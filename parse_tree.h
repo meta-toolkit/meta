@@ -5,9 +5,13 @@
 #ifndef _PARSE_TREE_H_
 #define _PARSE_TREE_H_
 
+#include <iostream>
 #include <string>
 #include <vector>
 
+using std::cout;
+using std::endl;
+using std::cerr;
 using std::string;
 using std::vector;
 
@@ -21,9 +25,10 @@ class ParseTree
 
         /**
          * Constructor.
-         * Sets the part of speech to the parameter.
+         * Detects whether the parameter is a subtree or a leaf, and recursively
+         *  builds subtrees.
          */
-        ParseTree(string POS);
+        ParseTree(string tags);
 
         /**
          * @return the toplevel part of speech for this ParseTree.
@@ -40,16 +45,25 @@ class ParseTree
          */
         size_t numChildren() const;
 
+        /**
+         * @return a string representation of the ParseTree.
+         */
+        string getString() const;
+
     private:
 
         string partOfSpeech;
         vector<ParseTree> children;
 
         /**
-         * Adds a subtree to the current ParseTree.
-         * @param POS - the part of speech to give the subtree
+         * @return a vector of subtrees in string representation.
          */
-        void addChild(string POS);
+        vector<string> getTransitions(string tags) const;
+
+        /**
+         * @return the root part of speech for a transition.
+         */
+        string getRootPOS(string tags) const;
 };
 
 #endif
