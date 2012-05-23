@@ -8,6 +8,9 @@ using std::string;
 
 int main(int argc, char* argv[])
 {
+    vector<string> filenames;
+
+
     string s = "(S(NP)(VP(AB)(BC)))";
     ParseTree tree(s);
     cout << tree.getString() << endl;
