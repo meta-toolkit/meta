@@ -23,14 +23,13 @@ vector<string> ParseTree::getTransitions(string tags) const
     tags = tags.substr(index, tags.size() - index - 1);
 
     // find groups of same-level parens; start on the first paren
-    index = 1;
-    int parenDepth = 1;
+    index = 0;
+    int parenDepth = 0;
     string current = "";
     vector<string> transitions;
     while(index < tags.size())
     {
         current += tags[index];
-
         if(tags[index] == ')')
             --parenDepth;
         else if(tags[index] == '(')
@@ -51,7 +50,7 @@ string ParseTree::getRootPOS(string tags) const
 {
     size_t index = 1;
     string POS = "";
-    while(tags[index] != ')')
+    while(tags[index] != ')' && tags[index] != '(')
         POS += tags[index++];
     return POS;
 }
@@ -78,5 +77,14 @@ string ParseTree::getString() const
     for(child = children.begin(); child != children.end(); ++child)
         ret += child->getString();
     ret += ")";
+    return ret;
+}
+
+string ParseTree::getChildrenString() const
+{
+    string ret = "";
+    vector<ParseTree>::const_iterator child;
+    for(child = children.begin(); child != children.end(); ++child)
+        ret += "(" + child->partOfSpeech + ")";
     return ret;
 }

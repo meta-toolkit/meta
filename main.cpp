@@ -8,7 +8,8 @@ using std::string;
 
 int main(int argc, char* argv[])
 {
-    ParseTree tree("(S(NP)(VP(AB)(BC)))");
+    string s = "(S(NP)(VP(AB)(BC)))";
+    ParseTree tree(s);
     cout << tree.getString() << endl;
     return 0;
 }

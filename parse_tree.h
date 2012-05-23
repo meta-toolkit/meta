@@ -50,6 +50,11 @@ class ParseTree
          */
         string getString() const;
 
+        /**
+         * @return a string representation of the ParseTree's children.
+         */
+        string getChildrenString() const;
+
     private:
 
         string partOfSpeech;
