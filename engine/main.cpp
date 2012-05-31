@@ -20,12 +20,14 @@ using namespace engine;
 
 vector<Document> loadIndex()
 {
+    cout << "Loading index" << endl;
     const string inputPath = "../../senior-thesis-data/input/";
     
     vector<string> filenames;
-    filenames.push_back(inputPath + "one.tree");
-    filenames.push_back(inputPath + "two.tree");
-    filenames.push_back(inputPath + "three.tree");
+    filenames.push_back(inputPath + "doc1.txt.tree");
+    filenames.push_back(inputPath + "doc2.txt.tree");
+    filenames.push_back(inputPath + "doc3.txt.tree");
+    filenames.push_back(inputPath + "doc4.txt.tree");
 
     vector<Document> documents;
 
@@ -47,6 +49,7 @@ vector<Document> loadIndex()
 void performSearch(Document query)
 {
     vector<Document> documents = loadIndex();
+    cout << "Scoring documents" << endl;
 
     // score documents
     multimap<double, string> ranks;
@@ -68,6 +71,6 @@ void performSearch(Document query)
 
 int main(int argc, char* argv[])
 {
-    performSearch(Document("",""));
+    performSearch(Document("(S(H)(H))","N/A"));
     return 0;
 }

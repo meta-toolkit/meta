@@ -6,6 +6,7 @@
  */
 vector<ParseTree> engine::util::getTrees(string filename)
 {
+    cout << " Getting parse trees for " << filename << endl;
     vector<ParseTree> trees;
     ifstream treeFile(filename, ifstream::in);
     if(treeFile.is_open())

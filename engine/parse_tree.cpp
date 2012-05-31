@@ -12,8 +12,9 @@ ParseTree::ParseTree(string tags): children(vector<ParseTree>())
 
 vector<string> ParseTree::getTransitions(string tags) const
 {
+
     // make sure there are actually transitions
-    if(tags.substr(1, tags.size() - 1).find_first_of("(") == string::npos)
+    if(tags == "" || tags.substr(1, tags.size() - 1).find_first_of("(") == string::npos)
         return vector<string>();
 
     // get rid of first transition and its closing paren

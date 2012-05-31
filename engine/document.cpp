@@ -43,3 +43,8 @@ size_t Document::getFrequency(string transition) const
     else
         return 0;
 }
+
+const unordered_map<string, size_t> & Document::getFrequencies() const
+{
+    return _frequencies;
+}

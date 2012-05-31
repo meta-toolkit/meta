@@ -57,6 +57,11 @@ class Document
          */
         size_t getFrequency(string transition) const;
 
+        /**
+         * @return the map of frequencies for this document.
+         */
+        const unordered_map<string, size_t> & getFrequencies() const;
+
     private:
 
         string _author;
