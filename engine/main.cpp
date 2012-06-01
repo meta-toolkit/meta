@@ -8,9 +8,8 @@
 #include "pos_tokenizer.h"
 #include "document.h"
 #include "parse_tree.h"
-#include "index.h"
+#include "ram_index.h"
 #include "search.h"
-#include "util.h"
 
 using std::pair;
 using std::make_pair;
@@ -20,61 +19,23 @@ using std::cout;
 using std::endl;
 using std::string;
 
-vector<Document> loadIndex()
-{
-    cout << "Loading index" << endl;
-    const string inputPath = "../../senior-thesis-data/input/";
-    
-    vector<string> filenames;
-    filenames.push_back(inputPath + "doc1.txt.tree");
-    filenames.push_back(inputPath + "doc2.txt.tree");
-    filenames.push_back(inputPath + "doc3.txt.tree");
-    filenames.push_back(inputPath + "doc4.txt.tree");
-
-    vector<Document> documents;
-
-    // get a vector of parse trees for each file
-    for(vector<string>::const_iterator file = filenames.begin(); file != filenames.end(); ++file)
-    {
-        vector<ParseTree> trees = util::getTrees(*file);
-        Document document(*file, "N/A");
-       
-        // aggregate token counts for each tree
-        ParseTreeTokenizer* tokenizer = new POSTokenizer();
-        for(vector<ParseTree>::const_iterator tree = trees.begin(); tree != trees.end(); ++tree)
-            tokenizer->tokenize(*tree, document);
-        delete tokenizer;
-        documents.push_back(document);
-    }
-
-    return documents;
-}
-
-void performSearch(Document query)
-{
-    vector<Document> documents = loadIndex();
-    cout << "Scoring documents" << endl;
-
-    // score documents
-    multimap<double, string> ranks;
-    for(vector<Document>::const_iterator doc = documents.begin(); doc != documents.end(); ++doc)
-    {
-        double score = search::scoreDocument(*doc, query);
-        ranks.insert(make_pair(score, doc->getAuthor()));
-    }
-
-    // display results
-    int numToDisplay = 10;
-    int displayed = 0;
-    for(multimap<double, string>::const_reverse_iterator rank = ranks.rbegin();
-        rank != ranks.rend() && displayed != numToDisplay; ++rank, ++displayed)
-    {
-        cout << rank->first << " " << rank->second << endl;
-    }
-}
-
 int main(int argc, char* argv[])
 {
-    performSearch(Document("(S(H)(H))","N/A"));
+    string prefix = "/home/sean/projects/senior-thesis-data/input/";
+
+    vector<string> indexFiles;
+    indexFiles.push_back(prefix + "doc1.txt.tree");
+    indexFiles.push_back(prefix + "doc2.txt.tree");
+    indexFiles.push_back(prefix + "doc3.txt.tree");
+    indexFiles.push_back(prefix + "doc4.txt.tree");
+
+    RAMIndex index(indexFiles, POSTokenizer());
+
+    Document query("author", "nationality");
+    multimap<double, string> results = index.search(query);
+
+    for(multimap<double, string>::iterator result = results.begin(); result != results.end(); ++result)
+        cout << result->first << " " << result->second << endl;
+
     return 0;
 }

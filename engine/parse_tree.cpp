@@ -89,3 +89,27 @@ string ParseTree::getChildrenString() const
         ret += "(" + child->partOfSpeech + ")";
     return ret;
 }
+
+vector<ParseTree> ParseTree::getTrees(const string & filename)
+{
+    cout << " Getting parse trees for " << filename << endl;
+    vector<ParseTree> trees;
+    ifstream treeFile(filename, ifstream::in);
+    if(treeFile.is_open())
+    {
+        string line;
+        while(treeFile.good())
+        {
+            std::getline(treeFile, line);
+            trees.push_back(ParseTree(line));
+        }        
+        treeFile.close();
+    }
+    else
+    {
+        cerr << "[ParseTree::getTrees]: Failed to open "
+             << filename << endl;
+    }
+
+    return trees;
+}

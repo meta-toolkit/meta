@@ -5,10 +5,12 @@
 #ifndef _PARSE_TREE_H_
 #define _PARSE_TREE_H_
 
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 
+using std::ifstream;
 using std::cout;
 using std::endl;
 using std::cerr;
@@ -54,6 +56,12 @@ class ParseTree
          * @return a string representation of the ParseTree's children.
          */
         string getChildrenString() const;
+
+        /**
+         * @param filename - where to read the trees from
+         * @return a vector of ParseTrees generated from the given file
+         */
+        static vector<ParseTree> getTrees(const string & filename);
 
     private:
 
