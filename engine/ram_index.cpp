@@ -17,6 +17,7 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles,
         // aggregate token counts for each tree
         for(vector<ParseTree>::const_iterator tree = trees.begin(); tree != trees.end(); ++tree)
             tokenizer.tokenize(*tree, document);
+
         _documents.push_back(document);
         _avgDocLength += document.getLength();
     }
@@ -24,27 +25,25 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles,
     _avgDocLength /= _documents.size();
 }
 
-double RAMIndex::scoreDocument(const Document & document,
-                               const Document & query) const
+double RAMIndex::scoreDocument(const Document & document, const Document & query) const
 {
     double score = 0.0;
 
     const unordered_map<string, size_t> frequencies = query.getFrequencies();
-    for(unordered_map<string, size_t>::const_iterator freq = frequencies.begin(); freq != frequencies.end(); ++freq)
+    for(unordered_map<string, size_t>::const_iterator term = frequencies.begin(); term != frequencies.end(); ++term)
     {
-        double N = 0;
-        double avgDL;
         double k1 = 1.5;
-        double b = 1;
+        double b = 0.75;
         double k3 = 500;
 
-        double df = 1;
-        double tf = document.getFrequency(freq->first);
-        double qtf = query.getFrequency(freq->first);
+        double numDocs = _documents.size();
+        double docFreq = 1; // ugh, this is why an inverted index is nice....
+        double termFreq = document.getFrequency(term->first);
+        double queryTermFreq = query.getFrequency(term->first);
 
-        double IDF = log((N - df + 0.5) / (df + 0.5));
-        double TF = ((k1 + 1.0) * tf) / ((k1 * ((1.0-b) + b * document.getLength() / avgDL)) + tf);
-        double QTF = ((k3 + 1.0) * qtf) / (k3 + qtf);
+        double IDF = log((numDocs - docFreq + 0.5) / (docFreq + 0.5));
+        double TF = ((k1 + 1.0) * termFreq) / ((k1 * ((1.0 - b) + b * document.getLength() / _avgDocLength)) + termFreq);
+        double QTF = ((k3 + 1.0) * queryTermFreq) / (k3 + queryTermFreq);
 
         score += IDF * TF * QTF;
     }
