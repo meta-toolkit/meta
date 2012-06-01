@@ -27,13 +27,3 @@ vector<ParseTree> util::getTrees(string filename)
 
     return trees;
 }
-
-/**
- * Adds tokens from the given tree to the supplied document.
- * @param tree - the tree to tokenize
- * @param document - the document to add counts to
- */
-void util::tokenize(const ParseTree & tree, Document & document)
-{
-    return;
-}

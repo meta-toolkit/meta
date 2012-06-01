@@ -1,5 +1,5 @@
 SEARCH = search
-SEARCHOBJS = parse_tree.o document.o search.o index.o util.o
+SEARCHOBJS = parse_tree.o document.o search.o ram_index.o util.o pos_tokenizer.o level_tokenizer.o
 
 CC = g++ -std=c++0x
 CCOPTS = -g -O0

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <map>
 
+#include "tokenizer.h"
+#include "pos_tokenizer.h"
 #include "document.h"
 #include "parse_tree.h"
 #include "index.h"
@@ -37,9 +39,11 @@ vector<Document> loadIndex()
         vector<ParseTree> trees = util::getTrees(*file);
         Document document(*file, "N/A");
        
-        // aggregate token counts for each tree 
+        // aggregate token counts for each tree
+        ParseTreeTokenizer* tokenizer = new POSTokenizer();
         for(vector<ParseTree>::const_iterator tree = trees.begin(); tree != trees.end(); ++tree)
-            util::tokenize(*tree, document);
+            tokenizer->tokenize(*tree, document);
+        delete tokenizer;
         documents.push_back(document);
     }
 

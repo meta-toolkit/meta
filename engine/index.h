@@ -5,6 +5,10 @@
 #ifndef _INDEX_H_
 #define _INDEX_H_
 
+#include <string>
+
+using std::string;
+
 /**
  *
  */
