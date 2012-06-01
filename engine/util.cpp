@@ -1,10 +1,10 @@
-#include "engine.h"
+#include "util.h"
 
 /**
  * @param filename
  * @return - a vector of ParseTrees
  */
-vector<ParseTree> engine::util::getTrees(string filename)
+vector<ParseTree> util::getTrees(string filename)
 {
     cout << " Getting parse trees for " << filename << endl;
     vector<ParseTree> trees;
@@ -33,7 +33,7 @@ vector<ParseTree> engine::util::getTrees(string filename)
  * @param tree - the tree to tokenize
  * @param document - the document to add counts to
  */
-void engine::util::tokenize(const ParseTree & tree, Document & document)
+void util::tokenize(const ParseTree & tree, Document & document)
 {
     return;
 }

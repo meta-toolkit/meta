@@ -6,7 +6,9 @@
 
 #include "document.h"
 #include "parse_tree.h"
-#include "engine.h"
+#include "index.h"
+#include "search.h"
+#include "util.h"
 
 using std::pair;
 using std::make_pair;
@@ -15,8 +17,6 @@ using std::vector;
 using std::cout;
 using std::endl;
 using std::string;
-
-using namespace engine;
 
 vector<Document> loadIndex()
 {

@@ -1,4 +1,4 @@
-#include "engine.h"
+#include "search.h"
 
 /**
  * Scores a document given a query.
@@ -6,7 +6,7 @@
  * @param query - the query to score against
  * @return the real score value 
  */
-double engine::search::scoreDocument(const Document & document, const Document & query)
+double search::scoreDocument(const Document & document, const Document & query)
 {
     double score = 0.0;
 
