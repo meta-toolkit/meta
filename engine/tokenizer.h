@@ -5,21 +5,22 @@
 #ifndef _TOKENIZER_H_
 #define _TOKENIZER_H_
 
+#include <unordered_map>
 #include "document.h"
 #include "parse_tree.h"
 
+using std::unordered_map;
+
 /**
- * An abstract class that takes a ParseTree and produces tokens.
+ * An abstract class that produces tokens.
  */
-class ParseTreeTokenizer
+class Tokenizer
 {
     public:
         /**
-         * Tokenizes a ParseTree, accumulating tokens in a document.
-         * @param tree - the tree to tokenize
-         * @param document - where to store aggregated tokens
+         *
          */
-        virtual void tokenize(const ParseTree & tree, Document & document) const = 0;
+        virtual unordered_map<string, size_t> getTokens(const string & filename) const = 0;
 };
 
 #endif

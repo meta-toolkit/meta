@@ -1,7 +1,7 @@
 #include "ram_index.h"
 
 RAMIndex::RAMIndex(const vector<string> & indexFiles,
-                   const ParseTreeTokenizer & tokenizer)
+                   const Tokenizer* tokenizer)
 {
     cout << "Creating RAM index" << endl;
 
@@ -11,12 +11,10 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles,
     // get a vector of parse trees for each file
     for(vector<string>::const_iterator file = indexFiles.begin(); file != indexFiles.end(); ++file)
     {
-        vector<ParseTree> trees = ParseTree::getTrees(*file);
         Document document(*file, "N/A");
-       
-        // aggregate token counts for each tree
-        for(vector<ParseTree>::const_iterator tree = trees.begin(); tree != trees.end(); ++tree)
-            tokenizer.tokenize(*tree, document);
+        unordered_map<string, size_t> tokens = tokenizer->getTokens(*file);
+        for(unordered_map<string, size_t>::const_iterator token = tokens.begin(); token != tokens.end(); ++token)
+            document.increment(token->first, token->second);
 
         _documents.push_back(document);
         _avgDocLength += document.getLength();

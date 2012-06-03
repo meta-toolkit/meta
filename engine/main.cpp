@@ -5,7 +5,7 @@
 #include <map>
 
 #include "tokenizer.h"
-#include "pos_tokenizer.h"
+#include "pos_tree_tokenizer.h"
 #include "document.h"
 #include "parse_tree.h"
 #include "ram_index.h"
@@ -29,7 +29,9 @@ int main(int argc, char* argv[])
     indexFiles.push_back(prefix + "doc3.txt.tree");
     indexFiles.push_back(prefix + "doc4.txt.tree");
 
-    RAMIndex index(indexFiles, POSTokenizer());
+    Tokenizer* tokenizer = new POSTreeTokenizer();
+    RAMIndex index(indexFiles, tokenizer);
+    delete tokenizer;
 
     Document query("author", "nationality");
     multimap<double, string> results = index.search(query);
