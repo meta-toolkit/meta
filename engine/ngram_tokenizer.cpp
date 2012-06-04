@@ -1,8 +1,7 @@
 #include "ngram_tokenizer.h"
 
-void NgramTokenizer::tokenize(const string & filename, Document & document) const
+void NgramTokenizer::tokenize(const string & filename, Document & document, unordered_map<string, size_t>* docFreq) const
 {
-    //cout << " [NgramTokenizer]: tokenizing " << filename << endl;
     struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     string validchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'-";
     Parser parser(filename, validchars, validchars, validchars);
@@ -19,9 +18,7 @@ void NgramTokenizer::tokenize(const string & filename, Document & document) cons
     while(parser.hasNext())
     {
         string wordified = wordify(ngram);
-        //if(idf != NULL)
-        //    idf->add(wordified);
-        document.increment(wordified, 1);
+        document.increment(wordified, 1, docFreq);
         ngram.erase(ngram.begin());
         string next = stem(parser.next(), stemmer);
         ngram.push_back(next);
@@ -54,10 +51,10 @@ string NgramTokenizer::setLower(const string & word) const
 
 string NgramTokenizer::stem(const string & word, struct sb_stemmer* stemmer) const
 {
-    //size_t length = word.size();
-    //sb_symbol symb[length];
-    //const char* cstr = (setLower(word)).c_str();
-    //memcpy(symb, cstr, length);
-    //return string((char*)sb_stemmer_stem(stemmer, symb, length));
-    return word;
+    size_t length = word.size();
+    sb_symbol symb[length];
+    const char* cstr = (setLower(word)).c_str();
+    memcpy(symb, cstr, length);
+    return string((char*)sb_stemmer_stem(stemmer, symb, length));
+    //return word;
 }

@@ -21,7 +21,7 @@ class POSTreeTokenizer : public Tokenizer
         /**
          *
          */
-        void tokenize(const string & filename, Document & document) const;
+        void tokenize(const string & filename, Document & document, unordered_map<string, size_t>* docFreq) const;
 };
 
 #endif

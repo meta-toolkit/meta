@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
         size_t numResults = 0;
         string category = RAMIndex::getCategory(*iter);
         Document query(RAMIndex::getName(*iter), category);
-        tokenizer->tokenize(*iter, query);
+        tokenizer->tokenize(*iter, query, NULL);
         string result = index.classifyKNN(query, 3);
         if(result == ( "(" + category + ")"))
         {

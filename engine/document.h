@@ -36,6 +36,15 @@ class Document
         void increment(string transition, size_t amount);
 
         /**
+         * Increment the count of the specified transition.
+         * @param transition - the rule to increment
+         * @param amount - the amount to increment by
+         * @param docFreq - used for IDF
+         */
+        void increment(string transition, size_t amount,
+            unordered_map<string, size_t>* docFreq);
+
+        /**
          * @return the name of this Document's author
          */
         string getName() const;

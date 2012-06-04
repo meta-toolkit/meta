@@ -34,7 +34,7 @@ class NgramTokenizer : public Tokenizer
         /**
          *
          */
-        void tokenize(const string & filename, Document & document) const;
+        void tokenize(const string & filename, Document & document, unordered_map<string, size_t>* docFreqs) const;
 
         /**
          * @return the value of n used for the ngrams

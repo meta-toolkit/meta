@@ -7,7 +7,7 @@ Document::Document(string name, string category):
     _length(0)
 { /* nothing */ }
 
-void Document::increment(string transition, size_t amount)
+void Document::increment(string transition, size_t amount, unordered_map<string, size_t>* docFreq)
 {
     unordered_map<string, size_t>::iterator iter;
     iter = _frequencies.find(transition);
@@ -15,9 +15,19 @@ void Document::increment(string transition, size_t amount)
     if(iter != _frequencies.end())
         iter->second += amount;
     else
-        _frequencies.insert(make_pair(transition, amount));    
+    {
+        _frequencies.insert(make_pair(transition, amount));
+        if(docFreq)
+            (*docFreq)[transition]++;
+    }
 
     _length += amount;
+   
+}
+
+void Document::increment(string transition, size_t amount)
+{
+    increment(transition, amount, NULL);
 }
 
 string Document::getName() const

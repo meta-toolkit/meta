@@ -5,6 +5,7 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles,
 {
     cout << "[RAMIndex]: creating index from " << indexFiles.size() << " files" << endl;
 
+    _docFreqs = unordered_map<string, size_t>();
     _documents = vector<Document>();
     _avgDocLength = 0;
     
@@ -12,9 +13,7 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles,
     for(vector<string>::const_iterator file = indexFiles.begin(); file != indexFiles.end(); ++file)
     {
         Document document(getName(*file), getCategory(*file));
-        tokenizer->tokenize(*file, document);
-        //cout << "  [RAMIndex]: parsed " << document.getLength() << " unique tokens in "
-        //     << document.getName() << " (" << document.getCategory() << ")" << endl;
+        tokenizer->tokenize(*file, document, &_docFreqs);
         _documents.push_back(document);
         _avgDocLength += document.getLength();
 
@@ -50,7 +49,8 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
         double k3 = 500;
 
         double numDocs = _documents.size();
-        double docFreq = 1; // ugh, this is why an inverted index is nice....
+        unordered_map<string, size_t>::const_iterator df = _docFreqs.find(term->first);
+        double docFreq = (df == _docFreqs.end()) ? (0.0) : (df->second);
         double termFreq = document.getFrequency(term->first);
         double queryTermFreq = query.getFrequency(term->first);
 
