@@ -3,7 +3,8 @@
 Document::Document(string author, string nationality):
     _frequencies(unordered_map<string, size_t>()),
     _author(author),
-    _nationality(nationality)
+    _nationality(nationality),
+    _length(0)
 { /* nothing */ }
 
 void Document::increment(string transition, size_t amount)

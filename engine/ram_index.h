@@ -53,6 +53,11 @@ class RAMIndex : public Index
 
         vector<Document> _documents;
         size_t _avgDocLength;
+
+        /**
+         *
+         */
+        string shortFilename(const string & filename) const;
 };
 
 #endif

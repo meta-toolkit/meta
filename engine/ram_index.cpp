@@ -3,7 +3,7 @@
 RAMIndex::RAMIndex(const vector<string> & indexFiles,
                    const Tokenizer* tokenizer)
 {
-    cout << "Creating RAM index" << endl;
+    cout << "[RAMIndex]: creating index from " << indexFiles.size() << " files" << endl;
 
     _documents = vector<Document>();
     _avgDocLength = 0;
@@ -12,6 +12,8 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles,
     {
         Document document(*file, "N/A");
         tokenizer->tokenize(*file, document);
+        cout << "  [RAMIndex]: " << document.getLength() 
+             << " unique tokens" << endl;
         _documents.push_back(document);
         _avgDocLength += document.getLength();
     }
@@ -19,10 +21,14 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles,
     _avgDocLength /= _documents.size();
 }
 
+string RAMIndex::shortFilename(const string & filename) const
+{
+    return filename.substr(filename.find_last_of("/") + 1, filename.size());
+}
+
 double RAMIndex::scoreDocument(const Document & document, const Document & query) const
 {
     double score = 0.0;
-
     const unordered_map<string, size_t> frequencies = query.getFrequencies();
     for(unordered_map<string, size_t>::const_iterator term = frequencies.begin(); term != frequencies.end(); ++term)
     {
@@ -39,29 +45,28 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
         double TF = ((k1 + 1.0) * termFreq) / ((k1 * ((1.0 - b) + b * document.getLength() / _avgDocLength)) + termFreq);
         double QTF = ((k3 + 1.0) * queryTermFreq) / (k3 + queryTermFreq);
 
+        //cout << "IDF = " << IDF << ", TF = " << TF << ", QTF = " << QTF << endl;
         score += IDF * TF * QTF;
     }
 
     return score;
 }
 
-
 size_t RAMIndex::getAvgDocLength() const
 {
     return _avgDocLength;
 }
 
-
 multimap<double, string> RAMIndex::search(const Document & query) const
 {
-    cout << "Scoring documents" << endl;
+    cout << "[RAMIndex]: scoring documents for query " << query.getAuthor() << endl;
 
     // score documents
     multimap<double, string> ranks;
     for(vector<Document>::const_iterator doc = _documents.begin(); doc != _documents.end(); ++doc)
     {
         double score = scoreDocument(*doc, query);
-        ranks.insert(make_pair(score, doc->getAuthor()));
+        ranks.insert(make_pair(score, shortFilename(doc->getAuthor())));
     }
 
     return ranks; // seems like a bad idea

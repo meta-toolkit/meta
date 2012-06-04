@@ -5,8 +5,13 @@
 #ifndef _NGRAM_TOKENIZER_H_
 #define _NGRAM_TOKENIZER_H_
 
+#include <string.h>
+#include <cstdlib>
 #include <vector>
 #include <unordered_map>
+
+#include "libstemmer/libstemmer.h"
+#include "parser.h"
 #include "document.h"
 #include "parse_tree.h"
 #include "tokenizer.h"
@@ -39,6 +44,28 @@ class NgramTokenizer : public Tokenizer
     private:
 
         size_t _nValue;
+        
+        /**
+         * Uses the Snowball stemmer.
+         * @param word - the word to stem
+         * @param stemmer - the stemmer to use
+         * @return the stemmed version of the word
+         */
+        string stem(const string & word, struct sb_stemmer* stemmer) const;
+    
+        /**
+         * Simply changes all letters to lowercase in a word.
+         * @param word - the word to change
+         * @return the value of n used for the ngrams
+         */
+        string setLower(const string & word) const;
+
+        /**
+         * Turns a list of words into an ngram string.
+         * @param words - the vectoring representing a list of words
+         * @return the ngrams in string format
+         */
+        string wordify(const vector<string> & words) const;
 };
 
 #endif
