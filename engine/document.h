@@ -26,7 +26,7 @@ class Document
          * @param author - the author's name
          * @param nationality - the author's nationality
          */
-        Document(string author, string nationality);
+        Document(string name, string category);
 
         /**
          * Increment the count of the specified transition.
@@ -38,12 +38,12 @@ class Document
         /**
          * @return the name of this Document's author
          */
-        string getAuthor() const;
+        string getName() const;
 
         /**
          * @return the nationality of this Document's author
          */
-        string getNationality() const;
+        string getCategory() const;
 
         /**
          * @return the total of transitions recorded for this Document.
@@ -64,8 +64,8 @@ class Document
 
     private:
 
-        string _author;
-        string _nationality;
+        string _name;
+        string _category;
         size_t _length;
         unordered_map<string, size_t> _frequencies;
 };

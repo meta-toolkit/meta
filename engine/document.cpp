@@ -1,9 +1,9 @@
 #include "document.h" 
 
-Document::Document(string author, string nationality):
+Document::Document(string name, string category):
     _frequencies(unordered_map<string, size_t>()),
-    _author(author),
-    _nationality(nationality),
+    _name(name),
+    _category(category),
     _length(0)
 { /* nothing */ }
 
@@ -20,14 +20,14 @@ void Document::increment(string transition, size_t amount)
     _length += amount;
 }
 
-string Document::getAuthor() const
+string Document::getName() const
 {
-    return _author;
+    return _name;
 }
 
-string Document::getNationality() const
+string Document::getCategory() const
 {
-    return _nationality;
+    return _category;
 }
 
 size_t Document::getLength() const

@@ -49,6 +49,18 @@ class RAMIndex : public Index
          */
         multimap<double, string> search(const Document & query) const;
 
+        /**
+         * Classify the query document by category using K-Nearest Neighbor.
+         * @param query - the query to run
+         * @param k - the value of k in KNN
+         * @return the category the document is believed to be in
+         */
+        string classifyKNN(const Document & query, size_t k) const;
+
+        static string getName(const string & path);
+
+        static string getCategory(const string & path);
+
     private:
 
         vector<Document> _documents;

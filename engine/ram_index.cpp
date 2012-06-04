@@ -8,22 +8,35 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles,
     _documents = vector<Document>();
     _avgDocLength = 0;
     
+    size_t docNum = 0;
     for(vector<string>::const_iterator file = indexFiles.begin(); file != indexFiles.end(); ++file)
     {
-        Document document(*file, "N/A");
+        Document document(getName(*file), getCategory(*file));
         tokenizer->tokenize(*file, document);
-        cout << "  [RAMIndex]: " << document.getLength() 
-             << " unique tokens" << endl;
+        //cout << "  [RAMIndex]: parsed " << document.getLength() << " unique tokens in "
+        //     << document.getName() << " (" << document.getCategory() << ")" << endl;
         _documents.push_back(document);
         _avgDocLength += document.getLength();
+
+        if(docNum++ % 10 == 0)
+            cout << "  " << ((double) docNum / indexFiles.size() * 100) << "%    \r";
     }
+    cout << "  100%        " << endl;
 
     _avgDocLength /= _documents.size();
 }
 
-string RAMIndex::shortFilename(const string & filename) const
+string RAMIndex::getName(const string & path)
 {
-    return filename.substr(filename.find_last_of("/") + 1, filename.size());
+    size_t idx = path.find_last_of("/") + 1;
+    return path.substr(idx, path.size() - idx);
+}
+
+string RAMIndex::getCategory(const string & path)
+{
+    size_t idx = path.find_last_of("/");
+    string sub = path.substr(0, idx);
+    return getName(sub);
 }
 
 double RAMIndex::scoreDocument(const Document & document, const Document & query) const
@@ -59,15 +72,44 @@ size_t RAMIndex::getAvgDocLength() const
 
 multimap<double, string> RAMIndex::search(const Document & query) const
 {
-    cout << "[RAMIndex]: scoring documents for query " << query.getAuthor() << endl;
+    cout << "[RAMIndex]: scoring documents for query " << query.getName()
+         << " (" << query.getCategory() << ")" << endl;
 
     // score documents
     multimap<double, string> ranks;
     for(vector<Document>::const_iterator doc = _documents.begin(); doc != _documents.end(); ++doc)
     {
         double score = scoreDocument(*doc, query);
-        ranks.insert(make_pair(score, shortFilename(doc->getAuthor())));
+        if(score != 0.0)
+            ranks.insert(make_pair(score, doc->getName() + " (" + doc->getCategory() + ")"));
     }
 
     return ranks; // seems like a bad idea
 }
+
+/**
+ * Classify the query document by category using K-Nearest Neighbor.
+ * @param query - the query to run
+ * @param k - the value of k in KNN
+ * @return the category the document is believed to be in
+ */
+string RAMIndex::classifyKNN(const Document & query, size_t k) const
+{
+    multimap<double, string> ranking = search(query);
+    unordered_map<string, size_t> counts;
+    size_t numResults = 0;
+    for(multimap<double, string>::reverse_iterator result = ranking.rbegin(); result !=
+      ranking.rend() && numResults++ != k; ++result)
+    {
+        size_t space = result->second.find_first_of(" ") + 1;
+        string category = result->second.substr(space, result->second.size() - space);
+        counts[category]++;
+    }
+
+    // sort
+    multimap<size_t, string> results;
+    for(unordered_map<string, size_t>::iterator it = counts.begin(); it != counts.end(); ++it)
+        results.insert(make_pair(it->second, it->first));
+    return results.begin()->second;
+}
+

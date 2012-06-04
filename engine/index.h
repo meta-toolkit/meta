@@ -39,6 +39,14 @@ class Index
          * @return - a mapping of scores to Documents
          */
         virtual multimap<double, string> search(const Document & query) const = 0;
+
+        /**
+         * Classify the query document by category using K-Nearest Neighbor.
+         * @param query - the query to run
+         * @param k - the value of k in KNN
+         * @return the category the document is believed to be in
+         */
+        virtual string classifyKNN(const Document & query, size_t k) const = 0;
 };
 
 #endif
