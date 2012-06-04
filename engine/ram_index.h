@@ -5,6 +5,7 @@
 #ifndef _RAM_INDEX_
 #define _RAM_INDEX_
 
+#include <omp.h>
 #include <string>
 
 #include "document.h"

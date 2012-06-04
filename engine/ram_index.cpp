@@ -75,16 +75,21 @@ multimap<double, string> RAMIndex::search(const Document & query) const
     cout << "[RAMIndex]: scoring documents for query " << query.getName()
          << " (" << query.getCategory() << ")" << endl;
 
-    // score documents
     multimap<double, string> ranks;
-    for(vector<Document>::const_iterator doc = _documents.begin(); doc != _documents.end(); ++doc)
+    #pragma omp parallel for
+    for(size_t idx = 0; idx < _documents.size(); ++idx)
     {
-        double score = scoreDocument(*doc, query);
+        double score = scoreDocument(_documents[idx], query);
         if(score != 0.0)
-            ranks.insert(make_pair(score, doc->getName() + " (" + doc->getCategory() + ")"));
+        {
+            #pragma omp critical
+            {
+                ranks.insert(make_pair(score, _documents[idx].getName() + " (" + _documents[idx].getCategory() + ")"));
+            }
+        }
     }
 
-    return ranks; // seems like a bad idea
+    return ranks;
 }
 
 /**

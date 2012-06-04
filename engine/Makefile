@@ -3,9 +3,9 @@ SEARCHOBJS = parse_tree.o document.o ram_index.o pos_tree_tokenizer.o \
     level_tree_tokenizer.o ngram_tokenizer.o textfile.o parser.o \
     libstemmer/libstemmer.o
 
-CC = g++ -std=c++0x
+CC = g++ -std=c++0x -fopenmp
 CCOPTS = -g -O0
-LINKER = g++ -std=c++0x
+LINKER = g++ -std=c++0x -fopenmp
 
 all: $(SEARCH)
 
