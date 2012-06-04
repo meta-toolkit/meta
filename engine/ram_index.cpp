@@ -8,14 +8,10 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles,
     _documents = vector<Document>();
     _avgDocLength = 0;
     
-    // get a vector of parse trees for each file
     for(vector<string>::const_iterator file = indexFiles.begin(); file != indexFiles.end(); ++file)
     {
         Document document(*file, "N/A");
-        unordered_map<string, size_t> tokens = tokenizer->getTokens(*file);
-        for(unordered_map<string, size_t>::const_iterator token = tokens.begin(); token != tokens.end(); ++token)
-            document.increment(token->first, token->second);
-
+        tokenizer->tokenize(*file, document);
         _documents.push_back(document);
         _avgDocLength += document.getLength();
     }
