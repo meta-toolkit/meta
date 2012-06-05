@@ -117,13 +117,6 @@ int main(int argc, char* argv[])
         else
             cout << "  -> " << makeRed("incorrect");
         cout << " " << result << endl << "  -> " << ((double) numCorrect / numQueries * 100) << "% accuracy" << endl;
-/*
-        multimap<double, string> results = index.search(query);
-
-        for(multimap<double, string>::reverse_iterator result = results.rbegin(); result !=
-         results.rend() && numResults++ != 5; ++result)
-            cout << " " << result->first << " " << result->second << endl;
-*/
         ++numQueries;
     }
 

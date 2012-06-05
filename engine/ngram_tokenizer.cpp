@@ -1,5 +1,10 @@
 #include "ngram_tokenizer.h"
 
+NgramTokenizer::NgramTokenizer(size_t n): _nValue(n), _stopwords(unordered_set<string>())
+{
+   initStopwords();     
+}
+
 void NgramTokenizer::tokenize(const string & filename, Document & document, unordered_map<string, size_t>* docFreq) const
 {
     struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
@@ -10,7 +15,11 @@ void NgramTokenizer::tokenize(const string & filename, Document & document, unor
     vector<string> ngram;
     for(size_t i = 0; i < _nValue && parser.hasNext(); ++i)
     {
-        string next = stem(parser.next(), stemmer);
+        string next = "";
+        do
+        {
+            next = stem(parser.next(), stemmer);
+        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
     }
 
@@ -20,10 +29,26 @@ void NgramTokenizer::tokenize(const string & filename, Document & document, unor
         string wordified = wordify(ngram);
         document.increment(wordified, 1, docFreq);
         ngram.erase(ngram.begin());
-        string next = stem(parser.next(), stemmer);
+        string next = "";
+        do
+        {
+            next = stem(parser.next(), stemmer);
+        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
     }
 
+    sb_stemmer_delete(stemmer);
+}
+
+void NgramTokenizer::initStopwords()
+{
+    struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
+    string valid = "abcdefghijklmnopqrstuvwxyzI";
+    Parser parser("lemur-stopwords.txt", valid, valid, valid);
+    while(parser.hasNext())
+    {
+        _stopwords.insert(stem(parser.next(), stemmer));
+    }
     sb_stemmer_delete(stemmer);
 }
 
@@ -56,5 +81,4 @@ string NgramTokenizer::stem(const string & word, struct sb_stemmer* stemmer) con
     const char* cstr = (setLower(word)).c_str();
     memcpy(symb, cstr, length);
     return string((char*)sb_stemmer_stem(stemmer, symb, length));
-    //return word;
 }

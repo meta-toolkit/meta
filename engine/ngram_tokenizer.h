@@ -8,6 +8,7 @@
 #include <string.h>
 #include <cstdlib>
 #include <vector>
+#include <unordered_set>
 #include <unordered_map>
 
 #include "libstemmer/libstemmer.h"
@@ -18,6 +19,7 @@
 
 using std::vector;
 using std::unordered_map;
+using std::unordered_set;
 
 /**
  * 
@@ -29,7 +31,7 @@ class NgramTokenizer : public Tokenizer
          * Constructor.
          * @param n - the value of n to use for the ngrams.
          */
-        NgramTokenizer(size_t n): _nValue(n){/* nothing */}
+        NgramTokenizer(size_t n);
 
         /**
          *
@@ -44,6 +46,7 @@ class NgramTokenizer : public Tokenizer
     private:
 
         size_t _nValue;
+        unordered_set<string> _stopwords;
         
         /**
          * Uses the Snowball stemmer.
@@ -66,6 +69,11 @@ class NgramTokenizer : public Tokenizer
          * @return the ngrams in string format
          */
         string wordify(const vector<string> & words) const;
+
+        /**
+         * Sets up a set of stopwords.
+         */
+        void initStopwords();
 };
 
 #endif
