@@ -12,8 +12,12 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include <iostream>
 #include <string>
 
+using std::cerr;
+using std::endl;
 using std::string;
 
 /**
@@ -30,6 +34,12 @@ class CompressedFileReader
         CompressedFileReader(const string & filename);
 
         /**
+         * Destructor.
+         * Closes the compressed file.
+         */
+        ~CompressedFileReader();
+
+        /**
          * Sets the cursor back to the beginning of the file.
          */
         void reset();
@@ -37,9 +47,10 @@ class CompressedFileReader
         /**
          * Sets the cursor to the specified position in the file.
          * It is up to the user to specify a valid position.
-         * @param position - where to set the cursor
+         * @param position - where to set the cursor in terms of bytes
+         * @param bitOffset - bit offset from current byte position [0..7]
          */
-        void seek(unsigned int position);
+        void seek(unsigned int position, unsigned int bitOffset);
 
         /**
          * @return whether there is another number in the file
@@ -53,14 +64,25 @@ class CompressedFileReader
 
     private:
 
-        unsigned int readCharCursor;
-        unsigned int readBitCursor;
+        unsigned char* _start;
+        int _fileDescriptor;
+        unsigned int _size;
+        int _end;
+
+        unsigned int _currentValue;
+        unsigned int _currentChar;
+        unsigned int _currentBit;
+
+        /**
+         * Sets _currentValue to the value of the next number.
+         */
+        void getNext();
 
         /**
          * Advances readCursors.
          * @return the next bit in the file
          */
-        void readBit();
+        bool readBit();
 };
 
 #endif

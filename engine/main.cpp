@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
         string category = RAMIndex::getCategory(*iter);
         Document query(RAMIndex::getName(*iter), category);
         tokenizer->tokenize(*iter, query, NULL);
-        string result = index.classifyKNN(query, 3);
+        string result = index.classifyKNN(query, 1);
         if(result == ( "(" + category + ")"))
         {
             ++numCorrect;
@@ -116,7 +116,8 @@ int main(int argc, char* argv[])
         }
         else
             cout << "  -> " << makeRed("incorrect");
-        cout << " " << result << endl << "  -> " << ((double) numCorrect / numQueries * 100) << "% accuracy" << endl;
+        cout << " " << result << endl << "  -> " << ((double) numCorrect / numQueries * 100)
+             << "% accuracy, " << numQueries << "/" << queryFiles.size() << " processed " << endl;
         ++numQueries;
     }
 
