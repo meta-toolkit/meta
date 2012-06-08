@@ -1,7 +1,8 @@
 SEARCH = search
 SEARCHOBJS = parse_tree.o document.o ram_index.o pos_tree_tokenizer.o \
     level_tree_tokenizer.o ngram_tokenizer.o textfile.o parser.o \
-    lexicon.o inverted_index.o compressed_file.o libstemmer/libstemmer.o
+    lexicon.o inverted_index.o compressed_file_reader.o compressed_file_writer.o \
+    libstemmer/libstemmer.o
 
 CC = g++ -std=c++0x -fopenmp
 CCOPTS = -g -O0

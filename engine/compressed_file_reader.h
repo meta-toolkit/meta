@@ -1,9 +1,9 @@
 /**
- * @file compressed_file.h
+ * @file compressed_file_reader.h
  */
 
-#ifndef _COMPRESSED_FILE_H_
-#define _COMPRESSED_FILE_H_
+#ifndef _COMPRESSED_FILE_READER_H_
+#define _COMPRESSED_FILE_READER_H_
 
 #include <cmath>
 #include <fcntl.h>
@@ -19,15 +19,15 @@ using std::string;
 /**
  * Represents a file of unsigned integers compressed using gamma compression.
  */
-class CompressedFile
+class CompressedFileReader
 {
     public:
 
         /**
          * Constructor.
-         * Opens a compressed file for reading and writing or creates a new file if it doesn't exist.
+         * Opens a compressed file for reading.
          */
-        CompressedFile(const string & filename);
+        CompressedFileReader(const string & filename);
 
         /**
          * Sets the cursor back to the beginning of the file.
@@ -51,31 +51,10 @@ class CompressedFile
          */
         unsigned int next();
 
-        /**
-         * Writes a value to the end of the compressed file.
-         * @param value - the number to write
-         */
-        void write(unsigned int value);
-
     private:
 
         unsigned int readCharCursor;
         unsigned int readBitCursor;
-
-        // this is going to be gross
-        // will have to stop in the middle of chars
-        //  to read and write
-
-        // how to store the last value? it will be padded with zeros or something??
-
-        unsigned int writeCharCursor;
-        unsigned int writeBitCursor;
-
-        /**
-         * Writes a bit to the file and advances writeCursors.
-         * @param bit
-         */
-        void writeBit(bool bit);
 
         /**
          * Advances readCursors.
