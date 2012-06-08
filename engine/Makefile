@@ -1,7 +1,7 @@
 SEARCH = search
 SEARCHOBJS = parse_tree.o document.o ram_index.o pos_tree_tokenizer.o \
     level_tree_tokenizer.o ngram_tokenizer.o textfile.o parser.o \
-    libstemmer/libstemmer.o
+    lexicon.o inverted_index.o libstemmer/libstemmer.o
 
 CC = g++ -std=c++0x -fopenmp
 CCOPTS = -g -O0
@@ -17,3 +17,6 @@ $(SEARCH): $(SEARCHOBJS) main.cpp
 
 clean:
 	-rm -rf *.o $(SEARCH)
+
+tidy: clean
+	-rm -rf ./doc

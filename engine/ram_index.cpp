@@ -1,3 +1,7 @@
+/**
+ * @file ram_index.cpp
+ */
+
 #include "ram_index.h"
 
 RAMIndex::RAMIndex(const vector<string> & indexFiles,
@@ -41,24 +45,24 @@ string RAMIndex::getCategory(const string & path)
 double RAMIndex::scoreDocument(const Document & document, const Document & query) const
 {
     double score = 0.0;
+    double k1 = 1.5;
+    double b = 0.75;
+    double k3 = 500;
+    double docLength = document.getLength();
+    double numDocs = _documents.size();
+
     const unordered_map<string, size_t> frequencies = query.getFrequencies();
     for(unordered_map<string, size_t>::const_iterator term = frequencies.begin(); term != frequencies.end(); ++term)
     {
-        double k1 = 1.5;
-        double b = 0.75;
-        double k3 = 500;
-
-        double numDocs = _documents.size();
         unordered_map<string, size_t>::const_iterator df = _docFreqs.find(term->first);
         double docFreq = (df == _docFreqs.end()) ? (0.0) : (df->second);
         double termFreq = document.getFrequency(term->first);
         double queryTermFreq = query.getFrequency(term->first);
 
         double IDF = log((numDocs - docFreq + 0.5) / (docFreq + 0.5));
-        double TF = ((k1 + 1.0) * termFreq) / ((k1 * ((1.0 - b) + b * document.getLength() / _avgDocLength)) + termFreq);
+        double TF = ((k1 + 1.0) * termFreq) / ((k1 * ((1.0 - b) + b * docLength / _avgDocLength)) + termFreq);
         double QTF = ((k3 + 1.0) * queryTermFreq) / (k3 + queryTermFreq);
 
-        //cout << "IDF = " << IDF << ", TF = " << TF << ", QTF = " << QTF << endl;
         score += IDF * TF * QTF;
     }
 

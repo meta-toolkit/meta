@@ -1,5 +1,5 @@
 /**
- * @file pos_tokenizer.h
+ * @file ngram_tokenizer.h
  */
 
 #ifndef _NGRAM_TOKENIZER_H_
@@ -20,7 +20,7 @@ using std::vector;
 using std::unordered_map;
 
 /**
- * 
+ * Tokenizes documents based on an ngram word model, where the value for n is supplied by the user.
  */
 class NgramTokenizer : public Tokenizer
 {

@@ -1,5 +1,5 @@
 /**
- * @file pos_tokenizer.h
+ * @file pos_tree_tokenizer.h
  */
 
 #ifndef _POS_TREE_TOKENIZER_H_
@@ -13,7 +13,7 @@
 using std::unordered_map;
 
 /**
- * 
+ * Tokenizes a parse tree by the leaf POS values.
  */
 class POSTreeTokenizer : public Tokenizer
 {

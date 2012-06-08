@@ -1,5 +1,7 @@
-/*	Part of CS 296-25 Honors project Spring 2011
- *	textfile.* - allows programming with (hopefully) fewer I/O bottlenecks
+/**
+ * @file textfile.h
+ * Originally part of CS 296-25 Honors project Spring 2011.
+ * Allows programming with (hopefully) fewer I/O bottlenecks
  */
 
 #ifndef _TEXTFILE_H_
@@ -16,24 +18,47 @@
 
 using std::string;
 
-class TextFile {
+/**
+ * Memory maps a text file for better I/O performance and allows you to read it.
+ */
+class TextFile
+{
+    public:
 
-public:
+        /**
+         * Constructor.
+         * @param title - creates a TextFile object from the given filename
+         */
+        TextFile(string title);
 
-	TextFile(string title);
+        /**
+         * Opens the current file.
+         * @return a pointer to the beginning of the text file; NULL if unsuccessful
+         */
+        char* opentext();
 
-	char* opentext();
-	unsigned int get_size() const;
-	string get_title() const;
-	bool closetext();
+        /**
+         * @return the length of the file (in number of characters)
+         */
+        unsigned int get_size() const;
 
-private:
+        /**
+         * @return the title of the text file (the parameter given to the contructor)
+         */
+        string get_title() const;
 
-	string _title;
-	char* start;
-	unsigned int size;
-	int file_descriptor;
+        /**
+         * Closes the text file.
+         * @return whether closing the file was successful
+         */
+        bool closetext();
 
+    private:
+
+        string _title;
+        char* start;
+        unsigned int size;
+        int file_descriptor;
 };
 
 #endif

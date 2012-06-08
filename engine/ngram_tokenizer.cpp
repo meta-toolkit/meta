@@ -1,3 +1,7 @@
+/**
+ * @file ngram_tokenizer.cpp
+ */
+
 #include "ngram_tokenizer.h"
 
 void NgramTokenizer::tokenize(const string & filename, Document & document, unordered_map<string, size_t>* docFreq) const

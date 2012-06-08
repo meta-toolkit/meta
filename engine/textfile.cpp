@@ -1,8 +1,6 @@
-/*	Part of CS 296-25 Honors project Spring 2011
- *	textfile.* - allows programming with (hopefully) fewer I/O bottlenecks
+/**
+ * @file textfile.cpp
  */
-
-#define USE_MMAP false
 
 #include <iostream>
 #include "textfile.h"

@@ -5,6 +5,7 @@
 #ifndef _RAM_INDEX_
 #define _RAM_INDEX_
 
+#include <cmath>
 #include <omp.h>
 #include <string>
 
@@ -15,7 +16,7 @@
 using std::string;
 
 /**
- *
+ * Represents an index that resides in memory and is created on the fly.
  */
 class RAMIndex : public Index
 {
@@ -58,8 +59,14 @@ class RAMIndex : public Index
          */
         string classifyKNN(const Document & query, size_t k) const;
 
+        /**
+         * @return the name of a document given its full path
+         */
         static string getName(const string & path);
 
+        /**
+         * @return the containing directory of a file given its full path
+         */
         static string getCategory(const string & path);
 
     private:
