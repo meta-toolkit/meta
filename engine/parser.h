@@ -1,6 +1,6 @@
 /**
- * parser.h / parser.cpp
- * written by Sean Massung for CS 225 Honors Fall 2011
+ * @file parser.h
+ * Originally for CS 225 Honors Fall 2011
  */
 
 #ifndef _PARSER_H_
@@ -14,6 +14,9 @@
 using std::string;
 using std::set;
 
+/**
+ * Provides a Java-like file parsing utiltity.
+ */
 class Parser {
 public:
 

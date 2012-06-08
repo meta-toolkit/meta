@@ -1,5 +1,5 @@
 /**
- * @file level_tokenizer.h
+ * @file level_tree_tokenizer.h
  */
 
 #ifndef _LEVEL_TREE_TOKENIZER_H_
@@ -10,7 +10,7 @@
 #include "tokenizer.h"
 
 /**
- * 
+ * Tokenizes parse trees based on their levels.
  */
 class LevelTreeTokenizer : public Tokenizer
 {

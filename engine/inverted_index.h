@@ -1,23 +1,35 @@
 /**
- * @file index.h
+ * @file inverted_index.h
  */
 
-#ifndef _INDEX_H_
-#define _INDEX_H_
+#ifndef _INVERTED_INDEX_H_
+#define _INVERTED_INDEX_H_
 
 #include <map>
+#include <unordered_map>
+#include <cmath>
 #include <string>
+#include "index.h"
 #include "document.h"
+#include "lexicon.h"
 
 using std::multimap;
+using std::unordered_map;
 using std::string;
 
 /**
- * An abstract class that represents searchable document-based index.
+ * Represents an index that resides on disk, in the standard inverted format.
  */
-class Index
+class InvertedIndex : public Index
 {
     public:
+
+        /**
+         * Constructor.
+         * If the lexicon file already exists, it loads it into memory.
+         * Otherwise, an empty index is created there.
+         */
+        InvertedIndex(const string & lexiconFile);
 
         /**
          * Scores a document given a query.
@@ -25,19 +37,19 @@ class Index
          * @param query - the query to score against
          * @return the real score value 
          */
-        virtual double scoreDocument(const Document & document, const Document & query) const = 0;
+        double scoreDocument(const Document & document, const Document & query) const;
 
         /**
          * @return the average document length of the collection
          */
-        virtual size_t getAvgDocLength() const = 0;
+        size_t getAvgDocLength() const;
 
         /**
          * Searches the index using the scoreDocument function on each Document.
          * @param query - the query to perform the search with
          * @return - a mapping of scores to Documents
          */
-        virtual multimap<double, string> search(const Document & query) const = 0;
+        multimap<double, string> search(const Document & query) const;
 
         /**
          * Classify the query document by category using K-Nearest Neighbor.
@@ -45,7 +57,7 @@ class Index
          * @param k - the value of k in KNN
          * @return the category the document is believed to be in
          */
-        virtual string classifyKNN(const Document & query, size_t k) const = 0;
+        string classifyKNN(const Document & query, size_t k) const;
 };
 
 #endif

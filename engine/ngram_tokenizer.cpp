@@ -1,3 +1,7 @@
+/**
+ * @file ngram_tokenizer.cpp
+ */
+
 #include "ngram_tokenizer.h"
 
 NgramTokenizer::NgramTokenizer(size_t n): _nValue(n), _stopwords(unordered_set<string>())

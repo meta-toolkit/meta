@@ -23,8 +23,8 @@ class Document
 
         /**
          * Constructor.
-         * @param author - the author's name
-         * @param nationality - the author's nationality
+         * @param name - name for the document
+         * @param category - a classification category this document belongs to
          */
         Document(string name, string category);
 
@@ -41,8 +41,7 @@ class Document
          * @param amount - the amount to increment by
          * @param docFreq - used for IDF
          */
-        void increment(string transition, size_t amount,
-            unordered_map<string, size_t>* docFreq);
+        void increment(string transition, size_t amount, unordered_map<string, size_t>* docFreq);
 
         /**
          * @return the name of this Document's author
