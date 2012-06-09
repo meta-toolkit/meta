@@ -5,15 +5,14 @@
 #ifndef _COMPRESSED_FILE_WRITER_H_
 #define _COMPRESSED_FILE_WRITER_H_
 
+#include <string.h>
+#include <cstdio>
 #include <cmath>
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <string>
+#include <iostream>
 
+using std::cerr;
+using std::endl;
 using std::string;
 
 /**
@@ -30,6 +29,11 @@ class CompressedFileWriter
         CompressedFileWriter(const string & filename);
 
         /**
+         * Destructor; closes the compressed file.
+         */
+        ~CompressedFileWriter();
+
+        /**
          * Writes a value to the end of the compressed file.
          * @param value - the number to write
          */
@@ -37,14 +41,22 @@ class CompressedFileWriter
 
     private:
 
-        unsigned int writeCharCursor;
-        unsigned int writeBitCursor;
+        FILE* _outfile;
+        unsigned int _charCursor;
+        unsigned int _bitCursor;
+        unsigned char* _buffer;
+        unsigned int _bufferSize;
 
         /**
          * Writes a bit to the file and advances writeCursors.
          * @param bit
          */
         void writeBit(bool bit);
+
+        /**
+         * Writes the buffer to the file.
+         */
+        void writeBuffer() const;
 };
 
 #endif

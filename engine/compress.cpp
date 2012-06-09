@@ -8,12 +8,15 @@ using std::endl;
 
 int main(int argc, char* argv[])
 {
-    CompressedFileReader reader("compressed.txt");
+    CompressedFileReader reader("in-compressed.txt");
+    CompressedFileWriter writer("out-compressed.txt");
 
     while(reader.hasNext())
     {
-        cout << reader.next();
+        unsigned int next = reader.next();
+        cout << next;
         cout << endl;
+        writer.write(next);
     }
 
     return 0;
