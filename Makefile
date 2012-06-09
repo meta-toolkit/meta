@@ -2,7 +2,7 @@ SEARCH = search
 SEARCHOBJS = parse_tree.o document.o ram_index.o pos_tree_tokenizer.o \
     level_tree_tokenizer.o ngram_tokenizer.o textfile.o parser.o \
     lexicon.o inverted_index.o compressed_file_reader.o compressed_file_writer.o \
-    libstemmer/libstemmer.o
+    invertible_map.o libstemmer/libstemmer.o
 
 COMPRESSION_TEST = compress
 COMPRESS_OBJS = compressed_file_reader.o compressed_file_writer.o
