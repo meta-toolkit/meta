@@ -4,15 +4,17 @@
 
 #include "compressed_file_writer.h"
 
-CompressedFileWriter::CompressedFileWriter(const string & filename):
-    _outfile(fopen(filename.c_str(), "w")),
-    _charCursor(0),
-    _bitCursor(0),
-    _bufferSize(8),
-    _buffer(new unsigned char[_bufferSize])
+CompressedFileWriter::CompressedFileWriter(const string & filename)
 {
+    _outfile = fopen(filename.c_str(), "w");
+    _charCursor = 0;
+    _bitCursor = 0;
+    _bufferSize = 8,
+    _buffer = new unsigned char[_bufferSize];
+
     // disable buffering
-    setvbuf(_outfile, NULL, _IONBF, 0);
+    if(setvbuf(_outfile, NULL, _IONBF, 0) != 0)
+        cerr << "[CompressedFileWriter]: error setvbuf" << endl;
 
     // zero out, we'll only write ones
     memset(_buffer, 0, _bufferSize);
