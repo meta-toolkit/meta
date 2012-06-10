@@ -9,7 +9,7 @@ CompressedFileWriter::CompressedFileWriter(const string & filename)
     _outfile = fopen(filename.c_str(), "w");
     _charCursor = 0;
     _bitCursor = 0;
-    _bufferSize = 8,
+    _bufferSize = 1024 * 1024 * 8,
     _buffer = new unsigned char[_bufferSize];
 
     // disable buffering
