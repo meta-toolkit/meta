@@ -5,7 +5,7 @@
 #include "compressed_file_reader.h"
 
 CompressedFileReader::CompressedFileReader(const string & filename):
-    _currentValue(0), _currentChar(0), _currentBit(0), _end(0)
+    _currentValue(0), _currentChar(0), _currentBit(0), _status(notDone)
 {
     struct stat st;
     stat(filename.c_str(), &st);
@@ -48,7 +48,7 @@ void CompressedFileReader::reset()
 {
     _currentChar = 0;
     _currentBit = 0;
-    _end = 0;
+    _status = notDone;
     getNext();
 }
 
@@ -58,7 +58,7 @@ void CompressedFileReader::seek(unsigned int position, unsigned int bitOffset)
     {
         _currentChar = position;
         _currentBit = bitOffset;
-        _end = 0;
+        _status = notDone;
         getNext();
     }
     else
@@ -69,17 +69,17 @@ void CompressedFileReader::seek(unsigned int position, unsigned int bitOffset)
 
 bool CompressedFileReader::hasNext() const
 {
-    return _end != 2;
+    return _status != readerDone;
 }
 
 unsigned int CompressedFileReader::next()
 {
-    if(_end == 2)
+    if(_status == userDone)
         return 0;
 
-    if(_end == 1)
+    if(_status == readerDone)
     {
-        _end = 2;
+        _status = userDone;
         return _currentValue;
     }
 
@@ -91,11 +91,11 @@ unsigned int CompressedFileReader::next()
 void CompressedFileReader::getNext()
 {
     int numberBits = 0;
-    while(_end == 0 && !readBit())
+    while(_status == 0 && !readBit())
         ++numberBits;
 
     _currentValue = 0;
-    for(int bit = numberBits - 1; _end == 0 && bit >= 0; --bit)
+    for(int bit = numberBits - 1; _status == 0 && bit >= 0; --bit)
     {
         if(readBit())
             _currentValue |= (1 << bit);
@@ -112,7 +112,7 @@ bool CompressedFileReader::readBit()
     {
         _currentBit = 0;
         if(++_currentChar == _size)
-            _end = 1;
+            _status = readerDone;
     }
     else
     {

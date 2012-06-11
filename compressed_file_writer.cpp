@@ -22,7 +22,8 @@ CompressedFileWriter::CompressedFileWriter(const string & filename)
 
 CompressedFileWriter::~CompressedFileWriter()
 {
-    writeBuffer();
+    // write the remaining bits, up to the nearest byte
+    fwrite(_buffer, 1, _charCursor + 1, _outfile);
     delete [] _buffer;
     fclose(_outfile);
 }

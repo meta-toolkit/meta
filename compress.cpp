@@ -31,7 +31,7 @@ unordered_map<char, size_t> getFreqs(string filename)
     while(index < length)
     {
         ++freqs[start[index]];
-        if(++index % 100 == 0)
+        if(++index % 1000 == 0)
             cerr << "  " << (double) index / length * 100 << "%    \r";
     }
     cerr << "  100.00%  " << endl;
@@ -53,7 +53,7 @@ void compress(string filename, string outfilename, const InvertibleMap<char, uns
     {
         unsigned int toWrite = mapping.getValueByKey(start[index]);
         writer.write(toWrite);
-        if(++index % 100 == 0)
+        if(++index % 1000 == 0)
             cerr << "  " << (double) index / length * 100 << "%    \r";
     }
     cerr << "  100.00%  " << endl;
@@ -65,9 +65,10 @@ void decompress(string infilename, string outfilename, const InvertibleMap<char,
 {
     CompressedFileReader reader(infilename);
     ofstream writer(outfilename);
+    unsigned int val;
     while(reader.hasNext())
     {
-        unsigned int val = reader.next();
+        val = reader.next();
         writer << mapping.getKeyByValue(val);
     }
     writer.close();

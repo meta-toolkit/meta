@@ -21,6 +21,11 @@ using std::endl;
 using std::string;
 
 /**
+ * Simply saves the current state of the reader.
+ */
+enum ReaderStatus { notDone, readerDone, userDone };
+
+/**
  * Represents a file of unsigned integers compressed using gamma compression.
  */
 class CompressedFileReader
@@ -67,7 +72,7 @@ class CompressedFileReader
         unsigned char* _start;
         int _fileDescriptor;
         unsigned int _size;
-        int _end;
+        int _status;
 
         unsigned int _currentValue;
         unsigned int _currentChar;
