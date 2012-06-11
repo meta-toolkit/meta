@@ -6,6 +6,7 @@
 #include <omp.h>
 
 #include "textfile.h"
+#include "lexicon.h"
 #include "invertible_map.h"
 #include "compressed_file_reader.h"
 #include "compressed_file_writer.h"
@@ -113,6 +114,17 @@ int main(int argc, char* argv[])
     start = omp_get_wtime();
     decompress("compressed.txt", "uncompressed.txt", mapping);
     cerr << "  " << omp_get_wtime() - start << " seconds elapsed" << endl;
+
+    Lexicon lexicon("lexicon.txt");
+    TokenData data = lexicon.getInfo(1);
+    cerr << "idf for 1: " << data.idf << endl;
+    data.idf = 77;
+    data.totalFreq = 77;
+    data.postingIndex = 77;
+    data.postingBit = 7;
+    data.postingLength = 77;
+    lexicon.addTerm(77, data);
+    lexicon.save();
 
     return 0;
 }

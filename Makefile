@@ -5,7 +5,7 @@ SEARCHOBJS = parse_tree.o document.o ram_index.o pos_tree_tokenizer.o \
     libstemmer/libstemmer.o
 
 COMPRESSION_TEST = compress
-COMPRESS_OBJS = compressed_file_reader.o compressed_file_writer.o textfile.o
+COMPRESS_OBJS = compressed_file_reader.o compressed_file_writer.o textfile.o parser.o lexicon.o
 
 CC = g++ -std=c++0x -fopenmp
 CCOPTS = -g -O0

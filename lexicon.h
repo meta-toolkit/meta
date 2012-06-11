@@ -5,6 +5,7 @@
 #ifndef _LEXICON_H_
 #define _LEXICON_H_
 
+#include <fstream>
 #include <iterator>
 #include <vector>
 #include <iostream>
@@ -14,6 +15,7 @@
 #include <sstream>
 #include "parser.h"
 
+using std::ofstream;
 using std::vector;
 using std::istringstream;
 using std::endl;
@@ -80,7 +82,7 @@ class Lexicon
          * Writes the lexicon to disk.
          * @param filename - the name to save the file as
          */
-        void saveLexicon() const;
+        void save() const;
 
         /**
          * Adds a new term to the lexicon.
@@ -98,6 +100,12 @@ class Lexicon
          *  well as the InvertedIndex constructor.
          */
         void readLexicon();
+
+        /**
+         * @return the string representation of an object
+         */
+        template <class T>
+        static string toString(T value);
 };
 
 #endif

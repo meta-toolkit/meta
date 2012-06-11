@@ -44,9 +44,37 @@ TokenData Lexicon::getInfo(TermID termID) const
     return it->second;
 }
 
-void Lexicon::saveLexicon() const
+void Lexicon::save() const
 {
+    ofstream outfile(_lexiconFilename);
+    if(outfile.good())
+    {
+        unordered_map<TermID, TokenData>::const_iterator it;
+        for(it = _entries->begin(); it != _entries->end(); ++it)
+        {
+            string line = toString(it->first) + " ";
+            TokenData data = it->second;
+            line += toString(data.idf) + " ";
+            line += toString(data.totalFreq) + " ";
+            line += toString(data.postingIndex) + " ";
+            line += toString(data.postingBit) + " ";
+            line += toString(data.postingLength) + "\n";
+            outfile << line;
+        }
+        outfile.close();
+    }
+    else
+    {
+        cerr << "[Lexicon]: error writing lexicon to disk" << endl;
+    }
+}
 
+template <class T>
+string Lexicon::toString(T value)
+{
+    std::stringstream ss;
+    ss << value;
+    return ss.str();
 }
 
 void Lexicon::addTerm(TermID term, TokenData tokenData)
