@@ -57,8 +57,7 @@ void Lexicon::save() const
             line += toString(data.idf) + " ";
             line += toString(data.totalFreq) + " ";
             line += toString(data.postingIndex) + " ";
-            line += toString(data.postingBit) + " ";
-            line += toString(data.postingLength) + "\n";
+            line += toString(data.postingBit) + "\n";
             outfile << line;
         }
         outfile.close();
@@ -86,8 +85,12 @@ void Lexicon::readLexicon()
 {
     Parser parser(_lexiconFilename, "\n");
     if(!parser.isValid())
+    {
+        cerr << "[Lexicon]: created empty lexicon" << endl;
         return;
+    }
 
+    cerr << "[Lexicon]: reading from file..." << endl;
     while(parser.hasNext())
     {
         istringstream line(parser.next());
@@ -102,7 +105,6 @@ void Lexicon::readLexicon()
         istringstream(items[2]) >> data.totalFreq;
         istringstream(items[3]) >> data.postingIndex;
         istringstream(items[4]) >> data.postingBit;
-        istringstream(items[5]) >> data.postingLength;
         addTerm(termID, data);
     }
 }

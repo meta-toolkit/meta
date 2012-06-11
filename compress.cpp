@@ -122,7 +122,6 @@ int main(int argc, char* argv[])
     data.totalFreq = 77;
     data.postingIndex = 77;
     data.postingBit = 7;
-    data.postingLength = 77;
     lexicon.addTerm(77, data);
     lexicon.save();
 

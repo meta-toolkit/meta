@@ -37,7 +37,6 @@ struct TokenData
     unsigned int totalFreq;
     unsigned int postingIndex;
     unsigned char postingBit;
-    unsigned int postingLength;
 };
 
 /**

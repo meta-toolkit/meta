@@ -12,6 +12,7 @@
 #include "index.h"
 #include "document.h"
 #include "lexicon.h"
+#include "postings.h"
 
 using std::multimap;
 using std::unordered_map;
@@ -62,6 +63,7 @@ class InvertedIndex : public Index
     private:
 
         Lexicon _lexicon;
+        Postings _postings;
 };
 
 #endif
