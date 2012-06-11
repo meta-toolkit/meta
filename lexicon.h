@@ -5,11 +5,38 @@
 #ifndef _LEXICON_H_
 #define _LEXICON_H_
 
+#include <iterator>
+#include <vector>
+#include <iostream>
 #include <unordered_map>
 #include <string>
+#include <utility>
+#include <sstream>
+#include "parser.h"
 
+using std::vector;
+using std::istringstream;
+using std::endl;
+using std::cerr;
+using std::pair;
+using std::make_pair;
 using std::unordered_map;
 using std::string;
+
+typedef unsigned int TermID;
+typedef unsigned int DocID;
+
+/**
+ * Represents metadata for a specific term in the lexicon.
+ */
+struct TokenData
+{
+    unsigned int idf;
+    unsigned int totalFreq;
+    unsigned int postingIndex;
+    unsigned char postingBit;
+    unsigned int postingLength;
+};
 
 /**
  * Represents the dictionary or lexicon of an inverted index.
@@ -27,30 +54,50 @@ class Lexicon
          */
         Lexicon();
 
-    private:
         /**
-         * Represents metadata for a specific term in the lexicon.
+         * Destructor.
          */
-        class TokenData
-        {
-            public:
-                /**
-                 * How many documents this token appears in.
-                 */
-                size_t numDocs;
+        ~Lexicon();
 
-                /**
-                 * How many times this token appears in total.
-                 */
-                size_t freq;
+        /**
+         * Copy constructor.
+         */
+        Lexicon(const Lexicon & other);
 
-                /**
-                 * Where to find the token information in the postings file.
-                 */
-                size_t index;
-        };
+        /**
+         * Assigns the content of one lexicon to another.
+         * @param other - the lexicon to copy
+         * @return a reference to the copied lexicon
+         */
+        const Lexicon & operator=(const Lexicon & other);
 
-        unordered_map<string, TokenData> _entries;
+        /**
+         * @return all lexicon information about a specific term.
+         */
+        TokenData getInfo(TermID termID) const;
+
+        /**
+         * Writes the lexicon to disk.
+         * @param filename - the name to save the file as
+         */
+        void saveLexicon() const;
+
+        /**
+         * Adds a new term to the lexicon.
+         */
+        void addTerm(TermID term, TokenData tokenData);
+
+    private:
+ 
+        string _lexiconFilename;
+        unordered_map<TermID, TokenData>* _entries;
+
+        /**
+         * Reads a lexicon from disk if it exists.
+         * This function is called from the lexicon constructor as
+         *  well as the InvertedIndex constructor.
+         */
+        void readLexicon();
 };
 
 #endif

@@ -58,6 +58,10 @@ class InvertedIndex : public Index
          * @return the category the document is believed to be in
          */
         string classifyKNN(const Document & query, size_t k) const;
+
+    private:
+
+        Lexicon _lexicon;
 };
 
 #endif
