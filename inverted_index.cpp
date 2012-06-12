@@ -4,14 +4,10 @@
 
 #include "inverted_index.h"
 
-InvertedIndex::InvertedIndex(const string & lexiconFile):
-    _lexicon(Lexicon(lexiconFile))
+InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postingsFile):
+    _lexicon(lexiconFile),
+    _postings(postingsFile)
 {
-}
-
-double InvertedIndex::scoreDocument(const Document & document, const Document & query) const
-{
-    return 0.0;
 }
 
 size_t InvertedIndex::getAvgDocLength() const
@@ -21,6 +17,7 @@ size_t InvertedIndex::getAvgDocLength() const
 
 multimap<double, string> InvertedIndex::search(const Document & query) const
 {
+    // figure out which ranking algorithm to use; for now we just have Okapi
     multimap<double, string> results;
     return results;
 }

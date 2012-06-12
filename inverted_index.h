@@ -29,8 +29,10 @@ class InvertedIndex : public Index
          * Constructor.
          * If the lexicon file already exists, it loads it into memory.
          * Otherwise, an empty index is created there.
+         * @param lexiconFile - where to find the lexicon
+         * @param postingsFile - where to find the postings
          */
-        InvertedIndex(const string & lexiconFile);
+        InvertedIndex(const string & lexiconFile, const string & postingsFile);
 
         /**
          * Scores a document given a query.

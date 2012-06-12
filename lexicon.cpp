@@ -97,7 +97,7 @@ void Lexicon::readLexicon()
         vector<string> items;
         copy(std::istream_iterator<string>(line),
              std::istream_iterator<string>(),
-             std::back_inserter<vector<string> >(items));
+             std::back_inserter<vector<string>>(items));
         TermID termID;
         TokenData data;
         istringstream(items[0]) >> termID;
