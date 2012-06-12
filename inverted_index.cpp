@@ -8,6 +8,7 @@ InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postings
     _lexicon(lexiconFile),
     _postings(postingsFile)
 {
+    /* nothing */
 }
 
 size_t InvertedIndex::getAvgDocLength() const
