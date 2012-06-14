@@ -12,8 +12,8 @@
 #include <unordered_map>
 
 #include "libstemmer/libstemmer.h"
-#include "parser.h"
-#include "document.h"
+#include "index/document.h"
+#include "io/parser.h"
 #include "parse_tree.h"
 #include "tokenizer.h"
 

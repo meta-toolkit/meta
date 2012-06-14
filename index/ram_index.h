@@ -10,7 +10,7 @@
 #include <string>
 
 #include "document.h"
-#include "tokenizer.h"
+#include "tokenizers/tokenizer.h"
 #include "index.h"
 
 using std::string;

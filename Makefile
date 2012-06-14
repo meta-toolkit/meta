@@ -1,31 +1,34 @@
 SEARCH = search
-SEARCHOBJS = parse_tree.o document.o ram_index.o pos_tree_tokenizer.o \
-    level_tree_tokenizer.o ngram_tokenizer.o textfile.o parser.o \
-    lexicon.o inverted_index.o compressed_file_reader.o compressed_file_writer.o \
-    postings.o libstemmer/libstemmer.o
+SEARCHOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o tokenizers/pos_tree_tokenizer.o \
+    tokenizers/level_tree_tokenizer.o tokenizers/ngram_tokenizer.o io/textfile.o io/parser.o \
+    index/lexicon.o index/inverted_index.o io/compressed_file_reader.o io/compressed_file_writer.o \
+    index/postings.o libstemmer/libstemmer.o
 
-COMPRESSION_TEST = compress
-COMPRESS_OBJS = compressed_file_reader.o compressed_file_writer.o textfile.o \
-    parser.o lexicon.o postings.o
+TESTER = tester
+TESTER_OBJS = io/compressed_file_reader.o io/compressed_file_writer.o io/textfile.o \
+    io/parser.o index/lexicon.o index/postings.o
 
-CC = g++ -std=c++0x -fopenmp
+CC = g++ -std=c++0x -fopenmp -I.
 CCOPTS = -g -O0
 #CCOPTS = -O3
-LINKER = g++ -std=c++0x -fopenmp
+LINKER = g++ -std=c++0x -fopenmp -I.
 
-all: $(SEARCH) $(COMPRESSION_TEST)
+CLEANDIRS = tokenizers test io index util
 
-$(SEARCH): $(SEARCHOBJS) main.cpp invertible_map.h invertible_map.cpp
+all: $(SEARCH) $(TESTER)
+
+$(SEARCH): $(SEARCHOBJS) main.cpp util/invertible_map.h util/invertible_map.cpp
 	$(LINKER) main.cpp -o $@ $(SEARCHOBJS)
 
-$(COMPRESSION_TEST): $(COMPRESS_OBJS) compress.cpp invertible_map.h invertible_map.cpp
-	$(LINKER) compress.cpp -o $@ $(COMPRESS_OBJS)
+$(TESTER): $(TESTER_OBJS) test/tester.cpp util/invertible_map.h util/invertible_map.cpp
+	$(LINKER) test/tester.cpp -o $@ $(TESTER_OBJS)
 
 %.o : %.cpp $(wildcard *.h)
 	$(CC) $(CCOPTS) -c $(@:.o=.cpp) -o $@
 
 clean:
-	-rm -rf *.o $(SEARCH) $(COMPRESSION_TEST)
+	for dir in $(CLEANDIRS) ; do rm -rf $$dir/*.o ; done
+	rm -f $(SEARCH) $(TESTER)
 
 tidy: clean
-	-rm -rf ./doc
+	rm -rf ./doc

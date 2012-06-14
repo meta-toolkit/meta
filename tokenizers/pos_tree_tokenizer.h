@@ -6,7 +6,7 @@
 #define _POS_TREE_TOKENIZER_H_
 
 #include <unordered_map>
-#include "document.h"
+#include "index/document.h"
 #include "parse_tree.h"
 #include "tokenizer.h"
 

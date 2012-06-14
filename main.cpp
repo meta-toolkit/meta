@@ -7,13 +7,11 @@
 #include <iostream>
 #include <map>
 
-#include "tokenizer.h"
-#include "ngram_tokenizer.h"
-#include "pos_tree_tokenizer.h"
-#include "parse_tree.h"
-#include "ram_index.h"
-#include "search.h"
-#include "document.h"
+#include "tokenizers/ngram_tokenizer.h"
+#include "tokenizers/pos_tree_tokenizer.h"
+#include "tokenizers/parse_tree.h"
+#include "index/ram_index.h"
+#include "index/document.h"
 
 using std::pair;
 using std::make_pair;

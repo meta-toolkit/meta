@@ -10,9 +10,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "io/compressed_file_reader.h"
+#include "io/compressed_file_writer.h"
 #include "lexicon.h"
-#include "compressed_file_reader.h"
-#include "compressed_file_writer.h"
 
 using std::istringstream;
 using std::ifstream; // to remove

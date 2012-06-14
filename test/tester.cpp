@@ -5,11 +5,11 @@
 #include <iostream>
 #include <omp.h>
 
-#include "textfile.h"
-#include "lexicon.h"
-#include "invertible_map.h"
-#include "compressed_file_reader.h"
-#include "compressed_file_writer.h"
+#include "io/textfile.h"
+#include "io/compressed_file_reader.h"
+#include "io/compressed_file_writer.h"
+#include "index/lexicon.h"
+#include "util/invertible_map.h"
 
 using std::make_pair;
 using std::pair;

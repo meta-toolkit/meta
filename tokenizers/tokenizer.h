@@ -6,7 +6,7 @@
 #define _TOKENIZER_H_
 
 #include <unordered_map>
-#include "document.h"
+#include "index/document.h"
 #include "parse_tree.h"
 
 using std::unordered_map;

@@ -1,3 +1,8 @@
+/**
+ * @file libstemmer.h
+ * Contains the Snowball implementation of the Porter2 stemmer.
+ */
+
 /* Make header file work when included from C++ */
 #ifdef __cplusplus
 extern "C" {
