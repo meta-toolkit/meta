@@ -1,3 +1,7 @@
+/**
+ * @file parse_tree.cpp
+ */
+
 #include "parse_tree.h"
 
 ParseTree::ParseTree(string tags): children(vector<ParseTree>())
