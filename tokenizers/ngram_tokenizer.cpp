@@ -48,7 +48,7 @@ void NgramTokenizer::initStopwords()
 {
     struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     string valid = "abcdefghijklmnopqrstuvwxyzI";
-    Parser parser("lemur-stopwords.txt", valid, valid, valid);
+    Parser parser("data/lemur-stopwords.txt", valid, valid, valid);
     while(parser.hasNext())
     {
         _stopwords.insert(stem(parser.next(), stemmer));

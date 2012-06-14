@@ -1,3 +1,7 @@
+/**
+ * @file tester.cpp
+ */
+
 #include <utility>
 #include <map>
 #include <unordered_map>
@@ -89,17 +93,11 @@ InvertibleMap<char, unsigned int> getMapping(const unordered_map<char, size_t> &
     return mapping;
 }
 
-int main(int argc, char* argv[])
+void testCompression(string filename)
 {
-    if(argc != 2)
-    {
-        cerr << "usage: " << argv[0] << " file.txt" << endl;
-        return 1;
-    }
-
     cerr << "Getting frequencies..." << endl;
     double start = omp_get_wtime();
-    unordered_map<char, size_t> freqs = getFreqs(string(argv[1]));
+    unordered_map<char, size_t> freqs = getFreqs(string(filename));
     cerr << "  found " << freqs.size() << " unique characters" << endl;
     cerr << "  " << omp_get_wtime() - start << " seconds elapsed" << endl;
 
@@ -107,14 +105,17 @@ int main(int argc, char* argv[])
 
     cerr << "Compressing..." << endl;
     start = omp_get_wtime();
-    compress(string(argv[1]), "compressed.txt", mapping);
+    compress(string(filename), "compressed.txt", mapping);
     cerr << "  " << omp_get_wtime() - start << " seconds elapsed" << endl;
 
     cerr << "Decompressing..." << endl;
     start = omp_get_wtime();
     decompress("compressed.txt", "uncompressed.txt", mapping);
     cerr << "  " << omp_get_wtime() - start << " seconds elapsed" << endl;
+}
 
+void testLexicon()
+{
     Lexicon lexicon("lexicon.txt");
     TokenData data = lexicon.getInfo(1);
     cerr << "idf for 1: " << data.idf << endl;
@@ -124,6 +125,18 @@ int main(int argc, char* argv[])
     data.postingBit = 7;
     lexicon.addTerm(77, data);
     lexicon.save();
+}
+
+int main(int argc, char* argv[])
+{
+    if(argc != 2)
+    {
+        cerr << "usage: " << argv[0] << " file.txt" << endl;
+        return 1;
+    }
+
+    testCompression(string(argv[0]));
+    testLexicon();
 
     return 0;
 }
