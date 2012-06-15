@@ -9,7 +9,7 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles,
 {
     cout << "[RAMIndex]: creating index from " << indexFiles.size() << " files" << endl;
 
-    _docFreqs = unordered_map<string, size_t>();
+    _docFreqs = unordered_map<TermID, unsigned int>();
     _documents = vector<Document>();
     _avgDocLength = 0;
     
@@ -51,10 +51,10 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
     double docLength = document.getLength();
     double numDocs = _documents.size();
 
-    const unordered_map<string, size_t> frequencies = query.getFrequencies();
-    for(unordered_map<string, size_t>::const_iterator term = frequencies.begin(); term != frequencies.end(); ++term)
+    const unordered_map<TermID, unsigned int> frequencies = query.getFrequencies();
+    for(unordered_map<TermID, unsigned int>::const_iterator term = frequencies.begin(); term != frequencies.end(); ++term)
     {
-        unordered_map<string, size_t>::const_iterator df = _docFreqs.find(term->first);
+        unordered_map<TermID, unsigned int>::const_iterator df = _docFreqs.find(term->first);
         double docFreq = (df == _docFreqs.end()) ? (0.0) : (df->second);
         double termFreq = document.getFrequency(term->first);
         double queryTermFreq = query.getFrequency(term->first);

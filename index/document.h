@@ -14,6 +14,8 @@ using std::make_pair;
 using std::string;
 using std::unordered_map;
 
+typedef unsigned int TermID;
+
 /**
  * Represents an indexed document.
  */
@@ -30,18 +32,18 @@ class Document
 
         /**
          * Increment the count of the specified transition.
-         * @param transition - the rule to increment
+         * @param termID - the token count to increment
          * @param amount - the amount to increment by
          */
-        void increment(string transition, size_t amount);
+        void increment(TermID termID, unsigned int amount);
 
         /**
          * Increment the count of the specified transition.
-         * @param transition - the rule to increment
+         * @param termID - the token count to increment
          * @param amount - the amount to increment by
          * @param docFreq - used for IDF
          */
-        void increment(string transition, size_t amount, unordered_map<string, size_t>* docFreq);
+        void increment(TermID termID, unsigned int amount, unordered_map<TermID, unsigned int>* docFreq);
 
         /**
          * @return the name of this Document's author
@@ -63,19 +65,19 @@ class Document
          * Get the number of occurrences for a particular transition.
          * @param transition - the transition to check
          */
-        size_t getFrequency(string transition) const;
+        size_t getFrequency(TermID termID) const;
 
         /**
          * @return the map of frequencies for this document.
          */
-        const unordered_map<string, size_t> & getFrequencies() const;
+        const unordered_map<TermID, unsigned int> & getFrequencies() const;
 
     private:
 
         string _name;
         string _category;
         size_t _length;
-        unordered_map<string, size_t> _frequencies;
+        unordered_map<TermID, unsigned int> _frequencies;
 };
 
 #endif

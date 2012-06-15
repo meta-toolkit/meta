@@ -9,7 +9,7 @@ NgramTokenizer::NgramTokenizer(size_t n): _nValue(n), _stopwords(unordered_set<s
    initStopwords();     
 }
 
-void NgramTokenizer::tokenize(const string & filename, Document & document, unordered_map<string, size_t>* docFreq) const
+void NgramTokenizer::tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq) const
 {
     struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     string validchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'-";

@@ -72,7 +72,7 @@ class RAMIndex : public Index
     private:
 
         vector<Document> _documents;
-        unordered_map<string, size_t> _docFreqs;
+        unordered_map<TermID, unsigned int> _docFreqs;
         size_t _avgDocLength;
 
         /**

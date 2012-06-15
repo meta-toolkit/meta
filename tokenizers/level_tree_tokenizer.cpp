@@ -4,7 +4,7 @@
 
 #include "level_tree_tokenizer.h"
 
-void LevelTreeTokenizer::tokenize(const string & filename, Document & document, unordered_map<string, size_t>* docFreq) const
+void LevelTreeTokenizer::tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq) const
 {
 
 }

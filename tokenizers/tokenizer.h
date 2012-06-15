@@ -20,7 +20,7 @@ class Tokenizer
         /**
          *
          */
-        virtual void tokenize(const string & filename, Document & document, unordered_map<string, size_t>* docFreq) const = 0;
+        virtual void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq) const = 0;
 };
 
 #endif
