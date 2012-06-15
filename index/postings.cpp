@@ -10,9 +10,9 @@ Postings::Postings(const string & postingsFile):
 {
 }
 
-vector<PostingData> Postings::getDocs(const TokenData & tokenData) const
+vector<PostingData> Postings::getDocs(const TermData & termData) const
 {
-    string line = getLine(tokenData.postingIndex);
+    string line = getLine(termData.postingIndex);
 
     istringstream iss(line);
     vector<string> items;
@@ -32,7 +32,7 @@ vector<PostingData> Postings::getDocs(const TokenData & tokenData) const
     return data;
 }
 
-vector<PostingData> Postings::getCompressedDocs(const TokenData & tokenData) const
+vector<PostingData> Postings::getCompressedDocs(const TermData & termData) const
 {
     vector<PostingData> data;
     return data;

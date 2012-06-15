@@ -7,7 +7,7 @@
 Lexicon::Lexicon(const string & lexiconFile):
     _lexiconFilename(lexiconFile)
 {
-    _entries = new unordered_map<TermID, TokenData>();
+    _entries = new unordered_map<TermID, TermData>();
     readLexicon();
 }
 
@@ -18,7 +18,7 @@ Lexicon::~Lexicon()
 
 Lexicon::Lexicon(const Lexicon & other)
 {
-    _entries = new unordered_map<TermID, TokenData>(*other._entries);
+    _entries = new unordered_map<TermID, TermData>(*other._entries);
     _lexiconFilename = other._lexiconFilename;
 }
 
@@ -33,13 +33,13 @@ const Lexicon & Lexicon::operator=(const Lexicon & other)
     return *this;
 }
 
-TokenData Lexicon::getInfo(TermID termID) const
+TermData Lexicon::getTermInfo(TermID termID) const
 {
-    unordered_map<TermID, TokenData>::const_iterator it = _entries->find(termID);
+    unordered_map<TermID, TermData>::const_iterator it = _entries->find(termID);
     if(it == _entries->end())
     {
         cerr << "[Lexicon]: warning: termID lookup failed" << endl;
-        return TokenData();
+        return TermData();
     }
     return it->second;
 }
@@ -49,11 +49,11 @@ void Lexicon::save() const
     ofstream outfile(_lexiconFilename);
     if(outfile.good())
     {
-        unordered_map<TermID, TokenData>::const_iterator it;
+        unordered_map<TermID, TermData>::const_iterator it;
         for(it = _entries->begin(); it != _entries->end(); ++it)
         {
             string line = toString(it->first) + " ";
-            TokenData data = it->second;
+            TermData data = it->second;
             line += toString(data.idf) + " ";
             line += toString(data.totalFreq) + " ";
             line += toString(data.postingIndex) + " ";
@@ -76,9 +76,9 @@ string Lexicon::toString(T value)
     return ss.str();
 }
 
-void Lexicon::addTerm(TermID term, TokenData tokenData)
+void Lexicon::addTerm(TermID term, TermData termData)
 {
-    _entries->insert(make_pair(term, tokenData));
+    _entries->insert(make_pair(term, termData));
 }
 
 void Lexicon::readLexicon()
@@ -99,7 +99,7 @@ void Lexicon::readLexicon()
              std::istream_iterator<string>(),
              std::back_inserter<vector<string>>(items));
         TermID termID;
-        TokenData data;
+        TermData data;
         istringstream(items[0]) >> termID;
         istringstream(items[1]) >> data.idf;
         istringstream(items[2]) >> data.totalFreq;

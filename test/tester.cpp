@@ -117,7 +117,7 @@ void testCompression(string filename)
 void testLexicon()
 {
     Lexicon lexicon("lexicon.txt");
-    TokenData data = lexicon.getInfo(1);
+    TermData data = lexicon.getTermInfo(1);
     cerr << "idf for 1: " << data.idf << endl;
     data.idf = 77;
     data.totalFreq = 77;

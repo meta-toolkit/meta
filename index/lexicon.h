@@ -31,7 +31,7 @@ typedef unsigned int DocID;
 /**
  * Represents metadata for a specific term in the lexicon.
  */
-struct TokenData
+struct TermData
 {
     unsigned int idf;
     unsigned int totalFreq;
@@ -75,7 +75,7 @@ class Lexicon
         /**
          * @return all lexicon information about a specific term.
          */
-        TokenData getInfo(TermID termID) const;
+        TermData getTermInfo(TermID termID) const;
 
         /**
          * Writes the lexicon to disk.
@@ -86,12 +86,12 @@ class Lexicon
         /**
          * Adds a new term to the lexicon.
          */
-        void addTerm(TermID term, TokenData tokenData);
+        void addTerm(TermID term, TermData termData);
 
     private:
  
         string _lexiconFilename;
-        unordered_map<TermID, TokenData>* _entries;
+        unordered_map<TermID, TermData>* _entries;
 
         /**
          * Reads a lexicon from disk if it exists.

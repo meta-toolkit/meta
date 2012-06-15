@@ -96,12 +96,6 @@ multimap<double, string> RAMIndex::search(const Document & query) const
     return ranks;
 }
 
-/**
- * Classify the query document by category using K-Nearest Neighbor.
- * @param query - the query to run
- * @param k - the value of k in KNN
- * @return the category the document is believed to be in
- */
 string RAMIndex::classifyKNN(const Document & query, size_t k) const
 {
     multimap<double, string> ranking = search(query);
@@ -115,10 +109,11 @@ string RAMIndex::classifyKNN(const Document & query, size_t k) const
         counts[category]++;
     }
 
+    // do we need to sort? can't we just iterate through once and keep track of the largest?
+
     // sort
     multimap<size_t, string> results;
     for(unordered_map<string, size_t>::iterator it = counts.begin(); it != counts.end(); ++it)
         results.insert(make_pair(it->second, it->first));
     return results.begin()->second;
 }
-

@@ -43,16 +43,16 @@ class Postings
         Postings(const string & postingsFile);
 
         /**
-         * @param tokenData - used to determine the location of the term information in the postings
+         * @param termData - used to determine the location of the term information in the postings
          * @return a vector of documents that contain the term the parameters refer to
          */
-        vector<PostingData> getDocs(const TokenData & tokenData) const;
+        vector<PostingData> getDocs(const TermData & termData) const;
 
         /**
-         * @param tokenData - used to determine the location of the term information in the postings
+         * @param termData - used to determine the location of the term information in the postings
          * @return a vector of documents that contain the term the parameters refer to
          */
-        vector<PostingData> getCompressedDocs(const TokenData & tokenData) const;
+        vector<PostingData> getCompressedDocs(const TermData & termData) const;
 
     private:
 
