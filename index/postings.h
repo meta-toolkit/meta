@@ -26,7 +26,10 @@ using std::endl;
  */
 struct PostingData
 {
+    /** The numeric id value assigned to this document */
     DocID docID;
+
+    /** The number of times a term appeared in this document */
     unsigned int freq;
 };
 

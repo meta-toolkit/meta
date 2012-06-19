@@ -13,6 +13,7 @@
 #include <string>
 #include <utility>
 #include <sstream>
+#include "document.h"
 #include "io/parser.h"
 
 using std::ofstream;
@@ -25,17 +26,21 @@ using std::make_pair;
 using std::unordered_map;
 using std::string;
 
-typedef unsigned int TermID;
-typedef unsigned int DocID;
-
 /**
  * Represents metadata for a specific term in the lexicon.
  */
 struct TermData
 {
+    /** The inverse document frequency */
     unsigned int idf;
+
+    /** The total number of occurences of this term */
     unsigned int totalFreq;
+
+    /** The byte address in the inverted index */
     unsigned int postingIndex;
+
+    /** The bit address where this TermData starts */
     unsigned char postingBit;
 };
 
@@ -79,7 +84,6 @@ class Lexicon
 
         /**
          * Writes the lexicon to disk.
-         * @param filename - the name to save the file as
          */
         void save() const;
 

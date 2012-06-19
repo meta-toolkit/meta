@@ -11,8 +11,6 @@
 
 using std::unordered_map;
 
-typedef unsigned int TermID;
-
 /**
  * An class that provides a framework to produce tokens.
  */
@@ -27,7 +25,10 @@ class Tokenizer
         Tokenizer();
 
         /**
-         *
+         * Tokenizes a file into a Document.
+         * @param filename - the file to read tokens from
+         * @param document - the Document to store the tokenized information in
+         * @param docFreq - optional parameter to store IDF values in
          */
         virtual void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq);
 

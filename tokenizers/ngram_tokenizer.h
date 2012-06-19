@@ -34,7 +34,10 @@ class NgramTokenizer : public Tokenizer
         NgramTokenizer(size_t n);
 
         /**
-         *
+         * Tokenizes a file into a Document.
+         * @param filename - the file to read tokens from
+         * @param document - the Document to store the tokenized information in
+         * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreqs);
 

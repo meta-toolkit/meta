@@ -9,6 +9,8 @@ extern "C" {
 #endif
 
 struct sb_stemmer;
+
+/** This is just an unsigned char. */
 typedef unsigned char sb_symbol;
 
 /* FIXME - should be able to get a version number for each stemming

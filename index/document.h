@@ -14,7 +14,12 @@ using std::make_pair;
 using std::string;
 using std::unordered_map;
 
+/** Numbering value for Terms in the index */
 typedef unsigned int TermID;
+
+/** Numbering value for Documents in the index */
+typedef unsigned int DocID;
+
 
 /**
  * Represents an indexed document.
@@ -63,7 +68,7 @@ class Document
 
         /**
          * Get the number of occurrences for a particular transition.
-         * @param transition - the transition to check
+         * @param termID - the termID of the term to look up
          */
         size_t getFrequency(TermID termID) const;
 
