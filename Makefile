@@ -2,7 +2,7 @@ SEARCH = search
 SEARCHOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o tokenizers/pos_tree_tokenizer.o \
     tokenizers/level_tree_tokenizer.o tokenizers/ngram_tokenizer.o io/textfile.o io/parser.o \
     index/lexicon.o index/inverted_index.o io/compressed_file_reader.o io/compressed_file_writer.o \
-    index/postings.o libstemmer/libstemmer.o
+    index/postings.o libstemmer/libstemmer.o tokenizers/tokenizer.o
 
 TESTER = tester
 TESTER_OBJS = io/compressed_file_reader.o io/compressed_file_writer.o io/textfile.o \

@@ -45,9 +45,6 @@ class NgramTokenizer : public Tokenizer
 
     private:
 
-        TermID _currentTermID;
-        unordered_map<string, TermID> _termMap;
-
         size_t _nValue;
         unordered_set<string> _stopwords;
         
@@ -77,13 +74,6 @@ class NgramTokenizer : public Tokenizer
          * Sets up a set of stopwords.
          */
         void initStopwords();
-
-        /**
-         * Maps terms to TermIDs.
-         * @param term - the term to check
-         * @return the TermID assigned to this term
-         */
-        TermID getMapping(const string & term);
 };
 
 #endif

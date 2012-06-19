@@ -5,8 +5,7 @@
 #include "ngram_tokenizer.h"
 
 NgramTokenizer::NgramTokenizer(size_t n):
-    _nValue(n), _stopwords(unordered_set<string>()),
-    _currentTermID(0), _termMap(unordered_map<string, TermID>())
+    _nValue(n), _stopwords(unordered_set<string>())
 {
    initStopwords();     
 }
@@ -87,16 +86,4 @@ string NgramTokenizer::stem(const string & word, struct sb_stemmer* stemmer) con
     const char* cstr = (setLower(word)).c_str();
     memcpy(symb, cstr, length);
     return string((char*)sb_stemmer_stem(stemmer, symb, length));
-}
-
-TermID NgramTokenizer::getMapping(const string & term)
-{
-    unordered_map<string, TermID>::iterator it = _termMap.find(term);
-    if(it == _termMap.end())
-    {
-        _termMap.insert(make_pair(term, _currentTermID));
-        return _currentTermID++;
-    }
-    else
-        return it->second;
 }

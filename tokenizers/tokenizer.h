@@ -11,16 +11,37 @@
 
 using std::unordered_map;
 
+typedef unsigned int TermID;
+
 /**
- * An abstract class that produces tokens.
+ * An class that provides a framework to produce tokens.
  */
 class Tokenizer
 {
     public:
+
+        /**
+         * Constructor. Simply initializes some member variables that
+         *  keep track of the TermID mapping.
+         */
+        Tokenizer();
+
         /**
          *
          */
-        virtual void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq) = 0;
+        virtual void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq);
+
+        /**
+         * Maps terms to TermIDs.
+         * @param term - the term to check
+         * @return the TermID assigned to this term
+         */
+        virtual TermID getMapping(const string & term);
+
+    private:
+        
+        TermID _currentTermID;
+        unordered_map<string, TermID> _termMap;
 };
 
 #endif
