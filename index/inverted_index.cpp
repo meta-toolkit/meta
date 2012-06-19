@@ -25,11 +25,11 @@ multimap<double, string> InvertedIndex::search(const Document & query) const
     unordered_map<DocID, double> scores;
 
     // loop through each term in the query
-    const unordered_map<string, size_t> freqs = query.getFrequencies();
-    for(unordered_map<string, size_t>::const_iterator queryTerm = freqs.begin(); queryTerm != freqs.end(); ++queryTerm)
+    const unordered_map<TermID, unsigned int> freqs = query.getFrequencies();
+    for(unordered_map<TermID, unsigned int>::const_iterator queryTerm = freqs.begin(); queryTerm != freqs.end(); ++queryTerm)
     {
         // loop through each document containing the current term
-        string queryTermID = queryTerm->first;
+        TermID queryTermID = queryTerm->first;
         double docLength = 100;
         size_t queryTermFreq = queryTerm->second;
         TermData termData = _lexicon.getTermInfo(queryTermID);

@@ -27,8 +27,7 @@ class RAMIndex : public Index
          * @param indexFiles - files to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const vector<string> & indexFiles,
-                 const Tokenizer* tokenizer);
+        RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer);
 
         /**
          * Scores a document given a query.

@@ -4,8 +4,7 @@
 
 #include "ram_index.h"
 
-RAMIndex::RAMIndex(const vector<string> & indexFiles,
-                   const Tokenizer* tokenizer)
+RAMIndex::RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer)
 {
     cout << "[RAMIndex]: creating index from " << indexFiles.size() << " files" << endl;
 

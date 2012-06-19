@@ -36,7 +36,7 @@ class NgramTokenizer : public Tokenizer
         /**
          *
          */
-        void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreqs) const;
+        void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreqs);
 
         /**
          * @return the value of n used for the ngrams
@@ -44,6 +44,9 @@ class NgramTokenizer : public Tokenizer
         size_t getNValue() const;
 
     private:
+
+        TermID _currentTermID;
+        unordered_map<string, TermID> _termMap;
 
         size_t _nValue;
         unordered_set<string> _stopwords;
@@ -74,6 +77,13 @@ class NgramTokenizer : public Tokenizer
          * Sets up a set of stopwords.
          */
         void initStopwords();
+
+        /**
+         * Maps terms to TermIDs.
+         * @param term - the term to check
+         * @return the TermID assigned to this term
+         */
+        TermID getMapping(const string & term);
 };
 
 #endif

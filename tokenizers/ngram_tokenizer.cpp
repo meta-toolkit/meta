@@ -4,12 +4,14 @@
 
 #include "ngram_tokenizer.h"
 
-NgramTokenizer::NgramTokenizer(size_t n): _nValue(n), _stopwords(unordered_set<string>())
+NgramTokenizer::NgramTokenizer(size_t n):
+    _nValue(n), _stopwords(unordered_set<string>()),
+    _currentTermID(0), _termMap(unordered_map<string, TermID>())
 {
    initStopwords();     
 }
 
-void NgramTokenizer::tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq) const
+void NgramTokenizer::tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq)
 {
     struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     string validchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'-";
@@ -31,7 +33,7 @@ void NgramTokenizer::tokenize(const string & filename, Document & document, unor
     while(parser.hasNext())
     {
         string wordified = wordify(ngram);
-        document.increment(wordified, 1, docFreq);
+        document.increment(getMapping(wordified), 1, docFreq);
         ngram.erase(ngram.begin());
         string next = "";
         do
@@ -85,4 +87,16 @@ string NgramTokenizer::stem(const string & word, struct sb_stemmer* stemmer) con
     const char* cstr = (setLower(word)).c_str();
     memcpy(symb, cstr, length);
     return string((char*)sb_stemmer_stem(stemmer, symb, length));
+}
+
+TermID NgramTokenizer::getMapping(const string & term)
+{
+    unordered_map<string, TermID>::iterator it = _termMap.find(term);
+    if(it == _termMap.end())
+    {
+        _termMap.insert(make_pair(term, _currentTermID));
+        return _currentTermID++;
+    }
+    else
+        return it->second;
 }
