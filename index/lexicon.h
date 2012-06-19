@@ -92,10 +92,32 @@ class Lexicon
          */
         void addTerm(TermID term, TermData termData);
 
+        /**
+         * @param docID - the id of the document to get the length of
+         * @return the length of the parameter document
+         */
+        unsigned int getDocLength(DocID docID) const;
+
+        /**
+         * @return the number of documents in this collection
+         */
+        unsigned int getNumDocs() const;
+
+        /**
+         * @return the average document length in the collection
+         */
+        double getAvgDocLength() const;
+
     private:
  
         string _lexiconFilename;
+        string _lengthsFilename;
+
+        double _avgDL;
+        bool _avgDLSet;
+
         unordered_map<TermID, TermData>* _entries;
+        unordered_map<DocID, unsigned int>* _docLengths;
 
         /**
          * Reads a lexicon from disk if it exists.
@@ -103,6 +125,17 @@ class Lexicon
          *  well as the InvertedIndex constructor.
          */
         void readLexicon();
+
+        /**
+         * Reads the document lengths from disk.
+         */
+        void readDocLengths();
+
+        /**
+         * Calculates the average document length of the collection
+         *  and stores it in the member variable.
+         */
+        void setAvgDocLength();
 
         /**
          * @return the string representation of an object

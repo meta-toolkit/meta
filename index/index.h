@@ -20,11 +20,6 @@ class Index
     public:
 
         /**
-         * @return the average document length of the collection
-         */
-        virtual size_t getAvgDocLength() const = 0;
-
-        /**
          * Searches the index using the scoreDocument function on each Document.
          * @param query - the query to perform the search with
          * @return - a mapping of scores to Documents

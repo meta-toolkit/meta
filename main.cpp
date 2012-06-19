@@ -48,31 +48,6 @@ vector<string> getFilenames(const string & filename)
 }
 
 /**
- * from
- * http://www.linuxquestions.org/questions/programming-9/c-list-files-in-directory-379323/
- */
-vector<string> getdir(string dir)
-{
-    DIR *dp;
-    vector<string> files;
-    struct dirent *dirp;
-    if((dp = opendir(dir.c_str())) == NULL)
-    {
-        cout << "Error(" << errno << ") opening " << dir << endl;
-        return files;
-    }
-
-    while((dirp = readdir(dp)) != NULL)
-    {
-        string name = string(dirp->d_name);
-        if(name != "." && name != "..")
-            files.push_back(dir + name);
-    }
-    closedir(dp);
-    return files;
-}
-
-/**
  * makeGreen - color a string green
  * @param str - the string to color
  */

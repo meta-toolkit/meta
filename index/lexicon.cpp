@@ -8,17 +8,22 @@ Lexicon::Lexicon(const string & lexiconFile):
     _lexiconFilename(lexiconFile)
 {
     _entries = new unordered_map<TermID, TermData>();
+    _docLengths = new unordered_map<DocID, unsigned int>();
     readLexicon();
+    readDocLengths();
+    setAvgDocLength();
 }
 
 Lexicon::~Lexicon()
 {
     delete _entries;
+    delete _docLengths;
 }
 
 Lexicon::Lexicon(const Lexicon & other)
 {
     _entries = new unordered_map<TermID, TermData>(*other._entries);
+    _docLengths = new unordered_map<DocID, unsigned int>(*other._docLengths);
     _lexiconFilename = other._lexiconFilename;
 }
 
@@ -27,7 +32,9 @@ const Lexicon & Lexicon::operator=(const Lexicon & other)
     if(this != &other)
     {
         delete _entries;
+        delete _docLengths;
         _entries = other._entries;
+        _docLengths = other._docLengths;
         _lexiconFilename = other._lexiconFilename;
     }
     return *this;
@@ -91,6 +98,10 @@ void Lexicon::readLexicon()
     }
 
     cerr << "[Lexicon]: reading from file..." << endl;
+
+    // the first line in this file is the path to the doc lengths
+    _lengthsFilename = parser.next();
+
     while(parser.hasNext())
     {
         istringstream line(parser.next());
@@ -107,4 +118,42 @@ void Lexicon::readLexicon()
         istringstream(items[4]) >> data.postingBit;
         addTerm(termID, data);
     }
+}
+
+void Lexicon::readDocLengths()
+{
+    Parser parser(_lengthsFilename, " \n");
+
+    while(parser.hasNext())
+    {
+        DocID docID;
+        unsigned int length;
+        istringstream(parser.next()) >> docID;
+        istringstream(parser.next()) >> length;
+        _docLengths->insert(make_pair(docID, length));
+    }
+}
+
+unsigned int Lexicon::getDocLength(DocID docID) const
+{
+    return _docLengths->at(docID);
+}
+
+unsigned int Lexicon::getNumDocs() const
+{
+    return _docLengths->size();
+}
+
+double Lexicon::getAvgDocLength() const
+{
+    return _avgDL;
+}
+
+void Lexicon::setAvgDocLength()
+{
+    double sum = 0;
+    for(auto it = _docLengths->begin(); it != _docLengths->end(); ++it)
+        sum += it->second;
+
+    _avgDL = (double) sum / _docLengths->size();
 }
