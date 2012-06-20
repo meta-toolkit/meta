@@ -39,14 +39,14 @@ class NgramTokenizer : public Tokenizer
          * @param document - the Document to store the tokenized information in
          * @param docFreqs - optional parameter to store IDF values in
          */
-        void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreqs);
+        virtual void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreqs);
 
         /**
          * @return the value of n used for the ngrams
          */
         size_t getNValue() const;
 
-    private:
+    protected:
 
         size_t _nValue;
         unordered_set<string> _stopwords;

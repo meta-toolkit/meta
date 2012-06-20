@@ -24,7 +24,7 @@ void NgramTokenizer::tokenize(const string & filename, Document & document, unor
         do
         {
             next = stem(parser.next(), stemmer);
-        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
+        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext() && i < _nValue);
         ngram.push_back(next);
     }
 

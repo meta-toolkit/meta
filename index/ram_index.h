@@ -21,6 +21,12 @@ using std::string;
 class RAMIndex : public Index
 {
     public:
+        /**
+         * Creates an Index located in memory.
+         * @param indexDocs - Document objects to index
+         * @param tokenizer - how to tokenize the indexed files 
+         */
+        RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer);
 
         /**
          * Creates an Index located in memory.
@@ -75,7 +81,13 @@ class RAMIndex : public Index
         size_t _avgDocLength;
 
         /**
-         *
+         * Adds counts to the IDF map.
+         * @param newFreqs - the frequencies to add to _docFreqs
+         */
+        void combineMap(const unordered_map<TermID, unsigned int> & newFreqs);
+
+        /**
+         * @return a filename minus the path
          */
         string shortFilename(const string & filename) const;
 };

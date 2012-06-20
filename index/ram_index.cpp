@@ -28,6 +28,34 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer)
     _avgDocLength /= _documents.size();
 }
 
+RAMIndex::RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer)
+{
+    cout << "[RAMIndex]: creating index from " << indexDocs.size() << " Documents" << endl;
+
+    _docFreqs = unordered_map<TermID, unsigned int>();
+    _documents = indexDocs;
+    _avgDocLength = 0;
+    size_t docNum = 0;
+    for(vector<Document>::const_iterator doc = indexDocs.begin(); doc != indexDocs.end(); ++doc)
+    {
+        _avgDocLength += doc->getLength();
+        combineMap(doc->getFrequencies());
+        if(docNum++ % 10 == 0)
+            cout << "  " << ((double) docNum / indexDocs.size() * 100) << "%    \r";
+    }
+    cout << "  100%        " << endl;
+
+    _avgDocLength /= _documents.size();
+
+}
+
+void RAMIndex::combineMap(const unordered_map<TermID, unsigned int> & newFreqs)
+{
+    unordered_map<TermID, unsigned int>::const_iterator freq;
+    for(freq = _docFreqs.begin(); freq != _docFreqs.end(); ++freq)
+        _docFreqs[freq->first] += freq->second;
+}
+
 string RAMIndex::getName(const string & path)
 {
     size_t idx = path.find_last_of("/") + 1;
@@ -100,19 +128,23 @@ string RAMIndex::classifyKNN(const Document & query, size_t k) const
     multimap<double, string> ranking = search(query);
     unordered_map<string, size_t> counts;
     size_t numResults = 0;
-    for(multimap<double, string>::reverse_iterator result = ranking.rbegin(); result !=
-      ranking.rend() && numResults++ != k; ++result)
+    for(multimap<double, string>::reverse_iterator result = ranking.rbegin(); result != ranking.rend() && numResults++ != k; ++result)
     {
         size_t space = result->second.find_first_of(" ") + 1;
         string category = result->second.substr(space, result->second.size() - space);
         counts[category]++;
     }
 
-    // do we need to sort? can't we just iterate through once and keep track of the largest?
-
-    // sort
-    multimap<size_t, string> results;
+    string best = "[no results]";
+    size_t high = 0;
     for(unordered_map<string, size_t>::iterator it = counts.begin(); it != counts.end(); ++it)
-        results.insert(make_pair(it->second, it->first));
-    return results.begin()->second;
+    {
+        if(it->second > high)
+        {
+            best = it->first;
+            high = it->second;
+        }
+    }
+
+    return best;
 }
