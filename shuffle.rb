@@ -1,38 +1,50 @@
-file = File.open('full-corpus.txt', 'r')
-entries = file.readlines
-puts "Found #{entries.length} authors"
+path = ARGV[0]
+puts "Examining collection located at \"#{path}\""
 
-authors = [ "austen", "dickens", "doyle", "henry", "kipling",
-    "poe", "rls", "shakespeare", "twain", "wells" ]
+numTraining = ARGV[1].to_i
+numTesting = -2
 
-# split authors into testing and training
-train = File.open('train.txt', 'w')
-test = File.open('test.txt', 'w')
+# if no arg for num testing, make it the rest of the files
+if ARGV.size == 3
+    numTesting = ARGV[2].to_i
+end
 
-authorList = {}
-for author in authors
+corpus = File.open(path + "/full-corpus.txt", "r")
+entries = corpus.readlines
+puts "Found #{entries.length} documents"
 
-    # gather all same authors
-    authorList[author] = []
+Dir.chdir(path)
+categories = Dir["*"].reject{ |f| not File.directory? (f) }
+puts "Found #{categories.length} categories"
+
+# split categories into testing and training
+train = File.open(path + "/train.txt", "w")
+test = File.open(path + "/test.txt", "w")
+
+catMap = {}
+for cat in categories
+
+    # gather all same categories
+    catMap[cat] = []
     for entry in entries
-        if entry.include? author
-            authorList[author] << entry
+        if entry.include? cat
+            catMap[cat] << entry
         end
     end
 
+    puts "  - #{catMap[cat].size} documents in #{cat}"
+
     # randomize order
-    authorList[author].shuffle!
+    catMap[cat].shuffle!
     i = 0
 
-    puts "  - #{authorList[author].size} by #{author}"
-
-    # add first 4 to training...
-    for work in authorList[author][0..4]
-        train << work
+    # add to training...
+    for doc in catMap[cat][0..(numTraining - 1)]
+        train << doc
     end
 
     # ...and the remaining to testing
-    for work in authorList[author][5..-1]
-        test << work
+    for doc in catMap[cat][numTraining..(numTesting + 1)]
+        test << doc
     end
 end

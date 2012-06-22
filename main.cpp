@@ -1,6 +1,3 @@
-#include <sys/types.h>
-#include <dirent.h>
-#include <errno.h>
 #include <utility>
 #include <vector>
 #include <string>
@@ -10,74 +7,43 @@
 #include "tokenizers/ngram_tokenizer.h"
 #include "tokenizers/pos_tree_tokenizer.h"
 #include "tokenizers/parse_tree.h"
+#include "io/parser.h"
 #include "index/ram_index.h"
 #include "index/document.h"
 
 using std::pair;
-using std::make_pair;
-using std::multimap;
 using std::vector;
 using std::cout;
 using std::endl;
 using std::string;
 
-string collectionPrefix = "/home/sean/projects/senior-thesis-data/input/forums-collection/";
-string queryPrefix = "/home/sean/projects/senior-thesis-data/input/forums-queries/";
-string forums = "/home/sean/projects/senior-thesis-data/input/20news/";
+inline string makeGreen(string str){ return "\033[1;32m" + str + "\033[0m"; }
+inline string makeRed(string str){ return "\033[1;31m" + str + "\033[0m"; }
 
-vector<string> getFilenames(const string & filename)
+vector<string> getFilenames(const string & filename, const string & prefix)
 {
     vector<string> files;
-    ifstream inputFile(filename, ifstream::in);
-    if(inputFile.is_open())
-    {
-        string line;
-        while(inputFile.good())
-        {
-            std::getline(inputFile, line);
-            if(line != "")
-                files.push_back(forums + line);
-        }        
-        inputFile.close();
-    }
-    else
-    {
-        cerr << "Failed to open " << filename << endl;
-    }
+    Parser parser(filename, "\n");
+    while(parser.hasNext())
+        files.push_back(prefix + parser.next());
     return files;
-}
-
-/**
- * makeGreen - color a string green
- * @param str - the string to color
- */
-inline string makeGreen(string str)
-{
-    return "\033[1;32m" + str + "\033[0m";
-}
-
-/**
- * makeRed - color a string red
- * @param str - the string to color
- */
-inline string makeRed(string str)
-{
-    return "\033[1;31m" + str + "\033[0m";
 }
 
 int main(int argc, char* argv[])
 {
-    vector<string> indexFiles = getFilenames(forums + "20news.train");
-    vector<string> queryFiles = getFilenames(forums + "20news.test.shortest");
+    string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
+    vector<string> trainFiles = getFilenames(prefix + "train.txt", prefix);
+    vector<string> testFiles = getFilenames(prefix + "test.txt", prefix);
 
-    Tokenizer* tokenizer = new NgramTokenizer(2); 
-    RAMIndex index(indexFiles, tokenizer);
+    Tokenizer* tokenizer = new NgramTokenizer(2);
+    RAMIndex index(trainFiles, tokenizer);
+
     cout << "Running queries..." << endl;
     size_t numQueries = 1;
     size_t numCorrect = 0;
-    for(vector<string>::iterator iter = queryFiles.begin(); iter != queryFiles.end(); ++iter)
+    for(vector<string>::iterator iter = testFiles.begin(); iter != testFiles.end(); ++iter)
     {
-        size_t numResults = 0;
         string category = RAMIndex::getCategory(*iter);
         Document query(RAMIndex::getName(*iter), category);
         tokenizer->tokenize(*iter, query, NULL);
@@ -90,7 +56,7 @@ int main(int argc, char* argv[])
         else
             cout << "  -> " << makeRed("incorrect");
         cout << " " << result << endl << "  -> " << ((double) numCorrect / numQueries * 100)
-             << "% accuracy, " << numQueries << "/" << queryFiles.size() << " processed " << endl;
+             << "% accuracy, " << numQueries << "/" << testFiles.size() << " processed " << endl;
         ++numQueries;
     }
 
