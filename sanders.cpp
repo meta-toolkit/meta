@@ -45,7 +45,7 @@ vector<Document> getDocs(const string & path, Tokenizer* tokenizer)
 
 int main(int argc, char* argv[])
 {
-    Tokenizer* tokenizer = new SandersTokenizer(1);
+    Tokenizer* tokenizer = new SandersTokenizer(2);
 
     string prefix = "/home/sean/projects/senior-thesis-data/sanders/";
     vector<Document> trainFiles = getDocs(prefix + "train.txt", tokenizer);
