@@ -10,6 +10,7 @@
 #include <cmath>
 #include <string>
 #include "index.h"
+#include "tokenizers/tokenizer.h"
 #include "document.h"
 #include "lexicon.h"
 #include "postings.h"
@@ -31,8 +32,9 @@ class InvertedIndex : public Index
          * Otherwise, an empty index is created there.
          * @param lexiconFile - where to find the lexicon
          * @param postingsFile - where to find the postings
+         * @param tokenizer - how to tokenize the indexed files
          */
-        InvertedIndex(const string & lexiconFile, const string & postingsFile);
+        InvertedIndex(const string & lexiconFile, const string & postingsFile, Tokenizer* tokenizer);
 
         /**
          * Scores a document given a query.
@@ -66,6 +68,7 @@ class InvertedIndex : public Index
 
         Lexicon _lexicon;
         Postings _postings;
+        Tokenizer* _tokenizer;
 };
 
 #endif

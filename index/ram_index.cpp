@@ -13,7 +13,7 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer)
     _avgDocLength = 0;
     
     size_t docNum = 0;
-    for(vector<string>::const_iterator file = indexFiles.begin(); file != indexFiles.end(); ++file)
+    for(auto file = indexFiles.begin(); file != indexFiles.end(); ++file)
     {
         Document document(getName(*file), getCategory(*file));
         tokenizer->tokenize(*file, document, &_docFreqs);
@@ -36,7 +36,7 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer)
     _documents = indexDocs;
     _avgDocLength = 0;
     size_t docNum = 0;
-    for(vector<Document>::const_iterator doc = indexDocs.begin(); doc != indexDocs.end(); ++doc)
+    for(auto doc = indexDocs.begin(); doc != indexDocs.end(); ++doc)
     {
         _avgDocLength += doc->getLength();
         combineMap(doc->getFrequencies());
@@ -51,8 +51,7 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer)
 
 void RAMIndex::combineMap(const unordered_map<TermID, unsigned int> & newFreqs)
 {
-    unordered_map<TermID, unsigned int>::const_iterator freq;
-    for(freq = _docFreqs.begin(); freq != _docFreqs.end(); ++freq)
+    for(auto freq = _docFreqs.begin(); freq != _docFreqs.end(); ++freq)
         _docFreqs[freq->first] += freq->second;
 }
 
@@ -79,9 +78,9 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
     double numDocs = _documents.size();
 
     const unordered_map<TermID, unsigned int> frequencies = query.getFrequencies();
-    for(unordered_map<TermID, unsigned int>::const_iterator term = frequencies.begin(); term != frequencies.end(); ++term)
+    for(auto term = frequencies.begin(); term != frequencies.end(); ++term)
     {
-        unordered_map<TermID, unsigned int>::const_iterator df = _docFreqs.find(term->first);
+        auto df = _docFreqs.find(term->first);
         double docFreq = (df == _docFreqs.end()) ? (0.0) : (df->second);
         double termFreq = document.getFrequency(term->first);
         double queryTermFreq = query.getFrequency(term->first);
@@ -128,7 +127,7 @@ string RAMIndex::classifyKNN(const Document & query, size_t k) const
     multimap<double, string> ranking = search(query);
     unordered_map<string, size_t> counts;
     size_t numResults = 0;
-    for(multimap<double, string>::reverse_iterator result = ranking.rbegin(); result != ranking.rend() && numResults++ != k; ++result)
+    for(auto result = ranking.rbegin(); result != ranking.rend() && numResults++ != k; ++result)
     {
         size_t space = result->second.find_first_of(" ") + 1;
         string category = result->second.substr(space, result->second.size() - space);
@@ -137,7 +136,7 @@ string RAMIndex::classifyKNN(const Document & query, size_t k) const
 
     string best = "[no results]";
     size_t high = 0;
-    for(unordered_map<string, size_t>::iterator it = counts.begin(); it != counts.end(); ++it)
+    for(auto it = counts.begin(); it != counts.end(); ++it)
     {
         if(it->second > high)
         {

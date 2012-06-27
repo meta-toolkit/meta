@@ -41,8 +41,7 @@ class RAMIndex : public Index
          * @param query - the query to score against
          * @return the real score value 
          */
-        double scoreDocument(const Document & document,
-                             const Document & query) const;
+        double scoreDocument(const Document & document, const Document & query) const;
 
         /**
          * @return the average document length of the collection
@@ -76,8 +75,13 @@ class RAMIndex : public Index
 
     private:
 
+        /** documents stored in this index */
         vector<Document> _documents;
+
+        /** the IDF values of all the terms encountered in the document collection */
         unordered_map<TermID, unsigned int> _docFreqs;
+
+        /** average number of terms in the documents in the collection */
         size_t _avgDocLength;
 
         /**

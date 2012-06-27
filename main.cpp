@@ -1,3 +1,8 @@
+/**
+ * Run shuffle.rb first to generating the testing and training lists for
+ *  a given collection.
+ */
+
 #include <utility>
 #include <vector>
 #include <string>
@@ -31,8 +36,10 @@ vector<string> getFilenames(const string & filename, const string & prefix)
 
 int main(int argc, char* argv[])
 {
-    string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
+
     vector<string> trainFiles = getFilenames(prefix + "train.txt", prefix);
     vector<string> testFiles = getFilenames(prefix + "test.txt", prefix);
 

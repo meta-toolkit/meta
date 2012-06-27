@@ -4,9 +4,10 @@
 
 #include "inverted_index.h"
 
-InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postingsFile):
+InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postingsFile, Tokenizer* tokenizer):
     _lexicon(lexiconFile),
-    _postings(postingsFile)
+    _postings(postingsFile),
+    _tokenizer(tokenizer)
 { /* nothing */ }
 
 multimap<double, string> InvertedIndex::search(const Document & query) const

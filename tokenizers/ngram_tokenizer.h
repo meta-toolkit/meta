@@ -48,7 +48,10 @@ class NgramTokenizer : public Tokenizer
 
     protected:
 
+        /** the value of N in Ngram */
         size_t _nValue;
+
+        /** a stopword list based on the Lemur stopwords */
         unordered_set<string> _stopwords;
         
         /**
