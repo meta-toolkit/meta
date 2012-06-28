@@ -39,11 +39,24 @@ multimap<double, string> InvertedIndex::search(const Document & query) const
         }
     }
 
+    // combine into sorted multimap
     multimap<double, string> results;
+    for(auto & score: scores)
+        results.insert(make_pair(score.second, _docMap.getKeyByValue(score.first)));
     return results;
 }
 
 string InvertedIndex::classifyKNN(const Document & query, size_t k) const
 {
     return "chuck testa";
+}
+
+bool InvertedIndex::indexDocs(const vector<Document> & documents)
+{
+    if(!_lexicon.isEmpty())
+        return false;
+
+    // create index...
+
+    return true;
 }

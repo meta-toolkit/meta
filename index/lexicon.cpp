@@ -40,6 +40,11 @@ const Lexicon & Lexicon::operator=(const Lexicon & other)
     return *this;
 }
 
+bool Lexicon::isEmpty() const
+{
+    return _entries->empty();
+}
+
 TermData Lexicon::getTermInfo(TermID termID) const
 {
     auto it = _entries->find(termID);

@@ -71,6 +71,11 @@ class Lexicon
         Lexicon(const Lexicon & other);
 
         /**
+         * @return whether this Lexicon is empty
+         */
+        bool isEmpty() const;
+
+        /**
          * Assigns the content of one lexicon to another.
          * @param other - the lexicon to copy
          * @return a reference to the copied lexicon

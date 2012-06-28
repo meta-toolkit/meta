@@ -10,6 +10,7 @@
 #include <cmath>
 #include <string>
 #include "index.h"
+#include "util/invertible_map.h"
 #include "tokenizers/tokenizer.h"
 #include "document.h"
 #include "lexicon.h"
@@ -64,11 +65,30 @@ class InvertedIndex : public Index
          */
         string classifyKNN(const Document & query, size_t k) const;
 
+        /**
+         * Creates an index of given documents.
+         * @param documents - a vector of documents to make the index out of
+         * @return whether the index creation was successful. For instance,
+         *  it fails if there is already an index in that location.
+         */
+        bool indexDocs(const vector<Document> & documents);
+
     private:
 
+        /** contains term IDF info and where to find per-document posting information */
         Lexicon _lexicon;
+
+        /** represents the large postings file on disk */
         Postings _postings;
+
+        /** the tokenizer used to create the index */
         Tokenizer* _tokenizer;
+
+        /** maps terms (strings) to TermIDs */
+        InvertibleMap<string, TermID> _termMap;
+
+        /** maps document names (DocIDs) to DocIDs */
+        InvertibleMap<string, DocID> _docMap;
 };
 
 #endif

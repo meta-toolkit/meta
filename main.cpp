@@ -1,4 +1,8 @@
 /**
+ * @file main.cpp
+ * 
+ * Creates an index and runs queries on it.
+ *
  * Run shuffle.rb first to generating the testing and training lists for
  *  a given collection.
  */
@@ -49,11 +53,11 @@ int main(int argc, char* argv[])
     cout << "Running queries..." << endl;
     size_t numQueries = 1;
     size_t numCorrect = 0;
-    for(vector<string>::iterator iter = testFiles.begin(); iter != testFiles.end(); ++iter)
+    for(auto & file: testFiles)
     {
-        string category = RAMIndex::getCategory(*iter);
-        Document query(RAMIndex::getName(*iter), category);
-        tokenizer->tokenize(*iter, query, NULL);
+        string category = RAMIndex::getCategory(file);
+        Document query(RAMIndex::getName(file), category);
+        tokenizer->tokenize(file, query, NULL);
         string result = index.classifyKNN(query, 1);
         if(result == ( "(" + category + ")"))
         {
