@@ -14,6 +14,7 @@
 #include <utility>
 #include <sstream>
 #include "document.h"
+#include "util/invertible_map.h"
 #include "io/parser.h"
 
 using std::ofstream;
@@ -50,15 +51,11 @@ struct TermData
 class Lexicon
 {
     public:
+
         /**
          * Constructor to read an existing lexicon from disk.
          */
         Lexicon(const string & lexiconFile);
-
-        /**
-         * Constructor to create a new lexicon.
-         */
-        Lexicon();
 
         /**
          * Destructor.
@@ -113,6 +110,26 @@ class Lexicon
          */
         double getAvgDocLength() const;
 
+        /**
+         * @return the string term associated with the termID
+         */
+        string getTerm(TermID termID) const;
+
+        /**
+         * @return the TermID associated with the given term
+         */
+        TermID getTermID(string term) const;
+        
+        /**
+         * @return the string document name associated with the termID
+         */
+        string getDoc(DocID docID) const;
+        
+        /**
+         * @return the DocID of the given document name
+         */
+        DocID getDocID(string docName) const;
+
     private:
  
         string _lexiconFilename;
@@ -123,6 +140,9 @@ class Lexicon
 
         unordered_map<TermID, TermData>* _entries;
         unordered_map<DocID, unsigned int>* _docLengths;
+
+        InvertibleMap<TermID, string>* _termMap;
+        InvertibleMap<DocID, string>* _docMap;
 
         /**
          * Reads a lexicon from disk if it exists.
@@ -143,10 +163,34 @@ class Lexicon
         void setAvgDocLength();
 
         /**
+         * Reads the specified file and initializes the TermID mapping
+         *  accordingly.
+         * @param filename - where the mapping file is located
+         */
+        void setTermMap(const string & filename);
+
+        /**
+         * Reads the specified file and initializes the DocID mapping
+         *  accordingly.
+         * @param filename - where the mapping file is located
+         */
+        void setDocMap(const string & filename);
+
+        /**
          * @return the string representation of an object
          */
         template <class T>
         static string toString(T value);
+
+        /**
+         * Helper function for operator= and cctr.
+         */
+        void clear();
+
+        /**
+         * Helper function for operator= and destructor.
+         */
+        void copy(const Lexicon & other);
 };
 
 #endif

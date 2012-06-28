@@ -10,7 +10,6 @@
 #include <cmath>
 #include <string>
 #include "index.h"
-#include "util/invertible_map.h"
 #include "tokenizers/tokenizer.h"
 #include "document.h"
 #include "lexicon.h"
@@ -83,12 +82,6 @@ class InvertedIndex : public Index
 
         /** the tokenizer used to create the index */
         Tokenizer* _tokenizer;
-
-        /** maps terms (strings) to TermIDs */
-        InvertibleMap<string, TermID> _termMap;
-
-        /** maps document names (DocIDs) to DocIDs */
-        InvertibleMap<string, DocID> _docMap;
 };
 
 #endif

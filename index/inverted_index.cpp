@@ -42,7 +42,7 @@ multimap<double, string> InvertedIndex::search(const Document & query) const
     // combine into sorted multimap
     multimap<double, string> results;
     for(auto & score: scores)
-        results.insert(make_pair(score.second, _docMap.getKeyByValue(score.first)));
+        results.insert(make_pair(score.second, _lexicon.getTerm(score.first)));
     return results;
 }
 

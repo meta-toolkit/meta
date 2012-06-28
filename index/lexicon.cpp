@@ -4,8 +4,7 @@
 
 #include "lexicon.h"
 
-Lexicon::Lexicon(const string & lexiconFile):
-    _lexiconFilename(lexiconFile)
+Lexicon::Lexicon(const string & lexiconFile): _lexiconFilename(lexiconFile)
 {
     _entries = new unordered_map<TermID, TermData>();
     _docLengths = new unordered_map<DocID, unsigned int>();
@@ -16,26 +15,20 @@ Lexicon::Lexicon(const string & lexiconFile):
 
 Lexicon::~Lexicon()
 {
-    delete _entries;
-    delete _docLengths;
+    clear();
 }
 
 Lexicon::Lexicon(const Lexicon & other)
 {
-    _entries = new unordered_map<TermID, TermData>(*other._entries);
-    _docLengths = new unordered_map<DocID, unsigned int>(*other._docLengths);
-    _lexiconFilename = other._lexiconFilename;
+    copy(other);
 }
 
 const Lexicon & Lexicon::operator=(const Lexicon & other)
 {
     if(this != &other)
     {
-        delete _entries;
-        delete _docLengths;
-        _entries = other._entries;
-        _docLengths = other._docLengths;
-        _lexiconFilename = other._lexiconFilename;
+        clear();
+        copy(other);
     }
     return *this;
 }
@@ -79,14 +72,6 @@ void Lexicon::save() const
     }
 }
 
-template <class T>
-string Lexicon::toString(T value)
-{
-    std::stringstream ss;
-    ss << value;
-    return ss.str();
-}
-
 void Lexicon::addTerm(TermID term, TermData termData)
 {
     _entries->insert(make_pair(term, termData));
@@ -103,16 +88,21 @@ void Lexicon::readLexicon()
 
     cerr << "[Lexicon]: reading from file..." << endl;
 
-    // the first line in this file is the path to the doc lengths
+    // the first, second, and third lines in the lexicon file correspond
+    //  to the doclengths files, term id mapping, and docid mapping files respectively
     _lengthsFilename = parser.next();
+    setTermMap(parser.next());
+    setDocMap(parser.next());
 
     while(parser.hasNext())
     {
         istringstream line(parser.next());
         vector<string> items;
-        copy(std::istream_iterator<string>(line),
+
+        std::copy(std::istream_iterator<string>(line),
              std::istream_iterator<string>(),
              std::back_inserter<vector<string>>(items));
+
         TermID termID;
         TermData data;
         istringstream(items[0]) >> termID;
@@ -160,4 +150,72 @@ void Lexicon::setAvgDocLength()
         sum += length.second;
 
     _avgDL = (double) sum / _docLengths->size();
+}
+
+string Lexicon::getTerm(TermID termID) const
+{
+    return _termMap->getValueByKey(termID);
+}
+
+TermID Lexicon::getTermID(string term) const
+{
+    return _termMap->getKeyByValue(term);
+}
+
+string Lexicon::getDoc(DocID docID) const
+{
+    return _docMap->getValueByKey(docID);
+}
+
+DocID Lexicon::getDocID(string docName) const
+{
+    return _docMap->getKeyByValue(docName);
+}
+
+void Lexicon::setTermMap(const string & filename)
+{
+    Parser parser(filename, " \n");
+    while(parser.hasNext())
+    {
+        TermID termID;
+        istringstream(parser.next()) >> termID;
+        _termMap->insert(termID, parser.next());
+    }
+}
+
+void Lexicon::setDocMap(const string & filename)
+{
+    Parser parser(filename, " \n");
+    while(parser.hasNext())
+    {
+        DocID docID;
+        istringstream(parser.next()) >> docID;
+        _termMap->insert(docID, parser.next());
+    }
+}
+
+void Lexicon::clear()
+{
+    delete _entries;
+    delete _docLengths;
+    delete _termMap;
+    delete _docMap;
+}
+
+void Lexicon::copy(const Lexicon & other)
+{
+    _lexiconFilename = other._lexiconFilename;
+    _lengthsFilename = other._lengthsFilename;
+    _entries = new unordered_map<TermID, TermData>(*other._entries);
+    _docLengths = new unordered_map<DocID, unsigned int>(*other._docLengths);
+    _termMap = new InvertibleMap<TermID, string>(*other._termMap);
+    _docMap = new InvertibleMap<DocID, string>(*other._docMap);
+}
+
+template <class T>
+string Lexicon::toString(T value)
+{
+    std::stringstream ss;
+    ss << value;
+    return ss.str();
 }
