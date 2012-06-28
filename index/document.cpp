@@ -13,9 +13,7 @@ Document::Document(string name, string category):
 
 void Document::increment(TermID termID, unsigned int amount, unordered_map<TermID, unsigned int>* docFreq)
 {
-    unordered_map<TermID, unsigned int>::iterator iter;
-    iter = _frequencies.find(termID);
-   
+    auto iter = _frequencies.find(termID);
     if(iter != _frequencies.end())
         iter->second += amount;
     else
@@ -51,8 +49,7 @@ size_t Document::getLength() const
 
 size_t Document::getFrequency(TermID termID) const
 {
-    unordered_map<TermID, unsigned int>::const_iterator iter;
-    iter = _frequencies.find(termID);
+    auto iter = _frequencies.find(termID);
     if(iter != _frequencies.end())
         return iter->second;
     else

@@ -82,13 +82,16 @@ void decompress(string infilename, string outfilename, const InvertibleMap<char,
 InvertibleMap<char, unsigned int> getMapping(const unordered_map<char, size_t> & freqs)
 {
     multimap<size_t, char> sorted;
-    for(unordered_map<char, size_t>::const_iterator it = freqs.begin(); it != freqs.end(); ++it)
-        sorted.insert(make_pair(it->second, it->first));
+    for(auto & it: freqs)
+        sorted.insert(make_pair(it.second, it.first));
 
     InvertibleMap<char, unsigned int> mapping;
     unsigned int value = 1;
-    for(multimap<size_t, char>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it, ++value)
-        mapping.insert(it->second, value);
+    for(auto & it: sorted)
+    {
+        mapping.insert(it.second, value);
+        ++value;
+    }
 
     return mapping;
 }

@@ -7,9 +7,8 @@
 ParseTree::ParseTree(string tags): children(vector<ParseTree>())
 {
     vector<string> transitions = getTransitions(tags);
-    vector<string>::iterator iter;
-    for(iter = transitions.begin(); iter != transitions.end(); ++iter)
-        children.push_back(ParseTree(*iter));
+    for(auto & it: transitions)
+        children.push_back(ParseTree(it));
 
     partOfSpeech = getRootPOS(tags);
 }
@@ -78,9 +77,8 @@ size_t ParseTree::numChildren() const
 string ParseTree::getString() const
 {
     string ret = "(" + partOfSpeech;
-    vector<ParseTree>::const_iterator child;
-    for(child = children.begin(); child != children.end(); ++child)
-        ret += child->getString();
+    for(auto & child: children)
+        ret += child.getString();
     ret += ")";
     return ret;
 }
@@ -88,9 +86,8 @@ string ParseTree::getString() const
 string ParseTree::getChildrenString() const
 {
     string ret = "";
-    vector<ParseTree>::const_iterator child;
-    for(child = children.begin(); child != children.end(); ++child)
-        ret += "(" + child->partOfSpeech + ")";
+    for(auto & child: children)
+        ret += "(" + child.partOfSpeech + ")";
     return ret;
 }
 

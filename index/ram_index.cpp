@@ -13,10 +13,10 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer)
     _avgDocLength = 0;
     
     size_t docNum = 0;
-    for(auto file = indexFiles.begin(); file != indexFiles.end(); ++file)
+    for(auto & file: indexFiles)
     {
-        Document document(getName(*file), getCategory(*file));
-        tokenizer->tokenize(*file, document, &_docFreqs);
+        Document document(getName(file), getCategory(file));
+        tokenizer->tokenize(file, document, &_docFreqs);
         _documents.push_back(document);
         _avgDocLength += document.getLength();
 
@@ -36,10 +36,10 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer)
     _documents = indexDocs;
     _avgDocLength = 0;
     size_t docNum = 0;
-    for(auto doc = indexDocs.begin(); doc != indexDocs.end(); ++doc)
+    for(auto & doc: indexDocs)
     {
-        _avgDocLength += doc->getLength();
-        combineMap(doc->getFrequencies());
+        _avgDocLength += doc.getLength();
+        combineMap(doc.getFrequencies());
         if(docNum++ % 10 == 0)
             cout << "  " << ((double) docNum / indexDocs.size() * 100) << "%    \r";
     }
@@ -51,8 +51,8 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer)
 
 void RAMIndex::combineMap(const unordered_map<TermID, unsigned int> & newFreqs)
 {
-    for(auto freq = _docFreqs.begin(); freq != _docFreqs.end(); ++freq)
-        _docFreqs[freq->first] += freq->second;
+    for(auto & freq: _docFreqs)
+        _docFreqs[freq.first] += freq.second;
 }
 
 string RAMIndex::getName(const string & path)
@@ -78,12 +78,12 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
     double numDocs = _documents.size();
 
     const unordered_map<TermID, unsigned int> frequencies = query.getFrequencies();
-    for(auto term = frequencies.begin(); term != frequencies.end(); ++term)
+    for(auto & term: frequencies)
     {
-        auto df = _docFreqs.find(term->first);
+        auto df = _docFreqs.find(term.first);
         double docFreq = (df == _docFreqs.end()) ? (0.0) : (df->second);
-        double termFreq = document.getFrequency(term->first);
-        double queryTermFreq = query.getFrequency(term->first);
+        double termFreq = document.getFrequency(term.first);
+        double queryTermFreq = query.getFrequency(term.first);
 
         double IDF = log((numDocs - docFreq + 0.5) / (docFreq + 0.5));
         double TF = ((k1 + 1.0) * termFreq) / ((k1 * ((1.0 - b) + b * docLength / _avgDocLength)) + termFreq);
@@ -136,12 +136,12 @@ string RAMIndex::classifyKNN(const Document & query, size_t k) const
 
     string best = "[no results]";
     size_t high = 0;
-    for(auto it = counts.begin(); it != counts.end(); ++it)
+    for(auto & count: counts)
     {
-        if(it->second > high)
+        if(count.second > high)
         {
-            best = it->first;
-            high = it->second;
+            best = count.first;
+            high = count.second;
         }
     }
 

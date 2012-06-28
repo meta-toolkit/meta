@@ -42,7 +42,7 @@ const Lexicon & Lexicon::operator=(const Lexicon & other)
 
 TermData Lexicon::getTermInfo(TermID termID) const
 {
-    unordered_map<TermID, TermData>::const_iterator it = _entries->find(termID);
+    auto it = _entries->find(termID);
     if(it == _entries->end())
     {
         cerr << "[Lexicon]: warning: termID lookup failed" << endl;
@@ -56,11 +56,10 @@ void Lexicon::save() const
     ofstream outfile(_lexiconFilename);
     if(outfile.good())
     {
-        unordered_map<TermID, TermData>::const_iterator it;
-        for(it = _entries->begin(); it != _entries->end(); ++it)
+        for(auto & entry: *_entries)
         {
-            string line = toString(it->first) + " ";
-            TermData data = it->second;
+            string line = toString(entry.first) + " ";
+            TermData data = entry.second;
             line += toString(data.idf) + " ";
             line += toString(data.totalFreq) + " ";
             line += toString(data.postingIndex) + " ";
@@ -152,8 +151,8 @@ double Lexicon::getAvgDocLength() const
 void Lexicon::setAvgDocLength()
 {
     double sum = 0;
-    for(auto it = _docLengths->begin(); it != _docLengths->end(); ++it)
-        sum += it->second;
+    for(auto & length: *_docLengths)
+        sum += length.second;
 
     _avgDL = (double) sum / _docLengths->size();
 }

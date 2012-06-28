@@ -6,7 +6,7 @@ Tokenizer::Tokenizer():
 
 TermID Tokenizer::getMapping(const string & term)
 {
-    unordered_map<string, TermID>::iterator it = _termMap.find(term);
+    auto it = _termMap.find(term);
     if(it == _termMap.end())
     {
         _termMap.insert(make_pair(term, _currentTermID));

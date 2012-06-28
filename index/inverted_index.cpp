@@ -21,21 +21,21 @@ multimap<double, string> InvertedIndex::search(const Document & query) const
 
     // loop through each term in the query
     const unordered_map<TermID, unsigned int> freqs = query.getFrequencies();
-    for(unordered_map<TermID, unsigned int>::const_iterator queryTerm = freqs.begin(); queryTerm != freqs.end(); ++queryTerm)
+    for(auto & queryTerm: freqs)
     {
         // loop through each document containing the current term
-        TermID queryTermID = queryTerm->first;
-        size_t queryTermFreq = queryTerm->second;
+        TermID queryTermID = queryTerm.first;
+        size_t queryTermFreq = queryTerm.second;
         TermData termData = _lexicon.getTermInfo(queryTermID);
         vector<PostingData> docList = _postings.getDocs(termData);
-        for(vector<PostingData>::const_iterator doc = docList.begin(); doc != docList.end(); ++doc)
+        for(auto & doc: docList)
         {
-            double docLength = _lexicon.getDocLength(doc->docID);
+            double docLength = _lexicon.getDocLength(doc.docID);
             double IDF = log((numDocs - termData.idf + 0.5) / (termData.idf + 0.5));
-            double TF = ((k1 + 1.0) * doc->freq) / ((k1 * ((1.0 - b) + b * docLength / avgDL)) + doc->freq);
+            double TF = ((k1 + 1.0) * doc.freq) / ((k1 * ((1.0 - b) + b * docLength / avgDL)) + doc.freq);
             double QTF = ((k3 + 1.0) * queryTermFreq) / (k3 + queryTermFreq);
             double score = TF * IDF * QTF;
-            scores[doc->docID] += score;
+            scores[doc.docID] += score;
         }
     }
 

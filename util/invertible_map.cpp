@@ -17,7 +17,7 @@ size_t InvertibleMap<Key, Value>::size() const
 template <class Key, class Value>
 Key InvertibleMap<Key, Value>::getKeyByValue(const Value & value) const
 {
-    typename unordered_map<Value, Key>::const_iterator it = _backward.find(value);
+    auto it = _backward.find(value);
     if(it == _backward.end())
         return Key();
     return it->second;
@@ -26,7 +26,7 @@ Key InvertibleMap<Key, Value>::getKeyByValue(const Value & value) const
 template <class Key, class Value>
 Value InvertibleMap<Key, Value>::getValueByKey(const Key & key) const
 {
-    typename unordered_map<Key, Value>::const_iterator it = _forward.find(key);
+    auto it = _forward.find(key);
     if(it == _forward.end())
         return Value();
     return it->second;
@@ -43,8 +43,8 @@ template <class Key, class Value>
 map<Key, Value> InvertibleMap<Key, Value>::sortKeys() const
 {
     map<Key, Value> sorted;
-    for(auto it = _forward.begin(); it != _forward.end(); ++it)
-        sorted.insert(*it);
+    for(auto & it: _forward)
+        sorted.insert(it);
     return sorted;
 }
 
@@ -52,7 +52,7 @@ template <class Key, class Value>
 map<Value, Key> InvertibleMap<Key, Value>::sortValues() const
 {
     map<Value, Key> sorted;
-    for(auto it = _backward.begin(); it != _backward.end(); ++it)
-        sorted.insert(*it);
+    for(auto & it: _backward)
+        sorted.insert(it);
     return sorted;
 }

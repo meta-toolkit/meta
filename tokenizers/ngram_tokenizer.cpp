@@ -65,17 +65,16 @@ size_t NgramTokenizer::getNValue() const
 string NgramTokenizer::wordify(const vector<string> & words) const
 {
     string result = "";
-    vector<string>::const_iterator iter;
-    for(iter = words.begin(); iter != words.end(); ++iter)
-        result += (*iter + " ");
+    for(auto & word: words)
+        result += (word + " ");
     return result;
 }
 
 string NgramTokenizer::setLower(const string & word) const
 {
     string lower = "";
-    for(size_t i = 0; i < word.size(); ++i)
-        lower += tolower(word[i]);
+    for(auto & ch: word)
+        lower += tolower(ch);
     return lower;
 }
 
