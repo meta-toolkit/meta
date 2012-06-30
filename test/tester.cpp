@@ -134,13 +134,15 @@ void testLexicon()
 
 void testIterators()
 {
-    InvertibleMap<unsigned char, string> imap;
+    InvertibleMap<int, string> imap;
     imap.insert(4, "derp");
     imap.insert(5, "derpyderp");
     imap.insert(7, "derpderp");
     imap.insert(19, "herpderp");
-    for(InvertibleMap<unsigned char, string>::iterator it = imap.begin(); it != imap.end(); ++it)
+    for(InvertibleMap<int, string>::const_iterator it = imap.begin(); it != imap.end(); ++it)
         cout << it->first << " " << it->second << endl;
+    for(auto & it: imap)
+        cout << it.first << " " << it.second << endl;
 }
 
 int main(int argc, char* argv[])

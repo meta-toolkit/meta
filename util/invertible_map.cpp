@@ -3,6 +3,11 @@
  */
 
 template <class Key, class Value>
+InvertibleMap<Key, Value>::InvertibleMap():
+    _forward(unordered_map<Key, Value>()),
+    _backward(unordered_map<Value, Key>()) { /* nothing */ }
+
+template <class Key, class Value>
 bool InvertibleMap<Key, Value>::empty() const
 {
     return _forward.empty();
@@ -55,4 +60,78 @@ map<Value, Key> InvertibleMap<Key, Value>::sortValues() const
     for(auto & it: _backward)
         sorted.insert(it);
     return sorted;
+}
+
+template <class Key, class Value>
+InvertibleMap<Key, Value>::Iterator::Iterator(): iter(InnerIterator())
+    { /* nothing */ }
+
+template <class Key, class Value>
+InvertibleMap<Key, Value>::Iterator::Iterator(const InnerIterator & other): iter(other)
+    { /* nothing */ }
+
+template <class Key, class Value>
+typename InvertibleMap<Key, Value>::Iterator & InvertibleMap<Key, Value>::Iterator::operator++()
+{
+    ++iter;
+    return *this;
+}
+
+template <class Key, class Value>
+typename InvertibleMap<Key, Value>::Iterator InvertibleMap<Key, Value>::Iterator::operator++(int)
+{
+    InnerIterator save = iter;
+    ++iter;
+    return Iterator(save);
+}
+
+template <class Key, class Value>
+typename InvertibleMap<Key, Value>::Iterator & InvertibleMap<Key, Value>::Iterator::operator--()
+{
+    --iter;
+    return *this;
+}
+
+template <class Key, class Value>
+typename InvertibleMap<Key, Value>::Iterator InvertibleMap<Key, Value>::Iterator::operator--(int)
+{
+    InnerIterator save = iter;
+    --iter;
+    return Iterator(save);
+}
+
+template <class Key, class Value>
+bool InvertibleMap<Key, Value>::Iterator::operator==(const Iterator & other)
+{
+    return iter == other.iter;
+}
+
+template <class Key, class Value>
+bool InvertibleMap<Key, Value>::Iterator::operator!=(const Iterator & other)
+{
+    return iter != other.iter;
+}
+
+template <class Key, class Value>
+const typename InvertibleMap<Key, Value>::InnerIterator::value_type & InvertibleMap<Key, Value>::Iterator::operator*()
+{
+    return *iter;
+}
+
+template <class Key, class Value>
+const typename InvertibleMap<Key, Value>::InnerIterator::value_type* InvertibleMap<Key, Value>::Iterator::operator->()
+{
+    return &(*iter);
+}
+
+template <class Key, class Value>
+typename InvertibleMap<Key, Value>::const_iterator InvertibleMap<Key, Value>::begin() const
+{
+    return Iterator(_forward.begin());
+}
+
+template <class Key, class Value>
+typename InvertibleMap<Key, Value>::const_iterator InvertibleMap<Key, Value>::end() const
+{
+    return Iterator(_forward.end());
 }

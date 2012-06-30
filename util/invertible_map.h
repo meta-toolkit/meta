@@ -18,15 +18,6 @@ using std::unordered_map;
 using std::cerr;
 using std::endl;
 
-typedef Iterator iterator;
-typedef Iterator const_iterator;
-typedef RevIterator reverse_iterator;
-typedef RevIterator const_reverse_iterator;
-typedef InnerIterator unordered_map<Key, Value>::iterator;
-typedef InnerIterator unordered_map<Key, Value>::const_iterator;
-typedef RevInnerIterator unordered_map<Key, Value>::reverse_iterator;
-typedef RevInnerIterator unordered_map<Key, Value>::const_reverse_iterator;
-
 /**
  * This data structure indexes by keys as well as values, allowing constant
  *  amortized lookup time by key or value. All keys and values must be unique.
@@ -39,9 +30,7 @@ class InvertibleMap
         /**
          * Constructor.
          */
-        InvertibleMap():
-            _forward(unordered_map<Key, Value>()),
-            _backward(unordered_map<Value, Key>()) { /* nothing */ }
+        InvertibleMap();
 
         /**
          * @return whether the invertible map is empty
@@ -77,87 +66,77 @@ class InvertibleMap
          * @return a (value, key) map sorted by values
          */
         map<Value, Key> sortValues() const;
- 
-        class Iterator: public std::iterator<std::bidirectional_iterator_tag, unordered_map<Key, Value>::iterator iter>
+
+        /**
+         * The "inner" iterator representation of the InvertibleMap.
+         */
+        typedef typename unordered_map<Key, Value>::const_iterator InnerIterator;
+
+        /**
+         * The InvertibleMap iterator is really just a wrapper for the forward (key -> value)
+         *  unordered_map iterator. Use this iterator class the same way you'd use it on an
+         *  unordered_map.
+         */
+        class Iterator: public std::iterator<std::bidirectional_iterator_tag, InnerIterator>
         {
             public:
 
-                Iterator(): iter(InnerIterator()) { }
+                /** Constructor */
+                Iterator();
 
-                Iterator(const InnerIterator & it): iter(it) { }
+                /** Copy constructor */
+                Iterator(const InnerIterator & other);
                 
-                // Pre-Increment
-                Iterator & operator++(){
-                    ++iter;
-                    return *this;
-                }
+                /** Pre-Increment */
+                Iterator & operator++();
 
-                // Post-increment
-                Iterator operator++(int){
-                    InnerIter r = iter;
-                    ++iter;
-                    return Iterator(r);
-                }
+                /** Post-increment */
+                Iterator operator++(int);
 
-                // Pre-decrement
-                Iterator & operator--(){
-                    --iter;
-                    return *this;
-                }
+                /** Pre-decrement */
+                Iterator & operator--();
 
-                // Post-decrement
-                Iterator operator--(int)
-                    InnerIter r = iter;
-                    --iter;
-                    return Iterator(r);
-                }
+                /** Post-decrement */
+                Iterator operator--(int);
 
-                bool operator==(const Iterator & other){
-                    return iter == other.iter;
-                }
+                /** Iterator equality */
+                bool operator==(const Iterator & other);
 
-                bool operator!=(const Iterator & other){
-                    return iter != other.iter;
-                }
+                /** Iterator inequality */
+                bool operator!=(const Iterator & other);
 
-                const InnerIterator & operator*(){
-                    return *iter;
-                }
+                /**
+                 * Dereference operator. Returns the underlying value_type,
+                 *  which will always be a std::pair<Key, Value>
+                 */
+                const typename InnerIterator::value_type & operator*();
 
-                const InnerIterator * operator->(){
-                    return &(*iter);
-                }
+                /**
+                 * Arrow operator. Returns a pointer to the underlying value_type,
+                 *  which will always be a std::pair<Key, Value>
+                 */
+                const typename InnerIterator::value_type* operator->();
 
             private:
+
                 InnerIterator iter;
         };
 
-/*
-        class RevIterator : public std::iterator<std::bidirectional_iterator_tag, pair<Key, Value> >
-        {
-            public:
-                RevIterator(): p(NULL) { }
-                RevIterator(ListNode * x) : p(x) { }
-                RevIterator& operator++()   { p = p->prev; return *this; } // Pre-Increment
-                RevIterator operator++(int) { ListNode* r = p; p = p->prev; return RevIterator(r); } // Post-Increment
-                RevIterator& operator--()   { p = p->next; return *this; } // Pre-Decrement
-                RevIterator operator--(int) { ListNode* r = p; p = p->next; return RevIterator(r); } // Post-Decrement
-                bool operator==(const RevIterator& rhs) { return p == rhs.p; }
-                bool operator!=(const RevIterator& rhs) { return p != rhs.p; }
-                const T & operator*() { return p->data; }
-                const T * operator->() { return &(p->data); }
+        /** Easier typename to deal with if capital, also lets const_iterator share same name */
+        typedef Iterator iterator;
 
-            private:
-        };
-*/
-        const_iterator begin() const { return Iterator(head); }
-        const_iterator end() const { return Iterator(NULL); }
-        //const_reverse_iterator rbegin() const { return RevIterator(tail); }
-        //const_reverse_iterator rend() const { return RevIterator(NULL); }
+        /** Lets const_iterator be interchangeable with "iterator" */
+        typedef Iterator const_iterator;
 
-        // Iterator constructor
-        template <class Iter>
-        InvertibleMap(const Iter & start, const Iter & end);
+        /**
+         * @return an iterator to the beginning of this container
+         */
+        const_iterator begin() const;
+
+        /**
+         * @return an iterator to the end of this container
+         */
+        const_iterator end() const;
 
     private:
 

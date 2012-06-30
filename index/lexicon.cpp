@@ -217,6 +217,8 @@ void Lexicon::copy(const Lexicon & other)
 {
     _lexiconFilename = other._lexiconFilename;
     _lengthsFilename = other._lengthsFilename;
+
+    // other._thing may be empty, but will never be NULL
     _entries = new unordered_map<TermID, TermData>(*other._entries);
     _docLengths = new unordered_map<DocID, unsigned int>(*other._docLengths);
     _termMap = new InvertibleMap<TermID, string>(*other._termMap);
@@ -224,18 +226,13 @@ void Lexicon::copy(const Lexicon & other)
 }
 
 template <class KeyType>
-void Lexicon::saveMap(const string & filename,
-                      const InvertibleMap<KeyType, string> & map) const
+void Lexicon::saveMap(const string & filename, const InvertibleMap<KeyType, string> & map) const
 {
     ofstream outfile(_lexiconFilename);
     if(outfile.good())
     {
         for(auto & entry: map)
-        {
-            string key;
-            istringstream(entry.first) >> key;
-            outfile << key << " " << entry.second << endl;
-        }
+            outfile << toString(entry.first) << " " << entry.second << endl;
         outfile.close();
     }
     else
