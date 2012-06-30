@@ -67,10 +67,12 @@ class InvertedIndex : public Index
         /**
          * Creates an index of given documents.
          * @param documents - a vector of documents to make the index out of
+         * @param chunkMBSize - the maximum size the postings chunks will be in
+         *  memory before they're written to disk.
          * @return whether the index creation was successful. For instance,
          *  it fails if there is already an index in that location.
          */
-        bool indexDocs(const vector<Document> & documents);
+        bool indexDocs(const vector<Document> & documents, size_t chunkMBSize);
 
     private:
 

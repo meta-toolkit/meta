@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "tokenizers/tokenizer.h"
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
 #include "lexicon.h"
@@ -57,6 +58,30 @@ class Postings
          */
         vector<PostingData> getCompressedDocs(const TermData & termData) const;
 
+        /**
+         * Creates lists of term information sorted by TermID on disk.
+         * The lexicon is NOT updated in this function.
+         * @param documents - a list of documents to index
+         * @param chunkMBSize - the maximum size the postings chunks will be in
+         *  memory before they're written to disk.
+         * @param tokenizer - how to tokenize the indexed documents
+         * @return a list of filenames indicating the location of the chunks on disk
+         */
+        vector<string> createChunks(const vector<Document> & documents,
+                                    size_t chunkMBSize, Tokenizer* tokenizer) const;
+
+        /**
+         * Creates the large postings file on disk out of many chunks.
+         * @param chunks - a list of filenames indicating the location of the chunks to combine
+         */
+        void createPostingsFile(const vector<string> & chunks);
+
+        /**
+         * Creates a compressed postings file on disk out of many chunks.
+         * @param chunks - a list of filenames indicating the location of the chunks to combine
+         */
+        void createCompressedPostingsFile(const vector<string> & chunks);
+
     private:
 
         string _postingsFilename;
@@ -66,6 +91,8 @@ class Postings
          * Gets a line out of an uncompressed postings file.
          * This will be slow for large posting files and should
          *  only be used to check correctness.
+         * @param lineNumber - which line number in the postings file to seek to
+         * @return the contents of the specified line
          */
         string getLine(unsigned int lineNumber) const;
 };

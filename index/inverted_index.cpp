@@ -51,12 +51,17 @@ string InvertedIndex::classifyKNN(const Document & query, size_t k) const
     return "chuck testa";
 }
 
-bool InvertedIndex::indexDocs(const vector<Document> & documents)
+bool InvertedIndex::indexDocs(const vector<Document> & documents, size_t chunkMBSize)
 {
     if(!_lexicon.isEmpty())
+    {
+        cerr << "[InvertedIndex]: attempted to create an index in an existing index location" << endl;
         return false;
+    }
 
-    // create index...
+    vector<string> chunks = _postings.createChunks(documents, chunkMBSize, _tokenizer);
+    _postings.createPostingsFile(chunks);
+    _lexicon.createFromPostings("myindex.lexicon");
 
     return true;
 }

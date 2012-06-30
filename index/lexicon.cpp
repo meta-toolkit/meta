@@ -242,6 +242,16 @@ void Lexicon::saveMap(const string & filename, const InvertibleMap<KeyType, stri
 
 }
 
+void Lexicon::createFromPostings(const string & filename)
+{
+
+}
+
+void Lexicon::createFromCompressedPostings(const string & filename)
+{
+
+}
+
 template <class T>
 string Lexicon::toString(T value)
 {
