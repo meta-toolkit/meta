@@ -12,7 +12,7 @@
 #include "io/textfile.h"
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
-#include "index/lexicon.h"
+//#include "index/lexicon.h"
 #include "util/invertible_map.h"
 
 using std::make_pair;
@@ -117,6 +117,7 @@ void testCompression(string filename)
     cerr << "  " << omp_get_wtime() - start << " seconds elapsed" << endl;
 }
 
+/*
 void testLexicon()
 {
     Lexicon lexicon("lexicon.txt");
@@ -129,17 +130,32 @@ void testLexicon()
     lexicon.addTerm(77, data);
     lexicon.save();
 }
+*/
+
+void testIterators()
+{
+    InvertibleMap<unsigned char, string> imap;
+    imap.insert(4, "derp");
+    imap.insert(5, "derpyderp");
+    imap.insert(7, "derpderp");
+    imap.insert(19, "herpderp");
+    for(InvertibleMap<unsigned char, string>::iterator it = imap.begin(); it != imap.end(); ++it)
+        cout << it->first << " " << it->second << endl;
+}
 
 int main(int argc, char* argv[])
 {
+    /*
     if(argc != 2)
     {
         cerr << "usage: " << argv[0] << " file.txt" << endl;
         return 1;
     }
+    */
 
-    testCompression(string(argv[0]));
-    testLexicon();
+    //testCompression(string(argv[0]));
+    //testLexicon();
+    testIterators();
 
     return 0;
 }

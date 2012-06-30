@@ -10,8 +10,8 @@ SANDERSOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o \
     libstemmer/libstemmer.o tokenizers/tokenizer.o tokenizers/sanders_tokenizer.o
 
 TESTER = tester
-TESTEROBJS = io/compressed_file_reader.o io/compressed_file_writer.o io/textfile.o \
-    io/parser.o index/lexicon.o index/postings.o
+TESTEROBJS = io/compressed_file_reader.o io/compressed_file_writer.o io/textfile.o
+#    io/parser.o index/lexicon.o index/postings.o
 
 CC = g++ -std=c++0x -fopenmp -I.
 CCOPTS = -g -O0

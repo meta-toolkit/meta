@@ -54,6 +54,17 @@ void Lexicon::save() const
     ofstream outfile(_lexiconFilename);
     if(outfile.good())
     {
+        // save the paths to the doclengths and mappings
+        outfile << _lengthsFilename << endl;
+
+        string termMapFilename = "termid.mapping";
+        string docMapFilename = "docid.mapping";
+        outfile << termMapFilename << endl;
+        outfile << docMapFilename << endl;
+
+        saveMap(termMapFilename, *_termMap);
+        saveMap(docMapFilename, *_docMap);
+
         for(auto & entry: *_entries)
         {
             string line = toString(entry.first) + " ";
@@ -210,6 +221,28 @@ void Lexicon::copy(const Lexicon & other)
     _docLengths = new unordered_map<DocID, unsigned int>(*other._docLengths);
     _termMap = new InvertibleMap<TermID, string>(*other._termMap);
     _docMap = new InvertibleMap<DocID, string>(*other._docMap);
+}
+
+template <class KeyType>
+void Lexicon::saveMap(const string & filename,
+                      const InvertibleMap<KeyType, string> & map) const
+{
+    ofstream outfile(_lexiconFilename);
+    if(outfile.good())
+    {
+        for(auto & entry: map)
+        {
+            string key;
+            istringstream(entry.first) >> key;
+            outfile << key << " " << entry.second << endl;
+        }
+        outfile.close();
+    }
+    else
+    {
+        cerr << "[Lexicon]: error writing map to disk" << endl;
+    }
+
 }
 
 template <class T>
