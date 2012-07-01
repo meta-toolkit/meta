@@ -51,7 +51,7 @@ string InvertedIndex::classifyKNN(const Document & query, size_t k) const
     return "chuck testa";
 }
 
-bool InvertedIndex::indexDocs(const vector<Document> & documents, size_t chunkMBSize)
+bool InvertedIndex::indexDocs(vector<Document> & documents, size_t chunkMBSize)
 {
     if(!_lexicon.isEmpty())
     {

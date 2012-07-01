@@ -29,37 +29,38 @@ using std::string;
 inline string makeGreen(string str){ return "\033[1;32m" + str + "\033[0m"; }
 inline string makeRed(string str){ return "\033[1;31m" + str + "\033[0m"; }
 
-vector<string> getFilenames(const string & filename, const string & prefix)
+vector<Document> getDocs(const string & filename, const string & prefix)
 {
-    vector<string> files;
+    vector<Document> docs;
     Parser parser(filename, "\n");
     while(parser.hasNext())
-        files.push_back(prefix + parser.next());
-    return files;
+    {
+        string file = parser.next();
+        docs.push_back(Document(prefix + file));
+    }
+    return docs;
 }
 
 int main(int argc, char* argv[])
 {
-    //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
+    string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
     //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
-    string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
 
-    vector<string> trainFiles = getFilenames(prefix + "train.txt", prefix);
-    vector<string> testFiles = getFilenames(prefix + "test.txt", prefix);
+    vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
+    vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
 
     Tokenizer* tokenizer = new NgramTokenizer(2);
-    RAMIndex index(trainFiles, tokenizer);
+    RAMIndex index(trainDocs, tokenizer);
 
     cout << "Running queries..." << endl;
     size_t numQueries = 1;
     size_t numCorrect = 0;
-    for(auto & file: testFiles)
+    for(auto & query: testDocs)
     {
-        string category = RAMIndex::getCategory(file);
-        Document query(RAMIndex::getName(file), category);
-        tokenizer->tokenize(file, query, NULL);
+        tokenizer->tokenize(query, NULL);
         string result = index.classifyKNN(query, 1);
-        if(result == ( "(" + category + ")"))
+        if(result == ( "(" + query.getCategory() + ")"))
         {
             ++numCorrect;
             cout << "  -> " << makeGreen("OK");
@@ -67,7 +68,7 @@ int main(int argc, char* argv[])
         else
             cout << "  -> " << makeRed("incorrect");
         cout << " " << result << endl << "  -> " << ((double) numCorrect / numQueries * 100)
-             << "% accuracy, " << numQueries << "/" << testFiles.size() << " processed " << endl;
+             << "% accuracy, " << numQueries << "/" << testDocs.size() << " processed " << endl;
         ++numQueries;
     }
 

@@ -4,7 +4,7 @@
 
 #include "pos_tree_tokenizer.h"
 
-void POSTreeTokenizer::tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq)
+void POSTreeTokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
 {
 
 }

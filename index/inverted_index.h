@@ -72,7 +72,7 @@ class InvertedIndex : public Index
          * @return whether the index creation was successful. For instance,
          *  it fails if there is already an index in that location.
          */
-        bool indexDocs(const vector<Document> & documents, size_t chunkMBSize);
+        bool indexDocs(vector<Document> & documents, size_t chunkMBSize);
 
     private:
 

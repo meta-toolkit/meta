@@ -4,11 +4,6 @@ SEARCHOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o tokenize
     index/lexicon.o index/inverted_index.o io/compressed_file_reader.o io/compressed_file_writer.o \
     index/postings.o libstemmer/libstemmer.o tokenizers/tokenizer.o
 
-SANDERS = sanders
-SANDERSOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o \
-    io/parser.o tokenizers/ngram_tokenizer.o io/textfile.o \
-    libstemmer/libstemmer.o tokenizers/tokenizer.o tokenizers/sanders_tokenizer.o
-
 TESTER = tester
 TESTEROBJS = io/compressed_file_reader.o io/compressed_file_writer.o io/textfile.o
 #    io/parser.o index/lexicon.o index/postings.o
@@ -25,9 +20,6 @@ all: $(SEARCH) $(TESTER) $(SANDERS) $(GENERIC)
 $(SEARCH): $(SEARCHOBJS) main.cpp util/invertible_map.h util/invertible_map.cpp
 	$(LINKER) main.cpp -o $@ $(SEARCHOBJS)
 
-$(SANDERS): $(SANDERSOBJS) sanders.cpp util/invertible_map.h util/invertible_map.cpp
-	$(LINKER) sanders.cpp -o $@ $(SANDERSOBJS)
-
 $(TESTER): $(TESTEROBJS) test/tester.cpp util/invertible_map.h util/invertible_map.cpp
 	$(LINKER) test/tester.cpp -o $@ $(TESTEROBJS)
 
@@ -36,7 +28,7 @@ $(TESTER): $(TESTEROBJS) test/tester.cpp util/invertible_map.h util/invertible_m
 
 clean:
 	for dir in $(CLEANDIRS) ; do rm -rf $$dir/*.o ; done
-	rm -f $(SEARCH) $(TESTER) $(SANDERS)
+	rm -f $(SEARCH) $(TESTER)
 
 tidy: clean
 	rm -rf ./doc

@@ -20,11 +20,10 @@ class POSTreeTokenizer : public Tokenizer
     public:
         /**
          * Tokenizes a file into a Document.
-         * @param filename - the file to read tokens from
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq);
+        void tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq);
 };
 
 #endif

@@ -26,7 +26,7 @@ class RAMIndex : public Index
          * @param indexDocs - Document objects to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer);
+        RAMIndex(vector<Document> & indexDocs, Tokenizer* tokenizer);
 
         /**
          * Creates an Index located in memory.
@@ -62,16 +62,6 @@ class RAMIndex : public Index
          * @return the category the document is believed to be in
          */
         string classifyKNN(const Document & query, size_t k) const;
-
-        /**
-         * @return the name of a document given its full path
-         */
-        static string getName(const string & path);
-
-        /**
-         * @return the containing directory of a file given its full path
-         */
-        static string getCategory(const string & path);
 
     private:
 

@@ -10,11 +10,11 @@ NgramTokenizer::NgramTokenizer(size_t n):
    initStopwords();     
 }
 
-void NgramTokenizer::tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq)
+void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
 {
     struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     string validchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'-";
-    Parser parser(filename, validchars, validchars, validchars);
+    Parser parser(document.getPath(), validchars, validchars, validchars);
 
     // initialize the ngram
     vector<string> ngram;

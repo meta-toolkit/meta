@@ -15,8 +15,8 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer)
     size_t docNum = 0;
     for(auto & file: indexFiles)
     {
-        Document document(getName(file), getCategory(file));
-        tokenizer->tokenize(file, document, &_docFreqs);
+        Document document(file);
+        tokenizer->tokenize(document, &_docFreqs);
         _documents.push_back(document);
         _avgDocLength += document.getLength();
 
@@ -28,7 +28,7 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer)
     _avgDocLength /= _documents.size();
 }
 
-RAMIndex::RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer)
+RAMIndex::RAMIndex(vector<Document> & indexDocs, Tokenizer* tokenizer)
 {
     cout << "[RAMIndex]: creating index from " << indexDocs.size() << " Documents" << endl;
 
@@ -39,7 +39,8 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer)
     for(auto & doc: indexDocs)
     {
         _avgDocLength += doc.getLength();
-        combineMap(doc.getFrequencies());
+        //combineMap(doc.getFrequencies()); // call this if doc was already tokenized
+        tokenizer->tokenize(doc, &_docFreqs);
         if(docNum++ % 10 == 0)
             cout << "  " << ((double) docNum / indexDocs.size() * 100) << "%    \r";
     }
@@ -53,19 +54,6 @@ void RAMIndex::combineMap(const unordered_map<TermID, unsigned int> & newFreqs)
 {
     for(auto & freq: _docFreqs)
         _docFreqs[freq.first] += freq.second;
-}
-
-string RAMIndex::getName(const string & path)
-{
-    size_t idx = path.find_last_of("/") + 1;
-    return path.substr(idx, path.size() - idx);
-}
-
-string RAMIndex::getCategory(const string & path)
-{
-    size_t idx = path.find_last_of("/");
-    string sub = path.substr(0, idx);
-    return getName(sub);
 }
 
 double RAMIndex::scoreDocument(const Document & document, const Document & query) const

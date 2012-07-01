@@ -30,10 +30,9 @@ class Document
 
         /**
          * Constructor.
-         * @param filename - name for the document
-         * @param category - a classification category this document belongs to
+         * @param path - the path to the document
          */
-        Document(string filename, string category);
+        Document(const string & path);
 
         /**
          * Increment the count of the specified transition.
@@ -51,14 +50,19 @@ class Document
         void increment(TermID termID, unsigned int amount, unordered_map<TermID, unsigned int>* docFreq);
 
         /**
-         * @return the name of this Document's author
+         * @return the path to this document (the argument to the constructor)
          */
-        string getName() const;
+        string getPath() const;
 
         /**
-         * @return the nationality of this Document's author
+         * @return the classification category this document is in
          */
         string getCategory() const;
+
+        /**
+         * @return the name of this document
+         */
+        string getName() const;
 
         /**
          * @return the total of transitions recorded for this Document.
@@ -76,13 +80,24 @@ class Document
          * @return the map of frequencies for this document.
          */
         const unordered_map<TermID, unsigned int> & getFrequencies() const;
-
+ 
     private:
 
-        string _filename;
+        string _path;
         string _category;
+        string _name;
         size_t _length;
         unordered_map<TermID, unsigned int> _frequencies;
+
+        /**
+         * @return the name of a document given its full path
+         */
+        static string getName(const string & path);
+
+        /**
+         * @return the containing directory of a file given its full path
+         */
+        static string getCategory(const string & path);
 };
 
 #endif

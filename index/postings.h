@@ -35,9 +35,13 @@ struct PostingData
     /** The number of times a term appeared in this document */
     unsigned int freq;
 
-    /** Constructor */
+    /** Parameters constructor */
     PostingData(DocID pdocID, unsigned int pfreq):
         docID(pdocID), freq(pfreq){ /* nothing */ }
+
+    /** No params contructor */
+    PostingData():
+        docID(0), freq(0){ /* nothing */ }
 };
 
 /**
@@ -74,8 +78,7 @@ class Postings
          * @return the number of chunks created. Since their name is standard, they can easily
          *  be located.
          */
-        size_t createChunks(const vector<Document> & documents,
-                                    size_t chunkMBSize, Tokenizer* tokenizer);
+        size_t createChunks(vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer) const;
 
         /**
          * Creates the large postings file on disk out of many chunks.
@@ -108,7 +111,7 @@ class Postings
          * @param terms - the map of terms to write. It is cleared at the end of this function.
          * @param chunkNum - the number used for the filename
          */
-        void writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunkNum);
+        void writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunkNum) const;
 };
 
 #endif

@@ -75,7 +75,7 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, 
         for(auto & freq: freqs)
         {
             DocID docID = 1; // TODO get doc ids!!
-            terms[freq.first].push_back(PostingData(docID, freq.second))
+            terms[freq.first].push_back(PostingData(docID, freq.second));
         }
 
         // check size of term map
@@ -89,10 +89,11 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, 
     return chunkNum;
 }
 
-void Postings::writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunkNum)
+void Postings::writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunkNum) const
 {
-    string fileNumber;
-    istringstream(chunkNum) >> fileNumber;
+    std::stringstream ss;
+    ss << chunkNum;
+    string fileNumber = ss.str();
     ofstream outfile(fileNumber + ".chunk");
 
     if(outfile.good())
