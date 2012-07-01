@@ -26,7 +26,7 @@ class RAMIndex : public Index
          * @param indexDocs - Document objects to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(vector<Document> & indexDocs, Tokenizer* tokenizer);
+        RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer);
 
         /**
          * Creates an Index located in memory.
