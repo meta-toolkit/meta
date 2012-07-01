@@ -16,7 +16,7 @@ TermID Tokenizer::getMapping(const string & term)
         return it->second;
 }
 
-void Tokenizer::tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq)
+void Tokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
 {
 
 }

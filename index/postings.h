@@ -5,8 +5,9 @@
 #ifndef _POSTINGS_H_
 #define _POSTINGS_H_
 
+#include <map>
 #include <sstream>
-#include <fstream> // to remove
+#include <fstream>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -15,8 +16,9 @@
 #include "io/compressed_file_writer.h"
 #include "lexicon.h"
 
+using std::map;
 using std::istringstream;
-using std::ifstream; // to remove
+using std::ifstream;
 using std::string;
 using std::vector;
 using std::cerr;
@@ -32,6 +34,10 @@ struct PostingData
 
     /** The number of times a term appeared in this document */
     unsigned int freq;
+
+    /** Constructor */
+    PostingData(DocID pdocID, unsigned int pfreq):
+        docID(pdocID), freq(pfreq){ /* nothing */ }
 };
 
 /**
@@ -65,22 +71,23 @@ class Postings
          * @param chunkMBSize - the maximum size the postings chunks will be in
          *  memory before they're written to disk.
          * @param tokenizer - how to tokenize the indexed documents
-         * @return a list of filenames indicating the location of the chunks on disk
+         * @return the number of chunks created. Since their name is standard, they can easily
+         *  be located.
          */
-        vector<string> createChunks(const vector<Document> & documents,
-                                    size_t chunkMBSize, Tokenizer* tokenizer) const;
+        size_t createChunks(const vector<Document> & documents,
+                                    size_t chunkMBSize, Tokenizer* tokenizer);
 
         /**
          * Creates the large postings file on disk out of many chunks.
          * @param chunks - a list of filenames indicating the location of the chunks to combine
          */
-        void createPostingsFile(const vector<string> & chunks);
+        void createPostingsFile(size_t numChunks);
 
         /**
          * Creates a compressed postings file on disk out of many chunks.
          * @param chunks - a list of filenames indicating the location of the chunks to combine
          */
-        void createCompressedPostingsFile(const vector<string> & chunks);
+        void createCompressedPostingsFile(size_t numChunks);
 
     private:
 
@@ -95,6 +102,13 @@ class Postings
          * @return the contents of the specified line
          */
         string getLine(unsigned int lineNumber) const;
+
+        /**
+         * Writes a chunk to disk.
+         * @param terms - the map of terms to write. It is cleared at the end of this function.
+         * @param chunkNum - the number used for the filename
+         */
+        void writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunkNum);
 };
 
 #endif

@@ -50,15 +50,72 @@ string Postings::getLine(unsigned int lineNumber) const
     return line;
 }
 
-vector<string> Postings::createChunks(const vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer) const
+size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer) const
 {
     cerr << "[Postings]: creating chunks" << endl;
 
+    size_t chunkNum = 0;
     vector<string> chunkNames;
-    return chunkNames;
+    map<TermID, vector<PostingData>> terms;
+
+    /*
+        Create Map of TermID to vector of PostingData.
+          - TermIDs need to be sorted on disk for merge.
+          - PostingData needs to be sorted when it's all there (call std::sort on vector)
+             so don't worry about that here; it'll happen in createPostingsFile()
+          - When map.size() * (sizeof(TermID) + sizeof(PostingData)) >= (chunkMBSize * 1024 * 1024),
+             write current map to disk
+    */
+
+    // iterate over documents, writing data to disk when we reach chunkMBSize
+    for(auto & doc: documents)
+    {
+        tokenizer->tokenize(doc, NULL);
+        unordered_map<TermID, unsigned int> freqs = doc.getFrequencies();
+        for(auto & freq: freqs)
+        {
+            DocID docID = 1; // TODO get doc ids!!
+            terms[freq.first].push_back(PostingData(docID, freq.second))
+        }
+
+        // check size of term map
+        if(terms.size() * (sizeof(TermID) + sizeof(PostingData)) >= (chunkMBSize * 1024 * 1024))
+            writeChunk(terms, chunkNum++);
+    }
+
+    // write the last partial chunk
+    writeChunk(terms, chunkNum++);
+
+    return chunkNum;
 }
 
-void Postings::createPostingsFile(const vector<string> & chunks)
+void Postings::writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunkNum)
+{
+    string fileNumber;
+    istringstream(chunkNum) >> fileNumber;
+    ofstream outfile(fileNumber + ".chunk");
+
+    if(outfile.good())
+    {
+        for(auto & term: terms)
+        {
+            outfile << term.first;
+            for(auto & pdata: term.second)
+                outfile << " " << pdata.docID << " " << pdata.freq;
+            outfile << "\n";
+        }
+
+        outfile.close();
+        terms.clear();
+    }
+    else
+    {
+        cerr << "[Postings]: error creating chunk file" << endl;
+    }
+}
+
+void Postings::createPostingsFile(size_t numChunks)
 {
     cerr << "[Postings]: merging chunks to create postings file" << endl;
+    // the lexicon can be created when the postings file is written to disk
 }

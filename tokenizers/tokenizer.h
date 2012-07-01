@@ -26,11 +26,10 @@ class Tokenizer
 
         /**
          * Tokenizes a file into a Document.
-         * @param filename - the file to read tokens from
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        virtual void tokenize(const string & filename, Document & document, unordered_map<TermID, unsigned int>* docFreq);
+        virtual void tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq);
 
         /**
          * Maps terms to TermIDs.

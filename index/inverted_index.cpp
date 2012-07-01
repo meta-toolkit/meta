@@ -59,8 +59,8 @@ bool InvertedIndex::indexDocs(const vector<Document> & documents, size_t chunkMB
         return false;
     }
 
-    vector<string> chunks = _postings.createChunks(documents, chunkMBSize, _tokenizer);
-    _postings.createPostingsFile(chunks);
+    size_t numChunks = _postings.createChunks(documents, chunkMBSize, _tokenizer);
+    _postings.createPostingsFile(numChunks);
     _lexicon.createFromPostings("myindex.lexicon");
 
     return true;

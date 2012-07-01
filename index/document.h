@@ -30,10 +30,10 @@ class Document
 
         /**
          * Constructor.
-         * @param name - name for the document
+         * @param filename - name for the document
          * @param category - a classification category this document belongs to
          */
-        Document(string name, string category);
+        Document(string filename, string category);
 
         /**
          * Increment the count of the specified transition.
@@ -79,7 +79,7 @@ class Document
 
     private:
 
-        string _name;
+        string _filename;
         string _category;
         size_t _length;
         unordered_map<TermID, unsigned int> _frequencies;
