@@ -5,7 +5,7 @@
 #include "postings.h"
 
 Postings::Postings(const string & postingsFile):
-    _reader(postingsFile),
+    //_reader(postingsFile),
     _postingsFilename(postingsFile),
     _docMap(InvertibleMap<DocID, string>()),
     _currentDocID(0)
@@ -140,6 +140,10 @@ void Postings::createPostingsFile(size_t numChunks)
         cerr << "[Postings]: error creating postings file" << endl;
         return;
     }
+
+    ChunkList chunks(numChunks);
+    while(chunks.hasNext())
+        postingsFile << chunks.next();
 
     postingsFile.close();
 }

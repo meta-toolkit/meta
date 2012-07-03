@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
 
-    Tokenizer* tokenizer = new NgramTokenizer(2);
+    Tokenizer* tokenizer = new NgramTokenizer(1);
     RAMIndex index(trainDocs, tokenizer);
 
     cout << "Running queries..." << endl;

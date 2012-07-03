@@ -15,6 +15,7 @@
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
 #include "lexicon.h"
+#include "chunk_list.h"
 
 using std::map;
 using std::istringstream;
@@ -95,7 +96,7 @@ class Postings
     private:
 
         string _postingsFilename;
-        CompressedFileReader _reader;
+        //CompressedFileReader _reader;
         InvertibleMap<DocID, string> _docMap;
         DocID _currentDocID;
 
