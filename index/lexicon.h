@@ -59,26 +59,9 @@ class Lexicon
         Lexicon(const string & lexiconFile);
 
         /**
-         * Destructor.
-         */
-        ~Lexicon();
-
-        /**
-         * Copy constructor.
-         */
-        Lexicon(const Lexicon & other);
-
-        /**
          * @return whether this Lexicon is empty
          */
         bool isEmpty() const;
-
-        /**
-         * Assigns the content of one lexicon to another.
-         * @param other - the lexicon to copy
-         * @return a reference to the copied lexicon
-         */
-        const Lexicon & operator=(const Lexicon & other);
 
         /**
          * @return all lexicon information about a specific term.
@@ -154,11 +137,10 @@ class Lexicon
         double _avgDL;
         bool _avgDLSet;
 
-        unordered_map<TermID, TermData>* _entries;
-        unordered_map<DocID, unsigned int>* _docLengths;
-
-        InvertibleMap<TermID, string>* _termMap;
-        InvertibleMap<DocID, string>* _docMap;
+        unordered_map<TermID, TermData> _entries;
+        unordered_map<DocID, unsigned int> _docLengths;
+        InvertibleMap<TermID, string> _termMap;
+        InvertibleMap<DocID, string> _docMap;
 
         /**
          * Reads a lexicon from disk if it exists.
@@ -191,22 +173,6 @@ class Lexicon
          * @param filename - where the mapping file is located
          */
         void setDocMap(const string & filename);
-
-        /**
-         * @return the string representation of an object
-         */
-        template <class T>
-        static string toString(T value);
-
-        /**
-         * Helper function for operator= and cctr.
-         */
-        void clear();
-
-        /**
-         * Helper function for operator= and destructor.
-         */
-        void copy(const Lexicon & other);
 };
 
 #endif

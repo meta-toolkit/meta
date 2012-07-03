@@ -4,44 +4,27 @@
 
 #include "lexicon.h"
 
-Lexicon::Lexicon(const string & lexiconFile): _lexiconFilename(lexiconFile)
+Lexicon::Lexicon(const string & lexiconFile):
+    _lexiconFilename(lexiconFile),
+    _entries(unordered_map<TermID, TermData>()),
+    _docLengths(unordered_map<DocID, unsigned int>()),
+    _termMap(InvertibleMap<TermID, string>()),
+    _docMap(InvertibleMap<DocID, string>())
 {
-    _entries = new unordered_map<TermID, TermData>();
-    _docLengths = new unordered_map<DocID, unsigned int>();
     readLexicon();
     readDocLengths();
     setAvgDocLength();
 }
 
-Lexicon::~Lexicon()
-{
-    clear();
-}
-
-Lexicon::Lexicon(const Lexicon & other)
-{
-    copy(other);
-}
-
-const Lexicon & Lexicon::operator=(const Lexicon & other)
-{
-    if(this != &other)
-    {
-        clear();
-        copy(other);
-    }
-    return *this;
-}
-
 bool Lexicon::isEmpty() const
 {
-    return _entries->empty();
+    return _entries.empty();
 }
 
 TermData Lexicon::getTermInfo(TermID termID) const
 {
-    auto it = _entries->find(termID);
-    if(it == _entries->end())
+    auto it = _entries.find(termID);
+    if(it == _entries.end())
     {
         cerr << "[Lexicon]: warning: termID lookup failed" << endl;
         return TermData();
@@ -62,10 +45,10 @@ void Lexicon::save() const
         outfile << termMapFilename << endl;
         outfile << docMapFilename << endl;
 
-        _termMap->saveMap(termMapFilename);
-        _docMap->saveMap(docMapFilename);
+        _termMap.saveMap(termMapFilename);
+        _docMap.saveMap(docMapFilename);
 
-        for(auto & entry: *_entries)
+        for(auto & entry: _entries)
         {
             string line = Common::toString(entry.first) + " ";
             TermData data = entry.second;
@@ -85,7 +68,7 @@ void Lexicon::save() const
 
 void Lexicon::addTerm(TermID term, TermData termData)
 {
-    _entries->insert(make_pair(term, termData));
+    _entries.insert(make_pair(term, termData));
 }
 
 void Lexicon::readLexicon()
@@ -135,18 +118,18 @@ void Lexicon::readDocLengths()
         unsigned int length;
         istringstream(parser.next()) >> docID;
         istringstream(parser.next()) >> length;
-        _docLengths->insert(make_pair(docID, length));
+        _docLengths.insert(make_pair(docID, length));
     }
 }
 
 unsigned int Lexicon::getDocLength(DocID docID) const
 {
-    return _docLengths->at(docID);
+    return _docLengths.at(docID);
 }
 
 unsigned int Lexicon::getNumDocs() const
 {
-    return _docLengths->size();
+    return _docLengths.size();
 }
 
 double Lexicon::getAvgDocLength() const
@@ -157,30 +140,30 @@ double Lexicon::getAvgDocLength() const
 void Lexicon::setAvgDocLength()
 {
     double sum = 0;
-    for(auto & length: *_docLengths)
+    for(auto & length: _docLengths)
         sum += length.second;
 
-    _avgDL = (double) sum / _docLengths->size();
+    _avgDL = (double) sum / _docLengths.size();
 }
 
 string Lexicon::getTerm(TermID termID) const
 {
-    return _termMap->getValueByKey(termID);
+    return _termMap.getValueByKey(termID);
 }
 
 TermID Lexicon::getTermID(string term) const
 {
-    return _termMap->getKeyByValue(term);
+    return _termMap.getKeyByValue(term);
 }
 
 string Lexicon::getDoc(DocID docID) const
 {
-    return _docMap->getValueByKey(docID);
+    return _docMap.getValueByKey(docID);
 }
 
 DocID Lexicon::getDocID(string docName) const
 {
-    return _docMap->getKeyByValue(docName);
+    return _docMap.getKeyByValue(docName);
 }
 
 void Lexicon::setTermMap(const string & filename)
@@ -190,7 +173,7 @@ void Lexicon::setTermMap(const string & filename)
     {
         TermID termID;
         istringstream(parser.next()) >> termID;
-        _termMap->insert(termID, parser.next());
+        _termMap.insert(termID, parser.next());
     }
 }
 
@@ -201,28 +184,8 @@ void Lexicon::setDocMap(const string & filename)
     {
         DocID docID;
         istringstream(parser.next()) >> docID;
-        _termMap->insert(docID, parser.next());
+        _termMap.insert(docID, parser.next());
     }
-}
-
-void Lexicon::clear()
-{
-    delete _entries;
-    delete _docLengths;
-    delete _termMap;
-    delete _docMap;
-}
-
-void Lexicon::copy(const Lexicon & other)
-{
-    _lexiconFilename = other._lexiconFilename;
-    _lengthsFilename = other._lengthsFilename;
-
-    // other._thing may be empty, but will never be NULL
-    _entries = new unordered_map<TermID, TermData>(*other._entries);
-    _docLengths = new unordered_map<DocID, unsigned int>(*other._docLengths);
-    _termMap = new InvertibleMap<TermID, string>(*other._termMap);
-    _docMap = new InvertibleMap<DocID, string>(*other._docMap);
 }
 
 void Lexicon::createFromPostings(const string & filename)

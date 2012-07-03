@@ -81,7 +81,8 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, 
         }
 
         // check size of term map
-        if(terms.size() * (sizeof(TermID) + sizeof(PostingData)) >= (chunkMBSize * 1024 * 1024))
+        //if(terms.size() * (sizeof(TermID) + sizeof(PostingData)) >= (chunkMBSize * 1024 * 1024))
+        if(terms.size() * (sizeof(TermID) + sizeof(PostingData)) >= (chunkMBSize * 1024))
             writeChunk(terms, chunkNum++);
     }
 
@@ -132,4 +133,13 @@ void Postings::createPostingsFile(size_t numChunks)
 {
     cerr << "[Postings]: merging chunks to create postings file" << endl;
     // the lexicon can be created when the postings file is written to disk
+
+    ofstream postingsFile(_postingsFilename);
+    if(!postingsFile.good())
+    {
+        cerr << "[Postings]: error creating postings file" << endl;
+        return;
+    }
+
+    postingsFile.close();
 }

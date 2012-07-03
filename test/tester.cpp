@@ -2,6 +2,7 @@
  * @file tester.cpp
  */
 
+#include <vector>
 #include <utility>
 #include <map>
 #include <unordered_map>
@@ -12,9 +13,12 @@
 #include "io/textfile.h"
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
-//#include "index/lexicon.h"
+#include "index/lexicon.h"
+#include "index/inverted_index.h"
+#include "tokenizers/ngram_tokenizer.h"
 #include "util/invertible_map.h"
 
+using std::vector;
 using std::make_pair;
 using std::pair;
 using std::multimap;
@@ -117,7 +121,6 @@ void testCompression(string filename)
     cerr << "  " << omp_get_wtime() - start << " seconds elapsed" << endl;
 }
 
-/*
 void testLexicon()
 {
     Lexicon lexicon("lexicon.txt");
@@ -130,7 +133,6 @@ void testLexicon()
     lexicon.addTerm(77, data);
     lexicon.save();
 }
-*/
 
 void testIterators()
 {
@@ -145,6 +147,29 @@ void testIterators()
         cout << it.first << " " << it.second << endl;
 }
 
+vector<Document> getDocs(const string & filename, const string & prefix)
+{
+    vector<Document> docs;
+    Parser parser(filename, "\n");
+    while(parser.hasNext())
+    {
+        string file = parser.next();
+        docs.push_back(Document(prefix + file));
+    }
+    return docs;
+}
+
+void testIndex()
+{
+    string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    string lexicon = "lexiconFile";
+    string postings = "postingsFile";
+    vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
+    Tokenizer* tokenizer = new NgramTokenizer(1);
+    InvertedIndex index(lexicon, postings, tokenizer);
+    index.indexDocs(trainDocs, 1);
+}
+
 int main(int argc, char* argv[])
 {
     /*
@@ -157,7 +182,8 @@ int main(int argc, char* argv[])
 
     //testCompression(string(argv[0]));
     //testLexicon();
-    testIterators();
+    //testIterators();
+    testIndex();
 
     return 0;
 }
