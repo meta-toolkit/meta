@@ -8,6 +8,8 @@ TESTER = tester
 TESTEROBJS = io/compressed_file_reader.o io/compressed_file_writer.o io/textfile.o
 #    io/parser.o index/lexicon.o index/postings.o
 
+TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp
+
 CC = g++ -std=c++0x -fopenmp -I.
 CCOPTS = -g -O0
 #CCOPTS = -O3
@@ -17,10 +19,10 @@ CLEANDIRS = tokenizers test io index util
 
 all: $(SEARCH) $(TESTER) $(SANDERS) $(GENERIC)
 
-$(SEARCH): $(SEARCHOBJS) main.cpp util/invertible_map.h util/invertible_map.cpp
+$(SEARCH): $(SEARCHOBJS) main.cpp $(TEMPLATES)
 	$(LINKER) main.cpp -o $@ $(SEARCHOBJS)
 
-$(TESTER): $(TESTEROBJS) test/tester.cpp util/invertible_map.h util/invertible_map.cpp
+$(TESTER): $(TESTEROBJS) test/tester.cpp $(TEMPLATES)
 	$(LINKER) test/tester.cpp -o $@ $(TESTEROBJS)
 
 %.o : %.cpp $(wildcard *.h)

@@ -5,12 +5,15 @@
 #ifndef _INVERTIBLE_MAP_H_
 #define _INVERTIBLE_MAP_H_
 
+#include <fstream>
 #include <iterator>
 #include <utility>
 #include <iostream>
 #include <map>
 #include <unordered_map>
+#include "util/common.h"
 
+using std::ofstream;
 using std::pair;
 using std::make_pair;
 using std::map;
@@ -66,6 +69,13 @@ class InvertibleMap
          * @return a (value, key) map sorted by values
          */
         map<Value, Key> sortValues() const;
+
+        /**
+         * Saves an Invertible Map to disk.
+         * @param filename - where to save the map
+         * @param map - the map to save
+         */
+        void saveMap(const string & filename) const;
 
         /**
          * The "inner" iterator representation of the InvertibleMap.

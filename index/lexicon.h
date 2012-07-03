@@ -16,6 +16,7 @@
 #include "document.h"
 #include "util/invertible_map.h"
 #include "io/parser.h"
+#include "util/common.h"
 
 using std::ofstream;
 using std::vector;
@@ -190,14 +191,6 @@ class Lexicon
          * @param filename - where the mapping file is located
          */
         void setDocMap(const string & filename);
-
-        /**
-         * Saves an Invertible Map to disk.
-         * @param filename - where to save the map
-         * @param map - the map to save
-         */
-        template <class KeyType>
-        void saveMap(const string & filename, const InvertibleMap<KeyType, string> & map) const;
 
         /**
          * @return the string representation of an object

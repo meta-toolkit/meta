@@ -63,6 +63,24 @@ map<Value, Key> InvertibleMap<Key, Value>::sortValues() const
 }
 
 template <class Key, class Value>
+void InvertibleMap<Key, Value>::saveMap(const string & filename) const
+{
+    ofstream outfile(filename);
+    if(outfile.good())
+    {
+        for(auto & entry: _forward)
+            outfile << Common::toString(entry.first) << " " << Common::toString(entry.second) << endl;
+        outfile.close();
+    }
+    else
+    {
+        cerr << "[Lexicon]: error writing map to disk" << endl;
+    }
+}
+
+/* Iterator code */
+
+template <class Key, class Value>
 InvertibleMap<Key, Value>::Iterator::Iterator(): iter(InnerIterator())
     { /* nothing */ }
 

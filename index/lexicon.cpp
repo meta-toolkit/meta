@@ -62,17 +62,17 @@ void Lexicon::save() const
         outfile << termMapFilename << endl;
         outfile << docMapFilename << endl;
 
-        saveMap(termMapFilename, *_termMap);
-        saveMap(docMapFilename, *_docMap);
+        _termMap->saveMap(termMapFilename);
+        _docMap->saveMap(docMapFilename);
 
         for(auto & entry: *_entries)
         {
-            string line = toString(entry.first) + " ";
+            string line = Common::toString(entry.first) + " ";
             TermData data = entry.second;
-            line += toString(data.idf) + " ";
-            line += toString(data.totalFreq) + " ";
-            line += toString(data.postingIndex) + " ";
-            line += toString(data.postingBit) + "\n";
+            line += Common::toString(data.idf) + " ";
+            line += Common::toString(data.totalFreq) + " ";
+            line += Common::toString(data.postingIndex) + " ";
+            line += Common::toString(data.postingBit) + "\n";
             outfile << line;
         }
         outfile.close();
@@ -225,23 +225,6 @@ void Lexicon::copy(const Lexicon & other)
     _docMap = new InvertibleMap<DocID, string>(*other._docMap);
 }
 
-template <class KeyType>
-void Lexicon::saveMap(const string & filename, const InvertibleMap<KeyType, string> & map) const
-{
-    ofstream outfile(_lexiconFilename);
-    if(outfile.good())
-    {
-        for(auto & entry: map)
-            outfile << toString(entry.first) << " " << entry.second << endl;
-        outfile.close();
-    }
-    else
-    {
-        cerr << "[Lexicon]: error writing map to disk" << endl;
-    }
-
-}
-
 void Lexicon::createFromPostings(const string & filename)
 {
 
@@ -250,12 +233,4 @@ void Lexicon::createFromPostings(const string & filename)
 void Lexicon::createFromCompressedPostings(const string & filename)
 {
 
-}
-
-template <class T>
-string Lexicon::toString(T value)
-{
-    std::stringstream ss;
-    ss << value;
-    return ss.str();
 }
