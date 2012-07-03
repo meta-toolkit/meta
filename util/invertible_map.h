@@ -56,6 +56,16 @@ class InvertibleMap
         Value getValueByKey(const Key & key) const;
 
         /**
+         * @return whether the map contains the given key
+         */
+        bool containsKey(const Key & key) const;
+
+        /**
+         * @return whether the map contains the given value
+         */
+        bool containsValue(const Value & value) const;
+
+        /**
          * Inserts a (key, value) pair into the invertible map
          */
         void insert(const Key & key, const Value & value);

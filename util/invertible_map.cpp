@@ -38,6 +38,18 @@ Value InvertibleMap<Key, Value>::getValueByKey(const Key & key) const
 }
 
 template <class Key, class Value>
+bool InvertibleMap<Key, Value>::containsKey(const Key & key) const
+{
+    return _forward.find(key) != _forward.end();
+}
+
+template <class Key, class Value>
+bool InvertibleMap<Key, Value>::containsValue(const Value & value) const
+{
+    return _backward.find(value) != _backward.end();
+}
+
+template <class Key, class Value>
 void InvertibleMap<Key, Value>::insert(const Key & key, const Value & value)
 {
     _forward.insert(make_pair(key, value));

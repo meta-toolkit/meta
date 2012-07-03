@@ -78,7 +78,7 @@ class Postings
          * @return the number of chunks created. Since their name is standard, they can easily
          *  be located.
          */
-        size_t createChunks(vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer) const;
+        size_t createChunks(vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer);
 
         /**
          * Creates the large postings file on disk out of many chunks.
@@ -96,6 +96,8 @@ class Postings
 
         string _postingsFilename;
         CompressedFileReader _reader;
+        InvertibleMap<DocID, string> _docMap;
+        DocID _currentDocID;
 
         /**
          * Gets a line out of an uncompressed postings file.
@@ -112,6 +114,14 @@ class Postings
          * @param chunkNum - the number used for the filename
          */
         void writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunkNum) const;
+
+        /**
+         * Keeps the DocID -> path mapping, and returns a new DocID
+         *  if an unseen path is encountered.
+         * @param path - the document path to check
+         * @return the DocID for the given path
+         */
+        DocID getDocID(const string & path);
 };
 
 #endif

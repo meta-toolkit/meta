@@ -6,7 +6,9 @@
 
 Postings::Postings(const string & postingsFile):
     _reader(postingsFile),
-    _postingsFilename(postingsFile)
+    _postingsFilename(postingsFile),
+    _docMap(InvertibleMap<DocID, string>()),
+    _currentDocID(0)
 {
     // ??
 }
@@ -50,7 +52,7 @@ string Postings::getLine(unsigned int lineNumber) const
     return line;
 }
 
-size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer) const
+size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer)
 {
     cerr << "[Postings]: creating chunks" << endl;
 
@@ -74,7 +76,7 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, 
         unordered_map<TermID, unsigned int> freqs = doc.getFrequencies();
         for(auto & freq: freqs)
         {
-            DocID docID = 1; // TODO get doc ids!!
+            DocID docID = getDocID(doc.getPath());
             terms[freq.first].push_back(PostingData(docID, freq.second));
         }
 
@@ -87,6 +89,17 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, 
     writeChunk(terms, chunkNum++);
 
     return chunkNum;
+}
+
+DocID Postings::getDocID(const string & path)
+{
+    if(_docMap.containsValue(path))
+        return _docMap.getKeyByValue(path);
+    else
+    {
+        _docMap.insert(_currentDocID, path);
+        return _currentDocID++;
+    }
 }
 
 void Postings::writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunkNum) const
