@@ -7,9 +7,12 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 #include "io/parser.h"
 #include "structs.h"
 
+using std::cerr;
+using std::endl;
 using std::vector;
 using std::string;
 
@@ -37,7 +40,7 @@ class ChunkList
         /**
          * @return the next string to write to the postings file
          */
-        string next();
+        IndexEntry next();
 
     private:
 

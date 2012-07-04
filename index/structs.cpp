@@ -22,6 +22,11 @@ IndexEntry::IndexEntry(const string & str):
     }
 }
 
+bool IndexEntry::operator<(const IndexEntry & other) const
+{
+    return termID < other.termID;
+}
+
 string IndexEntry::toString() const
 {
     string str = Common::toString(termID);
@@ -31,4 +36,9 @@ string IndexEntry::toString() const
         str += " " + Common::toString(pd.freq);
     }
     return str;
+}
+
+bool PostingData::operator<(const PostingData & other) const
+{
+    return docID < other.docID;
 }

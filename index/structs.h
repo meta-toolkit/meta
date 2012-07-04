@@ -72,6 +72,9 @@ struct IndexEntry
     TermID termID;
     vector<PostingData> data;
 
+    IndexEntry(TermID ptermID):
+        termID(ptermID) { /* nothing */ }
+
     /**
      * Constructor from a string.
      * @param str - the string to make this IndexEntry from
@@ -82,6 +85,13 @@ struct IndexEntry
      * @return a string representation of this IndexEntry
      */
     string toString() const;
+
+    /**
+     * Compares two IndexEntriess.
+     * @param other - the IndexEntry to compare with
+     * @return whether this IndexEntry's termID is less than the parameter 
+     */
+    bool operator<(const IndexEntry & other) const;
 };
 
 #endif

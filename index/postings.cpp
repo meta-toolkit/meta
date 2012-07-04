@@ -141,9 +141,9 @@ void Postings::createPostingsFile(size_t numChunks)
         return;
     }
 
-    ChunkList chunks(numChunks);
+    ChunkList chunks(numChunks - 1);
     while(chunks.hasNext())
-        postingsFile << chunks.next();
+        postingsFile << chunks.next().toString() << "\n";
 
     postingsFile.close();
 }

@@ -205,6 +205,10 @@ void Parser::copy(const Parser & other){
     cursor = other.cursor;
     text = other.text;
     valid = other.valid;
+    token = other.token;
+	valid_charset = other.valid_charset;
+	starting_charset = other.starting_charset;
+	ending_charset = other.ending_charset;
 }
 
 void Parser::clear(){
