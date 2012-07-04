@@ -17,6 +17,7 @@
 #include "util/invertible_map.h"
 #include "io/parser.h"
 #include "util/common.h"
+#include "structs.h"
 
 using std::ofstream;
 using std::vector;
@@ -27,24 +28,6 @@ using std::pair;
 using std::make_pair;
 using std::unordered_map;
 using std::string;
-
-/**
- * Represents metadata for a specific term in the lexicon.
- */
-struct TermData
-{
-    /** The inverse document frequency */
-    unsigned int idf;
-
-    /** The total number of occurences of this term */
-    unsigned int totalFreq;
-
-    /** The byte address in the inverted index */
-    unsigned int postingIndex;
-
-    /** The bit address where this TermData starts */
-    unsigned char postingBit;
-};
 
 /**
  * Represents the dictionary or lexicon of an inverted index.

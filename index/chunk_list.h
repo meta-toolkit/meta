@@ -5,8 +5,12 @@
 #ifndef _CHUNK_LIST_H_
 #define _CHUNK_LIST_H_
 
+#include <vector>
 #include <string>
+#include "io/parser.h"
+#include "structs.h"
 
+using std::vector;
 using std::string;
 
 /**
@@ -38,6 +42,15 @@ class ChunkList
     private:
 
         size_t _numChunks;
+        vector<Parser> _parsers;
+
+        /**
+         * Appends entries from the vector of IndexEntries into one IndexEntry.
+         * When this function ends, the entries vector will be empty.
+         * @param entries - the entries to combine together
+         * @param combined - where to store the combined IndexEntries
+         */
+        void combinePostingData(vector<IndexEntry> & entries, IndexEntry & combined) const;
 };
 
 #endif

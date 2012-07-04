@@ -20,7 +20,6 @@ typedef unsigned int TermID;
 /** Numbering value for Documents in the index */
 typedef unsigned int DocID;
 
-
 /**
  * Represents an indexed document.
  */

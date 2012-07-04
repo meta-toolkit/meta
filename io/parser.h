@@ -66,6 +66,12 @@ public:
 	string next();
 
 	/**
+     * Finds and returns the next complete token from this Parser, but does not
+     *  advance the cursor.
+     */
+	string peek() const;
+
+	/**
      * Finds and returns the next complete line from this Parser,
      *   disregarding any previous tokens, even if they would be on this line.
      *

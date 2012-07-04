@@ -15,6 +15,7 @@
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
 #include "lexicon.h"
+#include "structs.h"
 #include "chunk_list.h"
 
 using std::map;
@@ -24,26 +25,6 @@ using std::string;
 using std::vector;
 using std::cerr;
 using std::endl;
-
-/**
- * Represents one term's document info.
- */
-struct PostingData
-{
-    /** The numeric id value assigned to this document */
-    DocID docID;
-
-    /** The number of times a term appeared in this document */
-    unsigned int freq;
-
-    /** Parameters constructor */
-    PostingData(DocID pdocID, unsigned int pfreq):
-        docID(pdocID), freq(pfreq){ /* nothing */ }
-
-    /** No params contructor */
-    PostingData():
-        docID(0), freq(0){ /* nothing */ }
-};
 
 /**
  * This is the interface to the large postings file located on disk.

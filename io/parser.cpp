@@ -48,6 +48,10 @@ string Parser::next() {
     return ret;
 }
 
+string Parser::peek() const {
+    return token;
+}
+
 void Parser::findNextToken(){
 
     token = "";
