@@ -203,7 +203,7 @@ void Parser::copy(const Parser & other){
     textfile = new TextFile(*(other.textfile));
     filesize = other.filesize;
     cursor = other.cursor;
-    text = other.text;
+    text = textfile->opentext();
     valid = other.valid;
     token = other.token;
 	valid_charset = other.valid_charset;

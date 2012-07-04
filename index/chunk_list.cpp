@@ -9,13 +9,10 @@ ChunkList::ChunkList(size_t numChunks):
         string filename = Common::toString(i) + ".chunk";
         _parsers.push_back(Parser(filename, "\n"));
     }
-
-    hasNext();
 }
 
 bool ChunkList::hasNext() const
 {
-    cerr << "[ChunkList]: hasNext() called " << _parsers.size() << " " << _parsers[0].hasNext() << endl;
     return _parsers[0].hasNext();
 }
 
@@ -41,6 +38,7 @@ IndexEntry ChunkList::next()
     IndexEntry min(_parsers[0].peek());
 
     // change this.........
+    // can I assume the minimums will be 0,1,2,3,....
 
     for(size_t i = 1; i < _numChunks; ++i)
     {
@@ -49,22 +47,27 @@ IndexEntry ChunkList::next()
             min = next;
     }
 
-    cerr << "[ChunkList]: min == " << min.termID << endl;
-
     vector<IndexEntry> mins;
-    for(size_t i = 0; i < _numChunks; ++i)
+    for(int i = 0; i < _numChunks; ++i)
     {
-        if(IndexEntry(_parsers[i].peek()).termID == min.termID)
+        cerr << "i: " << i << ", _numChunks: " << _numChunks << endl; 
+
+        // see if it has the min value
+        IndexEntry current(_parsers[i].peek());
+        if(current.termID == min.termID)
         {
-            mins.push_back(IndexEntry(_parsers[i].next()));
-            if(!_parsers[i].hasNext())
-            {
-                std::swap(_parsers[i], _parsers[_numChunks - 1]);
-                --_numChunks;
-                --i;
-                if(_numChunks == 0)
-                    break;
-            }
+            string next = _parsers[i].next();
+            mins.push_back(IndexEntry(next));
+        }
+
+        // get to valid spot
+        if(!_parsers[i].hasNext())
+        {
+            cerr << "[ChunkList]: used up a chunk" << endl;
+            std::swap(_parsers[i], _parsers[_numChunks - 1]);
+            --_numChunks;
+            if(_numChunks == 0)
+                break;
         }
     }
 
