@@ -32,23 +32,16 @@ TermData Lexicon::getTermInfo(TermID termID) const
     return it->second;
 }
 
-void Lexicon::save() const
+void Lexicon::save(const string & docLengthsFilename, const string & termMapFilename, const string & docMapFilename) const
 {
     cerr << "[Lexicon]: saving lexicon to disk" << endl;
 
     ofstream outfile(_lexiconFilename);
     if(outfile.good())
     {
-        // save the paths to the doclengths and mappings
-        string termMapFilename = "termid.mapping";
-        string docMapFilename = "docid.mapping";
-
-        outfile << _lengthsFilename << endl;
+        outfile << docLengthsFilename << endl;
         outfile << termMapFilename << endl;
         outfile << docMapFilename << endl;
-
-        _termMap.saveMap(termMapFilename);
-        _docMap.saveMap(docMapFilename);
 
         for(auto & entry: _entries)
         {

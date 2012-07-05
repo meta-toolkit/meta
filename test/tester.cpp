@@ -131,7 +131,7 @@ void testLexicon()
     data.postingIndex = 77;
     data.postingBit = 7;
     lexicon.addTerm(77, data);
-    lexicon.save();
+    //lexicon.save();
 }
 
 void testIterators()

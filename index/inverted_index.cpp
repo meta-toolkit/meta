@@ -60,8 +60,10 @@ bool InvertedIndex::indexDocs(vector<Document> & documents, size_t chunkMBSize)
     }
 
     size_t numChunks = _postings.createChunks(documents, chunkMBSize, _tokenizer);
+    _tokenizer->saveTermIDMapping("termid.mapping");
+    _postings.saveDocIDMapping("docid.mapping");
     _postings.createPostingsFile(numChunks, _lexicon);
-    _lexicon.save();
-
+    _postings.saveDocLengths(documents, "docs.lengths");
+    _lexicon.save("docs.lengths", "termid.mapping", "docid.mapping");
     return true;
 }

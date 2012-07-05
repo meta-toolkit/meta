@@ -53,8 +53,11 @@ class Lexicon
 
         /**
          * Writes the lexicon to disk.
+         * @param docLengthsFilename
+         * @param termMapFilename
+         * @param docMapFilename
          */
-        void save() const;
+        void save(const string & docLengthsFilename, const string & termMapFilename, const string & docMapFilename) const;
 
         /**
          * Adds a new term to the lexicon.

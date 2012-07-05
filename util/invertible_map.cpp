@@ -81,12 +81,12 @@ void InvertibleMap<Key, Value>::saveMap(const string & filename) const
     if(outfile.good())
     {
         for(auto & entry: _forward)
-            outfile << Common::toString(entry.first) << " " << Common::toString(entry.second) << endl;
+            outfile << entry.first << " " << entry.second << endl;
         outfile.close();
     }
     else
     {
-        cerr << "[Lexicon]: error writing map to disk" << endl;
+        cerr << "[InvertibleMap]: error writing map to disk" << endl;
     }
 }
 

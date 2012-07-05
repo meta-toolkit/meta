@@ -20,3 +20,20 @@ void Tokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int
 {
 
 }
+
+void Tokenizer::saveTermIDMapping(const string & filename) const
+{
+    ofstream outfile(filename);
+    if(outfile.good())
+    {
+        for(auto & term: _termMap)
+        {
+            outfile << term.first << " ";
+            outfile << term.second << endl;
+        }
+    }
+    else
+    {
+        cerr << "[Tokenizer]: error creating termid mapping file" << endl;
+    }
+}

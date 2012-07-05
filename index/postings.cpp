@@ -60,27 +60,16 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, 
     vector<string> chunkNames;
     map<TermID, vector<PostingData>> terms;
 
-    /*
-        Create Map of TermID to vector of PostingData.
-          - TermIDs need to be sorted on disk for merge.
-          - PostingData needs to be sorted when it's all there (call std::sort on vector)
-             so don't worry about that here; it'll happen in createPostingsFile()
-          - When map.size() * (sizeof(TermID) + sizeof(PostingData)) >= (chunkMBSize * 1024 * 1024),
-             write current map to disk
-    */
-
     // iterate over documents, writing data to disk when we reach chunkMBSize
     for(auto & doc: documents)
     {
         tokenizer->tokenize(doc, NULL);
+        DocID docID = getDocID(doc.getPath());
+        cerr << " -> tokenizing " << doc.getName() << " (docid " << docID << ")" << endl;
         unordered_map<TermID, unsigned int> freqs = doc.getFrequencies();
         for(auto & freq: freqs)
-        {
-            DocID docID = getDocID(doc.getPath());
             terms[freq.first].push_back(PostingData(docID, freq.second));
-        }
 
-        // check size of term map
         //if(terms.size() * (sizeof(TermID) + sizeof(PostingData)) >= (chunkMBSize * 1024 * 1024))
         if(terms.size() * (sizeof(TermID) + sizeof(PostingData)) >= (chunkMBSize * 1024))
             writeChunk(terms, chunkNum++);
@@ -88,7 +77,6 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, 
 
     // write the last partial chunk
     writeChunk(terms, chunkNum++);
-
     return chunkNum;
 }
 
@@ -158,10 +146,29 @@ void Postings::createPostingsFile(size_t numChunks, Lexicon & lexicon)
     postingsFile.close();
 }
 
+void Postings::saveDocIDMapping(const string & filename) const
+{
+    _docMap.saveMap(filename);
+}
+
 unsigned int Postings::getTotalFreq(const vector<PostingData> & pdata) const
 {
     unsigned int freq = 0;
     for(auto & d: pdata)
         freq += d.freq;
     return freq;
+}
+
+void Postings::saveDocLengths(const vector<Document> & documents, const string & filename)
+{
+    ofstream outfile(filename);
+    if(outfile.good())
+    {
+        for(auto & doc: documents)
+            outfile << getDocID(doc.getPath()) << " " << doc.getLength() << endl;
+    }
+    else
+    {
+        cerr << "[Postings]: error saving document lengths" << endl;
+    }
 }

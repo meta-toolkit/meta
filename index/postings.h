@@ -76,6 +76,19 @@ class Postings
          */
         void createCompressedPostingsFile(size_t numChunks, Lexicon & lexicon);
 
+        /**
+         * Saves the docid mapping to disk.
+         * @param filename - the filename to save the mapping as
+         */
+        void saveDocIDMapping(const string & filename) const;
+
+        /**
+         * Saves document lengths for the given vector of documents.
+         * @param documents - the documents to save lengths of
+         * @param filename - the name for the doc length file
+         */
+        void saveDocLengths(const vector<Document> & documents, const string & filename);
+
     private:
 
         string _postingsFilename;

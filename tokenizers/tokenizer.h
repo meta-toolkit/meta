@@ -5,10 +5,12 @@
 #ifndef _TOKENIZER_H_
 #define _TOKENIZER_H_
 
+#include <fstream>
 #include <unordered_map>
 #include "index/document.h"
 #include "parse_tree.h"
 
+using std::ofstream;
 using std::unordered_map;
 
 /**
@@ -37,6 +39,12 @@ class Tokenizer
          * @return the TermID assigned to this term
          */
         virtual TermID getMapping(const string & term);
+
+        /**
+         * Calls the TermID InvertibleMap's saveMap function.
+         * @param filename - the filename to save the mapping as
+         */
+        void saveTermIDMapping(const string & filename) const;
 
     private:
         
