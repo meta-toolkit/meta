@@ -12,7 +12,6 @@ Lexicon::Lexicon(const string & lexiconFile):
     _docMap(InvertibleMap<DocID, string>())
 {
     readLexicon();
-    readDocLengths();
     setAvgDocLength();
 }
 
@@ -74,11 +73,9 @@ void Lexicon::readLexicon()
         return;
     }
 
-    cerr << "[Lexicon]: reading from file..." << endl;
-
     // the first, second, and third lines in the lexicon file correspond
     //  to the doclengths files, term id mapping, and docid mapping files respectively
-    _lengthsFilename = parser.next();
+    setLengthsMap(parser.next());
     setTermMap(parser.next());
     setDocMap(parser.next());
 
@@ -100,11 +97,14 @@ void Lexicon::readLexicon()
         istringstream(items[4]) >> data.postingBit;
         addTerm(termID, data);
     }
+
+    cerr << "[Lexicon]: added " << _entries.size() << " entries" << endl;
 }
 
-void Lexicon::readDocLengths()
+void Lexicon::setLengthsMap(const string & filename)
 {
-    Parser parser(_lengthsFilename, " \n");
+    cerr << "[Lexicon]: reading doc lengths from file" << endl;
+    Parser parser(filename, " \n");
 
     while(parser.hasNext())
     {
@@ -114,6 +114,8 @@ void Lexicon::readDocLengths()
         istringstream(parser.next()) >> length;
         _docLengths.insert(make_pair(docID, length));
     }
+
+    cerr << " -> added " << _docLengths.size() << " document lengths" << endl;
 }
 
 unsigned int Lexicon::getDocLength(DocID docID) const
@@ -162,6 +164,7 @@ DocID Lexicon::getDocID(string docName) const
 
 void Lexicon::setTermMap(const string & filename)
 {
+    cerr << "[Lexicon]: reading termIDs from file" << endl;
     Parser parser(filename, " \n");
     while(parser.hasNext())
     {
@@ -169,15 +172,18 @@ void Lexicon::setTermMap(const string & filename)
         istringstream(parser.next()) >> termID;
         _termMap.insert(termID, parser.next());
     }
+    cerr << " -> added " << _termMap.size() << " terms" << endl;
 }
 
 void Lexicon::setDocMap(const string & filename)
 {
+    cerr << "[Lexicon]: reading docIDs from file" << endl;
     Parser parser(filename, " \n");
     while(parser.hasNext())
     {
         DocID docID;
         istringstream(parser.next()) >> docID;
-        _termMap.insert(docID, parser.next());
+        _docMap.insert(docID, parser.next());
     }
+    cerr << " -> added " << _docLengths.size() << " documents" << endl;
 }

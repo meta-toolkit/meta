@@ -59,6 +59,11 @@ class Document
         string getCategory() const;
 
         /**
+         * @return the containing directory of a file given its full path
+         */
+        static string getCategory(const string & path);
+
+        /**
          * @return the name of this document
          */
         string getName() const;
@@ -92,11 +97,6 @@ class Document
          * @return the name of a document given its full path
          */
         static string getName(const string & path);
-
-        /**
-         * @return the containing directory of a file given its full path
-         */
-        static string getCategory(const string & path);
 };
 
 #endif

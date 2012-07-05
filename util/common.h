@@ -19,6 +19,16 @@ namespace Common
 {
     template <class T>
     string toString(const T & value);
+
+    inline string makeGreen(string str)
+    {
+        return "\033[1;32m" + str + "\033[0m";
+    }
+
+    inline string makeRed(string str)
+    {
+        return "\033[1;31m" + str + "\033[0m";
+    }
 }
 
 #include "common.cpp"

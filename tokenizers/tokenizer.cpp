@@ -1,7 +1,8 @@
 #include "tokenizer.h"
 
 Tokenizer::Tokenizer():
-    _currentTermID(0), _termMap(unordered_map<string, TermID>())
+    _currentTermID(0),
+    _termMap(unordered_map<string, TermID>())
 { /* nothing */ }
 
 TermID Tokenizer::getMapping(const string & term)
@@ -27,10 +28,7 @@ void Tokenizer::saveTermIDMapping(const string & filename) const
     if(outfile.good())
     {
         for(auto & term: _termMap)
-        {
-            outfile << term.first << " ";
-            outfile << term.second << endl;
-        }
+            outfile << term.second << " " << term.first << endl;
     }
     else
     {

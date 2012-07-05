@@ -19,15 +19,13 @@
 #include "io/parser.h"
 #include "index/ram_index.h"
 #include "index/document.h"
+#include "util/common.h"
 
 using std::pair;
 using std::vector;
 using std::cout;
 using std::endl;
 using std::string;
-
-inline string makeGreen(string str){ return "\033[1;32m" + str + "\033[0m"; }
-inline string makeRed(string str){ return "\033[1;31m" + str + "\033[0m"; }
 
 vector<Document> getDocs(const string & filename, const string & prefix)
 {
@@ -43,8 +41,8 @@ vector<Document> getDocs(const string & filename, const string & prefix)
 
 int main(int argc, char* argv[])
 {
-    string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
+    string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
     //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
 
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
@@ -63,10 +61,10 @@ int main(int argc, char* argv[])
         if(result == ( "(" + query.getCategory() + ")"))
         {
             ++numCorrect;
-            cout << "  -> " << makeGreen("OK");
+            cout << "  -> " << Common::makeGreen("OK");
         }
         else
-            cout << "  -> " << makeRed("incorrect");
+            cout << "  -> " << Common::makeRed("incorrect");
         cout << " " << result << endl << "  -> " << ((double) numCorrect / numQueries * 100)
              << "% accuracy, " << numQueries << "/" << testDocs.size() << " processed " << endl;
         ++numQueries;

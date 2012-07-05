@@ -9,9 +9,7 @@ Postings::Postings(const string & postingsFile):
     _postingsFilename(postingsFile),
     _docMap(InvertibleMap<DocID, string>()),
     _currentDocID(0)
-{
-    // ??
-}
+{ /* nothing */ }
 
 vector<PostingData> Postings::getDocs(const TermData & termData) const
 {
@@ -24,7 +22,7 @@ vector<PostingData> Postings::getDocs(const TermData & termData) const
          std::back_inserter<vector<string>>(items));
 
     vector<PostingData> data;
-    for(size_t i = 0; i < items.size(); i += 2)
+    for(size_t i = 1; i < items.size(); i += 2)
     {
         PostingData postingData;
         istringstream(items[i]) >> postingData.docID;
@@ -46,7 +44,7 @@ string Postings::getLine(unsigned int lineNumber) const
     size_t currentLine = 0;
     ifstream infile(_postingsFilename, ifstream::in);
     string line;
-    while(infile.good() && currentLine < lineNumber)
+    while(infile.good() && currentLine++ < lineNumber + 1)
         std::getline(infile, line);
     infile.close();
     return line;

@@ -103,10 +103,7 @@ class Lexicon
     private:
  
         string _lexiconFilename;
-        string _lengthsFilename;
-
         double _avgDL;
-        bool _avgDLSet;
 
         unordered_map<TermID, TermData> _entries;
         unordered_map<DocID, unsigned int> _docLengths;
@@ -123,7 +120,7 @@ class Lexicon
         /**
          * Reads the document lengths from disk.
          */
-        void readDocLengths();
+        void setLengthsMap(const string & filename);
 
         /**
          * Calculates the average document length of the collection

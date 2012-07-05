@@ -159,7 +159,7 @@ vector<Document> getDocs(const string & filename, const string & prefix)
     return docs;
 }
 
-void testIndex()
+void testIndexCreation()
 {
     string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
     string lexicon = "lexiconFile";
@@ -170,19 +170,40 @@ void testIndex()
     index.indexDocs(trainDocs, 1);
 }
 
+void testIndex()
+{
+    string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    string lexicon = "lexiconFile";
+    string postings = "postingsFile";
+    vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
+    Tokenizer* tokenizer = new NgramTokenizer(1);
+    InvertedIndex index(lexicon, postings, tokenizer);
+
+    size_t numQueries = 1;
+    size_t numCorrect = 0;
+    for(auto & query: testDocs)
+    {
+        tokenizer->tokenize(query, NULL);
+        string result = index.classifyKNN(query, 1);
+        if(result == query.getCategory())
+        {
+            ++numCorrect;
+            cout << "  -> " << Common::makeGreen("OK");
+        }
+        else
+            cout << "  -> " << Common::makeRed("incorrect");
+        cout << " (" << result << ")" << endl << "  -> " << ((double) numCorrect / numQueries * 100)
+             << "% accuracy, " << numQueries << "/" << testDocs.size() << " processed " << endl;
+        ++numQueries;
+    }
+}
+
 int main(int argc, char* argv[])
 {
-    /*
-    if(argc != 2)
-    {
-        cerr << "usage: " << argv[0] << " file.txt" << endl;
-        return 1;
-    }
-    */
-
     //testCompression(string(argv[0]));
     //testLexicon();
     //testIterators();
+    //testIndexCreation();
     testIndex();
 
     return 0;
