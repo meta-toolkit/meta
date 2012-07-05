@@ -50,8 +50,6 @@ IndexEntry ChunkList::next()
     vector<IndexEntry> mins;
     for(int i = 0; i < _numChunks; ++i)
     {
-        cerr << "i: " << i << ", _numChunks: " << _numChunks << endl; 
-
         // see if it has the min value
         IndexEntry current(_parsers[i].peek());
         if(current.termID == min.termID)
@@ -63,7 +61,7 @@ IndexEntry ChunkList::next()
         // get to valid spot
         if(!_parsers[i].hasNext())
         {
-            cerr << "[ChunkList]: used up a chunk" << endl;
+            cerr << "[ChunkList]: used up " << _parsers[i].getFilename() << endl;
             std::swap(_parsers[i], _parsers[_numChunks - 1]);
             --_numChunks;
             if(_numChunks == 0)

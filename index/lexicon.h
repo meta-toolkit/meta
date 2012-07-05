@@ -97,21 +97,6 @@ class Lexicon
          */
         DocID getDocID(string docName) const;
 
-        /**
-         * Sets this lexicon to represent a postings file.
-         * @param filename - the postings file to read from
-         */
-        void createFromPostings(const string & filename);
-
-        /**
-         * Sets this lexicon to represent a postings file.
-         * @param filename - the postings file to read from
-         *
-         * @todo Will also have to pass in the InvertibleMap to read
-         *  the compressed file
-         */
-        void createFromCompressedPostings(const string & filename);
-
     private:
  
         string _lexiconFilename;

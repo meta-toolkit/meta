@@ -129,11 +129,9 @@ void Postings::writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunk
     }
 }
 
-void Postings::createPostingsFile(size_t numChunks)
+void Postings::createPostingsFile(size_t numChunks, Lexicon & lexicon)
 {
     cerr << "[Postings]: merging chunks to create postings file" << endl;
-    // the lexicon can be created when the postings file is written to disk
-
     ofstream postingsFile(_postingsFilename);
     if(!postingsFile.good())
     {
@@ -141,9 +139,29 @@ void Postings::createPostingsFile(size_t numChunks)
         return;
     }
 
+    size_t line = 0;
     ChunkList chunks(numChunks - 1);
     while(chunks.hasNext())
-        postingsFile << chunks.next().toString() << "\n";
+    {
+        IndexEntry entry = chunks.next();
+
+        TermData termData;
+        termData.idf = entry.data.size();
+        termData.totalFreq = getTotalFreq(entry.data);
+        termData.postingIndex = line++;
+        termData.postingBit = 0; // uncompressed, always 0
+
+        lexicon.addTerm(entry.termID, termData);
+        postingsFile << entry.toString() << "\n";
+    }
 
     postingsFile.close();
+}
+
+unsigned int Postings::getTotalFreq(const vector<PostingData> & pdata) const
+{
+    unsigned int freq = 0;
+    for(auto & d: pdata)
+        freq += d.freq;
+    return freq;
 }

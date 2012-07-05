@@ -65,14 +65,16 @@ class Postings
         /**
          * Creates the large postings file on disk out of many chunks.
          * @param chunks - a list of filenames indicating the location of the chunks to combine
+         * @param lexicon - the lexicon to update while indexing
          */
-        void createPostingsFile(size_t numChunks);
+        void createPostingsFile(size_t numChunks, Lexicon & lexicon);
 
         /**
          * Creates a compressed postings file on disk out of many chunks.
          * @param chunks - a list of filenames indicating the location of the chunks to combine
+         * @param lexicon - the lexicon to update while indexing
          */
-        void createCompressedPostingsFile(size_t numChunks);
+        void createCompressedPostingsFile(size_t numChunks, Lexicon & lexicon);
 
     private:
 
@@ -80,6 +82,12 @@ class Postings
         //CompressedFileReader _reader;
         InvertibleMap<DocID, string> _docMap;
         DocID _currentDocID;
+
+        /**
+         * @param pdata - list of PostingData for a term
+         * @return the number of times a specific term has appeared in the corpus
+         */
+        unsigned int getTotalFreq(const vector<PostingData> & pdata) const;
 
         /**
          * Gets a line out of an uncompressed postings file.

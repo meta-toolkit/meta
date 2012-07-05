@@ -85,6 +85,11 @@ public:
 	void reset();
 
 	/**
+     * Returns the name of the file being parsed
+     */
+	string getFilename() const;
+
+	/**
      * The destructor closes the input file if it is still open as well as normal memory duties
      */
 	virtual ~Parser();

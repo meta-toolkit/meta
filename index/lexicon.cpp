@@ -34,14 +34,16 @@ TermData Lexicon::getTermInfo(TermID termID) const
 
 void Lexicon::save() const
 {
+    cerr << "[Lexicon]: saving lexicon to disk" << endl;
+
     ofstream outfile(_lexiconFilename);
     if(outfile.good())
     {
         // save the paths to the doclengths and mappings
-        outfile << _lengthsFilename << endl;
-
         string termMapFilename = "termid.mapping";
         string docMapFilename = "docid.mapping";
+
+        outfile << _lengthsFilename << endl;
         outfile << termMapFilename << endl;
         outfile << docMapFilename << endl;
 
@@ -50,13 +52,12 @@ void Lexicon::save() const
 
         for(auto & entry: _entries)
         {
-            string line = Common::toString(entry.first) + " ";
+            outfile << entry.first << " ";
             TermData data = entry.second;
-            line += Common::toString(data.idf) + " ";
-            line += Common::toString(data.totalFreq) + " ";
-            line += Common::toString(data.postingIndex) + " ";
-            line += Common::toString(data.postingBit) + "\n";
-            outfile << line;
+            outfile << data.idf << " ";
+            outfile << data.totalFreq << " ";
+            outfile << data.postingIndex << " ";
+            outfile << (int) data.postingBit << "\n";
         }
         outfile.close();
     }
@@ -186,14 +187,4 @@ void Lexicon::setDocMap(const string & filename)
         istringstream(parser.next()) >> docID;
         _termMap.insert(docID, parser.next());
     }
-}
-
-void Lexicon::createFromPostings(const string & filename)
-{
-
-}
-
-void Lexicon::createFromCompressedPostings(const string & filename)
-{
-
 }

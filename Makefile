@@ -32,4 +32,4 @@ clean:
 	rm -f $(SEARCH) $(TESTER)
 
 tidy:
-	rm -rf ./doc *.chunk postingsFile lexiconFile
+	rm -rf ./doc *.chunk postingsFile lexiconFile termid.mapping docid.mapping

@@ -183,6 +183,10 @@ void Parser::initSetsViaDelims(string delimiters){
     }
 }
 
+string Parser::getFilename() const {
+    return textfile->get_title();
+}
+
 Parser::~Parser(){
     clear();
 }
