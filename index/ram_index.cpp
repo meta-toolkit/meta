@@ -88,7 +88,7 @@ size_t RAMIndex::getAvgDocLength() const
     return _avgDocLength;
 }
 
-multimap<double, string> RAMIndex::search(const Document & query) const
+multimap<double, string> RAMIndex::search(Document & query) const
 {
     cout << "[RAMIndex]: scoring documents for query " << query.getName()
          << " (" << query.getCategory() << ")" << endl;
@@ -110,7 +110,7 @@ multimap<double, string> RAMIndex::search(const Document & query) const
     return ranks;
 }
 
-string RAMIndex::classifyKNN(const Document & query, size_t k) const
+string RAMIndex::classifyKNN(Document & query, size_t k) const
 {
     multimap<double, string> ranking = search(query);
     unordered_map<string, size_t> counts;

@@ -2,19 +2,23 @@
 
 Tokenizer::Tokenizer():
     _currentTermID(0),
-    _termMap(unordered_map<string, TermID>())
+    _termMap(InvertibleMap<TermID, string>())
 { /* nothing */ }
 
 TermID Tokenizer::getMapping(const string & term)
 {
-    auto it = _termMap.find(term);
-    if(it == _termMap.end())
+    if(!_termMap.containsValue(term))
     {
-        _termMap.insert(make_pair(term, _currentTermID));
+        _termMap.insert(_currentTermID, term);
+        //cerr << "[Tokenizer]: added NEW term #" << term << "# (termID " << _currentTermID << ")" << endl;
         return _currentTermID++;
     }
     else
-        return it->second;
+    {
+        TermID termID = _termMap.getKeyByValue(term);
+        //cerr << "[Tokenizer]: looked up term #" << term << "# (termID " << termID << ")" << endl;
+        return termID;
+    }
 }
 
 void Tokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
@@ -22,16 +26,13 @@ void Tokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int
 
 }
 
+void Tokenizer::setTermIDMapping(const InvertibleMap<TermID, string> & mapping)
+{
+    _termMap = mapping;
+    _currentTermID = _termMap.size();
+}
+
 void Tokenizer::saveTermIDMapping(const string & filename) const
 {
-    ofstream outfile(filename);
-    if(outfile.good())
-    {
-        for(auto & term: _termMap)
-            outfile << term.second << " " << term.first << endl;
-    }
-    else
-    {
-        cerr << "[Tokenizer]: error creating termid mapping file" << endl;
-    }
+    _termMap.saveMap(filename);
 }

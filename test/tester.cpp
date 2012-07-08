@@ -161,8 +161,8 @@ vector<Document> getDocs(const string & filename, const string & prefix)
 
 void testIndexCreation()
 {
-    //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
-    string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
     //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
     //string prefix = "/home/sean/projects/senior-thesis-data/simple/";
     string lexicon = "lexiconFile";
@@ -175,14 +175,14 @@ void testIndexCreation()
 
 void testIndex()
 {
-    //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
-    string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
     //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
     //string prefix = "/home/sean/projects/senior-thesis-data/simple/";
     string lexicon = "lexiconFile";
     string postings = "postingsFile";
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
-    Tokenizer* tokenizer = new NgramTokenizer(1);
+    Tokenizer* const tokenizer = new NgramTokenizer(1);
     InvertedIndex index(lexicon, postings, tokenizer);
 
     //testDocs.erase(testDocs.begin() + 1, testDocs.end());
@@ -191,7 +191,6 @@ void testIndex()
     size_t numCorrect = 0;
     for(auto & query: testDocs)
     {
-        tokenizer->tokenize(query, NULL);
         string result = index.classifyKNN(query, 1);
         if(result == query.getCategory())
         {

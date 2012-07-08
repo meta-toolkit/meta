@@ -8,9 +8,12 @@ InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postings
     _lexicon(lexiconFile),
     _postings(postingsFile),
     _tokenizer(tokenizer)
-{ /* nothing */ }
+{
+    if(!_lexicon.isEmpty())
+        _tokenizer->setTermIDMapping(_lexicon.getTermIDMapping());
+}
 
-multimap<double, string> InvertedIndex::search(const Document & query) const
+multimap<double, string> InvertedIndex::search(Document & query) const
 {
     cerr << "[InvertedIndex]: scoring documents for query " << query.getName()
          << " (" << query.getCategory() << ")" << endl;
@@ -22,14 +25,25 @@ multimap<double, string> InvertedIndex::search(const Document & query) const
     double avgDL = _lexicon.getAvgDocLength();
     unordered_map<DocID, double> scores;
 
+    _tokenizer->tokenize(query, NULL);
     const unordered_map<TermID, unsigned int> freqs = query.getFrequencies();
+
+    //cerr << "Iterating through " << freqs.size() << " unique tokens" << endl;
     for(auto & queryTerm: freqs)
     {
         TermID queryTermID = queryTerm.first;
-        //cerr << _lexicon.getTerm(queryTermID) << endl;
+        if(!_lexicon.containsTermID(queryTermID))
+        {
+            //cerr << "[InvertedIndex]: query contains token not indexed" << endl;
+            continue;
+        }
+
         size_t queryTermFreq = queryTerm.second;
         TermData termData = _lexicon.getTermInfo(queryTermID);
         vector<PostingData> docList = _postings.getDocs(termData);
+
+        //cerr << "  Iterating through " << docList.size()
+        //     << " documents containing \"" << _lexicon.getTerm(queryTermID) << "\" (termID " << queryTermID << ")" << endl;
         for(auto & doc: docList)
         {
             double docLength = _lexicon.getDocLength(doc.docID);
@@ -37,9 +51,11 @@ multimap<double, string> InvertedIndex::search(const Document & query) const
             double TF = ((k1 + 1.0) * doc.freq) / ((k1 * ((1.0 - b) + b * docLength / avgDL)) + doc.freq);
             double QTF = ((k3 + 1.0) * queryTermFreq) / (k3 + queryTermFreq);
             double score = TF * IDF * QTF;
-            //cerr << "  docLength: " << docLength << ", avgDL: " << avgDL << endl;
-            //cerr << "  idf: " << termData.idf << ", tf: " << doc.freq << ", qtf: " << queryTermFreq << endl;
-            //cerr << "  IDF: " << IDF << ", TF: " << TF << ", QTF: " << QTF << endl;
+
+            //cerr << "    docLength: " << docLength << ", avgDL: " << avgDL << endl;
+            //cerr << "    idf: " << termData.idf << ", tf: " << doc.freq << ", qtf: " << queryTermFreq << endl;
+            //cerr << "    IDF: " << IDF << ", TF: " << TF << ", QTF: " << QTF << endl;
+
             scores[doc.docID] += score;
         }
         //cerr << endl;
@@ -55,7 +71,7 @@ multimap<double, string> InvertedIndex::search(const Document & query) const
     return results;
 }
 
-string InvertedIndex::classifyKNN(const Document & query, size_t k) const
+string InvertedIndex::classifyKNN(Document & query, size_t k) const
 {
     multimap<double, string> ranking = search(query);
     unordered_map<string, size_t> counts;

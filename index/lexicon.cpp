@@ -152,6 +152,11 @@ TermID Lexicon::getTermID(string term) const
     return _termMap.getKeyByValue(term);
 }
 
+bool Lexicon::containsTermID(TermID termID) const
+{
+    return termID < _termMap.size();
+}
+
 string Lexicon::getDoc(DocID docID) const
 {
     return _docMap.getValueByKey(docID);
@@ -186,4 +191,9 @@ void Lexicon::setDocMap(const string & filename)
         _docMap.insert(docID, parser.next());
     }
     cerr << " -> added " << _docLengths.size() << " documents" << endl;
+}
+
+const InvertibleMap<TermID, string> & Lexicon::getTermIDMapping() const
+{
+    return _termMap;
 }

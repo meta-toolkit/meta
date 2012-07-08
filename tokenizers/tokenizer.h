@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <unordered_map>
+#include "util/invertible_map.h"
 #include "index/document.h"
 #include "parse_tree.h"
 
@@ -46,10 +47,18 @@ class Tokenizer
          */
         void saveTermIDMapping(const string & filename) const;
 
+        /**
+         * Sets the token to termid mapping for this tokenizer.
+         * This is useful when reading an inverted index from disk
+         *  with an existing mapping.
+         * @param mapping - a reference to the desired mapping
+         */
+        void setTermIDMapping(const InvertibleMap<TermID, string> & mapping);
+
     private:
         
         TermID _currentTermID;
-        unordered_map<string, TermID> _termMap;
+        InvertibleMap<TermID, string> _termMap;
 };
 
 #endif

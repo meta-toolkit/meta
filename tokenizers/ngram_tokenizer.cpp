@@ -70,6 +70,7 @@ string NgramTokenizer::wordify(const vector<string> & words) const
     string result = "";
     for(auto & word: words)
         result += (word + " ");
+    result = result.substr(0, result.size() - 1);
     return result;
 }
 

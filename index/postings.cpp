@@ -55,7 +55,7 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, 
     cerr << "[Postings]: creating chunks" << endl;
 
     size_t chunkNum = 0;
-    size_t maxSize = chunkMBSize * 1024;
+    size_t maxSize = chunkMBSize * 4 * 1024 * 1024;
     vector<string> chunkNames;
     map<TermID, vector<PostingData>> terms;
 

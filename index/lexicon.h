@@ -91,6 +91,11 @@ class Lexicon
         TermID getTermID(string term) const;
         
         /**
+         * @return whether this lexicon has information on the specified termID
+         */
+        bool containsTermID(TermID termID) const;
+
+        /**
          * @return the string document name associated with the termID
          */
         string getDoc(DocID docID) const;
@@ -99,6 +104,11 @@ class Lexicon
          * @return the DocID of the given document name
          */
         DocID getDocID(string docName) const;
+
+        /**
+         * @return the TermID mapping for this lexicon
+         */
+        const InvertibleMap<TermID, string> & getTermIDMapping() const;
 
     private:
  
