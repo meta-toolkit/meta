@@ -2,7 +2,6 @@
  * @file parser.cpp
  */
 
-#include <iostream>
 #include "parser.h"
 
 Parser::Parser(string filename, string valid_chars, string starting_chars, string ending_chars){

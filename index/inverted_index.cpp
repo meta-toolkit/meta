@@ -26,6 +26,7 @@ multimap<double, string> InvertedIndex::search(const Document & query) const
     for(auto & queryTerm: freqs)
     {
         TermID queryTermID = queryTerm.first;
+        //cerr << _lexicon.getTerm(queryTermID) << endl;
         size_t queryTermFreq = queryTerm.second;
         TermData termData = _lexicon.getTermInfo(queryTermID);
         vector<PostingData> docList = _postings.getDocs(termData);
@@ -36,16 +37,19 @@ multimap<double, string> InvertedIndex::search(const Document & query) const
             double TF = ((k1 + 1.0) * doc.freq) / ((k1 * ((1.0 - b) + b * docLength / avgDL)) + doc.freq);
             double QTF = ((k3 + 1.0) * queryTermFreq) / (k3 + queryTermFreq);
             double score = TF * IDF * QTF;
-            cerr << queryTermID << ": IDF: " << IDF << ", TF: " << TF << ", QTF: " << QTF << endl;
+            //cerr << "  docLength: " << docLength << ", avgDL: " << avgDL << endl;
+            //cerr << "  idf: " << termData.idf << ", tf: " << doc.freq << ", qtf: " << queryTermFreq << endl;
+            //cerr << "  IDF: " << IDF << ", TF: " << TF << ", QTF: " << QTF << endl;
             scores[doc.docID] += score;
         }
+        //cerr << endl;
     }
 
     // combine into sorted multimap
     multimap<double, string> results;
     for(auto & score: scores)
     {
-        cerr << score.second << ": " << _lexicon.getDoc(score.first) << endl;
+        //cerr << score.second << ": " << _lexicon.getDoc(score.first) << endl;
         results.insert(make_pair(score.second, Document::getCategory(_lexicon.getDoc(score.first))));
     }
     return results;

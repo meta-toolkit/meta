@@ -76,7 +76,7 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
         double TF = ((k1 + 1.0) * termFreq) / ((k1 * ((1.0 - b) + b * docLength / _avgDocLength)) + termFreq);
         double QTF = ((k3 + 1.0) * queryTermFreq) / (k3 + queryTermFreq);
 
-        cerr << term.first << ": IDF: " << IDF << ", TF: " << TF << ", QTF: " << QTF << endl;
+        //cerr << term.first << ": IDF: " << IDF << ", TF: " << TF << ", QTF: " << QTF << endl;
         score += IDF * TF * QTF;
     }
 

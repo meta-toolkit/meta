@@ -24,7 +24,7 @@ void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigne
         do
         {
             next = stem(parser.next(), stemmer);
-        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext() && i < _nValue);
+        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
     }
 
@@ -41,6 +41,9 @@ void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigne
         } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
     }
+
+    // add the last token
+    document.increment(getMapping(wordify(ngram)), 1, docFreq);
 
     sb_stemmer_delete(stemmer);
 }

@@ -55,6 +55,7 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, 
     cerr << "[Postings]: creating chunks" << endl;
 
     size_t chunkNum = 0;
+    size_t maxSize = chunkMBSize * 1024;
     vector<string> chunkNames;
     map<TermID, vector<PostingData>> terms;
 
@@ -68,13 +69,13 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, 
         for(auto & freq: freqs)
             terms[freq.first].push_back(PostingData(docID, freq.second));
 
-        //if(terms.size() * (sizeof(TermID) + sizeof(PostingData)) >= (chunkMBSize * 1024 * 1024))
-        if(terms.size() * (sizeof(TermID) + sizeof(PostingData)) >= (chunkMBSize * 1024))
+        if(terms.size() * (sizeof(TermID) + sizeof(PostingData)) >= maxSize)
             writeChunk(terms, chunkNum++);
     }
 
     // write the last partial chunk
-    writeChunk(terms, chunkNum++);
+    if(terms.size())
+        writeChunk(terms, chunkNum++);
     return chunkNum;
 }
 
@@ -126,7 +127,7 @@ void Postings::createPostingsFile(size_t numChunks, Lexicon & lexicon)
     }
 
     size_t line = 0;
-    ChunkList chunks(numChunks - 1);
+    ChunkList chunks(numChunks);
     while(chunks.hasNext())
     {
         IndexEntry entry = chunks.next();

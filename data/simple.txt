@@ -1,0 +1,33 @@
+doc0
+    b c d e f g g g
+
+doc1
+    d e f g h j
+
+doc2
+    k l m n o p p
+
+doc3
+    g p p q q r r s s
+
+stop words: a t i
+
+TermID and IDF
+
+0 b 1
+1 c 1
+2 d 2
+3 e 2
+4 f 2
+5 g 3
+6 h 1
+7 j 1
+8 k 1
+9 l 1
+10 m 1
+11 n  1
+12 o 1
+13 p 2
+14 q 1
+15 r 1
+16 s 1

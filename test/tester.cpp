@@ -161,7 +161,10 @@ vector<Document> getDocs(const string & filename, const string & prefix)
 
 void testIndexCreation()
 {
+    //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
     string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/simple/";
     string lexicon = "lexiconFile";
     string postings = "postingsFile";
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
@@ -172,12 +175,17 @@ void testIndexCreation()
 
 void testIndex()
 {
+    //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
     string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/simple/";
     string lexicon = "lexiconFile";
     string postings = "postingsFile";
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
     Tokenizer* tokenizer = new NgramTokenizer(1);
     InvertedIndex index(lexicon, postings, tokenizer);
+
+    //testDocs.erase(testDocs.begin() + 1, testDocs.end());
 
     size_t numQueries = 1;
     size_t numCorrect = 0;
