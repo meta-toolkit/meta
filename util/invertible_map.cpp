@@ -90,6 +90,20 @@ void InvertibleMap<Key, Value>::saveMap(const string & filename) const
     }
 }
 
+template <class Key, class Value>
+void InvertibleMap<Key, Value>::readMap(const string & filename)
+{
+    Parser parser(filename, " \n");
+    while(parser.hasNext())
+    {
+        Key key;
+        Value value;
+        istringstream(parser.next()) >> key;
+        istringstream(parser.next()) >> value;
+        insert(key, value);
+    }
+}
+
 /* Iterator code */
 
 template <class Key, class Value>

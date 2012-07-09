@@ -210,7 +210,7 @@ int main(int argc, char* argv[])
     //testCompression(string(argv[0]));
     //testLexicon();
     //testIterators();
-    //testIndexCreation();
+    testIndexCreation();
     testIndex();
 
     return 0;

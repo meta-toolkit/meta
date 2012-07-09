@@ -106,6 +106,13 @@ class Lexicon
         DocID getDocID(string docName) const;
 
         /**
+         * Reads document lengths from disk into memory.
+         * We don't use InvertibleMap::readMap because many docLengths
+         *  can be duplicated.
+         */
+        void setDocLengths(const string & filename);
+
+        /**
          * @return the TermID mapping for this lexicon
          */
         const InvertibleMap<TermID, string> & getTermIDMapping() const;
@@ -128,29 +135,10 @@ class Lexicon
         void readLexicon();
 
         /**
-         * Reads the document lengths from disk.
-         */
-        void setLengthsMap(const string & filename);
-
-        /**
          * Calculates the average document length of the collection
          *  and stores it in the member variable.
          */
         void setAvgDocLength();
-
-        /**
-         * Reads the specified file and initializes the TermID mapping
-         *  accordingly.
-         * @param filename - where the mapping file is located
-         */
-        void setTermMap(const string & filename);
-
-        /**
-         * Reads the specified file and initializes the DocID mapping
-         *  accordingly.
-         * @param filename - where the mapping file is located
-         */
-        void setDocMap(const string & filename);
 };
 
 #endif

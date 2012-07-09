@@ -11,8 +11,10 @@
 #include <iostream>
 #include <map>
 #include <unordered_map>
+#include "io/parser.h"
 #include "util/common.h"
 
+using std::istringstream;
 using std::ofstream;
 using std::pair;
 using std::make_pair;
@@ -86,6 +88,12 @@ class InvertibleMap
          * @param map - the map to save
          */
         void saveMap(const string & filename) const;
+
+        /**
+         * Reads a saved map from disk and loads it into the current InvertibleMap.
+         * @param filename - the file where the map is saved
+         */
+        void readMap(const string & filename);
 
         /**
          * The "inner" iterator representation of the InvertibleMap.

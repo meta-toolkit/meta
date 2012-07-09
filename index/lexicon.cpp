@@ -75,9 +75,18 @@ void Lexicon::readLexicon()
 
     // the first, second, and third lines in the lexicon file correspond
     //  to the doclengths files, term id mapping, and docid mapping files respectively
-    setLengthsMap(parser.next());
-    setTermMap(parser.next());
-    setDocMap(parser.next());
+
+    cerr << "[Lexicon]: reading doc lengths from file" << endl;
+    setDocLengths(parser.next());
+    cerr << " -> added " << _docLengths.size() << " document lengths" << endl;
+    
+    cerr << "[Lexicon]: reading termIDs from file" << endl;
+    _termMap.readMap(parser.next());
+    cerr << " -> added " << _termMap.size() << " terms" << endl;
+
+    cerr << "[Lexicon]: reading docIDs from file" << endl;
+    _docMap.readMap(parser.next());
+    cerr << " -> added " << _docMap.size() << " documents" << endl;
 
     while(parser.hasNext())
     {
@@ -99,23 +108,6 @@ void Lexicon::readLexicon()
     }
 
     cerr << "[Lexicon]: added " << _entries.size() << " entries" << endl;
-}
-
-void Lexicon::setLengthsMap(const string & filename)
-{
-    cerr << "[Lexicon]: reading doc lengths from file" << endl;
-    Parser parser(filename, " \n");
-
-    while(parser.hasNext())
-    {
-        DocID docID;
-        unsigned int length;
-        istringstream(parser.next()) >> docID;
-        istringstream(parser.next()) >> length;
-        _docLengths.insert(make_pair(docID, length));
-    }
-
-    cerr << " -> added " << _docLengths.size() << " document lengths" << endl;
 }
 
 unsigned int Lexicon::getDocLength(DocID docID) const
@@ -167,33 +159,20 @@ DocID Lexicon::getDocID(string docName) const
     return _docMap.getKeyByValue(docName);
 }
 
-void Lexicon::setTermMap(const string & filename)
+const InvertibleMap<TermID, string> & Lexicon::getTermIDMapping() const
 {
-    cerr << "[Lexicon]: reading termIDs from file" << endl;
-    Parser parser(filename, " \n");
-    while(parser.hasNext())
-    {
-        TermID termID;
-        istringstream(parser.next()) >> termID;
-        _termMap.insert(termID, parser.next());
-    }
-    cerr << " -> added " << _termMap.size() << " terms" << endl;
+    return _termMap;
 }
 
-void Lexicon::setDocMap(const string & filename)
+void Lexicon::setDocLengths(const string & filename)
 {
-    cerr << "[Lexicon]: reading docIDs from file" << endl;
     Parser parser(filename, " \n");
     while(parser.hasNext())
     {
         DocID docID;
+        unsigned int length;
         istringstream(parser.next()) >> docID;
-        _docMap.insert(docID, parser.next());
+        istringstream(parser.next()) >> length;
+        _docLengths.insert(make_pair(docID, length));
     }
-    cerr << " -> added " << _docLengths.size() << " documents" << endl;
-}
-
-const InvertibleMap<TermID, string> & Lexicon::getTermIDMapping() const
-{
-    return _termMap;
 }
