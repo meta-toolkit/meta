@@ -2,10 +2,15 @@
  * @file ram_index.cpp
  */
 
+#include <cmath>
+#include <omp.h>
 #include "document.h"
 #include "tokenizers/tokenizer.h"
 #include "ram_index.h"
 
+using std::cout;
+using std::endl;
+using std::cerr;
 using std::string;
 using std::vector;
 using std::multimap;

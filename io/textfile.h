@@ -16,8 +16,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-using std::string;
-
 /**
  * Memory maps a text file for better I/O performance and allows you to read it.
  */
@@ -29,7 +27,7 @@ class TextFile
          * Constructor.
          * @param title - creates a TextFile object from the given filename
          */
-        TextFile(string title);
+        TextFile(std::string title);
 
         /**
          * Opens the current file.
@@ -45,7 +43,7 @@ class TextFile
         /**
          * @return the title of the text file (the parameter given to the contructor)
          */
-        string get_title() const;
+        std::string get_title() const;
 
         /**
          * Closes the text file.
@@ -55,7 +53,7 @@ class TextFile
 
     private:
 
-        string _title;
+        std::string _title;
         char* start;
         unsigned int size;
         int file_descriptor;

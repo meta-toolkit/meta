@@ -2,6 +2,11 @@
  * @file common.cpp
  */
 
+#include <sstream>
+
+using std::string;
+using std::stringstream;
+
 template <class T>
 string Common::toString(const T & value)
 {

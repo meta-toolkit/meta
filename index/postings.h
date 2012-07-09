@@ -12,6 +12,7 @@
 #include <vector>
 #include <iostream>
 
+#include "document.h"
 #include "util/invertible_map.h"
 
 class TermData;

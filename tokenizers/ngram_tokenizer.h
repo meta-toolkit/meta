@@ -5,21 +5,13 @@
 #ifndef _NGRAM_TOKENIZER_H_
 #define _NGRAM_TOKENIZER_H_
 
-#include <string.h>
-#include <cstdlib>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
 
-#include "libstemmer/libstemmer.h"
-#include "index/document.h"
-#include "io/parser.h"
-#include "parse_tree.h"
 #include "tokenizer.h"
 
-using std::vector;
-using std::unordered_map;
-using std::unordered_set;
+class Document;
 
 /**
  * Tokenizes documents based on an ngram word model, where the value for n is supplied by the user.
@@ -38,7 +30,7 @@ class NgramTokenizer : public Tokenizer
          * @param document - the Document to store the tokenized information in
          * @param docFreqs - optional parameter to store IDF values in
          */
-        virtual void tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreqs);
+        virtual void tokenize(Document & document, std::unordered_map<TermID, unsigned int>* docFreqs);
 
         /**
          * @return the value of n used for the ngrams
@@ -51,7 +43,7 @@ class NgramTokenizer : public Tokenizer
         size_t _nValue;
 
         /** a stopword list based on the Lemur stopwords */
-        unordered_set<string> _stopwords;
+        std::unordered_set<string> _stopwords;
         
         /**
          * Uses the Snowball stemmer.
@@ -59,21 +51,21 @@ class NgramTokenizer : public Tokenizer
          * @param stemmer - the stemmer to use
          * @return the stemmed version of the word
          */
-        string stem(const string & word, struct sb_stemmer* stemmer) const;
+        std::string stem(const std::string & word, struct sb_stemmer* stemmer) const;
     
         /**
          * Simply changes all letters to lowercase in a word.
          * @param word - the word to change
          * @return the value of n used for the ngrams
          */
-        string setLower(const string & word) const;
+        std::string setLower(const std::string & word) const;
 
         /**
          * Turns a list of words into an ngram string.
          * @param words - the vectoring representing a list of words
          * @return the ngrams in string format
          */
-        string wordify(const vector<string> & words) const;
+        std::string wordify(const std::vector<std::string> & words) const;
 
         /**
          * Sets up a set of stopwords.

@@ -5,10 +5,9 @@
 #ifndef _RAM_INDEX_
 #define _RAM_INDEX_
 
-#include <cmath>
+#include <vector>
 #include <unordered_map>
 #include <map>
-#include <omp.h>
 #include <string>
 
 #include "index.h"

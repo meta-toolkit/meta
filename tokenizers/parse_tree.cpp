@@ -2,7 +2,16 @@
  * @file parse_tree.cpp
  */
 
+#include <fstream>
+#include <iostream>
 #include "parse_tree.h"
+
+using std::ifstream;
+using std::cout;
+using std::endl;
+using std::cerr;
+using std::string;
+using std::vector;
 
 ParseTree::ParseTree(string tags): children(vector<ParseTree>())
 {

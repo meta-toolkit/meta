@@ -8,6 +8,7 @@
 #include "inverted_index.h"
 #include "structs.h"
 
+using std::vector;
 using std::multimap;
 using std::unordered_map;
 using std::string;

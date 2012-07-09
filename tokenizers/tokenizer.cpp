@@ -1,4 +1,11 @@
+#include <fstream>
+#include "util/invertible_map.h"
+#include "index/document.h"
+#include "parse_tree.h"
 #include "tokenizer.h"
+
+using std::ofstream;
+using std::unordered_map;
 
 Tokenizer::Tokenizer():
     _currentTermID(0),

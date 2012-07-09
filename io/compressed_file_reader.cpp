@@ -4,6 +4,10 @@
 
 #include "compressed_file_reader.h"
 
+using std::cerr;
+using std::endl;
+using std::string;
+
 CompressedFileReader::CompressedFileReader(const string & filename):
     _currentValue(0), _currentChar(0), _currentBit(0), _status(notDone)
 {

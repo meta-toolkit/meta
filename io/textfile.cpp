@@ -2,39 +2,40 @@
  * @file textfile.cpp
  */
 
-#include <iostream>
 #include "textfile.h"
 
-using namespace std;
+using std::cerr;
+using std::endl;
+using std::string;
 
-TextFile::TextFile(string title){
-
+TextFile::TextFile(string title)
+{
     _title = title;
     start = NULL;
     size = 0;
     file_descriptor = -1;
-    
 }
 
-char* TextFile::opentext(){
-
+char* TextFile::opentext()
+{
     // get file size
     struct stat st;
     stat(_title.c_str(), &st);
-    
     size = st.st_size;
     
     // get file descriptor
     file_descriptor = open(_title.c_str(), O_RDONLY);
-    if(file_descriptor < 0){
+    if(file_descriptor < 0)
+    {
         // cerr << "Error obtaining file descriptor for: " << _title.c_str() << endl;
         return NULL;
     }
     
     // memory map
     start = (char*) mmap(NULL, size, PROT_READ, MAP_SHARED, file_descriptor, 0);
-    if(start == NULL){
-        cerr << "Error memory-mapping the file\n";
+    if(start == NULL)
+    {
+        cerr << "Error memory-mapping " << _title << endl;
         close(file_descriptor);
         return NULL;
     }
@@ -42,18 +43,21 @@ char* TextFile::opentext(){
     return start;
 }
 
-unsigned int TextFile::get_size() const {
+unsigned int TextFile::get_size() const
+{
     return size;
 }
 
-string TextFile::get_title() const {
+string TextFile::get_title() const
+{
     return _title;
 }
 
-bool TextFile::closetext(){
-    
-    if(start == NULL){
-        // cerr << "Error closing file. Was closetext() called without a matching opentext() ?\n";
+bool TextFile::closetext()
+{    
+    if(start == NULL)
+    {
+        // cerr << "Error closing file. Was closetext() called without a matching opentext() ?" << endl;
         return false;
     }
     

@@ -16,10 +16,6 @@
 #include <iostream>
 #include <string>
 
-using std::cerr;
-using std::endl;
-using std::string;
-
 /**
  * Simply saves the current state of the reader.
  */
@@ -36,7 +32,7 @@ class CompressedFileReader
          * Constructor.
          * Opens a compressed file for reading.
          */
-        CompressedFileReader(const string & filename);
+        CompressedFileReader(const std::string & filename);
 
         /**
          * Destructor.

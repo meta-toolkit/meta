@@ -4,6 +4,10 @@
 
 #include "compressed_file_writer.h"
 
+using std::cerr;
+using std::endl;
+using std::string;
+
 CompressedFileWriter::CompressedFileWriter(const string & filename)
 {
     _outfile = fopen(filename.c_str(), "w");

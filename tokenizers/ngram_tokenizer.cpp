@@ -2,7 +2,17 @@
  * @file ngram_tokenizer.cpp
  */
 
+#include <string.h>
+#include <cstdlib>
+#include "libstemmer/libstemmer.h"
+#include "index/document.h"
+#include "io/parser.h"
+#include "parse_tree.h"
 #include "ngram_tokenizer.h"
+
+using std::vector;
+using std::unordered_map;
+using std::unordered_set;
 
 NgramTokenizer::NgramTokenizer(size_t n):
     _nValue(n), _stopwords(unordered_set<string>())

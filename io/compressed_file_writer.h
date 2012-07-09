@@ -11,10 +11,6 @@
 #include <string>
 #include <iostream>
 
-using std::cerr;
-using std::endl;
-using std::string;
-
 /**
  * Writes to a file of unsigned integers using gamma compression.
  */
@@ -26,7 +22,7 @@ class CompressedFileWriter
          * Constructor.
          * Opens a compressed file for writing or creates a new file if it doesn't exist.
          */
-        CompressedFileWriter(const string & filename);
+        CompressedFileWriter(const std::string & filename);
 
         /**
          * Destructor; closes the compressed file.
