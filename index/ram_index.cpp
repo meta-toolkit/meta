@@ -2,7 +2,13 @@
  * @file ram_index.cpp
  */
 
+#include "document.h"
+#include "tokenizers/tokenizer.h"
 #include "ram_index.h"
+
+using std::string;
+using std::vector;
+using std::multimap;
 
 RAMIndex::RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer)
 {

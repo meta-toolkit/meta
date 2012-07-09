@@ -6,15 +6,6 @@
 #define _CHUNK_LIST_H_
 
 #include <vector>
-#include <string>
-#include <iostream>
-#include "io/parser.h"
-#include "structs.h"
-
-using std::cerr;
-using std::endl;
-using std::vector;
-using std::string;
 
 /**
  * Represents a collection of chunks that are waiting to be merged into
@@ -45,7 +36,7 @@ class ChunkList
     private:
 
         size_t _numChunks;
-        vector<Parser> _parsers;
+        std::vector<Parser> _parsers;
 
         /**
          * Appends entries from the vector of IndexEntries into one IndexEntry.
@@ -53,7 +44,7 @@ class ChunkList
          * @param entries - the entries to combine together
          * @param combined - where to store the combined IndexEntries
          */
-        void combinePostingData(vector<IndexEntry> & entries, IndexEntry & combined) const;
+        void combinePostingData(std::vector<IndexEntry> & entries, IndexEntry & combined) const;
 };
 
 #endif

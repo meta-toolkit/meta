@@ -5,14 +5,8 @@
 #ifndef _DOCUMENT_H_
 #define _DOCUMENT_H_
 
-#include <utility>
-#include <string>
 #include <unordered_map>
-
-using std::pair;
-using std::make_pair;
-using std::string;
-using std::unordered_map;
+#include <string>
 
 /** Numbering value for Terms in the index */
 typedef unsigned int TermID;
@@ -31,7 +25,7 @@ class Document
          * Constructor.
          * @param path - the path to the document
          */
-        Document(const string & path);
+        Document(const std::string & path);
 
         /**
          * Increment the count of the specified transition.
@@ -46,27 +40,27 @@ class Document
          * @param amount - the amount to increment by
          * @param docFreq - used for IDF
          */
-        void increment(TermID termID, unsigned int amount, unordered_map<TermID, unsigned int>* docFreq);
+        void increment(TermID termID, unsigned int amount, std::unordered_map<TermID, unsigned int>* docFreq);
 
         /**
          * @return the path to this document (the argument to the constructor)
          */
-        string getPath() const;
+        std::string getPath() const;
 
         /**
          * @return the classification category this document is in
          */
-        string getCategory() const;
+        std::string getCategory() const;
 
         /**
          * @return the containing directory of a file given its full path
          */
-        static string getCategory(const string & path);
+        static std::string getCategory(const std::string & path);
 
         /**
          * @return the name of this document
          */
-        string getName() const;
+        std::string getName() const;
 
         /**
          * @return the total of transitions recorded for this Document.
@@ -83,20 +77,20 @@ class Document
         /**
          * @return the map of frequencies for this document.
          */
-        const unordered_map<TermID, unsigned int> & getFrequencies() const;
+        const std::unordered_map<TermID, unsigned int> & getFrequencies() const;
  
     private:
 
-        string _path;
-        string _category;
-        string _name;
+        std::string _path;
+        std::string _category;
+        std::string _name;
         size_t _length;
-        unordered_map<TermID, unsigned int> _frequencies;
+        std::unordered_map<TermID, unsigned int> _frequencies;
 
         /**
          * @return the name of a document given its full path
          */
-        static string getName(const string & path);
+        static std::string getName(const std::string & path);
 };
 
 #endif

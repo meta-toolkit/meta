@@ -8,16 +8,16 @@
 #include <map>
 #include <unordered_map>
 #include <cmath>
+#include <vector>
 #include <string>
+
 #include "index.h"
-#include "tokenizers/tokenizer.h"
-#include "document.h"
-#include "lexicon.h"
 #include "postings.h"
 
-using std::multimap;
-using std::unordered_map;
-using std::string;
+class Tokenizer;
+class Document;
+class Postings;
+class Lexicon;
 
 /**
  * Represents an index that resides on disk, in the standard inverted format.
@@ -34,7 +34,7 @@ class InvertedIndex : public Index
          * @param postingsFile - where to find the postings
          * @param tokenizer - how to tokenize the indexed files
          */
-        InvertedIndex(const string & lexiconFile, const string & postingsFile, Tokenizer* tokenizer);
+        InvertedIndex(const std::string & lexiconFile, const std::string & postingsFile, Tokenizer* tokenizer);
 
         /**
          * Scores a document given a query.
@@ -54,7 +54,7 @@ class InvertedIndex : public Index
          * @param query - the query to perform the search with
          * @return - a mapping of scores to Documents
          */
-        multimap<double, string> search(Document & query) const;
+        std::multimap<double, std::string> search(Document & query) const;
 
         /**
          * Classify the query document by category using K-Nearest Neighbor.
@@ -62,7 +62,7 @@ class InvertedIndex : public Index
          * @param k - the value of k in KNN
          * @return the category the document is believed to be in
          */
-        string classifyKNN(Document & query, size_t k) const;
+        std::string classifyKNN(Document & query, size_t k) const;
 
         /**
          * Creates an index of given documents.
@@ -72,7 +72,7 @@ class InvertedIndex : public Index
          * @return whether the index creation was successful. For instance,
          *  it fails if there is already an index in that location.
          */
-        bool indexDocs(vector<Document> & documents, size_t chunkMBSize);
+        bool indexDocs(std::vector<Document> & documents, size_t chunkMBSize);
 
     private:
 

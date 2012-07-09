@@ -2,7 +2,20 @@
  * @file lexicon.cpp
  */
 
+#include "document.h"
+#include "io/parser.h"
+#include "util/common.h"
 #include "lexicon.h"
+
+using std::ofstream;
+using std::vector;
+using std::istringstream;
+using std::endl;
+using std::cerr;
+using std::pair;
+using std::make_pair;
+using std::unordered_map;
+using std::string;
 
 Lexicon::Lexicon(const string & lexiconFile):
     _lexiconFilename(lexiconFile),

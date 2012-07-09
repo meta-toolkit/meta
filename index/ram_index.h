@@ -6,14 +6,14 @@
 #define _RAM_INDEX_
 
 #include <cmath>
+#include <unordered_map>
+#include <map>
 #include <omp.h>
 #include <string>
 
-#include "document.h"
-#include "tokenizers/tokenizer.h"
 #include "index.h"
 
-using std::string;
+class Tokenizer;
 
 /**
  * Represents an index that resides in memory and is created on the fly.
@@ -26,14 +26,14 @@ class RAMIndex : public Index
          * @param indexDocs - Document objects to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer);
+        RAMIndex(const std::vector<Document> & indexDocs, Tokenizer* tokenizer);
 
         /**
          * Creates an Index located in memory.
          * @param indexFiles - files to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer);
+        RAMIndex(const std::vector<string> & indexFiles, Tokenizer* tokenizer);
 
         /**
          * Scores a document given a query.
@@ -53,7 +53,7 @@ class RAMIndex : public Index
          * @param query - the query to perform the search with
          * @return - a mapping of scores to Documents
          */
-        multimap<double, string> search(Document & query) const;
+        std::multimap<double, std::string> search(Document & query) const;
 
         /**
          * Classify the query document by category using K-Nearest Neighbor.
@@ -61,15 +61,15 @@ class RAMIndex : public Index
          * @param k - the value of k in KNN
          * @return the category the document is believed to be in
          */
-        string classifyKNN(Document & query, size_t k) const;
+        std::string classifyKNN(Document & query, size_t k) const;
 
     private:
 
         /** documents stored in this index */
-        vector<Document> _documents;
+        std::vector<Document> _documents;
 
         /** the IDF values of all the terms encountered in the document collection */
-        unordered_map<TermID, unsigned int> _docFreqs;
+        std::unordered_map<TermID, unsigned int> _docFreqs;
 
         /** average number of terms in the documents in the collection */
         size_t _avgDocLength;
@@ -78,12 +78,12 @@ class RAMIndex : public Index
          * Adds counts to the IDF map.
          * @param newFreqs - the frequencies to add to _docFreqs
          */
-        void combineMap(const unordered_map<TermID, unsigned int> & newFreqs);
+        void combineMap(const std::unordered_map<TermID, unsigned int> & newFreqs);
 
         /**
          * @return a filename minus the path
          */
-        string shortFilename(const string & filename) const;
+        std::string shortFilename(const std::string & filename) const;
 };
 
 #endif

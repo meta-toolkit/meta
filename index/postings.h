@@ -11,20 +11,13 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "tokenizers/tokenizer.h"
-#include "io/compressed_file_reader.h"
-#include "io/compressed_file_writer.h"
-#include "lexicon.h"
-#include "structs.h"
-#include "chunk_list.h"
 
-using std::map;
-using std::istringstream;
-using std::ifstream;
-using std::string;
-using std::vector;
-using std::cerr;
-using std::endl;
+#include "util/invertible_map.h"
+
+class TermData;
+class PostingData;
+class Lexicon;
+class Tokenizer;
 
 /**
  * This is the interface to the large postings file located on disk.
@@ -36,19 +29,19 @@ class Postings
         /**
          * Constructor; sets this Postings object to look at the specified file.
          */
-        Postings(const string & postingsFile);
+        Postings(const std::string & postingsFile);
 
         /**
          * @param termData - used to determine the location of the term information in the postings
-         * @return a vector of documents that contain the term the parameters refer to
+         * @return a std::vector of documents that contain the term the parameters refer to
          */
-        vector<PostingData> getDocs(const TermData & termData) const;
+        std::vector<PostingData> getDocs(const TermData & termData) const;
 
         /**
          * @param termData - used to determine the location of the term information in the postings
-         * @return a vector of documents that contain the term the parameters refer to
+         * @return a std::vector of documents that contain the term the parameters refer to
          */
-        vector<PostingData> getCompressedDocs(const TermData & termData) const;
+        std::vector<PostingData> getCompressedDocs(const TermData & termData) const;
 
         /**
          * Creates lists of term information sorted by TermID on disk.
@@ -60,7 +53,7 @@ class Postings
          * @return the number of chunks created. Since their name is standard, they can easily
          *  be located.
          */
-        size_t createChunks(vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer);
+        size_t createChunks(std::vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer);
 
         /**
          * Creates the large postings file on disk out of many chunks.
@@ -80,27 +73,27 @@ class Postings
          * Saves the docid mapping to disk.
          * @param filename - the filename to save the mapping as
          */
-        void saveDocIDMapping(const string & filename) const;
+        void saveDocIDMapping(const std::string & filename) const;
 
         /**
-         * Saves document lengths for the given vector of documents.
+         * Saves document lengths for the given std::vector of documents.
          * @param documents - the documents to save lengths of
          * @param filename - the name for the doc length file
          */
-        void saveDocLengths(const vector<Document> & documents, const string & filename);
+        void saveDocLengths(const std::vector<Document> & documents, const std::string & filename);
 
     private:
 
-        string _postingsFilename;
+        std::string _postingsFilename;
         //CompressedFileReader _reader;
-        InvertibleMap<DocID, string> _docMap;
+        InvertibleMap<DocID, std::string> _docMap;
         DocID _currentDocID;
 
         /**
          * @param pdata - list of PostingData for a term
          * @return the number of times a specific term has appeared in the corpus
          */
-        unsigned int getTotalFreq(const vector<PostingData> & pdata) const;
+        unsigned int getTotalFreq(const std::vector<PostingData> & pdata) const;
 
         /**
          * Gets a line out of an uncompressed postings file.
@@ -109,14 +102,14 @@ class Postings
          * @param lineNumber - which line number in the postings file to seek to
          * @return the contents of the specified line
          */
-        string getLine(unsigned int lineNumber) const;
+        std::string getLine(unsigned int lineNumber) const;
 
         /**
          * Writes a chunk to disk.
          * @param terms - the map of terms to write. It is cleared at the end of this function.
          * @param chunkNum - the number used for the filename
          */
-        void writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunkNum) const;
+        void writeChunk(std::map<TermID, std::vector<PostingData>> & terms, size_t chunkNum) const;
 
         /**
          * Keeps the DocID -> path mapping, and returns a new DocID
@@ -124,7 +117,7 @@ class Postings
          * @param path - the document path to check
          * @return the DocID for the given path
          */
-        DocID getDocID(const string & path);
+        DocID getDocID(const std::string & path);
 };
 
 #endif

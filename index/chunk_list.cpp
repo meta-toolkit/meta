@@ -1,4 +1,18 @@
+/**
+ * @file chunk_list.cpp
+ */
+
+#include <string>
+#include <iostream>
+#include "io/parser.h"
+#include "structs.h"
+#include "util/common.h"
 #include "chunk_list.h"
+
+using std::cerr;
+using std::endl;
+using std::vector;
+using std::string;
 
 ChunkList::ChunkList(size_t numChunks):
     _numChunks(numChunks),

@@ -10,56 +10,55 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "util/common.h"
-#include "document.h"
 
-using std::istringstream;
-using std::string;
-using std::vector;
+typedef unsigned int TermID;
+typedef unsigned int DocID;
 
 /**
  * Represents one term's document info.
  */
-struct PostingData
+class PostingData
 {
-    /** The numeric id value assigned to this document */
-    DocID docID;
+    public:
+        /** The numeric id value assigned to this document */
+        DocID docID;
 
-    /** The number of times a term appeared in this document */
-    unsigned int freq;
+        /** The number of times a term appeared in this document */
+        unsigned int freq;
 
-    /** Parameters constructor */
-    PostingData(DocID pdocID, unsigned int pfreq):
-        docID(pdocID), freq(pfreq){ /* nothing */ }
+        /** Parameters constructor */
+        PostingData(DocID pdocID, unsigned int pfreq):
+            docID(pdocID), freq(pfreq){ /* nothing */ }
 
-    /** No params contructor */
-    PostingData():
-        docID(0), freq(0){ /* nothing */ }
+        /** No params contructor */
+        PostingData():
+            docID(0), freq(0){ /* nothing */ }
 
-    /**
-     * Compares two PostingDatas.
-     * @param other - the PostingData to compare with
-     * @return whether this PostingData's docID is less than the parameter 
-     */
-    bool operator<(const PostingData & other) const;
+        /**
+         * Compares two PostingDatas.
+         * @param other - the PostingData to compare with
+         * @return whether this PostingData's docID is less than the parameter 
+         */
+        bool operator<(const PostingData & other) const;
 };
 
 /**
  * Represents metadata for a specific term in the lexicon.
  */
-struct TermData
+class TermData
 {
-    /** The inverse document frequency */
-    unsigned int idf;
+    public:
+        /** The inverse document frequency */
+        unsigned int idf;
 
-    /** The total number of occurences of this term */
-    unsigned int totalFreq;
+        /** The total number of occurences of this term */
+        unsigned int totalFreq;
 
-    /** The byte address in the inverted index */
-    unsigned int postingIndex;
+        /** The byte address in the inverted index */
+        unsigned int postingIndex;
 
-    /** The bit address where this TermData starts */
-    unsigned char postingBit;
+        /** The bit address where this TermData starts */
+        unsigned char postingBit;
 };
 
 /**
@@ -67,31 +66,32 @@ struct TermData
  * Multiple IndexEntries with the same TermID can be
  *  merged together.
  */
-struct IndexEntry
+class IndexEntry
 {
-    TermID termID;
-    vector<PostingData> data;
+    public:
+        TermID termID;
+        std::vector<PostingData> data;
 
-    IndexEntry(TermID ptermID):
-        termID(ptermID) { /* nothing */ }
+        IndexEntry(TermID ptermID):
+            termID(ptermID) { /* nothing */ }
 
-    /**
-     * Constructor from a string.
-     * @param str - the string to make this IndexEntry from
-     */
-    IndexEntry(const string & str);
+        /**
+         * Constructor from a string.
+         * @param str - the string to make this IndexEntry from
+         */
+        IndexEntry(const std::string & str);
 
-    /**
-     * @return a string representation of this IndexEntry
-     */
-    string toString() const;
+        /**
+         * @return a string representation of this IndexEntry
+         */
+        std::string toString() const;
 
-    /**
-     * Compares two IndexEntriess.
-     * @param other - the IndexEntry to compare with
-     * @return whether this IndexEntry's termID is less than the parameter 
-     */
-    bool operator<(const IndexEntry & other) const;
+        /**
+         * Compares two IndexEntriess.
+         * @param other - the IndexEntry to compare with
+         * @return whether this IndexEntry's termID is less than the parameter 
+         */
+        bool operator<(const IndexEntry & other) const;
 };
 
 #endif

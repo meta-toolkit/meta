@@ -1,4 +1,14 @@
+/**
+ * @file structs.cpp
+ */
+
+#include "util/common.h"
+#include "document.h"
 #include "structs.h"
+
+using std::istringstream;
+using std::string;
+using std::vector;
 
 IndexEntry::IndexEntry(const string & str):
     data(vector<PostingData>())

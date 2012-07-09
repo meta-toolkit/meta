@@ -2,7 +2,15 @@
  * @file inverted_index.cpp
  */
 
+#include "tokenizers/tokenizer.h"
+#include "document.h"
+#include "lexicon.h"
 #include "inverted_index.h"
+#include "structs.h"
+
+using std::multimap;
+using std::unordered_map;
+using std::string;
 
 InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postingsFile, Tokenizer* tokenizer):
     _lexicon(lexiconFile),

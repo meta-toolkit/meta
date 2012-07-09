@@ -2,7 +2,13 @@
  * @file document.cpp
  */
 
+#include <utility>
 #include "document.h" 
+
+using std::pair;
+using std::make_pair;
+using std::string;
+using std::unordered_map;
 
 Document::Document(const string & path):
     _frequencies(unordered_map<TermID, unsigned int>()),

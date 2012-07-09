@@ -2,7 +2,21 @@
  * @file postings.cpp
  */
 
+#include "tokenizers/tokenizer.h"
+#include "io/compressed_file_reader.h"
+#include "io/compressed_file_writer.h"
+#include "lexicon.h"
+#include "structs.h"
+#include "chunk_list.h"
 #include "postings.h"
+
+using std::map;
+using std::istringstream;
+using std::ifstream;
+using std::string;
+using std::vector;
+using std::cerr;
+using std::endl;
 
 Postings::Postings(const string & postingsFile):
     //_reader(postingsFile),
