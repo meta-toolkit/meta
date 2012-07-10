@@ -2,6 +2,18 @@
  * @file invertible_map.cpp
  */
 
+#include "io/parser.h"
+#include "util/common.h"
+
+using std::istringstream;
+using std::ofstream;
+using std::pair;
+using std::make_pair;
+using std::map;
+using std::unordered_map;
+using std::cerr;
+using std::endl;
+
 template <class Key, class Value>
 InvertibleMap<Key, Value>::InvertibleMap():
     _forward(unordered_map<Key, Value>()),

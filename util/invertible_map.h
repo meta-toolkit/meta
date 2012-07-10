@@ -11,17 +11,7 @@
 #include <iostream>
 #include <map>
 #include <unordered_map>
-#include "io/parser.h"
-#include "util/common.h"
-
-using std::istringstream;
-using std::ofstream;
-using std::pair;
-using std::make_pair;
-using std::map;
-using std::unordered_map;
-using std::cerr;
-using std::endl;
+#include <string>
 
 /**
  * This data structure indexes by keys as well as values, allowing constant
@@ -75,30 +65,30 @@ class InvertibleMap
         /**
          * @return a (key, value) map sorted by keys
          */
-        map<Key, Value> sortKeys() const;
+        std::map<Key, Value> sortKeys() const;
 
         /**
          * @return a (value, key) map sorted by values
          */
-        map<Value, Key> sortValues() const;
+        std::map<Value, Key> sortValues() const;
 
         /**
          * Saves an Invertible Map to disk.
          * @param filename - where to save the map
          * @param map - the map to save
          */
-        void saveMap(const string & filename) const;
+        void saveMap(const std::string & filename) const;
 
         /**
          * Reads a saved map from disk and loads it into the current InvertibleMap.
          * @param filename - the file where the map is saved
          */
-        void readMap(const string & filename);
+        void readMap(const std::string & filename);
 
         /**
          * The "inner" iterator representation of the InvertibleMap.
          */
-        typedef typename unordered_map<Key, Value>::const_iterator InnerIterator;
+        typedef typename std::unordered_map<Key, Value>::const_iterator InnerIterator;
 
         /**
          * The InvertibleMap iterator is really just a wrapper for the forward (key -> value)
@@ -168,8 +158,8 @@ class InvertibleMap
 
     private:
 
-        unordered_map<Key, Value> _forward;
-        unordered_map<Value, Key> _backward;
+        std::unordered_map<Key, Value> _forward;
+        std::unordered_map<Value, Key> _backward;
 };
 
 #include "invertible_map.cpp"
