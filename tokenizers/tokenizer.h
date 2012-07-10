@@ -31,7 +31,7 @@ class Tokenizer
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        virtual void tokenize(Document & document, std::unordered_map<TermID, unsigned int>* docFreq);
+        virtual void tokenize(Document & document, std::unordered_map<TermID, unsigned int>* docFreq) = 0;
 
         /**
          * Maps terms to TermIDs.

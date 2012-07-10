@@ -121,28 +121,8 @@ multimap<double, string> RAMIndex::search(Document & query) const
     return ranks;
 }
 
-string RAMIndex::classifyKNN(Document & query, size_t k) const
+bool RAMIndex::indexDocs(std::vector<Document> & documents, size_t chunkMBSize)
 {
-    multimap<double, string> ranking = search(query);
-    unordered_map<string, size_t> counts;
-    size_t numResults = 0;
-    for(auto result = ranking.rbegin(); result != ranking.rend() && numResults++ != k; ++result)
-    {
-        size_t space = result->second.find_first_of(" ") + 1;
-        string category = result->second.substr(space, result->second.size() - space);
-        counts[category]++;
-    }
-
-    string best = "[no results]";
-    size_t high = 0;
-    for(auto & count: counts)
-    {
-        if(count.second > high)
-        {
-            best = count.first;
-            high = count.second;
-        }
-    }
-
-    return best;
+    // put code for index creation in here?
+    return true;
 }

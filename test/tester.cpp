@@ -169,8 +169,11 @@ void testIndexCreation()
     string postings = "postingsFile";
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
     Tokenizer* tokenizer = new NgramTokenizer(1);
-    InvertedIndex index(lexicon, postings, tokenizer);
-    index.indexDocs(trainDocs, 1);
+    Index* index = new InvertedIndex(lexicon, postings, tokenizer);
+    index->indexDocs(trainDocs, 1);
+
+    delete index;
+    delete tokenizer;
 }
 
 void testIndex()
@@ -183,7 +186,7 @@ void testIndex()
     string postings = "postingsFile";
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
     Tokenizer* const tokenizer = new NgramTokenizer(1);
-    InvertedIndex index(lexicon, postings, tokenizer);
+    Index* index = new InvertedIndex(lexicon, postings, tokenizer);
 
     //testDocs.erase(testDocs.begin() + 1, testDocs.end());
 
@@ -191,7 +194,7 @@ void testIndex()
     size_t numCorrect = 0;
     for(auto & query: testDocs)
     {
-        string result = index.classifyKNN(query, 1);
+        string result = index->classifyKNN(query, 1);
         if(result == query.getCategory())
         {
             ++numCorrect;
@@ -203,6 +206,9 @@ void testIndex()
              << "% accuracy, " << numQueries << "/" << testDocs.size() << " processed " << endl;
         ++numQueries;
     }
+
+    delete index;
+    delete tokenizer;
 }
 
 int main(int argc, char* argv[])

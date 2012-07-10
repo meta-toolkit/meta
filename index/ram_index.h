@@ -9,7 +9,6 @@
 #include <unordered_map>
 #include <map>
 #include <string>
-
 #include "index.h"
 
 class Tokenizer;
@@ -33,6 +32,15 @@ class RAMIndex : public Index
          * @param tokenizer - how to tokenize the indexed files 
          */
         RAMIndex(const std::vector<string> & indexFiles, Tokenizer* tokenizer);
+        
+        /**
+         * Creates an index of given documents.
+         * @param documents - a vector of documents to make the index out of
+         * @param chunkMBSize - the maximum size the postings chunks will be in
+         *  memory before they're written to disk.
+         * @return whether the index creation was successful.
+         */
+        bool indexDocs(std::vector<Document> & documents, size_t chunkMBSize);
 
         /**
          * Scores a document given a query.
@@ -53,14 +61,6 @@ class RAMIndex : public Index
          * @return - a mapping of scores to Documents
          */
         std::multimap<double, std::string> search(Document & query) const;
-
-        /**
-         * Classify the query document by category using K-Nearest Neighbor.
-         * @param query - the query to run
-         * @param k - the value of k in KNN
-         * @return the category the document is believed to be in
-         */
-        std::string classifyKNN(Document & query, size_t k) const;
 
     private:
 

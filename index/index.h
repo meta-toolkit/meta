@@ -6,6 +6,7 @@
 #define _INDEX_H_
 
 #include <map>
+#include <vector>
 #include <string>
 
 class Document;
@@ -30,7 +31,16 @@ class Index
          * @param k - the value of k in KNN
          * @return the category the document is believed to be in
          */
-        virtual std::string classifyKNN(Document & query, size_t k) const = 0;
+        virtual std::string classifyKNN(Document & query, size_t k) const;
+
+        /**
+         * Creates an index of given documents.
+         * @param documents - a vector of documents to make the index out of
+         * @param chunkMBSize - the maximum size the postings chunks will be in
+         *  memory before they're written to disk.
+         * @return whether the index creation was successful.
+         */
+        virtual bool indexDocs(std::vector<Document> & documents, size_t chunkMBSize) = 0;
 };
 
 #endif

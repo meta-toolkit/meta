@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
 
     Tokenizer* tokenizer = new NgramTokenizer(1);
-    RAMIndex index(trainDocs, tokenizer);
+    Index* index = new RAMIndex(trainDocs, tokenizer);
 
     cout << "Running queries..." << endl;
     size_t numQueries = 1;
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     for(auto & query: testDocs)
     {
         tokenizer->tokenize(query, NULL);
-        string result = index.classifyKNN(query, 1);
+        string result = index->classifyKNN(query, 1);
         if(result == ( "(" + query.getCategory() + ")"))
         {
             ++numCorrect;
@@ -70,6 +70,7 @@ int main(int argc, char* argv[])
         ++numQueries;
     }
 
+    delete index;
     delete tokenizer;
     return 0;
 }

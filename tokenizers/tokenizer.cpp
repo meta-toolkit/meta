@@ -28,11 +28,6 @@ TermID Tokenizer::getMapping(const string & term)
     }
 }
 
-void Tokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
-{
-
-}
-
 void Tokenizer::setTermIDMapping(const InvertibleMap<TermID, string> & mapping)
 {
     _termMap = mapping;
