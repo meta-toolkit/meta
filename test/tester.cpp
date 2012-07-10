@@ -91,9 +91,9 @@ InvertibleMap<char, unsigned int> getMapping(const unordered_map<char, size_t> &
 
     InvertibleMap<char, unsigned int> mapping;
     unsigned int value = 1;
-    for(auto & it: sorted)
+    for(auto it = sorted.rbegin(); it != sorted.rend(); ++it)
     {
-        mapping.insert(it.second, value);
+        mapping.insert(it->second, value);
         ++value;
     }
 
@@ -119,32 +119,6 @@ void testCompression(string filename)
     start = omp_get_wtime();
     decompress("compressed.txt", "uncompressed.txt", mapping);
     cerr << "  " << omp_get_wtime() - start << " seconds elapsed" << endl;
-}
-
-void testLexicon()
-{
-    Lexicon lexicon("lexicon.txt");
-    TermData data = lexicon.getTermInfo(1);
-    cerr << "idf for 1: " << data.idf << endl;
-    data.idf = 77;
-    data.totalFreq = 77;
-    data.postingIndex = 77;
-    data.postingBit = 7;
-    lexicon.addTerm(77, data);
-    //lexicon.save();
-}
-
-void testIterators()
-{
-    InvertibleMap<int, string> imap;
-    imap.insert(4, "derp");
-    imap.insert(5, "derpyderp");
-    imap.insert(7, "derpderp");
-    imap.insert(19, "herpderp");
-    for(InvertibleMap<int, string>::const_iterator it = imap.begin(); it != imap.end(); ++it)
-        cout << it->first << " " << it->second << endl;
-    for(auto & it: imap)
-        cout << it.first << " " << it.second << endl;
 }
 
 vector<Document> getDocs(const string & filename, const string & prefix)
@@ -213,11 +187,9 @@ void testIndex()
 
 int main(int argc, char* argv[])
 {
-    //testCompression(string(argv[0]));
-    //testLexicon();
-    //testIterators();
-    testIndexCreation();
-    testIndex();
+    testCompression(string(argv[1]));
+    //testIndexCreation();
+    //testIndex();
 
     return 0;
 }
