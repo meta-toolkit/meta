@@ -4,7 +4,7 @@
 
 #include <string.h>
 #include <cstdlib>
-#include "libstemmer/libstemmer.h"
+#include "stemmers/snowball_stemmer.h"
 #include "index/document.h"
 #include "io/parser.h"
 #include "parse_tree.h"

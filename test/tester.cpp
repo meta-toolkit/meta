@@ -187,9 +187,9 @@ void testIndex()
 
 int main(int argc, char* argv[])
 {
-    testCompression(string(argv[1]));
-    //testIndexCreation();
-    //testIndex();
+    //testCompression(string(argv[1]));
+    testIndexCreation();
+    testIndex();
 
     return 0;
 }
