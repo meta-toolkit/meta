@@ -2,7 +2,8 @@ SEARCH = search
 SEARCHOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o tokenizers/pos_tree_tokenizer.o \
     index/index.o tokenizers/level_tree_tokenizer.o tokenizers/ngram_tokenizer.o io/textfile.o io/parser.o \
     index/lexicon.o index/inverted_index.o io/compressed_file_reader.o io/compressed_file_writer.o \
-    index/postings.o stemmers/snowball_stemmer.o tokenizers/tokenizer.o index/chunk_list.o index/structs.o
+    index/postings.o stemmers/snowball_stemmer.o tokenizers/tokenizer.o index/chunk_list.o index/structs.o \
+    stemmers/porter2_stemmer.o
 
 TESTER = tester
 TESTEROBJS = $(SEARCHOBJS)
@@ -29,7 +30,7 @@ $(TESTER): $(TESTEROBJS) test/tester.cpp $(TEMPLATES)
 
 clean:
 	for dir in $(CLEANDIRS) ; do rm -rf $$dir/*.o ; done
-	rm -f $(SEARCH) $(TESTER)
+	rm -f $(SEARCH) $(TESTER) stemmers/porter2_stemmer.o
 
 tidy:
 	rm -rf ./doc *.chunk postingsFile lexiconFile termid.mapping docid.mapping docs.lengths *compressed.txt
