@@ -89,7 +89,18 @@ string NgramTokenizer::stem(const string & word, struct sb_stemmer* stemmer) con
 {
     size_t length = word.size();
     sb_symbol symb[length];
-    const char* cstr = (Common::setLower(word)).c_str();
+    const char* cstr = setLower(word).c_str();
     memcpy(symb, cstr, length);
     return string((char*)sb_stemmer_stem(stemmer, symb, length));
+}
+
+string NgramTokenizer::setLower(const string & original) const
+{
+    string word = "";
+    for(auto ch: original)
+    {
+        if(ch > 'A' && ch < 'Z')
+            ch += 32;
+    }
+    return word;
 }

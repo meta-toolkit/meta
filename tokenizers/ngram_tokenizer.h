@@ -64,6 +64,8 @@ class NgramTokenizer : public Tokenizer
          * Sets up a set of stopwords.
          */
         void initStopwords();
+
+        string setLower(const string & original) const;
 };
 
 #endif

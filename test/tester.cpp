@@ -188,7 +188,7 @@ void testIndex()
 
 void testStemmer()
 {
-    string word = "DERPY";
+    string word = "derpy";
     cout << Porter2Stemmer::stem(word) << endl;
 }
 

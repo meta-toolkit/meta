@@ -3,11 +3,16 @@
  */
 
 #include <boost/regex.hpp>
-#include <iostream>
 #include "porter2_stemmer.h"
 
 using namespace Porter2Stemmer::internal;
 using std::string;
+using boost::regex;
+using boost::smatch;
+
+#include <iostream>
+using std::cout;
+using std::endl;
 
 string Porter2Stemmer::stem(const string & toStem)
 {
@@ -33,8 +38,8 @@ string Porter2Stemmer::stem(const string & toStem)
 
 string Porter2Stemmer::internal::finalStem(string & word)
 {
-    word = regex_replace(word, boost::regex("Y"), "y");
-    word = regex_replace(word, boost::regex("'"), "");
+    word = regex_replace(word, regex("Y"), "y");
+    word = regex_replace(word, regex("'"), "");
     return word;
 }
 
@@ -58,28 +63,36 @@ bool Porter2Stemmer::internal::returnImmediately(const string & word)
 
 int Porter2Stemmer::internal::getStartR1(const string & word)
 {
-    return 1;
-    //startR1 = word.search(/[aeiouy][^aeiouy]/)
-    //if(startR1 == -1)
-    //    return word.size();
-    //else
-    //    return std::distance(word.begin(), it) + 2;
+    smatch results;
+    if(regex_search(word, results, regex("[aeiouy][^aeiouy]")))
+        return results.position() + 2;
+    else
+        return word.size();
 }
 
 int Porter2Stemmer::internal::getStartR2(const string & word, int startR1)
 {
-  //return startR1 if startR1 == word.length
-  //r1 = word.slice(startR1)
-  //startR2 = r1.search(/[aeiouy][^aeiouy]/)
-  //if startR2 == -1 then word.length else startR1 + startR2 + 2
-    return 1;
+    if(startR1 == word.size())
+        return startR1;
+
+    string split = word.substr(startR1, word.size() - startR1);
+
+    smatch results;
+    if(regex_search(split, results, regex("[aeiouy][^aeiouy]")))
+        return results.position() + startR1 + 2;
+    else
+        return word.size();
 }
 
 void Porter2Stemmer::internal::changeY(string & word)
 {
-  //return word if word.indexOf("y") == -1
-  //word = "Y" + word.slice(1) if word.charAt(0) == "y"
-  //word.replace(/([aeiou])y/g, "$1Y")
+    if(word.find_first_of("y") == string::npos)
+        return;
+
+    if(word[0] == 'y')
+        word[0] = 'Y';
+
+    word = regex_replace(word, regex("([aeiou])y"), "$1Y");
 }
 
 void Porter2Stemmer::internal::removeApostrophe(string & word)
@@ -117,7 +130,7 @@ void Porter2Stemmer::internal::step1B(string & word, int startR1)
 
 void Porter2Stemmer::internal::step1C(string & word)
 {
-  //word.replace /(\w+[^aeiouy])(y|Y)$/, "$1i"
+    //word = regex_replace(word, regex("(\w+[^aeiouy])(y|Y)$"), "$1i");
 }
 
 void Porter2Stemmer::internal::step2(string & word, int startR1)
@@ -200,10 +213,4 @@ bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
 {
     //word.match(/^([aeouiy][^aeouiy]|\w*[^aeiouy][aeouiy][^aeouiyYwx])$/) != null and startR1 >= word.length
     return false;
-}
-
-bool Porter2Stemmer::internal::isVowel(char ch)
-{
-    return ch == 'e' || ch == 'a' || ch == 'i' ||
-           ch == 'u' || ch == 'o' || ch == 'y';
 }
