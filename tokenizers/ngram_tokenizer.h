@@ -52,14 +52,7 @@ class NgramTokenizer : public Tokenizer
          * @return the stemmed version of the word
          */
         std::string stem(const std::string & word, struct sb_stemmer* stemmer) const;
-    
-        /**
-         * Simply changes all letters to lowercase in a word.
-         * @param word - the word to change
-         * @return the value of n used for the ngrams
-         */
-        std::string setLower(const std::string & word) const;
-
+     
         /**
          * Turns a list of words into an ngram string.
          * @param words - the vectoring representing a list of words

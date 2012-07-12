@@ -4,6 +4,7 @@
 
 #include <string.h>
 #include <cstdlib>
+#include "util/common.h"
 #include "stemmers/snowball_stemmer.h"
 #include "index/document.h"
 #include "io/parser.h"
@@ -84,19 +85,11 @@ string NgramTokenizer::wordify(const vector<string> & words) const
     return result;
 }
 
-string NgramTokenizer::setLower(const string & word) const
-{
-    string lower = "";
-    for(auto & ch: word)
-        lower += tolower(ch);
-    return lower;
-}
-
 string NgramTokenizer::stem(const string & word, struct sb_stemmer* stemmer) const
 {
     size_t length = word.size();
     sb_symbol symb[length];
-    const char* cstr = (setLower(word)).c_str();
+    const char* cstr = (Common::setLower(word)).c_str();
     memcpy(symb, cstr, length);
     return string((char*)sb_stemmer_stem(stemmer, symb, length));
 }

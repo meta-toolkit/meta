@@ -18,7 +18,7 @@ namespace Porter2Stemmer
 
     namespace internal
     {
-        std::string finalStem(const std::string & word);
+        std::string finalStem(std::string & word);
 
         std::string prepareWord(const std::string & word);
 
@@ -32,21 +32,23 @@ namespace Porter2Stemmer
 
         void removeApostrophe(std::string & word);
 
-        void doStep1A(std::string & word);
+        void step1A(std::string & word);
 
-        void doStep1B(std::string & word, int startR1);
+        void step1B(std::string & word, int startR1);
 
-        void doStep1C(std::string & word);
+        void step1C(std::string & word);
 
-        void doStep2(std::string & word, int startR1);
+        void step2(std::string & word, int startR1);
 
-        void doStep3(std::string & word, int startR1, int startR2);
+        void step3(std::string & word, int startR1, int startR2);
 
-        void doStep4(std::string & word, int startR2);
+        void step4(std::string & word, int startR2);
 
-        void doStep5(std::string & word, int startR1, int startR2);
+        void step5(std::string & word, int startR1, int startR2);
 
         bool isShort(const std::string & word, int startR1);
+
+        bool isVowel(char ch);
     }
 }
 

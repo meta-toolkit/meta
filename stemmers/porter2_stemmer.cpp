@@ -2,6 +2,8 @@
  * string file porter2_stemmer.cpp
  */
 
+#include <boost/regex.hpp>
+#include <iostream>
 #include "porter2_stemmer.h"
 
 using namespace Porter2Stemmer::internal;
@@ -18,45 +20,50 @@ string Porter2Stemmer::stem(const string & toStem)
     int startR1 = getStartR1(word);
     int startR2 = getStartR2(word, startR1);
     removeApostrophe(word);
-    doStep1A(word);
-    doStep1B(word, startR1);
-    doStep1C(word);
-    doStep2(word, startR1);
-    doStep3(word, startR1, startR2);
-    doStep4(word, startR2);
-    doStep5(word, startR1, startR2);
+    step1A(word);
+    step1B(word, startR1);
+    step1C(word);
+    step2(word, startR1);
+    step3(word, startR1, startR2);
+    step4(word, startR2);
+    step5(word, startR1, startR2);
 
+    return finalStem(word);
+}
+
+string Porter2Stemmer::internal::finalStem(string & word)
+{
+    word = regex_replace(word, boost::regex("Y"), "y");
+    word = regex_replace(word, boost::regex("'"), "");
     return word;
 }
 
-string Porter2Stemmer::internal::finalStem(const string & word)
+string Porter2Stemmer::internal::prepareWord(const string & toStem)
 {
-  //word = word.replace(/Y/g, "y")
-  //word.replace(/'/, "")
-    return "the stemmed word";
-}
-
-string Porter2Stemmer::internal::prepareWord(const string & word)
-{
-    return "the word";
+    string word = "";
+    for(auto ch: toStem)
+    {
+        if(ch > 'A' && ch < 'Z')
+            ch += 32;
+        if((ch > 'a' && ch < 'z') || ch == '\'')
+            word += ch;
+    }
+    return word;
 }
 
 bool Porter2Stemmer::internal::returnImmediately(const string & word)
 {
-    if(word.size() <= 2)
-        return true;
-    //return true if word.search(/[^\w']/) > -1
-    return false;
+    return word.size() <= 2;
 }
 
 int Porter2Stemmer::internal::getStartR1(const string & word)
 {
-    int startR1 = 1;
-  //startR1 = word.search(/[aeiouy][^aeiouy]/)
-    if(startR1 == -1)
-        return word.size();
-    else
-        return startR1 + 2;
+    return 1;
+    //startR1 = word.search(/[aeiouy][^aeiouy]/)
+    //if(startR1 == -1)
+    //    return word.size();
+    //else
+    //    return std::distance(word.begin(), it) + 2;
 }
 
 int Porter2Stemmer::internal::getStartR2(const string & word, int startR1)
@@ -82,7 +89,7 @@ void Porter2Stemmer::internal::removeApostrophe(string & word)
   //match[1]
 }
 
-void Porter2Stemmer::internal::doStep1A(string & word)
+void Porter2Stemmer::internal::step1A(string & word)
 {
   //if word.match /sses$/
   //return word.replace /(\w*)sses$/, "$1ss"
@@ -96,7 +103,7 @@ void Porter2Stemmer::internal::doStep1A(string & word)
   //return word.slice(0, word.length - 1)
 }
 
-void Porter2Stemmer::internal::doStep1B(string & word, int startR1)
+void Porter2Stemmer::internal::step1B(string & word, int startR1)
 {
   //if word.search(/(eed|eedly)$/) >= startR1
   //return word.replace(/(\w*)(eed|eedly)/, "$1ee")
@@ -108,12 +115,12 @@ void Porter2Stemmer::internal::doStep1B(string & word, int startR1)
   //return word + "e" if string isShort(word, startR1)
 }
 
-void Porter2Stemmer::internal::doStep1C(string & word)
+void Porter2Stemmer::internal::step1C(string & word)
 {
   //word.replace /(\w+[^aeiouy])(y|Y)$/, "$1i"
 }
 
-void Porter2Stemmer::internal::doStep2(string & word, int startR1)
+void Porter2Stemmer::internal::step2(string & word, int startR1)
 {
   //if word.search(/ational$/) >= startR1
   //return word.replace /(\w*)ational$/, "$1ate"
@@ -151,7 +158,7 @@ void Porter2Stemmer::internal::doStep2(string & word, int startR1)
   //return word.replace /(\w*)li$/, "$1"
 }
 
-void Porter2Stemmer::internal::doStep3(string & word, int startR1, int startR2)
+void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
 {
   //if word.search(/ational$/) >= startR1
   //return word.replace /(\w*)ational$/, "$1ate"
@@ -167,7 +174,7 @@ void Porter2Stemmer::internal::doStep3(string & word, int startR1, int startR2)
   //return word.replace /(\w*)ative$/, "$1"
 }
 
-void Porter2Stemmer::internal::doStep4(string & word, int startR2)
+void Porter2Stemmer::internal::step4(string & word, int startR2)
 {
   //if word.search(/ement$/) >= startR2
   //return word.replace /(\w*)ement$/, "$1"
@@ -179,7 +186,7 @@ void Porter2Stemmer::internal::doStep4(string & word, int startR2)
   //return word.replace /(\w*)(s|t)ion$/, "$1"
 }
 
-void Porter2Stemmer::internal::doStep5(string & word, int startR1, int startR2)
+void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
 {
   //if word.search(/e$/) >= startR2
   //return word.slice(0, word.length - 1)
@@ -192,4 +199,11 @@ void Porter2Stemmer::internal::doStep5(string & word, int startR1, int startR2)
 bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
 {
     //word.match(/^([aeouiy][^aeouiy]|\w*[^aeiouy][aeouiy][^aeouiyYwx])$/) != null and startR1 >= word.length
+    return false;
+}
+
+bool Porter2Stemmer::internal::isVowel(char ch)
+{
+    return ch == 'e' || ch == 'a' || ch == 'i' ||
+           ch == 'u' || ch == 'o' || ch == 'y';
 }

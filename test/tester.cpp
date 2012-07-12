@@ -13,6 +13,7 @@
 #include "io/textfile.h"
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
+#include "stemmers/porter2_stemmer.h"
 #include "index/lexicon.h"
 #include "index/inverted_index.h"
 #include "tokenizers/ngram_tokenizer.h"
@@ -185,11 +186,18 @@ void testIndex()
     delete tokenizer;
 }
 
+void testStemmer()
+{
+    string word = "DERPY";
+    cout << Porter2Stemmer::stem(word) << endl;
+}
+
 int main(int argc, char* argv[])
 {
     //testCompression(string(argv[1]));
-    testIndexCreation();
-    testIndex();
+    //testIndexCreation();
+    //testIndex();
+    testStemmer();
 
     return 0;
 }
