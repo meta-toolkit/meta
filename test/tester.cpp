@@ -174,10 +174,10 @@ void testIndex()
         if(result == query.getCategory())
         {
             ++numCorrect;
-            cout << "  -> " << Common::makeGreen("OK");
+            cout << " -> " << Common::makeGreen("OK");
         }
         else
-            cout << "  -> " << Common::makeRed("incorrect");
+            cout << " -> " << Common::makeRed("incorrect");
         cout << " (" << result << ")" << endl << "  -> " << ((double) numCorrect / numQueries * 100)
              << "% accuracy, " << numQueries << "/" << testDocs.size() << " processed " << endl;
         ++numQueries;
@@ -189,23 +189,20 @@ void testIndex()
 
 void testStemmer()
 {
-    //Parser parser("data/lemur-stopwords.txt", "\n");
-    Parser
-        parser("/home/sean/cs225/_cs296honors/sp12/wordfreq_data/waroftheworlds.txt", " \n");
+    Parser parser("data/top1000.txt", "\n");
+    //Parser parser("/home/sean/cs225/_cs296honors/sp12/wordfreq_data/waroftheworlds.txt", " \n");
     struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     int correct = 0;
     int total = 0;
     double start = omp_get_wtime();
     while(parser.hasNext())
     {
-        //string word = parser.next();
         string word = Porter2Stemmer::trim(parser.next());
-        //string mine = Porter2Stemmer::stem(word);
+        string mine = Porter2Stemmer::stem(word);
         size_t length = word.size();
         sb_symbol symb[length];
         memcpy(symb, word.c_str(), length);
         string theirs =  string((char*)sb_stemmer_stem(stemmer, symb, length));
-        /*
         if(mine == theirs)
         {
             //cout << " -> " << Common::makeGreen("OK");
@@ -214,13 +211,12 @@ void testStemmer()
         else
         {
             cout << word << ": " << theirs << " " << mine;
-            cout << " ->  " << Common::makeRed("incorrect");
+            cout << " -> " << Common::makeRed("incorrect");
             cout << endl;
         }
-        */
         ++total;
     }
-    //cout << correct << "/" << total << " correct" << endl;
+    cout << correct << "/" << total << " correct" << endl;
     sb_stemmer_delete(stemmer);
     cout << omp_get_wtime() - start << " second elapsed" << endl;
 }

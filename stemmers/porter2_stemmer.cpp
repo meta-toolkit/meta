@@ -2,6 +2,7 @@
  * @file porter2_stemmer.cpp
  */
 
+#include <unordered_map>
 #include <boost/regex.hpp>
 #include "porter2_stemmer.h"
 
@@ -22,6 +23,9 @@ string Porter2Stemmer::stem(const string & toStem)
     if(returnImmediately(word))
         return finalStem(word);
 
+    if(special(word))
+        return finalStem(word);
+
     changeY(word);
     int startR1 = getStartR1(word);
     int startR2 = getStartR2(word, startR1);
@@ -40,7 +44,9 @@ string Porter2Stemmer::stem(const string & toStem)
 string Porter2Stemmer::internal::finalStem(string & word)
 {
     word = regex_replace(word, regex("Y"), "y");
-    word = regex_replace(word, regex("'"), "");
+    // snowball gets rid of apostrophe
+    // word = regex_replace(word, regex("'"), "");
+
     return word;
 }
 
@@ -64,6 +70,15 @@ bool Porter2Stemmer::internal::returnImmediately(const string & word)
 
 int Porter2Stemmer::internal::getStartR1(const string & word)
 {
+    // special cases
+    if(word.substr(0, 5) == "gener")
+        return 5;
+    if(word.substr(0, 6) == "commun")
+        return 6;
+    if(word.substr(0, 5) == "arsen")
+        return 5;
+
+    // general case
     smatch results;
     if(regex_search(word, results, regex("[aeiouy][^aeiouy]")))
         return results.position() + 2;
@@ -115,6 +130,8 @@ void Porter2Stemmer::internal::step1A(string & word)
         return;
     else if(regex_search(word, results, regex(".*[aeiouy].+s$")))
         word = word.substr(0, word.length() - 1);
+
+    // add special case here...
 }
 
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
@@ -122,10 +139,10 @@ void Porter2Stemmer::internal::step1B(string & word, int startR1)
     smatch results;
     if(regex_search(word, results, regex("(eed|eedly)$")) && results.position() >= startR1)
         word = regex_replace(word, regex("(.+)(eed|eedly)$"), "$1ee");
-    else if(regex_search(word, results, regex("^.*[aeiouy].+(ed|edly|ing|ingly)$")))
+    else if(regex_search(word, results, regex("^.*[aeiouy].*(ed|edly|ing|ingly)$")))
     {
         // is this word variable a new variable or the original word?
-        word = regex_replace(word, regex("(^.*[aeiouy].+)(ed|edly|ing|ingly)"), "$1");
+        word = regex_replace(word, regex("(^.*[aeiouy].*)(ed|edly|ing|ingly)"), "$1");
         if(regex_search(word, results, regex("(at|bl|iz)$")))
             word = word + "e";
         else if(regex_search(word, results, regex("(bb|dd|ff|gg|mm|nn|pp|rr|tt)$")))
@@ -229,4 +246,27 @@ bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
 
     smatch results;
     return regex_search(word, results, regex("^([aeouiy][^aeouiy]|.*[^aeiouy][aeouiy][^aeouiyYwx])$"));
+}
+
+bool Porter2Stemmer::internal::special(string & word)
+{
+   const std::unordered_map<string, string> exceptions = {
+        {"skis", "ski"}, {"skies", "sky"},
+        {"dyigg", "die"}, {"lying", "lie"},
+        {"tying", "tie"}, {"idly", "idl"},
+        {"gently", "gentl"}, {"ugly", "ugli"},
+        {"early", "earli"}, {"only", "onli"},
+        {"singly", "singl"} };
+
+    // special cases
+    if(exceptions.find(word) != exceptions.end())
+    {
+        word = exceptions.at(word);
+        return true;
+    }
+
+    // invariants
+    return word == "sky" || word == "news" || word == "howe" ||
+       word == "atlas" || word == "cosmos" || word == "bias" ||
+       word == "andes";
 }

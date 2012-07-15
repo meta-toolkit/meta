@@ -47,6 +47,8 @@ namespace Porter2Stemmer
         void step5(std::string & word, int startR1, int startR2);
 
         inline bool isShort(const std::string & word, int startR1);
+
+        bool special(std::string & word);
     }
 }
 
