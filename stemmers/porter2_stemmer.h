@@ -16,13 +16,13 @@ namespace Porter2Stemmer
 {
     std::string stem(const std::string & toStem);
 
+    std::string trim(const std::string & word);
+    
     namespace internal
     {
         std::string finalStem(std::string & word);
 
-        std::string prepareWord(const std::string & word);
-
-        bool returnImmediately(const std::string & word);
+        inline bool returnImmediately(const std::string & word);
 
         int getStartR1(const std::string & word);
 
@@ -46,7 +46,7 @@ namespace Porter2Stemmer
 
         void step5(std::string & word, int startR1, int startR2);
 
-        bool isShort(const std::string & word, int startR1);
+        inline bool isShort(const std::string & word, int startR1);
     }
 }
 

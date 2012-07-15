@@ -1,5 +1,5 @@
 /**
- * string file porter2_stemmer.cpp
+ * @file porter2_stemmer.cpp
  */
 
 #include <boost/regex.hpp>
@@ -9,7 +9,6 @@ using namespace Porter2Stemmer::internal;
 using std::string;
 using boost::regex;
 using boost::smatch;
-using boost::cmatch;
 
 #include <iostream>
 using std::cout;
@@ -18,7 +17,7 @@ using std::cerr;
 
 string Porter2Stemmer::stem(const string & toStem)
 {
-    string word = prepareWord(toStem);
+    string word = trim(toStem);
 
     if(returnImmediately(word))
         return finalStem(word);
@@ -45,7 +44,7 @@ string Porter2Stemmer::internal::finalStem(string & word)
     return word;
 }
 
-string Porter2Stemmer::internal::prepareWord(const string & toStem)
+string Porter2Stemmer::trim(const string & toStem)
 {
     string word = "";
     for(auto ch: toStem)
@@ -123,17 +122,10 @@ void Porter2Stemmer::internal::step1B(string & word, int startR1)
     smatch results;
     if(regex_search(word, results, regex("(eed|eedly)$")) && results.position() >= startR1)
         word = regex_replace(word, regex("(.+)(eed|eedly)$"), "$1ee");
-    else if(regex_search(word, results, regex("([aeiouy].+)(ed|edly|ing|ingly)$")))
+    else if(regex_search(word, results, regex("^.*[aeiouy].+(ed|edly|ing|ingly)$")))
     {
-        // TODO bug here
-        cmatch matches;
-        if(regex_match(word.c_str(), matches, regex("^([aeiouy].+)(ed|edly|ing|ingly)$")))
-            word = matches[1];
-        else
-        {
-            cerr << "[Porter2Stemmer]: error" << endl;
-            return;
-        }
+        // is this word variable a new variable or the original word?
+        word = regex_replace(word, regex("(^.*[aeiouy].+)(ed|edly|ing|ingly)"), "$1");
         if(regex_search(word, results, regex("(at|bl|iz)$")))
             word = word + "e";
         else if(regex_search(word, results, regex("(bb|dd|ff|gg|mm|nn|pp|rr|tt)$")))
@@ -235,6 +227,6 @@ bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
     if(startR1 < word.length())
         return false;
 
-    cmatch matches;
-    return regex_match(word.c_str(), matches, regex("^([aeouiy][^aeouiy]|.*[^aeiouy][aeouiy][^aeouiyYwx])$"));
+    smatch results;
+    return regex_search(word, results, regex("^([aeouiy][^aeouiy]|.*[^aeiouy][aeouiy][^aeouiyYwx])$"));
 }

@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include "util/common.h"
 #include "stemmers/snowball_stemmer.h"
+#include "stemmers/porter2_stemmer.h"
 #include "index/document.h"
 #include "io/parser.h"
 #include "parse_tree.h"
@@ -23,7 +24,7 @@ NgramTokenizer::NgramTokenizer(size_t n):
 
 void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
 {
-    struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
+    //struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     string validchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'-";
     Parser parser(document.getPath(), validchars, validchars, validchars);
 
@@ -34,7 +35,8 @@ void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigne
         string next = "";
         do
         {
-            next = stem(parser.next(), stemmer);
+            //next = stem(parser.next(), stemmer);
+            next = Porter2Stemmer::stem(parser.next());
         } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
     }
@@ -48,7 +50,8 @@ void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigne
         string next = "";
         do
         {
-            next = stem(parser.next(), stemmer);
+            //next = stem(parser.next(), stemmer);
+            next = Porter2Stemmer::stem(parser.next());
         } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
     }
@@ -56,7 +59,7 @@ void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigne
     // add the last token
     document.increment(getMapping(wordify(ngram)), 1, docFreq);
 
-    sb_stemmer_delete(stemmer);
+    //sb_stemmer_delete(stemmer);
 }
 
 void NgramTokenizer::initStopwords()
