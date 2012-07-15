@@ -97,23 +97,38 @@ void Porter2Stemmer::internal::changeY(string & word)
 
 void Porter2Stemmer::internal::removeApostrophe(string & word)
 {
-  //match = word.match /^(\w*)('s?)$/
-  //return word if match == null
-  //match[1]
+    smatch results;
+    word = regex_replace(word, regex("'s.*$"), "");
 }
 
 void Porter2Stemmer::internal::step1A(string & word)
 {
-  //if word.match /sses$/
-  //return word.replace /(\w*)sses$/, "$1ss"
-  //if word.match /(\w*)(ied|ies)$/
-  //if word.match(/(\w*)(ied|ies)$/)[1].length > 1
-  //return word.replace /(\w*)(ied|ies)$/, "$1i"
-  //else
-  //return word.replace /(\w*)(ied|ies)$/, "$1ie"
-  //return word if word.match(/(\w*)(u|s)s$/)
-  //if word.match(/\w*?[aeiouy]\w+s$/)
-  //return word.slice(0, word.length - 1)
+    smatch results;
+    if(regex_search(word, results, regex("sses$")))
+    {
+        regex_replace(word, regex("(.*)sses$"), "$1ss");
+        return;
+    }
+
+    if(regex_search(word, results, regex(".*(ied|ies)")))
+    {
+        if(results.position() > 1)
+        {
+            regex_replace(word, regex(".*(ied|ies)$"), "$1i");
+            return;
+        }
+    }
+    else
+    {
+        regex_replace(word, regex(".*(ied|ies)$"), "$1ie");
+        return;
+    }
+
+    if(regex_search(word, results, regex(".*(u|s)s$")))
+        return;
+
+    if(regex_search(word, results, regex(".*[aeiouy](.*)+s$")))
+        word = word.substr(0, word.size() - 1);
 }
 
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
@@ -130,7 +145,7 @@ void Porter2Stemmer::internal::step1B(string & word, int startR1)
 
 void Porter2Stemmer::internal::step1C(string & word)
 {
-    //word = regex_replace(word, regex("(\w+[^aeiouy])(y|Y)$"), "$1i");
+    word = regex_replace(word, regex("(.+[^aeiouy])(y|Y)$"), "$1i");
 }
 
 void Porter2Stemmer::internal::step2(string & word, int startR1)
