@@ -105,29 +105,14 @@ void Porter2Stemmer::internal::step1A(string & word)
 {
     smatch results;
     if(regex_search(word, results, regex("sses$")))
-    {
-        regex_replace(word, regex("(.*)sses$"), "$1ss");
+        word = regex_replace(word, regex("(.*)sses$"), "$1ss");
+    else if(regex_search(word, results, regex("(.+)(ied|ies)$")))
+        word = regex_replace(word, regex("(.+)(ied|ies)$"), "$1i");
+    else if(regex_search(word, results, regex("(.*)(ied|ies)$")))
+        word = regex_replace(word, regex("(.*)(ied|ies)$"), "$1ie");
+    else if(regex_search(word, results, regex("(u|s)s$")))
         return;
-    }
-
-    if(regex_search(word, results, regex(".*(ied|ies)")))
-    {
-        if(results.position() > 1)
-        {
-            regex_replace(word, regex(".*(ied|ies)$"), "$1i");
-            return;
-        }
-    }
-    else
-    {
-        regex_replace(word, regex(".*(ied|ies)$"), "$1ie");
-        return;
-    }
-
-    if(regex_search(word, results, regex(".*(u|s)s$")))
-        return;
-
-    if(regex_search(word, results, regex(".*[aeiouy](.*)+s$")))
+    else if(regex_search(word, results, regex(".*[aeiouy].+s$")))
         word = word.substr(0, word.size() - 1);
 }
 
@@ -150,40 +135,41 @@ void Porter2Stemmer::internal::step1C(string & word)
 
 void Porter2Stemmer::internal::step2(string & word, int startR1)
 {
-  //if word.search(/ational$/) >= startR1
-  //return word.replace /(\w*)ational$/, "$1ate"
-  //if word.search(/tional$/) >= startR1
-  //return word.replace /(\w*)tional$/, "$1tion"
-  //if word.search(/ization$/) >= startR1
-  //return word.replace /(\w*)ization$/, "$1ize"
-  //if word.search(/(ation|ator)$/) >= startR1
-  //return word.replace /(\w*)(ation|ator)$/, "$1ate"
-  //if word.search(/(alism|aliti|alli)$/) >= startR1
-  //return word.replace /(\w*)(alism|aliti|alli)$/, "$1al"
-  //if word.search(/enci$/) >= startR1
-  //return word.replace /(\w*)enci$/, "$1ence"
-  //if word.search(/anci$/) >= startR1
-  //return word.replace /(\w*)anci$/, "$1ance"
-  //if word.search(/abli$/) >= startR1
-  //return word.replace /(\w*)abli$/, "$1able"
-  //if word.search(/entli$/) >= startR1
-  //return word.replace /(\w*)entli$/, "$1ent"
-  //if word.search(/fulness$/) >= startR1
-  //return word.replace /(\w*)fulness$/, "$1ful"
-  //if word.search(/(ousli|ousness)$/) >= startR1
-  //return word.replace /(\w*)(ousli|ousness)$/, "$1ous"
-  //if word.search(/(iveness|iviti)$/) >= startR1
-  //return word.replace /(\w*)(iveness|iviti)$/, "$1ive"
-  //if word.search(/(biliti|bli)$/) >= startR1
-  //return word.replace /(\w*)(biliti|bli)$/, "$1ble"
-  //if word.search(/logi$/) >= startR1
-  //return word.replace /(\w*l)ogi$/, "$1og"
-  //if word.search(/fulli$/) >= startR1
-  //return word.replace /(\w*)fulli$/, "$1ful"
-  //if word.search(/lessli$/) >= startR1
-  //return word.replace /(\w*)lessli$/, "$1less"
-  //if word.search(/[cdeghkmnrt]li$/) >= startR1
-  //return word.replace /(\w*)li$/, "$1"
+    smatch results;
+    if(regex_search(word, results, regex("ational$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)ational$"), "$1ate");
+    else if(regex_search(word, results, regex("tional$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)tional$"), "$1tion");
+    else if(regex_search(word, results, regex("ization$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)ization$"), "$1ize");
+    else if(regex_search(word, results, regex("(.+)(ation|ator)$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)(ation|ator)$"), "$1ate");
+    else if(regex_search(word, results, regex("(alism|aliti|alli)$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)(alism|aliti|alli)$"), "$1al");
+    else if(regex_search(word, results, regex("enci$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)enci$"), "$1ence");
+    else if(regex_search(word, results, regex("anci$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)anci$"), "$1ance");
+    else if(regex_search(word, results, regex("abli$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)abli$"), "$1able");
+    else if(regex_search(word, results, regex("entli$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)entli$"), "$1ent");
+    else if(regex_search(word, results, regex("fulness$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)fulness$"), "$1ful");
+    else if(regex_search(word, results, regex("(ousli|ousness)$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)(ousli|ousness)$"), "$1ous");
+    else if(regex_search(word, results, regex("(iveness|iviti)$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)(iveness|iviti)$"), "$1ive");
+    else if(regex_search(word, results, regex("(biliti|bli)$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)(biliti|bli)$"), "$1ble");
+    else if(regex_search(word, results, regex("logi$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.*l)ogi$"), "$1og");
+    else if(regex_search(word, results, regex("fulli$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)fulli$"), "$1ful");
+    else if(regex_search(word, results, regex("lessli$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)(lessli)$"), "$1less");
+    else if(regex_search(word, results, regex("[cdeghkmnrt]li$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)li$"), "$1");
 }
 
 void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
