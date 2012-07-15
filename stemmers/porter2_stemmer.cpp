@@ -9,10 +9,12 @@ using namespace Porter2Stemmer::internal;
 using std::string;
 using boost::regex;
 using boost::smatch;
+using boost::cmatch;
 
 #include <iostream>
 using std::cout;
 using std::endl;
+using std::cerr;
 
 string Porter2Stemmer::stem(const string & toStem)
 {
@@ -48,9 +50,9 @@ string Porter2Stemmer::internal::prepareWord(const string & toStem)
     string word = "";
     for(auto ch: toStem)
     {
-        if(ch > 'A' && ch < 'Z')
+        if(ch >= 'A' && ch <= 'Z')
             ch += 32;
-        if((ch > 'a' && ch < 'z') || ch == '\'')
+        if((ch >= 'a' && ch <= 'z') || ch == '\'')
             word += ch;
     }
     return word;
@@ -58,7 +60,7 @@ string Porter2Stemmer::internal::prepareWord(const string & toStem)
 
 bool Porter2Stemmer::internal::returnImmediately(const string & word)
 {
-    return word.size() <= 2;
+    return word.length() <= 2;
 }
 
 int Porter2Stemmer::internal::getStartR1(const string & word)
@@ -67,21 +69,21 @@ int Porter2Stemmer::internal::getStartR1(const string & word)
     if(regex_search(word, results, regex("[aeiouy][^aeiouy]")))
         return results.position() + 2;
     else
-        return word.size();
+        return word.length();
 }
 
 int Porter2Stemmer::internal::getStartR2(const string & word, int startR1)
 {
-    if(startR1 == word.size())
+    if(startR1 == word.length())
         return startR1;
 
-    string split = word.substr(startR1, word.size() - startR1);
+    string split = word.substr(startR1, word.length() - startR1);
 
     smatch results;
     if(regex_search(split, results, regex("[aeiouy][^aeiouy]")))
         return results.position() + startR1 + 2;
     else
-        return word.size();
+        return word.length();
 }
 
 void Porter2Stemmer::internal::changeY(string & word)
@@ -113,19 +115,32 @@ void Porter2Stemmer::internal::step1A(string & word)
     else if(regex_search(word, results, regex("(u|s)s$")))
         return;
     else if(regex_search(word, results, regex(".*[aeiouy].+s$")))
-        word = word.substr(0, word.size() - 1);
+        word = word.substr(0, word.length() - 1);
 }
 
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
 {
-  //if word.search(/(eed|eedly)$/) >= startR1
-  //return word.replace(/(\w*)(eed|eedly)/, "$1ee")
-  //if word.match(/\w*?[aeiouy]\w+(ed|edly|ing|ingly)$/)
-  //word = word.match(/^(\w*?[aeiouy]\w+)(ed|edly|ing|ingly)$/)[1]
-  //return word + "e" if word.match(/(at|bl|iz)$/)
-  //if word.match(/(bb|dd|ff|gg|mm|nn|pp|rr|tt)$/)
-  //return word.slice(0, word.length - 1)
-  //return word + "e" if string isShort(word, startR1)
+    smatch results;
+    if(regex_search(word, results, regex("(eed|eedly)$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)(eed|eedly)$"), "$1ee");
+    else if(regex_search(word, results, regex("([aeiouy].+)(ed|edly|ing|ingly)$")))
+    {
+        // TODO bug here
+        cmatch matches;
+        if(regex_match(word.c_str(), matches, regex("^([aeiouy].+)(ed|edly|ing|ingly)$")))
+            word = matches[1];
+        else
+        {
+            cerr << "[Porter2Stemmer]: error" << endl;
+            return;
+        }
+        if(regex_search(word, results, regex("(at|bl|iz)$")))
+            word = word + "e";
+        else if(regex_search(word, results, regex("(bb|dd|ff|gg|mm|nn|pp|rr|tt)$")))
+            word = word.substr(0, word.length() - 1);
+        else if(isShort(word, startR1))
+            word = word + "e";
+    }
 }
 
 void Porter2Stemmer::internal::step1C(string & word)
@@ -174,44 +189,52 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
 
 void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
 {
-  //if word.search(/ational$/) >= startR1
-  //return word.replace /(\w*)ational$/, "$1ate"
-  //if word.search(/tional$/) >= startR1
-  //return word.replace /(\w*)tional$/, "$1tion"
-  //if word.search(/alize$/) >= startR1
-  //return word.replace /(\w*)alize$/, "$1al"
-  //if word.search(/(icate|iciti|ical)$/) >= startR1
-  //return word.replace /(\w*)(icate|iciti|ical)$/, "$1ic"
-  //if word.search(/(ful|ness)$/) >= startR1
-  //return word.replace /(\w*)(ful|ness)$/, "$1"
-  //if word.search(/ative$/) >= startR2
-  //return word.replace /(\w*)ative$/, "$1"
+    smatch results;
+    if(regex_search(word, results, regex("ational$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)ational$"), "$1ate");
+    else if(regex_search(word, results, regex("tional$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)tional$"), "$1tion");
+    else if(regex_search(word, results, regex("alize$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)alize$"), "$1al");
+    else if(regex_search(word, results, regex("(icate|iciti|ical)$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)(icate|iciti|ical)$"), "$1ic");
+    else if(regex_search(word, results, regex("(ful|ness)$")) && results.position() >= startR1)
+        word = regex_replace(word, regex("(.+)(ful|ness)$"), "$1");
+    else if(regex_search(word, results, regex("ative$")) && results.position() >= startR2)
+        word = regex_replace(word, regex("(.+)ative$"), "$1");
 }
 
 void Porter2Stemmer::internal::step4(string & word, int startR2)
 {
-  //if word.search(/ement$/) >= startR2
-  //return word.replace /(\w*)ement$/, "$1"
-  //if word.search(/ment$/) >= startR2
-  //return word.replace /(\w*)ment$/, "$1"
-  //if word.search(/(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$/) >= startR2
-  //return word.replace /(\w*)(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$/, "$1"
-  //if word.search(/(s|t)ion$/) >= startR2
-  //return word.replace /(\w*)(s|t)ion$/, "$1"
+    smatch results;
+    if(regex_search(word, results, regex("e?ment$")) && results.position() >= startR2)
+        word = regex_replace(word, regex("(.+)e?ment$"), "$1"); // combined two here
+    else if(regex_search(word, results, regex("(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$"))
+                && results.position() >= startR2)
+        word = regex_replace(word, regex("(.+)(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$"), "$1");
+    else if(regex_search(word, results, regex("(s|t)ion$")) && results.position() >= startR2)
+        word = regex_replace(word, regex("(.+)(s|t)ion$"), "$1");
 }
 
 void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
 {
-  //if word.search(/e$/) >= startR2
-  //return word.slice(0, word.length - 1)
-  //if word.search(/e$/) >= startR1 and (not string isShort(word.match(/(\w*)e$/)[1], startR1))
-  //return word.slice(0, word.length - 1)
-  //if word.search(/ll$/) >= startR2
-  //return word.slice(0, word.length - 1)
+    smatch matches;
+    if(regex_search(word, matches, regex("e$")) && matches.position() >= startR2)
+        word = word.substr(0, word.length() - 1);
+    else if(regex_search(word, matches, regex("e$")) && matches.position() >= startR1)
+    {
+        if(!isShort(regex_replace(word, regex("(.+)e$"), "$1"), startR1))
+            word = word.substr(0, word.length() - 1);
+    }
+    else if(regex_search(word, matches, regex("ll$")) && matches.position() >= startR2)
+        word = word.substr(0, word.length() - 1);
 }
 
 bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
 {
-    //word.match(/^([aeouiy][^aeouiy]|\w*[^aeiouy][aeouiy][^aeouiyYwx])$/) != null and startR1 >= word.length
-    return false;
+    if(startR1 < word.length())
+        return false;
+
+    cmatch matches;
+    return regex_match(word.c_str(), matches, regex("^([aeouiy][^aeouiy]|.*[^aeiouy][aeouiy][^aeouiyYwx])$"));
 }

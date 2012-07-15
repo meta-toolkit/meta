@@ -14,6 +14,7 @@
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
 #include "stemmers/porter2_stemmer.h"
+#include "stemmers/snowball_stemmer.h"
 #include "index/lexicon.h"
 #include "index/inverted_index.h"
 #include "tokenizers/ngram_tokenizer.h"
@@ -188,8 +189,31 @@ void testIndex()
 
 void testStemmer()
 {
-    string word = "derpy's";
-    cout << Porter2Stemmer::stem(word) << endl;
+    Parser parser("data/lemur-stopwords.txt", "\n");
+    struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
+    int correct = 0;
+    int total = 0;
+    while(parser.hasNext())
+    {
+        string word = parser.next();
+        string mine = Porter2Stemmer::stem(word);
+        size_t length = word.size();
+        sb_symbol symb[length];
+        memcpy(symb, word.c_str(), length);
+        string theirs =  string((char*)sb_stemmer_stem(stemmer, symb, length));
+        cout << word << ": " << theirs << " " << mine;
+        if(mine == theirs)
+        {
+            cout << " -> " << Common::makeGreen("OK");
+            ++correct;
+        }
+        else
+            cout << " ->  " << Common::makeRed("incorrect");
+        cout << endl;
+        ++total;
+    }
+    cout << correct << "/" << total << " correct" << endl;
+    sb_stemmer_delete(stemmer);
 }
 
 int main(int argc, char* argv[])
