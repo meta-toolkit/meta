@@ -30,7 +30,10 @@ string Porter2Stemmer::stem(const string & toStem)
     int startR1 = getStartR1(word);
     int startR2 = getStartR2(word, startR1);
     removeApostrophe(word);
-    step1A(word);
+
+    if(step1A(word))
+        return finalStem(word);
+    
     step1B(word, startR1);
     step1C(word);
     step2(word, startR1);
@@ -60,6 +63,10 @@ string Porter2Stemmer::trim(const string & toStem)
         if((ch >= 'a' && ch <= 'z') || ch == '\'')
             word += ch;
     }
+
+    // remove leading apostrophe
+    if(word.length() >= 1 && word[0] == '\'')
+        word = word.substr(1, word.length() - 1);
     return word;
 }
 
@@ -115,9 +122,13 @@ void Porter2Stemmer::internal::removeApostrophe(string & word)
 {
     smatch results;
     word = regex_replace(word, regex("'s.*$"), "");
+
+    // added case: possessive name, etc
+    if(regex_search(word, results, regex("s'$")))
+        word = regex_replace(word, regex("(.*s)'$"), "$1");
 }
 
-void Porter2Stemmer::internal::step1A(string & word)
+bool Porter2Stemmer::internal::step1A(string & word)
 {
     smatch results;
     if(regex_search(word, results, regex("sses$")))
@@ -127,11 +138,13 @@ void Porter2Stemmer::internal::step1A(string & word)
     else if(regex_search(word, results, regex("(.*)(ied|ies)$")))
         word = regex_replace(word, regex("(.*)(ied|ies)$"), "$1ie");
     else if(regex_search(word, results, regex("(u|s)s$")))
-        return;
+        return false;
     else if(regex_search(word, results, regex(".*[aeiouy].+s$")))
         word = word.substr(0, word.length() - 1);
 
-    // add special case here...
+    // special case after step 1a
+    return word == "inning" || word == "outing" || word == "canning" || word == "herring" ||
+        word == "earring" || word == "proceed" || word == "exceed" || word == "succeed";
 }
 
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
@@ -166,7 +179,7 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
         word = regex_replace(word, regex("(.+)tional$"), "$1tion");
     else if(regex_search(word, results, regex("ization$")) && results.position() >= startR1)
         word = regex_replace(word, regex("(.+)ization$"), "$1ize");
-    else if(regex_search(word, results, regex("(.+)(ation|ator)$")) && results.position() >= startR1)
+    else if(regex_search(word, results, regex("(ation|ator)$")) && results.position() >= startR1)
         word = regex_replace(word, regex("(.+)(ation|ator)$"), "$1ate");
     else if(regex_search(word, results, regex("(alism|aliti|alli)$")) && results.position() >= startR1)
         word = regex_replace(word, regex("(.+)(alism|aliti|alli)$"), "$1al");
@@ -217,12 +230,12 @@ void Porter2Stemmer::internal::step4(string & word, int startR2)
 {
     smatch results;
     if(regex_search(word, results, regex("e?ment$")) && results.position() >= startR2)
-        word = regex_replace(word, regex("(.+)e?ment$"), "$1"); // combined two here
+        word = regex_replace(word, regex("(.*)e?ment$"), "$1"); // combined two here
     else if(regex_search(word, results, regex("(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$"))
                 && results.position() >= startR2)
-        word = regex_replace(word, regex("(.+)(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$"), "$1");
+        word = regex_replace(word, regex("(.*)(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$"), "$1");
     else if(regex_search(word, results, regex("(s|t)ion$")) && results.position() >= startR2)
-        word = regex_replace(word, regex("(.+)(s|t)ion$"), "$1");
+        word = regex_replace(word, regex("(.*)(s|t)ion$"), "$1");
 }
 
 void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)

@@ -32,7 +32,7 @@ namespace Porter2Stemmer
 
         void removeApostrophe(std::string & word);
 
-        void step1A(std::string & word);
+        bool step1A(std::string & word);
 
         void step1B(std::string & word, int startR1);
 
