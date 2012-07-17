@@ -265,7 +265,7 @@ bool Porter2Stemmer::internal::special(string & word)
 {
    const std::unordered_map<string, string> exceptions = {
         {"skis", "ski"}, {"skies", "sky"},
-        {"dyigg", "die"}, {"lying", "lie"},
+        {"dying", "die"}, {"lying", "lie"},
         {"tying", "tie"}, {"idly", "idl"},
         {"gently", "gentl"}, {"ugly", "ugli"},
         {"early", "earli"}, {"only", "onli"},
