@@ -10,6 +10,7 @@
 #ifndef _PORTER2_STEMMER_H_
 #define _PORTER2_STEMMER_H_
 
+#include <vector>
 #include <string>
 
 namespace Porter2Stemmer
@@ -20,6 +21,17 @@ namespace Porter2Stemmer
     
     namespace internal
     {
+        class Replacement
+        {
+            public:
+                std::string searchRegex;
+                std::string replaceRegex;
+                std::string replaceStr;
+                Replacement(std::string sr, std::string rr, std::string rs):
+                    searchRegex(sr), replaceRegex(rr), replaceStr(rs)
+                    { /* nothing */ }
+        };
+
         std::string finalStem(std::string & word);
 
         inline bool returnImmediately(const std::string & word);
@@ -49,6 +61,9 @@ namespace Porter2Stemmer
         inline bool isShort(const std::string & word, int startR1);
 
         bool special(std::string & word);
+
+        bool replace(const std::vector<Replacement> & replacements,
+                     std::string & word, int position);
     }
 }
 

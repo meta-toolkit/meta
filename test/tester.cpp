@@ -189,8 +189,8 @@ void testIndex()
 
 void testStemmer()
 {
-    //Parser parser("data/top1000.txt", "\n");
-    Parser parser("/home/sean/cs225/_cs296honors/sp12/wordfreq_data/waroftheworlds.txt", " \n");
+    Parser parser("data/top1000.txt", "\n");
+    //Parser parser("/home/sean/cs225/_cs296honors/sp12/wordfreq_data/waroftheworlds.txt", " \n");
     struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     int correct = 0;
     int total = 0;
