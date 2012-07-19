@@ -3,8 +3,6 @@
  *
  * Based on
  *  http://snowball.tartarus.org/algorithms/english/stemmer.html
- * and
- *  https://gist.github.com/2849130
  */
 
 #ifndef _PORTER2_STEMMER_H_
@@ -18,7 +16,7 @@ namespace Porter2Stemmer
     std::string stem(const std::string & toStem);
 
     std::string trim(const std::string & word);
-    
+
     namespace internal
     {
         class Replacement
