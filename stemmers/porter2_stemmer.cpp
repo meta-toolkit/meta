@@ -72,7 +72,6 @@ string Porter2Stemmer::trim(const string & toStem)
     if(word.length() >= 1 && word[0] == '\'')
         word = word.substr(1, word.length() - 1);
 
-    if(DEBUG) cout << "  " << __func__ << ": " << toStem << endl;
     return word;
 }
 
@@ -177,17 +176,21 @@ bool Porter2Stemmer::internal::step1A(string & word)
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
 {
     smatch results;
-    if(regex_search(word, results, regex("(eed|eedly)$")) && results.position() >= startR1)
-        word = regex_replace(word, regex("(.+)(eed|eedly)$"), "$1ee");
+    if(regex_search(word, results, regex("(eed|eedly)$")))
+    {
+        if(results.position() >= startR1)
+            word = regex_replace(word, regex("(.+)(eed|eedly)$"), "$1ee");
+    }
     else if(regex_search(word, results, regex("^.*[aeiouy].*(ed|edly|ing|ingly)$")))
     {
         word = regex_replace(word, regex("(^.*[aeiouy].*)(ed|edly|ing|ingly)"), "$1");
-        if(regex_search(word, results, regex("(at|bl|iz)$")))
+        if(regex_search(word, results, regex("(at|bl|iz)$")) || isShort(word, startR1))
+        {
+            cout << "adding e" << endl;
             word = word + "e";
+        }
         else if(regex_search(word, results, regex("(bb|dd|ff|gg|mm|nn|pp|rr|tt)$")))
             word = word.substr(0, word.length() - 1);
-        else if(isShort(word, startR1))
-            word = word + "e";
     }
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
@@ -250,7 +253,7 @@ void Porter2Stemmer::internal::step4(string & word, int startR2)
         Replacement("e?ment$", "(.*)e?ment$", "$1"), // combined two here
         Replacement("(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$",
                     "(.*)(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$", "$1"),
-        Replacement("(s|t)ion$", "(.*)(s|t)ion$", "$1")
+        Replacement("(s|t)ion$", "(.*(s|t))ion$", "$1")
     };
 
     replace(replacements, word, startR2);
@@ -261,8 +264,21 @@ void Porter2Stemmer::internal::step4(string & word, int startR2)
 void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
 {
     smatch matches;
-    if(regex_search(word, matches, regex("e$")) && matches.position() >= startR2)
+    if(regex_search(word, matches, regex("e$")))
+    {
+        if(matches.position() >= startR2 ||
+                (
+                 matches.position() >= startR1 &&
+                 !regex_search(word, matches, regex("^([aeouiy][^aeouiy]|.*[^aeiouy][aeouiy][^aeouiyYwx])e$"))
+                )
+          )
+            word = word.substr(0, word.length() - 1);
+    }
+    else if(regex_search(word, matches, regex("ll$")) && matches.position() >= startR2)
+    {
         word = word.substr(0, word.length() - 1);
+    }
+    /*
     else if(regex_search(word, matches, regex("e$")) && matches.position() >= startR1)
     {
         if(!isShort(regex_replace(word, regex("(.+)e$"), "$1"), startR1))
@@ -270,17 +286,23 @@ void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
     }
     else if(regex_search(word, matches, regex("ll$")) && matches.position() >= startR2)
         word = word.substr(0, word.length() - 1);
+    */
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
+/**
+ * Define a short syllable in a word as either (a) a vowel followed by a
+ * non-vowel other than w, x or Y and preceded by a non-vowel, or * (b) a vowel
+ * at the beginning of the word followed by a non-vowel.
+ *
+ * A word is called short if it ends in a short syllable, and if R1 is null.
+ */
 bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
 {
-    if(startR1 < word.length())
-        return false;
-
     smatch results;
-    return regex_search(word, results, regex("^([aeouiy][^aeouiy]|.*[^aeiouy][aeouiy][^aeouiyYwx])$"));
+    return regex_search(word, results, regex("^([aeouiy][^aeouiy]|.*[^aeiouy][aeouiy][^aeouiyYwx])$"))
+        && startR1 >= word.length();
 }
 
 bool Porter2Stemmer::internal::special(string & word)

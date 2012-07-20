@@ -189,9 +189,8 @@ void testIndex()
 
 void testStemmer()
 {
-    //Parser parser("data/porter2-stems.txt", " \n");
-    Parser parser("data/top1000.txt", "\n");
-    //Parser parser("data/mine.txt", "\n");
+    Parser parser("data/porter2-stems.txt", " \n");
+    //Parser parser("data/top1000.txt", "\n");
     //Parser parser("/home/sean/cs225/_cs296honors/sp12/wordfreq_data/waroftheworlds.txt", " \n");
     struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     int correct = 0;
@@ -201,6 +200,7 @@ void testStemmer()
     {
         string word = Porter2Stemmer::trim(parser.next());
         string mine = Porter2Stemmer::stem(word);
+        parser.next(); // skip answer
         size_t length = word.size();
         sb_symbol symb[length];
         memcpy(symb, word.c_str(), length);
