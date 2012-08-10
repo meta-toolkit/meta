@@ -5,7 +5,7 @@
 #ifndef _NGRAM_TOKENIZER_H_
 #define _NGRAM_TOKENIZER_H_
 
-#include <vector>
+#include <deque>
 #include <unordered_set>
 #include <unordered_map>
 
@@ -55,10 +55,10 @@ class NgramTokenizer : public Tokenizer
      
         /**
          * Turns a list of words into an ngram string.
-         * @param words - the vectoring representing a list of words
+         * @param words - the deque representing a list of words
          * @return the ngrams in string format
          */
-        std::string wordify(const std::vector<std::string> & words) const;
+        std::string wordify(const std::deque<std::string> & words) const;
 
         /**
          * Sets up a set of stopwords.

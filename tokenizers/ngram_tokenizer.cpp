@@ -12,7 +12,7 @@
 #include "parse_tree.h"
 #include "ngram_tokenizer.h"
 
-using std::vector;
+using std::deque;
 using std::unordered_map;
 using std::unordered_set;
 
@@ -29,7 +29,7 @@ void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigne
     Parser parser(document.getPath(), validchars, validchars, validchars);
 
     // initialize the ngram
-    vector<string> ngram;
+    deque<string> ngram;
     for(size_t i = 0; i < _nValue && parser.hasNext(); ++i)
     {
         string next = "";
@@ -46,7 +46,7 @@ void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigne
     {
         string wordified = wordify(ngram);
         document.increment(getMapping(wordified), 1, docFreq);
-        ngram.erase(ngram.begin());
+        ngram.pop_front();
         string next = "";
         do
         {
@@ -79,7 +79,7 @@ size_t NgramTokenizer::getNValue() const
     return _nValue;
 }
 
-string NgramTokenizer::wordify(const vector<string> & words) const
+string NgramTokenizer::wordify(const deque<string> & words) const
 {
     string result = "";
     for(auto & word: words)
