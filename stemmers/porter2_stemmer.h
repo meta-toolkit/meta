@@ -32,6 +32,8 @@ namespace Porter2Stemmer
 
         std::string finalStem(std::string & word);
 
+        int firstNonVowelAfterVowel(const std::string & word, int start);
+
         inline bool returnImmediately(const std::string & word);
 
         int getStartR1(const std::string & word);
@@ -62,6 +64,12 @@ namespace Porter2Stemmer
 
         bool replace(const std::vector<Replacement> & replacements,
                      std::string & word, int position);
+
+        bool isVowel(char ch);
+
+        bool isVowelY(char ch);
+
+        bool endsWith(const std::string & word, const std::string & str);
     }
 }
 

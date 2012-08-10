@@ -2,10 +2,10 @@
  * @file porter2_stemmer.cpp
  */
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
-#include <boost/regex.hpp>
 #include "porter2_stemmer.h"
 
 #define DEBUG 1
@@ -13,8 +13,6 @@
 using namespace Porter2Stemmer::internal;
 using std::string;
 using std::vector;
-using boost::regex;
-using boost::smatch;
 using std::stringstream;
 using std::endl;
 using std::cout;
@@ -50,10 +48,8 @@ string Porter2Stemmer::stem(const string & toStem)
 
 string Porter2Stemmer::internal::finalStem(string & word)
 {
-    word = regex_replace(word, regex("Y"), "y");
-    // snowball gets rid of apostrophe
-    // word = regex_replace(word, regex("'"), "");
-
+    std::replace(word.begin(), word.end(), 'Y', 'y');
+    std::remove(word.begin(), word.end(), '\'');
     return word;
 }
 
@@ -91,12 +87,7 @@ int Porter2Stemmer::internal::getStartR1(const string & word)
         return 5;
 
     // general case
-    smatch results;
-    int startR1;
-    if(regex_search(word, results, regex("[aeiouy][^aeiouy]")))
-        startR1 = results.position() + 2;
-    else
-        startR1 = word.length();
+    int startR1 = firstNonVowelAfterVowel(word, 1);
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
     if(DEBUG) cout << "    startR1: " << startR1 << endl;
@@ -109,20 +100,23 @@ int Porter2Stemmer::internal::getStartR2(const string & word, int startR1)
     if(startR1 == word.length())
         return startR1;
 
-    string split = word.substr(startR1, word.length() - startR1 + 1);
-
-    smatch results;
-    int startR2;
-    if(regex_search(split, results, regex("[aeiouy][^aeiouy]")))
-        startR2 = results.position() + startR1 + 2;
-    else
-        startR2 = word.length();
+    int startR2 = firstNonVowelAfterVowel(word, startR1);
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
     if(DEBUG) cout << "    startR2: " << startR2 << endl;
-    if(DEBUG) cout << "    R1: " << split << endl;
-    if(DEBUG) cout << "    R2: " << word.substr(startR2, word.length() - startR2 + 1) << endl;
+
     return startR2;
+}
+
+int Porter2Stemmer::internal::firstNonVowelAfterVowel(const string & word, int start)
+{
+    for(size_t i = start; i < word.length(); ++i)
+    {
+        if(isVowelY(word[i]) && !isVowelY(word[i - 1]))
+            return i + 1;
+    }
+
+    return word.length();
 }
 
 void Porter2Stemmer::internal::changeY(string & word)
@@ -133,24 +127,30 @@ void Porter2Stemmer::internal::changeY(string & word)
     if(word[0] == 'y')
         word[0] = 'Y';
 
-    word = regex_replace(word, regex("([aeiou])y"), "$1Y");
+    for(size_t i = 1; i < word.length(); ++i)
+    {
+        if(word[i] == 'y' && isVowel(word[i - 1]))
+            word[i++] = 'Y'; // skip next iteration
+    }
+
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 void Porter2Stemmer::internal::removeApostrophe(string & word)
 {
-    smatch results;
-    word = regex_replace(word, regex("'s.*$"), "");
-
-    // added case: possessive name, etc
-    if(regex_search(word, results, regex("s'$")))
-        word = regex_replace(word, regex("(.*s)'$"), "$1");
+    if(endsWith(word, "'s'"))
+        word = word.substr(0, word.length() - 3);
+    else if(endsWith(word, "s'"))
+        word = word.substr(0, word.length() - 2);
+    else if(endsWith(word, "'"))
+        word = word.substr(0, word.length() - 1);
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 bool Porter2Stemmer::internal::step1A(string & word)
 {
+    /*
     const vector<Replacement> replacements = {
         Replacement("sses$", "(.+)sses$", "$1ss"),
         Replacement("(ied|ies)$", "(..+)(ied|ies)$", "$1i"),
@@ -165,6 +165,7 @@ bool Porter2Stemmer::internal::step1A(string & word)
         else if(regex_search(word, results, regex(".*[aeiouy].+s$")))
             word = word.substr(0, word.length() - 1);
     }
+    */
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 
@@ -175,6 +176,7 @@ bool Porter2Stemmer::internal::step1A(string & word)
 
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
 {
+    /*
     smatch results;
     if(regex_search(word, results, regex("(eed|eedly)$")))
     {
@@ -192,18 +194,20 @@ void Porter2Stemmer::internal::step1B(string & word, int startR1)
         else if(regex_search(word, results, regex("(bb|dd|ff|gg|mm|nn|pp|rr|tt)$")))
             word = word.substr(0, word.length() - 1);
     }
+    */
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 void Porter2Stemmer::internal::step1C(string & word)
 {
-    word = regex_replace(word, regex("(.+[^aeiouy])(y|Y)$"), "$1i");
+    //word = regex_replace(word, regex("(.+[^aeiouy])(y|Y)$"), "$1i");
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 void Porter2Stemmer::internal::step2(string & word, int startR1)
 {
+    /*
     const vector<Replacement> replacements = {
         Replacement("ational$", "(.+)ational$", "$1ate"),
         Replacement("tional$", "(.+)tional$", "$1tion"),
@@ -225,11 +229,14 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
     };
 
     replace(replacements, word, startR1);
+    */
+
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
 {
+    /*
     const vector<Replacement> replacements = {
         Replacement("ational$", "(.+)ational$", "$1ate"),
         Replacement("tional$", "(.+)tional$", "$1tion"),
@@ -243,12 +250,14 @@ void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
         const vector<Replacement> other = { Replacement("ative$", "(.+)ative$", "$1") };
         replace(other, word, startR2);
     }
+    */
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 void Porter2Stemmer::internal::step4(string & word, int startR2)
 {
+    /*
     const vector<Replacement> replacements = {
         Replacement("e?ment$", "(.*)e?ment$", "$1"), // combined two here
         Replacement("(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$",
@@ -257,12 +266,14 @@ void Porter2Stemmer::internal::step4(string & word, int startR2)
     };
 
     replace(replacements, word, startR2);
+    */
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
 {
+    /*
     smatch matches;
     if(regex_search(word, matches, regex("e$")))
     {
@@ -278,7 +289,6 @@ void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
     {
         word = word.substr(0, word.length() - 1);
     }
-    /*
     else if(regex_search(word, matches, regex("e$")) && matches.position() >= startR1)
     {
         if(!isShort(regex_replace(word, regex("(.+)e$"), "$1"), startR1))
@@ -300,9 +310,11 @@ void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
  */
 bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
 {
+    /*
     smatch results;
     return regex_search(word, results, regex("^([aeouiy][^aeouiy]|.*[^aeiouy][aeouiy][^aeouiyYwx])$"))
         && startR1 >= word.length();
+    */
 }
 
 bool Porter2Stemmer::internal::special(string & word)
@@ -316,9 +328,10 @@ bool Porter2Stemmer::internal::special(string & word)
         {"singly", "singl"} };
 
     // special cases
-    if(exceptions.find(word) != exceptions.end())
+    auto ex = exceptions.find(word);
+    if(ex != exceptions.end())
     {
-        word = exceptions.at(word);
+        word = ex->second;
         return true;
     }
 
@@ -330,7 +343,7 @@ bool Porter2Stemmer::internal::special(string & word)
 
 bool Porter2Stemmer::internal::replace(const vector<Replacement> & replacements, string & word, int position)
 {
-    //if(DEBUG) cout << "    " << __func__ << ": " << word << endl;
+    /*
     smatch results;
     for(auto & rep: replacements)
     {
@@ -345,5 +358,24 @@ bool Porter2Stemmer::internal::replace(const vector<Replacement> & replacements,
             }
         }
     }
+    */
     return false;
+}
+
+bool Porter2Stemmer::internal::isVowelY(char ch)
+{
+    return ch == 'e' || ch == 'a' || ch == 'i' ||
+        ch == 'o' || ch == 'u' || ch == 'y';
+}
+
+bool Porter2Stemmer::internal::isVowel(char ch)
+{
+    return ch == 'e' || ch == 'a' || ch == 'i' ||
+        ch == 'o' || ch == 'u';
+}
+
+bool Porter2Stemmer::internal::endsWith(const string & word, const string & str)
+{
+    return word.length() >= str.length() &&
+        word.substr(word.length() - str.length()) == str;
 }
