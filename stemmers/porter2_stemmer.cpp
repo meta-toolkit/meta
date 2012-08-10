@@ -148,24 +148,37 @@ void Porter2Stemmer::internal::removeApostrophe(string & word)
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
+/**
+  Step 1a:
+
+  sses
+    replace by ss 
+
+  ied   ies
+    replace by i if preceded by more than one letter, otherwise by ie
+    (so ties -> tie, cries -> cri) 
+
+  us   ss
+    do nothing
+
+  s
+    delete if the preceding word part contains a vowel not immediately before the
+    s (so gas and this retain the s, gaps and kiwis lose it) 
+*/
 bool Porter2Stemmer::internal::step1A(string & word)
 {
-    /*
-    const vector<Replacement> replacements = {
-        Replacement("sses$", "(.+)sses$", "$1ss"),
-        Replacement("(ied|ies)$", "(..+)(ied|ies)$", "$1i"),
-        Replacement("(ied|ies)$", "(.)(ied|ies)$", "$1ie")
-    };
-
-    if(!replace(replacements, word, 0))
+    const vector<Replacement> first = { Replacement("sses", "ss") };
+    if(!replace(first, word, 0))
     {
-        smatch results;
-        if(regex_search(word, results, regex("(u|s)s$")))
-            return false;
-        else if(regex_search(word, results, regex(".*[aeiouy].+s$")))
-            word = word.substr(0, word.length() - 1);
+        if(endsWith(word, "ied") || endsWith(word, "ies"))
+        {
+            
+        }
+        else if(endsWith(word, "s") && !endsWith(word, "us") && !endsWith(word, "ss"))
+        {
+
+        }
     }
-    */
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 
@@ -174,130 +187,73 @@ bool Porter2Stemmer::internal::step1A(string & word)
         word == "earring" || word == "proceed" || word == "exceed" || word == "succeed";
 }
 
+/**
+  Step 1b:
+
+  eed   eedly
+      replace by ee if in R1 
+
+  ed   edly   ing   ingly
+      delete if the preceding word part contains a vowel, and after the deletion:
+      if the word ends at, bl or iz add e (so luxuriat -> luxuriate), or
+      if the word ends with a double remove the last letter (so hopp -> hop), or
+      if the word is short, add e (so hop -> hope)
+*/
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
 {
-    /*
-    smatch results;
-    if(regex_search(word, results, regex("(eed|eedly)$")))
-    {
-        if(results.position() >= startR1)
-            word = regex_replace(word, regex("(.+)(eed|eedly)$"), "$1ee");
-    }
-    else if(regex_search(word, results, regex("^.*[aeiouy].*(ed|edly|ing|ingly)$")))
-    {
-        word = regex_replace(word, regex("(^.*[aeiouy].*)(ed|edly|ing|ingly)"), "$1");
-        if(regex_search(word, results, regex("(at|bl|iz)$")) || isShort(word, startR1))
-        {
-            cout << "adding e" << endl;
-            word = word + "e";
-        }
-        else if(regex_search(word, results, regex("(bb|dd|ff|gg|mm|nn|pp|rr|tt)$")))
-            word = word.substr(0, word.length() - 1);
-    }
-    */
-
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
+/**
+  Step 1c:
+
+  Replace suffix y or Y by i if preceded by a non-vowel which is not the first
+  letter of the word (so cry -> cri, by -> by, say -> say)
+*/
 void Porter2Stemmer::internal::step1C(string & word)
 {
-    //word = regex_replace(word, regex("(.+[^aeiouy])(y|Y)$"), "$1i");
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
+/**
+  Step 2:
+
+  If found and in R1, perform the action indicated. 
+
+  tional:   replace by tion
+  enci:   replace by ence
+  anci:   replace by ance
+  abli:   replace by able
+  entli:   replace by ent
+  izer   ization:   replace by ize
+  ational   ation   ator:   replace by ate
+  alism   aliti   alli:   replace by al
+  fulness:   replace by ful
+  ousli   ousness:   replace by ous
+  iveness   iviti:   replace by ive
+  biliti   bli:   replace by ble
+  ogi:   replace by og if preceded by l
+  fulli:   replace by ful
+  lessli:   replace by less
+  li:   delete if preceded by a valid li-ending
+*/
 void Porter2Stemmer::internal::step2(string & word, int startR1)
 {
-    /*
-    const vector<Replacement> replacements = {
-        Replacement("ational$", "(.+)ational$", "$1ate"),
-        Replacement("tional$", "(.+)tional$", "$1tion"),
-        Replacement("ization$", "(.+)ization$", "$1ize"),
-        Replacement("(ation|ator)$", "(.+)(ation|ator)$", "$1ate"),
-        Replacement("(alism|aliti|alli)$", "(.+)(alism|aliti|alli)$", "$1al"),
-        Replacement("enci$", "(.+)enci$", "$1ence"),
-        Replacement("anci$", "(.+)anci$", "$1ance"),
-        Replacement("abli$", "(.+)abli$", "$1able"),
-        Replacement("entli$", "(.+)entli$", "$1ent"),
-        Replacement("fulness$", "(.+)fulness$", "$1ful"),
-        Replacement("(ousli|ousness)$", "(.+)(ousli|ousness)$", "$1ous"),
-        Replacement("(iveness|iviti)$", "(.+)(iveness|iviti)$", "$1ive"),
-        Replacement("(biliti|bli)$", "(.+)(biliti|bli)$", "$1ble"),
-        Replacement("logi$", "(.*l)ogi$", "$1og"),
-        Replacement("fulli$", "(.+)fulli$", "$1ful"),
-        Replacement("lessli$", "(.+)(lessli)$", "$1less"),
-        Replacement("[cdeghkmnrt]li$", "(.+)li$", "$1")
-    };
-
-    replace(replacements, word, startR1);
-    */
-
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
 {
-    /*
-    const vector<Replacement> replacements = {
-        Replacement("ational$", "(.+)ational$", "$1ate"),
-        Replacement("tional$", "(.+)tional$", "$1tion"),
-        Replacement("alize$", "(.+)alize$", "$1al"),
-        Replacement("(icate|iciti|ical)$", "(.+)(icate|iciti|ical)$", "$1ic"),
-        Replacement("(ful|ness)$", "(.+)(ful|ness)$", "$1")
-    };
-
-    if(!replace(replacements, word, startR1))
-    {
-        const vector<Replacement> other = { Replacement("ative$", "(.+)ative$", "$1") };
-        replace(other, word, startR2);
-    }
-    */
-
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 void Porter2Stemmer::internal::step4(string & word, int startR2)
 {
-    /*
-    const vector<Replacement> replacements = {
-        Replacement("e?ment$", "(.*)e?ment$", "$1"), // combined two here
-        Replacement("(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$",
-                    "(.*)(al|ance|ence|er|ic|able|ible|ant|ent|ism|ate|iti|ous|ive|ize)$", "$1"),
-        Replacement("(s|t)ion$", "(.*(s|t))ion$", "$1")
-    };
-
-    replace(replacements, word, startR2);
-    */
-
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
 {
-    /*
-    smatch matches;
-    if(regex_search(word, matches, regex("e$")))
-    {
-        if(matches.position() >= startR2 ||
-                (
-                 matches.position() >= startR1 &&
-                 !regex_search(word, matches, regex("^([aeouiy][^aeouiy]|.*[^aeiouy][aeouiy][^aeouiyYwx])e$"))
-                )
-          )
-            word = word.substr(0, word.length() - 1);
-    }
-    else if(regex_search(word, matches, regex("ll$")) && matches.position() >= startR2)
-    {
-        word = word.substr(0, word.length() - 1);
-    }
-    else if(regex_search(word, matches, regex("e$")) && matches.position() >= startR1)
-    {
-        if(!isShort(regex_replace(word, regex("(.+)e$"), "$1"), startR1))
-            word = word.substr(0, word.length() - 1);
-    }
-    else if(regex_search(word, matches, regex("ll$")) && matches.position() >= startR2)
-        word = word.substr(0, word.length() - 1);
-    */
-
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
@@ -310,11 +266,7 @@ void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
  */
 bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
 {
-    /*
-    smatch results;
-    return regex_search(word, results, regex("^([aeouiy][^aeouiy]|.*[^aeiouy][aeouiy][^aeouiyYwx])$"))
-        && startR1 >= word.length();
-    */
+    return false;
 }
 
 bool Porter2Stemmer::internal::special(string & word)
@@ -343,22 +295,6 @@ bool Porter2Stemmer::internal::special(string & word)
 
 bool Porter2Stemmer::internal::replace(const vector<Replacement> & replacements, string & word, int position)
 {
-    /*
-    smatch results;
-    for(auto & rep: replacements)
-    {
-        if(regex_search(word, results, regex(rep.searchRegex)))
-        {
-            if(DEBUG) cout << "      regex_search true for " << rep.searchRegex << endl;
-            if(results.position() >= position - 1)
-            {
-                word = regex_replace(word, regex(rep.replaceRegex), rep.replaceStr);
-                if(DEBUG) cout << "      replaced with " << rep.searchRegex << endl;
-                return true;
-            }
-        }
-    }
-    */
     return false;
 }
 

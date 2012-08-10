@@ -22,12 +22,10 @@ namespace Porter2Stemmer
         class Replacement
         {
             public:
-                std::string searchRegex;
-                std::string replaceRegex;
+                std::string searchStr;
                 std::string replaceStr;
-                Replacement(std::string sr, std::string rr, std::string rs):
-                    searchRegex(sr), replaceRegex(rr), replaceStr(rs)
-                    { /* nothing */ }
+                Replacement(std::string ss, std::string rs):
+                    searchStr(ss), replaceStr(rs) { /* nothing */ }
         };
 
         std::string finalStem(std::string & word);
