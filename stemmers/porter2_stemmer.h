@@ -68,6 +68,8 @@ namespace Porter2Stemmer
         bool isVowelY(char ch);
 
         bool endsWith(const std::string & word, const std::string & str);
+
+        bool endsInDouble(const std::string & word);
     }
 }
 

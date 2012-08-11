@@ -172,11 +172,22 @@ bool Porter2Stemmer::internal::step1A(string & word)
     {
         if(endsWith(word, "ied") || endsWith(word, "ies"))
         {
-            
+            // if preceded by only one letter
+            if(word.length() == 4)
+                word = word.substr(0, word.length() - 1);
+            else
+                word = word.substr(0, word.length() - 2);
         }
         else if(endsWith(word, "s") && !endsWith(word, "us") && !endsWith(word, "ss"))
         {
-
+            for(size_t i = 0; i < word.length() - 2; ++i)
+            {
+                if(isVowel(word[i]))
+                {
+                    word = word.substr(0, word.length() - 1);
+                    break;
+                }
+            }
         }
     }
 
@@ -201,6 +212,40 @@ bool Porter2Stemmer::internal::step1A(string & word)
 */
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
 {
+    if(endsWith(word, "eedly") && word.length() - 5 >= startR1)
+        word = word.substr(0, word.length() - 3);
+    else if(endsWith(word, "eed") && word.length() - 3 >= startR1)
+        word = word.substr(0, word.length() - 1);
+    else
+    {
+        bool deleted = false;
+        if(endsWith(word, "ed"))
+        {
+            deleted = true;
+            word = word.substr(0, word.length() - 2);
+        }
+        else if(endsWith(word, "edly"))
+        {
+            deleted = true;
+            word = word.substr(0, word.length() - 4);
+        }
+        else if(endsWith(word, "ing"))
+        {
+            deleted = true;
+            word = word.substr(0, word.length() - 3);
+        }
+        else if(endsWith(word, "ingly"))
+        {
+            deleted = true;
+            word = word.substr(0, word.length() - 5);
+        }
+
+        if(deleted && (endsWith(word, "at") || endsWith(word, "bl") || endsWith(word, "iz")))
+            word = word + "e";
+        else if(deleted && endsInDouble(word))
+            word = word.substr(0, word.length() - 1);
+    }
+
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
@@ -314,4 +359,21 @@ bool Porter2Stemmer::internal::endsWith(const string & word, const string & str)
 {
     return word.length() >= str.length() &&
         word.substr(word.length() - str.length()) == str;
+}
+
+bool Porter2Stemmer::internal::endsInDouble(const string & word)
+{
+    if(word.length() >= 2)
+    {
+        char a = word[word.length() - 1];
+        char b = word[word.length() - 2];
+
+        if(a == b)
+        {
+            return a == 'b' || a == 'd' || a == 'f' || a == 'g'
+                || a == 'm' || a == 'n' || a == 'p' || a == 'r' || a == 't';
+        }
+    }
+
+    return false;
 }
