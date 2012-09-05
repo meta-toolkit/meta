@@ -3,6 +3,7 @@
  */
 
 #include <algorithm>
+#include <utility>
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
@@ -11,6 +12,7 @@
 #define DEBUG 1
 
 using namespace Porter2Stemmer::internal;
+using std::pair;
 using std::string;
 using std::vector;
 using std::stringstream;
@@ -309,10 +311,8 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
     }
 
     // last case
-    if(endsWith(word, "li"))
-    {
-
-    }
+    if(endsWith(word, "li") && word.size() > 3 && validLIEnding(word[word.size() - 3]))
+        word = word.substr(0, word.size() - 2);
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
@@ -370,6 +370,7 @@ void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
  */
 bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
 {
+    // TODO
     return false;
 }
 
@@ -442,4 +443,10 @@ bool Porter2Stemmer::internal::replaceIfExists(string & word,
         return true;
     }
     return false;
+}
+
+bool Porter2Stemmer::internal::validLIEnding(char ch)
+{
+    return ch == 'c' || ch == 'd' || ch == 'e' || ch == 'g' || ch == 'h'
+        || ch == 'k' || ch == 'm' || ch == 'n' || ch == 'r' || ch == 't';
 }

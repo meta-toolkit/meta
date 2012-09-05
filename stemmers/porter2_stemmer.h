@@ -77,6 +77,8 @@ namespace Porter2Stemmer
 
         bool replaceIfExists(std::string & word,
             const std::string & suffix, const std::string & replacement);
+
+        bool validLIEnding(char ch);
     }
 }
 
