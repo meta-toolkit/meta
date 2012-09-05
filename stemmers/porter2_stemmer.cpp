@@ -167,8 +167,7 @@ void Porter2Stemmer::internal::removeApostrophe(string & word)
 */
 bool Porter2Stemmer::internal::step1A(string & word)
 {
-    const vector<Replacement> first = { Replacement("sses", "ss") };
-    if(!replace(first, word, 0))
+    if(!replaceIfExists(word, "sses", "ss"))
     {
         if(endsWith(word, "ied") || endsWith(word, "ies"))
         {
@@ -212,6 +211,7 @@ bool Porter2Stemmer::internal::step1A(string & word)
 */
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
 {
+    // TODO: convert to replaceIfExists, with replacement as ""
     if(endsWith(word, "eedly") && word.length() - 5 >= startR1)
         word = word.substr(0, word.length() - 3);
     else if(endsWith(word, "eed") && word.length() - 3 >= startR1)
@@ -257,6 +257,13 @@ void Porter2Stemmer::internal::step1B(string & word, int startR1)
 */
 void Porter2Stemmer::internal::step1C(string & word)
 {
+    size_t size = word.size();
+    if(size > 2 && (word[size - 1] == 'y' || word[size - 1] == 'Y'))
+    {
+        if(!isVowel(word[size - 2]))
+            word[size - 1] = 'i';
+    }
+
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
@@ -265,38 +272,90 @@ void Porter2Stemmer::internal::step1C(string & word)
 
   If found and in R1, perform the action indicated. 
 
-  tional:   replace by tion
-  enci:   replace by ence
-  anci:   replace by ance
-  abli:   replace by able
-  entli:   replace by ent
-  izer   ization:   replace by ize
-  ational   ation   ator:   replace by ate
-  alism   aliti   alli:   replace by al
-  fulness:   replace by ful
-  ousli   ousness:   replace by ous
-  iveness   iviti:   replace by ive
-  biliti   bli:   replace by ble
-  ogi:   replace by og if preceded by l
-  fulli:   replace by ful
-  lessli:   replace by less
-  li:   delete if preceded by a valid li-ending
+  tional:               replace by tion
+  enci:                 replace by ence
+  anci:                 replace by ance
+  abli:                 replace by able
+  entli:                replace by ent
+  izer, ization:        replace by ize
+  ational, ation, ator: replace by ate
+  alism, aliti, alli:   replace by al
+  fulness:              replace by ful
+  ousli, ousness:       replace by ous
+  iveness, iviti:       replace by ive
+  biliti, bli:          replace by ble
+  fulli:                replace by ful
+  lessli:               replace by less
+  logi:                 replace by log   // TODO check if ok
+  li:                   delete if preceded by a valid li-ending
 */
 void Porter2Stemmer::internal::step2(string & word, int startR1)
 {
+    vector<pair<string, string>> subs = {
+        {"tional", "tion"}, {"enci", "ence"}, {"anci", "ance"},
+        {"abli", "able"}, {"entli", "ent"}, {"izer", "ize"},
+        {"ization", "ize"}, {"ational", "ate"}, {"ation", "ate"},
+        {"ator", "ate"}, {"alism", "al"}, {"aliti", "al"},
+        {"alli", "al"}, {"fulness", "ful"}, {"ousli", "ous"},
+        {"ousness", "ous"}, {"iveness", "ive"}, {"iviti", "ive"},
+        {"biliti", "ble"}, {"bli", "ble"}, {"fulli", "ful"},
+        {"lessli", "less"}, {"logi", "log"}
+    };
+
+    for(auto & sub: subs)
+    {
+        if(replaceIfExists(word, sub.first, sub.second))
+            return;
+    }
+
+    // last case
+    if(endsWith(word, "li"))
+    {
+
+    }
+
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
+/**
+  Step 3:
+  
+  If found and in R1, perform the action indicated. 
+
+  tional:             replace by tion
+  ational:            replace by ate
+  alize:              replace by al
+  icate, iciti, ical: replace by ic
+  ful, ness:          delete
+  ative:              delete if in R2
+*/
 void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
 {
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
+/**
+  Step 4:
+
+  If found and in R2, perform the action indicated. 
+
+  al ance ence er ic able ible ant ement ment ent ism ate
+    iti ous ive ize
+                              delete
+  ion
+                              delete if preceded by s or t
+*/
 void Porter2Stemmer::internal::step4(string & word, int startR2)
 {
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
+/**
+  Step 5:
+
+  e     delete if in R2, or in R1 and not preceded by a short syllable
+  l     delete if in R2 and preceded by l
+*/
 void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
 {
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
@@ -322,7 +381,8 @@ bool Porter2Stemmer::internal::special(string & word)
         {"tying", "tie"}, {"idly", "idl"},
         {"gently", "gentl"}, {"ugly", "ugli"},
         {"early", "earli"}, {"only", "onli"},
-        {"singly", "singl"} };
+        {"singly", "singl"}
+    };
 
     // special cases
     auto ex = exceptions.find(word);
@@ -336,11 +396,6 @@ bool Porter2Stemmer::internal::special(string & word)
     return word == "sky" || word == "news" || word == "howe" ||
        word == "atlas" || word == "cosmos" || word == "bias" ||
        word == "andes";
-}
-
-bool Porter2Stemmer::internal::replace(const vector<Replacement> & replacements, string & word, int position)
-{
-    return false;
 }
 
 bool Porter2Stemmer::internal::isVowelY(char ch)
@@ -375,5 +430,16 @@ bool Porter2Stemmer::internal::endsInDouble(const string & word)
         }
     }
 
+    return false;
+}
+
+bool Porter2Stemmer::internal::replaceIfExists(string & word,
+        const string & suffix, const string & replacement)
+{
+    if(endsWith(word, suffix))
+    {
+        word = word.substr(0, word.size() - suffix.size()) + replacement;
+        return true;
+    }
     return false;
 }

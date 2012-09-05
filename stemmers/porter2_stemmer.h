@@ -19,14 +19,16 @@ namespace Porter2Stemmer
 
     namespace internal
     {
+        /*
         class Replacement
         {
             public:
                 std::string searchStr;
                 std::string replaceStr;
                 Replacement(std::string ss, std::string rs):
-                    searchStr(ss), replaceStr(rs) { /* nothing */ }
+                    searchStr(ss), replaceStr(rs) { }
         };
+        */
 
         std::string finalStem(std::string & word);
 
@@ -60,8 +62,10 @@ namespace Porter2Stemmer
 
         bool special(std::string & word);
 
+        /*
         bool replace(const std::vector<Replacement> & replacements,
                      std::string & word, int position);
+        */
 
         bool isVowel(char ch);
 
@@ -70,6 +74,9 @@ namespace Porter2Stemmer
         bool endsWith(const std::string & word, const std::string & str);
 
         bool endsInDouble(const std::string & word);
+
+        bool replaceIfExists(std::string & word,
+            const std::string & suffix, const std::string & replacement);
     }
 }
 
