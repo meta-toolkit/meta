@@ -1,6 +1,7 @@
  x vector -> deque in ngram tokenizer
-   Different retrieval methods besides Okapi
+   Different retrieval methods than Okapi
    Function words and POS tokenizers
-   Compression implemented
+   Compression implemented for indexes
  x Remove Snowball stemmer and use my C++ stemmer
    Sentence segmentation for ngram parser (page 69+ in NLP book)
+   Write parse tree preprocessor stuff in hadoopable format
