@@ -171,7 +171,7 @@ bool Porter2Stemmer::internal::step1A(string & word)
         if(endsWith(word, "ied") || endsWith(word, "ies"))
         {
             // if preceded by only one letter
-            if(word.size() == 4)
+            if(word.size() <= 4)
                 word = word.substr(0, word.size() - 1);
             else
                 word = word.substr(0, word.size() - 2);
@@ -204,10 +204,11 @@ bool Porter2Stemmer::internal::step1A(string & word)
 */
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
 {
-    bool replaced = replaceIfExists(word, "eedly", "ee", startR1)
-        || replaceIfExists(word, "eed", "ee", startR1);
+    bool exists = endsWith(word, "eedly") || endsWith(word, "eed");
 
-    if(!replaced)
+    if(exists)
+        replaceIfExists(word, "eedly", "ee", startR1) || replaceIfExists(word, "eed", "ee", startR1);
+    else
     {
         size_t size = word.size();
         bool deleted = (containsVowel(word, 0, size - 2) && replaceIfExists(word, "ed", "", 0))
@@ -267,9 +268,9 @@ void Porter2Stemmer::internal::step1C(string & word)
 void Porter2Stemmer::internal::step2(string & word, int startR1)
 {
     const vector<pair<string, string>> subs = {
-        {"tional", "tion"}, {"enci", "ence"}, {"anci", "ance"},
+        {"ational", "ate"}, {"tional", "tion"}, {"enci", "ence"}, {"anci", "ance"},
         {"abli", "able"}, {"entli", "ent"}, {"izer", "ize"},
-        {"ization", "ize"}, {"ational", "ate"}, {"ation", "ate"},
+        {"ization", "ize"}, {"ation", "ate"},
         {"ator", "ate"}, {"alism", "al"}, {"aliti", "al"},
         {"alli", "al"}, {"fulness", "ful"}, {"ousli", "ous"},
         {"ousness", "ous"}, {"iveness", "ive"}, {"iviti", "ive"},
@@ -282,8 +283,14 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
             return;
 
     if(!replaceIfExists(word, "logi", "log", startR1 - 1))
-        if(endsWith(word, "li") && word.size() > 3 && isValidLIEnding(word[word.size() - 3]))
-            word = word.substr(0, word.size() - 2);
+    {
+        // make sure we choose the longest suffix
+        if(endsWith(word, "li") && !endsWith(word, "abli") && !endsWith(word, "entli")
+                && !endsWith(word, "aliti") && !endsWith(word, "alli") && !endsWith(word, "ousli")
+                && !endsWith(word, "bli") && !endsWith(word, "fulli") && !endsWith(word, "lessli"))
+            if(word.size() > 3 && word.size() - 2 >= startR1 && isValidLIEnding(word[word.size() - 3]))
+                word = word.substr(0, word.size() - 2);
+    }
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
@@ -333,15 +340,19 @@ void Porter2Stemmer::internal::step4(string & word, int startR2)
     const vector<pair<string, string>> subs = {
         {"al", ""}, {"ance", ""}, {"ence", ""}, {"er", ""}, {"ic", ""},
         {"able", ""}, {"ible", ""}, {"ant", ""}, {"ement", ""}, {"ment", ""},
-        {"ent", ""}, {"ism", ""}, {"ate", ""}, {"iti", ""}, {"ous", ""},
-        {"ive", ""}, {"ize", ""}
+        {"ism", ""}, {"ate", ""}, {"iti", ""}, {"ous", ""}, {"ive", ""}, {"ize", ""}
     };
 
     for(auto & sub: subs)
         if(replaceIfExists(word, sub.first, sub.second, startR2))
             return;
 
-    // short circuit again
+    // make sure we only choose the longest suffix
+    if(!endsWith(word, "ement") && !endsWith(word, "ment"))
+        if(replaceIfExists(word, "ent", "", startR2))
+            return;
+
+    // short circuit
     replaceIfExists(word, "sion", "s", startR2 - 1)
         || replaceIfExists(word, "tion", "t", startR2 - 1);
 

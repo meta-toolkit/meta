@@ -189,8 +189,8 @@ void testIndex()
 
 void testStemmer()
 {
-    //Parser parser("data/porter2-stems.txt", " \n");
-    Parser parser("data/wrong.txt", "\n");
+    Parser parser("data/porter2-stems.txt", " \n");
+    //Parser parser("data/wrong.txt", "\n");
     //Parser parser("data/top1000.txt", "\n");
     //Parser parser("data/mine.txt", "\n");
     //Parser parser("/home/sean/cs225/_cs296honors/sp12/wordfreq_data/waroftheworlds.txt", " \n");
@@ -206,7 +206,7 @@ void testStemmer()
         sb_symbol symb[length];
         memcpy(symb, word.c_str(), length);
         string theirs = string((char*)sb_stemmer_stem(stemmer, symb, length));
-        //parser.next();
+        parser.next();
         if(mine == theirs)
         {
             //cout << " -> " << Common::makeGreen("OK");
