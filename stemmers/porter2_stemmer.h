@@ -19,8 +19,6 @@ namespace Porter2Stemmer
 
     namespace internal
     {
-        std::string finalStem(std::string & word);
-
         int firstNonVowelAfterVowel(const std::string & word, int start);
 
         int getStartR1(const std::string & word);

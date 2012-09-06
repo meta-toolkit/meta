@@ -5,7 +5,6 @@
 #include <string.h>
 #include <cstdlib>
 #include "util/common.h"
-#include "stemmers/snowball_stemmer.h"
 #include "stemmers/porter2_stemmer.h"
 #include "index/document.h"
 #include "io/parser.h"
@@ -24,7 +23,6 @@ NgramTokenizer::NgramTokenizer(size_t n):
 
 void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
 {
-    //struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     string validchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'-";
     Parser parser(document.getPath(), validchars, validchars, validchars);
 
@@ -35,7 +33,6 @@ void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigne
         string next = "";
         do
         {
-            //next = stem(parser.next(), stemmer);
             next = Porter2Stemmer::stem(parser.next());
         } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
@@ -50,7 +47,6 @@ void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigne
         string next = "";
         do
         {
-            //next = stem(parser.next(), stemmer);
             next = Porter2Stemmer::stem(parser.next());
         } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
@@ -58,20 +54,14 @@ void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigne
 
     // add the last token
     document.increment(getMapping(wordify(ngram)), 1, docFreq);
-
-    //sb_stemmer_delete(stemmer);
 }
 
 void NgramTokenizer::initStopwords()
 {
-    struct sb_stemmer* stemmer = sb_stemmer_new("english", NULL);
     string valid = "abcdefghijklmnopqrstuvwxyzI";
     Parser parser("data/lemur-stopwords.txt", valid, valid, valid);
     while(parser.hasNext())
-    {
-        _stopwords.insert(stem(parser.next(), stemmer));
-    }
-    sb_stemmer_delete(stemmer);
+        _stopwords.insert(Porter2Stemmer::stem(parser.next()));
 }
 
 size_t NgramTokenizer::getNValue() const
@@ -86,15 +76,6 @@ string NgramTokenizer::wordify(const deque<string> & words) const
         result += (word + " ");
     result = result.substr(0, result.size() - 1);
     return result;
-}
-
-string NgramTokenizer::stem(const string & word, struct sb_stemmer* stemmer) const
-{
-    size_t length = word.size();
-    sb_symbol symb[length];
-    const char* cstr = setLower(word).c_str();
-    memcpy(symb, cstr, length);
-    return string((char*)sb_stemmer_stem(stemmer, symb, length));
 }
 
 string NgramTokenizer::setLower(const string & original) const

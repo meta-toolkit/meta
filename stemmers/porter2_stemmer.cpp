@@ -33,7 +33,10 @@ string Porter2Stemmer::stem(const string & toStem)
         word = word.substr(1, word.size() - 1);
 
     if(special(word))
-        return finalStem(word);
+    {
+        std::replace(word.begin(), word.end(), 'Y', 'y');
+        return word;
+    }
 
     changeY(word);
     int startR1 = getStartR1(word);
@@ -42,7 +45,10 @@ string Porter2Stemmer::stem(const string & toStem)
     step0(word);
 
     if(step1A(word))
-        return finalStem(word);
+    {
+        std::replace(word.begin(), word.end(), 'Y', 'y');
+        return word;
+    }
     
     step1B(word, startR1);
     step1C(word);
@@ -51,13 +57,7 @@ string Porter2Stemmer::stem(const string & toStem)
     step4(word, startR2);
     step5(word, startR1, startR2);
 
-    return finalStem(word);
-}
-
-string Porter2Stemmer::internal::finalStem(string & word)
-{
     std::replace(word.begin(), word.end(), 'Y', 'y');
-    std::remove(word.begin(), word.end(), '\'');
     return word;
 }
 

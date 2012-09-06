@@ -46,14 +46,6 @@ class NgramTokenizer : public Tokenizer
         std::unordered_set<string> _stopwords;
         
         /**
-         * Uses the Snowball stemmer.
-         * @param word - the word to stem
-         * @param stemmer - the stemmer to use
-         * @return the stemmed version of the word
-         */
-        std::string stem(const std::string & word, struct sb_stemmer* stemmer) const;
-     
-        /**
          * Turns a list of words into an ngram string.
          * @param words - the deque representing a list of words
          * @return the ngrams in string format
