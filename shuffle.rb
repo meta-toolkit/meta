@@ -1,6 +1,6 @@
-path = ARGV[0]
-puts "Examining collection located at \"#{path}\""
+#!/usr/bin/env ruby
 
+path = ARGV[0]
 numTraining = ARGV[1].to_i
 numTesting = -2
 
