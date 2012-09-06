@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include "porter2_stemmer.h"
 
-#define DEBUG 0
+#define DEBUG 1
 
 using namespace Porter2Stemmer::internal;
 using std::pair;
@@ -22,10 +22,15 @@ using std::cout;
 string Porter2Stemmer::stem(const string & toStem)
 {
     if(DEBUG) cout << __func__ << ": " << toStem << endl;
-    string word = trim(toStem);
 
-    if(returnImmediately(word))
-        return finalStem(word);
+    if(toStem.size() <= 2)
+        return toStem;
+
+    //string word = trim(toStem);
+    string word = toStem;
+
+    if(word[0] == '\'')
+        word = word.substr(1, word.size() - 1);
 
     if(special(word))
         return finalStem(word);
@@ -33,7 +38,8 @@ string Porter2Stemmer::stem(const string & toStem)
     changeY(word);
     int startR1 = getStartR1(word);
     int startR2 = getStartR2(word, startR1);
-    removeApostrophe(word);
+
+    step0(word);
 
     if(step1A(word))
         return finalStem(word);
@@ -65,17 +71,7 @@ string Porter2Stemmer::trim(const string & toStem)
         if((ch >= 'a' && ch <= 'z') || ch == '\'')
             word += ch;
     }
-
-    // remove leading apostrophe
-    if(word.size() >= 1 && word[0] == '\'')
-        word = word.substr(1, word.size() - 1);
-
     return word;
-}
-
-bool Porter2Stemmer::internal::returnImmediately(const string & word)
-{
-    return word.size() <= 2;
 }
 
 int Porter2Stemmer::internal::getStartR1(const string & word)
@@ -102,7 +98,7 @@ int Porter2Stemmer::internal::getStartR2(const string & word, int startR1)
     if(startR1 == word.size())
         return startR1;
 
-    int startR2 = firstNonVowelAfterVowel(word, startR1);
+    int startR2 = firstNonVowelAfterVowel(word, startR1 + 1);
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
     if(DEBUG) cout << "    startR2: " << startR2 << endl;
@@ -112,9 +108,9 @@ int Porter2Stemmer::internal::getStartR2(const string & word, int startR1)
 
 int Porter2Stemmer::internal::firstNonVowelAfterVowel(const string & word, int start)
 {
-    for(size_t i = start; i < word.size(); ++i)
+    for(size_t i = start; i != 0 && i < word.size(); ++i)
     {
-        if(isVowelY(word[i]) && !isVowelY(word[i - 1]))
+        if(!isVowelY(word[i]) && isVowelY(word[i - 1]))
             return i + 1;
     }
 
@@ -138,7 +134,10 @@ void Porter2Stemmer::internal::changeY(string & word)
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
-void Porter2Stemmer::internal::removeApostrophe(string & word)
+/**
+  Step 0
+*/
+void Porter2Stemmer::internal::step0(string & word)
 {
     // short circuit the longest suffix
     replaceIfExists(word, "'s'", "", 0)
@@ -243,6 +242,8 @@ void Porter2Stemmer::internal::step1B(string & word, int startR1)
             word = word + "e";
         else if(deleted && endsInDouble(word))
             word = word.substr(0, word.size() - 1);
+        else if(deleted && startR1 == word.size() && isShort(word))
+            word = word + "e";
     }
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
@@ -383,7 +384,7 @@ void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
     {
         if(size - 1 >= startR2)
             word = word.substr(0, size - 1);
-        else if(size - 1 >= startR1 && !isShort(word.substr(0, size - 1), startR1))
+        else if(size - 1 >= startR1 && !isShort(word.substr(0, size - 1)))
             word = word.substr(0, size - 1);
     }
     else if(word[word.size() - 1] == 'l')
@@ -402,7 +403,7 @@ void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
  * (a) a vowel followed by a non-vowel other than w, x or Y and preceded by a non-vowel
  * (b) a vowel at the beginning of the word followed by a non-vowel.
  */
-bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
+bool Porter2Stemmer::internal::isShort(const string & word)
 {
     size_t size = word.size();
 

@@ -199,7 +199,7 @@ void testStemmer()
     double start = omp_get_wtime();
     while(parser.hasNext())
     {
-        string word = Porter2Stemmer::trim(parser.next());
+        string word = parser.next();
         string mine = Porter2Stemmer::stem(word);
         size_t length = word.size();
         sb_symbol symb[length];

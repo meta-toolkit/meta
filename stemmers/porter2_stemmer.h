@@ -23,15 +23,13 @@ namespace Porter2Stemmer
 
         int firstNonVowelAfterVowel(const std::string & word, int start);
 
-        inline bool returnImmediately(const std::string & word);
-
         int getStartR1(const std::string & word);
 
         int getStartR2(const std::string & word, int startR1);
 
         void changeY(std::string & word);
 
-        void removeApostrophe(std::string & word);
+        void step0(std::string & word);
 
         bool step1A(std::string & word);
 
@@ -47,7 +45,7 @@ namespace Porter2Stemmer
 
         void step5(std::string & word, int startR1, int startR2);
 
-        inline bool isShort(const std::string & word, int startR1);
+        inline bool isShort(const std::string & word);
 
         bool special(std::string & word);
 
