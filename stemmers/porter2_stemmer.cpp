@@ -141,7 +141,7 @@ void Porter2Stemmer::internal::step0(string & word)
 {
     // short circuit the longest suffix
     replaceIfExists(word, "'s'", "", 0)
-        || replaceIfExists(word, "s'", "", 0)
+        || replaceIfExists(word, "'s", "", 0)
         || replaceIfExists(word, "'", "", 0);
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
@@ -179,9 +179,7 @@ bool Porter2Stemmer::internal::step1A(string & word)
         else if(endsWith(word, "s") && !endsWith(word, "us") && !endsWith(word, "ss"))
         {
             if(containsVowel(word, 0, word.size() - 2))
-            {
                 word = word.substr(0, word.size() - 1);
-            }
         }
     }
 
@@ -472,11 +470,11 @@ bool Porter2Stemmer::internal::isValidLIEnding(char ch)
         || ch == 'k' || ch == 'm' || ch == 'n' || ch == 'r' || ch == 't';
 }
 
-bool Porter2Stemmer::internal::containsVowel(const string & word, size_t start, size_t end)
+bool Porter2Stemmer::internal::containsVowel(const string & word, int start, int end)
 {
-    if(start <= end && end < word.size())
+    if(start >=0 && end > 0 && start <= end && end < word.size())
     {
-        for(size_t i = start; start < end; ++i)
+        for(size_t i = start; i < end; ++i)
             if(isVowelY(word[i]))
                 return true;
     }

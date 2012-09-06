@@ -17,15 +17,15 @@ CCOPTS = -g -O0
 LINKER = g++ -std=c++0x -fopenmp -I.
 #LINKER = g++ -std=c++0x -fopenmp -lboost_regex -I.
 
-CLEANDIRS = tokenizers test io index util
+CLEANDIRS = tokenizers io index util
 
 all: $(SEARCH) $(TESTER) $(SANDERS) $(GENERIC)
 
 $(SEARCH): $(SEARCHOBJS) main.cpp $(TEMPLATES)
 	$(LINKER) main.cpp -o $@ $(SEARCHOBJS)
 
-$(TESTER): $(TESTEROBJS) test/tester.cpp $(TEMPLATES)
-	$(LINKER) test/tester.cpp -o $@ $(TESTEROBJS)
+$(TESTER): $(TESTEROBJS) tester.cpp $(TEMPLATES)
+	$(LINKER) tester.cpp -o $@ $(TESTEROBJS)
 
 %.o : %.cpp $(wildcard *.h)
 	$(CC) $(CCOPTS) -c $(@:.o=.cpp) -o $@

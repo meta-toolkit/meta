@@ -63,8 +63,7 @@ namespace Porter2Stemmer
 
         bool isValidLIEnding(char ch);
 
-        bool containsVowel(const std::string & word, size_t start,
-                size_t end);
+        bool containsVowel(const std::string & word, int start, int end);
     }
 }
 
