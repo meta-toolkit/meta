@@ -1,5 +1,30 @@
 /**
  * @file porter2_stemmer.cpp
+ * @author Sean Massung
+ * @date September 2012
+ *
+ * Implementation of
+ * http://snowball.tartarus.org/algorithms/english/stemmer.html
+ *
+ * Copyright (C) 2012 Sean Massung
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 #include <algorithm>
@@ -26,7 +51,6 @@ string Porter2Stemmer::stem(const string & toStem)
     if(toStem.size() <= 2)
         return toStem;
 
-    //string word = trim(toStem);
     string word = toStem;
 
     if(word[0] == '\'')
@@ -269,13 +293,11 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
 {
     const vector<pair<string, string>> subs = {
         {"ational", "ate"}, {"tional", "tion"}, {"enci", "ence"}, {"anci", "ance"},
-        {"abli", "able"}, {"entli", "ent"}, {"izer", "ize"},
-        {"ization", "ize"}, {"ation", "ate"},
-        {"ator", "ate"}, {"alism", "al"}, {"aliti", "al"},
-        {"alli", "al"}, {"fulness", "ful"}, {"ousli", "ous"},
-        {"ousness", "ous"}, {"iveness", "ive"}, {"iviti", "ive"},
-        {"biliti", "ble"}, {"bli", "ble"}, {"fulli", "ful"},
-        {"lessli", "less"}
+        {"abli", "able"}, {"entli", "ent"}, {"izer", "ize"}, {"ization", "ize"},
+        {"ation", "ate"}, {"ator", "ate"}, {"alism", "al"}, {"aliti", "al"},
+        {"alli", "al"}, {"fulness", "ful"}, {"ousli", "ous"}, {"ousness", "ous"},
+        {"iveness", "ive"}, {"iviti", "ive"}, {"biliti", "ble"}, {"bli", "ble"},
+        {"fulli", "ful"}, {"lessli", "less"}
     };
 
     for(auto & sub: subs)
@@ -310,9 +332,8 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
 void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
 {
     const vector<pair<string, string>> subs = {
-        {"ational", "ate"}, {"tional", "tion"}, {"alize", "al"},
-        {"icate", "ic"}, {"iciti", "ic"}, {"ical", "ic"},
-        {"ful", ""}, {"ness", ""}
+        {"ational", "ate"}, {"tional", "tion"}, {"alize", "al"}, {"icate", "ic"},
+        {"iciti", "ic"}, {"ical", "ic"}, {"ful", ""}, {"ness", ""}
     };
 
     for(auto & sub: subs)
@@ -409,12 +430,9 @@ bool Porter2Stemmer::internal::isShort(const string & word)
 bool Porter2Stemmer::internal::special(string & word)
 {
     const std::unordered_map<string, string> exceptions = {
-        {"skis", "ski"}, {"skies", "sky"},
-        {"dying", "die"}, {"lying", "lie"},
-        {"tying", "tie"}, {"idly", "idl"},
-        {"gently", "gentl"}, {"ugly", "ugli"},
-        {"early", "earli"}, {"only", "onli"},
-        {"singly", "singl"}
+        {"skis", "ski"}, {"skies", "sky"}, {"dying", "die"}, {"lying", "lie"},
+        {"tying", "tie"}, {"idly", "idl"}, {"gently", "gentl"}, {"ugly", "ugli"},
+        {"early", "earli"}, {"only", "onli"}, {"singly", "singl"}
     };
 
     // special cases
