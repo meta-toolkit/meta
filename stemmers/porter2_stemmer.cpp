@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include "porter2_stemmer.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 using namespace Porter2Stemmer::internal;
 using std::pair;
@@ -179,7 +179,9 @@ bool Porter2Stemmer::internal::step1A(string & word)
         else if(endsWith(word, "s") && !endsWith(word, "us") && !endsWith(word, "ss"))
         {
             if(containsVowel(word, 0, word.size() - 2))
+            {
                 word = word.substr(0, word.size() - 1);
+            }
         }
     }
 
@@ -209,34 +211,11 @@ void Porter2Stemmer::internal::step1B(string & word, int startR1)
 
     if(!replaced)
     {
-        /*
         size_t size = word.size();
         bool deleted = (containsVowel(word, 0, size - 2) && replaceIfExists(word, "ed", "", 0))
             || (containsVowel(word, 0, size - 4) && replaceIfExists(word, "edly", "", 0))
             || (containsVowel(word, 0, size - 3) && replaceIfExists(word, "ing", "", 0))
             || (containsVowel(word, 0, size - 5) && replaceIfExists(word, "ingly", "", 0));
-        */
-        bool deleted = false;
-        if(endsWith(word, "ed"))
-        {
-                deleted = true;
-                    word = word.substr(0, word.length() - 2);
-        }
-        else if(endsWith(word, "edly"))
-        {
-                deleted = true;
-                    word = word.substr(0, word.length() - 4);
-        }
-        else if(endsWith(word, "ing"))
-        {
-                deleted = true;
-                    word = word.substr(0, word.length() - 3);
-        }
-        else if(endsWith(word, "ingly"))
-        {
-                deleted = true;
-                    word = word.substr(0, word.length() - 5);
-        }
 
         if(deleted && (endsWith(word, "at") || endsWith(word, "bl") || endsWith(word, "iz")))
             word = word + "e";
@@ -479,7 +458,7 @@ bool Porter2Stemmer::internal::endsInDouble(const string & word)
 bool Porter2Stemmer::internal::replaceIfExists(string & word,
         const string & suffix, const string & replacement, size_t start)
 {
-    if(endsWith(word, suffix) && (word.size() - start >= start))
+    if(!(start > word.size()) && endsWith(word.substr(start, word.size() - start), suffix))
     {
         word = word.substr(0, word.size() - suffix.size()) + replacement;
         return true;
@@ -497,7 +476,7 @@ bool Porter2Stemmer::internal::containsVowel(const string & word, size_t start, 
 {
     if(start <= end && end < word.size())
     {
-        for(size_t i = start; start < end; ++start)
+        for(size_t i = start; start < end; ++i)
             if(isVowelY(word[i]))
                 return true;
     }
