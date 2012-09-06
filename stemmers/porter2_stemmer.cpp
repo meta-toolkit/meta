@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include "porter2_stemmer.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 using namespace Porter2Stemmer::internal;
 using std::pair;
@@ -67,15 +67,15 @@ string Porter2Stemmer::trim(const string & toStem)
     }
 
     // remove leading apostrophe
-    if(word.length() >= 1 && word[0] == '\'')
-        word = word.substr(1, word.length() - 1);
+    if(word.size() >= 1 && word[0] == '\'')
+        word = word.substr(1, word.size() - 1);
 
     return word;
 }
 
 bool Porter2Stemmer::internal::returnImmediately(const string & word)
 {
-    return word.length() <= 2;
+    return word.size() <= 2;
 }
 
 int Porter2Stemmer::internal::getStartR1(const string & word)
@@ -99,7 +99,7 @@ int Porter2Stemmer::internal::getStartR1(const string & word)
 
 int Porter2Stemmer::internal::getStartR2(const string & word, int startR1)
 {
-    if(startR1 == word.length())
+    if(startR1 == word.size())
         return startR1;
 
     int startR2 = firstNonVowelAfterVowel(word, startR1);
@@ -112,13 +112,13 @@ int Porter2Stemmer::internal::getStartR2(const string & word, int startR1)
 
 int Porter2Stemmer::internal::firstNonVowelAfterVowel(const string & word, int start)
 {
-    for(size_t i = start; i < word.length(); ++i)
+    for(size_t i = start; i < word.size(); ++i)
     {
         if(isVowelY(word[i]) && !isVowelY(word[i - 1]))
             return i + 1;
     }
 
-    return word.length();
+    return word.size();
 }
 
 void Porter2Stemmer::internal::changeY(string & word)
@@ -129,7 +129,7 @@ void Porter2Stemmer::internal::changeY(string & word)
     if(word[0] == 'y')
         word[0] = 'Y';
 
-    for(size_t i = 1; i < word.length(); ++i)
+    for(size_t i = 1; i < word.size(); ++i)
     {
         if(word[i] == 'y' && isVowel(word[i - 1]))
             word[i++] = 'Y'; // skip next iteration
@@ -140,12 +140,10 @@ void Porter2Stemmer::internal::changeY(string & word)
 
 void Porter2Stemmer::internal::removeApostrophe(string & word)
 {
-    if(endsWith(word, "'s'"))
-        word = word.substr(0, word.length() - 3);
-    else if(endsWith(word, "s'"))
-        word = word.substr(0, word.length() - 2);
-    else if(endsWith(word, "'"))
-        word = word.substr(0, word.length() - 1);
+    // short circuit the longest suffix
+    replaceIfExists(word, "'s'", "", 0)
+        || replaceIfExists(word, "s'", "", 0)
+        || replaceIfExists(word, "'", "", 0);
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
@@ -169,26 +167,20 @@ void Porter2Stemmer::internal::removeApostrophe(string & word)
 */
 bool Porter2Stemmer::internal::step1A(string & word)
 {
-    if(!replaceIfExists(word, "sses", "ss"))
+    if(!replaceIfExists(word, "sses", "ss", 0))
     {
         if(endsWith(word, "ied") || endsWith(word, "ies"))
         {
             // if preceded by only one letter
-            if(word.length() == 4)
-                word = word.substr(0, word.length() - 1);
+            if(word.size() == 4)
+                word = word.substr(0, word.size() - 1);
             else
-                word = word.substr(0, word.length() - 2);
+                word = word.substr(0, word.size() - 2);
         }
         else if(endsWith(word, "s") && !endsWith(word, "us") && !endsWith(word, "ss"))
         {
-            for(size_t i = 0; i < word.length() - 2; ++i)
-            {
-                if(isVowel(word[i]))
-                {
-                    word = word.substr(0, word.length() - 1);
-                    break;
-                }
-            }
+            if(containsVowel(word, 0, word.size() - 2))
+                word = word.substr(0, word.size() - 1);
         }
     }
 
@@ -213,39 +205,44 @@ bool Porter2Stemmer::internal::step1A(string & word)
 */
 void Porter2Stemmer::internal::step1B(string & word, int startR1)
 {
-    // TODO: convert to replaceIfExists, with replacement as ""
-    if(endsWith(word, "eedly") && word.length() - 5 >= startR1)
-        word = word.substr(0, word.length() - 3);
-    else if(endsWith(word, "eed") && word.length() - 3 >= startR1)
-        word = word.substr(0, word.length() - 1);
-    else
+    bool replaced = replaceIfExists(word, "eedly", "ee", startR1)
+        || replaceIfExists(word, "eed", "ee", startR1);
+
+    if(!replaced)
     {
+        /*
+        size_t size = word.size();
+        bool deleted = (containsVowel(word, 0, size - 2) && replaceIfExists(word, "ed", "", 0))
+            || (containsVowel(word, 0, size - 4) && replaceIfExists(word, "edly", "", 0))
+            || (containsVowel(word, 0, size - 3) && replaceIfExists(word, "ing", "", 0))
+            || (containsVowel(word, 0, size - 5) && replaceIfExists(word, "ingly", "", 0));
+        */
         bool deleted = false;
         if(endsWith(word, "ed"))
         {
-            deleted = true;
-            word = word.substr(0, word.length() - 2);
+                deleted = true;
+                    word = word.substr(0, word.length() - 2);
         }
         else if(endsWith(word, "edly"))
         {
-            deleted = true;
-            word = word.substr(0, word.length() - 4);
+                deleted = true;
+                    word = word.substr(0, word.length() - 4);
         }
         else if(endsWith(word, "ing"))
         {
-            deleted = true;
-            word = word.substr(0, word.length() - 3);
+                deleted = true;
+                    word = word.substr(0, word.length() - 3);
         }
         else if(endsWith(word, "ingly"))
         {
-            deleted = true;
-            word = word.substr(0, word.length() - 5);
+                deleted = true;
+                    word = word.substr(0, word.length() - 5);
         }
 
         if(deleted && (endsWith(word, "at") || endsWith(word, "bl") || endsWith(word, "iz")))
             word = word + "e";
         else if(deleted && endsInDouble(word))
-            word = word.substr(0, word.length() - 1);
+            word = word.substr(0, word.size() - 1);
     }
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
@@ -261,10 +258,8 @@ void Porter2Stemmer::internal::step1C(string & word)
 {
     size_t size = word.size();
     if(size > 2 && (word[size - 1] == 'y' || word[size - 1] == 'Y'))
-    {
         if(!isVowel(word[size - 2]))
             word[size - 1] = 'i';
-    }
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
@@ -288,12 +283,12 @@ void Porter2Stemmer::internal::step1C(string & word)
   biliti, bli:          replace by ble
   fulli:                replace by ful
   lessli:               replace by less
-  logi:                 replace by log   // TODO check if ok
+  ogi:                  replace by og if preceded by l
   li:                   delete if preceded by a valid li-ending
 */
 void Porter2Stemmer::internal::step2(string & word, int startR1)
 {
-    vector<pair<string, string>> subs = {
+    const vector<pair<string, string>> subs = {
         {"tional", "tion"}, {"enci", "ence"}, {"anci", "ance"},
         {"abli", "able"}, {"entli", "ent"}, {"izer", "ize"},
         {"ization", "ize"}, {"ational", "ate"}, {"ation", "ate"},
@@ -301,18 +296,16 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
         {"alli", "al"}, {"fulness", "ful"}, {"ousli", "ous"},
         {"ousness", "ous"}, {"iveness", "ive"}, {"iviti", "ive"},
         {"biliti", "ble"}, {"bli", "ble"}, {"fulli", "ful"},
-        {"lessli", "less"}, {"logi", "log"}
+        {"lessli", "less"}
     };
 
     for(auto & sub: subs)
-    {
-        if(replaceIfExists(word, sub.first, sub.second))
+        if(replaceIfExists(word, sub.first, sub.second, startR1))
             return;
-    }
 
-    // last case
-    if(endsWith(word, "li") && word.size() > 3 && validLIEnding(word[word.size() - 3]))
-        word = word.substr(0, word.size() - 2);
+    if(!replaceIfExists(word, "logi", "log", startR1 - 1))
+        if(endsWith(word, "li") && word.size() > 3 && isValidLIEnding(word[word.size() - 3]))
+            word = word.substr(0, word.size() - 2);
 
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
@@ -322,8 +315,8 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
   
   If found and in R1, perform the action indicated. 
 
-  tional:             replace by tion
   ational:            replace by ate
+  tional:             replace by tion
   alize:              replace by al
   icate, iciti, ical: replace by ic
   ful, ness:          delete
@@ -331,6 +324,18 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
 */
 void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
 {
+    const vector<pair<string, string>> subs = {
+        {"ational", "ate"}, {"tional", "tion"}, {"alize", "al"},
+        {"icate", "ic"}, {"iciti", "ic"}, {"ical", "ic"},
+        {"ful", ""}, {"ness", ""}
+    };
+
+    for(auto & sub: subs)
+        if(replaceIfExists(word, sub.first, sub.second, startR1))
+            return;
+
+    replaceIfExists(word, "ative", "", startR2);
+
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
@@ -347,6 +352,21 @@ void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
 */
 void Porter2Stemmer::internal::step4(string & word, int startR2)
 {
+    const vector<pair<string, string>> subs = {
+        {"al", ""}, {"ance", ""}, {"ence", ""}, {"er", ""}, {"ic", ""},
+        {"able", ""}, {"ible", ""}, {"ant", ""}, {"ement", ""}, {"ment", ""},
+        {"ent", ""}, {"ism", ""}, {"ate", ""}, {"iti", ""}, {"ous", ""},
+        {"ive", ""}, {"ize", ""}
+    };
+
+    for(auto & sub: subs)
+        if(replaceIfExists(word, sub.first, sub.second, startR2))
+            return;
+
+    // short circuit again
+    replaceIfExists(word, "sion", "s", startR2 - 1)
+        || replaceIfExists(word, "tion", "t", startR2 - 1);
+
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
@@ -358,20 +378,43 @@ void Porter2Stemmer::internal::step4(string & word, int startR2)
 */
 void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
 {
+    size_t size = word.size();
+    if(word[size - 1] == 'e')
+    {
+        if(size - 1 >= startR2)
+            word = word.substr(0, size - 1);
+        else if(size - 1 >= startR1 && !isShort(word.substr(0, size - 1), startR1))
+            word = word.substr(0, size - 1);
+    }
+    else if(word[word.size() - 1] == 'l')
+    {
+        if(word.size() - 1 >= startR2 && word[word.size() - 2] == 'l')
+            word = word.substr(0, word.size() - 1);
+    }
+
     if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 /**
- * Define a short syllable in a word as either (a) a vowel followed by a
- * non-vowel other than w, x or Y and preceded by a non-vowel, or * (b) a vowel
- * at the beginning of the word followed by a non-vowel.
+ * Determines whether a word ends in a short syllable.
+ * Define a short syllable in a word as either
  *
- * A word is called short if it ends in a short syllable, and if R1 is null.
+ * (a) a vowel followed by a non-vowel other than w, x or Y and preceded by a non-vowel
+ * (b) a vowel at the beginning of the word followed by a non-vowel.
  */
 bool Porter2Stemmer::internal::isShort(const string & word, int startR1)
 {
-    // TODO
-    return false;
+    size_t size = word.size();
+
+    if(size >= 3)
+    {
+        if(!isVowelY(word[size - 3]) && isVowelY(word[size - 2])
+                && !isVowelY(word[size - 1]) && word[size - 1] != 'w'
+                && word[size - 1] != 'x' && word[size - 1] != 'Y')
+            return true;
+    }
+    else
+        return size == 2 && isVowelY(word[0]) && !isVowelY(word[1]);
 }
 
 bool Porter2Stemmer::internal::special(string & word)
@@ -413,31 +456,29 @@ bool Porter2Stemmer::internal::isVowel(char ch)
 
 bool Porter2Stemmer::internal::endsWith(const string & word, const string & str)
 {
-    return word.length() >= str.length() &&
-        word.substr(word.length() - str.length()) == str;
+    return word.size() >= str.size() &&
+        word.substr(word.size() - str.size()) == str;
 }
 
 bool Porter2Stemmer::internal::endsInDouble(const string & word)
 {
-    if(word.length() >= 2)
+    if(word.size() >= 2)
     {
-        char a = word[word.length() - 1];
-        char b = word[word.length() - 2];
+        char a = word[word.size() - 1];
+        char b = word[word.size() - 2];
 
         if(a == b)
-        {
             return a == 'b' || a == 'd' || a == 'f' || a == 'g'
                 || a == 'm' || a == 'n' || a == 'p' || a == 'r' || a == 't';
-        }
     }
 
     return false;
 }
 
 bool Porter2Stemmer::internal::replaceIfExists(string & word,
-        const string & suffix, const string & replacement)
+        const string & suffix, const string & replacement, size_t start)
 {
-    if(endsWith(word, suffix))
+    if(endsWith(word, suffix) && (word.size() - start >= start))
     {
         word = word.substr(0, word.size() - suffix.size()) + replacement;
         return true;
@@ -445,8 +486,19 @@ bool Porter2Stemmer::internal::replaceIfExists(string & word,
     return false;
 }
 
-bool Porter2Stemmer::internal::validLIEnding(char ch)
+bool Porter2Stemmer::internal::isValidLIEnding(char ch)
 {
     return ch == 'c' || ch == 'd' || ch == 'e' || ch == 'g' || ch == 'h'
         || ch == 'k' || ch == 'm' || ch == 'n' || ch == 'r' || ch == 't';
+}
+
+bool Porter2Stemmer::internal::containsVowel(const string & word, size_t start, size_t end)
+{
+    if(start <= end && end < word.size())
+    {
+        for(size_t i = start; start < end; ++start)
+            if(isVowelY(word[i]))
+                return true;
+    }
+    return false;
 }
