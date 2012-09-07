@@ -34,8 +34,6 @@
 #include <unordered_map>
 #include "porter2_stemmer.h"
 
-#define DEBUG 0
-
 using namespace Porter2Stemmer::internal;
 using std::pair;
 using std::string;
@@ -46,8 +44,6 @@ using std::cout;
 
 string Porter2Stemmer::stem(const string & toStem)
 {
-    if(DEBUG) cout << __func__ << ": " << toStem << endl;
-
     if(toStem.size() <= 2)
         return toStem;
 
@@ -57,10 +53,7 @@ string Porter2Stemmer::stem(const string & toStem)
         word = word.substr(1, word.size() - 1);
 
     if(special(word))
-    {
-        std::replace(word.begin(), word.end(), 'Y', 'y');
         return word;
-    }
 
     changeY(word);
     int startR1 = getStartR1(word);
@@ -111,9 +104,6 @@ int Porter2Stemmer::internal::getStartR1(const string & word)
     // general case
     int startR1 = firstNonVowelAfterVowel(word, 1);
 
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
-    if(DEBUG) cout << "    startR1: " << startR1 << endl;
-
     return startR1;
 }
 
@@ -123,9 +113,6 @@ int Porter2Stemmer::internal::getStartR2(const string & word, int startR1)
         return startR1;
 
     int startR2 = firstNonVowelAfterVowel(word, startR1 + 1);
-
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
-    if(DEBUG) cout << "    startR2: " << startR2 << endl;
 
     return startR2;
 }
@@ -154,8 +141,6 @@ void Porter2Stemmer::internal::changeY(string & word)
         if(word[i] == 'y' && isVowel(word[i - 1]))
             word[i++] = 'Y'; // skip next iteration
     }
-
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 /**
@@ -167,8 +152,6 @@ void Porter2Stemmer::internal::step0(string & word)
     replaceIfExists(word, "'s'", "", 0)
         || replaceIfExists(word, "'s", "", 0)
         || replaceIfExists(word, "'", "", 0);
-
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 /**
@@ -206,8 +189,6 @@ bool Porter2Stemmer::internal::step1A(string & word)
                 word = word.substr(0, word.size() - 1);
         }
     }
-
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 
     // special case after step 1a
     return word == "inning" || word == "outing" || word == "canning" || word == "herring" ||
@@ -247,8 +228,6 @@ void Porter2Stemmer::internal::step1B(string & word, int startR1)
         else if(deleted && startR1 == word.size() && isShort(word))
             word = word + "e";
     }
-
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 /**
@@ -263,8 +242,6 @@ void Porter2Stemmer::internal::step1C(string & word)
     if(size > 2 && (word[size - 1] == 'y' || word[size - 1] == 'Y'))
         if(!isVowel(word[size - 2]))
             word[size - 1] = 'i';
-
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 /**
@@ -313,8 +290,6 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
             if(word.size() > 3 && word.size() - 2 >= startR1 && isValidLIEnding(word[word.size() - 3]))
                 word = word.substr(0, word.size() - 2);
     }
-
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 /**
@@ -341,8 +316,6 @@ void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
             return;
 
     replaceIfExists(word, "ative", "", startR2);
-
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 /**
@@ -376,8 +349,6 @@ void Porter2Stemmer::internal::step4(string & word, int startR2)
     // short circuit
     replaceIfExists(word, "sion", "s", startR2 - 1)
         || replaceIfExists(word, "tion", "t", startR2 - 1);
-
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 /**
@@ -401,8 +372,6 @@ void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
         if(word.size() - 1 >= startR2 && word[word.size() - 2] == 'l')
             word = word.substr(0, word.size() - 1);
     }
-
-    if(DEBUG) cout << "  " << __func__ << ": " << word << endl;
 }
 
 /**
