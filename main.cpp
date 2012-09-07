@@ -7,6 +7,7 @@
  *  a given collection.
  */
 
+#include <memory>
 #include <utility>
 #include <vector>
 #include <string>
@@ -15,6 +16,7 @@
 
 #include "tokenizers/ngram_tokenizer.h"
 #include "tokenizers/pos_tree_tokenizer.h"
+#include "tokenizers/fw_tokenizer.h"
 #include "tokenizers/parse_tree.h"
 #include "io/parser.h"
 #include "index/ram_index.h"
@@ -41,15 +43,16 @@ vector<Document> getDocs(const string & filename, const string & prefix)
 
 int main(int argc, char* argv[])
 {
-    string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
     //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
+    string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
 
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
 
-    Tokenizer* tokenizer = new NgramTokenizer(1);
-    Index* index = new RAMIndex(trainDocs, tokenizer);
+    Tokenizer* tokenizer = new FWTokenizer("data/function-words.txt");
+    //Tokenizer* tokenizer = new NgramTokenizer(3);
+    std::unique_ptr<Index> index(new RAMIndex(trainDocs, tokenizer)); // TODO shared pointer?
 
     cout << "Running queries..." << endl;
     size_t numQueries = 1;
@@ -70,7 +73,6 @@ int main(int argc, char* argv[])
         ++numQueries;
     }
 
-    delete index;
     delete tokenizer;
     return 0;
 }

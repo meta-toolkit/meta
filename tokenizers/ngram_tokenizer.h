@@ -43,7 +43,7 @@ class NgramTokenizer : public Tokenizer
         size_t _nValue;
 
         /** a stopword list based on the Lemur stopwords */
-        std::unordered_set<string> _stopwords;
+        std::unordered_set<std::string> _stopwords;
         
         /**
          * Turns a list of words into an ngram string.
@@ -57,7 +57,7 @@ class NgramTokenizer : public Tokenizer
          */
         void initStopwords();
 
-        string setLower(const string & original) const;
+        std::string setLower(const std::string & original) const;
 };
 
 #endif
