@@ -45,7 +45,6 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer
 {
     cout << "[RAMIndex]: creating index from " << indexDocs.size() << " documents" << endl;
 
-    /*
     size_t docNum = 0;
     for(auto & doc: _documents)
     {
@@ -58,7 +57,6 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer
     cout << "  100%        " << endl;
 
     _avgDocLength /= _documents.size();
-    */
 }
 
 void RAMIndex::combineMap(const unordered_map<TermID, unsigned int> & newFreqs)
