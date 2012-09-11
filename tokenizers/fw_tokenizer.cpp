@@ -17,7 +17,8 @@ FWTokenizer::FWTokenizer(const string & fwFile)
         _functionWords.insert(parser.next());
 }
 
-void FWTokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
+void FWTokenizer::tokenize(Document & document,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     string validchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'-";
     Parser parser(document.getPath(), validchars, validchars, validchars);

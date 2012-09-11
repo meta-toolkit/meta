@@ -8,7 +8,8 @@
 
 using std::unordered_map;
 
-void POSTreeTokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
+void POSTreeTokenizer::tokenize(Document & document,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
 
 }

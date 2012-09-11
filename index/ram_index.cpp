@@ -15,19 +15,18 @@ using std::string;
 using std::vector;
 using std::multimap;
 
-RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer)
+RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer):
+    _documents(vector<Document>()),
+    _docFreqs(new unordered_map<TermID, unsigned int>),
+    _avgDocLength(0)
 {
-    cout << "[RAMIndex]: creating index from " << indexFiles.size() << " files" << endl;
-
-    _docFreqs = unordered_map<TermID, unsigned int>();
-    _documents = vector<Document>();
-    _avgDocLength = 0;
+    cout << "[RAMIndex]: creating index from " << indexFiles.size() << " documents" << endl;
     
     size_t docNum = 0;
     for(auto & file: indexFiles)
     {
         Document document(file);
-        tokenizer->tokenize(document, &_docFreqs);
+        tokenizer->tokenize(document, _docFreqs);
         _documents.push_back(document);
         _avgDocLength += document.getLength();
 
@@ -39,18 +38,19 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer>
     _avgDocLength /= _documents.size();
 }
 
-RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer> tokenizer)
+RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer> tokenizer):
+    _documents(indexDocs),
+    _docFreqs(new unordered_map<TermID, unsigned int>),
+    _avgDocLength(0)
 {
-    cout << "[RAMIndex]: creating index from " << indexDocs.size() << " Documents" << endl;
+    cout << "[RAMIndex]: creating index from " << indexDocs.size() << " documents" << endl;
 
-    _docFreqs = unordered_map<TermID, unsigned int>();
-    _documents = indexDocs;
-    _avgDocLength = 0;
+    /*
     size_t docNum = 0;
     for(auto & doc: _documents)
     {
         //combineMap(doc.getFrequencies()); // call this if doc was already tokenized
-        tokenizer->tokenize(doc, &_docFreqs);
+        tokenizer->tokenize(doc, _docFreqs);
         _avgDocLength += doc.getLength();
         if(docNum++ % 10 == 0)
             cout << "  " << ((double) docNum / _documents.size() * 100) << "%    \r";
@@ -58,12 +58,13 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer
     cout << "  100%        " << endl;
 
     _avgDocLength /= _documents.size();
+    */
 }
 
 void RAMIndex::combineMap(const unordered_map<TermID, unsigned int> & newFreqs)
 {
-    for(auto & freq: _docFreqs)
-        _docFreqs[freq.first] += freq.second;
+    for(auto & freq: *_docFreqs)
+        (*_docFreqs)[freq.first] += freq.second;
 }
 
 double RAMIndex::scoreDocument(const Document & document, const Document & query) const
@@ -78,8 +79,8 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
     const unordered_map<TermID, unsigned int> frequencies = query.getFrequencies();
     for(auto & term: frequencies)
     {
-        auto df = _docFreqs.find(term.first);
-        double docFreq = (df == _docFreqs.end()) ? (0.0) : (df->second);
+        auto df = _docFreqs->find(term.first);
+        double docFreq = (df == _docFreqs->end()) ? (0.0) : (df->second);
         double termFreq = document.getFrequency(term.first);
         double queryTermFreq = query.getFrequency(term.first);
 
@@ -112,9 +113,7 @@ multimap<double, string> RAMIndex::search(Document & query) const
         if(score != 0.0)
         {
             #pragma omp critical
-            {
-                ranks.insert(make_pair(score, _documents[idx].getName() + " (" + _documents[idx].getCategory() + ")"));
-            }
+            ranks.insert(make_pair(score, _documents[idx].getName() + " (" + _documents[idx].getCategory() + ")"));
         }
     }
 

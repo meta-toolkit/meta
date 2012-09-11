@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
 
     std::shared_ptr<Tokenizer> tokenizer(new FWTokenizer("data/function-words.txt"));
-    std::unique_ptr<Index> index(new RAMIndex(trainDocs, tokenizer));
+    std::shared_ptr<Index> index(new RAMIndex(trainDocs, tokenizer));
 
     cout << "Running queries..." << endl;
     size_t numQueries = 1;

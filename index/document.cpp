@@ -19,7 +19,8 @@ Document::Document(const string & path):
     _category = getCategory(path);
 }
 
-void Document::increment(TermID termID, unsigned int amount, unordered_map<TermID, unsigned int>* docFreq)
+void Document::increment(TermID termID, unsigned int amount,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     auto iter = _frequencies.find(termID);
     if(iter != _frequencies.end())

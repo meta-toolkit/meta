@@ -5,6 +5,7 @@
 #ifndef _POS_TREE_TOKENIZER_H_
 #define _POS_TREE_TOKENIZER_H_
 
+#include <memory>
 #include <unordered_map>
 #include "tokenizer.h"
 
@@ -21,7 +22,8 @@ class POSTreeTokenizer : public Tokenizer
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        void tokenize(Document & document, std::unordered_map<TermID, unsigned int>* docFreq);
+        void tokenize(Document & document,
+                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq);
 };
 
 #endif

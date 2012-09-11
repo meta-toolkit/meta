@@ -5,6 +5,7 @@
 #ifndef _NGRAM_TOKENIZER_H_
 #define _NGRAM_TOKENIZER_H_
 
+#include <memory>
 #include <deque>
 #include <unordered_set>
 #include <unordered_map>
@@ -30,7 +31,8 @@ class NgramTokenizer : public Tokenizer
          * @param document - the Document to store the tokenized information in
          * @param docFreqs - optional parameter to store IDF values in
          */
-        virtual void tokenize(Document & document, std::unordered_map<TermID, unsigned int>* docFreqs);
+        virtual void tokenize(Document & document,
+                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
 
         /**
          * @return the value of n used for the ngrams

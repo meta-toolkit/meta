@@ -5,6 +5,7 @@
 #ifndef _FW_TOKENIZER_H_
 #define _FW_TOKENIZER_H_
 
+#include <memory>
 #include <unordered_set>
 #include <unordered_map>
 #include <string>
@@ -29,7 +30,8 @@ class FWTokenizer : public Tokenizer
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        virtual void tokenize(Document & document, std::unordered_map<TermID, unsigned int>* docFreq);
+        virtual void tokenize(Document & document,
+                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq);
 
     private:
 

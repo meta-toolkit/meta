@@ -17,13 +17,11 @@ TermID Tokenizer::getMapping(const string & term)
     if(!_termMap.containsValue(term))
     {
         _termMap.insert(_currentTermID, term);
-        //cerr << "[Tokenizer]: added NEW term #" << term << "# (termID " << _currentTermID << ")" << endl;
         return _currentTermID++;
     }
     else
     {
         TermID termID = _termMap.getKeyByValue(term);
-        //cerr << "[Tokenizer]: looked up term #" << term << "# (termID " << termID << ")" << endl;
         return termID;
     }
 }

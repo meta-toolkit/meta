@@ -6,7 +6,8 @@
 #include "parse_tree.h"
 #include "level_tree_tokenizer.h"
 
-void LevelTreeTokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
+void LevelTreeTokenizer::tokenize(Document & document,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
 
 }

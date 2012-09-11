@@ -21,7 +21,8 @@ NgramTokenizer::NgramTokenizer(size_t n):
    initStopwords();     
 }
 
-void NgramTokenizer::tokenize(Document & document, unordered_map<TermID, unsigned int>* docFreq)
+void NgramTokenizer::tokenize(Document & document,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     string validchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'-";
     Parser parser(document.getPath(), validchars, validchars, validchars);

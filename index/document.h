@@ -5,6 +5,7 @@
 #ifndef _DOCUMENT_H_
 #define _DOCUMENT_H_
 
+#include <memory>
 #include <unordered_map>
 #include <string>
 
@@ -40,7 +41,8 @@ class Document
          * @param amount - the amount to increment by
          * @param docFreq - used for IDF
          */
-        void increment(TermID termID, unsigned int amount, std::unordered_map<TermID, unsigned int>* docFreq);
+        void increment(TermID termID, unsigned int amount,
+                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq);
 
         /**
          * @return the path to this document (the argument to the constructor)

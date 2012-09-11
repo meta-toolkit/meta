@@ -5,6 +5,7 @@
 #ifndef _TOKENIZER_H_
 #define _TOKENIZER_H_
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include "util/invertible_map.h"
@@ -31,7 +32,8 @@ class Tokenizer
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        virtual void tokenize(Document & document, std::unordered_map<TermID, unsigned int>* docFreq) = 0;
+        virtual void tokenize(Document & document,
+                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq) = 0;
 
         /**
          * Maps terms to TermIDs.
