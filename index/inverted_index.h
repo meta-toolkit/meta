@@ -5,6 +5,7 @@
 #ifndef _INVERTED_INDEX_H_
 #define _INVERTED_INDEX_H_
 
+#include <memory>
 #include <map>
 #include <unordered_map>
 #include <cmath>
@@ -34,7 +35,8 @@ class InvertedIndex : public Index
          * @param postingsFile - where to find the postings
          * @param tokenizer - how to tokenize the indexed files
          */
-        InvertedIndex(const std::string & lexiconFile, const std::string & postingsFile, Tokenizer* tokenizer);
+        InvertedIndex(const std::string & lexiconFile, const std::string & postingsFile,
+                std::shared_ptr<Tokenizer> tokenizer);
 
         /**
          * Scores a document given a query.
@@ -74,7 +76,7 @@ class InvertedIndex : public Index
         Postings _postings;
 
         /** the tokenizer used to create the index */
-        Tokenizer* _tokenizer;
+        std::shared_ptr<Tokenizer> _tokenizer;
 };
 
 #endif

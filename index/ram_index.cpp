@@ -15,7 +15,7 @@ using std::string;
 using std::vector;
 using std::multimap;
 
-RAMIndex::RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer)
+RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer)
 {
     cout << "[RAMIndex]: creating index from " << indexFiles.size() << " files" << endl;
 
@@ -39,7 +39,7 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, Tokenizer* tokenizer)
     _avgDocLength /= _documents.size();
 }
 
-RAMIndex::RAMIndex(const vector<Document> & indexDocs, Tokenizer* tokenizer)
+RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer> tokenizer)
 {
     cout << "[RAMIndex]: creating index from " << indexDocs.size() << " Documents" << endl;
 

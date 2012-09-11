@@ -5,6 +5,7 @@
 #ifndef _RAM_INDEX_
 #define _RAM_INDEX_
 
+#include <memory>
 #include <vector>
 #include <unordered_map>
 #include <map>
@@ -24,14 +25,14 @@ class RAMIndex : public Index
          * @param indexDocs - Document objects to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const std::vector<Document> & indexDocs, Tokenizer* tokenizer);
+        RAMIndex(const std::vector<Document> & indexDocs, std::shared_ptr<Tokenizer> tokenizer);
 
         /**
          * Creates an Index located in memory.
          * @param indexFiles - files to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const std::vector<string> & indexFiles, Tokenizer* tokenizer);
+        RAMIndex(const std::vector<string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer);
         
         /**
          * Creates an index of given documents.

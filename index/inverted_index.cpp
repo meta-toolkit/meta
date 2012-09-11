@@ -13,7 +13,8 @@ using std::multimap;
 using std::unordered_map;
 using std::string;
 
-InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postingsFile, Tokenizer* tokenizer):
+InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postingsFile,
+        std::shared_ptr<Tokenizer> tokenizer):
     _lexicon(lexiconFile),
     _postings(postingsFile),
     _tokenizer(tokenizer)

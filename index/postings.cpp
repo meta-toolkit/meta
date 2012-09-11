@@ -64,7 +64,8 @@ string Postings::getLine(unsigned int lineNumber) const
     return line;
 }
 
-size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer)
+size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize,
+        std::shared_ptr<Tokenizer> tokenizer)
 {
     cerr << "[Postings]: creating chunks" << endl;
 

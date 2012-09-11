@@ -5,6 +5,7 @@
 #ifndef _POSTINGS_H_
 #define _POSTINGS_H_
 
+#include <memory>
 #include <map>
 #include <sstream>
 #include <fstream>
@@ -54,7 +55,8 @@ class Postings
          * @return the number of chunks created. Since their name is standard, they can easily
          *  be located.
          */
-        size_t createChunks(std::vector<Document> & documents, size_t chunkMBSize, Tokenizer* tokenizer);
+        size_t createChunks(std::vector<Document> & documents, size_t chunkMBSize,
+                std::shared_ptr<Tokenizer> tokenizer);
 
         /**
          * Creates the large postings file on disk out of many chunks.

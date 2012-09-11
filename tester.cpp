@@ -2,6 +2,7 @@
  * @file tester.cpp
  */
 
+#include <memory>
 #include <vector>
 #include <utility>
 #include <map>
@@ -143,12 +144,9 @@ void testIndexCreation()
     string lexicon = "lexiconFile";
     string postings = "postingsFile";
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
-    Tokenizer* tokenizer = new NgramTokenizer(1);
-    Index* index = new InvertedIndex(lexicon, postings, tokenizer);
+    std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(1));
+    std::unique_ptr<Index> index(new InvertedIndex(lexicon, postings, tokenizer));
     index->indexDocs(trainDocs, 1);
-
-    delete index;
-    delete tokenizer;
 }
 
 void testIndex()
@@ -160,8 +158,8 @@ void testIndex()
     string lexicon = "lexiconFile";
     string postings = "postingsFile";
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
-    Tokenizer* const tokenizer = new NgramTokenizer(1);
-    Index* index = new InvertedIndex(lexicon, postings, tokenizer);
+    std::shared_ptr<Tokenizer> const tokenizer(new NgramTokenizer(1));
+    std::unique_ptr<Index> index(new InvertedIndex(lexicon, postings, tokenizer));
 
     //testDocs.erase(testDocs.begin() + 1, testDocs.end());
 
@@ -181,9 +179,6 @@ void testIndex()
              << "% accuracy, " << numQueries << "/" << testDocs.size() << " processed " << endl;
         ++numQueries;
     }
-
-    delete index;
-    delete tokenizer;
 }
 
 int main(int argc, char* argv[])

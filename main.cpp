@@ -50,9 +50,8 @@ int main(int argc, char* argv[])
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
 
-    Tokenizer* tokenizer = new FWTokenizer("data/function-words.txt");
-    //Tokenizer* tokenizer = new NgramTokenizer(3);
-    std::unique_ptr<Index> index(new RAMIndex(trainDocs, tokenizer)); // TODO shared pointer?
+    std::shared_ptr<Tokenizer> tokenizer(new FWTokenizer("data/function-words.txt"));
+    std::unique_ptr<Index> index(new RAMIndex(trainDocs, tokenizer));
 
     cout << "Running queries..." << endl;
     size_t numQueries = 1;
@@ -73,6 +72,5 @@ int main(int argc, char* argv[])
         ++numQueries;
     }
 
-    delete tokenizer;
     return 0;
 }
