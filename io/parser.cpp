@@ -62,7 +62,7 @@ void Parser::findNextToken(){
     while(!startable(text[cursor])){
         // if at the end and still not startable chars,
         //   return and leave token as the empty string
-        if(cursor == filesize - 1)
+        if(cursor >= filesize - 1)
            return;
         ++cursor;
     }

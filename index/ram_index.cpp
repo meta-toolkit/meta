@@ -111,7 +111,7 @@ multimap<double, string> RAMIndex::search(Document & query) const
         if(score != 0.0)
         {
             #pragma omp critical
-            ranks.insert(make_pair(score, _documents[idx].getName() + " (" + _documents[idx].getCategory() + ")"));
+            ranks.insert(make_pair(score, _documents[idx].getName() + " " + _documents[idx].getCategory()));
         }
     }
 

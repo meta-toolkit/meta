@@ -17,9 +17,6 @@ import java.util.List;
  */
 public class TreeWriter
 {
-    private final static String INPUTPREFIX = "../../senior-thesis-data/input/";
-    private final static String OUTPUTPREFIX = "../../senior-thesis-data/output/";
-    
     /**
      * Preprocesses the document via the Stanford Parser's DocumentPreprocessor, finding sentence boundaries.
      * @param filename - The document to process
@@ -46,10 +43,10 @@ public class TreeWriter
         int filesDone = 0;
         for(String filename : filenames)
         {
-            FileWriter writer = new FileWriter(OUTPUTPREFIX + filename + ".tree");
+            FileWriter writer = new FileWriter(filename + ".tree");
             System.out.println("Parsing " + filename + " ... ");
             String numDone = "[" + (filesDone + 1) + "/" + filenames.length + "]: ";
-            Iterable<List<? extends HasWord>> sentences = setupSentences(INPUTPREFIX + filename);
+            Iterable<List<? extends HasWord>> sentences = setupSentences(filename);
             double totalSentences = ((ArrayList<List<? extends HasWord>>)sentences).size();
             double sentencesProcessed = 0;
             for(List<? extends HasWord> sentence : sentences)
@@ -59,7 +56,7 @@ public class TreeWriter
                 writer.write(parsed + "\n");
                 System.out.print("  " + numDone);
                 System.out.printf("%2.2f%% ", sentencesProcessed / totalSentences * 100.0);
-                System.out.print(parsed + "\n");
+                System.out.print(parsed.substring(0, Math.min(100, parsed.length())) + " ... \n");
                 ++sentencesProcessed;
             }
             System.out.println();
@@ -92,6 +89,6 @@ public class TreeWriter
     public static void main(String args[]) throws IOException
     {
         System.out.println("Processing " + args.length + " files.");
-        process(args, "80");
+        process(args, "100");
     }
 }

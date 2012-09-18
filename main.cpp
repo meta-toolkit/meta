@@ -3,7 +3,7 @@
  * 
  * Creates an index and runs queries on it.
  *
- * Run shuffle.rb first to generating the testing and training lists for
+ * Run shuffle.rb first to generate the testing and training lists for
  *  a given collection.
  */
 
@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <map>
 
@@ -41,16 +42,28 @@ vector<Document> getDocs(const string & filename, const string & prefix)
     return docs;
 }
 
+bool withinK(const string & one, const string & two, int k)
+{
+    int valOne;
+    int valTwo;
+    istringstream(one) >> valOne;
+    istringstream(two) >> valTwo;
+    return abs(valTwo - valOne) <= k;
+}
+
 int main(int argc, char* argv[])
 {
-    string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
+    bool quiet = argc > 1;
+
+    string prefix = "/home/sean/projects/senior-thesis-data/kaggle/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
     //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
     //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
 
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
 
-    std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(1));
+    std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(2));
     //std::shared_ptr<Tokenizer> tokenizer(new FWTokenizer("data/function-words.txt"));
     std::shared_ptr<Index> index(new RAMIndex(trainDocs, tokenizer));
 
@@ -61,17 +74,22 @@ int main(int argc, char* argv[])
     {
         tokenizer->tokenize(query, NULL);
         string result = index->classifyKNN(query, 1);
-        if(result == ( "(" + query.getCategory() + ")"))
+        //if(result == query.getCategory())
+        if(withinK(result, query.getCategory(), 0))
         {
             ++numCorrect;
-            cout << "  -> " << Common::makeGreen("OK");
+            if(!quiet) cout << "  -> " << Common::makeGreen("OK");
         }
         else
-            cout << "  -> " << Common::makeRed("incorrect");
-        cout << " " << result << endl << "  -> " << ((double) numCorrect / numQueries * 100)
+            if(!quiet) cout << "  -> " << Common::makeRed("incorrect");
+        if(!quiet) cout << " (" << result << ")" << endl << "  -> " << ((double) numCorrect / numQueries * 100)
              << "% accuracy, " << numQueries << "/" << testDocs.size() << " processed " << endl;
         ++numQueries;
     }
+
+    cout << "Trained on " << trainDocs.size() << " documents" << endl;
+    cout << "Tested on " << testDocs.size() << " documents" << endl;
+    cout << "Total accuracy: " << ((double) numCorrect / numQueries * 100) << endl;
 
     return 0;
 }
