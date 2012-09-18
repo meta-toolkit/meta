@@ -1,4 +1,4 @@
-#include <map>
+#include <iostream>
 #include <unordered_map>
 #include "knn.h"
 
@@ -37,5 +37,23 @@ string KNN::classify(Document & query, shared_ptr<Index> index, size_t k)
 string KNN::classify(Document & query, vector<shared_ptr<Index>> indexes,
         vector<double> weights, size_t k)
 {
-    return "nope";
+    // make sure weights sum to 1.0
+    double sum = 0.0;
+    for(double weight: weights)
+        sum += weight;
+
+    if(sum != 1.0)
+    {
+        std::cerr << "[KNN::classify]: weights in ensemble do not add to 1.0" << std::endl;
+        return "";
+    }
+
+    return "chuck testa";
+}
+
+multimap<double, string>
+KNN::internal::normalize(const multimap<double, string> & scores)
+{
+    multimap<double, string> normalized;
+    return normalized;
 }

@@ -5,6 +5,7 @@
 #ifndef _KNN_H_
 #define _KNN_H_
 
+#include <map>
 #include <memory>
 #include <vector>
 #include <string>
@@ -36,6 +37,17 @@ namespace KNN
             std::vector<std::shared_ptr<Index>> indexes,
             std::vector<double> weights,
             size_t k);
+
+    namespace internal
+    {
+        /**
+         * Normalizes the values in scores to be in [0, 1].
+         * @param scores - the scores to normalize
+         * @return the normalized scores
+         */
+        std::multimap<double, std::string>
+        normalize(const std::multimap<double, std::string> & scores);
+    }
 }
 
 #endif
