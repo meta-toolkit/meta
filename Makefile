@@ -30,6 +30,7 @@ $(TESTER): $(TESTEROBJS) tester.cpp $(TEMPLATES)
 
 clean:
 	for dir in $(CLEANDIRS) ; do rm -rf $$dir/*.o ; done
+	rm -f preprocessor/*.class
 	rm -f $(SEARCH) $(TESTER)
 
 tidy:
