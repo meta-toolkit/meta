@@ -6,6 +6,7 @@
 #define _KNN_H_
 
 #include <map>
+#include <unordered_map>
 #include <memory>
 #include <vector>
 #include <string>
@@ -45,8 +46,14 @@ namespace KNN
          * @param scores - the scores to normalize
          * @return the normalized scores
          */
-        std::multimap<double, std::string>
+        std::unordered_map<std::string, double>
         normalize(const std::multimap<double, std::string> & scores);
+
+        /**
+         * Stuff
+         * @param rankings
+         */
+        std::string findNN(const std::multimap<double, std::string> & rankings, size_t k);
     }
 }
 

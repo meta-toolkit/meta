@@ -1,10 +1,13 @@
+x done
+- in progress
+
  x vector -> deque in ngram tokenizer
    Different retrieval methods than Okapi
-   Function words tokenizer
+ - Function words tokenizer
    POS tokenizer
    Compression implemented for indexes
  x Remove Snowball stemmer and use my C++ stemmer
-   Sentence segmentation for ngram parser (page 69+ in NLP book)
+   Sentence segmentation for ngram parser (page 69+ in NLP book) (stanford parser preprocessing)
    Write parse tree preprocessor stuff in hadoopable format
-   KNN ensemble classification (normalize search results, interpolate)
-   Move KNN from indices to ensemble (can be used as one method)
+ - KNN ensemble classification (normalize search results, interpolate)
+ x Move KNN from indices to ensemble (can be used as one method)
