@@ -1,9 +1,9 @@
 SEARCH = search
 SEARCHOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o tokenizers/pos_tree_tokenizer.o \
-    index/index.o tokenizers/level_tree_tokenizer.o tokenizers/ngram_tokenizer.o io/textfile.o io/parser.o \
+    tokenizers/level_tree_tokenizer.o tokenizers/ngram_tokenizer.o io/textfile.o io/parser.o \
     index/lexicon.o index/inverted_index.o io/compressed_file_reader.o io/compressed_file_writer.o \
     index/postings.o tokenizers/tokenizer.o index/chunk_list.o index/structs.o stemmers/porter2_stemmer.o \
-    tokenizers/fw_tokenizer.o
+    tokenizers/fw_tokenizer.o classify/knn.o
 
 TESTER = tester
 TESTEROBJS = $(SEARCHOBJS)
@@ -15,7 +15,7 @@ CC = g++ -std=c++0x -fopenmp -I.
 CCOPTS = -O3
 LINKER = g++ -std=c++0x -fopenmp -I.
 
-CLEANDIRS = tokenizers io index util stemmers
+CLEANDIRS = tokenizers io index util stemmers classify
 
 all: $(SEARCH) $(TESTER) 
 

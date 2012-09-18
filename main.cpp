@@ -15,6 +15,7 @@
 #include <iostream>
 #include <map>
 
+#include "classify/knn.h"
 #include "tokenizers/ngram_tokenizer.h"
 #include "tokenizers/pos_tree_tokenizer.h"
 #include "tokenizers/fw_tokenizer.h"
@@ -73,7 +74,7 @@ int main(int argc, char* argv[])
     for(auto & query: testDocs)
     {
         tokenizer->tokenize(query, NULL);
-        string result = index->classifyKNN(query, 1);
+        string result = KNN::classify(query, index, 1);
         //if(result == query.getCategory())
         if(withinK(result, query.getCategory(), 0))
         {

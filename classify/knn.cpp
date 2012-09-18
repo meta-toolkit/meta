@@ -1,17 +1,16 @@
-/**
- * @file index.cpp
- */
-
+#include <map>
 #include <unordered_map>
-#include "index.h"
+#include "knn.h"
 
-using std::string;
-using std::multimap;
 using std::unordered_map;
+using std::multimap;
+using std::string;
+using std::vector;
+using std::shared_ptr;
 
-string Index::classifyKNN(Document & query, size_t k) const
+string KNN::classify(Document & query, shared_ptr<Index> index, size_t k)
 {
-    multimap<double, string> ranking = search(query);
+    multimap<double, string> ranking = index->search(query);
     unordered_map<string, size_t> counts;
     size_t numResults = 0;
     for(auto result = ranking.rbegin(); result != ranking.rend() && numResults++ != k; ++result)
@@ -33,4 +32,10 @@ string Index::classifyKNN(Document & query, size_t k) const
     }
 
     return best;
+}
+
+string KNN::classify(Document & query, vector<shared_ptr<Index>> indexes,
+        vector<double> weights, size_t k)
+{
+    return "nope";
 }

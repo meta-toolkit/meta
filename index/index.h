@@ -26,14 +26,6 @@ class Index
         virtual std::multimap<double, std::string> search(Document & query) const = 0;
 
         /**
-         * Classify the query document by category using K-Nearest Neighbor.
-         * @param query - the query to run
-         * @param k - the value of k in KNN
-         * @return the category the document is believed to be in
-         */
-        virtual std::string classifyKNN(Document & query, size_t k) const;
-
-        /**
          * Creates an index of given documents.
          * @param documents - a vector of documents to make the index out of
          * @param chunkMBSize - the maximum size the postings chunks will be in

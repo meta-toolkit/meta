@@ -11,6 +11,7 @@
 #include <iostream>
 #include <omp.h>
 
+#include "classify/knn.h"
 #include "io/textfile.h"
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
@@ -159,7 +160,7 @@ void testIndex()
     string postings = "postingsFile";
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
     std::shared_ptr<Tokenizer> const tokenizer(new NgramTokenizer(1));
-    std::unique_ptr<Index> index(new InvertedIndex(lexicon, postings, tokenizer));
+    std::shared_ptr<Index> index(new InvertedIndex(lexicon, postings, tokenizer));
 
     //testDocs.erase(testDocs.begin() + 1, testDocs.end());
 
@@ -167,7 +168,7 @@ void testIndex()
     size_t numCorrect = 0;
     for(auto & query: testDocs)
     {
-        string result = index->classifyKNN(query, 1);
+        string result = KNN::classify(query, index, 1);
         if(result == query.getCategory())
         {
             ++numCorrect;
