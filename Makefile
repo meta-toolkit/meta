@@ -1,5 +1,5 @@
 SEARCH = search
-SEARCHOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o tokenizers/pos_tokenizer.o \
+SEARCHOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o \
     tokenizers/level_tree_tokenizer.o tokenizers/ngram_tokenizer.o io/textfile.o io/parser.o \
     index/lexicon.o index/inverted_index.o io/compressed_file_reader.o io/compressed_file_writer.o \
     index/postings.o tokenizers/tokenizer.o index/chunk_list.o index/structs.o stemmers/porter2_stemmer.o \
