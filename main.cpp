@@ -64,17 +64,17 @@ int main(int argc, char* argv[])
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
 
-    std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(2));
-    //std::shared_ptr<Tokenizer> tokenizer(new FWTokenizer("data/function-words.txt"));
-    std::shared_ptr<Index> index(new RAMIndex(trainDocs, tokenizer));
+    std::shared_ptr<Tokenizer> wordTokenizer(new NgramTokenizer(2, NgramTokenizer::Word));
+    std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(5, NgramTokenizer::POS));
+    std::shared_ptr<Index> wordIndex(new RAMIndex(trainDocs, wordTokenizer));
+    std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
 
     cout << "Running queries..." << endl;
     size_t numQueries = 1;
     size_t numCorrect = 0;
     for(auto & query: testDocs)
     {
-        tokenizer->tokenize(query, NULL);
-        string result = KNN::classify(query, index, 1);
+        string result = KNN::classify(query, {wordIndex, posIndex}, {0.5, 0.5}, 1);
         //if(result == query.getCategory())
         if(withinK(result, query.getCategory(), 0))
         {

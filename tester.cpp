@@ -145,7 +145,7 @@ void testIndexCreation()
     string lexicon = "lexiconFile";
     string postings = "postingsFile";
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
-    std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(1));
+    std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(1, NgramTokenizer::Word));
     std::unique_ptr<Index> index(new InvertedIndex(lexicon, postings, tokenizer));
     index->indexDocs(trainDocs, 1);
 }
@@ -159,7 +159,7 @@ void testIndex()
     string lexicon = "lexiconFile";
     string postings = "postingsFile";
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
-    std::shared_ptr<Tokenizer> const tokenizer(new NgramTokenizer(1));
+    std::shared_ptr<Tokenizer> const tokenizer(new NgramTokenizer(1, NgramTokenizer::Word));
     std::shared_ptr<Index> index(new InvertedIndex(lexicon, postings, tokenizer));
 
     //testDocs.erase(testDocs.begin() + 1, testDocs.end());

@@ -18,7 +18,8 @@ using std::multimap;
 RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer):
     _documents(vector<Document>()),
     _docFreqs(new unordered_map<TermID, unsigned int>),
-    _avgDocLength(0)
+    _avgDocLength(0),
+    _tokenizer(tokenizer)
 {
     cout << "[RAMIndex]: creating index from " << indexFiles.size() << " documents" << endl;
     
@@ -26,7 +27,7 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer>
     for(auto & file: indexFiles)
     {
         Document document(file);
-        tokenizer->tokenize(document, _docFreqs);
+        _tokenizer->tokenize(document, _docFreqs);
         _documents.push_back(document);
         _avgDocLength += document.getLength();
 
@@ -41,7 +42,8 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer>
 RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer> tokenizer):
     _documents(indexDocs),
     _docFreqs(new unordered_map<TermID, unsigned int>),
-    _avgDocLength(0)
+    _avgDocLength(0),
+    _tokenizer(tokenizer)
 {
     cout << "[RAMIndex]: creating index from " << indexDocs.size() << " documents" << endl;
 
@@ -49,7 +51,7 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer
     for(auto & doc: _documents)
     {
         //combineMap(doc.getFrequencies()); // call this if doc was already tokenized
-        tokenizer->tokenize(doc, _docFreqs);
+        _tokenizer->tokenize(doc, _docFreqs);
         _avgDocLength += doc.getLength();
         if(docNum++ % 10 == 0)
             cout << "  " << ((double) docNum / _documents.size() * 100) << "%    \r";
@@ -102,6 +104,7 @@ multimap<double, string> RAMIndex::search(Document & query) const
     cout << "[RAMIndex]: scoring documents for query " << query.getName()
          << " (" << query.getCategory() << ")" << endl;
 
+    _tokenizer->tokenize(query, NULL);
     multimap<double, string> ranks;
     #pragma omp parallel for
     for(size_t idx = 0; idx < _documents.size(); ++idx)

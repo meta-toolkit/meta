@@ -65,6 +65,9 @@ class RAMIndex : public Index
 
     private:
 
+        /** stuff */
+        std::shared_ptr<Tokenizer> _tokenizer;
+
         /** documents stored in this index */
         std::vector<Document> _documents;
 

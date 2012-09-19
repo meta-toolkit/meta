@@ -1,5 +1,8 @@
+using namespace std;
+
 #include <iostream>
 #include <utility>
+#include "index/document.h"
 #include "knn.h"
 
 using std::pair;
@@ -56,9 +59,11 @@ string KNN::classify(Document & query, vector<shared_ptr<Index>> indexes, vector
 
     // create a vector of normalized results for each index
     vector<unordered_map<string, double>> results;
-    for(shared_ptr<Index> & ptr: indexes)
+    for(auto & ptr: indexes)
     {
-        multimap<double, string> result = ptr->search(query);
+        Document tempQuery(query);
+        multimap<double, string> result = ptr->search(tempQuery);
+        //cout << "first result was " << result.begin()->second << endl;
         unordered_map<string, double> normalized = normalize(result);
         results.push_back(normalized);
     }
@@ -81,8 +86,18 @@ unordered_map<string, double>
 KNN::internal::normalize(const multimap<double, string> & scores)
 {
     unordered_map<string, double> normalized;
+    if(scores.empty())
+        return normalized;
 
-    // we know the first element has the highest score and the last element has
-    //  the lowest score
+    double low = scores.begin()->first;
+    double high = scores.rbegin()->first;
+    double range = high - low;
+
+    for(auto & score: scores)
+    {
+        double newScore = (score.first - low) / range;
+        normalized.insert(make_pair(score.second, newScore));
+    }
+
     return normalized;
 }

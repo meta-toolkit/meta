@@ -20,11 +20,17 @@ class Document;
 class NgramTokenizer : public Tokenizer
 {
     public:
+
+        /**
+         *
+         */
+        enum NgramType { POS, Word };
+
         /**
          * Constructor.
          * @param n - the value of n to use for the ngrams.
          */
-        NgramTokenizer(size_t n);
+        NgramTokenizer(size_t n, NgramType type);
 
         /**
          * Tokenizes a file into a Document.
@@ -40,6 +46,9 @@ class NgramTokenizer : public Tokenizer
         size_t getNValue() const;
 
     protected:
+
+        /** Represents the extension for the ngram type */
+        string _extension;
 
         /** the value of N in Ngram */
         size_t _nValue;

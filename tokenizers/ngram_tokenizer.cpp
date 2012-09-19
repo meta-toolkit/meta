@@ -15,16 +15,22 @@ using std::deque;
 using std::unordered_map;
 using std::unordered_set;
 
-NgramTokenizer::NgramTokenizer(size_t n):
+NgramTokenizer::NgramTokenizer(size_t n, NgramType type):
     _nValue(n), _stopwords(unordered_set<string>())
 {
-   initStopwords();     
+    if(type == Word)
+    {
+        _extension = ".sen";
+        initStopwords();
+    }
+    else
+        _extension = ".pos";
 }
 
 void NgramTokenizer::tokenize(Document & document,
         std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
-    Parser parser(document.getPath() + ".sen", " \n");
+    Parser parser(document.getPath() + _extension, " \n");
 
     // initialize the ngram
     deque<string> ngram;
