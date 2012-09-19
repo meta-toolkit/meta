@@ -59,6 +59,10 @@ class NgramTokenizer : public Tokenizer
          */
         void initStopwords();
 
+        /**
+         * @param original - the string to set to lowercase
+         * @return a lowercase version of the string
+         */
         std::string setLower(const std::string & original) const;
 };
 

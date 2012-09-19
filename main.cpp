@@ -17,7 +17,7 @@
 
 #include "classify/knn.h"
 #include "tokenizers/ngram_tokenizer.h"
-#include "tokenizers/pos_tree_tokenizer.h"
+#include "tokenizers/pos_tokenizer.h"
 #include "tokenizers/fw_tokenizer.h"
 #include "tokenizers/parse_tree.h"
 #include "io/parser.h"

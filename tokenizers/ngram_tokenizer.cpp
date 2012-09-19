@@ -24,8 +24,7 @@ NgramTokenizer::NgramTokenizer(size_t n):
 void NgramTokenizer::tokenize(Document & document,
         std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
-    string validchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'-";
-    Parser parser(document.getPath(), validchars, validchars, validchars);
+    Parser parser(document.getPath() + ".sen", " \n");
 
     // initialize the ngram
     deque<string> ngram;
@@ -59,8 +58,7 @@ void NgramTokenizer::tokenize(Document & document,
 
 void NgramTokenizer::initStopwords()
 {
-    string valid = "abcdefghijklmnopqrstuvwxyzI";
-    Parser parser("data/lemur-stopwords.txt", valid, valid, valid);
+    Parser parser("data/lemur-stopwords.txt", "\n");
     while(parser.hasNext())
         _stopwords.insert(Porter2Stemmer::stem(parser.next()));
 }

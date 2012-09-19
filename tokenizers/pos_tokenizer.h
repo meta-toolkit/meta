@@ -1,9 +1,9 @@
 /**
- * @file pos_tree_tokenizer.h
+ * @file pos_tokenizer.h
  */
 
-#ifndef _POS_TREE_TOKENIZER_H_
-#define _POS_TREE_TOKENIZER_H_
+#ifndef _POS_TOKENIZER_H_
+#define _POS_TOKENIZER_H_
 
 #include <memory>
 #include <unordered_map>
@@ -12,9 +12,9 @@
 class Document;
 
 /**
- * Tokenizes a parse tree by the leaf POS values.
+ * Tokenizes sentences with the Stanford Log-linear Part-Of-Speech Tagger.
  */
-class POSTreeTokenizer : public Tokenizer
+class POSTokenizer : public Tokenizer
 {
     public:
         /**
