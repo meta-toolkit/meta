@@ -7,7 +7,9 @@ import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.trees.Tree;
+import java.io.BufferedReader;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,29 @@ import java.util.List;
  */
 public class TreeWriter
 {
+    /**
+     * Reads a file and returns all its lines.
+     * @param filename - the file to read from
+     * @return lines an ArrayList of lines from the file
+     */
+    private static ArrayList<String> readLines(String filename)
+    {
+        ArrayList<String> lines = new ArrayList<String>();
+        try
+        {
+            String line = null;
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
+            while((line = bufferedReader.readLine()) != null)
+                lines.add(line);
+            bufferedReader.close();
+        }
+        catch(Exception e)
+        {
+            System.out.println("Error reading " + filename);
+        }
+        return lines;
+    }
+
     /**
      * Preprocesses the document via the Stanford Parser's DocumentPreprocessor, finding sentence boundaries.
      * @param filename - The document to process
@@ -36,7 +61,7 @@ public class TreeWriter
      * @param filenames - the files to run the parser on
      * @param maxSentenceLength - the maximum length of sentences that will be parsed
      */
-    public static void process(String[] filenames, String maxSentenceLength) throws IOException
+    public static void process(ArrayList<String> filenames, String maxSentenceLength) throws IOException
     {
         LexicalizedParser parser = new LexicalizedParser("../data/englishPCFG.ser.gz");
         parser.setOptionFlags("-maxLength", maxSentenceLength, "-retainTmpSubcategories");
@@ -45,7 +70,7 @@ public class TreeWriter
         {
             FileWriter writer = new FileWriter(filename + ".tree");
             System.out.println("Parsing " + filename + " ... ");
-            String numDone = "[" + (filesDone + 1) + "/" + filenames.length + "]: ";
+            String numDone = "[" + (filesDone + 1) + "/" + filenames.size() + "]: ";
             Iterable<List<? extends HasWord>> sentences = setupSentences(filename);
             double totalSentences = ((ArrayList<List<? extends HasWord>>)sentences).size();
             double sentencesProcessed = 0;
@@ -88,7 +113,8 @@ public class TreeWriter
      */
     public static void main(String args[]) throws IOException
     {
-        System.out.println("Processing " + args.length + " files.");
-        process(args, "100");
+        ArrayList<String> lines = readLines(args[0]);
+        System.out.println("Processing " + lines.size() + " files.");
+        process(lines, "100");
     }
 }

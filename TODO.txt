@@ -2,11 +2,13 @@ x done
 - in progress
 
    Different retrieval methods than Okapi
-   POS tokenizer
    Compression implemented for indexes
    Write parse tree preprocessor stuff in hadoopable format
- - Function words tokenizer
- - KNN ensemble classification (normalize search results, interpolate)
+   Make preprocessors take list of files as argument
+   Add more data to 6authors!
+ - Function words tokenizer (is it broken or does it just suck?)
+ x KNN ensemble classification (normalize search results, interpolate)
+ x POS tokenizer
  x vector -> deque in ngram tokenizer
  x Remove Snowball stemmer and use my C++ stemmer
  x POS preprocessor

@@ -1,4 +1,6 @@
-using namespace std;
+/**
+ * @file knn.cpp
+ */
 
 #include <iostream>
 #include <utility>
@@ -63,7 +65,6 @@ string KNN::classify(Document & query, vector<shared_ptr<Index>> indexes, vector
     {
         Document tempQuery(query);
         multimap<double, string> result = ptr->search(tempQuery);
-        //cout << "first result was " << result.begin()->second << endl;
         unordered_map<string, double> normalized = normalize(result);
         results.push_back(normalized);
     }

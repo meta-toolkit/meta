@@ -17,7 +17,6 @@
 
 #include "classify/knn.h"
 #include "tokenizers/ngram_tokenizer.h"
-#include "tokenizers/pos_tokenizer.h"
 #include "tokenizers/fw_tokenizer.h"
 #include "tokenizers/parse_tree.h"
 #include "io/parser.h"
@@ -56,27 +55,28 @@ int main(int argc, char* argv[])
 {
     bool quiet = argc > 1;
 
-    string prefix = "/home/sean/projects/senior-thesis-data/kaggle/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/kaggle/";
     //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
     //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
 
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
     vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
 
     std::shared_ptr<Tokenizer> wordTokenizer(new NgramTokenizer(2, NgramTokenizer::Word));
-    std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(5, NgramTokenizer::POS));
+    //std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(6, NgramTokenizer::POS));
     std::shared_ptr<Index> wordIndex(new RAMIndex(trainDocs, wordTokenizer));
-    std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
+    //std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
 
     cout << "Running queries..." << endl;
     size_t numQueries = 1;
     size_t numCorrect = 0;
     for(auto & query: testDocs)
     {
-        string result = KNN::classify(query, {wordIndex, posIndex}, {0.5, 0.5}, 1);
-        //if(result == query.getCategory())
-        if(withinK(result, query.getCategory(), 0))
+        string result = KNN::classify(query, wordIndex, 1);
+        //string result = KNN::classify(query, {wordIndex, posIndex}, {0.5, 0.5}, 1);
+        //if(withinK(result, query.getCategory(), 0))
+        if(result == query.getCategory())
         {
             ++numCorrect;
             if(!quiet) cout << "  -> " << Common::makeGreen("OK");
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 
     cout << "Trained on " << trainDocs.size() << " documents" << endl;
     cout << "Tested on " << testDocs.size() << " documents" << endl;
-    cout << "Total accuracy: " << ((double) numCorrect / numQueries * 100) << endl;
+    cout << "Total accuracy: " << ((double) numCorrect / (numQueries - 1) * 100) << endl;
 
     return 0;
 }

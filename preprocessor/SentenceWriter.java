@@ -3,6 +3,7 @@
  * Contains some simple preprocessing code in Java using the Stanford Parser.
  */
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,29 @@ import edu.stanford.nlp.trees.Tree;
 
 class SentenceWriter
 {
+    /**
+     * Reads a file and returns all its lines.
+     * @param filename - the file to read from
+     * @return lines an ArrayList of lines from the file
+     */
+    private static ArrayList<String> readLines(String filename)
+    {
+        ArrayList<String> lines = new ArrayList<String>();
+        try
+        {
+            String line = null;
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
+            while((line = bufferedReader.readLine()) != null)
+                lines.add(line);
+            bufferedReader.close();
+        }
+        catch(Exception e)
+        {
+            System.out.println("Error reading " + filename);
+        }
+        return lines;
+    }
+
     /**
      * Preprocesses the document via the Stanford Parser's DocumentPreprocessor, finding sentence boundaries.
      * @param filename - The document to process
@@ -31,9 +55,10 @@ class SentenceWriter
 
     public static void main(String[] args) throws Exception
     {
-        System.out.println("Processing " + args.length + " files.");
+        ArrayList<String> lines = readLines(args[0]);
+        System.out.println("Processing " + lines.size() + " files.");
         int filesDone = 0;
-        for(String filename: args)
+        for(String filename: lines)
         {
             FileWriter writer = new FileWriter(filename + ".sen");
             System.out.println("Parsing " + filename + " ... ");
