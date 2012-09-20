@@ -4,9 +4,10 @@ x done
    Different retrieval methods than Okapi
    Compression implemented for indexes
    Write parse tree preprocessor stuff in hadoopable format
-   Make preprocessors take list of files as argument
    Add more data to 6authors!
  - Function words tokenizer (is it broken or does it just suck?)
+ x File compression
+ x Make preprocessors take list of files as argument
  x KNN ensemble classification (normalize search results, interpolate)
  x POS tokenizer
  x vector -> deque in ngram tokenizer

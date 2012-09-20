@@ -102,7 +102,6 @@ string ParseTree::getChildrenString() const
 
 vector<ParseTree> ParseTree::getTrees(const string & filename)
 {
-    cout << " Getting parse trees for " << filename << endl;
     vector<ParseTree> trees;
     ifstream treeFile(filename, ifstream::in);
     if(treeFile.is_open())
