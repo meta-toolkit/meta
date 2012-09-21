@@ -22,7 +22,7 @@ class TreeTokenizer : public Tokenizer
         /**
          *
          */
-        enum TreeTokenizerType { ConditionalChildren, SubtreeCounter };
+        enum TreeTokenizerType { Subtree, Depth, Branch, Tag };
 
         /**
          * Constructor.
@@ -55,7 +55,7 @@ class TreeTokenizer : public Tokenizer
          * @param tree
          * @param docFreq 
          */
-        void condChildrenTokenize(Document & document, const ParseTree & tree,
+        void depthTokenize(Document & document, const ParseTree & tree,
                 std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq);
 
         /**
@@ -63,7 +63,23 @@ class TreeTokenizer : public Tokenizer
          * @param tree
          * @param docFreq 
          */
-        void subtreeCountTokenize(Document & document, const ParseTree & tree,
+        void subtreeTokenize(Document & document, const ParseTree & tree,
+                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq);
+
+        /**
+         * @param document
+         * @param tree
+         * @param docFreq 
+         */
+        void tagTokenize(Document & document, const ParseTree & tree,
+                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq);
+
+        /**
+         * @param document
+         * @param tree
+         * @param docFreq 
+         */
+        void branchTokenize(Document & document, const ParseTree & tree,
                 std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq);
 };
 

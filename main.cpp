@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     //std::shared_ptr<Index> wordIndex(new RAMIndex(trainDocs, wordTokenizer));
     //std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
 
-    std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::SubtreeCounter));
+    std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::Subtree));
     //std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::ConditionalChildren));
     std::shared_ptr<Index> treeIndex(new RAMIndex(trainDocs, treeTokenizer));
 

@@ -11,6 +11,7 @@
 using std::vector;
 using std::unordered_map;
 using std::pair;
+using std::bind;
 
 const char* TreeTokenizer::_extension = ".tree";
 
@@ -18,50 +19,44 @@ TreeTokenizer::TreeTokenizer(TreeTokenizerType type):
     _type(type),
     _tokenizerTypes(unordered_map<TreeTokenizerType, TokenizerFunction, std::hash<int>>())
 {
-    //_tokenizerTypes.insert(pair<TreeTokenizerType, TokenizerFunction>(ConditionalChildren, condChildrenTokenize));
-    //_tokenizerTypes[ConditionalChildren] = condChildrenTokenize;
-    //_tokenizerTypes.insert({SubtreeCounter, TreeTokenizer::subtreeCountTokenize});
+    using namespace std::placeholders;
+    _tokenizerTypes[Subtree] = bind(&TreeTokenizer::subtreeTokenize, this, _1, _2, _3);
+    _tokenizerTypes[Tag]     = bind(&TreeTokenizer::tagTokenize,     this, _1, _2, _3);
+    _tokenizerTypes[Branch]  = bind(&TreeTokenizer::branchTokenize,  this, _1, _2, _3);
+    _tokenizerTypes[Depth]   = bind(&TreeTokenizer::depthTokenize,   this, _1, _2, _3);
 }
 
 void TreeTokenizer::tokenize(Document & document, std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     vector<ParseTree> trees = ParseTree::getTrees(document.getPath() + _extension);
+    TokenizerFunction tFunc = _tokenizerTypes[_type];
     for(auto & tree: trees)
-        _tokenizerTypes[_type](document, tree, docFreq);
-
-    /*
-    switch(_type)
-    {
-        case ConditionalChildren:
-            for(auto & tree: trees)
-                condChildrenTokenize(document, tree, docFreq);
-            break;
-        case SubtreeCount:
-            for(auto & tree: trees)
-                subtreeCountTokenize(document, tree, docFreq);
-            break;
-        default:
-            std::cerr << "[TreeTokenizer]: tokenize: invalid TreeTokenizerType" << std::endl;
-    }
-    */
+        tFunc(document, tree, docFreq);
 }
 
-void TreeTokenizer::condChildrenTokenize(Document & document, const ParseTree & tree,
+void TreeTokenizer::subtreeTokenize(Document & document, const ParseTree & tree,
         std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     string representation = tree.getChildrenString() + "|" + tree.getPOS();
-    //std::cout << representation << std::endl;
     document.increment(getMapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())
-        condChildrenTokenize(document, child, docFreq);
+        subtreeTokenize(document, child, docFreq);
 }
 
-void TreeTokenizer::subtreeCountTokenize(Document & document, const ParseTree & tree,
+void TreeTokenizer::branchTokenize(Document & document, const ParseTree & tree,
         std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     string representation = tree.getChildrenString() + "|" + tree.getPOS();
-    //std::cout << representation << std::endl;
     document.increment(getMapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())
-        condChildrenTokenize(document, child, docFreq);
+        branchTokenize(document, child, docFreq);
+}
+
+void TreeTokenizer::tagTokenize(Document & document, const ParseTree & tree,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+{
+}
+void TreeTokenizer::depthTokenize(Document & document, const ParseTree & tree,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+{
 }

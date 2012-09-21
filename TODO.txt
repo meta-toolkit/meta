@@ -4,6 +4,7 @@ x done
    Different retrieval methods than Okapi
    Compression implemented for indexes
    Write parse tree preprocessor stuff in hadoopable format
+   Update doxygen!!
    Add more data to 6authors!
  - Function words tokenizer (is it broken or does it just suck?)
  x File compression
