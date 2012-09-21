@@ -11,8 +11,8 @@ TESTEROBJS = $(SEARCHOBJS)
 TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp
 
 CC = g++ -std=c++0x -fopenmp -I.
-#CCOPTS = -g -O0
-CCOPTS = -O3
+CCOPTS = -g -O0
+#CCOPTS = -O3
 LINKER = g++ -std=c++0x -fopenmp -I.
 
 CLEANDIRS = tokenizers io index util stemmers classify

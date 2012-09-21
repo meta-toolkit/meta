@@ -55,9 +55,9 @@ int main(int argc, char* argv[])
 {
     bool quiet = argc > 1;
 
-    //string prefix = "/home/sean/projects/senior-thesis-data/kaggle/";
+    string prefix = "/home/sean/projects/senior-thesis-data/kaggle/";
     //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
-    string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
+    //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
     //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
 
     vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
@@ -69,7 +69,6 @@ int main(int argc, char* argv[])
     //std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
 
     std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::Subtree));
-    //std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::ConditionalChildren));
     std::shared_ptr<Index> treeIndex(new RAMIndex(trainDocs, treeTokenizer));
 
     cout << "Running queries..." << endl;

@@ -122,3 +122,15 @@ vector<ParseTree> ParseTree::getTrees(const string & filename)
 
     return trees;
 }
+
+size_t ParseTree::height(const ParseTree & curr)
+{
+    size_t max = 0;
+    for(auto & child: curr.getChildren())
+    {
+        size_t h = height(child) + 1;
+        if(h > max)
+            max = h;
+    }
+    return max;
+}

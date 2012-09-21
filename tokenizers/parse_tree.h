@@ -34,6 +34,12 @@ class ParseTree
         std::vector<ParseTree> getChildren() const;
 
         /**
+         * @param curr
+         * @return the height of the current tree
+         */
+        static size_t height(const ParseTree & curr);
+
+        /**
          * @return the number of immediate children for this ParseTree.
          */
         size_t numChildren() const;
