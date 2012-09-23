@@ -17,9 +17,6 @@
 #include "structs.h"
 #include "util/invertible_map.h"
 
-typedef unsigned int TermID;
-typedef unsigned int DocID;
-
 /**
  * Represents the dictionary or lexicon of an inverted index.
  */
@@ -109,13 +106,23 @@ class Lexicon
         const InvertibleMap<TermID, std::string> & getTermIDMapping() const;
 
     private:
- 
+
+        /** the name of the lexicon file */
         std::string _lexiconFilename;
+
+        /** saves the average document length in this collection */
         double _avgDL;
 
+        /** maps TermID (tokens) -> TermData (where to find in the postingsFile) */
         std::unordered_map<TermID, TermData> _entries;
+
+        /** lengths for all documents in the index, used in ranking functions */
         std::unordered_map<DocID, unsigned int> _docLengths;
+
+        /** maps TermIDs to the strings they represent */
         InvertibleMap<TermID, std::string> _termMap;
+
+        /** maps DocIDs to the document paths they represent */
         InvertibleMap<DocID, std::string> _docMap;
 
         /**

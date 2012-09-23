@@ -1,5 +1,6 @@
 /**
  * @file knn.h
+ * Collection of k-nearest neighbor tools.
  */
 
 #ifndef _KNN_H_
@@ -28,16 +29,15 @@ namespace KNN
     std::string classify(Document & query, std::shared_ptr<Index> index, size_t k);
 
     /**
-     * Runs a KNN classifier.
+     * Runs a KNN classifier on multiple indexes.
      * @param query - the query to run
-     * @param index - the indexes to perform the KNN search on
+     * @param indexes - the indexes to perform the KNN search on
      * @param weights - ensemble linear interpolation weights
-     * @param k - the value of k in KNN
+     * @param k - the value of k in kNN
      */
     std::string classify(Document & query,
             std::vector<std::shared_ptr<Index>> indexes,
-            std::vector<double> weights,
-            size_t k);
+            std::vector<double> weights, size_t k);
 
     namespace internal
     {
@@ -50,8 +50,11 @@ namespace KNN
         normalize(const std::multimap<double, std::string> & scores);
 
         /**
-         * Stuff
-         * @param rankings
+         * Finds the most common occurrence in the top k results.
+         * @param rankings - ranked list of documents returned by a search
+         *  engine
+         * @param k - k value in kNN
+         * @return the class label for the most common document
          */
         std::string findNN(const std::multimap<double, std::string> & rankings, size_t k);
     }

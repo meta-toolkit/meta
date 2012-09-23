@@ -11,7 +11,10 @@
 #include <string>
 #include <vector>
 
+/** Numbering value for Terms in the index */
 typedef unsigned int TermID;
+
+/** Numbering value for Documents in the index */
 typedef unsigned int DocID;
 
 /**
@@ -69,9 +72,16 @@ class TermData
 class IndexEntry
 {
     public:
+        /** denotes which token this entry is for */
         TermID termID;
+
+        /** collection of PostingData for each document this term occurs in */
         std::vector<PostingData> data;
 
+        /**
+         * Constructor.
+         * @param ptermID - the termID to set
+         */
         IndexEntry(TermID ptermID):
             termID(ptermID) { /* nothing */ }
 

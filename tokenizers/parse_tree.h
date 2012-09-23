@@ -5,6 +5,7 @@
 #ifndef _PARSE_TREE_H_
 #define _PARSE_TREE_H_
 
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -50,6 +51,12 @@ class ParseTree
         std::string getString() const;
 
         /**
+         * @param tree - the tree to print
+         * @return a nice multiline string representation of the tree
+         */
+        static std::string prettyPrint(const ParseTree & tree);
+
+        /**
          * @return a string representation of the ParseTree's children.
          */
         std::string getChildrenString() const;
@@ -62,7 +69,10 @@ class ParseTree
 
     private:
 
+        /** the tag label on the root of this subtree */
         std::string partOfSpeech;
+
+        /** ordered collection of children of the current parse tree */
         std::vector<ParseTree> children;
 
         /**
@@ -74,6 +84,14 @@ class ParseTree
          * @return the root part of speech for a transition.
          */
         std::string getRootPOS(std::string tags) const;
+
+        /**
+         * @param tree
+         * @param depth
+         * @param output
+         */
+        static void prettyPrint(const ParseTree & tree, size_t depth,
+                std::stringstream & output);
 };
 
 #endif

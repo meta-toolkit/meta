@@ -53,9 +53,16 @@ class TextFile
 
     private:
 
+        /** filename of the text file */
         std::string _title;
+
+        /** pointer to the beginning of the text file */
         char* start;
+
+        /** size of the current text file */
         unsigned int size;
+
+        /** file descriptor for the open text file */
         int file_descriptor;
 };
 

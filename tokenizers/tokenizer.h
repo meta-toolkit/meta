@@ -8,11 +8,10 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include "index/structs.h"
 #include "util/invertible_map.h"
 
 class Document;
-
-typedef unsigned int TermID;
 
 /**
  * An class that provides a framework to produce tokens.
@@ -57,8 +56,13 @@ class Tokenizer
         void setTermIDMapping(const InvertibleMap<TermID, std::string> & mapping);
 
     private:
-        
+
+        /** Internal counter for the number of unique terms seen (used as keys
+         * in the InvertibleMap) */
         TermID _currentTermID;
+
+        /** Keeps track of the internal mapping of TermIDs to strings parsed
+         * from the file */
         InvertibleMap<TermID, std::string> _termMap;
 };
 

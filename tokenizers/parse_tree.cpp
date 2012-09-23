@@ -6,6 +6,7 @@
 #include <iostream>
 #include "parse_tree.h"
 
+using std::stringstream;
 using std::ifstream;
 using std::cout;
 using std::endl;
@@ -15,16 +16,14 @@ using std::vector;
 
 ParseTree::ParseTree(string tags): children(vector<ParseTree>())
 {
-    vector<string> transitions = getTransitions(tags);
-    for(auto & it: transitions)
-        children.push_back(ParseTree(it));
-
     partOfSpeech = getRootPOS(tags);
+    vector<string> transitions(getTransitions(tags));
+    for(auto & transition: transitions)
+        children.push_back(ParseTree(transition));
 }
 
 vector<string> ParseTree::getTransitions(string tags) const
 {
-
     // make sure there are actually transitions
     if(tags == "" || tags.substr(1, tags.size() - 1).find_first_of("(") == string::npos)
         return vector<string>();
@@ -92,6 +91,23 @@ string ParseTree::getString() const
     return ret;
 }
 
+string ParseTree::prettyPrint(const ParseTree & tree)
+{
+    stringstream output;
+    prettyPrint(tree, 0, output);
+    return output.str();
+}
+
+void ParseTree::prettyPrint(const ParseTree & tree, size_t depth, stringstream & output)
+{
+    string padding(depth, ' ');
+    output << padding << "(" << endl << padding
+           << "  " << tree.partOfSpeech << endl;
+    for(auto & child: tree.children)
+        prettyPrint(child, depth + 2, output);
+    output << padding << ")" << endl;
+}
+
 string ParseTree::getChildrenString() const
 {
     string ret = "";
@@ -110,7 +126,8 @@ vector<ParseTree> ParseTree::getTrees(const string & filename)
         while(treeFile.good())
         {
             std::getline(treeFile, line);
-            trees.push_back(ParseTree(line));
+            if(line != "")
+                trees.push_back(ParseTree(line));
         }        
         treeFile.close();
     }

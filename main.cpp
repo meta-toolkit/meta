@@ -15,6 +15,7 @@
 #include <iostream>
 #include <map>
 
+#include "io/config_reader.h"
 #include "classify/knn.h"
 #include "tokenizers/ngram_tokenizer.h"
 #include "tokenizers/fw_tokenizer.h"
@@ -37,11 +38,14 @@ vector<Document> getDocs(const string & filename, const string & prefix)
     while(parser.hasNext())
     {
         string file = parser.next();
-        docs.push_back(Document(prefix + file));
+        docs.push_back(Document(prefix + "/" + file));
     }
     return docs;
 }
 
+/**
+ * @return whether the int representation of two strings is within k of each other
+ */
 bool withinK(const string & one, const string & two, int k)
 {
     int valOne;
@@ -53,23 +57,27 @@ bool withinK(const string & one, const string & two, int k)
 
 int main(int argc, char* argv[])
 {
-    bool quiet = argc > 1;
+    if(argc != 2)
+    {
+        cerr << "Usage:\t" << argv[0] << " configFile" << endl;
+        return 1;
+    }
 
-    string prefix = "/home/sean/projects/senior-thesis-data/kaggle/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
+    unordered_map<string, string> config = ConfigReader::read(argv[1]);
 
-    vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
-    vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
+    bool quiet = config["quiet"] == "yes";
+    string prefix = config["prefix"];
 
-    //std::shared_ptr<Tokenizer> wordTokenizer(new NgramTokenizer(2, NgramTokenizer::Word));
-    //std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(6, NgramTokenizer::POS));
-    //std::shared_ptr<Index> wordIndex(new RAMIndex(trainDocs, wordTokenizer));
-    //std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
+    vector<Document> trainDocs = getDocs(prefix + "/train.txt", prefix);
+    vector<Document> testDocs = getDocs(prefix + "/test.txt", prefix);
 
-    std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::Subtree));
-    std::shared_ptr<Index> treeIndex(new RAMIndex(trainDocs, treeTokenizer));
+    std::shared_ptr<Tokenizer> wordTokenizer(new NgramTokenizer(2, NgramTokenizer::Word));
+    std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(6, NgramTokenizer::POS));
+    std::shared_ptr<Index> wordIndex(new RAMIndex(trainDocs, wordTokenizer));
+    std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
+
+    //std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::Subtree));
+    //std::shared_ptr<Index> treeIndex(new RAMIndex(trainDocs, treeTokenizer));
 
     cout << "Running queries..." << endl;
     size_t numQueries = 0;
@@ -78,8 +86,9 @@ int main(int argc, char* argv[])
     for(auto & query: testDocs)
     {
         ++numQueries;
-        string result = KNN::classify(query, treeIndex, 1);
-        //string result = KNN::classify(query, {wordIndex, posIndex}, {0.5, 0.5}, 1);
+        //string result = KNN::classify(query, treeIndex, 1);
+        //string result = KNN::classify(query, posIndex, 1);
+        string result = KNN::classify(query, {wordIndex, posIndex}, {0.5, 0.5}, 1);
         //if(withinK(result, query.getCategory(), 0))
         if(result == query.getCategory())
         {

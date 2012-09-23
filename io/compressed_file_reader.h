@@ -65,13 +65,26 @@ class CompressedFileReader
 
     private:
 
+        /** pointer to the beginning of the compressed file (which will be in
+         * memory most of the time) */
         unsigned char* _start;
+
+        /** file descriptor for the memory map where this compressed file is */
         int _fileDescriptor;
+
+        /** the number of bytes in this compressed file */
         unsigned int _size;
+
+        /** reading/writing status */
         int _status;
 
+        /** current numeric value that was read */
         unsigned int _currentValue;
+
+        /** current byte in the compressed file */
         unsigned int _currentChar;
+
+        /** current bit inside the current byte */
         unsigned int _currentBit;
 
         /**

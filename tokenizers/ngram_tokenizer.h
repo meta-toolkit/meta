@@ -20,15 +20,16 @@ class Document;
 class NgramTokenizer : public Tokenizer
 {
     public:
-
         /**
-         *
+         * Enumeration representing different ways to tokenize word tokens. 
          */
         enum NgramType { POS, Word };
 
         /**
          * Constructor.
          * @param n - the value of n to use for the ngrams.
+         * @param type - indicates whether this tokenizer is tokenizing words or
+         *  POS tags
          */
         NgramTokenizer(size_t n, NgramType type);
 

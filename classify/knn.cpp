@@ -2,6 +2,7 @@
  * @file knn.cpp
  */
 
+#include <cmath>
 #include <iostream>
 #include <utility>
 #include "index/document.h"
@@ -76,7 +77,8 @@ string KNN::classify(Document & query, vector<shared_ptr<Index>> indexes, vector
     {
         double score = 0.0;
         for(size_t i = 0; i < results.size(); ++i)
-            score += (results[i][rank.first] * weights[i]);
+            score += log(results[i][rank.first]);
+            //score += (results[i][rank.first] * weights[i]);
         ranking.insert(make_pair(score, rank.first));
     }
 

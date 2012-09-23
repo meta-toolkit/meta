@@ -11,6 +11,7 @@
 #include <iostream>
 #include <omp.h>
 
+#include "tokenizers/parse_tree.h"
 #include "classify/knn.h"
 #include "io/textfile.h"
 #include "io/compressed_file_reader.h"
@@ -162,8 +163,6 @@ void testIndex()
     std::shared_ptr<Tokenizer> const tokenizer(new NgramTokenizer(1, NgramTokenizer::Word));
     std::shared_ptr<Index> index(new InvertedIndex(lexicon, postings, tokenizer));
 
-    //testDocs.erase(testDocs.begin() + 1, testDocs.end());
-
     size_t numQueries = 1;
     size_t numCorrect = 0;
     for(auto & query: testDocs)
@@ -182,11 +181,21 @@ void testIndex()
     }
 }
 
+void testParseTrees()
+{
+    vector<ParseTree> trees = ParseTree::getTrees("input.tree");
+    ofstream out("output.tree");
+    for(auto & tree: trees)
+        out << tree.getString() << endl;
+    out.close();
+}
+
 int main(int argc, char* argv[])
 {
     //testCompression(string(argv[1]));
     //testIndexCreation();
     //testIndex();
+    testParseTrees();
 
     return 0;
 }

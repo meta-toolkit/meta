@@ -35,7 +35,10 @@ class ChunkList
 
     private:
 
+        /** how many chunks need to be merged */
         size_t _numChunks;
+
+        /** a parser for each chunk that needs to be merged */
         std::vector<Parser> _parsers;
 
         /**

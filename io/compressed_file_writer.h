@@ -37,10 +37,19 @@ class CompressedFileWriter
 
     private:
 
+        /** where to write the compressed data */
         FILE* _outfile;
+        
+        /** the current byte this reader is on */
         unsigned int _charCursor;
+        
+        /** the current bit of the current byte this reader is on */
         unsigned int _bitCursor;
+        
+        /** saved data that is not yet written to disk */
         unsigned char* _buffer;
+
+        /** how large to make the internal writer buffer */
         unsigned int _bufferSize;
 
         /**

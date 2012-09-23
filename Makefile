@@ -3,7 +3,7 @@ SEARCHOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o \
     tokenizers/tree_tokenizer.o tokenizers/ngram_tokenizer.o io/textfile.o io/parser.o \
     index/lexicon.o index/inverted_index.o io/compressed_file_reader.o io/compressed_file_writer.o \
     index/postings.o tokenizers/tokenizer.o index/chunk_list.o index/structs.o stemmers/porter2_stemmer.o \
-    tokenizers/fw_tokenizer.o classify/knn.o
+    tokenizers/fw_tokenizer.o classify/knn.o io/config_reader.o
 
 TESTER = tester
 TESTEROBJS = $(SEARCHOBJS)
@@ -11,8 +11,8 @@ TESTEROBJS = $(SEARCHOBJS)
 TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp
 
 CC = g++ -std=c++0x -fopenmp -I.
-CCOPTS = -g -O0
-#CCOPTS = -O3
+#CCOPTS = -g -O0
+CCOPTS = -O3
 LINKER = g++ -std=c++0x -fopenmp -I.
 
 CLEANDIRS = tokenizers io index util stemmers classify

@@ -8,12 +8,7 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
-
-/** Numbering value for Terms in the index */
-typedef unsigned int TermID;
-
-/** Numbering value for Documents in the index */
-typedef unsigned int DocID;
+#include "structs.h"
 
 /**
  * Represents an indexed document.
@@ -83,10 +78,19 @@ class Document
  
     private:
 
+        /** where this document is on disk */
         std::string _path;
+
+        /** which category this document would be classified into */
         std::string _category;
+
+        /** the short name for this document (not the full path) */
         std::string _name;
+
+        /** the number of (non-unique) tokens in this document */
         size_t _length;
+
+        /** counts of how many times each token appears */
         std::unordered_map<TermID, unsigned int> _frequencies;
 
         /**

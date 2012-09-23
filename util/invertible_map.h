@@ -75,7 +75,6 @@ class InvertibleMap
         /**
          * Saves an Invertible Map to disk.
          * @param filename - where to save the map
-         * @param map - the map to save
          */
         void saveMap(const std::string & filename) const;
 
@@ -137,6 +136,7 @@ class InvertibleMap
 
             private:
 
+                /** the iterator of the underlying unordered_map */
                 InnerIterator iter;
         };
 
@@ -158,7 +158,10 @@ class InvertibleMap
 
     private:
 
+        /** the internal map representing Key -> Value pairs */
         std::unordered_map<Key, Value> _forward;
+
+        /** the internal map representing Value -> Key pairs */
         std::unordered_map<Value, Key> _backward;
 };
 

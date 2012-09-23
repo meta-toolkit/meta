@@ -60,14 +60,14 @@ class Postings
 
         /**
          * Creates the large postings file on disk out of many chunks.
-         * @param chunks - a list of filenames indicating the location of the chunks to combine
+         * @param numChunks - a list of filenames indicating the location of the chunks to combine
          * @param lexicon - the lexicon to update while indexing
          */
         void createPostingsFile(size_t numChunks, Lexicon & lexicon);
 
         /**
          * Creates a compressed postings file on disk out of many chunks.
-         * @param chunks - a list of filenames indicating the location of the chunks to combine
+         * @param numChunks - a list of filenames indicating the location of the chunks to combine
          * @param lexicon - the lexicon to update while indexing
          */
         void createCompressedPostingsFile(size_t numChunks, Lexicon & lexicon);
@@ -87,9 +87,15 @@ class Postings
 
     private:
 
+        /** Maintains the filename of the postings file */
         std::string _postingsFilename;
+        
         //CompressedFileReader _reader;
+        
+        /** Keeps track of the DocID -> filename mapping */
         InvertibleMap<DocID, std::string> _docMap;
+
+        /** Internal counter of docs, used to create DocIDs */
         DocID _currentDocID;
 
         /**
