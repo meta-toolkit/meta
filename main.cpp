@@ -15,6 +15,7 @@
 #include <iostream>
 #include <map>
 
+#include "classify/confusion_matrix.h"
 #include "io/config_reader.h"
 #include "classify/knn.h"
 #include "tokenizers/ngram_tokenizer.h"
@@ -65,6 +66,7 @@ int main(int argc, char* argv[])
 
     unordered_map<string, string> config = ConfigReader::read(argv[1]);
 
+    bool matrix = config["ConfusionMatrix"] == "yes";
     bool quiet = config["quiet"] == "yes";
     string prefix = config["prefix"];
 
@@ -72,24 +74,26 @@ int main(int argc, char* argv[])
     vector<Document> testDocs = getDocs(prefix + "/test.txt", prefix);
 
     std::shared_ptr<Tokenizer> wordTokenizer(new NgramTokenizer(2, NgramTokenizer::Word));
-    std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(6, NgramTokenizer::POS));
+    //std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(6, NgramTokenizer::POS));
     std::shared_ptr<Index> wordIndex(new RAMIndex(trainDocs, wordTokenizer));
-    std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
+    //std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
 
-    //std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::Subtree));
+    //std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::Depth));
     //std::shared_ptr<Index> treeIndex(new RAMIndex(trainDocs, treeTokenizer));
 
     cout << "Running queries..." << endl;
     size_t numQueries = 0;
     size_t numCorrect = 0;
+    ConfusionMatrix confusionMatrix;
 
     for(auto & query: testDocs)
     {
         ++numQueries;
         //string result = KNN::classify(query, treeIndex, 1);
-        //string result = KNN::classify(query, posIndex, 1);
-        string result = KNN::classify(query, {wordIndex, posIndex}, {0.5, 0.5}, 1);
-        //if(withinK(result, query.getCategory(), 0))
+        string result = KNN::classify(query, wordIndex, 1);
+        //string result = KNN::classify(query, {wordIndex, posIndex}, {0.5, 0.5}, 1);
+        //if(withinK(result, query.getCategory(), 1))
+        confusionMatrix.add(result, query.getCategory());
         if(result == query.getCategory())
         {
             ++numCorrect;
@@ -101,6 +105,7 @@ int main(int argc, char* argv[])
              << "% accuracy, " << numQueries << "/" << testDocs.size() << " processed " << endl;
     }
 
+    confusionMatrix.print();
     cout << "Trained on " << trainDocs.size() << " documents" << endl;
     cout << "Tested on " << testDocs.size() << " documents" << endl;
     cout << "Total accuracy: " << ((double) numCorrect / numQueries * 100) << endl;

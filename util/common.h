@@ -38,6 +38,15 @@ namespace Common
     {
         return "\033[1;31m" + str + "\033[0m";
     }
+
+    /**
+     * @param str
+     * @return the parameter string bolded
+     */
+    inline std::string makeBold(std::string str)
+    {
+        return "\033[1m" + str + "\033[0m";
+    }
 }
 
 #include "common.cpp"

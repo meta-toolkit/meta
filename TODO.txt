@@ -6,8 +6,9 @@ x done
    Write parse tree preprocessor stuff in hadoopable format
    Update doxygen!!
    Add more data to 6authors!
-   Ensure ParseTree functions are working 100%, make some unit tests
+   Confusion matrix output
  - Function words tokenizer (is it broken or does it just suck?)
+ x Ensure ParseTree functions are working 100%, make some unit tests
  x File compression
  x Make preprocessors take list of files as argument
  x KNN ensemble classification (normalize search results, interpolate)
