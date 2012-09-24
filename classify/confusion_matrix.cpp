@@ -2,10 +2,12 @@
  * @file confusion_matrix.cpp
  */
 
+#include <iomanip>
 #include <iostream>
 #include "util/common.h"
 #include "confusion_matrix.h"
 
+using std::setw;
 using std::cout;
 using std::endl;
 using std::unordered_map;
@@ -42,22 +44,31 @@ void ConfusionMatrix::add(const string & predicted, const string & actual)
 
 void ConfusionMatrix::print() const
 {
-    cout << "The classifier predicted..." << endl;
+    size_t w = 11;
+    cout << endl << setw(w) << "";
+    for(auto & aClass: _classes)
+        cout << setw(w) << aClass;
+    cout << endl;
+    cout << string(w, ' ') << string(_classes.size() * w, '-') << endl;
+
     for(auto & aClass: _classes)
     {
-        cout << " " << Common::makeBold(aClass) << endl;
+        cout << setw(w) << (aClass + " | ");
         for(auto & pClass: _classes)
         {
             auto predIt = _predictions.find(make_pair(pClass, aClass));
             if(predIt != _predictions.end())
             {
                 size_t numPred = predIt->second;
-                cout << "  as " << ((pClass == aClass) ? Common::makeBold(pClass) : pClass)
-                     << ": " << numPred << " times ("
-                     << (double) numPred / _counts.at(aClass) * 100 << "%)" << endl;
+                string percent = Common::toString((double) numPred / _counts.at(aClass));
+                cout << setw(w) << ((aClass == pClass) ? ("[" + percent + "]") : (percent + " "));
             }
+            else
+                cout << setw(w) << "- ";
         }
+        cout << endl;
     }
+    cout << endl;
 }
 
 size_t ConfusionMatrix::stringPairHash(const std::pair<std::string, std::string> & strPair)

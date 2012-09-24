@@ -22,7 +22,7 @@ entries.each { |entry|
   # extract 2nd to last directory (the category)
   curCat = entry.match(/^(.+)\/(.+)$/)[1]
   catMap[curCat] = [] if catMap[curCat] == nil
-  catMap[curCat] << entry.chomp
+  catMap[curCat] << entry
 }
 
 catMap.each { |cat, files|

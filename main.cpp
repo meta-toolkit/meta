@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
     vector<Document> trainDocs = getDocs(prefix + "/train.txt", prefix);
     vector<Document> testDocs = getDocs(prefix + "/test.txt", prefix);
 
-    std::shared_ptr<Tokenizer> wordTokenizer(new NgramTokenizer(2, NgramTokenizer::Word));
+    std::shared_ptr<Tokenizer> wordTokenizer(new NgramTokenizer(1, NgramTokenizer::Word));
     //std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(6, NgramTokenizer::POS));
     std::shared_ptr<Index> wordIndex(new RAMIndex(trainDocs, wordTokenizer));
     //std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
