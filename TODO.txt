@@ -6,8 +6,10 @@ x done
    Write parse tree preprocessor stuff in hadoopable format
    Update doxygen!!
    Add more data to 6authors!
-   Confusion matrix output
+   Try out libsvm (looks pretty easy; only question is number of dimensions)
+   Add getCategory function in Document; clean up tiebreaking code in KNN
  - Function words tokenizer (is it broken or does it just suck?)
+ x Confusion matrix output
  x Ensure ParseTree functions are working 100%, make some unit tests
  x File compression
  x Make preprocessors take list of files as argument

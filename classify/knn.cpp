@@ -2,11 +2,15 @@
  * @file knn.cpp
  */
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <utility>
 #include "index/document.h"
 #include "knn.h"
+
+using std::cout;
+using std::endl;
 
 using std::pair;
 using std::unordered_map;
@@ -26,11 +30,16 @@ string KNN::internal::findNN(const multimap<double, string> & ranking, size_t k)
 {
     unordered_map<string, size_t> counts;
     size_t numResults = 0;
+    vector<string> orderSeen;
     for(auto result = ranking.rbegin(); result != ranking.rend() && numResults++ != k; ++result)
     {
         size_t space = result->second.find_first_of(" ") + 1;
         string category = result->second.substr(space, result->second.size() - space);
         ++counts[category];
+        if(std::find(orderSeen.begin(), orderSeen.end(), category) == orderSeen.end())
+            orderSeen.push_back(category);
+
+        //cout << " " << numResults << " " << result->second << endl;
     }
 
     string best = "[no results]";
@@ -42,9 +51,30 @@ string KNN::internal::findNN(const multimap<double, string> & ranking, size_t k)
             best = count.first;
             high = count.second;
         }
+        // tie break based on initial ranking
+        else if(count.second == high && isHigherRank(count.first, best, orderSeen))
+        {
+            best = count.first;
+            high = count.second;
+        }
     }
 
     return best;
+}
+
+bool KNN::internal::isHigherRank(const string & check, const string & best,
+        const vector<string> & orderSeen)
+{
+    string catCheck = check.substr(check.find_first_of(" ") + 1);
+    string catBest = best.substr(best.find_first_of(" ") + 1);
+    for(auto & doc: orderSeen)
+    {
+        if(doc == catCheck)
+            return true;
+        if(doc == catBest)
+            return false;
+    }
+    return false;
 }
 
 string KNN::classify(Document & query, vector<shared_ptr<Index>> indexes, vector<double> weights, size_t k)

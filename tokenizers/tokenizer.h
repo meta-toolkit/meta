@@ -55,6 +55,11 @@ class Tokenizer
          */
         void setTermIDMapping(const InvertibleMap<TermID, std::string> & mapping);
 
+        /**
+         *
+         */
+        std::string getLabel(TermID termID) const;
+
     private:
 
         /** Internal counter for the number of unique terms seen (used as keys

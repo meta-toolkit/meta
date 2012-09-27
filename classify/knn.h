@@ -57,6 +57,11 @@ namespace KNN
          * @return the class label for the most common document
          */
         std::string findNN(const std::multimap<double, std::string> & rankings, size_t k);
+
+
+        bool isHigherRank(const std::string & check,
+                const std::string & best,
+                const std::vector<std::string> & orderSeen);
     }
 }
 

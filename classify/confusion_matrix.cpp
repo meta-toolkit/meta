@@ -44,7 +44,7 @@ void ConfusionMatrix::add(const string & predicted, const string & actual)
 
 void ConfusionMatrix::print() const
 {
-    size_t w = 11;
+    size_t w = 8;
     cout << endl << setw(w) << "";
     for(auto & aClass: _classes)
         cout << setw(w) << aClass;
@@ -60,7 +60,8 @@ void ConfusionMatrix::print() const
             if(predIt != _predictions.end())
             {
                 size_t numPred = predIt->second;
-                string percent = Common::toString((double) numPred / _counts.at(aClass));
+                double rounded = (int)((double) numPred / _counts.at(aClass) * 10000);
+                string percent = Common::toString(rounded / 100);
                 cout << setw(w) << ((aClass == pClass) ? ("[" + percent + "]") : (percent + " "));
             }
             else

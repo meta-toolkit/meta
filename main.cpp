@@ -73,12 +73,12 @@ int main(int argc, char* argv[])
     vector<Document> trainDocs = getDocs(prefix + "/train.txt", prefix);
     vector<Document> testDocs = getDocs(prefix + "/test.txt", prefix);
 
-    std::shared_ptr<Tokenizer> wordTokenizer(new NgramTokenizer(1, NgramTokenizer::Word));
-    //std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(6, NgramTokenizer::POS));
-    std::shared_ptr<Index> wordIndex(new RAMIndex(trainDocs, wordTokenizer));
-    //std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
+    //std::shared_ptr<Tokenizer> wordTokenizer(new NgramTokenizer(1, NgramTokenizer::Word));
+    std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(5, NgramTokenizer::POS));
+    //std::shared_ptr<Index> wordIndex(new RAMIndex(trainDocs, wordTokenizer));
+    std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
 
-    //std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::Depth));
+    //std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::Subtree));
     //std::shared_ptr<Index> treeIndex(new RAMIndex(trainDocs, treeTokenizer));
 
     cout << "Running queries..." << endl;
@@ -89,11 +89,10 @@ int main(int argc, char* argv[])
     for(auto & query: testDocs)
     {
         ++numQueries;
-        //string result = KNN::classify(query, treeIndex, 1);
-        string result = KNN::classify(query, wordIndex, 1);
+        string result = KNN::classify(query, posIndex, 1);
         //string result = KNN::classify(query, {wordIndex, posIndex}, {0.5, 0.5}, 1);
         //if(withinK(result, query.getCategory(), 1))
-        confusionMatrix.add(result, query.getCategory());
+        if(matrix) confusionMatrix.add(result, query.getCategory());
         if(result == query.getCategory())
         {
             ++numCorrect;
@@ -105,7 +104,7 @@ int main(int argc, char* argv[])
              << "% accuracy, " << numQueries << "/" << testDocs.size() << " processed " << endl;
     }
 
-    confusionMatrix.print();
+    if(matrix) confusionMatrix.print();
     cout << "Trained on " << trainDocs.size() << " documents" << endl;
     cout << "Tested on " << testDocs.size() << " documents" << endl;
     cout << "Total accuracy: " << ((double) numCorrect / numQueries * 100) << endl;
