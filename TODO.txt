@@ -8,6 +8,7 @@ x done
    Add more data to 6authors!
    Try out libsvm (looks pretty easy; only question is number of dimensions)
    Add getCategory function in Document; clean up tiebreaking code in KNN
+ - unit testing framework
  - Function words tokenizer (is it broken or does it just suck?)
  x Confusion matrix output
  x Ensure ParseTree functions are working 100%, make some unit tests

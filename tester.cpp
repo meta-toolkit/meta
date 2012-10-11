@@ -21,6 +21,7 @@
 #include "index/inverted_index.h"
 #include "tokenizers/ngram_tokenizer.h"
 #include "util/invertible_map.h"
+#include "test/unit_test.h"
 
 using std::vector;
 using std::make_pair;
@@ -190,12 +191,33 @@ void testParseTrees()
     out.close();
 }
 
+void thing()
+{
+    ASSERT(1 == 1);
+    ASSERT(2 == 3);
+    PASS;
+}
+
+void thing1()
+{
+    ASSERT(1 == 1);
+    PASS;
+}
+
+void testTest()
+{
+    cout << "Running tests..." << endl;
+    UnitTests::runTest("MyFirstTest", thing);
+    UnitTests::runTest("MySecondTest", thing1);
+}
+
 int main(int argc, char* argv[])
 {
     //testCompression(string(argv[1]));
     //testIndexCreation();
     //testIndex();
-    testParseTrees();
+    //testParseTrees();
+    testTest();
 
     return 0;
 }
