@@ -200,7 +200,13 @@ void thing()
 
 void thing1()
 {
-    ASSERT(1 == 1);
+    int* p = NULL;
+    *p = 1;
+    PASS;
+}
+
+void thing2()
+{
     PASS;
 }
 
@@ -209,6 +215,7 @@ void testTest()
     cout << "Running tests..." << endl;
     UnitTests::runTest("MyFirstTest", thing);
     UnitTests::runTest("MySecondTest", thing1);
+    UnitTests::runTest("LastTest", thing2);
 }
 
 int main(int argc, char* argv[])

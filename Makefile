@@ -11,7 +11,7 @@ TESTEROBJS = $(SEARCHOBJS)
 PLOT = plot
 PLOTOBJS = $(SEARCHOBJS)
 
-TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp
+TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp test/unit_test.h
 
 CC = g++ -std=c++0x -fopenmp -I.
 #CCOPTS = -g -O0
