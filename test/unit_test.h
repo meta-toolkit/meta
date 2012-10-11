@@ -1,7 +1,7 @@
 /**
  * @file unit_test.h
  *
- * Contains macros used in unit testing.
+ * Contains functions and defines used in unit testing.
  */
 
 #ifndef _UNIT_TEST_H_
@@ -26,6 +26,12 @@
         exit(1); \
     } while(0)
 
+#define FAIL_NOLINE(why) \
+    do { \
+        std::cerr << Common::makeRed("FAIL") << " " << (why) << std::endl; \
+        exit(1); \
+    } while(0)
+
 #define PASS \
     do { \
         std::cerr << Common::makeGreen("OK") << std::endl; \
@@ -33,7 +39,7 @@
     } while(0)
 
 /**
- *
+ * Contains unit testing related functions.
  */
 namespace UnitTests
 {
@@ -42,26 +48,31 @@ namespace UnitTests
     using std::cerr;
 
     /**
-     *
+     * Signal handler for unit tests.
+     * Catches signals and responds appropriately, usually by failing the
+     *  current test.
+     * @param sig - the caught signal ID
      */
     void sigCatch(int sig)
     {
         switch(sig)
         {
-            case SIGALRM:
-                FAIL("Time limit exceeded");
-                break;
-            case SIGSEGV:
-                FAIL("Received segfault");
-                break;
+            case SIGALRM: FAIL_NOLINE("Time limit exceeded");
+            case SIGSEGV: FAIL_NOLINE("Received segfault");
+            case SIGINT:  FAIL_NOLINE("Received interrupt, exiting.");
         }
     }
 
     /**
-     *
+     * Runs a unit test in a semi-controlled environment.
+     * @param testName - the name to display when running this test
+     * @param func - the function (unit test) to run. This function should take
+     *  no parameters and return void.
+     * @param timeout - how long to allow this test to execute (in seconds).
+     *  Default is one second.
      */
     template <class Func>
-    void runTest(const string & testName, Func func, int timeout = 2)
+    void runTest(const string & testName, Func func, int timeout = 1)
     {
         cerr << " " << testName << "... ";
 
@@ -69,8 +80,10 @@ namespace UnitTests
         act.sa_handler = sigCatch;
         sigemptyset(&act.sa_mask);
         act.sa_flags = 0;
+
         sigaction(SIGALRM, &act, 0);
         sigaction(SIGSEGV, &act, 0);
+        sigaction(SIGINT, &act, 0);
 
         pid_t pid = fork();
         if(pid == 0)
