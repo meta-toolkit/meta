@@ -207,6 +207,12 @@ void thing1()
 
 void thing2()
 {
+    while(1);
+    PASS;
+}
+
+void thing3()
+{
     PASS;
 }
 
@@ -215,7 +221,8 @@ void testTest()
     cout << "Running tests..." << endl;
     UnitTests::runTest("MyFirstTest", thing);
     UnitTests::runTest("MySecondTest", thing1);
-    UnitTests::runTest("LastTest", thing2);
+    UnitTests::runTest("InfiniteLoopTest", thing2, 3);
+    UnitTests::runTest("LastTest", thing3);
 }
 
 int main(int argc, char* argv[])

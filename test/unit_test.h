@@ -61,7 +61,7 @@ namespace UnitTests
      *
      */
     template <class Func>
-    void runTest(const string & testName, Func func)
+    void runTest(const string & testName, Func func, int timeout = 2)
     {
         cerr << " " << testName << "... ";
 
@@ -74,7 +74,10 @@ namespace UnitTests
 
         pid_t pid = fork();
         if(pid == 0)
+        {
+            alarm(timeout);
             func();
+        }
         else if(pid > 0)
             waitpid(pid, NULL, 0);
         else
