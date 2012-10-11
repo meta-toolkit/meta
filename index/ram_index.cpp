@@ -54,7 +54,10 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer
         _tokenizer->tokenize(doc, _docFreqs);
         _avgDocLength += doc.getLength();
         if(docNum++ % 10 == 0)
+        {
             cout << "  " << ((double) docNum / _documents.size() * 100) << "%    \r";
+            cout.flush();
+        }
     }
     cout << "  100%        " << endl;
 
@@ -69,10 +72,14 @@ void RAMIndex::combineMap(const unordered_map<TermID, unsigned int> & newFreqs)
 
 double RAMIndex::scoreDocument(const Document & document, const Document & query) const
 {
+    // seems horrible
+    bool bm25L = false;
+
     double score = 0.0;
-    double k1 = 1.5;
-    double b = 0.75;
+    double k1 = 1.5; // 1.5 -> 2.5
+    double b = 0.75; // 0.75 -> 1.0
     double k3 = 500;
+    double delta = 0.5;
     double docLength = document.getLength();
     double numDocs = _documents.size();
 
@@ -84,11 +91,40 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
         double termFreq = document.getFrequency(term.first);
         double queryTermFreq = query.getFrequency(term.first);
 
-        double IDF = log((numDocs - docFreq + 0.5) / (docFreq + 0.5));
-        double TF = ((k1 + 1.0) * termFreq) / ((k1 * ((1.0 - b) + b * docLength / _avgDocLength)) + termFreq);
+        //double IDF = (numDocs - docFreq + 0.5) / (docFreq + 0.5);
+        double IDF = log(1 + ((numDocs - docFreq + 0.5) / (docFreq + 0.5)));
+        double TF = 0;
+
+        if(bm25L)
+        {
+            double cPrime = termFreq / (1 - b + b * docLength / _avgDocLength);
+            if(cPrime > 0)
+                TF = ((k1 + 1) * (cPrime + delta)) / (k1 * (cPrime + delta));
+        }
+        else
+            TF = ((k1 + 1.0) * termFreq) / ((k1 * ((1.0 - b) + b * docLength / _avgDocLength)) + termFreq);
+
         double QTF = ((k3 + 1.0) * queryTermFreq) / (k3 + queryTermFreq);
 
+        /*
+        #pragma omp critical
+        {
+            cout << "IDF: " << IDF << endl;
+            cout << "TF: " << TF << endl;
+            cout << "QTF: " << QTF << endl;
+            cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        }
+        */
+        
         score += IDF * TF * QTF;
+
+        /*
+        if(df != _docFreqs->end())
+        {
+            #pragma omp critical
+            cout << term.first << ": " << _tokenizer->getLabel(term.first) << ": " << IDF * TF * QTF << endl;
+        }
+        */
     }
 
     return score;
@@ -101,8 +137,10 @@ size_t RAMIndex::getAvgDocLength() const
 
 multimap<double, string> RAMIndex::search(Document & query) const
 {
+    /*
     cout << "[RAMIndex]: scoring documents for query " << query.getName()
          << " (" << query.getCategory() << ")" << endl;
+    */
 
     _tokenizer->tokenize(query, NULL);
     multimap<double, string> ranks;
@@ -116,6 +154,9 @@ multimap<double, string> RAMIndex::search(Document & query) const
             ranks.insert(make_pair(score, _documents[idx].getName() + " " + _documents[idx].getCategory()));
         }
     }
+
+    //for(auto & rank: ranks)
+    //    cout << rank.first << " " << rank.second << endl;
 
     return ranks;
 }

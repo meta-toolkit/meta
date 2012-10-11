@@ -44,10 +44,10 @@ void ConfusionMatrix::add(const string & predicted, const string & actual)
 
 void ConfusionMatrix::print() const
 {
-    size_t w = 8;
+    size_t w = 10;
     cout << endl << setw(w) << "";
     for(auto & aClass: _classes)
-        cout << setw(w) << aClass;
+        cout << setw(w - 1) << aClass << " ";
     cout << endl;
     cout << string(w, ' ') << string(_classes.size() * w, '-') << endl;
 

@@ -58,8 +58,8 @@ void TreeTokenizer::branchTokenize(Document & document, const ParseTree & tree,
 void TreeTokenizer::tagTokenize(Document & document, const ParseTree & tree,
         std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
-    // Getting some random output here. Is getPOS/parsetree working?
     string representation = tree.getPOS();
+    //string representation = tree.getPOS() + " " + Common::toString(ParseTree::height(tree));
     //std::cout << "tag: " << representation << std::endl;
     document.increment(getMapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())

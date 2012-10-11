@@ -73,15 +73,12 @@ int main(int argc, char* argv[])
     vector<Document> trainDocs = getDocs(prefix + "/train.txt", prefix);
     vector<Document> testDocs = getDocs(prefix + "/test.txt", prefix);
 
-    //std::shared_ptr<Tokenizer> wordTokenizer(new NgramTokenizer(1, NgramTokenizer::Word));
-    std::shared_ptr<Tokenizer> posTokenizer(new NgramTokenizer(5, NgramTokenizer::POS));
-    //std::shared_ptr<Index> wordIndex(new RAMIndex(trainDocs, wordTokenizer));
-    std::shared_ptr<Index> posIndex(new RAMIndex(trainDocs, posTokenizer));
+    //std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(2, NgramTokenizer::Word));
+    //std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(5, NgramTokenizer::POS));
+    std::shared_ptr<Tokenizer> tokenizer(new TreeTokenizer(TreeTokenizer::Subtree));
 
-    //std::shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(TreeTokenizer::Subtree));
-    //std::shared_ptr<Index> treeIndex(new RAMIndex(trainDocs, treeTokenizer));
+    std::shared_ptr<Index> index(new RAMIndex(trainDocs, tokenizer));
 
-    cout << "Running queries..." << endl;
     size_t numQueries = 0;
     size_t numCorrect = 0;
     ConfusionMatrix confusionMatrix;
@@ -89,7 +86,7 @@ int main(int argc, char* argv[])
     for(auto & query: testDocs)
     {
         ++numQueries;
-        string result = KNN::classify(query, posIndex, 1);
+        string result = KNN::classify(query, index, 1);
         //string result = KNN::classify(query, {wordIndex, posIndex}, {0.5, 0.5}, 1);
         //if(withinK(result, query.getCategory(), 1))
         if(matrix) confusionMatrix.add(result, query.getCategory());

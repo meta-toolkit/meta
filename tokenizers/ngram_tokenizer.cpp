@@ -39,7 +39,10 @@ void NgramTokenizer::tokenize(Document & document,
         string next = "";
         do
         {
-            next = Porter2Stemmer::stem(parser.next());
+            if(_extension == ".sen")
+                next = Porter2Stemmer::stem(Porter2Stemmer::trim(parser.next()));
+            else
+                next = parser.next();
         } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
     }
@@ -53,7 +56,10 @@ void NgramTokenizer::tokenize(Document & document,
         string next = "";
         do
         {
-            next = Porter2Stemmer::stem(parser.next());
+            if(_extension == ".sen")
+                next = Porter2Stemmer::stem(Porter2Stemmer::trim(parser.next()));
+            else
+                next = parser.next();
         } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
     }

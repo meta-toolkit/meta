@@ -38,8 +38,6 @@ string KNN::internal::findNN(const multimap<double, string> & ranking, size_t k)
         ++counts[category];
         if(std::find(orderSeen.begin(), orderSeen.end(), category) == orderSeen.end())
             orderSeen.push_back(category);
-
-        //cout << " " << numResults << " " << result->second << endl;
     }
 
     string best = "[no results]";

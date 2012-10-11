@@ -7,13 +7,14 @@ numTesting = -2
 # if no arg for num testing, make it the rest of the files
 numTesting = ARGV[2].to_i unless ARGV.size != 3
 
-corpus = File.open(path + "/full-corpus.txt", "r")
+prefix = "/home/sean/projects/senior-thesis-data/"
+corpus = File.open(prefix + path + "/full-corpus.txt", "r")
 entries = corpus.readlines
 puts "Found #{entries.length} documents"
 
 # split categories into testing and training
-train = File.open(path + "/train.txt", "w")
-test = File.open(path + "/test.txt", "w")
+train = File.open(prefix + path + "/train.txt", "w")
+test = File.open(prefix + path + "/test.txt", "w")
 
 catMap = {}
 
