@@ -7,8 +7,10 @@
 #ifndef _UNIT_TEST_H_
 #define _UNIT_TEST_H_
 
+#include <unistd.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <iomanip>
 #include <string>
 #include <iostream>
 #include "util/common.h"
@@ -21,20 +23,20 @@
 
 #define FAIL(why) \
     do { \
-        std::cerr << Common::makeRed("FAIL") << " " << (why) << " ("; \
+        std::cerr << "[ " << Common::makeRed("FAIL") << " ] " << (why) << " ("; \
         std::cerr << __FILE__ << ":" << __LINE__ << ")" << std::endl; \
         exit(1); \
     } while(0)
 
 #define FAIL_NOLINE(why) \
     do { \
-        std::cerr << Common::makeRed("FAIL") << " " << (why) << std::endl; \
+        std::cerr << "[ " << Common::makeRed("FAIL") << " ]" \
+        << " " << (why) << std::endl; \
         exit(1); \
     } while(0)
 
 #define PASS \
     do { \
-        std::cerr << Common::makeGreen("OK") << std::endl; \
         exit(0); \
     } while(0)
 
@@ -74,7 +76,7 @@ namespace UnitTests
     template <class Func>
     void runTest(const string & testName, Func func, int timeout = 1)
     {
-        cerr << " " << testName << "... ";
+        cerr << std::left << std::setw(30) << (" " + testName);
 
         struct sigaction act;
         act.sa_handler = sigCatch;
@@ -85,6 +87,7 @@ namespace UnitTests
         sigaction(SIGSEGV, &act, 0);
         sigaction(SIGINT, &act, 0);
 
+        double start = omp_get_wtime();
         pid_t pid = fork();
         if(pid == 0)
         {
@@ -92,9 +95,18 @@ namespace UnitTests
             func();
         }
         else if(pid > 0)
+        {
             waitpid(pid, NULL, 0);
+        }
         else
-            cerr << Common::makeRed("ERROR") << ": failure to fork" << endl;
+        {
+            cerr << "[ " << Common::makeRed("ERROR") << " ]"
+                 << ": failure to fork" << endl;
+        }
+
+        cerr << "[ " << Common::makeGreen("OK") << " ] ";
+        //cerr << std::setprecision(4) << (omp_get_wtime() - start) << "s"
+        cerr << endl;
     }
 }
 

@@ -11,7 +11,10 @@ TESTEROBJS = $(SEARCHOBJS)
 PLOT = plot
 PLOTOBJS = $(SEARCHOBJS)
 
-TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp test/unit_test.h
+TESTS = test/porter2_stemmer_test.h test/parse_tree_test.h \
+    test/compressed_file_test.h test/unit_test.h
+
+TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp
 
 CC = g++ -std=c++0x -fopenmp -I.
 #CCOPTS = -g -O0
@@ -22,13 +25,13 @@ CLEANDIRS = tokenizers io index util stemmers classify
 
 all: $(SEARCH) $(TESTER) $(PLOT)
 
-$(SEARCH): $(SEARCHOBJS) main.cpp $(TEMPLATES)
+$(SEARCH): $(SEARCHOBJS) main.cpp $(TEMPLATES) $(TESTS)
 	$(LINKER) main.cpp -o $@ $(SEARCHOBJS)
 
-$(TESTER): $(TESTEROBJS) tester.cpp $(TEMPLATES)
+$(TESTER): $(TESTEROBJS) tester.cpp $(TEMPLATES) $(TESTS)
 	$(LINKER) tester.cpp -o $@ $(TESTEROBJS)
 
-$(PLOT): $(PLOTOBJS) scatter.cpp $(TEMPLATES)
+$(PLOT): $(PLOTOBJS) scatter.cpp $(TEMPLATES) $(TESTS)
 	$(LINKER) scatter.cpp -o $@ $(PLOTOBJS)
 
 %.o : %.cpp $(wildcard *.h)

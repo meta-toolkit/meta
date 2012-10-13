@@ -2,37 +2,19 @@
  * @file tester.cpp
  */
 
-#include <memory>
-#include <vector>
-#include <utility>
-#include <map>
-#include <unordered_map>
-#include <fstream>
 #include <iostream>
 #include <omp.h>
-
-#include "tokenizers/parse_tree.h"
-#include "classify/knn.h"
-#include "io/textfile.h"
-#include "io/compressed_file_reader.h"
-#include "io/compressed_file_writer.h"
-#include "stemmers/porter2_stemmer.h"
-#include "index/lexicon.h"
-#include "index/inverted_index.h"
-#include "tokenizers/ngram_tokenizer.h"
-#include "util/invertible_map.h"
+#include "test/compressed_file_test.h"
+#include "test/porter2_stemmer_test.h"
+#include "test/parse_tree_test.h"
 #include "test/unit_test.h"
 
-using std::vector;
-using std::make_pair;
-using std::pair;
-using std::multimap;
-using std::unordered_map;
-using std::ofstream;
 using std::cerr;
 using std::cout;
 using std::endl;
+using namespace UnitTests;
 
+/*
 unordered_map<char, size_t> getFreqs(string filename)
 {
     unordered_map<char, size_t> freqs;
@@ -125,71 +107,7 @@ void testCompression(string filename)
     decompress("compressed.txt", "uncompressed.txt", mapping);
     cerr << "  " << omp_get_wtime() - start << " seconds elapsed" << endl;
 }
-
-vector<Document> getDocs(const string & filename, const string & prefix)
-{
-    vector<Document> docs;
-    Parser parser(filename, "\n");
-    while(parser.hasNext())
-    {
-        string file = parser.next();
-        docs.push_back(Document(prefix + file));
-    }
-    return docs;
-}
-
-void testIndexCreation()
-{
-    string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/simple/";
-    string lexicon = "lexiconFile";
-    string postings = "postingsFile";
-    vector<Document> trainDocs = getDocs(prefix + "train.txt", prefix);
-    std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(1, NgramTokenizer::Word));
-    std::unique_ptr<Index> index(new InvertedIndex(lexicon, postings, tokenizer));
-    index->indexDocs(trainDocs, 1);
-}
-
-void testIndex()
-{
-    string prefix = "/home/sean/projects/senior-thesis-data/20newsgroups/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/6reviewers/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/10authors/";
-    //string prefix = "/home/sean/projects/senior-thesis-data/simple/";
-    string lexicon = "lexiconFile";
-    string postings = "postingsFile";
-    vector<Document> testDocs = getDocs(prefix + "test.txt", prefix);
-    std::shared_ptr<Tokenizer> const tokenizer(new NgramTokenizer(1, NgramTokenizer::Word));
-    std::shared_ptr<Index> index(new InvertedIndex(lexicon, postings, tokenizer));
-
-    size_t numQueries = 1;
-    size_t numCorrect = 0;
-    for(auto & query: testDocs)
-    {
-        string result = KNN::classify(query, index, 1);
-        if(result == query.getCategory())
-        {
-            ++numCorrect;
-            cout << " -> " << Common::makeGreen("OK");
-        }
-        else
-            cout << " -> " << Common::makeRed("incorrect");
-        cout << " (" << result << ")" << endl << "  -> " << ((double) numCorrect / numQueries * 100)
-             << "% accuracy, " << numQueries << "/" << testDocs.size() << " processed " << endl;
-        ++numQueries;
-    }
-}
-
-void testParseTrees()
-{
-    vector<ParseTree> trees = ParseTree::getTrees("input.tree");
-    ofstream out("output.tree");
-    for(auto & tree: trees)
-        out << tree.getString() << endl;
-    out.close();
-}
+*/
 
 void thing()
 {
@@ -225,13 +143,46 @@ void testTest()
     UnitTests::runTest("LastTest", thing3);
 }
 
+void porter2Stemmer()
+{
+    using namespace Tests::Porter2StemmerTests;
+
+    cout << Common::makeBold("[porter2_stemmer]") << endl;
+    runTest("stem", correctStem, 5);
+    runTest("emptyStem", emptyStem);
+    runTest("trim", trim);
+}
+
+void parseTree()
+{
+    using namespace Tests::ParseTreeTests;
+
+    cout << Common::makeBold("[parse_tree]") << endl;
+    runTest("constructor", constructor);
+    runTest("height", height);
+    runTest("getPOS", getPOS);
+    runTest("getChildren", getChildren);
+    runTest("numChildren", numChildren);
+    runTest("getChildrenString", getChildrenString);
+    runTest("getTrees", getTrees);
+}
+
+void compressedFile()
+{
+    using namespace Tests::CompressedFileTests;
+
+    cout << Common::makeBold("[compressed_file]") << endl;
+    runTest("read", testRead);
+    runTest("write", testWrite);
+    runTest("correct", correct);
+    runTest("isSmaller", isSmaller);
+}
+
 int main(int argc, char* argv[])
 {
-    //testCompression(string(argv[1]));
-    //testIndexCreation();
-    //testIndex();
-    //testParseTrees();
-    testTest();
+    porter2Stemmer();
+    parseTree();
+    compressedFile();
 
     return 0;
 }

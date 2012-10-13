@@ -74,8 +74,8 @@ int main(int argc, char* argv[])
     vector<Document> testDocs = getDocs(prefix + "/test.txt", prefix);
 
     //std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(2, NgramTokenizer::Word));
-    //std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(5, NgramTokenizer::POS));
-    std::shared_ptr<Tokenizer> tokenizer(new TreeTokenizer(TreeTokenizer::Subtree));
+    //std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(4, NgramTokenizer::POS));
+    std::shared_ptr<Tokenizer> tokenizer(new TreeTokenizer(TreeTokenizer::Tag));
 
     std::shared_ptr<Index> index(new RAMIndex(trainDocs, tokenizer));
 
@@ -88,8 +88,8 @@ int main(int argc, char* argv[])
         ++numQueries;
         string result = KNN::classify(query, index, 1);
         //string result = KNN::classify(query, {wordIndex, posIndex}, {0.5, 0.5}, 1);
-        //if(withinK(result, query.getCategory(), 1))
         if(matrix) confusionMatrix.add(result, query.getCategory());
+        //if(withinK(result, query.getCategory(), 1))
         if(result == query.getCategory())
         {
             ++numCorrect;

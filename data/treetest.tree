@@ -1,0 +1,2 @@
+(S(NP(NP(JJ)(NNS))(PP(IN)(NP(NNP)(NNP)(NNP))))(VP(VBZ)(NP(NP(DT)(NNP)(NNP)(NNP))(PP(IN)(NP(``)(NP(NNP)(NNP))('')(SBAR(S(NP(PRP))(VP(VBZ)(SBAR(NP(RB)(CD)(NNS))(IN)(S(NP(DT)(NN))(VP(VBD)(VP(ADVP(RB))(VBN))))))))))))(.))
+(S(NP(PRP))(VP(VBP)(SBAR(S(NP(PRP))(,)(S(ADJP(ADJP(JJ)(,)(PP(IN)(NP(NP(DT)(JJ)(NN))(:)(CC)(NP(NP(JJ))(PP(IN)(NP(PRP$)(NNS)))))))(SBAR(IN)(S(NP(PRP))(VP(VBZ))))))(,)(VP(VBP)(ADJP(RB)(JJ)(RB))))))(.))
