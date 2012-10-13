@@ -11,6 +11,12 @@ TESTEROBJS = $(SEARCHOBJS)
 PLOT = plot
 PLOTOBJS = $(SEARCHOBJS)
 
+LIBLINEAR = liblinear
+LIBLINEAROBJS = tokenizers/parse_tree.o tokenizers/tree_tokenizer.o \
+    tokenizers/ngram_tokenizer.o io/textfile.o io/parser.o tokenizers/tokenizer.o \
+    index/chunk_list.o index/structs.o stemmers/porter2_stemmer.o \
+    tokenizers/fw_tokenizer.o io/config_reader.o index/document.o
+
 TESTS = test/porter2_stemmer_test.h test/parse_tree_test.h \
     test/compressed_file_test.h test/unit_test.h
 
@@ -23,7 +29,7 @@ LINKER = g++ -std=c++0x -fopenmp -I.
 
 CLEANDIRS = tokenizers io index util stemmers classify
 
-all: $(SEARCH) $(TESTER) $(PLOT)
+all: $(SEARCH) $(TESTER) $(PLOT) $(LIBLINEAR)
 
 $(SEARCH): $(SEARCHOBJS) main.cpp $(TEMPLATES) $(TESTS)
 	$(LINKER) main.cpp -o $@ $(SEARCHOBJS)
@@ -34,13 +40,16 @@ $(TESTER): $(TESTEROBJS) tester.cpp $(TEMPLATES) $(TESTS)
 $(PLOT): $(PLOTOBJS) scatter.cpp $(TEMPLATES) $(TESTS)
 	$(LINKER) scatter.cpp -o $@ $(PLOTOBJS)
 
+$(LIBLINEAR): $(LIBLINEAROBJS) liblinear.cpp $(TEMPLATES)
+	$(LINKER) liblinear.cpp -o $@ $(LIBLINEAROBJS)
+
 %.o : %.cpp $(wildcard *.h)
 	$(CC) $(CCOPTS) -c $(@:.o=.cpp) -o $@
 
 clean:
 	for dir in $(CLEANDIRS) ; do rm -rf $$dir/*.o ; done
 	rm -f preprocessor/*.class
-	rm -f $(SEARCH) $(TESTER) $(PLOT)
+	rm -f $(SEARCH) $(TESTER) $(PLOT) $(LIBLINEAR)
 
 tidy:
 	rm -rf ./doc *.chunk postingsFile lexiconFile termid.mapping docid.mapping docs.lengths *compressed.txt

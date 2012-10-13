@@ -6,10 +6,12 @@ x done
    Write parse tree preprocessor stuff in hadoopable format
    Update doxygen!!
    Add more data to 6authors!
-   Try out libsvm (looks pretty easy; only question is number of dimensions)
-   Add getCategory function in Document; clean up tiebreaking code in KNN
- - unit testing framework
+   Clean up tiebreaking code in KNN
+   Make liblinear easy to use
+ - Unit testing framework
  - Function words tokenizer (is it broken or does it just suck?)
+ x Add getCategory function in Document
+ x Try out liblinear (apparently this is better for high-dimensional feature space)
  x Confusion matrix output
  x Ensure ParseTree functions are working 100%, make some unit tests
  x File compression

@@ -76,6 +76,11 @@ class Document
          */
         const std::unordered_map<TermID, unsigned int> & getFrequencies() const;
  
+        /**
+         * Prints tokenizer output in liblinear input format.
+         */
+        void printLiblinearData() const;
+
     private:
 
         /** where this document is on disk */

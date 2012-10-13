@@ -2,9 +2,14 @@
  * @file document.cpp
  */
 
+#include <map>
 #include <utility>
+#include <iostream>
 #include "document.h" 
 
+using std::map;
+using std::cout;
+using std::endl;
 using std::pair;
 using std::make_pair;
 using std::string;
@@ -85,4 +90,24 @@ string Document::getCategory(const string & path)
     size_t idx = path.find_last_of("/");
     string sub = path.substr(0, idx);
     return getName(sub);
+}
+
+void Document::printLiblinearData() const
+{
+    //unordered_map<string, string> mapping = {{"chinese", "1"}, {"english", "2"}, {"japanese", "3"}};
+    unordered_map<string, string> mapping = {{"dickens", "1"}, {"doyle", "2"},
+        {"kipling", "3"}, {"rls", "4"}, {"twain", "5"}};
+    cout << mapping[getCategory(_path)];
+    //cout << getCategory(_path);
+
+    map<TermID, unsigned int> sorted;
+
+    // liblinear feature indices start at 1, not 0 like the tokenizers
+    for(auto & freq: _frequencies)
+        sorted.insert(make_pair(freq.first + 1, freq.second));
+
+    for(auto & freq: sorted)
+        cout << " " << freq.first << ":" << freq.second;
+
+    cout << "\n";
 }

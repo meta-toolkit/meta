@@ -1,3 +1,4 @@
+*.dat
 .*.swp
 *.o
 *.class
