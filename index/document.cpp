@@ -94,9 +94,9 @@ string Document::getCategory(const string & path)
 
 void Document::printLiblinearData() const
 {
-    //unordered_map<string, string> mapping = {{"chinese", "1"}, {"english", "2"}, {"japanese", "3"}};
-    unordered_map<string, string> mapping = {{"dickens", "1"}, {"doyle", "2"},
-        {"kipling", "3"}, {"rls", "4"}, {"twain", "5"}};
+    unordered_map<string, string> mapping = {{"chinese", "1"}, {"english", "2"}, {"japanese", "3"}};
+    //unordered_map<string, string> mapping = {{"dickens", "1"}, {"doyle", "2"},
+    //    {"kipling", "3"}, {"rls", "4"}, {"twain", "5"}};
     cout << mapping[getCategory(_path)];
     //cout << getCategory(_path);
 

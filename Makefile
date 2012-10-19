@@ -49,7 +49,7 @@ $(LIBLINEAR): $(LIBLINEAROBJS) liblinear.cpp $(TEMPLATES)
 clean:
 	for dir in $(CLEANDIRS) ; do rm -rf $$dir/*.o ; done
 	rm -f preprocessor/*.class
-	rm -f $(SEARCH) $(TESTER) $(PLOT) $(LIBLINEAR)
+	rm -f $(SEARCH) $(TESTER) $(PLOT) $(LIBLINEAR) *.o
 
 tidy:
 	rm -rf ./doc *.chunk postingsFile lexiconFile termid.mapping docid.mapping docs.lengths *compressed.txt

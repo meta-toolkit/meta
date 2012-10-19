@@ -17,6 +17,7 @@
 #include "io/parser.h"
 #include "util/common.h"
 
+using std::shared_ptr;
 using std::vector;
 using std::cout;
 using std::endl;
@@ -44,16 +45,44 @@ int main(int argc, char* argv[])
     }
 
     unordered_map<string, string> config = ConfigReader::read(argv[1]);
-    string prefix = config["prefix"];
+    string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
+    string method = config["method"];
+
+    int nVal;
+    istringstream(config["ngram"]) >> nVal;
+
+    unordered_map<string, NgramTokenizer::NgramType> ngramOpt = {
+        {"POS", NgramTokenizer::POS}, {"Word", NgramTokenizer::Word}
+    };
+
+    unordered_map<string, TreeTokenizer::TreeTokenizerType> treeOpt = {
+        {"Subtree", TreeTokenizer::Subtree}, {"Depth", TreeTokenizer::Depth},
+        {"Branch", TreeTokenizer::Branch}, {"Tag", TreeTokenizer::Tag}
+    };
+    
     vector<Document> documents = getDocs(prefix + "/full-corpus.txt", prefix);
 
-    //std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(2, NgramTokenizer::Word));
-    //std::shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(5, NgramTokenizer::POS));
-    std::shared_ptr<Tokenizer> tokenizer(new TreeTokenizer(TreeTokenizer::Subtree));
-
-    for(auto & doc: documents)
+    if(method == "ngram")
     {
-        tokenizer->tokenize(doc, NULL);
-        doc.printLiblinearData();
+        //cerr << "Running ngram tokenizer with n = " << nVal
+        //     << " and submethod " << config["ngramOpt"] << endl;
+        shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]));
+        for(auto & doc: documents)
+        {
+            tokenizer->tokenize(doc, NULL);
+            doc.printLiblinearData();
+        }
     }
+    else if(method == "tree")
+    {
+        //cerr << "Running tree tokenizer with submethod " << config["treeOpt"] << endl;
+        shared_ptr<Tokenizer> tokenizer(new TreeTokenizer(treeOpt[config["treeOpt"]]));
+        for(auto & doc: documents)
+        {
+            tokenizer->tokenize(doc, NULL);
+            doc.printLiblinearData();
+        }
+    }
+    else
+        cerr << "Method was not able to be determined" << endl;
 }
