@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 # evaluates classification using liblinear with various features
 
 def createConfigFile(config)
