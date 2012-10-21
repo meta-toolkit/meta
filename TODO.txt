@@ -5,11 +5,10 @@ x done
    Compression implemented for indexes
    Write parse tree preprocessor stuff in hadoopable format
    Update doxygen!!
-   Add more data to 6authors!
    Clean up tiebreaking code in KNN
-   Make liblinear easy to use
- - Unit testing framework
+ - Make liblinear easy to use
  - Function words tokenizer (is it broken or does it just suck?)
+ x Unit testing framework
  x Add getCategory function in Document
  x Try out liblinear (apparently this is better for high-dimensional feature space)
  x Confusion matrix output

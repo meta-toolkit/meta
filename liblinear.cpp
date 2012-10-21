@@ -16,6 +16,7 @@
 #include "tokenizers/tree_tokenizer.h"
 #include "io/parser.h"
 #include "util/common.h"
+#include "util/invertible_map.h"
 
 using std::shared_ptr;
 using std::vector;
@@ -47,6 +48,7 @@ int main(int argc, char* argv[])
     unordered_map<string, string> config = ConfigReader::read(argv[1]);
     string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
     string method = config["method"];
+    InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
 
     int nVal;
     istringstream(config["ngram"]) >> nVal;
@@ -70,7 +72,7 @@ int main(int argc, char* argv[])
         for(auto & doc: documents)
         {
             tokenizer->tokenize(doc, NULL);
-            doc.printLiblinearData();
+            doc.printLiblinearData(mapping);
         }
     }
     else if(method == "tree")
@@ -80,7 +82,7 @@ int main(int argc, char* argv[])
         for(auto & doc: documents)
         {
             tokenizer->tokenize(doc, NULL);
-            doc.printLiblinearData();
+            doc.printLiblinearData(mapping);
         }
     }
     else

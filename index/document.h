@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <string>
 #include "structs.h"
+#include "util/invertible_map.h"
 
 /**
  * Represents an indexed document.
@@ -79,7 +80,7 @@ class Document
         /**
          * Prints tokenizer output in liblinear input format.
          */
-        void printLiblinearData() const;
+        void printLiblinearData(InvertibleMap<std::string, int> & mapping) const;
 
     private:
 
@@ -102,6 +103,13 @@ class Document
          * @return the name of a document given its full path
          */
         static std::string getName(const std::string & path);
+
+        /**
+         * @param mapping - an InvertibleMap of category <-> category id
+         * @param category - the category to find an id for
+         * @return a unique numerical id for the category, creating a new entry if necessary
+         */
+        static int getMapping(InvertibleMap<std::string, int> & mapping, const std::string & category);
 };
 
 #endif

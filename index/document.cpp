@@ -92,14 +92,9 @@ string Document::getCategory(const string & path)
     return getName(sub);
 }
 
-void Document::printLiblinearData() const
+void Document::printLiblinearData(InvertibleMap<string, int> & mapping) const
 {
-    unordered_map<string, string> mapping = {{"chinese", "1"}, {"english", "2"}, {"japanese", "3"}};
-    //unordered_map<string, string> mapping = {{"dickens", "1"}, {"doyle", "2"},
-    //    {"kipling", "3"}, {"rls", "4"}, {"twain", "5"}};
-    cout << mapping[getCategory(_path)];
-    //cout << getCategory(_path);
-
+    cout << getMapping(mapping, getCategory(_path));
     map<TermID, unsigned int> sorted;
 
     // liblinear feature indices start at 1, not 0 like the tokenizers
@@ -110,4 +105,19 @@ void Document::printLiblinearData() const
         cout << " " << freq.first << ":" << freq.second;
 
     cout << "\n";
+}
+
+int Document::getMapping(InvertibleMap<string, int> & mapping, const string & category)
+{
+    // see if entered already
+    if(mapping.containsKey(category))
+        return mapping.getValueByKey(category);
+
+    // otherwise, inefficiently create new entry (starting at 1)
+    int newVal = 1;
+    while(mapping.containsValue(newVal))
+        ++newVal;
+
+    mapping.insert(category, newVal);
+    return newVal;
 }
