@@ -24,6 +24,12 @@ using std::cout;
 using std::endl;
 using std::string;
 
+/**
+ * Returns a vector of all documents in a given dataset.
+ * @param filename - the file containing the list of files in a corpus
+ * @param prefix - the prefix of the path to a corpus
+ * @return a vector of Documents created from the filenames
+ */
 vector<Document> getDocs(const string & filename, const string & prefix)
 {
     vector<Document> docs;
@@ -36,7 +42,9 @@ vector<Document> getDocs(const string & filename, const string & prefix)
     return docs;
 }
 
-
+/**
+ * Runs the scatterplot creation.
+ */
 int main(int argc, char* argv[])
 {
     if(argc != 2)
@@ -59,7 +67,9 @@ int main(int argc, char* argv[])
 
     unordered_map<string, TreeTokenizer::TreeTokenizerType> treeOpt = {
         {"Subtree", TreeTokenizer::Subtree}, {"Depth", TreeTokenizer::Depth},
-        {"Branch", TreeTokenizer::Branch}, {"Tag", TreeTokenizer::Tag}
+        {"Branch", TreeTokenizer::Branch}, {"Tag", TreeTokenizer::Tag},
+        {"Skeleton", TreeTokenizer::Skeleton}, {"SemiSkeleton", TreeTokenizer::SemiSkeleton},
+        {"Multi", TreeTokenizer::Multi}
     };
     
     vector<Document> documents = getDocs(prefix + "/full-corpus.txt", prefix);

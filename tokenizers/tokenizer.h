@@ -56,7 +56,9 @@ class Tokenizer
         void setTermIDMapping(const InvertibleMap<TermID, std::string> & mapping);
 
         /**
-         *
+         * Looks up the actual label that is represented by a TermID.
+         * @param termID
+         * @return the label
          */
         std::string getLabel(TermID termID) const;
 

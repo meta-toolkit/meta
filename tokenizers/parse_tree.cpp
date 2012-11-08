@@ -91,6 +91,15 @@ string ParseTree::getString() const
     return ret;
 }
 
+string ParseTree::getSkeleton() const
+{
+    string ret = "(";
+    for(auto & child: children)
+        ret += child.getSkeleton();
+    ret += ")";
+    return ret;
+}
+
 string ParseTree::prettyPrint(const ParseTree & tree)
 {
     stringstream output;
@@ -150,4 +159,12 @@ size_t ParseTree::height(const ParseTree & curr)
             max = h;
     }
     return max;
+}
+
+string ParseTree::getSkeletonChildren() const
+{
+    string ret = "";
+    for(auto & child: children)
+        ret += "()";
+    return ret;
 }

@@ -51,6 +51,11 @@ class ParseTree
         std::string getString() const;
 
         /**
+         * @return a string representation of the ParseTree structure.
+         */
+        std::string getSkeleton() const;
+
+        /**
          * @param tree - the tree to print
          * @return a nice multiline string representation of the tree
          */
@@ -60,6 +65,11 @@ class ParseTree
          * @return a string representation of the ParseTree's children.
          */
         std::string getChildrenString() const;
+
+        /**
+         * @return a string representation of the ParseTree's children without tags.
+         */
+        std::string getSkeletonChildren() const;
 
         /**
          * @param filename - where to read the trees from

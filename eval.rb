@@ -19,7 +19,7 @@ def runTest(config)
 end
 
 def main()
-  dataset = "ceeaus"
+  dataset = "5authors"
   config = {"quiet" => "yes", "prefix" => dataset}
   for n in (1..6)
     config["method"] = "ngram"
@@ -30,7 +30,7 @@ def main()
   end
   config.delete("ngramOpt")
   config.delete("ngram")
-  for treeMethod in ["Subtree", "Branch", "Tag", "Depth"]
+  for treeMethod in ["Subtree", "Branch", "Tag", "Depth", "SemiSkeleton", "Multi"]
     config["method"] = "tree"
     config["treeOpt"] = treeMethod
     createConfigFile(config)

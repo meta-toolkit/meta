@@ -11,13 +11,13 @@
 #include <unordered_set>
 
 /**
- *
+ * Allows interpretation of classification errors.
  */
 class ConfusionMatrix
 {
     public:
         /**
-         *
+         * Creates an empty confusion matrix.
          */
         ConfusionMatrix();
 
@@ -28,13 +28,15 @@ class ConfusionMatrix
         void add(const std::string & predicted, const std::string & actual);
 
         /**
-         *
+         * Prints this matrix to cout.
          */
         void print() const;
 
     private:
         /**
-         *
+         * Implements a hash function for a pair of strings.
+         * @param strPair - the pair of strings
+         * @return the hash
          */
         static size_t stringPairHash(const std::pair<std::string, std::string> & strPair);
 

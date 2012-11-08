@@ -33,6 +33,12 @@ using std::cout;
 using std::endl;
 using std::string;
 
+/**
+ * Returns a vector of all documents in a given dataset.
+ * @param filename - the file containing the list of files in a corpus
+ * @param prefix - the prefix of the path to a corpus
+ * @return a vector of Documents created from the filenames
+ */
 vector<Document> getDocs(const string & filename, const string & prefix)
 {
     vector<Document> docs;

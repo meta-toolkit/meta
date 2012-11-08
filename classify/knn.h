@@ -58,7 +58,14 @@ namespace KNN
          */
         std::string findNN(const std::multimap<double, std::string> & rankings, size_t k);
 
-
+        /**
+         * Used for tiebreaking. If there are the same number of a certain class, prefer the class
+         *  that was seen first.
+         * @param check
+         * @param best
+         * @param orderSeen
+         * @return if the class to check should be ranked about the current best
+         */
         bool isHigherRank(const std::string & check,
                 const std::string & best,
                 const std::vector<std::string> & orderSeen);

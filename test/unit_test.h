@@ -15,12 +15,19 @@
 #include <iostream>
 #include "util/common.h"
 
+/**
+ * Fail if expr is false; otherwise continue.
+ */
 #define ASSERT(expr) \
     do { \
        if (!(expr)) \
            FAIL("Assertion failed: " #expr ); \
     } while(0)
 
+/**
+ * Fail this test case with an explanation.
+ * Give line number and file where the test case failed.
+ */
 #define FAIL(why) \
     do { \
         std::cerr << "[ " << Common::makeRed("FAIL") << " ] " << (why) << " ("; \
@@ -28,6 +35,11 @@
         exit(1); \
     } while(0)
 
+/**
+ * Same as FAIL, except no line number is printed.
+ * This is useful for failing after a segfault for example;
+ *  the line number would be useless since it will report somewhere inside this file.
+ */
 #define FAIL_NOLINE(why) \
     do { \
         std::cerr << "[ " << Common::makeRed("FAIL") << " ]" \
@@ -35,6 +47,9 @@
         exit(1); \
     } while(0)
 
+/**
+ * Exits the unit test without failing.
+ */
 #define PASS \
     do { \
         exit(0); \
