@@ -4,10 +4,12 @@ x done
    Different retrieval methods than Okapi
    Compression implemented for indexes
    Write parse tree preprocessor stuff in hadoopable format
-   Update doxygen!!
    Clean up tiebreaking code in KNN
- - Make liblinear easy to use
+ - parallelize liblinear
+ - have liblinear output TP, FP, TN, FN for eval usage
+ - clean up liblinear naming in this project
  - Function words tokenizer (is it broken or does it just suck?)
+ x Update doxygen!!
  x Unit testing framework
  x Add getCategory function in Document
  x Try out liblinear (apparently this is better for high-dimensional feature space)
