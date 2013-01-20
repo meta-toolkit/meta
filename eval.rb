@@ -13,17 +13,17 @@ def runTest(config)
   liblinear = "lib/train"
   svmMethod = "-s 2"
   opts = "-v 5 -q"
-  `./liblinear evalConfig.ini > evalOutput`
+  `./learn evalConfig.ini > evalOutput`
   result = `#{liblinear} #{svmMethod} #{opts} evalOutput`
   puts "#{config}\t#{/[0-9.%]+/.match(result)[0]}"
 end
 
 def main()
-  dataset = "blog"
+  dataset = "5authors"
   config = {"quiet" => "yes", "prefix" => dataset}
   for n in (1..6)
     config["method"] = "ngram"
-    config["ngramOpt"] = "Word"
+    config["ngramOpt"] = "POS"
     config["ngram"] = n
     createConfigFile(config)
     runTest(config)
@@ -49,7 +49,7 @@ def main()
  #createConfigFile(config)
  #runTest(config)
 
-  `rm evalOutput evalConfig.ini`
+ #`rm evalOutput evalConfig.ini`
 end
 
 main()

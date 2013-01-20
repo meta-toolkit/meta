@@ -1,5 +1,5 @@
 /**
- * @file liblinear.cpp
+ * @file learn.cpp
  * This creates input for liblinear based on features extracted from my
  *  tokenizers.
  */

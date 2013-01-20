@@ -7,8 +7,8 @@ x done
    Clean up tiebreaking code in KNN
  - parallelize liblinear
  - have liblinear output TP, FP, TN, FN for eval usage
- - clean up liblinear naming in this project
  - Function words tokenizer (is it broken or does it just suck?)
+ x clean up liblinear naming in this project
  x Update doxygen!!
  x Unit testing framework
  x Add getCategory function in Document
