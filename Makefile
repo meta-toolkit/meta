@@ -20,6 +20,8 @@ LIBLINEAROBJS = tokenizers/parse_tree.o tokenizers/tree_tokenizer.o \
 TESTS = test/porter2_stemmer_test.h test/parse_tree_test.h \
     test/compressed_file_test.h test/unit_test.h
 
+LIB = lib
+
 TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp
 
 CC = g++ -std=c++0x -fopenmp -I.
@@ -27,9 +29,10 @@ CC = g++ -std=c++0x -fopenmp -I.
 CCOPTS = -O3
 LINKER = g++ -std=c++0x -fopenmp -I.
 
-CLEANDIRS = tokenizers io index util stemmers classify test
+CLEANDIRS = tokenizers io index util stemmers classify test lib/liblinear-1.92
 
-all: $(SEARCH) $(TESTER) $(PLOT) $(LIBLINEAR)
+all: $(SEARCH) $(TESTER) $(PLOT) $(LIBLINEAR) $(LIB)
+	make -C lib/liblinear-1.92
 
 $(SEARCH): $(SEARCHOBJS) main.cpp $(TEMPLATES) $(TESTS)
 	$(LINKER) main.cpp -o $@ $(SEARCHOBJS)

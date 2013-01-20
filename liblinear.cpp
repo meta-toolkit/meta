@@ -95,6 +95,17 @@ int main(int argc, char* argv[])
             doc.printLiblinearData(mapping);
         }
     }
+    else if(method == "both")
+    {
+        shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(treeOpt[config["treeOpt"]]));
+        shared_ptr<Tokenizer> ngramTokenizer(new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]));
+        for(auto & doc: documents)
+        {
+            treeTokenizer->tokenize(doc, NULL);
+            ngramTokenizer->tokenize(doc, NULL);
+            doc.printLiblinearData(mapping);
+        }
+    }
     else
         cerr << "Method was not able to be determined" << endl;
 }
