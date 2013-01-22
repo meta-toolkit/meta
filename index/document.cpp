@@ -5,6 +5,7 @@
 #include <map>
 #include <utility>
 #include <iostream>
+#include <sstream>
 #include "document.h" 
 
 using std::map;
@@ -13,6 +14,7 @@ using std::endl;
 using std::pair;
 using std::make_pair;
 using std::string;
+using std::stringstream;
 using std::unordered_map;
 
 Document::Document(const string & path):
@@ -92,9 +94,10 @@ string Document::getCategory(const string & path)
     return getName(sub);
 }
 
-void Document::printLiblinearData(InvertibleMap<string, int> & mapping) const
+string Document::getLiblinearData(InvertibleMap<string, int> & mapping) const
 {
-    cout << getMapping(mapping, getCategory(_path));
+    stringstream out;
+    out << getMapping(mapping, getCategory(_path));
     map<TermID, unsigned int> sorted;
 
     // liblinear feature indices start at 1, not 0 like the tokenizers
@@ -102,9 +105,10 @@ void Document::printLiblinearData(InvertibleMap<string, int> & mapping) const
         sorted.insert(make_pair(freq.first + 1, freq.second));
 
     for(auto & freq: sorted)
-        cout << " " << freq.first << ":" << freq.second;
+        out << " " << freq.first << ":" << freq.second;
 
-    cout << "\n";
+    out << "\n";
+    return out.str();
 }
 
 int Document::getMapping(InvertibleMap<string, int> & mapping, const string & category)

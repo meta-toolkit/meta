@@ -2,6 +2,7 @@
  * @file ngram_tokenizer.cpp
  */
 
+#include <omp.h>
 #include <string.h>
 #include <cstdlib>
 #include "util/common.h"
@@ -65,6 +66,7 @@ void NgramTokenizer::tokenize(Document & document,
     while(parser.hasNext())
     {
         string wordified = wordify(ngram);
+        #pragma omp critical
         document.increment(getMapping(wordified), 1, docFreq);
         ngram.pop_front();
         string next = "";
@@ -79,6 +81,7 @@ void NgramTokenizer::tokenize(Document & document,
     }
 
     // add the last token
+    #pragma omp critical
     document.increment(getMapping(wordify(ngram)), 1, docFreq);
 }
 
@@ -103,6 +106,7 @@ void NgramTokenizer::tokenizeFW(Document & document,
     while(parser.hasNext())
     {
         string wordified = wordify(ngram);
+        #pragma omp critical
         document.increment(getMapping(wordified), 1, docFreq);
         ngram.pop_front();
         string next = "";
@@ -114,6 +118,7 @@ void NgramTokenizer::tokenizeFW(Document & document,
     }
 
     // add the last token
+    #pragma omp critical
     document.increment(getMapping(wordify(ngram)), 1, docFreq);
 }
 

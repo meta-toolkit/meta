@@ -4,7 +4,7 @@
  *  tokenizers.
  */
 
-#include <memory>
+#include <omp.h>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -17,7 +17,6 @@
 #include "util/common.h"
 #include "util/invertible_map.h"
 
-using std::shared_ptr;
 using std::vector;
 using std::cout;
 using std::endl;
@@ -55,7 +54,11 @@ int main(int argc, char* argv[])
     unordered_map<string, string> config = ConfigReader::read(argv[1]);
     string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
     string method = config["method"];
+    bool quiet = (config["quiet"] == "yes");
     InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
+
+    if(config["parallel"] == "no")
+        omp_set_num_threads(1);
 
     int nVal;
     istringstream(config["ngram"]) >> nVal;
@@ -74,38 +77,61 @@ int main(int argc, char* argv[])
     
     vector<Document> documents = getDocs(prefix + "/full-corpus.txt", prefix);
 
+    size_t done = 0;
     if(method == "ngram")
     {
-        //cerr << "Running ngram tokenizer with n = " << nVal
-        //     << " and submethod " << config["ngramOpt"] << endl;
-        shared_ptr<Tokenizer> tokenizer(new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]));
-        for(auto & doc: documents)
+        Tokenizer* tokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
+        #pragma omp parallel for
+        for(size_t i = 0; i < documents.size(); ++i)
         {
-            tokenizer->tokenize(doc, NULL);
-            doc.printLiblinearData(mapping);
+            tokenizer->tokenize(documents[i], NULL);
+            #pragma omp critical
+            {
+                cout << documents[i].getLiblinearData(mapping);
+                if(!quiet && done++ % 10 == 0)
+                    cerr << "  Tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
+            }
         }
+        delete tokenizer;
     }
     else if(method == "tree")
     {
-        //cerr << "Running tree tokenizer with submethod " << config["treeOpt"] << endl;
-        shared_ptr<Tokenizer> tokenizer(new TreeTokenizer(treeOpt[config["treeOpt"]]));
-        for(auto & doc: documents)
+        #pragma omp parallel for
+        for(size_t i = 0; i < documents.size(); ++i)
         {
-            tokenizer->tokenize(doc, NULL);
-            doc.printLiblinearData(mapping);
+            Tokenizer* tokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
+            tokenizer->tokenize(documents[i], NULL);
+            #pragma omp critical
+            {
+                cout << documents[i].getLiblinearData(mapping);
+                if(!quiet && done++ % 10 == 0)
+                    cerr << "  Tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
+            }
+            delete tokenizer;
         }
     }
     else if(method == "both")
     {
-        shared_ptr<Tokenizer> treeTokenizer(new TreeTokenizer(treeOpt[config["treeOpt"]]));
-        shared_ptr<Tokenizer> ngramTokenizer(new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]));
-        for(auto & doc: documents)
+        Tokenizer* treeTokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
+        Tokenizer* ngramTokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
+        #pragma omp parallel for
+        for(size_t i = 0; i < documents.size(); ++i)
         {
-            treeTokenizer->tokenize(doc, NULL);
-            ngramTokenizer->tokenize(doc, NULL);
-            doc.printLiblinearData(mapping);
+            treeTokenizer->tokenize(documents[i], NULL);
+            ngramTokenizer->tokenize(documents[i], NULL);
+            #pragma omp critical
+            {
+                cout << documents[i].getLiblinearData(mapping);
+                if(!quiet && done++ % 10 == 0)
+                    cerr << "  Tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
+            }
         }
+        delete treeTokenizer;
+        delete ngramTokenizer;
     }
     else
         cerr << "Method was not able to be determined" << endl;
+
+    if(!quiet)
+        cerr << "  Tokenizing 100%         " << endl;
 }

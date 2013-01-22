@@ -79,8 +79,10 @@ class Document
  
         /**
          * Prints tokenizer output in liblinear input format.
+         * @param mapping
+         * @return
          */
-        void printLiblinearData(InvertibleMap<std::string, int> & mapping) const;
+        std::string getLiblinearData(InvertibleMap<std::string, int> & mapping) const;
 
     private:
 

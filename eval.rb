@@ -13,16 +13,26 @@ def runTest(config)
   liblinear = "lib/train"
   svmMethod = "-s 2"
   opts = "-v 5 -q"
-  puts "Running ./learn"
   `./learn evalConfig.ini > evalOutput`
-  puts "Running liblinear"
   result = `#{liblinear} #{svmMethod} #{opts} evalOutput`
-  puts "#{config}\t#{/[0-9.%]+/.match(result)[0]}"
+  puts "#{/[0-9.%]+/.match(result)[0]}\t#{config}"
 end
 
 def main()
-  dataset = "blog"
-  config = {"quiet" => "no", "prefix" => dataset, "method" => "ngram"}
+ 
+  dataset = "ceeaus"
+  config = {"quiet" => "yes", "prefix" => dataset, "parallel" => "no", "method" => "ngram"}
+
+  config["ngramOpt"] = "Word"
+  config["ngram"] = 1
+  createConfigFile(config)
+  runTest(config)
+  config["parallel"] = "yes"
+  createConfigFile(config)
+  runTest(config)
+
+  exit
+  
   for type in ["Word", "POS", "FW"]
     config["ngramOpt"] = type
     for n in (1..6)
@@ -31,28 +41,30 @@ def main()
       runTest(config)
     end
   end
- #config.delete("ngramOpt")
- #config.delete("ngram")
- #for treeMethod in ["Subtree", "Branch", "Tag", "Depth", "SemiSkeleton", "Multi"]
- #for treeMethod in ["SemiSkeleton"]
- #  config["method"] = "tree"
- #  config["treeOpt"] = treeMethod
- #  createConfigFile(config)
- #  runTest(config)
- #end
 
- #for n in (1..3)
- #  config["method"] = "both"
- #  config["ngramOpt"] = "FW"
- #  config["ngram"] = n
- #  config["treeOpt"] = "Subtree"
- #  createConfigFile(config)
- #  runTest(config)
+  config.delete("ngramOpt")
+  config.delete("ngram")
+  config["method"] = "tree"
 
- #  config["treeOpt"] = "Multi"
- #  createConfigFile(config)
- #  runTest(config)
- #end
+  for treeMethod in ["Subtree", "Branch", "Tag", "Depth", "Skeleton", "SemiSkeleton", "Multi"]
+    config["treeOpt"] = treeMethod
+    createConfigFile(config)
+    runTest(config)
+  end
+
+  for method in ["Word", "POS", "FW"]
+    for n in (1..3)
+      config["method"] = "both"
+      config["ngramOpt"] = method
+      config["ngram"] = n
+      config["treeOpt"] = "Subtree"
+      createConfigFile(config)
+      runTest(config)
+      config["treeOpt"] = "Multi"
+      createConfigFile(config)
+      runTest(config)
+    end
+  end
 
   `rm evalOutput evalConfig.ini`
 end

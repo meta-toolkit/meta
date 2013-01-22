@@ -37,7 +37,6 @@ void Tokenizer::saveTermIDMapping(const string & filename) const
     _termMap.saveMap(filename);
 }
 
-
 string Tokenizer::getLabel(TermID termID) const
 {
     return _termMap.getValueByKey(termID);
