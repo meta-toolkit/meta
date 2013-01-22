@@ -1,4 +1,5 @@
 #include <fstream>
+#include <omp.h>
 #include "util/invertible_map.h"
 #include "index/document.h"
 #include "parse_tree.h"
@@ -14,16 +15,21 @@ Tokenizer::Tokenizer():
 
 TermID Tokenizer::getMapping(const string & term)
 {
-    if(!_termMap.containsValue(term))
+    TermID retID;
+    #pragma omp critical
     {
-        _termMap.insert(_currentTermID, term);
-        return _currentTermID++;
+        if(!_termMap.containsValue(term))
+        {
+            _termMap.insert(_currentTermID, term);
+            retID = _currentTermID++;
+        }
+        else
+        {
+            TermID termID = _termMap.getKeyByValue(term);
+            retID = termID;
+        }
     }
-    else
-    {
-        TermID termID = _termMap.getKeyByValue(term);
-        return termID;
-    }
+    return retID;
 }
 
 void Tokenizer::setTermIDMapping(const InvertibleMap<TermID, string> & mapping)

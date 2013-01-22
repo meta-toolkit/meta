@@ -89,6 +89,21 @@ class NgramTokenizer : public Tokenizer
             std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
 
         /**
+         * @param document - the Document to store the tokenized information in
+         * @param docFreqs - optional parameter to store IDF values in
+         */
+        void tokenizePOS(Document & document,
+            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+
+
+        /**
+         * @param document - the Document to store the tokenized information in
+         * @param docFreqs - optional parameter to store IDF values in
+         */
+        void tokenizeWord(Document & document,
+            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+
+        /**
          * @param original - the string to set to lowercase
          * @return a lowercase version of the string
          */

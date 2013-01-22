@@ -2,7 +2,6 @@
  * @file ngram_tokenizer.cpp
  */
 
-#include <omp.h>
 #include <string.h>
 #include <cstdlib>
 #include "util/common.h"
@@ -37,28 +36,49 @@ NgramTokenizer::NgramTokenizer(size_t n, NgramType type):
 void NgramTokenizer::tokenize(Document & document,
         std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
-    // if we're tokenizing function words, just go there instead
-    // TODO: make this cleaner
     if(_type == FW)
-    {
         tokenizeFW(document, docFreq);
-        return;
+    else if(_type == Word)
+        tokenizeWord(document, docFreq);
+    else
+        tokenizePOS(document, docFreq);
+}
+
+void NgramTokenizer::tokenizePOS(Document & document,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+{
+    Parser parser(document.getPath() + _extension, " \n");
+
+    // initialize the ngram
+    deque<string> ngram;
+    for(size_t i = 0; i < _nValue && parser.hasNext(); ++i)
+        ngram.push_back(parser.next());
+
+    // add the rest of the ngrams
+    while(parser.hasNext())
+    {
+        string wordified = wordify(ngram);
+        document.increment(getMapping(wordified), 1, docFreq);
+        ngram.pop_front();
+        ngram.push_back(parser.next());
     }
 
+    // add the last token
+    document.increment(getMapping(wordify(ngram)), 1, docFreq);
+}
+
+void NgramTokenizer::tokenizeWord(Document & document,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+{
     Parser parser(document.getPath() + _extension, " \n");
 
     // initialize the ngram
     deque<string> ngram;
     for(size_t i = 0; i < _nValue && parser.hasNext(); ++i)
     {
-        string next = "";
-        do
-        {
-            if(_extension == ".sen")
-                next = Porter2Stemmer::stem(Porter2Stemmer::trim(parser.next()));
-            else
-                next = parser.next();
-        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
+        string next = "a"; // start with stopword
+        while(_stopwords.find(next) != _stopwords.end() && parser.hasNext())
+            next = Porter2Stemmer::stem(Porter2Stemmer::trim(parser.next()));
         ngram.push_back(next);
     }
 
@@ -66,22 +86,15 @@ void NgramTokenizer::tokenize(Document & document,
     while(parser.hasNext())
     {
         string wordified = wordify(ngram);
-        #pragma omp critical
         document.increment(getMapping(wordified), 1, docFreq);
         ngram.pop_front();
-        string next = "";
-        do
-        {
-            if(_extension == ".sen")
-                next = Porter2Stemmer::stem(Porter2Stemmer::trim(parser.next()));
-            else
-                next = parser.next();
-        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
+        string next = "a";
+        while(_stopwords.find(next) != _stopwords.end() && parser.hasNext())
+            next = Porter2Stemmer::stem(Porter2Stemmer::trim(parser.next()));
         ngram.push_back(next);
     }
 
     // add the last token
-    #pragma omp critical
     document.increment(getMapping(wordify(ngram)), 1, docFreq);
 }
 
@@ -106,7 +119,6 @@ void NgramTokenizer::tokenizeFW(Document & document,
     while(parser.hasNext())
     {
         string wordified = wordify(ngram);
-        #pragma omp critical
         document.increment(getMapping(wordified), 1, docFreq);
         ngram.pop_front();
         string next = "";
@@ -118,7 +130,6 @@ void NgramTokenizer::tokenizeFW(Document & document,
     }
 
     // add the last token
-    #pragma omp critical
     document.increment(getMapping(wordify(ngram)), 1, docFreq);
 }
 
