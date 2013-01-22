@@ -23,7 +23,7 @@ class NgramTokenizer : public Tokenizer
         /**
          * Enumeration representing different ways to tokenize word tokens. 
          */
-        enum NgramType { POS, Word };
+        enum NgramType { POS, Word, FW };
 
         /**
          * Constructor.
@@ -54,9 +54,15 @@ class NgramTokenizer : public Tokenizer
         /** the value of N in Ngram */
         size_t _nValue;
 
+        /** shows how we're tokenizing text */
+        NgramType _type;
+
         /** a stopword list based on the Lemur stopwords */
         std::unordered_set<std::string> _stopwords;
         
+        /** a stopword list based on the Lemur stopwords */
+        std::unordered_set<std::string> _functionWords;
+
         /**
          * Turns a list of words into an ngram string.
          * @param words - the deque representing a list of words
@@ -68,6 +74,19 @@ class NgramTokenizer : public Tokenizer
          * Sets up a set of stopwords.
          */
         void initStopwords();
+
+        /**
+         * Sets up a set of function words.
+         */
+        void initFunctionWords();
+
+        /**
+         * Tokenizes a file into a Document using function words.
+         * @param document - the Document to store the tokenized information in
+         * @param docFreqs - optional parameter to store IDF values in
+         */
+        void tokenizeFW(Document & document,
+            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
 
         /**
          * @param original - the string to set to lowercase

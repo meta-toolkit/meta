@@ -5,9 +5,10 @@ x done
    Compression implemented for indexes
    Write parse tree preprocessor stuff in hadoopable format
    Clean up tiebreaking code in KNN
- - parallelize liblinear
  - have liblinear output TP, FP, TN, FN for eval usage
- - Function words tokenizer (is it broken or does it just suck?)
+ - write a tokenizeAll function that tokenizes many docs in parallel
+ x Function words tokenizer (is it broken or does it just suck?)
+ x parallelize liblinear
  x clean up liblinear naming in this project
  x Update doxygen!!
  x Unit testing framework

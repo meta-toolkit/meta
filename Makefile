@@ -3,7 +3,7 @@ SEARCHOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o \
     tokenizers/tree_tokenizer.o tokenizers/ngram_tokenizer.o io/textfile.o io/parser.o \
     index/lexicon.o index/inverted_index.o io/compressed_file_reader.o io/compressed_file_writer.o \
     index/postings.o tokenizers/tokenizer.o index/chunk_list.o index/structs.o stemmers/porter2_stemmer.o \
-    tokenizers/fw_tokenizer.o classify/knn.o io/config_reader.o classify/confusion_matrix.o
+    classify/knn.o io/config_reader.o classify/confusion_matrix.o
 
 TESTER = tester
 TESTEROBJS = $(SEARCHOBJS)
@@ -15,7 +15,7 @@ LEARN = learn
 LEARNOBJS = tokenizers/parse_tree.o tokenizers/tree_tokenizer.o \
     tokenizers/ngram_tokenizer.o io/textfile.o io/parser.o tokenizers/tokenizer.o \
     index/chunk_list.o index/structs.o stemmers/porter2_stemmer.o \
-    tokenizers/fw_tokenizer.o io/config_reader.o index/document.o
+    io/config_reader.o index/document.o
 
 TESTS = test/porter2_stemmer_test.h test/parse_tree_test.h \
     test/compressed_file_test.h test/unit_test.h

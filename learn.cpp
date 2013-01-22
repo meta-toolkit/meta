@@ -12,7 +12,6 @@
 #include "index/document.h"
 #include "io/config_reader.h"
 #include "tokenizers/ngram_tokenizer.h"
-#include "tokenizers/fw_tokenizer.h"
 #include "tokenizers/tree_tokenizer.h"
 #include "io/parser.h"
 #include "util/common.h"
@@ -62,7 +61,8 @@ int main(int argc, char* argv[])
     istringstream(config["ngram"]) >> nVal;
 
     unordered_map<string, NgramTokenizer::NgramType> ngramOpt = {
-        {"POS", NgramTokenizer::POS}, {"Word", NgramTokenizer::Word}
+        {"POS", NgramTokenizer::POS}, {"Word", NgramTokenizer::Word},
+        {"FW", NgramTokenizer::FW}
     };
 
     unordered_map<string, TreeTokenizer::TreeTokenizerType> treeOpt = {
