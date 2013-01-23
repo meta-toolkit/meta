@@ -23,7 +23,7 @@ class NgramTokenizer : public Tokenizer
         /**
          * Enumeration representing different ways to tokenize word tokens. 
          */
-        enum NgramType { POS, Word, FW };
+        enum NgramType { POS, Word, FW, Char };
 
         /**
          * Constructor.
@@ -47,9 +47,6 @@ class NgramTokenizer : public Tokenizer
         size_t getNValue() const;
 
     protected:
-
-        /** Represents the extension for the ngram type */
-        string _extension;
 
         /** the value of N in Ngram */
         size_t _nValue;
@@ -81,7 +78,7 @@ class NgramTokenizer : public Tokenizer
         void initFunctionWords();
 
         /**
-         * Tokenizes a file into a Document using function words.
+         * Tokenizes text based on function word usage.
          * @param document - the Document to store the tokenized information in
          * @param docFreqs - optional parameter to store IDF values in
          */
@@ -89,18 +86,27 @@ class NgramTokenizer : public Tokenizer
             std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
 
         /**
+         * Tokenizes text based on part of speech tags.
          * @param document - the Document to store the tokenized information in
          * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenizePOS(Document & document,
             std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
 
-
         /**
+         * Tokenizes text based on non-stopword tokens.
          * @param document - the Document to store the tokenized information in
          * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenizeWord(Document & document,
+            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+
+        /**
+         * Tokenizes text based on character ngrams.
+         * @param document - the Document to store the tokenized information in
+         * @param docFreqs - optional parameter to store IDF values in
+         */
+        void tokenizeChar(Document & document,
             std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
 
         /**

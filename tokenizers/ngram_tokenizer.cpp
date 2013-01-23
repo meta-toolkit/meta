@@ -21,16 +21,10 @@ NgramTokenizer::NgramTokenizer(size_t n, NgramType type):
     _stopwords(unordered_set<string>()), 
     _functionWords(unordered_set<string>())
 {
-    if(type == Word || type == FW)
-    {
-        _extension = ".sen";
-        if(type == Word)
-            initStopwords();
-        else
-            initFunctionWords();
-    }
-    else
-        _extension = ".pos";
+   if(type == Word)
+       initStopwords();
+   else if(type == FW)
+       initFunctionWords();
 }
 
 void NgramTokenizer::tokenize(Document & document,
@@ -47,7 +41,7 @@ void NgramTokenizer::tokenize(Document & document,
 void NgramTokenizer::tokenizePOS(Document & document,
         std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
-    Parser parser(document.getPath() + _extension, " \n");
+    Parser parser(document.getPath() + ".pos", " \n");
 
     // initialize the ngram
     deque<string> ngram;
@@ -70,7 +64,7 @@ void NgramTokenizer::tokenizePOS(Document & document,
 void NgramTokenizer::tokenizeWord(Document & document,
         std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
-    Parser parser(document.getPath() + _extension, " \n");
+    Parser parser(document.getPath() + ".sen", " \n");
 
     // initialize the ngram
     deque<string> ngram;
@@ -98,10 +92,33 @@ void NgramTokenizer::tokenizeWord(Document & document,
     document.increment(getMapping(wordify(ngram)), 1, docFreq);
 }
 
+void NgramTokenizer::tokenizeChar(Document & document,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+{
+    Parser parser(document.getPath() + ".sen", "");
+
+    // initialize the ngram
+    deque<string> ngram;
+    for(size_t i = 0; i < _nValue && parser.hasNext(); ++i)
+        ngram.push_back(parser.next());
+
+    // add the rest of the ngrams
+    while(parser.hasNext())
+    {
+        string wordified = wordify(ngram);
+        document.increment(getMapping(wordified), 1, docFreq);
+        ngram.pop_front();
+        ngram.push_back(parser.next());
+    }
+
+    // add the last token
+    document.increment(getMapping(wordify(ngram)), 1, docFreq);
+}
+
 void NgramTokenizer::tokenizeFW(Document & document,
         std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
-    Parser parser(document.getPath() + _extension, " \n");
+    Parser parser(document.getPath() + ".sen", " \n");
 
     // initialize the ngram
     deque<string> ngram;
