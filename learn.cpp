@@ -97,8 +97,6 @@ int main(int argc, char* argv[])
     }
     else if(method == "tree")
     {
-        vector<string> output;
-        output.reserve(1000);
         #pragma omp parallel for
         for(size_t i = 0; i < documents.size(); ++i)
         {

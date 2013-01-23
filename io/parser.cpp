@@ -57,6 +57,19 @@ string Parser::peek() const {
 
 void Parser::findNextToken(){
 
+    // if we're dealing with single characters only
+    if(valid_charset.size() == 127)
+    {
+        if(cursor > filesize)
+        {
+            token = "";
+            return;
+        }
+        token = text[cursor];
+        ++cursor;
+        return;
+    }
+
     token = "";
     
     while(!startable(text[cursor])){
