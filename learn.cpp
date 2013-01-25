@@ -84,12 +84,12 @@ int main(int argc, char* argv[])
         #pragma omp parallel for
         for(size_t i = 0; i < documents.size(); ++i)
         {
-            tokenizer->tokenize(documents[i], NULL);
             // order of lines in the liblinear input file does NOT matter (tested)
+            tokenizer->tokenize(documents[i], NULL);
             #pragma omp critical
             {
                 cout << documents[i].getLiblinearData(mapping);
-                if(!quiet && done++ % 10 == 0)
+                if(!quiet && done++ % 20 == 0)
                     cerr << "  Tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
             }
         }
@@ -97,19 +97,19 @@ int main(int argc, char* argv[])
     }
     else if(method == "tree")
     {
+        Tokenizer* tokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
         #pragma omp parallel for
         for(size_t i = 0; i < documents.size(); ++i)
         {
-            Tokenizer* tokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
             tokenizer->tokenize(documents[i], NULL);
             #pragma omp critical
             {
                 cout << documents[i].getLiblinearData(mapping);
-                if(!quiet && done++ % 10 == 0)
+                if(!quiet && done++ % 20 == 0)
                     cerr << "  Tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
             }
-            delete tokenizer;
         }
+        delete tokenizer;
     }
     else if(method == "both")
     {
@@ -123,7 +123,7 @@ int main(int argc, char* argv[])
             #pragma omp critical
             {
                 cout << documents[i].getLiblinearData(mapping);
-                if(!quiet && done++ % 10 == 0)
+                if(!quiet && done++ % 20 == 0)
                     cerr << "  Tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
             }
         }

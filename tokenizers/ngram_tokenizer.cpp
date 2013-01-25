@@ -34,7 +34,9 @@ void NgramTokenizer::tokenize(Document & document,
         tokenizeFW(document, docFreq);
     else if(_type == Word)
         tokenizeWord(document, docFreq);
-    else
+    else if(_type == Char)
+        tokenizeChar(document, docFreq);
+    else // _type == POS
         tokenizePOS(document, docFreq);
 }
 

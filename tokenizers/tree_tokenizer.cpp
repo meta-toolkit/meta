@@ -56,7 +56,6 @@ void TreeTokenizer::subtreeTokenize(Document & document, const ParseTree & tree,
         shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     string representation = tree.getChildrenString() + "|" + tree.getPOS();
-    #pragma omp critical
     document.increment(getMapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())
         subtreeTokenize(document, child, docFreq);
@@ -66,7 +65,6 @@ void TreeTokenizer::branchTokenize(Document & document, const ParseTree & tree,
         shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     string representation = Common::toString(tree.numChildren());
-    #pragma omp critical
     document.increment(getMapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())
         branchTokenize(document, child, docFreq);
@@ -76,7 +74,6 @@ void TreeTokenizer::tagTokenize(Document & document, const ParseTree & tree,
         shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     string representation = tree.getPOS();
-    #pragma omp critical
     document.increment(getMapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())
         tagTokenize(document, child, docFreq);
@@ -87,7 +84,6 @@ void TreeTokenizer::depthTokenize(Document & document, const ParseTree & tree,
 {
     size_t h = ParseTree::height(tree);
     string representation = Common::toString(h);
-    #pragma omp critical
     document.increment(getMapping(representation), 1, docFreq);
 }
 
@@ -95,7 +91,6 @@ void TreeTokenizer::skeletonTokenize(Document & document, const ParseTree & tree
         shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     string representation = tree.getSkeleton();
-    #pragma omp critical
     document.increment(getMapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())
         skeletonTokenize(document, child, docFreq);
@@ -105,7 +100,6 @@ void TreeTokenizer::semiSkeletonTokenize(Document & document, const ParseTree & 
         shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
     string representation = tree.getPOS() + tree.getSkeleton();
-    #pragma omp critical
     document.increment(getMapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())
         semiSkeletonTokenize(document, child, docFreq);
