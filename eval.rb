@@ -10,34 +10,35 @@ def createConfigFile(config)
 end
 
 def runTest(config)
+  createConfigFile(config)
   liblinear = "lib/train"
   svmMethod = "-s 2"
   opts = "-v 5 -q"
   `./learn evalConfig.ini > evalOutput`
   result = `#{liblinear} #{svmMethod} #{opts} evalOutput`
-  puts "#{/[0-9.%]+/.match(result)[0]}\t#{config}"
+  accuracy = /([0-9\.]+)/.match(result)[1].to_f / 100
+  puts "#{accuracy.round(4)}\t#{config}"
 end
 
 def main()
  
-  dataset = "ceeaus"
-  config = {"quiet" => "yes", "prefix" => dataset, "parallel" => "no", "method" => "ngram"}
+  dataset = "6reviewers"
+  config = {"quiet" => "no", "prefix" => dataset, "parallel" => "yes", "method" => "ngram"}
 
-  config["ngramOpt"] = "Word"
-  config["ngram"] = 1
-  createConfigFile(config)
-  runTest(config)
-  config["parallel"] = "yes"
-  createConfigFile(config)
-  runTest(config)
+ #config["ngramOpt"] = "Word"
+ #config["ngram"] = 1
+ #createConfigFile(config)
+ #runTest(config)
+ #config["parallel"] = "yes"
+ #createConfigFile(config)
+ #runTest(config)
 
-  exit
+ #exit
   
-  for type in ["Word", "POS", "FW"]
+  for type in ["Char", "Word", "POS", "FW"]
     config["ngramOpt"] = type
     for n in (1..6)
       config["ngram"] = n
-      createConfigFile(config)
       runTest(config)
     end
   end
@@ -48,7 +49,6 @@ def main()
 
   for treeMethod in ["Subtree", "Branch", "Tag", "Depth", "Skeleton", "SemiSkeleton", "Multi"]
     config["treeOpt"] = treeMethod
-    createConfigFile(config)
     runTest(config)
   end
 
@@ -57,12 +57,10 @@ def main()
       config["method"] = "both"
       config["ngramOpt"] = method
       config["ngram"] = n
-      config["treeOpt"] = "Subtree"
-      createConfigFile(config)
-      runTest(config)
-      config["treeOpt"] = "Multi"
-      createConfigFile(config)
-      runTest(config)
+      for treeMethod in ["Subtree", "Branch", "Tag", "Depth", "Skeleton", "SemiSkeleton", "Multi"]
+        config["treeOpt"] = treeMethod
+        runTest(config)
+      end
     end
   end
 

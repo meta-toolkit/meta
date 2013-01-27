@@ -164,6 +164,7 @@ void do_cross_validation()
 	}
 	else
 	{
+        // TODO put more eval stuff in here
 		for(i=0;i<prob.l;i++)
 			if(target[i] == prob.y[i])
 				++total_correct;

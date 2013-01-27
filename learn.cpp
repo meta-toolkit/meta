@@ -134,5 +134,5 @@ int main(int argc, char* argv[])
         cerr << "Method was not able to be determined" << endl;
 
     if(!quiet)
-        cerr << "  Tokenizing 100%         " << endl;
+        cerr << "\r";
 }

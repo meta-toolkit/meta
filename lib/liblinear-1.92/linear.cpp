@@ -1,3 +1,4 @@
+#include <omp.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -2457,6 +2458,7 @@ void cross_validation(const problem *prob, const parameter *param, int nr_fold, 
 
 	for(i=0;i<nr_fold;i++)
 	{
+        fprintf(stderr, "  cross validation %d/%d\r", i + 1, nr_fold);
 		int begin = fold_start[i];
 		int end = fold_start[i+1];
 		int j,k;
@@ -2475,11 +2477,12 @@ void cross_validation(const problem *prob, const parameter *param, int nr_fold, 
 			subprob.y[k] = prob->y[perm[j]];
 			++k;
 		}
+        int offset = end - k;
+        #pragma omp parallel for
 		for(j=end;j<l;j++)
 		{
-			subprob.x[k] = prob->x[perm[j]];
-			subprob.y[k] = prob->y[perm[j]];
-			++k;
+			subprob.x[j - offset] = prob->x[perm[j]];
+			subprob.y[j - offset] = prob->y[perm[j]];
 		}
 		struct model *submodel = train(&subprob,param);
 		for(j=begin;j<end;j++)
@@ -2488,6 +2491,7 @@ void cross_validation(const problem *prob, const parameter *param, int nr_fold, 
 		free(subprob.x);
 		free(subprob.y);
 	}
+    fprintf(stderr, "                                \r");
 	free(fold_start);
 	free(perm);
 }
