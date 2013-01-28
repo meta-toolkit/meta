@@ -56,11 +56,33 @@ class Tokenizer
         void setTermIDMapping(const InvertibleMap<TermID, std::string> & mapping);
 
         /**
+         *
+         */
+        InvertibleMap<TermID, std::string> getTermIDMapping() const;
+
+        /**
          * Looks up the actual label that is represented by a TermID.
          * @param termID
          * @return the label
          */
         std::string getLabel(TermID termID) const;
+
+        /**
+         * Prints the data associated with this tokenizer, consisting of a TermID and its string
+         * value.
+         */
+        void printData() const;
+
+        /**
+         * @return the number of terms seen so far by this tokenizer
+         */
+        size_t getNumTerms() const;
+
+        /**
+         * Sets the current termID for this tokenizer. This is useful when running multiple
+         * tokenizers on a single documents.
+         */
+        void setMaxTermID(size_t start);
 
     private:
 

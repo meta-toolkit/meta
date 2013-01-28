@@ -4,7 +4,6 @@
  *  tokenizers.
  */
 
-#include <omp.h>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -57,9 +56,6 @@ int main(int argc, char* argv[])
     bool quiet = (config["quiet"] == "yes");
     InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
 
-    if(config["parallel"] == "no")
-        omp_set_num_threads(1);
-
     int nVal;
     istringstream(config["ngram"]) >> nVal;
 
@@ -81,33 +77,25 @@ int main(int argc, char* argv[])
     if(method == "ngram")
     {
         Tokenizer* tokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
-        #pragma omp parallel for
         for(size_t i = 0; i < documents.size(); ++i)
         {
             // order of lines in the liblinear input file does NOT matter (tested)
             tokenizer->tokenize(documents[i], NULL);
-            #pragma omp critical
-            {
-                cout << documents[i].getLiblinearData(mapping);
-                if(!quiet && done++ % 20 == 0)
-                    cerr << "  Tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
-            }
+            cout << documents[i].getLiblinearData(mapping);
+            if(!quiet && done++ % 20 == 0)
+                cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
         }
         delete tokenizer;
     }
     else if(method == "tree")
     {
         Tokenizer* tokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
-        #pragma omp parallel for
         for(size_t i = 0; i < documents.size(); ++i)
         {
             tokenizer->tokenize(documents[i], NULL);
-            #pragma omp critical
-            {
-                cout << documents[i].getLiblinearData(mapping);
-                if(!quiet && done++ % 20 == 0)
-                    cerr << "  Tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
-            }
+            cout << documents[i].getLiblinearData(mapping);
+            if(!quiet && done++ % 20 == 0)
+                cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
         }
         delete tokenizer;
     }
@@ -115,17 +103,15 @@ int main(int argc, char* argv[])
     {
         Tokenizer* treeTokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
         Tokenizer* ngramTokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
-        #pragma omp parallel for
         for(size_t i = 0; i < documents.size(); ++i)
         {
             treeTokenizer->tokenize(documents[i], NULL);
+            ngramTokenizer->setMaxTermID(treeTokenizer->getNumTerms());
             ngramTokenizer->tokenize(documents[i], NULL);
-            #pragma omp critical
-            {
-                cout << documents[i].getLiblinearData(mapping);
-                if(!quiet && done++ % 20 == 0)
-                    cerr << "  Tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
-            }
+            treeTokenizer->setMaxTermID(ngramTokenizer->getNumTerms());
+            cout << documents[i].getLiblinearData(mapping);
+            if(!quiet && done++ % 20 == 0)
+                cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
         }
         delete treeTokenizer;
         delete ngramTokenizer;

@@ -22,8 +22,8 @@ end
 
 def main()
  
-  dataset = "6reviewers"
-  config = {"quiet" => "no", "prefix" => dataset, "parallel" => "yes", "method" => "ngram"}
+  dataset = "kaggle"
+  config = {"quiet" => "no", "prefix" => dataset}
 
  #config["ngramOpt"] = "Word"
  #config["ngram"] = 1
@@ -35,6 +35,7 @@ def main()
 
  #exit
   
+  config["method"] = "ngram"
   for type in ["Char", "Word", "POS", "FW"]
     config["ngramOpt"] = type
     for n in (1..6)
