@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include "linear.h"
+#include "evaluate.h"
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 #define INF HUGE_VAL
 
@@ -135,7 +136,6 @@ int main(int argc, char **argv)
 void do_cross_validation()
 {
 	int i;
-	int total_correct = 0;
 	double total_error = 0;
 	double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
 	double *target = Malloc(double, prob.l);
@@ -164,11 +164,7 @@ void do_cross_validation()
 	}
 	else
 	{
-        // TODO put more eval stuff in here
-		for(i=0;i<prob.l;i++)
-			if(target[i] == prob.y[i])
-				++total_correct;
-		printf("Cross Validation Accuracy = %g%%\n",100.0*total_correct/prob.l);
+        evaluate(target, &prob);
 	}
 
 	free(target);

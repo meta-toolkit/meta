@@ -16,8 +16,8 @@ def runTest(config)
   opts = "-v 5 -q"
   `./learn evalConfig.ini > evalOutput`
   result = `#{liblinear} #{svmMethod} #{opts} evalOutput`
-  accuracy = /([0-9\.]+)/.match(result)[1].to_f / 100
-  puts "#{accuracy.round(4)}\t#{config}"
+  f1 = /^ f1:([0-9\.]+)/.match(result)[1].to_f
+  puts "#{f1.round(4)}\t#{config}"
 end
 
 def main()
@@ -25,16 +25,6 @@ def main()
   dataset = "kaggle"
   config = {"quiet" => "no", "prefix" => dataset}
 
- #config["ngramOpt"] = "Word"
- #config["ngram"] = 1
- #createConfigFile(config)
- #runTest(config)
- #config["parallel"] = "yes"
- #createConfigFile(config)
- #runTest(config)
-
- #exit
-  
   config["method"] = "ngram"
   for type in ["Char", "Word", "POS", "FW"]
     config["ngramOpt"] = type
