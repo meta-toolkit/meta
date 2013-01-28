@@ -5,8 +5,8 @@ x done
    Compression implemented for indexes
    Write parse tree preprocessor stuff in hadoopable format
    Clean up tiebreaking code in KNN
- - have liblinear output TP, FP, TN, FN for eval usage
- - write a tokenizeAll function that tokenizes many docs in parallel
+   remove unnecessary files from liblinear project?
+ x have liblinear output TP, FP, TN, FN for eval usage
  x Function words tokenizer (is it broken or does it just suck?)
  x parallelize liblinear
  x clean up liblinear naming in this project
