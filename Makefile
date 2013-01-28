@@ -51,7 +51,7 @@ $(LEARN): $(LEARNOBJS) learn.cpp $(TEMPLATES)
 clean:
 	for dir in $(CLEANDIRS) ; do rm -rf $$dir/*.o ; done
 	for dir in $(LIBDIRS) ; do make -C $$dir clean ; done
-	rm -f preprocessor/*.class
+	rm -f preprocessor/*.class evalConfig.ini evalOutput
 	rm -f $(SEARCH) $(TESTER) $(PLOT) $(LEARN) *.o
 
 tidy:

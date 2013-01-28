@@ -27,7 +27,7 @@ end
 
 def main()
  
-  config = {"prefix" => "ceeaus"}
+  config = {"prefix" => "sentiment"}
 
   config["method"] = "ngram"
   for type in ["Char", "Word", "POS", "FW"]

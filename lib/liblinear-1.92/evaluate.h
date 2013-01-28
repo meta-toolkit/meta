@@ -21,7 +21,12 @@ void print_matrix(int** matrix, int num_classes)
     for(int i = 0; i < num_classes; ++i)
     {
         for(int j = 0; j < num_classes; ++j)
-            printf("%4d", matrix[i][j]);
+        {
+            if(i == j)
+                printf("[%5d]", matrix[i][j]);
+            else
+                printf(" %5d ", matrix[i][j]);
+        }
         printf("\n");
     }
 }
@@ -63,7 +68,7 @@ void print_stats(int** matrix, int num_classes)
         for(int j = 0; j < num_classes; ++j)
             total += matrix[i][j];
     }
-    printf(" f1:%.4f acc:%.4f p:%.4f r:%.4f\n", t_f1 / num_classes,
+    printf("\n f1:%.4f acc:%.4f p:%.4f r:%.4f\n", t_f1 / num_classes,
         (double) t_corr / total, t_prec / num_classes, t_rec / num_classes);
 }
 
@@ -80,6 +85,7 @@ void evaluate(double* target, struct problem* prob)
         ++matrix[(int) target[i] - 1][(int) prob->y[i] - 1];
 
     print_matrix(matrix, num_classes);
+    printf("\n");
     print_stats(matrix, num_classes);
 
     for(int i = 0; i < num_classes; ++i)
