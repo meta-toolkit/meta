@@ -27,25 +27,27 @@ end
 
 def main()
  
-  config = {"prefix" => "sentiment"}
+  config = {"prefix" => "kaggle"}
 
-  config["method"] = "ngram"
-  for type in ["Char", "Word", "POS", "FW"]
-    config["ngramOpt"] = type
-    for n in (1..6)
-      config["ngram"] = n
-      runTest(config)
-    end
-  end
+ #config["method"] = "ngram"
+ #for type in ["Char", "Word", "POS", "FW"]
+ #  config["ngramOpt"] = type
+ #  for n in (1..6)
+ #    config["ngram"] = n
+ #    runTest(config)
+ #  end
+ #end
 
-  config.delete("ngramOpt")
-  config.delete("ngram")
-  config["method"] = "tree"
+ #config.delete("ngramOpt")
+ #config.delete("ngram")
+ #config["method"] = "tree"
 
-  for treeMethod in ["Subtree", "Branch", "Tag", "Depth", "Skeleton", "SemiSkeleton", "Multi"]
-    config["treeOpt"] = treeMethod
-    runTest(config)
-  end
+ #for treeMethod in ["Subtree", "Branch", "Tag", "Depth", "Skeleton", "SemiSkeleton", "Multi"]
+ #  config["treeOpt"] = treeMethod
+ #  runTest(config)
+ #end
+
+# just started Word, 3
 
   for method in ["Word", "POS", "FW"]
     for n in (1..3)
