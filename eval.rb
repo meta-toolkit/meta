@@ -16,14 +16,18 @@ def runTest(config)
   opts = "-v 5 -q"
   `./learn evalConfig.ini > evalOutput`
   result = `#{liblinear} #{svmMethod} #{opts} evalOutput`
+  filename = "#{config["prefix"]}-#{config["method"]}-#{config["ngramOpt"]}-#{config["ngram"]}-#{config["treeOpt"]}"
+  filename.gsub!(/-[-]+/, "-")
+  filename.gsub!(/-$/, "")
+  File.open("runs/#{filename}.run", "w") { |f| f.write(result) }
   f1 = /^ f1:([0-9\.]+)/.match(result)[1].to_f
-  puts "#{f1.round(4)}\t#{config}"
+  acc = /^ f1:([0-9\.]+) acc:([0-9\.]+)/.match(result)[2].to_f
+  puts "#{f1.round(4)}\t#{acc.round(4)}\t#{config}"
 end
 
 def main()
  
-  dataset = "kaggle"
-  config = {"quiet" => "no", "prefix" => dataset}
+  config = {"prefix" => "ceeaus"}
 
   config["method"] = "ngram"
   for type in ["Char", "Word", "POS", "FW"]
