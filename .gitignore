@@ -1,4 +1,5 @@
 data/prelim-results.txt
+*.a
 *.dat
 .*.swp
 *.o
