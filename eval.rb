@@ -49,7 +49,8 @@ def main()
 
 # just started Word, 3
 
-  for method in ["Word", "POS", "FW"]
+ #for method in ["Word", "POS", "FW"]
+  for method in ["Char"]
     for n in (1..3)
       config["method"] = "both"
       config["ngramOpt"] = method
