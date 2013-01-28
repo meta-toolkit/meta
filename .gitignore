@@ -4,3 +4,9 @@ data/prelim-results.txt
 .*.swp
 *.o
 *.class
+learn
+lib/liblinear-1.92/predict
+lib/liblinear-1.92/train
+plot
+search
+tester
