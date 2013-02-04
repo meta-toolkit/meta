@@ -156,14 +156,14 @@ void Parser::reset(){
 bool Parser::initTextFile(string filename){
 
     textfile = new TextFile(filename);
-    text = textfile->opentext();
+    text = textfile->start();
     
     if(!text){
         valid = false;
         return false;
     }
 
-    filesize = textfile->get_size();
+    filesize = textfile->size();
     token = "";
     cursor = 0;
 
@@ -200,7 +200,7 @@ void Parser::initSetsViaDelims(string delimiters){
 }
 
 string Parser::getFilename() const {
-    return textfile->get_title();
+    return textfile->path();
 }
 
 Parser::~Parser(){
@@ -220,10 +220,10 @@ Parser::Parser(const Parser & other){
 }
 
 void Parser::copy(const Parser & other){
-    textfile = new TextFile(*(other.textfile));
+    textfile = new TextFile(other.textfile->path());
     filesize = other.filesize;
     cursor = other.cursor;
-    text = textfile->opentext();
+    text = textfile->start();
     valid = other.valid;
     token = other.token;
 	valid_charset = other.valid_charset;
@@ -232,7 +232,6 @@ void Parser::copy(const Parser & other){
 }
 
 void Parser::clear(){
-    textfile->closetext();
     delete textfile;
     textfile = NULL;
     text = NULL;

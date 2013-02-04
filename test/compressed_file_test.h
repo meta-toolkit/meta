@@ -37,13 +37,12 @@ namespace Tests
             unordered_map<char, size_t> freqs;
             TextFile textfile(filename);
 
-            char* start = textfile.opentext();
+            char* start = textfile.start();
             unsigned int index = 0;
 
-            while(index < textfile.get_size())
+            while(index < textfile.size())
                 ++freqs[start[index++]];
 
-            textfile.closetext();
             return freqs;
         }
 
@@ -88,16 +87,15 @@ namespace Tests
             TextFile textfile(inputFilename);
             CompressedFileWriter writer(compressedFilename);
 
-            char* start = textfile.opentext();
+            char* start = textfile.start();
             unsigned int index = 0;
 
-            while(index < textfile.get_size())
+            while(index < textfile.size())
             {
                 unsigned int toWrite = mapping.getValueByKey(start[index++]);
                 writer.write(toWrite);
             }
 
-            textfile.closetext();
             PASS;
         }
 

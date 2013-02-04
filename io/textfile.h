@@ -1,7 +1,6 @@
 /**
  * @file textfile.h
- * Originally part of CS 296-25 Honors project Spring 2011.
- * Allows programming with (hopefully) fewer I/O bottlenecks
+ * Allows programming with (hopefully) fewer I/O bottlenecks.
  */
 
 #ifndef _TEXTFILE_H_
@@ -18,6 +17,7 @@
 
 /**
  * Memory maps a text file for better I/O performance and allows you to read it.
+ * However, if the file is very small, it will simply be stored in memory.
  */
 class TextFile
 {
@@ -25,45 +25,63 @@ class TextFile
 
         /**
          * Constructor.
-         * @param title - creates a TextFile object from the given filename
+         * @param path - creates a TextFile object from the given filename
          */
-        TextFile(std::string title);
+        TextFile(std::string path);
 
         /**
-         * Opens the current file.
+         * Destructor; deallocates memory used to store this object, closing the text file.
+         */
+        ~TextFile();
+
+        /**
          * @return a pointer to the beginning of the text file; NULL if unsuccessful
          */
-        char* opentext();
+        char* start() const;
 
         /**
-         * @return the length of the file (in number of characters)
+         * @return the length of the file in bytes
          */
-        unsigned int get_size() const;
+        unsigned int size() const;
 
         /**
          * @return the title of the text file (the parameter given to the contructor)
          */
-        std::string get_title() const;
-
-        /**
-         * Closes the text file.
-         * @return whether closing the file was successful
-         */
-        bool closetext();
+        std::string path() const;
 
     private:
 
+        /** minimum size requirement for mmap'ing files */
+        static const unsigned int _min_mmap_size = 4096;
+
         /** filename of the text file */
-        std::string _title;
+        std::string _path;
 
         /** pointer to the beginning of the text file */
-        char* start;
+        char* _start;
 
         /** size of the current text file */
-        unsigned int size;
+        unsigned int _size;
 
         /** file descriptor for the open text file */
-        int file_descriptor;
+        int _file_descriptor;
+
+        /**
+         * Loads a small file onto the heap in order to save virtual memory space. It's supposed to
+         * be more efficient, and doesn't waste space since mmap takes up one page minimum per file.
+         */
+        void load_file();
+
+        /**
+         * Memory-maps the file.
+         */
+        void open_mmap();
+
+        /** no copying */
+        TextFile(const TextFile & other) { /* nothing */ }
+
+        /** no copying */
+        const TextFile & operator=(const TextFile & other) { /* nothing */ }
 };
 
 #endif

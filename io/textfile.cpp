@@ -8,61 +8,72 @@ using std::cerr;
 using std::endl;
 using std::string;
 
-TextFile::TextFile(string title)
+TextFile::TextFile(string path):
+    _path(path), _start(NULL), _file_descriptor(-1)
 {
-    _title = title;
-    start = NULL;
-    size = 0;
-    file_descriptor = -1;
-}
 
-char* TextFile::opentext()
-{
-    // get file size
     struct stat st;
-    stat(_title.c_str(), &st);
-    size = st.st_size;
-    
-    // get file descriptor
-    file_descriptor = open(_title.c_str(), O_RDONLY);
-    if(file_descriptor < 0)
-    {
-        // cerr << "Error obtaining file descriptor for: " << _title.c_str() << endl;
-        return NULL;
-    }
-    
-    // memory map
-    start = (char*) mmap(NULL, size, PROT_READ, MAP_SHARED, file_descriptor, 0);
-    if(start == NULL)
-    {
-        cerr << "Error memory-mapping " << _title << endl;
-        close(file_descriptor);
-        return NULL;
-    }
-    
-    return start;
+    stat(_path.c_str(), &st);
+    _size = st.st_size; 
+   
+    if(_size >= _min_mmap_size)
+        open_mmap();
+    else
+        load_file();
 }
 
-unsigned int TextFile::get_size() const
+void TextFile::load_file()
 {
-    return size;
+    _start = new char[_size];
+    FILE* file = fopen(_path.c_str(), "r");
+    fread(_start, _size, 1, file);
+    fclose(file);
 }
 
-string TextFile::get_title() const
+void TextFile::open_mmap()
 {
-    return _title;
+    _file_descriptor = open(_path.c_str(), O_RDONLY);
+    if(_file_descriptor < 0)
+    {
+        cerr << "[TextFile]: Error obtaining file descriptor for: " << _path.c_str() << endl;
+        return;
+    }
+
+    _start = (char*) mmap(NULL, _size, PROT_READ, MAP_SHARED, _file_descriptor, 0);
+    if(_start == NULL)
+    {
+        cerr << "[TextFile]: Error memory-mapping " << _path << endl;
+        close(_file_descriptor);
+    }
 }
 
-bool TextFile::closetext()
-{    
-    if(start == NULL)
+unsigned int TextFile::size() const
+{
+    return _size;
+}
+
+string TextFile::path() const
+{
+    return _path;
+}
+
+char* TextFile::start() const
+{
+    return _start;
+}
+
+TextFile::~TextFile()
+{
+    if(_size >= _min_mmap_size)
     {
-        // cerr << "Error closing file. Was closetext() called without a matching opentext() ?" << endl;
-        return false;
+        if(_start != NULL)
+        {
+            munmap(_start, _size);
+            close(_file_descriptor);
+        }
     }
-    
-    // unmap memory and close file
-    bool ret = munmap(start, size) != -1 && close(file_descriptor) != -1;
-    start = NULL;
-    return ret;
+    else
+    {
+        delete [] _start;
+    }
 }
