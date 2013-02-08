@@ -8,7 +8,7 @@ SEARCHOBJS = tokenizers/parse_tree.o index/document.o index/ram_index.o \
 TESTER = tester
 TESTEROBJS = $(SEARCHOBJS)
 
-PLOT = plot
+PLOT = features 
 PLOTOBJS = $(SEARCHOBJS)
 
 LEARN = learn
@@ -39,8 +39,8 @@ $(SEARCH): $(SEARCHOBJS) main.cpp $(TEMPLATES) $(TESTS)
 $(TESTER): $(TESTEROBJS) test/tester.cpp $(TEMPLATES) $(TESTS)
 	$(LINKER) test/tester.cpp -o $@ $(TESTEROBJS)
 
-$(PLOT): $(PLOTOBJS) scatter.cpp $(TEMPLATES) $(TESTS)
-	$(LINKER) scatter.cpp -o $@ $(PLOTOBJS)
+$(PLOT): $(PLOTOBJS) features.cpp $(TEMPLATES) $(TESTS)
+	$(LINKER) features.cpp -o $@ $(PLOTOBJS)
 
 $(LEARN): $(LEARNOBJS) learn.cpp $(TEMPLATES)
 	$(LINKER) learn.cpp -o $@ $(LEARNOBJS)
