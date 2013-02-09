@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 
     unordered_map<string, NgramTokenizer::NgramType> ngramOpt = {
         {"POS", NgramTokenizer::POS}, {"Word", NgramTokenizer::Word},
-        {"FW", NgramTokenizer::FW}
+        {"FW", NgramTokenizer::FW}, {"Char", NgramTokenizer::Char}
     };
 
     unordered_map<string, TreeTokenizer::TreeTokenizerType> treeOpt = {

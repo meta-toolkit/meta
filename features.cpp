@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 
     unordered_map<string, NgramTokenizer::NgramType> ngramOpt = {
         {"POS", NgramTokenizer::POS}, {"Word", NgramTokenizer::Word},
-        {"FW", NgramTokenizer::FW}
+        {"FW", NgramTokenizer::FW}, {"Char", NgramTokenizer::Char}
     };
 
     unordered_map<string, TreeTokenizer::TreeTokenizerType> treeOpt = {
@@ -79,6 +79,7 @@ int main(int argc, char* argv[])
   
     Tokenizer* class_tokenizer = NULL; 
     string method = config["method"];
+    cerr << "ngramOpt: " << config["ngramOpt"] << endl;
     if(method == "ngram")
         class_tokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
     else if(method == "tree")
@@ -110,7 +111,7 @@ int main(int argc, char* argv[])
         {
             total += term.second;
             smoothed_models[model.first][term.first] = (static_cast<double>(term.second) + 1.0) /
-                ((*bg_model)[term.first] + bg_model->size());
+                ((*bg_model)[term.first] + 2 * bg_model->size());
         }
 
         map<double, TermID> sorted;
@@ -118,9 +119,9 @@ int main(int argc, char* argv[])
             sorted.insert(make_pair(m.second, m.first));
 
         cout << model.first << endl;
-        size_t num = 16;
+        //size_t num = 16;
         map<double, TermID>::reverse_iterator p = sorted.rbegin();
-        for( ; p != sorted.rend() && num != 0; ++p, --num)
+        for( ; p != sorted.rend() /*&& num != 0*/; ++p/*, --num*/)
         {
             cout << " " << p->first << " " << class_tokenizer->getLabel(p->second)
                  << " p(w|class) = "
