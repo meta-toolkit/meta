@@ -11,7 +11,7 @@ end
 
 def runTest(config)
   createConfigFile(config)
-  liblinear = "lib/train"
+  liblinear = "lib/liblinear-1.92/train"
   svmMethod = "-s 2"
   opts = "-v 5 -q"
   `./learn evalConfig.ini > evalOutput`
@@ -27,31 +27,30 @@ end
 
 def main()
  
-  config = {"prefix" => "kaggle"}
+  config = {"prefix" => "sentiment"}
 
- #config["method"] = "ngram"
- #for type in ["Char", "Word", "POS", "FW"]
- #  config["ngramOpt"] = type
- #  for n in (1..6)
- #    config["ngram"] = n
- #    runTest(config)
- #  end
- #end
+# config["method"] = "ngram"
+# for type in ["Char", "Word", "POS", "FW"]
+# for type in ["Char"]
+#   config["ngramOpt"] = type
+#   for n in (1..6)
+#     config["ngram"] = n
+#     runTest(config)
+#   end
+# end
 
- #config.delete("ngramOpt")
- #config.delete("ngram")
- #config["method"] = "tree"
+# config.delete("ngramOpt")
+# config.delete("ngram")
+# config["method"] = "tree"
 
- #for treeMethod in ["Subtree", "Branch", "Tag", "Depth", "Skeleton", "SemiSkeleton", "Multi"]
- #  config["treeOpt"] = treeMethod
- #  runTest(config)
- #end
+# for treeMethod in ["Subtree", "Branch", "Tag", "Depth", "Skeleton", "SemiSkeleton", "Multi"]
+#   config["treeOpt"] = treeMethod
+#   runTest(config)
+# end
 
-# just started Word, 3
-
- #for method in ["Word", "POS", "FW"]
+  #for method in ["Word", "POS", "FW", "Char"]
   for method in ["Char"]
-    for n in (1..3)
+    for n in (4..6)
       config["method"] = "both"
       config["ngramOpt"] = method
       config["ngram"] = n
