@@ -7,6 +7,8 @@ data/prelim-results.txt
 learn
 lib/liblinear-1.92/predict
 lib/liblinear-1.92/train
-plot
+features
 search
 tester
+eval/__pycache__
+*.pyc
