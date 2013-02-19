@@ -154,14 +154,14 @@ void NgramTokenizer::tokenizeFW(Document & document,
 
 void NgramTokenizer::initStopwords()
 {
-    Parser parser("data/lemur-stopwords.txt", "\n");
+    Parser parser("../data/lemur-stopwords.txt", "\n"); // TODO
     while(parser.hasNext())
         _stopwords.insert(Porter2Stemmer::stem(parser.next()));
 }
 
 void NgramTokenizer::initFunctionWords()
 {
-    Parser parser("data/function-words.txt", " \n");
+    Parser parser("../data/function-words.txt", " \n"); // TODO
     while(parser.hasNext())
         _functionWords.insert(parser.next());
 }

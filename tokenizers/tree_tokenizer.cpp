@@ -45,10 +45,9 @@ void TreeTokenizer::tokenize(Document & document, shared_ptr<unordered_map<TermI
 void TreeTokenizer::multiTokenize(Document & document, const ParseTree & tree,
         shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
-    // subtree, depth, semiSkeleton, branch
     subtreeTokenize(document, tree, docFreq);
+    tagTokenize(document, tree, docFreq);
     depthTokenize(document, tree, docFreq);
-    semiSkeletonTokenize(document, tree, docFreq);
     branchTokenize(document, tree, docFreq);
 }
 
