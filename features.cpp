@@ -9,6 +9,7 @@
 #include <memory>
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 #include <map>
 
 #include "index/document.h"
@@ -19,6 +20,7 @@
 #include "util/common.h"
 
 using std::unordered_map;
+using std::unordered_set;
 using std::shared_ptr;
 using std::pair;
 using std::vector;
@@ -74,16 +76,16 @@ int main(int argc, char* argv[])
 
     unordered_map<string, TreeTokenizer::TreeTokenizerType> treeOpt = {
         {"Subtree", TreeTokenizer::Subtree}, {"Depth", TreeTokenizer::Depth},
-        {"Branch", TreeTokenizer::Branch}, {"Tag", TreeTokenizer::Tag}
+        {"Branch", TreeTokenizer::Branch}, {"Tag", TreeTokenizer::Tag},
+        {"Skel", TreeTokenizer::Skeleton}, {"Semi", TreeTokenizer::SemiSkeleton}
     };
   
-    Tokenizer* class_tokenizer = NULL; 
+    Tokenizer* tokenizer = NULL; 
     string method = config["method"];
-    cerr << "ngramOpt: " << config["ngramOpt"] << endl;
     if(method == "ngram")
-        class_tokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
+        tokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
     else if(method == "tree")
-        class_tokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
+        tokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
     else
     {
         cerr << "Method was not able to be determined" << endl;
@@ -91,13 +93,12 @@ int main(int argc, char* argv[])
     } 
 
     cerr << "Tokenizing..." << endl;
-    shared_ptr<unordered_map<TermID, unsigned int>> bg_model(new unordered_map<TermID, unsigned int>);
     unordered_map<string, unordered_map<TermID, unsigned int>> language_models;
     for(auto & str: docs)
     {
         for(auto & doc: str.second)
         {
-            class_tokenizer->tokenize(doc, bg_model);
+            tokenizer->tokenize(doc, NULL);
             combine_counts(language_models[str.first], doc.getFrequencies());
         }
     }
@@ -106,29 +107,54 @@ int main(int argc, char* argv[])
     unordered_map<string, unordered_map<TermID, double>> smoothed_models;
     for(auto & model: language_models)
     {
+        string label = model.first;
+
+        // get total number of term counts for all terms
         size_t total = 0;
-        for(auto & term: model.second)
-        {
-            total += term.second;
-            smoothed_models[model.first][term.first] = (static_cast<double>(term.second) + 1.0) /
-                ((*bg_model)[term.first] + 2 * bg_model->size());
-        }
+        for(auto & termMap: model.second)
+            total += termMap.second;
 
-        map<double, TermID> sorted;
-        for(auto & m: smoothed_models[model.first])
-            sorted.insert(make_pair(m.second, m.first));
+        cerr << " " << total << " total tokens in class " << label << endl;
 
-        cout << model.first << endl;
-        //size_t num = 16;
-        map<double, TermID>::reverse_iterator p = sorted.rbegin();
-        for( ; p != sorted.rend() /*&& num != 0*/; ++p/*, --num*/)
+        // smooth frequencies
+        for(auto & termMap: model.second)
         {
-            cout << " " << p->first << " " << class_tokenizer->getLabel(p->second)
-                 << " p(w|class) = "
-                 << static_cast<double>(language_models[model.first][p->second]) / total << endl;
+            smoothed_models[label][termMap.first]
+                = static_cast<double>(termMap.second) / total;
         }
     }
 
-    delete class_tokenizer;
+    cerr << "Comparing features between classes..." << endl;
+    for(auto & m1: smoothed_models)
+    {
+        string class1 = m1.first;
+        for(auto & m2: smoothed_models)
+        {
+            string class2 = m2.first;
+            // compare different models
+            if(class1 == "chinese" && class2 == "english")
+            {
+                cerr << "calculating p(f|" << class1 << ")/p(f|" << class2 << ")..." << endl;
+                cout << "#### p(f|" << class1 << ")/p(f|" << class2 << ")" << endl;
+
+                // create set of all terms shared between classes
+                unordered_set<TermID> termIDs;
+                for(auto & term: m1.second)
+                    termIDs.insert(term.first);
+                for(auto & term: m2.second)
+                    termIDs.insert(term.first);
+                
+                for(auto & termID: termIDs)
+                {
+                    cout << (m1.second[termID] + .0001) / (m2.second[termID] + .0001)
+                         << " " << tokenizer->getLabel(termID) << endl;
+                }
+
+                return 0;
+            }
+        }
+    }
+    
+    delete tokenizer;
     return 0;
 }
