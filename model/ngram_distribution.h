@@ -64,5 +64,23 @@ class NgramDistribution
         double _discount;
 };
 
+/**
+ * Specialized "base case" class for a unigram model's prior distribution.
+ */
+template <>
+class NgramDistribution<0>
+{
+    public:
+    
+        typedef std::unordered_map<std::string, double> ProbMap;
+
+        NgramDistribution(const std::string & docPath):
+            _dist(ProbMap()){ /* nothing */ }
+    
+    private:
+        
+        ProbMap _dist;
+};
+
 #include "ngram_distribution.cpp"
 #endif
