@@ -31,12 +31,18 @@ class NgramTokenizer : public Tokenizer
         enum StemmerType { Porter2, NoStemmer };
 
         /**
+         * Enumeration for which stemmer (if any) to use.
+         */
+        enum StopwordType { Default, NoStopwords };
+
+        /**
          * Constructor.
          * @param n - the value of n to use for the ngrams.
          * @param type - indicates whether this tokenizer is tokenizing words or
          *  POS tags
          */
-        NgramTokenizer(size_t n, NgramType ngramType, StemmerType stemmerType = Porter2);
+        NgramTokenizer(size_t n, NgramType ngramType,
+                StemmerType stemmerType = Porter2, StopwordType = Default);
 
         /**
          * Tokenizes a file into a Document.
@@ -122,6 +128,11 @@ class NgramTokenizer : public Tokenizer
          * @return a lowercase version of the string
          */
         std::string setLower(const std::string & original) const;
+
+        /**
+         *
+         */
+        std::string stopOrStem(const string & str) const;
 };
 
 #endif

@@ -9,6 +9,7 @@ lib/liblinear-1.92/predict
 lib/liblinear-1.92/train
 features
 search
+lm
 tester
 eval/__pycache__
 *.pyc

@@ -15,14 +15,15 @@ using std::deque;
 using std::unordered_map;
 using std::unordered_set;
 
-NgramTokenizer::NgramTokenizer(size_t n, NgramType ngramType, StemmerType stemmerType):
+NgramTokenizer::NgramTokenizer(size_t n, NgramType ngramType,
+                               StemmerType stemmerType, StopwordType stopwordType):
     _nValue(n),
     _ngramType(ngramType),
     _stemmerType(stemmerType),
     _stopwords(unordered_set<string>()), 
     _functionWords(unordered_set<string>())
 {
-   if(_ngramType == Word)
+   if(_ngramType == Word && stopwordType != NoStopwords)
        initStopwords();
    else if(_ngramType == FW)
        initFunctionWords();
@@ -73,9 +74,11 @@ void NgramTokenizer::tokenizeWord(Document & document,
     deque<string> ngram;
     for(size_t i = 0; i < _nValue && parser.hasNext(); ++i)
     {
-        string next = "a"; // start with stopword
-        while(_stopwords.find(next) != _stopwords.end() && parser.hasNext())
-            next = Porter2Stemmer::stem(Porter2Stemmer::trim(parser.next()));
+        string next = "";
+        do
+        {
+            next = stopOrStem(parser.next());
+        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
     }
 
@@ -85,14 +88,24 @@ void NgramTokenizer::tokenizeWord(Document & document,
         string wordified = wordify(ngram);
         document.increment(getMapping(wordified), 1, docFreq);
         ngram.pop_front();
-        string next = "a";
-        while(_stopwords.find(next) != _stopwords.end() && parser.hasNext())
-            next = Porter2Stemmer::stem(Porter2Stemmer::trim(parser.next()));
+        string next = "";
+        do
+        {
+            next = stopOrStem(parser.next());
+        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
         ngram.push_back(next);
     }
 
     // add the last token
     document.increment(getMapping(wordify(ngram)), 1, docFreq);
+}
+
+string NgramTokenizer::stopOrStem(const string & str) const
+{
+    if(_stemmerType == NoStemmer)
+        return Porter2Stemmer::trim(str);
+    else
+        return Porter2Stemmer::stem(Porter2Stemmer::trim(str));
 }
 
 void NgramTokenizer::tokenizeChar(Document & document,
@@ -155,14 +168,14 @@ void NgramTokenizer::tokenizeFW(Document & document,
 
 void NgramTokenizer::initStopwords()
 {
-    Parser parser("../data/lemur-stopwords.txt", "\n"); // TODO
+    Parser parser("data/lemur-stopwords.txt", "\n"); // TODO
     while(parser.hasNext())
         _stopwords.insert(Porter2Stemmer::stem(parser.next()));
 }
 
 void NgramTokenizer::initFunctionWords()
 {
-    Parser parser("../data/function-words.txt", " \n"); // TODO
+    Parser parser("data/function-words.txt", " \n"); // TODO
     while(parser.hasNext())
         _functionWords.insert(parser.next());
 }

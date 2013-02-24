@@ -17,6 +17,10 @@ LEARNOBJS = tokenizers/parse_tree.o tokenizers/tree_tokenizer.o \
     index/chunk_list.o index/structs.o stemmers/porter2_stemmer.o \
     io/config_reader.o index/document.o
 
+LM = lm
+LMOBJS = tokenizers/ngram_tokenizer.o index/document.o io/textfile.o io/parser.o \
+		 tokenizers/tokenizer.o stemmers/porter2_stemmer.o
+
 TESTS = test/porter2_stemmer_test.h test/parse_tree_test.h \
     test/compressed_file_test.h test/unit_test.h
 
@@ -30,16 +34,19 @@ LINKER = g++ -std=c++0x -fopenmp -I.
 LIBDIRS = lib/liblinear-1.92
 CLEANDIRS = tokenizers io index util stemmers classify test lib/liblinear-1.92
 
-all: $(SEARCH) $(TESTER) $(PLOT) $(LEARN)
+all: $(SEARCH) $(TESTER) $(PLOT) $(LEARN) $(LM)
 	for dir in $(LIBDIRS) ; do make -C $$dir ; done
 
-$(SEARCH): $(SEARCHOBJS) main.cpp $(TEMPLATES) $(TESTS)
+$(LM): $(LMOBJS) lm.cpp
+	$(LINKER) lm.cpp -o $@ $(LMOBJS)
+
+$(SEARCH): $(SEARCHOBJS) main.cpp $(TEMPLATES)
 	$(LINKER) main.cpp -o $@ $(SEARCHOBJS)
 
 $(TESTER): $(TESTEROBJS) test/tester.cpp $(TEMPLATES) $(TESTS)
 	$(LINKER) test/tester.cpp -o $@ $(TESTEROBJS)
 
-$(PLOT): $(PLOTOBJS) features.cpp $(TEMPLATES) $(TESTS)
+$(PLOT): $(PLOTOBJS) features.cpp $(TEMPLATES)
 	$(LINKER) features.cpp -o $@ $(PLOTOBJS)
 
 $(LEARN): $(LEARNOBJS) learn.cpp $(TEMPLATES)
