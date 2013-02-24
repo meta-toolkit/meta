@@ -36,7 +36,7 @@ class TreeTokenizer: public Tokenizer
          * @param docFreq - optional parameter to store IDF values in
          */
         void tokenize(Document & document,
-                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq);
+                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq = nullptr);
 
     private:
 

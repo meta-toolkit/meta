@@ -44,7 +44,7 @@ void Document::increment(TermID termID, unsigned int amount,
 
 void Document::increment(TermID termID, unsigned int amount)
 {
-    increment(termID, amount, NULL);
+    increment(termID, amount, nullptr);
 }
 
 string Document::getPath() const

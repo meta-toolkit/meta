@@ -17,7 +17,7 @@ CompressedFileWriter::CompressedFileWriter(const string & filename)
     _buffer = new unsigned char[_bufferSize];
 
     // disable buffering
-    if(setvbuf(_outfile, NULL, _IONBF, 0) != 0)
+    if(setvbuf(_outfile, nullptr, _IONBF, 0) != 0)
         cerr << "[CompressedFileWriter]: error setvbuf" << endl;
 
     // zero out, we'll only write ones

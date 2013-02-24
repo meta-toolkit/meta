@@ -142,7 +142,7 @@ multimap<double, string> RAMIndex::search(Document & query) const
          << " (" << query.getCategory() << ")" << endl;
     */
 
-    _tokenizer->tokenize(query, NULL);
+    _tokenizer->tokenize(query);
     multimap<double, string> ranks;
     #pragma omp parallel for
     for(size_t idx = 0; idx < _documents.size(); ++idx)

@@ -9,7 +9,7 @@ using std::endl;
 using std::string;
 
 TextFile::TextFile(string path):
-    _path(path), _start(NULL), _file_descriptor(-1)
+    _path(path), _start(nullptr), _file_descriptor(-1)
 {
 
     struct stat st;
@@ -39,8 +39,8 @@ void TextFile::open_mmap()
         return;
     }
 
-    _start = (char*) mmap(NULL, _size, PROT_READ, MAP_SHARED, _file_descriptor, 0);
-    if(_start == NULL)
+    _start = (char*) mmap(nullptr, _size, PROT_READ, MAP_SHARED, _file_descriptor, 0);
+    if(_start == nullptr)
     {
         cerr << "[TextFile]: Error memory-mapping " << _path << endl;
         close(_file_descriptor);
@@ -66,7 +66,7 @@ TextFile::~TextFile()
 {
     if(_size >= _min_mmap_size)
     {
-        if(_start != NULL)
+        if(_start != nullptr)
         {
             munmap(_start, _size);
             close(_file_descriptor);

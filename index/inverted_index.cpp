@@ -35,7 +35,7 @@ multimap<double, string> InvertedIndex::search(Document & query) const
     double avgDL = _lexicon.getAvgDocLength();
     unordered_map<DocID, double> scores;
 
-    _tokenizer->tokenize(query, NULL);
+    _tokenizer->tokenize(query);
     const unordered_map<TermID, unsigned int> freqs = query.getFrequencies();
 
     //cerr << "Iterating through " << freqs.size() << " unique tokens" << endl;

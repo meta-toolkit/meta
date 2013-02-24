@@ -77,7 +77,7 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize,
     // iterate over documents, writing data to disk when we reach chunkMBSize
     for(auto & doc: documents)
     {
-        tokenizer->tokenize(doc, NULL);
+        tokenizer->tokenize(doc);
         DocID docID = getDocID(doc.getPath());
         cerr << " -> tokenizing " << doc.getName() << " (docid " << docID << ")" << endl;
         unordered_map<TermID, unsigned int> freqs = doc.getFrequencies();

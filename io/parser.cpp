@@ -233,6 +233,6 @@ void Parser::copy(const Parser & other){
 
 void Parser::clear(){
     delete textfile;
-    textfile = NULL;
-    text = NULL;
+    textfile = nullptr;
+    text = nullptr;
 }

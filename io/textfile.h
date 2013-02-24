@@ -35,7 +35,7 @@ class TextFile
         ~TextFile();
 
         /**
-         * @return a pointer to the beginning of the text file; NULL if unsuccessful
+         * @return a pointer to the beginning of the text file; nullptr if unsuccessful
          */
         char* start() const;
 

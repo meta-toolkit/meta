@@ -25,8 +25,8 @@ CompressedFileReader::CompressedFileReader(const string & filename):
     }
     
     // memory map
-    _start = (unsigned char*) mmap(NULL, _size, PROT_READ, MAP_SHARED, _fileDescriptor, 0);
-    if(_start == NULL)
+    _start = (unsigned char*) mmap(nullptr, _size, PROT_READ, MAP_SHARED, _fileDescriptor, 0);
+    if(_start == nullptr)
     {
         cerr << "[CompressedFileReader]: error memory-mapping the file"
              << endl;
@@ -40,7 +40,7 @@ CompressedFileReader::CompressedFileReader(const string & filename):
 
 CompressedFileReader::~CompressedFileReader()
 {
-    if(_start != NULL)
+    if(_start != nullptr)
     { 
         // unmap memory and close file
         munmap(_start, _size);
