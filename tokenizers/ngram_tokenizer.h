@@ -26,12 +26,17 @@ class NgramTokenizer : public Tokenizer
         enum NgramType { POS, Word, FW, Char };
 
         /**
+         * Enumeration for which stemmer (if any) to use.
+         */
+        enum StemmerType { Porter2, NoStemmer };
+
+        /**
          * Constructor.
          * @param n - the value of n to use for the ngrams.
          * @param type - indicates whether this tokenizer is tokenizing words or
          *  POS tags
          */
-        NgramTokenizer(size_t n, NgramType type);
+        NgramTokenizer(size_t n, NgramType ngramType, StemmerType stemmerType = Porter2);
 
         /**
          * Tokenizes a file into a Document.
@@ -39,7 +44,7 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         virtual void tokenize(Document & document,
-                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs = nullptr);
 
         /**
          * @return the value of n used for the ngrams
@@ -52,7 +57,10 @@ class NgramTokenizer : public Tokenizer
         size_t _nValue;
 
         /** shows how we're tokenizing text */
-        NgramType _type;
+        NgramType _ngramType;
+
+        /** shows how we're tokenizing text */
+        StemmerType _stemmerType;
 
         /** a stopword list based on the Lemur stopwords */
         std::unordered_set<std::string> _stopwords;

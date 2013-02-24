@@ -15,28 +15,29 @@ using std::deque;
 using std::unordered_map;
 using std::unordered_set;
 
-NgramTokenizer::NgramTokenizer(size_t n, NgramType type):
+NgramTokenizer::NgramTokenizer(size_t n, NgramType ngramType, StemmerType stemmerType):
     _nValue(n),
-    _type(type),
+    _ngramType(ngramType),
+    _stemmerType(stemmerType),
     _stopwords(unordered_set<string>()), 
     _functionWords(unordered_set<string>())
 {
-   if(type == Word)
+   if(_ngramType == Word)
        initStopwords();
-   else if(type == FW)
+   else if(_ngramType == FW)
        initFunctionWords();
 }
 
 void NgramTokenizer::tokenize(Document & document,
         std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
 {
-    if(_type == FW)
+    if(_ngramType == FW)
         tokenizeFW(document, docFreq);
-    else if(_type == Word)
+    else if(_ngramType == Word)
         tokenizeWord(document, docFreq);
-    else if(_type == Char)
+    else if(_ngramType == Char)
         tokenizeChar(document, docFreq);
-    else // _type == POS
+    else // _ngramType == POS
         tokenizePOS(document, docFreq);
 }
 
