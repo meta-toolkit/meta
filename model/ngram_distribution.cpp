@@ -3,7 +3,13 @@
  * Implementation of a smoothed ngram language model class.
  */
 
+#include <vector>
+#include <stdexcept>
+
+using std::deque;
+using std::vector;
 using std::cout;
+using std::cerr;
 using std::endl;
 using std::string;
 using std::unordered_map;
@@ -24,9 +30,97 @@ double NgramDistribution<N>::perplexity(const Document & document) const
 }
 
 template <size_t N>
-string NgramDistribution<N>::random_sentence() const
+string NgramDistribution<N>::random_sentence(unsigned int seed) const
 {
-    return "random sentence";
+    std::default_random_engine gen(seed);
+    std::uniform_real_distribution<double> rdist(0.0, 1.0);
+
+    // create the beginning of the sentence
+    string sentence = get_prev(rdist(gen));
+
+    // create initial deque
+    deque<string> ngram;
+    string buff(sentence);
+    for(size_t i = 0; i < N - 1; ++i)
+    {
+        ngram.push_front(get_last(buff));
+        buff = get_rest(buff);
+    }
+
+    // append likely words, creating a sentence
+    string word = get_word(rdist(gen), _dist.at(sentence));
+    for(size_t i = 0; i < 400; ++i)
+    {
+        sentence += " " + word;
+        ngram.push_back(word);
+        ngram.pop_front();
+        string prev = to_prev(ngram);
+        auto it = _dist.find(prev);
+        word = get_word(rdist(gen), it->second);
+    }
+
+    return sentence;
+}
+
+template <size_t N>
+string NgramDistribution<N>::to_prev(const deque<string> & ngram) const
+{
+    if(ngram.empty())
+        cerr << "uhoh, something went horribly wrong inside of me!" << endl;
+
+    string ret = "";
+    for(auto & w: ngram)
+        ret += " " + w;
+    return ret.substr(1);
+}
+
+template <size_t N>
+string NgramDistribution<N>::get_prev(double rand) const
+{
+    double range = 0.0;
+    for(auto & d: _dist)
+        range += d.second.size();
+    rand *= range;
+
+    double sum = 0.0;
+    for(auto & d: _dist)
+    {
+        if(sum > rand)
+            return d.first;
+        sum += d.second.size();
+    }
+}
+
+template <size_t N>
+string NgramDistribution<N>::get_word(double rand, const unordered_map<string, double> & dist) const
+{
+    double range = 0.0;
+    for(auto & prob: dist)
+        range += prob.second;
+    rand *= range;
+
+    double sum = 0.0;
+    for(auto & prob: dist)
+    {
+        sum += prob.second;
+        if(sum > rand || prob.second > rand)
+            return prob.first;
+    }
+
+    cout << " get_word: sum: " << sum << " rand: " << rand << endl;
+    return "";
+}
+
+template <size_t N>
+const ProbMap & NgramDistribution<N>::kth_distribution(size_t k) const
+{
+    if(k == 0)
+        throw std::out_of_range("kth_distribution value is 0");
+
+    if(k == 1)
+        return _dist;
+
+    return _lower.kth_distribution(k - 1);
 }
 
 template <size_t N>
@@ -35,6 +129,7 @@ NgramDistribution<N>::NgramDistribution(const string & docPath):
     _dist(ProbMap()),
     _lower(NgramDistribution<N - 1>(docPath))
 {
+    cerr << " Creating " << N << "-gram model..." << endl;
     calc_freqs(docPath);
     calc_discount_factor();
     calc_dist();
@@ -73,6 +168,7 @@ void NgramDistribution<N>::calc_freqs(const string & docPath)
         string str = tokenizer.getLabel(p.first);
         string word = get_last(str);
         string rest = get_rest(str);
+        std::remove(word.begin(), word.end(), ' ');
         _freqs[rest][word] += p.second;
     }
 }
@@ -118,7 +214,7 @@ void NgramDistribution<N>::calc_dist()
             
             //  _dist[prev][word] = static_cast<double>(c_prevw) / c_prev; // unsmoothed
 
-            cout << " p(" << word << "|" << prev << ") = " << _dist[prev][word] << endl;
+            //cout << " p(" << word << "|" << prev << ") = " << _dist[prev][word] << endl;
         }
     }
 }

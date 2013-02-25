@@ -7,6 +7,8 @@
 #define _NGRAM_DISTRIBUTION_
 
 #include <iostream>
+#include <random>
+#include <deque>
 #include <unordered_map>
 #include <utility>
 #include "index/document.h"
@@ -64,9 +66,23 @@ class NgramDistribution
          * Generates a random sentence using the current language model.
          * @return a random sentence likely to be generated with this model
          */
-        string random_sentence() const;
+        string random_sentence(unsigned int seed) const;
+
+        /**
+         * @return the value of N for this model
+         */
+        inline size_t n_value() const { return N; }
+
+        /**
+         * @return the language model for k-grams, where 1 <= k <= N.
+         */
+        const ProbMap & kth_distribution(size_t k) const;
 
     private:
+
+        string get_word(double rand, const std::unordered_map<std::string, double> & dist) const;
+
+        string get_prev(double rand) const;
 
         /**
          * Tokenizes a training document, counting frequencies of ngrams.
@@ -100,6 +116,9 @@ class NgramDistribution
          */
         std::string get_rest(const std::string & words) const;
 
+        
+        string to_prev(const std::deque<std::string> & ngram) const;
+
         /** Distribution for this ngram */
         FreqMap _freqs;
 
@@ -126,11 +145,15 @@ class NgramDistribution<0>
         NgramDistribution(const std::string & docPath):
             _dist(ProbMap()){ /* nothing */ }
 
-        double prob(const std::string & str)
-        {
-            return 0.0;
-        }
+        double prob(const std::string & str) { return 0.0; }
+
+        const ProbMap & kth_distribution(size_t k) const { return _dist; }
     
+        string get_next_word(const std::deque<std::string> & ngram,
+            std::default_random_engine & gen,
+            std::uniform_real_distribution<double> & rdist) const
+        { return " _segfault_ "; }
+
     private:
         
         ProbMap _dist;

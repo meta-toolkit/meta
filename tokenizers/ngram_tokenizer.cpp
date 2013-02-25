@@ -103,7 +103,11 @@ void NgramTokenizer::tokenizeWord(Document & document,
 string NgramTokenizer::stopOrStem(const string & str) const
 {
     if(_stemmerType == NoStemmer)
-        return Porter2Stemmer::trim(str);
+    {
+        string ret(str);
+        std::transform(ret.begin(), ret.end(), ret.begin(), ::tolower);
+        return ret;
+    }
     else
         return Porter2Stemmer::stem(Porter2Stemmer::trim(str));
 }
