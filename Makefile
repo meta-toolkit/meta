@@ -59,7 +59,7 @@ clean:
 	for dir in $(CLEANDIRS) ; do rm -rf $$dir/*.o ; done
 	for dir in $(LIBDIRS) ; do make -C $$dir clean ; done
 	rm -f preprocessor/*.class evalConfig.ini evalOutput
-	rm -f $(SEARCH) $(TESTER) $(PLOT) $(LEARN) *.o
+	rm -f $(SEARCH) $(TESTER) $(PLOT) $(LEARN) $(LM) *.o
 
 tidy:
 	rm -rf ./doc *.chunk postingsFile lexiconFile termid.mapping docid.mapping docs.lengths *compressed.txt
