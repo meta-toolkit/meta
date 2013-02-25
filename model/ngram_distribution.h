@@ -44,6 +44,28 @@ class NgramDistribution
          */
         double prob(const std::string & str) const;
 
+        /**
+         * Calculates the log-likelihood of the given document using the current
+         * language model.
+         * @param document
+         * @return the log-likelihood
+         */
+        double log_likelihood(const Document & document) const;
+
+        /**
+         * Calculates the perplexity of the given document using the current
+         * language model.
+         * @param document
+         * @return the perplexity of the document
+         */
+        double perplexity(const Document & document) const;
+
+        /**
+         * Generates a random sentence using the current language model.
+         * @return a random sentence likely to be generated with this model
+         */
+        string random_sentence() const;
+
     private:
 
         /**

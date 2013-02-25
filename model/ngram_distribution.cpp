@@ -12,6 +12,24 @@ typedef unordered_map<string, unordered_map<string, size_t>> FreqMap;
 typedef unordered_map<string, unordered_map<string, double>> ProbMap;
 
 template <size_t N>
+double NgramDistribution<N>::log_likelihood(const Document & document) const
+{
+    return 0.0;
+}
+
+template <size_t N>
+double NgramDistribution<N>::perplexity(const Document & document) const
+{
+    return 0.0;
+}
+
+template <size_t N>
+string NgramDistribution<N>::random_sentence() const
+{
+    return "random sentence";
+}
+
+template <size_t N>
 NgramDistribution<N>::NgramDistribution(const string & docPath):
     _freqs(FreqMap()),
     _dist(ProbMap()),
@@ -20,7 +38,6 @@ NgramDistribution<N>::NgramDistribution(const string & docPath):
     calc_freqs(docPath);
     calc_discount_factor();
     calc_dist();
-    cout << N << " constructor done" << endl;
 }
 
 template <size_t N>
@@ -101,7 +118,7 @@ void NgramDistribution<N>::calc_dist()
             
             //  _dist[prev][word] = static_cast<double>(c_prevw) / c_prev; // unsmoothed
 
-            // cout << " p(" << word << "|" << prev << ") = " << _dist[prev][word] << endl;
+            cout << " p(" << word << "|" << prev << ") = " << _dist[prev][word] << endl;
         }
     }
 }
