@@ -22,14 +22,27 @@ class NgramDistribution
 {
     public:
 
-        typedef std::unordered_map<std::string, unsigned int> FreqMap;
-        typedef std::unordered_map<std::string, double> ProbMap;
+        typedef std::unordered_map<std::string, std::unordered_map<std::string, size_t>> FreqMap;
+        typedef std::unordered_map<std::string, std::unordered_map<std::string, double>> ProbMap;
 
         /**
          * Constructor.
          * @param docPath The training document.
          */
         NgramDistribution(const std::string & docPath);
+
+        /**
+         * @param prev
+         * @param word
+         * @return the probability of seeing "prev+word".
+         */
+        double prob(const std::string & prev, const std::string & word) const;
+
+        /**
+         * @param str
+         * @return the probability of seeing "str".
+         */
+        double prob(const std::string & str) const;
 
     private:
 
@@ -40,7 +53,9 @@ class NgramDistribution
         void calc_freqs(const std::string & docPath);
 
         /**
-         * Tokenizes a training document, counting frequencies of ngrams.
+         * Calculates a smoothed probability distribution over ngrams.
+         * \f$P_{AD}(word|prev) = \frac{ max(c(prevword) - D, 0) }{ c(prev) } +
+         *  \frac{D}{c(prev)} \cdot |S_w| \cdot P_{AD}(word)\f$
          */
         void calc_dist();
 
@@ -50,6 +65,18 @@ class NgramDistribution
          * n2 = number of ngrams that appear exactly twice.
          */
         void calc_discount_factor();
+
+        /**
+         * @param words A string "w1 w2 w3 w4"
+         * @return "w4" from "w1 w2 w3 w4"
+         */
+        std::string get_last(const std::string & words) const;
+
+        /**
+         * @param words A string "w1 w2 w3 w4"
+         * @return "w1 w2 w3" from "w1 w2 w3 w4"
+         */
+        std::string get_rest(const std::string & words) const;
 
         /** Distribution for this ngram */
         FreqMap _freqs;
@@ -72,10 +99,15 @@ class NgramDistribution<0>
 {
     public:
     
-        typedef std::unordered_map<std::string, double> ProbMap;
+        typedef std::unordered_map<std::string, std::unordered_map<std::string, double>> ProbMap;
 
         NgramDistribution(const std::string & docPath):
             _dist(ProbMap()){ /* nothing */ }
+
+        double prob(const std::string & str)
+        {
+            return 0.0;
+        }
     
     private:
         
