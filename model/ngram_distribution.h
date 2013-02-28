@@ -66,7 +66,7 @@ class NgramDistribution
          * Generates a random sentence using the current language model.
          * @return a random sentence likely to be generated with this model
          */
-        string random_sentence(unsigned int seed) const;
+        string random_sentence(unsigned int seed, size_t numWords) const;
 
         /**
          * @return the value of N for this model
@@ -80,8 +80,20 @@ class NgramDistribution
 
     private:
 
+        /**
+         * Selects a word (token) from a probability distribution given a random
+         * number.
+         * @param rand A uniform random number in [0,1] used to select a token.
+         * @param dist The distribution to select from
+         * @return a random, though likely token from the distribution
+         */
         string get_word(double rand, const std::unordered_map<std::string, double> & dist) const;
 
+        /**
+         * @param rand
+         * @return N-1 previous tokens based on a uniform random number in
+         * [0,1].
+         */
         string get_prev(double rand) const;
 
         /**
@@ -116,19 +128,24 @@ class NgramDistribution
          */
         std::string get_rest(const std::string & words) const;
 
-        
+        /**
+         * Converts a deque into a human-readable string representation of
+         * tokens.
+         * @param ngram The deque of tokens
+         * @return the list of tokens as a string
+         */
         string to_prev(const std::deque<std::string> & ngram) const;
 
-        /** Distribution for this ngram */
+        /** Frequency of each ngram, used for probability calculation. */
         FreqMap _freqs;
 
-        /** Distribution for this ngram */
+        /** Distribution for this ngram. */
         ProbMap _dist;
 
-        /** Distribution for this ngram */
+        /** N-1 prior distribution. */
         NgramDistribution<N - 1> _lower;
 
-        /** Discounting factor for this distribution */
+        /** Discounting factor for absolute discounting smoothing. */
         double _discount;
 };
 
@@ -149,11 +166,6 @@ class NgramDistribution<0>
 
         const ProbMap & kth_distribution(size_t k) const { return _dist; }
     
-        string get_next_word(const std::deque<std::string> & ngram,
-            std::default_random_engine & gen,
-            std::uniform_real_distribution<double> & rdist) const
-        { return " _segfault_ "; }
-
     private:
         
         ProbMap _dist;

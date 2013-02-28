@@ -8,8 +8,6 @@
 
 using std::deque;
 using std::vector;
-using std::cout;
-using std::cerr;
 using std::endl;
 using std::string;
 using std::unordered_map;
@@ -30,7 +28,7 @@ double NgramDistribution<N>::perplexity(const Document & document) const
 }
 
 template <size_t N>
-string NgramDistribution<N>::random_sentence(unsigned int seed) const
+string NgramDistribution<N>::random_sentence(unsigned int seed, size_t numWords) const
 {
     std::default_random_engine gen(seed);
     std::uniform_real_distribution<double> rdist(0.0, 1.0);
@@ -49,10 +47,18 @@ string NgramDistribution<N>::random_sentence(unsigned int seed) const
 
     // append likely words, creating a sentence
     string word = get_word(rdist(gen), _dist.at(sentence));
-    for(size_t i = 0; i < 400; ++i)
+    for(size_t i = 0; i < numWords; ++i)
     {
-        sentence += " " + word;
         ngram.push_back(word);
+        if(word == "-rrb-")
+            word = ")";
+        else if(word == "-lrb-")
+            word = "(";
+        else if(word == "</s>")
+            word = "\n\n";
+        else if(word == "<s>")
+            word = "";
+        sentence += " " + word;
         ngram.pop_front();
         string prev = to_prev(ngram);
         auto it = _dist.find(prev);
@@ -65,9 +71,6 @@ string NgramDistribution<N>::random_sentence(unsigned int seed) const
 template <size_t N>
 string NgramDistribution<N>::to_prev(const deque<string> & ngram) const
 {
-    if(ngram.empty())
-        cerr << "uhoh, something went horribly wrong inside of me!" << endl;
-
     string ret = "";
     for(auto & w: ngram)
         ret += " " + w;
@@ -107,7 +110,6 @@ string NgramDistribution<N>::get_word(double rand, const unordered_map<string, d
             return prob.first;
     }
 
-    cout << " get_word: sum: " << sum << " rand: " << rand << endl;
     return "";
 }
 
@@ -129,7 +131,7 @@ NgramDistribution<N>::NgramDistribution(const string & docPath):
     _dist(ProbMap()),
     _lower(NgramDistribution<N - 1>(docPath))
 {
-    cerr << " Creating " << N << "-gram model..." << endl;
+    std::cerr << " Creating " << N << "-gram model..." << std::endl;
     calc_freqs(docPath);
     calc_discount_factor();
     calc_dist();
@@ -211,10 +213,6 @@ void NgramDistribution<N>::calc_dist()
             size_t c_prevw = wmap.second;
             _dist[prev][word] = std::max(c_prevw - _discount, 0.0) / c_prev;
             _dist[prev][word] += (_discount / c_prev) * s_w * _lower.prob(prev);
-            
-            //  _dist[prev][word] = static_cast<double>(c_prevw) / c_prev; // unsmoothed
-
-            //cout << " p(" << word << "|" << prev << ") = " << _dist[prev][word] << endl;
         }
     }
 }
