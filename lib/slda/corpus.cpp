@@ -59,6 +59,8 @@ void corpus::read_data(const char * data_filename,
     nd = 0;
     nw = 0;
 
+    // read the length of the term list so we can allocate a document of the
+    // correct size
     while ((fscanf(fileptr, "%10d", &length) != EOF))
     {
         document * doc = new document(length);

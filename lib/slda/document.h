@@ -19,26 +19,48 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA
 
-#ifndef CORPUS_H
-#define CORPUS_H
+#ifndef DOCUMENT_H
+#define DOCUMENT_H 
 
 #include <vector>
 #include <stddef.h>
-#include "document.h"
 
-class corpus
+class document
 {
 public:
-    corpus();
-    ~corpus();
-    void read_data(const char * data_filename, const char * label_filename);
-    int max_corpus_length();
+    int * words;
+    int * counts;
+    int length;
+    int total;
+    int label;
 
-    int num_docs;
-    int size_vocab;
-    int num_classes;
-    int num_total_words;
-    std::vector<document*> docs;
+    document()
+    {
+        words = NULL;
+        counts = NULL;
+        length = 0;
+        total = 0;
+        label = -1;
+    }
+    document(int len)
+    {
+        length = len;
+        words = new int [length];
+        counts = new int [length];
+        total = 0;
+        label = -1;
+    }
+    ~document()
+    {
+        if (words != NULL)
+        {
+            delete [] words;
+            delete [] counts;
+            length = 0;
+            total = 0;
+            label = -1;
+        }
+    }
 };
 
-#endif // CORPUS_H
+#endif // DOCUMENT_H
