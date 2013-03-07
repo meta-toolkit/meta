@@ -27,11 +27,11 @@ TESTS = test/porter2_stemmer_test.h test/parse_tree_test.h \
 TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp
 
 CC = g++ -std=c++0x -fopenmp -I.
-#CCOPTS = -g -O0
-CCOPTS = -O3
+CCOPTS = -g -O0
+#CCOPTS = -O3
 LINKER = g++ -std=c++0x -fopenmp -I.
 
-LIBDIRS = lib/liblinear-1.92
+LIBDIRS = lib/liblinear-1.92 lib/slda
 CLEANDIRS = tokenizers io index util stemmers classify test model lib/liblinear-1.92
 
 all: $(SEARCH) $(TESTER) $(PLOT) $(LEARN) $(LM)

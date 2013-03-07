@@ -1,0 +1,6 @@
+var max iter 20
+var convergence 1e-3
+em max iter 50
+em convergence 1e-4
+L2 penalty 0.01
+alpha fixed
