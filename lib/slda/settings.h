@@ -42,19 +42,19 @@ struct settings
         char alpha_action[100];
 
         fileptr = fopen(filename, "r");
-        fscanf(fileptr, "var max iter %d\n", &this->VAR_MAX_ITER);
-        fscanf(fileptr, "var convergence %f\n", &this->VAR_CONVERGED);
-        fscanf(fileptr, "em max iter %d\n", &this->EM_MAX_ITER);
-        fscanf(fileptr, "em convergence %f\n", &this->EM_CONVERGED);
-        fscanf(fileptr, "L2 penalty %f\n", &this->PENALTY);
-        fscanf(fileptr, "alpha val %f\n", &this->ALPHA);
-        fscanf(fileptr, "num topics %d\n", &this->NUM_TOPICS);
+        fscanf(fileptr, "var max iter %d\n", &VAR_MAX_ITER);
+        fscanf(fileptr, "var convergence %f\n", &VAR_CONVERGED);
+        fscanf(fileptr, "em max iter %d\n", &EM_MAX_ITER);
+        fscanf(fileptr, "em convergence %f\n", &EM_CONVERGED);
+        fscanf(fileptr, "L2 penalty %f\n", &PENALTY);
+        fscanf(fileptr, "alpha val %f\n", &ALPHA);
+        fscanf(fileptr, "num topics %d\n", &NUM_TOPICS);
 
         fscanf(fileptr, "alpha %s", alpha_action);
         if (strcmp(alpha_action, "fixed") == 0)
-            this->ESTIMATE_ALPHA = 0;
+            ESTIMATE_ALPHA = 0;
         else
-            this->ESTIMATE_ALPHA = 1;
+            ESTIMATE_ALPHA = 1;
 
         fclose(fileptr);
     }
