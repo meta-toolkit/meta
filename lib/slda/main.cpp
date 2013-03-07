@@ -26,7 +26,7 @@
 #include "slda.h"
 
 void help( void ) {
-    printf("usage: slda [est] [data] [label] [settings] [alpha] [k] [random/seeded/model_path] [directory]\n");
+    printf("usage: slda [est] [data] [label] [settings] [random/seeded/model_path] [directory]\n");
     printf("       slda [inf] [data] [label] [settings] [model] [directory]\n");
 }
 
@@ -37,26 +37,24 @@ int main(int argc, char* argv[])
         help();
         return 0;
     }
+
     if (strcmp(argv[1], "est") == 0)
     {
         corpus c;
         char * data_filename = argv[2];
         char * label_filename = argv[3];
         c.read_data(data_filename, label_filename);
-        settings setting;
+
         char * setting_filename = argv[4];
+        settings setting;
         setting.read_settings(setting_filename);
 
-        double alpha = atof(argv[5]);
-        int num_topics = atoi(argv[6]);
-        printf("number of topics is %d\n", num_topics);
-        char * init_method = argv[7];
-        char * directory = argv[8];
-        printf("models will be saved in %s\n", directory);
+        char * init_method = argv[5];
+        char * directory = argv[6];
         make_directory(directory);
 
         slda model;
-        model.init(alpha, num_topics, &c);
+        model.init(setting.ALPHA, setting.NUM_TOPICS, &c);
         model.v_em(&c, &setting, init_method, directory);
     }
 

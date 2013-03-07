@@ -21,6 +21,7 @@
 
 #ifndef SETTINGS_H
 #define SETTINGS_H
+
 #include <stdio.h>
 #include <string.h>
 
@@ -32,6 +33,8 @@ struct settings
     int   EM_MAX_ITER;
     int   ESTIMATE_ALPHA;
     float PENALTY;
+    float ALPHA;
+    int   NUM_TOPICS;
 
     void read_settings(char* filename)
     {
@@ -44,24 +47,16 @@ struct settings
         fscanf(fileptr, "em max iter %d\n", &this->EM_MAX_ITER);
         fscanf(fileptr, "em convergence %f\n", &this->EM_CONVERGED);
         fscanf(fileptr, "L2 penalty %f\n", &this->PENALTY);
+        fscanf(fileptr, "alpha val %f\n", &this->ALPHA);
+        fscanf(fileptr, "num topics %d\n", &this->NUM_TOPICS);
 
         fscanf(fileptr, "alpha %s", alpha_action);
         if (strcmp(alpha_action, "fixed") == 0)
-        {
             this->ESTIMATE_ALPHA = 0;
-            printf("alpha is fixed ...\n");
-        }
         else
-        {
             this->ESTIMATE_ALPHA = 1;
-            printf("alpha is esimated ...\n");
-        }
+
         fclose(fileptr);
-        printf("var max iter %d\n", this->VAR_MAX_ITER);
-        printf("var convergence %.2E\n", this->VAR_CONVERGED);
-        printf("em max iter %d\n", this->EM_MAX_ITER);
-        printf("em convergence %.2E\n", this->EM_CONVERGED);
-        printf("L2 penalty %.2E\n", this->PENALTY);
     }
 };
 
