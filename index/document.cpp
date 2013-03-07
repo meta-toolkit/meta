@@ -123,5 +123,6 @@ int Document::getMapping(InvertibleMap<string, int> & mapping, const string & ca
         ++newVal;
 
     mapping.insert(category, newVal);
+    //cerr << "id: " << newVal << " = " << category << endl;
     return newVal;
 }
