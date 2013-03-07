@@ -25,42 +25,17 @@
 #include <vector>
 #include <stddef.h>
 
-class document
+struct document
 {
-public:
-    int * words;
-    int * counts;
+    std::vector<int> words;
+    std::vector<int> counts;
     int length;
     int total;
     int label;
 
-    document()
-    {
-        words = NULL;
-        counts = NULL;
-        length = 0;
-        total = 0;
-        label = -1;
-    }
-    document(int len)
-    {
-        length = len;
-        words = new int [length];
-        counts = new int [length];
-        total = 0;
-        label = -1;
-    }
-    ~document()
-    {
-        if (words != NULL)
-        {
-            delete [] words;
-            delete [] counts;
-            length = 0;
-            total = 0;
-            label = -1;
-        }
-    }
+    document(int _length):
+        length(_length), total(0), label(-1)
+    { /* nothing */ }
 };
 
 #endif // DOCUMENT_H

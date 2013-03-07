@@ -26,8 +26,8 @@
 #include "slda.h"
 
 void help( void ) {
-    printf("usage: slda [est] [data] [label] [settings] [random/seeded/model_path] [directory]\n");
-    printf("       slda [inf] [data] [label] [settings] [model] [directory]\n");
+    printf("usage: slda [est] [data] [settings] [random/seeded/model_path] [directory]\n");
+    printf("       slda [inf] [data] [settings] [model] [directory]\n");
 }
 
 int main(int argc, char* argv[])
@@ -42,15 +42,14 @@ int main(int argc, char* argv[])
     {
         corpus c;
         char * data_filename = argv[2];
-        char * label_filename = argv[3];
-        c.read_data(data_filename, label_filename);
+        c.read_data(data_filename);
 
-        char * setting_filename = argv[4];
+        char * setting_filename = argv[3];
         settings setting;
         setting.read_settings(setting_filename);
 
-        char * init_method = argv[5];
-        char * directory = argv[6];
+        char * init_method = argv[4];
+        char * directory = argv[5];
         make_directory(directory);
 
         slda model;
@@ -62,14 +61,13 @@ int main(int argc, char* argv[])
     {
         corpus c;
         char * data_filename = argv[2];
-        char * label_filename = argv[3];
-        c.read_data(data_filename, label_filename);
+        c.read_data(data_filename);
         settings setting;
-        char * setting_filename = argv[4];
+        char * setting_filename = argv[3];
         setting.read_settings(setting_filename);
 
-        char * model_filename = argv[5];
-        char * directory = argv[6];
+        char * model_filename = argv[4];
+        char * directory = argv[5];
         printf("\nresults will be saved in %s\n", directory);
         make_directory(directory);
 

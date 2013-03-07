@@ -22,23 +22,30 @@
 #ifndef CORPUS_H
 #define CORPUS_H
 
+#include <utility>
 #include <vector>
+#include <string>
 #include <stddef.h>
 #include "document.h"
 
 class corpus
 {
-public:
-    corpus();
-    ~corpus();
-    void read_data(const char * data_filename, const char * label_filename);
-    int max_corpus_length();
+    public:
 
-    int num_docs;
-    int size_vocab;
-    int num_classes;
-    int num_total_words;
-    std::vector<document*> docs;
+        corpus();
+        ~corpus();
+        void read_data(const char * data_filename);
+        int max_corpus_length();
+
+        int num_docs;
+        int size_vocab;
+        int num_classes;
+        int num_total_words;
+        std::vector<document*> docs;
+
+    private:
+
+        std::pair<int, int> get_word_data(const std::string & str) const;
 };
 
 #endif // CORPUS_H

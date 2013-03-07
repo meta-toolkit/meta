@@ -1,4 +1,4 @@
-CC = g++
+CC = g++ -std=c++0x
 CC_OPTS = -O3
 #CC_OPTS = -g -O0
 LDFLAGS = -lgsl -lm -lgslcblas
