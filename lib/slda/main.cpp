@@ -33,10 +33,10 @@ using std::endl;
 
 int main(int argc, char* argv[])
 {
-    if(argc != 6)
+    if(argc < 5 || argc > 6)
     {
         cerr << "usage: " << argv[0]
-             << " [est] [data] [settings] [random/seeded/model_path] [directory]"
+             << " [est] [data] [settings] [directory]"
              << endl << "       " << argv[0]
              << " [inf] [data] [settings] [model] [directory]" << endl;
         return 1;
@@ -57,19 +57,21 @@ int main(int argc, char* argv[])
     string setting_filename = args[2];
     setting.read_settings(setting_filename);
 
-    string directory = args[4];
-    make_directory(directory);
-
     if(args[0] == "est")
     {
-        string init_method = args[3];
+        string directory = args[3];
+        make_directory(directory);
+
         slda model;
-        model.init(setting.ALPHA, setting.NUM_TOPICS, &c);
-        model.v_em(&c, &setting, init_method, directory);
+        model.init(setting.alpha, setting.num_topics, &c);
+        model.v_em(&c, &setting, setting.init_method, directory);
     }
 
     if(args[0] == "inf")
     {
+        string directory = args[4];
+        make_directory(directory);
+
         string model_filename = args[3];
         slda model;
         model.load_model(model_filename);

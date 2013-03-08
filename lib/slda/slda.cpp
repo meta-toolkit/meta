@@ -23,6 +23,7 @@
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
+#include <string.h>
 #include "slda.h"
 #include "utils.h"
 #include "assert.h"
@@ -452,7 +453,7 @@ void slda::v_em(corpus * c, const settings * setting,
     int ETA_UPDATE = 0;
 
     i = 0;
-    while (((converged < 0) || (converged > setting->EM_CONVERGED) || (i <= LDA_INIT_MAX+2)) && (i <= setting->EM_MAX_ITER))
+    while (((converged < 0) || (converged > setting->em_converged) || (i <= LDA_INIT_MAX+2)) && (i <= setting->em_max_iter))
     {
         printf("**** em iteration %d ****\n", ++i);
         likelihood = 0;
@@ -550,7 +551,7 @@ void slda::mle(suffstats * ss, int eta_update, const settings * setting)
 	opt_parameter param;
 	param.ss = ss;
 	param.model = this;
-	param.PENALTY = setting->PENALTY;
+	param.PENALTY = setting->penalty;
 
 	const gsl_multimin_fdfminimizer_type * T;
 	gsl_multimin_fdfminimizer * s;
@@ -673,7 +674,7 @@ double slda::lda_inference(document* doc, double* var_gamma, double** phi, const
     }
     var_iter = 0;
 
-    while (converged > setting->VAR_CONVERGED && (var_iter < setting->VAR_MAX_ITER || setting->VAR_MAX_ITER == -1))
+    while (converged > setting->var_converged && (var_iter < setting->var_max_iter || setting->var_max_iter == -1))
     {
         var_iter++;
         for (n = 0; n < doc->length; n++)
@@ -834,7 +835,7 @@ double slda::slda_inference(document* doc, double* var_gamma, double** phi, cons
 
     var_iter = 0;
 
-    while ((converged > setting->VAR_CONVERGED) && ((var_iter < setting->VAR_MAX_ITER) || (setting->VAR_MAX_ITER == -1)))
+    while ((converged > setting->var_converged) && ((var_iter < setting->var_max_iter) || (setting->var_max_iter == -1)))
     {
         var_iter++;
         for (n = 0; n < doc->length; n++)

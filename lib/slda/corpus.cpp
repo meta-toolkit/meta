@@ -85,6 +85,8 @@ void corpus::read_data(const string & data_filename)
 
         docs.push_back(doc);
     }
+    
+    infile.close();
 
     cout << "number of docs  : " << docs.size() << endl;
     cout << "number of terms : " << size_vocab << endl;

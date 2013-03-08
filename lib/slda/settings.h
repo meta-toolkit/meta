@@ -22,42 +22,46 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <stdio.h>
-#include <string.h>
+#include <fstream>
+#include <sstream>
 #include <string>
 
 struct settings
 {
-    float VAR_CONVERGED;
-    int   VAR_MAX_ITER;
-    float EM_CONVERGED;
-    int   EM_MAX_ITER;
-    int   ESTIMATE_ALPHA;
-    float PENALTY;
-    float ALPHA;
-    int   NUM_TOPICS;
+    using string = std::string;
 
-    void read_settings(const std::string & filename)
+    float  var_converged;
+    int    var_max_iter;
+    float  em_converged;
+    int    em_max_iter;
+    int    estimate_alpha;
+    float  penalty;
+    float  alpha;
+    int    num_topics;
+    string init_method;
+
+    void read_settings(const string & filename)
     {
-        FILE * fileptr;
-        char alpha_action[100];
-
-        fileptr = fopen(filename.c_str(), "r");
-        fscanf(fileptr, "var max iter %d\n", &VAR_MAX_ITER);
-        fscanf(fileptr, "var convergence %f\n", &VAR_CONVERGED);
-        fscanf(fileptr, "em max iter %d\n", &EM_MAX_ITER);
-        fscanf(fileptr, "em convergence %f\n", &EM_CONVERGED);
-        fscanf(fileptr, "L2 penalty %f\n", &PENALTY);
-        fscanf(fileptr, "alpha val %f\n", &ALPHA);
-        fscanf(fileptr, "num topics %d\n", &NUM_TOPICS);
-
-        fscanf(fileptr, "alpha %s", alpha_action);
-        if (strcmp(alpha_action, "fixed") == 0)
-            ESTIMATE_ALPHA = 0;
-        else
-            ESTIMATE_ALPHA = 1;
-
-        fclose(fileptr);
+        std::ifstream infile(filename);
+        string line;
+        while(infile >> line)
+        {
+            if(line == "var-max-iter")         infile >> var_max_iter;
+            else if(line == "var-convergence") infile >> var_converged;
+            else if(line == "em-max-iter")     infile >> em_max_iter;
+            else if(line == "em-convergence")  infile >> em_converged;
+            else if(line == "L2-penalty")      infile >> penalty;
+            else if(line == "alpha-val")       infile >> alpha;
+            else if(line == "num-topics")      infile >> num_topics;
+            else if(line == "init-method")     infile >> init_method;
+            else if(line == "alpha-action")
+            {
+                string opt;
+                infile >> opt;
+                estimate_alpha = (opt == "fixed") ? 0 : 1;
+            }
+        }
+        infile.close();
     }
 };
 

@@ -1,8 +1,9 @@
-var max iter 20
-var convergence 1e-3
-em max iter 50
-em convergence 1e-4
-L2 penalty 0.01
-alpha val 1.0
-num topics 8
-alpha fixed
+var-max-iter 20
+var-convergence 1e-3
+em-max-iter 50
+em-convergence 1e-4
+L2-penalty 0.01
+alpha-val 1.0
+num-topics 8
+init-method random
+alpha-action fixed
