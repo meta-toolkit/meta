@@ -42,7 +42,7 @@ vector<vector<pair<int, double>>> slda::top_terms() const
     vector<vector<pair<int, double>>> sorted(num_topics);
     for(int k = 0; k < num_topics; ++k)
     {
-        sorted[k].reserve(num_topics);
+        sorted[k].reserve(size_vocab);
         for(int j = 0; j < size_vocab; ++j)
             sorted[k].push_back(std::make_pair(j, log_prob_w[k][j]));
 
