@@ -21,6 +21,9 @@
 
 #ifndef SLDA_H
 #define SLDA_H
+
+#include <vector>
+#include <utility>
 #include <string>
 #include "settings.h"
 #include "corpus.h"
@@ -49,6 +52,8 @@ public:
     void v_em(corpus * c, const settings * setting,
               const std::string & start, const std::string & directory);
 
+    std::vector<std::vector<std::pair<int, double>>> top_terms() const;
+
     void save_model(const std::string & filename);
     void save_model_text(const std::string & filename);
     void load_model(const std::string & model_filename);
@@ -73,8 +78,6 @@ public:
     void save_gamma(char* filename, double** gamma, int num_docs);
     void write_word_assignment(FILE* f, document* doc, double** phi);
 
-
-public:
     double alpha; // the parameter for the dirichlet
     int num_topics;
     int num_classes;

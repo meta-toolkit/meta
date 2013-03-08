@@ -22,6 +22,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <utility>
 #include "corpus.h"
 #include "utils.h"
 #include "slda.h"
@@ -30,6 +31,8 @@ using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;
+using std::vector;
+using std::pair;
 
 int main(int argc, char* argv[])
 {
@@ -74,6 +77,15 @@ int main(int argc, char* argv[])
         slda model;
         model.load_model(model_filename);
         model.infer_only(&c, &setting, directory);
+
+        vector<vector<pair<int, double>>> dists = model.top_terms();
+        size_t d = 0;
+        for(auto & dist: dists)
+        {
+            cout << "Top terms for dist " << d++ << endl;
+            for(size_t i = 0; i < 10; ++i)
+                cout << "  " << dist[i].first << " " << dist[i].second << endl;
+        }
     }
 
     return 0;

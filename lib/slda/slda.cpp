@@ -25,6 +25,7 @@
 #include <gsl/gsl_randist.h>
 #include <string.h>
 #include <iostream>
+#include <algorithm>
 #include "slda.h"
 #include "utils.h"
 #include "assert.h"
@@ -33,6 +34,26 @@
 using std::cerr;
 using std::endl;
 using std::string;
+using std::vector;
+using std::pair;
+
+vector<vector<pair<int, double>>> slda::top_terms() const
+{
+    vector<vector<pair<int, double>>> sorted(num_topics);
+    for(int k = 0; k < num_topics; ++k)
+    {
+        sorted[k].reserve(num_topics);
+        for(int j = 0; j < size_vocab; ++j)
+            sorted[k].push_back(std::make_pair(j, log_prob_w[k][j]));
+
+        std::sort(sorted[k].begin(), sorted[k].end(),
+            [](const pair<int, double> & a, const pair<int, double> & b){
+                return a.second > b.second;
+        });
+    }
+
+    return sorted;
+}
 
 slda::slda()
 {
