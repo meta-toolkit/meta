@@ -8,8 +8,8 @@
 #include <cstddef>
 #include <unordered_map>
 
-#include "similarity.h"
-#include "../index/document.h"
+#include "cluster/similarity.h"
+#include "index/document.h"
 
 namespace clustering {
 
@@ -48,7 +48,7 @@ template <>
 point<TermID, Document>::point( const Document & d ) 
         : element_{ &d }, size_{ 1 } {
     for( const auto & freq : d.getFrequencies() )
-        avg_vector_[ freq.first() ] = static_cast<double>( freq.second() );
+        avg_vector_[ freq.first ] = static_cast<double>( freq.second );
 }
 
 template <class DimensionKey, class Element>

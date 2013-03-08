@@ -27,8 +27,11 @@ TESTS = test/porter2_stemmer_test.h test/parse_tree_test.h \
 SLDATEST = slda-test
 SLDATESTOBJS = $(SEARCHOBJS) lib/slda/corpus.o lib/slda/slda.o lib/slda/utils.o lib/slda/opt.o
 
+CLUSTERTEST = cluster-test
+CLUSTERTESTOBJS = $(SEARCHOBJS)
+
 TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp \
-    cluster/similarity.h cluster/similarity.cpp
+    cluster/similarity.h cluster/similarity.cpp cluster/point.h
 
 CC = g++ -std=c++0x -fopenmp -I.
 #CCOPTS = -g -O0
@@ -36,10 +39,10 @@ CCOPTS = -O3
 LINKER = g++ -std=c++0x -fopenmp -I.
 
 LIBDIRS = lib/liblinear-1.92 lib/slda
-CLEANDIRS = tokenizers io index util stemmers classify test model $(LIBDIRS)
+CLEANDIRS = tokenizers io index util stemmers classify test model cluster $(LIBDIRS)
 SLDALIBS = -lgsl -lm -lgslcblas
 
-all: $(SEARCH) $(TESTER) $(PLOT) $(LEARN) $(LM) $(SLDATEST)
+all: $(SEARCH) $(TESTER) $(PLOT) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST)
 	for dir in $(LIBDIRS) ; do make -C $$dir ; done
 
 $(LM): $(LMOBJS) lm.cpp model/ngram_distribution.h model/ngram_distribution.cpp
@@ -59,6 +62,9 @@ $(PLOT): $(PLOTOBJS) features.cpp $(TEMPLATES)
 
 $(LEARN): $(LEARNOBJS) learn.cpp $(TEMPLATES)
 	$(LINKER) learn.cpp -o $@ $(LEARNOBJS)
+			   
+$(CLUSTERTEST): $(CLUSTERTESTOBJS) cluster/test.cpp $(TEMPLATES)
+	$(LINKER) cluster/test.cpp -o $@ $(CLUSTERTESTOBJS)
 
 %.o : %.cpp $(wildcard *.h)
 	$(CC) $(CCOPTS) -c $(@:.o=.cpp) -o $@

@@ -2,6 +2,8 @@
  * @file similarity.cpp
  */
 
+#include <cmath>
+
 template <class Key, class Value>
 double Similarity::cosine_similarity(const unordered_map<Key, Value> & a,
                                      const unordered_map<Key, Value> & b)
