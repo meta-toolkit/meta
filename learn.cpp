@@ -22,24 +22,6 @@ using std::endl;
 using std::string;
 
 /**
- * Returns a vector of all documents in a given dataset.
- * @param filename - the file containing the list of files in a corpus
- * @param prefix - the prefix of the path to a corpus
- * @return a vector of Documents created from the filenames
- */
-vector<Document> getDocs(const string & filename, const string & prefix)
-{
-    vector<Document> docs;
-    Parser parser(filename, "\n");
-    while(parser.hasNext())
-    {
-        string file = parser.next();
-        docs.push_back(Document(prefix + "/" + file));
-    }
-    return docs;
-}
-
-/**
  * Runs the scatterplot creation.
  */
 int main(int argc, char* argv[])
@@ -71,7 +53,7 @@ int main(int argc, char* argv[])
         {"Multi", TreeTokenizer::Multi}
     };
     
-    vector<Document> documents = getDocs(prefix + "/full-corpus.txt", prefix);
+    vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
 
     size_t done = 0;
     if(method == "ngram")
@@ -85,6 +67,8 @@ int main(int argc, char* argv[])
             if(!quiet && done++ % 20 == 0)
                 cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
         }
+
+        tokenizer->saveTermIDMapping("termidmapping.txt");
         delete tokenizer;
     }
     else if(method == "tree")
@@ -97,6 +81,7 @@ int main(int argc, char* argv[])
             if(!quiet && done++ % 20 == 0)
                 cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
         }
+
         delete tokenizer;
     }
     else if(method == "both")
