@@ -34,7 +34,7 @@ class corpus
 
         corpus();
         ~corpus();
-        void read_data(const char * data_filename);
+        void read_data(const std::string & data_filename);
         int max_corpus_length();
 
         int size_vocab;

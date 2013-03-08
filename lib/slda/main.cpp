@@ -19,58 +19,58 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA
 
-#include <stdio.h>
-#include <string.h>
+#include <iostream>
+#include <string>
+#include <vector>
 #include "corpus.h"
 #include "utils.h"
 #include "slda.h"
 
-void help( void ) {
-    printf("usage: slda [est] [data] [settings] [random/seeded/model_path] [directory]\n");
-    printf("       slda [inf] [data] [settings] [model] [directory]\n");
-}
+using std::string;
+using std::cout;
+using std::cerr;
+using std::endl;
 
 int main(int argc, char* argv[])
 {
-    if (argc < 2)
+    if(argc != 6)
     {
-        help();
-        return 0;
+        cerr << "usage: " << argv[0]
+             << " [est] [data] [settings] [random/seeded/model_path] [directory]"
+             << endl << "       " << argv[0]
+             << " [inf] [data] [settings] [model] [directory]" << endl;
+        return 1;
     }
 
-    if (strcmp(argv[1], "est") == 0)
+    std::vector<string> args(argv + 1, argv + argc);
+
+    if(args[0] != "est" && args[0] != "inf")
     {
-        corpus c;
-        char * data_filename = argv[2];
-        c.read_data(data_filename);
+        cerr << "arg 1 must be \"est\" or \"inf\"" << endl;
+        return 1;
+    }
 
-        char * setting_filename = argv[3];
-        settings setting;
-        setting.read_settings(setting_filename);
+    corpus c;
+    string data_filename = args[1];
+    c.read_data(data_filename);
+    settings setting;
+    string setting_filename = args[2];
+    setting.read_settings(setting_filename);
 
-        char * init_method = argv[4];
-        char * directory = argv[5];
-        make_directory(directory);
+    string directory = args[4];
+    make_directory(directory);
 
+    if(args[0] == "est")
+    {
+        string init_method = args[3];
         slda model;
         model.init(setting.ALPHA, setting.NUM_TOPICS, &c);
         model.v_em(&c, &setting, init_method, directory);
     }
 
-    if (strcmp(argv[1], "inf") == 0)
+    if(args[0] == "inf")
     {
-        corpus c;
-        char * data_filename = argv[2];
-        c.read_data(data_filename);
-        settings setting;
-        char * setting_filename = argv[3];
-        setting.read_settings(setting_filename);
-
-        char * model_filename = argv[4];
-        char * directory = argv[5];
-        printf("\nresults will be saved in %s\n", directory);
-        make_directory(directory);
-
+        string model_filename = args[3];
         slda model;
         model.load_model(model_filename);
         model.infer_only(&c, &setting, directory);

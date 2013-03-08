@@ -47,7 +47,7 @@ corpus::~corpus()
         delete docs[i];
 }
 
-void corpus::read_data(const char * data_filename)
+void corpus::read_data(const string & data_filename)
 {
     std::ifstream infile(data_filename);
     string line;

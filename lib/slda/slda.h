@@ -21,6 +21,7 @@
 
 #ifndef SLDA_H
 #define SLDA_H
+#include <string>
 #include "settings.h"
 #include "corpus.h"
 
@@ -46,13 +47,13 @@ public:
     void free_model();
     void init(double alpha_, int num_topics_, const corpus * c);
     void v_em(corpus * c, const settings * setting,
-              const char * start, const char * directory);
+              const std::string & start, const std::string & directory);
 
-    void save_model(const char * filename);
-    void save_model_text(const char * filename);
-    void load_model(const char * model_filename);
+    void save_model(const std::string & filename);
+    void save_model_text(const std::string & filename);
+    void load_model(const std::string & model_filename);
     void infer_only(corpus * c, const settings * setting,
-                    const char * directory);
+                    const std::string & directory);
 
     suffstats * new_suffstats(int num_docs);
     void free_suffstats(suffstats * ss);
@@ -81,6 +82,11 @@ public:
 
     double ** log_prob_w; //the log of the topic distribution
     double ** eta; //softmax regression, in general, there are num_classes-1 etas, we don't need a intercept here, since \sum_i \bar{z_i} = 1
+
+    static const int NUM_INIT = 50;
+    static const int LAG = 10;
+    static const int LDA_INIT_MAX = 0;
+    static const int MSTEP_MAX_ITER = 50;
 };
 
 #endif // SLDA_H

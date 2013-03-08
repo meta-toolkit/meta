@@ -28,14 +28,10 @@
 #include "assert.h"
 #include "opt.h"
 
-const int NUM_INIT = 50;
-const int LAG = 10;
-const int LDA_INIT_MAX = 0;
-const int MSTEP_MAX_ITER = 50;
+using std::string;
 
 slda::slda()
 {
-    //ctor
     alpha = 1.0;
     num_topics = 0;
     num_classes = 0;
@@ -110,10 +106,10 @@ void slda::free_model()
  * save the model in the binary format
  */
 
-void slda::save_model(const char * filename)
+void slda::save_model(const string & filename)
 {
     FILE * file = NULL;
-    file = fopen(filename, "wb");
+    file = fopen(filename.c_str(), "wb");
     fwrite(&alpha, sizeof (double), 1, file);
     fwrite(&num_topics, sizeof (int), 1, file);
     fwrite(&size_vocab, sizeof (int), 1, file);
@@ -139,10 +135,10 @@ void slda::save_model(const char * filename)
  * load the model in the binary format
  */
 
-void slda::load_model(const char * filename)
+void slda::load_model(const string & filename)
 {
     FILE * file = NULL;
-    file = fopen(filename, "rb");
+    file = fopen(filename.c_str(), "rb");
     fread(&alpha, sizeof (double), 1, file);
     fread(&num_topics, sizeof (int), 1, file);
     fread(&size_vocab, sizeof (int), 1, file);
@@ -172,10 +168,10 @@ void slda::load_model(const char * filename)
  * save the model in the text format
  */
 
-void slda::save_model_text(const char * filename)
+void slda::save_model_text(const string & filename)
 {
     FILE * file = NULL;
-    file = fopen(filename, "w");
+    file = fopen(filename.c_str(), "w");
     fprintf(file, "alpha: %lf\n", alpha);
     fprintf(file, "number of topics: %d\n", num_topics);
     fprintf(file, "size of vocab: %d\n", size_vocab);
@@ -414,14 +410,14 @@ void slda::free_suffstats(suffstats * ss)
 }
 
 void slda::v_em(corpus * c, const settings * setting,
-                const char * start, const char * directory)
+                const string & start, const string & directory)
 {
     char filename[100];
     int max_length = c->max_corpus_length();
-    double **var_gamma, **phi, **lambda;
+    double **var_gamma, **phi;
     double likelihood, likelihood_old = 0, converged = 1;
     int n, i;
-    double L2penalty = setting->PENALTY;
+
     // allocate variational parameters
     var_gamma = new double * [c->docs.size()];
     for (size_t d = 0; d < c->docs.size(); d++)
@@ -433,12 +429,12 @@ void slda::v_em(corpus * c, const settings * setting,
 
     printf("initializing ...\n");
     suffstats * ss = new_suffstats(c->docs.size());
-    if (strcmp(start, "seeded") == 0)
+    if (start == "seeded")
     {
         corpus_initialize_ss(ss, c);
         mle(ss, 0, setting);
     }
-    else if (strcmp(start, "random") == 0)
+    else if (start == "random")
     {
         random_initialize_ss(ss, c);
         mle(ss, 0, setting);
@@ -450,7 +446,7 @@ void slda::v_em(corpus * c, const settings * setting,
     }
 
     FILE * likelihood_file = NULL;
-    sprintf(filename, "%s/likelihood.dat", directory);
+    sprintf(filename, "%s/likelihood.dat", directory.c_str());
     likelihood_file = fopen(filename, "w");
 
     int ETA_UPDATE = 0;
@@ -485,27 +481,27 @@ void slda::v_em(corpus * c, const settings * setting,
         fflush(likelihood_file);
         if ((i % LAG) == 0)
         {
-            sprintf(filename, "%s/%03d.model", directory, i);
+            sprintf(filename, "%s/%03d.model", directory.c_str(), i);
             save_model(filename);
-            sprintf(filename, "%s/%03d.model.text", directory, i);
+            sprintf(filename, "%s/%03d.model.text", directory.c_str(), i);
             save_model_text(filename);
-            sprintf(filename, "%s/%03d.gamma", directory, i);
+            sprintf(filename, "%s/%03d.gamma", directory.c_str(), i);
             save_gamma(filename, var_gamma, c->docs.size());
         }
     }
 
     // output the final model
-    sprintf(filename, "%s/final.model", directory);
+    sprintf(filename, "%s/final.model", directory.c_str());
     save_model(filename);
-    sprintf(filename, "%s/final.model.text", directory);
+    sprintf(filename, "%s/final.model.text", directory.c_str());
     save_model_text(filename);
-    sprintf(filename, "%s/final.gamma", directory);
+    sprintf(filename, "%s/final.gamma", directory.c_str());
     save_gamma(filename, var_gamma, c->docs.size());
 
 
     fclose(likelihood_file);
     FILE * w_asgn_file = NULL;
-    sprintf(filename, "%s/word-assignments.dat", directory);
+    sprintf(filename, "%s/word-assignments.dat", directory.c_str());
     w_asgn_file = fopen(filename, "w");
     for (size_t d = 0; d < c->docs.size(); d ++)
     {
@@ -620,7 +616,7 @@ double slda::doc_e_step(document* doc, double* gamma, double** phi,
 
     int d = ss->num_docs;
 
-    int n, k, i, idx, m;
+    int n, k, i, idx;
 
     // update sufficient statistics
 
@@ -753,7 +749,6 @@ double slda::slda_compute_likelihood(document* doc, double** phi, double* var_ga
     double likelihood = 0, digsum = 0, var_gamma_sum = 0, t = 0.0, t1 = 0.0, t2 = 0.0;
     double * dig = new double [num_topics];
     int k, n, l;
-    int flag;
     double alpha_sum = num_topics * alpha;
     for (k = 0; k < num_topics; k++)
     {
@@ -924,7 +919,7 @@ double slda::slda_inference(document* doc, double* var_gamma, double** phi, cons
     return likelihood;
 }
 
-void slda::infer_only(corpus * c, const settings * setting, const char * directory)
+void slda::infer_only(corpus * c, const settings * setting, const string & directory)
 {
     int i, k, n;
     double **var_gamma, likelihood, **phi;
@@ -948,10 +943,10 @@ void slda::infer_only(corpus * c, const settings * setting, const char * directo
     phi_m = new double [num_topics];
 
     FILE * likelihood_file = NULL;
-    sprintf(filename, "%s/inf-likelihood.dat", directory);
+    sprintf(filename, "%s/inf-likelihood.dat", directory.c_str());
     likelihood_file = fopen(filename, "w");
     FILE * inf_label_file = NULL;
-    sprintf(filename, "%s/inf-labels.dat", directory);
+    sprintf(filename, "%s/inf-labels.dat", directory.c_str());
     inf_label_file = fopen(filename, "w");
 
     for (size_t d = 0; d < c->docs.size(); d++)
@@ -1000,7 +995,7 @@ void slda::infer_only(corpus * c, const settings * setting, const char * directo
 
     printf("average accuracy: %.3f\n", (double)num_correct / (double) c->docs.size());
 
-    sprintf(filename, "%s/inf-gamma.dat", directory);
+    sprintf(filename, "%s/inf-gamma.dat", directory.c_str());
     save_gamma(filename, var_gamma, c->docs.size());
 
     for (size_t d = 0; d < c->docs.size(); d++)

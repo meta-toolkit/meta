@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <string>
 
 struct settings
 {
@@ -36,12 +37,12 @@ struct settings
     float ALPHA;
     int   NUM_TOPICS;
 
-    void read_settings(char* filename)
+    void read_settings(const std::string & filename)
     {
         FILE * fileptr;
         char alpha_action[100];
 
-        fileptr = fopen(filename, "r");
+        fileptr = fopen(filename.c_str(), "r");
         fscanf(fileptr, "var max iter %d\n", &VAR_MAX_ITER);
         fscanf(fileptr, "var convergence %f\n", &VAR_CONVERGED);
         fscanf(fileptr, "em max iter %d\n", &EM_MAX_ITER);
