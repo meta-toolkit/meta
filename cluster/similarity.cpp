@@ -38,7 +38,7 @@ Value Similarity::internal::safe_at(const unordered_map<Key, Value> & map, const
 {
     auto it = map.find(key);
     if(it == map.end())
-        return Key();
+        return Value{};
     return it->second;
 }
 

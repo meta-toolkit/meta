@@ -60,13 +60,13 @@ merge_points( const point<DimensionKey, Element> & first,
 
     typename point<DimensionKey, Element>::sparse_vector avg_vector;
     for( const auto & key : get_space( first.vector(), second.vector() ) ) {
-        auto first_contrib = first.size() * safe_at( first, key );
-        auto second_contrib = second.size() * safe_at( second, key );
+        auto first_contrib = first.size() * safe_at( first.vector(), key );
+        auto second_contrib = second.size() * safe_at( second.vector(), key );
         avg_vector[ key ] = ( first_contrib + second_contrib ) 
                             / ( first.size() + second.size() );
     }
 
-    return avg_vector;
+    return { avg_vector, first.size() + second.size() };
 }
 
 }
