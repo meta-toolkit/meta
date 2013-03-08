@@ -96,13 +96,19 @@ string Document::getCategory(const string & path)
     return getName(sub);
 }
 
-string Document::getLiblinearData(InvertibleMap<string, int> & mapping) const
+string Document::getLearningData(InvertibleMap<string, int> & mapping, bool usingSLDA) const
 {
     stringstream out;
-    out << getMapping(mapping, getCategory(_path)) - 1; // -1 for slda
+
+    if(usingSLDA)
+        out << getMapping(mapping, getCategory(_path)) - 1; // slda, classes start at 0
+    else
+        out << getMapping(mapping, getCategory(_path));     // liblinear, classes start at 1
+
     map<TermID, unsigned int> sorted;
 
     // liblinear feature indices start at 1, not 0 like the tokenizers
+    // this works for sLDA as well.
     for(auto & freq: _frequencies)
         sorted.insert(make_pair(freq.first + 1, freq.second));
 
@@ -125,7 +131,6 @@ int Document::getMapping(InvertibleMap<string, int> & mapping, const string & ca
         ++newVal;
 
     mapping.insert(category, newVal);
-    //cerr << "id: " << newVal << " = " << category << endl;
     return newVal;
 }
 

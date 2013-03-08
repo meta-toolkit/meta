@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
         {
             // order of lines in the liblinear input file does NOT matter (tested)
             tokenizer->tokenize(documents[i], NULL);
-            cout << documents[i].getLiblinearData(mapping);
+            cout << documents[i].getLearningData(mapping, false /* using liblinear */);
             if(!quiet && done++ % 20 == 0)
                 cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
         }
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
         for(size_t i = 0; i < documents.size(); ++i)
         {
             tokenizer->tokenize(documents[i], NULL);
-            cout << documents[i].getLiblinearData(mapping);
+            cout << documents[i].getLearningData(mapping, false /* using liblinear */);
             if(!quiet && done++ % 20 == 0)
                 cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
         }
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
             ngramTokenizer->setMaxTermID(treeTokenizer->getNumTerms());
             ngramTokenizer->tokenize(documents[i], NULL);
             treeTokenizer->setMaxTermID(ngramTokenizer->getNumTerms());
-            cout << documents[i].getLiblinearData(mapping);
+            cout << documents[i].getLearningData(mapping, false /* using liblinear */);
             if(!quiet && done++ % 20 == 0)
                 cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
         }

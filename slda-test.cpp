@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     Tokenizer* tokenizer = new NgramTokenizer(1, NgramTokenizer::Word);
     ofstream out("slda-input.dat");
 
-    InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
+    InvertibleMap<string, int> mapping;
     unordered_map<string, string> config = ConfigReader::read(argv[1]);
     string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
     vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     for(size_t i = 0; i < documents.size(); ++i)
     {
         tokenizer->tokenize(documents[i], NULL);
-        out << documents[i].getLiblinearData(mapping);
+        out << documents[i].getLearningData(mapping, true /* using sLDA */);
         if(i % 20 == 0)
             cerr << "  tokenizing " << static_cast<double>(i) / documents.size() * 100 << "%     \r"; 
     }
