@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 
     for(size_t i = 0; i < documents.size(); ++i)
     {
-        tokenizer->tokenize(documents[i], NULL);
+        tokenizer->tokenize(documents[i], nullptr);
         out << documents[i].getLearningData(mapping, true /* using sLDA */);
         if(i % 20 == 0)
             cerr << "  tokenizing " << static_cast<double>(i) / documents.size() * 100 << "%     \r"; 

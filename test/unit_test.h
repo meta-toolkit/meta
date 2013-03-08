@@ -102,7 +102,6 @@ namespace UnitTests
         sigaction(SIGSEGV, &act, 0);
         sigaction(SIGINT, &act, 0);
 
-        double start = omp_get_wtime();
         pid_t pid = fork();
         if(pid == 0)
         {
@@ -120,7 +119,6 @@ namespace UnitTests
         }
 
         cerr << "[ " << Common::makeGreen("OK") << " ] ";
-        //cerr << std::setprecision(4) << (omp_get_wtime() - start) << "s"
         cerr << endl;
     }
 }

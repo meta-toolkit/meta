@@ -3,7 +3,6 @@
  */
 
 #include <cmath>
-#include <omp.h>
 #include "document.h"
 #include "tokenizers/tokenizer.h"
 #include "ram_index.h"
@@ -16,10 +15,10 @@ using std::vector;
 using std::multimap;
 
 RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer):
+    _tokenizer(tokenizer),
     _documents(vector<Document>()),
     _docFreqs(new unordered_map<TermID, unsigned int>),
-    _avgDocLength(0),
-    _tokenizer(tokenizer)
+    _avgDocLength(0)
 {
     cout << "[RAMIndex]: creating index from " << indexFiles.size() << " documents" << endl;
     
@@ -40,10 +39,10 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer>
 }
 
 RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer> tokenizer):
+    _tokenizer(tokenizer),
     _documents(indexDocs),
     _docFreqs(new unordered_map<TermID, unsigned int>),
-    _avgDocLength(0),
-    _tokenizer(tokenizer)
+    _avgDocLength(0)
 {
     cout << "[RAMIndex]: creating index from " << indexDocs.size() << " documents" << endl;
 
@@ -106,25 +105,7 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
 
         double QTF = ((k3 + 1.0) * queryTermFreq) / (k3 + queryTermFreq);
 
-        /*
-        #pragma omp critical
-        {
-            cout << "IDF: " << IDF << endl;
-            cout << "TF: " << TF << endl;
-            cout << "QTF: " << QTF << endl;
-            cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-        }
-        */
-        
         score += IDF * TF * QTF;
-
-        /*
-        if(df != _docFreqs->end())
-        {
-            #pragma omp critical
-            cout << term.first << ": " << _tokenizer->getLabel(term.first) << ": " << IDF * TF * QTF << endl;
-        }
-        */
     }
 
     return score;
@@ -137,26 +118,16 @@ size_t RAMIndex::getAvgDocLength() const
 
 multimap<double, string> RAMIndex::search(Document & query) const
 {
-    /*
-    cout << "[RAMIndex]: scoring documents for query " << query.getName()
-         << " (" << query.getCategory() << ")" << endl;
-    */
-
     _tokenizer->tokenize(query);
     multimap<double, string> ranks;
-    #pragma omp parallel for
     for(size_t idx = 0; idx < _documents.size(); ++idx)
     {
         double score = scoreDocument(_documents[idx], query);
         if(score != 0.0)
         {
-            #pragma omp critical
             ranks.insert(make_pair(score, _documents[idx].getName() + " " + _documents[idx].getCategory()));
         }
     }
-
-    //for(auto & rank: ranks)
-    //    cout << rank.first << " " << rank.second << endl;
 
     return ranks;
 }

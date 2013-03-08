@@ -164,7 +164,7 @@ size_t ParseTree::height(const ParseTree & curr)
 string ParseTree::getSkeletonChildren() const
 {
     string ret = "";
-    for(auto & child: children)
+    for(size_t i = 0; i < children.size(); ++i)
         ret += "()";
     return ret;
 }

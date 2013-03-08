@@ -78,10 +78,10 @@ class TextFile
         void open_mmap();
 
         /** no copying */
-        TextFile(const TextFile & other) { /* nothing */ }
+        TextFile(const TextFile & other) = delete;
 
         /** no copying */
-        const TextFile & operator=(const TextFile & other) { /* nothing */ }
+        const TextFile & operator=(const TextFile & other) = delete;
 };
 
 #endif

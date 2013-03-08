@@ -20,9 +20,9 @@ using std::stringstream;
 using std::unordered_map;
 
 Document::Document(const string & path):
-    _frequencies(unordered_map<TermID, unsigned int>()),
     _path(path),
-    _length(0)
+    _length(0),
+    _frequencies(unordered_map<TermID, unsigned int>())
 {
     _name = getName(path);
     _category = getCategory(path);

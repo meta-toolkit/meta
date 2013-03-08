@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
         for(size_t i = 0; i < documents.size(); ++i)
         {
             // order of lines in the liblinear input file does NOT matter (tested)
-            tokenizer->tokenize(documents[i], NULL);
+            tokenizer->tokenize(documents[i], nullptr);
             cout << documents[i].getLearningData(mapping, false /* using liblinear */);
             if(!quiet && done++ % 20 == 0)
                 cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
         Tokenizer* tokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
         for(size_t i = 0; i < documents.size(); ++i)
         {
-            tokenizer->tokenize(documents[i], NULL);
+            tokenizer->tokenize(documents[i], nullptr);
             cout << documents[i].getLearningData(mapping, false /* using liblinear */);
             if(!quiet && done++ % 20 == 0)
                 cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
@@ -90,9 +90,9 @@ int main(int argc, char* argv[])
         Tokenizer* ngramTokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
         for(size_t i = 0; i < documents.size(); ++i)
         {
-            treeTokenizer->tokenize(documents[i], NULL);
+            treeTokenizer->tokenize(documents[i], nullptr);
             ngramTokenizer->setMaxTermID(treeTokenizer->getNumTerms());
-            ngramTokenizer->tokenize(documents[i], NULL);
+            ngramTokenizer->tokenize(documents[i], nullptr);
             treeTokenizer->setMaxTermID(ngramTokenizer->getNumTerms());
             cout << documents[i].getLearningData(mapping, false /* using liblinear */);
             if(!quiet && done++ % 20 == 0)

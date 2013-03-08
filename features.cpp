@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
         {"Skel", TreeTokenizer::Skeleton}, {"Semi", TreeTokenizer::SemiSkeleton}
     };
   
-    Tokenizer* tokenizer = NULL; 
+    Tokenizer* tokenizer = nullptr; 
     string method = config["method"];
     if(method == "ngram")
         tokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     {
         for(auto & doc: str.second)
         {
-            tokenizer->tokenize(doc, NULL);
+            tokenizer->tokenize(doc, nullptr);
             combine_counts(language_models[str.first], doc.getFrequencies());
         }
     }
