@@ -36,7 +36,6 @@ using std::endl;
 
 corpus::corpus()
 {
-    num_docs = 0;
     size_vocab = 0;
     num_classes = 0;
     num_total_words = 0;
@@ -44,17 +43,8 @@ corpus::corpus()
 
 corpus::~corpus()
 {
-    for (int i = 0; i < num_docs; i ++)
-    {
-        document * doc = docs[i];
-        delete doc;
-    }
-    docs.clear();
-
-    num_docs = 0;
-    size_vocab = 0;
-    num_classes = 0;
-    num_total_words = 0;
+    for (size_t i = 0; i < docs.size(); i ++)
+        delete docs[i];
 }
 
 void corpus::read_data(const char * data_filename)
@@ -66,7 +56,7 @@ void corpus::read_data(const char * data_filename)
         size_t length = count_if(line.begin(), line.end(), [](unsigned char ch){
             return std::isspace(ch); });
 
-        document* doc = new document(length);
+        document* doc = new document(length - 1);
         doc->words.reserve(length);
         doc->counts.reserve(length);
 
@@ -94,10 +84,9 @@ void corpus::read_data(const char * data_filename)
         }
 
         docs.push_back(doc);
-        num_docs++;
     }
 
-    cout << "number of docs  : " << num_docs << endl;
+    cout << "number of docs  : " << docs.size() << endl;
     cout << "number of terms : " << size_vocab << endl;
     cout << "number of total words: " << num_total_words << endl;
     cout << "number of classes : " << num_classes << endl;
@@ -119,7 +108,7 @@ pair<int, int> corpus::get_word_data(const string & str) const
 
 int corpus::max_corpus_length() {
     int max_length = 0;
-    for (int d = 0; d < num_docs; d++) {
+    for (size_t d = 0; d < docs.size(); d++) {
         if (docs[d]->length > max_length)
             max_length = docs[d]->length;
     }

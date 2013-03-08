@@ -37,7 +37,6 @@ class corpus
         void read_data(const char * data_filename);
         int max_corpus_length();
 
-        int num_docs;
         int size_vocab;
         int num_classes;
         int num_total_words;

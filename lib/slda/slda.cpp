@@ -337,9 +337,7 @@ void slda::corpus_initialize_ss(suffstats* ss, corpus* c)
             printf("initialized with document %d\n", d);
             document * doc = c->docs[d];
             for (n = 0; n < doc->length; n++)
-            {
                 ss->word_ss[k][doc->words[n]] += doc->counts[n];
-            }
         }
         for (w = 0; w < size_vocab; w++)
         {
@@ -422,11 +420,11 @@ void slda::v_em(corpus * c, const settings * setting,
     int max_length = c->max_corpus_length();
     double **var_gamma, **phi, **lambda;
     double likelihood, likelihood_old = 0, converged = 1;
-    int d, n, i;
+    int n, i;
     double L2penalty = setting->PENALTY;
     // allocate variational parameters
-    var_gamma = new double * [c->num_docs];
-    for (d = 0; d < c->num_docs; d++)
+    var_gamma = new double * [c->docs.size()];
+    for (size_t d = 0; d < c->docs.size(); d++)
         var_gamma[d] = new double [num_topics];
 
     phi = new double * [max_length];
@@ -434,7 +432,7 @@ void slda::v_em(corpus * c, const settings * setting,
         phi[n] = new double [num_topics];
 
     printf("initializing ...\n");
-    suffstats * ss = new_suffstats(c->num_docs);
+    suffstats * ss = new_suffstats(c->docs.size());
     if (strcmp(start, "seeded") == 0)
     {
         corpus_initialize_ss(ss, c);
@@ -466,9 +464,9 @@ void slda::v_em(corpus * c, const settings * setting,
         if (i > LDA_INIT_MAX) ETA_UPDATE = 1;
         // e-step
         printf("**** e-step ****\n");
-        for (d = 0; d < c->num_docs; d++)
+        for (size_t d = 0; d < c->docs.size(); d++)
         {
-            if ((d % 100) == 0) printf("document %d\n", d);
+            if ((d % 100) == 0) printf("document %lu\n", d);
             likelihood += doc_e_step(c->docs[d], var_gamma[d], phi, ss, ETA_UPDATE, setting);
         }
 
@@ -492,7 +490,7 @@ void slda::v_em(corpus * c, const settings * setting,
             sprintf(filename, "%s/%03d.model.text", directory, i);
             save_model_text(filename);
             sprintf(filename, "%s/%03d.gamma", directory, i);
-            save_gamma(filename, var_gamma, c->num_docs);
+            save_gamma(filename, var_gamma, c->docs.size());
         }
     }
 
@@ -502,17 +500,17 @@ void slda::v_em(corpus * c, const settings * setting,
     sprintf(filename, "%s/final.model.text", directory);
     save_model_text(filename);
     sprintf(filename, "%s/final.gamma", directory);
-    save_gamma(filename, var_gamma, c->num_docs);
+    save_gamma(filename, var_gamma, c->docs.size());
 
 
     fclose(likelihood_file);
     FILE * w_asgn_file = NULL;
     sprintf(filename, "%s/word-assignments.dat", directory);
     w_asgn_file = fopen(filename, "w");
-    for (d = 0; d < c->num_docs; d ++)
+    for (size_t d = 0; d < c->docs.size(); d ++)
     {
         //final inference
-        if ((d % 100) == 0) printf("final e step document %d\n", d);
+        if ((d % 100) == 0) printf("final e step document %lu\n", d);
         likelihood += slda_inference(c->docs[d], var_gamma[d], phi, setting);
         write_word_assignment(w_asgn_file, c->docs[d], phi);
 
@@ -520,7 +518,7 @@ void slda::v_em(corpus * c, const settings * setting,
     fclose(w_asgn_file);
 
     free_suffstats(ss);
-    for (d = 0; d < c->num_docs; d++)
+    for (size_t d = 0; d < c->docs.size(); d++)
         delete [] var_gamma[d];
     delete [] var_gamma;
 
@@ -528,6 +526,7 @@ void slda::v_em(corpus * c, const settings * setting,
         delete [] phi[n];
     delete [] phi;
 }
+
 void slda::mle(suffstats * ss, int eta_update, const settings * setting)
 {
     int k, w;
@@ -927,7 +926,7 @@ double slda::slda_inference(document* doc, double* var_gamma, double** phi, cons
 
 void slda::infer_only(corpus * c, const settings * setting, const char * directory)
 {
-    int i, k, d, n;
+    int i, k, n;
     double **var_gamma, likelihood, **phi;
     double* phi_m;
     char filename[100];
@@ -937,8 +936,8 @@ void slda::infer_only(corpus * c, const settings * setting, const char * directo
     int max_length = c->max_corpus_length();
 
 
-    var_gamma = new double * [c->num_docs];
-    for (i = 0; i < c->num_docs; i++)
+    var_gamma = new double * [c->docs.size()];
+    for (size_t i = 0; i < c->docs.size(); i++)
         var_gamma[i] = new double [num_topics];
 
 
@@ -955,10 +954,10 @@ void slda::infer_only(corpus * c, const settings * setting, const char * directo
     sprintf(filename, "%s/inf-labels.dat", directory);
     inf_label_file = fopen(filename, "w");
 
-    for (d = 0; d < c->num_docs; d++)
+    for (size_t d = 0; d < c->docs.size(); d++)
     {
         if ((d % 100) == 0)
-            printf("document %d\n", d);
+            printf("document %lu\n", d);
 
         document * doc = c->docs[d];
         likelihood = lda_inference(doc, var_gamma[d], phi, setting);
@@ -999,12 +998,12 @@ void slda::infer_only(corpus * c, const settings * setting, const char * directo
         fprintf(inf_label_file, "%d\n", label);
     }
 
-    printf("average accuracy: %.3f\n", (double)num_correct / (double) c->num_docs);
+    printf("average accuracy: %.3f\n", (double)num_correct / (double) c->docs.size());
 
     sprintf(filename, "%s/inf-gamma.dat", directory);
-    save_gamma(filename, var_gamma, c->num_docs);
+    save_gamma(filename, var_gamma, c->docs.size());
 
-    for (d = 0; d < c->num_docs; d++)
+    for (size_t d = 0; d < c->docs.size(); d++)
         delete [] var_gamma[d];
     delete [] var_gamma;
 
