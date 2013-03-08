@@ -2,9 +2,6 @@
  * @file similarity.cpp
  */
 
-#include <iostream>
-using namespace std;
-
 template <class Key, class Value>
 double Similarity::cosine_similarity(const unordered_map<Key, Value> & a,
                                      const unordered_map<Key, Value> & b)
@@ -24,7 +21,14 @@ template <class Key, class Value>
 double Similarity::jaccard_similarity(const unordered_map<Key, Value> & a,
                                       const unordered_map<Key, Value> & b)
 {
-    return 0.0;
+    double in_both = 0.0;
+    for(auto & p: a)
+    {
+        if(b.find(p.first) != b.end())
+            ++in_both;
+    }
+
+    return in_both / internal::get_space(a, b).size();
 }
 
 template <class Key, class Value>

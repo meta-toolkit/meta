@@ -31,12 +31,12 @@ TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/com
     cluster/similarity.h cluster/similarity.cpp
 
 CC = g++ -std=c++0x -fopenmp -I.
-CCOPTS = -g -O0
-#CCOPTS = -O3
+#CCOPTS = -g -O0
+CCOPTS = -O3
 LINKER = g++ -std=c++0x -fopenmp -I.
 
 LIBDIRS = lib/liblinear-1.92 lib/slda
-CLEANDIRS = tokenizers io index util stemmers classify test model lib/liblinear-1.92
+CLEANDIRS = tokenizers io index util stemmers classify test model $(LIBDIRS)
 SLDALIBS = -lgsl -lm -lgslcblas
 
 all: $(SEARCH) $(TESTER) $(PLOT) $(LEARN) $(LM) $(SLDATEST)
@@ -67,7 +67,7 @@ clean:
 	for dir in $(CLEANDIRS) ; do rm -rf $$dir/*.o ; done
 	for dir in $(LIBDIRS) ; do make -C $$dir clean ; done
 	rm -f preprocessor/*.class evalConfig.ini evalOutput
-	rm -f $(SEARCH) $(TESTER) $(PLOT) $(LEARN) $(LM) *.o
+	rm -f $(SEARCH) $(TESTER) $(PLOT) $(LEARN) $(LM) $(SLDATEST) *.o
 
 tidy:
 	rm -rf ./doc *.chunk postingsFile lexiconFile termid.mapping docid.mapping docs.lengths *compressed.txt

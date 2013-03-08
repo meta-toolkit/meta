@@ -34,6 +34,7 @@ namespace Similarity
 
     /**
      * Computes the Jaccard similarity between two sparse vectors.
+     * \f$ similarity(a, b) = \frac{|a\cap b|}{|a\cup b|} \f$
      * @param a
      * @param b
      * @return the Jaccard similarity between the two parameters
