@@ -24,7 +24,11 @@ LMOBJS = tokenizers/ngram_tokenizer.o index/document.o io/textfile.o io/parser.o
 TESTS = test/porter2_stemmer_test.h test/parse_tree_test.h \
     test/compressed_file_test.h test/unit_test.h
 
-TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp
+SLDATEST = slda-test
+SLDATESTOBJS = $(SEARCHOBJS) lib/slda/corpus.o lib/slda/slda.o lib/slda/utils.o lib/slda/opt.o
+
+TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp \
+    cluster/similarity.h cluster/similarity.cpp
 
 CC = g++ -std=c++0x -fopenmp -I.
 CCOPTS = -g -O0
@@ -33,8 +37,9 @@ LINKER = g++ -std=c++0x -fopenmp -I.
 
 LIBDIRS = lib/liblinear-1.92 lib/slda
 CLEANDIRS = tokenizers io index util stemmers classify test model lib/liblinear-1.92
+SLDALIBS = -lgsl -lm -lgslcblas
 
-all: $(SEARCH) $(TESTER) $(PLOT) $(LEARN) $(LM)
+all: $(SEARCH) $(TESTER) $(PLOT) $(LEARN) $(LM) $(SLDATEST)
 	for dir in $(LIBDIRS) ; do make -C $$dir ; done
 
 $(LM): $(LMOBJS) lm.cpp model/ngram_distribution.h model/ngram_distribution.cpp
@@ -42,6 +47,9 @@ $(LM): $(LMOBJS) lm.cpp model/ngram_distribution.h model/ngram_distribution.cpp
 
 $(SEARCH): $(SEARCHOBJS) main.cpp $(TEMPLATES)
 	$(LINKER) main.cpp -o $@ $(SEARCHOBJS)
+
+$(SLDATEST): $(SLDATESTOBJS) slda-test.cpp $(TEMPLATES)
+	$(LINKER) slda-test.cpp -o $@ $(SLDATESTOBJS) $(SLDALIBS)
 
 $(TESTER): $(TESTEROBJS) test/tester.cpp $(TEMPLATES) $(TESTS)
 	$(LINKER) test/tester.cpp -o $@ $(TESTEROBJS)

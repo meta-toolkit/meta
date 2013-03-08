@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include "document.h" 
+#include "cluster/similarity.h"
 
 using std::map;
 using std::cout;
@@ -97,7 +98,7 @@ string Document::getCategory(const string & path)
 string Document::getLiblinearData(InvertibleMap<string, int> & mapping) const
 {
     stringstream out;
-    out << getMapping(mapping, getCategory(_path));
+    out << getMapping(mapping, getCategory(_path)) - 1; // -1 for slda
     map<TermID, unsigned int> sorted;
 
     // liblinear feature indices start at 1, not 0 like the tokenizers
@@ -125,4 +126,14 @@ int Document::getMapping(InvertibleMap<string, int> & mapping, const string & ca
     mapping.insert(category, newVal);
     //cerr << "id: " << newVal << " = " << category << endl;
     return newVal;
+}
+
+double Document::cosine_similarity(const Document & a, const Document & b)
+{
+    return Similarity::cosine_similarity(a._frequencies, b._frequencies);
+}
+
+double Document::jaccard_similarity(const Document & a, const Document & b)
+{
+    return Similarity::jaccard_similarity(a._frequencies, b._frequencies);
 }

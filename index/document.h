@@ -84,6 +84,22 @@ class Document
          */
         std::string getLiblinearData(InvertibleMap<std::string, int> & mapping) const;
 
+        /**
+         * Wrapper function for a Document's cosine similarity measure.
+         * @param a
+         * @param b
+         * @return the Jaccard similarity between the two parameters
+         */
+        static double jaccard_similarity(const Document & a, const Document & b);
+
+        /**
+         * Wrapper function for a Document's cosine similarity measure.
+         * @param a
+         * @param b
+         * @return the cosine similarity between the two parameters
+         */
+        static double cosine_similarity(const Document & a, const Document & b);
+
     private:
 
         /** where this document is on disk */
