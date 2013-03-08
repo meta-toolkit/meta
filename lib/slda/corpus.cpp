@@ -19,9 +19,20 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA
 
-#include "corpus.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <algorithm>
+#include <iterator>
 #include <assert.h>
 #include <stdio.h>
+#include "corpus.h"
+
+using std::pair;
+using std::vector;
+using std::string;
+using std::cout;
+using std::endl;
 
 corpus::corpus()
 {
@@ -46,65 +57,68 @@ corpus::~corpus()
     num_total_words = 0;
 }
 
-void corpus::read_data(const char * data_filename,
-                       const char * label_filename)
+void corpus::read_data(const char * data_filename)
 {
-    int OFFSET = 0;
-    int length = 0, count = 0, word = 0,
-        n = 0, nd = 0, nw = 0, label = -1;
-
-    FILE * fileptr;
-    fileptr = fopen(data_filename, "r");
-    printf("\nreading data from %s\n", data_filename);
-    nd = 0;
-    nw = 0;
-
-    while ((fscanf(fileptr, "%10d", &length) != EOF))
+    std::ifstream infile(data_filename);
+    string line;
+    while(std::getline(infile, line))
     {
-        document * doc = new document(length);
-        for (n = 0; n < length; n++)
+        size_t length = count_if(line.begin(), line.end(), [](unsigned char ch){
+            return std::isspace(ch); });
+
+        document* doc = new document(length);
+        doc->words.reserve(length);
+        doc->counts.reserve(length);
+
+        std::stringstream stream(line);
+        
+        stream >> doc->label;
+        if(doc->label >= num_classes)
+            num_classes = doc->label + 1;
+
+        // stream now contains "word_id:count" strings
+        string token;
+        while(stream >> token)
         {
-            fscanf(fileptr, "%10d:%10d", &word, &count);
-            word = word - OFFSET;
-            doc->words[n] = word;
-            doc->counts[n] = count;
+            pair<int, int> vals = get_word_data(token);
+            int word = vals.first;
+            int count = vals.second;
+            doc->words.push_back(word);
+            doc->counts.push_back(count);
             doc->total += count;
-            if (word >= nw)
-            {
-                nw = word + 1;
-            }
-        }
-        num_total_words += doc->total;
-        docs.push_back(doc);
-        nd++;
-    }
-    fclose(fileptr);
-    num_docs = nd;
-    size_vocab = nw;
-    printf("number of docs  : %d\n", nd);
-    printf("number of terms : %d\n", nw);
-    printf("number of total words : %d\n", num_total_words);
 
-    fileptr = fopen(label_filename, "r");
-    printf("\nreading labels from %s\n", label_filename);
-    nd = 0;
-    while ((fscanf(fileptr, "%10d", &label) != EOF))
-    {
-        document * doc = docs[nd];
-        doc->label = label;
-        if (label >= num_classes)
-        {
-            num_classes = label + 1;
+            if(word >= size_vocab)
+                size_vocab = word + 1;
+
+            num_total_words += doc->total;
         }
-        nd ++;
+
+        docs.push_back(doc);
+        num_docs++;
     }
-    assert(nd == int(docs.size()));
-    printf("number of classes : %d\n\n", num_classes);
+
+    cout << "number of docs  : " << num_docs << endl;
+    cout << "number of terms : " << size_vocab << endl;
+    cout << "number of total words: " << num_total_words << endl;
+    cout << "number of classes : " << num_classes << endl;
+}
+
+pair<int, int> corpus::get_word_data(const string & str) const
+{
+    size_t idx = str.find_first_of(':');
+    std::istringstream wordstr(str.substr(0, idx));
+    std::istringstream countstr(str.substr(idx + 1));
+
+    int word = 0;
+    int count = 0;
+    wordstr >> word;
+    countstr >> count;
+
+    return std::make_pair(word, count);
 }
 
 int corpus::max_corpus_length() {
     int max_length = 0;
-
     for (int d = 0; d < num_docs; d++) {
         if (docs[d]->length > max_length)
             max_length = docs[d]->length;
