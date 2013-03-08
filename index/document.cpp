@@ -9,6 +9,7 @@
 #include "document.h" 
 #include "cluster/similarity.h"
 
+using std::vector;
 using std::map;
 using std::cout;
 using std::endl;
@@ -136,4 +137,16 @@ double Document::cosine_similarity(const Document & a, const Document & b)
 double Document::jaccard_similarity(const Document & a, const Document & b)
 {
     return Similarity::jaccard_similarity(a._frequencies, b._frequencies);
+}
+
+vector<Document> Document::loadDocs(const string & filename, const string & prefix)
+{
+    vector<Document> docs;
+    Parser parser(filename, "\n");
+    while(parser.hasNext())
+    {
+        string file = parser.next();
+        docs.push_back(Document(prefix + "/" + file));
+    }
+    return docs;
 }

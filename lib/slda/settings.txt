@@ -4,6 +4,6 @@ em-max-iter 50
 em-convergence 1e-4
 L2-penalty 0.01
 alpha-val 1.0
-num-topics 8
+num-topics 3
 init-method seeded
 alpha-action fixed

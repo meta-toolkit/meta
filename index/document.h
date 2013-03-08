@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <vector>
 #include <string>
 #include "structs.h"
 #include "util/invertible_map.h"
@@ -99,6 +100,15 @@ class Document
          * @return the cosine similarity between the two parameters
          */
         static double cosine_similarity(const Document & a, const Document & b);
+
+        /**
+         * Returns a vector of all documents in a given dataset.
+         * @param filename - the file containing the list of files in a corpus
+         * @param prefix - the prefix of the path to a corpus
+         * @return a vector of Documents created from the filenames
+         */
+        static std::vector<Document> loadDocs(const std::string & filename,
+                const std::string & prefix);
 
     private:
 
