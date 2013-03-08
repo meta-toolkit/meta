@@ -1,13 +1,14 @@
 CC = g++ -std=c++0x -Wall
-CC_OPTS = -O3
-#CC_OPTS = -g -O0
-LDFLAGS = -lgsl -lm -lgslcblas
+CCOPTS = -O3
+#CCOPTS = -g -O0
+LIBS = -lgsl -lm -lgslcblas
+OBJS = corpus.o slda.o utils.o opt.o
 
-LSOURCE = main.cpp corpus.cpp slda.cpp utils.cpp opt.cpp
-LHEADER = corpus.h slda.h utils.h opt.h settings.h document.h
+slda: $(OBJS) main.cpp document.h settings.h
+	  $(CC) $(CCOPTS) main.cpp -o $@ $(OBJS) $(LIBS)
 
-slda: $(LSOURCE) $(LHEADER)
-	  $(CC) $(CC_OPTS) $(LSOURCE) -o $@ $(LDFLAGS)
+%.o : %.cpp $(wildcard *.h)
+	$(CC) $(CCOPTS) -c $(@:.o=.cpp) -o $@ $(LIBS)
 
 clean:
 	-rm -f *.o slda

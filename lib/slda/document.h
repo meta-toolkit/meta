@@ -23,7 +23,6 @@
 #define DOCUMENT_H 
 
 #include <vector>
-#include <stddef.h>
 
 struct document
 {

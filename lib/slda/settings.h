@@ -40,7 +40,7 @@ struct settings
     int    num_topics;
     string init_method;
 
-    void read_settings(const string & filename)
+    settings(const string & filename)
     {
         std::ifstream infile(filename);
         string line;

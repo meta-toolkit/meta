@@ -53,9 +53,7 @@ int main(int argc, char* argv[])
     corpus c;
     string data_filename = args[1];
     c.read_data(data_filename);
-    settings setting;
-    string setting_filename = args[2];
-    setting.read_settings(setting_filename);
+    settings setting(args[2]);
 
     if(args[0] == "est")
     {
