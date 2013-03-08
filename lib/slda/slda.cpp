@@ -24,11 +24,14 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 #include <string.h>
+#include <iostream>
 #include "slda.h"
 #include "utils.h"
 #include "assert.h"
 #include "opt.h"
 
+using std::cerr;
+using std::endl;
 using std::string;
 
 slda::slda()
@@ -47,12 +50,7 @@ slda::~slda()
     free_model();
 }
 
-/*
- * init the model
- */
-
-void slda::init(double alpha_, int num_topics_,
-                const corpus * c)
+void slda::init(double alpha_, int num_topics_, const corpus * c)
 {
     alpha = alpha_;
     num_topics = num_topics_;
@@ -77,10 +75,6 @@ void slda::init(double alpha_, int num_topics_,
     }
 }
 
-/*
- * free the model
- */
-
 void slda::free_model()
 {
     if (log_prob_w != NULL)
@@ -103,10 +97,9 @@ void slda::free_model()
     }
 }
 
-/*
- * save the model in the binary format
+/**
+ * Save the model in the binary format.
  */
-
 void slda::save_model(const string & filename)
 {
     FILE * file = NULL;
@@ -132,10 +125,9 @@ void slda::save_model(const string & filename)
     fclose(file);
 }
 
-/*
- * load the model in the binary format
+/**
+ * Load the model in the binary format.
  */
-
 void slda::load_model(const string & filename)
 {
     FILE * file = NULL;
@@ -165,10 +157,9 @@ void slda::load_model(const string & filename)
     fclose(file);
 }
 
-/*
- * save the model in the text format
+/**
+ * Save the model in the text format.
  */
-
 void slda::save_model_text(const string & filename)
 {
     FILE * file = NULL;
@@ -204,10 +195,9 @@ void slda::save_model_text(const string & filename)
     fclose(file);
 }
 
-/*
- * create the data structure for sufficient statistic 
+/**
+ * Create the data structure for sufficient statistics.
  */
-
 suffstats * slda::new_suffstats(int num_docs)
 {
     suffstats * ss = new suffstats;
@@ -239,10 +229,9 @@ suffstats * slda::new_suffstats(int num_docs)
 }
 
 
-/*
- * initialize the sufficient statistics with zeros
+/**
+ * Initialize the sufficient statistics with zeros.
  */
-
 void slda::zero_initialize_ss(suffstats * ss)
 {
     memset(ss->word_total_ss, 0, sizeof(double)*num_topics);
@@ -260,11 +249,9 @@ void slda::zero_initialize_ss(suffstats * ss)
     ss->num_docs = 0;
 }
 
-
-/*
- * initialize the sufficient statistics with random numbers 
+/**
+ * Initialize the sufficient statistics with random numbers.
  */
-
 void slda::random_initialize_ss(suffstats * ss, corpus* c)
 {
     int num_docs = ss->num_docs;
@@ -317,6 +304,9 @@ void slda::random_initialize_ss(suffstats * ss, corpus* c)
     gsl_rng_free(rng);
 }
 
+/**
+ * Initialize sufficient statistics with previous model.
+ */
 void slda::corpus_initialize_ss(suffstats* ss, corpus* c)
 {
     int num_docs = ss->num_docs;
@@ -331,7 +321,6 @@ void slda::corpus_initialize_ss(suffstats* ss, corpus* c)
         for (i = 0; i < NUM_INIT; i++)
         {
             d = (int)(floor(gsl_rng_uniform(rng) * num_docs));
-            printf("initialized with document %d\n", d);
             document * doc = c->docs[d];
             for (n = 0; n < doc->length; n++)
                 ss->word_ss[k][doc->words[n]] += doc->counts[n];
@@ -428,7 +417,6 @@ void slda::v_em(corpus * c, const settings * setting,
     for (n = 0; n < max_length; n++)
         phi[n] = new double [num_topics];
 
-    printf("initializing ...\n");
     suffstats * ss = new_suffstats(c->docs.size());
     if (start == "seeded")
     {
@@ -455,22 +443,27 @@ void slda::v_em(corpus * c, const settings * setting,
     i = 0;
     while (((converged < 0) || (converged > setting->em_converged) || (i <= LDA_INIT_MAX+2)) && (i <= setting->em_max_iter))
     {
-        printf("**** em iteration %d ****\n", ++i);
+        ++i;
         likelihood = 0;
         zero_initialize_ss(ss);
         if (i > LDA_INIT_MAX) ETA_UPDATE = 1;
+
         // e-step
-        printf("**** e-step ****\n");
         for (size_t d = 0; d < c->docs.size(); d++)
         {
-            if ((d % 100) == 0) printf("document %lu\n", d);
+            if ((d % 20) == 0)
+                cerr << " EM iteration " << i << ", "
+                     << 100 * static_cast<double>(d) / c->docs.size()
+                     << "%     \r";
             likelihood += doc_e_step(c->docs[d], var_gamma[d], phi, ss, ETA_UPDATE, setting);
         }
 
-        printf("likelihood: %10.10f\n", likelihood);
+        cerr << " EM iteration " << i << ", 100%  LL = ";
+
         // m-step
-        printf("**** m-step ****\n");
         mle(ss, ETA_UPDATE, setting);
+
+        cerr << "\r" << endl;
 
         // check for convergence
         converged = fabs((likelihood_old - likelihood) / (likelihood_old));
@@ -499,7 +492,6 @@ void slda::v_em(corpus * c, const settings * setting,
     sprintf(filename, "%s/final.gamma", directory.c_str());
     save_gamma(filename, var_gamma, c->docs.size());
 
-
     fclose(likelihood_file);
     FILE * w_asgn_file = NULL;
     sprintf(filename, "%s/word-assignments.dat", directory.c_str());
@@ -507,7 +499,6 @@ void slda::v_em(corpus * c, const settings * setting,
     for (size_t d = 0; d < c->docs.size(); d ++)
     {
         //final inference
-        if ((d % 100) == 0) printf("final e step document %lu\n", d);
         likelihood += slda_inference(c->docs[d], var_gamma[d], phi, setting);
         write_word_assignment(w_asgn_file, c->docs[d], phi);
 
@@ -541,7 +532,6 @@ void slda::mle(suffstats * ss, int eta_update, const settings * setting)
     if (eta_update == 0) return;
 
     //the label part goes here
-    printf("maximizing ...\n");
 	double f = 0.0;
 	int status;
 	int opt_iter;
@@ -564,14 +554,9 @@ void slda::mle(suffstats * ss, int eta_update, const settings * setting)
 	opt_fun.params = (void*)(&param);
 	x = gsl_vector_alloc(opt_size);
 
-
 	for (l = 0; l < num_classes-1; l ++)
-	{
 		for (k = 0; k < num_topics; k ++)
-		{
 			gsl_vector_set(x, l*num_topics + k, eta[l][k]);
-		}
-	}
 
 	T = gsl_multimin_fdfminimizer_vector_bfgs;
 	s = gsl_multimin_fdfminimizer_alloc(T, opt_size);
@@ -588,8 +573,6 @@ void slda::mle(suffstats * ss, int eta_update, const settings * setting)
 		if (status == GSL_SUCCESS)
 			break;
 		f = -s->f;
-		if ((opt_iter-1) % 10 == 0)
-			printf("step: %02d -> f: %f\n", opt_iter-1, f);
 	} while (status == GSL_CONTINUE && opt_iter < MSTEP_MAX_ITER);
 
 	for (l = 0; l < num_classes-1; l ++)
@@ -603,7 +586,7 @@ void slda::mle(suffstats * ss, int eta_update, const settings * setting)
 	gsl_multimin_fdfminimizer_free (s);
 	gsl_vector_free (x);
 
-	printf("final f: %f\n", f);
+    cerr << f;
 }
 
 double slda::doc_e_step(document* doc, double* gamma, double** phi,
@@ -793,7 +776,6 @@ double slda::slda_compute_likelihood(document* doc, double** phi, double* var_ga
     }
     likelihood -= log(t); 
     delete [] dig;
-    //printf("%lf\n", likelihood);
     return likelihood;
 }
 
@@ -952,8 +934,10 @@ void slda::infer_only(corpus * c, const settings * setting, const string & direc
 
     for (size_t d = 0; d < c->docs.size(); d++)
     {
-        if ((d % 100) == 0)
-            printf("document %lu\n", d);
+        if ((d % 20) == 0)
+            cerr << " Inference "
+                 << 100 * static_cast<double>(d) / c->docs.size()
+                 << "%     \r";
 
         document * doc = c->docs[d];
         likelihood = lda_inference(doc, var_gamma[d], phi, setting);
@@ -994,7 +978,8 @@ void slda::infer_only(corpus * c, const settings * setting, const string & direc
         fprintf(inf_label_file, "%d\n", label);
     }
 
-    printf("average accuracy: %.3f\n", (double)num_correct / (double) c->docs.size());
+    cerr << " Inference 100%     " << endl;
+    cerr << "Average accuracy: " << static_cast<double>(num_correct) / c->docs.size() << endl;
 
     sprintf(filename, "%s/inf-gamma.dat", directory.c_str());
     save_gamma(filename, var_gamma, c->docs.size());
