@@ -58,4 +58,5 @@ double Similarity::internal::magnitude(const unordered_map<Key, Value> & map)
     double sum = 0.0;
     for(auto & p: map)
         sum += p.second * p.second;
-    return sqrt(sum);}
+    return sqrt(sum);
+}
