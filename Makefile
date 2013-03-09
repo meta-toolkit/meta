@@ -30,10 +30,10 @@ SLDATESTOBJS = $(SEARCHOBJS) lib/slda/corpus.o lib/slda/slda.o lib/slda/utils.o 
 TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp \
     cluster/similarity.h cluster/similarity.cpp
 
-CC = clang++ -Wall -std=c++0x -I.
+CC = clang++ -Wall -std=c++11 -I.
 #CCOPTS = -g -O0
 CCOPTS = -O3
-LINKER = clang++ -Wall -std=c++0x -I.
+LINKER = clang++ -Wall -std=c++11 -I.
 
 LIBDIRS = lib/liblinear-1.92 lib/slda
 CLEANDIRS = tokenizers io index util stemmers classify test model $(LIBDIRS)
