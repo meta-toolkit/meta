@@ -92,6 +92,8 @@ string NgramDistribution<N>::get_prev(double rand) const
             return d.first;
         sum += d.second.size();
     }
+
+    return "";
 }
 
 template <size_t N>

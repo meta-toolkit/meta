@@ -1,6 +1,5 @@
 #include <fstream>
 #include <ostream>
-#include <omp.h>
 #include "util/invertible_map.h"
 #include "index/document.h"
 #include "parse_tree.h"

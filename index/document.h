@@ -80,10 +80,11 @@ class Document
  
         /**
          * Prints tokenizer output in liblinear input format.
-         * @param mapping
+         * @param mapping Keeps track of class labels as integers.
+         * @param usingSLDA Indicates which learner we're passing the data to.
          * @return
          */
-        std::string getLiblinearData(InvertibleMap<std::string, int> & mapping) const;
+        string getLearningData(InvertibleMap<std::string, int> & mapping, bool usingSLDA) const;
 
         /**
          * Wrapper function for a Document's cosine similarity measure.

@@ -9,7 +9,7 @@ using std::endl;
 using std::string;
 
 CompressedFileReader::CompressedFileReader(const string & filename):
-    _currentValue(0), _currentChar(0), _currentBit(0), _status(notDone)
+    _status(notDone), _currentValue(0), _currentChar(0), _currentBit(0)
 {
     struct stat st;
     stat(filename.c_str(), &st);

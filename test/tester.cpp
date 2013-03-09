@@ -3,7 +3,6 @@
  */
 
 #include <iostream>
-#include <omp.h>
 #include "test/compressed_file_test.h"
 #include "test/porter2_stemmer_test.h"
 #include "test/parse_tree_test.h"

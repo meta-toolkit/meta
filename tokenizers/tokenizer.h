@@ -26,6 +26,8 @@ class Tokenizer
          */
         Tokenizer();
 
+        virtual ~Tokenizer() { /* nothing */ }
+
         /**
          * Tokenizes a file into a Document.
          * @param document - the Document to store the tokenized information in

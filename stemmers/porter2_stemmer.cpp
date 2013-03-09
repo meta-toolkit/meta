@@ -392,8 +392,7 @@ bool Porter2Stemmer::internal::isShort(const string & word)
                 && word[size - 1] != 'x' && word[size - 1] != 'Y')
             return true;
     }
-    else
-        return size == 2 && isVowelY(word[0]) && !isVowelY(word[1]);
+    return size == 2 && isVowelY(word[0]) && !isVowelY(word[1]);
 }
 
 bool Porter2Stemmer::internal::special(string & word)

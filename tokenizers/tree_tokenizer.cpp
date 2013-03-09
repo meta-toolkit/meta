@@ -2,7 +2,6 @@
  * @file tree_tokenizer.cpp
  */
 
-#include <omp.h>
 #include <iostream>
 #include <utility>
 #include "util/common.h"
