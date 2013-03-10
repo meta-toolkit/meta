@@ -32,6 +32,15 @@ namespace Similarity
     double cosine_similarity(const unordered_map<Key, Value> & a,
                              const unordered_map<Key, Value> & b);
 
+    struct cosine {
+        template <class Key, class Value>
+        double operator()(const unordered_map<Key, Value> & a,
+                          const unordered_map<Key, Value> & b) {
+            return cosine_similarity(a, b);
+        }
+    };
+
+
     /**
      * Computes the Jaccard similarity between two sparse vectors.
      * \f$ similarity(a, b) = \frac{|a\cap b|}{|a\cup b|} \f$
@@ -42,6 +51,14 @@ namespace Similarity
     template <class Key, class Value>
     double jaccard_similarity(const unordered_map<Key, Value> & a,
                               const unordered_map<Key, Value> & b);
+
+    struct jaccard {
+        template <class Key, class Value>
+        double operator()(const unordered_map<Key, Value> & a,
+                          const unordered_map<Key, Value> & b) {
+            return jaccard_similarity(a, b);
+        }
+    };
 
     /**
      * Contains "private" helpers for the Similarity namespace.

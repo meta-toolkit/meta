@@ -31,7 +31,8 @@ CLUSTERTEST = cluster-test
 CLUSTERTESTOBJS = $(SEARCHOBJS)
 
 TEMPLATES = util/invertible_map.h util/invertible_map.cpp util/common.h util/common.cpp \
-    cluster/similarity.h cluster/similarity.cpp cluster/point.h
+    cluster/similarity.h cluster/similarity.cpp cluster/point.h \
+    cluster/agglomerative_clustering.h cluster/basic_single_link_policy.h
 
 CC = clang++ -Wall -std=c++0x -I.
 #CCOPTS = -g -O0

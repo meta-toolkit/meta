@@ -51,6 +51,10 @@ point<TermID, Document>::point( const Document & d )
         avg_vector_[ freq.first ] = static_cast<double>( freq.second );
 }
 
+point<TermID, Document> make_point( const Document & d ) {
+    return point<TermID, Document>{ d };
+}
+
 template <class DimensionKey, class Element>
 point<DimensionKey, Element> 
 merge_points( const point<DimensionKey, Element> & first, 
