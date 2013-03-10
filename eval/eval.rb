@@ -19,7 +19,7 @@ def runTest(config)
   filename = "#{config["prefix"]}-#{config["method"]}-#{config["ngramOpt"]}-#{config["ngram"]}-#{config["treeOpt"]}"
   filename.gsub!(/-[-]+/, "-")
   filename.gsub!(/-$/, "")
-  File.open("../runs/#{filename}.run", "w") { |f| f.write(result) }
+  File.open("../../senior-thesis-data/runs/#{filename}.run", "w") { |f| f.write(result) }
   f1 = /^ f1:([0-9\.]+)/.match(result)[1].to_f
   acc = /^ f1:([0-9\.]+) acc:([0-9\.]+)/.match(result)[2].to_f
   puts "#{f1.round(4)}\t#{acc.round(4)}\t#{config}"

@@ -8,8 +8,9 @@ CFLAGS = $(OPTFLAGS)
 FFLAGS = $(OPTFLAGS)
 
 blas: $(FILES) $(HEADERS)
-	$(AR) blas.a $(FILES)  
-	$(RANLIB) blas.a
+	@echo " Creating archive \"$@\"..."
+	@$(AR) blas.a $(FILES) > /dev/null
+	@$(RANLIB) blas.a > /dev/null
 
 clean:
 	- rm -f *.o
@@ -17,6 +18,7 @@ clean:
 	- rm -f *~
 
 .c.o:
-	$(CC) $(CFLAGS) -c $*.c
+	@echo " Compiling lib/liblinear/blas/$@..."
+	@$(CC) $(CFLAGS) -c $*.c
 
 

@@ -9,4 +9,5 @@ features
 search
 lm
 tester
+obj/
 *.pyc
