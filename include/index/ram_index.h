@@ -32,7 +32,7 @@ class RAMIndex : public Index
          * @param indexFiles - files to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const std::vector<string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer);
+        RAMIndex(const std::vector<std::string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer);
         
         /**
          * Creates an index of given documents.
