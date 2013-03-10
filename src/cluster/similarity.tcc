@@ -2,6 +2,8 @@
  * @file similarity.tcc
  */
 
+#include <cmath>
+
 template <class Key, class Value>
 double Similarity::cosine_similarity(const unordered_map<Key, Value> & a,
                                      const unordered_map<Key, Value> & b)
@@ -36,7 +38,7 @@ Value Similarity::internal::safe_at(const unordered_map<Key, Value> & map, const
 {
     auto it = map.find(key);
     if(it == map.end())
-        return Value();
+        return Value{};
     return it->second;
 }
 
