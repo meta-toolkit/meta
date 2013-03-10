@@ -60,6 +60,7 @@ class thread_pool {
 
         struct task {
             virtual void run() = 0;
+            virtual ~task() = default;
         };
 
         template <class R>
@@ -68,6 +69,8 @@ class thread_pool {
             concrete_task( const Function & f )
                     : task_( f ) {
             }
+
+            virtual ~concrete_task() = default;
 
             virtual void run() {
                 task_();
