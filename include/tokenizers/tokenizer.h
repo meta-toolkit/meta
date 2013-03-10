@@ -86,6 +86,12 @@ class Tokenizer
          */
         void setMaxTermID(size_t start);
 
+        /**
+         * @return a Tokenizer as specified by a config object
+         */
+        static Tokenizer* create_from_config(
+                const std::unordered_map<std::string, std::string> & config);
+
     private:
 
         /** Internal counter for the number of unique terms seen (used as keys

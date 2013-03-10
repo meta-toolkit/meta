@@ -66,31 +66,7 @@ int main(int argc, char* argv[])
     unordered_map<string, vector<Document>> docs =
         getDocs("/home/sean/projects/senior-thesis-data/" + config["prefix"]);
 
-    int nVal;
-    istringstream(config["ngram"]) >> nVal;
-
-    unordered_map<string, NgramTokenizer::NgramType> ngramOpt = {
-        {"POS", NgramTokenizer::POS}, {"Word", NgramTokenizer::Word},
-        {"FW", NgramTokenizer::FW}, {"Char", NgramTokenizer::Char}
-    };
-
-    unordered_map<string, TreeTokenizer::TreeTokenizerType> treeOpt = {
-        {"Subtree", TreeTokenizer::Subtree}, {"Depth", TreeTokenizer::Depth},
-        {"Branch", TreeTokenizer::Branch}, {"Tag", TreeTokenizer::Tag},
-        {"Skel", TreeTokenizer::Skeleton}, {"Semi", TreeTokenizer::SemiSkeleton}
-    };
-  
-    Tokenizer* tokenizer = nullptr; 
-    string method = config["method"];
-    if(method == "ngram")
-        tokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
-    else if(method == "tree")
-        tokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
-    else
-    {
-        cerr << "Method was not able to be determined" << endl;
-        return 1;
-    } 
+    Tokenizer* tokenizer = Tokenizer::create_from_config(config); 
 
     cerr << "Tokenizing..." << endl;
     unordered_map<string, unordered_map<TermID, unsigned int>> language_models;
