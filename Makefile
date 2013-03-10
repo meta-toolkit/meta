@@ -9,11 +9,6 @@ SRC = $(wildcard src/io/*.cpp) $(wildcard src/model/*.cpp) $(wildcard src/cluste
 	  $(wildcard src/index/*.cpp) $(wildcard src/stemmers/*.cpp) $(wildcard lib/slda/*.cpp) \
 	  $(wildcard lib/liblinear/*.cpp)
 
-HEADERS = $(wildcard include/io/*.h) $(wildcard include/model/*.h) $(wildcard include/cluster/*.h) \
-	  $(wildcard include/classify/*.h) $(wildcard include/util/*.h) $(wildcard include/tokenizers/*.h) \
-	  $(wildcard include/index/*.h) $(wildcard include/stemmers/*.h) $(wildcard lib/slda/*.h) \
-	  $(wildcard lib/liblinear/*.h)
-
 TEMPLATES = $(wildcard src/io/*.tcc) $(wildcard src/model/*.tcc) $(wildcard src/cluster/*.tcc) \
 	  $(wildcard src/classify/*.tcc) $(wildcard src/util/*.tcc) $(wildcard src/tokenizers/*.tcc) \
 	  $(wildcard src/index/*.tcc) $(wildcard src/stemmers/*.tcc) $(wildcard lib/slda/*.tcc) \
@@ -59,11 +54,11 @@ $(SLDATEST): $(OBJ) $(SLDATEST).cpp $(TEMPLATES)
 	@echo " Linking \"$@\"..."
 	@$(LINKER) -o $@ $(SLDATEST).cpp $(OBJ) $(SLDALIBS)
 
-obj/%.o : lib/%.cpp $(HEADERS) | create_dirs
+obj/%.o : lib/%.cpp lib/%.h | create_dirs
 	@echo " Compiling $@..."
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
-obj/%.o : src/%.cpp $(HEADERS) | create_dirs
+obj/%.o : src/%.cpp include/%.h | create_dirs
 	@echo " Compiling $@..."
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
