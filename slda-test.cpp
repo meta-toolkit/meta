@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     unordered_map<string, string> config = ConfigReader::read(argv[1]);
     string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
     vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
-    Tokenizer* tokenizer = Tokenizer::create_from_config(config);
+    Tokenizer* tokenizer = ConfigReader::create_tokenizer(config);
     ofstream out("slda-input.dat");
 
     for(size_t i = 0; i < documents.size(); ++i)

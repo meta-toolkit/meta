@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
     unordered_map<string, vector<Document>> docs =
         getDocs("/home/sean/projects/senior-thesis-data/" + config["prefix"]);
 
-    Tokenizer* tokenizer = Tokenizer::create_from_config(config); 
+    Tokenizer* tokenizer = ConfigReader::create_tokenizer(config); 
 
     cerr << "Tokenizing..." << endl;
     unordered_map<string, unordered_map<TermID, unsigned int>> language_models;

@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
 
     vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
-    Tokenizer* tokenizer = Tokenizer::create_from_config(config);
+    Tokenizer* tokenizer = ConfigReader::create_tokenizer(config);
 
     for(size_t i = 0; i < documents.size(); ++i)
     {

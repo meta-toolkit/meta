@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include "tokenizers/multi_tokenizer.h"
 #include "io/config_reader.h"
 
 using std::ifstream;
@@ -34,4 +35,24 @@ unordered_map<string, string> ConfigReader::read(const string & path)
         cerr << "[ConfigReader]: Failed to open " << path << endl;
     }
     return options;
+}
+
+Tokenizer* ConfigReader::create_tokenizer(const unordered_map<string, string> & config)
+{
+    string method = config.at("method");
+    int nVal;
+    istringstream(config.at("ngram")) >> nVal;
+     
+    if(method == "ngram")
+        return new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt")));
+    else if(method == "tree")
+        return new TreeTokenizer(treeOpt.at(config.at("treeOpt")));
+    else if(method == "both")
+        return new MultiTokenizer({
+            new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt"))),
+            new TreeTokenizer(treeOpt.at(config.at("treeOpt")))
+        });
+
+    cerr << "Method was not able to be determined" << endl;
+    return nullptr;
 }
