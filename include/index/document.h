@@ -84,7 +84,7 @@ class Document
          * @param usingSLDA Indicates which learner we're passing the data to.
          * @return
          */
-        string getLearningData(InvertibleMap<std::string, int> & mapping, bool usingSLDA) const;
+        std::string getLearningData(InvertibleMap<std::string, int> & mapping, bool usingSLDA) const;
 
         /**
          * Wrapper function for a Document's cosine similarity measure.

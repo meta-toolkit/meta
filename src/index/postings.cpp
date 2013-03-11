@@ -9,10 +9,13 @@
 #include "index/structs.h"
 #include "index/chunk_list.h"
 #include "index/postings.h"
+#include "index/index.h"
 
 using std::map;
 using std::istringstream;
+using std::unordered_map;
 using std::ifstream;
+using std::ofstream;
 using std::string;
 using std::vector;
 using std::cerr;
@@ -126,9 +129,7 @@ void Postings::writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunk
         terms.clear();
     }
     else
-    {
-        cerr << "[Postings]: error creating chunk file" << endl;
-    }
+        throw IndexException("[Postings]: error creating chunk file");
 }
 
 void Postings::createPostingsFile(size_t numChunks, Lexicon & lexicon)
@@ -136,10 +137,7 @@ void Postings::createPostingsFile(size_t numChunks, Lexicon & lexicon)
     cerr << "[Postings]: merging chunks to create postings file" << endl;
     ofstream postingsFile(_postingsFilename);
     if(!postingsFile.good())
-    {
-        cerr << "[Postings]: error creating postings file" << endl;
-        return;
-    }
+        throw IndexException("[Postings]: error creating postings file");
 
     size_t line = 0;
     ChunkList chunks(numChunks);
@@ -182,7 +180,5 @@ void Postings::saveDocLengths(const vector<Document> & documents, const string &
             outfile << getDocID(doc.getPath()) << " " << doc.getLength() << endl;
     }
     else
-    {
-        cerr << "[Postings]: error saving document lengths" << endl;
-    }
+        throw IndexException("[Postings]: error saving document lengths");
 }

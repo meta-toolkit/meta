@@ -3,14 +3,11 @@
  */
 
 #include <fstream>
-#include <iostream>
 #include "tokenizers/parse_tree.h"
 
 using std::stringstream;
 using std::ifstream;
-using std::cout;
 using std::endl;
-using std::cerr;
 using std::string;
 using std::vector;
 
@@ -141,10 +138,7 @@ vector<ParseTree> ParseTree::getTrees(const string & filename)
         treeFile.close();
     }
     else
-    {
-        cerr << "[ParseTree::getTrees]: Failed to open "
-             << filename << endl;
-    }
+        throw ParseTreeException("failed to open " + filename);
 
     return trees;
 }

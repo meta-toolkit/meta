@@ -13,7 +13,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <iostream>
 #include <string>
 
 /**
@@ -97,6 +96,26 @@ class CompressedFileReader
          * @return the next bit in the file
          */
         bool readBit();
+};
+
+/**
+ * Basic exception for CompressedFileReader interactions.
+ */
+class CompressedFileReaderException: public std::exception
+{
+    public:
+        
+        CompressedFileReaderException(const std::string & error):
+            _error(error) { /* nothing */ }
+
+        const char* what () const throw ()
+        {
+            return _error.c_str();
+        }
+   
+    private:
+   
+        std::string _error;
 };
 
 #endif

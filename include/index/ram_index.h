@@ -39,9 +39,8 @@ class RAMIndex : public Index
          * @param documents - a vector of documents to make the index out of
          * @param chunkMBSize - the maximum size the postings chunks will be in
          *  memory before they're written to disk.
-         * @return whether the index creation was successful.
          */
-        bool indexDocs(std::vector<Document> & documents, size_t chunkMBSize);
+        void indexDocs(std::vector<Document> & documents, size_t chunkMBSize);
 
         /**
          * Scores a document given a query.

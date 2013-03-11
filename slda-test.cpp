@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include <fstream>
 #include <iostream>
 
@@ -14,7 +15,10 @@
 #include "lib/slda/utils.h"
 
 using std::vector;
+using std::unordered_map;
+using std::pair;
 using std::cout;
+using std::cerr;
 using std::endl;
 using std::string;
 using std::ofstream;

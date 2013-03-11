@@ -6,6 +6,7 @@
 #include "util/common.h"
 #include "index/document.h"
 #include "index/lexicon.h"
+#include "index/index.h"
 
 using std::ofstream;
 using std::vector;
@@ -62,14 +63,12 @@ void Lexicon::save(const string & docLengthsFilename, const string & termMapFile
             outfile << data.idf << " ";
             outfile << data.totalFreq << " ";
             outfile << data.postingIndex << " ";
-            outfile << (int) data.postingBit << "\n";
+            outfile << static_cast<int>(data.postingBit) << "\n";
         }
         outfile.close();
     }
     else
-    {
-        cerr << "[Lexicon]: error writing lexicon to disk" << endl;
-    }
+        throw IndexException("[Lexicon]: error writing lexicon to disk");
 }
 
 void Lexicon::addTerm(TermID term, TermData termData)
@@ -144,7 +143,7 @@ void Lexicon::setAvgDocLength()
     for(auto & length: _docLengths)
         sum += length.second;
 
-    _avgDL = (double) sum / _docLengths.size();
+    _avgDL = static_cast<double>(sum) / _docLengths.size();
 }
 
 string Lexicon::getTerm(TermID termID) const

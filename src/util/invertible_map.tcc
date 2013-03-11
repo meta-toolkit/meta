@@ -5,19 +5,10 @@
 #include "io/parser.h"
 #include "util/common.h"
 
-using std::istringstream;
-using std::ofstream;
-using std::pair;
-using std::make_pair;
-using std::map;
-using std::unordered_map;
-using std::cerr;
-using std::endl;
-
 template <class Key, class Value>
 InvertibleMap<Key, Value>::InvertibleMap():
-    _forward(unordered_map<Key, Value>()),
-    _backward(unordered_map<Value, Key>()) { /* nothing */ }
+    _forward(std::unordered_map<Key, Value>()),
+    _backward(std::unordered_map<Value, Key>()) { /* nothing */ }
 
 template <class Key, class Value>
 bool InvertibleMap<Key, Value>::empty() const
@@ -69,49 +60,47 @@ void InvertibleMap<Key, Value>::insert(const Key & key, const Value & value)
 }
 
 template <class Key, class Value>
-map<Key, Value> InvertibleMap<Key, Value>::sortKeys() const
+std::map<Key, Value> InvertibleMap<Key, Value>::sortKeys() const
 {
-    map<Key, Value> sorted;
+    std::map<Key, Value> sorted;
     for(auto & it: _forward)
         sorted.insert(it);
     return sorted;
 }
 
 template <class Key, class Value>
-map<Value, Key> InvertibleMap<Key, Value>::sortValues() const
+std::map<Value, Key> InvertibleMap<Key, Value>::sortValues() const
 {
-    map<Value, Key> sorted;
+    std::map<Value, Key> sorted;
     for(auto & it: _backward)
         sorted.insert(it);
     return sorted;
 }
 
 template <class Key, class Value>
-void InvertibleMap<Key, Value>::saveMap(const string & filename) const
+void InvertibleMap<Key, Value>::saveMap(const std::string & filename) const
 {
-    ofstream outfile(filename);
+    std::ofstream outfile(filename);
     if(outfile.good())
     {
         for(auto & entry: _forward)
-            outfile << entry.first << " " << entry.second << endl;
+            outfile << entry.first << " " << entry.second << std::endl;
         outfile.close();
     }
     else
-    {
-        cerr << "[InvertibleMap]: error writing map to disk" << endl;
-    }
+        throw InvertibleMapException("error writing map to disk");
 }
 
 template <class Key, class Value>
-void InvertibleMap<Key, Value>::readMap(const string & filename)
+void InvertibleMap<Key, Value>::readMap(const std::string & filename)
 {
     Parser parser(filename, " \n");
     while(parser.hasNext())
     {
         Key key;
         Value value;
-        istringstream(parser.next()) >> key;
-        istringstream(parser.next()) >> value;
+        std::istringstream(parser.next()) >> key;
+        std::istringstream(parser.next()) >> value;
         insert(key, value);
     }
 }

@@ -1,10 +1,11 @@
 #include <fstream>
-#include <ostream>
+#include <iostream>
 #include "util/invertible_map.h"
 #include "index/document.h"
 #include "tokenizers/parse_tree.h"
 #include "tokenizers/tokenizer.h"
 
+using std::string;
 using std::cout;
 using std::endl;
 using std::ofstream;

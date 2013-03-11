@@ -9,7 +9,6 @@
 #include <cstdio>
 #include <cmath>
 #include <string>
-#include <iostream>
 
 /**
  * Writes to a file of unsigned integers using gamma compression.
@@ -62,6 +61,26 @@ class CompressedFileWriter
          * Writes the buffer to the file.
          */
         void writeBuffer() const;
+};
+
+/**
+ * Basic exception for CompressedFileWriter interactions.
+ */
+class CompressedFileWriterException: public std::exception
+{
+    public:
+        
+        CompressedFileWriterException(const std::string & error):
+            _error(error) { /* nothing */ }
+
+        const char* what () const throw ()
+        {
+            return _error.c_str();
+        }
+   
+    private:
+   
+        std::string _error;
 };
 
 #endif

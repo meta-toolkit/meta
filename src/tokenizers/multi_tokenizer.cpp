@@ -3,6 +3,7 @@
  */
 
 #include "tokenizers/multi_tokenizer.h"
+using std::unordered_map;
         
 MultiTokenizer::MultiTokenizer(const std::vector<Tokenizer*> & tokenizers):
     _tokenizers(tokenizers)

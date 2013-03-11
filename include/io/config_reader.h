@@ -37,4 +37,26 @@ namespace ConfigReader
     };
 }
 
+/**
+ * Basic exception for ConfigReader interactions.
+ */
+class ConfigReaderException: public std::exception
+{
+    public:
+        
+        ConfigReaderException(const std::string & error):
+            _error(error) { /* nothing */ }
+
+        const char* what () const throw ()
+        {
+            return _error.c_str();
+        }
+   
+    private:
+   
+        std::string _error;
+};
+
+
+
 #endif

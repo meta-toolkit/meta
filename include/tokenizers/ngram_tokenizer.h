@@ -5,6 +5,7 @@
 #ifndef _NGRAM_TOKENIZER_H_
 #define _NGRAM_TOKENIZER_H_
 
+#include <string>
 #include <memory>
 #include <deque>
 #include <unordered_set>
@@ -132,7 +133,7 @@ class NgramTokenizer : public Tokenizer
         /**
          *
          */
-        std::string stopOrStem(const string & str) const;
+        std::string stopOrStem(const std::string & str) const;
 };
 
 #endif

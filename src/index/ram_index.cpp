@@ -3,16 +3,17 @@
  */
 
 #include <cmath>
+#include <iostream>
 #include "tokenizers/tokenizer.h"
 #include "index/ram_index.h"
 #include "index/document.h"
 
 using std::cout;
 using std::endl;
-using std::cerr;
 using std::string;
 using std::vector;
 using std::multimap;
+using std::unordered_map;
 
 RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer):
     _tokenizer(tokenizer),
@@ -132,8 +133,7 @@ multimap<double, string> RAMIndex::search(Document & query) const
     return ranks;
 }
 
-bool RAMIndex::indexDocs(std::vector<Document> & documents, size_t chunkMBSize)
+void RAMIndex::indexDocs(std::vector<Document> & documents, size_t chunkMBSize)
 {
     // put code for index creation in here?
-    return true;
 }

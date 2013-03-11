@@ -72,4 +72,24 @@ namespace KNN
     }
 }
 
+/**
+ * Basic exception for KNN interactions.
+ */
+class KNNException: public std::exception
+{
+    public:
+        
+        KNNException(const std::string & error):
+            _error(error) { /* nothing */ }
+
+        const char* what () const throw ()
+        {
+            return _error.c_str();
+        }
+   
+    private:
+   
+        std::string _error;
+};
+
 #endif

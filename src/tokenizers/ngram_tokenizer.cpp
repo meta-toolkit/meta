@@ -2,7 +2,6 @@
  * @file ngram_tokenizer.cpp
  */
 
-#include <string.h>
 #include <cstdlib>
 #include "util/common.h"
 #include "stemmers/porter2_stemmer.h"
@@ -12,6 +11,7 @@
 #include "tokenizers/ngram_tokenizer.h"
 
 using std::deque;
+using std::string;
 using std::unordered_map;
 using std::unordered_set;
 

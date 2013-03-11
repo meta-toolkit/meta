@@ -14,6 +14,7 @@ using std::unordered_map;
 using std::pair;
 using std::bind;
 using std::shared_ptr;
+using std::string;
 
 const char* TreeTokenizer::_extension = ".tree";
 

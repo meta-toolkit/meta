@@ -9,6 +9,8 @@
 #include "index/structs.h"
 
 using std::vector;
+using std::cerr;
+using std::endl;
 using std::multimap;
 using std::unordered_map;
 using std::string;
@@ -38,22 +40,16 @@ multimap<double, string> InvertedIndex::search(Document & query) const
     _tokenizer->tokenize(query);
     const unordered_map<TermID, unsigned int> freqs = query.getFrequencies();
 
-    //cerr << "Iterating through " << freqs.size() << " unique tokens" << endl;
     for(auto & queryTerm: freqs)
     {
         TermID queryTermID = queryTerm.first;
         if(!_lexicon.containsTermID(queryTermID))
-        {
-            //cerr << "[InvertedIndex]: query contains token not indexed" << endl;
             continue;
-        }
 
         size_t queryTermFreq = queryTerm.second;
         TermData termData = _lexicon.getTermInfo(queryTermID);
         vector<PostingData> docList = _postings.getDocs(termData);
 
-        //cerr << "  Iterating through " << docList.size()
-        //     << " documents containing \"" << _lexicon.getTerm(queryTermID) << "\" (termID " << queryTermID << ")" << endl;
         for(auto & doc: docList)
         {
             double docLength = _lexicon.getDocLength(doc.docID);
@@ -62,32 +58,21 @@ multimap<double, string> InvertedIndex::search(Document & query) const
             double QTF = ((k3 + 1.0) * queryTermFreq) / (k3 + queryTermFreq);
             double score = TF * IDF * QTF;
 
-            //cerr << "    docLength: " << docLength << ", avgDL: " << avgDL << endl;
-            //cerr << "    idf: " << termData.idf << ", tf: " << doc.freq << ", qtf: " << queryTermFreq << endl;
-            //cerr << "    IDF: " << IDF << ", TF: " << TF << ", QTF: " << QTF << endl;
-
             scores[doc.docID] += score;
         }
-        //cerr << endl;
     }
 
     // combine into sorted multimap
     multimap<double, string> results;
     for(auto & score: scores)
-    {
-        //cerr << score.second << ": " << _lexicon.getDoc(score.first) << endl;
         results.insert(make_pair(score.second, Document::getCategory(_lexicon.getDoc(score.first))));
-    }
     return results;
 }
 
-bool InvertedIndex::indexDocs(vector<Document> & documents, size_t chunkMBSize)
+void InvertedIndex::indexDocs(vector<Document> & documents, size_t chunkMBSize)
 {
     if(!_lexicon.isEmpty())
-    {
-        cerr << "[InvertedIndex]: attempted to create an index in an existing index location" << endl;
-        return false;
-    }
+        throw IndexException("[InvertedIndex]: attempted to create an index in an existing index location");
 
     size_t numChunks = _postings.createChunks(documents, chunkMBSize, _tokenizer);
     _tokenizer->saveTermIDMapping("termid.mapping");
@@ -95,6 +80,4 @@ bool InvertedIndex::indexDocs(vector<Document> & documents, size_t chunkMBSize)
     _postings.createPostingsFile(numChunks, _lexicon);
     _postings.saveDocLengths(documents, "docs.lengths");
     _lexicon.save("docs.lengths", "termid.mapping", "docid.mapping");
-
-    return true;
 }

@@ -18,12 +18,13 @@ using std::vector;
 using std::cout;
 using std::endl;
 using std::string;
+using std::unordered_map;
 
 int main(int argc, char* argv[])
 {
     if(argc != 2)
     {
-        cerr << "Usage:\t" << argv[0] << " configFile" << endl;
+        std::cerr << "Usage:\t" << argv[0] << " configFile" << endl;
         return 1;
     }
 
