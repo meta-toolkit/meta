@@ -2,6 +2,7 @@
 #define _CONFIG_READER_H_
 
 #include <unordered_map>
+#include <memory>
 #include <string>
 #include "tokenizers/ngram_tokenizer.h"
 #include "tokenizers/tree_tokenizer.h"
@@ -22,12 +23,13 @@ namespace ConfigReader
     /**
      * @return a Tokenizer as specified by a config object
      */
-    Tokenizer* create_tokenizer(
+    std::shared_ptr<Tokenizer> create_tokenizer(
         const std::unordered_map<std::string, std::string> & config);
 
     static const std::unordered_map<std::string, NgramTokenizer::NgramType> ngramOpt = {
         {"POS", NgramTokenizer::POS}, {"Word", NgramTokenizer::Word},
-        {"FW", NgramTokenizer::FW}, {"Char", NgramTokenizer::Char}
+        {"FW", NgramTokenizer::FW}, {"Char", NgramTokenizer::Char},
+        {"Lex", NgramTokenizer::Lex}
     };
 
     static const std::unordered_map<std::string, TreeTokenizer::TreeTokenizerType> treeOpt = {

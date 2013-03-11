@@ -24,7 +24,7 @@ class NgramTokenizer : public Tokenizer
         /**
          * Enumeration representing different ways to tokenize word tokens. 
          */
-        enum NgramType { POS, Word, FW, Char };
+        enum NgramType { POS, Word, FW, Char, Lex };
 
         /**
          * Enumeration for which stemmer (if any) to use.
@@ -114,6 +114,14 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenizeWord(Document & document,
+            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+
+        /**
+         * Tokenizes text based on lexed tokens from source code.
+         * @param document - the Document to store the tokenized information in
+         * @param docFreqs - optional parameter to store IDF values in
+         */
+        void tokenizeLex(Document & document,
             std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
 
         /**

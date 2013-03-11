@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
     unordered_map<string, vector<Document>> docs =
         getDocs("/home/sean/projects/senior-thesis-data/" + config["prefix"]);
 
-    Tokenizer* tokenizer = ConfigReader::create_tokenizer(config); 
+    std::shared_ptr<Tokenizer> tokenizer = ConfigReader::create_tokenizer(config); 
 
     cerr << "Tokenizing..." << endl;
     unordered_map<string, unordered_map<TermID, unsigned int>> language_models;
@@ -132,6 +132,5 @@ int main(int argc, char* argv[])
         }
     }
     
-    delete tokenizer;
     return 0;
 }

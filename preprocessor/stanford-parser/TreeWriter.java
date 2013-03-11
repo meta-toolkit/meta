@@ -63,7 +63,7 @@ public class TreeWriter
      */
     public static void process(ArrayList<String> filenames, String maxSentenceLength) throws IOException
     {
-        LexicalizedParser parser = new LexicalizedParser("../data/englishPCFG.ser.gz");
+        LexicalizedParser parser = new LexicalizedParser("../../data/englishPCFG.ser.gz");
         parser.setOptionFlags("-maxLength", maxSentenceLength, "-retainTmpSubcategories");
         int filesDone = 0;
         for(String filename: filenames)

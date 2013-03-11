@@ -5,6 +5,7 @@
  */
 
 #include <vector>
+#include <memory>
 #include <string>
 #include <iostream>
 
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
     InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
 
     vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
-    Tokenizer* tokenizer = ConfigReader::create_tokenizer(config);
+    std::shared_ptr<Tokenizer> tokenizer = ConfigReader::create_tokenizer(config);
 
     for(size_t i = 0; i < documents.size(); ++i)
     {
@@ -53,7 +54,6 @@ int main(int argc, char* argv[])
     }
 
     tokenizer->saveTermIDMapping("termidmapping.txt");
-    delete tokenizer;
     
     if(!quiet)
         cerr << "\r";

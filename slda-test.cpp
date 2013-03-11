@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <fstream>
@@ -47,7 +48,7 @@ void run_slda_plus_svm(const vector<Document> & documents,
     cerr << endl;
 }
 
-unordered_set<TermID> run_slda(const Tokenizer* tok, const InvertibleMap<string, int> & mapping)
+unordered_set<TermID> run_slda(const std::shared_ptr<Tokenizer> tok, const InvertibleMap<string, int> & mapping)
 {
     cerr << endl;
     cerr << string(16, '*') << " sLDA " << string(16, '*') << endl;
@@ -94,7 +95,7 @@ int main(int argc, char* argv[])
     unordered_map<string, string> config = ConfigReader::read(argv[1]);
     string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
     vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
-    Tokenizer* tokenizer = ConfigReader::create_tokenizer(config);
+    std::shared_ptr<Tokenizer> tokenizer = ConfigReader::create_tokenizer(config);
 
     ofstream slda_train_out("slda-train.dat");
     ofstream slda_test_out("slda-test.dat");
@@ -123,6 +124,4 @@ int main(int argc, char* argv[])
     unordered_set<TermID> selected_features = run_slda(tokenizer, mapping);
     run_liblinear("liblinear-input.dat", " SVM ");
     run_slda_plus_svm(documents, selected_features, mapping);
-
-    delete tokenizer;
 }

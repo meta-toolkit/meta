@@ -4,6 +4,7 @@
 
 using std::ifstream;
 using std::make_pair;
+using std::shared_ptr;
 using std::string;
 using std::unordered_map;
 
@@ -33,21 +34,21 @@ unordered_map<string, string> ConfigReader::read(const string & path)
     return options;
 }
 
-Tokenizer* ConfigReader::create_tokenizer(const unordered_map<string, string> & config)
+shared_ptr<Tokenizer> ConfigReader::create_tokenizer(const unordered_map<string, string> & config)
 {
     string method = config.at("method");
     int nVal;
     std::istringstream(config.at("ngram")) >> nVal;
      
     if(method == "ngram")
-        return new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt")));
+        return shared_ptr<Tokenizer>(new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt"))));
     else if(method == "tree")
-        return new TreeTokenizer(treeOpt.at(config.at("treeOpt")));
+        return shared_ptr<Tokenizer>(new TreeTokenizer(treeOpt.at(config.at("treeOpt"))));
     else if(method == "both")
-        return new MultiTokenizer({
+        return shared_ptr<Tokenizer>(new MultiTokenizer({
             new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt"))),
             new TreeTokenizer(treeOpt.at(config.at("treeOpt")))
-        });
+        }));
 
     throw ConfigReaderException("method was not able to be determined");
     return nullptr;

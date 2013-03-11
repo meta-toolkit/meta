@@ -38,8 +38,33 @@ void NgramTokenizer::tokenize(Document & document,
         tokenizeWord(document, docFreq);
     else if(_ngramType == Char)
         tokenizeChar(document, docFreq);
+    else if(_ngramType == Lex)
+        tokenizeLex(document, docFreq);
     else // _ngramType == POS
         tokenizePOS(document, docFreq);
+}
+
+void NgramTokenizer::tokenizeLex(Document & document,
+        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+{
+    Parser parser(document.getPath() + ".lex", "\n");
+
+    // initialize the ngram
+    deque<string> ngram;
+    for(size_t i = 0; i < _nValue && parser.hasNext(); ++i)
+        ngram.push_back(parser.next());
+
+    // add the rest of the ngrams
+    while(parser.hasNext())
+    {
+        string wordified = wordify(ngram);
+        document.increment(getMapping(wordified), 1, docFreq);
+        ngram.pop_front();
+        ngram.push_back(parser.next());
+    }
+
+    // add the last token
+    document.increment(getMapping(wordify(ngram)), 1, docFreq);
 }
 
 void NgramTokenizer::tokenizePOS(Document & document,
