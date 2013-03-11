@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <string>
 #include "structs.h"
@@ -85,6 +86,9 @@ class Document
          * @return
          */
         std::string getLearningData(InvertibleMap<std::string, int> & mapping, bool usingSLDA) const;
+
+        std::string getFilteredLearningData(InvertibleMap<std::string, int> & mapping, 
+                const std::unordered_set<TermID> & features) const;
 
         /**
          * Wrapper function for a Document's cosine similarity measure.
