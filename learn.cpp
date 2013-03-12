@@ -5,6 +5,7 @@
  */
 
 #include <vector>
+#include <memory>
 #include <string>
 #include <iostream>
 
@@ -18,8 +19,10 @@
 
 using std::vector;
 using std::cout;
+using std::cerr;
 using std::endl;
 using std::string;
+using std::unordered_map;
 
 /**
  * Runs the scatterplot creation.
@@ -38,72 +41,20 @@ int main(int argc, char* argv[])
     bool quiet = (config["quiet"] == "yes");
     InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
 
-    int nVal;
-    istringstream(config["ngram"]) >> nVal;
-
-    unordered_map<string, NgramTokenizer::NgramType> ngramOpt = {
-        {"POS", NgramTokenizer::POS}, {"Word", NgramTokenizer::Word},
-        {"FW", NgramTokenizer::FW}, {"Char", NgramTokenizer::Char}
-    };
-
-    unordered_map<string, TreeTokenizer::TreeTokenizerType> treeOpt = {
-        {"Subtree", TreeTokenizer::Subtree}, {"Depth", TreeTokenizer::Depth},
-        {"Branch", TreeTokenizer::Branch}, {"Tag", TreeTokenizer::Tag},
-        {"Skeleton", TreeTokenizer::Skeleton}, {"SemiSkeleton", TreeTokenizer::SemiSkeleton},
-        {"Multi", TreeTokenizer::Multi}
-    };
-    
     vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
+    std::shared_ptr<Tokenizer> tokenizer = ConfigReader::create_tokenizer(config);
 
-    size_t done = 0;
-    if(method == "ngram")
+    for(size_t i = 0; i < documents.size(); ++i)
     {
-        Tokenizer* tokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
-        for(size_t i = 0; i < documents.size(); ++i)
-        {
-            // order of lines in the liblinear input file does NOT matter (tested)
-            tokenizer->tokenize(documents[i], nullptr);
-            cout << documents[i].getLearningData(mapping, false /* using liblinear */);
-            if(!quiet && done++ % 20 == 0)
-                cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
-        }
-
-        tokenizer->saveTermIDMapping("termidmapping.txt");
-        delete tokenizer;
+        // order of lines in the liblinear input file does NOT matter (tested)
+        tokenizer->tokenize(documents[i], nullptr);
+        cout << documents[i].getLearningData(mapping, false /* using liblinear */);
+        if(!quiet && i % 20 == 0)
+            cerr << "  tokenizing " << static_cast<double>(i) / documents.size() * 100 << "%     \r"; 
     }
-    else if(method == "tree")
-    {
-        Tokenizer* tokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
-        for(size_t i = 0; i < documents.size(); ++i)
-        {
-            tokenizer->tokenize(documents[i], nullptr);
-            cout << documents[i].getLearningData(mapping, false /* using liblinear */);
-            if(!quiet && done++ % 20 == 0)
-                cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
-        }
 
-        delete tokenizer;
-    }
-    else if(method == "both")
-    {
-        Tokenizer* treeTokenizer = new TreeTokenizer(treeOpt[config["treeOpt"]]);
-        Tokenizer* ngramTokenizer = new NgramTokenizer(nVal, ngramOpt[config["ngramOpt"]]);
-        for(size_t i = 0; i < documents.size(); ++i)
-        {
-            treeTokenizer->tokenize(documents[i], nullptr);
-            ngramTokenizer->setMaxTermID(treeTokenizer->getNumTerms());
-            ngramTokenizer->tokenize(documents[i], nullptr);
-            treeTokenizer->setMaxTermID(ngramTokenizer->getNumTerms());
-            cout << documents[i].getLearningData(mapping, false /* using liblinear */);
-            if(!quiet && done++ % 20 == 0)
-                cerr << "  tokenizing " << static_cast<double>(done) / documents.size() * 100 << "%     \r"; 
-        }
-        delete treeTokenizer;
-        delete ngramTokenizer;
-    }
-    else
-        cerr << "Method was not able to be determined" << endl;
-
+    tokenizer->saveTermIDMapping("termidmapping.txt");
+    
     if(!quiet)
         cerr << "\r";
 }

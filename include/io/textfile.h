@@ -6,7 +6,6 @@
 #ifndef _TEXTFILE_H_
 #define _TEXTFILE_H_
 
-#include <iostream>
 #include <fcntl.h>
 #include <stdio.h>
 #include <string>
@@ -82,6 +81,27 @@ class TextFile
 
         /** no copying */
         const TextFile & operator=(const TextFile & other) = delete;
+};
+
+
+/**
+ * Basic exception for TextFile interactions.
+ */
+class TextFileException: public std::exception
+{
+    public:
+        
+        TextFileException(const std::string & error):
+            _error(error) { /* nothing */ }
+
+        const char* what () const throw ()
+        {
+            return _error.c_str();
+        }
+   
+    private:
+   
+        std::string _error;
 };
 
 #endif

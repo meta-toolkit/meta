@@ -26,7 +26,7 @@ class Tokenizer
          */
         Tokenizer();
 
-        virtual ~Tokenizer() { /* nothing */ }
+        virtual ~Tokenizer() = default;
 
         /**
          * Tokenizes a file into a Document.
@@ -34,7 +34,7 @@ class Tokenizer
          * @param docFreq - optional parameter to store IDF values in
          */
         virtual void tokenize(Document & document,
-                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq = nullptr) = 0;
+                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq = nullptr) = 0;
 
         /**
          * Maps terms to TermIDs.
@@ -86,6 +86,8 @@ class Tokenizer
          */
         void setMaxTermID(size_t start);
 
+        TermID getMaxTermID() const;
+ 
     private:
 
         /** Internal counter for the number of unique terms seen (used as keys

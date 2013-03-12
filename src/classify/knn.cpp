@@ -4,13 +4,9 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 #include <utility>
 #include "index/document.h"
 #include "classify/knn.h"
-
-using std::cout;
-using std::endl;
 
 using std::pair;
 using std::unordered_map;
@@ -83,10 +79,7 @@ string KNN::classify(Document & query, vector<shared_ptr<Index>> indexes, vector
         sum += weight;
 
     if(sum != 1.0)
-    {
-        std::cerr << "[KNN::classify]: weights in ensemble do not add to 1.0" << std::endl;
-        return "";
-    }
+        throw KNNException("weights in ensemble do not add to 1.0");
 
     // create a vector of normalized results for each index
     vector<unordered_map<string, double>> results;

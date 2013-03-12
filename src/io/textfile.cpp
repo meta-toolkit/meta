@@ -4,8 +4,6 @@
 
 #include "io/textfile.h"
 
-using std::cerr;
-using std::endl;
 using std::string;
 
 TextFile::TextFile(string path):
@@ -34,16 +32,13 @@ void TextFile::open_mmap()
 {
     _file_descriptor = open(_path.c_str(), O_RDONLY);
     if(_file_descriptor < 0)
-    {
-        cerr << "[TextFile]: Error obtaining file descriptor for: " << _path.c_str() << endl;
-        return;
-    }
+        throw TextFileException("error obtaining file descriptor for " + _path);
 
     _start = (char*) mmap(nullptr, _size, PROT_READ, MAP_SHARED, _file_descriptor, 0);
     if(_start == nullptr)
     {
-        cerr << "[TextFile]: Error memory-mapping " << _path << endl;
         close(_file_descriptor);
+        throw TextFileException("error memory-mapping " + _path);
     }
 }
 

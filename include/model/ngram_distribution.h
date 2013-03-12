@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <random>
+#include <string>
 #include <deque>
 #include <unordered_map>
 #include <utility>
@@ -66,7 +67,7 @@ class NgramDistribution
          * Generates a random sentence using the current language model.
          * @return a random sentence likely to be generated with this model
          */
-        string random_sentence(unsigned int seed, size_t numWords) const;
+        std::string random_sentence(unsigned int seed, size_t numWords) const;
 
         /**
          * @return the value of N for this model
@@ -87,14 +88,14 @@ class NgramDistribution
          * @param dist The distribution to select from
          * @return a random, though likely token from the distribution
          */
-        string get_word(double rand, const std::unordered_map<std::string, double> & dist) const;
+        std::string get_word(double rand, const std::unordered_map<std::string, double> & dist) const;
 
         /**
          * @param rand
          * @return N-1 previous tokens based on a uniform random number in
          * [0,1].
          */
-        string get_prev(double rand) const;
+        std::string get_prev(double rand) const;
 
         /**
          * Tokenizes a training document, counting frequencies of ngrams.
@@ -134,7 +135,7 @@ class NgramDistribution
          * @param ngram The deque of tokens
          * @return the list of tokens as a string
          */
-        string to_prev(const std::deque<std::string> & ngram) const;
+        std::string to_prev(const std::deque<std::string> & ngram) const;
 
         /** Frequency of each ngram, used for probability calculation. */
         FreqMap _freqs;

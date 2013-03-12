@@ -1,13 +1,12 @@
-#include <iostream>
 #include <fstream>
+#include "tokenizers/multi_tokenizer.h"
 #include "io/config_reader.h"
 
 using std::ifstream;
 using std::make_pair;
+using std::shared_ptr;
 using std::string;
 using std::unordered_map;
-using std::cerr;
-using std::endl;
 
 unordered_map<string, string> ConfigReader::read(const string & path)
 {
@@ -30,8 +29,27 @@ unordered_map<string, string> ConfigReader::read(const string & path)
         configFile.close();
     }
     else
-    {
-        cerr << "[ConfigReader]: Failed to open " << path << endl;
-    }
+        throw ConfigReaderException("failed to open " + path);
+
     return options;
+}
+
+shared_ptr<Tokenizer> ConfigReader::create_tokenizer(const unordered_map<string, string> & config)
+{
+    string method = config.at("method");
+    int nVal;
+    std::istringstream(config.at("ngram")) >> nVal;
+     
+    if(method == "ngram")
+        return shared_ptr<Tokenizer>(new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt"))));
+    else if(method == "tree")
+        return shared_ptr<Tokenizer>(new TreeTokenizer(treeOpt.at(config.at("treeOpt"))));
+    else if(method == "both")
+        return shared_ptr<Tokenizer>(new MultiTokenizer({
+            shared_ptr<Tokenizer>(new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt")))),
+            shared_ptr<Tokenizer>(new TreeTokenizer(treeOpt.at(config.at("treeOpt"))))
+        }));
+
+    throw ConfigReaderException("method was not able to be determined");
+    return nullptr;
 }

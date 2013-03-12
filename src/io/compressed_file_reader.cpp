@@ -4,8 +4,6 @@
 
 #include "io/compressed_file_reader.h"
 
-using std::cerr;
-using std::endl;
 using std::string;
 
 CompressedFileReader::CompressedFileReader(const string & filename):
@@ -18,20 +16,14 @@ CompressedFileReader::CompressedFileReader(const string & filename):
     // get file descriptor
     _fileDescriptor = open(filename.c_str(), O_RDONLY);
     if(_fileDescriptor < 0)
-    {
-        cerr << "[CompressedFileReader]: error obtaining file descriptor for "
-             << filename << endl;
-        return; 
-    }
+        throw CompressedFileReaderException("error obtaining file descriptor for " + filename);
     
     // memory map
     _start = (unsigned char*) mmap(nullptr, _size, PROT_READ, MAP_SHARED, _fileDescriptor, 0);
     if(_start == nullptr)
     {
-        cerr << "[CompressedFileReader]: error memory-mapping the file"
-             << endl;
         close(_fileDescriptor);
-        return;
+        throw CompressedFileReaderException("error memory-mapping the file");
     }
 
     // initialize the stream
@@ -66,9 +58,7 @@ void CompressedFileReader::seek(unsigned int position, unsigned int bitOffset)
         getNext();
     }
     else
-    {
-        cerr << "[CompressedFileReader]: error seeking; invalid parameters" << endl;
-    }
+        throw CompressedFileReaderException("error seeking; invalid parameters");
 }
 
 bool CompressedFileReader::hasNext() const

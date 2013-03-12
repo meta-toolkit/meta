@@ -1,10 +1,11 @@
 #include <fstream>
-#include <ostream>
+#include <iostream>
 #include "util/invertible_map.h"
 #include "index/document.h"
 #include "tokenizers/parse_tree.h"
 #include "tokenizers/tokenizer.h"
 
+using std::string;
 using std::cout;
 using std::endl;
 using std::ofstream;
@@ -61,7 +62,13 @@ void Tokenizer::setMaxTermID(size_t start)
     _currentTermID = start;
 }
 
+TermID Tokenizer::getMaxTermID() const
+{
+    return _currentTermID;
+}
+
 size_t Tokenizer::getNumTerms() const
 {
     return _termMap.size();
+
 }

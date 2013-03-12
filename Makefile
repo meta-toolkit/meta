@@ -45,7 +45,7 @@ CXXFLAGS = -O3 -pthread $(STDLIBFLAGS)
 LINKER = clang++ -Wall -pedantic -std=c++11 -I./include -I./src
 
 all: $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST)
-	for dir in $(LIBDIRS) ; do make -C $$dir ; done
+	@for dir in $(LIBDIRS) ; do make -C $$dir ; done
 
 create_dirs:
 	@mkdir -p obj/io obj/model obj/classify obj/util obj/cluster \
@@ -88,7 +88,7 @@ obj/%.o : src/%.cpp include/%.h | create_dirs
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	-for dir in $(LIBDIRS) ; do make -C $$dir clean; done
+	@for dir in $(LIBDIRS) ; do make -C $$dir clean; done
 	-rm -rf obj
 	-rm -f $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST)
 

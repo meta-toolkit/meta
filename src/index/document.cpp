@@ -18,6 +18,7 @@ using std::make_pair;
 using std::string;
 using std::stringstream;
 using std::unordered_map;
+using std::unordered_set;
 
 Document::Document(const string & path):
     _path(path),
@@ -111,6 +112,27 @@ string Document::getLearningData(InvertibleMap<string, int> & mapping, bool usin
     // this works for sLDA as well.
     for(auto & freq: _frequencies)
         sorted.insert(make_pair(freq.first + 1, freq.second));
+
+    for(auto & freq: sorted)
+        out << " " << freq.first << ":" << freq.second;
+
+    out << "\n";
+    return out.str();
+}
+
+string Document::getFilteredLearningData(InvertibleMap<string, int> & mapping, const unordered_set<TermID> & features) const
+{
+    stringstream out;
+    out << getMapping(mapping, getCategory(_path));
+
+    map<TermID, unsigned int> sorted;
+
+    for(auto & freq: _frequencies)
+    {
+        // only consider features selected in the set
+        if(features.find(freq.first) != features.end())
+            sorted.insert(make_pair(freq.first + 1, freq.second));
+    }
 
     for(auto & freq: sorted)
         out << " " << freq.first << ":" << freq.second;

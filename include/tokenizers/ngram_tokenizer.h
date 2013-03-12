@@ -5,6 +5,7 @@
 #ifndef _NGRAM_TOKENIZER_H_
 #define _NGRAM_TOKENIZER_H_
 
+#include <string>
 #include <memory>
 #include <deque>
 #include <unordered_set>
@@ -23,7 +24,7 @@ class NgramTokenizer : public Tokenizer
         /**
          * Enumeration representing different ways to tokenize word tokens. 
          */
-        enum NgramType { POS, Word, FW, Char };
+        enum NgramType { POS, Word, FW, Char, Lex };
 
         /**
          * Enumeration for which stemmer (if any) to use.
@@ -50,14 +51,14 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         virtual void tokenize(Document & document,
-                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs = nullptr);
+                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs = nullptr);
 
         /**
          * @return the value of n used for the ngrams
          */
         size_t getNValue() const;
 
-    protected:
+    private:
 
         /** the value of N in Ngram */
         size_t _nValue;
@@ -97,15 +98,7 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenizeFW(Document & document,
-            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
-
-        /**
-         * Tokenizes text based on part of speech tags.
-         * @param document - the Document to store the tokenized information in
-         * @param docFreqs - optional parameter to store IDF values in
-         */
-        void tokenizePOS(Document & document,
-            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+            const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
          * Tokenizes text based on non-stopword tokens.
@@ -113,15 +106,16 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenizeWord(Document & document,
-            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+            const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
          * Tokenizes text based on character ngrams.
          * @param document - the Document to store the tokenized information in
+         * @param parser - the initialized document parser to use
          * @param docFreqs - optional parameter to store IDF values in
          */
-        void tokenizeChar(Document & document,
-            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+        void tokenizeSimple(Document & document, Parser & parser,
+            const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
          * @param original - the string to set to lowercase
@@ -130,9 +124,12 @@ class NgramTokenizer : public Tokenizer
         std::string setLower(const std::string & original) const;
 
         /**
-         *
+         * Removes stopwords or stems words depending on the options set in the
+         * constructor. (Currently only stems words if that option is set)
+         * @param str - the token to consider
+         * @return the stemmed version of the word if the stemmer is enabled
          */
-        std::string stopOrStem(const string & str) const;
+        std::string stopOrStem(const std::string & str) const;
 };
 
 #endif

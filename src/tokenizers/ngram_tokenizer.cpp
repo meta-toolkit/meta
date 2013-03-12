@@ -2,7 +2,6 @@
  * @file ngram_tokenizer.cpp
  */
 
-#include <string.h>
 #include <cstdlib>
 #include "util/common.h"
 #include "stemmers/porter2_stemmer.h"
@@ -12,6 +11,7 @@
 #include "tokenizers/ngram_tokenizer.h"
 
 using std::deque;
+using std::string;
 using std::unordered_map;
 using std::unordered_set;
 
@@ -30,23 +30,32 @@ NgramTokenizer::NgramTokenizer(size_t n, NgramType ngramType,
 }
 
 void NgramTokenizer::tokenize(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     if(_ngramType == FW)
         tokenizeFW(document, docFreq);
     else if(_ngramType == Word)
         tokenizeWord(document, docFreq);
     else if(_ngramType == Char)
-        tokenizeChar(document, docFreq);
+    {
+        Parser parser(document.getPath() + ".sen", "");
+        tokenizeSimple(document, parser, docFreq);
+    }
+    else if(_ngramType == Lex)
+    {
+        Parser parser(document.getPath() + ".lex", "\n");
+        tokenizeSimple(document, parser, docFreq);
+    }
     else // _ngramType == POS
-        tokenizePOS(document, docFreq);
+    {
+        Parser parser(document.getPath() + ".pos", " \n");
+        tokenizeSimple(document, parser, docFreq);
+    }
 }
 
-void NgramTokenizer::tokenizePOS(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+void NgramTokenizer::tokenizeSimple(Document & document, Parser & parser,
+        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
-    Parser parser(document.getPath() + ".pos", " \n");
-
     // initialize the ngram
     deque<string> ngram;
     for(size_t i = 0; i < _nValue && parser.hasNext(); ++i)
@@ -66,7 +75,7 @@ void NgramTokenizer::tokenizePOS(Document & document,
 }
 
 void NgramTokenizer::tokenizeWord(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     Parser parser(document.getPath() + ".sen", " \n");
 
@@ -112,31 +121,8 @@ string NgramTokenizer::stopOrStem(const string & str) const
         return Porter2Stemmer::stem(Porter2Stemmer::trim(str));
 }
 
-void NgramTokenizer::tokenizeChar(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
-{
-    Parser parser(document.getPath() + ".sen", "");
-
-    // initialize the ngram
-    deque<string> ngram;
-    for(size_t i = 0; i < _nValue && parser.hasNext(); ++i)
-        ngram.push_back(parser.next());
-
-    // add the rest of the ngrams
-    while(parser.hasNext())
-    {
-        string wordified = wordify(ngram);
-        document.increment(getMapping(wordified), 1, docFreq);
-        ngram.pop_front();
-        ngram.push_back(parser.next());
-    }
-
-    // add the last token
-    document.increment(getMapping(wordify(ngram)), 1, docFreq);
-}
-
 void NgramTokenizer::tokenizeFW(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     Parser parser(document.getPath() + ".sen", " \n");
 

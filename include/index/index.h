@@ -7,6 +7,7 @@
 
 #include <map>
 #include <vector>
+#include <exception>
 #include <string>
 
 class Document;
@@ -30,9 +31,28 @@ class Index
          * @param documents - a vector of documents to make the index out of
          * @param chunkMBSize - the maximum size the postings chunks will be in
          *  memory before they're written to disk.
-         * @return whether the index creation was successful.
          */
-        virtual bool indexDocs(std::vector<Document> & documents, size_t chunkMBSize) = 0;
+        virtual void indexDocs(std::vector<Document> & documents, size_t chunkMBSize) = 0;
+};
+
+/**
+ * Basic exception for Index interactions.
+ */
+class IndexException: public std::exception
+{
+    public:
+        
+        IndexException(const std::string & error):
+            _error(error) { /* nothing */ }
+
+        const char* what () const throw ()
+        {
+            return _error.c_str();
+        }
+   
+    private:
+   
+        std::string _error;
 };
 
 #endif

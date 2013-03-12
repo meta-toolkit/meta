@@ -7,6 +7,7 @@
 #include "io/parser.h"
 #include "index/structs.h"
 #include "util/common.h"
+#include "index/index.h"
 #include "index/chunk_list.h"
 
 using std::cerr;
@@ -44,10 +45,7 @@ void ChunkList::combinePostingData(vector<IndexEntry> & entries, IndexEntry & co
 IndexEntry ChunkList::next()
 {
     if(!_parsers[0].hasNext())
-    {
-        cerr << "[ChunkList]: tried to getNext() when there were no more elements" << endl;
-        return IndexEntry(0);
-    }
+        throw IndexException("[ChunkList]: tried to getNext() when there were no more elements");
 
     IndexEntry min(_parsers[0].peek());
 

@@ -4,8 +4,6 @@
 
 #include "io/compressed_file_writer.h"
 
-using std::cerr;
-using std::endl;
 using std::string;
 
 CompressedFileWriter::CompressedFileWriter(const string & filename)
@@ -18,7 +16,7 @@ CompressedFileWriter::CompressedFileWriter(const string & filename)
 
     // disable buffering
     if(setvbuf(_outfile, nullptr, _IONBF, 0) != 0)
-        cerr << "[CompressedFileWriter]: error setvbuf" << endl;
+        throw CompressedFileWriterException("error disabling buffering (setvbuf)");
 
     // zero out, we'll only write ones
     memset(_buffer, 0, _bufferSize);
@@ -64,6 +62,6 @@ void CompressedFileWriter::writeBit(bool bit)
 void CompressedFileWriter::writeBuffer() const
 {
     if(fwrite(_buffer, 1, _bufferSize, _outfile) != _bufferSize)
-        cerr << "[CompressedFileWriter]: error writing to file" << endl;
+        throw CompressedFileWriterException("error writing to file");
     memset(_buffer, 0, _bufferSize);
 }
