@@ -12,7 +12,7 @@ MultiTokenizer::MultiTokenizer(const std::vector<std::shared_ptr<Tokenizer>> & t
 { /* nothing */ }
 
 void MultiTokenizer::tokenize(Document & document,
-    std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+    const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     for(auto & tok: _tokenizers)
     {

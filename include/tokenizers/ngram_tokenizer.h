@@ -58,7 +58,7 @@ class NgramTokenizer : public Tokenizer
          */
         size_t getNValue() const;
 
-    protected:
+    private:
 
         /** the value of N in Ngram */
         size_t _nValue;
@@ -101,14 +101,6 @@ class NgramTokenizer : public Tokenizer
             const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
-         * Tokenizes text based on part of speech tags.
-         * @param document - the Document to store the tokenized information in
-         * @param docFreqs - optional parameter to store IDF values in
-         */
-        void tokenizePOS(Document & document,
-            const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
-
-        /**
          * Tokenizes text based on non-stopword tokens.
          * @param document - the Document to store the tokenized information in
          * @param docFreqs - optional parameter to store IDF values in
@@ -117,19 +109,12 @@ class NgramTokenizer : public Tokenizer
             const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
-         * Tokenizes text based on lexed tokens from source code.
-         * @param document - the Document to store the tokenized information in
-         * @param docFreqs - optional parameter to store IDF values in
-         */
-        void tokenizeLex(Document & document,
-            const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
-
-        /**
          * Tokenizes text based on character ngrams.
          * @param document - the Document to store the tokenized information in
+         * @param parser - the initialized document parser to use
          * @param docFreqs - optional parameter to store IDF values in
          */
-        void tokenizeChar(Document & document,
+        void tokenizeSimple(Document & document, Parser & parser,
             const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
@@ -139,7 +124,10 @@ class NgramTokenizer : public Tokenizer
         std::string setLower(const std::string & original) const;
 
         /**
-         *
+         * Removes stopwords or stems words depending on the options set in the
+         * constructor. (Currently only stems words if that option is set)
+         * @param str - the token to consider
+         * @return the stemmed version of the word if the stemmer is enabled
          */
         std::string stopOrStem(const std::string & str) const;
 };
