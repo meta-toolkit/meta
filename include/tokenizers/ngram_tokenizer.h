@@ -51,7 +51,7 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         virtual void tokenize(Document & document,
-                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs = nullptr);
+                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs = nullptr);
 
         /**
          * @return the value of n used for the ngrams
@@ -98,7 +98,7 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenizeFW(Document & document,
-            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+            const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
          * Tokenizes text based on part of speech tags.
@@ -106,7 +106,7 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenizePOS(Document & document,
-            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+            const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
          * Tokenizes text based on non-stopword tokens.
@@ -114,7 +114,7 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenizeWord(Document & document,
-            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+            const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
          * Tokenizes text based on lexed tokens from source code.
@@ -122,7 +122,7 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenizeLex(Document & document,
-            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+            const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
          * Tokenizes text based on character ngrams.
@@ -130,7 +130,7 @@ class NgramTokenizer : public Tokenizer
          * @param docFreqs - optional parameter to store IDF values in
          */
         void tokenizeChar(Document & document,
-            std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreqs);
+            const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs);
 
         /**
          * @param original - the string to set to lowercase

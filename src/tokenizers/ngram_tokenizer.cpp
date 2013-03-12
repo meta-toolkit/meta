@@ -30,7 +30,7 @@ NgramTokenizer::NgramTokenizer(size_t n, NgramType ngramType,
 }
 
 void NgramTokenizer::tokenize(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     if(_ngramType == FW)
         tokenizeFW(document, docFreq);
@@ -45,7 +45,7 @@ void NgramTokenizer::tokenize(Document & document,
 }
 
 void NgramTokenizer::tokenizeLex(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     Parser parser(document.getPath() + ".lex", "\n");
 
@@ -68,7 +68,7 @@ void NgramTokenizer::tokenizeLex(Document & document,
 }
 
 void NgramTokenizer::tokenizePOS(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     Parser parser(document.getPath() + ".pos", " \n");
 
@@ -91,7 +91,7 @@ void NgramTokenizer::tokenizePOS(Document & document,
 }
 
 void NgramTokenizer::tokenizeWord(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     Parser parser(document.getPath() + ".sen", " \n");
 
@@ -138,7 +138,7 @@ string NgramTokenizer::stopOrStem(const string & str) const
 }
 
 void NgramTokenizer::tokenizeChar(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     Parser parser(document.getPath() + ".sen", "");
 
@@ -161,7 +161,7 @@ void NgramTokenizer::tokenizeChar(Document & document,
 }
 
 void NgramTokenizer::tokenizeFW(Document & document,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     Parser parser(document.getPath() + ".sen", " \n");
 
