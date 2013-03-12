@@ -2,7 +2,6 @@
  * @file tree_tokenizer.cpp
  */
 
-#include <iostream>
 #include <utility>
 #include "util/common.h"
 #include "index/document.h"

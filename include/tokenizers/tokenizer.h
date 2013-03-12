@@ -85,6 +85,8 @@ class Tokenizer
          * tokenizers on a single documents.
          */
         void setMaxTermID(size_t start);
+
+        TermID getMaxTermID() const;
  
     private:
 

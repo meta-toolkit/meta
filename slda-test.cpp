@@ -48,7 +48,7 @@ void run_slda_plus_svm(const vector<Document> & documents,
     cerr << endl;
 }
 
-unordered_set<TermID> run_slda(const std::shared_ptr<Tokenizer> tok, const InvertibleMap<string, int> & mapping)
+unordered_set<TermID> run_slda(const std::shared_ptr<Tokenizer> tok, const InvertibleMap<string, int> & mapping, size_t num_features)
 {
     cerr << endl;
     cerr << string(16, '*') << " sLDA " << string(16, '*') << endl;
@@ -79,7 +79,7 @@ unordered_set<TermID> run_slda(const std::shared_ptr<Tokenizer> tok, const Inver
     for(auto & dist: dists)
     {
         //cout << "Top terms for " << mapping.getKeyByValue(d++) << endl;
-        for(size_t i = 0; i < 1000; ++i)
+        for(size_t i = 0; i < num_features; ++i)
         {
             //cout << "  " << tok->getLabel(dist[i].first) << " " << dist[i].second << endl;
             selected_features.insert(static_cast<TermID>(dist[i].first));
@@ -121,7 +121,8 @@ int main(int argc, char* argv[])
     slda_test_out.close();
     liblinear_out.close();
 
-    unordered_set<TermID> selected_features = run_slda(tokenizer, mapping);
+    size_t num_features = atoi(argv[2]);
+    unordered_set<TermID> selected_features = run_slda(tokenizer, mapping, num_features);
     run_liblinear("liblinear-input.dat", " SVM ");
     run_slda_plus_svm(documents, selected_features, mapping);
 }

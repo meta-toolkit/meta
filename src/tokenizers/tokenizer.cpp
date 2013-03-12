@@ -62,6 +62,11 @@ void Tokenizer::setMaxTermID(size_t start)
     _currentTermID = start;
 }
 
+TermID Tokenizer::getMaxTermID() const
+{
+    return _currentTermID;
+}
+
 size_t Tokenizer::getNumTerms() const
 {
     return _termMap.size();

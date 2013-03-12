@@ -26,11 +26,6 @@ class MultiTokenizer: public Tokenizer
         MultiTokenizer(const std::vector<Tokenizer*> & tokenizers);
 
         /**
-         * Destructor; we need to free the collection of other Tokenizers.
-         */
-        ~MultiTokenizer();
-
-        /**
          * Tokenizes a file into a Document.
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
@@ -42,6 +37,9 @@ class MultiTokenizer: public Tokenizer
 
         /** Holds all the Tokenizers in this MultiTokenizer */
         std::vector<Tokenizer*> _tokenizers;
+
+        /** */
+        size_t _maxTermID;
 
         /**
          * Disallow copying.
