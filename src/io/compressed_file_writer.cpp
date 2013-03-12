@@ -16,7 +16,7 @@ CompressedFileWriter::CompressedFileWriter(const string & filename)
 
     // disable buffering
     if(setvbuf(_outfile, nullptr, _IONBF, 0) != 0)
-        CompressedFileWriterException("error disabling buffering (setvbuf)");
+        throw CompressedFileWriterException("error disabling buffering (setvbuf)");
 
     // zero out, we'll only write ones
     memset(_buffer, 0, _bufferSize);
@@ -62,6 +62,6 @@ void CompressedFileWriter::writeBit(bool bit)
 void CompressedFileWriter::writeBuffer() const
 {
     if(fwrite(_buffer, 1, _bufferSize, _outfile) != _bufferSize)
-        CompressedFileWriterException("error writing to file");
+        throw CompressedFileWriterException("error writing to file");
     memset(_buffer, 0, _bufferSize);
 }

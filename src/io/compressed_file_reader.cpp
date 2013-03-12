@@ -58,7 +58,7 @@ void CompressedFileReader::seek(unsigned int position, unsigned int bitOffset)
         getNext();
     }
     else
-        CompressedFileReaderException("error seeking; invalid parameters");
+        throw CompressedFileReaderException("error seeking; invalid parameters");
 }
 
 bool CompressedFileReader::hasNext() const
