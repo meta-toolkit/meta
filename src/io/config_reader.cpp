@@ -46,8 +46,8 @@ shared_ptr<Tokenizer> ConfigReader::create_tokenizer(const unordered_map<string,
         return shared_ptr<Tokenizer>(new TreeTokenizer(treeOpt.at(config.at("treeOpt"))));
     else if(method == "both")
         return shared_ptr<Tokenizer>(new MultiTokenizer({
-            new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt"))),
-            new TreeTokenizer(treeOpt.at(config.at("treeOpt")))
+            shared_ptr<Tokenizer>(new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt")))),
+            shared_ptr<Tokenizer>(new TreeTokenizer(treeOpt.at(config.at("treeOpt"))))
         }));
 
     throw ConfigReaderException("method was not able to be determined");

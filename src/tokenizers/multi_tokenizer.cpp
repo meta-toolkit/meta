@@ -6,7 +6,7 @@
 #include "tokenizers/multi_tokenizer.h"
 using std::unordered_map;
         
-MultiTokenizer::MultiTokenizer(const std::vector<Tokenizer*> & tokenizers):
+MultiTokenizer::MultiTokenizer(const std::vector<std::shared_ptr<Tokenizer>> & tokenizers):
     _tokenizers(tokenizers),
     _maxTermID(0)
 { /* nothing */ }

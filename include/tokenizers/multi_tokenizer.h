@@ -5,6 +5,7 @@
 #ifndef _MULTI_TOKENIZER_
 #define _MULTI_TOKENIZER_
 
+#include <memory>
 #include <vector>
 #include "tokenizers/tokenizer.h"
 
@@ -23,7 +24,7 @@ class MultiTokenizer: public Tokenizer
         /**
          * Constructs a MultiTokenizer from a vector of other Tokenizers.
          */
-        MultiTokenizer(const std::vector<Tokenizer*> & tokenizers);
+        MultiTokenizer(const std::vector<std::shared_ptr<Tokenizer>> & tokenizers);
 
         /**
          * Tokenizes a file into a Document.
@@ -36,20 +37,10 @@ class MultiTokenizer: public Tokenizer
     private:
 
         /** Holds all the Tokenizers in this MultiTokenizer */
-        std::vector<Tokenizer*> _tokenizers;
+        std::vector<std::shared_ptr<Tokenizer>> _tokenizers;
 
-        /** */
+        /** Keeps track of the number of terms between all the contained Tokenizers. */
         size_t _maxTermID;
-
-        /**
-         * Disallow copying.
-         */
-        MultiTokenizer(const MultiTokenizer & other) = delete;
-
-        /**
-         * Disallow assignment.
-         */
-        const MultiTokenizer & operator=(const MultiTokenizer & other) = delete;
 };
 
 #endif
