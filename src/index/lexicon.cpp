@@ -79,11 +79,14 @@ void Lexicon::addTerm(TermID term, TermData termData)
 void Lexicon::readLexicon()
 {
     Parser parser(_lexiconFilename, "\n");
+    
+    /*
     if(!parser.isValid())
     {
         cerr << "[Lexicon]: created empty lexicon" << endl;
         return;
     }
+    */
 
     // the first, second, and third lines in the lexicon file correspond
     //  to the doclengths files, term id mapping, and docid mapping files respectively

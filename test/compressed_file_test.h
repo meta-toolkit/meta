@@ -35,7 +35,7 @@ namespace Tests
         unordered_map<char, size_t> getFreqs(const string & filename)
         {
             unordered_map<char, size_t> freqs;
-            TextFile textfile(filename);
+            MmapFile textfile(filename);
 
             char* start = textfile.start();
             unsigned int index = 0;
@@ -84,7 +84,7 @@ namespace Tests
 
         void testWrite()
         {
-            TextFile textfile(inputFilename);
+            MmapFile textfile(inputFilename);
             CompressedFileWriter writer(compressedFilename);
 
             char* start = textfile.start();

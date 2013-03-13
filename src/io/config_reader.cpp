@@ -37,13 +37,15 @@ unordered_map<string, string> ConfigReader::read(const string & path)
 shared_ptr<Tokenizer> ConfigReader::create_tokenizer(const unordered_map<string, string> & config)
 {
     string method = config.at("method");
+
+    if(method == "tree")
+        return shared_ptr<Tokenizer>(new TreeTokenizer(treeOpt.at(config.at("treeOpt"))));
+
     int nVal;
     std::istringstream(config.at("ngram")) >> nVal;
      
     if(method == "ngram")
         return shared_ptr<Tokenizer>(new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt"))));
-    else if(method == "tree")
-        return shared_ptr<Tokenizer>(new TreeTokenizer(treeOpt.at(config.at("treeOpt"))));
     else if(method == "both")
         return shared_ptr<Tokenizer>(new MultiTokenizer({
             shared_ptr<Tokenizer>(new NgramTokenizer(nVal, ngramOpt.at(config.at("ngramOpt")))),

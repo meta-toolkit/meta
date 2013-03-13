@@ -1,10 +1,9 @@
 /**
- * @file textfile.h
- * Allows programming with (hopefully) fewer I/O bottlenecks.
+ * @file mmap_file.h
  */
 
-#ifndef _TEXTFILE_H_
-#define _TEXTFILE_H_
+#ifndef _MMAP_FILE_H_
+#define _MMAP_FILE_H_
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -18,7 +17,7 @@
  * Memory maps a text file for better I/O performance and allows you to read it.
  * However, if the file is very small, it will simply be stored in memory.
  */
-class TextFile
+class MmapFile
 {
     public:
 
@@ -26,12 +25,12 @@ class TextFile
          * Constructor.
          * @param path - creates a TextFile object from the given filename
          */
-        TextFile(std::string path);
+        MmapFile(std::string path);
 
         /**
          * Destructor; deallocates memory used to store this object, closing the text file.
          */
-        ~TextFile();
+        ~MmapFile();
 
         /**
          * @return a pointer to the beginning of the text file; nullptr if unsuccessful
@@ -50,9 +49,6 @@ class TextFile
 
     private:
 
-        /** minimum size requirement for mmap'ing files */
-        static const unsigned int _min_mmap_size = 4096;
-
         /** filename of the text file */
         std::string _path;
 
@@ -65,33 +61,22 @@ class TextFile
         /** file descriptor for the open text file */
         int _file_descriptor;
 
-        /**
-         * Loads a small file onto the heap in order to save virtual memory space. It's supposed to
-         * be more efficient, and doesn't waste space since mmap takes up one page minimum per file.
-         */
-        void load_file();
-
-        /**
-         * Memory-maps the file.
-         */
-        void open_mmap();
+        /** no copying */
+        MmapFile(const MmapFile & other) = delete;
 
         /** no copying */
-        TextFile(const TextFile & other) = delete;
-
-        /** no copying */
-        const TextFile & operator=(const TextFile & other) = delete;
+        const MmapFile & operator=(const MmapFile & other) = delete;
 };
 
 
 /**
  * Basic exception for TextFile interactions.
  */
-class TextFileException: public std::exception
+class MmapFileException: public std::exception
 {
     public:
         
-        TextFileException(const std::string & error):
+        MmapFileException(const std::string & error):
             _error(error) { /* nothing */ }
 
         const char* what () const throw ()

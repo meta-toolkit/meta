@@ -73,7 +73,7 @@ IndexEntry ChunkList::next()
         // get to valid spot
         if(!_parsers[i].hasNext())
         {
-            cerr << " -> used up " << _parsers[i].getFilename() << endl;
+            cerr << " -> used up " << _parsers[i].filename() << endl;
             std::swap(_parsers[i], _parsers[_numChunks - 1]);
             --_numChunks;
             if(_numChunks == 0)
