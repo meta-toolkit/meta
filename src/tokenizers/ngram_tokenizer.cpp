@@ -7,6 +7,7 @@
 #include "stemmers/porter2_stemmer.h"
 #include "index/document.h"
 #include "io/parser.h"
+#include "io/config_reader.h"
 #include "tokenizers/parse_tree.h"
 #include "tokenizers/ngram_tokenizer.h"
 
@@ -158,14 +159,16 @@ void NgramTokenizer::tokenizeFW(Document & document,
 
 void NgramTokenizer::initStopwords()
 {
-    Parser parser("../data/lemur-stopwords.txt", "\n"); // TODO
+    auto config = ConfigReader::read("tokenizer.ini");
+    Parser parser(config["stop-words"], "\n");
     while(parser.hasNext())
         _stopwords.insert(Porter2Stemmer::stem(parser.next()));
 }
 
 void NgramTokenizer::initFunctionWords()
 {
-    Parser parser("../data/function-words.txt", " \n"); // TODO
+    auto config = ConfigReader::read("tokenizer.ini");
+    Parser parser(config["function-words"], " \n");
     while(parser.hasNext())
         _functionWords.insert(parser.next());
 }
