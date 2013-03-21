@@ -94,14 +94,18 @@ void InvertibleMap<Key, Value>::saveMap(const std::string & filename) const
 template <class Key, class Value>
 void InvertibleMap<Key, Value>::readMap(const std::string & filename)
 {
-    Parser parser(filename, " \n");
-    while(parser.hasNext())
-    {
+    std::ifstream infile( filename );
+    while( infile ) {
+        std::string line;
+        std::getline( infile, line );
+        if( line.length() == 0 )
+            continue;
+        std::stringstream stream( line );
         Key key;
         Value value;
-        std::istringstream(parser.next()) >> key;
-        std::istringstream(parser.next()) >> value;
-        insert(key, value);
+        stream >> key;
+        stream >> value;
+        insert( key, value );
     }
 }
 
