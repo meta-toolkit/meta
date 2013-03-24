@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
+#include <vector>
 #include "tokenizers/ngram_tokenizer.h"
 #include "tokenizers/tree_tokenizer.h"
 
