@@ -1,18 +1,14 @@
 #include <fstream>
-#include <streambuf>
-#include <fstream>
 #include "tokenizers/multi_tokenizer.h"
 #include "io/config_reader.h"
 
-using std::ifstream;
-using std::make_pair;
 using std::shared_ptr;
 using std::string;
 using std::unordered_map;
 
 unordered_map<string, string> ConfigReader::read(const string & path)
 {
-    ifstream configFile(path);
+    std::ifstream configFile(path);
 
     if(!configFile.is_open())
         throw ConfigReaderException("failed to open " + path);
