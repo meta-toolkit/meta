@@ -26,17 +26,14 @@ using std::endl;
 using std::string;
 using std::ofstream;
 
-void run_liblinear(const string & datafile, const string & name)
+void run_liblinear(const string & datafile, const string & prefix)
 {
-    cerr << endl;
-    cerr << string(16, '*') << name << string(16, '*') << endl;
-    cerr << endl;
-    string command = "lib/liblinear-1.92/train -s 2 -v 2 -q " + datafile;
+    string command = prefix + "lib/liblinear-1.92/train -s 2 -v 2 -q " + datafile;
     system(command.c_str());
 }
 
 void run_slda_plus_svm(const vector<Document> & documents,
-        const unordered_set<TermID> & features, InvertibleMap<string, int> & mapping)
+        const unordered_set<TermID> & features, InvertibleMap<string, int> & mapping, const string & prefix)
 {
     string datafile = "liblinear-selected.dat";
     ofstream out(datafile);
@@ -44,19 +41,14 @@ void run_slda_plus_svm(const vector<Document> & documents,
         out << d.getFilteredLearningData(mapping, features);
 
     out.close();
-    run_liblinear(datafile, " sLDA+SVM ");
-    cerr << endl;
+    run_liblinear(datafile, prefix);
 }
 
-unordered_set<TermID> run_slda(const std::shared_ptr<Tokenizer> tok, const InvertibleMap<string, int> & mapping, size_t num_features)
+vector<TermID> run_slda(const string & prefix)
 {
-    cerr << endl;
-    cerr << string(16, '*') << " sLDA " << string(16, '*') << endl;
-    cerr << endl;
-
     corpus train_corpus;
     train_corpus.read_data("slda-train.dat");
-    settings setting("lib/slda/settings.txt");
+    settings setting(prefix + "lib/slda/settings.txt");
 
     string directory = "slda-output-est";
     make_directory(directory);
@@ -73,29 +65,37 @@ unordered_set<TermID> run_slda(const std::shared_ptr<Tokenizer> tok, const Inver
     model.load_model(model_filename);
     model.infer_only(&test_corpus, &setting, directory);
 
-    unordered_set<TermID> selected_features;
+    vector<pair<TermID, double>> features;
     vector<vector<pair<int, double>>> dists = model.top_terms();
-    //size_t d = 1;
+
+    cerr << dists.front().size() << " total features" << endl;
+
     for(auto & dist: dists)
+        for(auto & p: dist)
+            features.push_back(std::make_pair(static_cast<TermID>(p.first), p.second));
+
+    std::sort(features.begin(), features.end(), [](const pair<TermID, double> & a, const pair<TermID, double> b) {
+        return a.second > b.second;
+    });
+
+    vector<TermID> selected_features;
+    unordered_set<TermID> seen;
+    selected_features.reserve(features.size());
+    for(auto & p: features)
     {
-        //cout << "Top terms for " << mapping.getKeyByValue(d++) << endl;
-        for(size_t i = 0; i < num_features; ++i)
+        if(seen.find(p.first) == seen.end())
         {
-            //cout << "  " << tok->getLabel(dist[i].first) << " " << dist[i].second << endl;
-            selected_features.insert(static_cast<TermID>(dist[i].first));
+            selected_features.push_back(p.first);
+            seen.insert(p.first);
         }
     }
 
     return selected_features;
 }
 
-int main(int argc, char* argv[])
+InvertibleMap<string, int> tokenize(std::shared_ptr<Tokenizer> & tokenizer, vector<Document> & documents)
 {
     InvertibleMap<string, int> mapping;
-    unordered_map<string, string> config = ConfigReader::read(argv[1]);
-    string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
-    vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
-    std::shared_ptr<Tokenizer> tokenizer = ConfigReader::create_tokenizer(config);
 
     ofstream slda_train_out("slda-train.dat");
     ofstream slda_test_out("slda-test.dat");
@@ -115,14 +115,41 @@ int main(int argc, char* argv[])
         if(i % 20 == 0)
             cerr << "  tokenizing " << static_cast<double>(i) / documents.size() * 100 << "%     \r"; 
     }
-    cerr << "  tokenizing 100%       " << endl;
+    cerr << "  tokenizing 100%\r       ";
 
     slda_train_out.close();
     slda_test_out.close();
     liblinear_out.close();
 
-    size_t num_features = atoi(argv[2]);
-    unordered_set<TermID> selected_features = run_slda(tokenizer, mapping, num_features);
-    run_liblinear("liblinear-input.dat", " SVM ");
-    run_slda_plus_svm(documents, selected_features, mapping);
+    return mapping;
+}
+
+int main(int argc, char* argv[])
+{
+    if(argc != 3)
+    {
+        cerr << "Usage:\t" << argv[0] << " config.ini prefix" << endl;
+        return 1;
+    }
+
+    string path(argv[2]);
+
+    unordered_map<string, string> config = ConfigReader::read(argv[1]);
+    string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
+
+    vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
+    std::shared_ptr<Tokenizer> tokenizer = ConfigReader::create_tokenizer(config);
+    InvertibleMap<string, int> mapping = tokenize(tokenizer, documents);
+
+    vector<TermID> selected_features = run_slda(path);
+    run_liblinear("liblinear-input.dat", path);
+    for(double d = 0.01; d < 0.5; d += .02)
+    {
+        size_t num_features = d * selected_features.size();
+        cout << "Using " << num_features << " features (" << (d * 100) << "%)" << endl;
+        unordered_set<TermID> features(selected_features.begin(), selected_features.begin() + num_features);
+        run_slda_plus_svm(documents, features, mapping, path);
+    }
+
+    return 0;
 }

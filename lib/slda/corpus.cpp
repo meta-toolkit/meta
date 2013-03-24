@@ -88,10 +88,10 @@ void corpus::read_data(const string & data_filename)
     
     infile.close();
 
-    cout << docs.size() << " documents" << endl;
-    cout << size_vocab << " terms" << endl;
-    cout << num_total_words << " total words" << endl;
-    cout << num_classes << " classes" << endl;
+    cout << docs.size() << " documents, "
+         << size_vocab << " terms, "
+         << num_total_words << " total words, "
+         << num_classes << " classes" << endl;
 }
 
 pair<int, int> corpus::get_word_data(const string & str) const

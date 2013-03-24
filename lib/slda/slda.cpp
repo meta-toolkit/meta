@@ -32,6 +32,7 @@
 #include "opt.h"
 
 using std::cerr;
+using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
@@ -479,12 +480,10 @@ void slda::v_em(corpus * c, const settings * setting,
             likelihood += doc_e_step(c->docs[d], var_gamma[d], phi, ss, ETA_UPDATE, setting);
         }
 
-        cerr << " EM iteration " << i << ", 100%  LL = ";
-
         // m-step
         mle(ss, ETA_UPDATE, setting);
 
-        cerr << "\r" << endl;
+        cerr << "\r";
 
         // check for convergence
         converged = fabs((likelihood_old - likelihood) / (likelihood_old));
@@ -606,8 +605,6 @@ void slda::mle(suffstats * ss, int eta_update, const settings * setting)
 
 	gsl_multimin_fdfminimizer_free (s);
 	gsl_vector_free (x);
-
-    cerr << f;
 }
 
 double slda::doc_e_step(document* doc, double* gamma, double** phi,
@@ -955,11 +952,6 @@ void slda::infer_only(corpus * c, const settings * setting, const string & direc
 
     for (size_t d = 0; d < c->docs.size(); d++)
     {
-        if ((d % 20) == 0)
-            cerr << " Inference "
-                 << 100 * static_cast<double>(d) / c->docs.size()
-                 << "%     \r";
-
         document * doc = c->docs[d];
         likelihood = lda_inference(doc, var_gamma[d], phi, setting);
 
@@ -999,8 +991,7 @@ void slda::infer_only(corpus * c, const settings * setting, const string & direc
         fprintf(inf_label_file, "%d\n", label);
     }
 
-    cerr << " Inference 100%     " << endl;
-    cerr << "Average accuracy: " << static_cast<double>(num_correct) / c->docs.size() << endl;
+    cout << "Average accuracy: " << static_cast<double>(num_correct) / c->docs.size() << endl;
 
     sprintf(filename, "%s/inf-gamma.dat", directory.c_str());
     save_gamma(filename, var_gamma, c->docs.size());
