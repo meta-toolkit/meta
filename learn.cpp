@@ -53,8 +53,6 @@ int main(int argc, char* argv[])
             cerr << "  tokenizing " << static_cast<double>(i) / documents.size() * 100 << "%     \r"; 
     }
 
-    tokenizer->saveTermIDMapping("termidmapping.txt");
-    
     if(!quiet)
         cerr << "\r";
 }
