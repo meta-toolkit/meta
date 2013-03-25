@@ -12,6 +12,9 @@
 #include "tokenizers/tree_tokenizer.h"
 #include "util/invertible_map.h"
 
+#include "classify/select_slda.h"
+#include "classify/select_doc_freq.h"
+
 #include "lib/slda/slda.h"
 #include "lib/slda/corpus.h"
 #include "lib/slda/utils.h"

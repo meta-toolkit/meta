@@ -4,7 +4,9 @@
 
 #include "index/document.h"
 #include "tokenizers/multi_tokenizer.h"
+
 using std::unordered_map;
+using std::string;
         
 MultiTokenizer::MultiTokenizer(const std::vector<std::shared_ptr<Tokenizer>> & tokenizers):
     _tokenizers(tokenizers),
@@ -27,4 +29,16 @@ void MultiTokenizer::tokenize(Document & document,
         // update the number of unique terms
         _maxTermID = tok->getMaxTermID();
     }
+}
+
+string MultiTokenizer::getLabel(TermID termID) const
+{
+    for(auto & t: _tokenizers)
+    {
+        auto map = t->getTermIDMapping();
+        if(map.containsKey(termID))
+            return map.getValueByKey(termID);
+    }
+
+    return "";
 }

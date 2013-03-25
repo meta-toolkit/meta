@@ -63,11 +63,12 @@ class Tokenizer
         InvertibleMap<TermID, std::string> getTermIDMapping() const;
 
         /**
+         * TODO there are probably other functions that MultiTokenizer messes up
          * Looks up the actual label that is represented by a TermID.
          * @param termID
          * @return the label
          */
-        std::string getLabel(TermID termID) const;
+        virtual std::string getLabel(TermID termID) const;
 
         /**
          * Prints the data associated with this tokenizer, consisting of a TermID and its string

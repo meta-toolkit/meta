@@ -6,6 +6,7 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+#include <iostream>
 #include <string>
 
 /**
@@ -46,6 +47,26 @@ namespace Common
     inline std::string makeBold(std::string str)
     {
         return "\033[1m" + str + "\033[0m";
+    }
+
+    /**
+     * @param idx
+     * @param max
+     * @param freq
+     * @param prefix
+     */
+    inline void show_progress(size_t idx, size_t max, size_t freq, const std::string & prefix = "")
+    {
+        if(idx % freq == 0)
+        {
+            std::cerr << prefix << static_cast<double>(idx) / max * 100 << "%    \r";
+            std::flush(std::cerr);
+        }
+    }
+
+    inline void end_progress(const std::string & prefix)
+    {
+        std::cerr << prefix << "100%         " << std::endl;
     }
 }
 

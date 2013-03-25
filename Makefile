@@ -7,6 +7,7 @@ CLUSTERTEST = cluster-test
 THREADPOOLTEST = threadpool-test
 LDAGIBBSTEST = lda-gibbs-test
 LDATOPICS = lda-topics
+FEATURETEST = feature-test
 
 SRC = $(wildcard src/io/*.cpp) $(wildcard src/model/*.cpp) $(wildcard src/cluster/*.cpp) \
 	  $(wildcard src/classify/*.cpp) $(wildcard src/util/*.cpp) $(wildcard src/tokenizers/*.cpp) \
@@ -46,7 +47,7 @@ CXXFLAGS = -O3 -pthread $(STDLIBFLAGS)
 #CXXFLAGS = -g -O0 -pthread $(STDLIBFLAGS)
 LINKER = clang++ -Wall -pedantic -std=c++11 -I./include -I./src
 
-all: $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST) $(LDAGIBBSTEST) $(LDATOPICS)
+all: $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST) $(LDAGIBBSTEST) $(LDATOPICS) $(FEATURETEST)
 	@for dir in $(LIBDIRS) ; do make -C $$dir ; done
 
 create_dirs:
@@ -90,6 +91,10 @@ $(LDATOPICS): $(OBJ) $(LDATOPICS).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
 	@echo " Linking \"$@\"..."
 	@$(LINKER) -o $@ $(LDATOPICS).cpp $(OBJ) $(LIBS)
 
+$(FEATURETEST): $(OBJ) $(FEATURETEST).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
+	@echo " Linking \"$@\"..."
+	@$(LINKER) -o $@ $(FEATURETEST).cpp $(OBJ) $(LIBS)
+
 obj/%.o : lib/%.cpp lib/%.h | create_dirs
 	@echo " Compiling $@..."
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -101,7 +106,7 @@ obj/%.o : src/%.cpp include/%.h | create_dirs
 clean:
 	@for dir in $(LIBDIRS) ; do make -C $$dir clean; done
 	-rm -rf obj
-	-rm -f $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST) $(LDAGIBBSTEST) $(LDATOPICS)
+	-rm -f $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST) $(LDAGIBBSTEST) $(LDATOPICS) $(FEATURETEST)
 
 tidy:
 	-rm -rf ./doc *.chunk postingsFile lexiconFile termid.mapping docid.mapping docs.lengths *compressed.txt *.terms *.phi *.theta

@@ -6,6 +6,7 @@
 #define _MULTI_TOKENIZER_
 
 #include <memory>
+#include <string>
 #include <vector>
 #include "tokenizers/tokenizer.h"
 
@@ -33,6 +34,8 @@ class MultiTokenizer: public Tokenizer
          */
         void tokenize(Document & document,
                 const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq = nullptr);
+
+        std::string getLabel(TermID termID) const;
 
     private:
 
