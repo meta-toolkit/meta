@@ -12,8 +12,8 @@ using std::ofstream;
 using std::unordered_map;
 
 Tokenizer::Tokenizer():
-    _currentTermID(0),
-    _termMap(InvertibleMap<TermID, string>())
+    _termMap(InvertibleMap<TermID, string>()),
+    _currentTermID(0)
 { /* nothing */ }
 
 TermID Tokenizer::getMapping(const string & term)
@@ -41,7 +41,7 @@ void Tokenizer::saveTermIDMapping(const string & filename) const
     _termMap.saveMap(filename);
 }
 
-InvertibleMap<TermID, std::string> Tokenizer::getTermIDMapping() const
+const InvertibleMap<TermID, std::string> & Tokenizer::getTermIDMapping() const
 {
     return _termMap;
 }

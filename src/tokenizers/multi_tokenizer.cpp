@@ -28,17 +28,9 @@ void MultiTokenizer::tokenize(Document & document,
 
         // update the number of unique terms
         _maxTermID = tok->getMaxTermID();
-    }
-}
 
-string MultiTokenizer::getLabel(TermID termID) const
-{
-    for(auto & t: _tokenizers)
-    {
-        auto map = t->getTermIDMapping();
-        if(map.containsKey(termID))
-            return map.getValueByKey(termID);
+        // update the counts stored in our own _termMap
+        for(auto & m: tok->getTermIDMapping())
+            _termMap.insert(m.first, m.second);
     }
-
-    return "";
 }

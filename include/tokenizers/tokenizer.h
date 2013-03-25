@@ -47,7 +47,7 @@ class Tokenizer
          * Calls the TermID InvertibleMap's saveMap function.
          * @param filename - the filename to save the mapping as
          */
-        void saveTermIDMapping(const std::string & filename) const;
+        virtual void saveTermIDMapping(const std::string & filename) const;
 
         /**
          * Sets the token to termid mapping for this tokenizer.
@@ -55,12 +55,13 @@ class Tokenizer
          *  with an existing mapping.
          * @param mapping - a reference to the desired mapping
          */
-        void setTermIDMapping(const InvertibleMap<TermID, std::string> & mapping);
+        virtual void setTermIDMapping(const InvertibleMap<TermID, std::string> & mapping);
 
         /**
-         *
+         * @return a reference to the structure used to store the termID <->
+         * term string mapping
          */
-        InvertibleMap<TermID, std::string> getTermIDMapping() const;
+        virtual const InvertibleMap<TermID, std::string> & getTermIDMapping() const;
 
         /**
          * TODO there are probably other functions that MultiTokenizer messes up
@@ -74,30 +75,41 @@ class Tokenizer
          * Prints the data associated with this tokenizer, consisting of a TermID and its string
          * value.
          */
-        void printData() const;
+        virtual void printData() const;
 
         /**
          * @return the number of terms seen so far by this tokenizer
          */
-        size_t getNumTerms() const;
+        virtual size_t getNumTerms() const;
 
         /**
          * Sets the current termID for this tokenizer. This is useful when running multiple
          * tokenizers on a single documents.
          */
-        void setMaxTermID(size_t start);
+        virtual void setMaxTermID(size_t start);
 
-        TermID getMaxTermID() const;
+        /**
+         * @return the max TermID associated with this Tokenizer. This is NOT
+         * the total number of unique terms seen by this Tokenizer.
+         */
+        virtual TermID getMaxTermID() const;
+
+    protected:
+
+        /**
+         * Keeps track of the internal mapping of TermIDs to strings parsed
+         * from the file. This is protected mainly so MultiTokenizer can update
+         * its _termMap correctly.
+         */
+        InvertibleMap<TermID, std::string> _termMap;
  
     private:
 
-        /** Internal counter for the number of unique terms seen (used as keys
-         * in the InvertibleMap) */
+        /**
+         * Internal counter for the number of unique terms seen (used as keys
+         * in the InvertibleMap).
+         */
         TermID _currentTermID;
-
-        /** Keeps track of the internal mapping of TermIDs to strings parsed
-         * from the file */
-        InvertibleMap<TermID, std::string> _termMap;
 };
 
 #endif
