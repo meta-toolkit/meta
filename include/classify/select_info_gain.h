@@ -6,6 +6,7 @@
 #define _SELECT_INFO_GAIN_H_
 
 #include <vector>
+#include <utility>
 #include "index/document.h"
 
 namespace classify { namespace feature_select {
@@ -17,8 +18,18 @@ namespace classify { namespace feature_select {
      * @param docs The documents to extract features from
      * @return a vector of TermIDs sorted by importance
      */
-    std::vector<TermID> info_gain(const std::vector<Document> & docs);
+    std::vector<std::pair<TermID, double>> info_gain(const std::vector<Document> & docs);
 
+    /**
+     * @param termID
+     * @param label
+     * @param total_classes
+     * @param total_terms
+     * @param classes
+     */
+    double calc_info_gain(TermID termID, const std::string & label,
+        size_t total_docs, size_t total_terms,
+        const std::unordered_map<std::string, std::vector<Document>> & classes);
 } }
 
 #endif

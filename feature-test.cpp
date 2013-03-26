@@ -48,11 +48,7 @@ int main(int argc, char* argv[])
     }
     Common::end_progress("  tokenizing ");
 
-    auto m = tokenizer->getTermIDMapping();
-    for(auto & p: m)
-        cout << p.first << " " << p.second << endl;
-
-    vector<pair<TermID, double>> features = classify::feature_select::doc_freq(documents);
+    vector<pair<TermID, double>> features = classify::feature_select::info_gain(documents);
     for(size_t i = 0; i < features.size(); ++i)
         cout << " " << tokenizer->getLabel(features[i].first)
              << " " << features[i].second << endl;
