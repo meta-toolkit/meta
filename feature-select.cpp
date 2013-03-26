@@ -32,7 +32,7 @@ void run_liblinear(const string & datafile, const string & prefix)
     system(command.c_str());
 }
 
-void run_slda_plus_svm(const vector<Document> & documents,
+void run_selected_features(const vector<Document> & documents,
         const unordered_set<TermID> & features, InvertibleMap<string, int> & mapping, const string & prefix)
 {
     string datafile = "liblinear-selected.dat";
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
         unordered_set<TermID> features;
         for(size_t i = 0; i < num_features; ++i)
             features.insert(selected_features[i].first);
-        run_slda_plus_svm(documents, features, mapping, path);
+        run_selected_features(documents, features, mapping, path);
     }
 
     return 0;
