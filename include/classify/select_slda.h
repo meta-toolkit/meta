@@ -6,6 +6,7 @@
 #define _SELECT_SLDA_H_
 
 #include <vector>
+#include <utility>
 #include "index/document.h"
 
 namespace classify { namespace feature_select {
@@ -18,7 +19,7 @@ namespace classify { namespace feature_select {
      * @param docs The documents to extract features from
      * @return a vector of TermIDs sorted by importance
      */
-    std::vector<TermID> slda(const std::vector<Document> & docs);
+    std::vector<std::pair<TermID, double>> slda(const std::vector<Document> & docs);
 
 } }
 

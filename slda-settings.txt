@@ -1,0 +1,9 @@
+var-max-iter 20
+var-convergence .001
+em-max-iter 50
+em-convergence .001
+L2-penalty 0.01
+alpha-val 1.0
+num-topics 2
+init-method seeded
+alpha-action fixed
