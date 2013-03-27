@@ -5,6 +5,7 @@ LM = lm
 SLDATEST = feature-select
 CLUSTERTEST = cluster-test
 THREADPOOLTEST = threadpool-test
+PARALLELFORTEST = parallel-for-test
 LDAGIBBSTEST = lda-gibbs-test
 LDATOPICS = lda-topics
 
@@ -24,7 +25,8 @@ TEMPLATE_HEADERS := $(shell echo $(TEMPLATE_HEADERS) | sed -e "s/src/include/g")
 # manually add template headers here that do not have a corresponding .tcc file
 TEMPLATE_HEADERS += include/cluster/agglomerative_clustering.h \
 					include/cluster/basic_single_link_policy.h \
-					include/cluster/point.h
+					include/cluster/point.h \
+					include/parallel/thread_pool.h include/parallel/parallel_for.h
 
 OBJ := $(SRC:.cpp=.o)
 OBJ := $(shell echo $(OBJ) | sed -e "s/src/obj/g" | sed -e "s/lib/obj/g")
@@ -41,12 +43,13 @@ STDLIBFLAGS =
 
 LIBS = $(SLDALIBS) $(CXXRTLIBS) $(THREADLIBS) $(STDLIBFLAGS)
 
-CXX = clang++ -Wall -pedantic -std=c++11 -I./include -I./src
+CXX = g++ -Wall -pedantic -std=c++11 -I./include -I./src
 CXXFLAGS = -O3 -pthread $(STDLIBFLAGS)
 #CXXFLAGS = -g -O0 -pthread $(STDLIBFLAGS)
-LINKER = clang++ -Wall -pedantic -std=c++11 -I./include -I./src
+LINKER = g++ -Wall -pedantic -std=c++11 -I./include -I./src
 
-all: $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST) $(LDAGIBBSTEST) $(LDATOPICS)
+all: $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) \
+	 $(THREADPOOLTEST) $(PARALLELFORTEST) $(LDAGIBBSTEST) $(LDATOPICS)
 	@for dir in $(LIBDIRS) ; do make -C $$dir ; done
 
 create_dirs:
@@ -78,9 +81,13 @@ $(CLUSTERTEST): $(OBJ) $(CLUSTERTEST).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
 	@echo " Linking \"$@\"..."
 	@$(LINKER) -o $@ $(CLUSTERTEST).cpp $(OBJ) $(LIBS)
 
-$(THREADPOOLTEST): $(THREADPOOLTEST).cpp $(TEMPLATES)
+$(THREADPOOLTEST): $(THREADPOOLTEST).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
 	@echo " Linking \"$@\"..."
 	@$(LINKER) -o $@ $(THREADPOOLTEST).cpp $(LIBS)
+	
+$(PARALLELFORTEST): $(PARALLELFORTEST).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
+	@echo " Linking \"$@\"..."
+	@$(LINKER) -o $@ $@.cpp $(LIBS)
 	
 $(LDAGIBBSTEST): $(OBJ) $(LDAGIBBSTEST).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
 	@echo " Linking \"$@\"..."

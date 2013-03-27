@@ -60,7 +60,7 @@ class thread_pool {
 
         struct task {
             virtual void run() = 0;
-            virtual ~task() = default;
+            virtual ~task() { } // silence g++ errors
         };
 
         template <class R>
@@ -70,7 +70,7 @@ class thread_pool {
                     : task_( f ) {
             }
 
-            virtual ~concrete_task() = default;
+            virtual ~concrete_task() { } // silence g++ errors
 
             virtual void run() {
                 task_();
