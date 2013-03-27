@@ -56,11 +56,18 @@ class thread_pool {
             return future;
         }
 
+        std::vector<std::thread::id> thread_ids() const {
+            std::vector<std::thread::id> ids;
+            for( auto & t : threads_ )
+                ids.emplace_back( t.get_id() );
+            return ids;
+        }
+
     private:
 
         struct task {
             virtual void run() = 0;
-            virtual ~task() = default;
+            virtual ~task() { } // silence g++ errors
         };
 
         template <class R>
@@ -70,7 +77,7 @@ class thread_pool {
                     : task_( f ) {
             }
 
-            virtual ~concrete_task() = default;
+            virtual ~concrete_task() { } // silence g++ errors
 
             virtual void run() {
                 task_();

@@ -3,35 +3,37 @@
  */
 
 #include "topics/lda_gibbs.h"
+#include "util/common.h"
 
 namespace topics {
     
 lda_gibbs::lda_gibbs( std::vector<Document> & docs, size_t num_topics, 
                       double alpha, double beta ) :
         tokenizer_{ 1, NgramTokenizer::Word }, docs_{ docs }, 
-        alpha_{ alpha }, beta_{ beta }, num_topics_{ num_topics }, 
-        rng_{ std::random_device{}() } {
-    for( auto & d : docs_ )
-        tokenizer_.tokenize( d );
+        alpha_{ alpha }, beta_{ beta }, num_topics_{ num_topics } {
+    for( size_t i = 0; i < docs_.size(); ++i ) {
+        Common::show_progress( i, docs_.size(), 10, "Tokenizing documents: " );
+        tokenizer_.tokenize( docs_[i] );
+    }
+    std::cerr << '\n';
     num_words_ = tokenizer_.getNumTerms();
 }
 
 void lda_gibbs::run( size_t num_iters, double convergence /* = 1e-6 */ ) {
-    std::cerr << "Running LDA inference..." << std::endl;
+    std::cerr << "Running LDA inference...\n";
     initialize();
     double likelihood = corpus_likelihood();
     for( size_t i = 0; i < num_iters; ++i ) {
-        std::cerr << "Remaining iterations: " << (num_iters - i)
-            << "   ";
+        std::cerr << "Iteration " << i + 1 << "/" << num_iters << ":\r";
         perform_iteration();
         double likelihood_update = corpus_likelihood();
         double ratio = std::fabs( ( likelihood - likelihood_update ) 
                                   / likelihood );
         likelihood = likelihood_update;
-        std::cerr << "\tCorpus log likelihood: " << likelihood
+        std::cerr << "\t\t\t\t\t\tlog likelihood: " << likelihood
             << "    \r";
         if( ratio <= convergence ) {
-            std::cerr << "\nFound convergence after " << i << " iterations!\n";
+            std::cerr << "\nFound convergence after " << i + 1 << " iterations!\n";
             break;
         }
     }
@@ -130,12 +132,13 @@ double lda_gibbs::count_doc( size_t doc ) const {
 }
 
 void lda_gibbs::initialize() {
-    std::cerr << "Initializing topic assignments..." << std::endl;
+    std::cerr << "Initialization:\r";
     perform_iteration( true );
 }
 
 void lda_gibbs::perform_iteration( bool init /* = false */ ) {
     for( size_t i = 0; i < docs_.size(); ++i ) {
+        Common::show_progress( i, docs_.size(), 10, "\t\t\t" );
         size_t n = 0; // term number within document---constructed
                       // so that each occurrence of the same term
                       // can still be assigned a different topic
