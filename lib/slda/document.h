@@ -28,12 +28,11 @@ struct document
 {
     std::vector<int> words;
     std::vector<int> counts;
-    int length;
     int total;
     int label;
 
-    document(int _length):
-        length(_length), total(0), label(-1)
+    document():
+        total(0), label(-1)
     { /* nothing */ }
 };
 

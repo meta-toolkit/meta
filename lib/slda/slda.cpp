@@ -344,7 +344,7 @@ void slda::corpus_initialize_ss(suffstats* ss, corpus* c)
         {
             d = (int)(floor(gsl_rng_uniform(rng) * num_docs));
             document * doc = c->docs[d];
-            for (n = 0; n < doc->length; n++)
+            for (n = 0; n < doc->words.size(); n++)
                 ss->word_ss[k][doc->words[n]] += doc->counts[n];
         }
         for (w = 0; w < size_vocab; w++)
@@ -622,7 +622,7 @@ double slda::doc_e_step(document* doc, double* gamma, double** phi,
 
     // update sufficient statistics
 
-    for (n = 0; n < doc->length; n++)
+    for (n = 0; n < doc->words.size(); n++)
     {
         for (k = 0; k < num_topics; k++)
         {
@@ -670,7 +670,7 @@ double slda::lda_inference(document* doc, double* var_gamma, double** phi, const
     {
         var_gamma[k] = alpha + (doc->total/((double) num_topics));
         digamma_gam[k] = digamma(var_gamma[k]);
-        for (n = 0; n < doc->length; n++)
+        for (n = 0; n < doc->words.size(); n++)
             phi[n][k] = 1.0/num_topics;
     }
     var_iter = 0;
@@ -678,7 +678,7 @@ double slda::lda_inference(document* doc, double* var_gamma, double** phi, const
     while (converged > setting->var_converged && (var_iter < setting->var_max_iter || setting->var_max_iter == -1))
     {
         var_iter++;
-        for (n = 0; n < doc->length; n++)
+        for (n = 0; n < doc->words.size(); n++)
         {
             phisum = 0;
             for (k = 0; k < num_topics; k++)
@@ -732,7 +732,7 @@ double slda::lda_compute_likelihood(document* doc, double** phi, double* var_gam
         likelihood += - lgamma(alpha) + (alpha - 1)*(dig[k] - digsum) +
                       lgamma(var_gamma[k]) - (var_gamma[k] - 1)*(dig[k] - digsum);
 
-        for (n = 0; n < doc->length; n++)
+        for (n = 0; n < doc->words.size(); n++)
         {
             if (phi[n][k] > 0)
             {
@@ -765,7 +765,7 @@ double slda::slda_compute_likelihood(document* doc, double** phi, double* var_ga
     {
         likelihood += -lgamma(alpha) + (alpha - 1)*(dig[k] - digsum) + lgamma(var_gamma[k]) - (var_gamma[k] - 1)*(dig[k] - digsum);
 
-        for (n = 0; n < doc->length; n++)
+        for (n = 0; n < doc->words.size(); n++)
         {
             if (phi[n][k] > 0)
             {
@@ -781,7 +781,7 @@ double slda::slda_compute_likelihood(document* doc, double** phi, double* var_ga
     for (l = 0; l < num_classes-1; l ++)
     {
         t1 = 1.0; 
-        for (n = 0; n < doc->length; n ++)
+        for (n = 0; n < doc->words.size(); n ++)
         {
             t2 = 0.0;
             for (k = 0; k < num_topics; k ++)
@@ -814,7 +814,7 @@ double slda::slda_inference(document* doc, double* var_gamma, double** phi, cons
     {
         var_gamma[k] = alpha + (doc->total/((double) num_topics));
         digamma_gam[k] = digamma(var_gamma[k]);
-        for (n = 0; n < doc->length; n++)
+        for (n = 0; n < doc->words.size(); n++)
             phi[n][k] = 1.0/(double)(num_topics);
     }
 
@@ -822,7 +822,7 @@ double slda::slda_inference(document* doc, double* var_gamma, double** phi, cons
     for (l = 0; l < num_classes-1; l ++)
     {
         sf_aux[l] = 1.0; // the quantity for equation 6 of each class
-        for (n = 0; n < doc->length; n ++)
+        for (n = 0; n < doc->words.size(); n ++)
         {
             t = 0.0;
             for (k = 0; k < num_topics; k ++)
@@ -838,7 +838,7 @@ double slda::slda_inference(document* doc, double* var_gamma, double** phi, cons
     while ((converged > setting->var_converged) && ((var_iter < setting->var_max_iter) || (setting->var_max_iter == -1)))
     {
         var_iter++;
-        for (n = 0; n < doc->length; n++)
+        for (n = 0; n < doc->words.size(); n++)
         {
             //compute sf_params
             memset(sf_params, 0, sizeof(double)*num_topics); //in log space
@@ -956,7 +956,7 @@ void slda::infer_only(corpus * c, const settings * setting, const string & direc
         likelihood = lda_inference(doc, var_gamma[d], phi, setting);
 
         memset(phi_m, 0, sizeof(double)*num_topics); //zero_initialize
-        for (n = 0; n < doc->length; n++)
+        for (n = 0; n < doc->words.size(); n++)
         {
             for (k = 0; k < num_topics; k ++)
             {
@@ -1026,8 +1026,8 @@ void slda::write_word_assignment(FILE* f, document* doc, double** phi)
 {
     int n;
 
-    fprintf(f, "%03d", doc->length);
-    for (n = 0; n < doc->length; n++)
+    fprintf(f, "%03lu", doc->words.size());
+    for (n = 0; n < doc->words.size(); n++)
     {
         fprintf(f, " %04d:%02d", doc->words[n], argmax(phi[n], num_topics));
     }

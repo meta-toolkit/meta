@@ -33,6 +33,7 @@ using std::vector;
 using std::string;
 using std::cout;
 using std::endl;
+using std::cerr;
 
 corpus::corpus()
 {
@@ -53,14 +54,8 @@ void corpus::read_data(const string & data_filename)
     string line;
     while(std::getline(infile, line))
     {
-        size_t length = count_if(line.begin(), line.end(), [](unsigned char ch){
-            return std::isspace(ch); });
-
-        document* doc = new document(length - 1);
-        doc->words.reserve(length);
-        doc->counts.reserve(length);
-
         std::stringstream stream(line);
+        document* doc = new document();
         
         stream >> doc->label;
         if(doc->label >= num_classes)
@@ -79,10 +74,9 @@ void corpus::read_data(const string & data_filename)
 
             if(word >= size_vocab)
                 size_vocab = word + 1;
-
-            num_total_words += doc->total;
         }
 
+        num_total_words += doc->words.size();
         docs.push_back(doc);
     }
     
@@ -109,10 +103,10 @@ pair<int, int> corpus::get_word_data(const string & str) const
 }
 
 int corpus::max_corpus_length() {
-    int max_length = 0;
+    size_t max_length = 0;
     for (size_t d = 0; d < docs.size(); d++) {
-        if (docs[d]->length > max_length)
-            max_length = docs[d]->length;
+        if (docs[d]->words.size() > max_length)
+            max_length = docs[d]->words.size();
     }
     return max_length;
 }
