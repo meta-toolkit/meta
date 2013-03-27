@@ -5,6 +5,8 @@
 
 #include <iomanip>
 #include <iostream>
+#include <cmath>
+#include <numeric>
 
 #include "parallel/parallel_for.h"
 

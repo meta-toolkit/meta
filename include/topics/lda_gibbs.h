@@ -9,6 +9,7 @@
 #include <cmath>
 #include <cstddef>
 #include <iostream>
+#include <random>
 #include <vector>
 
 #include "index/document.h"
