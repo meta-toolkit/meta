@@ -43,10 +43,10 @@ STDLIBFLAGS =
 
 LIBS = $(SLDALIBS) $(CXXRTLIBS) $(THREADLIBS) $(STDLIBFLAGS)
 
-CXX = g++ -Wall -pedantic -std=c++11 -I./include -I./src
+CXX = clang++ -Wall -pedantic -std=c++11 -I./include -I./src
 CXXFLAGS = -O3 -pthread $(STDLIBFLAGS)
 #CXXFLAGS = -g -O0 -pthread $(STDLIBFLAGS)
-LINKER = g++ -Wall -pedantic -std=c++11 -I./include -I./src
+LINKER = clang++ -Wall -pedantic -std=c++11 -I./include -I./src
 
 all: $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) \
 	 $(THREADPOOLTEST) $(PARALLELFORTEST) $(LDAGIBBSTEST) $(LDATOPICS)
