@@ -10,8 +10,7 @@ namespace topics {
 lda_gibbs::lda_gibbs( std::vector<Document> & docs, size_t num_topics, 
                       double alpha, double beta ) :
         tokenizer_{ 1, NgramTokenizer::Word }, docs_{ docs }, 
-        alpha_{ alpha }, beta_{ beta }, num_topics_{ num_topics }, 
-        rng_{ std::random_device{}() } {
+        alpha_{ alpha }, beta_{ beta }, num_topics_{ num_topics } {
     for( size_t i = 0; i < docs_.size(); ++i ) {
         Common::show_progress( i, docs_.size(), 10, "Tokenizing documents: " );
         tokenizer_.tokenize( docs_[i] );

@@ -91,7 +91,7 @@ class lda_gibbs {
          */
         void save( const std::string & prefix ) const;
         
-    private:
+    protected:
         
         /**
          * Samples a topic from the full conditional distribution
@@ -140,7 +140,7 @@ class lda_gibbs {
          * @param term The term we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        double count_term( TermID term, size_t topic ) const;
+        virtual double count_term( TermID term, size_t topic ) const;
         
         /**
          * Computes how many times the given topic has been assigned for
@@ -148,7 +148,7 @@ class lda_gibbs {
          *
          * @param topic The topic we are concerned with.
          */
-        double count_topic( size_t topic ) const;
+        virtual double count_topic( size_t topic ) const;
         
         /**
          * Computes how may times the given topic has been chosen for a
@@ -157,7 +157,7 @@ class lda_gibbs {
          * @param doc The document we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        double count_doc( size_t doc, size_t topic ) const;
+        virtual double count_doc( size_t doc, size_t topic ) const;
         
         /**
          * Computes how may times a topic has been assigned to a word in
@@ -165,14 +165,14 @@ class lda_gibbs {
          *
          * @param doc The document we are concerned with.
          */
-        double count_doc( size_t doc ) const;
+        virtual double count_doc( size_t doc ) const;
         
         /**
          * Initializes the first set of topic assignments for inference.
          * Employs an online application of the sampler where counts are
          * only considered for the words observed so far through the loop.
          */
-        void initialize();
+        virtual void initialize();
         
         /**
          * Performs a sampling iteration.
@@ -180,7 +180,7 @@ class lda_gibbs {
          * @param init Whether or not to employ the online method.
          *  (defaults to `false`)
          */
-        void perform_iteration( bool init = false );
+        virtual void perform_iteration( bool init = false );
 
         /**
          * Decreases all counts associated with the given topic, term, and
@@ -190,7 +190,7 @@ class lda_gibbs {
          * @param term The term in question.
          * @param doc The document in question.
          */
-        void decrease_counts( size_t topic, TermID term, size_t doc );
+        virtual void decrease_counts( size_t topic, TermID term, size_t doc );
         
         /**
          * Increases all counts associated with the given topic, term, and
@@ -200,11 +200,10 @@ class lda_gibbs {
          * @param term The term in question.
          * @param doc The document in question.
          */
-        void increase_counts( size_t topic, TermID term, size_t doc );
+        virtual void increase_counts( size_t topic, TermID term, size_t doc );
         
         /**
-         * Computes the current courpus log likelihood, given the vector of
-         * assignments \f$\boldsymbol{z}\f$.
+         * Computes the current courpus log likelihood, given the vector of * assignments \f$\boldsymbol{z}\f$.
          */
         double corpus_likelihood() const;
         
@@ -282,6 +281,7 @@ class lda_gibbs {
          * The random number generator for the sampler.
          */
         std::mt19937 rng_;
+        std::random_device dev_;
 
 };
 

@@ -17,11 +17,11 @@ namespace parallel {
 template <class Iterator, class Function>
 void parallel_for( Iterator begin, Iterator end, Function func ) {
     thread_pool pool;
-    parallel_for( begin, end, func, pool );
+    parallel_for( begin, end, pool, func );
 }
 
 template <class Iterator, class Function>
-void parallel_for( Iterator begin, Iterator end, Function func, thread_pool & pool ) {
+void parallel_for( Iterator begin, Iterator end, thread_pool & pool, Function func ) {
     auto block_size = std::distance( begin, end ) / std::thread::hardware_concurrency();
     
     Iterator last = begin;
@@ -48,7 +48,7 @@ void parallel_for( Iterator begin, Iterator end, Function func, thread_pool & po
             )
         );
     for( auto & fut : futures )
-        fut.wait();
+        fut.get();
 }
 
 }
