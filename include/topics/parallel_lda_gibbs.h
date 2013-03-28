@@ -14,8 +14,8 @@
 namespace topics {
 
 /**
- * An LDA topic mdoel implemented using the Approximate Distributed LDA
- * algorithm detailed by David Newman et all.
+ * An LDA topic model implemented using the Approximate Distributed LDA
+ * algorithm. Based on the algorithm detailed by David Newman et. al.
  * 
  * @see http://www.jmlr.org/papers/volume10/newman09a/newman09a.pdf
  */
