@@ -5,24 +5,21 @@
 #include "topics/lda_gibbs.h"
 #include "util/common.h"
 
+#include <cmath>
+#include <cassert>
+
 namespace topics {
     
 lda_gibbs::lda_gibbs( std::vector<Document> & docs, size_t num_topics, 
                       double alpha, double beta ) :
-        tokenizer_{ 1, NgramTokenizer::Word }, docs_{ docs }, 
-        alpha_{ alpha }, beta_{ beta }, num_topics_{ num_topics } {
-    for( size_t i = 0; i < docs_.size(); ++i ) {
-        Common::show_progress( i, docs_.size(), 10, "Tokenizing documents: " );
-        tokenizer_.tokenize( docs_[i] );
-    }
-    std::cerr << '\n';
-    num_words_ = tokenizer_.getNumTerms();
+        lda_model{ docs, num_topics }, alpha_{ alpha }, beta_{ beta } {
 }
 
 void lda_gibbs::run( size_t num_iters, double convergence /* = 1e-6 */ ) {
     std::cerr << "Running LDA inference...\n";
     initialize();
     double likelihood = corpus_likelihood();
+    assert( !std::isnan( likelihood ) );
     for( size_t i = 0; i < num_iters; ++i ) {
         std::cerr << "Iteration " << i + 1 << "/" << num_iters << ":\r";
         perform_iteration();
@@ -40,42 +37,6 @@ void lda_gibbs::run( size_t num_iters, double convergence /* = 1e-6 */ ) {
     std::cerr << "\nFinished maximum iterations, or found convergence!\n";
 }
 
-void lda_gibbs::save_doc_topic_distributions( const std::string & filename ) const {
-    std::ofstream file{ filename };
-    for( size_t i = 0; i < docs_.size(); ++i ) {
-        file << docs_[i].getName() << "\t";
-        for( size_t j = 0; j < num_topics_; ++j ) {
-            double prob = compute_doc_topic_probability( i, j );
-            if( prob > 0 )
-                file << j << ":" << prob << "\t";
-        }
-        file << "\n";
-    }
-}
-
-void lda_gibbs::save_topic_term_distributions( const std::string & filename ) const {
-    std::ofstream file{ filename };
-    for( size_t j = 0; j < num_topics_; ++j ) {
-        file << j << "\t";
-        for( const auto & pair : tokenizer_.getTermIDMapping() ) {
-            TermID term = pair.first;
-            double prob = compute_term_topic_probability( term, j );
-            if( prob > 0 )
-                file << term << ":" << prob << "\t";
-        }
-        file << "\n";
-    }
-}
-
-void lda_gibbs::save_term_mapping( const std::string & filename ) const {
-    tokenizer_.saveTermIDMapping( filename );
-}
-
-void lda_gibbs::save( const std::string & prefix ) const {
-    save_doc_topic_distributions( prefix + ".theta" );
-    save_topic_term_distributions( prefix + ".phi" );
-    save_term_mapping( prefix + ".terms" );
-}
 
 size_t lda_gibbs::sample_topic( TermID term, size_t doc ) {
     std::vector<double> weights( num_topics_ );
@@ -193,6 +154,7 @@ void lda_gibbs::increase_counts( size_t topic, TermID term, size_t doc ) {
 
 double lda_gibbs::corpus_likelihood() const {
     double likelihood = num_topics_ * std::lgamma( num_words_ * beta_ );
+    assert( !std::isnan(likelihood) );
     for( size_t j = 0; j < num_topics_; ++j ) {
         for( const auto & doc : docs_ ) {
             for( const auto & freq : doc.getFrequencies() ) {
@@ -200,9 +162,11 @@ double lda_gibbs::corpus_likelihood() const {
                     freq.second 
                     * std::lgamma( count_term( freq.first, j )
                                    + beta_ );
+                assert( !std::isnan(likelihood) );
             }
         }
         likelihood -= std::lgamma( count_topic( j ) + num_words_ * beta_ );
+        assert( !std::isnan(likelihood) );
     }
     return likelihood;
 }

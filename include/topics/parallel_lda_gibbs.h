@@ -24,6 +24,8 @@ class parallel_lda_gibbs : public lda_gibbs {
         parallel_lda_gibbs( std::vector<Document> & docs, size_t num_topics,
                             double alpha, double beta ) 
                 : lda_gibbs( docs, num_topics, alpha, beta ) { }
+
+        virtual ~parallel_lda_gibbs() { }
     protected:
         virtual void initialize() {
             for( size_t i = 0; i < docs_.size(); ++i ) {

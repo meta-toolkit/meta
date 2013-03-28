@@ -6,7 +6,7 @@ SLDATEST = feature-select
 CLUSTERTEST = cluster-test
 THREADPOOLTEST = threadpool-test
 PARALLELFORTEST = parallel-for-test
-LDAGIBBSTEST = lda-gibbs-test
+LDATEST = lda-test
 LDATOPICS = lda-topics
 
 SRC = $(wildcard src/io/*.cpp) $(wildcard src/model/*.cpp) $(wildcard src/cluster/*.cpp) \
@@ -26,7 +26,8 @@ TEMPLATE_HEADERS := $(shell echo $(TEMPLATE_HEADERS) | sed -e "s/src/include/g")
 TEMPLATE_HEADERS += include/cluster/agglomerative_clustering.h \
 					include/cluster/basic_single_link_policy.h \
 					include/cluster/point.h \
-					include/parallel/thread_pool.h include/parallel/parallel_for.h
+					include/parallel/thread_pool.h include/parallel/parallel_for.h \
+					include/topics/parallel_lda_gibbs.h include/topics/lda_cvb.h
 
 OBJ := $(SRC:.cpp=.o)
 OBJ := $(shell echo $(OBJ) | sed -e "s/src/obj/g" | sed -e "s/lib/obj/g")
@@ -49,7 +50,7 @@ CXXFLAGS = -O3 -pthread $(STDLIBFLAGS)
 LINKER = clang++ -Wall -pedantic -std=c++11 -I./include -I./src
 
 all: $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) \
-	 $(THREADPOOLTEST) $(PARALLELFORTEST) $(LDAGIBBSTEST) $(LDATOPICS)
+	 $(THREADPOOLTEST) $(PARALLELFORTEST) $(LDATEST) $(LDATOPICS)
 	@for dir in $(LIBDIRS) ; do make -C $$dir ; done
 
 create_dirs:
@@ -89,9 +90,9 @@ $(PARALLELFORTEST): $(PARALLELFORTEST).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
 	@echo " Linking \"$@\"..."
 	@$(LINKER) -o $@ $@.cpp $(LIBS)
 	
-$(LDAGIBBSTEST): $(OBJ) $(LDAGIBBSTEST).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
+$(LDATEST): $(OBJ) $(LDATEST).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
 	@echo " Linking \"$@\"..."
-	@$(LINKER) -o $@ $(LDAGIBBSTEST).cpp $(OBJ) $(LIBS)
+	@$(LINKER) -o $@ $(LDATEST).cpp $(OBJ) $(LIBS)
 	
 $(LDATOPICS): $(OBJ) $(LDATOPICS).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
 	@echo " Linking \"$@\"..."
@@ -108,7 +109,7 @@ obj/%.o : src/%.cpp include/%.h | create_dirs
 clean:
 	@for dir in $(LIBDIRS) ; do make -C $$dir clean; done
 	-rm -rf obj
-	-rm -f $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST) $(LDAGIBBSTEST) $(LDATOPICS)
+	-rm -f $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST) $(PARALLELFORTEST) $(LDATEST) $(LDATOPICS)
 
 tidy:
 	-rm -rf ./doc *.chunk postingsFile lexiconFile termid.mapping docid.mapping docs.lengths *compressed.txt *.terms *.phi *.theta

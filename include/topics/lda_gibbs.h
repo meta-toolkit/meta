@@ -14,6 +14,7 @@
 
 #include "index/document.h"
 #include "tokenizers/ngram_tokenizer.h"
+#include "topics/lda_model.h"
 
 namespace topics {
 
@@ -22,7 +23,7 @@ namespace topics {
  *
  * @see http://www.pnas.org/content/101/suppl.1/5228.full.pdf
  */
-class lda_gibbs {
+class lda_gibbs : public lda_model {
     public:
         /**
          * Constructs the lda model over the given documents, with the
@@ -42,6 +43,8 @@ class lda_gibbs {
          */
         lda_gibbs( std::vector<Document> & docs, size_t num_topics, 
                    double alpha, double beta );
+
+        virtual ~lda_gibbs() { }
         
         /**
          * Runs the sampler for a maximum number of iterations, or until
@@ -55,41 +58,7 @@ class lda_gibbs {
          *  likelihood to be allowed before considering the sampler to have
          *  converged.
          */
-        void run( size_t num_iters, double convergence = 1e-6 );
-        
-        /**
-         * Saves the topic proportions \f$\theta_d\f$ for each document to
-         * the given file. Saves the distributions in a simple "human
-         * readable" plain-text format.
-         *
-         * @param filename The file to save \f$theta\f$ to.
-         */
-        void save_doc_topic_distributions( const std::string & filename ) const;
-        
-        /**
-         * Saves the term distributions \f$\phi_j\f$ for each topic to the
-         * given file. Saves the distributions in a simple "human readable"
-         * plain-text format.
-         *
-         * @param filename The file to save \f$\phi\f$ to.
-         */
-        void save_topic_term_distributions( const std::string & filename ) const;
-        
-        /**
-         * Saves the TermID --> String mapping to the given file.
-         *
-         * @param filename The file to save the term mapping to.
-         */
-        void save_term_mapping( const std::string & filename ) const;
-        
-        /**
-         * Saves the current model to a set of files beginning with prefix:
-         * prefix.phi, prefix.theta, and prefix.terms.
-         *
-         * @param prefix The prefix for all generated files over this
-         *  model.
-         */
-        void save( const std::string & prefix ) const;
+        virtual void run( size_t num_iters, double convergence = 1e-6 );
         
     protected:
         
@@ -122,7 +91,7 @@ class lda_gibbs {
          * @param term The term we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        double compute_term_topic_probability( TermID term, size_t topic ) const;
+        virtual double compute_term_topic_probability( TermID term, size_t topic ) const;
 
         /**
          * Computes the probability that the given topic is picked for the
@@ -131,7 +100,7 @@ class lda_gibbs {
          * @param doc The document we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        double compute_doc_topic_probability( size_t doc, size_t topic ) const;
+        virtual double compute_doc_topic_probability( size_t doc, size_t topic ) const;
         
         /**
          * Computes how many times the given term has been assigned the
@@ -203,7 +172,8 @@ class lda_gibbs {
         virtual void increase_counts( size_t topic, TermID term, size_t doc );
         
         /**
-         * Computes the current courpus log likelihood, given the vector of * assignments \f$\boldsymbol{z}\f$.
+         * Computes the current courpus log likelihood, given the vector of 
+         * assignments \f$\boldsymbol{z}\f$.
          */
         double corpus_likelihood() const;
         
@@ -216,16 +186,6 @@ class lda_gibbs {
          * lda_gibbs cannot be copy constructed.
          */
         lda_gibbs( const lda_gibbs & other ) = delete;
-        
-        /**
-         * The tokenizer used for tokenizing the corpus.
-         */
-        NgramTokenizer tokenizer_;
-        
-        /**
-         * A reference to the corpus.
-         */
-        std::vector<Document> & docs_;
         
         using topic_id = size_t; // for clarity below
         
@@ -267,15 +227,6 @@ class lda_gibbs {
          * Hyperparameter for the Dirichlet prior over \f$\phi\f$.
          */
         double beta_;
-        
-        /**
-         * The number of topics in the model.
-         */
-        size_t num_topics_;
-        /**
-         * The number of words in the corpus vocabulary.
-         */
-        size_t num_words_;
         
         /**
          * The random number generator for the sampler.
