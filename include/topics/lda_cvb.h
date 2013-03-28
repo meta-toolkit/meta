@@ -5,7 +5,6 @@
 #ifndef _DST_TOPICS_LDA_CVB_H_
 #define _DST_TOPICS_LDA_CVB_H_
 
-#include <cassert>
 #include <random>
 #include <string>
 #include <unordered_map>

@@ -6,7 +6,6 @@
 #include "util/common.h"
 
 #include <cmath>
-#include <cassert>
 
 namespace topics {
     
@@ -19,7 +18,6 @@ void lda_gibbs::run( size_t num_iters, double convergence /* = 1e-6 */ ) {
     std::cerr << "Running LDA inference...\n";
     initialize();
     double likelihood = corpus_likelihood();
-    assert( !std::isnan( likelihood ) );
     for( size_t i = 0; i < num_iters; ++i ) {
         std::cerr << "Iteration " << i + 1 << "/" << num_iters << ":\r";
         perform_iteration();
@@ -154,7 +152,6 @@ void lda_gibbs::increase_counts( size_t topic, TermID term, size_t doc ) {
 
 double lda_gibbs::corpus_likelihood() const {
     double likelihood = num_topics_ * std::lgamma( num_words_ * beta_ );
-    assert( !std::isnan(likelihood) );
     for( size_t j = 0; j < num_topics_; ++j ) {
         for( const auto & doc : docs_ ) {
             for( const auto & freq : doc.getFrequencies() ) {
@@ -162,11 +159,9 @@ double lda_gibbs::corpus_likelihood() const {
                     freq.second 
                     * std::lgamma( count_term( freq.first, j )
                                    + beta_ );
-                assert( !std::isnan(likelihood) );
             }
         }
         likelihood -= std::lgamma( count_topic( j ) + num_words_ * beta_ );
-        assert( !std::isnan(likelihood) );
     }
     return likelihood;
 }
