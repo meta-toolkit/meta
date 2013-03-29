@@ -76,11 +76,11 @@ int main(int argc, char* argv[])
 
     string path(argv[2]);
 
-    unordered_map<string, string> config = io::ConfigReader::read(argv[1]);
+    unordered_map<string, string> config = io::config_reader::read(argv[1]);
     string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
 
     vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
-    std::shared_ptr<Tokenizer> tokenizer = io::ConfigReader::create_tokenizer(config);
+    std::shared_ptr<Tokenizer> tokenizer = io::config_reader::create_tokenizer(config);
     InvertibleMap<string, int> mapping = tokenize(tokenizer, documents);
 
     vector<pair<TermID, double>> selected_features = classify::feature_select::slda(documents);

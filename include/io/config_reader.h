@@ -14,7 +14,7 @@ namespace io {
 /**
  * A very simple configuration file reader.
  */
-namespace ConfigReader
+namespace config_reader
 {
     /**
      * @param path The path to the config file
@@ -48,27 +48,27 @@ namespace ConfigReader
         {"Skel",    tokenizers::TreeTokenizer::Skeleton},
         {"Semi",    tokenizers::TreeTokenizer::SemiSkeleton}
     };
+
+    /**
+     * Basic exception for config_reader interactions.
+     */
+    class config_reader_exception: public std::exception
+    {
+        public:
+            
+            config_reader_exception(const std::string & error):
+                _error(error) { /* nothing */ }
+
+            const char* what () const throw ()
+            {
+                return _error.c_str();
+            }
+       
+        private:
+       
+            std::string _error;
+    };
 }
-
-/**
- * Basic exception for ConfigReader interactions.
- */
-class ConfigReaderException: public std::exception
-{
-    public:
-        
-        ConfigReaderException(const std::string & error):
-            _error(error) { /* nothing */ }
-
-        const char* what () const throw ()
-        {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
-};
 
 }
 }

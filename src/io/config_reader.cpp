@@ -14,12 +14,12 @@ using tokenizers::MultiTokenizer;
 using tokenizers::TreeTokenizer;
 using tokenizers::NgramTokenizer;
 
-unordered_map<string, string> ConfigReader::read(const string & path)
+unordered_map<string, string> config_reader::read(const string & path)
 {
     std::ifstream configFile(path);
 
     if(!configFile.is_open())
-        throw ConfigReaderException("failed to open " + path);
+        throw config_reader_exception("failed to open " + path);
 
     unordered_map<string, string> options;
     size_t num_tokenizers = 0;
@@ -51,7 +51,7 @@ unordered_map<string, string> ConfigReader::read(const string & path)
     return options;
 }
 
-shared_ptr<Tokenizer> ConfigReader::create_tokenizer(const unordered_map<string, string> & config)
+shared_ptr<Tokenizer> config_reader::create_tokenizer(const unordered_map<string, string> & config)
 {
     size_t current_tokenizer = 0;
     std::vector<shared_ptr<Tokenizer>> toks;
@@ -80,7 +80,7 @@ shared_ptr<Tokenizer> ConfigReader::create_tokenizer(const unordered_map<string,
             );
         }
         else
-            throw ConfigReaderException("method was not able to be determined");
+            throw config_reader_exception("method was not able to be determined");
     }
     
     return shared_ptr<Tokenizer>(new MultiTokenizer(toks));

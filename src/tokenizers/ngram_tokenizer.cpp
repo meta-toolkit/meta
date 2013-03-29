@@ -165,7 +165,7 @@ void NgramTokenizer::tokenizeFW(Document & document,
 
 void NgramTokenizer::initStopwords()
 {
-    auto config = io::ConfigReader::read("tokenizer.ini");
+    auto config = io::config_reader::read("tokenizer.ini");
     Parser parser(config["stop-words"], "\n");
     while(parser.hasNext())
         _stopwords.insert(stemmers::Porter2Stemmer::stem(parser.next()));
@@ -173,7 +173,7 @@ void NgramTokenizer::initStopwords()
 
 void NgramTokenizer::initFunctionWords()
 {
-    auto config = io::ConfigReader::read("tokenizer.ini");
+    auto config = io::config_reader::read("tokenizer.ini");
     Parser parser(config["function-words"], " \n");
     while(parser.hasNext())
         _functionWords.insert(parser.next());

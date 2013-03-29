@@ -65,11 +65,11 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    unordered_map<string, string> config = io::ConfigReader::read(argv[1]);
+    unordered_map<string, string> config = io::config_reader::read(argv[1]);
     unordered_map<string, vector<index::Document>> docs =
         getDocs("/home/sean/projects/senior-thesis-data/" + config["prefix"]);
 
-    std::shared_ptr<tokenizers::Tokenizer> tokenizer = io::ConfigReader::create_tokenizer(config); 
+    std::shared_ptr<tokenizers::Tokenizer> tokenizer = io::config_reader::create_tokenizer(config); 
 
     cerr << "Tokenizing..." << endl;
     unordered_map<string, unordered_map<index::TermID, unsigned int>> language_models;
