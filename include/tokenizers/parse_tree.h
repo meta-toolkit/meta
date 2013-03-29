@@ -105,26 +105,27 @@ class ParseTree
          */
         static void prettyPrint(const ParseTree & tree, size_t depth,
                 std::stringstream & output);
-};
-
-/**
- * Basic exception for ParseTree interactions.
- */
-class ParseTreeException: public std::exception
-{
     public:
-        
-        ParseTreeException(const std::string & error):
-            _error(error) { /* nothing */ }
 
-        const char* what () const throw ()
+        /**
+         * Basic exception for ParseTree interactions.
+         */
+        class parse_tree_exception: public std::exception
         {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
+            public:
+                
+                parse_tree_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+           
+                std::string _error;
+        };
 };
 
 }

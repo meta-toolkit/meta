@@ -91,7 +91,7 @@ void InvertibleMap<Key, Value>::saveMap(const std::string & filename) const
         outfile.close();
     }
     else
-        throw InvertibleMapException("error writing map to disk");
+        throw invertible_map_exception("error writing map to disk");
 }
 
 template <class Key, class Value>

@@ -35,26 +35,26 @@ class Index
          *  memory before they're written to disk.
          */
         virtual void indexDocs(std::vector<Document> & documents, size_t chunkMBSize) = 0;
-};
 
-/**
- * Basic exception for Index interactions.
- */
-class IndexException: public std::exception
-{
-    public:
-        
-        IndexException(const std::string & error):
-            _error(error) { /* nothing */ }
-
-        const char* what () const throw ()
+        /**
+         * Basic exception for Index interactions.
+         */
+        class index_exception: public std::exception
         {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
+            public:
+                
+                index_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+           
+                std::string _error;
+        };
 };
 
 }

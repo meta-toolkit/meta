@@ -74,7 +74,7 @@ void Lexicon::save(const string & docLengthsFilename, const string & termMapFile
         outfile.close();
     }
     else
-        throw IndexException("[Lexicon]: error writing lexicon to disk");
+        throw Index::index_exception("[Lexicon]: error writing lexicon to disk");
 }
 
 void Lexicon::addTerm(TermID term, TermData termData)

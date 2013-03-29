@@ -141,7 +141,7 @@ vector<ParseTree> ParseTree::getTrees(const string & filename)
         treeFile.close();
     }
     else
-        throw ParseTreeException("failed to open " + filename);
+        throw parse_tree_exception("failed to open " + filename);
 
     return trees;
 }

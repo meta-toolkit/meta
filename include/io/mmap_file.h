@@ -68,27 +68,28 @@ class MmapFile
 
         /** no copying */
         const MmapFile & operator=(const MmapFile & other) = delete;
-};
 
-
-/**
- * Basic exception for MmapFile interactions.
- */
-class MmapFileException: public std::exception
-{
     public:
-        
-        MmapFileException(const std::string & error):
-            _error(error) { /* nothing */ }
 
-        const char* what () const throw ()
+        /**
+         * Basic exception for MmapFile interactions.
+         */
+        class mmap_file_exception: public std::exception
         {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
+            public:
+                
+                mmap_file_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+           
+                std::string _error;
+        };
 };
 
 }

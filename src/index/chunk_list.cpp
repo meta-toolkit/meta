@@ -50,7 +50,7 @@ void ChunkList::combinePostingData(vector<IndexEntry> & entries, IndexEntry & co
 IndexEntry ChunkList::next()
 {
     if(!_parsers[0].hasNext())
-        throw IndexException("[ChunkList]: tried to getNext() when there were no more elements");
+        throw Index::index_exception("[ChunkList]: tried to getNext() when there were no more elements");
 
     IndexEntry min(_parsers[0].peek());
 

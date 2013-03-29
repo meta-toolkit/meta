@@ -165,26 +165,28 @@ class InvertibleMap
 
         /** the internal map representing Value -> Key pairs */
         std::unordered_map<Value, Key> _backward;
-};
 
-/**
- * Basic exception for InvertibleMap interactions.
- */
-class InvertibleMapException: public std::exception
-{
     public:
-        
-        InvertibleMapException(const std::string & error):
-            _error(error) { /* nothing */ }
 
-        const char* what () const throw ()
+        /**
+         * Basic exception for InvertibleMap interactions.
+         */
+        class invertible_map_exception: public std::exception
         {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
+            public:
+                
+                invertible_map_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+           
+                std::string _error;
+        };
 };
 
 }
