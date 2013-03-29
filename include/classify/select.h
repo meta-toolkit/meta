@@ -13,17 +13,12 @@
 #include "index/document.h"
 
 namespace meta {
-
-/**
- * The classify namespace contains functionality for discriminative
- * classification and related utility.
- */
 namespace classify {
     
-    /**
-     * Contains various feature selection methods.
-     */
-    namespace feature_select {
+/**
+ * Contains various feature selection methods.
+ */
+namespace feature_select {
 
     /**
      * Separates documents into class buckets.
