@@ -36,11 +36,11 @@ OBJ := $(shell echo $(OBJ) | sed -e "s/src/obj/g" | sed -e "s/lib/obj/g")
 LIBDIRS = lib/liblinear-1.92
 
 SLDALIBS = -lgsl -lm -lgslcblas
-CXXRTLIBS = 
-#CXXRTLIBS = -lcxxrt
+#CXXRTLIBS = 
+CXXRTLIBS = -lcxxrt
 THREADLIBS = -pthread
-STDLIBFLAGS = 
-#STDLIBFLAGS = -stdlib=libc++
+#STDLIBFLAGS = 
+STDLIBFLAGS = -stdlib=libc++
 
 LIBS = $(SLDALIBS) $(CXXRTLIBS) $(THREADLIBS) $(STDLIBFLAGS)
 
