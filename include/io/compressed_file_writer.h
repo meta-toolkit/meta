@@ -64,26 +64,29 @@ class CompressedFileWriter
          * Writes the buffer to the file.
          */
         void writeBuffer() const;
-};
 
-/**
- * Basic exception for CompressedFileWriter interactions.
- */
-class CompressedFileWriterException: public std::exception
-{
     public:
-        
-        CompressedFileWriterException(const std::string & error):
-            _error(error) { /* nothing */ }
 
-        const char* what () const throw ()
+        /**
+         * Basic exception for CompressedFileWriter interactions.
+         */
+        class compressed_file_writer_exception: public std::exception
         {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
+            public:
+                
+                compressed_file_writer_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+           
+                std::string _error;
+        };
+
 };
 
 }

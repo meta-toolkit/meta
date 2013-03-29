@@ -19,14 +19,14 @@ CompressedFileReader::CompressedFileReader(const string & filename):
     // get file descriptor
     _fileDescriptor = open(filename.c_str(), O_RDONLY);
     if(_fileDescriptor < 0)
-        throw CompressedFileReaderException("error obtaining file descriptor for " + filename);
+        throw compressed_file_reader_exception("error obtaining file descriptor for " + filename);
     
     // memory map
     _start = (unsigned char*) mmap(nullptr, _size, PROT_READ, MAP_SHARED, _fileDescriptor, 0);
     if(_start == nullptr)
     {
         close(_fileDescriptor);
-        throw CompressedFileReaderException("error memory-mapping the file");
+        throw compressed_file_reader_exception("error memory-mapping the file");
     }
 
     // initialize the stream
@@ -61,7 +61,7 @@ void CompressedFileReader::seek(unsigned int position, unsigned int bitOffset)
         getNext();
     }
     else
-        throw CompressedFileReaderException("error seeking; invalid parameters");
+        throw compressed_file_reader_exception("error seeking; invalid parameters");
 }
 
 bool CompressedFileReader::hasNext() const

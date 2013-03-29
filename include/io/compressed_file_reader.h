@@ -99,26 +99,29 @@ class CompressedFileReader
          * @return the next bit in the file
          */
         bool readBit();
-};
 
-/**
- * Basic exception for CompressedFileReader interactions.
- */
-class CompressedFileReaderException: public std::exception
-{
     public:
-        
-        CompressedFileReaderException(const std::string & error):
-            _error(error) { /* nothing */ }
 
-        const char* what () const throw ()
+        /**
+         * Basic exception for CompressedFileReader interactions.
+         */
+        class compressed_file_reader_exception: public std::exception
         {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
+            public:
+                
+                compressed_file_reader_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+           
+                std::string _error;
+        };
+
 };
 
 }
