@@ -1,5 +1,5 @@
 /**
- * @file single_link_policy.h
+ * @file basic_single_link_policy.h
  */
 
 #ifndef _SINGLE_LINK_POLICY_H_

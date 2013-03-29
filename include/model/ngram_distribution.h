@@ -1,5 +1,5 @@
 /**
- * @file ngram_distribution
+ * @file ngram_distribution.h
  * Declaration of a smoothed ngram language model class.
  */
 
