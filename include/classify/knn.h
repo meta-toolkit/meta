@@ -19,7 +19,7 @@ namespace classify {
 /**
  * Runs KNN on a single index or multiple indexes.
  */
-namespace KNN
+namespace knn
 {
     /**
      * Runs a KNN classifier.
@@ -40,6 +40,9 @@ namespace KNN
             std::vector<std::shared_ptr<index::Index>> indexes,
             std::vector<double> weights, size_t k);
 
+    /**
+     * Helper functions for the knn namespace.
+     */
     namespace internal
     {
         /**
@@ -71,27 +74,27 @@ namespace KNN
                 const std::string & best,
                 const std::vector<std::string> & orderSeen);
     }
+
+    /**
+     * Basic exception for KNN interactions.
+     */
+    class knn_exception: public std::exception
+    {
+        public:
+            
+            knn_exception(const std::string & error):
+                _error(error) { /* nothing */ }
+
+            const char* what () const throw ()
+            {
+                return _error.c_str();
+            }
+       
+        private:
+       
+            std::string _error;
+    };
 }
-
-/**
- * Basic exception for KNN interactions.
- */
-class KNNException: public std::exception
-{
-    public:
-        
-        KNNException(const std::string & error):
-            _error(error) { /* nothing */ }
-
-        const char* what () const throw ()
-        {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
-};
 
 }
 }
