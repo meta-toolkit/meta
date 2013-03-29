@@ -12,11 +12,15 @@
 #include "stemmers/porter2_stemmer.h"
 #include "test/unit_test.h"
 
-namespace Tests
+namespace unit_tests
 {
-    namespace Porter2StemmerTests
+    /**
+     * Tests stemming with the Porter2 stemmer.
+     */
+    namespace porter2_stemmer_tests
     {
         using std::string;
+        using namespace meta::stemmers;
 
         void correctStem()
         {

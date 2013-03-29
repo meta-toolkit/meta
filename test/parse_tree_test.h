@@ -5,9 +5,12 @@
 #ifndef _PARSE_TREE_TEST_H_
 #define _PARSE_TREE_TEST_H_
 
-namespace Tests
+namespace unit_tests
 {
-    namespace ParseTreeTests
+    /**
+     * Tests parse tree functions.
+     */
+    namespace parse_tree_tests
     {
         void constructor()
         {

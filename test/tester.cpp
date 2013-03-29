@@ -11,13 +11,13 @@
 using std::cerr;
 using std::cout;
 using std::endl;
-using namespace UnitTests;
+using namespace unit_tests;
 
 void porter2Stemmer()
 {
     using namespace Tests::Porter2StemmerTests;
 
-    cout << Common::makeBold("[porter2_stemmer]") << endl;
+    cout << common::makeBold("[porter2_stemmer]") << endl;
     runTest("stem", correctStem, 5);
     runTest("emptyStem", emptyStem);
     runTest("trim", trim);
@@ -27,7 +27,7 @@ void parseTree()
 {
     using namespace Tests::ParseTreeTests;
 
-    cout << Common::makeBold("[parse_tree]") << endl;
+    cout << common::makeBold("[parse_tree]") << endl;
     runTest("constructor", constructor);
     runTest("height", height);
     runTest("getPOS", getPOS);
@@ -41,7 +41,7 @@ void compressedFile()
 {
     using namespace Tests::CompressedFileTests;
 
-    cout << Common::makeBold("[compressed_file]") << endl;
+    cout << common::makeBold("[compressed_file]") << endl;
     runTest("init", init);
     runTest("write", testWrite);
     runTest("read", testRead);

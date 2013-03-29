@@ -13,9 +13,15 @@
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
 
-namespace Tests
+/**
+ * Tests functionality of the META toolkit.
+ */
+namespace unit_tests
 {
-    namespace CompressedFileTests
+    /**
+     * Tests compressed file readers and writers.
+     */
+    namespace compressed_file_tests
     {
         using std::unordered_map;
         using std::multimap;
