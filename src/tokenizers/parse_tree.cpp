@@ -5,6 +5,9 @@
 #include <fstream>
 #include "tokenizers/parse_tree.h"
 
+namespace meta {
+namespace tokenizers {
+
 using std::stringstream;
 using std::ifstream;
 using std::endl;
@@ -161,4 +164,7 @@ string ParseTree::getSkeletonChildren() const
     for(size_t i = 0; i < children.size(); ++i)
         ret += "()";
     return ret;
+}
+
+}
 }

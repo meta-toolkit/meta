@@ -9,8 +9,10 @@
 #include <vector>
 #include <exception>
 #include <string>
+#include "index/document.h"
 
-class Document;
+namespace meta {
+namespace index {
 
 /**
  * An abstract class that represents searchable document-based index.
@@ -54,5 +56,8 @@ class IndexException: public std::exception
    
         std::string _error;
 };
+
+}
+}
 
 #endif

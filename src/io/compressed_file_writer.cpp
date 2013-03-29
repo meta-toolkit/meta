@@ -4,6 +4,9 @@
 
 #include "io/compressed_file_writer.h"
 
+namespace meta {
+namespace io {
+
 using std::string;
 
 CompressedFileWriter::CompressedFileWriter(const string & filename)
@@ -64,4 +67,7 @@ void CompressedFileWriter::writeBuffer() const
     if(fwrite(_buffer, 1, _bufferSize, _outfile) != _bufferSize)
         throw CompressedFileWriterException("error writing to file");
     memset(_buffer, 0, _bufferSize);
+}
+
+}
 }

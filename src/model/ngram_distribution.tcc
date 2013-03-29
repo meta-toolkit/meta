@@ -5,17 +5,20 @@
 
 #include <stdexcept>
 
+namespace meta {
+namespace language_model {
+
 typedef std::unordered_map<std::string, std::unordered_map<std::string, size_t>> FreqMap;
 typedef std::unordered_map<std::string, std::unordered_map<std::string, double>> ProbMap;
 
 template <size_t N>
-double NgramDistribution<N>::log_likelihood(const Document & document) const
+double NgramDistribution<N>::log_likelihood(const index::Document & document) const
 {
     return 0.0;
 }
 
 template <size_t N>
-double NgramDistribution<N>::perplexity(const Document & document) const
+double NgramDistribution<N>::perplexity(const index::Document & document) const
 {
     return 0.0;
 }
@@ -156,9 +159,9 @@ void NgramDistribution<N>::calc_discount_factor()
 template <size_t N>
 void NgramDistribution<N>::calc_freqs(const std::string & docPath)
 {
-    Document doc(docPath);
-    NgramTokenizer tokenizer(N, NgramTokenizer::Word,
-        NgramTokenizer::NoStemmer, NgramTokenizer::NoStopwords);
+    index::Document doc(docPath);
+    tokenizers::NgramTokenizer tokenizer(N, tokenizers::NgramTokenizer::Word,
+        tokenizers::NgramTokenizer::NoStemmer, tokenizers::NgramTokenizer::NoStopwords);
     tokenizer.tokenize(doc);
 
     for(auto & p: doc.getFrequencies())
@@ -225,4 +228,7 @@ template <size_t N>
 double NgramDistribution<N>::prob(const std::string & prev, const std::string & word) const
 {
     return _dist(prev).at(word);
+}
+
+}
 }

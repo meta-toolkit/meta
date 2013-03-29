@@ -2,9 +2,17 @@
 #include "tokenizers/multi_tokenizer.h"
 #include "io/config_reader.h"
 
+namespace meta {
+namespace io {
+
 using std::shared_ptr;
 using std::string;
 using std::unordered_map;
+
+using tokenizers::Tokenizer;
+using tokenizers::MultiTokenizer;
+using tokenizers::TreeTokenizer;
+using tokenizers::NgramTokenizer;
 
 unordered_map<string, string> ConfigReader::read(const string & path)
 {
@@ -34,7 +42,7 @@ unordered_map<string, string> ConfigReader::read(const string & path)
             string opt = line.substr(0, space);
             string val = line.substr(space + 1);
             if(in_tokenizer)
-                opt += "_" + Common::toString(num_tokenizers);
+                opt += "_" + common::toString(num_tokenizers);
             options[opt] = val;
         }
     }
@@ -46,11 +54,11 @@ unordered_map<string, string> ConfigReader::read(const string & path)
 shared_ptr<Tokenizer> ConfigReader::create_tokenizer(const unordered_map<string, string> & config)
 {
     size_t current_tokenizer = 0;
-    std::vector<shared_ptr<Tokenizer>> tokenizers;
+    std::vector<shared_ptr<Tokenizer>> toks;
 
     while(true)
     {
-        string suffix = "_" + Common::toString(++current_tokenizer);
+        string suffix = "_" + common::toString(++current_tokenizer);
         auto method = config.find("method" + suffix);
         if(method == config.end())
             break;
@@ -58,7 +66,7 @@ shared_ptr<Tokenizer> ConfigReader::create_tokenizer(const unordered_map<string,
         if(method->second == "tree")
         {
             string tree = config.at("treeOpt" + suffix);
-            tokenizers.emplace_back(
+            toks.emplace_back(
                     shared_ptr<Tokenizer>(new TreeTokenizer(treeOpt.at(tree)))
             );
         }
@@ -67,7 +75,7 @@ shared_ptr<Tokenizer> ConfigReader::create_tokenizer(const unordered_map<string,
             int nVal;
             std::istringstream(config.at("ngram" + suffix)) >> nVal;
             string ngram = config.at("ngramOpt" + suffix);
-            tokenizers.emplace_back(
+            toks.emplace_back(
                     shared_ptr<Tokenizer>(new NgramTokenizer(nVal, ngramOpt.at(ngram)))
             );
         }
@@ -75,5 +83,8 @@ shared_ptr<Tokenizer> ConfigReader::create_tokenizer(const unordered_map<string,
             throw ConfigReaderException("method was not able to be determined");
     }
     
-    return shared_ptr<Tokenizer>(new MultiTokenizer(tokenizers));
+    return shared_ptr<Tokenizer>(new MultiTokenizer(toks));
+}
+
+}
 }

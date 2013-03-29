@@ -16,6 +16,7 @@
 #include "tokenizers/ngram_tokenizer.h"
 #include "topics/lda_model.h"
 
+namespace meta {
 namespace topics {
 
 /**
@@ -41,7 +42,7 @@ class lda_gibbs : public lda_model {
          * @param beta The hyperparameter for the Dirichlet prior over
          *  \f$\theta\f$.
          */
-        lda_gibbs( std::vector<Document> & docs, size_t num_topics, 
+        lda_gibbs( std::vector<index::Document> & docs, size_t num_topics, 
                    double alpha, double beta );
 
         virtual ~lda_gibbs() { }
@@ -72,7 +73,7 @@ class lda_gibbs : public lda_model {
          * @param term The term we are sampling a topic assignment for.
          * @param doc The document the term resides in.
          */
-        size_t sample_topic( TermID term, size_t doc );
+        size_t sample_topic( index::TermID term, size_t doc );
         
         /**
          * Computes \f$P(z_i = j | w, \boldsymbol{z})\f$.
@@ -82,7 +83,7 @@ class lda_gibbs : public lda_model {
          * @param topic The topic \f$j\f$ we want to compute the
          *  probability for.
          */
-        double compute_probability( TermID term, size_t doc, size_t topic ) const;
+        double compute_probability( index::TermID term, size_t doc, size_t topic ) const;
 
         /**
          * Computes the probability that the given term appears in the
@@ -91,7 +92,7 @@ class lda_gibbs : public lda_model {
          * @param term The term we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        virtual double compute_term_topic_probability( TermID term, size_t topic ) const;
+        virtual double compute_term_topic_probability( index::TermID term, size_t topic ) const;
 
         /**
          * Computes the probability that the given topic is picked for the
@@ -109,7 +110,7 @@ class lda_gibbs : public lda_model {
          * @param term The term we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        virtual double count_term( TermID term, size_t topic ) const;
+        virtual double count_term( index::TermID term, size_t topic ) const;
         
         /**
          * Computes how many times the given topic has been assigned for
@@ -159,7 +160,7 @@ class lda_gibbs : public lda_model {
          * @param term The term in question.
          * @param doc The document in question.
          */
-        virtual void decrease_counts( size_t topic, TermID term, size_t doc );
+        virtual void decrease_counts( size_t topic, index::TermID term, size_t doc );
         
         /**
          * Increases all counts associated with the given topic, term, and
@@ -169,7 +170,7 @@ class lda_gibbs : public lda_model {
          * @param term The term in question.
          * @param doc The document in question.
          */
-        virtual void increase_counts( size_t topic, TermID term, size_t doc );
+        virtual void increase_counts( size_t topic, index::TermID term, size_t doc );
         
         /**
          * Computes the current courpus log likelihood, given the vector of 
@@ -195,20 +196,20 @@ class lda_gibbs : public lda_model {
          * potentially have many different topics assigned to it, so we are
          * not using TermIDs here, but our own contrived intra document term id.
          */
-        std::unordered_map<DocID, std::unordered_map<size_t, size_t>>
+        std::unordered_map<index::DocID, std::unordered_map<size_t, size_t>>
         doc_word_topic_;
         
         /**
          * Contains the counts for each word being assigned a given topic.
          */
-        std::unordered_map<topic_id, std::unordered_map<TermID, size_t>> 
+        std::unordered_map<topic_id, std::unordered_map<index::TermID, size_t>> 
         topic_term_count_;
         
         /**
          * Contains the counts for each topic being assigned in a given
          * document.
          */
-        std::unordered_map<DocID, std::unordered_map<topic_id, size_t>>
+        std::unordered_map<index::DocID, std::unordered_map<topic_id, size_t>>
         doc_topic_count_;
         
         /**
@@ -236,6 +237,7 @@ class lda_gibbs : public lda_model {
 
 };
 
+}
 }
 
 #endif

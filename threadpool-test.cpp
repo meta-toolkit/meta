@@ -4,7 +4,7 @@
 #include "parallel/thread_pool.h"
 
 int main() {
-    using namespace parallel;
+    using namespace meta::parallel;
     thread_pool pool{};
 
     std::vector<std::future<size_t>> futures;

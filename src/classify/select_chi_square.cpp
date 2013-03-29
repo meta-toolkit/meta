@@ -5,13 +5,19 @@
 #include "classify/select.h"
 #include "classify/select_chi_square.h"
 
+namespace meta {
+namespace classify {
+
 using std::vector;
 using std::unordered_set;
 using std::unordered_map;
 using std::string;
 using std::pair;
 
-vector<pair<TermID, double>> classify::feature_select::chi_square(const vector<Document> & docs)
+using index::TermID;
+using index::Document;
+
+vector<pair<TermID, double>> feature_select::chi_square(const vector<Document> & docs)
 {
     unordered_set<string> classes(get_class_space(docs));
     unordered_set<TermID> terms(get_term_space(docs));
@@ -28,12 +34,12 @@ vector<pair<TermID, double>> classify::feature_select::chi_square(const vector<D
         size_t i = 0;
         for(auto & t: terms)
         {
-            Common::show_progress(i++, terms.size(), 20, "  " + c + ": ");
+            common::show_progress(i++, terms.size(), 20, "  " + c + ": ");
             double chi = calc_chi_square(t, c, docs.size(), total_terms, buckets);
             if(feature_weights[t] < chi)
                 feature_weights[t] = chi;
         }
-        Common::end_progress("  " + c + ": ");
+        common::end_progress("  " + c + ": ");
     }
 
     vector<pair<TermID, double>> features(feature_weights.begin(), feature_weights.end());
@@ -46,7 +52,7 @@ vector<pair<TermID, double>> classify::feature_select::chi_square(const vector<D
     return features;
 }
 
-double classify::feature_select::calc_chi_square(TermID termID, const string & label,
+double feature_select::calc_chi_square(TermID termID, const string & label,
         size_t total_docs, size_t total_terms,
         const unordered_map<string, vector<Document>> & classes)
 {
@@ -73,4 +79,7 @@ double classify::feature_select::calc_chi_square(TermID termID, const string & l
     numerator *= numerator;
     double denominator = p_c * (1.0 - p_c) * p_t * (1.0 - p_t);
     return numerator / denominator;
+}
+
+}
 }

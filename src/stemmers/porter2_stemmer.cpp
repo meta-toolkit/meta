@@ -34,6 +34,9 @@
 #include <unordered_map>
 #include "stemmers/porter2_stemmer.h"
 
+namespace meta {
+namespace stemmers {
+
 using namespace Porter2Stemmer::internal;
 using std::pair;
 using std::string;
@@ -476,4 +479,7 @@ bool Porter2Stemmer::internal::containsVowel(const string & word, int start, int
                 return true;
     }
     return false;
+}
+
+}
 }

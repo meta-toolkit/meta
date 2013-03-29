@@ -17,6 +17,7 @@
 #include <queue>
 #include <future>
 
+namespace meta {
 namespace parallel {
 
 class thread_pool {
@@ -116,4 +117,6 @@ class thread_pool {
 };
 
 }
+}
+
 #endif

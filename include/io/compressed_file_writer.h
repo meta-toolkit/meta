@@ -10,6 +10,9 @@
 #include <cmath>
 #include <string>
 
+namespace meta {
+namespace io {
+
 /**
  * Writes to a file of unsigned integers using gamma compression.
  */
@@ -82,5 +85,8 @@ class CompressedFileWriterException: public std::exception
    
         std::string _error;
 };
+
+}
+}
 
 #endif

@@ -9,9 +9,11 @@
 #include <string>
 #include <unordered_map>
 #include "index/structs.h"
+#include "index/document.h"
 #include "util/invertible_map.h"
 
-class Document;
+namespace meta {
+namespace tokenizers {
 
 /**
  * An class that provides a framework to produce tokens.
@@ -33,15 +35,15 @@ class Tokenizer
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        virtual void tokenize(Document & document,
-                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq = nullptr) = 0;
+        virtual void tokenize(index::Document & document,
+                const std::shared_ptr<std::unordered_map<index::TermID, unsigned int>> & docFreq = nullptr) = 0;
 
         /**
          * Maps terms to TermIDs.
          * @param term - the term to check
          * @return the TermID assigned to this term
          */
-        virtual TermID getMapping(const std::string & term);
+        virtual index::TermID getMapping(const std::string & term);
 
         /**
          * Calls the TermID InvertibleMap's saveMap function.
@@ -55,13 +57,13 @@ class Tokenizer
          *  with an existing mapping.
          * @param mapping - a reference to the desired mapping
          */
-        virtual void setTermIDMapping(const InvertibleMap<TermID, std::string> & mapping);
+        virtual void setTermIDMapping(const util::InvertibleMap<index::TermID, std::string> & mapping);
 
         /**
          * @return a reference to the structure used to store the termID <->
          * term string mapping
          */
-        virtual const InvertibleMap<TermID, std::string> & getTermIDMapping() const;
+        virtual const util::InvertibleMap<index::TermID, std::string> & getTermIDMapping() const;
 
         /**
          * TODO there are probably other functions that MultiTokenizer messes up
@@ -69,7 +71,7 @@ class Tokenizer
          * @param termID
          * @return the label
          */
-        virtual std::string getLabel(TermID termID) const;
+        virtual std::string getLabel(index::TermID termID) const;
 
         /**
          * Prints the data associated with this tokenizer, consisting of a TermID and its string
@@ -92,7 +94,7 @@ class Tokenizer
          * @return the max TermID associated with this Tokenizer. This is NOT
          * the total number of unique terms seen by this Tokenizer.
          */
-        virtual TermID getMaxTermID() const;
+        virtual index::TermID getMaxTermID() const;
 
     protected:
 
@@ -101,7 +103,7 @@ class Tokenizer
          * from the file. This is protected mainly so MultiTokenizer can update
          * its _termMap correctly.
          */
-        InvertibleMap<TermID, std::string> _termMap;
+        util::InvertibleMap<index::TermID, std::string> _termMap;
  
     private:
 
@@ -109,7 +111,10 @@ class Tokenizer
          * Internal counter for the number of unique terms seen (used as keys
          * in the InvertibleMap).
          */
-        TermID _currentTermID;
+        index::TermID _currentTermID;
 };
+
+}
+}
 
 #endif

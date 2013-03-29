@@ -10,9 +10,11 @@
 #include <unordered_map>
 #include <map>
 #include <string>
-#include "index.h"
+#include "tokenizers/tokenizer.h"
+#include "index/index.h"
 
-class Tokenizer;
+namespace meta {
+namespace index {
 
 /**
  * Represents an index that resides in memory and is created on the fly.
@@ -25,14 +27,14 @@ class RAMIndex : public Index
          * @param indexDocs - Document objects to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const std::vector<Document> & indexDocs, std::shared_ptr<Tokenizer> tokenizer);
+        RAMIndex(const std::vector<Document> & indexDocs, std::shared_ptr<tokenizers::Tokenizer> tokenizer);
 
         /**
          * Creates an Index located in memory.
          * @param indexFiles - files to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const std::vector<std::string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer);
+        RAMIndex(const std::vector<std::string> & indexFiles, std::shared_ptr<tokenizers::Tokenizer> tokenizer);
         
         /**
          * Creates an index of given documents.
@@ -64,8 +66,8 @@ class RAMIndex : public Index
 
     private:
 
-        /** stuff */
-        std::shared_ptr<Tokenizer> _tokenizer;
+        /** the tokenizer that was used to interpret the indexed documents */
+        std::shared_ptr<tokenizers::Tokenizer> _tokenizer;
 
         /** documents stored in this index */
         std::vector<Document> _documents;
@@ -87,5 +89,8 @@ class RAMIndex : public Index
          */
         std::string shortFilename(const std::string & filename) const;
 };
+
+}
+}
 
 #endif

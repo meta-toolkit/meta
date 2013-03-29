@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+namespace meta {
+namespace tokenizers {
+
 /**
  * Represents a static parse tree that was generated from the Stanford
  *  Parser.
@@ -123,5 +126,8 @@ class ParseTreeException: public std::exception
    
         std::string _error;
 };
+
+}
+}
 
 #endif

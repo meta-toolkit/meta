@@ -8,13 +8,19 @@
 #include "index/document.h"
 #include "classify/knn.h"
 
+namespace meta {
+namespace classify {
+
 using std::pair;
 using std::unordered_map;
 using std::multimap;
 using std::string;
 using std::vector;
 using std::shared_ptr;
+
 using namespace KNN::internal;
+using index::Index;
+using index::Document;
 
 string KNN::classify(Document & query, shared_ptr<Index> index, size_t k)
 {
@@ -124,4 +130,7 @@ KNN::internal::normalize(const multimap<double, string> & scores)
     }
 
     return normalized;
+}
+
+}
 }

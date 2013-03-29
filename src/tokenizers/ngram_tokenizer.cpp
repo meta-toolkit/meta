@@ -5,16 +5,22 @@
 #include <cstdlib>
 #include "util/common.h"
 #include "stemmers/porter2_stemmer.h"
-#include "index/document.h"
 #include "io/parser.h"
 #include "io/config_reader.h"
 #include "tokenizers/parse_tree.h"
 #include "tokenizers/ngram_tokenizer.h"
 
+namespace meta {
+namespace tokenizers {
+
 using std::deque;
 using std::string;
 using std::unordered_map;
 using std::unordered_set;
+
+using index::TermID;
+using index::Document;
+using io::Parser;
 
 NgramTokenizer::NgramTokenizer(size_t n, NgramType ngramType,
                                StemmerType stemmerType, StopwordType stopwordType):
@@ -119,7 +125,7 @@ string NgramTokenizer::stopOrStem(const string & str) const
         return ret;
     }
     else
-        return Porter2Stemmer::stem(Porter2Stemmer::trim(str));
+        return stemmers::Porter2Stemmer::stem(stemmers::Porter2Stemmer::trim(str));
 }
 
 void NgramTokenizer::tokenizeFW(Document & document,
@@ -159,15 +165,15 @@ void NgramTokenizer::tokenizeFW(Document & document,
 
 void NgramTokenizer::initStopwords()
 {
-    auto config = ConfigReader::read("tokenizer.ini");
+    auto config = io::ConfigReader::read("tokenizer.ini");
     Parser parser(config["stop-words"], "\n");
     while(parser.hasNext())
-        _stopwords.insert(Porter2Stemmer::stem(parser.next()));
+        _stopwords.insert(stemmers::Porter2Stemmer::stem(parser.next()));
 }
 
 void NgramTokenizer::initFunctionWords()
 {
-    auto config = ConfigReader::read("tokenizer.ini");
+    auto config = io::ConfigReader::read("tokenizer.ini");
     Parser parser(config["function-words"], " \n");
     while(parser.hasNext())
         _functionWords.insert(parser.next());
@@ -196,4 +202,7 @@ string NgramTokenizer::setLower(const string & original) const
             ch += 32;
     }
     return word;
+}
+
+}
 }

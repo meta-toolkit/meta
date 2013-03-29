@@ -4,6 +4,9 @@
 
 #include "io/compressed_file_reader.h"
 
+namespace meta {
+namespace io {
+
 using std::string;
 
 CompressedFileReader::CompressedFileReader(const string & filename):
@@ -113,4 +116,7 @@ bool CompressedFileReader::readBit()
         ++_currentBit;
     }
     return bit;
+}
+
+}
 }

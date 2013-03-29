@@ -12,6 +12,9 @@
 #include <unordered_map>
 #include <string>
 
+namespace meta {
+namespace util {
+
 /**
  * This data structure indexes by keys as well as values, allowing constant
  *  amortized lookup time by key or value. All keys and values must be unique.
@@ -183,6 +186,9 @@ class InvertibleMapException: public std::exception
    
         std::string _error;
 };
+
+}
+}
 
 #include "util/invertible_map.tcc"
 #endif

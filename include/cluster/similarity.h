@@ -8,6 +8,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
+namespace meta {
+namespace clustering {
+
 /**
  * Contains various similarity metrics. These are intended to be used by
  * specific objects (e.g. Document) to implement their own similarity functions.
@@ -16,7 +19,7 @@
  * Value is assumed to be a numerical value that math operations can be
  * performed on.
  */
-namespace Similarity
+namespace similarity
 {
     using std::unordered_map;
     using std::unordered_set;
@@ -86,6 +89,9 @@ namespace Similarity
         template <class Key, class Value>
         Value safe_at(const unordered_map<Key, Value> & map, const Key & key);
     }
+}
+
+}
 }
 
 #include "cluster/similarity.tcc"

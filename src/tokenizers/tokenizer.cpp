@@ -1,15 +1,25 @@
+/**
+ * @file tokenizer.cpp
+ */
+
 #include <fstream>
 #include <iostream>
 #include "util/invertible_map.h"
-#include "index/document.h"
 #include "tokenizers/parse_tree.h"
 #include "tokenizers/tokenizer.h"
+
+namespace meta {
+namespace tokenizers {
 
 using std::string;
 using std::cout;
 using std::endl;
 using std::ofstream;
 using std::unordered_map;
+
+using util::InvertibleMap;
+using index::TermID;
+using index::Document;
 
 Tokenizer::Tokenizer():
     _termMap(InvertibleMap<TermID, string>()),
@@ -71,4 +81,7 @@ size_t Tokenizer::getNumTerms() const
 {
     return _termMap.size();
 
+}
+
+}
 }

@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    NgramDistribution<4> dist("papers.txt");
+    meta::language_model::NgramDistribution<4> dist("papers.txt");
     cout << endl << dist.random_sentence(atoi(argv[1]), atoi(argv[2])) << endl << endl;
 
     return 0;

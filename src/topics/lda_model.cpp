@@ -5,16 +5,21 @@
 #include "topics/lda_model.h"
 #include "util/common.h"
 
+namespace meta {
 namespace topics {
 
+using index::Document;
+using index::TermID;
+using index::DocID;
+
 lda_model::lda_model( std::vector<Document> & docs, size_t num_topics )
-        : docs_{ docs }, tokenizer_{ 1, NgramTokenizer::Word },
+        : docs_{ docs }, tokenizer_{ 1, tokenizers::NgramTokenizer::Word },
           num_topics_{ num_topics } {
     for( size_t i = 0; i < docs_.size(); ++i ) {
-        Common::show_progress( i, docs_.size(), 10, "Tokenizing documents: " );
+        common::show_progress( i, docs_.size(), 10, "Tokenizing documents: " );
         tokenizer_.tokenize( docs_[i] );
     }
-    std::cerr << '\n';
+    common::end_progress("Tokenizing documents: ");
     num_words_ = tokenizer_.getNumTerms();
 }
 
@@ -55,4 +60,5 @@ void lda_model::save( const std::string & prefix ) const {
     save_term_mapping( prefix + ".terms" );
 }
 
+}
 }

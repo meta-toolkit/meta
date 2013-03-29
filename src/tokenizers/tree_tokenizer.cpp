@@ -8,12 +8,18 @@
 #include "tokenizers/parse_tree.h"
 #include "tokenizers/tree_tokenizer.h"
 
+namespace meta {
+namespace tokenizers {
+
 using std::vector;
 using std::unordered_map;
 using std::pair;
 using std::bind;
 using std::shared_ptr;
 using std::string;
+
+using index::Document;
+using index::TermID;
 
 const char* TreeTokenizer::_extension = ".tree";
 
@@ -63,7 +69,7 @@ void TreeTokenizer::subtreeTokenize(Document & document, const ParseTree & tree,
 void TreeTokenizer::branchTokenize(Document & document, const ParseTree & tree,
         const shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
-    string representation = Common::toString(tree.numChildren());
+    string representation = common::toString(tree.numChildren());
     document.increment(getMapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())
         branchTokenize(document, child, docFreq);
@@ -82,7 +88,7 @@ void TreeTokenizer::depthTokenize(Document & document, const ParseTree & tree,
         const shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     size_t h = ParseTree::height(tree);
-    string representation = Common::toString(h);
+    string representation = common::toString(h);
     document.increment(getMapping(representation), 1, docFreq);
 }
 
@@ -102,4 +108,7 @@ void TreeTokenizer::semiSkeletonTokenize(Document & document, const ParseTree & 
     document.increment(getMapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())
         semiSkeletonTokenize(document, child, docFreq);
+}
+
+}
 }

@@ -10,6 +10,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
+namespace meta {
+namespace classify {
+
 /**
  * Allows interpretation of classification errors.
  */
@@ -50,5 +53,8 @@ class ConfusionMatrix
         /** how many times each class was predicted */
         std::unordered_map<std::string, size_t> _counts;
 };
+
+}
+}
 
 #endif

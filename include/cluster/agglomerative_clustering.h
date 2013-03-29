@@ -12,6 +12,7 @@
 
 #include "cluster/point.h"
 
+namespace meta {
 namespace clustering {
     
 template <class Element, class LinkPolicy>
@@ -113,4 +114,6 @@ class agglomerative_clustering {
 };
 
 }
+}
+
 #endif

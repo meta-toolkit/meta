@@ -8,6 +8,9 @@
 #include "index/lexicon.h"
 #include "index/index.h"
 
+namespace meta {
+namespace index {
+
 using std::ofstream;
 using std::vector;
 using std::istringstream;
@@ -17,6 +20,9 @@ using std::pair;
 using std::make_pair;
 using std::unordered_map;
 using std::string;
+
+using util::InvertibleMap;
+using io::Parser;
 
 Lexicon::Lexicon(const string & lexiconFile):
     _lexiconFilename(lexiconFile),
@@ -190,4 +196,7 @@ void Lexicon::setDocLengths(const string & filename)
         istringstream(parser.next()) >> length;
         _docLengths.insert(make_pair(docID, length));
     }
+}
+
+}
 }

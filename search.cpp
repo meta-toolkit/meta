@@ -21,6 +21,8 @@ using std::endl;
 using std::string;
 using std::unordered_map;
 
+using namespace meta;
+
 int main(int argc, char* argv[])
 {
     if(argc != 2)
@@ -29,12 +31,12 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    unordered_map<string, string> config = ConfigReader::read(argv[1]);
+    unordered_map<string, string> config = io::ConfigReader::read(argv[1]);
     string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
 
-    std::shared_ptr<Tokenizer> tokenizer = ConfigReader::create_tokenizer(config);
+    std::shared_ptr<tokenizers::Tokenizer> tokenizer = io::ConfigReader::create_tokenizer(config);
 
-    vector<Document> docs = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
+    vector<index::Document> docs = index::Document::loadDocs(prefix + "/full-corpus.txt", prefix);
 
     cerr << "Tokenizing..." << endl;
     for(auto & doc: docs)
@@ -51,7 +53,7 @@ int main(int argc, char* argv[])
             string comp = docs[i].getName() + " " + docs[j].getName();
             // heuristically guess if the assignment is completed
             if(docs[i].getLength() > 10 && docs[j].getLength() > 10)
-                scores.push_back(make_pair(comp, Document::cosine_similarity(docs[i], docs[j])));
+                scores.push_back(make_pair(comp, index::Document::cosine_similarity(docs[i], docs[j])));
         }
     }
     cerr << endl;

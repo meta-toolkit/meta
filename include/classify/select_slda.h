@@ -9,7 +9,9 @@
 #include <utility>
 #include "index/document.h"
 
-namespace classify { namespace feature_select {
+namespace meta {
+namespace classify {
+namespace feature_select {
 
     /**
      * Creates an sLDA input file from the given documents and runs the
@@ -19,8 +21,10 @@ namespace classify { namespace feature_select {
      * @param docs The documents to extract features from
      * @return a vector of TermIDs sorted by importance
      */
-    std::vector<std::pair<TermID, double>> slda(const std::vector<Document> & docs);
+    std::vector<std::pair<index::TermID, double>> slda(const std::vector<index::Document> & docs);
 
-} }
+}
+}
+}
 
 #endif

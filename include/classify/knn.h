@@ -13,7 +13,8 @@
 #include <string>
 #include "index/index.h"
 
-class Document;
+namespace meta {
+namespace classify {
 
 /**
  * Runs KNN on a single index or multiple indexes.
@@ -26,7 +27,7 @@ namespace KNN
      * @param index - the index to perform the KNN on
      * @param k - the value of k in KNN
      */
-    std::string classify(Document & query, std::shared_ptr<Index> index, size_t k);
+    std::string classify(index::Document & query, std::shared_ptr<index::Index> index, size_t k);
 
     /**
      * Runs a KNN classifier on multiple indexes.
@@ -35,8 +36,8 @@ namespace KNN
      * @param weights - ensemble linear interpolation weights
      * @param k - the value of k in kNN
      */
-    std::string classify(Document & query,
-            std::vector<std::shared_ptr<Index>> indexes,
+    std::string classify(index::Document & query,
+            std::vector<std::shared_ptr<index::Index>> indexes,
             std::vector<double> weights, size_t k);
 
     namespace internal
@@ -91,5 +92,8 @@ class KNNException: public std::exception
    
         std::string _error;
 };
+
+}
+}
 
 #endif

@@ -2,11 +2,11 @@
  * @file inverted_index.cpp
  */
 
-#include "tokenizers/tokenizer.h"
-#include "index/document.h"
-#include "index/lexicon.h"
 #include "index/inverted_index.h"
 #include "index/structs.h"
+
+namespace meta {
+namespace index {
 
 using std::vector;
 using std::cerr;
@@ -14,6 +14,8 @@ using std::endl;
 using std::multimap;
 using std::unordered_map;
 using std::string;
+
+using tokenizers::Tokenizer;
 
 InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postingsFile,
         std::shared_ptr<Tokenizer> tokenizer):
@@ -80,4 +82,7 @@ void InvertedIndex::indexDocs(vector<Document> & documents, size_t chunkMBSize)
     _postings.createPostingsFile(numChunks, _lexicon);
     _postings.saveDocLengths(documents, "docs.lengths");
     _lexicon.save("docs.lengths", "termid.mapping", "docid.mapping");
+}
+
+}
 }

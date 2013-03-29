@@ -8,6 +8,7 @@
 #include <cmath>
 #include <iterator>
 
+namespace meta {
 namespace util {
 
 template <class T>
@@ -128,4 +129,6 @@ basic_range<T> range( const T & begin, const T & end, std::ptrdiff_t step = 1 ) 
 }
 
 }
+}
+
 #endif

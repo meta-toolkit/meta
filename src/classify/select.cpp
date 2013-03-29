@@ -4,13 +4,18 @@
 
 #include "classify/select.h"
 
+namespace meta {
+namespace classify {
+
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 using std::pair;
 using std::string;
+using index::Document;
+using index::TermID;
 
-unordered_map<string, vector<Document>> classify::feature_select::partition_classes(
+unordered_map<string, vector<Document>> feature_select::partition_classes(
         const vector<Document> & docs)
 {
     unordered_map<string, vector<Document>> classes;
@@ -19,7 +24,7 @@ unordered_map<string, vector<Document>> classify::feature_select::partition_clas
     return classes;
 }
 
-unordered_set<string> classify::feature_select::get_class_space(const vector<Document> & docs)
+unordered_set<string> feature_select::get_class_space(const vector<Document> & docs)
 {
     unordered_set<string> classes;
     for(auto & d: docs)
@@ -27,7 +32,7 @@ unordered_set<string> classify::feature_select::get_class_space(const vector<Doc
     return classes;
 }
 
-unordered_set<TermID> classify::feature_select::get_term_space(const vector<Document> & docs)
+unordered_set<TermID> feature_select::get_term_space(const vector<Document> & docs)
 {
     unordered_set<TermID> terms;
     for(auto & d: docs)
@@ -36,7 +41,7 @@ unordered_set<TermID> classify::feature_select::get_term_space(const vector<Docu
     return terms;
 }
 
-double classify::feature_select::term_given_class(TermID term, const string & label,
+double feature_select::term_given_class(TermID term, const string & label,
         unordered_map<string, vector<Document>> classes)
 {
     size_t count = 0;
@@ -47,7 +52,7 @@ double classify::feature_select::term_given_class(TermID term, const string & la
 }
 
 
-double classify::feature_select::not_term_given_not_class(TermID term, const string & label,
+double feature_select::not_term_given_not_class(TermID term, const string & label,
         unordered_map<string, vector<Document>> classes)
 {
     size_t count = 0;
@@ -65,4 +70,7 @@ double classify::feature_select::not_term_given_not_class(TermID term, const str
         }
     }
     return static_cast<double>(count) / total;
+}
+
+}
 }

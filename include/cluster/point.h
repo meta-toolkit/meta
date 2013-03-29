@@ -11,6 +11,7 @@
 #include "cluster/similarity.h"
 #include "index/document.h"
 
+namespace meta {
 namespace clustering {
 
 template <class DimensionKey, class Element>
@@ -45,14 +46,14 @@ class point {
 };
 
 template <>
-point<TermID, Document>::point( const Document & d ) 
+point<index::TermID, index::Document>::point( const index::Document & d ) 
         : element_{ &d }, size_{ 1 } {
     for( const auto & freq : d.getFrequencies() )
         avg_vector_[ freq.first ] = static_cast<double>( freq.second );
 }
 
-point<TermID, Document> make_point( const Document & d ) {
-    return point<TermID, Document>{ d };
+point<index::TermID, index::Document> make_point( const index::Document & d ) {
+    return point<index::TermID, index::Document>{ d };
 }
 
 template <class DimensionKey, class Element>
@@ -60,7 +61,7 @@ point<DimensionKey, Element>
 merge_points( const point<DimensionKey, Element> & first, 
               const point<DimensionKey, Element> & second ) {
 
-    using namespace Similarity::internal;
+    using namespace similarity::internal;
 
     typename point<DimensionKey, Element>::sparse_vector avg_vector;
     for( const auto & key : get_space( first.vector(), second.vector() ) ) {
@@ -73,6 +74,7 @@ merge_points( const point<DimensionKey, Element> & first,
     return { avg_vector, first.size() + second.size() };
 }
 
+}
 }
 
 #endif

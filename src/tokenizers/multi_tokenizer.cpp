@@ -5,16 +5,19 @@
 #include "index/document.h"
 #include "tokenizers/multi_tokenizer.h"
 
+namespace meta {
+namespace tokenizers {
+
 using std::unordered_map;
 using std::string;
         
-MultiTokenizer::MultiTokenizer(const std::vector<std::shared_ptr<Tokenizer>> & tokenizers):
-    _tokenizers(tokenizers),
+MultiTokenizer::MultiTokenizer(const std::vector<std::shared_ptr<Tokenizer>> & toks):
+    _tokenizers(toks),
     _maxTermID(0)
 { /* nothing */ }
 
-void MultiTokenizer::tokenize(Document & document,
-    const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
+void MultiTokenizer::tokenize(index::Document & document,
+    const std::shared_ptr<unordered_map<index::TermID, unsigned int>> & docFreq)
 {
     for(auto & tok: _tokenizers)
     {
@@ -33,4 +36,7 @@ void MultiTokenizer::tokenize(Document & document,
         for(auto & m: tok->getTermIDMapping())
             _termMap.insert(m.first, m.second);
     }
+}
+
+}
 }

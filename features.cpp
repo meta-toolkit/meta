@@ -29,27 +29,29 @@ using std::cerr;
 using std::endl;
 using std::string;
 
+using namespace meta;
+
 string getClass(const string & path)
 {
     size_t idx = path.find_first_of("/");
     return path.substr(0, idx);
 }
 
-unordered_map<string, vector<Document>> getDocs(const string & path)
+unordered_map<string, vector<index::Document>> getDocs(const string & path)
 {
-    unordered_map<string, vector<Document>> docs;
-    Parser parser(path + "/full-corpus.txt", "\n");
+    unordered_map<string, vector<index::Document>> docs;
+    io::Parser parser(path + "/full-corpus.txt", "\n");
     while(parser.hasNext())
     {
         string file = parser.next();
         string className = getClass(file);
-        docs[className].push_back(Document(path + "/" + file));
+        docs[className].push_back(index::Document(path + "/" + file));
     }
     return docs;
 }
 
-void combine_counts(unordered_map<TermID, unsigned int> & language_model, const
-        unordered_map<TermID, unsigned int> & doc_counts)
+void combine_counts(unordered_map<index::TermID, unsigned int> & language_model, const
+        unordered_map<index::TermID, unsigned int> & doc_counts)
 {
     for(auto & count: doc_counts)
         language_model[count.first] += count.second;
@@ -63,14 +65,14 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    unordered_map<string, string> config = ConfigReader::read(argv[1]);
-    unordered_map<string, vector<Document>> docs =
+    unordered_map<string, string> config = io::ConfigReader::read(argv[1]);
+    unordered_map<string, vector<index::Document>> docs =
         getDocs("/home/sean/projects/senior-thesis-data/" + config["prefix"]);
 
-    std::shared_ptr<Tokenizer> tokenizer = ConfigReader::create_tokenizer(config); 
+    std::shared_ptr<tokenizers::Tokenizer> tokenizer = io::ConfigReader::create_tokenizer(config); 
 
     cerr << "Tokenizing..." << endl;
-    unordered_map<string, unordered_map<TermID, unsigned int>> language_models;
+    unordered_map<string, unordered_map<index::TermID, unsigned int>> language_models;
     for(auto & str: docs)
     {
         for(auto & doc: str.second)
@@ -81,7 +83,7 @@ int main(int argc, char* argv[])
     }
 
     cerr << "Smoothing..." << endl;
-    unordered_map<string, unordered_map<TermID, double>> smoothed_models;
+    unordered_map<string, unordered_map<index::TermID, double>> smoothed_models;
     for(auto & model: language_models)
     {
         string label = model.first;
@@ -115,7 +117,7 @@ int main(int argc, char* argv[])
                 cout << "#### p(f|" << class1 << ")/p(f|" << class2 << ")" << endl;
 
                 // create set of all terms shared between classes
-                unordered_set<TermID> termIDs;
+                unordered_set<index::TermID> termIDs;
                 for(auto & term: m1.second)
                     termIDs.insert(term.first);
                 for(auto & term: m2.second)

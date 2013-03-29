@@ -11,6 +11,9 @@
 #include "index/postings.h"
 #include "index/index.h"
 
+namespace meta {
+namespace index {
+
 using std::map;
 using std::istringstream;
 using std::unordered_map;
@@ -20,6 +23,9 @@ using std::string;
 using std::vector;
 using std::cerr;
 using std::endl;
+
+using util::InvertibleMap;
+using tokenizers::Tokenizer;
 
 Postings::Postings(const string & postingsFile):
     //_reader(postingsFile),
@@ -181,4 +187,7 @@ void Postings::saveDocLengths(const vector<Document> & documents, const string &
     }
     else
         throw IndexException("[Postings]: error saving document lengths");
+}
+
+}
 }

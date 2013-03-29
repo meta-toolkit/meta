@@ -14,6 +14,7 @@
 #include "cluster/point.h"
 #include "parallel/thread_pool.h"
 
+namespace meta {
 namespace clustering {
     
 /**
@@ -101,6 +102,7 @@ class basic_single_link_policy {
         Similarity sim_;
 };
 
+}
 }
 
 #endif

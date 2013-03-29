@@ -15,6 +15,9 @@
 
 #include <string>
 
+namespace meta {
+namespace io {
+
 /**
  * Simply saves the current state of the reader.
  */
@@ -117,5 +120,8 @@ class CompressedFileReaderException: public std::exception
    
         std::string _error;
 };
+
+}
+}
 
 #endif

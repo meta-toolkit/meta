@@ -5,6 +5,9 @@
 #include "io/parser.h"
 #include "util/common.h"
 
+namespace meta {
+namespace util {
+
 template <class Key, class Value>
 InvertibleMap<Key, Value>::InvertibleMap():
     _forward(std::unordered_map<Key, Value>()),
@@ -183,4 +186,7 @@ template <class Key, class Value>
 typename InvertibleMap<Key, Value>::const_iterator InvertibleMap<Key, Value>::end() const
 {
     return Iterator(_forward.end());
+}
+
+}
 }

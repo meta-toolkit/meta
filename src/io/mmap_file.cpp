@@ -4,6 +4,9 @@
 
 #include "io/mmap_file.h"
 
+namespace meta {
+namespace io {
+
 using std::string;
 
 MmapFile::MmapFile(string path):
@@ -48,4 +51,7 @@ MmapFile::~MmapFile()
         munmap(_start, _size);
         close(_file_descriptor);
     }
+}
+
+}
 }

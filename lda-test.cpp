@@ -8,6 +8,8 @@
 #include "topics/parallel_lda_gibbs.h"
 #include "topics/lda_cvb.h"
 
+using namespace meta;
+
 int print_usage( const std::string & name ) {
     std::cout << "Usage: " << name << " type prefix/full-corpus.txt prefix alpha beta topics\n"
         "\tRuns LDA of the given type (gibbs, pargibbs, cvb) on the given"
@@ -17,7 +19,7 @@ int print_usage( const std::string & name ) {
 }
 
 template <class Model>
-int run_lda( std::vector<Document> & docs, size_t topics, double alpha, double beta ) {
+int run_lda( std::vector<index::Document> & docs, size_t topics, double alpha, double beta ) {
     Model model{ docs, topics, alpha, beta };
     model.run( 1000 );
     model.save( "lda_model" );
@@ -27,9 +29,9 @@ int run_lda( std::vector<Document> & docs, size_t topics, double alpha, double b
 int run_lda( const std::string & type, const std::string & filename,
              const std::string & prefix, double alpha, double beta, 
              size_t topics ) {
-    using namespace topics;
+    using namespace meta::topics;
     std::cout << "Loading documents...\r" << std::flush;
-    std::vector<Document> docs = Document::loadDocs( filename, prefix );
+    std::vector<index::Document> docs = index::Document::loadDocs( filename, prefix );
     if( type == "gibbs" ) {
         std::cout<< "Beginning LDA using serial Gibbs sampling..." << std::endl;
         return run_lda<lda_gibbs>( docs, topics, alpha, beta );

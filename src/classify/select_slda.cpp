@@ -10,15 +10,21 @@
 #include "classify/select_slda.h"
 #include "classify/select.h"
 
+namespace meta {
+namespace classify {
+
 using std::unordered_map;
 using std::string;
 using std::pair;
 using std::vector;
 
-vector<pair<TermID, double>> classify::feature_select::slda(const vector<Document> & docs)
+using index::TermID;
+using index::Document;
+
+vector<pair<TermID, double>> feature_select::slda(const vector<Document> & docs)
 {
     // create sLDA input data
-    InvertibleMap<string, int> mapping;
+    util::InvertibleMap<string, int> mapping;
     std::ofstream slda_train_out("slda-train.dat");
     for(auto & d: docs)
         slda_train_out << d.getLearningData(mapping, true /* using sLDA */);
@@ -59,4 +65,7 @@ vector<pair<TermID, double>> classify::feature_select::slda(const vector<Documen
     );
 
     return features;
+}
+
+}
 }
