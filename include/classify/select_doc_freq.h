@@ -9,7 +9,9 @@
 #include <utility>
 #include "index/document.h"
 
-namespace classify { namespace feature_select {
+namespace meta {
+namespace classify {
+namespace feature_select {
 
     /**
      * Calculates important features via their document frequency; that is,
@@ -18,8 +20,10 @@ namespace classify { namespace feature_select {
      * @param docs The documents to extract features from
      * @return a vector of TermIDs sorted by importance
      */
-    std::vector<std::pair<TermID, double>> doc_freq(const std::vector<Document> & docs);
+    std::vector<std::pair<index::TermID, double>> doc_freq(const std::vector<index::Document> & docs);
 
-} }
+}
+}
+}
 
 #endif

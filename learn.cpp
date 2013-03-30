@@ -18,6 +18,8 @@ using std::vector;
 using std::string;
 using std::unordered_map;
 
+using namespace meta;
+
 int main(int argc, char* argv[])
 {
     if(argc != 2)
@@ -26,21 +28,21 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    unordered_map<string, string> config = ConfigReader::read(argv[1]);
+    unordered_map<string, string> config = io::config_reader::read(argv[1]);
     string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
-    InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
+    util::InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
 
-    vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
-    std::shared_ptr<Tokenizer> tokenizer = ConfigReader::create_tokenizer(config);
+    vector<index::Document> documents = index::Document::loadDocs(prefix + "/full-corpus.txt", prefix);
+    std::shared_ptr<tokenizers::Tokenizer> tokenizer = io::config_reader::create_tokenizer(config);
 
     for(size_t i = 0; i < documents.size(); ++i)
     {
-        Common::show_progress(i, documents.size(), 20, "  tokenizing ");
+        common::show_progress(i, documents.size(), 20, "  tokenizing ");
         // order of lines in the liblinear input file does NOT matter (tested)
         tokenizer->tokenize(documents[i], nullptr);
         std::cout << documents[i].getLearningData(mapping, false /* using liblinear */);
     }
-    Common::end_progress("  tokenizing ");
+    common::end_progress("  tokenizing ");
 
     return 0;
 }

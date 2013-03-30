@@ -8,16 +8,19 @@
 #include "classify/select.h"
 #include "util/common.h"
 
+namespace meta {
+namespace classify {
+
 using std::string;
 using std::pair;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-#include <iostream>
-using namespace std;
+using index::Document;
+using index::TermID;
 
-vector<pair<TermID, double>> classify::feature_select::doc_freq(const vector<Document> & docs)
+vector<pair<TermID, double>> feature_select::doc_freq(const vector<Document> & docs)
 {
     unordered_map<string, vector<Document>> classes(partition_classes(docs));
     unordered_map<TermID, double> feature_weights;
@@ -28,12 +31,12 @@ vector<pair<TermID, double>> classify::feature_select::doc_freq(const vector<Doc
         size_t i = 0;
         for(auto & term: feature_space)
         {
-            Common::show_progress(i++, feature_space.size(), 100, "  " + c.first + ": ");
+            common::show_progress(i++, feature_space.size(), 100, "  " + c.first + ": ");
             double prob = term_given_class(term, c.first, classes);
             if(feature_weights[term] < prob)
                 feature_weights[term] = prob;
         }
-        Common::end_progress("  " + c.first + ": ");
+        common::end_progress("  " + c.first + ": ");
     }
 
     vector<pair<TermID, double>> features(feature_weights.begin(), feature_weights.end());
@@ -44,4 +47,7 @@ vector<pair<TermID, double>> classify::feature_select::doc_freq(const vector<Doc
     );
 
     return features;
+}
+
+}
 }

@@ -9,6 +9,10 @@
 #include <string>
 #include <vector>
 #include "tokenizers/tokenizer.h"
+#include "index/document.h"
+
+namespace meta {
+namespace tokenizers {
 
 /**
  * The MultiTokenizer class contains more than one tokenizer. This is useful for
@@ -24,16 +28,17 @@ class MultiTokenizer: public Tokenizer
 
         /**
          * Constructs a MultiTokenizer from a vector of other Tokenizers.
+         * @param toks
          */
-        MultiTokenizer(const std::vector<std::shared_ptr<Tokenizer>> & tokenizers);
+        MultiTokenizer(const std::vector<std::shared_ptr<Tokenizer>> & toks);
 
         /**
          * Tokenizes a file into a Document.
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        void tokenize(Document & document,
-                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq = nullptr);
+        void tokenize(index::Document & document,
+                const std::shared_ptr<std::unordered_map<index::TermID, unsigned int>> & docFreq = nullptr);
 
     private:
 
@@ -43,5 +48,8 @@ class MultiTokenizer: public Tokenizer
         /** Keeps track of the number of terms between all the contained Tokenizers. */
         size_t _maxTermID;
 };
+
+}
+}
 
 #endif

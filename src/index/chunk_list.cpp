@@ -10,10 +10,15 @@
 #include "index/index.h"
 #include "index/chunk_list.h"
 
+namespace meta {
+namespace index {
+
 using std::cerr;
 using std::endl;
 using std::vector;
 using std::string;
+
+using io::Parser;
 
 ChunkList::ChunkList(size_t numChunks):
     _numChunks(numChunks),
@@ -21,7 +26,7 @@ ChunkList::ChunkList(size_t numChunks):
 {
     for(size_t i = 0; i < _numChunks; ++i)
     {
-        string filename = Common::toString(i) + ".chunk";
+        string filename = common::toString(i) + ".chunk";
         _parsers.push_back(Parser(filename, "\n"));
     }
 }
@@ -45,7 +50,7 @@ void ChunkList::combinePostingData(vector<IndexEntry> & entries, IndexEntry & co
 IndexEntry ChunkList::next()
 {
     if(!_parsers[0].hasNext())
-        throw IndexException("[ChunkList]: tried to getNext() when there were no more elements");
+        throw Index::index_exception("[ChunkList]: tried to getNext() when there were no more elements");
 
     IndexEntry min(_parsers[0].peek());
 
@@ -60,7 +65,7 @@ IndexEntry ChunkList::next()
     }
 
     vector<IndexEntry> mins;
-    for(int i = 0; i < _numChunks; ++i)
+    for(size_t i = 0; i < _numChunks; ++i)
     {
         // see if it has the min value
         IndexEntry current(_parsers[i].peek());
@@ -87,4 +92,7 @@ IndexEntry ChunkList::next()
     IndexEntry combined(mins[0].termID);
     combinePostingData(mins, combined);
     return combined;
+}
+
+}
 }

@@ -33,6 +33,9 @@
 #include <vector>
 #include <string>
 
+namespace meta {
+namespace stemmers {
+
 namespace Porter2Stemmer
 {
     std::string stem(const std::string & toStem);
@@ -85,6 +88,9 @@ namespace Porter2Stemmer
 
         bool containsVowel(const std::string & word, int start, int end);
     }
+}
+
+}
 }
 
 #endif

@@ -11,6 +11,9 @@
 #include "index/postings.h"
 #include "index/index.h"
 
+namespace meta {
+namespace index {
+
 using std::map;
 using std::istringstream;
 using std::unordered_map;
@@ -20,6 +23,9 @@ using std::string;
 using std::vector;
 using std::cerr;
 using std::endl;
+
+using util::InvertibleMap;
+using tokenizers::Tokenizer;
 
 Postings::Postings(const string & postingsFile):
     //_reader(postingsFile),
@@ -129,7 +135,7 @@ void Postings::writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunk
         terms.clear();
     }
     else
-        throw IndexException("[Postings]: error creating chunk file");
+        throw Index::index_exception("[Postings]: error creating chunk file");
 }
 
 void Postings::createPostingsFile(size_t numChunks, Lexicon & lexicon)
@@ -137,7 +143,7 @@ void Postings::createPostingsFile(size_t numChunks, Lexicon & lexicon)
     cerr << "[Postings]: merging chunks to create postings file" << endl;
     ofstream postingsFile(_postingsFilename);
     if(!postingsFile.good())
-        throw IndexException("[Postings]: error creating postings file");
+        throw Index::index_exception("[Postings]: error creating postings file");
 
     size_t line = 0;
     ChunkList chunks(numChunks);
@@ -180,5 +186,8 @@ void Postings::saveDocLengths(const vector<Document> & documents, const string &
             outfile << getDocID(doc.getPath()) << " " << doc.getLength() << endl;
     }
     else
-        throw IndexException("[Postings]: error saving document lengths");
+        throw Index::index_exception("[Postings]: error saving document lengths");
+}
+
+}
 }

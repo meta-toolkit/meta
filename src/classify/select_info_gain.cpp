@@ -5,13 +5,19 @@
 #include "classify/select.h"
 #include "classify/select_info_gain.h"
 
+namespace meta {
+namespace classify {
+
 using std::vector;
 using std::unordered_set;
 using std::unordered_map;
 using std::pair;
 using std::string;
 
-vector<pair<TermID, double>> classify::feature_select::info_gain(const vector<Document> & docs)
+using index::Document;
+using index::TermID;
+
+vector<pair<TermID, double>> feature_select::info_gain(const vector<Document> & docs)
 {
     unordered_set<string> classes(get_class_space(docs));
     unordered_set<TermID> terms(get_term_space(docs));
@@ -28,12 +34,12 @@ vector<pair<TermID, double>> classify::feature_select::info_gain(const vector<Do
         size_t i = 0;
         for(auto & t: terms)
         {
-            Common::show_progress(i++, terms.size(), 20, "  " + c + ": ");
+            common::show_progress(i++, terms.size(), 20, "  " + c + ": ");
             double gain = calc_info_gain(t, c, docs.size(), total_terms, buckets);
             if(feature_weights[t] < gain)
                 feature_weights[t] = gain;
         }
-        Common::end_progress("  " + c + ": ");
+        common::end_progress("  " + c + ": ");
     }
 
     vector<pair<TermID, double>> features(feature_weights.begin(), feature_weights.end());
@@ -47,7 +53,7 @@ vector<pair<TermID, double>> classify::feature_select::info_gain(const vector<Do
 
 }
 
-double classify::feature_select::calc_info_gain(TermID termID, const string & label,
+double feature_select::calc_info_gain(TermID termID, const string & label,
         size_t total_docs, size_t total_terms, const unordered_map<string, vector<Document>> & classes)
 {
     double term_count = 0;
@@ -77,4 +83,7 @@ double classify::feature_select::calc_info_gain(TermID termID, const string & la
     double gain_tnc = p_tnc * log(p_tnc / (p_t * p_nc));
 
     return gain_tc + gain_ntnc + gain_ntc + gain_tnc;
+}
+
+}
 }

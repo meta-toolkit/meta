@@ -11,6 +11,9 @@
 #include <string>
 #include <vector>
 
+namespace meta {
+namespace index {
+
 /** Numbering value for Terms in the index */
 typedef unsigned int TermID;
 
@@ -103,5 +106,8 @@ class IndexEntry
          */
         bool operator<(const IndexEntry & other) const;
 };
+
+}
+}
 
 #endif

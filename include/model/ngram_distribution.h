@@ -1,5 +1,5 @@
 /**
- * @file ngram_distribution
+ * @file ngram_distribution.h
  * Declaration of a smoothed ngram language model class.
  */
 
@@ -14,6 +14,9 @@
 #include <utility>
 #include "index/document.h"
 #include "tokenizers/ngram_tokenizer.h"
+
+namespace meta {
+namespace language_model {
 
 /**
  * Represents a smoothed distribution of ngrams of either words, POS tags,
@@ -53,7 +56,7 @@ class NgramDistribution
          * @param document
          * @return the log-likelihood
          */
-        double log_likelihood(const Document & document) const;
+        double log_likelihood(const index::Document & document) const;
 
         /**
          * Calculates the perplexity of the given document using the current
@@ -61,7 +64,7 @@ class NgramDistribution
          * @param document
          * @return the perplexity of the document
          */
-        double perplexity(const Document & document) const;
+        double perplexity(const index::Document & document) const;
 
         /**
          * Generates a random sentence using the current language model.
@@ -171,6 +174,9 @@ class NgramDistribution<0>
         
         ProbMap _dist;
 };
+
+}
+}
 
 #include "model/ngram_distribution.tcc"
 #endif

@@ -9,10 +9,12 @@
 #include <iostream>
 #include <string>
 
+namespace meta {
+
 /**
  * Functions used by many classes is contained here.
  */
-namespace Common
+namespace common
 {
     /**
      * Converts and type to a string representation.
@@ -68,6 +70,8 @@ namespace Common
     {
         std::cerr << prefix << "100%         " << std::endl;
     }
+}
+
 }
 
 #include "util/common.tcc"

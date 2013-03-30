@@ -13,9 +13,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+namespace meta {
+namespace io {
+
 /**
  * Memory maps a text file for better I/O performance and allows you to read it.
- * However, if the file is very small, it will simply be stored in memory.
  */
 class MmapFile
 {
@@ -66,27 +68,31 @@ class MmapFile
 
         /** no copying */
         const MmapFile & operator=(const MmapFile & other) = delete;
-};
 
-
-/**
- * Basic exception for TextFile interactions.
- */
-class MmapFileException: public std::exception
-{
     public:
-        
-        MmapFileException(const std::string & error):
-            _error(error) { /* nothing */ }
 
-        const char* what () const throw ()
+        /**
+         * Basic exception for MmapFile interactions.
+         */
+        class mmap_file_exception: public std::exception
         {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
+            public:
+                
+                mmap_file_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+           
+                std::string _error;
+        };
 };
+
+}
+}
 
 #endif

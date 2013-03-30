@@ -15,6 +15,8 @@
 #include "tokenizers/ngram_tokenizer.h"
 #include "topics/lda_model.h"
 #include "util/common.h"
+
+namespace meta {
 namespace topics {
 
 /**
@@ -26,7 +28,7 @@ namespace topics {
  */
 class lda_cvb : public lda_model {
     public:
-        lda_cvb( std::vector<Document> & docs, size_t num_topics, 
+        lda_cvb( std::vector<index::Document> & docs, size_t num_topics, 
                  double alpha, double beta ) 
                 : lda_model{ docs, num_topics }, alpha_{ alpha }, 
                   beta_{ beta } {
@@ -54,7 +56,7 @@ class lda_cvb : public lda_model {
             std::mt19937 rng( rdev() );
             std::cerr << "Initalizing::\r";
             for( size_t i = 0; i < docs_.size(); ++i ) {
-                Common::show_progress( i, docs_.size(), 10, "\t\t\t" );
+                common::show_progress( i, docs_.size(), 10, "\t\t\t" );
                 for( auto & freq : docs_[i].getFrequencies() ) {
                     double sum = 0;
                     for( size_t k = 0; k < num_topics_; ++k ) {
@@ -71,12 +73,13 @@ class lda_cvb : public lda_model {
                     }
                 }
             }
+            common::end_progress("\t\t\t");
         }
 
         double perform_iteration() {
             double max_change = 0;
             for( size_t i = 0; i < docs_.size(); ++i ) {
-                Common::show_progress( i, docs_.size(), 10, "\t\t\t" );
+                common::show_progress( i, docs_.size(), 10, "\t\t\t" );
                 for( auto & freq : docs_[i].getFrequencies() ) {
                     // remove this word occurrence from means
                     for( size_t k = 0; k < num_topics_; ++k ) {
@@ -102,10 +105,11 @@ class lda_cvb : public lda_model {
                     }
                 }
             }
+            common::end_progress("\t\t\t");
             return max_change;
         }
 
-        virtual double compute_term_topic_probability( TermID term, size_t topic ) const {
+        virtual double compute_term_topic_probability( index::TermID term, size_t topic ) const {
             return ( topic_term_mean_.at(topic).at(term) + beta_ )
                      / ( topic_mean_.at(topic) + num_words_ * beta_ );
         }
@@ -117,23 +121,24 @@ class lda_cvb : public lda_model {
 
         using topic_id = size_t;
 
-        std::unordered_map<DocID, std::unordered_map<topic_id, double>>
+        std::unordered_map<index::DocID, std::unordered_map<topic_id, double>>
         doc_topic_mean_;
 
-        std::unordered_map<topic_id, std::unordered_map<TermID, double>>
+        std::unordered_map<topic_id, std::unordered_map<index::TermID, double>>
         topic_term_mean_;
 
         std::unordered_map<topic_id, double> topic_mean_;
 
         std::unordered_map<
-            DocID, 
-            std::unordered_map<TermID, std::unordered_map<topic_id, double>>
+            index::DocID, 
+            std::unordered_map<index::TermID, std::unordered_map<topic_id, double>>
         > gamma_;
 
         double alpha_;
         double beta_;
 };
 
+}
 }
 
 #endif

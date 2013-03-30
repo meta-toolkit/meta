@@ -5,6 +5,9 @@
 #include "io/parser.h"
 #include "util/common.h"
 
+namespace meta {
+namespace util {
+
 template <class Key, class Value>
 InvertibleMap<Key, Value>::InvertibleMap():
     _forward(std::unordered_map<Key, Value>()),
@@ -88,7 +91,7 @@ void InvertibleMap<Key, Value>::saveMap(const std::string & filename) const
         outfile.close();
     }
     else
-        throw InvertibleMapException("error writing map to disk");
+        throw invertible_map_exception("error writing map to disk");
 }
 
 template <class Key, class Value>
@@ -183,4 +186,7 @@ template <class Key, class Value>
 typename InvertibleMap<Key, Value>::const_iterator InvertibleMap<Key, Value>::end() const
 {
     return Iterator(_forward.end());
+}
+
+}
 }

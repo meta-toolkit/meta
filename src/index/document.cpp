@@ -9,6 +9,9 @@
 #include "index/document.h" 
 #include "cluster/similarity.h"
 
+namespace meta {
+namespace index {
+
 using std::vector;
 using std::map;
 using std::cout;
@@ -19,6 +22,8 @@ using std::string;
 using std::stringstream;
 using std::unordered_map;
 using std::unordered_set;
+
+using util::InvertibleMap;
 
 Document::Document(const string & path):
     _path(path),
@@ -158,22 +163,25 @@ int Document::getMapping(InvertibleMap<string, int> & mapping, const string & ca
 
 double Document::cosine_similarity(const Document & a, const Document & b)
 {
-    return Similarity::cosine_similarity(a._frequencies, b._frequencies);
+    return clustering::similarity::cosine_similarity(a._frequencies, b._frequencies);
 }
 
 double Document::jaccard_similarity(const Document & a, const Document & b)
 {
-    return Similarity::jaccard_similarity(a._frequencies, b._frequencies);
+    return clustering::similarity::jaccard_similarity(a._frequencies, b._frequencies);
 }
 
 vector<Document> Document::loadDocs(const string & filename, const string & prefix)
 {
     vector<Document> docs;
-    Parser parser(filename, "\n");
+    io::Parser parser(filename, "\n");
     while(parser.hasNext())
     {
         string file = parser.next();
         docs.push_back(Document(prefix + "/" + file));
     }
     return docs;
+}
+
+}
 }

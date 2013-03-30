@@ -1,3 +1,7 @@
+/**
+ * @file config_reader.h
+ */
+
 #ifndef _CONFIG_READER_H_
 #define _CONFIG_READER_H_
 
@@ -8,12 +12,13 @@
 #include "tokenizers/ngram_tokenizer.h"
 #include "tokenizers/tree_tokenizer.h"
 
-class Tokenizer;
+namespace meta {
+namespace io {
 
 /**
  * A very simple configuration file reader.
  */
-namespace ConfigReader
+namespace config_reader
 {
     /**
      * @param path The path to the config file
@@ -24,42 +29,52 @@ namespace ConfigReader
     /**
      * @return a Tokenizer as specified by a config object
      */
-    std::shared_ptr<Tokenizer> create_tokenizer(
+    std::shared_ptr<tokenizers::Tokenizer> create_tokenizer(
         const std::unordered_map<std::string, std::string> & config);
 
-    static const std::unordered_map<std::string, NgramTokenizer::NgramType> ngramOpt = {
-        {"POS", NgramTokenizer::POS}, {"Word", NgramTokenizer::Word},
-        {"FW", NgramTokenizer::FW}, {"Char", NgramTokenizer::Char},
-        {"Lex", NgramTokenizer::Lex}
+    static const std::unordered_map<
+        std::string, tokenizers::NgramTokenizer::NgramType
+    > ngramOpt = {
+        {"POS",  tokenizers::NgramTokenizer::POS},
+        {"Word", tokenizers::NgramTokenizer::Word},
+        {"FW",   tokenizers::NgramTokenizer::FW},
+        {"Char", tokenizers::NgramTokenizer::Char},
+        {"Lex",  tokenizers::NgramTokenizer::Lex}
     };
 
-    static const std::unordered_map<std::string, TreeTokenizer::TreeTokenizerType> treeOpt = {
-        {"Subtree", TreeTokenizer::Subtree}, {"Depth", TreeTokenizer::Depth},
-        {"Branch", TreeTokenizer::Branch}, {"Tag", TreeTokenizer::Tag},
-        {"Skel", TreeTokenizer::Skeleton}, {"Semi", TreeTokenizer::SemiSkeleton}
+    static const std::unordered_map<
+        std::string, tokenizers::TreeTokenizer::TreeTokenizerType
+    > treeOpt = {
+        {"Subtree", tokenizers::TreeTokenizer::Subtree},
+        {"Depth",   tokenizers::TreeTokenizer::Depth},
+        {"Branch",  tokenizers::TreeTokenizer::Branch},
+        {"Tag",     tokenizers::TreeTokenizer::Tag},
+        {"Skel",    tokenizers::TreeTokenizer::Skeleton},
+        {"Semi",    tokenizers::TreeTokenizer::SemiSkeleton}
+    };
+
+    /**
+     * Basic exception for config_reader interactions.
+     */
+    class config_reader_exception: public std::exception
+    {
+        public:
+            
+            config_reader_exception(const std::string & error):
+                _error(error) { /* nothing */ }
+
+            const char* what () const throw ()
+            {
+                return _error.c_str();
+            }
+       
+        private:
+       
+            std::string _error;
     };
 }
 
-/**
- * Basic exception for ConfigReader interactions.
- */
-class ConfigReaderException: public std::exception
-{
-    public:
-        
-        ConfigReaderException(const std::string & error):
-            _error(error) { /* nothing */ }
-
-        const char* what () const throw ()
-        {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
-};
-
-
+}
+}
 
 #endif

@@ -6,8 +6,8 @@
 #include "io/parser.h"
 #include "io/mmap_file.h"
 
-#include <iostream>
-using namespace std;
+namespace meta {
+namespace io {
 
 using std::string;
 using std::vector;
@@ -54,4 +54,7 @@ string Parser::next()
 bool Parser::hasNext() const
 {
     return _idx < _tokens.size();
+}
+
+}
 }

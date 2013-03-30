@@ -4,9 +4,11 @@
 
 #include <cmath>
 #include <iostream>
-#include "tokenizers/tokenizer.h"
 #include "index/ram_index.h"
 #include "index/document.h"
+
+namespace meta {
+namespace index {
 
 using std::cout;
 using std::endl;
@@ -14,6 +16,8 @@ using std::string;
 using std::vector;
 using std::multimap;
 using std::unordered_map;
+
+using tokenizers::Tokenizer;
 
 RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer):
     _tokenizer(tokenizer),
@@ -66,7 +70,7 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer
 
 void RAMIndex::combineMap(const unordered_map<TermID, unsigned int> & newFreqs)
 {
-    for(auto & freq: *_docFreqs)
+    for(auto & freq: *_docFreqs) // TODO bug?
         (*_docFreqs)[freq.first] += freq.second;
 }
 
@@ -136,4 +140,7 @@ multimap<double, string> RAMIndex::search(Document & query) const
 void RAMIndex::indexDocs(std::vector<Document> & documents, size_t chunkMBSize)
 {
     // put code for index creation in here?
+}
+
+}
 }

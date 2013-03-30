@@ -9,18 +9,19 @@
 #include "tokenizers/ngram_tokenizer.h"
 
 void run_test( const std::string & filename, const std::string & prefix ) {
-    using namespace clustering;
-    NgramTokenizer t(1, NgramTokenizer::Word);
+    using namespace meta;
+    using namespace meta::clustering;
+    tokenizers::NgramTokenizer t(1, tokenizers::NgramTokenizer::Word);
     
     std::cout << "Loading documents...\r" << std::flush;
-    std::vector<Document> docs = Document::loadDocs( filename, prefix );
+    std::vector<index::Document> docs = index::Document::loadDocs( filename, prefix );
     std::cout << "Tokenizing documents...\r" << std::flush;
     for( auto & d : docs )
         t.tokenize( d );
 
     std::cout << "Clustring documents..." << std::endl;
-    agglomerative_clustering<Document,
-                             basic_single_link_policy<Similarity::cosine>>
+    agglomerative_clustering<index::Document,
+                             basic_single_link_policy<similarity::cosine>>
     cluster( docs );
 }
 

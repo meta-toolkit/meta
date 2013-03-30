@@ -7,9 +7,13 @@
 
 #include <cmath>
 
+namespace meta {
 namespace topics {
-    
-lda_gibbs::lda_gibbs( std::vector<Document> & docs, size_t num_topics, 
+
+using index::TermID;
+using index::DocID;
+
+lda_gibbs::lda_gibbs( std::vector<index::Document> & docs, size_t num_topics, 
                       double alpha, double beta ) :
         lda_model{ docs, num_topics }, alpha_{ alpha }, beta_{ beta } {
 }
@@ -97,7 +101,7 @@ void lda_gibbs::initialize() {
 
 void lda_gibbs::perform_iteration( bool init /* = false */ ) {
     for( size_t i = 0; i < docs_.size(); ++i ) {
-        Common::show_progress( i, docs_.size(), 10, "\t\t\t" );
+        common::show_progress( i, docs_.size(), 10, "\t\t\t" );
         size_t n = 0; // term number within document---constructed
                       // so that each occurrence of the same term
                       // can still be assigned a different topic
@@ -119,6 +123,7 @@ void lda_gibbs::perform_iteration( bool init /* = false */ ) {
             }
         }
     }
+    common::end_progress("\t\t\t");
 }
 
 void lda_gibbs::decrease_counts( size_t topic, TermID term, size_t doc ) {
@@ -166,4 +171,5 @@ double lda_gibbs::corpus_likelihood() const {
     return likelihood;
 }
 
+}
 }

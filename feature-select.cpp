@@ -15,6 +15,7 @@
 #include "classify/select_slda.h"
 #include "classify/select_doc_freq.h"
 #include "classify/select_chi_square.h"
+#include "classify/select_info_gain.h"
 
 using std::vector;
 using std::unordered_map;
@@ -25,6 +26,11 @@ using std::cerr;
 using std::endl;
 using std::string;
 using std::ofstream;
+
+using namespace meta;
+using namespace meta::index;
+using namespace meta::util;
+using namespace meta::tokenizers;
 
 void run_liblinear(const string & datafile, const string & prefix)
 {
@@ -51,11 +57,11 @@ InvertibleMap<string, int> tokenize(std::shared_ptr<Tokenizer> & tokenizer, vect
     size_t i = 0;
     for(auto & d: documents)
     {
-        Common::show_progress(i++, documents.size(), 20, "  tokenizing ");
+        common::show_progress(i++, documents.size(), 20, "  tokenizing ");
         tokenizer->tokenize(d, nullptr);
         liblinear_out << d.getLearningData(mapping, false /* using liblinear */);
     }
-    Common::end_progress("  tokenizing ");
+    common::end_progress("  tokenizing ");
     liblinear_out.close();
     return mapping;
 }
@@ -70,14 +76,15 @@ int main(int argc, char* argv[])
 
     string path(argv[2]);
 
-    unordered_map<string, string> config = ConfigReader::read(argv[1]);
+    unordered_map<string, string> config = io::config_reader::read(argv[1]);
     string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
 
     vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
-    std::shared_ptr<Tokenizer> tokenizer = ConfigReader::create_tokenizer(config);
+    std::shared_ptr<Tokenizer> tokenizer = io::config_reader::create_tokenizer(config);
     InvertibleMap<string, int> mapping = tokenize(tokenizer, documents);
 
     vector<pair<TermID, double>> selected_features = classify::feature_select::slda(documents);
+
     run_liblinear("liblinear-input.dat", path);
     for(double d = 0.01; d < 0.5; d += .02)
     {

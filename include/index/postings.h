@@ -13,13 +13,13 @@
 #include <vector>
 #include <iostream>
 
-#include "document.h"
+#include "index/document.h"
+#include "index/lexicon.h"
+#include "tokenizers/tokenizer.h"
 #include "util/invertible_map.h"
 
-class TermData;
-class PostingData;
-class Lexicon;
-class Tokenizer;
+namespace meta {
+namespace index {
 
 /**
  * This is the interface to the large postings file located on disk.
@@ -56,7 +56,7 @@ class Postings
          *  be located.
          */
         size_t createChunks(std::vector<Document> & documents, size_t chunkMBSize,
-                std::shared_ptr<Tokenizer> tokenizer);
+                std::shared_ptr<tokenizers::Tokenizer> tokenizer);
 
         /**
          * Creates the large postings file on disk out of many chunks.
@@ -93,7 +93,7 @@ class Postings
         //CompressedFileReader _reader;
         
         /** Keeps track of the DocID -> filename mapping */
-        InvertibleMap<DocID, std::string> _docMap;
+        util::InvertibleMap<DocID, std::string> _docMap;
 
         /** Internal counter of docs, used to create DocIDs */
         DocID _currentDocID;
@@ -128,5 +128,8 @@ class Postings
          */
         DocID getDocID(const std::string & path);
 };
+
+}
+}
 
 #endif

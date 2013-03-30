@@ -11,6 +11,7 @@
 #include "topics/lda_gibbs.h"
 #include "util/range.h"
 
+namespace meta {
 namespace topics {
 
 /**
@@ -21,7 +22,7 @@ namespace topics {
  */
 class parallel_lda_gibbs : public lda_gibbs {
     public:
-        parallel_lda_gibbs( std::vector<Document> & docs, size_t num_topics,
+        parallel_lda_gibbs( std::vector<index::Document> & docs, size_t num_topics,
                             double alpha, double beta ) 
                 : lda_gibbs( docs, num_topics, alpha, beta ) { }
 
@@ -47,7 +48,7 @@ class parallel_lda_gibbs : public lda_gibbs {
             parallel::parallel_for( range.begin(), range.end(), pool_, [&]( size_t i ) {
                         {
                             std::lock_guard<std::mutex> lock( mutex_ );
-                            Common::show_progress( assigned++, docs_.size(), 10, "\t\t\t" );
+                            common::show_progress( assigned++, docs_.size(), 10, "\t\t\t" );
                         }
                         size_t n = 0; // term number within document---constructed
                                       // so that each occurrence of the same term
@@ -82,7 +83,7 @@ class parallel_lda_gibbs : public lda_gibbs {
             }
         }
 
-        virtual void decrease_counts( size_t topic, TermID term, size_t doc ) {
+        virtual void decrease_counts( size_t topic, index::TermID term, size_t doc ) {
             std::thread::id tid = std::this_thread::get_id();
             // decrease topic_term_diff_ for the given assignment
             topic_term_diffs_.at( tid )[ topic ][ term ] -= 1;
@@ -98,14 +99,14 @@ class parallel_lda_gibbs : public lda_gibbs {
             topic_diffs_.at( tid )[ topic ] -= 1;
         }
 
-        virtual void increase_counts( size_t topic, TermID term, size_t doc ) {
+        virtual void increase_counts( size_t topic, index::TermID term, size_t doc ) {
             std::thread::id tid = std::this_thread::get_id();
             topic_term_diffs_.at( tid )[ topic ][ term ] += 1;
             doc_topic_count_[ doc ][ topic ] += 1;
             topic_diffs_.at( tid )[ topic ] += 1;
         }
 
-        virtual double count_term( TermID term, size_t topic ) const {
+        virtual double count_term( index::TermID term, size_t topic ) const {
             double count = lda_gibbs::count_term( term, topic );
             std::thread::id tid = std::this_thread::get_id();
             if( topic_term_diffs_.find( tid ) == topic_term_diffs_.end() )
@@ -137,7 +138,7 @@ class parallel_lda_gibbs : public lda_gibbs {
 
         std::unordered_map<
             std::thread::id, 
-            std::unordered_map<topic_id, std::unordered_map<TermID, ssize_t>>
+            std::unordered_map<topic_id, std::unordered_map<index::TermID, ssize_t>>
         > topic_term_diffs_;
 
         std::unordered_map<
@@ -147,6 +148,7 @@ class parallel_lda_gibbs : public lda_gibbs {
 
 };
 
+}
 }
 
 #endif

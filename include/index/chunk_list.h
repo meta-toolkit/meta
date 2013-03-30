@@ -6,6 +6,11 @@
 #define _CHUNK_LIST_H_
 
 #include <vector>
+#include "io/parser.h"
+#include "index/structs.h"
+
+namespace meta {
+namespace index {
 
 /**
  * Represents a collection of chunks that are waiting to be merged into
@@ -39,7 +44,7 @@ class ChunkList
         size_t _numChunks;
 
         /** a parser for each chunk that needs to be merged */
-        std::vector<Parser> _parsers;
+        std::vector<io::Parser> _parsers;
 
         /**
          * Appends entries from the vector of IndexEntries into one IndexEntry.
@@ -49,5 +54,8 @@ class ChunkList
          */
         void combinePostingData(std::vector<IndexEntry> & entries, IndexEntry & combined) const;
 };
+
+}
+}
 
 #endif

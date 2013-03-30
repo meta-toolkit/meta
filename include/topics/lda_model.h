@@ -12,6 +12,7 @@
 #include "index/document.h"
 #include "tokenizers/ngram_tokenizer.h"
 
+namespace meta {
 namespace topics {
 
 /**
@@ -19,7 +20,7 @@ namespace topics {
  */
 class lda_model {
     public:
-        lda_model( std::vector<Document> & docs, size_t num_topics );
+        lda_model( std::vector<index::Document> & docs, size_t num_topics );
 
         virtual ~lda_model() { }
 
@@ -71,7 +72,7 @@ class lda_model {
          * @param term The term we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        virtual double compute_term_topic_probability( TermID term, size_t topic ) const = 0;
+        virtual double compute_term_topic_probability( index::TermID term, size_t topic ) const = 0;
 
         /**
          * Computes the probability that the given topic is picked for the
@@ -82,13 +83,13 @@ class lda_model {
          */
         virtual double compute_doc_topic_probability( size_t doc, size_t topic ) const = 0;
 
-        std::vector<Document> & docs_;
-        NgramTokenizer tokenizer_;
+        std::vector<index::Document> & docs_;
+        tokenizers::NgramTokenizer tokenizer_;
         size_t num_topics_;
         size_t num_words_;
 };
 
-
+}
 }
 
 #endif

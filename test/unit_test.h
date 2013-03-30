@@ -56,9 +56,9 @@
     } while(0)
 
 /**
- * Contains unit testing related functions.
+ * Contains unit testing functions for the META toolkit.
  */
-namespace UnitTests
+namespace test_framework
 {
     using std::string;
     using std::endl;
@@ -114,11 +114,11 @@ namespace UnitTests
         }
         else
         {
-            cerr << "[ " << Common::makeRed("ERROR") << " ]"
+            cerr << "[ " << common::makeRed("ERROR") << " ]"
                  << ": failure to fork" << endl;
         }
 
-        cerr << "[ " << Common::makeGreen("OK") << " ] ";
+        cerr << "[ " << common::makeGreen("OK") << " ] ";
         cerr << endl;
     }
 }

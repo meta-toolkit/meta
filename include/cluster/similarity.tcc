@@ -4,8 +4,11 @@
 
 #include <cmath>
 
+namespace meta {
+namespace clustering {
+
 template <class Key, class Value>
-double Similarity::cosine_similarity(const unordered_map<Key, Value> & a,
+double similarity::cosine_similarity(const unordered_map<Key, Value> & a,
                                      const unordered_map<Key, Value> & b)
 {
     using namespace internal;
@@ -20,7 +23,7 @@ double Similarity::cosine_similarity(const unordered_map<Key, Value> & a,
 }
 
 template <class Key, class Value>
-double Similarity::jaccard_similarity(const unordered_map<Key, Value> & a,
+double similarity::jaccard_similarity(const unordered_map<Key, Value> & a,
                                       const unordered_map<Key, Value> & b)
 {
     double in_both = 0.0;
@@ -34,7 +37,7 @@ double Similarity::jaccard_similarity(const unordered_map<Key, Value> & a,
 }
 
 template <class Key, class Value>
-Value Similarity::internal::safe_at(const unordered_map<Key, Value> & map, const Key & key)
+Value similarity::internal::safe_at(const unordered_map<Key, Value> & map, const Key & key)
 {
     auto it = map.find(key);
     if(it == map.end())
@@ -43,7 +46,7 @@ Value Similarity::internal::safe_at(const unordered_map<Key, Value> & map, const
 }
 
 template <class Key, class Value>
-std::unordered_set<Key> Similarity::internal::get_space(const unordered_map<Key, Value> & a,
+std::unordered_set<Key> similarity::internal::get_space(const unordered_map<Key, Value> & a,
                                                         const unordered_map<Key, Value> & b)
 {
     unordered_set<Key> space;
@@ -55,10 +58,13 @@ std::unordered_set<Key> Similarity::internal::get_space(const unordered_map<Key,
 }
 
 template <class Key, class Value>
-double Similarity::internal::magnitude(const unordered_map<Key, Value> & map)
+double similarity::internal::magnitude(const unordered_map<Key, Value> & map)
 {
     double sum = 0.0;
     for(auto & p: map)
         sum += p.second * p.second;
     return sqrt(sum);
+}
+
+}
 }

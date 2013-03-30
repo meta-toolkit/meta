@@ -4,6 +4,9 @@
 
 #include "io/mmap_file.h"
 
+namespace meta {
+namespace io {
+
 using std::string;
 
 MmapFile::MmapFile(string path):
@@ -16,13 +19,13 @@ MmapFile::MmapFile(string path):
 
      _file_descriptor = open(_path.c_str(), O_RDONLY);
     if(_file_descriptor < 0)
-        throw MmapFileException("error obtaining file descriptor for " + _path);
+        throw mmap_file_exception("error obtaining file descriptor for " + _path);
 
     _start = (char*) mmap(nullptr, _size, PROT_READ, MAP_SHARED, _file_descriptor, 0);
     if(_start == nullptr)
     {
         close(_file_descriptor);
-        throw MmapFileException("error memory-mapping " + _path);
+        throw mmap_file_exception("error memory-mapping " + _path);
     }
 }
 
@@ -48,4 +51,7 @@ MmapFile::~MmapFile()
         munmap(_start, _size);
         close(_file_descriptor);
     }
+}
+
+}
 }

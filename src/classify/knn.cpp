@@ -8,21 +8,27 @@
 #include "index/document.h"
 #include "classify/knn.h"
 
+namespace meta {
+namespace classify {
+
 using std::pair;
 using std::unordered_map;
 using std::multimap;
 using std::string;
 using std::vector;
 using std::shared_ptr;
-using namespace KNN::internal;
 
-string KNN::classify(Document & query, shared_ptr<Index> index, size_t k)
+using namespace knn::internal;
+using index::Index;
+using index::Document;
+
+string knn::classify(Document & query, shared_ptr<Index> index, size_t k)
 {
     multimap<double, string> ranking = index->search(query);
     return findNN(ranking, k);
 }
 
-string KNN::internal::findNN(const multimap<double, string> & ranking, size_t k)
+string knn::internal::findNN(const multimap<double, string> & ranking, size_t k)
 {
     unordered_map<string, size_t> counts;
     size_t numResults = 0;
@@ -56,7 +62,7 @@ string KNN::internal::findNN(const multimap<double, string> & ranking, size_t k)
     return best;
 }
 
-bool KNN::internal::isHigherRank(const string & check, const string & best,
+bool knn::internal::isHigherRank(const string & check, const string & best,
         const vector<string> & orderSeen)
 {
     string catCheck = check.substr(check.find_first_of(" ") + 1);
@@ -71,7 +77,7 @@ bool KNN::internal::isHigherRank(const string & check, const string & best,
     return false;
 }
 
-string KNN::classify(Document & query, vector<shared_ptr<Index>> indexes, vector<double> weights, size_t k)
+string knn::classify(Document & query, vector<shared_ptr<Index>> indexes, vector<double> weights, size_t k)
 {
     // make sure weights sum to 1.0
     double sum = 0.0;
@@ -79,7 +85,7 @@ string KNN::classify(Document & query, vector<shared_ptr<Index>> indexes, vector
         sum += weight;
 
     if(sum != 1.0)
-        throw KNNException("weights in ensemble do not add to 1.0");
+        throw knn_exception("weights in ensemble do not add to 1.0");
 
     // create a vector of normalized results for each index
     vector<unordered_map<string, double>> results;
@@ -107,7 +113,7 @@ string KNN::classify(Document & query, vector<shared_ptr<Index>> indexes, vector
 }
 
 unordered_map<string, double>
-KNN::internal::normalize(const multimap<double, string> & scores)
+knn::internal::normalize(const multimap<double, string> & scores)
 {
     unordered_map<string, double> normalized;
     if(scores.empty())
@@ -124,4 +130,7 @@ KNN::internal::normalize(const multimap<double, string> & scores)
     }
 
     return normalized;
+}
+
+}
 }

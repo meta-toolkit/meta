@@ -12,13 +12,15 @@
 #include <vector>
 #include <string>
 
-#include "index.h"
-#include "postings.h"
+#include "index/index.h"
+#include "index/postings.h"
+#include "index/document.h"
+#include "index/postings.h"
+#include "index/lexicon.h"
+#include "tokenizers/tokenizer.h"
 
-class Tokenizer;
-class Document;
-class Postings;
-class Lexicon;
+namespace meta {
+namespace index {
 
 /**
  * Represents an index that resides on disk, in the standard inverted format.
@@ -36,7 +38,7 @@ class InvertedIndex : public Index
          * @param tokenizer - how to tokenize the indexed files
          */
         InvertedIndex(const std::string & lexiconFile, const std::string & postingsFile,
-                std::shared_ptr<Tokenizer> tokenizer);
+                std::shared_ptr<tokenizers::Tokenizer> tokenizer);
 
         /**
          * Scores a document given a query.
@@ -75,7 +77,10 @@ class InvertedIndex : public Index
         Postings _postings;
 
         /** the tokenizer used to create the index */
-        std::shared_ptr<Tokenizer> _tokenizer;
+        std::shared_ptr<tokenizers::Tokenizer> _tokenizer;
 };
+
+}
+}
 
 #endif

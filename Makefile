@@ -14,10 +14,10 @@ SRC = $(wildcard src/io/*.cpp) $(wildcard src/model/*.cpp) $(wildcard src/cluste
 	  $(wildcard src/index/*.cpp) $(wildcard src/stemmers/*.cpp) $(wildcard lib/slda/*.cpp) \
 	  $(wildcard lib/liblinear/*.cpp) $(wildcard src/topics/*.cpp)
 
-TEMPLATES = $(wildcard src/io/*.tcc) $(wildcard src/model/*.tcc) $(wildcard src/cluster/*.tcc) \
-	  $(wildcard src/classify/*.tcc) $(wildcard src/util/*.tcc) $(wildcard src/tokenizers/*.tcc) \
-	  $(wildcard src/index/*.tcc) $(wildcard src/stemmers/*.tcc) $(wildcard lib/slda/*.tcc) \
-	  $(wildcard lib/liblinear/*.tcc) $(wildcard src/topics/*.tcc)
+TEMPLATES = $(wildcard include/io/*.tcc) $(wildcard include/model/*.tcc) $(wildcard include/cluster/*.tcc) \
+	  $(wildcard include/classify/*.tcc) $(wildcard include/util/*.tcc) $(wildcard include/tokenizers/*.tcc) \
+	  $(wildcard include/index/*.tcc) $(wildcard include/stemmers/*.tcc) $(wildcard lib/slda/*.tcc) \
+	  $(wildcard lib/liblinear/*.tcc) $(wildcard include/topics/*.tcc)
 
 TEMPLATE_HEADERS := $(TEMPLATES:.tcc=.h)
 TEMPLATE_HEADERS := $(shell echo $(TEMPLATE_HEADERS) | sed -e "s/src/include/g")
@@ -36,11 +36,11 @@ OBJ := $(shell echo $(OBJ) | sed -e "s/src/obj/g" | sed -e "s/lib/obj/g")
 LIBDIRS = lib/liblinear-1.92
 
 SLDALIBS = -lgsl -lm -lgslcblas
-CXXRTLIBS = 
-#CXXRTLIBS = -lcxxrt
+#CXXRTLIBS = 
+CXXRTLIBS = -lcxxrt
 THREADLIBS = -pthread
-STDLIBFLAGS = 
-#STDLIBFLAGS = -stdlib=libc++
+#STDLIBFLAGS = 
+STDLIBFLAGS = -stdlib=libc++
 
 LIBS = $(SLDALIBS) $(CXXRTLIBS) $(THREADLIBS) $(STDLIBFLAGS)
 

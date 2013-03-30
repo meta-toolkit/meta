@@ -17,6 +17,9 @@
 #include "structs.h"
 #include "util/invertible_map.h"
 
+namespace meta {
+namespace index {
+
 /**
  * Represents the dictionary or lexicon of an inverted index.
  */
@@ -103,7 +106,7 @@ class Lexicon
         /**
          * @return the TermID mapping for this lexicon
          */
-        const InvertibleMap<TermID, std::string> & getTermIDMapping() const;
+        const util::InvertibleMap<index::TermID, std::string> & getTermIDMapping() const;
 
     private:
 
@@ -120,10 +123,10 @@ class Lexicon
         std::unordered_map<DocID, unsigned int> _docLengths;
 
         /** maps TermIDs to the strings they represent */
-        InvertibleMap<TermID, std::string> _termMap;
+        util::InvertibleMap<index::TermID, std::string> _termMap;
 
         /** maps DocIDs to the document paths they represent */
-        InvertibleMap<DocID, std::string> _docMap;
+        util::InvertibleMap<index::DocID, std::string> _docMap;
 
         /**
          * Reads a lexicon from disk if it exists.
@@ -138,5 +141,8 @@ class Lexicon
          */
         void setAvgDocLength();
 };
+
+}
+}
 
 #endif

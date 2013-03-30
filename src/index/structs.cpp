@@ -6,6 +6,9 @@
 #include "index/document.h"
 #include "index/structs.h"
 
+namespace meta {
+namespace index {
+
 using std::istringstream;
 using std::string;
 using std::vector;
@@ -39,11 +42,11 @@ bool IndexEntry::operator<(const IndexEntry & other) const
 
 string IndexEntry::toString() const
 {
-    string str = Common::toString(termID);
+    string str = common::toString(termID);
     for(auto & pd: data)
     {
-        str += " " + Common::toString(pd.docID);
-        str += " " + Common::toString(pd.freq);
+        str += " " + common::toString(pd.docID);
+        str += " " + common::toString(pd.freq);
     }
     return str;
 }
@@ -51,4 +54,7 @@ string IndexEntry::toString() const
 bool PostingData::operator<(const PostingData & other) const
 {
     return docID < other.docID;
+}
+
+}
 }

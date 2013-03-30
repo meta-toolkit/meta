@@ -12,6 +12,9 @@
 #include <unordered_map>
 #include <string>
 
+namespace meta {
+namespace util {
+
 /**
  * This data structure indexes by keys as well as values, allowing constant
  *  amortized lookup time by key or value. All keys and values must be unique.
@@ -162,27 +165,32 @@ class InvertibleMap
 
         /** the internal map representing Value -> Key pairs */
         std::unordered_map<Value, Key> _backward;
-};
 
-/**
- * Basic exception for InvertibleMap interactions.
- */
-class InvertibleMapException: public std::exception
-{
     public:
-        
-        InvertibleMapException(const std::string & error):
-            _error(error) { /* nothing */ }
 
-        const char* what () const throw ()
+        /**
+         * Basic exception for InvertibleMap interactions.
+         */
+        class invertible_map_exception: public std::exception
         {
-            return _error.c_str();
-        }
-   
-    private:
-   
-        std::string _error;
+            public:
+                
+                invertible_map_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+           
+                std::string _error;
+        };
 };
+
+}
+}
 
 #include "util/invertible_map.tcc"
 #endif

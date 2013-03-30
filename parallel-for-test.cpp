@@ -10,7 +10,7 @@
 
 #include "parallel/parallel_for.h"
 
-using namespace parallel;
+using namespace meta::parallel;
 
 template <class Type>
 void f( Type & x ) {

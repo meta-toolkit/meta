@@ -13,6 +13,9 @@
 #include "structs.h"
 #include "util/invertible_map.h"
 
+namespace meta {
+namespace index {
+
 /**
  * Represents an indexed document.
  */
@@ -85,9 +88,9 @@ class Document
          * @param usingSLDA Indicates which learner we're passing the data to.
          * @return
          */
-        std::string getLearningData(InvertibleMap<std::string, int> & mapping, bool usingSLDA) const;
+        std::string getLearningData(util::InvertibleMap<std::string, int> & mapping, bool usingSLDA) const;
 
-        std::string getFilteredLearningData(InvertibleMap<std::string, int> & mapping, 
+        std::string getFilteredLearningData(util::InvertibleMap<std::string, int> & mapping, 
                 const std::unordered_set<TermID> & features) const;
 
         /**
@@ -142,7 +145,10 @@ class Document
          * @param category - the category to find an id for
          * @return a unique numerical id for the category, creating a new entry if necessary
          */
-        static int getMapping(InvertibleMap<std::string, int> & mapping, const std::string & category);
+        static int getMapping(util::InvertibleMap<std::string, int> & mapping, const std::string & category);
 };
+
+}
+}
 
 #endif

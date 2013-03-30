@@ -7,6 +7,9 @@
 #include "util/common.h"
 #include "classify/confusion_matrix.h"
 
+namespace meta {
+namespace classify {
+
 using std::setw;
 using std::cout;
 using std::endl;
@@ -61,7 +64,7 @@ void ConfusionMatrix::print() const
             {
                 size_t numPred = predIt->second;
                 double rounded = (int)((double) numPred / _counts.at(aClass) * 10000);
-                string percent = Common::toString(rounded / 100);
+                string percent = common::toString(rounded / 100);
                 cout << setw(w) << ((aClass == pClass) ? ("[" + percent + "]") : (percent + " "));
             }
             else
@@ -75,4 +78,7 @@ void ConfusionMatrix::print() const
 size_t ConfusionMatrix::stringPairHash(const std::pair<std::string, std::string> & strPair)
 {
     return std::hash<string>()(strPair.first) ^ std::hash<string>()(strPair.second);
+}
+
+}
 }

@@ -12,6 +12,7 @@
 
 #include "parallel/thread_pool.h"
 
+namespace meta {
 namespace parallel {
     
 template <class Iterator, class Function>
@@ -51,6 +52,7 @@ void parallel_for( Iterator begin, Iterator end, thread_pool & pool, Function fu
         fut.get();
 }
 
+}
 }
 
 #endif
