@@ -43,7 +43,7 @@ class POSWriter
     {
         ArrayList<String> lines = readLines(args[0]);
         System.out.println("Processing " + lines.size() + " files.");
-        String modelPath = "../data/english-left3words-distsim.tagger";
+        String modelPath = "../../data/english-left3words-distsim.tagger";
         MaxentTagger tagger = new MaxentTagger(modelPath);
         int filesDone = 0;
         for(String filename: lines)
