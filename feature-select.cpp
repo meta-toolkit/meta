@@ -50,7 +50,7 @@ void run_selected_features(const vector<Document> & documents,
     run_liblinear(datafile, prefix);
 }
 
-InvertibleMap<string, int> tokenize(std::shared_ptr<Tokenizer> & tokenizer, vector<Document> & documents)
+InvertibleMap<string, int> tokenize(std::shared_ptr<tokenizer> & tokenizer, vector<Document> & documents)
 {
     InvertibleMap<string, int> mapping;
     ofstream liblinear_out("liblinear-input.dat");
@@ -80,8 +80,8 @@ int main(int argc, char* argv[])
     string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
 
     vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
-    std::shared_ptr<Tokenizer> tokenizer = io::config_reader::create_tokenizer(config);
-    InvertibleMap<string, int> mapping = tokenize(tokenizer, documents);
+    std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
+    InvertibleMap<string, int> mapping = tokenize(tok, documents);
 
     vector<pair<TermID, double>> selected_features = classify::feature_select::slda(documents);
 

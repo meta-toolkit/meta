@@ -4,6 +4,7 @@
  */
 
 #include <stdexcept>
+#include "tokenizers/ngram_word_tokenizer.h"
 
 namespace meta {
 namespace language_model {
@@ -159,14 +160,14 @@ void NgramDistribution<N>::calc_discount_factor()
 template <size_t N>
 void NgramDistribution<N>::calc_freqs(const std::string & docPath)
 {
+    using namespace tokenizers;
     index::Document doc(docPath);
-    tokenizers::NgramTokenizer tokenizer(N, tokenizers::NgramTokenizer::Word,
-        tokenizers::NgramTokenizer::NoStemmer, tokenizers::NgramTokenizer::NoStopwords);
-    tokenizer.tokenize(doc);
+    ngram_word_tokenizer tok(N, ngram_word_tokenizer::NoStemmer, ngram_word_tokenizer::NoStopwords);
+    tok.tokenize(doc);
 
     for(auto & p: doc.getFrequencies())
     {
-        std::string str = tokenizer.getLabel(p.first);
+        std::string str = tok.label(p.first);
         std::string word = get_last(str);
         std::string rest = get_rest(str);
         std::remove(word.begin(), word.end(), ' ');

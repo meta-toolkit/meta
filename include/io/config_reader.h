@@ -29,28 +29,21 @@ namespace config_reader
     /**
      * @return a Tokenizer as specified by a config object
      */
-    std::shared_ptr<tokenizers::Tokenizer> create_tokenizer(
+    std::shared_ptr<tokenizers::tokenizer> create_tokenizer(
         const std::unordered_map<std::string, std::string> & config);
 
+    /**
+     * Keeps track of which tree option to use depending on config setting.
+     */
     static const std::unordered_map<
-        std::string, tokenizers::NgramTokenizer::NgramType
-    > ngramOpt = {
-        {"POS",  tokenizers::NgramTokenizer::POS},
-        {"Word", tokenizers::NgramTokenizer::Word},
-        {"FW",   tokenizers::NgramTokenizer::FW},
-        {"Char", tokenizers::NgramTokenizer::Char},
-        {"Lex",  tokenizers::NgramTokenizer::Lex}
-    };
-
-    static const std::unordered_map<
-        std::string, tokenizers::TreeTokenizer::TreeTokenizerType
+        std::string, tokenizers::tree_tokenizer::TreeTokenizerType
     > treeOpt = {
-        {"Subtree", tokenizers::TreeTokenizer::Subtree},
-        {"Depth",   tokenizers::TreeTokenizer::Depth},
-        {"Branch",  tokenizers::TreeTokenizer::Branch},
-        {"Tag",     tokenizers::TreeTokenizer::Tag},
-        {"Skel",    tokenizers::TreeTokenizer::Skeleton},
-        {"Semi",    tokenizers::TreeTokenizer::SemiSkeleton}
+        {"Subtree", tokenizers::tree_tokenizer::Subtree},
+        {"Depth",   tokenizers::tree_tokenizer::Depth},
+        {"Branch",  tokenizers::tree_tokenizer::Branch},
+        {"Tag",     tokenizers::tree_tokenizer::Tag},
+        {"Skel",    tokenizers::tree_tokenizer::Skeleton},
+        {"Semi",    tokenizers::tree_tokenizer::SemiSkeleton}
     };
 
     /**

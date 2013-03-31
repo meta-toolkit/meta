@@ -10,7 +10,7 @@
 #include <string>
 
 #include "index/document.h"
-#include "tokenizers/ngram_tokenizer.h"
+#include "tokenizers/ngram_word_tokenizer.h"
 
 namespace meta {
 namespace topics {
@@ -84,7 +84,7 @@ class lda_model {
         virtual double compute_doc_topic_probability( size_t doc, size_t topic ) const = 0;
 
         std::vector<index::Document> & docs_;
-        tokenizers::NgramTokenizer tokenizer_;
+        tokenizers::ngram_word_tokenizer tokenizer_;
         size_t num_topics_;
         size_t num_words_;
 };

@@ -18,7 +18,7 @@ namespace tokenizers {
 /**
  * Tokenizes parse trees with various methods.
  */
-class TreeTokenizer: public Tokenizer
+class tree_tokenizer: public tokenizer
 {
     public:
         /**
@@ -30,7 +30,7 @@ class TreeTokenizer: public Tokenizer
          * Constructor.
          * @param type - The specific type of tree tokenizer employed
          */
-        TreeTokenizer(TreeTokenizerType type);
+        tree_tokenizer(TreeTokenizerType type);
 
         /**
          * Tokenizes a file into a Document.
@@ -42,9 +42,6 @@ class TreeTokenizer: public Tokenizer
 
     private:
 
-        /** the file extension for ParseTrees stored on disk */
-        const static char* _extension;
-
         /** the type of tree tokenizer this tokenizer is using */
         TreeTokenizerType _type;
 
@@ -52,7 +49,7 @@ class TreeTokenizer: public Tokenizer
         typedef std::function<void(index::Document &, const ParseTree &, std::shared_ptr<std::unordered_map<index::TermID, unsigned int>>)> TokenizerFunction;
 
         /** Hashes specific tree tokenizer types to tokenizer functions */
-        std::unordered_map< TreeTokenizerType, TokenizerFunction, std::hash<int> > _tokenizerTypes;
+        std::unordered_map< TreeTokenizerType, TokenizerFunction, std::hash<int> > _tokenizer_types;
 
         /**
          * Extracts the depth feature from parse trees: what are the heights of

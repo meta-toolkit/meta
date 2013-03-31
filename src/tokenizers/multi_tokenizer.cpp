@@ -11,12 +11,12 @@ namespace tokenizers {
 using std::unordered_map;
 using std::string;
         
-MultiTokenizer::MultiTokenizer(const std::vector<std::shared_ptr<Tokenizer>> & toks):
+multi_tokenizer::multi_tokenizer(const std::vector<std::shared_ptr<tokenizer>> & toks):
     _tokenizers(toks),
-    _maxTermID(0)
+    _max_term_id(0)
 { /* nothing */ }
 
-void MultiTokenizer::tokenize(index::Document & document,
+void multi_tokenizer::tokenize(index::Document & document,
     const std::shared_ptr<unordered_map<index::TermID, unsigned int>> & docFreq)
 {
     for(auto & tok: _tokenizers)
@@ -24,17 +24,17 @@ void MultiTokenizer::tokenize(index::Document & document,
         // adjust the other tokenizer's max termID so the features don't get
         // out of sync (every feature needs a unique ID, regardless of the
         // tokenizer that creates it)
-        tok->setMaxTermID(_maxTermID);
+        tok->set_max_term_id(_max_term_id);
 
         // tokenize the current document
         tok->tokenize(document, docFreq);
 
         // update the number of unique terms
-        _maxTermID = tok->getMaxTermID();
+        _max_term_id = tok->max_term_id();
 
         // update the counts stored in our own _termMap
-        for(auto & m: tok->getTermIDMapping())
-            _termMap.insert(m.first, m.second);
+        for(auto & m: tok->term_id_mapping())
+            _term_map.insert(m.first, m.second);
     }
 }
 

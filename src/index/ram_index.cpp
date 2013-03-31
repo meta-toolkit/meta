@@ -17,9 +17,9 @@ using std::vector;
 using std::multimap;
 using std::unordered_map;
 
-using tokenizers::Tokenizer;
+using tokenizers::tokenizer;
 
-RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer> tokenizer):
+RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<tokenizer> tokenizer):
     _tokenizer(tokenizer),
     _documents(vector<Document>()),
     _docFreqs(new unordered_map<TermID, unsigned int>),
@@ -43,7 +43,7 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<Tokenizer>
     _avgDocLength /= _documents.size();
 }
 
-RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<Tokenizer> tokenizer):
+RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<tokenizer> tokenizer):
     _tokenizer(tokenizer),
     _documents(indexDocs),
     _docFreqs(new unordered_map<TermID, unsigned int>),

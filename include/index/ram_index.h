@@ -27,14 +27,14 @@ class RAMIndex : public Index
          * @param indexDocs - Document objects to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const std::vector<Document> & indexDocs, std::shared_ptr<tokenizers::Tokenizer> tokenizer);
+        RAMIndex(const std::vector<Document> & indexDocs, std::shared_ptr<tokenizers::tokenizer> tokenizer);
 
         /**
          * Creates an Index located in memory.
          * @param indexFiles - files to index
          * @param tokenizer - how to tokenize the indexed files 
          */
-        RAMIndex(const std::vector<std::string> & indexFiles, std::shared_ptr<tokenizers::Tokenizer> tokenizer);
+        RAMIndex(const std::vector<std::string> & indexFiles, std::shared_ptr<tokenizers::tokenizer> tokenizer);
         
         /**
          * Creates an index of given documents.
@@ -67,7 +67,7 @@ class RAMIndex : public Index
     private:
 
         /** the tokenizer that was used to interpret the indexed documents */
-        std::shared_ptr<tokenizers::Tokenizer> _tokenizer;
+        std::shared_ptr<tokenizers::tokenizer> _tokenizer;
 
         /** documents stored in this index */
         std::vector<Document> _documents;

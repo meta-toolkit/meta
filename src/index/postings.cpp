@@ -25,7 +25,7 @@ using std::cerr;
 using std::endl;
 
 using util::InvertibleMap;
-using tokenizers::Tokenizer;
+using tokenizers::tokenizer;
 
 Postings::Postings(const string & postingsFile):
     //_reader(postingsFile),
@@ -74,7 +74,7 @@ string Postings::getLine(unsigned int lineNumber) const
 }
 
 size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize,
-        std::shared_ptr<Tokenizer> tokenizer)
+        std::shared_ptr<tokenizer> tokenizer)
 {
     cerr << "[Postings]: creating chunks" << endl;
 

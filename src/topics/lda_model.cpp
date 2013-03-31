@@ -13,14 +13,14 @@ using index::TermID;
 using index::DocID;
 
 lda_model::lda_model( std::vector<Document> & docs, size_t num_topics )
-        : docs_{ docs }, tokenizer_{ 1, tokenizers::NgramTokenizer::Word },
+        : docs_{ docs }, tokenizer_{1},
           num_topics_{ num_topics } {
     for( size_t i = 0; i < docs_.size(); ++i ) {
         common::show_progress( i, docs_.size(), 10, "Tokenizing documents: " );
         tokenizer_.tokenize( docs_[i] );
     }
     common::end_progress("Tokenizing documents: ");
-    num_words_ = tokenizer_.getNumTerms();
+    num_words_ = tokenizer_.num_terms();
 }
 
 void lda_model::save_doc_topic_distributions( const std::string & filename ) const {
@@ -40,7 +40,7 @@ void lda_model::save_topic_term_distributions( const std::string & filename ) co
     std::ofstream file{ filename };
     for( size_t j = 0; j < num_topics_; ++j ) {
         file << j << "\t";
-        for( const auto & pair : tokenizer_.getTermIDMapping() ) {
+        for( const auto & pair : tokenizer_.term_id_mapping() ) {
             TermID term = pair.first;
             double prob = compute_term_topic_probability( term, j );
             if( prob > 0 )
@@ -51,7 +51,7 @@ void lda_model::save_topic_term_distributions( const std::string & filename ) co
 }
 
 void lda_model::save_term_mapping( const std::string & filename ) const {
-    tokenizer_.saveTermIDMapping( filename );
+    tokenizer_.save_term_id_mapping( filename );
 }
 
 void lda_model::save( const std::string & prefix ) const {

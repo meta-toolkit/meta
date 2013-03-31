@@ -21,65 +21,65 @@ using util::InvertibleMap;
 using index::TermID;
 using index::Document;
 
-Tokenizer::Tokenizer():
-    _termMap(InvertibleMap<TermID, string>()),
-    _currentTermID(0)
+tokenizer::tokenizer():
+    _term_map(InvertibleMap<TermID, string>()),
+    _current_term_id(0)
 { /* nothing */ }
 
-TermID Tokenizer::getMapping(const string & term)
+TermID tokenizer::mapping(const string & term)
 {
-    if(!_termMap.containsValue(term))
+    if(!_term_map.containsValue(term))
     {
-        _termMap.insert(_currentTermID, term);
-        return _currentTermID++;
+        _term_map.insert(_current_term_id, term);
+        return _current_term_id++;
     }
     else
     {
-        TermID termID = _termMap.getKeyByValue(term);
+        TermID termID = _term_map.getKeyByValue(term);
         return termID;
     }
 }
 
-void Tokenizer::setTermIDMapping(const InvertibleMap<TermID, string> & mapping)
+void tokenizer::set_term_id_mapping(const InvertibleMap<TermID, string> & mapping)
 {
-    _termMap = mapping;
-    _currentTermID = _termMap.size();
+    _term_map = mapping;
+    _current_term_id = _term_map.size();
 }
 
-void Tokenizer::saveTermIDMapping(const string & filename) const
+void tokenizer::save_term_id_mapping(const string & filename) const
 {
-    _termMap.saveMap(filename);
+    _term_map.saveMap(filename);
 }
 
-const InvertibleMap<TermID, std::string> & Tokenizer::getTermIDMapping() const
+const InvertibleMap<TermID, std::string> & tokenizer::term_id_mapping() const
 {
-    return _termMap;
+    return _term_map;
 }
 
-string Tokenizer::getLabel(TermID termID) const
+string tokenizer::label(TermID termID) const
 {
-    return _termMap.getValueByKey(termID);
+    return _term_map.getValueByKey(termID);
 }
 
-void Tokenizer::printData() const
+void tokenizer::print_data() const
 {
-    for(auto & term: _termMap)
+    for(auto & term: _term_map)
         cout << term.first << "\t" << term.second << endl;
 }
 
-void Tokenizer::setMaxTermID(size_t start)
+void tokenizer::set_max_term_id(size_t start)
 {
-    _currentTermID = start;
+    _current_term_id = start;
 }
 
-TermID Tokenizer::getMaxTermID() const
+TermID tokenizer::max_term_id() const
 {
-    return _currentTermID;
+    return _current_term_id;
 }
 
-size_t Tokenizer::getNumTerms() const
+size_t tokenizer::num_terms() const
 {
-    return _termMap.size();
+    return _term_map.size();
 
 }
 

@@ -33,13 +33,13 @@ int main(int argc, char* argv[])
     util::InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
 
     vector<index::Document> documents = index::Document::loadDocs(prefix + "/full-corpus.txt", prefix);
-    std::shared_ptr<tokenizers::Tokenizer> tokenizer = io::config_reader::create_tokenizer(config);
+    std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
 
     for(size_t i = 0; i < documents.size(); ++i)
     {
         common::show_progress(i, documents.size(), 20, "  tokenizing ");
         // order of lines in the liblinear input file does NOT matter (tested)
-        tokenizer->tokenize(documents[i], nullptr);
+        tok->tokenize(documents[i], nullptr);
         std::cout << documents[i].getLearningData(mapping, false /* using liblinear */);
     }
     common::end_progress("  tokenizing ");

@@ -6,12 +6,12 @@
 #include "cluster/basic_single_link_policy.h"
 #include "cluster/similarity.h"
 #include "index/document.h"
-#include "tokenizers/ngram_tokenizer.h"
+#include "tokenizers/ngram_word_tokenizer.h"
 
 void run_test( const std::string & filename, const std::string & prefix ) {
     using namespace meta;
     using namespace meta::clustering;
-    tokenizers::NgramTokenizer t(1, tokenizers::NgramTokenizer::Word);
+    tokenizers::ngram_word_tokenizer t(1);
     
     std::cout << "Loading documents...\r" << std::flush;
     std::vector<index::Document> docs = index::Document::loadDocs( filename, prefix );

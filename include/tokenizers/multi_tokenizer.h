@@ -15,22 +15,22 @@ namespace meta {
 namespace tokenizers {
 
 /**
- * The MultiTokenizer class contains more than one tokenizer. This is useful for
+ * The multi_tokenizer class contains more than one tokenizer. This is useful for
  * trying combined feature methods.
  *
  * For example, you could tokenize based on ngrams of words and parse tree
- * rewrite rules. The MultiTokenizer keeps track of all the features in one set
- * for however many internal Tokenizers it contains.
+ * rewrite rules. The multi_tokenizer keeps track of all the features in one set
+ * for however many internal tokenizers it contains.
  */
-class MultiTokenizer: public Tokenizer
+class multi_tokenizer: public tokenizer
 {
     public:
 
         /**
-         * Constructs a MultiTokenizer from a vector of other Tokenizers.
+         * Constructs a multi_tokenizer from a vector of other tokenizers.
          * @param toks
          */
-        MultiTokenizer(const std::vector<std::shared_ptr<Tokenizer>> & toks);
+        multi_tokenizer(const std::vector<std::shared_ptr<tokenizer>> & toks);
 
         /**
          * Tokenizes a file into a Document.
@@ -42,11 +42,11 @@ class MultiTokenizer: public Tokenizer
 
     private:
 
-        /** Holds all the Tokenizers in this MultiTokenizer */
-        std::vector<std::shared_ptr<Tokenizer>> _tokenizers;
+        /** Holds all the tokenizers in this multi_tokenizer */
+        std::vector<std::shared_ptr<tokenizer>> _tokenizers;
 
-        /** Keeps track of the number of terms between all the contained Tokenizers. */
-        size_t _maxTermID;
+        /** Keeps track of the number of terms between all the contained tokenizers. */
+        size_t _max_term_id;
 };
 
 }

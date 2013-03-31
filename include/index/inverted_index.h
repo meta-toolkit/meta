@@ -38,7 +38,7 @@ class InvertedIndex : public Index
          * @param tokenizer - how to tokenize the indexed files
          */
         InvertedIndex(const std::string & lexiconFile, const std::string & postingsFile,
-                std::shared_ptr<tokenizers::Tokenizer> tokenizer);
+                std::shared_ptr<tokenizers::tokenizer> tokenizer);
 
         /**
          * Scores a document given a query.
@@ -77,7 +77,7 @@ class InvertedIndex : public Index
         Postings _postings;
 
         /** the tokenizer used to create the index */
-        std::shared_ptr<tokenizers::Tokenizer> _tokenizer;
+        std::shared_ptr<tokenizers::tokenizer> _tokenizer;
 };
 
 }

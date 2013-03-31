@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     unordered_map<string, vector<index::Document>> docs =
         getDocs("/home/sean/projects/senior-thesis-data/" + config["prefix"]);
 
-    std::shared_ptr<tokenizers::Tokenizer> tokenizer = io::config_reader::create_tokenizer(config); 
+    std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config); 
 
     cerr << "Tokenizing..." << endl;
     unordered_map<string, unordered_map<index::TermID, unsigned int>> language_models;
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
     {
         for(auto & doc: str.second)
         {
-            tokenizer->tokenize(doc, nullptr);
+            tok->tokenize(doc, nullptr);
             combine_counts(language_models[str.first], doc.getFrequencies());
         }
     }
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
                 for(auto & termID: termIDs)
                 {
                     cout << (m1.second[termID] + .0001) / (m2.second[termID] + .0001)
-                         << " " << tokenizer->getLabel(termID) << endl;
+                         << " " << tok->label(termID) << endl;
                 }
 
                 return 0;

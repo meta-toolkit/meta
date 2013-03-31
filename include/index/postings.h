@@ -56,7 +56,7 @@ class Postings
          *  be located.
          */
         size_t createChunks(std::vector<Document> & documents, size_t chunkMBSize,
-                std::shared_ptr<tokenizers::Tokenizer> tokenizer);
+                std::shared_ptr<tokenizers::tokenizer> tokenizer);
 
         /**
          * Creates the large postings file on disk out of many chunks.

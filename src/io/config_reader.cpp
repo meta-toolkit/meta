@@ -1,5 +1,11 @@
 #include <fstream>
 #include "tokenizers/multi_tokenizer.h"
+#include "tokenizers/tree_tokenizer.h"
+#include "tokenizers/ngram_word_tokenizer.h"
+#include "tokenizers/ngram_fw_tokenizer.h"
+#include "tokenizers/ngram_pos_tokenizer.h"
+#include "tokenizers/ngram_lex_tokenizer.h"
+#include "tokenizers/ngram_char_tokenizer.h"
 #include "io/config_reader.h"
 
 namespace meta {
@@ -9,10 +15,10 @@ using std::shared_ptr;
 using std::string;
 using std::unordered_map;
 
-using tokenizers::Tokenizer;
-using tokenizers::MultiTokenizer;
-using tokenizers::TreeTokenizer;
-using tokenizers::NgramTokenizer;
+using tokenizers::tokenizer;
+using tokenizers::multi_tokenizer;
+using tokenizers::tree_tokenizer;
+using tokenizers::ngram_tokenizer;
 
 unordered_map<string, string> config_reader::read(const string & path)
 {
@@ -51,10 +57,10 @@ unordered_map<string, string> config_reader::read(const string & path)
     return options;
 }
 
-shared_ptr<Tokenizer> config_reader::create_tokenizer(const unordered_map<string, string> & config)
+shared_ptr<tokenizer> config_reader::create_tokenizer(const unordered_map<string, string> & config)
 {
     size_t current_tokenizer = 0;
-    std::vector<shared_ptr<Tokenizer>> toks;
+    std::vector<shared_ptr<tokenizer>> toks;
 
     while(true)
     {
@@ -67,23 +73,32 @@ shared_ptr<Tokenizer> config_reader::create_tokenizer(const unordered_map<string
         {
             string tree = config.at("treeOpt" + suffix);
             toks.emplace_back(
-                    shared_ptr<Tokenizer>(new TreeTokenizer(treeOpt.at(tree)))
+                    shared_ptr<tokenizer>(new tree_tokenizer(treeOpt.at(tree)))
             );
         }
         else if(method->second == "ngram")
         {
             int nVal;
             std::istringstream(config.at("ngram" + suffix)) >> nVal;
-            string ngram = config.at("ngramOpt" + suffix);
-            toks.emplace_back(
-                    shared_ptr<Tokenizer>(new NgramTokenizer(nVal, ngramOpt.at(ngram)))
-            );
+            string type = config.at("ngramOpt" + suffix);
+            if(type == "Word")
+                toks.emplace_back(shared_ptr<tokenizer>(new tokenizers::ngram_word_tokenizer(nVal)));
+            else if(type == "FW")
+                toks.emplace_back(shared_ptr<tokenizer>(new tokenizers::ngram_fw_tokenizer(nVal)));
+            else if(type == "Lex")
+                toks.emplace_back(shared_ptr<tokenizer>(new tokenizers::ngram_lex_tokenizer(nVal)));
+            else if(type == "POS")
+                toks.emplace_back(shared_ptr<tokenizer>(new tokenizers::ngram_pos_tokenizer(nVal)));
+            else if(type == "Char")
+                toks.emplace_back(shared_ptr<tokenizer>(new tokenizers::ngram_char_tokenizer(nVal)));
+            else
+                throw config_reader_exception("ngram method was not able to be determined");
         }
         else
             throw config_reader_exception("method was not able to be determined");
     }
     
-    return shared_ptr<Tokenizer>(new MultiTokenizer(toks));
+    return shared_ptr<tokenizer>(new multi_tokenizer(toks));
 }
 
 }

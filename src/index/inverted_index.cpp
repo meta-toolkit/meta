@@ -15,16 +15,16 @@ using std::multimap;
 using std::unordered_map;
 using std::string;
 
-using tokenizers::Tokenizer;
+using tokenizers::tokenizer;
 
 InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postingsFile,
-        std::shared_ptr<Tokenizer> tokenizer):
+        std::shared_ptr<tokenizer> tokenizer):
     _lexicon(lexiconFile),
     _postings(postingsFile),
     _tokenizer(tokenizer)
 {
     if(!_lexicon.isEmpty())
-        _tokenizer->setTermIDMapping(_lexicon.getTermIDMapping());
+        _tokenizer->set_term_id_mapping(_lexicon.getTermIDMapping());
 }
 
 multimap<double, string> InvertedIndex::search(Document & query) const
@@ -77,7 +77,7 @@ void InvertedIndex::indexDocs(vector<Document> & documents, size_t chunkMBSize)
         throw Index::index_exception("[InvertedIndex]: attempted to create an index in an existing index location");
 
     size_t numChunks = _postings.createChunks(documents, chunkMBSize, _tokenizer);
-    _tokenizer->saveTermIDMapping("termid.mapping");
+    _tokenizer->save_term_id_mapping("termid.mapping");
     _postings.saveDocIDMapping("docid.mapping");
     _postings.createPostingsFile(numChunks, _lexicon);
     _postings.saveDocLengths(documents, "docs.lengths");
