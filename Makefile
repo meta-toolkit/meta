@@ -26,8 +26,7 @@ TEMPLATE_HEADERS := $(shell echo $(TEMPLATE_HEADERS) | sed -e "s/src/include/g")
 TEMPLATE_HEADERS += include/cluster/agglomerative_clustering.h \
 					include/cluster/basic_single_link_policy.h \
 					include/cluster/point.h \
-					include/parallel/thread_pool.h include/parallel/parallel_for.h \
-					include/topics/parallel_lda_gibbs.h include/topics/lda_cvb.h
+					include/parallel/thread_pool.h include/parallel/parallel_for.h
 
 OBJ := $(SRC:.cpp=.o)
 OBJ := $(shell echo $(OBJ) | sed -e "s/src/obj/g" | sed -e "s/lib/obj/g")
@@ -37,7 +36,7 @@ LIBDIRS = lib/liblinear-1.92
 
 SLDALIBS = -lgsl -lm -lgslcblas
 #CXXRTLIBS = 
-CXXRTLIBS = -lcxxrt
+CXXRTLIBS = -lcxxrt -ldl
 THREADLIBS = -pthread
 #STDLIBFLAGS = 
 STDLIBFLAGS = -stdlib=libc++
@@ -105,6 +104,13 @@ obj/%.o : lib/%.cpp lib/%.h | create_dirs
 obj/%.o : src/%.cpp include/%.h | create_dirs
 	@echo " Compiling $@..."
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
+
+.PHONY: doc clean tidy
+
+doc: meta.doxygen
+	@echo " Compiling doxygen..."
+	@-rm -rf doc
+	@-doxygen $< &> /dev/null
 
 clean:
 	@for dir in $(LIBDIRS) ; do make -C $$dir clean; done
