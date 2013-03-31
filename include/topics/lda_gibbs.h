@@ -45,6 +45,9 @@ class lda_gibbs : public lda_model {
         lda_gibbs( std::vector<index::Document> & docs, size_t num_topics, 
                    double alpha, double beta );
 
+        /**
+         * Destructor: virtual for potential subclassing.
+         */
         virtual ~lda_gibbs() { }
         
         /**
