@@ -17,11 +17,13 @@ lda_cvb::~lda_cvb() { }
 void lda_cvb::run( size_t num_iters, double convergence ) {
     std::cerr << "Running LDA inference...\n";
     initialize();
+    common::end_progress("\t\t\t");
     for( size_t i = 0; i < num_iters; ++i ) {
         std::cerr << "Iteration " << i + 1 << "/" << num_iters << ":\r";
         double max_change = perform_iteration();
         std::cerr << "\t\t\t\t\t\tmaximum change in gamma: " << max_change
             << "    \r";
+        common::end_progress("\t\t\t");
         if( max_change <= convergence ) {
             std::cerr << "\nFound convergence after " << i + 1 << " iterations!\n";
             break;
@@ -52,7 +54,6 @@ void lda_cvb::initialize() {
             }
         }
     }
-    common::end_progress("\t\t\t");
 }
 
 double lda_cvb::perform_iteration() {
@@ -67,24 +68,26 @@ double lda_cvb::perform_iteration() {
                 topic_term_mean_[k][freq.first] -= contrib;
                 topic_mean_[k]                  -= contrib;
             }
+            double sum = 0;
+            std::unordered_map<topic_id, double> old_gammas = gamma_[i][freq.first];
             for( size_t k = 0; k < num_topics_; ++k ) {
                 // recompute gamma using CVB0 formula
-                double newgamma = 
+                gamma_[i][freq.first][k] = 
                     compute_term_topic_probability( freq.first, k )
-                    * compute_doc_topic_probability( i, k );
-                max_change = std::max( max_change, std::abs( gamma_[i][freq.first][k] - newgamma ) );
-                gamma_[i][freq.first][k] = newgamma;
+                    * doc_topic_mean_.at( i ).at( k );
+                sum += gamma_[i][freq.first][k];
             }
-            // update means
+            // normalize gamma and update means
             for( size_t k = 0; k < num_topics_; ++k ) {
+                gamma_[i][freq.first][k] /= sum;
                 double contrib = freq.second * gamma_[i][freq.first][k];
                 doc_topic_mean_[i][k]           += contrib;
                 topic_term_mean_[k][freq.first] += contrib;
                 topic_mean_[k]                  += contrib;
+                max_change = std::max( max_change, std::abs( old_gammas[k] - gamma_[i][freq.first][k] ) );
             }
         }
     }
-    common::end_progress("\t\t\t");
     return max_change;
 }
 

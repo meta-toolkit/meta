@@ -65,7 +65,7 @@ class lda_cvb : public lda_model {
          *  \f$\gamma_{dij}\f$ to be allowed before considering the
          *  inference to have converged.
          */
-        void run( size_t num_iters, double convergence = 0.1 );
+        void run( size_t num_iters, double convergence = 1e-3 );
 
     protected:
         /**
