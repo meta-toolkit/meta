@@ -4,6 +4,8 @@
 
 #include "topics/lda_cvb.h"
 
+#include <iomanip>
+
 namespace meta {
 namespace topics {
 
@@ -68,18 +70,20 @@ double lda_cvb::perform_iteration() {
                 topic_term_mean_[k][freq.first] -= contrib;
                 topic_mean_[k]                  -= contrib;
             }
-            double sum = 0;
+            double min = 0;
+            double max = 0;
             std::unordered_map<topic_id, double> old_gammas = gamma_[i][freq.first];
             for( size_t k = 0; k < num_topics_; ++k ) {
                 // recompute gamma using CVB0 formula
                 gamma_[i][freq.first][k] = 
                     compute_term_topic_probability( freq.first, k )
                     * doc_topic_mean_.at( i ).at( k );
-                sum += gamma_[i][freq.first][k];
+                min = std::min( min, gamma_[i][freq.first][k] );
+                max = std::max( max, gamma_[i][freq.first][k] );
             }
             // normalize gamma and update means
             for( size_t k = 0; k < num_topics_; ++k ) {
-                gamma_[i][freq.first][k] /= sum;
+                gamma_[i][freq.first][k] = ( gamma_[i][freq.first][k] - min ) / ( max - min );
                 double contrib = freq.second * gamma_[i][freq.first][k];
                 doc_topic_mean_[i][k]           += contrib;
                 topic_term_mean_[k][freq.first] += contrib;
