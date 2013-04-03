@@ -82,7 +82,7 @@ shared_ptr<tokenizer> config_reader::create_tokenizer(const unordered_map<string
             std::istringstream(config.at("ngram" + suffix)) >> nVal;
             string type = config.at("ngramOpt" + suffix);
             if(type == "Word")
-                toks.emplace_back(shared_ptr<tokenizer>(new tokenizers::ngram_word_tokenizer(nVal)));
+                toks.emplace_back(shared_ptr<tokenizer>(new tokenizers::ngram_word_tokenizer<>(nVal)));
             else if(type == "FW")
                 toks.emplace_back(shared_ptr<tokenizer>(new tokenizers::ngram_fw_tokenizer(nVal)));
             else if(type == "Lex")

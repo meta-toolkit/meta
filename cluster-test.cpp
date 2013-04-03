@@ -11,7 +11,7 @@
 void run_test( const std::string & filename, const std::string & prefix ) {
     using namespace meta;
     using namespace meta::clustering;
-    tokenizers::ngram_word_tokenizer t(1);
+    tokenizers::ngram_word_tokenizer<> t{ 1 };
     
     std::cout << "Loading documents...\r" << std::flush;
     std::vector<index::Document> docs = index::Document::loadDocs( filename, prefix );

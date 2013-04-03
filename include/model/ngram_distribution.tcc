@@ -4,6 +4,7 @@
  */
 
 #include <stdexcept>
+#include "stemmers/no_stemmer.h"
 #include "tokenizers/ngram_word_tokenizer.h"
 
 namespace meta {
@@ -162,7 +163,7 @@ void NgramDistribution<N>::calc_freqs(const std::string & docPath)
 {
     using namespace tokenizers;
     index::Document doc(docPath);
-    ngram_word_tokenizer tok(N, ngram_word_tokenizer::NoStemmer, ngram_word_tokenizer::NoStopwords);
+    ngram_word_tokenizer<stemmers::no_stemmer> tok(N, ngram_word_traits::NoStopwords);
     tok.tokenize(doc);
 
     for(auto & p: doc.getFrequencies())
