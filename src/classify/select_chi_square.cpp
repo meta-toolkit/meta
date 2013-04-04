@@ -34,7 +34,6 @@ vector<pair<TermID, double>> feature_select::chi_square(const vector<Document> &
     for(auto & c: classes)
     {
         string progress = "  " + c + ": ";
-        progress += c + ": ";
         size_t i = 0;
         parallel::parallel_for(terms.begin(), terms.end(), [&](const TermID t)
         {

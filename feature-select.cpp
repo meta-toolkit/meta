@@ -83,17 +83,30 @@ int main(int argc, char* argv[])
     std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
     InvertibleMap<string, int> mapping = tokenize(tok, documents);
 
-    vector<pair<TermID, double>> selected_features = classify::feature_select::slda(documents);
+    cerr << " Info Gain" << endl;
+    vector<pair<TermID, double>> info_features = classify::feature_select::info_gain(documents);
+    cerr << " Chi Square" << endl;
+    vector<pair<TermID, double>> chi_features  = classify::feature_select::chi_square(documents);
+    cerr << " Doc Freq" << endl;
+    vector<pair<TermID, double>> freq_features = classify::feature_select::doc_freq(documents);
+    cerr << " sLDA" << endl;
+    vector<pair<TermID, double>> slda_features = classify::feature_select::slda(documents);
+
+    vector<vector<pair<TermID, double>>> all_features = {info_features, chi_features, freq_features, slda_features};
 
     run_liblinear("liblinear-input.dat", path);
-    for(double d = 0.01; d < 0.5; d += .02)
+    for(double d = 0.01; d < 1.0; d += .02)
     {
-        size_t num_features = d * selected_features.size();
+        size_t num_features = d * all_features[0].size();
         cout << "Using " << num_features << " features (" << (d * 100) << "%)" << endl;
-        unordered_set<TermID> features;
-        for(size_t i = 0; i < num_features; ++i)
-            features.insert(selected_features[i].first);
-        run_selected_features(documents, features, mapping, path);
+
+        for(auto & fs: all_features)
+        {
+            unordered_set<TermID> features;
+            for(size_t i = 0; i < num_features; ++i)
+                features.insert(fs[i].first);
+            run_selected_features(documents, features, mapping, path);
+        }
     }
 
     return 0;
