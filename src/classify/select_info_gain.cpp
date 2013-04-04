@@ -4,6 +4,8 @@
 
 #include "classify/select.h"
 #include "classify/select_info_gain.h"
+#include "util/common.h"
+#include "parallel/parallel_for.h"
 
 namespace meta {
 namespace classify {
@@ -29,17 +31,22 @@ vector<pair<TermID, double>> feature_select::info_gain(const vector<Document> & 
         for(auto & d: p.second)
             total_terms += d.getLength();
 
+    std::mutex _mutex;
     for(auto & c: classes)
     {
+        string progress = "  " + c + ": ";
         size_t i = 0;
-        for(auto & t: terms)
+        parallel::parallel_for(terms.begin(), terms.end(), [&](const TermID t)
         {
-            common::show_progress(i++, terms.size(), 20, "  " + c + ": ");
             double gain = calc_info_gain(t, c, docs.size(), total_terms, buckets);
-            if(feature_weights[t] < gain)
-                feature_weights[t] = gain;
-        }
-        common::end_progress("  " + c + ": ");
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+                common::show_progress(i++, terms.size(), 50, progress);
+                if(feature_weights[t] < gain)
+                    feature_weights[t] = gain;
+            }
+        });
+        common::end_progress(progress);
     }
 
     vector<pair<TermID, double>> features(feature_weights.begin(), feature_weights.end());

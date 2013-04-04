@@ -4,6 +4,7 @@
 
 #include "classify/select.h"
 #include "classify/select_chi_square.h"
+#include "parallel/parallel_for.h"
 
 namespace meta {
 namespace classify {
@@ -29,17 +30,23 @@ vector<pair<TermID, double>> feature_select::chi_square(const vector<Document> &
         for(auto & d: p.second)
             total_terms += d.getLength();
 
+    std::mutex _mutex;
     for(auto & c: classes)
     {
+        string progress = "  " + c + ": ";
+        progress += c + ": ";
         size_t i = 0;
-        for(auto & t: terms)
+        parallel::parallel_for(terms.begin(), terms.end(), [&](const TermID t)
         {
-            common::show_progress(i++, terms.size(), 20, "  " + c + ": ");
             double chi = calc_chi_square(t, c, docs.size(), total_terms, buckets);
-            if(feature_weights[t] < chi)
-                feature_weights[t] = chi;
-        }
-        common::end_progress("  " + c + ": ");
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+                common::show_progress(i++, terms.size(), 50, progress);
+                if(feature_weights[t] < chi)
+                    feature_weights[t] = chi;
+            }
+        });
+        common::end_progress(progress);
     }
 
     vector<pair<TermID, double>> features(feature_weights.begin(), feature_weights.end());

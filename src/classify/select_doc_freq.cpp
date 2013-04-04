@@ -7,6 +7,7 @@
 #include "classify/select_doc_freq.h"
 #include "classify/select.h"
 #include "util/common.h"
+#include "parallel/parallel_for.h"
 
 namespace meta {
 namespace classify {
@@ -26,17 +27,22 @@ vector<pair<TermID, double>> feature_select::doc_freq(const vector<Document> & d
     unordered_map<TermID, double> feature_weights;
     unordered_set<TermID> feature_space(get_term_space(docs));
 
+    std::mutex _mutex;
     for(auto & c: classes)
     {
+        string progress = "  " + c.first + ": ";
         size_t i = 0;
-        for(auto & term: feature_space)
+        parallel::parallel_for(feature_space.begin(), feature_space.end(), [&](const TermID t)
         {
-            common::show_progress(i++, feature_space.size(), 100, "  " + c.first + ": ");
-            double prob = term_given_class(term, c.first, classes);
-            if(feature_weights[term] < prob)
-                feature_weights[term] = prob;
-        }
-        common::end_progress("  " + c.first + ": ");
+            double prob = term_given_class(t, c.first, classes);
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+                common::show_progress(i++, feature_space.size(), 50, progress);
+                if(feature_weights[t] < prob)
+                    feature_weights[t] = prob;
+            }
+        });
+        common::end_progress(progress);
     }
 
     vector<pair<TermID, double>> features(feature_weights.begin(), feature_weights.end());
