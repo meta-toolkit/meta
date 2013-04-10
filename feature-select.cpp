@@ -83,14 +83,19 @@ int main(int argc, char* argv[])
     std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
     InvertibleMap<string, int> mapping = tokenize(tok, documents);
 
+    classify::select_info_gain ig;
+    classify::select_chi_square cs;
+    classify::select_doc_freq df;
+    classify::select_slda slda;
+    
     cerr << " Info Gain" << endl;
-    vector<pair<TermID, double>> info_features = classify::feature_select::info_gain(documents);
+    vector<pair<TermID, double>> info_features = ig.select(documents);
     cerr << " Chi Square" << endl;
-    vector<pair<TermID, double>> chi_features  = classify::feature_select::chi_square(documents);
+    vector<pair<TermID, double>> chi_features  = cs.select(documents);
     cerr << " Doc Freq" << endl;
-    vector<pair<TermID, double>> freq_features = classify::feature_select::doc_freq(documents);
+    vector<pair<TermID, double>> freq_features = df.select(documents);
     cerr << " sLDA" << endl;
-    vector<pair<TermID, double>> slda_features = classify::feature_select::slda(documents);
+    vector<pair<TermID, double>> slda_features = slda.select(documents);
 
     vector<vector<pair<TermID, double>>> all_features = {info_features, chi_features, freq_features, slda_features};
 

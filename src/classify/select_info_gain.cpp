@@ -2,7 +2,6 @@
  * @file select_info_gain.cpp
  */
 
-#include "classify/select.h"
 #include "classify/select_info_gain.h"
 #include "util/common.h"
 #include "parallel/parallel_for.h"
@@ -19,7 +18,7 @@ using std::string;
 using index::Document;
 using index::TermID;
 
-vector<pair<TermID, double>> feature_select::info_gain(const vector<Document> & docs)
+vector<pair<TermID, double>> select_info_gain::select(const vector<Document> & docs)
 {
     unordered_set<string> classes(get_class_space(docs));
     unordered_set<TermID> terms(get_term_space(docs));
@@ -60,7 +59,7 @@ vector<pair<TermID, double>> feature_select::info_gain(const vector<Document> & 
 
 }
 
-double feature_select::calc_info_gain(TermID termID, const string & label,
+double select_info_gain::calc_info_gain(TermID termID, const string & label,
         size_t total_docs, size_t total_terms, const unordered_map<string, vector<Document>> & classes)
 {
     double term_count = 0;

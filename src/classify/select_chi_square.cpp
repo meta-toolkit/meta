@@ -2,7 +2,6 @@
  * @file select_chi_square.cpp
  */
 
-#include "classify/select.h"
 #include "classify/select_chi_square.h"
 #include "parallel/parallel_for.h"
 
@@ -18,7 +17,7 @@ using std::pair;
 using index::TermID;
 using index::Document;
 
-vector<pair<TermID, double>> feature_select::chi_square(const vector<Document> & docs)
+vector<pair<TermID, double>> select_chi_square::select(const vector<Document> & docs)
 {
     unordered_set<string> classes(get_class_space(docs));
     unordered_set<TermID> terms(get_term_space(docs));
@@ -58,7 +57,7 @@ vector<pair<TermID, double>> feature_select::chi_square(const vector<Document> &
     return features;
 }
 
-double feature_select::calc_chi_square(TermID termID, const string & label,
+double select_chi_square::calc_chi_square(TermID termID, const string & label,
         size_t total_docs, size_t total_terms,
         const unordered_map<string, vector<Document>> & classes)
 {

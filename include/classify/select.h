@@ -16,53 +16,66 @@ namespace meta {
 namespace classify {
     
 /**
- * Contains various feature selection methods.
+ * Shared feature selection utilites that inheriting classes use.
  */
-namespace feature_select {
+class feature_select
+{
+    public:
 
-    /**
-     * Separates documents into class buckets.
-     * @param docs The Documents to filter through
-     * @return the bucketed Documents
-     */
-    std::unordered_map<std::string, std::vector<index::Document>> partition_classes(
-            const std::vector<index::Document> & docs);
-    /**
-     * @param docs
-     * @return all classes used in the corpus represented by the vector of
-     * Documents
-     */
-    std::unordered_set<std::string> get_class_space(const std::vector<index::Document> & docs);
+        /**
+         * Performs feature selection on a collection of Documents.
+         * @param docs A vector of tokenized Documents containing all features
+         * @return a vector of TermIDs, sorting by their feature selection
+         * rating
+         */
+        virtual std::vector<std::pair<index::TermID, double>>
+            select(const std::vector<index::Document> & docs) = 0;
 
-    /**
-     * @param docs
-     * @return all terms used in the corpus represented by the vector of
-     * Documents
-     */
-    std::unordered_set<index::TermID> get_term_space(const std::vector<index::Document> & docs);
+    protected:
 
-    /**
-     * Calculates percentage of documents in class c in which term t occurs.
-     * @param term
-     * @param label
-     * @param classes
-     * @return P(t, c), or 1 - P(t', c)
-     */
-    double term_given_class(index::TermID term, const std::string & label,
-            std::unordered_map<std::string, std::vector<index::Document>> classes);
+        /**
+         * Separates documents into class buckets.
+         * @param docs The Documents to filter through
+         * @return the bucketed Documents
+         */
+        std::unordered_map<std::string, std::vector<index::Document>> partition_classes(
+                const std::vector<index::Document> & docs);
+        /**
+         * @param docs
+         * @return all classes used in the corpus represented by the vector of
+         * Documents
+         */
+        std::unordered_set<std::string> get_class_space(const std::vector<index::Document> & docs);
 
-    /**
-     * Calculates percentage of documents not in class c in which term t does
-     * not occur.
-     * @param term
-     * @param label
-     * @param classes
-     * @return P(t', c'), or 1 - P(t, c')
-     */
-    double not_term_given_not_class(index::TermID term, const std::string & label,
-            std::unordered_map<std::string, std::vector<index::Document>> classes);
+        /**
+         * @param docs
+         * @return all terms used in the corpus represented by the vector of
+         * Documents
+         */
+        std::unordered_set<index::TermID> get_term_space(const std::vector<index::Document> & docs);
 
-}
+        /**
+         * Calculates percentage of documents in class c in which term t occurs.
+         * @param term
+         * @param label
+         * @param classes
+         * @return P(t, c), or 1 - P(t', c)
+         */
+        double term_given_class(index::TermID term, const std::string & label,
+                std::unordered_map<std::string, std::vector<index::Document>> classes);
+
+        /**
+         * Calculates percentage of documents not in class c in which term t does
+         * not occur.
+         * @param term
+         * @param label
+         * @param classes
+         * @return P(t', c'), or 1 - P(t, c')
+         */
+        double not_term_given_not_class(index::TermID term, const std::string & label,
+                std::unordered_map<std::string, std::vector<index::Document>> classes);
+
+};
 
 }
 }

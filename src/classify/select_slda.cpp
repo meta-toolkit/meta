@@ -8,7 +8,6 @@
 #include "../lib/slda/corpus.h"
 #include "../lib/slda/utils.h"
 #include "classify/select_slda.h"
-#include "classify/select.h"
 
 namespace meta {
 namespace classify {
@@ -21,7 +20,7 @@ using std::vector;
 using index::TermID;
 using index::Document;
 
-vector<pair<TermID, double>> feature_select::slda(const vector<Document> & docs)
+vector<pair<TermID, double>> select_slda::select(const vector<Document> & docs)
 {
     // create sLDA input data
     util::InvertibleMap<string, int> mapping;

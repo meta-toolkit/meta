@@ -21,7 +21,7 @@ using std::vector;
 using index::Document;
 using index::TermID;
 
-vector<pair<TermID, double>> feature_select::doc_freq(const vector<Document> & docs)
+vector<pair<TermID, double>> select_doc_freq::select(const vector<Document> & docs)
 {
     unordered_map<string, vector<Document>> classes(partition_classes(docs));
     unordered_map<TermID, double> feature_weights;
