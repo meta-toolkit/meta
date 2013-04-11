@@ -20,12 +20,15 @@ using std::vector;
 using index::TermID;
 using index::Document;
 
-vector<pair<TermID, double>> select_slda::select(const vector<Document> & docs)
+select_slda::select_slda(const vector<Document> & docs):
+    _docs(docs) { /* nothing */ }
+
+vector<pair<TermID, double>> select_slda::select()
 {
     // create sLDA input data
     util::InvertibleMap<string, int> mapping;
     std::ofstream slda_train_out("slda-train.dat");
-    for(auto & d: docs)
+    for(auto & d: _docs)
         slda_train_out << d.getLearningData(mapping, true /* using sLDA */);
     slda_train_out.close();
 

@@ -16,6 +16,12 @@ namespace classify {
 class select_slda: public feature_select
 {
     public:
+
+        /**
+         * Constructor.
+         */
+        select_slda(const std::vector<index::Document> & docs);
+
         /**
          * Creates an sLDA input file from the given documents and runs the
          * supervised latent Dirichlet topic modeling algorithm on the data.
@@ -24,7 +30,11 @@ class select_slda: public feature_select
          * @param docs The documents to extract features from
          * @return a vector of TermIDs sorted by importance
          */
-        std::vector<std::pair<index::TermID, double>> select(const std::vector<index::Document> & docs);
+        std::vector<std::pair<index::TermID, double>> select();
+
+    private:
+
+        const std::vector<index::Document> & _docs;
 };
 
 }

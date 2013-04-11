@@ -6,7 +6,6 @@
 #include <string>
 #include "classify/select_doc_freq.h"
 #include "classify/select.h"
-#include "util/common.h"
 #include "parallel/parallel_for.h"
 
 namespace meta {
@@ -21,38 +20,29 @@ using std::vector;
 using index::Document;
 using index::TermID;
 
-vector<pair<TermID, double>> select_doc_freq::select(const vector<Document> & docs)
+select_doc_freq::select_doc_freq(const vector<Document> & docs):
+    feature_select(docs) { /* nothing */ }
+
+vector<pair<TermID, double>> select_doc_freq::select()
 {
-    unordered_map<string, vector<Document>> classes(partition_classes(docs));
     unordered_map<TermID, double> feature_weights;
-    unordered_set<TermID> feature_space(get_term_space(docs));
 
     std::mutex _mutex;
-    for(auto & c: classes)
+    for(auto & c: _class_space)
     {
-        string progress = "  " + c.first + ": ";
-        size_t i = 0;
-        parallel::parallel_for(feature_space.begin(), feature_space.end(), [&](const TermID t)
+        string progress = "  " + c + ": ";
+        parallel::parallel_for(_term_space.begin(), _term_space.end(), [&](const TermID t)
         {
-            double prob = term_given_class(t, c.first, classes);
+            double prob = term_and_class(t, c);
             {
                 std::lock_guard<std::mutex> lock(_mutex);
-                common::show_progress(i++, feature_space.size(), 50, progress);
                 if(feature_weights[t] < prob)
                     feature_weights[t] = prob;
             }
         });
-        common::end_progress(progress);
     }
 
-    vector<pair<TermID, double>> features(feature_weights.begin(), feature_weights.end());
-    std::sort(features.begin(), features.end(),
-        [](const pair<TermID, double> & a, const pair<TermID, double> & b) {
-            return a.second > b.second;
-        }
-    );
-
-    return features;
+    return sort_terms(feature_weights);
 }
 
 }

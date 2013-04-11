@@ -16,13 +16,19 @@ namespace classify {
 class select_chi_square: public feature_select
 {
     public:
+
+        /**
+         * Constructor.
+         */
+        select_chi_square(const std::vector<index::Document> & docs);
+
         /**
          * Calculates important features via Chi-square statistics (independence of
          * two random variables).
          * @param docs The documents to extract features from
          * @return a vector of TermIDs sorted by importance
          */
-        std::vector<std::pair<index::TermID, double>> select(const std::vector<index::Document> & docs);
+        std::vector<std::pair<index::TermID, double>> select();
 
     private:
         /**
@@ -32,9 +38,7 @@ class select_chi_square: public feature_select
          * @param classes
          * @return the chi-square score
          */
-        double calc_chi_square(index::TermID termID, const std::string & label,
-                size_t total_docs, size_t total_terms,
-                const std::unordered_map<std::string, std::vector<index::Document>> & classes);
+        double calc_chi_square(index::TermID termID, const std::string & label);
 };
 
 }

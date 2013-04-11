@@ -16,6 +16,12 @@ namespace classify {
 class select_doc_freq: public feature_select
 {
     public:
+
+        /**
+         * Constructor.
+         */
+        select_doc_freq(const std::vector<index::Document> & docs);
+
         /**
          * Calculates important features via their document frequency; that is,
          * features are assumed to be important if they appear many times per
@@ -23,7 +29,7 @@ class select_doc_freq: public feature_select
          * @param docs The documents to extract features from
          * @return a vector of TermIDs sorted by importance
          */
-        std::vector<std::pair<index::TermID, double>> select(const std::vector<index::Document> & docs);
+        std::vector<std::pair<index::TermID, double>> select();
 };
 
 }

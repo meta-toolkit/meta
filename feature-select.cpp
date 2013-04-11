@@ -83,36 +83,51 @@ int main(int argc, char* argv[])
     std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
     InvertibleMap<string, int> mapping = tokenize(tok, documents);
 
-    classify::select_info_gain ig;
-    classify::select_chi_square cs;
-    classify::select_doc_freq df;
-    classify::select_slda slda;
-    
     cerr << " Info Gain" << endl;
-    vector<pair<TermID, double>> info_features = ig.select(documents);
+    classify::select_info_gain ig(documents);
     cerr << " Chi Square" << endl;
-    vector<pair<TermID, double>> chi_features  = cs.select(documents);
+    classify::select_chi_square cs(documents);
     cerr << " Doc Freq" << endl;
-    vector<pair<TermID, double>> freq_features = df.select(documents);
+    classify::select_doc_freq df(documents);
     cerr << " sLDA" << endl;
-    vector<pair<TermID, double>> slda_features = slda.select(documents);
+    classify::select_slda slda(documents);
+    
+    vector<pair<TermID, double>> info_features = ig.select();
+    vector<pair<TermID, double>> chi_features  = cs.select();
+    vector<pair<TermID, double>> freq_features = df.select();
+    vector<pair<TermID, double>> slda_features = slda.select();
 
-    vector<vector<pair<TermID, double>>> all_features = {info_features, chi_features, freq_features, slda_features};
+    vector<pair<string, vector<pair<TermID, double>>>> all_features = {
+        {"info gain", info_features},
+        {"chi square", chi_features},
+        {"doc freq", freq_features},
+        {"slda", slda_features}
+    };
 
-    run_liblinear("liblinear-input.dat", path);
-    for(double d = 0.01; d < 1.0; d += .02)
-    {
-        size_t num_features = d * all_features[0].size();
-        cout << "Using " << num_features << " features (" << (d * 100) << "%)" << endl;
+ // run_liblinear("liblinear-input.dat", path);
+ // for(double d = 0.01; d < 1.0; d += .02)
+ // {
+ //     size_t num_features = d * all_features[0].size();
+ //     cout << "Using " << num_features << " features (" << (d * 100) << "%)" << endl;
 
         for(auto & fs: all_features)
         {
-            unordered_set<TermID> features;
-            for(size_t i = 0; i < num_features; ++i)
-                features.insert(fs[i].first);
-            run_selected_features(documents, features, mapping, path);
+            size_t num = 10;
+            cout << "-------------------------------------------" << endl;
+            cout << "    " << fs.first << endl;
+            cout << "-------------------------------------------" << endl;
+            for(auto & p: fs.second)
+            {
+                cout << p.second << " " << tok->label(p.first) << endl;
+                if(num-- == 0)
+                    break;
+            }
+ //         unordered_set<TermID> features;
+ //         for(size_t i = 0; i < num_features; ++i)
+ //             features.insert(fs[i].first);
+ //         run_selected_features(documents, features, mapping, path);
         }
-    }
+ // }
 
     return 0;
 }
