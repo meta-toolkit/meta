@@ -1,8 +1,8 @@
 /**
- * @file select_chi_square.cpp
+ * @file select_corr.cpp
  */
 
-#include "classify/select_chi_square.h"
+#include "classify/select_corr.h"
 #include "parallel/parallel_for.h"
 
 namespace meta {
@@ -17,10 +17,10 @@ using std::pair;
 using index::TermID;
 using index::Document;
 
-select_chi_square::select_chi_square(const vector<Document> & docs):
+select_corr_coeff::select_corr_coeff(const vector<Document> & docs):
     feature_select(docs) { /* nothing */ }
 
-vector<pair<TermID, double>> select_chi_square::select()
+vector<pair<TermID, double>> select_corr_coeff::select()
 {
     unordered_map<TermID, double> feature_weights;
 
@@ -29,11 +29,11 @@ vector<pair<TermID, double>> select_chi_square::select()
     {
         parallel::parallel_for(_term_space.begin(), _term_space.end(), [&](const TermID t)
         {
-            double chi = calc_chi_square(t, c);
+            double cc = calc_corr_coeff(t, c);
             {
                 std::lock_guard<std::mutex> lock(_mutex);
-                if(feature_weights[t] < chi)
-                    feature_weights[t] = chi;
+                if(feature_weights[t] < cc)
+                    feature_weights[t] = cc;
             }
         });
     }
@@ -41,7 +41,7 @@ vector<pair<TermID, double>> select_chi_square::select()
     return sort_terms(feature_weights);
 }
 
-double select_chi_square::calc_chi_square(TermID termID, const string & label)
+double select_corr_coeff::calc_corr_coeff(TermID termID, const string & label)
 {
     double p_tc = term_and_class(termID, label);
     double p_ntnc = not_term_and_not_class(termID, label);
@@ -51,8 +51,7 @@ double select_chi_square::calc_chi_square(TermID termID, const string & label)
     double p_t = _pterm[termID];
 
     double numerator = p_tc * p_ntnc - p_ntc * p_tnc;
-    numerator *= numerator;
-    double denominator = p_c * (1.0 - p_c) * p_t * (1.0 - p_t);
+    double denominator = sqrt(p_c * (1.0 - p_c) * p_t * (1.0 - p_t));
 
     return numerator / denominator;
 }

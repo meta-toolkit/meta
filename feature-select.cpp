@@ -16,6 +16,8 @@
 #include "classify/select_doc_freq.h"
 #include "classify/select_chi_square.h"
 #include "classify/select_info_gain.h"
+#include "classify/select_corr.h"
+#include "classify/select_odds.h"
 
 using std::vector;
 using std::unordered_map;
@@ -89,18 +91,26 @@ int main(int argc, char* argv[])
     classify::select_chi_square cs(documents);
     cerr << " Doc Freq" << endl;
     classify::select_doc_freq df(documents);
+    cerr << " Correlation Coefficient" << endl;
+    classify::select_corr_coeff cc(documents);
+    cerr << " Odds Ratio" << endl;
+    classify::select_odds_ratio od(documents);
     cerr << " sLDA" << endl;
     classify::select_slda slda(documents);
     
     vector<pair<TermID, double>> info_features = ig.select();
     vector<pair<TermID, double>> chi_features  = cs.select();
     vector<pair<TermID, double>> freq_features = df.select();
+    vector<pair<TermID, double>> cc_features = cc.select();
+    vector<pair<TermID, double>> od_features = od.select();
     vector<pair<TermID, double>> slda_features = slda.select();
 
     vector<pair<string, vector<pair<TermID, double>>>> all_features = {
         {"info gain", info_features},
         {"chi square", chi_features},
         {"doc freq", freq_features},
+        {"correlation coefficient", cc_features},
+        {"odds ratio", od_features},
         {"slda", slda_features}
     };
 
@@ -112,7 +122,7 @@ int main(int argc, char* argv[])
 
         for(auto & fs: all_features)
         {
-            size_t num = 10;
+            size_t num = 10000;
             cout << "-------------------------------------------" << endl;
             cout << "    " << fs.first << endl;
             cout << "-------------------------------------------" << endl;

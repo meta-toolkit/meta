@@ -47,7 +47,7 @@ double select_info_gain::calc_info_gain(TermID termID, const string & label)
     double p_tc = term_and_class(termID, label);
     double p_ntnc = not_term_and_not_class(termID, label);
     double p_ntc = not_term_and_class(termID, label);
-    double p_tnc = not_term_and_class(termID, label);
+    double p_tnc = term_and_not_class(termID, label);
     double p_c = _pclass[label];
     double p_t = _pterm[termID];
     double p_nc = 1.0 - p_c;
