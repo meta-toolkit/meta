@@ -13,18 +13,24 @@
 namespace meta {
 namespace classify {
 
+/**
+ * Performs feature selection using odds ratios:
+ * \f$ OR(t,c_i) = \log\frac{P(t|c_i)\cdot (1 - P(t|\overline{c_i}))}
+ *      {(1 - P(t|c_i))\cdot P(t|\overline{c_i})}  \f$
+ */
 class select_odds_ratio: public select_simple
 {
     public:
 
         /**
          * Constructor.
+         * @param docs The documents containing features
          */
         select_odds_ratio(const std::vector<index::Document> & docs);
 
     private:
         /**
-         * Calculates the chi-square score for one term.
+         * Calculates the odds ratio score for one term.
          * @param termID 
          * @param label
          * @return the odds ratio score

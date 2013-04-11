@@ -19,6 +19,7 @@ class select_slda: public feature_select
 
         /**
          * Constructor.
+         * @param docs The documents containing features
          */
         select_slda(const std::vector<index::Document> & docs);
 
@@ -27,7 +28,6 @@ class select_slda: public feature_select
          * supervised latent Dirichlet topic modeling algorithm on the data.
          * Features are sorted by weight, and then returned in order in a vector
          * like the other feature selection algorithms.
-         * @param docs The documents to extract features from
          * @return a vector of TermIDs sorted by importance
          */
         std::vector<std::pair<index::TermID, double>> select();

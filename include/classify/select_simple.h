@@ -23,6 +23,7 @@ class select_simple: public feature_select
 
         /**
          * Constructor.
+         * @param docs The documents containing features
          */
         select_simple(const std::vector<index::Document> & docs);
 

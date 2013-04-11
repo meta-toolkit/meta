@@ -13,12 +13,18 @@
 namespace meta {
 namespace classify {
 
+/**
+ * Performs Chi square feature selection:
+ * \f$ \chi^2(t, c_i) = \frac{(P(t,c_i)P(\overline{t},\overline{c_i})-P(t,\overline{c_i})P(\overline{t},c_i))^2}
+ *  {P(t)P(\overline{t})P(c_i)P(\overline{c_i})} \f$
+ */
 class select_chi_square: public select_simple
 {
     public:
 
         /**
          * Constructor.
+         * @param docs The documents containing features
          */
         select_chi_square(const std::vector<index::Document> & docs);
 

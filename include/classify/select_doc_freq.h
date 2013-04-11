@@ -13,12 +13,17 @@
 namespace meta {
 namespace classify {
 
+/**
+ * Performs feature selection based on term document frequency:
+ * \f$ P(t,c_i) \f$
+ */
 class select_doc_freq: public select_simple
 {
     public:
 
         /**
          * Constructor.
+         * @param docs The documents containing features
          */
         select_doc_freq(const std::vector<index::Document> & docs);
 
