@@ -1,5 +1,4 @@
 SEARCH = search
-FEATURES = features
 LEARN = learn
 LM = lm
 SLDATEST = feature-select
@@ -48,7 +47,7 @@ CXXFLAGS = -O3 -pthread $(STDLIBFLAGS)
 #CXXFLAGS = -g -O0 -pthread $(STDLIBFLAGS)
 LINKER = clang++ -Wall -pedantic -std=c++11 -I./include -I./src
 
-all: $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) \
+all: $(SEARCH) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) \
 	 $(THREADPOOLTEST) $(PARALLELFORTEST) $(LDATEST) $(LDATOPICS)
 	@for dir in $(LIBDIRS) ; do make -C $$dir ; done
 
@@ -64,10 +63,6 @@ $(LM): $(OBJ) $(LM).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
 $(SEARCH): $(OBJ) $(SEARCH).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
 	@echo " Linking \"$@\"..."
 	@$(LINKER) -o $@ $(SEARCH).cpp $(OBJ) $(LIBS)
-
-$(FEATURES): $(OBJ) $(FEATURES).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
-	@echo " Linking \"$@\"..."
-	@$(LINKER) -o $@ $(FEATURES).cpp $(OBJ) $(LIBS)
 
 $(LEARN): $(OBJ) $(LEARN).cpp $(TEMPLATES) $(TEMPLATE_HEADERS)
 	@echo " Linking \"$@\"..."
@@ -115,7 +110,7 @@ doc: meta.doxygen
 clean:
 	@for dir in $(LIBDIRS) ; do make -C $$dir clean; done
 	-rm -rf obj
-	-rm -f $(SEARCH) $(FEATURES) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST) $(PARALLELFORTEST) $(LDATEST) $(LDATOPICS)
+	-rm -f $(SEARCH) $(LEARN) $(LM) $(SLDATEST) $(CLUSTERTEST) $(THREADPOOLTEST) $(PARALLELFORTEST) $(LDATEST) $(LDATOPICS)
 
 tidy:
 	-rm -rf ./doc *.chunk postingsFile lexiconFile termid.mapping docid.mapping docs.lengths *compressed.txt *.terms *.phi *.theta
