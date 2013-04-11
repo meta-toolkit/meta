@@ -7,13 +7,13 @@
 
 #include <vector>
 #include <utility>
-#include "classify/select.h"
+#include "classify/select_simple.h"
 #include "index/document.h"
 
 namespace meta {
 namespace classify {
 
-class select_info_gain: public feature_select
+class select_info_gain: public select_simple
 {
     public:
 
@@ -22,24 +22,14 @@ class select_info_gain: public feature_select
          */
         select_info_gain(const std::vector<index::Document> & docs);
 
-        /**
-         * Calculates important features based on information gain; that is, the
-         * reduction of entropy by knowing the existance or absense of a term in a
-         * document.
-         * @param docs The documents to extract features from
-         * @return a vector of TermIDs sorted by importance
-         */
-        std::vector<std::pair<index::TermID, double>> select();
-
     private:
+
         /**
          * @param termID
          * @param label
-         * @param total_classes
-         * @param total_terms
-         * @param classes
+         * @return the info gain score
          */
-        double calc_info_gain(index::TermID termID, const std::string & label);
+        double calc_weight(index::TermID termID, const std::string & label) const;
 };
 
 }

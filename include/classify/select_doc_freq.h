@@ -8,12 +8,12 @@
 #include <vector>
 #include <utility>
 #include "index/document.h"
-#include "classify/select.h"
+#include "classify/select_simple.h"
 
 namespace meta {
 namespace classify {
 
-class select_doc_freq: public feature_select
+class select_doc_freq: public select_simple
 {
     public:
 
@@ -23,13 +23,12 @@ class select_doc_freq: public feature_select
         select_doc_freq(const std::vector<index::Document> & docs);
 
         /**
-         * Calculates important features via their document frequency; that is,
-         * features are assumed to be important if they appear many times per
-         * document.
-         * @param docs The documents to extract features from
-         * @return a vector of TermIDs sorted by importance
+         * Calculates the doc freq score for one term.
+         * @param termID 
+         * @param label
+         * @return the doc freq score
          */
-        std::vector<std::pair<index::TermID, double>> select();
+        double calc_weight(index::TermID termID, const std::string & label) const;
 };
 
 }

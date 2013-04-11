@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 
         for(auto & fs: all_features)
         {
-            size_t num = 10000;
+            size_t num = 100;
             cout << "-------------------------------------------" << endl;
             cout << "    " << fs.first << endl;
             cout << "-------------------------------------------" << endl;

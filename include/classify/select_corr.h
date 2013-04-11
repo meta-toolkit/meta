@@ -7,13 +7,13 @@
 
 #include <vector>
 #include <utility>
-#include "classify/select.h"
+#include "classify/select_simple.h"
 #include "index/document.h"
 
 namespace meta {
 namespace classify {
 
-class select_corr_coeff: public feature_select
+class select_corr_coeff: public select_simple
 {
     public:
 
@@ -21,13 +21,6 @@ class select_corr_coeff: public feature_select
          * Constructor.
          */
         select_corr_coeff(const std::vector<index::Document> & docs);
-
-        /**
-         * Calculates important features via Correlation Coefficient
-         * @param docs The documents to extract features from
-         * @return a vector of TermIDs sorted by importance
-         */
-        std::vector<std::pair<index::TermID, double>> select();
 
     private:
         /**
@@ -37,7 +30,7 @@ class select_corr_coeff: public feature_select
          * @param classes
          * @return the correlation coefficient score
          */
-        double calc_corr_coeff(index::TermID termID, const std::string & label);
+        double calc_weight(index::TermID termID, const std::string & label) const;
 };
 
 }

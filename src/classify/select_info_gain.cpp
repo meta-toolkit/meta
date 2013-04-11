@@ -18,38 +18,16 @@ using index::Document;
 using index::TermID;
 
 select_info_gain::select_info_gain(const vector<Document> & docs):
-    feature_select(docs) { /* nothing */ }
+    select_simple(docs) { /* nothing */ }
 
-vector<pair<TermID, double>> select_info_gain::select()
-{
-    unordered_map<TermID, double> feature_weights;
-
-    std::mutex _mutex;
-    for(auto & c: _class_space)
-    {
-        parallel::parallel_for(_term_space.begin(), _term_space.end(), [&](const TermID t)
-        {
-            double gain = calc_info_gain(t, c);
-            {
-                std::lock_guard<std::mutex> lock(_mutex);
-                if(feature_weights[t] < gain)
-                    feature_weights[t] = gain;
-            }
-        });
-    }
-
-    return sort_terms(feature_weights);
-
-}
-
-double select_info_gain::calc_info_gain(TermID termID, const string & label)
+double select_info_gain::calc_weight(TermID termID, const string & label) const
 {
     double p_tc = term_and_class(termID, label);
     double p_ntnc = not_term_and_not_class(termID, label);
     double p_ntc = not_term_and_class(termID, label);
     double p_tnc = term_and_not_class(termID, label);
-    double p_c = _pclass[label];
-    double p_t = _pterm[termID];
+    double p_c = _pclass.at(label);
+    double p_t = _pterm.at(termID);
     double p_nc = 1.0 - p_c;
     double p_nt = 1.0 - p_t;
 
