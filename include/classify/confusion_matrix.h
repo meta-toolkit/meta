@@ -1,10 +1,12 @@
 /**
  * @file confusion_matrix.h
+ * @author Sean Massung
  */
 
 #ifndef _CONFUSION_MATRIX_H_
 #define _CONFUSION_MATRIX_H_
 
+#include <iostream>
 #include <utility>
 #include <string>
 #include <unordered_map>
@@ -19,6 +21,7 @@ namespace classify {
 class ConfusionMatrix
 {
     public:
+        
         /**
          * Creates an empty confusion matrix.
          */
@@ -33,12 +36,24 @@ class ConfusionMatrix
         /**
          * Prints this matrix to cout.
          */
-        void print() const;
+        void print_stats(std::ostream & out = std::cout) const;
+
+        /**
+         * Prints this matrix to cout.
+         */
+        void print(std::ostream & out = std::cout) const;
 
     private:
+
+        /**
+         *
+         */
+        void print_class_stats(std::ostream & out, const std::string & label,
+                double & prec, double & rec, double & f1) const;
+
         /**
          * Implements a hash function for a pair of strings.
-         * @param strPair - the pair of strings
+         * @param str_pair The pair of strings
          * @return the hash
          */
         static size_t stringPairHash(const std::pair<std::string, std::string> & strPair);
@@ -52,6 +67,9 @@ class ConfusionMatrix
 
         /** how many times each class was predicted */
         std::unordered_map<std::string, size_t> _counts;
+
+        /** total number of classification attempts */
+        size_t _total;
 };
 
 }

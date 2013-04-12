@@ -3,6 +3,7 @@
  */
 
 #include <cmath>
+#include "util/common.h"
 
 namespace meta {
 namespace clustering {
@@ -16,7 +17,7 @@ double similarity::cosine_similarity(const unordered_map<Key, Value> & a,
     unordered_set<Key> space = get_space(a, b);
     double numerator = 0.0;
     for(auto & key: space)
-        numerator += safe_at(a, key) * safe_at(b, key);
+        numerator += common::safe_at(a, key) * common::safe_at(b, key);
 
     double denominator = magnitude(a) * magnitude(b);
     return numerator / denominator;
@@ -34,15 +35,6 @@ double similarity::jaccard_similarity(const unordered_map<Key, Value> & a,
     }
 
     return in_both / internal::get_space(a, b).size();
-}
-
-template <class Key, class Value>
-Value similarity::internal::safe_at(const unordered_map<Key, Value> & map, const Key & key)
-{
-    auto it = map.find(key);
-    if(it == map.end())
-        return Value{};
-    return it->second;
 }
 
 template <class Key, class Value>

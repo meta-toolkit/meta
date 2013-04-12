@@ -7,6 +7,7 @@
 #define _COMMON_H_
 
 #include <iostream>
+#include <unordered_map>
 #include <string>
 
 namespace meta {
@@ -70,6 +71,20 @@ namespace common
     {
         std::cerr << prefix << "100%         " << std::endl;
     }
+
+    /**
+     * @return the value for a given key in map if it exists; otherwise,
+     * the default Value() is returned.
+     */
+    template <class Key, class Value, class Hash>
+    Value safe_at(const std::unordered_map<Key, Value, Hash> & map, const Key & key);
+
+    /**
+     * @return the value for a given key in map if it exists; otherwise,
+     * the default Value() is returned.
+     */
+    template <class Key, class Value>
+    Value safe_at(const std::unordered_map<Key, Value> & map, const Key & key);
 }
 
 }

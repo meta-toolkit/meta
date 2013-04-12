@@ -4,6 +4,7 @@
 
 #include <cassert> // debug
 #include "cluster/similarity.h"
+#include "util/common.h"
 #include "classify/select.h"
 
 namespace meta {
@@ -36,8 +37,7 @@ void feature_select::set_pseen(const vector<Document> & docs)
     {
         for(auto & d: docs)
         {
-            using namespace clustering::similarity::internal;
-            size_t count = safe_at(d.getFrequencies(), t);
+            size_t count = common::safe_at(d.getFrequencies(), t);
             _pseen[d.getCategory()][t] += count;
             _pterm[t] += count;
         }

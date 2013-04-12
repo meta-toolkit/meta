@@ -1,9 +1,9 @@
 /**
  * @file confusion_matrix.cpp
+ * @author Sean Massung
  */
 
 #include <iomanip>
-#include <iostream>
 #include "util/common.h"
 #include "classify/confusion_matrix.h"
 
@@ -11,7 +11,6 @@ namespace meta {
 namespace classify {
 
 using std::setw;
-using std::cout;
 using std::endl;
 using std::unordered_map;
 using std::unordered_set;
@@ -23,61 +22,119 @@ ConfusionMatrix::ConfusionMatrix():
     _predictions(unordered_map<pair<string, string>, size_t,
             decltype(&ConfusionMatrix::stringPairHash)>(32, stringPairHash)),
     _classes(unordered_set<string>()),
-    _counts(unordered_map<string, size_t>()) { /* nothing */ }
+    _counts(unordered_map<string, size_t>()),
+    _total(0)
+{ /* nothing */ }
 
 void ConfusionMatrix::add(const string & predicted, const string & actual)
 {
     pair<string, string> prediction(predicted, actual);
-    auto it = _predictions.find(prediction);
-    if(it == _predictions.end())
-        _predictions.insert(make_pair(prediction, 1));
-    else
-        _predictions[prediction] += 1;
-
-    auto act = _counts.find(actual);
-    if(act == _counts.end())
-        _counts.insert(make_pair(actual, 1));
-    else
-        _counts[actual] += 1;
-
-    auto cl = _classes.find(actual);
-    if(cl == _classes.end())
-        _classes.insert(actual);
+    _predictions[prediction] += 1;
+    _counts[actual] += 1;
+    _classes.insert(actual);
+    ++_total;
 }
 
-void ConfusionMatrix::print() const
+void ConfusionMatrix::print(std::ostream & out) const
 {
-    size_t w = 10;
-    cout << endl << setw(w) << "";
+    size_t w = 12;
+    out << endl << setw(w) << "";
     for(auto & aClass: _classes)
-        cout << setw(w - 1) << aClass << " ";
-    cout << endl;
-    cout << string(w, ' ') << string(_classes.size() * w, '-') << endl;
+        out << setw(w - 1) << aClass << " ";
+    out << endl;
+    out << string(w, ' ') << string(_classes.size() * w, '-') << endl;
 
     for(auto & aClass: _classes)
     {
-        cout << setw(w) << (aClass + " | ");
+        out << setw(w) << (aClass + " | ");
         for(auto & pClass: _classes)
         {
             auto predIt = _predictions.find(make_pair(pClass, aClass));
             if(predIt != _predictions.end())
             {
                 size_t numPred = predIt->second;
-                double rounded = (int)((double) numPred / _counts.at(aClass) * 10000);
-                string percent = common::toString(rounded / 100);
-                cout << setw(w) << ((aClass == pClass) ? ("[" + percent + "]") : (percent + " "));
+                double percent = static_cast<double>(numPred) / _counts.at(aClass);
+                out.precision(3);
+                if(aClass == pClass)
+                    out << "[" << setw(w - 2) << percent << "]";
+                else
+                    out << setw(w) << percent;
             }
             else
-                cout << setw(w) << "- ";
+                out << setw(w) << "- ";
         }
-        cout << endl;
+        out << endl;
     }
-    cout << endl;
+    out << endl;
 }
 
-size_t ConfusionMatrix::stringPairHash(const std::pair<std::string, std::string> & strPair)
+void ConfusionMatrix::print_class_stats(std::ostream & out, const string & label,
+        double & prec, double & rec, double & f1) const
 {
-    return std::hash<string>()(strPair.first) ^ std::hash<string>()(strPair.second);
+    for(auto & cls: _classes)
+    {
+        prec += common::safe_at(_predictions, make_pair(cls, label));
+        rec +=  common::safe_at(_predictions, make_pair(label, cls));
+    }
+
+    double correct = common::safe_at(_predictions, make_pair(label, label));
+    
+    if(rec != 0.0)
+        rec = correct / rec;
+
+    if(prec != 0.0)
+        prec = correct / prec;
+
+    if(prec + rec != 0.0)
+        f1 = (2.0 * prec * rec) / (prec + rec);
+
+    size_t w = 16;
+    out << std::left << setw(w) << label
+        << std::left << setw(w) << f1
+        << std::left << setw(w) << prec
+        << std::left << setw(w) << rec
+        << endl;
+}
+
+void ConfusionMatrix::print_stats(std::ostream & out) const
+{
+    double t_prec = 0.0;
+    double t_rec = 0.0;
+    double t_f1 = 0.0;
+    double t_corr = 0.0;
+
+    size_t w = 16;
+    out.precision(3);
+    out << string(w * 4, '-') << endl
+        << std::left << setw(w) << "Class"
+        << std::left << setw(w) << "F1 Score"
+        << std::left << setw(w) << "Precision"
+        << std::left << setw(w) << "Recall" << endl
+        << string(w * 4, '-') << endl;
+
+    for(auto & cls: _classes)
+    {
+        double prec = 0.0, rec = 0.0, f1 = 0.0;
+        t_corr += _predictions.at(make_pair(cls, cls));
+        print_class_stats(out, cls, prec, rec, f1);
+        t_prec += prec;
+        t_rec += rec;
+        t_f1 += f1;
+    }
+
+    out << string(w * 4, '-') << endl
+        << setw(w) << "Total"
+        << setw(w) << t_f1 / _classes.size()
+        << setw(w) << t_prec / _classes.size()
+        << setw(w) << t_rec / _classes.size() << endl
+        << string(w * 4, '-') << endl
+        << _total << " predictions attempted, overall accuracy: "
+        << t_corr / _total << endl;
+}
+
+size_t ConfusionMatrix::stringPairHash(const std::pair<std::string, std::string> & str_pair)
+{
+    return std::hash<string>()(str_pair.first + str_pair.second);
 }
 
 }

@@ -12,7 +12,11 @@ using index::Document;
 
 ConfusionMatrix classifier::test(const vector<Document> & docs) const
 {
-    return ConfusionMatrix();
+    ConfusionMatrix matrix;
+    for(auto & d: docs)
+        matrix.add(classify(d), d.getCategory());
+
+    return matrix;
 }
 
 ConfusionMatrix classifier::cross_validate(const vector<Document> & docs, size_t k) const

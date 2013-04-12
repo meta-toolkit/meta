@@ -81,13 +81,6 @@ namespace similarity
          */
         template <class Key, class Value>
         double magnitude(const unordered_map<Key, Value> & map);
-
-        /**
-         * @return the value for a given key in map if it exists; otherwise,
-         * the default Value() is returned.
-         */
-        template <class Key, class Value>
-        Value safe_at(const unordered_map<Key, Value> & map, const Key & key);
     }
 }
 
