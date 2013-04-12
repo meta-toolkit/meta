@@ -41,6 +41,13 @@ class feature_select
          */
         virtual std::vector<std::pair<index::TermID, double>> select() = 0;
 
+        /**
+         * Performs feature selection on a collection of Documents, returning
+         * each class's features sorted by usefulness.
+         */
+        virtual std::unordered_map<std::string, std::vector<std::pair<index::TermID, double>>>
+            select_by_class() = 0;
+
     protected:
 
         /**

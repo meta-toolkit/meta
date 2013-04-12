@@ -35,6 +35,13 @@ class select_simple: public feature_select
          */
         std::vector<std::pair<index::TermID, double>> select();
 
+        /**
+         * Performs feature selection on a collection of Documents, returning
+         * each class's features sorted by usefulness.
+         */
+        std::unordered_map<std::string, std::vector<std::pair<index::TermID, double>>>
+            select_by_class();
+
     protected:
 
         /**

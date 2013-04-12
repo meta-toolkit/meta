@@ -31,7 +31,7 @@ double select_odds_ratio::calc_weight(TermID termID, const string & label) const
 
     double numerator = p_tc * (1.0 - p_tnc);
 
-    return log(numerator / denominator);
+    return log(1 + (numerator / denominator));
 }
 
 }

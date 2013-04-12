@@ -23,22 +23,33 @@ select_simple::select_simple(const vector<Document> & docs):
 vector<pair<TermID, double>> select_simple::select()
 {
     unordered_map<TermID, double> feature_weights;
-
-    std::mutex _mutex;
     for(auto & c: _class_space)
     {
-        parallel::parallel_for(_term_space.begin(), _term_space.end(), [&](const TermID t)
+        for(auto & t: _term_space)
         {
             double weight = calc_weight(t, c);
-            {
-                std::lock_guard<std::mutex> lock(_mutex);
-                if(feature_weights[t] < weight)
-                    feature_weights[t] = weight;
-            }
-        });
+            if(feature_weights[t] < weight)
+                feature_weights[t] = weight;
+        }
     }
 
     return sort_terms(feature_weights);
+}
+
+unordered_map<string, vector<pair<TermID, double>>> select_simple::select_by_class()
+{
+    unordered_map<string, vector<pair<TermID, double>>> features;
+
+    for(auto & c: _class_space)
+    {
+        unordered_map<TermID, double> weights;
+        for(auto & t: _term_space)
+            weights[t] = calc_weight(t, c);
+
+        features[c] = sort_terms(weights);
+    }
+
+    return features;
 }
 
 }

@@ -31,10 +31,10 @@ double select_info_gain::calc_weight(TermID termID, const string & label) const
     double p_nc = 1.0 - p_c;
     double p_nt = 1.0 - p_t;
 
-    double gain_tc = p_tc * log(p_tc / (p_t * p_c));
-    double gain_ntnc = p_ntnc * log(p_ntnc / (p_nt * p_nc));
-    double gain_ntc = p_ntc * log(p_ntc / (p_nt * p_c));
-    double gain_tnc = p_tnc * log(p_tnc / (p_t * p_nc));
+    double gain_tc = p_tc * log(1 + (p_tc / (p_t * p_c)));
+    double gain_ntnc = p_ntnc * log(1 + (p_ntnc / (p_nt * p_nc)));
+    double gain_ntc = p_ntc * log(1 + (p_ntc / (p_nt * p_c)));
+    double gain_tnc = p_tnc * log(1 + (p_tnc / (p_t * p_nc)));
 
     return gain_tc + gain_ntnc + gain_ntc + gain_tnc;
 }
