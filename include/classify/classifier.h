@@ -30,20 +30,27 @@ class classifier
         virtual std::string classify(const index::Document & doc) const = 0;
 
         /**
-         * Classifies a document into a specific group, as determined by
-         * training data.
-         * @param doc The document to classify
-         * @return the class it belongs to
+         * Creates a classification model based on training documents.
+         * @param docs The training documents
          */
-        ConfusionMatrix classify_all(const std::vector<index::Document> & docs) const;
+        virtual void train(const std::vector<index::Document> & docs) = 0;
 
         /**
-         * Performs k-fold cross-validation on a set of training documents.
-         * @param test_docs Testing documents
+         * Classifies a collection document into specific groups, as determined by
+         * training data; this function will make repeated calls to classify().
+         * @param docs The documents to classify
+         * @return a ConfusionMatrix detailing the performance of the classifier
+         */
+        ConfusionMatrix test(const std::vector<index::Document> & docs) const;
+
+        /**
+         * Performs k-fold cross-validation on a set of documents. When using
+         * this function, it is not necessary to call train() or test() first.
+         * @param docs Testing documents
          * @param k The number of folds
          * @return a ConfusionMatrix containing the results over all the folds
          */
-        ConfusionMatrix cross_validate(const std::vector<index::Document> & test_docs, size_t k) const;
+        ConfusionMatrix cross_validate(const std::vector<index::Document> & docs, size_t k) const;
 };
 
 }

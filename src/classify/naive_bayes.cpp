@@ -17,17 +17,15 @@ using std::string;
 using index::Document;
 using index::TermID;
 
-naive_bayes::naive_bayes(const vector<Document> & train_docs, double alpha, double beta):
+naive_bayes::naive_bayes(double alpha, double beta):
     _term_probs(unordered_map<string, unordered_map<TermID, double>>()),
     _class_counts(unordered_map<string, size_t>()),
     _total_docs(0),
     _alpha(alpha),
     _beta(beta)
-{
-    calc_probs(train_docs);
-}
+{ /* nothing */ }
 
-void naive_bayes::calc_probs(const vector<Document> & docs)
+void naive_bayes::train(const vector<Document> & docs)
 {
     using namespace clustering::similarity::internal;
 

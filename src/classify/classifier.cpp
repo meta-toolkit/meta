@@ -10,7 +10,7 @@ namespace classify {
 using std::vector;
 using index::Document;
 
-ConfusionMatrix classifier::classify_all(const vector<Document> & docs) const
+ConfusionMatrix classifier::test(const vector<Document> & docs) const
 {
     return ConfusionMatrix();
 }
