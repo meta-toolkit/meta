@@ -13,7 +13,7 @@ using index::TermID;
 using index::DocID;
 
 lda_model::lda_model( std::vector<Document> & docs, size_t num_topics )
-        : docs_{ docs }, tokenizer_{1},
+        : docs_( docs ), tokenizer_{1},
           num_topics_{ num_topics } {
     for( size_t i = 0; i < docs_.size(); ++i ) {
         common::show_progress( i, docs_.size(), 10, "Tokenizing documents: " );
