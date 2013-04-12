@@ -1,13 +1,13 @@
-data/prelim-results.txt
+build/
+obj/
 *.a
 *.dat
 .*.swp
 *.o
 *.class
+*.pyc
 learn
 features
 search
 lm
 tester
-obj/
-*.pyc
