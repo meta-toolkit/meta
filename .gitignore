@@ -1,5 +1,6 @@
 build/
 obj/
+doc/
 *.a
 *.dat
 .*.swp
