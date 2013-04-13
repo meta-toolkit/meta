@@ -6,7 +6,7 @@ option( USE_LIBCXX "Use libc++ for the C++ standard library" ON )
 include_directories( "include/" )
 include_directories( "lib/slda/" )
 
-set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}" )
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/lib" )
 
 find_package( Threads REQUIRED )
 find_package( GSL REQUIRED )
