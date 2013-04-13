@@ -31,6 +31,7 @@ add_library( meta-classify
              src/classify/knn.cpp
              src/classify/select_corr.cpp
              src/classify/select_odds.cpp
+             src/classify/naive_bayes.cpp
              lib/slda/corpus.cpp
              lib/slda/slda.cpp
              lib/slda/opt.cpp
@@ -88,6 +89,16 @@ target_link_libraries( lm
                        meta-tokenizers 
                        meta-stemmers 
                        ${CMAKE_THREAD_LIBS_INIT} 
+)
+
+add_executable( classify classify-test.cpp )
+target_link_libraries( classify
+                       meta-io
+                       meta-index
+                       meta-tokenizers
+                       meta-stemmers
+                       meta-classify
+                       ${CMAKE_THREAD_LIBS_INIT}
 )
 
 add_executable( search search.cpp )
