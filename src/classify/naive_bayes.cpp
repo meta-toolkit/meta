@@ -79,7 +79,7 @@ string naive_bayes::classify(const Document & doc) const
             auto it = cls.second.find(t.first);
             double term_prob = (it == cls.second.end()) ? 0.0 : it->second;
             term_prob += _alpha;
-            sum += log(term_prob * class_prob);
+            sum += log(1 + term_prob * class_prob);
         }
 
         if(sum > best)

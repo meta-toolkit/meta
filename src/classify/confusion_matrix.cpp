@@ -88,7 +88,7 @@ void ConfusionMatrix::print_class_stats(std::ostream & out, const string & label
     if(prec + rec != 0.0)
         f1 = (2.0 * prec * rec) / (prec + rec);
 
-    size_t w = 16;
+    size_t w = 20;
     out << std::left << setw(w) << label
         << std::left << setw(w) << f1
         << std::left << setw(w) << prec
@@ -103,7 +103,7 @@ void ConfusionMatrix::print_stats(std::ostream & out) const
     double t_f1 = 0.0;
     double t_corr = 0.0;
 
-    size_t w = 16;
+    size_t w = 20;
     out.precision(3);
     out << string(w * 4, '-') << endl
         << std::left << setw(w) << "Class"
@@ -115,7 +115,9 @@ void ConfusionMatrix::print_stats(std::ostream & out) const
     for(auto & cls: _classes)
     {
         double prec = 0.0, rec = 0.0, f1 = 0.0;
-        t_corr += _predictions.at(make_pair(cls, cls));
+        auto it = _predictions.find(make_pair(cls, cls));
+        if(it != _predictions.end())
+            t_corr += it->second;
         print_class_stats(out, cls, prec, rec, f1);
         t_prec += prec;
         t_rec += rec;
