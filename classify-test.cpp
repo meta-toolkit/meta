@@ -63,13 +63,13 @@ int main(int argc, char* argv[])
     }
 
     unordered_map<string, string> config = io::config_reader::read(argv[1]);
-    string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
+    string prefix = config["prefix"] + config["dataset"];
     vector<Document> train_docs = Document::loadDocs(prefix + "/train.txt", prefix);
     vector<Document> test_docs = Document::loadDocs(prefix + "/test.txt", prefix);
 
     tokenize(train_docs, test_docs, config);
    
-    classify::naive_bayes nb;
+    classify::naive_bayes nb(0.000001, 0.000001);
     nb.train(train_docs);
     classify::ConfusionMatrix matrix = nb.test(test_docs);
     matrix.print();

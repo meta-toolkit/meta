@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     }
 
     unordered_map<string, string> config = io::config_reader::read(argv[1]);
-    string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
+    string prefix = config["prefix"] + config["data"];
 
     std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
 

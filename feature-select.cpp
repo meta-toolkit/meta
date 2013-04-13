@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
     string path(argv[2]);
 
     unordered_map<string, string> config = io::config_reader::read(argv[1]);
-    string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
+    string prefix = config["prefix"] + config["dataset"];
 
     vector<Document> documents = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
     std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
@@ -87,32 +87,42 @@ int main(int argc, char* argv[])
 
     cerr << " Info Gain" << endl;
     classify::select_info_gain ig(documents);
-    cerr << " Chi Square" << endl;
-    classify::select_chi_square cs(documents);
-    cerr << " Doc Freq" << endl;
-    classify::select_doc_freq df(documents);
-    cerr << " Correlation Coefficient" << endl;
-    classify::select_corr_coeff cc(documents);
-    cerr << " Odds Ratio" << endl;
-    classify::select_odds_ratio od(documents);
-    cerr << " sLDA" << endl;
-    classify::select_slda slda(documents);
-    
+//  cerr << " Chi Square" << endl;
+//  classify::select_chi_square cs(documents);
+//  cerr << " Doc Freq" << endl;
+//  classify::select_doc_freq df(documents);
+//  cerr << " Correlation Coefficient" << endl;
+//  classify::select_corr_coeff cc(documents);
+//  cerr << " Odds Ratio" << endl;
+//  classify::select_odds_ratio od(documents);
+//  cerr << " sLDA" << endl;
+//  classify::select_slda slda(documents);
+   
+/* 
     vector<pair<TermID, double>> info_features = ig.select();
     vector<pair<TermID, double>> chi_features  = cs.select();
     vector<pair<TermID, double>> freq_features = df.select();
     vector<pair<TermID, double>> cc_features = cc.select();
     vector<pair<TermID, double>> od_features = od.select();
-    vector<pair<TermID, double>> slda_features = slda.select();
+//  vector<pair<TermID, double>> slda_features = slda.select();
+*/
 
+    auto info_features = ig.select_by_class();
+ // unordered_map<string, vector<pair<TermID, double>>> chi_features  = cs.select_by_class();
+ // unordered_map<string, vector<pair<TermID, double>>> freq_features = df.select_by_class();
+ // unordered_map<string, vector<pair<TermID, double>>> cc_features = cc.select_by_class();
+ // unordered_map<string, vector<pair<TermID, double>>> od_features = od.select_by_class();
+
+    /*
     vector<pair<string, vector<pair<TermID, double>>>> all_features = {
         {"info gain", info_features},
         {"chi square", chi_features},
         {"doc freq", freq_features},
         {"correlation coefficient", cc_features},
-        {"odds ratio", od_features},
-        {"slda", slda_features}
+        {"odds ratio", od_features}
+//      {"slda", slda_features}
     };
+    */
 
  // run_liblinear("liblinear-input.dat", path);
  // for(double d = 0.01; d < 1.0; d += .02)
@@ -120,7 +130,7 @@ int main(int argc, char* argv[])
  //     size_t num_features = d * all_features[0].size();
  //     cout << "Using " << num_features << " features (" << (d * 100) << "%)" << endl;
 
-        for(auto & fs: all_features)
+        for(auto & fs: info_features)
         {
             size_t num = 100;
             cout << "-------------------------------------------" << endl;

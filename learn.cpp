@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     }
 
     unordered_map<string, string> config = io::config_reader::read(argv[1]);
-    string prefix = "/home/sean/projects/senior-thesis-data/" + config["prefix"];
+    string prefix = config["prefix"] + config["dataset"];
     util::InvertibleMap<string, int> mapping; // for unique ids when printing liblinear data
 
     vector<index::Document> documents = index::Document::loadDocs(prefix + "/full-corpus.txt", prefix);
