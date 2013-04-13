@@ -37,7 +37,7 @@ class ngram_simple_tokenizer: public ngram_tokenizer
         void simple_tokenize(
                 io::Parser & parser,
                 index::Document & document,
-                const std::shared_ptr<std::unordered_map<index::TermID, unsigned int>> & docFreqs = nullptr
+                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs = nullptr
         );
 };
 

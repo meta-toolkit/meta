@@ -13,8 +13,6 @@ using std::deque;
 using std::string;
 using std::unordered_map;
 using std::unordered_set;
-
-using index::TermID;
 using index::Document;
 using io::Parser;
 

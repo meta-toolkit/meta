@@ -14,16 +14,14 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 using std::pair;
-using std::string;
 using index::Document;
-using index::TermID;
 
 feature_select::feature_select(const vector<Document> & docs):
     _term_space(unordered_set<TermID>()),
-    _class_space(unordered_set<string>()),
+    _class_space(unordered_set<ClassLabel>()),
     _num_terms(0),
     _pterm(unordered_map<TermID, double>()),
-    _pclass(unordered_map<string, double>())
+    _pclass(unordered_map<ClassLabel, double>())
 {
     set_term_space(docs);
     set_class_space(docs);
@@ -88,7 +86,7 @@ void feature_select::set_term_space(const vector<Document> & docs)
     }
 }
 
-double feature_select::term_and_class(TermID term, const string & label) const
+double feature_select::term_and_class(TermID term, const ClassLabel & label) const
 {
     double prob = _pseen.at(label).at(term);
     assert(prob <= 1.0 && prob >= 0.0); // debug
@@ -96,7 +94,7 @@ double feature_select::term_and_class(TermID term, const string & label) const
 }
 
 
-double feature_select::not_term_and_not_class(TermID term, const string & label) const
+double feature_select::not_term_and_not_class(TermID term, const ClassLabel & label) const
 {
     double prob = 1.0 - term_and_class(term, label)
                - not_term_and_class(term, label)
@@ -105,14 +103,14 @@ double feature_select::not_term_and_not_class(TermID term, const string & label)
     return prob;
 }
 
-double feature_select::term_and_not_class(TermID term, const string & label) const
+double feature_select::term_and_not_class(TermID term, const ClassLabel & label) const
 {
     double prob = _pterm.at(term) - term_and_class(term, label);
     assert(prob <= 1.0 && prob >= 0.0);
     return prob;
 }
 
-double feature_select::not_term_and_class(TermID term, const string & label) const
+double feature_select::not_term_and_class(TermID term, const ClassLabel & label) const
 {
     double prob = _pclass.at(label) - term_and_class(term, label);
     assert(prob <= 1.0 && prob >= 0.0);

@@ -11,10 +11,7 @@ namespace classify {
 using std::vector;
 using std::unordered_set;
 using std::unordered_map;
-using std::string;
 using std::pair;
-
-using index::TermID;
 using index::Document;
 
 select_simple::select_simple(const vector<Document> & docs):
@@ -36,9 +33,9 @@ vector<pair<TermID, double>> select_simple::select()
     return sort_terms(feature_weights);
 }
 
-unordered_map<string, vector<pair<TermID, double>>> select_simple::select_by_class()
+unordered_map<ClassLabel, vector<pair<TermID, double>>> select_simple::select_by_class()
 {
-    unordered_map<string, vector<pair<TermID, double>>> features;
+    unordered_map<ClassLabel, vector<pair<TermID, double>>> features;
 
     for(auto & c: _class_space)
     {

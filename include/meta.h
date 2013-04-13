@@ -5,6 +5,9 @@
  * namespace that is a logical choice for such documentation.
  */
 
+#include <stdint.h>
+#include <string>
+
 /**
  * The ModErn Text Analysis toolkit is a suite of natural language processing,
  * classification, information retreival, data mining, and other applications
@@ -12,6 +15,22 @@
  */
 namespace meta
 {
+    /**
+     * Represents the name of a class used in classification or feature
+     * selection.
+     */
+    typedef std::string ClassLabel;
+
+    /**
+     * Numbering system for string terms.
+     */
+    typedef uint16_t TermID;
+
+    /**
+     * Numbering system for Documents.
+     */
+    typedef uint16_t DocID;
+
     /**
      * Algorithms for feature selection, KNN search, and confusion
      * matrices.

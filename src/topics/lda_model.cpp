@@ -9,8 +9,6 @@ namespace meta {
 namespace topics {
 
 using index::Document;
-using index::TermID;
-using index::DocID;
 
 lda_model::lda_model( std::vector<Document> & docs, size_t num_topics )
         : docs_( docs ), tokenizer_{1},

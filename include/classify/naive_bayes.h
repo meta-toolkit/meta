@@ -8,6 +8,7 @@
 
 #include <unordered_map>
 #include "classify/classifier.h"
+#include "meta.h"
 
 namespace meta {
 namespace classify {
@@ -41,19 +42,19 @@ class naive_bayes: public classifier
          * @param doc The document to classify
          * @return the class it belongs to
          */
-        std::string classify(const index::Document & doc) const;
+        ClassLabel classify(const index::Document & doc) const;
 
     private:
 
         /**
          * Contains P(term|class) for each class.
          */
-        std::unordered_map<std::string, std::unordered_map<index::TermID, double>> _term_probs;
+        std::unordered_map<ClassLabel, std::unordered_map<TermID, double>> _term_probs;
 
         /**
          * Contains the number of documents in each class
          */
-        std::unordered_map<std::string, size_t> _class_counts;
+        std::unordered_map<ClassLabel, size_t> _class_counts;
 
         /** The number of training documents */
         size_t _total_docs;

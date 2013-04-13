@@ -12,15 +12,12 @@ using std::vector;
 using std::unordered_set;
 using std::unordered_map;
 using std::pair;
-using std::string;
-
 using index::Document;
-using index::TermID;
 
 select_info_gain::select_info_gain(const vector<Document> & docs):
     select_simple(docs) { /* nothing */ }
 
-double select_info_gain::calc_weight(TermID termID, const string & label) const
+double select_info_gain::calc_weight(TermID termID, const ClassLabel & label) const
 {
     double p_tc = term_and_class(termID, label);
     double p_ntnc = not_term_and_not_class(termID, label);

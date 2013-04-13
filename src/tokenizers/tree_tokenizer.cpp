@@ -17,9 +17,7 @@ using std::pair;
 using std::bind;
 using std::shared_ptr;
 using std::string;
-
 using index::Document;
-using index::TermID;
 
 tree_tokenizer::tree_tokenizer(TreeTokenizerType type):
     _type(type),

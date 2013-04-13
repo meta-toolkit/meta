@@ -13,7 +13,7 @@ ngram_char_tokenizer::ngram_char_tokenizer(size_t n):
     ngram_simple_tokenizer(n) { /* nothing */ }
 
 void ngram_char_tokenizer::tokenize(index::Document & document,
-        const std::shared_ptr<std::unordered_map<index::TermID, unsigned int>> & docFreq)
+        const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq)
 {
     io::Parser parser(document.getPath() + ".sen", " \n");
     simple_tokenize(parser, document, docFreq);

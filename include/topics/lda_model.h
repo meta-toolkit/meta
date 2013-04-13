@@ -72,7 +72,7 @@ class lda_model {
          * @param term The term we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        virtual double compute_term_topic_probability( index::TermID term, size_t topic ) const = 0;
+        virtual double compute_term_topic_probability( TermID term, size_t topic ) const = 0;
 
         /**
          * Computes the probability that the given topic is picked for the

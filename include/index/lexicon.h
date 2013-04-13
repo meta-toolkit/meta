@@ -14,6 +14,7 @@
 #include <utility>
 #include <sstream>
 
+#include "meta.h"
 #include "structs.h"
 #include "util/invertible_map.h"
 
@@ -106,7 +107,7 @@ class Lexicon
         /**
          * @return the TermID mapping for this lexicon
          */
-        const util::InvertibleMap<index::TermID, std::string> & getTermIDMapping() const;
+        const util::InvertibleMap<TermID, std::string> & getTermIDMapping() const;
 
     private:
 
@@ -123,10 +124,10 @@ class Lexicon
         std::unordered_map<DocID, unsigned int> _docLengths;
 
         /** maps TermIDs to the strings they represent */
-        util::InvertibleMap<index::TermID, std::string> _termMap;
+        util::InvertibleMap<TermID, std::string> _termMap;
 
         /** maps DocIDs to the document paths they represent */
-        util::InvertibleMap<index::DocID, std::string> _docMap;
+        util::InvertibleMap<DocID, std::string> _docMap;
 
         /**
          * Reads a lexicon from disk if it exists.

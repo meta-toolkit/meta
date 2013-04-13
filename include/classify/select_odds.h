@@ -35,7 +35,7 @@ class select_odds_ratio: public select_simple
          * @param label
          * @return the odds ratio score
          */
-        double calc_weight(index::TermID termID, const std::string & label) const;
+        double calc_weight(TermID termID, const ClassLabel & label) const;
 };
 
 }

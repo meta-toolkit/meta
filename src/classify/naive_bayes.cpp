@@ -16,13 +16,11 @@ using std::cerr;
 using std::endl;
 using std::unordered_map;
 using std::unordered_set;
-using std::string;
 using index::Document;
-using index::TermID;
 
 naive_bayes::naive_bayes(double alpha, double beta):
-    _term_probs(unordered_map<string, unordered_map<TermID, double>>()),
-    _class_counts(unordered_map<string, size_t>()),
+    _term_probs(unordered_map<ClassLabel, unordered_map<TermID, double>>()),
+    _class_counts(unordered_map<ClassLabel, size_t>()),
     _total_docs(0),
     _alpha(alpha),
     _beta(beta)
@@ -63,9 +61,9 @@ void naive_bayes::train(const vector<Document> & docs)
    
 }
 
-string naive_bayes::classify(const Document & doc) const
+ClassLabel naive_bayes::classify(const Document & doc) const
 {
-    string label;
+    ClassLabel label;
     double best = std::numeric_limits<double>::min();
 
     // calculate prob of test doc for each class

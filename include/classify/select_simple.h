@@ -9,6 +9,7 @@
 #include <utility>
 #include "classify/select.h"
 #include "index/document.h"
+#include "meta.h"
 
 namespace meta {
 namespace classify {
@@ -33,13 +34,13 @@ class select_simple: public feature_select
          * @param docs The documents to extract features from
          * @return a vector of TermIDs sorted by importance
          */
-        std::vector<std::pair<index::TermID, double>> select();
+        std::vector<std::pair<TermID, double>> select();
 
         /**
          * Performs feature selection on a collection of Documents, returning
          * each class's features sorted by usefulness.
          */
-        std::unordered_map<std::string, std::vector<std::pair<index::TermID, double>>>
+        std::unordered_map<ClassLabel, std::vector<std::pair<TermID, double>>>
             select_by_class();
 
     protected:
@@ -50,7 +51,7 @@ class select_simple: public feature_select
          * @param label
          * @return the score
          */
-        virtual double calc_weight(index::TermID termID, const std::string & label) const = 0;
+        virtual double calc_weight(TermID termID, const ClassLabel & label) const = 0;
 };
 
 }

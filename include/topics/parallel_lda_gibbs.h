@@ -60,11 +60,11 @@ class parallel_lda_gibbs : public lda_gibbs {
          */
         virtual void perform_iteration( bool init = false );
 
-        virtual void decrease_counts( size_t topic, index::TermID term, size_t doc );
+        virtual void decrease_counts( size_t topic, TermID term, size_t doc );
 
-        virtual void increase_counts( size_t topic, index::TermID term, size_t doc );
+        virtual void increase_counts( size_t topic, TermID term, size_t doc );
 
-        virtual double count_term( index::TermID term, size_t topic ) const;
+        virtual double count_term( TermID term, size_t topic ) const;
 
         virtual double count_topic( size_t topic ) const;
 
@@ -86,7 +86,7 @@ class parallel_lda_gibbs : public lda_gibbs {
          */
         std::unordered_map<
             std::thread::id, 
-            std::unordered_map<topic_id, std::unordered_map<index::TermID, ssize_t>>
+            std::unordered_map<topic_id, std::unordered_map<TermID, ssize_t>>
         > topic_term_diffs_;
 
         /**

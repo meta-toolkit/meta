@@ -13,11 +13,8 @@ namespace meta {
 namespace classify {
 
 using std::unordered_map;
-using std::string;
 using std::pair;
 using std::vector;
-
-using index::TermID;
 using index::Document;
 
 select_slda::select_slda(const vector<Document> & docs):
@@ -26,7 +23,7 @@ select_slda::select_slda(const vector<Document> & docs):
 vector<pair<TermID, double>> select_slda::select()
 {
     // create sLDA input data
-    util::InvertibleMap<string, int> mapping;
+    util::InvertibleMap<ClassLabel, int> mapping;
     std::ofstream slda_train_out("slda-train.dat");
     for(auto & d: _docs)
         slda_train_out << d.getLearningData(mapping, true /* using sLDA */);
@@ -35,7 +32,7 @@ vector<pair<TermID, double>> select_slda::select()
     // initialize sLDA framework
     corpus train_corpus;
     train_corpus.read_data("slda-train.dat");
-    string directory = "slda-output-est";
+    std::string directory = "slda-output-est";
     make_directory(directory);
     settings setting("slda-settings.txt");
 
@@ -69,7 +66,7 @@ vector<pair<TermID, double>> select_slda::select()
     return features;
 }
 
-std::unordered_map<std::string, std::vector<std::pair<index::TermID, double>>>
+std::unordered_map<ClassLabel, std::vector<std::pair<TermID, double>>>
 select_slda::select_by_class() {
     return {};
 }

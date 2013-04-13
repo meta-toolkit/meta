@@ -9,7 +9,6 @@ namespace meta {
 namespace tokenizers {
 
 using std::unordered_map;
-using std::string;
         
 multi_tokenizer::multi_tokenizer(const std::vector<std::shared_ptr<tokenizer>> & toks):
     _tokenizers(toks),
@@ -17,7 +16,7 @@ multi_tokenizer::multi_tokenizer(const std::vector<std::shared_ptr<tokenizer>> &
 { /* nothing */ }
 
 void multi_tokenizer::tokenize(index::Document & document,
-    const std::shared_ptr<unordered_map<index::TermID, unsigned int>> & docFreq)
+    const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
 {
     for(auto & tok: _tokenizers)
     {

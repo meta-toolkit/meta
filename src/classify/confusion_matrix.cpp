@@ -19,16 +19,16 @@ using std::pair;
 using std::make_pair;
 
 ConfusionMatrix::ConfusionMatrix():
-    _predictions(unordered_map<pair<string, string>, size_t,
+    _predictions(unordered_map<pair<ClassLabel, ClassLabel>, size_t,
             decltype(&ConfusionMatrix::stringPairHash)>(32, stringPairHash)),
-    _classes(unordered_set<string>()),
-    _counts(unordered_map<string, size_t>()),
+    _classes(unordered_set<ClassLabel>()),
+    _counts(unordered_map<ClassLabel, size_t>()),
     _total(0)
 { /* nothing */ }
 
-void ConfusionMatrix::add(const string & predicted, const string & actual)
+void ConfusionMatrix::add(const ClassLabel & predicted, const ClassLabel & actual)
 {
-    pair<string, string> prediction(predicted, actual);
+    pair<ClassLabel, ClassLabel> prediction(predicted, actual);
     _predictions[prediction] += 1;
     _counts[actual] += 1;
     _classes.insert(actual);
@@ -68,7 +68,7 @@ void ConfusionMatrix::print(std::ostream & out) const
     out << endl;
 }
 
-void ConfusionMatrix::print_class_stats(std::ostream & out, const string & label,
+void ConfusionMatrix::print_class_stats(std::ostream & out, const ClassLabel & label,
         double & prec, double & rec, double & f1) const
 {
     for(auto & cls: _classes)

@@ -10,15 +10,10 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "meta.h"
 
 namespace meta {
 namespace index {
-
-/** Numbering value for Terms in the index */
-typedef unsigned int TermID;
-
-/** Numbering value for Documents in the index */
-typedef unsigned int DocID;
 
 /**
  * Represents one term's document info.

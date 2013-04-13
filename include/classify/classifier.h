@@ -5,7 +5,6 @@
 #ifndef _CLASSIFIER_H_
 #define _CLASSIFIER_H_
 
-#include <string>
 #include <vector>
 #include "index/document.h"
 #include "classify/confusion_matrix.h"
@@ -27,7 +26,7 @@ class classifier
          * @param doc The document to classify
          * @return the class it belongs to
          */
-        virtual std::string classify(const index::Document & doc) const = 0;
+        virtual ClassLabel classify(const index::Document & doc) const = 0;
 
         /**
          * Creates a classification model based on training documents.

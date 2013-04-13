@@ -10,9 +10,6 @@
 namespace meta {
 namespace topics {
 
-using index::TermID;
-using index::DocID;
-
 lda_gibbs::lda_gibbs( std::vector<index::Document> & docs, size_t num_topics, 
                       double alpha, double beta ) :
         lda_model{ docs, num_topics }, alpha_{ alpha }, beta_{ beta } {

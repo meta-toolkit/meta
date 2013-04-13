@@ -27,7 +27,7 @@ class ngram_lex_tokenizer: public ngram_simple_tokenizer
          */
         virtual void tokenize(
                 index::Document & document,
-                const std::shared_ptr<std::unordered_map<index::TermID, unsigned int>> & docFreqs = nullptr
+                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreqs = nullptr
         );
 };
 

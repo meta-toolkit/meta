@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include "index/index.h"
+#include "meta.h"
 
 namespace meta {
 namespace classify {
@@ -26,8 +27,9 @@ namespace knn
      * @param query - the query to run
      * @param index - the index to perform the KNN on
      * @param k - the value of k in KNN
+     * @return the class label assigned for the query
      */
-    std::string classify(index::Document & query, std::shared_ptr<index::Index> index, size_t k);
+    ClassLabel classify(index::Document & query, std::shared_ptr<index::Index> index, size_t k);
 
     /**
      * Runs a KNN classifier on multiple indexes.
@@ -35,8 +37,9 @@ namespace knn
      * @param indexes - the indexes to perform the KNN search on
      * @param weights - ensemble linear interpolation weights
      * @param k - the value of k in kNN
+     * @return the class label assigned for the query
      */
-    std::string classify(index::Document & query,
+    ClassLabel classify(index::Document & query,
             std::vector<std::shared_ptr<index::Index>> indexes,
             std::vector<double> weights, size_t k);
 
@@ -50,8 +53,7 @@ namespace knn
          * @param scores - the scores to normalize
          * @return the normalized scores
          */
-        std::unordered_map<std::string, double>
-        normalize(const std::multimap<double, std::string> & scores);
+        std::unordered_map<ClassLabel, double> normalize(const std::multimap<double, ClassLabel> & scores);
 
         /**
          * Finds the most common occurrence in the top k results.
@@ -60,7 +62,7 @@ namespace knn
          * @param k - k value in kNN
          * @return the class label for the most common document
          */
-        std::string findNN(const std::multimap<double, std::string> & rankings, size_t k);
+        ClassLabel findNN(const std::multimap<double, ClassLabel> & rankings, size_t k);
 
         /**
          * Used for tiebreaking. If there are the same number of a certain class, prefer the class
@@ -70,9 +72,9 @@ namespace knn
          * @param orderSeen
          * @return if the class to check should be ranked about the current best
          */
-        bool isHigherRank(const std::string & check,
-                const std::string & best,
-                const std::vector<std::string> & orderSeen);
+        bool isHigherRank(const ClassLabel & check,
+                const ClassLabel & best,
+                const std::vector<ClassLabel> & orderSeen);
     }
 
     /**

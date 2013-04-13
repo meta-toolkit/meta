@@ -16,9 +16,7 @@ using std::cout;
 using std::endl;
 using std::ofstream;
 using std::unordered_map;
-
 using util::InvertibleMap;
-using index::TermID;
 using index::Document;
 
 tokenizer::tokenizer():

@@ -30,10 +30,14 @@ class select_slda: public feature_select
          * like the other feature selection algorithms.
          * @return a vector of TermIDs sorted by importance
          */
-        std::vector<std::pair<index::TermID, double>> select();
+        std::vector<std::pair<TermID, double>> select();
 
-        std::unordered_map<std::string, std::vector<std::pair<index::TermID, double>>>
-        select_by_class();
+        /**
+         * Performs feature selection on a collection of Documents, returning
+         * each class's features sorted by usefulness.
+         */
+        std::unordered_map<ClassLabel, std::vector<std::pair<TermID, double>>>
+            select_by_class();
 
     private:
 
