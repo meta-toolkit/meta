@@ -69,5 +69,11 @@ vector<pair<TermID, double>> select_slda::select()
     return features;
 }
 
+std::unordered_map<std::string, std::vector<std::pair<index::TermID, double>>>
+select_slda::select_by_class() {
+    return {};
+}
+
+
 }
 }

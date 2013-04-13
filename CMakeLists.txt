@@ -4,8 +4,12 @@ project( meta )
 option( USE_LIBCXX "Use libc++ for the C++ standard library" ON )
 
 include_directories( "include/" )
+include_directories( "lib/slda/" )
 
-find_package( Threads )
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}" )
+
+find_package( Threads REQUIRED )
+find_package( GSL REQUIRED )
 
 if( UNIX )
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
@@ -27,6 +31,10 @@ add_library( meta-classify
              src/classify/knn.cpp
              src/classify/select_corr.cpp
              src/classify/select_odds.cpp
+             lib/slda/corpus.cpp
+             lib/slda/slda.cpp
+             lib/slda/opt.cpp
+             lib/slda/utils.cpp
 )
 
 add_library( meta-index
@@ -107,6 +115,7 @@ target_link_libraries( feature-select
                        meta-tokenizers
                        meta-stemmers
                        meta-classify
+                       ${GSL_LIBRARIES}
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 

@@ -32,6 +32,9 @@ class select_slda: public feature_select
          */
         std::vector<std::pair<index::TermID, double>> select();
 
+        std::unordered_map<std::string, std::vector<std::pair<index::TermID, double>>>
+        select_by_class();
+
     private:
 
         const std::vector<index::Document> & _docs;
