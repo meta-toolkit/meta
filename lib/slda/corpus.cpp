@@ -56,8 +56,9 @@ void corpus::read_data(const string & data_filename)
     {
         std::stringstream stream(line);
         document* doc = new document();
-        
+ 
         stream >> doc->label;
+
         if(doc->label >= num_classes)
             num_classes = doc->label + 1;
 
@@ -82,7 +83,7 @@ void corpus::read_data(const string & data_filename)
     
     infile.close();
 
-    cout << docs.size() << " documents, "
+    cerr << docs.size() << " documents, "
          << size_vocab << " terms, "
          << num_total_words << " total words, "
          << num_classes << " classes" << endl;
