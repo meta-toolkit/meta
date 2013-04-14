@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
    
     classify::naive_bayes nb(0.000001, 0.000001);
     nb.train(train_docs);
-    classify::ConfusionMatrix matrix = nb.test(test_docs);
+    classify::confusion_matrix matrix = nb.test(test_docs);
     matrix.print();
     matrix.print_stats();
 

@@ -18,15 +18,15 @@ using std::string;
 using std::pair;
 using std::make_pair;
 
-ConfusionMatrix::ConfusionMatrix():
+confusion_matrix::confusion_matrix():
     _predictions(unordered_map<pair<class_label, class_label>, size_t,
-            decltype(&ConfusionMatrix::stringPairHash)>(32, stringPairHash)),
+            decltype(&confusion_matrix::string_pair_hash)>(32, string_pair_hash)),
     _classes(unordered_set<class_label>()),
     _counts(unordered_map<class_label, size_t>()),
     _total(0)
 { /* nothing */ }
 
-void ConfusionMatrix::add(const class_label & predicted, const class_label & actual)
+void confusion_matrix::add(const class_label & predicted, const class_label & actual)
 {
     pair<class_label, class_label> prediction(predicted, actual);
     _predictions[prediction] += 1;
@@ -35,7 +35,7 @@ void ConfusionMatrix::add(const class_label & predicted, const class_label & act
     ++_total;
 }
 
-void ConfusionMatrix::print(std::ostream & out) const
+void confusion_matrix::print(std::ostream & out) const
 {
     size_t w = 12;
     out << endl << setw(w) << "";
@@ -68,7 +68,7 @@ void ConfusionMatrix::print(std::ostream & out) const
     out << endl;
 }
 
-void ConfusionMatrix::print_class_stats(std::ostream & out, const class_label & label,
+void confusion_matrix::print_class_stats(std::ostream & out, const class_label & label,
         double & prec, double & rec, double & f1) const
 {
     for(auto & cls: _classes)
@@ -96,7 +96,7 @@ void ConfusionMatrix::print_class_stats(std::ostream & out, const class_label & 
         << endl;
 }
 
-void ConfusionMatrix::print_stats(std::ostream & out) const
+void confusion_matrix::print_stats(std::ostream & out) const
 {
     double t_prec = 0.0;
     double t_rec = 0.0;
@@ -134,7 +134,7 @@ void ConfusionMatrix::print_stats(std::ostream & out) const
         << t_corr / _total << endl;
 }
 
-size_t ConfusionMatrix::stringPairHash(const std::pair<std::string, std::string> & str_pair)
+size_t confusion_matrix::string_pair_hash(const std::pair<std::string, std::string> & str_pair)
 {
     return std::hash<string>()(str_pair.first + str_pair.second);
 }

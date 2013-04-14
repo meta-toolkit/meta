@@ -19,14 +19,14 @@ namespace classify {
 /**
  * Allows interpretation of classification errors.
  */
-class ConfusionMatrix
+class confusion_matrix
 {
     public:
         
         /**
          * Creates an empty confusion matrix.
          */
-        ConfusionMatrix();
+        confusion_matrix();
 
         /**
          * @param predicted
@@ -62,11 +62,11 @@ class ConfusionMatrix
          * @param str_pair The pair of strings
          * @return the hash
          */
-        static size_t stringPairHash(const std::pair<std::string, std::string> & strPair);
+        static size_t string_pair_hash(const std::pair<std::string, std::string> & strPair);
 
         /** maps predicted class to actual class frequencies */
         std::unordered_map<std::pair<class_label, class_label>, size_t,
-            decltype(&ConfusionMatrix::stringPairHash)> _predictions;
+            decltype(&confusion_matrix::string_pair_hash)> _predictions;
 
         /** keeps track of the number of classes */
         std::unordered_set<class_label> _classes;
