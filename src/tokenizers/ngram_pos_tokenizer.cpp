@@ -13,7 +13,7 @@ ngram_pos_tokenizer::ngram_pos_tokenizer(size_t n):
     ngram_simple_tokenizer(n) { /* nothing */ }
 
 void ngram_pos_tokenizer::tokenize(index::Document & document,
-        const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq)
+        const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq)
 {
     io::Parser parser(document.getPath() + ".pos", " \n");
     simple_tokenize(parser, document, docFreq);

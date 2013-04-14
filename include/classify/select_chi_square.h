@@ -36,7 +36,7 @@ class select_chi_square: public select_simple
          * @param label
          * @return the chi-square score
          */
-        double calc_weight(TermID termID, const ClassLabel & label) const;
+        double calc_weight(term_id termID, const class_label & label) const;
 };
 
 }

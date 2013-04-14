@@ -20,11 +20,11 @@ using util::InvertibleMap;
 using index::Document;
 
 tokenizer::tokenizer():
-    _term_map(InvertibleMap<TermID, string>()),
+    _term_map(InvertibleMap<term_id, string>()),
     _current_term_id(0)
 { /* nothing */ }
 
-TermID tokenizer::mapping(const string & term)
+term_id tokenizer::mapping(const string & term)
 {
     if(!_term_map.containsValue(term))
     {
@@ -33,12 +33,12 @@ TermID tokenizer::mapping(const string & term)
     }
     else
     {
-        TermID termID = _term_map.getKeyByValue(term);
+        term_id termID = _term_map.getKeyByValue(term);
         return termID;
     }
 }
 
-void tokenizer::set_term_id_mapping(const InvertibleMap<TermID, string> & mapping)
+void tokenizer::set_term_id_mapping(const InvertibleMap<term_id, string> & mapping)
 {
     _term_map = mapping;
     _current_term_id = _term_map.size();
@@ -49,12 +49,12 @@ void tokenizer::save_term_id_mapping(const string & filename) const
     _term_map.saveMap(filename);
 }
 
-const InvertibleMap<TermID, std::string> & tokenizer::term_id_mapping() const
+const InvertibleMap<term_id, std::string> & tokenizer::term_id_mapping() const
 {
     return _term_map;
 }
 
-string tokenizer::label(TermID termID) const
+string tokenizer::label(term_id termID) const
 {
     return _term_map.getValueByKey(termID);
 }
@@ -70,7 +70,7 @@ void tokenizer::set_max_term_id(size_t start)
     _current_term_id = start;
 }
 
-TermID tokenizer::max_term_id() const
+term_id tokenizer::max_term_id() const
 {
     return _current_term_id;
 }

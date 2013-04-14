@@ -18,7 +18,7 @@ using index::Document;
 select_doc_freq::select_doc_freq(const vector<Document> & docs):
     select_simple(docs) { /* nothing */ }
 
-double select_doc_freq::calc_weight(TermID termID, const ClassLabel & label) const
+double select_doc_freq::calc_weight(term_id termID, const class_label & label) const
 {
     return term_and_class(termID, label);
 }

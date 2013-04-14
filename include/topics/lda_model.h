@@ -45,7 +45,7 @@ class lda_model {
         void save_topic_term_distributions( const std::string & filename ) const;
         
         /**
-         * Saves the TermID --> String mapping to the given file.
+         * Saves the term_id --> String mapping to the given file.
          *
          * @param filename The file to save the term mapping to.
          */
@@ -72,7 +72,7 @@ class lda_model {
          * @param term The term we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        virtual double compute_term_topic_probability( TermID term, size_t topic ) const = 0;
+        virtual double compute_term_topic_probability( term_id term, size_t topic ) const = 0;
 
         /**
          * Computes the probability that the given topic is picked for the

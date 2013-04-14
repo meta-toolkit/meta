@@ -30,8 +30,8 @@ using tokenizers::tokenizer;
 Postings::Postings(const string & postingsFile):
     //_reader(postingsFile),
     _postingsFilename(postingsFile),
-    _docMap(InvertibleMap<DocID, string>()),
-    _currentDocID(0)
+    _docMap(InvertibleMap<doc_id, string>()),
+    _currentdoc_id(0)
 { /* nothing */ }
 
 vector<PostingData> Postings::getDocs(const TermData & termData) const
@@ -81,19 +81,19 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize,
     size_t chunkNum = 0;
     size_t maxSize = chunkMBSize * 4 * 1024 * 1024;
     vector<string> chunkNames;
-    map<TermID, vector<PostingData>> terms;
+    map<term_id, vector<PostingData>> terms;
 
     // iterate over documents, writing data to disk when we reach chunkMBSize
     for(auto & doc: documents)
     {
         tokenizer->tokenize(doc);
-        DocID docID = getDocID(doc.getPath());
+        doc_id docID = getdoc_id(doc.getPath());
         cerr << " -> tokenizing " << doc.getName() << " (docid " << docID << ")" << endl;
-        unordered_map<TermID, unsigned int> freqs = doc.getFrequencies();
+        unordered_map<term_id, unsigned int> freqs = doc.getFrequencies();
         for(auto & freq: freqs)
             terms[freq.first].push_back(PostingData(docID, freq.second));
 
-        if(terms.size() * (sizeof(TermID) + sizeof(PostingData)) >= maxSize)
+        if(terms.size() * (sizeof(term_id) + sizeof(PostingData)) >= maxSize)
             writeChunk(terms, chunkNum++);
     }
 
@@ -103,18 +103,18 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize,
     return chunkNum;
 }
 
-DocID Postings::getDocID(const string & path)
+doc_id Postings::getdoc_id(const string & path)
 {
     if(_docMap.containsValue(path))
         return _docMap.getKeyByValue(path);
     else
     {
-        _docMap.insert(_currentDocID, path);
-        return _currentDocID++;
+        _docMap.insert(_currentdoc_id, path);
+        return _currentdoc_id++;
     }
 }
 
-void Postings::writeChunk(map<TermID, vector<PostingData>> & terms, size_t chunkNum) const
+void Postings::writeChunk(map<term_id, vector<PostingData>> & terms, size_t chunkNum) const
 {
     std::stringstream ss;
     ss << chunkNum;
@@ -164,7 +164,7 @@ void Postings::createPostingsFile(size_t numChunks, Lexicon & lexicon)
     postingsFile.close();
 }
 
-void Postings::saveDocIDMapping(const string & filename) const
+void Postings::savedoc_idMapping(const string & filename) const
 {
     _docMap.saveMap(filename);
 }
@@ -183,7 +183,7 @@ void Postings::saveDocLengths(const vector<Document> & documents, const string &
     if(outfile.good())
     {
         for(auto & doc: documents)
-            outfile << getDocID(doc.getPath()) << " " << doc.getLength() << endl;
+            outfile << getdoc_id(doc.getPath()) << " " << doc.getLength() << endl;
     }
     else
         throw Index::index_exception("[Postings]: error saving document lengths");

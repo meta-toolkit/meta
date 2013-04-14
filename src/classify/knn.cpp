@@ -21,27 +21,27 @@ using namespace knn::internal;
 using index::Index;
 using index::Document;
 
-ClassLabel knn::classify(Document & query, shared_ptr<Index> index, size_t k)
+class_label knn::classify(Document & query, shared_ptr<Index> index, size_t k)
 {
-    multimap<double, ClassLabel> ranking = index->search(query);
+    multimap<double, class_label> ranking = index->search(query);
     return findNN(ranking, k);
 }
 
-ClassLabel knn::internal::findNN(const multimap<double, ClassLabel> & ranking, size_t k)
+class_label knn::internal::findNN(const multimap<double, class_label> & ranking, size_t k)
 {
-    unordered_map<ClassLabel, size_t> counts;
+    unordered_map<class_label, size_t> counts;
     size_t numResults = 0;
-    vector<ClassLabel> orderSeen;
+    vector<class_label> orderSeen;
     for(auto result = ranking.rbegin(); result != ranking.rend() && numResults++ != k; ++result)
     {
         size_t space = result->second.find_first_of(" ") + 1;
-        ClassLabel category = result->second.substr(space, result->second.size() - space);
+        class_label category = result->second.substr(space, result->second.size() - space);
         ++counts[category];
         if(std::find(orderSeen.begin(), orderSeen.end(), category) == orderSeen.end())
             orderSeen.push_back(category);
     }
 
-    ClassLabel best = "[no results]";
+    class_label best = "[no results]";
     size_t high = 0;
     for(auto & count: counts)
     {
@@ -61,11 +61,11 @@ ClassLabel knn::internal::findNN(const multimap<double, ClassLabel> & ranking, s
     return best;
 }
 
-bool knn::internal::isHigherRank(const ClassLabel & check, const ClassLabel & best,
-        const vector<ClassLabel> & orderSeen)
+bool knn::internal::isHigherRank(const class_label & check, const class_label & best,
+        const vector<class_label> & orderSeen)
 {
-    ClassLabel catCheck = check.substr(check.find_first_of(" ") + 1);
-    ClassLabel catBest = best.substr(best.find_first_of(" ") + 1);
+    class_label catCheck = check.substr(check.find_first_of(" ") + 1);
+    class_label catBest = best.substr(best.find_first_of(" ") + 1);
     for(auto & doc: orderSeen)
     {
         if(doc == catCheck)
@@ -76,7 +76,7 @@ bool knn::internal::isHigherRank(const ClassLabel & check, const ClassLabel & be
     return false;
 }
 
-ClassLabel knn::classify(Document & query, vector<shared_ptr<Index>> indexes, vector<double> weights, size_t k)
+class_label knn::classify(Document & query, vector<shared_ptr<Index>> indexes, vector<double> weights, size_t k)
 {
     // make sure weights sum to 1.0
     double sum = 0.0;
@@ -87,18 +87,18 @@ ClassLabel knn::classify(Document & query, vector<shared_ptr<Index>> indexes, ve
         throw knn_exception("weights in ensemble do not add to 1.0");
 
     // create a vector of normalized results for each index
-    vector<unordered_map<ClassLabel, double>> results;
+    vector<unordered_map<class_label, double>> results;
     for(auto & ptr: indexes)
     {
         Document tempQuery(query);
-        multimap<double, ClassLabel> result = ptr->search(tempQuery);
-        unordered_map<ClassLabel, double> normalized = normalize(result);
+        multimap<double, class_label> result = ptr->search(tempQuery);
+        unordered_map<class_label, double> normalized = normalize(result);
         results.push_back(normalized);
     }
 
     // iterate over the elements in the first hashtable (they should all be the same),
     //   and add the interpolated values into the final ranking
-    multimap<double, ClassLabel> ranking;
+    multimap<double, class_label> ranking;
     for(auto & rank: results[0])
     {
         double score = 0.0;
@@ -111,10 +111,10 @@ ClassLabel knn::classify(Document & query, vector<shared_ptr<Index>> indexes, ve
     return findNN(ranking, k);
 }
 
-unordered_map<ClassLabel, double>
-knn::internal::normalize(const multimap<double, ClassLabel> & scores)
+unordered_map<class_label, double>
+knn::internal::normalize(const multimap<double, class_label> & scores)
 {
-    unordered_map<ClassLabel, double> normalized;
+    unordered_map<class_label, double> normalized;
     if(scores.empty())
         return normalized;
 

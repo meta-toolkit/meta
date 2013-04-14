@@ -38,7 +38,7 @@ class tree_tokenizer: public tokenizer
          * @param docFreq - optional parameter to store IDF values in
          */
         void tokenize(index::Document & document,
-                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq = nullptr);
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq = nullptr);
 
     private:
 
@@ -46,7 +46,7 @@ class tree_tokenizer: public tokenizer
         TreeTokenizerType _type;
 
         /** Tree tokenizer function type */
-        typedef std::function<void(index::Document &, const ParseTree &, std::shared_ptr<std::unordered_map<TermID, unsigned int>>)> TokenizerFunction;
+        typedef std::function<void(index::Document &, const ParseTree &, std::shared_ptr<std::unordered_map<term_id, unsigned int>>)> TokenizerFunction;
 
         /** Hashes specific tree tokenizer types to tokenizer functions */
         std::unordered_map< TreeTokenizerType, TokenizerFunction, std::hash<int> > _tokenizer_types;
@@ -60,7 +60,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void depthTokenize(index::Document & document, const ParseTree & tree,
-                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq);
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
          * Counts occurrences of subtrees in this document's ParseTrees.
@@ -70,7 +70,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void subtreeTokenize(index::Document & document, const ParseTree & tree,
-                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq);
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
          * Counts occurrences of leaf and interior node labels.
@@ -80,7 +80,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void tagTokenize(index::Document & document, const ParseTree & tree,
-                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq);
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
          * Keeps track of the branching factor for this document's ParseTrees.
@@ -90,7 +90,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void branchTokenize(index::Document & document, const ParseTree & tree,
-                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq);
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
          * Ignores node labels and only tokenizes the tree structure.
@@ -100,7 +100,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void skeletonTokenize(index::Document & document, const ParseTree & tree,
-                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq);
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
          * Keeps track of one node's tag and the skeleton structure beneath it.
@@ -110,7 +110,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void semiSkeletonTokenize(index::Document & document, const ParseTree & tree,
-                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq);
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
          * Runs multiple tokenizers at once.
@@ -120,7 +120,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void multiTokenize(index::Document & document, const ParseTree & tree,
-                const std::shared_ptr<std::unordered_map<TermID, unsigned int>> & docFreq);
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 };
 
 }

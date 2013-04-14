@@ -22,7 +22,7 @@ using tokenizers::tokenizer;
 RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<tokenizer> tokenizer):
     _tokenizer(tokenizer),
     _documents(vector<Document>()),
-    _docFreqs(new unordered_map<TermID, unsigned int>),
+    _docFreqs(new unordered_map<term_id, unsigned int>),
     _avgDocLength(0)
 {
     cout << "[RAMIndex]: creating index from " << indexFiles.size() << " documents" << endl;
@@ -46,7 +46,7 @@ RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<tokenizer>
 RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<tokenizer> tokenizer):
     _tokenizer(tokenizer),
     _documents(indexDocs),
-    _docFreqs(new unordered_map<TermID, unsigned int>),
+    _docFreqs(new unordered_map<term_id, unsigned int>),
     _avgDocLength(0)
 {
     cout << "[RAMIndex]: creating index from " << indexDocs.size() << " documents" << endl;
@@ -68,7 +68,7 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<tokenizer
     _avgDocLength /= _documents.size();
 }
 
-void RAMIndex::combineMap(const unordered_map<TermID, unsigned int> & newFreqs)
+void RAMIndex::combineMap(const unordered_map<term_id, unsigned int> & newFreqs)
 {
     for(auto & freq: *_docFreqs) // TODO bug?
         (*_docFreqs)[freq.first] += freq.second;
@@ -87,7 +87,7 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
     double docLength = document.getLength();
     double numDocs = _documents.size();
 
-    const unordered_map<TermID, unsigned int> frequencies = query.getFrequencies();
+    const unordered_map<term_id, unsigned int> frequencies = query.getFrequencies();
     for(auto & term: frequencies)
     {
         auto df = _docFreqs->find(term.first);

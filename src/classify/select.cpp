@@ -17,11 +17,11 @@ using std::pair;
 using index::Document;
 
 feature_select::feature_select(const vector<Document> & docs):
-    _term_space(unordered_set<TermID>()),
-    _class_space(unordered_set<ClassLabel>()),
+    _term_space(unordered_set<term_id>()),
+    _class_space(unordered_set<class_label>()),
     _num_terms(0),
-    _pterm(unordered_map<TermID, double>()),
-    _pclass(unordered_map<ClassLabel, double>())
+    _pterm(unordered_map<term_id, double>()),
+    _pclass(unordered_map<class_label, double>())
 {
     set_term_space(docs);
     set_class_space(docs);
@@ -53,11 +53,11 @@ void feature_select::set_pseen(const vector<Document> & docs)
     }
 }
 
-vector<pair<TermID, double>> feature_select::sort_terms(unordered_map<TermID, double> & weights) const
+vector<pair<term_id, double>> feature_select::sort_terms(unordered_map<term_id, double> & weights) const
 {
-    vector<pair<TermID, double>> ret(weights.begin(), weights.end());
+    vector<pair<term_id, double>> ret(weights.begin(), weights.end());
     std::sort(ret.begin(), ret.end(),
-        [](const pair<TermID, double> & a, const pair<TermID, double> & b) {
+        [](const pair<term_id, double> & a, const pair<term_id, double> & b) {
             return a.second > b.second;
         }
     );
@@ -86,7 +86,7 @@ void feature_select::set_term_space(const vector<Document> & docs)
     }
 }
 
-double feature_select::term_and_class(TermID term, const ClassLabel & label) const
+double feature_select::term_and_class(term_id term, const class_label & label) const
 {
     double prob = _pseen.at(label).at(term);
     assert(prob <= 1.0 && prob >= 0.0); // debug
@@ -94,7 +94,7 @@ double feature_select::term_and_class(TermID term, const ClassLabel & label) con
 }
 
 
-double feature_select::not_term_and_not_class(TermID term, const ClassLabel & label) const
+double feature_select::not_term_and_not_class(term_id term, const class_label & label) const
 {
     double prob = 1.0 - term_and_class(term, label)
                - not_term_and_class(term, label)
@@ -103,14 +103,14 @@ double feature_select::not_term_and_not_class(TermID term, const ClassLabel & la
     return prob;
 }
 
-double feature_select::term_and_not_class(TermID term, const ClassLabel & label) const
+double feature_select::term_and_not_class(term_id term, const class_label & label) const
 {
     double prob = _pterm.at(term) - term_and_class(term, label);
     assert(prob <= 1.0 && prob >= 0.0);
     return prob;
 }
 
-double feature_select::not_term_and_class(TermID term, const ClassLabel & label) const
+double feature_select::not_term_and_class(term_id term, const class_label & label) const
 {
     double prob = _pclass.at(label) - term_and_class(term, label);
     assert(prob <= 1.0 && prob >= 0.0);

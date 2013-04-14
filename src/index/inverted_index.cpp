@@ -24,7 +24,7 @@ InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postings
     _tokenizer(tokenizer)
 {
     if(!_lexicon.isEmpty())
-        _tokenizer->set_term_id_mapping(_lexicon.getTermIDMapping());
+        _tokenizer->set_term_id_mapping(_lexicon.getterm_idMapping());
 }
 
 multimap<double, string> InvertedIndex::search(Document & query) const
@@ -37,19 +37,19 @@ multimap<double, string> InvertedIndex::search(Document & query) const
     double k3 = 500;
     double numDocs = _lexicon.getNumDocs();
     double avgDL = _lexicon.getAvgDocLength();
-    unordered_map<DocID, double> scores;
+    unordered_map<doc_id, double> scores;
 
     _tokenizer->tokenize(query);
-    const unordered_map<TermID, unsigned int> freqs = query.getFrequencies();
+    const unordered_map<term_id, unsigned int> freqs = query.getFrequencies();
 
     for(auto & queryTerm: freqs)
     {
-        TermID queryTermID = queryTerm.first;
-        if(!_lexicon.containsTermID(queryTermID))
+        term_id queryterm_id = queryTerm.first;
+        if(!_lexicon.containsterm_id(queryterm_id))
             continue;
 
         size_t queryTermFreq = queryTerm.second;
-        TermData termData = _lexicon.getTermInfo(queryTermID);
+        TermData termData = _lexicon.getTermInfo(queryterm_id);
         vector<PostingData> docList = _postings.getDocs(termData);
 
         for(auto & doc: docList)
@@ -78,7 +78,7 @@ void InvertedIndex::indexDocs(vector<Document> & documents, size_t chunkMBSize)
 
     size_t numChunks = _postings.createChunks(documents, chunkMBSize, _tokenizer);
     _tokenizer->save_term_id_mapping("termid.mapping");
-    _postings.saveDocIDMapping("docid.mapping");
+    _postings.savedoc_idMapping("docid.mapping");
     _postings.createPostingsFile(numChunks, _lexicon);
     _postings.saveDocLengths(documents, "docs.lengths");
     _lexicon.save("docs.lengths", "termid.mapping", "docid.mapping");

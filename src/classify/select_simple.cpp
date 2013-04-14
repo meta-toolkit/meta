@@ -17,9 +17,9 @@ using index::Document;
 select_simple::select_simple(const vector<Document> & docs):
     feature_select(docs) { /* nothing */ }
 
-vector<pair<TermID, double>> select_simple::select()
+vector<pair<term_id, double>> select_simple::select()
 {
-    unordered_map<TermID, double> feature_weights;
+    unordered_map<term_id, double> feature_weights;
     for(auto & c: _class_space)
     {
         for(auto & t: _term_space)
@@ -33,13 +33,13 @@ vector<pair<TermID, double>> select_simple::select()
     return sort_terms(feature_weights);
 }
 
-unordered_map<ClassLabel, vector<pair<TermID, double>>> select_simple::select_by_class()
+unordered_map<class_label, vector<pair<term_id, double>>> select_simple::select_by_class()
 {
-    unordered_map<ClassLabel, vector<pair<TermID, double>>> features;
+    unordered_map<class_label, vector<pair<term_id, double>>> features;
 
     for(auto & c: _class_space)
     {
-        unordered_map<TermID, double> weights;
+        unordered_map<term_id, double> weights;
         for(auto & t: _term_space)
             weights[t] = calc_weight(t, c);
 

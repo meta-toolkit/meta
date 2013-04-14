@@ -27,7 +27,7 @@ IndexEntry::IndexEntry(const string & str):
 
     for(size_t i = 1; i < items.size(); i += 2)
     {
-        DocID docID;
+        doc_id docID;
         unsigned int freq;
         istringstream(items[i]) >> docID;
         istringstream(items[i + 1]) >> freq;

@@ -19,8 +19,8 @@ using std::unordered_set;
 using index::Document;
 
 naive_bayes::naive_bayes(double alpha, double beta):
-    _term_probs(unordered_map<ClassLabel, unordered_map<TermID, double>>()),
-    _class_counts(unordered_map<ClassLabel, size_t>()),
+    _term_probs(unordered_map<class_label, unordered_map<term_id, double>>()),
+    _class_counts(unordered_map<class_label, size_t>()),
     _total_docs(0),
     _alpha(alpha),
     _beta(beta)
@@ -32,7 +32,7 @@ void naive_bayes::train(const vector<Document> & docs)
 
     // discover all seen features
     cerr << "  calculating feature space..." << endl;
-    unordered_set<TermID> term_space;
+    unordered_set<term_id> term_space;
     for(auto & d: docs)
     {
         ++_total_docs;
@@ -61,9 +61,9 @@ void naive_bayes::train(const vector<Document> & docs)
    
 }
 
-ClassLabel naive_bayes::classify(const Document & doc) const
+class_label naive_bayes::classify(const Document & doc) const
 {
-    ClassLabel label;
+    class_label label;
     double best = std::numeric_limits<double>::min();
 
     // calculate prob of test doc for each class

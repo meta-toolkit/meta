@@ -32,15 +32,15 @@ class select_simple: public feature_select
          * Calculates important features via Chi-square statistics (independence of
          * two random variables).
          * @param docs The documents to extract features from
-         * @return a vector of TermIDs sorted by importance
+         * @return a vector of term_ids sorted by importance
          */
-        std::vector<std::pair<TermID, double>> select();
+        std::vector<std::pair<term_id, double>> select();
 
         /**
          * Performs feature selection on a collection of Documents, returning
          * each class's features sorted by usefulness.
          */
-        std::unordered_map<ClassLabel, std::vector<std::pair<TermID, double>>>
+        std::unordered_map<class_label, std::vector<std::pair<term_id, double>>>
             select_by_class();
 
     protected:
@@ -51,7 +51,7 @@ class select_simple: public feature_select
          * @param label
          * @return the score
          */
-        virtual double calc_weight(TermID termID, const ClassLabel & label) const = 0;
+        virtual double calc_weight(term_id termID, const class_label & label) const = 0;
 };
 
 }

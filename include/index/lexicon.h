@@ -41,7 +41,7 @@ class Lexicon
         /**
          * @return all lexicon information about a specific term.
          */
-        TermData getTermInfo(TermID termID) const;
+        TermData getTermInfo(term_id termID) const;
 
         /**
          * Writes the lexicon to disk.
@@ -54,13 +54,13 @@ class Lexicon
         /**
          * Adds a new term to the lexicon.
          */
-        void addTerm(TermID term, TermData termData);
+        void addTerm(term_id term, TermData termData);
 
         /**
          * @param docID - the id of the document to get the length of
          * @return the length of the parameter document
          */
-        unsigned int getDocLength(DocID docID) const;
+        unsigned int getDocLength(doc_id docID) const;
 
         /**
          * @return the number of documents in this collection
@@ -75,27 +75,27 @@ class Lexicon
         /**
          * @return the string term associated with the termID
          */
-        std::string getTerm(TermID termID) const;
+        std::string getTerm(term_id termID) const;
 
         /**
-         * @return the TermID associated with the given term
+         * @return the term_id associated with the given term
          */
-        TermID getTermID(std::string term) const;
+        term_id getterm_id(std::string term) const;
         
         /**
          * @return whether this lexicon has information on the specified termID
          */
-        bool containsTermID(TermID termID) const;
+        bool containsterm_id(term_id termID) const;
 
         /**
          * @return the string document name associated with the termID
          */
-        std::string getDoc(DocID docID) const;
+        std::string getDoc(doc_id docID) const;
         
         /**
-         * @return the DocID of the given document name
+         * @return the doc_id of the given document name
          */
-        DocID getDocID(std::string docName) const;
+        doc_id getdoc_id(std::string docName) const;
 
         /**
          * Reads document lengths from disk into memory.
@@ -105,9 +105,9 @@ class Lexicon
         void setDocLengths(const std::string & filename);
 
         /**
-         * @return the TermID mapping for this lexicon
+         * @return the term_id mapping for this lexicon
          */
-        const util::InvertibleMap<TermID, std::string> & getTermIDMapping() const;
+        const util::InvertibleMap<term_id, std::string> & getterm_idMapping() const;
 
     private:
 
@@ -117,17 +117,17 @@ class Lexicon
         /** saves the average document length in this collection */
         double _avgDL;
 
-        /** maps TermID (tokens) -> TermData (where to find in the postingsFile) */
-        std::unordered_map<TermID, TermData> _entries;
+        /** maps term_id (tokens) -> TermData (where to find in the postingsFile) */
+        std::unordered_map<term_id, TermData> _entries;
 
         /** lengths for all documents in the index, used in ranking functions */
-        std::unordered_map<DocID, unsigned int> _docLengths;
+        std::unordered_map<doc_id, unsigned int> _docLengths;
 
-        /** maps TermIDs to the strings they represent */
-        util::InvertibleMap<TermID, std::string> _termMap;
+        /** maps term_ids to the strings they represent */
+        util::InvertibleMap<term_id, std::string> _termMap;
 
-        /** maps DocIDs to the document paths they represent */
-        util::InvertibleMap<DocID, std::string> _docMap;
+        /** maps doc_ids to the document paths they represent */
+        util::InvertibleMap<doc_id, std::string> _docMap;
 
         /**
          * Reads a lexicon from disk if it exists.

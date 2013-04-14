@@ -19,17 +19,17 @@ namespace meta
      * Represents the name of a class used in classification or feature
      * selection.
      */
-    typedef std::string ClassLabel;
+    typedef std::string class_label;
 
     /**
      * Numbering system for string terms.
      */
-    typedef uint16_t TermID;
+    typedef uint16_t term_id;
 
     /**
      * Numbering system for Documents.
      */
-    typedef uint16_t DocID;
+    typedef uint16_t doc_id;
 
     /**
      * Algorithms for feature selection, KNN search, and confusion

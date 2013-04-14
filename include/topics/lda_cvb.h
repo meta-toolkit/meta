@@ -80,7 +80,7 @@ class lda_cvb : public lda_model {
          */
         double perform_iteration();
 
-        virtual double compute_term_topic_probability( TermID term, size_t topic ) const;
+        virtual double compute_term_topic_probability( term_id term, size_t topic ) const;
 
         virtual double compute_doc_topic_probability( size_t doc, size_t topic ) const;
 
@@ -89,13 +89,13 @@ class lda_cvb : public lda_model {
         /**
          * Means for (document, topic) assignment counts.
          */
-        std::unordered_map<DocID, std::unordered_map<topic_id, double>>
+        std::unordered_map<doc_id, std::unordered_map<topic_id, double>>
         doc_topic_mean_;
 
         /**
          * Means for (topic, term) assignment counts.
          */
-        std::unordered_map<topic_id, std::unordered_map<TermID, double>>
+        std::unordered_map<topic_id, std::unordered_map<term_id, double>>
         topic_term_mean_;
 
         /**
@@ -107,8 +107,8 @@ class lda_cvb : public lda_model {
          * Variational parameters \f$\gamma_{dij}\f$.
          */
         std::unordered_map<
-            DocID, 
-            std::unordered_map<TermID, std::unordered_map<topic_id, double>>
+            doc_id, 
+            std::unordered_map<term_id, std::unordered_map<topic_id, double>>
         > gamma_;
 
         /**

@@ -46,14 +46,14 @@ class point {
 };
 
 template <>
-point<TermID, index::Document>::point( const index::Document & d ) 
+point<term_id, index::Document>::point( const index::Document & d ) 
         : element_{ &d }, size_{ 1 } {
     for( const auto & freq : d.getFrequencies() )
         avg_vector_[ freq.first ] = static_cast<double>( freq.second );
 }
 
-point<TermID, index::Document> make_point( const index::Document & d ) {
-    return point<TermID, index::Document>{ d };
+point<term_id, index::Document> make_point( const index::Document & d ) {
+    return point<term_id, index::Document>{ d };
 }
 
 template <class DimensionKey, class Element>

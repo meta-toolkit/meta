@@ -22,13 +22,13 @@ class PostingData
 {
     public:
         /** The numeric id value assigned to this document */
-        DocID docID;
+        doc_id docID;
 
         /** The number of times a term appeared in this document */
         unsigned int freq;
 
         /** Parameters constructor */
-        PostingData(DocID pdocID, unsigned int pfreq):
+        PostingData(doc_id pdocID, unsigned int pfreq):
             docID(pdocID), freq(pfreq){ /* nothing */ }
 
         /** No params contructor */
@@ -64,14 +64,14 @@ class TermData
 
 /**
  * Represents one entry in a chunk file.
- * Multiple IndexEntries with the same TermID can be
+ * Multiple IndexEntries with the same term_id can be
  *  merged together.
  */
 class IndexEntry
 {
     public:
         /** denotes which token this entry is for */
-        TermID termID;
+        term_id termID;
 
         /** collection of PostingData for each document this term occurs in */
         std::vector<PostingData> data;
@@ -80,7 +80,7 @@ class IndexEntry
          * Constructor.
          * @param ptermID - the termID to set
          */
-        IndexEntry(TermID ptermID):
+        IndexEntry(term_id ptermID):
             termID(ptermID) { /* nothing */ }
 
         /**

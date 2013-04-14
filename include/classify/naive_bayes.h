@@ -42,19 +42,19 @@ class naive_bayes: public classifier
          * @param doc The document to classify
          * @return the class it belongs to
          */
-        ClassLabel classify(const index::Document & doc) const;
+        class_label classify(const index::Document & doc) const;
 
     private:
 
         /**
          * Contains P(term|class) for each class.
          */
-        std::unordered_map<ClassLabel, std::unordered_map<TermID, double>> _term_probs;
+        std::unordered_map<class_label, std::unordered_map<term_id, double>> _term_probs;
 
         /**
          * Contains the number of documents in each class
          */
-        std::unordered_map<ClassLabel, size_t> _class_counts;
+        std::unordered_map<class_label, size_t> _class_counts;
 
         /** The number of training documents */
         size_t _total_docs;

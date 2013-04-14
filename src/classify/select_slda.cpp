@@ -20,10 +20,10 @@ using index::Document;
 select_slda::select_slda(const vector<Document> & docs):
     _docs(docs) { /* nothing */ }
 
-vector<pair<TermID, double>> select_slda::select()
+vector<pair<term_id, double>> select_slda::select()
 {
     // create sLDA input data
-    util::InvertibleMap<ClassLabel, int> mapping;
+    util::InvertibleMap<class_label, int> mapping;
     std::ofstream slda_train_out("slda-train.dat");
     for(auto & d: _docs)
         slda_train_out << d.getLearningData(mapping, true /* using sLDA */);
@@ -43,12 +43,12 @@ vector<pair<TermID, double>> select_slda::select()
 
     // collect features
     vector<vector<pair<int, double>>> dists = model.top_terms();
-    unordered_map<TermID, double> feature_weights;
+    unordered_map<term_id, double> feature_weights;
     for(auto & dist: dists)
     {
         for(auto & p: dist)
         {
-            TermID id = static_cast<TermID>(p.first);
+            term_id id = static_cast<term_id>(p.first);
             // 0 will actually be higher than any feature rating from sLDA
             if(feature_weights[id] == 0.0 || feature_weights[id] < p.second)
                 feature_weights[id] = p.second;
@@ -56,9 +56,9 @@ vector<pair<TermID, double>> select_slda::select()
     }
 
     // sort features
-    vector<pair<TermID, double>> features(feature_weights.begin(), feature_weights.end());
+    vector<pair<term_id, double>> features(feature_weights.begin(), feature_weights.end());
     std::sort(features.begin(), features.end(),
-        [](const pair<TermID, double> & a, const pair<TermID, double> & b) {
+        [](const pair<term_id, double> & a, const pair<term_id, double> & b) {
             return a.second > b.second;
         }
     );
@@ -66,7 +66,7 @@ vector<pair<TermID, double>> select_slda::select()
     return features;
 }
 
-std::unordered_map<ClassLabel, std::vector<std::pair<TermID, double>>>
+std::unordered_map<class_label, std::vector<std::pair<term_id, double>>>
 select_slda::select_by_class() {
     return {};
 }

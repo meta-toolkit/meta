@@ -26,10 +26,10 @@ using io::Parser;
 
 Lexicon::Lexicon(const string & lexiconFile):
     _lexiconFilename(lexiconFile),
-    _entries(unordered_map<TermID, TermData>()),
-    _docLengths(unordered_map<DocID, unsigned int>()),
-    _termMap(InvertibleMap<TermID, string>()),
-    _docMap(InvertibleMap<DocID, string>())
+    _entries(unordered_map<term_id, TermData>()),
+    _docLengths(unordered_map<doc_id, unsigned int>()),
+    _termMap(InvertibleMap<term_id, string>()),
+    _docMap(InvertibleMap<doc_id, string>())
 {
     readLexicon();
     setAvgDocLength();
@@ -40,7 +40,7 @@ bool Lexicon::isEmpty() const
     return _entries.empty();
 }
 
-TermData Lexicon::getTermInfo(TermID termID) const
+TermData Lexicon::getTermInfo(term_id termID) const
 {
     auto it = _entries.find(termID);
     if(it == _entries.end())
@@ -77,7 +77,7 @@ void Lexicon::save(const string & docLengthsFilename, const string & termMapFile
         throw Index::index_exception("[Lexicon]: error writing lexicon to disk");
 }
 
-void Lexicon::addTerm(TermID term, TermData termData)
+void Lexicon::addTerm(term_id term, TermData termData)
 {
     _entries.insert(make_pair(term, termData));
 }
@@ -118,7 +118,7 @@ void Lexicon::readLexicon()
              std::istream_iterator<string>(),
              std::back_inserter<vector<string>>(items));
 
-        TermID termID;
+        term_id termID;
         TermData data;
         istringstream(items[0]) >> termID;
         istringstream(items[1]) >> data.idf;
@@ -131,7 +131,7 @@ void Lexicon::readLexicon()
     cerr << "[Lexicon]: added " << _entries.size() << " entries" << endl;
 }
 
-unsigned int Lexicon::getDocLength(DocID docID) const
+unsigned int Lexicon::getDocLength(doc_id docID) const
 {
     return _docLengths.at(docID);
 }
@@ -155,32 +155,32 @@ void Lexicon::setAvgDocLength()
     _avgDL = static_cast<double>(sum) / _docLengths.size();
 }
 
-string Lexicon::getTerm(TermID termID) const
+string Lexicon::getTerm(term_id termID) const
 {
     return _termMap.getValueByKey(termID);
 }
 
-TermID Lexicon::getTermID(string term) const
+term_id Lexicon::getterm_id(string term) const
 {
     return _termMap.getKeyByValue(term);
 }
 
-bool Lexicon::containsTermID(TermID termID) const
+bool Lexicon::containsterm_id(term_id termID) const
 {
     return termID < _termMap.size();
 }
 
-string Lexicon::getDoc(DocID docID) const
+string Lexicon::getDoc(doc_id docID) const
 {
     return _docMap.getValueByKey(docID);
 }
 
-DocID Lexicon::getDocID(string docName) const
+doc_id Lexicon::getdoc_id(string docName) const
 {
     return _docMap.getKeyByValue(docName);
 }
 
-const InvertibleMap<TermID, string> & Lexicon::getTermIDMapping() const
+const InvertibleMap<term_id, string> & Lexicon::getterm_idMapping() const
 {
     return _termMap;
 }
@@ -190,7 +190,7 @@ void Lexicon::setDocLengths(const string & filename)
     Parser parser(filename, " \n");
     while(parser.hasNext())
     {
-        DocID docID;
+        doc_id docID;
         unsigned int length;
         istringstream(parser.next()) >> docID;
         istringstream(parser.next()) >> length;

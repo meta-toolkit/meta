@@ -15,7 +15,7 @@ int print_usage( const std::string & name ) {
 
 int print_topics( const std::string & filename, const std::string & termsfile, 
                   size_t num_words ) {
-    util::InvertibleMap<TermID, std::string> terms;
+    util::InvertibleMap<term_id, std::string> terms;
     terms.readMap( termsfile );
     std::ifstream file{ filename };
     while( file ) {
@@ -28,9 +28,9 @@ int print_topics( const std::string & filename, const std::string & termsfile,
         stream >> topic;
         std::cout << "Topic " << topic << ":" << std::endl;
         std::cout << "-----------------------" << std::endl;
-        std::vector<std::pair<TermID, double>> pairs;
-        auto comp = []( const std::pair<TermID, double> & first,
-                        const std::pair<TermID, double> & second ) {
+        std::vector<std::pair<term_id, double>> pairs;
+        auto comp = []( const std::pair<term_id, double> & first,
+                        const std::pair<term_id, double> & second ) {
             return first.second > second.second;
         };
         while( stream ) {
@@ -39,7 +39,7 @@ int print_topics( const std::string & filename, const std::string & termsfile,
             if( to_split.length() == 0 )
                 continue;
             size_t idx = to_split.find_first_of( ':' );
-            TermID term = std::stoul( to_split.substr( 0, idx ) );
+            term_id term = std::stoul( to_split.substr( 0, idx ) );
             double prob = std::stod( to_split.substr( idx + 1 ) );
             pairs.emplace_back( term, prob );
             std::push_heap( pairs.begin(), pairs.end(), comp );

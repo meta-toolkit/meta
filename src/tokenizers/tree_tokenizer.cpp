@@ -36,7 +36,7 @@ tree_tokenizer::tree_tokenizer(TreeTokenizerType type):
 }
 
 void tree_tokenizer::tokenize(Document & document,
-        const shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
+        const shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     vector<ParseTree> trees = ParseTree::getTrees(document.getPath() + ".tree");
     TokenizerFunction tFunc = _tokenizer_types[_type];
@@ -45,7 +45,7 @@ void tree_tokenizer::tokenize(Document & document,
 }
 
 void tree_tokenizer::multiTokenize(Document & document, const ParseTree & tree,
-        const shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
+        const shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     subtreeTokenize(document, tree, docFreq);
     tagTokenize(document, tree, docFreq);
@@ -54,7 +54,7 @@ void tree_tokenizer::multiTokenize(Document & document, const ParseTree & tree,
 }
 
 void tree_tokenizer::subtreeTokenize(Document & document, const ParseTree & tree,
-        const shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
+        const shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     string representation = tree.getChildrenString() + "|" + tree.getPOS();
     document.increment(mapping(representation), 1, docFreq);
@@ -63,7 +63,7 @@ void tree_tokenizer::subtreeTokenize(Document & document, const ParseTree & tree
 }
 
 void tree_tokenizer::branchTokenize(Document & document, const ParseTree & tree,
-        const shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
+        const shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     string representation = common::toString(tree.numChildren());
     document.increment(mapping(representation), 1, docFreq);
@@ -72,7 +72,7 @@ void tree_tokenizer::branchTokenize(Document & document, const ParseTree & tree,
 }
 
 void tree_tokenizer::tagTokenize(Document & document, const ParseTree & tree,
-        const shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
+        const shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     string representation = tree.getPOS();
     document.increment(mapping(representation), 1, docFreq);
@@ -81,7 +81,7 @@ void tree_tokenizer::tagTokenize(Document & document, const ParseTree & tree,
 }
 
 void tree_tokenizer::depthTokenize(Document & document, const ParseTree & tree,
-        const shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
+        const shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     size_t h = ParseTree::height(tree);
     string representation = common::toString(h);
@@ -89,7 +89,7 @@ void tree_tokenizer::depthTokenize(Document & document, const ParseTree & tree,
 }
 
 void tree_tokenizer::skeletonTokenize(Document & document, const ParseTree & tree,
-        const shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
+        const shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     string representation = tree.getSkeleton();
     document.increment(mapping(representation), 1, docFreq);
@@ -98,7 +98,7 @@ void tree_tokenizer::skeletonTokenize(Document & document, const ParseTree & tre
 }
 
 void tree_tokenizer::semiSkeletonTokenize(Document & document, const ParseTree & tree,
-        const shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
+        const shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     string representation = tree.getPOS() + tree.getSkeleton();
     document.increment(mapping(representation), 1, docFreq);

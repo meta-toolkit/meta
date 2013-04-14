@@ -95,7 +95,7 @@ double lda_cvb::perform_iteration() {
     return max_change;
 }
 
-double lda_cvb::compute_term_topic_probability( TermID term, size_t topic ) const {
+double lda_cvb::compute_term_topic_probability( term_id term, size_t topic ) const {
     return ( topic_term_mean_.at(topic).at(term) + beta_ )
         / ( topic_mean_.at(topic) + num_words_ * beta_ );
 }

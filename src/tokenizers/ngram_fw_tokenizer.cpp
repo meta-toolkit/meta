@@ -24,7 +24,7 @@ ngram_fw_tokenizer::ngram_fw_tokenizer(size_t n):
 }
 
 void ngram_fw_tokenizer::tokenize(Document & document,
-        const std::shared_ptr<unordered_map<TermID, unsigned int>> & docFreq)
+        const std::shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     Parser parser(document.getPath() + ".sen", " \n");
 

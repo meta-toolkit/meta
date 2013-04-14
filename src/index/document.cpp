@@ -28,14 +28,14 @@ using util::InvertibleMap;
 Document::Document(const string & path):
     _path(path),
     _length(0),
-    _frequencies(unordered_map<TermID, unsigned int>())
+    _frequencies(unordered_map<term_id, unsigned int>())
 {
     _name = getName(path);
     _category = getCategory(path);
 }
 
-void Document::increment(TermID termID, unsigned int amount,
-        std::shared_ptr<unordered_map<TermID, unsigned int>> docFreq)
+void Document::increment(term_id termID, unsigned int amount,
+        std::shared_ptr<unordered_map<term_id, unsigned int>> docFreq)
 {
     auto iter = _frequencies.find(termID);
     if(iter != _frequencies.end())
@@ -50,7 +50,7 @@ void Document::increment(TermID termID, unsigned int amount,
     _length += amount;
 }
 
-void Document::increment(TermID termID, unsigned int amount)
+void Document::increment(term_id termID, unsigned int amount)
 {
     increment(termID, amount, nullptr);
 }
@@ -75,7 +75,7 @@ size_t Document::getLength() const
     return _length;
 }
 
-size_t Document::getFrequency(TermID termID) const
+size_t Document::getFrequency(term_id termID) const
 {
     auto iter = _frequencies.find(termID);
     if(iter != _frequencies.end())
@@ -84,7 +84,7 @@ size_t Document::getFrequency(TermID termID) const
         return 0;
 }
 
-const unordered_map<TermID, unsigned int> & Document::getFrequencies() const
+const unordered_map<term_id, unsigned int> & Document::getFrequencies() const
 {
     return _frequencies;
 }
@@ -111,7 +111,7 @@ string Document::getLearningData(InvertibleMap<string, int> & mapping, bool usin
     else
         out << getMapping(mapping, getCategory(_path));     // liblinear, classes start at 1
 
-    map<TermID, unsigned int> sorted;
+    map<term_id, unsigned int> sorted;
 
     // liblinear feature indices start at 1, not 0 like the tokenizers
     // this works for sLDA as well.
@@ -125,12 +125,12 @@ string Document::getLearningData(InvertibleMap<string, int> & mapping, bool usin
     return out.str();
 }
 
-string Document::getFilteredLearningData(InvertibleMap<string, int> & mapping, const unordered_set<TermID> & features) const
+string Document::getFilteredLearningData(InvertibleMap<string, int> & mapping, const unordered_set<term_id> & features) const
 {
     stringstream out;
     out << getMapping(mapping, getCategory(_path));
 
-    map<TermID, unsigned int> sorted;
+    map<term_id, unsigned int> sorted;
 
     for(auto & freq: _frequencies)
     {

@@ -69,7 +69,7 @@ void parallel_lda_gibbs::perform_iteration( bool init /* = false */ ) {
     }
 }
 
-void parallel_lda_gibbs::decrease_counts( size_t topic, TermID term, size_t doc ) {
+void parallel_lda_gibbs::decrease_counts( size_t topic, term_id term, size_t doc ) {
     std::thread::id tid = std::this_thread::get_id();
     // decrease topic_term_diff_ for the given assignment
     topic_term_diffs_.at( tid )[ topic ][ term ] -= 1;
@@ -85,14 +85,14 @@ void parallel_lda_gibbs::decrease_counts( size_t topic, TermID term, size_t doc 
     topic_diffs_.at( tid )[ topic ] -= 1;
 }
 
-void parallel_lda_gibbs::increase_counts( size_t topic, TermID term, size_t doc ) {
+void parallel_lda_gibbs::increase_counts( size_t topic, term_id term, size_t doc ) {
     std::thread::id tid = std::this_thread::get_id();
     topic_term_diffs_.at( tid )[ topic ][ term ] += 1;
     doc_topic_count_[ doc ][ topic ] += 1;
     topic_diffs_.at( tid )[ topic ] += 1;
 }
 
-double parallel_lda_gibbs::count_term( TermID term, size_t topic ) const {
+double parallel_lda_gibbs::count_term( term_id term, size_t topic ) const {
     double count = lda_gibbs::count_term( term, topic );
     std::thread::id tid = std::this_thread::get_id();
     if( topic_term_diffs_.find( tid ) == topic_term_diffs_.end() )

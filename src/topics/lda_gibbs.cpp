@@ -37,7 +37,7 @@ void lda_gibbs::run( size_t num_iters, double convergence /* = 1e-6 */ ) {
 }
 
 
-size_t lda_gibbs::sample_topic( TermID term, size_t doc ) {
+size_t lda_gibbs::sample_topic( term_id term, size_t doc ) {
     std::vector<double> weights( num_topics_ );
     for( size_t j = 0; j < weights.size(); ++j )
         weights[ j ] = compute_probability( term, doc, j );
@@ -45,12 +45,12 @@ size_t lda_gibbs::sample_topic( TermID term, size_t doc ) {
     return dist( rng_ );
 }
 
-double lda_gibbs::compute_probability( TermID term, size_t doc, size_t topic ) const {
+double lda_gibbs::compute_probability( term_id term, size_t doc, size_t topic ) const {
     return compute_term_topic_probability( term, topic )
            * compute_doc_topic_probability( doc, topic );
 }
 
-double lda_gibbs::compute_term_topic_probability( TermID term, size_t topic ) const {
+double lda_gibbs::compute_term_topic_probability( term_id term, size_t topic ) const {
     return ( count_term( term, topic ) + beta_ ) 
              / ( count_topic( topic ) + num_words_ * beta_ );
 }
@@ -60,7 +60,7 @@ double lda_gibbs::compute_doc_topic_probability( size_t doc, size_t topic ) cons
              / ( count_doc( doc ) + num_topics_ * alpha_ );
 }
 
-double lda_gibbs::count_term( TermID term, size_t topic ) const {
+double lda_gibbs::count_term( term_id term, size_t topic ) const {
     auto it = topic_term_count_.find( topic );
     if( it == topic_term_count_.end() )
         return 0;
@@ -123,7 +123,7 @@ void lda_gibbs::perform_iteration( bool init /* = false */ ) {
     common::end_progress("\t\t\t");
 }
 
-void lda_gibbs::decrease_counts( size_t topic, TermID term, size_t doc ) {
+void lda_gibbs::decrease_counts( size_t topic, term_id term, size_t doc ) {
     // decrease topic_term_count_ for the given assignment
     auto & tt_count = topic_term_count_.at( topic ).at( term );
     if( tt_count == 1 )
@@ -146,7 +146,7 @@ void lda_gibbs::decrease_counts( size_t topic, TermID term, size_t doc ) {
         tc -= 1;
 }
 
-void lda_gibbs::increase_counts( size_t topic, TermID term, size_t doc ) {
+void lda_gibbs::increase_counts( size_t topic, term_id term, size_t doc ) {
     topic_term_count_[ topic ][ term ] += 1;
     doc_topic_count_[ doc ][ topic ] += 1;
     topic_count_[ topic ] += 1;

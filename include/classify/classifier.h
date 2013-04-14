@@ -26,7 +26,7 @@ class classifier
          * @param doc The document to classify
          * @return the class it belongs to
          */
-        virtual ClassLabel classify(const index::Document & doc) const = 0;
+        virtual class_label classify(const index::Document & doc) const = 0;
 
         /**
          * Creates a classification model based on training documents.

@@ -29,7 +29,7 @@ namespace knn
      * @param k - the value of k in KNN
      * @return the class label assigned for the query
      */
-    ClassLabel classify(index::Document & query, std::shared_ptr<index::Index> index, size_t k);
+    class_label classify(index::Document & query, std::shared_ptr<index::Index> index, size_t k);
 
     /**
      * Runs a KNN classifier on multiple indexes.
@@ -39,7 +39,7 @@ namespace knn
      * @param k - the value of k in kNN
      * @return the class label assigned for the query
      */
-    ClassLabel classify(index::Document & query,
+    class_label classify(index::Document & query,
             std::vector<std::shared_ptr<index::Index>> indexes,
             std::vector<double> weights, size_t k);
 
@@ -53,7 +53,7 @@ namespace knn
          * @param scores - the scores to normalize
          * @return the normalized scores
          */
-        std::unordered_map<ClassLabel, double> normalize(const std::multimap<double, ClassLabel> & scores);
+        std::unordered_map<class_label, double> normalize(const std::multimap<double, class_label> & scores);
 
         /**
          * Finds the most common occurrence in the top k results.
@@ -62,7 +62,7 @@ namespace knn
          * @param k - k value in kNN
          * @return the class label for the most common document
          */
-        ClassLabel findNN(const std::multimap<double, ClassLabel> & rankings, size_t k);
+        class_label findNN(const std::multimap<double, class_label> & rankings, size_t k);
 
         /**
          * Used for tiebreaking. If there are the same number of a certain class, prefer the class
@@ -72,9 +72,9 @@ namespace knn
          * @param orderSeen
          * @return if the class to check should be ranked about the current best
          */
-        bool isHigherRank(const ClassLabel & check,
-                const ClassLabel & best,
-                const std::vector<ClassLabel> & orderSeen);
+        bool isHigherRank(const class_label & check,
+                const class_label & best,
+                const std::vector<class_label> & orderSeen);
     }
 
     /**

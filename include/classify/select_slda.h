@@ -28,15 +28,15 @@ class select_slda: public feature_select
          * supervised latent Dirichlet topic modeling algorithm on the data.
          * Features are sorted by weight, and then returned in order in a vector
          * like the other feature selection algorithms.
-         * @return a vector of TermIDs sorted by importance
+         * @return a vector of term_ids sorted by importance
          */
-        std::vector<std::pair<TermID, double>> select();
+        std::vector<std::pair<term_id, double>> select();
 
         /**
          * Performs feature selection on a collection of Documents, returning
          * each class's features sorted by usefulness.
          */
-        std::unordered_map<ClassLabel, std::vector<std::pair<TermID, double>>>
+        std::unordered_map<class_label, std::vector<std::pair<term_id, double>>>
             select_by_class();
 
     private:

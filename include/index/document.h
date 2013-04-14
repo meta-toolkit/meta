@@ -34,7 +34,7 @@ class Document
          * @param termID - the token count to increment
          * @param amount - the amount to increment by
          */
-        void increment(TermID termID, unsigned int amount);
+        void increment(term_id termID, unsigned int amount);
 
         /**
          * Increment the count of the specified transition.
@@ -42,8 +42,8 @@ class Document
          * @param amount - the amount to increment by
          * @param docFreq - used for IDF
          */
-        void increment(TermID termID, unsigned int amount,
-                std::shared_ptr<std::unordered_map<TermID, unsigned int>> docFreq);
+        void increment(term_id termID, unsigned int amount,
+                std::shared_ptr<std::unordered_map<term_id, unsigned int>> docFreq);
 
         /**
          * @return the path to this document (the argument to the constructor)
@@ -75,12 +75,12 @@ class Document
          * Get the number of occurrences for a particular transition.
          * @param termID - the termID of the term to look up
          */
-        size_t getFrequency(TermID termID) const;
+        size_t getFrequency(term_id termID) const;
 
         /**
          * @return the map of frequencies for this document.
          */
-        const std::unordered_map<TermID, unsigned int> & getFrequencies() const;
+        const std::unordered_map<term_id, unsigned int> & getFrequencies() const;
  
         /**
          * Prints tokenizer output in liblinear input format.
@@ -91,7 +91,7 @@ class Document
         std::string getLearningData(util::InvertibleMap<std::string, int> & mapping, bool usingSLDA) const;
 
         std::string getFilteredLearningData(util::InvertibleMap<std::string, int> & mapping, 
-                const std::unordered_set<TermID> & features) const;
+                const std::unordered_set<term_id> & features) const;
 
         /**
          * Wrapper function for a Document's cosine similarity measure.
@@ -133,7 +133,7 @@ class Document
         size_t _length;
 
         /** counts of how many times each token appears */
-        std::unordered_map<TermID, unsigned int> _frequencies;
+        std::unordered_map<term_id, unsigned int> _frequencies;
 
         /**
          * @return the name of a document given its full path

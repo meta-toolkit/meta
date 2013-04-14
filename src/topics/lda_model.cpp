@@ -39,7 +39,7 @@ void lda_model::save_topic_term_distributions( const std::string & filename ) co
     for( size_t j = 0; j < num_topics_; ++j ) {
         file << j << "\t";
         for( const auto & pair : tokenizer_.term_id_mapping() ) {
-            TermID term = pair.first;
+            term_id term = pair.first;
             double prob = compute_term_topic_probability( term, j );
             if( prob > 0 )
                 file << term << ":" << prob << "\t";

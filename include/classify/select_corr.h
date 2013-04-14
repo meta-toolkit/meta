@@ -36,7 +36,7 @@ class select_corr_coeff: public select_simple
          * @param label
          * @return the correlation coefficient score
          */
-        double calc_weight(TermID termID, const ClassLabel & label) const;
+        double calc_weight(term_id termID, const class_label & label) const;
 };
 
 }

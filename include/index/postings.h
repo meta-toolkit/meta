@@ -46,7 +46,7 @@ class Postings
         std::vector<PostingData> getCompressedDocs(const TermData & termData) const;
 
         /**
-         * Creates lists of term information sorted by TermID on disk.
+         * Creates lists of term information sorted by term_id on disk.
          * The lexicon is NOT updated in this function.
          * @param documents - a list of documents to index
          * @param chunkMBSize - the maximum size the postings chunks will be in
@@ -76,7 +76,7 @@ class Postings
          * Saves the docid mapping to disk.
          * @param filename - the filename to save the mapping as
          */
-        void saveDocIDMapping(const std::string & filename) const;
+        void savedoc_idMapping(const std::string & filename) const;
 
         /**
          * Saves document lengths for the given std::vector of documents.
@@ -92,11 +92,11 @@ class Postings
         
         //CompressedFileReader _reader;
         
-        /** Keeps track of the DocID -> filename mapping */
-        util::InvertibleMap<DocID, std::string> _docMap;
+        /** Keeps track of the doc_id -> filename mapping */
+        util::InvertibleMap<doc_id, std::string> _docMap;
 
-        /** Internal counter of docs, used to create DocIDs */
-        DocID _currentDocID;
+        /** Internal counter of docs, used to create doc_ids */
+        doc_id _currentdoc_id;
 
         /**
          * @param pdata - list of PostingData for a term
@@ -118,15 +118,15 @@ class Postings
          * @param terms - the map of terms to write. It is cleared at the end of this function.
          * @param chunkNum - the number used for the filename
          */
-        void writeChunk(std::map<TermID, std::vector<PostingData>> & terms, size_t chunkNum) const;
+        void writeChunk(std::map<term_id, std::vector<PostingData>> & terms, size_t chunkNum) const;
 
         /**
-         * Keeps the DocID -> path mapping, and returns a new DocID
+         * Keeps the doc_id -> path mapping, and returns a new doc_id
          *  if an unseen path is encountered.
          * @param path - the document path to check
-         * @return the DocID for the given path
+         * @return the doc_id for the given path
          */
-        DocID getDocID(const std::string & path);
+        doc_id getdoc_id(const std::string & path);
 };
 
 }

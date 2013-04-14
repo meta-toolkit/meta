@@ -73,7 +73,7 @@ class RAMIndex : public Index
         std::vector<Document> _documents;
 
         /** the IDF values of all the terms encountered in the document collection */
-        std::shared_ptr<std::unordered_map<TermID, unsigned int>> _docFreqs;
+        std::shared_ptr<std::unordered_map<term_id, unsigned int>> _docFreqs;
 
         /** average number of terms in the documents in the collection */
         size_t _avgDocLength;
@@ -82,7 +82,7 @@ class RAMIndex : public Index
          * Adds counts to the IDF map.
          * @param newFreqs - the frequencies to add to _docFreqs
          */
-        void combineMap(const std::unordered_map<TermID, unsigned int> & newFreqs);
+        void combineMap(const std::unordered_map<term_id, unsigned int> & newFreqs);
 
         /**
          * @return a filename minus the path
