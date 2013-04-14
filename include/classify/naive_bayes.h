@@ -44,6 +44,11 @@ class naive_bayes: public classifier
          */
         class_label classify(const index::Document & doc) const;
 
+        /**
+         * Resets any learning information associated with this classifier.
+         */
+        void reset();
+
     private:
 
         /**

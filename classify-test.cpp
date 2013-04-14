@@ -30,25 +30,17 @@ using namespace meta::tokenizers;
 /**
  * Tokenizes testing and training docs.
  */
-void tokenize(vector<Document> & train_docs, vector<Document> & test_docs, const unordered_map<string, string> & config)
+void tokenize(vector<Document> & docs, const unordered_map<string, string> & config)
 {
     std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
 
     size_t i = 0;
-    for(auto & d: train_docs)
+    for(auto & d: docs)
     {
-        common::show_progress(i++, train_docs.size(), 20, "  tokenizing training docs ");
+        common::show_progress(i++, docs.size(), 20, "  tokenizing ");
         tok->tokenize(d, nullptr);
     }
-    common::end_progress("  tokenizing training docs ");
-
-    i = 0;
-    for(auto & d: test_docs)
-    {
-        common::show_progress(i++, test_docs.size(), 20, "  tokenizing testing docs ");
-        tok->tokenize(d, nullptr);
-    }
-    common::end_progress("  tokenizing testing docs ");
+    common::end_progress("  tokenizing ");
 }
 
 /**
@@ -64,14 +56,12 @@ int main(int argc, char* argv[])
 
     unordered_map<string, string> config = io::config_reader::read(argv[1]);
     string prefix = config["prefix"] + config["dataset"];
-    vector<Document> train_docs = Document::loadDocs(prefix + "/train.txt", prefix);
-    vector<Document> test_docs = Document::loadDocs(prefix + "/test.txt", prefix);
+    vector<Document> docs = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
 
-    tokenize(train_docs, test_docs, config);
+    tokenize(docs, config);
    
     classify::naive_bayes nb(0.000001, 0.000001);
-    nb.train(train_docs);
-    classify::confusion_matrix matrix = nb.test(test_docs);
+    classify::confusion_matrix matrix = nb.cross_validate(docs, 5);
     matrix.print();
     matrix.print_stats();
 

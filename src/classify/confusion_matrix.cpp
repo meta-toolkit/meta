@@ -26,13 +26,14 @@ confusion_matrix::confusion_matrix():
     _total(0)
 { /* nothing */ }
 
-void confusion_matrix::add(const class_label & predicted, const class_label & actual)
+void confusion_matrix::add(const class_label & predicted, const class_label & actual, size_t times)
 {
     pair<class_label, class_label> prediction(predicted, actual);
-    _predictions[prediction] += 1;
-    _counts[actual] += 1;
+    _predictions[prediction] += times;
+    _counts[actual] += times;
+    _classes.insert(predicted);
     _classes.insert(actual);
-    ++_total;
+    _total += times;
 }
 
 void confusion_matrix::print(std::ostream & out) const
@@ -137,6 +138,27 @@ void confusion_matrix::print_stats(std::ostream & out) const
 size_t confusion_matrix::string_pair_hash(const std::pair<std::string, std::string> & str_pair)
 {
     return std::hash<string>()(str_pair.first + str_pair.second);
+}
+
+const confusion_matrix::prediction_counts & confusion_matrix::predictions() const
+{
+    return _predictions;
+}
+
+confusion_matrix confusion_matrix::operator+(const confusion_matrix & other) const
+{
+    confusion_matrix sum(*this);
+    
+    for(auto & pred: other.predictions())
+        sum.add(pred.first.first, pred.first.second, pred.second);
+
+    return sum;
+}
+
+confusion_matrix & confusion_matrix::operator+=(const confusion_matrix & other)
+{
+    *this = *this + other;
+    return *this;
 }
 
 }

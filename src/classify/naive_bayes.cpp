@@ -3,7 +3,6 @@
  * @author Sean Massung
  */
 
-#include <iostream>
 #include <unordered_set>
 #include "cluster/similarity.h"
 #include "classify/naive_bayes.h"
@@ -12,8 +11,6 @@ namespace meta {
 namespace classify {
 
 using std::vector;
-using std::cerr;
-using std::endl;
 using std::unordered_map;
 using std::unordered_set;
 using index::Document;
@@ -26,12 +23,16 @@ naive_bayes::naive_bayes(double alpha, double beta):
     _beta(beta)
 { /* nothing */ }
 
+void naive_bayes::reset()
+{
+    _term_probs.clear();
+    _class_counts.clear();
+    _total_docs = 0;
+}
+
 void naive_bayes::train(const vector<Document> & docs)
 {
-    using namespace clustering::similarity::internal;
-
     // discover all seen features
-    cerr << "  calculating feature space..." << endl;
     unordered_set<term_id> term_space;
     for(auto & d: docs)
     {
@@ -41,7 +42,6 @@ void naive_bayes::train(const vector<Document> & docs)
     }
 
     // calculate c(term|class) for all classes
-    cerr << "  calculating term probabilities..." << endl;
     for(auto & t: term_space)
     {
         for(auto & d: docs)

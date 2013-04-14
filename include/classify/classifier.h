@@ -45,11 +45,18 @@ class classifier
         /**
          * Performs k-fold cross-validation on a set of documents. When using
          * this function, it is not necessary to call train() or test() first.
-         * @param docs Testing documents
+         * @param input_docs Testing documents
          * @param k The number of folds
+         * @param seed The seed for the RNG used to shuffle the documents
          * @return a confusion_matrix containing the results over all the folds
          */
-        confusion_matrix cross_validate(const std::vector<index::Document> & docs, size_t k) const;
+        confusion_matrix cross_validate(const std::vector<index::Document> & input_docs,
+                size_t k, int seed = 1);
+
+        /**
+         * Clears any learning data associated with this classifier.
+         */
+        virtual void reset() = 0;
 };
 
 }
