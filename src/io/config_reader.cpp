@@ -48,7 +48,7 @@ unordered_map<string, string> config_reader::read(const string & path)
             string opt = line.substr(0, space);
             string val = line.substr(space + 1);
             if(in_tokenizer)
-                opt += "_" + common::toString(num_tokenizers);
+                opt += "_" + common::to_string(num_tokenizers);
             options[opt] = val;
         }
     }
@@ -64,7 +64,7 @@ shared_ptr<tokenizer> config_reader::create_tokenizer(const unordered_map<string
 
     while(true)
     {
-        string suffix = "_" + common::toString(++current_tokenizer);
+        string suffix = "_" + common::to_string(++current_tokenizer);
         auto method = config.find("method" + suffix);
         if(method == config.end())
             break;

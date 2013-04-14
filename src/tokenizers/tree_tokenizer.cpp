@@ -65,7 +65,7 @@ void tree_tokenizer::subtreeTokenize(Document & document, const ParseTree & tree
 void tree_tokenizer::branchTokenize(Document & document, const ParseTree & tree,
         const shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
-    string representation = common::toString(tree.numChildren());
+    string representation = common::to_string(tree.numChildren());
     document.increment(mapping(representation), 1, docFreq);
     for(auto & child: tree.getChildren())
         branchTokenize(document, child, docFreq);
@@ -84,7 +84,7 @@ void tree_tokenizer::depthTokenize(Document & document, const ParseTree & tree,
         const shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     size_t h = ParseTree::height(tree);
-    string representation = common::toString(h);
+    string representation = common::to_string(h);
     document.increment(mapping(representation), 1, docFreq);
 }
 

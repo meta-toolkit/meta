@@ -26,7 +26,7 @@ ChunkList::ChunkList(size_t numChunks):
 {
     for(size_t i = 0; i < _numChunks; ++i)
     {
-        string filename = common::toString(i) + ".chunk";
+        string filename = common::to_string(i) + ".chunk";
         _parsers.push_back(Parser(filename, "\n"));
     }
 }

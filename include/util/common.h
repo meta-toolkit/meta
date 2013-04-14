@@ -23,13 +23,13 @@ namespace common
      * @return the string representation of vaue
      */
     template <class T>
-    std::string toString(const T & value);
+    std::string to_string(const T & value);
 
     /**
      * @param str
      * @return the parameter string colored green
      */
-    inline std::string makeGreen(std::string str)
+    inline std::string make_green(std::string str)
     {
         return "\033[1;32m" + str + "\033[0m";
     }
@@ -38,7 +38,7 @@ namespace common
      * @param str
      * @return the parameter string colored red
      */
-    inline std::string makeRed(std::string str)
+    inline std::string make_red(std::string str)
     {
         return "\033[1;31m" + str + "\033[0m";
     }
@@ -47,32 +47,27 @@ namespace common
      * @param str
      * @return the parameter string bolded
      */
-    inline std::string makeBold(std::string str)
+    inline std::string make_bold(std::string str)
     {
         return "\033[1m" + str + "\033[0m";
     }
 
     /**
-     * @param idx
-     * @param max
-     * @param freq
-     * @param prefix
+     * @param idx The current progress in the operation
+     * @param max The maximum value of idx, when it is done
+     * @param freq How often to write output to the terminal
+     * @param prefix The text to show before the percentage
      */
-    inline void show_progress(size_t idx, size_t max, size_t freq, const std::string & prefix = "")
-    {
-        if(idx % freq == 0)
-        {
-            std::cerr << prefix << static_cast<double>(idx) / max * 100 << "%    \r";
-            std::flush(std::cerr);
-        }
-    }
-
-    inline void end_progress(const std::string & prefix)
-    {
-        std::cerr << prefix << "100%         " << std::endl;
-    }
+    inline void show_progress(size_t idx, size_t max, size_t freq, const std::string & prefix = "");
 
     /**
+     * Ends output from a call to show_progess by displaying 100% completion.
+     * @param prefix The text to show before the percentage
+     */
+    inline void end_progress(const std::string & prefix);
+
+    /**
+     * This safe_at allows the use of a hash function to be specified.
      * @return the value for a given key in map if it exists; otherwise,
      * the default Value() is returned.
      */

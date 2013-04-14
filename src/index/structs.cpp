@@ -42,11 +42,11 @@ bool IndexEntry::operator<(const IndexEntry & other) const
 
 string IndexEntry::toString() const
 {
-    string str = common::toString(termID);
+    string str = common::to_string(termID);
     for(auto & pd: data)
     {
-        str += " " + common::toString(pd.docID);
-        str += " " + common::toString(pd.freq);
+        str += " " + common::to_string(pd.docID);
+        str += " " + common::to_string(pd.freq);
     }
     return str;
 }

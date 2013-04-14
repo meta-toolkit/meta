@@ -7,11 +7,25 @@
 namespace meta {
 
 template <class T>
-std::string common::toString(const T & value)
+std::string common::to_string(const T & value)
 {
     std::stringstream ss;
     ss << value;
     return ss.str();
+}
+
+void common::show_progress(size_t idx, size_t max, size_t freq, const std::string & prefix)
+{
+    if(idx % freq == 0)
+    {
+        std::cerr << prefix << static_cast<double>(idx) / max * 100 << "%    \r";
+        std::flush(std::cerr);
+    }
+}
+
+void common::end_progress(const std::string & prefix)
+{
+    std::cerr << prefix << "100%         " << std::endl;
 }
 
 template <class Key, class Value, class Hash>
