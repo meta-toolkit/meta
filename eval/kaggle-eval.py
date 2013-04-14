@@ -2,10 +2,10 @@ import subprocess
 from score import *
 
 def main():
-  files = subprocess.check_output(["ls", "../runs"]).decode("utf-8").split()
+  files = subprocess.check_output(["ls", "../../senior-thesis-data/runs"]).decode("utf-8").split()
   files = [f for f in files if "kaggle" in f]
   for f in files:
-    lines = open("../runs/" + f).readlines()
+    lines = open("../../senior-thesis-data/runs/" + f).readlines()
     lines = lines[0:13] # only get confusion matrix part
     rater_a, rater_b = [], []
     pred = 0

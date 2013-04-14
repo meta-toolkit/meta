@@ -5,6 +5,8 @@ def createConfigFile(config)
   configFile = File.open("evalConfig.ini", "w")
   configFile << "[general]\n"
   configFile << "prefix " << config["prefix"] << "\n"
+  configFile << "stop-words /home/sean/projects/senior-thesis/data/lemur-stopwords.txt\n"
+  configFile << "function-words /home/sean/projects/senior-thesis/data/function-words.txt\n"
   configFile << "[tokenizer]\n"
   config.each do |opt, val|
     if opt != "prefix"
