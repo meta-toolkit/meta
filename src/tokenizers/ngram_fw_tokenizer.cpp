@@ -60,7 +60,7 @@ void ngram_fw_tokenizer::tokenize(Document & document,
 
 void ngram_fw_tokenizer::init_function_words()
 {
-    auto config = io::config_reader::read("tokenizer.ini");
+    auto config = io::config_reader::read("config.ini");
     Parser parser(config["function-words"], " \n");
     while(parser.hasNext())
         _function_words.insert(parser.next());
