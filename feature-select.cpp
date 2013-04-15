@@ -33,7 +33,7 @@ using namespace meta::index;
 using namespace meta::util;
 using namespace meta::tokenizers;
 
-int main(int argc, char8 argv[])
+int main(int argc, char* argv[])
 {
     return 0;
 }

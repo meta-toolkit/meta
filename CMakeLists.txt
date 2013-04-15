@@ -26,7 +26,6 @@ add_library( meta-classify
              src/classify/confusion_matrix.cpp
              src/classify/select_chi_square.cpp
              src/classify/select_info_gain.cpp  
-             src/classify/select_slda.cpp
              src/classify/knn.cpp
              src/classify/select_corr.cpp
              src/classify/select_odds.cpp
