@@ -22,19 +22,6 @@ using namespace meta::index;
 using namespace meta::topics;
 using namespace meta::tokenizers;
 
-void tokenize(vector<Document> & docs, const unordered_map<string, string> & config)
-{
-    std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
-
-    size_t i = 0;
-    for(auto & d: docs)
-    {
-        common::show_progress(i++, docs.size(), 20, "  tokenizing ");
-        tok->tokenize(d, nullptr);
-    }
-    common::end_progress("  tokenizing ");
-}
-
 int main(int argc, char* argv[])
 {
     if(argc != 2)
@@ -46,10 +33,36 @@ int main(int argc, char* argv[])
     unordered_map<string, string> config = io::config_reader::read(argv[1]);
     string prefix = config["prefix"] + config["dataset"];
     vector<Document> docs = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
+    
+    // tokenize
+    std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
+    size_t i = 0;
+    for(auto & d: docs)
+    {
+        common::show_progress(i++, docs.size(), 20, "  tokenizing ");
+        tok->tokenize(d, nullptr);
+    }
+    common::end_progress("  tokenizing ");
 
-    tokenize(docs, config);
+    // run slda
     slda model(config["slda"], 0.1);
     model.estimate(docs);
+
+    // print distributions
+    auto dists = model.class_distributions();
+    for(auto & cls: dists)
+    {
+        size_t num = 20;
+        cout << string(40, '-') << endl;
+        cout << cls.first << endl;
+        cout << string(40, '-') << endl;
+        for(auto & dist: cls.second)
+        {
+            cout << dist.second << " " << tok->label(dist.first) << endl;
+            if(num-- == 0)
+                break;
+        }
+    }
 
     return 0;
 }

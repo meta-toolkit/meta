@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <iostream>
 #include <fstream>
 #include <unordered_set>
 #include "topics/slda.h"
@@ -41,23 +42,118 @@ void slda::estimate(const vector<Document> & docs)
     labels.close();
     data.close();
 
+    std::cerr << "Running sLDA..." << std::endl;
     string command = _slda_path + "/slda est slda-data slda-labels ";
     command += _slda_path + "/settings.txt "; // use default settings for now
     command += common::to_string(_alpha) + " ";
     command += common::to_string(unique_labels.size()) + " ";
     command += "random slda-est-output";
+    command += " 2>&1> /dev/null";
     system(command.c_str());
+    std::cerr << "Done!" << std::endl;
 }
 
 unordered_map<class_label, vector<pair<term_id, double>>> slda::class_distributions() const
 {
-    unordered_map<class_label, vector<pair<term_id, double>>> ret;
-    return ret;
+    unordered_map<class_label, vector<pair<term_id, double>>> dists;
+
+    vector<vector<double>> probs = get_probs();
+    int curr_label_id = 1; // start at one since mappings start at one
+    for(auto & dist: probs)
+    {
+        vector<pair<term_id, double>> this_dist;
+        term_id curr_id = 0;
+
+        // combine each probability with its term id
+        for(auto & prob: dist)
+        {
+            this_dist.push_back(std::make_pair(curr_id, prob));
+            ++curr_id;
+        }
+
+        // sort this distribution by term weight
+        std::sort(this_dist.begin(), this_dist.end(),
+            [](const pair<term_id, double> & a, const pair<term_id, double> & b) {
+                return a.second > b.second;
+            }
+        );
+
+        // assign the current distribution to its respective class
+        dists[_mapping.getKeyByValue(curr_label_id)] = this_dist;
+        ++curr_label_id;
+    }
+
+    return dists;
+}
+
+vector<vector<double>> slda::get_probs() const
+{
+    // read the betas from the file
+    std::ifstream in("slda-est-output/final.model.text");
+    string line;
+    vector<string> str_probs;
+    while(in.good())
+    {
+        // skip to the betas (term probabilities per class)
+        std::getline(in, line);
+        if(line == "betas: ")
+        {
+            // grab all the betas
+            std::getline(in, line);
+            while(line != "etas: ")
+            {
+                str_probs.push_back(line);
+                std::getline(in, line);
+            }
+
+            // once we've gotten the betas, we're done
+            break;
+        }
+    }
+    in.close();
+
+    // convert them into doubles for each class (order in outer vector is the
+    // class id)
+    vector<vector<double>> probs;
+    for(auto & str: str_probs)
+    {
+        double prob;
+        vector<double> curr_probs;
+        std::istringstream iss(str);
+        while(iss >> prob)
+            curr_probs.push_back(prob);
+        probs.emplace_back(curr_probs);
+    }
+
+    return probs;
 }
 
 vector<pair<term_id, double>> slda::select_features() const
 {
-    vector<pair<term_id, double>> ret;
+    unordered_map<term_id, double> weights;
+
+    // find highest weighted terms
+    vector<vector<double>> probs = get_probs();
+    for(auto & dist: probs)
+    {
+        term_id curr_id = 0;
+        for(auto & prob: dist)
+        {
+            // 0 will actually be higher than any feature rating from sLDA
+            if(weights[curr_id] == 0.0 || weights[curr_id] < prob)
+                weights[curr_id] = prob;
+            ++curr_id;
+        }
+    }
+
+    // sort by term weight
+    vector<pair<term_id, double>> ret(weights.begin(), weights.end());
+    std::sort(ret.begin(), ret.end(),
+        [](const pair<term_id, double> & a, const pair<term_id, double> & b) {
+            return a.second > b.second;
+        }
+    );
+
     return ret;
 }
 

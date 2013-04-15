@@ -53,6 +53,11 @@ class slda
 
     private:
 
+        /**
+         * @return a vector of betas for each class
+         */
+        std::vector<std::vector<double>> get_probs() const;
+
         /** value of alpha for sLDA */
         const double _alpha;
 
