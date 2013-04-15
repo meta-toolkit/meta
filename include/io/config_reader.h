@@ -27,6 +27,11 @@ namespace config_reader
     std::unordered_map<std::string, std::string> read(const std::string & path);
 
     /**
+     * @param config
+     */
+    std::string get_config_string(const std::unordered_map<std::string, std::string> & config);
+
+    /**
      * @return a Tokenizer as specified by a config object
      */
     std::shared_ptr<tokenizers::tokenizer> create_tokenizer(

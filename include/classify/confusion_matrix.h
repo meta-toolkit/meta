@@ -36,12 +36,12 @@ class confusion_matrix
         void add(const class_label & predicted, const class_label & actual, size_t times = 1);
 
         /**
-         * Prints this matrix to cout.
+         * Prints this matrix to out.
          */
         void print_stats(std::ostream & out = std::cout) const;
 
         /**
-         * Prints this matrix to cout.
+         * Prints this matrix to out.
          */
         void print(std::ostream & out = std::cout) const;
 

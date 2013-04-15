@@ -78,6 +78,16 @@ add_library( meta-topics
              src/topics/parallel_lda_gibbs.cpp
 )
 
+add_executable( eval eval.cpp )
+target_link_libraries( eval
+                       meta-io
+                       meta-index
+                       meta-tokenizers
+                       meta-stemmers
+                       meta-classify
+                       ${CMAKE_THREAD_LIBS_INIT} 
+)
+
 add_executable( lm lm.cpp )
 target_link_libraries( lm 
                        meta-io 

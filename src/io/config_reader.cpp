@@ -20,6 +20,20 @@ using tokenizers::multi_tokenizer;
 using tokenizers::tree_tokenizer;
 using tokenizers::ngram_tokenizer;
 
+string config_reader::get_config_string(const unordered_map<string, string> & config)
+{
+    std::stringstream ss;
+    ss << "config";
+    for(auto & opt: config)
+    {
+        // filter out unwanted (not useful) options
+        if(opt.first != "slda" && opt.first != "liblinear" && opt.first != "prefix"
+                && opt.first != "stop-words" && opt.first != "function-words")
+            ss << "-" << opt.second;
+    }
+    return ss.str();
+}
+
 unordered_map<string, string> config_reader::read(const string & path)
 {
     std::ifstream configFile(path);
