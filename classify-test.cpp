@@ -13,6 +13,7 @@
 #include "tokenizers/tree_tokenizer.h"
 #include "util/invertible_map.h"
 #include "classify/naive_bayes.h"
+#include "classify/liblinear_svm.h"
 
 using std::vector;
 using std::unordered_map;
@@ -56,12 +57,15 @@ int main(int argc, char* argv[])
 
     unordered_map<string, string> config = io::config_reader::read(argv[1]);
     string prefix = config["prefix"] + config["dataset"];
-    vector<Document> docs = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
+    vector<Document> train_docs = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
+    //vector<Document> test_docs = Document::loadDocs(prefix + "/test.txt", prefix);
 
-    tokenize(docs, config);
+    tokenize(train_docs, config);
+    //tokenize(test_docs, config);
    
-    classify::naive_bayes nb(0.000001, 0.000001);
-    classify::confusion_matrix matrix = nb.cross_validate(docs, 5);
+    classify::liblinear_svm svm(config["liblinear"]);
+    //svm.train(train_docs);
+    classify::confusion_matrix matrix = svm.cross_validate(train_docs, 5);
     matrix.print();
     matrix.print_stats();
 

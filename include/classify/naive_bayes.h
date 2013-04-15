@@ -42,7 +42,7 @@ class naive_bayes: public classifier
          * @param doc The document to classify
          * @return the class it belongs to
          */
-        class_label classify(const index::Document & doc) const;
+        class_label classify(const index::Document & doc);
 
         /**
          * Resets any learning information associated with this classifier.

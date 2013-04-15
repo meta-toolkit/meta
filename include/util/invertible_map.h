@@ -87,6 +87,11 @@ class InvertibleMap
         void readMap(const std::string & filename);
 
         /**
+         * Frees all keys from this object.
+         */
+        void clear();
+
+        /**
          * The "inner" iterator representation of the InvertibleMap.
          */
         typedef typename std::unordered_map<Key, Value>::const_iterator InnerIterator;

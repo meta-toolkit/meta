@@ -26,7 +26,7 @@ class classifier
          * @param doc The document to classify
          * @return the class it belongs to
          */
-        virtual class_label classify(const index::Document & doc) const = 0;
+        virtual class_label classify(const index::Document & doc) = 0;
 
         /**
          * Creates a classification model based on training documents.
@@ -40,7 +40,7 @@ class classifier
          * @param docs The documents to classify
          * @return a confusion_matrix detailing the performance of the classifier
          */
-        confusion_matrix test(const std::vector<index::Document> & docs) const;
+        virtual confusion_matrix test(const std::vector<index::Document> & docs);
 
         /**
          * Performs k-fold cross-validation on a set of documents. When using
@@ -50,7 +50,7 @@ class classifier
          * @param seed The seed for the RNG used to shuffle the documents
          * @return a confusion_matrix containing the results over all the folds
          */
-        confusion_matrix cross_validate(const std::vector<index::Document> & input_docs,
+        virtual confusion_matrix cross_validate(const std::vector<index::Document> & input_docs,
                 size_t k, int seed = 1);
 
         /**

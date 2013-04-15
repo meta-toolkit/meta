@@ -12,7 +12,7 @@ namespace classify {
 using std::vector;
 using index::Document;
 
-confusion_matrix classifier::test(const vector<Document> & docs) const
+confusion_matrix classifier::test(const vector<Document> & docs)
 {
     confusion_matrix matrix;
     for(auto & d: docs)
@@ -32,12 +32,13 @@ confusion_matrix classifier::cross_validate(const vector<Document> & input_docs,
     size_t step_size = docs.size() / k;
     for(size_t i = 0; i < k; ++i)
     {
-        std::cerr << "Cross-validating fold " << (i + 1) << "/" << k << std::endl;
+        std::cerr << "Cross-validating fold " << (i + 1) << "/" << k << "\r";
         reset(); // clear any learning data already calculated
         train(vector<Document>(docs.begin() + step_size, docs.end()));
         matrix += test(vector<Document>(docs.begin(), docs.begin() + step_size));
         std::rotate(docs.begin(), docs.begin() + step_size, docs.end());
     }
+    std::cerr << std::endl;
 
     return matrix;
 }

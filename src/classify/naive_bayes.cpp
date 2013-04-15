@@ -61,7 +61,7 @@ void naive_bayes::train(const vector<Document> & docs)
    
 }
 
-class_label naive_bayes::classify(const Document & doc) const
+class_label naive_bayes::classify(const Document & doc)
 {
     class_label label;
     double best = std::numeric_limits<double>::min();

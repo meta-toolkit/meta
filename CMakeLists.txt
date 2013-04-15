@@ -32,6 +32,7 @@ add_library( meta-classify
              src/classify/select_corr.cpp
              src/classify/select_odds.cpp
              src/classify/naive_bayes.cpp
+             src/classify/liblinear_svm.cpp
              lib/slda/corpus.cpp
              lib/slda/slda.cpp
              lib/slda/opt.cpp

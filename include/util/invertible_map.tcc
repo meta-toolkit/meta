@@ -20,6 +20,13 @@ bool InvertibleMap<Key, Value>::empty() const
 }
 
 template <class Key, class Value>
+void InvertibleMap<Key, Value>::clear()
+{
+    _forward.clear();
+    _backward.clear();
+}
+
+template <class Key, class Value>
 size_t InvertibleMap<Key, Value>::size() const
 {
     return _forward.size();
