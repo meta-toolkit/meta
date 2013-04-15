@@ -116,15 +116,6 @@ target_link_libraries( search
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
-add_executable( learn learn.cpp )
-target_link_libraries( learn
-                       meta-io
-                       meta-index
-                       meta-tokenizers
-                       meta-stemmers
-                       ${CMAKE_THREAD_LIBS_INIT}
-)
-
 add_executable( feature-select feature-select.cpp )
 target_link_libraries( feature-select
                        meta-io
