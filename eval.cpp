@@ -38,7 +38,8 @@ void run(const std::unordered_map<std::string, std::string> & config)
 
     std::ofstream outfile(filename);
     std::stringstream ss;
-    matrix.print_stats(ss);
+    //matrix.print_stats(ss); // ceeaus, sentiment
+    matrix.print_result_pairs(ss); // kaggle (for quadratic weighted kappa input)
     cerr << ss.str();
     outfile << ss.str();
     outfile.close();
@@ -54,10 +55,20 @@ int main(int argc, char* argv[])
 
     std::unordered_map<std::string, std::string> config = io::config_reader::read(argv[1]);
 
-    for(size_t n = 1; n < 6; ++n)
+ // for(auto & opt: {"Branch", "Subtree", "Depth", "Skel", "Semi", "Tag"})
+ // {
+ //     config["treeOpt_1"] = opt;
+ //     run(config);
+ // }
+
+    for(auto & ngramOpt: {"Word", "Char", "FW", "POS"})
     {
-        config["ngram_1"] = common::to_string(n);
-        run(config);
+        config["ngramOpt_1"] = ngramOpt;
+        for(size_t n = 1; n < 6; ++n)
+        {
+            config["ngram_1"] = common::to_string(n);
+            run(config);
+        }
     }
  
     return 0;

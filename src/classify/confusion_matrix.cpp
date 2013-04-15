@@ -36,6 +36,15 @@ void confusion_matrix::add(const class_label & predicted, const class_label & ac
     _total += times;
 }
 
+void confusion_matrix::print_result_pairs(std::ostream & out) const
+{
+    for(auto & p: _predictions)
+    {
+        for(size_t i = 0; i < p.second; ++i)
+            out << p.first.first << " " << p.first.second << "\n";
+    }
+}
+
 void confusion_matrix::print(std::ostream & out) const
 {
     size_t w = 12;

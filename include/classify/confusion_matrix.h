@@ -46,6 +46,11 @@ class confusion_matrix
         void print(std::ostream & out = std::cout) const;
 
         /**
+         * Prints (predicted, actual) pairs for all judgements
+         */
+        void print_result_pairs(std::ostream & out = std::cout) const;
+
+        /**
          * Implements a hash function for a pair of strings.
          * @param str_pair The pair of strings
          * @return the hash
