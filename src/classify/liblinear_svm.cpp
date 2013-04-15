@@ -23,7 +23,7 @@ class_label liblinear_svm::classify(const Document & doc)
 {
     // create input for liblinear
     std::ofstream out("liblinear-input");
-    out << doc.getLearningData(_mapping, false);
+    out << doc.get_liblinear_data(_mapping);
     out.close();
 
     // run liblinear
@@ -46,7 +46,7 @@ confusion_matrix liblinear_svm::test(const vector<Document> & docs)
     // create input for liblinear
     std::ofstream out("liblinear-input");
     for(auto & d: docs)
-        out << d.getLearningData(_mapping, false);
+        out << d.get_liblinear_data(_mapping);
     out.close();
 
     // run liblinear
@@ -75,7 +75,7 @@ void liblinear_svm::train(const vector<Document> & docs)
 {
     std::ofstream out("liblinear-train");
     for(auto & d: docs)
-        out << d.getLearningData(_mapping, false);
+        out << d.get_liblinear_data(_mapping);
     out.close();
 
     string command = _liblinear_path + "/train liblinear-train";

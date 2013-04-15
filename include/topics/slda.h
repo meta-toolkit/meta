@@ -6,8 +6,10 @@
 #ifndef _SLDA_H_
 #define _SLDA_H_
 
+#include <string>
 #include <vector>
 #include "index/document.h"
+#include "util/invertible_map.h"
 
 namespace meta {
 namespace topics {
@@ -24,7 +26,7 @@ class slda
          * @param alpha The value of alpha, the parameter for a uniform
          * Dirichlet prior
          */
-        slda(double alpha);
+        slda(const std::string & slda_path, double alpha);
 
         /**
          * Estimates topic models based on each document's class label.
@@ -53,6 +55,12 @@ class slda
 
         /** value of alpha for sLDA */
         const double _alpha;
+
+        /** path to the sLDA library */
+        const std::string _slda_path;
+
+        /** maps classes to integers for slda i/o */
+        util::InvertibleMap<class_label, int> _mapping;
 };
 
 }

@@ -1,5 +1,6 @@
 /**
  * @file document.h
+ * @author Sean Massung
  */
 
 #ifndef _DOCUMENT_H_
@@ -85,13 +86,27 @@ class Document
         /**
          * Prints tokenizer output in liblinear input format.
          * @param mapping Keeps track of class labels as integers.
-         * @param usingSLDA Indicates which learner we're passing the data to.
          * @return
          */
-        std::string getLearningData(util::InvertibleMap<std::string, int> & mapping, bool usingSLDA) const;
+        std::string get_liblinear_data(util::InvertibleMap<class_label, int> & mapping) const;
 
-        std::string getFilteredLearningData(util::InvertibleMap<std::string, int> & mapping, 
+        /**
+         * Outputs learning data only using specified features.
+         * @param mapping Keeps track of class labels as integers.
+         */
+        std::string get_filtered_liblinear_data(util::InvertibleMap<class_label, int> & mapping, 
                 const std::unordered_set<term_id> & features) const;
+
+        /**
+         * Outputs class label integer for slda.
+         * @param mapping Keeps track of class labels as integers.
+         */
+        std::string get_slda_label_data(util::InvertibleMap<class_label, int> & mapping) const;
+
+        /**
+         * Outputs term count data in slda format.
+         */
+        std::string get_slda_term_data() const;
 
         /**
          * Wrapper function for a Document's cosine similarity measure.

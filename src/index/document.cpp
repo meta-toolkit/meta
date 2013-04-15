@@ -1,5 +1,6 @@
 /**
  * @file document.cpp
+ * @author Sean Massung
  */
 
 #include <map>
@@ -102,19 +103,13 @@ string Document::getCategory(const string & path)
     return getName(sub);
 }
 
-string Document::getLearningData(InvertibleMap<string, int> & mapping, bool usingSLDA) const
+string Document::get_liblinear_data(InvertibleMap<string, int> & mapping) const
 {
     stringstream out;
-
-    if(usingSLDA)
-        out << getMapping(mapping, getCategory(_path)) - 1; // slda, classes start at 0
-    else
-        out << getMapping(mapping, getCategory(_path));     // liblinear, classes start at 1
-
+    out << getMapping(mapping, getCategory());     // liblinear, classes start at 1
     map<term_id, unsigned int> sorted;
 
     // liblinear feature indices start at 1, not 0 like the tokenizers
-    // this works for sLDA as well.
     for(auto & freq: _frequencies)
         sorted.insert(make_pair(freq.first + 1, freq.second));
 
@@ -125,10 +120,11 @@ string Document::getLearningData(InvertibleMap<string, int> & mapping, bool usin
     return out.str();
 }
 
-string Document::getFilteredLearningData(InvertibleMap<string, int> & mapping, const unordered_set<term_id> & features) const
+string Document::get_filtered_liblinear_data(InvertibleMap<string, int> & mapping,
+        const unordered_set<term_id> & features) const
 {
     stringstream out;
-    out << getMapping(mapping, getCategory(_path));
+    out << getMapping(mapping, getCategory());
 
     map<term_id, unsigned int> sorted;
 
@@ -181,6 +177,22 @@ vector<Document> Document::loadDocs(const string & filename, const string & pref
         docs.push_back(Document(prefix + "/" + file));
     }
     return docs;
+}
+
+string Document::get_slda_term_data() const
+{
+    stringstream out;
+    out << _frequencies.size();
+    for(auto & f: _frequencies)
+        out << " " << f.first << ":" << f.second;
+    out << "\n";
+    return out.str();
+}
+
+string Document::get_slda_label_data(InvertibleMap<class_label, int> & mapping) const
+{
+    // minus one because slda classes start at 0
+    return common::to_string(getMapping(mapping, getCategory()) - 1) + "\n";
 }
 
 }

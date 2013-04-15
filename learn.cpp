@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
         common::show_progress(i, documents.size(), 20, "  tokenizing ");
         // order of lines in the liblinear input file does NOT matter (tested)
         tok->tokenize(documents[i], nullptr);
-        std::cout << documents[i].getLearningData(mapping, false /* using liblinear */);
+        std::cout << documents[i].get_liblinear_data(mapping);
     }
     common::end_progress("  tokenizing ");
 

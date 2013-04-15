@@ -46,7 +46,7 @@ void run_selected_features(const vector<Document> & documents,
     string datafile = "liblinear-selected.dat";
     ofstream out(datafile);
     for(auto & d: documents)
-        out << d.getFilteredLearningData(mapping, features);
+        out << d.get_filtered_liblinear_data(mapping, features);
 
     out.close();
     run_liblinear(datafile, prefix);
@@ -61,7 +61,7 @@ InvertibleMap<string, int> tokenize(std::shared_ptr<tokenizer> & tokenizer, vect
     {
         common::show_progress(i++, documents.size(), 20, "  tokenizing ");
         tokenizer->tokenize(d, nullptr);
-        liblinear_out << d.getLearningData(mapping, false /* using liblinear */);
+        liblinear_out << d.get_liblinear_data(mapping);
     }
     common::end_progress("  tokenizing ");
     liblinear_out.close();

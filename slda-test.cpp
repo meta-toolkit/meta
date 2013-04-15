@@ -4,13 +4,9 @@
 
 #include <vector>
 #include <string>
-#include <memory>
 #include <iostream>
-
 #include "index/document.h"
 #include "io/config_reader.h"
-#include "tokenizers/ngram_tokenizer.h"
-#include "util/invertible_map.h"
 #include "topics/slda.h"
 
 using std::vector;
@@ -24,12 +20,8 @@ using std::string;
 using namespace meta;
 using namespace meta::index;
 using namespace meta::topics;
-using namespace meta::util;
 using namespace meta::tokenizers;
 
-/**
- * Tokenizes testing and training docs.
- */
 void tokenize(vector<Document> & docs, const unordered_map<string, string> & config)
 {
     std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
@@ -56,7 +48,7 @@ int main(int argc, char* argv[])
     vector<Document> docs = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
 
     tokenize(docs, config);
-    slda model(0.1);
+    slda model(config["slda"], 0.1);
     model.estimate(docs);
 
     return 0;
