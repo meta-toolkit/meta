@@ -98,6 +98,16 @@ target_link_libraries( classify
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
+add_executable( slda slda-test.cpp )
+target_link_libraries( slda
+                       meta-io
+                       meta-index
+                       meta-tokenizers
+                       meta-stemmers
+                       meta-topics
+                       ${CMAKE_THREAD_LIBS_INIT}
+)
+
 add_executable( search search.cpp )
 target_link_libraries( search
                        meta-io
