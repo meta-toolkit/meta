@@ -11,19 +11,19 @@
  - You will also probably want to enable supervised latent Dirichlet allocation
    through slda. Download the source
    [here](http://www.cs.cmu.edu/~chongw/slda/). Add
-    ```C++
+    ```
     #include <cstddef>
     ```
    at the top of corpus.h, and compile. Again, add the path to slda to
    config.ini.
 
  - To compile initially, run the following commands
-    ```bash
-    mkdir build
-    cd build
-    CXX=clang++ LDFLAGS="-lcxxrt -ldl" cmake ../ -DCMAKE_BUILD_TYPE=Debug
-    make
-    ```
+```bash
+mkdir build
+cd build
+CXX=clang++ LDFLAGS="-lcxxrt -ldl" cmake ../ -DCMAKE_BUILD_TYPE=Debug
+make
+```
 
  - There are rules for clean, tidy, and doc. (Also, once you run the cmake
    command once, you should be able to just run make like usual as you're
