@@ -27,26 +27,13 @@ slda::slda(const string & slda_path, double alpha):
 
 void slda::estimate(const vector<Document> & docs)
 {
-    std::ofstream data("slda-data");
-    std::ofstream labels("slda-labels");
-
-    unordered_set<class_label> unique_labels;
-
-    for(auto & d: docs)
-    {
-        labels << d.get_slda_label_data(_mapping);
-        data << d.get_slda_term_data();
-        unique_labels.insert(d.getCategory());
-    }
-
-    labels.close();
-    data.close();
+    size_t num_classes = create_input_files(docs);
 
     std::cerr << "Running sLDA..." << std::endl;
     string command = _slda_path + "/slda est slda-data slda-labels ";
     command += _slda_path + "/settings.txt "; // use default settings for now
     command += common::to_string(_alpha) + " ";
-    command += common::to_string(unique_labels.size()) + " ";
+    command += common::to_string(num_classes) + " ";
     command += "random slda-est-output";
     command += " 2>&1> /dev/null";
     system(command.c_str());
@@ -157,9 +144,36 @@ vector<pair<term_id, double>> slda::select_features() const
     return ret;
 }
 
-void slda::infer(const vector<Document> & docs) const
+size_t slda::create_input_files(const vector<Document> & docs)
 {
+    std::ofstream data("slda-data");
+    std::ofstream labels("slda-labels");
+    unordered_set<class_label> unique_labels;
 
+    for(auto & d: docs)
+    {
+        labels << d.get_slda_label_data(_mapping);
+        data << d.get_slda_term_data();
+        unique_labels.insert(d.getCategory());
+    }
+
+    labels.close();
+    data.close();
+
+    return unique_labels.size();
+}
+
+void slda::infer(const vector<Document> & docs)
+{
+    create_input_files(docs);
+
+    std::cerr << "Running sLDA inference..." << std::endl;
+    string command = _slda_path + "/slda inf slda-data slda-labels ";
+    command += _slda_path + "/settings.txt "; // use default settings for now
+    command += "slda-est-output/final.model slda-inf-output ";
+    command += "2>&1> /dev/null";
+    system(command.c_str());
+    std::cerr << "Done!" << std::endl;
 }
 
 }

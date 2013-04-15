@@ -49,7 +49,7 @@ class slda
          * Infers labels based on a collection of documents.
          * @param docs The "testing" corpus
          */
-        void infer(const std::vector<index::Document> & docs) const;
+        void infer(const std::vector<index::Document> & docs);
 
     private:
 
@@ -57,6 +57,12 @@ class slda
          * @return a vector of betas for each class
          */
         std::vector<std::vector<double>> get_probs() const;
+
+        /**
+         * @param docs
+         * @return the number of classes seen in the corpus
+         */
+        size_t create_input_files(const std::vector<index::Document> & docs);
 
         /** value of alpha for sLDA */
         const double _alpha;
