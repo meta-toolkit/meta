@@ -32,10 +32,6 @@ add_library( meta-classify
              src/classify/select_odds.cpp
              src/classify/naive_bayes.cpp
              src/classify/liblinear_svm.cpp
-             lib/slda/corpus.cpp
-             lib/slda/slda.cpp
-             lib/slda/opt.cpp
-             lib/slda/utils.cpp
 )
 
 add_library( meta-index
@@ -79,6 +75,7 @@ add_library( meta-topics
              src/topics/lda_cvb.cpp  
              src/topics/lda_gibbs.cpp
              src/topics/lda_model.cpp
+             src/topics/slda.cpp
              src/topics/parallel_lda_gibbs.cpp
 )
 
