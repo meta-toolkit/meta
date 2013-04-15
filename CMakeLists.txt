@@ -9,7 +9,6 @@ include_directories( "lib/slda/" )
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/lib" )
 
 find_package( Threads REQUIRED )
-find_package( GSL REQUIRED )
 
 if( UNIX )
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
@@ -127,7 +126,6 @@ target_link_libraries( feature-select
                        meta-tokenizers
                        meta-stemmers
                        meta-classify
-                       ${GSL_LIBRARIES}
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
