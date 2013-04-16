@@ -1,5 +1,8 @@
 /**
  * @file config_reader.h
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _CONFIG_READER_H_

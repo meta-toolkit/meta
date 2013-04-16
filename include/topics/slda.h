@@ -1,6 +1,9 @@
 /**
  * @file slda.h
  * @author Sean Massung
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _SLDA_H_

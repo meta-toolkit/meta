@@ -1,5 +1,8 @@
 /**
  * @file ngram_char_tokenizer.h
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _NGRAM_CHAR_TOKENIZER_H_

@@ -1,5 +1,8 @@
 /**
  * @file postings.h
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _POSTINGS_H_

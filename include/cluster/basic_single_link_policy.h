@@ -1,5 +1,8 @@
 /**
  * @file basic_single_link_policy.h
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _SINGLE_LINK_POLICY_H_

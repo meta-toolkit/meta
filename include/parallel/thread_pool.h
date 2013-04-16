@@ -4,6 +4,9 @@
  * facilities.
  * 
  * @see Inspired by: https://github.com/progschj/ThreadPool
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _DST_THREAD_POOL_H_

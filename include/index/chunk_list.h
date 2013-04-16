@@ -1,5 +1,8 @@
 /**
  * @file chunk_list.h
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _CHUNK_LIST_H_

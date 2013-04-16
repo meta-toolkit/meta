@@ -1,6 +1,9 @@
 /**
  * @file ngram_distribution.h
  * Declaration of a smoothed ngram language model class.
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _NGRAM_DISTRIBUTION_
