@@ -14,6 +14,7 @@
 #include "util/invertible_map.h"
 #include "classify/naive_bayes.h"
 #include "classify/liblinear_svm.h"
+#include "classify/perceptron.h"
 
 using std::vector;
 using std::unordered_map;
@@ -44,6 +45,12 @@ void tokenize(vector<Document> & docs, const unordered_map<string, string> & con
     common::end_progress("  tokenizing ");
 }
 
+void cv( classify::classifier & c, const vector<Document> & train_docs ) {
+    classify::confusion_matrix matrix = c.cross_validate(train_docs, 5);
+    matrix.print();
+    matrix.print_stats();
+}
+
 /**
  *
  */
@@ -62,12 +69,14 @@ int main(int argc, char* argv[])
 
     tokenize(train_docs, config);
     //tokenize(test_docs, config);
-   
+    
     classify::liblinear_svm svm(config["liblinear"]);
+    classify::perceptron p;
+    classify::naive_bayes nb;
+    cv( svm, train_docs );
+    cv( p, train_docs );
+    cv( nb, train_docs );
     //svm.train(train_docs);
-    classify::confusion_matrix matrix = svm.cross_validate(train_docs, 5);
-    matrix.print();
-    matrix.print_stats();
-
+    
     return 0;
 }

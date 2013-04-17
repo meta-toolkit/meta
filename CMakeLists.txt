@@ -31,6 +31,7 @@ add_library( meta-classify
              src/classify/select_odds.cpp
              src/classify/naive_bayes.cpp
              src/classify/liblinear_svm.cpp
+             src/classify/perceptron.cpp
 )
 
 add_library( meta-index
