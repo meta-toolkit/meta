@@ -87,10 +87,17 @@ class perceptron : public classifier {
          */
         std::unordered_map<class_label, std::unordered_map<term_id, double>> weights_;
 
-        const double alpha_;    /// \f$\alpha\f$, the learning rate.
-        const double gamma_;    /// \f$\gamma\f$, the error threshold.
-        const double bias_;     /// \f$b\f$, the bias.
-        const size_t max_iter_; /// The maximum number of iterations for training.
+        /// \f$\alpha\f$, the learning rate.
+        const double alpha_;    
+
+        /// \f$\gamma\f$, the error threshold.
+        const double gamma_;    
+
+        /// \f$b\f$, the bias.
+        const double bias_;     
+
+        /// The maximum number of iterations for training.
+        const size_t max_iter_; 
 };
 
 }
