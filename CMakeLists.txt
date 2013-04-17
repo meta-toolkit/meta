@@ -185,9 +185,17 @@ add_custom_target( tidy
                    *.theta
 )
 
-add_custom_target( doc
-                   COMMAND doxygen ${CMAKE_CURRENT_SOURCE_DIR}/meta.doxygen
-)
+find_package( Doxygen )
+if( DOXYGEN_FOUND )
+    configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/meta.doxygen.in
+                    ${CMAKE_CURRENT_BINARY_DIR}/meta.doxygen @ONLY
+    )
+    add_custom_target( doc
+                       ${DOXYGEN_EXECUTABLE}
+                       ${CMAKE_CURRENT_BINARY_DIR}/meta.doxygen
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+endif()
 
 file( GLOB INI_FILES *.ini )
 file( COPY ${INI_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
