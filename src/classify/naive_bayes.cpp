@@ -39,6 +39,7 @@ void naive_bayes::train(const vector<Document> & docs)
         ++_total_docs;
         for(auto & p: d.getFrequencies())
             term_space.insert(p.first);
+        ++_class_counts[d.getCategory()];
     }
 
     // calculate c(term|class) for all classes
@@ -46,7 +47,6 @@ void naive_bayes::train(const vector<Document> & docs)
     {
         for(auto & d: docs)
         {
-            ++_class_counts[d.getCategory()];
             size_t count = common::safe_at(d.getFrequencies(), t);
             _term_probs[d.getCategory()][t] += count;
         }
@@ -72,12 +72,13 @@ class_label naive_bayes::classify(const Document & doc)
         double sum = 0.0;
         double class_prob = static_cast<double>(_class_counts.at(cls.first)) / _total_docs;
         class_prob += _beta;
+        sum += log(1 + class_prob);
         for(auto & t: doc.getFrequencies())
         {
             auto it = cls.second.find(t.first);
             double term_prob = (it == cls.second.end()) ? 0.0 : it->second;
             term_prob += _alpha;
-            sum += log(1 + term_prob * class_prob);
+            sum += log(1 + term_prob);
         }
 
         if(sum > best)
