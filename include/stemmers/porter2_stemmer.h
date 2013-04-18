@@ -27,11 +27,11 @@ namespace Porter2Stemmer
 
     namespace internal
     {
-        int firstNonVowelAfterVowel(const std::string & word, int start);
+        size_t firstNonVowelAfterVowel(const std::string & word, size_t start);
 
-        int getStartR1(const std::string & word);
+        size_t getStartR1(const std::string & word);
 
-        int getStartR2(const std::string & word, int startR1);
+        size_t getStartR2(const std::string & word, size_t startR1);
 
         void changeY(std::string & word);
 
@@ -39,17 +39,17 @@ namespace Porter2Stemmer
 
         bool step1A(std::string & word);
 
-        void step1B(std::string & word, int startR1);
+        void step1B(std::string & word, size_t startR1);
 
         void step1C(std::string & word);
 
-        void step2(std::string & word, int startR1);
+        void step2(std::string & word, size_t startR1);
 
-        void step3(std::string & word, int startR1, int startR2);
+        void step3(std::string & word, size_t startR1, size_t startR2);
 
-        void step4(std::string & word, int startR2);
+        void step4(std::string & word, size_t startR2);
 
-        void step5(std::string & word, int startR1, int startR2);
+        void step5(std::string & word, size_t startR1, size_t startR2);
 
         inline bool isShort(const std::string & word);
 

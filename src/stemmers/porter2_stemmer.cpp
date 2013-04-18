@@ -43,8 +43,8 @@ string Porter2Stemmer::stem(const string & toStem)
         return word;
 
     changeY(word);
-    int startR1 = getStartR1(word);
-    int startR2 = getStartR2(word, startR1);
+    size_t startR1 = getStartR1(word);
+    size_t startR2 = getStartR2(word, startR1);
 
     step0(word);
 
@@ -82,7 +82,7 @@ string Porter2Stemmer::trim(const string & toStem)
     return word;
 }
 
-int Porter2Stemmer::internal::getStartR1(const string & word)
+size_t Porter2Stemmer::internal::getStartR1(const string & word)
 {
     // special cases
     if(word.substr(0, 5) == "gener")
@@ -93,22 +93,22 @@ int Porter2Stemmer::internal::getStartR1(const string & word)
         return 5;
 
     // general case
-    int startR1 = firstNonVowelAfterVowel(word, 1);
+    size_t startR1 = firstNonVowelAfterVowel(word, 1);
 
     return startR1;
 }
 
-int Porter2Stemmer::internal::getStartR2(const string & word, int startR1)
+size_t Porter2Stemmer::internal::getStartR2(const string & word, size_t startR1)
 {
     if(startR1 == word.size())
         return startR1;
 
-    int startR2 = firstNonVowelAfterVowel(word, startR1 + 1);
+    size_t startR2 = firstNonVowelAfterVowel(word, startR1 + 1);
 
     return startR2;
 }
 
-int Porter2Stemmer::internal::firstNonVowelAfterVowel(const string & word, int start)
+size_t Porter2Stemmer::internal::firstNonVowelAfterVowel(const string & word, size_t start)
 {
     for(size_t i = start; i != 0 && i < word.size(); ++i)
     {
@@ -198,7 +198,7 @@ bool Porter2Stemmer::internal::step1A(string & word)
       if the word ends with a double remove the last letter (so hopp -> hop), or
       if the word is short, add e (so hop -> hope)
 */
-void Porter2Stemmer::internal::step1B(string & word, int startR1)
+void Porter2Stemmer::internal::step1B(string & word, size_t startR1)
 {
     bool exists = endsWith(word, "eedly") || endsWith(word, "eed");
 
@@ -257,7 +257,7 @@ void Porter2Stemmer::internal::step1C(string & word)
   ogi:                  replace by og if preceded by l
   li:                   delete if preceded by a valid li-ending
 */
-void Porter2Stemmer::internal::step2(string & word, int startR1)
+void Porter2Stemmer::internal::step2(string & word, size_t startR1)
 {
     const vector<pair<string, string>> subs = {
         {"ational", "ate"}, {"tional", "tion"}, {"enci", "ence"}, {"anci", "ance"},
@@ -295,7 +295,7 @@ void Porter2Stemmer::internal::step2(string & word, int startR1)
   ful, ness:          delete
   ative:              delete if in R2
 */
-void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
+void Porter2Stemmer::internal::step3(string & word, size_t startR1, size_t startR2)
 {
     const vector<pair<string, string>> subs = {
         {"ational", "ate"}, {"tional", "tion"}, {"alize", "al"}, {"icate", "ic"},
@@ -320,7 +320,7 @@ void Porter2Stemmer::internal::step3(string & word, int startR1, int startR2)
   ion
                               delete if preceded by s or t
 */
-void Porter2Stemmer::internal::step4(string & word, int startR2)
+void Porter2Stemmer::internal::step4(string & word, size_t startR2)
 {
     const vector<pair<string, string>> subs = {
         {"al", ""}, {"ance", ""}, {"ence", ""}, {"er", ""}, {"ic", ""},
@@ -348,7 +348,7 @@ void Porter2Stemmer::internal::step4(string & word, int startR2)
   e     delete if in R2, or in R1 and not preceded by a short syllable
   l     delete if in R2 and preceded by l
 */
-void Porter2Stemmer::internal::step5(string & word, int startR1, int startR2)
+void Porter2Stemmer::internal::step5(string & word, size_t startR1, size_t startR2)
 {
     size_t size = word.size();
     if(word[size - 1] == 'e')
@@ -460,9 +460,9 @@ bool Porter2Stemmer::internal::isValidLIEnding(char ch)
 
 bool Porter2Stemmer::internal::containsVowel(const string & word, int start, int end)
 {
-    if(start >=0 && end > 0 && start <= end && end < word.size())
+    if(start >=0 && end > 0 && start <= end && end < static_cast<int>(word.size()))
     {
-        for(size_t i = start; i < end; ++i)
+        for(int i = start; i < end; ++i)
             if(isVowelY(word[i]))
                 return true;
     }
