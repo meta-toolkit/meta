@@ -30,17 +30,5 @@ string ngram_tokenizer::wordify(const deque<string> & words) const
     return result.substr(0, result.size() - 1);
 }
 
-string ngram_tokenizer::set_lower(const string & original) const
-{
-    string word = "";
-    for(auto ch: original)
-    {
-        if(ch >= 'A' && ch <= 'Z')
-            ch += 32;
-        word += ch;
-    }
-    return word;
-}
-
 }
 }

@@ -48,12 +48,6 @@ class ngram_tokenizer: public tokenizer
          */
         virtual std::string wordify(const std::deque<std::string> & words) const;
 
-        /**
-         * @param original - the string to set to lowercase
-         * @return a lowercase version of the string
-         */
-        std::string set_lower(const std::string & original) const;
-
     private:
 
         /** The value of n for this ngram tokenizer */
