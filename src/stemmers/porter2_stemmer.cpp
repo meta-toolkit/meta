@@ -5,26 +5,6 @@
  *
  * Implementation of
  * http://snowball.tartarus.org/algorithms/english/stemmer.html
- *
- * Copyright (C) 2012 Sean Massung
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
  */
 
 #include <algorithm>
@@ -48,6 +28,10 @@ using std::cout;
 string Porter2Stemmer::stem(const string & toStem)
 {
     if(toStem.size() <= 2)
+        return toStem;
+
+    // special case for begin and end sentence markers
+    if(toStem == "<s>" || toStem == "</s>")
         return toStem;
 
     string word = toStem;
@@ -83,12 +67,16 @@ string Porter2Stemmer::stem(const string & toStem)
 
 string Porter2Stemmer::trim(const string & toStem)
 {
+    // special case for begin and end sentence markers
+    if(toStem == "<s>" || toStem == "</s>")
+        return toStem;
+
     string word = "";
     for(auto ch: toStem)
     {
-        if(ch >= 'A' && ch <= 'Z')
-            ch += 32;
-        if((ch >= 'a' && ch <= 'z') || ch == '\'')
+        if(std::isupper(ch))
+            ch = std::tolower(ch);
+        if(std::islower(ch) || ch == '\'')
             word += ch;
     }
     return word;
