@@ -19,30 +19,6 @@ using std::unordered_map;
 
 using tokenizers::tokenizer;
 
-RAMIndex::RAMIndex(const vector<string> & indexFiles, std::shared_ptr<tokenizer> tokenizer):
-    _tokenizer(tokenizer),
-    _documents(vector<Document>()),
-    _docFreqs(new unordered_map<term_id, unsigned int>),
-    _avgDocLength(0)
-{
-    cout << "[RAMIndex]: creating index from " << indexFiles.size() << " documents" << endl;
-    
-    size_t docNum = 0;
-    for(auto & file: indexFiles)
-    {
-        Document document(file);
-        _tokenizer->tokenize(document, _docFreqs);
-        _documents.push_back(document);
-        _avgDocLength += document.getLength();
-
-        if(docNum++ % 10 == 0)
-            cout << "  " << ((double) docNum / indexFiles.size() * 100) << "%    \r";
-    }
-    cout << "  100%        " << endl;
-
-    _avgDocLength /= _documents.size();
-}
-
 RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<tokenizer> tokenizer):
     _tokenizer(tokenizer),
     _documents(indexDocs),
@@ -54,7 +30,6 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<tokenizer
     size_t docNum = 0;
     for(auto & doc: _documents)
     {
-        //combineMap(doc.getFrequencies()); // call this if doc was already tokenized
         _tokenizer->tokenize(doc, _docFreqs);
         _avgDocLength += doc.getLength();
         if(docNum++ % 10 == 0)
@@ -66,12 +41,6 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<tokenizer
     cout << "  100%        " << endl;
 
     _avgDocLength /= _documents.size();
-}
-
-void RAMIndex::combineMap(const unordered_map<term_id, unsigned int> & newFreqs)
-{
-    for(auto & freq: *_docFreqs) // TODO bug?
-        (*_docFreqs)[freq.first] += freq.second;
 }
 
 double RAMIndex::scoreDocument(const Document & document, const Document & query) const
@@ -135,11 +104,6 @@ multimap<double, string> RAMIndex::search(Document & query) const
     }
 
     return ranks;
-}
-
-void RAMIndex::indexDocs(std::vector<Document> & documents, size_t chunkMBSize)
-{
-    // put code for index creation in here?
 }
 
 }

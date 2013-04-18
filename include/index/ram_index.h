@@ -27,30 +27,15 @@ class RAMIndex : public Index
     public:
         /**
          * Creates an Index located in memory.
-         * @param indexDocs - Document objects to index
-         * @param tokenizer - how to tokenize the indexed files 
+         * @param indexDocs Untokenized Document objects to index
+         * @param tokenizer How to tokenize the indexed files 
          */
         RAMIndex(const std::vector<Document> & indexDocs, std::shared_ptr<tokenizers::tokenizer> tokenizer);
 
         /**
-         * Creates an Index located in memory.
-         * @param indexFiles - files to index
-         * @param tokenizer - how to tokenize the indexed files 
-         */
-        RAMIndex(const std::vector<std::string> & indexFiles, std::shared_ptr<tokenizers::tokenizer> tokenizer);
-        
-        /**
-         * Creates an index of given documents.
-         * @param documents - a vector of documents to make the index out of
-         * @param chunkMBSize - the maximum size the postings chunks will be in
-         *  memory before they're written to disk.
-         */
-        void indexDocs(std::vector<Document> & documents, size_t chunkMBSize);
-
-        /**
          * Scores a document given a query.
-         * @param document - the doc to score
-         * @param query - the query to score against
+         * @param document The doc to score
+         * @param query The query to score against
          * @return the real score value 
          */
         double scoreDocument(const Document & document, const Document & query) const;
@@ -80,12 +65,6 @@ class RAMIndex : public Index
 
         /** average number of terms in the documents in the collection */
         size_t _avgDocLength;
-
-        /**
-         * Adds counts to the IDF map.
-         * @param newFreqs - the frequencies to add to _docFreqs
-         */
-        void combineMap(const std::unordered_map<term_id, unsigned int> & newFreqs);
 
         /**
          * @return a filename minus the path

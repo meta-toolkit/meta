@@ -32,12 +32,12 @@ class Index
         virtual std::multimap<double, std::string> search(Document & query) const = 0;
 
         /**
-         * Creates an index of given documents.
-         * @param documents - a vector of documents to make the index out of
-         * @param chunkMBSize - the maximum size the postings chunks will be in
-         *  memory before they're written to disk.
+         * Scores a document given a query.
+         * @param document The doc to score
+         * @param query The query to score against
+         * @return the real score value 
          */
-        virtual void indexDocs(std::vector<Document> & documents, size_t chunkMBSize) = 0;
+        virtual double scoreDocument(const Document & document, const Document & query) const = 0;
 
         /**
          * Basic exception for Index interactions.

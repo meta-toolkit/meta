@@ -45,8 +45,8 @@ class InvertedIndex : public Index
 
         /**
          * Scores a document given a query.
-         * @param document - the doc to score
-         * @param query - the query to score against
+         * @param document The doc to score
+         * @param query The query to score against
          * @return the real score value 
          */
         double scoreDocument(const Document & document, const Document & query) const;
