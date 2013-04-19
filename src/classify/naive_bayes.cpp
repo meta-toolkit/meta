@@ -32,24 +32,12 @@ void naive_bayes::reset()
 
 void naive_bayes::train(const vector<Document> & docs)
 {
-    // discover all seen features
-    unordered_set<term_id> term_space;
     for(auto & d: docs)
     {
         ++_total_docs;
         for(auto & p: d.getFrequencies())
-            term_space.insert(p.first);
+            _term_probs[d.getCategory()][p.first] += p.second;
         ++_class_counts[d.getCategory()];
-    }
-
-    // calculate c(term|class) for all classes
-    for(auto & t: term_space)
-    {
-        for(auto & d: docs)
-        {
-            size_t count = common::safe_at(d.getFrequencies(), t);
-            _term_probs[d.getCategory()][t] += count;
-        }
     }
 
     // calculate P(term|class) for all classes based on c(term|class)
