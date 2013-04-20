@@ -13,7 +13,7 @@
 #include <utility>
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
+#include <set>
 #include "meta.h"
 
 namespace meta {
@@ -101,14 +101,20 @@ class confusion_matrix
         /** maps predicted class to actual class frequencies */
         prediction_counts _predictions;
 
-        /** keeps track of the number of classes */
-        std::unordered_set<class_label> _classes;
+        /**
+         * Keeps track of the number of classes. We use a std::set here so the
+         * class labels are sorted alphabetically.
+         */
+        std::set<class_label> _classes;
 
         /** how many times each class was predicted */
         std::unordered_map<class_label, size_t> _counts;
 
         /** total number of classification attempts */
         size_t _total;
+
+        /** width of each column of confusion_matrix */
+        size_t _width;
 };
 
 }

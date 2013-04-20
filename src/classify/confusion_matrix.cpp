@@ -4,6 +4,8 @@
  */
 
 #include <iomanip>
+#include <algorithm>
+#include <vector>
 #include "util/common.h"
 #include "classify/confusion_matrix.h"
 
@@ -13,7 +15,7 @@ namespace classify {
 using std::setw;
 using std::endl;
 using std::unordered_map;
-using std::unordered_set;
+using std::set;
 using std::string;
 using std::pair;
 using std::make_pair;
@@ -21,9 +23,10 @@ using std::make_pair;
 confusion_matrix::confusion_matrix():
     _predictions(unordered_map<pair<class_label, class_label>, size_t,
             decltype(&confusion_matrix::string_pair_hash)>(32, string_pair_hash)),
-    _classes(unordered_set<class_label>()),
+    _classes(set<class_label>()),
     _counts(unordered_map<class_label, size_t>()),
-    _total(0)
+    _total(0),
+    _width(20)
 { /* nothing */ }
 
 void confusion_matrix::add(const class_label & predicted, const class_label & actual, size_t times)
@@ -56,7 +59,7 @@ void confusion_matrix::print(std::ostream & out) const
 
     for(auto & aClass: _classes)
     {
-        out << setw(w) << (aClass + " | ");
+        out << setw(w - 1) << aClass << " | ";
         for(auto & pClass: _classes)
         {
             auto predIt = _predictions.find(make_pair(pClass, aClass));
@@ -65,10 +68,13 @@ void confusion_matrix::print(std::ostream & out) const
                 size_t numPred = predIt->second;
                 double percent = static_cast<double>(numPred) / _counts.at(aClass);
                 out.precision(3);
+                std::stringstream ss;
+                ss.precision(3);
+                ss << percent;
                 if(aClass == pClass)
-                    out << "[" << setw(w - 2) << percent << "]";
+                    out << setw(w) << ("[" + ss.str() + "]");
                 else
-                    out << setw(w) << percent;
+                    out << setw(w) << std::fixed << percent;
             }
             else
                 out << setw(w) << "- ";
@@ -84,7 +90,7 @@ void confusion_matrix::print_class_stats(std::ostream & out, const class_label &
     for(auto & cls: _classes)
     {
         prec += common::safe_at(_predictions, make_pair(cls, label));
-        rec +=  common::safe_at(_predictions, make_pair(label, cls));
+        rec  += common::safe_at(_predictions, make_pair(label, cls));
     }
 
     double correct = common::safe_at(_predictions, make_pair(label, label));
@@ -98,11 +104,11 @@ void confusion_matrix::print_class_stats(std::ostream & out, const class_label &
     if(prec + rec != 0.0)
         f1 = (2.0 * prec * rec) / (prec + rec);
 
-    size_t w = 20;
-    out << std::left << setw(w) << label
-        << std::left << setw(w) << f1
-        << std::left << setw(w) << prec
-        << std::left << setw(w) << rec
+    auto w = setw(_width);
+    out << std::left << w << label
+        << std::left << w << f1
+        << std::left << w << prec
+        << std::left << w << rec
         << endl;
 }
 
@@ -113,14 +119,14 @@ void confusion_matrix::print_stats(std::ostream & out) const
     double t_f1 = 0.0;
     double t_corr = 0.0;
 
-    size_t w = 20;
+    auto w = setw(_width);
     out.precision(3);
-    out << string(w * 4, '-') << endl
-        << std::left << setw(w) << "Class"
-        << std::left << setw(w) << "F1 Score"
-        << std::left << setw(w) << "Precision"
-        << std::left << setw(w) << "Recall" << endl
-        << string(w * 4, '-') << endl;
+    out << string(_width * 4, '-') << endl
+        << std::left << w << "Class"
+        << std::left << w << "F1 Score"
+        << std::left << w << "Precision"
+        << std::left << w << "Recall" << endl
+        << string(_width * 4, '-') << endl;
 
     for(auto & cls: _classes)
     {
@@ -134,12 +140,12 @@ void confusion_matrix::print_stats(std::ostream & out) const
         t_f1 += f1;
     }
 
-    out << string(w * 4, '-') << endl
-        << setw(w) << "Total"
-        << setw(w) << t_f1 / _classes.size()
-        << setw(w) << t_prec / _classes.size()
-        << setw(w) << t_rec / _classes.size() << endl
-        << string(w * 4, '-') << endl
+    out << string(_width * 4, '-') << endl
+        << w << "Total"
+        << w << t_f1 / _classes.size()
+        << w << t_prec / _classes.size()
+        << w << t_rec / _classes.size() << endl
+        << string(_width * 4, '-') << endl
         << _total << " predictions attempted, overall accuracy: "
         << t_corr / _total << endl;
 }
