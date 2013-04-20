@@ -26,12 +26,13 @@ class ngram_char_tokenizer: public ngram_simple_tokenizer
         /**
          * Tokenizes a file into a Document.
          * @param document - the Document to store the tokenized information in
+         * @param mapping - the string to term_id mapping
          * @param docFreqs - optional parameter to store IDF values in
          */
-        virtual void tokenize(
+        virtual void tokenize_document(
                 index::Document & document,
-                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreqs = nullptr
-        );
+                std::function<term_id(const std::string & term)> mapping,
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreqs = nullptr);
 };
 
 }

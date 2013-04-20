@@ -8,6 +8,9 @@
 #ifndef _NGRAM_SIMPLE_TOKENIZER_H_
 #define _NGRAM_SIMPLE_TOKENIZER_H_
 
+#include <functional>
+#include <string>
+
 #include "tokenizers/ngram_tokenizer.h"
 #include "io/parser.h"
 
@@ -34,12 +37,14 @@ class ngram_simple_tokenizer: public ngram_tokenizer
         /**
          * Tokenizes a file into a Document.
          * @param document The Document to store the tokenized information in
+         * @param mapping - the string to term_id mapping
          * @param parser The parser to use for this document
          * @param docFreqs Optional parameter to store IDF values in
          */
         void simple_tokenize(
                 io::Parser & parser,
                 index::Document & document,
+                std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreqs = nullptr
         );
 };

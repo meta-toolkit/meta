@@ -40,7 +40,8 @@ class tree_tokenizer: public tokenizer
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        void tokenize(index::Document & document,
+        void tokenize_document(index::Document & document,
+                std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq = nullptr);
 
     private:
@@ -49,7 +50,7 @@ class tree_tokenizer: public tokenizer
         TreeTokenizerType _type;
 
         /** Tree tokenizer function type */
-        typedef std::function<void(index::Document &, const ParseTree &, std::shared_ptr<std::unordered_map<term_id, unsigned int>>)> TokenizerFunction;
+        typedef std::function<void(index::Document &, const ParseTree &, std::function<term_id(const std::string &)>, std::shared_ptr<std::unordered_map<term_id, unsigned int>>)> TokenizerFunction;
 
         /** Hashes specific tree tokenizer types to tokenizer functions */
         std::unordered_map< TreeTokenizerType, TokenizerFunction, std::hash<int> > _tokenizer_types;
@@ -63,6 +64,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void depthTokenize(index::Document & document, const ParseTree & tree,
+                std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
@@ -73,6 +75,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void subtreeTokenize(index::Document & document, const ParseTree & tree,
+                std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
@@ -83,6 +86,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void tagTokenize(index::Document & document, const ParseTree & tree,
+                std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
@@ -93,6 +97,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void branchTokenize(index::Document & document, const ParseTree & tree,
+                std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
@@ -103,6 +108,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void skeletonTokenize(index::Document & document, const ParseTree & tree,
+                std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
@@ -113,6 +119,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void semiSkeletonTokenize(index::Document & document, const ParseTree & tree,
+                std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 
         /**
@@ -123,6 +130,7 @@ class tree_tokenizer: public tokenizer
          *  instance
          */
         void multiTokenize(index::Document & document, const ParseTree & tree,
+                std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq);
 };
 

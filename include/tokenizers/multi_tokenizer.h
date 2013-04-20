@@ -38,18 +38,17 @@ class multi_tokenizer: public tokenizer
         /**
          * Tokenizes a file into a Document.
          * @param document - the Document to store the tokenized information in
+         * @param mapping - the string to term_id mapping
          * @param docFreq - optional parameter to store IDF values in
          */
-        void tokenize(index::Document & document,
+        void tokenize_document(index::Document & document,
+                std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq = nullptr);
 
     private:
 
         /** Holds all the tokenizers in this multi_tokenizer */
         std::vector<std::shared_ptr<tokenizer>> _tokenizers;
-
-        /** Keeps track of the number of terms between all the contained tokenizers. */
-        size_t _max_term_id;
 };
 
 }

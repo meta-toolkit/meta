@@ -43,8 +43,12 @@ class tokenizer
          * @param document - the Document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        virtual void tokenize(index::Document & document,
-                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq = nullptr) = 0;
+        void tokenize(index::Document & document,
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq = nullptr);
+        
+        virtual void tokenize_document(index::Document & document,
+                std::function<term_id(const std::string & term)> mapping,
+                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq) = 0;
 
         /**
          * Maps terms to term_ids.
@@ -112,9 +116,9 @@ class tokenizer
          * its _termMap correctly.
          */
         util::InvertibleMap<term_id, std::string> _term_map;
- 
+        
     private:
-
+ 
         /**
          * Internal counter for the number of unique terms seen (used as keys
          * in the InvertibleMap).
