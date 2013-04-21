@@ -1,3 +1,6 @@
+#include <numeric>
+#include <random>
+
 #include "classify/perceptron.h"
 
 namespace meta {
@@ -27,15 +30,19 @@ void perceptron::zero_weights( const std::vector<index::Document> & docs ) {
 
 void perceptron::train( const std::vector<index::Document> & docs ) {
     zero_weights( docs );
+    std::vector<size_t> indices( docs.size() );
+    std::iota( indices.begin(), indices.end(), 0 );
+    std::random_device d;
+    std::mt19937 g( d() );
     for( size_t iter = 0; iter < max_iter_; ++iter ) {
-        common::show_progress( iter, max_iter_, 10, "[perceptron]: training " );
+        std::shuffle( indices.begin(), indices.end(), g );
         double error_count = 0;
-        for( const index::Document & doc : docs ) {
-            class_label guess = classify( doc );
-            class_label actual = doc.getCategory();
+        for( size_t i = 0; i < indices.size(); ++i ) {
+            class_label guess = classify( docs[i] );
+            class_label actual = docs[i].getCategory();
             if( guess != actual ) {
                 error_count += 1;
-                for( const auto & count : doc.getFrequencies() ) {
+                for( const auto & count : docs[i].getFrequencies() ) {
                     weights_[ guess ][ count.first ] -= alpha_ * count.second;
                     weights_[ actual ][ count.first ] += alpha_ * count.second;
                 }
@@ -44,7 +51,6 @@ void perceptron::train( const std::vector<index::Document> & docs ) {
         if( error_count / docs.size() < gamma_ )
             break;
     }
-    common::end_progress("[perceptron]: training ");
 }
 
 class_label perceptron::classify( const index::Document & doc ) {
