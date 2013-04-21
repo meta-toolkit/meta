@@ -56,7 +56,7 @@ class_label perceptron::classify( const index::Document & doc ) {
             dot += count.second * get_weight( w.first, count.first );
         }
         if( dot > best_dot ) {
-            dot = best_dot;
+            best_dot = dot;
             best_label = w.first;
         }
     }
