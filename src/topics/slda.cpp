@@ -3,7 +3,6 @@
  * @author Sean Massung
  */
 
-#include <iostream>
 #include <fstream>
 #include <unordered_set>
 #include "topics/slda.h"
@@ -29,7 +28,6 @@ void slda::estimate(const vector<Document> & docs)
 {
     size_t num_classes = create_input_files(docs);
 
-    std::cerr << "Running sLDA..." << std::endl;
     string command = _slda_path + "/slda est slda-data slda-labels ";
     command += _slda_path + "/settings.txt "; // use default settings for now
     command += common::to_string(_alpha) + " ";
@@ -37,7 +35,6 @@ void slda::estimate(const vector<Document> & docs)
     command += "random slda-est-output";
     command += " 2>&1> /dev/null";
     system(command.c_str());
-    std::cerr << "Done!" << std::endl;
 }
 
 unordered_map<class_label, vector<pair<term_id, double>>> slda::class_distributions() const
@@ -167,13 +164,11 @@ void slda::infer(const vector<Document> & docs)
 {
     create_input_files(docs);
 
-    std::cerr << "Running sLDA inference..." << std::endl;
     string command = _slda_path + "/slda inf slda-data slda-labels ";
     command += _slda_path + "/settings.txt "; // use default settings for now
     command += "slda-est-output/final.model slda-inf-output ";
     command += "2>&1> /dev/null";
     system(command.c_str());
-    std::cerr << "Done!" << std::endl;
 }
 
 }

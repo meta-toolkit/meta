@@ -136,6 +136,7 @@ add_executable( feature-select feature-select.cpp )
 target_link_libraries( feature-select
                        meta-io
                        meta-index
+                       meta-topics
                        meta-tokenizers
                        meta-stemmers
                        meta-classify
