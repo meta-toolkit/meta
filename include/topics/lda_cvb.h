@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "index/document.h"
-#include "tokenizers/ngram_tokenizer.h"
+#include "tokenizers/ngram/ngram_tokenizer.h"
 #include "topics/lda_model.h"
 #include "util/common.h"
 

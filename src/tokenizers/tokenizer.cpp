@@ -6,7 +6,6 @@
 #include <fstream>
 #include <iostream>
 #include "util/invertible_map.h"
-#include "tokenizers/parse_tree.h"
 #include "tokenizers/tokenizer.h"
 
 namespace meta {

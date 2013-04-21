@@ -16,7 +16,7 @@
 #include <unordered_map>
 #include <utility>
 #include "index/document.h"
-#include "tokenizers/ngram_tokenizer.h"
+#include "tokenizers/ngram/ngram_tokenizer.h"
 
 namespace meta {
 namespace language_model {

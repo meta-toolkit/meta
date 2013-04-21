@@ -4,7 +4,7 @@
 
 #include <unordered_map>
 #include "io/parser.h"
-#include "tokenizers/ngram_pos_tokenizer.h"
+#include "tokenizers/ngram/ngram_pos_tokenizer.h"
 
 namespace meta {
 namespace tokenizers {

@@ -5,7 +5,7 @@
 
 #include <stdexcept>
 #include "stemmers/no_stemmer.h"
-#include "tokenizers/ngram_word_tokenizer.h"
+#include "tokenizers/ngram/ngram_word_tokenizer.h"
 
 namespace meta {
 namespace language_model {

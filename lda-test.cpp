@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "index/document.h"
-#include "tokenizers/ngram_tokenizer.h"
+#include "tokenizers/ngram/ngram_tokenizer.h"
 #include "topics/lda_gibbs.h"
 #include "topics/parallel_lda_gibbs.h"
 #include "topics/lda_cvb.h"

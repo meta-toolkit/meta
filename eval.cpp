@@ -9,7 +9,6 @@
 #include <fstream>
 #include <sstream>
 #include "index/document.h"
-#include "tokenizers/ngram_word_tokenizer.h"
 #include "classify/liblinear_svm.h"
 #include "io/config_reader.h"
 

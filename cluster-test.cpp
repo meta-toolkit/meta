@@ -6,7 +6,7 @@
 #include "cluster/basic_single_link_policy.h"
 #include "cluster/similarity.h"
 #include "index/document.h"
-#include "tokenizers/ngram_word_tokenizer.h"
+#include "tokenizers/ngram/ngram_word_tokenizer.h"
 
 void run_test( const std::string & filename, const std::string & prefix ) {
     using namespace meta;

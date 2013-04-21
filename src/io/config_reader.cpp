@@ -1,17 +1,11 @@
 #include <fstream>
-#include "tokenizers/multi_tokenizer.h"
-#include "tokenizers/tree_tokenizer.h"
-#include "tokenizers/ngram_word_tokenizer.h"
-#include "tokenizers/ngram_fw_tokenizer.h"
-#include "tokenizers/ngram_pos_tokenizer.h"
-#include "tokenizers/ngram_lex_tokenizer.h"
-#include "tokenizers/ngram_char_tokenizer.h"
-#include "io/config_reader.h"
+#include "tokenizers/tokenizers.h"
 
 namespace meta {
 namespace io {
 
 using std::shared_ptr;
+using std::make_shared;
 using std::string;
 using std::unordered_map;
 
@@ -85,10 +79,21 @@ shared_ptr<tokenizer> config_reader::create_tokenizer(const unordered_map<string
 
         if(method->second == "tree")
         {
-            string tree = config.at("treeOpt" + suffix);
-            toks.emplace_back(
-                    shared_ptr<tokenizer>(new tree_tokenizer(treeOpt.at(tree)))
-            );
+            string type = config.at("treeOpt" + suffix);
+            if(type == "Branch")
+                toks.emplace_back(make_shared<tokenizers::branch_tokenizer>());
+            else if(type == "Depth")
+                toks.emplace_back(make_shared<tokenizers::depth_tokenizer>());
+            else if(type == "Semi")
+                toks.emplace_back(make_shared<tokenizers::semi_skeleton_tokenizer>());
+            else if(type == "Skel")
+                toks.emplace_back(make_shared<tokenizers::skeleton_tokenizer>());
+            else if(type == "Subtree")
+                toks.emplace_back(make_shared<tokenizers::subtree_tokenizer>());
+            else if(type == "Tag")
+                toks.emplace_back(make_shared<tokenizers::tag_tokenizer>());
+            else
+                throw config_reader_exception{"tree method was not able to be determined"};
         }
         else if(method->second == "ngram")
         {

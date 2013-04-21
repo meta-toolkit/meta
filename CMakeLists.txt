@@ -60,15 +60,20 @@ add_library( meta-stemmers
 
 add_library( meta-tokenizers
              src/tokenizers/multi_tokenizer.cpp
-             src/tokenizers/ngram_lex_tokenizer.cpp
-             src/tokenizers/ngram_tokenizer.cpp
-             src/tokenizers/tree_tokenizer.cpp
-             src/tokenizers/ngram_char_tokenizer.cpp
-             src/tokenizers/ngram_pos_tokenizer.cpp
-             src/tokenizers/parse_tree.cpp
-             src/tokenizers/ngram_fw_tokenizer.cpp
-             src/tokenizers/ngram_simple_tokenizer.cpp
              src/tokenizers/tokenizer.cpp
+             src/tokenizers/ngram/ngram_char_tokenizer.cpp
+             src/tokenizers/ngram/ngram_fw_tokenizer.cpp
+             src/tokenizers/ngram/ngram_lex_tokenizer.cpp
+             src/tokenizers/ngram/ngram_pos_tokenizer.cpp
+             src/tokenizers/ngram/ngram_simple_tokenizer.cpp
+             src/tokenizers/ngram/ngram_tokenizer.cpp
+             src/tokenizers/tree/branch_tokenizer.cpp
+             src/tokenizers/tree/depth_tokenizer.cpp
+             src/tokenizers/tree/parse_tree.cpp
+             src/tokenizers/tree/semi_skeleton_tokenizer.cpp
+             src/tokenizers/tree/skeleton_tokenizer.cpp
+             src/tokenizers/tree/subtree_tokenizer.cpp
+             src/tokenizers/tree/tag_tokenizer.cpp
 )
 
 add_library( meta-topics

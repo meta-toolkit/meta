@@ -13,7 +13,7 @@
 #include <string>
 
 #include "index/document.h"
-#include "tokenizers/ngram_word_tokenizer.h"
+#include "tokenizers/ngram/ngram_word_tokenizer.h"
 
 namespace meta {
 namespace topics {
