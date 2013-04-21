@@ -176,5 +176,34 @@ confusion_matrix & confusion_matrix::operator+=(const confusion_matrix & other)
     return *this;
 }
 
+bool confusion_matrix::mcnemar_significant(const confusion_matrix & a, const confusion_matrix & b)
+{
+    set<class_label> classes = a._classes;
+    classes.insert(b._classes.begin(), b._classes.end());
+
+    double a_adv = 0;
+    double b_adv = 0;
+
+    for(auto & cls: classes)
+    {
+        auto a_count = common::safe_at(a._predictions, make_pair(cls, cls));
+        auto b_count = common::safe_at(b._predictions, make_pair(cls, cls));
+        if(a_count > b_count)
+            a_adv += (a_count - b_count);
+        else if(b_count > a_count)
+            b_adv += (b_count - a_count);
+    }
+
+    // does not approximate well if less than 25 samples
+    if(a_adv + b_adv < 25)
+        return false;
+
+    double numerator = std::abs(a_adv - b_adv) - 0.5;
+    double chi_square = (numerator * numerator) / (a_adv + b_adv);
+
+    // check if significant with chi square, 1 degree of freedom, alpha == 0.05
+    return chi_square > 3.84;
+}
+
 }
 }

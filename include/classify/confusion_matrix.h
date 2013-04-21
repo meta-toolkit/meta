@@ -85,6 +85,15 @@ class confusion_matrix
          */
         confusion_matrix & operator+=(const confusion_matrix & other);
 
+        /**
+         * @param a The first matrix to compare
+         * @param b The second matrix to compare
+         * @return whether results between two confusion matrices are
+         * statistically significant according to McNemar's test with Yates'
+         * correction for continuity (alpha = .05)
+         */
+        static bool mcnemar_significant(const confusion_matrix & a, const confusion_matrix & b);
+
     private:
 
         /**
