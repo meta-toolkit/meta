@@ -94,11 +94,22 @@ class Document
         std::string get_liblinear_data(util::InvertibleMap<class_label, int> & mapping) const;
 
         /**
-         * Outputs learning data only using specified features.
-         * @param mapping Keeps track of class labels as integers.
+         * Removes featuress from a document.
+         * @param docs The documents to remove features from
+         * @param features A list of features that should be removed from the document
+         * @return the filtered document
          */
-        std::string get_filtered_liblinear_data(util::InvertibleMap<class_label, int> & mapping, 
-                const std::unordered_set<term_id> & features) const;
+        static Document filter_features(const index::Document & doc,
+                                        const std::vector<std::pair<term_id, double>> & features);
+
+        /**
+         * Removes features from each document.
+         * @param docs The documents to remove features from
+         * @param features A list of features that should be removed from the document
+         * @return the filtered documents
+         */
+        static std::vector<Document> filter_features(const std::vector<index::Document> & docs,
+                                        const std::vector<std::pair<term_id, double>> & features);
 
         /**
          * Outputs class label integer for slda.

@@ -120,28 +120,6 @@ string Document::get_liblinear_data(InvertibleMap<string, int> & mapping) const
     return out.str();
 }
 
-string Document::get_filtered_liblinear_data(InvertibleMap<string, int> & mapping,
-        const unordered_set<term_id> & features) const
-{
-    stringstream out;
-    out << getMapping(mapping, getCategory());
-
-    map<term_id, unsigned int> sorted;
-
-    for(auto & freq: _frequencies)
-    {
-        // only consider features selected in the set
-        if(features.find(freq.first) != features.end())
-            sorted.insert(make_pair(freq.first + 1, freq.second));
-    }
-
-    for(auto & freq: sorted)
-        out << " " << freq.first << ":" << freq.second;
-
-    out << "\n";
-    return out.str();
-}
-
 int Document::getMapping(InvertibleMap<string, int> & mapping, const string & category)
 {
     // see if entered already
@@ -193,6 +171,29 @@ string Document::get_slda_label_data(InvertibleMap<class_label, int> & mapping) 
 {
     // minus one because slda classes start at 0
     return common::to_string(getMapping(mapping, getCategory()) - 1) + "\n";
+}
+
+Document Document::filter_features(const Document & doc,
+        const vector<pair<term_id, double>> & features)
+{
+    Document filtered(doc);
+    for(auto & feature: features)
+    {
+        auto it = filtered._frequencies.find(feature.first);
+        if(it != filtered._frequencies.end())
+            filtered._frequencies.erase(it);
+    }
+    return filtered;
+}
+
+vector<Document> Document::filter_features(const vector<Document> & docs,
+        const vector<pair<term_id, double>> & features)
+{
+    vector<Document> ret;
+    ret.reserve(docs.size());
+    for(auto & doc: docs)
+        ret.emplace_back(filter_features(doc, features));
+    return ret;
 }
 
 }
