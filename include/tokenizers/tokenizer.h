@@ -39,13 +39,20 @@ class tokenizer
         virtual ~tokenizer() = default;
 
         /**
-         * Tokenizes a file into a Document.
-         * @param document - the Document to store the tokenized information in
-         * @param docFreq - optional parameter to store IDF values in
+         * Tokenizes a Document.
+         * @param document Document to store the tokenized information in
+         * @param docFreq Optional parameter to store IDF values in
          */
         void tokenize(index::Document & document,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq = nullptr);
-        
+
+        /**
+         * Tokenizes a document
+         * @param document Document to store tokenized information in
+         * @param mapping A function that shows the tokenizer how to convert a
+         * string term into its term_id
+         * @param docFreq Parameter to store IDF values in
+         */        
         virtual void tokenize_document(index::Document & document,
                 std::function<term_id(const std::string & term)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq) = 0;
@@ -78,7 +85,6 @@ class tokenizer
         virtual const util::InvertibleMap<term_id, std::string> & term_id_mapping() const;
 
         /**
-         * TODO there are probably other functions that MultiTokenizer messes up
          * Looks up the actual label that is represented by a term_id.
          * @param termID
          * @return the label
