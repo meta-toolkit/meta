@@ -14,6 +14,7 @@
 #include "classify/naive_bayes.h"
 #include "classify/liblinear_svm.h"
 #include "classify/perceptron.h"
+#include "classify/linear_svm.h"
 
 using std::vector;
 using std::unordered_map;
@@ -44,10 +45,11 @@ void tokenize(vector<Document> & docs, const unordered_map<string, string> & con
     common::end_progress("  tokenizing ");
 }
 
-void cv( classify::classifier & c, const vector<Document> & train_docs ) {
+classify::confusion_matrix cv( classify::classifier & c, const vector<Document> & train_docs ) {
     classify::confusion_matrix matrix = c.cross_validate(train_docs, 5);
     matrix.print();
     matrix.print_stats();
+    return matrix;
 }
 
 /**
@@ -70,10 +72,18 @@ int main(int argc, char* argv[])
     //tokenize(test_docs, config);
     
     classify::liblinear_svm svm(config["liblinear"]);
+    classify::linear_svm l2svm;
+    classify::linear_svm l1svm{ classify::linear_svm::loss_function::L1 };
     classify::perceptron p;
     classify::naive_bayes nb;
-    cv( svm, train_docs );
-    cv( p, train_docs );
+    auto m1 = cv( svm, train_docs );
+    auto m2 = cv( l2svm, train_docs );
+    std::cout << "(liblinear) Significant? " << std::boolalpha << classify::confusion_matrix::mcnemar_significant( m1, m2 ) << std::endl;
+    auto m3 = cv( l1svm, train_docs );
+    std::cout << "(liblinear) Significant? " << std::boolalpha << classify::confusion_matrix::mcnemar_significant( m1, m3 ) << std::endl;
+    auto m4 = cv( p, train_docs );
+    std::cout << "(liblinear) Significant? " << std::boolalpha << classify::confusion_matrix::mcnemar_significant( m1, m4 ) << std::endl;
+    std::cout << "(lsvm) Significant? " << std::boolalpha << classify::confusion_matrix::mcnemar_significant( m2, m4 ) << std::endl;
     cv( nb, train_docs );
     //svm.train(train_docs);
     

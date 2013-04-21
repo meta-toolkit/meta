@@ -27,9 +27,14 @@ void parallel_for( Iterator begin, Iterator end, Function func ) {
 template <class Iterator, class Function>
 void parallel_for( Iterator begin, Iterator end, thread_pool & pool, Function func ) {
     auto block_size = std::distance( begin, end ) / std::thread::hardware_concurrency();
-    
+
     Iterator last = begin;
-    std::advance( last, ( std::thread::hardware_concurrency() - 1 ) * block_size );
+    if( block_size > 0 ) {
+        std::advance( last, ( std::thread::hardware_concurrency() - 1 ) * block_size );
+    } else {
+        last = end;
+        block_size = 1;
+    }
 
     std::vector<std::future<void>> futures;
     // first p - 1 groups

@@ -32,6 +32,7 @@ add_library( meta-classify
              src/classify/naive_bayes.cpp
              src/classify/liblinear_svm.cpp
              src/classify/perceptron.cpp
+             src/classify/linear_svm.cpp
 )
 
 add_library( meta-index
