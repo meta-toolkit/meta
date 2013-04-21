@@ -9,8 +9,7 @@
 
 #include "index/document.h"
 #include "io/config_reader.h"
-#include "tokenizers/ngram_tokenizer.h"
-#include "tokenizers/tree_tokenizer.h"
+#include "tokenizers/tokenizers.h"
 #include "util/invertible_map.h"
 #include "classify/naive_bayes.h"
 #include "classify/liblinear_svm.h"

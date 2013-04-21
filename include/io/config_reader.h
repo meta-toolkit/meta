@@ -12,8 +12,8 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "tokenizers/ngram_tokenizer.h"
-#include "tokenizers/tree_tokenizer.h"
+
+#include "tokenizers/tokenizer.h"
 
 namespace meta {
 namespace io {
@@ -39,20 +39,6 @@ namespace config_reader
      */
     std::shared_ptr<tokenizers::tokenizer> create_tokenizer(
         const std::unordered_map<std::string, std::string> & config);
-
-    /**
-     * Keeps track of which tree option to use depending on config setting.
-     */
-    static const std::unordered_map<
-        std::string, tokenizers::tree_tokenizer::TreeTokenizerType
-    > treeOpt = {
-        {"Subtree", tokenizers::tree_tokenizer::Subtree},
-        {"Depth",   tokenizers::tree_tokenizer::Depth},
-        {"Branch",  tokenizers::tree_tokenizer::Branch},
-        {"Tag",     tokenizers::tree_tokenizer::Tag},
-        {"Skel",    tokenizers::tree_tokenizer::Skeleton},
-        {"Semi",    tokenizers::tree_tokenizer::SemiSkeleton}
-    };
 
     /**
      * Basic exception for config_reader interactions.

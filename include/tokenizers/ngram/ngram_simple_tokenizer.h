@@ -11,7 +11,7 @@
 #include <functional>
 #include <string>
 
-#include "tokenizers/ngram_tokenizer.h"
+#include "tokenizers/ngram/ngram_tokenizer.h"
 #include "io/parser.h"
 
 namespace meta {

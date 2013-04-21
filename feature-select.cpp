@@ -8,8 +8,6 @@
 
 #include "index/document.h"
 #include "io/config_reader.h"
-#include "tokenizers/ngram_tokenizer.h"
-#include "tokenizers/tree_tokenizer.h"
 #include "util/invertible_map.h"
 
 #include "classify/select_doc_freq.h"

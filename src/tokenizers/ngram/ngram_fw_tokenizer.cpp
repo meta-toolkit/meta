@@ -1,10 +1,10 @@
 /**
- * @file ngram_word_tokenizer.tcc
+ * @file ngram_fw_tokenizer.cpp
  */
 
 #include "io/parser.h"
 #include "io/config_reader.h"
-#include "tokenizers/ngram_word_tokenizer.h"
+#include "tokenizers/ngram/ngram_fw_tokenizer.h"
 
 namespace meta {
 namespace tokenizers {
@@ -13,21 +13,17 @@ using std::deque;
 using std::string;
 using std::unordered_map;
 using std::unordered_set;
-
 using index::Document;
 using io::Parser;
 
-template <class Stemmer>
-ngram_word_tokenizer<Stemmer>::ngram_word_tokenizer(size_t n, ngram_word_traits::StopwordType stopwordType):
+ngram_fw_tokenizer::ngram_fw_tokenizer(size_t n):
     ngram_tokenizer(n),
-    _stopwords(unordered_set<string>())
+    _function_words(unordered_set<string>())
 {
-    if(stopwordType != ngram_word_traits::NoStopwords)
-        init_stopwords();
+    init_function_words();
 }
 
-template <class Stemmer>
-void ngram_word_tokenizer<Stemmer>::tokenize_document(Document & document,
+void ngram_fw_tokenizer::tokenize_document(Document & document,
         std::function<term_id(const std::string &)> mapping,
         const std::shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
@@ -40,8 +36,8 @@ void ngram_word_tokenizer<Stemmer>::tokenize_document(Document & document,
         string next = "";
         do
         {
-            next = stem(parser.next());
-        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
+            next = parser.next();
+        } while(_function_words.find(next) == _function_words.end() && parser.hasNext());
         ngram.push_back(next);
     }
 
@@ -54,8 +50,8 @@ void ngram_word_tokenizer<Stemmer>::tokenize_document(Document & document,
         string next = "";
         do
         {
-            next = stem(parser.next());
-        } while(_stopwords.find(next) != _stopwords.end() && parser.hasNext());
+            next = parser.next();
+        } while(_function_words.find(next) == _function_words.end() && parser.hasNext());
         ngram.push_back(next);
     }
 
@@ -63,13 +59,12 @@ void ngram_word_tokenizer<Stemmer>::tokenize_document(Document & document,
     document.increment(mapping(wordify(ngram)), 1, docFreq);
 }
 
-template <class Stemmer>
-void ngram_word_tokenizer<Stemmer>::init_stopwords()
+void ngram_fw_tokenizer::init_function_words()
 {
     auto config = io::config_reader::read("config.ini");
-    Parser parser(config["stop-words"], "\n");
+    Parser parser(config["function-words"], " \n");
     while(parser.hasNext())
-        _stopwords.insert(stem(parser.next()));
+        _function_words.insert(parser.next());
 }
 
 }

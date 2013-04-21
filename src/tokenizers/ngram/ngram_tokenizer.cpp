@@ -2,7 +2,7 @@
  * @file ngram_tokenizer.cpp
  */
 
-#include "tokenizers/ngram_tokenizer.h"
+#include "tokenizers/ngram/ngram_tokenizer.h"
 
 namespace meta {
 namespace tokenizers {

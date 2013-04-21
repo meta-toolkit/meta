@@ -3,7 +3,7 @@
  */
 
 #include <fstream>
-#include "tokenizers/parse_tree.h"
+#include "tokenizers/tree/parse_tree.h"
 
 namespace meta {
 namespace tokenizers {

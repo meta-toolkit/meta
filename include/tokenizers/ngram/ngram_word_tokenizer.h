@@ -9,7 +9,7 @@
 #define _NGRAM_WORD_TOKENIZER_H_
 
 #include "stemmers/porter2.h"
-#include "tokenizers/ngram_tokenizer.h"
+#include "tokenizers/ngram/ngram_tokenizer.h"
 
 namespace meta {
 namespace tokenizers {
@@ -69,6 +69,6 @@ class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
 }
 }
 
-#include "tokenizers/ngram_word_tokenizer.tcc"
+#include "tokenizers/ngram/ngram_word_tokenizer.tcc"
 
 #endif
