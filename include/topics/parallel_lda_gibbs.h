@@ -41,7 +41,7 @@ class parallel_lda_gibbs : public lda_gibbs {
          * @param beta The hyperparameter for the Dirichlet prior over
          *  \f$\theta\f$.
          */
-        parallel_lda_gibbs( std::vector<index::Document> & docs, size_t num_topics,
+        parallel_lda_gibbs( std::vector<index::document> & docs, size_t num_topics,
                             double alpha, double beta );
 
         /**

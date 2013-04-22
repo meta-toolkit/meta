@@ -29,7 +29,7 @@ class select_chi_square: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        select_chi_square(const std::vector<index::Document> & docs);
+        select_chi_square(const std::vector<index::document> & docs);
 
     private:
 

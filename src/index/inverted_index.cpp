@@ -27,10 +27,10 @@ InvertedIndex::InvertedIndex(const string & lexiconFile, const string & postings
         _tokenizer->set_term_id_mapping(_lexicon.getterm_idMapping());
 }
 
-multimap<double, string> InvertedIndex::search(Document & query) const
+multimap<double, string> InvertedIndex::search(document & query) const
 {
-    cerr << "[InvertedIndex]: scoring documents for query " << query.getName()
-         << " (" << query.getCategory() << ")" << endl;
+    cerr << "[InvertedIndex]: scoring documents for query " << query.name()
+         << " (" << query.label() << ")" << endl;
 
     double k1 = 1.5;
     double b = 0.75;
@@ -40,7 +40,7 @@ multimap<double, string> InvertedIndex::search(Document & query) const
     unordered_map<doc_id, double> scores;
 
     _tokenizer->tokenize(query);
-    const unordered_map<term_id, unsigned int> freqs = query.getFrequencies();
+    const unordered_map<term_id, unsigned int> freqs = query.frequencies();
 
     for(auto & queryTerm: freqs)
     {
@@ -67,11 +67,11 @@ multimap<double, string> InvertedIndex::search(Document & query) const
     // combine into sorted multimap
     multimap<double, string> results;
     for(auto & score: scores)
-        results.insert(make_pair(score.second, Document::getCategory(_lexicon.getDoc(score.first))));
+        results.insert(std::make_pair(score.second, "")); // TODO
     return results;
 }
 
-void InvertedIndex::indexDocs(vector<Document> & documents, size_t chunkMBSize)
+void InvertedIndex::indexDocs(vector<document> & documents, size_t chunkMBSize)
 {
     if(!_lexicon.isEmpty())
         throw Index::index_exception("[InvertedIndex]: attempted to create an index in an existing index location");

@@ -19,7 +19,7 @@ int print_usage( const std::string & name ) {
 }
 
 template <class Model>
-int run_lda( std::vector<index::Document> & docs, size_t topics, double alpha, double beta ) {
+int run_lda( std::vector<index::document> & docs, size_t topics, double alpha, double beta ) {
     Model model{ docs, topics, alpha, beta };
     model.run( 1000 );
     model.save( "lda_model" );
@@ -31,7 +31,7 @@ int run_lda( const std::string & type, const std::string & filename,
              size_t topics ) {
     using namespace meta::topics;
     std::cout << "Loading documents...\r" << std::flush;
-    std::vector<index::Document> docs = index::Document::loadDocs( filename, prefix );
+    std::vector<index::document> docs = index::document::load_docs( filename, prefix );
     if( type == "gibbs" ) {
         std::cout<< "Beginning LDA using serial Gibbs sampling..." << std::endl;
         return run_lda<lda_gibbs>( docs, topics, alpha, beta );

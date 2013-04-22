@@ -23,15 +23,15 @@ namespace index {
 /**
  * Represents an indexed document.
  */
-class Document
+class document
 {
     public:
 
         /**
          * Constructor.
-         * @param path - the path to the document
+         * @param path The path to the document
          */
-        Document(const std::string & path);
+        document(const std::string & path, const class_label & label = "");
 
         /**
          * Increment the count of the specified transition.
@@ -52,39 +52,34 @@ class Document
         /**
          * @return the path to this document (the argument to the constructor)
          */
-        std::string getPath() const;
+        std::string path() const;
 
         /**
          * @return the classification category this document is in
          */
-        std::string getCategory() const;
-
-        /**
-         * @return the containing directory of a file given its full path
-         */
-        static std::string getCategory(const std::string & path);
+        std::string label() const;
 
         /**
          * @return the name of this document
          */
-        std::string getName() const;
+        std::string name() const;
 
         /**
-         * @return the total of transitions recorded for this Document.
+         * @return the total of transitions recorded for this document.
          * This is not the number of unique transitions.
          */
-        size_t getLength() const;
+        size_t length() const;
 
         /**
          * Get the number of occurrences for a particular transition.
          * @param termID - the termID of the term to look up
          */
-        size_t getFrequency(term_id termID) const;
+        size_t frequency(term_id termID) const;
 
         /**
          * @return the map of frequencies for this document.
          */
-        const std::unordered_map<term_id, unsigned int> & getFrequencies() const;
+        const std::unordered_map<term_id, unsigned int> & frequencies() const;
  
         /**
          * Prints tokenizer output in liblinear input format.
@@ -99,7 +94,7 @@ class Document
          * @param features A list of features that should be removed from the document
          * @return the filtered document
          */
-        static Document filter_features(const index::Document & doc,
+        static document filter_features(const document & doc,
                                         const std::vector<std::pair<term_id, double>> & features);
 
         /**
@@ -108,7 +103,7 @@ class Document
          * @param features A list of features that should be removed from the document
          * @return the filtered documents
          */
-        static std::vector<Document> filter_features(const std::vector<index::Document> & docs,
+        static std::vector<document> filter_features(const std::vector<document> & docs,
                                         const std::vector<std::pair<term_id, double>> & features);
 
         /**
@@ -123,28 +118,28 @@ class Document
         std::string get_slda_term_data() const;
 
         /**
-         * Wrapper function for a Document's cosine similarity measure.
+         * Wrapper function for a document's cosine similarity measure.
          * @param a
          * @param b
          * @return the Jaccard similarity between the two parameters
          */
-        static double jaccard_similarity(const Document & a, const Document & b);
+        static double jaccard_similarity(const document & a, const document & b);
 
         /**
-         * Wrapper function for a Document's cosine similarity measure.
+         * Wrapper function for a document's cosine similarity measure.
          * @param a
          * @param b
          * @return the cosine similarity between the two parameters
          */
-        static double cosine_similarity(const Document & a, const Document & b);
+        static double cosine_similarity(const document & a, const document & b);
 
         /**
          * Returns a vector of all documents in a given dataset.
          * @param filename - the file containing the list of files in a corpus
          * @param prefix - the prefix of the path to a corpus
-         * @return a vector of Documents created from the filenames
+         * @return a vector of documents created from the filenames
          */
-        static std::vector<Document> loadDocs(const std::string & filename,
+        static std::vector<document> load_docs(const std::string & filename,
                 const std::string & prefix);
 
     private:
@@ -153,7 +148,7 @@ class Document
         std::string _path;
 
         /** which category this document would be classified into */
-        std::string _category;
+        class_label _label;
 
         /** the short name for this document (not the full path) */
         std::string _name;
@@ -174,7 +169,7 @@ class Document
          * @param category - the category to find an id for
          * @return a unique numerical id for the category, creating a new entry if necessary
          */
-        static int getMapping(util::InvertibleMap<std::string, int> & mapping, const std::string & category);
+        static int get_mapping(util::InvertibleMap<std::string, int> & mapping, const std::string & category);
 };
 
 }

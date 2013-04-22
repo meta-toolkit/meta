@@ -12,11 +12,11 @@ namespace tokenizers {
 ngram_pos_tokenizer::ngram_pos_tokenizer(size_t n):
     ngram_simple_tokenizer(n) { /* nothing */ }
 
-void ngram_pos_tokenizer::tokenize_document(index::Document & document,
+void ngram_pos_tokenizer::tokenize_document(index::document & document,
         std::function<term_id(const std::string &)> mapping,
         const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq)
 {
-    io::Parser parser(document.getPath() + ".pos", " \n");
+    io::Parser parser(document.path() + ".pos", " \n");
     simple_tokenize(parser, document, mapping, docFreq);
 }
 

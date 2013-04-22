@@ -3,7 +3,7 @@
 namespace meta {
 namespace tokenizers {
 
-void skeleton_tokenizer::tree_tokenize( index::Document & document,
+void skeleton_tokenizer::tree_tokenize( index::document & document,
                                         const ParseTree & tree,
                                         mapping_fn mapping,
                                         const doc_freq_ptr & docFreq ) {

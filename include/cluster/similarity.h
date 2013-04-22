@@ -16,7 +16,7 @@ namespace clustering {
 
 /**
  * Contains various similarity metrics. These are intended to be used by
- * specific objects (e.g. Document) to implement their own similarity functions.
+ * specific objects (e.g. document) to implement their own similarity functions.
  *
  * All functions take in unordered_map<Key, Value> representing a sparse vector.
  * Value is assumed to be a numerical value that math operations can be

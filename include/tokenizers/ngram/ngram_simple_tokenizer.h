@@ -35,15 +35,15 @@ class ngram_simple_tokenizer: public ngram_tokenizer
     protected:
 
         /**
-         * Tokenizes a file into a Document.
-         * @param document The Document to store the tokenized information in
+         * Tokenizes a file into a document.
+         * @param document The document to store the tokenized information in
          * @param mapping - the string to term_id mapping
          * @param parser The parser to use for this document
          * @param docFreqs Optional parameter to store IDF values in
          */
         void simple_tokenize(
                 io::Parser & parser,
-                index::Document & document,
+                index::document & document,
                 std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreqs = nullptr
         );

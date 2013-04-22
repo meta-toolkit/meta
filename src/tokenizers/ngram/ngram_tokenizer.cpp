@@ -11,7 +11,7 @@ using std::deque;
 using std::string;
 using std::unordered_map;
 using std::unordered_set;
-using index::Document;
+using index::document;
 using io::Parser;
 
 ngram_tokenizer::ngram_tokenizer(size_t n):

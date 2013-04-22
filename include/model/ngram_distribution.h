@@ -59,7 +59,7 @@ class NgramDistribution
          * @param document
          * @return the log-likelihood
          */
-        double log_likelihood(const index::Document & document) const;
+        double log_likelihood(const index::document & document) const;
 
         /**
          * Calculates the perplexity of the given document using the current
@@ -67,7 +67,7 @@ class NgramDistribution
          * @param document
          * @return the perplexity of the document
          */
-        double perplexity(const index::Document & document) const;
+        double perplexity(const index::document & document) const;
 
         /**
          * Generates a random sentence using the current language model.

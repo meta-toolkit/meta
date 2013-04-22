@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 
     std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
 
-    vector<index::Document> docs = index::Document::loadDocs(prefix + "/full-corpus.txt", prefix);
+    vector<index::document> docs = index::document::load_docs(prefix + "/full-corpus.txt", prefix);
 
     cerr << "Tokenizing..." << endl;
     for(auto & doc: docs)
@@ -50,10 +50,10 @@ int main(int argc, char* argv[])
         cerr << "  " << docs.size() - i - 1 << " remaining    \r";
         for(size_t j = 0; j < i; ++j)
         {
-            string comp = docs[i].getName() + " " + docs[j].getName();
+            string comp = docs[i].name() + " " + docs[j].name();
             // heuristically guess if the assignment is completed
-            if(docs[i].getLength() > 10 && docs[j].getLength() > 10)
-                scores.push_back(make_pair(comp, index::Document::cosine_similarity(docs[i], docs[j])));
+            if(docs[i].length() > 10 && docs[j].length() > 10)
+                scores.push_back(make_pair(comp, index::document::cosine_similarity(docs[i], docs[j])));
         }
     }
     cerr << endl;

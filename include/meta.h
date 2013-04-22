@@ -1,7 +1,7 @@
 /**
  * @file meta.h
  * Contains top-level namespace documentation for the META toolkit.
- * Documentation is included here because there is no main file in each
+ * documentation is included here because there is no main file in each
  * namespace that is a logical choice for such documentation.
  *
  * All files in META are released under the MIT license. For more details,
@@ -30,7 +30,7 @@ namespace meta
     typedef uint32_t term_id;
 
     /**
-     * Numbering system for Documents.
+     * Numbering system for documents.
      */
     typedef uint32_t doc_id;
 

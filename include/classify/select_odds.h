@@ -29,7 +29,7 @@ class select_odds_ratio: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        select_odds_ratio(const std::vector<index::Document> & docs);
+        select_odds_ratio(const std::vector<index::document> & docs);
 
     private:
         /**

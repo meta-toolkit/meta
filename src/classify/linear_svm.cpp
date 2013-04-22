@@ -19,7 +19,7 @@ linear_svm::linear_svm( loss_function loss,
           epsilon_{ epsilon }, 
           max_iter_{ max_iter } { }
 
-void linear_svm::train( const std::vector<index::Document> & docs ) {
+void linear_svm::train( const std::vector<index::document> & docs ) {
     double diag;
     double upper;
     if( loss_ == loss_function::L2 ) {
@@ -33,9 +33,9 @@ void linear_svm::train( const std::vector<index::Document> & docs ) {
     std::unordered_set<class_label> classes;
     term_id max_id = 0;
     for( size_t i = 0; i < docs.size(); ++i ) {
-        classes.insert( docs[i].getCategory() );
+        classes.insert( docs[i].label() );
         qbar_ii[i] = diag;
-        for( const auto & count : docs[i].getFrequencies() ) {
+        for( const auto & count : docs[i].frequencies() ) {
             qbar_ii[i] += count.second * count.second;
             max_id = std::max( max_id, count.first );
         }
@@ -52,12 +52,12 @@ void linear_svm::train( const std::vector<index::Document> & docs ) {
     });
 }
 
-class_label linear_svm::classify( const index::Document & doc ) {
+class_label linear_svm::classify( const index::document & doc ) {
     class_label best_label = weights_.begin()->first;
     double best_dot = std::numeric_limits<double>::min();
     for( const auto & w : weights_ ) {
         double dot = 0;
-        for( const auto & count : doc.getFrequencies() ) {
+        for( const auto & count : doc.frequencies() ) {
             dot += count.second * safe_at( w.second, count.first );
         }
         if( dot > best_dot ) {
@@ -80,12 +80,12 @@ double linear_svm::safe_at( const std::vector<double> & weight, const term_id & 
 
 void linear_svm::train_one( const class_label & label, 
                             std::vector<double> & weight,
-                            const std::vector<index::Document> & docs, 
+                            const std::vector<index::document> & docs, 
                             double diag,
                             double upper,
                             const std::vector<double> & qbar_ii ) {
-    auto labeler = [&label]( const index::Document & doc ) { 
-        if( doc.getCategory() == label )
+    auto labeler = [&label]( const index::document & doc ) { 
+        if( doc.label() == label )
             return 1;
         return -1;
     };
@@ -112,7 +112,7 @@ void linear_svm::train_one( const class_label & label,
         for( size_t j = 0; j < partition_size; ++j ) {
             size_t i = indices[j];
             double grad = 0.0;
-            for( auto & count : docs[i].getFrequencies() ) {
+            for( auto & count : docs[i].frequencies() ) {
                 grad += count.second * safe_at( weight, count.first );
             }
             grad = grad * labeler( docs[i] ) - 1 + diag * alpha[i];
@@ -144,7 +144,7 @@ void linear_svm::train_one( const class_label & label,
                 alpha[i] = std::min( std::max( alpha[i] - grad / qbar_ii[i], 0.0 ), 
                                      upper );
                 double w = ( alpha[i] - abar ) * labeler( docs[i] );
-                for( auto & count : docs[i].getFrequencies() ) {
+                for( auto & count : docs[i].frequencies() ) {
                     weight[ count.first ] += w * count.second;
                 }
             }

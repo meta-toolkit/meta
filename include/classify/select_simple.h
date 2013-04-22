@@ -29,7 +29,7 @@ class select_simple: public feature_select
          * Constructor.
          * @param docs The documents containing features
          */
-        select_simple(const std::vector<index::Document> & docs);
+        select_simple(const std::vector<index::document> & docs);
 
         /**
          * Calculates important features via Chi-square statistics (independence of
@@ -40,7 +40,7 @@ class select_simple: public feature_select
         std::vector<std::pair<term_id, double>> select();
 
         /**
-         * Performs feature selection on a collection of Documents, returning
+         * Performs feature selection on a collection of documents, returning
          * each class's features sorted by usefulness.
          */
         std::unordered_map<class_label, std::vector<std::pair<term_id, double>>>

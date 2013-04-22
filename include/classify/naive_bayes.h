@@ -37,7 +37,7 @@ class naive_bayes: public classifier
          * Calculates P(term|class) and P(class) for all the training documents.
          * @param docs The training documents
          */
-        void train(const std::vector<index::Document> & docs);
+        void train(const std::vector<index::document> & docs);
 
         /**
          * Classifies a document into a specific group, as determined by
@@ -45,7 +45,7 @@ class naive_bayes: public classifier
          * @param doc The document to classify
          * @return the class it belongs to
          */
-        class_label classify(const index::Document & doc);
+        class_label classify(const index::document & doc);
 
         /**
          * Resets any learning information associated with this classifier.

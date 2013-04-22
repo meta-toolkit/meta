@@ -14,13 +14,13 @@ typedef std::unordered_map<std::string, std::unordered_map<std::string, size_t>>
 typedef std::unordered_map<std::string, std::unordered_map<std::string, double>> ProbMap;
 
 template <size_t N>
-double NgramDistribution<N>::log_likelihood(const index::Document & document) const
+double NgramDistribution<N>::log_likelihood(const index::document & document) const
 {
     return 0.0;
 }
 
 template <size_t N>
-double NgramDistribution<N>::perplexity(const index::Document & document) const
+double NgramDistribution<N>::perplexity(const index::document & document) const
 {
     return 0.0;
 }
@@ -162,11 +162,11 @@ template <size_t N>
 void NgramDistribution<N>::calc_freqs(const std::string & docPath)
 {
     using namespace tokenizers;
-    index::Document doc(docPath);
+    index::document doc(docPath);
     ngram_word_tokenizer<stemmers::no_stemmer> tok(N, ngram_word_traits::NoStopwords);
     tok.tokenize(doc);
 
-    for(auto & p: doc.getFrequencies())
+    for(auto & p: doc.frequencies())
     {
         std::string str = tok.label(p.first);
         std::string word = get_last(str);

@@ -28,7 +28,7 @@ class feature_select
         /**
          * Constructor; initializes class and term probabilities.
          */
-        feature_select(const std::vector<index::Document> & docs);
+        feature_select(const std::vector<index::document> & docs);
 
         /**
          * Default constructor in case a feature selection method does want
@@ -37,15 +37,15 @@ class feature_select
         feature_select() = default;
 
         /**
-         * Performs feature selection on a collection of Documents.
-         * @param docs A vector of tokenized Documents containing all features
+         * Performs feature selection on a collection of documents.
+         * @param docs A vector of tokenized documents containing all features
          * @return a vector of term_ids, sorting by their feature selection
          * rating
          */
         virtual std::vector<std::pair<term_id, double>> select() = 0;
 
         /**
-         * Performs feature selection on a collection of Documents, returning
+         * Performs feature selection on a collection of documents, returning
          * each class's features sorted by usefulness.
          */
         virtual std::unordered_map<class_label, std::vector<std::pair<term_id, double>>>
@@ -118,17 +118,17 @@ class feature_select
         /**
          * Calculates probabilities for terms and classes co-occuring.
          */
-        void set_pseen(const std::vector<index::Document> & docs);
+        void set_pseen(const std::vector<index::document> & docs);
         
         /**
          * Calculates the term space of the corpus.
          */
-        void set_term_space(const std::vector<index::Document> & docs);
+        void set_term_space(const std::vector<index::document> & docs);
 
         /**
          * Calculates the class space of the corpus.
          */
-        void set_class_space(const std::vector<index::Document> & docs);
+        void set_class_space(const std::vector<index::document> & docs);
 };
 
 }

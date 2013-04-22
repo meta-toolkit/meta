@@ -54,7 +54,7 @@ end
 
 def main()
   path = ARGV[0]
-  prefix = "/home/sean/projects/senior-thesis-data/"
+  prefix = "/home/sean/projects/meta-data/"
   if ARGV.size == 1
     even_split(prefix, path)
   else

@@ -3,9 +3,7 @@
  * @author Sean Massung
  */
 
-#include <map>
 #include <utility>
-#include <iostream>
 #include <sstream>
 #include "index/document.h" 
 #include "cluster/similarity.h"
@@ -14,28 +12,28 @@ namespace meta {
 namespace index {
 
 using std::vector;
-using std::map;
-using std::cout;
-using std::endl;
 using std::pair;
 using std::make_pair;
 using std::string;
 using std::stringstream;
 using std::unordered_map;
-using std::unordered_set;
-
 using util::InvertibleMap;
 
-Document::Document(const string & path):
+#include <iostream>
+using namespace std;
+
+document::document(const string & path, const class_label & label):
     _path(path),
+    _label(label),
     _length(0),
     _frequencies(unordered_map<term_id, unsigned int>())
 {
-    _name = getName(path);
-    _category = getCategory(path);
+
+    size_t idx = path.find_last_of("/") + 1;
+    _name = path.substr(idx);
 }
 
-void Document::increment(term_id termID, unsigned int amount,
+void document::increment(term_id termID, unsigned int amount,
         std::shared_ptr<unordered_map<term_id, unsigned int>> docFreq)
 {
     auto iter = _frequencies.find(termID);
@@ -51,32 +49,32 @@ void Document::increment(term_id termID, unsigned int amount,
     _length += amount;
 }
 
-void Document::increment(term_id termID, unsigned int amount)
+void document::increment(term_id termID, unsigned int amount)
 {
     increment(termID, amount, nullptr);
 }
 
-string Document::getPath() const
+string document::path() const
 {
     return _path;
 }
 
-string Document::getCategory() const
+string document::label() const
 {
-    return _category;
+    return _label;
 }
 
-string Document::getName() const
+string document::name() const
 {
     return _name;
 }
 
-size_t Document::getLength() const
+size_t document::length() const
 {
     return _length;
 }
 
-size_t Document::getFrequency(term_id termID) const
+size_t document::frequency(term_id termID) const
 {
     auto iter = _frequencies.find(termID);
     if(iter != _frequencies.end())
@@ -85,33 +83,26 @@ size_t Document::getFrequency(term_id termID) const
         return 0;
 }
 
-const unordered_map<term_id, unsigned int> & Document::getFrequencies() const
+const unordered_map<term_id, unsigned int> & document::frequencies() const
 {
     return _frequencies;
 }
 
-string Document::getName(const string & path)
-{
-    size_t idx = path.find_last_of("/") + 1;
-    return path.substr(idx, path.size() - idx);
-}
-
-string Document::getCategory(const string & path)
-{
-    size_t idx = path.find_last_of("/");
-    string sub = path.substr(0, idx);
-    return getName(sub);
-}
-
-string Document::get_liblinear_data(InvertibleMap<string, int> & mapping) const
+string document::get_liblinear_data(InvertibleMap<string, int> & mapping) const
 {
     stringstream out;
-    out << getMapping(mapping, getCategory());     // liblinear, classes start at 1
-    map<term_id, unsigned int> sorted;
+    out << get_mapping(mapping, _label);     // liblinear, classes start at 1
+    vector<pair<term_id, unsigned int>> sorted;
 
     // liblinear feature indices start at 1, not 0 like the tokenizers
     for(auto & freq: _frequencies)
-        sorted.insert(make_pair(freq.first + 1, freq.second));
+        sorted.push_back(make_pair(freq.first + 1, freq.second));
+
+    std::sort(sorted.begin(), sorted.end(),
+        [](const pair<term_id, unsigned int> & a, const pair<term_id, unsigned int> & b) {
+            return a.first < b.first;
+        }
+    );
 
     for(auto & freq: sorted)
         out << " " << freq.first << ":" << freq.second;
@@ -120,7 +111,7 @@ string Document::get_liblinear_data(InvertibleMap<string, int> & mapping) const
     return out.str();
 }
 
-int Document::getMapping(InvertibleMap<string, int> & mapping, const string & category)
+int document::get_mapping(InvertibleMap<string, int> & mapping, const class_label & category)
 {
     // see if entered already
     if(mapping.containsKey(category))
@@ -135,29 +126,43 @@ int Document::getMapping(InvertibleMap<string, int> & mapping, const string & ca
     return newVal;
 }
 
-double Document::cosine_similarity(const Document & a, const Document & b)
+double document::cosine_similarity(const document & a, const document & b)
 {
     return clustering::similarity::cosine_similarity(a._frequencies, b._frequencies);
 }
 
-double Document::jaccard_similarity(const Document & a, const Document & b)
+double document::jaccard_similarity(const document & a, const document & b)
 {
     return clustering::similarity::jaccard_similarity(a._frequencies, b._frequencies);
 }
 
-vector<Document> Document::loadDocs(const string & filename, const string & prefix)
+vector<document> document::load_docs(const string & filename, const string & prefix)
 {
-    vector<Document> docs;
-    io::Parser parser(filename, "\n");
-    while(parser.hasNext())
+    vector<document> docs;
+    std::ifstream infile{filename};
+    string line;
+    while(infile.good())
     {
-        string file = parser.next();
-        docs.push_back(Document(prefix + "/" + file));
+        std::getline(infile, line);
+        if(line == "")
+            continue;
+        string file = line;
+        size_t space = line.find_first_of(" ");
+        // see if there is class label info for this doc
+        if(space != string::npos)
+        {
+            class_label label = line.substr(0, space);
+            file = line.substr(space + 1);
+            docs.emplace_back(document{prefix + "/" + file, label});
+        }
+        else
+            docs.emplace_back(document{prefix + "/" + file});
     }
+    infile.close();
     return docs;
 }
 
-string Document::get_slda_term_data() const
+string document::get_slda_term_data() const
 {
     stringstream out;
     out << _frequencies.size();
@@ -167,16 +172,16 @@ string Document::get_slda_term_data() const
     return out.str();
 }
 
-string Document::get_slda_label_data(InvertibleMap<class_label, int> & mapping) const
+string document::get_slda_label_data(InvertibleMap<class_label, int> & mapping) const
 {
     // minus one because slda classes start at 0
-    return common::to_string(getMapping(mapping, getCategory()) - 1) + "\n";
+    return common::to_string(get_mapping(mapping, _label) - 1) + "\n";
 }
 
-Document Document::filter_features(const Document & doc,
+document document::filter_features(const document & doc,
         const vector<pair<term_id, double>> & features)
 {
-    Document filtered(doc);
+    document filtered(doc);
     for(auto & feature: features)
     {
         auto it = filtered._frequencies.find(feature.first);
@@ -186,10 +191,10 @@ Document Document::filter_features(const Document & doc,
     return filtered;
 }
 
-vector<Document> Document::filter_features(const vector<Document> & docs,
+vector<document> document::filter_features(const vector<document> & docs,
         const vector<pair<term_id, double>> & features)
 {
-    vector<Document> ret;
+    vector<document> ret;
     ret.reserve(docs.size());
     for(auto & doc: docs)
         ret.emplace_back(filter_features(doc, features));

@@ -16,7 +16,7 @@ using std::unordered_set;
 using std::pair;
 using std::string;
 using util::InvertibleMap;
-using index::Document;
+using index::document;
 
 slda::slda(const string & slda_path, double alpha):
     _alpha(alpha),
@@ -24,7 +24,7 @@ slda::slda(const string & slda_path, double alpha):
     _mapping(InvertibleMap<class_label, int>())
 { /* nothing */ }
 
-void slda::estimate(const vector<Document> & docs)
+void slda::estimate(const vector<document> & docs)
 {
     size_t num_classes = create_input_files(docs);
 
@@ -141,7 +141,7 @@ vector<pair<term_id, double>> slda::select_features() const
     return ret;
 }
 
-size_t slda::create_input_files(const vector<Document> & docs)
+size_t slda::create_input_files(const vector<document> & docs)
 {
     std::ofstream data("slda-data");
     std::ofstream labels("slda-labels");
@@ -151,7 +151,7 @@ size_t slda::create_input_files(const vector<Document> & docs)
     {
         labels << d.get_slda_label_data(_mapping);
         data << d.get_slda_term_data();
-        unique_labels.insert(d.getCategory());
+        unique_labels.insert(d.label());
     }
 
     labels.close();
@@ -160,7 +160,7 @@ size_t slda::create_input_files(const vector<Document> & docs)
     return unique_labels.size();
 }
 
-void slda::infer(const vector<Document> & docs)
+void slda::infer(const vector<document> & docs)
 {
     create_input_files(docs);
 

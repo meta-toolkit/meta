@@ -45,11 +45,11 @@ class InvertedIndex : public Index
 
         /**
          * Scores a document given a query.
-         * @param document The doc to score
+         * @param doc The doc to score
          * @param query The query to score against
          * @return the real score value 
          */
-        double scoreDocument(const Document & document, const Document & query) const;
+        double score_document(const document & doc, const document & query) const;
 
         /**
          * @return the average document length of the collection
@@ -57,11 +57,11 @@ class InvertedIndex : public Index
         size_t getAvgDocLength() const;
 
         /**
-         * Searches the index using the scoreDocument function on each Document.
+         * Searches the index using the scoredocument function on each document.
          * @param query - the query to perform the search with
-         * @return - a mapping of scores to Documents
+         * @return - a mapping of scores to documents
          */
-        std::multimap<double, std::string> search(Document & query) const;
+        std::multimap<double, std::string> search(document & query) const;
 
         /**
          * Creates an index of given documents.
@@ -69,7 +69,7 @@ class InvertedIndex : public Index
          * @param chunkMBSize - the maximum size the postings chunks will be in
          *  memory before they're written to disk.
          */
-        void indexDocs(std::vector<Document> & documents, size_t chunkMBSize);
+        void indexDocs(std::vector<document> & documents, size_t chunkMBSize);
 
     private:
 

@@ -27,10 +27,10 @@ class RAMIndex : public Index
     public:
         /**
          * Creates an Index located in memory.
-         * @param indexDocs Untokenized Document objects to index
+         * @param indexDocs Untokenized document objects to index
          * @param tokenizer How to tokenize the indexed files 
          */
-        RAMIndex(const std::vector<Document> & indexDocs, std::shared_ptr<tokenizers::tokenizer> tokenizer);
+        RAMIndex(const std::vector<document> & indexDocs, std::shared_ptr<tokenizers::tokenizer> tokenizer);
 
         /**
          * Scores a document given a query.
@@ -38,7 +38,7 @@ class RAMIndex : public Index
          * @param query The query to score against
          * @return the real score value 
          */
-        double scoreDocument(const Document & document, const Document & query) const;
+        double score_document(const document & doc, const document & query) const;
 
         /**
          * @return the average document length of the collection
@@ -46,11 +46,11 @@ class RAMIndex : public Index
         size_t getAvgDocLength() const;
 
         /**
-         * Searches the index using the scoreDocument function on each Document.
+         * Searches the index using the scoredocument function on each document.
          * @param query - the query to perform the search with
-         * @return - a mapping of scores to Documents
+         * @return - a mapping of scores to documents
          */
-        std::multimap<double, std::string> search(Document & query) const;
+        std::multimap<double, std::string> search(document & query) const;
 
     private:
 
@@ -58,7 +58,7 @@ class RAMIndex : public Index
         std::shared_ptr<tokenizers::tokenizer> _tokenizer;
 
         /** documents stored in this index */
-        std::vector<Document> _documents;
+        std::vector<document> _documents;
 
         /** the IDF values of all the terms encountered in the document collection */
         std::shared_ptr<std::unordered_map<term_id, unsigned int>> _docFreqs;

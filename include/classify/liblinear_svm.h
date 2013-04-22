@@ -35,13 +35,13 @@ class liblinear_svm: public classifier
          * @param doc The document to classify
          * @return the class it belongs to
          */
-        class_label classify(const index::Document & doc);
+        class_label classify(const index::document & doc);
 
         /**
          * Creates a classification model based on training documents.
          * @param docs The training documents
          */
-        void train(const std::vector<index::Document> & docs);
+        void train(const std::vector<index::document> & docs);
 
         /**
          * Classifies a collection document into specific groups, as determined by
@@ -49,7 +49,7 @@ class liblinear_svm: public classifier
          * @param docs The documents to classify
          * @return a confusion_matrix detailing the performance of the classifier
          */
-        confusion_matrix test(const std::vector<index::Document> & docs);
+        confusion_matrix test(const std::vector<index::document> & docs);
 
         /**
          * Clears any learned data from this classifier.

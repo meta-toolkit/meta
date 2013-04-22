@@ -45,7 +45,7 @@ class perceptron : public classifier {
          * is completed.
          * @param docs The training set.
          */
-        void train( const std::vector<index::Document> & docs ) override;
+        void train( const std::vector<index::document> & docs ) override;
 
         /**
          * Classifies the given document. 
@@ -56,7 +56,7 @@ class perceptron : public classifier {
          * @param doc The document to be classified.
          * @return The class label determined for the document.
          */
-        class_label classify( const index::Document & doc ) override;
+        class_label classify( const index::document & doc ) override;
 
         /**
          * Resets all learned information for this perceptron so it may be
@@ -80,7 +80,7 @@ class perceptron : public classifier {
          * 
          * @param docs The set of documents to collect class labels from.
          */
-        void zero_weights( const std::vector<index::Document> & docs );
+        void zero_weights( const std::vector<index::document> & docs );
 
         /**
          * The weight vectors for each class label.

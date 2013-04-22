@@ -4,7 +4,6 @@ project( meta )
 option( USE_LIBCXX "Use libc++ for the C++ standard library" ON )
 
 include_directories( "include/" )
-include_directories( "lib/slda/" )
 
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/lib" )
 
@@ -111,16 +110,6 @@ target_link_libraries( classify
                        meta-tokenizers
                        meta-stemmers
                        meta-classify
-                       ${CMAKE_THREAD_LIBS_INIT}
-)
-
-add_executable( slda slda-test.cpp )
-target_link_libraries( slda
-                       meta-io
-                       meta-index
-                       meta-tokenizers
-                       meta-stemmers
-                       meta-topics
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 

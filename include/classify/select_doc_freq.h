@@ -28,7 +28,7 @@ class select_doc_freq: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        select_doc_freq(const std::vector<index::Document> & docs);
+        select_doc_freq(const std::vector<index::document> & docs);
 
         /**
          * Calculates the doc freq score for one term.

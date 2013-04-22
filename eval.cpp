@@ -20,7 +20,7 @@ void run(const std::unordered_map<std::string, std::string> & config)
 {
     std::string prefix = config.at("prefix") + config.at("dataset");
     std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
-    std::vector<index::Document> test_docs = index::Document::loadDocs(prefix + "/test.txt", prefix);
+    std::vector<index::document> test_docs = index::document::load_docs(prefix + "/test.txt", prefix);
 
     size_t i = 0;
     for(auto & d: test_docs)

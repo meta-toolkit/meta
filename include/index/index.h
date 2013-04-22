@@ -25,11 +25,11 @@ class Index
     public:
 
         /**
-         * Searches the index using the scoreDocument function on each Document.
+         * Searches the index using the scoredocument function on each document.
          * @param query - the query to perform the search with
-         * @return - a mapping of scores to Documents
+         * @return - a mapping of scores to documents
          */
-        virtual std::multimap<double, std::string> search(Document & query) const = 0;
+        virtual std::multimap<double, std::string> search(document & query) const = 0;
 
         /**
          * Scores a document given a query.
@@ -37,7 +37,7 @@ class Index
          * @param query The query to score against
          * @return the real score value 
          */
-        virtual double scoreDocument(const Document & document, const Document & query) const = 0;
+        virtual double score_doc(const document & doc, const document & query) const = 0;
 
         /**
          * Basic exception for Index interactions.

@@ -12,9 +12,9 @@ using std::vector;
 using std::unordered_set;
 using std::unordered_map;
 using std::pair;
-using index::Document;
+using index::document;
 
-select_odds_ratio::select_odds_ratio(const vector<Document> & docs):
+select_odds_ratio::select_odds_ratio(const vector<document> & docs):
     select_simple(docs) { /* nothing */ }
 
 double select_odds_ratio::calc_weight(term_id termID, const class_label & label) const

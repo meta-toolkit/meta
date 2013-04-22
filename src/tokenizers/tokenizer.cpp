@@ -18,14 +18,14 @@ using std::ofstream;
 using namespace std::placeholders;
 using std::unordered_map;
 using util::InvertibleMap;
-using index::Document;
+using index::document;
 
 tokenizer::tokenizer():
     _term_map(InvertibleMap<term_id, string>()),
     _current_term_id(0)
 { /* nothing */ }
 
-void tokenizer::tokenize(index::Document & document,
+void tokenizer::tokenize(index::document & document,
         const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & doc_freq) {
     tokenize_document(document, std::bind(&tokenizer::mapping, this, _1), doc_freq);
 }

@@ -29,7 +29,7 @@ class select_info_gain: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        select_info_gain(const std::vector<index::Document> & docs);
+        select_info_gain(const std::vector<index::document> & docs);
 
     private:
 

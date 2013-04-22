@@ -12,9 +12,9 @@ using std::vector;
 using std::unordered_set;
 using std::unordered_map;
 using std::pair;
-using index::Document;
+using index::document;
 
-select_info_gain::select_info_gain(const vector<Document> & docs):
+select_info_gain::select_info_gain(const vector<document> & docs):
     select_simple(docs) { /* nothing */ }
 
 double select_info_gain::calc_weight(term_id termID, const class_label & label) const

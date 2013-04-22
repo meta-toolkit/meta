@@ -12,9 +12,9 @@ using std::vector;
 using std::unordered_set;
 using std::unordered_map;
 using std::pair;
-using index::Document;
+using index::document;
 
-select_chi_square::select_chi_square(const vector<Document> & docs):
+select_chi_square::select_chi_square(const vector<document> & docs):
     select_simple(docs) { /* nothing */ }
 
 double select_chi_square::calc_weight(term_id termID, const class_label & label) const

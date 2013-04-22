@@ -43,9 +43,9 @@ class linear_svm : public classifier {
                     double epsilon = 0.1, 
                     size_t max_iter = 1000 );
 
-        virtual void train( const std::vector<index::Document> & docs );
+        virtual void train( const std::vector<index::document> & docs );
 
-        class_label classify( const index::Document & doc );
+        class_label classify( const index::document & doc );
 
         virtual void reset();
 
@@ -70,7 +70,7 @@ class linear_svm : public classifier {
          */
         void train_one( const class_label & label, 
                         std::vector<double> & weight,
-                        const std::vector<index::Document> & docs, 
+                        const std::vector<index::document> & docs, 
                         double diag,
                         double upper,
                         const std::vector<double> & qbar_ii );

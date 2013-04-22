@@ -73,7 +73,7 @@ string Postings::getLine(unsigned int lineNumber) const
     return line;
 }
 
-size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize,
+size_t Postings::createChunks(vector<document> & documents, size_t chunkMBSize,
         std::shared_ptr<tokenizer> tokenizer)
 {
     cerr << "[Postings]: creating chunks" << endl;
@@ -87,9 +87,9 @@ size_t Postings::createChunks(vector<Document> & documents, size_t chunkMBSize,
     for(auto & doc: documents)
     {
         tokenizer->tokenize(doc);
-        doc_id docID = getdoc_id(doc.getPath());
-        cerr << " -> tokenizing " << doc.getName() << " (docid " << docID << ")" << endl;
-        unordered_map<term_id, unsigned int> freqs = doc.getFrequencies();
+        doc_id docID = getdoc_id(doc.path());
+        cerr << " -> tokenizing " << doc.name() << " (docid " << docID << ")" << endl;
+        unordered_map<term_id, unsigned int> freqs = doc.frequencies();
         for(auto & freq: freqs)
             terms[freq.first].push_back(PostingData(docID, freq.second));
 
@@ -177,13 +177,13 @@ unsigned int Postings::getTotalFreq(const vector<PostingData> & pdata) const
     return freq;
 }
 
-void Postings::saveDocLengths(const vector<Document> & documents, const string & filename)
+void Postings::saveDocLengths(const vector<document> & documents, const string & filename)
 {
     ofstream outfile(filename);
     if(outfile.good())
     {
         for(auto & doc: documents)
-            outfile << getdoc_id(doc.getPath()) << " " << doc.getLength() << endl;
+            outfile << getdoc_id(doc.path()) << " " << doc.length() << endl;
     }
     else
         throw Index::index_exception("[Postings]: error saving document lengths");

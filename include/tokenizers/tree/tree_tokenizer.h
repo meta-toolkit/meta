@@ -26,14 +26,14 @@ class tree_tokenizer: public tokenizer
 {
     public:
         /**
-         * Tokenizes a file into a Document.
-         * @param document - the Document to store the tokenized information in
+         * Tokenizes a file into a document.
+         * @param document - the document to store the tokenized information in
          * @param docFreq - optional parameter to store IDF values in
          */
-        void tokenize_document(index::Document & document,
+        void tokenize_document(index::document & document,
                 std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq = nullptr) {
-            std::vector<ParseTree> trees = ParseTree::getTrees( document.getPath() + ".tree" );
+            std::vector<ParseTree> trees = ParseTree::getTrees( document.path() + ".tree" );
             for( auto & tree : trees )
                 derived().tree_tokenize( document, tree, mapping, docFreq );
         }

@@ -10,7 +10,7 @@
 namespace meta {
 namespace topics {
 
-lda_gibbs::lda_gibbs( std::vector<index::Document> & docs, size_t num_topics, 
+lda_gibbs::lda_gibbs( std::vector<index::document> & docs, size_t num_topics, 
                       double alpha, double beta ) :
         lda_model{ docs, num_topics }, alpha_{ alpha }, beta_{ beta } {
 }
@@ -88,7 +88,7 @@ double lda_gibbs::count_doc( size_t doc, size_t topic ) const {
 }
 
 double lda_gibbs::count_doc( size_t doc ) const {
-    return docs_[ doc ].getLength();
+    return docs_[ doc ].length();
 }
 
 void lda_gibbs::initialize() {
@@ -102,7 +102,7 @@ void lda_gibbs::perform_iteration( bool init /* = false */ ) {
         size_t n = 0; // term number within document---constructed
                       // so that each occurrence of the same term
                       // can still be assigned a different topic
-        for( const auto & freq : docs_[i].getFrequencies() ) {
+        for( const auto & freq : docs_[i].frequencies() ) {
             for( size_t j = 0; j < freq.second; ++j ) {
                 size_t old_topic = doc_word_topic_[ i ][ n ];
                 // don't include current topic assignment in
@@ -156,7 +156,7 @@ double lda_gibbs::corpus_likelihood() const {
     double likelihood = num_topics_ * std::lgamma( num_words_ * beta_ );
     for( size_t j = 0; j < num_topics_; ++j ) {
         for( const auto & doc : docs_ ) {
-            for( const auto & freq : doc.getFrequencies() ) {
+            for( const auto & freq : doc.frequencies() ) {
                 likelihood += 
                     freq.second 
                     * std::lgamma( count_term( freq.first, j )

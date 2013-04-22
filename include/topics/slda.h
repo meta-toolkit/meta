@@ -35,7 +35,7 @@ class slda
          * Estimates topic models based on each document's class label.
          * @param docs The "training" corpus
          */
-        void estimate(const std::vector<index::Document> & docs);
+        void estimate(const std::vector<index::document> & docs);
 
         /**
          * @return distribution of terms for each label, sorted by weight
@@ -52,7 +52,7 @@ class slda
          * Infers labels based on a collection of documents.
          * @param docs The "testing" corpus
          */
-        void infer(const std::vector<index::Document> & docs);
+        void infer(const std::vector<index::document> & docs);
 
     private:
 
@@ -65,7 +65,7 @@ class slda
          * @param docs
          * @return the number of classes seen in the corpus
          */
-        size_t create_input_files(const std::vector<index::Document> & docs);
+        size_t create_input_files(const std::vector<index::document> & docs);
 
         /** value of alpha for sLDA */
         const double _alpha;

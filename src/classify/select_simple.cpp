@@ -12,9 +12,9 @@ using std::vector;
 using std::unordered_set;
 using std::unordered_map;
 using std::pair;
-using index::Document;
+using index::document;
 
-select_simple::select_simple(const vector<Document> & docs):
+select_simple::select_simple(const vector<document> & docs):
     feature_select(docs) { /* nothing */ }
 
 vector<pair<term_id, double>> select_simple::select()

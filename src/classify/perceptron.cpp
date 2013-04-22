@@ -23,12 +23,12 @@ double perceptron::get_weight( const class_label & label,
     return term_it->second;
 }
 
-void perceptron::zero_weights( const std::vector<index::Document> & docs ) {
+void perceptron::zero_weights( const std::vector<index::document> & docs ) {
     for( const auto & d : docs )
-        weights_[ d.getCategory() ] = {};
+        weights_[ d.label() ] = {};
 }
 
-void perceptron::train( const std::vector<index::Document> & docs ) {
+void perceptron::train( const std::vector<index::document> & docs ) {
     zero_weights( docs );
     std::vector<size_t> indices( docs.size() );
     std::iota( indices.begin(), indices.end(), 0 );
@@ -39,10 +39,10 @@ void perceptron::train( const std::vector<index::Document> & docs ) {
         double error_count = 0;
         for( size_t i = 0; i < indices.size(); ++i ) {
             class_label guess = classify( docs[i] );
-            class_label actual = docs[i].getCategory();
+            class_label actual = docs[i].label();
             if( guess != actual ) {
                 error_count += 1;
-                for( const auto & count : docs[i].getFrequencies() ) {
+                for( const auto & count : docs[i].frequencies() ) {
                     weights_[ guess ][ count.first ] -= alpha_ * count.second;
                     weights_[ actual ][ count.first ] += alpha_ * count.second;
                 }
@@ -53,12 +53,12 @@ void perceptron::train( const std::vector<index::Document> & docs ) {
     }
 }
 
-class_label perceptron::classify( const index::Document & doc ) {
+class_label perceptron::classify( const index::document & doc ) {
     class_label best_label = weights_.begin()->first;
     double best_dot = 0;
     for( const auto & w : weights_ ) {
         double dot = bias_;
-        for( const auto & count : doc.getFrequencies() ) {
+        for( const auto & count : doc.frequencies() ) {
             dot += count.second * get_weight( w.first, count.first );
         }
         if( dot > best_dot ) {

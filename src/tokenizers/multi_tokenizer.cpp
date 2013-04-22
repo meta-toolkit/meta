@@ -14,7 +14,7 @@ multi_tokenizer::multi_tokenizer(const std::vector<std::shared_ptr<tokenizer>> &
     _tokenizers(toks)
 { /* nothing */ }
 
-void multi_tokenizer::tokenize_document(index::Document & document,
+void multi_tokenizer::tokenize_document(index::document & document,
     std::function<term_id(const std::string &)> mapping,
     const std::shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {

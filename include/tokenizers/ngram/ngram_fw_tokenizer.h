@@ -24,13 +24,13 @@ class ngram_fw_tokenizer: public ngram_tokenizer
         ngram_fw_tokenizer(size_t n);
 
         /**
-         * Tokenizes a file into a Document.
-         * @param document - the Document to store the tokenized information in
+         * Tokenizes a file into a document.
+         * @param document - the document to store the tokenized information in
          * @param mapping - the string to term_id mapping
          * @param docFreqs - optional parameter to store IDF values in
          */
         virtual void tokenize_document(
-                index::Document & document,
+                index::document & document,
                 std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreqs = nullptr
         );

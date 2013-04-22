@@ -58,7 +58,7 @@ class Postings
          * @return the number of chunks created. Since their name is standard, they can easily
          *  be located.
          */
-        size_t createChunks(std::vector<Document> & documents, size_t chunkMBSize,
+        size_t createChunks(std::vector<document> & documents, size_t chunkMBSize,
                 std::shared_ptr<tokenizers::tokenizer> tokenizer);
 
         /**
@@ -86,7 +86,7 @@ class Postings
          * @param documents - the documents to save lengths of
          * @param filename - the name for the doc length file
          */
-        void saveDocLengths(const std::vector<Document> & documents, const std::string & filename);
+        void saveDocLengths(const std::vector<document> & documents, const std::string & filename);
 
     private:
 

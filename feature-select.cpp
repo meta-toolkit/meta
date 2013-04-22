@@ -33,10 +33,9 @@ using namespace meta::tokenizers;
 /**
  * Cross-validate documents with a specific classifier.
  */
-classify::confusion_matrix cv( classify::classifier & c, const vector<Document> & train_docs )
+classify::confusion_matrix cv( classify::classifier & c, const vector<document> & train_docs )
 {
     classify::confusion_matrix matrix = c.cross_validate(train_docs, 5);
-    matrix.print();
     matrix.print_stats();
     return matrix;
 }
@@ -44,7 +43,7 @@ classify::confusion_matrix cv( classify::classifier & c, const vector<Document> 
 /**
  * Tokenize documents based on options set in config.
  */
-void tokenize(vector<Document> & docs, const unordered_map<string, string> & config)
+void tokenize(vector<document> & docs, const unordered_map<string, string> & config)
 {
     std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
 
@@ -98,7 +97,7 @@ int main(int argc, char* argv[])
 
     unordered_map<string, string> config = io::config_reader::read(argv[1]);
     string prefix = config["prefix"] + config["dataset"];
-    vector<Document> docs = Document::loadDocs(prefix + "/full-corpus.txt", prefix);
+    vector<document> docs = document::load_docs(prefix + "/full-corpus.txt", prefix);
     tokenize(docs, config);
    
     // baseline
@@ -106,25 +105,25 @@ int main(int argc, char* argv[])
     classify::confusion_matrix orig_matrix = cv(svm, docs);
 
     // information gain
-    cout << "Running information gain..." << endl;
+    cout << endl << "Running information gain..." << endl;
     classify::select_info_gain ig(docs);
     auto ig_features = top_features(ig.select(), .1);
-    vector<Document> reduced = Document::filter_features(docs, ig_features);
+    vector<document> reduced = document::filter_features(docs, ig_features);
     cv(svm, reduced);
 
     // chi square
-    cout << "Running Chi square..." << endl;
+    cout << endl << "Running Chi square..." << endl;
     classify::select_chi_square cs(docs);
     auto cs_features = top_features(cs.select(), .1);
-    reduced = Document::filter_features(docs, cs_features);
+    reduced = document::filter_features(docs, cs_features);
     cv(svm, reduced);
 
     // sLDA
-    cout << "Running sLDA..." << endl;
+    cout << endl << "Running sLDA..." << endl;
     topics::slda lda(config["slda"], .1);
     lda.estimate(docs);
     auto lda_features = top_features(lda.select_features(), .1);
-    reduced = Document::filter_features(docs, lda_features);
+    reduced = document::filter_features(docs, lda_features);
     cv(svm, reduced);
 
     return 0;

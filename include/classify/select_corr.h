@@ -30,7 +30,7 @@ class select_corr_coeff: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        select_corr_coeff(const std::vector<index::Document> & docs);
+        select_corr_coeff(const std::vector<index::document> & docs);
 
     private:
         /**

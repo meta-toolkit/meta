@@ -19,7 +19,7 @@ using std::unordered_map;
 
 using tokenizers::tokenizer;
 
-RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<tokenizer> tokenizer):
+RAMIndex::RAMIndex(const vector<document> & indexDocs, std::shared_ptr<tokenizer> tokenizer):
     _tokenizer(tokenizer),
     _documents(indexDocs),
     _docFreqs(new unordered_map<term_id, unsigned int>),
@@ -31,7 +31,7 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<tokenizer
     for(auto & doc: _documents)
     {
         _tokenizer->tokenize(doc, _docFreqs);
-        _avgDocLength += doc.getLength();
+        _avgDocLength += doc.length();
         if(docNum++ % 10 == 0)
         {
             cout << "  " << ((double) docNum / _documents.size() * 100) << "%    \r";
@@ -43,7 +43,7 @@ RAMIndex::RAMIndex(const vector<Document> & indexDocs, std::shared_ptr<tokenizer
     _avgDocLength /= _documents.size();
 }
 
-double RAMIndex::scoreDocument(const Document & document, const Document & query) const
+double RAMIndex::score_document(const document & doc, const document & query) const
 {
     // seems horrible
     bool bm25L = false;
@@ -53,16 +53,16 @@ double RAMIndex::scoreDocument(const Document & document, const Document & query
     double b = 0.75; // 0.75 -> 1.0
     double k3 = 500;
     double delta = 0.5;
-    double docLength = document.getLength();
+    double docLength = doc.length();
     double numDocs = _documents.size();
 
-    const unordered_map<term_id, unsigned int> frequencies = query.getFrequencies();
+    const unordered_map<term_id, unsigned int> & frequencies = query.frequencies();
     for(auto & term: frequencies)
     {
         auto df = _docFreqs->find(term.first);
         double docFreq = (df == _docFreqs->end()) ? (0.0) : (df->second);
-        double termFreq = document.getFrequency(term.first);
-        double queryTermFreq = query.getFrequency(term.first);
+        double termFreq = doc.frequency(term.first);
+        double queryTermFreq = query.frequency(term.first);
 
         //double IDF = (numDocs - docFreq + 0.5) / (docFreq + 0.5);
         double IDF = log(1 + ((numDocs - docFreq + 0.5) / (docFreq + 0.5)));
@@ -90,16 +90,16 @@ size_t RAMIndex::getAvgDocLength() const
     return _avgDocLength;
 }
 
-multimap<double, string> RAMIndex::search(Document & query) const
+multimap<double, string> RAMIndex::search(document & query) const
 {
     _tokenizer->tokenize(query);
     multimap<double, string> ranks;
     for(size_t idx = 0; idx < _documents.size(); ++idx)
     {
-        double score = scoreDocument(_documents[idx], query);
+        double score = score_document(_documents[idx], query);
         if(score != 0.0)
         {
-            ranks.insert(make_pair(score, _documents[idx].getName() + " " + _documents[idx].getCategory()));
+            ranks.insert(make_pair(score, _documents[idx].name() + " " + _documents[idx].label()));
         }
     }
 

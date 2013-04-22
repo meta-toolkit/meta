@@ -9,7 +9,7 @@
 namespace meta {
 namespace topics {
 
-lda_cvb::lda_cvb( std::vector<index::Document> & docs, size_t num_topics, 
+lda_cvb::lda_cvb( std::vector<index::document> & docs, size_t num_topics, 
                   double alpha, double beta ) 
         : lda_model{ docs, num_topics }, alpha_{ alpha }, beta_{ beta } { }
 
@@ -40,7 +40,7 @@ void lda_cvb::initialize() {
     std::cerr << "Initalizing::\r";
     for( size_t i = 0; i < docs_.size(); ++i ) {
         common::show_progress( i, docs_.size(), 10, "\t\t\t" );
-        for( auto & freq : docs_[i].getFrequencies() ) {
+        for( auto & freq : docs_[i].frequencies() ) {
             double sum = 0;
             for( size_t k = 0; k < num_topics_; ++k ) {
                 double random = rng();
@@ -62,7 +62,7 @@ double lda_cvb::perform_iteration() {
     double max_change = 0;
     for( size_t i = 0; i < docs_.size(); ++i ) {
         common::show_progress( i, docs_.size(), 10, "\t\t\t" );
-        for( auto & freq : docs_[i].getFrequencies() ) {
+        for( auto & freq : docs_[i].frequencies() ) {
             // remove this word occurrence from means
             for( size_t k = 0; k < num_topics_; ++k ) {
                 double contrib = freq.second * gamma_[i][freq.first][k];
@@ -102,7 +102,7 @@ double lda_cvb::compute_term_topic_probability( term_id term, size_t topic ) con
 
 double lda_cvb::compute_doc_topic_probability( size_t doc, size_t topic ) const {
     return ( doc_topic_mean_.at( doc ).at( topic ) + alpha_ )
-        / ( docs_[ doc ].getLength() + num_topics_ * alpha_ );
+        / ( docs_[ doc ].length() + num_topics_ * alpha_ );
 }
 
 }

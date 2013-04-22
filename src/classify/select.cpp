@@ -14,9 +14,9 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 using std::pair;
-using index::Document;
+using index::document;
 
-feature_select::feature_select(const vector<Document> & docs):
+feature_select::feature_select(const vector<document> & docs):
     _term_space(unordered_set<term_id>()),
     _class_space(unordered_set<class_label>()),
     _num_terms(0),
@@ -28,15 +28,15 @@ feature_select::feature_select(const vector<Document> & docs):
     set_pseen(docs);
 }
 
-void feature_select::set_pseen(const vector<Document> & docs)
+void feature_select::set_pseen(const vector<document> & docs)
 {
     // aggregate counts
     for(auto & t: _term_space)
     {
         for(auto & d: docs)
         {
-            size_t count = common::safe_at(d.getFrequencies(), t);
-            _pseen[d.getCategory()][t] += count;
+            size_t count = common::safe_at(d.frequencies(), t);
+            _pseen[d.label()][t] += count;
             _pterm[t] += count;
         }
     }
@@ -64,24 +64,24 @@ vector<pair<term_id, double>> feature_select::sort_terms(unordered_map<term_id, 
     return ret;
 }
 
-void feature_select::set_class_space(const vector<Document> & docs)
+void feature_select::set_class_space(const vector<document> & docs)
 {
     for(auto & d: docs)
     {
-        ++_pclass[d.getCategory()];
-        _class_space.insert(d.getCategory());
+        ++_pclass[d.label()];
+        _class_space.insert(d.label());
     }
 
     for(auto & c: _pclass)
         c.second /= docs.size();
 }
 
-void feature_select::set_term_space(const vector<Document> & docs)
+void feature_select::set_term_space(const vector<document> & docs)
 {
     for(auto & d: docs)
     {
-        _num_terms += d.getLength();
-        for(auto & p: d.getFrequencies())
+        _num_terms += d.length();
+        for(auto & p: d.frequencies())
             _term_space.insert(p.first);
     }
 }

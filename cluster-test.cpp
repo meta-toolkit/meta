@@ -14,13 +14,13 @@ void run_test( const std::string & filename, const std::string & prefix ) {
     tokenizers::ngram_word_tokenizer<> t{ 1 };
     
     std::cout << "Loading documents...\r" << std::flush;
-    std::vector<index::Document> docs = index::Document::loadDocs( filename, prefix );
+    std::vector<index::document> docs = index::document::load_docs( filename, prefix );
     std::cout << "Tokenizing documents...\r" << std::flush;
     for( auto & d : docs )
         t.tokenize( d );
 
     std::cout << "Clustring documents..." << std::endl;
-    agglomerative_clustering<index::Document,
+    agglomerative_clustering<index::document,
                              basic_single_link_policy<similarity::cosine>>
     cluster( docs );
 }

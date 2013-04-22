@@ -12,14 +12,14 @@ namespace classify {
 
 using std::string;
 using std::vector;
-using index::Document;
+using index::document;
 
 liblinear_svm::liblinear_svm(const string & liblinear_path):
     _liblinear_path(liblinear_path),
     _mapping(util::InvertibleMap<class_label, int>())
 { /* nothing */ }
 
-class_label liblinear_svm::classify(const Document & doc)
+class_label liblinear_svm::classify(const document & doc)
 {
     // create input for liblinear
     std::ofstream out("liblinear-input");
@@ -41,7 +41,7 @@ class_label liblinear_svm::classify(const Document & doc)
     return _mapping.getKeyByValue(value);
 }
 
-confusion_matrix liblinear_svm::test(const vector<Document> & docs)
+confusion_matrix liblinear_svm::test(const vector<document> & docs)
 {
     // create input for liblinear
     std::ofstream out("liblinear-input");
@@ -64,14 +64,14 @@ confusion_matrix liblinear_svm::test(const vector<Document> & docs)
         // number of testing documents
         std::getline(in, str_val);
         int value = std::stoul(str_val);
-        matrix.add(_mapping.getKeyByValue(value), d.getCategory());
+        matrix.add(_mapping.getKeyByValue(value), d.label());
     }
     in.close();
 
     return matrix;
 }
 
-void liblinear_svm::train(const vector<Document> & docs)
+void liblinear_svm::train(const vector<document> & docs)
 {
     std::ofstream out("liblinear-train");
     for(auto & d: docs)
