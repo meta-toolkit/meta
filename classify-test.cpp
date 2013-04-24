@@ -11,10 +11,7 @@
 #include "io/config_reader.h"
 #include "tokenizers/tokenizers.h"
 #include "util/invertible_map.h"
-#include "classify/naive_bayes.h"
-#include "classify/liblinear_svm.h"
-#include "classify/perceptron.h"
-#include "classify/linear_svm.h"
+#include "classify/classifier/all.h"
 
 using std::vector;
 using std::unordered_map;

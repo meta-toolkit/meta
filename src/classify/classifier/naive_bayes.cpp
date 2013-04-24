@@ -5,7 +5,7 @@
 
 #include <unordered_set>
 #include "cluster/similarity.h"
-#include "classify/naive_bayes.h"
+#include "classify/classifier/naive_bayes.h"
 
 namespace meta {
 namespace classify {

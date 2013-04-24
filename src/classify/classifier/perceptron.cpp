@@ -1,7 +1,7 @@
 #include <numeric>
 #include <random>
 
-#include "classify/perceptron.h"
+#include "classify/classifier/perceptron.h"
 
 namespace meta {
 namespace classify {

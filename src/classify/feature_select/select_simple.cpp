@@ -2,7 +2,7 @@
  * @file select_simple.cpp
  */
 
-#include "classify/select_simple.h"
+#include "classify/feature_select/select_simple.h"
 #include "parallel/parallel_for.h"
 
 namespace meta {

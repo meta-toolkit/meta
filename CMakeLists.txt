@@ -18,20 +18,20 @@ if( UNIX )
 endif()
 
 add_library( meta-classify
-             src/classify/classifier.cpp
-             src/classify/select.cpp
-             src/classify/select_doc_freq.cpp
-             src/classify/select_simple.cpp
+             src/classify/classifier/classifier.cpp
+             src/classify/feature_select/select.cpp
+             src/classify/feature_select/doc_freq.cpp
+             src/classify/feature_select/select_simple.cpp
              src/classify/confusion_matrix.cpp
-             src/classify/select_chi_square.cpp
-             src/classify/select_info_gain.cpp  
-             src/classify/knn.cpp
-             src/classify/select_corr.cpp
-             src/classify/select_odds.cpp
-             src/classify/naive_bayes.cpp
-             src/classify/liblinear_svm.cpp
-             src/classify/perceptron.cpp
-             src/classify/linear_svm.cpp
+             src/classify/feature_select/chi_square.cpp
+             src/classify/feature_select/info_gain.cpp  
+             src/classify/classifier/knn.cpp
+             src/classify/feature_select/correlation.cpp
+             src/classify/feature_select/odds.cpp
+             src/classify/classifier/naive_bayes.cpp
+             src/classify/classifier/liblinear_svm.cpp
+             src/classify/classifier/perceptron.cpp
+             src/classify/classifier/linear_svm.cpp
 )
 
 add_library( meta-index

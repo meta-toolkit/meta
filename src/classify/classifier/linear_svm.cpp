@@ -3,7 +3,7 @@
 #include <random>
 #include <utility>
 
-#include "classify/linear_svm.h"
+#include "classify/classifier/linear_svm.h"
 #include "parallel/parallel_for.h"
 #include "util/common.h"
 

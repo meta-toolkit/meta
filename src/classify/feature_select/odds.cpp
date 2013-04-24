@@ -1,8 +1,8 @@
 /**
- * @file select_odds.cpp
+ * @file odds.cpp
  */
 
-#include "classify/select_odds.h"
+#include "classify/feature_select/odds.h"
 #include "parallel/parallel_for.h"
 
 namespace meta {
@@ -14,10 +14,10 @@ using std::unordered_map;
 using std::pair;
 using index::document;
 
-select_odds_ratio::select_odds_ratio(const vector<document> & docs):
+odds_ratio::odds_ratio(const vector<document> & docs):
     select_simple(docs) { /* nothing */ }
 
-double select_odds_ratio::calc_weight(term_id termID, const class_label & label) const
+double odds_ratio::calc_weight(term_id termID, const class_label & label) const
 {
     double p_tc = term_and_class(termID, label);
     double p_tnc = term_and_not_class(termID, label);

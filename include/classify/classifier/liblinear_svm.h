@@ -9,7 +9,7 @@
 #ifndef _LIBLINEAR_SVM_H_
 #define _LIBLINEAR_SVM_H_
 
-#include "classify/classifier.h"
+#include "classify/classifier/classifier.h"
 #include "meta.h"
 
 namespace meta {

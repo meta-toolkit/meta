@@ -10,7 +10,7 @@
 #define _NAIVE_BAYES_H_
 
 #include <unordered_map>
-#include "classify/classifier.h"
+#include "classify/classifier/classifier.h"
 #include "meta.h"
 
 namespace meta {

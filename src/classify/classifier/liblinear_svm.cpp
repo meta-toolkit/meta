@@ -5,7 +5,7 @@
 
 #include <fstream>
 #include "util/invertible_map.h"
-#include "classify/liblinear_svm.h"
+#include "classify/classifier/liblinear_svm.h"
 
 namespace meta {
 namespace classify {

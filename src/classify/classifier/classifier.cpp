@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <random>
-#include "classify/classifier.h"
+#include "classify/classifier/classifier.h"
 
 namespace meta {
 namespace classify {

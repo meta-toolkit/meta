@@ -1,5 +1,5 @@
 /**
- * @file select_chi_square.h
+ * @file chi_square.h
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <utility>
-#include "classify/select_simple.h"
+#include "classify/feature_select/select_simple.h"
 #include "index/document.h"
 
 namespace meta {
@@ -21,7 +21,7 @@ namespace classify {
  * \f$ \chi^2(t, c_i) = \frac{(P(t,c_i)P(\overline{t},\overline{c_i})-P(t,\overline{c_i})P(\overline{t},c_i))^2}
  *  {P(t)P(\overline{t})P(c_i)P(\overline{c_i})} \f$
  */
-class select_chi_square: public select_simple
+class chi_square: public select_simple
 {
     public:
 
@@ -29,7 +29,7 @@ class select_chi_square: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        select_chi_square(const std::vector<index::document> & docs);
+        chi_square(const std::vector<index::document> & docs);
 
     private:
 

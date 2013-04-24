@@ -12,7 +12,7 @@
 #include <vector>
 #include <unordered_map>
 
-#include "classify/classifier.h"
+#include "classify/classifier/classifier.h"
 #include "meta.h"
 
 namespace meta {

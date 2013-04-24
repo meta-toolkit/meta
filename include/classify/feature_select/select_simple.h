@@ -1,5 +1,5 @@
 /**
- * @file select_simple.h
+ * @file simple.h
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <utility>
-#include "classify/select.h"
+#include "classify/feature_select/select.h"
 #include "index/document.h"
 #include "meta.h"
 

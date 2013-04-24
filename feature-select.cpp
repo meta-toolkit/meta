@@ -9,10 +9,9 @@
 #include "index/document.h"
 #include "io/config_reader.h"
 #include "util/invertible_map.h"
-#include "classify/select_chi_square.h"
-#include "classify/select_info_gain.h"
+#include "classify/feature_select/all.h"
 #include "classify/confusion_matrix.h"
-#include "classify/liblinear_svm.h"
+#include "classify/classifier/liblinear_svm.h"
 #include "topics/slda.h"
 
 using std::vector;
@@ -106,14 +105,14 @@ int main(int argc, char* argv[])
 
     // information gain
     cout << endl << "Running information gain..." << endl;
-    classify::select_info_gain ig(docs);
+    classify::info_gain ig(docs);
     auto ig_features = top_features(ig.select(), .1);
     vector<document> reduced = document::filter_features(docs, ig_features);
     cv(svm, reduced);
 
     // chi square
     cout << endl << "Running Chi square..." << endl;
-    classify::select_chi_square cs(docs);
+    classify::chi_square cs(docs);
     auto cs_features = top_features(cs.select(), .1);
     reduced = document::filter_features(docs, cs_features);
     cv(svm, reduced);

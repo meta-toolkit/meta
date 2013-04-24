@@ -1,5 +1,5 @@
 /**
- * @file select_info_gain.h
+ * @file info_gain.h
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <utility>
-#include "classify/select_simple.h"
+#include "classify/feature_select/select_simple.h"
 #include "index/document.h"
 
 namespace meta {
@@ -21,7 +21,7 @@ namespace classify {
  * \f$ IG(t, c_i) =
  * \sum_{c\in\{c_i,\overline{c_i}\}}\sum_{t'\in\{t,t'\}}P(t',c)\log\frac{P(t',c)}{P(t')P(c)} \f$
  */
-class select_info_gain: public select_simple
+class info_gain: public select_simple
 {
     public:
 
@@ -29,7 +29,7 @@ class select_info_gain: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        select_info_gain(const std::vector<index::document> & docs);
+        info_gain(const std::vector<index::document> & docs);
 
     private:
 

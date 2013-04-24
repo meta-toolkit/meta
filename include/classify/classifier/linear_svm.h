@@ -9,7 +9,7 @@
 #ifndef _META_CLASSIFY_LINEAR_SVM_H_
 #define _META_CLASSIFY_LINEAR_SVM_H_
 
-#include "classify/classifier.h"
+#include "classify/classifier/classifier.h"
 
 namespace meta {
 namespace classify {

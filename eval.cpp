@@ -9,7 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include "index/document.h"
-#include "classify/liblinear_svm.h"
+#include "classify/classifier/liblinear_svm.h"
 #include "io/config_reader.h"
 
 using std::cerr;

@@ -5,7 +5,7 @@
 #include <cassert> // debug
 #include "cluster/similarity.h"
 #include "util/common.h"
-#include "classify/select.h"
+#include "classify/feature_select/select.h"
 
 namespace meta {
 namespace classify {

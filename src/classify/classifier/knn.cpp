@@ -6,7 +6,7 @@
 #include <cmath>
 #include <utility>
 #include "index/document.h"
-#include "classify/knn.h"
+#include "classify/classifier/knn.h"
 
 namespace meta {
 namespace classify {

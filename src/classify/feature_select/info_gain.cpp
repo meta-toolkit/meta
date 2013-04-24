@@ -1,8 +1,8 @@
 /**
- * @file select_info_gain.cpp
+ * @file info_gain.cpp
  */
 
-#include "classify/select_info_gain.h"
+#include "classify/feature_select/info_gain.h"
 #include "parallel/parallel_for.h"
 
 namespace meta {
@@ -14,10 +14,10 @@ using std::unordered_map;
 using std::pair;
 using index::document;
 
-select_info_gain::select_info_gain(const vector<document> & docs):
+info_gain::info_gain(const vector<document> & docs):
     select_simple(docs) { /* nothing */ }
 
-double select_info_gain::calc_weight(term_id termID, const class_label & label) const
+double info_gain::calc_weight(term_id termID, const class_label & label) const
 {
     double p_tc = term_and_class(termID, label);
     double p_ntnc = not_term_and_not_class(termID, label);

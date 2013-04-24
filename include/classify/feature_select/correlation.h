@@ -1,5 +1,5 @@
 /**
- * @file select_corr.h
+ * @file correlation.h
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <utility>
-#include "classify/select_simple.h"
+#include "classify/feature_select/select_simple.h"
 #include "index/document.h"
 
 namespace meta {
@@ -22,7 +22,7 @@ namespace classify {
  * \frac{P(t,c_i)P(\overline{t},\overline{c_i})-P(t,\overline{c_i})P(\overline{t},c_i)}
  *  {\sqrt{P(t)P(\overline{t})P(c_i)P(\overline{c_i})}} \f$
  */
-class select_corr_coeff: public select_simple
+class correlation: public select_simple
 {
     public:
 
@@ -30,7 +30,7 @@ class select_corr_coeff: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        select_corr_coeff(const std::vector<index::document> & docs);
+        correlation(const std::vector<index::document> & docs);
 
     private:
         /**

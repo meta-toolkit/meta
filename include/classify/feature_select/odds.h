@@ -1,26 +1,27 @@
 /**
- * @file select_doc_freq.h
+ * @file odds.h
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _SELECT_DOC_FREQ_H_
-#define _SELECT_DOC_FREQ_H_
+#ifndef _SELECT_ODDS_H_
+#define _SELECT_ODDS_H_
 
 #include <vector>
 #include <utility>
+#include "classify/feature_select/select_simple.h"
 #include "index/document.h"
-#include "classify/select_simple.h"
 
 namespace meta {
 namespace classify {
 
 /**
- * Performs feature selection based on term document frequency:
- * \f$ P(t,c_i) \f$
+ * Performs feature selection using odds ratios:
+ * \f$ OR(t,c_i) = \log\frac{P(t|c_i)\cdot (1 - P(t|\overline{c_i}))}
+ *      {(1 - P(t|c_i))\cdot P(t|\overline{c_i})}  \f$
  */
-class select_doc_freq: public select_simple
+class odds_ratio: public select_simple
 {
     public:
 
@@ -28,13 +29,14 @@ class select_doc_freq: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        select_doc_freq(const std::vector<index::document> & docs);
+        odds_ratio(const std::vector<index::document> & docs);
 
+    private:
         /**
-         * Calculates the doc freq score for one term.
+         * Calculates the odds ratio score for one term.
          * @param termID 
          * @param label
-         * @return the doc freq score
+         * @return the odds ratio score
          */
         double calc_weight(term_id termID, const class_label & label) const;
 };
