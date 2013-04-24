@@ -19,7 +19,7 @@ namespace tokenizers {
  * Represents a static parse tree that was generated from the Stanford
  *  Parser.
  */
-class ParseTree
+class parse_tree
 {
     public:
 
@@ -28,90 +28,90 @@ class ParseTree
          * Detects whether the parameter is a subtree or a leaf, and recursively
          *  builds subtrees.
          */
-        ParseTree(std::string tags);
+        parse_tree(std::string tags);
 
         /**
-         * @return the toplevel part of speech for this ParseTree.
+         * @return the toplevel part of speech for this parse_tree.
          */
-        std::string getPOS() const;
+        std::string get_category() const;
 
         /**
-         * @return a vector of this ParseTree's immediate children.
+         * @return a vector of this parse_tree's immediate children.
          */
-        std::vector<ParseTree> getChildren() const;
+        std::vector<parse_tree> children() const;
 
         /**
          * @param curr
          * @return the height of the current tree
          */
-        static size_t height(const ParseTree & curr);
+        static size_t height(const parse_tree & curr);
 
         /**
-         * @return the number of immediate children for this ParseTree.
+         * @return the number of immediate children for this parse_tree.
          */
-        size_t numChildren() const;
+        size_t num_children() const;
 
         /**
-         * @return a string representation of the ParseTree.
+         * @return a string representation of the parse_tree.
          */
-        std::string getString() const;
+        std::string get_string() const;
 
         /**
-         * @return a string representation of the ParseTree structure.
+         * @return a string representation of the parse_tree structure.
          */
-        std::string getSkeleton() const;
+        std::string skeleton() const;
 
         /**
          * @param tree - the tree to print
          * @return a nice multiline string representation of the tree
          */
-        static std::string prettyPrint(const ParseTree & tree);
+        static std::string pretty_print(const parse_tree & tree);
 
         /**
-         * @return a string representation of the ParseTree's children.
+         * @return a string representation of the parse_tree's children.
          */
-        std::string getChildrenString() const;
+        std::string get_children_string() const;
 
         /**
-         * @return a string representation of the ParseTree's children without tags.
+         * @return a string representation of the parse_tree's children without tags.
          */
-        std::string getSkeletonChildren() const;
+        std::string get_skeleton_children() const;
 
         /**
          * @param filename - where to read the trees from
-         * @return a vector of ParseTrees generated from the given file
+         * @return a vector of parse_trees generated from the given file
          */
-        static std::vector<ParseTree> getTrees(const std::string & filename);
+        static std::vector<parse_tree> get_trees(const std::string & filename);
 
     private:
 
         /** the tag label on the root of this subtree */
-        std::string partOfSpeech;
+        std::string _syntactic_category;
 
         /** ordered collection of children of the current parse tree */
-        std::vector<ParseTree> children;
+        std::vector<parse_tree> _children;
 
         /**
          * @return a vector of subtrees in string representation.
          */
-        std::vector<std::string> getTransitions(std::string tags) const;
+        std::vector<std::string> transitions(std::string tags) const;
 
         /**
          * @return the root part of speech for a transition.
          */
-        std::string getRootPOS(std::string tags) const;
+        std::string root_category(std::string tags) const;
 
         /**
          * @param tree
          * @param depth
          * @param output
          */
-        static void prettyPrint(const ParseTree & tree, size_t depth,
+        static void pretty_print(const parse_tree & tree, size_t depth,
                 std::stringstream & output);
     public:
 
         /**
-         * Basic exception for ParseTree interactions.
+         * Basic exception for parse_tree interactions.
          */
         class parse_tree_exception: public std::exception
         {

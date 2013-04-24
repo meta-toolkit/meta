@@ -25,10 +25,10 @@ class semi_skeleton_tokenizer : public tree_tokenizer<semi_skeleton_tokenizer> {
         /**
          * Keeps track of one node's tag and the skeleton structure beneath it.
          * @param document - the document to parse
-         * @param tree - the current ParseTree in the document
+         * @param tree - the current parse_tree in the document
          * @param docFreq - used to aggregate counts for this tokenizer
          */
-        void tree_tokenize( index::document & document, const ParseTree & tree, 
+        void tree_tokenize( index::document & document, const parse_tree & tree, 
                             mapping_fn mapping, const doc_freq_ptr & doc_freq );
 };
 

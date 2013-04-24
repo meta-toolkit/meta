@@ -19,7 +19,7 @@ Parser::Parser(const string & path, const string & delims):
 {
     std::unordered_set<char> invalid(delims.begin(), delims.end());
 
-    MmapFile mmap_file(path);
+    mmap_file mmap_file(path);
     char* file = mmap_file.start();
     
     size_t left = 0;

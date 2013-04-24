@@ -14,15 +14,16 @@ using std::endl;
 using std::string;
 using std::vector;
 
-ParseTree::ParseTree(string tags): children(vector<ParseTree>())
+parse_tree::parse_tree(string tags):
+    _children(vector<parse_tree>())
 {
-    partOfSpeech = getRootPOS(tags);
-    vector<string> transitions(getTransitions(tags));
-    for(auto & transition: transitions)
-        children.push_back(ParseTree(transition));
+    _syntactic_category = root_category(tags);
+    vector<string> trans(transitions(tags));
+    for(auto & transition: trans)
+        _children.push_back(parse_tree(transition));
 }
 
-vector<string> ParseTree::getTransitions(string tags) const
+vector<string> parse_tree::transitions(string tags) const
 {
     // make sure there are actually transitions
     if(tags == "" || tags.substr(1, tags.size() - 1).find_first_of("(") == string::npos)
@@ -58,7 +59,7 @@ vector<string> ParseTree::getTransitions(string tags) const
     return transitions;
 }
 
-string ParseTree::getRootPOS(string tags) const
+string parse_tree::root_category(string tags) const
 {
     size_t index = 1;
     string POS = "";
@@ -67,67 +68,67 @@ string ParseTree::getRootPOS(string tags) const
     return POS;
 }
 
-string ParseTree::getPOS() const
+string parse_tree::get_category() const
 {
-    return partOfSpeech;
+    return _syntactic_category;
 }
 
-vector<ParseTree> ParseTree::getChildren() const
+vector<parse_tree> parse_tree::children() const
 {
-    return children;
+    return _children;
 }
 
-size_t ParseTree::numChildren() const
+size_t parse_tree::num_children() const
 {
-    return children.size();
+    return _children.size();
 }
 
-string ParseTree::getString() const
+string parse_tree::get_string() const
 {
-    string ret = "(" + partOfSpeech;
-    for(auto & child: children)
-        ret += child.getString();
+    string ret = "(" + _syntactic_category;
+    for(auto & child: _children)
+        ret += child.get_string();
     ret += ")";
     return ret;
 }
 
-string ParseTree::getSkeleton() const
+string parse_tree::skeleton() const
 {
     string ret = "(";
-    for(auto & child: children)
-        ret += child.getSkeleton();
+    for(auto & child: _children)
+        ret += child.skeleton();
     ret += ")";
     return ret;
 }
 
-string ParseTree::prettyPrint(const ParseTree & tree)
+string parse_tree::pretty_print(const parse_tree & tree)
 {
     stringstream output;
-    prettyPrint(tree, 0, output);
+    pretty_print(tree, 0, output);
     return output.str();
 }
 
-void ParseTree::prettyPrint(const ParseTree & tree, size_t depth, stringstream & output)
+void parse_tree::pretty_print(const parse_tree & tree, size_t depth, stringstream & output)
 {
     string padding(depth, ' ');
     output << padding << "(" << endl << padding
-           << "  " << tree.partOfSpeech << endl;
-    for(auto & child: tree.children)
-        prettyPrint(child, depth + 2, output);
+           << "  " << tree._syntactic_category << endl;
+    for(auto & child: tree._children)
+        pretty_print(child, depth + 2, output);
     output << padding << ")" << endl;
 }
 
-string ParseTree::getChildrenString() const
+string parse_tree::get_children_string() const
 {
     string ret = "";
-    for(auto & child: children)
-        ret += "(" + child.partOfSpeech + ")";
+    for(auto & child: _children)
+        ret += "(" + child._syntactic_category + ")";
     return ret;
 }
 
-vector<ParseTree> ParseTree::getTrees(const string & filename)
+vector<parse_tree> parse_tree::get_trees(const string & filename)
 {
-    vector<ParseTree> trees;
+    vector<parse_tree> trees;
     ifstream treeFile(filename, ifstream::in);
     if(treeFile.is_open())
     {
@@ -136,7 +137,7 @@ vector<ParseTree> ParseTree::getTrees(const string & filename)
         {
             std::getline(treeFile, line);
             if(line != "")
-                trees.push_back(ParseTree(line));
+                trees.push_back(parse_tree(line));
         }        
         treeFile.close();
     }
@@ -146,10 +147,10 @@ vector<ParseTree> ParseTree::getTrees(const string & filename)
     return trees;
 }
 
-size_t ParseTree::height(const ParseTree & curr)
+size_t parse_tree::height(const parse_tree & curr)
 {
     size_t max = 0;
-    for(auto & child: curr.getChildren())
+    for(auto & child: curr.children())
     {
         size_t h = height(child) + 1;
         if(h > max)
@@ -158,10 +159,10 @@ size_t ParseTree::height(const ParseTree & curr)
     return max;
 }
 
-string ParseTree::getSkeletonChildren() const
+string parse_tree::get_skeleton_children() const
 {
     string ret = "";
-    for(size_t i = 0; i < children.size(); ++i)
+    for(size_t i = 0; i < _children.size(); ++i)
         ret += "()";
     return ret;
 }

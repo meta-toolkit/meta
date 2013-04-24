@@ -9,7 +9,7 @@ namespace io {
 
 using std::string;
 
-MmapFile::MmapFile(string path):
+mmap_file::mmap_file(string path):
     _path(path), _start(nullptr), _file_descriptor(-1)
 {
 
@@ -29,22 +29,22 @@ MmapFile::MmapFile(string path):
     }
 }
 
-unsigned int MmapFile::size() const
+unsigned int mmap_file::size() const
 {
     return _size;
 }
 
-string MmapFile::path() const
+string mmap_file::path() const
 {
     return _path;
 }
 
-char* MmapFile::start() const
+char* mmap_file::start() const
 {
     return _start;
 }
 
-MmapFile::~MmapFile()
+mmap_file::~mmap_file()
 {
     if(_start != nullptr)
     {

@@ -22,12 +22,12 @@ class branch_tokenizer : public tree_tokenizer<branch_tokenizer> {
         using doc_freq_ptr = std::shared_ptr<std::unordered_map<term_id, unsigned int>>;
 
         /**
-         * Keeps track of the branching factor for this document's ParseTrees.
+         * Keeps track of the branching factor for this document's parse_trees.
          * @param document - the document to parse
-         * @param tree - the current ParseTree in the document
+         * @param tree - the current parse_tree in the document
          * @param docFreq - used to aggregate counts for this tokenizer
          */
-        void tree_tokenize( index::document & document, const ParseTree & tree, 
+        void tree_tokenize( index::document & document, const parse_tree & tree, 
                             mapping_fn mapping, const doc_freq_ptr & doc_freq );
 };
 

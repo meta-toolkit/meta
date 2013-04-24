@@ -22,7 +22,7 @@ namespace io {
 /**
  * Memory maps a text file for better I/O performance and allows you to read it.
  */
-class MmapFile
+class mmap_file
 {
     public:
 
@@ -30,12 +30,12 @@ class MmapFile
          * Constructor.
          * @param path - creates a TextFile object from the given filename
          */
-        MmapFile(std::string path);
+        mmap_file(std::string path);
 
         /**
          * Destructor; deallocates memory used to store this object, closing the text file.
          */
-        ~MmapFile();
+        ~mmap_file();
 
         /**
          * @return a pointer to the beginning of the text file; nullptr if unsuccessful
@@ -67,15 +67,15 @@ class MmapFile
         int _file_descriptor;
 
         /** no copying */
-        MmapFile(const MmapFile & other) = delete;
+        mmap_file(const mmap_file & other) = delete;
 
         /** no copying */
-        const MmapFile & operator=(const MmapFile & other) = delete;
+        const mmap_file & operator=(const mmap_file & other) = delete;
 
     public:
 
         /**
-         * Basic exception for MmapFile interactions.
+         * Basic exception for mmap_file interactions.
          */
         class mmap_file_exception: public std::exception
         {
