@@ -86,7 +86,7 @@ class document
          * @param mapping Keeps track of class labels as integers.
          * @return
          */
-        std::string get_liblinear_data(util::InvertibleMap<class_label, int> & mapping) const;
+        std::string get_liblinear_data(util::invertible_map<class_label, int> & mapping) const;
 
         /**
          * Removes featuress from a document.
@@ -110,7 +110,7 @@ class document
          * Outputs class label integer for slda.
          * @param mapping Keeps track of class labels as integers.
          */
-        std::string get_slda_label_data(util::InvertibleMap<class_label, int> & mapping) const;
+        std::string get_slda_label_data(util::invertible_map<class_label, int> & mapping) const;
 
         /**
          * Outputs term count data in slda format.
@@ -165,11 +165,11 @@ class document
         static std::string getName(const std::string & path);
 
         /**
-         * @param mapping - an InvertibleMap of category <-> category id
+         * @param mapping - an invertible_map of category <-> category id
          * @param category - the category to find an id for
          * @return a unique numerical id for the category, creating a new entry if necessary
          */
-        static int get_mapping(util::InvertibleMap<std::string, int> & mapping, const std::string & category);
+        static int get_mapping(util::invertible_map<std::string, int> & mapping, const std::string & category);
 };
 
 }

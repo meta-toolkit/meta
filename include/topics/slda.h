@@ -74,7 +74,7 @@ class slda
         const std::string _slda_path;
 
         /** maps classes to integers for slda i/o */
-        util::InvertibleMap<class_label, int> _mapping;
+        util::invertible_map<class_label, int> _mapping;
 };
 
 }

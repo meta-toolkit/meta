@@ -21,15 +21,15 @@ using std::make_pair;
 using std::unordered_map;
 using std::string;
 
-using util::InvertibleMap;
+using util::invertible_map;
 using io::Parser;
 
 Lexicon::Lexicon(const string & lexiconFile):
     _lexiconFilename(lexiconFile),
     _entries(unordered_map<term_id, TermData>()),
     _docLengths(unordered_map<doc_id, unsigned int>()),
-    _termMap(InvertibleMap<term_id, string>()),
-    _docMap(InvertibleMap<doc_id, string>())
+    _termMap(invertible_map<term_id, string>()),
+    _docMap(invertible_map<doc_id, string>())
 {
     readLexicon();
     setAvgDocLength();
@@ -102,11 +102,11 @@ void Lexicon::readLexicon()
     cerr << " -> added " << _docLengths.size() << " document lengths" << endl;
     
     cerr << "[Lexicon]: reading termIDs from file" << endl;
-    _termMap.readMap(parser.next());
+    _termMap.read(parser.next());
     cerr << " -> added " << _termMap.size() << " terms" << endl;
 
     cerr << "[Lexicon]: reading docIDs from file" << endl;
-    _docMap.readMap(parser.next());
+    _docMap.read(parser.next());
     cerr << " -> added " << _docMap.size() << " documents" << endl;
 
     while(parser.hasNext())
@@ -157,12 +157,12 @@ void Lexicon::setAvgDocLength()
 
 string Lexicon::getTerm(term_id termID) const
 {
-    return _termMap.getValueByKey(termID);
+    return _termMap.get_value(termID);
 }
 
 term_id Lexicon::getterm_id(string term) const
 {
-    return _termMap.getKeyByValue(term);
+    return _termMap.get_key(term);
 }
 
 bool Lexicon::containsterm_id(term_id termID) const
@@ -172,15 +172,15 @@ bool Lexicon::containsterm_id(term_id termID) const
 
 string Lexicon::getDoc(doc_id docID) const
 {
-    return _docMap.getValueByKey(docID);
+    return _docMap.get_value(docID);
 }
 
 doc_id Lexicon::getdoc_id(string docName) const
 {
-    return _docMap.getKeyByValue(docName);
+    return _docMap.get_key(docName);
 }
 
-const InvertibleMap<term_id, string> & Lexicon::getterm_idMapping() const
+const invertible_map<term_id, string> & Lexicon::getterm_idMapping() const
 {
     return _termMap;
 }

@@ -62,7 +62,7 @@ class liblinear_svm: public classifier
         const std::string _liblinear_path;
 
         /** keeps track of the class to integer mapping */
-        util::InvertibleMap<class_label, int> _mapping;
+        util::invertible_map<class_label, int> _mapping;
 };
 
 }

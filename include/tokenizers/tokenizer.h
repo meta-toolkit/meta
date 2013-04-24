@@ -65,7 +65,7 @@ class tokenizer
         virtual term_id mapping(const std::string & term);
 
         /**
-         * Calls the term_id InvertibleMap's saveMap function.
+         * Calls the term_id invertible_map's saveMap function.
          * @param filename - the filename to save the mapping as
          */
         virtual void save_term_id_mapping(const std::string & filename) const;
@@ -76,13 +76,13 @@ class tokenizer
          *  with an existing mapping.
          * @param mapping - a reference to the desired mapping
          */
-        virtual void set_term_id_mapping(const util::InvertibleMap<term_id, std::string> & mapping);
+        virtual void set_term_id_mapping(const util::invertible_map<term_id, std::string> & mapping);
 
         /**
          * @return a reference to the structure used to store the termID <->
          * term string mapping
          */
-        virtual const util::InvertibleMap<term_id, std::string> & term_id_mapping() const;
+        virtual const util::invertible_map<term_id, std::string> & term_id_mapping() const;
 
         /**
          * Looks up the actual label that is represented by a term_id.
@@ -121,13 +121,13 @@ class tokenizer
          * from the file. This is protected mainly so MultiTokenizer can update
          * its _termMap correctly.
          */
-        util::InvertibleMap<term_id, std::string> _term_map;
+        util::invertible_map<term_id, std::string> _term_map;
         
     private:
  
         /**
          * Internal counter for the number of unique terms seen (used as keys
-         * in the InvertibleMap).
+         * in the invertible_map).
          */
         term_id _current_term_id;
 };

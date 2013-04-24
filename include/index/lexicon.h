@@ -102,7 +102,7 @@ class Lexicon
 
         /**
          * Reads document lengths from disk into memory.
-         * We don't use InvertibleMap::readMap because many docLengths
+         * We don't use invertible_map::readMap because many docLengths
          *  can be duplicated.
          */
         void setDocLengths(const std::string & filename);
@@ -110,7 +110,7 @@ class Lexicon
         /**
          * @return the term_id mapping for this lexicon
          */
-        const util::InvertibleMap<term_id, std::string> & getterm_idMapping() const;
+        const util::invertible_map<term_id, std::string> & getterm_idMapping() const;
 
     private:
 
@@ -127,10 +127,10 @@ class Lexicon
         std::unordered_map<doc_id, unsigned int> _docLengths;
 
         /** maps term_ids to the strings they represent */
-        util::InvertibleMap<term_id, std::string> _termMap;
+        util::invertible_map<term_id, std::string> _termMap;
 
         /** maps doc_ids to the document paths they represent */
-        util::InvertibleMap<doc_id, std::string> _docMap;
+        util::invertible_map<doc_id, std::string> _docMap;
 
         /**
          * Reads a lexicon from disk if it exists.

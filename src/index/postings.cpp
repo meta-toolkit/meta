@@ -24,13 +24,13 @@ using std::vector;
 using std::cerr;
 using std::endl;
 
-using util::InvertibleMap;
+using util::invertible_map;
 using tokenizers::tokenizer;
 
 Postings::Postings(const string & postingsFile):
     //_reader(postingsFile),
     _postingsFilename(postingsFile),
-    _docMap(InvertibleMap<doc_id, string>()),
+    _docMap(invertible_map<doc_id, string>()),
     _currentdoc_id(0)
 { /* nothing */ }
 
@@ -105,8 +105,8 @@ size_t Postings::createChunks(vector<document> & documents, size_t chunkMBSize,
 
 doc_id Postings::getdoc_id(const string & path)
 {
-    if(_docMap.containsValue(path))
-        return _docMap.getKeyByValue(path);
+    if(_docMap.contains_value(path))
+        return _docMap.get_key(path);
     else
     {
         _docMap.insert(_currentdoc_id, path);
@@ -166,7 +166,7 @@ void Postings::createPostingsFile(size_t numChunks, Lexicon & lexicon)
 
 void Postings::savedoc_idMapping(const string & filename) const
 {
-    _docMap.saveMap(filename);
+    _docMap.save(filename);
 }
 
 unsigned int Postings::getTotalFreq(const vector<PostingData> & pdata) const

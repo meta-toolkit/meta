@@ -15,13 +15,13 @@ using std::unordered_map;
 using std::unordered_set;
 using std::pair;
 using std::string;
-using util::InvertibleMap;
+using util::invertible_map;
 using index::document;
 
 slda::slda(const string & slda_path, double alpha):
     _alpha(alpha),
     _slda_path(slda_path),
-    _mapping(InvertibleMap<class_label, int>())
+    _mapping(invertible_map<class_label, int>())
 { /* nothing */ }
 
 void slda::estimate(const vector<document> & docs)
@@ -63,7 +63,7 @@ unordered_map<class_label, vector<pair<term_id, double>>> slda::class_distributi
         );
 
         // assign the current distribution to its respective class
-        dists[_mapping.getKeyByValue(curr_label_id)] = this_dist;
+        dists[_mapping.get_key(curr_label_id)] = this_dist;
         ++curr_label_id;
     }
 

@@ -23,14 +23,14 @@ namespace util {
  *  amortized lookup time by key or value. All keys and values must be unique.
  */
 template <class Key, class Value>
-class InvertibleMap
+class invertible_map
 {
     public:
 
         /**
          * Constructor.
          */
-        InvertibleMap();
+        invertible_map();
 
         /**
          * @return whether the invertible map is empty
@@ -45,22 +45,22 @@ class InvertibleMap
         /**
          * @return a key given a value
          */
-        Key getKeyByValue(const Value & value) const;
+        Key get_key(const Value & value) const;
 
         /**
          * @return a value given a key
          */
-        Value getValueByKey(const Key & key) const;
+        Value get_value(const Key & key) const;
 
         /**
          * @return whether the map contains the given key
          */
-        bool containsKey(const Key & key) const;
+        bool contains_key(const Key & key) const;
 
         /**
          * @return whether the map contains the given value
          */
-        bool containsValue(const Value & value) const;
+        bool contains_value(const Value & value) const;
 
         /**
          * Inserts a (key, value) pair into the invertible map
@@ -68,26 +68,16 @@ class InvertibleMap
         void insert(const Key & key, const Value & value);
 
         /**
-         * @return a (key, value) map sorted by keys
-         */
-        std::map<Key, Value> sortKeys() const;
-
-        /**
-         * @return a (value, key) map sorted by values
-         */
-        std::map<Value, Key> sortValues() const;
-
-        /**
-         * Saves an Invertible Map to disk.
+         * Saves an invertible map to disk.
          * @param filename - where to save the map
          */
-        void saveMap(const std::string & filename) const;
+        void save(const std::string & filename) const;
 
         /**
-         * Reads a saved map from disk and loads it into the current InvertibleMap.
+         * Reads a saved map from disk and loads it into the current invertible_map.
          * @param filename - the file where the map is saved
          */
-        void readMap(const std::string & filename);
+        void read(const std::string & filename);
 
         /**
          * Frees all keys from this object.
@@ -95,12 +85,12 @@ class InvertibleMap
         void clear();
 
         /**
-         * The "inner" iterator representation of the InvertibleMap.
+         * The "inner" iterator representation of the invertible_map.
          */
         typedef typename std::unordered_map<Key, Value>::const_iterator InnerIterator;
 
         /**
-         * The InvertibleMap iterator is really just a wrapper for the forward (key -> value)
+         * The invertible_map iterator is really just a wrapper for the forward (key -> value)
          *  unordered_map iterator. Use this iterator class the same way you'd use it on an
          *  unordered_map.
          */
@@ -177,7 +167,7 @@ class InvertibleMap
     public:
 
         /**
-         * Basic exception for InvertibleMap interactions.
+         * Basic exception for invertible_map interactions.
          */
         class invertible_map_exception: public std::exception
         {

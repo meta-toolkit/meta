@@ -96,7 +96,7 @@ class Postings
         //CompressedFileReader _reader;
         
         /** Keeps track of the doc_id -> filename mapping */
-        util::InvertibleMap<doc_id, std::string> _docMap;
+        util::invertible_map<doc_id, std::string> _docMap;
 
         /** Internal counter of docs, used to create doc_ids */
         doc_id _currentdoc_id;

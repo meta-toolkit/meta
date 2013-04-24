@@ -17,11 +17,11 @@ using std::endl;
 using std::ofstream;
 using namespace std::placeholders;
 using std::unordered_map;
-using util::InvertibleMap;
+using util::invertible_map;
 using index::document;
 
 tokenizer::tokenizer():
-    _term_map(InvertibleMap<term_id, string>()),
+    _term_map(invertible_map<term_id, string>()),
     _current_term_id(0)
 { /* nothing */ }
 
@@ -32,19 +32,19 @@ void tokenizer::tokenize(index::document & document,
 
 term_id tokenizer::mapping(const string & term)
 {
-    if(!_term_map.containsValue(term))
+    if(!_term_map.contains_value(term))
     {
         _term_map.insert(_current_term_id, term);
         return _current_term_id++;
     }
     else
     {
-        term_id termID = _term_map.getKeyByValue(term);
+        term_id termID = _term_map.get_key(term);
         return termID;
     }
 }
 
-void tokenizer::set_term_id_mapping(const InvertibleMap<term_id, string> & mapping)
+void tokenizer::set_term_id_mapping(const invertible_map<term_id, string> & mapping)
 {
     _term_map = mapping;
     _current_term_id = _term_map.size();
@@ -52,17 +52,17 @@ void tokenizer::set_term_id_mapping(const InvertibleMap<term_id, string> & mappi
 
 void tokenizer::save_term_id_mapping(const string & filename) const
 {
-    _term_map.saveMap(filename);
+    _term_map.save(filename);
 }
 
-const InvertibleMap<term_id, std::string> & tokenizer::term_id_mapping() const
+const invertible_map<term_id, std::string> & tokenizer::term_id_mapping() const
 {
     return _term_map;
 }
 
 string tokenizer::label(term_id termID) const
 {
-    return _term_map.getValueByKey(termID);
+    return _term_map.get_value(termID);
 }
 
 void tokenizer::print_data() const

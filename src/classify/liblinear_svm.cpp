@@ -16,7 +16,7 @@ using index::document;
 
 liblinear_svm::liblinear_svm(const string & liblinear_path):
     _liblinear_path(liblinear_path),
-    _mapping(util::InvertibleMap<class_label, int>())
+    _mapping(util::invertible_map<class_label, int>())
 { /* nothing */ }
 
 class_label liblinear_svm::classify(const document & doc)
@@ -38,7 +38,7 @@ class_label liblinear_svm::classify(const document & doc)
     in.close();
     int value = std::stoul(str_val);
 
-    return _mapping.getKeyByValue(value);
+    return _mapping.get_key(value);
 }
 
 confusion_matrix liblinear_svm::test(const vector<document> & docs)
@@ -64,7 +64,7 @@ confusion_matrix liblinear_svm::test(const vector<document> & docs)
         // number of testing documents
         std::getline(in, str_val);
         int value = std::stoul(str_val);
-        matrix.add(_mapping.getKeyByValue(value), d.label());
+        matrix.add(_mapping.get_key(value), d.label());
     }
     in.close();
 

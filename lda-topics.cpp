@@ -15,8 +15,8 @@ int print_usage( const std::string & name ) {
 
 int print_topics( const std::string & filename, const std::string & termsfile, 
                   size_t num_words ) {
-    util::InvertibleMap<term_id, std::string> terms;
-    terms.readMap( termsfile );
+    util::invertible_map<term_id, std::string> terms;
+    terms.read( termsfile );
     std::ifstream file{ filename };
     while( file ) {
         std::string line;
@@ -50,7 +50,7 @@ int print_topics( const std::string & filename, const std::string & termsfile,
         }
         std::sort( pairs.begin(), pairs.end(), comp );
         for( const auto & p : pairs )
-            std::cout << terms.getValueByKey( p.first ) 
+            std::cout << terms.get_value( p.first ) 
                 << " (" << p.first << "): " << p.second << std::endl;
         std::cout << std::endl;
     }

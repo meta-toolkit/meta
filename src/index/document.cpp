@@ -17,7 +17,7 @@ using std::make_pair;
 using std::string;
 using std::stringstream;
 using std::unordered_map;
-using util::InvertibleMap;
+using util::invertible_map;
 
 #include <iostream>
 using namespace std;
@@ -88,7 +88,7 @@ const unordered_map<term_id, unsigned int> & document::frequencies() const
     return _frequencies;
 }
 
-string document::get_liblinear_data(InvertibleMap<string, int> & mapping) const
+string document::get_liblinear_data(invertible_map<string, int> & mapping) const
 {
     stringstream out;
     out << get_mapping(mapping, _label);     // liblinear, classes start at 1
@@ -111,15 +111,15 @@ string document::get_liblinear_data(InvertibleMap<string, int> & mapping) const
     return out.str();
 }
 
-int document::get_mapping(InvertibleMap<string, int> & mapping, const class_label & category)
+int document::get_mapping(invertible_map<string, int> & mapping, const class_label & category)
 {
     // see if entered already
-    if(mapping.containsKey(category))
-        return mapping.getValueByKey(category);
+    if(mapping.contains_key(category))
+        return mapping.get_value(category);
 
     // otherwise, inefficiently create new entry (starting at 1)
     int newVal = 1;
-    while(mapping.containsValue(newVal))
+    while(mapping.contains_value(newVal))
         ++newVal;
 
     mapping.insert(category, newVal);
@@ -172,7 +172,7 @@ string document::get_slda_term_data() const
     return out.str();
 }
 
-string document::get_slda_label_data(InvertibleMap<class_label, int> & mapping) const
+string document::get_slda_label_data(invertible_map<class_label, int> & mapping) const
 {
     // minus one because slda classes start at 0
     return common::to_string(get_mapping(mapping, _label) - 1) + "\n";
