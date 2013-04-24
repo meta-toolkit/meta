@@ -61,7 +61,7 @@ class CompressedFileReader
         /**
          * @return whether there is another number in the file
          */
-        bool hasNext() const;
+        bool has_next() const;
 
         /**
          * @return the next compressed number

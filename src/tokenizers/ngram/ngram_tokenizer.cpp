@@ -12,7 +12,7 @@ using std::string;
 using std::unordered_map;
 using std::unordered_set;
 using index::document;
-using io::Parser;
+using io::parser;
 
 ngram_tokenizer::ngram_tokenizer(size_t n):
     _n_val(n) { /* nothing */ }

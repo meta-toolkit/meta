@@ -17,7 +17,7 @@ namespace tokenizers {
 
 /**
  * Represents a static parse tree that was generated from the Stanford
- *  Parser.
+ *  parser.
  */
 class parse_tree
 {

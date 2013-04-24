@@ -12,22 +12,22 @@ using std::string;
 using std::unordered_map;
 using std::unordered_set;
 using index::document;
-using io::Parser;
+using io::parser;
 
 ngram_simple_tokenizer::ngram_simple_tokenizer(size_t n):
     ngram_tokenizer(n) { /* nothing */ }
 
-void ngram_simple_tokenizer::simple_tokenize(Parser & parser, document & document,
+void ngram_simple_tokenizer::simple_tokenize(parser & parser, document & document,
         std::function<term_id(const std::string &)> mapping,
         const std::shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
 {
     // initialize the ngram
     deque<string> ngram;
-    for(size_t i = 0; i < n_value() && parser.hasNext(); ++i)
+    for(size_t i = 0; i < n_value() && parser.has_next(); ++i)
         ngram.push_back(parser.next());
 
     // add the rest of the ngrams
-    while(parser.hasNext())
+    while(parser.has_next())
     {
         string wordified = wordify(ngram);
         document.increment(mapping(wordified), 1, docFreq);

@@ -27,7 +27,7 @@ namespace language_model {
  * with the (n-1)-gram model recursively to the unigram level.
  */
 template <size_t N>
-class NgramDistribution
+class ngram_distribution
 {
     public:
 
@@ -38,7 +38,7 @@ class NgramDistribution
          * Constructor.
          * @param docPath The training document.
          */
-        NgramDistribution(const std::string & docPath);
+        ngram_distribution(const std::string & docPath);
 
         /**
          * @param prev
@@ -150,7 +150,7 @@ class NgramDistribution
         ProbMap _dist;
 
         /** N-1 prior distribution. */
-        NgramDistribution<N - 1> _lower;
+        ngram_distribution<N - 1> _lower;
 
         /** Discounting factor for absolute discounting smoothing. */
         double _discount;
@@ -160,13 +160,13 @@ class NgramDistribution
  * Specialized "base case" class for a unigram model's prior distribution.
  */
 template <>
-class NgramDistribution<0>
+class ngram_distribution<0>
 {
     public:
     
         typedef std::unordered_map<std::string, std::unordered_map<std::string, double>> ProbMap;
 
-        NgramDistribution(const std::string & docPath):
+        ngram_distribution(const std::string & docPath):
             _dist(ProbMap()){ /* nothing */ }
 
         double prob(const std::string & str) { return 0.0; }

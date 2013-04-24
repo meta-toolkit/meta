@@ -12,7 +12,7 @@ namespace io {
 using std::string;
 using std::vector;
 
-Parser::Parser(const string & path, const string & delims):
+parser::parser(const string & path, const string & delims):
     _idx(0),
     _filename(path),
     _tokens(vector<string>())
@@ -36,22 +36,22 @@ Parser::Parser(const string & path, const string & delims):
     }
 }
 
-string Parser::filename() const
+string parser::filename() const
 {
     return _filename;
 }
 
-string Parser::peek() const
+string parser::peek() const
 {
     return _tokens.at(_idx);
 }
 
-string Parser::next()
+string parser::next()
 {
     return _tokens[_idx++];
 }
 
-bool Parser::hasNext() const
+bool parser::has_next() const
 {
     return _idx < _tokens.size();
 }

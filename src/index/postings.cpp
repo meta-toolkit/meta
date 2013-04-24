@@ -147,7 +147,7 @@ void Postings::createPostingsFile(size_t numChunks, Lexicon & lexicon)
 
     size_t line = 0;
     ChunkList chunks(numChunks);
-    while(chunks.hasNext())
+    while(chunks.has_next())
     {
         IndexEntry entry = chunks.next();
 

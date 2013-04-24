@@ -34,7 +34,7 @@ class ChunkList
         /**
          * @return whether there is another string to write to the postings file
          */
-        bool hasNext() const;
+        bool has_next() const;
 
         /**
          * @return the next string to write to the postings file
@@ -47,7 +47,7 @@ class ChunkList
         size_t _numChunks;
 
         /** a parser for each chunk that needs to be merged */
-        std::vector<io::Parser> _parsers;
+        std::vector<io::parser> _parsers;
 
         /**
          * Appends entries from the vector of IndexEntries into one IndexEntry.

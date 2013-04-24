@@ -18,14 +18,14 @@ namespace io {
  * Parses a text file by reading it completely into memory, delimiting tokens
  * by user request.
  */
-class Parser
+class parser
 {
     public:
         /**
          * @param path The path to the file to parse
          * @param delims Delimiters to be used for separating tokens
          */
-        Parser(const std::string & path, const std::string & delims);
+        parser(const std::string & path, const std::string & delims);
 
         /**
          * @return the filename of the file that is being parsed
@@ -47,7 +47,7 @@ class Parser
         /**
          * @return whether the parser contains another token
          */
-        bool hasNext() const;
+        bool has_next() const;
 
     private:
 

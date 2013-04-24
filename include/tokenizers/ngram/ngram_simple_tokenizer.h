@@ -19,7 +19,7 @@ namespace tokenizers {
 
 /**
  * Derived classes from this simple ngram tokenizer differ only in file
- * extensions and Parsers used. Note this class is still abstract because
+ * extensions and parsers used. Note this class is still abstract because
  * tokenize() is not defined.
  */
 class ngram_simple_tokenizer: public ngram_tokenizer
@@ -42,7 +42,7 @@ class ngram_simple_tokenizer: public ngram_tokenizer
          * @param docFreqs Optional parameter to store IDF values in
          */
         void simple_tokenize(
-                io::Parser & parser,
+                io::parser & parser,
                 index::document & document,
                 std::function<term_id(const std::string &)> mapping,
                 const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreqs = nullptr

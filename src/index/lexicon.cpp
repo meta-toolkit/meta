@@ -22,7 +22,7 @@ using std::unordered_map;
 using std::string;
 
 using util::invertible_map;
-using io::Parser;
+using io::parser;
 
 Lexicon::Lexicon(const string & lexiconFile):
     _lexiconFilename(lexiconFile),
@@ -84,7 +84,7 @@ void Lexicon::addTerm(term_id term, TermData termData)
 
 void Lexicon::readLexicon()
 {
-    Parser parser(_lexiconFilename, "\n");
+    parser parser(_lexiconFilename, "\n");
     
     /*
     if(!parser.isValid())
@@ -109,7 +109,7 @@ void Lexicon::readLexicon()
     _docMap.read(parser.next());
     cerr << " -> added " << _docMap.size() << " documents" << endl;
 
-    while(parser.hasNext())
+    while(parser.has_next())
     {
         istringstream line(parser.next());
         vector<string> items;
@@ -187,8 +187,8 @@ const invertible_map<term_id, string> & Lexicon::getterm_idMapping() const
 
 void Lexicon::setDocLengths(const string & filename)
 {
-    Parser parser(filename, " \n");
-    while(parser.hasNext())
+    parser parser(filename, " \n");
+    while(parser.has_next())
     {
         doc_id docID;
         unsigned int length;

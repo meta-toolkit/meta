@@ -18,22 +18,22 @@ using std::endl;
 using std::vector;
 using std::string;
 
-using io::Parser;
+using io::parser;
 
 ChunkList::ChunkList(size_t numChunks):
     _numChunks(numChunks),
-    _parsers(vector<Parser>())
+    _parsers(vector<parser>())
 {
     for(size_t i = 0; i < _numChunks; ++i)
     {
         string filename = common::to_string(i) + ".chunk";
-        _parsers.push_back(Parser(filename, "\n"));
+        _parsers.push_back(parser(filename, "\n"));
     }
 }
 
-bool ChunkList::hasNext() const
+bool ChunkList::has_next() const
 {
-    return _parsers[0].hasNext();
+    return _parsers[0].has_next();
 }
 
 void ChunkList::combinePostingData(vector<IndexEntry> & entries, IndexEntry & combined) const
@@ -49,7 +49,7 @@ void ChunkList::combinePostingData(vector<IndexEntry> & entries, IndexEntry & co
 
 IndexEntry ChunkList::next()
 {
-    if(!_parsers[0].hasNext())
+    if(!_parsers[0].has_next())
         throw Index::index_exception("[ChunkList]: tried to getNext() when there were no more elements");
 
     IndexEntry min(_parsers[0].peek());
@@ -76,7 +76,7 @@ IndexEntry ChunkList::next()
         }
 
         // get to valid spot
-        if(!_parsers[i].hasNext())
+        if(!_parsers[i].has_next())
         {
             cerr << " -> used up " << _parsers[i].filename() << endl;
             std::swap(_parsers[i], _parsers[_numChunks - 1]);

@@ -14,19 +14,19 @@ typedef std::unordered_map<std::string, std::unordered_map<std::string, size_t>>
 typedef std::unordered_map<std::string, std::unordered_map<std::string, double>> ProbMap;
 
 template <size_t N>
-double NgramDistribution<N>::log_likelihood(const index::document & document) const
+double ngram_distribution<N>::log_likelihood(const index::document & document) const
 {
     return 0.0;
 }
 
 template <size_t N>
-double NgramDistribution<N>::perplexity(const index::document & document) const
+double ngram_distribution<N>::perplexity(const index::document & document) const
 {
     return 0.0;
 }
 
 template <size_t N>
-std::string NgramDistribution<N>::random_sentence(unsigned int seed, size_t numWords) const
+std::string ngram_distribution<N>::random_sentence(unsigned int seed, size_t numWords) const
 {
     std::default_random_engine gen(seed);
     std::uniform_real_distribution<double> rdist(0.0, 1.0);
@@ -67,7 +67,7 @@ std::string NgramDistribution<N>::random_sentence(unsigned int seed, size_t numW
 }
 
 template <size_t N>
-std::string NgramDistribution<N>::to_prev(const std::deque<std::string> & ngram) const
+std::string ngram_distribution<N>::to_prev(const std::deque<std::string> & ngram) const
 {
     std::string ret = "";
     for(auto & w: ngram)
@@ -76,7 +76,7 @@ std::string NgramDistribution<N>::to_prev(const std::deque<std::string> & ngram)
 }
 
 template <size_t N>
-std::string NgramDistribution<N>::get_prev(double rand) const
+std::string ngram_distribution<N>::get_prev(double rand) const
 {
     double range = 0.0;
     for(auto & d: _dist)
@@ -95,7 +95,7 @@ std::string NgramDistribution<N>::get_prev(double rand) const
 }
 
 template <size_t N>
-std::string NgramDistribution<N>::get_word(double rand,
+std::string ngram_distribution<N>::get_word(double rand,
     const std::unordered_map<std::string, double> & dist) const
 {
     double range = 0.0;
@@ -115,7 +115,7 @@ std::string NgramDistribution<N>::get_word(double rand,
 }
 
 template <size_t N>
-const ProbMap & NgramDistribution<N>::kth_distribution(size_t k) const
+const ProbMap & ngram_distribution<N>::kth_distribution(size_t k) const
 {
     if(k == 0)
         throw std::out_of_range("kth_distribution value is 0");
@@ -127,10 +127,10 @@ const ProbMap & NgramDistribution<N>::kth_distribution(size_t k) const
 }
 
 template <size_t N>
-NgramDistribution<N>::NgramDistribution(const std::string & docPath):
+ngram_distribution<N>::ngram_distribution(const std::string & docPath):
     _freqs(FreqMap()),
     _dist(ProbMap()),
-    _lower(NgramDistribution<N - 1>(docPath))
+    _lower(ngram_distribution<N - 1>(docPath))
 {
     std::cerr << " Creating " << N << "-gram model..." << std::endl;
     calc_freqs(docPath);
@@ -139,7 +139,7 @@ NgramDistribution<N>::NgramDistribution(const std::string & docPath):
 }
 
 template <size_t N>
-void NgramDistribution<N>::calc_discount_factor()
+void ngram_distribution<N>::calc_discount_factor()
 {
     size_t n1 = 0;
     size_t n2 = 0;
@@ -159,7 +159,7 @@ void NgramDistribution<N>::calc_discount_factor()
 }
 
 template <size_t N>
-void NgramDistribution<N>::calc_freqs(const std::string & docPath)
+void ngram_distribution<N>::calc_freqs(const std::string & docPath)
 {
     using namespace tokenizers;
     index::document doc(docPath);
@@ -177,14 +177,14 @@ void NgramDistribution<N>::calc_freqs(const std::string & docPath)
 }
 
 template <size_t N>
-std::string NgramDistribution<N>::get_last(const std::string & words) const
+std::string ngram_distribution<N>::get_last(const std::string & words) const
 {
     size_t idx = words.find_last_of(" ");
     return words.substr(idx + 1);
 }
 
 template <size_t N>
-std::string NgramDistribution<N>::get_rest(const std::string & words) const
+std::string ngram_distribution<N>::get_rest(const std::string & words) const
 {
     size_t idx = words.find_last_of(" ");
     if(idx == std::string::npos)
@@ -193,7 +193,7 @@ std::string NgramDistribution<N>::get_rest(const std::string & words) const
 }
 
 template <size_t N>
-void NgramDistribution<N>::calc_dist()
+void ngram_distribution<N>::calc_dist()
 {
     for(auto & pmap: _freqs)
     {
@@ -219,7 +219,7 @@ void NgramDistribution<N>::calc_dist()
 }
 
 template <size_t N>
-double NgramDistribution<N>::prob(const std::string & str) const
+double ngram_distribution<N>::prob(const std::string & str) const
 {
     std::string word = get_last(str);
     std::string prev = get_rest(str);
@@ -227,7 +227,7 @@ double NgramDistribution<N>::prob(const std::string & str) const
 }
 
 template <size_t N>
-double NgramDistribution<N>::prob(const std::string & prev, const std::string & word) const
+double ngram_distribution<N>::prob(const std::string & prev, const std::string & word) const
 {
     return _dist(prev).at(word);
 }
