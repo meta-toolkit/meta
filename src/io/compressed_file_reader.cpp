@@ -9,8 +9,8 @@ namespace io {
 
 using std::string;
 
-CompressedFileReader::CompressedFileReader(const string & filename):
-    _status(notDone), _currentValue(0), _currentChar(0), _currentBit(0)
+compressed_file_reader::compressed_file_reader(const string & filename):
+    _status(notDone), _current_value(0), _current_char(0), _current_bit(0)
 {
     struct stat st;
     stat(filename.c_str(), &st);
@@ -30,10 +30,10 @@ CompressedFileReader::CompressedFileReader(const string & filename):
     }
 
     // initialize the stream
-    getNext();
+    get_next();
 }
 
-CompressedFileReader::~CompressedFileReader()
+compressed_file_reader::~compressed_file_reader()
 {
     if(_start != nullptr)
     { 
@@ -43,33 +43,33 @@ CompressedFileReader::~CompressedFileReader()
     }
 }
 
-void CompressedFileReader::reset()
+void compressed_file_reader::reset()
 {
-    _currentChar = 0;
-    _currentBit = 0;
+    _current_char = 0;
+    _current_bit = 0;
     _status = notDone;
-    getNext();
+    get_next();
 }
 
-void CompressedFileReader::seek(unsigned int position, unsigned int bitOffset)
+void compressed_file_reader::seek(unsigned int position, unsigned int bitOffset)
 {
     if(bitOffset <= 7 && position > _size)
     {
-        _currentChar = position;
-        _currentBit = bitOffset;
+        _current_char = position;
+        _current_bit = bitOffset;
         _status = notDone;
-        getNext();
+        get_next();
     }
     else
         throw compressed_file_reader_exception("error seeking; invalid parameters");
 }
 
-bool CompressedFileReader::has_next() const
+bool compressed_file_reader::has_next() const
 {
     return _status != readerDone;
 }
 
-unsigned int CompressedFileReader::next()
+unsigned int compressed_file_reader::next()
 {
     if(_status == userDone)
         return 0;
@@ -77,43 +77,43 @@ unsigned int CompressedFileReader::next()
     if(_status == readerDone)
     {
         _status = userDone;
-        return _currentValue;
+        return _current_value;
     }
 
-    unsigned int next = _currentValue;
-    getNext();
+    unsigned int next = _current_value;
+    get_next();
     return next;
 }
 
-void CompressedFileReader::getNext()
+void compressed_file_reader::get_next()
 {
     int numberBits = 0;
-    while(_status == 0 && !readBit())
+    while(_status == 0 && !read_bit())
         ++numberBits;
 
-    _currentValue = 0;
+    _current_value = 0;
     for(int bit = numberBits - 1; _status == 0 && bit >= 0; --bit)
     {
-        if(readBit())
-            _currentValue |= (1 << bit);
+        if(read_bit())
+            _current_value |= (1 << bit);
     }
 
-    _currentValue |= (1 << numberBits);
+    _current_value |= (1 << numberBits);
 }
 
-bool CompressedFileReader::readBit()
+bool compressed_file_reader::read_bit()
 {
     // (7 - _currentBit) to read from left to right
-    bool bit = _start[_currentChar] & (1 << (7 - _currentBit));
-    if(_currentBit == 7)
+    bool bit = _start[_current_char] & (1 << (7 - _current_bit));
+    if(_current_bit == 7)
     {
-        _currentBit = 0;
-        if(++_currentChar == _size)
+        _current_bit = 0;
+        if(++_current_char == _size)
             _status = readerDone;
     }
     else
     {
-        ++_currentBit;
+        ++_current_bit;
     }
     return bit;
 }

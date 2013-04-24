@@ -9,64 +9,64 @@ namespace io {
 
 using std::string;
 
-CompressedFileWriter::CompressedFileWriter(const string & filename)
+compressed_file_writer::compressed_file_writer(const string & filename)
 {
     _outfile = fopen(filename.c_str(), "w");
-    _charCursor = 0;
-    _bitCursor = 0;
-    _bufferSize = 1024 * 1024 * 8,
-    _buffer = new unsigned char[_bufferSize];
+    _char_cursor = 0;
+    _bit_cursor = 0;
+    _buffer_size = 1024 * 1024 * 8,
+    _buffer = new unsigned char[_buffer_size];
 
     // disable buffering
     if(setvbuf(_outfile, nullptr, _IONBF, 0) != 0)
         throw compressed_file_writer_exception("error disabling buffering (setvbuf)");
 
     // zero out, we'll only write ones
-    memset(_buffer, 0, _bufferSize);
+    memset(_buffer, 0, _buffer_size);
 }
 
-CompressedFileWriter::~CompressedFileWriter()
+compressed_file_writer::~compressed_file_writer()
 {
     // write the remaining bits, up to the nearest byte
-    fwrite(_buffer, 1, _charCursor + 1, _outfile);
+    fwrite(_buffer, 1, _char_cursor + 1, _outfile);
     delete [] _buffer;
     fclose(_outfile);
 }
 
-void CompressedFileWriter::write(unsigned int value)
+void compressed_file_writer::write(unsigned int value)
 {
     int length = log2(value);
 
     for(int bit = 0; bit < length; ++bit)
-        writeBit(false);
+        write_bit(false);
 
-    writeBit(true);
+    write_bit(true);
 
     for(int bit = length - 1; bit >= 0; --bit)
-        writeBit(value & 1 << bit);
+        write_bit(value & 1 << bit);
 }
 
-void CompressedFileWriter::writeBit(bool bit)
+void compressed_file_writer::write_bit(bool bit)
 {
     if(bit)
-        _buffer[_charCursor] |= (1 << (7 - _bitCursor));
+        _buffer[_char_cursor] |= (1 << (7 - _bit_cursor));
 
-    if(++_bitCursor == 8)
+    if(++_bit_cursor == 8)
     {
-        _bitCursor = 0;
-        if(++_charCursor == _bufferSize)
+        _bit_cursor = 0;
+        if(++_char_cursor == _buffer_size)
         {
-            _charCursor = 0;
-            writeBuffer();
+            _char_cursor = 0;
+            write_buffer();
         }
     }
 }
 
-void CompressedFileWriter::writeBuffer() const
+void compressed_file_writer::write_buffer() const
 {
-    if(fwrite(_buffer, 1, _bufferSize, _outfile) != _bufferSize)
+    if(fwrite(_buffer, 1, _buffer_size, _outfile) != _buffer_size)
         throw compressed_file_writer_exception("error writing to file");
-    memset(_buffer, 0, _bufferSize);
+    memset(_buffer, 0, _buffer_size);
 }
 
 }

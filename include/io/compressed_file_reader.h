@@ -29,7 +29,7 @@ enum ReaderStatus { notDone, readerDone, userDone };
 /**
  * Represents a file of unsigned integers compressed using gamma compression.
  */
-class CompressedFileReader
+class compressed_file_reader
 {
     public:
 
@@ -37,13 +37,13 @@ class CompressedFileReader
          * Constructor.
          * Opens a compressed file for reading.
          */
-        CompressedFileReader(const std::string & filename);
+        compressed_file_reader(const std::string & filename);
 
         /**
          * Destructor.
          * Closes the compressed file.
          */
-        ~CompressedFileReader();
+        ~compressed_file_reader();
 
         /**
          * Sets the cursor back to the beginning of the file.
@@ -56,7 +56,7 @@ class CompressedFileReader
          * @param position - where to set the cursor in terms of bytes
          * @param bitOffset - bit offset from current byte position [0..7]
          */
-        void seek(unsigned int position, unsigned int bitOffset);
+        void seek(unsigned int position, unsigned int bit_offset);
 
         /**
          * @return whether there is another number in the file
@@ -84,29 +84,29 @@ class CompressedFileReader
         int _status;
 
         /** current numeric value that was read */
-        unsigned int _currentValue;
+        unsigned int _current_value;
 
         /** current byte in the compressed file */
-        unsigned int _currentChar;
+        unsigned int _current_char;
 
         /** current bit inside the current byte */
-        unsigned int _currentBit;
+        unsigned int _current_bit;
 
         /**
          * Sets _currentValue to the value of the next number.
          */
-        void getNext();
+        void get_next();
 
         /**
          * Advances readCursors.
          * @return the next bit in the file
          */
-        bool readBit();
+        bool read_bit();
 
     public:
 
         /**
-         * Basic exception for CompressedFileReader interactions.
+         * Basic exception for compressed_file_reader interactions.
          */
         class compressed_file_reader_exception: public std::exception
         {

@@ -19,7 +19,7 @@ namespace io {
 /**
  * Writes to a file of unsigned integers using gamma compression.
  */
-class CompressedFileWriter
+class compressed_file_writer
 {
     public:
 
@@ -27,12 +27,12 @@ class CompressedFileWriter
          * Constructor.
          * Opens a compressed file for writing or creates a new file if it doesn't exist.
          */
-        CompressedFileWriter(const std::string & filename);
+        compressed_file_writer(const std::string & filename);
 
         /**
          * Destructor; closes the compressed file.
          */
-        ~CompressedFileWriter();
+        ~compressed_file_writer();
 
         /**
          * Writes a value to the end of the compressed file.
@@ -46,32 +46,32 @@ class CompressedFileWriter
         FILE* _outfile;
         
         /** the current byte this reader is on */
-        unsigned int _charCursor;
+        unsigned int _char_cursor;
         
         /** the current bit of the current byte this reader is on */
-        unsigned int _bitCursor;
+        unsigned int _bit_cursor;
         
         /** saved data that is not yet written to disk */
         unsigned char* _buffer;
 
         /** how large to make the internal writer buffer */
-        unsigned int _bufferSize;
+        unsigned int _buffer_size;
 
         /**
          * Writes a bit to the file and advances writeCursors.
          * @param bit
          */
-        void writeBit(bool bit);
+        void write_bit(bool bit);
 
         /**
          * Writes the buffer to the file.
          */
-        void writeBuffer() const;
+        void write_buffer() const;
 
     public:
 
         /**
-         * Basic exception for CompressedFileWriter interactions.
+         * Basic exception for compressed_file_writer interactions.
          */
         class compressed_file_writer_exception: public std::exception
         {
