@@ -150,6 +150,14 @@ void confusion_matrix::print_stats(std::ostream & out) const
         << t_corr / _total << endl;
 }
 
+double confusion_matrix::accuracy() const
+{
+    double correct = 0.0;
+    for(auto & cls: _classes)
+        correct += common::safe_at(_predictions, make_pair(cls, cls));
+    return correct / _total;
+}
+
 size_t confusion_matrix::string_pair_hash(const std::pair<std::string, std::string> & str_pair)
 {
     return std::hash<string>()(str_pair.first + str_pair.second);

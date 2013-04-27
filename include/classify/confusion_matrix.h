@@ -70,6 +70,11 @@ class confusion_matrix
         const prediction_counts & predictions() const;
 
         /**
+         * @return the accuracy for this confusion matrix
+         */
+        double accuracy() const;
+
+        /**
          * operator+ for confusion matrices. All counts are agglomerated for all
          * predictions.
          * @param other 
