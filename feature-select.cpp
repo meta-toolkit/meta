@@ -75,9 +75,7 @@ void test(const vector<document> & docs, const vector<pair<term_id, double>> & f
     for(auto percent: {.01, .05, .10, .15, .20, .25})
     {
         auto selected_features = top_features(features, percent);
-        cout << "filtering features..." << endl;
         vector<document> reduced = document::filter_features(docs, selected_features);
-        cout << "done filtering features" << endl;
         cv(c, reduced, orig);
     }
     cout << endl;
