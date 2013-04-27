@@ -167,6 +167,8 @@ target_link_libraries( lda-topics
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
+add_executable( shuffle shuffle.cpp )
+
 add_custom_target( tidy
                    COMMAND /usr/bin/rm -rf
                    ./doc

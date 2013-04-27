@@ -62,7 +62,8 @@ int main(int argc, char* argv[])
 
     unordered_map<string, string> config = io::config_reader::read(argv[1]);
     string prefix = config["prefix"] + config["dataset"];
-    vector<document> train_docs = document::load_docs(prefix + "/full-corpus.txt", prefix);
+    string corpus_file = prefix + "/" + config["list"] + "-full-corpus.txt";
+    vector<document> train_docs = document::load_docs(corpus_file, prefix);
     //vector<document> test_docs = document::loadDocs(prefix + "/test.txt", prefix);
 
     tokenize(train_docs, config);

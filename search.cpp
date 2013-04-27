@@ -33,10 +33,11 @@ int main(int argc, char* argv[])
 
     unordered_map<string, string> config = io::config_reader::read(argv[1]);
     string prefix = config["prefix"] + config["data"];
+    string corpus_file = prefix + "/" + config["list"] + "-full-corpus.txt";
 
     std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
 
-    vector<index::document> docs = index::document::load_docs(prefix + "/full-corpus.txt", prefix);
+    vector<index::document> docs = index::document::load_docs(corpus_file, prefix);
 
     cerr << "Tokenizing..." << endl;
     for(auto & doc: docs)
