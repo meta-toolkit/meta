@@ -2,11 +2,13 @@
  * @file select_simple.cpp
  */
 
+#include <iostream>
 #include "classify/feature_select/select_simple.h"
-#include "parallel/parallel_for.h"
 
 namespace meta {
 namespace classify {
+
+using namespace std;
 
 using std::vector;
 using std::unordered_set;
@@ -41,8 +43,10 @@ unordered_map<class_label, vector<pair<term_id, double>>> select_simple::select_
     {
         unordered_map<term_id, double> weights;
         for(auto & t: _term_space)
-            weights[t] = calc_weight(t, c);
-
+        {
+            double weight = calc_weight(t, c);
+            weights[t] = weight;
+        }
         features[c] = sort_terms(weights);
     }
 

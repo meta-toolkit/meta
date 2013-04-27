@@ -91,7 +91,7 @@ class document
         /**
          * Removes featuress from a document.
          * @param docs The documents to remove features from
-         * @param features A list of features that should be removed from the document
+         * @param features A list of features that should remain in the document
          * @return the filtered document
          */
         static document filter_features(const document & doc,

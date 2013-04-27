@@ -181,13 +181,24 @@ string document::get_slda_label_data(invertible_map<class_label, int> & mapping)
 document document::filter_features(const document & doc,
         const vector<pair<term_id, double>> & features)
 {
-    document filtered(doc);
-    for(auto & feature: features)
+    unordered_set<term_id> keep;
+    keep.reserve(features.size());
+    for(auto & p: features)
+        keep.insert(p.first);
+
+    document filtered(doc._path, doc._label);
+    
+    filtered._frequencies.clear();
+    for(auto & f: doc._frequencies)
     {
-        auto it = filtered._frequencies.find(feature.first);
-        if(it != filtered._frequencies.end())
-            filtered._frequencies.erase(it);
-    }
+        auto it = keep.find(f.first);
+        if(it != keep.end())
+        {
+            filtered._frequencies[f.first] = f.second;
+            filtered._length += f.second;
+        }
+    } 
+
     return filtered;
 }
 

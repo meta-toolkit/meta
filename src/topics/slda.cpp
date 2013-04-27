@@ -112,7 +112,7 @@ vector<vector<double>> slda::get_probs() const
     return probs;
 }
 
-vector<pair<term_id, double>> slda::select_features() const
+vector<pair<term_id, double>> slda::select() const
 {
     unordered_map<term_id, double> weights;
 

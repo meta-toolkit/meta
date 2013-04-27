@@ -32,10 +32,12 @@ using namespace meta::tokenizers;
 /**
  * Cross-validate documents with a specific classifier.
  */
-classify::confusion_matrix cv( classify::classifier & c, const vector<document> & train_docs )
+classify::confusion_matrix cv(classify::classifier & c, const vector<document> & train_docs,
+        const classify::confusion_matrix & orig)
 {
     classify::confusion_matrix matrix = c.cross_validate(train_docs, 5);
-    matrix.print_stats();
+    cout << matrix.accuracy();
+    cout << ((classify::confusion_matrix::mcnemar_significant(orig, matrix)) ? "* " : "  ");
     return matrix;
 }
 
@@ -60,8 +62,25 @@ void tokenize(vector<document> & docs, const unordered_map<string, string> & con
  */
 vector<pair<term_id, double>> top_features(const vector<pair<term_id, double>> & orig, double percent)
 {
-    size_t start = percent * orig.size();
-    return vector<pair<term_id, double>>(orig.begin() + start, orig.end());
+    size_t size = percent * orig.size();
+    return vector<pair<term_id, double>>(orig.begin(), orig.begin() + size);
+}
+
+/**
+ * Run feature selection with varying amounts of features.
+ */
+void test(const vector<document> & docs, const vector<pair<term_id, double>> & features, classify::classifier & c,
+        const classify::confusion_matrix & orig)
+{
+    for(auto percent: {.01, .05, .10, .15, .20, .25})
+    {
+        auto selected_features = top_features(features, percent);
+        cout << "filtering features..." << endl;
+        vector<document> reduced = document::filter_features(docs, selected_features);
+        cout << "done filtering features" << endl;
+        cv(c, reduced, orig);
+    }
+    cout << endl;
 }
 
 /**
@@ -102,29 +121,26 @@ int main(int argc, char* argv[])
    
     // baseline
     classify::liblinear_svm svm(config["liblinear"]);
-    classify::confusion_matrix orig_matrix = cv(svm, docs);
+    classify::confusion_matrix orig = svm.cross_validate(docs, 5);
+    cout << "Original accuracy: " << orig.accuracy() << endl;
 
     // information gain
-    cout << endl << "Running information gain..." << endl;
+    cerr << endl << "Running information gain..." << endl;
     classify::info_gain ig(docs);
-    auto ig_features = top_features(ig.select(), .1);
-    vector<document> reduced = document::filter_features(docs, ig_features);
-    cv(svm, reduced);
+    test(docs, ig.select(), svm, orig);
 
     // chi square
-    cout << endl << "Running Chi square..." << endl;
+    cerr << endl << "Running Chi square..." << endl;
     classify::chi_square cs(docs);
-    auto cs_features = top_features(cs.select(), .1);
-    reduced = document::filter_features(docs, cs_features);
-    cv(svm, reduced);
+    test(docs, cs.select(), svm, orig);
 
     // sLDA
-    cout << endl << "Running sLDA..." << endl;
+    cerr << endl << "Running sLDA..." << endl;
     topics::slda lda(config["slda"], .1);
     lda.estimate(docs);
-    auto lda_features = top_features(lda.select_features(), .1);
-    reduced = document::filter_features(docs, lda_features);
-    cv(svm, reduced);
+    auto features = lda.select();
+    test(docs, features, svm, orig);
+    cout << features.size() << " total features" << endl;
 
     return 0;
 }

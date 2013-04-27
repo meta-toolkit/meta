@@ -46,7 +46,7 @@ class slda
         /**
          * @return a sorted list of terms across all classes sorted by weight
          */
-        std::vector<std::pair<term_id, double>> select_features() const;
+        std::vector<std::pair<term_id, double>> select() const;
 
         /**
          * Infers labels based on a collection of documents.

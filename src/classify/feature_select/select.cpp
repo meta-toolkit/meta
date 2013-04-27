@@ -2,8 +2,8 @@
  * @file select.cpp
  */
 
-#include <cassert> // debug
 #include "cluster/similarity.h"
+#include "parallel/parallel_for.h"
 #include "util/common.h"
 #include "classify/feature_select/select.h"
 
@@ -30,19 +30,29 @@ feature_select::feature_select(const vector<document> & docs):
 
 void feature_select::set_pseen(const vector<document> & docs)
 {
-    // aggregate counts
+    // set all probs to zero initially; this makes sure they are entered in the
+    // map, avoiding exceptions when using at()
     for(auto & t: _term_space)
     {
-        for(auto & d: docs)
+        for(auto & c: _class_space)
         {
-            size_t count = common::safe_at(d.frequencies(), t);
-            _pseen[d.label()][t] += count;
-            _pterm[t] += count;
+            _pseen[c][t] = 0;
+            _pterm[t] = 0;
+        }
+    }
+
+    // aggregate counts
+    for(auto & d: docs)
+    {
+        for(auto & f: d.frequencies())
+        {
+            size_t count = f.second;
+            _pseen[d.label()][f.first] += count;
+            _pterm[f.first] += count;
         }
     }
 
     // create probabilities
-
     for(auto & t: _pterm)
         t.second /= _num_terms;
 
@@ -88,9 +98,7 @@ void feature_select::set_term_space(const vector<document> & docs)
 
 double feature_select::term_and_class(term_id term, const class_label & label) const
 {
-    double prob = _pseen.at(label).at(term);
-    assert(prob <= 1.0 && prob >= 0.0); // debug
-    return prob;
+    return _pseen.at(label).at(term);
 }
 
 
@@ -99,22 +107,17 @@ double feature_select::not_term_and_not_class(term_id term, const class_label & 
     double prob = 1.0 - term_and_class(term, label)
                - not_term_and_class(term, label)
                - term_and_not_class(term, label);
-    assert(prob <= 1.0 && prob >= 0.0);
     return prob;
 }
 
 double feature_select::term_and_not_class(term_id term, const class_label & label) const
 {
-    double prob = _pterm.at(term) - term_and_class(term, label);
-    assert(prob <= 1.0 && prob >= 0.0);
-    return prob;
+    return _pterm.at(term) - term_and_class(term, label);
 }
 
 double feature_select::not_term_and_class(term_id term, const class_label & label) const
 {
-    double prob = _pclass.at(label) - term_and_class(term, label);
-    assert(prob <= 1.0 && prob >= 0.0);
-    return prob;
+    return _pclass.at(label) - term_and_class(term, label);
 }
 
 }
