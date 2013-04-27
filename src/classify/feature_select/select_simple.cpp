@@ -2,13 +2,10 @@
  * @file select_simple.cpp
  */
 
-#include <iostream>
 #include "classify/feature_select/select_simple.h"
 
 namespace meta {
 namespace classify {
-
-using namespace std;
 
 using std::vector;
 using std::unordered_set;
