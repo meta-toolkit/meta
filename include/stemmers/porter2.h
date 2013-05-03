@@ -5,6 +5,9 @@
  * consult the file LICENSE in the root of the project.
  */
 
+#ifndef _STRUCT_PORTER2_H_
+#define _STRUCT_PORTER2_H_
+
 #include "stemmers/porter2_stemmer.h"
 
 namespace meta {
@@ -21,3 +24,5 @@ struct porter2 {
 
 }
 }
+
+#endif

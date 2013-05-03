@@ -5,6 +5,9 @@
  * consult the file LICENSE in the root of the project.
  */
 
+#ifndef _NO_STEMMER_H_
+#define _NO_STEMMER_H_
+
 #include <string>
 
 namespace meta {
@@ -21,3 +24,5 @@ struct no_stemmer {
 
 }
 }
+
+#endif
