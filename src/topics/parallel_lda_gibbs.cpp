@@ -7,10 +7,11 @@
 namespace meta {
 namespace topics {
 
-parallel_lda_gibbs::parallel_lda_gibbs( std::vector<index::document> & docs, 
-                                        size_t num_topics, double alpha, 
-                                        double beta ) 
-        : lda_gibbs( docs, num_topics, alpha, beta ) { }
+parallel_lda_gibbs::parallel_lda_gibbs( std::vector<index::document> & docs,
+    const std::shared_ptr<tokenizers::tokenizer> & tok,
+    size_t num_topics, double alpha, double beta ):
+lda_gibbs{ docs, tok, num_topics, alpha, beta }
+{ /* nothing */ }
 
 parallel_lda_gibbs::~parallel_lda_gibbs() { /* nothing */ }
 

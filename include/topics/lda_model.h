@@ -13,7 +13,7 @@
 #include <string>
 
 #include "index/document.h"
-#include "tokenizers/ngram/ngram_word_tokenizer.h"
+#include "tokenizers/tokenizer.h"
 
 namespace meta {
 namespace topics {
@@ -23,7 +23,8 @@ namespace topics {
  */
 class lda_model {
     public:
-        lda_model( std::vector<index::document> & docs, size_t num_topics );
+        lda_model( std::vector<index::document> & docs, size_t num_topics,
+                const std::shared_ptr<tokenizers::tokenizer> & tok);
 
         virtual ~lda_model() { }
 
@@ -63,6 +64,11 @@ class lda_model {
          */
         void save( const std::string & prefix ) const;
 
+        /**
+         * @return a list of the highest weighted terms from each class
+         */
+        std::vector<std::pair<term_id, double>> select() const;
+
     protected:
         
         lda_model & operator=( const lda_model & ) = delete;
@@ -87,7 +93,7 @@ class lda_model {
         virtual double compute_doc_topic_probability( size_t doc, size_t topic ) const = 0;
 
         std::vector<index::document> & docs_;
-        tokenizers::ngram_word_tokenizer<> tokenizer_;
+        std::shared_ptr<tokenizers::tokenizer> tokenizer_;
         size_t num_topics_;
         size_t num_words_;
 };

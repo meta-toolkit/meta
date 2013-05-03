@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "index/document.h"
-#include "tokenizers/ngram/ngram_tokenizer.h"
+#include "tokenizers/tokenizer.h"
 #include "topics/lda_model.h"
 #include "util/common.h"
 
@@ -41,14 +41,17 @@ class lda_cvb : public lda_model {
          * as or longer than the lda_cvb instance.
          *
          * @param docs The documents for the LDA model
+         * @param tok How to tokenize each document (e.g. words, POS
+         * tags, etc)
          * @param num_topics The number of topics to infer
          * @param alpha The hyperparameter for the Dirichlet prior over
          *  \f$\phi\f$.
          * @param beta The hyperparameter for the Dirichlet prior over
          *  \f$\theta\f$.
          */
-        lda_cvb( std::vector<index::document> & docs, size_t num_topics, 
-                 double alpha, double beta );
+        lda_cvb( std::vector<index::document> & docs,
+            const std::shared_ptr<tokenizers::tokenizer> & tok,
+            size_t num_topics, double alpha, double beta );
 
         /**
          * Destructor: virtual for potential subclassing.

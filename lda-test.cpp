@@ -3,7 +3,8 @@
 #include <vector>
 
 #include "index/document.h"
-#include "tokenizers/ngram/ngram_tokenizer.h"
+#include "stemmers/porter2.h"
+#include "tokenizers/ngram/ngram_word_tokenizer.h"
 #include "topics/lda_gibbs.h"
 #include "topics/parallel_lda_gibbs.h"
 #include "topics/lda_cvb.h"
@@ -20,7 +21,8 @@ int print_usage( const std::string & name ) {
 
 template <class Model>
 int run_lda( std::vector<index::document> & docs, size_t topics, double alpha, double beta ) {
-    Model model{ docs, topics, alpha, beta };
+    tokenizers::ngram_word_tokenizer<> tok{1};
+    Model model{ docs, std::shared_ptr<tokenizers::tokenizer>{&tok}, topics, alpha, beta };
     model.run( 1000 );
     model.save( "lda_model" );
     return 0;

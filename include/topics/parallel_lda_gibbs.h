@@ -35,14 +35,17 @@ class parallel_lda_gibbs : public lda_gibbs {
          * as or longer than the parallel_lda_gibbs instance.
          *
          * @param docs The documents for the LDA model
+         * @param tok How to tokenize each document (e.g. words, POS
+         * tags, etc)
          * @param num_topics The number of topics to infer
          * @param alpha The hyperparameter for the Dirichlet prior over
          *  \f$\phi\f$.
          * @param beta The hyperparameter for the Dirichlet prior over
          *  \f$\theta\f$.
          */
-        parallel_lda_gibbs( std::vector<index::document> & docs, size_t num_topics,
-                            double alpha, double beta );
+        parallel_lda_gibbs( std::vector<index::document> & docs,
+                const std::shared_ptr<tokenizers::tokenizer> & tok,
+                size_t num_topics, double alpha, double beta );
 
         /**
          * Destructor: virtual for potential subclassing.

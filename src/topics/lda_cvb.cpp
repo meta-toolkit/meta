@@ -9,10 +9,11 @@
 namespace meta {
 namespace topics {
 
-lda_cvb::lda_cvb( std::vector<index::document> & docs, size_t num_topics, 
-                  double alpha, double beta ) 
-        : lda_model{ docs, num_topics }, alpha_{ alpha }, beta_{ beta } { }
-
+lda_cvb::lda_cvb( std::vector<index::document> & docs,
+    const std::shared_ptr<tokenizers::tokenizer> & tok,
+    size_t num_topics, double alpha, double beta ):
+lda_model{ docs, num_topics, tok }, alpha_{ alpha }, beta_{ beta }
+{ /* nothing */ }
 
 lda_cvb::~lda_cvb() { }
 

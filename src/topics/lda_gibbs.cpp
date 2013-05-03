@@ -10,10 +10,11 @@
 namespace meta {
 namespace topics {
 
-lda_gibbs::lda_gibbs( std::vector<index::document> & docs, size_t num_topics, 
-                      double alpha, double beta ) :
-        lda_model{ docs, num_topics }, alpha_{ alpha }, beta_{ beta } {
-}
+lda_gibbs::lda_gibbs( std::vector<index::document> & docs,
+        const std::shared_ptr<tokenizers::tokenizer> & tok,
+        size_t num_topics, double alpha, double beta ):
+lda_model{ docs, num_topics, tok }, alpha_{ alpha }, beta_{ beta }
+{ /* nothing */ }
 
 void lda_gibbs::run( size_t num_iters, double convergence /* = 1e-6 */ ) {
     std::cerr << "Running LDA inference...\n";
