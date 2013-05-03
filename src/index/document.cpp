@@ -6,6 +6,7 @@
 #include <utility>
 #include <sstream>
 #include "index/document.h" 
+#include "parallel/parallel_for.h" 
 #include "cluster/similarity.h"
 
 namespace meta {
@@ -207,8 +208,15 @@ vector<document> document::filter_features(const vector<document> & docs,
 {
     vector<document> ret;
     ret.reserve(docs.size());
-    for(auto & doc: docs)
-        ret.emplace_back(filter_features(doc, features));
+    std::mutex _mutex;
+    parallel::parallel_for(docs.begin(), docs.end(), [&](const document & doc)
+    {
+        document filtered{filter_features(doc, features)};
+        {
+            std::lock_guard<std::mutex> lock{_mutex};
+            ret.emplace_back(filtered);
+        }
+    });
     return ret;
 }
 
