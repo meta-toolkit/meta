@@ -21,8 +21,13 @@ int print_usage( const std::string & name ) {
 
 template <class Model>
 int run_lda( std::vector<index::document> & docs, size_t topics, double alpha, double beta ) {
-    tokenizers::ngram_word_tokenizer<> tok{1};
-    Model model{ docs, std::shared_ptr<tokenizers::tokenizer>{&tok}, topics, alpha, beta };
+    auto tok = std::make_shared<tokenizers::ngram_word_tokenizer<>>( 1 );
+    for( size_t i = 0; i < docs.size(); ++i ) {
+        common::show_progress( i, docs.size(), 10, "  tokenizing: " );
+        tok->tokenize( docs[i] );
+    }
+    common::end_progress( "  tokenizing: " );
+    Model model{ docs, tok, topics, alpha, beta };
     model.run( 1000 );
     model.save( "lda_model" );
     return 0;
