@@ -1,0 +1,65 @@
+# libs
+slda = "/path/to/slda/"
+liblinear = "/path/to/liblinear/"
+
+# prefix to folder containing data sets
+prefix = "/path/to/meta-data/"
+
+# path to stopwords
+stop-words = "/path/to/meta/data/lemur-stopwords.txt"
+
+# path to function words
+function-words = "/path/to/meta/data/function-words.txt"
+
+# dataset: which dataset to use
+# list: which corpus listing in that dataset to use (supplies class labels,
+# etc)
+dataset = "ceeaus"
+list = "ceeaus-essay-topic"
+
+#list ceeaus-nationality
+
+#dataset kaggle
+#list kaggle
+
+#dataset yelp
+#list yelp-score
+#list yelp-sentiment
+
+#dataset 20newsgroups
+#list 20news
+
+#dataset 10authors
+#list 10authors
+
+#dataset blog-full
+# a subset of the blog-full dataset
+#list blog
+# the entire blog-full dataset
+#list blog-full
+
+#dataset sentiment
+#list sentiment
+
+[[tokenizers]]
+method = "ngram"
+ngramOpt = "Word"
+ngram = 3
+
+#[[tokenizers]]
+#method = "ngram"
+#ngramOpt = "Word"
+#ngram = 2
+
+#[[tokenizers]]
+#method = "ngram"
+#ngramOpt = "Word"
+#ngram = 3
+
+#[[tokenizers]]
+#method = "tree"
+#treeOpt = "Subtree"
+
+[[tokenizers]]
+method = "tree"
+treeOpt = "Skel"

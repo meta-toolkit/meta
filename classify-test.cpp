@@ -29,7 +29,7 @@ using namespace meta::tokenizers;
 /**
  * Tokenizes testing and training docs.
  */
-void tokenize(vector<document> & docs, const unordered_map<string, string> & config)
+void tokenize(vector<document> & docs, const cpptoml::toml_group & config)
 {
     std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
 
@@ -60,16 +60,20 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    unordered_map<string, string> config = io::config_reader::read(argv[1]);
-    string prefix = config["prefix"] + config["dataset"];
-    string corpus_file = prefix + "/" + config["list"] + "-full-corpus.txt";
+    auto config = io::config_reader::read(argv[1]);
+    string prefix = *cpptoml::get_as<std::string>( config, "prefix" ) 
+        + *cpptoml::get_as<std::string>( config, "dataset" );;
+    string corpus_file = prefix 
+        + "/" 
+        + *cpptoml::get_as<std::string>( config, "list" ) 
+        + "-full-corpus.txt";
     vector<document> train_docs = document::load_docs(corpus_file, prefix);
     //vector<document> test_docs = document::loadDocs(prefix + "/test.txt", prefix);
 
     tokenize(train_docs, config);
     //tokenize(test_docs, config);
     
-    classify::liblinear_svm svm(config["liblinear"]);
+    classify::liblinear_svm svm{ *cpptoml::get_as<std::string>( config, "liblinear" ) };
     classify::linear_svm l2svm;
     classify::linear_svm l1svm{ classify::linear_svm::loss_function::L1 };
     classify::perceptron p;

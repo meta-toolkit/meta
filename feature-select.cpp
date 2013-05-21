@@ -44,7 +44,7 @@ classify::confusion_matrix cv(classify::classifier & c, const vector<document> &
 /**
  * Tokenize documents based on options set in config.
  */
-void tokenize(vector<document> & docs, const unordered_map<string, string> & config)
+void tokenize(vector<document> & docs, const cpptoml::toml_group & config)
 {
     std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
 
@@ -111,14 +111,18 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    unordered_map<string, string> config = io::config_reader::read(argv[1]);
-    string prefix = config["prefix"] + config["dataset"];
-    string corpus_file = prefix + "/" + config["list"] + "-full-corpus.txt";
+    auto config = io::config_reader::read(argv[1]);
+    string prefix = *cpptoml::get_as<std::string>( config, "prefix" )
+        + *cpptoml::get_as<std::string>( config, "dataset" );
+    string corpus_file = prefix 
+        + "/" 
+        + *cpptoml::get_as<std::string>( config, "list" )
+        + "-full-corpus.txt";
     vector<document> docs = document::load_docs(corpus_file, prefix);
     tokenize(docs, config);
    
     // baseline
-    classify::liblinear_svm svm(config["liblinear"]);
+    classify::liblinear_svm svm{ *cpptoml::get_as<std::string>( config, "liblinear" ) };
     classify::confusion_matrix orig = svm.cross_validate(docs, 5);
     cout << "Original accuracy: " << orig.accuracy() << endl;
 
@@ -134,7 +138,7 @@ int main(int argc, char* argv[])
 
     // sLDA
     cerr << endl << "Running sLDA..." << endl;
-    topics::slda lda(config["slda"], .1);
+    topics::slda lda{ *cpptoml::get_as<std::string>( config, "slda" ), .1 };
     lda.estimate(docs);
     auto features = lda.select();
     test(docs, features, svm, orig);

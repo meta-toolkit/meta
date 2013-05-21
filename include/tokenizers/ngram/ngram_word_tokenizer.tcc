@@ -66,8 +66,8 @@ void ngram_word_tokenizer<Stemmer>::tokenize_document(document & document,
 template <class Stemmer>
 void ngram_word_tokenizer<Stemmer>::init_stopwords()
 {
-    auto config = io::config_reader::read("config.ini");
-    parser parser(config["stop-words"], "\n");
+    auto config = io::config_reader::read("config.toml");
+    parser parser{ *cpptoml::get_as<std::string>( config, "stop-words" ), "\n" };
     while(parser.has_next())
         _stopwords.insert(stem(parser.next()));
 }

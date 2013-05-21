@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "tokenizers/tokenizer.h"
+#include "cpptoml.h"
 
 namespace meta {
 namespace io {
@@ -27,18 +28,18 @@ namespace config_reader
      * @param path The path to the config file
      * @return a mapping of option name to option value
      */
-    std::unordered_map<std::string, std::string> read(const std::string & path);
+    cpptoml::toml_group read(const std::string & path);
 
     /**
      * @param config
      */
-    std::string get_config_string(const std::unordered_map<std::string, std::string> & config);
+    std::string get_config_string(const cpptoml::toml_group & config);
 
     /**
      * @return a Tokenizer as specified by a config object
      */
     std::shared_ptr<tokenizers::tokenizer> create_tokenizer(
-        const std::unordered_map<std::string, std::string> & config);
+        const cpptoml::toml_group & config);
 
     /**
      * Basic exception for config_reader interactions.
