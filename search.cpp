@@ -31,9 +31,13 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    unordered_map<string, string> config = io::config_reader::read(argv[1]);
-    string prefix = config["prefix"] + config["data"];
-    string corpus_file = prefix + "/" + config["list"] + "-full-corpus.txt";
+    auto config = io::config_reader::read(argv[1]);
+    string prefix = *cpptoml::get_as<std::string>( config, "prefix" )
+        + *cpptoml::get_as<std::string>( config, "data" );
+    string corpus_file = prefix 
+        + "/" 
+        + *cpptoml::get_as<std::string>( config, "list" )
+        + "-full-corpus.txt";
 
     std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
 

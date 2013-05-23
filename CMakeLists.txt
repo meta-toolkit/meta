@@ -3,7 +3,9 @@ project( meta )
 
 option( USE_LIBCXX "Use libc++ for the C++ standard library" ON )
 
-include_directories( "include/" )
+include_directories( "include/" 
+                     "deps/cpptoml/include/" 
+)
 
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/lib" )
 

@@ -61,8 +61,8 @@ void ngram_fw_tokenizer::tokenize_document(document & document,
 
 void ngram_fw_tokenizer::init_function_words()
 {
-    auto config = io::config_reader::read("config.ini");
-    parser parser(config["function-words"], " \n");
+    auto config = io::config_reader::read("config.toml");
+    parser parser{ *cpptoml::get_as<std::string>( config, "function-words" ), " \n" };
     while(parser.has_next())
         _function_words.insert(parser.next());
 }

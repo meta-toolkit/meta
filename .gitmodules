@@ -1,0 +1,4 @@
+[submodule "deps/cpptoml"]
+	path = deps/cpptoml
+	url = git@bitbucket.org:skystrife/cpptoml.git
+	branch = array-of-hashes
