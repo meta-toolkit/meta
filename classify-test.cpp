@@ -56,13 +56,13 @@ int main(int argc, char* argv[])
 {
     if(argc != 2)
     {
-        cerr << "Usage:\t" << argv[0] << " config.ini" << endl;
+        cerr << "Usage:\t" << argv[0] << " config.toml" << endl;
         return 1;
     }
 
     auto config = io::config_reader::read(argv[1]);
     string prefix = *cpptoml::get_as<std::string>( config, "prefix" ) 
-        + *cpptoml::get_as<std::string>( config, "dataset" );;
+        + *cpptoml::get_as<std::string>( config, "dataset" );
     string corpus_file = prefix 
         + "/" 
         + *cpptoml::get_as<std::string>( config, "list" ) 
