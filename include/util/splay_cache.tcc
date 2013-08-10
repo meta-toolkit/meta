@@ -10,7 +10,7 @@ splay_cache<Key, Value>::splay_cache(uint32_t max_height):
     _max_height(max_height), _root(nullptr)
 {
     if(_max_height < 1)
-        _max_height = 1;
+        throw splay_cache_exception{"max height must be greater than 0"};
 }
 
 template <class Key, class Value>
@@ -73,6 +73,9 @@ bool splay_cache<Key, Value>::exists(const Key & key)
 template <class Key, class Value>
 const Value & splay_cache<Key, Value>::find(const Key & key)
 {
+    if(_root == nullptr)
+        throw splay_cache_exception{"find called on empty cache; call exists first"};
+
     find(_root, key);
     return _root->value;
 }

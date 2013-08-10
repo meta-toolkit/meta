@@ -84,6 +84,29 @@ class splay_cache
 
         void rotate_left(node* & subroot);
         void rotate_right(node* & subroot);
+
+    public:
+
+        /**
+         * Basic exception for splay_cache interactions.
+         */
+        class splay_cache_exception: public std::exception
+        {
+            public:
+                
+                splay_cache_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+           
+                std::string _error;
+        };
+
 };
 
 }
