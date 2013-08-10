@@ -39,6 +39,7 @@ add_library( meta-classify
 add_library( meta-index
              src/index/chunk_list.cpp
              src/index/inverted_index.cpp
+             src/index/forward_index.cpp
              src/index/postings.cpp
              src/index/structs.cpp
              src/index/document.cpp
@@ -170,6 +171,8 @@ target_link_libraries( lda-topics
 )
 
 add_executable( shuffle shuffle.cpp )
+
+add_executable( cachetest cachetest.cpp )
 
 add_custom_target( tidy
                    COMMAND /usr/bin/rm -rf
