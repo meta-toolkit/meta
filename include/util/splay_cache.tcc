@@ -1,8 +1,6 @@
 /**
- * @file splay_cache.cpp
+ * @file splay_cache.tcc
  */
-
-#include "util/splay_cache.h"
 
 namespace meta {
 namespace util {
