@@ -14,7 +14,7 @@
 #include <unordered_set>
 #include <vector>
 #include <string>
-#include "structs.h"
+#include "meta.h"
 #include "util/invertible_map.h"
 
 namespace meta {

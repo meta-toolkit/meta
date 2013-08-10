@@ -37,13 +37,7 @@ add_library( meta-classify
 )
 
 add_library( meta-index
-             src/index/chunk_list.cpp
-             src/index/inverted_index.cpp
-             src/index/postings.cpp
-             src/index/structs.cpp
              src/index/document.cpp
-             src/index/lexicon.cpp
-             src/index/ram_index.cpp
 )
 
 add_library( meta-io
@@ -177,12 +171,9 @@ add_custom_target( tidy
                    COMMAND /usr/bin/rm -rf
                    ./doc
                    *.chunk
-                   postingsFile
-                   lexiconFile
                    termid.mapping
                    docid.mapping
                    docs.lengths
-                   *compressed.txt
                    *.terms
                    *.phi
                    *.theta

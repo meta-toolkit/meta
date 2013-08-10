@@ -18,14 +18,15 @@ using std::vector;
 using std::shared_ptr;
 
 using namespace knn::internal;
-using index::Index;
 using index::document;
 
+/*
 class_label knn::classify(document & query, shared_ptr<Index> index, size_t k)
 {
     multimap<double, class_label> ranking = index->search(query);
     return findNN(ranking, k);
 }
+*/
 
 class_label knn::internal::findNN(const multimap<double, class_label> & ranking, size_t k)
 {
@@ -76,6 +77,7 @@ bool knn::internal::isHigherRank(const class_label & check, const class_label & 
     return false;
 }
 
+/*
 class_label knn::classify(document & query, vector<shared_ptr<Index>> indexes, vector<double> weights, size_t k)
 {
     // make sure weights sum to 1.0
@@ -110,6 +112,7 @@ class_label knn::classify(document & query, vector<shared_ptr<Index>> indexes, v
 
     return findNN(ranking, k);
 }
+*/
 
 unordered_map<class_label, double>
 knn::internal::normalize(const multimap<double, class_label> & scores)

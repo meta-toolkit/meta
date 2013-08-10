@@ -11,7 +11,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include "index/structs.h"
+#include "meta.h"
 #include "index/document.h"
 #include "util/invertible_map.h"
 

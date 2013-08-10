@@ -14,8 +14,8 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include "index/index.h"
 #include "meta.h"
+#include "index/document.h"
 
 namespace meta {
 namespace classify {
@@ -32,7 +32,7 @@ namespace knn
      * @param k - the value of k in KNN
      * @return the class label assigned for the query
      */
-    class_label classify(index::document & query, std::shared_ptr<index::Index> index, size_t k);
+    //class_label classify(index::document & query, std::shared_ptr<index::Index> index, size_t k);
 
     /**
      * Runs a KNN classifier on multiple indexes.
@@ -42,9 +42,9 @@ namespace knn
      * @param k - the value of k in kNN
      * @return the class label assigned for the query
      */
-    class_label classify(index::document & query,
-            std::vector<std::shared_ptr<index::Index>> indexes,
-            std::vector<double> weights, size_t k);
+    //class_label classify(index::document & query,
+    //        std::vector<std::shared_ptr<index::Index>> indexes,
+    //        std::vector<double> weights, size_t k);
 
     /**
      * Helper functions for the knn namespace.
