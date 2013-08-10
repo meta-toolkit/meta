@@ -39,7 +39,6 @@ add_library( meta-classify
 add_library( meta-index
              src/index/chunk_list.cpp
              src/index/inverted_index.cpp
-             src/index/forward_index.cpp
              src/index/postings.cpp
              src/index/structs.cpp
              src/index/document.cpp
