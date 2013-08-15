@@ -17,6 +17,11 @@ bool chunk::operator<(const chunk & other) const
     return size() < other.size();
 }
 
+std::string chunk::path() const
+{
+    return _path;
+}
+
 uint32_t chunk::size() const
 {
     return _size;

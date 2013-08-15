@@ -41,6 +41,19 @@ class chunk
          */
         uint32_t size() const;
 
+        /**
+         * @return the path to this chunk
+         */
+        std::string path() const;
+
+        /**
+         * @param other The other chunk to merge merge_with
+         * After this function ends, the current chunk file will contain
+         * information from both chunks, and the "other" chunk file will be
+         * deleted.
+         */
+        void merge_with(const chunk & other);
+
     private:
 
         std::string _path;

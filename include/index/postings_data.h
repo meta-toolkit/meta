@@ -43,6 +43,12 @@ class postings_data
         std::string to_string() const;
 
         /**
+         * @param other The other postings_data object to consume
+         * Adds the parameter's data to this object's data
+         */
+        void merge_with(const postings_data & other);
+
+        /**
          * @param d_id The doc_id of the new document to add counts for
          * @param amount The number of times to increase the count for a given
          * doc_id

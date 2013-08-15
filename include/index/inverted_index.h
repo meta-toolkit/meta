@@ -10,7 +10,11 @@
 #define _INVERTED_INDEX_H_
 
 #include <string>
+#include <vector>
+#include <memory>
 #include "util/splay_cache.h"
+#include "tokenizers/tokenizers.h"
+#include "index/document.h"
 #include "index/postings_data.h"
 #include "meta.h"
 
@@ -43,6 +47,18 @@ class inverted_index
 {
     public:
         /**
+         * @param docs The untokenized documents to add to the index
+         * @param tok The tokenizer to use to tokenize the documents
+         */
+        inverted_index(std::vector<document> & docs,
+                       std::shared_ptr<tokenizers::tokenizer> & tok);
+
+        /**
+         * @param index_path The directory containing an already-created index
+         */
+        inverted_index(const std::string & index_path);
+
+        /**
          * @param t_id The term to search for
          * @return the inverse document frequency of a term
          * @note This function is not const because the cache may be updated
@@ -72,6 +88,35 @@ class inverted_index
          * inverted_index::idf.
          */
         postings_data search_term(term_id t_id);
+
+        /**
+         * @param chunk_num The current chunk number of the postings file
+         * @param pdata A collection of postings data to write to the chunk
+         */
+        void write_chunk(uint32_t chunk_num,
+                         std::unordered_map<term_id, postings_data> & pdata);
+
+        /**
+         * @param docs The documents to add to the inverted index
+         * @param tok The tokenizer to use to tokenize the documents
+         */
+        uint32_t tokenize_docs(std::vector<document> & docs,
+                               std::shared_ptr<tokenizers::tokenizer> & tok);
+
+        /**
+         * Creates the lexicon file (or "dictionary") which has pointers into
+         * the large postings file
+         */
+        void create_lexicon();
+
+        /**
+         * @param num_chunks The total number of chunks to merge together to
+         * create the postings file
+         */
+        void merge_chunks(uint32_t num_chunks);
+
+        /** doc_id -> document name mapping */
+        std::unordered_map<doc_id, std::string> _doc_id_mapping;
 };
 
 }

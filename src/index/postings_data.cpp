@@ -30,6 +30,12 @@ std::string postings_data::to_string() const
     return ret;
 }
 
+void postings_data::merge_with(const postings_data & other)
+{
+    for(auto & p: other._counts)
+        _counts[p.first] += p.second;
+}
+
 void postings_data::increase_count(doc_id d_id, uint32_t amount)
 {
     _counts[d_id] += amount;
