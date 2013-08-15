@@ -93,15 +93,6 @@ target_link_libraries( eval
                        ${CMAKE_THREAD_LIBS_INIT} 
 )
 
-add_executable( lm lm.cpp )
-target_link_libraries( lm 
-                       meta-io 
-                       meta-index
-                       meta-tokenizers 
-                       meta-stemmers 
-                       ${CMAKE_THREAD_LIBS_INIT} 
-)
-
 add_executable( classify classify-test.cpp )
 target_link_libraries( classify
                        meta-io
