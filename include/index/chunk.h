@@ -25,9 +25,8 @@ class chunk
     public:
         /**
          * @param path The path to this chunk file on disk
-         * @param size The size in bytes of this chunk file
          */
-        chunk(const std::string & path, uint32_t size);
+        chunk(const std::string & path);
 
         /**
          * @param other The other chunk to compare with this one
@@ -39,7 +38,7 @@ class chunk
         /**
          * @return the size of this postings file chunk in bytes
          */
-        uint32_t size() const;
+        uint64_t size() const;
 
         /**
          * @return the path to this chunk
@@ -55,9 +54,11 @@ class chunk
         void merge_with(const chunk & other);
 
     private:
+    
+        void set_size();
 
         std::string _path;
-        uint32_t _size;
+        uint64_t _size;
 };
 
 }

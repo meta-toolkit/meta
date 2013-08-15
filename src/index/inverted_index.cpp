@@ -5,8 +5,12 @@
 
 #include <cstdio>
 #include <queue>
+#include <iostream>
 #include "index/inverted_index.h"
 #include "index/chunk.h"
+
+using std::cerr;
+using std::endl;
 
 namespace meta {
 namespace index {
@@ -18,6 +22,7 @@ inverted_index::inverted_index(std::vector<document> & docs,
     uint32_t num_chunks = tokenize_docs(docs, tok);
     merge_chunks(num_chunks);
     create_lexicon();
+    tok->save_term_id_mapping("termids.mapping");
 }
 
 uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
@@ -25,9 +30,10 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
 {
     std::unordered_map<term_id, postings_data> pdata;
     uint32_t chunk_num = 0;
-    uint32_t doc_num = 0;
+    uint64_t doc_num = 0;
     for(auto & doc: docs)
     {
+        cerr << "[II] Tokenizing " << doc.name() << endl;
         tok->tokenize(doc);
         _doc_id_mapping[doc_num] = doc.name();
 
@@ -44,9 +50,9 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
 
         ++doc_num;
 
-        // every ten documents, write a chunk
+        // every k documents, write a chunk
         // TODO: make this based on memory usage instead
-        if(doc_num % 10 == 0)
+        if(doc_num % 2 == 0)
             write_chunk(chunk_num++, pdata);
     }
     
@@ -59,10 +65,15 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
 void inverted_index::write_chunk(uint32_t chunk_num,
                                  std::unordered_map<term_id, postings_data> & pdata)
 {
+    cerr << "[II] Writing chunk " << chunk_num << endl;
+
     std::vector<std::pair<term_id, postings_data>> sorted{pdata.begin(), pdata.end()};
     std::sort(sorted.begin(), sorted.end());
 
     std::ofstream outfile{"chunk-" + common::to_string(chunk_num)};
+    for(auto & p: sorted)
+        outfile << p.second;
+    outfile.close();
 
     pdata.clear();
 }
@@ -73,8 +84,8 @@ void inverted_index::merge_chunks(uint32_t num_chunks)
     std::priority_queue<chunk> chunks;
     for(uint32_t i = 0; i < num_chunks; ++i)
     {
-        uint32_t size = 0;
-        chunks.push(chunk{"chunk-" + common::to_string(i), size});
+        std::string filename = "chunk-" + common::to_string(i);
+        chunks.push(chunk{filename});
     }
 
     // merge the smallest two chunks together until there is only one left
@@ -84,6 +95,11 @@ void inverted_index::merge_chunks(uint32_t num_chunks)
         chunks.pop();
         chunk second = chunks.top();
         chunks.pop();
+
+        cerr << "[II] Merging " << first.path() << " (" << first.size()
+             << " bytes) and " << second.path() << " (" << second.size()
+             << " bytes)" << endl;
+
         first.merge_with(second);
         chunks.push(first);
     }
@@ -91,24 +107,30 @@ void inverted_index::merge_chunks(uint32_t num_chunks)
     rename(chunks.top().path().c_str(), "postings.index");
 }
 
+void inverted_index::create_lexicon()
+{
+    // TODO
+}
+
 inverted_index::inverted_index(const std::string & index_path)
 {
     std::string postings_file = index_path + "/postings.index";
+    // TODO
 }
 
-uint32_t inverted_index::idf(term_id t_id)
+uint64_t inverted_index::idf(term_id t_id)
 {
     postings_data pdata = search_term(t_id);
     return pdata.idf();
 }
 
-uint32_t inverted_index::doc_size(doc_id d_id) const
+uint64_t inverted_index::doc_size(doc_id d_id) const
 {
     // TODO
     return d_id;
 }
 
-uint32_t inverted_index::term_freq(term_id t_id, doc_id d_id)
+uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id)
 {
     postings_data pdata = search_term(t_id);
     return pdata.count(d_id);

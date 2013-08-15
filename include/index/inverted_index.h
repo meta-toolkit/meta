@@ -63,21 +63,21 @@ class inverted_index
          * @return the inverse document frequency of a term
          * @note This function is not const because the cache may be updated
          */
-        uint32_t idf(term_id t_id);
+        uint64_t idf(term_id t_id);
 
         /**
          * @param d_id The document to search for
          * @return the size of the given document (the total number of terms
          * occuring)
          */
-        uint32_t doc_size(doc_id d_id) const;
+        uint64_t doc_size(doc_id d_id) const;
 
         /**
          * @param t_id The term_id to search for
          * @param d_id The doc_id to search for
          * @note This function is not const because the cache may be updated
          */
-        uint32_t term_freq(term_id t_id, doc_id d_id);
+        uint64_t term_freq(term_id t_id, doc_id d_id);
 
     private:
         /**

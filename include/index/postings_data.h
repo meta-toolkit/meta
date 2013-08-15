@@ -9,6 +9,7 @@
 #ifndef _POSTINGS_DATA_
 #define _POSTINGS_DATA_
 
+#include <istream>
 #include <unordered_map>
 #include <string>
 #include "meta.h"
@@ -37,12 +38,6 @@ class postings_data
         postings_data(const std::string & raw_data);
 
         /**
-         * @return the string representation of this postings_data (a sequence
-         * of bytes)
-         */
-        std::string to_string() const;
-
-        /**
          * @param other The other postings_data object to consume
          * Adds the parameter's data to this object's data
          */
@@ -53,13 +48,13 @@ class postings_data
          * @param amount The number of times to increase the count for a given
          * doc_id
          */
-        void increase_count(doc_id d_id, uint32_t amount);
+        void increase_count(doc_id d_id, uint64_t amount);
 
         /**
          * @param d_id The document id to query
          * @return the number of times term_id occurred in this postings_data
          */
-        uint32_t count(doc_id d_id) const;
+        uint64_t count(doc_id d_id) const;
 
         /**
          * @param other The postings_data to compare with
@@ -69,6 +64,20 @@ class postings_data
         bool operator<(const postings_data & other) const;
 
         /**
+         * @param in The stream to read from
+         * @param pd The postings data object to write the stream info to
+         * @return the input stream
+         */
+        friend std::istream & operator>>(std::istream & in, postings_data & pd);
+
+        /**
+         * @param out The stream to write to
+         * @param pd The postings data object to write to the stream
+         * @return the output stream
+         */
+        friend std::ostream & operator<<(std::ostream & out, postings_data & pd);
+
+        /**
          * @return the term_id for this postings_data
          */
         term_id term() const;
@@ -76,12 +85,12 @@ class postings_data
         /**
          * @return the number of documents that this term occurs in
          */
-        uint32_t idf() const;
+        uint64_t idf() const;
 
     private:
 
         term_id _t_id;
-        std::unordered_map<doc_id, uint32_t> _counts;
+        std::unordered_map<doc_id, uint64_t> _counts;
 };
 
 }
