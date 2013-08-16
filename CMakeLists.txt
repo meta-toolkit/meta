@@ -164,10 +164,6 @@ add_executable( cachetest cachetest.cpp )
 add_custom_target( tidy
                    COMMAND /usr/bin/rm -rf
                    ./doc
-                   *.chunk
-                   termid.mapping
-                   docid.mapping
-                   docs.lengths
                    *.terms
                    *.phi
                    *.theta
