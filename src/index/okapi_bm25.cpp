@@ -16,6 +16,7 @@ okapi_bm25::okapi_bm25(double k1 /* = 1.5 */,
 std::vector<std::pair<doc_id, double>> okapi_bm25::score(inverted_index & idx,
                                                          document & query)
 {
+    idx.tokenize(query);
     std::unordered_map<doc_id, double> results;
 
     double avg_doc_length = idx.avg_doc_length();

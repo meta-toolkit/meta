@@ -44,9 +44,9 @@ term_id tokenizer::mapping(const string & term)
     }
 }
 
-void tokenizer::set_term_id_mapping(const invertible_map<term_id, string> & mapping)
+void tokenizer::set_term_id_mapping(const std::string & filename)
 {
-    _term_map = mapping;
+    _term_map.read(filename);
     _current_term_id = _term_map.size();
 }
 

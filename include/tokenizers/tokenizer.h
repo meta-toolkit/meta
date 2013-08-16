@@ -66,7 +66,7 @@ class tokenizer
 
         /**
          * Calls the term_id invertible_map's saveMap function.
-         * @param filename - the filename to save the mapping as
+         * @param filename The filename to save the mapping as
          */
         virtual void save_term_id_mapping(const std::string & filename) const;
 
@@ -74,9 +74,9 @@ class tokenizer
          * Sets the token to termid mapping for this tokenizer.
          * This is useful when reading an inverted index from disk
          *  with an existing mapping.
-         * @param mapping - a reference to the desired mapping
+         * @param filename The filename containing the desired mapping
          */
-        virtual void set_term_id_mapping(const util::invertible_map<term_id, std::string> & mapping);
+        virtual void set_term_id_mapping(const std::string & filename);
 
         /**
          * @return a reference to the structure used to store the termID <->

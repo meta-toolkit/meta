@@ -43,17 +43,22 @@ namespace index {
  *  - lexicon.index: the smaller file that contains pointers into the postings
  *      file based on term_id
  *  - docsizes.counts: maps doc_id -> number of terms
+ *  - config.toml: saves the tokenizer configuration
  */
 class inverted_index
 {
     public:
         /**
+         * @param index_name The name for this inverted index to be saved as
          * @param docs The untokenized documents to add to the index
          * @param tok The tokenizer to use to tokenize the documents
+         * @param config_file The configuration file used to create the
+         * tokenizer
          */
         inverted_index(const std::string & index_name,
                        std::vector<document> & docs,
-                       std::shared_ptr<tokenizers::tokenizer> & tok);
+                       std::shared_ptr<tokenizers::tokenizer> & tok,
+                       const std::string & config_file);
 
         /**
          * @param index_path The directory containing an already-created index
@@ -103,6 +108,11 @@ class inverted_index
          */
         std::string doc_name(doc_id d_id) const;
 
+        /**
+         * @param doc The document to tokenize
+         */
+        void tokenize(document & doc);
+
     private:
         /**
          * @param t_id The term_id to search for
@@ -122,10 +132,8 @@ class inverted_index
 
         /**
          * @param docs The documents to add to the inverted index
-         * @param tok The tokenizer to use to tokenize the documents
          */
-        uint32_t tokenize_docs(std::vector<document> & docs,
-                               std::shared_ptr<tokenizers::tokenizer> & tok);
+        uint32_t tokenize_docs(std::vector<document> & docs);
 
         /**
          * Creates the lexicon file (or "dictionary") which has pointers into
@@ -191,6 +199,9 @@ class inverted_index
         /** average document length in the inverted_index */
         double _avg_dl;
 
+        /** the tokenizer used to tokenize documents in the index */
+        std::shared_ptr<tokenizers::tokenizer> _tokenizer;
+
     public:
         /**
          * Basic exception for inverted_index interactions.
@@ -210,7 +221,6 @@ class inverted_index
             private:
                 std::string _error;
         };
-
 };
 
 }

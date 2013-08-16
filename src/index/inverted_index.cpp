@@ -9,6 +9,7 @@
 #include <iostream>
 #include "index/inverted_index.h"
 #include "index/chunk.h"
+#include "io/config_reader.h"
 
 #define USE_CACHE false
 
@@ -20,24 +21,31 @@ namespace index {
 
 inverted_index::inverted_index(const std::string & index_name,
                                std::vector<document> & docs,
-                               std::shared_ptr<tokenizers::tokenizer> & tok):
+                               std::shared_ptr<tokenizers::tokenizer> & tok,
+                               const std::string & config_file):
     _index_name(index_name),
     _cache(util::splay_cache<term_id, postings_data>{10}),
-    _avg_dl(-1.0)
+    _avg_dl(-1.0),
+    _tokenizer(tok)
 {
     if(mkdir(_index_name.c_str(), 0755) == -1)
         throw inverted_index_exception{"directory already exists"};
 
-    uint32_t num_chunks = tokenize_docs(docs, tok);
+    uint32_t num_chunks = tokenize_docs(docs);
     merge_chunks(num_chunks, index_name + "/postings.index");
     create_lexicon(index_name + "/postings.index", index_name + "/lexicon.index");
-    tok->save_term_id_mapping(index_name + "/termids.mapping");
+    _tokenizer->save_term_id_mapping(index_name + "/termids.mapping");
     save_mapping(_doc_id_mapping, index_name + "/docids.mapping");
     save_mapping(_doc_sizes, index_name + "/docsizes.counts");
 
     _postings = std::unique_ptr<io::mmap_file>{
         new io::mmap_file{index_name + "/postings.index"}
     };
+
+    // save the config file so we can recreate the tokenizer
+    std::ifstream source_config{config_file.c_str(), std::ios::binary};
+    std::ofstream dest_config{index_name + "/config.toml", std::ios::binary};
+    dest_config << source_config.rdbuf();
 }
 
 template <class Key, class Value>
@@ -50,8 +58,7 @@ void inverted_index::save_mapping(const std::unordered_map<Key, Value> & map,
     outfile.close();
 }
 
-uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
-                                   std::shared_ptr<tokenizers::tokenizer> & tok)
+uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
 {
     std::unordered_map<term_id, postings_data> pdata;
     uint32_t chunk_num = 0;
@@ -60,7 +67,7 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
     for(auto & doc: docs)
     {
         common::show_progress(doc_num, docs.size(), 20, progress);
-        tok->tokenize(doc);
+        _tokenizer->tokenize(doc);
         _doc_id_mapping[doc_num] = doc.name();
         _doc_sizes[doc_num] = doc.length();
 
@@ -172,9 +179,14 @@ inverted_index::inverted_index(const std::string & index_path):
     load_mapping(_doc_id_mapping, index_path + "/docids.mapping");
     load_mapping(_doc_sizes, index_path + "/docsizes.counts");
     load_mapping(_term_locations, index_path + "/lexicon.index");
+
     _postings = std::unique_ptr<io::mmap_file>{
         new io::mmap_file{index_path + "/postings.index"}
     };
+
+    auto config = io::config_reader::read(index_path + "/config.toml");
+    _tokenizer = io::config_reader::create_tokenizer(config);
+    _tokenizer->set_term_id_mapping(index_path + "/termids.mapping");
 }
 
 template <class Key, class Value>
@@ -241,6 +253,11 @@ double inverted_index::avg_doc_length()
 std::string inverted_index::doc_name(doc_id d_id) const
 {
     return common::safe_at(_doc_id_mapping, d_id);
+}
+
+void inverted_index::tokenize(document & doc)
+{
+    _tokenizer->tokenize(doc);
 }
 
 postings_data inverted_index::search_term(term_id t_id)

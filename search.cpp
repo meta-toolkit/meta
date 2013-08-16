@@ -38,11 +38,8 @@ int main(int argc, char* argv[])
     docs.pop_back();
     std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
 
-    //index::inverted_index idx{"my-index"};
-    index::inverted_index idx{"my-index", docs, tok};
-
-    tok->tokenize(query);
-
+    index::inverted_index idx{"my-index"};
+    //index::inverted_index idx{"my-index", docs, tok, argv[1]};
     index::okapi_bm25 ranker;
     std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);
     cout << "Query: " << query.name() << endl;
