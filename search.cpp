@@ -40,6 +40,8 @@ int main(int argc, char* argv[])
     std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
 
     index::inverted_index idx{"my-index", docs, tok};
+    cerr << idx.term_freq(0, 0) << endl;
+    cerr << idx.term_freq(5, 3) << endl;
 
     return 0;
 }

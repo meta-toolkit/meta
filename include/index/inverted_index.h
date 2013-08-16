@@ -16,6 +16,7 @@
 #include "tokenizers/tokenizers.h"
 #include "index/document.h"
 #include "index/postings_data.h"
+#include "io/mmap_file.h"
 #include "meta.h"
 
 namespace meta {
@@ -128,6 +129,21 @@ class inverted_index
          */
         void merge_chunks(uint32_t num_chunks, const std::string & filename);
 
+        /**
+         * @param map The map to load information into
+         * @param filename The file containing key, value pairs
+         */
+        template <class Key, class Value>
+        void load_mapping(std::unordered_map<Key, Value> & map,
+                          const std::string & filename);
+
+        /**
+         * @param idx The pointer into the postings file where the wanted
+         * term_id begins
+         * @return a postings_data object from the postings file
+         */
+        postings_data search_postings(uint64_t idx);
+
         /** the location of this index */
         std::string _index_name;
 
@@ -139,6 +155,16 @@ class inverted_index
 
         /** term_id -> postings location */
         std::unordered_map<term_id, uint64_t> _term_locations;
+
+        /** cache for recently used postings_data */
+        util::splay_cache<term_id, postings_data> _cache;
+
+        /**
+         * A pointer to a memory-mapped postings file. It is a pointer because
+         * we want to deplay the initialization of it until the postings file is
+         * created in some cases.
+         */
+        std::unique_ptr<io::mmap_file> _postings;
 
     public:
         /**

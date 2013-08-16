@@ -58,7 +58,8 @@ class splay_cache
     private:
 
         /** disallow copying */
-        splay_cache(const splay_cache & other) = delete;
+        // TODO
+        //splay_cache(const splay_cache & other) = delete;
 
         /** disallow assignment */
         splay_cache & operator=(const splay_cache & rhs) = delete;

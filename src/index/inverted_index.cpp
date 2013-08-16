@@ -9,7 +9,8 @@
 #include <iostream>
 #include "index/inverted_index.h"
 #include "index/chunk.h"
-#include "io/mmap_file.h"
+
+#define USE_CACHE false
 
 using std::cerr;
 using std::endl;
@@ -21,9 +22,7 @@ inverted_index::inverted_index(const std::string & index_name,
                                std::vector<document> & docs,
                                std::shared_ptr<tokenizers::tokenizer> & tok):
     _index_name(index_name),
-    _doc_id_mapping(std::unordered_map<doc_id, std::string>{}),
-    _doc_sizes(std::unordered_map<doc_id, uint64_t>{}),
-    _term_locations(std::unordered_map<term_id, uint64_t>{})
+    _cache(util::splay_cache<term_id, postings_data>{10})
 {
     if(mkdir(_index_name.c_str(), 0755) == -1)
         throw inverted_index_exception{"directory already exists"};
@@ -34,6 +33,10 @@ inverted_index::inverted_index(const std::string & index_name,
     tok->save_term_id_mapping(index_name + "/termids.mapping");
     save_mapping(_doc_id_mapping, index_name + "/docids.mapping");
     save_mapping(_doc_sizes, index_name + "/docsizes.counts");
+
+    _postings = std::unique_ptr<io::mmap_file>{
+        new io::mmap_file{index_name + "/postings.index"}
+    };
 }
 
 template <class Key, class Value>
@@ -150,9 +153,8 @@ void inverted_index::create_lexicon(const std::string & postings_file,
     char* postings = pfile.start();
     term_id cur_id = 1;
     _term_locations[0] = 0;
-    uint64_t size = pfile.size();
     uint64_t idx = 0;
-    while(idx < size - 1)
+    while(idx < pfile.size() - 1)
     {
         if(postings[idx] == '\n')
             _term_locations[cur_id++] = idx + 1;
@@ -161,10 +163,32 @@ void inverted_index::create_lexicon(const std::string & postings_file,
     save_mapping(_term_locations, lexicon_file);
 }
 
-inverted_index::inverted_index(const std::string & index_path)
+inverted_index::inverted_index(const std::string & index_path):
+    _cache(util::splay_cache<term_id, postings_data>{10})
 {
-    std::string postings_file = index_path + "/postings.index";
-    // TODO
+    load_mapping(_doc_id_mapping, index_path + "/docids.mapping");
+    load_mapping(_doc_sizes, index_path + "/docsizes.counts");
+    load_mapping(_term_locations, index_path + "/lexicon.index");
+    // load termid -> term info? will I need this?
+    _postings = std::unique_ptr<io::mmap_file>{
+        new io::mmap_file{_index_name + "/postings.index"}
+    };
+}
+
+template <class Key, class Value>
+void inverted_index::load_mapping(std::unordered_map<Key, Value> & map,
+                                  const std::string & filename)
+{
+    std::ifstream input{filename};
+    while(input.good())
+    {
+        Key k;
+        Value v;
+        input >> k;
+        input >> v;
+        map[k] = v;
+    }
+    input.close();
 }
 
 uint64_t inverted_index::idf(term_id t_id)
@@ -175,8 +199,10 @@ uint64_t inverted_index::idf(term_id t_id)
 
 uint64_t inverted_index::doc_size(doc_id d_id) const
 {
-    // TODO
-    return d_id;
+    auto it = _doc_sizes.find(d_id);
+    if(it == _doc_sizes.end())
+        throw inverted_index_exception{"nonexistent doc id"};
+    return it->second;
 }
 
 uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id)
@@ -187,8 +213,35 @@ uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id)
 
 postings_data inverted_index::search_term(term_id t_id)
 {
-    // TODO
-    return postings_data{t_id};
+#if USE_CACHE
+    if(_cache.exists(t_id))
+        return _cache.find(t_id);
+#endif
+
+    auto it = _term_locations.find(t_id);
+    if(it == _term_locations.end())
+        throw inverted_index_exception{"term does not exist in index"};
+
+    uint64_t idx = it->second;
+    postings_data pdata = search_postings(idx);
+
+#if USE_CACHE
+    cache.insert(t_id, pdata);
+#endif
+
+    return pdata;
+}
+
+postings_data inverted_index::search_postings(uint64_t idx)
+{
+    uint64_t len = 0;
+    char* post = _postings->start();
+
+    while(post[idx + len] != '\n')
+        ++len;
+
+    std::string raw{post + idx, len};
+    return postings_data{raw};
 }
 
 }
