@@ -107,8 +107,11 @@ class inverted_index
         /**
          * Creates the lexicon file (or "dictionary") which has pointers into
          * the large postings file
+         * @param postings_file
+         * @param lexicon_file
          */
-        void create_lexicon(const std::string & filename);
+        void create_lexicon(const std::string & postings_file,
+                            const std::string & lexicon_file);
 
         /**
          * Saves the doc_id -> document name mapping to disk.
@@ -133,6 +136,9 @@ class inverted_index
 
         /** doc_id -> document length mapping */
         std::unordered_map<doc_id, uint64_t> _doc_sizes;
+
+        /** term_id -> postings location */
+        std::unordered_map<term_id, uint64_t> _term_locations;
 
     public:
         /**

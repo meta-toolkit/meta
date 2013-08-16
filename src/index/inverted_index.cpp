@@ -9,6 +9,7 @@
 #include <iostream>
 #include "index/inverted_index.h"
 #include "index/chunk.h"
+#include "io/mmap_file.h"
 
 using std::cerr;
 using std::endl;
@@ -21,13 +22,15 @@ inverted_index::inverted_index(const std::string & index_name,
                                std::shared_ptr<tokenizers::tokenizer> & tok):
     _index_name(index_name),
     _doc_id_mapping(std::unordered_map<doc_id, std::string>{}),
-    _doc_sizes(std::unordered_map<doc_id, uint64_t>{})
+    _doc_sizes(std::unordered_map<doc_id, uint64_t>{}),
+    _term_locations(std::unordered_map<term_id, uint64_t>{})
 {
     if(mkdir(_index_name.c_str(), 0755) == -1)
         throw inverted_index_exception{"directory already exists"};
+
     uint32_t num_chunks = tokenize_docs(docs, tok);
     merge_chunks(num_chunks, index_name + "/postings.index");
-    create_lexicon(index_name + "/lexicon.index");
+    create_lexicon(index_name + "/postings.index", index_name + "/lexicon.index");
     tok->save_term_id_mapping(index_name + "/termids.mapping");
     save_mapping(_doc_id_mapping, index_name + "/docids.mapping");
     save_mapping(_doc_sizes, index_name + "/docsizes.counts");
@@ -140,11 +143,22 @@ void inverted_index::merge_chunks(uint32_t num_chunks, const std::string & filen
          << " (" << size << " " << units << ")" << endl;
 }
 
-void inverted_index::create_lexicon(const std::string & filename)
+void inverted_index::create_lexicon(const std::string & postings_file,
+                                    const std::string & lexicon_file)
 {
-    std::ofstream lexicon{filename};
-    lexicon.close();
-    // TODO
+    io::mmap_file pfile{postings_file};
+    char* postings = pfile.start();
+    term_id cur_id = 1;
+    _term_locations[0] = 0;
+    uint64_t size = pfile.size();
+    uint64_t idx = 0;
+    while(idx < size - 1)
+    {
+        if(postings[idx] == '\n')
+            _term_locations[cur_id++] = idx + 1;
+        ++idx;
+    }
+    save_mapping(_term_locations, lexicon_file);
 }
 
 inverted_index::inverted_index(const std::string & index_path)
