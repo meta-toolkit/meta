@@ -57,6 +57,11 @@ class postings_data
         uint64_t count(doc_id d_id) const;
 
         /**
+         * @return the per-document frequency information for this term_id
+         */
+        const std::unordered_map<doc_id, uint64_t> & counts() const;
+
+        /**
          * @param other The postings_data to compare with
          * @return whether this postings_data is less than (has a smaller
          * term_id than) the parameter

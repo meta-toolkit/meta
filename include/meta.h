@@ -27,12 +27,12 @@ namespace meta
     /**
      * Numbering system for string terms.
      */
-    typedef uint32_t term_id;
+    typedef uint64_t term_id;
 
     /**
      * Numbering system for documents.
      */
-    typedef uint32_t doc_id;
+    typedef uint64_t doc_id;
 
     /**
      * Algorithms for feature selection, KNN search, and confusion

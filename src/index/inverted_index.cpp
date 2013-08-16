@@ -22,7 +22,8 @@ inverted_index::inverted_index(const std::string & index_name,
                                std::vector<document> & docs,
                                std::shared_ptr<tokenizers::tokenizer> & tok):
     _index_name(index_name),
-    _cache(util::splay_cache<term_id, postings_data>{10})
+    _cache(util::splay_cache<term_id, postings_data>{10}),
+    _avg_dl(-1.0)
 {
     if(mkdir(_index_name.c_str(), 0755) == -1)
         throw inverted_index_exception{"directory already exists"};
@@ -55,9 +56,10 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
     std::unordered_map<term_id, postings_data> pdata;
     uint32_t chunk_num = 0;
     uint64_t doc_num = 0;
+    std::string progress = "Tokenizing ";
     for(auto & doc: docs)
     {
-        cerr << "[II] Tokenizing " << doc.name() << endl;
+        common::show_progress(doc_num, docs.size(), 20, progress);
         tok->tokenize(doc);
         _doc_id_mapping[doc_num] = doc.name();
         _doc_sizes[doc_num] = doc.length();
@@ -80,6 +82,7 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
         if(doc_num % 100 == 0)
             write_chunk(chunk_num++, pdata);
     }
+    common::end_progress(progress);
     
     if(!pdata.empty())
         write_chunk(chunk_num++, pdata);
@@ -90,8 +93,6 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
 void inverted_index::write_chunk(uint32_t chunk_num,
                                  std::unordered_map<term_id, postings_data> & pdata)
 {
-    cerr << "[II] Writing chunk " << chunk_num << endl;
-
     std::vector<std::pair<term_id, postings_data>> sorted{pdata.begin(), pdata.end()};
     std::sort(sorted.begin(), sorted.end());
 
@@ -121,9 +122,9 @@ void inverted_index::merge_chunks(uint32_t num_chunks, const std::string & filen
         chunk second = chunks.top();
         chunks.pop();
 
-        cerr << "[II] Merging " << first.path() << " (" << first.size()
+        cerr << " Merging " << first.path() << " (" << first.size()
              << " bytes) and " << second.path() << " (" << second.size()
-             << " bytes)" << endl;
+             << " bytes), " << chunks.size() << " remaining" << endl;
 
         first.merge_with(second);
         chunks.push(first);
@@ -142,7 +143,7 @@ void inverted_index::merge_chunks(uint32_t num_chunks, const std::string & filen
         }
     }
 
-    cerr << "[II] Finished creating postings file " << filename
+    cerr << "Created postings file " << filename
          << " (" << size << " " << units << ")" << endl;
 }
 
@@ -164,14 +165,15 @@ void inverted_index::create_lexicon(const std::string & postings_file,
 }
 
 inverted_index::inverted_index(const std::string & index_path):
-    _cache(util::splay_cache<term_id, postings_data>{10})
+    _index_name(index_path),
+    _cache(util::splay_cache<term_id, postings_data>{10}),
+    _avg_dl(-1.0)
 {
     load_mapping(_doc_id_mapping, index_path + "/docids.mapping");
     load_mapping(_doc_sizes, index_path + "/docsizes.counts");
     load_mapping(_term_locations, index_path + "/lexicon.index");
-    // load termid -> term info? will I need this?
     _postings = std::unique_ptr<io::mmap_file>{
-        new io::mmap_file{_index_name + "/postings.index"}
+        new io::mmap_file{index_path + "/postings.index"}
     };
 }
 
@@ -211,6 +213,36 @@ uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id)
     return pdata.count(d_id);
 }
 
+// TODO can we not return a copy?
+const std::unordered_map<doc_id, uint64_t> inverted_index::counts(term_id t_id)
+{
+    postings_data pdata = search_term(t_id);
+    return pdata.counts();
+}
+
+uint64_t inverted_index::num_docs() const
+{
+    return _doc_sizes.size();
+}
+
+double inverted_index::avg_doc_length()
+{
+    if(_avg_dl == -1.0)
+    {
+        uint64_t sum = 0.0;
+        for(auto & p: _doc_sizes)
+            sum += p.second;
+        _avg_dl = static_cast<double>(sum) / _doc_sizes.size();
+    }
+
+    return _avg_dl;
+}
+
+std::string inverted_index::doc_name(doc_id d_id) const
+{
+    return common::safe_at(_doc_id_mapping, d_id);
+}
+
 postings_data inverted_index::search_term(term_id t_id)
 {
 #if USE_CACHE
@@ -219,8 +251,9 @@ postings_data inverted_index::search_term(term_id t_id)
 #endif
 
     auto it = _term_locations.find(t_id);
+    // if the term doesn't exist in the index, return an empty postings_data
     if(it == _term_locations.end())
-        throw inverted_index_exception{"term does not exist in index"};
+        return postings_data{t_id};
 
     uint64_t idx = it->second;
     postings_data pdata = search_postings(idx);

@@ -11,7 +11,7 @@ namespace meta {
 namespace index {
 
 postings_data::postings_data(term_id t_id):
-    _t_id(t_id), _counts(std::unordered_map<doc_id, uint64_t>{})
+    _t_id(t_id)
 { /* nothing */ }
 
 postings_data::postings_data(const std::string & raw_data)
@@ -34,6 +34,11 @@ void postings_data::increase_count(doc_id d_id, uint64_t amount)
 uint64_t postings_data::count(doc_id d_id) const
 {
     return common::safe_at(_counts, d_id);
+}
+
+const std::unordered_map<doc_id, uint64_t> & postings_data::counts() const
+{
+    return _counts;
 }
 
 bool postings_data::operator<(const postings_data & other) const

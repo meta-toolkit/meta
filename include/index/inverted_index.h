@@ -81,6 +81,28 @@ class inverted_index
          */
         uint64_t term_freq(term_id t_id, doc_id d_id);
 
+        /**
+         * @param t_id The term id to find containing documents from
+         * @return a mapping of doc_id -> term occurrence
+         */
+        const std::unordered_map<doc_id, uint64_t> counts(term_id t_id);
+
+        /**
+         * @return the number of documents in this index
+         */
+        uint64_t num_docs() const;
+
+        /**
+         * @return the average document length in this index
+         */
+        double avg_doc_length();
+
+        /**
+         * @param doc_id
+         * @return the actual name of this document
+         */
+        std::string doc_name(doc_id d_id) const;
+
     private:
         /**
          * @param t_id The term_id to search for
@@ -161,10 +183,13 @@ class inverted_index
 
         /**
          * A pointer to a memory-mapped postings file. It is a pointer because
-         * we want to deplay the initialization of it until the postings file is
+         * we want to delay the initialization of it until the postings file is
          * created in some cases.
          */
         std::unique_ptr<io::mmap_file> _postings;
+
+        /** average document length in the inverted_index */
+        double _avg_dl;
 
     public:
         /**

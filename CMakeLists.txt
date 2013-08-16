@@ -41,6 +41,7 @@ add_library( meta-index
              src/index/chunk.cpp
              src/index/postings_data.cpp
              src/index/inverted_index.cpp
+             src/index/okapi_bm25.cpp
 )
 
 add_library( meta-io
