@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <sys/stat.h>
 #include <cstdio>
 #include <queue>
 #include <iostream>
@@ -15,14 +16,31 @@ using std::endl;
 namespace meta {
 namespace index {
 
-inverted_index::inverted_index(std::vector<document> & docs,
+inverted_index::inverted_index(const std::string & index_name,
+                               std::vector<document> & docs,
                                std::shared_ptr<tokenizers::tokenizer> & tok):
-    _doc_id_mapping(std::unordered_map<doc_id, std::string>{})
+    _index_name(index_name),
+    _doc_id_mapping(std::unordered_map<doc_id, std::string>{}),
+    _doc_sizes(std::unordered_map<doc_id, uint64_t>{})
 {
+    if(mkdir(_index_name.c_str(), 0755) == -1)
+        throw inverted_index_exception{"directory already exists"};
     uint32_t num_chunks = tokenize_docs(docs, tok);
-    merge_chunks(num_chunks);
-    create_lexicon();
-    tok->save_term_id_mapping("termids.mapping");
+    merge_chunks(num_chunks, index_name + "/postings.index");
+    create_lexicon(index_name + "/lexicon.index");
+    tok->save_term_id_mapping(index_name + "/termids.mapping");
+    save_mapping(_doc_id_mapping, index_name + "/docids.mapping");
+    save_mapping(_doc_sizes, index_name + "/docsizes.counts");
+}
+
+template <class Key, class Value>
+void inverted_index::save_mapping(const std::unordered_map<Key, Value> & map,
+                                  const std::string & filename) const
+{
+    std::ofstream outfile{filename};
+    for(auto & p: map)
+        outfile << p.first << " " << p.second << "\n";
+    outfile.close();
 }
 
 uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
@@ -36,6 +54,7 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
         cerr << "[II] Tokenizing " << doc.name() << endl;
         tok->tokenize(doc);
         _doc_id_mapping[doc_num] = doc.name();
+        _doc_sizes[doc_num] = doc.length();
 
         for(auto & f: doc.frequencies())
         {
@@ -78,7 +97,7 @@ void inverted_index::write_chunk(uint32_t chunk_num,
     pdata.clear();
 }
 
-void inverted_index::merge_chunks(uint32_t num_chunks)
+void inverted_index::merge_chunks(uint32_t num_chunks, const std::string & filename)
 {
     // create priority queue of all chunks based on size
     std::priority_queue<chunk> chunks;
@@ -104,7 +123,7 @@ void inverted_index::merge_chunks(uint32_t num_chunks)
         chunks.push(first);
     }
 
-    rename(chunks.top().path().c_str(), "postings.index");
+    rename(chunks.top().path().c_str(), filename.c_str());
     double size = chunks.top().size();
     std::string units = "bytes";
 
@@ -117,12 +136,14 @@ void inverted_index::merge_chunks(uint32_t num_chunks)
         }
     }
 
-    cerr << "[II] Finished creating postings file ("
-         << size << " " << units << ")" << endl;
+    cerr << "[II] Finished creating postings file " << filename
+         << " (" << size << " " << units << ")" << endl;
 }
 
-void inverted_index::create_lexicon()
+void inverted_index::create_lexicon(const std::string & filename)
 {
+    std::ofstream lexicon{filename};
+    lexicon.close();
     // TODO
 }
 

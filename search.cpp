@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     cerr << "[Main] Creating tokenizer(s)" << endl;
     std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
 
-    index::inverted_index idx{docs, tok};
+    index::inverted_index idx{"my-index", docs, tok};
 
     return 0;
 }

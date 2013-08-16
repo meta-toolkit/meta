@@ -50,7 +50,8 @@ class inverted_index
          * @param docs The untokenized documents to add to the index
          * @param tok The tokenizer to use to tokenize the documents
          */
-        inverted_index(std::vector<document> & docs,
+        inverted_index(const std::string & index_name,
+                       std::vector<document> & docs,
                        std::shared_ptr<tokenizers::tokenizer> & tok);
 
         /**
@@ -107,16 +108,52 @@ class inverted_index
          * Creates the lexicon file (or "dictionary") which has pointers into
          * the large postings file
          */
-        void create_lexicon();
+        void create_lexicon(const std::string & filename);
+
+        /**
+         * Saves the doc_id -> document name mapping to disk.
+         * @param filename The name to save the mapping as
+         */
+        template <class Key, class Value>
+        void save_mapping(const std::unordered_map<Key, Value> & map,
+                          const std::string & filename) const;
 
         /**
          * @param num_chunks The total number of chunks to merge together to
          * create the postings file
+         * @param filename The name for the postings file
          */
-        void merge_chunks(uint32_t num_chunks);
+        void merge_chunks(uint32_t num_chunks, const std::string & filename);
+
+        /** the location of this index */
+        std::string _index_name;
 
         /** doc_id -> document name mapping */
         std::unordered_map<doc_id, std::string> _doc_id_mapping;
+
+        /** doc_id -> document length mapping */
+        std::unordered_map<doc_id, uint64_t> _doc_sizes;
+
+    public:
+        /**
+         * Basic exception for inverted_index interactions.
+         */
+        class inverted_index_exception: public std::exception
+        {
+            public:
+                
+                inverted_index_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+                std::string _error;
+        };
+
 };
 
 }
