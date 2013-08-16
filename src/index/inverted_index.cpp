@@ -52,7 +52,7 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs,
 
         // every k documents, write a chunk
         // TODO: make this based on memory usage instead
-        if(doc_num % 2 == 0)
+        if(doc_num % 100 == 0)
             write_chunk(chunk_num++, pdata);
     }
     
@@ -105,6 +105,20 @@ void inverted_index::merge_chunks(uint32_t num_chunks)
     }
 
     rename(chunks.top().path().c_str(), "postings.index");
+    double size = chunks.top().size();
+    std::string units = "bytes";
+
+    for(auto & u: {"KB", "MB", "GB", "TB"})
+    {
+        if(size >= 1024)
+        {
+            size /= 1024;
+            units = u;
+        }
+    }
+
+    cerr << "[II] Finished creating postings file ("
+         << size << " " << units << ")" << endl;
 }
 
 void inverted_index::create_lexicon()

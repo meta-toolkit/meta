@@ -83,13 +83,13 @@ void chunk::merge_with(const chunk & other)
         }
     }
 
-    std::string buffer;
+    postings_data buffer{0};
     if(my_data.good())
     {
         output << my_pd;
         while(my_data.good())
         {
-            std::getline(my_data, buffer);
+            my_data >> buffer;
             output << buffer;
         }
     }
@@ -98,7 +98,7 @@ void chunk::merge_with(const chunk & other)
         output << other_pd;
         while(other_data.good())
         {
-            std::getline(other_data, buffer);
+            other_data >> buffer;
             output << buffer;
         }
     }
