@@ -18,9 +18,11 @@ inverted_index::inverted_index(const std::string & index_name,
                                std::vector<document> & docs,
                                std::shared_ptr<tokenizers::tokenizer> & tok,
                                const std::string & config_file):
-    disk_index(index_name, docs, tok, config_file),
+    disk_index(index_name, tok),
     _avg_dl(-1.0)
-{ /* nothing */ }
+{
+    create_index(docs, config_file);
+}
 
 inverted_index::inverted_index(const std::string & index_name):
     disk_index(index_name),

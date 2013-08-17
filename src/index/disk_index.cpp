@@ -20,31 +20,32 @@ namespace meta {
 namespace index {
 
 disk_index::disk_index(const std::string & index_name,
-                               std::vector<document> & docs,
-                               std::shared_ptr<tokenizers::tokenizer> & tok,
-                               const std::string & config_file):
+                               std::shared_ptr<tokenizers::tokenizer> & tok):
+    _tokenizer(tok),
     _index_name(index_name),
-    _cache(util::splay_cache<term_id, postings_data<term_id, doc_id>>{10}),
-    _tokenizer(tok)
+    _cache(util::splay_cache<term_id, postings_data<term_id, doc_id>>{10})
+{ /* nothing */ }
+
+void disk_index::create_index(std::vector<document> & docs,
+                              const std::string & config_file)
 {
     if(mkdir(_index_name.c_str(), 0755) == -1)
         throw disk_index_exception{"directory already exists"};
 
-    // TODO investigate warning from calling tokenize_docs here
     uint32_t num_chunks = tokenize_docs(docs);
-    merge_chunks(num_chunks, index_name + "/postings.index");
-    create_lexicon(index_name + "/postings.index", index_name + "/lexicon.index");
-    _tokenizer->save_term_id_mapping(index_name + "/termids.mapping");
-    save_mapping(_doc_id_mapping, index_name + "/docids.mapping");
-    save_mapping(_doc_sizes, index_name + "/docsizes.counts");
+    merge_chunks(num_chunks, _index_name + "/postings.index");
+    create_lexicon(_index_name + "/postings.index", _index_name + "/lexicon.index");
+    _tokenizer->save_term_id_mapping(_index_name + "/termids.mapping");
+    save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
+    save_mapping(_doc_sizes, _index_name + "/docsizes.counts");
 
     _postings = std::unique_ptr<io::mmap_file>{
-        new io::mmap_file{index_name + "/postings.index"}
+        new io::mmap_file{_index_name + "/postings.index"}
     };
 
     // save the config file so we can recreate the tokenizer
     std::ifstream source_config{config_file.c_str(), std::ios::binary};
-    std::ofstream dest_config{index_name + "/config.toml", std::ios::binary};
+    std::ofstream dest_config{_index_name + "/config.toml", std::ios::binary};
     dest_config << source_config.rdbuf();
 }
 

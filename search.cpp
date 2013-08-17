@@ -35,10 +35,10 @@ int main(int argc, char* argv[])
         + "-full-corpus.txt";
 
     std::vector<index::document> docs = index::document::load_docs(corpus_file, prefix);
-    //std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
+    std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
 
-    index::inverted_index idx{"my-index"};
-    //index::inverted_index idx{"my-index", docs, tok, argv[1]};
+    //index::inverted_index idx{"my-index"};
+    index::inverted_index idx{"my-index", docs, tok, argv[1]};
     index::okapi_bm25 ranker;
 
     std::chrono::time_point<std::chrono::system_clock> start, end;

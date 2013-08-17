@@ -23,22 +23,19 @@ namespace meta {
 namespace index {
 
 /**
- * stuff
+ * Contains functionality common to inverted_index and forward_index; mainly,
+ * creating chunks and merging them together and storing various mappings.
  */
 class disk_index
 {
     public:
         /**
          * @param index_name The name for this index to be saved as
-         * @param docs The untokenized documents to add to the index
          * @param tok The tokenizer to use to tokenize the documents
-         * @param config_file The configuration file used to create the
          * tokenizer
          */
         disk_index(const std::string & index_name,
-                   std::vector<document> & docs,
-                   std::shared_ptr<tokenizers::tokenizer> & tok,
-                   const std::string & config_file);
+                   std::shared_ptr<tokenizers::tokenizer> & tok);
 
         /**
          * @param index_path The directory containing an already-created index
@@ -77,6 +74,16 @@ class disk_index
 
     protected:
         /**
+         * This function initializes the disk index. It cannot be part of the
+         * constructor since dynamic binding doesn't work in a base class's
+         * consturctor. Therefore, deriving classes must call this function in
+         * their constructor.
+         * @param docs The documents to tokenize
+         * @param config_file The configuration file used to create the
+         */
+        void create_index(std::vector<document> & docs, const std::string & config_file);
+
+        /**
          * @param t_id The term_id to search for
          * @return the postings data for a given term_id
          * A cache is first searched before the postings file is queried.  This
@@ -96,16 +103,24 @@ class disk_index
          * @param docs The documents to add to the inverted index
          */
         virtual uint32_t tokenize_docs(std::vector<document> & docs) = 0;
+  
+        /** doc_id -> document name mapping */
+        std::unordered_map<doc_id, std::string> _doc_id_mapping;
 
+        /** doc_id -> document length mapping */
+        std::unordered_map<doc_id, uint64_t> _doc_sizes;
+
+        /** the tokenizer used to tokenize documents in the index */
+        std::shared_ptr<tokenizers::tokenizer> _tokenizer;
+
+    private:
         /**
-         * Creates the lexicon file (or "dictionary") which has pointers into
-         * the large postings file
-         * @param postings_file
-         * @param lexicon_file
+         * @param num_chunks The total number of chunks to merge together to
+         * create the postings file
+         * @param filename The name for the postings file
          */
-        void create_lexicon(const std::string & postings_file,
-                            const std::string & lexicon_file);
-
+        void merge_chunks(uint32_t num_chunks, const std::string & filename);
+        
         /**
          * Saves the doc_id -> document name mapping to disk.
          * @param filename The name to save the mapping as
@@ -113,13 +128,6 @@ class disk_index
         template <class Key, class Value>
         void save_mapping(const std::unordered_map<Key, Value> & map,
                           const std::string & filename) const;
-
-        /**
-         * @param num_chunks The total number of chunks to merge together to
-         * create the postings file
-         * @param filename The name for the postings file
-         */
-        void merge_chunks(uint32_t num_chunks, const std::string & filename);
 
         /**
          * @param map The map to load information into
@@ -131,26 +139,26 @@ class disk_index
 
         /**
          * @param idx The pointer into the postings file where the wanted
-         * term_id begins
+         * PrimaryKey begins
          * @return a postings_data object from the postings file
          */
         postings_data<term_id, doc_id> search_postings(uint64_t idx);
 
+        /**
+         * Creates the lexicon file (or "dictionary") which has pointers into
+         * the large postings file
+         * @param postings_file
+         * @param lexicon_file
+         */
+        void create_lexicon(const std::string & postings_file,
+                            const std::string & lexicon_file);
+
         /** the location of this index */
         std::string _index_name;
 
-        /** doc_id -> document name mapping */
-        std::unordered_map<doc_id, std::string> _doc_id_mapping;
-
-        /** doc_id -> document length mapping */
-        std::unordered_map<doc_id, uint64_t> _doc_sizes;
-
         /** term_id -> postings location */
         std::unordered_map<term_id, uint64_t> _term_locations;
-
-        /** cache for recently used postings_data */
-        util::splay_cache<term_id, postings_data<term_id, doc_id>> _cache;
-
+        
         /**
          * A pointer to a memory-mapped postings file. It is a pointer because
          * we want to delay the initialization of it until the postings file is
@@ -158,13 +166,9 @@ class disk_index
          */
         std::unique_ptr<io::mmap_file> _postings;
 
-        /** the tokenizer used to tokenize documents in the index */
-        std::shared_ptr<tokenizers::tokenizer> _tokenizer;
-
-    private:
-
-        // TODO: move stuff here not used by derived classes
-
+        /** cache for recently used postings_data */
+        util::splay_cache<term_id, postings_data<term_id, doc_id>> _cache;
+ 
     public:
         /**
          * Basic exception for disk_index interactions.
