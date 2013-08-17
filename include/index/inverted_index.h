@@ -121,14 +121,14 @@ class inverted_index
          * function may be called by inverted_index::term_freq or
          * inverted_index::idf.
          */
-        postings_data search_term(term_id t_id);
+        postings_data<term_id, doc_id> search_term(term_id t_id);
 
         /**
          * @param chunk_num The current chunk number of the postings file
          * @param pdata A collection of postings data to write to the chunk
          */
         void write_chunk(uint32_t chunk_num,
-                         std::unordered_map<term_id, postings_data> & pdata);
+                         std::unordered_map<term_id, postings_data<term_id, doc_id>> & pdata);
 
         /**
          * @param docs The documents to add to the inverted index
@@ -172,7 +172,7 @@ class inverted_index
          * term_id begins
          * @return a postings_data object from the postings file
          */
-        postings_data search_postings(uint64_t idx);
+        postings_data<term_id, doc_id> search_postings(uint64_t idx);
 
         /** the location of this index */
         std::string _index_name;
@@ -187,7 +187,7 @@ class inverted_index
         std::unordered_map<term_id, uint64_t> _term_locations;
 
         /** cache for recently used postings_data */
-        util::splay_cache<term_id, postings_data> _cache;
+        util::splay_cache<term_id, postings_data<term_id, doc_id>> _cache;
 
         /**
          * A pointer to a memory-mapped postings file. It is a pointer because

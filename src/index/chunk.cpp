@@ -47,14 +47,14 @@ void chunk::merge_with(const chunk & other)
     std::ifstream other_data{other._path.c_str()};
     std::ofstream output{"chunk-temp"};
 
-    postings_data my_pd{0};
-    postings_data other_pd{0};
+    postings_data<term_id, doc_id> my_pd{0}; // TODO how to instantiate for both index types?
+    postings_data<term_id, doc_id> other_pd{0};
     my_data >> my_pd;
     other_data >> other_pd;
 
     while(true)
     {
-        if(my_pd.term() == other_pd.term())
+        if(my_pd.primary_key() == other_pd.primary_key())
         {
             my_pd.merge_with(other_pd);
             output << my_pd;
@@ -83,7 +83,7 @@ void chunk::merge_with(const chunk & other)
         }
     }
 
-    postings_data buffer{0};
+    postings_data<term_id, doc_id> buffer{0}; // TODO same here
     if(my_data.good())
     {
         output << my_pd;

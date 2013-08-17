@@ -24,7 +24,7 @@ inverted_index::inverted_index(const std::string & index_name,
                                std::shared_ptr<tokenizers::tokenizer> & tok,
                                const std::string & config_file):
     _index_name(index_name),
-    _cache(util::splay_cache<term_id, postings_data>{10}),
+    _cache(util::splay_cache<term_id, postings_data<term_id, doc_id>>{10}),
     _avg_dl(-1.0),
     _tokenizer(tok)
 {
@@ -60,7 +60,7 @@ void inverted_index::save_mapping(const std::unordered_map<Key, Value> & map,
 
 uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
 {
-    std::unordered_map<term_id, postings_data> pdata;
+    std::unordered_map<term_id, postings_data<term_id, doc_id>> pdata;
     uint32_t chunk_num = 0;
     uint64_t doc_num = 0;
     std::string progress = "Tokenizing ";
@@ -73,7 +73,7 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
 
         for(auto & f: doc.frequencies())
         {
-            postings_data pd{f.first};
+            postings_data<term_id, doc_id> pd{f.first};
             pd.increase_count(doc_num, f.second);
             auto it = pdata.find(f.first);
             if(it == pdata.end())
@@ -98,9 +98,9 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
 }
 
 void inverted_index::write_chunk(uint32_t chunk_num,
-                                 std::unordered_map<term_id, postings_data> & pdata)
+                                 std::unordered_map<term_id, postings_data<term_id, doc_id>> & pdata)
 {
-    std::vector<std::pair<term_id, postings_data>> sorted{pdata.begin(), pdata.end()};
+    std::vector<std::pair<term_id, postings_data<term_id, doc_id>>> sorted{pdata.begin(), pdata.end()};
     std::sort(sorted.begin(), sorted.end());
 
     std::ofstream outfile{"chunk-" + common::to_string(chunk_num)};
@@ -173,7 +173,7 @@ void inverted_index::create_lexicon(const std::string & postings_file,
 
 inverted_index::inverted_index(const std::string & index_path):
     _index_name(index_path),
-    _cache(util::splay_cache<term_id, postings_data>{10}),
+    _cache(util::splay_cache<term_id, postings_data<term_id, doc_id>>{10}),
     _avg_dl(-1.0)
 {
     load_mapping(_doc_id_mapping, index_path + "/docids.mapping");
@@ -207,8 +207,8 @@ void inverted_index::load_mapping(std::unordered_map<Key, Value> & map,
 
 uint64_t inverted_index::idf(term_id t_id)
 {
-    postings_data pdata = search_term(t_id);
-    return pdata.idf();
+    postings_data<term_id, doc_id> pdata = search_term(t_id);
+    return pdata.inverse_frequency();
 }
 
 uint64_t inverted_index::doc_size(doc_id d_id) const
@@ -221,14 +221,13 @@ uint64_t inverted_index::doc_size(doc_id d_id) const
 
 uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id)
 {
-    postings_data pdata = search_term(t_id);
+    postings_data<term_id, doc_id> pdata = search_term(t_id);
     return pdata.count(d_id);
 }
 
-// TODO can we not return a copy?
 const std::unordered_map<doc_id, uint64_t> inverted_index::counts(term_id t_id)
 {
-    postings_data pdata = search_term(t_id);
+    postings_data<term_id, doc_id> pdata = search_term(t_id);
     return pdata.counts();
 }
 
@@ -260,7 +259,7 @@ void inverted_index::tokenize(document & doc)
     _tokenizer->tokenize(doc);
 }
 
-postings_data inverted_index::search_term(term_id t_id)
+postings_data<term_id, doc_id> inverted_index::search_term(term_id t_id)
 {
 #if USE_CACHE
     if(_cache.exists(t_id))
@@ -270,10 +269,10 @@ postings_data inverted_index::search_term(term_id t_id)
     auto it = _term_locations.find(t_id);
     // if the term doesn't exist in the index, return an empty postings_data
     if(it == _term_locations.end())
-        return postings_data{t_id};
+        return postings_data<term_id, doc_id>{t_id};
 
     uint64_t idx = it->second;
-    postings_data pdata = search_postings(idx);
+    postings_data<term_id, doc_id> pdata = search_postings(idx);
 
 #if USE_CACHE
     _cache.insert(t_id, pdata);
@@ -282,7 +281,7 @@ postings_data inverted_index::search_term(term_id t_id)
     return pdata;
 }
 
-postings_data inverted_index::search_postings(uint64_t idx)
+postings_data<term_id, doc_id> inverted_index::search_postings(uint64_t idx)
 {
     uint64_t len = 0;
     char* post = _postings->start();
@@ -291,7 +290,7 @@ postings_data inverted_index::search_postings(uint64_t idx)
         ++len;
 
     std::string raw{post + idx, len};
-    return postings_data{raw};
+    return postings_data<term_id, doc_id>{raw};
 }
 
 }
