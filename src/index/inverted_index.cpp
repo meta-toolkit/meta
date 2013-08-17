@@ -11,7 +11,7 @@
 #include "index/chunk.h"
 #include "io/config_reader.h"
 
-#define USE_CACHE false
+#define USE_CACHE true
 
 using std::cerr;
 using std::endl;
@@ -276,7 +276,7 @@ postings_data inverted_index::search_term(term_id t_id)
     postings_data pdata = search_postings(idx);
 
 #if USE_CACHE
-    cache.insert(t_id, pdata);
+    _cache.insert(t_id, pdata);
 #endif
 
     return pdata;

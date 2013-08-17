@@ -160,11 +160,6 @@ class document
         std::unordered_map<term_id, unsigned int> _frequencies;
 
         /**
-         * @return the name of a document given its full path
-         */
-        static std::string getName(const std::string & path);
-
-        /**
          * @param mapping - an invertible_map of category <-> category id
          * @param category - the category to find an id for
          * @return a unique numerical id for the category, creating a new entry if necessary

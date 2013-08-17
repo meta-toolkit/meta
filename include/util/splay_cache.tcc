@@ -22,7 +22,7 @@ splay_cache<Key, Value>::~splay_cache()
 template <class Key, class Value>
 void splay_cache<Key, Value>::insert(const Key & key, const Value & value)
 {
-    insert(_root, key, value, 1);
+    insert(_root, key, value, 0);
 }
 
 template <class Key, class Value>
@@ -35,26 +35,15 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
     {
         insert(subroot->left, key, value, depth + 1);
         rotate_right(subroot);
-
-        // see if the tree is too tall; if so, remove the last leaf node (on
-        // opposite side now since we rotated)
-        if(depth > _max_height)
-        {
-            delete subroot->left;
-            subroot->left = nullptr;
-        }
+        if(depth == _max_height)
+            clear(subroot->left);
     }
     else if(key > subroot->key)
     {
         insert(subroot->right, key, value, depth + 1);
         rotate_left(subroot);
-
-        // see if the tree is too tall; opposite case as above
-        if(depth > _max_height)
-        {
-            delete subroot->right;
-            subroot->right = nullptr;
-        }
+        if(depth == _max_height)
+            clear(subroot->right);
     }
 }
 
@@ -89,12 +78,14 @@ void splay_cache<Key, Value>::find(node* & subroot, const Key & key)
     if(key < subroot->key)
     {
         find(subroot->left, key);
-        rotate_right(subroot);
+        if(subroot->left != nullptr)
+            rotate_right(subroot);
     }
     else if(key > subroot->key)
     {
         find(subroot->right, key);
-        rotate_left(subroot);
+        if(subroot->right != nullptr)
+            rotate_left(subroot);
     }
 }
 
