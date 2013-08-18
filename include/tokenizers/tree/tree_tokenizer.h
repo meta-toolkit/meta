@@ -32,7 +32,7 @@ class tree_tokenizer: public tokenizer
          */
         void tokenize_document(index::document & document,
                 std::function<term_id(const std::string &)> mapping,
-                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq = nullptr) {
+                const std::shared_ptr<std::unordered_map<term_id, uint64_t>> & docFreq = nullptr) {
             std::vector<parse_tree> trees = parse_tree::get_trees( document.path() + ".tree" );
             for( auto & tree : trees )
                 derived().tree_tokenize( document, tree, mapping, docFreq );

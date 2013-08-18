@@ -29,7 +29,7 @@ ngram_word_tokenizer<Stemmer>::ngram_word_tokenizer(size_t n, ngram_word_traits:
 template <class Stemmer>
 void ngram_word_tokenizer<Stemmer>::tokenize_document(document & document,
         std::function<term_id(const std::string &)> mapping,
-        const std::shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
+        const std::shared_ptr<unordered_map<term_id, uint64_t>> & docFreq)
 {
     parser parser(document.path() + ".sen", " \n");
 

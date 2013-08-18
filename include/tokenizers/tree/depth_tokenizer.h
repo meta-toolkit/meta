@@ -19,7 +19,7 @@ namespace tokenizers {
 class depth_tokenizer : public tree_tokenizer<depth_tokenizer> {
     public:
         using mapping_fn = std::function<term_id(const std::string &)>;
-        using doc_freq_ptr = std::shared_ptr<std::unordered_map<term_id, unsigned int>>;
+        using doc_freq_ptr = std::shared_ptr<std::unordered_map<term_id, uint64_t>>;
 
         /**
          * Extracts the depth feature from parse trees: what are the heights of

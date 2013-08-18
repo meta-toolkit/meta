@@ -43,7 +43,7 @@ class multi_tokenizer: public tokenizer
          */
         void tokenize_document(index::document & document,
                 std::function<term_id(const std::string &)> mapping,
-                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq = nullptr);
+                const std::shared_ptr<std::unordered_map<term_id, uint64_t>> & docFreq = nullptr);
 
     private:
 

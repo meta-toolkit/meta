@@ -44,7 +44,7 @@ class tokenizer
          * @param docFreq Optional parameter to store IDF values in
          */
         void tokenize(index::document & document,
-                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq = nullptr);
+                const std::shared_ptr<std::unordered_map<term_id, uint64_t>> & docFreq = nullptr);
 
         /**
          * Tokenizes a document
@@ -55,7 +55,7 @@ class tokenizer
          */        
         virtual void tokenize_document(index::document & document,
                 std::function<term_id(const std::string & term)> mapping,
-                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq) = 0;
+                const std::shared_ptr<std::unordered_map<term_id, uint64_t>> & docFreq) = 0;
 
         /**
          * Maps terms to term_ids.

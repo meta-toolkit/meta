@@ -19,7 +19,7 @@ ngram_simple_tokenizer::ngram_simple_tokenizer(size_t n):
 
 void ngram_simple_tokenizer::simple_tokenize(parser & parser, document & document,
         std::function<term_id(const std::string &)> mapping,
-        const std::shared_ptr<unordered_map<term_id, unsigned int>> & docFreq)
+        const std::shared_ptr<unordered_map<term_id, uint64_t>> & docFreq)
 {
     // initialize the ngram
     deque<string> ngram;

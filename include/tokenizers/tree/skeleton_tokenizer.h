@@ -19,7 +19,7 @@ namespace tokenizers {
 class skeleton_tokenizer : public tree_tokenizer<skeleton_tokenizer> {
     public:
         using mapping_fn = std::function<term_id(const std::string &)>;
-        using doc_freq_ptr = std::shared_ptr<std::unordered_map<term_id, unsigned int>>;
+        using doc_freq_ptr = std::shared_ptr<std::unordered_map<term_id, uint64_t>>;
 
         /**
          * Ignores node labels and only tokenizes the tree structure.

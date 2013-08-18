@@ -14,7 +14,7 @@ ngram_char_tokenizer::ngram_char_tokenizer(size_t n):
 
 void ngram_char_tokenizer::tokenize_document(index::document & document,
         std::function<term_id(const std::string &)> mapping,
-        const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreq)
+        const std::shared_ptr<std::unordered_map<term_id, uint64_t>> & docFreq)
 {
     io::parser parser(document.path() + ".sen", " \n");
     simple_tokenize(parser, document, mapping, docFreq);

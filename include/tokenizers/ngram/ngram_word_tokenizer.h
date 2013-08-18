@@ -48,7 +48,7 @@ class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
         virtual void tokenize_document(
                 index::document & document,
                 std::function<term_id(const std::string &)> mapping,
-                const std::shared_ptr<std::unordered_map<term_id, unsigned int>> & docFreqs = nullptr);
+                const std::shared_ptr<std::unordered_map<term_id, uint64_t>> & docFreqs = nullptr);
 
     private:
 

@@ -19,7 +19,7 @@ namespace tokenizers {
 class branch_tokenizer : public tree_tokenizer<branch_tokenizer> {
     public:
         using mapping_fn = std::function<term_id(const std::string &)>;
-        using doc_freq_ptr = std::shared_ptr<std::unordered_map<term_id, unsigned int>>;
+        using doc_freq_ptr = std::shared_ptr<std::unordered_map<term_id, uint64_t>>;
 
         /**
          * Keeps track of the branching factor for this document's parse_trees.

@@ -20,7 +20,7 @@ namespace tokenizers {
 class semi_skeleton_tokenizer : public tree_tokenizer<semi_skeleton_tokenizer> {
     public:
         using mapping_fn = std::function<term_id(const std::string &)>;
-        using doc_freq_ptr = std::shared_ptr<std::unordered_map<term_id, unsigned int>>;
+        using doc_freq_ptr = std::shared_ptr<std::unordered_map<term_id, uint64_t>>;
 
         /**
          * Keeps track of one node's tag and the skeleton structure beneath it.

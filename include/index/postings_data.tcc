@@ -48,6 +48,12 @@ postings_data<PrimaryKey, SecondaryKey>::counts() const
 }
 
 template <class PrimaryKey, class SecondaryKey>
+void postings_data<PrimaryKey, SecondaryKey>::set_counts(const std::unordered_map<SecondaryKey, uint64_t> & map)
+{
+    _counts = map;
+}
+
+template <class PrimaryKey, class SecondaryKey>
 bool postings_data<PrimaryKey, SecondaryKey>::operator<(const postings_data & other) const
 {
     return primary_key() < other.primary_key();

@@ -38,7 +38,7 @@ class document
          * @param termID - the token count to increment
          * @param amount - the amount to increment by
          */
-        void increment(term_id termID, unsigned int amount);
+        void increment(term_id termID, uint64_t amount);
 
         /**
          * Increment the count of the specified transition.
@@ -46,8 +46,8 @@ class document
          * @param amount - the amount to increment by
          * @param docFreq - used for IDF
          */
-        void increment(term_id termID, unsigned int amount,
-                std::shared_ptr<std::unordered_map<term_id, unsigned int>> docFreq);
+        void increment(term_id termID, uint64_t amount,
+                std::shared_ptr<std::unordered_map<term_id, uint64_t>> docFreq);
 
         /**
          * @return the path to this document (the argument to the constructor)
@@ -79,7 +79,7 @@ class document
         /**
          * @return the map of frequencies for this document.
          */
-        const std::unordered_map<term_id, unsigned int> & frequencies() const;
+        const std::unordered_map<term_id, uint64_t> & frequencies() const;
  
         /**
          * Prints tokenizer output in liblinear input format.
@@ -157,7 +157,7 @@ class document
         size_t _length;
 
         /** counts of how many times each token appears */
-        std::unordered_map<term_id, unsigned int> _frequencies;
+        std::unordered_map<term_id, uint64_t> _frequencies;
 
         /**
          * @param mapping - an invertible_map of category <-> category id

@@ -77,6 +77,11 @@ class postings_data
         const std::unordered_map<SecondaryKey, uint64_t> & counts() const;
 
         /**
+         * @param map A map of counts to assign into this postings_data
+         */
+        void set_counts(const std::unordered_map<SecondaryKey, uint64_t> & map);
+
+        /**
          * @param other The postings_data to compare with
          * @return whether this postings_data is less than (has a smaller
          * PrimaryKey than) the parameter

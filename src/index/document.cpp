@@ -26,16 +26,15 @@ using namespace std;
 document::document(const string & path, const class_label & label):
     _path(path),
     _label(label),
-    _length(0),
-    _frequencies(unordered_map<term_id, unsigned int>())
+    _length(0)
 {
 
     size_t idx = path.find_last_of("/") + 1;
     _name = path.substr(idx);
 }
 
-void document::increment(term_id termID, unsigned int amount,
-        std::shared_ptr<unordered_map<term_id, unsigned int>> docFreq)
+void document::increment(term_id termID, uint64_t amount,
+        std::shared_ptr<unordered_map<term_id, uint64_t>> docFreq)
 {
     auto iter = _frequencies.find(termID);
     if(iter != _frequencies.end())
@@ -50,7 +49,7 @@ void document::increment(term_id termID, unsigned int amount,
     _length += amount;
 }
 
-void document::increment(term_id termID, unsigned int amount)
+void document::increment(term_id termID, uint64_t amount)
 {
     increment(termID, amount, nullptr);
 }
@@ -75,7 +74,7 @@ size_t document::length() const
     return _length;
 }
 
-size_t document::frequency(term_id termID) const
+uint64_t document::frequency(term_id termID) const
 {
     auto iter = _frequencies.find(termID);
     if(iter != _frequencies.end())
@@ -84,7 +83,7 @@ size_t document::frequency(term_id termID) const
         return 0;
 }
 
-const unordered_map<term_id, unsigned int> & document::frequencies() const
+const unordered_map<term_id, uint64_t> & document::frequencies() const
 {
     return _frequencies;
 }
@@ -93,14 +92,14 @@ string document::get_liblinear_data(invertible_map<string, int> & mapping) const
 {
     stringstream out;
     out << get_mapping(mapping, _label);     // liblinear, classes start at 1
-    vector<pair<term_id, unsigned int>> sorted;
+    vector<pair<term_id, uint64_t>> sorted;
 
     // liblinear feature indices start at 1, not 0 like the tokenizers
     for(auto & freq: _frequencies)
         sorted.push_back(make_pair(freq.first + 1, freq.second));
 
     std::sort(sorted.begin(), sorted.end(),
-        [](const pair<term_id, unsigned int> & a, const pair<term_id, unsigned int> & b) {
+        [](const pair<term_id, uint64_t> & a, const pair<term_id, uint64_t> & b) {
             return a.first < b.first;
         }
     );
