@@ -19,16 +19,15 @@ namespace tokenizers {
 class tag_tokenizer : public tree_tokenizer<tag_tokenizer> {
     public:
         using mapping_fn = std::function<term_id(const std::string &)>;
-        using doc_freq_ptr = std::shared_ptr<std::unordered_map<term_id, uint64_t>>;
 
         /**
          * Counts occurrences of leaf and interior node labels.
          * @param document - the document to parse
          * @param tree - the current parse_tree in the document
-         * @param docFreq - used to aggregate counts for this tokenizer
          */
-        void tree_tokenize( index::document & document, const parse_tree & tree, 
-                            mapping_fn mapping, const doc_freq_ptr & doc_freq );
+        void tree_tokenize(index::document & document,
+                           const parse_tree & tree, 
+                           mapping_fn mapping);
 };
 
 }

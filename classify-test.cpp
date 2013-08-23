@@ -37,7 +37,7 @@ void tokenize(vector<document> & docs, const cpptoml::toml_group & config)
     for(auto & d: docs)
     {
         common::show_progress(i++, docs.size(), 20, "  tokenizing ");
-        tok->tokenize(d, nullptr);
+        tok->tokenize(d);
     }
     common::end_progress("  tokenizing ");
 }

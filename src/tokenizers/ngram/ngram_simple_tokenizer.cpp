@@ -18,8 +18,7 @@ ngram_simple_tokenizer::ngram_simple_tokenizer(size_t n):
     ngram_tokenizer(n) { /* nothing */ }
 
 void ngram_simple_tokenizer::simple_tokenize(parser & parser, document & document,
-        std::function<term_id(const std::string &)> mapping,
-        const std::shared_ptr<unordered_map<term_id, uint64_t>> & docFreq)
+        std::function<term_id(const std::string &)> mapping)
 {
     // initialize the ngram
     deque<string> ngram;
@@ -30,13 +29,13 @@ void ngram_simple_tokenizer::simple_tokenize(parser & parser, document & documen
     while(parser.has_next())
     {
         string wordified = wordify(ngram);
-        document.increment(mapping(wordified), 1, docFreq);
+        document.increment(mapping(wordified), 1);
         ngram.pop_front();
         ngram.push_back(parser.next());
     }
 
     // add the last token
-    document.increment(mapping(wordify(ngram)), 1, docFreq);
+    document.increment(mapping(wordify(ngram)), 1);
 }
 
 }

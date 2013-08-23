@@ -31,7 +31,7 @@ void run(const cpptoml::toml_group & config)
     for(auto & d: test_docs)
     {
         common::show_progress(i++, test_docs.size(), 20, "  tokenizing ");
-        tok->tokenize(d, nullptr);
+        tok->tokenize(d);
     }
     common::end_progress("  tokenizing ");
 

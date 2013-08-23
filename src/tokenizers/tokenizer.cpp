@@ -25,9 +25,9 @@ tokenizer::tokenizer():
     _current_term_id(0)
 { /* nothing */ }
 
-void tokenizer::tokenize(index::document & document,
-        const std::shared_ptr<std::unordered_map<term_id, uint64_t>> & doc_freq) {
-    tokenize_document(document, std::bind(&tokenizer::mapping, this, _1), doc_freq);
+void tokenizer::tokenize(index::document & document)
+{
+    tokenize_document(document, std::bind(&tokenizer::mapping, this, _1));
 }
 
 term_id tokenizer::mapping(const string & term)

@@ -28,8 +28,7 @@ ngram_word_tokenizer<Stemmer>::ngram_word_tokenizer(size_t n, ngram_word_traits:
 
 template <class Stemmer>
 void ngram_word_tokenizer<Stemmer>::tokenize_document(document & document,
-        std::function<term_id(const std::string &)> mapping,
-        const std::shared_ptr<unordered_map<term_id, uint64_t>> & docFreq)
+        std::function<term_id(const std::string &)> mapping)
 {
     parser parser(document.path() + ".sen", " \n");
 
@@ -49,7 +48,7 @@ void ngram_word_tokenizer<Stemmer>::tokenize_document(document & document,
     while(parser.has_next())
     {
         string wordified = wordify(ngram);
-        document.increment(mapping(wordified), 1, docFreq);
+        document.increment(mapping(wordified), 1);
         ngram.pop_front();
         string next = "";
         do
@@ -60,7 +59,7 @@ void ngram_word_tokenizer<Stemmer>::tokenize_document(document & document,
     }
 
     // add the last token
-    document.increment(mapping(wordify(ngram)), 1, docFreq);
+    document.increment(mapping(wordify(ngram)), 1);
 }
 
 template <class Stemmer>
