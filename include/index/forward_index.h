@@ -64,11 +64,22 @@ class forward_index: public disk_index
          */
         const std::unordered_map<term_id, uint64_t> counts(doc_id d_id);
 
+        /**
+         * @param d_id The doc id to find the class label for
+         * @return the label of the class that the document belongs to, or an
+         * empty string if a label was not assigned
+         */
+        class_label label(doc_id d_id) const;
+
     protected:
         /**
          * @param docs The documents to add to the inverted index
          */
         uint32_t tokenize_docs(std::vector<document> & docs);
+
+    private:
+        /** maps which class a document belongs to (if any) */
+        std::unordered_map<doc_id, class_label> _labels;
 };
 
 }

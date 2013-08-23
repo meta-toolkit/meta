@@ -40,6 +40,9 @@ uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
         _doc_id_mapping[doc_num] = doc.name();
         _doc_sizes[doc_num] = doc.length();
 
+        if(doc.label() != "")
+            _labels[doc_num] = doc.label();
+
         postings_data<doc_id, term_id> pd{doc_num};
         pd.set_counts(doc.frequencies());
 
@@ -64,6 +67,11 @@ uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
         write_chunk(chunk_num++, pdata);
 
     return chunk_num;
+}
+
+class_label forward_index::label(doc_id d_id) const
+{
+    return common::safe_at(_labels, d_id);
 }
 
 uint64_t forward_index::term_freq(term_id t_id, doc_id d_id)
