@@ -14,6 +14,7 @@
 #include <string>
 #include <unordered_map>
 #include <set>
+#include "index/forward_index.h"
 #include "meta.h"
 
 namespace meta {

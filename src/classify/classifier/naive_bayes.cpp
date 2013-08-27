@@ -15,12 +15,12 @@ using std::unordered_map;
 using std::unordered_set;
 using index::document;
 
-naive_bayes::naive_bayes(double alpha, double beta):
-    _term_probs(unordered_map<class_label, unordered_map<term_id, double>>()),
-    _class_counts(unordered_map<class_label, size_t>()),
-    _total_docs(0),
-    _alpha(alpha),
-    _beta(beta)
+naive_bayes::naive_bayes(std::unique_ptr<index::forward_index> & idx,
+                         double alpha, double beta):
+    classifier{idx},
+    _total_docs{0},
+    _alpha{alpha},
+    _beta{beta}
 { /* nothing */ }
 
 void naive_bayes::reset()
@@ -30,14 +30,14 @@ void naive_bayes::reset()
     _total_docs = 0;
 }
 
-void naive_bayes::train(const vector<document> & docs)
+void naive_bayes::train(const vector<doc_id> & docs)
 {
-    for(auto & d: docs)
+    for(auto & d_id: docs)
     {
         ++_total_docs;
-        for(auto & p: d.frequencies())
-            _term_probs[d.label()][p.first] += p.second;
-        ++_class_counts[d.label()];
+        for(auto & p: _idx->counts(d_id))
+            _term_probs[_idx->label(d_id)][p.first] += p.second;
+        ++_class_counts[_idx->label(d_id)];
     }
 
     // calculate P(term|class) for all classes based on c(term|class)
@@ -49,7 +49,7 @@ void naive_bayes::train(const vector<document> & docs)
    
 }
 
-class_label naive_bayes::classify(const document & doc)
+class_label naive_bayes::classify(doc_id d_id)
 {
     class_label label;
     double best = std::numeric_limits<double>::min();
@@ -61,7 +61,7 @@ class_label naive_bayes::classify(const document & doc)
         double class_prob = static_cast<double>(_class_counts.at(cls.first)) / _total_docs;
         class_prob += _beta;
         sum += log(1 + class_prob);
-        for(auto & t: doc.frequencies())
+        for(auto & t: _idx->counts(d_id))
         {
             auto it = cls.second.find(t.first);
             double term_prob = (it == cls.second.end()) ? 0.0 : it->second;

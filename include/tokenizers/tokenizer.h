@@ -12,6 +12,7 @@
 #include <string>
 #include <unordered_map>
 #include "meta.h"
+#include "cpptoml.h"
 #include "index/document.h"
 #include "util/invertible_map.h"
 
@@ -110,6 +111,11 @@ class tokenizer
          */
         virtual term_id max_term_id() const;
 
+        /**
+         * @return a Tokenizer as specified by a config object
+         */
+        static std::unique_ptr<tokenizer> load_tokenizer(const cpptoml::toml_group & config);
+
     protected:
 
         /**
@@ -126,6 +132,27 @@ class tokenizer
          * in the invertible_map).
          */
         term_id _current_term_id;
+
+    public:
+        /**
+         * Basic exception for tokenizer interactions.
+         */
+        class tokenizer_exception: public std::exception
+        {
+            public:
+                
+                tokenizer_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what () const throw ()
+                {
+                    return _error.c_str();
+                }
+           
+            private:
+                std::string _error;
+        };
+
 };
 
 }

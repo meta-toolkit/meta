@@ -25,9 +25,11 @@ class liblinear_svm: public classifier
 
         /**
          * Constructor.
+         * @param idx The index to run the classifier on
          * @param liblinear_path The path to the liblinear library
          */
-        liblinear_svm(const std::string & liblinear_path);
+        liblinear_svm(std::unique_ptr<index::forward_index> & idx,
+                      const std::string & liblinear_path);
 
         /**
          * Classifies a document into a specific group, as determined by
@@ -35,13 +37,13 @@ class liblinear_svm: public classifier
          * @param doc The document to classify
          * @return the class it belongs to
          */
-        class_label classify(const index::document & doc);
+        class_label classify(doc_id d_id) override;
 
         /**
          * Creates a classification model based on training documents.
          * @param docs The training documents
          */
-        void train(const std::vector<index::document> & docs);
+        void train(const std::vector<doc_id> & docs) override;
 
         /**
          * Classifies a collection document into specific groups, as determined by
@@ -49,12 +51,12 @@ class liblinear_svm: public classifier
          * @param docs The documents to classify
          * @return a confusion_matrix detailing the performance of the classifier
          */
-        confusion_matrix test(const std::vector<index::document> & docs);
+        confusion_matrix test(const std::vector<doc_id> & docs) override;
 
         /**
          * Clears any learned data from this classifier.
          */
-        void reset();
+        void reset() override;
 
     private:
 

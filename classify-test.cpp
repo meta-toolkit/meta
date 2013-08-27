@@ -4,54 +4,28 @@
 
 #include <vector>
 #include <string>
-#include <memory>
 #include <iostream>
 
-#include "index/document.h"
+#include "index/forward_index.h"
 #include "io/config_reader.h"
-#include "tokenizers/tokenizers.h"
 #include "util/invertible_map.h"
 #include "classify/classifier/all.h"
 
-using std::vector;
-using std::unordered_map;
-using std::pair;
 using std::cout;
 using std::cerr;
 using std::endl;
-using std::string;
-
 using namespace meta;
-using namespace meta::index;
-using namespace meta::util;
-using namespace meta::tokenizers;
 
-/**
- * Tokenizes testing and training docs.
- */
-void tokenize(vector<document> & docs, const cpptoml::toml_group & config)
+classify::confusion_matrix cv(const std::unique_ptr<index::forward_index> & idx,
+                              classify::classifier & c)
 {
-    std::shared_ptr<tokenizer> tok = io::config_reader::create_tokenizer(config);
-
-    size_t i = 0;
-    for(auto & d: docs)
-    {
-        common::show_progress(i++, docs.size(), 20, "  tokenizing ");
-        tok->tokenize(d);
-    }
-    common::end_progress("  tokenizing ");
-}
-
-classify::confusion_matrix cv( classify::classifier & c, const vector<document> & train_docs ) {
-    classify::confusion_matrix matrix = c.cross_validate(train_docs, 5);
+    std::vector<doc_id> docs = idx->docs();
+    classify::confusion_matrix matrix = c.cross_validate(docs, 5);
     matrix.print();
     matrix.print_stats();
     return matrix;
 }
 
-/**
- *
- */
 int main(int argc, char* argv[])
 {
     if(argc != 2)
@@ -61,33 +35,34 @@ int main(int argc, char* argv[])
     }
 
     auto config = io::config_reader::read(argv[1]);
-    string prefix = *cpptoml::get_as<std::string>( config, "prefix" ) 
-        + *cpptoml::get_as<std::string>( config, "dataset" );
-    string corpus_file = prefix 
-        + "/" 
-        + *cpptoml::get_as<std::string>( config, "list" ) 
-        + "-full-corpus.txt";
-    vector<document> train_docs = document::load_docs(corpus_file, prefix);
-    //vector<document> test_docs = document::loadDocs(prefix + "/test.txt", prefix);
+    std::unique_ptr<index::forward_index> idx = index::forward_index::load_index(config);
 
-    tokenize(train_docs, config);
-    //tokenize(test_docs, config);
-    
-    classify::liblinear_svm svm{ *cpptoml::get_as<std::string>( config, "liblinear" ) };
-    classify::linear_svm l2svm;
-    classify::linear_svm l1svm{ classify::linear_svm::loss_function::L1 };
-    classify::perceptron p;
-    classify::naive_bayes nb;
-    auto m1 = cv( svm, train_docs );
-    auto m2 = cv( l2svm, train_docs );
-    std::cout << "(liblinear) Significant? " << std::boolalpha << classify::confusion_matrix::mcnemar_significant( m1, m2 ) << std::endl;
-    auto m3 = cv( l1svm, train_docs );
-    std::cout << "(liblinear) Significant? " << std::boolalpha << classify::confusion_matrix::mcnemar_significant( m1, m3 ) << std::endl;
-    auto m4 = cv( p, train_docs );
-    std::cout << "(liblinear) Significant? " << std::boolalpha << classify::confusion_matrix::mcnemar_significant( m1, m4 ) << std::endl;
-    std::cout << "(lsvm) Significant? " << std::boolalpha << classify::confusion_matrix::mcnemar_significant( m2, m4 ) << std::endl;
-    cv( nb, train_docs );
-    //svm.train(train_docs);
-    
+    classify::liblinear_svm svm{ idx, *cpptoml::get_as<std::string>( config, "liblinear" ) };
+    auto m1 = cv(idx, svm);
+
+    classify::linear_svm l2svm{idx};
+    auto m2 = cv(idx, l2svm);
+    std::cout << "(liblinear vs l2svm) Significant? " << std::boolalpha
+              << classify::confusion_matrix::mcnemar_significant( m1, m2 )
+              << std::endl;
+
+    classify::linear_svm l1svm{ idx, classify::linear_svm::loss_function::L1 };
+    auto m3 = cv(idx, l1svm);
+    std::cout << "(liblinear vs l1svm) Significant? " << std::boolalpha
+              << classify::confusion_matrix::mcnemar_significant( m1, m3 )
+              << std::endl;
+
+    classify::perceptron p{idx};
+    auto m4 = cv(idx, p);
+    std::cout << "(liblinear vs perceptron) Significant? " << std::boolalpha
+              << classify::confusion_matrix::mcnemar_significant( m1, m4 )
+              << std::endl;
+
+    classify::naive_bayes nb{idx};
+    auto m5 = cv(idx, nb);
+    std::cout << "(liblinear vs naive bayes) Significant? " << std::boolalpha
+              << classify::confusion_matrix::mcnemar_significant( m1, m5 )
+              << std::endl;
+
     return 0;
 }

@@ -29,37 +29,6 @@ namespace config_reader
      * @return a mapping of option name to option value
      */
     cpptoml::toml_group read(const std::string & path);
-
-    /**
-     * @param config
-     */
-    std::string get_config_string(const cpptoml::toml_group & config);
-
-    /**
-     * @return a Tokenizer as specified by a config object
-     */
-    std::shared_ptr<tokenizers::tokenizer> create_tokenizer(
-        const cpptoml::toml_group & config);
-
-    /**
-     * Basic exception for config_reader interactions.
-     */
-    class config_reader_exception: public std::exception
-    {
-        public:
-            
-            config_reader_exception(const std::string & error):
-                _error(error) { /* nothing */ }
-
-            const char* what () const throw ()
-            {
-                return _error.c_str();
-            }
-       
-        private:
-       
-            std::string _error;
-    };
 }
 
 }

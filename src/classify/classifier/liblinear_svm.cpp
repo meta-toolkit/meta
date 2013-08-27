@@ -10,30 +10,28 @@
 namespace meta {
 namespace classify {
 
-using std::string;
-using std::vector;
-using index::document;
-
-liblinear_svm::liblinear_svm(const string & liblinear_path):
-    _liblinear_path(liblinear_path),
-    _mapping(util::invertible_map<class_label, int>())
+liblinear_svm::liblinear_svm(std::unique_ptr<index::forward_index> & idx,
+                             const std::string & liblinear_path):
+    classifier{idx},
+    _liblinear_path{liblinear_path}
 { /* nothing */ }
 
-class_label liblinear_svm::classify(const document & doc)
+class_label liblinear_svm::classify(doc_id d_id)
 {
     // create input for liblinear
     std::ofstream out("liblinear-input");
-    out << doc.get_liblinear_data(_mapping);
+    // TODO
+    out << d_id; // doc.get_liblinear_data(_mapping);
     out.close();
 
     // run liblinear
-    string command = _liblinear_path + "/predict liblinear-input liblinear-train.model liblinear-predicted";
+    std::string command = _liblinear_path + "/predict liblinear-input liblinear-train.model liblinear-predicted";
     command += " 2>&1> /dev/null";
     system(command.c_str());
 
     // extract answer
     std::ifstream in("liblinear-predicted");
-    string str_val;
+    std::string str_val;
     std::getline(in, str_val);
     in.close();
     int value = std::stoul(str_val);
@@ -41,44 +39,46 @@ class_label liblinear_svm::classify(const document & doc)
     return _mapping.get_key(value);
 }
 
-confusion_matrix liblinear_svm::test(const vector<document> & docs)
+confusion_matrix liblinear_svm::test(const std::vector<doc_id> & docs)
 {
     // create input for liblinear
     std::ofstream out("liblinear-input");
-    for(auto & d: docs)
-        out << d.get_liblinear_data(_mapping);
+    // TODO
+    for(auto & d_id: docs)
+        out << d_id; // d.get_liblinear_data(_mapping);
     out.close();
 
     // run liblinear
-    string command = _liblinear_path + "/predict liblinear-input liblinear-train.model liblinear-predicted";
+    std::string command = _liblinear_path + "/predict liblinear-input liblinear-train.model liblinear-predicted";
     command += " 2>&1> /dev/null";
     system(command.c_str());
 
     // extract answer
     confusion_matrix matrix;
     std::ifstream in("liblinear-predicted");
-    string str_val;
-    for(auto & d: docs)
+    std::string str_val;
+    for(auto & d_id: docs)
     {
         // we can assume that the number of lines in the file is equal to the
         // number of testing documents
         std::getline(in, str_val);
         int value = std::stoul(str_val);
-        matrix.add(_mapping.get_key(value), d.label());
+        matrix.add(_mapping.get_key(value), _idx->label(d_id));
     }
     in.close();
 
     return matrix;
 }
 
-void liblinear_svm::train(const vector<document> & docs)
+void liblinear_svm::train(const std::vector<doc_id> & docs)
 {
     std::ofstream out("liblinear-train");
-    for(auto & d: docs)
-        out << d.get_liblinear_data(_mapping);
+    // TODO
+    for(auto & d_id: docs)
+        out << d_id; // d.get_liblinear_data(_mapping);
     out.close();
 
-    string command = _liblinear_path + "/train liblinear-train";
+    std::string command = _liblinear_path + "/train liblinear-train";
     command += " 2>&1> /dev/null";
     system(command.c_str());
 }

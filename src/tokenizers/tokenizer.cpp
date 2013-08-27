@@ -7,6 +7,7 @@
 #include <iostream>
 #include "util/invertible_map.h"
 #include "tokenizers/tokenizer.h"
+#include "tokenizers/tokenizers.h"
 
 namespace meta {
 namespace tokenizers {
@@ -85,6 +86,51 @@ size_t tokenizer::num_terms() const
 {
     return _term_map.size();
 
+}
+
+std::unique_ptr<tokenizer> tokenizer::load_tokenizer(const cpptoml::toml_group & config)
+{
+    std::vector<std::shared_ptr<tokenizer>> toks;
+    
+    auto tokenizers = config.get_group_array( "tokenizers" );
+    for( auto group : tokenizers->array() ) {
+        string method = *cpptoml::get_as<std::string>( *group, "method" );
+        if( method == "tree" ) {
+            string type = *cpptoml::get_as<std::string>( *group, "treeOpt" );
+            if( type == "Branch" )
+                toks.emplace_back( std::make_shared<tokenizers::branch_tokenizer>() );
+            else if( type == "Depth" )
+                toks.emplace_back( std::make_shared<tokenizers::depth_tokenizer>() );
+            else if( type == "Semi" )
+                toks.emplace_back( std::make_shared<tokenizers::semi_skeleton_tokenizer>() );
+            else if( type == "Skel" )
+                toks.emplace_back( std::make_shared<tokenizers::skeleton_tokenizer>() );
+            else if( type == "Subtree" )
+                toks.emplace_back( std::make_shared<tokenizers::subtree_tokenizer>() );
+            else if( type == "Tag" )
+                toks.emplace_back( std::make_shared<tokenizers::tag_tokenizer>() );
+            else
+                throw tokenizer_exception{ "tree method was not able to be determined" };
+        } else if( method == "ngram" ) {
+            int64_t n_val = *cpptoml::get_as<int64_t>( *group, "ngram" );
+            string type = *cpptoml::get_as<std::string>( *group, "ngramOpt" );
+            if( type == "Word" )
+                toks.emplace_back( std::make_shared<tokenizers::ngram_word_tokenizer<>>( n_val ) );
+            else if( type == "FW" )
+                toks.emplace_back( std::make_shared<tokenizers::ngram_fw_tokenizer>( n_val ) );
+            else if( type == "Lex" )
+                toks.emplace_back( std::make_shared<tokenizers::ngram_lex_tokenizer>( n_val ) );
+            else if( type == "POS" )
+                toks.emplace_back( std::make_shared<tokenizers::ngram_pos_tokenizer>( n_val ) );
+            else if( type == "Char" )
+                toks.emplace_back( std::make_shared<tokenizers::ngram_char_tokenizer>( n_val ) );
+            else
+                throw tokenizer_exception{ "ngram method was not able to be determined" };
+        } else {
+            throw tokenizer_exception{ "method was not able to be determined" };
+        }
+    }
+    return std::unique_ptr<multi_tokenizer>{new multi_tokenizer{toks}};
 }
 
 }

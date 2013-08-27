@@ -61,6 +61,11 @@ class disk_index
         std::string doc_name(doc_id d_id) const;
 
         /**
+         * @return a vector of doc_ids that are contained in this index
+         */
+        std::vector<doc_id> docs() const;
+
+        /**
          * @param d_id The document to search for
          * @return the size of the given document (the total number of terms
          * occuring)

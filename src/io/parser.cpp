@@ -9,17 +9,13 @@
 namespace meta {
 namespace io {
 
-using std::string;
-using std::vector;
-
-parser::parser(const string & path, const string & delims):
-    _idx(0),
-    _filename(path),
-    _tokens(vector<string>())
+parser::parser(const std::string & path, const std::string & delims):
+    _idx{0},
+    _filename{path}
 {
-    std::unordered_set<char> invalid(delims.begin(), delims.end());
+    std::unordered_set<char> invalid{delims.begin(), delims.end()};
 
-    mmap_file mmap_file(path);
+    mmap_file mmap_file{path};
     char* file = mmap_file.start();
     
     size_t left = 0;
@@ -30,23 +26,23 @@ parser::parser(const string & path, const string & delims):
             // only create a string object once we know the exact size and
             // content
             if(left != i)
-                _tokens.push_back(string(file + left, i - left));
+                _tokens.push_back(std::string(file + left, i - left));
             left = i + 1;
         }
     }
 }
 
-string parser::filename() const
+std::string parser::filename() const
 {
     return _filename;
 }
 
-string parser::peek() const
+std::string parser::peek() const
 {
     return _tokens.at(_idx);
 }
 
-string parser::next()
+std::string parser::next()
 {
     return _tokens[_idx++];
 }

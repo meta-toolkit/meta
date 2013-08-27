@@ -4,6 +4,7 @@
  */
 
 #include <iostream>
+#include <memory>
 #include "index/forward_index.h"
 #include "index/chunk.h"
 #include "io/config_reader.h"
@@ -84,6 +85,29 @@ const std::unordered_map<term_id, uint64_t> forward_index::counts(doc_id d_id)
 {
     postings_data<doc_id, term_id> pdata = search_term(d_id);
     return pdata.counts();
+}
+
+std::unique_ptr<forward_index> forward_index::load_index(const cpptoml::toml_group & config)
+{
+    // if the index hasn't been created yet
+
+    std::string prefix = *cpptoml::get_as<std::string>(config, "prefix")
+        + *cpptoml::get_as<std::string>(config, "dataset");
+
+    std::string corpus_file = prefix
+        + "/"
+        + *cpptoml::get_as<std::string>(config, "list")
+        + "-full-corpus.txt";
+
+    std::string index_name = *cpptoml::get_as<std::string>(config, "forward-index");
+
+    std::vector<index::document> docs =
+        index::document::load_docs(corpus_file, prefix);
+    
+    std::shared_ptr<tokenizers::tokenizer> tok =
+        tokenizers::tokenizer::load_tokenizer(config);
+
+    return std::unique_ptr<forward_index>{new forward_index{index_name, docs, tok, "config.toml"}};
 }
 
 }

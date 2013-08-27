@@ -9,7 +9,8 @@
 #define _CLASSIFIER_H_
 
 #include <vector>
-#include "index/document.h"
+#include <memory>
+#include "index/forward_index.h"
 #include "classify/confusion_matrix.h"
 
 namespace meta {
@@ -22,20 +23,24 @@ namespace classify {
 class classifier
 {
     public:
+        /**
+         * @param idx The index to run the classifier on
+         */
+        classifier(std::unique_ptr<index::forward_index> & idx);
 
         /**
          * Classifies a document into a specific group, as determined by
          * training data.
-         * @param doc The document to classify
+         * @param d_id The document to classify
          * @return the class it belongs to
          */
-        virtual class_label classify(const index::document & doc) = 0;
+        virtual class_label classify(doc_id d_id) = 0;
 
         /**
          * Creates a classification model based on training documents.
          * @param docs The training documents
          */
-        virtual void train(const std::vector<index::document> & docs) = 0;
+        virtual void train(const std::vector<doc_id> & docs) = 0;
 
         /**
          * Classifies a collection document into specific groups, as determined by
@@ -43,7 +48,7 @@ class classifier
          * @param docs The documents to classify
          * @return a confusion_matrix detailing the performance of the classifier
          */
-        virtual confusion_matrix test(const std::vector<index::document> & docs);
+        virtual confusion_matrix test(const std::vector<doc_id> & docs);
 
         /**
          * Performs k-fold cross-validation on a set of documents. When using
@@ -53,13 +58,19 @@ class classifier
          * @param seed The seed for the RNG used to shuffle the documents
          * @return a confusion_matrix containing the results over all the folds
          */
-        virtual confusion_matrix cross_validate(const std::vector<index::document> & input_docs,
-                size_t k, int seed = 1);
+        virtual confusion_matrix cross_validate(const std::vector<doc_id> & input_docs,
+                                                size_t k,
+                                                int seed = 1);
 
         /**
          * Clears any learning data associated with this classifier.
          */
         virtual void reset() = 0;
+
+    protected:
+
+        /** the index that the classifer is run on */
+        std::unique_ptr<index::forward_index> & _idx;
 };
 
 }

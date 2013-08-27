@@ -28,13 +28,15 @@ class perceptron : public classifier {
          * Constructs a perceptron classifier with the given learning rate,
          * error threshold, and maximum iterations.
          * 
+         * @param idx The index to run the classifier on
          * @param alpha \f$alpha\f$, the learning rate
          * @param gamma \f$gamma\f$, the error threshold
          * @param bias \f$b\f$, the bias
          * @param max_iter The maximum number of iterations for training.
          */ 
-        perceptron( double alpha = 0.1, double gamma = 0.05, double bias = 0, 
-                    size_t max_iter = 100 );
+        perceptron(std::unique_ptr<index::forward_index> & idx,
+                   double alpha = 0.1, double gamma = 0.05, double bias = 0, 
+                   size_t max_iter = 100 );
 
         /**
          * Trains the perceptron on the given training documents.
@@ -45,7 +47,7 @@ class perceptron : public classifier {
          * is completed.
          * @param docs The training set.
          */
-        void train( const std::vector<index::document> & docs ) override;
+        void train( const std::vector<doc_id> & docs ) override;
 
         /**
          * Classifies the given document. 
@@ -56,7 +58,7 @@ class perceptron : public classifier {
          * @param doc The document to be classified.
          * @return The class label determined for the document.
          */
-        class_label classify( const index::document & doc ) override;
+        class_label classify( doc_id d_id ) override;
 
         /**
          * Resets all learned information for this perceptron so it may be
@@ -80,7 +82,7 @@ class perceptron : public classifier {
          * 
          * @param docs The set of documents to collect class labels from.
          */
-        void zero_weights( const std::vector<index::document> & docs );
+        void zero_weights( const std::vector<doc_id> & docs );
 
         /**
          * The weight vectors for each class label.

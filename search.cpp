@@ -26,6 +26,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+
     auto config = io::config_reader::read(argv[1]);
     std::string prefix = *cpptoml::get_as<std::string>(config, "prefix")
         + *cpptoml::get_as<std::string>(config, "dataset");
@@ -35,7 +36,8 @@ int main(int argc, char* argv[])
         + "-full-corpus.txt";
 
     std::vector<index::document> docs = index::document::load_docs(corpus_file, prefix);
-    std::shared_ptr<tokenizers::tokenizer> tok = io::config_reader::create_tokenizer(config);
+
+    std::shared_ptr<tokenizers::tokenizer> tok = tokenizers::tokenizer::load_tokenizer(config);
 
     //index::inverted_index idx{"my-index"};
     index::inverted_index idx{"my-index", docs, tok, argv[1]};

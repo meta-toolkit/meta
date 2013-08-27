@@ -30,7 +30,6 @@ template <class Stemmer = stemmers::porter2>
 class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
 {
     public:
-
         /**
          * Constructor.
          * @param n - the value of n to use for the ngrams.
@@ -68,5 +67,4 @@ class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
 }
 
 #include "tokenizers/ngram/ngram_word_tokenizer.tcc"
-
 #endif

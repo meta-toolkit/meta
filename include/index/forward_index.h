@@ -71,6 +71,12 @@ class forward_index: public disk_index
          */
         class_label label(doc_id d_id) const;
 
+        /**
+         * @return a forward_index object created from the config file; if an index
+         * at the given path already exists, it will load that one
+         */
+        static std::unique_ptr<forward_index> load_index(const cpptoml::toml_group & config);
+
     protected:
         /**
          * @param docs The documents to add to the inverted index

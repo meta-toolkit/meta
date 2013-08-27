@@ -146,7 +146,7 @@ disk_index::disk_index(const std::string & index_path):
     };
 
     auto config = io::config_reader::read(index_path + "/config.toml");
-    _tokenizer = io::config_reader::create_tokenizer(config);
+    _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
     _tokenizer->set_term_id_mapping(index_path + "/termids.mapping");
 }
 
@@ -182,6 +182,15 @@ uint64_t disk_index::num_docs() const
 std::string disk_index::doc_name(doc_id d_id) const
 {
     return common::safe_at(_doc_id_mapping, d_id);
+}
+
+std::vector<doc_id> disk_index::docs() const
+{
+    std::vector<doc_id> ret;
+    ret.reserve(_doc_id_mapping.size());
+    for(auto & d: _doc_id_mapping)
+        ret.push_back(d.first);
+    return ret;
 }
 
 void disk_index::tokenize(document & doc)

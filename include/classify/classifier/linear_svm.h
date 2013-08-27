@@ -33,21 +33,23 @@ class linear_svm : public classifier {
         /**
          * Creates an empty SVM model with the given parameters.
          * 
+         * @param idx The index to run the classifier on
          * @param loss The loss function to be used (default: L2)
          * @param cost The cost parameter to be used (default: 1)
          * @param epsilon The termination criteria (default: 0.1)
          * @param max_iter The maximum allowed iterations in the solver.
          */
-        linear_svm( loss_function loss = loss_function::L2, 
-                    double cost = 1.0, 
-                    double epsilon = 0.1, 
-                    size_t max_iter = 1000 );
+        linear_svm(std::unique_ptr<index::forward_index> & idx, 
+                   loss_function loss = loss_function::L2, 
+                   double cost = 1.0, 
+                   double epsilon = 0.1, 
+                   size_t max_iter = 1000 );
 
-        virtual void train( const std::vector<index::document> & docs );
+        virtual void train(const std::vector<doc_id> & docs) override;
 
-        class_label classify( const index::document & doc );
+        class_label classify(doc_id d_id) override;
 
-        virtual void reset();
+        virtual void reset() override;
 
     private:
         /**
@@ -70,7 +72,7 @@ class linear_svm : public classifier {
          */
         void train_one( const class_label & label, 
                         std::vector<double> & weight,
-                        const std::vector<index::document> & docs, 
+                        const std::vector<doc_id> & docs, 
                         double diag,
                         double upper,
                         const std::vector<double> & qbar_ii );

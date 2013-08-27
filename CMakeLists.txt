@@ -27,7 +27,6 @@ add_library( meta-classify
              src/classify/confusion_matrix.cpp
              src/classify/feature_select/chi_square.cpp
              src/classify/feature_select/info_gain.cpp  
-             src/classify/classifier/knn.cpp
              src/classify/feature_select/correlation.cpp
              src/classify/feature_select/odds.cpp
              src/classify/classifier/naive_bayes.cpp
@@ -85,52 +84,31 @@ add_library( meta-topics
              src/topics/parallel_lda_gibbs.cpp
 )
 
-add_executable( eval eval.cpp )
-target_link_libraries( eval
-                       meta-io
-                       meta-index
-                       meta-tokenizers
-                       meta-stemmers
-                       meta-classify
-                       ${CMAKE_THREAD_LIBS_INIT} 
-)
-
 add_executable( classify classify-test.cpp )
 target_link_libraries( classify
-                       meta-io
+                       meta-classify
                        meta-index
                        meta-tokenizers
                        meta-stemmers
-                       meta-classify
+                       meta-io
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
 add_executable( search search.cpp )
 target_link_libraries( search
-                       meta-io
-                       meta-index
                        meta-tokenizers
                        meta-stemmers
-                       ${CMAKE_THREAD_LIBS_INIT}
-)
-
-add_executable( feature-select feature-select.cpp )
-target_link_libraries( feature-select
-                       meta-io
                        meta-index
-                       meta-topics
-                       meta-tokenizers
-                       meta-stemmers
-                       meta-classify
+                       meta-io
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
 add_executable( cluster-test cluster-test.cpp )
 target_link_libraries( cluster-test
-                       meta-io
-                       meta-index
                        meta-tokenizers
                        meta-stemmers
+                       meta-index
+                       meta-io
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -147,10 +125,10 @@ target_link_libraries( parallel-for-test
 add_executable( lda-test lda-test.cpp )
 target_link_libraries( lda-test
                        meta-topics
-                       meta-io
-                       meta-index
                        meta-tokenizers
                        meta-stemmers
+                       meta-index
+                       meta-io
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 

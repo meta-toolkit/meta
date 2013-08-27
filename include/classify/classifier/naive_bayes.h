@@ -27,30 +27,32 @@ class naive_bayes: public classifier
         /**
          * Constructor: learns class models based on a collection of training
          * documents.
+         * @param idx The index to run the classifier on
          * @param alpha Optional smoothing parameter for term frequencies
          * @param beta Optional smoothing parameter for class frequencies
          */
-        naive_bayes(double alpha = 0.1, double beta = 0.1);
+        naive_bayes(std::unique_ptr<index::forward_index> & idx,
+                    double alpha = 0.1, double beta = 0.1);
 
         /**
          * Creates a classification model based on training documents.
          * Calculates P(term|class) and P(class) for all the training documents.
          * @param docs The training documents
          */
-        void train(const std::vector<index::document> & docs);
+        void train(const std::vector<doc_id> & docs) override;
 
         /**
          * Classifies a document into a specific group, as determined by
          * training data.
-         * @param doc The document to classify
+         * @param d_id The document to classify
          * @return the class it belongs to
          */
-        class_label classify(const index::document & doc);
+        class_label classify(doc_id d_id) override;
 
         /**
          * Resets any learning information associated with this classifier.
          */
-        void reset();
+        void reset() override;
 
     private:
 
