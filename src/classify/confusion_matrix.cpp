@@ -13,6 +13,7 @@ namespace meta {
 namespace classify {
 
 confusion_matrix::confusion_matrix():
+    _predictions{32, string_pair_hash},
     _total{0},
     _width{20}
 { /* nothing */ }

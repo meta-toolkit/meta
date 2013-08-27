@@ -1,21 +1,27 @@
+# locations to store the foward and inverted index
+forward-index = "my-forward-index"
+inverted-index = "my-inverted-index"
+
 # libs
-slda = "/path/to/slda/"
-liblinear = "/path/to/liblinear/"
+slda = "/home/sean/projects/slda/"
+liblinear = "/home/sean/projects/liblinear/"
 
 # prefix to folder containing data sets
-prefix = "/path/to/meta-data/"
+prefix = "/home/sean/projects/meta-data/"
 
 # path to stopwords
-stop-words = "/path/to/meta/data/lemur-stopwords.txt"
+stop-words = "/home/sean/projects/meta/data/lemur-stopwords.txt"
 
 # path to function words
-function-words = "/path/to/meta/data/function-words.txt"
+function-words = "/home/sean/projects/meta/data/function-words.txt"
 
 # dataset: which dataset to use
 # list: which corpus listing in that dataset to use (supplies class labels,
 # etc)
 dataset = "ceeaus"
 list = "ceeaus-essay-topic"
+#dataset = "simple"
+#list = "simple"
 
 #list ceeaus-nationality
 
@@ -44,7 +50,7 @@ list = "ceeaus-essay-topic"
 [[tokenizers]]
 method = "ngram"
 ngramOpt = "Word"
-ngram = 3
+ngram = 1
 
 #[[tokenizers]]
 #method = "ngram"
@@ -59,7 +65,3 @@ ngram = 3
 #[[tokenizers]]
 #method = "tree"
 #treeOpt = "Subtree"
-
-[[tokenizers]]
-method = "tree"
-treeOpt = "Skel"

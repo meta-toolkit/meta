@@ -11,7 +11,7 @@
 #include "index/chunk.h"
 #include "io/config_reader.h"
 
-#define USE_CACHE true
+#define USE_CACHE false
 
 using std::cerr;
 using std::endl;
