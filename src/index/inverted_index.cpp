@@ -68,19 +68,19 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
     return chunk_num;
 }
 
-uint64_t inverted_index::idf(term_id t_id)
+uint64_t inverted_index::idf(term_id t_id) const
 {
     postings_data<term_id, doc_id> pdata = search_term(t_id);
     return pdata.inverse_frequency();
 }
 
-uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id)
+uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id) const
 {
     postings_data<term_id, doc_id> pdata = search_term(t_id);
     return pdata.count(d_id);
 }
 
-const std::unordered_map<doc_id, uint64_t> inverted_index::counts(term_id t_id)
+const std::unordered_map<doc_id, uint64_t> inverted_index::counts(term_id t_id) const
 {
     postings_data<term_id, doc_id> pdata = search_term(t_id);
     return pdata.counts();

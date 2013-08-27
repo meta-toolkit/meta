@@ -54,15 +54,14 @@ class forward_index: public disk_index
         /**
          * @param t_id The term_id to search for
          * @param d_id The doc_id to search for
-         * @note This function is not const because the cache may be updated
          */
-        uint64_t term_freq(term_id t_id, doc_id d_id);
+        uint64_t term_freq(term_id t_id, doc_id d_id) const;
 
         /**
          * @param d_id The doc id to find containing terms from
          * @return a mapping of term_id -> term occurrence
          */
-        const std::unordered_map<term_id, uint64_t> counts(doc_id d_id);
+        const std::unordered_map<term_id, uint64_t> counts(doc_id d_id) const;
 
         /**
          * @param d_id The doc id to find the class label for

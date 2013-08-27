@@ -11,7 +11,7 @@
 #include "index/chunk.h"
 #include "io/config_reader.h"
 
-#define USE_CACHE false
+#define USE_CACHE true
 
 using std::cerr;
 using std::endl;
@@ -198,11 +198,14 @@ void disk_index::tokenize(document & doc)
     _tokenizer->tokenize(doc);
 }
 
-postings_data<term_id, doc_id> disk_index::search_term(term_id t_id)
+postings_data<term_id, doc_id> disk_index::search_term(term_id t_id) const
 {
 #if USE_CACHE
-    if(_cache.exists(t_id))
-        return _cache.find(t_id);
+    {
+        std::lock_guard<std::mutex> lock{_mutex};
+        if(_cache.exists(t_id))
+            return _cache.find(t_id);
+    }
 #endif
 
     auto it = _term_locations.find(t_id);
@@ -214,13 +217,16 @@ postings_data<term_id, doc_id> disk_index::search_term(term_id t_id)
     postings_data<term_id, doc_id> pdata = search_postings(idx);
 
 #if USE_CACHE
-    _cache.insert(t_id, pdata);
+    {
+        std::lock_guard<std::mutex> lock{_mutex};
+        _cache.insert(t_id, pdata);
+    }
 #endif
 
     return pdata;
 }
 
-postings_data<term_id, doc_id> disk_index::search_postings(uint64_t idx)
+postings_data<term_id, doc_id> disk_index::search_postings(uint64_t idx) const
 {
     uint64_t len = 0;
     char* post = _postings->start();

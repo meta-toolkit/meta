@@ -64,22 +64,20 @@ class inverted_index: public disk_index
         /**
          * @param t_id The term to search for
          * @return the inverse document frequency of a term
-         * @note This function is not const because the cache may be updated
          */
-        uint64_t idf(term_id t_id);
+        uint64_t idf(term_id t_id) const;
 
         /**
          * @param t_id The term_id to search for
          * @param d_id The doc_id to search for
-         * @note This function is not const because the cache may be updated
          */
-        uint64_t term_freq(term_id t_id, doc_id d_id);
+        uint64_t term_freq(term_id t_id, doc_id d_id) const;
 
         /**
          * @param t_id The term id to find containing documents from
          * @return a mapping of doc_id -> term occurrence
          */
-        const std::unordered_map<doc_id, uint64_t> counts(term_id t_id);
+        const std::unordered_map<doc_id, uint64_t> counts(term_id t_id) const;
 
         /**
          * @return the average document length in this index

@@ -45,9 +45,8 @@ class disk_index
         /**
          * @param t_id The term_id to search for
          * @param d_id The doc_id to search for
-         * @note This function is not const because the cache may be updated
          */
-        virtual uint64_t term_freq(term_id t_id, doc_id d_id) = 0;
+        virtual uint64_t term_freq(term_id t_id, doc_id d_id) const = 0;
 
         /**
          * @return the number of documents in this index
@@ -95,7 +94,7 @@ class disk_index
          * function may be called by inverted_index::term_freq or
          * inverted_index::idf.
          */
-        postings_data<term_id, doc_id> search_term(term_id t_id);
+        postings_data<term_id, doc_id> search_term(term_id t_id) const;
 
         /**
          * @param chunk_num The current chunk number of the postings file
@@ -147,7 +146,7 @@ class disk_index
          * PrimaryKey begins
          * @return a postings_data object from the postings file
          */
-        postings_data<term_id, doc_id> search_postings(uint64_t idx);
+        postings_data<term_id, doc_id> search_postings(uint64_t idx) const;
 
         /**
          * Creates the lexicon file (or "dictionary") which has pointers into
@@ -172,7 +171,10 @@ class disk_index
         std::unique_ptr<io::mmap_file> _postings;
 
         /** cache for recently used postings_data */
-        util::splay_cache<term_id, postings_data<term_id, doc_id>> _cache;
+        mutable util::splay_cache<term_id, postings_data<term_id, doc_id>> _cache;
+
+        /** mutex used when the splay is accessed */
+        mutable std::mutex _mutex;
  
     public:
         /**
