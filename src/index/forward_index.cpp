@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <memory>
+#include <unordered_set>
 #include "index/forward_index.h"
 #include "index/chunk.h"
 
@@ -21,11 +22,25 @@ forward_index::forward_index(const std::string & index_name,
     disk_index(index_name, tok)
 {
     create_index(docs, config_file);
+    set_label_ids();
 }
 
 forward_index::forward_index(const std::string & index_name):
     disk_index(index_name)
-{ /* nothing */ }
+{
+    set_label_ids();
+}
+
+void forward_index::set_label_ids()
+{
+    std::unordered_set<class_label> labels;
+    for(auto & p: _labels)
+        labels.insert(p.second);
+
+    size_t i = 0;
+    for(auto & lbl: labels)
+        _label_ids.insert(lbl, i++);
+}
 
 uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
 {
@@ -80,6 +95,11 @@ const std::unordered_map<term_id, uint64_t> forward_index::counts(doc_id d_id) c
     return pdata.counts();
 }
 
+class_label forward_index::class_label_from_id(label_id l_id) const
+{
+    return _label_ids.get_key(l_id);
+}
+
 std::unique_ptr<forward_index> forward_index::load_index(const cpptoml::toml_group & config)
 {
     // if the index hasn't been created yet
@@ -101,6 +121,35 @@ std::unique_ptr<forward_index> forward_index::load_index(const cpptoml::toml_gro
         tokenizers::tokenizer::load_tokenizer(config);
 
     return std::unique_ptr<forward_index>{new forward_index{index_name, docs, tok, "config.toml"}};
+}
+
+std::string forward_index::liblinear_data(doc_id d_id) const
+{
+    postings_data<doc_id, term_id> pdata = search_primary(d_id);
+
+    // output the class label (starting with index 1)
+
+    std::stringstream out;
+    out << (_label_ids.get_value(_labels.at(d_id)) + 1);
+
+    // output each term_id:count (starting with index 1)
+
+    std::vector<std::pair<term_id, uint64_t>> sorted;
+    sorted.reserve(pdata.counts().size());
+    for(auto & p: pdata.counts())
+        sorted.push_back(std::make_pair(p.first + 1, p.second));
+
+    std::sort(sorted.begin(), sorted.end(),
+        [](const std::pair<term_id, uint64_t> & a, const std::pair<term_id, uint64_t> & b) {
+            return a.first < b.first;
+        }
+    );
+
+    for(auto & freq: sorted)
+        out << " " << freq.first << ":" << freq.second;
+
+    out << "\n";
+    return out.str();
 }
 
 }

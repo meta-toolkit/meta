@@ -20,8 +20,7 @@ class_label liblinear_svm::classify(doc_id d_id)
 {
     // create input for liblinear
     std::ofstream out("liblinear-input");
-    // TODO
-    out << d_id; // doc.get_liblinear_data(_mapping);
+    out << _idx->liblinear_data(d_id);
     out.close();
 
     // run liblinear
@@ -34,18 +33,16 @@ class_label liblinear_svm::classify(doc_id d_id)
     std::string str_val;
     std::getline(in, str_val);
     in.close();
-    int value = std::stoul(str_val);
 
-    return _mapping.get_key(value);
+    return _idx->class_label_from_id(std::stoul(str_val));
 }
 
 confusion_matrix liblinear_svm::test(const std::vector<doc_id> & docs)
 {
     // create input for liblinear
     std::ofstream out("liblinear-input");
-    // TODO
     for(auto & d_id: docs)
-        out << d_id; // d.get_liblinear_data(_mapping);
+        out << _idx->liblinear_data(d_id);
     out.close();
 
     // run liblinear
@@ -62,8 +59,10 @@ confusion_matrix liblinear_svm::test(const std::vector<doc_id> & docs)
         // we can assume that the number of lines in the file is equal to the
         // number of testing documents
         std::getline(in, str_val);
-        int value = std::stoul(str_val);
-        matrix.add(_mapping.get_key(value), _idx->label(d_id));
+        int value = std::stoul(str_val) - 1; // get correct start for liblinear
+        class_label predicted = _idx->class_label_from_id(value);
+        class_label actual = _idx->label(d_id);
+        matrix.add(predicted, actual);
     }
     in.close();
 
@@ -73,9 +72,8 @@ confusion_matrix liblinear_svm::test(const std::vector<doc_id> & docs)
 void liblinear_svm::train(const std::vector<doc_id> & docs)
 {
     std::ofstream out("liblinear-train");
-    // TODO
     for(auto & d_id: docs)
-        out << d_id; // d.get_liblinear_data(_mapping);
+        out << _idx->liblinear_data(d_id);
     out.close();
 
     std::string command = _liblinear_path + "/train liblinear-train";
@@ -85,7 +83,7 @@ void liblinear_svm::train(const std::vector<doc_id> & docs)
 
 void liblinear_svm::reset()
 {
-    _mapping.clear();
+    // nothing
 }
 
 }

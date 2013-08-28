@@ -82,13 +82,6 @@ class document
         const std::unordered_map<term_id, uint64_t> & frequencies() const;
  
         /**
-         * Prints tokenizer output in liblinear input format.
-         * @param mapping Keeps track of class labels as integers.
-         * @return
-         */
-        std::string get_liblinear_data(util::invertible_map<class_label, int> & mapping) const;
-
-        /**
          * Removes featuress from a document.
          * @param docs The documents to remove features from
          * @param features A list of features that should remain in the document
@@ -158,13 +151,6 @@ class document
 
         /** counts of how many times each token appears */
         std::unordered_map<term_id, uint64_t> _frequencies;
-
-        /**
-         * @param mapping - an invertible_map of category <-> category id
-         * @param category - the category to find an id for
-         * @return a unique numerical id for the category, creating a new entry if necessary
-         */
-        static int get_mapping(util::invertible_map<std::string, int> & mapping, const std::string & category);
 };
 
 }

@@ -149,8 +149,9 @@ size_t slda::create_input_files(const vector<document> & docs)
 
     for(auto & d: docs)
     {
-        labels << d.get_slda_label_data(_mapping);
-        data << d.get_slda_term_data();
+        // TODO
+        labels << d.path(); // d.get_slda_label_data(_mapping);
+        data << d.path(); // d.get_slda_term_data();
         unique_labels.insert(d.label());
     }
 

@@ -88,44 +88,6 @@ const unordered_map<term_id, uint64_t> & document::frequencies() const
     return _frequencies;
 }
 
-string document::get_liblinear_data(invertible_map<string, int> & mapping) const
-{
-    stringstream out;
-    out << get_mapping(mapping, _label);     // liblinear, classes start at 1
-    vector<pair<term_id, uint64_t>> sorted;
-
-    // liblinear feature indices start at 1, not 0 like the tokenizers
-    for(auto & freq: _frequencies)
-        sorted.push_back(make_pair(freq.first + 1, freq.second));
-
-    std::sort(sorted.begin(), sorted.end(),
-        [](const pair<term_id, uint64_t> & a, const pair<term_id, uint64_t> & b) {
-            return a.first < b.first;
-        }
-    );
-
-    for(auto & freq: sorted)
-        out << " " << freq.first << ":" << freq.second;
-
-    out << "\n";
-    return out.str();
-}
-
-int document::get_mapping(invertible_map<string, int> & mapping, const class_label & category)
-{
-    // see if entered already
-    if(mapping.contains_key(category))
-        return mapping.get_value(category);
-
-    // otherwise, inefficiently create new entry (starting at 1)
-    int newVal = 1;
-    while(mapping.contains_value(newVal))
-        ++newVal;
-
-    mapping.insert(category, newVal);
-    return newVal;
-}
-
 double document::cosine_similarity(const document & a, const document & b)
 {
     return clustering::similarity::cosine_similarity(a._frequencies, b._frequencies);
@@ -160,22 +122,6 @@ vector<document> document::load_docs(const string & filename, const string & pre
     }
     infile.close();
     return docs;
-}
-
-string document::get_slda_term_data() const
-{
-    stringstream out;
-    out << _frequencies.size();
-    for(auto & f: _frequencies)
-        out << " " << f.first << ":" << f.second;
-    out << "\n";
-    return out.str();
-}
-
-string document::get_slda_label_data(invertible_map<class_label, int> & mapping) const
-{
-    // minus one because slda classes start at 0
-    return common::to_string(get_mapping(mapping, _label) - 1) + "\n";
 }
 
 document document::filter_features(const document & doc,

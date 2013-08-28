@@ -37,19 +37,19 @@ int main(int argc, char* argv[])
     auto config = common::read_config(argv[1]);
     std::unique_ptr<index::forward_index> idx = index::forward_index::load_index(config);
 
-    //classify::liblinear_svm svm{ idx, *cpptoml::get_as<std::string>( config, "liblinear" ) };
-    //auto m1 = cv(idx, svm);
+    classify::liblinear_svm svm{ idx, *cpptoml::get_as<std::string>( config, "liblinear" ) };
+    auto m1 = cv(idx, svm);
 
     classify::linear_svm l2svm{idx};
     auto m2 = cv(idx, l2svm);
- // std::cout << "(liblinear vs l2svm) Significant? " << std::boolalpha
- //           << classify::confusion_matrix::mcnemar_significant( m1, m2 )
- //           << std::endl;
+    std::cout << "(liblinear vs l2svm) Significant? " << std::boolalpha
+              << classify::confusion_matrix::mcnemar_significant( m1, m2 )
+              << std::endl;
 
     classify::linear_svm l1svm{ idx, classify::linear_svm::loss_function::L1 };
     auto m3 = cv(idx, l1svm);
     std::cout << "(liblinear vs l1svm) Significant? " << std::boolalpha
-              << classify::confusion_matrix::mcnemar_significant( m2, m3 )
+              << classify::confusion_matrix::mcnemar_significant( m1, m3 )
               << std::endl;
 
  // classify::perceptron p{idx};

@@ -35,6 +35,11 @@ namespace meta
     typedef uint64_t doc_id;
 
     /**
+     * Numbering system for class label ids.
+     */
+    typedef uint32_t label_id;
+
+    /**
      * Algorithms for feature selection, KNN search, and confusion
      * matrices.
      */

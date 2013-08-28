@@ -13,6 +13,7 @@
 #include <vector>
 #include <memory>
 #include "index/disk_index.h"
+#include "util/invertible_map.h"
 #include "meta.h"
 
 namespace meta {
@@ -77,6 +78,18 @@ class forward_index: public disk_index<doc_id, term_id>
          */
         static std::unique_ptr<forward_index> load_index(const cpptoml::toml_group & config);
 
+        /**
+         * @param d_id The document id of the doc to convert to liblinear format
+         * @return the string representation liblinear format
+         */
+        std::string liblinear_data(doc_id d_id) const;
+
+        /**
+         * @param l_id The id of the class label in question
+         * @return the integer label id of a document
+         */
+        class_label class_label_from_id(label_id l_id) const;
+
     protected:
         /**
          * @param docs The documents to add to the inverted index
@@ -84,8 +97,18 @@ class forward_index: public disk_index<doc_id, term_id>
         uint32_t tokenize_docs(std::vector<document> & docs);
 
     private:
+        /**
+         * Initializes the _label_ids member.
+         */
+        void set_label_ids();
+
         /** maps which class a document belongs to (if any) */
         std::unordered_map<doc_id, class_label> _labels;
+
+        /** assigns an integer to each class label (used for liblinear and slda
+         * mappings) */
+        util::invertible_map<class_label, label_id> _label_ids;
+
 };
 
 }
