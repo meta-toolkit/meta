@@ -75,15 +75,9 @@ class_label forward_index::label(doc_id d_id) const
     return common::safe_at(_labels, d_id);
 }
 
-uint64_t forward_index::term_freq(term_id t_id, doc_id d_id) const
-{
-    postings_data<doc_id, term_id> pdata = search_term(d_id);
-    return pdata.count(t_id);
-}
-
 const std::unordered_map<term_id, uint64_t> forward_index::counts(doc_id d_id) const
 {
-    postings_data<doc_id, term_id> pdata = search_term(d_id);
+    postings_data<doc_id, term_id> pdata = search_primary(d_id);
     return pdata.counts();
 }
 

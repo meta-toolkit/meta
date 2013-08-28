@@ -26,6 +26,7 @@ namespace index {
  * Contains functionality common to inverted_index and forward_index; mainly,
  * creating chunks and merging them together and storing various mappings.
  */
+template <class PrimaryKey, class SecondaryKey>
 class disk_index
 {
     public:
@@ -43,10 +44,9 @@ class disk_index
         disk_index(const std::string & index_path);
 
         /**
-         * @param t_id The term_id to search for
-         * @param d_id The doc_id to search for
+         * Default destructor.
          */
-        virtual uint64_t term_freq(term_id t_id, doc_id d_id) const = 0;
+        virtual ~disk_index() = default;
 
         /**
          * @return the number of documents in this index
@@ -80,7 +80,7 @@ class disk_index
         /**
          * This function initializes the disk index. It cannot be part of the
          * constructor since dynamic binding doesn't work in a base class's
-         * consturctor. Therefore, deriving classes must call this function in
+         * constructor. Therefore, deriving classes must call this function in
          * their constructor.
          * @param docs The documents to tokenize
          * @param config_file The configuration file used to create the
@@ -88,20 +88,20 @@ class disk_index
         void create_index(std::vector<document> & docs, const std::string & config_file);
 
         /**
-         * @param t_id The term_id to search for
-         * @return the postings data for a given term_id
-         * A cache is first searched before the postings file is queried.  This
-         * function may be called by inverted_index::term_freq or
-         * inverted_index::idf.
+         * @param p_id The PrimaryKey id to search for
+         * @return the postings data for a given PrimaryKey
+         * A cache is first searched before the postings file is queried.
          */
-        postings_data<term_id, doc_id> search_term(term_id t_id) const;
+        postings_data<PrimaryKey, SecondaryKey> search_primary(PrimaryKey p_id) const;
 
         /**
          * @param chunk_num The current chunk number of the postings file
          * @param pdata A collection of postings data to write to the chunk
          */
         void write_chunk(uint32_t chunk_num,
-                         std::unordered_map<term_id, postings_data<term_id, doc_id>> & pdata);
+                         std::unordered_map<PrimaryKey,
+                                            postings_data<PrimaryKey, SecondaryKey>
+                                           > & pdata);
 
         /**
          * @param docs The documents to add to the inverted index
@@ -146,7 +146,7 @@ class disk_index
          * PrimaryKey begins
          * @return a postings_data object from the postings file
          */
-        postings_data<term_id, doc_id> search_postings(uint64_t idx) const;
+        postings_data<PrimaryKey, SecondaryKey> search_postings(uint64_t idx) const;
 
         /**
          * Creates the lexicon file (or "dictionary") which has pointers into
@@ -171,9 +171,9 @@ class disk_index
         std::unique_ptr<io::mmap_file> _postings;
 
         /** cache for recently used postings_data */
-        mutable util::splay_cache<term_id, postings_data<term_id, doc_id>> _cache;
+        mutable util::splay_cache<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>> _cache;
 
-        /** mutex used when the splay is accessed */
+        /** mutex used when the cache is accessed */
         mutable std::mutex _mutex;
  
     public:
@@ -200,4 +200,5 @@ class disk_index
 }
 }
 
+#include "index/disk_index.tcc"
 #endif

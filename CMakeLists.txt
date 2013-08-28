@@ -40,7 +40,6 @@ add_library( meta-index
              src/index/chunk.cpp
              src/index/inverted_index.cpp
              src/index/forward_index.cpp
-             src/index/disk_index.cpp
              src/index/okapi_bm25.cpp
 )
 

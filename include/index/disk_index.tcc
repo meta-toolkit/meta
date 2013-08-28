@@ -19,14 +19,16 @@ using std::endl;
 namespace meta {
 namespace index {
 
-disk_index::disk_index(const std::string & index_name,
-                               std::shared_ptr<tokenizers::tokenizer> & tok):
+template <class PrimaryKey, class SecondaryKey>
+disk_index<PrimaryKey, SecondaryKey>::disk_index(const std::string & index_name,
+                                                 std::shared_ptr<tokenizers::tokenizer> & tok):
     _tokenizer(tok),
     _index_name(index_name),
-    _cache(util::splay_cache<term_id, postings_data<term_id, doc_id>>{10})
+    _cache(util::splay_cache<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>>{10})
 { /* nothing */ }
 
-void disk_index::create_index(std::vector<document> & docs,
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::create_index(std::vector<document> & docs,
                               const std::string & config_file)
 {
     if(mkdir(_index_name.c_str(), 0755) == -1)
@@ -49,9 +51,10 @@ void disk_index::create_index(std::vector<document> & docs,
     dest_config << source_config.rdbuf();
 }
 
+template <class PrimaryKey, class SecondaryKey>
 template <class Key, class Value>
-void disk_index::save_mapping(const std::unordered_map<Key, Value> & map,
-                                  const std::string & filename) const
+void disk_index<PrimaryKey, SecondaryKey>::save_mapping(const std::unordered_map<Key, Value> & map,
+                                                        const std::string & filename) const
 {
     std::ofstream outfile{filename};
     for(auto & p: map)
@@ -59,10 +62,11 @@ void disk_index::save_mapping(const std::unordered_map<Key, Value> & map,
     outfile.close();
 }
 
-void disk_index::write_chunk(uint32_t chunk_num,
-                                 std::unordered_map<term_id, postings_data<term_id, doc_id>> & pdata)
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::write_chunk(uint32_t chunk_num,
+                                 std::unordered_map<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>> & pdata)
 {
-    std::vector<std::pair<term_id, postings_data<term_id, doc_id>>> sorted{pdata.begin(), pdata.end()};
+    std::vector<std::pair<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>>> sorted{pdata.begin(), pdata.end()};
     std::sort(sorted.begin(), sorted.end());
 
     std::ofstream outfile{"chunk-" + common::to_string(chunk_num)};
@@ -73,7 +77,8 @@ void disk_index::write_chunk(uint32_t chunk_num,
     pdata.clear();
 }
 
-void disk_index::merge_chunks(uint32_t num_chunks, const std::string & filename)
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(uint32_t num_chunks, const std::string & filename)
 {
     // create priority queue of all chunks based on size
     std::priority_queue<chunk> chunks;
@@ -116,12 +121,13 @@ void disk_index::merge_chunks(uint32_t num_chunks, const std::string & filename)
          << " (" << size << " " << units << ")" << endl;
 }
 
-void disk_index::create_lexicon(const std::string & postings_file,
-                                    const std::string & lexicon_file)
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::create_lexicon(const std::string & postings_file,
+                                                          const std::string & lexicon_file)
 {
     io::mmap_file pfile{postings_file};
     char* postings = pfile.start();
-    term_id cur_id = 1;
+    PrimaryKey cur_id = 1;
     _term_locations[0] = 0;
     uint64_t idx = 0;
     while(idx < pfile.size() - 1)
@@ -133,9 +139,10 @@ void disk_index::create_lexicon(const std::string & postings_file,
     save_mapping(_term_locations, lexicon_file);
 }
 
-disk_index::disk_index(const std::string & index_path):
+template <class PrimaryKey, class SecondaryKey>
+disk_index<PrimaryKey, SecondaryKey>::disk_index(const std::string & index_path):
     _index_name(index_path),
-    _cache(util::splay_cache<term_id, postings_data<term_id, doc_id>>{10})
+    _cache(util::splay_cache<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>>{10})
 {
     load_mapping(_doc_id_mapping, index_path + "/docids.mapping");
     load_mapping(_doc_sizes, index_path + "/docsizes.counts");
@@ -150,9 +157,10 @@ disk_index::disk_index(const std::string & index_path):
     _tokenizer->set_term_id_mapping(index_path + "/termids.mapping");
 }
 
+template <class PrimaryKey, class SecondaryKey>
 template <class Key, class Value>
-void disk_index::load_mapping(std::unordered_map<Key, Value> & map,
-                                  const std::string & filename)
+void disk_index<PrimaryKey, SecondaryKey>::load_mapping(std::unordered_map<Key, Value> & map,
+                                                        const std::string & filename)
 {
     std::ifstream input{filename};
     while(input.good())
@@ -166,7 +174,8 @@ void disk_index::load_mapping(std::unordered_map<Key, Value> & map,
     input.close();
 }
 
-uint64_t disk_index::doc_size(doc_id d_id) const
+template <class PrimaryKey, class SecondaryKey>
+uint64_t disk_index<PrimaryKey, SecondaryKey>::doc_size(doc_id d_id) const
 {
     auto it = _doc_sizes.find(d_id);
     if(it == _doc_sizes.end())
@@ -174,17 +183,20 @@ uint64_t disk_index::doc_size(doc_id d_id) const
     return it->second;
 }
 
-uint64_t disk_index::num_docs() const
+template <class PrimaryKey, class SecondaryKey>
+uint64_t disk_index<PrimaryKey, SecondaryKey>::num_docs() const
 {
     return _doc_sizes.size();
 }
 
-std::string disk_index::doc_name(doc_id d_id) const
+template <class PrimaryKey, class SecondaryKey>
+std::string disk_index<PrimaryKey, SecondaryKey>::doc_name(doc_id d_id) const
 {
     return common::safe_at(_doc_id_mapping, d_id);
 }
 
-std::vector<doc_id> disk_index::docs() const
+template <class PrimaryKey, class SecondaryKey>
+std::vector<doc_id> disk_index<PrimaryKey, SecondaryKey>::docs() const
 {
     std::vector<doc_id> ret;
     ret.reserve(_doc_id_mapping.size());
@@ -193,12 +205,15 @@ std::vector<doc_id> disk_index::docs() const
     return ret;
 }
 
-void disk_index::tokenize(document & doc)
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::tokenize(document & doc)
 {
     _tokenizer->tokenize(doc);
 }
 
-postings_data<term_id, doc_id> disk_index::search_term(term_id t_id) const
+template <class PrimaryKey, class SecondaryKey>
+postings_data<PrimaryKey, SecondaryKey>
+disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey t_id) const
 {
 #if USE_CACHE
     {
@@ -211,10 +226,10 @@ postings_data<term_id, doc_id> disk_index::search_term(term_id t_id) const
     auto it = _term_locations.find(t_id);
     // if the term doesn't exist in the index, return an empty postings_data
     if(it == _term_locations.end())
-        return postings_data<term_id, doc_id>{t_id};
+        return postings_data<PrimaryKey, SecondaryKey>{t_id};
 
     uint64_t idx = it->second;
-    postings_data<term_id, doc_id> pdata = search_postings(idx);
+    postings_data<PrimaryKey, SecondaryKey> pdata = search_postings(idx);
 
 #if USE_CACHE
     {
@@ -226,7 +241,9 @@ postings_data<term_id, doc_id> disk_index::search_term(term_id t_id) const
     return pdata;
 }
 
-postings_data<term_id, doc_id> disk_index::search_postings(uint64_t idx) const
+template <class PrimaryKey, class SecondaryKey>
+postings_data<PrimaryKey, SecondaryKey>
+disk_index<PrimaryKey, SecondaryKey>::search_postings(uint64_t idx) const
 {
     uint64_t len = 0;
     char* post = _postings->start();
@@ -235,7 +252,7 @@ postings_data<term_id, doc_id> disk_index::search_postings(uint64_t idx) const
         ++len;
 
     std::string raw{post + idx, len};
-    return postings_data<term_id, doc_id>{raw};
+    return postings_data<PrimaryKey, SecondaryKey>{raw};
 }
 
 }

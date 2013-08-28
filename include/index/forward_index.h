@@ -19,7 +19,9 @@ namespace meta {
 namespace index {
 
 /**
- * stuff
+ * The forward_index stores information on a corpus by doc_ids.  Each doc_id key
+ * is associated with a distribution of term_ids or term "counts" that occur in
+ * that particular document.
  *
  * A forward index consists of the following five files:
  *  - termids.mapping: maps term_id -> string information
@@ -31,7 +33,7 @@ namespace index {
  *  - docsizes.counts: maps doc_id -> number of terms
  *  - config.toml: saves the tokenizer configuration
  */
-class forward_index: public disk_index
+class forward_index: public disk_index<doc_id, term_id>
 {
     public:
         /**
@@ -52,10 +54,9 @@ class forward_index: public disk_index
         forward_index(const std::string & index_path);
 
         /**
-         * @param t_id The term_id to search for
-         * @param d_id The doc_id to search for
+         * Default destructor.
          */
-        uint64_t term_freq(term_id t_id, doc_id d_id) const;
+        virtual ~forward_index() = default;
 
         /**
          * @param d_id The doc id to find containing terms from

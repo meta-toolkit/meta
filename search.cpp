@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
 
-    for(size_t i = 0; i < 100; ++i)
+    for(size_t i = 0; i < 100 && i < docs.size(); ++i)
     {
         index::document query{docs[i]};
         std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);

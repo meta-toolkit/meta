@@ -41,7 +41,7 @@ namespace index {
  *  - docsizes.counts: maps doc_id -> number of terms
  *  - config.toml: saves the tokenizer configuration
  */
-class inverted_index: public disk_index
+class inverted_index: public disk_index<term_id, doc_id>
 {
     public:
         /**
@@ -60,6 +60,11 @@ class inverted_index: public disk_index
          * @param index_path The directory containing an already-created index
          */
         inverted_index(const std::string & index_path);
+
+        /**
+         * Default destructor.
+         */
+        virtual ~inverted_index() = default;
 
         /**
          * @param t_id The term to search for
