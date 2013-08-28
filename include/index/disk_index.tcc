@@ -9,7 +9,7 @@
 #include <iostream>
 #include "index/disk_index.h"
 #include "index/chunk.h"
-#include "io/config_reader.h"
+#include "util/common.h"
 
 #define USE_CACHE true
 
@@ -152,7 +152,7 @@ disk_index<PrimaryKey, SecondaryKey>::disk_index(const std::string & index_path)
         new io::mmap_file{index_path + "/postings.index"}
     };
 
-    auto config = io::config_reader::read(index_path + "/config.toml");
+    auto config = common::read_config(index_path + "/config.toml");
     _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
     _tokenizer->set_term_id_mapping(index_path + "/termids.mapping");
 }

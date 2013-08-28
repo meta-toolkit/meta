@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include "index/forward_index.h"
-#include "io/config_reader.h"
+#include "util/common.h"
 #include "util/invertible_map.h"
 #include "classify/classifier/all.h"
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto config = io::config_reader::read(argv[1]);
+    auto config = common::read_config(argv[1]);
     std::unique_ptr<index::forward_index> idx = index::forward_index::load_index(config);
 
     //classify::liblinear_svm svm{ idx, *cpptoml::get_as<std::string>( config, "liblinear" ) };

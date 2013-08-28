@@ -12,6 +12,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include "cpptoml.h"
 
 namespace meta {
 
@@ -68,6 +69,14 @@ namespace common
      * @param prefix The text to show before the percentage
      */
     inline void end_progress(const std::string & prefix);
+
+    /**
+     * This function should be deprecated when similar functionality is
+     * introduced to cpptoml.
+     * @param path The path to the toml file to parse
+     * @return a cpptoml object representing the parsed file
+     */
+    inline cpptoml::toml_group read_config(const std::string & path);
 
     /**
      * This safe_at allows the use of a hash function to be specified.

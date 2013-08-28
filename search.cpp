@@ -7,7 +7,7 @@
 #include <string>
 #include <iostream>
 
-#include "io/config_reader.h"
+#include "util/common.h"
 #include "tokenizers/tokenizer.h"
 #include "index/document.h"
 #include "index/inverted_index.h"
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     }
 
 
-    auto config = io::config_reader::read(argv[1]);
+    auto config = common::read_config(argv[1]);
     std::string prefix = *cpptoml::get_as<std::string>(config, "prefix")
         + *cpptoml::get_as<std::string>(config, "dataset");
     std::string corpus_file = prefix 

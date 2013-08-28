@@ -6,7 +6,6 @@
 #include <iostream>
 #include "index/inverted_index.h"
 #include "index/chunk.h"
-#include "io/config_reader.h"
 
 using std::cerr;
 using std::endl;

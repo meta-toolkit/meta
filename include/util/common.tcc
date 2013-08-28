@@ -28,6 +28,15 @@ void common::end_progress(const std::string & prefix)
     std::cerr << prefix << "100%         " << std::endl;
 }
 
+cpptoml::toml_group common::read_config(const std::string & path)
+{
+    std::ifstream file{path};
+    if(!file.is_open())
+        throw "Error: config file couldn't be opened";
+    cpptoml::parser p{file};
+    return p.parse();
+}
+
 template <class Key, class Value, class Hash>
 Value common::safe_at(const std::unordered_map<Key, Value, Hash> & map, const Key & key)
 {

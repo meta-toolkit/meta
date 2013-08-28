@@ -3,7 +3,7 @@
  */
 
 #include "tokenizers/ngram/ngram_word_tokenizer.h"
-#include "io/config_reader.h"
+#include "util/common.h"
 #include "io/parser.h"
 
 namespace meta {
@@ -61,7 +61,7 @@ void ngram_word_tokenizer<Stemmer>::tokenize_document(index::document & document
 template <class Stemmer>
 void ngram_word_tokenizer<Stemmer>::init_stopwords()
 {
-    auto config = io::config_reader::read("config.toml");
+    auto config = common::read_config("config.toml");
     meta::io::parser p{ *cpptoml::get_as<std::string>( config, "stop-words" ), "\n" };
     while(p.has_next())
         _stopwords.insert(stem(p.next()));
