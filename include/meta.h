@@ -51,8 +51,7 @@ namespace meta
     namespace clustering {}
 
     /**
-     * Two types of indices (RAMIndex, InvertedIndex) and associated
-     * classes.
+     * Indexes to create efficient representations of data.
      */
     namespace index {}
 

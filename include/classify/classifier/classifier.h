@@ -26,7 +26,7 @@ class classifier
         /**
          * @param idx The index to run the classifier on
          */
-        classifier(std::unique_ptr<index::forward_index> & idx);
+        classifier(index::forward_index & idx);
 
         /**
          * Classifies a document into a specific group, as determined by
@@ -70,7 +70,7 @@ class classifier
     protected:
 
         /** the index that the classifer is run on */
-        std::unique_ptr<index::forward_index> & _idx;
+        index::forward_index & _idx;
 };
 
 }

@@ -13,19 +13,9 @@ using std::endl;
 namespace meta {
 namespace index {
 
-inverted_index::inverted_index(const std::string & index_name,
-                               std::vector<document> & docs,
-                               std::shared_ptr<tokenizers::tokenizer> & tok,
-                               const std::string & config_file):
-    disk_index(index_name, tok),
-    _avg_dl(-1.0)
-{
-    create_index(docs, config_file);
-}
-
-inverted_index::inverted_index(const std::string & index_name):
-    disk_index(index_name),
-    _avg_dl(-1.0)
+inverted_index::inverted_index(const cpptoml::toml_group & config):
+    disk_index{config, *cpptoml::get_as<std::string>(config, "inverted-index")},
+    _avg_dl{-1.0}
 { /* nothing */ }
 
 uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
@@ -38,7 +28,7 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
     {
         common::show_progress(doc_num, docs.size(), 20, progress);
         _tokenizer->tokenize(doc);
-        _doc_id_mapping[doc_num] = doc.name();
+        _doc_id_mapping[doc_num] = doc.path();
         _doc_sizes[doc_num] = doc.length();
 
         for(auto & f: doc.frequencies())

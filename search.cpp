@@ -26,29 +26,16 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-
-    auto config = common::read_config(argv[1]);
-    std::string prefix = *cpptoml::get_as<std::string>(config, "prefix")
-        + *cpptoml::get_as<std::string>(config, "dataset");
-    std::string corpus_file = prefix 
-        + "/" 
-        + *cpptoml::get_as<std::string>(config, "list")
-        + "-full-corpus.txt";
-
-    std::vector<index::document> docs = index::document::load_docs(corpus_file, prefix);
-
-    std::shared_ptr<tokenizers::tokenizer> tok = tokenizers::tokenizer::load_tokenizer(config);
-
-    //index::inverted_index idx{"my-index"};
-    index::inverted_index idx{"my-index", docs, tok, argv[1]};
+    auto idx = index::make_index<index::inverted_index>(argv[1]);
     index::okapi_bm25 ranker;
 
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
 
-    for(size_t i = 0; i < 100 && i < docs.size(); ++i)
+    for(size_t i = 0; i < 100 && i < idx.num_docs(); ++i)
     {
-        index::document query{docs[i]};
+        auto d_id = idx.docs()[i];
+        index::document query{idx.doc_path(d_id)};
         std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);
         cout << "Query " << i << ": " << query.path() << endl;
 

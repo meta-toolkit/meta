@@ -39,7 +39,7 @@ class linear_svm : public classifier {
          * @param epsilon The termination criteria (default: 0.1)
          * @param max_iter The maximum allowed iterations in the solver.
          */
-        linear_svm(std::unique_ptr<index::forward_index> & idx, 
+        linear_svm(index::forward_index & idx, 
                    loss_function loss = loss_function::L2, 
                    double cost = 1.0, 
                    double epsilon = 0.1, 

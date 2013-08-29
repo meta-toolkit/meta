@@ -16,10 +16,10 @@ using std::cerr;
 using std::endl;
 using namespace meta;
 
-classify::confusion_matrix cv(const std::unique_ptr<index::forward_index> & idx,
+classify::confusion_matrix cv(index::forward_index & idx,
                               classify::classifier & c)
 {
-    std::vector<doc_id> docs = idx->docs();
+    std::vector<doc_id> docs = idx.docs();
     classify::confusion_matrix matrix = c.cross_validate(docs, 5);
     matrix.print();
     matrix.print_stats();
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     }
 
     auto config = common::read_config(argv[1]);
-    std::unique_ptr<index::forward_index> idx = index::forward_index::load_index(config);
+    auto idx = index::make_index<index::forward_index>(argv[1]);
 
     classify::liblinear_svm svm{ idx, *cpptoml::get_as<std::string>( config, "liblinear" ) };
     auto m1 = cv(idx, svm);

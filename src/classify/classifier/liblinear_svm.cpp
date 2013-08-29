@@ -10,7 +10,7 @@
 namespace meta {
 namespace classify {
 
-liblinear_svm::liblinear_svm(std::unique_ptr<index::forward_index> & idx,
+liblinear_svm::liblinear_svm(index::forward_index & idx,
                              const std::string & liblinear_path):
     classifier{idx},
     _liblinear_path{liblinear_path}
@@ -20,7 +20,7 @@ class_label liblinear_svm::classify(doc_id d_id)
 {
     // create input for liblinear
     std::ofstream out("liblinear-input");
-    out << _idx->liblinear_data(d_id);
+    out << _idx.liblinear_data(d_id);
     out.close();
 
     // run liblinear
@@ -34,7 +34,7 @@ class_label liblinear_svm::classify(doc_id d_id)
     std::getline(in, str_val);
     in.close();
 
-    return _idx->class_label_from_id(std::stoul(str_val));
+    return _idx.class_label_from_id(std::stoul(str_val));
 }
 
 confusion_matrix liblinear_svm::test(const std::vector<doc_id> & docs)
@@ -42,7 +42,7 @@ confusion_matrix liblinear_svm::test(const std::vector<doc_id> & docs)
     // create input for liblinear
     std::ofstream out("liblinear-input");
     for(auto & d_id: docs)
-        out << _idx->liblinear_data(d_id);
+        out << _idx.liblinear_data(d_id);
     out.close();
 
     // run liblinear
@@ -60,8 +60,8 @@ confusion_matrix liblinear_svm::test(const std::vector<doc_id> & docs)
         // number of testing documents
         std::getline(in, str_val);
         int value = std::stoul(str_val) - 1; // get correct start for liblinear
-        class_label predicted = _idx->class_label_from_id(value);
-        class_label actual = _idx->label(d_id);
+        class_label predicted = _idx.class_label_from_id(value);
+        class_label actual = _idx.label(d_id);
         matrix.add(predicted, actual);
     }
     in.close();
@@ -73,7 +73,7 @@ void liblinear_svm::train(const std::vector<doc_id> & docs)
 {
     std::ofstream out("liblinear-train");
     for(auto & d_id: docs)
-        out << _idx->liblinear_data(d_id);
+        out << _idx.liblinear_data(d_id);
     out.close();
 
     std::string command = _liblinear_path + "/train liblinear-train";

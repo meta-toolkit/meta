@@ -43,23 +43,35 @@ namespace index {
  */
 class inverted_index: public disk_index<term_id, doc_id>
 {
+    protected:
+        /**
+         * @param config The toml_group that specifies how to create the
+         * index.
+         */
+        inverted_index(const cpptoml::toml_group & config);
+
     public:
         /**
-         * @param index_name The name for this inverted index to be saved as
-         * @param docs The untokenized documents to add to the index
-         * @param tok The tokenizer to use to tokenize the documents
-         * @param config_file The configuration file used to create the
-         * tokenizer
+         * Move constructs an inverted index.
+         * @param other The inverted_index to move into this one.
          */
-        inverted_index(const std::string & index_name,
-                       std::vector<document> & docs,
-                       std::shared_ptr<tokenizers::tokenizer> & tok,
-                       const std::string & config_file);
+        inverted_index(inverted_index && other) = default;
 
         /**
-         * @param index_path The directory containing an already-created index
+         * Move assigns an inverted_index.
+         * @param other The inverted_index to move into this one.
          */
-        inverted_index(const std::string & index_path);
+        inverted_index & operator=(inverted_index && other) = default;
+
+        /**
+         * inverted_index may not be copy-constructed.
+         */
+        inverted_index(const inverted_index &) = delete;
+
+        /**
+         * inverted_index may not be copy-assigned.
+         */
+        inverted_index & operator=(const inverted_index &) = delete;
 
         /**
          * Default destructor.
@@ -89,6 +101,12 @@ class inverted_index: public disk_index<term_id, doc_id>
          */
         double avg_doc_length();
 
+        /**
+         * inverted_index is a friend of the factory method used to create
+         * it.
+         */
+        friend inverted_index make_index<inverted_index>(const std::string &);
+
     protected:
         /**
          * @param docs The documents to add to the inverted index
@@ -98,7 +116,10 @@ class inverted_index: public disk_index<term_id, doc_id>
     private:
         /** average document length in the inverted_index */
         double _avg_dl;
+
 };
+
+
 
 }
 }

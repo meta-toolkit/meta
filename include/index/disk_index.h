@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <mutex>
 #include "util/splay_cache.h"
 #include "tokenizers/tokenizers.h"
 #include "index/document.h"
@@ -29,20 +30,38 @@ namespace index {
 template <class PrimaryKey, class SecondaryKey>
 class disk_index
 {
+    protected:
+        /**
+         * @param config The toml_group that specifies how to create the
+         * index.
+         * @param index_path The location to store the index on disk.
+         */
+        disk_index(const cpptoml::toml_group & config,
+                   const std::string & index_path);
+
+        /**
+         * Move constructs a disk_index.
+         * @param other The disk_index to move into this one.
+         */
+        disk_index(disk_index && other) = default;
+
+        /**
+         * Move assigns a disk_index.
+         * @param other The disk_index to move into this one.
+         */
+        disk_index & operator=(disk_index && other) = default;
+
+        /**
+         * disk_index may not be copy-constructed.
+         */
+        disk_index(const disk_index &) = delete;
+
+        /**
+         * disk_index may not be copy-assigned.
+         */
+        disk_index & operator=(const disk_index &) = delete;
+
     public:
-        /**
-         * @param index_name The name for this index to be saved as
-         * @param tok The tokenizer to use to tokenize the documents
-         * tokenizer
-         */
-        disk_index(const std::string & index_name,
-                   std::shared_ptr<tokenizers::tokenizer> & tok);
-
-        /**
-         * @param index_path The directory containing an already-created index
-         */
-        disk_index(const std::string & index_path);
-
         /**
          * Default destructor.
          */
@@ -58,6 +77,12 @@ class disk_index
          * @return the actual name of this document
          */
         std::string doc_name(doc_id d_id) const;
+
+        /**
+         * @param doc_id
+         * @return the path to the file containing this document
+         */
+        std::string doc_path(doc_id d_id) const;
 
         /**
          * @return a vector of doc_ids that are contained in this index
@@ -80,12 +105,17 @@ class disk_index
         /**
          * This function initializes the disk index. It cannot be part of the
          * constructor since dynamic binding doesn't work in a base class's
-         * constructor. Therefore, deriving classes must call this function in
-         * their constructor.
+         * constructor, so it is invoked from a factory method.
          * @param docs The documents to tokenize
          * @param config_file The configuration file used to create the
          */
         void create_index(std::vector<document> & docs, const std::string & config_file);
+
+        /**
+         * This function loads a disk index from its filesystem
+         * representation.
+         */
+        void load_index();
 
         /**
          * @param p_id The PrimaryKey id to search for
@@ -108,15 +138,15 @@ class disk_index
          */
         virtual uint32_t tokenize_docs(std::vector<document> & docs) = 0;
   
-        /** doc_id -> document name mapping */
+        /** doc_id -> document path mapping */
         std::unordered_map<doc_id, std::string> _doc_id_mapping;
 
         /** doc_id -> document length mapping */
         std::unordered_map<doc_id, uint64_t> _doc_sizes;
 
         /** the tokenizer used to tokenize documents in the index */
-        std::shared_ptr<tokenizers::tokenizer> _tokenizer;
-
+        std::unique_ptr<tokenizers::tokenizer> _tokenizer;
+        
     private:
         /**
          * @param num_chunks The total number of chunks to merge together to
@@ -174,7 +204,7 @@ class disk_index
         mutable util::splay_cache<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>> _cache;
 
         /** mutex used when the cache is accessed */
-        mutable std::mutex _mutex;
+        mutable std::unique_ptr<std::mutex> _mutex;
  
     public:
         /**
@@ -195,6 +225,21 @@ class disk_index
             private:
                 std::string _error;
         };
+
+        /**
+         * Factory method for creating indexes.
+         * Usage: 
+         * 
+         * ~~~cpp
+         * auto idx = index::make_index<derived_index_type>(config_path);
+         * ~~~
+         *
+         * @param config_file The path to the configuration file to be
+         * used to build the index
+         * @return A properly initialized index
+         */
+        template <class Index>
+        friend Index make_index(const std::string & config_file);
 };
 
 }

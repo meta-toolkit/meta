@@ -31,7 +31,7 @@ class naive_bayes: public classifier
          * @param alpha Optional smoothing parameter for term frequencies
          * @param beta Optional smoothing parameter for class frequencies
          */
-        naive_bayes(std::unique_ptr<index::forward_index> & idx,
+        naive_bayes(index::forward_index & idx,
                     double alpha = 0.1, double beta = 0.1);
 
         /**

@@ -19,21 +19,46 @@ using std::endl;
 namespace meta {
 namespace index {
 
+template <class Index>
+Index make_index(const std::string & config_file)
+{
+    auto config = common::read_config(config_file);
+    Index idx{config};
+    if(mkdir(idx._index_name.c_str(), 0755) == -1) 
+    {
+        // index has already been made, load it
+        idx.load_index();
+    }
+    else
+    {
+        // otherwise, create a new one
+        std::string prefix = *cpptoml::get_as<std::string>(config, "prefix")
+            + *cpptoml::get_as<std::string>(config, "dataset");
+        std::string corpus_file = prefix 
+            + "/" 
+            + *cpptoml::get_as<std::string>(config, "list")
+            + "-full-corpus.txt";
+
+        auto docs = index::document::load_docs(corpus_file, prefix);
+        idx.create_index(docs, config_file);
+    }
+    return idx;
+}
+
 template <class PrimaryKey, class SecondaryKey>
-disk_index<PrimaryKey, SecondaryKey>::disk_index(const std::string & index_name,
-                                                 std::shared_ptr<tokenizers::tokenizer> & tok):
-    _tokenizer(tok),
-    _index_name(index_name),
-    _cache(util::splay_cache<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>>{10})
+disk_index<PrimaryKey, SecondaryKey>::disk_index(
+        const cpptoml::toml_group & config,
+        const std::string & index_path):
+    _tokenizer{ tokenizers::tokenizer::load_tokenizer(config) },
+    _index_name{ index_path },
+    _cache{10}, 
+    _mutex{ new std::mutex() }
 { /* nothing */ }
 
 template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::create_index(std::vector<document> & docs,
                               const std::string & config_file)
 {
-    if(mkdir(_index_name.c_str(), 0755) == -1)
-        throw disk_index_exception{"directory already exists"};
-
     uint32_t num_chunks = tokenize_docs(docs);
     merge_chunks(num_chunks, _index_name + "/postings.index");
     create_lexicon(_index_name + "/postings.index", _index_name + "/lexicon.index");
@@ -49,6 +74,22 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(std::vector<document> & 
     std::ifstream source_config{config_file.c_str(), std::ios::binary};
     std::ofstream dest_config{_index_name + "/config.toml", std::ios::binary};
     dest_config << source_config.rdbuf();
+}
+
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::load_index()
+{
+    load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
+    load_mapping(_doc_sizes, _index_name + "/docsizes.counts");
+    load_mapping(_term_locations, _index_name + "/lexicon.index");
+
+    _postings = std::unique_ptr<io::mmap_file>{
+        new io::mmap_file{_index_name + "/postings.index"}
+    };
+
+    auto config = common::read_config(_index_name + "/config.toml");
+    _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
+    _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -139,6 +180,7 @@ void disk_index<PrimaryKey, SecondaryKey>::create_lexicon(const std::string & po
     save_mapping(_term_locations, lexicon_file);
 }
 
+/*
 template <class PrimaryKey, class SecondaryKey>
 disk_index<PrimaryKey, SecondaryKey>::disk_index(const std::string & index_path):
     _index_name(index_path),
@@ -156,6 +198,7 @@ disk_index<PrimaryKey, SecondaryKey>::disk_index(const std::string & index_path)
     _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
     _tokenizer->set_term_id_mapping(index_path + "/termids.mapping");
 }
+*/
 
 template <class PrimaryKey, class SecondaryKey>
 template <class Key, class Value>
@@ -192,6 +235,13 @@ uint64_t disk_index<PrimaryKey, SecondaryKey>::num_docs() const
 template <class PrimaryKey, class SecondaryKey>
 std::string disk_index<PrimaryKey, SecondaryKey>::doc_name(doc_id d_id) const
 {
+    auto path = doc_path(d_id);
+    return path.substr(path.find_last_of("/") + 1);
+}
+
+template <class PrimaryKey, class SecondaryKey>
+std::string disk_index<PrimaryKey, SecondaryKey>::doc_path(doc_id d_id) const
+{
     return common::safe_at(_doc_id_mapping, d_id);
 }
 
@@ -217,7 +267,7 @@ disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey t_id) const
 {
 #if USE_CACHE
     {
-        std::lock_guard<std::mutex> lock{_mutex};
+        std::lock_guard<std::mutex> lock{*_mutex};
         if(_cache.exists(t_id))
             return _cache.find(t_id);
     }
@@ -233,7 +283,7 @@ disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey t_id) const
 
 #if USE_CACHE
     {
-        std::lock_guard<std::mutex> lock{_mutex};
+        std::lock_guard<std::mutex> lock{*_mutex};
         _cache.insert(t_id, pdata);
     }
 #endif

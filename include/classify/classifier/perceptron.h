@@ -34,7 +34,7 @@ class perceptron : public classifier {
          * @param bias \f$b\f$, the bias
          * @param max_iter The maximum number of iterations for training.
          */ 
-        perceptron(std::unique_ptr<index::forward_index> & idx,
+        perceptron(index::forward_index & idx,
                    double alpha = 0.1, double gamma = 0.05, double bias = 0, 
                    size_t max_iter = 100 );
 

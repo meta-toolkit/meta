@@ -36,23 +36,35 @@ namespace index {
  */
 class forward_index: public disk_index<doc_id, term_id>
 {
+    protected:
+        /**
+         * @param config The toml_group that specifies how to create the
+         * index.
+         */
+        forward_index(const cpptoml::toml_group & config);
+
     public:
         /**
-         * @param index_name The name for this inverted index to be saved as
-         * @param docs The untokenized documents to add to the index
-         * @param tok The tokenizer to use to tokenize the documents
-         * @param config_file The configuration file used to create the
-         * tokenizer
+         * Move constructs a forward_index.
+         * @param other The forward_index to move into this one.
          */
-        forward_index(const std::string & index_name,
-                      std::vector<document> & docs,
-                      std::shared_ptr<tokenizers::tokenizer> & tok,
-                      const std::string & config_file);
+        forward_index(forward_index && other) = default;
 
         /**
-         * @param index_path The directory containing an already-created index
+         * Move assigns a forward_index.
+         * @param other The forward_index to move into this one.
          */
-        forward_index(const std::string & index_path);
+        forward_index & operator=(forward_index && other) = default;
+
+        /**
+         * forward_index may not be copy-constructed.
+         */
+        forward_index(const forward_index &) = delete;
+
+        /**
+         * forward_index may not be copy-assigned.
+         */
+        forward_index & operator=(const forward_index &) = delete;
 
         /**
          * Default destructor.
@@ -71,12 +83,6 @@ class forward_index: public disk_index<doc_id, term_id>
          * empty string if a label was not assigned
          */
         class_label label(doc_id d_id) const;
-
-        /**
-         * @return a forward_index object created from the config file; if an index
-         * at the given path already exists, it will load that one
-         */
-        static std::unique_ptr<forward_index> load_index(const cpptoml::toml_group & config);
 
         /**
          * @param d_id The document id of the doc to convert to liblinear format
@@ -101,6 +107,12 @@ class forward_index: public disk_index<doc_id, term_id>
          * Initializes the _label_ids member.
          */
         void set_label_ids();
+
+        /**
+         * forward_index is a friend of the factory method used to create
+         * it.
+         */
+        friend forward_index make_index<forward_index>(const std::string &);
 
         /** maps which class a document belongs to (if any) */
         std::unordered_map<doc_id, class_label> _labels;

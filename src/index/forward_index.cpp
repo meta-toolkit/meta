@@ -15,18 +15,9 @@ using std::endl;
 namespace meta {
 namespace index {
 
-forward_index::forward_index(const std::string & index_name,
-                             std::vector<document> & docs,
-                             std::shared_ptr<tokenizers::tokenizer> & tok,
-                             const std::string & config_file):
-    disk_index(index_name, tok)
-{
-    create_index(docs, config_file);
-    set_label_ids();
-}
 
-forward_index::forward_index(const std::string & index_name):
-    disk_index(index_name)
+forward_index::forward_index(const cpptoml::toml_group & config):
+    disk_index{config, *cpptoml::get_as<std::string>(config, "forward-index")}
 {
     set_label_ids();
 }
@@ -52,7 +43,7 @@ uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
     {
         common::show_progress(doc_num, docs.size(), 20, progress);
         _tokenizer->tokenize(doc);
-        _doc_id_mapping[doc_num] = doc.name();
+        _doc_id_mapping[doc_num] = doc.path();
         _doc_sizes[doc_num] = doc.length();
 
         if(doc.label() != "")
@@ -98,29 +89,6 @@ const std::unordered_map<term_id, uint64_t> forward_index::counts(doc_id d_id) c
 class_label forward_index::class_label_from_id(label_id l_id) const
 {
     return _label_ids.get_key(l_id);
-}
-
-std::unique_ptr<forward_index> forward_index::load_index(const cpptoml::toml_group & config)
-{
-    // if the index hasn't been created yet
-
-    std::string prefix = *cpptoml::get_as<std::string>(config, "prefix")
-        + *cpptoml::get_as<std::string>(config, "dataset");
-
-    std::string corpus_file = prefix
-        + "/"
-        + *cpptoml::get_as<std::string>(config, "list")
-        + "-full-corpus.txt";
-
-    std::string index_name = *cpptoml::get_as<std::string>(config, "forward-index");
-
-    std::vector<index::document> docs =
-        index::document::load_docs(corpus_file, prefix);
-    
-    std::shared_ptr<tokenizers::tokenizer> tok =
-        tokenizers::tokenizer::load_tokenizer(config);
-
-    return std::unique_ptr<forward_index>{new forward_index{index_name, docs, tok, "config.toml"}};
 }
 
 std::string forward_index::liblinear_data(doc_id d_id) const

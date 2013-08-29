@@ -94,9 +94,9 @@ target_link_libraries( classify
 
 add_executable( search search.cpp )
 target_link_libraries( search
+                       meta-index
                        meta-tokenizers
                        meta-stemmers
-                       meta-index
                        meta-io
                        ${CMAKE_THREAD_LIBS_INIT}
 )

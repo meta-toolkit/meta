@@ -10,7 +10,7 @@
 namespace meta {
 namespace classify {
 
-linear_svm::linear_svm(std::unique_ptr<index::forward_index> & idx,
+linear_svm::linear_svm(index::forward_index & idx,
                        loss_function loss,
                        double cost, 
                        double epsilon, 
@@ -36,9 +36,9 @@ void linear_svm::train( const std::vector<doc_id> & docs ) {
     std::unordered_set<class_label> classes;
     term_id max_id = 0;
     for( size_t i = 0; i < docs.size(); ++i ) {
-        classes.insert( _idx->label(docs[i]) );
+        classes.insert( _idx.label(docs[i]) );
         qbar_ii[i] = diag;
-        for( const auto & count : _idx->counts(docs[i]) ) {
+        for( const auto & count : _idx.counts(docs[i]) ) {
             qbar_ii[i] += count.second * count.second;
             max_id = std::max( max_id, count.first );
         }
@@ -60,7 +60,7 @@ class_label linear_svm::classify( doc_id d_id ) {
     double best_dot = std::numeric_limits<double>::min();
     for( const auto & w : weights_ ) {
         double dot = 0;
-        for( const auto & count : _idx->counts(d_id) ) {
+        for( const auto & count : _idx.counts(d_id) ) {
             dot += count.second * safe_at( w.second, count.first );
         }
         if( dot > best_dot ) {
@@ -87,8 +87,8 @@ void linear_svm::train_one( const class_label & label,
                             double diag,
                             double upper,
                             const std::vector<double> & qbar_ii ) {
-    auto labeler = [&label](std::unique_ptr<index::forward_index> & idx, doc_id d_id ) { 
-        if( idx->label(d_id) == label )
+    auto labeler = [this, &label](doc_id d_id ) { 
+        if( _idx.label(d_id) == label )
             return 1;
         return -1;
     };
@@ -115,10 +115,10 @@ void linear_svm::train_one( const class_label & label,
         for( size_t j = 0; j < partition_size; ++j ) {
             size_t i = indices[j];
             double grad = 0.0;
-            for( auto & count : _idx->counts(docs[i]) ) {
+            for( auto & count : _idx.counts(docs[i]) ) {
                 grad += count.second * safe_at( weight, count.first );
             }
-            grad = grad * labeler( _idx, docs[i] ) - 1 + diag * alpha[i];
+            grad = grad * labeler( docs[i] ) - 1 + diag * alpha[i];
 
             double projected_grad = 0;
             if( alpha[i] == 0 ) {
@@ -146,8 +146,8 @@ void linear_svm::train_one( const class_label & label,
                 double abar = alpha[i];
                 alpha[i] = std::min( std::max( alpha[i] - grad / qbar_ii[i], 0.0 ), 
                                      upper );
-                double w = ( alpha[i] - abar ) * labeler( _idx, docs[i] );
-                for( auto & count : _idx->counts(docs[i]) ) {
+                double w = ( alpha[i] - abar ) * labeler( docs[i] );
+                for( auto & count : _idx.counts(docs[i]) ) {
                     weight[ count.first ] += w * count.second;
                 }
             }

@@ -9,7 +9,7 @@
 namespace meta {
 namespace classify {
 
-classifier::classifier(std::unique_ptr<index::forward_index> & idx):
+classifier::classifier(index::forward_index & idx):
     _idx(idx)
 { /* nothing */ }
 
@@ -17,7 +17,7 @@ confusion_matrix classifier::test(const std::vector<doc_id> & docs)
 {
     confusion_matrix matrix;
     for(auto & d_id: docs)
-        matrix.add(classify(d_id), _idx->label(d_id));
+        matrix.add(classify(d_id), _idx.label(d_id));
 
     return matrix;
 }

@@ -30,6 +30,9 @@ class splay_cache
          */
         splay_cache(uint32_t max_height);
 
+        splay_cache(splay_cache && other) = default;
+        splay_cache & operator=(splay_cache && other) = default;
+
         /**
          * Frees all objects in the cache
          */

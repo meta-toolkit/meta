@@ -28,7 +28,7 @@ class liblinear_svm: public classifier
          * @param idx The index to run the classifier on
          * @param liblinear_path The path to the liblinear library
          */
-        liblinear_svm(std::unique_ptr<index::forward_index> & idx,
+        liblinear_svm(index::forward_index & idx,
                       const std::string & liblinear_path);
 
         /**
