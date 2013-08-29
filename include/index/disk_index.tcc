@@ -180,26 +180,6 @@ void disk_index<PrimaryKey, SecondaryKey>::create_lexicon(const std::string & po
     save_mapping(_term_locations, lexicon_file);
 }
 
-/*
-template <class PrimaryKey, class SecondaryKey>
-disk_index<PrimaryKey, SecondaryKey>::disk_index(const std::string & index_path):
-    _index_name(index_path),
-    _cache(util::splay_cache<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>>{10})
-{
-    load_mapping(_doc_id_mapping, index_path + "/docids.mapping");
-    load_mapping(_doc_sizes, index_path + "/docsizes.counts");
-    load_mapping(_term_locations, index_path + "/lexicon.index");
-
-    _postings = std::unique_ptr<io::mmap_file>{
-        new io::mmap_file{index_path + "/postings.index"}
-    };
-
-    auto config = common::read_config(index_path + "/config.toml");
-    _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
-    _tokenizer->set_term_id_mapping(index_path + "/termids.mapping");
-}
-*/
-
 template <class PrimaryKey, class SecondaryKey>
 template <class Key, class Value>
 void disk_index<PrimaryKey, SecondaryKey>::load_mapping(std::unordered_map<Key, Value> & map,
