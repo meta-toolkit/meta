@@ -20,9 +20,6 @@ using std::stringstream;
 using std::unordered_map;
 using util::invertible_map;
 
-#include <iostream>
-using namespace std;
-
 document::document(const string & path, const class_label & label):
     _path(path),
     _label(label),
@@ -127,7 +124,7 @@ vector<document> document::load_docs(const string & filename, const string & pre
 document document::filter_features(const document & doc,
         const vector<pair<term_id, double>> & features)
 {
-    unordered_set<term_id> keep;
+    std::unordered_set<term_id> keep;
     keep.reserve(features.size());
     for(auto & p: features)
         keep.insert(p.first);
