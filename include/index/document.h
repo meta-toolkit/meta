@@ -88,22 +88,27 @@ class document
          * @return the filtered document
          */
         static document filter_features(const document & doc,
-                                        const std::vector<std::pair<term_id, double>> & features);
+                                        const std::vector<
+                                            std::pair<term_id, double>
+                                        > & features);
 
         /**
          * Removes features from each document.
          * @param docs The documents to remove features from
-         * @param features A list of features that should be removed from the document
+         * @param features A list of features that should be removed from the
+         * document
          * @return the filtered documents
          */
-        static std::vector<document> filter_features(const std::vector<document> & docs,
-                                        const std::vector<std::pair<term_id, double>> & features);
+        static std::vector<document> filter_features(
+                const std::vector<document> & docs,
+                const std::vector<std::pair<term_id, double>> & features);
 
         /**
          * Outputs class label integer for slda.
          * @param mapping Keeps track of class labels as integers.
          */
-        std::string get_slda_label_data(util::invertible_map<class_label, int> & mapping) const;
+        std::string get_slda_label_data(
+                util::invertible_map<class_label, int> & mapping) const;
 
         /**
          * Outputs term count data in slda format.
@@ -116,7 +121,8 @@ class document
          * @param b
          * @return the Jaccard similarity between the two parameters
          */
-        static double jaccard_similarity(const document & a, const document & b);
+        static double jaccard_similarity(const document & a,
+                                         const document & b);
 
         /**
          * Wrapper function for a document's cosine similarity measure.

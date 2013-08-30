@@ -46,10 +46,12 @@ class liblinear_svm: public classifier
         void train(const std::vector<doc_id> & docs) override;
 
         /**
-         * Classifies a collection document into specific groups, as determined by
-         * training data; this function will make repeated calls to classify().
+         * Classifies a collection document into specific groups, as determined
+         * by training data; this function will make repeated calls to
+         * classify().
          * @param docs The documents to classify
-         * @return a confusion_matrix detailing the performance of the classifier
+         * @return a confusion_matrix detailing the performance of the
+         * classifier
          */
         confusion_matrix test(const std::vector<doc_id> & docs) override;
 

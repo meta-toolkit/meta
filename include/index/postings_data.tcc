@@ -15,21 +15,24 @@ postings_data<PrimaryKey, SecondaryKey>::postings_data(PrimaryKey p_id):
 { /* nothing */ }
 
 template <class PrimaryKey, class SecondaryKey>
-postings_data<PrimaryKey, SecondaryKey>::postings_data(const std::string & raw_data)
+postings_data<PrimaryKey, SecondaryKey>::postings_data(
+        const std::string & raw_data)
 {
     std::istringstream iss{raw_data};
     iss >> *this;
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void postings_data<PrimaryKey, SecondaryKey>::merge_with(const postings_data & other)
+void postings_data<PrimaryKey, SecondaryKey>::merge_with(
+        const postings_data & other)
 {
     for(auto & p: other._counts)
         _counts[p.first] += p.second;
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void postings_data<PrimaryKey, SecondaryKey>::increase_count(SecondaryKey s_id, uint64_t amount)
+void postings_data<PrimaryKey, SecondaryKey>::increase_count(
+        SecondaryKey s_id, uint64_t amount)
 {
     _counts[s_id] += amount;
 }
@@ -48,7 +51,8 @@ postings_data<PrimaryKey, SecondaryKey>::counts() const
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void postings_data<PrimaryKey, SecondaryKey>::set_counts(const std::unordered_map<SecondaryKey, uint64_t> & map)
+void postings_data<PrimaryKey, SecondaryKey>::set_counts(
+        const std::unordered_map<SecondaryKey, uint64_t> & map)
 {
     _counts = map;
 }

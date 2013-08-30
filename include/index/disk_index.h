@@ -109,7 +109,8 @@ class disk_index
          * @param docs The documents to tokenize
          * @param config_file The configuration file used to create the
          */
-        void create_index(std::vector<document> & docs, const std::string & config_file);
+        void create_index(std::vector<document> & docs,
+                          const std::string & config_file);
 
         /**
          * This function loads a disk index from its filesystem
@@ -122,16 +123,18 @@ class disk_index
          * @return the postings data for a given PrimaryKey
          * A cache is first searched before the postings file is queried.
          */
-        postings_data<PrimaryKey, SecondaryKey> search_primary(PrimaryKey p_id) const;
+        postings_data<PrimaryKey, SecondaryKey>
+        search_primary(PrimaryKey p_id) const;
 
         /**
          * @param chunk_num The current chunk number of the postings file
          * @param pdata A collection of postings data to write to the chunk
          */
         void write_chunk(uint32_t chunk_num,
-                         std::unordered_map<PrimaryKey,
-                                            postings_data<PrimaryKey, SecondaryKey>
-                                           > & pdata);
+                         std::unordered_map<
+                            PrimaryKey,
+                            postings_data<PrimaryKey, SecondaryKey>
+                         > & pdata);
 
         /**
          * @param docs The documents to add to the inverted index
@@ -176,7 +179,8 @@ class disk_index
          * PrimaryKey begins
          * @return a postings_data object from the postings file
          */
-        postings_data<PrimaryKey, SecondaryKey> search_postings(uint64_t idx) const;
+        postings_data<PrimaryKey, SecondaryKey>
+        search_postings(uint64_t idx) const;
 
         /**
          * Creates the lexicon file (or "dictionary") which has pointers into
@@ -201,7 +205,9 @@ class disk_index
         std::unique_ptr<io::mmap_file> _postings;
 
         /** cache for recently used postings_data */
-        mutable util::splay_cache<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>> _cache;
+        mutable util::splay_cache<
+            PrimaryKey, postings_data<PrimaryKey, SecondaryKey>
+        > _cache;
 
         /** mutex used when the cache is accessed */
         mutable std::unique_ptr<std::mutex> _mutex;

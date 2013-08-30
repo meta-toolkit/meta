@@ -2,7 +2,6 @@
  * @file inverted_index.cpp
  * @author Sean Massung
  */
-
 #include <iostream>
 #include "index/inverted_index.h"
 #include "index/chunk.h"
@@ -53,7 +52,7 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
     
     if(!pdata.empty())
         write_chunk(chunk_num++, pdata);
-
+    
     return chunk_num;
 }
 
@@ -69,7 +68,8 @@ uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id) const
     return pdata.count(d_id);
 }
 
-const std::unordered_map<doc_id, uint64_t> inverted_index::counts(term_id t_id) const
+const std::unordered_map<doc_id, uint64_t>
+inverted_index::counts(term_id t_id) const
 {
     postings_data<term_id, doc_id> pdata = search_primary(t_id);
     return pdata.counts();

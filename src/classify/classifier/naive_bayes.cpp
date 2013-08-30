@@ -58,7 +58,8 @@ class_label naive_bayes::classify(doc_id d_id)
     for(auto & cls: _term_probs)
     {
         double sum = 0.0;
-        double class_prob = static_cast<double>(_class_counts.at(cls.first)) / _total_docs;
+        double class_prob =
+            static_cast<double>(_class_counts.at(cls.first)) / _total_docs;
         class_prob += _beta;
         sum += log(1 + class_prob);
         for(auto & t: _idx.counts(d_id))

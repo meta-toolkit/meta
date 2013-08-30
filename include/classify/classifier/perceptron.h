@@ -75,7 +75,8 @@ class perceptron : public classifier {
          * @param label The class label for the weight vector we want.
          * @param term The term whose weight should be returned.
          */
-        double get_weight( const class_label & label, const term_id & term ) const;
+        double get_weight( const class_label & label,
+                           const term_id & term ) const;
 
         /**
          * Initializes the weight vectors to zero for every class label.
@@ -87,7 +88,10 @@ class perceptron : public classifier {
         /**
          * The weight vectors for each class label.
          */
-        std::unordered_map<class_label, std::unordered_map<term_id, double>> weights_;
+        std::unordered_map<
+            class_label,
+            std::unordered_map<term_id, double>
+        > weights_;
 
         /// \f$\alpha\f$, the learning rate.
         const double alpha_;    

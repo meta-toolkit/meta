@@ -43,10 +43,12 @@ class classifier
         virtual void train(const std::vector<doc_id> & docs) = 0;
 
         /**
-         * Classifies a collection document into specific groups, as determined by
-         * training data; this function will make repeated calls to classify().
+         * Classifies a collection document into specific groups, as determined
+         * by training data; this function will make repeated calls to
+         * classify().
          * @param docs The documents to classify
-         * @return a confusion_matrix detailing the performance of the classifier
+         * @return a confusion_matrix detailing the performance of the
+         * classifier
          */
         virtual confusion_matrix test(const std::vector<doc_id> & docs);
 
@@ -58,9 +60,10 @@ class classifier
          * @param seed The seed for the RNG used to shuffle the documents
          * @return a confusion_matrix containing the results over all the folds
          */
-        virtual confusion_matrix cross_validate(const std::vector<doc_id> & input_docs,
-                                                size_t k,
-                                                int seed = 1);
+        virtual confusion_matrix cross_validate(
+                const std::vector<doc_id> & input_docs,
+                size_t k,
+                int seed = 1);
 
         /**
          * Clears any learning data associated with this classifier.

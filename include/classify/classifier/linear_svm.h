@@ -56,7 +56,8 @@ class linear_svm : public classifier {
          * Used to safely index into a vector. Needed for testing because
          * the test vocabulary may exceed the training vocabulary.
          */
-        double safe_at( const std::vector<double> & weight, const term_id & id );
+        double safe_at( const std::vector<double> & weight,
+                        const term_id & id );
 
         /**
          * Trains a single, binary linear_svm using Algorithm 3 from Hseih
@@ -81,7 +82,10 @@ class linear_svm : public classifier {
          * Used for the shrinking optimization to remove an element j from
          * the current partition.
          */
-        void shrink_partition( std::vector<size_t> & indices, size_t & j, size_t & partition_size );
+        void shrink_partition(
+                std::vector<size_t> & indices,
+                size_t & j,
+                size_t & partition_size );
 
         /**
          * The loss function for the problem.

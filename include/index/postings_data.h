@@ -94,7 +94,10 @@ class postings_data
          * @return the input stream
          */
         friend std::istream & operator>>(std::istream & in,
-                                         postings_data<PrimaryKey, SecondaryKey> & pd)
+                                         postings_data<
+                                            PrimaryKey,
+                                            SecondaryKey
+                                         > & pd)
         {
             std::string buffer;
             std::getline(in, buffer);
@@ -121,7 +124,10 @@ class postings_data
          * @return the output stream
          */
         friend std::ostream & operator<<(std::ostream & out,
-                                         postings_data<PrimaryKey, SecondaryKey> & pd)
+                                         postings_data<
+                                            PrimaryKey,
+                                            SecondaryKey
+                                         > & pd)
         {
             if(pd._counts.empty())
                 return out;

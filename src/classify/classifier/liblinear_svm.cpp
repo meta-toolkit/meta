@@ -24,7 +24,8 @@ class_label liblinear_svm::classify(doc_id d_id)
     out.close();
 
     // run liblinear
-    std::string command = _liblinear_path + "/predict liblinear-input liblinear-train.model liblinear-predicted";
+    std::string command = _liblinear_path
+        + "/predict liblinear-input liblinear-train.model liblinear-predicted";
     command += " 2>&1> /dev/null";
     system(command.c_str());
 
@@ -46,7 +47,8 @@ confusion_matrix liblinear_svm::test(const std::vector<doc_id> & docs)
     out.close();
 
     // run liblinear
-    std::string command = _liblinear_path + "/predict liblinear-input liblinear-train.model liblinear-predicted";
+    std::string command = _liblinear_path
+        + "/predict liblinear-input liblinear-train.model liblinear-predicted";
     command += " 2>&1> /dev/null";
     system(command.c_str());
 

@@ -48,11 +48,13 @@ void linear_svm::train( const std::vector<doc_id> & docs ) {
         weights_[ label ].resize( max_id + 1 );
     }
 
-    parallel::parallel_for( weights_.begin(), 
-                            weights_.end(), 
-                            [&]( const std::pair<class_label, std::vector<double> &> & p ) {
-        train_one( p.first, p.second, docs, diag, upper, qbar_ii );
-    });
+    parallel::parallel_for(
+        weights_.begin(), 
+        weights_.end(), 
+        [&]( const std::pair<class_label, std::vector<double> &> & p ) {
+            train_one( p.first, p.second, docs, diag, upper, qbar_ii );
+        }
+    );
 }
 
 class_label linear_svm::classify( doc_id d_id ) {
@@ -75,7 +77,8 @@ void linear_svm::reset() {
     weights_.clear();
 }
 
-double linear_svm::safe_at( const std::vector<double> & weight, const term_id & id ) {
+double linear_svm::safe_at( const std::vector<double> & weight,
+                            const term_id & id ) {
     if( id >= weight.size() )
         return 0.0;
     return weight[ id ];
@@ -144,8 +147,10 @@ void linear_svm::train_one( const class_label & label,
 
             if( std::fabs( projected_grad ) > 1e-12 ) {
                 double abar = alpha[i];
-                alpha[i] = std::min( std::max( alpha[i] - grad / qbar_ii[i], 0.0 ), 
-                                     upper );
+                alpha[i] = std::min(
+                    std::max( alpha[i] - grad / qbar_ii[i], 0.0 ), 
+                    upper
+                );
                 double w = ( alpha[i] - abar ) * labeler( docs[i] );
                 for( auto & count : _idx.counts(docs[i]) ) {
                     weight[ count.first ] += w * count.second;
@@ -164,12 +169,14 @@ void linear_svm::train_one( const class_label & label,
             }
         }
 
-        pg_max_old = ( pg_max <= 0 ) ? std::numeric_limits<double>::max() : pg_max;
-        pg_min_old = ( pg_min >= 0 ) ? std::numeric_limits<double>::min() : pg_min;
+        pg_max_old = (pg_max <= 0)? std::numeric_limits<double>::max() : pg_max;
+        pg_min_old = (pg_min >= 0)? std::numeric_limits<double>::min() : pg_min;
     }
 }
 
-void linear_svm::shrink_partition( std::vector<size_t> & indices, size_t & j, size_t & partition_size ) {
+void linear_svm::shrink_partition( std::vector<size_t> & indices,
+                                   size_t & j,
+                                   size_t & partition_size ) {
     partition_size -= 1;
     std::swap( indices[j], indices[partition_size] );
     j -= 1;

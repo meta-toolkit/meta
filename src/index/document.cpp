@@ -87,15 +87,18 @@ const unordered_map<term_id, uint64_t> & document::frequencies() const
 
 double document::cosine_similarity(const document & a, const document & b)
 {
-    return clustering::similarity::cosine_similarity(a._frequencies, b._frequencies);
+    return clustering::similarity::cosine_similarity(a._frequencies,
+                                                     b._frequencies);
 }
 
 double document::jaccard_similarity(const document & a, const document & b)
 {
-    return clustering::similarity::jaccard_similarity(a._frequencies, b._frequencies);
+    return clustering::similarity::jaccard_similarity(a._frequencies,
+                                                      b._frequencies);
 }
 
-vector<document> document::load_docs(const string & filename, const string & prefix)
+vector<document> document::load_docs(const string & filename,
+                                     const string & prefix)
 {
     vector<document> docs;
     std::ifstream infile{filename};

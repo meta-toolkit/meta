@@ -56,12 +56,14 @@ disk_index<PrimaryKey, SecondaryKey>::disk_index(
 { /* nothing */ }
 
 template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::create_index(std::vector<document> & docs,
-                              const std::string & config_file)
+void disk_index<PrimaryKey, SecondaryKey>::create_index(
+        std::vector<document> & docs,
+        const std::string & config_file)
 {
     uint32_t num_chunks = tokenize_docs(docs);
     merge_chunks(num_chunks, _index_name + "/postings.index");
-    create_lexicon(_index_name + "/postings.index", _index_name + "/lexicon.index");
+    create_lexicon(_index_name
+            + "/postings.index", _index_name + "/lexicon.index");
     _tokenizer->save_term_id_mapping(_index_name + "/termids.mapping");
     save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
     save_mapping(_doc_sizes, _index_name + "/docsizes.counts");
@@ -94,8 +96,9 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
 
 template <class PrimaryKey, class SecondaryKey>
 template <class Key, class Value>
-void disk_index<PrimaryKey, SecondaryKey>::save_mapping(const std::unordered_map<Key, Value> & map,
-                                                        const std::string & filename) const
+void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
+        const std::unordered_map<Key, Value> & map,
+        const std::string & filename) const
 {
     std::ofstream outfile{filename};
     for(auto & p: map)
@@ -104,10 +107,16 @@ void disk_index<PrimaryKey, SecondaryKey>::save_mapping(const std::unordered_map
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::write_chunk(uint32_t chunk_num,
-                                 std::unordered_map<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>> & pdata)
+void disk_index<PrimaryKey, SecondaryKey>::write_chunk(
+        uint32_t chunk_num,
+        std::unordered_map<
+            PrimaryKey,
+            postings_data<PrimaryKey, SecondaryKey>
+        > & pdata)
 {
-    std::vector<std::pair<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>>> sorted{pdata.begin(), pdata.end()};
+    std::vector<
+        std::pair<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>>
+    > sorted{pdata.begin(), pdata.end()};
     std::sort(sorted.begin(), sorted.end());
 
     std::ofstream outfile{"chunk-" + common::to_string(chunk_num)};
@@ -119,7 +128,9 @@ void disk_index<PrimaryKey, SecondaryKey>::write_chunk(uint32_t chunk_num,
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(uint32_t num_chunks, const std::string & filename)
+void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
+        uint32_t num_chunks,
+        const std::string & filename)
 {
     // create priority queue of all chunks based on size
     std::priority_queue<chunk> chunks;
@@ -163,8 +174,9 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(uint32_t num_chunks, con
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::create_lexicon(const std::string & postings_file,
-                                                          const std::string & lexicon_file)
+void disk_index<PrimaryKey, SecondaryKey>::create_lexicon(
+        const std::string & postings_file,
+        const std::string & lexicon_file)
 {
     io::mmap_file pfile{postings_file};
     char* postings = pfile.start();
@@ -182,8 +194,9 @@ void disk_index<PrimaryKey, SecondaryKey>::create_lexicon(const std::string & po
 
 template <class PrimaryKey, class SecondaryKey>
 template <class Key, class Value>
-void disk_index<PrimaryKey, SecondaryKey>::load_mapping(std::unordered_map<Key, Value> & map,
-                                                        const std::string & filename)
+void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
+        std::unordered_map<Key, Value> & map,
+        const std::string & filename)
 {
     std::ifstream input{filename};
     while(input.good())

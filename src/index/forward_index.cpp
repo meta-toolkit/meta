@@ -80,7 +80,8 @@ class_label forward_index::label(doc_id d_id) const
     return common::safe_at(_labels, d_id);
 }
 
-const std::unordered_map<term_id, uint64_t> forward_index::counts(doc_id d_id) const
+const std::unordered_map<term_id, uint64_t>
+forward_index::counts(doc_id d_id) const
 {
     postings_data<doc_id, term_id> pdata = search_primary(d_id);
     return pdata.counts();
@@ -102,13 +103,14 @@ std::string forward_index::liblinear_data(doc_id d_id) const
 
     // output each term_id:count (starting with index 1)
 
-    std::vector<std::pair<term_id, uint64_t>> sorted;
+    using term_pair = std::pair<term_id, uint64_t>;
+    std::vector<term_pair> sorted;
     sorted.reserve(pdata.counts().size());
     for(auto & p: pdata.counts())
         sorted.push_back(std::make_pair(p.first + 1, p.second));
 
     std::sort(sorted.begin(), sorted.end(),
-        [](const std::pair<term_id, uint64_t> & a, const std::pair<term_id, uint64_t> & b) {
+        [](const term_pair & a, const term_pair & b) {
             return a.first < b.first;
         }
     );

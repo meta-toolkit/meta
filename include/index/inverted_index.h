@@ -119,8 +119,6 @@ class inverted_index: public disk_index<term_id, doc_id>
 
 };
 
-
-
 }
 }
 

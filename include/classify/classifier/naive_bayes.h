@@ -59,7 +59,10 @@ class naive_bayes: public classifier
         /**
          * Contains P(term|class) for each class.
          */
-        std::unordered_map<class_label, std::unordered_map<term_id, double>> _term_probs;
+        std::unordered_map<
+            class_label,
+            std::unordered_map<term_id, double>
+        > _term_probs;
 
         /**
          * Contains the number of documents in each class
