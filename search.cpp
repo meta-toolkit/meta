@@ -11,7 +11,7 @@
 #include "tokenizers/tokenizer.h"
 #include "index/document.h"
 #include "index/inverted_index.h"
-#include "index/ranker/okapi_bm25.h"
+#include "index/ranker/all.h"
 
 using namespace meta;
 using std::cerr;
@@ -36,8 +36,10 @@ int main(int argc, char* argv[])
     {
         auto d_id = idx.docs()[i];
         index::document query{idx.doc_path(d_id)};
+        cout << "Ranking query " << (i + 1) << ": " << query.path() << endl;
+
         std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);
-        cout << "Query " << i << ": " << query.path() << endl;
+        cout << "Showing top 10 of " << ranking.size() << " results." << endl;
 
         for(size_t i = 0; i < ranking.size() && i < 10; ++i)
             cout << (i+1) << ". " << idx.doc_name(ranking[i].first)

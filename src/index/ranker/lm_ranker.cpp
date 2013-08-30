@@ -16,9 +16,10 @@ double language_model_ranker::score_one(inverted_index & idx,
 {
     double ps = smoothed_prob(idx, tpair.first, dpair.first);
     double doc_const = doc_constant(idx, dpair.first);
-    double pc = 0.0; // TODO
+    double pc = static_cast<double>(idx.total_num_occurences(tpair.first))
+        / idx.total_corpus_terms();
 
-    return ps / doc_const * pc + query.length() * log(doc_const);
+    return ps / doc_const * pc + query.length() * log(1 + doc_const);
 }
 
 }

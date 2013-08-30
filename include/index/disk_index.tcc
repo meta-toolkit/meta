@@ -81,6 +81,9 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
 template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::load_index()
 {
+    cerr << "Loading inverted index from disk ("
+         << _index_name << ")..." << endl;
+
     load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
     load_mapping(_doc_sizes, _index_name + "/docsizes.counts");
     load_mapping(_term_locations, _index_name + "/lexicon.index");
@@ -199,13 +202,19 @@ void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
         const std::string & filename)
 {
     std::ifstream input{filename};
+    std::string buffer;
     while(input.good())
     {
-        Key k;
-        Value v;
-        input >> k;
-        input >> v;
-        map[k] = v;
+        std::getline(input, buffer);
+        if(buffer != "")
+        {
+            std::istringstream iss{buffer};
+            Key k;
+            Value v;
+            iss >> k;
+            iss >> v;
+            map[k] = v;
+        }
     }
     input.close();
 }
@@ -235,7 +244,7 @@ std::string disk_index<PrimaryKey, SecondaryKey>::doc_name(doc_id d_id) const
 template <class PrimaryKey, class SecondaryKey>
 std::string disk_index<PrimaryKey, SecondaryKey>::doc_path(doc_id d_id) const
 {
-    return common::safe_at(_doc_id_mapping, d_id);
+    return _doc_id_mapping.at(d_id);
 }
 
 template <class PrimaryKey, class SecondaryKey>

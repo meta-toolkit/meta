@@ -30,7 +30,7 @@ class mmap_file
          * Constructor.
          * @param path - creates a TextFile object from the given filename
          */
-        mmap_file(std::string path);
+        mmap_file(const std::string & path);
 
         /**
          * Destructor; deallocates memory used to store this object, closing the text file.

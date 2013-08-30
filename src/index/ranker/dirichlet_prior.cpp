@@ -16,7 +16,8 @@ double dirichlet_prior::smoothed_prob(inverted_index & idx,
                               term_id t_id,
                               doc_id d_id) const
 {
-    double pc = 0.0; // TODO
+    double pc = static_cast<double>(idx.total_num_occurences(t_id))
+        / idx.total_corpus_terms();
     double numerator = idx.term_freq(t_id, d_id) + _mu * pc;
     double denominator = idx.doc_size(d_id) + _mu;
     return numerator / denominator;
