@@ -11,7 +11,7 @@
 #include "tokenizers/tokenizer.h"
 #include "index/document.h"
 #include "index/inverted_index.h"
-#include "index/okapi_bm25.h"
+#include "index/ranker/okapi_bm25.h"
 
 using namespace meta;
 using std::cerr;

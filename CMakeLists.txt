@@ -39,7 +39,12 @@ add_library( meta-index
              src/index/document.cpp
              src/index/inverted_index.cpp
              src/index/forward_index.cpp
-             src/index/okapi_bm25.cpp
+             src/index/ranker/okapi_bm25.cpp
+             src/index/ranker/lm_ranker.cpp
+             src/index/ranker/ranker.cpp
+             src/index/ranker/jelinek_mercer.cpp
+             src/index/ranker/dirichlet_prior.cpp
+             src/index/ranker/absolute_discount.cpp
 )
 
 add_library( meta-io
