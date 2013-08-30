@@ -3,6 +3,9 @@
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
+ *
+ * @author Sean Massung
+ * @author Chase Geigle
  */
 
 #ifndef _META_TOKENIZERS_BRANCH_TOKENIZER_H_
@@ -16,7 +19,7 @@ namespace tokenizers {
 /**
  * Tokenizes parse trees by extracting branching factor features.
  */
-class branch_tokenizer : public tree_tokenizer<branch_tokenizer> {
+class branch_tokenizer: public tree_tokenizer<branch_tokenizer> {
     public:
         using mapping_fn = std::function<term_id(const std::string &)>;
 

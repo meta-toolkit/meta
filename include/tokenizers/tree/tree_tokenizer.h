@@ -3,6 +3,9 @@
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
+ *
+ * @author Sean Massung
+ * @author Chase Geigle
  */
 
 #ifndef _TREE_TOKENIZER_H_
@@ -32,18 +35,19 @@ class tree_tokenizer: public tokenizer
         void tokenize_document(index::document & document,
                 std::function<term_id(const std::string &)> mapping)
         {
-            std::vector<parse_tree> trees = parse_tree::get_trees( document.path() + ".tree" );
+            std::vector<parse_tree> trees =
+                parse_tree::get_trees( document.path() + ".tree" );
             for( auto & tree : trees )
                 derived().tree_tokenize( document, tree, mapping);
         }
 
     private:
-
         /**
          * Convenience method to obtain this tokenizer as its derived
          * class.
          */
-        DerivedTokenizer & derived() {
+        DerivedTokenizer & derived()
+        {
             return static_cast<DerivedTokenizer &>( *this );
         }
 };

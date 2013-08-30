@@ -18,8 +18,8 @@ namespace meta {
 namespace tokenizers {
 
 /**
- * The multi_tokenizer class contains more than one tokenizer. This is useful for
- * trying combined feature methods.
+ * The multi_tokenizer class contains more than one tokenizer. This is useful
+ * for trying combined feature methods.
  *
  * For example, you could tokenize based on ngrams of words and parse tree
  * rewrite rules. The multi_tokenizer keeps track of all the features in one set
@@ -40,8 +40,8 @@ class multi_tokenizer: public tokenizer
          * @param document - the document to store the tokenized information in
          * @param mapping - the string to term_id mapping
          */
-        void tokenize_document(index::document & document,
-                std::function<term_id(const std::string &)> mapping);
+        virtual void tokenize_document(index::document & document,
+                  std::function<term_id(const std::string &)> mapping) override;
 
     private:
 

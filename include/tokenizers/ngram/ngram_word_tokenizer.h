@@ -3,6 +3,8 @@
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
+ *
+ * @author Sean Massung
  */
 
 #ifndef _NGRAM_WORD_TOKENIZER_H_
@@ -19,7 +21,8 @@ namespace tokenizers {
  * to have the trait parameters be the same, regardless of the outer
  * template.
  */
-struct ngram_word_traits {
+struct ngram_word_traits
+{
     /**
      * Enumeration for which stemmer (if any) to use.
      */
@@ -36,7 +39,9 @@ class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
          * @param type - indicates whether this tokenizer is tokenizing words or
          *  POS tags
          */
-        ngram_word_tokenizer(size_t n, ngram_word_traits::StopwordType = ngram_word_traits::Default);
+        ngram_word_tokenizer(
+                size_t n,
+                ngram_word_traits::StopwordType = ngram_word_traits::Default);
 
         /**
          * Tokenizes a file into a document.
@@ -45,13 +50,11 @@ class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
          */
         virtual void tokenize_document(
                 index::document & document,
-                std::function<term_id(const std::string &)> mapping);
+                std::function<term_id(const std::string &)> mapping) override;
 
     private:
 
-        /**
-         * The stemming function of the Stemmer policy class.
-         */
+        /** The stemming function of the Stemmer policy class. */
         using Stemmer::stem;
 
         /** a stopword list based on the Lemur stopwords */

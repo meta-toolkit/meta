@@ -3,6 +3,8 @@
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
+ *
+ * @author Sean Massung
  */
 
 #ifndef _NGRAM_CHAR_TOKENIZER_H_
@@ -29,8 +31,8 @@ class ngram_char_tokenizer: public ngram_simple_tokenizer
          * @param mapping - the string to term_id mapping
          */
         virtual void tokenize_document(
-                index::document & document,
-                std::function<term_id(const std::string & term)> mapping);
+            index::document & document,
+            std::function<term_id(const std::string & term)> mapping) override;
 };
 
 }

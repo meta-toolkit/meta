@@ -3,6 +3,9 @@
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
+ * 
+ * @author Sean Massung
+ * @author Chase Geigle
  */
 
 #ifndef _META_TOKENIZERS_TAG_TOKENIZER_H_

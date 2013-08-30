@@ -3,6 +3,8 @@
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
+ *
+ * @author Sean Massung
  */
 
 #ifndef _NGRAM_POS_TOKENIZER_H_
@@ -31,7 +33,7 @@ class ngram_pos_tokenizer: public ngram_simple_tokenizer
         virtual void tokenize_document(
                 index::document & document,
                 std::function<term_id(const std::string &)> mapping
-        );
+        ) override;
 };
 
 }

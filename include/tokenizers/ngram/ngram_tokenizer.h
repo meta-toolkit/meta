@@ -3,6 +3,8 @@
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
+ *
+ * @author Sean Massung
  */
 
 #ifndef _NGRAM_TOKENIZER_H_
@@ -43,10 +45,11 @@ class ngram_tokenizer: public tokenizer
 
         /**
          * Turns a list of words into an ngram string.
-         * @param words - the deque representing a list of words
+         * @param words The deque representing a list of words
          * @return the ngrams in string format
          */
-        virtual std::string wordify(const std::deque<std::string> & words) const;
+        virtual std::string wordify(
+                const std::deque<std::string> & words) const;
 
     private:
 

@@ -42,7 +42,7 @@ class okapi_bm25: public ranker
                          const document & query,
                          const std::pair<term_id, uint64_t> & tpair,
                          const std::pair<doc_id, uint64_t> & dpair,
-                         uint64_t unique_terms) const;
+                         uint64_t unique_terms) const override;
 
     private:
 
