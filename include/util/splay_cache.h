@@ -30,7 +30,14 @@ class splay_cache
          */
         splay_cache(uint32_t max_height);
 
+        /**
+         * Default move copy-constructor.
+         */
         splay_cache(splay_cache && other) = default;
+
+        /**
+         * Default move assignment.
+         */
         splay_cache & operator=(splay_cache && other) = default;
 
         /**
@@ -61,8 +68,7 @@ class splay_cache
     private:
 
         /** disallow copying */
-        // TODO
-        //splay_cache(const splay_cache & other) = delete;
+        splay_cache(const splay_cache & other) = delete;
 
         /** disallow assignment */
         splay_cache & operator=(const splay_cache & rhs) = delete;
