@@ -133,19 +133,19 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
         const std::string & filename)
 {
     // create priority queue of all chunks based on size
-    std::priority_queue<chunk> chunks;
+    std::priority_queue<chunk<PrimaryKey, SecondaryKey>> chunks;
     for(uint32_t i = 0; i < num_chunks; ++i)
     {
         std::string filename = "chunk-" + common::to_string(i);
-        chunks.push(chunk{filename});
+        chunks.push(chunk<PrimaryKey, SecondaryKey>{filename});
     }
 
     // merge the smallest two chunks together until there is only one left
     while(chunks.size() > 1)
     {
-        chunk first = chunks.top();
+        chunk<PrimaryKey, SecondaryKey> first = chunks.top();
         chunks.pop();
-        chunk second = chunks.top();
+        chunk<PrimaryKey, SecondaryKey> second = chunks.top();
         chunks.pop();
 
         cerr << " Merging " << first.path() << " (" << first.size()

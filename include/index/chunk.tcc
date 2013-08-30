@@ -1,5 +1,5 @@
 /**
- * @file chunk.cpp
+ * @file chunk.tcc
  * @author Sean Massung
  */
 
@@ -12,46 +12,53 @@
 namespace meta {
 namespace index {
 
-chunk::chunk(const std::string & path):
+template <class PrimaryKey, class SecondaryKey>
+chunk<PrimaryKey, SecondaryKey>::chunk(const std::string & path):
     _path(path)
 {
     set_size();
 }
 
-void chunk::set_size()
+template <class PrimaryKey, class SecondaryKey>
+void chunk<PrimaryKey, SecondaryKey>::set_size()
 {
     struct stat st;
     stat(_path.c_str(), &st);
     _size = st.st_size;
 }
 
-bool chunk::operator<(const chunk & other) const
+template <class PrimaryKey, class SecondaryKey>
+bool chunk<PrimaryKey, SecondaryKey>::operator<(const chunk & other) const
 {
     // merge smaller chunks first
     return size() > other.size();
 }
 
-std::string chunk::path() const
+template <class PrimaryKey, class SecondaryKey>
+std::string chunk<PrimaryKey, SecondaryKey>::path() const
 {
     return _path;
 }
 
-uint64_t chunk::size() const
+template <class PrimaryKey, class SecondaryKey>
+uint64_t chunk<PrimaryKey, SecondaryKey>::size() const
 {
     return _size;
 }
 
-void chunk::merge_with(const chunk & other)
+template <class PrimaryKey, class SecondaryKey>
+void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
 {
     std::ifstream my_data{_path.c_str()};
     std::ifstream other_data{other._path.c_str()};
     std::ofstream output{"chunk-temp"};
 
-    // TODO how to instantiate for both index types?
-    postings_data<term_id, doc_id> my_pd{0};
-    postings_data<term_id, doc_id> other_pd{0};
+    postings_data<PrimaryKey, SecondaryKey> my_pd{0};
+    postings_data<PrimaryKey, SecondaryKey> other_pd{0};
     my_data >> my_pd;
     other_data >> other_pd;
+
+    // merge while both have postings data
 
     while(true)
     {
@@ -84,7 +91,9 @@ void chunk::merge_with(const chunk & other)
         }
     }
 
-    postings_data<term_id, doc_id> buffer{0}; // TODO same here
+    // finish merging when one runs out
+
+    postings_data<PrimaryKey, SecondaryKey> buffer{0};
     if(my_data.good())
     {
         output << my_pd;

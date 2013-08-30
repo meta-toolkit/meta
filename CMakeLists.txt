@@ -37,7 +37,6 @@ add_library( meta-classify
 
 add_library( meta-index
              src/index/document.cpp
-             src/index/chunk.cpp
              src/index/inverted_index.cpp
              src/index/forward_index.cpp
              src/index/okapi_bm25.cpp

@@ -20,6 +20,7 @@ namespace index {
  * intermediate file mapping term_ids to term document information. The chunks
  * are sorted to enable efficient merging.
  */
+template <class PrimaryKey, class SecondaryKey>
 class chunk
 {
     public:
@@ -64,4 +65,5 @@ class chunk
 }
 }
 
+#include "index/chunk.tcc"
 #endif
