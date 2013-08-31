@@ -7,7 +7,7 @@
 #include <iostream>
 #include "util/invertible_map.h"
 #include "tokenizers/tokenizer.h"
-#include "tokenizers/tokenizers.h"
+#include "tokenizers/all.h"
 
 namespace meta {
 namespace tokenizers {

@@ -91,6 +91,17 @@ class inverted_index: public disk_index<term_id, doc_id>
         uint64_t term_freq(term_id t_id, doc_id d_id) const;
 
         /**
+         * @return the total number of terms in this index
+         */
+        uint64_t total_corpus_terms() const;
+
+        /**
+         * @param t_id The specified term
+         * @return the number of times the given term appears in the corpus
+         */
+        uint64_t total_num_occurences(term_id t_id) const;
+
+        /**
          * @param t_id The term id to find containing documents from
          * @return a mapping of doc_id -> term occurrence
          */
@@ -116,6 +127,9 @@ class inverted_index: public disk_index<term_id, doc_id>
     private:
         /** average document length in the inverted_index */
         double _avg_dl;
+
+        /** the total number of term occurences in the entire corpus */
+        uint64_t _total_corpus_terms;
 
 };
 

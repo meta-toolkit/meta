@@ -7,9 +7,7 @@
 namespace meta {
 namespace io {
 
-using std::string;
-
-mmap_file::mmap_file(string path):
+mmap_file::mmap_file(const std::string & path):
     _path(path), _start(nullptr), _file_descriptor(-1)
 {
 
@@ -34,7 +32,7 @@ unsigned int mmap_file::size() const
     return _size;
 }
 
-string mmap_file::path() const
+std::string mmap_file::path() const
 {
     return _path;
 }

@@ -14,7 +14,7 @@
 #include <memory>
 #include <mutex>
 #include "util/splay_cache.h"
-#include "tokenizers/tokenizers.h"
+#include "tokenizers/all.h"
 #include "index/document.h"
 #include "index/postings_data.h"
 #include "io/mmap_file.h"

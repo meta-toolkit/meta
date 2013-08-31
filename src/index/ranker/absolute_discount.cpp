@@ -17,7 +17,8 @@ double absolute_discount::smoothed_prob(inverted_index & idx,
                               term_id t_id,
                               doc_id d_id) const
 {
-    double pc = 0.0; // TODO
+    double pc = static_cast<double>(idx.total_num_occurences(t_id))
+        / idx.total_corpus_terms();
     double numerator = std::max<double>(idx.term_freq(t_id, d_id) - _delta, 0);
     double denominator = idx.doc_size(d_id);
     return numerator / denominator + doc_constant(idx, d_id) * pc;
