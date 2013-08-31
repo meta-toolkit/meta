@@ -155,7 +155,7 @@ class disk_index
                          > & pdata);
 
         /**
-         * Saves the doc_id -> document name mapping to disk.
+         * Saves any arbitrary mapping to the disk.
          * @param filename The name to save the mapping as
          */
         template <class Key, class Value>
