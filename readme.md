@@ -2,6 +2,16 @@
 
 ## Project setup
 
+ - This project requires a very well conforming C++11 compiler. Currently,
+   clang is the de-facto compiler for use with this project. Additionally,
+   you will need a conformant implementation of the C++11 standard library
+   and ABI---currently libc++ and libc++abi are the best options for this.
+   See your distribution's package manager for more information on
+   installing these dependencies.
+
+   Windows users: YMMV. It is not currently supported, but things may
+   work. You will likely need Visual Studio 2013 for the C++11 features.
+
  - You will probably want to enable SVM classifier functionality through
    liblinear. Download the source
    [here](http://www.csie.ntu.edu.tw/~cjlin/liblinear/),
@@ -21,7 +31,7 @@
 ```bash
 mkdir build
 cd build
-CXX=clang++ LDFLAGS="-lcxxrt -ldl" cmake ../ -DCMAKE_BUILD_TYPE=Debug
+CXX=clang++ LDFLAGS=-lc++abi cmake ../ -DCMAKE_BUILD_TYPE=Debug
 make
 ```
 
