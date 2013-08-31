@@ -8,8 +8,13 @@
  * consult the file LICENSE in the root of the project.
  */
 
+#ifndef _META_H_
+#define _META_H_
+
 #include <stdint.h>
 #include <string>
+
+#include "util/identifiers.h"
 
 /**
  * The ModErn Text Analysis toolkit is a suite of natural language processing,
@@ -22,22 +27,22 @@ namespace meta
      * Represents the name of a class used in classification or feature
      * selection.
      */
-    typedef std::string class_label;
+    MAKE_IDENTIFIER(class_label, std::string)
 
     /**
      * Numbering system for string terms.
      */
-    typedef uint64_t term_id;
+    MAKE_NUMERIC_IDENTIFIER(term_id, uint64_t)
 
     /**
      * Numbering system for documents.
      */
-    typedef uint64_t doc_id;
+    MAKE_NUMERIC_IDENTIFIER(doc_id, uint64_t)
 
     /**
      * Numbering system for class label ids.
      */
-    typedef uint32_t label_id;
+    MAKE_NUMERIC_IDENTIFIER(label_id, uint32_t)
 
     /**
      * Algorithms for feature selection, KNN search, and confusion
@@ -84,12 +89,13 @@ namespace meta
     namespace tokenizers {}
 
     /**
-     * Topic modeling functionality 
+     * Topic modeling functionality.
      */
     namespace topics {}
 
     /**
-     * Shared resources and 
+     * Shared resources and utilities.
      */
     namespace util {}
 }
+#endif

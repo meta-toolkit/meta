@@ -66,9 +66,9 @@ class parallel_lda_gibbs : public lda_gibbs {
          */
         virtual void perform_iteration( bool init = false );
 
-        virtual void decrease_counts( size_t topic, term_id term, size_t doc );
+        virtual void decrease_counts( size_t topic, term_id term, doc_id doc ) override;
 
-        virtual void increase_counts( size_t topic, term_id term, size_t doc );
+        virtual void increase_counts( size_t topic, term_id term, doc_id doc ) override;
 
         virtual double count_term( term_id term, size_t topic ) const;
 

@@ -90,7 +90,7 @@ class lda_model {
          * @param doc The document we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        virtual double compute_doc_topic_probability( size_t doc, size_t topic ) const = 0;
+        virtual double compute_doc_topic_probability( doc_id doc, size_t topic ) const = 0;
 
         std::vector<index::document> & docs_;
         std::shared_ptr<tokenizers::tokenizer> tokenizer_;

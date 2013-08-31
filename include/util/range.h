@@ -33,7 +33,7 @@ class basic_range {
                  * Prefix increment.
                  */
                 self_type & operator++() {
-                    _curr = _plus( _curr, _step );
+                    _curr = _plus( _curr, _range->_step );
                     ++_idx;
                     return *this;
                 }
@@ -65,7 +65,7 @@ class basic_range {
                  * Equality operator.
                  */
                 friend bool operator==( const iterator_t & lhs, const iterator_t & rhs ) {
-                    return lhs._range == rhs._range && lhs._idx == rhs._idx && lhs._step == rhs._step;
+                    return lhs._range == rhs._range && lhs._idx == rhs._idx;
                 }
                 
                 /**
@@ -75,8 +75,8 @@ class basic_range {
                     return !(lhs == rhs);
                 }
             private:
-                iterator_t( const basic_range<T> * range, const T & start, size_t idx, std::ptrdiff_t step ) :
-                    _curr( start ), _idx( idx ), _range( range ), _step( step ) {
+                iterator_t( const basic_range<T> * range, const T & start, size_t idx ) :
+                    _curr( start ), _idx( idx ), _range( range ) {
                     // nothing
                 }
                 
@@ -84,7 +84,6 @@ class basic_range {
                 size_t _idx;
                 Plus _plus;
                 const basic_range<T> * _range;
-                std::ptrdiff_t _step;
         };
         typedef iterator_t<std::plus<T>> iterator;
         typedef iterator const_iterator;
@@ -96,22 +95,22 @@ class basic_range {
         friend reverse_iterator;
         
         iterator begin() const {
-            return iterator( this, _begin, 0, _step );
+            return iterator( this, _begin, 0 );
         }
         
         iterator end() const {
-            return iterator( this, _end, _num, _step );
+            return iterator( this, _end, _num );
         }
         
         reverse_iterator rbegin() const {
-            return reverse_iterator( this, _end, 0, _step );
+            return reverse_iterator( this, _end, 0 );
         }
         
         reverse_iterator rend() const {
-            return reverse_iterator( this, _begin, _num, _step );
+            return reverse_iterator( this, _begin, _num );
         }
         
-        basic_range( const T & begin, const T & end, std::ptrdiff_t step ) 
+        basic_range( const T & begin, const T & end, const T & step ) 
                 : _begin( begin ), _end( end ), 
                   _num( ( end - begin ) / step + 1 ),
                   _step( step ) {
@@ -123,11 +122,16 @@ class basic_range {
         T _begin;
         T _end;
         size_t _num;
-        std::ptrdiff_t _step;
+        T _step;
 };
 
 template <class T>
-basic_range<T> range( const T & begin, const T & end, std::ptrdiff_t step = 1 ) {
+basic_range<T> range( const T & begin, const T & end ) {
+    return basic_range<T>( begin, end, T{ 1 } );
+}
+
+template <class T>
+basic_range<T> range( const T & begin, const T & end, const T & step ) {
     return basic_range<T>( begin, end, step );
 }
 

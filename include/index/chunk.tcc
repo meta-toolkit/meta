@@ -53,8 +53,8 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
     std::ifstream other_data{other._path.c_str()};
     std::ofstream output{"chunk-temp"};
 
-    postings_data<PrimaryKey, SecondaryKey> my_pd{0};
-    postings_data<PrimaryKey, SecondaryKey> other_pd{0};
+    postings_data<PrimaryKey, SecondaryKey> my_pd{PrimaryKey{0}};
+    postings_data<PrimaryKey, SecondaryKey> other_pd{PrimaryKey{0}};
     my_data >> my_pd;
     other_data >> other_pd;
 
@@ -93,7 +93,7 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
 
     // finish merging when one runs out
 
-    postings_data<PrimaryKey, SecondaryKey> buffer{0};
+    postings_data<PrimaryKey, SecondaryKey> buffer{PrimaryKey{0}};
     if(my_data.good())
     {
         output << my_pd;

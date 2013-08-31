@@ -35,7 +35,7 @@ class_label liblinear_svm::classify(doc_id d_id)
     std::getline(in, str_val);
     in.close();
 
-    return _idx.class_label_from_id(std::stoul(str_val));
+    return _idx.class_label_from_id(label_id{std::stoul(str_val)});
 }
 
 confusion_matrix liblinear_svm::test(const std::vector<doc_id> & docs)
@@ -62,7 +62,7 @@ confusion_matrix liblinear_svm::test(const std::vector<doc_id> & docs)
         // number of testing documents
         std::getline(in, str_val);
         int value = std::stoul(str_val) - 1; // get correct start for liblinear
-        class_label predicted = _idx.class_label_from_id(value);
+        class_label predicted = _idx.class_label_from_id(label_id{value});
         class_label actual = _idx.label(d_id);
         matrix.add(predicted, actual);
     }

@@ -28,16 +28,16 @@ void forward_index::set_label_ids()
     for(auto & p: _labels)
         labels.insert(p.second);
 
-    size_t i = 0;
+    label_id i{ 0 };
     for(auto & lbl: labels)
         _label_ids.insert(lbl, i++);
 }
 
 uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
 {
-    std::unordered_map<term_id, postings_data<doc_id, term_id>> pdata;
+    std::unordered_map<doc_id, postings_data<doc_id, term_id>> pdata;
     uint32_t chunk_num = 0;
-    uint64_t doc_num = 0;
+    doc_id doc_num{ 0 };
     std::string progress = "Tokenizing ";
     for(auto & doc: docs)
     {
@@ -46,7 +46,7 @@ uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
         _doc_id_mapping[doc_num] = doc.path();
         _doc_sizes[doc_num] = doc.length();
 
-        if(doc.label() != "")
+        if(doc.label() != class_label{""})
             _labels[doc_num] = doc.label();
 
         postings_data<doc_id, term_id> pd{doc_num};
@@ -107,7 +107,9 @@ std::string forward_index::liblinear_data(doc_id d_id) const
     std::vector<term_pair> sorted;
     sorted.reserve(pdata.counts().size());
     for(auto & p: pdata.counts())
-        sorted.push_back(std::make_pair(p.first + 1, p.second));
+        sorted.emplace_back(std::piecewise_construct,
+                            std::forward_as_tuple(p.first + 1), 
+                            std::forward_as_tuple(p.second));
 
     std::sort(sorted.begin(), sorted.end(),
         [](const term_pair & a, const term_pair & b) {

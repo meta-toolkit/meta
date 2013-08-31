@@ -38,7 +38,7 @@ void lda_gibbs::run( size_t num_iters, double convergence /* = 1e-6 */ ) {
 }
 
 
-size_t lda_gibbs::sample_topic( term_id term, size_t doc ) {
+size_t lda_gibbs::sample_topic( term_id term, doc_id doc ) {
     std::vector<double> weights( num_topics_ );
     for( size_t j = 0; j < weights.size(); ++j )
         weights[ j ] = compute_probability( term, doc, j );
@@ -46,7 +46,7 @@ size_t lda_gibbs::sample_topic( term_id term, size_t doc ) {
     return dist( rng_ );
 }
 
-double lda_gibbs::compute_probability( term_id term, size_t doc, size_t topic ) const {
+double lda_gibbs::compute_probability( term_id term, doc_id doc, size_t topic ) const {
     return compute_term_topic_probability( term, topic )
            * compute_doc_topic_probability( doc, topic );
 }
@@ -56,7 +56,7 @@ double lda_gibbs::compute_term_topic_probability( term_id term, size_t topic ) c
              / ( count_topic( topic ) + num_words_ * beta_ );
 }
 
-double lda_gibbs::compute_doc_topic_probability( size_t doc, size_t topic ) const {
+double lda_gibbs::compute_doc_topic_probability( doc_id doc, size_t topic ) const {
     return ( count_doc( doc, topic ) + alpha_ )
              / ( count_doc( doc ) + num_topics_ * alpha_ );
 }
@@ -78,7 +78,7 @@ double lda_gibbs::count_topic( size_t topic ) const {
     return it->second;
 }
 
-double lda_gibbs::count_doc( size_t doc, size_t topic ) const {
+double lda_gibbs::count_doc( doc_id doc, size_t topic ) const {
     auto it = doc_topic_count_.find( doc );
     if( it == doc_topic_count_.end() )
         return 0;
@@ -88,7 +88,7 @@ double lda_gibbs::count_doc( size_t doc, size_t topic ) const {
     return iit->second;
 }
 
-double lda_gibbs::count_doc( size_t doc ) const {
+double lda_gibbs::count_doc( doc_id doc ) const {
     return docs_[ doc ].length();
 }
 
@@ -98,7 +98,7 @@ void lda_gibbs::initialize() {
 }
 
 void lda_gibbs::perform_iteration( bool init /* = false */ ) {
-    for( size_t i = 0; i < docs_.size(); ++i ) {
+    for( doc_id i{ 0 }; i < docs_.size(); ++i ) {
         common::show_progress( i, docs_.size(), 10, "\t\t\t" );
         size_t n = 0; // term number within document---constructed
                       // so that each occurrence of the same term
@@ -124,7 +124,7 @@ void lda_gibbs::perform_iteration( bool init /* = false */ ) {
     common::end_progress("\t\t\t");
 }
 
-void lda_gibbs::decrease_counts( size_t topic, term_id term, size_t doc ) {
+void lda_gibbs::decrease_counts( size_t topic, term_id term, doc_id doc ) {
     // decrease topic_term_count_ for the given assignment
     auto & tt_count = topic_term_count_.at( topic ).at( term );
     if( tt_count == 1 )
@@ -147,7 +147,7 @@ void lda_gibbs::decrease_counts( size_t topic, term_id term, size_t doc ) {
         tc -= 1;
 }
 
-void lda_gibbs::increase_counts( size_t topic, term_id term, size_t doc ) {
+void lda_gibbs::increase_counts( size_t topic, term_id term, doc_id doc ) {
     topic_term_count_[ topic ][ term ] += 1;
     doc_topic_count_[ doc ][ topic ] += 1;
     topic_count_[ topic ] += 1;
