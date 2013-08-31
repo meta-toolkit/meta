@@ -194,8 +194,8 @@ class disk_index
         /** the location of this index */
         std::string _index_name;
 
-        /** term_id -> postings location */
-        std::unordered_map<term_id, uint64_t> _term_locations;
+        /** PrimaryKey -> postings location */
+        std::unordered_map<PrimaryKey, uint64_t> _term_locations;
         
         /**
          * A pointer to a memory-mapped postings file. It is a pointer because

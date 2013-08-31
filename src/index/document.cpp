@@ -56,7 +56,7 @@ string document::path() const
     return _path;
 }
 
-string document::label() const
+class_label document::label() const
 {
     return _label;
 }
@@ -113,7 +113,7 @@ vector<document> document::load_docs(const string & filename,
         // see if there is class label info for this doc
         if(space != string::npos)
         {
-            class_label label = line.substr(0, space);
+            class_label label{line.substr(0, space)};
             file = line.substr(space + 1);
             docs.emplace_back(document{prefix + "/" + file, label});
         }

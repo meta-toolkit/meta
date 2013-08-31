@@ -39,7 +39,7 @@ int print_topics( const std::string & filename, const std::string & termsfile,
             if( to_split.length() == 0 )
                 continue;
             size_t idx = to_split.find_first_of( ':' );
-            term_id term = std::stoul( to_split.substr( 0, idx ) );
+            term_id term{ std::stoul( to_split.substr( 0, idx ) ) };
             double prob = std::stod( to_split.substr( idx + 1 ) );
             pairs.emplace_back( term, prob );
             std::push_heap( pairs.begin(), pairs.end(), comp );

@@ -22,7 +22,7 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
 {
     std::unordered_map<term_id, postings_data<term_id, doc_id>> pdata;
     uint32_t chunk_num = 0;
-    uint64_t doc_num = 0;
+    doc_id doc_num{ 0 };
     std::string progress = "Tokenizing ";
     for(auto & doc: docs)
     {

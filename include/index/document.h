@@ -31,7 +31,8 @@ class document
          * Constructor.
          * @param path The path to the document
          */
-        document(const std::string & path, const class_label & label = "");
+        document(const std::string & path,
+                 const class_label & label = class_label{""});
 
         /**
          * Increment the count of the specified transition.
@@ -57,7 +58,7 @@ class document
         /**
          * @return the classification category this document is in
          */
-        std::string label() const;
+        class_label label() const;
 
         /**
          * @return the name of this document

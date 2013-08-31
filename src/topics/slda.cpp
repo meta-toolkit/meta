@@ -46,7 +46,7 @@ unordered_map<class_label, vector<pair<term_id, double>>> slda::class_distributi
     for(auto & dist: probs)
     {
         vector<pair<term_id, double>> this_dist;
-        term_id curr_id = 0;
+        term_id curr_id{ 0 };
 
         // combine each probability with its term id
         for(auto & prob: dist)
@@ -120,7 +120,7 @@ vector<pair<term_id, double>> slda::select() const
     vector<vector<double>> probs = get_probs();
     for(auto & dist: probs)
     {
-        term_id curr_id = 0;
+        term_id curr_id{ 0 };
         for(auto & prob: dist)
         {
             // 0 will actually be higher than any feature rating from sLDA

@@ -34,7 +34,7 @@ void linear_svm::train( const std::vector<doc_id> & docs ) {
     }
     std::vector<double> qbar_ii( docs.size() );
     std::unordered_set<class_label> classes;
-    term_id max_id = 0;
+    term_id max_id{ 0 };
     for( size_t i = 0; i < docs.size(); ++i ) {
         classes.insert( _idx.label(docs[i]) );
         qbar_ii[i] = diag;

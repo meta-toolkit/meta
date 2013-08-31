@@ -39,7 +39,7 @@ void lda_cvb::initialize() {
     std::random_device rdev;
     std::mt19937 rng( rdev() );
     std::cerr << "Initalizing::\r";
-    for( size_t i = 0; i < docs_.size(); ++i ) {
+    for( doc_id i{ 0 }; i < docs_.size(); ++i ) {
         common::show_progress( i, docs_.size(), 10, "\t\t\t" );
         for( auto & freq : docs_[i].frequencies() ) {
             double sum = 0;
@@ -61,7 +61,7 @@ void lda_cvb::initialize() {
 
 double lda_cvb::perform_iteration() {
     double max_change = 0;
-    for( size_t i = 0; i < docs_.size(); ++i ) {
+    for( doc_id i{ 0 }; i < docs_.size(); ++i ) {
         common::show_progress( i, docs_.size(), 10, "\t\t\t" );
         for( auto & freq : docs_[i].frequencies() ) {
             // remove this word occurrence from means
@@ -101,7 +101,7 @@ double lda_cvb::compute_term_topic_probability( term_id term, size_t topic ) con
         / ( topic_mean_.at(topic) + num_words_ * beta_ );
 }
 
-double lda_cvb::compute_doc_topic_probability( size_t doc, size_t topic ) const {
+double lda_cvb::compute_doc_topic_probability( doc_id doc, size_t topic ) const {
     return ( doc_topic_mean_.at( doc ).at( topic ) + alpha_ )
         / ( docs_[ doc ].length() + num_topics_ * alpha_ );
 }

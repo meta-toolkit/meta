@@ -65,8 +65,8 @@ bool invertible_map<Key, Value>::contains_value(const Value & value) const
 template <class Key, class Value>
 void invertible_map<Key, Value>::insert(const Key & key, const Value & value)
 {
-    _forward.insert(make_pair(key, value));
-    _backward.insert(make_pair(value, key));
+    _forward.insert(std::make_pair(key, value));
+    _backward.insert(std::make_pair(value, key));
 }
 
 template <class Key, class Value>

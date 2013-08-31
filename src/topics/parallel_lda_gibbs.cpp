@@ -16,7 +16,7 @@ lda_gibbs{ docs, tok, num_topics, alpha, beta }
 parallel_lda_gibbs::~parallel_lda_gibbs() { /* nothing */ }
 
 void parallel_lda_gibbs::initialize() {
-    for( size_t i = 0; i < docs_.size(); ++i ) {
+    for( doc_id i{ 0 }; i < docs_.size(); ++i ) {
         doc_topic_count_[i] = {};
         doc_word_topic_[i] = {};
     }
@@ -25,14 +25,14 @@ void parallel_lda_gibbs::initialize() {
 
 void parallel_lda_gibbs::perform_iteration( bool init /* = false */ ) {
     size_t assigned = 0;
-    auto range = util::range<size_t>( 0, docs_.size() - 1 );
+    auto range = util::range<doc_id>( doc_id{ 0 }, doc_id{ docs_.size() - 1 } );
 
     for( auto & id : pool_.thread_ids() ) {
         topic_term_diffs_[ id ] = {};
         topic_diffs_[ id ] = {};
     }
 
-    parallel::parallel_for( range.begin(), range.end(), pool_, [&]( size_t i ) {
+    parallel::parallel_for( range.begin(), range.end(), pool_, [&]( doc_id i ) {
                 {
                     std::lock_guard<std::mutex> lock( mutex_ );
                     common::show_progress( assigned++, docs_.size(), 10, "\t\t\t" );
@@ -70,7 +70,7 @@ void parallel_lda_gibbs::perform_iteration( bool init /* = false */ ) {
     }
 }
 
-void parallel_lda_gibbs::decrease_counts( size_t topic, term_id term, size_t doc ) {
+void parallel_lda_gibbs::decrease_counts( size_t topic, term_id term, doc_id doc ) {
     std::thread::id tid = std::this_thread::get_id();
     // decrease topic_term_diff_ for the given assignment
     topic_term_diffs_.at( tid )[ topic ][ term ] -= 1;
@@ -86,7 +86,7 @@ void parallel_lda_gibbs::decrease_counts( size_t topic, term_id term, size_t doc
     topic_diffs_.at( tid )[ topic ] -= 1;
 }
 
-void parallel_lda_gibbs::increase_counts( size_t topic, term_id term, size_t doc ) {
+void parallel_lda_gibbs::increase_counts( size_t topic, term_id term, doc_id doc ) {
     std::thread::id tid = std::this_thread::get_id();
     topic_term_diffs_.at( tid )[ topic ][ term ] += 1;
     doc_topic_count_[ doc ][ topic ] += 1;

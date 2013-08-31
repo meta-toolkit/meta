@@ -86,9 +86,9 @@ class lda_cvb : public lda_model {
          */
         double perform_iteration();
 
-        virtual double compute_term_topic_probability( term_id term, size_t topic ) const;
+        virtual double compute_term_topic_probability( term_id term, size_t topic ) const override;
 
-        virtual double compute_doc_topic_probability( size_t doc, size_t topic ) const;
+        virtual double compute_doc_topic_probability( doc_id doc, size_t topic ) const override;
 
         using topic_id = size_t;
 

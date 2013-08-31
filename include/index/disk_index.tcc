@@ -183,8 +183,8 @@ void disk_index<PrimaryKey, SecondaryKey>::create_lexicon(
 {
     io::mmap_file pfile{postings_file};
     char* postings = pfile.start();
-    PrimaryKey cur_id = 1;
-    _term_locations[0] = 0;
+    PrimaryKey cur_id{ 1 };
+    _term_locations[PrimaryKey{0}] = 0;
     uint64_t idx = 0;
     while(idx < pfile.size() - 1)
     {

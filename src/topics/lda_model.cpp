@@ -20,7 +20,7 @@ lda_model::lda_model( std::vector<document> & docs, size_t num_topics,
 
 void lda_model::save_doc_topic_distributions( const std::string & filename ) const {
     std::ofstream file{ filename };
-    for( size_t i = 0; i < docs_.size(); ++i ) {
+    for( doc_id i{ 0 }; i < docs_.size(); ++i ) {
         file << docs_[i].name() << "\t";
         for( size_t j = 0; j < num_topics_; ++j ) {
             double prob = compute_doc_topic_probability( i, j );

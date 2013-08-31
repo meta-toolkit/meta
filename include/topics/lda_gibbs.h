@@ -82,7 +82,7 @@ class lda_gibbs : public lda_model {
          * @param term The term we are sampling a topic assignment for.
          * @param doc The document the term resides in.
          */
-        size_t sample_topic( term_id term, size_t doc );
+        size_t sample_topic( term_id term, doc_id doc );
         
         /**
          * Computes \f$P(z_i = j | w, \boldsymbol{z})\f$.
@@ -92,7 +92,7 @@ class lda_gibbs : public lda_model {
          * @param topic The topic \f$j\f$ we want to compute the
          *  probability for.
          */
-        double compute_probability( term_id term, size_t doc, size_t topic ) const;
+        double compute_probability( term_id term, doc_id doc, size_t topic ) const;
 
         /**
          * Computes the probability that the given term appears in the
@@ -101,7 +101,7 @@ class lda_gibbs : public lda_model {
          * @param term The term we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        virtual double compute_term_topic_probability( term_id term, size_t topic ) const;
+        virtual double compute_term_topic_probability( term_id term, size_t topic ) const override;
 
         /**
          * Computes the probability that the given topic is picked for the
@@ -110,7 +110,7 @@ class lda_gibbs : public lda_model {
          * @param doc The document we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        virtual double compute_doc_topic_probability( size_t doc, size_t topic ) const;
+        virtual double compute_doc_topic_probability( doc_id doc, size_t topic ) const override;
         
         /**
          * Computes how many times the given term has been assigned the
@@ -136,7 +136,7 @@ class lda_gibbs : public lda_model {
          * @param doc The document we are concerned with.
          * @param topic The topic we are concerned with.
          */
-        virtual double count_doc( size_t doc, size_t topic ) const;
+        virtual double count_doc( doc_id doc, size_t topic ) const;
         
         /**
          * Computes how may times a topic has been assigned to a word in
@@ -144,7 +144,7 @@ class lda_gibbs : public lda_model {
          *
          * @param doc The document we are concerned with.
          */
-        virtual double count_doc( size_t doc ) const;
+        virtual double count_doc( doc_id doc ) const;
         
         /**
          * Initializes the first set of topic assignments for inference.
@@ -169,7 +169,7 @@ class lda_gibbs : public lda_model {
          * @param term The term in question.
          * @param doc The document in question.
          */
-        virtual void decrease_counts( size_t topic, term_id term, size_t doc );
+        virtual void decrease_counts( size_t topic, term_id term, doc_id doc );
         
         /**
          * Increases all counts associated with the given topic, term, and
@@ -179,7 +179,7 @@ class lda_gibbs : public lda_model {
          * @param term The term in question.
          * @param doc The document in question.
          */
-        virtual void increase_counts( size_t topic, term_id term, size_t doc );
+        virtual void increase_counts( size_t topic, term_id term, doc_id doc );
         
         /**
          * Computes the current courpus log likelihood, given the vector of 
