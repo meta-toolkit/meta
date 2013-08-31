@@ -199,15 +199,13 @@ void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
         const std::string & filename)
 {
     std::ifstream input{filename};
-    while(input.good())
+    while(input)
     {
         Key k;
         Value v;
-        input >> k;
-        input >> v;
-        map[k] = v;
+        if((input >> k) && (input >> v))
+            map[k] = v;
     }
-    input.close();
 }
 
 template <class PrimaryKey, class SecondaryKey>
