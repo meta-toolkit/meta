@@ -68,6 +68,11 @@ class disk_index
         virtual ~disk_index() = default;
 
         /**
+         * @return the name of this index
+         */
+        std::string index_name() const;
+
+        /**
          * @return the number of documents in this index
          */
         uint64_t num_docs() const;
@@ -100,6 +105,19 @@ class disk_index
          * @param doc The document to tokenize
          */
         void tokenize(document & doc);
+
+        /**
+         * @param d_id The doc id to find the class label for
+         * @return the label of the class that the document belongs to, or an
+         * empty string if a label was not assigned
+         */
+        class_label label(doc_id d_id) const;
+
+        /**
+         * @param l_id The id of the class label in question
+         * @return the integer label id of a document
+         */
+        class_label class_label_from_id(label_id l_id) const;
 
     protected:
         /**
@@ -137,9 +155,31 @@ class disk_index
                          > & pdata);
 
         /**
+         * Saves the doc_id -> document name mapping to disk.
+         * @param filename The name to save the mapping as
+         */
+        template <class Key, class Value>
+        void save_mapping(const std::unordered_map<Key, Value> & map,
+                          const std::string & filename) const;
+
+        /**
+         * @param map The map to load information into
+         * @param filename The file containing key, value pairs
+         */
+        template <class Key, class Value>
+        void load_mapping(std::unordered_map<Key, Value> & map,
+                          const std::string & filename);
+
+        /**
          * @param docs The documents to add to the inverted index
          */
         virtual uint32_t tokenize_docs(std::vector<document> & docs) = 0;
+
+        /**
+         * @param d_id The document
+         * @return the numerical label_id for a given document's label
+         */
+        label_id label_id_from_doc(doc_id d_id) const;
   
         /** doc_id -> document path mapping */
         std::unordered_map<doc_id, std::string> _doc_id_mapping;
@@ -159,22 +199,6 @@ class disk_index
         void merge_chunks(uint32_t num_chunks, const std::string & filename);
         
         /**
-         * Saves the doc_id -> document name mapping to disk.
-         * @param filename The name to save the mapping as
-         */
-        template <class Key, class Value>
-        void save_mapping(const std::unordered_map<Key, Value> & map,
-                          const std::string & filename) const;
-
-        /**
-         * @param map The map to load information into
-         * @param filename The file containing key, value pairs
-         */
-        template <class Key, class Value>
-        void load_mapping(std::unordered_map<Key, Value> & map,
-                          const std::string & filename);
-
-        /**
          * @param idx The pointer into the postings file where the wanted
          * PrimaryKey begins
          * @return a postings_data object from the postings file
@@ -190,6 +214,11 @@ class disk_index
          */
         void create_lexicon(const std::string & postings_file,
                             const std::string & lexicon_file);
+        
+        /**
+         * Initializes the _label_ids member.
+         */
+        void set_label_ids();
 
         /** the location of this index */
         std::string _index_name;
@@ -211,6 +240,13 @@ class disk_index
 
         /** mutex used when the cache is accessed */
         mutable std::unique_ptr<std::mutex> _mutex;
+
+        /** maps which class a document belongs to (if any) */
+        std::unordered_map<doc_id, class_label> _labels;
+
+        /** assigns an integer to each class label (used for liblinear and slda
+         * mappings) */
+        util::invertible_map<class_label, label_id> _label_ids;
  
     public:
         /**

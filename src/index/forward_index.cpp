@@ -18,26 +18,13 @@ namespace index {
 
 forward_index::forward_index(const cpptoml::toml_group & config):
     disk_index{config, *cpptoml::get_as<std::string>(config, "forward-index")}
-{
-    set_label_ids();
-}
-
-void forward_index::set_label_ids()
-{
-    std::unordered_set<class_label> labels;
-    for(auto & p: _labels)
-        labels.insert(p.second);
-
-    label_id i{ 0 };
-    for(auto & lbl: labels)
-        _label_ids.insert(lbl, i++);
-}
+{ /* nothing */ }
 
 uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
 {
     std::unordered_map<doc_id, postings_data<doc_id, term_id>> pdata;
     uint32_t chunk_num = 0;
-    doc_id doc_num{ 0 };
+    doc_id doc_num{0};
     std::string progress = "Tokenizing ";
     for(auto & doc: docs)
     {
@@ -45,9 +32,6 @@ uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
         _tokenizer->tokenize(doc);
         _doc_id_mapping[doc_num] = doc.path();
         _doc_sizes[doc_num] = doc.length();
-
-        if(doc.label() != class_label{""})
-            _labels[doc_num] = doc.label();
 
         postings_data<doc_id, term_id> pd{doc_num};
         pd.set_counts(doc.frequencies());
@@ -68,16 +52,11 @@ uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
             write_chunk(chunk_num++, pdata);
     }
     common::end_progress(progress);
-    
+   
     if(!pdata.empty())
         write_chunk(chunk_num++, pdata);
 
     return chunk_num;
-}
-
-class_label forward_index::label(doc_id d_id) const
-{
-    return common::safe_at(_labels, d_id);
 }
 
 const std::unordered_map<term_id, uint64_t>
@@ -87,11 +66,6 @@ forward_index::counts(doc_id d_id) const
     return pdata.counts();
 }
 
-class_label forward_index::class_label_from_id(label_id l_id) const
-{
-    return _label_ids.get_key(l_id);
-}
-
 std::string forward_index::liblinear_data(doc_id d_id) const
 {
     postings_data<doc_id, term_id> pdata = search_primary(d_id);
@@ -99,7 +73,7 @@ std::string forward_index::liblinear_data(doc_id d_id) const
     // output the class label (starting with index 1)
 
     std::stringstream out;
-    out << (_label_ids.get_value(_labels.at(d_id)) + 1);
+    out << (label_id_from_doc(d_id) + 1);
 
     // output each term_id:count (starting with index 1)
 

@@ -78,23 +78,10 @@ class forward_index: public disk_index<doc_id, term_id>
         const std::unordered_map<term_id, uint64_t> counts(doc_id d_id) const;
 
         /**
-         * @param d_id The doc id to find the class label for
-         * @return the label of the class that the document belongs to, or an
-         * empty string if a label was not assigned
-         */
-        class_label label(doc_id d_id) const;
-
-        /**
          * @param d_id The document id of the doc to convert to liblinear format
          * @return the string representation liblinear format
          */
         std::string liblinear_data(doc_id d_id) const;
-
-        /**
-         * @param l_id The id of the class label in question
-         * @return the integer label id of a document
-         */
-        class_label class_label_from_id(label_id l_id) const;
 
     protected:
         /**
@@ -104,23 +91,10 @@ class forward_index: public disk_index<doc_id, term_id>
 
     private:
         /**
-         * Initializes the _label_ids member.
-         */
-        void set_label_ids();
-
-        /**
          * forward_index is a friend of the factory method used to create
          * it.
          */
         friend forward_index make_index<forward_index>(const std::string &);
-
-        /** maps which class a document belongs to (if any) */
-        std::unordered_map<doc_id, class_label> _labels;
-
-        /** assigns an integer to each class label (used for liblinear and slda
-         * mappings) */
-        util::invertible_map<class_label, label_id> _label_ids;
-
 };
 
 }

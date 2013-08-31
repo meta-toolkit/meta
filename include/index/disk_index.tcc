@@ -56,6 +56,12 @@ disk_index<PrimaryKey, SecondaryKey>::disk_index(
 { /* nothing */ }
 
 template <class PrimaryKey, class SecondaryKey>
+std::string disk_index<PrimaryKey, SecondaryKey>::index_name() const
+{
+    return _index_name;
+}
+
+template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::create_index(
         std::vector<document> & docs,
         const std::string & config_file)
@@ -72,6 +78,16 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
         new io::mmap_file{_index_name + "/postings.index"}
     };
 
+    // Save class label information; this is needed for both forward and
+    // inverted indexes. It's assumed that doc_ids are assigned in deriving
+    // classes in the same order the documents appear in the vector
+    doc_id doc_num{0};
+    for(auto & d: docs)
+        if(d.label() != class_label{""})
+            _labels[doc_num++] = d.label();
+    save_mapping(_labels, _index_name + "/docs.labels");
+    set_label_ids();
+
     // save the config file so we can recreate the tokenizer
     std::ifstream source_config{config_file.c_str(), std::ios::binary};
     std::ofstream dest_config{_index_name + "/config.toml", std::ios::binary};
@@ -87,6 +103,8 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
     load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
     load_mapping(_doc_sizes, _index_name + "/docsizes.counts");
     load_mapping(_term_locations, _index_name + "/lexicon.index");
+    load_mapping(_labels, _index_name + "/docs.labels");
+    set_label_ids();
 
     _postings = std::unique_ptr<io::mmap_file>{
         new io::mmap_file{_index_name + "/postings.index"}
@@ -95,6 +113,38 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
     auto config = common::read_config(_index_name + "/config.toml");
     _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
     _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
+}
+
+template <class PrimaryKey, class SecondaryKey>
+class_label disk_index<PrimaryKey, SecondaryKey>::label(doc_id d_id) const
+{
+    return common::safe_at(_labels, d_id);
+}
+
+template <class PrimaryKey, class SecondaryKey>
+class_label
+disk_index<PrimaryKey, SecondaryKey>::class_label_from_id(label_id l_id) const
+{
+    return _label_ids.get_key(l_id);
+}
+
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::set_label_ids()
+{
+    std::unordered_set<class_label> labels;
+    for(auto & p: _labels)
+        labels.insert(p.second);
+
+    label_id i{0};
+    for(auto & lbl: labels)
+        _label_ids.insert(lbl, i++);
+}
+
+template <class PrimaryKey, class SecondaryKey>
+label_id
+disk_index<PrimaryKey, SecondaryKey>::label_id_from_doc(doc_id d_id) const
+{
+    return _label_ids.get_value(_labels.at(d_id));
 }
 
 template <class PrimaryKey, class SecondaryKey>
