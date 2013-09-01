@@ -31,20 +31,15 @@ class jelinek_mercer: public language_model_ranker
 
         /**
          * Calculates the smoothed probability of a term.
-         * @param idx
-         * @param t_id
-         * @param d_id
+         * @param sd
          */
-        double smoothed_prob(inverted_index & idx,
-                             term_id t_id,
-                             doc_id d_id) const override;
+        double smoothed_prob(const score_data & sd) const override;
 
         /**
          * A document-dependent constant.
-         * @param d_id The id of the document to calculate the constant for
-         * @param idx
+         * @param sd
          */
-        double doc_constant(inverted_index & idx, doc_id d_id) const override;
+        double doc_constant(const score_data & sd) const override;
 
     private:
         /** the JM parameter*/

@@ -28,35 +28,21 @@ class language_model_ranker: public ranker
 {
     public:
         /**
-         * @param idx
-         * @param query
-         * @param tpair
-         * @param dpair
-         * @param unique_terms
+         * @param sd
          */
-        double score_one(inverted_index & idx,
-                         const document & query,
-                         const std::pair<term_id, uint64_t> & tpair,
-                         const std::pair<doc_id, uint64_t> & dpair,
-                         uint64_t unique_terms) const override;
+        double score_one(const score_data & sd) const override;
 
         /**
          * Calculates the smoothed probability of a term.
-         * @param idx
-         * @param t_id
-         * @param d_id
+         * @param sd
          */
-        virtual double smoothed_prob(inverted_index & idx,
-                                     term_id t_id,
-                                     doc_id d_id) const = 0;
+        virtual double smoothed_prob(const score_data & sd) const = 0;
 
         /**
          * A document-dependent constant.
-         * @param d_id The id of the document to calculate the constant for
-         * @param idx
+         * @param sd
          */
-        virtual double doc_constant(inverted_index & idx,
-                                    doc_id d_id) const = 0;
+        virtual double doc_constant(const score_data & sd) const = 0;
 
         /**
          * Default destructor.

@@ -11,6 +11,7 @@
 #define _RANKER_H_
 
 #include "index/inverted_index.h"
+#include "index/score_data.h"
 
 namespace meta {
 namespace index {
@@ -30,18 +31,9 @@ class ranker
                                                      document & query) const;
 
         /**
-         * @param idx
-         * @param query
-         * @param tpair
-         * @param dpair
-         * @param unique_terms
+         * @param sd
          */
-        virtual double score_one(
-                inverted_index & idx,
-                const document & query,
-                const std::pair<term_id, uint64_t> & tpair,
-                const std::pair<doc_id, uint64_t> & dpair,
-                uint64_t unique_terms) const = 0;
+        virtual double score_one(const score_data & sd) const = 0;
 
         /**
          * Default destructor.

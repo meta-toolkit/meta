@@ -13,21 +13,19 @@ absolute_discount::absolute_discount(double delta):
     _delta{delta}
 { /* nothing */ }
 
-double absolute_discount::smoothed_prob(inverted_index & idx,
-                              term_id t_id,
-                              doc_id d_id) const
+double absolute_discount::smoothed_prob(const score_data & sd) const
 {
-    double pc = static_cast<double>(idx.total_num_occurences(t_id))
-        / idx.total_corpus_terms();
-    double numerator = std::max<double>(idx.term_freq(t_id, d_id) - _delta, 0);
-    double denominator = idx.doc_size(d_id);
-    return numerator / denominator + doc_constant(idx, d_id) * pc;
+    double pc = static_cast<double>(sd.idx.total_num_occurences(sd.t_id))
+        / sd.total_terms;
+    double numerator = std::max<double>(sd.doc_term_count - _delta, 0);
+    double denominator = sd.doc_size;
+    return numerator / denominator + doc_constant(sd) * pc;
 }
 
-double absolute_discount::doc_constant(inverted_index & idx, doc_id d_id) const
+double absolute_discount::doc_constant(const score_data & sd) const
 {
     double unique = 0.0; // TODO
-    return _delta * unique / idx.doc_size(d_id);
+    return _delta * unique / sd.doc_size;
 }
 
 }

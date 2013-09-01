@@ -8,18 +8,14 @@
 namespace meta {
 namespace index {
 
-double language_model_ranker::score_one(inverted_index & idx,
-    const document & query,
-    const std::pair<term_id, uint64_t> & tpair,
-    const std::pair<doc_id, uint64_t> & dpair,
-    uint64_t unique_terms) const
+double language_model_ranker::score_one(const score_data & sd) const
 {
-    double ps = smoothed_prob(idx, tpair.first, dpair.first);
-    double doc_const = doc_constant(idx, dpair.first);
-    double pc = static_cast<double>(idx.total_num_occurences(tpair.first))
-        / idx.total_corpus_terms();
+    double ps = smoothed_prob(sd);
+    double doc_const = doc_constant(sd);
+    double pc = static_cast<double>(sd.idx.total_num_occurences(sd.t_id))
+        / sd.total_terms;
 
-    return ps / doc_const * pc + query.length() * log(1 + doc_const);
+    return ps / doc_const * pc + sd.query.length() * log(1 + doc_const);
 }
 
 }

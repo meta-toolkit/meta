@@ -14,24 +14,18 @@ okapi_bm25::okapi_bm25(double k1 /* = 1.5 */,
     _k1(k1), _b(b), _k3(k3)
 { /* nothing */ }
 
-double okapi_bm25::score_one(inverted_index & idx,
-                      const document & query,
-                      const std::pair<term_id, uint64_t> & tpair,
-                      const std::pair<doc_id, uint64_t> & dpair,
-                      uint64_t unique_terms) const
+double okapi_bm25::score_one(const score_data & sd) const
 {
-    double avg_dl = idx.avg_doc_length();
-    double num_docs = idx.num_docs();
-    double doc_len = idx.doc_size(dpair.first);
+    double doc_len = sd.idx.doc_size(sd.d_id);
 
     // add 1.0 to the IDF to ensure that the result is positive
-    double IDF = log(1.0 + (num_docs - unique_terms + 0.5)
-        / (unique_terms + 0.5));
+    double IDF = log(1.0 + (sd.num_docs - sd.idf + 0.5) / (sd.idf + 0.5));
 
-    double TF = ((_k1 + 1.0) * dpair.second)
-        / ((_k1 * ((1.0 - _b) + _b * doc_len / avg_dl)) + dpair.second);
+    double TF = ((_k1 + 1.0) * sd.doc_term_count)
+        / ((_k1 * ((1.0 - _b) + _b * doc_len / sd.avg_dl)) + sd.doc_term_count);
     
-    double QTF = ((_k3 + 1.0) * tpair.second) / (_k3 + tpair.second);
+    double QTF = ((_k3 + 1.0) * sd.query_term_count)
+        / (_k3 + sd.query_term_count);
 
     return TF * IDF * QTF;
 }

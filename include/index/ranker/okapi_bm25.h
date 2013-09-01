@@ -32,17 +32,9 @@ class okapi_bm25: public ranker
         okapi_bm25(double k1 = 1.5, double b = 0.75, double k3 = 500.0);
 
         /**
-         * @param idx
-         * @param query
-         * @param tpair
-         * @param dpair
-         * @param unique_terms
+         * @param sd
          */
-        double score_one(inverted_index & idx,
-                         const document & query,
-                         const std::pair<term_id, uint64_t> & tpair,
-                         const std::pair<doc_id, uint64_t> & dpair,
-                         uint64_t unique_terms) const override;
+        double score_one(const score_data & sd) const override;
 
     private:
 

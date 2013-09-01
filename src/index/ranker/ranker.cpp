@@ -15,12 +15,25 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
         idx.tokenize(query);
     std::unordered_map<doc_id, double> results;
 
+    score_data sd{idx,
+                  idx.avg_doc_length(),
+                  idx.num_docs(),
+                  idx.total_corpus_terms(),
+                  query
+    };
+
     for(auto & tpair: query.frequencies())
     {
-        auto counts = idx.counts(tpair.first);
-        for(auto & dpair: counts)
-            results[dpair.first] +=
-                score_one(idx, query, tpair, dpair, counts.size());
+        sd.t_id = tpair.first;
+        sd.query_term_count = tpair.second;
+        sd.idf = idx.idf(tpair.first);
+        for(auto & dpair: idx.counts(tpair.first))
+        {
+            sd.d_id = dpair.first;
+            sd.doc_term_count = dpair.second;
+            sd.doc_size = idx.doc_size(dpair.first);
+            results[dpair.first] += score_one(sd);
+        }
     }
 
     using doc_pair = std::pair<doc_id, double>;
