@@ -15,7 +15,7 @@ absolute_discount::absolute_discount(double delta):
 
 double absolute_discount::smoothed_prob(const score_data & sd) const
 {
-    double pc = static_cast<double>(sd.idx.total_num_occurences(sd.t_id))
+    double pc = static_cast<double>(sd.total_terms)
         / sd.total_terms;
     double numerator = std::max<double>(sd.doc_term_count - _delta, 0);
     double denominator = sd.doc_size;

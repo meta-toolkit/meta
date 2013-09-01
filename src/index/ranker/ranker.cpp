@@ -33,7 +33,7 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
             sd.d_id = dpair.first;
             sd.doc_term_count = dpair.second;
             sd.doc_size = idx.doc_size(dpair.first);
-            sd.doc_unique_terms = 1; // TODO
+            sd.doc_unique_terms = idx.unique_terms(dpair.first);
             results[dpair.first] += score_one(sd);
         }
     }

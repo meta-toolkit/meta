@@ -119,6 +119,12 @@ class disk_index
          */
         class_label class_label_from_id(label_id l_id) const;
 
+        /**
+         * @param d_id
+         * @return the number of unique terms in d_id
+         */
+        uint64_t unique_terms(doc_id d_id) const;
+
     protected:
         /**
          * This function initializes the disk index. It cannot be part of the
@@ -247,6 +253,13 @@ class disk_index
         /** assigns an integer to each class label (used for liblinear and slda
          * mappings) */
         util::invertible_map<class_label, label_id> _label_ids;
+
+        /**
+         * Holds how many unique terms there are per-document. This is sort of
+         * like an inverse IDF. For a forward_index, this field is certainly
+         * redundant, though it can save querying the postings file.
+         */
+        std::unordered_map<doc_id, uint64_t> _unique_terms;
  
     public:
         /**

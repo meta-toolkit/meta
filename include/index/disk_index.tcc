@@ -62,6 +62,12 @@ std::string disk_index<PrimaryKey, SecondaryKey>::index_name() const
 }
 
 template <class PrimaryKey, class SecondaryKey>
+uint64_t disk_index<PrimaryKey, SecondaryKey>::unique_terms(doc_id d_id) const
+{
+    return _unique_terms.at(d_id);
+}
+
+template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::create_index(
         std::vector<document> & docs,
         const std::string & config_file)
@@ -83,8 +89,12 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
     // classes in the same order the documents appear in the vector
     doc_id doc_num{0};
     for(auto & d: docs)
+    {
+        _unique_terms[doc_num] = d.frequencies().size();
         if(d.label() != class_label{""})
             _labels[doc_num++] = d.label();
+    }
+    save_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
     save_mapping(_labels, _index_name + "/docs.labels");
     set_label_ids();
 
@@ -104,6 +114,7 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
     load_mapping(_doc_sizes, _index_name + "/docsizes.counts");
     load_mapping(_term_locations, _index_name + "/lexicon.index");
     load_mapping(_labels, _index_name + "/docs.labels");
+    load_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
     set_label_ids();
 
     _postings = std::unique_ptr<io::mmap_file>{
