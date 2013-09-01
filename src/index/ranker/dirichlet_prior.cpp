@@ -14,8 +14,7 @@ dirichlet_prior::dirichlet_prior(double mu):
 
 double dirichlet_prior::smoothed_prob(const score_data & sd) const
 {
-    double pc = static_cast<double>(sd.idx.total_num_occurences(sd.t_id))
-        / sd.total_terms;
+    double pc = static_cast<double>(sd.corpus_term_count) / sd.total_terms;
     double numerator = sd.doc_term_count + _mu * pc;
     double denominator = sd.doc_size + _mu;
     return numerator / denominator;

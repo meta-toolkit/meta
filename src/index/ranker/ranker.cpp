@@ -27,11 +27,13 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
         sd.t_id = tpair.first;
         sd.query_term_count = tpair.second;
         sd.idf = idx.idf(tpair.first);
+        sd.corpus_term_count = idx.total_num_occurences(sd.t_id);
         for(auto & dpair: idx.counts(tpair.first))
         {
             sd.d_id = dpair.first;
             sd.doc_term_count = dpair.second;
             sd.doc_size = idx.doc_size(dpair.first);
+            sd.doc_unique_terms = 1; // TODO
             results[dpair.first] += score_one(sd);
         }
     }

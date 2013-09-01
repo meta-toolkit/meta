@@ -24,7 +24,7 @@ double absolute_discount::smoothed_prob(const score_data & sd) const
 
 double absolute_discount::doc_constant(const score_data & sd) const
 {
-    double unique = 0.0; // TODO
+    double unique = sd.doc_unique_terms;
     return _delta * unique / sd.doc_size;
 }
 

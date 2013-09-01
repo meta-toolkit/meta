@@ -22,7 +22,7 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
 {
     std::unordered_map<term_id, postings_data<term_id, doc_id>> pdata;
     uint32_t chunk_num = 0;
-    doc_id doc_num{ 0 };
+    doc_id doc_num{0};
     std::string progress = "Tokenizing ";
     for(auto & doc: docs)
     {
@@ -70,8 +70,14 @@ uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id) const
     return pdata.count(d_id);
 }
 
-uint64_t inverted_index::total_corpus_terms() const
+uint64_t inverted_index::total_corpus_terms()
 {
+    if(_total_corpus_terms == 0)
+    {
+        for(auto & d: _doc_sizes)
+            _total_corpus_terms += d.second;
+    }
+
     return _total_corpus_terms;
 }
 

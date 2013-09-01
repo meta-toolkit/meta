@@ -36,12 +36,14 @@ struct score_data
     term_id t_id;
     uint64_t query_term_count;
     uint64_t idf;
+    uint64_t corpus_term_count;
 
     // document-based info
 
     doc_id d_id;
     uint64_t doc_term_count;
     uint64_t doc_size;
+    uint64_t doc_unique_terms;
 
     score_data(inverted_index & p_idx,
                double p_avg_dl,

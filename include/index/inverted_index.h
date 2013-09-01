@@ -93,7 +93,7 @@ class inverted_index: public disk_index<term_id, doc_id>
         /**
          * @return the total number of terms in this index
          */
-        uint64_t total_corpus_terms() const;
+        uint64_t total_corpus_terms();
 
         /**
          * @param t_id The specified term

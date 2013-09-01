@@ -16,8 +16,7 @@ double jelinek_mercer::smoothed_prob(const score_data & sd) const
 {
     double max_likelihood = static_cast<double>(sd.doc_term_count)
         / sd.doc_size;
-    double pc = static_cast<double>(sd.idx.total_num_occurences(sd.t_id))
-        / sd.total_terms;
+    double pc = static_cast<double>(sd.corpus_term_count) / sd.total_terms;
     return (1.0 - _lambda) * max_likelihood + _lambda * pc;
 }
 
