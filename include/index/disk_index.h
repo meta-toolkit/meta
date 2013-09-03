@@ -186,7 +186,7 @@ class disk_index
          * @return the numerical label_id for a given document's label
          */
         label_id label_id_from_doc(doc_id d_id) const;
-  
+
         /** doc_id -> document path mapping */
         std::unordered_map<doc_id, std::string> _doc_id_mapping;
 
@@ -195,7 +195,7 @@ class disk_index
 
         /** the tokenizer used to tokenize documents in the index */
         std::unique_ptr<tokenizers::tokenizer> _tokenizer;
-        
+
     private:
         /**
          * @param num_chunks The total number of chunks to merge together to
@@ -203,7 +203,7 @@ class disk_index
          * @param filename The name for the postings file
          */
         void merge_chunks(uint32_t num_chunks, const std::string & filename);
-        
+
         /**
          * @param idx The pointer into the postings file where the wanted
          * PrimaryKey begins
@@ -220,7 +220,7 @@ class disk_index
          */
         void create_lexicon(const std::string & postings_file,
                             const std::string & lexicon_file);
-        
+
         /**
          * Initializes the _label_ids member.
          */
@@ -231,7 +231,7 @@ class disk_index
 
         /** PrimaryKey -> postings location */
         std::unordered_map<PrimaryKey, uint64_t> _term_locations;
-        
+
         /**
          * A pointer to a memory-mapped postings file. It is a pointer because
          * we want to delay the initialization of it until the postings file is
@@ -260,7 +260,7 @@ class disk_index
          * redundant, though it can save querying the postings file.
          */
         std::unordered_map<doc_id, uint64_t> _unique_terms;
- 
+
     public:
         /**
          * Basic exception for disk_index interactions.
@@ -268,7 +268,7 @@ class disk_index
         class disk_index_exception: public std::exception
         {
             public:
-                
+
                 disk_index_exception(const std::string & error):
                     _error(error) { /* nothing */ }
 
@@ -276,15 +276,15 @@ class disk_index
                 {
                     return _error.c_str();
                 }
-           
+
             private:
                 std::string _error;
         };
 
         /**
          * Factory method for creating indexes.
-         * Usage: 
-         * 
+         * Usage:
+         *
          * ~~~cpp
          * auto idx = index::make_index<derived_index_type>(config_path);
          * ~~~
