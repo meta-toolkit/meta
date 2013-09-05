@@ -35,7 +35,8 @@ void naive_bayes::train(const vector<doc_id> & docs)
     for(auto & d_id: docs)
     {
         ++_total_docs;
-        for(auto & p: _idx.counts(d_id))
+        auto pdata = _idx.search_primary(d_id);
+        for(auto & p: pdata->counts())
             _term_probs[_idx.label(d_id)][p.first] += p.second;
         ++_class_counts[_idx.label(d_id)];
     }
@@ -62,7 +63,8 @@ class_label naive_bayes::classify(doc_id d_id)
             static_cast<double>(_class_counts.at(cls.first)) / _total_docs;
         class_prob += _beta;
         sum += log(1 + class_prob);
-        for(auto & t: _idx.counts(d_id))
+        auto pdata = _idx.search_primary(d_id);
+        for(auto & t: pdata->counts())
         {
             auto it = cls.second.find(t.first);
             double term_prob = (it == cls.second.end()) ? 0.0 : it->second;

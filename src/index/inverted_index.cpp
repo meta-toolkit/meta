@@ -61,13 +61,13 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
 uint64_t inverted_index::idf(term_id t_id) const
 {
     auto pdata = search_primary(t_id);
-    return pdata.inverse_frequency();
+    return pdata->inverse_frequency();
 }
 
 uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id) const
 {
     auto pdata = search_primary(t_id);
-    return pdata.count(d_id);
+    return pdata->count(d_id);
 }
 
 uint64_t inverted_index::total_corpus_terms()
@@ -86,7 +86,7 @@ uint64_t inverted_index::total_num_occurences(term_id t_id) const
     auto pdata = search_primary(t_id);
 
     uint64_t sum = 0;
-    for(auto & c: pdata.counts())
+    for(auto & c: pdata->counts())
         sum += c.second;
 
     return sum;
@@ -96,7 +96,7 @@ const std::unordered_map<doc_id, uint64_t>
 inverted_index::counts(term_id t_id) const
 {
     auto pdata = search_primary(t_id);
-    return pdata.counts();
+    return pdata->counts();
 }
 
 double inverted_index::avg_doc_length()

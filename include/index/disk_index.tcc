@@ -314,7 +314,7 @@ void disk_index<PrimaryKey, SecondaryKey>::tokenize(document & doc)
 }
 
 template <class PrimaryKey, class SecondaryKey>
-postings_data<PrimaryKey, SecondaryKey>
+std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
 disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey t_id) const
 {
 #if USE_CACHE
@@ -328,10 +328,10 @@ disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey t_id) const
     auto it = _term_locations.find(t_id);
     // if the term doesn't exist in the index, return an empty postings_data
     if(it == _term_locations.end())
-        return postings_data<PrimaryKey, SecondaryKey>{t_id};
+        return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(t_id);
 
     uint64_t idx = it->second;
-    postings_data<PrimaryKey, SecondaryKey> pdata = search_postings(idx);
+    auto pdata = search_postings(idx);
 
 #if USE_CACHE
     {
@@ -344,7 +344,7 @@ disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey t_id) const
 }
 
 template <class PrimaryKey, class SecondaryKey>
-postings_data<PrimaryKey, SecondaryKey>
+std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
 disk_index<PrimaryKey, SecondaryKey>::search_postings(uint64_t idx) const
 {
     uint64_t len = 0;
@@ -354,7 +354,7 @@ disk_index<PrimaryKey, SecondaryKey>::search_postings(uint64_t idx) const
         ++len;
 
     std::string raw{post + idx, len};
-    return postings_data<PrimaryKey, SecondaryKey>{raw};
+    return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(raw);
 }
 
 }

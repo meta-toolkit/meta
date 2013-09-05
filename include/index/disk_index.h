@@ -125,6 +125,14 @@ class disk_index
          */
         uint64_t unique_terms(doc_id d_id) const;
 
+        /**
+         * @param p_id The PrimaryKey id to search for
+         * @return the postings data for a given PrimaryKey
+         * A cache is first searched before the postings file is queried.
+         */
+        std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
+        search_primary(PrimaryKey p_id) const;
+
     protected:
         /**
          * This function initializes the disk index. It cannot be part of the
@@ -141,14 +149,6 @@ class disk_index
          * representation.
          */
         void load_index();
-
-        /**
-         * @param p_id The PrimaryKey id to search for
-         * @return the postings data for a given PrimaryKey
-         * A cache is first searched before the postings file is queried.
-         */
-        postings_data<PrimaryKey, SecondaryKey>
-        search_primary(PrimaryKey p_id) const;
 
         /**
          * @param chunk_num The current chunk number of the postings file
@@ -209,7 +209,7 @@ class disk_index
          * PrimaryKey begins
          * @return a postings_data object from the postings file
          */
-        postings_data<PrimaryKey, SecondaryKey>
+        std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
         search_postings(uint64_t idx) const;
 
         /**
@@ -241,7 +241,8 @@ class disk_index
 
         /** cache for recently used postings_data */
         mutable util::splay_cache<
-            PrimaryKey, postings_data<PrimaryKey, SecondaryKey>
+            PrimaryKey,
+            std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
         > _cache;
 
         /** mutex used when the cache is accessed */

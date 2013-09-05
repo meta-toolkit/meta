@@ -44,7 +44,8 @@ void perceptron::train( const std::vector<doc_id> & docs ) {
             class_label actual = _idx.label(docs[i]);
             if( guess != actual ) {
                 error_count += 1;
-                for( const auto & count : _idx.counts(docs[i]) ) {
+                auto pdata = _idx.search_primary(docs[i]);
+                for( const auto & count : pdata->counts() ) {
                     weights_[ guess ][ count.first ] -= alpha_ * count.second;
                     weights_[ actual ][ count.first ] += alpha_ * count.second;
                 }
@@ -61,7 +62,8 @@ class_label perceptron::classify(doc_id d_id)
     double best_dot = 0;
     for( const auto & w : weights_ ) {
         double dot = bias_;
-        for( const auto & count : _idx.counts(d_id) ) {
+        auto pdata = _idx.search_primary(d_id);
+        for( const auto & count : pdata->counts() ) {
             dot += count.second * get_weight( w.first, count.first );
         }
         if( dot > best_dot ) {
