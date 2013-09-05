@@ -38,7 +38,8 @@ void linear_svm::train( const std::vector<doc_id> & docs ) {
     for( size_t i = 0; i < docs.size(); ++i ) {
         classes.insert( _idx.label(docs[i]) );
         qbar_ii[i] = diag;
-        for( const auto & count : _idx.counts(docs[i]) ) {
+        auto pdata = _idx.search_primary(docs[i]);
+        for( const auto & count : pdata->counts() ) {
             qbar_ii[i] += count.second * count.second;
             max_id = std::max( max_id, count.first );
         }
@@ -62,7 +63,8 @@ class_label linear_svm::classify( doc_id d_id ) {
     double best_dot = std::numeric_limits<double>::min();
     for( const auto & w : weights_ ) {
         double dot = 0;
-        for( const auto & count : _idx.counts(d_id) ) {
+        auto pdata = _idx.search_primary(d_id);
+        for( const auto & count : pdata->counts() ) {
             dot += count.second * safe_at( w.second, count.first );
         }
         if( dot > best_dot ) {
@@ -118,7 +120,8 @@ void linear_svm::train_one( const class_label & label,
         for( size_t j = 0; j < partition_size; ++j ) {
             size_t i = indices[j];
             double grad = 0.0;
-            for( auto & count : _idx.counts(docs[i]) ) {
+            auto pdata = _idx.search_primary(docs[i]);
+            for( auto & count : pdata->counts() ) {
                 grad += count.second * safe_at( weight, count.first );
             }
             grad = grad * labeler( docs[i] ) - 1 + diag * alpha[i];
@@ -152,7 +155,7 @@ void linear_svm::train_one( const class_label & label,
                     upper
                 );
                 double w = ( alpha[i] - abar ) * labeler( docs[i] );
-                for( auto & count : _idx.counts(docs[i]) ) {
+                for( auto & count : pdata->counts() ) {
                     weight[ count.first ] += w * count.second;
                 }
             }

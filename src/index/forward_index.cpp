@@ -62,13 +62,13 @@ uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
 const std::unordered_map<term_id, uint64_t>
 forward_index::counts(doc_id d_id) const
 {
-    postings_data<doc_id, term_id> pdata = search_primary(d_id);
-    return pdata.counts();
+    auto pdata = search_primary(d_id);
+    return pdata->counts();
 }
 
 std::string forward_index::liblinear_data(doc_id d_id) const
 {
-    postings_data<doc_id, term_id> pdata = search_primary(d_id);
+    auto pdata = search_primary(d_id);
 
     // output the class label (starting with index 1)
 
@@ -79,8 +79,8 @@ std::string forward_index::liblinear_data(doc_id d_id) const
 
     using term_pair = std::pair<term_id, uint64_t>;
     std::vector<term_pair> sorted;
-    sorted.reserve(pdata.counts().size());
-    for(auto & p: pdata.counts())
+    sorted.reserve(pdata->counts().size());
+    for(auto & p: pdata->counts())
         sorted.emplace_back(std::piecewise_construct,
                             std::forward_as_tuple(p.first + 1), 
                             std::forward_as_tuple(p.second));
