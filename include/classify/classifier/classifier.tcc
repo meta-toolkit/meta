@@ -1,5 +1,6 @@
 /**
- * @file classifier.cpp
+ * @file classifier.tcc
+ * @author Sean Massung
  */
 
 #include <iostream>
@@ -9,11 +10,13 @@
 namespace meta {
 namespace classify {
 
-classifier::classifier(index::forward_index & idx):
+template <class Index>
+classifier<Index>::classifier(Index & idx):
     _idx(idx)
 { /* nothing */ }
 
-confusion_matrix classifier::test(const std::vector<doc_id> & docs)
+template <class Index>
+confusion_matrix classifier<Index>::test(const std::vector<doc_id> & docs)
 {
     confusion_matrix matrix;
     for(auto & d_id: docs)
@@ -22,7 +25,8 @@ confusion_matrix classifier::test(const std::vector<doc_id> & docs)
     return matrix;
 }
 
-confusion_matrix classifier::cross_validate(
+template <class Index>
+confusion_matrix classifier<Index>::cross_validate(
         const std::vector<doc_id> & input_docs,
         size_t k, int seed)
 {

@@ -10,6 +10,7 @@
 #define _NAIVE_BAYES_H_
 
 #include <unordered_map>
+#include "index/forward_index.h"
 #include "classify/classifier/classifier.h"
 #include "meta.h"
 
@@ -20,7 +21,7 @@ namespace classify {
  * Implements the Naive Bayes classifier, a simplistic probabilistic classifier
  * that uses Bayes' theorem with strong feature independence assumptions.
  */
-class naive_bayes: public classifier
+class naive_bayes: public classifier<index::forward_index>
 {
     public:
 

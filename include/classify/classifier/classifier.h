@@ -3,6 +3,8 @@
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
+ *
+ * @author Sean Massung
  */
 
 #ifndef _CLASSIFIER_H_
@@ -10,7 +12,6 @@
 
 #include <vector>
 #include <memory>
-#include "index/forward_index.h"
 #include "classify/confusion_matrix.h"
 
 namespace meta {
@@ -20,13 +21,15 @@ namespace classify {
  * A classifier uses a document's feature space to identify which group it
  * belongs to.
  */
+template <class Index>
 class classifier
 {
     public:
         /**
-         * @param idx The index to run the classifier on
+         * @param idx The index to run the classifier on; it should either be a
+         * forward_index or and inverted_index, depending on the classifier
          */
-        classifier(index::forward_index & idx);
+        classifier(Index & idx);
 
         /**
          * Classifies a document into a specific group, as determined by
@@ -73,10 +76,11 @@ class classifier
     protected:
 
         /** the index that the classifer is run on */
-        index::forward_index & _idx;
+        Index & _idx;
 };
 
 }
 }
 
+#include "classify/classifier/classifier.tcc"
 #endif

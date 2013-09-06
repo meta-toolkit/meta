@@ -16,8 +16,9 @@ using std::cerr;
 using std::endl;
 using namespace meta;
 
+template <class Index>
 classify::confusion_matrix cv(index::forward_index & idx,
-                              classify::classifier & c)
+                              classify::classifier<Index> & c)
 {
     std::vector<doc_id> docs = idx.docs();
     classify::confusion_matrix matrix = c.cross_validate(docs, 5);

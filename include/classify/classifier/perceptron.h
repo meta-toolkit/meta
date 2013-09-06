@@ -11,7 +11,7 @@
 
 #include <vector>
 #include <unordered_map>
-
+#include "index/forward_index.h"
 #include "classify/classifier/classifier.h"
 #include "meta.h"
 
@@ -22,7 +22,7 @@ namespace classify {
  * Implements the Perceptron classifier, a simplistic linear classifier for
  * linearly-separable data.
  */
-class perceptron : public classifier {
+class perceptron : public classifier<index::forward_index> {
     public:
         /**
          * Constructs a perceptron classifier with the given learning rate,

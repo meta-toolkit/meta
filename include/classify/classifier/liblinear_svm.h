@@ -10,6 +10,7 @@
 #define _LIBLINEAR_SVM_H_
 
 #include "classify/classifier/classifier.h"
+#include "index/forward_index.h"
 #include "meta.h"
 
 namespace meta {
@@ -19,7 +20,7 @@ namespace classify {
  * Wrapper class for liblinear (http://www.csie.ntu.edu.tw/~cjlin/liblinear/)
  * implementation of support vector machine classification.
  */
-class liblinear_svm: public classifier
+class liblinear_svm: public classifier<index::forward_index>
 {
     public:
 
@@ -28,8 +29,7 @@ class liblinear_svm: public classifier
          * @param idx The index to run the classifier on
          * @param liblinear_path The path to the liblinear library
          */
-        liblinear_svm(index::forward_index & idx,
-                      const std::string & liblinear_path);
+        liblinear_svm(index::forward_index & idx, const std::string & liblinear_path);
 
         /**
          * Classifies a document into a specific group, as determined by

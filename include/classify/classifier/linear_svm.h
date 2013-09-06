@@ -9,6 +9,7 @@
 #ifndef _META_CLASSIFY_LINEAR_SVM_H_
 #define _META_CLASSIFY_LINEAR_SVM_H_
 
+#include "index/forward_index.h"
 #include "classify/classifier/classifier.h"
 
 namespace meta {
@@ -23,7 +24,7 @@ namespace classify {
  * @see http://www.csie.ntu.edu.tw/~cjlin/papers/cddual.pdf
  * @see Algorithm 3, in particular.
  */
-class linear_svm : public classifier {
+class linear_svm : public classifier<index::forward_index> {
     public:
         /**
          * Loss function to be used by the SVM. The default is L2.

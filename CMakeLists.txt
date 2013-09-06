@@ -20,7 +20,6 @@ if( UNIX )
 endif()
 
 add_library( meta-classify
-             src/classify/classifier/classifier.cpp
              src/classify/feature_select/select.cpp
              src/classify/feature_select/doc_freq.cpp
              src/classify/feature_select/select_simple.cpp
