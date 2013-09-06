@@ -39,22 +39,24 @@ class lock_free_map {
         /**
          * lock_free_map may be move constructed
          */
-        lock_free_map(lock_free_map &&) = default;
+        lock_free_map(lock_free_map &&);
 
         /**
-         * lock_free_map may be copy assigned
+         * lock_free_map may be copy or move assigned (unifying assignment
+         * op)
          */
-        lock_free_map & operator=(const lock_free_map &) = default;
-
-        /**
-         * lock_free_map may be move assigned
-         */
-        lock_free_map & operator=(lock_free_map &&) = default;
+        lock_free_map & operator=(lock_free_map rhs);
 
         /**
          * lock_free_map has a default destructor
          */
         ~lock_free_map() = default;
+
+        /**
+         * Swaps the current lock_free_map with the given one
+         * @param other the map to swap with
+         */
+        void swap(lock_free_map & other);
 
         /**
          * Inserts a given (key, value) pair into the hash table.
@@ -82,10 +84,10 @@ class lock_free_map {
          * early as the function's return.
          *
          * Throws an exception in the event the key does not exist.
-         * 
+         *
          * @todo When C++14 is released, have this return a
          *  std::optional<Value> instead of a Value directly
-         * 
+         *
          * @param key the key to find an associated value for
          */
         Value find(const Key & key) const;
@@ -100,8 +102,8 @@ class lock_free_map {
          * Helper function to perform a non-mutating operation on the map.
          */
         template <class Functor>
-        auto perform_operation(Functor && functor)
-            -> typename std::result_of<Functor>::type;
+        auto perform_operation(Functor && functor) const
+            -> decltype(functor(nullptr));
 
         /**
          * Helper function to perform a mutating operation on the map.
@@ -114,7 +116,7 @@ class lock_free_map {
          * will be updated on every write operation, and is a shared
          * pointer so that it may be (atomically) copied by value into a
          * read operation's body, ensuring it remains for the duration of
-         * the read, even if it has been replaced by a concurrent write. 
+         * the read, even if it has been replaced by a concurrent write.
          */
         std::shared_ptr<std::unordered_map<Key, Value>> map_;
 };

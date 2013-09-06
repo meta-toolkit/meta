@@ -15,6 +15,7 @@
 #include <mutex>
 #include "caching/splay_cache.h"
 #include "tokenizers/all.h"
+#include "index/cached_index.h"
 #include "index/document.h"
 #include "index/postings_data.h"
 #include "io/compressed_file_reader.h"
@@ -31,6 +32,9 @@ namespace index {
 template <class PrimaryKey, class SecondaryKey>
 class disk_index
 {
+    public:
+        using primary_key_type = PrimaryKey;
+        using secondary_key_type = SecondaryKey;
     protected:
         /**
          * @param config The toml_group that specifies how to create the
@@ -131,7 +135,7 @@ class disk_index
          * @return the postings data for a given PrimaryKey
          * A cache is first searched before the postings file is queried.
          */
-        std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
+        virtual std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
         search_primary(PrimaryKey p_id) const;
 
     protected:
@@ -269,15 +273,6 @@ class disk_index
          */
         std::unique_ptr<io::compressed_file_reader> _postings;
 
-        /** cache for recently used postings_data */
-        mutable caching::splay_cache<
-            PrimaryKey,
-            std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
-        > _cache;
-
-        /** mutex used when the cache is accessed */
-        mutable std::unique_ptr<std::mutex> _mutex;
-
         /** maps which class a document belongs to (if any) */
         std::unordered_map<doc_id, class_label> _labels;
 
@@ -324,8 +319,15 @@ class disk_index
          * used to build the index
          * @return A properly initialized index
          */
-        template <class Index>
-        friend Index make_index(const std::string & config_file);
+        template <class Index, class... Args>
+        friend Index make_index(const std::string & config_file, 
+                                Args &&... args);
+
+        template <class Index, 
+                  template <class, class> class Cache, 
+                  class... Args>
+        friend cached_index<Index, Cache> 
+        make_index(const std::string & config_file, Args &&... args);
 };
 
 }

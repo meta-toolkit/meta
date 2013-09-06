@@ -10,6 +10,9 @@
 #ifndef _SPLAY_CACHE_H_
 #define _SPLAY_CACHE_H_
 
+#include <memory>
+#include <mutex>
+
 #include "meta.h"
 
 namespace meta {
@@ -28,7 +31,7 @@ class splay_cache
          *
          * @param max_height The maximum height for the splay tree
          */
-        splay_cache(uint32_t max_height);
+        splay_cache(uint32_t max_height = 10);
 
         /**
          * Default move copy-constructor.
@@ -87,6 +90,7 @@ class splay_cache
 
         uint32_t _max_height;
         node* _root;
+        mutable std::unique_ptr<std::mutex> _mutables;
 
         void clear(node* & subroot);
         void insert(node* & subroot, const Key & key, const Value & value, uint32_t depth);
@@ -103,7 +107,7 @@ class splay_cache
         class splay_cache_exception: public std::exception
         {
             public:
-                
+
                 splay_cache_exception(const std::string & error):
                     _error(error) { /* nothing */ }
 
@@ -111,9 +115,9 @@ class splay_cache
                 {
                     return _error.c_str();
                 }
-           
+
             private:
-           
+
                 std::string _error;
         };
 

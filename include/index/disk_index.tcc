@@ -7,11 +7,10 @@
 #include <cstdio>
 #include <queue>
 #include <iostream>
+#include <utility>
 #include "index/disk_index.h"
 #include "index/chunk.h"
 #include "util/common.h"
-
-#define USE_CACHE true
 
 using std::cerr;
 using std::endl;
@@ -19,11 +18,11 @@ using std::endl;
 namespace meta {
 namespace index {
 
-template <class Index>
-Index make_index(const std::string & config_file)
+template <class Index, class... Args>
+Index make_index(const std::string & config_file, Args &&... args)
 {
     auto config = common::read_config(config_file);
-    Index idx{config};
+    Index idx{config, std::forward<Args>(args)...};
     if(mkdir(idx._index_name.c_str(), 0755) == -1) 
     {
         // index has already been made, load it
@@ -45,14 +44,19 @@ Index make_index(const std::string & config_file)
     return idx;
 }
 
+template <class Index, template <class, class> class Cache, class... Args>
+cached_index<Index, Cache> make_index(const std::string & config_file, 
+                                      Args &&... args) {
+    return make_index<cached_index<Index, Cache>>(config_file, 
+                                                  std::forward<Args>(args)...);
+}
+
 template <class PrimaryKey, class SecondaryKey>
 disk_index<PrimaryKey, SecondaryKey>::disk_index(
         const cpptoml::toml_group & config,
         const std::string & index_path):
     _tokenizer{ tokenizers::tokenizer::load_tokenizer(config) },
-    _index_name{ index_path },
-    _cache{10}, 
-    _mutex{ new std::mutex() }
+    _index_name{ index_path }
 { /* nothing */ }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -392,29 +396,11 @@ template <class PrimaryKey, class SecondaryKey>
 std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
 disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey p_id) const
 {
-#if USE_CACHE
-    {
-        std::lock_guard<std::mutex> lock{*_mutex};
-        if(_cache.exists(p_id))
-            return _cache.find(p_id);
-    }
-#endif
-
     auto it = _term_bit_locations.find(p_id);
     // if the term doesn't exist in the index, return an empty postings_data
     if(it == _term_bit_locations.end())
         return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(p_id);
-
-    auto pdata = search_postings(p_id, it->second);
-
-#if USE_CACHE
-    {
-        std::lock_guard<std::mutex> lock{*_mutex};
-        _cache.insert(p_id, pdata);
-    }
-#endif
-
-    return pdata;
+    return search_postings(p_id, it->second);
 }
 
 template <class PrimaryKey, class SecondaryKey>

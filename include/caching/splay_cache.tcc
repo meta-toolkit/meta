@@ -9,7 +9,7 @@ namespace caching {
 
 template <class Key, class Value>
 splay_cache<Key, Value>::splay_cache(uint32_t max_height):
-    _max_height(max_height), _root(nullptr)
+    _max_height(max_height), _root(nullptr), _mutables{new std::mutex{}}
 {
     if(_max_height < 1)
         throw splay_cache_exception{"max height must be greater than 0"};
@@ -24,6 +24,7 @@ splay_cache<Key, Value>::~splay_cache()
 template <class Key, class Value>
 void splay_cache<Key, Value>::insert(const Key & key, const Value & value)
 {
+    std::lock_guard<std::mutex> lock{*_mutables};
     insert(_root, key, value, 0);
 }
 
@@ -52,6 +53,7 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
 template <class Key, class Value>
 bool splay_cache<Key, Value>::exists(const Key & key)
 {
+    std::lock_guard<std::mutex> lock{*_mutables};
     if(_root != nullptr)
     {
         find(_root, key);
@@ -64,6 +66,7 @@ bool splay_cache<Key, Value>::exists(const Key & key)
 template <class Key, class Value>
 const Value & splay_cache<Key, Value>::find(const Key & key)
 {
+    std::lock_guard<std::mutex> lock{*_mutables};
     if(_root == nullptr)
         throw splay_cache_exception{"find called on empty cache; call exists first"};
 
