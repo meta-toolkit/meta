@@ -11,9 +11,11 @@ namespace meta {
 namespace classify {
 
 template <class Ranker>
-knn<Ranker>::knn(index::inverted_index & idx, uint16_t k):
+template <class... Args>
+knn<Ranker>::knn(index::inverted_index & idx, uint16_t k, Args &&... args):
     classifier{idx},
-    _k(k)
+    _k{k},
+    _ranker{std::forward<Args>(args)...}
 { /* nothing */ }
 
 template <class Ranker>

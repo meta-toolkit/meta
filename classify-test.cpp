@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
  //           << classify::confusion_matrix::mcnemar_significant( m1, m2 )
  //           << std::endl;
 
-    classify::knn<index::okapi_bm25> k{i_idx, 10};
+    classify::knn<index::okapi_bm25> k{i_idx, 10, 1.5, 0.75, 500.0};
     auto m2 = cv(i_idx, k);
     std::cout << "(liblinear vs knn) Significant? " << std::boolalpha
               << classify::confusion_matrix::mcnemar_significant( m1, m2 )

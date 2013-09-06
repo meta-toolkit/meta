@@ -28,8 +28,10 @@ class knn: public classifier<index::inverted_index>
          * @param idx The index to run the classifier on
          * @param ranker
          * @param k The value of k in k-NN
+         * @param args Arguments to the chosen ranker constructor
          */
-        knn(index::inverted_index & idx, uint16_t k);
+        template <class... Args>
+        knn(index::inverted_index & idx, uint16_t k, Args &&... args);
 
         /**
          * Creates a classification model based on training documents.
