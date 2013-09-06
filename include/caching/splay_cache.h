@@ -13,7 +13,7 @@
 #include "meta.h"
 
 namespace meta {
-namespace util {
+namespace caching {
 
 /**
  * A splay_cache is a fixed-height splay tree for cache operations
@@ -122,5 +122,5 @@ class splay_cache
 }
 }
 
-#include "util/splay_cache.tcc"
+#include "caching/splay_cache.tcc"
 #endif

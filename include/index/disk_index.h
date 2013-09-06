@@ -13,7 +13,7 @@
 #include <vector>
 #include <memory>
 #include <mutex>
-#include "util/splay_cache.h"
+#include "caching/splay_cache.h"
 #include "tokenizers/all.h"
 #include "index/document.h"
 #include "index/postings_data.h"
@@ -270,7 +270,7 @@ class disk_index
         std::unique_ptr<io::compressed_file_reader> _postings;
 
         /** cache for recently used postings_data */
-        mutable util::splay_cache<
+        mutable caching::splay_cache<
             PrimaryKey,
             std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
         > _cache;

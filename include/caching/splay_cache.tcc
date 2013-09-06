@@ -2,8 +2,10 @@
  * @file splay_cache.tcc
  */
 
+#include "caching/splay_cache.h"
+
 namespace meta {
-namespace util {
+namespace caching {
 
 template <class Key, class Value>
 splay_cache<Key, Value>::splay_cache(uint32_t max_height):
