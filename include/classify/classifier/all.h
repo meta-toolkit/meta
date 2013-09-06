@@ -3,3 +3,4 @@
 #include "classify/classifier/perceptron.h"
 #include "classify/classifier/linear_svm.h"
 #include "classify/classifier/liblinear_svm.h"
+#include "classify/classifier/knn.h"
