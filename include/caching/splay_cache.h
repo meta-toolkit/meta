@@ -14,6 +14,7 @@
 #include <mutex>
 
 #include "meta.h"
+#include "util/optional.h"
 
 namespace meta {
 namespace caching {
@@ -55,18 +56,10 @@ class splay_cache
         void insert(const Key & key, const Value & value);
 
         /**
-         * @param key The key to check existance for
-         * @return whether the key exists in the cache
-         */
-        bool exists(const Key & key);
-
-        /**
-         * This function assumes exists was called first to verify that the
-         * given key actually exists in the cache.
          * @param key The key to find the corresponding value for
          * @return the associated value for the given key
          */
-        const Value & find(const Key & key);
+        util::optional<Value> find(const Key & key);
 
     private:
 

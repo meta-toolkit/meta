@@ -23,7 +23,7 @@ Index make_index(const std::string & config_file, Args &&... args)
 {
     auto config = common::read_config(config_file);
     Index idx{config, std::forward<Args>(args)...};
-    if(mkdir(idx._index_name.c_str(), 0755) == -1) 
+    if(mkdir(idx._index_name.c_str(), 0755) == -1)
     {
         // index has already been made, load it
         idx.load_index();
@@ -33,8 +33,8 @@ Index make_index(const std::string & config_file, Args &&... args)
         // otherwise, create a new one
         std::string prefix = *cpptoml::get_as<std::string>(config, "prefix")
             + *cpptoml::get_as<std::string>(config, "dataset");
-        std::string corpus_file = prefix 
-            + "/" 
+        std::string corpus_file = prefix
+            + "/"
             + *cpptoml::get_as<std::string>(config, "list")
             + "-full-corpus.txt";
 
@@ -45,9 +45,9 @@ Index make_index(const std::string & config_file, Args &&... args)
 }
 
 template <class Index, template <class, class> class Cache, class... Args>
-cached_index<Index, Cache> make_index(const std::string & config_file, 
+cached_index<Index, Cache> make_index(const std::string & config_file,
                                       Args &&... args) {
-    return make_index<cached_index<Index, Cache>>(config_file, 
+    return make_index<cached_index<Index, Cache>>(config_file,
                                                   std::forward<Args>(args)...);
 }
 

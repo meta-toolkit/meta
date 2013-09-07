@@ -12,6 +12,7 @@
 
 #include "caching/unordered_map_cache.h"
 #include "parallel/lock_free_map.h"
+#include "util/optional.h"
 
 namespace meta {
 namespace caching {
@@ -38,9 +39,7 @@ class dblru_cache {
         template <class... Args>
         void emplace(Args &&... args);
 
-        bool exists(const Key & key);
-
-        Value find(const Key & key);
+        util::optional<Value> find(const Key & key);
     private:
         void handle_insert();
 

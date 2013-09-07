@@ -51,27 +51,15 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
 }
 
 template <class Key, class Value>
-bool splay_cache<Key, Value>::exists(const Key & key)
+util::optional<Value> splay_cache<Key, Value>::find(const Key & key)
 {
     std::lock_guard<std::mutex> lock{*_mutables};
-    if(_root != nullptr)
-    {
+    if(_root != nullptr) {
         find(_root, key);
-        return _root->key == key;
+        if(_root->key == key)
+            return {_root->value};
     }
-
-    return false;
-}
-
-template <class Key, class Value>
-const Value & splay_cache<Key, Value>::find(const Key & key)
-{
-    std::lock_guard<std::mutex> lock{*_mutables};
-    if(_root == nullptr)
-        throw splay_cache_exception{"find called on empty cache; call exists first"};
-
-    find(_root, key);
-    return _root->value;
+    return {util::nullopt};
 }
 
 template <class Key, class Value>

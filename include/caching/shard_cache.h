@@ -17,6 +17,7 @@
 #include "caching/splay_cache.h"
 #include "caching/unordered_map_cache.h"
 #include "parallel/lock_free_map.h"
+#include "util/optional.h"
 
 namespace meta {
 namespace caching {
@@ -32,8 +33,7 @@ class generic_shard_cache {
         ~generic_shard_cache() = default;
 
         void insert(const Key & key, const Value & value);
-        bool exists(const Key & key);
-        Value find(const Key & key);
+        util::optional<Value> find(const Key & key);
 
     private:
         std::vector<Map<Key, Value>> shards_;

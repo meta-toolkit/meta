@@ -9,6 +9,7 @@
 #define _TOKENIZER_H_
 
 #include <memory>
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include "meta.h"
@@ -50,7 +51,7 @@ class tokenizer
          * @param document document to store tokenized information in
          * @param mapping A function that shows the tokenizer how to convert a
          * string term into its term_id
-         */        
+         */
         virtual void tokenize_document(index::document & document,
                 std::function<term_id(const std::string & term)> mapping) = 0;
 
@@ -116,22 +117,25 @@ class tokenizer
          */
         static std::unique_ptr<tokenizer> load_tokenizer(const cpptoml::toml_group & config);
 
-    protected:
-
+    private:
         /**
          * Keeps track of the internal mapping of term_ids to strings parsed
          * from the file. This is protected mainly so MultiTokenizer can update
          * its _termMap correctly.
          */
         util::invertible_map<term_id, std::string> _term_map;
-        
-    private:
- 
+
         /**
          * Internal counter for the number of unique terms seen (used as keys
          * in the invertible_map).
          */
         term_id _current_term_id;
+
+        /**
+         * Internal lock to synchronize the term map when tokenizing from
+         * multiple threads.
+         */
+        mutable std::mutex mutables_;
 
     public:
         /**
@@ -140,7 +144,7 @@ class tokenizer
         class tokenizer_exception: public std::exception
         {
             public:
-                
+
                 tokenizer_exception(const std::string & error):
                     _error(error) { /* nothing */ }
 
@@ -148,7 +152,7 @@ class tokenizer
                 {
                     return _error.c_str();
                 }
-           
+
             private:
                 std::string _error;
         };

@@ -51,10 +51,10 @@ uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
             write_chunk(chunk_num++, pdata);
     }
     common::end_progress(progress);
-    
+
     if(!pdata.empty())
         write_chunk(chunk_num++, pdata);
-    
+
     return chunk_num;
 }
 

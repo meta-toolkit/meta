@@ -45,24 +45,16 @@ void dblru_cache<Key, Value, Map>::emplace(Args &&... args) {
 }
 
 template <class Key, class Value, template <class, class> class Map>
-bool dblru_cache<Key, Value, Map>::exists(const Key & key) {
-    if(primary_.exists(key))
-        return true;
-    if(!secondary_.exists(key))
-        return false;
-    primary_.insert(key, secondary_.find(key));
-    handle_insert();
-    return true;
-}
-
-template <class Key, class Value, template <class, class> class Map>
-Value dblru_cache<Key, Value, Map>::find(const Key & key) {
-    if(primary_.exists(key))
-        return primary_.find(key);
-    Value v = secondary_.find(key);
-    primary_.insert(key, v);
-    handle_insert();
-    return v;
+util::optional<Value> dblru_cache<Key, Value, Map>::find(const Key & key) {
+    auto opt = primary_.find(key);
+    if(opt)
+        return opt;
+    opt = secondary_.find(key);
+    if(opt) {
+        primary_.insert(key, *opt);
+        handle_insert();
+    }
+    return opt;
 }
 
 template <class Key, class Value, template <class, class> class Map>

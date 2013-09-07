@@ -13,6 +13,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include "util/optional.h"
+
 namespace meta {
 namespace parallel {
 
@@ -73,12 +75,6 @@ class lock_free_map {
         void emplace(Args &&... args);
 
         /**
-         * Determines if the given key exists in the map.
-         * @param key they key to look for
-         */
-        bool exists(const Key & key) const;
-
-        /**
          * Finds the value associated with a given key. Must return it by
          * value for correctness reasons---references may be invalid as
          * early as the function's return.
@@ -90,7 +86,7 @@ class lock_free_map {
          *
          * @param key the key to find an associated value for
          */
-        Value find(const Key & key) const;
+        util::optional<Value> find(const Key & key) const;
 
         /**
          * Empties the map.

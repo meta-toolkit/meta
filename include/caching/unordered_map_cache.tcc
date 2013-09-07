@@ -35,15 +35,12 @@ void unordered_map_cache<Key, Value>::emplace(Args &&... args) {
 }
 
 template <class Key, class Value>
-bool unordered_map_cache<Key, Value>::exists(const Key & key) const {
+util::optional<Value> unordered_map_cache<Key, Value>::find(const Key & key) const {
     std::lock_guard<std::mutex> lock{mutables_};
-    return map_.find(key) != map_.end();
-}
-
-template <class Key, class Value>
-const Value & unordered_map_cache<Key, Value>::find(const Key & key) const {
-    std::lock_guard<std::mutex> lock{mutables_};
-    return map_.at(key);
+    auto it = map_.find(key);
+    if(it == map_.end())
+        return {util::nullopt};
+    return {it->second};
 }
 
 }

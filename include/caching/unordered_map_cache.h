@@ -14,6 +14,8 @@
 #include <memory>
 #include <mutex>
 
+#include "util/optional.h"
+
 namespace meta {
 namespace caching {
 
@@ -33,9 +35,7 @@ class unordered_map_cache {
         template <class... Args>
         void emplace(Args &&... args);
 
-        bool exists(const Key & key) const;
-
-        const Value & find(const Key & key) const;
+        util::optional<Value> find(const Key & key) const;
 
     private:
         std::unordered_map<Key, Value> map_;

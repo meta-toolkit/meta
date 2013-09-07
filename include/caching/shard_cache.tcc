@@ -19,13 +19,8 @@ void generic_shard_cache<Key, Value, Map>::insert(const Key & key,
 }
 
 template <class Key, class Value, template <class, class> class Map>
-bool generic_shard_cache<Key, Value, Map>::exists(const Key & key) {
-    auto shard = hasher_(key) % shards_.size();
-    return shards_[shard].exists(key);
-}
-
-template <class Key, class Value, template <class, class> class Map>
-Value generic_shard_cache<Key, Value, Map>::find(const Key & key) {
+util::optional<Value>
+generic_shard_cache<Key, Value, Map>::find(const Key & key) {
     auto shard = hasher_(key) % shards_.size();
     return shards_[shard].find(key);
 }

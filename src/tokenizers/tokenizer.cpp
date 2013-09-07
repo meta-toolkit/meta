@@ -33,6 +33,7 @@ void tokenizer::tokenize(index::document & document)
 
 term_id tokenizer::mapping(const string & term)
 {
+    std::lock_guard<std::mutex> lock{mutables_};
     if(!_term_map.contains_value(term))
     {
         _term_map.insert(_current_term_id, term);
@@ -91,7 +92,7 @@ size_t tokenizer::num_terms() const
 std::unique_ptr<tokenizer> tokenizer::load_tokenizer(const cpptoml::toml_group & config)
 {
     std::vector<std::shared_ptr<tokenizer>> toks;
-    
+
     auto tokenizers = config.get_group_array( "tokenizers" );
     for( auto group : tokenizers->array() ) {
         string method = *cpptoml::get_as<std::string>( *group, "method" );

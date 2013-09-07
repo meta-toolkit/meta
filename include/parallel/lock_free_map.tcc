@@ -45,16 +45,12 @@ void lock_free_map<Key, Value>::emplace(Args &&... args) {
 }
 
 template <class Key, class Value>
-bool lock_free_map<Key, Value>::exists(const Key & key) const {
+util::optional<Value> lock_free_map<Key, Value>::find(const Key & key) const {
     return perform_operation([&](const decltype(map_) & map) {
-        return map->find(key) != map->end();
-    });
-}
-
-template <class Key, class Value>
-Value lock_free_map<Key, Value>::find(const Key & key) const {
-    return perform_operation([&](const decltype(map_) & map) {
-        return map->at(key);
+        auto it = map->find(key);
+        if(it == map->end())
+            return util::optional<Value>{util::nullopt};
+        return util::optional<Value>{it->second};
     });
 }
 

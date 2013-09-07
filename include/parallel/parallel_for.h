@@ -17,7 +17,7 @@
 
 namespace meta {
 namespace parallel {
-    
+
 template <class Iterator, class Function>
 void parallel_for( Iterator begin, Iterator end, Function func ) {
     thread_pool pool;
@@ -39,7 +39,7 @@ void parallel_for( Iterator begin, Iterator end, thread_pool & pool, Function fu
     std::vector<std::future<void>> futures;
     // first p - 1 groups
     for( ; begin != last; std::advance( begin, block_size ) ) {
-        futures.emplace_back( 
+        futures.emplace_back(
                 pool.submit_task(
                     [=]() {
                         auto mylast = begin;
