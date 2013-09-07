@@ -93,6 +93,7 @@ class postings_data
         bool operator<(const postings_data & other) const;
 
         /**
+         * Reads uncompressed postings data from a stream
          * @param in The stream to read from
          * @param pd The postings data object to write the stream info to
          * @return the input stream
@@ -123,6 +124,7 @@ class postings_data
         }
 
         /**
+         * Writes uncompressed postings data to a stream
          * @param out The stream to write to
          * @param pd The postings data object to write to the stream
          * @return the output stream

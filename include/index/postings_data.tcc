@@ -11,7 +11,7 @@ namespace index {
 
 template <class PrimaryKey, class SecondaryKey>
 postings_data<PrimaryKey, SecondaryKey>::postings_data(PrimaryKey p_id):
-    _p_id(p_id)
+    _p_id{p_id}
 { /* nothing */ }
 
 template <class PrimaryKey, class SecondaryKey>
