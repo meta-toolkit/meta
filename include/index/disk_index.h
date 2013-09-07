@@ -17,6 +17,7 @@
 #include "tokenizers/all.h"
 #include "index/document.h"
 #include "index/postings_data.h"
+#include "io/compressed_file_reader.h"
 #include "io/mmap_file.h"
 #include "meta.h"
 
@@ -196,6 +197,9 @@ class disk_index
         /** the tokenizer used to tokenize documents in the index */
         std::unique_ptr<tokenizers::tokenizer> _tokenizer;
 
+        /** the mapping of (actual -> compressed id) */
+        util::invertible_map<uint64_t, uint64_t> _compression_mapping;
+
     private:
         /**
          * @param num_chunks The total number of chunks to merge together to
@@ -205,12 +209,13 @@ class disk_index
         void merge_chunks(uint32_t num_chunks, const std::string & filename);
 
         /**
-         * @param idx The pointer into the postings file where the wanted
+         * @param p_id The id of the PrimaryKey to search for
+         * @param bit_offset The pointer into the postings file where the wanted
          * PrimaryKey begins
          * @return a postings_data object from the postings file
          */
         std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
-        search_postings(uint64_t idx) const;
+        search_postings(PrimaryKey p_id, uint64_t bit_offset) const;
 
         /**
          * Creates the lexicon file (or "dictionary") which has pointers into
@@ -222,6 +227,11 @@ class disk_index
                             const std::string & lexicon_file);
 
         /**
+         * Compresses the large postings file.
+         */
+        void compress(const std::string & filename);
+
+        /**
          * Initializes the _label_ids member.
          */
         void set_label_ids();
@@ -230,14 +240,14 @@ class disk_index
         std::string _index_name;
 
         /** PrimaryKey -> postings location */
-        std::unordered_map<PrimaryKey, uint64_t> _term_locations;
+        std::unordered_map<PrimaryKey, uint64_t> _term_bit_locations;
 
         /**
          * A pointer to a memory-mapped postings file. It is a pointer because
          * we want to delay the initialization of it until the postings file is
          * created in some cases.
          */
-        std::unique_ptr<io::mmap_file> _postings;
+        std::unique_ptr<io::compressed_file_reader> _postings;
 
         /** cache for recently used postings_data */
         mutable util::splay_cache<

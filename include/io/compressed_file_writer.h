@@ -40,6 +40,12 @@ class compressed_file_writer
         ~compressed_file_writer();
 
         /**
+         * @return the character index and bit index of the current location in
+         * the compressed file
+         */
+        uint64_t bit_location() const;
+
+        /**
          * Writes a value to the end of the compressed file.
          * @param value The number to write
          */
@@ -66,14 +72,17 @@ class compressed_file_writer
         /** the current bit of the current byte this reader is on */
         uint64_t _bit_cursor;
         
-        /** saved data that is not yet written to disk */
-        unsigned char* _buffer;
-
         /** how large to make the internal writer buffer */
         uint64_t _buffer_size;
 
+        /** saved data that is not yet written to disk */
+        unsigned char* _buffer;
+
         /** the mapping to use (actual -> compressed id) */
         const util::invertible_map<uint64_t, uint64_t> _mapping;
+
+        /** the number of total bits that have been written (for seeking )*/
+        uint64_t _bit_location;
 
     public:
 

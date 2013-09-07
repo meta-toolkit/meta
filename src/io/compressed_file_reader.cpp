@@ -59,7 +59,7 @@ void compressed_file_reader::reset()
 
 void compressed_file_reader::seek(uint64_t position, uint8_t bitOffset)
 {
-    if(bitOffset <= 7 && position > _size)
+    if(bitOffset <= 7 && position < _size)
     {
         _current_char = position;
         _current_bit = bitOffset;
@@ -68,7 +68,14 @@ void compressed_file_reader::seek(uint64_t position, uint8_t bitOffset)
     }
     else
         throw compressed_file_reader_exception(
-            "error seeking; invalid parameters");
+            "error seeking; invalid parameters: position = "
+            + common::to_string(position)
+            + ", bit = "
+            + common::to_string(static_cast<int>(bitOffset))
+            + " (size is "
+            + common::to_string(_size)
+            + " bytes)"
+        );
 }
 
 bool compressed_file_reader::has_next() const

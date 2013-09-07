@@ -74,15 +74,9 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
 {
     uint32_t num_chunks = tokenize_docs(docs);
     merge_chunks(num_chunks, _index_name + "/postings.index");
-    create_lexicon(_index_name
-            + "/postings.index", _index_name + "/lexicon.index");
     _tokenizer->save_term_id_mapping(_index_name + "/termids.mapping");
     save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
     save_mapping(_doc_sizes, _index_name + "/docsizes.counts");
-
-    _postings = std::unique_ptr<io::mmap_file>{
-        new io::mmap_file{_index_name + "/postings.index"}
-    };
 
     // Save class label information; this is needed for both forward and
     // inverted indexes. It's assumed that doc_ids are assigned in deriving
@@ -102,6 +96,68 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
     std::ifstream source_config{config_file.c_str(), std::ios::binary};
     std::ofstream dest_config{_index_name + "/config.toml", std::ios::binary};
     dest_config << source_config.rdbuf();
+
+    // compress the postings file
+    compress(_index_name + "/postings.index");
+
+    save_mapping(_term_bit_locations, _index_name + "/lexicon.index");
+  //save_mapping(_compression_mapping, _index_name +
+  //        "/keys.compressionmapping");
+
+    _postings = std::unique_ptr<io::compressed_file_reader>{
+        new io::compressed_file_reader{
+            _index_name + "/postings.index.compressed",
+            _compression_mapping
+        }
+    };
+}
+
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::compress(
+        const std::string & filename)
+{
+
+    std::ifstream in{filename};
+    postings_data<PrimaryKey, SecondaryKey> pdata{PrimaryKey{0}};
+    std::unordered_map<uint64_t, uint64_t> freqs;
+
+    while(in >> pdata)
+    {
+        for(auto & c: pdata.counts())
+        {
+            ++freqs[c.first];
+            ++freqs[c.second];
+        }
+    }
+
+    using pair_t = std::pair<uint64_t, uint64_t>;
+    std::vector<pair_t> sorted{freqs.begin(), freqs.end()};
+    std::sort(sorted.begin(), sorted.end(),
+        [](const pair_t & a, const pair_t & b) {
+            return a.second > b.second;
+        }
+    );
+
+    _compression_mapping.clear();
+    // 2 is the first valid compressed char after the delimiter 1
+    uint64_t counter = 2;
+    _compression_mapping.insert(1, 1); // we have to know what the delimiter is
+    for(auto & p: sorted)
+        _compression_mapping.insert(p.first, counter++);
+
+    io::compressed_file_writer out{filename + ".compressed",
+                                   _compression_mapping};
+
+    // now go back to the beginning of the file and compress it
+    // TODO why is seekg not working?
+    in.close();
+
+    std::ifstream test{filename};
+    while(test >> pdata)
+    {
+        _term_bit_locations[pdata.primary_key()] = out.bit_location();
+        pdata.write_compressed(out);
+    }
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -112,13 +168,18 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
 
     load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
     load_mapping(_doc_sizes, _index_name + "/docsizes.counts");
-    load_mapping(_term_locations, _index_name + "/lexicon.index");
+    load_mapping(_term_bit_locations, _index_name + "/lexicon.index");
     load_mapping(_labels, _index_name + "/docs.labels");
     load_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
+  //load_mapping(_compression_mapping, _index_name +
+  //      "/keys.compressionmapping");
     set_label_ids();
 
-    _postings = std::unique_ptr<io::mmap_file>{
-        new io::mmap_file{_index_name + "/postings.index"}
+    _postings = std::unique_ptr<io::compressed_file_reader>{
+        new io::compressed_file_reader{
+            _index_name + "/postings.index.compressed",
+            _compression_mapping
+        }
     };
 
     auto config = common::read_config(_index_name + "/config.toml");
@@ -238,25 +299,6 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::create_lexicon(
-        const std::string & postings_file,
-        const std::string & lexicon_file)
-{
-    io::mmap_file pfile{postings_file};
-    char* postings = pfile.start();
-    PrimaryKey cur_id{ 1 };
-    _term_locations[PrimaryKey{0}] = 0;
-    uint64_t idx = 0;
-    while(idx < pfile.size() - 1)
-    {
-        if(postings[idx] == '\n')
-            _term_locations[cur_id++] = idx + 1;
-        ++idx;
-    }
-    save_mapping(_term_locations, lexicon_file);
-}
-
-template <class PrimaryKey, class SecondaryKey>
 template <class Key, class Value>
 void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
         std::unordered_map<Key, Value> & map,
@@ -315,28 +357,27 @@ void disk_index<PrimaryKey, SecondaryKey>::tokenize(document & doc)
 
 template <class PrimaryKey, class SecondaryKey>
 std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
-disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey t_id) const
+disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey p_id) const
 {
 #if USE_CACHE
     {
         std::lock_guard<std::mutex> lock{*_mutex};
-        if(_cache.exists(t_id))
-            return _cache.find(t_id);
+        if(_cache.exists(p_id))
+            return _cache.find(p_id);
     }
 #endif
 
-    auto it = _term_locations.find(t_id);
+    auto it = _term_bit_locations.find(p_id);
     // if the term doesn't exist in the index, return an empty postings_data
-    if(it == _term_locations.end())
-        return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(t_id);
+    if(it == _term_bit_locations.end())
+        return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(p_id);
 
-    uint64_t idx = it->second;
-    auto pdata = search_postings(idx);
+    auto pdata = search_postings(p_id, it->second);
 
 #if USE_CACHE
     {
         std::lock_guard<std::mutex> lock{*_mutex};
-        _cache.insert(t_id, pdata);
+        _cache.insert(p_id, pdata);
     }
 #endif
 
@@ -345,16 +386,19 @@ disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey t_id) const
 
 template <class PrimaryKey, class SecondaryKey>
 std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
-disk_index<PrimaryKey, SecondaryKey>::search_postings(uint64_t idx) const
+disk_index<PrimaryKey, SecondaryKey>::search_postings(PrimaryKey p_id,
+        uint64_t bit_offset) const
 {
-    uint64_t len = 0;
-    char* post = _postings->start();
+    uint64_t byte = bit_offset / 8;
+    uint8_t bit = bit_offset % 8;
 
-    while(post[idx + len] != '\n')
-        ++len;
+    _postings->seek(byte, bit);
+    postings_data<PrimaryKey, SecondaryKey> pdata{PrimaryKey{p_id}};
+    pdata.read_compressed(*_postings);
 
-    std::string raw{post + idx, len};
-    return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(raw);
+    //cerr << "retrieved posting_data: " << endl << pdata << endl;
+
+    return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(pdata);
 }
 
 }

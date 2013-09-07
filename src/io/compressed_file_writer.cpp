@@ -13,9 +13,10 @@ compressed_file_writer::compressed_file_writer(const std::string & filename,
     _outfile{fopen(filename.c_str(), "w")},
     _char_cursor{0},
     _bit_cursor{0},
-    _buffer{new unsigned char[_buffer_size]},
     _buffer_size{1024 * 1024 * 8},
-    _mapping{mapping}
+    _buffer{new unsigned char[_buffer_size]},
+    _mapping{mapping},
+    _bit_location{0}
 {
     // disable buffering
     if(setvbuf(_outfile, nullptr, _IONBF, 0) != 0)
@@ -24,6 +25,11 @@ compressed_file_writer::compressed_file_writer(const std::string & filename,
 
     // zero out, we'll only write ones
     memset(_buffer, 0, _buffer_size);
+}
+
+uint64_t compressed_file_writer::bit_location() const
+{
+    return _bit_location;
 }
 
 compressed_file_writer::~compressed_file_writer()
@@ -50,6 +56,8 @@ void compressed_file_writer::write(uint64_t value)
 
 void compressed_file_writer::write_bit(bool bit)
 {
+    ++_bit_location;
+
     if(bit)
         _buffer[_char_cursor] |= (1 << (7 - _bit_cursor));
 

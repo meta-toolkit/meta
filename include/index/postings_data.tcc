@@ -1,7 +1,10 @@
 /**
- * @file postings_data.cpp
+ * @file postings_data.tcc
  * @author Sean Massung
  */
+
+#include <iostream>
+using namespace std;
 
 #include "index/postings_data.h"
 #include "util/common.h"
@@ -79,33 +82,40 @@ template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
         io::compressed_file_writer & writer) const
 {
-    // sort the counts according their SecondaryKey in increasing order (we know
-    // SecondaryKey is an integral type)
-    using pair_t = std::pair<SecondaryKey, uint64_t>;
-    std::vector<pair_t> sorted{_counts.begin(), _counts.end()};
-    std::sort(sorted.begin(), sorted.end(),
-        [](const pair_t & a, const pair_t & b) {
-            return a.first < b.first;
-        }
-    );
+    // sort the counts according their SecondaryKey in increasing order
+ // using pair_t = std::pair<SecondaryKey, uint64_t>;
+ // std::vector<pair_t> sorted{_counts.begin(), _counts.end()};
+ // std::sort(sorted.begin(), sorted.end(),
+ //     [](const pair_t & a, const pair_t & b) {
+ //         return a.first < b.first;
+ //     }
+ // );
 
-    writer.write(sorted[0].first);
-    writer.write(sorted[0].second);
+ // writer.write(sorted[0].first);
+ // writer.write(sorted[0].second);
 
-    // use gap encoding on the SecondaryKeys
-    uint64_t cur_id = sorted[0].first;
-    for(size_t i = 1; i < sorted.size(); ++i)
+    // use gap encoding on the SecondaryKeys (we know they are integral types)
+ // uint64_t cur_id = sorted[0].first;
+ // for(size_t i = 1; i < sorted.size(); ++i)
+ // {
+ //     //cerr << "SK = " << sorted[i].first << endl;
+
+ //     uint64_t temp_id = sorted[i].first;
+ //     sorted[i].first = sorted[i].first - cur_id;
+ //     cur_id = temp_id;
+
+ //     writer.write(sorted[i].first);
+ //     writer.write(sorted[i].second);
+ // }
+
+    for(auto & c: _counts)
     {
-        uint64_t temp_id = sorted[i].first;
-        sorted[i].first = sorted[i].first - cur_id;
-        cur_id = temp_id;
-
-        writer.write(sorted[i].first);
-        writer.write(sorted[i].second);
+        writer.write(c.first);
+        writer.write(c.second);
     }
 
     // mark end of postings_data
-    writer.write(0);
+    writer.write(_delimiter);
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -113,21 +123,22 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         io::compressed_file_reader & reader)
 {
     _counts.clear();
-    uint64_t last_id = 0;
+ // uint64_t last_id = 0;
 
     while(true)
     {
         uint64_t next_id = reader.next();
 
         // have we reached a delimiter?
-        if(next_id == 0)
+        if(next_id == _delimiter)
             break;
 
-        // we're using gap encoding
-        last_id += next_id;
-        SecondaryKey key{last_id};
+        _counts[SecondaryKey{next_id}] = reader.next();
 
-        _counts[key] = reader.next();
+        // we're using gap encoding
+     // last_id += next_id;
+     // SecondaryKey key{last_id};
+     // _counts[key] = reader.next();
     }
 }
 
