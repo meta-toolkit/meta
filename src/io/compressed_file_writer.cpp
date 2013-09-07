@@ -1,5 +1,6 @@
 /**
  * @file compressed_file_writer.cpp
+ * @author Sean Massung
  */
 
 #include "io/compressed_file_writer.h"
@@ -7,19 +8,19 @@
 namespace meta {
 namespace io {
 
-using std::string;
-
-compressed_file_writer::compressed_file_writer(const string & filename)
+compressed_file_writer::compressed_file_writer(const std::string & filename,
+        const util::invertible_map<uint64_t, uint64_t> & mapping):
+    _outfile{fopen(filename.c_str(), "w")},
+    _char_cursor{0},
+    _bit_cursor{0},
+    _buffer{new unsigned char[_buffer_size]},
+    _buffer_size{1024 * 1024 * 8},
+    _mapping{mapping}
 {
-    _outfile = fopen(filename.c_str(), "w");
-    _char_cursor = 0;
-    _bit_cursor = 0;
-    _buffer_size = 1024 * 1024 * 8,
-    _buffer = new unsigned char[_buffer_size];
-
     // disable buffering
     if(setvbuf(_outfile, nullptr, _IONBF, 0) != 0)
-        throw compressed_file_writer_exception("error disabling buffering (setvbuf)");
+        throw compressed_file_writer_exception(
+                "error disabling buffering (setvbuf)");
 
     // zero out, we'll only write ones
     memset(_buffer, 0, _buffer_size);
@@ -33,17 +34,18 @@ compressed_file_writer::~compressed_file_writer()
     fclose(_outfile);
 }
 
-void compressed_file_writer::write(unsigned int value)
+void compressed_file_writer::write(uint64_t value)
 {
-    int length = log2(value);
+    uint64_t cvalue = _mapping.get_value(value);
+    uint64_t length = log2(cvalue);
 
-    for(int bit = 0; bit < length; ++bit)
+    for(uint64_t bit = 0; bit < length; ++bit)
         write_bit(false);
 
     write_bit(true);
 
-    for(int bit = length - 1; bit >= 0; --bit)
-        write_bit(value & 1 << bit);
+    for(int64_t bit = length - 1; bit >= 0; --bit)
+        write_bit(cvalue & 1 << bit);
 }
 
 void compressed_file_writer::write_bit(bool bit)

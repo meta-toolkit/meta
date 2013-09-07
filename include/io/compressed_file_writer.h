@@ -1,5 +1,6 @@
 /**
  * @file compressed_file_writer.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
@@ -12,6 +13,7 @@
 #include <cstdio>
 #include <cmath>
 #include <string>
+#include "util/invertible_map.h"
 
 namespace meta {
 namespace io {
@@ -24,10 +26,13 @@ class compressed_file_writer
     public:
 
         /**
-         * Constructor.
-         * Opens a compressed file for writing or creates a new file if it doesn't exist.
+         * Constructor; Opens a compressed file for writing or creates a new
+         * file if it doesn't exist.
+         * @param filename The path to the compressed file
+         * @param mapping
          */
-        compressed_file_writer(const std::string & filename);
+        compressed_file_writer(const std::string & filename,
+                const util::invertible_map<uint64_t, uint64_t> & mapping);
 
         /**
          * Destructor; closes the compressed file.
@@ -36,27 +41,11 @@ class compressed_file_writer
 
         /**
          * Writes a value to the end of the compressed file.
-         * @param value - the number to write
+         * @param value The number to write
          */
-        void write(unsigned int value);
+        void write(uint64_t value);
 
     private:
-
-        /** where to write the compressed data */
-        FILE* _outfile;
-        
-        /** the current byte this reader is on */
-        unsigned int _char_cursor;
-        
-        /** the current bit of the current byte this reader is on */
-        unsigned int _bit_cursor;
-        
-        /** saved data that is not yet written to disk */
-        unsigned char* _buffer;
-
-        /** how large to make the internal writer buffer */
-        unsigned int _buffer_size;
-
         /**
          * Writes a bit to the file and advances writeCursors.
          * @param bit
@@ -67,6 +56,24 @@ class compressed_file_writer
          * Writes the buffer to the file.
          */
         void write_buffer() const;
+
+        /** where to write the compressed data */
+        FILE* _outfile;
+        
+        /** the current byte this reader is on */
+        uint64_t _char_cursor;
+        
+        /** the current bit of the current byte this reader is on */
+        uint64_t _bit_cursor;
+        
+        /** saved data that is not yet written to disk */
+        unsigned char* _buffer;
+
+        /** how large to make the internal writer buffer */
+        uint64_t _buffer_size;
+
+        /** the mapping to use (actual -> compressed id) */
+        const util::invertible_map<uint64_t, uint64_t> _mapping;
 
     public:
 
