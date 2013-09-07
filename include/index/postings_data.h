@@ -14,6 +14,8 @@
 #include <istream>
 #include <unordered_map>
 #include <string>
+#include "io/compressed_file_writer.h"
+#include "io/compressed_file_reader.h"
 #include "meta.h"
 
 namespace meta {
@@ -148,6 +150,24 @@ class postings_data
 
             return out;
         }
+
+        /**
+         * Writes this postings_data to a compressed file. The mapping for the
+         * compressed file is already set, so we don't have to worry about it.
+         * We can also assume that we are already in the correct location of the
+         * file.
+         * @param writer The compressed file to write to
+         */
+        void write_compressed(io::compressed_file_writer & writer) const;
+
+        /**
+         * Reads compressed postings_data into this object. The mapping for the
+         * compressed file is already set, so we don't have to worry about it.
+         * We can also assume that we are already in the correct location of the
+         * file.
+         * @param reader The compressed file to read from
+         */
+        void read_compressed(io::compressed_file_reader & reader);
 
         /**
          * @return the term_id for this postings_data

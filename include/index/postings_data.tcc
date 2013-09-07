@@ -75,5 +75,61 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::inverse_frequency() const
     return _counts.size();
 }
 
+template <class PrimaryKey, class SecondaryKey>
+void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
+        io::compressed_file_writer & writer) const
+{
+    // sort the counts according their SecondaryKey in increasing order (we know
+    // SecondaryKey is an integral type)
+    using pair_t = std::pair<SecondaryKey, uint64_t>;
+    std::vector<pair_t> sorted{_counts.begin(), _counts.end()};
+    std::sort(sorted.begin(), sorted.end(),
+        [](const pair_t & a, const pair_t & b) {
+            return a.first < b.first;
+        }
+    );
+
+    writer.write(sorted[0].first);
+    writer.write(sorted[0].second);
+
+    // use gap encoding on the SecondaryKeys
+    uint64_t cur_id = sorted[0].first;
+    for(size_t i = 1; i < sorted.size(); ++i)
+    {
+        uint64_t temp_id = sorted[i].first;
+        sorted[i].first = sorted[i].first - cur_id;
+        cur_id = temp_id;
+
+        writer.write(sorted[i].first);
+        writer.write(sorted[i].second);
+    }
+
+    // mark end of postings_data
+    writer.write(0);
+}
+
+template <class PrimaryKey, class SecondaryKey>
+void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
+        io::compressed_file_reader & reader)
+{
+    _counts.clear();
+    uint64_t last_id = 0;
+
+    while(true)
+    {
+        uint64_t next_id = reader.next();
+
+        // have we reached a delimiter?
+        if(next_id == 0)
+            break;
+
+        // we're using gap encoding
+        last_id += next_id;
+        SecondaryKey key{last_id};
+
+        _counts[key] = reader.next();
+    }
+}
+
 }
 }
