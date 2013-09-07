@@ -141,7 +141,8 @@ void disk_index<PrimaryKey, SecondaryKey>::compress(
     _compression_mapping.clear();
     // 2 is the first valid compressed char after the delimiter 1
     uint64_t counter = 2;
-    _compression_mapping.insert(1, 1); // we have to know what the delimiter is
+    uint64_t delim = std::numeric_limits<uint64_t>::max();
+    _compression_mapping.insert(delim, 1); // we have to know what the delimiter is
     for(auto & p: sorted)
         _compression_mapping.insert(p.first, counter++);
 
@@ -395,8 +396,6 @@ disk_index<PrimaryKey, SecondaryKey>::search_postings(PrimaryKey p_id,
     _postings->seek(byte, bit);
     postings_data<PrimaryKey, SecondaryKey> pdata{PrimaryKey{p_id}};
     pdata.read_compressed(*_postings);
-
-    //cerr << "retrieved posting_data: " << endl << pdata << endl;
 
     return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(pdata);
 }

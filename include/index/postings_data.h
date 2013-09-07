@@ -183,7 +183,7 @@ class postings_data
 
         PrimaryKey _p_id;
         std::unordered_map<SecondaryKey, uint64_t> _counts;
-        const static uint64_t _delimiter = 1;
+        const static uint64_t _delimiter = std::numeric_limits<uint64_t>::max();
 };
 
 }
