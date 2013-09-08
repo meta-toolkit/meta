@@ -316,17 +316,38 @@ class disk_index
          * ~~~
          *
          * @param config_file The path to the configuration file to be
-         * used to build the index
+         *  used to build the index
+         * @param args any additional arguments to forward to the
+         *  constructor for the chosen index type (usually none)
          * @return A properly initialized index
          */
         template <class Index, class... Args>
-        friend Index make_index(const std::string & config_file, 
+        friend Index make_index(const std::string & config_file,
                                 Args &&... args);
 
-        template <class Index, 
-                  template <class, class> class Cache, 
+        /**
+         * Factory method for creating indexes that are cached.
+         * Usage:
+         *
+         * ~~~cpp
+         * auto idx =
+         *     index::make_index<dervied_index_type,
+         *                       cache_type>(config_path, other, options);
+         * ~~~
+         *
+         * Other options will be forwarded to the constructor for the
+         * chosen cache class.
+         *
+         * @param config_file the path to the configuration file to be
+         *  used to build the index.
+         * @param args any additional arguments to forward to the
+         *  constructor for the cache class chosen
+         * @return A properly initialized, and automatically cached, index.
+         */
+        template <class Index,
+                  template <class, class> class Cache,
                   class... Args>
-        friend cached_index<Index, Cache> 
+        friend cached_index<Index, Cache>
         make_index(const std::string & config_file, Args &&... args);
 };
 
