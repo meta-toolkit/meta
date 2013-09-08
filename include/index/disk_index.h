@@ -170,11 +170,24 @@ class disk_index
                           const std::string & filename) const;
 
         /**
+         * Saves an invertible_map to disk.
+         */
+        void save_mapping(
+                const util::invertible_map<uint64_t, uint64_t> & map,
+                const std::string & filename) const;
+
+        /**
          * @param map The map to load information into
          * @param filename The file containing key, value pairs
          */
         template <class Key, class Value>
         void load_mapping(std::unordered_map<Key, Value> & map,
+                          const std::string & filename);
+
+        /**
+         * Loads an invertible_map from disk.
+         */
+        void load_mapping(util::invertible_map<uint64_t, uint64_t> & map,
                           const std::string & filename);
 
         /**
@@ -225,6 +238,13 @@ class disk_index
          */
         void create_lexicon(const std::string & postings_file,
                             const std::string & lexicon_file);
+
+        /**
+         * Calculates frequency info from the postings file to make the best
+         * compression mapping.
+         * @param filename The filename of the postings file
+         */
+        void calc_compression_mapping(const std::string & filename);
 
         /**
          * Compresses the large postings file.

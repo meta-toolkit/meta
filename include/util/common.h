@@ -57,6 +57,13 @@ namespace common
     }
 
     /**
+     * Converts a number of bytes into a human-readable number.
+     * @param num_bytes
+     * @return a human-readable string
+     */
+    inline std::string bytes_to_units(uint64_t num_bytes);
+
+    /**
      * @param idx The current progress in the operation
      * @param max The maximum value of idx, when it is done
      * @param freq How often to write output to the terminal

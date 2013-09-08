@@ -14,6 +14,21 @@ std::string common::to_string(const T & value)
     return ss.str();
 }
 
+std::string common::bytes_to_units(uint64_t num_bytes)
+{
+    std::string units = "bytes";
+    for(auto & u: {"KB", "MB", "GB", "TB"})
+    {
+        if(num_bytes >= 1024)
+        {
+            num_bytes /= 1024;
+            units = u;
+        }
+    }
+
+    return common::to_string(num_bytes) + " " + units;
+}
+
 void common::show_progress(size_t idx, size_t max, size_t freq, const std::string & prefix)
 {
     if(idx % freq == 0)

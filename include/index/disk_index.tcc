@@ -101,22 +101,21 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
     compress(_index_name + "/postings.index");
 
     save_mapping(_term_bit_locations, _index_name + "/lexicon.index");
-  //save_mapping(_compression_mapping, _index_name +
-  //        "/keys.compressionmapping");
+    save_mapping(_compression_mapping, _index_name +
+            "/keys.compressionmapping");
 
     _postings = std::unique_ptr<io::compressed_file_reader>{
         new io::compressed_file_reader{
-            _index_name + "/postings.index.compressed",
+            _index_name + "/postings.index",
             _compression_mapping
         }
     };
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::compress(
+void disk_index<PrimaryKey, SecondaryKey>::calc_compression_mapping(
         const std::string & filename)
 {
-
     std::ifstream in{filename};
     postings_data<PrimaryKey, SecondaryKey> pdata{PrimaryKey{0}};
     std::unordered_map<uint64_t, uint64_t> freqs;
@@ -139,26 +138,46 @@ void disk_index<PrimaryKey, SecondaryKey>::compress(
     );
 
     _compression_mapping.clear();
+
+    // have to know what the delimiter is
+    uint64_t delim = std::numeric_limits<uint64_t>::max();
+    _compression_mapping.insert(delim, 1);
+
     // 2 is the first valid compressed char after the delimiter 1
     uint64_t counter = 2;
-    uint64_t delim = std::numeric_limits<uint64_t>::max();
-    _compression_mapping.insert(delim, 1); // we have to know what the delimiter is
     for(auto & p: sorted)
         _compression_mapping.insert(p.first, counter++);
+}
 
-    io::compressed_file_writer out{filename + ".compressed",
-                                   _compression_mapping};
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::compress(
+        const std::string & filename)
+{
+    calc_compression_mapping(filename);
+    std::string cfilename{filename + ".compressed"};
 
-    // now go back to the beginning of the file and compress it
-    // TODO why is seekg not working?
-    in.close();
-
-    std::ifstream test{filename};
-    while(test >> pdata)
+    // create scope so the writer closes and we can calculate the size of the
+    // file as well as rename it
     {
-        _term_bit_locations[pdata.primary_key()] = out.bit_location();
-        pdata.write_compressed(out);
+        io::compressed_file_writer out{cfilename, _compression_mapping};
+
+        postings_data<PrimaryKey, SecondaryKey> pdata{PrimaryKey{0}};
+        std::ifstream in{filename};
+        while(in >> pdata)
+        {
+            _term_bit_locations[pdata.primary_key()] = out.bit_location();
+            pdata.write_compressed(out);
+        }
     }
+
+    struct stat st;
+    stat(cfilename.c_str(), &st);
+    uint64_t size = st.st_size;
+    cerr << "Created compressed postings file ("
+         << common::bytes_to_units(size) << ")" << endl;
+
+    remove(filename.c_str());
+    rename(cfilename.c_str(), filename.c_str());
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -172,13 +191,13 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
     load_mapping(_term_bit_locations, _index_name + "/lexicon.index");
     load_mapping(_labels, _index_name + "/docs.labels");
     load_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
-  //load_mapping(_compression_mapping, _index_name +
-  //      "/keys.compressionmapping");
+    load_mapping(_compression_mapping, _index_name +
+          "/keys.compressionmapping");
     set_label_ids();
 
     _postings = std::unique_ptr<io::compressed_file_reader>{
         new io::compressed_file_reader{
-            _index_name + "/postings.index.compressed",
+            _index_name + "/postings.index",
             _compression_mapping
         }
     };
@@ -224,6 +243,17 @@ template <class PrimaryKey, class SecondaryKey>
 template <class Key, class Value>
 void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
         const std::unordered_map<Key, Value> & map,
+        const std::string & filename) const
+{
+    std::ofstream outfile{filename};
+    for(auto & p: map)
+        outfile << p.first << " " << p.second << "\n";
+    outfile.close();
+}
+
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
+        const util::invertible_map<uint64_t, uint64_t> & map,
         const std::string & filename) const
 {
     std::ofstream outfile{filename};
@@ -284,19 +314,9 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
 
     rename(chunks.top().path().c_str(), filename.c_str());
     double size = chunks.top().size();
-    std::string units = "bytes";
-
-    for(auto & u: {"KB", "MB", "GB", "TB"})
-    {
-        if(size >= 1024)
-        {
-            size /= 1024;
-            units = u;
-        }
-    }
 
     cerr << "Created postings file " << filename
-         << " (" << size << " " << units << ")" << endl;
+         << " (" << common::bytes_to_units(size) << ")" << endl;
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -310,6 +330,18 @@ void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
     Value v;
     while((input >> k) && (input >> v))
         map[k] = v;
+}
+
+template <class PrimaryKey, class SecondaryKey>
+void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
+        util::invertible_map<uint64_t, uint64_t> & map,
+        const std::string & filename)
+{
+    std::ifstream input{filename};
+    uint64_t k;
+    uint64_t v;
+    while((input >> k) && (input >> v))
+        map.insert(k, v);
 }
 
 template <class PrimaryKey, class SecondaryKey>
