@@ -23,7 +23,7 @@ double okapi_bm25::score_one(const score_data & sd) const
 
     double TF = ((_k1 + 1.0) * sd.doc_term_count)
         / ((_k1 * ((1.0 - _b) + _b * doc_len / sd.avg_dl)) + sd.doc_term_count);
-    
+
     double QTF = ((_k3 + 1.0) * sd.query_term_count)
         / (_k3 + sd.query_term_count);
 

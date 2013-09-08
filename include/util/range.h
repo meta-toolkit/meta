@@ -15,7 +15,7 @@ namespace meta {
 namespace util {
 
 template <class T>
-class basic_range { 
+class basic_range {
     public:
         template <class Plus>
         class iterator_t {
@@ -26,9 +26,9 @@ class basic_range {
                 typedef const T *                   pointer;
                 typedef std::forward_iterator_tag   iterator_category;
                 typedef std::ptrdiff_t              difference_type;
-                
+
                 friend class basic_range<T>;
-                
+
                 /**
                  * Prefix increment.
                  */
@@ -37,7 +37,7 @@ class basic_range {
                     ++_idx;
                     return *this;
                 }
-                
+
                 /**
                  * Postfix increment.
                  */
@@ -46,28 +46,28 @@ class basic_range {
                     ++(*this);
                     return temp;
                 }
-                
+
                 /**
                  * Dereference operator.
                  */
                 reference operator*() {
                     return _curr;
                 }
-                
+
                 /**
                  * Member access operator.
                  */
                 pointer operator->() {
                     return &_curr;
                 }
-                
+
                 /**
                  * Equality operator.
                  */
                 friend bool operator==( const iterator_t & lhs, const iterator_t & rhs ) {
                     return lhs._range == rhs._range && lhs._idx == rhs._idx;
                 }
-                
+
                 /**
                  * Inequality operator.
                  */
@@ -79,7 +79,7 @@ class basic_range {
                     _curr( start ), _idx( idx ), _range( range ) {
                     // nothing
                 }
-                
+
                 T _curr;
                 size_t _idx;
                 Plus _plus;
@@ -87,31 +87,31 @@ class basic_range {
         };
         typedef iterator_t<std::plus<T>> iterator;
         typedef iterator const_iterator;
-        
+
         typedef iterator_t<std::minus<T>> reverse_iterator;
         typedef reverse_iterator const_reverse_iterator;
-        
+
         friend iterator;
         friend reverse_iterator;
-        
+
         iterator begin() const {
             return iterator( this, _begin, 0 );
         }
-        
+
         iterator end() const {
             return iterator( this, _end, _num );
         }
-        
+
         reverse_iterator rbegin() const {
             return reverse_iterator( this, _end, 0 );
         }
-        
+
         reverse_iterator rend() const {
             return reverse_iterator( this, _begin, _num );
         }
-        
-        basic_range( const T & begin, const T & end, const T & step ) 
-                : _begin( begin ), _end( end ), 
+
+        basic_range( const T & begin, const T & end, const T & step )
+                : _begin( begin ), _end( end ),
                   _num( ( end - begin ) / step + 1 ),
                   _step( step ) {
             // nothing

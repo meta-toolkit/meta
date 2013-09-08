@@ -9,6 +9,7 @@
 #define _MULTI_TOKENIZER_
 
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 #include "tokenizers/tokenizer.h"

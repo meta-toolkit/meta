@@ -2,8 +2,10 @@
  * @file splay_cache.tcc
  */
 
+#include "caching/splay_cache.h"
+
 namespace meta {
-namespace util {
+namespace caching {
 
 template <class Key, class Value>
 splay_cache<Key, Value>::splay_cache(uint32_t max_height):
@@ -11,6 +13,22 @@ splay_cache<Key, Value>::splay_cache(uint32_t max_height):
 {
     if(_max_height < 1)
         throw splay_cache_exception{"max height must be greater than 0"};
+}
+
+template <class Key, class Value>
+splay_cache<Key, Value>::splay_cache(splay_cache && other)
+    : _max_height{std::move(other._max_height)}, _root{std::move(other._root)}
+{ /* nothing */ }
+
+template <class Key, class Value>
+splay_cache<Key, Value> &
+splay_cache<Key, Value>::operator=(splay_cache && rhs)
+{
+    if(this != &rhs) {
+        _max_height = std::move(rhs._max_height);
+        _root = std::move(rhs._root);
+    }
+    return *this;
 }
 
 template <class Key, class Value>
@@ -22,6 +40,7 @@ splay_cache<Key, Value>::~splay_cache()
 template <class Key, class Value>
 void splay_cache<Key, Value>::insert(const Key & key, const Value & value)
 {
+    std::lock_guard<std::mutex> lock{_mutables};
     insert(_root, key, value, 0);
 }
 
@@ -48,25 +67,15 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
 }
 
 template <class Key, class Value>
-bool splay_cache<Key, Value>::exists(const Key & key)
+util::optional<Value> splay_cache<Key, Value>::find(const Key & key)
 {
-    if(_root != nullptr)
-    {
+    std::lock_guard<std::mutex> lock{_mutables};
+    if(_root != nullptr) {
         find(_root, key);
-        return _root->key == key;
+        if(_root->key == key)
+            return {_root->value};
     }
-
-    return false;
-}
-
-template <class Key, class Value>
-const Value & splay_cache<Key, Value>::find(const Key & key)
-{
-    if(_root == nullptr)
-        throw splay_cache_exception{"find called on empty cache; call exists first"};
-
-    find(_root, key);
-    return _root->value;
+    return {util::nullopt};
 }
 
 template <class Key, class Value>

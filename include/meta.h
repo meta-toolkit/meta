@@ -23,26 +23,31 @@
  */
 namespace meta
 {
-    /**
+    /*
      * Represents the name of a class used in classification or feature
      * selection.
      */
     MAKE_IDENTIFIER(class_label, std::string)
 
-    /**
+    /*
      * Numbering system for string terms.
      */
     MAKE_NUMERIC_IDENTIFIER(term_id, uint64_t)
 
-    /**
+    /*
      * Numbering system for documents.
      */
     MAKE_NUMERIC_IDENTIFIER(doc_id, uint64_t)
 
-    /**
+    /*
      * Numbering system for class label ids.
      */
     MAKE_NUMERIC_IDENTIFIER(label_id, uint32_t)
+
+    /**
+     * Containers to be used for caching purposes.
+     */
+    namespace caching {}
 
     /**
      * Algorithms for feature selection, KNN search, and confusion

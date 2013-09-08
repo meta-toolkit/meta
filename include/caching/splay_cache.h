@@ -10,10 +10,14 @@
 #ifndef _SPLAY_CACHE_H_
 #define _SPLAY_CACHE_H_
 
+#include <memory>
+#include <mutex>
+
 #include "meta.h"
+#include "util/optional.h"
 
 namespace meta {
-namespace util {
+namespace caching {
 
 /**
  * A splay_cache is a fixed-height splay tree for cache operations
@@ -28,17 +32,17 @@ class splay_cache
          *
          * @param max_height The maximum height for the splay tree
          */
-        splay_cache(uint32_t max_height);
+        splay_cache(uint32_t max_height = 10);
 
         /**
-         * Default move copy-constructor.
+         * splay_cache can be move constructed
          */
-        splay_cache(splay_cache && other) = default;
+        splay_cache(splay_cache && other);
 
         /**
-         * Default move assignment.
+         * splay_cache can be move assigned
          */
-        splay_cache & operator=(splay_cache && other) = default;
+        splay_cache & operator=(splay_cache && other);
 
         /**
          * Frees all objects in the cache
@@ -52,18 +56,10 @@ class splay_cache
         void insert(const Key & key, const Value & value);
 
         /**
-         * @param key The key to check existance for
-         * @return whether the key exists in the cache
-         */
-        bool exists(const Key & key);
-
-        /**
-         * This function assumes exists was called first to verify that the
-         * given key actually exists in the cache.
          * @param key The key to find the corresponding value for
          * @return the associated value for the given key
          */
-        const Value & find(const Key & key);
+        util::optional<Value> find(const Key & key);
 
     private:
 
@@ -87,6 +83,7 @@ class splay_cache
 
         uint32_t _max_height;
         node* _root;
+        mutable std::mutex _mutables;
 
         void clear(node* & subroot);
         void insert(node* & subroot, const Key & key, const Value & value, uint32_t depth);
@@ -103,7 +100,7 @@ class splay_cache
         class splay_cache_exception: public std::exception
         {
             public:
-                
+
                 splay_cache_exception(const std::string & error):
                     _error(error) { /* nothing */ }
 
@@ -111,9 +108,9 @@ class splay_cache
                 {
                     return _error.c_str();
                 }
-           
+
             private:
-           
+
                 std::string _error;
         };
 
@@ -122,5 +119,5 @@ class splay_cache
 }
 }
 
-#include "util/splay_cache.tcc"
+#include "caching/splay_cache.tcc"
 #endif
