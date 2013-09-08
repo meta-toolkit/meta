@@ -35,14 +35,14 @@ class splay_cache
         splay_cache(uint32_t max_height = 10);
 
         /**
-         * Default move copy-constructor.
+         * splay_cache can be move constructed
          */
-        splay_cache(splay_cache && other) = default;
+        splay_cache(splay_cache && other);
 
         /**
-         * Default move assignment.
+         * splay_cache can be move assigned
          */
-        splay_cache & operator=(splay_cache && other) = default;
+        splay_cache & operator=(splay_cache && other);
 
         /**
          * Frees all objects in the cache
@@ -83,7 +83,7 @@ class splay_cache
 
         uint32_t _max_height;
         node* _root;
-        mutable std::unique_ptr<std::mutex> _mutables;
+        mutable std::mutex _mutables;
 
         void clear(node* & subroot);
         void insert(node* & subroot, const Key & key, const Value & value, uint32_t depth);

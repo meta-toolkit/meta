@@ -1,10 +1,13 @@
+/**
+ * @file lock_free_map.tcc
+ */
 #include <atomic>
 #include <type_traits>
 
-#include "parallel/lock_free_map.h"
+#include "caching/maps/lock_free_map.h"
 
 namespace meta {
-namespace parallel {
+namespace caching {
 
 template <class Key, class Value>
 lock_free_map<Key, Value>::lock_free_map()

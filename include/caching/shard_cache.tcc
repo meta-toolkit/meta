@@ -1,3 +1,6 @@
+/**
+ * @file shard_cache.tcc
+ */
 #include "caching/shard_cache.h"
 
 namespace meta {

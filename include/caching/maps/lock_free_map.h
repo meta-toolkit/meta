@@ -16,7 +16,7 @@
 #include "util/optional.h"
 
 namespace meta {
-namespace parallel {
+namespace caching {
 
 /**
  * A lock_free_map is an implementation of a thread-safe unordered_map
@@ -81,9 +81,6 @@ class lock_free_map {
          *
          * Throws an exception in the event the key does not exist.
          *
-         * @todo When C++14 is released, have this return a
-         *  std::optional<Value> instead of a Value directly
-         *
          * @param key the key to find an associated value for
          */
         util::optional<Value> find(const Key & key) const;
@@ -120,5 +117,5 @@ class lock_free_map {
 }
 }
 
-#include "parallel/lock_free_map.tcc"
+#include "caching/maps/lock_free_map.tcc"
 #endif

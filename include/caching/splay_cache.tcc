@@ -9,10 +9,26 @@ namespace caching {
 
 template <class Key, class Value>
 splay_cache<Key, Value>::splay_cache(uint32_t max_height):
-    _max_height(max_height), _root(nullptr), _mutables{new std::mutex{}}
+    _max_height(max_height), _root(nullptr)
 {
     if(_max_height < 1)
         throw splay_cache_exception{"max height must be greater than 0"};
+}
+
+template <class Key, class Value>
+splay_cache<Key, Value>::splay_cache(splay_cache && other)
+    : _max_height{std::move(other._max_height)}, _root{std::move(other._root)}
+{ /* nothing */ }
+
+template <class Key, class Value>
+splay_cache<Key, Value> &
+splay_cache<Key, Value>::operator=(splay_cache && rhs)
+{
+    if(this != &rhs) {
+        _max_height = std::move(rhs._max_height);
+        _root = std::move(rhs._root);
+    }
+    return *this;
 }
 
 template <class Key, class Value>
@@ -24,7 +40,7 @@ splay_cache<Key, Value>::~splay_cache()
 template <class Key, class Value>
 void splay_cache<Key, Value>::insert(const Key & key, const Value & value)
 {
-    std::lock_guard<std::mutex> lock{*_mutables};
+    std::lock_guard<std::mutex> lock{_mutables};
     insert(_root, key, value, 0);
 }
 
@@ -53,7 +69,7 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
 template <class Key, class Value>
 util::optional<Value> splay_cache<Key, Value>::find(const Key & key)
 {
-    std::lock_guard<std::mutex> lock{*_mutables};
+    std::lock_guard<std::mutex> lock{_mutables};
     if(_root != nullptr) {
         find(_root, key);
         if(_root->key == key)
