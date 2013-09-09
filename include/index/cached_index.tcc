@@ -1,3 +1,7 @@
+/**
+ * @file cached_index.tcc
+ */
+
 #include "index/cached_index.h"
 
 namespace meta {
