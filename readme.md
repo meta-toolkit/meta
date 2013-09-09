@@ -3,13 +3,21 @@
 ## Overview
 
 MeTA is a modern C++ data sciences toolkit featuring
+
  - text tokenization, including deep semantic features like parse trees
+ 
  - inverted and forward indexes with compression and various caching strategies
+ 
  - various ranking functions for the indexes
+ 
  - topic modeling algorithms
+ 
  - language modeling algorithms
+ 
  - clustering and similarity algorithms
+ 
  - classification algorithms
+ 
  - wrappers for liblinear and slda
 
 Doxygen documentation can be found
