@@ -140,8 +140,6 @@ target_link_libraries( lda-topics
 
 add_executable( shuffle shuffle.cpp )
 
-add_executable( cachetest cachetest.cpp )
-
 add_custom_target( tidy
                    COMMAND /usr/bin/rm -rf
                    ./doc
