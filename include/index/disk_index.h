@@ -167,31 +167,20 @@ class disk_index
 
         /**
          * Saves any arbitrary mapping to the disk.
+         * @param map The map to read key, value pairs from
          * @param filename The name to save the mapping as
          */
-        template <class Key, class Value>
-        void save_mapping(const std::unordered_map<Key, Value> & map,
+        template <class... Targs, template <class...> class Map>
+        void save_mapping(const Map<Targs...> & map,
                           const std::string & filename) const;
-
-        /**
-         * Saves an invertible_map to disk.
-         */
-        void save_mapping(
-                const util::invertible_map<uint64_t, uint64_t> & map,
-                const std::string & filename) const;
 
         /**
          * @param map The map to load information into
          * @param filename The file containing key, value pairs
          */
-        template <class Key, class Value>
-        void load_mapping(std::unordered_map<Key, Value> & map,
-                          const std::string & filename);
-
-        /**
-         * Loads an invertible_map from disk.
-         */
-        void load_mapping(util::invertible_map<uint64_t, uint64_t> & map,
+        template <class Key, class Value, class... Targs,
+                 template <class...> class Map>
+        void load_mapping(Map<Key, Value, Targs...> & map,
                           const std::string & filename);
 
         /**

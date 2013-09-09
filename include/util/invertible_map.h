@@ -68,6 +68,13 @@ class invertible_map
         void insert(const Key & key, const Value & value);
 
         /**
+         * Convenience function to add a (key, value) pair into the invertible
+         * map.
+         * @param pair The pair to add
+         */
+        void insert(const std::pair<Key, Value> & pair);
+
+        /**
          * Saves an invertible map to disk.
          * @param filename - where to save the map
          */

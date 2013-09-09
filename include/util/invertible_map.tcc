@@ -70,6 +70,13 @@ void invertible_map<Key, Value>::insert(const Key & key, const Value & value)
 }
 
 template <class Key, class Value>
+void invertible_map<Key, Value>::insert(const std::pair<Key, Value> & pair)
+{
+    _forward.insert(pair);
+    _backward.insert(std::make_pair(pair.second, pair.first));
+}
+
+template <class Key, class Value>
 void invertible_map<Key, Value>::save(const std::string & filename) const
 {
     std::ofstream outfile(filename);

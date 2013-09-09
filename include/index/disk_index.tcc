@@ -244,29 +244,6 @@ disk_index<PrimaryKey, SecondaryKey>::label_id_from_doc(doc_id d_id) const
 }
 
 template <class PrimaryKey, class SecondaryKey>
-template <class Key, class Value>
-void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
-        const std::unordered_map<Key, Value> & map,
-        const std::string & filename) const
-{
-    std::ofstream outfile{filename};
-    for(auto & p: map)
-        outfile << p.first << " " << p.second << "\n";
-    outfile.close();
-}
-
-template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
-        const util::invertible_map<uint64_t, uint64_t> & map,
-        const std::string & filename) const
-{
-    std::ofstream outfile{filename};
-    for(auto & p: map)
-        outfile << p.first << " " << p.second << "\n";
-    outfile.close();
-}
-
-template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::write_chunk(
         uint32_t chunk_num,
         std::unordered_map<
@@ -308,9 +285,11 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
         chunk<PrimaryKey, SecondaryKey> second = chunks.top();
         chunks.pop();
 
-        cerr << " Merging " << first.path() << " (" << first.size()
-             << " bytes) and " << second.path() << " (" << second.size()
-             << " bytes), " << chunks.size() << " remaining" << endl;
+        cerr << " Merging " << first.path() << " ("
+             << common::bytes_to_units(first.size())
+             << ") and " << second.path() << " ("
+             << common::bytes_to_units(second.size())
+             << "), " << chunks.size() << " remaining" << endl;
 
         first.merge_with(second);
         chunks.push(first);
@@ -324,28 +303,27 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
 }
 
 template <class PrimaryKey, class SecondaryKey>
-template <class Key, class Value>
+template <class... Targs, template <class...> class Map>
+void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
+        const Map<Targs...> & map,
+        const std::string & filename) const
+{
+    std::ofstream outfile{filename};
+    for(auto & p: map)
+        outfile << p.first << " " << p.second << "\n";
+    outfile.close();
+}
+
+template <class PrimaryKey, class SecondaryKey>
+template <class Key, class Value, class... Targs, template <class...> class Map>
 void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
-        std::unordered_map<Key, Value> & map,
-        const std::string & filename)
+        Map<Key, Value, Targs...> & map, const std::string & filename)
 {
     std::ifstream input{filename};
     Key k;
     Value v;
     while((input >> k) && (input >> v))
-        map[k] = v;
-}
-
-template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
-        util::invertible_map<uint64_t, uint64_t> & map,
-        const std::string & filename)
-{
-    std::ifstream input{filename};
-    uint64_t k;
-    uint64_t v;
-    while((input >> k) && (input >> v))
-        map.insert(k, v);
+        map.insert(std::make_pair(k, v));
 }
 
 template <class PrimaryKey, class SecondaryKey>
