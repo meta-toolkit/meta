@@ -57,25 +57,21 @@ void compressed_file_reader::reset()
     get_next();
 }
 
-void compressed_file_reader::seek(uint64_t position, uint8_t bitOffset)
+void compressed_file_reader::seek(uint64_t bit_offset)
 {
-    if(bitOffset <= 7 && position < _size)
+    uint64_t byte = bit_offset / 8;
+    uint8_t bit = bit_offset % 8;
+
+    if(byte < _size)
     {
-        _current_char = position;
-        _current_bit = bitOffset;
+        _current_char = byte;
+        _current_bit = bit;
         _status = notDone;
         get_next();
     }
     else
         throw compressed_file_reader_exception(
-            "error seeking; invalid parameters: position = "
-            + common::to_string(position)
-            + ", bit = "
-            + common::to_string(static_cast<int>(bitOffset))
-            + " (size is "
-            + common::to_string(_size)
-            + " bytes)"
-        );
+                "error seeking: parameter out of bounds");
 }
 
 bool compressed_file_reader::has_next() const

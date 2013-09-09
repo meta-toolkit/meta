@@ -215,15 +215,6 @@ class disk_index
         void merge_chunks(uint32_t num_chunks, const std::string & filename);
 
         /**
-         * @param p_id The id of the PrimaryKey to search for
-         * @param bit_offset The pointer into the postings file where the wanted
-         * PrimaryKey begins
-         * @return a postings_data object from the postings file
-         */
-        std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
-        search_postings(PrimaryKey p_id, uint64_t bit_offset) const;
-
-        /**
          * Creates the lexicon file (or "dictionary") which has pointers into
          * the large postings file
          * @param postings_file

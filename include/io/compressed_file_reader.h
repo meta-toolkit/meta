@@ -54,10 +54,9 @@ class compressed_file_reader
         /**
          * Sets the cursor to the specified position in the file.
          * It is up to the user to specify a valid position.
-         * @param position Where to set the cursor in terms of bytes
-         * @param bitOffset Bit offset from current byte position [0..7]
+         * @param bit_offset Bit offset into the file
          */
-        void seek(uint64_t position, uint8_t bit_offset);
+        void seek(uint64_t bit_offset);
 
         /**
          * @return whether there is another number in the file

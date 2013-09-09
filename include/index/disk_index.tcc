@@ -1,5 +1,5 @@
 /**
- * @file disk_index.cpp
+ * @file disk_index.tcc
  * @author Sean Massung
  */
 
@@ -76,11 +76,15 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
         std::vector<document> & docs,
         const std::string & config_file)
 {
+    // save the config file so we can recreate the tokenizer
+    std::ifstream source_config{config_file.c_str(), std::ios::binary};
+    std::ofstream dest_config{_index_name + "/config.toml", std::ios::binary};
+    dest_config << source_config.rdbuf();
+
+    // create postings file
     uint32_t num_chunks = tokenize_docs(docs);
     merge_chunks(num_chunks, _index_name + "/postings.index");
-    _tokenizer->save_term_id_mapping(_index_name + "/termids.mapping");
-    save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
-    save_mapping(_doc_sizes, _index_name + "/docsizes.counts");
+    compress(_index_name + "/postings.index");
 
     // Save class label information; this is needed for both forward and
     // inverted indexes. It's assumed that doc_ids are assigned in deriving
@@ -92,21 +96,15 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
         if(d.label() != class_label{""})
             _labels[doc_num++] = d.label();
     }
-    save_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
-    save_mapping(_labels, _index_name + "/docs.labels");
-    set_label_ids();
 
-    // save the config file so we can recreate the tokenizer
-    std::ifstream source_config{config_file.c_str(), std::ios::binary};
-    std::ofstream dest_config{_index_name + "/config.toml", std::ios::binary};
-    dest_config << source_config.rdbuf();
-
-    // compress the postings file
-    compress(_index_name + "/postings.index");
-
+    save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
+    save_mapping(_doc_sizes, _index_name + "/docsizes.counts");
     save_mapping(_term_bit_locations, _index_name + "/lexicon.index");
-    save_mapping(_compression_mapping, _index_name +
-            "/keys.compressionmapping");
+    save_mapping(_labels, _index_name + "/docs.labels");
+    save_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
+    save_mapping(_compression_mapping, _index_name + "/keys.compressedmapping");
+    _tokenizer->save_term_id_mapping(_index_name + "/termids.mapping");
+    set_label_ids();
 
     _postings = std::unique_ptr<io::compressed_file_reader>{
         new io::compressed_file_reader{
@@ -190,13 +188,16 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
     cerr << "Loading inverted index from disk ("
          << _index_name << ")..." << endl;
 
+    auto config = common::read_config(_index_name + "/config.toml");
+
     load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
     load_mapping(_doc_sizes, _index_name + "/docsizes.counts");
     load_mapping(_term_bit_locations, _index_name + "/lexicon.index");
     load_mapping(_labels, _index_name + "/docs.labels");
     load_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
-    load_mapping(_compression_mapping, _index_name +
-          "/keys.compressionmapping");
+    load_mapping(_compression_mapping, _index_name + "/keys.compressedmapping");
+    _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
+    _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
     set_label_ids();
 
     _postings = std::unique_ptr<io::compressed_file_reader>{
@@ -205,10 +206,6 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
             _compression_mapping
         }
     };
-
-    auto config = common::read_config(_index_name + "/config.toml");
-    _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
-    _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -298,7 +295,7 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
     rename(chunks.top().path().c_str(), filename.c_str());
     double size = chunks.top().size();
 
-    cerr << "Created postings file " << filename
+    cerr << "Created uncompressed postings file " << filename
          << " (" << common::bytes_to_units(size) << ")" << endl;
 }
 
@@ -329,10 +326,7 @@ void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
 template <class PrimaryKey, class SecondaryKey>
 uint64_t disk_index<PrimaryKey, SecondaryKey>::doc_size(doc_id d_id) const
 {
-    auto it = _doc_sizes.find(d_id);
-    if(it == _doc_sizes.end())
-        throw disk_index_exception{"nonexistent doc id"};
-    return it->second;
+    return _doc_sizes.at(d_id);
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -375,21 +369,12 @@ std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
 disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey p_id) const
 {
     auto it = _term_bit_locations.find(p_id);
+
     // if the term doesn't exist in the index, return an empty postings_data
     if(it == _term_bit_locations.end())
         return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(p_id);
-    return search_postings(p_id, it->second);
-}
 
-template <class PrimaryKey, class SecondaryKey>
-std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
-disk_index<PrimaryKey, SecondaryKey>::search_postings(PrimaryKey p_id,
-        uint64_t bit_offset) const
-{
-    uint64_t byte = bit_offset / 8;
-    uint8_t bit = bit_offset % 8;
-
-    _postings->seek(byte, bit);
+    _postings->seek(it->second);
     postings_data<PrimaryKey, SecondaryKey> pdata{PrimaryKey{p_id}};
     pdata.read_compressed(*_postings);
 
