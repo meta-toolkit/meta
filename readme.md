@@ -1,5 +1,24 @@
 # MeTA: ModErn Text Analysis
 
+## Overview
+
+MeTA is a modern C++ data sciences toolkit featuring
+ - text tokenization, including deep semantic features like parse trees
+ - inverted and forward indexes with compression and various caching strategies
+ - various ranking functions for the indexes
+ - topic modeling algorithms
+ - language modeling algorithms
+ - clustering and similarity algorithms
+ - classification algorithms
+ - wrappers for liblinear and slda
+
+Doxygen documentation can be found
+[here](http://web.engr.illinois.edu/~massung1/toolkit-doc/). Note that this is
+probably not as frequently updated as it should be.
+
+Our current goal for MeTA is to publish in [JMLR's Machine Learning Open-Source
+Software](http://jmlr.org/mloss/).
+
 ## Project setup
 
  - This project requires a very well conforming C++11 compiler. Currently,
