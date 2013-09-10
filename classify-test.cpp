@@ -35,12 +35,12 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto config = common::read_config(argv[1]);
+    auto config = cpptoml::parse_file(argv[1]);
     auto f_idx = index::make_index<index::forward_index>(argv[1]);
     auto i_idx = index::make_index<index::inverted_index>(argv[1]);
 
     classify::liblinear_svm svm{ f_idx,
-        *cpptoml::get_as<std::string>( config, "liblinear" ) };
+                                 *config.get_as<std::string>("liblinear") };
     auto m1 = cv(f_idx, svm);
 
  // classify::linear_svm l2svm{idx};

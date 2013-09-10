@@ -60,8 +60,8 @@ void ngram_fw_tokenizer::tokenize_document(document & document,
 
 void ngram_fw_tokenizer::init_function_words()
 {
-    auto config = common::read_config("config.toml");
-    parser parser{ *cpptoml::get_as<std::string>( config, "function-words" ), " \n" };
+    auto config = cpptoml::parse_file("config.toml");
+    parser parser{*config.get_as<std::string>("function-words"), "\n"};
     while(parser.has_next())
         _function_words.insert(parser.next());
 }

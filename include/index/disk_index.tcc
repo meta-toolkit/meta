@@ -21,7 +21,7 @@ namespace index {
 template <class Index, class... Args>
 Index make_index(const std::string & config_file, Args &&... args)
 {
-    auto config = common::read_config(config_file);
+    auto config = cpptoml::parse_file(config_file);
     Index idx{config, std::forward<Args>(args)...};
     if(mkdir(idx._index_name.c_str(), 0755) == -1)
     {
@@ -31,11 +31,11 @@ Index make_index(const std::string & config_file, Args &&... args)
     else
     {
         // otherwise, create a new one
-        std::string prefix = *cpptoml::get_as<std::string>(config, "prefix")
-            + *cpptoml::get_as<std::string>(config, "dataset");
+        std::string prefix = *config.get_as<std::string>("prefix")
+            + *config.get_as<std::string>("dataset");
         std::string corpus_file = prefix
             + "/"
-            + *cpptoml::get_as<std::string>(config, "list")
+            + *config.get_as<std::string>("list")
             + "-full-corpus.txt";
 
         auto docs = index::document::load_docs(corpus_file, prefix);
@@ -188,7 +188,7 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
     cerr << "Loading inverted index from disk ("
          << _index_name << ")..." << endl;
 
-    auto config = common::read_config(_index_name + "/config.toml");
+    auto config = cpptoml::parse_file(_index_name + "/config.toml");
 
     load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
     load_mapping(_doc_sizes, _index_name + "/docsizes.counts");

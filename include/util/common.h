@@ -78,14 +78,6 @@ namespace common
     inline void end_progress(const std::string & prefix);
 
     /**
-     * This function should be deprecated when similar functionality is
-     * introduced to cpptoml.
-     * @param path The path to the toml file to parse
-     * @return a cpptoml object representing the parsed file
-     */
-    inline cpptoml::toml_group read_config(const std::string & path);
-
-    /**
      * This safe_at allows the use of a hash function to be specified.
      * @return the value for a given key in map if it exists; otherwise,
      * the default Value() is returned.
