@@ -30,7 +30,7 @@ class parse_tree
          * Detects whether the parameter is a subtree or a leaf, and recursively
          *  builds subtrees.
          */
-        parse_tree(std::string tags);
+        parse_tree(const std::string & tags);
 
         /**
          * @return the toplevel part of speech for this parse_tree.
@@ -46,12 +46,12 @@ class parse_tree
          * @param curr
          * @return the height of the current tree
          */
-        static size_t height(const parse_tree & curr);
+        static uint64_t height(const parse_tree & curr);
 
         /**
          * @return the number of immediate children for this parse_tree.
          */
-        size_t num_children() const;
+        uint64_t num_children() const;
 
         /**
          * @return a string representation of the parse_tree.
@@ -75,7 +75,8 @@ class parse_tree
         std::string get_children_string() const;
 
         /**
-         * @return a string representation of the parse_tree's children without tags.
+         * @return a string representation of the parse_tree's children without
+         * tags.
          */
         std::string get_skeleton_children() const;
 
@@ -101,14 +102,14 @@ class parse_tree
         /**
          * @return the root part of speech for a transition.
          */
-        std::string root_category(std::string tags) const;
+        std::string root_category(const std::string & tags) const;
 
         /**
          * @param tree
          * @param depth
          * @param output
          */
-        static void pretty_print(const parse_tree & tree, size_t depth,
+        static void pretty_print(const parse_tree & tree, uint64_t depth,
                 std::stringstream & output);
     public:
 
