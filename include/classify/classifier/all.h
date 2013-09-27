@@ -1,6 +1,5 @@
 #include "classify/classifier/naive_bayes.h"
-#include "classify/classifier/liblinear_svm.h"
+#include "classify/classifier/svm_wrapper.h"
 #include "classify/classifier/perceptron.h"
 #include "classify/classifier/linear_svm.h"
-#include "classify/classifier/liblinear_svm.h"
 #include "classify/classifier/knn.h"

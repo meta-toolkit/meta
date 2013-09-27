@@ -39,8 +39,9 @@ int main(int argc, char* argv[])
     auto f_idx = index::make_index<index::forward_index>(argv[1]);
     auto i_idx = index::make_index<index::inverted_index>(argv[1]);
 
-    classify::liblinear_svm svm{ f_idx,
-                                 *config.get_as<std::string>("liblinear") };
+    classify::svm_wrapper svm{f_idx,
+                              *config.get_as<std::string>("liblinear"),
+                              classify::svm_wrapper::kernel::None };
     auto m1 = cv(f_idx, svm);
 
  // classify::linear_svm l2svm{idx};

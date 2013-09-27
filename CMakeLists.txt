@@ -29,7 +29,7 @@ add_library( meta-classify
              src/classify/feature_select/correlation.cpp
              src/classify/feature_select/odds.cpp
              src/classify/classifier/naive_bayes.cpp
-             src/classify/classifier/liblinear_svm.cpp
+             src/classify/classifier/svm_wrapper.cpp
              src/classify/classifier/perceptron.cpp
              src/classify/classifier/linear_svm.cpp
 )

@@ -1,14 +1,15 @@
 /**
- * @file liblinear_svm.h
+ * @file svm_wrapper.h
  * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _LIBLINEAR_SVM_H_
-#define _LIBLINEAR_SVM_H_
+#ifndef _SVM_WRAPPER_H_
+#define _SVM_WRAPPER_H_
 
+#include <unordered_map>
 #include "classify/classifier/classifier.h"
 #include "index/forward_index.h"
 #include "meta.h"
@@ -18,18 +19,30 @@ namespace classify {
 
 /**
  * Wrapper class for liblinear (http://www.csie.ntu.edu.tw/~cjlin/liblinear/)
+ * and libsvm (http://www.csie.ntu.edu.tw/~cjlin/libsvm/)
  * implementation of support vector machine classification.
+ *
+ * If no kernel is selected, liblinear is used. Otherwise, libsvm is used.
  */
-class liblinear_svm: public classifier<index::forward_index>
+class svm_wrapper: public classifier<index::forward_index>
 {
     public:
 
         /**
+         * Selects which kernel to use. "None" uses liblinear. Any other kernel
+         * uses libsvm.
+         */
+        enum kernel { None, Quadratic, Cubic, Quartic, RBF, Sigmoid };
+
+        /**
          * Constructor.
          * @param idx The index to run the classifier on
-         * @param liblinear_path The path to the liblinear library
+         * @param svm_path The path to the liblinear/libsvm library
+         * @param kernel_opt Which kind of kernel you want to use (default:
+         * None)
          */
-        liblinear_svm(index::forward_index & idx, const std::string & liblinear_path);
+        svm_wrapper(index::forward_index & idx, const std::string & svm_path,
+                kernel kernel_opt = kernel::None);
 
         /**
          * Classifies a document into a specific group, as determined by
@@ -62,8 +75,19 @@ class liblinear_svm: public classifier<index::forward_index>
 
     private:
 
-        /** the path to the liblinear library */
-        const std::string _liblinear_path;
+        /** the path to the liblinear/libsvm library */
+        const std::string _svm_path;
+
+        /** keeps track of which arguments are necessary for which kernel
+         * function */
+        const static std::unordered_map<kernel, std::string, std::hash<int>>
+        _options;
+
+        /** which kernel function to use for this SVM */
+        kernel _kernel;
+
+        /** used to select which executable to use (libsvm or liblinear) */
+        std::string _executable;
 };
 
 }
