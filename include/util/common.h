@@ -9,6 +9,7 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+#include <chrono>
 #include <iostream>
 #include <unordered_map>
 #include <string>
@@ -62,6 +63,14 @@ namespace common
      * @return a human-readable string
      */
     inline std::string bytes_to_units(uint64_t num_bytes);
+
+    /**
+     * Times a given function.
+     * @param functor the function to be timed
+     * @return the number of seconds the function took to run
+     */
+    template <class Duration = std::chrono::milliseconds, class Functor>
+    Duration time(Functor && functor);
 
     /**
      * @param idx The current progress in the operation

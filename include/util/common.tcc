@@ -31,6 +31,14 @@ std::string bytes_to_units(uint64_t num_bytes)
     return to_string(num_bytes) + " " + units;
 }
 
+template <class Duration, class Functor>
+Duration time(Functor && functor) {
+    auto start = std::chrono::steady_clock::now();
+    functor();
+    auto end   = std::chrono::steady_clock::now();
+    return std::chrono::duration_cast<Duration>(end - start);
+}
+
 void show_progress(size_t idx, size_t max, size_t freq, const std::string & prefix)
 {
     if(idx % freq == 0)

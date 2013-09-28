@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <iomanip>
 
 #include "util/common.h"
 #include "tokenizers/tokenizer.h"
@@ -42,39 +43,36 @@ int main(int argc, char* argv[])
     //                           caching::splay_shard_cache>(argv[1], uint8_t{8}, uint32_t{10});
     index::okapi_bm25 ranker;
 
-    std::chrono::time_point<std::chrono::system_clock> start, end;
-    start = std::chrono::system_clock::now();
+    auto elapsed_seconds = common::time([&](){
+        // std::cout << "Beginning ranking..." << std::endl;
+        // auto range = util::range<size_t>(0, std::min<size_t>(1000, idx.num_docs()-1));
+        // parallel::parallel_for(range.begin(), range.end(), [&](size_t i) {
+        //     auto d_id = idx.docs()[i];
+        //     index::document query{idx.doc_path(d_id)};
+        //     auto ranking = ranker.score(idx, query);
+        // });
 
-//  std::cout << "Beginning ranking..." << std::endl;
-//  auto range = util::range<size_t>(0, std::min<size_t>(1000, idx.num_docs()-1));
-//  parallel::parallel_for(range.begin(), range.end(), [&](size_t i) {
-//      auto d_id = idx.docs()[i];
-//      index::document query{idx.doc_path(d_id)};
-//      auto ranking = ranker.score(idx, query);
-//  });
+        for(size_t i = 0; i < 100 && i < idx.num_docs(); ++i)
+        {
+            auto d_id = idx.docs()[i];
+            index::document query{idx.doc_path(d_id)};
+            cout << "Ranking query " << (i + 1) << ": " << query.path() << endl;
 
-    for(size_t i = 0; i < 100 && i < idx.num_docs(); ++i)
-    {
-        auto d_id = idx.docs()[i];
-        index::document query{idx.doc_path(d_id)};
-        cout << "Ranking query " << (i + 1) << ": " << query.path() << endl;
+            std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);
+            cout << "Showing top 10 of " << ranking.size() << " results." << endl;
 
-        std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);
-        cout << "Showing top 10 of " << ranking.size() << " results." << endl;
+            for(size_t i = 0; i < ranking.size() && i < 10; ++i)
+                cout << (i+1) << ". " << idx.doc_name(ranking[i].first)
+                     << " " << ranking[i].second << endl;
 
-        for(size_t i = 0; i < ranking.size() && i < 10; ++i)
-            cout << (i+1) << ". " << idx.doc_name(ranking[i].first)
-                 << " " << ranking[i].second << endl;
+            cout << endl;
+        }
+    });
 
-        cout << endl;
-    }
-
-    end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end-start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-
-    std::cout << "Finished at " << std::ctime(&end_time)
-              << "Elapsed time: " << elapsed_seconds.count() << "s\n";
+    auto time =
+        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::cout << "Finished at " << std::put_time(std::localtime(&time), "%c")
+              << "\nElapsed time: " << elapsed_seconds.count() << "ms\n";
 
     return 0;
 }
