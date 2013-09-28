@@ -67,7 +67,8 @@ namespace common
     /**
      * Times a given function.
      * @param functor the function to be timed
-     * @return the number of seconds the function took to run
+     * @return the length of time, expressed as a Duration, the function
+     *  took to run. Defaults to milliseconds.
      */
     template <class Duration = std::chrono::milliseconds, class Functor>
     Duration time(Functor && functor);
