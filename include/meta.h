@@ -15,7 +15,6 @@
 #include <string>
 
 #include "util/identifiers.h"
-
 /**
  * The ModErn Text Analysis toolkit is a suite of natural language processing,
  * classification, information retreival, data mining, and other applications
@@ -53,7 +52,12 @@ namespace meta
      * Algorithms for feature selection, KNN search, and confusion
      * matrices.
      */
-    namespace classify {}
+    namespace classify {
+        /**
+         * Kernel functions for linear classifiers.
+         */
+        namespace kernel {}
+    }
 
     /**
      * Similarity measures and various clustering algorithms.
