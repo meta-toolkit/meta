@@ -118,6 +118,15 @@ class dual_perceptron : public classifier<index::forward_index> {
         const uint64_t max_iter_;
 };
 
+/**
+ * Creates a dual_perceptron with the given arguments, for convenience.
+ * Similar to make_pair in spirit---avoid typing the kernel type more than
+ * once.
+ *
+ * @param idx the forward_index to be used for finding the documents
+ * @param kernel the desired kernel function
+ * @param args the remaining arguments to forward to the constructor
+ */
 template <class Kernel, class... Args>
 dual_perceptron<Kernel> make_perceptron(index::forward_index & idx,
                                         Kernel && kernel,
