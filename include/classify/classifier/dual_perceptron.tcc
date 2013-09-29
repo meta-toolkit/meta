@@ -6,6 +6,7 @@
 namespace meta {
 namespace classify {
 
+
 template <class Kernel>
 dual_perceptron<Kernel>::dual_perceptron(index::forward_index & idx,
                                          Kernel && kernel_fn,
@@ -14,12 +15,15 @@ dual_perceptron<Kernel>::dual_perceptron(index::forward_index & idx,
                                          double bias,
                                          uint64_t max_iter):
     classifier{idx},
-    kernel_(std::forward<Kernel>(kernel_fn)),
     alpha_{alpha},
     gamma_{gamma},
     bias_{bias},
     max_iter_{max_iter}
-{ /* nothing */ }
+{
+    std::function<double(pdata, pdata)> fun
+        = [=](const pdata & a, const pdata & b) { return kernel_fn(a, b); };
+    kernel_ = common::memoize(fun);
+}
 
 template <class Kernel>
 void dual_perceptron<Kernel>::train(const std::vector<doc_id> & docs) {
@@ -38,7 +42,7 @@ void dual_perceptron<Kernel>::train(const std::vector<doc_id> & docs) {
         ss << "iteration " << iter << ": ";
         uint64_t doc = 0;
         for(const auto & i : indices) {
-            common::show_progress(doc++, docs.size(), 20, ss.str());
+            common::show_progress(doc++, docs.size(), 50, ss.str());
             auto guess = classify(docs[i]);
             auto actual = _idx.label(docs[i]);
             if(guess != actual) {

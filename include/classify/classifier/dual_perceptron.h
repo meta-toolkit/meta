@@ -91,10 +91,12 @@ class dual_perceptron : public classifier<index::forward_index> {
             std::unordered_map<doc_id, uint64_t>
         > weights_;
 
+        using pdata = decltype(_idx.search_primary(doc_id{}));
+
         /**
          * The kernel function to be used in lieu of a dot product.
          */
-        Kernel kernel_;
+        std::function<double(pdata, pdata)> kernel_;
 
         /**
          * \f$\alpha\f$, the learning rate

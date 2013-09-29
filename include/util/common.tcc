@@ -2,6 +2,7 @@
  * @file common.tcc
  */
 
+#include <map>
 #include <sstream>
 #include "util/common.h"
 
@@ -69,6 +70,17 @@ Value safe_at(const std::unordered_map<Key, Value> & map, const Key & key)
     if(it == map.end())
         return Value{};
     return it->second;
+}
+
+template <class Result, class... Args>
+std::function<Result(Args...)> memoize(std::function<Result(Args...)> fun) {
+    return [fun](Args... args) {
+        static std::map<std::tuple<Args...>, Result> map_;
+        auto it = map_.find(std::make_tuple(args...));
+        if(it != map_.end())
+            return it->second;
+        return map_[std::make_tuple(args...)] = fun(args...);
+    };
 }
 
 }

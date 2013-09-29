@@ -101,6 +101,14 @@ namespace common
      */
     template <class Key, class Value>
     Value safe_at(const std::unordered_map<Key, Value> & map, const Key & key);
+
+    /**
+     * Memoizes a std::function.
+     * @param fun the std::function to be memoized
+     */
+    template <class Result, class... Args>
+    std::function<Result(Args...)> memoize(std::function<Result(Args...)> fun);
+
 }
 
 }

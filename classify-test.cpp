@@ -25,7 +25,11 @@ template <class Index, class Classifier>
 classify::confusion_matrix cv(Index & idx, Classifier & c)
 {
     std::vector<doc_id> docs = idx.docs();
-    classify::confusion_matrix matrix = c.cross_validate(docs, 5);
+    classify::confusion_matrix matrix;
+    auto seconds = common::time<std::chrono::seconds>([&]() {
+        matrix = c.cross_validate(docs, 5);
+    });
+    std::cerr << "time elapsed: " << seconds.count() << "s" << std::endl;
     matrix.print();
     matrix.print_stats();
     return matrix;
