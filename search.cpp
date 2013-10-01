@@ -41,7 +41,8 @@ int main(int argc, char* argv[])
     //                           caching::locking_dblru_shard_cache>(argv[1], uint8_t{8}, uint64_t{2048});
     //                           caching::lock_free_dblru_shard_cache>(argv[1], uint8_t{8}, uint64_t{2048});
     //                           caching::splay_shard_cache>(argv[1], uint8_t{8}, uint32_t{10});
-    index::okapi_bm25 ranker;
+    index::pivoted_length ranker;
+    //index::okapi_bm25 ranker;
 
     auto elapsed_seconds = common::time([&](){
         // std::cout << "Beginning ranking..." << std::endl;

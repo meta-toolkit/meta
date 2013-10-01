@@ -44,6 +44,7 @@ add_library( meta-index
              src/index/ranker/jelinek_mercer.cpp
              src/index/ranker/dirichlet_prior.cpp
              src/index/ranker/absolute_discount.cpp
+             src/index/ranker/pivoted_length.cpp
 )
 
 add_library( meta-io
