@@ -45,21 +45,27 @@ int main(int argc, char* argv[])
 
     auto config = cpptoml::parse_file(argv[1]);
     auto f_idx = index::make_index<index::forward_index, caching::splay_cache>(argv[1]);
-    auto i_idx = index::make_index<index::inverted_index, caching::splay_cache>(argv[1]);
+ // auto i_idx = index::make_index<index::inverted_index, caching::splay_cache>(argv[1]);
 
-    classify::svm_wrapper svm{f_idx,
-                              *config.get_as<std::string>("liblinear"),
-                              classify::svm_wrapper::kernel::Quadratic };
-    auto m1 = cv(f_idx, svm);
+    classify::perceptron p{f_idx};
+    classify::winnow w{f_idx};
 
-    auto kernel_perceptron =
-        classify::make_perceptron(f_idx, classify::kernel::polynomial{2, 1.0});
+    auto m1 = cv(f_idx, p);
+    auto m2 = cv(f_idx, w);
 
-    auto m2 = cv(f_idx, kernel_perceptron);
-    std::cout << "(liblinear vs kernel perceptron) Significant? "
-              << std::boolalpha
-              << classify::confusion_matrix::mcnemar_significant( m1, m2 )
-              << std::endl;
+ // classify::svm_wrapper svm{f_idx,
+ //                           *config.get_as<std::string>("liblinear"),
+ //                           classify::svm_wrapper::kernel::Quadratic };
+ // auto m1 = cv(f_idx, svm);
+
+ // auto kernel_perceptron =
+ //     classify::make_perceptron(f_idx, classify::kernel::polynomial{2, 1.0});
+
+ // auto m2 = cv(f_idx, kernel_perceptron);
+ // std::cout << "(liblinear vs kernel perceptron) Significant? "
+ //           << std::boolalpha
+ //           << classify::confusion_matrix::mcnemar_significant( m1, m2 )
+ //           << std::endl;
 
  // classify::linear_svm l2svm{idx};
  // auto m2 = cv(idx, l2svm);
@@ -71,24 +77,6 @@ int main(int argc, char* argv[])
  // auto m2 = cv(i_idx, k);
  // std::cout << "(liblinear vs knn) Significant? " << std::boolalpha
  //           << classify::confusion_matrix::mcnemar_significant( m1, m2 )
- //           << std::endl;
-
- // classify::linear_svm l1svm{ idx, classify::linear_svm::loss_function::L1 };
- // auto m3 = cv(idx, l1svm);
- // std::cout << "(liblinear vs l1svm) Significant? " << std::boolalpha
- //           << classify::confusion_matrix::mcnemar_significant( m1, m3 )
- //           << std::endl;
-
- // classify::perceptron p{idx};
- // auto m4 = cv(idx, p);
- // std::cout << "(liblinear vs perceptron) Significant? " << std::boolalpha
- //           << classify::confusion_matrix::mcnemar_significant( m2, m4 )
- //           << std::endl;
-
- // classify::naive_bayes nb{idx};
- // auto m5 = cv(idx, nb);
- // std::cout << "(liblinear vs naive bayes) Significant? " << std::boolalpha
- //           << classify::confusion_matrix::mcnemar_significant( m2, m5 )
  //           << std::endl;
 
     return 0;

@@ -1,3 +1,7 @@
+/**
+ * @file perceptron.cpp
+ */
+
 #include <numeric>
 #include <random>
 
@@ -46,8 +50,12 @@ void perceptron::train( const std::vector<doc_id> & docs ) {
                 error_count += 1;
                 auto pdata = _idx.search_primary(docs[i]);
                 for( const auto & count : pdata->counts() ) {
-                    weights_[ guess ][ count.first ] -= alpha_ * count.second;
-                    weights_[ actual ][ count.first ] += alpha_ * count.second;
+                    //weights_[ guess ][ count.first ] -= alpha_ * count.second;
+                    //weights_[ actual ][ count.first ] += alpha_ * count.second;
+                    weights_[ guess ][ count.first ] =
+                       get_weight(guess, count.first) - alpha_ * count.second;
+                    weights_[ actual ][ count.first ] =
+                        get_weight(actual, count.first) + alpha_ * count.second;
                 }
             }
         }

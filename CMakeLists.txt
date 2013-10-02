@@ -31,6 +31,7 @@ add_library( meta-classify
              src/classify/classifier/naive_bayes.cpp
              src/classify/classifier/svm_wrapper.cpp
              src/classify/classifier/perceptron.cpp
+             src/classify/classifier/winnow.cpp
              src/classify/classifier/linear_svm.cpp
 )
 
