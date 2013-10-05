@@ -1,0 +1,8 @@
+#include "classify/loss/hinge.h"
+#include "classify/loss/huber.h"
+#include "classify/loss/least_squares.h"
+#include "classify/loss/logistic.h"
+#include "classify/loss/modified_huber.h"
+#include "classify/loss/perceptron.h"
+#include "classify/loss/smooth_hinge.h"
+#include "classify/loss/squared_hinge.h"
