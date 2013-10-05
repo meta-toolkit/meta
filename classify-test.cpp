@@ -11,10 +11,6 @@
 #include "util/common.h"
 #include "util/invertible_map.h"
 #include "classify/classifier/all.h"
-#include "classify/classifier/dual_perceptron.h"
-#include "classify/kernel/polynomial.h"
-#include "classify/kernel/radial_basis.h"
-#include "classify/kernel/sigmoid.h"
 
 using std::cout;
 using std::cerr;
@@ -35,6 +31,31 @@ classify::confusion_matrix cv(Index & idx, Classifier & c)
     return matrix;
 }
 
+template <class Index>
+void compare_cv(classify::confusion_matrix &, Index &) {
+    std::cout << "finished cv comparison!" << std::endl;
+}
+
+template <class Index, class Alternative, class... Alternatives>
+void compare_cv(classify::confusion_matrix & matrix,
+                Index & idx,
+                Alternative & alt,
+                Alternatives &... alts)
+{
+    auto m = cv(idx, alt);
+    std::cout << "significant: " << std::boolalpha
+        << classify::confusion_matrix::mcnemar_significant(matrix, m)
+        << std::endl;
+    compare_cv(matrix, idx, alts...);
+}
+
+template <class Index, class Classifier, class... Alternatives>
+void compare_cv(Index & idx, Classifier & c, Alternatives &... alts)
+{
+    auto matrix = cv(idx, c);
+    compare_cv(matrix, idx, alts...);
+}
+
 int main(int argc, char* argv[])
 {
     if(argc != 2)
@@ -47,15 +68,39 @@ int main(int argc, char* argv[])
     auto f_idx = index::make_index<index::forward_index, caching::splay_cache>(argv[1]);
  // auto i_idx = index::make_index<index::inverted_index, caching::splay_cache>(argv[1]);
 
-    classify::perceptron p{f_idx};
-    classify::winnow w{f_idx};
+    //classify::winnow w{f_idx};
 
-    auto m1 = cv(f_idx, p);
-    auto m2 = cv(f_idx, w);
+    classify::svm_wrapper svm{f_idx,
+                              *config.get_as<std::string>("liblinear"),
+                              classify::svm_wrapper::kernel::None };
+
+    classify::linear_svm l2svm{f_idx};
+    classify::perceptron p{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::hinge>> hinge_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::huber>> huber_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::least_squares>> least_squares_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::logistic>> logistic_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::modified_huber>> mod_huber_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::perceptron>> perceptron_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::smooth_hinge>> smooth_hinge_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::squared_hinge>> squared_hinge_sgd{f_idx};
+
+    compare_cv(f_idx,
+               svm,
+               l2svm,
+               hinge_sgd,
+               smooth_hinge_sgd,
+               squared_hinge_sgd,
+               p,
+               perceptron_sgd,
+               huber_sgd,
+               least_squares_sgd,
+               logistic_sgd,
+               mod_huber_sgd);
 
  // classify::svm_wrapper svm{f_idx,
  //                           *config.get_as<std::string>("liblinear"),
- //                           classify::svm_wrapper::kernel::Quadratic };
+ //                           classify::svm_wrapper::kernel::None };
  // auto m1 = cv(f_idx, svm);
 
  // auto kernel_perceptron =
@@ -67,10 +112,10 @@ int main(int argc, char* argv[])
  //           << classify::confusion_matrix::mcnemar_significant( m1, m2 )
  //           << std::endl;
 
- // classify::linear_svm l2svm{idx};
- // auto m2 = cv(idx, l2svm);
- // std::cout << "(liblinear vs l2svm) Significant? " << std::boolalpha
- //           << classify::confusion_matrix::mcnemar_significant( m1, m2 )
+ // classify::linear_svm l2svm{f_idx};
+ // auto m3 = cv(f_idx, l2svm);
+ // std::cout << "(sgd perceptron vs l2svm) Significant? " << std::boolalpha
+ //           << classify::confusion_matrix::mcnemar_significant( m1, m3 )
  //           << std::endl;
 
  // classify::knn<index::okapi_bm25> k{i_idx, 10, 1.5, 0.75, 500.0};
