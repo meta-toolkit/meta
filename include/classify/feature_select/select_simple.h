@@ -11,7 +11,7 @@
 #include <vector>
 #include <utility>
 #include "classify/feature_select/select.h"
-#include "index/document.h"
+#include "corpus/document.h"
 #include "meta.h"
 
 namespace meta {
@@ -29,7 +29,7 @@ class select_simple: public feature_select
          * Constructor.
          * @param docs The documents containing features
          */
-        select_simple(const std::vector<index::document> & docs);
+        select_simple(const std::vector<corpus::document> & docs);
 
         /**
          * Calculates important features via Chi-square statistics (independence of

@@ -8,13 +8,11 @@
 namespace meta {
 namespace classify {
 
-using std::vector;
 using std::unordered_set;
 using std::unordered_map;
 using std::pair;
-using index::document;
 
-correlation::correlation(const vector<document> & docs):
+correlation::correlation(const std::vector<corpus::document> & docs):
     select_simple(docs) { /* nothing */ }
 
 double correlation::calc_weight(term_id termID, const class_label & label) const

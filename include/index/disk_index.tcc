@@ -38,7 +38,7 @@ Index make_index(const std::string & config_file, Args &&... args)
             + *config.get_as<std::string>("list")
             + "-full-corpus.txt";
 
-        auto docs = index::document::load_docs(corpus_file, prefix);
+        auto docs = corpus::document::load_docs(corpus_file, prefix);
         idx.create_index(docs, config_file);
     }
     return idx;
@@ -73,7 +73,7 @@ uint64_t disk_index<PrimaryKey, SecondaryKey>::unique_terms(doc_id d_id) const
 
 template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::create_index(
-        std::vector<document> & docs,
+        std::vector<corpus::document> & docs,
         const std::string & config_file)
 {
     // save the config file so we can recreate the tokenizer
@@ -359,7 +359,7 @@ std::vector<doc_id> disk_index<PrimaryKey, SecondaryKey>::docs() const
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::tokenize(document & doc)
+void disk_index<PrimaryKey, SecondaryKey>::tokenize(corpus::document & doc)
 {
     _tokenizer->tokenize(doc);
 }

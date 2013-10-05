@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 #include "tokenizers/tokenizer.h"
-#include "index/document.h"
+#include "corpus/document.h"
 
 namespace meta {
 namespace tokenizers {
@@ -41,7 +41,7 @@ class multi_tokenizer: public tokenizer
          * @param document - the document to store the tokenized information in
          * @param mapping - the string to term_id mapping
          */
-        virtual void tokenize_document(index::document & document,
+        virtual void tokenize_document(corpus::document & document,
                   std::function<term_id(const std::string &)> mapping) override;
 
     private:

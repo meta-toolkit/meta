@@ -35,8 +35,11 @@ add_library( meta-classify
              src/classify/classifier/linear_svm.cpp
 )
 
+add_library( meta-corpus
+             src/corpus/document.cpp
+)
+
 add_library( meta-index
-             src/index/document.cpp
              src/index/inverted_index.cpp
              src/index/forward_index.cpp
              src/index/ranker/okapi_bm25.cpp
@@ -94,6 +97,7 @@ target_link_libraries( classify
                        meta-tokenizers
                        meta-stemmers
                        meta-io
+                       meta-corpus
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -103,6 +107,7 @@ target_link_libraries( search
                        meta-tokenizers
                        meta-stemmers
                        meta-io
+                       meta-corpus
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -112,6 +117,7 @@ target_link_libraries( cluster-test
                        meta-stemmers
                        meta-index
                        meta-io
+                       meta-corpus
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -132,6 +138,7 @@ target_link_libraries( lda-test
                        meta-stemmers
                        meta-index
                        meta-io
+                       meta-corpus
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 

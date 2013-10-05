@@ -11,7 +11,7 @@
 #include <vector>
 #include <utility>
 #include "classify/feature_select/select_simple.h"
-#include "index/document.h"
+#include "corpus/document.h"
 
 namespace meta {
 namespace classify {
@@ -30,7 +30,7 @@ class correlation: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        correlation(const std::vector<index::document> & docs);
+        correlation(const std::vector<corpus::document> & docs);
 
     private:
         /**

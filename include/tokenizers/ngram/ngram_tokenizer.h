@@ -14,9 +14,7 @@
 #include <memory>
 #include <deque>
 #include <unordered_map>
-
 #include "tokenizers/tokenizer.h"
-#include "index/document.h"
 
 namespace meta {
 namespace tokenizers {

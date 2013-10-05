@@ -9,7 +9,7 @@ namespace meta {
 namespace index {
 
 std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
-                                                     document & query) const
+                                                 corpus::document & query) const
 {
     if(query.frequencies().empty())
         idx.tokenize(query);

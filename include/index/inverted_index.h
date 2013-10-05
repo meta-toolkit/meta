@@ -122,7 +122,7 @@ class inverted_index: public disk_index<term_id, doc_id>
         /**
          * @param docs The documents to add to the inverted index
          */
-        uint32_t tokenize_docs(std::vector<document> & docs);
+        uint32_t tokenize_docs(std::vector<corpus::document> & docs);
 
     private:
         /** average document length in the inverted_index */

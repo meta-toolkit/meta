@@ -10,11 +10,6 @@
 namespace meta {
 namespace classify {
 
-using std::vector;
-using std::unordered_map;
-using std::unordered_set;
-using index::document;
-
 naive_bayes::naive_bayes(index::forward_index & idx,
                          double alpha, double beta):
     classifier{idx},
@@ -30,7 +25,7 @@ void naive_bayes::reset()
     _total_docs = 0;
 }
 
-void naive_bayes::train(const vector<doc_id> & docs)
+void naive_bayes::train(const std::vector<doc_id> & docs)
 {
     for(auto & d_id: docs)
     {

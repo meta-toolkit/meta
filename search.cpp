@@ -10,7 +10,7 @@
 
 #include "util/common.h"
 #include "tokenizers/tokenizer.h"
-#include "index/document.h"
+#include "corpus/document.h"
 #include "index/inverted_index.h"
 #include "index/ranker/all.h"
 #include "caching/dblru_cache.h"
@@ -49,14 +49,14 @@ int main(int argc, char* argv[])
         // auto range = util::range<size_t>(0, std::min<size_t>(1000, idx.num_docs()-1));
         // parallel::parallel_for(range.begin(), range.end(), [&](size_t i) {
         //     auto d_id = idx.docs()[i];
-        //     index::document query{idx.doc_path(d_id)};
+        //     corpus::document query{idx.doc_path(d_id)};
         //     auto ranking = ranker.score(idx, query);
         // });
 
         for(size_t i = 0; i < 100 && i < idx.num_docs(); ++i)
         {
             auto d_id = idx.docs()[i];
-            index::document query{idx.doc_path(d_id)};
+            corpus::document query{idx.doc_path(d_id)};
             cout << "Ranking query " << (i + 1) << ": " << query.path() << endl;
 
             std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);

@@ -49,7 +49,7 @@ class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
          * @param mapping - the string to term_id mapping
          */
         virtual void tokenize_document(
-                index::document & document,
+                corpus::document & document,
                 std::function<term_id(const std::string &)> mapping) override;
 
     private:

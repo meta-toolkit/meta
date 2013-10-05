@@ -12,7 +12,7 @@
 #include <vector>
 #include <string>
 
-#include "index/document.h"
+#include "corpus/document.h"
 #include "tokenizers/tokenizer.h"
 
 namespace meta {
@@ -23,7 +23,7 @@ namespace topics {
  */
 class lda_model {
     public:
-        lda_model( std::vector<index::document> & docs, size_t num_topics,
+        lda_model( std::vector<corpus::document> & docs, size_t num_topics,
                 const std::shared_ptr<tokenizers::tokenizer> & tok);
 
         virtual ~lda_model() { }
@@ -92,7 +92,7 @@ class lda_model {
          */
         virtual double compute_doc_topic_probability( doc_id doc, size_t topic ) const = 0;
 
-        std::vector<index::document> & docs_;
+        std::vector<corpus::document> & docs_;
         std::shared_ptr<tokenizers::tokenizer> tokenizer_;
         size_t num_topics_;
         size_t num_words_;

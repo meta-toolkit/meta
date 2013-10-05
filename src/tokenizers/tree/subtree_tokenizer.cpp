@@ -3,7 +3,7 @@
 namespace meta {
 namespace tokenizers {
 
-void subtree_tokenizer::tree_tokenize( index::document & document,
+void subtree_tokenizer::tree_tokenize( corpus::document & document,
                                        const parse_tree & tree,
                                        mapping_fn mapping)
 {

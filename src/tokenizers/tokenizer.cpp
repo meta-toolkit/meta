@@ -19,14 +19,13 @@ using std::ofstream;
 using namespace std::placeholders;
 using std::unordered_map;
 using util::invertible_map;
-using index::document;
 
 tokenizer::tokenizer():
     _term_map(invertible_map<term_id, string>()),
     _current_term_id(0)
 { /* nothing */ }
 
-void tokenizer::tokenize(index::document & document)
+void tokenizer::tokenize(corpus::document & document)
 {
     tokenize_document(document, std::bind(&tokenizer::mapping, this, _1));
 }

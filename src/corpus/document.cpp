@@ -5,12 +5,12 @@
 
 #include <utility>
 #include <sstream>
-#include "index/document.h" 
+#include "corpus/document.h" 
 #include "parallel/parallel_for.h" 
 #include "cluster/similarity.h"
 
 namespace meta {
-namespace index {
+namespace corpus {
 
 using std::vector;
 using std::pair;

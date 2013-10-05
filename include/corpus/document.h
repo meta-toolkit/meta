@@ -18,10 +18,10 @@
 #include "util/invertible_map.h"
 
 namespace meta {
-namespace index {
+namespace corpus {
 
 /**
- * Represents an indexed document.
+ * Represents an indexable document.
  */
 class document
 {

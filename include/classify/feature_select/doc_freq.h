@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <utility>
-#include "index/document.h"
+#include "corpus/document.h"
 #include "classify/feature_select/select_simple.h"
 
 namespace meta {
@@ -28,7 +28,7 @@ class doc_freq: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        doc_freq(const std::vector<index::document> & docs);
+        doc_freq(const std::vector<corpus::document> & docs);
 
         /**
          * Calculates the doc freq score for one term.

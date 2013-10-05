@@ -31,7 +31,7 @@ class ngram_lex_tokenizer: public ngram_simple_tokenizer
          * @param mapping - the string to term_id mapping
          */
         virtual void tokenize_document(
-                index::document & document,
+                corpus::document & document,
                 std::function<term_id(const std::string &)> mapping
         ) override;
 };

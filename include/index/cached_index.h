@@ -10,7 +10,7 @@
 #ifndef _CACHED_INDEX_H_
 #define _CACHED_INDEX_H_
 
-#include "index/document.h"
+#include "corpus/document.h"
 #include "index/postings_data.h"
 #include "meta.h"
 

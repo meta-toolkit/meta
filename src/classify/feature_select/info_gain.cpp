@@ -8,13 +8,11 @@
 namespace meta {
 namespace classify {
 
-using std::vector;
 using std::unordered_set;
 using std::unordered_map;
 using std::pair;
-using index::document;
 
-info_gain::info_gain(const vector<document> & docs):
+info_gain::info_gain(const std::vector<corpus::document> & docs):
     select_simple(docs) { /* nothing */ }
 
 double info_gain::calc_weight(term_id termID, const class_label & label) const

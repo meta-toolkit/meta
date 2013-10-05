@@ -18,7 +18,7 @@ inverted_index::inverted_index(const cpptoml::toml_group & config):
     _total_corpus_terms{0}
 { /* nothing */ }
 
-uint32_t inverted_index::tokenize_docs(std::vector<document> & docs)
+uint32_t inverted_index::tokenize_docs(std::vector<corpus::document> & docs)
 {
     std::unordered_map<term_id, postings_data<term_id, doc_id>> pdata;
     uint32_t chunk_num = 0;

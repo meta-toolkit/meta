@@ -20,7 +20,7 @@ forward_index::forward_index(const cpptoml::toml_group & config):
     disk_index{config, *cpptoml::get_as<std::string>(config, "forward-index")}
 { /* nothing */ }
 
-uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
+uint32_t forward_index::tokenize_docs(std::vector<corpus::document> & docs)
 {
     std::unordered_map<doc_id, postings_data<doc_id, term_id>> pdata;
     uint32_t chunk_num = 0;

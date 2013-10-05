@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "index/document.h"
+#include "corpus/document.h"
 #include "stemmers/porter2.h"
 #include "tokenizers/ngram/ngram_word_tokenizer.h"
 #include "topics/lda_gibbs.h"
@@ -20,7 +20,7 @@ int print_usage( const std::string & name ) {
 }
 
 template <class Model>
-int run_lda( std::vector<index::document> & docs, size_t topics, double alpha, double beta ) {
+int run_lda( std::vector<corpus::document> & docs, size_t topics, double alpha, double beta ) {
     auto tok = std::make_shared<tokenizers::ngram_word_tokenizer<>>( 1 );
     for( size_t i = 0; i < docs.size(); ++i ) {
         common::show_progress( i, docs.size(), 10, "  tokenizing: " );
@@ -38,7 +38,7 @@ int run_lda( const std::string & type, const std::string & filename,
              size_t topics ) {
     using namespace meta::topics;
     std::cout << "Loading documents...\r" << std::flush;
-    std::vector<index::document> docs = index::document::load_docs( filename, prefix );
+    std::vector<corpus::document> docs = corpus::document::load_docs( filename, prefix );
     if( type == "gibbs" ) {
         std::cout<< "Beginning LDA using serial Gibbs sampling..." << std::endl;
         return run_lda<lda_gibbs>( docs, topics, alpha, beta );

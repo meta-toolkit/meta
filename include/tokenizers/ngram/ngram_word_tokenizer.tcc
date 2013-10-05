@@ -22,7 +22,7 @@ ngram_word_tokenizer<Stemmer>::ngram_word_tokenizer(
 
 template <class Stemmer>
 void ngram_word_tokenizer<Stemmer>::tokenize_document(
-        index::document & document,
+        corpus::document & document,
         std::function<term_id(const std::string &)> mapping)
 {
     meta::io::parser psr{document.path() + ".sen", " \n"};

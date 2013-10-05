@@ -12,7 +12,7 @@
 #include <unordered_map>
 
 #include "cluster/similarity.h"
-#include "index/document.h"
+#include "corpus/document.h"
 
 namespace meta {
 namespace clustering {
@@ -49,14 +49,14 @@ class point {
 };
 
 template <>
-point<term_id, index::document>::point( const index::document & d ) 
+point<term_id, corpus::document>::point( const corpus::document & d ) 
         : element_{ &d }, size_{ 1 } {
     for( const auto & freq : d.frequencies() )
         avg_vector_[ freq.first ] = static_cast<double>( freq.second );
 }
 
-point<term_id, index::document> make_point( const index::document & d ) {
-    return point<term_id, index::document>{ d };
+point<term_id, corpus::document> make_point( const corpus::document & d ) {
+    return point<term_id, corpus::document>{ d };
 }
 
 template <class DimensionKey, class Element>

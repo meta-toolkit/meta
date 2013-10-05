@@ -16,7 +16,6 @@
 #include "caching/splay_cache.h"
 #include "tokenizers/all.h"
 #include "index/cached_index.h"
-#include "index/document.h"
 #include "index/postings_data.h"
 #include "io/compressed_file_reader.h"
 #include "io/mmap_file.h"
@@ -109,7 +108,7 @@ class disk_index
         /**
          * @param doc The document to tokenize
          */
-        void tokenize(document & doc);
+        void tokenize(corpus::document & doc);
 
         /**
          * @param d_id The doc id to find the class label for
@@ -146,7 +145,7 @@ class disk_index
          * @param docs The documents to tokenize
          * @param config_file The configuration file used to create the
          */
-        void create_index(std::vector<document> & docs,
+        void create_index(std::vector<corpus::document> & docs,
                           const std::string & config_file);
 
         /**
@@ -186,7 +185,7 @@ class disk_index
         /**
          * @param docs The documents to add to the inverted index
          */
-        virtual uint32_t tokenize_docs(std::vector<document> & docs) = 0;
+        virtual uint32_t tokenize_docs(std::vector<corpus::document> & docs) = 0;
 
         /**
          * @param d_id The document

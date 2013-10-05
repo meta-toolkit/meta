@@ -2,7 +2,7 @@
  * @file multi_tokenizer.cpp
  */
 
-#include "index/document.h"
+#include "corpus/document.h"
 #include "tokenizers/multi_tokenizer.h"
 
 namespace meta {
@@ -14,7 +14,7 @@ multi_tokenizer::multi_tokenizer(const std::vector<std::shared_ptr<tokenizer>> &
     _tokenizers(toks)
 { /* nothing */ }
 
-void multi_tokenizer::tokenize_document(index::document & document,
+void multi_tokenizer::tokenize_document(corpus::document & document,
     std::function<term_id(const std::string &)> mapping)
 {
     for(auto & tok: _tokenizers)

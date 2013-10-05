@@ -5,7 +5,7 @@
 #include "cluster/agglomerative_clustering.h"
 #include "cluster/basic_single_link_policy.h"
 #include "cluster/similarity.h"
-#include "index/document.h"
+#include "corpus/document.h"
 #include "tokenizers/ngram/ngram_word_tokenizer.h"
 
 void run_test( const std::string & filename, const std::string & prefix ) {
@@ -14,13 +14,13 @@ void run_test( const std::string & filename, const std::string & prefix ) {
     tokenizers::ngram_word_tokenizer<> t{ 1 };
     
     std::cout << "Loading documents...\r" << std::flush;
-    std::vector<index::document> docs = index::document::load_docs( filename, prefix );
+    std::vector<corpus::document> docs = corpus::document::load_docs( filename, prefix );
     std::cout << "Tokenizing documents...\r" << std::flush;
     for( auto & d : docs )
         t.tokenize( d );
 
-    std::cout << "Clustring documents..." << std::endl;
-    agglomerative_clustering<index::document,
+    std::cout << "Clustering documents..." << std::endl;
+    agglomerative_clustering<corpus::document,
                              basic_single_link_policy<similarity::cosine>>
     cluster( docs );
 }

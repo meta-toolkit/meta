@@ -11,13 +11,13 @@ using std::deque;
 using std::string;
 using std::unordered_map;
 using std::unordered_set;
-using index::document;
 using io::parser;
 
 ngram_simple_tokenizer::ngram_simple_tokenizer(size_t n):
     ngram_tokenizer(n) { /* nothing */ }
 
-void ngram_simple_tokenizer::simple_tokenize(parser & parser, document & document,
+void ngram_simple_tokenizer::simple_tokenize(parser & parser,
+        corpus::document & document,
         std::function<term_id(const std::string &)> mapping)
 {
     // initialize the ngram

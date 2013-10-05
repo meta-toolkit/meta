@@ -12,11 +12,9 @@ namespace classify {
 
 using std::unordered_map;
 using std::unordered_set;
-using std::vector;
 using std::pair;
-using index::document;
 
-feature_select::feature_select(const vector<document> & docs):
+feature_select::feature_select(const std::vector<corpus::document> & docs):
     _term_space(unordered_set<term_id>()),
     _class_space(unordered_set<class_label>()),
     _num_terms(0),
@@ -28,7 +26,7 @@ feature_select::feature_select(const vector<document> & docs):
     set_pseen(docs);
 }
 
-void feature_select::set_pseen(const vector<document> & docs)
+void feature_select::set_pseen(const std::vector<corpus::document> & docs)
 {
     // set all probs to zero initially; this makes sure they are entered in the
     // map, avoiding exceptions when using at()
@@ -63,9 +61,10 @@ void feature_select::set_pseen(const vector<document> & docs)
     }
 }
 
-vector<pair<term_id, double>> feature_select::sort_terms(unordered_map<term_id, double> & weights) const
+std::vector<pair<term_id, double>>
+feature_select::sort_terms(unordered_map<term_id, double> & weights) const
 {
-    vector<pair<term_id, double>> ret(weights.begin(), weights.end());
+    std::vector<pair<term_id, double>> ret(weights.begin(), weights.end());
     std::sort(ret.begin(), ret.end(),
         [](const pair<term_id, double> & a, const pair<term_id, double> & b) {
             return a.second > b.second;
@@ -74,7 +73,7 @@ vector<pair<term_id, double>> feature_select::sort_terms(unordered_map<term_id, 
     return ret;
 }
 
-void feature_select::set_class_space(const vector<document> & docs)
+void feature_select::set_class_space(const std::vector<corpus::document> & docs)
 {
     for(auto & d: docs)
     {
@@ -86,7 +85,7 @@ void feature_select::set_class_space(const vector<document> & docs)
         c.second /= docs.size();
 }
 
-void feature_select::set_term_space(const vector<document> & docs)
+void feature_select::set_term_space(const std::vector<corpus::document> & docs)
 {
     for(auto & d: docs)
     {

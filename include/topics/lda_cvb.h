@@ -14,7 +14,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "index/document.h"
+#include "corpus/document.h"
 #include "tokenizers/tokenizer.h"
 #include "topics/lda_model.h"
 #include "util/common.h"
@@ -49,7 +49,7 @@ class lda_cvb : public lda_model {
          * @param beta The hyperparameter for the Dirichlet prior over
          *  \f$\theta\f$.
          */
-        lda_cvb( std::vector<index::document> & docs,
+        lda_cvb( std::vector<corpus::document> & docs,
             const std::shared_ptr<tokenizers::tokenizer> & tok,
             size_t num_topics, double alpha, double beta );
 

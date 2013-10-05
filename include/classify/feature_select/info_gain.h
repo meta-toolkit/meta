@@ -11,7 +11,6 @@
 #include <vector>
 #include <utility>
 #include "classify/feature_select/select_simple.h"
-#include "index/document.h"
 
 namespace meta {
 namespace classify {
@@ -29,7 +28,7 @@ class info_gain: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        info_gain(const std::vector<index::document> & docs);
+        info_gain(const std::vector<corpus::document> & docs);
 
     private:
 

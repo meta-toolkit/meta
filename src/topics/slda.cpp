@@ -16,7 +16,7 @@ using std::unordered_set;
 using std::pair;
 using std::string;
 using util::invertible_map;
-using index::document;
+using corpus::document;
 
 slda::slda(const string & slda_path, double alpha):
     _alpha(alpha),
