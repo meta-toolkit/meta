@@ -45,10 +45,10 @@ sgd<LossFunction>::sgd(index::forward_index & idx,
 
 template <class LossFunction>
 double sgd<LossFunction>::predict(doc_id d_id) const {
-    double dot =  bias_;
+    double dot =  coeff_ * bias_;
     auto pdata = _idx.search_primary(d_id);
     for( const auto & count : pdata->counts() ) {
-        dot += count.second * common::safe_at( weights_, count.first );
+        dot += coeff_ * count.second * common::safe_at( weights_, count.first );
     }
     return dot;
 }
@@ -71,6 +71,7 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
     std::random_device d;
     std::mt19937 g{ d() };
     for( size_t iter = 0; iter < max_iter_; ++iter ) {
+        double lr = alpha_ / (1 + lambda_ * iter);
         std::shuffle( indices.begin(), indices.end(), g );
         uint64_t error_count = 0;
         for( size_t i = 0; i < indices.size(); ++i ) {
@@ -89,12 +90,21 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
 
             double error_derivative = loss_.derivative(prediction, actual);
             auto pdata = _idx.search_primary(doc);
+            coeff_ *= (1 - lr * lambda_);
+
+            // renormalize vector of coefficient is too small
+            if( coeff_ < 1e-4 ) {
+                bias_ *= coeff_;
+                for( auto & w : weights_ )
+                    w.second *= coeff_;
+                coeff_ = 1;
+            }
+
             for( const auto & count : pdata->counts() ) {
                 weights_[ count.first ] -=
-                    alpha_ * (lambda_ * weights_[ count.first ]
-                              + error_derivative * count.second);
+                    lr * error_derivative * count.second / coeff_;
             }
-            bias_ -= alpha_ * (lambda_ * bias_ + error_derivative);
+            bias_ -= lr * error_derivative / coeff_;
         }
         if( static_cast<double>(error_count) / docs.size() < gamma_ )
             break;
