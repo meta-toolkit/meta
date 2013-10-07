@@ -39,8 +39,8 @@ class sgd : public classifier<index::forward_index> {
             double alpha = 0.001,
             double gamma = 0.05,
             double bias = 1,
-            double lambda = 0.1,
-            size_t max_iter = 100);
+            double lambda = 0.0001,
+            size_t max_iter = 20);
 
         /**
          * @param idx The index to run the classifier on
@@ -57,8 +57,8 @@ class sgd : public classifier<index::forward_index> {
             double alpha = 0.001,
             double gamma = 0.05,
             double bias = 1,
-            double lambda = 0.1,
-            size_t max_iter = 100);
+            double lambda = 0.0001,
+            size_t max_iter = 20);
 
         /**
          * Trains the sgd on the given training documents.
@@ -108,6 +108,9 @@ class sgd : public classifier<index::forward_index> {
 
         /// The weights vector.
         std::unordered_map<term_id, double> weights_;
+
+        /// The scalar coefficient for the weights vector.
+        double coeff_{1.0};
 
         /// \f$\alpha\f$, the learning rate.
         const double alpha_;
