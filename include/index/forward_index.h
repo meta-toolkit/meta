@@ -87,7 +87,7 @@ class forward_index: public disk_index<doc_id, term_id>
         /**
          * @param docs The documents to add to the inverted index
          */
-        uint32_t tokenize_docs(std::vector<corpus::document> & docs);
+        uint32_t tokenize_docs(const std::unique_ptr<corpus::corpus> & docs);
 
     private:
         /**

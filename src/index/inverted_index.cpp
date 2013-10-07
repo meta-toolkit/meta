@@ -18,24 +18,25 @@ inverted_index::inverted_index(const cpptoml::toml_group & config):
     _total_corpus_terms{0}
 { /* nothing */ }
 
-uint32_t inverted_index::tokenize_docs(std::vector<corpus::document> & docs)
+uint32_t inverted_index::tokenize_docs(
+        const std::unique_ptr<corpus::corpus> & docs)
 {
     std::unordered_map<term_id, postings_data<term_id, doc_id>> pdata;
     uint32_t chunk_num = 0;
-    doc_id doc_num{0};
     std::string progress = "Tokenizing ";
-    for(auto & doc: docs)
+    while(docs->has_next())
     {
-        common::show_progress(doc_num, docs.size(), 20, progress);
+        corpus::document doc{docs->next()};
+        common::show_progress(doc.id(), docs->size(), 20, progress);
         _tokenizer->tokenize(doc);
-        _doc_id_mapping[doc_num] = doc.path();
-        _doc_sizes[doc_num] = doc.length();
+        _doc_id_mapping[doc.id()] = doc.path();
+        _doc_sizes[doc.id()] = doc.length();
         _total_corpus_terms += doc.length();
 
         for(auto & f: doc.frequencies())
         {
             postings_data<term_id, doc_id> pd{f.first};
-            pd.increase_count(doc_num, f.second);
+            pd.increase_count(doc.id(), f.second);
             auto it = pdata.find(f.first);
             if(it == pdata.end())
                 pdata.insert(std::make_pair(f.first, pd));
@@ -43,11 +44,14 @@ uint32_t inverted_index::tokenize_docs(std::vector<corpus::document> & docs)
                 it->second.merge_with(pd);
         }
 
-        ++doc_num;
+        // Save class label information
+        _unique_terms[doc.id()] = doc.frequencies().size();
+        if(doc.label() != class_label{""})
+            _labels[doc.id()] = doc.label();
 
         // every k documents, write a chunk
         // TODO: make this based on memory usage instead
-        if(doc_num % 100 == 0)
+        if(doc.id() % 500 == 0)
             write_chunk(chunk_num++, pdata);
     }
     common::end_progress(progress);

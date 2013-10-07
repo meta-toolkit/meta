@@ -31,7 +31,7 @@ class document
          * Constructor.
          * @param path The path to the document
          */
-        document(const std::string & path,
+        document(const std::string & path, doc_id d_id,
                  const class_label & label = class_label{""});
 
         /**
@@ -134,18 +134,28 @@ class document
         static double cosine_similarity(const document & a, const document & b);
 
         /**
-         * Returns a vector of all documents in a given dataset.
-         * @param filename - the file containing the list of files in a corpus
-         * @param prefix - the prefix of the path to a corpus
-         * @return a vector of documents created from the filenames
+         * Sets the content of the document to be the parameter
+         * @param content
          */
-        static std::vector<document> load_docs(const std::string & filename,
-                const std::string & prefix);
+        void set_content(const std::string & content);
+
+        /**
+         * @return the contents of this document
+         */
+        const std::string & content() const;
+
+        /**
+         * @return the doc_id for this document
+         */
+        doc_id id() const;
 
     private:
 
         /** where this document is on disk */
         std::string _path;
+
+        /** the document id for this document */
+        doc_id _d_id;
 
         /** which category this document would be classified into */
         class_label _label;
@@ -158,6 +168,9 @@ class document
 
         /** counts of how many times each token appears */
         std::unordered_map<term_id, uint64_t> _frequencies;
+
+        /** what the document contains */
+        std::string _content;
 };
 
 }

@@ -30,16 +30,7 @@ Index make_index(const std::string & config_file, Args &&... args)
     }
     else
     {
-        // otherwise, create a new one
-        std::string prefix = *config.get_as<std::string>("prefix")
-            + *config.get_as<std::string>("dataset");
-        std::string corpus_file = prefix
-            + "/"
-            + *config.get_as<std::string>("list")
-            + "-full-corpus.txt";
-
-        auto docs = corpus::document::load_docs(corpus_file, prefix);
-        idx.create_index(docs, config_file);
+        idx.create_index(config_file);
     }
     return idx;
 }
@@ -73,7 +64,6 @@ uint64_t disk_index<PrimaryKey, SecondaryKey>::unique_terms(doc_id d_id) const
 
 template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::create_index(
-        std::vector<corpus::document> & docs,
         const std::string & config_file)
 {
     // save the config file so we can recreate the tokenizer
@@ -81,21 +71,13 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
     std::ofstream dest_config{_index_name + "/config.toml", std::ios::binary};
     dest_config << source_config.rdbuf();
 
+    // load the documents from the corpus
+    auto docs = corpus::corpus::load(config_file);
+
     // create postings file
     uint32_t num_chunks = tokenize_docs(docs);
     merge_chunks(num_chunks, _index_name + "/postings.index");
     compress(_index_name + "/postings.index");
-
-    // Save class label information; this is needed for both forward and
-    // inverted indexes. It's assumed that doc_ids are assigned in deriving
-    // classes in the same order the documents appear in the vector
-    doc_id doc_num{0};
-    for(auto & d: docs)
-    {
-        _unique_terms[doc_num] = d.frequencies().size();
-        if(d.label() != class_label{""})
-            _labels[doc_num++] = d.label();
-    }
 
     save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
     save_mapping(_doc_sizes, _index_name + "/docsizes.counts");

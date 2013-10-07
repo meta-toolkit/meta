@@ -37,6 +37,8 @@ add_library( meta-classify
 
 add_library( meta-corpus
              src/corpus/document.cpp
+             src/corpus/file_corpus.cpp
+             src/corpus/corpus.cpp
 )
 
 add_library( meta-index
@@ -106,16 +108,6 @@ target_link_libraries( search
                        meta-index
                        meta-tokenizers
                        meta-stemmers
-                       meta-io
-                       meta-corpus
-                       ${CMAKE_THREAD_LIBS_INIT}
-)
-
-add_executable( cluster-test cluster-test.cpp )
-target_link_libraries( cluster-test
-                       meta-tokenizers
-                       meta-stemmers
-                       meta-index
                        meta-io
                        meta-corpus
                        ${CMAKE_THREAD_LIBS_INIT}

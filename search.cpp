@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
         for(size_t i = 0; i < 100 && i < idx.num_docs(); ++i)
         {
             auto d_id = idx.docs()[i];
-            corpus::document query{idx.doc_path(d_id)};
+            corpus::document query{idx.doc_path(d_id), doc_id{0}};
             cout << "Ranking query " << (i + 1) << ": " << query.path() << endl;
 
             std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);

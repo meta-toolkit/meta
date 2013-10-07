@@ -20,10 +20,11 @@ using std::stringstream;
 using std::unordered_map;
 using util::invertible_map;
 
-document::document(const string & path, const class_label & label):
-    _path(path),
-    _label(label),
-    _length(0)
+document::document(const string & path, doc_id d_id, const class_label & label):
+    _path{path},
+    _d_id{d_id},
+    _label{label},
+    _length{0}
 {
 
     size_t idx = path.find_last_of("/") + 1;
@@ -97,33 +98,6 @@ double document::jaccard_similarity(const document & a, const document & b)
                                                       b._frequencies);
 }
 
-vector<document> document::load_docs(const string & filename,
-                                     const string & prefix)
-{
-    vector<document> docs;
-    std::ifstream infile{filename};
-    string line;
-    while(infile.good())
-    {
-        std::getline(infile, line);
-        if(line == "")
-            continue;
-        string file = line;
-        size_t space = line.find_first_of(" ");
-        // see if there is class label info for this doc
-        if(space != string::npos)
-        {
-            class_label label{line.substr(0, space)};
-            file = line.substr(space + 1);
-            docs.emplace_back(document{prefix + "/" + file, label});
-        }
-        else
-            docs.emplace_back(document{prefix + "/" + file});
-    }
-    infile.close();
-    return docs;
-}
-
 document document::filter_features(const document & doc,
         const vector<pair<term_id, double>> & features)
 {
@@ -132,7 +106,7 @@ document document::filter_features(const document & doc,
     for(auto & p: features)
         keep.insert(p.first);
 
-    document filtered(doc._path, doc._label);
+    document filtered(doc._path, doc._d_id, doc._label);
     
     filtered._frequencies.clear();
     for(auto & f: doc._frequencies)
@@ -163,6 +137,21 @@ vector<document> document::filter_features(const vector<document> & docs,
         }
     });
     return ret;
+}
+
+void document::set_content(const std::string & content)
+{
+    _content = content;
+}
+
+const std::string & document::content() const
+{
+    return _content;
+}
+
+doc_id document::id() const
+{
+    return _d_id;
 }
 
 }

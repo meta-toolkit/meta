@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "corpus/document.h"
+#include "corpus/corpus.h"
 #include "stemmers/porter2.h"
 #include "tokenizers/ngram/ngram_word_tokenizer.h"
 #include "topics/lda_gibbs.h"
@@ -20,14 +21,18 @@ int print_usage( const std::string & name ) {
 }
 
 template <class Model>
-int run_lda( std::vector<corpus::document> & docs, size_t topics, double alpha, double beta ) {
+int run_lda(const std::unique_ptr<corpus::corpus> & docs, size_t topics, double alpha, double beta ) {
     auto tok = std::make_shared<tokenizers::ngram_word_tokenizer<>>( 1 );
-    for( size_t i = 0; i < docs.size(); ++i ) {
-        common::show_progress( i, docs.size(), 10, "  tokenizing: " );
-        tok->tokenize( docs[i] );
+    std::vector<corpus::document> tok_docs;
+    tok_docs.reserve(docs->size());
+    while(docs->has_next()) {
+        corpus::document d{docs->next()};
+        common::show_progress(d.id(), docs->size(), 10, "  tokenizing: " );
+        tok->tokenize(d);
+        tok_docs.emplace_back(d);
     }
     common::end_progress( "  tokenizing: " );
-    Model model{ docs, tok, topics, alpha, beta };
+    Model model{ tok_docs, tok, topics, alpha, beta };
     model.run( 1000 );
     model.save( "lda_model" );
     return 0;
@@ -38,7 +43,7 @@ int run_lda( const std::string & type, const std::string & filename,
              size_t topics ) {
     using namespace meta::topics;
     std::cout << "Loading documents...\r" << std::flush;
-    std::vector<corpus::document> docs = corpus::document::load_docs( filename, prefix );
+    auto docs = corpus::corpus::load("config.toml");
     if( type == "gibbs" ) {
         std::cout<< "Beginning LDA using serial Gibbs sampling..." << std::endl;
         return run_lda<lda_gibbs>( docs, topics, alpha, beta );
