@@ -91,12 +91,6 @@ class tokenizer
         virtual std::string label(term_id termID) const;
 
         /**
-         * Prints the data associated with this tokenizer, consisting of a
-         * term_id and its string value.
-         */
-        virtual void print_data() const;
-
-        /**
          * @return the number of terms seen so far by this tokenizer
          */
         virtual size_t num_terms() const;
@@ -118,6 +112,17 @@ class tokenizer
          */
         static std::unique_ptr<tokenizer>
             load_tokenizer(const cpptoml::toml_group & config);
+
+        /**
+         * @param doc The document to parse
+         * @param extension The possible file extension for this document if it
+         * is represented by a file on disk
+         * @param delims Possible character delimiters to use when parsing the
+         * file
+         * @return a parser suited to read data that this document represents
+         */
+        static io::parser create_parser(const corpus::document & doc,
+                const std::string & extension, const std::string & delims);
 
     private:
         /**

@@ -39,11 +39,6 @@ class ngram_fw_tokenizer: public ngram_tokenizer
 
         /** a stopword list based on the Lemur stopwords */
         std::unordered_set<std::string> _function_words;
-
-        /**
-         * Reads in specified function words from a file.
-         */
-        void init_function_words();
 };
 
 }

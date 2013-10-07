@@ -10,12 +10,13 @@ namespace meta {
 namespace tokenizers {
 
 ngram_lex_tokenizer::ngram_lex_tokenizer(size_t n):
-    ngram_simple_tokenizer(n) { /* nothing */ }
+    ngram_simple_tokenizer{n}
+{ /* nothing */ }
 
 void ngram_lex_tokenizer::tokenize_document(corpus::document & document,
         std::function<term_id(const std::string &)> mapping)
 {
-    io::parser parser(document.path() + ".lex", " \n");
+    io::parser parser{create_parser(document, ".lex", " \n")};
     simple_tokenize(parser, document, mapping);
 }
 

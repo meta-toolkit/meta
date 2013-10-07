@@ -136,6 +136,9 @@ class document
         /**
          * Sets the content of the document to be the parameter
          * @param content
+         * @note saving the document's content is only used by some corpora
+         * formats; not all documents are guaranteed to have content stored in
+         * the object itself
          */
         void set_content(const std::string & content);
 
@@ -148,6 +151,11 @@ class document
          * @return the doc_id for this document
          */
         doc_id id() const;
+
+        /**
+         * @return whether this document contains its content internally
+         */
+        bool contains_content() const;
 
     private:
 
@@ -171,6 +179,10 @@ class document
 
         /** what the document contains */
         std::string _content;
+
+        /** indicates whether this document has the original content stored in
+         * it */
+        bool _contains_content;
 };
 
 }

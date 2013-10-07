@@ -40,10 +40,6 @@ bool file_corpus::has_next() const
 document file_corpus::next()
 {
     document doc{_prefix + _docs[_cur].first, doc_id{_cur}, _docs[_cur].second};
-    std::ifstream file{_docs[_cur].first.c_str(), std::ios::binary};
-    doc.set_content(std::string{std::istreambuf_iterator<char>{file},
-                                std::istreambuf_iterator<char>{}});
-
     ++_cur;
     return doc;
 }

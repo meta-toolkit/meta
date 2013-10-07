@@ -5,8 +5,9 @@
 
 #include <utility>
 #include <sstream>
-#include "corpus/document.h" 
-#include "parallel/parallel_for.h" 
+#include "corpus/document.h"
+#include "corpus/corpus.h"
+#include "parallel/parallel_for.h"
 #include "cluster/similarity.h"
 
 namespace meta {
@@ -24,7 +25,9 @@ document::document(const string & path, doc_id d_id, const class_label & label):
     _path{path},
     _d_id{d_id},
     _label{label},
-    _length{0}
+    _length{0},
+    _content{""},
+    _contains_content{false}
 {
 
     size_t idx = path.find_last_of("/") + 1;
@@ -142,16 +145,25 @@ vector<document> document::filter_features(const vector<document> & docs,
 void document::set_content(const std::string & content)
 {
     _content = content;
+    _contains_content = true;
 }
 
 const std::string & document::content() const
 {
-    return _content;
+    if(_contains_content)
+        return _content;
+    throw corpus::corpus_exception{
+        "there is no content for the requested document"};
 }
 
 doc_id document::id() const
 {
     return _d_id;
+}
+
+bool document::contains_content() const
+{
+    return _contains_content;
 }
 
 }
