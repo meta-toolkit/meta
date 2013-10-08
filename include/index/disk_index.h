@@ -251,7 +251,7 @@ class disk_index
          * we want to delay the initialization of it until the postings file is
          * created in some cases.
          */
-        std::unique_ptr<io::compressed_file_reader> _postings;
+        std::unique_ptr<io::mmap_file> _postings;
 
         /** maps which class a document belongs to (if any) */
         std::unordered_map<doc_id, class_label> _labels;

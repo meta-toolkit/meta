@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <string>
 #include "util/invertible_map.h"
+#include "io/mmap_file.h"
 
 namespace meta {
 namespace io {
@@ -38,13 +39,8 @@ class compressed_file_reader
          * Constructor; opens a compressed file for reading using the given
          * mapping.
          */
-        compressed_file_reader(const std::string & filename,
+        compressed_file_reader(const mmap_file & file,
                 const util::invertible_map<uint64_t, uint64_t> & mapping);
-
-        /**
-         * Destructor; closes the compressed file.
-         */
-        ~compressed_file_reader();
 
         /**
          * Sets the cursor back to the beginning of the file.
@@ -82,10 +78,7 @@ class compressed_file_reader
 
         /** pointer to the beginning of the compressed file (which will be in
          * memory most of the time) */
-        unsigned char* _start;
-
-        /** file descriptor for the memory map where this compressed file is */
-        int _fileDescriptor;
+        char* _start;
 
         /** the number of bytes in this compressed file */
         uint64_t _size;
@@ -103,10 +96,9 @@ class compressed_file_reader
         uint8_t _current_bit;
 
         /** hold the (actual -> compressed id) mapping */
-        const util::invertible_map<uint64_t, uint64_t> _mapping;
+        const util::invertible_map<uint64_t, uint64_t> & _mapping;
 
     public:
-
         /**
          * Basic exception for compressed_file_reader interactions.
          */
@@ -126,7 +118,6 @@ class compressed_file_reader
            
                 std::string _error;
         };
-
 };
 
 }

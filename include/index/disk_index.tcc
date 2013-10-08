@@ -106,11 +106,8 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
     _tokenizer->save_term_id_mapping(_index_name + "/termids.mapping");
     set_label_ids();
 
-    _postings = std::unique_ptr<io::compressed_file_reader>{
-        new io::compressed_file_reader{
-            _index_name + "/postings.index",
-            _compression_mapping
-        }
+    _postings = std::unique_ptr<io::mmap_file>{
+        new io::mmap_file{_index_name + "/postings.index"}
     };
 }
 
@@ -200,11 +197,8 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
     _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
     set_label_ids();
 
-    _postings = std::unique_ptr<io::compressed_file_reader>{
-        new io::compressed_file_reader{
-            _index_name + "/postings.index",
-            _compression_mapping
-        }
+    _postings = std::unique_ptr<io::mmap_file>{
+        new io::mmap_file{_index_name + "/postings.index"}
     };
 }
 
@@ -368,17 +362,20 @@ template <class PrimaryKey, class SecondaryKey>
 std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
 disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey p_id) const
 {
+    using PostingsData = postings_data<PrimaryKey, SecondaryKey>;
     auto it = _term_bit_locations.find(p_id);
 
     // if the term doesn't exist in the index, return an empty postings_data
     if(it == _term_bit_locations.end())
-        return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(p_id);
+        return std::make_shared<PostingsData>(p_id);
 
-    _postings->seek(it->second);
-    postings_data<PrimaryKey, SecondaryKey> pdata{PrimaryKey{p_id}};
-    pdata.read_compressed(*_postings);
+    io::compressed_file_reader reader{*_postings, _compression_mapping};
+    reader.seek(it->second);
 
-    return std::make_shared<postings_data<PrimaryKey, SecondaryKey>>(pdata);
+    auto pdata = std::make_shared<PostingsData>(PrimaryKey{p_id});
+    pdata->read_compressed(reader);
+
+    return pdata;
 }
 
 }

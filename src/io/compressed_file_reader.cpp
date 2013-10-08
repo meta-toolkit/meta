@@ -8,45 +8,18 @@
 namespace meta {
 namespace io {
 
-compressed_file_reader::compressed_file_reader(const std::string & filename,
+compressed_file_reader::compressed_file_reader(const mmap_file & file,
         const util::invertible_map<uint64_t, uint64_t> & mapping):
+    _start{file.start()},
+    _size{file.size()},
     _status{notDone},
     _current_value{0},
     _current_char{0},
     _current_bit{0},
     _mapping{mapping}
 {
-    struct stat st;
-    stat(filename.c_str(), &st);
-    _size = st.st_size;
-    
-    // get file descriptor
-    _fileDescriptor = open(filename.c_str(), O_RDONLY);
-    if(_fileDescriptor < 0)
-        throw compressed_file_reader_exception(
-                "error obtaining file descriptor for " + filename);
-    
-    // memory map
-    _start = (unsigned char*)
-        mmap(nullptr, _size, PROT_READ, MAP_SHARED, _fileDescriptor, 0);
-    if(_start == nullptr)
-    {
-        close(_fileDescriptor);
-        throw compressed_file_reader_exception("error memory-mapping the file");
-    }
-
     // initialize the stream
     get_next();
-}
-
-compressed_file_reader::~compressed_file_reader()
-{
-    if(_start != nullptr)
-    { 
-        // unmap memory and close file
-        munmap(_start, _size);
-        close(_fileDescriptor);
-    }
 }
 
 void compressed_file_reader::reset()
