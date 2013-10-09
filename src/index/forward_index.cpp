@@ -63,7 +63,7 @@ uint32_t forward_index::tokenize_docs(
     return chunk_num;
 }
 
-const std::unordered_map<term_id, uint64_t>
+const std::unordered_map<term_id, double>
 forward_index::counts(doc_id d_id) const
 {
     auto pdata = search_primary(d_id);
@@ -81,7 +81,7 @@ std::string forward_index::liblinear_data(doc_id d_id) const
 
     // output each term_id:count (starting with index 1)
 
-    using term_pair = std::pair<term_id, uint64_t>;
+    using term_pair = std::pair<term_id, double>;
     std::vector<term_pair> sorted;
     sorted.reserve(pdata->counts().size());
     for(auto & p: pdata->counts())

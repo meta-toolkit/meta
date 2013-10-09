@@ -104,7 +104,7 @@ class disk_index
          * @return the size of the given document (the total number of terms
          * occuring)
          */
-        uint64_t doc_size(doc_id d_id) const;
+        double doc_size(doc_id d_id) const;
 
         /**
          * @param doc The document to tokenize
@@ -197,7 +197,7 @@ class disk_index
         std::unordered_map<doc_id, std::string> _doc_id_mapping;
 
         /** doc_id -> document length mapping */
-        std::unordered_map<doc_id, uint64_t> _doc_sizes;
+        std::unordered_map<doc_id, double> _doc_sizes;
 
         /** the tokenizer used to tokenize documents in the index */
         std::unique_ptr<tokenizers::tokenizer> _tokenizer;

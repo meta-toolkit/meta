@@ -22,8 +22,8 @@ std::string ngram_tokenizer::wordify(
 {
     std::string result = "";
     for(auto & word: words)
-        result += (word + " ");
-    return result;
+        result += (word + "_");
+    return result.substr(0, result.size() - 1);
 }
 
 }

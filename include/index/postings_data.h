@@ -44,6 +44,12 @@ class postings_data
             "primary and secondary keys in postings data must be numeric types"
         );
 
+        static_assert(
+            sizeof(uint64_t) == sizeof(double),
+            "sizeof(uint64_t) must equal sizeof(double) since "
+            "reinterpret_cast is used in postings_data"
+        );
+
         /**
          * Creates an empty postings_data for a given PrimaryKey.
          * @param p_id The PrimaryKey to be associated with this postings_data
@@ -68,24 +74,24 @@ class postings_data
          * @param amount The number of times to increase the count for a given
          * SecondaryKey
          */
-        void increase_count(SecondaryKey s_id, uint64_t amount);
+        void increase_count(SecondaryKey s_id, double amount);
 
         /**
          * @param s_id The SecondaryKey id to query
          * @return the number of times PrimaryKey occurred in this postings_data
          */
-        uint64_t count(SecondaryKey s_id) const;
+        double count(SecondaryKey s_id) const;
 
         /**
          * @return the per-SecondaryKey frequency information for this
          * PrimaryKey
          */
-        const std::unordered_map<SecondaryKey, uint64_t> & counts() const;
+        const std::unordered_map<SecondaryKey, double> & counts() const;
 
         /**
          * @param map A map of counts to assign into this postings_data
          */
-        void set_counts(const std::unordered_map<SecondaryKey, uint64_t> & map);
+        void set_counts(const std::unordered_map<SecondaryKey, double> & map);
 
         /**
          * @param other The postings_data to compare with
@@ -114,7 +120,7 @@ class postings_data
             pd._counts.clear();
 
             SecondaryKey s_id;
-            uint64_t count;
+            double count;
             while(iss.good())
             {
                 iss >> s_id;
@@ -182,7 +188,7 @@ class postings_data
     private:
 
         PrimaryKey _p_id;
-        std::unordered_map<SecondaryKey, uint64_t> _counts;
+        std::unordered_map<SecondaryKey, double> _counts;
         const static uint64_t _delimiter = std::numeric_limits<uint64_t>::max();
 };
 

@@ -13,7 +13,6 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
 {
     if(query.frequencies().empty())
         idx.tokenize(query);
-    std::unordered_map<doc_id, double> results;
 
     score_data sd{idx,
                   idx.avg_doc_length(),
@@ -22,6 +21,7 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
                   query
     };
 
+    std::unordered_map<doc_id, double> results;
     for(auto & tpair: query.frequencies())
     {
         sd.t_id = tpair.first;

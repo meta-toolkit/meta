@@ -21,7 +21,11 @@ namespace meta {
 namespace corpus {
 
 /**
- * Represents an indexable document.
+ * Represents an indexable document. Internally, a document may contain either
+ * string content or a path to a file it represents on disk.
+ *
+ * Once tokenized, a document contains a mapping of term_id -> frequency. This
+ * mapping is empty upon creation.
  */
 class document
 {
@@ -36,19 +40,10 @@ class document
 
         /**
          * Increment the count of the specified transition.
-         * @param termID - the token count to increment
-         * @param amount - the amount to increment by
+         * @param termID The token count to increment
+         * @param amount The amount to increment by
          */
-        void increment(term_id termID, uint64_t amount);
-
-        /**
-         * Increment the count of the specified transition.
-         * @param termID - the token count to increment
-         * @param amount - the amount to increment by
-         * @param docFreq - used for IDF
-         */
-        void increment(term_id termID, uint64_t amount,
-                std::shared_ptr<std::unordered_map<term_id, uint64_t>> docFreq);
+        void increment(term_id termID, double amount);
 
         /**
          * @return the path to this document (the argument to the constructor)
@@ -73,14 +68,14 @@ class document
 
         /**
          * Get the number of occurrences for a particular transition.
-         * @param termID - the termID of the term to look up
+         * @param termID The termID of the term to look up
          */
-        size_t frequency(term_id termID) const;
+        double frequency(term_id termID) const;
 
         /**
          * @return the map of frequencies for this document.
          */
-        const std::unordered_map<term_id, uint64_t> & frequencies() const;
+        const std::unordered_map<term_id, double> & frequencies() const;
  
         /**
          * Removes featuress from a document.
@@ -175,7 +170,7 @@ class document
         size_t _length;
 
         /** counts of how many times each token appears */
-        std::unordered_map<term_id, uint64_t> _frequencies;
+        std::unordered_map<term_id, double> _frequencies;
 
         /** what the document contains */
         std::string _content;

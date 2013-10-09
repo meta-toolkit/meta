@@ -23,15 +23,12 @@ Index make_index(const std::string & config_file, Args &&... args)
 {
     auto config = cpptoml::parse_file(config_file);
     Index idx{config, std::forward<Args>(args)...};
+ 
+    // if index has already been made, load it
     if(mkdir(idx._index_name.c_str(), 0755) == -1)
-    {
-        // index has already been made, load it
         idx.load_index();
-    }
     else
-    {
         idx.create_index(config_file);
-    }
     return idx;
 }
 
@@ -109,7 +106,7 @@ void disk_index<PrimaryKey, SecondaryKey>::calc_compression_mapping(
         for(auto & c: pdata.counts())
         {
             ++freqs[c.first];
-            ++freqs[c.second];
+            ++freqs[*reinterpret_cast<const uint64_t*>(&c.second)];
         }
     }
 
@@ -123,7 +120,7 @@ void disk_index<PrimaryKey, SecondaryKey>::calc_compression_mapping(
 
     _compression_mapping.clear();
 
-    // have to know what the delimiter is
+    // have to know what the delimiter is, and can't use 0
     uint64_t delim = std::numeric_limits<uint64_t>::max();
     _compression_mapping.insert(delim, 1);
 
@@ -156,9 +153,8 @@ void disk_index<PrimaryKey, SecondaryKey>::compress(
 
     struct stat st;
     stat(cfilename.c_str(), &st);
-    uint64_t size = st.st_size;
     cerr << "Created compressed postings file ("
-         << common::bytes_to_units(size) << ")" << endl;
+         << common::bytes_to_units(st.st_size) << ")" << endl;
 
     remove(filename.c_str());
     rename(cfilename.c_str(), filename.c_str());
@@ -180,6 +176,7 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
     load_mapping(_compression_mapping, _index_name + "/keys.compressedmapping");
     _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
     _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
+    cerr << "tokenizer num_terms() " << _tokenizer->num_terms() << endl;
     set_label_ids();
 
     _postings = std::unique_ptr<io::compressed_file_reader>{
@@ -248,20 +245,22 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
         uint32_t num_chunks,
         const std::string & filename)
 {
+    using chunk_t = chunk<PrimaryKey, SecondaryKey>;
+
     // create priority queue of all chunks based on size
-    std::priority_queue<chunk<PrimaryKey, SecondaryKey>> chunks;
+    std::priority_queue<chunk_t> chunks;
     for(uint32_t i = 0; i < num_chunks; ++i)
     {
         std::string filename = "chunk-" + common::to_string(i);
-        chunks.push(chunk<PrimaryKey, SecondaryKey>{filename});
+        chunks.push(chunk_t{filename});
     }
 
     // merge the smallest two chunks together until there is only one left
     while(chunks.size() > 1)
     {
-        chunk<PrimaryKey, SecondaryKey> first = chunks.top();
+        chunk_t first = chunks.top();
         chunks.pop();
-        chunk<PrimaryKey, SecondaryKey> second = chunks.top();
+        chunk_t second = chunks.top();
         chunks.pop();
 
         cerr << " Merging " << first.path() << " ("
@@ -275,10 +274,9 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
     }
 
     rename(chunks.top().path().c_str(), filename.c_str());
-    double size = chunks.top().size();
 
     cerr << "Created uncompressed postings file " << filename
-         << " (" << common::bytes_to_units(size) << ")" << endl;
+         << " (" << common::bytes_to_units(chunks.top().size()) << ")" << endl;
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -306,7 +304,7 @@ void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
 }
 
 template <class PrimaryKey, class SecondaryKey>
-uint64_t disk_index<PrimaryKey, SecondaryKey>::doc_size(doc_id d_id) const
+double disk_index<PrimaryKey, SecondaryKey>::doc_size(doc_id d_id) const
 {
     return _doc_sizes.at(d_id);
 }

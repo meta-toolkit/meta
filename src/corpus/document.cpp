@@ -7,6 +7,7 @@
 #include <sstream>
 #include "corpus/document.h"
 #include "corpus/corpus.h"
+#include "util/common.h"
 #include "parallel/parallel_for.h"
 #include "cluster/similarity.h"
 
@@ -34,25 +35,10 @@ document::document(const string & path, doc_id d_id, const class_label & label):
     _name = path.substr(idx);
 }
 
-void document::increment(term_id termID, uint64_t amount,
-        std::shared_ptr<unordered_map<term_id, uint64_t>> docFreq)
+void document::increment(term_id termID, double amount)
 {
-    auto iter = _frequencies.find(termID);
-    if(iter != _frequencies.end())
-        iter->second += amount;
-    else
-    {
-        _frequencies.insert(make_pair(termID, amount));
-        if(docFreq)
-            (*docFreq)[termID]++;
-    }
-
+    _frequencies[termID] += amount;
     _length += amount;
-}
-
-void document::increment(term_id termID, uint64_t amount)
-{
-    increment(termID, amount, nullptr);
 }
 
 string document::path() const
@@ -75,16 +61,12 @@ size_t document::length() const
     return _length;
 }
 
-uint64_t document::frequency(term_id termID) const
+double document::frequency(term_id termID) const
 {
-    auto iter = _frequencies.find(termID);
-    if(iter != _frequencies.end())
-        return iter->second;
-    else
-        return 0;
+    return common::safe_at(_frequencies, termID);
 }
 
-const unordered_map<term_id, uint64_t> & document::frequencies() const
+const unordered_map<term_id, double> & document::frequencies() const
 {
     return _frequencies;
 }
