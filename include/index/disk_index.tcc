@@ -173,7 +173,6 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
     load_mapping(_compression_mapping, _index_name + "/keys.compressedmapping");
     _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
     _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
-    cerr << "tokenizer num_terms() " << _tokenizer->num_terms() << endl;
     set_label_ids();
 
     _postings = std::unique_ptr<io::mmap_file>{
