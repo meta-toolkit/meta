@@ -32,19 +32,19 @@ void postings_data<PrimaryKey, SecondaryKey>::merge_with(
 
 template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::increase_count(
-        SecondaryKey s_id, uint64_t amount)
+        SecondaryKey s_id, double amount)
 {
     _counts[s_id] += amount;
 }
 
 template <class PrimaryKey, class SecondaryKey>
-uint64_t postings_data<PrimaryKey, SecondaryKey>::count(SecondaryKey s_id) const
+double postings_data<PrimaryKey, SecondaryKey>::count(SecondaryKey s_id) const
 {
     return common::safe_at(_counts, s_id);
 }
 
 template <class PrimaryKey, class SecondaryKey>
-const std::unordered_map<SecondaryKey, uint64_t> &
+const std::unordered_map<SecondaryKey, double> &
 postings_data<PrimaryKey, SecondaryKey>::counts() const
 {
     return _counts;
@@ -52,7 +52,7 @@ postings_data<PrimaryKey, SecondaryKey>::counts() const
 
 template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::set_counts(
-        const std::unordered_map<SecondaryKey, uint64_t> & map)
+        const std::unordered_map<SecondaryKey, double> & map)
 {
     _counts = map;
 }
@@ -80,7 +80,7 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
         io::compressed_file_writer & writer) const
 {
     // sort the counts according their SecondaryKey in increasing order
-    using pair_t = std::pair<SecondaryKey, uint64_t>;
+    using pair_t = std::pair<SecondaryKey, double>;
     std::vector<pair_t> sorted{_counts.begin(), _counts.end()};
     std::sort(sorted.begin(), sorted.end(),
         [](const pair_t & a, const pair_t & b) {
@@ -89,7 +89,7 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
     );
 
     writer.write(sorted[0].first);
-    writer.write(sorted[0].second);
+    writer.write(*reinterpret_cast<uint64_t*>(&sorted[0].second));
 
     // use gap encoding on the SecondaryKeys (we know they are integral types)
     uint64_t cur_id = sorted[0].first;
@@ -100,7 +100,7 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
         cur_id = temp_id;
 
         writer.write(sorted[i].first);
-        writer.write(sorted[i].second);
+        writer.write(*reinterpret_cast<uint64_t*>(&sorted[i].second));
     }
 
     // mark end of postings_data
@@ -125,7 +125,8 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         // we're using gap encoding
         last_id += this_id;
         SecondaryKey key{last_id};
-        _counts[key] = reader.next();
+        uint64_t next = reader.next();
+        _counts[key] = *reinterpret_cast<double*>(&next);
     }
 }
 

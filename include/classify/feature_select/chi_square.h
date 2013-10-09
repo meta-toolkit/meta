@@ -11,7 +11,7 @@
 #include <vector>
 #include <utility>
 #include "classify/feature_select/select_simple.h"
-#include "index/document.h"
+#include "corpus/document.h"
 
 namespace meta {
 namespace classify {
@@ -29,7 +29,7 @@ class chi_square: public select_simple
          * Constructor.
          * @param docs The documents containing features
          */
-        chi_square(const std::vector<index::document> & docs);
+        chi_square(const std::vector<corpus::document> & docs);
 
     private:
 

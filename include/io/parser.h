@@ -22,10 +22,18 @@ class parser
 {
     public:
         /**
+         * Determines whether the parser parses a std::string or the contents
+         * of a file
+         */
+        enum class input_type { File, String };
+
+        /**
          * @param path The path to the file to parse
          * @param delims Delimiters to be used for separating tokens
+         * @param in_type
          */
-        parser(const std::string & path, const std::string & delims);
+        parser(const std::string & input, const std::string & delims,
+                input_type in_type = input_type::File);
 
         /**
          * @return the filename of the file that is being parsed
@@ -50,6 +58,12 @@ class parser
         bool has_next() const;
 
     private:
+
+        void parse_file(const std::string & filename,
+                const std::string & delims);
+
+        void parse_string(const std::string & input,
+                const std::string & delims);
 
         size_t _idx;
 

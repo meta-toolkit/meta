@@ -88,7 +88,7 @@ class inverted_index: public disk_index<term_id, doc_id>
          * @param t_id The term_id to search for
          * @param d_id The doc_id to search for
          */
-        uint64_t term_freq(term_id t_id, doc_id d_id) const;
+        double term_freq(term_id t_id, doc_id d_id) const;
 
         /**
          * @return the total number of terms in this index
@@ -99,13 +99,13 @@ class inverted_index: public disk_index<term_id, doc_id>
          * @param t_id The specified term
          * @return the number of times the given term appears in the corpus
          */
-        uint64_t total_num_occurences(term_id t_id) const;
+        double total_num_occurences(term_id t_id) const;
 
         /**
          * @param t_id The term id to find containing documents from
          * @return a mapping of doc_id -> term occurrence
          */
-        const std::unordered_map<doc_id, uint64_t> counts(term_id t_id) const;
+        const std::unordered_map<doc_id, double> counts(term_id t_id) const;
 
         /**
          * @return the average document length in this index
@@ -122,7 +122,7 @@ class inverted_index: public disk_index<term_id, doc_id>
         /**
          * @param docs The documents to add to the inverted index
          */
-        uint32_t tokenize_docs(std::vector<document> & docs);
+        uint32_t tokenize_docs(const std::unique_ptr<corpus::corpus> & docs);
 
     private:
         /** average document length in the inverted_index */

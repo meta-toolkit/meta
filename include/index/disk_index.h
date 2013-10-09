@@ -13,10 +13,10 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include "corpus/corpus.h"
 #include "caching/splay_cache.h"
 #include "tokenizers/all.h"
 #include "index/cached_index.h"
-#include "index/document.h"
 #include "index/postings_data.h"
 #include "io/compressed_file_reader.h"
 #include "io/mmap_file.h"
@@ -104,12 +104,12 @@ class disk_index
          * @return the size of the given document (the total number of terms
          * occuring)
          */
-        uint64_t doc_size(doc_id d_id) const;
+        double doc_size(doc_id d_id) const;
 
         /**
          * @param doc The document to tokenize
          */
-        void tokenize(document & doc);
+        void tokenize(corpus::document & doc);
 
         /**
          * @param d_id The doc id to find the class label for
@@ -143,11 +143,9 @@ class disk_index
          * This function initializes the disk index. It cannot be part of the
          * constructor since dynamic binding doesn't work in a base class's
          * constructor, so it is invoked from a factory method.
-         * @param docs The documents to tokenize
          * @param config_file The configuration file used to create the
          */
-        void create_index(std::vector<document> & docs,
-                          const std::string & config_file);
+        void create_index(const std::string & config_file);
 
         /**
          * This function loads a disk index from its filesystem
@@ -186,7 +184,8 @@ class disk_index
         /**
          * @param docs The documents to add to the inverted index
          */
-        virtual uint32_t tokenize_docs(std::vector<document> & docs) = 0;
+        virtual uint32_t tokenize_docs(
+                const std::unique_ptr<corpus::corpus> & docs) = 0;
 
         /**
          * @param d_id The document
@@ -198,13 +197,23 @@ class disk_index
         std::unordered_map<doc_id, std::string> _doc_id_mapping;
 
         /** doc_id -> document length mapping */
-        std::unordered_map<doc_id, uint64_t> _doc_sizes;
+        std::unordered_map<doc_id, double> _doc_sizes;
 
         /** the tokenizer used to tokenize documents in the index */
         std::unique_ptr<tokenizers::tokenizer> _tokenizer;
 
         /** the mapping of (actual -> compressed id) */
         util::invertible_map<uint64_t, uint64_t> _compression_mapping;
+
+        /** maps which class a document belongs to (if any) */
+        std::unordered_map<doc_id, class_label> _labels;
+
+        /**
+         * Holds how many unique terms there are per-document. This is sort of
+         * like an inverse IDF. For a forward_index, this field is certainly
+         * redundant, though it can save querying the postings file.
+         */
+        std::unordered_map<doc_id, uint64_t> _unique_terms;
 
     private:
         /**
@@ -253,20 +262,10 @@ class disk_index
          */
         std::unique_ptr<io::mmap_file> _postings;
 
-        /** maps which class a document belongs to (if any) */
-        std::unordered_map<doc_id, class_label> _labels;
-
         /** assigns an integer to each class label (used for liblinear and slda
          * mappings) */
         util::invertible_map<class_label, label_id> _label_ids;
-
-        /**
-         * Holds how many unique terms there are per-document. This is sort of
-         * like an inverse IDF. For a forward_index, this field is certainly
-         * redundant, though it can save querying the postings file.
-         */
-        std::unordered_map<doc_id, uint64_t> _unique_terms;
-
+ 
     public:
         /**
          * Basic exception for disk_index interactions.

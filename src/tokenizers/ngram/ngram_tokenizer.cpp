@@ -1,5 +1,6 @@
 /**
  * @file ngram_tokenizer.cpp
+ * @author Sean Massung
  */
 
 #include "tokenizers/ngram/ngram_tokenizer.h"
@@ -7,26 +8,21 @@
 namespace meta {
 namespace tokenizers {
 
-using std::deque;
-using std::string;
-using std::unordered_map;
-using std::unordered_set;
-using index::document;
-using io::parser;
-
 ngram_tokenizer::ngram_tokenizer(size_t n):
-    _n_val(n) { /* nothing */ }
+    _n_val{n}
+{ /* nothing */ }
 
 size_t ngram_tokenizer::n_value() const
 {
     return _n_val;
 }
 
-string ngram_tokenizer::wordify(const deque<string> & words) const
+std::string ngram_tokenizer::wordify(
+        const std::deque<std::string> & words) const
 {
-    string result = "";
+    std::string result = "";
     for(auto & word: words)
-        result += (word + " ");
+        result += (word + "_");
     return result.substr(0, result.size() - 1);
 }
 

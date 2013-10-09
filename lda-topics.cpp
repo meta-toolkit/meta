@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "index/document.h"
+#include "corpus/document.h"
 
 using namespace meta;
 

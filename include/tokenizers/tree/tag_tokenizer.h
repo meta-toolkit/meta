@@ -28,7 +28,7 @@ class tag_tokenizer : public tree_tokenizer<tag_tokenizer> {
          * @param document - the document to parse
          * @param tree - the current parse_tree in the document
          */
-        void tree_tokenize(index::document & document,
+        void tree_tokenize(corpus::document & document,
                            const parse_tree & tree, 
                            mapping_fn mapping);
 };

@@ -31,7 +31,7 @@ class ngram_fw_tokenizer: public ngram_tokenizer
          * @param mapping - the string to term_id mapping
          */
         virtual void tokenize_document(
-                index::document & document,
+                corpus::document & document,
                 std::function<term_id(const std::string &)> mapping
         ) override;
 
@@ -39,11 +39,6 @@ class ngram_fw_tokenizer: public ngram_tokenizer
 
         /** a stopword list based on the Lemur stopwords */
         std::unordered_set<std::string> _function_words;
-
-        /**
-         * Reads in specified function words from a file.
-         */
-        void init_function_words();
 };
 
 }

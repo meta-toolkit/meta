@@ -28,7 +28,7 @@ class ranker
          * @param query
          */
         std::vector<std::pair<doc_id, double>> score(inverted_index & idx,
-                                                     document & query) const;
+                                                corpus::document & query) const;
 
         /**
          * @param sd

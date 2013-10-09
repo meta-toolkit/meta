@@ -12,7 +12,7 @@
 #include <utility>
 #include <unordered_map>
 #include <unordered_set>
-#include "index/document.h"
+#include "corpus/document.h"
 #include "meta.h"
 
 namespace meta {
@@ -28,7 +28,7 @@ class feature_select
         /**
          * Constructor; initializes class and term probabilities.
          */
-        feature_select(const std::vector<index::document> & docs);
+        feature_select(const std::vector<corpus::document> & docs);
 
         /**
          * Default constructor in case a feature selection method does want
@@ -118,17 +118,17 @@ class feature_select
         /**
          * Calculates probabilities for terms and classes co-occuring.
          */
-        void set_pseen(const std::vector<index::document> & docs);
+        void set_pseen(const std::vector<corpus::document> & docs);
         
         /**
          * Calculates the term space of the corpus.
          */
-        void set_term_space(const std::vector<index::document> & docs);
+        void set_term_space(const std::vector<corpus::document> & docs);
 
         /**
          * Calculates the class space of the corpus.
          */
-        void set_class_space(const std::vector<index::document> & docs);
+        void set_class_space(const std::vector<corpus::document> & docs);
 };
 
 }

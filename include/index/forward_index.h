@@ -75,7 +75,7 @@ class forward_index: public disk_index<doc_id, term_id>
          * @param d_id The doc id to find containing terms from
          * @return a mapping of term_id -> term occurrence
          */
-        const std::unordered_map<term_id, uint64_t> counts(doc_id d_id) const;
+        const std::unordered_map<term_id, double> counts(doc_id d_id) const;
 
         /**
          * @param d_id The document id of the doc to convert to liblinear format
@@ -87,7 +87,7 @@ class forward_index: public disk_index<doc_id, term_id>
         /**
          * @param docs The documents to add to the inverted index
          */
-        uint32_t tokenize_docs(std::vector<document> & docs);
+        uint32_t tokenize_docs(const std::unique_ptr<corpus::corpus> & docs);
 
     private:
         /**

@@ -11,7 +11,7 @@
 #define _SCORE_DATA_H_
 
 #include "meta.h"
-#include "index/document.h"
+#include "corpus/document.h"
 
 namespace meta {
 namespace index {
@@ -29,7 +29,7 @@ struct score_data
     double avg_dl;
     uint64_t num_docs;
     uint64_t total_terms;
-    const document & query;
+    const corpus::document & query;
 
     // term-based info
 
@@ -49,7 +49,7 @@ struct score_data
                double p_avg_dl,
                uint64_t p_num_docs,
                uint64_t p_total_terms,
-               const document & p_query):
+               const corpus::document & p_query):
         idx{p_idx},
         avg_dl{p_avg_dl},
         num_docs{p_num_docs},

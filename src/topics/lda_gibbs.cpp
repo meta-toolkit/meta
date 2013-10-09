@@ -10,7 +10,7 @@
 namespace meta {
 namespace topics {
 
-lda_gibbs::lda_gibbs( std::vector<index::document> & docs,
+lda_gibbs::lda_gibbs( std::vector<corpus::document> & docs,
         const std::shared_ptr<tokenizers::tokenizer> & tok,
         size_t num_topics, double alpha, double beta ):
 lda_model{ docs, num_topics, tok }, alpha_{ alpha }, beta_{ beta }

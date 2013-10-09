@@ -7,16 +7,14 @@
 namespace meta {
 namespace classify {
 
-using std::vector;
 using std::unordered_set;
 using std::unordered_map;
 using std::pair;
-using index::document;
 
-select_simple::select_simple(const vector<document> & docs):
+select_simple::select_simple(const std::vector<corpus::document> & docs):
     feature_select(docs) { /* nothing */ }
 
-vector<pair<term_id, double>> select_simple::select()
+std::vector<pair<term_id, double>> select_simple::select()
 {
     unordered_map<term_id, double> feature_weights;
     for(auto & c: _class_space)
@@ -32,9 +30,9 @@ vector<pair<term_id, double>> select_simple::select()
     return sort_terms(feature_weights);
 }
 
-unordered_map<class_label, vector<pair<term_id, double>>> select_simple::select_by_class()
+unordered_map<class_label, std::vector<pair<term_id, double>>> select_simple::select_by_class()
 {
-    unordered_map<class_label, vector<pair<term_id, double>>> features;
+    unordered_map<class_label, std::vector<pair<term_id, double>>> features;
 
     for(auto & c: _class_space)
     {

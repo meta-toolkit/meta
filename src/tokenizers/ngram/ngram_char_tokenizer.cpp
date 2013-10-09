@@ -10,9 +10,10 @@ namespace meta {
 namespace tokenizers {
 
 ngram_char_tokenizer::ngram_char_tokenizer(size_t n):
-    ngram_simple_tokenizer(n) { /* nothing */ }
+    ngram_simple_tokenizer{n}
+{ /* nothing */ }
 
-void ngram_char_tokenizer::tokenize_document(index::document & document,
+void ngram_char_tokenizer::tokenize_document(corpus::document & document,
         std::function<term_id(const std::string &)> mapping)
 {
     io::parser parser(document.path() + ".sen", " \n");

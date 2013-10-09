@@ -20,35 +20,39 @@ forward_index::forward_index(const cpptoml::toml_group & config):
     disk_index{config, *cpptoml::get_as<std::string>(config, "forward-index")}
 { /* nothing */ }
 
-uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
+uint32_t forward_index::tokenize_docs(
+        const std::unique_ptr<corpus::corpus> & docs)
 {
     std::unordered_map<doc_id, postings_data<doc_id, term_id>> pdata;
     uint32_t chunk_num = 0;
-    doc_id doc_num{0};
     std::string progress = "Tokenizing ";
-    for(auto & doc: docs)
+    while(docs->has_next())
     {
-        common::show_progress(doc_num, docs.size(), 20, progress);
+        corpus::document doc{docs->next()};
+        common::show_progress(doc.id(), docs->size(), 20, progress);
         _tokenizer->tokenize(doc);
-        _doc_id_mapping[doc_num] = doc.path();
-        _doc_sizes[doc_num] = doc.length();
+        _doc_id_mapping[doc.id()] = doc.path();
+        _doc_sizes[doc.id()] = doc.length();
 
-        postings_data<doc_id, term_id> pd{doc_num};
+        postings_data<doc_id, term_id> pd{doc.id()};
         pd.set_counts(doc.frequencies());
 
         // in the current scheme, we should never have to merge two postings
         // together in this step since each postings is a unique doc_id
-        auto it = pdata.find(doc_num);
+        auto it = pdata.find(doc.id());
         if(it == pdata.end())
-            pdata.insert(std::make_pair(doc_num, pd));
+            pdata.insert(std::make_pair(doc.id(), pd));
         else
             it->second.merge_with(pd);
 
-        ++doc_num;
+        // Save class label information
+        _unique_terms[doc.id()] = doc.frequencies().size();
+        if(doc.label() != class_label{""})
+            _labels[doc.id()] = doc.label();
 
         // every k documents, write a chunk
         // TODO: make this based on memory usage instead
-        if(doc_num % 100 == 0)
+        if(doc.id() % 500 == 0)
             write_chunk(chunk_num++, pdata);
     }
     common::end_progress(progress);
@@ -59,7 +63,7 @@ uint32_t forward_index::tokenize_docs(std::vector<document> & docs)
     return chunk_num;
 }
 
-const std::unordered_map<term_id, uint64_t>
+const std::unordered_map<term_id, double>
 forward_index::counts(doc_id d_id) const
 {
     auto pdata = search_primary(d_id);
@@ -77,7 +81,7 @@ std::string forward_index::liblinear_data(doc_id d_id) const
 
     // output each term_id:count (starting with index 1)
 
-    using term_pair = std::pair<term_id, uint64_t>;
+    using term_pair = std::pair<term_id, double>;
     std::vector<term_pair> sorted;
     sorted.reserve(pdata->counts().size());
     for(auto & p: pdata->counts())

@@ -14,7 +14,7 @@
 #include <unordered_map>
 #include "meta.h"
 #include "cpptoml.h"
-#include "index/document.h"
+#include "corpus/document.h"
 #include "util/invertible_map.h"
 
 namespace meta {
@@ -44,7 +44,7 @@ class tokenizer
          * Tokenizes a document.
          * @param document document to store the tokenized information in
          */
-        void tokenize(index::document & document);
+        void tokenize(corpus::document & document);
 
         /**
          * Tokenizes a document
@@ -52,7 +52,7 @@ class tokenizer
          * @param mapping A function that shows the tokenizer how to convert a
          * string term into its term_id
          */
-        virtual void tokenize_document(index::document & document,
+        virtual void tokenize_document(corpus::document & document,
                 std::function<term_id(const std::string & term)> mapping) = 0;
 
         /**
@@ -80,7 +80,8 @@ class tokenizer
          * @return a reference to the structure used to store the termID <->
          * term string mapping
          */
-        virtual const util::invertible_map<term_id, std::string> & term_id_mapping() const;
+        virtual const util::invertible_map<term_id, std::string> &
+            term_id_mapping() const;
 
         /**
          * Looks up the actual label that is represented by a term_id.
@@ -90,19 +91,13 @@ class tokenizer
         virtual std::string label(term_id termID) const;
 
         /**
-         * Prints the data associated with this tokenizer, consisting of a term_id and its string
-         * value.
-         */
-        virtual void print_data() const;
-
-        /**
          * @return the number of terms seen so far by this tokenizer
          */
         virtual size_t num_terms() const;
 
         /**
-         * Sets the current termID for this tokenizer. This is useful when running multiple
-         * tokenizers on a single documents.
+         * Sets the current termID for this tokenizer. This is useful when
+         * running multiple tokenizers on a single documents.
          */
         virtual void set_max_term_id(size_t start);
 
@@ -115,7 +110,19 @@ class tokenizer
         /**
          * @return a Tokenizer as specified by a config object
          */
-        static std::unique_ptr<tokenizer> load_tokenizer(const cpptoml::toml_group & config);
+        static std::unique_ptr<tokenizer>
+            load_tokenizer(const cpptoml::toml_group & config);
+
+        /**
+         * @param doc The document to parse
+         * @param extension The possible file extension for this document if it
+         * is represented by a file on disk
+         * @param delims Possible character delimiters to use when parsing the
+         * file
+         * @return a parser suited to read data that this document represents
+         */
+        static io::parser create_parser(const corpus::document & doc,
+                const std::string & extension, const std::string & delims);
 
     private:
         /**

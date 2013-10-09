@@ -9,30 +9,25 @@
 namespace meta {
 namespace tokenizers {
 
-using std::deque;
-using std::string;
-using std::unordered_map;
-using std::unordered_set;
-using index::document;
-using io::parser;
-
 ngram_fw_tokenizer::ngram_fw_tokenizer(size_t n):
-    ngram_tokenizer(n),
-    _function_words(unordered_set<string>())
+    ngram_tokenizer{n}
 {
-    init_function_words();
+    auto config = cpptoml::parse_file("config.toml");
+    io::parser parser{*config.get_as<std::string>("function-words"), "\n"};
+    while(parser.has_next())
+        _function_words.insert(parser.next());
 }
 
-void ngram_fw_tokenizer::tokenize_document(document & document,
+void ngram_fw_tokenizer::tokenize_document(corpus::document & document,
         std::function<term_id(const std::string &)> mapping)
 {
-    parser parser(document.path() + ".sen", " \n");
+    io::parser parser{create_parser(document, ".sen", " \n")};
 
     // initialize the ngram
-    deque<string> ngram;
+    std::deque<std::string> ngram;
     for(size_t i = 0; i < n_value() && parser.has_next(); ++i)
     {
-        string next = "";
+        std::string next = "";
         do
         {
             next = parser.next();
@@ -43,10 +38,10 @@ void ngram_fw_tokenizer::tokenize_document(document & document,
     // add the rest of the ngrams
     while(parser.has_next())
     {
-        string wordified = wordify(ngram);
+        std::string wordified = wordify(ngram);
         document.increment(mapping(wordified), 1);
         ngram.pop_front();
-        string next = "";
+        std::string next = "";
         do
         {
             next = parser.next();
@@ -56,14 +51,6 @@ void ngram_fw_tokenizer::tokenize_document(document & document,
 
     // add the last token
     document.increment(mapping(wordify(ngram)), 1);
-}
-
-void ngram_fw_tokenizer::init_function_words()
-{
-    auto config = cpptoml::parse_file("config.toml");
-    parser parser{*config.get_as<std::string>("function-words"), "\n"};
-    while(parser.has_next())
-        _function_words.insert(parser.next());
 }
 
 }

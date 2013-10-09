@@ -49,6 +49,11 @@ namespace meta
     namespace caching {}
 
     /**
+     * Various ways to convert corpus formats into META-readable documents
+     */
+    namespace corpus {}
+
+    /**
      * Algorithms for feature selection, KNN search, and confusion
      * matrices.
      */

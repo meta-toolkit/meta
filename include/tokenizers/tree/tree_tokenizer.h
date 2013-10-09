@@ -16,7 +16,6 @@
 #include <unordered_map>
 #include "tokenizers/tokenizer.h"
 #include "tokenizers/tree/parse_tree.h"
-#include "index/document.h"
 
 namespace meta {
 namespace tokenizers {
@@ -32,7 +31,7 @@ class tree_tokenizer: public tokenizer
          * Tokenizes a file into a document.
          * @param document - the document to store the tokenized information in
          */
-        void tokenize_document(index::document & document,
+        void tokenize_document(corpus::document & document,
                 std::function<term_id(const std::string &)> mapping)
         {
             std::vector<parse_tree> trees =

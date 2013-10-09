@@ -44,7 +44,7 @@ class ngram_simple_tokenizer: public ngram_tokenizer
          */
         void simple_tokenize(
                 io::parser & parser,
-                index::document & document,
+                corpus::document & document,
                 std::function<term_id(const std::string &)> mapping
         );
 };

@@ -5,12 +5,14 @@
 
 #include <utility>
 #include <sstream>
-#include "index/document.h" 
-#include "parallel/parallel_for.h" 
+#include "corpus/document.h"
+#include "corpus/corpus.h"
+#include "util/common.h"
+#include "parallel/parallel_for.h"
 #include "cluster/similarity.h"
 
 namespace meta {
-namespace index {
+namespace corpus {
 
 using std::vector;
 using std::pair;
@@ -20,35 +22,23 @@ using std::stringstream;
 using std::unordered_map;
 using util::invertible_map;
 
-document::document(const string & path, const class_label & label):
-    _path(path),
-    _label(label),
-    _length(0)
+document::document(const string & path, doc_id d_id, const class_label & label):
+    _path{path},
+    _d_id{d_id},
+    _label{label},
+    _length{0},
+    _content{""},
+    _contains_content{false}
 {
 
     size_t idx = path.find_last_of("/") + 1;
     _name = path.substr(idx);
 }
 
-void document::increment(term_id termID, uint64_t amount,
-        std::shared_ptr<unordered_map<term_id, uint64_t>> docFreq)
+void document::increment(term_id termID, double amount)
 {
-    auto iter = _frequencies.find(termID);
-    if(iter != _frequencies.end())
-        iter->second += amount;
-    else
-    {
-        _frequencies.insert(make_pair(termID, amount));
-        if(docFreq)
-            (*docFreq)[termID]++;
-    }
-
+    _frequencies[termID] += amount;
     _length += amount;
-}
-
-void document::increment(term_id termID, uint64_t amount)
-{
-    increment(termID, amount, nullptr);
 }
 
 string document::path() const
@@ -71,16 +61,12 @@ size_t document::length() const
     return _length;
 }
 
-uint64_t document::frequency(term_id termID) const
+double document::frequency(term_id termID) const
 {
-    auto iter = _frequencies.find(termID);
-    if(iter != _frequencies.end())
-        return iter->second;
-    else
-        return 0;
+    return common::safe_at(_frequencies, termID);
 }
 
-const unordered_map<term_id, uint64_t> & document::frequencies() const
+const unordered_map<term_id, double> & document::frequencies() const
 {
     return _frequencies;
 }
@@ -97,33 +83,6 @@ double document::jaccard_similarity(const document & a, const document & b)
                                                       b._frequencies);
 }
 
-vector<document> document::load_docs(const string & filename,
-                                     const string & prefix)
-{
-    vector<document> docs;
-    std::ifstream infile{filename};
-    string line;
-    while(infile.good())
-    {
-        std::getline(infile, line);
-        if(line == "")
-            continue;
-        string file = line;
-        size_t space = line.find_first_of(" ");
-        // see if there is class label info for this doc
-        if(space != string::npos)
-        {
-            class_label label{line.substr(0, space)};
-            file = line.substr(space + 1);
-            docs.emplace_back(document{prefix + "/" + file, label});
-        }
-        else
-            docs.emplace_back(document{prefix + "/" + file});
-    }
-    infile.close();
-    return docs;
-}
-
 document document::filter_features(const document & doc,
         const vector<pair<term_id, double>> & features)
 {
@@ -132,7 +91,7 @@ document document::filter_features(const document & doc,
     for(auto & p: features)
         keep.insert(p.first);
 
-    document filtered(doc._path, doc._label);
+    document filtered(doc._path, doc._d_id, doc._label);
     
     filtered._frequencies.clear();
     for(auto & f: doc._frequencies)
@@ -163,6 +122,30 @@ vector<document> document::filter_features(const vector<document> & docs,
         }
     });
     return ret;
+}
+
+void document::set_content(const std::string & content)
+{
+    _content = content;
+    _contains_content = true;
+}
+
+const std::string & document::content() const
+{
+    if(_contains_content)
+        return _content;
+    throw corpus::corpus_exception{
+        "there is no content for the requested document"};
+}
+
+doc_id document::id() const
+{
+    return _d_id;
+}
+
+bool document::contains_content() const
+{
+    return _contains_content;
 }
 
 }

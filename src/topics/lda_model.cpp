@@ -8,7 +8,7 @@
 namespace meta {
 namespace topics {
 
-using index::document;
+using corpus::document;
 
 lda_model::lda_model( std::vector<document> & docs, size_t num_topics,
         const std::shared_ptr<tokenizers::tokenizer> & tokenizer ):
