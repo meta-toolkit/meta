@@ -9,10 +9,11 @@
 #ifndef _POSTINGS_DATA_
 #define _POSTINGS_DATA_
 
+#include <algorithm>
 #include <sstream>
 #include <type_traits>
 #include <istream>
-#include <unordered_map>
+#include <vector>
 #include <string>
 #include "io/compressed_file_writer.h"
 #include "io/compressed_file_reader.h"
@@ -33,6 +34,7 @@ template <class PrimaryKey, class SecondaryKey>
 class postings_data
 {
     public:
+        using count_t = std::vector<std::pair<SecondaryKey, double>>;
 
         static_assert(
             (std::is_integral<PrimaryKey>::value ||
@@ -78,7 +80,8 @@ class postings_data
 
         /**
          * @param s_id The SecondaryKey id to query
-         * @return the number of times PrimaryKey occurred in this postings_data
+         * @return the number of times SecondaryKey occurred in this
+         * postings_data
          */
         double count(SecondaryKey s_id) const;
 
@@ -86,12 +89,12 @@ class postings_data
          * @return the per-SecondaryKey frequency information for this
          * PrimaryKey
          */
-        const std::unordered_map<SecondaryKey, double> & counts() const;
+        const count_t & counts() const;
 
         /**
          * @param map A map of counts to assign into this postings_data
          */
-        void set_counts(const std::unordered_map<SecondaryKey, double> & map);
+        void set_counts(const count_t & counts);
 
         /**
          * @param other The postings_data to compare with
@@ -125,7 +128,7 @@ class postings_data
             {
                 iss >> s_id;
                 iss >> count;
-                pd._counts[s_id] += count;
+                pd._counts.emplace_back(std::make_pair(s_id, count));
             }
 
             return in;
@@ -188,7 +191,7 @@ class postings_data
     private:
 
         PrimaryKey _p_id;
-        std::unordered_map<SecondaryKey, double> _counts;
+        count_t _counts;
         const static uint64_t _delimiter = std::numeric_limits<uint64_t>::max();
 };
 

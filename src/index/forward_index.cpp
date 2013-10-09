@@ -35,7 +35,9 @@ uint32_t forward_index::tokenize_docs(
         _doc_sizes[doc.id()] = doc.length();
 
         postings_data<doc_id, term_id> pd{doc.id()};
-        pd.set_counts(doc.frequencies());
+        pd.set_counts(std::vector<std::pair<term_id, double>>{
+            doc.frequencies().begin(), doc.frequencies().end()
+        });
 
         // in the current scheme, we should never have to merge two postings
         // together in this step since each postings is a unique doc_id
@@ -63,7 +65,7 @@ uint32_t forward_index::tokenize_docs(
     return chunk_num;
 }
 
-const std::unordered_map<term_id, double>
+const std::vector<std::pair<term_id, double>>
 forward_index::counts(doc_id d_id) const
 {
     auto pdata = search_primary(d_id);

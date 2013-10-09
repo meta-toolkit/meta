@@ -26,35 +26,60 @@ template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::merge_with(
         const postings_data & other)
 {
+    // O(n log n) now, could be O(n)
     for(auto & p: other._counts)
-        _counts[p.first] += p.second;
+        increase_count(p.first, p.second);
 }
 
 template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::increase_count(
         SecondaryKey s_id, double amount)
 {
-    _counts[s_id] += amount;
+    auto it = std::lower_bound(_counts.begin(), _counts.end(), s_id,
+        [](const std::pair<SecondaryKey, double> & p, const SecondaryKey & s) {
+            return p.first < s;
+        }
+    );
+
+    if(it == _counts.end())
+        _counts.emplace_back(std::make_pair(s_id, amount));
+    else if(it->first != s_id)
+        _counts.insert(it, std::make_pair(s_id, amount));
+    else
+        it->second += amount;
 }
 
 template <class PrimaryKey, class SecondaryKey>
 double postings_data<PrimaryKey, SecondaryKey>::count(SecondaryKey s_id) const
 {
-    return common::safe_at(_counts, s_id);
+    auto it = std::lower_bound(_counts.begin(), _counts.end(), s_id,
+        [](const std::pair<SecondaryKey, double> & p, const SecondaryKey & s) {
+            return p.first < s;
+        }
+    );
+
+    if(it == _counts.end() || it->first != s_id)
+        return 0.0;
+    return it->second;
 }
 
 template <class PrimaryKey, class SecondaryKey>
-const std::unordered_map<SecondaryKey, double> &
+const std::vector<std::pair<SecondaryKey, double>> &
 postings_data<PrimaryKey, SecondaryKey>::counts() const
 {
     return _counts;
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void postings_data<PrimaryKey, SecondaryKey>::set_counts(
-        const std::unordered_map<SecondaryKey, double> & map)
+void postings_data<PrimaryKey, SecondaryKey>::set_counts(const count_t & counts)
 {
-    _counts = map;
+    _counts = counts;
+    using pair_t = std::pair<SecondaryKey, double>;
+    std::sort(_counts.begin(), _counts.end(),
+        [](const pair_t & a, const pair_t & b) {
+            return a.first < b.first;
+        }
+    );
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -79,28 +104,20 @@ template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
         io::compressed_file_writer & writer) const
 {
-    // sort the counts according their SecondaryKey in increasing order
-    using pair_t = std::pair<SecondaryKey, double>;
-    std::vector<pair_t> sorted{_counts.begin(), _counts.end()};
-    std::sort(sorted.begin(), sorted.end(),
-        [](const pair_t & a, const pair_t & b) {
-            return a.first < b.first;
-        }
-    );
-
-    writer.write(sorted[0].first);
-    writer.write(*reinterpret_cast<uint64_t*>(&sorted[0].second));
+    count_t mutable_counts{_counts};
+    writer.write(mutable_counts[0].first);
+    writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[0].second));
 
     // use gap encoding on the SecondaryKeys (we know they are integral types)
-    uint64_t cur_id = sorted[0].first;
-    for(size_t i = 1; i < sorted.size(); ++i)
+    uint64_t cur_id = mutable_counts[0].first;
+    for(size_t i = 1; i < mutable_counts.size(); ++i)
     {
-        uint64_t temp_id = sorted[i].first;
-        sorted[i].first = sorted[i].first - cur_id;
+        uint64_t temp_id = mutable_counts[i].first;
+        mutable_counts[i].first = mutable_counts[i].first - cur_id;
         cur_id = temp_id;
 
-        writer.write(sorted[i].first);
-        writer.write(*reinterpret_cast<uint64_t*>(&sorted[i].second));
+        writer.write(mutable_counts[i].first);
+        writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[i].second));
     }
 
     // mark end of postings_data
@@ -126,7 +143,9 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         last_id += this_id;
         SecondaryKey key{last_id};
         uint64_t next = reader.next();
-        _counts[key] = *reinterpret_cast<double*>(&next);
+        double count = *reinterpret_cast<double*>(&next);
+
+        _counts.emplace_back(std::make_pair(key, count));
     }
 }
 

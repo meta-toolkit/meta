@@ -96,7 +96,7 @@ double inverted_index::total_num_occurences(term_id t_id) const
     return sum;
 }
 
-const std::unordered_map<doc_id, double>
+const std::vector<std::pair<doc_id, double>>
 inverted_index::counts(term_id t_id) const
 {
     auto pdata = search_primary(t_id);
