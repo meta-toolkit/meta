@@ -152,6 +152,11 @@ class document
          */
         bool contains_content() const;
 
+        /**
+         * @param label The label for this document
+         */
+        void set_label(class_label label);
+
     private:
 
         /** where this document is on disk */

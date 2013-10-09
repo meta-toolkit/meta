@@ -125,6 +125,8 @@ std::unique_ptr<tokenizer> tokenizer::load_tokenizer(const cpptoml::toml_group &
                 toks.emplace_back( std::make_shared<tokenizers::ngram_char_tokenizer>( n_val ) );
             else
                 throw tokenizer_exception{ "ngram method was not able to be determined" };
+        } else if (method == "libsvm") {
+            toks.emplace_back( std::make_shared<tokenizers::libsvm_tokenizer>() );
         } else {
             throw tokenizer_exception{ "method was not able to be determined" };
         }

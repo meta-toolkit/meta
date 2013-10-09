@@ -148,5 +148,10 @@ bool document::contains_content() const
     return _contains_content;
 }
 
+void document::set_label(class_label label)
+{
+    _label = label;
+}
+
 }
 }

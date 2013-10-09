@@ -38,6 +38,7 @@ add_library( meta-classify
 add_library( meta-corpus
              src/corpus/document.cpp
              src/corpus/file_corpus.cpp
+             src/corpus/line_corpus.cpp
              src/corpus/corpus.cpp
 )
 
@@ -69,6 +70,7 @@ add_library( meta-stemmers
 add_library( meta-tokenizers
              src/tokenizers/multi_tokenizer.cpp
              src/tokenizers/tokenizer.cpp
+             src/tokenizers/libsvm_tokenizer.cpp
              src/tokenizers/ngram/ngram_char_tokenizer.cpp
              src/tokenizers/ngram/ngram_fw_tokenizer.cpp
              src/tokenizers/ngram/ngram_lex_tokenizer.cpp

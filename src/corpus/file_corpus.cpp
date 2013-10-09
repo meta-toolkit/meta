@@ -3,7 +3,6 @@
  * @author Sean Massung
  */
 
-#include <iostream>
 #include "corpus/file_corpus.h"
 
 namespace meta {

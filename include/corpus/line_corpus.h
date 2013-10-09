@@ -1,13 +1,13 @@
 /**
- * @file file_corpus.h
+ * @file line_corpus.h
  * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _FILE_CORPUS_H_
-#define _FILE_CORPUS_H_
+#ifndef _LINE_CORPUS_H_
+#define _LINE_CORPUS_H_
 
 #include <string>
 #include <vector>
@@ -19,18 +19,18 @@ namespace meta {
 namespace corpus {
 
 /**
- * Creates document objects from individual files, each representing a single
- * document.
+ * Fills document objects with content line-by-line from an input file. It is up
+ * to the tokenizer used to be able to correctly parse the document content into
+ * labels and features.
  */
-class file_corpus: public corpus
+class line_corpus: public corpus
 {
     public:
         /**
-         * @param prefix The path to where the files are located
-         * @param doc_list A file containing the path to each document in the
-         * corpus
+         * @param file The path to the corpus file, where each line represents
+         * a document
          */
-        file_corpus(const std::string & prefix, const std::string & doc_list);
+        line_corpus(const std::string & file);
 
         /**
          * @return whether there is another document in this corpus
@@ -48,14 +48,20 @@ class file_corpus: public corpus
         uint64_t size() const override;
 
     private:
+        /**
+         * @param file the file to count lines in
+         * @return the number of lines in the given file
+         */
+        uint64_t lines(const std::string & file) const;
+
         /** the current document we are on */
         uint64_t _cur;
 
-        /** the path to all the documents */
-        std::string _prefix;
+        /** the number of lines in the file */
+        uint64_t _num_lines;
 
-        /** contains doc class labels and paths */
-        std::vector<std::pair<std::string, class_label>> _docs;
+        /** parser to read the corpus file */
+        io::parser _parser;
 };
 
 }

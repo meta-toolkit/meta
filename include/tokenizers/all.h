@@ -1,6 +1,8 @@
 #include "tokenizers/tokenizer.h"
 #include "tokenizers/multi_tokenizer.h"
-    
+
+#include "tokenizers/libsvm_tokenizer.h"
+
 #include "ngram/ngram_char_tokenizer.h"
 #include "ngram/ngram_fw_tokenizer.h"
 #include "ngram/ngram_lex_tokenizer.h"
