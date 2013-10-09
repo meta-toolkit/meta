@@ -30,7 +30,7 @@ bool line_corpus::has_next() const
 
 document line_corpus::next()
 {
-    document d{"", doc_id{_cur++}};
+    document d{"[NONE]", doc_id{_cur++}};
     d.set_content(_parser.next());
     return d;
 }
