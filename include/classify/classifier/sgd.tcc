@@ -21,7 +21,7 @@ sgd<LossFunction>::sgd(index::forward_index & idx,
     positive_label_{""}, // this will be inferred later
     alpha_{alpha},
     gamma_{gamma},
-    bias_{bias},
+    bias_weight_{bias},
     lambda_{lambda},
     max_iter_{max_iter}
 { /* nothing */ }
@@ -38,17 +38,17 @@ sgd<LossFunction>::sgd(index::forward_index & idx,
     positive_label_{positive_label},
     alpha_{alpha},
     gamma_{gamma},
-    bias_{bias},
+    bias_weight_{bias},
     lambda_{lambda},
     max_iter_{max_iter}
 { /* nothing */ }
 
 template <class LossFunction>
 double sgd<LossFunction>::predict(doc_id d_id) const {
-    double dot =  coeff_ * bias_;
+    double dot =  coeff_ * bias_ * bias_weight_;
     auto pdata = _idx.search_primary(d_id);
     for( const auto & count : pdata->counts() ) {
-        dot += coeff_ * count.second * common::safe_at( weights_, count.first );
+        dot += coeff_ * count.second * weights_[count.first];
     }
     return dot;
 }
@@ -56,8 +56,7 @@ double sgd<LossFunction>::predict(doc_id d_id) const {
 
 template <class LossFunction>
 void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
-    weights_ = {};
-
+    weights_.resize(_idx.unique_terms());
     if( positive_label_ == class_label{""} )
         positive_label_ = class_label{ _idx.label(docs[0]) };
 
@@ -70,13 +69,24 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
     std::iota( indices.begin(), indices.end(), 0 );
     std::random_device d;
     std::mt19937 g{ d() };
+    size_t t = 0;
+    double sum_loss = 0;
+    double prev_sum_loss = std::numeric_limits<double>::max();
     for( size_t iter = 0; iter < max_iter_; ++iter ) {
-        double lr = alpha_ / (1 + lambda_ * iter);
         std::shuffle( indices.begin(), indices.end(), g );
-        uint64_t error_count = 0;
         for( size_t i = 0; i < indices.size(); ++i ) {
-            doc_id doc{docs[indices[i]]};
+            t += 1;
 
+            // check for convergence every 1000 documents
+            if (t % (docs.size() / 10) == 0) {
+                sum_loss /= docs.size() / 10;
+                if (std::abs(prev_sum_loss - sum_loss) < gamma_)
+                    return;
+                prev_sum_loss = sum_loss;
+                sum_loss = 0;
+            }
+
+            doc_id doc{docs[indices[i]]};
             // get output prediction
             // this is the binary case where p is either +1 or -1
             double prediction = predict(doc);
@@ -85,29 +95,28 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
             if( _idx.label(doc) == positive_label_ )
                 actual = 1;
 
-            if( actual * prediction < 0 )
-                ++error_count;
+            sum_loss += loss_.loss(prediction, actual);
 
             double error_derivative = loss_.derivative(prediction, actual);
-            auto pdata = _idx.search_primary(doc);
-            coeff_ *= (1 - lr * lambda_);
+            coeff_ *= (1 - alpha_ * lambda_);
 
             // renormalize vector of coefficient is too small
-            if( coeff_ < 1e-4 ) {
+            if( coeff_ < 1e-9 ) {
                 bias_ *= coeff_;
                 for( auto & w : weights_ )
-                    w.second *= coeff_;
+                    w *= coeff_;
                 coeff_ = 1;
             }
 
-            for( const auto & count : pdata->counts() ) {
-                weights_[ count.first ] -=
-                    lr * error_derivative * count.second / coeff_;
+            double update = -alpha_ * error_derivative / coeff_;
+            if( update != 0 ) {
+                auto pdata = _idx.search_primary(doc);
+                for( const auto & count : pdata->counts() ) {
+                    weights_[ count.first ] += update * count.second;
+                }
+                bias_ += update * bias_weight_;
             }
-            bias_ -= lr * error_derivative / coeff_;
         }
-        if( static_cast<double>(error_count) / docs.size() < gamma_ )
-            break;
     }
 }
 
@@ -122,7 +131,9 @@ class_label sgd<LossFunction>::classify(doc_id d_id)
 
 template <class LossFunction>
 void sgd<LossFunction>::reset() {
-    weights_ = {};
+    weights_.clear();
+    coeff_ = 1;
+    bias_ = 0;
 }
 
 

@@ -37,10 +37,10 @@ class sgd : public classifier<index::forward_index> {
          */
         sgd(index::forward_index & idx,
             double alpha = 0.001,
-            double gamma = 0.05,
+            double gamma = 1e-4,
             double bias = 1,
             double lambda = 0.0001,
-            size_t max_iter = 20);
+            size_t max_iter = 50);
 
         /**
          * @param idx The index to run the classifier on
@@ -55,10 +55,10 @@ class sgd : public classifier<index::forward_index> {
         sgd(index::forward_index & idx,
             class_label positive_label,
             double alpha = 0.001,
-            double gamma = 0.05,
+            double gamma = 1e-4,
             double bias = 1,
             double lambda = 0.0001,
-            size_t max_iter = 20);
+            size_t max_iter = 50);
 
         /**
          * Trains the sgd on the given training documents.
@@ -107,7 +107,7 @@ class sgd : public classifier<index::forward_index> {
         class_label negative_label_;
 
         /// The weights vector.
-        std::unordered_map<term_id, double> weights_;
+        std::vector<double> weights_;
 
         /// The scalar coefficient for the weights vector.
         double coeff_{1.0};
@@ -120,6 +120,9 @@ class sgd : public classifier<index::forward_index> {
 
         /// \f$b\f$, the bias.
         double bias_;
+
+        /// The weight of the bias term for each document (defaults to 1)
+        double bias_weight_;
 
         /// \f$\lambda\f$, the regularization constant
         const double lambda_;

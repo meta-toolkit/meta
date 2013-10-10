@@ -57,6 +57,12 @@ uint64_t disk_index<PrimaryKey, SecondaryKey>::unique_terms(doc_id d_id) const
 }
 
 template <class PrimaryKey, class SecondaryKey>
+uint64_t disk_index<PrimaryKey, SecondaryKey>::unique_terms() const
+{
+    return _tokenizer->num_terms();
+}
+
+template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::create_index(
         const std::string & config_file)
 {

@@ -131,6 +131,11 @@ class disk_index
         uint64_t unique_terms(doc_id d_id) const;
 
         /**
+         * @return the number of unique terms in the index
+         */
+        uint64_t unique_terms() const;
+
+        /**
          * @param p_id The PrimaryKey id to search for
          * @return the postings data for a given PrimaryKey
          * A cache is first searched before the postings file is queried.
