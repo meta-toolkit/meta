@@ -26,9 +26,32 @@ template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::merge_with(
         const postings_data & other)
 {
+    auto searcher = [](const pair_t & p, const SecondaryKey & s) {
+        return p.first < s;
+    };
+
     // O(n log n) now, could be O(n)
+
+    // if the primary_key doesn't exist, add onto back
+    uint64_t orig_length = _counts.size();
     for(auto & p: other._counts)
-        increase_count(p.first, p.second);
+    {
+        auto it = std::lower_bound(_counts.begin(),
+                                   _counts.begin() + orig_length,
+                                   p.first,
+                                   searcher);
+        if(it == _counts.end() || it->first != p.first)
+            _counts.emplace_back(std::move(p));
+        else
+            it->second += p.second;
+    }
+
+    // sort _counts again to fix new elements added onto back
+    std::sort(_counts.begin(), _counts.end(), 
+        [](const pair_t & a, const pair_t & b) {
+            return a.first < b.first;
+        }
+    );
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -36,7 +59,7 @@ void postings_data<PrimaryKey, SecondaryKey>::increase_count(
         SecondaryKey s_id, double amount)
 {
     auto it = std::lower_bound(_counts.begin(), _counts.end(), s_id,
-        [](const std::pair<SecondaryKey, double> & p, const SecondaryKey & s) {
+        [](const pair_t & p, const SecondaryKey & s) {
             return p.first < s;
         }
     );
@@ -53,7 +76,7 @@ template <class PrimaryKey, class SecondaryKey>
 double postings_data<PrimaryKey, SecondaryKey>::count(SecondaryKey s_id) const
 {
     auto it = std::lower_bound(_counts.begin(), _counts.end(), s_id,
-        [](const std::pair<SecondaryKey, double> & p, const SecondaryKey & s) {
+        [](const pair_t & p, const SecondaryKey & s) {
             return p.first < s;
         }
     );
@@ -74,7 +97,6 @@ template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::set_counts(const count_t & counts)
 {
     _counts = counts;
-    using pair_t = std::pair<SecondaryKey, double>;
     std::sort(_counts.begin(), _counts.end(),
         [](const pair_t & a, const pair_t & b) {
             return a.first < b.first;
@@ -147,6 +169,10 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
 
         _counts.emplace_back(std::make_pair(key, count));
     }
+
+    // compress vector to conserve memory (it shouldn't be modified again after
+    // this)
+    _counts.shrink_to_fit();
 }
 
 }

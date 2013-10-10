@@ -34,7 +34,8 @@ template <class PrimaryKey, class SecondaryKey>
 class postings_data
 {
     public:
-        using count_t = std::vector<std::pair<SecondaryKey, double>>;
+        using pair_t = std::pair<SecondaryKey, double>;
+        using count_t = std::vector<pair_t>;
 
         static_assert(
             (std::is_integral<PrimaryKey>::value ||
@@ -109,11 +110,9 @@ class postings_data
          * @param pd The postings data object to write the stream info to
          * @return the input stream
          */
-        friend std::istream & operator>>(std::istream & in,
-                                         postings_data<
-                                            PrimaryKey,
-                                            SecondaryKey
-                                         > & pd)
+        friend std::istream & operator>>(
+                std::istream & in,
+                postings_data<PrimaryKey, SecondaryKey> & pd)
         {
             std::string buffer;
             std::getline(in, buffer);
@@ -140,11 +139,9 @@ class postings_data
          * @param pd The postings data object to write to the stream
          * @return the output stream
          */
-        friend std::ostream & operator<<(std::ostream & out,
-                                         postings_data<
-                                            PrimaryKey,
-                                            SecondaryKey
-                                         > & pd)
+        friend std::ostream & operator<<(
+                std::ostream & out,
+                postings_data<PrimaryKey, SecondaryKey> & pd)
         {
             if(pd._counts.empty())
                 return out;
