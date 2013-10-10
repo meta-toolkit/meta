@@ -111,7 +111,7 @@ class confusion_matrix
          * @param f1 The F1 score for this class
          */
         void print_class_stats(std::ostream & out, const class_label & label,
-                double & prec, double & rec, double & f1) const;
+                double & prec, double & rec, double & f1, size_t width) const;
 
         /** maps predicted class to actual class frequencies */
         prediction_counts _predictions;
@@ -127,9 +127,6 @@ class confusion_matrix
 
         /** total number of classification attempts */
         size_t _total;
-
-        /** width of each column of confusion_matrix */
-        size_t _width;
 };
 
 }

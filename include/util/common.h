@@ -62,7 +62,7 @@ namespace common
      * @param num_bytes
      * @return a human-readable string
      */
-    inline std::string bytes_to_units(uint64_t num_bytes);
+    inline std::string bytes_to_units(double num_bytes);
 
     /**
      * Times a given function.

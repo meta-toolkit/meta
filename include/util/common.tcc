@@ -17,7 +17,7 @@ std::string to_string(const T & value)
     return ss.str();
 }
 
-std::string bytes_to_units(uint64_t num_bytes)
+std::string bytes_to_units(double num_bytes)
 {
     std::string units = "bytes";
     for(auto & u: {"KB", "MB", "GB", "TB"})
@@ -29,6 +29,7 @@ std::string bytes_to_units(uint64_t num_bytes)
         }
     }
 
+    num_bytes = static_cast<double>(static_cast<int>(num_bytes * 100)) / 100;
     return to_string(num_bytes) + " " + units;
 }
 
