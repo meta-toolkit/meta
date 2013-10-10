@@ -261,11 +261,12 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
              << common::bytes_to_units(first.size())
              << ") and " << second.path() << " ("
              << common::bytes_to_units(second.size())
-             << "), " << chunks.size() << " remaining" << std::endl;
+             << "), " << chunks.size() << " remaining        \r";
 
         first.merge_with(second);
         chunks.push(first);
     }
+    std::cerr << std::endl;
 
     rename(chunks.top().path().c_str(), filename.c_str());
 
