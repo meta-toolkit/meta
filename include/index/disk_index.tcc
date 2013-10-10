@@ -216,19 +216,13 @@ disk_index<PrimaryKey, SecondaryKey>::label_id_from_doc(doc_id d_id) const
 template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::write_chunk(
         uint32_t chunk_num,
-        std::unordered_map<
-            PrimaryKey,
-            postings_data<PrimaryKey, SecondaryKey>
-        > & pdata)
+        std::vector<postings_data<PrimaryKey, SecondaryKey>> & pdata)
 {
-    std::vector<
-        std::pair<PrimaryKey, postings_data<PrimaryKey, SecondaryKey>>
-    > sorted{pdata.begin(), pdata.end()};
-    std::sort(sorted.begin(), sorted.end());
+    std::sort(pdata.begin(), pdata.end());
 
     std::ofstream outfile{"chunk-" + common::to_string(chunk_num)};
-    for(auto & p: sorted)
-        outfile << p.second;
+    for(auto & p: pdata)
+        outfile << p;
     outfile.close();
 
     pdata.clear();

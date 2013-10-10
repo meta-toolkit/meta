@@ -21,7 +21,7 @@ inverted_index::inverted_index(const cpptoml::toml_group & config):
 uint32_t inverted_index::tokenize_docs(
         const std::unique_ptr<corpus::corpus> & docs)
 {
-    std::unordered_map<term_id, postings_data<term_id, doc_id>> pdata;
+    std::unordered_map<term_id, PostingsData> pdata;
     uint32_t chunk_num = 0;
     std::string progress = "Tokenizing ";
     while(docs->has_next())
@@ -35,7 +35,7 @@ uint32_t inverted_index::tokenize_docs(
 
         for(auto & f: doc.frequencies())
         {
-            postings_data<term_id, doc_id> pd{f.first};
+            PostingsData pd{f.first};
             pd.increase_count(doc.id(), f.second);
             auto it = pdata.find(f.first);
             if(it == pdata.end())
@@ -52,14 +52,31 @@ uint32_t inverted_index::tokenize_docs(
         // every k documents, write a chunk
         // TODO: make this based on memory usage instead
         if(doc.id() % 500 == 0)
-            write_chunk(chunk_num++, pdata);
+        {
+            std::vector<PostingsData> vec{to_vector(pdata)};
+            write_chunk(chunk_num++, vec);
+        }
     }
     common::end_progress(progress);
 
     if(!pdata.empty())
-        write_chunk(chunk_num++, pdata);
+    {
+        std::vector<PostingsData> vec{to_vector(pdata)};
+        write_chunk(chunk_num++, vec);
+    }
 
     return chunk_num;
+}
+
+std::vector<postings_data<term_id, doc_id>> inverted_index::to_vector(
+        std::unordered_map<term_id, postings_data<term_id, doc_id>> & pdata)
+{
+    std::vector<PostingsData> vec;
+    vec.reserve(pdata.size());
+    for(auto & p: pdata)
+        vec.push_back(p.second);
+    pdata.clear();
+    return vec;
 }
 
 uint64_t inverted_index::idf(term_id t_id) const

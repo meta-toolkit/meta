@@ -23,7 +23,8 @@ forward_index::forward_index(const cpptoml::toml_group & config):
 uint32_t forward_index::tokenize_docs(
         const std::unique_ptr<corpus::corpus> & docs)
 {
-    std::unordered_map<doc_id, postings_data<doc_id, term_id>> pdata;
+    std::vector<postings_data<doc_id, term_id>> pdata;
+    pdata.reserve(docs->size());
     uint32_t chunk_num = 0;
     std::string progress = "Tokenizing ";
     while(docs->has_next())
@@ -38,14 +39,7 @@ uint32_t forward_index::tokenize_docs(
         pd.set_counts(std::vector<std::pair<term_id, double>>{
             doc.frequencies().begin(), doc.frequencies().end()
         });
-
-        // in the current scheme, we should never have to merge two postings
-        // together in this step since each postings is a unique doc_id
-        auto it = pdata.find(doc.id());
-        if(it == pdata.end())
-            pdata.insert(std::make_pair(doc.id(), pd));
-        else
-            it->second.merge_with(pd);
+        pdata.push_back(pd);
 
         // Save class label information
         _unique_terms[doc.id()] = doc.frequencies().size();
