@@ -12,9 +12,6 @@
 #include "index/chunk.h"
 #include "util/common.h"
 
-using std::cerr;
-using std::endl;
-
 namespace meta {
 namespace index {
 
@@ -131,8 +128,12 @@ template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::compress(
         const std::string & filename)
 {
+    std::cerr << "Calculating optimal compression mapping..." << std::endl;
+
     calc_compression_mapping(filename);
     std::string cfilename{filename + ".compressed"};
+
+    std::cerr << "Creating compressed postings file..." << std::endl;
 
     // create scope so the writer closes and we can calculate the size of the
     // file as well as rename it
@@ -150,8 +151,8 @@ void disk_index<PrimaryKey, SecondaryKey>::compress(
 
     struct stat st;
     stat(cfilename.c_str(), &st);
-    cerr << "Created compressed postings file ("
-         << common::bytes_to_units(st.st_size) << ")" << endl;
+    std::cerr << "Created compressed postings file ("
+         << common::bytes_to_units(st.st_size) << ")" << std::endl;
 
     remove(filename.c_str());
     rename(cfilename.c_str(), filename.c_str());
@@ -160,8 +161,8 @@ void disk_index<PrimaryKey, SecondaryKey>::compress(
 template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::load_index()
 {
-    cerr << "Loading inverted index from disk ("
-         << _index_name << ")..." << endl;
+    std::cerr << "Loading index from disk ("
+         << _index_name << ")..." << std::endl;
 
     auto config = cpptoml::parse_file(_index_name + "/config.toml");
 
@@ -256,11 +257,11 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
         chunk_t second = chunks.top();
         chunks.pop();
 
-        cerr << " Merging " << first.path() << " ("
+        std::cerr << " Merging " << first.path() << " ("
              << common::bytes_to_units(first.size())
              << ") and " << second.path() << " ("
              << common::bytes_to_units(second.size())
-             << "), " << chunks.size() << " remaining" << endl;
+             << "), " << chunks.size() << " remaining" << std::endl;
 
         first.merge_with(second);
         chunks.push(first);
@@ -268,8 +269,9 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
 
     rename(chunks.top().path().c_str(), filename.c_str());
 
-    cerr << "Created uncompressed postings file " << filename
-         << " (" << common::bytes_to_units(chunks.top().size()) << ")" << endl;
+    std::cerr << "Created uncompressed postings file " << filename
+              << " (" << common::bytes_to_units(chunks.top().size()) << ")"
+              << std::endl;
 }
 
 template <class PrimaryKey, class SecondaryKey>

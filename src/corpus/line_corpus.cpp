@@ -4,6 +4,7 @@
  */
 
 #include <algorithm>
+#include <iostream>
 #include "io/parser.h"
 #include "io/mmap_file.h"
 #include "corpus/line_corpus.h"
@@ -19,6 +20,7 @@ line_corpus::line_corpus(const std::string & file):
 
 uint64_t line_corpus::lines(const std::string & file) const
 {
+    std::cerr << "Counting number of lines in corpus file..." << std::endl;
     io::mmap_file f{file};
     return std::count(f.start(), f.start() + f.size(), '\n');
 }
