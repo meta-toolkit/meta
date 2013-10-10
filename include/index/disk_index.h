@@ -163,10 +163,7 @@ class disk_index
          * @param pdata A collection of postings data to write to the chunk
          */
         void write_chunk(uint32_t chunk_num,
-                         std::unordered_map<
-                            PrimaryKey,
-                            postings_data<PrimaryKey, SecondaryKey>
-                         > & pdata);
+                 std::vector<postings_data<PrimaryKey, SecondaryKey>> & pdata);
 
         /**
          * Saves any arbitrary mapping to the disk.

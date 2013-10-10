@@ -51,6 +51,8 @@ class inverted_index: public disk_index<term_id, doc_id>
         inverted_index(const cpptoml::toml_group & config);
 
     public:
+        using PostingsData = postings_data<term_id, doc_id>;
+
         /**
          * Move constructs an inverted index.
          * @param other The inverted_index to move into this one.
@@ -125,6 +127,14 @@ class inverted_index: public disk_index<term_id, doc_id>
         uint32_t tokenize_docs(const std::unique_ptr<corpus::corpus> & docs);
 
     private:
+
+        /**
+         * @param pdata
+         * @return a vector version of postings data for writing chunks
+         */
+        static std::vector<PostingsData> to_vector(
+                std::unordered_map<term_id, PostingsData> & pdata);
+
         /** average document length in the inverted_index */
         double _avg_dl;
 
