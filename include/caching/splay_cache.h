@@ -27,12 +27,13 @@ class splay_cache
 {
     public:
         /**
-         * Creates a splay tree cache with maximum height (depth). This means
-         * there are at most \f$2^{max_height + 1} - 1\f$ nodes.
+         * Creates a splay tree cache with maximum size (or not, if no size is
+         * given).
          *
-         * @param max_height The maximum height for the splay tree
+         * @param max_size The maximum number of nodes that will be in the splay
+         * tree
          */
-        splay_cache(uint32_t max_height = 10);
+        splay_cache(uint64_t max_size = std::numeric_limits<uint64_t>::max());
 
         /**
          * splay_cache can be move constructed
@@ -61,6 +62,11 @@ class splay_cache
          */
         util::optional<Value> find(const Key & key);
 
+        /**
+         * @return the number of elements in the cache
+         */
+        uint64_t size() const;
+
     private:
 
         /** disallow copying */
@@ -81,16 +87,17 @@ class splay_cache
             { /* nothing */ }
         };
 
-        uint32_t _max_height;
+        uint64_t _size;
+        uint64_t _max_size;
         node* _root;
         mutable std::mutex _mutables;
 
         void clear(node* & subroot);
-        void insert(node* & subroot, const Key & key, const Value & value, uint32_t depth);
-        void find(node* & subroot, const Key & key, uint32_t depth);
+        void insert(node* & subroot, const Key & key, const Value & value);
+        void find(node* & subroot, const Key & key);
 
-        void rotate_left(node* & subroot, uint32_t depth);
-        void rotate_right(node* & subroot, uint32_t depth);
+        void rotate_left(node* & subroot);
+        void rotate_right(node* & subroot);
 
     public:
 
