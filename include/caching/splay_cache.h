@@ -87,10 +87,10 @@ class splay_cache
 
         void clear(node* & subroot);
         void insert(node* & subroot, const Key & key, const Value & value, uint32_t depth);
-        void find(node* & subroot, const Key & key);
+        void find(node* & subroot, const Key & key, uint32_t depth);
 
-        void rotate_left(node* & subroot);
-        void rotate_right(node* & subroot);
+        void rotate_left(node* & subroot, uint32_t depth);
+        void rotate_right(node* & subroot, uint32_t depth);
 
     public:
 
