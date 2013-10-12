@@ -42,7 +42,7 @@ namespace common
      */
     inline std::string make_green(std::string str)
     {
-        return "\033[1;32m" + str + "\033[0m";
+        return "\033[32m" + str + "\033[0m";
     }
 
     /**
@@ -51,7 +51,7 @@ namespace common
      */
     inline std::string make_red(std::string str)
     {
-        return "\033[1;31m" + str + "\033[0m";
+        return "\033[31m" + str + "\033[0m";
     }
 
     /**
@@ -60,7 +60,7 @@ namespace common
      */
     inline std::string make_bold(std::string str)
     {
-        return "\033[1m" + str + "\033[0m";
+        return "\033[1m" + str + "\033[22m";
     }
 
     /**
