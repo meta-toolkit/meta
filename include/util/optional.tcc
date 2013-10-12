@@ -17,8 +17,11 @@ optional_storage<T>::optional_storage(Args &&... args)
     : value_{std::forward<Args>(args)...} { /* nothing */ }
 
 template <class T>
-optional<T>::optional(nullopt_t)
+optional<T>::optional()
     : initialized_{false}, storage_{trivial_init} { /* nothing */ }
+
+template <class T>
+optional<T>::optional(nullopt_t) : optional() { /* nothing */ }
 
 template <class T>
 optional<T>::optional(const T & value)
