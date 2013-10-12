@@ -26,8 +26,6 @@ namespace meta
      * Represents the name of a class used in classification or feature
      * selection.
      */
-#define NUSE_OPAQUE_IDENTIFIERS 1
-
 #if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
     MAKE_IDENTIFIER(class_label, std::string)
 #else
