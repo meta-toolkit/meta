@@ -14,7 +14,6 @@
 #include <memory>
 #include <mutex>
 #include "corpus/corpus.h"
-#include "caching/splay_cache.h"
 #include "tokenizers/all.h"
 #include "index/cached_index.h"
 #include "index/postings_data.h"
@@ -35,6 +34,7 @@ class disk_index
     public:
         using primary_key_type = PrimaryKey;
         using secondary_key_type = SecondaryKey;
+        using PostingsData = postings_data<PrimaryKey, SecondaryKey>;
     protected:
         /**
          * @param config The toml_group that specifies how to create the
@@ -140,7 +140,7 @@ class disk_index
          * @return the postings data for a given PrimaryKey
          * A cache is first searched before the postings file is queried.
          */
-        virtual std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
+        virtual std::shared_ptr<PostingsData>
         search_primary(PrimaryKey p_id) const;
 
     protected:
@@ -162,26 +162,43 @@ class disk_index
          * @param chunk_num The current chunk number of the postings file
          * @param pdata A collection of postings data to write to the chunk
          */
-        void write_chunk(uint32_t chunk_num,
-                 std::vector<postings_data<PrimaryKey, SecondaryKey>> & pdata);
+        void write_chunk(uint32_t chunk_num, std::vector<PostingsData> & pdata);
 
         /**
          * Saves any arbitrary mapping to the disk.
          * @param map The map to read key, value pairs from
          * @param filename The name to save the mapping as
          */
-        template <class... Targs, template <class...> class Map>
-        void save_mapping(const Map<Targs...> & map,
-                          const std::string & filename) const;
+        template <class Key, class Value>
+        static void save_mapping(const util::invertible_map<Key, Value> & map,
+                                 const std::string & filename);
+
+        /**
+         * Vector-specific version of save_mapping: saves any arbitrary mapping
+         * to the disk.
+         * @param map The map to read key, value pairs from
+         * @param filename The name to save the mapping as
+         */
+        template <class T>
+        static void save_mapping(const std::vector<T> & vec,
+                                 const std::string & filename);
 
         /**
          * @param map The map to load information into
          * @param filename The file containing key, value pairs
          */
-        template <class Key, class Value, class... Targs,
-                 template <class...> class Map>
-        void load_mapping(Map<Key, Value, Targs...> & map,
-                          const std::string & filename);
+        template <class Key, class Value>
+        static void load_mapping(util::invertible_map<Key, Value> & map,
+                                 const std::string & filename);
+
+        /**
+         * Vector-specific version of load_mapping.
+         * @param vec The vector to load information into
+         * @param filename The file containing the vector's data.
+         */
+        template <class T>
+        static void load_mapping(std::vector<T> & vec,
+                                 const std::string & filename);
 
         /**
          * @param docs The documents to add to the inverted index
@@ -195,11 +212,17 @@ class disk_index
          */
         label_id label_id_from_doc(doc_id d_id) const;
 
-        /** doc_id -> document path mapping */
-        std::unordered_map<doc_id, std::string> _doc_id_mapping;
+        /**
+         * doc_id -> document path mapping.
+         * Each index corresponds to a doc_id (uint64_t).
+         */
+        std::vector<std::string> _doc_id_mapping;
 
-        /** doc_id -> document length mapping */
-        std::unordered_map<doc_id, double> _doc_sizes;
+        /**
+         * doc_id -> document length mapping.
+         * Each index corresponds to a doc_id (uint64_t).
+         */
+        std::vector<double> _doc_sizes;
 
         /** the tokenizer used to tokenize documents in the index */
         std::unique_ptr<tokenizers::tokenizer> _tokenizer;
@@ -207,15 +230,19 @@ class disk_index
         /** the mapping of (actual -> compressed id) */
         util::invertible_map<uint64_t, uint64_t> _compression_mapping;
 
-        /** maps which class a document belongs to (if any) */
-        std::unordered_map<doc_id, class_label> _labels;
+        /**
+         * Maps which class a document belongs to (if any).
+         * Each index corresponds to a doc_id (uint64_t).
+         */
+        std::vector<class_label> _labels;
 
         /**
          * Holds how many unique terms there are per-document. This is sort of
          * like an inverse IDF. For a forward_index, this field is certainly
          * redundant, though it can save querying the postings file.
+         * Each index corresponds to a doc_id (uint64_t).
          */
-        std::unordered_map<doc_id, uint64_t> _unique_terms;
+        std::vector<uint64_t> _unique_terms;
 
     private:
         /**
@@ -254,8 +281,11 @@ class disk_index
         /** the location of this index */
         std::string _index_name;
 
-        /** PrimaryKey -> postings location */
-        std::unordered_map<PrimaryKey, uint64_t> _term_bit_locations;
+        /**
+         * PrimaryKey -> postings location.
+         * Each index corresponds to a PrimaryKey (uint64_t).
+         */
+        std::vector<uint64_t> _term_bit_locations;
 
         /**
          * A pointer to a memory-mapped postings file. It is a pointer because

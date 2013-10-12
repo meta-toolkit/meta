@@ -48,12 +48,6 @@ class line_corpus: public corpus
         uint64_t size() const override;
 
     private:
-        /**
-         * @param file the file to count lines in
-         * @return the number of lines in the given file
-         */
-        uint64_t lines(const std::string & file) const;
-
         /** the current document we are on */
         uint64_t _cur;
 

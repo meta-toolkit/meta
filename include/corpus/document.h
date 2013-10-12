@@ -36,7 +36,7 @@ class document
          * @param path The path to the document
          */
         document(const std::string & path, doc_id d_id,
-                 const class_label & label = class_label{""});
+                 const class_label & label = class_label{"[NONE]"});
 
         /**
          * Increment the count of the specified transition.

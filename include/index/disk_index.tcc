@@ -3,11 +3,12 @@
  * @author Sean Massung
  */
 
-#include <sys/stat.h>
 #include <cstdio>
+#include <numeric>
 #include <queue>
 #include <iostream>
 #include <utility>
+#include <sys/stat.h>
 #include "index/disk_index.h"
 #include "index/chunk.h"
 #include "util/common.h"
@@ -83,6 +84,14 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
     // load the documents from the corpus
     auto docs = corpus::corpus::load(config_file);
 
+    // reserve space for all the vectors
+    uint64_t num_docs = docs->size();
+    _doc_id_mapping.reserve(num_docs);
+    _doc_sizes.reserve(num_docs);
+    _term_bit_locations.reserve(num_docs * 3); // guess 3x
+    _labels.reserve(num_docs);
+    _unique_terms.reserve(num_docs); // guess 1x
+
     // create postings file
     uint32_t num_chunks = tokenize_docs(docs);
     merge_chunks(num_chunks, _index_name + "/postings.index");
@@ -107,7 +116,7 @@ void disk_index<PrimaryKey, SecondaryKey>::calc_compression_mapping(
         const std::string & filename)
 {
     std::ifstream in{filename};
-    postings_data<PrimaryKey, SecondaryKey> pdata{PrimaryKey{0}};
+    PostingsData pdata{PrimaryKey{0}};
     std::unordered_map<uint64_t, uint64_t> freqs;
 
     while(in >> pdata)
@@ -155,11 +164,13 @@ void disk_index<PrimaryKey, SecondaryKey>::compress(
     {
         io::compressed_file_writer out{cfilename, _compression_mapping};
 
-        postings_data<PrimaryKey, SecondaryKey> pdata{PrimaryKey{0}};
+        PostingsData pdata{PrimaryKey{0}};
         std::ifstream in{filename};
+
+        // note: we will be accessing pdata in sorted order
         while(in >> pdata)
         {
-            _term_bit_locations[pdata.primary_key()] = out.bit_location();
+            _term_bit_locations.push_back(out.bit_location());
             pdata.write_compressed(out);
         }
     }
@@ -199,7 +210,7 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
 template <class PrimaryKey, class SecondaryKey>
 class_label disk_index<PrimaryKey, SecondaryKey>::label(doc_id d_id) const
 {
-    return common::safe_at(_labels, d_id);
+    return _labels.at(d_id);
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -213,8 +224,8 @@ template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::set_label_ids()
 {
     std::unordered_set<class_label> labels;
-    for(auto & p: _labels)
-        labels.insert(p.second);
+    for(auto & lbl: _labels)
+        labels.insert(lbl);
 
     label_id i{0};
     for(auto & lbl: labels)
@@ -285,27 +296,50 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
 }
 
 template <class PrimaryKey, class SecondaryKey>
-template <class... Targs, template <class...> class Map>
+template <class Key, class Value>
 void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
-        const Map<Targs...> & map,
-        const std::string & filename) const
+        const util::invertible_map<Key, Value> & map,
+        const std::string & filename)
 {
     std::ofstream outfile{filename};
     for(auto & p: map)
         outfile << p.first << " " << p.second << "\n";
-    outfile.close();
 }
 
 template <class PrimaryKey, class SecondaryKey>
-template <class Key, class Value, class... Targs, template <class...> class Map>
+template <class T>
+void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
+        const std::vector<T> & vec, const std::string & filename)
+{
+    std::ofstream outfile{filename};
+    for(auto & v: vec)
+        outfile << v << "\n";
+}
+
+template <class PrimaryKey, class SecondaryKey>
+template <class Key, class Value>
 void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
-        Map<Key, Value, Targs...> & map, const std::string & filename)
+        util::invertible_map<Key, Value> & map, const std::string & filename)
 {
     std::ifstream input{filename};
     Key k;
     Value v;
     while((input >> k) && (input >> v))
         map.insert(std::make_pair(k, v));
+}
+
+template <class PrimaryKey, class SecondaryKey>
+template <class T>
+void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
+        std::vector<T> & vec, const std::string & filename)
+{
+    std::ifstream input{filename};
+    uint64_t size = common::num_lines(filename);
+    vec.reserve(size);
+
+    T val;
+    while(input >> val)
+        vec.push_back(val);
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -336,10 +370,8 @@ std::string disk_index<PrimaryKey, SecondaryKey>::doc_path(doc_id d_id) const
 template <class PrimaryKey, class SecondaryKey>
 std::vector<doc_id> disk_index<PrimaryKey, SecondaryKey>::docs() const
 {
-    std::vector<doc_id> ret;
-    ret.reserve(_doc_id_mapping.size());
-    for(auto & d: _doc_id_mapping)
-        ret.push_back(d.first);
+    std::vector<doc_id> ret{_doc_id_mapping.size()};
+    std::iota(ret.begin(), ret.end(), 0);
     return ret;
 }
 
@@ -353,17 +385,16 @@ template <class PrimaryKey, class SecondaryKey>
 std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
 disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey p_id) const
 {
-    using PostingsData = postings_data<PrimaryKey, SecondaryKey>;
-    auto it = _term_bit_locations.find(p_id);
+    uint64_t idx{p_id};
 
     // if the term doesn't exist in the index, return an empty postings_data
-    if(it == _term_bit_locations.end())
+    if(idx >= _term_bit_locations.size())
         return std::make_shared<PostingsData>(p_id);
 
     io::compressed_file_reader reader{*_postings, _compression_mapping};
-    reader.seek(it->second);
+    reader.seek(_term_bit_locations.at(idx));
 
-    auto pdata = std::make_shared<PostingsData>(PrimaryKey{p_id});
+    auto pdata = std::make_shared<PostingsData>(p_id);
     pdata->read_compressed(reader);
 
     return pdata;

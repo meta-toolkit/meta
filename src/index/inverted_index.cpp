@@ -6,9 +6,6 @@
 #include "index/inverted_index.h"
 #include "index/chunk.h"
 
-using std::cerr;
-using std::endl;
-
 namespace meta {
 namespace index {
 
@@ -29,8 +26,8 @@ uint32_t inverted_index::tokenize_docs(
         corpus::document doc{docs->next()};
         common::show_progress(doc.id(), docs->size(), 20, progress);
         _tokenizer->tokenize(doc);
-        _doc_id_mapping[doc.id()] = doc.path();
-        _doc_sizes[doc.id()] = doc.length();
+        _doc_id_mapping.push_back(doc.path());
+        _doc_sizes.push_back(doc.length());
         _total_corpus_terms += doc.length();
 
         for(auto & f: doc.frequencies())
@@ -45,9 +42,8 @@ uint32_t inverted_index::tokenize_docs(
         }
 
         // Save class label information
-        _unique_terms[doc.id()] = doc.frequencies().size();
-        if(doc.label() != class_label{""})
-            _labels[doc.id()] = doc.label();
+        _unique_terms.push_back(doc.frequencies().size());
+        _labels.push_back(doc.label());
 
         // every k documents, write a chunk
         // TODO: make this based on memory usage instead
@@ -95,8 +91,8 @@ uint64_t inverted_index::total_corpus_terms()
 {
     if(_total_corpus_terms == 0)
     {
-        for(auto & d: _doc_sizes)
-            _total_corpus_terms += d.second;
+        for(auto & sz: _doc_sizes)
+            _total_corpus_terms += sz;
     }
 
     return _total_corpus_terms;
@@ -125,8 +121,8 @@ double inverted_index::avg_doc_length()
     if(_avg_dl == -1.0)
     {
         uint64_t sum = 0.0;
-        for(auto & p: _doc_sizes)
-            sum += p.second;
+        for(auto & sz: _doc_sizes)
+            sum += sz;
         _avg_dl = static_cast<double>(sum) / _doc_sizes.size();
     }
 

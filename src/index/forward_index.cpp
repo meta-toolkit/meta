@@ -32,8 +32,8 @@ uint32_t forward_index::tokenize_docs(
         corpus::document doc{docs->next()};
         common::show_progress(doc.id(), docs->size(), 20, progress);
         _tokenizer->tokenize(doc);
-        _doc_id_mapping[doc.id()] = doc.path();
-        _doc_sizes[doc.id()] = doc.length();
+        _doc_id_mapping.push_back(doc.path());
+        _doc_sizes.push_back(doc.length());
 
         postings_data<doc_id, term_id> pd{doc.id()};
         pd.set_counts(std::vector<std::pair<term_id, double>>{
@@ -42,9 +42,8 @@ uint32_t forward_index::tokenize_docs(
         pdata.push_back(pd);
 
         // Save class label information
-        _unique_terms[doc.id()] = doc.frequencies().size();
-        if(doc.label() != class_label{""})
-            _labels[doc.id()] = doc.label();
+        _unique_terms.push_back(doc.frequencies().size());
+        _labels.push_back(doc.label());
 
         // every k documents, write a chunk
         // TODO: make this based on memory usage instead
