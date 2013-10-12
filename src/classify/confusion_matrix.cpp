@@ -114,7 +114,8 @@ void confusion_matrix::print_stats(std::ostream & out) const
         }
     );
 
-    size_t width = static_cast<std::string>(*max_label).size() + 2;
+    size_t width =
+        std::max<size_t>(5, static_cast<std::string>(*max_label).size()) + 2;
 
     auto w1 = std::setw(width);
     auto w2 = std::setw(12);
