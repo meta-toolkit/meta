@@ -273,6 +273,10 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
 
     // merge the smallest two chunks together until there is only one left
     // done in parallel
+
+    // this represents the number of merge steps needed---it is equivalent
+    // to the number of internal nodes in a binary tree with n leaf nodes
+    size_t remaining = chunks.size() - 1;
     std::mutex mutex;
     parallel::thread_pool pool;
     auto thread_ids = pool.thread_ids();
@@ -293,7 +297,7 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
                  << common::bytes_to_units(first->size())
                  << ") and " << second->path() << " ("
                  << common::bytes_to_units(second->size())
-                 << "), " << chunks.size() << " remaining        \r";
+                 << "), " << --remaining << " remaining        \r";
         }
         first->merge_with(*second);
         mutex.lock();
