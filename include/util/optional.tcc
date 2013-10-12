@@ -79,6 +79,27 @@ const T & optional<T>::operator*() const {
 }
 
 template <class T>
+T & optional<T>::operator*() {
+    if(!initialized_)
+        throw bad_optional_access{"access attempted on uninitialized option"};
+    return storage_.value_;
+}
+
+template <class T>
+const T * optional<T>::operator->() const {
+    if(!initialized_)
+        throw bad_optional_access{"access attempted on uninitialized option"};
+    return dataptr();
+}
+
+template <class T>
+T * optional<T>::operator->() {
+    if(!initialized_)
+        throw bad_optional_access{"access attempted on uninitialized option"};
+    return dataptr();
+}
+
+template <class T>
 optional<T>::operator bool() const {
     return initialized_;
 }

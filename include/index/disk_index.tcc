@@ -11,7 +11,9 @@
 #include <sys/stat.h>
 #include "index/disk_index.h"
 #include "index/chunk.h"
+#include "parallel/thread_pool.h"
 #include "util/common.h"
+#include "util/optional.h"
 
 namespace meta {
 namespace index {
@@ -270,22 +272,46 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
     }
 
     // merge the smallest two chunks together until there is only one left
-    while(chunks.size() > 1)
-    {
-        chunk_t first = chunks.top();
-        chunks.pop();
-        chunk_t second = chunks.top();
-        chunks.pop();
-
-        std::cerr << " Merging " << first.path() << " ("
-             << common::bytes_to_units(first.size())
-             << ") and " << second.path() << " ("
-             << common::bytes_to_units(second.size())
-             << "), " << chunks.size() << " remaining        \r";
-
-        first.merge_with(second);
-        chunks.push(first);
+    // done in parallel
+    std::mutex mutex;
+    parallel::thread_pool pool;
+    auto thread_ids = pool.thread_ids();
+    std::vector<std::future<void>> futures;
+    std::function<void()> task;
+    task = [&]() {
+        util::optional<chunk_t> first;
+        util::optional<chunk_t> second;
+        {
+            std::lock_guard<std::mutex> lock{mutex};
+            if (chunks.size() < 2)
+                return;
+            first = util::optional<chunk_t>{chunks.top()};
+            chunks.pop();
+            second = util::optional<chunk_t>{chunks.top()};
+            chunks.pop();
+            std::cerr << " Merging " << first->path() << " ("
+                 << common::bytes_to_units(first->size())
+                 << ") and " << second->path() << " ("
+                 << common::bytes_to_units(second->size())
+                 << "), " << chunks.size() << " remaining        \r";
+        }
+        first->merge_with(*second);
+        mutex.lock();
+        chunks.push(*first);
+        if (chunks.size() > 1) {
+            mutex.unlock();
+            task();
+        } else {
+            mutex.unlock();
+        }
+    };
+    for (size_t i = 0; i < thread_ids.size(); ++i) {
+        futures.emplace_back(pool.submit_task(task));
     }
+
+    for (auto & fut : futures)
+        fut.get();
+
     std::cerr << std::endl;
 
     rename(chunks.top().path().c_str(), filename.c_str());

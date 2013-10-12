@@ -49,9 +49,11 @@ uint64_t chunk<PrimaryKey, SecondaryKey>::size() const
 template <class PrimaryKey, class SecondaryKey>
 void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
 {
-    std::ifstream my_data{_path.c_str()};
-    std::ifstream other_data{other._path.c_str()};
-    std::ofstream output{"chunk-temp"};
+    std::ifstream my_data{_path};
+    std::ifstream other_data{other._path};
+
+    std::string temp_name = _path + "_" + other._path;
+    std::ofstream output{temp_name};
 
     postings_data<PrimaryKey, SecondaryKey> my_pd{PrimaryKey{0}};
     postings_data<PrimaryKey, SecondaryKey> other_pd{PrimaryKey{0}};
@@ -118,7 +120,7 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
     output.close();
     remove(_path.c_str());
     remove(other._path.c_str());
-    rename("chunk-temp", _path.c_str());
+    rename(temp_name.c_str(), _path.c_str());
 
     set_size();
 }

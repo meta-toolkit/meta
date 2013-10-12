@@ -47,7 +47,7 @@ uint32_t inverted_index::tokenize_docs(
 
         // every k documents, write a chunk
         // TODO: make this based on memory usage instead
-        if(doc.id() % 500 == 0)
+        if(doc.id() % 1000 == 0)
         {
             std::vector<PostingsData> vec{to_vector(pdata)};
             write_chunk(chunk_num++, vec);

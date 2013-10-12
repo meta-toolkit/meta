@@ -133,9 +133,26 @@ class optional {
         void swap(optional & other);
 
         /**
-         * Obtains the value contained in the optional.
+         * Obtains the value contained in the optional. Const version.
          */
         const T & operator*() const;
+
+        /**
+         * Obtains the value contained in the optional. Non-const version.
+         */
+        T & operator*();
+
+        /**
+         * Member access operator to the value contained in the optional.
+         * Const version.
+         */
+        const T * operator->() const;
+
+        /**
+         * Member access operator to the value contained in the optional.
+         * Non-const version.
+         */
+        T * operator->();
 
         /**
          * Determines if the optional is engaged.
