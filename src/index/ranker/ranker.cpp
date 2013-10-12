@@ -28,7 +28,8 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
         sd.query_term_count = tpair.second;
         sd.idf = idx.idf(tpair.first);
         sd.corpus_term_count = idx.total_num_occurences(sd.t_id);
-        for(auto & dpair: idx.counts(tpair.first))
+        auto pdata = idx.search_primary(tpair.first);
+        for(auto & dpair: pdata->counts())
         {
             sd.d_id = dpair.first;
             sd.doc_term_count = dpair.second;
