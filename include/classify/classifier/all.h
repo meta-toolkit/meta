@@ -1,8 +1,6 @@
 #include "classify/classifier/knn.h"
-#include "classify/classifier/linear_svm.h"
 #include "classify/classifier/one_vs_all.h"
 #include "classify/classifier/naive_bayes.h"
-#include "classify/classifier/perceptron.h"
 #include "classify/classifier/sgd.h"
 #include "classify/classifier/svm_wrapper.h"
 #include "classify/classifier/winnow.h"

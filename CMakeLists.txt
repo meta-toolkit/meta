@@ -3,8 +3,8 @@ project( meta )
 
 option( USE_LIBCXX "Use libc++ for the C++ standard library" ON )
 
-include_directories( "include/" 
-                     "deps/cpptoml/include/" 
+include_directories( "include/"
+                     "deps/cpptoml/include/"
 )
 
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/lib" )
@@ -25,14 +25,12 @@ add_library( meta-classify
              src/classify/feature_select/select_simple.cpp
              src/classify/confusion_matrix.cpp
              src/classify/feature_select/chi_square.cpp
-             src/classify/feature_select/info_gain.cpp  
+             src/classify/feature_select/info_gain.cpp
              src/classify/feature_select/correlation.cpp
              src/classify/feature_select/odds.cpp
              src/classify/classifier/naive_bayes.cpp
              src/classify/classifier/svm_wrapper.cpp
-             src/classify/classifier/perceptron.cpp
              src/classify/classifier/winnow.cpp
-             src/classify/classifier/linear_svm.cpp
 )
 
 add_library( meta-corpus
@@ -87,7 +85,7 @@ add_library( meta-tokenizers
 )
 
 add_library( meta-topics
-             src/topics/lda_cvb.cpp  
+             src/topics/lda_cvb.cpp
              src/topics/lda_gibbs.cpp
              src/topics/lda_model.cpp
              src/topics/slda.cpp

@@ -105,24 +105,19 @@ int main(int argc, char* argv[])
     //m.print();
     //m.print_stats();
 
-    classify::winnow w{f_idx};
+    classify::winnow winnow{f_idx};
 
-    //classify::linear_svm l2svm{f_idx};
-    //classify::perceptron p{f_idx};
-    //classify::one_vs_all<classify::sgd<classify::loss::huber>> huber_sgd{f_idx};
-    //classify::one_vs_all<classify::sgd<classify::loss::least_squares>> least_squares_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::huber>> huber_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::least_squares>> least_squares_sgd{f_idx};
     classify::one_vs_all<classify::sgd<classify::loss::logistic>> logistic_sgd{f_idx};
-    //classify::one_vs_all<classify::sgd<classify::loss::modified_huber>> mod_huber_sgd{f_idx};
-    //classify::one_vs_all<classify::sgd<classify::loss::perceptron>> perceptron_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::modified_huber>> mod_huber_sgd{f_idx};
+    classify::one_vs_all<classify::sgd<classify::loss::perceptron>> perceptron_sgd{f_idx};
     classify::one_vs_all<classify::sgd<classify::loss::smooth_hinge>> smooth_hinge_sgd{f_idx};
     classify::one_vs_all<classify::sgd<classify::loss::squared_hinge>> squared_hinge_sgd{f_idx};
 
     compare_cv(f_idx,
-               svm,
-               hinge_sgd,
-               smooth_hinge_sgd,
-               squared_hinge_sgd,
-               logistic_sgd);
+               perceptron_sgd,
+               winnow);
 
  // classify::svm_wrapper svm{f_idx,
  //                           *config.get_as<std::string>("liblinear"),
