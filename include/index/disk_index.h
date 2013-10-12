@@ -267,7 +267,7 @@ class disk_index
         /** assigns an integer to each class label (used for liblinear and slda
          * mappings) */
         util::invertible_map<class_label, label_id> _label_ids;
- 
+
     public:
         /**
          * Basic exception for disk_index interactions.
