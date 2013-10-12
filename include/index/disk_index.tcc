@@ -370,7 +370,7 @@ std::string disk_index<PrimaryKey, SecondaryKey>::doc_path(doc_id d_id) const
 template <class PrimaryKey, class SecondaryKey>
 std::vector<doc_id> disk_index<PrimaryKey, SecondaryKey>::docs() const
 {
-    std::vector<doc_id> ret{_doc_id_mapping.size()};
+    std::vector<doc_id> ret(_doc_id_mapping.size());
     std::iota(ret.begin(), ret.end(), 0);
     return ret;
 }
