@@ -127,16 +127,16 @@ void confusion_matrix::print_stats(std::ostream & out) const
     );
 
     size_t width =
-        std::max<size_t>(12, static_cast<std::string>(*max_label).size());
+        std::max<size_t>(12, static_cast<std::string>(*max_label).size() + 2);
 
-    auto w1 = std::setw(width);
-    auto w2 = std::setw(12);
+    auto w1 = std::setw(width + common::make_bold("").size());
+    auto w2 = std::setw(12 + common::make_bold("").size());
     out.precision(3);
     out << std::string(width + 12 * 3, '-') << std::endl
-        << std::left << w1 << "Class"
-        << std::left << w2 << "F1 Score"
-        << std::left << w2 << "Precision"
-        << std::left << w2 << "Recall" << std::endl
+        << std::left << w1 << common::make_bold("Class")
+        << std::left << w2 << common::make_bold("F1 Score")
+        << std::left << w2 << common::make_bold("Precision")
+        << std::left << w2 << common::make_bold("Recall") << std::endl
         << std::string(width + 12 * 3, '-') << std::endl;
 
     for(auto & cls: _classes)
@@ -151,11 +151,19 @@ void confusion_matrix::print_stats(std::ostream & out) const
         t_f1 += f1;
     }
 
+    auto limit = [](double val) {
+        std::stringstream ss;
+        ss.precision(3);
+        ss << val;
+        return ss.str();
+    };
+
     out << std::string(width + 12 * 3, '-') << std::endl
-        << w1 << "Total"
-        << w2 << t_f1 / _classes.size()
-        << w2 << t_prec / _classes.size()
-        << w2 << t_rec / _classes.size() << std::endl
+        << w1 << common::make_bold("Total")
+        << w2 << common::make_bold(limit(t_f1 / _classes.size()))
+        << w2 << common::make_bold(limit(t_prec / _classes.size()))
+        << w2 << common::make_bold(limit(t_rec / _classes.size()))
+        << std::endl
         << std::string(width + 12 * 3, '-') << std::endl
         << _total << " predictions attempted, overall accuracy: "
         << t_corr / _total << std::endl;
