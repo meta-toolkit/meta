@@ -93,39 +93,47 @@ std::unique_ptr<tokenizer> tokenizer::load_tokenizer(const cpptoml::toml_group &
     std::vector<std::shared_ptr<tokenizer>> toks;
     auto tokenizers = config.get_group_array( "tokenizers" );
     for( auto group : tokenizers->array() ) {
-        std::string method = *cpptoml::get_as<std::string>( *group, "method" );
-        if( method == "tree" ) {
-            std::string type = *cpptoml::get_as<std::string>( *group, "treeOpt" );
-            if( type == "Branch" )
+        auto method = group->get_as<std::string>("method");
+        if (!method)
+            throw tokenizer_exception{"failed to find tokenizer method"};
+        if( *method == "tree" ) {
+            auto type = group->get_as<std::string>("treeOpt");
+            if (!type)
+                throw tokenizer_exception{"tree method needed in config file"};
+            if( *type == "Branch" )
                 toks.emplace_back( std::make_shared<tokenizers::branch_tokenizer>() );
-            else if( type == "Depth" )
+            else if( *type == "Depth" )
                 toks.emplace_back( std::make_shared<tokenizers::depth_tokenizer>() );
-            else if( type == "Semi" )
+            else if( *type == "Semi" )
                 toks.emplace_back( std::make_shared<tokenizers::semi_skeleton_tokenizer>() );
-            else if( type == "Skel" )
+            else if( *type == "Skel" )
                 toks.emplace_back( std::make_shared<tokenizers::skeleton_tokenizer>() );
-            else if( type == "Subtree" )
+            else if( *type == "Subtree" )
                 toks.emplace_back( std::make_shared<tokenizers::subtree_tokenizer>() );
-            else if( type == "Tag" )
+            else if( *type == "Tag" )
                 toks.emplace_back( std::make_shared<tokenizers::tag_tokenizer>() );
             else
                 throw tokenizer_exception{ "tree method was not able to be determined" };
-        } else if( method == "ngram" ) {
-            int64_t n_val = *cpptoml::get_as<int64_t>( *group, "ngram" );
-            std::string type = *cpptoml::get_as<std::string>( *group, "ngramOpt" );
-            if( type == "Word" )
-                toks.emplace_back( std::make_shared<tokenizers::ngram_word_tokenizer<>>( n_val ) );
-            else if( type == "FW" )
-                toks.emplace_back( std::make_shared<tokenizers::ngram_fw_tokenizer>( n_val ) );
-            else if( type == "Lex" )
-                toks.emplace_back( std::make_shared<tokenizers::ngram_lex_tokenizer>( n_val ) );
-            else if( type == "POS" )
-                toks.emplace_back( std::make_shared<tokenizers::ngram_pos_tokenizer>( n_val ) );
-            else if( type == "Char" )
-                toks.emplace_back( std::make_shared<tokenizers::ngram_char_tokenizer>( n_val ) );
+        } else if( *method == "ngram" ) {
+            auto n_val = group->get_as<int64_t>("ngram");
+            if (!n_val)
+                throw tokenizer_exception{"ngram size needed in config file"};
+            auto type = group->get_as<std::string>("ngramOpt");
+            if (!type)
+                throw tokenizer_exception{"ngram type needed in config file"};
+            if( *type == "Word" )
+                toks.emplace_back( std::make_shared<tokenizers::ngram_word_tokenizer<>>( *n_val ) );
+            else if( *type == "FW" )
+                toks.emplace_back( std::make_shared<tokenizers::ngram_fw_tokenizer>( *n_val ) );
+            else if( *type == "Lex" )
+                toks.emplace_back( std::make_shared<tokenizers::ngram_lex_tokenizer>( *n_val ) );
+            else if( *type == "POS" )
+                toks.emplace_back( std::make_shared<tokenizers::ngram_pos_tokenizer>( *n_val ) );
+            else if( *type == "Char" )
+                toks.emplace_back( std::make_shared<tokenizers::ngram_char_tokenizer>( *n_val ) );
             else
                 throw tokenizer_exception{ "ngram method was not able to be determined" };
-        } else if (method == "libsvm") {
+        } else if (*method == "libsvm") {
             toks.emplace_back( std::make_shared<tokenizers::libsvm_tokenizer>() );
         } else {
             throw tokenizer_exception{ "method was not able to be determined" };
