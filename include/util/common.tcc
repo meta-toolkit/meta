@@ -5,6 +5,7 @@
 #include <map>
 #include <sstream>
 #include "util/common.h"
+#include "io/mmap_file.h"
 
 namespace meta {
 namespace common {
@@ -15,6 +16,12 @@ std::string to_string(const T & value)
     std::stringstream ss;
     ss << value;
     return ss.str();
+}
+
+uint64_t num_lines(const std::string & filename)
+{
+    io::mmap_file file{filename};
+    return std::count(file.start(), file.start() + file.size(), '\n');
 }
 
 std::string bytes_to_units(double num_bytes)

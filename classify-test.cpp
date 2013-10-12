@@ -11,6 +11,7 @@
 #include "util/common.h"
 #include "util/invertible_map.h"
 #include "classify/classifier/all.h"
+#include "caching/all.h"
 
 using std::cout;
 using std::cerr;

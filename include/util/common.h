@@ -31,6 +31,12 @@ namespace common
     std::string to_string(const T & value);
 
     /**
+     * @param filename
+     * @return the number of newline characters in the paramter
+     */
+    inline uint64_t num_lines(const std::string & filename);
+
+    /**
      * @param str
      * @return the parameter string colored green
      */

@@ -13,9 +13,7 @@
 #include "corpus/document.h"
 #include "index/inverted_index.h"
 #include "index/ranker/all.h"
-#include "caching/dblru_cache.h"
-#include "caching/shard_cache.h"
-#include "caching/splay_cache.h"
+#include "caching/all.h"
 
 #include "util/range.h"
 #include "parallel/parallel_for.h"
