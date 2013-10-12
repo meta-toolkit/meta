@@ -26,22 +26,40 @@ namespace meta
      * Represents the name of a class used in classification or feature
      * selection.
      */
+#define NUSE_OPAQUE_IDENTIFIERS 1
+
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
     MAKE_IDENTIFIER(class_label, std::string)
+#else
+    using class_label = std::string;
+#endif
 
     /*
      * Numbering system for string terms.
      */
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
     MAKE_NUMERIC_IDENTIFIER(term_id, uint64_t)
+#else
+    using term_id = uint64_t;
+#endif
 
     /*
      * Numbering system for documents.
      */
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
     MAKE_NUMERIC_IDENTIFIER(doc_id, uint64_t)
+#else
+    using doc_id = uint64_t;
+#endif
 
     /*
      * Numbering system for class label ids.
      */
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
     MAKE_NUMERIC_IDENTIFIER(label_id, uint32_t)
+#else
+    using label_id = uint32_t;
+#endif
 
     /**
      * Containers to be used for caching purposes.
