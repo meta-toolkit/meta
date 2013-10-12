@@ -43,16 +43,20 @@ sgd<LossFunction>::sgd(index::forward_index & idx,
     max_iter_{max_iter}
 { /* nothing */ }
 
+
 template <class LossFunction>
 double sgd<LossFunction>::predict(doc_id d_id) const {
-    double dot =  coeff_ * bias_ * bias_weight_;
     auto pdata = _idx.search_primary(d_id);
-    for( const auto & count : pdata->counts() ) {
-        dot += coeff_ * count.second * weights_[count.first];
-    }
-    return dot;
+    return predict(pdata->counts());
 }
 
+template <class LossFunction>
+double sgd<LossFunction>::predict(const counts_t & doc) const {
+    double dot = coeff_ * bias_ * bias_weight_;
+    for (const auto & count : doc)
+        dot += coeff_ * count.second * weights_[count.first];
+    return dot;
+}
 
 template <class LossFunction>
 void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
@@ -66,7 +70,11 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
     negative_label_ = class_label{_idx.label(*it)};
 
     std::vector<size_t> indices( docs.size() );
-    std::iota( indices.begin(), indices.end(), 0 );
+    std::vector<int> labels( docs.size() );
+    for( size_t i = 0; i < docs.size(); ++i ) {
+        indices[i] = i;
+        labels[i] = _idx.label(docs[i]) == positive_label_ ? 1 : -1;
+    }
     std::random_device d;
     std::mt19937 g{ d() };
     size_t t = 0;
@@ -77,7 +85,7 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
         for( size_t i = 0; i < indices.size(); ++i ) {
             t += 1;
 
-            // check for convergence every 1000 documents
+            // check for convergence every 10th of the dataset
             if (t % (docs.size() / 10) == 0) {
                 sum_loss /= docs.size() / 10;
                 if (std::abs(prev_sum_loss - sum_loss) < gamma_)
@@ -86,14 +94,13 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
                 sum_loss = 0;
             }
 
-            doc_id doc{docs[indices[i]]};
+            auto pdata = _idx.search_primary(docs[indices[i]]);
+            const counts_t & doc = pdata->counts();
+
             // get output prediction
             // this is the binary case where p is either +1 or -1
             double prediction = predict(doc);
-
-            int actual = -1;
-            if( _idx.label(doc) == positive_label_ )
-                actual = 1;
+            int actual = labels[indices[i]];
 
             sum_loss += loss_.loss(prediction, actual);
 
@@ -110,8 +117,7 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
 
             double update = -alpha_ * error_derivative / coeff_;
             if( update != 0 ) {
-                auto pdata = _idx.search_primary(doc);
-                for( const auto & count : pdata->counts() ) {
+                for (const auto & count : doc) {
                     weights_[ count.first ] += update * count.second;
                 }
                 bias_ += update * bias_weight_;

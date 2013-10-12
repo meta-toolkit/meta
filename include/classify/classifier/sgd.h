@@ -37,7 +37,7 @@ class sgd : public classifier<index::forward_index> {
          */
         sgd(index::forward_index & idx,
             double alpha = 0.001,
-            double gamma = 1e-4,
+            double gamma = 1e-6,
             double bias = 1,
             double lambda = 0.0001,
             size_t max_iter = 50);
@@ -55,7 +55,7 @@ class sgd : public classifier<index::forward_index> {
         sgd(index::forward_index & idx,
             class_label positive_label,
             double alpha = 0.001,
-            double gamma = 1e-4,
+            double gamma = 1e-6,
             double bias = 1,
             double lambda = 0.0001,
             size_t max_iter = 50);
@@ -99,7 +99,6 @@ class sgd : public classifier<index::forward_index> {
 
     private:
 
-
         /// The label for positive examples.
         class_label positive_label_;
 
@@ -133,6 +132,18 @@ class sgd : public classifier<index::forward_index> {
         /// The loss function to be used for the update.
         LossFunction loss_;
 
+        /**
+         * Typedef for the sparse vector training/test instances.
+         */
+        using counts_t = std::vector<std::pair<term_id, double>>;
+
+        /**
+         * Helper function that takes a sparse vector. Used as a
+         * performance optimization during training.
+         *
+         * @param doc the document to form a prediction for
+         */
+        double predict(const counts_t & doc) const;
 };
 
 }
