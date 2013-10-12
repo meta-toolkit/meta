@@ -12,23 +12,35 @@ namespace corpus {
 std::unique_ptr<corpus> corpus::load(const std::string & config_file)
 {
     auto config = cpptoml::parse_file(config_file);
-    std::string type = *config.get_as<std::string>("corpus-type");
-    std::string prefix = *config.get_as<std::string>("prefix");
-    std::string dataset = *config.get_as<std::string>("dataset");
 
-    if(type == "file-corpus")
+    auto type = config.get_as<std::string>("corpus-type");
+    if (!type)
+        throw corpus_exception{"corpus-type missing from configuration file"};
+
+    auto prefix = config.get_as<std::string>("prefix");
+    if (!prefix)
+        throw corpus_exception{"prefix missing from configuration file"};
+
+    auto dataset = config.get_as<std::string>("dataset");
+    if (!dataset)
+        throw corpus_exception{"dataset missing from configuration file"};
+
+    if(*type == "file-corpus")
     {
-        std::string file_list = *config.get_as<std::string>("list");
-        std::string file = prefix + "/"
-            + dataset + "/" + file_list + "-full-corpus.txt";
+        auto file_list = config.get_as<std::string>("list");
+        if (!file_list)
+            throw corpus_exception{"list missing from configuration file"};
+
+        std::string file = *prefix + "/"
+            + *dataset + "/" + *file_list + "-full-corpus.txt";
         return std::unique_ptr<corpus>{
-            new file_corpus{prefix + "/" + dataset + "/", file}
+            new file_corpus{*prefix + "/" + *dataset + "/", file}
         };
     }
-    else if(type == "line-corpus")
+    else if(*type == "line-corpus")
     {
         return std::unique_ptr<corpus>{
-            new line_corpus{prefix + "/" + dataset + "/" + dataset + ".dat"}
+            new line_corpus{*prefix + "/" + *dataset + "/" + *dataset + ".dat"}
         };
     }
     else

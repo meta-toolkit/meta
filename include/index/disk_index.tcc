@@ -19,8 +19,17 @@ template <class Index, class... Args>
 Index make_index(const std::string & config_file, Args &&... args)
 {
     auto config = cpptoml::parse_file(config_file);
+
+    // check if we have paths specified for either kind of index
+    if (!(config.contains("forward-index")
+          && config.contains("inverted-index"))) {
+        throw typename Index::disk_index_exception{
+            "forward-index or inverted-index missing from configuration file"
+        };
+    }
+
     Index idx{config, std::forward<Args>(args)...};
- 
+
     // if index has already been made, load it
     if(mkdir(idx._index_name.c_str(), 0755) == -1)
         idx.load_index();
