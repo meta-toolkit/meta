@@ -60,8 +60,6 @@ add_library( meta-io
 )
 
 add_library( meta-stemmers
-             src/stemmers/no_stemmer.cpp
-             src/stemmers/porter2.cpp
              src/stemmers/porter2_stemmer.cpp
 )
 
