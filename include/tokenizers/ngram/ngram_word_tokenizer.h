@@ -16,23 +16,13 @@
 namespace meta {
 namespace tokenizers {
 
-/**
- * Container for traits for the ngram_word_tokenizer. We need this in order
- * to have the trait parameters be the same, regardless of the outer
- * template.
- */
-struct ngram_word_traits
-{
-    /**
-     * Enumeration for which stemmer (if any) to use.
-     */
-    enum StopwordType { Default, NoStopwords };
-};
-
-template <class Stemmer = stemmers::porter2>
-class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
+class ngram_word_tokenizer: public ngram_tokenizer
 {
     public:
+        enum class stopword_t {
+            Default, None
+        };
+
         /**
          * Constructor.
          * @param n - the value of n to use for the ngrams.
@@ -41,7 +31,9 @@ class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
          */
         ngram_word_tokenizer(
                 size_t n,
-                ngram_word_traits::StopwordType = ngram_word_traits::Default);
+                stopword_t stopwords = stopword_t::Default,
+                std::function<std::string(const std::string &)> stemmer =
+                    stemmers::Porter2Stemmer::stem);
 
         /**
          * Tokenizes a file into a document.
@@ -54,10 +46,13 @@ class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
 
     private:
 
-        /** The stemming function of the Stemmer policy class. */
-        using Stemmer::stem;
+        /** The stemming function */
+        std::function<std::string(const std::string &)> _stemmer;
 
-        /** a stopword list based on the Lemur stopwords */
+        /**
+         * A stopword list based on the stopwords list in the
+         * configuration file
+         * */
         std::unordered_set<std::string> _stopwords;
 
         /**
@@ -68,6 +63,4 @@ class ngram_word_tokenizer: public ngram_tokenizer, private Stemmer
 
 }
 }
-
-#include "tokenizers/ngram/ngram_word_tokenizer.tcc"
 #endif

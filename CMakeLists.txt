@@ -75,6 +75,7 @@ add_library( meta-tokenizers
              src/tokenizers/ngram/ngram_pos_tokenizer.cpp
              src/tokenizers/ngram/ngram_simple_tokenizer.cpp
              src/tokenizers/ngram/ngram_tokenizer.cpp
+             src/tokenizers/ngram/ngram_word_tokenizer.cpp
              src/tokenizers/tree/branch_tokenizer.cpp
              src/tokenizers/tree/depth_tokenizer.cpp
              src/tokenizers/tree/parse_tree.cpp

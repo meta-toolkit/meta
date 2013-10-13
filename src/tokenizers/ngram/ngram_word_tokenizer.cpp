@@ -1,5 +1,5 @@
 /**
- * @file ngram_word_tokenizer.tcc
+ * @file ngram_word_tokenizer.cpp
  * @author Sean Massung
  */
 
@@ -10,18 +10,17 @@
 namespace meta {
 namespace tokenizers {
 
-template <class Stemmer>
-ngram_word_tokenizer<Stemmer>::ngram_word_tokenizer(
+ngram_word_tokenizer::ngram_word_tokenizer(
         size_t n,
-        ngram_word_traits::StopwordType stopwordType):
-    ngram_tokenizer{n}
+        stopword_t stopwords,
+        std::function<std::string(const std::string &)> stemmer)
+: ngram_tokenizer{n}, _stemmer{stemmer}
 {
-    if(stopwordType != ngram_word_traits::NoStopwords)
+    if(stopwords != stopword_t::None)
         init_stopwords();
 }
 
-template <class Stemmer>
-void ngram_word_tokenizer<Stemmer>::tokenize_document(
+void ngram_word_tokenizer::tokenize_document(
         corpus::document & document,
         std::function<term_id(const std::string &)> mapping)
 {
@@ -34,7 +33,7 @@ void ngram_word_tokenizer<Stemmer>::tokenize_document(
         std::string next = "";
         do
         {
-            next = stem(psr.next());
+            next = _stemmer(psr.next());
         } while(_stopwords.find(next) != _stopwords.end() && psr.has_next());
         ngram.push_back(next);
     }
@@ -48,7 +47,7 @@ void ngram_word_tokenizer<Stemmer>::tokenize_document(
         std::string next = "";
         do
         {
-            next = stem(psr.next());
+            next = _stemmer(psr.next());
         } while(_stopwords.find(next) != _stopwords.end() && psr.has_next());
         ngram.push_back(next);
     }
@@ -57,13 +56,12 @@ void ngram_word_tokenizer<Stemmer>::tokenize_document(
     document.increment(mapping(wordify(ngram)), 1);
 }
 
-template <class Stemmer>
-void ngram_word_tokenizer<Stemmer>::init_stopwords()
+void ngram_word_tokenizer::init_stopwords()
 {
     auto config = cpptoml::parse_file("config.toml");
     io::parser p{*config.get_as<std::string>("stop-words"), "\n"};
     while(p.has_next())
-        _stopwords.insert(stem(p.next()));
+        _stopwords.insert(_stemmer(p.next()));
 }
 
 }

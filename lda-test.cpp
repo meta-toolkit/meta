@@ -22,7 +22,7 @@ int print_usage( const std::string & name ) {
 
 template <class Model>
 int run_lda(const std::unique_ptr<corpus::corpus> & docs, size_t topics, double alpha, double beta ) {
-    auto tok = std::make_shared<tokenizers::ngram_word_tokenizer<>>( 1 );
+    auto tok = std::make_shared<tokenizers::ngram_word_tokenizer>( 1 );
     std::vector<corpus::document> tok_docs;
     tok_docs.reserve(docs->size());
     while(docs->has_next()) {

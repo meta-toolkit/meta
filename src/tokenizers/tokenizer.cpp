@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include "util/invertible_map.h"
+#include "stemmers/porter2_stemmer.h"
 #include "tokenizers/tokenizer.h"
 #include "tokenizers/all.h"
 
@@ -115,24 +116,44 @@ std::unique_ptr<tokenizer> tokenizer::load_tokenizer(const cpptoml::toml_group &
             else
                 throw tokenizer_exception{ "tree method was not able to be determined" };
         } else if( *method == "ngram" ) {
+
             auto n_val = group->get_as<int64_t>("ngram");
             if (!n_val)
                 throw tokenizer_exception{"ngram size needed in config file"};
+
             auto type = group->get_as<std::string>("ngramOpt");
             if (!type)
                 throw tokenizer_exception{"ngram type needed in config file"};
-            if( *type == "Word" )
-                toks.emplace_back( std::make_shared<tokenizers::ngram_word_tokenizer<>>( *n_val ) );
-            else if( *type == "FW" )
+
+            if( *type == "Word" ) {
+                // determine stemmer type
+                auto stem = group->get_as<std::string>("stemmer");
+                std::function<std::string(const std::string &)> stemmer =
+                    stemmers::Porter2Stemmer::stem;
+                if (stem && *stem == "None")
+                    stemmer = [](const std::string & str) { return str; };
+
+                // determine whether or not to use stopwords
+                auto stop = group->get_as<bool>("stopwords");
+                auto stopwords =
+                    tokenizers::ngram_word_tokenizer::stopword_t::Default;
+                if (stop && !*stop)
+                    stopwords = tokenizers::ngram_word_tokenizer::stopword_t::None;
+
+                auto tok = std::make_shared<tokenizers::ngram_word_tokenizer>(
+                        *n_val, stopwords, stemmer);
+                toks.emplace_back(std::move(tok));
+            } else if( *type == "FW" ) {
                 toks.emplace_back( std::make_shared<tokenizers::ngram_fw_tokenizer>( *n_val ) );
-            else if( *type == "Lex" )
+            } else if( *type == "Lex" ) {
                 toks.emplace_back( std::make_shared<tokenizers::ngram_lex_tokenizer>( *n_val ) );
-            else if( *type == "POS" )
+            } else if( *type == "POS" ) {
                 toks.emplace_back( std::make_shared<tokenizers::ngram_pos_tokenizer>( *n_val ) );
-            else if( *type == "Char" )
+            } else if( *type == "Char" ) {
                 toks.emplace_back( std::make_shared<tokenizers::ngram_char_tokenizer>( *n_val ) );
-            else
+            } else {
                 throw tokenizer_exception{ "ngram method was not able to be determined" };
+            }
         } else if (*method == "libsvm") {
             toks.emplace_back( std::make_shared<tokenizers::libsvm_tokenizer>() );
         } else {
