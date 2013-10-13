@@ -104,12 +104,6 @@ class inverted_index: public disk_index<term_id, doc_id>
         double total_num_occurences(term_id t_id) const;
 
         /**
-         * @param t_id The term id to find containing documents from
-         * @return a mapping of doc_id -> term occurrence
-         */
-        const std::vector<std::pair<doc_id, double>> counts(term_id t_id) const;
-
-        /**
          * @return the average document length in this index
          */
         double avg_doc_length();

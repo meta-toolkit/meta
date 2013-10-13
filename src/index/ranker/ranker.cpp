@@ -21,7 +21,11 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
                   query
     };
 
-    std::unordered_map<doc_id, double> results;
+    using doc_pair = std::pair<doc_id, double>;
+    std::vector<doc_pair> results(idx.num_docs());
+    for(doc_id i{0}; i < results.size(); ++i) {
+        results[i].first = i;
+    }
     for(auto & tpair: query.frequencies())
     {
         sd.t_id = tpair.first;
@@ -35,19 +39,17 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
             sd.doc_term_count = dpair.second;
             sd.doc_size = idx.doc_size(dpair.first);
             sd.doc_unique_terms = idx.unique_terms(dpair.first);
-            results[dpair.first] += score_one(sd);
+            results[dpair.first].second += score_one(sd);
         }
     }
 
-    using doc_pair = std::pair<doc_id, double>;
-    std::vector<doc_pair> final_results{results.begin(), results.end()};
-    std::sort(final_results.begin(), final_results.end(),
+    std::sort(results.begin(), results.end(),
         [](const doc_pair & a, const doc_pair & b) {
             return a.second > b.second;
         }
     );
 
-    return final_results;
+    return results;
 }
 
 }

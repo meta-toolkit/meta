@@ -109,13 +109,6 @@ double inverted_index::total_num_occurences(term_id t_id) const
     return sum;
 }
 
-const std::vector<std::pair<doc_id, double>>
-inverted_index::counts(term_id t_id) const
-{
-    auto pdata = search_primary(t_id);
-    return pdata->counts();
-}
-
 double inverted_index::avg_doc_length()
 {
     if(_avg_dl == -1.0)
