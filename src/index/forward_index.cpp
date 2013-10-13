@@ -58,13 +58,6 @@ uint32_t forward_index::tokenize_docs(
     return chunk_num;
 }
 
-const std::vector<std::pair<term_id, double>>
-forward_index::counts(doc_id d_id) const
-{
-    auto pdata = search_primary(d_id);
-    return pdata->counts();
-}
-
 std::string forward_index::liblinear_data(doc_id d_id) const
 {
     auto pdata = search_primary(d_id);

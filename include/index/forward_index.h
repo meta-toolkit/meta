@@ -72,12 +72,6 @@ class forward_index: public disk_index<doc_id, term_id>
         virtual ~forward_index() = default;
 
         /**
-         * @param d_id The doc id to find containing terms from
-         * @return a mapping of term_id -> term occurrence
-         */
-        const std::vector<std::pair<term_id, double>> counts(doc_id d_id) const;
-
-        /**
          * @param d_id The document id of the doc to convert to liblinear format
          * @return the string representation liblinear format
          */
