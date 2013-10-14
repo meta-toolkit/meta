@@ -33,7 +33,8 @@ class ngram_word_tokenizer: public ngram_tokenizer
                 size_t n,
                 stopword_t stopwords = stopword_t::Default,
                 std::function<std::string(const std::string &)> stemmer =
-                    stemmers::Porter2Stemmer::stem);
+                    stemmers::porter2{}
+        );
 
         /**
          * Tokenizes a file into a document.

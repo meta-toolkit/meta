@@ -6,7 +6,8 @@
 #include <fstream>
 #include <iostream>
 #include "util/invertible_map.h"
-#include "stemmers/porter2_stemmer.h"
+#include "stemmers/no_stemmer.h"
+#include "stemmers/porter2.h"
 #include "tokenizers/tokenizer.h"
 #include "tokenizers/all.h"
 
@@ -129,9 +130,9 @@ std::unique_ptr<tokenizer> tokenizer::load_tokenizer(const cpptoml::toml_group &
                 // determine stemmer type
                 auto stem = group->get_as<std::string>("stemmer");
                 std::function<std::string(const std::string &)> stemmer =
-                    stemmers::Porter2Stemmer::stem;
+                    stemmers::porter2{};
                 if (stem && *stem == "None")
-                    stemmer = [](const std::string & str) { return str; };
+                    stemmer = stemmers::no_stemmer{};
 
                 // determine whether or not to use stopwords
                 auto stop = group->get_as<bool>("stopwords");
