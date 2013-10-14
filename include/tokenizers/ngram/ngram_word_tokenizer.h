@@ -10,7 +10,7 @@
 #ifndef _NGRAM_WORD_TOKENIZER_H_
 #define _NGRAM_WORD_TOKENIZER_H_
 
-#include "stemmers/porter2_stemmer.h"
+#include "stemmers/porter2.h"
 #include "tokenizers/ngram/ngram_tokenizer.h"
 
 namespace meta {

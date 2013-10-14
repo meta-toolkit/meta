@@ -4,6 +4,7 @@
 
 #include "corpus/document.h"
 #include "corpus/corpus.h"
+#include "stemmers/porter2.h"
 #include "tokenizers/ngram/ngram_word_tokenizer.h"
 #include "topics/lda_gibbs.h"
 #include "topics/parallel_lda_gibbs.h"
