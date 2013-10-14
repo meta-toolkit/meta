@@ -11,6 +11,8 @@
 #define _META_NO_EVICT_CACHE_H_
 
 #include <deque>
+#include <memory>
+#include <mutex>
 
 #include "meta.h"
 #include "util/optional.h"
@@ -47,6 +49,12 @@ class no_evict_cache {
         util::optional<Value> find(const Key & key) const;
 
     private:
+
+        /**
+         * Mutex for locking operations.
+         */
+        std::unique_ptr<std::mutex> mutables_{new std::mutex{}};
+
         /**
          * Contains all of the values inserted thus far. Never shrinks.
          */

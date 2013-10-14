@@ -5,6 +5,7 @@ namespace caching {
 
 template <class Key, class Value>
 void no_evict_cache<Key, Value>::insert(const Key & key, const Value & value) {
+    std::lock_guard<std::mutex> lock{*mutables_};
     if (key >= values_.size())
         values_.resize(key + 1);
     values_[key] = util::optional<Value>{value};
