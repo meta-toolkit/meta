@@ -281,32 +281,29 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
     parallel::thread_pool pool;
     auto thread_ids = pool.thread_ids();
     std::vector<std::future<void>> futures;
-    std::function<void()> task;
-    task = [&]() {
-        util::optional<chunk_t> first;
-        util::optional<chunk_t> second;
-        {
-            std::lock_guard<std::mutex> lock{mutex};
-            if (chunks.size() < 2)
-                return;
-            first = util::optional<chunk_t>{chunks.top()};
-            chunks.pop();
-            second = util::optional<chunk_t>{chunks.top()};
-            chunks.pop();
-            std::cerr << " Merging " << first->path() << " ("
-                 << common::bytes_to_units(first->size())
-                 << ") and " << second->path() << " ("
-                 << common::bytes_to_units(second->size())
-                 << "), " << --remaining << " remaining        \r";
-        }
-        first->merge_with(*second);
-        mutex.lock();
-        chunks.push(*first);
-        if (chunks.size() > 1) {
-            mutex.unlock();
-            task();
-        } else {
-            mutex.unlock();
+    auto task = [&]() {
+        while (true) {
+            util::optional<chunk_t> first;
+            util::optional<chunk_t> second;
+            {
+                std::lock_guard<std::mutex> lock{mutex};
+                if (chunks.size() < 2)
+                    return;
+                first = util::optional<chunk_t>{chunks.top()};
+                chunks.pop();
+                second = util::optional<chunk_t>{chunks.top()};
+                chunks.pop();
+                std::cerr << " Merging " << first->path() << " ("
+                     << common::bytes_to_units(first->size())
+                     << ") and " << second->path() << " ("
+                     << common::bytes_to_units(second->size())
+                     << "), " << --remaining << " remaining        \r";
+            }
+            first->merge_with(*second);
+            {
+                std::lock_guard<std::mutex> lock{mutex};
+                chunks.push(*first);
+            }
         }
     };
     for (size_t i = 0; i < thread_ids.size(); ++i) {
