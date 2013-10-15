@@ -81,9 +81,20 @@ class forward_index: public disk_index<doc_id, term_id>
         /**
          * @param docs The documents to add to the inverted index
          */
-        uint32_t tokenize_docs(const std::unique_ptr<corpus::corpus> & docs);
+        uint32_t tokenize_docs(corpus::corpus * docs) override;
 
     private:
+        class chunk_handler : public disk_index::chunk_handler<chunk_handler> {
+            std::vector<postings_data<doc_id, term_id>> pdata_;
+
+            public:
+                using disk_index::chunk_handler<chunk_handler>::chunk_handler;
+
+                void handle_doc(const corpus::document & doc);
+                std::vector<postings_data<doc_id, term_id>> chunk();
+                ~chunk_handler();
+        };
+
         /**
          * forward_index is a friend of the factory method used to create
          * it.

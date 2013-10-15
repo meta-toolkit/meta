@@ -9,6 +9,7 @@
 #ifndef _DISK_INDEX_H_
 #define _DISK_INDEX_H_
 
+#include <atomic>
 #include <string>
 #include <vector>
 #include <memory>
@@ -159,7 +160,7 @@ class disk_index
         void load_index();
 
         /**
-         * @param chunk_num The current chunk number of the postings file
+         * @param chunk_num The id of the chunk to write
          * @param pdata A collection of postings data to write to the chunk
          */
         void write_chunk(uint32_t chunk_num, std::vector<PostingsData> & pdata);
@@ -203,14 +204,44 @@ class disk_index
         /**
          * @param docs The documents to add to the inverted index
          */
-        virtual uint32_t tokenize_docs(
-                const std::unique_ptr<corpus::corpus> & docs) = 0;
+        virtual uint32_t tokenize_docs(corpus::corpus * docs) = 0;
 
         /**
          * @param d_id The document
          * @return the numerical label_id for a given document's label
          */
         label_id label_id_from_doc(doc_id d_id) const;
+
+        template <class Derived, uint32_t MaxSize = 1000>
+        class chunk_handler {
+            uint32_t chunk_size_{0};
+            disk_index * idx_;
+            std::atomic<uint32_t> & chunk_num_;
+
+            public:
+                chunk_handler(disk_index * idx,
+                              std::atomic<uint32_t> & chunk_num)
+                    : idx_{idx}, chunk_num_{chunk_num}
+                { /* nothing */ }
+
+                void operator()(const corpus::document & doc) {
+                    static_cast<Derived *>(this)->handle_doc(doc);
+                    if (++chunk_size_ % MaxSize == 0)
+                        write_chunk();
+                }
+
+                void write_chunk() {
+                    auto vec = static_cast<Derived *>(this)->chunk();
+                    idx_->write_chunk(chunk_num_.fetch_add(1), vec);
+                    chunk_size_ = 0;
+                }
+        };
+
+        /**
+         * @param docs the documents to create chunks for.
+         */
+        template <class ChunkHandler>
+        uint32_t create_chunks(corpus::corpus * docs);
 
         /**
          * doc_id -> document path mapping.
@@ -244,10 +275,12 @@ class disk_index
          */
         std::vector<uint64_t> _unique_terms;
 
+        /** the total number of term occurrences in the entire corpus */
+        uint64_t _total_corpus_terms;
+
     private:
         /**
-         * @param num_chunks The total number of chunks to merge together to
-         * create the postings file
+         * @param num_chunks The number of chunks to be merged
          * @param filename The name for the postings file
          */
         void merge_chunks(uint32_t num_chunks, const std::string & filename);
@@ -294,8 +327,10 @@ class disk_index
          */
         std::unique_ptr<io::mmap_file> _postings;
 
-        /** assigns an integer to each class label (used for liblinear and slda
-         * mappings) */
+        /**
+         * assigns an integer to each class label (used for liblinear and slda
+         * mappings)
+         */
         util::invertible_map<class_label, label_id> _label_ids;
 
     public:

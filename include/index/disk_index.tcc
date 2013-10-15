@@ -88,14 +88,14 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
 
     // reserve space for all the vectors
     uint64_t num_docs = docs->size();
-    _doc_id_mapping.reserve(num_docs);
-    _doc_sizes.reserve(num_docs);
+    _doc_id_mapping.resize(num_docs);
+    _doc_sizes.resize(num_docs);
+    _labels.resize(num_docs);
+    _unique_terms.resize(num_docs);
     _term_bit_locations.reserve(num_docs * 3); // guess 3x
-    _labels.reserve(num_docs);
-    _unique_terms.reserve(num_docs); // guess 1x
 
     // create postings file
-    uint32_t num_chunks = tokenize_docs(docs);
+    uint32_t num_chunks = tokenize_docs(docs.get());
     merge_chunks(num_chunks, _index_name + "/postings.index");
     compress(_index_name + "/postings.index");
 
@@ -111,6 +111,56 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
     _postings = std::unique_ptr<io::mmap_file>{
         new io::mmap_file{_index_name + "/postings.index"}
     };
+}
+
+template <class PrimaryKey, class SecondaryKey>
+template <class ChunkHandler>
+uint32_t
+disk_index<PrimaryKey, SecondaryKey>::create_chunks(corpus::corpus * docs)
+{
+    std::string progress = "Tokenizing ";
+    std::mutex mutex;
+    std::atomic<uint64_t> total_terms{0};
+    std::atomic<uint32_t> chunk_num{0};
+    auto task = [&]() {
+        ChunkHandler handler{this, chunk_num};
+        while (true) {
+            util::optional<corpus::document> doc;
+            {
+                std::lock_guard<std::mutex> lock{mutex};
+                if (!docs->has_next())
+                    return; // destructor for handler will write
+                            // any intermediate chunks
+                doc = docs->next();
+                common::show_progress(doc->id(), docs->size(), 20, progress);
+            }
+
+            _tokenizer->tokenize(*doc);
+
+            // save metadata
+            _doc_id_mapping[doc->id()] = doc->path();
+            _doc_sizes[doc->id()] = doc->length();
+            _unique_terms[doc->id()] = doc->frequencies().size();
+            _labels[doc->id()] = doc->label();
+            total_terms.fetch_add(doc->length());
+
+            // update chunk
+            handler(*doc);
+        }
+    };
+
+    parallel::thread_pool pool;
+    std::vector<std::future<void>> futures;
+    for (size_t i = 0; i < pool.thread_ids().size(); ++i)
+        futures.emplace_back(pool.submit_task(task));
+
+    for (auto & fut : futures)
+        fut.get();
+    common::end_progress(progress);
+
+    _total_corpus_terms = total_terms;
+
+    return chunk_num;
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -248,7 +298,8 @@ void disk_index<PrimaryKey, SecondaryKey>::write_chunk(
 {
     std::sort(pdata.begin(), pdata.end());
 
-    std::ofstream outfile{"chunk-" + common::to_string(chunk_num)};
+    std::ofstream outfile{"chunk-"
+                          + common::to_string(chunk_num)};
     for(auto & p: pdata)
         outfile << p;
     outfile.close();
@@ -258,8 +309,7 @@ void disk_index<PrimaryKey, SecondaryKey>::write_chunk(
 
 template <class PrimaryKey, class SecondaryKey>
 void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
-        uint32_t num_chunks,
-        const std::string & filename)
+        uint32_t num_chunks, const std::string & filename)
 {
     using chunk_t = chunk<PrimaryKey, SecondaryKey>;
 

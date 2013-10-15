@@ -118,9 +118,20 @@ class inverted_index: public disk_index<term_id, doc_id>
         /**
          * @param docs The documents to add to the inverted index
          */
-        uint32_t tokenize_docs(const std::unique_ptr<corpus::corpus> & docs);
+        uint32_t tokenize_docs(corpus::corpus * docs) override;
 
     private:
+
+        class chunk_handler : public disk_index::chunk_handler<chunk_handler> {
+            std::unordered_map<term_id, PostingsData> pdata_;
+
+            public:
+                using disk_index::chunk_handler<chunk_handler>::chunk_handler;
+
+                void handle_doc(const corpus::document & doc);
+                std::vector<PostingsData> chunk();
+                ~chunk_handler();
+        };
 
         /**
          * @param pdata
@@ -128,12 +139,6 @@ class inverted_index: public disk_index<term_id, doc_id>
          */
         static std::vector<PostingsData> to_vector(
                 std::unordered_map<term_id, PostingsData> & pdata);
-
-        /** average document length in the inverted_index */
-        double _avg_dl;
-
-        /** the total number of term occurences in the entire corpus */
-        uint64_t _total_corpus_terms;
 
 };
 
