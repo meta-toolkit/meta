@@ -117,12 +117,6 @@ PrimaryKey postings_data<PrimaryKey, SecondaryKey>::primary_key() const
 }
 
 template <class PrimaryKey, class SecondaryKey>
-uint64_t postings_data<PrimaryKey, SecondaryKey>::inverse_frequency() const
-{
-    return _counts.size();
-}
-
-template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
         io::compressed_file_writer & writer) const
 {
