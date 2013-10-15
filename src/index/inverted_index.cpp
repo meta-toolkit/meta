@@ -29,12 +29,6 @@ std::vector<postings_data<term_id, doc_id>> inverted_index::to_vector(
     return vec;
 }
 
-uint64_t inverted_index::idf(term_id t_id) const
-{
-    auto pdata = search_primary(t_id);
-    return pdata->inverse_frequency();
-}
-
 double inverted_index::term_freq(term_id t_id, doc_id d_id) const
 {
     auto pdata = search_primary(t_id);

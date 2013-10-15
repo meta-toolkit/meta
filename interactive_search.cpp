@@ -3,6 +3,7 @@
  */
 
 #include <vector>
+#include <algorithm>
 #include <string>
 #include <iostream>
 #include "util/common.h"
@@ -18,6 +19,33 @@ using std::cin;
 using std::cout;
 using std::endl;
 
+std::string get_snippets(const std::string & filename, const std::string & text)
+{
+    std::ifstream in{filename};
+    std::string str{(std::istreambuf_iterator<char>(in)),
+                     std::istreambuf_iterator<char>()};
+    std::string snippets = "";
+    std::string word;
+    std::istringstream iss{text};
+
+    // for each "word" in query
+    while(iss >> word)
+    {
+        // get all occurences of text
+        size_t pos = str.find(word);
+        while(pos != std::string::npos)
+        {
+            std::replace(str.begin(), str.end(), '\n', ' ');
+            int begin = std::max(0, static_cast<int>(pos) - 50);
+            int end = std::min<int>(static_cast<int>(pos) + 50, str.size());
+            snippets += "..." + str.substr(begin, end - begin) + "...\n";
+            pos = str.find(word, pos + 1);
+        }
+    }
+
+    return snippets;
+}
+
 int main(int argc, char* argv[])
 {
     if(argc != 2)
@@ -29,8 +57,8 @@ int main(int argc, char* argv[])
     auto idx = index::make_index<index::inverted_index,
                                  caching::splay_cache>(argv[1], uint32_t{10000});
 
-    index::pivoted_length ranker;
-    //index::okapi_bm25 ranker;
+    //index::pivoted_length ranker;
+    index::okapi_bm25 ranker;
     
     cout << "Enter a query, or type \"exit\" to quit." << endl << endl;
 
@@ -53,9 +81,17 @@ int main(int argc, char* argv[])
         
         cout << "Showing top 10 of " << ranking.size()
              << " results (" << time.count() << "ms)" << endl;
+
         for(size_t i = 0; i < ranking.size() && i < 10; ++i)
-            cout << (i+1) << ". " << idx.doc_name(ranking[i].first)
-                 << " " << ranking[i].second << endl;
+        {
+            std::string path{idx.doc_path(ranking[i].first)};
+            cout << common::make_bold(
+                        common::to_string(i+1) + ". " + path + " ("
+                        + common::to_string(ranking[i].second) + ")"
+                    ) << endl;
+            cout << get_snippets(path, text) << endl << endl;
+
+        }
 
         cout << endl;
     }
