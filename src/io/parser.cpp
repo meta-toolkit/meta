@@ -29,13 +29,15 @@ void parser::parse_string(const std::string & input, const std::string & delims)
     {
         if(invalid.find(input[i]) != invalid.end())
         {
-            // TODO: make sure this calculation is correct
             if(left != i)
-                _tokens.push_back(input.substr(left, i - left));
+                _tokens.emplace_back(input.substr(left, i - left));
             left = i + 1;
         }
     }
 
+    // get last token if there is no delimiter at the EOF
+    if(left != input.size())
+        _tokens.emplace_back(input.substr(left));
 }
 
 void parser::parse_file(const std::string & filename,
@@ -55,10 +57,14 @@ void parser::parse_file(const std::string & filename,
             // only create a string object once we know the exact size and
             // content
             if(left != i)
-                _tokens.push_back(std::string(file + left, i - left));
+                _tokens.emplace_back(file + left, i - left);
             left = i + 1;
         }
     }
+
+    // get last token if there is no delimiter at the EOF
+    if(left != mmap_file.size())
+        _tokens.emplace_back(left, mmap_file.size() - left);
 }
 
 std::string parser::filename() const

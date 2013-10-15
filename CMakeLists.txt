@@ -114,6 +114,16 @@ target_link_libraries( search
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
+add_executable( interactive_search interactive_search.cpp )
+target_link_libraries( interactive_search
+                       meta-index
+                       meta-tokenizers
+                       meta-stemmers
+                       meta-io
+                       meta-corpus
+                       ${CMAKE_THREAD_LIBS_INIT}
+)
+
 add_executable( threadpool-test threadpool-test.cpp )
 target_link_libraries( threadpool-test
                        ${CMAKE_THREAD_LIBS_INIT}

@@ -7,6 +7,8 @@
 #include "util/common.h"
 #include "io/parser.h"
 
+using namespace std;
+
 namespace meta {
 namespace tokenizers {
 
@@ -24,7 +26,7 @@ void ngram_word_tokenizer::tokenize_document(
         corpus::document & document,
         std::function<term_id(const std::string &)> mapping)
 {
-    meta::io::parser psr{document.path() + ".sen", " \n"};
+    io::parser psr{create_parser(document, ".sen", " \n")};
 
     // initialize the ngram
     std::deque<std::string> ngram;
