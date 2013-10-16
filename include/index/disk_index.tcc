@@ -48,35 +48,33 @@ cached_index<Index, Cache> make_index(const std::string & config_file,
                                                   std::forward<Args>(args)...);
 }
 
-template <class PrimaryKey, class SecondaryKey>
-disk_index<PrimaryKey, SecondaryKey>::disk_index(
-        const cpptoml::toml_group & config,
-        const std::string & index_path):
+template <class DerivedIndex>
+disk_index<DerivedIndex>::disk_index(const cpptoml::toml_group & config,
+                                     const std::string & index_path):
     _tokenizer{ tokenizers::tokenizer::load_tokenizer(config) },
     _index_name{ index_path }
 { /* nothing */ }
 
-template <class PrimaryKey, class SecondaryKey>
-std::string disk_index<PrimaryKey, SecondaryKey>::index_name() const
+template <class DerivedIndex>
+std::string disk_index<DerivedIndex>::index_name() const
 {
     return _index_name;
 }
 
-template <class PrimaryKey, class SecondaryKey>
-uint64_t disk_index<PrimaryKey, SecondaryKey>::unique_terms(doc_id d_id) const
+template <class DerivedIndex>
+uint64_t disk_index<DerivedIndex>::unique_terms(doc_id d_id) const
 {
     return _unique_terms.at(d_id);
 }
 
-template <class PrimaryKey, class SecondaryKey>
-uint64_t disk_index<PrimaryKey, SecondaryKey>::unique_terms() const
+template <class DerivedIndex>
+uint64_t disk_index<DerivedIndex>::unique_terms() const
 {
     return _tokenizer->num_terms();
 }
 
-template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::create_index(
-        const std::string & config_file)
+template <class DerivedIndex>
+void disk_index<DerivedIndex>::create_index(const std::string & config_file)
 {
     // save the config file so we can recreate the tokenizer
     std::ifstream source_config{config_file.c_str(), std::ios::binary};
@@ -113,17 +111,15 @@ void disk_index<PrimaryKey, SecondaryKey>::create_index(
     };
 }
 
-template <class PrimaryKey, class SecondaryKey>
-template <class ChunkHandler>
-uint32_t
-disk_index<PrimaryKey, SecondaryKey>::create_chunks(corpus::corpus * docs)
+template <class DerivedIndex>
+uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
 {
     std::string progress = "Tokenizing ";
     std::mutex mutex;
     std::atomic<uint64_t> total_terms{0};
     std::atomic<uint32_t> chunk_num{0};
     auto task = [&]() {
-        ChunkHandler handler{this, chunk_num};
+        typename DerivedIndex::chunk_handler handler{this, chunk_num};
         while (true) {
             util::optional<corpus::document> doc;
             {
@@ -163,12 +159,12 @@ disk_index<PrimaryKey, SecondaryKey>::create_chunks(corpus::corpus * docs)
     return chunk_num;
 }
 
-template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::calc_compression_mapping(
+template <class DerivedIndex>
+void disk_index<DerivedIndex>::calc_compression_mapping(
         const std::string & filename)
 {
     std::ifstream in{filename};
-    PostingsData pdata{PrimaryKey{0}};
+    postings_data_type pdata{primary_key_type{0}};
     std::unordered_map<uint64_t, uint64_t> freqs;
 
     while(in >> pdata)
@@ -200,8 +196,8 @@ void disk_index<PrimaryKey, SecondaryKey>::calc_compression_mapping(
         _compression_mapping.insert(p.first, counter++);
 }
 
-template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::compress(
+template <class DerivedIndex>
+void disk_index<DerivedIndex>::compress(
         const std::string & filename)
 {
     std::cerr << "Calculating optimal compression mapping..." << std::endl;
@@ -216,7 +212,7 @@ void disk_index<PrimaryKey, SecondaryKey>::compress(
     {
         io::compressed_file_writer out{cfilename, _compression_mapping};
 
-        PostingsData pdata{PrimaryKey{0}};
+        postings_data_type pdata{primary_key_type{0}};
         std::ifstream in{filename};
 
         // note: we will be accessing pdata in sorted order
@@ -236,8 +232,8 @@ void disk_index<PrimaryKey, SecondaryKey>::compress(
     rename(cfilename.c_str(), filename.c_str());
 }
 
-template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::load_index()
+template <class DerivedIndex>
+void disk_index<DerivedIndex>::load_index()
 {
     std::cerr << "Loading index from disk ("
          << _index_name << ")..." << std::endl;
@@ -259,21 +255,21 @@ void disk_index<PrimaryKey, SecondaryKey>::load_index()
     };
 }
 
-template <class PrimaryKey, class SecondaryKey>
-class_label disk_index<PrimaryKey, SecondaryKey>::label(doc_id d_id) const
+template <class DerivedIndex>
+class_label disk_index<DerivedIndex>::label(doc_id d_id) const
 {
     return _labels.at(d_id);
 }
 
-template <class PrimaryKey, class SecondaryKey>
+template <class DerivedIndex>
 class_label
-disk_index<PrimaryKey, SecondaryKey>::class_label_from_id(label_id l_id) const
+disk_index<DerivedIndex>::class_label_from_id(label_id l_id) const
 {
     return _label_ids.get_key(l_id);
 }
 
-template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::set_label_ids()
+template <class DerivedIndex>
+void disk_index<DerivedIndex>::set_label_ids()
 {
     std::unordered_set<class_label> labels;
     for(auto & lbl: _labels)
@@ -284,17 +280,17 @@ void disk_index<PrimaryKey, SecondaryKey>::set_label_ids()
         _label_ids.insert(lbl, i++);
 }
 
-template <class PrimaryKey, class SecondaryKey>
+template <class DerivedIndex>
 label_id
-disk_index<PrimaryKey, SecondaryKey>::label_id_from_doc(doc_id d_id) const
+disk_index<DerivedIndex>::label_id_from_doc(doc_id d_id) const
 {
     return _label_ids.get_value(_labels.at(d_id));
 }
 
-template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::write_chunk(
+template <class DerivedIndex>
+void disk_index<DerivedIndex>::write_chunk(
         uint32_t chunk_num,
-        std::vector<postings_data<PrimaryKey, SecondaryKey>> & pdata)
+        std::vector<postings_data_type> & pdata)
 {
     std::sort(pdata.begin(), pdata.end());
 
@@ -307,11 +303,11 @@ void disk_index<PrimaryKey, SecondaryKey>::write_chunk(
     pdata.clear();
 }
 
-template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
+template <class DerivedIndex>
+void disk_index<DerivedIndex>::merge_chunks(
         uint32_t num_chunks, const std::string & filename)
 {
-    using chunk_t = chunk<PrimaryKey, SecondaryKey>;
+    using chunk_t = chunk<primary_key_type, secondary_key_type>;
 
     // create priority queue of all chunks based on size
     std::priority_queue<chunk_t> chunks;
@@ -372,9 +368,9 @@ void disk_index<PrimaryKey, SecondaryKey>::merge_chunks(
               << std::endl;
 }
 
-template <class PrimaryKey, class SecondaryKey>
+template <class DerivedIndex>
 template <class Key, class Value>
-void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
+void disk_index<DerivedIndex>::save_mapping(
         const util::invertible_map<Key, Value> & map,
         const std::string & filename)
 {
@@ -383,9 +379,9 @@ void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
         outfile << p.first << " " << p.second << "\n";
 }
 
-template <class PrimaryKey, class SecondaryKey>
+template <class DerivedIndex>
 template <class T>
-void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
+void disk_index<DerivedIndex>::save_mapping(
         const std::vector<T> & vec, const std::string & filename)
 {
     std::ofstream outfile{filename};
@@ -393,9 +389,9 @@ void disk_index<PrimaryKey, SecondaryKey>::save_mapping(
         outfile << v << "\n";
 }
 
-template <class PrimaryKey, class SecondaryKey>
+template <class DerivedIndex>
 template <class Key, class Value>
-void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
+void disk_index<DerivedIndex>::load_mapping(
         util::invertible_map<Key, Value> & map, const std::string & filename)
 {
     std::ifstream input{filename};
@@ -405,9 +401,9 @@ void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
         map.insert(std::make_pair(k, v));
 }
 
-template <class PrimaryKey, class SecondaryKey>
+template <class DerivedIndex>
 template <class T>
-void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
+void disk_index<DerivedIndex>::load_mapping(
         std::vector<T> & vec, const std::string & filename)
 {
     std::ifstream input{filename};
@@ -419,59 +415,59 @@ void disk_index<PrimaryKey, SecondaryKey>::load_mapping(
         vec.push_back(val);
 }
 
-template <class PrimaryKey, class SecondaryKey>
-double disk_index<PrimaryKey, SecondaryKey>::doc_size(doc_id d_id) const
+template <class DerivedIndex>
+double disk_index<DerivedIndex>::doc_size(doc_id d_id) const
 {
     return _doc_sizes.at(d_id);
 }
 
-template <class PrimaryKey, class SecondaryKey>
-uint64_t disk_index<PrimaryKey, SecondaryKey>::num_docs() const
+template <class DerivedIndex>
+uint64_t disk_index<DerivedIndex>::num_docs() const
 {
     return _doc_sizes.size();
 }
 
-template <class PrimaryKey, class SecondaryKey>
-std::string disk_index<PrimaryKey, SecondaryKey>::doc_name(doc_id d_id) const
+template <class DerivedIndex>
+std::string disk_index<DerivedIndex>::doc_name(doc_id d_id) const
 {
     auto path = doc_path(d_id);
     return path.substr(path.find_last_of("/") + 1);
 }
 
-template <class PrimaryKey, class SecondaryKey>
-std::string disk_index<PrimaryKey, SecondaryKey>::doc_path(doc_id d_id) const
+template <class DerivedIndex>
+std::string disk_index<DerivedIndex>::doc_path(doc_id d_id) const
 {
     return _doc_id_mapping.at(d_id);
 }
 
-template <class PrimaryKey, class SecondaryKey>
-std::vector<doc_id> disk_index<PrimaryKey, SecondaryKey>::docs() const
+template <class DerivedIndex>
+std::vector<doc_id> disk_index<DerivedIndex>::docs() const
 {
     std::vector<doc_id> ret(_doc_id_mapping.size());
     std::iota(ret.begin(), ret.end(), 0);
     return ret;
 }
 
-template <class PrimaryKey, class SecondaryKey>
-void disk_index<PrimaryKey, SecondaryKey>::tokenize(corpus::document & doc)
+template <class DerivedIndex>
+void disk_index<DerivedIndex>::tokenize(corpus::document & doc)
 {
     _tokenizer->tokenize(doc);
 }
 
-template <class PrimaryKey, class SecondaryKey>
-std::shared_ptr<postings_data<PrimaryKey, SecondaryKey>>
-disk_index<PrimaryKey, SecondaryKey>::search_primary(PrimaryKey p_id) const
+template <class DerivedIndex>
+auto disk_index<DerivedIndex>::search_primary(primary_key_type p_id) const
+    -> std::shared_ptr<postings_data_type>
 {
     uint64_t idx{p_id};
 
     // if the term doesn't exist in the index, return an empty postings_data
     if(idx >= _term_bit_locations.size())
-        return std::make_shared<PostingsData>(p_id);
+        return std::make_shared<postings_data_type>(p_id);
 
     io::compressed_file_reader reader{*_postings, _compression_mapping};
     reader.seek(_term_bit_locations.at(idx));
 
-    auto pdata = std::make_shared<PostingsData>(p_id);
+    auto pdata = std::make_shared<postings_data_type>(p_id);
     pdata->read_compressed(reader);
 
     return pdata;

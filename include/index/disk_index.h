@@ -26,16 +26,29 @@ namespace meta {
 namespace index {
 
 /**
+ * A traits class for the indexes. Specifies what the primary key,
+ * secondary key, and postings data types are.
+ */
+template <class Index>
+struct index_traits;
+
+/**
  * Contains functionality common to inverted_index and forward_index; mainly,
  * creating chunks and merging them together and storing various mappings.
  */
-template <class PrimaryKey, class SecondaryKey>
+template <class DerivedIndex>
 class disk_index
 {
     public:
-        using primary_key_type = PrimaryKey;
-        using secondary_key_type = SecondaryKey;
-        using PostingsData = postings_data<PrimaryKey, SecondaryKey>;
+        friend DerivedIndex;
+
+        using primary_key_type =
+            typename index_traits<DerivedIndex>::primary_key_type;
+        using secondary_key_type =
+            typename index_traits<DerivedIndex>::secondary_key_type;
+        using postings_data_type =
+            typename index_traits<DerivedIndex>::postings_data_type;
+
     protected:
         /**
          * @param config The toml_group that specifies how to create the
@@ -141,8 +154,8 @@ class disk_index
          * @return the postings data for a given PrimaryKey
          * A cache is first searched before the postings file is queried.
          */
-        virtual std::shared_ptr<PostingsData>
-        search_primary(PrimaryKey p_id) const;
+        virtual std::shared_ptr<postings_data_type>
+        search_primary(primary_key_type p_id) const;
 
     protected:
         /**
@@ -163,7 +176,9 @@ class disk_index
          * @param chunk_num The id of the chunk to write
          * @param pdata A collection of postings data to write to the chunk
          */
-        void write_chunk(uint32_t chunk_num, std::vector<PostingsData> & pdata);
+        void write_chunk(
+                uint32_t chunk_num,
+                std::vector<postings_data_type> & pdata);
 
         /**
          * Saves any arbitrary mapping to the disk.
@@ -202,46 +217,62 @@ class disk_index
                                  const std::string & filename);
 
         /**
-         * @param docs The documents to add to the inverted index
-         */
-        virtual uint32_t tokenize_docs(corpus::corpus * docs) = 0;
-
-        /**
          * @param d_id The document
          * @return the numerical label_id for a given document's label
          */
         label_id label_id_from_doc(doc_id d_id) const;
 
+        /**
+         * @param docs The documents to be tokenized
+         * @return the number of chunks created
+         */
+        uint32_t tokenize_docs(corpus::corpus * docs);
+
+        /**
+         * A handler for writing chunks to disk during the tokenization
+         * process. This is a CRTP base class, whose derived classes must
+         * implement the handle_doc() and chunk() methods, as well as a
+         * proper destructor.
+         */
         template <class Derived, uint32_t MaxSize = 1000>
         class chunk_handler {
+            /** the current size of the in-memory chunk */
             uint32_t chunk_size_{0};
+
+            /** a back-pointer to the index this handler is operating on */
             disk_index * idx_;
+
+            /** the current chunk number */
             std::atomic<uint32_t> & chunk_num_;
 
             public:
+                /**
+                 * creates a new handler on the given index, using the
+                 * given atomic to keep track of the current chunk number.
+                 */
                 chunk_handler(disk_index * idx,
                               std::atomic<uint32_t> & chunk_num)
                     : idx_{idx}, chunk_num_{chunk_num}
                 { /* nothing */ }
 
+                /**
+                 * Handles a document.
+                 */
                 void operator()(const corpus::document & doc) {
                     static_cast<Derived *>(this)->handle_doc(doc);
                     if (++chunk_size_ % MaxSize == 0)
                         write_chunk();
                 }
 
+                /**
+                 * Writes the current in-memory chunk to the disk.
+                 */
                 void write_chunk() {
                     auto vec = static_cast<Derived *>(this)->chunk();
                     idx_->write_chunk(chunk_num_.fetch_add(1), vec);
                     chunk_size_ = 0;
                 }
         };
-
-        /**
-         * @param docs the documents to create chunks for.
-         */
-        template <class ChunkHandler>
-        uint32_t create_chunks(corpus::corpus * docs);
 
         /**
          * doc_id -> document path mapping.

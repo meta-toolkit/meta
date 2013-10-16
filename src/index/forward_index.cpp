@@ -17,13 +17,8 @@ namespace index {
 
 
 forward_index::forward_index(const cpptoml::toml_group & config):
-    disk_index{config, *cpptoml::get_as<std::string>(config, "forward-index")}
+    base{config, *cpptoml::get_as<std::string>(config, "forward-index")}
 { /* nothing */ }
-
-uint32_t forward_index::tokenize_docs(corpus::corpus * docs)
-{
-    return create_chunks<chunk_handler>(docs);
-}
 
 std::string forward_index::liblinear_data(doc_id d_id) const
 {

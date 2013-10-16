@@ -10,18 +10,13 @@ namespace meta {
 namespace index {
 
 inverted_index::inverted_index(const cpptoml::toml_group & config):
-    disk_index{config, *cpptoml::get_as<std::string>(config, "inverted-index")}
+    base{config, *cpptoml::get_as<std::string>(config, "inverted-index")}
 { /* nothing */ }
-
-uint32_t inverted_index::tokenize_docs(corpus::corpus * docs)
-{
-    return create_chunks<chunk_handler>(docs);
-}
 
 std::vector<postings_data<term_id, doc_id>> inverted_index::to_vector(
         std::unordered_map<term_id, postings_data<term_id, doc_id>> & pdata)
 {
-    std::vector<PostingsData> vec;
+    std::vector<postings_data_type> vec;
     vec.reserve(pdata.size());
     for(auto & p: pdata)
         vec.push_back(p.second);
@@ -64,7 +59,7 @@ double inverted_index::avg_doc_length()
 
 void inverted_index::chunk_handler::handle_doc(const corpus::document & doc) {
     for (const auto & f : doc.frequencies()) {
-        PostingsData pd{f.first};
+        postings_data_type pd{f.first};
         pd.increase_count(doc.id(), f.second);
         auto it = pdata_.find(f.first);
         if (it == pdata_.end())

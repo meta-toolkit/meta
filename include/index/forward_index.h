@@ -19,6 +19,18 @@
 namespace meta {
 namespace index {
 
+class forward_index;
+
+/**
+ * A specialization of the traits class for forward indexes.
+ */
+template <>
+struct index_traits<forward_index> {
+    using primary_key_type   = doc_id;
+    using secondary_key_type = term_id;
+    using postings_data_type = postings_data<doc_id, term_id>;
+};
+
 /**
  * The forward_index stores information on a corpus by doc_ids.  Each doc_id key
  * is associated with a distribution of term_ids or term "counts" that occur in
@@ -34,8 +46,11 @@ namespace index {
  *  - docsizes.counts: maps doc_id -> number of terms
  *  - config.toml: saves the tokenizer configuration
  */
-class forward_index: public disk_index<doc_id, term_id>
+class forward_index: public disk_index<forward_index>
 {
+    using base = disk_index<forward_index>;
+    friend base;
+
     protected:
         /**
          * @param config The toml_group that specifies how to create the
@@ -77,21 +92,34 @@ class forward_index: public disk_index<doc_id, term_id>
          */
         std::string liblinear_data(doc_id d_id) const;
 
-    protected:
-        /**
-         * @param docs The documents to add to the inverted index
-         */
-        uint32_t tokenize_docs(corpus::corpus * docs) override;
-
     private:
-        class chunk_handler : public disk_index::chunk_handler<chunk_handler> {
+        /**
+         * The chunk handler for forward indexes.
+         */
+        class chunk_handler : public base::chunk_handler<chunk_handler> {
+            /** the current in-memory chunk */
             std::vector<postings_data<doc_id, term_id>> pdata_;
 
             public:
-                using disk_index::chunk_handler<chunk_handler>::chunk_handler;
+                // inherit the base class constructor
+                using base::chunk_handler<chunk_handler>::chunk_handler;
 
+                /**
+                 * Handler for when a given doc has been successfully
+                 * tokenized.
+                 */
                 void handle_doc(const corpus::document & doc);
+
+                /**
+                 * Returns an in-memory chunk ready for being written to
+                 * the disk.
+                 */
                 std::vector<postings_data<doc_id, term_id>> chunk();
+
+                /**
+                 * Destroys the handler, writing to disk any chunk data
+                 * still resident in memory.
+                 */
                 ~chunk_handler();
         };
 

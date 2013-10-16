@@ -42,6 +42,7 @@ class cached_index : public Index {
 
         using primary_key_type   = typename Index::primary_key_type;
         using secondary_key_type = typename Index::secondary_key_type;
+        using postings_data_type = typename Index::postings_data_type;
 
         /**
          * Overload for search_primary() that first attempts to find the
@@ -51,17 +52,14 @@ class cached_index : public Index {
          *
          * @param p_id the primary key to search the postings file for
          */
-        virtual std::shared_ptr<postings_data<primary_key_type,
-                                              secondary_key_type>>
+        virtual std::shared_ptr<postings_data_type>
         search_primary(primary_key_type p_id) const override;
     private:
         /**
          * The internal cache object.
          */
         mutable Cache<primary_key_type,
-                      std::shared_ptr<postings_data<primary_key_type,
-                                                    secondary_key_type>
-                      >
+                      std::shared_ptr<postings_data_type>
                 > cache_;
 };
 

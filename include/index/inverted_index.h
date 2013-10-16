@@ -18,6 +18,18 @@
 namespace meta {
 namespace index {
 
+class inverted_index;
+
+/**
+ * A specialization of the traits class for inverted indexes.
+ */
+template <>
+struct index_traits<inverted_index> {
+    using primary_key_type   = term_id;
+    using secondary_key_type = doc_id;
+    using postings_data_type = postings_data<term_id, doc_id>;
+};
+
 /**
  * The inverted_index class stores information on a corpus indexed by term_ids.
  * Each term_id key is associated with an IDF (inverse document frequency) and
@@ -41,8 +53,11 @@ namespace index {
  *  - docsizes.counts: maps doc_id -> number of terms
  *  - config.toml: saves the tokenizer configuration
  */
-class inverted_index: public disk_index<term_id, doc_id>
+class inverted_index: public disk_index<inverted_index>
 {
+    using base = disk_index<inverted_index>;
+    friend base;
+
     protected:
         /**
          * @param config The toml_group that specifies how to create the
@@ -51,8 +66,6 @@ class inverted_index: public disk_index<term_id, doc_id>
         inverted_index(const cpptoml::toml_group & config);
 
     public:
-        using PostingsData = postings_data<term_id, doc_id>;
-
         /**
          * Move constructs an inverted index.
          * @param other The inverted_index to move into this one.
@@ -114,22 +127,35 @@ class inverted_index: public disk_index<term_id, doc_id>
          */
         friend inverted_index make_index<inverted_index>(const std::string &);
 
-    protected:
-        /**
-         * @param docs The documents to add to the inverted index
-         */
-        uint32_t tokenize_docs(corpus::corpus * docs) override;
-
     private:
 
-        class chunk_handler : public disk_index::chunk_handler<chunk_handler> {
-            std::unordered_map<term_id, PostingsData> pdata_;
+        /**
+         * The chunk handler for inverted indexes.
+         */
+        class chunk_handler : public base::chunk_handler<chunk_handler> {
+            /** the current in-memory chunk */
+            std::unordered_map<term_id, postings_data_type> pdata_;
 
             public:
-                using disk_index::chunk_handler<chunk_handler>::chunk_handler;
+                // inherit the base class constructor
+                using base::chunk_handler<chunk_handler>::chunk_handler;
 
+                /**
+                 * Handler for when a given doc has been successfully
+                 * tokenized.
+                 */
                 void handle_doc(const corpus::document & doc);
-                std::vector<PostingsData> chunk();
+
+                /**
+                 * Returns an in-memory chunk ready for being written to
+                 * the disk.
+                 */
+                std::vector<postings_data_type> chunk();
+
+                /**
+                 * Destroys the handler, writing to disk any chunk data
+                 * still resident in memory.
+                 */
                 ~chunk_handler();
         };
 
@@ -137,8 +163,8 @@ class inverted_index: public disk_index<term_id, doc_id>
          * @param pdata
          * @return a vector version of postings data for writing chunks
          */
-        static std::vector<PostingsData> to_vector(
-                std::unordered_map<term_id, PostingsData> & pdata);
+        static std::vector<postings_data_type> to_vector(
+                std::unordered_map<term_id, postings_data_type> & pdata);
 
 };
 
