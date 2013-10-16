@@ -14,11 +14,11 @@ cached_index<Index, Cache>::cached_index(cpptoml::toml_group & config,
     : Index{config}, cache_{std::forward<Args>(args)...} { /* nothing */ }
 
 template <class Index, template <class, class> class Cache>
-std::shared_ptr<postings_data<typename Index::primary_key_type,
-                              typename Index::secondary_key_type>>
-cached_index<Index, Cache>::search_primary(primary_key_type p_id) const {
+auto cached_index<Index, Cache>::search_primary(primary_key_type p_id) const
+    -> std::shared_ptr<postings_data_type>
+{
     auto opt = cache_.find(p_id);
-    if(opt)
+    if (opt)
         return *opt;
     auto result = Index::search_primary(p_id);
     cache_.insert(p_id, result);
