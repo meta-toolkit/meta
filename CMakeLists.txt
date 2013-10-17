@@ -57,6 +57,7 @@ add_library( meta-io
              src/io/parser.cpp
              src/io/compressed_file_writer.cpp
              src/io/mmap_file.cpp
+             src/io/file_writer.cpp
 )
 
 add_library( meta-stemmers
