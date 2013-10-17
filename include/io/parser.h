@@ -8,8 +8,9 @@
 #ifndef _PARSER_H_
 #define _PARSER_H_
 
-#include <vector>
 #include <string>
+#include <unordered_set>
+#include "io/mmap_file.h"
 
 namespace meta {
 namespace io {
@@ -59,17 +60,31 @@ class parser
 
     private:
 
-        void parse_file(const std::string & filename,
-                const std::string & delims);
+        /**
+         * Advances to the next token in the file or string, saving the result.
+         */
+        void get_next();
 
-        void parse_string(const std::string & input,
-                const std::string & delims);
-
+        /** the current position of the "cursor" into the file or string */
         size_t _idx;
 
+        /** invalid characters that serve as delimiters */
+        std::unordered_set<char> _invalid;
+
+        /** saves the name of the file if the parser is parsing a file */
         std::string _filename;
 
-        std::vector<std::string> _tokens;
+        /** memory-mapped file pointer if the parser is parsing a file */
+        std::unique_ptr<io::mmap_file> _mmap_file;
+
+        /** the number of characters that will be read */
+        uint64_t _size;
+
+        /** pointer into a string or memory-mapped file */
+        const char* _data;
+
+        /** the next token to be returned; "" if none */
+        std::string _next;
 };
 
 }
