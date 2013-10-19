@@ -22,9 +22,7 @@ chunk<PrimaryKey, SecondaryKey>::chunk(const std::string & path):
 template <class PrimaryKey, class SecondaryKey>
 void chunk<PrimaryKey, SecondaryKey>::set_size()
 {
-    struct stat st;
-    stat(_path.c_str(), &st);
-    _size = st.st_size;
+    _size = common::file_size(_path);
 }
 
 template <class PrimaryKey, class SecondaryKey>

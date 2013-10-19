@@ -31,6 +31,13 @@ namespace common
     std::string to_string(const T & value);
 
     /**
+     * Calculates a file's size in bytes with support for files over 4GB.
+     * @param filename The path for the file
+     * @return the number of bytes in the file
+     */
+    inline uint64_t file_size(const std::string & filename);
+
+    /**
      * @param filename
      * @return the number of newline characters in the paramter
      */

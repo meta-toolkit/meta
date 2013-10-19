@@ -4,6 +4,7 @@
 
 #include <map>
 #include <sstream>
+#include <sys/stat.h>
 #include "util/common.h"
 #include "io/mmap_file.h"
 
@@ -16,6 +17,13 @@ std::string to_string(const T & value)
     std::stringstream ss;
     ss << value;
     return ss.str();
+}
+
+uint64_t file_size(const std::string & filename)
+{
+    struct stat64 st;
+    stat64(filename.c_str(), &st);
+    return st.st_size;
 }
 
 uint64_t num_lines(const std::string & filename)

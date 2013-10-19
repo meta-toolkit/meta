@@ -19,6 +19,7 @@ line_corpus::line_corpus(const std::string & file):
 {
     std::cerr << "Counting number of lines in corpus file..." << std::endl;
     _num_lines = common::num_lines(file);
+    std::cerr << "Found " << _num_lines << " documents in corpus." << std::endl;
 }
 
 bool line_corpus::has_next() const
@@ -28,8 +29,11 @@ bool line_corpus::has_next() const
 
 document line_corpus::next()
 {
-    document d{"[NONE]", doc_id{_cur++}};
-    d.set_content(_parser.next());
+    std::string content = _parser.next();
+    size_t space = content.find_first_of(" ");
+    std::string name = common::to_string(_cur) + "_" + content.substr(0, space);
+    document d{name, doc_id{_cur++}};
+    d.set_content(content);
     return d;
 }
 

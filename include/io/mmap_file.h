@@ -12,8 +12,6 @@
 #include <stdio.h>
 #include <string>
 #include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 namespace meta {
@@ -28,27 +26,30 @@ class mmap_file
 
         /**
          * Constructor.
-         * @param path - creates a TextFile object from the given filename
+         * @param path Path to the text file to open
          */
         mmap_file(const std::string & path);
 
         /**
-         * Destructor; deallocates memory used to store this object, closing the text file.
+         * Destructor; deallocates memory used to store this object, closing the
+         * text file.
          */
         ~mmap_file();
 
         /**
-         * @return a pointer to the beginning of the text file; nullptr if unsuccessful
+         * @return a pointer to the beginning of the text file; nullptr if
+         * unsuccessful
          */
         char* start() const;
 
         /**
          * @return the length of the file in bytes
          */
-        unsigned int size() const;
+        uint64_t size() const;
 
         /**
-         * @return the title of the text file (the parameter given to the contructor)
+         * @return the title of the text file (the parameter given to the
+         * contructor)
          */
         std::string path() const;
 
@@ -61,7 +62,7 @@ class mmap_file
         char* _start;
 
         /** size of the current text file */
-        unsigned int _size;
+        uint64_t _size;
 
         /** file descriptor for the open text file */
         int _file_descriptor;

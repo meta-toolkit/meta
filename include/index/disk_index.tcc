@@ -223,10 +223,9 @@ void disk_index<DerivedIndex>::compress(
         }
     }
 
-    struct stat st;
-    stat(cfilename.c_str(), &st);
     std::cerr << "Created compressed postings file ("
-         << common::bytes_to_units(st.st_size) << ")" << std::endl;
+              << common::bytes_to_units(common::file_size(cfilename))
+              << ")" << std::endl;
 
     remove(filename.c_str());
     rename(cfilename.c_str(), filename.c_str());
