@@ -70,17 +70,11 @@ void end_progress(const std::string & prefix)
     std::cerr << prefix << "100%         " << std::endl;
 }
 
-template <class Key, class Value, class Hash>
-Value safe_at(const std::unordered_map<Key, Value, Hash> & map, const Key & key)
-{
-    auto it = map.find(key);
-    if(it == map.end())
-        return Value{};
-    return it->second;
-}
-
-template <class Key, class Value>
-Value safe_at(const std::unordered_map<Key, Value> & map, const Key & key)
+template <class Key,
+          class Value,
+          class... Args,
+          template <class, class, class...> class Map> 
+Value safe_at(const Map<Key, Value, Args...> & map, const Key & key)
 {
     auto it = map.find(key);
     if(it == map.end())
