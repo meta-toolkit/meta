@@ -1,5 +1,7 @@
 /**
  * @file common.tcc
+ * @author Sean Massung
+ * @author Chase Geigle
  */
 
 #include <map>
@@ -49,7 +51,8 @@ std::string bytes_to_units(double num_bytes)
 }
 
 template <class Duration, class Functor>
-Duration time(Functor && functor) {
+Duration time(Functor && functor)
+{
     auto start = std::chrono::steady_clock::now();
     functor();
     auto end   = std::chrono::steady_clock::now();
@@ -83,7 +86,8 @@ Value safe_at(const Map<Key, Value, Args...> & map, const Key & key)
 }
 
 template <class Result, class... Args>
-std::function<Result(Args...)> memoize(std::function<Result(Args...)> fun) {
+std::function<Result(Args...)> memoize(std::function<Result(Args...)> fun)
+{
     return [fun](Args... args) {
         static std::map<std::tuple<Args...>, Result> map_;
         auto it = map_.find(std::make_tuple(args...));
@@ -91,6 +95,46 @@ std::function<Result(Args...)> memoize(std::function<Result(Args...)> fun) {
             return it->second;
         return map_[std::make_tuple(args...)] = fun(args...);
     };
+}
+
+template <class Key, class Value>
+void save_mapping(const util::invertible_map<Key, Value> & map,
+                  const std::string & filename)
+{
+    std::ofstream outfile{filename};
+    for(auto & p: map)
+        outfile << p.first << " " << p.second << "\n";
+}
+
+template <class T>
+void save_mapping(const std::vector<T> & vec, const std::string & filename)
+{
+    std::ofstream outfile{filename};
+    for(auto & v: vec)
+        outfile << v << "\n";
+}
+
+template <class Key, class Value>
+void load_mapping(util::invertible_map<Key, Value> & map,
+                  const std::string & filename)
+{
+    std::ifstream input{filename};
+    Key k;
+    Value v;
+    while((input >> k) && (input >> v))
+        map.insert(std::make_pair(k, v));
+}
+
+template <class T>
+void load_mapping(std::vector<T> & vec, const std::string & filename)
+{
+    std::ifstream input{filename};
+    uint64_t size = common::num_lines(filename);
+    vec.reserve(size);
+
+    T val;
+    while(input >> val)
+        vec.push_back(val);
 }
 
 }

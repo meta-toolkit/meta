@@ -181,42 +181,6 @@ class disk_index
                 std::vector<postings_data_type> & pdata);
 
         /**
-         * Saves any arbitrary mapping to the disk.
-         * @param map The map to read key, value pairs from
-         * @param filename The name to save the mapping as
-         */
-        template <class Key, class Value>
-        static void save_mapping(const util::invertible_map<Key, Value> & map,
-                                 const std::string & filename);
-
-        /**
-         * Vector-specific version of save_mapping: saves any arbitrary mapping
-         * to the disk.
-         * @param map The map to read key, value pairs from
-         * @param filename The name to save the mapping as
-         */
-        template <class T>
-        static void save_mapping(const std::vector<T> & vec,
-                                 const std::string & filename);
-
-        /**
-         * @param map The map to load information into
-         * @param filename The file containing key, value pairs
-         */
-        template <class Key, class Value>
-        static void load_mapping(util::invertible_map<Key, Value> & map,
-                                 const std::string & filename);
-
-        /**
-         * Vector-specific version of load_mapping.
-         * @param vec The vector to load information into
-         * @param filename The file containing the vector's data.
-         */
-        template <class T>
-        static void load_mapping(std::vector<T> & vec,
-                                 const std::string & filename);
-
-        /**
          * @param d_id The document
          * @return the numerical label_id for a given document's label
          */

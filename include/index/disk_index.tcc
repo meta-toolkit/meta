@@ -97,12 +97,12 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     merge_chunks(num_chunks, _index_name + "/postings.index");
     compress(_index_name + "/postings.index");
 
-    save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
-    save_mapping(_doc_sizes, _index_name + "/docsizes.counts");
-    save_mapping(_term_bit_locations, _index_name + "/lexicon.index");
-    save_mapping(_labels, _index_name + "/docs.labels");
-    save_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
-    save_mapping(_compression_mapping, _index_name + "/keys.compressedmapping");
+    common::save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
+    common::save_mapping(_doc_sizes, _index_name + "/docsizes.counts");
+    common::save_mapping(_term_bit_locations, _index_name + "/lexicon.index");
+    common::save_mapping(_labels, _index_name + "/docs.labels");
+    common::save_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
+    common::save_mapping(_compression_mapping, _index_name + "/keys.compressedmapping");
     _tokenizer->save_term_id_mapping(_index_name + "/termids.mapping");
     set_label_ids();
 
@@ -239,12 +239,13 @@ void disk_index<DerivedIndex>::load_index()
 
     auto config = cpptoml::parse_file(_index_name + "/config.toml");
 
-    load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
-    load_mapping(_doc_sizes, _index_name + "/docsizes.counts");
-    load_mapping(_term_bit_locations, _index_name + "/lexicon.index");
-    load_mapping(_labels, _index_name + "/docs.labels");
-    load_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
-    load_mapping(_compression_mapping, _index_name + "/keys.compressedmapping");
+    common::load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
+    common::load_mapping(_doc_sizes, _index_name + "/docsizes.counts");
+    common::load_mapping(_term_bit_locations, _index_name + "/lexicon.index");
+    common::load_mapping(_labels, _index_name + "/docs.labels");
+    common::load_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
+    common::load_mapping(_compression_mapping,
+            _index_name + "/keys.compressedmapping");
     _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
     _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
     set_label_ids();
@@ -365,53 +366,6 @@ void disk_index<DerivedIndex>::merge_chunks(
     std::cerr << "Created uncompressed postings file " << filename
               << " (" << common::bytes_to_units(chunks.top().size()) << ")"
               << std::endl;
-}
-
-template <class DerivedIndex>
-template <class Key, class Value>
-void disk_index<DerivedIndex>::save_mapping(
-        const util::invertible_map<Key, Value> & map,
-        const std::string & filename)
-{
-    std::ofstream outfile{filename};
-    for(auto & p: map)
-        outfile << p.first << " " << p.second << "\n";
-}
-
-template <class DerivedIndex>
-template <class T>
-void disk_index<DerivedIndex>::save_mapping(
-        const std::vector<T> & vec, const std::string & filename)
-{
-    std::ofstream outfile{filename};
-    for(auto & v: vec)
-        outfile << v << "\n";
-}
-
-template <class DerivedIndex>
-template <class Key, class Value>
-void disk_index<DerivedIndex>::load_mapping(
-        util::invertible_map<Key, Value> & map, const std::string & filename)
-{
-    std::ifstream input{filename};
-    Key k;
-    Value v;
-    while((input >> k) && (input >> v))
-        map.insert(std::make_pair(k, v));
-}
-
-template <class DerivedIndex>
-template <class T>
-void disk_index<DerivedIndex>::load_mapping(
-        std::vector<T> & vec, const std::string & filename)
-{
-    std::ifstream input{filename};
-    uint64_t size = common::num_lines(filename);
-    vec.reserve(size);
-
-    T val;
-    while(input >> val)
-        vec.push_back(val);
 }
 
 template <class DerivedIndex>

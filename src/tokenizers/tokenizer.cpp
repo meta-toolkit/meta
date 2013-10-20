@@ -5,6 +5,7 @@
 #include <functional>
 #include <fstream>
 #include <iostream>
+#include "util/common.h"
 #include "util/invertible_map.h"
 #include "stemmers/no_stemmer.h"
 #include "stemmers/porter2.h"
@@ -42,13 +43,13 @@ term_id tokenizer::mapping(const std::string & term)
 
 void tokenizer::set_term_id_mapping(const std::string & filename)
 {
-    _term_map.read(filename);
+    common::load_mapping(_term_map, filename);
     _current_term_id = _term_map.size();
 }
 
 void tokenizer::save_term_id_mapping(const std::string & filename) const
 {
-    _term_map.save(filename);
+    common::save_mapping(_term_map, filename);
 }
 
 const util::invertible_map<term_id, std::string> & tokenizer::term_id_mapping() const

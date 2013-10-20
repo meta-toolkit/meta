@@ -13,6 +13,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include "util/invertible_map.h"
 #include "cpptoml.h"
 
 namespace meta {
@@ -118,6 +119,40 @@ namespace common
     template <class Result, class... Args>
     std::function<Result(Args...)> memoize(std::function<Result(Args...)> fun);
 
+    /**
+     * Saves any arbitrary mapping to the disk.
+     * @param map The map to read key, value pairs from
+     * @param filename The name to save the mapping as
+     */
+    template <class Key, class Value>
+    void save_mapping(const util::invertible_map<Key, Value> & map,
+                      const std::string & filename);
+
+    /**
+     * Vector-specific version of save_mapping: saves any arbitrary mapping
+     * to the disk.
+     * @param map The map to read key, value pairs from
+     * @param filename The name to save the mapping as
+     */
+    template <class T>
+    void save_mapping(const std::vector<T> & vec,
+                      const std::string & filename);
+
+    /**
+     * @param map The map to load information into
+     * @param filename The file containing key, value pairs
+     */
+    template <class Key, class Value>
+    void load_mapping(util::invertible_map<Key, Value> & map,
+                      const std::string & filename);
+
+    /**
+     * Vector-specific version of load_mapping.
+     * @param vec The vector to load information into
+     * @param filename The file containing the vector's data.
+     */
+    template <class T>
+    void load_mapping(std::vector<T> & vec, const std::string & filename);
 }
 
 }

@@ -1,5 +1,6 @@
 /**
  * @file invertible_map.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
@@ -20,13 +21,12 @@ namespace util {
 
 /**
  * This data structure indexes by keys as well as values, allowing constant
- *  amortized lookup time by key or value. All keys and values must be unique.
+ * amortized lookup time by key or value. All keys and values must be unique.
  */
 template <class Key, class Value>
 class invertible_map
 {
     public:
-
         /**
          * Constructor.
          */
@@ -75,18 +75,6 @@ class invertible_map
         void insert(const std::pair<Key, Value> & pair);
 
         /**
-         * Saves an invertible map to disk.
-         * @param filename - where to save the map
-         */
-        void save(const std::string & filename) const;
-
-        /**
-         * Reads a saved map from disk and loads it into the current invertible_map.
-         * @param filename - the file where the map is saved
-         */
-        void read(const std::string & filename);
-
-        /**
          * Frees all keys from this object.
          */
         void clear();
@@ -94,60 +82,94 @@ class invertible_map
         /**
          * The "inner" iterator representation of the invertible_map.
          */
-        typedef typename std::unordered_map<Key, Value>::const_iterator InnerIterator;
+        typedef typename std::unordered_map<Key, Value>::const_iterator
+            InnerIterator;
 
         /**
-         * The invertible_map iterator is really just a wrapper for the forward (key -> value)
-         *  unordered_map iterator. Use this iterator class the same way you'd use it on an
-         *  unordered_map.
+         * The invertible_map iterator is really just a wrapper for the forward
+         * (key -> value) unordered_map iterator. Use this iterator class the
+         * same way you'd use it on an unordered_map.
          */
-        class Iterator: public std::iterator<std::bidirectional_iterator_tag, InnerIterator>
+        class Iterator:
+            public std::iterator<std::bidirectional_iterator_tag, InnerIterator>
         {
-            public:
+            private:
+                /** the iterator of the underlying unordered_map */
+                InnerIterator iter;
 
+            public:
                 /** Constructor */
-                Iterator();
+                Iterator() { /* nothing */ }
 
                 /** Copy constructor */
-                Iterator(const InnerIterator & other);
+                Iterator(const InnerIterator & other): iter{other}
+                    { /* nothing */ }
                 
                 /** Pre-Increment */
-                Iterator & operator++();
+                Iterator & operator++()
+                {
+                    ++iter;
+                    return *this;
+                }
 
                 /** Post-increment */
-                Iterator operator++(int);
+                Iterator operator++(int)
+                {
+                    InnerIterator save = iter;
+                    ++iter;
+                    return Iterator{save};
+                }
 
                 /** Pre-decrement */
-                Iterator & operator--();
+                Iterator & operator--()
+                {
+                    --iter;
+                    return *this;
+                }
 
                 /** Post-decrement */
-                Iterator operator--(int);
+                Iterator operator--(int)
+                {
+                    InnerIterator save = iter;
+                    --iter;
+                    return Iterator{save};
+                }
 
                 /** Iterator equality */
-                bool operator==(const Iterator & other);
+                bool operator==(const Iterator & other)
+                {
+                    return iter == other.iter;
+                }
 
                 /** Iterator inequality */
-                bool operator!=(const Iterator & other);
+                bool operator!=(const Iterator & other)
+                {
+                    return iter != other.iter;
+                }
 
                 /**
                  * Dereference operator. Returns the underlying value_type,
                  *  which will always be a std::pair<Key, Value>
                  */
-                const typename InnerIterator::value_type & operator*();
+                const typename InnerIterator::value_type & operator*()
+                {
+                    return *iter;
+                }
 
                 /**
-                 * Arrow operator. Returns a pointer to the underlying value_type,
-                 *  which will always be a std::pair<Key, Value>
+                 * Arrow operator. Returns a pointer to the underlying
+                 * value_type, which will always be a std::pair<Key, Value>
                  */
-                const typename InnerIterator::value_type* operator->();
-
-            private:
-
-                /** the iterator of the underlying unordered_map */
-                InnerIterator iter;
+                const typename InnerIterator::value_type* operator->()
+                {
+                    return &(*iter);
+                }
         };
 
-        /** Easier typename to deal with if capital, also lets const_iterator share same name */
+        /**
+         * Easier typename to deal with if capital, also lets const_iterator
+         * share same name
+         */
         typedef Iterator iterator;
 
         /** Lets const_iterator be interchangeable with "iterator" */
@@ -172,14 +194,12 @@ class invertible_map
         std::unordered_map<Value, Key> _backward;
 
     public:
-
         /**
          * Basic exception for invertible_map interactions.
          */
         class invertible_map_exception: public std::exception
         {
             public:
-                
                 invertible_map_exception(const std::string & error):
                     _error(error) { /* nothing */ }
 
@@ -189,7 +209,6 @@ class invertible_map
                 }
            
             private:
-           
                 std::string _error;
         };
 };

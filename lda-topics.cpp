@@ -16,7 +16,7 @@ int print_usage( const std::string & name ) {
 int print_topics( const std::string & filename, const std::string & termsfile, 
                   size_t num_words ) {
     util::invertible_map<term_id, std::string> terms;
-    terms.read( termsfile );
+    common::load_mapping(terms, termsfile);
     std::ifstream file{ filename };
     while( file ) {
         std::string line;
