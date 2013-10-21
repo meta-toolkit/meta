@@ -64,7 +64,7 @@ std::string disk_index<DerivedIndex>::index_name() const
 template <class DerivedIndex>
 uint64_t disk_index<DerivedIndex>::unique_terms(doc_id d_id) const
 {
-    return _unique_terms.at(d_id);
+    return _unique_terms->at(d_id);
 }
 
 template <class DerivedIndex>
@@ -84,12 +84,16 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     // load the documents from the corpus
     auto docs = corpus::corpus::load(config_file);
 
-    // reserve space for all the vectors
     uint64_t num_docs = docs->size();
     _doc_id_mapping.resize(num_docs);
-    _doc_sizes.resize(num_docs);
-    _labels.resize(num_docs);
-    _unique_terms.resize(num_docs);
+
+    _doc_sizes = common::make_unique<util::disk_vector<double>>(
+        _index_name + "/docsizes.counts", num_docs);
+    _labels = common::make_unique<util::disk_vector<label_id>>(
+        _index_name + "/docs.labels", num_docs);
+    _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
+        _index_name + "/docs.uniqueterms", num_docs);
+
     _term_bit_locations.reserve(num_docs * 3); // guess 3x
 
     // create postings file
@@ -98,13 +102,12 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     compress(_index_name + "/postings.index");
 
     common::save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
-    common::save_mapping(_doc_sizes, _index_name + "/docsizes.counts");
+
     common::save_mapping(_term_bit_locations, _index_name + "/lexicon.index");
-    common::save_mapping(_labels, _index_name + "/docs.labels");
-    common::save_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
-    common::save_mapping(_compression_mapping, _index_name + "/keys.compressedmapping");
+    common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
+    common::save_mapping(_compression_mapping,
+            _index_name + "/keys.compressedmapping");
     _tokenizer->save_term_id_mapping(_index_name + "/termids.mapping");
-    set_label_ids();
 
     _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
 }
@@ -126,16 +129,16 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
                     return; // destructor for handler will write
                             // any intermediate chunks
                 doc = docs->next();
-                common::show_progress(doc->id(), docs->size(), 20, progress);
+                common::show_progress(doc->id(), docs->size(), 40, progress);
             }
 
             _tokenizer->tokenize(*doc);
 
             // save metadata
             _doc_id_mapping[doc->id()] = doc->path();
-            _doc_sizes[doc->id()] = doc->length();
-            _unique_terms[doc->id()] = doc->frequencies().size();
-            _labels[doc->id()] = doc->label();
+            (*_doc_sizes)[doc->id()] = doc->length();
+            (*_unique_terms)[doc->id()] = doc->frequencies().size();
+            (*_labels)[doc->id()] = get_label_id(doc->label());
             total_terms.fetch_add(doc->length());
 
             // update chunk
@@ -175,6 +178,8 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
     }
 
     using pair_t = std::pair<uint64_t, uint64_t>;
+    // TODO this requires 2x the memory of _compression_mapping which is already
+    // huge!
     std::vector<pair_t> sorted{freqs.begin(), freqs.end()};
     std::sort(sorted.begin(), sorted.end(),
         [](const pair_t & a, const pair_t & b) {
@@ -237,16 +242,20 @@ void disk_index<DerivedIndex>::load_index()
 
     auto config = cpptoml::parse_file(_index_name + "/config.toml");
 
+    _doc_sizes = common::make_unique<util::disk_vector<double>>(
+        _index_name + "/docsizes.counts");
+    _labels = common::make_unique<util::disk_vector<label_id>>(
+        _index_name + "/docs.labels");
+    _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
+        _index_name + "/docs.uniqueterms");
+
     common::load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
-    common::load_mapping(_doc_sizes, _index_name + "/docsizes.counts");
     common::load_mapping(_term_bit_locations, _index_name + "/lexicon.index");
-    common::load_mapping(_labels, _index_name + "/docs.labels");
-    common::load_mapping(_unique_terms, _index_name + "/docs.uniqueterms");
+    common::load_mapping(_label_ids, _index_name + "/labelids.mapping");
     common::load_mapping(_compression_mapping,
             _index_name + "/keys.compressedmapping");
     _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
     _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
-    set_label_ids();
 
     _postings = common::make_unique<io::mmap_file>(
         _index_name + "/postings.index"
@@ -256,33 +265,34 @@ void disk_index<DerivedIndex>::load_index()
 template <class DerivedIndex>
 class_label disk_index<DerivedIndex>::label(doc_id d_id) const
 {
-    return _labels.at(d_id);
+    return class_label_from_id(_labels->at(d_id));
 }
 
 template <class DerivedIndex>
-class_label
-disk_index<DerivedIndex>::class_label_from_id(label_id l_id) const
+class_label disk_index<DerivedIndex>::class_label_from_id(label_id l_id) const
 {
     return _label_ids.get_key(l_id);
 }
 
 template <class DerivedIndex>
-void disk_index<DerivedIndex>::set_label_ids()
+label_id disk_index<DerivedIndex>::get_label_id(const class_label & lbl)
 {
-    std::unordered_set<class_label> labels;
-    for(auto & lbl: _labels)
-        labels.insert(lbl);
-
-    label_id i{0};
-    for(auto & lbl: labels)
-        _label_ids.insert(lbl, i++);
+    std::mutex mutex;
+    std::lock_guard<std::mutex> lock{mutex};
+    if(!_label_ids.contains_key(lbl))
+    {
+        label_id next_id{static_cast<label_id>(_label_ids.size())};
+        _label_ids.insert(lbl, next_id);
+        return next_id;
+    }
+    else
+        return _label_ids.get_value(lbl);
 }
 
 template <class DerivedIndex>
-label_id
-disk_index<DerivedIndex>::label_id_from_doc(doc_id d_id) const
+label_id disk_index<DerivedIndex>::label_id_from_doc(doc_id d_id) const
 {
-    return _label_ids.get_value(_labels.at(d_id));
+    return _labels->at(d_id);
 }
 
 template <class DerivedIndex>
@@ -292,8 +302,7 @@ void disk_index<DerivedIndex>::write_chunk(
 {
     std::sort(pdata.begin(), pdata.end());
 
-    std::ofstream outfile{"chunk-"
-                          + common::to_string(chunk_num)};
+    std::ofstream outfile{"chunk-" + common::to_string(chunk_num)};
     for(auto & p: pdata)
         outfile << p;
     outfile.close();
@@ -369,13 +378,13 @@ void disk_index<DerivedIndex>::merge_chunks(
 template <class DerivedIndex>
 double disk_index<DerivedIndex>::doc_size(doc_id d_id) const
 {
-    return _doc_sizes.at(d_id);
+    return _doc_sizes->at(d_id);
 }
 
 template <class DerivedIndex>
 uint64_t disk_index<DerivedIndex>::num_docs() const
 {
-    return _doc_sizes.size();
+    return _doc_sizes->size();
 }
 
 template <class DerivedIndex>

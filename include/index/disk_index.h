@@ -19,6 +19,7 @@
 #include "index/cached_index.h"
 #include "index/postings_data.h"
 #include "io/compressed_file_reader.h"
+#include "util/disk_vector.h"
 #include "io/mmap_file.h"
 #include "meta.h"
 
@@ -248,7 +249,7 @@ class disk_index
          * doc_id -> document length mapping.
          * Each index corresponds to a doc_id (uint64_t).
          */
-        std::vector<double> _doc_sizes;
+        std::unique_ptr<util::disk_vector<double>> _doc_sizes;
 
         /** the tokenizer used to tokenize documents in the index */
         std::unique_ptr<tokenizers::tokenizer> _tokenizer;
@@ -260,7 +261,7 @@ class disk_index
          * Maps which class a document belongs to (if any).
          * Each index corresponds to a doc_id (uint64_t).
          */
-        std::vector<class_label> _labels;
+        std::unique_ptr<util::disk_vector<label_id>> _labels;
 
         /**
          * Holds how many unique terms there are per-document. This is sort of
@@ -268,7 +269,7 @@ class disk_index
          * redundant, though it can save querying the postings file.
          * Each index corresponds to a doc_id (uint64_t).
          */
-        std::vector<uint64_t> _unique_terms;
+        std::unique_ptr<util::disk_vector<uint64_t>> _unique_terms;
 
         /** the total number of term occurrences in the entire corpus */
         uint64_t _total_corpus_terms;
@@ -302,9 +303,11 @@ class disk_index
         void compress(const std::string & filename);
 
         /**
-         * Initializes the _label_ids member.
+         * @param lbl the string class label to find the id for
+         * @return the label_id of a class_label, creating a new one if
+         * necessary
          */
-        void set_label_ids();
+        label_id get_label_id(const class_label & lbl);
 
         /** the location of this index */
         std::string _index_name;
