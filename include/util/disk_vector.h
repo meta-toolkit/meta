@@ -9,11 +9,13 @@
 #ifndef _DISK_VECTOR_H_
 #define _DISK_VECTOR_H_
 
+#include <type_traits>
 #include <string>
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include "meta.h"
 
 namespace meta {
 namespace util {
@@ -25,6 +27,12 @@ namespace util {
 template <class T>
 class disk_vector
 {
+    static_assert(
+        std::is_integral<T>::value || std::is_floating_point<T>::value ||
+        std::is_base_of<util::numeric, T>::value,
+        "disk_vector templated types must be integral types"
+    );
+
     public:
         /**
          * @param path The path to save this vector as. If the file
