@@ -32,7 +32,7 @@ class disk_vector
          * new one is created.
          * @param size The number of elements that will be in this vector
          */
-        disk_vector(const std::string & path, uint64_t size);
+        disk_vector(const std::string & path, uint64_t size = 0);
 
         /**
          * Destructor.

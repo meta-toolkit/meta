@@ -9,7 +9,7 @@ namespace meta {
 namespace util {
 
 template <class T>
-disk_vector<T>::disk_vector(const std::string & path, uint64_t size):
+disk_vector<T>::disk_vector(const std::string & path, uint64_t size /* = 0 */):
     _path{path + ".vector"},
     _start{nullptr},
     _size{size},
@@ -20,20 +20,25 @@ disk_vector<T>::disk_vector(const std::string & path, uint64_t size):
         throw disk_vector_exception{"error obtaining file descriptor for "
             + _path};
 
-    uint64_t size_bytes = sizeof(T) * size;
-
-    // if file doesn't exist yet, make it the correct size by seeking to the end
-    // and writing a byte
-    uint64_t actual_size = common::file_size(path);
-    if(actual_size != size_bytes)
+    uint64_t actual_size = common::file_size(_path);
+    if(_size != 0)
     {
-        if(lseek(_file_desc, size_bytes - 1, SEEK_SET) == -1)
-            throw disk_vector_exception{"error lseeking to extend file"};
-        if(write(_file_desc, " ", 1) != 1)
-            throw disk_vector_exception{"error writing to extend vector file"};
-    }
+        uint64_t size_bytes = sizeof(T) * _size;
 
-    _start = (T*) mmap(nullptr, size_bytes, PROT_READ | PROT_WRITE,
+        // if file doesn't exist yet, make it the correct size by seeking to the
+        // end and writing a byte
+        if(actual_size != size_bytes)
+        {
+            if(lseek(_file_desc, size_bytes - 1, SEEK_SET) == -1)
+                throw disk_vector_exception{"error lseeking to extend file"};
+            if(write(_file_desc, " ", 1) != 1)
+                throw disk_vector_exception{"error writing to extend vector file"};
+        }
+    }
+    else
+        _size = actual_size / sizeof(T);
+
+    _start = (T*) mmap(nullptr, sizeof(T) * _size, PROT_READ | PROT_WRITE,
             MAP_SHARED, _file_desc, 0);
 
     if(_start == nullptr)
