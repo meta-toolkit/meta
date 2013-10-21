@@ -23,9 +23,23 @@ std::string to_string(const T & value)
 
 uint64_t file_size(const std::string & filename)
 {
+    if(!file_exists(filename))
+        return 0;
+
     struct stat64 st;
     stat64(filename.c_str(), &st);
     return st.st_size;
+}
+
+bool file_exists(const std::string & filename)
+{
+    FILE* f = fopen(filename.c_str(), "r");
+    if(f != nullptr)
+    {
+        fclose(f);
+        return true;
+    }
+    return false;
 }
 
 uint64_t num_lines(const std::string & filename)

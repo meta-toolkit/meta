@@ -40,6 +40,12 @@ namespace common
 
     /**
      * @param filename
+     * @return true if the file exists
+     */
+    inline bool file_exists(const std::string & filename);
+
+    /**
+     * @param filename
      * @return the number of newline characters in the paramter
      */
     inline uint64_t num_lines(const std::string & filename);
