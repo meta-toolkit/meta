@@ -137,5 +137,11 @@ void load_mapping(std::vector<T> & vec, const std::string & filename)
         vec.push_back(val);
 }
 
+template <class T, class... Args>
+std::unique_ptr<T> make_unique(Args &&... args)
+{
+    return std::unique_ptr<T>{new T{std::forward<Args>(args)...}};
+}
+
 }
 }

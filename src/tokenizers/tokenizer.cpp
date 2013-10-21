@@ -162,7 +162,7 @@ std::unique_ptr<tokenizer> tokenizer::load_tokenizer(const cpptoml::toml_group &
             throw tokenizer_exception{ "method was not able to be determined" };
         }
     }
-    return std::unique_ptr<multi_tokenizer>{new multi_tokenizer{toks}};
+    return common::make_unique<multi_tokenizer>(toks);
 }
 
 }

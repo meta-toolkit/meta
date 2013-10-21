@@ -33,15 +33,13 @@ std::unique_ptr<corpus> corpus::load(const std::string & config_file)
 
         std::string file = *prefix + "/"
             + *dataset + "/" + *file_list + "-full-corpus.txt";
-        return std::unique_ptr<corpus>{
-            new file_corpus{*prefix + "/" + *dataset + "/", file}
-        };
+        return common::make_unique<file_corpus>(*prefix + "/" + *dataset + "/", 
+                                                file);
     }
     else if(*type == "line-corpus")
     {
-        return std::unique_ptr<corpus>{
-            new line_corpus{*prefix + "/" + *dataset + "/" + *dataset + ".dat"}
-        };
+        return common::make_unique<line_corpus>(*prefix + "/" + *dataset + "/"
+                                                + *dataset + ".dat");
     }
     else
         throw corpus_exception{"corpus type was not able to be determined"};

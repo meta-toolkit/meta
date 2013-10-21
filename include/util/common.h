@@ -153,6 +153,13 @@ namespace common
      */
     template <class T>
     void load_mapping(std::vector<T> & vec, const std::string & filename);
+
+    /**
+     * Constructs a unique ptr in place.
+     * @param args The parameters to the constructor
+     */
+    template <class T, class... Args>
+    std::unique_ptr<T> make_unique(Args &&... args);
 }
 
 }

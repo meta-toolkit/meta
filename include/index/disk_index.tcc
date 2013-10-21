@@ -106,9 +106,7 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     _tokenizer->save_term_id_mapping(_index_name + "/termids.mapping");
     set_label_ids();
 
-    _postings = std::unique_ptr<io::mmap_file>{
-        new io::mmap_file{_index_name + "/postings.index"}
-    };
+    _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
 }
 
 template <class DerivedIndex>
@@ -250,9 +248,9 @@ void disk_index<DerivedIndex>::load_index()
     _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
     set_label_ids();
 
-    _postings = std::unique_ptr<io::mmap_file>{
-        new io::mmap_file{_index_name + "/postings.index"}
-    };
+    _postings = common::make_unique<io::mmap_file>(
+        _index_name + "/postings.index"
+    );
 }
 
 template <class DerivedIndex>
