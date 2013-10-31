@@ -13,7 +13,7 @@
 using namespace meta;
 
 int print_usage( const std::string & name ) {
-    std::cout << "Usage: " << name << " type prefix/full-corpus.txt prefix alpha beta topics\n"
+    std::cout << "Usage: " << name << " type alpha beta topics\n"
         "\tRuns LDA of the given type (gibbs, pargibbs, cvb) on the given"
         " corpus, with hyperparameters alpha" " and beta, and topics number"
         " of topics" << std::endl;
@@ -22,25 +22,30 @@ int print_usage( const std::string & name ) {
 
 template <class Model>
 int run_lda(const std::unique_ptr<corpus::corpus> & docs, size_t topics, double alpha, double beta ) {
-    auto tok = std::make_shared<tokenizers::ngram_word_tokenizer>( 1 );
+    using tokenizers::tokenizer;
+
+    auto config = cpptoml::parse_file("config.toml");
+    std::shared_ptr<tokenizer> tok{tokenizer::load_tokenizer(config)};
     std::vector<corpus::document> tok_docs;
     tok_docs.reserve(docs->size());
-    while(docs->has_next()) {
+
+    while(docs->has_next())
+    {
         corpus::document d{docs->next()};
-        common::show_progress(d.id(), docs->size(), 10, "  tokenizing: " );
+        common::show_progress(d.id(), docs->size(), 20, "  tokenizing: " );
         tok->tokenize(d);
         tok_docs.emplace_back(d);
     }
     common::end_progress( "  tokenizing: " );
+
     Model model{ tok_docs, tok, topics, alpha, beta };
     model.run( 1000 );
     model.save( "lda_model" );
     return 0;
 }
 
-int run_lda( const std::string & type, const std::string & filename,
-             const std::string & prefix, double alpha, double beta, 
-             size_t topics ) {
+int run_lda(const std::string & type, double alpha, double beta, size_t topics)
+{
     using namespace meta::topics;
     std::cout << "Loading documents...\r" << std::flush;
     auto docs = corpus::corpus::load("config.toml");
@@ -58,13 +63,14 @@ int run_lda( const std::string & type, const std::string & filename,
     return 1;
 }
 
-int main( int argc, char ** argv ) {
-    if( argc < 7 )
+int main( int argc, char ** argv )
+{
+    if( argc != 5 )
         return print_usage( argv[0] );
     std::vector<std::string> args( argv, argv + argc );
-    double alpha = std::stod( argv[4] );
-    double beta = std::stod( argv[5] );
-    size_t topics = std::stoul( argv[6] );
+    double alpha = std::stod( argv[2] );
+    double beta = std::stod( argv[3] );
+    size_t topics = std::stoul( argv[4] );
     std::cout << "alpha: " << alpha << "\nbeta: " << beta << "\ntopics: " << topics << std::endl;
-    return run_lda( args[1], args[2], args[3], alpha, beta, topics );
+    return run_lda( args[1], alpha, beta, topics );
 }
