@@ -1,66 +1,28 @@
-# locations to store the foward and inverted index
-forward-index = "my-forward-index"
-inverted-index = "my-inverted-index"
-
-# libs
 slda = "/home/sean/projects/slda/"
 liblinear = "/home/sean/projects/liblinear/"
-
-# prefix to folder containing data sets
 prefix = "/home/sean/projects/meta-data/"
-
-# path to stopwords
 stop-words = "/home/sean/projects/meta/data/lemur-stopwords.txt"
-
-# path to function words
 function-words = "/home/sean/projects/meta/data/function-words.txt"
 
-# dataset: which dataset to use
-# list: which corpus listing in that dataset to use (supplies class labels,
-# etc)
-dataset = "ceeaus"
-list = "ceeaus-essay-topic"
-#dataset = "simple"
-#list = "simple"
+#corpus-type = "file-corpus"
+#dataset = "imdb"
+#list = "imdb"
+#forward-index = "imdb-fwd"
+#inverted-index = "imdb-inv"
 
-#list ceeaus-nationality
-
-#dataset kaggle
-#list kaggle
-
-#dataset yelp
-#list yelp-score
-#list yelp-sentiment
-
-#dataset 20newsgroups
-#list 20news
-
-#dataset 10authors
-#list 10authors
-
-#dataset blog-full
-# a subset of the blog-full dataset
-#list blog
-# the entire blog-full dataset
-#list blog-full
-
-#dataset sentiment
-#list sentiment
+corpus-type = "line-corpus"
+dataset = "topics"
+list = "topics"
+forward-index = "topics-fwd"
+inverted-index = "topics-inv"
 
 [[tokenizers]]
-method = "ngram"
-ngramOpt = "Word"
-ngram = 1
+method = "libsvm"
 
 #[[tokenizers]]
 #method = "ngram"
 #ngramOpt = "Word"
-#ngram = 2
-
-#[[tokenizers]]
-#method = "ngram"
-#ngramOpt = "Word"
-#ngram = 3
+#ngram = 1
 
 #[[tokenizers]]
 #method = "tree"
