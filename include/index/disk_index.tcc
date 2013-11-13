@@ -115,7 +115,6 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
 template <class DerivedIndex>
 uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
 {
-    std::string progress = "Tokenizing ";
     std::mutex mutex;
     std::atomic<uint64_t> total_terms{0};
     std::atomic<uint32_t> chunk_num{0};
@@ -129,7 +128,13 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
                     return; // destructor for handler will write
                             // any intermediate chunks
                 doc = docs->next();
-                common::show_progress(doc->id(), docs->size(), 40, progress);
+                std::string progress = " Documents: "
+                    + common::add_commas(common::to_string(doc->id()))
+                    + " Unique primary keys: "
+                    + common::add_commas(
+                        common::to_string(_tokenizer->num_terms()))
+                    + " Tokenizing: ";
+                common::show_progress(doc->id(), docs->size(), 50, progress);
             }
 
             _tokenizer->tokenize(*doc);
@@ -153,6 +158,12 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
 
     for (auto & fut : futures)
         fut.get();
+
+    std::string progress = " Documents: "
+        + common::add_commas(common::to_string(docs->size()))
+        + " Unique primary keys: "
+        + common::add_commas(common::to_string(_tokenizer->num_terms()))
+        + " Tokenizing: ";
     common::end_progress(progress);
 
     _total_corpus_terms = total_terms;
