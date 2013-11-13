@@ -21,6 +21,20 @@ std::string to_string(const T & value)
     return ss.str();
 }
 
+std::string add_commas(const std::string & number)
+{
+    std::string ret{""};
+    size_t counter = 0;
+    for(auto it = number.rbegin(); it != number.rend(); ++it, ++counter)
+    {
+        if(counter != 0 && counter != number.size() && counter % 3 == 0)
+            ret = ',' + ret;
+        ret = *it + ret;
+    }
+
+    return ret;
+}
+
 uint64_t file_size(const std::string & filename)
 {
     if(!file_exists(filename))
