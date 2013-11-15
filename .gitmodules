@@ -5,3 +5,4 @@
 [submodule "deps/porter2_stemmer"]
 	path = deps/porter2_stemmer
 	url = git@bitbucket.org:smassung/porter2_stemmer
+	branch = meta
