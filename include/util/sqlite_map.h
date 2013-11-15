@@ -1,7 +1,8 @@
 /**
  * @file sqlite_map.h
  * @author Sean Massung
- * 
+ * @author Chase Geigle
+ *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
@@ -24,7 +25,7 @@ namespace util {
  * don't support containing spaces.
  */
 template <class Key, class Value>
-class sqlite_map 
+class sqlite_map
 {
     static_assert(
         std::is_integral<Key>::value ||
@@ -77,11 +78,20 @@ class sqlite_map
         /**
          * @return the number of elements (rows) in this map
          */
-        uint64_t size();
+        uint64_t size() const;
 
     private:
         /** pointer to the database; sqlite3 handles memory for this object */
         sqlite3* _db;
+
+        /** prepared statement for inserts */
+        sqlite3_stmt * insert_stmt_;
+
+        /** prepared statement for finds */
+        sqlite3_stmt * find_stmt_;
+
+        /** prepared statement for size */
+        sqlite3_stmt * size_stmt_;
 
         /** contains the type that Key is stored as in the database */
         std::string _sql_key_type;
@@ -96,7 +106,7 @@ class sqlite_map
         uint64_t _size;
 
         /** a mutex for synchronization */
-        std::mutex _mutex;
+        mutable std::mutex _mutex;
 
         /** buffer of insert commands */
         std::string _commands;
@@ -140,6 +150,49 @@ class sqlite_map
         static int size_callback(void* state, int num_cols,
                 char** fields, char** cols);
 
+        /**
+         * A RAII-style class for binding values to a sql query. Ensures
+         * that sqlite3_reset() is properly invoked on any prepared
+         * statement.
+         */
+        class sqlite_binder
+        {
+            sqlite3_stmt * stmt_;
+
+            public:
+                template <class... Args>
+                sqlite_binder(sqlite3_stmt * stmt, Args &&... args)
+                    : stmt_{stmt}
+                {
+                    bind_values(1, args...);
+                }
+
+                template <class T, class... Args>
+                void bind_values(int idx, T && value, Args &&... args) {
+                    bind_value(idx, value);
+                    bind_values(idx + 1, args...);
+                }
+
+                void bind_values(int) {}
+
+                void bind_value(int idx, const std::string & value) {
+                    sqlite3_bind_text(stmt_, idx, value.c_str(), -1, nullptr);
+                }
+
+                void bind_value(int idx, uint64_t value) {
+                    sqlite3_bind_int64(stmt_, idx, value);
+                }
+
+                void bind_value(int idx, double value) {
+                    sqlite3_bind_double(stmt_, idx, value);
+                }
+
+                ~sqlite_binder() {
+                    sqlite3_reset(stmt_);
+                }
+        };
+
+
     public:
         /**
          * Basic exception for sqlite_map.
@@ -154,11 +207,17 @@ class sqlite_map
                 {
                     return _error.c_str();
                 }
-           
+
             private:
                 std::string _error;
         };
 };
+
+/**
+ * Helper function for fetching results from prepared statements.
+ */
+template <class Result>
+Result sql_fetch_result(sqlite3_stmt * stmt, int idx);
 
 }
 }

@@ -33,6 +33,32 @@ sqlite_map<Key, Value>::sqlite_map(const std::string & filename):
                     nullptr, nullptr, nullptr) != SQLITE_OK)
         throw sqlite_map_exception{"error running command: " + command};
 
+    if (sqlite3_exec(_db, "PRAGMA synchronous = off;",
+                     nullptr, nullptr, nullptr) != SQLITE_OK)
+        throw sqlite_map_exception{"failed to set db properties"};
+
+    if (sqlite3_exec(_db, "PRAGMA journal_mode = MEMORY;",
+                     nullptr, nullptr, nullptr) != SQLITE_OK)
+        throw sqlite_map_exception{"failed to set db properties"};
+
+    sqlite3_prepare_v2(_db,
+                       "INSERT OR IGNORE INTO map (id, value) VALUES (?, ?);",
+                       -1,
+                       &insert_stmt_,
+                       nullptr);
+
+    sqlite3_prepare_v2(_db,
+                       "SELECT value FROM map WHERE id = ?;",
+                       -1,
+                       &find_stmt_,
+                       nullptr);
+
+    sqlite3_prepare_v2(_db,
+                       "SELECT COUNT(*) FROM map;",
+                       -1,
+                       &size_stmt_,
+                       nullptr);
+
     _commands.reserve(100000);
 }
 
@@ -61,12 +87,15 @@ template <class Key, class Value>
 sqlite_map<Key, Value>::~sqlite_map()
 {
     commit();
+    sqlite3_finalize(insert_stmt_);
+    sqlite3_finalize(find_stmt_);
     sqlite3_close(_db);
 }
 
 template <class Key, class Value>
 void sqlite_map<Key, Value>::insert(const Key & key, const Value & value)
 {
+    /*
     std::string command = "insert into map (id, value) select ";
     command += sql_text(key) + "," + sql_text(value);
     command += " where not exists (select value from map where id = ";
@@ -80,6 +109,15 @@ void sqlite_map<Key, Value>::insert(const Key & key, const Value & value)
         commit();
         _num_cached = 0;
     }
+    */
+
+    std::lock_guard<std::mutex> lock{_mutex};
+    sqlite_binder bind{insert_stmt_, key, value};
+    if (sqlite3_step(insert_stmt_) != SQLITE_DONE)
+        throw sqlite_map_exception{"insert failed: "
+                                   + common::to_string(key)
+                                   + ", "
+                                   + common::to_string(value)};
 }
 
 template <class Key, class Value>
@@ -100,6 +138,7 @@ void sqlite_map<Key, Value>::commit()
 template <class Key, class Value>
 Value sqlite_map<Key, Value>::find(const Key & key)
 {
+    /*
     std::string command = "select value from map where id = ";
     command += sql_text(key);
 
@@ -110,7 +149,35 @@ Value sqlite_map<Key, Value>::find(const Key & key)
             (void*) this, nullptr) != SQLITE_OK)
         throw sqlite_map_exception{"error running command: " + command};
 
-    return _return_value; 
+    return _return_value;
+    */
+
+    std::lock_guard<std::mutex> lock{_mutex};
+    sqlite_binder bind{find_stmt_, key};
+    if (sqlite3_step(find_stmt_) != SQLITE_ROW)
+        return Value{};
+    auto result = sql_fetch_result<Value>(find_stmt_, 0);
+    if (sqlite3_step(find_stmt_) != SQLITE_DONE)
+        throw sqlite_map_exception{"find produced too much data: " + common::to_string(key)};
+    return result;
+}
+
+template <>
+inline uint64_t sql_fetch_result<uint64_t>(sqlite3_stmt * stmt, int idx)
+{
+    return sqlite3_column_int64(stmt, idx);
+}
+
+template <>
+inline double sql_fetch_result<double>(sqlite3_stmt * stmt, int idx)
+{
+    return sqlite3_column_double(stmt, idx);
+}
+
+template <>
+inline std::string sql_fetch_result<std::string>(sqlite3_stmt * stmt, int idx)
+{
+    return reinterpret_cast<const char *>(sqlite3_column_text(stmt, idx));
 }
 
 template <class Key, class Value>
@@ -134,8 +201,9 @@ void sqlite_map<Key, Value>::increment(const Key & key, const Value & amount)
 }
 
 template <class Key, class Value>
-uint64_t sqlite_map<Key, Value>::size()
+uint64_t sqlite_map<Key, Value>::size() const
 {
+    /*
     std::lock_guard<std::mutex> lock{_mutex};
 
     if(!_size_dirty)
@@ -151,6 +219,15 @@ uint64_t sqlite_map<Key, Value>::size()
     _size_dirty = false;
 
     return _size;
+    */
+    std::lock_guard<std::mutex> lock{_mutex};
+    sqlite_binder{size_stmt_};
+    if (sqlite3_step(size_stmt_) != SQLITE_ROW)
+        throw sqlite_map_exception{"failed to get size"};
+    uint64_t size = sqlite3_column_int64(size_stmt_, 0);
+    if (sqlite3_step(size_stmt_) != SQLITE_DONE)
+        throw sqlite_map_exception{"size returned too much data"};
+    return size;
 }
 
 template <class Key, class Value>
