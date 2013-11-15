@@ -5,6 +5,7 @@ option( USE_LIBCXX "Use libc++ for the C++ standard library" ON )
 
 include_directories( "include/"
                      "deps/cpptoml/include/"
+                     "deps/porter2_stemmer/"
 )
 
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/lib" )
@@ -63,7 +64,7 @@ add_library( meta-io
 add_library( meta-stemmers
              src/stemmers/no_stemmer.cpp
              src/stemmers/porter2.cpp
-             src/stemmers/porter2_stemmer.cpp
+             deps/porter2_stemmer/porter2_stemmer.cpp
 )
 
 add_library( meta-tokenizers

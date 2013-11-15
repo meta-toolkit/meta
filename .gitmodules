@@ -2,3 +2,6 @@
 	path = deps/cpptoml
 	url = git@bitbucket.org:skystrife/cpptoml.git
 	branch = array-of-hashes
+[submodule "deps/porter2_stemmer"]
+	path = deps/porter2_stemmer
+	url = git@bitbucket.org:smassung/porter2_stemmer
