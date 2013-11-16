@@ -28,38 +28,27 @@ void tokenizer::tokenize(corpus::document & document)
 
 term_id tokenizer::mapping(const std::string & term)
 {
-    std::lock_guard<std::mutex> lock{mutables_};
-    if(!_term_map.contains_value(term))
-    {
-        _term_map.insert(_current_term_id, term);
-        return _current_term_id++;
-    }
-    else
-    {
-        term_id termID = _term_map.get_key(term);
-        return termID;
-    }
+    if (!_term_map)
+        throw tokenizer_exception{"failed to set term id mapping file"};
+    auto termID = _term_map->find(term);
+    if (termID)
+        return term_id{*termID};
+    _term_map->insert(term, _current_term_id);
+    return _current_term_id++;
 }
 
 void tokenizer::set_term_id_mapping(const std::string & filename)
 {
-    common::load_mapping(_term_map, filename);
-    _current_term_id = _term_map.size();
-}
-
-void tokenizer::save_term_id_mapping(const std::string & filename) const
-{
-    common::save_mapping(_term_map, filename);
-}
-
-const util::invertible_map<term_id, std::string> & tokenizer::term_id_mapping() const
-{
-    return _term_map;
+    _term_map =
+        common::make_unique<util::sqlite_map<std::string, uint64_t>>(filename);
+    _current_term_id = _term_map->size();
 }
 
 std::string tokenizer::label(term_id termID) const
 {
-    return _term_map.get_value(termID);
+    if (!_term_map)
+        throw tokenizer_exception{"failed to set term id mapping file"};
+    return *_term_map->find(termID);
 }
 
 void tokenizer::set_max_term_id(size_t start)
@@ -74,7 +63,9 @@ term_id tokenizer::max_term_id() const
 
 size_t tokenizer::num_terms() const
 {
-    return _term_map.size();
+    if (!_term_map)
+        throw tokenizer_exception{"failed to set term id mapping file"};
+    return _term_map->size();
 
 }
 

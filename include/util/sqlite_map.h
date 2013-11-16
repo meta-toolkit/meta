@@ -15,6 +15,8 @@
 #include <string>
 #include "meta.h"
 #include "sqlite3.h"
+#include "util/optional.h"
+#include "caching/splay_cache.h"
 
 namespace meta {
 namespace util {
@@ -24,7 +26,7 @@ namespace util {
  * integral types, floating point, or strings. Note that the strings currently
  * don't support containing spaces.
  */
-template <class Key, class Value>
+template <class Key, class Value, class Cache = caching::splay_cache<Key, Value>>
 class sqlite_map
 {
     static_assert(
@@ -65,15 +67,13 @@ class sqlite_map
          * @param key The key of the item to search for
          * @return the value corresponding to this key
          */
-        Value find(const Key & key);
+        util::optional<Value> find(const Key & key) const;
 
         /**
-         * Increments the key's value by the specified amount. If the key does
-         * not exist yet, a new one is inserted with the amount as the value.
-         * @param key
-         * @param amount
+         * @param value The value for the item to search for
+         * @return The key associated with this value
          */
-        void increment(const Key & key, const Value & amount);
+        util::optional<Key> find(const Value & value) const;
 
         /**
          * @return the number of elements (rows) in this map
@@ -90,17 +90,14 @@ class sqlite_map
         /** prepared statement for finds */
         sqlite3_stmt * find_stmt_;
 
+        /** prepared statement for finds of keys by value */
+        sqlite3_stmt * find_key_stmt_;
+
         /** prepared statement for size */
         sqlite3_stmt * size_stmt_;
 
-        /** contains the type that Key is stored as in the database */
-        std::string _sql_key_type;
-
-        /** contains the type that Value is stored as in the database */
-        std::string _sql_value_type;
-
-        /** where callback functions store results */
-        Value _return_value;
+        /** cache in front of the db for performance */
+        mutable Cache cache_;
 
         /** the number of elements in this map (calculated by sqlite) */
         uint64_t _size;
@@ -108,47 +105,8 @@ class sqlite_map
         /** a mutex for synchronization */
         mutable std::mutex _mutex;
 
-        /** buffer of insert commands */
-        std::string _commands;
-
-        /** indicates whether the _size variable may need to be updated */
-        bool _size_dirty;
-
-        /** the current number of insert commands cached */
-        uint64_t _num_cached;
-
         /** after this number is reached, commit inserts and updates */
         const static uint64_t _max_cached = 100000;
-
-        /**
-         * @return the type that the C++ object would be stored in a SQL
-         * database as
-         */
-        template <class T>
-        std::string sql_type() const;
-
-        /**
-         * @param elem The element to convert to a sql string
-         * @return a sql string of elem
-         */
-        template <class T>
-        std::string sql_text(const T & elem) const;
-
-        /**
-         * Writes a series of inserts to the database.
-         */
-        void commit();
-
-        /**
-         * The find callback for an sqlite3_exec function.
-         */
-        static int find_callback(void* state, int num_cols,
-                char** fields, char** cols);
-        /**
-         * The find callback for an sqlite3_exec function.
-         */
-        static int size_callback(void* state, int num_cols,
-                char** fields, char** cols);
 
         /**
          * A RAII-style class for binding values to a sql query. Ensures
@@ -192,6 +150,12 @@ class sqlite_map
                 }
         };
 
+        /**
+         * @return the type that the C++ object would be stored in a SQL
+         * database as
+         */
+        template <class T>
+        std::string sql_type() const;
 
     public:
         /**

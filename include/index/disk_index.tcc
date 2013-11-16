@@ -96,6 +96,8 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
 
     _term_bit_locations.reserve(num_docs * 3); // guess 3x
 
+    _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
+
     // create postings file
     uint32_t num_chunks = tokenize_docs(docs.get());
     merge_chunks(num_chunks, _index_name + "/postings.index");
@@ -107,7 +109,6 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
     common::save_mapping(_compression_mapping,
             _index_name + "/keys.compressedmapping");
-    _tokenizer->save_term_id_mapping(_index_name + "/termids.mapping");
 
     _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
 }

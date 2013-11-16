@@ -16,7 +16,7 @@
 #include "meta.h"
 #include "cpptoml.h"
 #include "corpus/document.h"
-#include "util/invertible_map.h"
+#include "util/sqlite_map.h"
 
 namespace meta {
 namespace tokenizers {
@@ -64,25 +64,12 @@ class tokenizer
         virtual term_id mapping(const std::string & term);
 
         /**
-         * Calls the term_id invertible_map's saveMap function.
-         * @param filename The filename to save the mapping as
-         */
-        virtual void save_term_id_mapping(const std::string & filename) const;
-
-        /**
          * Sets the token to termid mapping for this tokenizer.
          * This is useful when reading an inverted index from disk
          *  with an existing mapping.
          * @param filename The filename containing the desired mapping
          */
         virtual void set_term_id_mapping(const std::string & filename);
-
-        /**
-         * @return a reference to the structure used to store the termID <->
-         * term string mapping
-         */
-        virtual const util::invertible_map<term_id, std::string> &
-            term_id_mapping() const;
 
         /**
          * Looks up the actual label that is represented by a term_id.
@@ -131,7 +118,7 @@ class tokenizer
          * from the file. This is protected mainly so MultiTokenizer can update
          * its _termMap correctly.
          */
-        util::invertible_map<term_id, std::string> _term_map;
+        std::unique_ptr<util::sqlite_map<std::string, uint64_t>> _term_map;
 
         /**
          * Internal counter for the number of unique terms seen (used as keys

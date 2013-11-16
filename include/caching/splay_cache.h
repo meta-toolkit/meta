@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <mutex>
+#include <vector>
 
 #include "meta.h"
 #include "util/optional.h"
@@ -67,6 +68,18 @@ class splay_cache
          */
         uint64_t size() const;
 
+        /**
+         * Adds a listener for when key/value pairs are removed. Useful for
+         * implementing write-back caches.
+         */
+        template <class Functor>
+        void on_drop(Functor && fun);
+
+        /**
+         * Empties the cache.
+         */
+        void clear();
+
     private:
 
         /** disallow copying */
@@ -92,8 +105,12 @@ class splay_cache
         node* _root;
         mutable std::mutex _mutables;
 
+        std::vector<std::function<void(const Key & key, const Value & value)>>
+        _drop_callbacks;
+
         void clear(node* & subroot);
         void insert(node* & subroot, const Key & key, const Value & value);
+        void replace(node* subroot, const Key & key, const Value & value);
         void find(node* & subroot, const Key & key);
 
         void rotate_left(node* & subroot);
