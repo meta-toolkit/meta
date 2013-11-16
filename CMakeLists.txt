@@ -111,6 +111,11 @@ target_link_libraries(search
                       meta-index
                       ${CMAKE_THREAD_LIBS_INIT})
 
+add_executable(index index.cpp)
+target_link_libraries(index
+                      meta-index
+                      ${CMAKE_THREAD_LIBS_INIT})
+
 add_executable(interactive_search interactive_search.cpp)
 target_link_libraries(interactive_search
                       meta-index
