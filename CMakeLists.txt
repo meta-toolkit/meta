@@ -106,6 +106,16 @@ target_link_libraries( classify
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
+add_executable( index index.cpp )
+target_link_libraries( index
+                       meta-index
+                       meta-tokenizers
+                       meta-stemmers
+                       meta-io
+                       meta-corpus
+                       ${CMAKE_THREAD_LIBS_INIT}
+)
+
 add_executable( search search.cpp )
 target_link_libraries( search
                        meta-index
