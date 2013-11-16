@@ -15,8 +15,12 @@ find_package( Threads REQUIRED )
 if( UNIX )
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic" )
-    if( USE_LIBCXX )
-        set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++" )
+    set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKDER_FLAGS} -ldl" )
+    if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        if( USE_LIBCXX )
+            set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++" )
+            set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi" )
+        endif()
     endif()
 endif()
 
@@ -85,6 +89,7 @@ add_library( meta-tokenizers
              src/tokenizers/tree/skeleton_tokenizer.cpp
              src/tokenizers/tree/subtree_tokenizer.cpp
              src/tokenizers/tree/tag_tokenizer.cpp
+             deps/sqlite/sqlite3.c
 )
 
 add_library( meta-topics

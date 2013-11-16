@@ -67,7 +67,7 @@ git submodule update
 ```bash
 mkdir build
 cd build
-CXX=clang++ LDFLAGS=-lc++abi cmake ../ -DCMAKE_BUILD_TYPE=Debug
+CXX=clang++ C=clang cmake ../ -DCMAKE_BUILD_TYPE=Debug
 make
 ```
 
