@@ -59,7 +59,18 @@ bool file_exists(const std::string & filename)
 uint64_t num_lines(const std::string & filename)
 {
     io::mmap_file file{filename};
-    return std::count(file.start(), file.start() + file.size(), '\n');
+    uint64_t num = 0;
+
+    std::string progress = " Counting lines in file ";
+    for(uint64_t idx = 0; idx < file.size(); ++idx)
+    {
+        common::show_progress(idx, file.size(), 16 * 1024 * 1024, progress);
+        if(file.start()[idx] == '\n')
+            ++num;
+    }
+    common::end_progress(progress);
+
+    return num;
 }
 
 std::string bytes_to_units(double num_bytes)
