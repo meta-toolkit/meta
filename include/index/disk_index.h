@@ -315,10 +315,8 @@ class disk_index
         /**
          * PrimaryKey -> postings location.
          * Each index corresponds to a PrimaryKey (uint64_t).
-         * This isn't a disk_vector because we don't know the size at creation
-         * time.
          */
-        std::vector<uint64_t> _term_bit_locations;
+        std::unique_ptr<util::disk_vector<uint64_t>> _term_bit_locations;
 
         /**
          * A pointer to a memory-mapped postings file. It is a pointer because

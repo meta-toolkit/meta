@@ -94,8 +94,6 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/docs.uniqueterms", num_docs);
 
-    _term_bit_locations.reserve(num_docs * 3); // guess 3x
-
     _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
 
     // create postings file
@@ -104,8 +102,6 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     compress(_index_name + "/postings.index");
 
     common::save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
-
-    common::save_mapping(_term_bit_locations, _index_name + "/lexicon.index");
     common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
     common::save_mapping(_compression_mapping,
             _index_name + "/keys.compressedmapping");
@@ -222,6 +218,11 @@ void disk_index<DerivedIndex>::compress(
 
     std::cerr << "Creating compressed postings file..." << std::endl;
 
+    // allocate memory for the term_id -> term location mapping now that we know
+    // how many terms there are
+    _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
+            _index_name + "/lexicon.index", _tokenizer->max_term_id() - 1);
+
     // create scope so the writer closes and we can calculate the size of the
     // file as well as rename it
     {
@@ -233,7 +234,7 @@ void disk_index<DerivedIndex>::compress(
         // note: we will be accessing pdata in sorted order
         while(in >> pdata)
         {
-            _term_bit_locations.push_back(out.bit_location());
+            (*_term_bit_locations)[pdata.primary_key()] = out.bit_location();
             pdata.write_compressed(out);
         }
     }
@@ -260,9 +261,10 @@ void disk_index<DerivedIndex>::load_index()
         _index_name + "/docs.labels");
     _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/docs.uniqueterms");
+    _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
+        _index_name + "/lexicon.index");
 
     common::load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
-    common::load_mapping(_term_bit_locations, _index_name + "/lexicon.index");
     common::load_mapping(_label_ids, _index_name + "/labelids.mapping");
     common::load_mapping(_compression_mapping,
             _index_name + "/keys.compressedmapping");
@@ -433,11 +435,11 @@ auto disk_index<DerivedIndex>::search_primary(primary_key_type p_id) const
     uint64_t idx{p_id};
 
     // if the term doesn't exist in the index, return an empty postings_data
-    if(idx >= _term_bit_locations.size())
+    if(idx >= _term_bit_locations->size())
         return std::make_shared<postings_data_type>(p_id);
 
     io::compressed_file_reader reader{*_postings, _compression_mapping};
-    reader.seek(_term_bit_locations.at(idx));
+    reader.seek(_term_bit_locations->at(idx));
 
     auto pdata = std::make_shared<postings_data_type>(p_id);
     pdata->read_compressed(reader);
