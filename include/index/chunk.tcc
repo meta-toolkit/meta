@@ -50,7 +50,7 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
     std::ifstream my_data{_path};
     std::ifstream other_data{other._path};
 
-    std::string temp_name = _path + "_" + other._path;
+    std::string temp_name = _path + "_merge";
     std::ofstream output{temp_name};
 
     postings_data<PrimaryKey, SecondaryKey> my_pd{PrimaryKey{0}};

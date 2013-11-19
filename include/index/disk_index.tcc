@@ -316,7 +316,7 @@ void disk_index<DerivedIndex>::write_chunk(
 {
     std::sort(pdata.begin(), pdata.end());
 
-    std::ofstream outfile{"chunk-" + common::to_string(chunk_num)};
+    std::ofstream outfile{_index_name + "/chunk-" + common::to_string(chunk_num)};
     for(auto & p: pdata)
         outfile << p;
     outfile.close();
@@ -334,7 +334,7 @@ void disk_index<DerivedIndex>::merge_chunks(
     std::priority_queue<chunk_t> chunks;
     for(uint32_t i = 0; i < num_chunks; ++i)
     {
-        std::string filename = "chunk-" + common::to_string(i);
+        std::string filename = _index_name + "/chunk-" + common::to_string(i);
         chunks.push(chunk_t{filename});
     }
 
