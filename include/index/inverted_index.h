@@ -136,6 +136,9 @@ class inverted_index: public disk_index<inverted_index>
             /** the current in-memory chunk */
             std::unordered_map<term_id, postings_data_type> pdata_;
 
+            /** the current size of the in-memory chunk */
+            uint64_t chunk_size_{0};
+
             public:
                 // inherit the base class constructor
                 using base::chunk_handler<chunk_handler>::chunk_handler;

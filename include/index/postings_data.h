@@ -185,6 +185,11 @@ class postings_data
          */
         uint64_t inverse_frequency() const;
 
+        /**
+         * @return the number of bytes used for this postings_data
+         */
+        uint64_t bytes_used() const;
+
     private:
 
         PrimaryKey _p_id;

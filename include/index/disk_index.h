@@ -199,11 +199,8 @@ class disk_index
          * implement the handle_doc() and chunk() methods, as well as a
          * proper destructor.
          */
-        template <class Derived, uint32_t MaxSize = 1000>
+        template <class Derived, uint64_t MaxSize = 1024*1024*512 /* 512MB */>
         class chunk_handler {
-            /** the current size of the in-memory chunk */
-            uint32_t chunk_size_{0};
-
             /** a back-pointer to the index this handler is operating on */
             disk_index * idx_;
 
@@ -225,8 +222,6 @@ class disk_index
                  */
                 void operator()(const corpus::document & doc) {
                     static_cast<Derived *>(this)->handle_doc(doc);
-                    if (++chunk_size_ % MaxSize == 0)
-                        write_chunk();
                 }
 
                 /**
@@ -235,7 +230,14 @@ class disk_index
                 void write_chunk() {
                     auto vec = static_cast<Derived *>(this)->chunk();
                     idx_->write_chunk(chunk_num_.fetch_add(1), vec);
-                    chunk_size_ = 0;
+                }
+
+                /**
+                 * Convenience constexpr for getting MaxSize in derived
+                 * classes.
+                 */
+                static constexpr uint64_t max_size() {
+                    return MaxSize;
                 }
         };
 

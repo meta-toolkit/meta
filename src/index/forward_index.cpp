@@ -57,7 +57,12 @@ void forward_index::chunk_handler::handle_doc(const corpus::document & doc) {
     pd.set_counts(std::vector<std::pair<term_id, double>>{
         doc.frequencies().begin(), doc.frequencies().end()
     });
+    chunk_size_ += pd.bytes_used();
     pdata_.push_back(pd);
+    if (chunk_size_ >= max_size()) {
+        write_chunk();
+        chunk_size_ = 0;
+    }
 }
 
 std::vector<postings_data<doc_id, term_id>>

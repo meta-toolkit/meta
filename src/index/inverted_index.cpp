@@ -62,10 +62,18 @@ void inverted_index::chunk_handler::handle_doc(const corpus::document & doc) {
         postings_data_type pd{f.first};
         pd.increase_count(doc.id(), f.second);
         auto it = pdata_.find(f.first);
-        if (it == pdata_.end())
+        if (it == pdata_.end()) {
+            chunk_size_ += pd.bytes_used();
             pdata_.emplace(f.first, pd);
-        else
+        } else {
+            chunk_size_ -= it->second.bytes_used();
             it->second.merge_with(pd);
+            chunk_size_ += it->second.bytes_used();
+        }
+        if (chunk_size_ >= max_size()) {
+            write_chunk();
+            chunk_size_ = 0;
+        }
     }
 }
 

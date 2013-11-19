@@ -169,5 +169,11 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
     _counts.shrink_to_fit();
 }
 
+template <class PrimaryKey, class SecondaryKey>
+uint64_t postings_data<PrimaryKey, SecondaryKey>::bytes_used() const
+{
+    return sizeof(pair_t) * _counts.size() + sizeof(PrimaryKey);
+}
+
 }
 }

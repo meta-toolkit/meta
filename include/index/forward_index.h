@@ -100,6 +100,9 @@ class forward_index: public disk_index<forward_index>
             /** the current in-memory chunk */
             std::vector<postings_data<doc_id, term_id>> pdata_;
 
+            /** the current size of the in-memory chunk */
+            uint64_t chunk_size_{0};
+
             public:
                 // inherit the base class constructor
                 using base::chunk_handler<chunk_handler>::chunk_handler;
