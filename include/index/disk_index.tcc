@@ -85,7 +85,11 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     auto docs = corpus::corpus::load(config_file);
 
     uint64_t num_docs = docs->size();
-    _doc_id_mapping.resize(num_docs);
+
+    _doc_id_mapping =
+        common::make_unique<util::sqlite_map<doc_id, std::string>>(
+            _index_name + "/docids.mapping"
+        );
 
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts", num_docs);
@@ -101,7 +105,6 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     merge_chunks(num_chunks, _index_name + "/postings.index");
     compress(_index_name + "/postings.index");
 
-    common::save_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
     common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
     common::save_mapping(_compression_mapping,
             _index_name + "/keys.compressedmapping");
@@ -137,7 +140,7 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
             _tokenizer->tokenize(*doc);
 
             // save metadata
-            _doc_id_mapping[doc->id()] = doc->path();
+            _doc_id_mapping->insert(doc->id(), doc->path());
             (*_doc_sizes)[doc->id()] = doc->length();
             (*_unique_terms)[doc->id()] = doc->frequencies().size();
             (*_labels)[doc->id()] = get_label_id(doc->label());
@@ -255,6 +258,11 @@ void disk_index<DerivedIndex>::load_index()
 
     auto config = cpptoml::parse_file(_index_name + "/config.toml");
 
+
+    _doc_id_mapping =
+        common::make_unique<util::sqlite_map<doc_id, std::string>>(
+            _index_name + "/docids.mapping"
+        );
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts");
     _labels = common::make_unique<util::disk_vector<label_id>>(
@@ -264,7 +272,6 @@ void disk_index<DerivedIndex>::load_index()
     _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/lexicon.index");
 
-    common::load_mapping(_doc_id_mapping, _index_name + "/docids.mapping");
     common::load_mapping(_label_ids, _index_name + "/labelids.mapping");
     common::load_mapping(_compression_mapping,
             _index_name + "/keys.compressedmapping");
@@ -411,13 +418,13 @@ std::string disk_index<DerivedIndex>::doc_name(doc_id d_id) const
 template <class DerivedIndex>
 std::string disk_index<DerivedIndex>::doc_path(doc_id d_id) const
 {
-    return _doc_id_mapping.at(d_id);
+    return *_doc_id_mapping->find(d_id);
 }
 
 template <class DerivedIndex>
 std::vector<doc_id> disk_index<DerivedIndex>::docs() const
 {
-    std::vector<doc_id> ret(_doc_id_mapping.size());
+    std::vector<doc_id> ret(_doc_id_mapping->size());
     std::iota(ret.begin(), ret.end(), 0);
     return ret;
 }

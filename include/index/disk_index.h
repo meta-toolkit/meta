@@ -245,7 +245,7 @@ class disk_index
          * doc_id -> document path mapping.
          * Each index corresponds to a doc_id (uint64_t).
          */
-        std::vector<std::string> _doc_id_mapping;
+        std::unique_ptr<util::sqlite_map<doc_id, std::string>> _doc_id_mapping;
 
         /**
          * doc_id -> document length mapping.
