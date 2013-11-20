@@ -40,7 +40,7 @@ class compressed_file_reader
          * mapping.
          */
         compressed_file_reader(const mmap_file & file,
-                const util::invertible_map<uint64_t, uint64_t> & mapping);
+                std::function<uint64_t(uint64_t)> mapping);
 
         /**
          * Sets the cursor back to the beginning of the file.
@@ -96,7 +96,7 @@ class compressed_file_reader
         uint8_t _current_bit;
 
         /** hold the (actual -> compressed id) mapping */
-        const util::invertible_map<uint64_t, uint64_t> & _mapping;
+        std::function<uint64_t(uint64_t)> _mapping;
 
     public:
         /**
@@ -105,7 +105,7 @@ class compressed_file_reader
         class compressed_file_reader_exception: public std::exception
         {
             public:
-                
+
                 compressed_file_reader_exception(const std::string & error):
                     _error(error) { /* nothing */ }
 
@@ -113,9 +113,9 @@ class compressed_file_reader
                 {
                     return _error.c_str();
                 }
-           
+
             private:
-           
+
                 std::string _error;
         };
 };

@@ -13,6 +13,7 @@
 #include <mutex>
 #include <type_traits>
 #include <string>
+#include "common.h"
 #include "meta.h"
 #include "sqlite3.h"
 #include "util/optional.h"
@@ -22,11 +23,17 @@ namespace meta {
 namespace util {
 
 /**
+ * Helper function for fetching results from prepared statements.
+ */
+template <class Result>
+Result sql_fetch_result(sqlite3_stmt * stmt, int idx);
+
+/**
  * Wrapper for a sqlite3 database as a simple dictionary. Keys and values can be
  * integral types, floating point, or strings. Note that the strings currently
  * don't support containing spaces.
  */
-template <class Key, class Value, class Cache = caching::splay_cache<Key, Value>>
+template <class Key, class Value, template <class, class> class Cache = caching::splay_cache>
 class sqlite_map
 {
     static_assert(
@@ -73,12 +80,84 @@ class sqlite_map
          * @param value The value for the item to search for
          * @return The key associated with this value
          */
-        util::optional<Key> find(const Value & value) const;
+        util::optional<Key> find_key(const Value & value) const;
 
         /**
          * @return the number of elements (rows) in this map
          */
         uint64_t size() const;
+
+        template <class Result>
+        class query_result {
+            sqlite3_stmt * stmt_;
+
+            int step() {
+                return sqlite3_step(stmt_);
+            }
+
+            Result fetch() {
+                return sql_fetch_result<Result>(stmt_, 0);
+            }
+
+            public:
+                query_result(sqlite3_stmt * stmt) : stmt_{stmt}
+                { /* nothing */ }
+
+                ~query_result() {
+                    sqlite3_finalize(stmt_);
+                }
+
+                class iterator {
+                    friend query_result;
+
+                    int return_code_;
+                    query_result * qr_;
+                    Result result_;
+
+                    iterator(int ret, query_result * qr)
+                        : return_code_{ret}, qr_{qr}, result_{qr_->fetch()}
+                    { /* nothing */ }
+
+                    public:
+                        friend bool operator==(const iterator & first,
+                                               const iterator & second) {
+                            if (first.return_code_ == SQLITE_DONE)
+                                return second.return_code_ == SQLITE_DONE;
+                            return first.return_code_ == second.return_code_
+                                   && first.result_ == second.result_;
+                        }
+
+                        friend bool operator!=(const iterator & first,
+                                               const iterator & second) {
+                            return !(first == second);
+                        }
+
+                        iterator & operator++() {
+                            return_code_ = qr_->step();
+                            if (return_code_ == SQLITE_ROW)
+                                result_ = qr_->fetch();
+                            else if (return_code_ != SQLITE_DONE)
+                                throw sqlite_map_exception{"sql error in iteration over query set: "
+                                    + common::to_string(return_code_)};
+                            return *this;
+                        }
+
+                        Result operator*() {
+                            return result_;
+                        }
+                };
+
+                iterator begin() {
+                    return {step(), this};
+                }
+
+                iterator end() {
+                    return {SQLITE_DONE, this};
+                }
+        };
+
+        template <class Result, class... Args>
+        query_result<Result> query(const std::string & query, Args &&... args);
 
     private:
         /** pointer to the database; sqlite3 handles memory for this object */
@@ -97,16 +176,19 @@ class sqlite_map
         sqlite3_stmt * size_stmt_;
 
         /** cache in front of the db for performance */
-        mutable Cache cache_;
+        mutable Cache<Key, Value> cache_;
 
-        /** the number of elements in this map (calculated by sqlite) */
-        uint64_t _size;
+        /** cache in front of the db for performance, reverse direction */
+        mutable Cache<Value, Key> backward_cache_;
 
         /** a mutex for synchronization */
         mutable std::mutex _mutex;
 
         /** after this number is reached, commit inserts and updates */
         const static uint64_t _max_cached = 100000;
+
+        /** the size of the map */
+        uint64_t _size{0};
 
         /**
          * A RAII-style class for binding values to a sql query. Ensures
@@ -122,27 +204,36 @@ class sqlite_map
                 sqlite_binder(sqlite3_stmt * stmt, Args &&... args)
                     : stmt_{stmt}
                 {
-                    bind_values(1, args...);
+                    bind_values(stmt_, 1, args...);
                 }
 
                 template <class T, class... Args>
-                void bind_values(int idx, T && value, Args &&... args) {
-                    bind_value(idx, value);
-                    bind_values(idx + 1, args...);
+                static void bind_values(sqlite3_stmt * stmt,
+                                int idx,
+                                T && value,
+                                Args &&... args) {
+                    bind_value(stmt, idx, value);
+                    bind_values(stmt, idx + 1, args...);
                 }
 
-                void bind_values(int) {}
+                static void bind_values(sqlite3_stmt *, int) {}
 
-                void bind_value(int idx, const std::string & value) {
-                    sqlite3_bind_text(stmt_, idx, value.c_str(), -1, nullptr);
+                static void bind_value(sqlite3_stmt * stmt,
+                                       int idx,
+                                       const std::string & value) {
+                    sqlite3_bind_text(stmt, idx, value.c_str(), -1, nullptr);
                 }
 
-                void bind_value(int idx, uint64_t value) {
-                    sqlite3_bind_int64(stmt_, idx, value);
+                static void bind_value(sqlite3_stmt * stmt,
+                                       int idx,
+                                       uint64_t value) {
+                    sqlite3_bind_int64(stmt, idx, value);
                 }
 
-                void bind_value(int idx, double value) {
-                    sqlite3_bind_double(stmt_, idx, value);
+                static void bind_value(sqlite3_stmt * stmt,
+                                       int idx,
+                                       double value) {
+                    sqlite3_bind_double(stmt, idx, value);
                 }
 
                 ~sqlite_binder() {
@@ -177,11 +268,6 @@ class sqlite_map
         };
 };
 
-/**
- * Helper function for fetching results from prepared statements.
- */
-template <class Result>
-Result sql_fetch_result(sqlite3_stmt * stmt, int idx);
 
 }
 }

@@ -54,6 +54,8 @@ class splay_cache
         /**
          * @param key The key to insert
          * @param value The value to insert
+         *
+         * If the key exists in the map, it will be overwritten.
          */
         void insert(const Key & key, const Value & value);
 

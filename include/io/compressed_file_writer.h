@@ -32,7 +32,7 @@ class compressed_file_writer
          * @param mapping
          */
         compressed_file_writer(const std::string & filename,
-                const util::invertible_map<uint64_t, uint64_t> & mapping);
+                std::function<uint64_t(uint64_t)> mapping);
 
         /**
          * Destructor; closes the compressed file.
@@ -65,13 +65,13 @@ class compressed_file_writer
 
         /** where to write the compressed data */
         FILE* _outfile;
-        
+
         /** the current byte this reader is on */
         uint64_t _char_cursor;
-        
+
         /** the current bit of the current byte this reader is on */
         uint64_t _bit_cursor;
-        
+
         /** how large to make the internal writer buffer */
         uint64_t _buffer_size;
 
@@ -79,7 +79,7 @@ class compressed_file_writer
         unsigned char* _buffer;
 
         /** the mapping to use (actual -> compressed id) */
-        const util::invertible_map<uint64_t, uint64_t> _mapping;
+        std::function<uint64_t(uint64_t)> _mapping;
 
         /** the number of total bits that have been written (for seeking )*/
         uint64_t _bit_location;
@@ -92,7 +92,7 @@ class compressed_file_writer
         class compressed_file_writer_exception: public std::exception
         {
             public:
-                
+
                 compressed_file_writer_exception(const std::string & error):
                     _error(error) { /* nothing */ }
 
@@ -100,9 +100,9 @@ class compressed_file_writer
                 {
                     return _error.c_str();
                 }
-           
+
             private:
-           
+
                 std::string _error;
         };
 

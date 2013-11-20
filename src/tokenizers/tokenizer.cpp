@@ -48,7 +48,7 @@ std::string tokenizer::label(term_id termID) const
 {
     if (!_term_map)
         throw tokenizer_exception{"failed to set term id mapping file"};
-    return *_term_map->find(termID);
+    return *_term_map->find_key(termID);
 }
 
 void tokenizer::set_max_term_id(size_t start)

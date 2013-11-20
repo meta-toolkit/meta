@@ -9,13 +9,13 @@ namespace meta {
 namespace io {
 
 compressed_file_writer::compressed_file_writer(const std::string & filename,
-        const util::invertible_map<uint64_t, uint64_t> & mapping):
+        std::function<uint64_t(uint64_t)> mapping):
     _outfile{fopen(filename.c_str(), "w")},
     _char_cursor{0},
     _bit_cursor{0},
     _buffer_size{1024 * 1024 * 8},
     _buffer{new unsigned char[_buffer_size]},
-    _mapping{mapping},
+    _mapping{std::move(mapping)},
     _bit_location{0}
 {
     // disable buffering
@@ -42,7 +42,7 @@ compressed_file_writer::~compressed_file_writer()
 
 void compressed_file_writer::write(uint64_t value)
 {
-    uint64_t cvalue = _mapping.get_value(value);
+    uint64_t cvalue = _mapping(value);
     uint64_t length = log2(cvalue);
 
     for(uint64_t bit = 0; bit < length; ++bit)

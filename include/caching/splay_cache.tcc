@@ -78,6 +78,10 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
             rotate_left(subroot);
         }
     }
+    else if(key == subroot->key)
+    {
+        subroot->value = value;
+    }
 }
 
 template <class Key, class Value>
@@ -174,6 +178,7 @@ void splay_cache<Key, Value>::on_drop(Functor && fun) {
 
 template <class Key, class Value>
 void splay_cache<Key, Value>::clear() {
+    std::lock_guard<std::mutex> lock{_mutables};
     clear(_root);
 }
 

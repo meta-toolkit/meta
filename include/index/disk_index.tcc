@@ -177,37 +177,41 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
 {
     std::ifstream in{filename};
     postings_data_type pdata{primary_key_type{0}};
-    std::unordered_map<uint64_t, uint64_t> freqs;
-
-    while(in >> pdata)
+    auto temp_freqs = _index_name + "/freqs_temp.mapping";
     {
-        for(auto & c: pdata.counts())
+        util::sqlite_map<uint64_t, uint64_t> freqs{temp_freqs};
+
+        while(in >> pdata)
         {
-            ++freqs[c.first];
-            ++freqs[*reinterpret_cast<const uint64_t*>(&c.second)];
+            for(auto & c: pdata.counts())
+            {
+                if (auto val = freqs.find(c.first))
+                    freqs.insert(c.first, *val + 1);
+                else
+                    freqs.insert(c.first, 1);
+
+                auto num = *reinterpret_cast<const uint64_t*>(&c.second);
+                if (auto val = freqs.find(num))
+                    freqs.insert(num, *val + 1);
+                else
+                    freqs.insert(num, 1);
+            }
         }
+
+        _compression_mapping.clear();
+
+        // have to know what the delimiter is, and can't use 0
+        uint64_t delim = std::numeric_limits<uint64_t>::max();
+        _compression_mapping.insert(delim, 1);
+
+        // 2 is the first valid compressed char after the delimiter 1
+        uint64_t counter = 2;
+        auto query_result =
+            freqs.query<uint64_t>("SELECT id FROM map ORDER BY value DESC;");
+        for (const auto & num : query_result)
+            _compression_mapping.insert(num, counter++);
     }
-
-    using pair_t = std::pair<uint64_t, uint64_t>;
-    // TODO this requires 2x the memory of _compression_mapping which is already
-    // huge!
-    std::vector<pair_t> sorted{freqs.begin(), freqs.end()};
-    std::sort(sorted.begin(), sorted.end(),
-        [](const pair_t & a, const pair_t & b) {
-            return a.second > b.second;
-        }
-    );
-
-    _compression_mapping.clear();
-
-    // have to know what the delimiter is, and can't use 0
-    uint64_t delim = std::numeric_limits<uint64_t>::max();
-    _compression_mapping.insert(delim, 1);
-
-    // 2 is the first valid compressed char after the delimiter 1
-    uint64_t counter = 2;
-    for(auto & p: sorted)
-        _compression_mapping.insert(p.first, counter++);
+    remove(temp_freqs.c_str());
 }
 
 template <class DerivedIndex>
@@ -229,7 +233,9 @@ void disk_index<DerivedIndex>::compress(
     // create scope so the writer closes and we can calculate the size of the
     // file as well as rename it
     {
-        io::compressed_file_writer out{cfilename, _compression_mapping};
+        io::compressed_file_writer out{cfilename, [&](uint64_t key) {
+            return _compression_mapping.get_value(key);
+        }};
 
         postings_data_type pdata{primary_key_type{0}};
         std::ifstream in{filename};
@@ -445,7 +451,9 @@ auto disk_index<DerivedIndex>::search_primary(primary_key_type p_id) const
     if(idx >= _term_bit_locations->size())
         return std::make_shared<postings_data_type>(p_id);
 
-    io::compressed_file_reader reader{*_postings, _compression_mapping};
+    io::compressed_file_reader reader{*_postings, [&](uint64_t value) {
+        return _compression_mapping.get_key(value);
+    }};
     reader.seek(_term_bit_locations->at(idx));
 
     auto pdata = std::make_shared<postings_data_type>(p_id);

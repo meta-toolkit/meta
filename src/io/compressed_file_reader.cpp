@@ -9,14 +9,14 @@ namespace meta {
 namespace io {
 
 compressed_file_reader::compressed_file_reader(const mmap_file & file,
-        const util::invertible_map<uint64_t, uint64_t> & mapping):
+        std::function<uint64_t(uint64_t)> mapping):
     _start{file.start()},
     _size{file.size()},
     _status{notDone},
     _current_value{0},
     _current_char{0},
     _current_bit{0},
-    _mapping{mapping}
+    _mapping{std::move(mapping)}
 {
     // initialize the stream
     get_next();
@@ -63,7 +63,7 @@ uint64_t compressed_file_reader::next()
         return _current_value;
     }
 
-    uint64_t next = _mapping.get_key(_current_value);
+    uint64_t next = _mapping(_current_value);
     get_next();
     return next;
 }

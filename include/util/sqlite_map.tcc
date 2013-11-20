@@ -8,10 +8,10 @@
 namespace meta {
 namespace util {
 
-template <class Key, class Value, class Cache>
+template <class Key, class Value, template <class, class> class Cache>
 sqlite_map<Key, Value, Cache>::sqlite_map(const std::string & filename):
     cache_{_max_cached},
-    _size{0}
+    backward_cache_{_max_cached}
 {
     if(sqlite3_open_v2(
             filename.c_str(),
@@ -24,6 +24,7 @@ sqlite_map<Key, Value, Cache>::sqlite_map(const std::string & filename):
     std::string command = "create table if not exists map(";
     command += "id "    + sql_type<Key>()   + " primary key not null, ";
     command += "value " + sql_type<Value>() + " not null);";
+    command += "CREATE INDEX IF NOT EXISTS map_values ON map(value DESC);";
 
     if(sqlite3_exec(_db, command.c_str(),
                     nullptr, nullptr, nullptr) != SQLITE_OK)
@@ -38,7 +39,8 @@ sqlite_map<Key, Value, Cache>::sqlite_map(const std::string & filename):
         throw sqlite_map_exception{"failed to set db properties"};
 
     sqlite3_prepare_v2(_db,
-                       "INSERT OR IGNORE INTO map (id, value) VALUES (?, ?);",
+                       "INSERT OR IGNORE INTO map (id, value) VALUES (?1, ?2);"
+                       "UPDATE map SET value = ?2 WHERE id = ?1;",
                        -1,
                        &insert_stmt_,
                        nullptr);
@@ -79,7 +81,7 @@ sqlite_map<Key, Value, Cache>::sqlite_map(const std::string & filename):
     });
 }
 
-template <class Key, class Value, class Cache>
+template <class Key, class Value, template <class, class> class Cache>
 template <class T>
 std::string sqlite_map<Key, Value, Cache>::sql_type() const
 {
@@ -90,7 +92,7 @@ std::string sqlite_map<Key, Value, Cache>::sql_type() const
     return "bigint";
 }
 
-template <class Key, class Value, class Cache>
+template <class Key, class Value, template <class, class> class Cache>
 sqlite_map<Key, Value, Cache>::~sqlite_map()
 {
     cache_.clear(); // ensure that the cache gets flushed before we
@@ -100,15 +102,22 @@ sqlite_map<Key, Value, Cache>::~sqlite_map()
     sqlite3_close(_db);
 }
 
-template <class Key, class Value, class Cache>
+template <class Key, class Value, template <class, class> class Cache>
 void sqlite_map<Key, Value, Cache>::insert(const Key & key, const Value & value)
 {
-    cache_.insert(key, value);
     std::lock_guard<std::mutex> lock{_mutex};
-    ++_size;
+    // check if map size will increase
+    auto cache_result = cache_.find(key);
+    if (!cache_result) {
+        sqlite_binder bind{find_stmt_, key};
+        if (sqlite3_step(find_stmt_) != SQLITE_ROW)
+            _size++; // not in cache or in db
+    }
+    // insert into or overwrite in the write-back cache for committing later
+    cache_.insert(key, value);
 }
 
-template <class Key, class Value, class Cache>
+template <class Key, class Value, template <class, class> class Cache>
 util::optional<Value> sqlite_map<Key, Value, Cache>::find(const Key & key) const
 {
     auto cache_result = cache_.find(key);
@@ -130,17 +139,27 @@ util::optional<Value> sqlite_map<Key, Value, Cache>::find(const Key & key) const
     return result;
 }
 
-template <class Key, class Value, class Cache>
-util::optional<Key> sqlite_map<Key, Value, Cache>::find(const Value & value) const
+template <class Key, class Value, template <class, class> class Cache>
+util::optional<Key>
+sqlite_map<Key, Value, Cache>::find_key(const Value & value) const
 {
-    std::lock_guard<std::mutex> lock{_mutex};
-    sqlite_binder{find_key_stmt_, value};
-    if (sqlite3_step(find_key_stmt_) != SQLITE_ROW)
-        return util::nullopt;
-    auto result = sql_fetch_result<Key>(find_key_stmt_, 0);
-    if (sqlite3_step(find_key_stmt_) != SQLITE_DONE)
-        throw sqlite_map_exception{"find for key produced too much data: "
-                                   + common::to_string(value)};
+    cache_.clear(); // need to flush writes in order for us to find by value
+    auto cache_result = backward_cache_.find(value);
+    if (cache_result)
+        return cache_result;
+
+    Key result;
+    {
+        std::lock_guard<std::mutex> lock{_mutex};
+        sqlite_binder{find_key_stmt_, value};
+        if (sqlite3_step(find_key_stmt_) != SQLITE_ROW)
+            return util::nullopt;
+        result = sql_fetch_result<Key>(find_key_stmt_, 0);
+        if (sqlite3_step(find_key_stmt_) != SQLITE_DONE)
+            throw sqlite_map_exception{"find for key produced too much data: "
+                                       + common::to_string(value)};
+    }
+    backward_cache_.insert(value, result);
     return result;
 }
 
@@ -162,10 +181,23 @@ inline std::string sql_fetch_result<std::string>(sqlite3_stmt * stmt, int idx)
     return reinterpret_cast<const char *>(sqlite3_column_text(stmt, idx));
 }
 
-template <class Key, class Value, class Cache>
+template <class Key, class Value, template <class, class> class Cache>
 uint64_t sqlite_map<Key, Value, Cache>::size() const
 {
     return _size;
+}
+
+template <class Key, class Value, template <class, class> class Cache>
+template <class Result, class... Args>
+auto sqlite_map<Key, Value, Cache>::query(const std::string & query,
+                                          Args &&... args)
+-> query_result<Result>
+{
+    cache_.clear(); // ensure results are flushed before making the query
+    sqlite3_stmt * stmt;
+    sqlite3_prepare_v2(_db, query.c_str(), -1, &stmt, nullptr);
+    sqlite_binder::bind_values(stmt, 1, args...);
+    return {stmt};
 }
 
 }
