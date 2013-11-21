@@ -98,6 +98,12 @@ Duration time(Functor && functor)
     return std::chrono::duration_cast<Duration>(end - start);
 }
 
+void start_progress(const std::string & prefix)
+{
+    std::cerr << prefix << "0%\r";
+    std::flush(std::cerr);
+}
+
 void show_progress(size_t idx, size_t max, size_t freq, const std::string & prefix)
 {
     if(idx % freq == 0)

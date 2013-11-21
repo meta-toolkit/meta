@@ -100,6 +100,14 @@ namespace common
     Duration time(Functor && functor);
 
     /**
+     * Starts output from a call to show_progess by displaying 0% completion.
+     * This is an optional function, and may be useful if the first call to
+     * show_progress doesn't start exactly at 0%.
+     * @param prefix The text to show before the percentage
+     */
+    inline void start_progress(const std::string & prefix);
+
+    /**
      * @param idx The current progress in the operation
      * @param max The maximum value of idx, when it is done
      * @param freq How often to write output to the terminal

@@ -81,6 +81,8 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     std::ofstream dest_config{_index_name + "/config.toml", std::ios::binary};
     dest_config << source_config.rdbuf();
 
+    std::cerr << "Creating index: " << _index_name << std::endl;
+
     // load the documents from the corpus
     auto docs = corpus::corpus::load(config_file);
 
@@ -128,13 +130,13 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
                     return; // destructor for handler will write
                             // any intermediate chunks
                 doc = docs->next();
-                std::string progress = " Documents: "
+                std::string progress = " > Documents: "
                     + common::add_commas(common::to_string(doc->id()))
                     + " Unique primary keys: "
                     + common::add_commas(
                         common::to_string(_tokenizer->num_terms()))
                     + " Tokenizing: ";
-                common::show_progress(doc->id(), docs->size(), 50, progress);
+                common::show_progress(doc->id(), docs->size(), 100, progress);
             }
 
             _tokenizer->tokenize(*doc);
@@ -159,7 +161,7 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
     for (auto & fut : futures)
         fut.get();
 
-    std::string progress = " Documents: "
+    std::string progress = " > Documents: "
         + common::add_commas(common::to_string(docs->size()))
         + " Unique primary keys: "
         + common::add_commas(common::to_string(_tokenizer->num_terms()))
@@ -179,14 +181,22 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
     postings_data_type pdata{primary_key_type{0}};
     std::unordered_map<uint64_t, uint64_t> freqs;
 
+    uint64_t uncompressed_size = common::file_size(filename);
+    std::string progress = " > Calculating optimal compression encoding ";
+    common::start_progress(progress);
     while(in >> pdata)
     {
+        common::show_progress(in.tellg(),
+                              uncompressed_size,
+                              1024 * 1024 * 32, // every 32 MB
+                              progress);
         for(auto & c: pdata.counts())
         {
             ++freqs[c.first];
             ++freqs[*reinterpret_cast<const uint64_t*>(&c.second)];
         }
     }
+    common::end_progress(progress);
 
     using pair_t = std::pair<uint64_t, uint64_t>;
     // TODO this requires 2x the memory of _compression_mapping which is already
@@ -214,12 +224,11 @@ template <class DerivedIndex>
 void disk_index<DerivedIndex>::compress(
         const std::string & filename)
 {
-    std::cerr << "Calculating optimal compression mapping..." << std::endl;
-
     calc_compression_mapping(filename);
     std::string cfilename{filename + ".compressed"};
 
-    std::cerr << "Creating compressed postings file..." << std::endl;
+    std::string progress = " > Creating compressed postings file ";
+    uint64_t uncompressed_size = common::file_size(filename);
 
     // allocate memory for the term_id -> term location mapping now that we know
     // how many terms there are
@@ -235,29 +244,35 @@ void disk_index<DerivedIndex>::compress(
         std::ifstream in{filename};
 
         // note: we will be accessing pdata in sorted order
+        common::start_progress(progress);
         while(in >> pdata)
         {
+            common::show_progress(in.tellg(),
+                                  uncompressed_size,
+                                  1024 * 1024 * 64, // every 64 MB
+                                  progress);
             (*_term_bit_locations)[pdata.primary_key()] = out.bit_location();
             pdata.write_compressed(out);
         }
+        common::end_progress(progress);
     }
 
-    std::cerr << "Created compressed postings file ("
+    std::cerr << " > Created compressed postings file ("
               << common::bytes_to_units(common::file_size(cfilename))
               << ")" << std::endl;
 
     remove(filename.c_str());
     rename(cfilename.c_str(), filename.c_str());
+
+    std::cerr << "Done creating index: " << _index_name << std::endl;
 }
 
 template <class DerivedIndex>
 void disk_index<DerivedIndex>::load_index()
 {
-    std::cerr << "Loading index from disk ("
-         << _index_name << ")..." << std::endl;
+    std::cerr << "Loading index from disk: " << _index_name << std::endl;
 
     auto config = cpptoml::parse_file(_index_name + "/config.toml");
-
 
     _doc_id_mapping =
         common::make_unique<util::sqlite_map<doc_id, std::string>>(
@@ -367,7 +382,7 @@ void disk_index<DerivedIndex>::merge_chunks(
                 chunks.pop();
                 second = util::optional<chunk_t>{chunks.top()};
                 chunks.pop();
-                std::cerr << " Merging " << first->path() << " ("
+                std::cerr << " > Merging " << first->path() << " ("
                      << common::bytes_to_units(first->size())
                      << ") and " << second->path() << " ("
                      << common::bytes_to_units(second->size())
@@ -391,7 +406,7 @@ void disk_index<DerivedIndex>::merge_chunks(
 
     rename(chunks.top().path().c_str(), filename.c_str());
 
-    std::cerr << "Created uncompressed postings file " << filename
+    std::cerr << " > Created uncompressed postings file " << filename
               << " (" << common::bytes_to_units(chunks.top().size()) << ")"
               << std::endl;
 }
