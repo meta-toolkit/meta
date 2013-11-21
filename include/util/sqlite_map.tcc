@@ -63,15 +63,14 @@ sqlite_map<Key, Value, Cache>::sqlite_map(const std::string & filename):
                        &size_stmt_,
                        nullptr);
 
-    sqlite_binder{size_stmt_};
+    sqlite_binder binder{size_stmt_};
     if (sqlite3_step(size_stmt_) != SQLITE_ROW)
         throw sqlite_map_exception{"failed to get size"};
-    _size = sqlite3_column_int64(size_stmt_, 0);
+    _size = sql_fetch_result<uint64_t>(size_stmt_, 0);
     if (sqlite3_step(size_stmt_) != SQLITE_DONE)
         throw sqlite_map_exception{"size returned too much data"};
 
     cache_.on_drop([&](const Key & key, const Value & value) {
-        std::lock_guard<std::mutex> lock{_mutex};
         sqlite_binder bind{insert_stmt_, key, value};
         if (sqlite3_step(insert_stmt_) != SQLITE_DONE)
             throw sqlite_map_exception{"insert failed: "
@@ -120,21 +119,18 @@ void sqlite_map<Key, Value, Cache>::insert(const Key & key, const Value & value)
 template <class Key, class Value, template <class, class> class Cache>
 util::optional<Value> sqlite_map<Key, Value, Cache>::find(const Key & key) const
 {
+    std::lock_guard<std::mutex> lock{_mutex};
     auto cache_result = cache_.find(key);
     if (cache_result)
         return cache_result;
 
-    Value result;
-    {
-        std::lock_guard<std::mutex> lock{_mutex};
-        sqlite_binder bind{find_stmt_, key};
-        if (sqlite3_step(find_stmt_) != SQLITE_ROW)
-            return util::nullopt;
-        result = sql_fetch_result<Value>(find_stmt_, 0);
-        if (sqlite3_step(find_stmt_) != SQLITE_DONE)
-            throw sqlite_map_exception{"find for value produced too much data: "
-                                       + common::to_string(key)};
-    }
+    sqlite_binder bind{find_stmt_, key};
+    if (sqlite3_step(find_stmt_) != SQLITE_ROW)
+        return util::nullopt;
+    auto result = sql_fetch_result<Value>(find_stmt_, 0);
+    if (sqlite3_step(find_stmt_) != SQLITE_DONE)
+        throw sqlite_map_exception{"find for value produced too much data: "
+                                   + common::to_string(key)};
     cache_.insert(key, result);
     return result;
 }
@@ -143,22 +139,19 @@ template <class Key, class Value, template <class, class> class Cache>
 util::optional<Key>
 sqlite_map<Key, Value, Cache>::find_key(const Value & value) const
 {
+    std::lock_guard<std::mutex> lock{_mutex};
     cache_.clear(); // need to flush writes in order for us to find by value
     auto cache_result = backward_cache_.find(value);
     if (cache_result)
         return cache_result;
 
-    Key result;
-    {
-        std::lock_guard<std::mutex> lock{_mutex};
-        sqlite_binder{find_key_stmt_, value};
-        if (sqlite3_step(find_key_stmt_) != SQLITE_ROW)
-            return util::nullopt;
-        result = sql_fetch_result<Key>(find_key_stmt_, 0);
-        if (sqlite3_step(find_key_stmt_) != SQLITE_DONE)
-            throw sqlite_map_exception{"find for key produced too much data: "
+    sqlite_binder bind{find_key_stmt_, value};
+    if (sqlite3_step(find_key_stmt_) != SQLITE_ROW)
+        return util::nullopt;
+    auto result = sql_fetch_result<Key>(find_key_stmt_, 0);
+    if (sqlite3_step(find_key_stmt_) != SQLITE_DONE)
+        throw sqlite_map_exception{"find for key produced too much data: "
                                        + common::to_string(value)};
-    }
     backward_cache_.insert(value, result);
     return result;
 }
@@ -196,6 +189,8 @@ auto sqlite_map<Key, Value, Cache>::query(const std::string & query,
     cache_.clear(); // ensure results are flushed before making the query
     sqlite3_stmt * stmt;
     sqlite3_prepare_v2(_db, query.c_str(), -1, &stmt, nullptr);
+    // need side effect to remain until the query result calls reset and
+    // finalize itself, so we don't use a sqlite_binder here
     sqlite_binder::bind_values(stmt, 1, args...);
     return {stmt};
 }

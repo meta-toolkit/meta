@@ -71,6 +71,16 @@ class locking_map {
          */
         util::optional<Value> find(const Key & key) const;
 
+        using iterator = typename std::unordered_map<Key, Value>::iterator;
+        using const_iterator =
+            typename std::unordered_map<Key, Value>::const_iterator;
+
+        iterator begin();
+        iterator end();
+
+        const_iterator begin() const;
+        const_iterator end() const;
+
     private:
         std::unordered_map<Key, Value> map_;
         mutable std::mutex mutables_;

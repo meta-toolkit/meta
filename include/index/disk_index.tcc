@@ -87,7 +87,8 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     uint64_t num_docs = docs->size();
 
     _doc_id_mapping =
-        common::make_unique<util::sqlite_map<doc_id, std::string>>(
+        common::make_unique<util::sqlite_map<doc_id, std::string,
+                                             caching::default_dblru_cache>>(
             _index_name + "/docids.mapping"
         );
 
@@ -106,8 +107,6 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     compress(_index_name + "/postings.index");
 
     common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
-    common::save_mapping(_compression_mapping,
-            _index_name + "/keys.compressedmapping");
 
     _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
 }
@@ -176,13 +175,22 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
         const std::string & filename)
 {
     std::ifstream in{filename};
+    in.seekg(0, in.end);
+    uint64_t length = in.tellg();
+    in.seekg(0, in.beg);
+
     postings_data_type pdata{primary_key_type{0}};
     auto temp_freqs = _index_name + "/freqs_temp.mapping";
     {
-        util::sqlite_map<uint64_t, uint64_t> freqs{temp_freqs};
-
+        util::sqlite_map<uint64_t, uint64_t, caching::default_dblru_cache>
+        freqs{temp_freqs};
+        auto idx = in.tellg();
         while(in >> pdata)
         {
+            if (in.tellg() / (length / 500) != idx) {
+                idx = in.tellg() / (length / 500);
+                common::show_progress(idx, 500, 1, " Calculating frequencies: ");
+            }
             for(auto & c: pdata.counts())
             {
                 if (auto val = freqs.find(c.first))
@@ -197,19 +205,28 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
                     freqs.insert(num, 1);
             }
         }
+        common::end_progress(" Calculating frequencies: ");
 
-        _compression_mapping.clear();
+        _compression_mapping =
+            common::make_unique<util::sqlite_map<uint64_t, uint64_t>>(
+                _index_name + "/keys.compressedmapping"
+            );
 
         // have to know what the delimiter is, and can't use 0
         uint64_t delim = std::numeric_limits<uint64_t>::max();
-        _compression_mapping.insert(delim, 1);
+        _compression_mapping->insert(delim, 1);
 
         // 2 is the first valid compressed char after the delimiter 1
         uint64_t counter = 2;
         auto query_result =
             freqs.query<uint64_t>("SELECT id FROM map ORDER BY value DESC;");
-        for (const auto & num : query_result)
-            _compression_mapping.insert(num, counter++);
+        uint64_t total_numbers = freqs.size() + 1;
+        for (const auto & num : query_result) {
+            _compression_mapping->insert(num, counter++);
+            common::show_progress(counter, total_numbers, total_numbers / 500,
+                " Writing map: ");
+        }
+        common::end_progress(" Writing map: ");
     }
     remove(temp_freqs.c_str());
 }
@@ -223,8 +240,6 @@ void disk_index<DerivedIndex>::compress(
     calc_compression_mapping(filename);
     std::string cfilename{filename + ".compressed"};
 
-    std::cerr << "Creating compressed postings file..." << std::endl;
-
     // allocate memory for the term_id -> term location mapping now that we know
     // how many terms there are
     _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
@@ -234,18 +249,28 @@ void disk_index<DerivedIndex>::compress(
     // file as well as rename it
     {
         io::compressed_file_writer out{cfilename, [&](uint64_t key) {
-            return _compression_mapping.get_value(key);
+            return *_compression_mapping->find(key);
         }};
 
         postings_data_type pdata{primary_key_type{0}};
         std::ifstream in{filename};
 
+        in.seekg(0, in.end);
+        auto length = in.tellg();
+        in.seekg(0, in.beg);
+        auto idx = in.tellg();
         // note: we will be accessing pdata in sorted order
         while(in >> pdata)
         {
+            if (idx != in.tellg() / (length / 500)) {
+                idx = in.tellg() / (length / 500);
+                common::show_progress(idx, 500, 1,
+                        "Creating compressed postings file: ");
+            }
             (*_term_bit_locations)[pdata.primary_key()] = out.bit_location();
             pdata.write_compressed(out);
         }
+        common::end_progress("Creating compressed postings file: ");
     }
 
     std::cerr << "Created compressed postings file ("
@@ -266,7 +291,8 @@ void disk_index<DerivedIndex>::load_index()
 
 
     _doc_id_mapping =
-        common::make_unique<util::sqlite_map<doc_id, std::string>>(
+        common::make_unique<util::sqlite_map<doc_id, std::string,
+                                             caching::default_dblru_cache>>(
             _index_name + "/docids.mapping"
         );
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
@@ -278,9 +304,12 @@ void disk_index<DerivedIndex>::load_index()
     _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/lexicon.index");
 
+    _compression_mapping =
+        common::make_unique<util::sqlite_map<uint64_t, uint64_t>>(
+            _index_name + "/keys.compressedmapping"
+        );
+
     common::load_mapping(_label_ids, _index_name + "/labelids.mapping");
-    common::load_mapping(_compression_mapping,
-            _index_name + "/keys.compressedmapping");
     _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
     _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
 
@@ -452,7 +481,7 @@ auto disk_index<DerivedIndex>::search_primary(primary_key_type p_id) const
         return std::make_shared<postings_data_type>(p_id);
 
     io::compressed_file_reader reader{*_postings, [&](uint64_t value) {
-        return _compression_mapping.get_key(value);
+        return *_compression_mapping->find_key(value);
     }};
     reader.seek(_term_bit_locations->at(idx));
 

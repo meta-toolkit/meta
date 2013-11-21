@@ -14,6 +14,7 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include "caching/dblru_cache.h"
 #include "corpus/corpus.h"
 #include "tokenizers/all.h"
 #include "index/cached_index.h"
@@ -245,7 +246,9 @@ class disk_index
          * doc_id -> document path mapping.
          * Each index corresponds to a doc_id (uint64_t).
          */
-        std::unique_ptr<util::sqlite_map<doc_id, std::string>> _doc_id_mapping;
+        std::unique_ptr<util::sqlite_map<doc_id, std::string,
+                                         caching::default_dblru_cache>>
+        _doc_id_mapping;
 
         /**
          * doc_id -> document length mapping.
@@ -257,7 +260,8 @@ class disk_index
         std::unique_ptr<tokenizers::tokenizer> _tokenizer;
 
         /** the mapping of (actual -> compressed id) */
-        util::invertible_map<uint64_t, uint64_t> _compression_mapping;
+        std::unique_ptr<util::sqlite_map<uint64_t, uint64_t>>
+        _compression_mapping;
 
         /**
          * Maps which class a document belongs to (if any).

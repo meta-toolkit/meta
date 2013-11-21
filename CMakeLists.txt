@@ -24,6 +24,10 @@ if( UNIX )
     endif()
 endif()
 
+add_library( meta-sqlite
+             deps/sqlite/sqlite3.c
+)
+
 add_library( meta-classify
              src/classify/feature_select/select.cpp
              src/classify/feature_select/doc_freq.cpp
@@ -89,7 +93,6 @@ add_library( meta-tokenizers
              src/tokenizers/tree/skeleton_tokenizer.cpp
              src/tokenizers/tree/subtree_tokenizer.cpp
              src/tokenizers/tree/tag_tokenizer.cpp
-             deps/sqlite/sqlite3.c
 )
 
 add_library( meta-topics
@@ -105,6 +108,7 @@ target_link_libraries( classify
                        meta-classify
                        meta-index
                        meta-tokenizers
+                       meta-sqlite
                        meta-stemmers
                        meta-io
                        meta-corpus
@@ -115,6 +119,7 @@ add_executable( index index.cpp )
 target_link_libraries( index
                        meta-index
                        meta-tokenizers
+                       meta-sqlite
                        meta-stemmers
                        meta-io
                        meta-corpus
@@ -125,6 +130,7 @@ add_executable( search search.cpp )
 target_link_libraries( search
                        meta-index
                        meta-tokenizers
+                       meta-sqlite
                        meta-stemmers
                        meta-io
                        meta-corpus
@@ -135,6 +141,7 @@ add_executable( interactive_search interactive_search.cpp )
 target_link_libraries( interactive_search
                        meta-index
                        meta-tokenizers
+                       meta-sqlite
                        meta-stemmers
                        meta-io
                        meta-corpus
@@ -157,6 +164,7 @@ target_link_libraries( lda-test
                        meta-tokenizers
                        meta-stemmers
                        meta-index
+                       meta-sqlite
                        meta-io
                        meta-corpus
                        ${CMAKE_THREAD_LIBS_INIT}

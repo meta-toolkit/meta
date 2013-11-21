@@ -10,9 +10,11 @@
 #ifndef _SQLITE_MAP_H_
 #define _SQLITE_MAP_H_
 
+#include <limits>
 #include <mutex>
-#include <type_traits>
 #include <string>
+#include <type_traits>
+
 #include "common.h"
 #include "meta.h"
 #include "sqlite3.h"

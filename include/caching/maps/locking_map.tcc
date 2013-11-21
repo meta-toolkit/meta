@@ -46,5 +46,25 @@ util::optional<Value> locking_map<Key, Value>::find(const Key & key) const {
     return {it->second};
 }
 
+template <class Key, class Value>
+auto locking_map<Key, Value>::begin() -> iterator {
+    return map_.begin();
+}
+
+template <class Key, class Value>
+auto locking_map<Key, Value>::end() -> iterator {
+    return map_.end();
+}
+
+template <class Key, class Value>
+auto locking_map<Key, Value>::begin() const -> const_iterator {
+    return map_.begin();
+}
+
+template <class Key, class Value>
+auto locking_map<Key, Value>::end() const -> const_iterator {
+    return map_.end();
+}
+
 }
 }
