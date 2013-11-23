@@ -14,9 +14,6 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
     if(query.counts().empty())
         idx.tokenize(query);
 
-    // TODO
-    /*
-
     score_data sd{idx,
                   idx.avg_doc_length(),
                   idx.num_docs(),
@@ -24,10 +21,8 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
                   query
     };
 
-    */
     using doc_pair = std::pair<doc_id, double>;
     std::vector<doc_pair> results(idx.num_docs());
-    /*
 
     for(doc_id i{0}; i < results.size(); ++i) {
         results[i].first = i;
@@ -35,9 +30,10 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
 
     for(auto & tpair: query.counts())
     {
-        auto pdata = idx.search_primary(tpair.first);
+        term_id t_id{idx.get_term_id(tpair.first)};
+        auto pdata = idx.search_primary(t_id);
         sd.doc_count = pdata->counts().size();
-        sd.t_id = tpair.first;
+        sd.t_id = t_id;
         sd.query_term_count = tpair.second;
         sd.corpus_term_count = idx.total_num_occurences(sd.t_id);
         for(auto & dpair: pdata->counts())
@@ -55,7 +51,6 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
             return a.second > b.second;
         }
     );
-    */
 
     return results;
 }
