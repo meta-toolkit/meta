@@ -22,8 +22,7 @@ io::parser tokenizer::create_parser(const corpus::document & doc,
                           io::parser::input_type::File};
 }
 
-std::unique_ptr<tokenizer> tokenizer::load_tokenizer(
-        const cpptoml::toml_group & config)
+std::unique_ptr<tokenizer> tokenizer::load(const cpptoml::toml_group & config)
 {
     using namespace tokenizers;
     std::vector<std::shared_ptr<tokenizer>> toks;

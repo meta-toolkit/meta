@@ -126,6 +126,16 @@ target_link_libraries( index
                        ${CMAKE_THREAD_LIBS_INIT}
 )
 
+add_executable( tokenizer-test tokenizer-test.cpp )
+target_link_libraries( tokenizer-test
+                       meta-index
+                       meta-tokenizers
+                       meta-stemmers
+                       meta-io
+                       meta-corpus
+                       ${CMAKE_THREAD_LIBS_INIT}
+)
+
 add_executable( search search.cpp )
 target_link_libraries( search
                        meta-index

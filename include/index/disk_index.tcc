@@ -51,7 +51,7 @@ cached_index<Index, Cache> make_index(const std::string & config_file,
 template <class DerivedIndex>
 disk_index<DerivedIndex>::disk_index(const cpptoml::toml_group & config,
                                      const std::string & index_path):
-    _tokenizer{ tokenizers::tokenizer::load_tokenizer(config) },
+    _tokenizer{ tokenizers::tokenizer::load(config) },
     _index_name{ index_path }
 { /* nothing */ }
 
@@ -345,7 +345,7 @@ void disk_index<DerivedIndex>::load_index()
         );
 
     common::load_mapping(_label_ids, _index_name + "/labelids.mapping");
-    _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
+    _tokenizer = tokenizers::tokenizer::load(config);
 
     _postings = common::make_unique<io::mmap_file>(
         _index_name + "/postings.index"

@@ -39,8 +39,8 @@ class tokenizer
         /**
          * @return a Tokenizer as specified by a config object
          */
-        static std::unique_ptr<tokenizer>
-            load_tokenizer(const cpptoml::toml_group & config);
+        static std::unique_ptr<tokenizer> load(
+                const cpptoml::toml_group & config);
 
         /**
          * @param doc The document to parse
