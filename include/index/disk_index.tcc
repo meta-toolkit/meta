@@ -367,8 +367,7 @@ class_label disk_index<DerivedIndex>::class_label_from_id(label_id l_id) const
 template <class DerivedIndex>
 label_id disk_index<DerivedIndex>::get_label_id(const class_label & lbl)
 {
-    std::mutex mutex;
-    std::lock_guard<std::mutex> lock{mutex};
+    std::lock_guard<std::mutex> lock{*_mutex};
     if(!_label_ids.contains_key(lbl))
     {
         label_id next_id{static_cast<label_id>(_label_ids.size())};
