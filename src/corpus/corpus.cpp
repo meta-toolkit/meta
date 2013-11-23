@@ -38,8 +38,13 @@ std::unique_ptr<corpus> corpus::load(const std::string & config_file)
     }
     else if(*type == "line-corpus")
     {
-        return common::make_unique<line_corpus>(*prefix + "/" + *dataset + "/"
-                                                + *dataset + ".dat");
+        std::string filename = *prefix + "/"
+            + *dataset + "/" + *dataset + ".dat";
+        auto lines = config.get_as<int64_t>("num-lines");
+        if(!lines)
+            return common::make_unique<line_corpus>(filename);
+        return common::make_unique<line_corpus>(filename,
+                                                static_cast<uint64_t>(*lines));
     }
     else
         throw corpus_exception{"corpus type was not able to be determined"};
