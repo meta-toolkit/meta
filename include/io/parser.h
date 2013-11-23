@@ -9,7 +9,7 @@
 #define _PARSER_H_
 
 #include <string>
-#include <unordered_set>
+#include <array>
 #include "io/mmap_file.h"
 
 namespace meta {
@@ -68,8 +68,11 @@ class parser
         /** the current position of the "cursor" into the file or string */
         size_t _idx;
 
-        /** invalid characters that serve as delimiters */
-        std::unordered_set<char> _invalid;
+        /**
+         * Array of booleans indicating whether or not a character is a
+         * delimiter.
+         */
+        std::array<bool, 256> _invalid;
 
         /** saves the name of the file if the parser is parsing a file */
         std::string _filename;

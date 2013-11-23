@@ -10,9 +10,14 @@ namespace io {
 
 parser::parser(const std::string & input, const std::string & delims,
         input_type in_type /* = File */):
-    _idx{0},
-    _invalid{delims.begin(), delims.end()}
+    _idx{0}
 {
+    // initialize delimiter array
+    _invalid.fill(false);
+    for(const auto & ch: delims)
+        _invalid[static_cast<uint8_t>(ch)] = true;
+
+    // determine whether we're parsing an mmap_file or a std::string
     if(in_type == input_type::File)
     {
         _filename = input;
@@ -35,7 +40,7 @@ void parser::get_next()
     _next = "";
     for(size_t i = _idx; i < _size; ++i)
     {
-        if(_invalid.find(_data[i]) != _invalid.end())
+        if(_invalid[static_cast<uint8_t>(_data[i])])
         {
             if(_idx != i)
             {

@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     auto config = cpptoml::parse_file(argv[1]);
     auto corpus = corpus::corpus::load(argv[1]);
     auto tok = tokenizers::tokenizer::load(config);
-    const uint64_t total = 10000;
+    const uint64_t total = 2000;
 
     auto elapsed = common::time<std::chrono::seconds>([&](){
         std::string progress = " Tokenizing ";
@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
                 break;
             common::show_progress(doc.id(), total, 100, progress);
             tok->tokenize(doc);
+            //std::cout << doc.content() << std::endl;
         }
         common::end_progress(progress);
     });
