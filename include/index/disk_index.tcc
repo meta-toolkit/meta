@@ -70,7 +70,7 @@ uint64_t disk_index<DerivedIndex>::unique_terms(doc_id d_id) const
 template <class DerivedIndex>
 uint64_t disk_index<DerivedIndex>::unique_terms() const
 {
-    return _tokenizer->num_terms();
+    return _term_id_mapping->size();
 }
 
 template <class DerivedIndex>
@@ -94,6 +94,12 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
             _index_name + "/docids.mapping"
         );
 
+    _term_id_mapping =
+        common::make_unique<util::sqlite_map<std::string, uint64_t,
+                                             caching::default_dblru_cache>>(
+            _index_name + "/termids.mapping"
+        );
+
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts", num_docs);
     _labels = common::make_unique<util::disk_vector<label_id>>(
@@ -101,16 +107,17 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/docs.uniqueterms", num_docs);
 
-    _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
-
     // create postings file
     uint32_t num_chunks = tokenize_docs(docs.get());
+    return; // TODO testing hack
+    /*
     merge_chunks(num_chunks, _index_name + "/postings.index");
     compress(_index_name + "/postings.index");
 
     common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
 
     _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
+    */
 }
 
 template <class DerivedIndex>
@@ -125,15 +132,21 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
             util::optional<corpus::document> doc;
             {
                 std::lock_guard<std::mutex> lock{mutex};
+
                 if (!docs->has_next())
                     return; // destructor for handler will write
                             // any intermediate chunks
                 doc = docs->next();
+
+                // TODO hack stop
+                if(doc->id() > 20000)
+                    return;
+
                 std::string progress = " > Documents: "
                     + common::add_commas(common::to_string(doc->id()))
                     + " Unique primary keys: "
                     + common::add_commas(
-                        common::to_string(_tokenizer->num_terms()))
+                        common::to_string(_term_id_mapping->size()))
                     + " Tokenizing: ";
                 common::show_progress(doc->id(), docs->size(), 100, progress);
             }
@@ -143,7 +156,7 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
             // save metadata
             _doc_id_mapping->insert(doc->id(), doc->path());
             (*_doc_sizes)[doc->id()] = doc->length();
-            (*_unique_terms)[doc->id()] = doc->frequencies().size();
+            (*_unique_terms)[doc->id()] = doc->counts().size();
             (*_labels)[doc->id()] = get_label_id(doc->label());
             total_terms.fetch_add(doc->length());
 
@@ -163,7 +176,7 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
     std::string progress = " > Documents: "
         + common::add_commas(common::to_string(docs->size()))
         + " Unique primary keys: "
-        + common::add_commas(common::to_string(_tokenizer->num_terms()))
+        + common::add_commas(common::to_string(_term_id_mapping->size()))
         + " Tokenizing: ";
     common::end_progress(progress);
 
@@ -244,7 +257,7 @@ void disk_index<DerivedIndex>::compress(
     // allocate memory for the term_id -> term location mapping now that we know
     // how many terms there are
     _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
-            _index_name + "/lexicon.index", _tokenizer->max_term_id() - 1);
+            _index_name + "/lexicon.index", _term_id_mapping->size());
 
     // create scope so the writer closes and we can calculate the size of the
     // file as well as rename it
@@ -285,6 +298,20 @@ void disk_index<DerivedIndex>::compress(
 }
 
 template <class DerivedIndex>
+term_id disk_index<DerivedIndex>::get_term_id(const std::string & term)
+{
+    std::lock_guard<std::mutex> lock{*_mutex};
+
+    auto termID = _term_id_mapping->find(term);
+    if(termID)
+        return term_id{*termID};
+
+    uint64_t size = _term_id_mapping->size();
+    _term_id_mapping->insert(term, term_id{size});
+    return term_id{size};
+}
+
+template <class DerivedIndex>
 void disk_index<DerivedIndex>::load_index()
 {
     std::cerr << "Loading index from disk: " << _index_name << std::endl;
@@ -296,6 +323,13 @@ void disk_index<DerivedIndex>::load_index()
                                              caching::default_dblru_cache>>(
             _index_name + "/docids.mapping"
         );
+
+    _term_id_mapping =
+        common::make_unique<util::sqlite_map<std::string, uint64_t,
+                                             caching::default_dblru_cache>>(
+            _index_name + "/termids.mapping"
+        );
+
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts");
     _labels = common::make_unique<util::disk_vector<label_id>>(
@@ -312,7 +346,6 @@ void disk_index<DerivedIndex>::load_index()
 
     common::load_mapping(_label_ids, _index_name + "/labelids.mapping");
     _tokenizer = tokenizers::tokenizer::load_tokenizer(config);
-    _tokenizer->set_term_id_mapping(_index_name + "/termids.mapping");
 
     _postings = common::make_unique<io::mmap_file>(
         _index_name + "/postings.index"

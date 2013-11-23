@@ -13,7 +13,7 @@ namespace meta {
 namespace tokenizers {
 
 ngram_word_tokenizer::ngram_word_tokenizer(
-        size_t n,
+        uint16_t n,
         stopword_t stopwords,
         std::function<std::string(const std::string &)> stemmer)
 : ngram_tokenizer{n}, _stemmer{stemmer}
@@ -22,11 +22,9 @@ ngram_word_tokenizer::ngram_word_tokenizer(
         init_stopwords();
 }
 
-void ngram_word_tokenizer::tokenize_document(
-        corpus::document & document,
-        std::function<term_id(const std::string &)> mapping)
+void ngram_word_tokenizer::tokenize(corpus::document & doc)
 {
-    io::parser psr{create_parser(document, ".sen", " \n")};
+    io::parser psr{create_parser(doc, ".sen", " \n")};
 
     // initialize the ngram
     std::deque<std::string> ngram;
@@ -43,8 +41,7 @@ void ngram_word_tokenizer::tokenize_document(
     // add the rest of the ngrams
     while(psr.has_next())
     {
-        std::string wordified = wordify(ngram);
-        document.increment(mapping(wordified), 1);
+        doc.increment(wordify(ngram), 1);
         ngram.pop_front();
         std::string next = "";
         do
@@ -55,7 +52,7 @@ void ngram_word_tokenizer::tokenize_document(
     }
 
     // add the last token
-    document.increment(mapping(wordify(ngram)), 1);
+    doc.increment(wordify(ngram), 1);
 }
 
 void ngram_word_tokenizer::init_stopwords()

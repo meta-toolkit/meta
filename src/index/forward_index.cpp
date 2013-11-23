@@ -52,14 +52,18 @@ std::string forward_index::liblinear_data(doc_id d_id) const
     return out.str();
 }
 
-void forward_index::chunk_handler::handle_doc(const corpus::document & doc) {
+void forward_index::chunk_handler::handle_doc(const corpus::document & doc)
+{
     postings_data<doc_id, term_id> pd{doc.id()};
-    pd.set_counts(std::vector<std::pair<term_id, double>>{
-        doc.frequencies().begin(), doc.frequencies().end()
-    });
+
+    // add all counts to postings_data, but we also need to determine term_ids
+    for(const auto & count: doc.counts())
+        pd.increase_count(idx_->get_term_id(count.first), count.second);
+
     chunk_size_ += pd.bytes_used();
     pdata_.push_back(pd);
-    if (chunk_size_ >= max_size()) {
+    if(chunk_size_ >= max_size())
+    {
         write_chunk();
         chunk_size_ = 0;
     }

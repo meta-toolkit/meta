@@ -57,20 +57,27 @@ double inverted_index::avg_doc_length()
     return static_cast<double>(_total_corpus_terms) / _doc_sizes->size();
 }
 
-void inverted_index::chunk_handler::handle_doc(const corpus::document & doc) {
-    for (const auto & f : doc.frequencies()) {
-        postings_data_type pd{f.first};
-        pd.increase_count(doc.id(), f.second);
-        auto it = pdata_.find(f.first);
-        if (it == pdata_.end()) {
+void inverted_index::chunk_handler::handle_doc(const corpus::document & doc)
+{
+    for(const auto & count: doc.counts())   // count: (string, double)
+    {
+        term_id t_id{idx_->get_term_id(count.first)};
+        postings_data_type pd{t_id};
+        pd.increase_count(doc.id(), count.second);
+        auto it = pdata_.find(t_id);
+        if(it == pdata_.end())
+        {
             chunk_size_ += pd.bytes_used();
-            pdata_.emplace(f.first, pd);
-        } else {
+            pdata_.emplace(t_id, pd);
+        }
+        else
+        {
             chunk_size_ -= it->second.bytes_used();
             it->second.merge_with(pd);
             chunk_size_ += it->second.bytes_used();
         }
-        if (chunk_size_ >= max_size()) {
+        if(chunk_size_ >= max_size())
+        {
             write_chunk();
             chunk_size_ = 0;
         }

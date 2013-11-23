@@ -11,8 +11,11 @@ namespace index {
 std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
                                                  corpus::document & query) const
 {
-    if(query.frequencies().empty())
+    if(query.counts().empty())
         idx.tokenize(query);
+
+    // TODO
+    /*
 
     score_data sd{idx,
                   idx.avg_doc_length(),
@@ -21,14 +24,16 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
                   query
     };
 
+    */
     using doc_pair = std::pair<doc_id, double>;
     std::vector<doc_pair> results(idx.num_docs());
+    /*
 
     for(doc_id i{0}; i < results.size(); ++i) {
         results[i].first = i;
     }
 
-    for(auto & tpair: query.frequencies())
+    for(auto & tpair: query.counts())
     {
         auto pdata = idx.search_primary(tpair.first);
         sd.doc_count = pdata->counts().size();
@@ -50,6 +55,7 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index & idx,
             return a.second > b.second;
         }
     );
+    */
 
     return results;
 }

@@ -9,15 +9,14 @@
 namespace meta {
 namespace tokenizers {
 
-void libsvm_tokenizer::tokenize_document(corpus::document & document,
-        std::function<term_id(const std::string &)> mapping)
+void libsvm_tokenizer::tokenize(corpus::document & doc)
 {
-    std::stringstream stream{document.content()};
+    std::stringstream stream{doc.content()};
     std::string token;
     
     // first token is the class label
     stream >> token;
-    document.set_label(class_label{token});
+    doc.set_label(class_label{token});
 
     // remaining tokens are "feature:feature_count"
     while(stream >> token)
@@ -26,7 +25,7 @@ void libsvm_tokenizer::tokenize_document(corpus::document & document,
         std::string feature = token.substr(0, idx);
         double count;
         std::istringstream{token.substr(idx + 1)} >> count;
-        document.increment(mapping(feature), count);
+        doc.increment(feature, count);
     }
 }
 

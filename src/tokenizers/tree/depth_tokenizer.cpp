@@ -3,13 +3,12 @@
 namespace meta {
 namespace tokenizers {
 
-void depth_tokenizer::tree_tokenize( corpus::document & document,
-                                     const parse_tree & tree,
-                                     mapping_fn mapping)
+void depth_tokenizer::tree_tokenize( corpus::document & doc,
+        const parse_tree & tree)
 {
     size_t h = parse_tree::height(tree);
     std::string representation = common::to_string(h);
-    document.increment(mapping(representation), 1);
+    doc.increment(representation, 1);
 }
 
 }

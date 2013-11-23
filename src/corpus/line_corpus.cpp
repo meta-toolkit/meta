@@ -14,13 +14,9 @@ namespace corpus {
 
 line_corpus::line_corpus(const std::string & file):
     _cur{0},
-    _num_lines{0},
+    _num_lines{common::num_lines(file)},
     _parser{file, "\n"}
-{
-    std::cerr << "Counting number of lines in corpus file..." << std::endl;
-    _num_lines = common::num_lines(file);
-    std::cerr << "Found " << _num_lines << " documents in corpus." << std::endl;
-}
+{ /* nothing */ }
 
 bool line_corpus::has_next() const
 {

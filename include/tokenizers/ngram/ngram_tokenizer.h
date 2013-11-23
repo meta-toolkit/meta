@@ -1,10 +1,9 @@
 /**
  * @file ngram_tokenizer.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
  */
 
 #ifndef _NGRAM_TOKENIZER_H_
@@ -27,20 +26,18 @@ namespace tokenizers {
 class ngram_tokenizer: public tokenizer
 {
     public:
-
         /**
          * Constructor.
          * @param n The value of n in ngram.
          */
-        ngram_tokenizer(size_t n);
+        ngram_tokenizer(uint16_t n);
 
         /**
          * @return the value of n used for the ngrams
          */
-        virtual size_t n_value() const;
+        virtual uint16_t n_value() const;
 
     protected:
-
         /**
          * Turns a list of words into an ngram string.
          * @param words The deque representing a list of words
@@ -50,10 +47,8 @@ class ngram_tokenizer: public tokenizer
                 const std::deque<std::string> & words) const;
 
     private:
-
         /** The value of n for this ngram tokenizer */
-        size_t _n_val;
-
+        uint16_t _n_val;
 };
 
 }

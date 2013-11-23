@@ -9,15 +9,14 @@
 namespace meta {
 namespace tokenizers {
 
-ngram_pos_tokenizer::ngram_pos_tokenizer(size_t n):
+ngram_pos_tokenizer::ngram_pos_tokenizer(uint16_t n):
     ngram_simple_tokenizer{n}
 { /* nothing */ }
 
-void ngram_pos_tokenizer::tokenize_document(corpus::document & document,
-        std::function<term_id(const std::string &)> mapping)
+void ngram_pos_tokenizer::tokenize(corpus::document & doc)
 {
-    io::parser parser{create_parser(document, ".pos", " \n")};
-    simple_tokenize(parser, document, mapping);
+    io::parser parser{create_parser(doc, ".pos", " \n")};
+    simple_tokenize(parser, doc);
 }
 
 }

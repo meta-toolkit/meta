@@ -1,6 +1,7 @@
 /**
  * @file disk_index.h
  * @author Sean Massung
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
@@ -14,15 +15,16 @@
 #include <vector>
 #include <memory>
 #include <mutex>
-#include "caching/dblru_cache.h"
+#include "caching/all.h"
 #include "corpus/corpus.h"
-#include "tokenizers/all.h"
 #include "index/cached_index.h"
 #include "index/postings_data.h"
 #include "io/compressed_file_reader.h"
-#include "util/disk_vector.h"
 #include "io/mmap_file.h"
 #include "meta.h"
+#include "tokenizers/all.h"
+#include "util/disk_vector.h"
+#include "util/sqlite_map.h"
 
 namespace meta {
 namespace index {
@@ -152,6 +154,12 @@ class disk_index
         uint64_t unique_terms() const;
 
         /**
+         * @param term
+         * @return the term_id associated with the parameter
+         */
+        term_id get_term_id(const std::string & term);
+
+        /**
          * @param p_id The PrimaryKey id to search for
          * @return the postings data for a given PrimaryKey
          * A cache is first searched before the postings file is queried.
@@ -178,9 +186,8 @@ class disk_index
          * @param chunk_num The id of the chunk to write
          * @param pdata A collection of postings data to write to the chunk
          */
-        void write_chunk(
-                uint32_t chunk_num,
-                std::vector<postings_data_type> & pdata);
+        void write_chunk(uint32_t chunk_num,
+                         std::vector<postings_data_type> & pdata);
 
         /**
          * @param d_id The document
@@ -200,17 +207,18 @@ class disk_index
          * implement the handle_doc() and chunk() methods, as well as a
          * proper destructor.
          */
-        template <class Derived, uint64_t MaxSize = 1024*1024*512 /* 512MB */>
+        template <class Derived, uint64_t MaxSize = 1024*1024*128 /* 128 MB */>
         class chunk_handler {
-            /** a back-pointer to the index this handler is operating on */
-            disk_index * idx_;
+            protected:
+                /** a back-pointer to the index this handler is operating on */
+                disk_index * idx_;
 
-            /** the current chunk number */
-            std::atomic<uint32_t> & chunk_num_;
+                /** the current chunk number */
+                std::atomic<uint32_t> & chunk_num_;
 
             public:
                 /**
-                 * creates a new handler on the given index, using the
+                 * Creates a new handler on the given index, using the
                  * given atomic to keep track of the current chunk number.
                  */
                 chunk_handler(disk_index * idx,
@@ -277,6 +285,13 @@ class disk_index
          */
         std::unique_ptr<util::disk_vector<uint64_t>> _unique_terms;
 
+        /**
+         * Maps string terms to term_ids.
+         */
+        std::unique_ptr<util::sqlite_map<std::string, uint64_t,
+                                         caching::default_dblru_cache>>
+        _term_id_mapping;
+
         /** the total number of term occurrences in the entire corpus */
         uint64_t _total_corpus_terms;
 
@@ -336,6 +351,9 @@ class disk_index
          * mappings)
          */
         util::invertible_map<class_label, label_id> _label_ids;
+
+        /** mutex for thread-safe operations */
+        std::unique_ptr<std::mutex> _mutex{new std::mutex};
 
     public:
         /**
