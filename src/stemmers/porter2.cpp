@@ -7,8 +7,9 @@
 namespace meta {
 namespace stemmers {
 
-std::string porter2::operator()(const std::string & to_stem) const {
-    return Porter2Stemmer::stem(Porter2Stemmer::trim(to_stem));
+void porter2::operator()(std::string & term) const {
+    Porter2Stemmer::trim(term);
+    Porter2Stemmer::stem(term);
 }
 
 }

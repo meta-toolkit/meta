@@ -9,10 +9,8 @@
 namespace meta {
 namespace stemmers {
 
-std::string no_stemmer::operator()(const std::string & to_stem) const {
-    std::string result{to_stem};
-    std::transform(result.begin(), result.end(), result.begin(), ::tolower);
-    return result;
+void no_stemmer::operator()(std::string & term) const {
+    std::transform(term.begin(), term.end(), term.begin(), ::tolower);
 }
 
 }

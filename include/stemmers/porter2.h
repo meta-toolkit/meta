@@ -19,7 +19,7 @@ namespace stemmers {
  * just this use case.
  */
 struct porter2 {
-    std::string operator()(const std::string & to_stem) const;
+    void operator()(std::string & term) const;
 };
 
 }
