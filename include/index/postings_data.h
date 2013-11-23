@@ -141,7 +141,7 @@ class postings_data
          */
         friend std::ostream & operator<<(
                 std::ostream & out,
-                postings_data<PrimaryKey, SecondaryKey> & pd)
+                const postings_data<PrimaryKey, SecondaryKey> & pd)
         {
             if(pd._counts.empty())
                 return out;
