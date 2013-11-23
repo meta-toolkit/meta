@@ -68,7 +68,7 @@ std::unique_ptr<tokenizer> tokenizer::load_tokenizer(
             {
                 // determine stemmer type
                 auto stem = group->get_as<std::string>("stemmer");
-                std::function<std::string(const std::string &)> stemmer =
+                std::function<void(std::string &)> stemmer =
                     stemmers::porter2{};
                 if(stem && *stem == "None")
                     stemmer = stemmers::no_stemmer{};

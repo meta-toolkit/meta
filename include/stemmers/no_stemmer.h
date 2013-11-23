@@ -19,7 +19,7 @@ namespace stemmers {
  * limited to this use case.
  */
 struct no_stemmer {
-    std::string operator()(const std::string & to_stem) const;
+    void operator()(std::string & term) const;
 };
 
 }

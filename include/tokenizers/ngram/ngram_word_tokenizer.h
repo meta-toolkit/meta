@@ -32,7 +32,7 @@ class ngram_word_tokenizer: public ngram_tokenizer
          */
         ngram_word_tokenizer(uint16_t n,
             stopword_t stopwords = stopword_t::Default,
-            std::function<std::string(const std::string &)> stemmer =
+            std::function<void(std::string &)> stemmer =
                     stemmers::porter2{}
         );
 
@@ -44,7 +44,7 @@ class ngram_word_tokenizer: public ngram_tokenizer
 
     private:
         /** The stemming function */
-        std::function<std::string(const std::string &)> _stemmer;
+        std::function<void(std::string &)> _stemmer;
 
         /**
          * A stopword list based on the stopwords list in the configuration file

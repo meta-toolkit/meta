@@ -15,7 +15,7 @@ namespace tokenizers {
 ngram_word_tokenizer::ngram_word_tokenizer(
         uint16_t n,
         stopword_t stopwords,
-        std::function<std::string(const std::string &)> stemmer)
+        std::function<void(std::string &)> stemmer)
 : ngram_tokenizer{n}, _stemmer{stemmer}
 {
     if(stopwords != stopword_t::None)
@@ -33,7 +33,8 @@ void ngram_word_tokenizer::tokenize(corpus::document & doc)
         std::string next = "";
         do
         {
-            next = _stemmer(psr.next());
+            next = psr.next();
+            _stemmer(next);
         } while(_stopwords.find(next) != _stopwords.end() && psr.has_next());
         ngram.push_back(next);
     }
@@ -46,7 +47,8 @@ void ngram_word_tokenizer::tokenize(corpus::document & doc)
         std::string next = "";
         do
         {
-            next = _stemmer(psr.next());
+            next = psr.next();
+            _stemmer(next);
         } while(_stopwords.find(next) != _stopwords.end() && psr.has_next());
         ngram.push_back(next);
     }
@@ -60,7 +62,11 @@ void ngram_word_tokenizer::init_stopwords()
     auto config = cpptoml::parse_file("config.toml");
     io::parser p{*config.get_as<std::string>("stop-words"), "\n"};
     while(p.has_next())
-        _stopwords.insert(_stemmer(p.next()));
+    {
+        std::string sword{p.next()};
+        _stemmer(sword);
+        _stopwords.insert(sword);
+    }
 }
 
 }
