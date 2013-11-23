@@ -114,12 +114,6 @@ class forward_index: public disk_index<forward_index>
                 void handle_doc(const corpus::document & doc);
 
                 /**
-                 * Returns an in-memory chunk ready for being written to
-                 * the disk.
-                 */
-                std::vector<postings_data<doc_id, term_id>> chunk();
-
-                /**
                  * Destroys the handler, writing to disk any chunk data
                  * still resident in memory.
                  */

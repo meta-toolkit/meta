@@ -64,21 +64,13 @@ void forward_index::chunk_handler::handle_doc(const corpus::document & doc)
     pdata_.push_back(pd);
     if(chunk_size_ >= max_size())
     {
-        write_chunk();
+        idx_->write_chunk(chunk_num_.fetch_add(1), pdata_);
         chunk_size_ = 0;
     }
 }
 
-std::vector<postings_data<doc_id, term_id>>
-forward_index::chunk_handler::chunk() {
-    auto size = pdata_.size();
-    auto vec = std::move(pdata_);
-    pdata_.reserve(size);
-    return vec;
-}
-
 forward_index::chunk_handler::~chunk_handler() {
-    write_chunk();
+    idx_->write_chunk(chunk_num_.fetch_add(1), pdata_);
 }
 
 }

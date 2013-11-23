@@ -184,10 +184,14 @@ class disk_index
 
         /**
          * @param chunk_num The id of the chunk to write
-         * @param pdata A collection of postings data to write to the chunk
+         * @param pdata A collection of postings data to write to the chunk.
+         * pdata must:
+         *  - support iteration in sorted order
+         *  - dereferenced type must be a postings_data_type object
+         *  - implement the clear() function
          */
-        void write_chunk(uint32_t chunk_num,
-                         std::vector<postings_data_type> & pdata);
+        template <class Container>
+        void write_chunk(uint32_t chunk_num, Container & pdata) const;
 
         /**
          * @param d_id The document
@@ -231,14 +235,6 @@ class disk_index
                  */
                 void operator()(const corpus::document & doc) {
                     static_cast<Derived *>(this)->handle_doc(doc);
-                }
-
-                /**
-                 * Writes the current in-memory chunk to the disk.
-                 */
-                void write_chunk() {
-                    auto vec = static_cast<Derived *>(this)->chunk();
-                    idx_->write_chunk(chunk_num_.fetch_add(1), vec);
                 }
 
                 /**

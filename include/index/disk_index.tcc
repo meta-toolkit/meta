@@ -107,17 +107,17 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/docs.uniqueterms", num_docs);
 
-    // create postings file
     uint32_t num_chunks = tokenize_docs(docs.get());
-    return; // TODO testing hack
-    /*
     merge_chunks(num_chunks, _index_name + "/postings.index");
+
+    // TODO hack stop
+    /*
+    */
     compress(_index_name + "/postings.index");
 
     common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
 
     _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
-    */
 }
 
 template <class DerivedIndex>
@@ -385,17 +385,17 @@ label_id disk_index<DerivedIndex>::label_id_from_doc(doc_id d_id) const
 }
 
 template <class DerivedIndex>
-void disk_index<DerivedIndex>::write_chunk(
-        uint32_t chunk_num,
-        std::vector<postings_data_type> & pdata)
+template <class Container>
+void disk_index<DerivedIndex>::write_chunk(uint32_t chunk_num,
+                                           Container & pdata) const
 {
-    std::sort(pdata.begin(), pdata.end());
+    std::ofstream outfile{_index_name
+        + "/chunk-" + common::to_string(chunk_num)};
 
-    std::ofstream outfile{_index_name + "/chunk-" + common::to_string(chunk_num)};
     for(auto & p: pdata)
         outfile << p;
-    outfile.close();
 
+    outfile.close();
     pdata.clear();
 }
 

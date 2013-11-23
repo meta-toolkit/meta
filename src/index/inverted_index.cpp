@@ -13,17 +13,6 @@ inverted_index::inverted_index(const cpptoml::toml_group & config):
     base{config, *cpptoml::get_as<std::string>(config, "inverted-index")}
 { /* nothing */ }
 
-std::vector<postings_data<term_id, doc_id>> inverted_index::to_vector(
-        std::unordered_map<term_id, postings_data<term_id, doc_id>> & pdata)
-{
-    std::vector<postings_data_type> vec;
-    vec.reserve(pdata.size());
-    for(auto & p: pdata)
-        vec.push_back(p.second);
-    pdata.clear();
-    return vec;
-}
-
 double inverted_index::term_freq(term_id t_id, doc_id d_id) const
 {
     auto pdata = search_primary(t_id);
@@ -64,33 +53,31 @@ void inverted_index::chunk_handler::handle_doc(const corpus::document & doc)
         term_id t_id{idx_->get_term_id(count.first)};
         postings_data_type pd{t_id};
         pd.increase_count(doc.id(), count.second);
-        auto it = pdata_.find(t_id);
+        auto it = pdata_.find(pd);
         if(it == pdata_.end())
         {
             chunk_size_ += pd.bytes_used();
-            pdata_.emplace(t_id, pd);
+            pdata_.emplace(pd);
         }
         else
         {
-            chunk_size_ -= it->second.bytes_used();
-            it->second.merge_with(pd);
-            chunk_size_ += it->second.bytes_used();
+            chunk_size_ -= it->bytes_used();
+
+            // note: we can modify elements in this set because we do not change
+            // how comparisons are made (the primary_key value)
+            const_cast<postings_data_type &>(*it).merge_with(pd);
+            chunk_size_ += it->bytes_used();
         }
         if(chunk_size_ >= max_size())
         {
-            write_chunk();
+            idx_->write_chunk(chunk_num_.fetch_add(1), pdata_);
             chunk_size_ = 0;
         }
     }
 }
 
-std::vector<postings_data<term_id, doc_id>>
-inverted_index::chunk_handler::chunk() {
-    return to_vector(pdata_);
-}
-
 inverted_index::chunk_handler::~chunk_handler() {
-    write_chunk();
+    idx_->write_chunk(chunk_num_.fetch_add(1), pdata_);
 }
 
 }

@@ -10,6 +10,7 @@
 #define _INVERTED_INDEX_H_
 
 #include <string>
+#include <set>
 #include <vector>
 #include <memory>
 #include "index/disk_index.h"
@@ -134,7 +135,7 @@ class inverted_index: public disk_index<inverted_index>
          */
         class chunk_handler : public base::chunk_handler<chunk_handler> {
             /** the current in-memory chunk */
-            std::unordered_map<term_id, postings_data_type> pdata_;
+            std::set<postings_data_type> pdata_;
 
             /** the current size of the in-memory chunk */
             uint64_t chunk_size_{0};
@@ -150,25 +151,11 @@ class inverted_index: public disk_index<inverted_index>
                 void handle_doc(const corpus::document & doc);
 
                 /**
-                 * Returns an in-memory chunk ready for being written to
-                 * the disk.
-                 */
-                std::vector<postings_data_type> chunk();
-
-                /**
                  * Destroys the handler, writing to disk any chunk data
                  * still resident in memory.
                  */
                 ~chunk_handler();
         };
-
-        /**
-         * @param pdata
-         * @return a vector version of postings data for writing chunks
-         */
-        static std::vector<postings_data_type> to_vector(
-                std::unordered_map<term_id, postings_data_type> & pdata);
-
 };
 
 }
