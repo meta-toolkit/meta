@@ -44,7 +44,7 @@ void ngram_word_tokenizer::tokenize(corpus::document & doc)
 
     // second, create ngrams from them
 
-    for(size_t i = n_value(); i < tokens.size(); ++i)
+    for(size_t i = n_value() - 1; i < tokens.size(); ++i)
     {
         std::string combined = tokens[i];
         for(size_t j = 1; j < n_value(); ++j)
