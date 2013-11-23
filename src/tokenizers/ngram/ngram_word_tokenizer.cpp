@@ -26,7 +26,7 @@ ngram_word_tokenizer::ngram_word_tokenizer(
 }
 
 void ngram_word_tokenizer::tokenize_document(
-        corpus::document & document,
+        corpus::document & doc,
         std::function<term_id(const std::string &)> mapping)
 {
     // first, get tokens
@@ -46,13 +46,13 @@ void ngram_word_tokenizer::tokenize_document(
 
     // second, create ngrams from them
 
-    for(size_t i = n_value(); i < tokens.size(); ++i)
+    for(size_t i = n_value() - 1; i < tokens.size(); ++i)
     {
         std::string combined = tokens[i];
         for(size_t j = 1; j < n_value(); ++j)
             combined = tokens[i - j] + "_" + combined;
 
-        doc.increment(combined, 1);
+        doc.increment(mapping(combined), 1);
     }
 }
 
