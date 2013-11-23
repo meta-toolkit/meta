@@ -12,6 +12,9 @@ using namespace std;
 namespace meta {
 namespace tokenizers {
 
+const std::string ngram_word_tokenizer::_delimiters
+    = " \n\t!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~";
+
 ngram_word_tokenizer::ngram_word_tokenizer(
         uint16_t n,
         stopword_t stopwords,
@@ -24,37 +27,31 @@ ngram_word_tokenizer::ngram_word_tokenizer(
 
 void ngram_word_tokenizer::tokenize(corpus::document & doc)
 {
-    io::parser psr{create_parser(doc, ".sen", " \n")};
+    // first, get tokens
 
-    // initialize the ngram
-    std::deque<std::string> ngram;
-    for(size_t i = 0; i < n_value() && psr.has_next(); ++i)
-    {
-        std::string next = "";
-        do
-        {
-            next = psr.next();
-            _stemmer(next);
-        } while(_stopwords.find(next) != _stopwords.end() && psr.has_next());
-        ngram.push_back(next);
-    }
-
-    // add the rest of the ngrams
+    io::parser psr{create_parser(doc, ".sen", _delimiters)};
+    std::vector<std::string> tokens;
+    std::string token;
     while(psr.has_next())
     {
-        doc.increment(wordify(ngram), 1);
-        ngram.pop_front();
-        std::string next = "";
-        do
+        token = psr.next();
+        if(_stopwords.find(token) == _stopwords.end())
         {
-            next = psr.next();
-            _stemmer(next);
-        } while(_stopwords.find(next) != _stopwords.end() && psr.has_next());
-        ngram.push_back(next);
+            _stemmer(token);
+            tokens.push_back(token);
+        }
     }
 
-    // add the last token
-    doc.increment(wordify(ngram), 1);
+    // second, create ngrams from them
+
+    for(size_t i = n_value(); i < tokens.size(); ++i)
+    {
+        std::string combined = tokens[i];
+        for(size_t j = 1; j < n_value(); ++j)
+            combined = tokens[i - j] + "_" + combined;
+
+        doc.increment(combined, 1);
+    }
 }
 
 void ngram_word_tokenizer::init_stopwords()
@@ -62,11 +59,7 @@ void ngram_word_tokenizer::init_stopwords()
     auto config = cpptoml::parse_file("config.toml");
     io::parser p{*config.get_as<std::string>("stop-words"), "\n"};
     while(p.has_next())
-    {
-        std::string sword{p.next()};
-        _stemmer(sword);
-        _stopwords.insert(sword);
-    }
+        _stopwords.insert(p.next());
 }
 
 }

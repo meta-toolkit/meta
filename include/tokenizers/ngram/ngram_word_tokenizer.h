@@ -55,6 +55,8 @@ class ngram_word_tokenizer: public ngram_tokenizer
          * Loads in a list of stopwords to this tokenizer.
          */
         void init_stopwords();
+
+        const static std::string _delimiters;
 };
 
 }
