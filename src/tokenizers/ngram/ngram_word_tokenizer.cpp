@@ -35,11 +35,9 @@ void ngram_word_tokenizer::tokenize(corpus::document & doc)
     while(psr.has_next())
     {
         token = psr.next();
+        _stemmer(token);
         if(_stopwords.find(token) == _stopwords.end())
-        {
-            _stemmer(token);
             tokens.push_back(token);
-        }
     }
 
     // second, create ngrams from them
@@ -59,7 +57,11 @@ void ngram_word_tokenizer::init_stopwords()
     auto config = cpptoml::parse_file("config.toml");
     io::parser p{*config.get_as<std::string>("stop-words"), "\n"};
     while(p.has_next())
-        _stopwords.insert(p.next());
+    {
+        std::string word{p.next()};
+        _stemmer(word);
+        _stopwords.insert(word);
+    }
 }
 
 }
