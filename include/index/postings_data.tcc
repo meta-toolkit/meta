@@ -65,9 +65,9 @@ void postings_data<PrimaryKey, SecondaryKey>::increase_count(
     );
 
     if(it == _counts.end())
-        _counts.emplace_back(std::make_pair(s_id, amount));
+        _counts.emplace_back(s_id, amount);
     else if(it->first != s_id)
-        _counts.insert(it, std::make_pair(s_id, amount));
+        _counts.emplace(it, s_id, amount);
     else
         it->second += amount;
 }
@@ -161,7 +161,7 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         uint64_t next = reader.next();
         double count = *reinterpret_cast<double*>(&next);
 
-        _counts.emplace_back(std::make_pair(key, count));
+        _counts.emplace_back(key, count);
     }
 
     // compress vector to conserve memory (it shouldn't be modified again after

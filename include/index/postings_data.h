@@ -127,7 +127,7 @@ class postings_data
             {
                 iss >> s_id;
                 iss >> count;
-                pd._counts.emplace_back(std::make_pair(s_id, count));
+                pd._counts.emplace_back(s_id, count);
             }
 
             return in;
