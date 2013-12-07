@@ -110,9 +110,6 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     uint32_t num_chunks = tokenize_docs(docs.get());
     merge_chunks(num_chunks, _index_name + "/postings.index");
 
-    // TODO hack stop
-    /*
-    */
     compress(_index_name + "/postings.index");
 
     common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
@@ -137,10 +134,6 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
                     return; // destructor for handler will write
                             // any intermediate chunks
                 doc = docs->next();
-
-                // TODO hack stop
-                if(doc->id() > 20000)
-                    return;
 
                 std::string progress = " > Documents: "
                     + common::add_commas(common::to_string(doc->id()))
@@ -202,23 +195,24 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
         auto idx = in.tellg();
         while(in >> pdata)
         {
-            if (in.tellg() / (length / 500) != idx) {
+            if(in.tellg() / (length / 500) != idx)
+            {
                 idx = in.tellg() / (length / 500);
                 common::show_progress(idx, 500, 1,
                         " > Calculating compression encoding: ");
-            }
-            for(auto & c: pdata.counts())
-            {
-                if (auto val = freqs.find(c.first))
-                    freqs.insert(c.first, *val + 1);
-                else
-                    freqs.insert(c.first, 1);
+                for(auto & c: pdata.counts())
+                {
+                    if (auto val = freqs.find(c.first))
+                        freqs.insert(c.first, *val + 1);
+                    else
+                        freqs.insert(c.first, 1);
 
-                auto num = *reinterpret_cast<const uint64_t*>(&c.second);
-                if (auto val = freqs.find(num))
-                    freqs.insert(num, *val + 1);
-                else
-                    freqs.insert(num, 1);
+                    auto num = *reinterpret_cast<const uint64_t*>(&c.second);
+                    if (auto val = freqs.find(num))
+                        freqs.insert(num, *val + 1);
+                    else
+                        freqs.insert(num, 1);
+                }
             }
         }
         common::end_progress(" > Calculating compression encoding: ");
@@ -248,8 +242,7 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
 }
 
 template <class DerivedIndex>
-void disk_index<DerivedIndex>::compress(
-        const std::string & filename)
+void disk_index<DerivedIndex>::compress(const std::string & filename)
 {
     calc_compression_mapping(filename);
     std::string cfilename{filename + ".compressed"};
@@ -263,7 +256,10 @@ void disk_index<DerivedIndex>::compress(
     // file as well as rename it
     {
         io::compressed_file_writer out{cfilename, [&](uint64_t key) {
-            return *_compression_mapping->find(key);
+            auto val = _compression_mapping->find(key);
+            if(val)
+                return *val;
+            return key;
         }};
 
         postings_data_type pdata{primary_key_type{0}};
@@ -276,7 +272,8 @@ void disk_index<DerivedIndex>::compress(
         // note: we will be accessing pdata in sorted order
         while(in >> pdata)
         {
-            if (idx != in.tellg() / (length / 500)) {
+            if (idx != in.tellg() / (length / 500))
+            {
                 idx = in.tellg() / (length / 500);
                 common::show_progress(idx, 500, 1,
                         " > Creating compressed postings file: ");
@@ -514,7 +511,10 @@ auto disk_index<DerivedIndex>::search_primary(primary_key_type p_id) const
         return std::make_shared<postings_data_type>(p_id);
 
     io::compressed_file_reader reader{*_postings, [&](uint64_t value) {
-        return *_compression_mapping->find_key(value);
+        auto val = _compression_mapping->find_key(value);
+        if(val)
+            return *val;
+        return value;
     }};
     reader.seek(_term_bit_locations->at(idx));
 
