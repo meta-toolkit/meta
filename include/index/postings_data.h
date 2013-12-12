@@ -114,19 +114,18 @@ class postings_data
                 std::istream & in,
                 postings_data<PrimaryKey, SecondaryKey> & pd)
         {
-            std::string buffer;
-            std::getline(in, buffer);
-            std::istringstream iss{buffer};
-
-            iss >> pd._p_id;
+            common::read_binary(in, pd._p_id);
             pd._counts.clear();
+
+            uint32_t num_pairs;
+            common::read_binary(in, num_pairs);
 
             SecondaryKey s_id;
             double count;
-            while(iss.good())
+            for(uint32_t i = 0; i < num_pairs; ++i)
             {
-                iss >> s_id;
-                iss >> count;
+                common::read_binary(in, s_id);
+                common::read_binary(in, count);
                 pd._counts.emplace_back(s_id, count);
             }
 
@@ -146,13 +145,14 @@ class postings_data
             if(pd._counts.empty())
                 return out;
 
-            out << pd._p_id;
+            common::write_binary(out, pd._p_id);
+            uint32_t size = pd._counts.size();
+            common::write_binary(out, size);
             for(auto & p: pd._counts)
             {
-                out << " " << p.first;
-                out << " " << p.second;
+                common::write_binary(out, p.first);
+                common::write_binary(out, p.second);
             }
-            out << "\n";
 
             return out;
         }

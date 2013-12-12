@@ -24,6 +24,24 @@ namespace meta {
 namespace common
 {
     /**
+     *
+     */
+    template <class T>
+    void write_binary(std::ostream & out, const T & elem)
+    {
+        out.write(reinterpret_cast<const char*>(&elem), sizeof(T));
+    }
+
+    /**
+     *
+     */
+    template <class T>
+    void read_binary(std::istream & in, T & elem)
+    {
+        in.read(reinterpret_cast<char*>(&elem), sizeof(T));
+    }
+
+    /**
      * Converts and type to a string representation.
      * @param value - the object to convert
      * @return the string representation of vaue

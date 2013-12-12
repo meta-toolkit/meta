@@ -187,12 +187,12 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
     uint64_t length = in.tellg();
     in.seekg(0, in.beg);
 
-    postings_data_type pdata{primary_key_type{0}};
     auto temp_freqs = _index_name + "/freqs_temp.mapping";
     {
         util::sqlite_map<uint64_t, uint64_t, caching::default_dblru_cache>
         freqs{temp_freqs};
         auto idx = in.tellg();
+        postings_data_type pdata{primary_key_type{0}};
         while(in >> pdata)
         {
             if(in.tellg() / (length / 500) != idx)
