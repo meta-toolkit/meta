@@ -21,6 +21,9 @@ int main(int argc, char* argv[])
     auto time = common::time([&]() {
         auto idx = index::make_index<index::inverted_index,
                                      caching::splay_cache>(argv[1], uint32_t{10000});
+        std::cout << "Number of documents: " << idx.num_docs() << std::endl;
+        std::cout << "Average Doc Length: " << idx.avg_doc_length() << std::endl;
+        std::cout << "Unique Terms: " << idx.unique_terms() << std::endl;
     });
 
     std::cout << "Index generation took: " << time.count() / 1000.0
