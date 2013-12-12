@@ -29,7 +29,7 @@ class okapi_bm25: public ranker
          * @param b
          * @param k3
          */
-        okapi_bm25(double k1 = 1.5, double b = 0.75, double k3 = 500.0);
+        okapi_bm25(double k1 = 1.2, double b = 0.75, double k3 = 500.0);
 
         /**
          * @param sd

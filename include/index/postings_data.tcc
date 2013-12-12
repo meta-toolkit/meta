@@ -133,7 +133,10 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
         cur_id = temp_id;
 
         writer.write(mutable_counts[i].first);
-        writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[i].second));
+        if(std::is_same<PrimaryKey, term_id>::value)
+            writer.write(static_cast<uint64_t>(mutable_counts[i].second));
+        else
+            writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[i].second));
     }
 
     // mark end of postings_data
@@ -159,7 +162,11 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         last_id += this_id;
         SecondaryKey key{last_id};
         uint64_t next = reader.next();
-        double count = *reinterpret_cast<double*>(&next);
+        double count;
+        if(std::is_same<PrimaryKey, term_id>::value)
+            count = static_cast<double>(next);
+        else
+            count = *reinterpret_cast<double*>(&next);
 
         _counts.emplace_back(key, count);
     }

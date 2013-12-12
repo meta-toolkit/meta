@@ -107,14 +107,30 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/docs.uniqueterms", num_docs);
 
-    uint32_t num_chunks = tokenize_docs(docs.get());
-    merge_chunks(num_chunks, _index_name + "/postings.index");
+    uint32_t num_chunks;
+    auto time = common::time([&](){
+        num_chunks = tokenize_docs(docs.get());
+    });
 
-    compress(_index_name + "/postings.index");
+    std::cerr << " ! Time spent tokenizing: " << (time.count() / 1000.0) << std::endl;
+
+    time = common::time([&](){
+        merge_chunks(num_chunks, _index_name + "/postings.index");
+    });
+
+    std::cerr << " ! Time spent merging: " << (time.count() / 1000.0) << std::endl;
+
+    time = common::time([&](){
+        compress(_index_name + "/postings.index");
+    });
+
+    std::cerr << " ! Time spent compressing: " << (time.count() / 1000.0) << std::endl;
 
     common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
 
     _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
+
+    std::cerr << "Done creating index: " << _index_name << std::endl;
 }
 
 template <class DerivedIndex>
@@ -189,6 +205,7 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
 
     auto temp_freqs = _index_name + "/freqs_temp.mapping";
     {
+        /*
         util::sqlite_map<uint64_t, uint64_t, caching::default_dblru_cache>
         freqs{temp_freqs};
         auto idx = in.tellg();
@@ -216,12 +233,14 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
             }
         }
         common::end_progress(" > Calculating compression encoding: ");
+        */
 
         _compression_mapping =
             common::make_unique<util::sqlite_map<uint64_t, uint64_t>>(
                 _index_name + "/keys.compressedmapping"
             );
 
+        /*
         // have to know what the delimiter is, and can't use 0
         uint64_t delim = std::numeric_limits<uint64_t>::max();
         _compression_mapping->insert(delim, 1);
@@ -236,6 +255,7 @@ void disk_index<DerivedIndex>::calc_compression_mapping(
             common::show_progress(counter, total_numbers, total_numbers / 500,
                 " > Writing compression encoding: ");
         }
+        */
         common::end_progress(" > Writing compression encoding: ");
     }
     remove(temp_freqs.c_str());
@@ -256,10 +276,14 @@ void disk_index<DerivedIndex>::compress(const std::string & filename)
     // file as well as rename it
     {
         io::compressed_file_writer out{cfilename, [&](uint64_t key) {
+            /*
             auto val = _compression_mapping->find(key);
             if(val)
                 return *val;
-            return key;
+            */
+            if(key == std::numeric_limits<uint64_t>::max()) // delimiter
+                return uint64_t{1};
+            return key + 2;
         }};
 
         postings_data_type pdata{primary_key_type{0}};
@@ -290,8 +314,6 @@ void disk_index<DerivedIndex>::compress(const std::string & filename)
 
     remove(filename.c_str());
     rename(cfilename.c_str(), filename.c_str());
-
-    std::cerr << "Done creating index: " << _index_name << std::endl;
 }
 
 template <class DerivedIndex>
@@ -511,10 +533,14 @@ auto disk_index<DerivedIndex>::search_primary(primary_key_type p_id) const
         return std::make_shared<postings_data_type>(p_id);
 
     io::compressed_file_reader reader{*_postings, [&](uint64_t value) {
+        /*
         auto val = _compression_mapping->find_key(value);
         if(val)
             return *val;
-        return value;
+        */
+        if(value == 1)
+            return std::numeric_limits<uint64_t>::max(); // delimiter
+        return value - 2;
     }};
     reader.seek(_term_bit_locations->at(idx));
 
