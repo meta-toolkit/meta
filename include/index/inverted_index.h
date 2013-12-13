@@ -140,6 +140,13 @@ class inverted_index: public disk_index<inverted_index>
             /** the current size of the in-memory chunk */
             uint64_t chunk_size_{0};
 
+            uint64_t find_term_id_time_{0};
+            uint64_t writing_chunk_time_{0};
+            uint64_t merging_pdata_time_{0};
+            uint64_t total_time_{0};
+            uint64_t total_iteration_time_{0};
+            uint64_t merging_with_time_{0};
+
             public:
                 // inherit the base class constructor
                 using base::chunk_handler<chunk_handler>::chunk_handler;
@@ -155,6 +162,8 @@ class inverted_index: public disk_index<inverted_index>
                  * still resident in memory.
                  */
                 ~chunk_handler();
+
+                void print_stats_impl();
         };
 };
 

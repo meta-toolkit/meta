@@ -24,7 +24,7 @@ postings_data<PrimaryKey, SecondaryKey>::postings_data(
 
 template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::merge_with(
-        const postings_data & other)
+        postings_data & other)
 {
     auto searcher = [](const pair_t & p, const SecondaryKey & s) {
         return p.first < s;
@@ -47,11 +47,13 @@ void postings_data<PrimaryKey, SecondaryKey>::merge_with(
     }
 
     // sort _counts again to fix new elements added onto back
-    std::sort(_counts.begin(), _counts.end(), 
-        [](const pair_t & a, const pair_t & b) {
-            return a.first < b.first;
-        }
-    );
+    if (_counts.size() > orig_length) {
+        std::sort(_counts.begin(), _counts.end(),
+            [](const pair_t & a, const pair_t & b) {
+                return a.first < b.first;
+            }
+        );
+    }
 }
 
 template <class PrimaryKey, class SecondaryKey>

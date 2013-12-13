@@ -244,6 +244,13 @@ class disk_index
                 static constexpr uint64_t max_size() {
                     return MaxSize;
                 }
+
+                void print_stats() {
+                    static_cast<Derived *>(this)->print_stats_impl();
+                }
+
+                void print_stats_impl() {
+                }
         };
 
         /**

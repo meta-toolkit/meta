@@ -70,7 +70,7 @@ class postings_data
          * @param other The other postings_data object to consume
          * Adds the parameter's data to this object's data
          */
-        void merge_with(const postings_data & other);
+        void merge_with(postings_data & other);
 
         /**
          * @param s_id The SecondaryKey's id to add counts for

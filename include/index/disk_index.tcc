@@ -139,6 +139,12 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
     std::mutex mutex;
     std::atomic<uint64_t> total_terms{0};
     std::atomic<uint32_t> chunk_num{0};
+
+    std::atomic<uint64_t> token_time{0};
+    std::atomic<uint64_t> metadata_time{0};
+    std::atomic<uint64_t> handler_time{0};
+    uint64_t loading_docs_time{0};
+
     auto task = [&]() {
         typename DerivedIndex::chunk_handler handler{this, chunk_num};
         while (true) {
@@ -146,10 +152,15 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
             {
                 std::lock_guard<std::mutex> lock{mutex};
 
-                if (!docs->has_next())
+                if (!docs->has_next()) {
+                    handler.print_stats();
                     return; // destructor for handler will write
                             // any intermediate chunks
-                doc = docs->next();
+                }
+                auto time = common::time([&]() {
+                    doc = docs->next();
+                });
+                loading_docs_time += time.count();
 
                 std::string progress = " > Documents: "
                     + common::add_commas(common::to_string(doc->id()))
@@ -160,17 +171,26 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
                 common::show_progress(doc->id(), docs->size(), 100, progress);
             }
 
-            _tokenizer->tokenize(*doc);
+            auto time = common::time([&]() {
+                _tokenizer->tokenize(*doc);
+            });
+            token_time.fetch_add(time.count());
 
             // save metadata
-            _doc_id_mapping->insert(doc->id(), doc->path());
-            (*_doc_sizes)[doc->id()] = doc->length();
-            (*_unique_terms)[doc->id()] = doc->counts().size();
-            (*_labels)[doc->id()] = get_label_id(doc->label());
-            total_terms.fetch_add(doc->length());
+            time = common::time([&]() {
+                _doc_id_mapping->insert(doc->id(), doc->path());
+                (*_doc_sizes)[doc->id()] = doc->length();
+                (*_unique_terms)[doc->id()] = doc->counts().size();
+                (*_labels)[doc->id()] = get_label_id(doc->label());
+                total_terms.fetch_add(doc->length());
+            });
+            metadata_time.fetch_add(time.count());
 
             // update chunk
-            handler(*doc);
+            time = common::time([&]() {
+                handler(*doc);
+            });
+            handler_time.fetch_add(time.count());
         }
     };
 
@@ -188,6 +208,15 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
         + common::add_commas(common::to_string(_term_id_mapping->size()))
         + " Tokenizing: ";
     common::end_progress(progress);
+
+    std::cerr << "   ! CPU Time tokenizing: " << token_time / 1000.0
+        << "s" << std::endl;
+    std::cerr << "   ! CPU Time metadata building: " << metadata_time / 1000.0
+        << "s" << std::endl;
+    std::cerr << "   ! CPU Time in handler: " << handler_time / 1000.0
+        << "s" << std::endl;
+    std::cerr << "   ! Wall time getting documents: " << loading_docs_time / 1000.0
+        << "s" << std::endl;
 
     _total_corpus_terms = total_terms;
 
