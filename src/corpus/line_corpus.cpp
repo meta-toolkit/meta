@@ -33,7 +33,7 @@ document line_corpus::next()
     size_t space = content.find_first_of(" ");
     std::string name = common::to_string(_cur) + "_" + content.substr(0, space);
     document d{name, doc_id{_cur++}, class_label{content.substr(0, space)}};
-    d.set_content(content);
+    d.set_content(content.substr(space + 1));
     return d;
 }
 
