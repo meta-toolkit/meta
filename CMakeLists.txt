@@ -5,7 +5,8 @@ option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
 
 include_directories(include/
                     deps/cpptoml/include/
-                    deps/porter2_stemmer/)
+                    deps/porter2_stemmer/
+                    test/)
 
 find_package(Threads REQUIRED)
 
@@ -103,6 +104,12 @@ target_link_libraries(meta-topics meta-corpus meta-tokenizers)
 
 add_executable(classify classify-test.cpp)
 target_link_libraries(classify
+                      meta-classify
+                      ${CMAKE_THREAD_LIBS_INIT})
+
+add_executable(unit-test unit-test.cpp)
+target_link_libraries(unit-test
+                      meta-index
                       meta-classify
                       ${CMAKE_THREAD_LIBS_INIT})
 

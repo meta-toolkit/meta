@@ -30,7 +30,7 @@
  */
 #define FAIL(why) \
     do { \
-        std::cerr << "[ " << Common::makeRed("FAIL") << " ] " << (why) << " ("; \
+        std::cerr << "[ " << common::make_red("FAIL") << " ] " << (why) << " ("; \
         std::cerr << __FILE__ << ":" << __LINE__ << ")" << std::endl; \
         exit(1); \
     } while(0)
@@ -42,59 +42,49 @@
  */
 #define FAIL_NOLINE(why) \
     do { \
-        std::cerr << "[ " << Common::makeRed("FAIL") << " ]" \
+        std::cerr << "[ " << common::make_red("FAIL") << " ]" \
         << " " << (why) << std::endl; \
         exit(1); \
     } while(0)
 
-/**
- * Exits the unit test without failing.
- */
-#define PASS \
-    do { \
-        exit(0); \
-    } while(0)
+namespace meta {
 
 /**
  * Contains unit testing functions for the META toolkit.
  */
-namespace test_framework
+namespace testing
 {
-    using std::string;
-    using std::endl;
-    using std::cerr;
-
     /**
      * Signal handler for unit tests.
      * Catches signals and responds appropriately, usually by failing the
      *  current test.
-     * @param sig - the caught signal ID
+     * @param sig The caught signal ID
      */
-    void sigCatch(int sig)
+    void sig_catch(int sig)
     {
         switch(sig)
         {
-            case SIGALRM: FAIL_NOLINE("Time limit exceeded");
-            case SIGSEGV: FAIL_NOLINE("Received segfault");
-            case SIGINT:  FAIL_NOLINE("Received interrupt, exiting.");
+            case SIGALRM: FAIL_NOLINE("Time limit exceeded"); break;
+            case SIGSEGV: FAIL_NOLINE("Received segfault"); break;
+            case SIGINT:  FAIL_NOLINE("Received interrupt, exiting."); break;
         }
     }
 
     /**
      * Runs a unit test in a semi-controlled environment.
      * @param testName - the name to display when running this test
-     * @param func - the function (unit test) to run. This function should take
-     *  no parameters and return void.
      * @param timeout - how long to allow this test to execute (in seconds).
      *  Default is one second.
+     * @param func - the function (unit test) to run. This function should take
+     *  no parameters and return void.
      */
     template <class Func>
-    void runTest(const string & testName, Func func, int timeout = 1)
+    void run_test(const std::string & test_name, int timeout, Func && func)
     {
-        cerr << std::left << std::setw(30) << (" " + testName);
+        std::cerr << std::left << std::setw(30) << (" " + test_name);
 
         struct sigaction act;
-        act.sa_handler = sigCatch;
+        act.sa_handler = sig_catch;
         sigemptyset(&act.sa_mask);
         act.sa_flags = 0;
 
@@ -107,6 +97,8 @@ namespace test_framework
         {
             alarm(timeout);
             func();
+            std::cerr << "[ " << common::make_green("OK") << " ] " << std::endl;
+            exit(0);
         }
         else if(pid > 0)
         {
@@ -114,13 +106,17 @@ namespace test_framework
         }
         else
         {
-            cerr << "[ " << common::makeRed("ERROR") << " ]"
-                 << ": failure to fork" << endl;
+            std::cerr << "[ " << common::make_red("ERROR") << " ]"
+                 << ": failure to fork" << std::endl;
         }
-
-        cerr << "[ " << common::makeGreen("OK") << " ] ";
-        cerr << endl;
     }
+
+    template <class Func>
+    void run_test(const std::string & test_name, Func && func)
+    {
+        run_test(test_name, 1, func);
+    }
+}
 }
 
 #endif
