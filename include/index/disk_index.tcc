@@ -116,7 +116,6 @@ template <class DerivedIndex>
 uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
 {
     std::mutex mutex;
-    std::atomic<uint64_t> total_terms{0};
     std::atomic<uint32_t> chunk_num{0};
     auto task = [&]() {
         typename DerivedIndex::chunk_handler handler{this, chunk_num};
@@ -144,7 +143,6 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
             (*_doc_sizes)[doc->id()] = doc->length();
             (*_unique_terms)[doc->id()] = doc->frequencies().size();
             (*_labels)[doc->id()] = get_label_id(doc->label());
-            total_terms.fetch_add(doc->length());
 
             // update chunk
             handler(*doc);
@@ -165,8 +163,6 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
         + common::add_commas(common::to_string(_tokenizer->num_terms()))
         + " Tokenizing: ";
     common::end_progress(progress);
-
-    _total_corpus_terms = total_terms;
 
     return chunk_num;
 }

@@ -272,7 +272,7 @@ class disk_index
         std::unique_ptr<util::disk_vector<uint64_t>> _unique_terms;
 
         /** the total number of term occurrences in the entire corpus */
-        uint64_t _total_corpus_terms;
+        uint64_t _total_corpus_terms = 0;
 
     private:
         /**
