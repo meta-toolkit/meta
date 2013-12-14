@@ -312,6 +312,9 @@ class disk_index
         /** the location of this index */
         std::string _index_name;
 
+        /** whether or not to print out information during index operations */
+        bool _quiet;
+
         /**
          * PrimaryKey -> postings location.
          * Each index corresponds to a PrimaryKey (uint64_t).
