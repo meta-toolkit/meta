@@ -53,6 +53,8 @@ class postings_data
             "reinterpret_cast is used in postings_data"
         );
 
+        postings_data() = default;
+
         /**
          * Creates an empty postings_data for a given PrimaryKey.
          * @param p_id The PrimaryKey to be associated with this postings_data

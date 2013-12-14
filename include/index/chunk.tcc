@@ -53,64 +53,43 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
     std::string temp_name = _path + "_merge";
     std::ofstream output{temp_name};
 
-    postings_data<PrimaryKey, SecondaryKey> my_pd{PrimaryKey{0}};
-    postings_data<PrimaryKey, SecondaryKey> other_pd{PrimaryKey{0}};
+    postings_data<PrimaryKey, SecondaryKey> my_pd;
+    postings_data<PrimaryKey, SecondaryKey> other_pd;
     my_data >> my_pd;
     other_data >> other_pd;
 
     // merge while both have postings data
-
-    while(true)
-    {
-        if(my_pd.primary_key() == other_pd.primary_key())
-        {
+    while (my_data && other_data) {
+        if (my_pd.primary_key() == other_pd.primary_key()) {
+            // merge
             my_pd.merge_with(other_pd);
+            // write
             output << my_pd;
-            if(my_data.good())
-                my_data >> my_pd;
-            if(other_data.good())
-                other_data >> other_pd;
-            if(!my_data.good() || !other_data.good())
-                break;
-        }
-        else if(my_pd < other_pd)
-        {
+
+            // read next two postings data
+            my_data >> my_pd;
+            other_data >> other_pd;
+        } else if (my_pd.primary_key() < other_pd.primary_key()) {
+            // write the winner
             output << my_pd;
-            if(my_data.good())
-                my_data >> my_pd;
-            else
-                break;
-        }
-        else
-        {
+            // read next from the current chunk
+            my_data >> my_pd;
+        } else {
+            // write the winner
             output << other_pd;
-            if(other_data.good())
-                other_data >> other_pd;
-            else
-                break;
+            // read next from the other chunk
+            other_data >> other_pd;
         }
     }
 
     // finish merging when one runs out
-
-    postings_data<PrimaryKey, SecondaryKey> buffer{PrimaryKey{0}};
-    if(my_data.good())
-    {
+    while (my_data) {
         output << my_pd;
-        while(my_data.good())
-        {
-            my_data >> buffer;
-            output << buffer;
-        }
+        my_data >> my_pd;
     }
-    else if(other_data.good())
-    {
+    while (other_data) {
         output << other_pd;
-        while(other_data.good())
-        {
-            other_data >> buffer;
-            output << buffer;
-        }
+        other_data >> other_pd;
     }
 
     my_data.close();
