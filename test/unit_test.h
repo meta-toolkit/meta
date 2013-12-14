@@ -81,7 +81,7 @@ namespace testing
     template <class Func>
     void run_test(const std::string & test_name, int timeout, Func && func)
     {
-        std::cerr << std::left << std::setw(30) << (" " + test_name);
+        std::cerr << std::left << std::setw(50) << (" " + test_name);
 
         struct sigaction act;
         act.sa_handler = sig_catch;

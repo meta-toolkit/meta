@@ -3,7 +3,7 @@
  */
 
 #include <iostream>
-
+#include <fstream>
 #include "util/common.h"
 #include "index/inverted_index.h"
 #include "caching/all.h"
