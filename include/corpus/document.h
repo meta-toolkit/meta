@@ -53,7 +53,7 @@ class document
         /**
          * @return the classification category this document is in
          */
-        class_label label() const;
+        const class_label & label() const;
 
         /**
          * @return the name of this document
