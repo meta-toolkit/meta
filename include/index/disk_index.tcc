@@ -224,76 +224,8 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
 }
 
 template <class DerivedIndex>
-void disk_index<DerivedIndex>::calc_compression_mapping(
-        const std::string & filename)
-{
-    std::ifstream in{filename};
-    in.seekg(0, in.end);
-    uint64_t length = in.tellg();
-    in.seekg(0, in.beg);
-
-    auto temp_freqs = _index_name + "/freqs_temp.mapping";
-    {
-        /*
-        util::sqlite_map<uint64_t, uint64_t, caching::default_dblru_cache>
-        freqs{temp_freqs};
-        auto idx = in.tellg();
-        postings_data_type pdata{primary_key_type{0}};
-        while(in >> pdata)
-        {
-            if(in.tellg() / (length / 500) != idx)
-            {
-                idx = in.tellg() / (length / 500);
-                common::show_progress(idx, 500, 1,
-                        " > Calculating compression encoding: ");
-                for(auto & c: pdata.counts())
-                {
-                    if (auto val = freqs.find(c.first))
-                        freqs.insert(c.first, *val + 1);
-                    else
-                        freqs.insert(c.first, 1);
-
-                    auto num = *reinterpret_cast<const uint64_t*>(&c.second);
-                    if (auto val = freqs.find(num))
-                        freqs.insert(num, *val + 1);
-                    else
-                        freqs.insert(num, 1);
-                }
-            }
-        }
-        common::end_progress(" > Calculating compression encoding: ");
-        */
-
-        _compression_mapping =
-            common::make_unique<util::sqlite_map<uint64_t, uint64_t>>(
-                _index_name + "/keys.compressedmapping"
-            );
-
-        /*
-        // have to know what the delimiter is, and can't use 0
-        uint64_t delim = std::numeric_limits<uint64_t>::max();
-        _compression_mapping->insert(delim, 1);
-
-        // 2 is the first valid compressed char after the delimiter 1
-        uint64_t counter = 2;
-        auto query_result =
-            freqs.query<uint64_t>("SELECT id FROM map ORDER BY value DESC;");
-        uint64_t total_numbers = freqs.size() + 1;
-        for (const auto & num : query_result) {
-            _compression_mapping->insert(num, counter++);
-            common::show_progress(counter, total_numbers, total_numbers / 500,
-                " > Writing compression encoding: ");
-        }
-        */
-        common::end_progress(" > Writing compression encoding: ");
-    }
-    remove(temp_freqs.c_str());
-}
-
-template <class DerivedIndex>
 void disk_index<DerivedIndex>::compress(const std::string & filename)
 {
-    calc_compression_mapping(filename);
     std::string cfilename{filename + ".compressed"};
 
     // allocate memory for the term_id -> term location mapping now that we know
@@ -305,23 +237,30 @@ void disk_index<DerivedIndex>::compress(const std::string & filename)
     // file as well as rename it
     {
         io::compressed_file_writer out{cfilename, [&](uint64_t key) {
-            /*
-            auto val = _compression_mapping->find(key);
-            if(val)
-                return *val;
-            */
             if(key == std::numeric_limits<uint64_t>::max()) // delimiter
                 return uint64_t{1};
             return key + 2;
         }};
 
+        /*
         postings_data_type pdata{primary_key_type{0}};
+        */
+        postings_data<std::string, doc_id> pdata; // TODO: breaks forward_index
         std::ifstream in{filename};
 
         in.seekg(0, in.end);
         auto length = in.tellg();
         in.seekg(0, in.beg);
         auto idx = in.tellg();
+
+        uint64_t unique_terms;
+        common::read_binary(in, unique_terms);
+
+        // allocate memory for the term_id -> term location mapping now
+        // that we know how many terms there are
+        _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
+                _index_name + "/lexicon.index", unique_terms);
+
         // note: we will be accessing pdata in sorted order
         while(in >> pdata)
         {
@@ -331,7 +270,8 @@ void disk_index<DerivedIndex>::compress(const std::string & filename)
                 common::show_progress(idx, 500, 1,
                         " > Creating compressed postings file: ");
             }
-            (*_term_bit_locations)[pdata.primary_key()] = out.bit_location();
+            auto t_id = get_term_id(pdata.primary_key());
+            (*_term_bit_locations)[t_id] = out.bit_location();
             pdata.write_compressed(out);
         }
         common::end_progress(" > Creating compressed postings file: ");
@@ -387,11 +327,6 @@ void disk_index<DerivedIndex>::load_index()
     _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/lexicon.index");
 
-    _compression_mapping =
-        common::make_unique<util::sqlite_map<uint64_t, uint64_t>>(
-            _index_name + "/keys.compressedmapping"
-        );
-
     common::load_mapping(_label_ids, _index_name + "/labelids.mapping");
     _tokenizer = tokenizers::tokenizer::load(config);
 
@@ -440,6 +375,7 @@ void disk_index<DerivedIndex>::write_chunk(uint32_t chunk_num,
     std::ofstream outfile{_index_name
         + "/chunk-" + common::to_string(chunk_num)};
 
+    common::write_binary(outfile, uint64_t{pdata.size()});
     for(auto & p: pdata)
         outfile << p;
 
@@ -451,7 +387,10 @@ template <class DerivedIndex>
 void disk_index<DerivedIndex>::merge_chunks(
         uint32_t num_chunks, const std::string & filename)
 {
+    /*
     using chunk_t = chunk<primary_key_type, secondary_key_type>;
+    */
+    using chunk_t = chunk<std::string, secondary_key_type>;
 
     // create priority queue of all chunks based on size
     std::priority_queue<chunk_t> chunks;
@@ -562,11 +501,6 @@ auto disk_index<DerivedIndex>::search_primary(primary_key_type p_id) const
         return std::make_shared<postings_data_type>(p_id);
 
     io::compressed_file_reader reader{*_postings, [&](uint64_t value) {
-        /*
-        auto val = _compression_mapping->find_key(value);
-        if(val)
-            return *val;
-        */
         if(value == 1)
             return std::numeric_limits<uint64_t>::max(); // delimiter
         return value - 2;

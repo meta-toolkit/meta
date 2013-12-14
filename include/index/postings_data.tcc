@@ -15,6 +15,7 @@ postings_data<PrimaryKey, SecondaryKey>::postings_data(PrimaryKey p_id):
 { /* nothing */ }
 
 template <class PrimaryKey, class SecondaryKey>
+template <class>
 postings_data<PrimaryKey, SecondaryKey>::postings_data(
         const std::string & raw_data)
 {
@@ -113,6 +114,12 @@ bool postings_data<PrimaryKey, SecondaryKey>::operator<(const postings_data & ot
 }
 
 template <class PrimaryKey, class SecondaryKey>
+bool operator==(const postings_data<PrimaryKey, SecondaryKey> & lhs,
+                const postings_data<PrimaryKey, SecondaryKey> & rhs) {
+    return lhs.primary_key() == rhs.primary_key();
+}
+
+template <class PrimaryKey, class SecondaryKey>
 PrimaryKey postings_data<PrimaryKey, SecondaryKey>::primary_key() const
 {
     return _p_id;
@@ -135,7 +142,8 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
         cur_id = temp_id;
 
         writer.write(mutable_counts[i].first);
-        if(std::is_same<PrimaryKey, term_id>::value)
+        if(std::is_same<PrimaryKey, term_id>::value
+           || std::is_same<PrimaryKey, std::string>::value)
             writer.write(static_cast<uint64_t>(mutable_counts[i].second));
         else
             writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[i].second));
@@ -178,10 +186,28 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
     _counts.shrink_to_fit();
 }
 
+namespace {
+    template <class T>
+    uint64_t length(const T & elem,
+                    typename std::enable_if<
+                        std::is_same<T, std::string>::value
+                    >::type * = nullptr) {
+        return elem.size();
+    }
+
+    template <class T>
+    uint64_t length(const T & elem,
+                    typename std::enable_if<
+                        !std::is_same<T, std::string>::value
+                    >::type * = nullptr) {
+        return sizeof(T);
+    }
+}
+
 template <class PrimaryKey, class SecondaryKey>
 uint64_t postings_data<PrimaryKey, SecondaryKey>::bytes_used() const
 {
-    return sizeof(pair_t) * _counts.size() + sizeof(PrimaryKey);
+    return sizeof(pair_t) * _counts.size() + length(_p_id);
 }
 
 }

@@ -51,22 +51,10 @@ double inverted_index::avg_doc_length()
 void inverted_index::chunk_handler::handle_doc(const corpus::document & doc)
 {
     auto time = common::time([&]() {
-        auto it = doc.counts().begin();
-        auto end = doc.counts().end();
-        while (it != end) {
-        /*
         for(const auto & count: doc.counts())   // count: (string, double)
         {
-        */
-            const auto & count = *it;
-            term_id t_id{0};
             auto time = common::time<std::chrono::microseconds>([&]() {
-                t_id = term_id{idx_->get_term_id(count.first)};
-            });
-            find_term_id_time_ += time.count();
-
-            time = common::time<std::chrono::microseconds>([&]() {
-                postings_data_type pd{t_id};
+                index_pdata_type pd{count.first};
                 pd.increase_count(doc.id(), count.second);
                 auto it = pdata_.find(pd);
                 if(it == pdata_.end())
@@ -82,7 +70,7 @@ void inverted_index::chunk_handler::handle_doc(const corpus::document & doc)
                     // how comparisons are made (the primary_key value)
                     auto time = common::time<std::chrono::microseconds>([&]() {
                         //const_cast<postings_data_type &>(*it).merge_with(pd);
-                        const_cast<postings_data_type &>(*it).increase_count(doc.id(), count.second);
+                        const_cast<index_pdata_type &>(*it).increase_count(doc.id(), count.second);
                     });
                     merging_with_time_ += time.count();
                     chunk_size_ += it->bytes_used();
@@ -92,33 +80,34 @@ void inverted_index::chunk_handler::handle_doc(const corpus::document & doc)
 
             time = common::time<std::chrono::microseconds>([&]() {
                 if(chunk_size_ >= max_size())
-                {
-                    idx_->write_chunk(chunk_num_.fetch_add(1), pdata_);
-                    chunk_size_ = 0;
-                }
+                    flush_chunk();
             });
             writing_chunk_time_ += time.count();
-            time = common::time<std::chrono::microseconds>([&]() {
-                ++it;
-            });
-            total_iteration_time_ += time.count();
         }
     });
     total_time_ += time.count();
 }
 
+void inverted_index::chunk_handler::flush_chunk() {
+    if (chunk_size_ == 0)
+        return;
+
+    std::vector<index_pdata_type> pdata;
+    for (auto it = pdata_.begin(); it != pdata_.end(); it = pdata_.erase(it))
+        pdata.emplace_back(std::move(*it));
+    pdata_.clear();
+    std::sort(pdata.begin(), pdata.end());
+    idx_->write_chunk(chunk_num_.fetch_add(1), pdata);
+    chunk_size_ = 0;
+}
+
 inverted_index::chunk_handler::~chunk_handler() {
-    /*
-    auto time = common::time([&]() {
-        idx_->write_chunk(chunk_num_.fetch_add(1), pdata_);
-    });
-    writing_chunk_time_ += time.count();
-    */
+    flush_chunk();
 }
 
 void inverted_index::chunk_handler::print_stats_impl() {
     auto time = common::time([&]() {
-        idx_->write_chunk(chunk_num_.fetch_add(1), pdata_);
+        flush_chunk();
     });
     writing_chunk_time_ += time.count();
     total_time_ += time.count();
@@ -127,7 +116,6 @@ void inverted_index::chunk_handler::print_stats_impl() {
     std::cerr << "       ! CPU Time merge_with: " << merging_with_time_ / 1000.0 << "ms" << std::endl;
     std::cerr << "     ! CPU Time writing chunks: " << writing_chunk_time_ / 1000.0 << "ms" << std::endl;
     std::cerr << "     ! Total CPU time: " << total_time_ / 1000.0 << "s" << std::endl;
-    std::cerr << "     ! Iteration overhead: " << total_iteration_time_ / 1000.0 << "ms" << std::endl;
 }
 
 }

@@ -270,10 +270,6 @@ class disk_index
         /** the tokenizer used to tokenize documents in the index */
         std::unique_ptr<tokenizers::tokenizer> _tokenizer;
 
-        /** the mapping of (actual -> compressed id) */
-        std::unique_ptr<util::sqlite_map<uint64_t, uint64_t>>
-        _compression_mapping;
-
         /**
          * Maps which class a document belongs to (if any).
          * Each index corresponds to a doc_id (uint64_t).
@@ -313,13 +309,6 @@ class disk_index
          */
         void create_lexicon(const std::string & postings_file,
                             const std::string & lexicon_file);
-
-        /**
-         * Calculates frequency info from the postings file to make the best
-         * compression mapping.
-         * @param filename The filename of the postings file
-         */
-        void calc_compression_mapping(const std::string & filename);
 
         /**
          * Compresses the large postings file.

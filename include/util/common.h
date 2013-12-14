@@ -27,18 +27,27 @@ namespace common
      *
      */
     template <class T>
-    void write_binary(std::ostream & out, const T & elem)
+    inline void write_binary(std::ostream & out, const T & elem)
     {
         out.write(reinterpret_cast<const char*>(&elem), sizeof(T));
+    }
+
+    inline void write_binary(std::ostream & out, const std::string & str)
+    {
+        out.write(str.c_str(), str.size() + 1);
     }
 
     /**
      *
      */
     template <class T>
-    void read_binary(std::istream & in, T & elem)
+    inline void read_binary(std::istream & in, T & elem)
     {
         in.read(reinterpret_cast<char*>(&elem), sizeof(T));
+    }
+
+    inline void read_binary(std::istream & in, std::string & str) {
+        std::getline(in, str, '\0');
     }
 
     /**

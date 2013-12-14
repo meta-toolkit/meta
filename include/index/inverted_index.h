@@ -11,6 +11,7 @@
 
 #include <string>
 #include <set>
+#include <unordered_set>
 #include <vector>
 #include <memory>
 #include "index/disk_index.h"
@@ -58,6 +59,8 @@ class inverted_index: public disk_index<inverted_index>
 {
     using base = disk_index<inverted_index>;
     friend base;
+
+    using index_pdata_type = postings_data<std::string, doc_id>;
 
     protected:
         /**
@@ -135,7 +138,7 @@ class inverted_index: public disk_index<inverted_index>
          */
         class chunk_handler : public base::chunk_handler<chunk_handler> {
             /** the current in-memory chunk */
-            std::set<postings_data_type> pdata_;
+            std::unordered_set<index_pdata_type> pdata_;
 
             /** the current size of the in-memory chunk */
             uint64_t chunk_size_{0};
@@ -144,8 +147,9 @@ class inverted_index: public disk_index<inverted_index>
             uint64_t writing_chunk_time_{0};
             uint64_t merging_pdata_time_{0};
             uint64_t total_time_{0};
-            uint64_t total_iteration_time_{0};
             uint64_t merging_with_time_{0};
+
+            void flush_chunk();
 
             public:
                 // inherit the base class constructor

@@ -23,6 +23,8 @@ template <class PrimaryKey, class SecondaryKey>
 void chunk<PrimaryKey, SecondaryKey>::set_size()
 {
     _size = common::file_size(_path);
+    std::ifstream data{_path};
+    common::read_binary(data, _terms);
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -55,11 +57,21 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
 
     postings_data<PrimaryKey, SecondaryKey> my_pd;
     postings_data<PrimaryKey, SecondaryKey> other_pd;
+
+    // skip the term count at the beginning of the files
+    uint64_t terms;
+    common::read_binary(my_data, terms);
+    common::read_binary(other_data, terms);
+    common::write_binary(output, terms); // dummy output for now
+                                         // until know the true count
+
     my_data >> my_pd;
     other_data >> other_pd;
 
+    _terms = 0;
     // merge while both have postings data
     while (my_data && other_data) {
+        ++_terms;
         if (my_pd.primary_key() == other_pd.primary_key()) {
             // merge
             my_pd.merge_with(other_pd);
@@ -84,16 +96,20 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
 
     // finish merging when one runs out
     while (my_data) {
+        ++_terms;
         output << my_pd;
         my_data >> my_pd;
     }
     while (other_data) {
+        ++_terms;
         output << other_pd;
         other_data >> other_pd;
     }
 
     my_data.close();
     other_data.close();
+    output.seekp(0, output.beg);
+    common::write_binary(output, _terms);
     output.close();
     remove(_path.c_str());
     remove(other._path.c_str());

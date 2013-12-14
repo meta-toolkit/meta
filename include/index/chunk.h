@@ -55,11 +55,12 @@ class chunk
         void merge_with(const chunk & other);
 
     private:
-    
+
         void set_size();
 
         std::string _path;
         uint64_t _size;
+        uint64_t _terms; // unique term count for this chunk
 };
 
 }

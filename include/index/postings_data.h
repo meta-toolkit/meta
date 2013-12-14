@@ -39,7 +39,8 @@ class postings_data
 
         static_assert(
             (std::is_integral<PrimaryKey>::value ||
-             std::is_base_of<util::numeric, PrimaryKey>::value)
+             std::is_base_of<util::numeric, PrimaryKey>::value ||
+             std::is_same<PrimaryKey, std::string>::value)
             &&
             (std::is_integral<SecondaryKey>::value ||
              std::is_base_of<util::numeric, SecondaryKey>::value
@@ -66,6 +67,9 @@ class postings_data
          * numbers)
          * This function converts a list of numbers into a postings_data object
          */
+        template <class = typename std::enable_if<
+                              !std::is_same<PrimaryKey, std::string>::value
+                          >::type>
         postings_data(const std::string & raw_data);
 
         /**
@@ -199,7 +203,26 @@ class postings_data
         const static uint64_t _delimiter = std::numeric_limits<uint64_t>::max();
 };
 
+/**
+ * @param lhs The first postings_data
+ * @param rhs The postings_data to compare with
+ * @return whether this postings_data has the same PrimaryKey as
+ * the paramter
+ */
+template <class PrimaryKey, class SecondaryKey>
+bool operator==(const postings_data<PrimaryKey, SecondaryKey> & lhs,
+                const postings_data<PrimaryKey, SecondaryKey> & rhs);
 }
+}
+
+namespace std {
+    template <class PrimaryKey, class SecondaryKey>
+    struct hash<meta::index::postings_data<PrimaryKey, SecondaryKey>> {
+        using pdata_t = meta::index::postings_data<PrimaryKey, SecondaryKey>;
+        size_t operator()(const pdata_t & pd) const {
+            return std::hash<PrimaryKey>{}(pd.primary_key());
+        }
+    };
 }
 
 #include "index/postings_data.tcc"
