@@ -45,7 +45,7 @@ double inverted_index::total_num_occurences(term_id t_id) const
 
 double inverted_index::avg_doc_length()
 {
-    return static_cast<double>(_total_corpus_terms) / _doc_sizes->size();
+    return static_cast<double>(total_corpus_terms()) / _doc_sizes->size();
 }
 
 void inverted_index::chunk_handler::handle_doc(const corpus::document & doc)

@@ -13,10 +13,6 @@ void libsvm_tokenizer::tokenize(corpus::document & doc)
 {
     std::stringstream stream{doc.content()};
     std::string token;
-    
-    // first token is the class label
-    stream >> token;
-    doc.set_label(class_label{token});
 
     // remaining tokens are "feature:feature_count"
     while(stream >> token)

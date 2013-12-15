@@ -26,6 +26,12 @@ document::document(const std::string & path,
 {
     size_t idx = path.find_last_of("/") + 1;
     _name = path.substr(idx);
+
+    // make sure class label doesn't contain a path (we only want the label, not
+    // the entire file)
+    size_t slash = _label.find_first_of("/\\");
+    if(slash != std::string::npos)
+        _label = _label.substr(0, slash);
 }
 
 void document::increment(const std::string & term, double amount)
@@ -39,7 +45,7 @@ std::string document::path() const
     return _path;
 }
 
-class_label document::label() const
+const class_label & document::label() const
 {
     return _label;
 }

@@ -292,7 +292,7 @@ class disk_index
         _term_id_mapping;
 
         /** the total number of term occurrences in the entire corpus */
-        uint64_t _total_corpus_terms;
+        uint64_t _total_corpus_terms = 0;
 
     private:
         /**
@@ -324,6 +324,9 @@ class disk_index
 
         /** the location of this index */
         std::string _index_name;
+
+        /** whether or not to print out information during index operations */
+        bool _quiet;
 
         /**
          * PrimaryKey -> postings location.

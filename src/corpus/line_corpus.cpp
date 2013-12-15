@@ -15,12 +15,9 @@ namespace corpus {
 line_corpus::line_corpus(const std::string & file,
         uint64_t num_lines /* = 0 */):
     _cur{0},
-    _num_lines{num_lines},
+    _num_lines{common::num_lines(file)},
     _parser{file, "\n"}
-{
-    if(_num_lines == 0)
-        _num_lines = common::num_lines(file);
-}
+{ /* nothing */ }
 
 bool line_corpus::has_next() const
 {
@@ -33,7 +30,7 @@ document line_corpus::next()
     size_t space = content.find_first_of(" ");
     std::string name = common::to_string(_cur) + "_" + content.substr(0, space);
     document d{name, doc_id{_cur++}, class_label{content.substr(0, space)}};
-    d.set_content(content);
+    d.set_content(content.substr(space + 1));
     return d;
 }
 
