@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    common::set_cerr_logging();
     auto idx = index::make_index<index::inverted_index,
                                  caching::splay_cache>(argv[1], uint32_t{10000});
 

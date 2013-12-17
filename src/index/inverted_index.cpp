@@ -111,11 +111,11 @@ void inverted_index::chunk_handler::print_stats_impl() {
     });
     writing_chunk_time_ += time.count();
     total_time_ += time.count();
-    std::cerr << "     ! CPU Time finding ids: " << find_term_id_time_ / 1000.0 << "ms" << std::endl;
-    std::cerr << "     ! CPU Time merging pdata: " << merging_pdata_time_ / 1000.0 << "ms" << std::endl;
-    std::cerr << "       ! CPU Time merge_with: " << merging_with_time_ / 1000.0 << "ms" << std::endl;
-    std::cerr << "     ! CPU Time writing chunks: " << writing_chunk_time_ / 1000.0 << "ms" << std::endl;
-    std::cerr << "     ! Total CPU time: " << total_time_ / 1000.0 << "s" << std::endl;
+    LOG(debug) << "     ! CPU Time finding ids: " << find_term_id_time_ / 1000.0 << "ms" << ENDLG;
+    LOG(debug) << "     ! CPU Time merging pdata: " << merging_pdata_time_ / 1000.0 << "ms" << ENDLG;
+    LOG(debug) << "       ! CPU Time merge_with: " << merging_with_time_ / 1000.0 << "ms" << ENDLG;
+    LOG(debug) << "     ! CPU Time writing chunks: " << writing_chunk_time_ / 1000.0 << "ms" << ENDLG;
+    LOG(debug) << "     ! Total CPU time: " << total_time_ / 1000.0 << "s" << ENDLG;
 }
 
 }

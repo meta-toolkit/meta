@@ -21,6 +21,7 @@ sgd<LossFunction>::sgd(index::forward_index & idx,
     positive_label_{""}, // this will be inferred later
     alpha_{alpha},
     gamma_{gamma},
+    bias_{0},
     bias_weight_{bias},
     lambda_{lambda},
     max_iter_{max_iter}
@@ -38,6 +39,7 @@ sgd<LossFunction>::sgd(index::forward_index & idx,
     positive_label_{positive_label},
     alpha_{alpha},
     gamma_{gamma},
+    bias_{0},
     bias_weight_{bias},
     lambda_{lambda},
     max_iter_{max_iter}

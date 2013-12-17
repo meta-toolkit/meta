@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include "util/common.h"
 #include "io/mmap_file.h"
+#include "logging/logger.h"
 
 namespace meta {
 namespace common {
@@ -98,24 +99,32 @@ Duration time(Functor && functor)
     return std::chrono::duration_cast<Duration>(end - start);
 }
 
-void start_progress(const std::string & prefix)
+void set_cerr_logging(logging::logger::severity_level sev =
+                          logging::logger::severity_level::trace)
 {
-    std::cerr << prefix << "0%\r";
-    std::flush(std::cerr);
+    using namespace meta::logging;
+
+    // separate logging for progress output
+    logging::add_sink({std::cerr, [](const logger::log_line & ll) {
+        return ll.severity() == logger::severity_level::progress;
+    }, [](const logger::log_line & ll) {
+        return " " + ll.str();
+    }});
+
+    logging::add_sink({std::cerr, sev});
 }
 
 void show_progress(size_t idx, size_t max, size_t freq, const std::string & prefix)
 {
     if(idx % freq == 0)
-    {
-        std::cerr << prefix << static_cast<double>(idx) / max * 100 << "%    \r";
-        std::flush(std::cerr);
-    }
+        LOG(progress) << prefix << static_cast<double>(idx) / max * 100
+            << "%    \r" << ENDLG;
 }
 
 void end_progress(const std::string & prefix)
 {
-    std::cerr << prefix << "100%         " << std::endl;
+    LOG(progress) << prefix << "100%         \n" << ENDLG;
+    LOG(info) << prefix << "100%" << ENDLG;
 }
 
 template <class Key,

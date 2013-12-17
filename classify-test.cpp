@@ -65,6 +65,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    common::set_cerr_logging();
     auto config = cpptoml::parse_file(argv[1]);
     auto f_idx = index::make_index<index::forward_index, caching::no_evict_cache>(argv[1]);
  // auto i_idx = index::make_index<index::inverted_index, caching::splay_cache>(argv[1]);

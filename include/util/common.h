@@ -13,6 +13,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include "logging/logger.h"
 #include "util/invertible_map.h"
 #include "cpptoml.h"
 
@@ -127,12 +128,10 @@ namespace common
     Duration time(Functor && functor);
 
     /**
-     * Starts output from a call to show_progess by displaying 0% completion.
-     * This is an optional function, and may be useful if the first call to
-     * show_progress doesn't start exactly at 0%.
-     * @param prefix The text to show before the percentage
+     * Sets up default logging to cerr. Useful for a lot of the demo apps
+     * to reduce verbosity in setup.
      */
-    inline void start_progress(const std::string & prefix);
+    inline void set_cerr_logging(logging::logger::severity_level sev);
 
     /**
      * @param idx The current progress in the operation
