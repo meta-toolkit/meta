@@ -88,6 +88,21 @@ Duration time(Functor && functor)
     return std::chrono::duration_cast<Duration>(end - start);
 }
 
+void set_cerr_logging(logging::logger::severity_level sev =
+                          logging::logger::severity_level::trace)
+{
+    using namespace meta::logging;
+
+    // separate logging for progress output
+    logging::add_sink({std::cerr, [](const logger::log_line & ll) {
+        return ll.severity() == logger::severity_level::progress;
+    }, [](const logger::log_line & ll) {
+        return " " + ll.str();
+    }});
+
+    logging::add_sink({std::cerr, sev});
+}
+
 void show_progress(size_t idx, size_t max, size_t freq, const std::string & prefix)
 {
     if(idx % freq == 0)

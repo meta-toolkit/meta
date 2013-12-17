@@ -13,6 +13,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include "logging/logger.h"
 #include "util/invertible_map.h"
 #include "cpptoml.h"
 
@@ -98,6 +99,12 @@ namespace common
      */
     template <class Duration = std::chrono::milliseconds, class Functor>
     Duration time(Functor && functor);
+
+    /**
+     * Sets up default logging to cerr. Useful for a lot of the demo apps
+     * to reduce verbosity in setup.
+     */
+    inline void set_cerr_logging(logging::logger::severity_level sev);
 
     /**
      * @param idx The current progress in the operation

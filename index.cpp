@@ -19,18 +19,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    using namespace meta::logging;
-
-    logging::add_sink({std::cerr, [](const logger::log_line & ll) {
-        return ll.severity() == logger::severity_level::progress;
-    }, [](const logger::log_line & ll) {
-        return " " + ll.str();
-    }});
-
-    logging::add_sink({std::cerr, logger::severity_level::trace});
-    std::ofstream logfile{"meta.log"};
-    logging::add_sink({logfile, logger::severity_level::info});
-
+    common::set_cerr_logging();
     auto time = common::time([&]() {
         auto idx = index::make_index<index::inverted_index,
                                      caching::splay_cache>(argv[1], uint32_t{10000});

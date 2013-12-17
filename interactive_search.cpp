@@ -54,12 +54,13 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    common::set_cerr_logging();
     auto idx = index::make_index<index::inverted_index,
                                  caching::splay_cache>(argv[1], uint32_t{10000});
 
     //index::pivoted_length ranker;
     index::okapi_bm25 ranker;
-    
+
     cout << "Enter a query, or type \"exit\" to quit." << endl << endl;
 
     std::string text;
@@ -70,7 +71,7 @@ int main(int argc, char* argv[])
 
         if(text == "exit" || text == "quit")
             break;
-            
+
         corpus::document query{"[user input]", doc_id{0}};
         query.set_content(text);
 
@@ -78,7 +79,7 @@ int main(int argc, char* argv[])
         auto time = common::time([&](){
             ranking = ranker.score(idx, query);
         });
-        
+
         cout << "Showing top 10 of " << ranking.size()
              << " results (" << time.count() << "ms)" << endl;
 
