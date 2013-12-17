@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include "util/common.h"
 #include "io/mmap_file.h"
+#include "logging/logger.h"
 
 namespace meta {
 namespace common {
@@ -90,15 +91,14 @@ Duration time(Functor && functor)
 void show_progress(size_t idx, size_t max, size_t freq, const std::string & prefix)
 {
     if(idx % freq == 0)
-    {
-        std::cerr << prefix << static_cast<double>(idx) / max * 100 << "%    \r";
-        std::flush(std::cerr);
-    }
+        LOG(progress) << prefix << static_cast<double>(idx) / max * 100
+            << "%    \r" << ENDLG;
 }
 
 void end_progress(const std::string & prefix)
 {
-    std::cerr << prefix << "100%         " << std::endl;
+    LOG(progress) << prefix << "100%         \n" << ENDLG;
+    LOG(info) << prefix << "100%" << ENDLG;
 }
 
 template <class Key,

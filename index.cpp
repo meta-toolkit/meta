@@ -7,6 +7,7 @@
 #include "util/common.h"
 #include "index/inverted_index.h"
 #include "caching/all.h"
+#include "logging/logger.h"
 
 using namespace meta;
 
@@ -17,6 +18,18 @@ int main(int argc, char* argv[])
         std::cerr << "Usage:\t" << argv[0] << " configFile" << std::endl;
         return 1;
     }
+
+    using namespace meta::logging;
+
+    logging::add_sink({std::cerr, [](const logger::log_line & ll) {
+        return ll.severity() == logger::severity_level::progress;
+    }, [](const logger::log_line & ll) {
+        return " " + ll.str();
+    }});
+
+    logging::add_sink({std::cerr, logger::severity_level::trace});
+    std::ofstream logfile{"meta.log"};
+    logging::add_sink({logfile, logger::severity_level::info});
 
     auto time = common::time([&]() {
         auto idx = index::make_index<index::inverted_index,

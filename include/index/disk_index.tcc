@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include "index/disk_index.h"
 #include "index/chunk.h"
+#include "logging/logger.h"
 #include "parallel/thread_pool.h"
 #include "util/common.h"
 #include "util/optional.h"
@@ -32,8 +33,6 @@ Index make_index(const std::string & config_file, Args &&... args)
     }
 
     Index idx{config, std::forward<Args>(args)...};
-    auto quiet_opt = config.get_as<bool>("quiet");
-    idx._quiet = (quiet_opt && *quiet_opt);
 
     // if index has already been made, load it
     if(mkdir(idx._index_name.c_str(), 0755) == -1)
@@ -129,16 +128,13 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
                     return; // destructor for handler will write
                             // any intermediate chunks
                 doc = docs->next();
-                if(!_quiet)
-                {
-                    std::string progress = " Documents: "
-                        + common::add_commas(common::to_string(doc->id()))
-                        + " Unique primary keys: "
-                        + common::add_commas(
-                            common::to_string(_tokenizer->num_terms()))
-                        + " Tokenizing: ";
-                    common::show_progress(doc->id(), docs->size(), 50, progress);
-                }
+                std::string progress = "Documents: "
+                    + common::add_commas(common::to_string(doc->id()))
+                    + " Unique primary keys: "
+                    + common::add_commas(
+                        common::to_string(_tokenizer->num_terms()))
+                    + " Tokenizing: ";
+                common::show_progress(doc->id(), docs->size(), 50, progress);
             }
 
             _tokenizer->tokenize(*doc);
@@ -162,15 +158,12 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
     for (auto & fut : futures)
         fut.get();
 
-    if(!_quiet)
-    {
-        std::string progress = " Documents: "
-            + common::add_commas(common::to_string(docs->size()))
-            + " Unique primary keys: "
-            + common::add_commas(common::to_string(_tokenizer->num_terms()))
-            + " Tokenizing: ";
-        common::end_progress(progress);
-    }
+    std::string progress = "Documents: "
+        + common::add_commas(common::to_string(docs->size()))
+        + " Unique primary keys: "
+        + common::add_commas(common::to_string(_tokenizer->num_terms()))
+        + " Tokenizing: ";
+    common::end_progress(progress);
 
     return chunk_num;
 }
@@ -218,14 +211,12 @@ template <class DerivedIndex>
 void disk_index<DerivedIndex>::compress(
         const std::string & filename)
 {
-    if(!_quiet)
-        std::cerr << "Calculating optimal compression mapping..." << std::endl;
+    LOG(info) << "Calculating optimal compression mapping..." << ENDLG;
 
     calc_compression_mapping(filename);
     std::string cfilename{filename + ".compressed"};
 
-    if(!_quiet)
-        std::cerr << "Creating compressed postings file..." << std::endl;
+    LOG(info) << "Creating compressed postings file..." << ENDLG;
 
     // create scope so the writer closes and we can calculate the size of the
     // file as well as rename it
@@ -243,10 +234,9 @@ void disk_index<DerivedIndex>::compress(
         }
     }
 
-    if(!_quiet)
-        std::cerr << "Created compressed postings file ("
-              << common::bytes_to_units(common::file_size(cfilename))
-              << ")" << std::endl;
+    LOG(info) << "Created compressed postings file ("
+          << common::bytes_to_units(common::file_size(cfilename))
+          << ")" << ENDLG;
 
     remove(filename.c_str());
     rename(cfilename.c_str(), filename.c_str());
@@ -255,9 +245,8 @@ void disk_index<DerivedIndex>::compress(
 template <class DerivedIndex>
 void disk_index<DerivedIndex>::load_index()
 {
-    if(!_quiet)
-        std::cerr << "Loading index from disk (" << _index_name << ")..."
-                  << std::endl;
+    LOG(info) << "Loading index from disk (" << _index_name << ")..."
+              << ENDLG;
 
     auto config = cpptoml::parse_file(_index_name + "/config.toml");
 
@@ -365,14 +354,11 @@ void disk_index<DerivedIndex>::merge_chunks(
                 chunks.pop();
                 second = util::optional<chunk_t>{chunks.top()};
                 chunks.pop();
-                if(!_quiet)
-                {
-                    std::cerr << " Merging " << first->path() << " ("
-                        << common::bytes_to_units(first->size())
-                        << ") and " << second->path() << " ("
-                        << common::bytes_to_units(second->size())
-                        << "), " << --remaining << " remaining        \r";
-                }
+                LOG(progress) << "Merging " << first->path() << " ("
+                    << common::bytes_to_units(first->size())
+                    << ") and " << second->path() << " ("
+                    << common::bytes_to_units(second->size())
+                    << "), " << --remaining << " remaining        \r" << ENDLG;
             }
             first->merge_with(*second);
             {
@@ -388,15 +374,13 @@ void disk_index<DerivedIndex>::merge_chunks(
     for (auto & fut : futures)
         fut.get();
 
-    if(!_quiet)
-        std::cerr << std::endl;
+    LOG(progress) << '\n' << ENDLG;
 
     rename(chunks.top().path().c_str(), filename.c_str());
 
-    if(!_quiet)
-        std::cerr << "Created uncompressed postings file " << filename
-                  << " (" << common::bytes_to_units(chunks.top().size()) << ")"
-                  << std::endl;
+    LOG(info) << "Created uncompressed postings file " << filename
+              << " (" << common::bytes_to_units(chunks.top().size()) << ")"
+              << ENDLG;
 }
 
 template <class DerivedIndex>
