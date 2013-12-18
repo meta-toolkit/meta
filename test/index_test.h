@@ -24,7 +24,6 @@ namespace testing {
                     << *orig_config.get_as<std::string>("stop-words") << "\"\n"
                     << "prefix = \""
                     << *orig_config.get_as<std::string>("prefix") << "\"\n"
-                    << "quiet = true\n"
                     << "corpus-type = \"" << corpus_type << "-corpus\"\n"
                     << "list= \"ceeaus\"\n"
                     << "dataset = \"ceeaus\"\n"
