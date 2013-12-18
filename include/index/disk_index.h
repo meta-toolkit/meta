@@ -11,13 +11,15 @@
 #define _DISK_INDEX_H_
 
 #include <atomic>
-#include <string>
-#include <vector>
 #include <memory>
 #include <mutex>
+#include <queue>
+#include <string>
+#include <vector>
 #include "caching/all.h"
 #include "corpus/corpus.h"
 #include "index/cached_index.h"
+#include "index/chunk.h"
 #include "index/postings_data.h"
 #include "io/compressed_file_reader.h"
 #include "io/mmap_file.h"
@@ -191,7 +193,7 @@ class disk_index
          *  - implement the clear() function
          */
         template <class Container>
-        void write_chunk(uint32_t chunk_num, Container & pdata) const;
+        void write_chunk(uint32_t chunk_num, Container & pdata);
 
         /**
          * @param d_id The document
@@ -299,7 +301,7 @@ class disk_index
          * @param num_chunks The number of chunks to be merged
          * @param filename The name for the postings file
          */
-        void merge_chunks(uint32_t num_chunks, const std::string & filename);
+        void merge_chunks(const std::string & filename);
 
         /**
          * Creates the lexicon file (or "dictionary") which has pointers into
@@ -325,9 +327,6 @@ class disk_index
         /** the location of this index */
         std::string _index_name;
 
-        /** whether or not to print out information during index operations */
-        bool _quiet;
-
         /**
          * PrimaryKey -> postings location.
          * Each index corresponds to a PrimaryKey (uint64_t).
@@ -349,6 +348,9 @@ class disk_index
 
         /** mutex for thread-safe operations */
         std::unique_ptr<std::mutex> _mutex{new std::mutex};
+
+        /** used to select which chunk to merge next */
+        std::priority_queue<chunk<std::string, secondary_key_type>> _chunks;
 
     public:
         /**

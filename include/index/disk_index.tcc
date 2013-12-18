@@ -5,12 +5,10 @@
 
 #include <cstdio>
 #include <numeric>
-#include <queue>
 #include <iostream>
 #include <utility>
 #include <sys/stat.h>
 #include "index/disk_index.h"
-#include "index/chunk.h"
 #include "logging/logger.h"
 #include "parallel/thread_pool.h"
 #include "util/common.h"
@@ -116,7 +114,7 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
     LOG(debug) << " ! Time spent tokenizing: " << (time.count() / 1000.0) << ENDLG;
 
     time = common::time([&](){
-        merge_chunks(num_chunks, _index_name + "/postings.index");
+        merge_chunks(_index_name + "/postings.index");
     });
 
     LOG(debug) << " ! Time spent merging: " << (time.count() / 1000.0) << ENDLG;
@@ -139,7 +137,6 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
 {
     std::mutex mutex;
     std::atomic<uint32_t> chunk_num{0};
-
     std::atomic<uint64_t> token_time{0};
     std::atomic<uint64_t> metadata_time{0};
     std::atomic<uint64_t> handler_time{0};
@@ -366,10 +363,12 @@ label_id disk_index<DerivedIndex>::label_id_from_doc(doc_id d_id) const
 template <class DerivedIndex>
 template <class Container>
 void disk_index<DerivedIndex>::write_chunk(uint32_t chunk_num,
-                                           Container & pdata) const
+                                           Container & pdata)
 {
-    std::ofstream outfile{_index_name
-        + "/chunk-" + common::to_string(chunk_num)};
+    std::string chunk_name =
+        _index_name + "/chunk-" + common::to_string(chunk_num);
+    _chunks.emplace(chunk_name);
+    std::ofstream outfile{chunk_name};
 
     common::write_binary(outfile, uint64_t{pdata.size()});
     for(auto & p: pdata)
@@ -380,28 +379,13 @@ void disk_index<DerivedIndex>::write_chunk(uint32_t chunk_num,
 }
 
 template <class DerivedIndex>
-void disk_index<DerivedIndex>::merge_chunks(
-        uint32_t num_chunks, const std::string & filename)
+void disk_index<DerivedIndex>::merge_chunks(const std::string & filename)
 {
-    /*
-    using chunk_t = chunk<primary_key_type, secondary_key_type>;
-    */
     using chunk_t = chunk<std::string, secondary_key_type>;
-
-    // create priority queue of all chunks based on size
-    std::priority_queue<chunk_t> chunks;
-    for(uint32_t i = 0; i < num_chunks; ++i)
-    {
-        std::string filename = _index_name + "/chunk-" + common::to_string(i);
-        chunks.push(chunk_t{filename});
-    }
-
-    // merge the smallest two chunks together until there is only one left
-    // done in parallel
 
     // this represents the number of merge steps needed---it is equivalent
     // to the number of internal nodes in a binary tree with n leaf nodes
-    size_t remaining = chunks.size() - 1;
+    size_t remaining = _chunks.size() - 1;
     std::mutex mutex;
     parallel::thread_pool pool;
     auto thread_ids = pool.thread_ids();
@@ -412,12 +396,12 @@ void disk_index<DerivedIndex>::merge_chunks(
             util::optional<chunk_t> second;
             {
                 std::lock_guard<std::mutex> lock{mutex};
-                if (chunks.size() < 2)
+                if (_chunks.size() < 2)
                     return;
-                first = util::optional<chunk_t>{chunks.top()};
-                chunks.pop();
-                second = util::optional<chunk_t>{chunks.top()};
-                chunks.pop();
+                first = util::optional<chunk_t>{_chunks.top()};
+                _chunks.pop();
+                second = util::optional<chunk_t>{_chunks.top()};
+                _chunks.pop();
                 LOG(progress) << "> Merging " << first->path() << " ("
                     << common::bytes_to_units(first->size())
                     << ") and " << second->path() << " ("
@@ -427,23 +411,23 @@ void disk_index<DerivedIndex>::merge_chunks(
             first->merge_with(*second);
             {
                 std::lock_guard<std::mutex> lock{mutex};
-                chunks.push(*first);
+                _chunks.push(*first);
             }
         }
     };
-    for (size_t i = 0; i < thread_ids.size(); ++i) {
+
+    for (size_t i = 0; i < thread_ids.size(); ++i)
         futures.emplace_back(pool.submit_task(task));
-    }
 
     for (auto & fut : futures)
         fut.get();
 
     LOG(progress) << '\n' << ENDLG;
 
-    rename(chunks.top().path().c_str(), filename.c_str());
+    rename(_chunks.top().path().c_str(), filename.c_str());
 
     LOG(info) << "Created uncompressed postings file " << filename
-              << " (" << common::bytes_to_units(chunks.top().size()) << ")"
+              << " (" << common::bytes_to_units(_chunks.top().size()) << ")"
               << ENDLG;
 }
 

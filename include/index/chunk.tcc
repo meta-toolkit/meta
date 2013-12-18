@@ -14,7 +14,7 @@ namespace index {
 
 template <class PrimaryKey, class SecondaryKey>
 chunk<PrimaryKey, SecondaryKey>::chunk(const std::string & path):
-    _path(path)
+    _path{path}
 {
     set_size();
 }
