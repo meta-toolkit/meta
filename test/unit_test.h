@@ -21,7 +21,7 @@
 #define ASSERT(expr) \
     do { \
        if (!(expr)) \
-           FAIL("Assertion failed: " #expr ); \
+           FAIL("Assertion failed: \"" #expr "\""); \
     } while(0)
 
 /**
@@ -31,7 +31,8 @@
 #define FAIL(why) \
     do { \
         std::cerr << "[ " << common::make_red("FAIL") << " ] " << (why) << " ("; \
-        std::cerr << __FILE__ << ":" << __LINE__ << ")" << std::endl; \
+        std::cerr << testing::get_name(__FILE__) << ":"; \
+        std::cerr << __LINE__ << ")" << std::endl; \
         exit(1); \
     } while(0)
 
@@ -54,6 +55,16 @@ namespace meta {
  */
 namespace testing
 {
+    /**
+     * Trims a path to just show the filename
+     * @param path
+     * @return the filename from the given path
+     */
+    std::string get_name(const std::string & path)
+    {
+        return path.substr(path.find_last_of("/\\") + 1);
+    }
+
     /**
      * Signal handler for unit tests.
      * Catches signals and responds appropriately, usually by failing the
