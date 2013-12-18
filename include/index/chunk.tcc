@@ -118,5 +118,71 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
     set_size();
 }
 
+template <class PrimaryKey, class SecondaryKey>
+template <class Container>
+void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container & pdata)
+{
+    std::ifstream my_data{_path};
+    std::string temp_name = _path + "_merge";
+    std::ofstream output{temp_name};
+
+    postings_data<PrimaryKey, SecondaryKey> my_pd;
+    auto other_pd = pdata.begin();
+
+    // skip the term count at the beginning of the files
+    uint64_t terms;
+    common::read_binary(my_data, terms);
+    common::write_binary(output, terms); // dummy output for now
+
+    my_data >> my_pd;
+    other_pd = pdata.begin();
+
+    _terms = 0;
+    while (my_data && other_pd != pdata.end())
+    {
+        ++_terms;
+        if(my_pd.primary_key() == other_pd->primary_key())
+        {
+            my_pd.merge_with(*other_pd);
+            output << my_pd;
+            my_data >> my_pd;
+            ++other_pd;
+        }
+        else if(my_pd.primary_key() < other_pd->primary_key())
+        {
+            output << my_pd;
+            my_data >> my_pd;
+        }
+        else
+        {
+            output << *other_pd;
+            ++other_pd;
+        }
+    }
+
+    // finish merging when one runs out
+    while(my_data)
+    {
+        ++_terms;
+        output << my_pd;
+        my_data >> my_pd;
+    }
+    while(other_pd != pdata.end())
+    {
+        ++_terms;
+        output << *other_pd;
+        ++other_pd;
+    }
+
+    my_data.close();
+    output.seekp(0, output.beg);
+    common::write_binary(output, _terms);
+    output.close();
+    remove(_path.c_str());
+    rename(temp_name.c_str(), _path.c_str());
+    pdata.clear();
+    set_size();
+}
+
 }
 }

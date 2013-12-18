@@ -165,7 +165,7 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
                     + common::add_commas(
                         common::to_string(_term_id_mapping->size()))
                     + " Tokenizing: ";
-                common::show_progress(doc->id(), docs->size(), 100, progress);
+                common::show_progress(doc->id(), docs->size(), 1000, progress);
             }
 
             auto time = common::time([&]() {
@@ -365,17 +365,37 @@ template <class Container>
 void disk_index<DerivedIndex>::write_chunk(uint32_t chunk_num,
                                            Container & pdata)
 {
-    std::string chunk_name =
-        _index_name + "/chunk-" + common::to_string(chunk_num);
-    _chunks.emplace(chunk_name);
-    std::ofstream outfile{chunk_name};
+    using chunk_t = chunk<std::string, secondary_key_type>;
+    util::optional<chunk_t> top;
+    {
+        std::lock_guard<std::mutex> lock{*_queue_mutex};
+        if(!_chunks.empty())
+        {
+            top = _chunks.top();
+            _chunks.pop();
+        }
+    }
 
-    common::write_binary(outfile, uint64_t{pdata.size()});
-    for(auto & p: pdata)
-        outfile << p;
+    if(!top) // pqueue was empty
+    {
+        std::string chunk_name =
+            _index_name + "/chunk-" + common::to_string(chunk_num);
+        std::ofstream outfile{chunk_name};
+        common::write_binary(outfile, uint64_t{pdata.size()});
+        for(auto & p: pdata)
+            outfile << p;
+        pdata.clear();
 
-    outfile.close();
-    pdata.clear();
+        std::lock_guard<std::mutex> lock{*_queue_mutex};
+        _chunks.emplace(chunk_name);
+    }
+    else // we can merge with an existing chunk
+    {
+        top->memory_merge_with(pdata);
+
+        std::lock_guard<std::mutex> lock{*_queue_mutex};
+        _chunks.emplace(*top);
+    }
 }
 
 template <class DerivedIndex>

@@ -64,13 +64,13 @@ void forward_index::chunk_handler::handle_doc(const corpus::document & doc)
     pdata_.push_back(pd);
     if(chunk_size_ >= max_size())
     {
-        idx_->write_chunk(chunk_num_.fetch_add(1), pdata_);
+        //idx_->write_chunk(chunk_num_.fetch_add(1), pdata_); // XXX OMG TODO
         chunk_size_ = 0;
     }
 }
 
 forward_index::chunk_handler::~chunk_handler() {
-    idx_->write_chunk(chunk_num_.fetch_add(1), pdata_);
+    //idx_->write_chunk(chunk_num_.fetch_add(1), pdata_); // XXX OMG TODO
 }
 
 }

@@ -349,6 +349,9 @@ class disk_index
         /** mutex for thread-safe operations */
         std::unique_ptr<std::mutex> _mutex{new std::mutex};
 
+        /** mutex for accessing the priority_queue of chunks */
+        std::unique_ptr<std::mutex> _queue_mutex{new std::mutex};
+
         /** used to select which chunk to merge next */
         std::priority_queue<chunk<std::string, secondary_key_type>> _chunks;
 
@@ -363,7 +366,7 @@ class disk_index
                 disk_index_exception(const std::string & error):
                     _error(error) { /* nothing */ }
 
-                const char* what () const throw ()
+                const char* what() const throw()
                 {
                     return _error.c_str();
                 }
