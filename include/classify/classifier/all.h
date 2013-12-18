@@ -4,3 +4,4 @@
 #include "classify/classifier/sgd.h"
 #include "classify/classifier/svm_wrapper.h"
 #include "classify/classifier/winnow.h"
+#include "classify/classifier/dual_perceptron.h"
