@@ -31,7 +31,7 @@ class_label knn<Ranker>::classify(doc_id d_id)
         throw knn_exception{"k must be smaller than the "
             "number of documents in the index (training documents)"};
 
-    corpus::document query{_idx.doc_path(d_id)};
+    corpus::document query{_idx.doc_path(d_id), doc_id{0}};
     auto scored = _ranker.score(_idx, query);
 
     std::unordered_map<class_label, uint16_t> counts;

@@ -7,6 +7,7 @@
 #include <string>
 #include "unit_test.h"
 #include "tokenizer_test.h"
+#include "classifier_test.h"
 #include "index_test.h"
 
 using namespace meta;
@@ -20,6 +21,7 @@ int main(int argc, char* argv[])
         std::cerr << " \"all\": runs all unit tests" << std::endl;
         std::cerr << " \"tokenizers\": runs tokenization tests" << std::endl;
         std::cerr << " \"indexes\": runs indexing tests" << std::endl;
+        std::cerr << " \"classifiers\": runs classifier tests" << std::endl;
         return 1;
     }
 
@@ -35,5 +37,10 @@ int main(int argc, char* argv[])
     {
         std::cout << common::make_bold("Testing indexes") << std::endl;
         testing::index_tests();
+    }
+    if(all || args.find("classifiers") != args.end())
+    {
+        std::cout << common::make_bold("Testing classifiers") << std::endl;
+        testing::classifier_tests();
     }
 }
