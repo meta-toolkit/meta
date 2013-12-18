@@ -29,9 +29,10 @@ document::document(const std::string & path,
 
     // make sure class label doesn't contain a path (we only want the label, not
     // the entire file)
-    size_t slash = _label.find_first_of("/\\");
+    std::string str_lbl = _label;
+    size_t slash = str_lbl.find_first_of("/\\");
     if(slash != std::string::npos)
-        _label = _label.substr(0, slash);
+        _label = str_lbl.substr(0, slash);
 }
 
 void document::increment(const std::string & term, double amount)
