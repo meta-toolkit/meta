@@ -46,6 +46,67 @@ uint64_t chunk<PrimaryKey, SecondaryKey>::size() const
     return _size;
 }
 
+namespace {
+
+template <class ForwardIter1, class ForwardIter2, class OutputIter>
+uint64_t merge_pdata(ForwardIter1 first, ForwardIter1 end1,
+                     ForwardIter2 second, ForwardIter2 end2,
+                     OutputIter output) {
+    uint64_t num_unique = 0;
+    auto my_pd = std::move(*first);
+    auto other_pd = std::move(*second);
+    while (first != end1 && second != end2) {
+        ++num_unique;
+        if (my_pd.primary_key() == other_pd.primary_key()) {
+            // merge
+            my_pd.merge_with(other_pd);
+            // write
+            *output = my_pd;
+
+            // read next two postings data
+            ++first;
+            ++second;
+            my_pd = std::move(*first);
+            other_pd = std::move(*second);
+        } else if (my_pd.primary_key() < other_pd.primary_key()) {
+            // write the winner
+            *output = my_pd;
+            // read next from first chunk
+            ++first;
+            my_pd = std::move(*first);
+        } else {
+            // write the winner
+            *output = other_pd;
+            // read next from second chunk
+            ++second;
+            other_pd = std::move(*second);
+        }
+        ++output;
+    }
+
+    // finish merging when one runs out
+    while (first != end1) {
+        ++num_unique;
+        *output = my_pd;
+        ++output;
+        ++first;
+        if (first != end1)
+            my_pd = std::move(*first);
+    }
+    while (second != end2) {
+        ++num_unique;
+        *output = other_pd;
+        ++output;
+        ++second;
+        if (second != end2)
+            other_pd = std::move(*second);
+    }
+
+    return num_unique;
+}
+
+}
+
 template <class PrimaryKey, class SecondaryKey>
 void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
 {
@@ -55,56 +116,19 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
     std::string temp_name = _path + "_merge";
     std::ofstream output{temp_name};
 
-    postings_data<PrimaryKey, SecondaryKey> my_pd;
-    postings_data<PrimaryKey, SecondaryKey> other_pd;
-
     // skip the term count at the beginning of the files
     uint64_t terms;
     common::read_binary(my_data, terms);
     common::read_binary(other_data, terms);
-    common::write_binary(output, terms); // dummy output for now
-                                         // until know the true count
+    common::write_binary(output, terms); // dummy output for now until we
+                                         // know the true count
 
-    my_data >> my_pd;
-    other_data >> other_pd;
+    using pdata_t = postings_data<PrimaryKey, SecondaryKey>;
+    using pdata_t_iterator = std::istream_iterator<pdata_t>;
 
-    _terms = 0;
-    // merge while both have postings data
-    while (my_data && other_data) {
-        ++_terms;
-        if (my_pd.primary_key() == other_pd.primary_key()) {
-            // merge
-            my_pd.merge_with(other_pd);
-            // write
-            output << my_pd;
-
-            // read next two postings data
-            my_data >> my_pd;
-            other_data >> other_pd;
-        } else if (my_pd.primary_key() < other_pd.primary_key()) {
-            // write the winner
-            output << my_pd;
-            // read next from the current chunk
-            my_data >> my_pd;
-        } else {
-            // write the winner
-            output << other_pd;
-            // read next from the other chunk
-            other_data >> other_pd;
-        }
-    }
-
-    // finish merging when one runs out
-    while (my_data) {
-        ++_terms;
-        output << my_pd;
-        my_data >> my_pd;
-    }
-    while (other_data) {
-        ++_terms;
-        output << other_pd;
-        other_data >> other_pd;
-    }
+    _terms = merge_pdata(pdata_t_iterator{my_data}, pdata_t_iterator{},
+                         pdata_t_iterator{other_data}, pdata_t_iterator{},
+                         std::ostream_iterator<pdata_t>{output});
 
     my_data.close();
     other_data.close();
@@ -126,53 +150,18 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container & pdata)
     std::string temp_name = _path + "_merge";
     std::ofstream output{temp_name};
 
-    postings_data<PrimaryKey, SecondaryKey> my_pd;
-    auto other_pd = pdata.begin();
-
     // skip the term count at the beginning of the files
     uint64_t terms;
     common::read_binary(my_data, terms);
-    common::write_binary(output, terms); // dummy output for now
+    common::write_binary(output, terms); // dummy output for now until we
+                                         // know the true count
 
-    my_data >> my_pd;
-    other_pd = pdata.begin();
+    using pdata_t = postings_data<PrimaryKey, SecondaryKey>;
+    using pdata_t_iterator = std::istream_iterator<pdata_t>;
 
-    _terms = 0;
-    while (my_data && other_pd != pdata.end())
-    {
-        ++_terms;
-        if(my_pd.primary_key() == other_pd->primary_key())
-        {
-            my_pd.merge_with(*other_pd);
-            output << my_pd;
-            my_data >> my_pd;
-            ++other_pd;
-        }
-        else if(my_pd.primary_key() < other_pd->primary_key())
-        {
-            output << my_pd;
-            my_data >> my_pd;
-        }
-        else
-        {
-            output << *other_pd;
-            ++other_pd;
-        }
-    }
-
-    // finish merging when one runs out
-    while(my_data)
-    {
-        ++_terms;
-        output << my_pd;
-        my_data >> my_pd;
-    }
-    while(other_pd != pdata.end())
-    {
-        ++_terms;
-        output << *other_pd;
-        ++other_pd;
-    }
+    _terms = merge_pdata(pdata_t_iterator{my_data}, pdata_t_iterator{},
+                         std::begin(pdata), std::end(pdata),
+                         std::ostream_iterator<pdata_t>{output});
 
     my_data.close();
     output.seekp(0, output.beg);
