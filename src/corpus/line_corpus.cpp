@@ -15,9 +15,12 @@ namespace corpus {
 line_corpus::line_corpus(const std::string & file,
         uint64_t num_lines /* = 0 */):
     _cur{0},
-    _num_lines{common::num_lines(file)},
+    _num_lines{num_lines},
     _parser{file, "\n"}
-{ /* nothing */ }
+{
+    if(_num_lines == 0)
+        _num_lines = common::num_lines(file);
+}
 
 bool line_corpus::has_next() const
 {
