@@ -255,6 +255,7 @@ void disk_index<DerivedIndex>::compress(const std::string & filename)
                 _index_name + "/lexicon.index", unique_terms);
 
         // note: we will be accessing pdata in sorted order
+        term_id t_id{0};
         while(in >> pdata)
         {
             if (idx != in.tellg() / (length / 500))
@@ -263,9 +264,10 @@ void disk_index<DerivedIndex>::compress(const std::string & filename)
                 common::show_progress(idx, 500, 1,
                         " > Creating compressed postings file: ");
             }
-            auto t_id = get_term_id(pdata.primary_key());
+            _term_id_mapping->insert(pdata.primary_key(), t_id);
             (*_term_bit_locations)[t_id] = out.bit_location();
             pdata.write_compressed(out);
+            ++t_id;
         }
         common::end_progress(" > Creating compressed postings file: ");
     }
