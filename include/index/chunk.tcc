@@ -53,33 +53,33 @@ uint64_t merge_pdata(ForwardIter1 first, ForwardIter1 end1,
                      ForwardIter2 second, ForwardIter2 end2,
                      OutputIter output) {
     uint64_t num_unique = 0;
-    auto my_pd = std::move(*first);
-    auto other_pd = std::move(*second);
     while (first != end1 && second != end2) {
+        auto & my_pd    = *first;
+        auto & other_pd = *second;
         ++num_unique;
         if (my_pd.primary_key() == other_pd.primary_key()) {
             // merge
-            my_pd.merge_with(other_pd);
+            auto out = std::move(my_pd);
+            auto other = std::move(other_pd);
+            out.merge_with(other);
             // write
-            *output = my_pd;
+            *output = out;
 
             // read next two postings data
             ++first;
             ++second;
-            my_pd = std::move(*first);
-            other_pd = std::move(*second);
         } else if (my_pd.primary_key() < other_pd.primary_key()) {
             // write the winner
-            *output = my_pd;
+            auto out = std::move(my_pd);
+            *output = out;
             // read next from first chunk
             ++first;
-            my_pd = std::move(*first);
         } else {
             // write the winner
-            *output = other_pd;
+            auto out = std::move(other_pd);
+            *output = out;
             // read next from second chunk
             ++second;
-            other_pd = std::move(*second);
         }
         ++output;
     }
@@ -87,19 +87,15 @@ uint64_t merge_pdata(ForwardIter1 first, ForwardIter1 end1,
     // finish merging when one runs out
     while (first != end1) {
         ++num_unique;
-        *output = my_pd;
+        *output = std::move(*first);
         ++output;
         ++first;
-        if (first != end1)
-            my_pd = std::move(*first);
     }
     while (second != end2) {
         ++num_unique;
-        *output = other_pd;
+        *output = std::move(*second);
         ++output;
         ++second;
-        if (second != end2)
-            other_pd = std::move(*second);
     }
 
     return num_unique;
