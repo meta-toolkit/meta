@@ -13,7 +13,7 @@ compressed_file_writer::compressed_file_writer(const std::string & filename,
     _outfile{fopen(filename.c_str(), "w")},
     _char_cursor{0},
     _bit_cursor{0},
-    _buffer_size{1024 * 1024 * 8},
+    _buffer_size{1024 * 1024 * 64}, // 64 MB
     _buffer{new unsigned char[_buffer_size]},
     _mapping{std::move(mapping)},
     _bit_location{0}
