@@ -11,6 +11,10 @@
 
 #include <string>
 #include <cstdio>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 namespace meta {
 namespace io {
@@ -33,10 +37,15 @@ class file_writer
         ~file_writer();
 
         /**
-         * Writes data to the file as a series of characters from a string.
-         * @param data
+         * Writes an integral type to the file.
          */
-        void write(const std::string & data);
+        template <class T>
+        void write(const T & elem);
+
+        /**
+         * Writes a string object to the file.
+         */
+        void write(const std::string & str);
 
         // disable copy-construction
         file_writer(const file_writer &) = delete;
@@ -45,9 +54,7 @@ class file_writer
         file_writer & operator=(const file_writer &) = delete;
 
     private:
-        FILE* _outfile;
-        uint64_t _buffer_size;
-        std::string _buffer;
+        int _file_desc;
 
     public:
         /**
@@ -60,7 +67,7 @@ class file_writer
                 file_writer_exception(const std::string & error):
                     _error(error) { /* nothing */ }
 
-                const char* what () const throw ()
+                const char* what() const throw()
                 {
                     return _error.c_str();
                 }
@@ -74,4 +81,5 @@ class file_writer
 }
 }
 
+#include "io/file_writer.tcc"
 #endif

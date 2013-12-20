@@ -29,8 +29,7 @@ add_library(meta-io
             src/io/compressed_file_reader.cpp
             src/io/parser.cpp
             src/io/compressed_file_writer.cpp
-            src/io/mmap_file.cpp
-            src/io/file_writer.cpp)
+            src/io/mmap_file.cpp)
 
 add_library(meta-corpus
             src/corpus/document.cpp
@@ -118,6 +117,11 @@ target_link_libraries(unit-test
 add_executable(search search.cpp)
 target_link_libraries(search
                       meta-index
+                      ${CMAKE_THREAD_LIBS_INIT})
+
+add_executable(filewriter filewriter.cpp)
+target_link_libraries(filewriter
+                      meta-io
                       ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(index index.cpp)
