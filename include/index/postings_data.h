@@ -10,9 +10,7 @@
 #define _POSTINGS_DATA_
 
 #include <algorithm>
-#include <sstream>
 #include <type_traits>
-#include <istream>
 #include <vector>
 #include <string>
 #include "io/compressed_file_writer.h"
@@ -111,53 +109,49 @@ class postings_data
         bool operator<(const postings_data & other) const;
 
         /**
-         * Reads uncompressed postings data from a stream
+         * Reads semi-compressed postings data from a compressed file.
          * @param in The stream to read from
          * @param pd The postings data object to write the stream info to
          * @return the input stream
          */
-        friend std::istream & operator>>(
-                std::istream & in,
+        friend io::compressed_file_reader & operator>>(
+                io::compressed_file_reader & in,
                 postings_data<PrimaryKey, SecondaryKey> & pd)
         {
-            common::read_binary(in, pd._p_id);
+            pd._p_id = in.next_string();
             pd._counts.clear();
 
-            uint32_t num_pairs;
-            common::read_binary(in, num_pairs);
-
-            SecondaryKey s_id;
-            double count;
+            uint32_t num_pairs = in.next();
             for(uint32_t i = 0; i < num_pairs; ++i)
             {
-                common::read_binary(in, s_id);
-                common::read_binary(in, count);
-                pd._counts.emplace_back(s_id, count);
+                SecondaryKey s_id = SecondaryKey{in.next()};
+                uint64_t count = in.next();
+                pd._counts.emplace_back(s_id, static_cast<double>(count));
             }
 
             return in;
         }
 
         /**
-         * Writes uncompressed postings data to a stream
+         * Writes semi-compressed postings data to a compressed file.
          * @param out The stream to write to
          * @param pd The postings data object to write to the stream
          * @return the output stream
          */
-        friend std::ostream & operator<<(
-                std::ostream & out,
+        friend io::compressed_file_writer & operator<<(
+                io::compressed_file_writer & out,
                 const postings_data<PrimaryKey, SecondaryKey> & pd)
         {
             if(pd._counts.empty())
                 return out;
 
-            common::write_binary(out, pd._p_id);
+            out.write(pd._p_id);
             uint32_t size = pd._counts.size();
-            common::write_binary(out, size);
+            out.write(size);
             for(auto & p: pd._counts)
             {
-                common::write_binary(out, p.first);
-                common::write_binary(out, p.second);
+                out.write(p.first);
+                out.write(p.second);
             }
 
             return out;

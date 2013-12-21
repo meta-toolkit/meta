@@ -51,6 +51,16 @@ class compressed_file_writer
          */
         void write(uint64_t value);
 
+        /**
+         * Writes a binary string to the file.
+         */
+        void write(const std::string & str);
+
+        /**
+         * Closes this compressed file.
+         */
+        void close();
+
     private:
         /**
          * Writes a bit to the file and advances writeCursors.
@@ -83,6 +93,9 @@ class compressed_file_writer
 
         /** the number of total bits that have been written (for seeking )*/
         uint64_t _bit_location;
+
+        /** ensures the file isn't closed more than once */
+        bool _closed;
 
     public:
 

@@ -8,8 +8,24 @@
 namespace meta {
 namespace io {
 
+compressed_file_reader::compressed_file_reader(const std::string & filename,
+        std::function<uint64_t(uint64_t)> mapping):
+    _file{common::make_unique<mmap_file>(filename)},
+    _start{_file->start()},
+    _size{_file->size()},
+    _status{notDone},
+    _current_value{0},
+    _current_char{0},
+    _current_bit{0},
+    _mapping{std::move(mapping)}
+{
+    // initialize the stream
+    get_next();
+}
+
 compressed_file_reader::compressed_file_reader(const mmap_file & file,
         std::function<uint64_t(uint64_t)> mapping):
+    _file{nullptr},
     _start{file.start()},
     _size{file.size()},
     _status{notDone},
@@ -22,12 +38,31 @@ compressed_file_reader::compressed_file_reader(const mmap_file & file,
     get_next();
 }
 
+void compressed_file_reader::close()
+{
+    _file.reset(nullptr); // closes the mmap_file
+}
+
+uint64_t compressed_file_reader::bit_location() const
+{
+    return (_current_char * 8) + _current_bit;
+}
+
 void compressed_file_reader::reset()
 {
     _current_char = 0;
     _current_bit = 0;
     _status = notDone;
     get_next();
+}
+
+std::string compressed_file_reader::next_string()
+{
+    uint64_t length = next();
+    std::string str;
+    for(uint64_t i = 0; i < length; ++i)
+        str += static_cast<char>(next());
+    return str;
 }
 
 void compressed_file_reader::seek(uint64_t bit_offset)

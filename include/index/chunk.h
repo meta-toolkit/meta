@@ -71,7 +71,6 @@ class chunk
 
         std::string _path;
         uint64_t _size;
-        uint64_t _terms; // unique term count for this chunk
 };
 
 }

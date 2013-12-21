@@ -301,7 +301,7 @@ class disk_index
          * @param num_chunks The number of chunks to be merged
          * @param filename The name for the postings file
          */
-        void merge_chunks(const std::string & filename);
+        uint64_t merge_chunks(const std::string & filename);
 
         /**
          * Creates the lexicon file (or "dictionary") which has pointers into
@@ -315,7 +315,7 @@ class disk_index
         /**
          * Compresses the large postings file.
          */
-        void compress(const std::string & filename);
+        void compress(const std::string & filename, uint64_t num_unique_terms);
 
         /**
          * @param lbl the string class label to find the id for

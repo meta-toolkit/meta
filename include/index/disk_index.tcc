@@ -33,7 +33,7 @@ Index make_index(const std::string & config_file, Args &&... args)
     Index idx{config, std::forward<Args>(args)...};
 
     // if index has already been made, load it
-    if(mkdir(idx._index_name.c_str(), 0755) == -1)
+    if(common::make_directory(idx._index_name))
         idx.load_index();
     else
         idx.create_index(config_file);
@@ -76,7 +76,7 @@ template <class DerivedIndex>
 void disk_index<DerivedIndex>::create_index(const std::string & config_file)
 {
     // save the config file so we can recreate the tokenizer
-    std::ifstream source_config{config_file.c_str(), std::ios::binary};
+    std::ifstream source_config{config_file, std::ios::binary};
     std::ofstream dest_config{_index_name + "/config.toml", std::ios::binary};
     dest_config << source_config.rdbuf();
 
@@ -113,14 +113,15 @@ void disk_index<DerivedIndex>::create_index(const std::string & config_file)
 
     LOG(debug) << " ! Time spent tokenizing: " << (time.count() / 1000.0) << ENDLG;
 
+    uint64_t num_unique_terms;
     time = common::time([&](){
-        merge_chunks(_index_name + "/postings.index");
+        num_unique_terms = merge_chunks(_index_name + "/postings.index");
     });
 
     LOG(debug) << " ! Time spent merging: " << (time.count() / 1000.0) << ENDLG;
 
     time = common::time([&](){
-        compress(_index_name + "/postings.index");
+        compress(_index_name + "/postings.index", num_unique_terms);
     });
 
     LOG(debug) << " ! Time spent compressing: " << (time.count() / 1000.0) << ENDLG;
@@ -217,50 +218,36 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
 }
 
 template <class DerivedIndex>
-void disk_index<DerivedIndex>::compress(const std::string & filename)
+void disk_index<DerivedIndex>::compress(const std::string & filename,
+        uint64_t num_unique_terms)
 {
     std::string cfilename{filename + ".compressed"};
-
-    // allocate memory for the term_id -> term location mapping now that we know
-    // how many terms there are
-    _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
-            _index_name + "/lexicon.index", _term_id_mapping->size());
-
+ 
     // create scope so the writer closes and we can calculate the size of the
     // file as well as rename it
     {
-        io::compressed_file_writer out{cfilename, [&](uint64_t key) {
-            if(key == std::numeric_limits<uint64_t>::max()) // delimiter
-                return uint64_t{1};
-            return key + 2;
-        }};
+        io::compressed_file_writer out{cfilename,
+            common::default_compression_writer_func};
 
-        /*
-        postings_data_type pdata{primary_key_type{0}};
-        */
         postings_data<std::string, doc_id> pdata; // TODO: breaks forward_index
-        std::ifstream in{filename};
-
-        in.seekg(0, in.end);
-        auto length = in.tellg();
-        in.seekg(0, in.beg);
-        auto idx = in.tellg();
-
-        uint64_t unique_terms;
-        common::read_binary(in, unique_terms);
+        auto length = common::file_size(filename) * 8; // number of bits
+        io::compressed_file_reader in{filename,
+            common::default_compression_reader_func};
+        auto idx = in.bit_location();
 
         // allocate memory for the term_id -> term location mapping now
         // that we know how many terms there are
         _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
-                _index_name + "/lexicon.index", unique_terms);
+                _index_name + "/lexicon.index", num_unique_terms);
 
         // note: we will be accessing pdata in sorted order
         term_id t_id{0};
-        while(in >> pdata)
+        while(in.has_next())
         {
-            if (idx != in.tellg() / (length / 500))
+            in >> pdata;
+            if (idx != in.bit_location() / (length / 500))
             {
-                idx = in.tellg() / (length / 500);
+                idx = in.bit_location() / (length / 500);
                 common::show_progress(idx, 500, 1,
                         " > Creating compressed postings file: ");
             }
@@ -276,8 +263,8 @@ void disk_index<DerivedIndex>::compress(const std::string & filename)
           << common::bytes_to_units(common::file_size(cfilename))
           << ")" << ENDLG;
 
-    remove(filename.c_str());
-    rename(cfilename.c_str(), filename.c_str());
+    common::delete_file(filename);
+    common::rename_file(cfilename, filename);
 }
 
 template <class DerivedIndex>
@@ -382,10 +369,14 @@ void disk_index<DerivedIndex>::write_chunk(uint32_t chunk_num,
     {
         std::string chunk_name =
             _index_name + "/chunk-" + common::to_string(chunk_num);
-        std::ofstream outfile{chunk_name};
-        common::write_binary(outfile, uint64_t{pdata.size()});
+        io::compressed_file_writer outfile{chunk_name,
+            common::default_compression_writer_func};
         for(auto & p: pdata)
             outfile << p;
+
+        outfile.close(); // close so we can read the file size in chunk ctr
+        std::ofstream termfile{chunk_name + ".numterms"};
+        termfile << pdata.size();
         pdata.clear();
 
         std::lock_guard<std::mutex> lock{*_queue_mutex};
@@ -401,7 +392,7 @@ void disk_index<DerivedIndex>::write_chunk(uint32_t chunk_num,
 }
 
 template <class DerivedIndex>
-void disk_index<DerivedIndex>::merge_chunks(const std::string & filename)
+uint64_t disk_index<DerivedIndex>::merge_chunks(const std::string & filename)
 {
     using chunk_t = chunk<std::string, secondary_key_type>;
 
@@ -409,9 +400,6 @@ void disk_index<DerivedIndex>::merge_chunks(const std::string & filename)
     // to the number of internal nodes in a binary tree with n leaf nodes
     size_t remaining = _chunks.size() - 1;
     std::mutex mutex;
-    parallel::thread_pool pool;
-    auto thread_ids = pool.thread_ids();
-    std::vector<std::future<void>> futures;
     auto task = [&]() {
         while (true) {
             util::optional<chunk_t> first;
@@ -438,6 +426,9 @@ void disk_index<DerivedIndex>::merge_chunks(const std::string & filename)
         }
     };
 
+    parallel::thread_pool pool;
+    auto thread_ids = pool.thread_ids();
+    std::vector<std::future<void>> futures;
     for (size_t i = 0; i < thread_ids.size(); ++i)
         futures.emplace_back(pool.submit_task(task));
 
@@ -446,11 +437,18 @@ void disk_index<DerivedIndex>::merge_chunks(const std::string & filename)
 
     LOG(progress) << '\n' << ENDLG;
 
-    rename(_chunks.top().path().c_str(), filename.c_str());
+    uint64_t num_unique_terms;
+    std::ifstream termfile{_chunks.top().path() + ".numterms"};
+    termfile >> num_unique_terms;
+    termfile.close();
+    common::delete_file(_chunks.top().path() + ".numterms");
+    common::rename_file(_chunks.top().path(), filename);
 
     LOG(info) << "Created uncompressed postings file " << filename
               << " (" << common::bytes_to_units(_chunks.top().size()) << ")"
               << ENDLG;
+
+    return num_unique_terms;
 }
 
 template <class DerivedIndex>
@@ -502,11 +500,8 @@ auto disk_index<DerivedIndex>::search_primary(primary_key_type p_id) const
     if(idx >= _term_bit_locations->size())
         return std::make_shared<postings_data_type>(p_id);
 
-    io::compressed_file_reader reader{*_postings, [&](uint64_t value) {
-        if(value == 1)
-            return std::numeric_limits<uint64_t>::max(); // delimiter
-        return value - 2;
-    }};
+    io::compressed_file_reader reader{*_postings,
+        common::default_compression_reader_func};
     reader.seek(_term_bit_locations->at(idx));
 
     auto pdata = std::make_shared<postings_data_type>(p_id);

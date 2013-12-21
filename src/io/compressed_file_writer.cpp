@@ -16,7 +16,8 @@ compressed_file_writer::compressed_file_writer(const std::string & filename,
     _buffer_size{1024 * 1024 * 64}, // 64 MB
     _buffer{new unsigned char[_buffer_size]},
     _mapping{std::move(mapping)},
-    _bit_location{0}
+    _bit_location{0},
+    _closed{false}
 {
     // disable buffering
     if(setvbuf(_outfile, nullptr, _IONBF, 0) != 0)
@@ -27,6 +28,14 @@ compressed_file_writer::compressed_file_writer(const std::string & filename,
     memset(_buffer, 0, _buffer_size);
 }
 
+void compressed_file_writer::write(const std::string & str)
+{
+    uint64_t length = str.size();
+    write(length);
+    for(auto & ch: str)
+        write(static_cast<uint64_t>(ch));
+}
+
 uint64_t compressed_file_writer::bit_location() const
 {
     return _bit_location;
@@ -34,10 +43,21 @@ uint64_t compressed_file_writer::bit_location() const
 
 compressed_file_writer::~compressed_file_writer()
 {
-    // write the remaining bits, up to the nearest byte
-    fwrite(_buffer, 1, _char_cursor + 1, _outfile);
-    delete [] _buffer;
-    fclose(_outfile);
+    if(!_closed)
+        close();
+}
+
+void compressed_file_writer::close()
+{
+    if(!_closed)
+    {
+        // write the remaining bits, up to the nearest byte
+        fwrite(_buffer, 1, _char_cursor + 1, _outfile);
+        delete [] _buffer;
+        fclose(_outfile);
+
+        _closed = true;
+    }
 }
 
 void compressed_file_writer::write(uint64_t value)

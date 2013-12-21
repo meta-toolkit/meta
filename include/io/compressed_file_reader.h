@@ -34,7 +34,6 @@ enum ReaderStatus { notDone, readerDone, userDone };
 class compressed_file_reader
 {
     public:
-
         /**
          * Constructor; opens a compressed file for reading using the given
          * mapping.
@@ -43,9 +42,20 @@ class compressed_file_reader
                 std::function<uint64_t(uint64_t)> mapping);
 
         /**
+         * Constructor to create a new mmap file for reading.
+         */
+        compressed_file_reader(const std::string & filename,
+                std::function<uint64_t(uint64_t)> mapping);
+
+        /**
          * Sets the cursor back to the beginning of the file.
          */
         void reset();
+
+        /**
+         * Closes this compressed file.
+         */
+        void close();
 
         /**
          * Sets the cursor to the specified position in the file.
@@ -64,6 +74,21 @@ class compressed_file_reader
          */
         uint64_t next();
 
+        /**
+         * @return the next string from this compressed file
+         */
+        std::string next_string();
+
+        /**
+         * @return the current bit location in this file
+         */
+        uint64_t bit_location() const;
+
+        /**
+         * @return whether reading from this compressed file is still good
+         */
+        operator bool() const { return _status != userDone; }
+
     private:
         /**
          * Sets _currentValue to the value of the next number.
@@ -75,6 +100,10 @@ class compressed_file_reader
          * @return the next bit in the file
          */
         bool read_bit();
+
+        /** ptr to the mmap_file we are reading: nullptr if we don't own it,
+         * initialized if we do */
+        std::unique_ptr<mmap_file> _file;
 
         /** pointer to the beginning of the compressed file (which will be in
          * memory most of the time) */
