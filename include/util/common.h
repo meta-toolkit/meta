@@ -13,6 +13,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <sys/stat.h>
 #include "logging/logger.h"
 #include "util/invertible_map.h"
 #include "cpptoml.h"
@@ -24,6 +25,20 @@ namespace meta {
  */
 namespace common
 {
+    inline uint64_t default_compression_writer_func(uint64_t key)
+    {
+        if(key == std::numeric_limits<uint64_t>::max()) // delimiter
+            return uint64_t{1};
+        return key + 2;
+    }
+
+    inline uint64_t default_compression_reader_func(uint64_t value)
+    {
+        if(value == 1)
+            return std::numeric_limits<uint64_t>::max(); // delimiter
+        return value - 2;
+    }
+
     /**
      * Writes an object in binary format to a stream.
      * @param out The stream to write to
@@ -63,6 +78,25 @@ namespace common
      */
     inline void read_binary(std::istream & in, std::string & str) {
         std::getline(in, str, '\0');
+    }
+
+    inline void delete_file(const std::string & filename)
+    {
+        remove(filename.c_str());
+    }
+
+    inline void rename_file(const std::string & old_name, const std::string & new_name)
+    {
+        rename(old_name.c_str(), new_name.c_str());
+    }
+
+    /**
+     * Attempts to create the directory
+     * @return whether a new directory was created
+     */
+    inline bool make_directory(const std::string & dir_name)
+    {
+        return mkdir(dir_name.c_str(), 0755) == -1;
     }
 
     /**
