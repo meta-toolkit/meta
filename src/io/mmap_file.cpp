@@ -3,7 +3,7 @@
  */
 
 #include "io/mmap_file.h"
-#include "util/common.h"
+#include "util/filesystem.h"
 
 namespace meta {
 namespace io {
@@ -11,7 +11,7 @@ namespace io {
 mmap_file::mmap_file(const std::string & path):
     _path{path},
     _start{nullptr},
-    _size{common::file_size(path)}
+    _size{filesystem::file_size(path)}
 {
      _file_descriptor = open(_path.c_str(), O_RDONLY);
     if(_file_descriptor < 0)

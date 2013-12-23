@@ -12,6 +12,8 @@
 #include "logging/logger.h"
 #include "parallel/thread_pool.h"
 #include "util/common.h"
+#include "util/printing.h"
+#include "util/filesystem.h"
 #include "util/optional.h"
 
 namespace meta {
@@ -33,7 +35,7 @@ Index make_index(const std::string & config_file, Args &&... args)
     Index idx{config, std::forward<Args>(args)...};
 
     // if index has already been made, load it
-    if(common::make_directory(idx._index_name))
+    if(filesystem::make_directory(idx._index_name))
         idx.load_index();
     else
         idx.create_index(config_file);
@@ -161,12 +163,12 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
                 loading_docs_time += time.count();
 
                 std::string progress = "> Documents: "
-                    + common::add_commas(common::to_string(doc->id()))
+                    + printing::add_commas(common::to_string(doc->id()))
                     + " Unique primary keys: "
-                    + common::add_commas(
+                    + printing::add_commas(
                         common::to_string(_term_id_mapping->size()))
                     + " Tokenizing: ";
-                common::show_progress(doc->id(), docs->size(), 1000, progress);
+                printing::show_progress(doc->id(), docs->size(), 1000, progress);
             }
 
             auto time = common::time([&]() {
@@ -199,11 +201,11 @@ uint32_t disk_index<DerivedIndex>::tokenize_docs(corpus::corpus * docs)
         fut.get();
 
     std::string progress = "> Documents: "
-        + common::add_commas(common::to_string(docs->size()))
+        + printing::add_commas(common::to_string(docs->size()))
         + " Unique primary keys: "
-        + common::add_commas(common::to_string(_term_id_mapping->size()))
+        + printing::add_commas(common::to_string(_term_id_mapping->size()))
         + " Tokenizing: ";
-    common::end_progress(progress);
+    printing::end_progress(progress);
 
     LOG(debug) << "   ! CPU Time tokenizing: " << token_time / 1000.0
         << "s" << ENDLG;
@@ -230,7 +232,7 @@ void disk_index<DerivedIndex>::compress(const std::string & filename,
             common::default_compression_writer_func};
 
         postings_data<std::string, doc_id> pdata; // TODO: breaks forward_index
-        auto length = common::file_size(filename) * 8; // number of bits
+        auto length = filesystem::file_size(filename) * 8; // number of bits
         io::compressed_file_reader in{filename,
             common::default_compression_reader_func};
         auto idx = in.bit_location();
@@ -248,7 +250,7 @@ void disk_index<DerivedIndex>::compress(const std::string & filename,
             if (idx != in.bit_location() / (length / 500))
             {
                 idx = in.bit_location() / (length / 500);
-                common::show_progress(idx, 500, 1,
+                printing::show_progress(idx, 500, 1,
                         " > Creating compressed postings file: ");
             }
             _term_id_mapping->insert(pdata.primary_key(), t_id);
@@ -256,15 +258,15 @@ void disk_index<DerivedIndex>::compress(const std::string & filename,
             pdata.write_compressed(out);
             ++t_id;
         }
-        common::end_progress(" > Creating compressed postings file: ");
+        printing::end_progress(" > Creating compressed postings file: ");
     }
 
     LOG(info) << "Created compressed postings file ("
-          << common::bytes_to_units(common::file_size(cfilename))
+          << printing::bytes_to_units(filesystem::file_size(cfilename))
           << ")" << ENDLG;
 
-    common::delete_file(filename);
-    common::rename_file(cfilename, filename);
+    filesystem::delete_file(filename);
+    filesystem::rename_file(cfilename, filename);
 }
 
 template <class DerivedIndex>
@@ -413,9 +415,9 @@ uint64_t disk_index<DerivedIndex>::merge_chunks(const std::string & filename)
                 second = util::optional<chunk_t>{_chunks.top()};
                 _chunks.pop();
                 LOG(progress) << "> Merging " << first->path() << " ("
-                    << common::bytes_to_units(first->size())
+                    << printing::bytes_to_units(first->size())
                     << ") and " << second->path() << " ("
-                    << common::bytes_to_units(second->size())
+                    << printing::bytes_to_units(second->size())
                     << "), " << --remaining << " remaining        \r" << ENDLG;
             }
             first->merge_with(*second);
@@ -441,11 +443,11 @@ uint64_t disk_index<DerivedIndex>::merge_chunks(const std::string & filename)
     std::ifstream termfile{_chunks.top().path() + ".numterms"};
     termfile >> num_unique_terms;
     termfile.close();
-    common::delete_file(_chunks.top().path() + ".numterms");
-    common::rename_file(_chunks.top().path(), filename);
+    filesystem::delete_file(_chunks.top().path() + ".numterms");
+    filesystem::rename_file(_chunks.top().path(), filename);
 
     LOG(info) << "Created uncompressed postings file " << filename
-              << " (" << common::bytes_to_units(_chunks.top().size()) << ")"
+              << " (" << printing::bytes_to_units(_chunks.top().size()) << ")"
               << ENDLG;
 
     return num_unique_terms;

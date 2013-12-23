@@ -13,7 +13,7 @@
 #include <iomanip>
 #include <string>
 #include <iostream>
-#include "util/common.h"
+#include "util/printing.h"
 
 /**
  * Fail if expr is false; otherwise continue.
@@ -30,7 +30,7 @@
  */
 #define FAIL(why) \
     do { \
-        std::cerr << "[ " << common::make_red("FAIL") << " ] " << (why) << " ("; \
+        std::cerr << "[ " << printing::make_red("FAIL") << " ] " << (why) << " ("; \
         std::cerr << __FILE__ << ":" << __LINE__ << ")" << std::endl; \
         exit(1); \
     } while(0)
@@ -42,7 +42,7 @@
  */
 #define FAIL_NOLINE(why) \
     do { \
-        std::cerr << "[ " << common::make_red("FAIL") << " ]" \
+        std::cerr << "[ " << printing::make_red("FAIL") << " ]" \
         << " " << (why) << std::endl; \
         exit(1); \
     } while(0)
@@ -97,7 +97,7 @@ namespace testing
         {
             alarm(timeout);
             func();
-            std::cerr << "[ " << common::make_green("OK") << " ] " << std::endl;
+            std::cerr << "[ " << printing::make_green("OK") << " ] " << std::endl;
             exit(0);
         }
         else if(pid > 0)
@@ -106,7 +106,7 @@ namespace testing
         }
         else
         {
-            std::cerr << "[ " << common::make_red("ERROR") << " ]"
+            std::cerr << "[ " << printing::make_red("ERROR") << " ]"
                  << ": failure to fork" << std::endl;
         }
     }

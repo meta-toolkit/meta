@@ -8,6 +8,7 @@
 #include "io/parser.h"
 #include "io/mmap_file.h"
 #include "corpus/line_corpus.h"
+#include "util/filesystem.h"
 
 namespace meta {
 namespace corpus {
@@ -19,7 +20,7 @@ line_corpus::line_corpus(const std::string & file,
     _parser{file, "\n"}
 {
     if(_num_lines == 0)
-        _num_lines = common::num_lines(file);
+        _num_lines = filesystem::num_lines(file);
 }
 
 bool line_corpus::has_next() const

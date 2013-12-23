@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include "util/common.h"
+#include "util/printing.h"
 #include "tokenizers/tokenizer.h"
 #include "corpus/document.h"
 #include "index/inverted_index.h"
@@ -86,7 +87,7 @@ int main(int argc, char* argv[])
         for(size_t i = 0; i < ranking.size() && i < 10; ++i)
         {
             std::string path{idx.doc_path(ranking[i].first)};
-            cout << common::make_bold(
+            cout << printing::make_bold(
                         common::to_string(i+1) + ". " + path + " ("
                         + common::to_string(ranking[i].second) + ")"
                     ) << endl;

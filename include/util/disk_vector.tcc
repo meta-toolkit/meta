@@ -3,7 +3,7 @@
  * @author Sean Massung
  */
 
-#include "util/common.h"
+#include "util/filesystem.h"
 
 namespace meta {
 namespace util {
@@ -20,7 +20,7 @@ disk_vector<T>::disk_vector(const std::string & path, uint64_t size /* = 0 */):
         throw disk_vector_exception{"error obtaining file descriptor for "
             + _path};
 
-    uint64_t actual_size = common::file_size(_path);
+    uint64_t actual_size = filesystem::file_size(_path);
     if(_size != 0)
     {
         uint64_t size_bytes = sizeof(T) * _size;

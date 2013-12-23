@@ -4,6 +4,7 @@
  */
 
 #include <fstream>
+#include "util/filesystem.h"
 #include "index/chunk.h"
 #include "index/disk_index.h"
 #include "index/postings_data.h"
@@ -21,7 +22,7 @@ chunk<PrimaryKey, SecondaryKey>::chunk(const std::string & path):
 template <class PrimaryKey, class SecondaryKey>
 void chunk<PrimaryKey, SecondaryKey>::set_size()
 {
-    _size = common::file_size(_path);
+    _size = filesystem::file_size(_path);
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -101,11 +102,11 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
     my_data.close();
     other_data.close();
     output.close();
-    common::delete_file(_path);
-    common::delete_file(_path + ".numterms");
-    common::delete_file(other._path);
-    common::delete_file(other._path + ".numterms");
-    common::rename_file(temp_name, _path);
+    filesystem::delete_file(_path);
+    filesystem::delete_file(_path + ".numterms");
+    filesystem::delete_file(other._path);
+    filesystem::delete_file(other._path + ".numterms");
+    filesystem::rename_file(temp_name, _path);
 
     std::ofstream termfile{_path + ".numterms"};
     termfile << terms;
@@ -166,9 +167,9 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container & pdata)
 
     my_data.close();
     output.close();
-    common::delete_file(_path);
-    common::delete_file(_path + ".numterms");
-    common::rename_file(temp_name, _path);
+    filesystem::delete_file(_path);
+    filesystem::delete_file(_path + ".numterms");
+    filesystem::rename_file(temp_name, _path);
     pdata.clear();
 
     std::ofstream termfile{_path + ".numterms"};
