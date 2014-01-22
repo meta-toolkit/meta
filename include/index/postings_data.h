@@ -61,16 +61,6 @@ class postings_data
         postings_data(PrimaryKey p_id);
 
         /**
-         * @param raw_data The raw data from the postings file (a list of
-         * numbers)
-         * This function converts a list of numbers into a postings_data object
-         */
-        template <class = typename std::enable_if<
-                              !std::is_same<PrimaryKey, std::string>::value
-                          >::type>
-        postings_data(const std::string & raw_data);
-
-        /**
          * @param other The other postings_data object to consume
          * Adds the parameter's data to this object's data
          */

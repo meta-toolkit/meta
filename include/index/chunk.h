@@ -16,7 +16,7 @@ namespace meta {
 namespace index {
 
 /**
- * Represents a portion of the disk_index's postings file. It is an
+ * Represents a portion of the inverted_index's postings file. It is an
  * intermediate file mapping primary keys to secondary keys. The chunks
  * are sorted to enable efficient merging.
  */

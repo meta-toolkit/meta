@@ -15,15 +15,6 @@ postings_data<PrimaryKey, SecondaryKey>::postings_data(PrimaryKey p_id):
 { /* nothing */ }
 
 template <class PrimaryKey, class SecondaryKey>
-template <class>
-postings_data<PrimaryKey, SecondaryKey>::postings_data(
-        const std::string & raw_data)
-{
-    std::istringstream iss{raw_data};
-    iss >> *this;
-}
-
-template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::merge_with(
         postings_data & other)
 {

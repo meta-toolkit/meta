@@ -6,7 +6,6 @@
 #include <fstream>
 #include "util/filesystem.h"
 #include "index/chunk.h"
-#include "index/disk_index.h"
 #include "index/postings_data.h"
 
 namespace meta {

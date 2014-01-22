@@ -9,6 +9,8 @@
 #include "index/forward_index.h"
 #include "index/chunk.h"
 
+#if 0
+
 using std::cerr;
 using std::endl;
 
@@ -75,3 +77,5 @@ forward_index::chunk_handler::~chunk_handler() {
 
 }
 }
+
+#endif
