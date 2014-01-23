@@ -22,9 +22,7 @@ inverted_index::inverted_index(const cpptoml::toml_group & config):
 void inverted_index::create_index(const std::string & config_file)
 {
     // save the config file so we can recreate the tokenizer
-    std::ifstream source_config{config_file, std::ios::binary};
-    std::ofstream dest_config{_index_name + "/config.toml", std::ios::binary};
-    dest_config << source_config.rdbuf();
+    filesystem::copy_file(config_file, _index_name + "/config.toml");
 
     LOG(info) << "Creating index: " << _index_name << ENDLG;
 
