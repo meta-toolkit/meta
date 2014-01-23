@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#ifndef _META_LEXICON_H_
-#define _META_LEXICON_H_
+#ifndef _META_VOCABULARY_MAP_WRITER_H_
+#define _META_VOCABULARY_MAP_WRITER_H_
 
 #include "index/inverted_index.h"
 
