@@ -12,33 +12,29 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "index/postings_data.h"
 #include "corpus/document.h"
 #include "index/make_index.h"
-#include "index/postings_data.h"
-#include "util/invertible_map.h"
 #include "meta.h"
 
 namespace meta {
 namespace index {
 
-#if 0
-
 /**
  * The forward_index stores information on a corpus by doc_ids.  Each doc_id key
  * is associated with a distribution of term_ids or term "counts" that occur in
  * that particular document.
- *
- * A forward index consists of the following five files:
- *  - termids.mapping: maps term_id -> string information
- *  - docids.mapping: maps doc_id -> document path
- *  - postings.index: the large file saved on disk for per-document term_id
- *      information
- *  - lexicon.index: the smaller file that contains pointers into the postings
- *      file based on term_id
- *  - docsizes.counts: maps doc_id -> number of terms
- *  - config.toml: saves the tokenizer configuration
  */
-class forward_index {
+class forward_index
+{
+   public:
+    class forward_index_exception;
+
+    using primary_key_type   = doc_id;
+    using secondary_key_type = term_id;
+    using postings_data_type = postings_data<doc_id, term_id>;
+    using exception = forward_index_exception;
+
    protected:
     /**
      * @param config The toml_group that specifies how to create the
@@ -75,44 +71,105 @@ class forward_index {
     virtual ~forward_index() = default;
 
     /**
+     * @param d_id The doc id to find the class label for
+     * @return the label of the class that the document belongs to, or an empty
+     * string if a label was not assigned
+     */
+    class_label label(doc_id d_id) const;
+
+    /**
+     * @param l_id The id of the class label in question
+     * @return the integer label id of a document
+     */
+    class_label class_label_from_id(label_id l_id) const;
+
+    /**
+     * @param d_id The doc_id to search for
+     * @return the postings data for a given doc_id
+     */
+    virtual std::shared_ptr<postings_data_type>
+        search_primary(doc_id d_id) const;
+
+    /**
      * @param d_id The document id of the doc to convert to liblinear format
      * @return the string representation liblinear format
      */
     std::string liblinear_data(doc_id d_id) const;
 
-   private:
     /**
-     * The chunk handler for forward indexes.
+     * @return the number of documents in this index
      */
-    class chunk_handler {
-        /** the current in-memory chunk */
-        std::vector<postings_data<doc_id, term_id>> pdata_;
+    uint64_t num_docs() const;
 
-        /** the current size of the in-memory chunk */
-        uint64_t chunk_size_{0};
+    /**
+     * @return a vector of doc_ids that are contained in this index
+     */
+    std::vector<doc_id> docs() const;
 
-       public:
-        /**
-         * Handler for when a given doc has been successfully
-         * tokenized.
-         */
-        void handle_doc(const corpus::document &doc);
-
-        /**
-         * Destroys the handler, writing to disk any chunk data
-         * still resident in memory.
-         */
-        ~chunk_handler();
-    };
+    /**
+     * @return the number of unique terms in the index
+     */
+    uint64_t unique_terms() const;
 
     /**
      * forward_index is a friend of the factory method used to create
      * it.
      */
     friend forward_index make_index<forward_index>(const std::string &);
+
+   private:
+
+    /**
+     * This function loads a disk index from its filesystem
+     * representation.
+     */
+    void load_index();
+
+    /**
+     * This function initializes the forward index.
+     * @param config_file The configuration file used to create the index
+     */
+    void create_index(const std::string & config_file);
+
+    std::string _index_name;
+
+    public:
+        /**
+         * Basic exception for forward_index interactions.
+         */
+        class forward_index_exception: public std::exception
+        {
+            public:
+
+                forward_index_exception(const std::string & error):
+                    _error(error) { /* nothing */ }
+
+                const char* what() const throw()
+                {
+                    return _error.c_str();
+                }
+
+            private:
+                std::string _error;
+        };
+
+        /**
+         * Factory method for creating indexes.
+         */
+        template <class Index, class... Args>
+        friend Index make_index(const std::string & config_file,
+                                Args &&... args);
+
+        /**
+         * Factory method for creating indexes that are cached.
+         */
+        template <class Index,
+                  template <class, class> class Cache,
+                  class... Args>
+        friend cached_index<Index, Cache>
+        make_index(const std::string & config_file, Args &&... args);
 };
 
-#endif
 }
 }
 
