@@ -78,5 +78,15 @@ int vocabulary_map::compare(const std::string& term, const char* other) const
 {
     return std::memcmp(term.c_str(), other, term.length() + 1);
 }
+
+std::string vocabulary_map::find_term(term_id t_id) const
+{
+    return file_.start() + inverse_[t_id];
+}
+
+uint64_t vocabulary_map::size() const
+{
+    return inverse_.size();
+}
 }
 }

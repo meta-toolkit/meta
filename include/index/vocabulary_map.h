@@ -29,6 +29,7 @@ class vocabulary_map
   public:
     vocabulary_map(const std::string & path, uint16_t block_size = 4096);
     util::optional<term_id> find(const std::string & term) const;
+    std::string find_term(term_id t_id) const;
     uint64_t size() const;
 };
 }

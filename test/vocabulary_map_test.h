@@ -126,9 +126,12 @@ void read_file(uint16_t size = 20)
         auto elem = map.find(p.first);
         ASSERT(elem);
         ASSERT(*elem == p.second);
+
+        ASSERT(map.find_term(term_id{p.second}) == p.first);
     }
     ASSERT(!map.find("0"));
     ASSERT(!map.find("zabawe"));
+    ASSERT(map.size() == 14);
 }
 }
 
