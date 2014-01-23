@@ -2,6 +2,7 @@
  * @file select.cpp
  */
 
+#include <string>
 #include "cluster/similarity.h"
 #include "parallel/parallel_for.h"
 #include "util/common.h"
@@ -28,6 +29,7 @@ feature_select::feature_select(const std::vector<corpus::document> & docs):
 
 void feature_select::set_pseen(const std::vector<corpus::document> & docs)
 {
+#if 0
     // set all probs to zero initially; this makes sure they are entered in the
     // map, avoiding exceptions when using at()
     for(auto & t: _term_space)
@@ -42,7 +44,7 @@ void feature_select::set_pseen(const std::vector<corpus::document> & docs)
     // aggregate counts
     for(auto & d: docs)
     {
-        for(auto & f: d.frequencies())
+        for(auto & f: d.counts())
         {
             size_t count = f.second;
             _pseen[d.label()][f.first] += count;
@@ -59,6 +61,7 @@ void feature_select::set_pseen(const std::vector<corpus::document> & docs)
         for(auto & p: c.second)
             p.second /= _num_terms;
     }
+#endif
 }
 
 std::vector<pair<term_id, double>>
@@ -75,6 +78,7 @@ feature_select::sort_terms(unordered_map<term_id, double> & weights) const
 
 void feature_select::set_class_space(const std::vector<corpus::document> & docs)
 {
+#if 0
     for(auto & d: docs)
     {
         ++_pclass[d.label()];
@@ -83,16 +87,19 @@ void feature_select::set_class_space(const std::vector<corpus::document> & docs)
 
     for(auto & c: _pclass)
         c.second /= docs.size();
+#endif
 }
 
 void feature_select::set_term_space(const std::vector<corpus::document> & docs)
 {
+#if 0
     for(auto & d: docs)
     {
         _num_terms += d.length();
-        for(auto & p: d.frequencies())
+        for(auto & p: d.counts())
             _term_space.insert(p.first);
     }
+#endif
 }
 
 double feature_select::term_and_class(term_id term, const class_label & label) const

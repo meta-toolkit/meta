@@ -9,6 +9,7 @@
 #include "index/forward_index.h"
 #include "index/ranker/all.h"
 #include "util/common.h"
+#include "util/printing.h"
 #include "util/invertible_map.h"
 #include "classify/classifier/all.h"
 #include "caching/all.h"
@@ -80,10 +81,10 @@ int main(int argc, char* argv[])
     auto docs = f_idx.docs();
     // load the documents into the cache
     for (size_t i = 0; i < docs.size(); ++i) {
-        common::show_progress(i, docs.size(), 1000, "Pre-fetching for cache ");
+        printing::show_progress(i, docs.size(), 1000, "Pre-fetching for cache ");
         f_idx.search_primary(docs[i]);
     }
-    common::end_progress("Pre-fetching for cache ");
+    printing::end_progress("Pre-fetching for cache ");
 
     // below is a test for rcv1
     //std::vector<doc_id> train{docs.begin(), docs.begin() + 781265};
@@ -93,13 +94,13 @@ int main(int argc, char* argv[])
     //std::cout << "Testing set size: " << test.size() << std::endl;
 
     //std::cout << "Training..." << std::endl;
-    //auto train_time = common::time<std::chrono::milliseconds>([&]() {
+    //auto train_time = printing::time<std::chrono::milliseconds>([&]() {
     //    hinge_sgd.train(train);
     //});
     //std::cout << "Took " << train_time.count() / 1000.0 << "s" << std::endl;
     //std::cout << "Testing..." << std::endl;
     //classify::confusion_matrix m;
-    //auto test_time = common::time<std::chrono::milliseconds>([&]() {
+    //auto test_time = printing::time<std::chrono::milliseconds>([&]() {
     //    m = hinge_sgd.test(test);
     //});
     //std::cout << "Took " << test_time.count() / 1000.0 << "s" << std::endl;

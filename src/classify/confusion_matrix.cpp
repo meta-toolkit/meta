@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <vector>
 #include "util/common.h"
+#include "util/printing.h"
 #include "classify/confusion_matrix.h"
 
 namespace meta {
@@ -68,7 +69,7 @@ void confusion_matrix::print(std::ostream & out) const
                 ss.precision(3);
                 ss << percent;
                 if(aClass == pClass) {
-                    auto str  = common::make_bold(ss.str());
+                    auto str  = printing::make_bold(ss.str());
                     auto diff = str.size() - ss.str().size();
                     out << std::setw(w + diff) << str;
                 } else {
@@ -129,14 +130,14 @@ void confusion_matrix::print_stats(std::ostream & out) const
     size_t width =
         std::max<size_t>(12, static_cast<std::string>(*max_label).size() + 2);
 
-    auto w1 = std::setw(width + common::make_bold("").size());
-    auto w2 = std::setw(12 + common::make_bold("").size());
+    auto w1 = std::setw(width + printing::make_bold("").size());
+    auto w2 = std::setw(12 + printing::make_bold("").size());
     out.precision(3);
     out << std::string(width + 12 * 3, '-') << std::endl
-        << std::left << w1 << common::make_bold("Class")
-        << std::left << w2 << common::make_bold("F1 Score")
-        << std::left << w2 << common::make_bold("Precision")
-        << std::left << w2 << common::make_bold("Recall") << std::endl
+        << std::left << w1 << printing::make_bold("Class")
+        << std::left << w2 << printing::make_bold("F1 Score")
+        << std::left << w2 << printing::make_bold("Precision")
+        << std::left << w2 << printing::make_bold("Recall") << std::endl
         << std::string(width + 12 * 3, '-') << std::endl;
 
     for(auto & cls: _classes)
@@ -159,10 +160,10 @@ void confusion_matrix::print_stats(std::ostream & out) const
     };
 
     out << std::string(width + 12 * 3, '-') << std::endl
-        << w1 << common::make_bold("Total")
-        << w2 << common::make_bold(limit(t_f1 / _classes.size()))
-        << w2 << common::make_bold(limit(t_prec / _classes.size()))
-        << w2 << common::make_bold(limit(t_rec / _classes.size()))
+        << w1 << printing::make_bold("Total")
+        << w2 << printing::make_bold(limit(t_f1 / _classes.size()))
+        << w2 << printing::make_bold(limit(t_prec / _classes.size()))
+        << w2 << printing::make_bold(limit(t_rec / _classes.size()))
         << std::endl
         << std::string(width + 12 * 3, '-') << std::endl
         << _total << " predictions attempted, overall accuracy: "

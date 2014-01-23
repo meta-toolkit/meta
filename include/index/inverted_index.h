@@ -9,6 +9,7 @@
 
 #ifndef _DISK_INDEX_H_
 #define _DISK_INDEX_H_
+
 #include <atomic>
 #include <memory>
 #include <mutex>
@@ -244,7 +245,7 @@ class inverted_index
          * @param docs The documents to be tokenized
          * @return the number of chunks created
          */
-        uint32_t tokenize_docs(corpus::corpus * docs);
+        void tokenize_docs(corpus::corpus * docs);
 
         /**
          * The chunk handler for inverted indexes.
@@ -255,12 +256,6 @@ class inverted_index
 
             /** the current size of the in-memory chunk */
             uint64_t chunk_size_{0};
-
-            uint64_t find_term_id_time_{0};
-            uint64_t writing_chunk_time_{0};
-            uint64_t merging_pdata_time_{0};
-            uint64_t total_time_{0};
-            uint64_t merging_with_time_{0};
 
             void flush_chunk();
 

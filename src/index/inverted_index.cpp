@@ -1,7 +1,9 @@
 /**
  * @file inverted_index.cpp
  * @author Sean Massung
+ * @author Chase Geigle
  */
+
 #include <iostream>
 #include <numeric>
 #include "index/inverted_index.h"
@@ -50,28 +52,11 @@ void inverted_index::create_index(const std::string & config_file)
     _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/docs.uniqueterms", num_docs);
 
-    uint32_t num_chunks;
-    auto time = common::time([&](){
-        num_chunks = tokenize_docs(docs.get());
-    });
-
-    LOG(debug) << " ! Time spent tokenizing: " << (time.count() / 1000.0) << ENDLG;
-
-    uint64_t num_unique_terms;
-    time = common::time([&](){
-        num_unique_terms = merge_chunks(_index_name + "/postings.index");
-    });
-
-    LOG(debug) << " ! Time spent merging: " << (time.count() / 1000.0) << ENDLG;
-
-    time = common::time([&](){
-        compress(_index_name + "/postings.index", num_unique_terms);
-    });
-
-    LOG(debug) << " ! Time spent compressing: " << (time.count() / 1000.0) << ENDLG;
+    tokenize_docs(docs.get());
+    uint64_t num_unique_terms = merge_chunks(_index_name + "/postings.index");
+    compress(_index_name + "/postings.index", num_unique_terms);
 
     common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
-
     _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
 
     LOG(info) << "Done creating index: " << _index_name << ENDLG;
@@ -112,14 +97,10 @@ void inverted_index::load_index()
     );
 }
 
-uint32_t inverted_index::tokenize_docs(corpus::corpus * docs)
+void inverted_index::tokenize_docs(corpus::corpus * docs)
 {
     std::mutex mutex;
     std::atomic<uint32_t> chunk_num{0};
-    std::atomic<uint64_t> token_time{0};
-    std::atomic<uint64_t> metadata_time{0};
-    std::atomic<uint64_t> handler_time{0};
-    uint64_t loading_docs_time{0};
 
     auto task = [&]() {
         chunk_handler handler{this, chunk_num};
@@ -131,10 +112,7 @@ uint32_t inverted_index::tokenize_docs(corpus::corpus * docs)
                 if (!docs->has_next())
                     return; // destructor for handler will write
                             // any intermediate chunks
-                auto time = common::time([&]() {
-                    doc = docs->next();
-                });
-                loading_docs_time += time.count();
+                doc = docs->next();
 
                 std::string progress = "> Documents: "
                     + printing::add_commas(common::to_string(doc->id()))
@@ -145,24 +123,15 @@ uint32_t inverted_index::tokenize_docs(corpus::corpus * docs)
                 printing::show_progress(doc->id(), docs->size(), 1000, progress);
             }
 
-            auto time = common::time([&]() {
-                _tokenizer->tokenize(*doc);
-            });
-            token_time.fetch_add(time.count());
+            _tokenizer->tokenize(*doc);
 
             // save metadata
-            time = common::time([&]() {
-                _doc_id_mapping->insert(doc->id(), doc->path());
-                (*_doc_sizes)[doc->id()] = doc->length();
-                (*_unique_terms)[doc->id()] = doc->counts().size();
-                (*_labels)[doc->id()] = get_label_id(doc->label());
-            });
-            metadata_time.fetch_add(time.count());
+            _doc_id_mapping->insert(doc->id(), doc->path());
+            (*_doc_sizes)[doc->id()] = doc->length();
+            (*_unique_terms)[doc->id()] = doc->counts().size();
+            (*_labels)[doc->id()] = get_label_id(doc->label());
             // update chunk
-            time = common::time([&]() {
-                handler(*doc);
-            });
-            handler_time.fetch_add(time.count());
+            handler(*doc);
         }
     };
 
@@ -180,17 +149,6 @@ uint32_t inverted_index::tokenize_docs(corpus::corpus * docs)
         + printing::add_commas(common::to_string(_term_id_mapping->size()))
         + " Tokenizing: ";
     printing::end_progress(progress);
-
-    LOG(debug) << "   ! CPU Time tokenizing: " << token_time / 1000.0
-        << "s" << ENDLG;
-    LOG(debug) << "   ! CPU Time metadata building: " << metadata_time / 1000.0
-        << "s" << ENDLG;
-    LOG(debug) << "   ! CPU Time in handler: " << handler_time / 1000.0
-        << "s" << ENDLG;
-    LOG(debug) << "   ! Wall time getting documents: " << loading_docs_time / 1000.0
-        << "s" << ENDLG;
-
-    return chunk_num;
 }
 
 void inverted_index::write_chunk(uint32_t chunk_num,
@@ -484,42 +442,29 @@ auto inverted_index::search_primary(term_id t_id) const
 
 void inverted_index::chunk_handler::operator()(const corpus::document & doc)
 {
-    auto time = common::time([&]() {
-        for(const auto & count: doc.counts())   // count: (string, double)
+    for(const auto & count: doc.counts())   // count: (string, double)
+    {
+        index_pdata_type pd{count.first};
+        pd.increase_count(doc.id(), count.second);
+        auto it = pdata_.find(pd);
+        if(it == pdata_.end())
         {
-            auto time = common::time<std::chrono::microseconds>([&]() {
-                index_pdata_type pd{count.first};
-                pd.increase_count(doc.id(), count.second);
-                auto it = pdata_.find(pd);
-                if(it == pdata_.end())
-                {
-                    chunk_size_ += pd.bytes_used();
-                    pdata_.emplace(pd);
-                }
-                else
-                {
-                    chunk_size_ -= it->bytes_used();
-
-                    // note: we can modify elements in this set because we do not change
-                    // how comparisons are made (the primary_key value)
-                    auto time = common::time<std::chrono::microseconds>([&]() {
-                        //const_cast<postings_data_type &>(*it).merge_with(pd);
-                        const_cast<index_pdata_type &>(*it).increase_count(doc.id(), count.second);
-                    });
-                    merging_with_time_ += time.count();
-                    chunk_size_ += it->bytes_used();
-                }
-            });
-            merging_pdata_time_ += time.count();
-
-            time = common::time<std::chrono::microseconds>([&]() {
-                if(chunk_size_ >= max_size)
-                    flush_chunk();
-            });
-            writing_chunk_time_ += time.count();
+            chunk_size_ += pd.bytes_used();
+            pdata_.emplace(pd);
         }
-    });
-    total_time_ += time.count();
+        else
+        {
+            chunk_size_ -= it->bytes_used();
+
+            // note: we can modify elements in this set because we do not change
+            // how comparisons are made (the primary_key value)
+            const_cast<index_pdata_type&>(*it).increase_count(doc.id(), count.second);
+            chunk_size_ += it->bytes_used();
+        }
+
+        if(chunk_size_ >= max_size)
+            flush_chunk();
+    }
 }
 
 void inverted_index::chunk_handler::flush_chunk() {
