@@ -119,11 +119,6 @@ target_link_libraries(search
                       meta-index
                       ${CMAKE_THREAD_LIBS_INIT})
 
-add_executable(filewriter filewriter.cpp)
-target_link_libraries(filewriter
-                      meta-io
-                      ${CMAKE_THREAD_LIBS_INIT})
-
 add_executable(index index.cpp)
 target_link_libraries(index
                       meta-index
