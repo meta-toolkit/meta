@@ -10,6 +10,7 @@
 #define _COMMON_FILESYSTEM_H_
 
 #include <string>
+#include <fstream>
 #include <sys/stat.h>
 #include "util/printing.h"
 
@@ -57,6 +58,24 @@ inline bool file_exists(const std::string & filename)
         return true;
     }
     return false;
+}
+
+/**
+ * Copies a file source to file dest
+ * @param source
+ * @param dest
+ * @return whether the copy was successful
+ */
+inline bool copy_file(const std::string & source, const std::string & dest)
+{
+    if(!file_exists(source))
+        return false;
+
+    std::ifstream source_file{source, std::ios::binary};
+    std::ofstream dest_file{dest, std::ios::binary};
+    dest_file << source_file.rdbuf();
+
+    return true;
 }
 
 /**

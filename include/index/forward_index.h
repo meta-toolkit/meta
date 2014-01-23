@@ -131,6 +131,34 @@ class forward_index
      */
     void create_index(const std::string & config_file);
 
+    /**
+     * @param config the configuration settings for this index
+     */
+    void create_libsvm_postings(const cpptoml::toml_group& config);
+
+    /**
+     * @param config the configuration settings for this index
+     */
+    void create_libsvm_metadata(const cpptoml::toml_group& config);
+
+    /**
+     * @param config the configuration settings for this index
+     */
+    void uninvert(const cpptoml::toml_group& config);
+
+    /**
+     * @param config the configuration settings for this index
+     */
+    void create_univerted_metadata(const cpptoml::toml_group& config);
+
+    /**
+     * @param config the configuration settings for this index
+     * @return whether this index will be based off of a single
+     * libsvm-formatted corpus file
+     */
+    bool is_libsvm_format(const cpptoml::toml_group& config) const;
+
+    /** the directory name for this index on disk */
     std::string _index_name;
 
     public:
