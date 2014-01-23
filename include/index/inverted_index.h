@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _DISK_INDEX_H_
-#define _DISK_INDEX_H_
+#ifndef _INVERTED_INDEX_H_
+#define _INVERTED_INDEX_H_
 
 #include <atomic>
 #include <memory>
