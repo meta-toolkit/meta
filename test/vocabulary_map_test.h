@@ -11,6 +11,7 @@
 #include "util/filesystem.h"
 #include "unit_test.h"
 #include "index/vocabulary_map_writer.h"
+#include "index/vocabulary_map.h"
 
 namespace meta
 {
@@ -99,9 +100,39 @@ void assert_correctness(uint16_t size = 20)
     filesystem::delete_file("meta-tmp-test.bin");
     filesystem::delete_file("meta-tmp-test.bin.inverse.vector");
 }
+
+void read_file(uint16_t size = 20)
+{
+    std::vector<std::pair<std::string, uint64_t>> expected = {
+        // first level
+        {"a", 0},
+        {"b", 1},
+        {"c", 2},
+        {"d", 3},
+        {"e", 4},
+        {"f", 5},
+        {"g", 6},
+        {"h", 7},
+        {"i", 8},
+        {"j", 9},
+        {"k", 10},
+        {"l", 11},
+        {"m", 12},
+        {"n", 13}};
+
+    index::vocabulary_map map{"meta-tmp-test.bin", size};
+    for (const auto& p : expected)
+    {
+        auto elem = map.find(p.first);
+        ASSERT(elem);
+        ASSERT(*elem == p.second);
+    }
+    ASSERT(!map.find("0"));
+    ASSERT(!map.find("zabawe"));
+}
 }
 
-void vocabulary_map_writer_tests()
+void vocabulary_map_tests()
 {
     testing::run_test("vocabulary_writer_full_block", [&]()
     {
@@ -113,6 +144,18 @@ void vocabulary_map_writer_tests()
     {
         write_file(23);
         assert_correctness(23);
+    });
+
+    testing::run_test("vocabulary_map_full_block", [&]()
+    {
+        write_file();
+        read_file();
+    });
+
+    testing::run_test("vocabulary_map_partial_blocks", [&]()
+    {
+        write_file(23);
+        read_file(23);
     });
 }
 }

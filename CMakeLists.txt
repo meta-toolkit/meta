@@ -72,6 +72,7 @@ add_library(meta-index
             src/index/inverted_index.cpp
             src/index/forward_index.cpp
             src/index/vocabulary_map_writer.cpp
+            src/index/vocabulary_map.cpp
             src/index/ranker/okapi_bm25.cpp
             src/index/ranker/lm_ranker.cpp
             src/index/ranker/ranker.cpp
