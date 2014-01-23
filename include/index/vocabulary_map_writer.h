@@ -17,6 +17,8 @@ class vocabulary_map_writer
 {
   private:
     std::ofstream file_;
+    uint64_t file_write_pos_;
+    std::ofstream inverse_file_;
     std::string path_;
     uint16_t block_size_;
     uint64_t num_terms_;

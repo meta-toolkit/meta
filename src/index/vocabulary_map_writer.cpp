@@ -5,6 +5,7 @@
 
 #include "index/vocabulary_map_writer.h"
 #include "util/filesystem.h"
+#include <cassert>
 
 namespace meta
 {
@@ -13,18 +14,16 @@ namespace index
 
 vocabulary_map_writer::vocabulary_map_writer(const std::string& path,
                                              uint16_t block_size)
-    : path_{path},
+    : file_write_pos_{0},
+      inverse_file_{path + ".inverse.vector", std::ios::binary},
+      path_{path},
       block_size_{block_size},
       num_terms_{0},
       remaining_block_space_{block_size},
       written_nodes_{0}
 {
-    if (filesystem::file_exists(path))
-        throw inverted_index::inverted_index_exception{
-            "failed to write vocabulary map---file already exists"};
-
-    file_.open(path, file_.binary);
-    if (!file_)
+    file_.open(path, file_.binary | file_.trunc);
+    if (!file_ || !inverse_file_)
         throw inverted_index::inverted_index_exception{
             "failed to open vocabulary map file"};
 }
@@ -39,9 +38,16 @@ void vocabulary_map_writer::insert(const std::string& term)
         write_padding();
         ++written_nodes_;
     }
+    // record term position in inverse file
+    common::write_binary(inverse_file_, file_write_pos_);
 
+    // write term and id to tree file
     common::write_binary(file_, term);
     common::write_binary(file_, num_terms_);
+
+    // update write cursor (can't use fstream tell functions because these
+    // files may be larger than 2GB)
+    file_write_pos_ += length;
 
     remaining_block_space_ -= length;
     ++num_terms_;
@@ -55,6 +61,7 @@ void vocabulary_map_writer::write_padding()
         std::string padding(remaining_block_space_ - 1, '\0');
         common::write_binary(file_, padding);
     }
+    file_write_pos_ += remaining_block_space_;
     remaining_block_space_ = block_size_;
 }
 
