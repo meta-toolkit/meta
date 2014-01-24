@@ -34,6 +34,7 @@ Index make_index(const std::string &config_file, Args &&... args) {
         idx.load_index();
     else
         idx.create_index(config_file);
+
     return idx;
 }
 

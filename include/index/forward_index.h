@@ -9,12 +9,8 @@
 #ifndef _FORWARD_INDEX_H_
 #define _FORWARD_INDEX_H_
 
-#include <string>
-#include <vector>
-#include <memory>
-#include "index/postings_data.h"
+#include "index/disk_index.h"
 #include "corpus/document.h"
-#include "index/make_index.h"
 #include "meta.h"
 
 namespace meta {
@@ -25,7 +21,7 @@ namespace index {
  * is associated with a distribution of term_ids or term "counts" that occur in
  * that particular document.
  */
-class forward_index
+class forward_index: public disk_index
 {
    public:
     class forward_index_exception;
@@ -71,17 +67,9 @@ class forward_index
     virtual ~forward_index() = default;
 
     /**
-     * @param d_id The doc id to find the class label for
-     * @return the label of the class that the document belongs to, or an empty
-     * string if a label was not assigned
+     * @return the name of this index
      */
-    class_label label(doc_id d_id) const;
-
-    /**
-     * @param l_id The id of the class label in question
-     * @return the integer label id of a document
-     */
-    class_label class_label_from_id(label_id l_id) const;
+    std::string index_name() const;
 
     /**
      * @param d_id The doc_id to search for
@@ -97,27 +85,13 @@ class forward_index
     std::string liblinear_data(doc_id d_id) const;
 
     /**
-     * @return the number of documents in this index
-     */
-    uint64_t num_docs() const;
-
-    /**
-     * @return a vector of doc_ids that are contained in this index
-     */
-    std::vector<doc_id> docs() const;
-
-    /**
      * @return the number of unique terms in the index
      */
-    uint64_t unique_terms() const;
-
-    /**
-     * forward_index is a friend of the factory method used to create
-     * it.
-     */
-    friend forward_index make_index<forward_index>(const std::string &);
+    virtual uint64_t unique_terms() const override;
 
    private:
+    /** the name of this index on disk */
+    std::string _index_name;
 
     /**
      * This function loads a disk index from its filesystem
@@ -149,7 +123,7 @@ class forward_index
     /**
      * @param config the configuration settings for this index
      */
-    void create_univerted_metadata(const cpptoml::toml_group& config);
+    void create_uninverted_metadata(const cpptoml::toml_group& config);
 
     /**
      * @param config the configuration settings for this index
@@ -158,8 +132,8 @@ class forward_index
      */
     bool is_libsvm_format(const cpptoml::toml_group& config) const;
 
-    /** the directory name for this index on disk */
-    std::string _index_name;
+    /** the total number of unique terms if _term_id_mapping is unused */
+    uint64_t _total_unique_terms;
 
     public:
         /**
@@ -180,6 +154,12 @@ class forward_index
             private:
                 std::string _error;
         };
+
+        /**
+         * forward_index is a friend of the factory method used to create
+         * it.
+         */
+        friend forward_index make_index<forward_index>(const std::string &);
 
         /**
          * Factory method for creating indexes.

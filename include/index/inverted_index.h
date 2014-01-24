@@ -11,24 +11,12 @@
 #define _INVERTED_INDEX_H_
 
 #include <atomic>
-#include <memory>
 #include <mutex>
 #include <queue>
-#include <string>
-#include <vector>
-#include "caching/all.h"
-#include "corpus/corpus.h"
-#include "index/cached_index.h"
+#include "index/disk_index.h"
 #include "index/chunk.h"
-#include "index/make_index.h"
-#include "index/postings_data.h"
-#include "index/vocabulary_map.h"
 #include "io/compressed_file_reader.h"
 #include "io/mmap_file.h"
-#include "meta.h"
-#include "tokenizers/all.h"
-#include "util/disk_vector.h"
-#include "util/sqlite_map.h"
 
 namespace meta {
 namespace index {
@@ -45,18 +33,8 @@ namespace index {
  * information and contains pointers into the large postings file. It is assumed
  * that the lexicon will fit in memory. The IDF can be calculated by counting
  * the number of doc_ids after a specific term in the postings data.
- *
- * An inverted index consists of the following five files:
- *  - termids.mapping: maps term_id -> string information
- *  - docids.mapping: maps doc_id -> document path
- *  - postings.index: the large file saved on disk for per-document term_id
- *      information
- *  - lexicon.index: the smaller file that contains pointers into the postings
- *      file based on term_id
- *  - docsizes.counts: maps doc_id -> number of terms
- *  - config.toml: saves the tokenizer configuration
  */
-class inverted_index
+class inverted_index: public disk_index
 {
     public:
         class inverted_index_exception;
@@ -77,6 +55,11 @@ class inverted_index
         inverted_index(const cpptoml::toml_group & config);
 
     public:
+        /**
+         * @return the name of this index
+         */
+        std::string index_name() const;
+
         /**
          * Move constructs a inverted_index.
          * @param other The inverted_index to move into this one.
@@ -105,73 +88,9 @@ class inverted_index
         virtual ~inverted_index() = default;
 
         /**
-         * @return the name of this index
-         */
-        std::string index_name() const;
-
-        /**
-         * @return the number of documents in this index
-         */
-        uint64_t num_docs() const;
-
-        /**
-         * @param doc_id
-         * @return the actual name of this document
-         */
-        std::string doc_name(doc_id d_id) const;
-
-        /**
-         * @param doc_id
-         * @return the path to the file containing this document
-         */
-        std::string doc_path(doc_id d_id) const;
-
-        /**
-         * @return a vector of doc_ids that are contained in this index
-         */
-        std::vector<doc_id> docs() const;
-
-        /**
-         * @param d_id The document to search for
-         * @return the size of the given document (the total number of terms
-         * occurring)
-         */
-        uint64_t doc_size(doc_id d_id) const;
-
-        /**
          * @param doc The document to tokenize
          */
         void tokenize(corpus::document & doc);
-
-        /**
-         * @param d_id The doc id to find the class label for
-         * @return the label of the class that the document belongs to, or an
-         * empty string if a label was not assigned
-         */
-        class_label label(doc_id d_id) const;
-
-        /**
-         * @param l_id The id of the class label in question
-         * @return the integer label id of a document
-         */
-        class_label class_label_from_id(label_id l_id) const;
-
-        /**
-         * @param d_id
-         * @return the number of unique terms in d_id
-         */
-        uint64_t unique_terms(doc_id d_id) const;
-
-        /**
-         * @return the number of unique terms in the index
-         */
-        uint64_t unique_terms() const;
-
-        /**
-         * @param term
-         * @return the term_id associated with the parameter
-         */
-        term_id get_term_id(const std::string & term);
 
         /**
          * @param t_id The term_id to search for
@@ -208,13 +127,10 @@ class inverted_index
          */
         double avg_doc_length();
 
-        /**
-         * inverted_index is a friend of the factory method used to create
-         * it.
-         */
-        friend inverted_index make_index<inverted_index>(const std::string &);
-
     private:
+        /** the location of this index */
+        std::string _index_name;
+
         /**
          * This function initializes the disk index. It cannot be part of the
          * constructor since dynamic binding doesn't work in a base class's
@@ -235,12 +151,6 @@ class inverted_index
          */
         void write_chunk(uint32_t chunk_num,
                          std::vector<index_pdata_type> & pdata);
-
-        /**
-         * @param d_id The document
-         * @return the numerical label_id for a given document's label
-         */
-        label_id label_id_from_doc(doc_id d_id) const;
 
         /**
          * @param docs The documents to be tokenized
@@ -292,45 +202,6 @@ class inverted_index
         };
 
         /**
-         * doc_id -> document path mapping.
-         * Each index corresponds to a doc_id (uint64_t).
-         */
-        std::unique_ptr<util::sqlite_map<doc_id, std::string,
-                                         caching::default_dblru_cache>>
-        _doc_id_mapping;
-
-        /**
-         * doc_id -> document length mapping.
-         * Each index corresponds to a doc_id (uint64_t).
-         */
-        std::unique_ptr<util::disk_vector<double>> _doc_sizes;
-
-        /** the tokenizer used to tokenize documents in the index */
-        std::unique_ptr<tokenizers::tokenizer> _tokenizer;
-
-        /**
-         * Maps which class a document belongs to (if any).
-         * Each index corresponds to a doc_id (uint64_t).
-         */
-        std::unique_ptr<util::disk_vector<label_id>> _labels;
-
-        /**
-         * Holds how many unique terms there are per-document. This is sort of
-         * like an inverse IDF. For a forward_index, this field is certainly
-         * redundant, though it can save querying the postings file.
-         * Each index corresponds to a doc_id (uint64_t).
-         */
-        std::unique_ptr<util::disk_vector<uint64_t>> _unique_terms;
-
-        /**
-         * Maps string terms to term_ids.
-         */
-        std::unique_ptr<vocabulary_map> _term_id_mapping;
-
-        /** the total number of term occurrences in the entire corpus */
-        uint64_t _total_corpus_terms = 0;
-
-        /**
          * @param num_chunks The number of chunks to be merged
          * @param filename The name for the postings file
          */
@@ -351,16 +222,6 @@ class inverted_index
         void compress(const std::string & filename, uint64_t num_unique_terms);
 
         /**
-         * @param lbl the string class label to find the id for
-         * @return the label_id of a class_label, creating a new one if
-         * necessary
-         */
-        label_id get_label_id(const class_label & lbl);
-
-        /** the location of this index */
-        std::string _index_name;
-
-        /**
          * PrimaryKey -> postings location.
          * Each index corresponds to a PrimaryKey (uint64_t).
          */
@@ -373,20 +234,14 @@ class inverted_index
          */
         std::unique_ptr<io::mmap_file> _postings;
 
-        /**
-         * assigns an integer to each class label (used for liblinear and slda
-         * mappings)
-         */
-        util::invertible_map<class_label, label_id> _label_ids;
-
-        /** mutex for thread-safe operations */
-        std::unique_ptr<std::mutex> _mutex{new std::mutex};
-
         /** mutex for accessing the priority_queue of chunks */
         std::unique_ptr<std::mutex> _queue_mutex{new std::mutex};
 
         /** used to select which chunk to merge next */
         std::priority_queue<chunk<std::string, secondary_key_type>> _chunks;
+
+        /** the total number of term occurrences in the entire corpus */
+        uint64_t _total_corpus_terms = 0;
 
     public:
         /**
@@ -407,6 +262,12 @@ class inverted_index
             private:
                 std::string _error;
         };
+
+        /**
+         * inverted_index is a friend of the factory method used to create
+         * it.
+         */
+        friend inverted_index make_index<inverted_index>(const std::string &);
 
         /**
          * Factory method for creating indexes.

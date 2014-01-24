@@ -69,6 +69,7 @@ add_library(meta-tokenizers
 target_link_libraries(meta-tokenizers meta-io meta-corpus meta-stemmers)
 
 add_library(meta-index
+            src/index/disk_index.cpp
             src/index/inverted_index.cpp
             src/index/forward_index.cpp
             src/index/vocabulary_map_writer.cpp

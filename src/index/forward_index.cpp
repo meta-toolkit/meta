@@ -4,14 +4,21 @@
  */
 
 #include <iostream>
+#include <unordered_set>
 #include "index/forward_index.h"
 
 namespace meta {
 namespace index {
 
 forward_index::forward_index(const cpptoml::toml_group & config):
+    disk_index{config},
     _index_name{*cpptoml::get_as<std::string>(config, "forward-index")}
 { /* nothing */ }
+
+std::string forward_index::index_name() const
+{
+    return _index_name;
+}
 
 std::string forward_index::liblinear_data(doc_id d_id) const
 {
@@ -40,7 +47,7 @@ void forward_index::create_index(const std::string & config_file)
     else
     {
         uninvert(config);
-        create_univerted_metadata(config);
+        create_uninverted_metadata(config);
     }
 
     LOG(info) << "Done creating index: " << _index_name << ENDLG;
@@ -64,13 +71,51 @@ void forward_index::create_libsvm_postings(const cpptoml::toml_group& config)
 
 void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
 {
+    doc_id d_id{0};
+    std::unordered_set<term_id> terms;
+
+    std::ifstream in{_index_name + "/postings.index"};
+    std::string line;
+    while(in.good())
+    {
+        std::getline(in, line);
+        if(line.empty())
+            break;
+
+        std::stringstream stream{line};
+        std::string token;
+        stream >> token;
+        (*_labels)[d_id] = get_label_id(class_label{token});
+
+        uint64_t num_unique = 0;
+        uint64_t length = 0;
+        double count = 0.0;
+        term_id term;
+        while(stream >> token)
+        {
+            ++num_unique;
+            size_t idx = token.find_first_of(':');
+            std::string feature = token.substr(0, idx);
+            std::istringstream{feature} >> term;
+            std::istringstream{token.substr(idx + 1)} >> count;
+            length += static_cast<uint64_t>(count); // TODO
+        }
+
+        _doc_id_mapping->insert(d_id, "[no path]");
+        (*_doc_sizes)[d_id] = length;
+        (*_unique_terms)[d_id] = num_unique;
+
+        ++d_id;
+    }
+
+    _total_unique_terms = terms.size();
 }
 
 void forward_index::uninvert(const cpptoml::toml_group& config)
 {
 }
 
-void forward_index::create_univerted_metadata(const cpptoml::toml_group& config)
+void forward_index::create_uninverted_metadata(const cpptoml::toml_group& config)
 {
 }
 
@@ -87,30 +132,12 @@ bool forward_index::is_libsvm_format(const cpptoml::toml_group& config) const
     return *method == "libsvm";
 }
 
-class_label forward_index::label(doc_id d_id) const
-{
-    return class_label{""};
-}
-
-class_label forward_index::class_label_from_id(label_id l_id) const
-{
-    return class_label{""};
-}
-
-uint64_t forward_index::num_docs() const
-{
-    return 0;
-}
-
-std::vector<doc_id> forward_index::docs() const
-{
-    std::vector<doc_id> vec;
-    return vec;
-}
-
 uint64_t forward_index::unique_terms() const
 {
-    return 0;
+    if(_term_id_mapping == nullptr)
+        return _total_unique_terms;
+
+    return _term_id_mapping->size();
 }
 
 auto forward_index::search_primary(doc_id d_id) const
