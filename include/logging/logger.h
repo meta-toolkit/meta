@@ -340,7 +340,7 @@ class logger {
 /**
  * Gets a static instance of a logger.
  */
-static logger & get_logger() {
+inline logger & get_logger() {
     static logger log;
     return log;
 }

@@ -8,6 +8,7 @@
 #include <numeric>
 #include "index/inverted_index.h"
 #include "index/chunk.h"
+#include "index/vocabulary_map_writer.h"
 #include "logging/logger.h"
 #include "parallel/thread_pool.h"
 
@@ -37,12 +38,6 @@ void inverted_index::create_index(const std::string & config_file)
             _index_name + "/docids.mapping"
         );
 
-    _term_id_mapping =
-        common::make_unique<util::sqlite_map<std::string, uint64_t,
-                                             caching::default_dblru_cache>>(
-            _index_name + "/termids.mapping"
-        );
-
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts", num_docs);
     _labels = common::make_unique<util::disk_vector<label_id>>(
@@ -53,6 +48,9 @@ void inverted_index::create_index(const std::string & config_file)
     tokenize_docs(docs.get());
     uint64_t num_unique_terms = merge_chunks(_index_name + "/postings.index");
     compress(_index_name + "/postings.index", num_unique_terms);
+
+    _term_id_mapping =
+        common::make_unique<vocabulary_map>(_index_name + "/termids.mapping");
 
     common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
     _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
@@ -73,10 +71,7 @@ void inverted_index::load_index()
         );
 
     _term_id_mapping =
-        common::make_unique<util::sqlite_map<std::string, uint64_t,
-                                             caching::default_dblru_cache>>(
-            _index_name + "/termids.mapping"
-        );
+        common::make_unique<vocabulary_map>(_index_name + "/termids.mapping");
 
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts");
@@ -114,9 +109,6 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
 
                 std::string progress = "> Documents: "
                     + printing::add_commas(common::to_string(doc->id()))
-                    + " Unique primary keys: "
-                    + printing::add_commas(
-                        common::to_string(_term_id_mapping->size()))
                     + " Tokenizing: ";
                 printing::show_progress(doc->id(), docs->size(), 1000, progress);
             }
@@ -143,8 +135,6 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
 
     std::string progress = "> Documents: "
         + printing::add_commas(common::to_string(docs->size()))
-        + " Unique primary keys: "
-        + printing::add_commas(common::to_string(_term_id_mapping->size()))
         + " Tokenizing: ";
     printing::end_progress(progress);
 }
@@ -259,6 +249,8 @@ void inverted_index::compress(const std::string & filename,
         io::compressed_file_writer out{cfilename,
             common::default_compression_writer_func};
 
+        vocabulary_map_writer vocab{_index_name + "/termids.mapping"};
+
         postings_data<std::string, doc_id> pdata; // TODO: breaks forward_index
         auto length = filesystem::file_size(filename) * 8; // number of bits
         io::compressed_file_reader in{filename,
@@ -281,7 +273,7 @@ void inverted_index::compress(const std::string & filename,
                 printing::show_progress(idx, 500, 1,
                         " > Creating compressed postings file: ");
             }
-            _term_id_mapping->insert(pdata.primary_key(), t_id);
+            vocab.insert(pdata.primary_key());
             (*_term_bit_locations)[t_id] = out.bit_location();
             pdata.write_compressed(out);
             ++t_id;
@@ -306,7 +298,6 @@ term_id inverted_index::get_term_id(const std::string & term)
         return term_id{*termID};
 
     uint64_t size = _term_id_mapping->size();
-    _term_id_mapping->insert(term, term_id{size});
     return term_id{size};
 }
 

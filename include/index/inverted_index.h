@@ -22,6 +22,7 @@
 #include "index/chunk.h"
 #include "index/make_index.h"
 #include "index/postings_data.h"
+#include "index/vocabulary_map.h"
 #include "io/compressed_file_reader.h"
 #include "io/mmap_file.h"
 #include "meta.h"
@@ -324,9 +325,7 @@ class inverted_index
         /**
          * Maps string terms to term_ids.
          */
-        std::unique_ptr<util::sqlite_map<std::string, uint64_t,
-                                         caching::default_dblru_cache>>
-        _term_id_mapping;
+        std::unique_ptr<vocabulary_map> _term_id_mapping;
 
         /** the total number of term occurrences in the entire corpus */
         uint64_t _total_corpus_terms = 0;
