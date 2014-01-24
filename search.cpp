@@ -34,22 +34,28 @@ int main(int argc, char* argv[])
     common::set_cerr_logging();
     auto idx = index::make_index<index::inverted_index,
                                  caching::splay_cache>(argv[1], uint32_t{10000});
+    //                           caching::lock_free_dblru_cache>(argv[1], uint64_t{2048});
+    //                           caching::locking_dblru_cache>(argv[1], uint64_t{2048});
+    //                           caching::locking_dblru_shard_cache>(argv[1], uint8_t{8}, uint64_t{2048});
+    //                           caching::lock_free_dblru_shard_cache>(argv[1], uint8_t{8}, uint64_t{2048});
+    //                           caching::splay_shard_cache>(argv[1], uint8_t{8}, uint32_t{10});
+    index::pivoted_length ranker;
+    //index::okapi_bm25 ranker;
 
-    index::okapi_bm25 ranker;
+    auto elapsed_seconds = common::time([&](){
+        // std::cout << "Beginning ranking..." << std::endl;
+        // auto range = util::range<size_t>(0, std::min<size_t>(1000, idx.num_docs()-1));
+        // parallel::parallel_for(range.begin(), range.end(), [&](size_t i) {
+        //     auto d_id = idx.docs()[i];
+        //     corpus::document query{idx.doc_path(d_id)};
+        //     auto ranking = ranker.score(idx, query);
+        // });
 
-    auto config = cpptoml::parse_file(argv[1]);
-    std::string queryfile = "/home/sean/projects/cs446-project/index-comparison/queries/";
-    std::ifstream queries{queryfile + *config.get_as<std::string>("dataset") + "-queries.txt"};
-    std::string content;
-    auto elapsed_seconds = common::time([&]()
-    {
-        size_t i = 1;
-        while(queries.good() && i <= 500)
+        for(size_t i = 0; i < 100 && i < idx.num_docs(); ++i)
         {
-            std::getline(queries, content);
-            corpus::document query{"[user input]", doc_id{0}};
-            query.set_content(content);
-            cout << "Ranking query " << i++ << ": " << query.path() << endl;
+            auto d_id = idx.docs()[i];
+            corpus::document query{idx.doc_path(d_id), doc_id{0}};
+            cout << "Ranking query " << (i + 1) << ": " << query.path() << endl;
 
             std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);
             cout << "Showing top 10 of " << ranking.size() << " results." << endl;
@@ -62,7 +68,10 @@ int main(int argc, char* argv[])
         }
     });
 
-    std::cout << "Elapsed time: " << elapsed_seconds.count() << "ms\n";
+    auto time =
+        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::cout << "Finished at " << std::put_time(std::localtime(&time), "%c")
+              << "\nElapsed time: " << elapsed_seconds.count() << "ms\n";
 
     return 0;
 }
