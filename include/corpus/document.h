@@ -9,15 +9,13 @@
 #ifndef _DOCUMENT_H_
 #define _DOCUMENT_H_
 
-#include <memory>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 #include <string>
+#include <unordered_map>
+
 #include "meta.h"
-#include "util/invertible_map.h"
 
 namespace meta {
+
 namespace corpus {
 
 /**
@@ -75,18 +73,6 @@ class document
          * @return the map of counts for this document.
          */
         const std::unordered_map<std::string, double> & counts() const;
- 
-        /**
-         * Outputs class label integer for slda.
-         * @param mapping Keeps track of class labels as integers.
-         */
-        std::string get_slda_label_data(
-                util::invertible_map<class_label, int> & mapping) const;
-
-        /**
-         * Outputs term count data in slda format.
-         */
-        std::string get_slda_term_data() const;
 
         /**
          * Wrapper function for a document's cosine similarity measure.

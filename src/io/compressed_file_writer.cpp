@@ -3,6 +3,8 @@
  * @author Sean Massung
  */
 
+#include <cmath>
+#include <cstring>
 #include "io/compressed_file_writer.h"
 
 namespace meta {
@@ -63,7 +65,7 @@ void compressed_file_writer::close()
 void compressed_file_writer::write(uint64_t value)
 {
     uint64_t cvalue = _mapping(value);
-    uint64_t length = log2(cvalue);
+    uint64_t length = std::log2(cvalue);
 
     for(uint64_t bit = 0; bit < length; ++bit)
         write_bit(false);

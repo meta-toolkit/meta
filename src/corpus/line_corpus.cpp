@@ -4,10 +4,10 @@
  */
 
 #include <algorithm>
-#include <iostream>
-#include "io/parser.h"
-#include "io/mmap_file.h"
+
 #include "corpus/line_corpus.h"
+#include "io/parser.h"
+#include "util/common.h"
 #include "util/filesystem.h"
 
 namespace meta {

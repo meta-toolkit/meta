@@ -9,16 +9,18 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-#include <map>
-#include <sstream>
-#include <sys/stat.h>
+#include <cstdint>
 #include <chrono>
+#include <fstream>
+#include <functional>
 #include <iostream>
-#include <unordered_map>
-#include <string>
+#include <limits>
+#include <map>
+#include <memory>
+#include <sstream>
+
 #include "logging/logger.h"
 #include "util/invertible_map.h"
-#include "cpptoml.h"
 
 namespace meta {
 namespace common {
@@ -26,8 +28,7 @@ namespace common {
 inline uint64_t default_compression_writer_func(uint64_t key)
 {
     if(key == std::numeric_limits<uint64_t>::max()) // delimiter
-        return uint64_t{1};
-    return key + 2;
+        return uint64_t{1}; return key + 2;
 }
 
 inline uint64_t default_compression_reader_func(uint64_t value)

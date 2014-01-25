@@ -2,6 +2,7 @@
  * @file parser.cpp
  */
 
+#include "io/mmap_file.h"
 #include "io/parser.h"
 #include "util/common.h"
 
@@ -34,6 +35,10 @@ parser::parser(const std::string & input, const std::string & delims,
 
     get_next();
 }
+
+parser::parser(parser&&) = default;
+parser::~parser() = default;
+parser& parser::operator=(parser&&) = default;
 
 void parser::get_next()
 {

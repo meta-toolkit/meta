@@ -8,11 +8,8 @@
 #ifndef _MMAP_FILE_H_
 #define _MMAP_FILE_H_
 
-#include <fcntl.h>
-#include <stdio.h>
+#include <stdexcept>
 #include <string>
-#include <sys/mman.h>
-#include <unistd.h>
 
 namespace meta {
 namespace io {
@@ -78,21 +75,10 @@ class mmap_file
         /**
          * Basic exception for mmap_file interactions.
          */
-        class mmap_file_exception: public std::exception
+        class mmap_file_exception: public std::runtime_error
         {
             public:
-                
-                mmap_file_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-           
-            private:
-           
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 };
 

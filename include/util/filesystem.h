@@ -12,6 +12,7 @@
 #include <string>
 #include <fstream>
 #include <sys/stat.h>
+#include "io/mmap_file.h"
 #include "util/printing.h"
 
 namespace meta {

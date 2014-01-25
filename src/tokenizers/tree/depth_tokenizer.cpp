@@ -1,4 +1,5 @@
 #include "tokenizers/tree/depth_tokenizer.h"
+#include "util/common.h"
 
 namespace meta {
 namespace tokenizers {

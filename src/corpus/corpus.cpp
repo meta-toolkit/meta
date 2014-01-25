@@ -5,6 +5,8 @@
 
 #include "corpus/corpus.h"
 #include "corpus/all.h"
+#include "cpptoml.h"
+#include "util/common.h"
 
 namespace meta {
 namespace corpus {

@@ -11,9 +11,11 @@
 
 #include <memory>
 #include <string>
-#include "meta.h"
+
 #include "cpptoml.h"
+#include "meta.h"
 #include "corpus/document.h"
+#include "io/parser.h"
 
 namespace meta {
 namespace tokenizers {

@@ -2,6 +2,11 @@
  * @file mmap_file.cpp
  */
 
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 #include "io/mmap_file.h"
 #include "util/filesystem.h"
 

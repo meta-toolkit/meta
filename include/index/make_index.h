@@ -7,6 +7,7 @@
 #ifndef _META_MAKE_INDEX_H_
 #define _META_MAKE_INDEX_H_
 
+#include "cpptoml.h"
 #include "index/cached_index.h"
 #include "util/filesystem.h"
 

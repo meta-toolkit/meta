@@ -3,13 +3,10 @@
  * @author Sean Massung
  */
 
-#include <utility>
-#include <sstream>
-#include "corpus/document.h"
-#include "corpus/corpus.h"
-#include "util/common.h"
-#include "parallel/parallel_for.h"
 #include "cluster/similarity.h"
+#include "corpus/corpus.h"
+#include "corpus/document.h"
+#include "util/common.h"
 
 namespace meta {
 namespace corpus {

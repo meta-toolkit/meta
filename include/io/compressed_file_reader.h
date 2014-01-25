@@ -9,19 +9,15 @@
 #ifndef _COMPRESSED_FILE_READER_H_
 #define _COMPRESSED_FILE_READER_H_
 
-#include <cmath>
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include <functional>
+#include <memory>
+#include <stdexcept>
 #include <string>
-#include "util/invertible_map.h"
-#include "io/mmap_file.h"
 
 namespace meta {
 namespace io {
+
+class mmap_file;
 
 /**
  * Simply saves the current state of the reader.
@@ -46,6 +42,8 @@ class compressed_file_reader
          */
         compressed_file_reader(const std::string & filename,
                 std::function<uint64_t(uint64_t)> mapping);
+
+        ~compressed_file_reader();
 
         /**
          * Sets the cursor back to the beginning of the file.
@@ -131,21 +129,10 @@ class compressed_file_reader
         /**
          * Basic exception for compressed_file_reader interactions.
          */
-        class compressed_file_reader_exception: public std::exception
+        class compressed_file_reader_exception: public std::runtime_error
         {
             public:
-
-                compressed_file_reader_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-
-            private:
-
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 };
 

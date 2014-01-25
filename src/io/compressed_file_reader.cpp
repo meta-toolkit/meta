@@ -4,6 +4,8 @@
  */
 
 #include "io/compressed_file_reader.h"
+#include "io/mmap_file.h"
+#include "util/common.h"
 
 namespace meta {
 namespace io {
@@ -37,6 +39,8 @@ compressed_file_reader::compressed_file_reader(const mmap_file & file,
     // initialize the stream
     get_next();
 }
+
+compressed_file_reader::~compressed_file_reader() = default;
 
 void compressed_file_reader::close()
 {

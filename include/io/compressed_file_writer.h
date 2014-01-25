@@ -9,11 +9,9 @@
 #ifndef _COMPRESSED_FILE_WRITER_H_
 #define _COMPRESSED_FILE_WRITER_H_
 
-#include <string.h>
-#include <cstdio>
-#include <cmath>
+#include <functional>
+#include <stdexcept>
 #include <string>
-#include "util/invertible_map.h"
 
 namespace meta {
 namespace io {
@@ -102,21 +100,10 @@ class compressed_file_writer
         /**
          * Basic exception for compressed_file_writer interactions.
          */
-        class compressed_file_writer_exception: public std::exception
+        class compressed_file_writer_exception: public std::runtime_error
         {
             public:
-
-                compressed_file_writer_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-
-            private:
-
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 
 };
