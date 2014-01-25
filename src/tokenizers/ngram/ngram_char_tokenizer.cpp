@@ -2,7 +2,7 @@
  * @file ngram_char_tokenizer.cpp
  */
 
-#include <unordered_map>
+#include "corpus/document.h"
 #include "io/parser.h"
 #include "tokenizers/ngram/ngram_char_tokenizer.h"
 

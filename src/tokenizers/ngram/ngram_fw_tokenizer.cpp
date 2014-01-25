@@ -2,8 +2,8 @@
  * @file ngram_fw_tokenizer.cpp
  */
 
-#include "io/parser.h"
-#include "util/common.h"
+#include "cpptoml.h"
+#include "corpus/document.h"
 #include "tokenizers/ngram/ngram_fw_tokenizer.h"
 
 namespace meta {

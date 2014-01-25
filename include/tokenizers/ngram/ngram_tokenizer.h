@@ -9,10 +9,8 @@
 #ifndef _NGRAM_TOKENIZER_H_
 #define _NGRAM_TOKENIZER_H_
 
-#include <string>
-#include <memory>
 #include <deque>
-#include <unordered_map>
+
 #include "tokenizers/tokenizer.h"
 
 namespace meta {

@@ -9,12 +9,10 @@
 #ifndef _MULTI_TOKENIZER_
 #define _MULTI_TOKENIZER_
 
-#include <memory>
-#include <mutex>
-#include <string>
 #include <vector>
+#include <memory>
+
 #include "tokenizers/tokenizer.h"
-#include "corpus/document.h"
 
 namespace meta {
 namespace tokenizers {

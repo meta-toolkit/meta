@@ -9,6 +9,7 @@
 #ifndef _NGRAM_FW_TOKENIZER_H_
 #define _NGRAM_FW_TOKENIZER_H_
 
+#include <unordered_set>
 #include "tokenizers/ngram/ngram_tokenizer.h"
 
 namespace meta {

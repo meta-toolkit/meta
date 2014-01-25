@@ -4,6 +4,8 @@
  */
 
 #include <sstream>
+
+#include "corpus/document.h"
 #include "tokenizers/libsvm_tokenizer.h"
 
 namespace meta {

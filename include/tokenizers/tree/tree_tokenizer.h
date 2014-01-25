@@ -10,9 +10,7 @@
 #ifndef _TREE_TOKENIZER_H_
 #define _TREE_TOKENIZER_H_
 
-#include <string>
-#include <memory>
-#include <unordered_map>
+#include "corpus/document.h"
 #include "tokenizers/tokenizer.h"
 #include "tokenizers/tree/parse_tree.h"
 

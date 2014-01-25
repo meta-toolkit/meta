@@ -10,6 +10,8 @@
 #define _NGRAM_WORD_TOKENIZER_H_
 
 #include <functional>
+#include <unordered_set>
+
 #include "stemmers/porter2.h"
 #include "tokenizers/ngram/ngram_tokenizer.h"
 

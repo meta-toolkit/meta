@@ -9,9 +9,7 @@
 #ifndef _NGRAM_SIMPLE_TOKENIZER_H_
 #define _NGRAM_SIMPLE_TOKENIZER_H_
 
-#include <string>
 #include "tokenizers/ngram/ngram_tokenizer.h"
-#include "io/parser.h"
 
 namespace meta {
 namespace tokenizers {

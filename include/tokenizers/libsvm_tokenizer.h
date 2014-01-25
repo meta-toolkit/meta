@@ -9,9 +9,7 @@
 #ifndef _LIBSVM_TOKENIZER_
 #define _LIBSVM_TOKENIZER_
 
-#include <string>
 #include "tokenizers/tokenizer.h"
-#include "corpus/document.h"
 
 namespace meta {
 namespace tokenizers {

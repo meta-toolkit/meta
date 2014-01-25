@@ -2,11 +2,11 @@
  * @file tokenizer.cpp
  */
 
-#include "io/mmap_file.h"
+#include "cpptoml.h"
+#include "corpus/document.h"
+#include "tokenizers/all.h"
 #include "stemmers/no_stemmer.h"
 #include "stemmers/porter2.h"
-#include "tokenizers/tokenizer.h"
-#include "tokenizers/all.h"
 #include "util/common.h"
 
 namespace meta {

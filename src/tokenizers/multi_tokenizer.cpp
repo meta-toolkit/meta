@@ -2,7 +2,6 @@
  * @file multi_tokenizer.cpp
  */
 
-#include "corpus/document.h"
 #include "tokenizers/multi_tokenizer.h"
 
 namespace meta {

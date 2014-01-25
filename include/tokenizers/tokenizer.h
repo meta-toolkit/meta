@@ -9,15 +9,21 @@
 #ifndef _TOKENIZER_H_
 #define _TOKENIZER_H_
 
+#include <stdexcept>
 #include <memory>
-#include <string>
 
-#include "cpptoml.h"
-#include "meta.h"
-#include "corpus/document.h"
 #include "io/parser.h"
 
+namespace cpptoml {
+class toml_group;
+}
+
 namespace meta {
+
+namespace corpus {
+class document;
+}
+
 namespace tokenizers {
 
 /**
@@ -59,19 +65,10 @@ class tokenizer
         /**
          * Basic exception for tokenizer interactions.
          */
-        class tokenizer_exception: public std::exception
+        class tokenizer_exception: public std::runtime_error
         {
             public:
-                tokenizer_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-
-            private:
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 };
 

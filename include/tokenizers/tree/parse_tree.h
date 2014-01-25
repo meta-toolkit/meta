@@ -9,7 +9,9 @@
 #ifndef _PARSE_TREE_H_
 #define _PARSE_TREE_H_
 
+#include <cstdint>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -112,19 +114,10 @@ class parse_tree
         /**
          * Basic exception for parse_tree interactions.
          */
-        class parse_tree_exception: public std::exception
+        class parse_tree_exception: public std::runtime_error
         {
             public:
-                parse_tree_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-           
-            private:
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 };
 

@@ -2,8 +2,6 @@
  * @file ngram_lex_tokenizer.cpp
  */
 
-#include <unordered_map>
-#include "io/parser.h"
 #include "tokenizers/ngram/ngram_lex_tokenizer.h"
 
 namespace meta {
