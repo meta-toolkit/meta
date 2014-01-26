@@ -78,11 +78,8 @@ void forward_index::create_libsvm_postings(const cpptoml::toml_group& config)
 void forward_index::load_metadata()
 {
     uint64_t num_docs = filesystem::num_lines(_index_name + "/postings.index");
-    _doc_id_mapping =
-        common::make_unique<util::sqlite_map<doc_id, std::string,
-                                             caching::default_dblru_cache>>(
-            _index_name + "/docids.mapping"
-        );
+    _doc_id_mapping = common::make_unique<string_list>(_index_name
+                                                       + "/docids.mapping");
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts", num_docs);
     _labels = common::make_unique<util::disk_vector<label_id>>(
