@@ -32,8 +32,7 @@ void assert_read(std::ifstream& file, const std::string& expect)
 
 struct file_guard
 {
-    file_guard(const std::string& path)
-        : path_{path}
+    file_guard(const std::string& path) : path_{path}
     {
         filesystem::delete_file(path_);
     }
@@ -45,7 +44,6 @@ struct file_guard
 
     const std::string& path_;
 };
-
 }
 
 void string_list_tests()
@@ -75,8 +73,8 @@ void string_list_tests()
 
     testing::run_test("string_list_read_basic", [&]()
     {
-    file_guard f{"meta-tmp-string-list.bin"};
-    file_guard fi{"meta-tmp-string-list.bin_index.vector"};
+        file_guard f{"meta-tmp-string-list.bin"};
+        file_guard fi{"meta-tmp-string-list.bin_index.vector"};
         using namespace index;
         {
             string_list_writer writer{"meta-tmp-string-list.bin", 5};
@@ -93,7 +91,7 @@ void string_list_tests()
         ASSERT(std::strcmp(list.at(0), "things and stuff") == 0);
         ASSERT(std::strcmp(list.at(2), "other stuff") == 0);
         ASSERT(std::strcmp(list.at(1), "cat") == 0);
-        ASSERT(std::strcmp(list.at(4),  "dog") == 0);
+        ASSERT(std::strcmp(list.at(4), "dog") == 0);
         ASSERT(std::strcmp(list.at(3), "a no good very dead ex-parrot") == 0);
     });
 }
