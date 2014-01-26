@@ -34,6 +34,8 @@ void forward_index::load_index()
 {
     LOG(info) << "Loading index from disk: " << _index_name << ENDLG;
     init_metadata();
+    _doc_id_mapping = common::make_unique<string_list>(_index_name
+                                                    + "/docids.mapping");
 }
 
 void forward_index::create_index(const std::string & config_file)
@@ -55,6 +57,10 @@ void forward_index::create_index(const std::string & config_file)
         uninvert(config);
         create_uninverted_metadata(config);
     }
+
+    // now that the files are tokenized, we can create the string_list
+    _doc_id_mapping = common::make_unique<string_list>(_index_name
+                                                    + "/docids.mapping");
 
     LOG(info) << "Done creating index: " << _index_name << ENDLG;
 }
@@ -94,8 +100,6 @@ void forward_index::create_libsvm_postings(const cpptoml::toml_group& config)
 void forward_index::init_metadata()
 {
     uint64_t num_docs = filesystem::num_lines(_index_name + "/postings.index");
-    _doc_id_mapping = common::make_unique<string_list>(_index_name
-                                                       + "/docids.mapping");
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts", num_docs);
     _labels = common::make_unique<util::disk_vector<label_id>>(
@@ -113,6 +117,7 @@ void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
 
     std::ifstream in{_index_name + "/postings.index"};
     std::string line;
+    string_list_writer doc_id_mapping{_index_name + "/docids.mapping", num_docs()};
     while(in.good())
     {
         std::getline(in, line);
@@ -131,7 +136,7 @@ void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
             length += static_cast<uint64_t>(count_pair.second); // TODO
         }
 
-        //_doc_id_mapping->insert(d_id, "[no path]");
+        doc_id_mapping.insert(d_id, "[no path]");
         (*_doc_sizes)[d_id] = length;
         (*_unique_terms)[d_id] = num_unique;
 
