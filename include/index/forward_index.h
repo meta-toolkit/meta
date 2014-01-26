@@ -109,6 +109,11 @@ class forward_index: public disk_index
     std::string _index_name;
 
     /**
+     * Initializes this index's metadata structures.
+     */
+    void load_metadata();
+
+    /**
      * This function loads a disk index from its filesystem
      * representation.
      */
