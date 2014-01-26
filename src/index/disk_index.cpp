@@ -6,9 +6,9 @@
 #include <numeric>
 
 #include "index/disk_index.h"
+#include "index/string_list.h"
 #include "index/vocabulary_map.h"
 #include "tokenizers/tokenizer.h"
-#include "util/sqlite_map.h"
 #include "util/disk_vector.h"
 
 namespace meta {
@@ -90,7 +90,7 @@ std::string disk_index::doc_name(doc_id d_id) const
 
 std::string disk_index::doc_path(doc_id d_id) const
 {
-    return *_doc_id_mapping->find(d_id);
+    return _doc_id_mapping->at(d_id);
 }
 
 std::vector<doc_id> disk_index::docs() const

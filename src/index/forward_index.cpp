@@ -5,10 +5,11 @@
 
 #include "index/forward_index.h"
 #include "index/postings_data.h"
+#include "index/string_list.h"
+#include "index/string_list_writer.h"
 #include "index/vocabulary_map.h"
 #include "tokenizers/tokenizer.h"
 #include "util/disk_vector.h"
-#include "util/sqlite_map.h"
 
 namespace meta {
 namespace index {
@@ -104,7 +105,7 @@ void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
             length += static_cast<uint64_t>(count); // TODO
         }
 
-        _doc_id_mapping->insert(d_id, "[no path]");
+        //_doc_id_mapping->insert(d_id, "[no path]");
         (*_doc_sizes)[d_id] = length;
         (*_unique_terms)[d_id] = num_unique;
 

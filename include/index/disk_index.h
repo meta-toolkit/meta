@@ -21,26 +21,24 @@ class toml_group;
 }
 
 namespace meta {
-namespace util {
 
-template <class, class, template <class, class> class>
-class sqlite_map;
-
-template <class>
-class disk_vector;
+namespace index {
+class string_list;
+class vocabulary_map;
 }
 
 namespace tokenizers {
 class tokenizer;
 }
 
+namespace util {
+template <class>
+class disk_vector;
 }
-
+}
 
 namespace meta {
 namespace index {
-
-class vocabulary_map;
 
 /**
  * Holds generic data structures and functions that inverted_index and
@@ -151,9 +149,7 @@ class disk_index
      * doc_id -> document path mapping.
      * Each index corresponds to a doc_id (uint64_t).
      */
-    std::unique_ptr<util::sqlite_map<doc_id, std::string,
-                                     caching::default_dblru_cache>>
-    _doc_id_mapping;
+    std::unique_ptr<string_list> _doc_id_mapping;
 
     /**
      * doc_id -> document length mapping.
