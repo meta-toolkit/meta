@@ -22,9 +22,6 @@ if(UNIX)
     endif()
 endif()
 
-add_library(meta-sqlite
-            deps/sqlite/sqlite3.c)
-
 add_library(meta-io
             src/io/compressed_file_reader.cpp
             src/io/parser.cpp
@@ -73,8 +70,10 @@ add_library(meta-index
             src/index/disk_index.cpp
             src/index/inverted_index.cpp
             src/index/forward_index.cpp
-            src/index/vocabulary_map_writer.cpp
+            src/index/string_list.cpp
+            src/index/string_list_writer.cpp
             src/index/vocabulary_map.cpp
+            src/index/vocabulary_map_writer.cpp
             src/index/ranker/okapi_bm25.cpp
             src/index/ranker/lm_ranker.cpp
             src/index/ranker/ranker.cpp
@@ -84,7 +83,7 @@ add_library(meta-index
             src/index/ranker/pivoted_length.cpp)
 
 target_link_libraries(meta-index
-                      meta-io meta-corpus meta-tokenizers meta-sqlite)
+                      meta-io meta-corpus meta-tokenizers)
 
 add_library(meta-classify
             src/classify/feature_select/select.cpp

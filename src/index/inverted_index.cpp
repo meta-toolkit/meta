@@ -6,11 +6,12 @@
 
 #include "corpus/corpus.h"
 #include "index/inverted_index.h"
+#include "index/string_list.h"
+#include "index/string_list_writer.h"
 #include "index/vocabulary_map.h"
 #include "index/vocabulary_map_writer.h"
 #include "parallel/thread_pool.h"
 #include "tokenizers/tokenizer.h"
-#include "util/sqlite_map.h"
 
 namespace meta {
 namespace index {
@@ -41,12 +42,6 @@ void inverted_index::create_index(const std::string & config_file)
 
     uint64_t num_docs = docs->size();
 
-    _doc_id_mapping =
-        common::make_unique<util::sqlite_map<doc_id, std::string,
-                                             caching::default_dblru_cache>>(
-            _index_name + "/docids.mapping"
-        );
-
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts", num_docs);
     _labels = common::make_unique<util::disk_vector<label_id>>(
@@ -55,6 +50,10 @@ void inverted_index::create_index(const std::string & config_file)
         _index_name + "/docs.uniqueterms", num_docs);
 
     tokenize_docs(docs.get());
+
+    _doc_id_mapping = common::make_unique<string_list>(_index_name
+                                                       + "/docids.mapping");
+
     uint64_t num_unique_terms = merge_chunks(_index_name + "/postings.index");
     compress(_index_name + "/postings.index", num_unique_terms);
 
@@ -73,11 +72,8 @@ void inverted_index::load_index()
 
     auto config = cpptoml::parse_file(_index_name + "/config.toml");
 
-    _doc_id_mapping =
-        common::make_unique<util::sqlite_map<doc_id, std::string,
-                                             caching::default_dblru_cache>>(
-            _index_name + "/docids.mapping"
-        );
+    _doc_id_mapping = common::make_unique<string_list>(_index_name
+                                                       + "/docids.mapping");
 
     _term_id_mapping =
         common::make_unique<vocabulary_map>(_index_name + "/termids.mapping");
@@ -103,6 +99,8 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
 {
     std::mutex mutex;
     std::atomic<uint32_t> chunk_num{0};
+    string_list_writer doc_id_mapping{_index_name + "/docids.mapping",
+                                            docs->size()};
 
     auto task = [&]() {
         chunk_handler handler{this, chunk_num};
@@ -125,7 +123,7 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
             _tokenizer->tokenize(*doc);
 
             // save metadata
-            _doc_id_mapping->insert(doc->id(), doc->path());
+            doc_id_mapping.insert(doc->id(), doc->path());
             (*_doc_sizes)[doc->id()] = doc->length();
             (*_unique_terms)[doc->id()] = doc->counts().size();
             (*_labels)[doc->id()] = get_label_id(doc->label());

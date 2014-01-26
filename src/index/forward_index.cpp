@@ -5,10 +5,12 @@
 
 #include "index/forward_index.h"
 #include "index/postings_data.h"
+#include "index/string_list.h"
+#include "index/string_list_writer.h"
 #include "index/vocabulary_map.h"
 #include "io/libsvm_parser.h"
 #include "tokenizers/tokenizer.h"
-#include "util/sqlite_map.h"
+#include "util/disk_vector.h"
 
 namespace meta {
 namespace index {
@@ -92,11 +94,8 @@ void forward_index::create_libsvm_postings(const cpptoml::toml_group& config)
 void forward_index::init_metadata()
 {
     uint64_t num_docs = filesystem::num_lines(_index_name + "/postings.index");
-    _doc_id_mapping =
-        common::make_unique<util::sqlite_map<doc_id, std::string,
-                                             caching::default_dblru_cache>>(
-            _index_name + "/docids.mapping"
-        );
+    _doc_id_mapping = common::make_unique<string_list>(_index_name
+                                                       + "/docids.mapping");
     _doc_sizes = common::make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts", num_docs);
     _labels = common::make_unique<util::disk_vector<label_id>>(
@@ -132,7 +131,7 @@ void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
             length += static_cast<uint64_t>(count_pair.second); // TODO
         }
 
-        _doc_id_mapping->insert(d_id, "[no path]");
+        //_doc_id_mapping->insert(d_id, "[no path]");
         (*_doc_sizes)[d_id] = length;
         (*_unique_terms)[d_id] = num_unique;
 
