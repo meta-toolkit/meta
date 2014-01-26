@@ -10,13 +10,26 @@
 #ifndef _INVERTED_INDEX_H_
 #define _INVERTED_INDEX_H_
 
-#include <atomic>
-#include <mutex>
 #include <queue>
-#include "index/disk_index.h"
+#include <stdexcept>
+
 #include "index/chunk.h"
-#include "io/compressed_file_reader.h"
-#include "io/mmap_file.h"
+#include "index/disk_index.h"
+#include "index/make_index.h"
+
+namespace meta {
+
+namespace corpus {
+class corpus;
+class document;
+}
+
+namespace index {
+template <class, class>
+class postings_data;
+}
+
+}
 
 namespace meta {
 namespace index {
@@ -62,15 +75,13 @@ class inverted_index: public disk_index
 
         /**
          * Move constructs a inverted_index.
-         * @param other The inverted_index to move into this one.
          */
-        inverted_index(inverted_index &&) = default;
+        inverted_index(inverted_index&&);
 
         /**
          * Move assigns a inverted_index.
-         * @param other The inverted_index to move into this one.
          */
-        inverted_index & operator=(inverted_index &&) = default;
+        inverted_index & operator=(inverted_index&&);
 
         /**
          * inverted_index may not be copy-constructed.
@@ -85,7 +96,7 @@ class inverted_index: public disk_index
         /**
          * Default destructor.
          */
-        virtual ~inverted_index() = default;
+        virtual ~inverted_index();
 
         /**
          * @param doc The document to tokenize
@@ -247,20 +258,10 @@ class inverted_index: public disk_index
         /**
          * Basic exception for inverted_index interactions.
          */
-        class inverted_index_exception: public std::exception
+        class inverted_index_exception: public std::runtime_error
         {
             public:
-
-                inverted_index_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what() const throw()
-                {
-                    return _error.c_str();
-                }
-
-            private:
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 
         /**

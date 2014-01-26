@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include "classify/classifier/knn.h"
+#include "corpus/document.h"
 
 namespace meta {
 namespace classify {

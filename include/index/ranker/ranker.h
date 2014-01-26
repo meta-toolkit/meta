@@ -10,8 +10,23 @@
 #ifndef _RANKER_H_
 #define _RANKER_H_
 
-#include "index/inverted_index.h"
-#include "index/score_data.h"
+#include <utility>
+#include <vector>
+
+#include "meta.h"
+
+namespace meta {
+
+namespace corpus {
+class document;
+}
+
+namespace index {
+class inverted_index;
+struct score_data;
+}
+
+}
 
 namespace meta {
 namespace index {

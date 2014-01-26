@@ -10,9 +10,6 @@
 #ifndef _OKAPI_BM25_H_
 #define _OKAPI_BM25_H_
 
-#include <vector>
-#include <utility>
-#include "index/inverted_index.h"
 #include "index/ranker/ranker.h"
 
 namespace meta {

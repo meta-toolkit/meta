@@ -10,21 +10,37 @@
 #define _DISK_INDEX_H_
 
 #include <memory>
-#include <string>
-#include <vector>
-#include "index/postings_data.h"
-#include "index/make_index.h"
-#include "index/vocabulary_map.h"
-#include "index/cached_index.h"
-#include "tokenizers/all.h"
-#include "util/disk_vector.h"
-#include "util/sqlite_map.h"
-#include "caching/all.h"
-#include "corpus/corpus.h"
+#include <mutex>
+
+#include "caching/dblru_cache.h"
+#include "util/invertible_map.h"
 #include "meta.h"
+
+namespace cpptoml {
+class toml_group;
+}
+
+namespace meta {
+namespace util {
+
+template <class, class, template <class, class> class>
+class sqlite_map;
+
+template <class>
+class disk_vector;
+}
+
+namespace tokenizers {
+class tokenizer;
+}
+
+}
+
 
 namespace meta {
 namespace index {
+
+class vocabulary_map;
 
 /**
  * Holds generic data structures and functions that inverted_index and
@@ -51,21 +67,19 @@ class disk_index
 
     /**
      * Move constructs a disk_index.
-     * @param other The disk_index to move into this one.
      **/
-    disk_index(disk_index && other) = default;
+    disk_index(disk_index&&);
 
     /**
      * Move assigns a disk_index.
-     * @param other The disk_index to move into this one.
      */
-    disk_index & operator=(disk_index && other) = default;
+    disk_index& operator=(disk_index&&);
 
    public:
     /**
      * Default destructor.
      */
-    virtual ~disk_index() = default;
+    virtual ~disk_index();
 
     /**
      * @return the number of documents in this index

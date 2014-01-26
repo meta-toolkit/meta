@@ -9,13 +9,13 @@
 #ifndef _POSTINGS_DATA_
 #define _POSTINGS_DATA_
 
-#include <algorithm>
-#include <type_traits>
+#include <limits>
+#include <utility>
 #include <vector>
-#include <string>
-#include "io/compressed_file_writer.h"
-#include "io/compressed_file_reader.h"
+
 #include "meta.h"
+#include "io/compressed_file_reader.h"
+#include "io/compressed_file_writer.h"
 
 namespace meta {
 namespace index {

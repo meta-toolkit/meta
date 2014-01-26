@@ -4,7 +4,12 @@
  */
 
 #include <numeric>
+
 #include "index/disk_index.h"
+#include "index/vocabulary_map.h"
+#include "tokenizers/tokenizer.h"
+#include "util/sqlite_map.h"
+#include "util/disk_vector.h"
 
 namespace meta {
 namespace index {
@@ -12,6 +17,10 @@ namespace index {
 disk_index::disk_index(const cpptoml::toml_group & config):
     _tokenizer{tokenizers::tokenizer::load(config)}
 { /* nothing */}
+
+disk_index::disk_index(disk_index&&) = default;
+disk_index::~disk_index() = default;
+disk_index& disk_index::operator=(disk_index&&) = default;
 
 term_id disk_index::get_term_id(const std::string & term)
 {

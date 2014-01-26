@@ -4,6 +4,7 @@
 
 #include <numeric>
 #include <random>
+#include "index/postings_data.h"
 #include "classify/classifier/winnow.h"
 
 namespace meta {

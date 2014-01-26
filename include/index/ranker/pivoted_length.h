@@ -10,9 +10,6 @@
 #ifndef _PIVOTED_LENGTH_H_
 #define _PIVOTED_LENGTH_H_
 
-#include <vector>
-#include <utility>
-#include "index/inverted_index.h"
 #include "index/ranker/ranker.h"
 
 namespace meta {

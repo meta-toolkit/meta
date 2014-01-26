@@ -9,8 +9,8 @@
 #ifndef _CHUNK_H_
 #define _CHUNK_H_
 
+#include <cstdint>
 #include <string>
-#include "meta.h"
 
 namespace meta {
 namespace index {

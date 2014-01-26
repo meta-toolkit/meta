@@ -3,7 +3,9 @@
  * @author Sean Massung
  */
 
+#include "index/inverted_index.h"
 #include "index/ranker/pivoted_length.h"
+#include "index/score_data.h"
 
 namespace meta {
 namespace index {

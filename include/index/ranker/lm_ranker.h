@@ -10,10 +10,6 @@
 #ifndef _LM_RANKER_H_
 #define _LM_RANKER_H_
 
-#include <vector>
-#include <utility>
-#include "meta.h"
-#include "index/inverted_index.h"
 #include "index/ranker/ranker.h"
 
 namespace meta {

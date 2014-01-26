@@ -3,9 +3,12 @@
  * @author Sean Massung
  */
 
-#include <iostream>
-#include <unordered_set>
 #include "index/forward_index.h"
+#include "index/postings_data.h"
+#include "index/vocabulary_map.h"
+#include "tokenizers/tokenizer.h"
+#include "util/disk_vector.h"
+#include "util/sqlite_map.h"
 
 namespace meta {
 namespace index {

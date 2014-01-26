@@ -4,6 +4,7 @@
  */
 
 #include "index/ranker/dirichlet_prior.h"
+#include "index/score_data.h"
 
 namespace meta {
 namespace index {

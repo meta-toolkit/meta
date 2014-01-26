@@ -5,7 +5,7 @@
 
 #include "index/vocabulary_map_writer.h"
 #include "util/filesystem.h"
-#include <cassert>
+#include "meta.h"
 
 namespace meta
 {
@@ -24,7 +24,7 @@ vocabulary_map_writer::vocabulary_map_writer(const std::string& path,
 {
     file_.open(path, file_.binary | file_.trunc);
     if (!file_ || !inverse_file_)
-        throw inverted_index::inverted_index_exception{
+        throw vocabulary_map_writer_exception{
             "failed to open vocabulary map file"};
 }
 

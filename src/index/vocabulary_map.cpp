@@ -5,6 +5,7 @@
 
 #include <cstring>
 #include "index/vocabulary_map.h"
+#include "util/optional.h"
 
 namespace meta
 {

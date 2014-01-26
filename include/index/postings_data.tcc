@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <algorithm>
 #include "index/postings_data.h"
 #include "util/common.h"
 
@@ -191,7 +192,7 @@ namespace {
                     typename std::enable_if<
                         !std::is_same<T, std::string>::value
                     >::type * = nullptr) {
-        return sizeof(T);
+        return sizeof(elem);
     }
 }
 

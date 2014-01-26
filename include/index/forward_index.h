@@ -9,9 +9,24 @@
 #ifndef _FORWARD_INDEX_H_
 #define _FORWARD_INDEX_H_
 
+#include <stdexcept>
+
 #include "index/disk_index.h"
-#include "corpus/document.h"
+#include "index/make_index.h"
 #include "meta.h"
+
+namespace meta {
+
+namespace corpus {
+class corpus;
+}
+
+namespace index {
+template <class, class>
+class postings_data;
+}
+
+}
 
 namespace meta {
 namespace index {
@@ -139,20 +154,10 @@ class forward_index: public disk_index
         /**
          * Basic exception for forward_index interactions.
          */
-        class forward_index_exception: public std::exception
+        class forward_index_exception: public std::runtime_error
         {
             public:
-
-                forward_index_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what() const throw()
-                {
-                    return _error.c_str();
-                }
-
-            private:
-                std::string _error;
+               using std::runtime_error::runtime_error;
         };
 
         /**

@@ -4,13 +4,13 @@
  * @author Chase Geigle
  */
 
-#include <iostream>
-#include <numeric>
+#include "corpus/corpus.h"
 #include "index/inverted_index.h"
-#include "index/chunk.h"
+#include "index/vocabulary_map.h"
 #include "index/vocabulary_map_writer.h"
-#include "logging/logger.h"
 #include "parallel/thread_pool.h"
+#include "tokenizers/tokenizer.h"
+#include "util/sqlite_map.h"
 
 namespace meta {
 namespace index {
@@ -19,6 +19,10 @@ inverted_index::inverted_index(const cpptoml::toml_group & config):
     disk_index{config},
     _index_name{*cpptoml::get_as<std::string>(config, "inverted-index")}
 { /* nothing */ }
+
+inverted_index::inverted_index(inverted_index&&) = default;
+inverted_index::~inverted_index() = default;
+inverted_index& inverted_index::operator=(inverted_index&&) = default;
 
 std::string inverted_index::index_name() const
 {

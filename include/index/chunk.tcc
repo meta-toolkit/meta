@@ -3,10 +3,12 @@
  * @author Sean Massung
  */
 
-#include <fstream>
-#include "util/filesystem.h"
 #include "index/chunk.h"
 #include "index/postings_data.h"
+
+#include "io/compressed_file_reader.h"
+#include "io/compressed_file_writer.h"
+#include "util/filesystem.h"
 
 namespace meta {
 namespace index {
@@ -162,7 +164,7 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container & pdata)
         ++terms;
         output << *other_pd;
         ++other_pd;
-    } 
+    }
 
     my_data.close();
     output.close();

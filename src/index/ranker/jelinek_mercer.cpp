@@ -4,6 +4,7 @@
  */
 
 #include "index/ranker/jelinek_mercer.h"
+#include "index/score_data.h"
 
 namespace meta {
 namespace index {
@@ -20,7 +21,7 @@ double jelinek_mercer::smoothed_prob(const score_data & sd) const
     return (1.0 - _lambda) * max_likelihood + _lambda * pc;
 }
 
-double jelinek_mercer::doc_constant(const score_data & sd) const
+double jelinek_mercer::doc_constant(const score_data &) const
 {
     return _lambda;
 }

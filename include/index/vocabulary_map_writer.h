@@ -6,7 +6,10 @@
 #ifndef _META_VOCABULARY_MAP_WRITER_H_
 #define _META_VOCABULARY_MAP_WRITER_H_
 
-#include "index/inverted_index.h"
+#include <cstdint>
+#include <fstream>
+#include <stdexcept>
+#include <string>
 
 namespace meta
 {
@@ -30,6 +33,11 @@ class vocabulary_map_writer
     ~vocabulary_map_writer();
 
     void insert(const std::string& term);
+
+    class vocabulary_map_writer_exception: public std::runtime_error
+    {
+      using std::runtime_error::runtime_error;
+    };
 
   private:
     void write_padding();

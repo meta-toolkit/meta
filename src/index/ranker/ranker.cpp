@@ -3,7 +3,10 @@
  * @author Sean Massung
  */
 
+#include "corpus/document.h"
+#include "index/inverted_index.h"
 #include "index/ranker/ranker.h"
+#include "index/score_data.h"
 
 namespace meta {
 namespace index {

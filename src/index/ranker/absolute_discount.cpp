@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include "index/ranker/absolute_discount.h"
+#include "index/score_data.h"
 
 namespace meta {
 namespace index {

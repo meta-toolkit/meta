@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include "cluster/similarity.h"
 #include "classify/classifier/naive_bayes.h"
+#include "index/postings_data.h"
 
 namespace meta {
 namespace classify {
