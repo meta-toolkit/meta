@@ -8,6 +8,7 @@
 #include "index/string_list.h"
 #include "index/string_list_writer.h"
 #include "index/vocabulary_map.h"
+#include "io/libsvm_parser.h"
 #include "tokenizers/tokenizer.h"
 #include "util/disk_vector.h"
 
@@ -32,6 +33,7 @@ std::string forward_index::liblinear_data(doc_id d_id) const
 void forward_index::load_index()
 {
     LOG(info) << "Loading index from disk: " << _index_name << ENDLG;
+    load_metadata();
 }
 
 void forward_index::create_index(const std::string & config_file)
@@ -73,10 +75,28 @@ void forward_index::create_libsvm_postings(const cpptoml::toml_group& config)
     filesystem::copy_file(existing_file, _index_name + "/postings.index");
 }
 
+void forward_index::load_metadata()
+{
+    uint64_t num_docs = filesystem::num_lines(_index_name + "/postings.index");
+    _doc_id_mapping =
+        common::make_unique<util::sqlite_map<doc_id, std::string,
+                                             caching::default_dblru_cache>>(
+            _index_name + "/docids.mapping"
+        );
+    _doc_sizes = common::make_unique<util::disk_vector<double>>(
+        _index_name + "/docsizes.counts", num_docs);
+    _labels = common::make_unique<util::disk_vector<label_id>>(
+        _index_name + "/docs.labels", num_docs);
+    _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
+        _index_name + "/docs.uniqueterms", num_docs);
+}
+
 void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
 {
+    load_metadata();
+
     doc_id d_id{0};
-    std::unordered_set<term_id> terms;
+    std::unordered_set<std::string> terms;
 
     std::ifstream in{_index_name + "/postings.index"};
     std::string line;
@@ -86,23 +106,16 @@ void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
         if(line.empty())
             break;
 
-        std::stringstream stream{line};
-        std::string token;
-        stream >> token;
-        (*_labels)[d_id] = get_label_id(class_label{token});
+        class_label lbl = io::libsvm_parser::label(line);
+        (*_labels)[d_id] = get_label_id(lbl);
 
         uint64_t num_unique = 0;
         uint64_t length = 0;
-        double count = 0.0;
-        term_id term;
-        while(stream >> token)
+        for(auto & count_pair: io::libsvm_parser::counts(line))
         {
             ++num_unique;
-            size_t idx = token.find_first_of(':');
-            std::string feature = token.substr(0, idx);
-            std::istringstream{feature} >> term;
-            std::istringstream{token.substr(idx + 1)} >> count;
-            length += static_cast<uint64_t>(count); // TODO
+            terms.insert(count_pair.first);
+            length += static_cast<uint64_t>(count_pair.second); // TODO
         }
 
         //_doc_id_mapping->insert(d_id, "[no path]");

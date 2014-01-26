@@ -25,6 +25,7 @@ endif()
 add_library(meta-io
             src/io/compressed_file_reader.cpp
             src/io/parser.cpp
+            src/io/libsvm_parser.cpp
             src/io/compressed_file_writer.cpp
             src/io/mmap_file.cpp)
 
