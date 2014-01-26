@@ -13,6 +13,7 @@
 
 #include "index/disk_index.h"
 #include "index/make_index.h"
+#include "util/disk_vector.h"
 #include "meta.h"
 
 namespace meta {
@@ -111,7 +112,7 @@ class forward_index: public disk_index
     /**
      * Initializes this index's metadata structures.
      */
-    void load_metadata();
+    void init_metadata();
 
     /**
      * This function loads a disk index from its filesystem
@@ -154,6 +155,9 @@ class forward_index: public disk_index
 
     /** the total number of unique terms if _term_id_mapping is unused */
     uint64_t _total_unique_terms;
+
+    /** doc_id -> postings file byte location */
+    std::unique_ptr<util::disk_vector<uint64_t>> _doc_byte_locations;
 
     public:
         /**

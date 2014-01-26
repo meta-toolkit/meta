@@ -20,7 +20,7 @@ namespace io {
 
 namespace libsvm_parser {
 
-    using counts_t = std::vector<std::pair<std::string, double>>;
+    using counts_t = const std::vector<std::pair<term_id, double>>;
 
     /**
      * Extracts a class_label from a string in libsvm format

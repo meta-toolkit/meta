@@ -16,39 +16,39 @@ namespace
 {
     void label()
     {
-        auto same = { "a b:2e-3 f:4.01 gg:22 h:1",
-                      "a  b:2e-3 f:4.01   gg:22 h:1  " };
+        auto same = { "a 12:2e-3 15:4.01 99:22 122:1",
+                      "a  12:2e-3 15:4.01   99:22 122:1  " };
         for(auto & text: same)
         {
             ASSERT(io::libsvm_parser::label(text) == class_label{"a"});
             auto counts = io::libsvm_parser::counts(text);
             ASSERT(counts.size() == 4);
-            ASSERT(counts[0].first  == "b");
+            ASSERT(counts[0].first  == 12);
             ASSERT(counts[0].second == 2e-3);
-            ASSERT(counts[1].first  == "f");
+            ASSERT(counts[1].first  == 15);
             ASSERT(counts[1].second == 4.01);
-            ASSERT(counts[2].first  == "gg");
+            ASSERT(counts[2].first  == 99);
             ASSERT(counts[2].second == 22.0);
-            ASSERT(counts[3].first  == "h");
+            ASSERT(counts[3].first  == 122);
             ASSERT(counts[3].second == 1.0);
         }
     }
 
     void no_label()
     {
-        auto same = { "bbb:2e-3 f___:4.01 g1g:22 13:1",
-                      "bbb:2e-3 f___:4.01   g1g:22 13:1  " };
+        auto same = { "1:2e-3 2:4.01 3:22 13:1",
+                      "1:2e-3 2:4.01   3:22 13:1  " };
         for(auto & text: same)
         {
             auto counts = io::libsvm_parser::counts(text, false);
             ASSERT(counts.size() == 4);
-            ASSERT(counts[0].first  == "bbb");
+            ASSERT(counts[0].first  == 1);
             ASSERT(counts[0].second == 2e-3);
-            ASSERT(counts[1].first  == "f___");
+            ASSERT(counts[1].first  == 2);
             ASSERT(counts[1].second == 4.01);
-            ASSERT(counts[2].first  == "g1g");
+            ASSERT(counts[2].first  == 3);
             ASSERT(counts[2].second == 22.0);
-            ASSERT(counts[3].first  == "13");
+            ASSERT(counts[3].first  == 13);
             ASSERT(counts[3].second == 1.0);
         }
     }

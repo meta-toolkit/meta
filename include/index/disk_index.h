@@ -196,6 +196,13 @@ class disk_index
      */
     util::invertible_map<class_label, label_id> _label_ids;
 
+    /**
+     * A pointer to a memory-mapped postings file. It is a pointer because
+     * we want to delay the initialization of it until the postings file is
+     * created in some cases.
+     */
+    std::unique_ptr<io::mmap_file> _postings;
+
     /** mutex for thread-safe operations */
     std::unique_ptr<std::mutex> _mutex{new std::mutex};
 

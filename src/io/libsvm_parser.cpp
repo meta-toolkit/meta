@@ -34,8 +34,8 @@ counts_t counts(const std::string & text, bool contains_label /* = true */)
         throw libsvm_parser_exception{"incorrectly formatted libsvm data: "
             + text};
 
-    counts_t counts;
-    std::string feature;
+    std::vector<std::pair<term_id, double>> counts;
+    term_id term;
     double count;
     while(stream >> token)
     {
@@ -45,7 +45,8 @@ counts_t counts(const std::string & text, bool contains_label /* = true */)
             throw libsvm_parser_exception{"incorrectly formatted libsvm data: "
                 + text};
 
-        feature = token.substr(0, colon);
+        std::istringstream term_stream{token.substr(0, colon)};
+        term_stream >> term;
         std::istringstream double_stream{token.substr(colon + 1)};
         double_stream >> count;
 
@@ -54,7 +55,7 @@ counts_t counts(const std::string & text, bool contains_label /* = true */)
             throw libsvm_parser_exception{"incorrectly formatted libsvm data: "
                 + text};
 
-        counts.emplace_back(feature, count);
+        counts.emplace_back(term, count);
     }
 
     if(counts.empty())

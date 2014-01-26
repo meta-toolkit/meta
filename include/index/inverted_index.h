@@ -238,13 +238,6 @@ class inverted_index: public disk_index
          */
         std::unique_ptr<util::disk_vector<uint64_t>> _term_bit_locations;
 
-        /**
-         * A pointer to a memory-mapped postings file. It is a pointer because
-         * we want to delay the initialization of it until the postings file is
-         * created in some cases.
-         */
-        std::unique_ptr<io::mmap_file> _postings;
-
         /** mutex for accessing the priority_queue of chunks */
         std::unique_ptr<std::mutex> _queue_mutex{new std::mutex};
 
