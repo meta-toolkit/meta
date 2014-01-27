@@ -122,7 +122,11 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
 {
     count_t mutable_counts{_counts};
     writer.write(mutable_counts[0].first);
-    writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[0].second));
+    if(std::is_same<PrimaryKey, term_id>::value
+       || std::is_same<PrimaryKey, std::string>::value)
+        writer.write(static_cast<uint64_t>(mutable_counts[0].second));
+    else
+        writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[0].second));
 
     // use gap encoding on the SecondaryKeys (we know they are integral types)
     uint64_t cur_id = mutable_counts[0].first;
