@@ -6,7 +6,7 @@
 #include "cluster/similarity.h"
 #include "corpus/corpus.h"
 #include "corpus/document.h"
-#include "util/common.h"
+#include "util/mapping.h"
 
 namespace meta {
 namespace corpus {
@@ -60,7 +60,7 @@ uint64_t document::length() const
 
 double document::count(const std::string & term) const
 {
-    return common::safe_at(_counts, term);
+    return map::safe_at(_counts, term);
 }
 
 const std::unordered_map<std::string, double> & document::counts() const

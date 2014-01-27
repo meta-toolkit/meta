@@ -12,6 +12,7 @@
 #include "index/vocabulary_map_writer.h"
 #include "parallel/thread_pool.h"
 #include "tokenizers/tokenizer.h"
+#include "util/mapping.h"
 
 namespace meta {
 namespace index {
@@ -60,7 +61,7 @@ void inverted_index::create_index(const std::string & config_file)
     _term_id_mapping =
         common::make_unique<vocabulary_map>(_index_name + "/termids.mapping");
 
-    common::save_mapping(_label_ids, _index_name + "/labelids.mapping");
+    map::save_mapping(_label_ids, _index_name + "/labelids.mapping");
     _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
 
     LOG(info) << "Done creating index: " << _index_name << ENDLG;
@@ -87,7 +88,7 @@ void inverted_index::load_index()
     _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/lexicon.index");
 
-    common::load_mapping(_label_ids, _index_name + "/labelids.mapping");
+    map::load_mapping(_label_ids, _index_name + "/labelids.mapping");
     _tokenizer = tokenizers::tokenizer::load(config);
 
     _postings = common::make_unique<io::mmap_file>(

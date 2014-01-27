@@ -3,12 +3,13 @@
  * @author Sean Massung
  */
 
-#include <iomanip>
 #include <algorithm>
+#include <iomanip>
 #include <vector>
-#include "util/common.h"
-#include "util/printing.h"
+
 #include "classify/confusion_matrix.h"
+#include "util/mapping.h"
+#include "util/printing.h"
 
 namespace meta {
 namespace classify {
@@ -89,11 +90,11 @@ void confusion_matrix::print_class_stats(std::ostream & out, const class_label &
 {
     for(auto & cls: _classes)
     {
-        prec += common::safe_at(_predictions, std::make_pair(cls, label));
-        rec  += common::safe_at(_predictions, std::make_pair(label, cls));
+        prec += map::safe_at(_predictions, std::make_pair(cls, label));
+        rec  += map::safe_at(_predictions, std::make_pair(label, cls));
     }
 
-    double correct = common::safe_at(_predictions, std::make_pair(label, label));
+    double correct = map::safe_at(_predictions, std::make_pair(label, label));
 
     if(rec != 0.0)
         rec = correct / rec;
@@ -174,7 +175,7 @@ double confusion_matrix::accuracy() const
 {
     double correct = 0.0;
     for(auto & cls: _classes)
-        correct += common::safe_at(_predictions, std::make_pair(cls, cls));
+        correct += map::safe_at(_predictions, std::make_pair(cls, cls));
     return correct / _total;
 }
 
@@ -214,8 +215,8 @@ bool confusion_matrix::mcnemar_significant(const confusion_matrix & a, const con
 
     for(auto & cls: classes)
     {
-        auto a_count = common::safe_at(a._predictions, std::make_pair(cls, cls));
-        auto b_count = common::safe_at(b._predictions, std::make_pair(cls, cls));
+        auto a_count = map::safe_at(a._predictions, std::make_pair(cls, cls));
+        auto b_count = map::safe_at(b._predictions, std::make_pair(cls, cls));
         if(a_count > b_count)
             a_adv += (a_count - b_count);
         else if(b_count > a_count)
