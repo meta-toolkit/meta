@@ -67,7 +67,7 @@ int main( int argc, char ** argv )
 {
     if( argc != 5 )
         return print_usage( argv[0] );
-    common::set_cerr_logging();
+    logging::set_cerr_logging();
     std::vector<std::string> args( argv, argv + argc );
     double alpha = std::stod( argv[2] );
     double beta = std::stod( argv[3] );

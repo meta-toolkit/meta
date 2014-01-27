@@ -41,25 +41,6 @@ Duration time(Functor && functor)
 }
 
 /**
- * Sets up default logging to cerr. Useful for a lot of the demo apps
- * to reduce verbosity in setup.
- */
-inline void set_cerr_logging(logging::logger::severity_level sev = 
-        logging::logger::severity_level::trace)
-{
-    using namespace meta::logging;
-
-    // separate logging for progress output
-    logging::add_sink({std::cerr, [](const logger::log_line & ll) {
-        return ll.severity() == logger::severity_level::progress;
-    }, [](const logger::log_line & ll) {
-        return " " + ll.str();
-    }});
-
-    logging::add_sink({std::cerr, sev});
-}
-
-/**
  * This safe_at allows the use of a hash function to be specified.
  * @return the value for a given key in map if it exists; otherwise,
  * the default Value() is returned.
