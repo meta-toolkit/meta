@@ -108,6 +108,8 @@ class compressed_file_writer
 
 };
 
+uint64_t default_compression_writer_func(uint64_t key);
+
 }
 }
 

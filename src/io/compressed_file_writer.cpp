@@ -5,6 +5,7 @@
 
 #include <cmath>
 #include <cstring>
+#include <limits>
 #include "io/compressed_file_writer.h"
 
 namespace meta {
@@ -99,6 +100,13 @@ void compressed_file_writer::write_buffer() const
     if(fwrite(_buffer, 1, _buffer_size, _outfile) != _buffer_size)
         throw compressed_file_writer_exception("error writing to file");
     memset(_buffer, 0, _buffer_size);
+}
+
+uint64_t default_compression_writer_func(uint64_t key)
+{
+    if(key == std::numeric_limits<uint64_t>::max()) // delimiter
+        return uint64_t{1};
+    return key + 2;
 }
 
 }

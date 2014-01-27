@@ -165,7 +165,7 @@ void inverted_index::write_chunk(uint32_t chunk_num,
         std::string chunk_name =
             _index_name + "/chunk-" + common::to_string(chunk_num);
         io::compressed_file_writer outfile{chunk_name,
-            common::default_compression_writer_func};
+                                           io::default_compression_writer_func};
         for(auto & p: pdata)
             outfile << p;
 
@@ -254,14 +254,14 @@ void inverted_index::compress(const std::string & filename,
     // file as well as rename it
     {
         io::compressed_file_writer out{cfilename,
-            common::default_compression_writer_func};
+                                       io::default_compression_writer_func};
 
         vocabulary_map_writer vocab{_index_name + "/termids.mapping"};
 
         postings_data<std::string, doc_id> pdata;
         auto length = filesystem::file_size(filename) * 8; // number of bits
         io::compressed_file_reader in{filename,
-            common::default_compression_reader_func};
+                                      io::default_compression_reader_func};
         auto idx = in.bit_location();
 
         // allocate memory for the term_id -> term location mapping now
@@ -344,7 +344,7 @@ auto inverted_index::search_primary(term_id t_id) const
         return std::make_shared<postings_data_type>(t_id);
 
     io::compressed_file_reader reader{*_postings,
-        common::default_compression_reader_func};
+                                      io::default_compression_reader_func};
     reader.seek(_term_bit_locations->at(idx));
 
     auto pdata = std::make_shared<postings_data_type>(t_id);

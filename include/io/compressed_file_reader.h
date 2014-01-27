@@ -136,6 +136,8 @@ class compressed_file_reader
         };
 };
 
+uint64_t default_compression_reader_func(uint64_t value);
+
 }
 }
 

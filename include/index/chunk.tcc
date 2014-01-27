@@ -51,11 +51,11 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
     std::string temp_name = _path + "_merge";
 
     io::compressed_file_reader my_data{_path,
-        common::default_compression_reader_func};
+        io::default_compression_reader_func};
     io::compressed_file_reader other_data{other._path,
-        common::default_compression_reader_func};
+        io::default_compression_reader_func};
     io::compressed_file_writer output{temp_name,
-        common::default_compression_writer_func};
+        io::default_compression_writer_func};
 
     postings_data<PrimaryKey, SecondaryKey> my_pd;
     postings_data<PrimaryKey, SecondaryKey> other_pd;
@@ -121,9 +121,9 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container & pdata)
     std::string temp_name = _path + "_merge";
 
     io::compressed_file_reader my_data{_path,
-        common::default_compression_reader_func};
+                                       io::default_compression_reader_func};
     io::compressed_file_writer output{temp_name,
-        common::default_compression_writer_func};
+                                      io::default_compression_writer_func};
 
     postings_data<PrimaryKey, SecondaryKey> my_pd;
     my_data >> my_pd;

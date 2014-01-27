@@ -140,5 +140,12 @@ bool compressed_file_reader::read_bit()
     return bit;
 }
 
+uint64_t default_compression_reader_func(uint64_t value)
+{
+    if(value == 1)
+        return std::numeric_limits<uint64_t>::max(); // delimiter
+    return value - 2;
+}
+
 }
 }

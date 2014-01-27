@@ -25,20 +25,6 @@
 namespace meta {
 namespace common {
 
-inline uint64_t default_compression_writer_func(uint64_t key)
-{
-    if(key == std::numeric_limits<uint64_t>::max()) // delimiter
-        return uint64_t{1};
-    return key + 2;
-}
-
-inline uint64_t default_compression_reader_func(uint64_t value)
-{
-    if(value == 1)
-        return std::numeric_limits<uint64_t>::max(); // delimiter
-    return value - 2;
-}
-
 /**
  * Writes an object in binary format to a stream.
  * @param out The stream to write to
