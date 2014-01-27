@@ -335,6 +335,11 @@ void inverted_index::tokenize(corpus::document & doc)
     _tokenizer->tokenize(doc);
 }
 
+uint64_t inverted_index::idf(term_id t_id) const
+{
+    return search_primary(t_id)->counts().size();
+}
+
 auto inverted_index::search_primary(term_id t_id) const
     -> std::shared_ptr<postings_data_type>
 {
