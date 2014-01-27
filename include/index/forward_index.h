@@ -13,20 +13,14 @@
 
 #include "index/disk_index.h"
 #include "index/make_index.h"
+#include "index/postings_data.h" // needed for std::hash specialization
 #include "util/disk_vector.h"
 #include "meta.h"
 
 namespace meta {
-
 namespace corpus {
 class corpus;
 }
-
-namespace index {
-template <class, class>
-class postings_data;
-}
-
 }
 
 namespace meta {
@@ -45,6 +39,8 @@ class forward_index: public disk_index
     using primary_key_type   = doc_id;
     using secondary_key_type = term_id;
     using postings_data_type = postings_data<doc_id, term_id>;
+    using inverted_pdata_type = postings_data<term_id, doc_id>;
+    using index_pdata_type = postings_data_type;
     using exception = forward_index_exception;
 
    protected:
@@ -153,11 +149,41 @@ class forward_index: public disk_index
      */
     bool is_libsvm_format(const cpptoml::toml_group& config) const;
 
+    /**
+     * Merges chunks from uninverting into a single postings_data file.
+     */
+    void merge_chunks();
+
     /** the total number of unique terms if _term_id_mapping is unused */
     uint64_t _total_unique_terms;
 
     /** doc_id -> postings file byte location */
     std::unique_ptr<util::disk_vector<uint64_t>> _doc_byte_locations;
+
+    /**
+     * TODO: combine with inverted_index's chunk handler?
+     */
+    class chunk_handler
+    {
+       private:
+        void flush_chunk();
+
+        std::unordered_set<index_pdata_type> pdata_;
+        uint64_t chunk_size_{0};
+        const static uint64_t constexpr max_size = 1024*1024*128; // 128 MB
+        forward_index * idx_;
+        std::atomic<uint32_t> & chunk_num_;
+
+       public:
+        chunk_handler(forward_index * idx,
+                      std::atomic<uint32_t> & chunk_num)
+            : idx_{idx}, chunk_num_{chunk_num}
+        { /* nothing */ }
+
+        void operator()(const inverted_pdata_type & single_pdata);
+
+        ~chunk_handler();
+    };
 
     public:
         /**

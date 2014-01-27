@@ -74,8 +74,7 @@ void inverted_index::load_index()
 
     auto config = cpptoml::parse_file(_index_name + "/config.toml");
 
-    _doc_id_mapping = make_unique<string_list>(_index_name
-                                                       + "/docids.mapping");
+    _doc_id_mapping = make_unique<string_list>(_index_name + "/docids.mapping");
 
     _term_id_mapping =
         make_unique<vocabulary_map>(_index_name + "/termids.mapping");

@@ -9,6 +9,7 @@
 #ifndef _POSTINGS_DATA_
 #define _POSTINGS_DATA_
 
+#include <fstream>
 #include <limits>
 #include <utility>
 #include <vector>
@@ -164,6 +165,17 @@ class postings_data
          * @param reader The compressed file to read from
          */
         void read_compressed(io::compressed_file_reader & reader);
+
+        /**
+         * @param out The output stream to write to
+         */
+        void write_libsvm(std::ofstream & out) const
+        {
+            out << _p_id;
+            for(auto & c: _counts)
+                out << ' ' << c.first << ':' << c.second;
+            out << '\n';
+        }
 
         /**
          * @return the term_id for this postings_data

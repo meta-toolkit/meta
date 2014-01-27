@@ -4,6 +4,7 @@
  */
 
 #include "index/forward_index.h"
+#include "index/inverted_index.h"
 #include "index/postings_data.h"
 #include "index/string_list.h"
 #include "index/string_list_writer.h"
@@ -29,7 +30,15 @@ std::string forward_index::index_name() const
 
 std::string forward_index::liblinear_data(doc_id d_id) const
 {
-    return "";
+    if(d_id >= num_docs())
+        throw forward_index_exception{"invalid doc_id in search_primary"};
+
+    uint64_t begin = (*_doc_byte_locations)[d_id];
+    uint64_t length = 0;
+    while(_postings->start()[begin + length] != '\n')
+        ++length; // TODO maybe save lengths as well?
+
+    return std::string{_postings->start() + begin, length};
 }
 
 void forward_index::load_index()
@@ -74,13 +83,14 @@ void forward_index::create_index(const std::string & config_file)
     }
     else
     {
+        make_index<inverted_index, caching::default_dblru_cache>(config_file,
+                uint64_t{100000});
         uninvert(config);
         create_uninverted_metadata(config);
     }
 
     // now that the files are tokenized, we can create the string_list
-    _doc_id_mapping = make_unique<string_list>(_index_name
-                                                    + "/docids.mapping");
+    _doc_id_mapping = make_unique<string_list>(_index_name + "/docids.mapping");
     map::save_mapping(_label_ids, _index_name + "/labelids.mapping");
 
     LOG(info) << "Done creating index: " << _index_name << ENDLG;
@@ -167,12 +177,17 @@ void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
     _total_unique_terms = terms.size();
 }
 
-void forward_index::uninvert(const cpptoml::toml_group& config)
-{
-}
-
 void forward_index::create_uninverted_metadata(const cpptoml::toml_group& config)
 {
+    auto files = { "/docids.mapping", "/docids.mapping_index.vector",
+        "/termids.mapping", "/termids.mapping.inverse.vector",
+        "/docsizes.counts.vector", "/docs.labels.vector",
+        "/docs.uniqueterms.vector", "/labelids.mapping" };
+
+    auto inv_name = *cpptoml::get_as<std::string>(config, "inverted-index");
+    for(auto & file: files)
+        filesystem::copy_file(inv_name + file, _index_name + file);
+
     init_metadata();
 }
 
@@ -200,18 +215,86 @@ uint64_t forward_index::unique_terms() const
 auto forward_index::search_primary(doc_id d_id) const
     -> std::shared_ptr<postings_data_type>
 {
-    if(d_id >= num_docs())
-        throw forward_index_exception{"invalid doc_id in search_primary"};
-
-    uint64_t begin = (*_doc_byte_locations)[d_id];
-    uint64_t length = 0;
-    while(_postings->start()[begin + length] != '\n')
-        ++length; // TODO maybe save lengths as well?
-
     auto pdata = std::make_shared<postings_data_type>(d_id);
-    std::string line{_postings->start() + begin, length};
+    std::string line{liblinear_data(d_id)};
     pdata->set_counts(io::libsvm_parser::counts(line));
     return pdata;
+}
+
+void forward_index::uninvert(const cpptoml::toml_group& config)
+{
+    auto inv_name = *cpptoml::get_as<std::string>(config, "inverted-index");
+    io::compressed_file_reader inv_reader{inv_name + "/postings.index",
+                                          io::default_compression_reader_func};
+    term_id t_id{0};
+    std::atomic<uint32_t> chunk_num{0};
+    chunk_handler handler{this, chunk_num};
+    while(inv_reader.has_next())
+    {
+        inverted_pdata_type pdata{t_id};
+        pdata.read_compressed(inv_reader);
+        handler(pdata);
+        ++t_id;
+    }
+
+    merge_chunks();
+}
+
+void forward_index::merge_chunks()
+{
+}
+
+void forward_index::chunk_handler::flush_chunk()
+{
+    if (chunk_size_ == 0)
+        return;
+
+    std::vector<index_pdata_type> pdata;
+    for (auto it = pdata_.begin(); it != pdata_.end(); it = pdata_.erase(it))
+        pdata.emplace_back(std::move(*it));
+    pdata_.clear();
+    std::sort(pdata.begin(), pdata.end());
+
+    std::string chunk_name = idx_->_index_name + "/chunk-" + std::to_string(chunk_num_);
+    std::ofstream outfile{chunk_name};
+    for(auto & p: pdata)
+        p.write_libsvm(outfile);
+
+    pdata.clear();
+    chunk_size_ = 0;
+}
+
+void forward_index::chunk_handler::operator()(const inverted_pdata_type & single_pdata)
+{
+    for(const auto& count: single_pdata.counts()) // count: (doc_id, uint)
+    {
+        index_pdata_type pd{count.first};
+        pd.increase_count(single_pdata.primary_key(), count.second);
+        auto it = pdata_.find(pd);
+        if(it == pdata_.end())
+        {
+            chunk_size_ += pd.bytes_used();
+            pdata_.emplace(pd);
+        }
+        else
+        {
+            chunk_size_ -= it->bytes_used();
+
+            // note: we can modify elements in this set because we do not change
+            // how comparisons are made (the primary_key value)
+            const_cast<index_pdata_type&>(*it).increase_count(
+                    single_pdata.primary_key(), count.second);
+            chunk_size_ += it->bytes_used();
+        }
+
+        if(chunk_size_ >= max_size)
+            flush_chunk();
+    }
+}
+
+forward_index::chunk_handler::~chunk_handler()
+{
+    flush_chunk();
 }
 
 }
