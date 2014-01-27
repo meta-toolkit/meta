@@ -11,6 +11,7 @@
 #include "io/libsvm_parser.h"
 #include "tokenizers/tokenizer.h"
 #include "util/disk_vector.h"
+#include "util/mapping.h"
 #include "util/shim.h"
 
 namespace meta {
@@ -34,9 +35,25 @@ std::string forward_index::liblinear_data(doc_id d_id) const
 void forward_index::load_index()
 {
     LOG(info) << "Loading index from disk: " << _index_name << ENDLG;
+
     init_metadata();
-    _doc_id_mapping = make_unique<string_list>(_index_name
-                                                    + "/docids.mapping");
+
+    _doc_id_mapping = make_unique<string_list>(_index_name + "/docids.mapping");
+    _postings = make_unique<io::mmap_file>(
+        _index_name + "/postings.index"
+    );
+
+    auto config = cpptoml::parse_file(_index_name + "/config.toml");
+    if(is_libsvm_format(config))
+        _term_id_mapping = nullptr;
+    else
+    {
+        _term_id_mapping =
+            make_unique<vocabulary_map>(_index_name + "/termids.mapping");
+    }
+
+    map::load_mapping(_label_ids, _index_name + "/labelids.mapping");
+    _tokenizer = tokenizers::tokenizer::load(config);
 }
 
 void forward_index::create_index(const std::string & config_file)
@@ -45,6 +62,7 @@ void forward_index::create_index(const std::string & config_file)
 
     filesystem::copy_file(config_file, _index_name + "/config.toml");
     auto config = cpptoml::parse_file(_index_name + "/config.toml");
+    _tokenizer = tokenizers::tokenizer::load(config);
 
     // if the corpus is a single libsvm formatted file, then we are done;
     // otherwise, we will create an inverted index and the uninvert it
@@ -52,6 +70,7 @@ void forward_index::create_index(const std::string & config_file)
     {
         create_libsvm_postings(config);
         create_libsvm_metadata(config);
+        _term_id_mapping = nullptr; // we don't know what the terms are!
     }
     else
     {
@@ -62,6 +81,7 @@ void forward_index::create_index(const std::string & config_file)
     // now that the files are tokenized, we can create the string_list
     _doc_id_mapping = make_unique<string_list>(_index_name
                                                     + "/docids.mapping");
+    map::save_mapping(_label_ids, _index_name + "/labelids.mapping");
 
     LOG(info) << "Done creating index: " << _index_name << ENDLG;
 }
