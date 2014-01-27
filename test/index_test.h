@@ -59,16 +59,22 @@ namespace testing {
     }
 
     template <class Index>
-    void check_doc_id(Index & idx)
+    void check_term_id(Index & idx)
     {
-        auto pdata = idx.search_primary(term_id{0});
-        ASSERT(pdata->primary_key() == term_id{0});
-        pdata = idx.search_primary(term_id{2});
-        ASSERT(pdata->primary_key() == term_id{2});
-        /*
+        term_id t_id = idx.get_term_id("japanes");
+        ASSERT(idx.idf(t_id) == 69);
+
+        term_id first;
+        double second;
+        std::ifstream in{"../data/ceeaus-term-count.txt"};
+        auto pdata = idx.search_primary(t_id);
         for(auto & count: pdata->counts())
-            std::cout << count.first << ":" << count.second << std::endl;
-        */
+        {
+            in >> first;
+            in >> second;
+            ASSERT(first == count.first);
+            ASSERT(second == count.second);
+        }
     }
 
     void index_tests()
@@ -86,7 +92,7 @@ namespace testing {
             auto idx = index::make_index<index::inverted_index,
                 caching::splay_cache>("test-config.toml", uint32_t{10000});
             check_ceeaus_expected(idx);
-            check_doc_id(idx);
+            check_term_id(idx);
             system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
         });
 
@@ -103,7 +109,7 @@ namespace testing {
             auto idx = index::make_index<index::inverted_index,
                 caching::splay_cache>("test-config.toml", uint32_t{10000});
             check_ceeaus_expected(idx);
-            check_doc_id(idx);
+            check_term_id(idx);
             system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
         });
     }
