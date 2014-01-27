@@ -3,20 +3,19 @@
  */
 
 #include <chrono>
-#include <vector>
-#include <string>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <string>
+#include <vector>
 
-#include "util/common.h"
-#include "tokenizers/tokenizer.h"
+#include "caching/all.h"
 #include "corpus/document.h"
 #include "index/inverted_index.h"
 #include "index/ranker/all.h"
-#include "caching/all.h"
-
-#include "util/range.h"
 #include "parallel/parallel_for.h"
+#include "tokenizers/tokenizer.h"
+#include "util/range.h"
+#include "util/time.h"
 
 using namespace meta;
 using std::cerr;

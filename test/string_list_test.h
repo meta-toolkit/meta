@@ -9,7 +9,7 @@
 #include <cstring>
 #include <fstream>
 
-#include "util/common.h"
+#include "io/binary.h"
 #include "index/string_list.h"
 #include "index/string_list_writer.h"
 #include "util/filesystem.h"
@@ -26,7 +26,7 @@ namespace
 void assert_read(std::ifstream& file, const std::string& expect)
 {
     std::string str;
-    common::read_binary(file, str);
+    io::read_binary(file, str);
     ASSERT(str == expect);
 }
 

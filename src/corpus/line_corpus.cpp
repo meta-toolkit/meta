@@ -7,7 +7,6 @@
 
 #include "corpus/line_corpus.h"
 #include "io/parser.h"
-#include "util/common.h"
 #include "util/filesystem.h"
 
 namespace meta {

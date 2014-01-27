@@ -4,7 +4,7 @@
 
 #include "io/mmap_file.h"
 #include "io/parser.h"
-#include "util/common.h"
+#include "util/shim.h"
 
 namespace meta {
 namespace io {
@@ -22,7 +22,7 @@ parser::parser(const std::string & input, const std::string & delims,
     if(in_type == input_type::File)
     {
         _filename = input;
-        _mmap_file = common::make_unique<io::mmap_file>(input);
+        _mmap_file = make_unique<io::mmap_file>(input);
         _data = _mmap_file->start();
         _size = _mmap_file->size();
     }

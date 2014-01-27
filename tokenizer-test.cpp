@@ -4,9 +4,12 @@
  */
 
 #include <iostream>
-#include "util/common.h"
+
+#include "cpptoml.h"
 #include "tokenizers/all.h"
 #include "corpus/all.h"
+#include "util/printing.h"
+#include "util/time.h"
 
 using namespace meta;
 
@@ -30,11 +33,11 @@ int main(int argc, char* argv[])
             auto doc = corpus->next();
             if(doc.id() >= total)
                 break;
-            common::show_progress(doc.id(), total, 100, progress);
+            printing::show_progress(doc.id(), total, 100, progress);
             tok->tokenize(doc);
             //std::cout << doc.content() << std::endl;
         }
-        common::end_progress(progress);
+        printing::end_progress(progress);
     });
 
     std::cerr << "Tokenizing took " << elapsed.count() << "s" << std::endl;

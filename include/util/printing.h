@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <string>
-#include "util/common.h"
 #include "logging/logger.h"
 
 namespace meta {

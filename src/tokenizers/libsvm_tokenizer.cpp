@@ -8,7 +8,6 @@
 #include "corpus/document.h"
 #include "io/libsvm_parser.h"
 #include "tokenizers/libsvm_tokenizer.h"
-#include "util/common.h"
 
 namespace meta {
 namespace tokenizers {

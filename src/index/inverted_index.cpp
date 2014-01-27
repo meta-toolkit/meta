@@ -13,6 +13,7 @@
 #include "parallel/thread_pool.h"
 #include "tokenizers/tokenizer.h"
 #include "util/mapping.h"
+#include "util/shim.h"
 
 namespace meta {
 namespace index {
@@ -43,26 +44,26 @@ void inverted_index::create_index(const std::string & config_file)
 
     uint64_t num_docs = docs->size();
 
-    _doc_sizes = common::make_unique<util::disk_vector<double>>(
+    _doc_sizes = make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts", num_docs);
-    _labels = common::make_unique<util::disk_vector<label_id>>(
+    _labels = make_unique<util::disk_vector<label_id>>(
         _index_name + "/docs.labels", num_docs);
-    _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
+    _unique_terms = make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/docs.uniqueterms", num_docs);
 
     tokenize_docs(docs.get());
 
-    _doc_id_mapping = common::make_unique<string_list>(_index_name
+    _doc_id_mapping = make_unique<string_list>(_index_name
                                                        + "/docids.mapping");
 
     uint64_t num_unique_terms = merge_chunks(_index_name + "/postings.index");
     compress(_index_name + "/postings.index", num_unique_terms);
 
     _term_id_mapping =
-        common::make_unique<vocabulary_map>(_index_name + "/termids.mapping");
+        make_unique<vocabulary_map>(_index_name + "/termids.mapping");
 
     map::save_mapping(_label_ids, _index_name + "/labelids.mapping");
-    _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
+    _postings = make_unique<io::mmap_file>(_index_name + "/postings.index");
 
     LOG(info) << "Done creating index: " << _index_name << ENDLG;
 }
@@ -73,25 +74,25 @@ void inverted_index::load_index()
 
     auto config = cpptoml::parse_file(_index_name + "/config.toml");
 
-    _doc_id_mapping = common::make_unique<string_list>(_index_name
+    _doc_id_mapping = make_unique<string_list>(_index_name
                                                        + "/docids.mapping");
 
     _term_id_mapping =
-        common::make_unique<vocabulary_map>(_index_name + "/termids.mapping");
+        make_unique<vocabulary_map>(_index_name + "/termids.mapping");
 
-    _doc_sizes = common::make_unique<util::disk_vector<double>>(
+    _doc_sizes = make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts");
-    _labels = common::make_unique<util::disk_vector<label_id>>(
+    _labels = make_unique<util::disk_vector<label_id>>(
         _index_name + "/docs.labels");
-    _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
+    _unique_terms = make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/docs.uniqueterms");
-    _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
+    _term_bit_locations = make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/lexicon.index");
 
     map::load_mapping(_label_ids, _index_name + "/labelids.mapping");
     _tokenizer = tokenizers::tokenizer::load(config);
 
-    _postings = common::make_unique<io::mmap_file>(
+    _postings = make_unique<io::mmap_file>(
         _index_name + "/postings.index"
     );
 }
@@ -267,7 +268,7 @@ void inverted_index::compress(const std::string & filename,
 
         // allocate memory for the term_id -> term location mapping now
         // that we know how many terms there are
-        _term_bit_locations = common::make_unique<util::disk_vector<uint64_t>>(
+        _term_bit_locations = make_unique<util::disk_vector<uint64_t>>(
                 _index_name + "/lexicon.index", num_unique_terms);
 
         // note: we will be accessing pdata in sorted order

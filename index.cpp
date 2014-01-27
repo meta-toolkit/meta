@@ -4,10 +4,10 @@
 
 #include <iostream>
 #include <fstream>
-#include "util/common.h"
 #include "index/inverted_index.h"
 #include "caching/all.h"
 #include "logging/logger.h"
+#include "util/time.h"
 
 using namespace meta;
 

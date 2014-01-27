@@ -11,6 +11,7 @@
 #include "io/libsvm_parser.h"
 #include "tokenizers/tokenizer.h"
 #include "util/disk_vector.h"
+#include "util/shim.h"
 
 namespace meta {
 namespace index {
@@ -34,7 +35,7 @@ void forward_index::load_index()
 {
     LOG(info) << "Loading index from disk: " << _index_name << ENDLG;
     init_metadata();
-    _doc_id_mapping = common::make_unique<string_list>(_index_name
+    _doc_id_mapping = make_unique<string_list>(_index_name
                                                     + "/docids.mapping");
 }
 
@@ -59,7 +60,7 @@ void forward_index::create_index(const std::string & config_file)
     }
 
     // now that the files are tokenized, we can create the string_list
-    _doc_id_mapping = common::make_unique<string_list>(_index_name
+    _doc_id_mapping = make_unique<string_list>(_index_name
                                                     + "/docids.mapping");
 
     LOG(info) << "Done creating index: " << _index_name << ENDLG;
@@ -83,7 +84,7 @@ void forward_index::create_libsvm_postings(const cpptoml::toml_group& config)
     init_metadata();
 
     // now, assign byte locations for libsvm doc starting points
-    _postings = common::make_unique<io::mmap_file>(_index_name + "/postings.index");
+    _postings = make_unique<io::mmap_file>(_index_name + "/postings.index");
     doc_id d_id{0};
     uint8_t last_byte = '\n';
     for(uint64_t idx = 0; idx < _postings->size(); ++idx)
@@ -100,13 +101,13 @@ void forward_index::create_libsvm_postings(const cpptoml::toml_group& config)
 void forward_index::init_metadata()
 {
     uint64_t num_docs = filesystem::num_lines(_index_name + "/postings.index");
-    _doc_sizes = common::make_unique<util::disk_vector<double>>(
+    _doc_sizes = make_unique<util::disk_vector<double>>(
         _index_name + "/docsizes.counts", num_docs);
-    _labels = common::make_unique<util::disk_vector<label_id>>(
+    _labels = make_unique<util::disk_vector<label_id>>(
         _index_name + "/docs.labels", num_docs);
-    _unique_terms = common::make_unique<util::disk_vector<uint64_t>>(
+    _unique_terms = make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/docs.uniqueterms", num_docs);
-    _doc_byte_locations = common::make_unique<util::disk_vector<uint64_t>>(
+    _doc_byte_locations = make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/lexicon.index", num_docs);
 }
 

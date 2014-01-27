@@ -5,7 +5,6 @@
 #include <string>
 #include "cluster/similarity.h"
 #include "parallel/parallel_for.h"
-#include "util/common.h"
 #include "classify/feature_select/select.h"
 
 namespace meta {

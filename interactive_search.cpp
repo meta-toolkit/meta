@@ -2,17 +2,18 @@
  * @file interactive_search.cpp
  */
 
-#include <vector>
 #include <algorithm>
-#include <string>
 #include <iostream>
-#include "util/common.h"
-#include "util/printing.h"
-#include "tokenizers/tokenizer.h"
+#include <string>
+#include <vector>
+
+#include "caching/all.h"
 #include "corpus/document.h"
 #include "index/inverted_index.h"
 #include "index/ranker/all.h"
-#include "caching/all.h"
+#include "tokenizers/tokenizer.h"
+#include "util/printing.h"
+#include "util/time.h"
 
 using namespace meta;
 using std::cerr;

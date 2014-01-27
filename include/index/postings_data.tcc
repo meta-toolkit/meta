@@ -5,7 +5,6 @@
 
 #include <algorithm>
 #include "index/postings_data.h"
-#include "util/common.h"
 
 namespace meta {
 namespace index {

@@ -6,6 +6,9 @@
 #define _META_UTIL_MAPPING_H_
 
 #include <fstream>
+#include <vector>
+#include <string>
+
 #include "util/invertible_map.h"
 
 namespace meta

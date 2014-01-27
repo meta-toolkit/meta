@@ -6,7 +6,7 @@
 #include "corpus/corpus.h"
 #include "corpus/all.h"
 #include "cpptoml.h"
-#include "util/common.h"
+#include "util/shim.h"
 
 namespace meta {
 namespace corpus {
@@ -35,8 +35,7 @@ std::unique_ptr<corpus> corpus::load(const std::string & config_file)
 
         std::string file = *prefix + "/"
             + *dataset + "/" + *file_list + "-full-corpus.txt";
-        return common::make_unique<file_corpus>(*prefix + "/" + *dataset + "/", 
-                                                file);
+        return make_unique<file_corpus>(*prefix + "/" + *dataset + "/", file);
     }
     else if(*type == "line-corpus")
     {
@@ -44,9 +43,9 @@ std::unique_ptr<corpus> corpus::load(const std::string & config_file)
             + *dataset + "/" + *dataset + ".dat";
         auto lines = config.get_as<int64_t>("num-lines");
         if(!lines)
-            return common::make_unique<line_corpus>(filename);
-        return common::make_unique<line_corpus>(filename,
-                                                static_cast<uint64_t>(*lines));
+            return make_unique<line_corpus>(filename);
+        return make_unique<line_corpus>(filename,
+                                        static_cast<uint64_t>(*lines));
     }
     else
         throw corpus_exception{"corpus type was not able to be determined"};

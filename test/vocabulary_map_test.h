@@ -7,11 +7,12 @@
 #define _META_VOCABULARY_MAP_WRITER_TEST_H_
 
 #include <iostream>
+#include "io/binary.h"
+#include "index/vocabulary_map_writer.h"
+#include "index/vocabulary_map.h"
 #include "util/disk_vector.h"
 #include "util/filesystem.h"
 #include "unit_test.h"
-#include "index/vocabulary_map_writer.h"
-#include "index/vocabulary_map.h"
 
 namespace meta
 {
@@ -83,10 +84,10 @@ void assert_correctness(uint16_t size = 20)
 
             std::string term;
             uint64_t num;
-            common::read_binary(file, term);
+            io::read_binary(file, term);
             if (!file)
                 break;
-            common::read_binary(file, num);
+            io::read_binary(file, num);
             if (!file)
                 break;
             ASSERT(term == expected[idx].first);

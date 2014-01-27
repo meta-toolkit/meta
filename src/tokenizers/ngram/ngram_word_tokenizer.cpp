@@ -6,7 +6,6 @@
 #include "cpptoml.h"
 #include "corpus/document.h"
 #include "tokenizers/ngram/ngram_word_tokenizer.h"
-#include "util/common.h"
 #include "io/parser.h"
 
 using namespace std;

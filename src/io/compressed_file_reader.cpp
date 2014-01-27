@@ -5,14 +5,14 @@
 
 #include "io/compressed_file_reader.h"
 #include "io/mmap_file.h"
-#include "util/common.h"
+#include "util/shim.h"
 
 namespace meta {
 namespace io {
 
 compressed_file_reader::compressed_file_reader(const std::string & filename,
         std::function<uint64_t(uint64_t)> mapping):
-    _file{common::make_unique<mmap_file>(filename)},
+    _file{make_unique<mmap_file>(filename)},
     _start{_file->start()},
     _size{_file->size()},
     _status{notDone},

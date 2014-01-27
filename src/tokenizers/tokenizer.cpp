@@ -7,7 +7,7 @@
 #include "tokenizers/all.h"
 #include "stemmers/no_stemmer.h"
 #include "stemmers/porter2.h"
-#include "util/common.h"
+#include "util/shim.h"
 
 namespace meta {
 namespace tokenizers {
@@ -100,7 +100,7 @@ std::unique_ptr<tokenizer> tokenizer::load(const cpptoml::toml_group & config)
         else
             throw tokenizer_exception{"method was not able to be determined"};
     }
-    return common::make_unique<multi_tokenizer>(toks);
+    return make_unique<multi_tokenizer>(toks);
 }
 
 }

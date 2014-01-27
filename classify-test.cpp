@@ -2,17 +2,17 @@
  * @file classify-test.cpp
  */
 
-#include <vector>
-#include <string>
 #include <iostream>
+#include <string>
+#include <vector>
 
+#include "caching/all.h"
+#include "classify/classifier/all.h"
 #include "index/forward_index.h"
 #include "index/ranker/all.h"
-#include "util/common.h"
-#include "util/printing.h"
 #include "util/invertible_map.h"
-#include "classify/classifier/all.h"
-#include "caching/all.h"
+#include "util/printing.h"
+#include "util/time.h"
 
 using std::cout;
 using std::cerr;
