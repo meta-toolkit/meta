@@ -88,8 +88,8 @@ int main(int argc, char* argv[])
         {
             std::string path{idx.doc_path(ranking[i].first)};
             cout << printing::make_bold(
-                        common::to_string(i+1) + ". " + path + " ("
-                        + common::to_string(ranking[i].second) + ")"
+                        std::to_string(i+1) + ". " + path + " ("
+                        + std::to_string(ranking[i].second) + ")"
                     ) << endl;
             cout << get_snippets(path, text) << endl << endl;
 

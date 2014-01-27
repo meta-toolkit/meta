@@ -115,7 +115,7 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
                 doc = docs->next();
 
                 std::string progress = "> Documents: "
-                    + printing::add_commas(common::to_string(doc->id()))
+                    + printing::add_commas(std::to_string(doc->id()))
                     + " Tokenizing: ";
                 printing::show_progress(doc->id(), docs->size(), 1000, progress);
             }
@@ -141,7 +141,7 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
         fut.get();
 
     std::string progress = "> Documents: "
-        + printing::add_commas(common::to_string(docs->size()))
+        + printing::add_commas(std::to_string(docs->size()))
         + " Tokenizing: ";
     printing::end_progress(progress);
 }
@@ -163,7 +163,7 @@ void inverted_index::write_chunk(uint32_t chunk_num,
     if(!top) // pqueue was empty
     {
         std::string chunk_name =
-            _index_name + "/chunk-" + common::to_string(chunk_num);
+            _index_name + "/chunk-" + std::to_string(chunk_num);
         io::compressed_file_writer outfile{chunk_name,
                                            io::default_compression_writer_func};
         for(auto & p: pdata)

@@ -26,19 +26,6 @@ namespace meta {
 namespace common {
 
 /**
- * Converts and type to a string representation.
- * @param value - the object to convert
- * @return the string representation of vaue
- */
-template <class T>
-std::string to_string(const T & value)
-{
-    std::stringstream ss;
-    ss << value;
-    return ss.str();
-}
-
-/**
  * Times a given function.
  * @param functor the function to be timed
  * @return the length of time, expressed as a Duration, the function

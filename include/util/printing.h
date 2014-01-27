@@ -80,7 +80,7 @@ inline std::string bytes_to_units(double num_bytes)
     }
 
     num_bytes = static_cast<double>(static_cast<int>(num_bytes * 100)) / 100;
-    return common::to_string(num_bytes) + " " + units;
+    return std::to_string(num_bytes) + " " + units;
 }
 
 /**
