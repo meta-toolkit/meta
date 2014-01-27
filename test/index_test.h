@@ -58,6 +58,19 @@ namespace testing {
         ASSERT(id == idx.num_docs());
     }
 
+    template <class Index>
+    void check_doc_id(Index & idx)
+    {
+        auto pdata = idx.search_primary(term_id{0});
+        ASSERT(pdata->primary_key() == term_id{0});
+        pdata = idx.search_primary(term_id{2});
+        ASSERT(pdata->primary_key() == term_id{2});
+        /*
+        for(auto & count: pdata->counts())
+            std::cout << count.first << ":" << count.second << std::endl;
+        */
+    }
+
     void index_tests()
     {
         create_config("file");
@@ -68,11 +81,12 @@ namespace testing {
                 caching::splay_cache>("test-config.toml", uint32_t{10000});
             check_ceeaus_expected(idx);
         });
-        
+
         testing::run_test("ceeaus-read-file-corpus", 10, [&](){
             auto idx = index::make_index<index::inverted_index,
                 caching::splay_cache>("test-config.toml", uint32_t{10000});
             check_ceeaus_expected(idx);
+            check_doc_id(idx);
             system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
         });
 
@@ -84,11 +98,12 @@ namespace testing {
                 caching::splay_cache>("test-config.toml", uint32_t{10000});
             check_ceeaus_expected(idx);
         });
-        
+
         testing::run_test("ceeaus-read-line-corpus", 10, [&](){
             auto idx = index::make_index<index::inverted_index,
                 caching::splay_cache>("test-config.toml", uint32_t{10000});
             check_ceeaus_expected(idx);
+            check_doc_id(idx);
             system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
         });
     }
