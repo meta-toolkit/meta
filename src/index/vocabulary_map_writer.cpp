@@ -3,9 +3,9 @@
  * @author Chase Geigle
  */
 
-#include "index/vocabulary_map_writer.h"
-#include "util/filesystem.h"
 #include "meta.h"
+#include "index/vocabulary_map_writer.h"
+#include "io/binary.h"
 
 namespace meta
 {
@@ -39,11 +39,11 @@ void vocabulary_map_writer::insert(const std::string& term)
         ++written_nodes_;
     }
     // record term position in inverse file
-    common::write_binary(inverse_file_, file_write_pos_);
+    io::write_binary(inverse_file_, file_write_pos_);
 
     // write term and id to tree file
-    common::write_binary(file_, term);
-    common::write_binary(file_, num_terms_);
+    io::write_binary(file_, term);
+    io::write_binary(file_, num_terms_);
 
     // update write cursor (can't use fstream tell functions because these
     // files may be larger than 2GB)
@@ -59,7 +59,7 @@ void vocabulary_map_writer::write_padding()
     {
         // -1 for null terminator
         std::string padding(remaining_block_space_ - 1, '\0');
-        common::write_binary(file_, padding);
+        io::write_binary(file_, padding);
     }
     file_write_pos_ += remaining_block_space_;
     remaining_block_space_ = block_size_;
@@ -98,8 +98,8 @@ vocabulary_map_writer::~vocabulary_map_writer()
         {
             uint64_t t_id;
             std::string term;
-            common::read_binary(reader, term);
-            common::read_binary(reader, t_id);
+            io::read_binary(reader, term);
+            io::read_binary(reader, t_id);
 
             auto length = sizeof(uint64_t) + term.length() + 1;
 
@@ -116,8 +116,8 @@ vocabulary_map_writer::~vocabulary_map_writer()
             else
             {
                 // write the position of the block and the term at its head
-                common::write_binary(file_, term);
-                common::write_binary(file_, read_pos);
+                io::write_binary(file_, term);
+                io::write_binary(file_, read_pos);
 
                 // skip to the next block
                 reader.seekg(block_size_ - length, file_.cur);
