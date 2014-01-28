@@ -128,9 +128,8 @@ class forward_index: public disk_index
     void create_libsvm_postings(const cpptoml::toml_group& config);
 
     /**
-     * @param config the configuration settings for this index
      */
-    void create_libsvm_metadata(const cpptoml::toml_group& config);
+    void create_libsvm_metadata();
 
     /**
      * @param config the configuration settings for this index
@@ -164,7 +163,7 @@ class forward_index: public disk_index
     /**
      * Converts postings.index into a libsvm formatted file
      */
-    void doc_ids_to_labels(const std::string & filename);
+    void compressed_postings_to_libsvm(const std::string & filename);
 
     /** the total number of unique terms if _term_id_mapping is unused */
     uint64_t _total_unique_terms;
