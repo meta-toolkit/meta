@@ -62,7 +62,7 @@ namespace testing {
     void check_term_id(Index & idx)
     {
         term_id t_id = idx.get_term_id("japanes");
-        ASSERT(idx.idf(t_id) == 69);
+        ASSERT(idx.doc_freq(t_id) == 69);
 
         term_id first;
         double second;

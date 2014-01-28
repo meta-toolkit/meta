@@ -335,7 +335,7 @@ void inverted_index::tokenize(corpus::document & doc)
     _tokenizer->tokenize(doc);
 }
 
-uint64_t inverted_index::idf(term_id t_id) const
+uint64_t inverted_index::doc_freq(term_id t_id) const
 {
     return search_primary(t_id)->counts().size();
 }

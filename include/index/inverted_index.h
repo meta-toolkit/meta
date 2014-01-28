@@ -112,9 +112,10 @@ class inverted_index: public disk_index
 
         /**
          * @param t_id The term to search for
-         * @return the inverse document frequency of a term
+         * @return the document frequency of a term (number of documents it
+         * appears in)
          */
-        uint64_t idf(term_id t_id) const;
+        uint64_t doc_freq(term_id t_id) const;
 
         /**
          * @param t_id The term_id to search for
