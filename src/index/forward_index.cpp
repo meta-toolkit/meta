@@ -157,18 +157,19 @@ void forward_index::init_metadata()
         _index_name + "/lexicon.index", num_docs);
 }
 
-void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
+void forward_index::create_libsvm_metadata()
 {
-    doc_id d_id{0};
-    std::unordered_set<term_id> terms;
+    _total_unique_terms = 0;
 
+    doc_id d_id{0};
     std::ifstream in{_index_name + "/postings.index"};
     std::string line;
-    string_list_writer doc_id_mapping{_index_name + "/docids.mapping", num_docs()};
-    while(in.good())
+    string_list_writer doc_id_mapping{_index_name + "/docids.mapping",
+                                      num_docs()};
+    while (in.good())
     {
         std::getline(in, line);
-        if(line.empty())
+        if (line.empty())
             break;
 
         class_label lbl = io::libsvm_parser::label(line);
@@ -176,10 +177,11 @@ void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
 
         uint64_t num_unique = 0;
         uint64_t length = 0;
-        for(auto & count_pair: io::libsvm_parser::counts(line))
+        for (const auto& count_pair : io::libsvm_parser::counts(line))
         {
             ++num_unique;
-            terms.insert(count_pair.first);
+            if (count_pair.first > _total_unique_terms)
+                _total_unique_terms = count_pair.first;
             length += static_cast<uint64_t>(count_pair.second); // TODO
         }
 
@@ -189,8 +191,6 @@ void forward_index::create_libsvm_metadata(const cpptoml::toml_group& config)
 
         ++d_id;
     }
-
-    _total_unique_terms = terms.size();
 }
 
 void forward_index::create_uninverted_metadata(const cpptoml::toml_group& config)
