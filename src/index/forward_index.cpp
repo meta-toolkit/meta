@@ -337,7 +337,8 @@ void forward_index::chunk_handler::flush_chunk()
     pdata_.clear();
     std::sort(pdata.begin(), pdata.end());
 
-    std::string chunk_name = idx_->_index_name + "/chunk-" + std::to_string(chunk_num_);
+    std::string chunk_name = idx_->_index_name + "/chunk-"
+                             + std::to_string(chunk_num_.fetch_add(1));
     io::compressed_file_writer outfile{chunk_name,
         io::default_compression_writer_func};
     for(auto & p: pdata)
@@ -345,7 +346,6 @@ void forward_index::chunk_handler::flush_chunk()
 
     pdata.clear();
     chunk_size_ = 0;
-    chunk_num_.fetch_add(1);
 }
 
 void forward_index::chunk_handler::operator()(const inverted_pdata_type & single_pdata)
