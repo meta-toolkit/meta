@@ -99,6 +99,12 @@ void postings_data<PrimaryKey, SecondaryKey>::set_counts(const count_t & counts)
 }
 
 template <class PrimaryKey, class SecondaryKey>
+void postings_data<PrimaryKey, SecondaryKey>::set_primary_key(PrimaryKey new_key)
+{
+    _p_id = new_key;
+}
+
+template <class PrimaryKey, class SecondaryKey>
 bool postings_data<PrimaryKey, SecondaryKey>::operator<(const postings_data & other) const
 {
     return primary_key() < other.primary_key();

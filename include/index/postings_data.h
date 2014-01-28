@@ -99,6 +99,35 @@ class postings_data
          */
         bool operator<(const postings_data & other) const;
 
+        friend void stream_helper(
+            io::compressed_file_reader & in,
+            postings_data<PrimaryKey, SecondaryKey> & pd)
+        {
+            pd._counts.clear();
+            uint32_t num_pairs = in.next();
+            for(uint32_t i = 0; i < num_pairs; ++i)
+            {
+                SecondaryKey s_id = SecondaryKey{in.next()};
+                uint64_t count = in.next();
+                pd._counts.emplace_back(s_id, static_cast<double>(count));
+            }
+        }
+
+        /**
+         * Reads semi-compressed postings data from a compressed file.
+         * @param in The stream to read from
+         * @param pd The postings data object to write the stream info to
+         * @return the input stream
+         */
+        friend io::compressed_file_reader & operator>>(
+                io::compressed_file_reader & in,
+                postings_data<doc_id, term_id> & pd)
+        {
+            pd._p_id = in.next();
+            stream_helper(in, pd);
+            return in;
+        }
+
         /**
          * Reads semi-compressed postings data from a compressed file.
          * @param in The stream to read from
@@ -110,16 +139,7 @@ class postings_data
                 postings_data<PrimaryKey, SecondaryKey> & pd)
         {
             pd._p_id = in.next_string();
-            pd._counts.clear();
-
-            uint32_t num_pairs = in.next();
-            for(uint32_t i = 0; i < num_pairs; ++i)
-            {
-                SecondaryKey s_id = SecondaryKey{in.next()};
-                uint64_t count = in.next();
-                pd._counts.emplace_back(s_id, static_cast<double>(count));
-            }
-
+            stream_helper(in, pd);
             return in;
         }
 
@@ -181,6 +201,11 @@ class postings_data
          * @return the term_id for this postings_data
          */
         PrimaryKey primary_key() const;
+
+        /**
+         * @param new_key
+         */
+        void set_primary_key(PrimaryKey new_key);
 
         /**
          * @return the number of SecondaryKeys that this PrimaryKey occurs with

@@ -151,8 +151,20 @@ class forward_index: public disk_index
 
     /**
      * Merges chunks from uninverting into a single postings_data file.
+     * @param num_chunks The number of chunks that need to be merged together
+     * into one postings file
      */
-    void merge_chunks();
+    void merge_chunks(uint32_t num_chunks);
+
+    /**
+     * Calculates which documents start at which bytes in the postings file.
+     */
+    void set_doc_byte_locations();
+
+    /**
+     * Converts postings.index into a libsvm formatted file
+     */
+    void doc_ids_to_labels(const std::string & filename);
 
     /** the total number of unique terms if _term_id_mapping is unused */
     uint64_t _total_unique_terms;
