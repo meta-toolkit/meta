@@ -52,12 +52,21 @@ void inverted_index::create_index(const std::string & config_file)
     _unique_terms = make_unique<util::disk_vector<uint64_t>>(
         _index_name + "/docs.uniqueterms", num_docs);
 
-    tokenize_docs(docs.get());
+
+    chunk_handler<inverted_index> handler{_index_name};
+    tokenize_docs(docs.get(), handler);
 
     _doc_id_mapping = make_unique<string_list>(_index_name
                                                        + "/docids.mapping");
 
-    uint64_t num_unique_terms = merge_chunks(_index_name + "/postings.index");
+    handler.merge_chunks();
+
+    LOG(info) << "Created uncompressed postings file " << _index_name
+              << "/postings.index"
+              << " (" << printing::bytes_to_units(handler.final_size()) << ")"
+              << ENDLG;
+
+    uint64_t num_unique_terms = handler.unique_primary_keys();
     compress(_index_name + "/postings.index", num_unique_terms);
 
     _term_id_mapping =
@@ -97,24 +106,22 @@ void inverted_index::load_index()
     );
 }
 
-void inverted_index::tokenize_docs(corpus::corpus * docs)
+void inverted_index::tokenize_docs(corpus::corpus * docs,
+                                   chunk_handler<inverted_index> & handler)
 {
     std::mutex mutex;
-    std::atomic<uint32_t> chunk_num{0};
     string_list_writer doc_id_mapping{_index_name + "/docids.mapping",
                                             docs->size()};
 
-    using namespace std::placeholders;
-    auto writer = std::bind(&inverted_index::write_chunk, this, _1, _2);
     auto task = [&]() {
-        index::chunk_handler<inverted_index> handler{this, chunk_num, writer};
+        auto producer = handler.make_producer();
         while (true) {
             util::optional<corpus::document> doc;
             {
                 std::lock_guard<std::mutex> lock{mutex};
 
                 if (!docs->has_next())
-                    return; // destructor for handler will write
+                    return; // destructor for producer will write
                             // any intermediate chunks
                 doc = docs->next();
 
@@ -132,8 +139,7 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
             (*_unique_terms)[doc->id()] = doc->counts().size();
             (*_labels)[doc->id()] = get_label_id(doc->label());
             // update chunk
-            //handler(*doc);
-            handler(doc->id(), doc->counts());
+            producer(doc->id(), doc->counts());
         }
     };
 
@@ -149,105 +155,6 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
         + printing::add_commas(std::to_string(docs->size()))
         + " Tokenizing: ";
     printing::end_progress(progress);
-}
-
-void inverted_index::write_chunk(uint32_t chunk_num,
-                                 std::vector<index_pdata_type> & pdata)
-{
-    using chunk_t = chunk<std::string, secondary_key_type>;
-    util::optional<chunk_t> top;
-    {
-        std::lock_guard<std::mutex> lock{*_queue_mutex};
-        if(!_chunks.empty())
-        {
-            top = _chunks.top();
-            _chunks.pop();
-        }
-    }
-
-    if(!top) // pqueue was empty
-    {
-        std::string chunk_name =
-            _index_name + "/chunk-" + std::to_string(chunk_num);
-        io::compressed_file_writer outfile{chunk_name,
-                                           io::default_compression_writer_func};
-        for(auto & p: pdata)
-            outfile << p;
-
-        outfile.close(); // close so we can read the file size in chunk ctr
-        std::ofstream termfile{chunk_name + ".numterms"};
-        termfile << pdata.size();
-        pdata.clear();
-
-        std::lock_guard<std::mutex> lock{*_queue_mutex};
-        _chunks.emplace(chunk_name);
-    }
-    else // we can merge with an existing chunk
-    {
-        top->memory_merge_with(pdata);
-
-        std::lock_guard<std::mutex> lock{*_queue_mutex};
-        _chunks.emplace(*top);
-    }
-}
-
-uint64_t inverted_index::merge_chunks(const std::string & filename)
-{
-    using chunk_t = chunk<std::string, secondary_key_type>;
-
-    // this represents the number of merge steps needed---it is equivalent
-    // to the number of internal nodes in a binary tree with n leaf nodes
-    size_t remaining = _chunks.size() - 1;
-    std::mutex mutex;
-    auto task = [&]() {
-        while (true) {
-            util::optional<chunk_t> first;
-            util::optional<chunk_t> second;
-            {
-                std::lock_guard<std::mutex> lock{mutex};
-                if (_chunks.size() < 2)
-                    return;
-                first = util::optional<chunk_t>{_chunks.top()};
-                _chunks.pop();
-                second = util::optional<chunk_t>{_chunks.top()};
-                _chunks.pop();
-                LOG(progress) << "> Merging " << first->path() << " ("
-                    << printing::bytes_to_units(first->size())
-                    << ") and " << second->path() << " ("
-                    << printing::bytes_to_units(second->size())
-                    << "), " << --remaining << " remaining        \r" << ENDLG;
-            }
-            first->merge_with(*second);
-            {
-                std::lock_guard<std::mutex> lock{mutex};
-                _chunks.push(*first);
-            }
-        }
-    };
-
-    parallel::thread_pool pool;
-    auto thread_ids = pool.thread_ids();
-    std::vector<std::future<void>> futures;
-    for (size_t i = 0; i < thread_ids.size(); ++i)
-        futures.emplace_back(pool.submit_task(task));
-
-    for (auto & fut : futures)
-        fut.get();
-
-    LOG(progress) << '\n' << ENDLG;
-
-    uint64_t num_unique_terms;
-    std::ifstream termfile{_chunks.top().path() + ".numterms"};
-    termfile >> num_unique_terms;
-    termfile.close();
-    filesystem::delete_file(_chunks.top().path() + ".numterms");
-    filesystem::rename_file(_chunks.top().path(), filename);
-
-    LOG(info) << "Created uncompressed postings file " << filename
-              << " (" << printing::bytes_to_units(_chunks.top().size()) << ")"
-              << ENDLG;
-
-    return num_unique_terms;
 }
 
 void inverted_index::compress(const std::string & filename,

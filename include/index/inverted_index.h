@@ -13,7 +13,6 @@
 #include <queue>
 #include <stdexcept>
 
-#include "index/chunk.h"
 #include "index/disk_index.h"
 #include "index/make_index.h"
 
@@ -25,6 +24,10 @@ class document;
 }
 
 namespace index {
+
+template <class>
+class chunk_handler;
+
 template <class, class>
 class postings_data;
 }
@@ -156,23 +159,11 @@ class inverted_index: public disk_index
         void load_index();
 
         /**
-         * @param chunk_num The id of the chunk to write
-         * @param pdata A collection of postings data to write to the chunk.
-         */
-        void write_chunk(uint32_t chunk_num,
-                         std::vector<index_pdata_type> & pdata);
-
-        /**
          * @param docs The documents to be tokenized
          * @return the number of chunks created
          */
-        void tokenize_docs(corpus::corpus * docs);
-
-        /**
-         * @param num_chunks The number of chunks to be merged
-         * @param filename The name for the postings file
-         */
-        uint64_t merge_chunks(const std::string & filename);
+        void tokenize_docs(corpus::corpus * docs,
+                           chunk_handler<inverted_index>& handler);
 
         /**
          * Creates the lexicon file (or "dictionary") which has pointers into
@@ -193,12 +184,6 @@ class inverted_index: public disk_index
          * Each index corresponds to a PrimaryKey (uint64_t).
          */
         std::unique_ptr<util::disk_vector<uint64_t>> _term_bit_locations;
-
-        /** mutex for accessing the priority_queue of chunks */
-        std::unique_ptr<std::mutex> _queue_mutex{new std::mutex};
-
-        /** used to select which chunk to merge next */
-        std::priority_queue<chunk<std::string, secondary_key_type>> _chunks;
 
         /** the total number of term occurrences in the entire corpus */
         uint64_t _total_corpus_terms = 0;

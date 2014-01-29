@@ -5,6 +5,7 @@
 
 #include "corpus/document.h"
 #include "index/inverted_index.h"
+#include "index/postings_data.h"
 #include "index/ranker/ranker.h"
 #include "index/score_data.h"
 

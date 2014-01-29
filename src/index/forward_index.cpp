@@ -246,83 +246,32 @@ void forward_index::uninvert(const cpptoml::toml_group& config)
     io::compressed_file_reader inv_reader{inv_name + "/postings.index",
                                           io::default_compression_reader_func};
 
-    using namespace std::placeholders;
-    auto writer = std::bind(&forward_index::write_chunk, this, _1, _2);
-
     term_id t_id{0};
-    std::atomic<uint32_t> chunk_num{0};
+    chunk_handler<forward_index> handler{_index_name};
     {
-        chunk_handler<forward_index> handler{this, chunk_num, writer};
+        auto producer = handler.make_producer();
         while (inv_reader.has_next())
         {
             inverted_pdata_type pdata{t_id};
             pdata.read_compressed(inv_reader);
-            handler(pdata.primary_key(), pdata.counts());
+            producer(pdata.primary_key(), pdata.counts());
             ++t_id;
         }
     }
 
-    merge_chunks(chunk_num.load());
+    handler.merge_chunks();
+    compressed_postings_to_libsvm();
 }
 
-void forward_index::merge_chunks(uint32_t num_chunks)
-{
-    using chunk_t = chunk<primary_key_type, secondary_key_type>;
-    std::priority_queue<chunk_t> chunks;
-    for (uint32_t i = 0; i < num_chunks; ++i)
-        chunks.emplace(_index_name + "/chunk-" + std::to_string(i));
-
-    size_t remaining = chunks.size() - 1;
-    std::mutex mutex;
-    auto task = [&]()
-    {
-        while (true)
-        {
-            util::optional<chunk_t> first;
-            util::optional<chunk_t> second;
-            {
-                std::lock_guard<std::mutex> lock{mutex};
-                if (chunks.size() < 2)
-                    return;
-                first = util::optional<chunk_t>{chunks.top()};
-                chunks.pop();
-                second = util::optional<chunk_t>{chunks.top()};
-                chunks.pop();
-                LOG(progress) << "> Merging " << first->path() << " ("
-                              << printing::bytes_to_units(first->size())
-                              << ") and " << second->path() << " ("
-                              << printing::bytes_to_units(second->size())
-                              << "), " << --remaining << " remaining        \r"
-                              << ENDLG;
-            }
-            first->merge_with(*second);
-            {
-                std::lock_guard<std::mutex> lock{mutex};
-                chunks.push(*first);
-            }
-        }
-    };
-
-    parallel::thread_pool pool;
-    auto thread_ids = pool.thread_ids();
-    std::vector<std::future<void>> futures;
-    for (size_t i = 0; i < thread_ids.size(); ++i)
-        futures.emplace_back(pool.submit_task(task));
-
-    for (auto& fut : futures)
-        fut.get();
-
-    LOG(progress) << '\n' << ENDLG;
-    compressed_postings_to_libsvm(chunks.top().path());
-}
-
-void forward_index::compressed_postings_to_libsvm(const std::string& filename)
+void forward_index::compressed_postings_to_libsvm()
 {
     _labels = make_unique<util::disk_vector<label_id>>(_index_name
                                                        + "/docs.labels");
 
+    filesystem::rename_file(_index_name + "/postings.index",
+                            _index_name + "/postings.index.tmp");
     std::ofstream output{_index_name + "/postings.index"};
-    io::compressed_file_reader input{filename,
+    io::compressed_file_reader input{_index_name + "/postings.index.tmp",
                                      io::default_compression_reader_func};
 
     // read from input, write to output, changing doc_id to class_label for the
@@ -335,19 +284,7 @@ void forward_index::compressed_postings_to_libsvm(const std::string& filename)
         pdata.write_libsvm(output);
     }
 
-    filesystem::delete_file(filename);
-}
-
-void forward_index::write_chunk(uint32_t chunk_num,
-                                std::vector<index_pdata_type>& pdata)
-{
-    std::string chunk_name = _index_name + "/chunk-"
-                               + std::to_string(chunk_num);
-    io::compressed_file_writer outfile{chunk_name,
-                                       io::default_compression_writer_func};
-    for (auto& p : pdata)
-        outfile << p;
-    pdata.clear();
+    filesystem::delete_file(_index_name + "/postings.index.tmp");
 }
 
 }

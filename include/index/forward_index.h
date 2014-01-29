@@ -153,19 +153,6 @@ class forward_index: public disk_index
     bool is_libsvm_format(const cpptoml::toml_group& config) const;
 
     /**
-     * Merges chunks from uninverting into a single postings_data file.
-     * @param num_chunks The number of chunks that need to be merged together
-     * into one postings file
-     */
-    void merge_chunks(uint32_t num_chunks);
-
-    /**
-     * @param chunk_num The id of the chunk to write
-     * @param pdata A collection of postings data to write to the chunk.
-     */
-    void write_chunk(uint32_t chunk_num, std::vector<index_pdata_type>& pdata);
-
-    /**
      * Calculates which documents start at which bytes in the postings file.
      */
     void set_doc_byte_locations();
@@ -173,7 +160,7 @@ class forward_index: public disk_index
     /**
      * Converts postings.index into a libsvm formatted file
      */
-    void compressed_postings_to_libsvm(const std::string & filename);
+    void compressed_postings_to_libsvm();
 
     /** the total number of unique terms if _term_id_mapping is unused */
     uint64_t _total_unique_terms;
