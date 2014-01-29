@@ -21,6 +21,11 @@ namespace meta {
 namespace corpus {
 class corpus;
 }
+
+namespace index {
+template <class>
+class chunk_handler;
+}
 }
 
 namespace meta {
@@ -42,6 +47,9 @@ class forward_index: public disk_index
     using inverted_pdata_type = postings_data<term_id, doc_id>;
     using index_pdata_type = postings_data_type;
     using exception = forward_index_exception;
+
+   private:
+    friend class chunk_handler<forward_index>;
 
    protected:
     /**
@@ -156,6 +164,12 @@ class forward_index: public disk_index
     void merge_chunks(uint32_t num_chunks);
 
     /**
+     * @param chunk_num The id of the chunk to write
+     * @param pdata A collection of postings data to write to the chunk.
+     */
+    void write_chunk(uint32_t chunk_num, std::vector<index_pdata_type>& pdata);
+
+    /**
      * Calculates which documents start at which bytes in the postings file.
      */
     void set_doc_byte_locations();
@@ -170,31 +184,6 @@ class forward_index: public disk_index
 
     /** doc_id -> postings file byte location */
     std::unique_ptr<util::disk_vector<uint64_t>> _doc_byte_locations;
-
-    /**
-     * TODO: combine with inverted_index's chunk handler?
-     */
-    class chunk_handler
-    {
-       private:
-        void flush_chunk();
-
-        std::unordered_set<index_pdata_type> pdata_;
-        uint64_t chunk_size_{0};
-        const static uint64_t constexpr max_size = 1024*1024*128; // 128 MB
-        forward_index * idx_;
-        std::atomic<uint32_t> & chunk_num_;
-
-       public:
-        chunk_handler(forward_index * idx,
-                      std::atomic<uint32_t> & chunk_num)
-            : idx_{idx}, chunk_num_{chunk_num}
-        { /* nothing */ }
-
-        void operator()(const inverted_pdata_type & single_pdata);
-
-        ~chunk_handler();
-    };
 
     public:
         /**

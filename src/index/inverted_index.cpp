@@ -5,6 +5,7 @@
  */
 
 #include "corpus/corpus.h"
+#include "index/chunk_handler.h"
 #include "index/inverted_index.h"
 #include "index/string_list.h"
 #include "index/string_list_writer.h"
@@ -104,7 +105,7 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
                                             docs->size()};
 
     auto task = [&]() {
-        chunk_handler handler{this, chunk_num};
+        index::chunk_handler<inverted_index> handler{this, chunk_num};
         while (true) {
             util::optional<corpus::document> doc;
             {
@@ -129,7 +130,8 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
             (*_unique_terms)[doc->id()] = doc->counts().size();
             (*_labels)[doc->id()] = get_label_id(doc->label());
             // update chunk
-            handler(*doc);
+            //handler(*doc);
+            handler(doc->id(), doc->counts());
         }
     };
 
@@ -357,50 +359,6 @@ auto inverted_index::search_primary(term_id t_id) const
     pdata->read_compressed(reader);
 
     return pdata;
-}
-
-void inverted_index::chunk_handler::operator()(const corpus::document & doc)
-{
-    for(const auto & count: doc.counts())   // count: (string, double)
-    {
-        index_pdata_type pd{count.first};
-        pd.increase_count(doc.id(), count.second);
-        auto it = pdata_.find(pd);
-        if(it == pdata_.end())
-        {
-            chunk_size_ += pd.bytes_used();
-            pdata_.emplace(pd);
-        }
-        else
-        {
-            chunk_size_ -= it->bytes_used();
-
-            // note: we can modify elements in this set because we do not change
-            // how comparisons are made (the primary_key value)
-            const_cast<index_pdata_type&>(*it).increase_count(doc.id(), count.second);
-            chunk_size_ += it->bytes_used();
-        }
-
-        if(chunk_size_ >= max_size)
-            flush_chunk();
-    }
-}
-
-void inverted_index::chunk_handler::flush_chunk() {
-    if (chunk_size_ == 0)
-        return;
-
-    std::vector<index_pdata_type> pdata;
-    for (auto it = pdata_.begin(); it != pdata_.end(); it = pdata_.erase(it))
-        pdata.emplace_back(std::move(*it));
-    pdata_.clear();
-    std::sort(pdata.begin(), pdata.end());
-    idx_->write_chunk(chunk_num_.fetch_add(1), pdata);
-    chunk_size_ = 0;
-}
-
-inverted_index::chunk_handler::~chunk_handler() {
-    flush_chunk();
 }
 
 }

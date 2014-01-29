@@ -33,6 +33,8 @@ template <class PrimaryKey, class SecondaryKey>
 class postings_data
 {
     public:
+        using primary_key_type = PrimaryKey;
+        using secondary_key_type = SecondaryKey;
         using pair_t = std::pair<SecondaryKey, double>;
         using count_t = std::vector<pair_t>;
 
@@ -121,7 +123,7 @@ class postings_data
          */
         friend io::compressed_file_reader & operator>>(
                 io::compressed_file_reader & in,
-                postings_data<doc_id, term_id> & pd)
+                postings_data<PrimaryKey, SecondaryKey> & pd)
         {
             pd._p_id = in.next();
             stream_helper(in, pd);
@@ -136,7 +138,7 @@ class postings_data
          */
         friend io::compressed_file_reader & operator>>(
                 io::compressed_file_reader & in,
-                postings_data<PrimaryKey, SecondaryKey> & pd)
+                postings_data<std::string, doc_id> & pd)
         {
             pd._p_id = in.next_string();
             stream_helper(in, pd);

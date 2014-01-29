@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include "index/chunk_handler.h"
 #include "index/forward_index.h"
 #include "index/inverted_index.h"
 #include "index/postings_data.h"
@@ -247,12 +248,12 @@ void forward_index::uninvert(const cpptoml::toml_group& config)
     term_id t_id{0};
     std::atomic<uint32_t> chunk_num{0};
     {
-        chunk_handler handler{this, chunk_num};
+        chunk_handler<forward_index> handler{this, chunk_num};
         while (inv_reader.has_next())
         {
             inverted_pdata_type pdata{t_id};
             pdata.read_compressed(inv_reader);
-            handler(pdata);
+            handler(pdata.primary_key(), pdata.counts());
             ++t_id;
         }
     }
@@ -333,60 +334,17 @@ void forward_index::compressed_postings_to_libsvm(const std::string& filename)
     filesystem::delete_file(filename);
 }
 
-void forward_index::chunk_handler::flush_chunk()
+void forward_index::write_chunk(uint32_t chunk_num,
+                                std::vector<index_pdata_type>& pdata)
 {
-    if (chunk_size_ == 0)
-        return;
-
-    std::vector<index_pdata_type> pdata;
-    for (auto it = pdata_.begin(); it != pdata_.end(); it = pdata_.erase(it))
-        pdata.emplace_back(std::move(*it));
-    pdata_.clear();
-    std::sort(pdata.begin(), pdata.end());
-
-    std::string chunk_name = idx_->_index_name + "/chunk-"
-                             + std::to_string(chunk_num_.fetch_add(1));
+    std::string chunk_name = _index_name + "/chunk-"
+                               + std::to_string(chunk_num);
     io::compressed_file_writer outfile{chunk_name,
                                        io::default_compression_writer_func};
     for (auto& p : pdata)
         outfile << p;
-
     pdata.clear();
-    chunk_size_ = 0;
 }
 
-void forward_index::chunk_handler::operator()(
-    const inverted_pdata_type& single_pdata)
-{
-    for (const auto& count : single_pdata.counts()) // count: (doc_id, uint)
-    {
-        index_pdata_type pd{count.first};
-        pd.increase_count(single_pdata.primary_key(), count.second);
-        auto it = pdata_.find(pd);
-        if (it == pdata_.end())
-        {
-            chunk_size_ += pd.bytes_used();
-            pdata_.emplace(pd);
-        }
-        else
-        {
-            chunk_size_ -= it->bytes_used();
-
-            // note: we can modify elements in this set because we do not change
-            // how comparisons are made (the primary_key value)
-            const_cast<index_pdata_type&>(*it)
-                .increase_count(single_pdata.primary_key(), count.second);
-            chunk_size_ += it->bytes_used();
-        }
-
-        if (chunk_size_ >= max_size)
-            flush_chunk();
-    }
-}
-
-forward_index::chunk_handler::~chunk_handler()
-{
-    flush_chunk();
-}
 }
 }

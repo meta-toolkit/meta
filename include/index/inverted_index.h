@@ -25,6 +25,9 @@ class document;
 }
 
 namespace index {
+template <class>
+class chunk_handler;
+
 template <class, class>
 class postings_data;
 }
@@ -59,6 +62,7 @@ class inverted_index: public disk_index
 
     private:
         using index_pdata_type = postings_data<std::string, doc_id>;
+        friend class chunk_handler<inverted_index>;
 
     protected:
         /**
@@ -169,49 +173,6 @@ class inverted_index: public disk_index
          * @return the number of chunks created
          */
         void tokenize_docs(corpus::corpus * docs);
-
-        /**
-         * The chunk handler for inverted indexes.
-         */
-        class chunk_handler {
-            /** the current in-memory chunk */
-            std::unordered_set<index_pdata_type> pdata_;
-
-            /** the current size of the in-memory chunk */
-            uint64_t chunk_size_{0};
-
-            void flush_chunk();
-
-            const static uint64_t constexpr max_size = 1024*1024*128; // 128 MB
-
-            /** a back-pointer to the index this handler is operating on */
-            inverted_index * idx_;
-
-            /** the current chunk number */
-            std::atomic<uint32_t> & chunk_num_;
-
-            public:
-                /**
-                 * Creates a new handler on the given index, using the
-                 * given atomic to keep track of the current chunk number.
-                 */
-                chunk_handler(inverted_index * idx,
-                              std::atomic<uint32_t> & chunk_num)
-                    : idx_{idx}, chunk_num_{chunk_num}
-                { /* nothing */ }
-
-                /**
-                 * Handler for when a given doc has been successfully
-                 * tokenized.
-                 */
-                void operator()(const corpus::document & doc);
-
-                /**
-                 * Destroys the handler, writing to disk any chunk data
-                 * still resident in memory.
-                 */
-                ~chunk_handler();
-        };
 
         /**
          * @param num_chunks The number of chunks to be merged
