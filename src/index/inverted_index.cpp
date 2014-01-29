@@ -104,8 +104,10 @@ void inverted_index::tokenize_docs(corpus::corpus * docs)
     string_list_writer doc_id_mapping{_index_name + "/docids.mapping",
                                             docs->size()};
 
+    using namespace std::placeholders;
+    auto writer = std::bind(&inverted_index::write_chunk, this, _1, _2);
     auto task = [&]() {
-        index::chunk_handler<inverted_index> handler{this, chunk_num};
+        index::chunk_handler<inverted_index> handler{this, chunk_num, writer};
         while (true) {
             util::optional<corpus::document> doc;
             {

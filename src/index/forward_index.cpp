@@ -245,10 +245,14 @@ void forward_index::uninvert(const cpptoml::toml_group& config)
     auto inv_name = *cpptoml::get_as<std::string>(config, "inverted-index");
     io::compressed_file_reader inv_reader{inv_name + "/postings.index",
                                           io::default_compression_reader_func};
+
+    using namespace std::placeholders;
+    auto writer = std::bind(&forward_index::write_chunk, this, _1, _2);
+
     term_id t_id{0};
     std::atomic<uint32_t> chunk_num{0};
     {
-        chunk_handler<forward_index> handler{this, chunk_num};
+        chunk_handler<forward_index> handler{this, chunk_num, writer};
         while (inv_reader.has_next())
         {
             inverted_pdata_type pdata{t_id};

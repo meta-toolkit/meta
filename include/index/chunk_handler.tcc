@@ -13,9 +13,14 @@ namespace index
 {
 
 template <class Index>
+template <class Functor>
 chunk_handler<Index>::chunk_handler(Index* idx,
-                                    std::atomic<uint32_t>& chunk_num)
-    : chunk_size_{0}, idx_{idx}, chunk_num_{chunk_num}
+                                    std::atomic<uint32_t>& chunk_num,
+                                    Functor&& writer)
+    : chunk_size_{0},
+      idx_{idx},
+      chunk_num_{chunk_num},
+      writer_{std::forward<Functor>(writer)}
 {
     // nothing
 }
@@ -30,7 +35,7 @@ void chunk_handler<Index>::operator()(const secondary_key_type& key,
         index_pdata_type pd{count.first};
         pd.increase_count(key, count.second);
         auto it = pdata_.find(pd);
-        if(it == pdata_.end())
+        if (it == pdata_.end())
         {
             chunk_size_ += pd.bytes_used();
             pdata_.emplace(pd);
@@ -41,13 +46,13 @@ void chunk_handler<Index>::operator()(const secondary_key_type& key,
 
             // note: we can modify elements in this set because we do not change
             // how comparisons are made (the primary_key value)
-            const_cast<index_pdata_type&>(*it).increase_count(key, count.second);
+            const_cast<index_pdata_type&>(*it)
+                .increase_count(key, count.second);
             chunk_size_ += it->bytes_used();
         }
 
-        if(chunk_size_ >= max_size)
+        if (chunk_size_ >= max_size)
             flush_chunk();
-
     }
 }
 
@@ -62,7 +67,7 @@ void chunk_handler<Index>::flush_chunk()
         pdata.emplace_back(std::move(*it));
     pdata_.clear();
     std::sort(pdata.begin(), pdata.end());
-    idx_->write_chunk(chunk_num_.fetch_add(1), pdata);
+    writer_(chunk_num_.fetch_add(1), pdata);
     chunk_size_ = 0;
 }
 

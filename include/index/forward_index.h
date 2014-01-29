@@ -13,7 +13,6 @@
 
 #include "index/disk_index.h"
 #include "index/make_index.h"
-#include "index/postings_data.h" // needed for std::hash specialization
 #include "util/disk_vector.h"
 #include "meta.h"
 
@@ -23,8 +22,8 @@ class corpus;
 }
 
 namespace index {
-template <class>
-class chunk_handler;
+template <class, class>
+class postings_data;
 }
 }
 
@@ -47,9 +46,6 @@ class forward_index: public disk_index
     using inverted_pdata_type = postings_data<term_id, doc_id>;
     using index_pdata_type = postings_data_type;
     using exception = forward_index_exception;
-
-   private:
-    friend class chunk_handler<forward_index>;
 
    protected:
     /**

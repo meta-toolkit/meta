@@ -25,9 +25,6 @@ class document;
 }
 
 namespace index {
-template <class>
-class chunk_handler;
-
 template <class, class>
 class postings_data;
 }
@@ -58,11 +55,8 @@ class inverted_index: public disk_index
         using primary_key_type   = term_id;
         using secondary_key_type = doc_id;
         using postings_data_type = postings_data<term_id, doc_id>;
-        using exception = inverted_index_exception;
-
-    private:
         using index_pdata_type = postings_data<std::string, doc_id>;
-        friend class chunk_handler<inverted_index>;
+        using exception = inverted_index_exception;
 
     protected:
         /**

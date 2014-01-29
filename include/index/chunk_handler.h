@@ -7,6 +7,7 @@
 #define _META_INDEX_CHUNK_HANDLER_H_
 
 #include <atomic>
+#include <functional>
 #include <utility>
 #include <vector>
 #include <unordered_set>
@@ -22,12 +23,16 @@ class chunk_handler
   public:
     using index_pdata_type = typename Index::index_pdata_type;
     using secondary_key_type = typename index_pdata_type::secondary_key_type;
+    using container_type = std::vector<index_pdata_type>;
+    using callback_type = std::function<void(uint32_t, container_type&)>;
 
     /**
      * Creates a new handler on the given index, using the
      * given atomic to keep track of the current chunk number.
      */
-    chunk_handler(Index* idx, std::atomic<uint32_t>& chunk_num);
+    template <class Functor>
+    chunk_handler(Index* idx, std::atomic<uint32_t>& chunk_num,
+                  Functor&& writer);
 
     /**
      * Handler for when a given primary_key has been processed and is
@@ -61,6 +66,9 @@ class chunk_handler
 
     /** the current chunk number */
     std::atomic<uint32_t>& chunk_num_;
+
+    /** the callback for writing a chunk */
+    callback_type writer_;
 };
 }
 }
