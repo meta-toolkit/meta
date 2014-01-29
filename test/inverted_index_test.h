@@ -77,7 +77,7 @@ namespace testing {
         }
     }
 
-    void index_tests()
+    void inverted_index_tests()
     {
         create_config("file");
 
