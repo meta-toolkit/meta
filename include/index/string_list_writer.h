@@ -35,6 +35,16 @@ class string_list_writer
     string_list_writer(const std::string& path, uint64_t size);
 
     /**
+     * May be move constructed.
+     */
+    string_list_writer(string_list_writer&&);
+
+    /**
+     * May be move assigned.
+     */
+    string_list_writer& operator=(string_list_writer&&);
+
+    /**
      * Sets the string at idx to be elem.
      */
     void insert(uint64_t idx, const std::string& elem);

@@ -70,11 +70,6 @@ class inverted_index: public disk_index
 
     public:
         /**
-         * @return the name of this index
-         */
-        std::string index_name() const;
-
-        /**
          * Move constructs a inverted_index.
          */
         inverted_index(inverted_index&&);
@@ -141,9 +136,6 @@ class inverted_index: public disk_index
         double avg_doc_length();
 
     private:
-        /** the location of this index */
-        std::string _index_name;
-
         /**
          * This function initializes the disk index. It cannot be part of the
          * constructor since dynamic binding doesn't work in a base class's
@@ -178,6 +170,11 @@ class inverted_index: public disk_index
          * Compresses the large postings file.
          */
         void compress(const std::string & filename, uint64_t num_unique_terms);
+
+        /**
+         * The tokenizer used to tokenize documents.
+         */
+        std::unique_ptr<tokenizers::tokenizer> tokenizer_;
 
         /**
          * PrimaryKey -> postings location.

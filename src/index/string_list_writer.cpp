@@ -17,6 +17,24 @@ string_list_writer::string_list_writer(const std::string& path, uint64_t size)
     // nothing
 }
 
+string_list_writer::string_list_writer(string_list_writer&& other)
+    : string_file_{std::move(other.string_file_)},
+      write_pos_{std::move(other.write_pos_)},
+      index_{std::move(other.index_)}
+{
+    // nothing
+}
+
+string_list_writer& string_list_writer::operator=(string_list_writer&& other)
+{
+    if (this != &other) {
+        string_file_ = std::move(other.string_file_);
+        write_pos_ = std::move(other.write_pos_);
+        index_ = std::move(other.index_);
+    }
+    return *this;
+}
+
 void string_list_writer::insert(uint64_t idx, const std::string& elem)
 {
     std::lock_guard<std::mutex> lock{mutex_};

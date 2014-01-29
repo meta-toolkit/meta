@@ -15,7 +15,7 @@ namespace index
 vocabulary_map_writer::vocabulary_map_writer(const std::string& path,
                                              uint16_t block_size)
     : file_write_pos_{0},
-      inverse_file_{path + ".inverse.vector", std::ios::binary},
+      inverse_file_{path + ".inverse", std::ios::binary},
       path_{path},
       block_size_{block_size},
       num_terms_{0},

@@ -10,7 +10,7 @@ namespace util {
 
 template <class T>
 disk_vector<T>::disk_vector(const std::string & path, uint64_t size /* = 0 */):
-    _path{path + ".vector"},
+    _path{path},
     _start{nullptr},
     _size{size},
     _file_desc{-1}

@@ -31,7 +31,7 @@ Index make_index(const std::string &config_file, Args &&... args) {
     Index idx{config, std::forward<Args>(args)...};
 
     // if index has already been made, load it
-    if (filesystem::make_directory(idx._index_name))
+    if (filesystem::make_directory(idx.index_name()))
         idx.load_index();
     else
         idx.create_index(config_file);

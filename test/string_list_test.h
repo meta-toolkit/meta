@@ -51,7 +51,7 @@ void string_list_tests()
     testing::run_test("string_list_writer_basic", [&]()
     {
         file_guard f{"meta-tmp-string-list.bin"};
-        file_guard fi{"meta-tmp-string-list.bin_index.vector"};
+        file_guard fi{"meta-tmp-string-list.bin_index"};
         using namespace index;
         {
             string_list_writer writer{"meta-tmp-string-list.bin", 5};
@@ -74,7 +74,7 @@ void string_list_tests()
     testing::run_test("string_list_read_basic", [&]()
     {
         file_guard f{"meta-tmp-string-list.bin"};
-        file_guard fi{"meta-tmp-string-list.bin_index.vector"};
+        file_guard fi{"meta-tmp-string-list.bin_index"};
         using namespace index;
         {
             string_list_writer writer{"meta-tmp-string-list.bin", 5};

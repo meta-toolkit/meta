@@ -59,13 +59,13 @@ class forward_index: public disk_index
      * Move constructs a forward_index.
      * @param other The forward_index to move into this one.
      */
-    forward_index(forward_index &&other) = default;
+    forward_index(forward_index&&);
 
     /**
      * Move assigns a forward_index.
      * @param other The forward_index to move into this one.
      */
-    forward_index &operator=(forward_index &&other) = default;
+    forward_index &operator=(forward_index&&);
 
     /**
      * forward_index may not be copy-constructed.
@@ -80,12 +80,7 @@ class forward_index: public disk_index
     /**
      * Default destructor.
      */
-    virtual ~forward_index() = default;
-
-    /**
-     * @return the name of this index
-     */
-    std::string index_name() const;
+    virtual ~forward_index();
 
     /**
      * @param d_id The doc_id to search for
@@ -106,9 +101,6 @@ class forward_index: public disk_index
     virtual uint64_t unique_terms() const override;
 
    private:
-    /** the name of this index on disk */
-    std::string _index_name;
-
     /**
      * Initializes this index's metadata structures.
      */

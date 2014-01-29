@@ -99,7 +99,7 @@ void assert_correctness(uint16_t size = 20)
     }
 
     filesystem::delete_file("meta-tmp-test.bin");
-    filesystem::delete_file("meta-tmp-test.bin.inverse.vector");
+    filesystem::delete_file("meta-tmp-test.bin.inverse");
 }
 
 void read_file(uint16_t size = 20)

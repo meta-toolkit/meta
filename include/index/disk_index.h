@@ -10,10 +10,8 @@
 #define _DISK_INDEX_H_
 
 #include <memory>
-#include <mutex>
-
-#include "caching/dblru_cache.h"
-#include "util/invertible_map.h"
+#include <vector>
+#include "util/pimpl.h"
 #include "meta.h"
 
 namespace cpptoml {
@@ -46,38 +44,16 @@ namespace index {
  */
 class disk_index
 {
-   protected:
-    /**
-     * Constructor.
-     * @param config_file
-     */
-    disk_index(const cpptoml::toml_group & config);
-
-    /**
-     * disk_index may not be copy-constructed.
-     */
-    disk_index(const disk_index &) = delete;
-
-    /**
-     * disk_index may not be copy-assigned.
-     */
-    disk_index &operator=(const disk_index &) = delete;
-
-    /**
-     * Move constructs a disk_index.
-     **/
-    disk_index(disk_index&&);
-
-    /**
-     * Move assigns a disk_index.
-     */
-    disk_index& operator=(disk_index&&);
-
-   public:
+  public:
     /**
      * Default destructor.
      */
-    virtual ~disk_index();
+    virtual ~disk_index() = default;
+
+    /**
+     * The name of this index.
+     */
+    std::string index_name() const;
 
     /**
      * @return the number of documents in this index
@@ -138,70 +114,37 @@ class disk_index
      */
     term_id get_term_id(const std::string & term);
 
-   protected:
-    /**
-     * @param d_id The document
-     * @return the numerical label_id for a given document's label
-     */
-    label_id label_id_from_doc(doc_id d_id) const;
+  protected:
+    class disk_index_impl;
+    util::pimpl<disk_index_impl> impl_;
 
     /**
-     * doc_id -> document path mapping.
-     * Each index corresponds to a doc_id (uint64_t).
+     * Constructor.
+     * @param config_file
      */
-    std::unique_ptr<string_list> _doc_id_mapping;
+    disk_index(const cpptoml::toml_group & config, const std::string& name);
 
     /**
-     * doc_id -> document length mapping.
-     * Each index corresponds to a doc_id (uint64_t).
+     * disk_index may not be copy-constructed.
      */
-    std::unique_ptr<util::disk_vector<double>> _doc_sizes;
-
-    /** the tokenizer used to tokenize documents in the index */
-    std::unique_ptr<tokenizers::tokenizer> _tokenizer;
+    disk_index(const disk_index &) = delete;
 
     /**
-     * Maps which class a document belongs to (if any).
-     * Each index corresponds to a doc_id (uint64_t).
+     * disk_index may not be copy-assigned.
      */
-    std::unique_ptr<util::disk_vector<label_id>> _labels;
+    disk_index &operator=(const disk_index &) = delete;
+
+  public:
 
     /**
-     * Holds how many unique terms there are per-document. This is sort of
-     * like an inverse IDF. For a forward_index, this field is certainly
-     * redundant, though it can save querying the postings file.
-     * Each index corresponds to a doc_id (uint64_t).
-     */
-    std::unique_ptr<util::disk_vector<uint64_t>> _unique_terms;
+     * Move constructs a disk_index.
+     **/
+    disk_index(disk_index&&) = default;
 
     /**
-     * Maps string terms to term_ids.
+     * Move assigns a disk_index.
      */
-    std::unique_ptr<vocabulary_map> _term_id_mapping;
-
-    /**
-     * @param lbl the string class label to find the id for
-     * @return the label_id of a class_label, creating a new one if
-     * necessary
-     */
-    label_id get_label_id(const class_label & lbl);
-
-    /**
-     * assigns an integer to each class label (used for liblinear and slda
-     * mappings)
-     */
-    util::invertible_map<class_label, label_id> _label_ids;
-
-    /**
-     * A pointer to a memory-mapped postings file. It is a pointer because
-     * we want to delay the initialization of it until the postings file is
-     * created in some cases.
-     */
-    std::unique_ptr<io::mmap_file> _postings;
-
-    /** mutex for thread-safe operations */
-    std::unique_ptr<std::mutex> _mutex{new std::mutex};
-
+    disk_index& operator=(disk_index&&) = default;
 };
 
 }
