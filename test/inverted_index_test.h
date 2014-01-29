@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include "index/inverted_index.h"
+#include "index/postings_data.h"
 #include "caching/all.h"
 #include "cpptoml.h"
 
