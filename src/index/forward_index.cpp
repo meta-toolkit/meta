@@ -71,6 +71,9 @@ void forward_index::load_index()
 
     map::load_mapping(_label_ids, _index_name + "/labelids.mapping");
     _tokenizer = tokenizers::tokenizer::load(config);
+
+    std::ifstream unique_terms_file{"corpus.uniqueterms"};
+    unique_terms_file >> _total_unique_terms;
 }
 
 void forward_index::create_index(const std::string& config_file)
@@ -102,10 +105,16 @@ void forward_index::create_index(const std::string& config_file)
         init_metadata();
         _postings = make_unique<io::mmap_file>(_index_name + "/postings.index");
         set_doc_byte_locations();
+        _term_id_mapping = make_unique<vocabulary_map>(_index_name
+                                                       + "/termids.mapping");
+        _total_unique_terms = _term_id_mapping->size();
     }
 
     // now that the files are tokenized, we can create the string_list
     _doc_id_mapping = make_unique<string_list>(_index_name + "/docids.mapping");
+
+    std::ofstream unique_terms_file{"corpus.uniqueterms"};
+    unique_terms_file << _total_unique_terms;
 
     LOG(info) << "Done creating index: " << _index_name << ENDLG;
 }
@@ -225,10 +234,7 @@ bool forward_index::is_libsvm_format(const cpptoml::toml_group& config) const
 
 uint64_t forward_index::unique_terms() const
 {
-    if (_term_id_mapping == nullptr)
-        return _total_unique_terms;
-
-    return _term_id_mapping->size();
+    return _total_unique_terms;
 }
 
 auto forward_index::search_primary(doc_id d_id) const
