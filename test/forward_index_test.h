@@ -35,15 +35,13 @@ void check_ceeaus_expected_fwd(Index& idx) {
 }
 
 template <class Index>
-void check_doc_id(Index & idx)
-{
+void check_doc_id(Index& idx) {
     doc_id d_id{47};
     term_id first;
     double second;
     std::ifstream in{"../data/ceeaus-doc-count.txt"};
     auto pdata = idx.search_primary(d_id);
-    for(auto & count: pdata->counts())
-    {
+    for (auto& count : pdata->counts()) {
         in >> first;
         in >> second;
         ASSERT(first == count.first);
