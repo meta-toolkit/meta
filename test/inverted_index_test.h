@@ -1,9 +1,9 @@
 /**
- * @file index_test.h
+ * @file inverted_index_test.h
  */
 
-#ifndef _INDEX_TEST_H_
-#define _INDEX_TEST_H_
+#ifndef _INVERTED_INDEX_TEST_H_
+#define _INVERTED_INDEX_TEST_H_
 
 #include <fstream>
 #include <iostream>
@@ -81,14 +81,14 @@ namespace testing {
     {
         create_config("file");
 
-        testing::run_test("ceeaus-build-file-corpus", 30, [&](){
+        testing::run_test("inverted-index-build-file-corpus", 30, [&](){
             system("/usr/bin/rm -rf ceeaus-inv");
             auto idx = index::make_index<index::inverted_index,
                 caching::splay_cache>("test-config.toml", uint32_t{10000});
             check_ceeaus_expected(idx);
         });
 
-        testing::run_test("ceeaus-read-file-corpus", 10, [&](){
+        testing::run_test("inverted-index-read-file-corpus", 10, [&](){
             auto idx = index::make_index<index::inverted_index,
                 caching::splay_cache>("test-config.toml", uint32_t{10000});
             check_ceeaus_expected(idx);
@@ -98,14 +98,14 @@ namespace testing {
 
         create_config("line");
 
-        testing::run_test("ceeaus-build-line-corpus", 30, [&](){
+        testing::run_test("inverted-index-build-line-corpus", 30, [&](){
             system("/usr/bin/rm -rf ceeaus-inv");
             auto idx = index::make_index<index::inverted_index,
                 caching::splay_cache>("test-config.toml", uint32_t{10000});
             check_ceeaus_expected(idx);
         });
 
-        testing::run_test("ceeaus-read-line-corpus", 10, [&](){
+        testing::run_test("inverted-index-read-line-corpus", 10, [&](){
             auto idx = index::make_index<index::inverted_index,
                 caching::splay_cache>("test-config.toml", uint32_t{10000});
             check_ceeaus_expected(idx);

@@ -4,7 +4,7 @@
 
 #include "unit_test.h"
 #include "tokenizer_test.h"
-#include "index_test.h"
+#include "inverted_index_test.h"
 #include "string_list_test.h"
 #include "vocabulary_map_test.h"
 #include "libsvm_parser_test.h"
