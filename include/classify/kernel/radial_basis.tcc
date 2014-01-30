@@ -2,7 +2,6 @@
 #include <unordered_set>
 
 #include "classify/kernel/radial_basis.h"
-#include "util/mapping.h"
 
 namespace meta {
 namespace classify {
@@ -11,17 +10,14 @@ namespace kernel {
 template <class PostingsData>
 double radial_basis::operator()(const PostingsData & first,
                                 const PostingsData & second) const {
-    auto first_c = first->counts();
-    auto second_c = second->counts();
     double dist = 0;
     std::unordered_set<term_id> keyspace;
-    for(const auto & p : first_c)
+    for(const auto & p : first->counts())
         keyspace.insert(p.first);
-    for(const auto & p : second_c)
+    for(const auto & p : second->counts())
         keyspace.insert(p.first);
     for(const auto & t_id : keyspace) {
-        auto delta = map::safe_at(first_c, t_id)
-                     - map::safe_at(second_c, t_id);
+        auto delta = first->count(t_id) - second->count(t_id);
         dist += delta * delta;
     }
     return std::exp(gamma_ * dist);

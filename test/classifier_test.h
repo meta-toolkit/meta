@@ -1,0 +1,133 @@
+/**
+ * @file classifier_test.h
+ */
+
+#ifndef _CLASSIFIER_TEST_H_
+#define _CLASSIFIER_TEST_H_
+
+#include <fstream>
+#include <iostream>
+#include "inverted_index_test.h"
+#include "classify/classifier/all.h"
+#include "classify/kernel/all.h"
+#include "caching/all.h"
+#include "index/ranker/all.h"
+
+namespace meta {
+namespace testing {
+
+    template <class Index, class Classifier>
+    void check_cv(Index & idx, Classifier & c, double min_accuracy)
+    {
+        std::vector<doc_id> docs = idx.docs();
+        classify::confusion_matrix mtx = c.cross_validate(docs, 5);
+        //std::cout << mtx.accuracy() << std::endl;
+        ASSERT(mtx.accuracy() > min_accuracy);
+        ASSERT(mtx.accuracy() < 100.0);
+    }
+
+    template <class Index, class Classifier>
+    void check_split(Index & idx, Classifier & c, double min_accuracy)
+    {
+        // create splits
+        std::vector<doc_id> docs = idx.docs();
+        std::mt19937 gen(47);
+        std::shuffle(docs.begin(), docs.end(), gen);
+        size_t split_idx = docs.size() / 8;
+        std::vector<doc_id> train_docs{docs.begin() + split_idx, docs.end()};
+        std::vector<doc_id> test_docs{docs.begin(), docs.begin() + split_idx};
+
+        // train and test
+        c.train(train_docs);
+        classify::confusion_matrix mtx = c.test(test_docs);
+        ASSERT(mtx.accuracy() > min_accuracy);
+        ASSERT(mtx.accuracy() < 100.0);
+    }
+
+    void run_tests(const std::string & type)
+    {
+        auto i_idx = index::make_index<
+            index::inverted_index, caching::no_evict_cache
+        >("test-config.toml");
+        auto f_idx = index::make_index<
+            index::forward_index, caching::no_evict_cache
+        >("test-config.toml");
+
+        testing::run_test("naive-bayes-cv-" + type, 5, [&](){
+            classify::naive_bayes nb{f_idx};
+            check_cv(f_idx, nb, 0.86);
+        });
+
+        testing::run_test("naive-bayes-split-" + type, 5, [&](){
+            classify::naive_bayes nb{f_idx};
+            check_split(f_idx, nb, 0.84);
+        });
+
+        testing::run_test("knn-cv-" + type, 5, [&](){
+            classify::knn<index::okapi_bm25> kn{i_idx, 10};
+            check_cv(f_idx, kn, 0.90);
+        });
+
+        testing::run_test("knn-split-" + type, 5, [&](){
+            classify::knn<index::okapi_bm25> kn{i_idx, 10};
+            check_split(f_idx, kn, 0.88);
+        });
+
+        testing::run_test("sgd-cv-" + type, 5, [&](){
+            classify::one_vs_all<classify::sgd<classify::loss::hinge>>
+                hinge_sgd{f_idx};
+            check_cv(f_idx, hinge_sgd, 0.94);
+            classify::one_vs_all<classify::sgd<classify::loss::perceptron>>
+                perceptron{f_idx};
+            check_cv(f_idx, perceptron, 0.90);
+        });
+
+        testing::run_test("sgd-split-" + type, 5, [&](){
+            classify::one_vs_all<classify::sgd<classify::loss::hinge>>
+                hinge_sgd{f_idx};
+            check_split(f_idx, hinge_sgd, 0.90);
+            classify::one_vs_all<classify::sgd<classify::loss::perceptron>>
+                perceptron{f_idx};
+            check_split(f_idx, perceptron, 0.85);
+        });
+
+        testing::run_test("winnow-cv-" + type, 5, [&](){
+            classify::winnow win{f_idx};
+            check_cv(f_idx, win, 0.84);
+        });
+
+        testing::run_test("winnow-split-" + type, 5, [&](){
+            classify::winnow win{f_idx};
+            check_split(f_idx, win, 0.79); // this is really low
+        });
+
+        testing::run_test("dual-perceptron-cv-" + type, 10, [&](){
+            classify::dual_perceptron<classify::kernel::polynomial>
+                dp_p{f_idx};
+            check_cv(f_idx, dp_p, 0.84);
+
+            classify::dual_perceptron<classify::kernel::radial_basis>
+                dp_rb{f_idx, classify::kernel::radial_basis{0.5}};
+            check_cv(f_idx, dp_rb, 0.84);
+
+            classify::dual_perceptron<classify::kernel::sigmoid>
+                dp_s{f_idx, classify::kernel::sigmoid{1, 1}};
+            check_cv(f_idx, dp_s, 0.84);
+        });
+
+        system("/usr/bin/rm -rf ceeaus-*");
+    }
+
+    void classifier_tests()
+    {
+        system("/usr/bin/rm -rf ceeaus-*");
+        create_config("file");
+        run_tests("file");
+        create_config("line");
+        run_tests("line");
+    }
+
+}
+}
+
+#endif
