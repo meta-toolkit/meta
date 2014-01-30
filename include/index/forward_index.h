@@ -174,17 +174,13 @@ class forward_index: public disk_index
          * forward_index is a friend of the factory method used to create
          * it.
          */
-        friend forward_index make_index<forward_index>(const std::string &);
-
-        /**
-         * Factory method for creating indexes.
-         */
         template <class Index, class... Args>
         friend Index make_index(const std::string & config_file,
                                 Args &&... args);
 
         /**
-         * Factory method for creating indexes that are cached.
+         * forward_index is a friend of the factory method used to create
+         * cached versions of it.
          */
         template <class Index,
                   template <class, class> class Cache,
