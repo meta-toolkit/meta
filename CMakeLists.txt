@@ -114,6 +114,7 @@ target_link_libraries(classify
 
 add_executable(unit-test unit-test.cpp)
 target_link_libraries(unit-test
+                      meta-classify
                       meta-index
                       ${CMAKE_THREAD_LIBS_INIT})
 
