@@ -43,7 +43,6 @@ void naive_bayes::train(const std::vector<doc_id> & docs)
         for(auto & p: cls.second)
             p.second /= _class_counts[cls.first];
     }
-   
 }
 
 class_label naive_bayes::classify(doc_id d_id)

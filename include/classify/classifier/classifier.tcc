@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <random>
+#include "logging/logger.h"
 #include "classify/classifier/classifier.h"
 
 namespace meta {
@@ -39,14 +40,14 @@ confusion_matrix classifier<Index>::cross_validate(
     size_t step_size = docs.size() / k;
     for(size_t i = 0; i < k; ++i)
     {
-        std::cerr << "Cross-validating fold " << (i + 1) << "/" << k << "\r";
+        LOG(progress) << "Cross-validating fold " << (i + 1) << "/" << k << ENDLG;
         reset(); // clear any learning data already calculated
         train(std::vector<doc_id>{docs.begin() + step_size, docs.end()});
         matrix +=
             test(std::vector<doc_id>{docs.begin(), docs.begin() + step_size});
         std::rotate(docs.begin(), docs.begin() + step_size, docs.end());
     }
-    std::cerr << std::endl;
+    LOG(progress) << '\n' << ENDLG;
 
     return matrix;
 }
