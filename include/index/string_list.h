@@ -31,6 +31,16 @@ class string_list
     string_list(const std::string& path);
 
     /**
+     * Move constructs a string list
+     */
+    string_list(string_list&&) = default;
+
+    /**
+     * Move assigns a string list
+     */
+    string_list& operator=(string_list&&) = default;
+
+    /**
      * Gets the string at a given index.
      */
     const char* at(uint64_t idx) const;

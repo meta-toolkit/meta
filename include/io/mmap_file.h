@@ -28,6 +28,16 @@ class mmap_file
         mmap_file(const std::string & path);
 
         /**
+         * Move constructor.
+         */
+        mmap_file(mmap_file&&);
+
+        /**
+         * Move assignment operator.
+         */
+        mmap_file& operator=(mmap_file&&);
+
+        /**
          * Destructor; deallocates memory used to store this object, closing the
          * text file.
          */

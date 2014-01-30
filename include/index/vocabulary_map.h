@@ -81,6 +81,16 @@ class vocabulary_map
     vocabulary_map(const std::string& path, uint16_t block_size = 4096);
 
     /**
+     * Move constructs a vocabulary_map.
+     */
+    vocabulary_map(vocabulary_map&&) = default;
+
+    /**
+     * Move assigns a vocabulary_map.
+     */
+    vocabulary_map& operator=(vocabulary_map&&) = default;
+
+    /**
      * Finds the given term in the tree, if it exists.
      * @param term the term to find an id for
      */

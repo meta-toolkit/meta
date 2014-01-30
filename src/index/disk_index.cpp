@@ -119,32 +119,30 @@ void disk_index::disk_index_impl::initialize_metadata(uint64_t num_docs)
 
 void disk_index::disk_index_impl::load_doc_sizes(uint64_t num_docs)
 {
-    doc_sizes_ = make_unique<util::disk_vector<double>>(
-        index_name_ + files[DOC_SIZES], num_docs);
+    doc_sizes_ =
+        util::disk_vector<double>{index_name_ + files[DOC_SIZES], num_docs};
 }
 
 void disk_index::disk_index_impl::load_labels(uint64_t num_docs)
 {
-    labels_ = make_unique<util::disk_vector<label_id>>(
-        index_name_ + files[DOC_LABELS], num_docs);
+    labels_ =
+        util::disk_vector<label_id>{index_name_ + files[DOC_LABELS], num_docs};
 }
 
 void disk_index::disk_index_impl::load_unique_terms(uint64_t num_docs)
 {
-    unique_terms_ = make_unique<util::disk_vector<uint64_t>>(
-        index_name_ + files[DOC_UNIQUETERMS], num_docs);
+    unique_terms_ = util::disk_vector<uint64_t>{
+        index_name_ + files[DOC_UNIQUETERMS], num_docs};
 }
 
 void disk_index::disk_index_impl::load_doc_id_mapping()
 {
-    doc_id_mapping_ =
-        make_unique<string_list>(index_name_ + files[DOC_IDS_MAPPING]);
+    doc_id_mapping_ = string_list{index_name_ + files[DOC_IDS_MAPPING]};
 }
 
 void disk_index::disk_index_impl::load_term_id_mapping()
 {
-    term_id_mapping_ =
-        make_unique<vocabulary_map>(index_name_ + files[TERM_IDS_MAPPING]);
+    term_id_mapping_ = vocabulary_map{index_name_ + files[TERM_IDS_MAPPING]};
 }
 
 void disk_index::disk_index_impl::load_label_id_mapping()
@@ -154,7 +152,7 @@ void disk_index::disk_index_impl::load_label_id_mapping()
 
 void disk_index::disk_index_impl::load_postings()
 {
-    postings_ = make_unique<io::mmap_file>(index_name_ + files[POSTINGS]);
+    postings_ = io::mmap_file{index_name_ + files[POSTINGS]};
 }
 
 void disk_index::disk_index_impl::save_label_id_mapping()

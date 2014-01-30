@@ -9,7 +9,11 @@
 #include <mutex>
 
 #include "index/disk_index.h"
+#include "index/string_list.h"
+#include "index/vocabulary_map.h"
+#include "util/disk_vector.h"
 #include "util/invertible_map.h"
+#include "util/optional.h"
 
 namespace meta
 {
@@ -137,19 +141,19 @@ class disk_index::disk_index_impl
      * doc_id -> document path mapping.
      * Each index corresponds to a doc_id (uint64_t).
      */
-    std::unique_ptr<string_list> doc_id_mapping_;
+    util::optional<string_list> doc_id_mapping_;
 
     /**
      * doc_id -> document length mapping.
      * Each index corresponds to a doc_id (uint64_t).
      */
-    std::unique_ptr<util::disk_vector<double>> doc_sizes_;
+    util::optional<util::disk_vector<double>> doc_sizes_;
 
     /**
      * Maps which class a document belongs to (if any).
      * Each index corresponds to a doc_id (uint64_t).
      */
-    std::unique_ptr<util::disk_vector<label_id>> labels_;
+    util::optional<util::disk_vector<label_id>> labels_;
 
     /**
      * Holds how many unique terms there are per-document. This is sort of
@@ -157,12 +161,12 @@ class disk_index::disk_index_impl
      * redundant, though it can save querying the postings file.
      * Each index corresponds to a doc_id (uint64_t).
      */
-    std::unique_ptr<util::disk_vector<uint64_t>> unique_terms_;
+    util::optional<util::disk_vector<uint64_t>> unique_terms_;
 
     /**
      * Maps string terms to term_ids.
      */
-    std::unique_ptr<vocabulary_map> term_id_mapping_;
+    util::optional<vocabulary_map> term_id_mapping_;
 
     /**
      * assigns an integer to each class label (used for liblinear and slda
@@ -175,7 +179,7 @@ class disk_index::disk_index_impl
      * we want to delay the initialization of it until the postings file is
      * created in some cases.
      */
-    std::unique_ptr<io::mmap_file> postings_;
+    util::optional<io::mmap_file> postings_;
 
     /** mutex for thread-safe operations */
     mutable std::mutex mutex_;

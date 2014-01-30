@@ -32,6 +32,33 @@ mmap_file::mmap_file(const std::string & path):
     }
 }
 
+mmap_file::mmap_file(mmap_file&& other)
+    : _path{std::move(other._path)},
+      _start{std::move(other._start)},
+      _size{std::move(other._size)},
+      _file_descriptor{std::move(other._file_descriptor)}
+{
+    other._start = nullptr;
+}
+
+mmap_file& mmap_file::operator=(mmap_file&& other)
+{
+    if (this != &other)
+    {
+        if (_start)
+        {
+            munmap(_start, _size);
+            close(_file_descriptor);
+        }
+        _path = std::move(other._path);
+        _start = std::move(other._start);
+        _size = std::move(other._size);
+        _file_descriptor = std::move(other._file_descriptor);
+        other._start = nullptr;
+    }
+    return *this;
+}
+
 uint64_t mmap_file::size() const
 {
     return _size;

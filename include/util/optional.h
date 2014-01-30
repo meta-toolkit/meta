@@ -168,7 +168,7 @@ class optional {
          * Helper function to obtain the address of the contained value.
          * const version.
          */
-        T * dataptr() const;
+        const T * dataptr() const;
 
         /**
          * Helper function to obtain the address of the contained value.
