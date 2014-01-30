@@ -21,10 +21,65 @@
 namespace meta {
 namespace index {
 
+class inverted_index::impl
+{
+  private:
+      inverted_index* idx_;
+
+  public:
+    impl(inverted_index* parent, const cpptoml::toml_group& config);
+
+    /**
+     * @param docs The documents to be tokenized
+     * @return the number of chunks created
+     */
+    void tokenize_docs(corpus::corpus* docs,
+                       chunk_handler<inverted_index>& handler);
+
+    /**
+     * Creates the lexicon file (or "dictionary") which has pointers into
+     * the large postings file
+     * @param postings_file
+     * @param lexicon_file
+     */
+    void create_lexicon(const std::string& postings_file,
+                        const std::string& lexicon_file);
+
+    /**
+     * Compresses the large postings file.
+     */
+    void compress(const std::string& filename, uint64_t num_unique_terms);
+
+    /**
+     * The tokenizer used to tokenize documents.
+     */
+    std::unique_ptr<tokenizers::tokenizer> tokenizer_;
+
+    /**
+     * PrimaryKey -> postings location.
+     * Each index corresponds to a PrimaryKey (uint64_t).
+     */
+    std::unique_ptr<util::disk_vector<uint64_t>> _term_bit_locations;
+
+    /** the total number of term occurrences in the entire corpus */
+    uint64_t _total_corpus_terms;
+};
+
+inverted_index::impl::impl(inverted_index* idx,
+                           const cpptoml::toml_group& config)
+    : idx_{idx},
+      tokenizer_{tokenizers::tokenizer::load(config)},
+      _total_corpus_terms{0}
+{
+    // nothing
+}
+
 inverted_index::inverted_index(const cpptoml::toml_group & config):
     disk_index{config, *cpptoml::get_as<std::string>(config, "inverted-index")},
-    tokenizer_{tokenizers::tokenizer::load(config)}
-{ /* nothing */ }
+    inv_impl_{this, config}
+{
+    // nothing
+}
 
 inverted_index::inverted_index(inverted_index&&) = default;
 inverted_index& inverted_index::operator=(inverted_index&&) = default;
@@ -44,7 +99,7 @@ void inverted_index::create_index(const std::string & config_file)
     impl_->initialize_metadata(num_docs);
 
     chunk_handler<inverted_index> handler{index_name()};
-    tokenize_docs(docs.get(), handler);
+    inv_impl_->tokenize_docs(docs.get(), handler);
 
     impl_->load_doc_id_mapping();
 
@@ -56,7 +111,8 @@ void inverted_index::create_index(const std::string & config_file)
               << ENDLG;
 
     uint64_t num_unique_terms = handler.unique_primary_keys();
-    compress(index_name() + impl_->files[POSTINGS], num_unique_terms);
+    inv_impl_->compress(index_name() + impl_->files[POSTINGS],
+                        num_unique_terms);
 
     impl_->load_term_id_mapping();
 
@@ -76,18 +132,18 @@ void inverted_index::load_index()
     impl_->load_doc_id_mapping();
     impl_->load_term_id_mapping();
 
-    _term_bit_locations = make_unique<util::disk_vector<uint64_t>>(
+    inv_impl_->_term_bit_locations = make_unique<util::disk_vector<uint64_t>>(
         index_name() + "/lexicon.index");
 
     impl_->load_label_id_mapping();
     impl_->load_postings();
 }
 
-void inverted_index::tokenize_docs(corpus::corpus * docs,
-                                   chunk_handler<inverted_index> & handler)
+void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
+                                         chunk_handler<inverted_index>& handler)
 {
     std::mutex mutex;
-    auto docid_writer = impl_->make_doc_id_writer(docs->size());
+    auto docid_writer = idx_->impl_->make_doc_id_writer(docs->size());
 
     auto task = [&]() {
         auto producer = handler.make_producer();
@@ -107,13 +163,13 @@ void inverted_index::tokenize_docs(corpus::corpus * docs,
                 printing::show_progress(doc->id(), docs->size(), 1000, progress);
             }
 
-            tokenize(*doc);
+            tokenizer_->tokenize(*doc);
 
             // save metadata
             docid_writer.insert(doc->id(), doc->path());
-            impl_->set_length(doc->id(), doc->length());
-            impl_->set_unique_terms(doc->id(), doc->counts().size());
-            impl_->set_label(doc->id(), doc->label());
+            idx_->impl_->set_length(doc->id(), doc->length());
+            idx_->impl_->set_unique_terms(doc->id(), doc->counts().size());
+            idx_->impl_->set_label(doc->id(), doc->label());
             // update chunk
             producer(doc->id(), doc->counts());
         }
@@ -133,7 +189,7 @@ void inverted_index::tokenize_docs(corpus::corpus * docs,
     printing::end_progress(progress);
 }
 
-void inverted_index::compress(const std::string & filename,
+void inverted_index::impl::compress(const std::string & filename,
         uint64_t num_unique_terms)
 {
     std::string cfilename{filename + ".compressed"};
@@ -144,8 +200,8 @@ void inverted_index::compress(const std::string & filename,
         io::compressed_file_writer out{cfilename,
                                        io::default_compression_writer_func};
 
-        vocabulary_map_writer vocab{index_name() +
-                                    impl_->files[TERM_IDS_MAPPING]};
+        vocabulary_map_writer vocab{idx_->index_name() +
+                                    idx_->impl_->files[TERM_IDS_MAPPING]};
 
         postings_data<std::string, doc_id> pdata;
         auto length = filesystem::file_size(filename) * 8; // number of bits
@@ -156,7 +212,7 @@ void inverted_index::compress(const std::string & filename,
         // allocate memory for the term_id -> term location mapping now
         // that we know how many terms there are
         _term_bit_locations = make_unique<util::disk_vector<uint64_t>>(
-                index_name() + "/lexicon.index", num_unique_terms);
+                idx_->index_name() + "/lexicon.index", num_unique_terms);
 
         // note: we will be accessing pdata in sorted order
         term_id t_id{0};
@@ -193,13 +249,13 @@ uint64_t inverted_index::term_freq(term_id t_id, doc_id d_id) const
 
 uint64_t inverted_index::total_corpus_terms()
 {
-    if(_total_corpus_terms == 0)
+    if(inv_impl_->_total_corpus_terms == 0)
     {
         for(auto & id: docs())
-            _total_corpus_terms += doc_size(id);
+            inv_impl_->_total_corpus_terms += doc_size(id);
     }
 
-    return _total_corpus_terms;
+    return inv_impl_->_total_corpus_terms;
 }
 
 uint64_t inverted_index::total_num_occurences(term_id t_id) const
@@ -221,7 +277,7 @@ double inverted_index::avg_doc_length()
 
 void inverted_index::tokenize(corpus::document & doc)
 {
-    tokenizer_->tokenize(doc);
+    inv_impl_->tokenizer_->tokenize(doc);
 }
 
 uint64_t inverted_index::doc_freq(term_id t_id) const
@@ -235,12 +291,12 @@ auto inverted_index::search_primary(term_id t_id) const
     uint64_t idx{t_id};
 
     // if the term doesn't exist in the index, return an empty postings_data
-    if(idx >= _term_bit_locations->size())
+    if(idx >= inv_impl_->_term_bit_locations->size())
         return std::make_shared<postings_data_type>(t_id);
 
     io::compressed_file_reader reader{impl_->postings(),
                                       io::default_compression_reader_func};
-    reader.seek(_term_bit_locations->at(idx));
+    reader.seek(inv_impl_->_term_bit_locations->at(idx));
 
     auto pdata = std::make_shared<postings_data_type>(t_id);
     pdata->read_compressed(reader);

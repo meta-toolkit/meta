@@ -16,45 +16,72 @@
 #include "util/disk_vector.h"
 #include "meta.h"
 
-namespace meta {
-namespace corpus {
+namespace meta
+{
+namespace corpus
+{
 class corpus;
 }
 
-namespace index {
+namespace index
+{
 template <class, class>
 class postings_data;
 }
 }
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 /**
  * The forward_index stores information on a corpus by doc_ids.  Each doc_id key
  * is associated with a distribution of term_ids or term "counts" that occur in
  * that particular document.
  */
-class forward_index: public disk_index
+class forward_index : public disk_index
 {
-   public:
-    class forward_index_exception;
+  public:
+    /**
+       * Basic exception for forward_index interactions.
+       */
+    class forward_index_exception : public std::runtime_error
+    {
+      public:
+        using std::runtime_error::runtime_error;
+    };
 
-    using primary_key_type   = doc_id;
+    /**
+     * forward_index is a friend of the factory method used to create
+     * it.
+     */
+    template <class Index, class... Args>
+    friend Index make_index(const std::string& config_file, Args&&... args);
+
+    /**
+     * forward_index is a friend of the factory method used to create
+     * cached versions of it.
+     */
+    template <class Index, template <class, class> class Cache, class... Args>
+    friend cached_index<Index, Cache> make_index(const std::string& config_file,
+                                                 Args&&... args);
+
+    using primary_key_type = doc_id;
     using secondary_key_type = term_id;
     using postings_data_type = postings_data<doc_id, term_id>;
     using inverted_pdata_type = postings_data<term_id, doc_id>;
     using index_pdata_type = postings_data_type;
     using exception = forward_index_exception;
 
-   protected:
+  protected:
     /**
      * @param config The toml_group that specifies how to create the
      * index.
      */
-    forward_index(const cpptoml::toml_group &config);
+    forward_index(const cpptoml::toml_group& config);
 
-   public:
+  public:
     /**
      * Move constructs a forward_index.
      * @param other The forward_index to move into this one.
@@ -65,17 +92,17 @@ class forward_index: public disk_index
      * Move assigns a forward_index.
      * @param other The forward_index to move into this one.
      */
-    forward_index &operator=(forward_index&&);
+    forward_index& operator=(forward_index&&);
 
     /**
      * forward_index may not be copy-constructed.
      */
-    forward_index(const forward_index &) = delete;
+    forward_index(const forward_index&) = delete;
 
     /**
      * forward_index may not be copy-assigned.
      */
-    forward_index &operator=(const forward_index &) = delete;
+    forward_index& operator=(const forward_index&) = delete;
 
     /**
      * Default destructor.
@@ -100,12 +127,7 @@ class forward_index: public disk_index
      */
     virtual uint64_t unique_terms() const override;
 
-   private:
-    /**
-     * Initializes this index's metadata structures.
-     */
-    void init_metadata();
-
+  private:
     /**
      * This function loads a disk index from its filesystem
      * representation.
@@ -118,81 +140,9 @@ class forward_index: public disk_index
      */
     void create_index(const std::string & config_file);
 
-    /**
-     * @param config the configuration settings for this index
-     */
-    void create_libsvm_postings(const cpptoml::toml_group& config);
-
-    /**
-     */
-    void create_libsvm_metadata();
-
-    /**
-     * @param config the configuration settings for this index
-     */
-    void uninvert(const cpptoml::toml_group& config);
-
-    /**
-     * @param config the configuration settings for this index
-     */
-    void create_uninverted_metadata(const cpptoml::toml_group& config);
-
-    /**
-     * @param config the configuration settings for this index
-     * @return whether this index will be based off of a single
-     * libsvm-formatted corpus file
-     */
-    bool is_libsvm_format(const cpptoml::toml_group& config) const;
-
-    /**
-     * Calculates which documents start at which bytes in the postings file.
-     */
-    void set_doc_byte_locations();
-
-    /**
-     * Converts postings.index into a libsvm formatted file
-     */
-    void compressed_postings_to_libsvm();
-
-    /** the total number of unique terms if _term_id_mapping is unused */
-    uint64_t _total_unique_terms;
-
-    /** doc_id -> postings file byte location */
-    std::unique_ptr<util::disk_vector<uint64_t>> _doc_byte_locations;
-
-    public:
-        /**
-         * Basic exception for forward_index interactions.
-         */
-        class forward_index_exception: public std::runtime_error
-        {
-            public:
-               using std::runtime_error::runtime_error;
-        };
-
-        /**
-         * forward_index is a friend of the factory method used to create
-         * it.
-         */
-        friend forward_index make_index<forward_index>(const std::string &);
-
-        /**
-         * Factory method for creating indexes.
-         */
-        template <class Index, class... Args>
-        friend Index make_index(const std::string & config_file,
-                                Args &&... args);
-
-        /**
-         * Factory method for creating indexes that are cached.
-         */
-        template <class Index,
-                  template <class, class> class Cache,
-                  class... Args>
-        friend cached_index<Index, Cache>
-        make_index(const std::string & config_file, Args &&... args);
+    class impl;
+    util::pimpl<impl> fwd_impl_;
 };
-
 }
 }
 
