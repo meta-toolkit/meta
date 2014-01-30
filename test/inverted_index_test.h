@@ -1,5 +1,6 @@
 /**
  * @file inverted_index_test.h
+ * @author Sean Massung
  */
 
 #ifndef _INVERTED_INDEX_TEST_H_
