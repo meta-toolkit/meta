@@ -85,7 +85,7 @@ class forward_index::impl
     uint64_t _total_unique_terms;
 
     /** doc_id -> postings file byte location */
-    std::unique_ptr<util::disk_vector<uint64_t>> _doc_byte_locations;
+    util::optional<util::disk_vector<uint64_t>> _doc_byte_locations;
 
   private:
     forward_index* idx_;
@@ -228,7 +228,7 @@ void forward_index::impl::init_metadata()
     uint64_t num_docs = filesystem::num_lines(idx_->index_name() +
                                               idx_->impl_->files[POSTINGS]);
     idx_->impl_->initialize_metadata(num_docs);
-    _doc_byte_locations = make_unique<util::disk_vector<uint64_t>>(
+    _doc_byte_locations = util::disk_vector<uint64_t>(
         idx_->index_name() + "/lexicon.index", num_docs);
 }
 

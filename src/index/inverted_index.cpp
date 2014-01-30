@@ -59,7 +59,7 @@ class inverted_index::impl
      * PrimaryKey -> postings location.
      * Each index corresponds to a PrimaryKey (uint64_t).
      */
-    std::unique_ptr<util::disk_vector<uint64_t>> _term_bit_locations;
+    util::optional<util::disk_vector<uint64_t>> _term_bit_locations;
 
     /** the total number of term occurrences in the entire corpus */
     uint64_t _total_corpus_terms;
@@ -132,8 +132,8 @@ void inverted_index::load_index()
     impl_->load_doc_id_mapping();
     impl_->load_term_id_mapping();
 
-    inv_impl_->_term_bit_locations = make_unique<util::disk_vector<uint64_t>>(
-        index_name() + "/lexicon.index");
+    inv_impl_->_term_bit_locations =
+        util::disk_vector<uint64_t>(index_name() + "/lexicon.index");
 
     impl_->load_label_id_mapping();
     impl_->load_postings();
@@ -211,8 +211,8 @@ void inverted_index::impl::compress(const std::string & filename,
 
         // allocate memory for the term_id -> term location mapping now
         // that we know how many terms there are
-        _term_bit_locations = make_unique<util::disk_vector<uint64_t>>(
-                idx_->index_name() + "/lexicon.index", num_unique_terms);
+        _term_bit_locations = util::disk_vector<uint64_t>(
+            idx_->index_name() + "/lexicon.index", num_unique_terms);
 
         // note: we will be accessing pdata in sorted order
         term_id t_id{0};
