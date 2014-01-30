@@ -118,6 +118,11 @@ target_link_libraries(unit-test
                       meta-index
                       ${CMAKE_THREAD_LIBS_INIT})
 
+add_executable(query-runner query-runner.cpp)
+target_link_libraries(query-runner
+                      meta-index
+                      ${CMAKE_THREAD_LIBS_INIT})
+
 add_executable(search search.cpp)
 target_link_libraries(search
                       meta-index
