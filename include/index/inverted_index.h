@@ -53,13 +53,37 @@ namespace index {
 class inverted_index: public disk_index
 {
     public:
-        class inverted_index_exception;
+        /**
+         * Basic exception for inverted_index interactions.
+         */
+        class inverted_index_exception: public std::runtime_error
+        {
+            public:
+                using std::runtime_error::runtime_error;
+        };
 
         using primary_key_type   = term_id;
         using secondary_key_type = doc_id;
         using postings_data_type = postings_data<term_id, doc_id>;
         using index_pdata_type = postings_data<std::string, doc_id>;
         using exception = inverted_index_exception;
+
+        /**
+         * inverted_index is a friend of the factory method used to create
+         * it.
+         */
+        template <class Index, class... Args>
+        friend Index make_index(const std::string &, Args&&...);
+
+        /**
+         * inverted_index is a friend of the factory method used to create
+         * cached versions of it.
+         */
+        template <class Index,
+                  template <class, class> class Cache,
+                  class... Args>
+        friend cached_index<Index, Cache>
+        make_index(const std::string & config_file, Args &&... args);
 
     protected:
         /**
@@ -140,7 +164,7 @@ class inverted_index: public disk_index
          * This function initializes the disk index. It cannot be part of the
          * constructor since dynamic binding doesn't work in a base class's
          * constructor, so it is invoked from a factory method.
-         * @param config_file The configuration file used to create the
+         * @param config_file The configuration to be used
          */
         void create_index(const std::string & config_file);
 
@@ -150,99 +174,8 @@ class inverted_index: public disk_index
          */
         void load_index();
 
-        /**
-         * @param docs The documents to be tokenized
-         * @return the number of chunks created
-         */
-        void tokenize_docs(corpus::corpus * docs,
-                           chunk_handler<inverted_index>& handler);
-
-        /**
-         * Creates the lexicon file (or "dictionary") which has pointers into
-         * the large postings file
-         * @param postings_file
-         * @param lexicon_file
-         */
-        void create_lexicon(const std::string & postings_file,
-                            const std::string & lexicon_file);
-
-        /**
-         * Compresses the large postings file.
-         */
-        void compress(const std::string & filename, uint64_t num_unique_terms);
-
-        /**
-         * The tokenizer used to tokenize documents.
-         */
-        std::unique_ptr<tokenizers::tokenizer> tokenizer_;
-
-        /**
-         * PrimaryKey -> postings location.
-         * Each index corresponds to a PrimaryKey (uint64_t).
-         */
-        std::unique_ptr<util::disk_vector<uint64_t>> _term_bit_locations;
-
-        /** the total number of term occurrences in the entire corpus */
-        uint64_t _total_corpus_terms = 0;
-
-    public:
-        /**
-         * Basic exception for inverted_index interactions.
-         */
-        class inverted_index_exception: public std::runtime_error
-        {
-            public:
-                using std::runtime_error::runtime_error;
-        };
-
-        /**
-         * inverted_index is a friend of the factory method used to create
-         * it.
-         */
-        friend inverted_index make_index<inverted_index>(const std::string &);
-
-        /**
-         * Factory method for creating indexes.
-         * Usage:
-         *
-         * ~~~cpp
-         * auto idx = index::make_index<derived_index_type>(config_path);
-         * ~~~
-         *
-         * @param config_file The path to the configuration file to be
-         *  used to build the index
-         * @param args any additional arguments to forward to the
-         *  constructor for the chosen index type (usually none)
-         * @return A properly initialized index
-         */
-        template <class Index, class... Args>
-        friend Index make_index(const std::string & config_file,
-                                Args &&... args);
-
-        /**
-         * Factory method for creating indexes that are cached.
-         * Usage:
-         *
-         * ~~~cpp
-         * auto idx =
-         *     index::make_index<dervied_index_type,
-         *                       cache_type>(config_path, other, options);
-         * ~~~
-         *
-         * Other options will be forwarded to the constructor for the
-         * chosen cache class.
-         *
-         * @param config_file the path to the configuration file to be
-         *  used to build the index.
-         * @param args any additional arguments to forward to the
-         *  constructor for the cache class chosen
-         * @return A properly initialized, and automatically cached, index.
-         */
-        template <class Index,
-                  template <class, class> class Cache,
-                  class... Args>
-        friend cached_index<Index, Cache>
-        make_index(const std::string & config_file, Args &&... args);
+        class impl;
+        util::pimpl<impl> inv_impl_;
 };
 
 }
