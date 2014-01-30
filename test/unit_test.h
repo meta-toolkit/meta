@@ -18,21 +18,24 @@
 /**
  * Fail if expr is false; otherwise continue.
  */
-#define ASSERT(expr)                                   \
-    do {                                               \
-        if (!(expr)) FAIL("Assertion failed: " #expr); \
+#define ASSERT(expr)                                                           \
+    do                                                                         \
+    {                                                                          \
+        if (!(expr))                                                           \
+            FAIL("Assertion failed: " #expr);                                  \
     } while (0)
 
 /**
  * Fail this test case with an explanation.
  * Give line number and file where the test case failed.
  */
-#define FAIL(why)                                                         \
-    do {                                                                  \
-        std::cerr << "[ " << printing::make_red("FAIL") << " ] " << (why) \
-                  << " (";                                                \
-        std::cerr << __FILE__ << ":" << __LINE__ << ")" << std::endl;     \
-        exit(1);                                                          \
+#define FAIL(why)                                                              \
+    do                                                                         \
+    {                                                                          \
+        std::cerr << "[ " << printing::make_red("FAIL") << " ] " << (why)      \
+                  << " (";                                                     \
+        std::cerr << __FILE__ << ":" << __LINE__ << ")" << std::endl;          \
+        exit(1);                                                               \
     } while (0)
 
 /**
@@ -41,27 +44,32 @@
  *  the line number would be useless since it will report somewhere inside this
  * file.
  */
-#define FAIL_NOLINE(why)                                        \
-    do {                                                        \
-        std::cerr << "[ " << printing::make_red("FAIL") << " ]" \
-                  << " " << (why) << std::endl;                 \
-        exit(1);                                                \
+#define FAIL_NOLINE(why)                                                       \
+    do                                                                         \
+    {                                                                          \
+        std::cerr << "[ " << printing::make_red("FAIL") << " ]"                \
+                  << " " << (why) << std::endl;                                \
+        exit(1);                                                               \
     } while (0)
 
-namespace meta {
+namespace meta
+{
 
 /**
  * Contains unit testing functions for the META toolkit.
  */
-namespace testing {
+namespace testing
+{
 /**
  * Signal handler for unit tests.
  * Catches signals and responds appropriately, usually by failing the
  *  current test.
  * @param sig The caught signal ID
  */
-void sig_catch(int sig) {
-    switch (sig) {
+void sig_catch(int sig)
+{
+    switch (sig)
+    {
         case SIGALRM:
             FAIL_NOLINE("Time limit exceeded");
             break;
@@ -83,7 +91,8 @@ void sig_catch(int sig) {
  *  no parameters and return void.
  */
 template <class Func>
-void run_test(const std::string& test_name, int timeout, Func&& func) {
+void run_test(const std::string& test_name, int timeout, Func&& func)
+{
     std::cerr << std::left << std::setw(50) << (" " + test_name);
 
     struct sigaction act;
@@ -96,21 +105,35 @@ void run_test(const std::string& test_name, int timeout, Func&& func) {
     sigaction(SIGINT, &act, 0);
 
     pid_t pid = fork();
-    if (pid == 0) {
+    if (pid == 0)
+    {
         alarm(timeout);
-        func();
+        try
+        {
+            func();
+        }
+        catch (std::exception& ex)
+        {
+            std::string msg = " caught exception: " + std::string{ex.what()};
+            FAIL(msg);
+        }
         std::cerr << "[ " << printing::make_green("OK") << " ] " << std::endl;
         exit(0);
-    } else if (pid > 0) {
+    }
+    else if (pid > 0)
+    {
         waitpid(pid, NULL, 0);
-    } else {
+    }
+    else
+    {
         std::cerr << "[ " << printing::make_red("ERROR") << " ]"
                   << ": failure to fork" << std::endl;
     }
 }
 
 template <class Func>
-void run_test(const std::string& test_name, Func&& func) {
+void run_test(const std::string& test_name, Func&& func)
+{
     run_test(test_name, 1, func);
 }
 }
