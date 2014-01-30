@@ -24,7 +24,7 @@ namespace index {
 class inverted_index::impl
 {
   private:
-      inverted_index* idx_;
+    inverted_index* idx_;
 
   public:
     impl(inverted_index* parent, const cpptoml::toml_group& config);
