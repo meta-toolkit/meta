@@ -169,6 +169,9 @@ void chunk_handler<Index>::merge_chunks()
 
     LOG(progress) << '\n' << ENDLG;
 
+    if (chunks_.empty())
+        throw chunk_handler_exception{"there were no chunks to merge"};
+
     uint64_t unique_keys;
     std::ifstream termfile{chunks_.top().path() + ".numterms"};
     termfile >> unique_keys;
