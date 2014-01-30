@@ -46,6 +46,8 @@ namespace testing {
 
     void run_tests(const std::string & type)
     {
+        using namespace classify;
+
         auto i_idx = index::make_index<
             index::inverted_index, caching::no_evict_cache
         >("test-config.toml");
@@ -54,64 +56,55 @@ namespace testing {
         >("test-config.toml");
 
         testing::run_test("naive-bayes-cv-" + type, 5, [&](){
-            classify::naive_bayes nb{f_idx};
+            naive_bayes nb{f_idx};
             check_cv(f_idx, nb, 0.86);
         });
 
         testing::run_test("naive-bayes-split-" + type, 5, [&](){
-            classify::naive_bayes nb{f_idx};
+            naive_bayes nb{f_idx};
             check_split(f_idx, nb, 0.84);
         });
 
         testing::run_test("knn-cv-" + type, 5, [&](){
-            classify::knn<index::okapi_bm25> kn{i_idx, 10};
+            knn<index::okapi_bm25> kn{i_idx, 10};
             check_cv(f_idx, kn, 0.90);
         });
 
         testing::run_test("knn-split-" + type, 5, [&](){
-            classify::knn<index::okapi_bm25> kn{i_idx, 10};
+            knn<index::okapi_bm25> kn{i_idx, 10};
             check_split(f_idx, kn, 0.88);
         });
 
         testing::run_test("sgd-cv-" + type, 5, [&](){
-            classify::one_vs_all<classify::sgd<classify::loss::hinge>>
-                hinge_sgd{f_idx};
+            one_vs_all<sgd<loss::hinge>> hinge_sgd{f_idx};
             check_cv(f_idx, hinge_sgd, 0.94);
-            classify::one_vs_all<classify::sgd<classify::loss::perceptron>>
-                perceptron{f_idx};
+            one_vs_all<sgd<loss::perceptron>> perceptron{f_idx};
             check_cv(f_idx, perceptron, 0.90);
         });
 
         testing::run_test("sgd-split-" + type, 5, [&](){
-            classify::one_vs_all<classify::sgd<classify::loss::hinge>>
-                hinge_sgd{f_idx};
+            one_vs_all<sgd<loss::hinge>> hinge_sgd{f_idx};
             check_split(f_idx, hinge_sgd, 0.90);
-            classify::one_vs_all<classify::sgd<classify::loss::perceptron>>
-                perceptron{f_idx};
+            one_vs_all<sgd<loss::perceptron>> perceptron{f_idx};
             check_split(f_idx, perceptron, 0.85);
         });
 
         testing::run_test("winnow-cv-" + type, 5, [&](){
-            classify::winnow win{f_idx};
+            winnow win{f_idx};
             check_cv(f_idx, win, 0.84);
         });
 
         testing::run_test("winnow-split-" + type, 5, [&](){
-            classify::winnow win{f_idx};
+            winnow win{f_idx};
             check_split(f_idx, win, 0.79); // this is really low
         });
 
         testing::run_test("dual-perceptron-cv-" + type, 10, [&](){
-            classify::dual_perceptron<classify::kernel::polynomial>
-                dp_p{f_idx};
+            auto dp_p = make_perceptron(f_idx, kernel::polynomial{});
             check_cv(f_idx, dp_p, 0.84);
-
-            classify::dual_perceptron<classify::kernel::radial_basis>
-                dp_rb{f_idx, classify::kernel::radial_basis{0.5}};
+            auto dp_rb = make_perceptron(f_idx, kernel::radial_basis{0.5});
             check_cv(f_idx, dp_rb, 0.84);
-
-            classify::dual_perceptron<classify::kernel::sigmoid>
-                dp_s{f_idx, classify::kernel::sigmoid{1, 1}};
+            auto dp_s = make_perceptron(f_idx, kernel::sigmoid{1, 1});
             check_cv(f_idx, dp_s, 0.84);
         });
 

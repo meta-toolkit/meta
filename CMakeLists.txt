@@ -118,6 +118,11 @@ target_link_libraries(unit-test
                       meta-index
                       ${CMAKE_THREAD_LIBS_INIT})
 
+add_executable(query-runner query-runner.cpp)
+target_link_libraries(query-runner
+                      meta-index
+                      ${CMAKE_THREAD_LIBS_INIT})
+
 add_executable(search search.cpp)
 target_link_libraries(search
                       meta-index
@@ -135,10 +140,6 @@ target_link_libraries(interactive_search
 
 add_executable(threadpool-test threadpool-test.cpp)
 target_link_libraries(threadpool-test
-                      ${CMAKE_THREAD_LIBS_INIT})
-
-add_executable(parallel-for-test parallel-for-test.cpp)
-target_link_libraries(parallel-for-test
                       ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(lda-test lda-test.cpp)

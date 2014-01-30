@@ -1,5 +1,6 @@
 /**
  * @file forward_index_test.h
+ * @author Sean Massung
  */
 
 #ifndef _FORWARD_INDEX_TEST_H_

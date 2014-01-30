@@ -1,5 +1,6 @@
 /**
  * @file inverted_index_test.h
+ * @author Sean Massung
  */
 
 #ifndef _INVERTED_INDEX_TEST_H_
@@ -94,9 +95,9 @@ void inverted_index_tests() {
     });
 
     create_config("line");
+    system("/usr/bin/rm -rf ceeaus-inv");
 
     testing::run_test("inverted-index-build-line-corpus", 30, [&]() {
-        system("/usr/bin/rm -rf ceeaus-inv");
         auto idx =
             index::make_index<index::inverted_index, caching::splay_cache>(
                 "test-config.toml", uint32_t{10000});
@@ -109,8 +110,36 @@ void inverted_index_tests() {
                 "test-config.toml", uint32_t{10000});
         check_ceeaus_expected(idx);
         check_term_id(idx);
-        system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
+        check_term_id(idx); // twice to check splay_caching
     });
+
+    // test different caches
+
+    testing::run_test("inverted-index-dblru-cache", 5, [&]() {
+        auto idx =
+            index::make_index<index::inverted_index, caching::default_dblru_cache>(
+                "test-config.toml", uint64_t{1000});
+        check_term_id(idx);
+        check_term_id(idx);
+    });
+
+    testing::run_test("inverted-index-no-evict-cache", 5, [&]() {
+        auto idx =
+            index::make_index<index::inverted_index, caching::no_evict_cache>(
+                "test-config.toml");
+        check_term_id(idx);
+        check_term_id(idx);
+    });
+
+    testing::run_test("inverted-index-shard-cache", 5, [&]() {
+        auto idx =
+            index::make_index<index::inverted_index, caching::splay_shard_cache>(
+                "test-config.toml", uint8_t{8});
+        check_term_id(idx);
+        check_term_id(idx);
+    });
+
+    system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
 }
 }
 }
