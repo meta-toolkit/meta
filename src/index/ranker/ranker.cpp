@@ -49,7 +49,7 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index& idx,
 
     using doc_pair = std::pair<doc_id, double>;
     auto doc_pair_comp = [](const doc_pair& a, const doc_pair& b) {
-        return a.second > b.second;
+        return a.second < b.second;
     };
 
     std::priority_queue<doc_pair,
@@ -58,6 +58,9 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index& idx,
         > pq{doc_pair_comp};
     for (uint64_t id = 0; id < _results.size(); ++id)
     {
+        // if lower score than lowest score, don't add
+        if(!pq.empty() && _results[id] < pq.top().second)
+            continue;
         pq.emplace(doc_id{id}, _results[id]);
         if (pq.size() > num_results)
             pq.pop();
@@ -70,7 +73,7 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index& idx,
         pq.pop();
     }
 
-    std::reverse(sorted.begin(), sorted.end());
+    //std::reverse(sorted.begin(), sorted.end());
     return sorted;
 }
 }
