@@ -138,10 +138,6 @@ target_link_libraries(interactive_search
                       meta-index
                       ${CMAKE_THREAD_LIBS_INIT})
 
-add_executable(threadpool-test threadpool-test.cpp)
-target_link_libraries(threadpool-test
-                      ${CMAKE_THREAD_LIBS_INIT})
-
 add_executable(lda-test lda-test.cpp)
 target_link_libraries(lda-test
                       meta-topics

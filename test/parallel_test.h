@@ -12,6 +12,7 @@
 
 #include "util/time.h"
 #include "parallel/parallel_for.h"
+#include "parallel/thread_pool.h"
 
 namespace meta
 {
@@ -27,7 +28,7 @@ void hard_func(Type& x)
 template <class Type>
 void easy_func(Type& x)
 {
-    if(x != 1.0)
+    if (x != 1.0)
         FAIL("vector contents was modified");
     --x;
 }
@@ -41,12 +42,14 @@ void test_speed(std::vector<double>& v)
     {
 
         std::iota(v.begin(), v.end(), 0);
-        auto serial_time = common::time([&]() {
+        auto serial_time = common::time([&]()
+        {
             std::for_each(v.begin(), v.end(), hard_func<double>);
         });
 
         std::iota(v.begin(), v.end(), 0);
-        auto parallel_time = common::time([&]() {
+        auto parallel_time = common::time([&]()
+        {
             parallel::parallel_for(v.begin(), v.end(), hard_func<double>);
         });
 
@@ -66,12 +69,35 @@ void test_correctness(std::vector<double>& v)
     });
 }
 
+void test_threadpool()
+{
+    testing::run_test("parallel-thread-pool", 5, []()
+    {
+        parallel::thread_pool pool{};
+        std::vector<std::future<size_t>> futures;
+
+        for (size_t i = 0; i < 16; ++i)
+            futures.emplace_back(pool.submit_task([]() { return size_t{1}; }));
+
+        size_t sum = 0;
+        for (auto& fut : futures)
+        {
+            auto val = fut.get();
+            ASSERT(val == 1);
+            sum += val;
+        }
+
+        ASSERT(sum == 16);
+    });
+}
+
 void parallel_tests()
 {
     size_t n = 10000000;
     std::vector<double> v(n);
     test_speed(v);
     test_correctness(v);
+    test_threadpool();
 }
 }
 }
