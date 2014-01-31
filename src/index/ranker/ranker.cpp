@@ -73,7 +73,6 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index& idx,
         pq.pop();
     }
 
-    //std::reverse(sorted.begin(), sorted.end());
     return sorted;
 }
 }
