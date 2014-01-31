@@ -15,21 +15,25 @@
 
 #include "meta.h"
 
-namespace meta {
+namespace meta
+{
 
-namespace corpus {
+namespace corpus
+{
 class document;
 }
 
-namespace index {
+namespace index
+{
 class inverted_index;
 struct score_data;
 }
-
 }
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 /**
  * A ranker scores a query against all the documents in an inverted index,
@@ -37,25 +41,29 @@ namespace index {
  */
 class ranker
 {
-    public:
-        /**
-         * @param idx
-         * @param query
-         */
-        std::vector<std::pair<doc_id, double>> score(inverted_index & idx,
-                                                corpus::document & query) const;
+  public:
+    /**
+     * @param idx
+     * @param query
+     * @param num_results The number of results to return in the vector
+     */
+    std::vector<std::pair<doc_id, double>> score(inverted_index& idx,
+                                                 corpus::document& query,
+                                                 uint64_t num_results = 10);
 
-        /**
-         * @param sd
-         */
-        virtual double score_one(const score_data & sd) const = 0;
+    /**
+     * @param sd
+     */
+    virtual double score_one(const score_data& sd) = 0;
 
-        /**
-         * Default destructor.
-         */
-        virtual ~ranker() = default;
+    /**
+     * Default destructor.
+     */
+    virtual ~ranker() = default;
+
+  private:
+    std::vector<double> _results;
 };
-
 }
 }
 

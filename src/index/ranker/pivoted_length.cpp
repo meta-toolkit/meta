@@ -7,14 +7,16 @@
 #include "index/ranker/pivoted_length.h"
 #include "index/score_data.h"
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
-pivoted_length::pivoted_length(double s /* = 0.20 */):
-    _s{s}
-{ /* nothing */ }
+pivoted_length::pivoted_length(double s /* = 0.20 */) : _s{s}
+{/* nothing */
+}
 
-double pivoted_length::score_one(const score_data & sd) const
+double pivoted_length::score_one(const score_data& sd)
 {
     double doc_len = sd.idx.doc_size(sd.d_id);
     double TF = 1 + log(1 + log(sd.doc_term_count));
@@ -23,6 +25,5 @@ double pivoted_length::score_one(const score_data & sd) const
 
     return TF / norm * sd.query_term_count * IDF;
 }
-
 }
 }

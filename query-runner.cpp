@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     index::okapi_bm25 ranker;
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto query_path = config.get_as<std::string>("queryfile");
+    auto query_path = config.get_as<std::string>("querypath");
     if (!query_path)
     {
         std::cerr << "config file needs a \"queryfile\" parameter" << std::endl;

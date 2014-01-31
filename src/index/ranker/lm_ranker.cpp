@@ -8,10 +8,12 @@
 #include "index/score_data.h"
 #include "index/ranker/lm_ranker.h"
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
-double language_model_ranker::score_one(const score_data & sd) const
+double language_model_ranker::score_one(const score_data& sd)
 {
     double ps = smoothed_prob(sd);
     double doc_const = doc_constant(sd);
@@ -19,6 +21,5 @@ double language_model_ranker::score_one(const score_data & sd) const
 
     return ps / doc_const * pc + sd.query.length() * std::log(1 + doc_const);
 }
-
 }
 }
