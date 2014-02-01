@@ -16,6 +16,7 @@
 #include "tokenizers/tokenizer.h"
 #include "util/mapping.h"
 #include "util/pimpl.tcc"
+#include "util/progress.h"
 #include "util/shim.h"
 
 namespace meta {
@@ -145,6 +146,8 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
     std::mutex mutex;
     auto docid_writer = idx_->impl_->make_doc_id_writer(docs->size());
 
+    printing::progress progress{" > Tokenizing Docs: ", docs->size()};
+
     auto task = [&]() {
         auto producer = handler.make_producer();
         while (true) {
@@ -156,11 +159,7 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
                     return; // destructor for producer will write
                             // any intermediate chunks
                 doc = docs->next();
-
-                std::string progress = "> Documents: "
-                    + printing::add_commas(std::to_string(doc->id()))
-                    + " Tokenizing: ";
-                printing::show_progress(doc->id(), docs->size(), 1000, progress);
+                progress(doc->id());
             }
 
             tokenizer_->tokenize(*doc);
@@ -182,11 +181,6 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
 
     for (auto & fut : futures)
         fut.get();
-
-    std::string progress = "> Documents: "
-        + printing::add_commas(std::to_string(docs->size()))
-        + " Tokenizing: ";
-    printing::end_progress(progress);
 }
 
 void inverted_index::impl::compress(const std::string & filename,
@@ -207,30 +201,25 @@ void inverted_index::impl::compress(const std::string & filename,
         auto length = filesystem::file_size(filename) * 8; // number of bits
         io::compressed_file_reader in{filename,
                                       io::default_compression_reader_func};
-        auto idx = in.bit_location();
 
         // allocate memory for the term_id -> term location mapping now
         // that we know how many terms there are
         _term_bit_locations = util::disk_vector<uint64_t>(
             idx_->index_name() + "/lexicon.index", num_unique_terms);
 
+        printing::progress progress{" > Compressing postings: ", length, 500,
+                                    8 * 1024 /* 1KB */};
         // note: we will be accessing pdata in sorted order
         term_id t_id{0};
         while(in.has_next())
         {
             in >> pdata;
-            if (idx != in.bit_location() / (length / 500))
-            {
-                idx = in.bit_location() / (length / 500);
-                printing::show_progress(idx, 500, 1,
-                        " > Creating compressed postings file: ");
-            }
+            progress(in.bit_location());
             vocab.insert(pdata.primary_key());
             (*_term_bit_locations)[t_id] = out.bit_location();
             pdata.write_compressed(out);
             ++t_id;
         }
-        printing::end_progress(" > Creating compressed postings file: ");
     }
 
     LOG(info) << "Created compressed postings file ("
