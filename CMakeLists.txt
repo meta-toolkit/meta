@@ -22,6 +22,9 @@ if(UNIX)
     endif()
 endif()
 
+add_library(meta-util
+            src/util/progress.cpp)
+
 add_library(meta-io
             src/io/compressed_file_reader.cpp
             src/io/parser.cpp
@@ -83,7 +86,7 @@ add_library(meta-index
             src/index/ranker/pivoted_length.cpp)
 
 target_link_libraries(meta-index
-                      meta-io meta-corpus meta-tokenizers)
+                      meta-util meta-io meta-corpus meta-tokenizers)
 
 add_library(meta-classify
             src/classify/feature_select/select.cpp
@@ -148,6 +151,11 @@ target_link_libraries(lda-topics
                       ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(shuffle shuffle.cpp)
+
+add_executable(print-test print-test.cpp)
+target_link_libraries(print-test
+                      meta-util
+                      ${CMAKE_THREAD_LIBS_INIT})
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf
