@@ -12,6 +12,7 @@
 #include "index/ranker/all.h"
 #include "util/invertible_map.h"
 #include "util/printing.h"
+#include "util/progress.h"
 #include "util/time.h"
 
 using std::cout;
@@ -79,12 +80,13 @@ int main(int argc, char* argv[])
                               classify::svm_wrapper::kernel::None };
 
     auto docs = f_idx.docs();
+    printing::progress progress{" > Pre-fetching for cache: ", docs.size()};
     // load the documents into the cache
     for (size_t i = 0; i < docs.size(); ++i) {
-        printing::show_progress(i, docs.size(), 1000, "Pre-fetching for cache ");
+        progress(i);
         f_idx.search_primary(docs[i]);
     }
-    printing::end_progress("Pre-fetching for cache ");
+    progress.end();
 
     // below is a test for rcv1
     //std::vector<doc_id> train{docs.begin(), docs.begin() + 781265};
