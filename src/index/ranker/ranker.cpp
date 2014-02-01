@@ -59,7 +59,9 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index& idx,
     for (uint64_t id = 0; id < _results.size(); ++id)
     {
         // if lower score than lowest score, don't add
-        if(!pq.empty() && _results[id] < pq.top().second)
+        if (!pq.empty()
+                && _results[id] < pq.top().second
+                && pq.size() == num_results)
             continue;
         pq.emplace(doc_id{id}, _results[id]);
         if (pq.size() > num_results)

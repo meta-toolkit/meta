@@ -33,7 +33,7 @@ class_label knn<Ranker>::classify(doc_id d_id)
             "number of documents in the index (training documents)"};
 
     corpus::document query{_idx.doc_path(d_id), d_id};
-    auto scored = _ranker.score(_idx, query);
+    auto scored = _ranker.score(_idx, query, _idx.num_docs());
 
     std::unordered_map<class_label, uint16_t> counts;
     uint16_t i = 0;
@@ -47,6 +47,9 @@ class_label knn<Ranker>::classify(doc_id d_id)
                 break;
         }
     }
+
+    if(counts.empty())
+        throw knn_exception{"label counts were empty"};
 
     using pair_t = std::pair<class_label, uint16_t>;
     std::vector<pair_t> sorted{counts.begin(), counts.end()};
