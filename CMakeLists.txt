@@ -31,6 +31,7 @@ add_library(meta-io
             src/io/libsvm_parser.cpp
             src/io/compressed_file_writer.cpp
             src/io/mmap_file.cpp)
+target_link_libraries(meta-io meta-util)
 
 add_library(meta-corpus
             src/corpus/document.cpp
@@ -112,6 +113,7 @@ target_link_libraries(meta-topics meta-corpus meta-tokenizers)
 
 add_executable(classify classify-test.cpp)
 target_link_libraries(classify
+                      meta-util
                       meta-classify
                       ${CMAKE_THREAD_LIBS_INIT})
 

@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include "io/mmap_file.h"
 #include "util/printing.h"
+#include "util/progress.h"
 
 namespace meta {
 namespace filesystem {
@@ -105,14 +106,14 @@ inline uint64_t num_lines(const std::string & filename, char delimiter = '\n')
     io::mmap_file file{filename};
     uint64_t num = 0;
 
-    std::string progress = " > Counting lines in file ";
+    printing::progress progress{" > Counting lines in file: ", file.size(), 500,
+                                32 * 1024 * 1024};
     for(uint64_t idx = 0; idx < file.size(); ++idx)
     {
-        printing::show_progress(idx, file.size(), 32 * 1024 * 1024, progress);
+        progress(idx);
         if(file.start()[idx] == delimiter)
             ++num;
     }
-    printing::end_progress(progress);
 
     return num;
 }

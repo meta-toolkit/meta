@@ -40,7 +40,7 @@ confusion_matrix classifier<Index>::cross_validate(
     size_t step_size = docs.size() / k;
     for(size_t i = 0; i < k; ++i)
     {
-        LOG(progress) << "Cross-validating fold " << (i + 1) << "/" << k << ENDLG;
+        LOG(progress) << "\rCross-validating fold " << (i + 1) << "/" << k << ENDLG;
         reset(); // clear any learning data already calculated
         train(std::vector<doc_id>{docs.begin() + step_size, docs.end()});
         matrix +=
