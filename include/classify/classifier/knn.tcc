@@ -33,19 +33,17 @@ class_label knn<Ranker>::classify(doc_id d_id)
             "number of documents in the index (training documents)"};
 
     corpus::document query{_idx.doc_path(d_id), d_id};
-    auto scored = _ranker.score(_idx, query, _idx.num_docs());
+    auto scored = _ranker.score(_idx, query, _idx.num_docs(), [&](doc_id d_id) {
+        return _legal_docs.find(d_id) != _legal_docs.end();
+    });
 
     std::unordered_map<class_label, uint16_t> counts;
     uint16_t i = 0;
     for(auto & s: scored)
     {
-        // ensure we only "trained" on the supplied training docs
-        if(_legal_docs.find(s.first) != _legal_docs.end())
-        {
-            ++counts[_idx.label(s.first)];
-            if(++i > _k)
-                break;
-        }
+        ++counts[_idx.label(s.first)];
+        if(++i > _k)
+            break;
     }
 
     if(counts.empty())
@@ -86,14 +84,10 @@ class_label knn<Ranker>::select_best_label(
 
     for(auto & p: scored)
     {
-        // ensure we only "trained" on the supplied training docs
-        if(_legal_docs.find(p.first) != _legal_docs.end())
-        {
-            class_label lbl{_idx.label(p.first)};
-            auto f = best.find(lbl);
-            if(f != best.end())
-                return *f;
-        }
+        class_label lbl{_idx.label(p.first)};
+        auto f = best.find(lbl);
+        if(f != best.end())
+            return *f;
     }
 
     // suppress warnings

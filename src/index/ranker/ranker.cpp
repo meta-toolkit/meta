@@ -14,9 +14,10 @@ namespace meta
 namespace index
 {
 
-std::vector<std::pair<doc_id, double>> ranker::score(inverted_index& idx,
-                                                     corpus::document& query,
-                                                     uint64_t num_results)
+std::vector<std::pair<doc_id, double>>
+ranker::score(inverted_index& idx, corpus::document& query,
+             uint64_t num_results /* = 10 */,
+             const std::function<bool(doc_id d_id)>& filter /* = return true */)
 {
     if (query.counts().empty())
         idx.tokenize(query);
@@ -48,20 +49,18 @@ std::vector<std::pair<doc_id, double>> ranker::score(inverted_index& idx,
     }
 
     using doc_pair = std::pair<doc_id, double>;
-    auto doc_pair_comp = [](const doc_pair& a, const doc_pair& b) {
-        return a.second < b.second;
-    };
+    auto doc_pair_comp = [](const doc_pair& a, const doc_pair& b)
+    { return a.second < b.second; };
 
-    std::priority_queue<doc_pair,
-                        std::vector<doc_pair>,
-                        decltype(doc_pair_comp)
-        > pq{doc_pair_comp};
+    std::priority_queue
+        <doc_pair, std::vector<doc_pair>, decltype(doc_pair_comp)> pq{
+            doc_pair_comp};
     for (uint64_t id = 0; id < _results.size(); ++id)
     {
-        // if lower score than lowest score, don't add
-        if (!pq.empty()
-                && _results[id] < pq.top().second
-                && pq.size() == num_results)
+        if (!filter(doc_id{id}))
+            continue;
+        if (!pq.empty() && _results[id] < pq.top().second && pq.size()
+                                                             == num_results)
             continue;
         pq.emplace(doc_id{id}, _results[id]);
         if (pq.size() > num_results)

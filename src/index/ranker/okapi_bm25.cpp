@@ -15,7 +15,7 @@ namespace index
 
 okapi_bm25::okapi_bm25(double k1 /* = 1.5 */, double b /* = 0.75 */,
                        double k3 /* = 500.0 */)
-    : _k1(k1), _b(b), _k3(k3)
+    : _k1{k1}, _b{b}, _k3{k3}
 {/* nothing */
 }
 

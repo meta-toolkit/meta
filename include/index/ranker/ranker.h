@@ -46,10 +46,15 @@ class ranker
      * @param idx
      * @param query
      * @param num_results The number of results to return in the vector
+     * @param filter A filtering function to apply to each doc_id; returns true
+     * if the document should be included in results
      */
-    std::vector<std::pair<doc_id, double>> score(inverted_index& idx,
-                                                 corpus::document& query,
-                                                 uint64_t num_results = 10);
+    std::vector<std::pair<doc_id, double>>
+    score(inverted_index& idx, corpus::document& query,
+          uint64_t num_results = 10,
+          const std::function<bool(doc_id d_id)>& filter = [](doc_id d_id)
+            { return true; }
+    );
 
     /**
      * @param sd
