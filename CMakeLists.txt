@@ -154,11 +154,6 @@ target_link_libraries(lda-topics
 
 add_executable(shuffle shuffle.cpp)
 
-add_executable(print-test print-test.cpp)
-target_link_libraries(print-test
-                      meta-util
-                      ${CMAKE_THREAD_LIBS_INIT})
-
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf
                   ./doc
