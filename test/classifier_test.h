@@ -66,12 +66,12 @@ namespace testing {
         });
 
         testing::run_test("knn-cv-" + type, 5, [&](){
-            knn<index::okapi_bm25> kn{i_idx, 10};
+            knn<index::okapi_bm25> kn{i_idx, f_idx, 10};
             check_cv(f_idx, kn, 0.90);
         });
 
         testing::run_test("knn-split-" + type, 5, [&](){
-            knn<index::okapi_bm25> kn{i_idx, 10};
+            knn<index::okapi_bm25> kn{i_idx, f_idx, 10};
             check_split(f_idx, kn, 0.88);
         });
 
