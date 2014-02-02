@@ -114,6 +114,12 @@ class disk_index
      */
     term_id get_term_id(const std::string & term);
 
+    /**
+     * @param t_id The term_id to get the original text for
+     * @return The string representation of the term
+     */
+    std::string term_text(term_id t_id) const;
+
   protected:
     class disk_index_impl;
     util::pimpl<disk_index_impl> impl_;

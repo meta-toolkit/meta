@@ -195,5 +195,13 @@ label_id disk_index::disk_index_impl::doc_label_id(doc_id id) const
 {
    return labels_->at(id);
 }
+
+std::string disk_index::term_text(term_id t_id) const
+{
+    if(t_id >= impl_->term_id_mapping_->size())
+        return "";
+    return impl_->term_id_mapping_->find_term(t_id);
+}
+
 }
 }
