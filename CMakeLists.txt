@@ -90,14 +90,7 @@ target_link_libraries(meta-index
                       meta-util meta-io meta-corpus meta-tokenizers)
 
 add_library(meta-classify
-            src/classify/feature_select/select.cpp
-            src/classify/feature_select/doc_freq.cpp
-            src/classify/feature_select/select_simple.cpp
             src/classify/confusion_matrix.cpp
-            src/classify/feature_select/chi_square.cpp
-            src/classify/feature_select/info_gain.cpp
-            src/classify/feature_select/correlation.cpp
-            src/classify/feature_select/odds.cpp
             src/classify/classifier/naive_bayes.cpp
             src/classify/classifier/svm_wrapper.cpp
             src/classify/classifier/winnow.cpp)
