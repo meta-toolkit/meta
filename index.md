@@ -23,12 +23,14 @@ MeTA is a modern C++ data sciences toolkit featuring
 
  - wrappers for liblinear and slda
 
+Our current goal for MeTA is to publish in [JMLR's Machine Learning Open-Source
+Software](http://jmlr.org/mloss/).
+
+## Documentation
+
 Doxygen documentation can be found
 [here]({{site.baseurl}}/doxygen/). Note that this is
 probably not as frequently updated as it should be.
-
-Our current goal for MeTA is to publish in [JMLR's Machine Learning Open-Source
-Software](http://jmlr.org/mloss/).
 
 ## Tutorials
 
