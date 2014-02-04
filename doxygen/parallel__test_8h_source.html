@@ -69,6 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -76,7 +77,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -104,8 +105,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;numeric&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="time_8h.html">util/time.h</a>&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;parallel/parallel_for.h&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;parallel/thread_pool.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="parallel__for_8h.html">parallel/parallel_for.h</a>&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="thread__pool_8h.html">parallel/thread_pool.h</a>&quot;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span>meta</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{</div>
@@ -122,7 +123,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keywordtype">void</span> easy_func(Type&amp; x)</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;{</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordflow">if</span> (x != 1.0)</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        FAIL(<span class="stringliteral">&quot;vector contents was modified&quot;</span>);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <a class="code" href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a>(<span class="stringliteral">&quot;vector contents was modified&quot;</span>);</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    --x;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;}</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
@@ -132,18 +133,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    {</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        std::iota(v.begin(), v.end(), 0);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keyword">auto</span> serial_time = <a class="code" href="namespacemeta_1_1common.html#a18a4d3f0b2bd7003075edd74e4f8be9a">common::time</a>([&amp;]()</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keyword">auto</span> serial_time = common::time([&amp;]()</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        {</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            std::for_each(v.begin(), v.end(), hard_func&lt;double&gt;);</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        });</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        std::iota(v.begin(), v.end(), 0);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">auto</span> parallel_time = <a class="code" href="namespacemeta_1_1common.html#a18a4d3f0b2bd7003075edd74e4f8be9a">common::time</a>([&amp;]()</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">auto</span> parallel_time = common::time([&amp;]()</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        {</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            parallel::parallel_for(v.begin(), v.end(), hard_func&lt;double&gt;);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        });</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        ASSERT(parallel_time.count() &lt; serial_time.count());</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <a class="code" href="unit__test_8h.html#a28301f76c53b643912da7c538f74e2c6">ASSERT</a>(parallel_time.count() &lt; serial_time.count());</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    });</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
@@ -155,7 +156,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        std::fill(v.begin(), v.end(), 1.0);</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        std::mutex mtx;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        parallel::parallel_for(v.begin(), v.end(), easy_func&lt;double&gt;);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        ASSERT(std::accumulate(v.begin(), v.end(), 0.0) == 0.0);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <a class="code" href="unit__test_8h.html#a28301f76c53b643912da7c538f74e2c6">ASSERT</a>(std::accumulate(v.begin(), v.end(), 0.0) == 0.0);</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    });</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
@@ -173,11 +174,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; fut : futures)</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        {</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            <span class="keyword">auto</span> val = fut.get();</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            ASSERT(val == 1);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <a class="code" href="unit__test_8h.html#a28301f76c53b643912da7c538f74e2c6">ASSERT</a>(val == 1);</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            sum += val;</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        }</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        ASSERT(sum == 16);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <a class="code" href="unit__test_8h.html#a28301f76c53b643912da7c538f74e2c6">ASSERT</a>(sum == 16);</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    });</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;}</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
@@ -193,14 +194,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="unit__test_8h_html_aebe3b0b2cf32339bebc91dd13062437a"><div class="ttname"><a href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a></div><div class="ttdeci">#define FAIL(why)</div><div class="ttdoc">Fail this test case with an explanation. </div><div class="ttdef"><b>Definition:</b> unit_test.h:32</div></div>
 <div class="ttc" id="time_8h_html"><div class="ttname"><a href="time_8h.html">time.h</a></div></div>
-<div class="ttc" id="namespacemeta_1_1testing_html_a63f184adf9638af46879c37380ea256a"><div class="ttname"><a href="namespacemeta_1_1testing.html#a63f184adf9638af46879c37380ea256a">meta::testing::run_test</a></div><div class="ttdeci">void run_test(const std::string &amp;test_name, int timeout, Func &amp;&amp;func)</div><div class="ttdoc">Runs a unit test in a semi-controlled environment. </div><div class="ttdef"><b>Definition:</b> unit_test.h:93</div></div>
+<div class="ttc" id="namespacemeta_1_1testing_html_a63f184adf9638af46879c37380ea256a"><div class="ttname"><a href="namespacemeta_1_1testing.html#a63f184adf9638af46879c37380ea256a">meta::testing::run_test</a></div><div class="ttdeci">void run_test(const std::string &amp;test_name, int timeout, Func &amp;&amp;func)</div><div class="ttdoc">Runs a unit test in a semi-controlled environment. </div><div class="ttdef"><b>Definition:</b> unit_test.h:94</div></div>
 <div class="ttc" id="namespacemeta_1_1testing_html_ac06ccd0f004e2e6b611426d56aaa47cd"><div class="ttname"><a href="namespacemeta_1_1testing.html#ac06ccd0f004e2e6b611426d56aaa47cd">meta::testing::test_speed</a></div><div class="ttdeci">void test_speed(std::vector&lt; double &gt; &amp;v)</div><div class="ttdoc">Assumes multi-core machine... </div><div class="ttdef"><b>Definition:</b> parallel_test.h:39</div></div>
-<div class="ttc" id="namespacemeta_1_1common_html_a18a4d3f0b2bd7003075edd74e4f8be9a"><div class="ttname"><a href="namespacemeta_1_1common.html#a18a4d3f0b2bd7003075edd74e4f8be9a">meta::common::time</a></div><div class="ttdeci">Duration time(Functor &amp;&amp;functor)</div><div class="ttdoc">Times a given function. </div><div class="ttdef"><b>Definition:</b> common.tcc:83</div></div>
+<div class="ttc" id="parallel__for_8h_html"><div class="ttname"><a href="parallel__for_8h.html">parallel_for.h</a></div><div class="ttdoc">All files in META are released under the MIT license. </div></div>
+<div class="ttc" id="unit__test_8h_html_a28301f76c53b643912da7c538f74e2c6"><div class="ttname"><a href="unit__test_8h.html#a28301f76c53b643912da7c538f74e2c6">ASSERT</a></div><div class="ttdeci">#define ASSERT(expr)</div><div class="ttdoc">Fail if expr is false; otherwise continue. </div><div class="ttdef"><b>Definition:</b> unit_test.h:21</div></div>
+<div class="ttc" id="thread__pool_8h_html"><div class="ttname"><a href="thread__pool_8h.html">thread_pool.h</a></div><div class="ttdoc">Definition of a thread pool class that utilizes C++11 threading facilities. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:04 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:37 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -108,7 +108,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Represents a file of unsigned integers compressed using gamma compression.  
  <a href="classmeta_1_1io_1_1compressed__file__reader.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="__site_2include_2io_2compressed__file__reader_8h_source.html">compressed_file_reader.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="compressed__file__reader_8h_source.html">compressed_file_reader.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -118,21 +118,6 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aef0ac28d88c951f30a74b3f87af8b4fa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aef0ac28d88c951f30a74b3f87af8b4fa"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#aef0ac28d88c951f30a74b3f87af8b4fa">compressed_file_reader</a> (const <a class="el" href="classmeta_1_1io_1_1mmap__file.html">mmap_file</a> &amp;file, const <a class="el" href="classmeta_1_1util_1_1invertible__map.html">util::invertible_map</a>&lt; uint64_t, uint64_t &gt; &amp;mapping)</td></tr>
-<tr class="memdesc:aef0ac28d88c951f30a74b3f87af8b4fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor; opens a compressed file for reading using the given mapping. <br/></td></tr>
-<tr class="separator:aef0ac28d88c951f30a74b3f87af8b4fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7363218624f46f91ed48efe160afee23"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7363218624f46f91ed48efe160afee23"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a7363218624f46f91ed48efe160afee23">reset</a> ()</td></tr>
-<tr class="memdesc:a7363218624f46f91ed48efe160afee23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the cursor back to the beginning of the file. <br/></td></tr>
-<tr class="separator:a7363218624f46f91ed48efe160afee23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a769da2387b7c88c14f2439bb35b42fef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a769da2387b7c88c14f2439bb35b42fef">seek</a> (uint64_t bit_offset)</td></tr>
-<tr class="memdesc:a769da2387b7c88c14f2439bb35b42fef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the cursor to the specified position in the file.  <a href="#a769da2387b7c88c14f2439bb35b42fef">More...</a><br/></td></tr>
-<tr class="separator:a769da2387b7c88c14f2439bb35b42fef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a197971ce8757fb8a2f4ea7d6a5b5c8ff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a197971ce8757fb8a2f4ea7d6a5b5c8ff">has_next</a> () const </td></tr>
-<tr class="separator:a197971ce8757fb8a2f4ea7d6a5b5c8ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4d005477c8eb3c1bd828fd286909a21"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#ae4d005477c8eb3c1bd828fd286909a21">next</a> ()</td></tr>
-<tr class="separator:ae4d005477c8eb3c1bd828fd286909a21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ddb800fb0816c463057463a9abe1e28"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ddb800fb0816c463057463a9abe1e28"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a0ddb800fb0816c463057463a9abe1e28">compressed_file_reader</a> (const <a class="el" href="classmeta_1_1io_1_1mmap__file.html">mmap_file</a> &amp;file, std::function&lt; uint64_t(uint64_t)&gt; mapping)</td></tr>
 <tr class="memdesc:a0ddb800fb0816c463057463a9abe1e28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor; opens a compressed file for reading using the given mapping. <br/></td></tr>
@@ -172,20 +157,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a40d7ee4c7c6c4f738ddba96697e471a0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a40d7ee4c7c6c4f738ddba96697e471a0">read_bit</a> ()</td></tr>
 <tr class="memdesc:a40d7ee4c7c6c4f738ddba96697e471a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advances readCursors.  <a href="#a40d7ee4c7c6c4f738ddba96697e471a0">More...</a><br/></td></tr>
 <tr class="separator:a40d7ee4c7c6c4f738ddba96697e471a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1375fdb48ce1afa8424cc7a916c771b3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1375fdb48ce1afa8424cc7a916c771b3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a1375fdb48ce1afa8424cc7a916c771b3">get_next</a> ()</td></tr>
-<tr class="memdesc:a1375fdb48ce1afa8424cc7a916c771b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets _currentValue to the value of the next number. <br/></td></tr>
-<tr class="separator:a1375fdb48ce1afa8424cc7a916c771b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40d7ee4c7c6c4f738ddba96697e471a0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a40d7ee4c7c6c4f738ddba96697e471a0">read_bit</a> ()</td></tr>
-<tr class="memdesc:a40d7ee4c7c6c4f738ddba96697e471a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advances readCursors.  <a href="#a40d7ee4c7c6c4f738ddba96697e471a0">More...</a><br/></td></tr>
-<tr class="separator:a40d7ee4c7c6c4f738ddba96697e471a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a5588c8a326ccbef0d07fb609bf4ae0c4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5588c8a326ccbef0d07fb609bf4ae0c4"></a>
-char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a5588c8a326ccbef0d07fb609bf4ae0c4">_start</a></td></tr>
-<tr class="memdesc:a5588c8a326ccbef0d07fb609bf4ae0c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">pointer to the beginning of the compressed file (which will be in memory most of the time) <br/></td></tr>
-<tr class="separator:a5588c8a326ccbef0d07fb609bf4ae0c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb2692cc2f8a0650a6ffdacecfca74e2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb2692cc2f8a0650a6ffdacecfca74e2"></a>
+std::unique_ptr&lt; <a class="el" href="classmeta_1_1io_1_1mmap__file.html">mmap_file</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#acb2692cc2f8a0650a6ffdacecfca74e2">_file</a></td></tr>
+<tr class="memdesc:acb2692cc2f8a0650a6ffdacecfca74e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">ptr to the <a class="el" href="classmeta_1_1io_1_1mmap__file.html" title="Memory maps a text file for better I/O performance and allows you to read it. ">mmap_file</a> we are reading: nullptr if we don't own it, initialized if we do <br/></td></tr>
+<tr class="separator:acb2692cc2f8a0650a6ffdacecfca74e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a529a778f98318d1a4f2cccb5b1c99162"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a529a778f98318d1a4f2cccb5b1c99162"></a>
+char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a529a778f98318d1a4f2cccb5b1c99162">_start</a></td></tr>
+<tr class="memdesc:a529a778f98318d1a4f2cccb5b1c99162"><td class="mdescLeft">&#160;</td><td class="mdescRight">pointer to the beginning of the compressed file (which will be in memory most of the time) <br/></td></tr>
+<tr class="separator:a529a778f98318d1a4f2cccb5b1c99162"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf59877a6b5bbd62d29ddea2d28de2a5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf59877a6b5bbd62d29ddea2d28de2a5"></a>
 uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#aaf59877a6b5bbd62d29ddea2d28de2a5">_size</a></td></tr>
 <tr class="memdesc:aaf59877a6b5bbd62d29ddea2d28de2a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of bytes in this compressed file <br/></td></tr>
@@ -206,15 +188,6 @@ uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a251931cca99b317e9065de6d27d613b8">_current_bit</a></td></tr>
 <tr class="memdesc:a251931cca99b317e9065de6d27d613b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">current bit inside the current byte <br/></td></tr>
 <tr class="separator:a251931cca99b317e9065de6d27d613b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab40757afae0a40ac9d4962e729e13a35"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab40757afae0a40ac9d4962e729e13a35"></a>
-const <a class="el" href="classmeta_1_1util_1_1invertible__map.html">util::invertible_map</a><br class="typebreak"/>
-&lt; uint64_t, uint64_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#ab40757afae0a40ac9d4962e729e13a35">_mapping</a></td></tr>
-<tr class="memdesc:ab40757afae0a40ac9d4962e729e13a35"><td class="mdescLeft">&#160;</td><td class="mdescRight">hold the (actual -&gt; compressed id) mapping <br/></td></tr>
-<tr class="separator:ab40757afae0a40ac9d4962e729e13a35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb2692cc2f8a0650a6ffdacecfca74e2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb2692cc2f8a0650a6ffdacecfca74e2"></a>
-std::unique_ptr&lt; <a class="el" href="classmeta_1_1io_1_1mmap__file.html">mmap_file</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#acb2692cc2f8a0650a6ffdacecfca74e2">_file</a></td></tr>
-<tr class="memdesc:acb2692cc2f8a0650a6ffdacecfca74e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">ptr to the <a class="el" href="classmeta_1_1io_1_1mmap__file.html" title="Memory maps a text file for better I/O performance and allows you to read it. ">mmap_file</a> we are reading: nullptr if we don't own it, initialized if we do <br/></td></tr>
-<tr class="separator:acb2692cc2f8a0650a6ffdacecfca74e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d55ee624b8bc0e4f0192dbf6f71544b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d55ee624b8bc0e4f0192dbf6f71544b"></a>
 std::function&lt; uint64_t(uint64_t)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#a4d55ee624b8bc0e4f0192dbf6f71544b">_mapping</a></td></tr>
 <tr class="memdesc:a4d55ee624b8bc0e4f0192dbf6f71544b"><td class="mdescLeft">&#160;</td><td class="mdescRight">hold the (actual -&gt; compressed id) mapping <br/></td></tr>
@@ -223,89 +196,6 @@ std::function&lt; uint64_t(uint64_t)&gt;&#160;</td><td class="memItemRight" vali
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents a file of unsigned integers compressed using gamma compression. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a769da2387b7c88c14f2439bb35b42fef"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void meta::io::compressed_file_reader::seek </td>
-          <td>(</td>
-          <td class="paramtype">uint64_t&#160;</td>
-          <td class="paramname"><em>bit_offset</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Sets the cursor to the specified position in the file. </p>
-<p>It is up to the user to specify a valid position. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">bit_offset</td><td>Bit offset into the file </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a197971ce8757fb8a2f4ea7d6a5b5c8ff"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool meta::io::compressed_file_reader::has_next </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>whether there is another number in the file </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ae4d005477c8eb3c1bd828fd286909a21"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint64_t meta::io::compressed_file_reader::next </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>the next compressed number </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a40d7ee4c7c6c4f738ddba96697e471a0"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool meta::io::compressed_file_reader::read_bit </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Advances readCursors. </p>
-<dl class="section return"><dt>Returns</dt><dd>the next bit in the file </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="a769da2387b7c88c14f2439bb35b42fef"></a>
 <div class="memitem">
 <div class="memproto">
@@ -446,13 +336,13 @@ std::function&lt; uint64_t(uint64_t)&gt;&#160;</td><td class="memItemRight" vali
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/_site/include/io/<a class="el" href="__site_2include_2io_2compressed__file__reader_8h_source.html">compressed_file_reader.h</a></li>
-<li>/home/sean/projects/meta/_site/src/io/compressed_file_reader.cpp</li>
+<li>/home/sean/projects/meta/include/io/<a class="el" href="compressed__file__reader_8h_source.html">compressed_file_reader.h</a></li>
+<li>/home/sean/projects/meta/src/io/<a class="el" href="compressed__file__reader_8cpp.html">compressed_file_reader.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:10 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:42 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

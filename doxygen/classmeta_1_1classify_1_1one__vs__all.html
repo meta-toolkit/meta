@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -109,7 +109,6 @@ Inheritance diagram for meta::classify::one_vs_all&lt; Classifier &gt;:</div>
   <img src="classmeta_1_1classify_1_1one__vs__all.png" usemap="#meta::classify::one_vs_all&lt; Classifier &gt;_map" alt=""/>
   <map id="meta::classify::one_vs_all&lt; Classifier &gt;_map" name="meta::classify::one_vs_all&lt; Classifier &gt;_map">
 <area href="classmeta_1_1classify_1_1classifier.html" alt="meta::classify::classifier&lt; index::forward_index &gt;" shape="rect" coords="0,0,285,24"/>
-<area href="classmeta_1_1classify_1_1classifier.html" alt="meta::classify::classifier&lt; index::forward_index &gt;" shape="rect" coords="295,0,580,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -129,52 +128,30 @@ template&lt;class... Args&gt; </td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1one__vs__all.html#a54f2c2faeb814e7e446899e729a229a4">reset</a> () override</td></tr>
 <tr class="memdesc:a54f2c2faeb814e7e446899e729a229a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears any learning data associated with this classifier. <br/></td></tr>
 <tr class="separator:a54f2c2faeb814e7e446899e729a229a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a759cef3df81f90cdf7f26d0bca19d85e"><td class="memTemplParams" colspan="2"><a class="anchor" id="a759cef3df81f90cdf7f26d0bca19d85e"></a>
-template&lt;class... Args&gt; </td></tr>
-<tr class="memitem:a759cef3df81f90cdf7f26d0bca19d85e"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>one_vs_all</b> (<a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &amp;idx, Args &amp;&amp;...args)</td></tr>
-<tr class="separator:a759cef3df81f90cdf7f26d0bca19d85e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae96ab5e0cce193c96c17be237e53a1c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1one__vs__all.html#ae96ab5e0cce193c96c17be237e53a1c0">train</a> (const std::vector&lt; doc_id &gt; &amp;docs) override</td></tr>
-<tr class="memdesc:ae96ab5e0cce193c96c17be237e53a1c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a classification model based on training documents.  <a href="#ae96ab5e0cce193c96c17be237e53a1c0">More...</a><br/></td></tr>
-<tr class="separator:ae96ab5e0cce193c96c17be237e53a1c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ab55288d24c1be19a3ab73ef84405c2"><td class="memItemLeft" align="right" valign="top">class_label&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1one__vs__all.html#a9ab55288d24c1be19a3ab73ef84405c2">classify</a> (doc_id d_id) override</td></tr>
-<tr class="memdesc:a9ab55288d24c1be19a3ab73ef84405c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Classifies a document into a specific group, as determined by training data.  <a href="#a9ab55288d24c1be19a3ab73ef84405c2">More...</a><br/></td></tr>
-<tr class="separator:a9ab55288d24c1be19a3ab73ef84405c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54f2c2faeb814e7e446899e729a229a4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a54f2c2faeb814e7e446899e729a229a4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1one__vs__all.html#a54f2c2faeb814e7e446899e729a229a4">reset</a> () override</td></tr>
-<tr class="memdesc:a54f2c2faeb814e7e446899e729a229a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears any learning data associated with this classifier. <br/></td></tr>
-<tr class="separator:a54f2c2faeb814e7e446899e729a229a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classmeta_1_1classify_1_1classifier"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classmeta_1_1classify_1_1classifier')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classmeta_1_1classify_1_1classifier.html">meta::classify::classifier&lt; index::forward_index &gt;</a></td></tr>
-<tr class="memitem:a2803af1f7684f86707125dbe055b9136 inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1classifier.html#a2803af1f7684f86707125dbe055b9136">classifier</a> (<a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &amp;idx)</td></tr>
-<tr class="separator:a2803af1f7684f86707125dbe055b9136 inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2803af1f7684f86707125dbe055b9136 inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1classifier.html#a2803af1f7684f86707125dbe055b9136">classifier</a> (<a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &amp;idx)</td></tr>
 <tr class="separator:a2803af1f7684f86707125dbe055b9136 inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6423f5db3346d1aa3060bfb3b5f7486c inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1classifier.html#a6423f5db3346d1aa3060bfb3b5f7486c">test</a> (const std::vector&lt; doc_id &gt; &amp;docs)</td></tr>
 <tr class="memdesc:a6423f5db3346d1aa3060bfb3b5f7486c inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="mdescLeft">&#160;</td><td class="mdescRight">Classifies a collection document into specific groups, as determined by training data; this function will make repeated calls to <a class="el" href="classmeta_1_1classify_1_1classifier.html#ade8be2ad9ce2996b38ab185dfb630cfd" title="Classifies a document into a specific group, as determined by training data. ">classify()</a>.  <a href="#a6423f5db3346d1aa3060bfb3b5f7486c">More...</a><br/></td></tr>
 <tr class="separator:a6423f5db3346d1aa3060bfb3b5f7486c inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afda048d38a74cf0224bbb7151400cab5 inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1classifier.html#afda048d38a74cf0224bbb7151400cab5">test</a> (const std::vector&lt; doc_id &gt; &amp;docs)</td></tr>
-<tr class="memdesc:afda048d38a74cf0224bbb7151400cab5 inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="mdescLeft">&#160;</td><td class="mdescRight">Classifies a collection document into specific groups, as determined by training data; this function will make repeated calls to <a class="el" href="classmeta_1_1classify_1_1classifier.html#ade8be2ad9ce2996b38ab185dfb630cfd" title="Classifies a document into a specific group, as determined by training data. ">classify()</a>.  <a href="#afda048d38a74cf0224bbb7151400cab5">More...</a><br/></td></tr>
-<tr class="separator:afda048d38a74cf0224bbb7151400cab5 inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ef8fb8e55daa925425bf5971e32e9ba inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1classifier.html#a7ef8fb8e55daa925425bf5971e32e9ba">cross_validate</a> (const std::vector&lt; doc_id &gt; &amp;input_docs, size_t k, int seed=1)</td></tr>
 <tr class="memdesc:a7ef8fb8e55daa925425bf5971e32e9ba inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs k-fold cross-validation on a set of documents.  <a href="#a7ef8fb8e55daa925425bf5971e32e9ba">More...</a><br/></td></tr>
 <tr class="separator:a7ef8fb8e55daa925425bf5971e32e9ba inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12481944528884370b65361d2883e110 inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1classifier.html#a12481944528884370b65361d2883e110">cross_validate</a> (const std::vector&lt; doc_id &gt; &amp;input_docs, size_t k, int seed=1)</td></tr>
-<tr class="memdesc:a12481944528884370b65361d2883e110 inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs k-fold cross-validation on a set of documents.  <a href="#a12481944528884370b65361d2883e110">More...</a><br/></td></tr>
-<tr class="separator:a12481944528884370b65361d2883e110 inherit pub_methods_classmeta_1_1classify_1_1classifier"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a2837015fa9480b323b3e5f0c7292cfd2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2837015fa9480b323b3e5f0c7292cfd2"></a>
+<tr class="memitem:a8c5ca956587c45fa1fe3e14596d343b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c5ca956587c45fa1fe3e14596d343b4"></a>
 std::unordered_map<br class="typebreak"/>
 &lt; class_label, Classifier &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>classifiers_</b></td></tr>
-<tr class="separator:a2837015fa9480b323b3e5f0c7292cfd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a8c5ca956587c45fa1fe3e14596d343b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_classmeta_1_1classify_1_1classifier"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classmeta_1_1classify_1_1classifier')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classmeta_1_1classify_1_1classifier.html">meta::classify::classifier&lt; index::forward_index &gt;</a></td></tr>
-<tr class="memitem:aacbb60d25fd833bfe57480c81e53fd70 inherit pro_attribs_classmeta_1_1classify_1_1classifier"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aacbb60d25fd833bfe57480c81e53fd70"></a>
-<a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1classifier.html#aacbb60d25fd833bfe57480c81e53fd70">_idx</a></td></tr>
-<tr class="memdesc:aacbb60d25fd833bfe57480c81e53fd70 inherit pro_attribs_classmeta_1_1classify_1_1classifier"><td class="mdescLeft">&#160;</td><td class="mdescRight">the index that the classifer is run on <br/></td></tr>
-<tr class="separator:aacbb60d25fd833bfe57480c81e53fd70 inherit pro_attribs_classmeta_1_1classify_1_1classifier"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a271788e29bb5b3ba10af1695e1ffb617 inherit pro_attribs_classmeta_1_1classify_1_1classifier"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a271788e29bb5b3ba10af1695e1ffb617"></a>
+<a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1classifier.html#a271788e29bb5b3ba10af1695e1ffb617">_idx</a></td></tr>
+<tr class="memdesc:a271788e29bb5b3ba10af1695e1ffb617 inherit pro_attribs_classmeta_1_1classify_1_1classifier"><td class="mdescLeft">&#160;</td><td class="mdescRight">the index that the classifer is run on <br/></td></tr>
+<tr class="separator:a271788e29bb5b3ba10af1695e1ffb617 inherit pro_attribs_classmeta_1_1classify_1_1classifier"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="ae96ab5e0cce193c96c17be237e53a1c0"></a>
@@ -250,87 +227,14 @@ template&lt;class Classifier &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ae96ab5e0cce193c96c17be237e53a1c0"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Classifier &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classmeta_1_1classify_1_1one__vs__all.html">meta::classify::one_vs_all</a>&lt; Classifier &gt;::train </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; doc_id &gt; &amp;&#160;</td>
-          <td class="paramname"><em>docs</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Creates a classification model based on training documents. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">docs</td><td>The training documents </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classmeta_1_1classify_1_1classifier.html#a27f1e34b37076dbbfca1b3c0af0b8d3d">meta::classify::classifier&lt; index::forward_index &gt;</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a9ab55288d24c1be19a3ab73ef84405c2"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Classifier &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">class_label <a class="el" href="classmeta_1_1classify_1_1one__vs__all.html">meta::classify::one_vs_all</a>&lt; Classifier &gt;::classify </td>
-          <td>(</td>
-          <td class="paramtype">doc_id&#160;</td>
-          <td class="paramname"><em>d_id</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Classifies a document into a specific group, as determined by training data. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">d_id</td><td>The document to classify </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the class it belongs to </dd></dl>
-
-<p>Implements <a class="el" href="classmeta_1_1classify_1_1classifier.html#ade8be2ad9ce2996b38ab185dfb630cfd">meta::classify::classifier&lt; index::forward_index &gt;</a>.</p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/_site/include/classify/classifier/<a class="el" href="__site_2include_2classify_2classifier_2one__vs__all_8h_source.html">one_vs_all.h</a></li>
-<li>/home/sean/projects/meta/_site/include/classify/classifier/one_vs_all.tcc</li>
+<li>/home/sean/projects/meta/include/classify/classifier/<a class="el" href="one__vs__all_8h_source.html">one_vs_all.h</a></li>
+<li>/home/sean/projects/meta/include/classify/classifier/one_vs_all.tcc</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:06 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:39 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -109,9 +109,6 @@ Public Types</h2></td></tr>
 <tr class="memitem:a588d2ab213ccf5900b05d53628e782cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a588d2ab213ccf5900b05d53628e782cf"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>sparse_vector</b> = std::unordered_map&lt; DimensionKey, double &gt;</td></tr>
 <tr class="separator:a588d2ab213ccf5900b05d53628e782cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a588d2ab213ccf5900b05d53628e782cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a588d2ab213ccf5900b05d53628e782cf"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>sparse_vector</b> = std::unordered_map&lt; DimensionKey, double &gt;</td></tr>
-<tr class="separator:a588d2ab213ccf5900b05d53628e782cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -130,25 +127,6 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const <
 <tr class="memitem:a1a122281af16b9081dc3a9e99a86c498"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a122281af16b9081dc3a9e99a86c498"></a>
 const Element *&#160;</td><td class="memItemRight" valign="bottom"><b>element</b> () const </td></tr>
 <tr class="separator:a1a122281af16b9081dc3a9e99a86c498"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdd6c9d4a34ae8b4cfdfaf3306ef3bcd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdd6c9d4a34ae8b4cfdfaf3306ef3bcd"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>point</b> (const Element &amp;elem)</td></tr>
-<tr class="separator:afdd6c9d4a34ae8b4cfdfaf3306ef3bcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf0debb96dda4c79918d6ad8227f25c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf0debb96dda4c79918d6ad8227f25c9"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>point</b> (const sparse_vector &amp;vec, size_t size)</td></tr>
-<tr class="separator:adf0debb96dda4c79918d6ad8227f25c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39872bab28e77ca4e616faa610f1ea9a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a39872bab28e77ca4e616faa610f1ea9a"></a>
-const sparse_vector &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>vector</b> () const </td></tr>
-<tr class="separator:a39872bab28e77ca4e616faa610f1ea9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5353a345f01eb037f833e1b25ae4d0ee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5353a345f01eb037f833e1b25ae4d0ee"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const </td></tr>
-<tr class="separator:a5353a345f01eb037f833e1b25ae4d0ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a122281af16b9081dc3a9e99a86c498"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a122281af16b9081dc3a9e99a86c498"></a>
-const Element *&#160;</td><td class="memItemRight" valign="bottom"><b>element</b> () const </td></tr>
-<tr class="separator:a1a122281af16b9081dc3a9e99a86c498"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a849882711203d0f6e910ba1c8124d17b"><td class="memTemplParams" colspan="2"><a class="anchor" id="a849882711203d0f6e910ba1c8124d17b"></a>
-template&lt;&gt; </td></tr>
-<tr class="memitem:a849882711203d0f6e910ba1c8124d17b"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>point</b> (const <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &amp;d)</td></tr>
-<tr class="separator:a849882711203d0f6e910ba1c8124d17b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a849882711203d0f6e910ba1c8124d17b"><td class="memTemplParams" colspan="2"><a class="anchor" id="a849882711203d0f6e910ba1c8124d17b"></a>
 template&lt;&gt; </td></tr>
 <tr class="memitem:a849882711203d0f6e910ba1c8124d17b"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>point</b> (const <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &amp;d)</td></tr>
@@ -156,9 +134,9 @@ template&lt;&gt; </td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:aba6c2b1a32512cab88caaeb859c3daa6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aba6c2b1a32512cab88caaeb859c3daa6"></a>
+<tr class="memitem:a04842ae6537c1fd5bf4ef438ff2cd1c1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04842ae6537c1fd5bf4ef438ff2cd1c1"></a>
 const Element *&#160;</td><td class="memItemRight" valign="bottom"><b>element_</b></td></tr>
-<tr class="separator:aba6c2b1a32512cab88caaeb859c3daa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a04842ae6537c1fd5bf4ef438ff2cd1c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdcdf3ed8167a7cd23acf0b91911264c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acdcdf3ed8167a7cd23acf0b91911264c"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size_</b></td></tr>
 <tr class="separator:acdcdf3ed8167a7cd23acf0b91911264c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,12 +145,12 @@ sparse_vector&#160;</td><td class="memItemRight" valign="bottom"><b>avg_vector_<
 <tr class="separator:a2a17c632bf808b267302f4678c0607e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/sean/projects/meta/_site/include/cluster/<a class="el" href="__site_2include_2cluster_2point_8h_source.html">point.h</a></li>
+<li>/home/sean/projects/meta/include/cluster/<a class="el" href="point_8h_source.html">point.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:07 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:40 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

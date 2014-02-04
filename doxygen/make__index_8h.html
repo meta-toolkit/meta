@@ -69,6 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -76,7 +77,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -99,7 +100,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;cpptoml.h&quot;</code><br/>
-<code>#include &quot;index/cached_index.h&quot;</code><br/>
+<code>#include &quot;<a class="el" href="cached__index_8h_source.html">index/cached_index.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="filesystem_8h_source.html">util/filesystem.h</a>&quot;</code><br/>
 </div>
 <p><a href="make__index_8h_source.html">Go to the source code of this file.</a></p>
@@ -119,10 +120,10 @@ Functions</h2></td></tr>
 <tr class="memitem:aa3f095e92bf16262ede79c3c75ffc891"><td class="memTemplItemLeft" align="right" valign="top">Index&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891">meta::index::make_index</a> (const std::string &amp;config_file, Args &amp;&amp;...args)</td></tr>
 <tr class="memdesc:aa3f095e92bf16262ede79c3c75ffc891"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory method for creating indexes.  <a href="#aa3f095e92bf16262ede79c3c75ffc891">More...</a><br/></td></tr>
 <tr class="separator:aa3f095e92bf16262ede79c3c75ffc891"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c56b04fe36315efcecb0f1b3a40a27d"><td class="memTemplParams" colspan="2">template&lt;class Index , template&lt; class, class &gt; class Cache, class... Args&gt; </td></tr>
-<tr class="memitem:a0c56b04fe36315efcecb0f1b3a40a27d"><td class="memTemplItemLeft" align="right" valign="top">cached_index&lt; Index, Cache &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a0c56b04fe36315efcecb0f1b3a40a27d">meta::index::make_index</a> (const std::string &amp;config_file, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a0c56b04fe36315efcecb0f1b3a40a27d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory method for creating indexes that are cached.  <a href="#a0c56b04fe36315efcecb0f1b3a40a27d">More...</a><br/></td></tr>
-<tr class="separator:a0c56b04fe36315efcecb0f1b3a40a27d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0342389c7f91fbfe72e16bfe39307512"><td class="memTemplParams" colspan="2">template&lt;class Index , template&lt; class, class &gt; class Cache, class... Args&gt; </td></tr>
+<tr class="memitem:a0342389c7f91fbfe72e16bfe39307512"><td class="memTemplItemLeft" align="right" valign="top">cached_index&lt; Index, Cache &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a0342389c7f91fbfe72e16bfe39307512">meta::index::make_index</a> (const std::string &amp;config_file, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a0342389c7f91fbfe72e16bfe39307512"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory method for creating indexes that are cached.  <a href="#a0342389c7f91fbfe72e16bfe39307512">More...</a><br/></td></tr>
+<tr class="separator:a0342389c7f91fbfe72e16bfe39307512"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Sean Massung </dd>
@@ -131,7 +132,7 @@ Chase Geigle </dd></dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:04 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:38 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -108,7 +108,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>A LDA topic model implemented using a collapsed gibbs sampler.  
  <a href="classmeta_1_1topics_1_1lda__gibbs.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="__site_2include_2topics_2lda__gibbs_8h_source.html">lda_gibbs.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="lda__gibbs_8h_source.html">lda_gibbs.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for meta::topics::lda_gibbs:</div>
 <div class="dyncontent">
@@ -116,9 +116,7 @@ Inheritance diagram for meta::topics::lda_gibbs:</div>
   <img src="classmeta_1_1topics_1_1lda__gibbs.png" usemap="#meta::topics::lda_gibbs_map" alt=""/>
   <map id="meta::topics::lda_gibbs_map" name="meta::topics::lda_gibbs_map">
 <area href="classmeta_1_1topics_1_1lda__model.html" title="An LDA topic model base class. " alt="meta::topics::lda_model" shape="rect" coords="0,0,186,24"/>
-<area href="classmeta_1_1topics_1_1lda__model.html" title="An LDA topic model base class. " alt="meta::topics::lda_model" shape="rect" coords="196,0,382,24"/>
 <area href="classmeta_1_1topics_1_1parallel__lda__gibbs.html" title="An LDA topic model implemented using the Approximate Distributed LDA algorithm. " alt="meta::topics::parallel_lda_gibbs" shape="rect" coords="0,112,186,136"/>
-<area href="classmeta_1_1topics_1_1parallel__lda__gibbs.html" title="An LDA topic model implemented using the Approximate Distributed LDA algorithm. " alt="meta::topics::parallel_lda_gibbs" shape="rect" coords="196,112,382,136"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -134,16 +132,6 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a73d2e81534928a92f20827813473b2d7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a73d2e81534928a92f20827813473b2d7">run</a> (size_t num_iters, double convergence=1e-6)</td></tr>
 <tr class="memdesc:a73d2e81534928a92f20827813473b2d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the sampler for a maximum number of iterations, or until the given convergence criterion is met.  <a href="#a73d2e81534928a92f20827813473b2d7">More...</a><br/></td></tr>
 <tr class="separator:a73d2e81534928a92f20827813473b2d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5ba9fb69ee5d9352fbc2cfbea760960"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#ac5ba9fb69ee5d9352fbc2cfbea760960">lda_gibbs</a> (std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;docs, const std::shared_ptr&lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt; &amp;tok, size_t num_topics, double alpha, double beta)</td></tr>
-<tr class="memdesc:ac5ba9fb69ee5d9352fbc2cfbea760960"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the lda model over the given documents, with the given number of topics, and hyperparameters \(\alpha\) and \(\beta\) for the priors on \(\phi\) (topic distributions) and \(\theta\) (topic proportions), respectively.  <a href="#ac5ba9fb69ee5d9352fbc2cfbea760960">More...</a><br/></td></tr>
-<tr class="separator:ac5ba9fb69ee5d9352fbc2cfbea760960"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ba7255a4643254d416ae67dbe9c494e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ba7255a4643254d416ae67dbe9c494e"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a0ba7255a4643254d416ae67dbe9c494e">~lda_gibbs</a> ()</td></tr>
-<tr class="memdesc:a0ba7255a4643254d416ae67dbe9c494e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor: virtual for potential subclassing. <br/></td></tr>
-<tr class="separator:a0ba7255a4643254d416ae67dbe9c494e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a509ba03f4be31d6356811599b0417b7b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a509ba03f4be31d6356811599b0417b7b">run</a> (size_t num_iters, double convergence=1e-6)</td></tr>
-<tr class="memdesc:a509ba03f4be31d6356811599b0417b7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the sampler for a maximum number of iterations, or until the given convergence criterion is met.  <a href="#a509ba03f4be31d6356811599b0417b7b">More...</a><br/></td></tr>
-<tr class="separator:a509ba03f4be31d6356811599b0417b7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classmeta_1_1topics_1_1lda__model"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classmeta_1_1topics_1_1lda__model')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classmeta_1_1topics_1_1lda__model.html">meta::topics::lda_model</a></td></tr>
 <tr class="memitem:adea74d6103bb86e220021a6e8ca835cc inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adea74d6103bb86e220021a6e8ca835cc"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>lda_model</b> (std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;docs, size_t num_topics, const std::shared_ptr&lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt; &amp;tok)</td></tr>
@@ -163,30 +151,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a41cef049a68364e4d23b857792425e2e inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair<br class="typebreak"/>
 &lt; term_id, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a41cef049a68364e4d23b857792425e2e">select</a> () const </td></tr>
 <tr class="separator:a41cef049a68364e4d23b857792425e2e inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adea74d6103bb86e220021a6e8ca835cc inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adea74d6103bb86e220021a6e8ca835cc"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>lda_model</b> (std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;docs, size_t num_topics, const std::shared_ptr&lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt; &amp;tok)</td></tr>
-<tr class="separator:adea74d6103bb86e220021a6e8ca835cc inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67d1d995e1bc3866ff3514d463e5894b inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a67d1d995e1bc3866ff3514d463e5894b">save_doc_topic_distributions</a> (const std::string &amp;filename) const </td></tr>
-<tr class="memdesc:a67d1d995e1bc3866ff3514d463e5894b inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the topic proportions \(\theta_d\) for each document to the given file.  <a href="#a67d1d995e1bc3866ff3514d463e5894b">More...</a><br/></td></tr>
-<tr class="separator:a67d1d995e1bc3866ff3514d463e5894b inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3042b31608339a5b606c1cbdf2d88312 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a3042b31608339a5b606c1cbdf2d88312">save_topic_term_distributions</a> (const std::string &amp;filename) const </td></tr>
-<tr class="memdesc:a3042b31608339a5b606c1cbdf2d88312 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the term distributions \(\phi_j\) for each topic to the given file.  <a href="#a3042b31608339a5b606c1cbdf2d88312">More...</a><br/></td></tr>
-<tr class="separator:a3042b31608339a5b606c1cbdf2d88312 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a080a17446fa790b7871b0299bc8cb61c inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a080a17446fa790b7871b0299bc8cb61c">save_term_mapping</a> (const std::string &amp;filename) const </td></tr>
-<tr class="memdesc:a080a17446fa790b7871b0299bc8cb61c inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the term_id &ndash;&gt; String mapping to the given file.  <a href="#a080a17446fa790b7871b0299bc8cb61c">More...</a><br/></td></tr>
-<tr class="separator:a080a17446fa790b7871b0299bc8cb61c inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84a17b141fd5e460bc996983f2ccafd0 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a84a17b141fd5e460bc996983f2ccafd0">save</a> (const std::string &amp;prefix) const </td></tr>
-<tr class="memdesc:a84a17b141fd5e460bc996983f2ccafd0 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the current model to a set of files beginning with prefix: prefix.phi, prefix.theta, and prefix.terms.  <a href="#a84a17b141fd5e460bc996983f2ccafd0">More...</a><br/></td></tr>
-<tr class="separator:a84a17b141fd5e460bc996983f2ccafd0 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5592a7f090ca48e2902d17332cfb0bf inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair<br class="typebreak"/>
-&lt; term_id, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#ae5592a7f090ca48e2902d17332cfb0bf">select</a> () const </td></tr>
-<tr class="separator:ae5592a7f090ca48e2902d17332cfb0bf inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
-<tr class="memitem:a34ae40825998937f74f61dc01983d98b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a34ae40825998937f74f61dc01983d98b"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>topic_id</b> = size_t</td></tr>
-<tr class="separator:a34ae40825998937f74f61dc01983d98b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34ae40825998937f74f61dc01983d98b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a34ae40825998937f74f61dc01983d98b"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>topic_id</b> = size_t</td></tr>
 <tr class="separator:a34ae40825998937f74f61dc01983d98b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -241,61 +208,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#aa9fc7ae21e6ae09fa037f799ef948513">lda_gibbs</a> (const <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html">lda_gibbs</a> &amp;other)=delete</td></tr>
 <tr class="memdesc:aa9fc7ae21e6ae09fa037f799ef948513"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html" title="A LDA topic model implemented using a collapsed gibbs sampler. ">lda_gibbs</a> cannot be copy constructed. <br/></td></tr>
 <tr class="separator:aa9fc7ae21e6ae09fa037f799ef948513"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5446b7c8e846afe0fda551860a79ae20"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a5446b7c8e846afe0fda551860a79ae20">sample_topic</a> (term_id term, doc_id doc)</td></tr>
-<tr class="memdesc:a5446b7c8e846afe0fda551860a79ae20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Samples a topic from the full conditional distribution \(P(z_i = j | w, \boldsymbol{z})\).  <a href="#a5446b7c8e846afe0fda551860a79ae20">More...</a><br/></td></tr>
-<tr class="separator:a5446b7c8e846afe0fda551860a79ae20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19b33064fc3558b7cedc6229ed646d49"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a19b33064fc3558b7cedc6229ed646d49">compute_probability</a> (term_id term, doc_id doc, size_t topic) const </td></tr>
-<tr class="memdesc:a19b33064fc3558b7cedc6229ed646d49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes \(P(z_i = j | w, \boldsymbol{z})\).  <a href="#a19b33064fc3558b7cedc6229ed646d49">More...</a><br/></td></tr>
-<tr class="separator:a19b33064fc3558b7cedc6229ed646d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50180c0a1368db54136cb8c504e185f5"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a50180c0a1368db54136cb8c504e185f5">compute_term_topic_probability</a> (term_id term, size_t topic) const override</td></tr>
-<tr class="memdesc:a50180c0a1368db54136cb8c504e185f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the probability that the given term appears in the given topic.  <a href="#a50180c0a1368db54136cb8c504e185f5">More...</a><br/></td></tr>
-<tr class="separator:a50180c0a1368db54136cb8c504e185f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cf29b198f562d25ff14ae6f1e035836"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a3cf29b198f562d25ff14ae6f1e035836">compute_doc_topic_probability</a> (doc_id doc, size_t topic) const override</td></tr>
-<tr class="memdesc:a3cf29b198f562d25ff14ae6f1e035836"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the probability that the given topic is picked for the given document.  <a href="#a3cf29b198f562d25ff14ae6f1e035836">More...</a><br/></td></tr>
-<tr class="separator:a3cf29b198f562d25ff14ae6f1e035836"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaebbdd8455cc2f87e447fe37d177f9a1"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#aaebbdd8455cc2f87e447fe37d177f9a1">count_term</a> (term_id term, size_t topic) const </td></tr>
-<tr class="memdesc:aaebbdd8455cc2f87e447fe37d177f9a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes how many times the given term has been assigned the given topic in the vector of assignments \(\boldsymbol{z}\).  <a href="#aaebbdd8455cc2f87e447fe37d177f9a1">More...</a><br/></td></tr>
-<tr class="separator:aaebbdd8455cc2f87e447fe37d177f9a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ff1fcff16cd8c691b8d5dae1cc5d8ed"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a4ff1fcff16cd8c691b8d5dae1cc5d8ed">count_topic</a> (size_t topic) const </td></tr>
-<tr class="memdesc:a4ff1fcff16cd8c691b8d5dae1cc5d8ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes how many times the given topic has been assigned for <em>any</em> word in the corpus.  <a href="#a4ff1fcff16cd8c691b8d5dae1cc5d8ed">More...</a><br/></td></tr>
-<tr class="separator:a4ff1fcff16cd8c691b8d5dae1cc5d8ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3a5541229fc08c1cbf886c69d9d6554"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#aa3a5541229fc08c1cbf886c69d9d6554">count_doc</a> (doc_id doc, size_t topic) const </td></tr>
-<tr class="memdesc:aa3a5541229fc08c1cbf886c69d9d6554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes how may times the given topic has been chosen for a <em>any</em> word in the given document.  <a href="#aa3a5541229fc08c1cbf886c69d9d6554">More...</a><br/></td></tr>
-<tr class="separator:aa3a5541229fc08c1cbf886c69d9d6554"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c4fd2b074791e6a616b5c4931d0d662"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a6c4fd2b074791e6a616b5c4931d0d662">count_doc</a> (doc_id doc) const </td></tr>
-<tr class="memdesc:a6c4fd2b074791e6a616b5c4931d0d662"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes how may times a topic has been assigned to a word in the given document.  <a href="#a6c4fd2b074791e6a616b5c4931d0d662">More...</a><br/></td></tr>
-<tr class="separator:a6c4fd2b074791e6a616b5c4931d0d662"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5c84021408a24b5b9d7316d9ab6c176"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#af5c84021408a24b5b9d7316d9ab6c176">initialize</a> ()</td></tr>
-<tr class="memdesc:af5c84021408a24b5b9d7316d9ab6c176"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the first set of topic assignments for inference.  <a href="#af5c84021408a24b5b9d7316d9ab6c176">More...</a><br/></td></tr>
-<tr class="separator:af5c84021408a24b5b9d7316d9ab6c176"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2e7704bacefaa69161241c8495d505e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#ae2e7704bacefaa69161241c8495d505e">perform_iteration</a> (bool init=false)</td></tr>
-<tr class="memdesc:ae2e7704bacefaa69161241c8495d505e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs a sampling iteration.  <a href="#ae2e7704bacefaa69161241c8495d505e">More...</a><br/></td></tr>
-<tr class="separator:ae2e7704bacefaa69161241c8495d505e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99e04f8ae3636b758cff0b7f5e3a4270"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a99e04f8ae3636b758cff0b7f5e3a4270">decrease_counts</a> (size_t topic, term_id term, doc_id doc)</td></tr>
-<tr class="memdesc:a99e04f8ae3636b758cff0b7f5e3a4270"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decreases all counts associated with the given topic, term, and document by one.  <a href="#a99e04f8ae3636b758cff0b7f5e3a4270">More...</a><br/></td></tr>
-<tr class="separator:a99e04f8ae3636b758cff0b7f5e3a4270"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92e069934c95aedf9492afe83e26681f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a92e069934c95aedf9492afe83e26681f">increase_counts</a> (size_t topic, term_id term, doc_id doc)</td></tr>
-<tr class="memdesc:a92e069934c95aedf9492afe83e26681f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increases all counts associated with the given topic, term, and document by one.  <a href="#a92e069934c95aedf9492afe83e26681f">More...</a><br/></td></tr>
-<tr class="separator:a92e069934c95aedf9492afe83e26681f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfae12158cea8766db10ff9e04511047"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adfae12158cea8766db10ff9e04511047"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#adfae12158cea8766db10ff9e04511047">corpus_likelihood</a> () const </td></tr>
-<tr class="memdesc:adfae12158cea8766db10ff9e04511047"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the current courpus log likelihood, given the vector of assignments \(\boldsymbol{z}\). <br/></td></tr>
-<tr class="separator:adfae12158cea8766db10ff9e04511047"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9f8c557e546e5e78e9f183e23f8eb08"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9f8c557e546e5e78e9f183e23f8eb08"></a>
-<a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html">lda_gibbs</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#af9f8c557e546e5e78e9f183e23f8eb08">operator=</a> (const <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html">lda_gibbs</a> &amp;)=delete</td></tr>
-<tr class="memdesc:af9f8c557e546e5e78e9f183e23f8eb08"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html" title="A LDA topic model implemented using a collapsed gibbs sampler. ">lda_gibbs</a> cannot be copy assigned. <br/></td></tr>
-<tr class="separator:af9f8c557e546e5e78e9f183e23f8eb08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9fc7ae21e6ae09fa037f799ef948513"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa9fc7ae21e6ae09fa037f799ef948513"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#aa9fc7ae21e6ae09fa037f799ef948513">lda_gibbs</a> (const <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html">lda_gibbs</a> &amp;other)=delete</td></tr>
-<tr class="memdesc:aa9fc7ae21e6ae09fa037f799ef948513"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html" title="A LDA topic model implemented using a collapsed gibbs sampler. ">lda_gibbs</a> cannot be copy constructed. <br/></td></tr>
-<tr class="separator:aa9fc7ae21e6ae09fa037f799ef948513"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classmeta_1_1topics_1_1lda__model"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classmeta_1_1topics_1_1lda__model')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classmeta_1_1topics_1_1lda__model.html">meta::topics::lda_model</a></td></tr>
-<tr class="memitem:a22e09203c3bcb87b4a97a7fffe07b0fb inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22e09203c3bcb87b4a97a7fffe07b0fb"></a>
-<a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;)=delete</td></tr>
-<tr class="separator:a22e09203c3bcb87b4a97a7fffe07b0fb inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adeef8d04c1757bc2c88711f9d7004592 inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adeef8d04c1757bc2c88711f9d7004592"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>lda_model</b> (const <a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;)=delete</td></tr>
-<tr class="separator:adeef8d04c1757bc2c88711f9d7004592 inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a22e09203c3bcb87b4a97a7fffe07b0fb inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22e09203c3bcb87b4a97a7fffe07b0fb"></a>
 <a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;)=delete</td></tr>
 <tr class="separator:a22e09203c3bcb87b4a97a7fffe07b0fb inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -305,27 +218,27 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:acee76d27d4bbbc35251e306b83525c3f"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; doc_id, <br class="typebreak"/>
+<tr class="memitem:a1733f4deb11cef33122a4b7476cf17bd"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; doc_id, <br class="typebreak"/>
 std::unordered_map&lt; size_t, <br class="typebreak"/>
-size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#acee76d27d4bbbc35251e306b83525c3f">doc_word_topic_</a></td></tr>
-<tr class="memdesc:acee76d27d4bbbc35251e306b83525c3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The topic assignment for every word in every document.  <a href="#acee76d27d4bbbc35251e306b83525c3f">More...</a><br/></td></tr>
-<tr class="separator:acee76d27d4bbbc35251e306b83525c3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ee3e6487ee585f624028de3db52c2df"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ee3e6487ee585f624028de3db52c2df"></a>
+size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a1733f4deb11cef33122a4b7476cf17bd">doc_word_topic_</a></td></tr>
+<tr class="memdesc:a1733f4deb11cef33122a4b7476cf17bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The topic assignment for every word in every document.  <a href="#a1733f4deb11cef33122a4b7476cf17bd">More...</a><br/></td></tr>
+<tr class="separator:a1733f4deb11cef33122a4b7476cf17bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30d02ad66891ee4facc3fe84230a0185"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a30d02ad66891ee4facc3fe84230a0185"></a>
 std::unordered_map&lt; topic_id, <br class="typebreak"/>
 std::unordered_map&lt; term_id, <br class="typebreak"/>
-size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a6ee3e6487ee585f624028de3db52c2df">topic_term_count_</a></td></tr>
-<tr class="memdesc:a6ee3e6487ee585f624028de3db52c2df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the counts for each word being assigned a given topic. <br/></td></tr>
-<tr class="separator:a6ee3e6487ee585f624028de3db52c2df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9a63ed0e6224af86e574b0ca1967a32"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9a63ed0e6224af86e574b0ca1967a32"></a>
+size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a30d02ad66891ee4facc3fe84230a0185">topic_term_count_</a></td></tr>
+<tr class="memdesc:a30d02ad66891ee4facc3fe84230a0185"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the counts for each word being assigned a given topic. <br/></td></tr>
+<tr class="separator:a30d02ad66891ee4facc3fe84230a0185"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a0422935864753c0a54fa7605fc2d93"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a0422935864753c0a54fa7605fc2d93"></a>
 std::unordered_map&lt; doc_id, <br class="typebreak"/>
 std::unordered_map&lt; topic_id, <br class="typebreak"/>
-size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#af9a63ed0e6224af86e574b0ca1967a32">doc_topic_count_</a></td></tr>
-<tr class="memdesc:af9a63ed0e6224af86e574b0ca1967a32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the counts for each topic being assigned in a given document. <br/></td></tr>
-<tr class="separator:af9a63ed0e6224af86e574b0ca1967a32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a428727e42e3200d268fd218fb89a25"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; topic_id, <br class="typebreak"/>
-size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a6a428727e42e3200d268fd218fb89a25">topic_count_</a></td></tr>
-<tr class="memdesc:a6a428727e42e3200d268fd218fb89a25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the number of times the given topic has been assigned to a word.  <a href="#a6a428727e42e3200d268fd218fb89a25">More...</a><br/></td></tr>
-<tr class="separator:a6a428727e42e3200d268fd218fb89a25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a5a0422935864753c0a54fa7605fc2d93">doc_topic_count_</a></td></tr>
+<tr class="memdesc:a5a0422935864753c0a54fa7605fc2d93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the counts for each topic being assigned in a given document. <br/></td></tr>
+<tr class="separator:a5a0422935864753c0a54fa7605fc2d93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e2a6b13cd4e3429af69d0c81a883271"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; topic_id, <br class="typebreak"/>
+size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a5e2a6b13cd4e3429af69d0c81a883271">topic_count_</a></td></tr>
+<tr class="memdesc:a5e2a6b13cd4e3429af69d0c81a883271"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the number of times the given topic has been assigned to a word.  <a href="#a5e2a6b13cd4e3429af69d0c81a883271">More...</a><br/></td></tr>
+<tr class="separator:a5e2a6b13cd4e3429af69d0c81a883271"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdf67a25af315a4beef297cc213a151b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abdf67a25af315a4beef297cc213a151b"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#abdf67a25af315a4beef297cc213a151b">alpha_</a></td></tr>
 <tr class="memdesc:abdf67a25af315a4beef297cc213a151b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hyperparameter for the Dirichlet prior over \(\theta\). <br/></td></tr>
@@ -342,13 +255,13 @@ std::mt19937&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 std::random_device&#160;</td><td class="memItemRight" valign="bottom"><b>dev_</b></td></tr>
 <tr class="separator:a10d7c44516801a0dbb4b497d1740b9ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classmeta_1_1topics_1_1lda__model"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classmeta_1_1topics_1_1lda__model')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classmeta_1_1topics_1_1lda__model.html">meta::topics::lda_model</a></td></tr>
-<tr class="memitem:a6c68c2f018f151a90facdf7ef74834fe inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c68c2f018f151a90facdf7ef74834fe"></a>
+<tr class="memitem:a3bedd226af703610dae0df9b9dda8cb5 inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3bedd226af703610dae0df9b9dda8cb5"></a>
 std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>docs_</b></td></tr>
-<tr class="separator:a6c68c2f018f151a90facdf7ef74834fe inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaca7b7db860b6bdac286fd81f4e96e2e inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaca7b7db860b6bdac286fd81f4e96e2e"></a>
+<tr class="separator:a3bedd226af703610dae0df9b9dda8cb5 inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab88ba4445497fa66306387526a3ee99f inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab88ba4445497fa66306387526a3ee99f"></a>
 std::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tokenizer_</b></td></tr>
-<tr class="separator:aaca7b7db860b6bdac286fd81f4e96e2e inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ab88ba4445497fa66306387526a3ee99f inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3ceda95c29bbd33083d68264718b3af inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac3ceda95c29bbd33083d68264718b3af"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_topics_</b></td></tr>
 <tr class="separator:ac3ceda95c29bbd33083d68264718b3af inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -360,63 +273,6 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
 <div class="textblock"><p>A LDA topic model implemented using a collapsed gibbs sampler. </p>
 <dl class="section see"><dt>See Also</dt><dd><a href="http://www.pnas.org/content/101/suppl.1/5228.full.pdf">http://www.pnas.org/content/101/suppl.1/5228.full.pdf</a> </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ac5ba9fb69ee5d9352fbc2cfbea760960"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">meta::topics::lda_gibbs::lda_gibbs </td>
-          <td>(</td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>docs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>tok</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>num_topics</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>alpha</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>beta</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Constructs the lda model over the given documents, with the given number of topics, and hyperparameters \(\alpha\) and \(\beta\) for the priors on \(\phi\) (topic distributions) and \(\theta\) (topic proportions), respectively. </p>
-<p>Assumes that the given vector of documents will live for as long as or longer than the <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html" title="A LDA topic model implemented using a collapsed gibbs sampler. ">lda_gibbs</a> instance.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">docs</td><td>The documents for the LDA model </td></tr>
-    <tr><td class="paramname">tok</td><td>How to tokenize each document (e.g. words, POS tags, etc) </td></tr>
-    <tr><td class="paramname">num_topics</td><td>The number of topics to infer </td></tr>
-    <tr><td class="paramname">alpha</td><td>The hyperparameter for the Dirichlet prior over \(\phi\). </td></tr>
-    <tr><td class="paramname">beta</td><td>The hyperparameter for the Dirichlet prior over \(\theta\). </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="ac5ba9fb69ee5d9352fbc2cfbea760960"></a>
 <div class="memitem">
 <div class="memproto">
@@ -746,7 +602,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#ad0deab0e4197c0fb8d22ffb1086f8fed">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a6f1e85c2d79e76e832c314c2493f8388">meta::topics::parallel_lda_gibbs</a>.</p>
+<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#ad0deab0e4197c0fb8d22ffb1086f8fed">meta::topics::parallel_lda_gibbs</a>.</p>
 
 </div>
 </div>
@@ -780,7 +636,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a0274ced7c5e42c2a93146d3dc2067372">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#af0076cf65540fba2396708ea0e307a1c">meta::topics::parallel_lda_gibbs</a>.</p>
+<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a0274ced7c5e42c2a93146d3dc2067372">meta::topics::parallel_lda_gibbs</a>.</p>
 
 </div>
 </div>
@@ -883,7 +739,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
 <p>Initializes the first set of topic assignments for inference. </p>
 <p>Employs an online application of the sampler where counts are only considered for the words observed so far through the loop. </p>
 
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a80d0ea910766b78e6af45a3bc04d09f5">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#ad2034ae09f5b48e89ca9dd4ff216b816">meta::topics::parallel_lda_gibbs</a>.</p>
+<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a80d0ea910766b78e6af45a3bc04d09f5">meta::topics::parallel_lda_gibbs</a>.</p>
 
 </div>
 </div>
@@ -917,7 +773,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a433140d41f50ac7b8ec13941b040f483">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#aacb2b75991f6e8deae1c54a146814d89">meta::topics::parallel_lda_gibbs</a>.</p>
+<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a433140d41f50ac7b8ec13941b040f483">meta::topics::parallel_lda_gibbs</a>.</p>
 
 </div>
 </div>
@@ -969,7 +825,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#ad6c401a6132179dac68695d423f8e0f5">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a0f00509bbeb8b9b399ac247c3857a994">meta::topics::parallel_lda_gibbs</a>.</p>
+<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#ad6c401a6132179dac68695d423f8e0f5">meta::topics::parallel_lda_gibbs</a>.</p>
 
 </div>
 </div>
@@ -1021,562 +877,12 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
   </dd>
 </dl>
 
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#abbf20d25da52245b50940290aeea1c23">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a933be4d3fbf6046fe2a9a5e018131b11">meta::topics::parallel_lda_gibbs</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a509ba03f4be31d6356811599b0417b7b"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void meta::topics::lda_gibbs::run </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>num_iters</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>convergence</em> = <code>1e-6</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Runs the sampler for a maximum number of iterations, or until the given convergence criterion is met. </p>
-<p>The convergence criterion is determined as the relative difference in log corpus likelihood between two iterations.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">num_iters</td><td>The maximum number of iterations to run the sampler for. </td></tr>
-    <tr><td class="paramname">convergence</td><td>The lowest relative difference in log corpus likelihood to be allowed before considering the sampler to have converged. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classmeta_1_1topics_1_1lda__model.html">meta::topics::lda_model</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a5446b7c8e846afe0fda551860a79ae20"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">size_t meta::topics::lda_gibbs::sample_topic </td>
-          <td>(</td>
-          <td class="paramtype">term_id&#160;</td>
-          <td class="paramname"><em>term</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">doc_id&#160;</td>
-          <td class="paramname"><em>doc</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Samples a topic from the full conditional distribution \(P(z_i = j | w, \boldsymbol{z})\). </p>
-<p>Used in both initialization and each normal iteration of the sampler, after removing the current value of \(z_i\) from the vector of assignments \(\boldsymbol{z}\).</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">term</td><td>The term we are sampling a topic assignment for. </td></tr>
-    <tr><td class="paramname">doc</td><td>The document the term resides in. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a19b33064fc3558b7cedc6229ed646d49"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double meta::topics::lda_gibbs::compute_probability </td>
-          <td>(</td>
-          <td class="paramtype">term_id&#160;</td>
-          <td class="paramname"><em>term</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">doc_id&#160;</td>
-          <td class="paramname"><em>doc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>topic</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes \(P(z_i = j | w, \boldsymbol{z})\). </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">term</td><td>The current word we are sampling for. </td></tr>
-    <tr><td class="paramname">doc</td><td>The document in which the term resides. </td></tr>
-    <tr><td class="paramname">topic</td><td>The topic \(j\) we want to compute the probability for. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a50180c0a1368db54136cb8c504e185f5"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual double meta::topics::lda_gibbs::compute_term_topic_probability </td>
-          <td>(</td>
-          <td class="paramtype">term_id&#160;</td>
-          <td class="paramname"><em>term</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>topic</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes the probability that the given term appears in the given topic. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">term</td><td>The term we are concerned with. </td></tr>
-    <tr><td class="paramname">topic</td><td>The topic we are concerned with. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classmeta_1_1topics_1_1lda__model.html#ae9483d763bf58eef71c418709dad333b">meta::topics::lda_model</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a3cf29b198f562d25ff14ae6f1e035836"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual double meta::topics::lda_gibbs::compute_doc_topic_probability </td>
-          <td>(</td>
-          <td class="paramtype">doc_id&#160;</td>
-          <td class="paramname"><em>doc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>topic</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes the probability that the given topic is picked for the given document. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">doc</td><td>The document we are concerned with. </td></tr>
-    <tr><td class="paramname">topic</td><td>The topic we are concerned with. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classmeta_1_1topics_1_1lda__model.html#a7f0f2b6e65a485394d85b509c1897fdb">meta::topics::lda_model</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aaebbdd8455cc2f87e447fe37d177f9a1"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual double meta::topics::lda_gibbs::count_term </td>
-          <td>(</td>
-          <td class="paramtype">term_id&#160;</td>
-          <td class="paramname"><em>term</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>topic</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes how many times the given term has been assigned the given topic in the vector of assignments \(\boldsymbol{z}\). </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">term</td><td>The term we are concerned with. </td></tr>
-    <tr><td class="paramname">topic</td><td>The topic we are concerned with. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#ad0deab0e4197c0fb8d22ffb1086f8fed">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a6f1e85c2d79e76e832c314c2493f8388">meta::topics::parallel_lda_gibbs</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a4ff1fcff16cd8c691b8d5dae1cc5d8ed"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual double meta::topics::lda_gibbs::count_topic </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>topic</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes how many times the given topic has been assigned for <em>any</em> word in the corpus. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">topic</td><td>The topic we are concerned with. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a0274ced7c5e42c2a93146d3dc2067372">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#af0076cf65540fba2396708ea0e307a1c">meta::topics::parallel_lda_gibbs</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aa3a5541229fc08c1cbf886c69d9d6554"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual double meta::topics::lda_gibbs::count_doc </td>
-          <td>(</td>
-          <td class="paramtype">doc_id&#160;</td>
-          <td class="paramname"><em>doc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>topic</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes how may times the given topic has been chosen for a <em>any</em> word in the given document. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">doc</td><td>The document we are concerned with. </td></tr>
-    <tr><td class="paramname">topic</td><td>The topic we are concerned with. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a6c4fd2b074791e6a616b5c4931d0d662"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual double meta::topics::lda_gibbs::count_doc </td>
-          <td>(</td>
-          <td class="paramtype">doc_id&#160;</td>
-          <td class="paramname"><em>doc</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes how may times a topic has been assigned to a word in the given document. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">doc</td><td>The document we are concerned with. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="af5c84021408a24b5b9d7316d9ab6c176"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void meta::topics::lda_gibbs::initialize </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Initializes the first set of topic assignments for inference. </p>
-<p>Employs an online application of the sampler where counts are only considered for the words observed so far through the loop. </p>
-
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a80d0ea910766b78e6af45a3bc04d09f5">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#ad2034ae09f5b48e89ca9dd4ff216b816">meta::topics::parallel_lda_gibbs</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ae2e7704bacefaa69161241c8495d505e"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void meta::topics::lda_gibbs::perform_iteration </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>init</em> = <code>false</code></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Performs a sampling iteration. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">init</td><td>Whether or not to employ the online method. (defaults to <code>false</code>) </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a433140d41f50ac7b8ec13941b040f483">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#aacb2b75991f6e8deae1c54a146814d89">meta::topics::parallel_lda_gibbs</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a99e04f8ae3636b758cff0b7f5e3a4270"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void meta::topics::lda_gibbs::decrease_counts </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>topic</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">term_id&#160;</td>
-          <td class="paramname"><em>term</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">doc_id&#160;</td>
-          <td class="paramname"><em>doc</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Decreases all counts associated with the given topic, term, and document by one. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">topic</td><td>The topic in question. </td></tr>
-    <tr><td class="paramname">term</td><td>The term in question. </td></tr>
-    <tr><td class="paramname">doc</td><td>The document in question. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#ad6c401a6132179dac68695d423f8e0f5">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a0f00509bbeb8b9b399ac247c3857a994">meta::topics::parallel_lda_gibbs</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a92e069934c95aedf9492afe83e26681f"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void meta::topics::lda_gibbs::increase_counts </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>topic</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">term_id&#160;</td>
-          <td class="paramname"><em>term</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">doc_id&#160;</td>
-          <td class="paramname"><em>doc</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Increases all counts associated with the given topic, term, and document by one. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">topic</td><td>The topic in question. </td></tr>
-    <tr><td class="paramname">term</td><td>The term in question. </td></tr>
-    <tr><td class="paramname">doc</td><td>The document in question. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#abbf20d25da52245b50940290aeea1c23">meta::topics::parallel_lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a933be4d3fbf6046fe2a9a5e018131b11">meta::topics::parallel_lda_gibbs</a>.</p>
+<p>Reimplemented in <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#abbf20d25da52245b50940290aeea1c23">meta::topics::parallel_lda_gibbs</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="acee76d27d4bbbc35251e306b83525c3f"></a>
+<a class="anchor" id="a1733f4deb11cef33122a4b7476cf17bd"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -1584,7 +890,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unordered_map&lt; doc_id, std::unordered_map&lt; size_t, size_t &gt; &gt; meta::topics::lda_gibbs::doc_word_topic_</td>
+          <td class="memname">std::unordered_map&lt;doc_id, std::unordered_map&lt;size_t, size_t&gt; &gt; meta::topics::lda_gibbs::doc_word_topic_</td>
         </tr>
       </table>
   </td>
@@ -1599,7 +905,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
 
 </div>
 </div>
-<a class="anchor" id="a6a428727e42e3200d268fd218fb89a25"></a>
+<a class="anchor" id="a5e2a6b13cd4e3429af69d0c81a883271"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -1607,7 +913,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unordered_map&lt; topic_id, size_t &gt; meta::topics::lda_gibbs::topic_count_</td>
+          <td class="memname">std::unordered_map&lt;topic_id, size_t&gt; meta::topics::lda_gibbs::topic_count_</td>
         </tr>
       </table>
   </td>
@@ -1623,13 +929,13 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/_site/include/topics/<a class="el" href="__site_2include_2topics_2lda__gibbs_8h_source.html">lda_gibbs.h</a></li>
-<li>/home/sean/projects/meta/_site/src/topics/lda_gibbs.cpp</li>
+<li>/home/sean/projects/meta/include/topics/<a class="el" href="lda__gibbs_8h_source.html">lda_gibbs.h</a></li>
+<li>/home/sean/projects/meta/src/topics/<a class="el" href="lda__gibbs_8cpp.html">lda_gibbs.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:13 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:45 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

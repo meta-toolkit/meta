@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -108,7 +108,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html" title="lda_cvb: An implementation of LDA that uses collapsed variational bayes for inference. ">lda_cvb</a>: An implementation of LDA that uses collapsed variational bayes for inference.  
  <a href="classmeta_1_1topics_1_1lda__cvb.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="__site_2include_2topics_2lda__cvb_8h_source.html">lda_cvb.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="lda__cvb_8h_source.html">lda_cvb.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for meta::topics::lda_cvb:</div>
 <div class="dyncontent">
@@ -116,7 +116,6 @@ Inheritance diagram for meta::topics::lda_cvb:</div>
   <img src="classmeta_1_1topics_1_1lda__cvb.png" usemap="#meta::topics::lda_cvb_map" alt=""/>
   <map id="meta::topics::lda_cvb_map" name="meta::topics::lda_cvb_map">
 <area href="classmeta_1_1topics_1_1lda__model.html" title="An LDA topic model base class. " alt="meta::topics::lda_model" shape="rect" coords="0,0,140,24"/>
-<area href="classmeta_1_1topics_1_1lda__model.html" title="An LDA topic model base class. " alt="meta::topics::lda_model" shape="rect" coords="150,0,290,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -129,16 +128,6 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#ae7fb258a1450233a7b8ad1ed27bce0bf">~lda_cvb</a> ()</td></tr>
 <tr class="memdesc:ae7fb258a1450233a7b8ad1ed27bce0bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor: virtual for potential subclassing. <br/></td></tr>
 <tr class="separator:ae7fb258a1450233a7b8ad1ed27bce0bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb6b6f1dd3a9bfef7d32df16f7b606ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#aeb6b6f1dd3a9bfef7d32df16f7b606ad">run</a> (size_t num_iters, double convergence=1e-3)</td></tr>
-<tr class="memdesc:aeb6b6f1dd3a9bfef7d32df16f7b606ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the variational inference algorithm for a maximum number of iterations, or until the given convergence criterion is met.  <a href="#aeb6b6f1dd3a9bfef7d32df16f7b606ad">More...</a><br/></td></tr>
-<tr class="separator:aeb6b6f1dd3a9bfef7d32df16f7b606ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee339795f6d85f00d70b79525e293d16"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#aee339795f6d85f00d70b79525e293d16">lda_cvb</a> (std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;docs, const std::shared_ptr&lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt; &amp;tok, size_t num_topics, double alpha, double beta)</td></tr>
-<tr class="memdesc:aee339795f6d85f00d70b79525e293d16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the lda model over the given documents, with the given number of topics, and hyperparameters \(\alpha\) and \(\beta\) for the priors on \(\phi\) (topic distributions) and \(\theta\) (topic proportions), respectively.  <a href="#aee339795f6d85f00d70b79525e293d16">More...</a><br/></td></tr>
-<tr class="separator:aee339795f6d85f00d70b79525e293d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab5ce764bb97837f0e3fcf2ce9d2e563"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aab5ce764bb97837f0e3fcf2ce9d2e563"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#aab5ce764bb97837f0e3fcf2ce9d2e563">~lda_cvb</a> ()</td></tr>
-<tr class="memdesc:aab5ce764bb97837f0e3fcf2ce9d2e563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor: virtual for potential subclassing. <br/></td></tr>
-<tr class="separator:aab5ce764bb97837f0e3fcf2ce9d2e563"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb6b6f1dd3a9bfef7d32df16f7b606ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#aeb6b6f1dd3a9bfef7d32df16f7b606ad">run</a> (size_t num_iters, double convergence=1e-3)</td></tr>
 <tr class="memdesc:aeb6b6f1dd3a9bfef7d32df16f7b606ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the variational inference algorithm for a maximum number of iterations, or until the given convergence criterion is met.  <a href="#aeb6b6f1dd3a9bfef7d32df16f7b606ad">More...</a><br/></td></tr>
 <tr class="separator:aeb6b6f1dd3a9bfef7d32df16f7b606ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,30 +150,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memitem:a41cef049a68364e4d23b857792425e2e inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair<br class="typebreak"/>
 &lt; term_id, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a41cef049a68364e4d23b857792425e2e">select</a> () const </td></tr>
 <tr class="separator:a41cef049a68364e4d23b857792425e2e inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adea74d6103bb86e220021a6e8ca835cc inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adea74d6103bb86e220021a6e8ca835cc"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>lda_model</b> (std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;docs, size_t num_topics, const std::shared_ptr&lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt; &amp;tok)</td></tr>
-<tr class="separator:adea74d6103bb86e220021a6e8ca835cc inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67d1d995e1bc3866ff3514d463e5894b inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a67d1d995e1bc3866ff3514d463e5894b">save_doc_topic_distributions</a> (const std::string &amp;filename) const </td></tr>
-<tr class="memdesc:a67d1d995e1bc3866ff3514d463e5894b inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the topic proportions \(\theta_d\) for each document to the given file.  <a href="#a67d1d995e1bc3866ff3514d463e5894b">More...</a><br/></td></tr>
-<tr class="separator:a67d1d995e1bc3866ff3514d463e5894b inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3042b31608339a5b606c1cbdf2d88312 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a3042b31608339a5b606c1cbdf2d88312">save_topic_term_distributions</a> (const std::string &amp;filename) const </td></tr>
-<tr class="memdesc:a3042b31608339a5b606c1cbdf2d88312 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the term distributions \(\phi_j\) for each topic to the given file.  <a href="#a3042b31608339a5b606c1cbdf2d88312">More...</a><br/></td></tr>
-<tr class="separator:a3042b31608339a5b606c1cbdf2d88312 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a080a17446fa790b7871b0299bc8cb61c inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a080a17446fa790b7871b0299bc8cb61c">save_term_mapping</a> (const std::string &amp;filename) const </td></tr>
-<tr class="memdesc:a080a17446fa790b7871b0299bc8cb61c inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the term_id &ndash;&gt; String mapping to the given file.  <a href="#a080a17446fa790b7871b0299bc8cb61c">More...</a><br/></td></tr>
-<tr class="separator:a080a17446fa790b7871b0299bc8cb61c inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84a17b141fd5e460bc996983f2ccafd0 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a84a17b141fd5e460bc996983f2ccafd0">save</a> (const std::string &amp;prefix) const </td></tr>
-<tr class="memdesc:a84a17b141fd5e460bc996983f2ccafd0 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the current model to a set of files beginning with prefix: prefix.phi, prefix.theta, and prefix.terms.  <a href="#a84a17b141fd5e460bc996983f2ccafd0">More...</a><br/></td></tr>
-<tr class="separator:a84a17b141fd5e460bc996983f2ccafd0 inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5592a7f090ca48e2902d17332cfb0bf inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair<br class="typebreak"/>
-&lt; term_id, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#ae5592a7f090ca48e2902d17332cfb0bf">select</a> () const </td></tr>
-<tr class="separator:ae5592a7f090ca48e2902d17332cfb0bf inherit pub_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
-<tr class="memitem:ad0dc33640721401acb6d83daebf60eef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad0dc33640721401acb6d83daebf60eef"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>topic_id</b> = size_t</td></tr>
-<tr class="separator:ad0dc33640721401acb6d83daebf60eef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0dc33640721401acb6d83daebf60eef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad0dc33640721401acb6d83daebf60eef"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>topic_id</b> = size_t</td></tr>
 <tr class="separator:ad0dc33640721401acb6d83daebf60eef"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -204,26 +172,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a860b2891c2042a87e5fdce53628104bb"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a860b2891c2042a87e5fdce53628104bb">compute_doc_topic_probability</a> (doc_id doc, size_t topic) const override</td></tr>
 <tr class="memdesc:a860b2891c2042a87e5fdce53628104bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the probability that the given topic is picked for the given document.  <a href="#a860b2891c2042a87e5fdce53628104bb">More...</a><br/></td></tr>
 <tr class="separator:a860b2891c2042a87e5fdce53628104bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a472b8b7da764d84d078f9067063d7ae9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a472b8b7da764d84d078f9067063d7ae9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a472b8b7da764d84d078f9067063d7ae9">initialize</a> ()</td></tr>
-<tr class="memdesc:a472b8b7da764d84d078f9067063d7ae9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the parameters randomly. <br/></td></tr>
-<tr class="separator:a472b8b7da764d84d078f9067063d7ae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa94450d70e5d9e390b975c84d1bcb5de"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#aa94450d70e5d9e390b975c84d1bcb5de">perform_iteration</a> ()</td></tr>
-<tr class="memdesc:aa94450d70e5d9e390b975c84d1bcb5de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs one iteration of the inference algorithm.  <a href="#aa94450d70e5d9e390b975c84d1bcb5de">More...</a><br/></td></tr>
-<tr class="separator:aa94450d70e5d9e390b975c84d1bcb5de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a497419d197aaf0f369c2d833d3bfa036"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a497419d197aaf0f369c2d833d3bfa036">compute_term_topic_probability</a> (term_id term, size_t topic) const override</td></tr>
-<tr class="memdesc:a497419d197aaf0f369c2d833d3bfa036"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the probability that the given term appears in the given topic.  <a href="#a497419d197aaf0f369c2d833d3bfa036">More...</a><br/></td></tr>
-<tr class="separator:a497419d197aaf0f369c2d833d3bfa036"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0bcd39ff69c1e302fdd2e41c3f5b989f"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a0bcd39ff69c1e302fdd2e41c3f5b989f">compute_doc_topic_probability</a> (doc_id doc, size_t topic) const override</td></tr>
-<tr class="memdesc:a0bcd39ff69c1e302fdd2e41c3f5b989f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the probability that the given topic is picked for the given document.  <a href="#a0bcd39ff69c1e302fdd2e41c3f5b989f">More...</a><br/></td></tr>
-<tr class="separator:a0bcd39ff69c1e302fdd2e41c3f5b989f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classmeta_1_1topics_1_1lda__model"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classmeta_1_1topics_1_1lda__model')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classmeta_1_1topics_1_1lda__model.html">meta::topics::lda_model</a></td></tr>
-<tr class="memitem:a22e09203c3bcb87b4a97a7fffe07b0fb inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22e09203c3bcb87b4a97a7fffe07b0fb"></a>
-<a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;)=delete</td></tr>
-<tr class="separator:a22e09203c3bcb87b4a97a7fffe07b0fb inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adeef8d04c1757bc2c88711f9d7004592 inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adeef8d04c1757bc2c88711f9d7004592"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>lda_model</b> (const <a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;)=delete</td></tr>
-<tr class="separator:adeef8d04c1757bc2c88711f9d7004592 inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a22e09203c3bcb87b4a97a7fffe07b0fb inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22e09203c3bcb87b4a97a7fffe07b0fb"></a>
 <a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;)=delete</td></tr>
 <tr class="separator:a22e09203c3bcb87b4a97a7fffe07b0fb inherit pro_methods_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -233,30 +182,30 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a8fd2ff8fbd814179af9c0c34680882e0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8fd2ff8fbd814179af9c0c34680882e0"></a>
+<tr class="memitem:a354ced704c048218ff9b75288b74df7b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a354ced704c048218ff9b75288b74df7b"></a>
 std::unordered_map&lt; doc_id, <br class="typebreak"/>
 std::unordered_map&lt; topic_id, <br class="typebreak"/>
-double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a8fd2ff8fbd814179af9c0c34680882e0">doc_topic_mean_</a></td></tr>
-<tr class="memdesc:a8fd2ff8fbd814179af9c0c34680882e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Means for (document, topic) assignment counts. <br/></td></tr>
-<tr class="separator:a8fd2ff8fbd814179af9c0c34680882e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14d1060b40043c58775157aa059572e7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a14d1060b40043c58775157aa059572e7"></a>
+double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a354ced704c048218ff9b75288b74df7b">doc_topic_mean_</a></td></tr>
+<tr class="memdesc:a354ced704c048218ff9b75288b74df7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Means for (document, topic) assignment counts. <br/></td></tr>
+<tr class="separator:a354ced704c048218ff9b75288b74df7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0837ebb2c00188ecfa65232965af1c9d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0837ebb2c00188ecfa65232965af1c9d"></a>
 std::unordered_map&lt; topic_id, <br class="typebreak"/>
 std::unordered_map&lt; term_id, <br class="typebreak"/>
-double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a14d1060b40043c58775157aa059572e7">topic_term_mean_</a></td></tr>
-<tr class="memdesc:a14d1060b40043c58775157aa059572e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Means for (topic, term) assignment counts. <br/></td></tr>
-<tr class="separator:a14d1060b40043c58775157aa059572e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b7a17d3add87866ba074d4cac4f573b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b7a17d3add87866ba074d4cac4f573b"></a>
+double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a0837ebb2c00188ecfa65232965af1c9d">topic_term_mean_</a></td></tr>
+<tr class="memdesc:a0837ebb2c00188ecfa65232965af1c9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Means for (topic, term) assignment counts. <br/></td></tr>
+<tr class="separator:a0837ebb2c00188ecfa65232965af1c9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad980f7960b008022acb67f8011cb9645"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad980f7960b008022acb67f8011cb9645"></a>
 std::unordered_map&lt; topic_id, <br class="typebreak"/>
-double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a7b7a17d3add87866ba074d4cac4f573b">topic_mean_</a></td></tr>
-<tr class="memdesc:a7b7a17d3add87866ba074d4cac4f573b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Means for topic assignments. <br/></td></tr>
-<tr class="separator:a7b7a17d3add87866ba074d4cac4f573b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc0e2a66b198810c5023f73ee0e4009f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc0e2a66b198810c5023f73ee0e4009f"></a>
+double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#ad980f7960b008022acb67f8011cb9645">topic_mean_</a></td></tr>
+<tr class="memdesc:ad980f7960b008022acb67f8011cb9645"><td class="mdescLeft">&#160;</td><td class="mdescRight">Means for topic assignments. <br/></td></tr>
+<tr class="separator:ad980f7960b008022acb67f8011cb9645"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d2a60640357522d65bd8618844142ed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d2a60640357522d65bd8618844142ed"></a>
 std::unordered_map&lt; doc_id, <br class="typebreak"/>
 std::unordered_map&lt; term_id, <br class="typebreak"/>
 std::unordered_map&lt; topic_id, <br class="typebreak"/>
-double &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#afc0e2a66b198810c5023f73ee0e4009f">gamma_</a></td></tr>
-<tr class="memdesc:afc0e2a66b198810c5023f73ee0e4009f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variational parameters \(\gamma_{dij}\). <br/></td></tr>
-<tr class="separator:afc0e2a66b198810c5023f73ee0e4009f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+double &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a6d2a60640357522d65bd8618844142ed">gamma_</a></td></tr>
+<tr class="memdesc:a6d2a60640357522d65bd8618844142ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variational parameters \(\gamma_{dij}\). <br/></td></tr>
+<tr class="separator:a6d2a60640357522d65bd8618844142ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af77d551ab71cae9949d122da4840f836"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af77d551ab71cae9949d122da4840f836"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#af77d551ab71cae9949d122da4840f836">alpha_</a></td></tr>
 <tr class="memdesc:af77d551ab71cae9949d122da4840f836"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hyperparameter on \(\theta\), the topic proportions. <br/></td></tr>
@@ -266,13 +215,13 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <tr class="memdesc:adc193360a6901bce25edf9565c388643"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hyperparameter on \(\phi\), the topic distributions. <br/></td></tr>
 <tr class="separator:adc193360a6901bce25edf9565c388643"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classmeta_1_1topics_1_1lda__model"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classmeta_1_1topics_1_1lda__model')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classmeta_1_1topics_1_1lda__model.html">meta::topics::lda_model</a></td></tr>
-<tr class="memitem:a6c68c2f018f151a90facdf7ef74834fe inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c68c2f018f151a90facdf7ef74834fe"></a>
+<tr class="memitem:a3bedd226af703610dae0df9b9dda8cb5 inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3bedd226af703610dae0df9b9dda8cb5"></a>
 std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>docs_</b></td></tr>
-<tr class="separator:a6c68c2f018f151a90facdf7ef74834fe inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaca7b7db860b6bdac286fd81f4e96e2e inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaca7b7db860b6bdac286fd81f4e96e2e"></a>
+<tr class="separator:a3bedd226af703610dae0df9b9dda8cb5 inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab88ba4445497fa66306387526a3ee99f inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab88ba4445497fa66306387526a3ee99f"></a>
 std::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tokenizer_</b></td></tr>
-<tr class="separator:aaca7b7db860b6bdac286fd81f4e96e2e inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ab88ba4445497fa66306387526a3ee99f inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3ceda95c29bbd33083d68264718b3af inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac3ceda95c29bbd33083d68264718b3af"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_topics_</b></td></tr>
 <tr class="separator:ac3ceda95c29bbd33083d68264718b3af inherit pro_attribs_classmeta_1_1topics_1_1lda__model"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -285,63 +234,6 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
 <p>Specifically, it uses the CVB0 algorithm detailed in Asuncion et. al.</p>
 <dl class="section see"><dt>See Also</dt><dd><a href="http://www.ics.uci.edu/~asuncion/pubs/UAI_09.pdf">http://www.ics.uci.edu/~asuncion/pubs/UAI_09.pdf</a> </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="aee339795f6d85f00d70b79525e293d16"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">meta::topics::lda_cvb::lda_cvb </td>
-          <td>(</td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>docs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>tok</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>num_topics</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>alpha</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>beta</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Constructs the lda model over the given documents, with the given number of topics, and hyperparameters \(\alpha\) and \(\beta\) for the priors on \(\phi\) (topic distributions) and \(\theta\) (topic proportions), respectively. </p>
-<p>Assumes that the given vector of documents will live for as long as or longer than the <a class="el" href="classmeta_1_1topics_1_1lda__cvb.html" title="lda_cvb: An implementation of LDA that uses collapsed variational bayes for inference. ">lda_cvb</a> instance.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">docs</td><td>The documents for the LDA model </td></tr>
-    <tr><td class="paramname">tok</td><td>How to tokenize each document (e.g. words, POS tags, etc) </td></tr>
-    <tr><td class="paramname">num_topics</td><td>The number of topics to infer </td></tr>
-    <tr><td class="paramname">alpha</td><td>The hyperparameter for the Dirichlet prior over \(\phi\). </td></tr>
-    <tr><td class="paramname">beta</td><td>The hyperparameter for the Dirichlet prior over \(\theta\). </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="aee339795f6d85f00d70b79525e293d16"></a>
 <div class="memitem">
 <div class="memproto">
@@ -562,176 +454,14 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_words_</b></td>
 
 </div>
 </div>
-<a class="anchor" id="aeb6b6f1dd3a9bfef7d32df16f7b606ad"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void meta::topics::lda_cvb::run </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>num_iters</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>convergence</em> = <code>1e-3</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Runs the variational inference algorithm for a maximum number of iterations, or until the given convergence criterion is met. </p>
-<p>The convergence criterion is determined as the maximum difference in any of the variational parameters \(\gamma_{dij}\) in a given iteration.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">num_iters</td><td>The maximum number of iterations to run the sampler for. </td></tr>
-    <tr><td class="paramname">convergence</td><td>The lowest maximum difference in any \(\gamma_{dij}\) to be allowed before considering the inference to have converged. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classmeta_1_1topics_1_1lda__model.html">meta::topics::lda_model</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aa94450d70e5d9e390b975c84d1bcb5de"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double meta::topics::lda_cvb::perform_iteration </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Performs one iteration of the inference algorithm. </p>
-<dl class="section return"><dt>Returns</dt><dd>The maximum change in any of the \(\gamma_{dij}\)s. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a497419d197aaf0f369c2d833d3bfa036"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual double meta::topics::lda_cvb::compute_term_topic_probability </td>
-          <td>(</td>
-          <td class="paramtype">term_id&#160;</td>
-          <td class="paramname"><em>term</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>topic</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes the probability that the given term appears in the given topic. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">term</td><td>The term we are concerned with. </td></tr>
-    <tr><td class="paramname">topic</td><td>The topic we are concerned with. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classmeta_1_1topics_1_1lda__model.html#ae9483d763bf58eef71c418709dad333b">meta::topics::lda_model</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a0bcd39ff69c1e302fdd2e41c3f5b989f"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual double meta::topics::lda_cvb::compute_doc_topic_probability </td>
-          <td>(</td>
-          <td class="paramtype">doc_id&#160;</td>
-          <td class="paramname"><em>doc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>topic</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Computes the probability that the given topic is picked for the given document. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">doc</td><td>The document we are concerned with. </td></tr>
-    <tr><td class="paramname">topic</td><td>The topic we are concerned with. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implements <a class="el" href="classmeta_1_1topics_1_1lda__model.html#a7f0f2b6e65a485394d85b509c1897fdb">meta::topics::lda_model</a>.</p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/_site/include/topics/<a class="el" href="__site_2include_2topics_2lda__cvb_8h_source.html">lda_cvb.h</a></li>
-<li>/home/sean/projects/meta/_site/src/topics/lda_cvb.cpp</li>
+<li>/home/sean/projects/meta/include/topics/<a class="el" href="lda__cvb_8h_source.html">lda_cvb.h</a></li>
+<li>/home/sean/projects/meta/src/topics/<a class="el" href="lda__cvb_8cpp.html">lda_cvb.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:13 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:45 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

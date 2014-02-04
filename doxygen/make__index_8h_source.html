@@ -69,6 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -76,7 +77,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -100,7 +101,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define _META_MAKE_INDEX_H_</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;cpptoml.h&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;index/cached_index.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="cached__index_8h.html">index/cached_index.h</a>&quot;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="filesystem_8h.html">util/filesystem.h</a>&quot;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span>meta {</div>
@@ -110,7 +111,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">class </span>forward_index;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>Index, <span class="keyword">class</span>... Args&gt;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;Index <a class="code" href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891">make_index</a>(<span class="keyword">const</span> std::string &amp;config_file, Args &amp;&amp;... args) {</div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891">   35</a></span>&#160;Index <a class="code" href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891">make_index</a>(<span class="keyword">const</span> std::string &amp;config_file, Args &amp;&amp;... args) {</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">auto</span> config = cpptoml::parse_file(config_file);</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="comment">// check if we have paths specified for either kind of index</span></div>
@@ -132,7 +133,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;}</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Index, <span class="keyword">template</span> &lt;<span class="keyword">class</span>, <span class="keyword">class</span>&gt; <span class="keyword">class </span>Cache, <span class="keyword">class</span>... Args&gt;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;cached_index&lt;Index, Cache&gt; <a class="code" href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891">make_index</a>(<span class="keyword">const</span> std::string &amp;config_file,</div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#a0342389c7f91fbfe72e16bfe39307512">   76</a></span>&#160;<a class="code" href="classmeta_1_1index_1_1cached__index.html">cached_index&lt;Index, Cache&gt;</a> <a class="code" href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891">make_index</a>(<span class="keyword">const</span> std::string &amp;config_file,</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                                      Args &amp;&amp;... args) {</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordflow">return</span> make_index&lt;cached_index&lt;Index, Cache&gt;&gt;(config_file,</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                                                  std::forward&lt;Args&gt;(args)...);</div>
@@ -141,12 +142,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;}</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classmeta_1_1index_1_1cached__index_html"><div class="ttname"><a href="classmeta_1_1index_1_1cached__index.html">meta::index::cached_index</a></div><div class="ttdoc">Decorator class for wrapping indexes with a cache. </div><div class="ttdef"><b>Definition:</b> cached_index.h:27</div></div>
 <div class="ttc" id="filesystem_8h_html"><div class="ttname"><a href="filesystem_8h.html">filesystem.h</a></div><div class="ttdoc">Includes code shared by many classes. </div></div>
-<div class="ttc" id="namespacemeta_1_1index_html_aa3f095e92bf16262ede79c3c75ffc891"><div class="ttname"><a href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891">meta::index::make_index</a></div><div class="ttdeci">Index make_index(const std::string &amp;config_file, Args &amp;&amp;...args)</div><div class="ttdoc">Factory method for creating indexes. </div><div class="ttdef"><b>Definition:</b> disk_index.tcc:23</div></div>
+<div class="ttc" id="cached__index_8h_html"><div class="ttname"><a href="cached__index_8h.html">cached_index.h</a></div><div class="ttdoc">All files in META are released under the MIT license. </div></div>
+<div class="ttc" id="namespacemeta_1_1index_html_aa3f095e92bf16262ede79c3c75ffc891"><div class="ttname"><a href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891">meta::index::make_index</a></div><div class="ttdeci">Index make_index(const std::string &amp;config_file, Args &amp;&amp;...args)</div><div class="ttdoc">Factory method for creating indexes. </div><div class="ttdef"><b>Definition:</b> make_index.h:35</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:04 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:37 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -109,16 +109,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Allows interpretation of classification errors.  
  <a href="classmeta_1_1classify_1_1confusion__matrix.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="__site_2include_2classify_2confusion__matrix_8h_source.html">confusion_matrix.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="confusion__matrix_8h_source.html">confusion_matrix.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a198830f889fe2d161342c48335d8d37c"><td class="memItemLeft" align="right" valign="top">typedef std::unordered_map<br class="typebreak"/>
-&lt; std::pair&lt; class_label, <br class="typebreak"/>
-class_label &gt;, size_t, <br class="typebreak"/>
-decltype(&amp;<a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a82ba93fbf6fdd5c0ff3672f39a2acbfb">confusion_matrix::string_pair_hash</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a198830f889fe2d161342c48335d8d37c">prediction_counts</a></td></tr>
-<tr class="memdesc:a198830f889fe2d161342c48335d8d37c"><td class="mdescLeft">&#160;</td><td class="mdescRight">typedef for predicted class assignments to counts.  <a href="#a198830f889fe2d161342c48335d8d37c">More...</a><br/></td></tr>
-<tr class="separator:a198830f889fe2d161342c48335d8d37c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a198830f889fe2d161342c48335d8d37c"><td class="memItemLeft" align="right" valign="top">typedef std::unordered_map<br class="typebreak"/>
 &lt; std::pair&lt; class_label, <br class="typebreak"/>
 class_label &gt;, size_t, <br class="typebreak"/>
@@ -156,34 +150,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a8555ea7b2d0dc3f1f5a1219855703377"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a8555ea7b2d0dc3f1f5a1219855703377">operator+=</a> (const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;other)</td></tr>
 <tr class="memdesc:a8555ea7b2d0dc3f1f5a1219855703377"><td class="mdescLeft">&#160;</td><td class="mdescRight">operator+= for confusion matrices.  <a href="#a8555ea7b2d0dc3f1f5a1219855703377">More...</a><br/></td></tr>
 <tr class="separator:a8555ea7b2d0dc3f1f5a1219855703377"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64bac25778b14f920ae37fb4f14754c8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64bac25778b14f920ae37fb4f14754c8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a64bac25778b14f920ae37fb4f14754c8">confusion_matrix</a> ()</td></tr>
-<tr class="memdesc:a64bac25778b14f920ae37fb4f14754c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an empty confusion matrix. <br/></td></tr>
-<tr class="separator:a64bac25778b14f920ae37fb4f14754c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab43d13b9f9c3b02a6eacc3f5428f203b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#ab43d13b9f9c3b02a6eacc3f5428f203b">add</a> (const class_label &amp;predicted, const class_label &amp;actual, size_t times=1)</td></tr>
-<tr class="separator:ab43d13b9f9c3b02a6eacc3f5428f203b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8811c0e7f6e6c8a564d07fb784f8821"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8811c0e7f6e6c8a564d07fb784f8821"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#af8811c0e7f6e6c8a564d07fb784f8821">print_stats</a> (std::ostream &amp;out=std::cout) const </td></tr>
-<tr class="memdesc:af8811c0e7f6e6c8a564d07fb784f8821"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints this matrix to out. <br/></td></tr>
-<tr class="separator:af8811c0e7f6e6c8a564d07fb784f8821"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bc00361a9a2516d1167236c9d32f665"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1bc00361a9a2516d1167236c9d32f665"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a1bc00361a9a2516d1167236c9d32f665">print</a> (std::ostream &amp;out=std::cout) const </td></tr>
-<tr class="memdesc:a1bc00361a9a2516d1167236c9d32f665"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints this matrix to out. <br/></td></tr>
-<tr class="separator:a1bc00361a9a2516d1167236c9d32f665"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56fbbb79c71553abc6ee5289c5f49694"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a56fbbb79c71553abc6ee5289c5f49694"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a56fbbb79c71553abc6ee5289c5f49694">print_result_pairs</a> (std::ostream &amp;out=std::cout) const </td></tr>
-<tr class="memdesc:a56fbbb79c71553abc6ee5289c5f49694"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints (predicted, actual) pairs for all judgements. <br/></td></tr>
-<tr class="separator:a56fbbb79c71553abc6ee5289c5f49694"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1d98a97559ba3e637cbb5597c0fa41e"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a198830f889fe2d161342c48335d8d37c">prediction_counts</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#aa1d98a97559ba3e637cbb5597c0fa41e">predictions</a> () const </td></tr>
-<tr class="separator:aa1d98a97559ba3e637cbb5597c0fa41e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4712f43d7db76ba1026bfa9a638c48d3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a4712f43d7db76ba1026bfa9a638c48d3">accuracy</a> () const </td></tr>
-<tr class="separator:a4712f43d7db76ba1026bfa9a638c48d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15a8ec2c44f4f28dcf38ec82fb5fbd70"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a15a8ec2c44f4f28dcf38ec82fb5fbd70">operator+</a> (const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;other) const </td></tr>
-<tr class="memdesc:a15a8ec2c44f4f28dcf38ec82fb5fbd70"><td class="mdescLeft">&#160;</td><td class="mdescRight">operator+ for confusion matrices.  <a href="#a15a8ec2c44f4f28dcf38ec82fb5fbd70">More...</a><br/></td></tr>
-<tr class="separator:a15a8ec2c44f4f28dcf38ec82fb5fbd70"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee6478dab9c83da1fd77f551d908a84a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#aee6478dab9c83da1fd77f551d908a84a">operator+=</a> (const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;other)</td></tr>
-<tr class="memdesc:aee6478dab9c83da1fd77f551d908a84a"><td class="mdescLeft">&#160;</td><td class="mdescRight">operator+= for confusion matrices.  <a href="#aee6478dab9c83da1fd77f551d908a84a">More...</a><br/></td></tr>
-<tr class="separator:aee6478dab9c83da1fd77f551d908a84a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -192,17 +158,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a82ba93fbf6fdd5c0ff3672f39a2acbfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af71fa426bcbf514831bfc7279d00795b"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#af71fa426bcbf514831bfc7279d00795b">mcnemar_significant</a> (const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;a, const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;b)</td></tr>
 <tr class="separator:af71fa426bcbf514831bfc7279d00795b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4320c8713b9aa4c64cc0c2e73fe86bf"><td class="memItemLeft" align="right" valign="top">static size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#ad4320c8713b9aa4c64cc0c2e73fe86bf">string_pair_hash</a> (const std::pair&lt; std::string, std::string &gt; &amp;strPair)</td></tr>
-<tr class="memdesc:ad4320c8713b9aa4c64cc0c2e73fe86bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements a hash function for a pair of strings.  <a href="#ad4320c8713b9aa4c64cc0c2e73fe86bf">More...</a><br/></td></tr>
-<tr class="separator:ad4320c8713b9aa4c64cc0c2e73fe86bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c6c6e5958bd485d63ed479bd05ebeda"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a9c6c6e5958bd485d63ed479bd05ebeda">mcnemar_significant</a> (const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;a, const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;b)</td></tr>
-<tr class="separator:a9c6c6e5958bd485d63ed479bd05ebeda"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a3d1ce66c0add4a68e8b6b833fc539be9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a3d1ce66c0add4a68e8b6b833fc539be9">print_class_stats</a> (std::ostream &amp;out, const class_label &amp;label, double &amp;prec, double &amp;rec, double &amp;f1, size_t width) const </td></tr>
-<tr class="memdesc:a3d1ce66c0add4a68e8b6b833fc539be9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints precision, recall, and F1 for each class and as a whole.  <a href="#a3d1ce66c0add4a68e8b6b833fc539be9">More...</a><br/></td></tr>
-<tr class="separator:a3d1ce66c0add4a68e8b6b833fc539be9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d1ce66c0add4a68e8b6b833fc539be9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a3d1ce66c0add4a68e8b6b833fc539be9">print_class_stats</a> (std::ostream &amp;out, const class_label &amp;label, double &amp;prec, double &amp;rec, double &amp;f1, size_t width) const </td></tr>
 <tr class="memdesc:a3d1ce66c0add4a68e8b6b833fc539be9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints precision, recall, and F1 for each class and as a whole.  <a href="#a3d1ce66c0add4a68e8b6b833fc539be9">More...</a><br/></td></tr>
 <tr class="separator:a3d1ce66c0add4a68e8b6b833fc539be9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -213,14 +171,14 @@ Private Attributes</h2></td></tr>
 <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a198830f889fe2d161342c48335d8d37c">prediction_counts</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a9c7d15d425f7e221576401e209c6dbb9">_predictions</a></td></tr>
 <tr class="memdesc:a9c7d15d425f7e221576401e209c6dbb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">maps predicted class to actual class frequencies <br/></td></tr>
 <tr class="separator:a9c7d15d425f7e221576401e209c6dbb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07fec4241d47bcea099e70f0eeef8010"><td class="memItemLeft" align="right" valign="top">std::set&lt; class_label &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a07fec4241d47bcea099e70f0eeef8010">_classes</a></td></tr>
-<tr class="memdesc:a07fec4241d47bcea099e70f0eeef8010"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keeps track of the number of classes.  <a href="#a07fec4241d47bcea099e70f0eeef8010">More...</a><br/></td></tr>
-<tr class="separator:a07fec4241d47bcea099e70f0eeef8010"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0917d098502be54e7b385ebc4a80cf92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0917d098502be54e7b385ebc4a80cf92"></a>
+<tr class="memitem:a83d53e64d76d4346ab73850721a151b6"><td class="memItemLeft" align="right" valign="top">std::set&lt; class_label &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a83d53e64d76d4346ab73850721a151b6">_classes</a></td></tr>
+<tr class="memdesc:a83d53e64d76d4346ab73850721a151b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keeps track of the number of classes.  <a href="#a83d53e64d76d4346ab73850721a151b6">More...</a><br/></td></tr>
+<tr class="separator:a83d53e64d76d4346ab73850721a151b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf482bfc395a08d59b57ab484c149735"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf482bfc395a08d59b57ab484c149735"></a>
 std::unordered_map<br class="typebreak"/>
-&lt; class_label, size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a0917d098502be54e7b385ebc4a80cf92">_counts</a></td></tr>
-<tr class="memdesc:a0917d098502be54e7b385ebc4a80cf92"><td class="mdescLeft">&#160;</td><td class="mdescRight">how many times each class was predicted <br/></td></tr>
-<tr class="separator:a0917d098502be54e7b385ebc4a80cf92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+&lt; class_label, size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#aaf482bfc395a08d59b57ab484c149735">_counts</a></td></tr>
+<tr class="memdesc:aaf482bfc395a08d59b57ab484c149735"><td class="mdescLeft">&#160;</td><td class="mdescRight">how many times each class was predicted <br/></td></tr>
+<tr class="separator:aaf482bfc395a08d59b57ab484c149735"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d1f133cb696b76e1eda4d6fc7b4689e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8d1f133cb696b76e1eda4d6fc7b4689e"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a8d1f133cb696b76e1eda4d6fc7b4689e">_total</a></td></tr>
 <tr class="memdesc:a8d1f133cb696b76e1eda4d6fc7b4689e"><td class="mdescLeft">&#160;</td><td class="mdescRight">total number of classification attempts <br/></td></tr>
@@ -229,20 +187,6 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Allows interpretation of classification errors. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a class="anchor" id="a198830f889fe2d161342c48335d8d37c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef std::unordered_map&lt;std::pair&lt;class_label, class_label&gt;, size_t, decltype(&amp;<a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a82ba93fbf6fdd5c0ff3672f39a2acbfb">confusion_matrix::string_pair_hash</a>)&gt; <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a198830f889fe2d161342c48335d8d37c">meta::classify::confusion_matrix::prediction_counts</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>typedef for predicted class assignments to counts. </p>
-
-</div>
-</div>
 <a class="anchor" id="a198830f889fe2d161342c48335d8d37c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -527,277 +471,8 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 
 </div>
 </div>
-<a class="anchor" id="ab43d13b9f9c3b02a6eacc3f5428f203b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void meta::classify::confusion_matrix::add </td>
-          <td>(</td>
-          <td class="paramtype">const class_label &amp;&#160;</td>
-          <td class="paramname"><em>predicted</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const class_label &amp;&#160;</td>
-          <td class="paramname"><em>actual</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>times</em> = <code>1</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">predicted</td><td>The predicted class label </td></tr>
-    <tr><td class="paramname">actual</td><td>The actual class label </td></tr>
-    <tr><td class="paramname">times</td><td>The number of times this prediction was made </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="ad4320c8713b9aa4c64cc0c2e73fe86bf"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static size_t meta::classify::confusion_matrix::string_pair_hash </td>
-          <td>(</td>
-          <td class="paramtype">const std::pair&lt; std::string, std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>strPair</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Implements a hash function for a pair of strings. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">str_pair</td><td>The pair of strings </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the hash </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="aa1d98a97559ba3e637cbb5597c0fa41e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a198830f889fe2d161342c48335d8d37c">prediction_counts</a>&amp; meta::classify::confusion_matrix::predictions </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>all the predictions from this <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html" title="Allows interpretation of classification errors. ">confusion_matrix</a>. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a4712f43d7db76ba1026bfa9a638c48d3"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double meta::classify::confusion_matrix::accuracy </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>the accuracy for this confusion matrix </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a15a8ec2c44f4f28dcf38ec82fb5fbd70"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> meta::classify::confusion_matrix::operator+ </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>operator+ for confusion matrices. </p>
-<p>All counts are agglomerated for all predictions. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">other</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>a <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html" title="Allows interpretation of classification errors. ">confusion_matrix</a> containing all predictions of the parameters </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="aee6478dab9c83da1fd77f551d908a84a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a>&amp; meta::classify::confusion_matrix::operator+= </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;&#160;</td>
-          <td class="paramname"><em>other</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>operator+= for confusion matrices. </p>
-<p>All counts are agglomerated for all predictions. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">other</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>a <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html" title="Allows interpretation of classification errors. ">confusion_matrix</a> containing all predictions of the parameters </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a9c6c6e5958bd485d63ed479bd05ebeda"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static bool meta::classify::confusion_matrix::mcnemar_significant </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;&#160;</td>
-          <td class="paramname"><em>a</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a> &amp;&#160;</td>
-          <td class="paramname"><em>b</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">a</td><td>The first matrix to compare </td></tr>
-    <tr><td class="paramname">b</td><td>The second matrix to compare </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>whether results between two confusion matrices are statistically significant according to McNemar's test with Yates' correction for continuity (alpha = .05) </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a3d1ce66c0add4a68e8b6b833fc539be9"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void meta::classify::confusion_matrix::print_class_stats </td>
-          <td>(</td>
-          <td class="paramtype">std::ostream &amp;&#160;</td>
-          <td class="paramname"><em>out</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const class_label &amp;&#160;</td>
-          <td class="paramname"><em>label</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double &amp;&#160;</td>
-          <td class="paramname"><em>prec</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double &amp;&#160;</td>
-          <td class="paramname"><em>rec</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double &amp;&#160;</td>
-          <td class="paramname"><em>f1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>width</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Prints precision, recall, and F1 for each class and as a whole. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">out</td><td>The stream to print to </td></tr>
-    <tr><td class="paramname">label</td><td>The current class label to get statistics for </td></tr>
-    <tr><td class="paramname">prec</td><td>The precision for this class </td></tr>
-    <tr><td class="paramname">rec</td><td>The recall for this class </td></tr>
-    <tr><td class="paramname">f1</td><td>The F1 score for this class </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a07fec4241d47bcea099e70f0eeef8010"></a>
+<a class="anchor" id="a83d53e64d76d4346ab73850721a151b6"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -805,7 +480,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::set&lt; class_label &gt; meta::classify::confusion_matrix::_classes</td>
+          <td class="memname">std::set&lt;class_label&gt; meta::classify::confusion_matrix::_classes</td>
         </tr>
       </table>
   </td>
@@ -821,13 +496,13 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/_site/include/classify/<a class="el" href="__site_2include_2classify_2confusion__matrix_8h_source.html">confusion_matrix.h</a></li>
-<li>/home/sean/projects/meta/_site/src/classify/confusion_matrix.cpp</li>
+<li>/home/sean/projects/meta/include/classify/<a class="el" href="confusion__matrix_8h_source.html">confusion_matrix.h</a></li>
+<li>/home/sean/projects/meta/src/classify/<a class="el" href="confusion__matrix_8cpp.html">confusion_matrix.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:06 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:39 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

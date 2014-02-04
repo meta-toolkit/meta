@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -109,7 +109,6 @@ Inheritance diagram for meta::parallel::thread_pool::concrete_task&lt; R &gt;:</
   <img src="structmeta_1_1parallel_1_1thread__pool_1_1concrete__task.png" usemap="#meta::parallel::thread_pool::concrete_task&lt; R &gt;_map" alt=""/>
   <map id="meta::parallel::thread_pool::concrete_task&lt; R &gt;_map" name="meta::parallel::thread_pool::concrete_task&lt; R &gt;_map">
 <area href="structmeta_1_1parallel_1_1thread__pool_1_1task.html" alt="meta::parallel::thread_pool::task" shape="rect" coords="0,0,276,24"/>
-<area href="structmeta_1_1parallel_1_1thread__pool_1_1task.html" alt="meta::parallel::thread_pool::task" shape="rect" coords="286,0,562,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -125,30 +124,20 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> ()</t
 <tr class="memitem:a08178d5a0e8fd5f78ff5379e6f582ee1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a08178d5a0e8fd5f78ff5379e6f582ee1"></a>
 std::future&lt; R &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>get_future</b> ()</td></tr>
 <tr class="separator:a08178d5a0e8fd5f78ff5379e6f582ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbfae95b05bc6b4b8a8ff0e40fd38ccc"><td class="memTemplParams" colspan="2"><a class="anchor" id="abbfae95b05bc6b4b8a8ff0e40fd38ccc"></a>
-template&lt;class Function &gt; </td></tr>
-<tr class="memitem:abbfae95b05bc6b4b8a8ff0e40fd38ccc"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>concrete_task</b> (const Function &amp;f)</td></tr>
-<tr class="separator:abbfae95b05bc6b4b8a8ff0e40fd38ccc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72ce840c6782edc676388b11b6ce1756"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72ce840c6782edc676388b11b6ce1756"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> ()</td></tr>
-<tr class="separator:a72ce840c6782edc676388b11b6ce1756"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08178d5a0e8fd5f78ff5379e6f582ee1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a08178d5a0e8fd5f78ff5379e6f582ee1"></a>
-std::future&lt; R &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>get_future</b> ()</td></tr>
-<tr class="separator:a08178d5a0e8fd5f78ff5379e6f582ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ace4284120225a4cc7e7cbbc838513d47"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ace4284120225a4cc7e7cbbc838513d47"></a>
+<tr class="memitem:a606afc9ae0af10bc4adb81d70accb45e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a606afc9ae0af10bc4adb81d70accb45e"></a>
 std::packaged_task&lt; R()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>task_</b></td></tr>
-<tr class="separator:ace4284120225a4cc7e7cbbc838513d47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a606afc9ae0af10bc4adb81d70accb45e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>/home/sean/projects/meta/_site/include/parallel/<a class="el" href="__site_2include_2parallel_2thread__pool_8h_source.html">thread_pool.h</a></li>
+<li>/home/sean/projects/meta/include/parallel/<a class="el" href="thread__pool_8h_source.html">thread_pool.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:11 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:42 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

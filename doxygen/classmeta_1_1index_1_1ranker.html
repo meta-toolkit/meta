@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -106,45 +106,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>A ranker scores a query against all the documents in an inverted index, returning a list of documents sorted by relevance.  
  <a href="classmeta_1_1index_1_1ranker.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="__site_2include_2index_2ranker_2ranker_8h_source.html">ranker.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="ranker_8h_source.html">ranker.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for meta::index::ranker:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classmeta_1_1index_1_1ranker.png" usemap="#meta::index::ranker_map" alt=""/>
   <map id="meta::index::ranker_map" name="meta::index::ranker_map">
-<area href="classmeta_1_1index_1_1language__model__ranker.html" title="Scores documents according to one of three different smoothed language model scoring methods describe..." alt="meta::index::language_model_ranker" shape="rect" coords="0,56,216,80"/>
-<area href="classmeta_1_1index_1_1language__model__ranker.html" title="Scores documents according to one of three different smoothed language model scoring methods describe..." alt="meta::index::language_model_ranker" shape="rect" coords="452,56,668,80"/>
-<area href="classmeta_1_1index_1_1okapi__bm25.html" title="The Okapi BM25 scoring function. " alt="meta::index::okapi_bm25" shape="rect" coords="678,56,894,80"/>
-<area href="classmeta_1_1index_1_1okapi__bm25.html" title="The Okapi BM25 scoring function. " alt="meta::index::okapi_bm25" shape="rect" coords="904,56,1120,80"/>
-<area href="classmeta_1_1index_1_1pivoted__length.html" title="The pivoted document length normalization ranking function. " alt="meta::index::pivoted_length" shape="rect" coords="1130,56,1346,80"/>
-<area href="classmeta_1_1index_1_1pivoted__length.html" title="The pivoted document length normalization ranking function. " alt="meta::index::pivoted_length" shape="rect" coords="1356,56,1572,80"/>
-<area href="classmeta_1_1index_1_1absolute__discount.html" title="Implements the absolute discounting smoothing method. " alt="meta::index::absolute_discount" shape="rect" coords="226,112,442,136"/>
-<area href="classmeta_1_1index_1_1absolute__discount.html" title="Implements the absolute discounting smoothing method. " alt="meta::index::absolute_discount" shape="rect" coords="226,168,442,192"/>
-<area href="classmeta_1_1index_1_1dirichlet__prior.html" title="Implements Bayesian smoothing with a Dirichlet prior. " alt="meta::index::dirichlet_prior" shape="rect" coords="226,224,442,248"/>
-<area href="classmeta_1_1index_1_1dirichlet__prior.html" title="Implements Bayesian smoothing with a Dirichlet prior. " alt="meta::index::dirichlet_prior" shape="rect" coords="226,280,442,304"/>
-<area href="classmeta_1_1index_1_1jelinek__mercer.html" title="Implements the Jelinek-Mercer smoothed ranking model. " alt="meta::index::jelinek_mercer" shape="rect" coords="226,336,442,360"/>
-<area href="classmeta_1_1index_1_1jelinek__mercer.html" title="Implements the Jelinek-Mercer smoothed ranking model. " alt="meta::index::jelinek_mercer" shape="rect" coords="226,392,442,416"/>
-<area href="classmeta_1_1index_1_1absolute__discount.html" title="Implements the absolute discounting smoothing method. " alt="meta::index::absolute_discount" shape="rect" coords="678,112,894,136"/>
-<area href="classmeta_1_1index_1_1absolute__discount.html" title="Implements the absolute discounting smoothing method. " alt="meta::index::absolute_discount" shape="rect" coords="678,168,894,192"/>
-<area href="classmeta_1_1index_1_1dirichlet__prior.html" title="Implements Bayesian smoothing with a Dirichlet prior. " alt="meta::index::dirichlet_prior" shape="rect" coords="678,224,894,248"/>
-<area href="classmeta_1_1index_1_1dirichlet__prior.html" title="Implements Bayesian smoothing with a Dirichlet prior. " alt="meta::index::dirichlet_prior" shape="rect" coords="678,280,894,304"/>
-<area href="classmeta_1_1index_1_1jelinek__mercer.html" title="Implements the Jelinek-Mercer smoothed ranking model. " alt="meta::index::jelinek_mercer" shape="rect" coords="678,336,894,360"/>
-<area href="classmeta_1_1index_1_1jelinek__mercer.html" title="Implements the Jelinek-Mercer smoothed ranking model. " alt="meta::index::jelinek_mercer" shape="rect" coords="678,392,894,416"/>
+<area href="classmeta_1_1index_1_1language__model__ranker.html" title="Scores documents according to one of three different smoothed language model scoring methods describe..." alt="meta::index::language_model_ranker" shape="rect" coords="226,56,442,80"/>
+<area href="classmeta_1_1index_1_1okapi__bm25.html" title="The Okapi BM25 scoring function. " alt="meta::index::okapi_bm25" shape="rect" coords="452,56,668,80"/>
+<area href="classmeta_1_1index_1_1pivoted__length.html" title="The pivoted document length normalization ranking function. " alt="meta::index::pivoted_length" shape="rect" coords="678,56,894,80"/>
+<area href="classmeta_1_1index_1_1absolute__discount.html" title="Implements the absolute discounting smoothing method. " alt="meta::index::absolute_discount" shape="rect" coords="0,112,216,136"/>
+<area href="classmeta_1_1index_1_1dirichlet__prior.html" title="Implements Bayesian smoothing with a Dirichlet prior. " alt="meta::index::dirichlet_prior" shape="rect" coords="226,112,442,136"/>
+<area href="classmeta_1_1index_1_1jelinek__mercer.html" title="Implements the Jelinek-Mercer smoothed ranking model. " alt="meta::index::jelinek_mercer" shape="rect" coords="452,112,668,136"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa5e755b3a4664161587ef4fcbfe4e1b1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; doc_id, <br class="typebreak"/>
-double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1ranker.html#aa5e755b3a4664161587ef4fcbfe4e1b1">score</a> (<a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a> &amp;idx, <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &amp;query) const </td></tr>
-<tr class="separator:aa5e755b3a4664161587ef4fcbfe4e1b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a869a7ef9078cc38eeea6f6d2aafec673"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1ranker.html#a869a7ef9078cc38eeea6f6d2aafec673">score_one</a> (const <a class="el" href="structmeta_1_1index_1_1score__data.html">score_data</a> &amp;sd) const =0</td></tr>
-<tr class="separator:a869a7ef9078cc38eeea6f6d2aafec673"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b675ab9f79f341746ff75ab1e089c9b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b675ab9f79f341746ff75ab1e089c9b"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1ranker.html#a7b675ab9f79f341746ff75ab1e089c9b">~ranker</a> ()=default</td></tr>
-<tr class="memdesc:a7b675ab9f79f341746ff75ab1e089c9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default destructor. <br/></td></tr>
-<tr class="separator:a7b675ab9f79f341746ff75ab1e089c9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af95de9ed18c2554003ee2b3c7a44f087"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; doc_id, <br class="typebreak"/>
 double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1ranker.html#af95de9ed18c2554003ee2b3c7a44f087">score</a> (<a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a> &amp;idx, <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &amp;query, uint64_t num_results=10, const std::function&lt; bool(doc_id d_id)&gt; &amp;filter=[](doc_id d_id){return true;})</td></tr>
 <tr class="separator:af95de9ed18c2554003ee2b3c7a44f087"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,71 +143,6 @@ std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A ranker scores a query against all the documents in an inverted index, returning a list of documents sorted by relevance. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="aa5e755b3a4664161587ef4fcbfe4e1b1"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; std::pair&lt; doc_id, double &gt; &gt; meta::index::ranker::score </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a> &amp;&#160;</td>
-          <td class="paramname"><em>idx</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &amp;&#160;</td>
-          <td class="paramname"><em>query</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">idx</td><td></td></tr>
-    <tr><td class="paramname">query</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a869a7ef9078cc38eeea6f6d2aafec673"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual double meta::index::ranker::score_one </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structmeta_1_1index_1_1score__data.html">score_data</a> &amp;&#160;</td>
-          <td class="paramname"><em>sd</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">sd</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Implemented in <a class="el" href="classmeta_1_1index_1_1okapi__bm25.html#a3336cdc6c439a44434f7f2e616db925b">meta::index::okapi_bm25</a>, <a class="el" href="classmeta_1_1index_1_1pivoted__length.html#a2871d7bd3b2516ccae8d5de3b99ed96c">meta::index::pivoted_length</a>, and <a class="el" href="classmeta_1_1index_1_1language__model__ranker.html#a6e0b7654b92781c1faaca8a1482ce306">meta::index::language_model_ranker</a>.</p>
-
-</div>
-</div>
 <a class="anchor" id="af95de9ed18c2554003ee2b3c7a44f087"></a>
 <div class="memitem">
 <div class="memproto">
@@ -309,13 +223,13 @@ std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/_site/include/index/ranker/<a class="el" href="__site_2include_2index_2ranker_2ranker_8h_source.html">ranker.h</a></li>
-<li>/home/sean/projects/meta/_site/src/index/ranker/ranker.cpp</li>
+<li>/home/sean/projects/meta/include/index/ranker/<a class="el" href="ranker_8h_source.html">ranker.h</a></li>
+<li>/home/sean/projects/meta/src/index/ranker/<a class="el" href="ranker_8cpp.html">ranker.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:10 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:42 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

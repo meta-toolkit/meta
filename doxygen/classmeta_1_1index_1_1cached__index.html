@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -107,7 +107,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Decorator class for wrapping indexes with a cache.  
  <a href="classmeta_1_1index_1_1cached__index.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="__site_2include_2index_2cached__index_8h_source.html">cached_index.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="cached__index_8h_source.html">cached_index.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for meta::index::cached_index&lt; Index, Cache &gt;:</div>
 <div class="dyncontent">
@@ -128,15 +128,6 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>secondary_key_type</
 <tr class="memitem:a917354899bc67c64d881445d3009ec2e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a917354899bc67c64d881445d3009ec2e"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>postings_data_type</b> = typename Index::postings_data_type</td></tr>
 <tr class="separator:a917354899bc67c64d881445d3009ec2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a395779c4c0824253063ea85a426d7ab3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a395779c4c0824253063ea85a426d7ab3"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>primary_key_type</b> = typename Index::primary_key_type</td></tr>
-<tr class="separator:a395779c4c0824253063ea85a426d7ab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abacd07386a7f0b52f2885c94966588f1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abacd07386a7f0b52f2885c94966588f1"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>secondary_key_type</b> = typename Index::secondary_key_type</td></tr>
-<tr class="separator:abacd07386a7f0b52f2885c94966588f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a917354899bc67c64d881445d3009ec2e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a917354899bc67c64d881445d3009ec2e"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>postings_data_type</b> = typename Index::postings_data_type</td></tr>
-<tr class="separator:a917354899bc67c64d881445d3009ec2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -148,23 +139,15 @@ Public Member Functions</h2></td></tr>
 &lt; postings_data_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1cached__index.html#a12db786c06f9b4dcd9389d7d7059f59c">search_primary</a> (primary_key_type p_id) const override</td></tr>
 <tr class="memdesc:a12db786c06f9b4dcd9389d7d7059f59c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overload for <a class="el" href="classmeta_1_1index_1_1cached__index.html#a12db786c06f9b4dcd9389d7d7059f59c" title="Overload for search_primary() that first attempts to find the result in the cache. ">search_primary()</a> that first attempts to find the result in the cache.  <a href="#a12db786c06f9b4dcd9389d7d7059f59c">More...</a><br/></td></tr>
 <tr class="separator:a12db786c06f9b4dcd9389d7d7059f59c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16a423361fddab8924b2a5e7635b983b"><td class="memTemplParams" colspan="2">template&lt;class... Args&gt; </td></tr>
-<tr class="memitem:a16a423361fddab8924b2a5e7635b983b"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1cached__index.html#a16a423361fddab8924b2a5e7635b983b">cached_index</a> (<a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;config, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a16a423361fddab8924b2a5e7635b983b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forwarding constructor: construct the Index part using the config, but then forward the additional arguments to the underlying cache.  <a href="#a16a423361fddab8924b2a5e7635b983b">More...</a><br/></td></tr>
-<tr class="separator:a16a423361fddab8924b2a5e7635b983b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a515e475654d4cc1c48ad93c48367c79b"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr<br class="typebreak"/>
-&lt; postings_data_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1cached__index.html#a515e475654d4cc1c48ad93c48367c79b">search_primary</a> (primary_key_type p_id) const override</td></tr>
-<tr class="memdesc:a515e475654d4cc1c48ad93c48367c79b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overload for <a class="el" href="classmeta_1_1index_1_1cached__index.html#a12db786c06f9b4dcd9389d7d7059f59c" title="Overload for search_primary() that first attempts to find the result in the cache. ">search_primary()</a> that first attempts to find the result in the cache.  <a href="#a515e475654d4cc1c48ad93c48367c79b">More...</a><br/></td></tr>
-<tr class="separator:a515e475654d4cc1c48ad93c48367c79b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:aeef5f3a7029f843f6fe43c69b4e72de4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeef5f3a7029f843f6fe43c69b4e72de4"></a>
+<tr class="memitem:a4d077203398348eb7f32a4f13af8984b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d077203398348eb7f32a4f13af8984b"></a>
 Cache&lt; primary_key_type, <br class="typebreak"/>
 std::shared_ptr<br class="typebreak"/>
-&lt; postings_data_type &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1cached__index.html#aeef5f3a7029f843f6fe43c69b4e72de4">cache_</a></td></tr>
-<tr class="memdesc:aeef5f3a7029f843f6fe43c69b4e72de4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The internal cache object. <br/></td></tr>
-<tr class="separator:aeef5f3a7029f843f6fe43c69b4e72de4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+&lt; postings_data_type &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1cached__index.html#a4d077203398348eb7f32a4f13af8984b">cache_</a></td></tr>
+<tr class="memdesc:a4d077203398348eb7f32a4f13af8984b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The internal cache object. <br/></td></tr>
+<tr class="separator:a4d077203398348eb7f32a4f13af8984b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class Index, template&lt; class, class &gt; class Cache&gt;<br/>
@@ -173,45 +156,6 @@ class meta::index::cached_index&lt; Index, Cache &gt;</h3>
 <p>Decorator class for wrapping indexes with a cache. </p>
 <p>Like other indexes, you shouldn't construct this directly, but rather use <a class="el" href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891" title="Factory method for creating indexes. ">make_index()</a>. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a16a423361fddab8924b2a5e7635b983b"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Index , template&lt; class, class &gt; class Cache&gt; </div>
-<div class="memtemplate">
-template&lt;class... Args&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classmeta_1_1index_1_1cached__index.html">meta::index::cached_index</a>&lt; Index, Cache &gt;::<a class="el" href="classmeta_1_1index_1_1cached__index.html">cached_index</a> </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;&#160;</td>
-          <td class="paramname"><em>config</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...&#160;</td>
-          <td class="paramname"><em>args</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Forwarding constructor: construct the Index part using the config, but then forward the additional arguments to the underlying cache. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">config</td><td>the configuration that specifies how the index should be constructed </td></tr>
-    <tr><td class="paramname">args</td><td>the remaining arguments to send to the Cache constructor </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="a16a423361fddab8924b2a5e7635b983b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -287,49 +231,14 @@ template&lt;class Index , template&lt; class, class &gt; class Cache&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a515e475654d4cc1c48ad93c48367c79b"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Index , template&lt; class, class &gt; class Cache&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual std::shared_ptr&lt;postings_data_type&gt; <a class="el" href="classmeta_1_1index_1_1cached__index.html">meta::index::cached_index</a>&lt; Index, Cache &gt;::search_primary </td>
-          <td>(</td>
-          <td class="paramtype">primary_key_type&#160;</td>
-          <td class="paramname"><em>p_id</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Overload for <a class="el" href="classmeta_1_1index_1_1cached__index.html#a12db786c06f9b4dcd9389d7d7059f59c" title="Overload for search_primary() that first attempts to find the result in the cache. ">search_primary()</a> that first attempts to find the result in the cache. </p>
-<p>Failing that, it will invoke the base class <a class="el" href="classmeta_1_1index_1_1cached__index.html#a12db786c06f9b4dcd9389d7d7059f59c" title="Overload for search_primary() that first attempts to find the result in the cache. ">search_primary()</a>, store the result in the cache, and then return the value.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p_id</td><td>the primary key to search the postings file for </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/_site/include/index/<a class="el" href="__site_2include_2index_2cached__index_8h_source.html">cached_index.h</a></li>
-<li>/home/sean/projects/meta/_site/include/index/cached_index.tcc</li>
+<li>/home/sean/projects/meta/include/index/<a class="el" href="cached__index_8h_source.html">cached_index.h</a></li>
+<li>/home/sean/projects/meta/include/index/<a class="el" href="cached__index_8tcc.html">cached_index.tcc</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:41:08 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Feb 3 2014 19:55:40 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
