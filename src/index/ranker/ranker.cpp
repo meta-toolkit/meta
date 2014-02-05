@@ -50,7 +50,7 @@ ranker::score(inverted_index& idx, corpus::document& query,
 
     using doc_pair = std::pair<doc_id, double>;
     auto doc_pair_comp = [](const doc_pair& a, const doc_pair& b)
-    { return a.second < b.second; };
+    { return a.second > b.second; };
 
     std::priority_queue
         <doc_pair, std::vector<doc_pair>, decltype(doc_pair_comp)> pq{
@@ -59,9 +59,7 @@ ranker::score(inverted_index& idx, corpus::document& query,
     {
         if (!filter(doc_id{id}))
             continue;
-        if (!pq.empty() && _results[id] < pq.top().second && pq.size()
-                                                             == num_results)
-            continue;
+
         pq.emplace(doc_id{id}, _results[id]);
         if (pq.size() > num_results)
             pq.pop();
@@ -73,6 +71,7 @@ ranker::score(inverted_index& idx, corpus::document& query,
         sorted.emplace_back(pq.top());
         pq.pop();
     }
+    std::reverse(sorted.begin(), sorted.end());
 
     return sorted;
 }
