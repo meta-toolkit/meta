@@ -2,16 +2,18 @@
  * @file interactive_search.cpp
  */
 
-#include <vector>
 #include <algorithm>
-#include <string>
 #include <iostream>
-#include "util/common.h"
-#include "tokenizers/tokenizer.h"
+#include <string>
+#include <vector>
+
+#include "caching/all.h"
 #include "corpus/document.h"
 #include "index/inverted_index.h"
 #include "index/ranker/all.h"
-#include "caching/all.h"
+#include "tokenizers/tokenizer.h"
+#include "util/printing.h"
+#include "util/time.h"
 
 using namespace meta;
 using std::cerr;
@@ -54,7 +56,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    common::set_cerr_logging();
+    logging::set_cerr_logging();
     auto idx = index::make_index<index::inverted_index,
                                  caching::splay_cache>(argv[1], uint32_t{10000});
 
@@ -86,9 +88,9 @@ int main(int argc, char* argv[])
         for(size_t i = 0; i < ranking.size() && i < 10; ++i)
         {
             std::string path{idx.doc_path(ranking[i].first)};
-            cout << common::make_bold(
-                        common::to_string(i+1) + ". " + path + " ("
-                        + common::to_string(ranking[i].second) + ")"
+            cout << printing::make_bold(
+                        std::to_string(i+1) + ". " + path + " ("
+                        + std::to_string(ranking[i].second) + ")"
                     ) << endl;
             cout << get_snippets(path, text) << endl << endl;
 

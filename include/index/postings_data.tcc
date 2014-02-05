@@ -3,8 +3,8 @@
  * @author Sean Massung
  */
 
+#include <algorithm>
 #include "index/postings_data.h"
-#include "util/common.h"
 
 namespace meta {
 namespace index {
@@ -15,16 +15,8 @@ postings_data<PrimaryKey, SecondaryKey>::postings_data(PrimaryKey p_id):
 { /* nothing */ }
 
 template <class PrimaryKey, class SecondaryKey>
-postings_data<PrimaryKey, SecondaryKey>::postings_data(
-        const std::string & raw_data)
-{
-    std::istringstream iss{raw_data};
-    iss >> *this;
-}
-
-template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::merge_with(
-        const postings_data & other)
+        postings_data & other)
 {
     auto searcher = [](const pair_t & p, const SecondaryKey & s) {
         return p.first < s;
@@ -47,11 +39,13 @@ void postings_data<PrimaryKey, SecondaryKey>::merge_with(
     }
 
     // sort _counts again to fix new elements added onto back
-    std::sort(_counts.begin(), _counts.end(), 
-        [](const pair_t & a, const pair_t & b) {
-            return a.first < b.first;
-        }
-    );
+    if (_counts.size() > orig_length) {
+        std::sort(_counts.begin(), _counts.end(),
+            [](const pair_t & a, const pair_t & b) {
+                return a.first < b.first;
+            }
+        );
+    }
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -65,9 +59,9 @@ void postings_data<PrimaryKey, SecondaryKey>::increase_count(
     );
 
     if(it == _counts.end())
-        _counts.emplace_back(std::make_pair(s_id, amount));
+        _counts.emplace_back(s_id, amount);
     else if(it->first != s_id)
-        _counts.insert(it, std::make_pair(s_id, amount));
+        _counts.emplace(it, s_id, amount);
     else
         it->second += amount;
 }
@@ -105,9 +99,21 @@ void postings_data<PrimaryKey, SecondaryKey>::set_counts(const count_t & counts)
 }
 
 template <class PrimaryKey, class SecondaryKey>
+void postings_data<PrimaryKey, SecondaryKey>::set_primary_key(PrimaryKey new_key)
+{
+    _p_id = new_key;
+}
+
+template <class PrimaryKey, class SecondaryKey>
 bool postings_data<PrimaryKey, SecondaryKey>::operator<(const postings_data & other) const
 {
     return primary_key() < other.primary_key();
+}
+
+template <class PrimaryKey, class SecondaryKey>
+bool operator==(const postings_data<PrimaryKey, SecondaryKey> & lhs,
+                const postings_data<PrimaryKey, SecondaryKey> & rhs) {
+    return lhs.primary_key() == rhs.primary_key();
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -122,7 +128,11 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
 {
     count_t mutable_counts{_counts};
     writer.write(mutable_counts[0].first);
-    writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[0].second));
+    if(std::is_same<PrimaryKey, term_id>::value
+       || std::is_same<PrimaryKey, std::string>::value)
+        writer.write(static_cast<uint64_t>(mutable_counts[0].second));
+    else
+        writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[0].second));
 
     // use gap encoding on the SecondaryKeys (we know they are integral types)
     uint64_t cur_id = mutable_counts[0].first;
@@ -133,7 +143,11 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
         cur_id = temp_id;
 
         writer.write(mutable_counts[i].first);
-        writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[i].second));
+        if(std::is_same<PrimaryKey, term_id>::value
+           || std::is_same<PrimaryKey, std::string>::value)
+            writer.write(static_cast<uint64_t>(mutable_counts[i].second));
+        else
+            writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[i].second));
     }
 
     // mark end of postings_data
@@ -159,14 +173,42 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         last_id += this_id;
         SecondaryKey key{last_id};
         uint64_t next = reader.next();
-        double count = *reinterpret_cast<double*>(&next);
+        double count;
+        if(std::is_same<PrimaryKey, term_id>::value)
+            count = static_cast<double>(next);
+        else
+            count = *reinterpret_cast<double*>(&next);
 
-        _counts.emplace_back(std::make_pair(key, count));
+        _counts.emplace_back(key, count);
     }
 
     // compress vector to conserve memory (it shouldn't be modified again after
     // this)
     _counts.shrink_to_fit();
+}
+
+namespace {
+    template <class T>
+    uint64_t length(const T & elem,
+                    typename std::enable_if<
+                        std::is_same<T, std::string>::value
+                    >::type * = nullptr) {
+        return elem.size();
+    }
+
+    template <class T>
+    uint64_t length(const T & elem,
+                    typename std::enable_if<
+                        !std::is_same<T, std::string>::value
+                    >::type * = nullptr) {
+        return sizeof(elem);
+    }
+}
+
+template <class PrimaryKey, class SecondaryKey>
+uint64_t postings_data<PrimaryKey, SecondaryKey>::bytes_used() const
+{
+    return sizeof(pair_t) * _counts.size() + length(_p_id);
 }
 
 }

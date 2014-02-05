@@ -2,21 +2,27 @@
  * @file parser.cpp
  */
 
+#include "io/mmap_file.h"
 #include "io/parser.h"
-#include "util/common.h"
+#include "util/shim.h"
 
 namespace meta {
 namespace io {
 
 parser::parser(const std::string & input, const std::string & delims,
         input_type in_type /* = File */):
-    _idx{0},
-    _invalid{delims.begin(), delims.end()}
+    _idx{0}
 {
+    // initialize delimiter array
+    _invalid.fill(false);
+    for(const auto & ch: delims)
+        _invalid[static_cast<uint8_t>(ch)] = true;
+
+    // determine whether we're parsing an mmap_file or a std::string
     if(in_type == input_type::File)
     {
         _filename = input;
-        _mmap_file = common::make_unique<io::mmap_file>(input);
+        _mmap_file = make_unique<io::mmap_file>(input);
         _data = _mmap_file->start();
         _size = _mmap_file->size();
     }
@@ -30,12 +36,16 @@ parser::parser(const std::string & input, const std::string & delims,
     get_next();
 }
 
+parser::parser(parser&&) = default;
+parser::~parser() = default;
+parser& parser::operator=(parser&&) = default;
+
 void parser::get_next()
 {
     _next = "";
     for(size_t i = _idx; i < _size; ++i)
     {
-        if(_invalid.find(_data[i]) != _invalid.end())
+        if(_invalid[static_cast<uint8_t>(_data[i])])
         {
             if(_idx != i)
             {

@@ -3,8 +3,9 @@
  * @author Sean Massung
  */
 
+#include "cpptoml.h"
+#include "corpus/document.h"
 #include "tokenizers/ngram/ngram_word_tokenizer.h"
-#include "util/common.h"
 #include "io/parser.h"
 
 using namespace std;
@@ -25,9 +26,7 @@ ngram_word_tokenizer::ngram_word_tokenizer(
         init_stopwords();
 }
 
-void ngram_word_tokenizer::tokenize_document(
-        corpus::document & doc,
-        std::function<term_id(const std::string &)> mapping)
+void ngram_word_tokenizer::tokenize(corpus::document & doc)
 {
     // first, get tokens
 
@@ -50,7 +49,7 @@ void ngram_word_tokenizer::tokenize_document(
         for(size_t j = 1; j < n_value(); ++j)
             combined = tokens[i - j] + "_" + combined;
 
-        doc.increment(mapping(combined), 1);
+        doc.increment(combined, 1);
     }
 }
 

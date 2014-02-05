@@ -1,16 +1,17 @@
 /**
  * @file parse_tree.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- * 
- * @author Sean Massung
  */
 
 #ifndef _PARSE_TREE_H_
 #define _PARSE_TREE_H_
 
+#include <cstdint>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -24,7 +25,6 @@ namespace tokenizers {
 class parse_tree
 {
     public:
-
         /**
          * Constructor.
          * Detects whether the parameter is a subtree or a leaf, and recursively
@@ -87,7 +87,6 @@ class parse_tree
         static std::vector<parse_tree> get_trees(const std::string & filename);
 
     private:
-
         /** the tag label on the root of this subtree */
         std::string _syntactic_category;
 
@@ -112,25 +111,13 @@ class parse_tree
         static void pretty_print(const parse_tree & tree, uint64_t depth,
                 std::stringstream & output);
     public:
-
         /**
          * Basic exception for parse_tree interactions.
          */
-        class parse_tree_exception: public std::exception
+        class parse_tree_exception: public std::runtime_error
         {
             public:
-                
-                parse_tree_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-           
-            private:
-           
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 };
 

@@ -9,8 +9,10 @@
 #ifndef _CORPUS_H_
 #define _CORPUS_H_
 
+#include <stdexcept>
+#include <memory>
+
 #include "meta.h"
-#include "cpptoml.h"
 #include "corpus/document.h"
 
 namespace meta {
@@ -59,20 +61,10 @@ class corpus
         /**
          * Basic exception for corpus interactions.
          */
-        class corpus_exception: public std::exception
+        class corpus_exception: public std::runtime_error
         {
             public:
-
-                corpus_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-
-            private:
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 };
 

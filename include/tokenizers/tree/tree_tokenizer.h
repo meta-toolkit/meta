@@ -1,19 +1,16 @@
 /**
  * @file tree_tokenizer.h
+ * @author Sean Massung
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
- * @author Chase Geigle
  */
 
 #ifndef _TREE_TOKENIZER_H_
 #define _TREE_TOKENIZER_H_
 
-#include <string>
-#include <memory>
-#include <unordered_map>
+#include "corpus/document.h"
 #include "tokenizers/tokenizer.h"
 #include "tokenizers/tree/parse_tree.h"
 
@@ -29,21 +26,19 @@ class tree_tokenizer: public tokenizer
     public:
         /**
          * Tokenizes a file into a document.
-         * @param document - the document to store the tokenized information in
+         * @param do The document to store the tokenized information in
          */
-        void tokenize_document(corpus::document & document,
-                std::function<term_id(const std::string &)> mapping)
+        void tokenize(corpus::document & doc) override
         {
             std::vector<parse_tree> trees =
-                parse_tree::get_trees( document.path() + ".tree" );
-            for( auto & tree : trees )
-                derived().tree_tokenize( document, tree, mapping);
+                parse_tree::get_trees(doc.path() + ".tree");
+            for(auto & tree: trees)
+                derived().tree_tokenize(doc, tree);
         }
 
     private:
         /**
-         * Convenience method to obtain this tokenizer as its derived
-         * class.
+         * Convenience method to obtain this tokenizer as its derived class.
          */
         DerivedTokenizer & derived()
         {

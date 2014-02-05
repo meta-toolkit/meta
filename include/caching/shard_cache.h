@@ -92,18 +92,10 @@ using splay_shard_cache =
     generic_shard_cache<Key, Value, splay_cache>;
 
 /**
- * A sharding cache that uses a lock-free dblru cache as the internal map.
- */
-template <class Key, class Value>
-using lock_free_dblru_shard_cache =
-    generic_shard_cache<Key, Value, lock_free_dblru_cache>;
-
-/**
  * A sharding cache that uses a locking dblru_cache as the internal map.
  */
 template <class Key, class Value>
-using locking_dblru_shard_cache =
-    generic_shard_cache<Key, Value, locking_dblru_cache>;
+using dblru_shard_cache = generic_shard_cache<Key, Value, default_dblru_cache>;
 
 }
 }

@@ -4,19 +4,23 @@
  */
 
 #include <algorithm>
-#include <iostream>
-#include "io/parser.h"
-#include "io/mmap_file.h"
+
 #include "corpus/line_corpus.h"
+#include "io/parser.h"
+#include "util/filesystem.h"
 
 namespace meta {
 namespace corpus {
 
-line_corpus::line_corpus(const std::string & file):
+line_corpus::line_corpus(const std::string & file,
+        uint64_t num_lines /* = 0 */):
     _cur{0},
-    _num_lines{common::num_lines(file)},
+    _num_lines{num_lines},
     _parser{file, "\n"}
-{ /* nothing */ }
+{
+    if(_num_lines == 0)
+        _num_lines = filesystem::num_lines(file);
+}
 
 bool line_corpus::has_next() const
 {
@@ -27,7 +31,7 @@ document line_corpus::next()
 {
     std::string content = _parser.next();
     size_t space = content.find_first_of(" ");
-    std::string name = common::to_string(_cur) + "_" + content.substr(0, space);
+    std::string name = std::to_string(_cur) + "_" + content.substr(0, space);
     document d{name, doc_id{_cur++}, class_label{content.substr(0, space)}};
     d.set_content(content.substr(space + 1));
     return d;

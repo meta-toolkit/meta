@@ -9,9 +9,7 @@
 #ifndef _NUMERIC_IDENTIFIER_H_
 #define _NUMERIC_IDENTIFIER_H_
 
-#include <cstdint>
-#include <functional>
-
+#include <functional> // for std::hash
 #include "util/comparable.h"
 
 namespace meta {

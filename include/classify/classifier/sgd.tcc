@@ -6,6 +6,7 @@
 #include <random>
 
 #include "classify/classifier/sgd.h"
+#include "index/postings_data.h"
 
 namespace meta {
 namespace classify {

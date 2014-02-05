@@ -9,28 +9,25 @@
 #ifndef _DOCUMENT_H_
 #define _DOCUMENT_H_
 
-#include <memory>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 #include <string>
+#include <unordered_map>
+
 #include "meta.h"
-#include "util/invertible_map.h"
 
 namespace meta {
+
 namespace corpus {
 
 /**
  * Represents an indexable document. Internally, a document may contain either
  * string content or a path to a file it represents on disk.
  *
- * Once tokenized, a document contains a mapping of term_id -> frequency. This
+ * Once tokenized, a document contains a mapping of term -> frequency. This
  * mapping is empty upon creation.
  */
 class document
 {
     public:
-
         /**
          * Constructor.
          * @param path The path to the document
@@ -40,10 +37,10 @@ class document
 
         /**
          * Increment the count of the specified transition.
-         * @param termID The token count to increment
+         * @param term The string token whose count to increment
          * @param amount The amount to increment by
          */
-        void increment(term_id termID, double amount);
+        void increment(const std::string & term, double amount);
 
         /**
          * @return the path to this document (the argument to the constructor)
@@ -64,52 +61,18 @@ class document
          * @return the total of transitions recorded for this document.
          * This is not the number of unique transitions.
          */
-        size_t length() const;
+        uint64_t length() const;
 
         /**
-         * Get the number of occurrences for a particular transition.
-         * @param termID The termID of the term to look up
+         * Get the number of occurrences for a particular term.
+         * @param term The string term to look up
          */
-        double frequency(term_id termID) const;
+        double count(const std::string & term) const;
 
         /**
-         * @return the map of frequencies for this document.
+         * @return the map of counts for this document.
          */
-        const std::unordered_map<term_id, double> & frequencies() const;
- 
-        /**
-         * Removes featuress from a document.
-         * @param docs The documents to remove features from
-         * @param features A list of features that should remain in the document
-         * @return the filtered document
-         */
-        static document filter_features(const document & doc,
-                                        const std::vector<
-                                            std::pair<term_id, double>
-                                        > & features);
-
-        /**
-         * Removes features from each document.
-         * @param docs The documents to remove features from
-         * @param features A list of features that should be removed from the
-         * document
-         * @return the filtered documents
-         */
-        static std::vector<document> filter_features(
-                const std::vector<document> & docs,
-                const std::vector<std::pair<term_id, double>> & features);
-
-        /**
-         * Outputs class label integer for slda.
-         * @param mapping Keeps track of class labels as integers.
-         */
-        std::string get_slda_label_data(
-                util::invertible_map<class_label, int> & mapping) const;
-
-        /**
-         * Outputs term count data in slda format.
-         */
-        std::string get_slda_term_data() const;
+        const std::unordered_map<std::string, double> & counts() const;
 
         /**
          * Wrapper function for a document's cosine similarity measure.
@@ -158,7 +121,6 @@ class document
         void set_label(class_label label);
 
     private:
-
         /** where this document is on disk */
         std::string _path;
 
@@ -175,13 +137,14 @@ class document
         size_t _length;
 
         /** counts of how many times each token appears */
-        std::unordered_map<term_id, double> _frequencies;
+        std::unordered_map<std::string, double> _counts;
 
         /** what the document contains */
         std::string _content;
 
-        /** indicates whether this document has the original content stored in
-         * it */
+        /**
+         * Indicates whether this document has the original content stored in it
+         */
         bool _contains_content;
 };
 

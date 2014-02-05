@@ -9,19 +9,15 @@
 #ifndef _COMPRESSED_FILE_READER_H_
 #define _COMPRESSED_FILE_READER_H_
 
-#include <cmath>
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include <functional>
+#include <memory>
+#include <stdexcept>
 #include <string>
-#include "util/invertible_map.h"
-#include "io/mmap_file.h"
 
 namespace meta {
 namespace io {
+
+class mmap_file;
 
 /**
  * Simply saves the current state of the reader.
@@ -34,18 +30,30 @@ enum ReaderStatus { notDone, readerDone, userDone };
 class compressed_file_reader
 {
     public:
-
         /**
          * Constructor; opens a compressed file for reading using the given
          * mapping.
          */
         compressed_file_reader(const mmap_file & file,
-                const util::invertible_map<uint64_t, uint64_t> & mapping);
+                std::function<uint64_t(uint64_t)> mapping);
+
+        /**
+         * Constructor to create a new mmap file for reading.
+         */
+        compressed_file_reader(const std::string & filename,
+                std::function<uint64_t(uint64_t)> mapping);
+
+        ~compressed_file_reader();
 
         /**
          * Sets the cursor back to the beginning of the file.
          */
         void reset();
+
+        /**
+         * Closes this compressed file.
+         */
+        void close();
 
         /**
          * Sets the cursor to the specified position in the file.
@@ -64,6 +72,21 @@ class compressed_file_reader
          */
         uint64_t next();
 
+        /**
+         * @return the next string from this compressed file
+         */
+        std::string next_string();
+
+        /**
+         * @return the current bit location in this file
+         */
+        uint64_t bit_location() const;
+
+        /**
+         * @return whether reading from this compressed file is still good
+         */
+        operator bool() const { return _status != userDone; }
+
     private:
         /**
          * Sets _currentValue to the value of the next number.
@@ -75,6 +98,10 @@ class compressed_file_reader
          * @return the next bit in the file
          */
         bool read_bit();
+
+        /** ptr to the mmap_file we are reading: nullptr if we don't own it,
+         * initialized if we do */
+        std::unique_ptr<mmap_file> _file;
 
         /** pointer to the beginning of the compressed file (which will be in
          * memory most of the time) */
@@ -96,29 +123,20 @@ class compressed_file_reader
         uint8_t _current_bit;
 
         /** hold the (actual -> compressed id) mapping */
-        const util::invertible_map<uint64_t, uint64_t> & _mapping;
+        std::function<uint64_t(uint64_t)> _mapping;
 
     public:
         /**
          * Basic exception for compressed_file_reader interactions.
          */
-        class compressed_file_reader_exception: public std::exception
+        class compressed_file_reader_exception: public std::runtime_error
         {
             public:
-                
-                compressed_file_reader_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-           
-            private:
-           
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 };
+
+uint64_t default_compression_reader_func(uint64_t value);
 
 }
 }

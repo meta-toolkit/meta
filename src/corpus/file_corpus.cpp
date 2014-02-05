@@ -4,6 +4,7 @@
  */
 
 #include "corpus/file_corpus.h"
+#include "io/parser.h"
 
 namespace meta {
 namespace corpus {

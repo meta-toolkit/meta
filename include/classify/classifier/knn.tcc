@@ -6,14 +6,17 @@
 #include <vector>
 #include <unordered_map>
 #include "classify/classifier/knn.h"
+#include "corpus/document.h"
 
 namespace meta {
 namespace classify {
 
 template <class Ranker>
 template <class... Args>
-knn<Ranker>::knn(index::inverted_index & idx, uint16_t k, Args &&... args):
+knn<Ranker>::knn(index::inverted_index & idx, index::forward_index & f_idx,
+        uint16_t k, Args &&... args):
     classifier{idx},
+    _f_idx{f_idx},
     _k{k},
     _ranker{std::forward<Args>(args)...}
 { /* nothing */ }
@@ -31,21 +34,25 @@ class_label knn<Ranker>::classify(doc_id d_id)
         throw knn_exception{"k must be smaller than the "
             "number of documents in the index (training documents)"};
 
-    corpus::document query{_idx.doc_path(d_id), doc_id{0}};
-    auto scored = _ranker.score(_idx, query);
+    corpus::document query{"[no path]", d_id};
+    for (const auto& count: _f_idx.search_primary(d_id)->counts())
+        query.increment(_f_idx.term_text(count.first), count.second);
+
+    auto scored = _ranker.score(_idx, query, _idx.num_docs(), [&](doc_id d_id) {
+        return _legal_docs.find(d_id) != _legal_docs.end();
+    });
 
     std::unordered_map<class_label, uint16_t> counts;
     uint16_t i = 0;
     for(auto & s: scored)
     {
-        // ensure we only "trained" on the supplied training docs
-        if(_legal_docs.find(s.first) != _legal_docs.end())
-        {
-            ++counts[_idx.label(s.first)];
-            if(++i > _k)
-                break;
-        }
+        ++counts[_idx.label(s.first)];
+        if(++i > _k)
+            break;
     }
+
+    if(counts.empty())
+        throw knn_exception{"label counts were empty"};
 
     using pair_t = std::pair<class_label, uint16_t>;
     std::vector<pair_t> sorted{counts.begin(), counts.end()};
@@ -82,14 +89,10 @@ class_label knn<Ranker>::select_best_label(
 
     for(auto & p: scored)
     {
-        // ensure we only "trained" on the supplied training docs
-        if(_legal_docs.find(p.first) != _legal_docs.end())
-        {
-            class_label lbl{_idx.label(p.first)};
-            auto f = best.find(lbl);
-            if(f != best.end())
-                return *f;
-        }
+        class_label lbl{_idx.label(p.first)};
+        auto f = best.find(lbl);
+        if(f != best.end())
+            return *f;
     }
 
     // suppress warnings

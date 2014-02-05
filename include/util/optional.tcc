@@ -112,7 +112,7 @@ void optional<T>::clear() {
 }
 
 template <class T>
-T * optional<T>::dataptr() const {
+const T * optional<T>::dataptr() const {
     return std::addressof(storage_.value_);
 }
 

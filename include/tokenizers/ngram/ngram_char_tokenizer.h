@@ -1,10 +1,9 @@
 /**
  * @file ngram_char_tokenizer.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
  */
 
 #ifndef _NGRAM_CHAR_TOKENIZER_H_
@@ -18,21 +17,17 @@ namespace tokenizers {
 class ngram_char_tokenizer: public ngram_simple_tokenizer
 {
     public:
-
         /**
          * Constructor.
          * @param n The value of n in ngram.
          */
-        ngram_char_tokenizer(size_t n);
+        ngram_char_tokenizer(uint16_t n);
 
         /**
          * Tokenizes a file into a document.
-         * @param document - the document to store the tokenized information in
-         * @param mapping - the string to term_id mapping
+         * @param doc The document to store the tokenized information in
          */
-        virtual void tokenize_document(
-            corpus::document & document,
-            std::function<term_id(const std::string & term)> mapping) override;
+        virtual void tokenize(corpus::document & document) override;
 };
 
 }

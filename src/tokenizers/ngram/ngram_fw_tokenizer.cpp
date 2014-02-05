@@ -2,14 +2,14 @@
  * @file ngram_fw_tokenizer.cpp
  */
 
-#include "io/parser.h"
-#include "util/common.h"
+#include "cpptoml.h"
+#include "corpus/document.h"
 #include "tokenizers/ngram/ngram_fw_tokenizer.h"
 
 namespace meta {
 namespace tokenizers {
 
-ngram_fw_tokenizer::ngram_fw_tokenizer(size_t n):
+ngram_fw_tokenizer::ngram_fw_tokenizer(uint16_t n):
     ngram_tokenizer{n}
 {
     auto config = cpptoml::parse_file("config.toml");
@@ -18,10 +18,9 @@ ngram_fw_tokenizer::ngram_fw_tokenizer(size_t n):
         _function_words.insert(parser.next());
 }
 
-void ngram_fw_tokenizer::tokenize_document(corpus::document & document,
-        std::function<term_id(const std::string &)> mapping)
+void ngram_fw_tokenizer::tokenize(corpus::document & doc)
 {
-    io::parser parser{create_parser(document, ".sen", " \n")};
+    io::parser parser{create_parser(doc, ".sen", " \n")};
 
     // initialize the ngram
     std::deque<std::string> ngram;
@@ -38,8 +37,7 @@ void ngram_fw_tokenizer::tokenize_document(corpus::document & document,
     // add the rest of the ngrams
     while(parser.has_next())
     {
-        std::string wordified = wordify(ngram);
-        document.increment(mapping(wordified), 1);
+        doc.increment(wordify(ngram), 1);
         ngram.pop_front();
         std::string next = "";
         do
@@ -50,7 +48,7 @@ void ngram_fw_tokenizer::tokenize_document(corpus::document & document,
     }
 
     // add the last token
-    document.increment(mapping(wordify(ngram)), 1);
+    doc.increment(wordify(ngram), 1);
 }
 
 }

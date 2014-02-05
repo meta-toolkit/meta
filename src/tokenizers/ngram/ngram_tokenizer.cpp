@@ -8,11 +8,11 @@
 namespace meta {
 namespace tokenizers {
 
-ngram_tokenizer::ngram_tokenizer(size_t n):
+ngram_tokenizer::ngram_tokenizer(uint16_t n):
     _n_val{n}
 { /* nothing */ }
 
-size_t ngram_tokenizer::n_value() const
+uint16_t ngram_tokenizer::n_value() const
 {
     return _n_val;
 }

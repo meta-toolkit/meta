@@ -340,7 +340,7 @@ class logger {
 /**
  * Gets a static instance of a logger.
  */
-static logger & get_logger() {
+inline logger & get_logger() {
     static logger log;
     return log;
 }
@@ -357,6 +357,23 @@ inline void add_sink( const logger::sink & s ) {
  */
 inline void add_sink( logger::sink && s ) {
     get_logger().add_sink( std::move( s ) );
+}
+
+/**
+ * Sets up default logging to cerr. Useful for a lot of the demo apps
+ * to reduce verbosity in setup.
+ */
+inline void set_cerr_logging(logging::logger::severity_level sev =
+        logging::logger::severity_level::trace)
+{
+    // separate logging for progress output
+    add_sink({std::cerr, [](const logger::log_line & ll) {
+        return ll.severity() == logger::severity_level::progress;
+    }, [](const logger::log_line & ll) {
+        return " " + ll.str();
+    }});
+
+    add_sink({std::cerr, sev});
 }
 
 }

@@ -9,9 +9,7 @@
 #ifndef _LIBSVM_TOKENIZER_
 #define _LIBSVM_TOKENIZER_
 
-#include <string>
 #include "tokenizers/tokenizer.h"
-#include "corpus/document.h"
 
 namespace meta {
 namespace tokenizers {
@@ -26,11 +24,9 @@ class libsvm_tokenizer: public tokenizer
     public:
         /**
          * Tokenizes a file into a document.
-         * @param document - the document to store the tokenized information in
-         * @param mapping - the string to term_id mapping
+         * @param doc The document to store the tokenized information in
          */
-        virtual void tokenize_document(corpus::document & document,
-                  std::function<term_id(const std::string &)> mapping) override;
+        virtual void tokenize(corpus::document & doc) override;
 };
 
 }
