@@ -37,6 +37,11 @@ class progress
              int interval = 500, uint64_t min_iters = 10);
 
     /**
+     * Sets whether or not an endline should be printed at completion.
+     */
+    void print_endline(bool endline);
+
+    /**
      * Destroys this progress reporter. It will call end() if it has not
      * already been called.
      */
@@ -62,6 +67,7 @@ class progress
     uint64_t min_iters_;
     uint64_t str_len_;
     bool finished_;
+    bool endline_;
 };
 }
 }

@@ -5,6 +5,7 @@
 #include <random>
 #include "index/postings_data.h"
 #include "topics/lda_cvb.h"
+#include "util/progress.h"
 
 namespace meta
 {
@@ -20,31 +21,34 @@ lda_cvb::lda_cvb(index::forward_index& idx, uint64_t num_topics, double alpha,
 
 void lda_cvb::run(uint64_t num_iters, double convergence)
 {
-    std::cerr << "Running LDA inference...\n";
     initialize();
-    for (size_t i = 0; i < num_iters; ++i)
+    for (uint64_t i = 0; i < num_iters; ++i)
     {
-        std::cerr << "Iteration " << i + 1 << "/" << num_iters << ":\r";
-        double max_change = perform_iteration();
-        std::cerr << "\t\t\t\t\t\tmaximum change in gamma: " << max_change
-                  << "    \r";
+        std::stringstream ss;
+        double max_change = perform_iteration(i);
+        ss << "Iteration " << i + 1
+           << " maximum change in gamma: " << max_change;
+        std::string spacing(std::max<int>(0, 80 - ss.tellp()), ' ');
+        ss << spacing;
+        LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
         if (max_change <= convergence)
         {
-            std::cerr << "\nFound convergence after " << i + 1
-                      << " iterations!\n";
+            LOG(progress) << "Found convergence after " << i + 1
+                          << " iterations!\n";
             break;
         }
     }
-    std::cerr << "\nFinished maximum iterations, or found convergence!\n";
+    LOG(info) << "Finished maximum iterations, or found convergence!" << ENDLG;
 }
 
 void lda_cvb::initialize()
 {
     std::random_device rdev;
     std::mt19937 rng(rdev());
-    std::cerr << "Initalizing::\r";
+    printing::progress progress{"Initialization: ", idx_.num_docs()};
     for (doc_id i{0}; i < idx_.num_docs(); ++i)
     {
+        progress(i);
         for (auto& freq : idx_.search_primary(i)->counts())
         {
             double sum = 0;
@@ -66,11 +70,15 @@ void lda_cvb::initialize()
     }
 }
 
-double lda_cvb::perform_iteration()
+double lda_cvb::perform_iteration(uint64_t iter)
 {
+    printing::progress progress{"Iteration " + std::to_string(iter) + ": ",
+                                idx_.num_docs()};
+    progress.print_endline(false);
     double max_change = 0;
     for (doc_id i{0}; i < idx_.num_docs(); ++i)
     {
+        progress(i);
         for (auto& freq : idx_.search_primary(i)->counts())
         {
             // remove this word occurrence from means

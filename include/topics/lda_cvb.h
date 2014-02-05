@@ -73,9 +73,10 @@ class lda_cvb : public lda_model
     /**
      * Performs one iteration of the inference algorithm.
      *
+     * @param iter the current iteration number
      * @return The maximum change in any of the \f$\gamma_{dij}\f$s.
      */
-    double perform_iteration();
+    double perform_iteration(uint64_t iter);
 
     virtual double compute_term_topic_probability(term_id term,
                                                   topic_id topic) const

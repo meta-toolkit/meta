@@ -45,9 +45,15 @@ progress::progress(const std::string& prefix, uint64_t length, int interval,
       interval_{interval},
       min_iters_{min_iters},
       str_len_{0},
-      finished_{false}
+      finished_{false},
+      endline_{true}
 {
     // nothing
+}
+
+void progress::print_endline(bool endline)
+{
+    endline_ = endline;
 }
 
 void progress::operator()(uint64_t iter)
@@ -102,7 +108,8 @@ void progress::end()
     finished_ = true;
     if (last_iter_ != length_)
         (*this)(length_);
-    LOG(progress) << '\n' << ENDLG;
+    if (endline_)
+        LOG(progress) << '\n' << ENDLG;
 }
 
 progress::~progress()

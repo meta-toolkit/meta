@@ -2,10 +2,12 @@
  * @file lda_gibbs.cpp
  */
 
+#include <algorithm>
 #include <cmath>
 
 #include "index/postings_data.h"
 #include "topics/lda_gibbs.h"
+#include "util/progress.h"
 
 namespace meta
 {
@@ -21,25 +23,33 @@ lda_gibbs::lda_gibbs(index::forward_index& idx, uint64_t num_topics,
 
 void lda_gibbs::run(uint64_t num_iters, double convergence /* = 1e-6 */)
 {
-    std::cerr << "Running LDA inference...\n";
     initialize();
     double likelihood = corpus_likelihood();
+    std::stringstream ss;
+    ss << "Initialization log likelihood: " << likelihood;
+    std::string spacing(std::max<int>(0, 80 - ss.tellp()), ' ');
+    ss << spacing;
+    LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
+
     for (uint64_t i = 0; i < num_iters; ++i)
     {
-        std::cerr << "Iteration " << i + 1 << "/" << num_iters << ":\r";
-        perform_iteration();
+        perform_iteration(i + 1);
         double likelihood_update = corpus_likelihood();
         double ratio = std::fabs((likelihood - likelihood_update) / likelihood);
         likelihood = likelihood_update;
-        std::cerr << "\t\t\t\t\t\tlog likelihood: " << likelihood << "    \r";
+        std::stringstream ss;
+        ss << "Iteration " << i + 1 << " log likelihood: " << likelihood;
+        std::string spacing(std::max<int>(0, 80 - ss.tellp()), ' ');
+        ss << spacing;
+        LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
         if (ratio <= convergence)
         {
-            std::cerr << "\nFound convergence after " << i + 1
-                      << " iterations!\n";
+            LOG(progress) << "Found convergence after " << i + 1
+                          << " iterations!\n" << ENDLG;
             break;
         }
     }
-    std::cerr << "\nFinished maximum iterations, or found convergence!\n";
+    LOG(info) << "Finished maximum iterations, or found convergence!" << ENDLG;
 }
 
 topic_id lda_gibbs::sample_topic(term_id term, doc_id doc)
@@ -109,14 +119,21 @@ double lda_gibbs::count_doc(doc_id doc) const
 
 void lda_gibbs::initialize()
 {
-    std::cerr << "Initialization:\r";
-    perform_iteration(true);
+    perform_iteration(0, true);
 }
 
-void lda_gibbs::perform_iteration(bool init /* = false */)
+void lda_gibbs::perform_iteration(uint64_t iter, bool init /* = false */)
 {
+    std::string str;
+    if (init)
+        str = "Initialization: ";
+    else
+        str = "Iteration " + std::to_string(iter) + ": ";
+    printing::progress progress{str, idx_.num_docs()};
+    progress.print_endline(false);
     for (const auto& i : idx_.docs())
     {
+        progress(i);
         uint64_t n = 0; // term number within document---constructed
                         // so that each occurrence of the same term
                         // can still be assigned a different topic

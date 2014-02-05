@@ -148,10 +148,11 @@ class lda_gibbs : public lda_model
     /**
      * Performs a sampling iteration.
      *
+     * @param iter The iteration number
      * @param init Whether or not to employ the online method.
      *  (defaults to `false`)
      */
-    virtual void perform_iteration(bool init = false);
+    virtual void perform_iteration(uint64_t iter, bool init = false);
 
     /**
      * Decreases all counts associated with the given topic, term, and

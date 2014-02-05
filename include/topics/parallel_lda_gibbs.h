@@ -46,7 +46,7 @@ class parallel_lda_gibbs : public lda_gibbs
      * sampling has finished, the counts are reduced down (serially)
      * before the iteration is completed.
      */
-    virtual void perform_iteration(bool init = false);
+    virtual void perform_iteration(uint64_t iter, bool init = false);
 
     virtual void decrease_counts(topic_id topic, term_id term,
                                  doc_id doc) override;

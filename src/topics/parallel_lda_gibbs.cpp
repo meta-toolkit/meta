@@ -22,8 +22,17 @@ void parallel_lda_gibbs::initialize()
     lda_gibbs::initialize();
 }
 
-void parallel_lda_gibbs::perform_iteration(bool init /* = false */)
+void parallel_lda_gibbs::perform_iteration(uint64_t iter,
+                                           bool init /* = false */)
 {
+    std::string str;
+    if (init)
+        str = "Initialization: ";
+    else
+        str = "Iteration " + std::to_string(iter) + ": ";
+    printing::progress progress{str, idx_.num_docs()};
+    progress.print_endline(false);
+
     auto range = util::range<doc_id>(doc_id{0}, doc_id{idx_.num_docs() - 1});
 
     for (auto& id : pool_.thread_ids())
@@ -32,8 +41,14 @@ void parallel_lda_gibbs::perform_iteration(bool init /* = false */)
         topic_diffs_[id] = {};
     }
 
+    std::mutex mutex;
+    uint64_t assigned = 0;
     parallel::parallel_for(range.begin(), range.end(), pool_, [&](doc_id i)
     {
+        {
+            std::lock_guard<std::mutex> lock{mutex};
+            progress(assigned++);
+        }
         size_t n = 0; // term number within document---constructed
                       // so that each occurrence of the same term
                       // can still be assigned a different topic
