@@ -3,20 +3,19 @@
  */
 
 #include <chrono>
-#include <vector>
-#include <string>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <string>
+#include <vector>
 
-#include "util/common.h"
-#include "tokenizers/tokenizer.h"
+#include "caching/all.h"
 #include "corpus/document.h"
 #include "index/inverted_index.h"
 #include "index/ranker/all.h"
-#include "caching/all.h"
-
-#include "util/range.h"
 #include "parallel/parallel_for.h"
+#include "tokenizers/tokenizer.h"
+#include "util/range.h"
+#include "util/time.h"
 
 using namespace meta;
 using std::cerr;
@@ -31,8 +30,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    common::set_cerr_logging();
-    //auto idx = index::make_index<index::inverted_index>(argv[1]);
+    logging::set_cerr_logging();
     auto idx = index::make_index<index::inverted_index,
                                  caching::splay_cache>(argv[1], uint32_t{10000});
     //                           caching::lock_free_dblru_cache>(argv[1], uint64_t{2048});

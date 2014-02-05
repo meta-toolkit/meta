@@ -9,15 +9,14 @@
 #ifndef _POSTINGS_DATA_
 #define _POSTINGS_DATA_
 
-#include <algorithm>
-#include <sstream>
-#include <type_traits>
-#include <istream>
+#include <fstream>
+#include <limits>
+#include <utility>
 #include <vector>
-#include <string>
-#include "io/compressed_file_writer.h"
-#include "io/compressed_file_reader.h"
+
 #include "meta.h"
+#include "io/compressed_file_reader.h"
+#include "io/compressed_file_writer.h"
 
 namespace meta {
 namespace index {
@@ -34,12 +33,15 @@ template <class PrimaryKey, class SecondaryKey>
 class postings_data
 {
     public:
+        using primary_key_type = PrimaryKey;
+        using secondary_key_type = SecondaryKey;
         using pair_t = std::pair<SecondaryKey, double>;
         using count_t = std::vector<pair_t>;
 
         static_assert(
             (std::is_integral<PrimaryKey>::value ||
-             std::is_base_of<util::numeric, PrimaryKey>::value)
+             std::is_base_of<util::numeric, PrimaryKey>::value ||
+             std::is_same<PrimaryKey, std::string>::value)
             &&
             (std::is_integral<SecondaryKey>::value ||
              std::is_base_of<util::numeric, SecondaryKey>::value
@@ -53,6 +55,8 @@ class postings_data
             "reinterpret_cast is used in postings_data"
         );
 
+        postings_data() = default;
+
         /**
          * Creates an empty postings_data for a given PrimaryKey.
          * @param p_id The PrimaryKey to be associated with this postings_data
@@ -60,17 +64,10 @@ class postings_data
         postings_data(PrimaryKey p_id);
 
         /**
-         * @param raw_data The raw data from the postings file (a list of
-         * numbers)
-         * This function converts a list of numbers into a postings_data object
-         */
-        postings_data(const std::string & raw_data);
-
-        /**
          * @param other The other postings_data object to consume
          * Adds the parameter's data to this object's data
          */
-        void merge_with(const postings_data & other);
+        void merge_with(postings_data & other);
 
         /**
          * @param s_id The SecondaryKey's id to add counts for
@@ -104,55 +101,71 @@ class postings_data
          */
         bool operator<(const postings_data & other) const;
 
+        friend void stream_helper(
+            io::compressed_file_reader & in,
+            postings_data<PrimaryKey, SecondaryKey> & pd)
+        {
+            pd._counts.clear();
+            uint32_t num_pairs = in.next();
+            for(uint32_t i = 0; i < num_pairs; ++i)
+            {
+                SecondaryKey s_id = SecondaryKey{in.next()};
+                uint64_t count = in.next();
+                pd._counts.emplace_back(s_id, static_cast<double>(count));
+            }
+        }
+
         /**
-         * Reads uncompressed postings data from a stream
+         * Reads semi-compressed postings data from a compressed file.
          * @param in The stream to read from
          * @param pd The postings data object to write the stream info to
          * @return the input stream
          */
-        friend std::istream & operator>>(
-                std::istream & in,
+        friend io::compressed_file_reader & operator>>(
+                io::compressed_file_reader & in,
                 postings_data<PrimaryKey, SecondaryKey> & pd)
         {
-            std::string buffer;
-            std::getline(in, buffer);
-            std::istringstream iss{buffer};
-
-            iss >> pd._p_id;
-            pd._counts.clear();
-
-            SecondaryKey s_id;
-            double count;
-            while(iss.good())
-            {
-                iss >> s_id;
-                iss >> count;
-                pd._counts.emplace_back(std::make_pair(s_id, count));
-            }
-
+            pd._p_id = in.next();
+            stream_helper(in, pd);
             return in;
         }
 
         /**
-         * Writes uncompressed postings data to a stream
+         * Reads semi-compressed postings data from a compressed file.
+         * @param in The stream to read from
+         * @param pd The postings data object to write the stream info to
+         * @return the input stream
+         */
+        friend io::compressed_file_reader & operator>>(
+                io::compressed_file_reader & in,
+                postings_data<std::string, doc_id> & pd)
+        {
+            pd._p_id = in.next_string();
+            stream_helper(in, pd);
+            return in;
+        }
+
+        /**
+         * Writes semi-compressed postings data to a compressed file.
          * @param out The stream to write to
          * @param pd The postings data object to write to the stream
          * @return the output stream
          */
-        friend std::ostream & operator<<(
-                std::ostream & out,
-                postings_data<PrimaryKey, SecondaryKey> & pd)
+        friend io::compressed_file_writer & operator<<(
+                io::compressed_file_writer & out,
+                const postings_data<PrimaryKey, SecondaryKey> & pd)
         {
             if(pd._counts.empty())
                 return out;
 
-            out << pd._p_id;
+            out.write(pd._p_id);
+            uint32_t size = pd._counts.size();
+            out.write(size);
             for(auto & p: pd._counts)
             {
-                out << " " << p.first;
-                out << " " << p.second;
+                out.write(p.first);
+                out.write(p.second);
             }
-            out << "\n";
 
             return out;
         }
@@ -176,14 +189,35 @@ class postings_data
         void read_compressed(io::compressed_file_reader & reader);
 
         /**
+         * @param out The output stream to write to
+         */
+        void write_libsvm(std::ofstream & out) const
+        {
+            out << _p_id;
+            for(auto & c: _counts)
+                out << ' ' << c.first << ':' << c.second;
+            out << '\n';
+        }
+
+        /**
          * @return the term_id for this postings_data
          */
         PrimaryKey primary_key() const;
 
         /**
+         * @param new_key
+         */
+        void set_primary_key(PrimaryKey new_key);
+
+        /**
          * @return the number of SecondaryKeys that this PrimaryKey occurs with
          */
         uint64_t inverse_frequency() const;
+
+        /**
+         * @return the number of bytes used for this postings_data
+         */
+        uint64_t bytes_used() const;
 
     private:
 
@@ -192,7 +226,26 @@ class postings_data
         const static uint64_t _delimiter = std::numeric_limits<uint64_t>::max();
 };
 
+/**
+ * @param lhs The first postings_data
+ * @param rhs The postings_data to compare with
+ * @return whether this postings_data has the same PrimaryKey as
+ * the paramter
+ */
+template <class PrimaryKey, class SecondaryKey>
+bool operator==(const postings_data<PrimaryKey, SecondaryKey> & lhs,
+                const postings_data<PrimaryKey, SecondaryKey> & rhs);
 }
+}
+
+namespace std {
+    template <class PrimaryKey, class SecondaryKey>
+    struct hash<meta::index::postings_data<PrimaryKey, SecondaryKey>> {
+        using pdata_t = meta::index::postings_data<PrimaryKey, SecondaryKey>;
+        size_t operator()(const pdata_t & pd) const {
+            return std::hash<PrimaryKey>{}(pd.primary_key());
+        }
+    };
 }
 
 #include "index/postings_data.tcc"

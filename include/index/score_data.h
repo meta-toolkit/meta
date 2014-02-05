@@ -11,7 +11,18 @@
 #define _SCORE_DATA_H_
 
 #include "meta.h"
-#include "corpus/document.h"
+
+namespace meta {
+
+namespace corpus {
+class document;
+}
+
+namespace index {
+class inverted_index;
+}
+
+}
 
 namespace meta {
 namespace index {

@@ -43,6 +43,16 @@ class disk_vector
         disk_vector(const std::string & path, uint64_t size = 0);
 
         /**
+         * Move constructor.
+         */
+        disk_vector(disk_vector&&);
+
+        /**
+         * Move assignment operator.
+         */
+        disk_vector& operator=(disk_vector&&);
+
+        /**
          * Destructor.
          */
         ~disk_vector();

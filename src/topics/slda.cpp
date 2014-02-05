@@ -30,8 +30,8 @@ void slda::estimate(const vector<document> & docs)
 
     string command = _slda_path + "/slda est slda-data slda-labels ";
     command += _slda_path + "/settings.txt "; // use default settings for now
-    command += common::to_string(_alpha) + " ";
-    command += common::to_string(num_classes) + " ";
+    command += std::to_string(_alpha) + " ";
+    command += std::to_string(num_classes) + " ";
     command += "random slda-est-output";
     command += " 2>&1> /dev/null";
     system(command.c_str());

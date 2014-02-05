@@ -3,7 +3,7 @@
  */
 
 #include <cmath>
-#include "util/common.h"
+#include "util/mapping.h"
 
 namespace meta {
 namespace clustering {
@@ -17,7 +17,7 @@ double similarity::cosine_similarity(const unordered_map<Key, Value> & a,
     unordered_set<Key> space = get_space(a, b);
     double numerator = 0.0;
     for(auto & key: space)
-        numerator += common::safe_at(a, key) * common::safe_at(b, key);
+        numerator += map::safe_at(a, key) * map::safe_at(b, key);
 
     double denominator = magnitude(a) * magnitude(b);
     return numerator / denominator;

@@ -9,15 +9,15 @@
 #ifndef _CHUNK_H_
 #define _CHUNK_H_
 
+#include <cstdint>
 #include <string>
-#include "meta.h"
 
 namespace meta {
 namespace index {
 
 /**
  * Represents a portion of the inverted_index's postings file. It is an
- * intermediate file mapping term_ids to term document information. The chunks
+ * intermediate file mapping primary keys to secondary keys. The chunks
  * are sorted to enable efficient merging.
  */
 template <class PrimaryKey, class SecondaryKey>
@@ -54,8 +54,19 @@ class chunk
          */
         void merge_with(const chunk & other);
 
+        /**
+         * @param pdata A collection of postings data to combine with this chunk
+         * pdata must:
+         *  - support iteration in sorted order
+         *  - dereferenced type must be a
+         *      postings_data<PrimaryKey, SecondaryKey> object
+         *  - implement the clear() function
+         */
+        template <class Container>
+        void memory_merge_with(Container & pdata);
+
     private:
-    
+
         void set_size();
 
         std::string _path;

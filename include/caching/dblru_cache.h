@@ -10,6 +10,9 @@
 #ifndef _DBLRU_CACHE_H_
 #define _DBLRU_CACHE_H_
 
+#include <functional>
+#include <vector>
+
 #include "caching/maps/locking_map.h"
 #include "caching/maps/lock_free_map.h"
 #include "util/optional.h"
@@ -90,6 +93,16 @@ class dblru_cache {
          * @param key the key to find the corresponding value for
          */
         util::optional<Value> find(const Key & key);
+
+        /**
+         * Adds a callback to be invoked when a key/value pair is dropped
+         * from the map.
+         */
+        template <class Functor>
+        void on_drop(Functor && functor);
+
+        /** Empties the cache. */
+        void clear();
     private:
         /**
          * Helper function to ensure that the primary and secondary map
@@ -110,12 +123,19 @@ class dblru_cache {
         /**
          * The primary map.
          */
-        Map<Key, Value> primary_;
+        std::shared_ptr<Map<Key, Value>> primary_;
 
         /**
          * The secondary map.
          */
-        Map<Key, Value> secondary_;
+        std::shared_ptr<Map<Key, Value>> secondary_;
+
+        /**
+         * List of functions to be invoked when a key/value pair is
+         * dropped.
+         */
+        std::vector<std::function<void(const Key & key, const Value & value)>>
+        drop_callbacks_;
 };
 
 /**
@@ -123,18 +143,6 @@ class dblru_cache {
  */
 template <class Key, class Value>
 using default_dblru_cache = dblru_cache<Key, Value>;
-
-/**
- * A lock-free version of the dblru_cache.
- */
-template <class Key, class Value>
-using lock_free_dblru_cache = dblru_cache<Key, Value, lock_free_map>;
-
-/**
- * A locking version of the dblru_cache.
- */
-template <class Key, class Value>
-using locking_dblru_cache = dblru_cache<Key, Value, locking_map>;
 
 }
 }

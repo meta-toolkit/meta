@@ -3,14 +3,13 @@
 namespace meta {
 namespace tokenizers {
 
-void skeleton_tokenizer::tree_tokenize( corpus::document & document,
-                                        const parse_tree & tree,
-                                        mapping_fn mapping)
+void skeleton_tokenizer::tree_tokenize( corpus::document & doc,
+        const parse_tree & tree)
 {
     std::string representation = tree.skeleton();
-    document.increment(mapping(representation), 1);
+    doc.increment(representation, 1);
     for(auto & child: tree.children())
-        tree_tokenize(document, child, mapping);
+        tree_tokenize(doc, child);
 
 }
 

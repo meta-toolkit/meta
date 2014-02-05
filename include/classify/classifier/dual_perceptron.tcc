@@ -3,6 +3,10 @@
 #include <numeric>
 #include <random>
 
+#include "util/functional.h"
+#include "util/printing.h"
+#include "util/progress.h"
+
 namespace meta {
 namespace classify {
 
@@ -22,7 +26,7 @@ dual_perceptron<Kernel>::dual_perceptron(index::forward_index & idx,
 {
     std::function<double(pdata, pdata)> fun
         = [=](const pdata & a, const pdata & b) { return kernel_fn(a, b); };
-    kernel_ = common::memoize(fun);
+    kernel_ = functional::memoize(fun);
 }
 
 template <class Kernel>
@@ -39,10 +43,11 @@ void dual_perceptron<Kernel>::train(const std::vector<doc_id> & docs) {
         std::shuffle(begin(indices), end(indices), g);
         uint64_t error_count = 0;
         std::stringstream ss;
-        ss << "iteration " << iter << ": ";
+        ss << " > iteration " << iter << ": ";
+        printing::progress progress{ss.str(), docs.size()};
         uint64_t doc = 0;
         for(const auto & i : indices) {
-            common::show_progress(doc++, docs.size(), 50, ss.str());
+            progress(doc++);
             auto guess = classify(docs[i]);
             auto actual = _idx.label(docs[i]);
             if(guess != actual) {

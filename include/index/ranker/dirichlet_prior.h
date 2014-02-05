@@ -12,37 +12,38 @@
 
 #include "index/ranker/lm_ranker.h"
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 /**
  * Implements Bayesian smoothing with a Dirichlet prior.
  */
-class dirichlet_prior: public language_model_ranker
+class dirichlet_prior : public language_model_ranker
 {
-    public:
-        /**
-         * @param mu
-         */
-        dirichlet_prior(double mu = 2000);
+  public:
+    /**
+     * @param mu
+     */
+    dirichlet_prior(double mu = 2000);
 
-        /**
-         * Calculates the smoothed probability of a term.
-         * @param sd
-         */
-        double smoothed_prob(const score_data & sd) const override;
+    /**
+     * Calculates the smoothed probability of a term.
+     * @param sd
+     */
+    double smoothed_prob(const score_data& sd) const override;
 
-        /**
-         * A document-dependent constant.
-         * @param sd
-         */
-        double doc_constant(const score_data & sd) const override;
+    /**
+     * A document-dependent constant.
+     * @param sd
+     */
+    double doc_constant(const score_data& sd) const override;
 
-    private:
-        /** the Dirichlet prior parameter*/
-        const double _mu;
+  private:
+    /** the Dirichlet prior parameter*/
+    const double _mu;
 };
-
 }
 }
 

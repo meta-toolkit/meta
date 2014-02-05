@@ -2,16 +2,18 @@
  * @file classify-test.cpp
  */
 
-#include <vector>
-#include <string>
 #include <iostream>
+#include <string>
+#include <vector>
 
+#include "caching/all.h"
+#include "classify/classifier/all.h"
 #include "index/forward_index.h"
 #include "index/ranker/all.h"
-#include "util/common.h"
 #include "util/invertible_map.h"
-#include "classify/classifier/all.h"
-#include "caching/all.h"
+#include "util/printing.h"
+#include "util/progress.h"
+#include "util/time.h"
 
 using std::cout;
 using std::cerr;
@@ -65,7 +67,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    common::set_cerr_logging();
+    logging::set_cerr_logging();
     auto config = cpptoml::parse_file(argv[1]);
     auto f_idx = index::make_index<index::forward_index, caching::no_evict_cache>(argv[1]);
  // auto i_idx = index::make_index<index::inverted_index, caching::splay_cache>(argv[1]);
@@ -78,12 +80,13 @@ int main(int argc, char* argv[])
                               classify::svm_wrapper::kernel::None };
 
     auto docs = f_idx.docs();
+    printing::progress progress{" > Pre-fetching for cache: ", docs.size()};
     // load the documents into the cache
     for (size_t i = 0; i < docs.size(); ++i) {
-        common::show_progress(i, docs.size(), 1000, "Pre-fetching for cache ");
+        progress(i);
         f_idx.search_primary(docs[i]);
     }
-    common::end_progress("Pre-fetching for cache ");
+    progress.end();
 
     // below is a test for rcv1
     //std::vector<doc_id> train{docs.begin(), docs.begin() + 781265};
@@ -93,13 +96,13 @@ int main(int argc, char* argv[])
     //std::cout << "Testing set size: " << test.size() << std::endl;
 
     //std::cout << "Training..." << std::endl;
-    //auto train_time = common::time<std::chrono::milliseconds>([&]() {
+    //auto train_time = printing::time<std::chrono::milliseconds>([&]() {
     //    hinge_sgd.train(train);
     //});
     //std::cout << "Took " << train_time.count() / 1000.0 << "s" << std::endl;
     //std::cout << "Testing..." << std::endl;
     //classify::confusion_matrix m;
-    //auto test_time = common::time<std::chrono::milliseconds>([&]() {
+    //auto test_time = printing::time<std::chrono::milliseconds>([&]() {
     //    m = hinge_sgd.test(test);
     //});
     //std::cout << "Took " << test_time.count() / 1000.0 << "s" << std::endl;

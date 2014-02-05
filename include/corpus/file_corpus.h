@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include "io/parser.h"
 #include "corpus/corpus.h"
 
 namespace meta {

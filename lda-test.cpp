@@ -2,76 +2,105 @@
 #include <string>
 #include <vector>
 
-#include "corpus/document.h"
-#include "corpus/corpus.h"
-#include "stemmers/porter2.h"
-#include "tokenizers/ngram/ngram_word_tokenizer.h"
 #include "topics/lda_gibbs.h"
 #include "topics/parallel_lda_gibbs.h"
 #include "topics/lda_cvb.h"
 
+#include "cpptoml.h"
+
+#include "caching/no_evict_cache.h"
+#include "index/forward_index.h"
+#include "logging/logger.h"
+
 using namespace meta;
 
-int print_usage( const std::string & name ) {
-    std::cout << "Usage: " << name << " type alpha beta topics\n"
-        "\tRuns LDA of the given type (gibbs, pargibbs, cvb) on the given"
-        " corpus, with hyperparameters alpha" " and beta, and topics number"
-        " of topics" << std::endl;
-    return 1;
-}
-
-template <class Model>
-int run_lda(const std::unique_ptr<corpus::corpus> & docs, size_t topics, double alpha, double beta ) {
-    using tokenizers::tokenizer;
-
-    auto config = cpptoml::parse_file("config.toml");
-    std::shared_ptr<tokenizer> tok{tokenizer::load_tokenizer(config)};
-    std::vector<corpus::document> tok_docs;
-    tok_docs.reserve(docs->size());
-
-    while(docs->has_next())
-    {
-        corpus::document d{docs->next()};
-        common::show_progress(d.id(), docs->size(), 20, "  tokenizing: " );
-        tok->tokenize(d);
-        tok_docs.emplace_back(d);
-    }
-    common::end_progress( "  tokenizing: " );
-
-    Model model{ tok_docs, tok, topics, alpha, beta };
-    model.run( 1000 );
-    model.save( "lda_model" );
+template <class Model, class Index>
+int run_lda(Index& idx, uint64_t num_iters, uint64_t topics, double alpha,
+            double beta, const std::string& save_prefix)
+{
+    Model model{idx, topics, alpha, beta};
+    model.run(num_iters);
+    model.save(save_prefix);
     return 0;
 }
 
-int run_lda(const std::string & type, double alpha, double beta, size_t topics)
+bool check_parameter(const std::string& file, const cpptoml::toml_group& group,
+                     const std::string& param)
+{
+    if (!group.contains(param))
+    {
+        std::cerr << "Missing lda configuration parameter " << param << " in "
+                  << file << std::endl;
+        return false;
+    }
+    return true;
+}
+
+int run_lda(const std::string& config_file)
 {
     using namespace meta::topics;
-    std::cout << "Loading documents...\r" << std::flush;
-    auto docs = corpus::corpus::load("config.toml");
-    if( type == "gibbs" ) {
-        std::cout<< "Beginning LDA using serial Gibbs sampling..." << std::endl;
-        return run_lda<lda_gibbs>( docs, topics, alpha, beta );
-    } else if( type == "pargibbs" ) {
-        std::cout<< "Beginning LDA using parallel Gibbs sampling..." << std::endl;
-        return run_lda<parallel_lda_gibbs>( docs, topics, alpha, beta );
-    } else if( type == "cvb" ) {
-        std::cout<< "Beginning LDA using serial collapsed variational bayes..." << std::endl;
-        return run_lda<lda_cvb>( docs, topics, alpha, beta );
+    auto config = cpptoml::parse_file(config_file);
+
+    if (!config.contains("lda"))
+    {
+        std::cerr << "Missing lda configuration group in " << config_file
+                  << std::endl;
+        return 1;
     }
-    std::cout << "Incorrect method selected: must be gibbs, pargibbs, or cvb" << std::endl;
+
+    auto lda_group = config.get_group("lda");
+
+    if (!check_parameter(config_file, *lda_group, "alpha") ||
+        !check_parameter(config_file, *lda_group, "beta") ||
+        !check_parameter(config_file, *lda_group, "topics") ||
+        !check_parameter(config_file, *lda_group, "inference") ||
+        !check_parameter(config_file, *lda_group, "max-iters") ||
+        !check_parameter(config_file, *lda_group, "model-prefix"))
+        return 1;
+
+    auto type = *lda_group->get_as<std::string>("inference");
+    uint64_t iters = *lda_group->get_as<int64_t>("max-iters");
+    auto alpha = *lda_group->get_as<double>("alpha");
+    auto beta = *lda_group->get_as<double>("beta");
+    uint64_t topics = *lda_group->get_as<int64_t>("topics");
+    auto save_prefix = *lda_group->get_as<std::string>("model-prefix");
+
+    auto f_idx =
+        index::make_index<index::forward_index, caching::no_evict_cache>(
+            config_file);
+    if (type == "gibbs")
+    {
+        std::cout << "Beginning LDA using serial Gibbs sampling..."
+                  << std::endl;
+        return run_lda<lda_gibbs>(f_idx, iters, topics, alpha, beta,
+                                  save_prefix);
+    }
+    else if (type == "pargibbs")
+    {
+        std::cout << "Beginning LDA using parallel Gibbs sampling..."
+                  << std::endl;
+        return run_lda<parallel_lda_gibbs>(f_idx, iters, topics, alpha, beta,
+                                           save_prefix);
+    }
+    else if (type == "cvb")
+    {
+        std::cout << "Beginning LDA using serial collapsed variational bayes..."
+                  << std::endl;
+        return run_lda<lda_cvb>(f_idx, iters, topics, alpha, beta, save_prefix);
+    }
+    std::cout << "Incorrect method selected: must be gibbs, pargibbs, or cvb"
+              << std::endl;
     return 1;
 }
 
-int main( int argc, char ** argv )
+int main(int argc, char** argv)
 {
-    if( argc != 5 )
-        return print_usage( argv[0] );
-    common::set_cerr_logging();
-    std::vector<std::string> args( argv, argv + argc );
-    double alpha = std::stod( argv[2] );
-    double beta = std::stod( argv[3] );
-    size_t topics = std::stoul( argv[4] );
-    std::cout << "alpha: " << alpha << "\nbeta: " << beta << "\ntopics: " << topics << std::endl;
-    return run_lda( args[1], alpha, beta, topics );
+    if (argc != 2)
+    {
+        std::cerr << "Usage:\t" << argv[0] << " configFile" << std::endl;
+        return 1;
+    }
+
+    logging::set_cerr_logging();
+    return run_lda(argv[1]);
 }

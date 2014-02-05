@@ -10,9 +10,11 @@
 #ifndef _CACHED_INDEX_H_
 #define _CACHED_INDEX_H_
 
-#include "corpus/document.h"
-#include "index/postings_data.h"
-#include "meta.h"
+#include <memory>
+
+namespace cpptoml {
+class toml_group;
+}
 
 namespace meta {
 namespace index {

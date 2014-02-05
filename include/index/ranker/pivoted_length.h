@@ -10,37 +10,34 @@
 #ifndef _PIVOTED_LENGTH_H_
 #define _PIVOTED_LENGTH_H_
 
-#include <vector>
-#include <utility>
-#include "index/inverted_index.h"
 #include "index/ranker/ranker.h"
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 /**
  * The pivoted document length normalization ranking function
  * @see Amit Singal, Chris Buckley, and Mandar Mitra. Pivoted document length
  * normalization. SIGIR '96, pages 21-29.
  */
-class pivoted_length: public ranker
+class pivoted_length : public ranker
 {
-    public:
-        /**
-         * @param s
-         */
-        pivoted_length(double s = 0.20);
+  public:
+    /**
+     * @param s
+     */
+    pivoted_length(double s = 0.20);
 
-        /**
-         * @param sd
-         */
-        double score_one(const score_data & sd) const override;
+    /**
+     * @param sd
+     */
+    double score_one(const score_data& sd) override;
 
-    private:
-
-        const double _s;
+  private:
+    const double _s;
 };
-
 }
 }
 

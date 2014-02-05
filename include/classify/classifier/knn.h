@@ -11,6 +11,7 @@
 
 #include <unordered_set>
 #include "index/inverted_index.h"
+#include "index/forward_index.h"
 #include "index/ranker/ranker.h"
 #include "classify/classifier/classifier.h"
 
@@ -31,7 +32,8 @@ class knn: public classifier<index::inverted_index>
          * @param args Arguments to the chosen ranker constructor
          */
         template <class... Args>
-        knn(index::inverted_index & idx, uint16_t k, Args &&... args);
+        knn(index::inverted_index & idx, index::forward_index & f_idx,
+                uint16_t k, Args &&... args);
 
         /**
          * Creates a classification model based on training documents.
@@ -61,13 +63,14 @@ class knn: public classifier<index::inverted_index>
             const std::vector<std::pair<doc_id, double>> & scored,
             const std::vector<std::pair<class_label, uint16_t>> & sorted) const;
 
+        /** the index used to create documents from */
+        index::forward_index & _f_idx;
+
         /** the value of k in k-NN */
         uint16_t _k;
 
         /**
          * The ranker that is used to score the queries in the index.
-         * TODO use perfect forwarding to pass args to the ranker object in
-         * order to specify parameter values
          */
         Ranker _ranker;
 

@@ -10,11 +10,30 @@
 #ifndef _RANKER_H_
 #define _RANKER_H_
 
-#include "index/inverted_index.h"
-#include "index/score_data.h"
+#include <utility>
+#include <vector>
 
-namespace meta {
-namespace index {
+#include "meta.h"
+
+namespace meta
+{
+
+namespace corpus
+{
+class document;
+}
+
+namespace index
+{
+class inverted_index;
+struct score_data;
+}
+}
+
+namespace meta
+{
+namespace index
+{
 
 /**
  * A ranker scores a query against all the documents in an inverted index,
@@ -22,25 +41,34 @@ namespace index {
  */
 class ranker
 {
-    public:
-        /**
-         * @param idx
-         * @param query
-         */
-        std::vector<std::pair<doc_id, double>> score(inverted_index & idx,
-                                                corpus::document & query) const;
+  public:
+    /**
+     * @param idx
+     * @param query
+     * @param num_results The number of results to return in the vector
+     * @param filter A filtering function to apply to each doc_id; returns true
+     * if the document should be included in results
+     */
+    std::vector<std::pair<doc_id, double>>
+    score(inverted_index& idx, corpus::document& query,
+          uint64_t num_results = 10,
+          const std::function<bool(doc_id d_id)>& filter = [](doc_id d_id)
+            { return true; }
+    );
 
-        /**
-         * @param sd
-         */
-        virtual double score_one(const score_data & sd) const = 0;
+    /**
+     * @param sd
+     */
+    virtual double score_one(const score_data& sd) = 0;
 
-        /**
-         * Default destructor.
-         */
-        virtual ~ranker() = default;
+    /**
+     * Default destructor.
+     */
+    virtual ~ranker() = default;
+
+  private:
+    std::vector<double> _results;
 };
-
 }
 }
 

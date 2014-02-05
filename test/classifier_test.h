@@ -7,8 +7,9 @@
 
 #include <fstream>
 #include <iostream>
-#include "index_test.h"
+#include "inverted_index_test.h"
 #include "classify/classifier/all.h"
+#include "classify/kernel/all.h"
 #include "caching/all.h"
 #include "index/ranker/all.h"
 
@@ -42,10 +43,9 @@ namespace testing {
         ASSERT(mtx.accuracy() < 100.0);
     }
 
-    void classifier_tests()
+    void run_tests(const std::string & type)
     {
-        system("/usr/bin/rm -rf ceeaus-inv ceeaus-fwd");
-        create_config("file"); // TODO bug in knn when using line corpus
+        using namespace classify;
 
         auto i_idx = index::make_index<
             index::inverted_index, caching::no_evict_cache
@@ -54,39 +54,69 @@ namespace testing {
             index::forward_index, caching::no_evict_cache
         >("test-config.toml");
 
-        testing::run_test("naive-bayes-ceeaus-cv", 5, [&](){
-            classify::naive_bayes nb{f_idx};
+        testing::run_test("naive-bayes-cv-" + type, 5, [&](){
+            naive_bayes nb{f_idx};
             check_cv(f_idx, nb, 0.86);
         });
 
-        testing::run_test("naive-bayes-ceeaus-split", 5, [&](){
-            classify::naive_bayes nb{f_idx};
+        testing::run_test("naive-bayes-split-" + type, 5, [&](){
+            naive_bayes nb{f_idx};
             check_split(f_idx, nb, 0.84);
         });
 
-        testing::run_test("knn-ceeaus-cv", 5, [&](){
-            classify::knn<index::okapi_bm25> kn{i_idx, 10};
+        testing::run_test("knn-cv-" + type, 5, [&](){
+            knn<index::okapi_bm25> kn{i_idx, f_idx, 10};
             check_cv(f_idx, kn, 0.90);
         });
 
-        testing::run_test("knn-ceeaus-split", 5, [&](){
-            classify::knn<index::okapi_bm25> kn{i_idx, 10};
+        testing::run_test("knn-split-" + type, 5, [&](){
+            knn<index::okapi_bm25> kn{i_idx, f_idx, 10};
             check_split(f_idx, kn, 0.88);
         });
 
-        testing::run_test("sgd-ceeaus-cv", 5, [&](){
-            classify::one_vs_all<classify::sgd<classify::loss::hinge>>
-            hinge_sgd{f_idx};
+        testing::run_test("sgd-cv-" + type, 5, [&](){
+            one_vs_all<sgd<loss::hinge>> hinge_sgd{f_idx};
             check_cv(f_idx, hinge_sgd, 0.94);
+            one_vs_all<sgd<loss::perceptron>> perceptron{f_idx};
+            check_cv(f_idx, perceptron, 0.90);
         });
 
-        testing::run_test("sgd-ceeaus-split", 5, [&](){
-            classify::one_vs_all<classify::sgd<classify::loss::hinge>>
-            hinge_sgd{f_idx};
+        testing::run_test("sgd-split-" + type, 5, [&](){
+            one_vs_all<sgd<loss::hinge>> hinge_sgd{f_idx};
             check_split(f_idx, hinge_sgd, 0.90);
+            one_vs_all<sgd<loss::perceptron>> perceptron{f_idx};
+            check_split(f_idx, perceptron, 0.85);
         });
 
-        system("/usr/bin/rm -rf ceeaus-inv ceeaus-fwd");
+        testing::run_test("winnow-cv-" + type, 5, [&](){
+            winnow win{f_idx};
+            check_cv(f_idx, win, 0.80);
+        });
+
+        testing::run_test("winnow-split-" + type, 5, [&](){
+            winnow win{f_idx};
+            check_split(f_idx, win, 0.79); // this is really low
+        });
+
+        testing::run_test("dual-perceptron-cv-" + type, 10, [&](){
+            auto dp_p = make_perceptron(f_idx, kernel::polynomial{});
+            check_cv(f_idx, dp_p, 0.84);
+            auto dp_rb = make_perceptron(f_idx, kernel::radial_basis{0.5});
+            check_cv(f_idx, dp_rb, 0.84);
+            auto dp_s = make_perceptron(f_idx, kernel::sigmoid{1, 1});
+            check_cv(f_idx, dp_s, 0.84);
+        });
+
+        system("/usr/bin/rm -rf ceeaus-*");
+    }
+
+    void classifier_tests()
+    {
+        system("/usr/bin/rm -rf ceeaus-*");
+        create_config("file");
+        run_tests("file");
+        create_config("line");
+        run_tests("line");
     }
 
 }

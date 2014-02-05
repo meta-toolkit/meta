@@ -11,7 +11,7 @@
 #ifndef _META_H_
 #define _META_H_
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 #include "util/identifiers.h"

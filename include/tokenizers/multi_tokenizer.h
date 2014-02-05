@@ -1,5 +1,6 @@
 /**
  * @file multi_tokenizer.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
@@ -8,12 +9,10 @@
 #ifndef _MULTI_TOKENIZER_
 #define _MULTI_TOKENIZER_
 
-#include <memory>
-#include <mutex>
-#include <string>
 #include <vector>
+#include <memory>
+
 #include "tokenizers/tokenizer.h"
-#include "corpus/document.h"
 
 namespace meta {
 namespace tokenizers {
@@ -29,7 +28,6 @@ namespace tokenizers {
 class multi_tokenizer: public tokenizer
 {
     public:
-
         /**
          * Constructs a multi_tokenizer from a vector of other tokenizers.
          * @param toks
@@ -38,11 +36,9 @@ class multi_tokenizer: public tokenizer
 
         /**
          * Tokenizes a file into a document.
-         * @param document - the document to store the tokenized information in
-         * @param mapping - the string to term_id mapping
+         * @param doc The document to store the tokenized information in
          */
-        virtual void tokenize_document(corpus::document & document,
-                  std::function<term_id(const std::string &)> mapping) override;
+        virtual void tokenize(corpus::document & doc) override;
 
     private:
 

@@ -9,11 +9,9 @@
 #ifndef _COMPRESSED_FILE_WRITER_H_
 #define _COMPRESSED_FILE_WRITER_H_
 
-#include <string.h>
-#include <cstdio>
-#include <cmath>
+#include <functional>
+#include <stdexcept>
 #include <string>
-#include "util/invertible_map.h"
 
 namespace meta {
 namespace io {
@@ -32,7 +30,7 @@ class compressed_file_writer
          * @param mapping
          */
         compressed_file_writer(const std::string & filename,
-                const util::invertible_map<uint64_t, uint64_t> & mapping);
+                std::function<uint64_t(uint64_t)> mapping);
 
         /**
          * Destructor; closes the compressed file.
@@ -51,6 +49,16 @@ class compressed_file_writer
          */
         void write(uint64_t value);
 
+        /**
+         * Writes a binary string to the file.
+         */
+        void write(const std::string & str);
+
+        /**
+         * Closes this compressed file.
+         */
+        void close();
+
     private:
         /**
          * Writes a bit to the file and advances writeCursors.
@@ -65,13 +73,13 @@ class compressed_file_writer
 
         /** where to write the compressed data */
         FILE* _outfile;
-        
+
         /** the current byte this reader is on */
         uint64_t _char_cursor;
-        
+
         /** the current bit of the current byte this reader is on */
         uint64_t _bit_cursor;
-        
+
         /** how large to make the internal writer buffer */
         uint64_t _buffer_size;
 
@@ -79,34 +87,28 @@ class compressed_file_writer
         unsigned char* _buffer;
 
         /** the mapping to use (actual -> compressed id) */
-        const util::invertible_map<uint64_t, uint64_t> _mapping;
+        std::function<uint64_t(uint64_t)> _mapping;
 
         /** the number of total bits that have been written (for seeking )*/
         uint64_t _bit_location;
+
+        /** ensures the file isn't closed more than once */
+        bool _closed;
 
     public:
 
         /**
          * Basic exception for compressed_file_writer interactions.
          */
-        class compressed_file_writer_exception: public std::exception
+        class compressed_file_writer_exception: public std::runtime_error
         {
             public:
-                
-                compressed_file_writer_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-           
-            private:
-           
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 
 };
+
+uint64_t default_compression_writer_func(uint64_t key);
 
 }
 }

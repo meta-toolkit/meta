@@ -29,8 +29,11 @@ class line_corpus: public corpus
         /**
          * @param file The path to the corpus file, where each line represents
          * a document
+         * @param num_lines The number of lines in the corpus file if known
+         * beforehand. If unknown, leave out this parameter and the value will
+         * be calculated in the constructor.
          */
-        line_corpus(const std::string & file);
+        line_corpus(const std::string & file, uint64_t num_lines = 0);
 
         /**
          * @return whether there is another document in this corpus

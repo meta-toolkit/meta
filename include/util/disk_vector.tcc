@@ -3,14 +3,14 @@
  * @author Sean Massung
  */
 
-#include "util/common.h"
+#include "util/filesystem.h"
 
 namespace meta {
 namespace util {
 
 template <class T>
 disk_vector<T>::disk_vector(const std::string & path, uint64_t size /* = 0 */):
-    _path{path + ".vector"},
+    _path{path},
     _start{nullptr},
     _size{size},
     _file_desc{-1}
@@ -20,7 +20,7 @@ disk_vector<T>::disk_vector(const std::string & path, uint64_t size /* = 0 */):
         throw disk_vector_exception{"error obtaining file descriptor for "
             + _path};
 
-    uint64_t actual_size = common::file_size(_path);
+    uint64_t actual_size = filesystem::file_size(_path);
     if(_size != 0)
     {
         uint64_t size_bytes = sizeof(T) * _size;
@@ -46,8 +46,39 @@ disk_vector<T>::disk_vector(const std::string & path, uint64_t size /* = 0 */):
 }
 
 template <class T>
+disk_vector<T>::disk_vector(disk_vector&& other)
+    : _path{std::move(other._path)},
+      _start{std::move(other._start)},
+      _size{std::move(other._size)},
+      _file_desc{std::move(other._file_desc)}
+{
+    other._start = nullptr;
+}
+
+template <class T>
+disk_vector<T>& disk_vector<T>::operator=(disk_vector&& other)
+{
+    if (this != &other)
+    {
+        if (_start)
+        {
+            munmap(_start, sizeof(T) * _size);
+            close(_file_desc);
+        }
+        _path = std::move(other._path);
+        _start = std::move(other._start);
+        _size = std::move(other._size);
+        _file_desc = std::move(other._file_desc);
+        other._start = nullptr;
+    }
+    return *this;
+}
+
+template <class T>
 disk_vector<T>::~disk_vector()
 {
+    if (!_start)
+        return;
     munmap(_start, sizeof(T) * _size);
     close(_file_desc);
 }

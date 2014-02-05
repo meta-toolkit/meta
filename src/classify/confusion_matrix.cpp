@@ -3,11 +3,13 @@
  * @author Sean Massung
  */
 
-#include <iomanip>
 #include <algorithm>
+#include <iomanip>
 #include <vector>
-#include "util/common.h"
+
 #include "classify/confusion_matrix.h"
+#include "util/mapping.h"
+#include "util/printing.h"
 
 namespace meta {
 namespace classify {
@@ -68,7 +70,7 @@ void confusion_matrix::print(std::ostream & out) const
                 ss.precision(3);
                 ss << percent;
                 if(aClass == pClass) {
-                    auto str  = common::make_bold(ss.str());
+                    auto str  = printing::make_bold(ss.str());
                     auto diff = str.size() - ss.str().size();
                     out << std::setw(w + diff) << str;
                 } else {
@@ -88,11 +90,11 @@ void confusion_matrix::print_class_stats(std::ostream & out, const class_label &
 {
     for(auto & cls: _classes)
     {
-        prec += common::safe_at(_predictions, std::make_pair(cls, label));
-        rec  += common::safe_at(_predictions, std::make_pair(label, cls));
+        prec += map::safe_at(_predictions, std::make_pair(cls, label));
+        rec  += map::safe_at(_predictions, std::make_pair(label, cls));
     }
 
-    double correct = common::safe_at(_predictions, std::make_pair(label, label));
+    double correct = map::safe_at(_predictions, std::make_pair(label, label));
 
     if(rec != 0.0)
         rec = correct / rec;
@@ -129,14 +131,14 @@ void confusion_matrix::print_stats(std::ostream & out) const
     size_t width =
         std::max<size_t>(12, static_cast<std::string>(*max_label).size() + 2);
 
-    auto w1 = std::setw(width + common::make_bold("").size());
-    auto w2 = std::setw(12 + common::make_bold("").size());
+    auto w1 = std::setw(width + printing::make_bold("").size());
+    auto w2 = std::setw(12 + printing::make_bold("").size());
     out.precision(3);
     out << std::string(width + 12 * 3, '-') << std::endl
-        << std::left << w1 << common::make_bold("Class")
-        << std::left << w2 << common::make_bold("F1 Score")
-        << std::left << w2 << common::make_bold("Precision")
-        << std::left << w2 << common::make_bold("Recall") << std::endl
+        << std::left << w1 << printing::make_bold("Class")
+        << std::left << w2 << printing::make_bold("F1 Score")
+        << std::left << w2 << printing::make_bold("Precision")
+        << std::left << w2 << printing::make_bold("Recall") << std::endl
         << std::string(width + 12 * 3, '-') << std::endl;
 
     for(auto & cls: _classes)
@@ -159,10 +161,10 @@ void confusion_matrix::print_stats(std::ostream & out) const
     };
 
     out << std::string(width + 12 * 3, '-') << std::endl
-        << w1 << common::make_bold("Total")
-        << w2 << common::make_bold(limit(t_f1 / _classes.size()))
-        << w2 << common::make_bold(limit(t_prec / _classes.size()))
-        << w2 << common::make_bold(limit(t_rec / _classes.size()))
+        << w1 << printing::make_bold("Total")
+        << w2 << printing::make_bold(limit(t_f1 / _classes.size()))
+        << w2 << printing::make_bold(limit(t_prec / _classes.size()))
+        << w2 << printing::make_bold(limit(t_rec / _classes.size()))
         << std::endl
         << std::string(width + 12 * 3, '-') << std::endl
         << _total << " predictions attempted, overall accuracy: "
@@ -173,7 +175,7 @@ double confusion_matrix::accuracy() const
 {
     double correct = 0.0;
     for(auto & cls: _classes)
-        correct += common::safe_at(_predictions, std::make_pair(cls, cls));
+        correct += map::safe_at(_predictions, std::make_pair(cls, cls));
     return correct / _total;
 }
 
@@ -213,8 +215,8 @@ bool confusion_matrix::mcnemar_significant(const confusion_matrix & a, const con
 
     for(auto & cls: classes)
     {
-        auto a_count = common::safe_at(a._predictions, std::make_pair(cls, cls));
-        auto b_count = common::safe_at(b._predictions, std::make_pair(cls, cls));
+        auto a_count = map::safe_at(a._predictions, std::make_pair(cls, cls));
+        auto b_count = map::safe_at(b._predictions, std::make_pair(cls, cls));
         if(a_count > b_count)
             a_adv += (a_count - b_count);
         else if(b_count > a_count)

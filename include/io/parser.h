@@ -8,12 +8,14 @@
 #ifndef _PARSER_H_
 #define _PARSER_H_
 
+#include <array>
+#include <memory>
 #include <string>
-#include <unordered_set>
-#include "io/mmap_file.h"
 
 namespace meta {
 namespace io {
+
+class mmap_file;
 
 /**
  * Parses a text file by reading it completely into memory, delimiting tokens
@@ -36,6 +38,10 @@ class parser
         parser(const std::string & input, const std::string & delims,
                 input_type in_type = input_type::File);
 
+        ~parser();
+        parser(parser &&);
+        parser & operator=(parser &&);
+
         /**
          * @return the filename of the file that is being parsed
          */
@@ -52,7 +58,7 @@ class parser
          * it exists
          */
         std::string next();
-        
+
         /**
          * @return whether the parser contains another token
          */
@@ -68,8 +74,11 @@ class parser
         /** the current position of the "cursor" into the file or string */
         size_t _idx;
 
-        /** invalid characters that serve as delimiters */
-        std::unordered_set<char> _invalid;
+        /**
+         * Array of booleans indicating whether or not a character is a
+         * delimiter.
+         */
+        std::array<bool, 256> _invalid;
 
         /** saves the name of the file if the parser is parsing a file */
         std::string _filename;

@@ -12,8 +12,10 @@
 
 #include "index/ranker/lm_ranker.h"
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 /**
  * Implements the Jelinek-Mercer smoothed ranking model. This smoothing method
@@ -21,31 +23,30 @@ namespace index {
  * and the collection term probability. The model parameter lambda is the
  * weighting of this interpolation.
  */
-class jelinek_mercer: public language_model_ranker
+class jelinek_mercer : public language_model_ranker
 {
-    public:
-        /**
-         * @param lambda
-         */
-        jelinek_mercer(double lambda = 0.7);
+  public:
+    /**
+     * @param lambda
+     */
+    jelinek_mercer(double lambda = 0.7);
 
-        /**
-         * Calculates the smoothed probability of a term.
-         * @param sd
-         */
-        double smoothed_prob(const score_data & sd) const override;
+    /**
+     * Calculates the smoothed probability of a term.
+     * @param sd
+     */
+    double smoothed_prob(const score_data& sd) const override;
 
-        /**
-         * A document-dependent constant.
-         * @param sd
-         */
-        double doc_constant(const score_data & sd) const override;
+    /**
+     * A document-dependent constant.
+     * @param sd
+     */
+    double doc_constant(const score_data& sd) const override;
 
-    private:
-        /** the JM parameter*/
-        const double _lambda;
+  private:
+    /** the JM parameter*/
+    const double _lambda;
 };
-
 }
 }
 

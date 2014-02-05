@@ -4,26 +4,18 @@
  */
 
 #include <sstream>
+
+#include "corpus/document.h"
+#include "io/libsvm_parser.h"
 #include "tokenizers/libsvm_tokenizer.h"
 
 namespace meta {
 namespace tokenizers {
 
-void libsvm_tokenizer::tokenize_document(corpus::document & document,
-        std::function<term_id(const std::string &)> mapping)
+void libsvm_tokenizer::tokenize(corpus::document & doc)
 {
-    std::stringstream stream{document.content()};
-    std::string token;
-    
-    // remaining tokens are "feature:feature_count"
-    while(stream >> token)
-    {
-        size_t idx = token.find_first_of(':');
-        std::string feature = token.substr(0, idx);
-        double count;
-        std::istringstream{token.substr(idx + 1)} >> count;
-        document.increment(mapping(feature), count);
-    }
+    for(auto & count_pair: io::libsvm_parser::counts(doc.content(), false))
+        doc.increment(std::to_string(count_pair.first), count_pair.second);
 }
 
 }

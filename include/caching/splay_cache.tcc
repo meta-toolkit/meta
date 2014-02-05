@@ -58,8 +58,7 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
     {
         if(_size == _max_size && !subroot->left)
         {
-            subroot->key = key;
-            subroot->value = value;
+            replace(subroot, key, value);
         }
         else
         {
@@ -71,8 +70,7 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
     {
         if(_size == _max_size && !subroot->right)
         {
-            subroot->key = key;
-            subroot->value = value;
+            replace(subroot, key, value);
         }
         else
         {
@@ -80,6 +78,20 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
             rotate_left(subroot);
         }
     }
+    else if(key == subroot->key)
+    {
+        subroot->value = value;
+    }
+}
+
+template <class Key, class Value>
+void splay_cache<Key, Value>::replace(node* subroot, const Key & key,
+                                      const Value & value)
+{
+    for (auto & callback : _drop_callbacks)
+        callback(subroot->key, subroot->value);
+    subroot->key = key;
+    subroot->value = value;
 }
 
 template <class Key, class Value>
@@ -122,6 +134,8 @@ void splay_cache<Key, Value>::clear(node* & subroot)
     {
         clear(subroot->left);
         clear(subroot->right);
+        for (auto & callback : _drop_callbacks)
+            callback(subroot->key, subroot->value);
         delete subroot;
         subroot = nullptr;
     }
@@ -154,6 +168,18 @@ template <class Key, class Value>
 uint64_t splay_cache<Key, Value>::size() const
 {
     return _size;
+}
+
+template <class Key, class Value>
+template <class Functor>
+void splay_cache<Key, Value>::on_drop(Functor && fun) {
+    _drop_callbacks.emplace_back(std::forward<Functor>(fun));
+}
+
+template <class Key, class Value>
+void splay_cache<Key, Value>::clear() {
+    std::lock_guard<std::mutex> lock{_mutables};
+    clear(_root);
 }
 
 }
