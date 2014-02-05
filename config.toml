@@ -27,3 +27,13 @@ method = "libsvm"
 #[[tokenizers]]
 #method = "tree"
 #treeOpt = "Subtree"
+
+[lda]
+#inference = "gibbs"
+#inference = "pargibbs"
+inference = "cvb"
+max-iters = 1000
+alpha = 1.0
+beta = 1.0
+topics = 4
+model-prefix = "lda_model"

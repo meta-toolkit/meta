@@ -100,9 +100,9 @@ add_library(meta-topics
             src/topics/lda_cvb.cpp
             src/topics/lda_gibbs.cpp
             src/topics/lda_model.cpp
-            src/topics/slda.cpp
+            # src/topics/slda.cpp
             src/topics/parallel_lda_gibbs.cpp)
-target_link_libraries(meta-topics meta-corpus meta-tokenizers)
+target_link_libraries(meta-topics meta-index)
 
 add_executable(classify classify-test.cpp)
 target_link_libraries(classify
@@ -143,6 +143,7 @@ target_link_libraries(lda-test
 
 add_executable(lda-topics lda-topics.cpp)
 target_link_libraries(lda-topics
+                      meta-index
                       ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(shuffle shuffle.cpp)
