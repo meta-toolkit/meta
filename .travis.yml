@@ -1,3 +1,6 @@
+notifications:
+  irc: "chat.freenode.net#meta-toolkit"
+
 language: cpp
 
 compiler:
