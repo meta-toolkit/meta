@@ -59,6 +59,16 @@ namespace meta
     using label_id = uint32_t;
 #endif
 
+    /*
+     * Numbering system for query ids.
+     */
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
+    MAKE_NUMERIC_IDENTIFIER(query_id, uint64_t)
+#else
+    using query_id = uint64_t;
+#endif
+
+
     /**
      * Containers to be used for caching purposes.
      */
