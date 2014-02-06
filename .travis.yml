@@ -16,7 +16,7 @@ install:
   - if [ "`echo $CXX`" == "clang++" ]; then svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx; fi
   - if [ "`echo $CXX`" == "clang++" ]; then svn co --quiet http://llvm.org/svn/llvm-project/libcxxabi/trunk libcxxabi; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cd libcxx && mkdir build && cd build; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cmake -DLIBCXX_CXX_ABI=libcxxabi -DCLIBCXX_LIBCXXABI_INCLUDE_PATHS="../../libcxxabi/include" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ../; fi
+  - if [ "`echo $CXX`" == "clang++" ]; then cmake -DLIBCXX_CXX_ABI=libcxxabi -DLIBCXX_LIBCXXABI_INCLUDE_PATHS="../../libcxxabi/include" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ../; fi
   - if [ "`echo $CXX`" == "clang++" ]; then make && sudo make install; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cd ../../; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cd libcxxabi/lib && ./buildit; fi
