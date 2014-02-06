@@ -8,6 +8,7 @@
 #include "unit_test.h"
 #include "tokenizer_test.h"
 #include "inverted_index_test.h"
+#include "ranker_test.h"
 #include "stemmer_test.h"
 #include "forward_index_test.h"
 #include "string_list_test.h"
@@ -35,6 +36,7 @@ int main(int argc, char* argv[])
         std::cerr << " \"vocabulary-map\": runs vocabulary map tests" << std::endl;
         std::cerr << " \"libsvm-parser\": runs libsvm parser tests" << std::endl;
         std::cerr << " \"classifiers\": runs classifier tests" << std::endl;
+        std::cerr << " \"rankers\": runs ranker tests" << std::endl;
         return 1;
     }
 
@@ -85,5 +87,10 @@ int main(int argc, char* argv[])
     {
         std::cout << printing::make_bold("Testing classifiers") << std::endl;
         testing::classifier_tests();
+    }
+    if(all || args.find("rankers") != args.end())
+    {
+        std::cout << printing::make_bold("Testing rankers") << std::endl;
+        testing::ranker_tests();
     }
 }
