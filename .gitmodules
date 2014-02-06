@@ -1,8 +1,8 @@
 [submodule "deps/cpptoml"]
 	path = deps/cpptoml
-	url = git@bitbucket.org:skystrife/cpptoml.git
-	branch = array-of-hashes
+	url = https://github.com/skystrife/cpptoml.git
+	branch = master
 [submodule "deps/porter2_stemmer"]
 	path = deps/porter2_stemmer
-	url = git@bitbucket.org:smassung/porter2_stemmer
+	url = https://github.com/smassung/porter2_stemmer.git
 	branch = meta

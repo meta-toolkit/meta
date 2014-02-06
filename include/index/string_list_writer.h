@@ -10,6 +10,11 @@
 #include <mutex>
 #include <string>
 
+#if !META_HAS_STREAM_MOVE
+#include <memory>
+#include "util/shim.h"
+#endif
+
 #include "util/disk_vector.h"
 
 namespace meta
@@ -50,8 +55,31 @@ class string_list_writer
     void insert(uint64_t idx, const std::string& elem);
 
   private:
+#if META_HAS_STREAM_MOVE
+    using ofstream = std::ofstream;
+    std::ofstream& file()
+    {
+        return string_file_;
+    }
+    ofstream make_file(const std::string& path)
+    {
+        return std::ofstream{path};
+    }
+#else
+    // workaround for lack of move operators for gcc 4.8
+    using ofstream = std::unique_ptr<std::ofstream>;
+    std::ofstream& file()
+    {
+        return *string_file_;
+    }
+    ofstream make_file(const std::string& path)
+    {
+        return make_unique<std::ofstream>(path);
+    }
+#endif
+
     std::mutex mutex_;            /// writes are internally synchronized
-    std::ofstream string_file_;   /// the file containing the strings
+    ofstream string_file_;        /// the file containing the strings
     uint64_t write_pos_;          /// keeps track of the write position
     util::disk_vector<uint64_t> index_; /// the index vector---stores byte positions
 };

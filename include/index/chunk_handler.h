@@ -111,7 +111,7 @@ class chunk_handler
     void write_chunk(std::vector<index_pdata_type>& pdata);
 
     /** the prefix for all chunks to be written */
-    const std::string& prefix_;
+    std::string prefix_;
 
     /** the current chunk number */
     std::atomic<uint32_t> chunk_num_{0};

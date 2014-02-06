@@ -17,9 +17,82 @@ if(UNIX)
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         if(USE_LIBCXX)
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi")
+            find_library(META_LIBCXXABI NAMES c++abi)
+            find_library(META_LIBCXXRT NAMES cxxrt)
+            if(META_LIBCXXABI)
+                set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi")
+                set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -lc++abi")
+            elseif(META_LIBCXXRT)
+                set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lcxxrt")
+                set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -lcxxrt")
+            endif()
         endif()
     endif()
+endif()
+
+include(CheckCXXSourceCompiles)
+include(CheckCXXSourceRuns)
+check_cxx_source_compiles("
+#include <iomanip>
+int main() {
+    std::tm t;
+    std::put_time(&t, \"%Y\");
+    return 0;
+}" META_HAS_STD_PUT_TIME)
+
+if(META_HAS_STD_PUT_TIME)
+    add_definitions(-DMETA_HAS_STD_PUT_TIME=1)
+    add_definitions(-DCPPTOML_HAS_STD_PUT_TIME=1)
+endif()
+
+check_cxx_source_runs("
+#include <cstring>
+#include <ctime>
+#include <regex>
+int main() {
+    std::string to_match = \"2014-02-05T14:30:05Z\";
+    std::regex pattern{\"(\\\\\\\\d{4})-(\\\\\\\\d{2})-(\\\\\\\\d{2})T(\\\\\\\\d{2}):(\\\\\\\\d{2}):(\\\\\\\\d{2})Z\"};
+    std::match_results<std::string::const_iterator> results;
+    std::regex_match(to_match, results, pattern);
+
+    std::tm date;
+    std::memset( &date, '\\\\0', sizeof( date ) );
+    date.tm_year = stoi( results[1] ) - 1900;
+    date.tm_mon = stoi( results[2] ) - 1;
+    date.tm_mday = stoi( results[3] );
+    date.tm_hour = stoi( results[4] );
+    date.tm_min = stoi( results[5] );
+    date.tm_sec = stoi( results[6] );
+    return 0;
+}" META_HAS_STD_REGEX)
+
+if(META_HAS_STD_REGEX)
+    add_definitions(-DCPPTOML_HAS_STD_REGEX=1)
+endif()
+
+check_cxx_source_compiles("
+#include <atomic>
+#include <memory>
+int main () {
+    auto sp = std::make_shared<int>(1);
+    auto sp2 = std::atomic_load(&sp);
+    return 0;
+}" META_HAS_STD_SHARED_PTR_ATOMICS)
+
+if(META_HAS_STD_SHARED_PTR_ATOMICS)
+    add_definitions(-DMETA_HAS_STD_SHARED_PTR_ATOMICS=1)
+endif()
+
+check_cxx_source_compiles("
+#include <fstream>
+int main() {
+    std::ofstream ofs{\"path\"};
+    std::ofstream ofs2{std::move(ofs)};
+    return 0;
+}" META_HAS_STREAM_MOVE)
+
+if(META_HAS_STREAM_MOVE)
+    add_definitions(-DMETA_HAS_STREAM_MOVE=1)
 endif()
 
 add_library(meta-util

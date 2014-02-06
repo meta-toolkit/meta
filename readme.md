@@ -30,6 +30,12 @@ probably not as frequently updated as it should be.
 Our current goal for MeTA is to publish in [JMLR's Machine Learning Open-Source
 Software](http://jmlr.org/mloss/).
 
+## Build Status (by branch)
+- master: [![Build
+  Status](https://travis-ci.org/meta-toolkit/meta.png?branch=master)](https://travis-ci.org/meta-toolkit/meta)
+- develop: [![Build
+  Status](https://travis-ci.org/meta-toolkit/meta.png?branch=develop)](https://travis-ci.org/meta-toolkit/meta)
+
 ## Project setup
 
  - This project requires a very well conforming C++11 compiler. Currently,
@@ -61,7 +67,8 @@ git submodule update
 ```bash
 mkdir build
 cd build
-CXX=clang++ C=clang cmake ../ -DCMAKE_BUILD_TYPE=Debug
+# omit CXX=clang++ if you want to use your default compiler
+CXX=clang++ cmake ../ -DCMAKE_BUILD_TYPE=Debug
 make
 ```
 

@@ -61,11 +61,11 @@ struct score_data
                uint64_t p_num_docs,
                uint64_t p_total_terms,
                const corpus::document & p_query):
-        idx{p_idx},
+        idx(p_idx), // gcc no non-const ref init from brace init list
         avg_dl{p_avg_dl},
         num_docs{p_num_docs},
         total_terms{p_total_terms},
-        query{p_query}
+        query(p_query) // gcc no non-const ref init from brace init list
     { /* nothing */ }
 };
 

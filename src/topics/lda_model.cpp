@@ -10,7 +10,7 @@ namespace topics
 {
 
 lda_model::lda_model(index::forward_index& idx, uint64_t num_topics)
-    : idx_{idx},
+    : idx_(idx), // gcc no non-const ref init from brace init list
       num_topics_{num_topics},
       num_words_{idx.unique_terms()}
 {

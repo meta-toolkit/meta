@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <limits>
 #include "io/compressed_file_reader.h"
 #include "io/mmap_file.h"
 #include "util/shim.h"

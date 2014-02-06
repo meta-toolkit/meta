@@ -32,7 +32,8 @@ int main(int argc, char* argv[])
 
     logging::set_cerr_logging();
     auto idx = index::make_index<index::inverted_index,
-                                 caching::splay_cache>(argv[1], uint32_t{10000});
+    //                           caching::splay_cache>(argv[1], uint32_t{10000});
+                                 caching::default_dblru_cache>(argv[1], uint64_t{10000});
     //                           caching::lock_free_dblru_cache>(argv[1], uint64_t{2048});
     //                           caching::locking_dblru_cache>(argv[1], uint64_t{2048});
     //                           caching::locking_dblru_shard_cache>(argv[1], uint8_t{8}, uint64_t{2048});
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
     index::pivoted_length ranker;
     //index::okapi_bm25 ranker;
 
-    auto elapsed_seconds = common::time([&](){
+    auto elapsed = common::time([&](){
         // std::cout << "Beginning ranking..." << std::endl;
         // auto range = util::range<size_t>(0, std::min<size_t>(1000, idx.num_docs()-1));
         // parallel::parallel_for(range.begin(), range.end(), [&](size_t i) {
@@ -67,10 +68,14 @@ int main(int argc, char* argv[])
         }
     });
 
+#if META_HAS_STD_PUT_TIME
     auto time =
         std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::cout << "Finished at " << std::put_time(std::localtime(&time), "%c")
-              << "\nElapsed time: " << elapsed_seconds.count() << "ms\n";
+              << "\nElapsed time: " << elapsed.count() << "ms\n";
+#else
+    std::cout << "Elapsed time: " << elapsed.count() << "ms\n";
+#endif
 
     return 0;
 }
