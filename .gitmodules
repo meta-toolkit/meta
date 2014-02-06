@@ -4,5 +4,5 @@
 	branch = master
 [submodule "deps/porter2_stemmer"]
 	path = deps/porter2_stemmer
-	url = git@bitbucket.org:smassung/porter2_stemmer
+	url = https://github.com/smassung/porter2_stemmer.git
 	branch = meta
