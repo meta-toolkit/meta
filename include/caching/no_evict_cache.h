@@ -16,6 +16,7 @@
 
 #include "meta.h"
 #include "util/optional.h"
+#include "util/shim.h"
 
 namespace meta {
 namespace caching {
@@ -53,7 +54,7 @@ class no_evict_cache {
         /**
          * Mutex for locking operations.
          */
-        std::unique_ptr<std::mutex> mutables_{new std::mutex{}};
+        std::unique_ptr<std::mutex> mutables_{make_unique<std::mutex>()};
 
         /**
          * Contains all of the values inserted thus far. Never shrinks.

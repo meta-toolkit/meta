@@ -10,7 +10,7 @@
 
 #include "index/forward_index.h"
 
-MAKE_NUMERIC_IDENTIFIER(topic_id, uint64_t);
+MAKE_NUMERIC_IDENTIFIER(topic_id, uint64_t)
 
 namespace meta
 {

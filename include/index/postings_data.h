@@ -21,6 +21,14 @@
 namespace meta {
 namespace index {
 
+template <class, class>
+class postings_data;
+
+template <class PrimaryKey, class SecondaryKey>
+io::compressed_file_reader&
+    operator>>(io::compressed_file_reader&,
+               postings_data<PrimaryKey, SecondaryKey>&);
+
 /**
  * A class to represent the per-PrimaryKey data in an index's postings
  * file. For a given PrimaryKey, a mapping of SecondaryKey -> count information
@@ -115,15 +123,16 @@ class postings_data
             }
         }
 
+#if 0
         /**
          * Reads semi-compressed postings data from a compressed file.
          * @param in The stream to read from
          * @param pd The postings data object to write the stream info to
          * @return the input stream
          */
-        friend io::compressed_file_reader & operator>>(
-                io::compressed_file_reader & in,
-                postings_data<PrimaryKey, SecondaryKey> & pd)
+        friend io::compressed_file_reader&
+            operator>>(io::compressed_file_reader& in,
+                       postings_data<PrimaryKey, SecondaryKey>& pd)
         {
             pd._p_id = in.next();
             stream_helper(in, pd);
@@ -144,6 +153,11 @@ class postings_data
             stream_helper(in, pd);
             return in;
         }
+#endif
+
+        friend io::compressed_file_reader& operator>>
+            <>(io::compressed_file_reader& in,
+               postings_data<PrimaryKey, SecondaryKey>& pd);
 
         /**
          * Writes semi-compressed postings data to a compressed file.
@@ -225,6 +239,40 @@ class postings_data
         count_t _counts;
         const static uint64_t _delimiter = std::numeric_limits<uint64_t>::max();
 };
+
+/**
+ * Reads semi-compressed postings data from a compressed file.
+ * @param in The stream to read from
+ * @param pd The postings data object to write the stream info to
+ * @return the input stream
+ */
+template <class PrimaryKey, class SecondaryKey>
+io::compressed_file_reader&
+    operator>>(io::compressed_file_reader& in,
+               postings_data<PrimaryKey, SecondaryKey>& pd)
+{
+    pd._p_id = in.next();
+    stream_helper(in, pd);
+    return in;
+}
+
+/**
+ * Reads semi-compressed postings data from a compressed file.
+ * @param in The stream to read from
+ * @param pd The postings data object to write the stream info to
+ * @return the input stream
+ */
+template <>
+inline io::compressed_file_reader & operator>><>(
+        io::compressed_file_reader & in,
+        postings_data<std::string, doc_id> & pd)
+{
+    pd._p_id = in.next_string();
+    stream_helper(in, pd);
+    return in;
+}
+
+
 
 /**
  * @param lhs The first postings_data

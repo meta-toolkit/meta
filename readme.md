@@ -61,7 +61,8 @@ git submodule update
 ```bash
 mkdir build
 cd build
-CXX=clang++ C=clang cmake ../ -DCMAKE_BUILD_TYPE=Debug
+# omit CXX=clang++ if you want to use your default compiler
+CXX=clang++ cmake ../ -DCMAKE_BUILD_TYPE=Debug
 make
 ```
 

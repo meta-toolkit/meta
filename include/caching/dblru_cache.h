@@ -10,11 +10,16 @@
 #ifndef _DBLRU_CACHE_H_
 #define _DBLRU_CACHE_H_
 
+#if META_HAS_STD_SHARED_PTR_ATOMICS
+#include <atomic>
+#else
+#include <mutex>
+#include "util/shim.h"
+#endif
 #include <functional>
 #include <vector>
 
 #include "caching/maps/locking_map.h"
-#include "caching/maps/lock_free_map.h"
 #include "util/optional.h"
 
 namespace meta {
@@ -111,6 +116,16 @@ class dblru_cache {
         void handle_insert();
 
         /**
+         * Gets the primary map.
+         */
+        std::shared_ptr<Map<Key, Value>> get_primary_map() const;
+
+        /**
+         * Gets the secondary map.
+         */
+        std::shared_ptr<Map<Key, Value>> get_secondary_map() const;
+
+        /**
          * The maximum allowed size for the cache.
          */
         uint64_t max_size_;
@@ -118,7 +133,12 @@ class dblru_cache {
         /**
          * The current size of the primary map.
          */
+#if META_HAS_STD_SHARED_PTR_ATOMICS
         std::atomic<uint64_t> current_size_;
+#else
+        uint64_t current_size_;
+        std::unique_ptr<std::mutex> mutables_{make_unique<std::mutex>()};
+#endif
 
         /**
          * The primary map.

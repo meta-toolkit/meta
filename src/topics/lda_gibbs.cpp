@@ -57,8 +57,8 @@ topic_id lda_gibbs::sample_topic(term_id term, doc_id doc)
     std::vector<double> weights(num_topics_);
     for (topic_id j{0}; j < weights.size(); ++j)
         weights[j] = compute_probability(term, doc, j);
-    std::discrete_distribution<topic_id> dist(weights.begin(), weights.end());
-    return dist(rng_);
+    std::discrete_distribution<uint64_t> dist(weights.begin(), weights.end());
+    return topic_id{dist(rng_)};
 }
 
 double lda_gibbs::compute_probability(term_id term, doc_id doc,

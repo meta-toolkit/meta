@@ -80,7 +80,7 @@ void assert_correctness(uint16_t size = 20)
             // checks that the inverse map contains the correct position of
             // the terms in the lowest level
             if (idx < 14)
-                ASSERT(inverse[idx] == file.tellg());
+                ASSERT(inverse[idx] == static_cast<uint64_t>(file.tellg()));
 
             std::string term;
             uint64_t num;

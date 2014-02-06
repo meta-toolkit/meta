@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include "classify/classifier/knn.h"
 #include "corpus/document.h"
+#include "index/postings_data.h"
 
 namespace meta {
 namespace classify {
@@ -16,7 +17,7 @@ template <class... Args>
 knn<Ranker>::knn(index::inverted_index & idx, index::forward_index & f_idx,
         uint16_t k, Args &&... args):
     classifier{idx},
-    _f_idx{f_idx},
+    _f_idx(f_idx), // gcc no non-const ref init from brace init list
     _k{k},
     _ranker{std::forward<Args>(args)...}
 { /* nothing */ }
