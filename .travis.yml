@@ -15,6 +15,7 @@ install:
   - if [ "`echo $CXX`" == "clang++" ]; then cwd=$(pwd); fi
   - if [ "`echo $CXX`" == "clang++" ]; then svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx; fi
   - if [ "`echo $CXX`" == "clang++" ]; then svn co --quiet http://llvm.org/svn/llvm-project/libcxxabi/trunk libcxxabi; fi
+  - if [ "`echo $CXX`" == "clang++" ]; then ln -s libcxx/include/* libcxxabi/include/; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cd libcxxabi/lib && ./buildit; fi
   - if [ "`echo $CXX`" == "clang++" ]; then sudo cp ./libc++abi.so.1.0 /usr/lib; fi
   - if [ "`echo $CXX`" == "clang++" ]; then sudo ln -sf /usr/lib/libc++abi.so.1.0 /usr/lib/libc++abi.so.1; fi
