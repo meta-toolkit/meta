@@ -1,5 +1,6 @@
 /**
  * @file mmap_file.cpp
+ * @author Sean Massung
  */
 
 #include <sys/mman.h>
@@ -10,22 +11,22 @@
 #include "io/mmap_file.h"
 #include "util/filesystem.h"
 
-namespace meta {
-namespace io {
-
-mmap_file::mmap_file(const std::string & path):
-    _path{path},
-    _start{nullptr},
-    _size{filesystem::file_size(path)}
+namespace meta
 {
-     _file_descriptor = open(_path.c_str(), O_RDONLY);
-    if(_file_descriptor < 0)
-        throw mmap_file_exception{"error obtaining file descriptor for "
-            + _path};
+namespace io
+{
 
-    _start = (char*) mmap(nullptr, _size, PROT_READ, MAP_SHARED,
-                          _file_descriptor, 0);
-    if(_start == nullptr)
+mmap_file::mmap_file(const std::string& path)
+    : _path{path}, _start{nullptr}, _size{filesystem::file_size(path)}
+{
+    _file_descriptor = open(_path.c_str(), O_RDONLY);
+    if (_file_descriptor < 0)
+        throw mmap_file_exception{"error obtaining file descriptor for "
+                                  + _path};
+
+    _start = (char*)mmap(nullptr, _size, PROT_READ, MAP_SHARED,
+                         _file_descriptor, 0);
+    if (_start == nullptr)
     {
         close(_file_descriptor);
         throw mmap_file_exception("error memory-mapping " + _path);
@@ -39,6 +40,19 @@ mmap_file::mmap_file(mmap_file&& other)
       _file_descriptor{std::move(other._file_descriptor)}
 {
     other._start = nullptr;
+}
+
+char mmap_file::operator[](uint64_t index) const
+{
+    if (index > _size)
+        throw mmap_file_exception{"index out of bounds"};
+
+    return _start[index];
+}
+
+char* mmap_file::begin() const
+{
+    return _start;
 }
 
 mmap_file& mmap_file::operator=(mmap_file&& other)
@@ -69,19 +83,13 @@ std::string mmap_file::path() const
     return _path;
 }
 
-char* mmap_file::start() const
-{
-    return _start;
-}
-
 mmap_file::~mmap_file()
 {
-    if(_start != nullptr)
+    if (_start != nullptr)
     {
         munmap(_start, _size);
         close(_file_descriptor);
     }
 }
-
 }
 }

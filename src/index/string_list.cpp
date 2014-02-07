@@ -18,7 +18,7 @@ string_list::string_list(const std::string& path)
 
 const char* string_list::at(uint64_t idx) const
 {
-    return string_file_.start() + index_[idx];
+    return string_file_.begin() + index_[idx];
 }
 
 uint64_t string_list::size() const

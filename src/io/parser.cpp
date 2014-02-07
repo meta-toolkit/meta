@@ -23,7 +23,7 @@ parser::parser(const std::string & input, const std::string & delims,
     {
         _filename = input;
         _mmap_file = make_unique<io::mmap_file>(input);
-        _data = _mmap_file->start();
+        _data = _mmap_file->begin();
         _size = _mmap_file->size();
     }
     else /* in_type == input_type::String */
