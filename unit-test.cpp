@@ -16,6 +16,7 @@
 #include "libsvm_parser_test.h"
 #include "classifier_test.h"
 #include "parallel_test.h"
+#include "ir_eval_test.h"
 #include "util/printing.h"
 
 using namespace meta;
@@ -37,6 +38,7 @@ int main(int argc, char* argv[])
         std::cerr << " \"libsvm-parser\": runs libsvm parser tests" << std::endl;
         std::cerr << " \"classifiers\": runs classifier tests" << std::endl;
         std::cerr << " \"rankers\": runs ranker tests" << std::endl;
+        std::cerr << " \"ir-eval\": runs IR evaluation tests" << std::endl;
         return 1;
     }
 
@@ -92,5 +94,10 @@ int main(int argc, char* argv[])
     {
         std::cout << printing::make_bold("Testing rankers") << std::endl;
         testing::ranker_tests();
+    }
+    if(all || args.find("ir-eval") != args.end())
+    {
+        std::cout << printing::make_bold("Testing IR eval") << std::endl;
+        testing::ir_eval_tests();
     }
 }
