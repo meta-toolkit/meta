@@ -41,6 +41,19 @@ mmap_file::mmap_file(mmap_file&& other)
     other._start = nullptr;
 }
 
+char mmap_file::operator[](uint64_t index) const
+{
+    if(index > _size)
+        throw mmap_file_exception{"index out of bounds"};
+
+    return _start[index];
+}
+
+char* mmap_file::begin() const
+{
+    return _start;
+}
+
 mmap_file& mmap_file::operator=(mmap_file&& other)
 {
     if (this != &other)
@@ -67,11 +80,6 @@ uint64_t mmap_file::size() const
 std::string mmap_file::path() const
 {
     return _path;
-}
-
-char* mmap_file::start() const
-{
-    return _start;
 }
 
 mmap_file::~mmap_file()

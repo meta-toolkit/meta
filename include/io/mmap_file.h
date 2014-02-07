@@ -1,5 +1,6 @@
 /**
  * @file mmap_file.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
@@ -44,10 +45,11 @@ class mmap_file
         ~mmap_file();
 
         /**
-         * @return a pointer to the beginning of the text file; nullptr if
-         * unsuccessful
+         * @param index The byte in the memory-mapped file to access
+         * @return the requested byte; an exception is thrown if the index is
+         * out of bounds of the mapped region
          */
-        char* start() const;
+        char operator[](uint64_t index) const;
 
         /**
          * @return the length of the file in bytes
@@ -59,6 +61,11 @@ class mmap_file
          * contructor)
          */
         std::string path() const;
+
+        /**
+         * @return a pointer to the beginning of the file
+         */
+        char* begin() const;
 
     private:
 
