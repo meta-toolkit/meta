@@ -59,7 +59,7 @@ void ir_eval::init_index(const std::string& path)
 }
 
 double ir_eval::precision(const std::vector<std::pair<doc_id, double>>& results,
-                          query_id q_id) const
+                          query_id q_id, uint64_t num_docs) const
 {
     if (results.size() == 0)
         return 0.0;
@@ -68,11 +68,12 @@ double ir_eval::precision(const std::vector<std::pair<doc_id, double>>& results,
     if (ht == _qrels.end())
         return 0.0;
 
-    return relevant_retrieved(results, q_id) / results.size();
+    uint64_t denominator = std::min(results.size(), num_docs);
+    return relevant_retrieved(results, q_id, num_docs) / denominator;
 }
 
 double ir_eval::recall(const std::vector<std::pair<doc_id, double>>& results,
-                       query_id q_id) const
+                       query_id q_id, uint64_t num_docs) const
 {
     if (results.size() == 0)
         return 0.0;
@@ -81,27 +82,33 @@ double ir_eval::recall(const std::vector<std::pair<doc_id, double>>& results,
     if (ht == _qrels.end())
         return 0.0;
 
-    return relevant_retrieved(results, q_id) / ht->second.size();
+    return relevant_retrieved(results, q_id, num_docs) / ht->second.size();
 }
 
 double ir_eval::relevant_retrieved(const std::vector<
                                        std::pair<doc_id, double>>& results,
-                                   query_id q_id) const
+                                   query_id q_id, uint64_t num_docs) const
 {
     double rel = 0.0;
     const auto& ht = _qrels.find(q_id);
+    uint64_t i = 0;
     for (auto& res : results)
+    {
+        if (i == num_docs)
+            break;
         if (map::safe_at(ht->second, res.first) != 0)
             ++rel;
+        ++i;
+    }
 
     return rel;
 }
 
 double ir_eval::f1(const std::vector<std::pair<doc_id, double>>& results,
-                   query_id q_id, double beta) const
+                   query_id q_id, uint64_t num_docs, double beta) const
 {
-    double p = precision(results, q_id);
-    double r = recall(results, q_id);
+    double p = precision(results, q_id, num_docs);
+    double r = recall(results, q_id, num_docs);
     double denominator = (beta * beta * p) + r;
 
     if (denominator < 0.00000001)
