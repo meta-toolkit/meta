@@ -10,7 +10,9 @@
 #define _META_IR_EVAL_H_
 
 #include <iostream>
+#include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 #include "meta.h"
@@ -70,6 +72,34 @@ class ir_eval
                      std::ostream& out = std::cout) const;
 
   private:
+    /**
+     * query_id -> (doc_id -> relevance) mapping
+     * If the doc_id isn't in the map, it is non-relevant.
+     */
+    std::unordered_map<query_id, std::unordered_map<doc_id, uint8_t>> _qrels;
+
+    /**
+     * Initializes the _byte_index member with pointers into the _judgements
+     * file
+     */
+    void init_index(const std::string& path);
+
+    /**
+     * @param results The ranked list of results
+     * @param q_id The query that was run to produce these results
+     * @return the number of relevant results that were retrieved
+     */
+    double relevant_retrieved(const result_type& results, query_id q_id) const;
+
+  public:
+    /**
+     * Basic exception for ir_eval interactions.
+     */
+    class ir_eval_exception : public std::runtime_error
+    {
+      public:
+        using std::runtime_error::runtime_error;
+    };
 };
 }
 }
