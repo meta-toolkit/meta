@@ -114,14 +114,14 @@ std::string forward_index::liblinear_data(doc_id d_id) const
 
     uint64_t begin = (*fwd_impl_->_doc_byte_locations)[d_id];
     uint64_t length = 0;
-    while (impl_->postings().start()[begin + length] != '\n')
+    while (impl_->postings()[begin + length] != '\n')
     {
         ++length; // TODO maybe save lengths as well?
         if (begin + length >= impl_->postings().size())
             throw forward_index_exception{"out of bounds!"};
     }
 
-    return std::string{impl_->postings().start() + begin, length};
+    return std::string{impl_->postings().begin() + begin, length};
 }
 
 void forward_index::load_index()
@@ -219,7 +219,7 @@ void forward_index::impl::set_doc_byte_locations()
             (*_doc_byte_locations)[d_id] = idx;
             ++d_id;
         }
-        last_byte = idx_->impl_->postings().start()[idx];
+        last_byte = idx_->impl_->postings()[idx];
     }
 }
 
