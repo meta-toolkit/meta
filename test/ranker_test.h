@@ -48,32 +48,32 @@ void ranker_tests()
         "test-config.toml", uint32_t{10000});
 
     /* TODO why does this not always work?
-    testing::run_test("ranker-absolute-discount", 3, [&]()
+    testing::run_test("ranker-absolute-discount", 5, [&]()
     {
         index::absolute_discount r;
         test_rank(r, idx);
     });
     */
 
-    testing::run_test("ranker-dirichlet-prior", 3, [&]()
+    testing::run_test("ranker-dirichlet-prior", 5, [&]()
     {
         index::dirichlet_prior r;
         test_rank(r, idx);
     });
 
-    testing::run_test("ranker-jelinek-mercer", 3, [&]()
+    testing::run_test("ranker-jelinek-mercer", 5, [&]()
     {
         index::jelinek_mercer r;
         test_rank(r, idx);
     });
 
-    testing::run_test("ranker-okapi-bm25", 3, [&]()
+    testing::run_test("ranker-okapi-bm25", 5, [&]()
     {
         index::okapi_bm25 r;
         test_rank(r, idx);
     });
 
-    testing::run_test("ranker-pivoted-length", 3, [&]()
+    testing::run_test("ranker-pivoted-length", 5, [&]()
     {
         index::pivoted_length r;
         test_rank(r, idx);
