@@ -36,31 +36,27 @@ void easy_func(Type& x)
 /**
  * Assumes multi-core machine...
  */
-void test_speed(std::vector<double>& v)
+int test_speed(std::vector<double>& v)
 {
-    testing::run_test("parallel-speed", 10, [&]()
+    return testing::run_test("parallel-speed", 10, [&]()
     {
 
         std::iota(v.begin(), v.end(), 0);
         auto serial_time = common::time([&]()
-        {
-            std::for_each(v.begin(), v.end(), hard_func<double>);
-        });
+            { std::for_each(v.begin(), v.end(), hard_func<double>); });
 
         std::iota(v.begin(), v.end(), 0);
         auto parallel_time = common::time([&]()
-        {
-            parallel::parallel_for(v.begin(), v.end(), hard_func<double>);
-        });
+            { parallel::parallel_for(v.begin(), v.end(), hard_func<double>); });
 
         ASSERT(parallel_time.count() < serial_time.count());
     });
 }
 
-void test_correctness(std::vector<double>& v)
+int test_correctness(std::vector<double>& v)
 {
     // this makes sure every single element is touched exactly once
-    testing::run_test("parallel-correctness", 10, [&]()
+    return testing::run_test("parallel-correctness", 10, [&]()
     {
         std::fill(v.begin(), v.end(), 1.0);
         std::mutex mtx;
@@ -69,9 +65,9 @@ void test_correctness(std::vector<double>& v)
     });
 }
 
-void test_threadpool()
+int test_threadpool()
 {
-    testing::run_test("parallel-thread-pool", 5, []()
+    return testing::run_test("parallel-thread-pool", 5, []()
     {
         parallel::thread_pool pool{};
         std::vector<std::future<size_t>> futures;
@@ -91,13 +87,16 @@ void test_threadpool()
     });
 }
 
-void parallel_tests()
+int parallel_tests()
 {
     size_t n = 10000000;
     std::vector<double> v(n);
-    test_speed(v);
-    test_correctness(v);
-    test_threadpool();
+    int num_failed = 0;
+    num_failed += test_speed(v);
+    num_failed += test_correctness(v);
+    num_failed += test_threadpool();
+    testing::report(num_failed);
+    return num_failed;
 }
 }
 }

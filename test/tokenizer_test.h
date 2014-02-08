@@ -1,5 +1,6 @@
 /**
  * @file tokenizer_test.h
+ * @author Sean Massung
  */
 
 #ifndef _TOKENIZER_TEST_H_
@@ -8,8 +9,10 @@
 #include <string>
 #include "tokenizers/all.h"
 
-namespace meta {
-namespace testing {
+namespace meta
+{
+namespace testing
+{
 
 #if 0
     template <class Tokenizer>
@@ -83,16 +86,23 @@ namespace testing {
     }
 #endif
 
-void tokenizer_tests() {
+int tokenizer_tests()
+{
+    int num_failed = 0;
+
     // "one" is a stopword
     std::string content = "one one two two two three four one five";
-    testing::run_test("tokenizer", [&]() {
+    num_failed += testing::run_test("tokenizer", [&]()
+    {
         tokenizers::ngram_word_tokenizer tok{1};
         corpus::document doc{"none", doc_id{0}};
         doc.set_content(content);
         tok.tokenize(doc);
         ASSERT(doc.length() == 6);
     });
+
+    testing::report(num_failed);
+    return num_failed;
 }
 }
 }

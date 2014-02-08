@@ -16,7 +16,7 @@ namespace meta
 namespace testing
 {
 
-void ir_eval_tests()
+int ir_eval_tests()
 {
     system("/usr/bin/rm -rf ceeaus-inv");
     create_config("file");
@@ -25,7 +25,9 @@ void ir_eval_tests()
     index::okapi_bm25 ranker;
     index::ir_eval eval{"test-config.toml"};
 
-    testing::run_test("ir-eval", [&]()
+    int num_failed = 0;
+
+    num_failed += testing::run_test("ir-eval", [&]()
     {
         for (size_t i = 0; i < 5; ++i)
         {
@@ -41,6 +43,8 @@ void ir_eval_tests()
     });
 
     system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
+    testing::report(num_failed);
+    return num_failed;
 }
 }
 }

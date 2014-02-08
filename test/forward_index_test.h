@@ -9,12 +9,14 @@
 #include <fstream>
 #include <iostream>
 #include "index/forward_index.h"
-#include "inverted_index_test.h"  // for config file creation
+#include "inverted_index_test.h" // for config file creation
 #include "caching/all.h"
 #include "cpptoml.h"
 
-namespace meta {
-namespace testing {
+namespace meta
+{
+namespace testing
+{
 
 void create_libsvm_config()
 {
@@ -32,14 +34,15 @@ void create_libsvm_config()
 }
 
 template <class Index>
-void check_bcancer_expected(Index& idx) {
+void check_bcancer_expected(Index& idx)
+{
     ASSERT(idx.num_docs() == 683);
     ASSERT(idx.unique_terms() == 10);
 
     std::ifstream in{"../data/bcancer-metadata.txt"};
     doc_id id{0};
     uint64_t size;
-    while(in >> size)
+    while (in >> size)
     {
         ASSERT(idx.doc_size(doc_id{id}) == size);
         ++id;
@@ -48,7 +51,8 @@ void check_bcancer_expected(Index& idx) {
 }
 
 template <class Index>
-void check_ceeaus_expected_fwd(Index& idx) {
+void check_ceeaus_expected_fwd(Index& idx)
+{
     ASSERT(idx.num_docs() == 1008);
     ASSERT(idx.unique_terms() == 4003);
 
@@ -56,7 +60,8 @@ void check_ceeaus_expected_fwd(Index& idx) {
     uint64_t size;
     uint64_t unique;
     doc_id id{0};
-    while (in >> size >> unique) {
+    while (in >> size >> unique)
+    {
         // don't care about unique terms per doc in forward_index (yet)
         ASSERT(idx.doc_size(id) == size);
         ++id;
@@ -67,14 +72,16 @@ void check_ceeaus_expected_fwd(Index& idx) {
 }
 
 template <class Index>
-void check_bcancer_doc_id(Index& idx) {
+void check_bcancer_doc_id(Index& idx)
+{
     double epsilon = 0.000001;
     doc_id d_id{47};
     term_id first;
     double second;
     std::ifstream in{"../data/bcancer-doc-count.txt"};
     auto pdata = idx.search_primary(d_id);
-    for (auto& count : pdata->counts()) {
+    for (auto& count : pdata->counts())
+    {
         in >> first;
         in >> second;
         ASSERT(first == count.first);
@@ -83,13 +90,15 @@ void check_bcancer_doc_id(Index& idx) {
 }
 
 template <class Index>
-void check_ceeaus_doc_id(Index& idx) {
+void check_ceeaus_doc_id(Index& idx)
+{
     doc_id d_id{47};
     term_id first;
     double second;
     std::ifstream in{"../data/ceeaus-doc-count.txt"};
     auto pdata = idx.search_primary(d_id);
-    for (auto& count : pdata->counts()) {
+    for (auto& count : pdata->counts())
+    {
         in >> first;
         in >> second;
         ASSERT(first == count.first);
@@ -99,58 +108,68 @@ void check_ceeaus_doc_id(Index& idx) {
 
 void ceeaus_forward_test()
 {
-    auto idx =
-        index::make_index<index::forward_index, caching::splay_cache>(
-            "test-config.toml", uint32_t{10000});
+    auto idx = index::make_index<index::forward_index, caching::splay_cache>(
+        "test-config.toml", uint32_t{10000});
     check_ceeaus_expected_fwd(idx);
     check_ceeaus_doc_id(idx);
 }
 
 void bcancer_forward_test()
 {
-    auto idx =
-        index::make_index<index::forward_index, caching::splay_cache>(
-            "test-config.toml", uint32_t{10000});
+    auto idx = index::make_index<index::forward_index, caching::splay_cache>(
+        "test-config.toml", uint32_t{10000});
     check_bcancer_expected(idx);
     check_bcancer_doc_id(idx);
 }
 
-void forward_index_tests() {
+int forward_index_tests()
+{
     create_config("file");
 
-    testing::run_test("forward-index-build-file-corpus", 30, [&]() {
+    int num_failed = 0;
+
+    num_failed += testing::run_test("forward-index-build-file-corpus", 30, [&]()
+    {
         system("/usr/bin/rm -rf ceeaus-*");
         ceeaus_forward_test();
     });
 
-    testing::run_test("forward-index-read-file-corpus", 10, [&]() {
+    num_failed += testing::run_test("forward-index-read-file-corpus", 10, [&]()
+    {
         ceeaus_forward_test();
         system("/usr/bin/rm -rf ceeaus-* test-config.toml");
     });
 
     create_config("line");
 
-    testing::run_test("forward-index-build-line-corpus", 30, [&]() {
+    num_failed += testing::run_test("forward-index-build-line-corpus", 30, [&]()
+    {
         system("/usr/bin/rm -rf ceeaus-*");
         ceeaus_forward_test();
     });
 
-    testing::run_test("forward-index-read-line-corpus", 10, [&]() {
+    num_failed += testing::run_test("forward-index-read-line-corpus", 10, [&]()
+    {
         ceeaus_forward_test();
         system("/usr/bin/rm -rf ceeaus-* test-config.toml");
     });
 
     create_libsvm_config();
 
-    testing::run_test("forward-index-build-libsvm", 10, [&]() {
+    num_failed += testing::run_test("forward-index-build-libsvm", 10, [&]()
+    {
         system("/usr/bin/rm -rf bcancer-*");
         bcancer_forward_test();
     });
 
-    testing::run_test("forward-index-load-libsvm", 10, [&]() {
+    num_failed += testing::run_test("forward-index-load-libsvm", 10, [&]()
+    {
         bcancer_forward_test();
         system("/usr/bin/rm -rf bcancer-* test-config.toml");
     });
+
+    testing::report(num_failed);
+    return num_failed;
 }
 }
 }
