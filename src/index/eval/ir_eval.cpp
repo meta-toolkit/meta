@@ -3,8 +3,6 @@
  * @author Sean Massung
  */
 
-#include <iostream>
-
 #include <algorithm>
 #include <iomanip>
 #include <fstream>
@@ -64,7 +62,7 @@ double ir_eval::precision(const std::vector<std::pair<doc_id, double>>& results,
     if (results.size() == 0)
         return 0.0;
 
-    auto ht = _qrels.find(q_id);
+    const auto& ht = _qrels.find(q_id);
     if (ht == _qrels.end())
         return 0.0;
 
@@ -78,7 +76,7 @@ double ir_eval::recall(const std::vector<std::pair<doc_id, double>>& results,
     if (results.size() == 0)
         return 0.0;
 
-    auto ht = _qrels.find(q_id);
+    const auto& ht = _qrels.find(q_id);
     if (ht == _qrels.end())
         return 0.0;
 
@@ -86,19 +84,18 @@ double ir_eval::recall(const std::vector<std::pair<doc_id, double>>& results,
 }
 
 double ir_eval::relevant_retrieved(const std::vector<
-                                       std::pair<doc_id, double>>& results,
+                                      std::pair<doc_id, double>>& results,
                                    query_id q_id, uint64_t num_docs) const
 {
     double rel = 0.0;
     const auto& ht = _qrels.find(q_id);
-    uint64_t i = 0;
+    uint64_t i = 1;
     for (auto& res : results)
     {
-        if (i == num_docs)
-            break;
         if (map::safe_at(ht->second, res.first) != 0)
             ++rel;
-        ++i;
+        if (i++ == num_docs)
+            break;
     }
 
     return rel;
@@ -118,14 +115,54 @@ double ir_eval::f1(const std::vector<std::pair<doc_id, double>>& results,
     return numerator / denominator;
 }
 
+double ir_eval::ndcg(const std::vector<std::pair<doc_id, double>>& results,
+                     query_id q_id, uint64_t num_docs) const
+{
+    // find this query's judgements
+    const auto& ht = _qrels.find(q_id);
+    if (ht == _qrels.end())
+        return 0.0;
+
+    // calculate discounted cumulative gain
+    double dcg = 0.0;
+    uint64_t i = 1;
+    for (auto& res : results)
+    {
+        double rel = map::safe_at(ht->second, res.first); // 0 if non-relevant
+        dcg += (std::pow(2.0, rel) + 1.0) / std::log(i + 1.0);
+        if (i++ == num_docs)
+            break;
+    }
+
+    // calculate ideal DCG
+    std::vector<uint8_t> rels;
+    for (const auto& s : ht->second)
+        rels.push_back(s.second);
+    std::sort(rels.begin(), rels.end());
+
+    double idcg = 0.0;
+    i = 1;
+    for (auto& rel : rels)
+    {
+        idcg += (std::pow(2.0, rel) + 1.0) / std::log(i + 1.0);
+        if (i++ == num_docs)
+            break;
+    }
+
+    return dcg / idcg;
+}
+
 void ir_eval::print_stats(const std::vector<std::pair<doc_id, double>>& results,
                           query_id q_id, std::ostream& out) const
 {
-    auto w = std::setw(10);
-    out << w << printing::make_bold("  F1 Score:") << w << f1(results, q_id)
-        << w << printing::make_bold("  Precision:") << w
+    auto w = std::setw(8);
+    size_t p = 3;
+    out << w << printing::make_bold("  NDCG:") << w << std::setprecision(p)
+        << ndcg(results, q_id) << w << printing::make_bold("  F1 Score:") << w
+        << std::setprecision(p) << f1(results, q_id) << w
+        << printing::make_bold("  Precision:") << w << std::setprecision(p)
         << precision(results, q_id) << w << printing::make_bold("  Recall:")
-        << w << recall(results, q_id) << std::endl;
+        << w << std::setprecision(p) << recall(results, q_id) << std::endl;
 }
 }
 }

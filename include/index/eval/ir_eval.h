@@ -75,6 +75,14 @@ class ir_eval
     /**
      * @param results The ranked list of results
      * @param q_id The query that was run to produce these results
+     * @param num_docs For f1@num_docs
+     */
+    double ndcg(const result_type& results, query_id q_id,
+                uint64_t num_docs = std::numeric_limits<uint64_t>::max()) const;
+
+    /**
+     * @param results The ranked list of results
+     * @param q_id The query that was run to produce these results
      * @param out The stream to print to
      */
     void print_stats(const result_type& results, query_id q_id,
