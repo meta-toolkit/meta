@@ -73,6 +73,10 @@ class ir_eval
               double beta = 1.0) const;
 
     /**
+     * @return the Normalized Discounted Cumulative Gain for a query.
+     * \f$ DCG_p = \sum_{i=1}^p \frac{2^{rel_i}-1}{\log(i+1)}, p = num\_docs \f$
+     * and \f$ nDCG_p = \frac{DCG_p}{IDCG_p} \f$, where IDCG is the optimal DCG
+     * score for a given query.
      * @param results The ranked list of results
      * @param q_id The query that was run to produce these results
      * @param num_docs For f1@num_docs
@@ -81,12 +85,41 @@ class ir_eval
                 uint64_t num_docs = std::numeric_limits<uint64_t>::max()) const;
 
     /**
+     * Computes the average precision for a query.
+     */
+    double avg_p(const result_type& results, query_id q_id,
+                 uint64_t num_docs = std::numeric_limits<uint64_t>::max());
+
+    /**
+     * @return the Mean Average Precision for a set of queries.
+     * Note that avg_p() must be called in order for the individual query scores
+     * to be calculated and saved.
+     * \f$ MAP = \frac{1}{n}\sum_{i=1}^n avg\_p(i)\f$
+     */
+    double map() const;
+
+    /**
+     * @return the Geometric Mean Average Precision for a set of queries.
+     * Note that avg_p() must be called in order for the individual query scores
+     * to be calculated and saved.
+     * Also note that the product is computed in log space to minimize any
+     * floating point errors.
+     * \f$ gMAP = \frac{1}{n}\sum_{i=1}^n \log avg\_p(i + 1)\f$
+     */
+    double gmap() const;
+
+    /**
      * @param results The ranked list of results
      * @param q_id The query that was run to produce these results
      * @param out The stream to print to
      */
     void print_stats(const result_type& results, query_id q_id,
-                     std::ostream& out = std::cout) const;
+                     std::ostream& out = std::cout);
+
+    /**
+     * Clears saved scores for MAP and gMAP.
+     */
+    void reset_stats();
 
   private:
     /**
@@ -94,6 +127,11 @@ class ir_eval
      * If the doc_id isn't in the map, it is non-relevant.
      */
     std::unordered_map<query_id, std::unordered_map<doc_id, uint8_t>> _qrels;
+
+    /**
+     * Collection of scores used to calculate MAP and gMAP.
+     */
+    std::vector<double> _scores;
 
     /**
      * Initializes the _byte_index member with pointers into the _judgements

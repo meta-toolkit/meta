@@ -4,6 +4,7 @@
  */
 
 #include <algorithm>
+#include <numeric>
 #include <iomanip>
 #include <fstream>
 #include <sstream>
@@ -59,7 +60,7 @@ void ir_eval::init_index(const std::string& path)
 double ir_eval::precision(const std::vector<std::pair<doc_id, double>>& results,
                           query_id q_id, uint64_t num_docs) const
 {
-    if (results.size() == 0)
+    if (results.empty())
         return 0.0;
 
     const auto& ht = _qrels.find(q_id);
@@ -73,7 +74,7 @@ double ir_eval::precision(const std::vector<std::pair<doc_id, double>>& results,
 double ir_eval::recall(const std::vector<std::pair<doc_id, double>>& results,
                        query_id q_id, uint64_t num_docs) const
 {
-    if (results.size() == 0)
+    if (results.empty())
         return 0.0;
 
     const auto& ht = _qrels.find(q_id);
@@ -84,7 +85,7 @@ double ir_eval::recall(const std::vector<std::pair<doc_id, double>>& results,
 }
 
 double ir_eval::relevant_retrieved(const std::vector<
-                                      std::pair<doc_id, double>>& results,
+                                       std::pair<doc_id, double>>& results,
                                    query_id q_id, uint64_t num_docs) const
 {
     double rel = 0.0;
@@ -120,7 +121,7 @@ double ir_eval::ndcg(const std::vector<std::pair<doc_id, double>>& results,
 {
     // find this query's judgements
     const auto& ht = _qrels.find(q_id);
-    if (ht == _qrels.end())
+    if (ht == _qrels.end() || results.empty())
         return 0.0;
 
     // calculate discounted cumulative gain
@@ -129,7 +130,7 @@ double ir_eval::ndcg(const std::vector<std::pair<doc_id, double>>& results,
     for (auto& res : results)
     {
         double rel = map::safe_at(ht->second, res.first); // 0 if non-relevant
-        dcg += (std::pow(2.0, rel) + 1.0) / std::log(i + 1.0);
+        dcg += (std::pow(2.0, rel) - 1.0) / std::log(i + 1.0);
         if (i++ == num_docs)
             break;
     }
@@ -152,17 +153,70 @@ double ir_eval::ndcg(const std::vector<std::pair<doc_id, double>>& results,
     return dcg / idcg;
 }
 
-void ir_eval::print_stats(const std::vector<std::pair<doc_id, double>>& results,
-                          query_id q_id, std::ostream& out) const
+double ir_eval::avg_p(const std::vector<std::pair<doc_id, double>>& results,
+                      query_id q_id, uint64_t num_docs)
 {
-    auto w = std::setw(8);
+    const auto& ht = _qrels.find(q_id);
+    if (ht == _qrels.end() || results.empty())
+    {
+        _scores.push_back(0.0);
+        return 0.0;
+    }
+
+    uint64_t i = 1;
+    double avgp = 0.0;
+    double num_rel = 1;
+    for (auto& res : results)
+    {
+        if (map::safe_at(ht->second, res.first) != 0)
+        {
+            avgp += num_rel / i;
+            ++num_rel;
+        }
+        if (i++ == num_docs)
+            break;
+    }
+
+    _scores.push_back(avgp / (i - 1.0));
+    return avgp / (i - 1.0);
+}
+
+double ir_eval::map() const
+{
+    return std::accumulate(_scores.begin(), _scores.end(), 0.0)
+           / _scores.size();
+}
+
+double ir_eval::gmap() const
+{
+    double sum = 0.0;
+    for (auto& s : _scores)
+        sum += std::log(s + 1.0);
+    return sum / _scores.size();
+}
+
+void ir_eval::print_stats(const std::vector<std::pair<doc_id, double>>& results,
+                          query_id q_id, std::ostream& out)
+{
+    auto w1 = std::setw(8);
+    auto w2 = std::setw(6);
     size_t p = 3;
-    out << w << printing::make_bold("  NDCG:") << w << std::setprecision(p)
-        << ndcg(results, q_id) << w << printing::make_bold("  F1 Score:") << w
-        << std::setprecision(p) << f1(results, q_id) << w
-        << printing::make_bold("  Precision:") << w << std::setprecision(p)
-        << precision(results, q_id) << w << printing::make_bold("  Recall:")
-        << w << std::setprecision(p) << recall(results, q_id) << std::endl;
+    out << w1 << printing::make_bold("  NDCG:") << w2 << std::setprecision(p)
+        << ndcg(results, q_id);
+    out << w1 << printing::make_bold("  Avg. P:") << w2 << std::setprecision(p)
+        << avg_p(results, q_id);
+    out << w1 << printing::make_bold("  F1 Score:") << w2
+        << std::setprecision(p) << f1(results, q_id);
+    out << w1 << printing::make_bold("  Precision:") << w2
+        << std::setprecision(p) << precision(results, q_id);
+    out << w1 << printing::make_bold("  Recall:") << w2 << std::setprecision(p)
+        << recall(results, q_id);
+    out << std::endl;
+}
+
+void ir_eval::reset_stats()
+{
+    _scores.clear();
 }
 }
 }
