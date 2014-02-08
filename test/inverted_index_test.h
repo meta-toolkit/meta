@@ -25,6 +25,8 @@ void create_config(const std::string& corpus_type) {
                 << *orig_config.get_as<std::string>("stop-words") << "\"\n"
                 << "prefix = \"" << *orig_config.get_as<std::string>("prefix")
                 << "\"\n"
+                << "query-judgements = \"" << *orig_config.get_as<std::string>("query-judgements")
+                << "\"\n"
                 << "corpus-type = \"" << corpus_type << "-corpus\"\n"
                 << "list= \"ceeaus\"\n"
                 << "dataset = \"ceeaus\"\n"
