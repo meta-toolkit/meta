@@ -6,3 +6,6 @@
 	path = deps/porter2_stemmer
 	url = https://github.com/smassung/porter2_stemmer.git
 	branch = meta
+[submodule "deps/libsvm-modules"]
+	path = deps/libsvm-modules
+	url = git@github.com:meta-toolkit/meta-libsvm.git
