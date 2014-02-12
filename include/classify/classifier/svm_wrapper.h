@@ -22,6 +22,9 @@ namespace classify {
  * and libsvm (http://www.csie.ntu.edu.tw/~cjlin/libsvm/)
  * implementation of support vector machine classification.
  *
+ * To use this class, make sure that you have checked out the libsvm-modules
+ * submodule and have compiled both libsvm and liblinear.
+ *
  * If no kernel is selected, liblinear is used. Otherwise, libsvm is used.
  */
 class svm_wrapper: public classifier<index::forward_index>

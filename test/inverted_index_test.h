@@ -27,6 +27,8 @@ void create_config(const std::string& corpus_type) {
                 << "\"\n"
                 << "query-judgements = \"" << *orig_config.get_as<std::string>("query-judgements")
                 << "\"\n"
+                << "libsvm-modules = \"" << *orig_config.get_as<std::string>("libsvm-modules")
+                << "\"\n"
                 << "corpus-type = \"" << corpus_type << "-corpus\"\n"
                 << "list= \"ceeaus\"\n"
                 << "dataset = \"ceeaus\"\n"

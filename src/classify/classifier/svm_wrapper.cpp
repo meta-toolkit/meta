@@ -60,7 +60,7 @@ confusion_matrix svm_wrapper::test(const std::vector<doc_id> & docs)
     // create input for liblinear/libsvm
     std::ofstream out("svm-input");
     for(auto & d_id: docs)
-        out << _idx.liblinear_data(d_id);
+        out << _idx.liblinear_data(d_id) << "\n";
     out.close();
 
     // run liblinear/libsvm
@@ -78,7 +78,7 @@ confusion_matrix svm_wrapper::test(const std::vector<doc_id> & docs)
         // we can assume that the number of lines in the file is equal to the
         // number of testing documents
         std::getline(in, str_val);
-        uint32_t value = std::stoul(str_val) - 1; // get correct start
+        uint32_t value = std::stoul(str_val);
         class_label predicted = _idx.class_label_from_id(label_id{value});
         class_label actual = _idx.label(d_id);
         matrix.add(predicted, actual);
@@ -92,7 +92,7 @@ void svm_wrapper::train(const std::vector<doc_id> & docs)
 {
     std::ofstream out("svm-train");
     for(auto & d_id: docs)
-        out << _idx.liblinear_data(d_id);
+        out << _idx.liblinear_data(d_id) << "\n";
     out.close();
 
     std::string command = _svm_path + _executable + "train "
