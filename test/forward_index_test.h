@@ -77,7 +77,7 @@ void check_bcancer_doc_id(Index& idx) {
     for (auto& count : pdata->counts()) {
         in >> first;
         in >> second;
-        ASSERT(first == count.first);
+        ASSERT(first - 1 == count.first); // - 1 because libsvm format
         ASSERT(std::abs(second - count.second) < epsilon);
     }
 }

@@ -49,12 +49,6 @@ Software](http://jmlr.org/mloss/).
  - Windows users: YMMV. It is not currently supported, but things may
    work. You will likely need Visual Studio 2013 for the C++11 features.
 
- - You will probably want to enable SVM classifier functionality through
-   liblinear. Download the source
-   [here](http://www.csie.ntu.edu.tw/~cjlin/liblinear/), and add the path to
-   liblinear in config.toml (replace the existing path). Make sure you compile
-   it.
-
  - This project makes use of several [git
    submodules](http://git-scm.com/book/en/Git-Tools-Submodules). To initialize
    these, run
@@ -62,6 +56,10 @@ Software](http://jmlr.org/mloss/).
 git submodule init
 git submodule update
 ```
+
+ - Once the submodules are instantiated, go to deps/libsvm-modules and run
+   `make` in the liblinear and libsvm directories if you plan on using the
+   `svm_wrapper` class.
 
  - To compile initially, run the following commands
 ```bash

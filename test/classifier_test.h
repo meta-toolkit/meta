@@ -98,6 +98,15 @@ namespace testing {
             check_split(f_idx, win, 0.79); // this is really low
         });
 
+        testing::run_test("svm-wrapper-" + type, 5, [&](){
+            auto config = cpptoml::parse_file("test-config.toml");
+            auto mod_path = config.get_as<std::string>("libsvm-modules");
+            if(!mod_path)
+                throw std::runtime_error{"no path for libsvm-modules"};
+            svm_wrapper svm{f_idx, *mod_path};
+            check_cv(f_idx, svm, .80);
+        });
+
         testing::run_test("dual-perceptron-cv-" + type, 10, [&](){
             auto dp_p = make_perceptron(f_idx, kernel::polynomial{});
             check_cv(f_idx, dp_p, 0.84);

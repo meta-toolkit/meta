@@ -265,6 +265,8 @@ void forward_index::impl::create_libsvm_metadata()
 
         ++d_id;
     }
+
+    ++_total_unique_terms; // since we subtracted one from the ids earlier
 }
 
 void forward_index::impl::create_uninverted_metadata(
