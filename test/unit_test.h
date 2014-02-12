@@ -1,5 +1,6 @@
 /**
  * @file unit_test.h
+ * @author Sean Massung
  *
  * Contains functions and defines used in unit testing.
  */
@@ -60,6 +61,12 @@ namespace meta
  */
 namespace testing
 {
+    /**
+     * Used to specify whether to fork() the function; useful for when you
+     * want to step through with the debugger.
+     */
+    static bool debug = false;
+
 /**
  * Signal handler for unit tests.
  * Catches signals and responds appropriately, usually by failing the
@@ -91,9 +98,16 @@ void sig_catch(int sig)
  *  no parameters and return void.
  */
 template <class Func>
-void run_test(const std::string& test_name, int timeout, Func&& func)
+int run_test(const std::string& test_name, int timeout, Func&& func)
 {
     std::cerr << std::left << std::setw(50) << (" " + test_name);
+
+    if(debug)
+    {
+        func();
+        std::cerr << "[ debug ] " << std::endl;
+        return 0;
+    }
 
     struct sigaction act;
     act.sa_handler = sig_catch;
@@ -104,6 +118,7 @@ void run_test(const std::string& test_name, int timeout, Func&& func)
     sigaction(SIGSEGV, &act, 0);
     sigaction(SIGINT, &act, 0);
 
+    int status;
     pid_t pid = fork();
     if (pid == 0)
     {
@@ -122,19 +137,52 @@ void run_test(const std::string& test_name, int timeout, Func&& func)
     }
     else if (pid > 0)
     {
-        waitpid(pid, NULL, 0);
+        waitpid(pid, &status, 0);
+        if (!WIFEXITED(status))
+        {
+            FAIL(" child did not exit properly");
+            return 1;
+        }
+
+        return WEXITSTATUS(status);
     }
     else
     {
         std::cerr << "[ " << printing::make_red("ERROR") << " ]"
                   << ": failure to fork" << std::endl;
     }
+
+    return 1;
 }
 
 template <class Func>
-void run_test(const std::string& test_name, Func&& func)
+int run_test(const std::string& test_name, Func&& func)
 {
-    run_test(test_name, 1, func);
+    return run_test(test_name, 1, func);
+}
+
+void report(int num_failed, bool done = false)
+{
+    std::string msg;
+    if (num_failed == 0)
+    {
+        msg = "[ " + printing::make_green("all tests passed") + " ]";
+    }
+    else
+    {
+        std::string tests{" test"};
+        if (num_failed > 1)
+            tests += "s";
+        msg = "[ " + printing::make_red(std::to_string(num_failed) + tests
+                                        + " failed") + " ]";
+    }
+
+    if (done)
+        std::cerr << std::endl << printing::make_bold("Unit testing complete")
+                  << std::endl;
+
+    std::cerr << std::left << std::setw(50) << " ";
+    std::cerr << msg << std::endl;
 }
 }
 }

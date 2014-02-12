@@ -9,14 +9,19 @@
 #include "unit_test.h"
 #include "io/libsvm_parser.h"
 
-namespace meta {
-namespace testing {
+namespace meta
+{
+namespace testing
+{
 
-namespace {
-void label() {
+namespace
+{
+void label()
+{
     auto same = {"a 12:2e-3 15:4.01 99:22 122:1",
                  "a  12:2e-3 15:4.01   99:22 122:1  "};
-    for (auto& text : same) {
+    for (auto& text : same)
+    {
         ASSERT(io::libsvm_parser::label(text) == class_label{"a"});
         auto counts = io::libsvm_parser::counts(text);
         ASSERT(counts.size() == 4);
@@ -31,9 +36,11 @@ void label() {
     }
 }
 
-void no_label() {
+void no_label()
+{
     auto same = {"1:2e-3 2:4.01 3:22 13:1", "1:2e-3 2:4.01   3:22 13:1  "};
-    for (auto& text : same) {
+    for (auto& text : same)
+    {
         auto counts = io::libsvm_parser::counts(text, false);
         ASSERT(counts.size() == 4);
         ASSERT(counts[0].first == 0);
@@ -47,40 +54,58 @@ void no_label() {
     }
 }
 
-void bad_label() {
+void bad_label()
+{
     auto bad = {"thisdatahasnospaces", "thishasspacelast ", " missing"};
-    for (auto& text : bad) {
-        try {
+    for (auto& text : bad)
+    {
+        try
+        {
             class_label lbl = io::libsvm_parser::label(text);
             FAIL("An exception was not thrown on invalid input");
         }
-        catch (io::libsvm_parser::libsvm_parser_exception ex) {
+        catch (io::libsvm_parser::libsvm_parser_exception ex)
+        {
             // nothing, we want an exception!
         }
     }
 }
 
-void bad_counts() {
+void bad_counts()
+{
     auto bad = {"",       "lis:uvfs agi uy:", "label :9 5:5",   "label 9: 5:5",
                 "label ", "label : :::",      "label 9:9 9::9", "label 5:"};
-    for (auto& text : bad) {
-        try {
+    for (auto& text : bad)
+    {
+        try
+        {
             auto counts = io::libsvm_parser::counts(text);
             std::cout << text << std::endl;
             FAIL("An exception was not thrown on invalid input");
         }
-        catch (io::libsvm_parser::libsvm_parser_exception ex) {
+        catch (io::libsvm_parser::libsvm_parser_exception ex)
+        {
             // nothing, we want an exception!
         }
     }
 }
 }
 
-void libsvm_parser_tests() {
-    testing::run_test("libsvm-parser-label", [&]() { label(); });
-    testing::run_test("libsvm-parser-no-label", [&]() { no_label(); });
-    testing::run_test("libsvm-parser-bad-label", [&]() { bad_label(); });
-    testing::run_test("libsvm-parser-bad-counts", [&]() { bad_counts(); });
+int libsvm_parser_tests()
+{
+    int num_failed = 0;
+
+    num_failed += testing::run_test("libsvm-parser-label", [&]()
+        { label(); });
+    num_failed += testing::run_test("libsvm-parser-no-label", [&]()
+        { no_label(); });
+    num_failed += testing::run_test("libsvm-parser-bad-label", [&]()
+        { bad_label(); });
+    num_failed += testing::run_test("libsvm-parser-bad-counts", [&]()
+        { bad_counts(); });
+
+    testing::report(num_failed);
+    return num_failed;
 }
 }
 }
