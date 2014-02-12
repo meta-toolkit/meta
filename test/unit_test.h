@@ -61,6 +61,12 @@ namespace meta
  */
 namespace testing
 {
+    /**
+     * Used to specify whether to fork() the function; useful for when you
+     * want to step through with the debugger.
+     */
+    static bool debug = false;
+
 /**
  * Signal handler for unit tests.
  * Catches signals and responds appropriately, usually by failing the
@@ -95,6 +101,13 @@ template <class Func>
 int run_test(const std::string& test_name, int timeout, Func&& func)
 {
     std::cerr << std::left << std::setw(50) << (" " + test_name);
+
+    if(debug)
+    {
+        func();
+        std::cerr << "[ debug ] " << std::endl;
+        return 0;
+    }
 
     struct sigaction act;
     act.sa_handler = sig_catch;

@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 {
     if(argc == 1)
     {
-        std::cerr << "Usage: " << argv[0] << " [opt1 [opt2 [...]]]" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " [opt1 [opt2 [...]]] [--debug]" << std::endl;
         std::cerr << "where opt is one of: " << std::endl;
         std::cerr << " \"all\": runs all unit tests" << std::endl;
         std::cerr << " \"tokenizers\": runs tokenization tests" << std::endl;
@@ -39,11 +39,13 @@ int main(int argc, char* argv[])
         std::cerr << " \"classifiers\": runs classifier tests" << std::endl;
         std::cerr << " \"rankers\": runs ranker tests" << std::endl;
         std::cerr << " \"ir-eval\": runs IR evaluation tests" << std::endl;
+        std::cerr << "Specify --debug to not fork() tests" << std::endl;
         return 1;
     }
 
     std::unordered_set<std::string> args{argv + 1, argv + argc};
     bool all = args.find("all") != args.end();
+    testing::debug = args.find("--debug") != args.end();
     int num_failed = 0;
 
     if (all || args.find("tokenizers") != args.end())
