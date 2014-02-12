@@ -14,7 +14,7 @@ namespace io {
 compressed_file_reader::compressed_file_reader(const std::string & filename,
         std::function<uint64_t(uint64_t)> mapping):
     _file{make_unique<mmap_file>(filename)},
-    _start{_file->start()},
+    _start{_file->begin()},
     _size{_file->size()},
     _status{notDone},
     _current_value{0},
@@ -29,7 +29,7 @@ compressed_file_reader::compressed_file_reader(const std::string & filename,
 compressed_file_reader::compressed_file_reader(const mmap_file & file,
         std::function<uint64_t(uint64_t)> mapping):
     _file{nullptr},
-    _start{file.start()},
+    _start{file.begin()},
     _size{file.size()},
     _status{notDone},
     _current_value{0},

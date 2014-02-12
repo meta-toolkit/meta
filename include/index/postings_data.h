@@ -209,7 +209,7 @@ class postings_data
         {
             out << _p_id;
             for(auto & c: _counts)
-                out << ' ' << c.first << ':' << c.second;
+                out << ' ' << (c.first + 1) << ':' << c.second;
             out << '\n';
         }
 

@@ -33,23 +33,25 @@ void test_stem(Stemmer& stemmer, std::ifstream& in, bool do_stem)
     }
 }
 
-void stemmer_tests()
+int stemmer_tests()
 {
-    testing::run_test("no-stemmer", [&]()
+    int num_failed = 0;
+
+    num_failed += testing::run_test("no-stemmer", [&]()
     {
         std::ifstream in{"../data/porter2_stems.txt"};
         stemmers::no_stemmer stemmer;
         test_stem(stemmer, in, false);
     });
 
-    testing::run_test("porter2-stemmer", [&]()
+    num_failed += testing::run_test("porter2-stemmer", [&]()
     {
         std::ifstream in{"../data/porter2_stems.txt"};
         stemmers::porter2 stemmer;
         test_stem(stemmer, in, true);
     });
 
-    testing::run_test("porter2-special-cases", [&]()
+    num_failed += testing::run_test("porter2-special-cases", [&]()
     {
         stemmers::porter2 stemmer;
         const static auto unchanged = {"'", "q", "<s>", "</s>"};
@@ -60,6 +62,9 @@ void stemmer_tests()
             ASSERT(to_stem == w);
         }
     });
+
+    testing::report(num_failed);
+    return num_failed;
 }
 }
 }

@@ -1,5 +1,4 @@
-slda = "/home/sean/projects/slda/"
-liblinear = "/home/sean/projects/liblinear/"
+libsvm-modules = "/home/sean/projects/meta/deps/libsvm-modules/"
 prefix = "/home/sean/projects/meta-data/"
 stop-words = "/home/sean/projects/meta/data/lemur-stopwords.txt"
 function-words = "/home/sean/projects/meta/data/function-words.txt"

@@ -46,9 +46,11 @@ struct file_guard
 };
 }
 
-void string_list_tests()
+int string_list_tests()
 {
-    testing::run_test("string_list_writer_basic", [&]()
+    int num_failed = 0;
+
+    num_failed += testing::run_test("string_list_writer_basic", [&]()
     {
         file_guard f{"meta-tmp-string-list.bin"};
         file_guard fi{"meta-tmp-string-list.bin_index"};
@@ -71,7 +73,7 @@ void string_list_tests()
         assert_read(file, "a no good very dead ex-parrot");
     });
 
-    testing::run_test("string_list_read_basic", [&]()
+    num_failed += testing::run_test("string_list_read_basic", [&]()
     {
         file_guard f{"meta-tmp-string-list.bin"};
         file_guard fi{"meta-tmp-string-list.bin_index"};
@@ -94,6 +96,9 @@ void string_list_tests()
         ASSERT(std::strcmp(list.at(4), "dog") == 0);
         ASSERT(std::strcmp(list.at(3), "a no good very dead ex-parrot") == 0);
     });
+
+    testing::report(num_failed);
+    return num_failed;
 }
 }
 }

@@ -151,6 +151,7 @@ add_library(meta-index
             src/index/string_list_writer.cpp
             src/index/vocabulary_map.cpp
             src/index/vocabulary_map_writer.cpp
+            src/index/eval/ir_eval.cpp
             src/index/ranker/okapi_bm25.cpp
             src/index/ranker/lm_ranker.cpp
             src/index/ranker/ranker.cpp

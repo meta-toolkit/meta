@@ -55,7 +55,12 @@ counts_t counts(const std::string & text, bool contains_label /* = true */)
             throw libsvm_parser_exception{"incorrectly formatted libsvm data: "
                 + text};
 
-        counts.emplace_back(term, count);
+        if(term == 0)
+            throw libsvm_parser_exception{"term id was 0 from libsvm format"};
+
+        // liblinear has term_ids start at 1 instead of 0 like MeTA and libsvm
+        term_id minus_term{static_cast<uint64_t>(term) - 1};
+        counts.emplace_back(minus_term, count);
     }
 
     if(counts.empty())

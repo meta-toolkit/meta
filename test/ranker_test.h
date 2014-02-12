@@ -40,46 +40,48 @@ void test_rank(Ranker& r, Index& idx)
 }
 }
 
-void ranker_tests()
+int ranker_tests()
 {
     create_config("file");
     system("/usr/bin/rm -rf ceeaus-inv");
     auto idx = index::make_index<index::inverted_index, caching::splay_cache>(
         "test-config.toml", uint32_t{10000});
 
+    int num_failed = 0;
     /* TODO why does this not always work?
-    testing::run_test("ranker-absolute-discount", 3, [&]()
+    num_failed += testing::run_test("ranker-absolute-discount", 5, [&]()
     {
         index::absolute_discount r;
         test_rank(r, idx);
     });
     */
-
-    testing::run_test("ranker-dirichlet-prior", 3, [&]()
+    num_failed += testing::run_test("ranker-dirichlet-prior", 5, [&]()
     {
         index::dirichlet_prior r;
         test_rank(r, idx);
     });
 
-    testing::run_test("ranker-jelinek-mercer", 3, [&]()
+    num_failed += testing::run_test("ranker-jelinek-mercer", 5, [&]()
     {
         index::jelinek_mercer r;
         test_rank(r, idx);
     });
 
-    testing::run_test("ranker-okapi-bm25", 3, [&]()
+    num_failed += testing::run_test("ranker-okapi-bm25", 5, [&]()
     {
         index::okapi_bm25 r;
         test_rank(r, idx);
     });
 
-    testing::run_test("ranker-pivoted-length", 3, [&]()
+    num_failed += testing::run_test("ranker-pivoted-length", 5, [&]()
     {
         index::pivoted_length r;
         test_rank(r, idx);
     });
 
     system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
+    testing::report(num_failed);
+    return num_failed;
 }
 }
 }

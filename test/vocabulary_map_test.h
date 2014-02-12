@@ -136,31 +136,36 @@ void read_file(uint16_t size = 20)
 }
 }
 
-void vocabulary_map_tests()
+int vocabulary_map_tests()
 {
-    testing::run_test("vocabulary_writer_full_block", [&]()
+    int num_failed = 0;
+
+    num_failed += testing::run_test("vocabulary_writer_full_block", [&]()
     {
         write_file();
         assert_correctness();
     });
 
-    testing::run_test("vocabulary_writer_partial_blocks", [&]()
+    num_failed += testing::run_test("vocabulary_writer_partial_blocks", [&]()
     {
         write_file(23);
         assert_correctness(23);
     });
 
-    testing::run_test("vocabulary_map_full_block", [&]()
+    num_failed += testing::run_test("vocabulary_map_full_block", [&]()
     {
         write_file();
         read_file();
     });
 
-    testing::run_test("vocabulary_map_partial_blocks", [&]()
+    num_failed += testing::run_test("vocabulary_map_partial_blocks", [&]()
     {
         write_file(23);
         read_file(23);
     });
+
+    testing::report(num_failed);
+    return num_failed;
 }
 }
 }

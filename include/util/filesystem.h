@@ -111,7 +111,7 @@ inline uint64_t num_lines(const std::string & filename, char delimiter = '\n')
     for(uint64_t idx = 0; idx < file.size(); ++idx)
     {
         progress(idx);
-        if(file.start()[idx] == delimiter)
+        if(file[idx] == delimiter)
             ++num;
     }
 
