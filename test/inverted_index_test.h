@@ -24,14 +24,25 @@ void create_config(const std::string& corpus_type)
     std::string config_filename{"test-config.toml"};
     std::ofstream config_file{config_filename};
 
-    config_file << "stop-words = \""
-                << *orig_config.get_as<std::string>("stop-words") << "\"\n"
+    auto stop_words = orig_config.get_as<std::string>("stop-words");
+    if(!stop_words)
+        throw std::runtime_error{"\"stop-words\" not in config"};
+
+    auto libsvm_modules = orig_config.get_as<std::string>("libsvm-modules");
+    if(!libsvm_modules)
+        throw std::runtime_error{"\"libsvm-modules\" not in config"};
+
+    auto query_judgements = orig_config.get_as<std::string>("query-judgements");
+    if(!query_judgements)
+        throw std::runtime_error{"\"query-judgements\" not in config"};
+
+    config_file << "stop-words = \"" << *stop_words
+                << "\"\n"
                 << "prefix = \"" << *orig_config.get_as<std::string>("prefix")
                 << "\"\n"
-                << "query-judgements = \""
-                << *orig_config.get_as<std::string>("query-judgements")
+                << "query-judgements = \"" << *query_judgements
                 << "\"\n"
-                << "libsvm-modules = \"" << *orig_config.get_as<std::string>("libsvm-modules")
+                << "libsvm-modules = \"" << *libsvm_modules
                 << "\"\n"
                 << "corpus-type = \"" << corpus_type << "-corpus\"\n"
                 << "list= \"ceeaus\"\n"
