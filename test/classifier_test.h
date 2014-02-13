@@ -108,26 +108,6 @@ int run_tests(const std::string& type)
         check_split(f_idx, win, 0.75); // this is really low
     });
 
-    num_failed += testing::run_test("dual-perceptron-cv-" + type, 10, [&]()
-    {
-        auto dp_p = make_perceptron(f_idx, kernel::polynomial{});
-        check_cv(f_idx, dp_p, 0.84);
-        auto dp_rb = make_perceptron(f_idx, kernel::radial_basis{0.5});
-        check_cv(f_idx, dp_rb, 0.84);
-        auto dp_s = make_perceptron(f_idx, kernel::sigmoid{1, 1});
-        check_cv(f_idx, dp_s, 0.84);
-    });
-
-    num_failed += testing::run_test("dual-perceptron-split-" + type, 10, [&]()
-    {
-        auto dp_p = make_perceptron(f_idx, kernel::polynomial{});
-        check_split(f_idx, dp_p, 0.80);
-        auto dp_rb = make_perceptron(f_idx, kernel::radial_basis{0.5});
-        check_split(f_idx, dp_rb, 0.80);
-        auto dp_s = make_perceptron(f_idx, kernel::sigmoid{1, 1});
-        check_split(f_idx, dp_s, 0.80);
-    });
-
     num_failed += testing::run_test("svm-wrapper-" + type, 5, [&]()
     {
         auto config = cpptoml::parse_file("test-config.toml");
