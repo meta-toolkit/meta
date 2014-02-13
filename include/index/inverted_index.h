@@ -39,16 +39,12 @@ namespace index {
 
 /**
  * The inverted_index class stores information on a corpus indexed by term_ids.
- * Each term_id key is associated with an IDF (inverse document frequency) and
- * per-document frequency (by doc_id). The inverted index also stores the sizes
- * of each document.
+ * Each term_id key is associated with a per-document frequency (by doc_id).
  *
  * It is assumed all this information will not fit in memory, so a large
  * postings file containing the (term_id -> each doc_id) information is saved on
- * disk. A lexicon (or "dictionary") is used to store the document size
- * information and contains pointers into the large postings file. It is assumed
- * that the lexicon will fit in memory. The IDF can be calculated by counting
- * the number of doc_ids after a specific term in the postings data.
+ * disk. A lexicon (or "dictionary") contains pointers into the large postings
+ * file. It is assumed that the lexicon will fit in memory.
  */
 class inverted_index: public disk_index
 {

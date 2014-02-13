@@ -1,10 +1,9 @@
 /**
  * @file score_data.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- * 
- * @author Sean Massung
  */
 
 #ifndef _SCORE_DATA_H_

@@ -1,6 +1,7 @@
 /**
  * @file disk_index.h
  * @author Sean Massung
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
@@ -51,7 +52,7 @@ class disk_index
     virtual ~disk_index() = default;
 
     /**
-     * The name of this index.
+     * @return the name of this index.
      */
     std::string index_name() const;
 
@@ -116,7 +117,7 @@ class disk_index
 
     /**
      * @param t_id The term_id to get the original text for
-     * @return The string representation of the term
+     * @return the string representation of the term
      */
     std::string term_text(term_id t_id) const;
 
@@ -126,7 +127,8 @@ class disk_index
 
     /**
      * Constructor.
-     * @param config_file
+     * @param config_file The config settings used to create this index
+     * @param name The name of this disk_index
      */
     disk_index(const cpptoml::toml_group & config, const std::string& name);
 

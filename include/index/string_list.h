@@ -1,6 +1,9 @@
 /**
  * @file string_list.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _META_STRING_LIST_H_
@@ -27,6 +30,7 @@ class string_list
   public:
     /**
      * Constructs the string list
+     * @param path The path to where this object is stored
      */
     string_list(const std::string& path);
 
@@ -41,12 +45,13 @@ class string_list
     string_list& operator=(string_list&&) = default;
 
     /**
-     * Gets the string at a given index.
+     * @param idx
+     * @return the string at a given index.
      */
     const char* at(uint64_t idx) const;
 
     /**
-     * Gets the number of strings in the list.
+     * @return the number of strings in the list.
      */
     uint64_t size() const;
 

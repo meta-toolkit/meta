@@ -16,9 +16,10 @@ namespace meta {
 namespace index {
 
 /**
- * Represents a portion of the inverted_index's postings file. It is an
- * intermediate file mapping primary keys to secondary keys. The chunks
- * are sorted to enable efficient merging.
+ * Represents a portion of a disk_index's postings file. It is an intermediate
+ * file mapping primary keys to secondary keys. The chunks are sorted to enable
+ * efficient merging, and define an operator< to allow them to be sorted or
+ * stored in a priority queue.
  */
 template <class PrimaryKey, class SecondaryKey>
 class chunk
@@ -66,10 +67,15 @@ class chunk
         void memory_merge_with(Container & pdata);
 
     private:
-
+        /**
+         * Calculates the size of the file this chunk represents in bytes.
+         */
         void set_size();
 
+        /** the path to this chunk file on disk */
         std::string _path;
+
+        /** the number of bytes this chunk takes up */
         uint64_t _size;
 };
 

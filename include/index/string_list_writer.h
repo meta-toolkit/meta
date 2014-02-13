@@ -1,6 +1,9 @@
 /**
  * @file string_list_writer.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _META_STRING_LIST_WRITER_H_
@@ -34,8 +37,8 @@ class string_list_writer
      * Constructs the writer, writing the string file to the given path.
      * The index file will go alongside that path.
      *
-     * @param path the path to write the string file to.
-     * @param size the number of strings in the list (must be known)
+     * @param path The path to write the string file to.
+     * @param size The number of strings in the list (must be known)
      */
     string_list_writer(const std::string& path, uint64_t size);
 
@@ -51,6 +54,8 @@ class string_list_writer
 
     /**
      * Sets the string at idx to be elem.
+     * @param idx
+     * @param elem
      */
     void insert(uint64_t idx, const std::string& elem);
 

@@ -44,8 +44,8 @@ class forward_index : public disk_index
 {
   public:
     /**
-       * Basic exception for forward_index interactions.
-       */
+     * Basic exception for forward_index interactions.
+     */
     class forward_index_exception : public std::runtime_error
     {
       public:

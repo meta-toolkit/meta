@@ -161,9 +161,9 @@ void disk_index::disk_index_impl::save_label_id_mapping()
 }
 
 string_list_writer
-    disk_index::disk_index_impl::make_doc_id_writer(uint64_t size) const
+    disk_index::disk_index_impl::make_doc_id_writer(uint64_t num_docs) const
 {
-    return {index_name_ + files[DOC_IDS_MAPPING], size};
+    return {index_name_ + files[DOC_IDS_MAPPING], num_docs};
 }
 
 void disk_index::disk_index_impl::set_label(doc_id id, const class_label& label)

@@ -1,6 +1,9 @@
 /**
  * @file chunk_handler.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _META_INDEX_CHUNK_HANDLER_H_
@@ -23,6 +26,10 @@ namespace meta
 namespace index
 {
 
+/**
+ * An interface for writing and merging inverted chunks of postings_data for a
+ * disk_index.
+ */
 template <class Index>
 class chunk_handler
 {
@@ -32,14 +39,23 @@ class chunk_handler
     using secondary_key_type = typename index_pdata_type::secondary_key_type;
     using chunk_t = chunk<primary_key_type, secondary_key_type>;
 
+    /**
+     * The object that is fed postings_data by the index.
+     */
     class producer
     {
       public:
+        /**
+         * @param parent A back-pointer to the handler this producer is
+         * operating on
+         */
         producer(chunk_handler* parent);
 
         /**
          * Handler for when a given secondary_key has been processed and is
          * ready to be added to the in-memory chunk.
+         * @param key The secondary key used to index the counts container
+         * @param counts A collection of (primary_key_type, count) pairs
          */
         template <class Container>
         void operator()(const secondary_key_type& key, const Container& counts);
@@ -62,6 +78,7 @@ class chunk_handler
         /** the current size of the in-memory chunk */
         uint64_t chunk_size_;
 
+        /** the maximum allowed size of a chunk in bytes before it is written */
         const static uint64_t constexpr max_size = 1024 * 1024 * 128; // 128 MB
 
         /** a back-pointer to the handler this producer is operating on */
@@ -70,7 +87,7 @@ class chunk_handler
 
     /**
      * Constructs a chunk_handler that writes to the given prefix.
-     * @param prefix the prefix for all chunks to be written
+     * @param prefix The prefix for all chunks to be written
      */
     chunk_handler(const std::string& prefix);
 
@@ -82,12 +99,12 @@ class chunk_handler
     producer make_producer();
 
     /**
-     * Gets the number of chunks this handler has written to disk.
+     * @return the number of chunks this handler has written to disk.
      */
     uint32_t size() const;
 
     /**
-     * Gets the size, in bytes, of the last chunk written to disk after
+     * @return the size, in bytes, of the last chunk written to disk after
      * merging.
      */
     uint64_t final_size() const;
@@ -98,16 +115,21 @@ class chunk_handler
     void merge_chunks();
 
     /**
-     * Gets the number of unique primary keys seen while merging chunks.
+     * @return the number of unique primary keys seen while merging chunks.
      */
     uint64_t unique_primary_keys() const;
 
+    /** simple exception class for chunk_handler interactions */
     class chunk_handler_exception : public std::runtime_error
     {
         using std::runtime_error::runtime_error;
     };
 
   private:
+    /**
+     * @param pdata The collection of postings_data objects to combine into a
+     * chunk
+     */
     void write_chunk(std::vector<index_pdata_type>& pdata);
 
     /** the prefix for all chunks to be written */

@@ -2,6 +2,9 @@
  * @file make_index.h
  * @author Sean Massung
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _META_MAKE_INDEX_H_

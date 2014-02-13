@@ -1,5 +1,6 @@
 /**
  * @file cached_index.tcc
+ * @author Chase Geigle
  */
 
 #include "index/cached_index.h"

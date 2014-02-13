@@ -25,9 +25,8 @@ template <class, class>
 class postings_data;
 
 template <class PrimaryKey, class SecondaryKey>
-io::compressed_file_reader&
-    operator>>(io::compressed_file_reader&,
-               postings_data<PrimaryKey, SecondaryKey>&);
+io::compressed_file_reader& operator>>(io::compressed_file_reader&,
+    postings_data<PrimaryKey, SecondaryKey>&);
 
 /**
  * A class to represent the per-PrimaryKey data in an index's postings
@@ -63,6 +62,9 @@ class postings_data
             "reinterpret_cast is used in postings_data"
         );
 
+        /**
+         * postings_data is default-constructable.
+         */
         postings_data() = default;
 
         /**
@@ -109,6 +111,11 @@ class postings_data
          */
         bool operator<(const postings_data & other) const;
 
+        /**
+         * Helper function used by istream operator.
+         * @param in The stream to read from
+         * @param pd The postings data object to write the stream info to
+         */
         friend void stream_helper(
             io::compressed_file_reader & in,
             postings_data<PrimaryKey, SecondaryKey> & pd)
@@ -123,38 +130,12 @@ class postings_data
             }
         }
 
-#if 0
         /**
          * Reads semi-compressed postings data from a compressed file.
          * @param in The stream to read from
          * @param pd The postings data object to write the stream info to
          * @return the input stream
          */
-        friend io::compressed_file_reader&
-            operator>>(io::compressed_file_reader& in,
-                       postings_data<PrimaryKey, SecondaryKey>& pd)
-        {
-            pd._p_id = in.next();
-            stream_helper(in, pd);
-            return in;
-        }
-
-        /**
-         * Reads semi-compressed postings data from a compressed file.
-         * @param in The stream to read from
-         * @param pd The postings data object to write the stream info to
-         * @return the input stream
-         */
-        friend io::compressed_file_reader & operator>>(
-                io::compressed_file_reader & in,
-                postings_data<std::string, doc_id> & pd)
-        {
-            pd._p_id = in.next_string();
-            stream_helper(in, pd);
-            return in;
-        }
-#endif
-
         friend io::compressed_file_reader& operator>>
             <>(io::compressed_file_reader& in,
                postings_data<PrimaryKey, SecondaryKey>& pd);
@@ -234,9 +215,13 @@ class postings_data
         uint64_t bytes_used() const;
 
     private:
-
+        /** the primary id this postings_data represents */
         PrimaryKey _p_id;
+
+        /** the (secondary_key_type, count) pairs */
         count_t _counts;
+
+        /** delimiter used when writing to compressed files */
         const static uint64_t _delimiter = std::numeric_limits<uint64_t>::max();
 };
 
@@ -288,6 +273,9 @@ bool operator==(const postings_data<PrimaryKey, SecondaryKey> & lhs,
 
 namespace std {
     template <class PrimaryKey, class SecondaryKey>
+    /**
+     * Hash specialization for postings_data<PrimaryKey, SecondaryKey>
+     */
     struct hash<meta::index::postings_data<PrimaryKey, SecondaryKey>> {
         using pdata_t = meta::index::postings_data<PrimaryKey, SecondaryKey>;
         size_t operator()(const pdata_t & pd) const {
