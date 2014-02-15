@@ -4,6 +4,7 @@
  */
 
 #include <algorithm>
+#include <cstring>
 #include "index/postings_data.h"
 
 namespace meta {
@@ -18,8 +19,7 @@ template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::merge_with(
         postings_data & other)
 {
-    auto searcher = [](const pair_t & p, const SecondaryKey & s) {
-        return p.first < s;
+    auto searcher = [](const pair_t & p, const SecondaryKey & s) { return p.first < s;
     };
 
     // O(n log n) now, could be O(n)
@@ -132,7 +132,12 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
        || std::is_same<PrimaryKey, std::string>::value)
         writer.write(static_cast<uint64_t>(mutable_counts[0].second));
     else
-        writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[0].second));
+    {
+        uint64_t to_write;
+        std::memcpy(&to_write, &mutable_counts[0].second,
+                    sizeof(mutable_counts[0].second));
+        writer.write(to_write);
+    }
 
     // use gap encoding on the SecondaryKeys (we know they are integral types)
     uint64_t cur_id = mutable_counts[0].first;
@@ -147,7 +152,12 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
            || std::is_same<PrimaryKey, std::string>::value)
             writer.write(static_cast<uint64_t>(mutable_counts[i].second));
         else
-            writer.write(*reinterpret_cast<uint64_t*>(&mutable_counts[i].second));
+        {
+            uint64_t to_write;
+            std::memcpy(&to_write, &mutable_counts[i].second,
+                        sizeof(mutable_counts[i].second));
+            writer.write(to_write);
+        }
     }
 
     // mark end of postings_data
@@ -177,7 +187,7 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         if(std::is_same<PrimaryKey, term_id>::value)
             count = static_cast<double>(next);
         else
-            count = *reinterpret_cast<double*>(&next);
+            std::memcpy(&count, &next, sizeof(next));
 
         _counts.emplace_back(key, count);
     }
