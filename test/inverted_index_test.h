@@ -49,7 +49,7 @@ void create_config(const std::string& corpus_type)
                 << "dataset = \"ceeaus\"\n"
                 << "forward-index = \"ceeaus-fwd\"\n"
                 << "inverted-index = \"ceeaus-inv\"\n"
-                << "[[tokenizers]]\n"
+                << "[[analyzers]]\n"
                 << "method = \"ngram\"\n"
                 << "ngramOpt = \"Word\"\n"
                 << "ngram = 1\n";

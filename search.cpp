@@ -13,7 +13,7 @@
 #include "index/inverted_index.h"
 #include "index/ranker/all.h"
 #include "parallel/parallel_for.h"
-#include "tokenizers/tokenizer.h"
+#include "analyzers/analyzer.h"
 #include "util/range.h"
 #include "util/time.h"
 

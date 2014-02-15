@@ -6,7 +6,7 @@
 #include <unordered_set>
 #include <string>
 #include "unit_test.h"
-#include "tokenizer_test.h"
+#include "analyzer_test.h"
 #include "inverted_index_test.h"
 #include "ranker_test.h"
 #include "stemmer_test.h"
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
         std::cerr << "Usage: " << argv[0] << " [opt1 [opt2 [...]]] [--debug]" << std::endl;
         std::cerr << "where opt is one of: " << std::endl;
         std::cerr << " \"all\": runs all unit tests" << std::endl;
-        std::cerr << " \"tokenizers\": runs tokenization tests" << std::endl;
+        std::cerr << " \"analyzers\": runs tokenization tests" << std::endl;
         std::cerr << " \"stemmers\": runs stemmer tests" << std::endl;
         std::cerr << " \"parallel\": runs parallel functionality tests" << std::endl;
         std::cerr << " \"inverted-index\": runs inverted index tests" << std::endl;
@@ -48,10 +48,10 @@ int main(int argc, char* argv[])
     testing::debug = args.find("--debug") != args.end();
     int num_failed = 0;
 
-    if (all || args.find("tokenizers") != args.end())
+    if (all || args.find("analyzers") != args.end())
     {
-        std::cout << printing::make_bold("Testing tokenizers") << std::endl;
-        num_failed += testing::tokenizer_tests();
+        std::cout << printing::make_bold("Testing analyzers") << std::endl;
+        num_failed += testing::analyzer_tests();
     }
     if (all || args.find("stemmers") != args.end())
     {

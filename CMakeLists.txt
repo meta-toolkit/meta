@@ -120,28 +120,28 @@ add_library(meta-stemmers
             src/stemmers/porter2.cpp
             deps/porter2_stemmer/porter2_stemmer.cpp)
 
-add_library(meta-tokenizers
-            src/tokenizers/multi_tokenizer.cpp
-            src/tokenizers/tokenizer.cpp
-            src/tokenizers/libsvm_tokenizer.cpp
-            src/tokenizers/ngram/ngram_char_tokenizer.cpp
-            src/tokenizers/ngram/ngram_fw_tokenizer.cpp
-            src/tokenizers/ngram/ngram_lex_tokenizer.cpp
-            src/tokenizers/ngram/ngram_pos_tokenizer.cpp
-            src/tokenizers/ngram/ngram_simple_tokenizer.cpp
-            src/tokenizers/ngram/ngram_tokenizer.cpp
-            src/tokenizers/ngram/ngram_word_tokenizer.cpp
-            src/tokenizers/tree/branch_tokenizer.cpp
-            src/tokenizers/tree/depth_tokenizer.cpp
-            src/tokenizers/tree/parse_tree.cpp
-            src/tokenizers/tree/semi_skeleton_tokenizer.cpp
-            src/tokenizers/tree/skeleton_tokenizer.cpp
-            src/tokenizers/tree/subtree_tokenizer.cpp
-            src/tokenizers/tree/tag_tokenizer.cpp)
+add_library(meta-analyzers
+            src/analyzers/multi_analyzer.cpp
+            src/analyzers/analyzer.cpp
+            src/analyzers/libsvm_analyzer.cpp
+            src/analyzers/ngram/ngram_char_analyzer.cpp
+            src/analyzers/ngram/ngram_fw_analyzer.cpp
+            src/analyzers/ngram/ngram_lex_analyzer.cpp
+            src/analyzers/ngram/ngram_pos_analyzer.cpp
+            src/analyzers/ngram/ngram_simple_analyzer.cpp
+            src/analyzers/ngram/ngram_analyzer.cpp
+            src/analyzers/ngram/ngram_word_analyzer.cpp
+            src/analyzers/tree/branch_analyzer.cpp
+            src/analyzers/tree/depth_analyzer.cpp
+            src/analyzers/tree/parse_tree.cpp
+            src/analyzers/tree/semi_skeleton_analyzer.cpp
+            src/analyzers/tree/skeleton_analyzer.cpp
+            src/analyzers/tree/subtree_analyzer.cpp
+            src/analyzers/tree/tag_analyzer.cpp)
 
-# some tokenizer clases use io::parser
-# ngram_word_tokenizer needs access to the stemmers
-target_link_libraries(meta-tokenizers meta-io meta-corpus meta-stemmers)
+# some analyzer clases use io::parser
+# ngram_word_analyzer needs access to the stemmers
+target_link_libraries(meta-analyzers meta-io meta-corpus meta-stemmers)
 
 add_library(meta-index
             src/index/disk_index.cpp
@@ -161,7 +161,7 @@ add_library(meta-index
             src/index/ranker/pivoted_length.cpp)
 
 target_link_libraries(meta-index
-                      meta-util meta-io meta-corpus meta-tokenizers)
+                      meta-util meta-io meta-corpus meta-analyzers)
 
 add_library(meta-classify
             src/classify/confusion_matrix.cpp

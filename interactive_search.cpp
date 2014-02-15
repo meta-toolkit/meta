@@ -11,7 +11,7 @@
 #include "corpus/document.h"
 #include "index/inverted_index.h"
 #include "index/ranker/all.h"
-#include "tokenizers/tokenizer.h"
+#include "analyzers/analyzer.h"
 #include "util/printing.h"
 #include "util/time.h"
 

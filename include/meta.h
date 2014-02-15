@@ -126,7 +126,7 @@ namespace meta
      * Contains various ways to segment text and deal with preprocessed files
      * (POS tags, parse trees, etc).
      */
-    namespace tokenizers {}
+    namespace analyzers {}
 
     /**
      * Topic modeling functionality.

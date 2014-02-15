@@ -285,13 +285,13 @@ void forward_index::impl::create_uninverted_metadata(
 bool forward_index::impl::is_libsvm_format(const cpptoml::toml_group& config)
     const
 {
-    auto tokenizers = config.get_group_array("tokenizers")->array();
-    if (tokenizers.size() != 1)
+    auto analyzers = config.get_group_array("analyzers")->array();
+    if (analyzers.size() != 1)
         return false;
 
-    auto method = tokenizers[0]->get_as<std::string>("method");
+    auto method = analyzers[0]->get_as<std::string>("method");
     if (!method)
-        throw forward_index_exception{"failed to find tokenizer method"};
+        throw forward_index_exception{"failed to find analyzer method"};
 
     return *method == "libsvm";
 }

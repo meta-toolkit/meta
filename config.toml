@@ -15,15 +15,15 @@ list = "topics"
 forward-index = "topics-fwd"
 inverted-index = "topics-inv"
 
-[[tokenizers]]
+[[analyzers]]
 method = "libsvm"
 
-#[[tokenizers]]
+#[[analyzers]]
 #method = "ngram"
 #ngramOpt = "Word"
 #ngram = 1
 
-#[[tokenizers]]
+#[[analyzers]]
 #method = "tree"
 #treeOpt = "Subtree"
 

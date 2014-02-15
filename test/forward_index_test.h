@@ -29,7 +29,7 @@ void create_libsvm_config()
                 << "dataset = \"breast-cancer\"\n"
                 << "forward-index = \"bcancer-fwd\"\n"
                 << "inverted-index = \"bcancer-inv\"\n"
-                << "[[tokenizers]]\n"
+                << "[[analyzers]]\n"
                 << "method = \"libsvm\"\n";
 }
 
