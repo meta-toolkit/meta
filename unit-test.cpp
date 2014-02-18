@@ -7,6 +7,7 @@
 #include <string>
 #include "unit_test.h"
 #include "analyzer_test.h"
+#include "filter_test.h"
 #include "inverted_index_test.h"
 #include "ranker_test.h"
 #include "stemmer_test.h"
@@ -29,6 +30,7 @@ int main(int argc, char* argv[])
         std::cerr << "where opt is one of: " << std::endl;
         std::cerr << " \"all\": runs all unit tests" << std::endl;
         std::cerr << " \"analyzers\": runs tokenization tests" << std::endl;
+        std::cerr << " \"filters\": runs filter tests" << std::endl;
         std::cerr << " \"stemmers\": runs stemmer tests" << std::endl;
         std::cerr << " \"parallel\": runs parallel functionality tests" << std::endl;
         std::cerr << " \"inverted-index\": runs inverted index tests" << std::endl;
@@ -52,6 +54,11 @@ int main(int argc, char* argv[])
     {
         std::cout << printing::make_bold("Testing analyzers") << std::endl;
         num_failed += testing::analyzer_tests();
+    }
+    if (all || args.find("filters") != args.end())
+    {
+        std::cout << printing::make_bold("Testing filters") << std::endl;
+        num_failed += testing::filter_tests();
     }
     if (all || args.find("stemmers") != args.end())
     {
