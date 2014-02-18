@@ -61,7 +61,7 @@ int test_correctness(std::vector<double>& v)
         std::fill(v.begin(), v.end(), 1.0);
         std::mutex mtx;
         parallel::parallel_for(v.begin(), v.end(), easy_func<double>);
-        ASSERT(std::accumulate(v.begin(), v.end(), 0.0) == 0.0);
+        ASSERT_EQUAL(std::accumulate(v.begin(), v.end(), 0.0), 0.0);
     });
 }
 
@@ -79,11 +79,11 @@ int test_threadpool()
         for (auto& fut : futures)
         {
             auto val = fut.get();
-            ASSERT(val == 1);
+            ASSERT_EQUAL(val, 1);
             sum += val;
         }
 
-        ASSERT(sum == 16);
+        ASSERT_EQUAL(sum, 16);
     });
 }
 

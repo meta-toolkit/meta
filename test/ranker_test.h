@@ -26,15 +26,15 @@ void test_rank(Ranker& r, Index& idx)
         corpus::document query{idx.doc_path(d_id), doc_id{i}};
 
         auto ranking = r.score(idx, query);
-        ASSERT(ranking.size() == 10); // default is 10 docs
+        ASSERT_EQUAL(ranking.size(), 10); // default is 10 docs
 
         // since we're searching for a document already in the index, the same
         // document should be ranked first, but there are a few duplicate
         // documents......
         if (ranking[0].first != i)
         {
-            ASSERT(ranking[1].first == i);
-            ASSERT(ranking[0].second == ranking[1].second);
+            ASSERT_EQUAL(ranking[1].first, i);
+            ASSERT_EQUAL(ranking[0].second, ranking[1].second);
         }
     }
 }

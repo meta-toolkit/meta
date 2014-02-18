@@ -27,7 +27,7 @@ void assert_read(std::ifstream& file, const std::string& expect)
 {
     std::string str;
     io::read_binary(file, str);
-    ASSERT(str == expect);
+    ASSERT_EQUAL(str, expect);
 }
 
 struct file_guard
@@ -89,12 +89,12 @@ int string_list_tests()
         }
 
         string_list list{"meta-tmp-string-list.bin"};
-        ASSERT(std::strcmp(list.at(5), "wat woah this is neato") == 0);
-        ASSERT(std::strcmp(list.at(0), "things and stuff") == 0);
-        ASSERT(std::strcmp(list.at(2), "other stuff") == 0);
-        ASSERT(std::strcmp(list.at(1), "cat") == 0);
-        ASSERT(std::strcmp(list.at(4), "dog") == 0);
-        ASSERT(std::strcmp(list.at(3), "a no good very dead ex-parrot") == 0);
+        ASSERT_EQUAL(std::strcmp(list.at(5), "wat woah this is neato"), 0);
+        ASSERT_EQUAL(std::strcmp(list.at(0), "things and stuff"), 0);
+        ASSERT_EQUAL(std::strcmp(list.at(2), "other stuff"), 0);
+        ASSERT_EQUAL(std::strcmp(list.at(1), "cat"), 0);
+        ASSERT_EQUAL(std::strcmp(list.at(4), "dog"), 0);
+        ASSERT_EQUAL(std::strcmp(list.at(3), "a no good very dead ex-parrot"), 0);
     });
 
     testing::report(num_failed);

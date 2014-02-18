@@ -27,9 +27,9 @@ void test_stem(Stemmer& stemmer, std::ifstream& in, bool do_stem)
         std::string orig{to_stem};
         stemmer(to_stem);
         if (do_stem)
-            ASSERT(to_stem == stemmed);
+            ASSERT_EQUAL(to_stem, stemmed);
         else
-            ASSERT(to_stem == orig);
+            ASSERT_EQUAL(to_stem, orig);
     }
 }
 
@@ -59,7 +59,7 @@ int stemmer_tests()
         {
             std::string to_stem{w};
             stemmer(to_stem);
-            ASSERT(to_stem == w);
+            ASSERT_EQUAL(to_stem, w);
         }
     });
 

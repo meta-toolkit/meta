@@ -80,7 +80,7 @@ void assert_correctness(uint16_t size = 20)
             // checks that the inverse map contains the correct position of
             // the terms in the lowest level
             if (idx < 14)
-                ASSERT(inverse[idx] == static_cast<uint64_t>(file.tellg()));
+                ASSERT_EQUAL(inverse[idx], static_cast<uint64_t>(file.tellg()));
 
             std::string term;
             uint64_t num;
@@ -90,12 +90,12 @@ void assert_correctness(uint16_t size = 20)
             io::read_binary(file, num);
             if (!file)
                 break;
-            ASSERT(term == expected[idx].first);
-            ASSERT(num == expected[idx].second);
+            ASSERT_EQUAL(term, expected[idx].first);
+            ASSERT_EQUAL(num, expected[idx].second);
             ++idx;
         }
         ASSERT(!file);
-        ASSERT(idx == expected.size());
+        ASSERT_EQUAL(idx, expected.size());
     }
 
     filesystem::delete_file("meta-tmp-test.bin");
@@ -126,13 +126,13 @@ void read_file(uint16_t size = 20)
     {
         auto elem = map.find(p.first);
         ASSERT(elem);
-        ASSERT(*elem == p.second);
+        ASSERT_EQUAL(*elem, p.second);
 
-        ASSERT(map.find_term(term_id{p.second}) == p.first);
+        ASSERT_EQUAL(map.find_term(term_id{p.second}), p.first);
     }
     ASSERT(!map.find("0"));
     ASSERT(!map.find("zabawe"));
-    ASSERT(map.size() == 14);
+    ASSERT_EQUAL(map.size(), 14);
 }
 }
 

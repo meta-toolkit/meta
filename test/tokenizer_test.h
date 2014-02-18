@@ -18,18 +18,18 @@ void check_tokenizer_expected(Tokenizer& tok, corpus::document doc,
                               uint64_t num_unique, uint64_t length)
 {
     tok.tokenize(doc);
-    ASSERT(doc.counts().size() == num_unique);
-    ASSERT(doc.length() == length);
-    ASSERT(doc.id() == 47);
+    ASSERT_EQUAL(doc.counts().size(), num_unique);
+    ASSERT_EQUAL(doc.length(), length);
+    ASSERT_EQUAL(doc.id(), 47);
     if (doc.contains_content())
     {
-        ASSERT(doc.path() == "/home/person/filename.txt");
-        ASSERT(doc.name() == "filename.txt");
+        ASSERT_EQUAL(doc.path(), "/home/person/filename.txt");
+        ASSERT_EQUAL(doc.name(), "filename.txt");
     }
     else
     {
-        ASSERT(doc.path() == "../data/sample-document.txt");
-        ASSERT(doc.name() == "sample-document.txt");
+        ASSERT_EQUAL(doc.path(), "../data/sample-document.txt");
+        ASSERT_EQUAL(doc.name(), "sample-document.txt");
     }
 }
 

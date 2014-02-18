@@ -36,25 +36,25 @@ void create_libsvm_config()
 template <class Index>
 void check_bcancer_expected(Index& idx)
 {
-    ASSERT(idx.num_docs() == 683);
-    ASSERT(idx.unique_terms() == 10);
+    ASSERT_EQUAL(idx.num_docs(), 683);
+    ASSERT_EQUAL(idx.unique_terms(), 10);
 
     std::ifstream in{"../data/bcancer-metadata.txt"};
     doc_id id{0};
     uint64_t size;
     while (in >> size)
     {
-        ASSERT(idx.doc_size(doc_id{id}) == size);
+        ASSERT_EQUAL(idx.doc_size(doc_id{id}), size);
         ++id;
     }
-    ASSERT(id == idx.num_docs());
+    ASSERT_EQUAL(id, idx.num_docs());
 }
 
 template <class Index>
 void check_ceeaus_expected_fwd(Index& idx)
 {
-    ASSERT(idx.num_docs() == 1008);
-    ASSERT(idx.unique_terms() == 4003);
+    ASSERT_EQUAL(idx.num_docs(), 1008);
+    ASSERT_EQUAL(idx.unique_terms(), 4003);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};
     uint64_t size;
@@ -63,12 +63,12 @@ void check_ceeaus_expected_fwd(Index& idx)
     while (in >> size >> unique)
     {
         // don't care about unique terms per doc in forward_index (yet)
-        ASSERT(idx.doc_size(id) == size);
+        ASSERT_EQUAL(idx.doc_size(id), size);
         ++id;
     }
 
     // make sure there's exactly the correct amount
-    ASSERT(id == idx.num_docs());
+    ASSERT_EQUAL(id, idx.num_docs());
 }
 
 template <class Index>
@@ -84,7 +84,7 @@ void check_bcancer_doc_id(Index& idx)
     {
         in >> first;
         in >> second;
-        ASSERT(first - 1 == count.first); // - 1 because libsvm format
+        ASSERT_EQUAL(first - 1, count.first); // - 1 because libsvm format
         ASSERT(std::abs(second - count.second) < epsilon);
     }
 }
@@ -101,8 +101,8 @@ void check_ceeaus_doc_id(Index& idx)
     {
         in >> first;
         in >> second;
-        ASSERT(first == count.first);
-        ASSERT(second == count.second);
+        ASSERT_EQUAL(first, count.first);
+        ASSERT_EQUAL(second, count.second);
     }
 }
 

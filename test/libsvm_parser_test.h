@@ -22,17 +22,17 @@ void label()
                  "a  12:2e-3 15:4.01   99:22 122:1  "};
     for (auto& text : same)
     {
-        ASSERT(io::libsvm_parser::label(text) == class_label{"a"});
+        ASSERT_EQUAL(io::libsvm_parser::label(text), class_label{"a"});
         auto counts = io::libsvm_parser::counts(text);
-        ASSERT(counts.size() == 4);
-        ASSERT(counts[0].first == 11);
-        ASSERT(counts[0].second == 2e-3);
-        ASSERT(counts[1].first == 14);
-        ASSERT(counts[1].second == 4.01);
-        ASSERT(counts[2].first == 98);
-        ASSERT(counts[2].second == 22.0);
-        ASSERT(counts[3].first == 121);
-        ASSERT(counts[3].second == 1.0);
+        ASSERT_EQUAL(counts.size(), 4);
+        ASSERT_EQUAL(counts[0].first, 11);
+        ASSERT_EQUAL(counts[0].second, 2e-3);
+        ASSERT_EQUAL(counts[1].first, 14);
+        ASSERT_EQUAL(counts[1].second, 4.01);
+        ASSERT_EQUAL(counts[2].first, 98);
+        ASSERT_EQUAL(counts[2].second, 22.0);
+        ASSERT_EQUAL(counts[3].first, 121);
+        ASSERT_EQUAL(counts[3].second, 1.0);
     }
 }
 
@@ -42,15 +42,15 @@ void no_label()
     for (auto& text : same)
     {
         auto counts = io::libsvm_parser::counts(text, false);
-        ASSERT(counts.size() == 4);
-        ASSERT(counts[0].first == 0);
-        ASSERT(counts[0].second == 2e-3);
-        ASSERT(counts[1].first == 1);
-        ASSERT(counts[1].second == 4.01);
-        ASSERT(counts[2].first == 2);
-        ASSERT(counts[2].second == 22.0);
-        ASSERT(counts[3].first == 12);
-        ASSERT(counts[3].second == 1.0);
+        ASSERT_EQUAL(counts.size(), 4);
+        ASSERT_EQUAL(counts[0].first, 0);
+        ASSERT_EQUAL(counts[0].second, 2e-3);
+        ASSERT_EQUAL(counts[1].first, 1);
+        ASSERT_EQUAL(counts[1].second, 4.01);
+        ASSERT_EQUAL(counts[2].first, 2);
+        ASSERT_EQUAL(counts[2].second, 22.0);
+        ASSERT_EQUAL(counts[3].first, 12);
+        ASSERT_EQUAL(counts[3].second, 1.0);
     }
 }
 
