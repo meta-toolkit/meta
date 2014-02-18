@@ -121,6 +121,8 @@ add_library(meta-stemmers
             deps/porter2_stemmer/porter2_stemmer.cpp)
 
 add_library(meta-analyzers
+            src/analyzers/tokenizers/character_tokenizer.cpp
+            src/analyzers/tokenizers/whitespace_tokenizer.cpp
             src/analyzers/multi_analyzer.cpp
             src/analyzers/analyzer.cpp
             src/analyzers/libsvm_analyzer.cpp
