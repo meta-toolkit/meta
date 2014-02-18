@@ -27,6 +27,17 @@
     } while (0)
 
 /**
+ * Fail if exp1 != exp2; otherwise continue.
+ */
+#define ASSERT_EQUAL(exp1, exp2)                                               \
+    do                                                                         \
+    {                                                                          \
+        std::string msg = testing::assert_equal(exp1, exp2, #exp1, #exp2);     \
+        if (!msg.empty())                                                      \
+            FAIL(msg);                                                         \
+    } while (0)
+
+/**
  * Fail this test case with an explanation.
  * Give line number and file where the test case failed.
  */
@@ -61,11 +72,33 @@ namespace meta
  */
 namespace testing
 {
-    /**
-     * Used to specify whether to fork() the function; useful for when you
-     * want to step through with the debugger.
-     */
-    static bool debug = false;
+/**
+ * Used to specify whether to fork() the function; useful for when you
+ * want to step through with the debugger.
+ */
+static bool debug = false;
+
+/**
+ * Allows the user to see what the evaluated statements are.
+ * @param expected The expected expression
+ * @param actual The actual expression
+ * @param expstr The expected string
+ * @param actstr The actual string
+ * @see https://bitbucket.org/jacktoole1/monad_hg/
+ */
+template <typename T, typename K>
+inline std::string assert_equal(const T& expected, const K& actual,
+                                const char* expstr, const char* actstr)
+{
+    if (actual != expected)
+    {
+        std::stringstream ss;
+        ss << "[" << expstr << " == " << actstr << "] => [" << expected
+           << " == " << actual << "]";
+        return ss.str();
+    }
+    return "";
+}
 
 /**
  * Signal handler for unit tests.
@@ -102,7 +135,7 @@ int run_test(const std::string& test_name, int timeout, Func&& func)
 {
     std::cerr << std::left << std::setw(50) << (" " + test_name);
 
-    if(debug)
+    if (debug)
     {
         func();
         std::cerr << "[ debug ] " << std::endl;
