@@ -47,6 +47,9 @@ class length_filter : public token_stream
     operator bool() const override;
 
   private:
+    /**
+     * Advances internal state to the next valid token.
+     */
     void next_token();
 
     /**
