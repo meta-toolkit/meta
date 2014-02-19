@@ -1,18 +1,9 @@
 /**
- * @file parallel_test.h
+ * @file parallel_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _META_PARALLEL_TEST_H_
-#define _META_PARALLEL_TEST_H_
-
-#include <cmath>
-#include <algorithm>
-#include <numeric>
-
-#include "util/time.h"
-#include "parallel/parallel_for.h"
-#include "parallel/thread_pool.h"
+#include "test/parallel_test.h"
 
 namespace meta
 {
@@ -100,5 +91,3 @@ int parallel_tests()
 }
 }
 }
-
-#endif

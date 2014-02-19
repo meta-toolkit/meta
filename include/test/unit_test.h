@@ -2,7 +2,8 @@
  * @file unit_test.h
  * @author Sean Massung
  *
- * Contains functions and defines used in unit testing.
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _UNIT_TEST_H_
@@ -182,21 +183,7 @@ inline std::string assert_greater(const T& expected, const K& actual,
  *  current test.
  * @param sig The caught signal ID
  */
-void sig_catch(int sig)
-{
-    switch (sig)
-    {
-        case SIGALRM:
-            FAIL_NOLINE("Time limit exceeded");
-            break;
-        case SIGSEGV:
-            FAIL_NOLINE("Received segfault");
-            break;
-        case SIGINT:
-            FAIL_NOLINE("Received interrupt, exiting.");
-            break;
-    }
-}
+void sig_catch(int sig);
 
 /**
  * Runs a unit test in a semi-controlled environment.
@@ -270,29 +257,7 @@ int run_test(const std::string& test_name, Func&& func)
     return run_test(test_name, 1, func);
 }
 
-void report(int num_failed, bool done = false)
-{
-    std::string msg;
-    if (num_failed == 0)
-    {
-        msg = "[ " + printing::make_green("all tests passed") + " ]";
-    }
-    else
-    {
-        std::string tests{" test"};
-        if (num_failed > 1)
-            tests += "s";
-        msg = "[ " + printing::make_red(std::to_string(num_failed) + tests
-                                        + " failed") + " ]";
-    }
-
-    if (done)
-        std::cerr << std::endl << printing::make_bold("Unit testing complete")
-                  << std::endl;
-
-    std::cerr << std::left << std::setw(50) << " ";
-    std::cerr << msg << std::endl;
-}
+void report(int num_failed, bool done = false);
 }
 }
 

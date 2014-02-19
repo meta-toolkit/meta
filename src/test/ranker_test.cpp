@@ -1,22 +1,16 @@
 /**
- * @file ranker_test.h
+ * @file ranker_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _META_RANKER_TEST_H_
-#define _META_RANKER_TEST_H_
-
-#include "unit_test.h"
-#include "inverted_index_test.h"
-#include "index/ranker/all.h"
+#include "test/ranker_test.h"
+#include "corpus/document.h"
 
 namespace meta
 {
 namespace testing
 {
 
-namespace
-{
 template <class Ranker, class Index>
 void test_rank(Ranker& r, Index& idx)
 {
@@ -37,7 +31,6 @@ void test_rank(Ranker& r, Index& idx)
             ASSERT_EQUAL(ranking[0].second, ranking[1].second);
         }
     }
-}
 }
 
 int ranker_tests()
@@ -85,5 +78,3 @@ int ranker_tests()
 }
 }
 }
-
-#endif

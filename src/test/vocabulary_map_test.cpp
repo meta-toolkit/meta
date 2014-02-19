@@ -1,27 +1,17 @@
 /**
- * @file vocabulary_map_writer.h
+ * @file vocabulary_map_writer.cpp
  * @author Chase Geigle
  */
 
-#ifndef _META_VOCABULARY_MAP_WRITER_TEST_H_
-#define _META_VOCABULARY_MAP_WRITER_TEST_H_
-
-#include <iostream>
-#include "io/binary.h"
-#include "index/vocabulary_map_writer.h"
-#include "index/vocabulary_map.h"
-#include "util/disk_vector.h"
-#include "util/filesystem.h"
-#include "unit_test.h"
+#include "test/vocabulary_map_test.h"
+#include "util/optional.h"
 
 namespace meta
 {
 namespace testing
 {
 
-namespace
-{
-void write_file(uint16_t size = 20)
+void write_file(uint16_t size)
 {
     index::vocabulary_map_writer writer{"meta-tmp-test.bin", size};
     auto str = std::string{"abcdefghijklmn"};
@@ -29,7 +19,7 @@ void write_file(uint16_t size = 20)
         writer.insert(std::string(1, c));
 }
 
-void assert_correctness(uint16_t size = 20)
+void assert_correctness(uint16_t size)
 {
     std::vector<std::pair<std::string, uint64_t>> expected = {
         // first level
@@ -102,7 +92,7 @@ void assert_correctness(uint16_t size = 20)
     filesystem::delete_file("meta-tmp-test.bin.inverse");
 }
 
-void read_file(uint16_t size = 20)
+void read_file(uint16_t size)
 {
     std::vector<std::pair<std::string, uint64_t>> expected = {
         // first level
@@ -133,7 +123,6 @@ void read_file(uint16_t size = 20)
     ASSERT(!map.find("0"));
     ASSERT(!map.find("zabawe"));
     ASSERT_EQUAL(map.size(), 14);
-}
 }
 
 int vocabulary_map_tests()
@@ -169,5 +158,3 @@ int vocabulary_map_tests()
 }
 }
 }
-
-#endif

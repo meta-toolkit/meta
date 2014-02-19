@@ -1,13 +1,9 @@
 /**
- * @file tokenizer_test.h
+ * @file tokenizer_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _TOKENIZER_TEST_H_
-#define _TOKENIZER_TEST_H_
-
-#include <string>
-#include "tokenizers/all.h"
+#include "test/tokenizer_test.h"
 
 namespace meta
 {
@@ -101,5 +97,3 @@ int tokenizer_tests()
 }
 }
 }
-
-#endif
