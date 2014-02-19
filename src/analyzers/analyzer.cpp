@@ -3,6 +3,12 @@
  */
 
 #include "analyzers/all.h"
+#include "analyzers/token_stream.h"
+#include "analyzers/filters/english_normalizer.h"
+#include "analyzers/filters/sentence_boundary.h"
+#include "analyzers/filters/length_filter.h"
+#include "analyzers/tokenizers/whitespace_tokenizer.h"
+#include "analyzers/tokenizers/character_tokenizer.h"
 #include "cpptoml.h"
 #include "corpus/document.h"
 #include "io/parser.h"
@@ -22,6 +28,60 @@ io::parser analyzer::create_parser(const corpus::document & doc,
     else
         return io::parser{doc.path() + extension, delims,
                           io::parser::input_type::File};
+}
+
+std::unique_ptr<token_stream>
+    analyzer::load_filters(const cpptoml::toml_group& config)
+{
+    auto filters = config.get_group_array("filter");
+    std::unique_ptr<token_stream> result;
+    for (const auto filter: filters->array())
+    {
+        auto type = filter->get_as<std::string>("type");
+        if (!type)
+            throw analyzer_exception{"filter type missing in config file"};
+
+        if (*type == "whitespace-tokenizer")
+        {
+            if (result)
+                throw analyzer_exception{"tokenizers must be the first filter"};
+            result = make_unique<whitespace_tokenizer>();
+        }
+        else if (*type == "character-tokenizer")
+        {
+            if (result)
+                throw analyzer_exception{"tokenizers must be the first filter"};
+            result = make_unique<character_tokenizer>();
+        }
+        else if (*type == "normalize")
+        {
+            result = make_unique<english_normalizer>(std::move(result));
+        }
+        else if (*type == "sentence-boundary")
+        {
+            sentence_boundary::load_heuristics(*filter);
+            result = make_unique<sentence_boundary>(std::move(result));
+        }
+        else if (*type == "length")
+        {
+            auto min = filter->get_as<int64_t>("min");
+            if (!min)
+                throw analyzer_exception{
+                    "min required for length filter config"};
+            auto max = filter->get_as<int64_t>("max");
+            if (!max)
+                throw analyzer_exception{
+                    "max required for length filter config"};
+            result = make_unique<length_filter>(std::move(result),
+                                                static_cast<uint64_t>(*min),
+                                                static_cast<uint64_t>(*max));
+        }
+        else
+        {
+            throw analyzer_exception{"unrecognized filter option"};
+        }
+    }
+    return result;
 }
 
 std::unique_ptr<analyzer> analyzer::load(const cpptoml::toml_group & config)

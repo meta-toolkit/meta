@@ -19,13 +19,21 @@ std::unordered_set<std::string> sentence_boundary::start_exception_set;
 std::unordered_set<std::string> sentence_boundary::end_exception_set;
 bool sentence_boundary::heuristics_loaded = false;
 
-sentence_boundary::sentence_boundary(token_stream& source)
-    : source_(source)
+sentence_boundary::sentence_boundary(std::unique_ptr<token_stream> source)
+    : source_{std::move(source)}
 {
     if (!heuristics_loaded)
         throw token_stream_exception{"heuristics must be pre-loaded"};
 
     tokens_.emplace_back("<s>");
+}
+
+void sentence_boundary::set_content(const std::string& content)
+{
+    tokens_.clear();
+    tokens_.emplace_back("<s>");
+    prev_ = util::nullopt;
+    source_->set_content(content);
 }
 
 void sentence_boundary::load_heuristics(const cpptoml::toml_group& config)
@@ -69,9 +77,9 @@ std::string sentence_boundary::next()
     {
         // the buffer is exhausted, so we require there to be tokens available
         // in source
-        if (!source_)
+        if (!*source_)
             throw token_stream_exception{"next() called with empty source"};
-        tokens_.emplace_back(source_.next());
+        tokens_.emplace_back(source_->next());
     }
 
     if (!possible_punc(tokens_.front()) || (prev_ && !possible_end(*prev_)))
@@ -79,13 +87,13 @@ std::string sentence_boundary::next()
 
     // we need to look ahead one token: if there is none, then this is
     // forced to be the end of a sentence at the end of a document
-    if (!source_)
+    if (!*source_)
     {
         tokens_.emplace_back("</s>");
         return current_token();
     }
 
-    auto token = source_.next();
+    auto token = source_->next();
 
     // we only break sentences after whitespace
     if (token != " ")
@@ -96,13 +104,13 @@ std::string sentence_boundary::next()
 
     // we again need to look ahead a single token: if there are none, this
     // is forced to be the end of the sentence at the end of the document.
-    if (!source_)
+    if (!*source_)
     {
         tokens_.emplace_back("</s>");
         return current_token();
     }
 
-    auto start_token = source_.next();
+    auto start_token = source_->next();
     if (!possible_start(start_token))
     {
         tokens_.emplace_back(std::move(token));
@@ -121,7 +129,7 @@ std::string sentence_boundary::next()
 
 sentence_boundary::operator bool() const
 {
-    return !tokens_.empty() || source_;
+    return !tokens_.empty() || *source_;
 }
 
 std::string sentence_boundary::current_token()

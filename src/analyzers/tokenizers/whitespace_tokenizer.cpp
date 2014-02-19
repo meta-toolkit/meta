@@ -14,15 +14,14 @@ namespace meta
 namespace analyzers
 {
 
-whitespace_tokenizer::whitespace_tokenizer(corpus::document& doc) : idx_{0}
+whitespace_tokenizer::whitespace_tokenizer() : idx_{0}
 {
-    if (doc.contains_content())
-        content_ = doc.content();
-    else
-    {
-        io::mmap_file file{doc.path()};
-        content_ = {file.begin(), file.begin() + file.size()};
-    }
+}
+
+void whitespace_tokenizer::set_content(const std::string& content)
+{
+    content_ = content;
+    idx_ = 0;
 }
 
 std::string whitespace_tokenizer::next()

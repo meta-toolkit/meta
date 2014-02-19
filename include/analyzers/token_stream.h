@@ -34,6 +34,11 @@ class token_stream
     virtual operator bool() const = 0;
 
     /**
+     * Sets the content for the stream.
+     */
+    virtual void set_content(const std::string& content) = 0;
+
+    /**
      * Destructor.
      */
     virtual ~token_stream() = default;

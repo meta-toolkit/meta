@@ -7,6 +7,7 @@
 #define _META_ENGLISH_NORMALIZER_H_
 
 #include <deque>
+#include <memory>
 #include "analyzers/token_stream.h"
 #include "util/optional.h"
 
@@ -28,7 +29,12 @@ class english_normalizer : public token_stream
      * Constructs an english_normalizer which reads tokens from the given
      * source.
      */
-    english_normalizer(token_stream& source);
+    english_normalizer(std::unique_ptr<token_stream> source);
+
+    /**
+     * Sets the content for the beginning of the filter chain.
+     */
+    void set_content(const std::string& content) override;
 
     /**
      * Obtains the next token in the sequence.
@@ -78,7 +84,7 @@ class english_normalizer : public token_stream
     /**
      * The source to read tokens from.
      */
-    token_stream& source_;
+    std::unique_ptr<token_stream> source_;
 
     /**
      * Buffered tokens to return.

@@ -30,9 +30,14 @@ class whitespace_tokenizer : public token_stream
 {
     public:
         /**
-         * Creates a whitespace_tokenizer operating on the given document.
+         * Creates a whitespace_tokenizer.
          */
-        whitespace_tokenizer(corpus::document& doc);
+        whitespace_tokenizer();
+
+        /**
+         * Sets the content for the tokenizer to parse.
+         */
+        void set_content(const std::string& content) override;
 
         /**
          * Obtains the next token in the document. This will either be a

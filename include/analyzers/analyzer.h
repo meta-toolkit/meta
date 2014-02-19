@@ -26,6 +26,8 @@ class document;
 
 namespace analyzers {
 
+class token_stream;
+
 /**
  * An class that provides a framework to produce token counts from documents.
  * All analyzers inherit from this class and (possibly) implement tokenize().
@@ -45,10 +47,16 @@ class analyzer
         virtual void tokenize(corpus::document & doc) = 0;
 
         /**
-         * @return a Tokenizer as specified by a config object
+         * @return an analyzer as specified by a config object
          */
         static std::unique_ptr<analyzer> load(
                 const cpptoml::toml_group & config);
+
+        /**
+         * @return a filter chain as specified by a config object
+         */
+        static std::unique_ptr<token_stream>
+            load_filters(const cpptoml::toml_group& config);
 
         /**
          * @param doc The document to parse

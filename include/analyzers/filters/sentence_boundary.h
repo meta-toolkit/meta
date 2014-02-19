@@ -7,6 +7,7 @@
 #define _META_SENTENCE_BOUNDARY_H_
 
 #include <deque>
+#include <memory>
 #include <unordered_set>
 
 #include "analyzers/token_stream.h"
@@ -15,7 +16,7 @@
 namespace cpptoml
 {
 class toml_group;
-};
+}
 
 namespace meta
 {
@@ -40,7 +41,12 @@ class sentence_boundary : public token_stream
      * Constructs a sentence_boundary filter, reading tokens from the
      * given source and configured via the given configuration group.
      */
-    sentence_boundary(token_stream& source);
+    sentence_boundary(std::unique_ptr<token_stream> source);
+
+    /**
+     * Sets the content for the beginning of the filter chain.
+     */
+    void set_content(const std::string& content) override;
 
     /**
      * Obtains the next token in the sequence.
@@ -77,7 +83,7 @@ class sentence_boundary : public token_stream
     /**
      * The source to read tokens from.
      */
-    token_stream& source_;
+    std::unique_ptr<token_stream> source_;
 
     /**
      * The current buffered tokens.

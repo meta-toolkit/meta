@@ -12,16 +12,15 @@ namespace meta
 namespace analyzers
 {
 
-character_tokenizer::character_tokenizer(corpus::document& doc)
-    : idx_{0}
+character_tokenizer::character_tokenizer() : idx_{0}
 {
-    if (doc.contains_content())
-        content_ = doc.content();
-    else
-    {
-        io::mmap_file file{doc.path()};
-        content_ = {file.begin(), file.begin() + file.size()};
-    }
+    // nothing
+}
+
+void character_tokenizer::set_content(const std::string& content)
+{
+    idx_ = 0;
+    content_ = content;
 }
 
 std::string character_tokenizer::next()

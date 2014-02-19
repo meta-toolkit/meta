@@ -12,10 +12,16 @@ namespace meta
 namespace analyzers
 {
 
-english_normalizer::english_normalizer(token_stream& source)
-    : source_(source)
+english_normalizer::english_normalizer(std::unique_ptr<token_stream> source)
+    : source_{std::move(source)}
 {
     // nothing
+}
+
+void english_normalizer::set_content(const std::string& content)
+{
+    tokens_.clear();
+    source_->set_content(content);
 }
 
 std::string english_normalizer::next()
@@ -25,10 +31,10 @@ std::string english_normalizer::next()
     if (!tokens_.empty())
         return current_token();
 
-    if (!source_)
+    if (!*source_)
         throw token_stream_exception{"next() called with empty source"};
 
-    auto token = source_.next();
+    auto token = source_->next();
 
     // if we have a whitespace token, keep reading any following whitespace
     // tokens to collapse them down to a single space. token_, afterwards,
@@ -36,8 +42,8 @@ std::string english_normalizer::next()
     // next().
     if (is_whitespace(token))
     {
-        while (is_whitespace(token) && source_)
-            token = source_.next();
+        while (is_whitespace(token) && *source_)
+            token = source_->next();
         if (!is_whitespace(token)) // source_ was non-empty after whitespace
             parse_token(token);
         return " ";
@@ -49,7 +55,7 @@ std::string english_normalizer::next()
 
 english_normalizer::operator bool() const
 {
-    return !tokens_.empty() || source_;
+    return !tokens_.empty() || *source_;
 }
 
 bool english_normalizer::is_whitespace(const std::string& token) const

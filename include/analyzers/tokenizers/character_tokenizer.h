@@ -29,9 +29,14 @@ class character_tokenizer : public token_stream
 {
   public:
       /**
-       * Creates a character_tokenizer operating on the given document.
+       * Creates a character_tokenizer.
        */
-      character_tokenizer(corpus::document& doc);
+      character_tokenizer();
+
+      /**
+       * Sets the content for the tokenizer.
+       */
+      void set_content(const std::string& content) override;
 
       /**
        * Obtains the next token in the document. This token will contain a

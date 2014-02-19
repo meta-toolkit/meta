@@ -6,6 +6,8 @@
 #ifndef _META_LENGTH_FILTER_H_
 #define _META_LENGTH_FILTER_H_
 
+#include <memory>
+
 #include "analyzers/token_stream.h"
 #include "util/optional.h"
 
@@ -26,7 +28,13 @@ class length_filter : public token_stream
      * and eliminating any that are shorter than min characters in length
      * or longer than max characters in length.
      */
-    length_filter(token_stream& source, uint64_t min, uint64_t max);
+    length_filter(std::unique_ptr<token_stream> source, uint64_t min,
+                  uint64_t max);
+
+    /**
+     * Sets the content for the beginning of the filter chain.
+     */
+    void set_content(const std::string& content) override;
 
     /**
      * Obtains the next token in the sequence.
@@ -44,7 +52,7 @@ class length_filter : public token_stream
     /**
      * The source to read tokens from.
      */
-    token_stream& source_;
+    std::unique_ptr<token_stream> source_;
 
     /**
      * The next buffered token.
