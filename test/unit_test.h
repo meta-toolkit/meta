@@ -13,6 +13,7 @@
 #include <signal.h>
 #include <iomanip>
 #include <string>
+#include <functional>
 #include <iostream>
 #include "util/printing.h"
 
@@ -28,11 +29,23 @@
 
 /**
  * Fail if exp1 != exp2; otherwise continue.
+ * @see https://bitbucket.org/jacktoole1/monad_hg/
  */
 #define ASSERT_EQUAL(exp1, exp2)                                               \
     do                                                                         \
     {                                                                          \
         std::string msg = testing::assert_equal(exp1, exp2, #exp1, #exp2);     \
+        if (!msg.empty())                                                      \
+            FAIL(msg);                                                         \
+    } while (0)
+
+/**
+ * Fail if !binop(exp1, exp2).
+ */
+#define ASSERT_BINOP(exp1, exp2, binop)                                        \
+    do                                                                         \
+    {                                                                          \
+        std::string msg = testing::assert(exp1, exp2, #exp1, #exp2, binop);    \
         if (!msg.empty())                                                      \
             FAIL(msg);                                                         \
     } while (0)
@@ -64,6 +77,28 @@
         exit(1);                                                               \
     } while (0)
 
+/**
+ * Fail if !(exp1 < exp2)
+ */
+#define ASSERT_LESS(exp1, exp2)                                                \
+    do                                                                         \
+    {                                                                          \
+        std::string msg = testing::assert_less(exp1, exp2, #exp1, #exp2);      \
+        if (!msg.empty())                                                      \
+            FAIL(msg);                                                         \
+    } while (0)
+
+/**
+ * Fail if !(exp1 > exp2)
+ */
+#define ASSERT_GREATER(exp1, exp2)                                             \
+    do                                                                         \
+    {                                                                          \
+        std::string msg = testing::assert_greater(exp1, exp2, #exp1, #exp2);   \
+        if (!msg.empty())                                                      \
+            FAIL(msg);                                                         \
+    } while (0)
+
 namespace meta
 {
 
@@ -84,17 +119,58 @@ static bool debug = false;
  * @param actual The actual expression
  * @param expstr The expected string
  * @param actstr The actual string
- * @see https://bitbucket.org/jacktoole1/monad_hg/
+ * @param binop The binary operator to compare the expressions; by default
+ * std::equal_to
  */
-template <typename T, typename K>
+template <class T, class K, class BinOp>
 inline std::string assert_equal(const T& expected, const K& actual,
-                                const char* expstr, const char* actstr)
+                                const char* expstr, const char* actstr,
+                                BinOp&& binop)
 {
-    if (actual != expected)
+    if (!binop(expected, actual))
     {
         std::stringstream ss;
         ss << "[" << expstr << " == " << actstr << "] => [" << expected
            << " == " << actual << "]";
+        return ss.str();
+    }
+    return "";
+}
+
+template <class T, class K>
+inline std::string assert_equal(const T& expected, const K& actual,
+                                const char* expstr, const char* actstr)
+{
+    return assert_equal(expected, actual, expstr, actstr,
+            [](const T& a, const K& b)
+    {
+        return a == b;
+    });
+}
+
+template <class T, class K>
+inline std::string assert_less(const T& expected, const K& actual,
+                               const char* expstr, const char* actstr)
+{
+    if (!(expected < actual))
+    {
+        std::stringstream ss;
+        ss << "[" << expstr << " < " << actstr << "] => [" << expected << " < "
+           << actual << "]";
+        return ss.str();
+    }
+    return "";
+}
+
+template <class T, class K>
+inline std::string assert_greater(const T& expected, const K& actual,
+                                  const char* expstr, const char* actstr)
+{
+    if (!(expected > actual))
+    {
+        std::stringstream ss;
+        ss << "[" << expstr << " > " << actstr << "] => [" << expected << " > "
+           << actual << "]";
         return ss.str();
     }
     return "";
