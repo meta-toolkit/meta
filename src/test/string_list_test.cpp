@@ -1,49 +1,20 @@
 /**
- * @file string_list_test.h
+ * @file string_list_test.cpp
  * @author Chase Geigle
  */
 
-#ifndef _META_STRING_LIST_TEST_H_
-#define _META_STRING_LIST_TEST_H_
-
-#include <cstring>
-#include <fstream>
-
-#include "io/binary.h"
-#include "index/string_list.h"
-#include "index/string_list_writer.h"
-#include "util/filesystem.h"
-
-#include "unit_test.h"
+#include "test/string_list_test.h"
 
 namespace meta
 {
 namespace testing
 {
 
-namespace
-{
 void assert_read(std::ifstream& file, const std::string& expect)
 {
     std::string str;
     io::read_binary(file, str);
     ASSERT_EQUAL(str, expect);
-}
-
-struct file_guard
-{
-    file_guard(const std::string& path) : path_{path}
-    {
-        filesystem::delete_file(path_);
-    }
-
-    ~file_guard()
-    {
-        filesystem::delete_file(path_);
-    }
-
-    const std::string& path_;
-};
 }
 
 int string_list_tests()
@@ -102,5 +73,3 @@ int string_list_tests()
 }
 }
 }
-
-#endif

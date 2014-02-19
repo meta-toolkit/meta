@@ -5,18 +5,18 @@
 #include <iostream>
 #include <unordered_set>
 #include <string>
-#include "unit_test.h"
-#include "tokenizer_test.h"
-#include "inverted_index_test.h"
-#include "ranker_test.h"
-#include "stemmer_test.h"
-#include "forward_index_test.h"
-#include "string_list_test.h"
-#include "vocabulary_map_test.h"
-#include "libsvm_parser_test.h"
-#include "classifier_test.h"
-#include "parallel_test.h"
-#include "ir_eval_test.h"
+#include "test/unit_test.h"
+#include "test/tokenizer_test.h"
+#include "test/inverted_index_test.h"
+#include "test/ranker_test.h"
+#include "test/stemmer_test.h"
+#include "test/forward_index_test.h"
+#include "test/string_list_test.h"
+#include "test/vocabulary_map_test.h"
+#include "test/libsvm_parser_test.h"
+#include "test/classifier_test.h"
+#include "test/parallel_test.h"
+#include "test/ir_eval_test.h"
 #include "util/printing.h"
 
 using namespace meta;

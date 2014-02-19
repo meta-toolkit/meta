@@ -1,21 +1,15 @@
 /**
- * @file libsvm_parser_test.h
+ * @file libsvm_parser_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _META_LIBSVM_PARSER_TEST_H_
-#define _META_LIBSVM_PARSER_TEST_H_
-
-#include "unit_test.h"
-#include "io/libsvm_parser.h"
+#include "test/libsvm_parser_test.h"
 
 namespace meta
 {
 namespace testing
 {
 
-namespace
-{
 void label()
 {
     auto same = {"a 12:2e-3 15:4.01 99:22 122:1",
@@ -89,7 +83,6 @@ void bad_counts()
         }
     }
 }
-}
 
 int libsvm_parser_tests()
 {
@@ -109,5 +102,3 @@ int libsvm_parser_tests()
 }
 }
 }
-
-#endif

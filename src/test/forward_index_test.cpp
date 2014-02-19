@@ -1,17 +1,9 @@
 /**
- * @file forward_index_test.h
+ * @file forward_index_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _FORWARD_INDEX_TEST_H_
-#define _FORWARD_INDEX_TEST_H_
-
-#include <fstream>
-#include <iostream>
-#include "index/forward_index.h"
-#include "inverted_index_test.h" // for config file creation
-#include "caching/all.h"
-#include "cpptoml.h"
+#include "test/forward_index_test.h"
 
 namespace meta
 {
@@ -173,5 +165,3 @@ int forward_index_tests()
 }
 }
 }
-
-#endif

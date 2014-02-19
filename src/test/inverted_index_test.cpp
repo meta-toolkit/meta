@@ -1,17 +1,9 @@
 /**
- * @file inverted_index_test.h
+ * @file inverted_index_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _INVERTED_INDEX_TEST_H_
-#define _INVERTED_INDEX_TEST_H_
-
-#include <fstream>
-#include <iostream>
-#include "index/inverted_index.h"
-#include "index/postings_data.h"
-#include "caching/all.h"
-#include "cpptoml.h"
+#include "test/inverted_index_test.h"
 
 namespace meta
 {
@@ -179,5 +171,3 @@ int inverted_index_tests()
 }
 }
 }
-
-#endif

@@ -1,16 +1,9 @@
 /**
- * @file stemmer_test.h
+ * @file stemmer_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _META_STEMMER_TEST_H_
-#define _META_STEMMER_TEST_H_
-
-#include <fstream>
-
-#include "unit_test.h"
-#include "stemmers/porter2.h"
-#include "stemmers/no_stemmer.h"
+#include "test/stemmer_test.h"
 
 namespace meta
 {
@@ -68,5 +61,3 @@ int stemmer_tests()
 }
 }
 }
-
-#endif

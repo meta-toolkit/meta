@@ -1,18 +1,9 @@
 /**
- * @file classifier_test.h
+ * @file classifier_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _CLASSIFIER_TEST_H_
-#define _CLASSIFIER_TEST_H_
-
-#include <fstream>
-#include <iostream>
-#include "inverted_index_test.h"
-#include "classify/classifier/all.h"
-#include "classify/kernel/all.h"
-#include "caching/all.h"
-#include "index/ranker/all.h"
+#include "test/classifier_test.h"
 
 namespace meta
 {
@@ -135,5 +126,3 @@ int classifier_tests()
 }
 }
 }
-
-#endif
