@@ -49,7 +49,7 @@ int test_speed(std::vector<double>& v)
         auto parallel_time = common::time([&]()
             { parallel::parallel_for(v.begin(), v.end(), hard_func<double>); });
 
-        ASSERT(parallel_time.count() < serial_time.count());
+        ASSERT_LESS(parallel_time.count(), serial_time.count());
     });
 }
 

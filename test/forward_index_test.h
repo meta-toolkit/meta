@@ -85,7 +85,7 @@ void check_bcancer_doc_id(Index& idx)
         in >> first;
         in >> second;
         ASSERT_EQUAL(first - 1, count.first); // - 1 because libsvm format
-        ASSERT(std::abs(second - count.second) < epsilon);
+        ASSERT_LESS(std::abs(second - count.second), epsilon);
     }
 }
 

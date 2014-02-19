@@ -24,8 +24,8 @@ void check_cv(Index& idx, Classifier& c, double min_accuracy)
 {
     std::vector<doc_id> docs = idx.docs();
     classify::confusion_matrix mtx = c.cross_validate(docs, 5);
-    ASSERT(mtx.accuracy() > min_accuracy);
-    ASSERT(mtx.accuracy() < 100.0);
+    ASSERT_GREATER(mtx.accuracy(), min_accuracy);
+    ASSERT_LESS(mtx.accuracy(), 100.0);
 }
 
 template <class Index, class Classifier>
@@ -42,8 +42,8 @@ void check_split(Index& idx, Classifier& c, double min_accuracy)
     // train and test
     c.train(train_docs);
     classify::confusion_matrix mtx = c.test(test_docs);
-    ASSERT(mtx.accuracy() > min_accuracy);
-    ASSERT(mtx.accuracy() < 100.0);
+    ASSERT_GREATER(mtx.accuracy(), min_accuracy);
+    ASSERT_LESS(mtx.accuracy(), 100.0);
 }
 
 int run_tests(const std::string& type)

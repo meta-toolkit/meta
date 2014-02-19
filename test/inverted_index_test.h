@@ -60,7 +60,7 @@ void check_ceeaus_expected(Index& idx)
 {
     double epsilon = 0.000001;
     ASSERT_EQUAL(idx.num_docs(), 1008);
-    ASSERT(abs(idx.avg_doc_length() - 128.879) < epsilon);
+    ASSERT_LESS(abs(idx.avg_doc_length() - 128.879), epsilon);
     ASSERT_EQUAL(idx.unique_terms(), 4003);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};
