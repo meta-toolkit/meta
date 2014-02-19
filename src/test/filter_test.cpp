@@ -1,10 +1,7 @@
 /**
- * @file filter_test.h
+ * @file filter_test.cpp
  * @author Chase Geigle
  */
-
-#ifndef _FILTER_TEST_H_
-#define _FILTER_TEST_H_
 
 #include <vector>
 #include <iostream>
@@ -12,6 +9,9 @@
 #include "analyzers/tokenizers/whitespace_tokenizer.h"
 #include "analyzers/filters/english_normalizer.h"
 #include "corpus/document.h"
+#include "util/shim.h"
+#include "test/filter_test.h"
+#include "test/unit_test.h"
 
 namespace meta
 {
@@ -37,24 +37,23 @@ int filter_tests()
 
     num_failed += testing::run_test("english_normalizer_test_basic", []()
     {
-        corpus::document d{"[no path]", doc_id{0}};
-        d.set_content("\"This \t\n\f\ris a quote,'' said Dr. Smith.");
-        analyzers::whitespace_tokenizer tok{d};
-        analyzers::english_normalizer norm{tok};
+        auto tok = make_unique<analyzers::whitespace_tokenizer>();
+        auto norm = make_unique<analyzers::english_normalizer>(std::move(tok));
+        norm->set_content("\"This \t\n\f\ris a quote,'' said Dr. Smith.");
 
         std::vector<std::string> expected = {
             "``", "This", " ",    "is", " ",  "a", " ", "quote", ",",
             "''", " ",    "said", " ",  "Dr", ".", " ", "Smith", "."};
 
-        check_expected(norm, expected);
+        check_expected(*norm, expected);
     });
 
     num_failed += testing::run_test("english_normalizer_test_contraction", []()
     {
-        corpus::document d{"[no path]", doc_id{0}};
-        d.set_content("What about when we don't want to knee-jerk? We'll have to do something.");
-        analyzers::whitespace_tokenizer tok{d};
-        analyzers::english_normalizer norm{tok};
+
+        auto tok = make_unique<analyzers::whitespace_tokenizer>();
+        auto norm = make_unique<analyzers::english_normalizer>(std::move(tok));
+        norm->set_content("What about when we don't want to knee-jerk? We'll have to do something.");
 
         std::vector<std::string> expected = {
             "What", " ",   "about", " ",         "when", " ",
@@ -63,7 +62,7 @@ int filter_tests()
             "We",   "'ll", " ",     "have",      " ",    "to",
             " ",    "do",  " ",     "something", "."};
 
-        check_expected(norm, expected);
+        check_expected(*norm, expected);
     });
 
     testing::report(num_failed);
@@ -73,5 +72,3 @@ int filter_tests()
 
 }
 }
-
-#endif

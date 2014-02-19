@@ -1,27 +1,17 @@
 /**
- * @file vocabulary_map_writer.h
+ * @file vocabulary_map_writer.cpp
  * @author Chase Geigle
  */
 
-#ifndef _META_VOCABULARY_MAP_WRITER_TEST_H_
-#define _META_VOCABULARY_MAP_WRITER_TEST_H_
-
-#include <iostream>
-#include "io/binary.h"
-#include "index/vocabulary_map_writer.h"
-#include "index/vocabulary_map.h"
-#include "util/disk_vector.h"
-#include "util/filesystem.h"
-#include "unit_test.h"
+#include "test/vocabulary_map_test.h"
+#include "util/optional.h"
 
 namespace meta
 {
 namespace testing
 {
 
-namespace
-{
-void write_file(uint16_t size = 20)
+void write_file(uint16_t size)
 {
     index::vocabulary_map_writer writer{"meta-tmp-test.bin", size};
     auto str = std::string{"abcdefghijklmn"};
@@ -29,7 +19,7 @@ void write_file(uint16_t size = 20)
         writer.insert(std::string(1, c));
 }
 
-void assert_correctness(uint16_t size = 20)
+void assert_correctness(uint16_t size)
 {
     std::vector<std::pair<std::string, uint64_t>> expected = {
         // first level
@@ -80,7 +70,7 @@ void assert_correctness(uint16_t size = 20)
             // checks that the inverse map contains the correct position of
             // the terms in the lowest level
             if (idx < 14)
-                ASSERT(inverse[idx] == static_cast<uint64_t>(file.tellg()));
+                ASSERT_EQUAL(inverse[idx], static_cast<uint64_t>(file.tellg()));
 
             std::string term;
             uint64_t num;
@@ -90,19 +80,19 @@ void assert_correctness(uint16_t size = 20)
             io::read_binary(file, num);
             if (!file)
                 break;
-            ASSERT(term == expected[idx].first);
-            ASSERT(num == expected[idx].second);
+            ASSERT_EQUAL(term, expected[idx].first);
+            ASSERT_EQUAL(num, expected[idx].second);
             ++idx;
         }
         ASSERT(!file);
-        ASSERT(idx == expected.size());
+        ASSERT_EQUAL(idx, expected.size());
     }
 
     filesystem::delete_file("meta-tmp-test.bin");
     filesystem::delete_file("meta-tmp-test.bin.inverse");
 }
 
-void read_file(uint16_t size = 20)
+void read_file(uint16_t size)
 {
     std::vector<std::pair<std::string, uint64_t>> expected = {
         // first level
@@ -126,14 +116,13 @@ void read_file(uint16_t size = 20)
     {
         auto elem = map.find(p.first);
         ASSERT(elem);
-        ASSERT(*elem == p.second);
+        ASSERT_EQUAL(*elem, p.second);
 
-        ASSERT(map.find_term(term_id{p.second}) == p.first);
+        ASSERT_EQUAL(map.find_term(term_id{p.second}), p.first);
     }
     ASSERT(!map.find("0"));
     ASSERT(!map.find("zabawe"));
-    ASSERT(map.size() == 14);
-}
+    ASSERT_EQUAL(map.size(), 14);
 }
 
 int vocabulary_map_tests()
@@ -169,5 +158,3 @@ int vocabulary_map_tests()
 }
 }
 }
-
-#endif

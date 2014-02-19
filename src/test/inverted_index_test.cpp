@@ -1,17 +1,9 @@
 /**
- * @file inverted_index_test.h
+ * @file inverted_index_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _INVERTED_INDEX_TEST_H_
-#define _INVERTED_INDEX_TEST_H_
-
-#include <fstream>
-#include <iostream>
-#include "index/inverted_index.h"
-#include "index/postings_data.h"
-#include "caching/all.h"
-#include "cpptoml.h"
+#include "test/inverted_index_test.h"
 
 namespace meta
 {
@@ -59,9 +51,9 @@ template <class Index>
 void check_ceeaus_expected(Index& idx)
 {
     double epsilon = 0.000001;
-    ASSERT(idx.num_docs() == 1008);
-    ASSERT(abs(idx.avg_doc_length() - 128.879) < epsilon);
-    ASSERT(idx.unique_terms() == 4003);
+    ASSERT_EQUAL(idx.num_docs(), 1008);
+    ASSERT_LESS(abs(idx.avg_doc_length() - 128.879), epsilon);
+    ASSERT_EQUAL(idx.unique_terms(), 4003);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};
     uint64_t size;
@@ -69,20 +61,20 @@ void check_ceeaus_expected(Index& idx)
     doc_id id{0};
     while (in >> size >> unique)
     {
-        ASSERT(idx.doc_size(id) == size);
-        ASSERT(idx.unique_terms(id) == unique);
+        ASSERT_EQUAL(idx.doc_size(id), size);
+        ASSERT_EQUAL(idx.unique_terms(id), unique);
         ++id;
     }
 
     // make sure there's exactly the correct amount
-    ASSERT(id == idx.num_docs());
+    ASSERT_EQUAL(id, idx.num_docs());
 }
 
 template <class Index>
 void check_term_id(Index& idx)
 {
     term_id t_id = idx.get_term_id("japanes");
-    ASSERT(idx.doc_freq(t_id) == 69);
+    ASSERT_EQUAL(idx.doc_freq(t_id), 69);
 
     term_id first;
     double second;
@@ -92,8 +84,8 @@ void check_term_id(Index& idx)
     {
         in >> first;
         in >> second;
-        ASSERT(first == count.first);
-        ASSERT(second == count.second);
+        ASSERT_EQUAL(first, count.first);
+        ASSERT_EQUAL(second, count.second);
     }
 }
 
@@ -179,5 +171,3 @@ int inverted_index_tests()
 }
 }
 }
-
-#endif

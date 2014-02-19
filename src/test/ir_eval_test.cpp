@@ -1,15 +1,10 @@
 /**
- * @file ir_eval_test.h
+ * @file ir_eval_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _META_IR_EVAL_TEST_H_
-#define _META_IR_EVAL_TEST_H_
-
-#include "inverted_index_test.h"
-#include "index/eval/ir_eval.h"
-#include "index/ranker/okapi_bm25.h"
-#include "unit_test.h"
+#include "test/ir_eval_test.h"
+#include "corpus/document.h"
 
 namespace meta
 {
@@ -48,5 +43,3 @@ int ir_eval_tests()
 }
 }
 }
-
-#endif

@@ -1,16 +1,9 @@
 /**
- * @file stemmer_test.h
+ * @file stemmer_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _META_STEMMER_TEST_H_
-#define _META_STEMMER_TEST_H_
-
-#include <fstream>
-
-#include "unit_test.h"
-#include "stemmers/porter2.h"
-#include "stemmers/no_stemmer.h"
+#include "test/stemmer_test.h"
 
 namespace meta
 {
@@ -27,9 +20,9 @@ void test_stem(Stemmer& stemmer, std::ifstream& in, bool do_stem)
         std::string orig{to_stem};
         stemmer(to_stem);
         if (do_stem)
-            ASSERT(to_stem == stemmed);
+            ASSERT_EQUAL(to_stem, stemmed);
         else
-            ASSERT(to_stem == orig);
+            ASSERT_EQUAL(to_stem, orig);
     }
 }
 
@@ -59,7 +52,7 @@ int stemmer_tests()
         {
             std::string to_stem{w};
             stemmer(to_stem);
-            ASSERT(to_stem == w);
+            ASSERT_EQUAL(to_stem, w);
         }
     });
 
@@ -68,5 +61,3 @@ int stemmer_tests()
 }
 }
 }
-
-#endif

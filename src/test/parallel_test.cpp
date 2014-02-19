@@ -1,18 +1,9 @@
 /**
- * @file parallel_test.h
+ * @file parallel_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _META_PARALLEL_TEST_H_
-#define _META_PARALLEL_TEST_H_
-
-#include <cmath>
-#include <algorithm>
-#include <numeric>
-
-#include "util/time.h"
-#include "parallel/parallel_for.h"
-#include "parallel/thread_pool.h"
+#include "test/parallel_test.h"
 
 namespace meta
 {
@@ -49,7 +40,7 @@ int test_speed(std::vector<double>& v)
         auto parallel_time = common::time([&]()
             { parallel::parallel_for(v.begin(), v.end(), hard_func<double>); });
 
-        ASSERT(parallel_time.count() < serial_time.count());
+        ASSERT_LESS(parallel_time.count(), serial_time.count());
     });
 }
 
@@ -61,7 +52,7 @@ int test_correctness(std::vector<double>& v)
         std::fill(v.begin(), v.end(), 1.0);
         std::mutex mtx;
         parallel::parallel_for(v.begin(), v.end(), easy_func<double>);
-        ASSERT(std::accumulate(v.begin(), v.end(), 0.0) == 0.0);
+        ASSERT_EQUAL(std::accumulate(v.begin(), v.end(), 0.0), 0.0);
     });
 }
 
@@ -79,11 +70,11 @@ int test_threadpool()
         for (auto& fut : futures)
         {
             auto val = fut.get();
-            ASSERT(val == 1);
+            ASSERT_EQUAL(val, 1);
             sum += val;
         }
 
-        ASSERT(sum == 16);
+        ASSERT_EQUAL(sum, 16);
     });
 }
 
@@ -100,5 +91,3 @@ int parallel_tests()
 }
 }
 }
-
-#endif

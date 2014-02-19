@@ -5,8 +5,7 @@ option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
 
 include_directories(include/
                     deps/cpptoml/include/
-                    deps/porter2_stemmer/
-                    test/)
+                    deps/porter2_stemmer/)
 
 find_package(Threads REQUIRED)
 
@@ -179,9 +178,24 @@ add_library(meta-topics
             src/topics/lda_cvb.cpp
             src/topics/lda_gibbs.cpp
             src/topics/lda_model.cpp
-            # src/topics/slda.cpp
             src/topics/parallel_lda_gibbs.cpp)
 target_link_libraries(meta-topics meta-index)
+
+add_library(meta-testing
+            src/test/classifier_test.cpp
+            src/test/forward_index_test.cpp
+            src/test/inverted_index_test.cpp
+            src/test/ir_eval_test.cpp
+            src/test/libsvm_parser_test.cpp
+            src/test/parallel_test.cpp
+            src/test/ranker_test.cpp
+            src/test/stemmer_test.cpp
+            src/test/string_list_test.cpp
+            src/test/analyzer_test.cpp
+            src/test/filter_test.cpp
+            src/test/vocabulary_map_test.cpp
+            src/test/unit_test.cpp)
+target_link_libraries(meta-testing meta-index meta-classify)
 
 add_executable(classify classify-test.cpp)
 target_link_libraries(classify
@@ -191,6 +205,7 @@ target_link_libraries(classify
 
 add_executable(unit-test unit-test.cpp)
 target_link_libraries(unit-test
+                      meta-testing
                       meta-classify
                       meta-index
                       ${CMAKE_THREAD_LIBS_INIT})

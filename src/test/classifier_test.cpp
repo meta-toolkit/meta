@@ -1,18 +1,9 @@
 /**
- * @file classifier_test.h
+ * @file classifier_test.cpp
  * @author Sean Massung
  */
 
-#ifndef _CLASSIFIER_TEST_H_
-#define _CLASSIFIER_TEST_H_
-
-#include <fstream>
-#include <iostream>
-#include "inverted_index_test.h"
-#include "classify/classifier/all.h"
-#include "classify/kernel/all.h"
-#include "caching/all.h"
-#include "index/ranker/all.h"
+#include "test/classifier_test.h"
 
 namespace meta
 {
@@ -24,8 +15,8 @@ void check_cv(Index& idx, Classifier& c, double min_accuracy)
 {
     std::vector<doc_id> docs = idx.docs();
     classify::confusion_matrix mtx = c.cross_validate(docs, 5);
-    ASSERT(mtx.accuracy() > min_accuracy);
-    ASSERT(mtx.accuracy() < 100.0);
+    ASSERT_GREATER(mtx.accuracy(), min_accuracy);
+    ASSERT_LESS(mtx.accuracy(), 100.0);
 }
 
 template <class Index, class Classifier>
@@ -42,8 +33,8 @@ void check_split(Index& idx, Classifier& c, double min_accuracy)
     // train and test
     c.train(train_docs);
     classify::confusion_matrix mtx = c.test(test_docs);
-    ASSERT(mtx.accuracy() > min_accuracy);
-    ASSERT(mtx.accuracy() < 100.0);
+    ASSERT_GREATER(mtx.accuracy(), min_accuracy);
+    ASSERT_LESS(mtx.accuracy(), 100.0);
 }
 
 int run_tests(const std::string& type)
@@ -135,5 +126,3 @@ int classifier_tests()
 }
 }
 }
-
-#endif
