@@ -123,6 +123,7 @@ add_library(meta-analyzers
             src/analyzers/filters/english_normalizer.cpp
             src/analyzers/filters/length_filter.cpp
             src/analyzers/filters/list_filter.cpp
+            src/analyzers/filters/lowercase_filter.cpp
             src/analyzers/filters/sentence_boundary.cpp
             src/analyzers/tokenizers/character_tokenizer.cpp
             src/analyzers/tokenizers/whitespace_tokenizer.cpp

@@ -8,6 +8,7 @@
 #include "analyzers/filters/sentence_boundary.h"
 #include "analyzers/filters/length_filter.h"
 #include "analyzers/filters/list_filter.h"
+#include "analyzers/filters/lowercase_filter.h"
 #include "analyzers/tokenizers/whitespace_tokenizer.h"
 #include "analyzers/tokenizers/character_tokenizer.h"
 #include "cpptoml.h"
@@ -95,6 +96,10 @@ std::unique_ptr<token_stream>
             }
 
             result = make_unique<list_filter>(std::move(result), *file, type);
+        }
+        else if (*type == "lowercase")
+        {
+            result = make_unique<lowercase_filter>(std::move(result));
         }
         else
         {
