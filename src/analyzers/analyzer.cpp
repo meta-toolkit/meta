@@ -7,6 +7,7 @@
 #include "analyzers/filters/english_normalizer.h"
 #include "analyzers/filters/sentence_boundary.h"
 #include "analyzers/filters/length_filter.h"
+#include "analyzers/filters/list_filter.h"
 #include "analyzers/tokenizers/whitespace_tokenizer.h"
 #include "analyzers/tokenizers/character_tokenizer.h"
 #include "cpptoml.h"
@@ -75,6 +76,25 @@ std::unique_ptr<token_stream>
             result = make_unique<length_filter>(std::move(result),
                                                 static_cast<uint64_t>(*min),
                                                 static_cast<uint64_t>(*max));
+        }
+        else if (*type == "list")
+        {
+            auto method = filter->get_as<std::string>("method");
+            auto file = filter->get_as<std::string>("file");
+            if (!file)
+                throw analyzer_exception{
+                    "file required for list_filter config"};
+
+            list_filter::type type = list_filter::type::REJECT;
+            if (method)
+            {
+                if (*method == "accept")
+                    type = list_filter::type::ACCEPT;
+                else if (*method != "reject")
+                    throw analyzer_exception{"invalid method for list_filter"};
+            }
+
+            result = make_unique<list_filter>(std::move(result), *file, type);
         }
         else
         {
