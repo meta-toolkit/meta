@@ -9,6 +9,7 @@
 #include "analyzers/filters/length_filter.h"
 #include "analyzers/filters/list_filter.h"
 #include "analyzers/filters/lowercase_filter.h"
+#include "analyzers/filters/porter2_stemmer.h"
 #include "analyzers/tokenizers/whitespace_tokenizer.h"
 #include "analyzers/tokenizers/character_tokenizer.h"
 #include "cpptoml.h"
@@ -100,6 +101,10 @@ std::unique_ptr<token_stream>
         else if (*type == "lowercase")
         {
             result = make_unique<lowercase_filter>(std::move(result));
+        }
+        else if (*type == "porter2-stemmer")
+        {
+            result = make_unique<porter2_stemmer>(std::move(result));
         }
         else
         {
