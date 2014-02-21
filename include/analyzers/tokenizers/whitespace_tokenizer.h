@@ -7,6 +7,7 @@
 #define _META_WHITESPACE_TOKENIZER_H_
 
 #include "analyzers/token_stream.h"
+#include "util/clonable.h"
 
 namespace meta
 {
@@ -26,7 +27,8 @@ namespace analyzers
  * tokenizer preserves the whitespace, but combines adjacent non-whitespace
  * characters together into individual tokens.
  */
-class whitespace_tokenizer : public token_stream
+class whitespace_tokenizer
+    : public util::clonable<token_stream, whitespace_tokenizer>
 {
     public:
         /**

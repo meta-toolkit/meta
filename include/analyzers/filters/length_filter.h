@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "analyzers/token_stream.h"
+#include "util/clonable.h"
 #include "util/optional.h"
 
 namespace meta
@@ -20,7 +21,7 @@ namespace analyzers
  * Filter that only retains tokens that are within a certain length range,
  * inclusive.
  */
-class length_filter : public token_stream
+class length_filter : public util::clonable<token_stream, length_filter>
 {
   public:
     /**
@@ -30,6 +31,11 @@ class length_filter : public token_stream
      */
     length_filter(std::unique_ptr<token_stream> source, uint64_t min,
                   uint64_t max);
+
+    /**
+     * Copy constructor.
+     */
+    length_filter(const length_filter& other);
 
     /**
      * Sets the content for the beginning of the filter chain.

@@ -9,6 +9,7 @@
 #include <deque>
 #include <memory>
 #include "analyzers/token_stream.h"
+#include "util/clonable.h"
 #include "util/optional.h"
 
 namespace meta
@@ -22,7 +23,8 @@ namespace analyzers
  * normalized space token) and punctuation (which is split out from words
  * following basic heuristics).
  */
-class english_normalizer : public token_stream
+class english_normalizer
+    : public util::clonable<token_stream, english_normalizer>
 {
   public:
     /**
@@ -30,6 +32,11 @@ class english_normalizer : public token_stream
      * source.
      */
     english_normalizer(std::unique_ptr<token_stream> source);
+
+    /**
+     * Copy constructor.
+     */
+    english_normalizer(const english_normalizer& other);
 
     /**
      * Sets the content for the beginning of the filter chain.

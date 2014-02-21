@@ -8,7 +8,7 @@ namespace meta {
 namespace analyzers {
 
 ngram_pos_analyzer::ngram_pos_analyzer(uint16_t n):
-    ngram_simple_analyzer{n}
+    base{n}
 { /* nothing */ }
 
 void ngram_pos_analyzer::tokenize(corpus::document & doc)

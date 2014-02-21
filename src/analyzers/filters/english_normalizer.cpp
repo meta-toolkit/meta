@@ -18,6 +18,12 @@ english_normalizer::english_normalizer(std::unique_ptr<token_stream> source)
     // nothing
 }
 
+english_normalizer::english_normalizer(const english_normalizer& other)
+    : source_{other.source_->clone()}, tokens_{other.tokens_}
+{
+    // nothing
+}
+
 void english_normalizer::set_content(const std::string& content)
 {
     tokens_.clear();

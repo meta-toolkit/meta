@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "analyzers/analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
@@ -25,14 +26,19 @@ namespace analyzers {
  * rewrite rules. The multi_analyzer keeps track of all the features in one set
  * for however many internal analyzers it contains.
  */
-class multi_analyzer: public analyzer
+class multi_analyzer: public util::clonable<analyzer, multi_analyzer>
 {
     public:
         /**
          * Constructs a multi_analyzer from a vector of other analyzers.
          * @param toks
          */
-        multi_analyzer(const std::vector<std::shared_ptr<analyzer>> & toks);
+        multi_analyzer(std::vector<std::unique_ptr<analyzer>>&& toks);
+
+        /**
+         * Copy constructor.
+         */
+        multi_analyzer(const multi_analyzer& other);
 
         /**
          * Tokenizes a file into a document.
@@ -43,7 +49,7 @@ class multi_analyzer: public analyzer
     private:
 
         /** Holds all the analyzers in this multi_analyzer */
-        std::vector<std::shared_ptr<analyzer>> _analyzers;
+        std::vector<std::unique_ptr<analyzer>> _analyzers;
 };
 
 }

@@ -29,6 +29,7 @@ void check_analyzer_expected(Tokenizer& tok, corpus::document doc,
     }
 }
 
+#if 0
 int content_tokenize()
 {
     corpus::document doc{"/home/person/filename.txt", doc_id{47}};
@@ -84,13 +85,16 @@ int file_tokenize()
 
     return num_failed;
 }
+#endif
 
 int analyzer_tests()
 {
     int num_failed = 0;
 
+#if 0
     num_failed += content_tokenize();
     num_failed += file_tokenize();
+#endif
 
     testing::report(num_failed);
     return num_failed;

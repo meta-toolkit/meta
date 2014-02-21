@@ -11,6 +11,7 @@
 #define _META_TOKENIZERS_BRANCH_TOKENIZER_H_
 
 #include "analyzers/tree/tree_analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
@@ -18,7 +19,10 @@ namespace analyzers {
 /**
  * Tokenizes parse trees by extracting branching factor features.
  */
-class branch_analyzer: public tree_analyzer<branch_analyzer> {
+class branch_analyzer
+    : public util::multilevel_clonable<analyzer, tree_analyzer<branch_analyzer>,
+                                       branch_analyzer>
+{
     public:
         /**
          * Keeps track of the branching factor for this document's parse_trees.

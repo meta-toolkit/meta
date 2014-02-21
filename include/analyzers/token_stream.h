@@ -6,6 +6,7 @@
 #ifndef _META_TOKEN_STREAM_H_
 #define _META_TOKEN_STREAM_H_
 
+#include <memory>
 #include <string>
 #include <stdexcept>
 
@@ -42,6 +43,11 @@ class token_stream
      * Destructor.
      */
     virtual ~token_stream() = default;
+
+    /**
+     * Clones the given token stream.
+     */
+    virtual std::unique_ptr<token_stream> clone() const = 0;
 
     /**
      * Basic exception class for token stream interactions.

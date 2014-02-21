@@ -11,6 +11,7 @@
 #define _META_TOKENIZERS_SKELETON_TOKENIZER_H_
 
 #include "analyzers/tree/tree_analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
@@ -18,7 +19,10 @@ namespace analyzers {
 /**
  * Tokenizes parse trees by only tokenizing the tree structure itself.
  */
-class skeleton_analyzer : public tree_analyzer<skeleton_analyzer> {
+class skeleton_analyzer
+    : public util::multilevel_clonable<
+          analyzer, tree_analyzer<skeleton_analyzer>, skeleton_analyzer>
+{
     public:
         /**
          * Ignores node labels and only tokenizes the tree structure.

@@ -10,7 +10,7 @@ namespace meta {
 namespace analyzers {
 
 ngram_char_analyzer::ngram_char_analyzer(uint16_t n):
-    ngram_simple_analyzer{n}
+    base{n}
 { /* nothing */ }
 
 void ngram_char_analyzer::tokenize(corpus::document & doc)

@@ -11,12 +11,16 @@
 
 #include <unordered_set>
 #include "analyzers/ngram/ngram_analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
 
-class ngram_fw_analyzer: public ngram_analyzer
+class ngram_fw_analyzer : public util::multilevel_clonable<
+                              analyzer, ngram_analyzer, ngram_fw_analyzer>
 {
+    using base =
+        util::multilevel_clonable<analyzer, ngram_analyzer, ngram_fw_analyzer>;
     public:
         /**
          * Constructor.

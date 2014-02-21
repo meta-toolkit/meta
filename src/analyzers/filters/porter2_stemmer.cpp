@@ -17,6 +17,12 @@ porter2_stemmer::porter2_stemmer(std::unique_ptr<token_stream> source)
     // nothing
 }
 
+porter2_stemmer::porter2_stemmer(const porter2_stemmer& other)
+    : source_{other.source_->clone()}
+{
+    // nothing
+}
+
 void porter2_stemmer::set_content(const std::string& content)
 {
     source_->set_content(content);

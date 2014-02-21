@@ -1,12 +1,11 @@
 /**
- * @file lowercase_filter.h
+ * @file alpha_filter.h
  * @author Chase Geigle
  */
 
-#ifndef _META_LOWERCASE_FILTER_H_
-#define _META_LOWERCASE_FILTER_H_
+#ifndef _META_ALPHA_FILTER_H_
+#define _META_ALPHA_FILTER_H_
 
-#include <memory>
 #include "analyzers/token_stream.h"
 #include "util/clonable.h"
 
@@ -16,21 +15,20 @@ namespace analyzers
 {
 
 /**
- * Filter that converts all tokens to lowercase.
+ * Filter that removes non-ASCII alphabet characters from tokens.
  */
-class lowercase_filter : public util::clonable<token_stream, lowercase_filter>
+class alpha_filter : public util::clonable<token_stream, alpha_filter>
 {
   public:
     /**
-     * Constructs a new lowercase_filter, reading tokens from the given
-     * source.
+     * Constructs an alpha filter reading tokens from the given source.
      */
-    lowercase_filter(std::unique_ptr<token_stream> source);
+    alpha_filter(std::unique_ptr<token_stream> source);
 
     /**
      * Copy constructor.
      */
-    lowercase_filter(const lowercase_filter& other);
+    alpha_filter(const alpha_filter& other);
 
     /**
      * Sets the content for the beginning of the filter chain.
@@ -49,7 +47,7 @@ class lowercase_filter : public util::clonable<token_stream, lowercase_filter>
 
   private:
     /**
-     * The stream to read tokens from.
+     * The source to read tokens from.
      */
     std::unique_ptr<token_stream> source_;
 };

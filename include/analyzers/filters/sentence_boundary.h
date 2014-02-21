@@ -11,6 +11,7 @@
 #include <unordered_set>
 
 #include "analyzers/token_stream.h"
+#include "util/clonable.h"
 #include "util/optional.h"
 
 namespace cpptoml
@@ -28,7 +29,7 @@ namespace analyzers
  * tokens. This filter requires that whitespace and punctuation be present
  * in the source stream.
  */
-class sentence_boundary : public token_stream
+class sentence_boundary : public util::clonable<token_stream, sentence_boundary>
 {
   public:
     /**
@@ -42,6 +43,11 @@ class sentence_boundary : public token_stream
      * given source and configured via the given configuration group.
      */
     sentence_boundary(std::unique_ptr<token_stream> source);
+
+    /**
+     * Copy constructor.
+     */
+    sentence_boundary(const sentence_boundary& other);
 
     /**
      * Sets the content for the beginning of the filter chain.

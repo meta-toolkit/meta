@@ -14,9 +14,9 @@ namespace analyzers
 {
 
 // static members
-std::unordered_set<std::string> sentence_boundary::punc_set;
-std::unordered_set<std::string> sentence_boundary::start_exception_set;
-std::unordered_set<std::string> sentence_boundary::end_exception_set;
+std::unordered_set<std::string> sentence_boundary::punc_set{};
+std::unordered_set<std::string> sentence_boundary::start_exception_set{};
+std::unordered_set<std::string> sentence_boundary::end_exception_set{};
 bool sentence_boundary::heuristics_loaded = false;
 
 sentence_boundary::sentence_boundary(std::unique_ptr<token_stream> source)
@@ -26,6 +26,14 @@ sentence_boundary::sentence_boundary(std::unique_ptr<token_stream> source)
         throw token_stream_exception{"heuristics must be pre-loaded"};
 
     tokens_.emplace_back("<s>");
+}
+
+sentence_boundary::sentence_boundary(const sentence_boundary& other)
+    : source_{other.source_->clone()},
+      tokens_{other.tokens_},
+      prev_{other.prev_}
+{
+    // nothing
 }
 
 void sentence_boundary::set_content(const std::string& content)

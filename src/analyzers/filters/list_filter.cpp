@@ -26,6 +26,15 @@ list_filter::list_filter(std::unique_ptr<token_stream> source,
     next_token();
 }
 
+list_filter::list_filter(const list_filter& other)
+    : source_{other.source_->clone()},
+      token_{other.token_},
+      list_{other.list_},
+      method_{other.method_}
+{
+    // nothing
+}
+
 void list_filter::set_content(const std::string& content)
 {
     token_ = util::nullopt;

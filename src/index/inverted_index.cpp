@@ -150,6 +150,7 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
 
     auto task = [&]() {
         auto producer = handler.make_producer();
+        auto analyzer = analyzer_->clone();
         while (true) {
             util::optional<corpus::document> doc;
             {
@@ -162,7 +163,7 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
                 progress(doc->id());
             }
 
-            analyzer_->tokenize(*doc);
+            analyzer->tokenize(*doc);
 
             // save metadata
             docid_writer.insert(doc->id(), doc->path());

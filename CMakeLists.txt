@@ -120,6 +120,7 @@ add_library(meta-stemmers
             deps/porter2_stemmer/porter2_stemmer.cpp)
 
 add_library(meta-analyzers
+            src/analyzers/filters/alpha_filter.cpp
             src/analyzers/filters/english_normalizer.cpp
             src/analyzers/filters/length_filter.cpp
             src/analyzers/filters/list_filter.cpp

@@ -11,6 +11,7 @@
 #define _META_TOKENIZERS_TAG_TOKENIZER_H_
 
 #include "analyzers/tree/tree_analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
@@ -18,7 +19,9 @@ namespace analyzers {
 /**
  * Tokenizes parse trees by looking at labels of leaf and interior nodes.
  */
-class tag_analyzer : public tree_analyzer<tag_analyzer> {
+class tag_analyzer : public util::multilevel_clonable<
+                         analyzer, tree_analyzer<tag_analyzer>, tag_analyzer>
+{
     public:
         /**
          * Counts occurrences of leaf and interior node labels.

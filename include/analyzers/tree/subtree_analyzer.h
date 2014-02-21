@@ -11,6 +11,7 @@
 #define _META_TOKENIZERS_SUBTREE_TOKENIZER_H_
 
 #include "analyzers/tree/tree_analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
@@ -19,7 +20,10 @@ namespace analyzers {
  * Tokenizes parse trees by counting occurrences of subtrees in a
  * document's parse tree.
  */
-class subtree_analyzer: public tree_analyzer<subtree_analyzer> {
+class subtree_analyzer
+    : public util::multilevel_clonable<
+          analyzer, tree_analyzer<subtree_analyzer>, subtree_analyzer>
+{
     public:
         /**
          * Counts occurrences of subtrees in this document's parse_trees.

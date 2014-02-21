@@ -10,6 +10,7 @@
 #define _LIBSVM_TOKENIZER_
 
 #include "analyzers/analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
@@ -19,7 +20,7 @@ namespace analyzers {
  * line_corpus, where each line is in libsvm input format and stored in the
  * document's content field.
  */
-class libsvm_analyzer: public analyzer
+class libsvm_analyzer: public util::clonable<analyzer, libsvm_analyzer>
 {
     public:
         /**

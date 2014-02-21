@@ -10,7 +10,7 @@ namespace meta {
 namespace analyzers {
 
 ngram_fw_analyzer::ngram_fw_analyzer(uint16_t n):
-    ngram_analyzer{n}
+    base{n}
 {
     auto config = cpptoml::parse_file("config.toml");
     io::parser parser{*config.get_as<std::string>("function-words"), "\n"};

@@ -11,6 +11,7 @@
 #define _META_TOKENIZERS_SEMI_SKELETON_TOKENIZER_H_
 
 #include "analyzers/tree/tree_analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
@@ -19,7 +20,11 @@ namespace analyzers {
  * Tokenizes parse trees by keeping track of only a single node label and
  * the underlying tree structure.
  */
-class semi_skeleton_analyzer : public tree_analyzer<semi_skeleton_analyzer> {
+class semi_skeleton_analyzer
+    : public util::multilevel_clonable<analyzer,
+                                       tree_analyzer<semi_skeleton_analyzer>,
+                                       semi_skeleton_analyzer>
+{
     public:
         /**
          * Keeps track of one node's tag and the skeleton structure beneath it.

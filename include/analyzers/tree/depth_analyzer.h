@@ -11,6 +11,7 @@
 #define _META_TOKENIZERS_DEPTH_TOKENIZER_H_
 
 #include "analyzers/tree/tree_analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
@@ -18,7 +19,10 @@ namespace analyzers {
 /**
  * Tokenizes parse trees by extracting depth features.
  */
-class depth_analyzer : public tree_analyzer<depth_analyzer> {
+class depth_analyzer
+    : public util::multilevel_clonable<analyzer, tree_analyzer<depth_analyzer>,
+                                       depth_analyzer>
+{
     public:
         /**
          * Extracts the height of each parse tree.

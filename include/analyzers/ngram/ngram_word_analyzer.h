@@ -9,33 +9,29 @@
 #ifndef _NGRAM_WORD_TOKENIZER_H_
 #define _NGRAM_WORD_TOKENIZER_H_
 
-#include <functional>
-#include <unordered_set>
-
-#include "stemmers/porter2.h"
 #include "analyzers/ngram/ngram_analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
 
-class ngram_word_analyzer: public ngram_analyzer
+class ngram_word_analyzer : public util::multilevel_clonable<
+                                analyzer, ngram_analyzer, ngram_word_analyzer>
 {
+    using base = util::multilevel_clonable<analyzer, ngram_analyzer,
+                                           ngram_word_analyzer>;
     public:
-        /** Signifies whether or not stopwords should be removed from the doc */
-        enum class stopword_t { Default, None };
-
         /**
          * Constructor.
          * @param n The value of n to use for the ngrams.
-         * @param type Indicates whether this analyzer is tokenizing words, POS
-         * tags, etc.
-         * @param stemmer What stemming function (if any) to use for this
-         * analyzer
+         * @param stream The stream to read tokens from.
          */
-        ngram_word_analyzer(uint16_t n,
-            stopword_t stopwords = stopword_t::Default,
-            std::function<void(std::string &)> stemmer = stemmers::porter2{}
-        );
+        ngram_word_analyzer(uint16_t n, std::unique_ptr<token_stream> stream);
+
+        /**
+         * Copy constructor.
+         */
+        ngram_word_analyzer(const ngram_word_analyzer& other);
 
         /**
          * Tokenizes a file into a document.
@@ -44,20 +40,10 @@ class ngram_word_analyzer: public ngram_analyzer
         virtual void tokenize(corpus::document & doc) override;
 
     private:
-        /** The stemming function */
-        std::function<void(std::string &)> _stemmer;
-
         /**
-         * A stopword list based on the stopwords list in the configuration file
+         * The token stream to be used for extracting tokens.
          */
-        std::unordered_set<std::string> _stopwords;
-
-        /**
-         * Loads in a list of stopwords to this analyzer.
-         */
-        void init_stopwords();
-
-        const static std::string _delimiters;
+        std::unique_ptr<token_stream> stream_;
 };
 
 }

@@ -18,6 +18,12 @@ lowercase_filter::lowercase_filter(std::unique_ptr<token_stream> source)
     // nothing
 }
 
+lowercase_filter::lowercase_filter(const lowercase_filter& other)
+    : source_{other.source_->clone()}
+{
+    // nothing
+}
+
 void lowercase_filter::set_content(const std::string& content)
 {
     source_->set_content(content);

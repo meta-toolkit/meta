@@ -12,6 +12,7 @@
 #include <deque>
 
 #include "analyzers/analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {

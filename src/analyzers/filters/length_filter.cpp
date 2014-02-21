@@ -17,6 +17,15 @@ length_filter::length_filter(std::unique_ptr<token_stream> source, uint64_t min,
     next_token();
 }
 
+length_filter::length_filter(const length_filter& other)
+    : source_{other.source_->clone()},
+      token_{other.token_},
+      min_length_{other.min_length_},
+      max_length_{other.max_length_}
+{
+    // nothing
+}
+
 void length_filter::set_content(const std::string& content)
 {
     token_ = util::nullopt;

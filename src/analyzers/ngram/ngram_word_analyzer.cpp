@@ -6,43 +6,33 @@
 #include "cpptoml.h"
 #include "corpus/document.h"
 #include "analyzers/ngram/ngram_word_analyzer.h"
-#include "io/parser.h"
-
-using namespace std;
+#include "analyzers/token_stream.h"
 
 namespace meta {
 namespace analyzers {
 
-const std::string ngram_word_analyzer::_delimiters
-    = " \n\t!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~";
-
-ngram_word_analyzer::ngram_word_analyzer(
-        uint16_t n,
-        stopword_t stopwords,
-        std::function<void(std::string &)> stemmer)
-: ngram_analyzer{n}, _stemmer{stemmer}
+ngram_word_analyzer::ngram_word_analyzer(uint16_t n,
+                                         std::unique_ptr<token_stream> stream)
+    : base{n}, stream_{std::move(stream)}
 {
-    if(stopwords != stopword_t::None)
-        init_stopwords();
+    // nothing
+}
+
+ngram_word_analyzer::ngram_word_analyzer(const ngram_word_analyzer& other)
+    : base{other.n_value()}, stream_{other.stream_->clone()}
+{
+    // nothing
 }
 
 void ngram_word_analyzer::tokenize(corpus::document & doc)
 {
     // first, get tokens
-
-    io::parser psr{create_parser(doc, ".sen", _delimiters)};
+    stream_->set_content(get_content(doc));
     std::vector<std::string> tokens;
-    std::string token;
-    while(psr.has_next())
-    {
-        token = psr.next();
-        _stemmer(token);
-        if(_stopwords.find(token) == _stopwords.end())
-            tokens.push_back(token);
-    }
+    while (*stream_)
+        tokens.push_back(stream_->next());
 
     // second, create ngrams from them
-
     for(size_t i = n_value() - 1; i < tokens.size(); ++i)
     {
         std::string combined = tokens[i];
@@ -50,18 +40,6 @@ void ngram_word_analyzer::tokenize(corpus::document & doc)
             combined = tokens[i - j] + "_" + combined;
 
         doc.increment(combined, 1);
-    }
-}
-
-void ngram_word_analyzer::init_stopwords()
-{
-    auto config = cpptoml::parse_file("config.toml");
-    io::parser p{*config.get_as<std::string>("stop-words"), "\n"};
-    while(p.has_next())
-    {
-        std::string word{p.next()};
-        _stemmer(word);
-        _stopwords.insert(word);
     }
 }
 

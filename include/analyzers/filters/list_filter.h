@@ -10,6 +10,7 @@
 #include <unordered_set>
 
 #include "analyzers/token_stream.h"
+#include "util/clonable.h"
 #include "util/optional.h"
 
 namespace meta
@@ -17,7 +18,7 @@ namespace meta
 namespace analyzers
 {
 
-class list_filter : public token_stream
+class list_filter : public util::clonable<token_stream, list_filter>
 {
   public:
 
@@ -41,6 +42,11 @@ class list_filter : public token_stream
     list_filter(std::unique_ptr<token_stream> source,
                 const std::string& filename,
                 type method = type::REJECT);
+
+    /**
+     * Copy constructor.
+     */
+    list_filter(const list_filter& other);
 
     /**
      * Sets the content for the beginning of the filter chain.

@@ -28,8 +28,23 @@ void create_config(const std::string& corpus_type)
     if(!query_judgements)
         throw std::runtime_error{"\"query-judgements\" not in config"};
 
+    auto punctuation = orig_config.get_as<std::string>("punctuation");
+    if (!punctuation)
+        throw std::runtime_error{"\"punctuation\" not in config"};
+
+    auto start_exeptions = orig_config.get_as<std::string>("start-exceptions");
+    if (!start_exeptions)
+        throw std::runtime_error{"\"start-exceptions\" not in config"};
+
+    auto end_exceptions = orig_config.get_as<std::string>("end-exceptions");
+    if (!end_exceptions)
+        throw std::runtime_error{"\"end-exceptions\" not in config"};
+
     config_file << "stop-words = \"" << *stop_words
                 << "\"\n"
+                << "punctuation = \"" << *punctuation << "\"\n"
+                << "start-exceptions = \"" << *start_exeptions << "\"\n"
+                << "end-exceptions = \"" << *end_exceptions << "\"\n"
                 << "prefix = \"" << *orig_config.get_as<std::string>("prefix")
                 << "\"\n"
                 << "query-judgements = \"" << *query_judgements
@@ -44,7 +59,8 @@ void create_config(const std::string& corpus_type)
                 << "[[analyzers]]\n"
                 << "method = \"ngram\"\n"
                 << "ngramOpt = \"Word\"\n"
-                << "ngram = 1\n";
+                << "ngram = 1\n"
+                << "filter = \"default-chain\"";
 }
 
 template <class Index>

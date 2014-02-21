@@ -10,6 +10,7 @@
 #define _NGRAM_SIMPLE_TOKENIZER_H_
 
 #include "analyzers/ngram/ngram_analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
@@ -19,7 +20,7 @@ namespace analyzers {
  * extensions and parsers used. Note this class is still abstract because
  * tokenize() is not defined.
  */
-class ngram_simple_analyzer: public ngram_analyzer
+class ngram_simple_analyzer : public ngram_analyzer
 {
     public:
         /**

@@ -8,6 +8,7 @@
 
 #include <memory>
 #include "analyzers/token_stream.h"
+#include "util/clonable.h"
 
 namespace meta
 {
@@ -18,7 +19,7 @@ namespace analyzers
  * Filter that stems words according to the porter2 stemmer algorithm.
  * Requires that the porter2 stemmer project submodule be downloaded.
  */
-class porter2_stemmer : public token_stream
+class porter2_stemmer : public util::clonable<token_stream, porter2_stemmer>
 {
   public:
     /**
@@ -26,6 +27,11 @@ class porter2_stemmer : public token_stream
      * the given source.
      */
     porter2_stemmer(std::unique_ptr<token_stream> source);
+
+    /**
+     * Copy constructor.
+     */
+    porter2_stemmer(const porter2_stemmer& other);
 
     /**
      * Sets the content for the beginning of the filter chain.

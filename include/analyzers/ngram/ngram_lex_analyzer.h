@@ -10,12 +10,17 @@
 #define _NGRAM_LEX_TOKENIZER_H_
 
 #include "analyzers/ngram/ngram_simple_analyzer.h"
+#include "util/clonable.h"
 
 namespace meta {
 namespace analyzers {
 
-class ngram_lex_analyzer: public ngram_simple_analyzer
+class ngram_lex_analyzer
+    : public util::multilevel_clonable<analyzer, ngram_simple_analyzer,
+                                       ngram_lex_analyzer>
 {
+    using base = util::multilevel_clonable<analyzer, ngram_simple_analyzer,
+                                           ngram_lex_analyzer>;
     public:
         /**
          * Constructor.

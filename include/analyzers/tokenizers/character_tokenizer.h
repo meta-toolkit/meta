@@ -7,6 +7,7 @@
 #define _META_CHARACTER_TOKENIZER_H_
 
 #include "analyzers/token_stream.h"
+#include "util/clonable.h"
 
 namespace meta
 {
@@ -25,7 +26,8 @@ namespace analyzers
  * Converts documents into streams of characters. This is the simplest
  * tokenizer.
  */
-class character_tokenizer : public token_stream
+class character_tokenizer
+    : public util::clonable<token_stream, character_tokenizer>
 {
   public:
       /**
