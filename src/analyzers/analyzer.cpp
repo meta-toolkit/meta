@@ -55,9 +55,9 @@ std::unique_ptr<token_stream>
     result = make_unique<english_normalizer>(std::move(result));
     sentence_boundary::load_heuristics(config);
     result = make_unique<sentence_boundary>(std::move(result));
+    result = make_unique<lowercase_filter>(std::move(result));
     result = make_unique<alpha_filter>(std::move(result));
     result = make_unique<length_filter>(std::move(result), 2, 35);
-    result = make_unique<lowercase_filter>(std::move(result));
     result = make_unique<list_filter>(std::move(result), *stopwords);
     result = make_unique<porter2_stemmer>(std::move(result));
 
