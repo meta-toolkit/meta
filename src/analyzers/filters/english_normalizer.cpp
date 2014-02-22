@@ -104,7 +104,7 @@ void english_normalizer::parse_token(const std::string& token)
 
     // split out sequences of alphanumeric characters into separate tokens
     while (idx < end)
-        idx = alphanum(idx, token);
+        idx = word(idx, token);
 
     if (end_quotes)
         tokens_.push_back("''");
@@ -133,14 +133,48 @@ bool english_normalizer::is_quote(char c)
     return c == '\'' || c == '`';
 }
 
-uint64_t english_normalizer::alphanum(uint64_t start, const std::string& token)
+uint64_t english_normalizer::strip_dashes(uint64_t start,
+                                          const std::string& token)
 {
+    auto idx = start + 1;
+    while (idx < token.length() && token[idx] == '-')
+        ++idx;
+    tokens_.emplace_back(token, start, idx - start);
+    return idx;
+}
+
+uint64_t english_normalizer::word(uint64_t start, const std::string& token)
+{
+    // special case leading dashes: if there are consecutive ones, we want
+    // to strip them out into their own token
+    if (token[start] == '-' && start + 1 < token.length()
+        && token[start + 1] == '-')
+        start = strip_dashes(start, token);
+
     uint64_t idx = start + 1; // the token is at least one character, which may
                               // have been a punctuation marker from the
                               // previous pass
-    while (idx < token.length()
-           && (!std::ispunct(token[idx]) || token[idx] == '-'))
+    while (idx < token.length())
+    {
+        if (token[idx] == '-' && idx + 1 < token.length()
+            && token[idx + 1] == '-')
+        {
+            // multiple dashes in a row---like this, indicating an em dash
+            // or something
+
+            // place the current token, before the dash, into the buffer
+            tokens_.emplace_back(token, start, idx - start);
+            // place the dashes onto the buffer
+            start = strip_dashes(idx, token);
+        }
+
+        // stop at first punctuation that is not a dash (we want to keep
+        // words like "forty-five")
+        if (std::ispunct(token[idx]) && token[idx] != '-')
+            break;
         ++idx;
+    }
+
     tokens_.emplace_back(token, start, idx - start);
     return idx;
 }

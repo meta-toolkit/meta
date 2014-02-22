@@ -77,11 +77,16 @@ class english_normalizer
     bool is_quote(char c);
 
     /**
-     * Reads alphanumeric characters starting at start from the given
-     * token. The first token is not checked and is assumed to be part of
-     * the returned token.
+     * Reads consecutive dash characters.
      */
-    uint64_t alphanum(uint64_t start, const std::string& token);
+    uint64_t strip_dashes(uint64_t start, const std::string& token);
+
+    /**
+     * Reads "word" characters (alpha numeric and dashes) starting at start
+     * from the given token. The first token is not checked and is assumed
+     * to be part of the returned token.
+     */
+    uint64_t word(uint64_t start, const std::string& token);
 
     /**
      * Returns the next buffered token.
