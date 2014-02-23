@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     classify::one_vs_all<classify::sgd<classify::loss::hinge>>
     hinge_sgd{f_idx};
     classify::svm_wrapper svm{f_idx,
-                              *config.get_as<std::string>("liblinear"),
+                              *config.get_as<std::string>("libsvm-modules"),
                               classify::svm_wrapper::kernel::None };
 
     auto docs = f_idx.docs();
