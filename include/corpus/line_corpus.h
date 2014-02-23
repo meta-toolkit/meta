@@ -52,13 +52,19 @@ class line_corpus: public corpus
 
     private:
         /** the current document we are on */
-        uint64_t _cur;
+        doc_id _cur_id;
 
         /** the number of lines in the file */
         uint64_t _num_lines;
 
         /** parser to read the corpus file */
         io::parser _parser;
+
+        /** parser to read the class labels */
+        std::unique_ptr<io::parser> _class_parser;
+
+        /** parser to read the document names */
+        std::unique_ptr<io::parser> _name_parser;
 };
 
 }
