@@ -77,13 +77,13 @@ int run_tests(const std::string& type)
         one_vs_all<sgd<loss::hinge>> hinge_sgd{f_idx};
         check_cv(f_idx, hinge_sgd, 0.94);
         one_vs_all<sgd<loss::perceptron>> perceptron{f_idx};
-        check_cv(f_idx, perceptron, 0.90);
+        check_cv(f_idx, perceptron, 0.89);
     });
 
     num_failed += testing::run_test("sgd-split-" + type, timeout, [&]()
     {
         one_vs_all<sgd<loss::hinge>> hinge_sgd{f_idx};
-        check_split(f_idx, hinge_sgd, 0.90);
+        check_split(f_idx, hinge_sgd, 0.89);
         one_vs_all<sgd<loss::perceptron>> perceptron{f_idx};
         check_split(f_idx, perceptron, 0.85);
     });
