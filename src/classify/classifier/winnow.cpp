@@ -57,10 +57,10 @@ void winnow::train( const std::vector<doc_id> & docs )
                 auto pdata = _idx.search_primary(doc);
                 for(const auto & count : pdata->counts())
                 {
-                    weights_[guess][count.first] =
-                       get_weight(guess, count.first) / m_;
-                    weights_[actual][count.first] =
-                        get_weight(actual, count.first) * m_;
+                    double guess_weight = get_weight(guess, count.first);
+                    weights_[guess][count.first] = guess_weight / m_;
+                    double actual_weight = get_weight(actual, count.first);
+                    weights_[actual][count.first] = actual_weight * m_;
                 }
             }
         }

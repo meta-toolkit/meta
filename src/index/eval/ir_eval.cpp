@@ -32,6 +32,10 @@ ir_eval::ir_eval(const std::string& config_file)
 void ir_eval::init_index(const std::string& path)
 {
     std::ifstream in{path};
+
+    if (!in)
+        throw ir_eval_exception{"query judgements file unable to be opened!"};
+
     std::string line;
 
     // four (or three) fields per line
