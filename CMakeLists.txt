@@ -9,7 +9,7 @@ include_directories(include/
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
-find_package(ICU REQUIRED)
+find_package(ICU COMPONENTS data i18n uc REQUIRED)
 include_directories(SYSTEM ${ICU_INCLUDE_DIRS})
 
 if(UNIX)
