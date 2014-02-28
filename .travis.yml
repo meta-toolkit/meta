@@ -10,6 +10,7 @@ compiler:
 install:
   # credit: https://github.com/beark/ftl/
   # install g++ 4.8, if tests are run with g++
+  - sudo apt-get install libicu-dev
   - if [ "`echo $CXX`" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
   - if [ "`echo $CXX`" == "g++" ]; then sudo apt-get update; fi
   - if [ "`echo $CXX`" == "g++" ]; then sudo apt-get install -qq g++-4.8; fi
