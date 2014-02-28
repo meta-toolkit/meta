@@ -7,11 +7,7 @@
 #define _META_UTF8_H_
 
 #include <string>
-#include <stdexcept>
 #include <vector>
-
-#include <unicode/unistr.h>
-#include <unicode/uclean.h>
 
 #include "util/pimpl.h"
 
