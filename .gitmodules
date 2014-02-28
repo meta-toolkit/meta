@@ -9,3 +9,6 @@
 [submodule "deps/libsvm-modules"]
 	path = deps/libsvm-modules
 	url = https://github.com/meta-toolkit/meta-libsvm.git
+[submodule "deps/findicu"]
+	path = deps/findicu
+	url = https://github.com/julp/FindICU.cmake.git

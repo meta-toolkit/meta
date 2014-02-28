@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 project(meta)
 
 option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
@@ -7,7 +7,10 @@ include_directories(include/
                     deps/cpptoml/include/
                     deps/porter2_stemmer/)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
+find_package(ICU REQUIRED)
+include_directories(SYSTEM ${ICU_INCLUDE_DIRS})
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -96,6 +99,10 @@ endif()
 
 add_library(meta-util
             src/util/progress.cpp)
+
+add_library(meta-utf
+            src/util/utf.cpp)
+target_link_libraries(meta-utf ${ICU_LIBRARIES})
 
 add_library(meta-io
             src/io/compressed_file_reader.cpp
@@ -245,6 +252,9 @@ target_link_libraries(lda-topics
                       ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(shuffle shuffle.cpp)
+
+add_executable(utf8-test utf8-test.cpp)
+target_link_libraries(utf8-test meta-utf)
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf
