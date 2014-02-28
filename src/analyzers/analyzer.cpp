@@ -19,6 +19,7 @@
 #include "stemmers/no_stemmer.h"
 #include "stemmers/porter2.h"
 #include "util/shim.h"
+#include "util/utf.h"
 
 namespace meta {
 namespace analyzers {
@@ -26,10 +27,10 @@ namespace analyzers {
 std::string analyzer::get_content(const corpus::document & doc)
 {
     if(doc.contains_content())
-        return doc.content();
+        return utf::to_utf8(doc.content(), doc.encoding());
 
     io::mmap_file file{doc.path()};
-    return {file.begin(), file.size()};
+    return utf::to_utf8({file.begin(), file.size()}, doc.encoding());
 }
 
 io::parser analyzer::create_parser(const corpus::document & doc,

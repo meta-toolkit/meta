@@ -10,7 +10,9 @@ namespace meta {
 namespace corpus {
 
 file_corpus::file_corpus(const std::string & prefix,
-        const std::string & doc_list):
+        const std::string & doc_list,
+        std::string encoding):
+    corpus{std::move(encoding)},
     _cur{0},
     _prefix{prefix}
 {
@@ -40,6 +42,7 @@ bool file_corpus::has_next() const
 document file_corpus::next()
 {
     document doc{_prefix + _docs[_cur].first, doc_id{_cur}, _docs[_cur].second};
+    doc.set_encoding(encoding());
     ++_cur;
     return doc;
 }

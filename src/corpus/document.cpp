@@ -17,9 +17,7 @@ document::document(const std::string & path,
     _path{path},
     _d_id{d_id},
     _label{label},
-    _length{0},
-    _content{""},
-    _contains_content{false}
+    _length{0}
 {
     size_t idx = path.find_last_of("/") + 1;
     _name = path.substr(idx);
@@ -73,18 +71,31 @@ double document::jaccard_similarity(const document & a, const document & b)
                                                       b._counts);
 }
 
-void document::set_content(const std::string & content)
+void document::set_content(const std::string& content,
+                           const std::string& encoding /* = "utf-8" */)
 {
     _content = content;
-    _contains_content = true;
+    _encoding = encoding;
+}
+
+void document::set_encoding(const std::string& encoding)
+{
+    _encoding = encoding;
 }
 
 const std::string & document::content() const
 {
-    if(_contains_content)
-        return _content;
+    if (_content)
+        return *_content;
     throw corpus::corpus_exception{
         "there is no content for the requested document"};
+}
+
+const std::string& document::encoding() const
+{
+    if (_encoding)
+        return *_encoding;
+    throw corpus::corpus_exception{"encoding was not set for this document"};
 }
 
 doc_id document::id() const
@@ -94,7 +105,7 @@ doc_id document::id() const
 
 bool document::contains_content() const
 {
-    return _contains_content;
+    return static_cast<bool>(_content);
 }
 
 void document::set_label(class_label label)

@@ -32,6 +32,11 @@ class corpus
 {
     public:
         /**
+         * Constructs a new corpus with the given encoding.
+         */
+        corpus(std::string encoding);
+
+        /**
          * @return whether there is another document in this corpus
          */
         virtual bool has_next() const = 0;
@@ -52,6 +57,11 @@ class corpus
         virtual ~corpus() = default;
 
         /**
+         * Gets the encoding for the corpus.
+         */
+        const std::string& encoding() const;
+
+        /**
          * @param config_file The cpptoml config file containing what type of
          * corpus to load
          * @return a unique_ptr to the corpus object containing the documents
@@ -66,6 +76,9 @@ class corpus
             public:
                 using std::runtime_error::runtime_error;
         };
+
+    private:
+        std::string encoding_;
 };
 
 }

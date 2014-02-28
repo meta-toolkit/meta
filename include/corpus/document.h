@@ -13,6 +13,7 @@
 #include <unordered_map>
 
 #include "meta.h"
+#include "util/optional.h"
 
 namespace meta {
 
@@ -94,16 +95,29 @@ class document
         /**
          * Sets the content of the document to be the parameter
          * @param content
+         * @param encoding the encoding of content, which defaults to utf-8
          * @note saving the document's content is only used by some corpora
          * formats; not all documents are guaranteed to have content stored in
          * the object itself
          */
-        void set_content(const std::string & content);
+        void set_content(const std::string& content,
+                         const std::string& encoding = "utf-8");
+
+        /**
+         * Sets the encoding for the document to be the parameter
+         * @param encoding
+         */
+        void set_encoding(const std::string& encoding);
 
         /**
          * @return the contents of this document
          */
         const std::string & content() const;
+
+        /**
+         * @return the encoding for this document
+         */
+        const std::string& encoding() const;
 
         /**
          * @return the doc_id for this document
@@ -140,12 +154,10 @@ class document
         std::unordered_map<std::string, double> _counts;
 
         /** what the document contains */
-        std::string _content;
+        util::optional<std::string> _content;
 
-        /**
-         * Indicates whether this document has the original content stored in it
-         */
-        bool _contains_content;
+        /** the encoding for the content */
+        util::optional<std::string> _encoding;
 };
 
 }

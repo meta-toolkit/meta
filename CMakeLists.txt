@@ -156,7 +156,8 @@ add_library(meta-analyzers
 
 # some analyzer clases use io::parser
 # ngram_word_analyzer needs access to the stemmers
-target_link_libraries(meta-analyzers meta-io meta-corpus meta-stemmers)
+target_link_libraries(meta-analyzers
+                      meta-io meta-corpus meta-stemmers meta-utf)
 
 add_library(meta-index
             src/index/disk_index.cpp
