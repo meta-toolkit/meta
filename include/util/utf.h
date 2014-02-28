@@ -49,6 +49,61 @@ std::string to_utf8(const std::u16string& str);
 std::u16string to_utf16(const std::string& str);
 
 /**
+ * Lowercases a utf8 string.
+ */
+std::string tolower(const std::string& str);
+
+/**
+ * Uppercases a utf8 string.
+ */
+std::string toupper(const std::string& str);
+
+/**
+ * Transliterates a utf8 string, using the rules defined in ICU.
+ * @see http://userguide.icu-project.org/transforms
+ */
+std::string transform(const std::string& str, const std::string& id);
+
+/**
+ * Class that encapsulates transliteration of unicode strings.
+ * @see http://userguide.icu-project.org/transforms
+ */
+class transformer
+{
+  public:
+    /**
+     * Constructs a new transformer.
+     *
+     * @param id the id of the transliteration rule as defined by ICU
+     */
+    transformer(const std::string& id);
+
+    /**
+     * Copy constructor.
+     */
+    transformer(const transformer& other);
+
+    /**
+     * Move constructor.
+     */
+    transformer(transformer&& other);
+
+    /**
+     * Destructor for the transformer.
+     */
+    ~transformer();
+
+    /**
+     * Transforms the given utf8 string.
+     */
+    std::string operator()(const std::string& str);
+
+  private:
+    class impl;
+    util::pimpl<impl> impl_;
+};
+
+/**
  * Class that encapsulates segmenting unicode strings. Supports segmenting
  * sentences as well as words.
  */
