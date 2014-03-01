@@ -61,6 +61,11 @@ std::string toupper(const std::string& str);
 std::string transform(const std::string& str, const std::string& id);
 
 /**
+ * Gets the number of code points in a utf8 string.
+ */
+uint64_t length(const std::string& str);
+
+/**
  * Class that encapsulates transliteration of unicode strings.
  * @see http://userguide.icu-project.org/transforms
  */

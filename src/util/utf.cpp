@@ -126,6 +126,20 @@ std::string toupper(const std::string& str)
     return icu_to_u8str(icu_str);
 }
 
+uint64_t length(const std::string& str)
+{
+    const char* s = str.c_str();
+    int32_t length = str.length();
+    uint64_t count = 0;
+    for (int32_t i = 0; i < length;)
+    {
+        UChar32 c;
+        U8_NEXT(s, i, length, c);
+        ++count;
+    }
+    return count;
+}
+
 /**
  * Implementation class for the transformer.
  */
