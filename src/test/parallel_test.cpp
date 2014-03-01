@@ -52,7 +52,7 @@ int test_correctness(std::vector<double>& v)
         std::fill(v.begin(), v.end(), 1.0);
         std::mutex mtx;
         parallel::parallel_for(v.begin(), v.end(), easy_func<double>);
-        ASSERT_EQUAL(std::accumulate(v.begin(), v.end(), 0.0), 0.0);
+        ASSERT_APPROX_EQUAL(std::accumulate(v.begin(), v.end(), 0.0), 0.0);
     });
 }
 

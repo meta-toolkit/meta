@@ -85,7 +85,7 @@ void check_term_id(Index& idx)
         in >> first;
         in >> second;
         ASSERT_EQUAL(first, count.first);
-        ASSERT_EQUAL(second, count.second);
+        ASSERT_APPROX_EQUAL(second, count.second);
     }
 }
 

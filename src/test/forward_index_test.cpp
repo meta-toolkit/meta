@@ -66,7 +66,6 @@ void check_ceeaus_expected_fwd(Index& idx)
 template <class Index>
 void check_bcancer_doc_id(Index& idx)
 {
-    double epsilon = 0.000001;
     doc_id d_id{47};
     term_id first;
     double second;
@@ -77,7 +76,7 @@ void check_bcancer_doc_id(Index& idx)
         in >> first;
         in >> second;
         ASSERT_EQUAL(first - 1, count.first); // - 1 because libsvm format
-        ASSERT_LESS(std::abs(second - count.second), epsilon);
+        ASSERT_APPROX_EQUAL(second, count.second);
     }
 }
 
@@ -94,7 +93,7 @@ void check_ceeaus_doc_id(Index& idx)
         in >> first;
         in >> second;
         ASSERT_EQUAL(first, count.first);
-        ASSERT_EQUAL(second, count.second);
+        ASSERT_APPROX_EQUAL(second, count.second);
     }
 }
 
