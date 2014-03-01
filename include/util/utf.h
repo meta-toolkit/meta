@@ -136,6 +136,11 @@ class segmenter
     segmenter();
 
     /**
+     * Copy constructs a segmenter.
+     */
+    segmenter(const segmenter&);
+
+    /**
      * Destructor for segmenter.
      */
     ~segmenter();

@@ -210,6 +210,28 @@ std::string transform(const std::string& str, const std::string& id)
 class segmenter::impl
 {
   public:
+    impl()
+    {
+        auto status = U_ZERO_ERROR;
+        const auto& locale = icu::Locale::getDefault();
+        sentence_iter_.reset(
+            icu::BreakIterator::createSentenceInstance(locale, status));
+        word_iter_.reset(
+            icu::BreakIterator::createWordInstance(locale, status));
+        if (!U_SUCCESS(status))
+            throw std::runtime_error{"failed to create segmenter"};
+    }
+
+    impl(const impl& other)
+        : u_str_{other.u_str_},
+          sentence_iter_{other.sentence_iter_->clone()},
+          word_iter_{other.word_iter_->clone()}
+    {
+        // nothing
+    }
+
+    impl(impl&&) = default;
+
     /**
      * Sets the content of the segmenter.
      */
@@ -264,13 +286,11 @@ class segmenter::impl
     {
         std::vector<segment> results;
         auto status = U_ZERO_ERROR;
-        std::unique_ptr<icu::BreakIterator> iter;
+        icu::BreakIterator* iter;
         if (type == segment_t::SENTENCES)
-            iter.reset(icu::BreakIterator::createSentenceInstance(
-                icu::Locale::getDefault(), status));
+            iter = sentence_iter_.get();
         else if (type == segment_t::WORDS)
-            iter.reset(icu::BreakIterator::createWordInstance(
-                icu::Locale::getDefault(), status));
+            iter = word_iter_.get();
         else
             throw std::runtime_error{"Unknown segmentation type"};
 
@@ -285,7 +305,7 @@ class segmenter::impl
 
         auto start = iter->first();
         auto end = iter->next();
-        while (start != icu::BreakIterator::DONE)
+        while (end != icu::BreakIterator::DONE)
         {
             results.emplace_back(first + start, first + end);
             start = end;
@@ -296,11 +316,19 @@ class segmenter::impl
 
   private:
     icu::UnicodeString u_str_;
+    std::unique_ptr<icu::BreakIterator> sentence_iter_;
+    std::unique_ptr<icu::BreakIterator> word_iter_;
 };
 
 segmenter::segmenter()
 {
     icu_handle::get();
+}
+
+segmenter::segmenter(const segmenter& other)
+    : impl_{*other.impl_}
+{
+    // nothing
 }
 
 segmenter::~segmenter() = default;
