@@ -31,6 +31,8 @@ void icu_filter::set_content(const std::string& content)
 std::string icu_filter::next()
 {
     auto tok = source_->next();
+    if (tok == "<s>" || tok == "</s>")
+        return tok;
     return trans_(tok);
 }
 
