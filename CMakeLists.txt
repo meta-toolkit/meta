@@ -129,16 +129,18 @@ add_library(meta-stemmers
 add_library(meta-analyzers
             src/analyzers/filters/alpha_filter.cpp
             src/analyzers/filters/english_normalizer.cpp
+            src/analyzers/filters/icu_filter.cpp
             src/analyzers/filters/length_filter.cpp
             src/analyzers/filters/list_filter.cpp
             src/analyzers/filters/lowercase_filter.cpp
             src/analyzers/filters/porter2_stemmer.cpp
             src/analyzers/filters/sentence_boundary.cpp
             src/analyzers/tokenizers/character_tokenizer.cpp
+            src/analyzers/tokenizers/icu_tokenizer.cpp
             src/analyzers/tokenizers/whitespace_tokenizer.cpp
-            src/analyzers/multi_analyzer.cpp
             src/analyzers/analyzer.cpp
             src/analyzers/libsvm_analyzer.cpp
+            src/analyzers/multi_analyzer.cpp
             src/analyzers/ngram/ngram_char_analyzer.cpp
             src/analyzers/ngram/ngram_fw_analyzer.cpp
             src/analyzers/ngram/ngram_lex_analyzer.cpp
@@ -154,8 +156,6 @@ add_library(meta-analyzers
             src/analyzers/tree/subtree_analyzer.cpp
             src/analyzers/tree/tag_analyzer.cpp)
 
-# some analyzer clases use io::parser
-# ngram_word_analyzer needs access to the stemmers
 target_link_libraries(meta-analyzers
                       meta-io meta-corpus meta-stemmers meta-utf)
 

@@ -6,13 +6,15 @@
 #include "analyzers/token_stream.h"
 #include "analyzers/filters/alpha_filter.h"
 #include "analyzers/filters/english_normalizer.h"
-#include "analyzers/filters/sentence_boundary.h"
+#include "analyzers/filters/icu_filter.h"
 #include "analyzers/filters/length_filter.h"
 #include "analyzers/filters/list_filter.h"
 #include "analyzers/filters/lowercase_filter.h"
 #include "analyzers/filters/porter2_stemmer.h"
-#include "analyzers/tokenizers/whitespace_tokenizer.h"
+#include "analyzers/filters/sentence_boundary.h"
 #include "analyzers/tokenizers/character_tokenizer.h"
+#include "analyzers/tokenizers/icu_tokenizer.h"
+#include "analyzers/tokenizers/whitespace_tokenizer.h"
 #include "cpptoml.h"
 #include "corpus/document.h"
 #include "io/mmap_file.h"
@@ -52,16 +54,14 @@ std::unique_ptr<token_stream>
 
     std::unique_ptr<token_stream> result;
 
-    result = make_unique<whitespace_tokenizer>();
-    result = make_unique<english_normalizer>(std::move(result));
-    sentence_boundary::load_heuristics(config);
-    result = make_unique<sentence_boundary>(std::move(result));
-    result = make_unique<lowercase_filter>(std::move(result));
-    result = make_unique<alpha_filter>(std::move(result));
+    result = make_unique<icu_tokenizer>();
+    // lowercase all characters, remove punctuation except for apostrophe,
+    // and remove digits
+    result = make_unique<icu_filter>(
+        std::move(result), "Any-Lower; [[:Punctuation:]-[']+[:Digit:]] Remove");
     result = make_unique<length_filter>(std::move(result), 2, 35);
     result = make_unique<list_filter>(std::move(result), *stopwords);
     result = make_unique<porter2_stemmer>(std::move(result));
-
     return result;
 }
 
