@@ -74,7 +74,7 @@ std::string icu_tokenizer::next()
 
 icu_tokenizer::operator bool() const
 {
-    return bool{*impl_};
+    return static_cast<bool>(*impl_);
 }
 
 }
