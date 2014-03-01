@@ -157,7 +157,7 @@ class document
         util::optional<std::string> _content;
 
         /** the encoding for the content */
-        util::optional<std::string> _encoding;
+        std::string _encoding;
 };
 
 }

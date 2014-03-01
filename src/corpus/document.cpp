@@ -17,7 +17,8 @@ document::document(const std::string & path,
     _path{path},
     _d_id{d_id},
     _label{label},
-    _length{0}
+    _length{0},
+    _encoding{"utf-8"}
 {
     size_t idx = path.find_last_of("/") + 1;
     _name = path.substr(idx);
@@ -93,9 +94,7 @@ const std::string & document::content() const
 
 const std::string& document::encoding() const
 {
-    if (_encoding)
-        return *_encoding;
-    throw corpus::corpus_exception{"encoding was not set for this document"};
+    return _encoding;
 }
 
 doc_id document::id() const
