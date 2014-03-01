@@ -3,6 +3,7 @@
  * @author Chase Geigle
  */
 
+#include <algorithm>
 #include <deque>
 
 #include "analyzers/tokenizers/icu_tokenizer.h"
@@ -22,8 +23,17 @@ class icu_tokenizer::impl
   public:
     // TODO: can we make this be a streaming API instead of buffering all
     // of the tokens?
-    void set_content(const std::string& content)
+    void set_content(std::string content)
     {
+        auto pred = [](char c)
+        {
+            return c == '\n' || c == '\v' || c == '\f' || c == '\r';
+        };
+        // doing this because the sentence segmenter gets confused by
+        // newlines appearing within a pargraph. Plus, we don't really care
+        // about the kind of whitespace that was used for IR tasks.
+        std::replace_if(content.begin(), content.end(), pred, ' ');
+
         utf::segmenter segmenter;
         segmenter.set_content(content);
         for (const auto& sentence : segmenter.sentences())
