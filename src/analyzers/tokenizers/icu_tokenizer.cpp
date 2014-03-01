@@ -34,13 +34,12 @@ class icu_tokenizer::impl
         // about the kind of whitespace that was used for IR tasks.
         std::replace_if(content.begin(), content.end(), pred, ' ');
 
-        utf::segmenter segmenter;
-        segmenter.set_content(content);
-        for (const auto& sentence : segmenter.sentences())
+        segmenter_.set_content(content);
+        for (const auto& sentence : segmenter_.sentences())
         {
             tokens_.emplace_back("<s>");
-            for (const auto& word : segmenter.words(sentence))
-                tokens_.emplace_back(segmenter.content(word));
+            for (const auto& word : segmenter_.words(sentence))
+                tokens_.emplace_back(segmenter_.content(word));
             tokens_.emplace_back("</s>");
         }
     }
@@ -59,6 +58,7 @@ class icu_tokenizer::impl
         return !tokens_.empty();
     }
   private:
+    utf::segmenter segmenter_;
     std::deque<std::string> tokens_;
 };
 
