@@ -24,6 +24,14 @@ auto idx = index::make_index<index::inverted_index>(config);
 
 Things will be here.
 
-Back: [Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
+---
 
-Next: [Classifiers]({{site.baseurl}}/classify-tutorial.html)
+[Home]({{site.baseurl}}/)
+&nbsp; | &nbsp;
+[Overview]({{site.baseurl}}/overview-tutorial.html)
+&nbsp; | &nbsp;
+[Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
+&nbsp; | &nbsp;
+[Indexes]({{site.baseurl}}/index-tutorial.html)
+&nbsp; | &nbsp;
+[Classifiers]({{site.baseurl}}/classify-tutorial.html)

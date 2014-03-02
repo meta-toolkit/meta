@@ -34,13 +34,13 @@ probably not as frequently updated as it should be.
 
 We have walkthroughs for the following parts of MeTA:
 
- - [Overview]({{site.baseurl}}/overview-tutorial.html)
+ - [System Overview]({{site.baseurl}}/overview-tutorial.html)
 
- - [Analyzers and Filters]({{site.baseurl}}/analyzers-filters.html)
+ - [Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
 
- - [Index tutorial]({{site.baseurl}}/index-tutorial.html)
+ - [Indexes]({{site.baseurl}}/index-tutorial.html)
 
- - [Classification tutorial]({{site.baseurl}}/classify-tutorial.html)
+ - [Classifiers]({{site.baseurl}}/classify-tutorial.html)
 
 ## Project setup
 
@@ -55,30 +55,20 @@ We have walkthroughs for the following parts of MeTA:
  - Windows users: YMMV. It is not currently supported, but things may
    work. You will likely need Visual Studio 2013 for the C++11 features.
 
- - You will probably want to enable SVM classifier functionality through
-   liblinear. Download the source
-   [here](http://www.csie.ntu.edu.tw/~cjlin/liblinear/), and add the path to
-   liblinear in config.toml (replace the existing path). Make sure you compile
-   it.
-
- - You will also probably want to enable supervised latent Dirichlet allocation
-   through slda. Download the source
-   [here](http://www.cs.cmu.edu/~chongw/slda/). Add
-    ```
-     #include <cstddef>
-    ```
-   at the top of corpus.h, and compile. Again, add the path to slda to
-   config.toml.
-
  - This project makes use of several [git
    submodules](http://git-scm.com/book/en/Git-Tools-Submodules). To initialize
    these, run
+
 ```bash
 git submodule init
 git submodule update
 ```
 
+   Then, make sure you compile liblinear and libsvm (located in
+   deps/libsvm-modules). It is not necessary to compile any other submodules.
+
  - To compile initially, run the following commands
+
 ```bash
 mkdir build
 cd build

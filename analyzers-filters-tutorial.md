@@ -3,6 +3,16 @@ layout: default
 title: Tutorial - Analyzers and Filters
 ---
 
-Back: [Overview]({{site.baseurl}}/overview-tutorial.html)
+Analyzers and filters
 
-Next: [Indexes]({{site.baseurl}}/index-tutorial.html)
+---
+
+[Home]({{site.baseurl}}/)
+&nbsp; | &nbsp;
+[Overview]({{site.baseurl}}/overview-tutorial.html)
+&nbsp; | &nbsp;
+[Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
+&nbsp; | &nbsp;
+[Indexes]({{site.baseurl}}/index-tutorial.html)
+&nbsp; | &nbsp;
+[Classifiers]({{site.baseurl}}/classify-tutorial.html)
