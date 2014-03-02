@@ -38,7 +38,6 @@ int ir_eval_tests()
     });
 
     system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
-    testing::report(num_failed);
     return num_failed;
 }
 }

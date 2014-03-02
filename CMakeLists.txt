@@ -187,8 +187,7 @@ add_library(meta-testing
             src/test/stemmer_test.cpp
             src/test/string_list_test.cpp
             src/test/tokenizer_test.cpp
-            src/test/vocabulary_map_test.cpp
-            src/test/unit_test.cpp)
+            src/test/vocabulary_map_test.cpp)
 target_link_libraries(meta-testing meta-index meta-classify)
 
 add_executable(corpus-gen corpus-gen.cpp)
@@ -240,6 +239,19 @@ target_link_libraries(lda-topics
                       ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(shuffle shuffle.cpp)
+
+enable_testing()
+add_test(tokenizers unit-test tokenizers)
+add_test(stemmers unit-test stemmers)
+add_test(parallel unit-test parallel)
+add_test(inverted-index unit-test inverted-index)
+add_test(forward-index unit-test forward-index)
+add_test(string-list unit-test string-list)
+add_test(vocabulary-map unit-test vocabulary-map)
+add_test(libsvm-parser unit-test libsvm-parser)
+add_test(classifiers unit-test classifiers)
+add_test(rankers unit-test rankers)
+add_test(ir-eval unit-test ir-eval)
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf

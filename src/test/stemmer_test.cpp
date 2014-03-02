@@ -56,7 +56,6 @@ int stemmer_tests()
         }
     });
 
-    testing::report(num_failed);
     return num_failed;
 }
 }
