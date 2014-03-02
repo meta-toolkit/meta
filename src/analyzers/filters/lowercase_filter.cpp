@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cctype>
 #include "analyzers/filters/lowercase_filter.h"
+#include "util/utf.h"
 
 namespace meta
 {
@@ -32,8 +33,7 @@ void lowercase_filter::set_content(const std::string& content)
 std::string lowercase_filter::next()
 {
     auto tok = source_->next();
-    std::transform(tok.begin(), tok.end(), tok.begin(), ::tolower);
-    return tok;
+    return utf::foldcase(tok);
 }
 
 lowercase_filter::operator bool() const

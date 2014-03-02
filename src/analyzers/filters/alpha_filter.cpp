@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include "analyzers/filters/alpha_filter.h"
+#include "util/utf.h"
 
 namespace meta
 {
@@ -34,20 +35,10 @@ std::string alpha_filter::next()
     if (tok == "<s>" || tok == "</s>")
         return tok;
 
-    auto it = std::remove_if(tok.begin(), tok.end(), [](char ch)
+    return utf::remove_if(tok, [](uint32_t codepoint)
     {
-        return (ch < 'a' || ch > 'z') && ch != '\'' && ch != '-';
+        return !utf::isalpha(codepoint) && codepoint != '\'';
     });
-    tok.erase(it, tok.end());
-
-    auto blank = std::all_of(tok.begin(), tok.end(), [](char ch)
-    {
-        return ch == '\'' || ch == '-';
-    });
-    if (blank)
-        return "";
-
-    return tok;
 }
 
 alpha_filter::operator bool() const

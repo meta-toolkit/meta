@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 project(meta)
 
 option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
@@ -7,7 +7,10 @@ include_directories(include/
                     deps/cpptoml/include/
                     deps/porter2_stemmer/)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
+find_package(ICU COMPONENTS data i18n uc REQUIRED)
+include_directories(SYSTEM ${ICU_INCLUDE_DIRS})
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -97,6 +100,10 @@ endif()
 add_library(meta-util
             src/util/progress.cpp)
 
+add_library(meta-utf
+            src/util/utf.cpp)
+target_link_libraries(meta-utf ${ICU_LIBRARIES})
+
 add_library(meta-io
             src/io/compressed_file_reader.cpp
             src/io/parser.cpp
@@ -122,16 +129,18 @@ add_library(meta-stemmers
 add_library(meta-analyzers
             src/analyzers/filters/alpha_filter.cpp
             src/analyzers/filters/english_normalizer.cpp
+            src/analyzers/filters/icu_filter.cpp
             src/analyzers/filters/length_filter.cpp
             src/analyzers/filters/list_filter.cpp
             src/analyzers/filters/lowercase_filter.cpp
             src/analyzers/filters/porter2_stemmer.cpp
             src/analyzers/filters/sentence_boundary.cpp
             src/analyzers/tokenizers/character_tokenizer.cpp
+            src/analyzers/tokenizers/icu_tokenizer.cpp
             src/analyzers/tokenizers/whitespace_tokenizer.cpp
-            src/analyzers/multi_analyzer.cpp
             src/analyzers/analyzer.cpp
             src/analyzers/libsvm_analyzer.cpp
+            src/analyzers/multi_analyzer.cpp
             src/analyzers/ngram/ngram_char_analyzer.cpp
             src/analyzers/ngram/ngram_fw_analyzer.cpp
             src/analyzers/ngram/ngram_lex_analyzer.cpp
@@ -147,9 +156,8 @@ add_library(meta-analyzers
             src/analyzers/tree/subtree_analyzer.cpp
             src/analyzers/tree/tag_analyzer.cpp)
 
-# some analyzer clases use io::parser
-# ngram_word_analyzer needs access to the stemmers
-target_link_libraries(meta-analyzers meta-io meta-corpus meta-stemmers)
+target_link_libraries(meta-analyzers
+                      meta-io meta-corpus meta-stemmers meta-utf)
 
 add_library(meta-index
             src/index/disk_index.cpp
@@ -250,6 +258,9 @@ target_link_libraries(lda-topics
                       ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(shuffle shuffle.cpp)
+
+add_executable(utf8-test utf8-test.cpp)
+target_link_libraries(utf8-test meta-utf)
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf

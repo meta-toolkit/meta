@@ -4,6 +4,7 @@
  */
 
 #include "analyzers/filters/length_filter.h"
+#include "util/utf.h"
 
 namespace meta
 {
@@ -56,7 +57,13 @@ void length_filter::next_token()
     while (*source_)
     {
         auto tok = source_->next();
-        if (tok.length() >= min_length_ && tok.length() <= max_length_)
+        if (tok == "<s>" || tok == "</s>")
+        {
+            token_ = tok;
+            break;
+        }
+        auto len = utf::length(tok);
+        if (len >= min_length_ && len <= max_length_)
         {
             token_ = tok;
             break;

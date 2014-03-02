@@ -28,8 +28,10 @@ class file_corpus: public corpus
          * @param prefix The path to where the files are located
          * @param doc_list A file containing the path to each document in the
          * corpus
+         * @param encoding the encoding of the corpus
          */
-        file_corpus(const std::string & prefix, const std::string & doc_list);
+        file_corpus(const std::string & prefix, const std::string & doc_list,
+                    std::string encoding);
 
         /**
          * @return whether there is another document in this corpus
