@@ -201,6 +201,11 @@ add_library(meta-testing
             src/test/unit_test.cpp)
 target_link_libraries(meta-testing meta-index meta-classify)
 
+add_executable(corpus-gen corpus-gen.cpp)
+target_link_libraries(corpus-gen
+                      meta-corpus
+                      meta-util)
+
 add_executable(classify classify-test.cpp)
 target_link_libraries(classify
                       meta-util

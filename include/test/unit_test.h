@@ -9,6 +9,7 @@
 #ifndef _UNIT_TEST_H_
 #define _UNIT_TEST_H_
 
+#include <cmath>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <signal.h>
@@ -30,12 +31,24 @@
 
 /**
  * Fail if exp1 != exp2; otherwise continue.
- * @see https://bitbucket.org/jacktoole1/monad_hg/
+ * @see https://bitbucket.org/jacktoole1/monad_hg/ for string printing
  */
 #define ASSERT_EQUAL(exp1, exp2)                                               \
     do                                                                         \
     {                                                                          \
         std::string msg = testing::assert_equal(exp1, exp2, #exp1, #exp2);     \
+        if (!msg.empty())                                                      \
+            FAIL(msg);                                                         \
+    } while (0)
+
+/**
+ * Fail if !(|exp1 - exp2| < epsilon); otherwise continue.
+ */
+#define ASSERT_APPROX_EQUAL(exp1, exp2)                                        \
+    do                                                                         \
+    {                                                                          \
+        std::string msg                                                        \
+            = testing::assert_approx_equal(exp1, exp2, #exp1, #exp2);          \
         if (!msg.empty())                                                      \
             FAIL(msg);                                                         \
     } while (0)
@@ -115,6 +128,11 @@ namespace testing
 static bool debug = false;
 
 /**
+ * Used to compare floating point equality
+ */
+static double epsilon = 0.0000001;
+
+/**
  * Allows the user to see what the evaluated statements are.
  * @param expected The expected expression
  * @param actual The actual expression
@@ -147,6 +165,20 @@ inline std::string assert_equal(const T& expected, const K& actual,
     {
         return a == b;
     });
+}
+
+template <class T, class K>
+inline std::string assert_approx_equal(const T& expected, const K& actual,
+                                       const char* expstr, const char* actstr)
+{
+    if (!(std::abs(expected - actual) < epsilon))
+    {
+        std::stringstream ss;
+        ss << "[abs(" << expstr << " - " << actstr << ") < epsilon] => [abs("
+           << expected << " - " << actual << ") < " << epsilon << "]";
+        return ss.str();
+    }
+    return "";
 }
 
 template <class T, class K>

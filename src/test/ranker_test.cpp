@@ -28,7 +28,7 @@ void test_rank(Ranker& r, Index& idx)
         if (ranking[0].first != i)
         {
             ASSERT_EQUAL(ranking[1].first, i);
-            ASSERT_EQUAL(ranking[0].second, ranking[1].second);
+            ASSERT_APPROX_EQUAL(ranking[0].second, ranking[1].second);
         }
     }
 }
