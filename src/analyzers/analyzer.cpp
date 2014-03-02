@@ -55,10 +55,8 @@ std::unique_ptr<token_stream>
     std::unique_ptr<token_stream> result;
 
     result = make_unique<icu_tokenizer>();
-    // lowercase all characters, remove punctuation except for apostrophe,
-    // and remove digits
-    result = make_unique<icu_filter>(
-        std::move(result), "Any-Lower; [[:Punctuation:]-[']+[:Digit:]] Remove");
+    result = make_unique<lowercase_filter>(std::move(result));
+    result = make_unique<alpha_filter>(std::move(result));
     result = make_unique<length_filter>(std::move(result), 2, 35);
     result = make_unique<list_filter>(std::move(result), *stopwords);
     result = make_unique<porter2_stemmer>(std::move(result));
