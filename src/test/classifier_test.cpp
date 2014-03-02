@@ -42,37 +42,36 @@ int run_tests(const std::string& type)
     using namespace classify;
 
     int num_failed = 0;
-    int timeout = 10; // 10 seconds
     auto i_idx = index::make_index
         <index::inverted_index, caching::no_evict_cache>("test-config.toml");
     auto f_idx = index::make_index
         <index::forward_index, caching::no_evict_cache>("test-config.toml");
 
-    num_failed += testing::run_test("naive-bayes-cv-" + type, timeout, [&]()
+    num_failed += testing::run_test("naive-bayes-cv-" + type, [&]()
     {
         naive_bayes nb{f_idx};
         check_cv(f_idx, nb, 0.86);
     });
 
-    num_failed += testing::run_test("naive-bayes-split-" + type, timeout, [&]()
+    num_failed += testing::run_test("naive-bayes-split-" + type, [&]()
     {
         naive_bayes nb{f_idx};
         check_split(f_idx, nb, 0.84);
     });
 
-    num_failed += testing::run_test("knn-cv-" + type, timeout, [&]()
+    num_failed += testing::run_test("knn-cv-" + type, [&]()
     {
         knn<index::okapi_bm25> kn{i_idx, f_idx, 10};
         check_cv(f_idx, kn, 0.90);
     });
 
-    num_failed += testing::run_test("knn-split-" + type, timeout, [&]()
+    num_failed += testing::run_test("knn-split-" + type, [&]()
     {
         knn<index::okapi_bm25> kn{i_idx, f_idx, 10};
         check_split(f_idx, kn, 0.88);
     });
 
-    num_failed += testing::run_test("sgd-cv-" + type, timeout, [&]()
+    num_failed += testing::run_test("sgd-cv-" + type, [&]()
     {
         one_vs_all<sgd<loss::hinge>> hinge_sgd{f_idx};
         check_cv(f_idx, hinge_sgd, 0.94);
@@ -80,7 +79,7 @@ int run_tests(const std::string& type)
         check_cv(f_idx, perceptron, 0.89);
     });
 
-    num_failed += testing::run_test("sgd-split-" + type, timeout, [&]()
+    num_failed += testing::run_test("sgd-split-" + type, [&]()
     {
         one_vs_all<sgd<loss::hinge>> hinge_sgd{f_idx};
         check_split(f_idx, hinge_sgd, 0.89);
@@ -88,19 +87,19 @@ int run_tests(const std::string& type)
         check_split(f_idx, perceptron, 0.85);
     });
 
-    num_failed += testing::run_test("winnow-cv-" + type, timeout, [&]()
+    num_failed += testing::run_test("winnow-cv-" + type, [&]()
     {
         winnow win{f_idx};
         check_cv(f_idx, win, 0.80);
     });
 
-    num_failed += testing::run_test("winnow-split-" + type, timeout, [&]()
+    num_failed += testing::run_test("winnow-split-" + type, [&]()
     {
         winnow win{f_idx};
         check_split(f_idx, win, 0.75); // this is really low
     });
 
-    num_failed += testing::run_test("svm-wrapper-" + type, timeout, [&]()
+    num_failed += testing::run_test("svm-wrapper-" + type, [&]()
     {
         auto config = cpptoml::parse_file("test-config.toml");
         auto mod_path = config.get_as<std::string>("libsvm-modules");
@@ -122,7 +121,6 @@ int classifier_tests()
     num_failed += run_tests("file");
     create_config("line");
     num_failed += run_tests("line");
-    testing::report(num_failed);
     return num_failed;
 }
 }

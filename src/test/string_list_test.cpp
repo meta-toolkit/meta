@@ -68,7 +68,6 @@ int string_list_tests()
         ASSERT_EQUAL(std::strcmp(list.at(3), "a no good very dead ex-parrot"), 0);
     });
 
-    testing::report(num_failed);
     return num_failed;
 }
 }

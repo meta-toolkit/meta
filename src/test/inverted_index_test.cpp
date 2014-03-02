@@ -94,8 +94,7 @@ int inverted_index_tests()
     create_config("file");
 
     int num_failed = 0;
-    num_failed += testing::run_test("inverted-index-build-file-corpus", 30,
-    [&]()
+    num_failed += testing::run_test("inverted-index-build-file-corpus", [&]()
     {
         system("/usr/bin/rm -rf ceeaus-inv");
         auto idx = index::make_index
@@ -104,7 +103,7 @@ int inverted_index_tests()
         check_ceeaus_expected(idx);
     });
 
-    num_failed += testing::run_test("inverted-index-read-file-corpus", 10, [&]()
+    num_failed += testing::run_test("inverted-index-read-file-corpus", [&]()
     {
         auto idx = index::make_index
             <index::inverted_index, caching::splay_cache>("test-config.toml",
@@ -117,8 +116,7 @@ int inverted_index_tests()
     create_config("line");
     system("/usr/bin/rm -rf ceeaus-inv");
 
-    num_failed += testing::run_test("inverted-index-build-line-corpus", 30,
-    [&]()
+    num_failed += testing::run_test("inverted-index-build-line-corpus", [&]()
     {
         auto idx = index::make_index
             <index::inverted_index, caching::splay_cache>("test-config.toml",
@@ -126,7 +124,7 @@ int inverted_index_tests()
         check_ceeaus_expected(idx);
     });
 
-    num_failed += testing::run_test("inverted-index-read-line-corpus", 10, [&]()
+    num_failed += testing::run_test("inverted-index-read-line-corpus", [&]()
     {
         auto idx = index::make_index
             <index::inverted_index, caching::splay_cache>("test-config.toml",
@@ -138,7 +136,7 @@ int inverted_index_tests()
 
     // test different caches
 
-    num_failed += testing::run_test("inverted-index-dblru-cache", 5, [&]()
+    num_failed += testing::run_test("inverted-index-dblru-cache", [&]()
     {
         auto idx = index::make_index
             <index::inverted_index, caching::default_dblru_cache>(
@@ -147,7 +145,7 @@ int inverted_index_tests()
         check_term_id(idx);
     });
 
-    num_failed += testing::run_test("inverted-index-no-evict-cache", 5, [&]()
+    num_failed += testing::run_test("inverted-index-no-evict-cache", [&]()
     {
         auto idx = index::make_index
             <index::inverted_index, caching::no_evict_cache>(
@@ -156,7 +154,7 @@ int inverted_index_tests()
         check_term_id(idx);
     });
 
-    num_failed += testing::run_test("inverted-index-shard-cache", 5, [&]()
+    num_failed += testing::run_test("inverted-index-shard-cache", [&]()
     {
         auto idx = index::make_index
             <index::inverted_index, caching::splay_shard_cache>(
@@ -166,7 +164,6 @@ int inverted_index_tests()
     });
 
     system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
-    testing::report(num_failed);
     return num_failed;
 }
 }

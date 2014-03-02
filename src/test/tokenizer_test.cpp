@@ -92,7 +92,6 @@ int tokenizer_tests()
     num_failed += content_tokenize();
     num_failed += file_tokenize();
 
-    testing::report(num_failed);
     return num_failed;
 }
 }

@@ -41,40 +41,38 @@ int ranker_tests()
         "test-config.toml", uint32_t{10000});
 
     int num_failed = 0;
-    int timeout = 10; // 10 seconds
     /* TODO why does this not always work?
-    num_failed += testing::run_test("ranker-absolute-discount", timeout, [&]()
+    num_failed += testing::run_test("ranker-absolute-discount", [&]()
     {
         index::absolute_discount r;
         test_rank(r, idx);
     });
     */
-    num_failed += testing::run_test("ranker-dirichlet-prior", timeout, [&]()
+    num_failed += testing::run_test("ranker-dirichlet-prior", [&]()
     {
         index::dirichlet_prior r;
         test_rank(r, idx);
     });
 
-    num_failed += testing::run_test("ranker-jelinek-mercer", timeout, [&]()
+    num_failed += testing::run_test("ranker-jelinek-mercer", [&]()
     {
         index::jelinek_mercer r;
         test_rank(r, idx);
     });
 
-    num_failed += testing::run_test("ranker-okapi-bm25", timeout, [&]()
+    num_failed += testing::run_test("ranker-okapi-bm25", [&]()
     {
         index::okapi_bm25 r;
         test_rank(r, idx);
     });
 
-    num_failed += testing::run_test("ranker-pivoted-length", timeout, [&]()
+    num_failed += testing::run_test("ranker-pivoted-length", [&]()
     {
         index::pivoted_length r;
         test_rank(r, idx);
     });
 
     system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
-    testing::report(num_failed);
     return num_failed;
 }
 }

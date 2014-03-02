@@ -97,7 +97,6 @@ int libsvm_parser_tests()
     num_failed += testing::run_test("libsvm-parser-bad-counts", [&]()
         { bad_counts(); });
 
-    testing::report(num_failed);
     return num_failed;
 }
 }

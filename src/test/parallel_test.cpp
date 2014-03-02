@@ -29,7 +29,7 @@ void easy_func(Type& x)
  */
 int test_speed(std::vector<double>& v)
 {
-    return testing::run_test("parallel-speed", 10, [&]()
+    return testing::run_test("parallel-speed", [&]()
     {
 
         std::iota(v.begin(), v.end(), 0);
@@ -47,7 +47,7 @@ int test_speed(std::vector<double>& v)
 int test_correctness(std::vector<double>& v)
 {
     // this makes sure every single element is touched exactly once
-    return testing::run_test("parallel-correctness", 10, [&]()
+    return testing::run_test("parallel-correctness", [&]()
     {
         std::fill(v.begin(), v.end(), 1.0);
         std::mutex mtx;
@@ -58,7 +58,7 @@ int test_correctness(std::vector<double>& v)
 
 int test_threadpool()
 {
-    return testing::run_test("parallel-thread-pool", 5, []()
+    return testing::run_test("parallel-thread-pool", []()
     {
         parallel::thread_pool pool{};
         std::vector<std::future<size_t>> futures;
@@ -86,7 +86,6 @@ int parallel_tests()
     num_failed += test_speed(v);
     num_failed += test_correctness(v);
     num_failed += test_threadpool();
-    testing::report(num_failed);
     return num_failed;
 }
 }

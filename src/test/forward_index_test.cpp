@@ -119,13 +119,13 @@ int forward_index_tests()
 
     int num_failed = 0;
 
-    num_failed += testing::run_test("forward-index-build-file-corpus", 30, [&]()
+    num_failed += testing::run_test("forward-index-build-file-corpus", [&]()
     {
         system("/usr/bin/rm -rf ceeaus-*");
         ceeaus_forward_test();
     });
 
-    num_failed += testing::run_test("forward-index-read-file-corpus", 10, [&]()
+    num_failed += testing::run_test("forward-index-read-file-corpus", [&]()
     {
         ceeaus_forward_test();
         system("/usr/bin/rm -rf ceeaus-* test-config.toml");
@@ -133,13 +133,13 @@ int forward_index_tests()
 
     create_config("line");
 
-    num_failed += testing::run_test("forward-index-build-line-corpus", 30, [&]()
+    num_failed += testing::run_test("forward-index-build-line-corpus", [&]()
     {
         system("/usr/bin/rm -rf ceeaus-*");
         ceeaus_forward_test();
     });
 
-    num_failed += testing::run_test("forward-index-read-line-corpus", 10, [&]()
+    num_failed += testing::run_test("forward-index-read-line-corpus", [&]()
     {
         ceeaus_forward_test();
         system("/usr/bin/rm -rf ceeaus-* test-config.toml");
@@ -147,19 +147,18 @@ int forward_index_tests()
 
     create_libsvm_config();
 
-    num_failed += testing::run_test("forward-index-build-libsvm", 10, [&]()
+    num_failed += testing::run_test("forward-index-build-libsvm", [&]()
     {
         system("/usr/bin/rm -rf bcancer-*");
         bcancer_forward_test();
     });
 
-    num_failed += testing::run_test("forward-index-load-libsvm", 10, [&]()
+    num_failed += testing::run_test("forward-index-load-libsvm", [&]()
     {
         bcancer_forward_test();
         system("/usr/bin/rm -rf bcancer-* test-config.toml");
     });
 
-    testing::report(num_failed);
     return num_failed;
 }
 }
