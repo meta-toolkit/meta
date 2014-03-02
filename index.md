@@ -1,9 +1,7 @@
 ---
 title: MeTA
-layout: index
+layout: default
 ---
-
-## Overview
 
 MeTA is a modern C++ data sciences toolkit featuring
 
