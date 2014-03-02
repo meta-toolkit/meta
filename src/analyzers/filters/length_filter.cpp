@@ -57,6 +57,11 @@ void length_filter::next_token()
     while (*source_)
     {
         auto tok = source_->next();
+        if (tok == "<s>" || tok == "</s>")
+        {
+            token_ = tok;
+            break;
+        }
         auto len = utf::length(tok);
         if (len >= min_length_ && len <= max_length_)
         {
