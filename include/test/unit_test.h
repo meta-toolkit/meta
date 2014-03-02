@@ -69,8 +69,8 @@
     do                                                                         \
     {                                                                          \
         std::string fail_msg = "[ " + printing::make_red("FAIL") + " ] "       \
-                               + (why) + " (" + __FILE__ + ":"                 \
-                               + std::to_string(__LINE__) + ")";               \
+                               + (why) + " (" + testing::filename(__FILE__)    \
+                               + ":" + std::to_string(__LINE__) + ")";         \
         throw testing::unit_test_exception{fail_msg};                          \
     } while (0)
 
@@ -108,6 +108,17 @@ namespace testing
  * Used to compare floating point equality
  */
 static double epsilon = 0.0000001;
+
+/**
+ * @param path The path to truncate
+ */
+inline std::string filename(const std::string& path)
+{
+    size_t slash = path.find_last_of("/\\");
+    if(slash == std::string::npos)
+        return path;
+    return path.substr(slash + 1);
+}
 
 /**
  * Allows the user to see what the evaluated statements are.
