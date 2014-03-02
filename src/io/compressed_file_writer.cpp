@@ -36,7 +36,10 @@ void compressed_file_writer::write(const std::string & str)
     uint64_t length = str.size();
     write(length);
     for(auto & ch: str)
-        write(static_cast<uint64_t>(ch));
+    {
+        auto uch = static_cast<uint8_t>(ch);
+        write(static_cast<uint64_t>(uch));
+    }
 }
 
 uint64_t compressed_file_writer::bit_location() const

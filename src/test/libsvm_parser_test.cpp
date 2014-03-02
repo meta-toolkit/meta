@@ -20,13 +20,13 @@ void label()
         auto counts = io::libsvm_parser::counts(text);
         ASSERT_EQUAL(counts.size(), 4);
         ASSERT_EQUAL(counts[0].first, 11);
-        ASSERT_EQUAL(counts[0].second, 2e-3);
+        ASSERT_APPROX_EQUAL(counts[0].second, 2e-3);
         ASSERT_EQUAL(counts[1].first, 14);
-        ASSERT_EQUAL(counts[1].second, 4.01);
+        ASSERT_APPROX_EQUAL(counts[1].second, 4.01);
         ASSERT_EQUAL(counts[2].first, 98);
-        ASSERT_EQUAL(counts[2].second, 22.0);
+        ASSERT_APPROX_EQUAL(counts[2].second, 22.0);
         ASSERT_EQUAL(counts[3].first, 121);
-        ASSERT_EQUAL(counts[3].second, 1.0);
+        ASSERT_APPROX_EQUAL(counts[3].second, 1.0);
     }
 }
 
@@ -38,13 +38,13 @@ void no_label()
         auto counts = io::libsvm_parser::counts(text, false);
         ASSERT_EQUAL(counts.size(), 4);
         ASSERT_EQUAL(counts[0].first, 0);
-        ASSERT_EQUAL(counts[0].second, 2e-3);
+        ASSERT_APPROX_EQUAL(counts[0].second, 2e-3);
         ASSERT_EQUAL(counts[1].first, 1);
-        ASSERT_EQUAL(counts[1].second, 4.01);
+        ASSERT_APPROX_EQUAL(counts[1].second, 4.01);
         ASSERT_EQUAL(counts[2].first, 2);
-        ASSERT_EQUAL(counts[2].second, 22.0);
+        ASSERT_APPROX_EQUAL(counts[2].second, 22.0);
         ASSERT_EQUAL(counts[3].first, 12);
-        ASSERT_EQUAL(counts[3].second, 1.0);
+        ASSERT_APPROX_EQUAL(counts[3].second, 1.0);
     }
 }
 
