@@ -21,7 +21,7 @@ MeTA is a modern C++ data sciences toolkit featuring
 
  - classification algorithms
 
- - wrappers for liblinear and slda
+ - wrapper for liblinear
 
 Our current goal for MeTA is to publish in [JMLR's Machine Learning Open-Source
 Software](http://jmlr.org/mloss/).
@@ -35,6 +35,10 @@ probably not as frequently updated as it should be.
 ## Tutorials
 
 We have walkthroughs for the following parts of MeTA:
+
+ - [Overview]({{site.baseurl}}/overview-tutorial.html)
+
+ - [Analyzers and Filters]({{site.baseurl}}/analyzers-filters.html)
 
  - [Index tutorial]({{site.baseurl}}/index-tutorial.html)
 

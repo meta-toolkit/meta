@@ -23,3 +23,7 @@ auto idx = index::make_index<index::inverted_index>(config);
 ## Other Things
 
 Things will be here.
+
+Back: [Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
+
+Next: [Classifiers]({{site.baseurl}}/classify-tutorial.html)
