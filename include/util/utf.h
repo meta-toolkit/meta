@@ -6,6 +6,7 @@
 #ifndef _META_UTF8_H_
 #define _META_UTF8_H_
 
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -55,15 +56,32 @@ std::string tolower(const std::string& str);
 std::string toupper(const std::string& str);
 
 /**
+ * Folds the case of a utf8 string. This is like lowercase, but a bit more
+ * general.
+ */
+std::string foldcase(const std::string& str);
+
+/**
  * Transliterates a utf8 string, using the rules defined in ICU.
  * @see http://userguide.icu-project.org/transforms
  */
 std::string transform(const std::string& str, const std::string& id);
 
 /**
+ * Removes characters that match the given function.
+ */
+std::string remove_if(const std::string& str,
+                      std::function<bool(uint32_t)> pred);
+
+/**
  * Gets the number of code points in a utf8 string.
  */
 uint64_t length(const std::string& str);
+
+/**
+ * Determines if a code point is a letter character.
+ */
+bool isalpha(uint32_t codepoint);
 
 /**
  * Class that encapsulates transliteration of unicode strings.
