@@ -156,8 +156,7 @@ add_library(meta-analyzers
             src/analyzers/tree/subtree_analyzer.cpp
             src/analyzers/tree/tag_analyzer.cpp)
 
-target_link_libraries(meta-analyzers
-                      meta-io meta-corpus meta-stemmers meta-utf)
+target_link_libraries(meta-analyzers meta-corpus meta-stemmers meta-utf)
 
 add_library(meta-index
             src/index/disk_index.cpp
@@ -176,8 +175,7 @@ add_library(meta-index
             src/index/ranker/absolute_discount.cpp
             src/index/ranker/pivoted_length.cpp)
 
-target_link_libraries(meta-index
-                      meta-util meta-io meta-corpus meta-analyzers)
+target_link_libraries(meta-index meta-analyzers ${CMAKE_THREAD_LIBS_INIT})
 
 add_library(meta-classify
             src/classify/confusion_matrix.cpp
@@ -209,52 +207,31 @@ add_library(meta-testing
 target_link_libraries(meta-testing meta-index meta-classify)
 
 add_executable(corpus-gen corpus-gen.cpp)
-target_link_libraries(corpus-gen
-                      meta-corpus
-                      meta-util)
+target_link_libraries(corpus-gen meta-corpus)
 
 add_executable(classify classify-test.cpp)
-target_link_libraries(classify
-                      meta-util
-                      meta-classify
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(classify meta-classify)
 
 add_executable(unit-test unit-test.cpp)
-target_link_libraries(unit-test
-                      meta-testing
-                      meta-classify
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(unit-test meta-testing meta-classify meta-index)
 
 add_executable(query-runner query-runner.cpp)
-target_link_libraries(query-runner
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(query-runner meta-index)
 
 add_executable(search search.cpp)
-target_link_libraries(search
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(search meta-index)
 
 add_executable(index index.cpp)
-target_link_libraries(index
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(index meta-index)
 
 add_executable(interactive_search interactive_search.cpp)
-target_link_libraries(interactive_search
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(interactive_search meta-index)
 
 add_executable(lda-test lda-test.cpp)
-target_link_libraries(lda-test
-                      meta-topics
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(lda-test meta-topics)
 
 add_executable(lda-topics lda-topics.cpp)
-target_link_libraries(lda-topics
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(lda-topics meta-index)
 
 add_executable(shuffle shuffle.cpp)
 
