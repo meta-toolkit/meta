@@ -12,12 +12,13 @@ namespace testing
 {
 
 template <class Ranker, class Index>
-void test_rank(Ranker& r, Index& idx)
+void test_rank(Ranker& r, Index& idx, const std::string& encoding)
 {
     for (size_t i = 0; i < idx.num_docs(); ++i)
     {
         auto d_id = idx.docs()[i];
         corpus::document query{idx.doc_path(d_id), doc_id{i}};
+        query.set_encoding(encoding);
 
         auto ranking = r.score(idx, query);
         ASSERT_EQUAL(ranking.size(), 10); // default is 10 docs
@@ -40,6 +41,11 @@ int ranker_tests()
     auto idx = index::make_index<index::inverted_index, caching::splay_cache>(
         "test-config.toml", uint32_t{10000});
 
+    auto config = cpptoml::parse_file("test-config.toml");
+    std::string encoding = "utf-8";
+    if (auto enc = config.get_as<std::string>("encoding"))
+        encoding = *enc;
+
     int num_failed = 0;
     /* TODO why does this not always work?
     num_failed += testing::run_test("ranker-absolute-discount", [&]()
@@ -51,25 +57,25 @@ int ranker_tests()
     num_failed += testing::run_test("ranker-dirichlet-prior", [&]()
     {
         index::dirichlet_prior r;
-        test_rank(r, idx);
+        test_rank(r, idx, encoding);
     });
 
     num_failed += testing::run_test("ranker-jelinek-mercer", [&]()
     {
         index::jelinek_mercer r;
-        test_rank(r, idx);
+        test_rank(r, idx, encoding);
     });
 
     num_failed += testing::run_test("ranker-okapi-bm25", [&]()
     {
         index::okapi_bm25 r;
-        test_rank(r, idx);
+        test_rank(r, idx, encoding);
     });
 
     num_failed += testing::run_test("ranker-pivoted-length", [&]()
     {
         index::pivoted_length r;
-        test_rank(r, idx);
+        test_rank(r, idx, encoding);
     });
 
     system("/usr/bin/rm -rf ceeaus-inv test-config.toml");

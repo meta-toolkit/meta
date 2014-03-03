@@ -42,15 +42,17 @@ int run_tests(const std::string& type)
     using namespace classify;
 
     int num_failed = 0;
-    auto i_idx = index::make_index
-        <index::inverted_index, caching::no_evict_cache>("test-config.toml");
-    auto f_idx = index::make_index
-        <index::forward_index, caching::no_evict_cache>("test-config.toml");
+    auto i_idx =
+        index::make_index<index::inverted_index, caching::no_evict_cache>(
+            "test-config.toml");
+    auto f_idx =
+        index::make_index<index::forward_index, caching::no_evict_cache>(
+            "test-config.toml");
 
     num_failed += testing::run_test("naive-bayes-cv-" + type, [&]()
     {
         naive_bayes nb{f_idx};
-        check_cv(f_idx, nb, 0.86);
+        check_cv(f_idx, nb, 0.84);
     });
 
     num_failed += testing::run_test("naive-bayes-split-" + type, [&]()

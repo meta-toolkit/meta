@@ -65,7 +65,6 @@ int filter_tests()
         check_expected(*norm, expected);
     });
 
-    testing::report(num_failed);
     return num_failed;
 }
 

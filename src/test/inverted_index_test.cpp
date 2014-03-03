@@ -54,6 +54,7 @@ void create_config(const std::string& corpus_type)
                 << "corpus-type = \"" << corpus_type << "-corpus\"\n"
                 << "list= \"ceeaus\"\n"
                 << "dataset = \"ceeaus\"\n"
+                << "encoding = \"shift_jis\"\n"
                 << "forward-index = \"ceeaus-fwd\"\n"
                 << "inverted-index = \"ceeaus-inv\"\n"
                 << "[[analyzers]]\n"
@@ -68,8 +69,8 @@ void check_ceeaus_expected(Index& idx)
 {
     double epsilon = 0.000001;
     ASSERT_EQUAL(idx.num_docs(), 1008);
-    ASSERT_LESS(abs(idx.avg_doc_length() - 128.879), epsilon);
-    ASSERT_EQUAL(idx.unique_terms(), 4003);
+    ASSERT_LESS(abs(idx.avg_doc_length() - 128.556), epsilon);
+    ASSERT_EQUAL(idx.unique_terms(), 3944);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};
     uint64_t size;
