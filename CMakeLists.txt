@@ -205,8 +205,7 @@ add_library(meta-testing
             src/test/string_list_test.cpp
             src/test/analyzer_test.cpp
             src/test/filter_test.cpp
-            src/test/vocabulary_map_test.cpp
-            src/test/unit_test.cpp)
+            src/test/vocabulary_map_test.cpp)
 target_link_libraries(meta-testing meta-index meta-classify)
 
 add_executable(corpus-gen corpus-gen.cpp)
@@ -261,6 +260,30 @@ add_executable(shuffle shuffle.cpp)
 
 add_executable(utf8-test utf8-test.cpp)
 target_link_libraries(utf8-test meta-utf)
+
+enable_testing()
+add_test(analyzers unit-test analyzers)
+set_tests_properties(analyzers PROPERTIES TIMEOUT 5)
+add_test(stemmers unit-test stemmers)
+set_tests_properties(stemmers PROPERTIES TIMEOUT 5)
+add_test(parallel unit-test parallel)
+set_tests_properties(parallel PROPERTIES TIMEOUT 10)
+add_test(inverted-index unit-test inverted-index)
+set_tests_properties(inverted-index PROPERTIES TIMEOUT 10)
+add_test(forward-index unit-test forward-index)
+set_tests_properties(forward-index PROPERTIES TIMEOUT 10)
+add_test(string-list unit-test string-list)
+set_tests_properties(string-list PROPERTIES TIMEOUT 5)
+add_test(vocabulary-map unit-test vocabulary-map)
+set_tests_properties(vocabulary-map PROPERTIES TIMEOUT 5)
+add_test(libsvm-parser unit-test libsvm-parser)
+set_tests_properties(libsvm-parser PROPERTIES TIMEOUT 5)
+add_test(classifiers unit-test classifiers)
+set_tests_properties(classifiers PROPERTIES TIMEOUT 30)
+add_test(rankers unit-test rankers)
+set_tests_properties(rankers PROPERTIES TIMEOUT 40)
+add_test(ir-eval unit-test ir-eval)
+set_tests_properties(ir-eval PROPERTIES TIMEOUT 5)
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf

@@ -96,7 +96,6 @@ int analyzer_tests()
     num_failed += file_tokenize();
 #endif
 
-    testing::report(num_failed);
     return num_failed;
 }
 }

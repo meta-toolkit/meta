@@ -153,7 +153,6 @@ int vocabulary_map_tests()
         read_file(23);
     });
 
-    testing::report(num_failed);
     return num_failed;
 }
 }
