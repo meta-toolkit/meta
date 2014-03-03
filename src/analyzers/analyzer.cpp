@@ -5,6 +5,7 @@
 #include "analyzers/all.h"
 #include "analyzers/token_stream.h"
 #include "analyzers/filters/alpha_filter.h"
+#include "analyzers/filters/empty_sentence_filter.h"
 #include "analyzers/filters/english_normalizer.h"
 #include "analyzers/filters/icu_filter.h"
 #include "analyzers/filters/length_filter.h"
@@ -60,6 +61,7 @@ std::unique_ptr<token_stream>
     result = make_unique<length_filter>(std::move(result), 2, 35);
     result = make_unique<list_filter>(std::move(result), *stopwords);
     result = make_unique<porter2_stemmer>(std::move(result));
+    result = make_unique<empty_sentence_filter>(std::move(result));
     return result;
 }
 

@@ -128,6 +128,7 @@ add_library(meta-stemmers
 
 add_library(meta-analyzers
             src/analyzers/filters/alpha_filter.cpp
+            src/analyzers/filters/empty_sentence_filter.cpp
             src/analyzers/filters/english_normalizer.cpp
             src/analyzers/filters/icu_filter.cpp
             src/analyzers/filters/length_filter.cpp
