@@ -42,6 +42,11 @@ int main(int argc, char* argv[])
     index::pivoted_length ranker;
     //index::okapi_bm25 ranker;
 
+    auto config = cpptoml::parse_file(argv[1]);
+    std::string encoding = "utf-8";
+    if (auto enc = config.get_as<std::string>("encoding"))
+        encoding = *enc;
+
     auto elapsed = common::time([&](){
         // std::cout << "Beginning ranking..." << std::endl;
         // auto range = util::range<size_t>(0, std::min<size_t>(1000, idx.num_docs()-1));
@@ -55,6 +60,7 @@ int main(int argc, char* argv[])
         {
             auto d_id = idx.docs()[i];
             corpus::document query{idx.doc_path(d_id), doc_id{0}};
+            query.set_encoding(encoding);
             cout << "Ranking query " << (i + 1) << ": " << query.path() << endl;
 
             std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);
