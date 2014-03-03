@@ -15,7 +15,8 @@ namespace analyzers
 {
 
 /**
- * Filter that removes non-ASCII alphabet characters from tokens.
+ * Filter that removes "non-letter" characters from tokens. "Letterness" is
+ * determined by the Unicode properties of each codepoint in the token.
  */
 class alpha_filter : public util::clonable<token_stream, alpha_filter>
 {
