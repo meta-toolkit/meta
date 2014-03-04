@@ -3,7 +3,9 @@
  * @author Sean Massung
  */
 
-#include "cpptoml.h"
+#include <string>
+#include <vector>
+
 #include "corpus/document.h"
 #include "analyzers/ngram/ngram_word_analyzer.h"
 #include "analyzers/token_stream.h"
