@@ -11,6 +11,8 @@ namespace meta
 namespace analyzers
 {
 
+const std::string icu_filter::id = "icu";
+
 icu_filter::icu_filter(std::unique_ptr<token_stream> source,
                        const std::string& id)
     : source_{std::move(source)}, trans_{id}

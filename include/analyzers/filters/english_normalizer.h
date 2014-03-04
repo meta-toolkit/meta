@@ -53,6 +53,11 @@ class english_normalizer
      */
     operator bool() const override;
 
+    /**
+     * Identifier for this filter.
+     */
+    const static std::string id;
+
   private:
     /**
      * Determines if the given token is a whitespace token.

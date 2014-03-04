@@ -139,6 +139,7 @@ add_library(meta-analyzers
             src/analyzers/tokenizers/character_tokenizer.cpp
             src/analyzers/tokenizers/icu_tokenizer.cpp
             src/analyzers/tokenizers/whitespace_tokenizer.cpp
+            src/analyzers/filter_factory.cpp
             src/analyzers/analyzer.cpp
             src/analyzers/libsvm_analyzer.cpp
             src/analyzers/multi_analyzer.cpp
@@ -153,7 +154,8 @@ add_library(meta-analyzers
             src/analyzers/tree/semi_skeleton_analyzer.cpp
             src/analyzers/tree/skeleton_analyzer.cpp
             src/analyzers/tree/subtree_analyzer.cpp
-            src/analyzers/tree/tag_analyzer.cpp)
+            src/analyzers/tree/tag_analyzer.cpp
+            src/analyzers/analyzer_factory.cpp)
 
 target_link_libraries(meta-analyzers meta-corpus meta-stemmers meta-utf)
 

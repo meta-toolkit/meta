@@ -28,6 +28,11 @@ class libsvm_analyzer: public util::clonable<analyzer, libsvm_analyzer>
          * @param doc The document to store the tokenized information in
          */
         virtual void tokenize(corpus::document & doc) override;
+
+        /**
+         * Identifier for this analyzer.
+         */
+        const static std::string id;
 };
 
 }

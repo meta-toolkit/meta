@@ -14,6 +14,8 @@ namespace meta
 namespace analyzers
 {
 
+const std::string whitespace_tokenizer::id = "whitespace-tokenizer";
+
 whitespace_tokenizer::whitespace_tokenizer() : idx_{0}
 {
 }

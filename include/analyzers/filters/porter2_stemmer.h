@@ -48,6 +48,11 @@ class porter2_stemmer : public util::clonable<token_stream, porter2_stemmer>
      */
     operator bool() const override;
 
+    /**
+     * Identifier for this filter.
+     */
+    const static std::string id;
+
   private:
     /**
      * The stream to read tokens from.

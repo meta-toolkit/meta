@@ -3,6 +3,8 @@
 namespace meta {
 namespace analyzers {
 
+const std::string branch_analyzer::id = "branch";
+
 void branch_analyzer::tree_tokenize( corpus::document & doc,
         const parse_tree & tree)
 {

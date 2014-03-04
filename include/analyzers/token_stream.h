@@ -10,12 +10,6 @@
 #include <string>
 #include <stdexcept>
 
-#include "util/shim.h"
-
-namespace cpptoml {
-class toml_group;
-}
-
 namespace meta
 {
 namespace analyzers
@@ -63,28 +57,6 @@ class token_stream
         using std::runtime_error::runtime_error;
     };
 };
-
-/**
- * Factory method for creating a tokenizer. This should be specialized if
- * your given tokenizer requires special construction behavior.
- */
-template <class Tokenizer>
-std::unique_ptr<token_stream> make_tokenizer(const cpptoml::toml_group&)
-{
-    return make_unique<Tokenizer>();
-}
-
-/**
- * Factory method for creating a filter. This should be specialized if your
- * given filter requires special behavior.
- */
-template <class Filter>
-std::unique_ptr<token_stream> make_filter(std::unique_ptr<token_stream> source,
-                                          const cpptoml::toml_group&)
-{
-    return make_unique<Filter>(std::move(source));
-}
-
 
 }
 }

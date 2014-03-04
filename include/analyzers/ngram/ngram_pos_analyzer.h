@@ -9,6 +9,7 @@
 #ifndef _NGRAM_POS_TOKENIZER_H_
 #define _NGRAM_POS_TOKENIZER_H_
 
+#include "analyzers/analyzer_factory.h"
 #include "analyzers/ngram/ngram_simple_analyzer.h"
 #include "util/clonable.h"
 
@@ -33,7 +34,20 @@ class ngram_pos_analyzer
          * @param doc The document to store the tokenized information in
          */
         virtual void tokenize(corpus::document & doc) override;
+
+        /**
+         * Identifier for this analyzer.
+         */
+        const static std::string id;
 };
+
+/**
+ * Specialization of the factory method for creating ngram_pos_analyzers.
+ */
+template <>
+std::unique_ptr<analyzer>
+    make_analyzer<ngram_pos_analyzer>(const cpptoml::toml_group&,
+                                      const cpptoml::toml_group&);
 
 }
 }

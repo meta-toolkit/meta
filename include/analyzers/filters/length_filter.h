@@ -8,7 +8,7 @@
 
 #include <memory>
 
-#include "analyzers/token_stream.h"
+#include "analyzers/filter_factory.h"
 #include "util/clonable.h"
 #include "util/optional.h"
 
@@ -56,6 +56,11 @@ class length_filter : public util::clonable<token_stream, length_filter>
      * Determines whether there are more tokens available in the stream.
      */
     operator bool() const override;
+
+    /**
+     * Identifier for this filter.
+     */
+    const static std::string id;
 
   private:
     /**

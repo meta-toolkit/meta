@@ -3,6 +3,8 @@
 namespace meta {
 namespace analyzers {
 
+const std::string tag_analyzer::id = "tag";
+
 void tag_analyzer::tree_tokenize( corpus::document & doc,
         const parse_tree & tree)
 {

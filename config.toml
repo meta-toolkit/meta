@@ -19,8 +19,7 @@ inverted-index = "topics-inv"
 method = "libsvm"
 
 #[[analyzers]]
-#method = "ngram"
-#ngramOpt = "Word"
+#method = "ngram-word"
 #ngram = 1
 
 #[[analyzers]]

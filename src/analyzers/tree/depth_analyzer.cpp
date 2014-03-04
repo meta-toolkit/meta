@@ -3,6 +3,8 @@
 namespace meta {
 namespace analyzers {
 
+const std::string depth_analyzer::id = "depth";
+
 void depth_analyzer::tree_tokenize( corpus::document & doc,
         const parse_tree & tree)
 {

@@ -6,7 +6,7 @@
 #ifndef _META_ICU_FILTER_H_
 #define _META_ICU_FILTER_H_
 
-#include "analyzers/token_stream.h"
+#include "analyzers/filter_factory.h"
 #include "util/clonable.h"
 #include "util/utf.h"
 
@@ -51,6 +51,11 @@ class icu_filter : public util::clonable<token_stream, icu_filter>
      * Determines whether there are more tokens available in the stream.
      */
     operator bool() const override;
+
+    /**
+     * Identifier for this filter.
+     */
+    const static std::string id;
 
   private:
     std::unique_ptr<token_stream> source_;

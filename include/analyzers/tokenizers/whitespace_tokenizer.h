@@ -53,6 +53,11 @@ class whitespace_tokenizer
          */
         operator bool() const override;
 
+        /**
+         * Identifier for this tokenizer.
+         */
+        const static std::string id;
+
     private:
         std::string content_;
         uint64_t idx_;

@@ -11,6 +11,8 @@ namespace meta
 namespace analyzers
 {
 
+const std::string porter2_stemmer::id = "porter2-stemmer";
+
 porter2_stemmer::porter2_stemmer(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}
 {

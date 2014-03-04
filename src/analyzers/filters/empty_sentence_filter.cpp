@@ -10,6 +10,8 @@ namespace meta
 namespace analyzers
 {
 
+const std::string empty_sentence_filter::id = "empty-sentence";
+
 empty_sentence_filter::empty_sentence_filter(
     std::unique_ptr<token_stream> source)
     : source_{std::move(source)}

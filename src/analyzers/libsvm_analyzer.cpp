@@ -12,6 +12,8 @@
 namespace meta {
 namespace analyzers {
 
+const std::string libsvm_analyzer::id = "libsvm";
+
 void libsvm_analyzer::tokenize(corpus::document & doc)
 {
     for(auto & count_pair: io::libsvm_parser::counts(doc.content(), false))

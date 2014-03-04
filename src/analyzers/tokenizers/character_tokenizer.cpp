@@ -12,6 +12,8 @@ namespace meta
 namespace analyzers
 {
 
+const std::string character_tokenizer::id = "character-tokenizer";
+
 character_tokenizer::character_tokenizer() : idx_{0}
 {
     // nothing

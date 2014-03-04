@@ -3,6 +3,8 @@
 namespace meta {
 namespace analyzers {
 
+const std::string subtree_analyzer::id = "subtree";
+
 void subtree_analyzer::tree_tokenize( corpus::document & doc,
         const parse_tree & tree)
 {

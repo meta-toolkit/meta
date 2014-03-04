@@ -32,6 +32,11 @@ class semi_skeleton_analyzer
          * @param tree The current parse_tree in the document
          */
         void tree_tokenize(corpus::document & doc, const parse_tree & tree);
+
+        /**
+         * Identifier for this analyzer.
+         */
+        const static std::string id;
 };
 
 }

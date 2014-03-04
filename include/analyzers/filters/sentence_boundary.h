@@ -10,7 +10,7 @@
 #include <memory>
 #include <unordered_set>
 
-#include "analyzers/token_stream.h"
+#include "analyzers/filter_factory.h"
 #include "util/clonable.h"
 #include "util/optional.h"
 
@@ -63,6 +63,11 @@ class sentence_boundary : public util::clonable<token_stream, sentence_boundary>
      * Determines whether there are more tokens available in the stream.
      */
     operator bool() const override;
+
+    /**
+     * Identifier for this filter.
+     */
+    const static std::string id;
 
   private:
     /**

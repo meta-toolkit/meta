@@ -46,6 +46,11 @@ class alpha_filter : public util::clonable<token_stream, alpha_filter>
      */
     operator bool() const override;
 
+    /**
+     * Identifier for this filter.
+     */
+    const static std::string id;
+
   private:
     /**
      * The source to read tokens from.

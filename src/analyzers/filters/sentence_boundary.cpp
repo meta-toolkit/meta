@@ -13,6 +13,8 @@ namespace meta
 namespace analyzers
 {
 
+const std::string sentence_boundary::id = "sentence-boundary";
+
 // static members
 std::unordered_set<std::string> sentence_boundary::punc_set{};
 std::unordered_set<std::string> sentence_boundary::start_exception_set{};

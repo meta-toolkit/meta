@@ -12,6 +12,8 @@ namespace meta
 namespace analyzers
 {
 
+const std::string list_filter::id = "list";
+
 list_filter::list_filter(std::unique_ptr<token_stream> source,
                          const std::string& filename, type method)
     : source_{std::move(source)}, method_{method}

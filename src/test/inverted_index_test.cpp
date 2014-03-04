@@ -58,8 +58,7 @@ void create_config(const std::string& corpus_type)
                 << "forward-index = \"ceeaus-fwd\"\n"
                 << "inverted-index = \"ceeaus-inv\"\n"
                 << "[[analyzers]]\n"
-                << "method = \"ngram\"\n"
-                << "ngramOpt = \"Word\"\n"
+                << "method = \"ngram-word\"\n"
                 << "ngram = 1\n"
                 << "filter = \"default-chain\"";
 }

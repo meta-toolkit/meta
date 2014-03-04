@@ -2,25 +2,20 @@
  * @file analyzer.cpp
  */
 
-#include "analyzers/all.h"
+#include "analyzers/analyzer_factory.h"
+#include "analyzers/filter_factory.h"
+#include "analyzers/multi_analyzer.h"
 #include "analyzers/token_stream.h"
 #include "analyzers/filters/alpha_filter.h"
 #include "analyzers/filters/empty_sentence_filter.h"
-#include "analyzers/filters/english_normalizer.h"
-#include "analyzers/filters/icu_filter.h"
 #include "analyzers/filters/length_filter.h"
 #include "analyzers/filters/list_filter.h"
 #include "analyzers/filters/lowercase_filter.h"
 #include "analyzers/filters/porter2_stemmer.h"
-#include "analyzers/filters/sentence_boundary.h"
-#include "analyzers/tokenizers/character_tokenizer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
-#include "analyzers/tokenizers/whitespace_tokenizer.h"
-#include "cpptoml.h"
 #include "corpus/document.h"
+#include "cpptoml.h"
 #include "io/mmap_file.h"
-#include "stemmers/no_stemmer.h"
-#include "stemmers/porter2.h"
 #include "util/shim.h"
 #include "util/utf.h"
 
@@ -72,40 +67,7 @@ std::unique_ptr<token_stream>
     auto type = config.get_as<std::string>("type");
     if (!type)
         throw analyzer_exception{"filter type missing in config file"};
-
-    if (type->rfind("tokenizer") != std::string::npos)
-    {
-        if (src)
-            throw analyzer_exception{"tokenizers must be the first filter"};
-    }
-    else if (!src)
-        throw analyzer_exception{"filter chain must start with a tokenizer"};
-
-    if (*type == "character-tokenizer")
-        return make_tokenizer<character_tokenizer>(config);
-    if (*type == "whitespace-tokenizer")
-        return make_tokenizer<whitespace_tokenizer>(config);
-    if (*type == "icu-tokenizer")
-        return make_tokenizer<icu_tokenizer>(config);
-    if (*type == "alpha")
-        return make_filter<alpha_filter>(std::move(src), config);
-    if (*type == "empty-sentence")
-        return make_filter<empty_sentence_filter>(std::move(src), config);
-    if (*type == "icu")
-        return make_filter<icu_filter>(std::move(src), config);
-    if (*type == "length")
-        return make_filter<length_filter>(std::move(src), config);
-    if (*type == "list")
-        return make_filter<list_filter>(std::move(src), config);
-    if (*type == "lowercase")
-        return make_filter<lowercase_filter>(std::move(src), config);
-    if (*type == "normalize")
-        return make_filter<english_normalizer>(std::move(src), config);
-    if (*type == "porter2-stemmer")
-        return make_filter<porter2_stemmer>(std::move(src), config);
-    if (*type == "sentence-boundary")
-        return make_filter<sentence_boundary>(std::move(src), config);
-    throw analyzer_exception{"unrecognized filter option"};
+    return filter_factory::get().create(*type, std::move(src), config);
 }
 
 std::unique_ptr<token_stream>
@@ -137,54 +99,10 @@ std::unique_ptr<analyzer> analyzer::load(const cpptoml::toml_group & config)
     for(auto group: analyzers->array())
     {
         auto method = group->get_as<std::string>("method");
-        if(!method)
+        if (!method)
             throw analyzer_exception{"failed to find analyzer method"};
-        if(*method == "tree")
-        {
-            auto type = group->get_as<std::string>("treeOpt");
-            if(!type)
-                throw analyzer_exception{"tree method needed in config file"};
-            if(*type == "Branch")
-                toks.emplace_back(make_unique<branch_analyzer>());
-            else if(*type == "Depth")
-                toks.emplace_back(make_unique<depth_analyzer>());
-            else if(*type == "Semi")
-                toks.emplace_back(make_unique<semi_skeleton_analyzer>());
-            else if(*type == "Skel")
-                toks.emplace_back(make_unique<skeleton_analyzer>());
-            else if(*type == "Subtree")
-                toks.emplace_back(make_unique<subtree_analyzer>());
-            else if(*type == "Tag")
-                toks.emplace_back(make_unique<tag_analyzer>());
-            else
-                throw analyzer_exception{
-                    "tree method was not able to be determined"};
-        }
-        else if(*method == "ngram")
-        {
-            auto n_val = group->get_as<int64_t>("ngram");
-            if(!n_val)
-                throw analyzer_exception{"ngram size needed in config file"};
-
-            auto type = group->get_as<std::string>("ngramOpt");
-            if(!type)
-                throw analyzer_exception{"ngram type needed in config file"};
-
-            if(*type == "Word")
-                toks.emplace_back(make_unique<ngram_word_analyzer>(
-                    *n_val, load_filters(config, *group)));
-            else if(*type == "Lex")
-              toks.emplace_back(make_unique<ngram_lex_analyzer>(*n_val));
-            else if(*type == "POS")
-              toks.emplace_back(make_unique<ngram_pos_analyzer>(*n_val));
-            else
-              throw analyzer_exception{
-                  "ngram method was not able to be determined"};
-        }
-        else if(*method == "libsvm")
-            toks.emplace_back(make_unique<libsvm_analyzer>());
-        else
-            throw analyzer_exception{"method was not able to be determined"};
+        toks.emplace_back(
+            analyzer_factory::get().create(*method, config, *group));
     }
     return make_unique<multi_analyzer>(std::move(toks));
 }

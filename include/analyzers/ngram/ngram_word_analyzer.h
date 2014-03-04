@@ -9,6 +9,7 @@
 #ifndef _NGRAM_WORD_TOKENIZER_H_
 #define _NGRAM_WORD_TOKENIZER_H_
 
+#include "analyzers/analyzer_factory.h"
 #include "analyzers/ngram/ngram_analyzer.h"
 #include "util/clonable.h"
 
@@ -39,6 +40,11 @@ class ngram_word_analyzer : public util::multilevel_clonable<
          */
         virtual void tokenize(corpus::document & doc) override;
 
+        /**
+         * Identifier for this analyzer.
+         */
+        const static std::string id;
+
     private:
         /**
          * The token stream to be used for extracting tokens.
@@ -46,7 +52,14 @@ class ngram_word_analyzer : public util::multilevel_clonable<
         std::unique_ptr<token_stream> stream_;
 };
 
-}
+/**
+ * Specialization of the factory method for creating ngram_word_analyzers.
+ */
+template <>
+std::unique_ptr<analyzer>
+    make_analyzer<ngram_word_analyzer>(const cpptoml::toml_group&,
+                                       const cpptoml::toml_group&);
 }
 
+}
 #endif

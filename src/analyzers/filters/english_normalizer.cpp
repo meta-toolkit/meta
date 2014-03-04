@@ -12,6 +12,8 @@ namespace meta
 namespace analyzers
 {
 
+const std::string english_normalizer::id = "normalize";
+
 english_normalizer::english_normalizer(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}
 {

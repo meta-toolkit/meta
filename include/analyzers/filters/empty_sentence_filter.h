@@ -48,6 +48,12 @@ class empty_sentence_filter
      * Determines whether there are more tokens available in the stream.
      */
     operator bool() const override;
+
+    /**
+     * Identifier for this filter.
+     */
+    const static std::string id;
+
   private:
     void next_token();
 
