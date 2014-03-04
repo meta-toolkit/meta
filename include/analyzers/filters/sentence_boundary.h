@@ -125,6 +125,15 @@ class sentence_boundary : public util::clonable<token_stream, sentence_boundary>
      */
     static bool heuristics_loaded;
 };
+
+/**
+ * Specialization of the factory method used to create sentence_boundary
+ * filters.
+ */
+template <>
+std::unique_ptr<token_stream>
+    make_filter<sentence_boundary>(std::unique_ptr<token_stream>,
+                                   const cpptoml::toml_group&);
 }
 }
 #endif

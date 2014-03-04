@@ -13,6 +13,11 @@
 #include "util/clonable.h"
 #include "util/optional.h"
 
+namespace cpptoml
+{
+class toml_group;
+}
+
 namespace meta
 {
 namespace analyzers
@@ -89,6 +94,14 @@ class list_filter : public util::clonable<token_stream, list_filter>
      */
     type method_;
 };
+
+/**
+ * Specialization of the factory method used to create list_filters.
+ */
+template <>
+std::unique_ptr<token_stream>
+    make_filter<list_filter>(std::unique_ptr<token_stream>,
+                             const cpptoml::toml_group&);
 }
 }
 #endif

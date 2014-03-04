@@ -10,6 +10,10 @@
 #include "util/clonable.h"
 #include "util/utf.h"
 
+namespace cpptoml {
+class toml_group;
+}
+
 namespace meta
 {
 namespace analyzers
@@ -53,6 +57,13 @@ class icu_filter : public util::clonable<token_stream, icu_filter>
     utf::transformer trans_;
 };
 
+/**
+ * Specialization of the factory method for creating icu_filters.
+ */
+template <>
+std::unique_ptr<token_stream>
+    make_filter<icu_filter>(std::unique_ptr<token_stream>,
+                            const cpptoml::toml_group&);
 }
 }
 #endif

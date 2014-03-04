@@ -72,6 +72,13 @@ class analyzer
                          const cpptoml::toml_group& config);
 
         /**
+         * @return a single filter specified by a config object
+         */
+        static std::unique_ptr<token_stream>
+            load_filter(std::unique_ptr<token_stream> src,
+                        const cpptoml::toml_group& config);
+
+        /**
          * @param doc The document to parse
          * @param extension The possible file extension for this document if it
          * is represented by a file on disk
@@ -101,5 +108,4 @@ class analyzer
 
 }
 }
-
 #endif

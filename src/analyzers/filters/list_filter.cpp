@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include "analyzers/filters/list_filter.h"
+#include "cpptoml.h"
 
 namespace meta
 {
@@ -87,5 +88,29 @@ void list_filter::next_token()
         }
     }
 }
+
+template <>
+std::unique_ptr<token_stream>
+    make_filter<list_filter>(std::unique_ptr<token_stream> src,
+                             const cpptoml::toml_group& config)
+{
+    using exception = token_stream::token_stream_exception;
+    auto method = config.get_as<std::string>("method");
+    auto file = config.get_as<std::string>("file");
+    if (!file)
+        throw exception{"file required for list_filter config"};
+
+    list_filter::type type = list_filter::type::REJECT;
+    if (method)
+    {
+        if (*method == "accept")
+            type = list_filter::type::ACCEPT;
+        else if (*method != "reject")
+            throw exception{"invalid method for list_filter"};
+    }
+
+    return make_unique<list_filter>(std::move(src), *file, type);
+}
+
 }
 }

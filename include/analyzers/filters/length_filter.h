@@ -12,6 +12,11 @@
 #include "util/clonable.h"
 #include "util/optional.h"
 
+namespace cpptoml
+{
+class toml_group;
+}
+
 namespace meta
 {
 namespace analyzers
@@ -78,6 +83,14 @@ class length_filter : public util::clonable<token_stream, length_filter>
      */
     uint64_t max_length_;
 };
+
+/**
+ * Specialization of the factory method for creating length_filters.
+ */
+template <>
+std::unique_ptr<token_stream>
+    make_filter<length_filter>(std::unique_ptr<token_stream>,
+                               const cpptoml::toml_group&);
 }
 }
 #endif

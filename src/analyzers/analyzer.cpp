@@ -66,6 +66,49 @@ std::unique_ptr<token_stream>
 }
 
 std::unique_ptr<token_stream>
+    analyzer::load_filter(std::unique_ptr<token_stream> src,
+                         const cpptoml::toml_group& config)
+{
+    auto type = config.get_as<std::string>("type");
+    if (!type)
+        throw analyzer_exception{"filter type missing in config file"};
+
+    if (type->rfind("tokenizer") != std::string::npos)
+    {
+        if (src)
+            throw analyzer_exception{"tokenizers must be the first filter"};
+    }
+    else if (!src)
+        throw analyzer_exception{"filter chain must start with a tokenizer"};
+
+    if (*type == "character-tokenizer")
+        return make_tokenizer<character_tokenizer>(config);
+    if (*type == "whitespace-tokenizer")
+        return make_tokenizer<whitespace_tokenizer>(config);
+    if (*type == "icu-tokenizer")
+        return make_tokenizer<icu_tokenizer>(config);
+    if (*type == "alpha")
+        return make_filter<alpha_filter>(std::move(src), config);
+    if (*type == "empty-sentence")
+        return make_filter<empty_sentence_filter>(std::move(src), config);
+    if (*type == "icu")
+        return make_filter<icu_filter>(std::move(src), config);
+    if (*type == "length")
+        return make_filter<length_filter>(std::move(src), config);
+    if (*type == "list")
+        return make_filter<list_filter>(std::move(src), config);
+    if (*type == "lowercase")
+        return make_filter<lowercase_filter>(std::move(src), config);
+    if (*type == "normalize")
+        return make_filter<english_normalizer>(std::move(src), config);
+    if (*type == "porter2-stemmer")
+        return make_filter<porter2_stemmer>(std::move(src), config);
+    if (*type == "sentence-boundary")
+        return make_filter<sentence_boundary>(std::move(src), config);
+    throw analyzer_exception{"unrecognized filter option"};
+}
+
+std::unique_ptr<token_stream>
     analyzer::load_filters(const cpptoml::toml_group& global,
                            const cpptoml::toml_group& config)
 {
@@ -82,78 +125,7 @@ std::unique_ptr<token_stream>
     auto filters = config.get_group_array("filter");
     std::unique_ptr<token_stream> result;
     for (const auto filter: filters->array())
-    {
-        auto type = filter->get_as<std::string>("type");
-        if (!type)
-            throw analyzer_exception{"filter type missing in config file"};
-
-        if (*type == "whitespace-tokenizer")
-        {
-            if (result)
-                throw analyzer_exception{"tokenizers must be the first filter"};
-            result = make_unique<whitespace_tokenizer>();
-        }
-        else if (*type == "character-tokenizer")
-        {
-            if (result)
-                throw analyzer_exception{"tokenizers must be the first filter"};
-            result = make_unique<character_tokenizer>();
-        }
-        else if (*type == "normalize")
-        {
-            result = make_unique<english_normalizer>(std::move(result));
-        }
-        else if (*type == "sentence-boundary")
-        {
-            sentence_boundary::load_heuristics(*filter);
-            result = make_unique<sentence_boundary>(std::move(result));
-        }
-        else if (*type == "length")
-        {
-            auto min = filter->get_as<int64_t>("min");
-            if (!min)
-                throw analyzer_exception{
-                    "min required for length filter config"};
-            auto max = filter->get_as<int64_t>("max");
-            if (!max)
-                throw analyzer_exception{
-                    "max required for length filter config"};
-            result = make_unique<length_filter>(std::move(result),
-                                                static_cast<uint64_t>(*min),
-                                                static_cast<uint64_t>(*max));
-        }
-        else if (*type == "list")
-        {
-            auto method = filter->get_as<std::string>("method");
-            auto file = filter->get_as<std::string>("file");
-            if (!file)
-                throw analyzer_exception{
-                    "file required for list_filter config"};
-
-            list_filter::type type = list_filter::type::REJECT;
-            if (method)
-            {
-                if (*method == "accept")
-                    type = list_filter::type::ACCEPT;
-                else if (*method != "reject")
-                    throw analyzer_exception{"invalid method for list_filter"};
-            }
-
-            result = make_unique<list_filter>(std::move(result), *file, type);
-        }
-        else if (*type == "lowercase")
-        {
-            result = make_unique<lowercase_filter>(std::move(result));
-        }
-        else if (*type == "porter2-stemmer")
-        {
-            result = make_unique<porter2_stemmer>(std::move(result));
-        }
-        else
-        {
-            throw analyzer_exception{"unrecognized filter option"};
-        }
-    }
+        result = load_filter(std::move(result), *filter);
     return result;
 }
 

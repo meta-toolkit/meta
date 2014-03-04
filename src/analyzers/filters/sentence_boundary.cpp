@@ -164,5 +164,13 @@ bool sentence_boundary::possible_start(const std::string& token)
     return start_exception_set.find(token) == start_exception_set.end();
 }
 
+template <>
+std::unique_ptr<token_stream> make_filter<sentence_boundary>(
+        std::unique_ptr<token_stream> src, const cpptoml::toml_group& config)
+{
+    sentence_boundary::load_heuristics(config);
+    return make_unique<sentence_boundary>(std::move(src));
+}
+
 }
 }
