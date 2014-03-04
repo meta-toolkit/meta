@@ -187,6 +187,7 @@ add_library(meta-testing
             src/test/stemmer_test.cpp
             src/test/string_list_test.cpp
             src/test/tokenizer_test.cpp
+            src/test/compression_test.cpp
             src/test/vocabulary_map_test.cpp)
 target_link_libraries(meta-testing meta-index meta-classify)
 
@@ -263,6 +264,8 @@ add_test(rankers unit-test rankers)
 set_tests_properties(rankers PROPERTIES TIMEOUT 25)
 add_test(ir-eval unit-test ir-eval)
 set_tests_properties(ir-eval PROPERTIES TIMEOUT 5)
+add_test(compression unit-test compression)
+set_tests_properties(compression PROPERTIES TIMEOUT 5)
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf
