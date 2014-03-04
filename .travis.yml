@@ -31,3 +31,4 @@ before_script:
 
 script:
   - make
+  - ctest --output-on-failure
