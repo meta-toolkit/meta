@@ -142,7 +142,6 @@ add_library(meta-analyzers
             src/analyzers/analyzer.cpp
             src/analyzers/libsvm_analyzer.cpp
             src/analyzers/multi_analyzer.cpp
-            src/analyzers/ngram/ngram_char_analyzer.cpp
             src/analyzers/ngram/ngram_lex_analyzer.cpp
             src/analyzers/ngram/ngram_pos_analyzer.cpp
             src/analyzers/ngram/ngram_simple_analyzer.cpp

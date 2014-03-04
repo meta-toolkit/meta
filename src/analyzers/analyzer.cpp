@@ -205,8 +205,6 @@ std::unique_ptr<analyzer> analyzer::load(const cpptoml::toml_group & config)
               toks.emplace_back(make_unique<ngram_lex_analyzer>(*n_val));
             else if(*type == "POS")
               toks.emplace_back(make_unique<ngram_pos_analyzer>(*n_val));
-            else if(*type == "Char")
-              toks.emplace_back(make_unique<ngram_char_analyzer>(*n_val));
             else
               throw analyzer_exception{
                   "ngram method was not able to be determined"};
