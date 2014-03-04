@@ -201,8 +201,6 @@ std::unique_ptr<analyzer> analyzer::load(const cpptoml::toml_group & config)
             if(*type == "Word")
                 toks.emplace_back(make_unique<ngram_word_analyzer>(
                     *n_val, load_filters(config, *group)));
-            else if(*type == "FW")
-              toks.emplace_back(make_unique<ngram_fw_analyzer>(*n_val));
             else if(*type == "Lex")
               toks.emplace_back(make_unique<ngram_lex_analyzer>(*n_val));
             else if(*type == "POS")
