@@ -16,8 +16,8 @@ template <class Ranker>
 template <class... Args>
 knn<Ranker>::knn(index::inverted_index & idx, index::forward_index & f_idx,
         uint16_t k, Args &&... args):
-    classifier{idx},
-    _f_idx(f_idx), // gcc no non-const ref init from brace init list
+    classifier{f_idx},
+    _inv_idx(idx), // gcc no non-const ref init from brace init list
     _k{k},
     _ranker{std::forward<Args>(args)...}
 { /* nothing */ }
@@ -36,12 +36,14 @@ class_label knn<Ranker>::classify(doc_id d_id)
             "number of documents in the index (training documents)"};
 
     corpus::document query{"[no path]", d_id};
-    for (const auto& count: _f_idx.search_primary(d_id)->counts())
-        query.increment(_f_idx.term_text(count.first), count.second);
+    for (const auto& count: _idx.search_primary(d_id)->counts())
+        query.increment(_idx.term_text(count.first), count.second);
 
-    auto scored = _ranker.score(_idx, query, _idx.num_docs(), [&](doc_id d_id) {
-        return _legal_docs.find(d_id) != _legal_docs.end();
-    });
+    auto scored =
+        _ranker.score(_inv_idx, query, _inv_idx.num_docs(), [&](doc_id d_id)
+        {
+            return _legal_docs.find(d_id) != _legal_docs.end();
+        });
 
     std::unordered_map<class_label, uint16_t> counts;
     uint16_t i = 0;
@@ -90,7 +92,7 @@ class_label knn<Ranker>::select_best_label(
 
     for(auto & p: scored)
     {
-        class_label lbl{_idx.label(p.first)};
+        class_label lbl{_inv_idx.label(p.first)};
         auto f = best.find(lbl);
         if(f != best.end())
             return *f;

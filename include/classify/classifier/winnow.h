@@ -24,19 +24,19 @@ namespace classify {
  * linearly-separable data. As opposed to winnow (which uses an additive
  * update rule), winnow uses a multiplicative update rule.
  */
-class winnow: public classifier<index::forward_index>
+class winnow: public classifier
 {
     public:
         /**
          * Constructs a winnow classifier with the given multiplier,
          * error threshold, and maximum iterations.
-         * 
+         *
          * @param idx The index to run the classifier on
          * @param m \f$m\f$, the multiplicative learning rate
          * @param gamma \f$gamma\f$, the error threshold
          * @param max_iter The maximum number of iterations for training.
-         */ 
-        winnow(index::forward_index & idx, double m = 1.5, double gamma = 0.05, 
+         */
+        winnow(index::forward_index & idx, double m = 1.5, double gamma = 0.05,
                    size_t max_iter = 100);
 
         /**
@@ -51,11 +51,11 @@ class winnow: public classifier<index::forward_index>
         void train(const std::vector<doc_id> & docs) override;
 
         /**
-         * Classifies the given document. 
-         * The class label returned is 
+         * Classifies the given document.
+         * The class label returned is
          * \f$\argmax_k(w_k^\intercal x_n + b)\f$---in other words, the
          * class whose associated weight vector gives the highest result.
-         * 
+         *
          * @param doc The document to be classified.
          * @return The class label determined for the document.
          */
@@ -72,7 +72,7 @@ class winnow: public classifier<index::forward_index>
         /**
          * Returns the given term's weight in the weight vector for the
          * given class.
-         * 
+         *
          * @param label The class label for the weight vector we want.
          * @param term The term whose weight should be returned.
          */
@@ -81,7 +81,7 @@ class winnow: public classifier<index::forward_index>
 
         /**
          * Initializes the weight vectors to zero for every class label.
-         * 
+         *
          * @param docs The set of documents to collect class labels from.
          */
         void zero_weights(const std::vector<doc_id> & docs);
@@ -95,13 +95,13 @@ class winnow: public classifier<index::forward_index>
         > weights_;
 
         /// \f$\m\f$, the multiplicative learning rate.
-        const double m_;    
+        const double m_;
 
         /// \f$\gamma\f$, the error threshold.
-        const double gamma_;    
+        const double gamma_;
 
         /// The maximum number of iterations for training.
-        const size_t max_iter_; 
+        const size_t max_iter_;
 };
 
 }
