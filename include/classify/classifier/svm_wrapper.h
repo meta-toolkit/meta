@@ -27,7 +27,7 @@ namespace classify {
  *
  * If no kernel is selected, liblinear is used. Otherwise, libsvm is used.
  */
-class svm_wrapper: public classifier<index::forward_index>
+class svm_wrapper: public classifier
 {
     public:
 
