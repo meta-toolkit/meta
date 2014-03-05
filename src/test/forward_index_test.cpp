@@ -21,7 +21,7 @@ void create_libsvm_config()
                 << "dataset = \"breast-cancer\"\n"
                 << "forward-index = \"bcancer-fwd\"\n"
                 << "inverted-index = \"bcancer-inv\"\n"
-                << "[[tokenizers]]\n"
+                << "[[analyzers]]\n"
                 << "method = \"libsvm\"\n";
 }
 
@@ -46,7 +46,7 @@ template <class Index>
 void check_ceeaus_expected_fwd(Index& idx)
 {
     ASSERT_EQUAL(idx.num_docs(), 1008);
-    ASSERT_EQUAL(idx.unique_terms(), 4003);
+    ASSERT_EQUAL(idx.unique_terms(), 3944);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};
     uint64_t size;

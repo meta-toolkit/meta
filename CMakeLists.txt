@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 project(meta)
 
 option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
@@ -7,7 +7,10 @@ include_directories(include/
                     deps/cpptoml/include/
                     deps/porter2_stemmer/)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
+find_package(ICU COMPONENTS data i18n uc REQUIRED)
+include_directories(SYSTEM ${ICU_INCLUDE_DIRS})
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -114,6 +117,10 @@ endif()
 add_library(meta-util
             src/util/progress.cpp)
 
+add_library(meta-utf
+            src/util/utf.cpp)
+target_link_libraries(meta-utf ${ICU_LIBRARIES})
+
 add_library(meta-io
             src/io/compressed_file_reader.cpp
             src/io/parser.cpp
@@ -136,28 +143,38 @@ add_library(meta-stemmers
             src/stemmers/porter2.cpp
             deps/porter2_stemmer/porter2_stemmer.cpp)
 
-add_library(meta-tokenizers
-            src/tokenizers/multi_tokenizer.cpp
-            src/tokenizers/tokenizer.cpp
-            src/tokenizers/libsvm_tokenizer.cpp
-            src/tokenizers/ngram/ngram_char_tokenizer.cpp
-            src/tokenizers/ngram/ngram_fw_tokenizer.cpp
-            src/tokenizers/ngram/ngram_lex_tokenizer.cpp
-            src/tokenizers/ngram/ngram_pos_tokenizer.cpp
-            src/tokenizers/ngram/ngram_simple_tokenizer.cpp
-            src/tokenizers/ngram/ngram_tokenizer.cpp
-            src/tokenizers/ngram/ngram_word_tokenizer.cpp
-            src/tokenizers/tree/branch_tokenizer.cpp
-            src/tokenizers/tree/depth_tokenizer.cpp
-            src/tokenizers/tree/parse_tree.cpp
-            src/tokenizers/tree/semi_skeleton_tokenizer.cpp
-            src/tokenizers/tree/skeleton_tokenizer.cpp
-            src/tokenizers/tree/subtree_tokenizer.cpp
-            src/tokenizers/tree/tag_tokenizer.cpp)
+add_library(meta-analyzers
+            src/analyzers/filters/alpha_filter.cpp
+            src/analyzers/filters/empty_sentence_filter.cpp
+            src/analyzers/filters/english_normalizer.cpp
+            src/analyzers/filters/icu_filter.cpp
+            src/analyzers/filters/length_filter.cpp
+            src/analyzers/filters/list_filter.cpp
+            src/analyzers/filters/lowercase_filter.cpp
+            src/analyzers/filters/porter2_stemmer.cpp
+            src/analyzers/filters/sentence_boundary.cpp
+            src/analyzers/tokenizers/character_tokenizer.cpp
+            src/analyzers/tokenizers/icu_tokenizer.cpp
+            src/analyzers/tokenizers/whitespace_tokenizer.cpp
+            src/analyzers/filter_factory.cpp
+            src/analyzers/analyzer.cpp
+            src/analyzers/libsvm_analyzer.cpp
+            src/analyzers/multi_analyzer.cpp
+            src/analyzers/ngram/ngram_lex_analyzer.cpp
+            src/analyzers/ngram/ngram_pos_analyzer.cpp
+            src/analyzers/ngram/ngram_simple_analyzer.cpp
+            src/analyzers/ngram/ngram_analyzer.cpp
+            src/analyzers/ngram/ngram_word_analyzer.cpp
+            src/analyzers/tree/branch_analyzer.cpp
+            src/analyzers/tree/depth_analyzer.cpp
+            src/analyzers/tree/parse_tree.cpp
+            src/analyzers/tree/semi_skeleton_analyzer.cpp
+            src/analyzers/tree/skeleton_analyzer.cpp
+            src/analyzers/tree/subtree_analyzer.cpp
+            src/analyzers/tree/tag_analyzer.cpp
+            src/analyzers/analyzer_factory.cpp)
 
-# some tokenizer clases use io::parser
-# ngram_word_tokenizer needs access to the stemmers
-target_link_libraries(meta-tokenizers meta-io meta-corpus meta-stemmers)
+target_link_libraries(meta-analyzers meta-corpus meta-stemmers meta-utf)
 
 add_library(meta-index
             src/index/disk_index.cpp
@@ -176,8 +193,7 @@ add_library(meta-index
             src/index/ranker/absolute_discount.cpp
             src/index/ranker/pivoted_length.cpp)
 
-target_link_libraries(meta-index
-                      meta-util meta-io meta-corpus meta-tokenizers)
+target_link_libraries(meta-index meta-analyzers ${CMAKE_THREAD_LIBS_INIT})
 
 add_library(meta-classify
             src/classify/confusion_matrix.cpp
@@ -203,64 +219,47 @@ add_library(meta-testing
             src/test/ranker_test.cpp
             src/test/stemmer_test.cpp
             src/test/string_list_test.cpp
-            src/test/tokenizer_test.cpp
+            src/test/analyzer_test.cpp
+            src/test/filter_test.cpp
             src/test/compression_test.cpp
             src/test/vocabulary_map_test.cpp)
 target_link_libraries(meta-testing meta-index meta-classify)
 
 add_executable(corpus-gen corpus-gen.cpp)
-target_link_libraries(corpus-gen
-                      meta-corpus
-                      meta-util)
+target_link_libraries(corpus-gen meta-corpus)
 
 add_executable(classify classify-test.cpp)
-target_link_libraries(classify
-                      meta-util
-                      meta-classify
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(classify meta-classify)
 
 add_executable(unit-test unit-test.cpp)
-target_link_libraries(unit-test
-                      meta-testing
-                      meta-classify
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(unit-test meta-testing meta-classify meta-index)
 
 add_executable(query-runner query-runner.cpp)
-target_link_libraries(query-runner
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(query-runner meta-index)
 
 add_executable(search search.cpp)
-target_link_libraries(search
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(search meta-index)
 
 add_executable(index index.cpp)
-target_link_libraries(index
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(index meta-index)
 
 add_executable(interactive_search interactive_search.cpp)
-target_link_libraries(interactive_search
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(interactive_search meta-index)
 
 add_executable(lda-test lda-test.cpp)
-target_link_libraries(lda-test
-                      meta-topics
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(lda-test meta-topics)
 
 add_executable(lda-topics lda-topics.cpp)
-target_link_libraries(lda-topics
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(lda-topics meta-index)
 
 add_executable(shuffle shuffle.cpp)
 
+add_executable(utf8-test utf8-test.cpp)
+target_link_libraries(utf8-test meta-utf)
+
 enable_testing()
-add_test(tokenizers unit-test tokenizers)
-set_tests_properties(tokenizers PROPERTIES TIMEOUT 5)
+add_test(analyzers unit-test analyzers)
+set_tests_properties(analyzers PROPERTIES TIMEOUT 5)
 add_test(stemmers unit-test stemmers)
 set_tests_properties(stemmers PROPERTIES TIMEOUT 5)
 add_test(parallel unit-test parallel)

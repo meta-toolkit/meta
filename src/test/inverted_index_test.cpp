@@ -28,8 +28,23 @@ void create_config(const std::string& corpus_type)
     if(!query_judgements)
         throw std::runtime_error{"\"query-judgements\" not in config"};
 
+    auto punctuation = orig_config.get_as<std::string>("punctuation");
+    if (!punctuation)
+        throw std::runtime_error{"\"punctuation\" not in config"};
+
+    auto start_exeptions = orig_config.get_as<std::string>("start-exceptions");
+    if (!start_exeptions)
+        throw std::runtime_error{"\"start-exceptions\" not in config"};
+
+    auto end_exceptions = orig_config.get_as<std::string>("end-exceptions");
+    if (!end_exceptions)
+        throw std::runtime_error{"\"end-exceptions\" not in config"};
+
     config_file << "stop-words = \"" << *stop_words
                 << "\"\n"
+                << "punctuation = \"" << *punctuation << "\"\n"
+                << "start-exceptions = \"" << *start_exeptions << "\"\n"
+                << "end-exceptions = \"" << *end_exceptions << "\"\n"
                 << "prefix = \"" << *orig_config.get_as<std::string>("prefix")
                 << "\"\n"
                 << "query-judgements = \"" << *query_judgements
@@ -39,12 +54,13 @@ void create_config(const std::string& corpus_type)
                 << "corpus-type = \"" << corpus_type << "-corpus\"\n"
                 << "list= \"ceeaus\"\n"
                 << "dataset = \"ceeaus\"\n"
+                << "encoding = \"shift_jis\"\n"
                 << "forward-index = \"ceeaus-fwd\"\n"
                 << "inverted-index = \"ceeaus-inv\"\n"
-                << "[[tokenizers]]\n"
-                << "method = \"ngram\"\n"
-                << "ngramOpt = \"Word\"\n"
-                << "ngram = 1\n";
+                << "[[analyzers]]\n"
+                << "method = \"ngram-word\"\n"
+                << "ngram = 1\n"
+                << "filter = \"default-chain\"";
 }
 
 template <class Index>
@@ -52,8 +68,8 @@ void check_ceeaus_expected(Index& idx)
 {
     double epsilon = 0.000001;
     ASSERT_EQUAL(idx.num_docs(), 1008);
-    ASSERT_LESS(abs(idx.avg_doc_length() - 128.879), epsilon);
-    ASSERT_EQUAL(idx.unique_terms(), 4003);
+    ASSERT_LESS(abs(idx.avg_doc_length() - 128.556), epsilon);
+    ASSERT_EQUAL(idx.unique_terms(), 3944);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};
     uint64_t size;
