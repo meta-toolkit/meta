@@ -25,7 +25,7 @@ namespace classify {
  * the one_vs_all or all_vs_all adapters.
  */
 template <class LossFunction>
-class sgd : public classifier<index::forward_index> {
+class sgd : public classifier {
     public:
         /**
          * @param idx The index to run the classifier on

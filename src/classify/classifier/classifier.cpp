@@ -3,7 +3,6 @@
  * @author Sean Massung
  */
 
-#include <iostream>
 #include <random>
 #include "logging/logger.h"
 #include "classify/classifier/classifier.h"
@@ -11,13 +10,11 @@
 namespace meta {
 namespace classify {
 
-template <class Index>
-classifier<Index>::classifier(Index & idx):
+classifier::classifier(index::forward_index & idx):
     _idx(idx)
 { /* nothing */ }
 
-template <class Index>
-confusion_matrix classifier<Index>::test(const std::vector<doc_id> & docs)
+confusion_matrix classifier::test(const std::vector<doc_id> & docs)
 {
     confusion_matrix matrix;
     for(auto & d_id: docs)
@@ -26,8 +23,7 @@ confusion_matrix classifier<Index>::test(const std::vector<doc_id> & docs)
     return matrix;
 }
 
-template <class Index>
-confusion_matrix classifier<Index>::cross_validate(
+confusion_matrix classifier::cross_validate(
         const std::vector<doc_id> & input_docs,
         size_t k, int seed)
 {

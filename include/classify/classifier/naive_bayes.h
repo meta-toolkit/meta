@@ -21,7 +21,7 @@ namespace classify {
  * Implements the Naive Bayes classifier, a simplistic probabilistic classifier
  * that uses Bayes' theorem with strong feature independence assumptions.
  */
-class naive_bayes: public classifier<index::forward_index>
+class naive_bayes: public classifier
 {
     public:
 

@@ -197,6 +197,7 @@ target_link_libraries(meta-index meta-analyzers ${CMAKE_THREAD_LIBS_INIT})
 
 add_library(meta-classify
             src/classify/confusion_matrix.cpp
+            src/classify/classifier/classifier.cpp
             src/classify/classifier/naive_bayes.cpp
             src/classify/classifier/svm_wrapper.cpp
             src/classify/classifier/winnow.cpp)
@@ -228,7 +229,7 @@ target_link_libraries(meta-testing meta-index meta-classify)
 add_executable(corpus-gen corpus-gen.cpp)
 target_link_libraries(corpus-gen meta-corpus)
 
-add_executable(classify classify-test.cpp)
+add_executable(classify classify.cpp)
 target_link_libraries(classify meta-classify)
 
 add_executable(unit-test unit-test.cpp)

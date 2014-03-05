@@ -19,10 +19,10 @@ namespace meta {
 namespace classify {
 
 /**
- * Implements the k-Nearest Neighber lazy learning classification algorithm.
+ * Implements the k-Nearest Neighbor lazy learning classification algorithm.
  */
 template <class Ranker>
-class knn: public classifier<index::inverted_index>
+class knn: public classifier
 {
     public:
         /**
@@ -63,8 +63,8 @@ class knn: public classifier<index::inverted_index>
             const std::vector<std::pair<doc_id, double>> & scored,
             const std::vector<std::pair<class_label, uint16_t>> & sorted) const;
 
-        /** the index used to create documents from */
-        index::forward_index & _f_idx;
+        /** the inverted index used for ranking */
+        index::inverted_index & _inv_idx;
 
         /** the value of k in k-NN */
         uint16_t _k;
@@ -81,22 +81,11 @@ class knn: public classifier<index::inverted_index>
         /**
          * Basic exception for knn interactions.
          */
-        class knn_exception: public std::exception
-        {
-            public:
-
-                knn_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-
-            private:
-                std::string _error;
-        };
-
+      class knn_exception : public std::runtime_error
+      {
+        public:
+          using std::runtime_error::runtime_error;
+      };
 };
 
 }

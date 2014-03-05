@@ -11,7 +11,6 @@
 #define _CLASSIFIER_H_
 
 #include <vector>
-#include <memory>
 #include "classify/confusion_matrix.h"
 
 namespace meta {
@@ -21,15 +20,13 @@ namespace classify {
  * A classifier uses a document's feature space to identify which group it
  * belongs to.
  */
-template <class Index>
 class classifier
 {
     public:
         /**
-         * @param idx The index to run the classifier on; it should either be a
-         * forward_index or and inverted_index, depending on the classifier
+         * @param idx The index to run the classifier on
          */
-        classifier(Index & idx);
+        classifier(index::forward_index & idx);
 
         /**
          * Classifies a document into a specific group, as determined by
@@ -76,11 +73,9 @@ class classifier
     protected:
 
         /** the index that the classifer is run on */
-        Index & _idx;
+        index::forward_index & _idx;
 };
 
 }
 }
-
-#include "classify/classifier/classifier.tcc"
 #endif

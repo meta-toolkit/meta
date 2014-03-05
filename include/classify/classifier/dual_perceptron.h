@@ -21,7 +21,7 @@ namespace classify {
  * necessarily linearly separable via the use of a kernel function.
  */
 template <class Kernel>
-class dual_perceptron : public classifier<index::forward_index> {
+class dual_perceptron : public classifier {
     public:
         /**
          * Constructs a dual_perceptron classifier over the given index

@@ -16,7 +16,7 @@ namespace meta {
 namespace classify {
 
 template <class Classifier>
-class one_vs_all : public classifier<index::forward_index> {
+class one_vs_all : public classifier {
     public:
         template <class... Args>
         one_vs_all(index::forward_index & idx, Args &&... args);
