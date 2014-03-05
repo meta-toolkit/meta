@@ -57,25 +57,25 @@ int ranker_tests()
     num_failed += testing::run_test("ranker-dirichlet-prior", [&]()
     {
         index::dirichlet_prior r;
-        test_rank(r, idx, encoding);
+        test_rank(r, *idx, encoding);
     });
 
     num_failed += testing::run_test("ranker-jelinek-mercer", [&]()
     {
         index::jelinek_mercer r;
-        test_rank(r, idx, encoding);
+        test_rank(r, *idx, encoding);
     });
 
     num_failed += testing::run_test("ranker-okapi-bm25", [&]()
     {
         index::okapi_bm25 r;
-        test_rank(r, idx, encoding);
+        test_rank(r, *idx, encoding);
     });
 
     num_failed += testing::run_test("ranker-pivoted-length", [&]()
     {
         index::pivoted_length r;
-        test_rank(r, idx, encoding);
+        test_rank(r, *idx, encoding);
     });
 
     system("rm -rf ceeaus-inv test-config.toml");

@@ -36,8 +36,8 @@ class winnow: public classifier
          * @param gamma \f$gamma\f$, the error threshold
          * @param max_iter The maximum number of iterations for training.
          */
-        winnow(index::forward_index & idx, double m = 1.5, double gamma = 0.05,
-                   size_t max_iter = 100);
+        winnow(std::shared_ptr<index::forward_index> idx, double m = 1.5,
+               double gamma = 0.05, size_t max_iter = 100);
 
         /**
          * Trains the winnow on the given training documents.

@@ -35,7 +35,9 @@ class forward_index;
  * @return A properly initialized index
  */
 template <class Index, class... Args>
-Index make_index(const std::string &config_file, Args &&... args) {
+std::shared_ptr<Index> make_index(const std::string& config_file,
+                                  Args&&... args)
+{
     auto config = cpptoml::parse_file(config_file);
 
     // check if we have paths specified for either kind of index
@@ -45,13 +47,14 @@ Index make_index(const std::string &config_file, Args &&... args) {
             "forward-index or inverted-index missing from configuration file"};
     }
 
-    Index idx{config, std::forward<Args>(args)...};
+    auto idx =
+        std::shared_ptr<Index>{new Index(config, std::forward<Args>(args)...)};
 
     // if index has already been made, load it
-    if (filesystem::make_directory(idx.index_name()))
-        idx.load_index();
+    if (filesystem::make_directory(idx->index_name()))
+        idx->load_index();
     else
-        idx.create_index(config_file);
+        idx->create_index(config_file);
 
     return idx;
 }
@@ -76,8 +79,9 @@ Index make_index(const std::string &config_file, Args &&... args) {
  * @return A properly initialized, and automatically cached, index.
  */
 template <class Index, template <class, class> class Cache, class... Args>
-cached_index<Index, Cache> make_index(const std::string &config_file,
-                                      Args &&... args) {
+std::shared_ptr<cached_index<Index, Cache>>
+    make_index(const std::string& config_file, Args&&... args)
+{
     return make_index<cached_index<Index, Cache>>(config_file,
                                                   std::forward<Args>(args)...);
 }

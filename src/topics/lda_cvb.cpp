@@ -12,9 +12,9 @@ namespace meta
 namespace topics
 {
 
-lda_cvb::lda_cvb(index::forward_index& idx, uint64_t num_topics, double alpha,
-                 double beta)
-    : lda_model{idx, num_topics}, alpha_{alpha}, beta_{beta}
+lda_cvb::lda_cvb(std::shared_ptr<index::forward_index> idx, uint64_t num_topics,
+                 double alpha, double beta)
+    : lda_model{std::move(idx), num_topics}, alpha_{alpha}, beta_{beta}
 {
     /* nothing */
 }
@@ -45,11 +45,11 @@ void lda_cvb::initialize()
 {
     std::random_device rdev;
     std::mt19937 rng(rdev());
-    printing::progress progress{"Initialization: ", idx_.num_docs()};
-    for (doc_id i{0}; i < idx_.num_docs(); ++i)
+    printing::progress progress{"Initialization: ", idx_->num_docs()};
+    for (doc_id i{0}; i < idx_->num_docs(); ++i)
     {
         progress(i);
-        for (auto& freq : idx_.search_primary(i)->counts())
+        for (auto& freq : idx_->search_primary(i)->counts())
         {
             double sum = 0;
             for (topic_id k{0}; k < num_topics_; ++k)
@@ -73,13 +73,13 @@ void lda_cvb::initialize()
 double lda_cvb::perform_iteration(uint64_t iter)
 {
     printing::progress progress{"Iteration " + std::to_string(iter) + ": ",
-                                idx_.num_docs()};
+                                idx_->num_docs()};
     progress.print_endline(false);
     double max_change = 0;
-    for (doc_id i{0}; i < idx_.num_docs(); ++i)
+    for (doc_id i{0}; i < idx_->num_docs(); ++i)
     {
         progress(i);
-        for (auto& freq : idx_.search_primary(i)->counts())
+        for (auto& freq : idx_->search_primary(i)->counts())
         {
             // remove this word occurrence from means
             for (topic_id k{0}; k < num_topics_; ++k)
@@ -130,7 +130,7 @@ double lda_cvb::compute_term_topic_probability(term_id term,
 double lda_cvb::compute_doc_topic_probability(doc_id doc, topic_id topic) const
 {
     return (doc_topic_mean_.at(doc).at(topic) + alpha_) /
-           (idx_.doc_size(doc) + num_topics_ * alpha_);
+           (idx_->doc_size(doc) + num_topics_ * alpha_);
 }
 }
 }

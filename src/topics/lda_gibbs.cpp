@@ -14,9 +14,9 @@ namespace meta
 namespace topics
 {
 
-lda_gibbs::lda_gibbs(index::forward_index& idx, uint64_t num_topics,
-                     double alpha, double beta)
-    : lda_model{idx, num_topics}, alpha_{alpha}, beta_{beta}
+lda_gibbs::lda_gibbs(std::shared_ptr<index::forward_index> idx,
+                     uint64_t num_topics, double alpha, double beta)
+    : lda_model{std::move(idx), num_topics}, alpha_{alpha}, beta_{beta}
 {
     /* nothing */
 }
@@ -114,7 +114,7 @@ double lda_gibbs::count_doc(doc_id doc, topic_id topic) const
 
 double lda_gibbs::count_doc(doc_id doc) const
 {
-    return idx_.doc_size(doc);
+    return idx_->doc_size(doc);
 }
 
 void lda_gibbs::initialize()
@@ -129,15 +129,15 @@ void lda_gibbs::perform_iteration(uint64_t iter, bool init /* = false */)
         str = "Initialization: ";
     else
         str = "Iteration " + std::to_string(iter) + ": ";
-    printing::progress progress{str, idx_.num_docs()};
+    printing::progress progress{str, idx_->num_docs()};
     progress.print_endline(false);
-    for (const auto& i : idx_.docs())
+    for (const auto& i : idx_->docs())
     {
         progress(i);
         uint64_t n = 0; // term number within document---constructed
                         // so that each occurrence of the same term
                         // can still be assigned a different topic
-        for (const auto& freq : idx_.search_primary(i)->counts())
+        for (const auto& freq : idx_->search_primary(i)->counts())
         {
             for (uint64_t j = 0; j < freq.second; ++j)
             {
@@ -196,9 +196,9 @@ double lda_gibbs::corpus_likelihood() const
                                        - num_words_ * std::lgamma(beta_));
     for (topic_id j{0}; j < num_topics_; ++j)
     {
-        for (const auto& d_id : idx_.docs())
+        for (const auto& d_id : idx_->docs())
         {
-            for (const auto& freq : idx_.search_primary(d_id)->counts())
+            for (const auto& freq : idx_->search_primary(d_id)->counts())
             {
                 likelihood += freq.second
                               * std::lgamma(count_term(freq.first, j) + beta_);

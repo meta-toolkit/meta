@@ -10,12 +10,12 @@
 namespace meta {
 namespace classify {
 
-winnow::winnow(index::forward_index & idx, double m, double gamma,
-        size_t max_iter):
-    classifier{idx},
-    m_{m}, gamma_{gamma},
-    max_iter_{max_iter}
-{ /* nothing */ }
+winnow::winnow(std::shared_ptr<index::forward_index> idx, double m,
+               double gamma, size_t max_iter)
+    : classifier{std::move(idx)}, m_{m}, gamma_{gamma}, max_iter_{max_iter}
+{
+    /* nothing */
+}
 
 double winnow::get_weight(const class_label & label, const term_id & term) const
 {
@@ -31,7 +31,7 @@ double winnow::get_weight(const class_label & label, const term_id & term) const
 void winnow::zero_weights(const std::vector<doc_id> & docs)
 {
     for(const auto & d_id : docs)
-        weights_[ _idx.label(d_id) ] = {};
+        weights_[ _idx->label(d_id) ] = {};
 }
 
 void winnow::train( const std::vector<doc_id> & docs )
@@ -50,11 +50,11 @@ void winnow::train( const std::vector<doc_id> & docs )
         {
             const doc_id doc{docs[indices[i]]};
             class_label guess = classify(doc);
-            class_label actual = _idx.label(doc);
+            class_label actual = _idx->label(doc);
             if(guess != actual)
             {
                 error_count += 1;
-                auto pdata = _idx.search_primary(doc);
+                auto pdata = _idx->search_primary(doc);
                 for(const auto & count : pdata->counts())
                 {
                     double guess_weight = get_weight(guess, count.first);
@@ -76,7 +76,7 @@ class_label winnow::classify(doc_id d_id)
     for(const auto & w : weights_)
     {
         double dot = weights_.size() / 2; // bias term
-        auto pdata = _idx.search_primary(d_id);
+        auto pdata = _idx->search_primary(d_id);
         for(const auto & count: pdata->counts())
             dot += count.second * get_weight(w.first, count.first);
 

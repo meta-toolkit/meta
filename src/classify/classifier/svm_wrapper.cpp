@@ -19,10 +19,10 @@ decltype(svm_wrapper::_options) svm_wrapper::_options = {
     {svm_wrapper::kernel::Sigmoid,   " -t 3 "}
 };
 
-svm_wrapper::svm_wrapper(index::forward_index & idx,
+svm_wrapper::svm_wrapper(std::shared_ptr<index::forward_index> idx,
                          const std::string & svm_path,
                          kernel kernel_opt /* = None */):
-    classifier{idx},
+    classifier{std::move(idx)},
     _svm_path{svm_path},
     _kernel{kernel_opt}
 {
@@ -36,7 +36,7 @@ class_label svm_wrapper::classify(doc_id d_id)
 {
     // create input for liblinear
     std::ofstream out("svm-input");
-    out << _idx.liblinear_data(d_id);
+    out << _idx->liblinear_data(d_id);
     out.close();
 
     // run liblinear/libsvm
@@ -52,7 +52,7 @@ class_label svm_wrapper::classify(doc_id d_id)
     in.close();
 
     label_id label{static_cast<uint32_t>(std::stoul(str_val))};
-    return _idx.class_label_from_id(label);
+    return _idx->class_label_from_id(label);
 }
 
 confusion_matrix svm_wrapper::test(const std::vector<doc_id> & docs)
@@ -60,7 +60,7 @@ confusion_matrix svm_wrapper::test(const std::vector<doc_id> & docs)
     // create input for liblinear/libsvm
     std::ofstream out("svm-input");
     for(auto & d_id: docs)
-        out << _idx.liblinear_data(d_id) << "\n";
+        out << _idx->liblinear_data(d_id) << "\n";
     out.close();
 
     // run liblinear/libsvm
@@ -79,8 +79,8 @@ confusion_matrix svm_wrapper::test(const std::vector<doc_id> & docs)
         // number of testing documents
         std::getline(in, str_val);
         uint32_t value = std::stoul(str_val);
-        class_label predicted = _idx.class_label_from_id(label_id{value});
-        class_label actual = _idx.label(d_id);
+        class_label predicted = _idx->class_label_from_id(label_id{value});
+        class_label actual = _idx->label(d_id);
         matrix.add(predicted, actual);
     }
     in.close();
@@ -92,7 +92,7 @@ void svm_wrapper::train(const std::vector<doc_id> & docs)
 {
     std::ofstream out("svm-train");
     for(auto & d_id: docs)
-        out << _idx.liblinear_data(d_id) << "\n";
+        out << _idx->liblinear_data(d_id) << "\n";
     out.close();
 
     std::string command = _svm_path + _executable + "train "

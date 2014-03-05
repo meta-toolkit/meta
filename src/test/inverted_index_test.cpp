@@ -113,19 +113,19 @@ int inverted_index_tests()
     num_failed += testing::run_test("inverted-index-build-file-corpus", [&]()
     {
         system("rm -rf ceeaus-inv");
-        auto idx = index::make_index
-            <index::inverted_index, caching::splay_cache>("test-config.toml",
-                                                          uint32_t{10000});
-        check_ceeaus_expected(idx);
+        auto idx =
+            index::make_index<index::inverted_index, caching::splay_cache>(
+                "test-config.toml", uint32_t{10000});
+        check_ceeaus_expected(*idx);
     });
 
     num_failed += testing::run_test("inverted-index-read-file-corpus", [&]()
     {
-        auto idx = index::make_index
-            <index::inverted_index, caching::splay_cache>("test-config.toml",
-                                                          uint32_t{10000});
-        check_ceeaus_expected(idx);
-        check_term_id(idx);
+        auto idx =
+            index::make_index<index::inverted_index, caching::splay_cache>(
+                "test-config.toml", uint32_t{10000});
+        check_ceeaus_expected(*idx);
+        check_term_id(*idx);
         system("rm -rf ceeaus-inv test-config.toml");
     });
 
@@ -134,49 +134,49 @@ int inverted_index_tests()
 
     num_failed += testing::run_test("inverted-index-build-line-corpus", [&]()
     {
-        auto idx = index::make_index
-            <index::inverted_index, caching::splay_cache>("test-config.toml",
-                                                          uint32_t{10000});
-        check_ceeaus_expected(idx);
+        auto idx =
+            index::make_index<index::inverted_index, caching::splay_cache>(
+                "test-config.toml", uint32_t{10000});
+        check_ceeaus_expected(*idx);
     });
 
     num_failed += testing::run_test("inverted-index-read-line-corpus", [&]()
     {
-        auto idx = index::make_index
-            <index::inverted_index, caching::splay_cache>("test-config.toml",
-                                                          uint32_t{10000});
-        check_ceeaus_expected(idx);
-        check_term_id(idx);
-        check_term_id(idx); // twice to check splay_caching
+        auto idx =
+            index::make_index<index::inverted_index, caching::splay_cache>(
+                "test-config.toml", uint32_t{10000});
+        check_ceeaus_expected(*idx);
+        check_term_id(*idx);
+        check_term_id(*idx); // twice to check splay_caching
     });
 
     // test different caches
 
     num_failed += testing::run_test("inverted-index-dblru-cache", [&]()
     {
-        auto idx = index::make_index
-            <index::inverted_index, caching::default_dblru_cache>(
-                "test-config.toml", uint64_t{1000});
-        check_term_id(idx);
-        check_term_id(idx);
+        auto idx = index::make_index<index::inverted_index,
+                                     caching::default_dblru_cache>(
+            "test-config.toml", uint64_t{1000});
+        check_term_id(*idx);
+        check_term_id(*idx);
     });
 
     num_failed += testing::run_test("inverted-index-no-evict-cache", [&]()
     {
-        auto idx = index::make_index
-            <index::inverted_index, caching::no_evict_cache>(
+        auto idx =
+            index::make_index<index::inverted_index, caching::no_evict_cache>(
                 "test-config.toml");
-        check_term_id(idx);
-        check_term_id(idx);
+        check_term_id(*idx);
+        check_term_id(*idx);
     });
 
     num_failed += testing::run_test("inverted-index-shard-cache", [&]()
     {
-        auto idx = index::make_index
-            <index::inverted_index, caching::splay_shard_cache>(
-                "test-config.toml", uint8_t{8});
-        check_term_id(idx);
-        check_term_id(idx);
+        auto idx = index::make_index<index::inverted_index,
+                                     caching::splay_shard_cache>(
+            "test-config.toml", uint8_t{8});
+        check_term_id(*idx);
+        check_term_id(*idx);
     });
 
     system("rm -rf ceeaus-inv test-config.toml");

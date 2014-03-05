@@ -59,7 +59,7 @@ int print_topics(const std::string& config_file, const std::string& filename,
         }
         std::sort(pairs.begin(), pairs.end(), comp);
         for (const auto& p : pairs)
-            std::cout << idx.term_text(p.first) << " (" << p.first
+            std::cout << idx->term_text(p.first) << " (" << p.first
                       << "): " << p.second << std::endl;
         std::cout << std::endl;
     }

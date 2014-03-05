@@ -35,7 +35,7 @@ class dual_perceptron : public classifier {
          * @param bias \f$b\f$, the bias
          * @param max_iter The maximum allowed iterations for training.
          */
-        dual_perceptron(index::forward_index & idx,
+        dual_perceptron(std::shared_ptr<index::forward_index> idx,
                         Kernel && kernel_fn = kernel::polynomial{},
                         double alpha = 0.1,
                         double gamma = 0.05,
@@ -91,7 +91,7 @@ class dual_perceptron : public classifier {
             std::unordered_map<doc_id, uint64_t>
         > weights_;
 
-        using pdata = decltype(_idx.search_primary(doc_id{}));
+        using pdata = decltype(_idx->search_primary(doc_id{}));
 
         /**
          * The kernel function to be used in lieu of a dot product.

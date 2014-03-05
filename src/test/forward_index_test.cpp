@@ -101,16 +101,16 @@ void ceeaus_forward_test()
 {
     auto idx = index::make_index<index::forward_index, caching::splay_cache>(
         "test-config.toml", uint32_t{10000});
-    check_ceeaus_expected_fwd(idx);
-    check_ceeaus_doc_id(idx);
+    check_ceeaus_expected_fwd(*idx);
+    check_ceeaus_doc_id(*idx);
 }
 
 void bcancer_forward_test()
 {
     auto idx = index::make_index<index::forward_index, caching::splay_cache>(
         "test-config.toml", uint32_t{10000});
-    check_bcancer_expected(idx);
-    check_bcancer_doc_id(idx);
+    check_bcancer_expected(*idx);
+    check_bcancer_doc_id(*idx);
 }
 
 int forward_index_tests()

@@ -32,8 +32,9 @@ class knn: public classifier
          * @param args Arguments to the chosen ranker constructor
          */
         template <class... Args>
-        knn(index::inverted_index & idx, index::forward_index & f_idx,
-                uint16_t k, Args &&... args);
+        knn(std::shared_ptr<index::inverted_index> idx,
+            std::shared_ptr<index::forward_index> f_idx, uint16_t k,
+            Args&&... args);
 
         /**
          * Creates a classification model based on training documents.
@@ -64,7 +65,7 @@ class knn: public classifier
             const std::vector<std::pair<class_label, uint16_t>> & sorted) const;
 
         /** the inverted index used for ranking */
-        index::inverted_index & _inv_idx;
+        std::shared_ptr<index::inverted_index> _inv_idx;
 
         /** the value of k in k-NN */
         uint16_t _k;

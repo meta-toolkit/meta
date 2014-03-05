@@ -11,9 +11,9 @@
 namespace meta {
 namespace classify {
 
-naive_bayes::naive_bayes(index::forward_index & idx,
+naive_bayes::naive_bayes(std::shared_ptr<index::forward_index> idx,
                          double alpha, double beta):
-    classifier{idx},
+    classifier{std::move(idx)},
     _total_docs{0},
     _alpha{alpha},
     _beta{beta}
@@ -31,10 +31,10 @@ void naive_bayes::train(const std::vector<doc_id> & docs)
     for(auto & d_id: docs)
     {
         ++_total_docs;
-        auto pdata = _idx.search_primary(d_id);
+        auto pdata = _idx->search_primary(d_id);
         for(auto & p: pdata->counts())
-            _term_probs[_idx.label(d_id)][p.first] += p.second;
-        ++_class_counts[_idx.label(d_id)];
+            _term_probs[_idx->label(d_id)][p.first] += p.second;
+        ++_class_counts[_idx->label(d_id)];
     }
 
     // calculate P(term|class) for all classes based on c(term|class)
@@ -58,7 +58,7 @@ class_label naive_bayes::classify(doc_id d_id)
             static_cast<double>(_class_counts.at(cls.first)) / _total_docs;
         class_prob += _beta;
         sum += log(1 + class_prob);
-        auto pdata = _idx.search_primary(d_id);
+        auto pdata = _idx->search_primary(d_id);
         for(auto & t: pdata->counts())
         {
             auto it = cls.second.find(t.first);

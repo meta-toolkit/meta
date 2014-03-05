@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 
         std::vector<std::pair<doc_id, double>> ranking;
         auto time = common::time([&](){
-            ranking = ranker.score(idx, query);
+            ranking = ranker.score(*idx, query);
         });
 
         cout << "Showing top 10 of " << ranking.size()
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 
         for(size_t i = 0; i < ranking.size() && i < 10; ++i)
         {
-            std::string path{idx.doc_path(ranking[i].first)};
+            std::string path{idx->doc_path(ranking[i].first)};
             cout << printing::make_bold(
                         std::to_string(i+1) + ". " + path + " ("
                         + std::to_string(ranking[i].second) + ")"

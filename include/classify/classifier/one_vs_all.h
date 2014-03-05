@@ -19,7 +19,7 @@ template <class Classifier>
 class one_vs_all : public classifier {
     public:
         template <class... Args>
-        one_vs_all(index::forward_index & idx, Args &&... args);
+        one_vs_all(std::shared_ptr<index::forward_index> idx, Args &&... args);
 
         void train(const std::vector<doc_id> & docs) override;
 

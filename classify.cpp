@@ -79,12 +79,12 @@ int main(int argc, char* argv[])
                               *config.get_as<std::string>("libsvm-modules"),
                               classify::svm_wrapper::kernel::None };
 
-    auto docs = f_idx.docs();
+    auto docs = f_idx->docs();
     printing::progress progress{" > Pre-fetching for cache: ", docs.size()};
     // load the documents into the cache
     for (size_t i = 0; i < docs.size(); ++i) {
         progress(i);
-        f_idx.search_primary(docs[i]);
+        f_idx->search_primary(docs[i]);
     }
     progress.end();
 
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
     classify::one_vs_all<classify::sgd<classify::loss::smooth_hinge>> smooth_hinge_sgd{f_idx};
     classify::one_vs_all<classify::sgd<classify::loss::squared_hinge>> squared_hinge_sgd{f_idx};
 
-    compare_cv(f_idx,
+    compare_cv(*f_idx,
                perceptron_sgd,
                winnow);
 

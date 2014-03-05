@@ -26,8 +26,8 @@ int ir_eval_tests()
     {
         for (size_t i = 0; i < 5; ++i)
         {
-            corpus::document query{idx.doc_path(doc_id{i}), doc_id{0}};
-            auto ranking = ranker.score(idx, query);
+            corpus::document query{idx->doc_path(doc_id{i}), doc_id{0}};
+            auto ranking = ranker.score(*idx, query);
             double f1 = eval.f1(ranking, query_id{i});
             double p = eval.precision(ranking, query_id{i});
             double r = eval.recall(ranking, query_id{i});

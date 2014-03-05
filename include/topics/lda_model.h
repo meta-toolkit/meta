@@ -23,7 +23,7 @@ namespace topics
 class lda_model
 {
   public:
-    lda_model(index::forward_index& idx, uint64_t num_topics);
+    lda_model(std::shared_ptr<index::forward_index> idx, uint64_t num_topics);
 
     virtual ~lda_model() = default;
 
@@ -80,7 +80,7 @@ class lda_model
     virtual double compute_doc_topic_probability(doc_id doc,
                                                  topic_id topic) const = 0;
 
-    index::forward_index& idx_;
+    std::shared_ptr<index::forward_index> idx_;
     size_t num_topics_;
     size_t num_words_;
 };

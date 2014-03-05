@@ -57,15 +57,16 @@ class forward_index : public disk_index
      * it.
      */
     template <class Index, class... Args>
-    friend Index make_index(const std::string& config_file, Args&&... args);
+    friend std::shared_ptr<Index> make_index(const std::string& config_file,
+                                             Args&&... args);
 
     /**
      * forward_index is a friend of the factory method used to create
      * cached versions of it.
      */
     template <class Index, template <class, class> class Cache, class... Args>
-    friend cached_index<Index, Cache> make_index(const std::string& config_file,
-                                                 Args&&... args);
+    friend std::shared_ptr<cached_index<Index, Cache>>
+        make_index(const std::string& config_file, Args&&... args);
 
     using primary_key_type = doc_id;
     using secondary_key_type = term_id;

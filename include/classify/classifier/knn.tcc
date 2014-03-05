@@ -14,12 +14,13 @@ namespace classify {
 
 template <class Ranker>
 template <class... Args>
-knn<Ranker>::knn(index::inverted_index & idx, index::forward_index & f_idx,
-        uint16_t k, Args &&... args):
-    classifier{f_idx},
-    _inv_idx(idx), // gcc no non-const ref init from brace init list
-    _k{k},
-    _ranker{std::forward<Args>(args)...}
+knn<Ranker>::knn(std::shared_ptr<index::inverted_index> idx,
+                 std::shared_ptr<index::forward_index> f_idx, uint16_t k,
+                 Args&&... args)
+    : classifier{std::move(f_idx)},
+      _inv_idx{std::move(idx)},
+      _k{k},
+      _ranker{std::forward<Args>(args)...}
 { /* nothing */ }
 
 template <class Ranker>
@@ -36,11 +37,11 @@ class_label knn<Ranker>::classify(doc_id d_id)
             "number of documents in the index (training documents)"};
 
     corpus::document query{"[no path]", d_id};
-    for (const auto& count: _idx.search_primary(d_id)->counts())
-        query.increment(_idx.term_text(count.first), count.second);
+    for (const auto& count: _idx->search_primary(d_id)->counts())
+        query.increment(_idx->term_text(count.first), count.second);
 
     auto scored =
-        _ranker.score(_inv_idx, query, _inv_idx.num_docs(), [&](doc_id d_id)
+        _ranker.score(*_inv_idx, query, _inv_idx->num_docs(), [&](doc_id d_id)
         {
             return _legal_docs.find(d_id) != _legal_docs.end();
         });
@@ -49,7 +50,7 @@ class_label knn<Ranker>::classify(doc_id d_id)
     uint16_t i = 0;
     for(auto & s: scored)
     {
-        ++counts[_idx.label(s.first)];
+        ++counts[_idx->label(s.first)];
         if(++i > _k)
             break;
     }
@@ -92,7 +93,7 @@ class_label knn<Ranker>::select_best_label(
 
     for(auto & p: scored)
     {
-        class_label lbl{_inv_idx.label(p.first)};
+        class_label lbl{_inv_idx->label(p.first)};
         auto f = best.find(lbl);
         if(f != best.end())
             return *f;

@@ -12,13 +12,13 @@ namespace meta {
 namespace classify {
 
 template <class LossFunction>
-sgd<LossFunction>::sgd(index::forward_index & idx,
+sgd<LossFunction>::sgd(std::shared_ptr<index::forward_index> idx,
                        double alpha,
                        double gamma,
                        double bias,
                        double lambda,
                        size_t max_iter):
-    classifier{idx},
+    classifier{std::move(idx)},
     positive_label_{""}, // this will be inferred later
     alpha_{alpha},
     gamma_{gamma},
@@ -29,14 +29,14 @@ sgd<LossFunction>::sgd(index::forward_index & idx,
 { /* nothing */ }
 
 template <class LossFunction>
-sgd<LossFunction>::sgd(index::forward_index & idx,
+sgd<LossFunction>::sgd(std::shared_ptr<index::forward_index> idx,
                        class_label positive_label,
                        double alpha,
                        double gamma,
                        double bias,
                        double lambda,
                        size_t max_iter):
-    classifier{idx},
+    classifier{std::move(idx)},
     positive_label_{positive_label},
     alpha_{alpha},
     gamma_{gamma},
@@ -49,7 +49,7 @@ sgd<LossFunction>::sgd(index::forward_index & idx,
 
 template <class LossFunction>
 double sgd<LossFunction>::predict(doc_id d_id) const {
-    auto pdata = _idx.search_primary(d_id);
+    auto pdata = _idx->search_primary(d_id);
     return predict(pdata->counts());
 }
 
@@ -63,20 +63,20 @@ double sgd<LossFunction>::predict(const counts_t & doc) const {
 
 template <class LossFunction>
 void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
-    weights_.resize(_idx.unique_terms());
+    weights_.resize(_idx->unique_terms());
     if( positive_label_ == class_label{""} )
-        positive_label_ = class_label{ _idx.label(docs[0]) };
+        positive_label_ = class_label{ _idx->label(docs[0]) };
 
     auto it = std::find_if(docs.begin(), docs.end(), [&](doc_id doc) {
-        return _idx.label(doc) != positive_label_;
+        return _idx->label(doc) != positive_label_;
     });
-    negative_label_ = class_label{_idx.label(*it)};
+    negative_label_ = class_label{_idx->label(*it)};
 
     std::vector<size_t> indices( docs.size() );
     std::vector<int> labels( docs.size() );
     for( size_t i = 0; i < docs.size(); ++i ) {
         indices[i] = i;
-        labels[i] = _idx.label(docs[i]) == positive_label_ ? 1 : -1;
+        labels[i] = _idx->label(docs[i]) == positive_label_ ? 1 : -1;
     }
     std::random_device d;
     std::mt19937 g{ d() };
@@ -97,7 +97,7 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
                 sum_loss = 0;
             }
 
-            auto pdata = _idx.search_primary(docs[indices[i]]);
+            auto pdata = _idx->search_primary(docs[indices[i]]);
             const counts_t & doc = pdata->counts();
 
             // get output prediction

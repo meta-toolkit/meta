@@ -50,13 +50,12 @@ int main(int argc, char* argv[])
             std::cout << "Ranking query " << i++ << ": " << query.path()
                       << std::endl;
 
-            std::vector<std::pair<doc_id, double>> ranking
-                = ranker.score(idx, query);
+            auto ranking = ranker.score(*idx, query);
             std::cout << "Showing top 10 of " << ranking.size() << " results."
                       << std::endl;
 
             for (size_t i = 0; i < ranking.size() && i < 10; ++i)
-                std::cout << (i + 1) << ". " << idx.doc_name(ranking[i].first)
+                std::cout << (i + 1) << ". " << idx->doc_name(ranking[i].first)
                           << " " << ranking[i].second << std::endl;
 
             std::cout << std::endl;

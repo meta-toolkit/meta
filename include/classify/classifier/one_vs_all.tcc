@@ -6,16 +6,18 @@ namespace classify {
 
 template <class Classifier>
 template <class... Args>
-one_vs_all<Classifier>::one_vs_all(index::forward_index & idx,
-                                   Args &&... args) : classifier{idx} {
-    for (const auto & d_id : idx.docs()) {
-        if (classifiers_.find(idx.label(d_id)) != classifiers_.end())
+one_vs_all<Classifier>::one_vs_all(std::shared_ptr<index::forward_index> idx,
+                                   Args&&... args)
+    : classifier{std::move(idx)}
+{
+    for (const auto & d_id : _idx->docs()) {
+        if (classifiers_.find(_idx->label(d_id)) != classifiers_.end())
             continue;
         classifiers_.emplace(
                 std::piecewise_construct,
-                std::forward_as_tuple(idx.label(d_id)),
-                std::forward_as_tuple(idx,
-                                      idx.label(d_id),
+                std::forward_as_tuple(_idx->label(d_id)),
+                std::forward_as_tuple(_idx,
+                                      _idx->label(d_id),
                                       std::forward<Args>(args)...));
     }
 }

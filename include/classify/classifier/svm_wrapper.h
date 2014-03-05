@@ -44,8 +44,9 @@ class svm_wrapper: public classifier
          * @param kernel_opt Which kind of kernel you want to use (default:
          * None)
          */
-        svm_wrapper(index::forward_index & idx, const std::string & svm_path,
-                kernel kernel_opt = kernel::None);
+        svm_wrapper(std::shared_ptr<index::forward_index> idx,
+                    const std::string& svm_path,
+                    kernel kernel_opt = kernel::None);
 
         /**
          * Classifies a document into a specific group, as determined by

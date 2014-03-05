@@ -69,17 +69,16 @@ class inverted_index: public disk_index
          * it.
          */
         template <class Index, class... Args>
-        friend Index make_index(const std::string &, Args&&...);
+        friend std::shared_ptr<Index> make_index(const std::string&, Args&&...);
 
         /**
          * inverted_index is a friend of the factory method used to create
          * cached versions of it.
          */
-        template <class Index,
-                  template <class, class> class Cache,
+        template <class Index, template <class, class> class Cache,
                   class... Args>
-        friend cached_index<Index, Cache>
-        make_index(const std::string & config_file, Args &&... args);
+        friend std::shared_ptr<cached_index<Index, Cache>>
+            make_index(const std::string& config_file, Args&&... args);
 
     protected:
         /**

@@ -56,18 +56,19 @@ int main(int argc, char* argv[])
         //     auto ranking = ranker.score(idx, query);
         // });
 
-        for(size_t i = 0; i < 100 && i < idx.num_docs(); ++i)
+        auto docs = idx->docs();
+        for(size_t i = 0; i < 100 && i < idx->num_docs(); ++i)
         {
-            auto d_id = idx.docs()[i];
-            corpus::document query{idx.doc_path(d_id), doc_id{0}};
+            auto d_id = docs[i];
+            corpus::document query{idx->doc_path(d_id), doc_id{0}};
             query.set_encoding(encoding);
             cout << "Ranking query " << (i + 1) << ": " << query.path() << endl;
 
-            std::vector<std::pair<doc_id, double>> ranking = ranker.score(idx, query);
+            auto ranking = ranker.score(*idx, query);
             cout << "Showing top 10 of " << ranking.size() << " results." << endl;
 
             for(size_t i = 0; i < ranking.size() && i < 10; ++i)
-                cout << (i+1) << ". " << idx.doc_name(ranking[i].first)
+                cout << (i+1) << ". " << idx->doc_name(ranking[i].first)
                      << " " << ranking[i].second << endl;
 
             cout << endl;

@@ -14,7 +14,7 @@ namespace topics
 
 void parallel_lda_gibbs::initialize()
 {
-    for (doc_id i{0}; i < idx_.num_docs(); ++i)
+    for (doc_id i{0}; i < idx_->num_docs(); ++i)
     {
         doc_topic_count_[i] = {};
         doc_word_topic_[i] = {};
@@ -30,10 +30,10 @@ void parallel_lda_gibbs::perform_iteration(uint64_t iter,
         str = "Initialization: ";
     else
         str = "Iteration " + std::to_string(iter) + ": ";
-    printing::progress progress{str, idx_.num_docs()};
+    printing::progress progress{str, idx_->num_docs()};
     progress.print_endline(false);
 
-    auto range = util::range<doc_id>(doc_id{0}, doc_id{idx_.num_docs() - 1});
+    auto range = util::range<doc_id>(doc_id{0}, doc_id{idx_->num_docs() - 1});
 
     for (auto& id : pool_.thread_ids())
     {
@@ -52,7 +52,7 @@ void parallel_lda_gibbs::perform_iteration(uint64_t iter,
         size_t n = 0; // term number within document---constructed
                       // so that each occurrence of the same term
                       // can still be assigned a different topic
-        for (const auto& freq : idx_.search_primary(i)->counts())
+        for (const auto& freq : idx_->search_primary(i)->counts())
         {
             for (size_t j = 0; j < freq.second; ++j)
             {

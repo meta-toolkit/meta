@@ -35,7 +35,7 @@ class sgd : public classifier {
          * @param lambda \f$\lambda\f$, the regularization constant
          * @param max_iter The maximum number of iterations for training.
          */
-        sgd(index::forward_index & idx,
+        sgd(std::shared_ptr<index::forward_index> idx,
             double alpha = 0.001,
             double gamma = 1e-6,
             double bias = 1,
@@ -52,7 +52,7 @@ class sgd : public classifier {
          * @param lambda \f$\lambda\f$, the regularization constant
          * @param max_iter The maximum number of iterations for training.
          */
-        sgd(index::forward_index & idx,
+        sgd(std::shared_ptr<index::forward_index> idx,
             class_label positive_label,
             double alpha = 0.001,
             double gamma = 1e-6,
