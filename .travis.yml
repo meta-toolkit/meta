@@ -31,8 +31,3 @@ before_script:
 
 script:
   - make
-  - mv travis-config.toml config.toml
-  - wget http://web.engr.illinois.edu/~massung1/files/ceeaus.tar.gz
-  - tar -xzvf ceeaus.tar.gz
-  - mv ceeaus data/
-  - ctest --output-on-failure
