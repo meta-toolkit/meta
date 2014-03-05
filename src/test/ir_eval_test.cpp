@@ -13,7 +13,7 @@ namespace testing
 
 int ir_eval_tests()
 {
-    system("/usr/bin/rm -rf ceeaus-inv");
+    system("rm -rf ceeaus-inv");
     create_config("file");
     auto idx = index::make_index<index::inverted_index, caching::splay_cache>(
         "test-config.toml", uint32_t{10000});
@@ -37,7 +37,7 @@ int ir_eval_tests()
         }
     });
 
-    system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
+    system("rm -rf ceeaus-inv test-config.toml");
     return num_failed;
 }
 }

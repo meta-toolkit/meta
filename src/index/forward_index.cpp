@@ -139,7 +139,7 @@ void forward_index::load_index()
 
     impl_->load_label_id_mapping();
 
-    std::ifstream unique_terms_file{"corpus.uniqueterms"};
+    std::ifstream unique_terms_file{index_name() + "/corpus.uniqueterms"};
     unique_terms_file >> fwd_impl_->_total_unique_terms;
 }
 
@@ -177,7 +177,7 @@ void forward_index::create_index(const std::string& config_file)
     // now that the files are tokenized, we can create the string_list
     impl_->load_doc_id_mapping();
 
-    std::ofstream unique_terms_file{"corpus.uniqueterms"};
+    std::ofstream unique_terms_file{index_name() + "/corpus.uniqueterms"};
     unique_terms_file << fwd_impl_->_total_unique_terms;
 
     LOG(info) << "Done creating index: " << index_name() << ENDLG;
