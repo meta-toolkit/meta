@@ -96,7 +96,7 @@ int inverted_index_tests()
     int num_failed = 0;
     num_failed += testing::run_test("inverted-index-build-file-corpus", [&]()
     {
-        system("/usr/bin/rm -rf ceeaus-inv");
+        system("rm -rf ceeaus-inv");
         auto idx = index::make_index
             <index::inverted_index, caching::splay_cache>("test-config.toml",
                                                           uint32_t{10000});
@@ -110,11 +110,11 @@ int inverted_index_tests()
                                                           uint32_t{10000});
         check_ceeaus_expected(idx);
         check_term_id(idx);
-        system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
+        system("rm -rf ceeaus-inv test-config.toml");
     });
 
     create_config("line");
-    system("/usr/bin/rm -rf ceeaus-inv");
+    system("rm -rf ceeaus-inv");
 
     num_failed += testing::run_test("inverted-index-build-line-corpus", [&]()
     {
@@ -163,7 +163,7 @@ int inverted_index_tests()
         check_term_id(idx);
     });
 
-    system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
+    system("rm -rf ceeaus-inv test-config.toml");
     return num_failed;
 }
 }

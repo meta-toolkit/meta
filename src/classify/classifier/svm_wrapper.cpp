@@ -42,7 +42,7 @@ class_label svm_wrapper::classify(doc_id d_id)
     // run liblinear/libsvm
     std::string command = _svm_path + _executable
         + "predict svm-input svm-train.model svm-predicted";
-    command += " 2>&1> /dev/null";
+    command += " > /dev/null 2>&1";
     system(command.c_str());
 
     // extract answer
@@ -66,7 +66,7 @@ confusion_matrix svm_wrapper::test(const std::vector<doc_id> & docs)
     // run liblinear/libsvm
     std::string command = _svm_path + _executable
         + "predict svm-input svm-train.model svm-predicted";
-    command += " 2>&1> /dev/null";
+    command += " > /dev/null 2>&1";
     system(command.c_str());
 
     // extract answer
@@ -97,7 +97,7 @@ void svm_wrapper::train(const std::vector<doc_id> & docs)
 
     std::string command = _svm_path + _executable + "train "
         + _options.at(_kernel) + " svm-train";
-    command += " 2>&1> /dev/null";
+    command += " > /dev/null 2>&1";
     system(command.c_str());
 }
 

@@ -36,7 +36,7 @@ void test_rank(Ranker& r, Index& idx)
 int ranker_tests()
 {
     create_config("file");
-    system("/usr/bin/rm -rf ceeaus-inv");
+    system("rm -rf ceeaus-inv");
     auto idx = index::make_index<index::inverted_index, caching::splay_cache>(
         "test-config.toml", uint32_t{10000});
 
@@ -72,7 +72,7 @@ int ranker_tests()
         test_rank(r, idx);
     });
 
-    system("/usr/bin/rm -rf ceeaus-inv test-config.toml");
+    system("rm -rf ceeaus-inv test-config.toml");
     return num_failed;
 }
 }

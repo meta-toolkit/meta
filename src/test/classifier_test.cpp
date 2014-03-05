@@ -109,14 +109,14 @@ int run_tests(const std::string& type)
         check_cv(f_idx, svm, .80);
     });
 
-    system("/usr/bin/rm -rf ceeaus-*");
+    system("rm -rf ceeaus-*");
     return num_failed;
 }
 
 int classifier_tests()
 {
     int num_failed = 0;
-    system("/usr/bin/rm -rf ceeaus-*");
+    system("rm -rf ceeaus-*");
     create_config("file");
     num_failed += run_tests("file");
     create_config("line");
