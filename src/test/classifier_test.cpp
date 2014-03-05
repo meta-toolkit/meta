@@ -58,7 +58,7 @@ int run_tests(const std::string& type)
     num_failed += testing::run_test("naive-bayes-split-" + type, [&]()
     {
         naive_bayes nb{f_idx};
-        check_split(f_idx, nb, 0.84);
+        check_split(f_idx, nb, 0.83);
     });
 
     num_failed += testing::run_test("knn-cv-" + type, [&]()
