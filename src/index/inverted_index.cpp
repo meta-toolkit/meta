@@ -13,7 +13,7 @@
 #include "index/vocabulary_map.h"
 #include "index/vocabulary_map_writer.h"
 #include "parallel/thread_pool.h"
-#include "tokenizers/tokenizer.h"
+#include "analyzers/analyzer.h"
 #include "util/mapping.h"
 #include "util/pimpl.tcc"
 #include "util/progress.h"
@@ -52,9 +52,9 @@ class inverted_index::impl
     void compress(const std::string& filename, uint64_t num_unique_terms);
 
     /**
-     * The tokenizer used to tokenize documents.
+     * The analyzer used to tokenize documents.
      */
-    std::unique_ptr<tokenizers::tokenizer> tokenizer_;
+    std::unique_ptr<analyzers::analyzer> analyzer_;
 
     /**
      * PrimaryKey -> postings location.
@@ -69,7 +69,7 @@ class inverted_index::impl
 inverted_index::impl::impl(inverted_index* idx,
                            const cpptoml::toml_group& config)
     : idx_{idx},
-      tokenizer_{tokenizers::tokenizer::load(config)},
+      analyzer_{analyzers::analyzer::load(config)},
       _total_corpus_terms{0}
 {
     // nothing
@@ -88,7 +88,7 @@ inverted_index::~inverted_index() = default;
 
 void inverted_index::create_index(const std::string & config_file)
 {
-    // save the config file so we can recreate the tokenizer
+    // save the config file so we can recreate the analyzer
     filesystem::copy_file(config_file, index_name() + "/config.toml");
 
     LOG(info) << "Creating index: " << index_name() << ENDLG;
@@ -150,6 +150,7 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
 
     auto task = [&]() {
         auto producer = handler.make_producer();
+        auto analyzer = analyzer_->clone();
         while (true) {
             util::optional<corpus::document> doc;
             {
@@ -162,7 +163,7 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
                 progress(doc->id());
             }
 
-            tokenizer_->tokenize(*doc);
+            analyzer->tokenize(*doc);
 
             // save metadata
             docid_writer.insert(doc->id(), doc->path());
@@ -266,7 +267,7 @@ double inverted_index::avg_doc_length()
 
 void inverted_index::tokenize(corpus::document & doc)
 {
-    inv_impl_->tokenizer_->tokenize(doc);
+    inv_impl_->analyzer_->tokenize(doc);
 }
 
 uint64_t inverted_index::doc_freq(term_id t_id) const

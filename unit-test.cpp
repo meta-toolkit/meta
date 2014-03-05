@@ -6,7 +6,8 @@
 #include <unordered_set>
 #include <string>
 #include "test/unit_test.h"
-#include "test/tokenizer_test.h"
+#include "test/analyzer_test.h"
+#include "test/filter_test.h"
 #include "test/inverted_index_test.h"
 #include "test/ranker_test.h"
 #include "test/stemmer_test.h"
@@ -29,7 +30,8 @@ int main(int argc, char* argv[])
         std::cerr << "Usage: " << argv[0] << " [opt1 [opt2 [...]]]" << std::endl;
         std::cerr << "where opt is one of: " << std::endl;
         std::cerr << " \"all\": runs all unit tests" << std::endl;
-        std::cerr << " \"tokenizers\": runs tokenization tests" << std::endl;
+        std::cerr << " \"analyzers\": runs tokenization tests" << std::endl;
+        std::cerr << " \"filters\": runs filter tests" << std::endl;
         std::cerr << " \"stemmers\": runs stemmer tests" << std::endl;
         std::cerr << " \"parallel\": runs parallel functionality tests" << std::endl;
         std::cerr << " \"inverted-index\": runs inverted index tests" << std::endl;
@@ -48,8 +50,10 @@ int main(int argc, char* argv[])
     bool all = args.find("all") != args.end();
     int num_failed = 0;
 
-    if (all || args.find("tokenizers") != args.end())
-        num_failed += testing::tokenizer_tests();
+    if (all || args.find("analyzers") != args.end())
+        num_failed += testing::analyzer_tests();
+    if (all || args.find("filters") != args.end())
+        num_failed += testing::filter_tests();
     if (all || args.find("stemmers") != args.end())
         num_failed += testing::stemmer_tests();
     if (all || args.find("parallel") != args.end())

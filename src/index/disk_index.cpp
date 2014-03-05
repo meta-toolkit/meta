@@ -10,7 +10,7 @@
 #include "index/string_list.h"
 #include "index/string_list_writer.h"
 #include "index/vocabulary_map.h"
-#include "tokenizers/tokenizer.h"
+#include "analyzers/analyzer.h"
 #include "util/disk_vector.h"
 #include "util/mapping.h"
 #include "util/optional.h"
