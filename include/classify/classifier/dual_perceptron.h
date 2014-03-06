@@ -9,9 +9,12 @@
 #ifndef _META_CLASSIFY_DUAL_PERCEPTRON_H_
 #define _META_CLASSIFY_DUAL_PERCEPTRON_H_
 
+#include "classify/classifier_factory.h"
 #include "classify/classifier/classifier.h"
 #include "classify/kernel/polynomial.h"
+#include "util/functional.h"
 #include "meta.h"
+
 namespace meta {
 namespace classify {
 
@@ -20,9 +23,15 @@ namespace classify {
  * the problem. This allows the perceptron to be used for data that is not
  * necessarily linearly separable via the use of a kernel function.
  */
-template <class Kernel>
 class dual_perceptron : public classifier {
     public:
+        const static constexpr double default_alpha = 0.1;
+        const static constexpr double default_gamma = 0.05;
+        const static constexpr double default_bias = 0;
+        const static constexpr uint64_t default_max_iter = 100;
+
+        const static std::string id;
+
         /**
          * Constructs a dual_perceptron classifier over the given index
          * and with the given paramters.
@@ -35,12 +44,26 @@ class dual_perceptron : public classifier {
          * @param bias \f$b\f$, the bias
          * @param max_iter The maximum allowed iterations for training.
          */
+        template <class Kernel>
         dual_perceptron(std::shared_ptr<index::forward_index> idx,
                         Kernel && kernel_fn = kernel::polynomial{},
-                        double alpha = 0.1,
-                        double gamma = 0.05,
-                        double bias = 0,
-                        uint64_t max_iter = 100);
+                        double alpha = default_alpha,
+                        double gamma = default_gamma,
+                        double bias = default_bias,
+                        uint64_t max_iter = default_max_iter)
+            : classifier{std::move(idx)},
+              alpha_{alpha},
+              gamma_{gamma},
+              bias_{bias},
+              max_iter_{max_iter}
+        {
+            std::function<double(pdata, pdata)> fun = [=](const pdata& a,
+                                                          const pdata& b)
+            {
+                return kernel_fn(a, b);
+            };
+            kernel_ = functional::memoize(fun);
+        }
 
         /**
          * Trains the perceptron on the given training documents.
@@ -121,6 +144,14 @@ class dual_perceptron : public classifier {
 };
 
 /**
+ * Specialization of the factory function used to create dual_perceptrons.
+ */
+template <>
+std::unique_ptr<classifier>
+    make_classifier<dual_perceptron>(const cpptoml::toml_group&,
+                                     std::shared_ptr<index::forward_index>);
+
+/**
  * Creates a dual_perceptron with the given arguments, for convenience.
  * Similar to make_pair in spirit---avoid typing the kernel type more than
  * once.
@@ -130,11 +161,13 @@ class dual_perceptron : public classifier {
  * @param args the remaining arguments to forward to the constructor
  */
 template <class Kernel, class... Args>
-dual_perceptron<Kernel> make_perceptron(index::forward_index & idx,
-                                        Kernel && kernel,
-                                        Args &&... args);
+dual_perceptron make_perceptron(std::shared_ptr<index::forward_index> idx,
+                                Kernel&& kernel, Args&&... args)
+{
+    return dual_perceptron{std::move(idx), std::forward<Kernel>(kernel),
+                           std::forward<Args>(args)...};
+}
 
 }
 }
-#include "classify/classifier/dual_perceptron.tcc"
 #endif

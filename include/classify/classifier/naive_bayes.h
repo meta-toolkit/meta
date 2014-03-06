@@ -55,6 +55,8 @@ class naive_bayes: public classifier
          */
         void reset() override;
 
+        const static constexpr char* id = "naive-bayes";
+
     private:
 
         /**

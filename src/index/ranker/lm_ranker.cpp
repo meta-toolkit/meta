@@ -13,6 +13,8 @@ namespace meta
 namespace index
 {
 
+const std::string language_model_ranker::id = "language-model";
+
 double language_model_ranker::score_one(const score_data& sd)
 {
     double ps = smoothed_prob(sd);

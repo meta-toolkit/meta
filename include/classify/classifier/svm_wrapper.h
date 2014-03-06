@@ -10,6 +10,7 @@
 #define _SVM_WRAPPER_H_
 
 #include <unordered_map>
+#include "classify/classifier_factory.h"
 #include "classify/classifier/classifier.h"
 #include "index/forward_index.h"
 #include "meta.h"
@@ -77,6 +78,8 @@ class svm_wrapper: public classifier
          */
         void reset() override;
 
+        const static std::string id;
+
     private:
 
         /** the path to the liblinear/libsvm library */
@@ -94,6 +97,10 @@ class svm_wrapper: public classifier
         std::string _executable;
 };
 
+template <>
+std::unique_ptr<classifier>
+    make_classifier<svm_wrapper>(const cpptoml::toml_group&,
+                                 std::shared_ptr<index::forward_index>);
 }
 }
 

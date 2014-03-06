@@ -13,6 +13,7 @@
 #include "index/inverted_index.h"
 #include "index/forward_index.h"
 #include "index/ranker/ranker.h"
+#include "classify/classifier_factory.h"
 #include "classify/classifier/classifier.h"
 
 namespace meta {
@@ -21,20 +22,23 @@ namespace classify {
 /**
  * Implements the k-Nearest Neighbor lazy learning classification algorithm.
  */
-template <class Ranker>
 class knn: public classifier
 {
     public:
+        /**
+         * Identifier for this classifier.
+         */
+        const static std::string id;
+
         /**
          * @param idx The index to run the classifier on
          * @param ranker
          * @param k The value of k in k-NN
          * @param args Arguments to the chosen ranker constructor
          */
-        template <class... Args>
         knn(std::shared_ptr<index::inverted_index> idx,
             std::shared_ptr<index::forward_index> f_idx, uint16_t k,
-            Args&&... args);
+            std::unique_ptr<index::ranker> ranker);
 
         /**
          * Creates a classification model based on training documents.
@@ -73,7 +77,7 @@ class knn: public classifier
         /**
          * The ranker that is used to score the queries in the index.
          */
-        Ranker _ranker;
+        std::unique_ptr<index::ranker> _ranker;
 
         /** documents that are "legal" to be used in the results */
         std::unordered_set<doc_id> _legal_docs;
@@ -89,8 +93,15 @@ class knn: public classifier
       };
 };
 
-}
-}
+/**
+ * Specialization of the factory method used to create knn classifiers.
+ */
+template <>
+std::unique_ptr<classifier>
+    make_multi_index_classifier<knn>(const cpptoml::toml_group&,
+                                     std::shared_ptr<index::forward_index>,
+                                     std::shared_ptr<index::inverted_index>);
 
-#include "classify/classifier/knn.tcc"
+}
+}
 #endif

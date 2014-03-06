@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include "cpptoml.h"
 #include "index/ranker/dirichlet_prior.h"
 #include "index/score_data.h"
 
@@ -11,8 +12,11 @@ namespace meta
 namespace index
 {
 
+const std::string dirichlet_prior::id = "dirichlet-prior";
+
 dirichlet_prior::dirichlet_prior(double mu) : _mu{mu}
-{/* nothing */
+{
+    /* nothing */
 }
 
 double dirichlet_prior::smoothed_prob(const score_data& sd) const
@@ -26,6 +30,15 @@ double dirichlet_prior::smoothed_prob(const score_data& sd) const
 double dirichlet_prior::doc_constant(const score_data& sd) const
 {
     return _mu / (sd.doc_size + _mu);
+}
+
+template <>
+std::unique_ptr<ranker>
+    make_ranker<dirichlet_prior>(const cpptoml::toml_group& config)
+{
+    if (auto mu = config.get_as<double>("mu"))
+        return make_unique<dirichlet_prior>(*mu);
+    return make_unique<dirichlet_prior>();
 }
 }
 }

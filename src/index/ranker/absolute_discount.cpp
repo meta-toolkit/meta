@@ -4,6 +4,7 @@
  */
 
 #include <algorithm>
+#include "cpptoml.h"
 #include "index/ranker/absolute_discount.h"
 #include "index/score_data.h"
 
@@ -12,8 +13,11 @@ namespace meta
 namespace index
 {
 
+const std::string absolute_discount::id = "absolute-discount";
+
 absolute_discount::absolute_discount(double delta) : _delta{delta}
-{/* nothing */
+{
+    /* nothing */
 }
 
 double absolute_discount::smoothed_prob(const score_data& sd) const
@@ -28,6 +32,15 @@ double absolute_discount::doc_constant(const score_data& sd) const
 {
     double unique = sd.doc_unique_terms;
     return _delta * unique / sd.doc_size;
+}
+
+template <>
+std::unique_ptr<ranker>
+    make_ranker<absolute_discount>(const cpptoml::toml_group& config)
+{
+    if(auto gamma = config.get_as<double>("gamma"))
+        return make_unique<absolute_discount>(*gamma);
+    return make_unique<absolute_discount>();
 }
 }
 }

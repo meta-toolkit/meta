@@ -1,82 +1,56 @@
 /**
  * @file sgd.cpp
+ * @author Chase Geigle
  */
 
 #include <numeric>
 #include <random>
 
 #include "classify/classifier/sgd.h"
+#include "classify/loss/loss_function_factory.h"
 #include "index/postings_data.h"
 
 namespace meta {
 namespace classify {
 
-template <class LossFunction>
-sgd<LossFunction>::sgd(std::shared_ptr<index::forward_index> idx,
-                       double alpha,
-                       double gamma,
-                       double bias,
-                       double lambda,
-                       size_t max_iter):
-    classifier{std::move(idx)},
-    positive_label_{""}, // this will be inferred later
-    alpha_{alpha},
-    gamma_{gamma},
-    bias_{0},
-    bias_weight_{bias},
-    lambda_{lambda},
-    max_iter_{max_iter}
-{ /* nothing */ }
+const std::string sgd::id = "sgd";
 
-template <class LossFunction>
-sgd<LossFunction>::sgd(std::shared_ptr<index::forward_index> idx,
-                       class_label positive_label,
-                       double alpha,
-                       double gamma,
-                       double bias,
-                       double lambda,
-                       size_t max_iter):
-    classifier{std::move(idx)},
-    positive_label_{positive_label},
-    alpha_{alpha},
-    gamma_{gamma},
-    bias_{0},
-    bias_weight_{bias},
-    lambda_{lambda},
-    max_iter_{max_iter}
-{ /* nothing */ }
+sgd::sgd(std::shared_ptr<index::forward_index> idx, class_label positive,
+         class_label negative, std::unique_ptr<loss::loss_function> loss,
+         double alpha, double gamma, double bias, double lambda,
+         size_t max_iter)
+    : binary_classifier{std::move(idx), positive, negative},
+      alpha_{alpha},
+      gamma_{gamma},
+      bias_{0},
+      bias_weight_{bias},
+      lambda_{lambda},
+      max_iter_{max_iter},
+      loss_{std::move(loss)}
+{
+    /* nothing */
+}
 
-
-template <class LossFunction>
-double sgd<LossFunction>::predict(doc_id d_id) const {
+double sgd::predict(doc_id d_id) const {
     auto pdata = _idx->search_primary(d_id);
     return predict(pdata->counts());
 }
 
-template <class LossFunction>
-double sgd<LossFunction>::predict(const counts_t & doc) const {
+double sgd::predict(const counts_t & doc) const {
     double dot = coeff_ * bias_ * bias_weight_;
     for (const auto & count : doc)
         dot += coeff_ * count.second * weights_[count.first];
     return dot;
 }
 
-template <class LossFunction>
-void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
+void sgd::train( const std::vector<doc_id> & docs ) {
     weights_.resize(_idx->unique_terms());
-    if( positive_label_ == class_label{""} )
-        positive_label_ = class_label{ _idx->label(docs[0]) };
-
-    auto it = std::find_if(docs.begin(), docs.end(), [&](doc_id doc) {
-        return _idx->label(doc) != positive_label_;
-    });
-    negative_label_ = class_label{_idx->label(*it)};
 
     std::vector<size_t> indices( docs.size() );
     std::vector<int> labels( docs.size() );
     for( size_t i = 0; i < docs.size(); ++i ) {
         indices[i] = i;
-        labels[i] = _idx->label(docs[i]) == positive_label_ ? 1 : -1;
+        labels[i] = _idx->label(docs[i]) == positive_ ? 1 : -1;
     }
     std::random_device d;
     std::mt19937 g{ d() };
@@ -105,9 +79,9 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
             double prediction = predict(doc);
             int actual = labels[indices[i]];
 
-            sum_loss += loss_.loss(prediction, actual);
+            sum_loss += loss_->loss(prediction, actual);
 
-            double error_derivative = loss_.derivative(prediction, actual);
+            double error_derivative = loss_->derivative(prediction, actual);
             coeff_ *= (1 - alpha_ * lambda_);
 
             // renormalize vector of coefficient is too small
@@ -129,22 +103,47 @@ void sgd<LossFunction>::train( const std::vector<doc_id> & docs ) {
     }
 }
 
-template <class LossFunction>
-class_label sgd<LossFunction>::classify(doc_id d_id)
-{
-    double prediction = predict(d_id);
-    if( prediction >= 0 )
-        return positive_label_;
-    return negative_label_;
-}
-
-template <class LossFunction>
-void sgd<LossFunction>::reset() {
+void sgd::reset() {
     weights_.clear();
     coeff_ = 1;
     bias_ = 0;
 }
 
+template <>
+std::unique_ptr<binary_classifier>
+    make_binary_classifier<sgd>(const cpptoml::toml_group& config,
+                                std::shared_ptr<index::forward_index> idx,
+                                class_label positive, class_label negative)
+{
+    auto loss = config.get_as<std::string>("loss");
+    if (!loss)
+        throw binary_classifier_factory::exception{
+            "loss function must be specified for sgd in config"};
+
+    auto alpha = sgd::default_alpha;
+    if (auto c_alpha = config.get_as<double>("alpha"))
+        alpha = *c_alpha;
+
+    auto gamma = sgd::default_gamma;
+    if (auto c_gamma = config.get_as<double>("gamma"))
+        gamma = *c_gamma;
+
+    auto bias = sgd::default_bias;
+    if (auto c_bias = config.get_as<double>("bias"))
+        bias = *c_bias;
+
+    auto lambda = sgd::default_lambda;
+    if (auto c_lambda = config.get_as<double>("lambda"))
+        lambda = *c_lambda;
+
+    auto max_iter = sgd::default_max_iter;
+    if (auto c_max_iter = config.get_as<int64_t>("max-iter"))
+        max_iter = *c_max_iter;
+
+    return make_unique<sgd>(
+        std::move(idx), std::move(positive), std::move(negative),
+        loss::make_loss_function(*loss), alpha, gamma, bias, lambda, max_iter);
+}
 
 }
 }

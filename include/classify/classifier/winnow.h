@@ -67,6 +67,8 @@ class winnow: public classifier
          */
         void reset() override;
 
+        const static constexpr char* id = "winnow";
+
     private:
 
         /**

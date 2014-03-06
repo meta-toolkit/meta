@@ -9,28 +9,16 @@
 #ifndef _META_CLASSIFY_SMOOTH_HINGE_LOSS_H_
 #define _META_CLASSIFY_SMOOTH_HINGE_LOSS_H_
 
+#include "classify/loss/loss_function.h"
+
 namespace meta {
 namespace classify {
 namespace loss {
 
-struct smooth_hinge {
-    double loss(double prediction, int expected) const {
-        double z = prediction * expected;
-        if (z <= 0)
-            return 0.5 - z;
-        if (z >= 1)
-            return 0;
-        return 0.5 * (1 - prediction * expected) * (1 - prediction * expected);
-    }
-
-    double derivative(double prediction, int expected) const {
-        double z = prediction * expected;
-        if (z <= 0)
-            return -expected;
-        if (z >= 1)
-            return 0;
-        return -expected * (1 - z);
-    }
+struct smooth_hinge : public loss_function {
+    const static std::string id;
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
 };
 
 }

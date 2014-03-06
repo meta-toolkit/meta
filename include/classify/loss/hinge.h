@@ -10,25 +10,16 @@
 #define _META_CLASSIFY_HINGE_LOSS_H_
 
 #include <algorithm>
+#include "classify/loss/loss_function.h"
 
 namespace meta {
 namespace classify {
 namespace loss {
 
-struct hinge {
-    double loss(double prediction, int expected) const {
-        double z = prediction * expected;
-        if (z < 1)
-            return 1 - z;
-        return 0;
-    }
-
-    double derivative(double prediction, int expected) const {
-        double z = prediction * expected;
-        if (z < 1)
-            return -expected;
-        return 0;
-    }
+struct hinge : public loss_function {
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
+    const static std::string id;
 };
 
 }

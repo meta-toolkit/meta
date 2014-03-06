@@ -11,6 +11,7 @@
 #define _PIVOTED_LENGTH_H_
 
 #include "index/ranker/ranker.h"
+#include "index/ranker/ranker_factory.h"
 
 namespace meta
 {
@@ -26,9 +27,16 @@ class pivoted_length : public ranker
 {
   public:
     /**
+     * The identifier for this ranker.
+     */
+    const static std::string id;
+
+    const static constexpr double default_s = 0.20;
+
+    /**
      * @param s
      */
-    pivoted_length(double s = 0.20);
+    pivoted_length(double s = default_s);
 
     /**
      * @param sd
@@ -38,7 +46,13 @@ class pivoted_length : public ranker
   private:
     const double _s;
 };
-}
-}
 
+/**
+ * Specialization of the factory method used to create pivoted_length
+ * rankers.
+ */
+template <>
+std::unique_ptr<ranker> make_ranker<pivoted_length>(const cpptoml::toml_group&);
+}
+}
 #endif

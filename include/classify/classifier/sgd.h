@@ -10,10 +10,9 @@
 #define _META_CLASSIFY_SGD_H_
 
 #include <vector>
-#include <unordered_map>
-#include "index/forward_index.h"
-#include "classify/classifier/classifier.h"
-#include "classify/loss/all.h"
+#include "classify/binary_classifier_factory.h"
+#include "classify/classifier/binary_classifier.h"
+#include "classify/loss/loss_function.h"
 #include "meta.h"
 
 namespace meta {
@@ -24,28 +23,19 @@ namespace classify {
  * classifiers. These may be extended to multiclass classification using
  * the one_vs_all or all_vs_all adapters.
  */
-template <class LossFunction>
-class sgd : public classifier {
+class sgd : public binary_classifier {
     public:
-        /**
-         * @param idx The index to run the classifier on
-         * @param alpha \f$alpha\f$, the learning rate
-         * @param gamma \f$gamma\f$, the error threshold
-         * @param bias \f$b\f$, the bias
-         * @param lambda \f$\lambda\f$, the regularization constant
-         * @param max_iter The maximum number of iterations for training.
-         */
-        sgd(std::shared_ptr<index::forward_index> idx,
-            double alpha = 0.001,
-            double gamma = 1e-6,
-            double bias = 1,
-            double lambda = 0.0001,
-            size_t max_iter = 50);
+        const static constexpr double default_alpha = 0.001;
+        const static constexpr double default_gamma = 1e-6;
+        const static constexpr double default_bias = 1;
+        const static constexpr double default_lambda = 0.0001;
+        const static constexpr size_t default_max_iter = 50;
 
         /**
          * @param idx The index to run the classifier on
-         * @param positive_label The label for the positive class (all
-         *  others are assumed to be negative)
+         * @param positive The label for the positive class (all others
+         *  are assumed to be negative).
+         * @param negative The label to return for negative documents.
          * @param alpha \f$alpha\f$, the learning rate
          * @param gamma \f$gamma\f$, the error threshold
          * @param bias \f$b\f$, the bias
@@ -53,12 +43,14 @@ class sgd : public classifier {
          * @param max_iter The maximum number of iterations for training.
          */
         sgd(std::shared_ptr<index::forward_index> idx,
-            class_label positive_label,
-            double alpha = 0.001,
-            double gamma = 1e-6,
-            double bias = 1,
-            double lambda = 0.0001,
-            size_t max_iter = 50);
+            class_label positive,
+            class_label negative,
+            std::unique_ptr<loss::loss_function> loss,
+            double alpha = default_alpha,
+            double gamma = default_gamma,
+            double bias = default_bias,
+            double lambda = default_lambda,
+            size_t max_iter = default_max_iter);
 
         /**
          * Trains the sgd on the given training documents.
@@ -70,17 +62,6 @@ class sgd : public classifier {
          * @param docs The training set.
          */
         void train( const std::vector<doc_id> & docs ) override;
-
-        /**
-         * Classifies the given document.
-         * The class label returned is
-         * \f$\argmax_k(w_k^\intercal x_n + b)\f$---in other words, the
-         * class whose associated weight vector gives the highest result.
-         *
-         * @param doc The document to be classified.
-         * @return The class label determined for the document.
-         */
-        class_label classify( doc_id d_id ) override;
 
         /**
          * Returns the dot product with the current weight vector. Used
@@ -97,14 +78,9 @@ class sgd : public classifier {
          */
         void reset() override;
 
+        const static std::string id;
+
     private:
-
-        /// The label for positive examples.
-        class_label positive_label_;
-
-        /// The label for negative examples.
-        class_label negative_label_;
-
         /// The weights vector.
         std::vector<double> weights_;
 
@@ -130,7 +106,7 @@ class sgd : public classifier {
         const size_t max_iter_;
 
         /// The loss function to be used for the update.
-        LossFunction loss_;
+        std::unique_ptr<loss::loss_function> loss_;
 
         /**
          * Typedef for the sparse vector training/test instances.
@@ -146,8 +122,11 @@ class sgd : public classifier {
         double predict(const counts_t & doc) const;
 };
 
+template <>
+std::unique_ptr<binary_classifier>
+    make_binary_classifier<sgd>(const cpptoml::toml_group& config,
+                                std::shared_ptr<index::forward_index> idx,
+                                class_label positive, class_label negative);
 }
 }
-
-#include "classify/classifier/sgd.tcc"
 #endif
