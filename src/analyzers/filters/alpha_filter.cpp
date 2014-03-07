@@ -56,7 +56,7 @@ void alpha_filter::next_token()
         });
         if (!filt.empty())
         {
-            token_ = tok;
+            token_ = filt;
             return;
         }
     }
