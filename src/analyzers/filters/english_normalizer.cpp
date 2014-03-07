@@ -68,7 +68,8 @@ english_normalizer::operator bool() const
 
 bool english_normalizer::is_whitespace(const std::string& token) const
 {
-    auto space = [](char c) { return std::isspace(c); };
+    auto space = [](char c)
+    { return std::isspace(c); };
     return std::all_of(token.begin(), token.end(), space);
 }
 
@@ -149,8 +150,8 @@ uint64_t english_normalizer::word(uint64_t start, const std::string& token)
 {
     // special case leading dashes: if there are consecutive ones, we want
     // to strip them out into their own token
-    if (token[start] == '-' && start + 1 < token.length()
-        && token[start + 1] == '-')
+    if (token[start] == '-' && start + 1 < token.length() &&
+        token[start + 1] == '-')
         start = strip_dashes(start, token);
 
     uint64_t idx = start + 1; // the token is at least one character, which may
@@ -158,8 +159,8 @@ uint64_t english_normalizer::word(uint64_t start, const std::string& token)
                               // previous pass
     while (idx < token.length())
     {
-        if (token[idx] == '-' && idx + 1 < token.length()
-            && token[idx + 1] == '-')
+        if (token[idx] == '-' && idx + 1 < token.length() &&
+            token[idx + 1] == '-')
         {
             // multiple dashes in a row---like this, indicating an em dash
             // or something
@@ -187,8 +188,5 @@ std::string english_normalizer::current_token()
     tokens_.pop_front();
     return token;
 }
-
-
-
 }
 }

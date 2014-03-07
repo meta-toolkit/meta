@@ -41,7 +41,12 @@ class icu_tokenizer::impl
         {
             tokens_.emplace_back("<s>");
             for (const auto& word : segmenter_.words(sentence))
-                tokens_.emplace_back(segmenter_.content(word));
+            {
+                auto wrd = segmenter_.content(word);
+                if (wrd.empty())
+                    continue;
+                tokens_.emplace_back(std::move(wrd));
+            }
             tokens_.emplace_back("</s>");
         }
     }

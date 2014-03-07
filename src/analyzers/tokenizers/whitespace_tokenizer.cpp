@@ -3,6 +3,7 @@
  * @author Chase Geigle
  */
 
+#include <cassert>
 #include <cctype>
 
 #include "analyzers/tokenizers/whitespace_tokenizer.h"
@@ -44,6 +45,7 @@ std::string whitespace_tokenizer::next()
         while (*this && !std::isspace(content_[idx_]))
             ret.push_back(content_[idx_++]);
     }
+    assert(!ret.empty());
     return ret;
 }
 

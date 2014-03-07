@@ -16,7 +16,7 @@ empty_sentence_filter::empty_sentence_filter(
     std::unique_ptr<token_stream> source)
     : source_{std::move(source)}
 {
-    // nothing
+    next_token();
 }
 
 empty_sentence_filter::empty_sentence_filter(const empty_sentence_filter& other)
@@ -64,7 +64,7 @@ std::string empty_sentence_filter::next()
 
 empty_sentence_filter::operator bool() const
 {
-    return first_ || second_ || *source_;
+    return static_cast<bool>(first_);
 }
 
 }

@@ -3,6 +3,8 @@
  * @author Chase Geigle
  */
 
+#include <iostream>
+#include <algorithm>
 #include "meta.h"
 #include "index/vocabulary_map_writer.h"
 #include "io/binary.h"
@@ -30,6 +32,9 @@ vocabulary_map_writer::vocabulary_map_writer(const std::string& path,
 
 void vocabulary_map_writer::insert(const std::string& term)
 {
+    if (term.empty())
+        throw vocabulary_map_writer{
+            "empty string cannot be inserted into the vocabulary_map"};
     // + 1 for null terminator
     auto length = sizeof(term_id) + term.length() + 1;
 

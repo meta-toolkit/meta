@@ -89,6 +89,7 @@ void list_filter::next_token()
                 throw token_stream_exception{"invalid method"};
         }
     }
+    token_ = util::nullopt;
 }
 
 template <>
