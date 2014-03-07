@@ -33,7 +33,7 @@ vocabulary_map_writer::vocabulary_map_writer(const std::string& path,
 void vocabulary_map_writer::insert(const std::string& term)
 {
     if (term.empty())
-        throw vocabulary_map_writer{
+        throw vocabulary_map_writer_exception{
             "empty string cannot be inserted into the vocabulary_map"};
     // + 1 for null terminator
     auto length = sizeof(term_id) + term.length() + 1;
