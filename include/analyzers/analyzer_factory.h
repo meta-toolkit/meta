@@ -6,11 +6,8 @@
 #ifndef _META_ANALYZER_FACTORY_H_
 #define _META_ANALYZER_FACTORY_H_
 
-#include <functional>
-#include <memory>
-#include <unordered_map>
-
 #include "analyzers/analyzer.h"
+#include "util/factory.h"
 #include "util/shim.h"
 
 namespace cpptoml
@@ -28,41 +25,11 @@ namespace analyzers
  * files.  Clients should use the register_analyzer method instead of this
  * class directly.
  */
-class analyzer_factory
+class analyzer_factory : public util::factory<analyzer_factory, analyzer,
+                                              const cpptoml::toml_group&,
+                                              const cpptoml::toml_group&>
 {
-  public:
-    using pointer = std::unique_ptr<analyzer>;
-    using factory_method = std::function<
-        pointer(const cpptoml::toml_group&, const cpptoml::toml_group&)>;
-    using exception = analyzer::analyzer_exception;
-
-    /**
-     * Obtains the singleton.
-     */
-    inline static analyzer_factory& get()
-    {
-        static analyzer_factory factory;
-        return factory;
-    }
-
-    /**
-     * Associates a given identifier with the given factory method.
-     */
-    template <class Function>
-    void add(const std::string& identifier, Function&& fn)
-    {
-        if (methods_.find(identifier) != methods_.end())
-            throw exception{"analyzer already registered with that id"};
-        methods_.emplace(identifier, std::forward<Function>(fn));
-    }
-
-    /**
-     * Creates a new analyzer based on the identifier and configuration
-     * group.
-     */
-    pointer create(const std::string& identifier,
-                   const cpptoml::toml_group& global,
-                   const cpptoml::toml_group& config);
+    friend base_factory;
 
   private:
     analyzer_factory();
@@ -93,7 +60,6 @@ void register_analyzer()
 {
     analyzer_factory::get().add(Analyzer::id, make_analyzer<Analyzer>);
 }
-
 }
 }
 #endif

@@ -13,7 +13,7 @@ namespace index
 {
 
 template <class Ranker>
-void ranker_factory::add()
+void ranker_factory::reg()
 {
     add(Ranker::id, make_ranker<Ranker>);
 }
@@ -21,20 +21,11 @@ void ranker_factory::add()
 ranker_factory::ranker_factory()
 {
     // built-in rankers
-    add<absolute_discount>();
-    add<dirichlet_prior>();
-    add<jelinek_mercer>();
-    add<okapi_bm25>();
-    add<pivoted_length>();
-}
-
-auto ranker_factory::create(const std::string& identifier,
-                            const cpptoml::toml_group& config) -> pointer
-{
-
-    if (methods_.find(identifier) == methods_.end())
-        throw exception{"unrecognized ranker id"};
-    return methods_[identifier](config);
+    reg<absolute_discount>();
+    reg<dirichlet_prior>();
+    reg<jelinek_mercer>();
+    reg<okapi_bm25>();
+    reg<pivoted_length>();
 }
 
 std::unique_ptr<ranker> make_ranker(const cpptoml::toml_group& config)
