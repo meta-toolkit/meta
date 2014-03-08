@@ -13,18 +13,16 @@ namespace classify
 {
 
 template <class Classifier>
-void classifier_factory::add()
+void classifier_factory::reg()
 {
     add(Classifier::id, [](const cpptoml::toml_group& config,
                            std::shared_ptr<index::forward_index> idx,
                            std::shared_ptr<index::inverted_index>)
-    {
-        return make_classifier<Classifier>(config, std::move(idx));
-    });
+    { return make_classifier<Classifier>(config, std::move(idx)); });
 }
 
 template <class Classifier>
-void classifier_factory::add_mi()
+void classifier_factory::reg_mi()
 {
     add(Classifier::id, make_multi_index_classifier<Classifier>);
 }
@@ -32,25 +30,14 @@ void classifier_factory::add_mi()
 classifier_factory::classifier_factory()
 {
     // built-in classifiers
-    add<one_vs_all>();
-    add<naive_bayes>();
-    add<svm_wrapper>();
-    add<winnow>();
-    add<dual_perceptron>();
+    reg<one_vs_all>();
+    reg<naive_bayes>();
+    reg<svm_wrapper>();
+    reg<winnow>();
+    reg<dual_perceptron>();
 
     // built-in multi-index classifiers
-    add_mi<knn>();
-}
-
-auto classifier_factory::create(const std::string& identifier,
-                                const cpptoml::toml_group& config,
-                                std::shared_ptr<index::forward_index> idx,
-                                std::shared_ptr<index::inverted_index> inv_idx)
-    -> pointer
-{
-    if (methods_.find(identifier) == methods_.end())
-        throw exception{"unrecognized classifier id"};
-    return methods_[identifier](config, std::move(idx), std::move(inv_idx));
+    reg_mi<knn>();
 }
 
 std::unique_ptr<classifier> make_classifier(

@@ -31,15 +31,5 @@ analyzer_factory::analyzer_factory()
     register_analyzer<ngram_pos_analyzer>();
     register_analyzer<libsvm_analyzer>();
 }
-
-auto analyzer_factory::create(const std::string& identifier,
-                              const cpptoml::toml_group& global,
-                              const cpptoml::toml_group& config) -> pointer
-{
-    if (methods_.find(identifier) == methods_.end())
-        throw exception{"unrecognized analyzer id"};
-    return methods_[identifier](global, config);
-}
-
 }
 }

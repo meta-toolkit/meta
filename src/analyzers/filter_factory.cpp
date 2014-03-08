@@ -61,14 +61,5 @@ filter_factory::filter_factory()
     register_filter<porter2_stemmer>();
     register_filter<sentence_boundary>();
 }
-
-auto filter_factory::create(const std::string& identifier, pointer source,
-                            const cpptoml::toml_group& config) -> pointer
-{
-    if (methods_.find(identifier) == methods_.end())
-        throw exception{"unrecognized filter id"};
-    return methods_[identifier](std::move(source), config);
-}
-
 }
 }

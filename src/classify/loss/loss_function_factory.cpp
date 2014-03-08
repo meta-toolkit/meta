@@ -14,7 +14,7 @@ namespace loss
 {
 
 template <class Loss>
-void loss_function_factory::add()
+void loss_function_factory::reg()
 {
     add(Loss::id, make_loss_function<Loss>);
 }
@@ -22,29 +22,20 @@ void loss_function_factory::add()
 loss_function_factory::loss_function_factory()
 {
     // built-in loss functions
-    add<hinge>();
-    add<huber>();
-    add<least_squares>();
-    add<logistic>();
-    add<modified_huber>();
-    add<perceptron>();
-    add<smooth_hinge>();
-    add<squared_hinge>();
+    reg<hinge>();
+    reg<huber>();
+    reg<least_squares>();
+    reg<logistic>();
+    reg<modified_huber>();
+    reg<perceptron>();
+    reg<smooth_hinge>();
+    reg<squared_hinge>();
 }
 
-auto loss_function_factory::create(const std::string& identifier) -> pointer
-{
-    if (methods_.find(identifier) == methods_.end())
-        throw exception{"unrecognized classifier id"};
-    return methods_[identifier]();
-}
-
-std::unique_ptr<loss_function>
-    make_loss_function(const std::string& identifier)
+std::unique_ptr<loss_function> make_loss_function(const std::string& identifier)
 {
     return loss_function_factory::get().create(identifier);
 }
-
 }
 }
 }

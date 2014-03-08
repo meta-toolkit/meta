@@ -6,9 +6,8 @@
 #ifndef _META_RANKER_FACTORY_H_
 #define _META_RANKER_FACTORY_H_
 
-#include <memory>
-#include <unordered_map>
 #include "index/ranker/ranker.h"
+#include "util/factory.h"
 #include "util/shim.h"
 
 namespace cpptoml
@@ -27,51 +26,15 @@ namespace index
  * class directly to add their own rankers.
  */
 class ranker_factory
+    : public util::factory<ranker_factory, ranker, const cpptoml::toml_group&>
 {
-  public:
-    using pointer = std::unique_ptr<ranker>;
-    using factory_method = std::function<pointer(const cpptoml::toml_group&)>;
-
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
-    /**
-     * Obtains the singleton.
-     */
-    inline static ranker_factory& get()
-    {
-        static ranker_factory factory;
-        return factory;
-    }
-
-    /**
-     * Associates the given identifier with the given factory method.
-     */
-    template <class Function>
-    void add(const std::string& identifier, Function&& fn)
-    {
-        if (methods_.find(identifier) != methods_.end())
-            throw exception{"classifier already registered with that id"};
-        methods_.emplace(identifier, std::forward<Function>(fn));
-    }
-
-    /**
-     * Creates a new classifier based on the identifier, configuration
-     * object, and index(es).
-     */
-    pointer create(const std::string& identifier,
-                   const cpptoml::toml_group& config);
+    friend base_factory;
 
   private:
     ranker_factory();
 
     template <class Ranker>
-    void add();
-
-    std::unordered_map<std::string, factory_method> methods_;
+    void reg();
 };
 
 /**
@@ -89,7 +52,6 @@ std::unique_ptr<ranker> make_ranker(const cpptoml::toml_group&)
 {
     return make_unique<Ranker>();
 }
-
 }
 }
 
