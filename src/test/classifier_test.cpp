@@ -83,7 +83,7 @@ int run_tests(const std::string& type)
             return make_unique<sgd>(f_idx, positive, class_label{"negative"},
                                     make_unique<loss::hinge>());
         }};
-        check_cv(*f_idx, hinge_sgd, 0.94);
+        check_cv(*f_idx, hinge_sgd, 0.93);
         one_vs_all perceptron{f_idx, [&](class_label positive)
         {
             return make_unique<sgd>(f_idx, positive, class_label{"negative"},
