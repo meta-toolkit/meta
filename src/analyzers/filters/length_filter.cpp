@@ -5,7 +5,7 @@
 
 #include "cpptoml.h"
 #include "analyzers/filters/length_filter.h"
-#include "util/utf.h"
+#include "utf/utf.h"
 
 namespace meta
 {

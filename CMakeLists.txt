@@ -118,7 +118,7 @@ add_library(meta-util
             src/util/progress.cpp)
 
 add_library(meta-utf
-            src/util/utf.cpp)
+            src/utf/utf.cpp)
 target_link_libraries(meta-utf ${ICU_LIBRARIES})
 
 add_library(meta-io

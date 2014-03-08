@@ -6,7 +6,7 @@
 #include <fstream>
 #include "classify/classifier/svm_wrapper.h"
 #include "util/invertible_map.h"
-#include "util/utf.h"
+#include "utf/utf.h"
 
 namespace meta {
 namespace classify {

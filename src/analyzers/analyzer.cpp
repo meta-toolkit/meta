@@ -17,7 +17,7 @@
 #include "cpptoml.h"
 #include "io/mmap_file.h"
 #include "util/shim.h"
-#include "util/utf.h"
+#include "utf/utf.h"
 
 namespace meta {
 namespace analyzers {

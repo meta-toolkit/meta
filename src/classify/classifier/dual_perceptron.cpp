@@ -12,7 +12,7 @@
 #include "util/functional.h"
 #include "util/printing.h"
 #include "util/progress.h"
-#include "util/utf.h"
+#include "utf/utf.h"
 
 namespace meta
 {

@@ -11,7 +11,7 @@
 #include <unicode/translit.h>
 
 #include "util/pimpl.tcc"
-#include "util/utf.h"
+#include "utf/utf.h"
 
 namespace meta
 {

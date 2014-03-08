@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <cctype>
 #include "analyzers/filters/lowercase_filter.h"
-#include "util/utf.h"
+#include "utf/utf.h"
 
 namespace meta
 {

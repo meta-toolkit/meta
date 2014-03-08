@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include "analyzers/filters/alpha_filter.h"
-#include "util/utf.h"
+#include "utf/utf.h"
 
 namespace meta
 {
