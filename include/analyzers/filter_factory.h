@@ -6,11 +6,8 @@
 #ifndef _META_FILTER_FACTORY_H_
 #define _META_FILTER_FACTORY_H_
 
-#include <functional>
-#include <memory>
-#include <unordered_map>
-
 #include "analyzers/token_stream.h"
+#include "util/factory.h"
 #include "util/shim.h"
 
 namespace cpptoml
@@ -28,40 +25,12 @@ namespace analyzers
  * construction. Clients should use the register_X methods instead of this
  * class directly.
  */
-class filter_factory
+class filter_factory : public util::factory<filter_factory, token_stream,
+                                            std::unique_ptr<token_stream>,
+                                            const cpptoml::toml_group&>
 {
-  public:
-    using pointer = std::unique_ptr<token_stream>;
-    using factory_method =
-        std::function<pointer(pointer, const cpptoml::toml_group&)>;
-    using exception = token_stream::token_stream_exception;
+    friend base_factory;
 
-    /**
-     * Obtains the singleton.
-     */
-    inline static filter_factory& get()
-    {
-        static filter_factory factory;
-        return factory;
-    }
-
-    /**
-     * Associates the given identifier with the given factory method.
-     */
-    template <class Function>
-    void add(const std::string& identifier, Function&& fn)
-    {
-        if (methods_.find(identifier) != methods_.end())
-            throw exception{"filter already registered with that id"};
-        methods_.emplace(identifier, std::forward<Function>(fn));
-    }
-
-    /**
-     * Creates a new filter based on the identifier, a source to read
-     * tokens from, and a configuration object.
-     */
-    pointer create(const std::string& identifier, pointer source,
-                   const cpptoml::toml_group& config);
   private:
     filter_factory();
 
@@ -70,8 +39,6 @@ class filter_factory
 
     template <class Filter>
     void register_filter();
-
-    std::unordered_map<std::string, factory_method> methods_;
 };
 
 /**
@@ -122,7 +89,6 @@ void register_filter()
 {
     filter_factory::get().add(Filter::id, make_filter<Filter>);
 }
-
 }
 }
 #endif

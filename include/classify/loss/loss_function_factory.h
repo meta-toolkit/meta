@@ -11,6 +11,7 @@
 #include <unordered_map>
 
 #include "classify/loss/loss_function.h"
+#include "util/factory.h"
 #include "util/shim.h"
 
 namespace meta
@@ -26,49 +27,15 @@ namespace loss
  * class directly to add their own loss functions.
  */
 class loss_function_factory
+    : public util::factory<loss_function_factory, loss_function>
 {
-  public:
-    using pointer = std::unique_ptr<loss_function>;
-    using factory_method = std::function<pointer()>;
-
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
-    /**
-     * Obtains the singleton.
-     */
-    inline static loss_function_factory& get()
-    {
-        static loss_function_factory factory;
-        return factory;
-    }
-
-    /**
-     * Associates the given identifier with the given factory method.
-     */
-    template <class Function>
-    void add(const std::string& identifier, Function&& fn)
-    {
-        if (methods_.find(identifier) != methods_.end())
-            throw exception{"classifier already registered with that id"};
-        methods_.emplace(identifier, std::forward<Function>(fn));
-    }
-
-    /**
-     * Creates a new loss function based on the identifier.
-     */
-    pointer create(const std::string& identifier);
+    friend base_factory;
 
   private:
     loss_function_factory();
 
     template <class Loss>
-    void add();
-
-    std::unordered_map<std::string, factory_method> methods_;
+    void reg();
 };
 
 /**
@@ -95,7 +62,6 @@ void register_loss_function()
 {
     loss_function_factory::get().add(Loss::id, make_loss_function<Loss>);
 }
-
 }
 }
 }

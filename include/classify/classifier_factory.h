@@ -7,6 +7,7 @@
 #define _META_CLASSIFIER_FACTORY_H_
 
 #include "classify/classifier/classifier.h"
+#include "util/factory.h"
 #include "util/shim.h"
 
 namespace cpptoml
@@ -25,58 +26,21 @@ namespace classify
  * class directly to add their own classifiers.
  */
 class classifier_factory
+    : public util::factory<classifier_factory, classifier,
+                           const cpptoml::toml_group&,
+                           std::shared_ptr<index::forward_index>,
+                           std::shared_ptr<index::inverted_index>>
 {
-  public:
-    using pointer = std::unique_ptr<classifier>;
-    using factory_method = std::function<pointer(
-        const cpptoml::toml_group&, std::shared_ptr<index::forward_index>,
-        std::shared_ptr<index::inverted_index>)>;
-
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
-    /**
-     * Obtains the singleton.
-     */
-    inline static classifier_factory& get()
-    {
-        static classifier_factory factory;
-        return factory;
-    }
-
-    /**
-     * Associates the given identifier with the given factory method.
-     */
-    template <class Function>
-    void add(const std::string& identifier, Function&& fn)
-    {
-        if (methods_.find(identifier) != methods_.end())
-            throw exception{"classifier already registered with that id"};
-        methods_.emplace(identifier, std::forward<Function>(fn));
-    }
-
-    /**
-     * Creates a new classifier based on the identifier, configuration
-     * object, and index(es).
-     */
-    pointer create(const std::string& identifier,
-                   const cpptoml::toml_group& config,
-                   std::shared_ptr<index::forward_index> idx,
-                   std::shared_ptr<index::inverted_index> inv_idx = nullptr);
+    friend base_factory;
 
   private:
     classifier_factory();
 
     template <class Classifier>
-    void add();
+    void reg();
 
     template <class Classifier>
-    void add_mi();
-
-    std::unordered_map<std::string, factory_method> methods_;
+    void reg_mi();
 };
 
 /**
@@ -128,9 +92,7 @@ void register_classifier()
                                   [](const cpptoml::toml_group& config,
                                      std::shared_ptr<index::forward_index> idx,
                                      std::shared_ptr<index::inverted_index>)
-    {
-        return make_classifier<Classifier>(config, std::move(idx));
-    });
+    { return make_classifier<Classifier>(config, std::move(idx)); });
 }
 
 /**
@@ -144,7 +106,6 @@ void register_multi_index_classifier()
     classifier_factory::get().add(Classifier::id,
                                   make_multi_index_classifier<Classifier>);
 }
-
 }
 }
 #endif
