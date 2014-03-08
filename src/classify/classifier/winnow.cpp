@@ -10,6 +10,8 @@
 namespace meta {
 namespace classify {
 
+const std::string winnow::id = "winnow";
+
 winnow::winnow(std::shared_ptr<index::forward_index> idx, double m,
                double gamma, size_t max_iter)
     : classifier{std::move(idx)}, m_{m}, gamma_{gamma}, max_iter_{max_iter}

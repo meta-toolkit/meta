@@ -11,6 +11,8 @@
 namespace meta {
 namespace classify {
 
+const std::string naive_bayes::id = "naive-bayes";
+
 naive_bayes::naive_bayes(std::shared_ptr<index::forward_index> idx,
                          double alpha, double beta):
     classifier{std::move(idx)},
