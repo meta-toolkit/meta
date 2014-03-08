@@ -8,7 +8,7 @@
 
 #include "analyzers/tokenizers/icu_tokenizer.h"
 #include "util/pimpl.tcc"
-#include "utf/utf.h"
+#include "utf/segmenter.h"
 
 namespace meta
 {

@@ -9,7 +9,7 @@
 #include "analyzers/filter_factory.h"
 #include "util/clonable.h"
 #include "util/optional.h"
-#include "utf/utf.h"
+#include "utf/transformer.h"
 
 namespace cpptoml {
 class toml_group;

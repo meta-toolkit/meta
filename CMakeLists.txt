@@ -118,6 +118,8 @@ add_library(meta-util
             src/util/progress.cpp)
 
 add_library(meta-utf
+            src/utf/segmenter.cpp
+            src/utf/transformer.cpp
             src/utf/utf.cpp)
 target_link_libraries(meta-utf ${ICU_LIBRARIES})
 
