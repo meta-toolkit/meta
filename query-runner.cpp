@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     auto query_path = config.get_as<std::string>("querypath");
     if (!query_path)
     {
-        std::cerr << "config file needs a \"queryfile\" parameter" << std::endl;
+        std::cerr << "config file needs a \"querypath\" parameter" << std::endl;
         return 1;
     }
 

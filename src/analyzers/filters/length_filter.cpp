@@ -63,15 +63,16 @@ void length_filter::next_token()
         if (tok == "<s>" || tok == "</s>")
         {
             token_ = tok;
-            break;
+            return;
         }
         auto len = utf::length(tok);
         if (len >= min_length_ && len <= max_length_)
         {
             token_ = tok;
-            break;
+            return;
         }
     }
+    token_ = util::nullopt;
 }
 
 template <>

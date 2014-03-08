@@ -9,6 +9,7 @@
 #include <memory>
 #include "analyzers/token_stream.h"
 #include "util/clonable.h"
+#include "util/optional.h"
 
 namespace meta
 {
@@ -54,10 +55,17 @@ class porter2_stemmer : public util::clonable<token_stream, porter2_stemmer>
     const static std::string id;
 
   private:
+    void next_token();
+
     /**
      * The stream to read tokens from.
      */
     std::unique_ptr<token_stream> source_;
+
+    /**
+     * The buffered next token.
+     */
+    util::optional<std::string> token_;
 };
 }
 }

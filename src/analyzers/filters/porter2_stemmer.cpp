@@ -16,11 +16,11 @@ const std::string porter2_stemmer::id = "porter2-stemmer";
 porter2_stemmer::porter2_stemmer(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}
 {
-    // nothing
+    next_token();
 }
 
 porter2_stemmer::porter2_stemmer(const porter2_stemmer& other)
-    : source_{other.source_->clone()}
+    : source_{other.source_->clone()}, token_{other.token_}
 {
     // nothing
 }
@@ -28,18 +28,34 @@ porter2_stemmer::porter2_stemmer(const porter2_stemmer& other)
 void porter2_stemmer::set_content(const std::string& content)
 {
     source_->set_content(content);
+    next_token();
 }
 
 std::string porter2_stemmer::next()
 {
-    auto tok = source_->next();
-    Porter2Stemmer::stem(tok);
+    auto tok = *token_;
+    next_token();
     return tok;
+}
+
+void porter2_stemmer::next_token()
+{
+    while (*source_)
+    {
+        auto tok = source_->next();
+        Porter2Stemmer::stem(tok);
+        if (!tok.empty())
+        {
+            token_ = tok;
+            return;
+        }
+    }
+    token_ = util::nullopt;
 }
 
 porter2_stemmer::operator bool() const
 {
-    return *source_;
+    return static_cast<bool>(token_);
 }
 
 }

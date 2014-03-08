@@ -8,6 +8,7 @@
 
 #include "analyzers/token_stream.h"
 #include "util/clonable.h"
+#include "util/optional.h"
 
 namespace meta
 {
@@ -52,10 +53,17 @@ class alpha_filter : public util::clonable<token_stream, alpha_filter>
     const static std::string id;
 
   private:
+    void next_token();
+
     /**
      * The source to read tokens from.
      */
     std::unique_ptr<token_stream> source_;
+
+    /**
+     * The buffered token.
+     */
+    util::optional<std::string> token_;
 };
 }
 }

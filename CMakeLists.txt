@@ -275,6 +275,12 @@ add_executable(shuffle shuffle.cpp)
 add_executable(utf8-test utf8-test.cpp)
 target_link_libraries(utf8-test meta-utf)
 
+add_executable(print-vocab print_vocab.cpp)
+target_link_libraries(print-vocab meta-index)
+
+add_executable(search-vocab search-vocab.cpp)
+target_link_libraries(search-vocab meta-index)
+
 enable_testing()
 add_test(analyzers unit-test analyzers)
 set_tests_properties(analyzers PROPERTIES TIMEOUT 5)

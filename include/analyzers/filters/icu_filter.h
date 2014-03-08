@@ -8,6 +8,7 @@
 
 #include "analyzers/filter_factory.h"
 #include "util/clonable.h"
+#include "util/optional.h"
 #include "util/utf.h"
 
 namespace cpptoml {
@@ -58,8 +59,11 @@ class icu_filter : public util::clonable<token_stream, icu_filter>
     const static std::string id;
 
   private:
+    void next_token();
+
     std::unique_ptr<token_stream> source_;
     utf::transformer trans_;
+    util::optional<std::string> token_;
 };
 
 /**
