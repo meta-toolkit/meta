@@ -191,16 +191,33 @@ add_library(meta-index
             src/index/ranker/jelinek_mercer.cpp
             src/index/ranker/dirichlet_prior.cpp
             src/index/ranker/absolute_discount.cpp
-            src/index/ranker/pivoted_length.cpp)
+            src/index/ranker/pivoted_length.cpp
+            src/index/ranker/ranker_factory.cpp)
 
 target_link_libraries(meta-index meta-analyzers ${CMAKE_THREAD_LIBS_INIT})
 
 add_library(meta-classify
             src/classify/confusion_matrix.cpp
+            src/classify/classifier_factory.cpp
+            src/classify/binary_classifier_factory.cpp
+            src/classify/loss/loss_function_factory.cpp
             src/classify/classifier/classifier.cpp
+            src/classify/classifier/binary_classifier.cpp
+            src/classify/classifier/sgd.cpp
             src/classify/classifier/naive_bayes.cpp
             src/classify/classifier/svm_wrapper.cpp
-            src/classify/classifier/winnow.cpp)
+            src/classify/classifier/winnow.cpp
+            src/classify/classifier/one_vs_all.cpp
+            src/classify/classifier/dual_perceptron.cpp
+            src/classify/classifier/knn.cpp
+            src/classify/loss/hinge.cpp
+            src/classify/loss/huber.cpp
+            src/classify/loss/least_squares.cpp
+            src/classify/loss/logistic.cpp
+            src/classify/loss/modified_huber.cpp
+            src/classify/loss/perceptron.cpp
+            src/classify/loss/smooth_hinge.cpp
+            src/classify/loss/squared_hinge.cpp)
 target_link_libraries(meta-classify meta-index)
 
 add_library(meta-topics

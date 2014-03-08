@@ -9,24 +9,21 @@
 #ifndef _META_CLASSIFY_PERCEPTRON_LOSS_H_
 #define _META_CLASSIFY_PERCEPTRON_LOSS_H_
 
-namespace meta {
-namespace classify {
-namespace loss {
+#include "classify/loss/loss_function.h"
 
-struct perceptron {
-    double loss(double prediction, int expected) const {
-        if( prediction * expected <= 0 )
-            return -expected * prediction;
-        return 0;
-    }
+namespace meta
+{
+namespace classify
+{
+namespace loss
+{
 
-    double derivative(double prediction, int expected) const {
-        if( prediction * expected <= 0 )
-            return -expected;
-        return 0;
-    }
+struct perceptron : public loss_function
+{
+    const static std::string id;
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
 };
-
 }
 }
 }

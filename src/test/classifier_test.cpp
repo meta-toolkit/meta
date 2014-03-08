@@ -3,7 +3,10 @@
  * @author Sean Massung
  */
 
+#include <random>
+
 #include "test/classifier_test.h"
+#include "classify/loss/all.h"
 
 namespace meta
 {
@@ -63,29 +66,45 @@ int run_tests(const std::string& type)
 
     num_failed += testing::run_test("knn-cv-" + type, [&]()
     {
-        knn<index::okapi_bm25> kn{i_idx, f_idx, 10};
+        knn kn{i_idx, f_idx, 10, make_unique<index::okapi_bm25>()};
         check_cv(*f_idx, kn, 0.90);
     });
 
     num_failed += testing::run_test("knn-split-" + type, [&]()
     {
-        knn<index::okapi_bm25> kn{i_idx, f_idx, 10};
+        knn kn{i_idx, f_idx, 10, make_unique<index::okapi_bm25>()};
         check_split(*f_idx, kn, 0.88);
     });
 
     num_failed += testing::run_test("sgd-cv-" + type, [&]()
     {
-        one_vs_all<sgd<loss::hinge>> hinge_sgd{f_idx};
+        one_vs_all hinge_sgd{f_idx, [&](class_label positive)
+        {
+            return make_unique<sgd>(f_idx, positive, class_label{"negative"},
+                                    make_unique<loss::hinge>());
+        }};
         check_cv(*f_idx, hinge_sgd, 0.94);
-        one_vs_all<sgd<loss::perceptron>> perceptron{f_idx};
+        one_vs_all perceptron{f_idx, [&](class_label positive)
+        {
+            return make_unique<sgd>(f_idx, positive, class_label{"negative"},
+                                    make_unique<loss::perceptron>());
+        }};
         check_cv(*f_idx, perceptron, 0.89);
     });
 
     num_failed += testing::run_test("sgd-split-" + type, [&]()
     {
-        one_vs_all<sgd<loss::hinge>> hinge_sgd{f_idx};
+        one_vs_all hinge_sgd{f_idx, [&](class_label positive)
+        {
+            return make_unique<sgd>(f_idx, positive, class_label{"negative"},
+                                    make_unique<loss::hinge>());
+        }};
         check_split(*f_idx, hinge_sgd, 0.89);
-        one_vs_all<sgd<loss::perceptron>> perceptron{f_idx};
+        one_vs_all perceptron{f_idx, [&](class_label positive)
+        {
+            return make_unique<sgd>(f_idx, positive, class_label{"negative"},
+                                    make_unique<loss::perceptron>());
+        }};
         check_split(*f_idx, perceptron, 0.85);
     });
 

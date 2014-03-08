@@ -11,6 +11,7 @@
 #define _ABSOLUTE_DISCOUNT_H_
 
 #include "index/ranker/lm_ranker.h"
+#include "index/ranker/ranker_factory.h"
 
 namespace meta
 {
@@ -23,6 +24,11 @@ namespace index
 class absolute_discount : public language_model_ranker
 {
   public:
+    /**
+     * The identifier of this ranker.
+     */
+    const static std::string id;
+
     /**
      * @param delta
      */
@@ -44,7 +50,14 @@ class absolute_discount : public language_model_ranker
     /** the absolute discounting parameter */
     const double _delta;
 };
-}
-}
 
+/**
+ * Specialization of the factory method used to create absolute_discount
+ * rankers.
+ */
+template <>
+std::unique_ptr<ranker>
+    make_ranker<absolute_discount>(const cpptoml::toml_group&);
+}
+}
 #endif

@@ -26,6 +26,11 @@ class language_model_ranker : public ranker
 {
   public:
     /**
+     * The identifier for this ranker.
+     */
+    const static std::string id;
+
+    /**
      * @param sd
      */
     double score_one(const score_data& sd) override;

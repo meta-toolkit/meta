@@ -9,18 +9,16 @@
 #ifndef _META_CLASSIFY_LEAST_SQUARES_LOSS_H_
 #define _META_CLASSIFY_LEAST_SQUARES_LOSS_H_
 
+#include "classify/loss/loss_function.h"
+
 namespace meta {
 namespace classify {
 namespace loss {
 
-struct least_squares {
-    double loss(double prediction, int expected) const {
-        return 0.5 * (prediction - expected) * (prediction - expected);
-    }
-
-    double derivative(double prediction, int expected) const {
-        return prediction - expected;
-    }
+struct least_squares : public loss_function {
+    const static std::string id;
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
 };
 
 }

@@ -13,10 +13,11 @@ namespace meta
 namespace index
 {
 
-okapi_bm25::okapi_bm25(double k1 /* = 1.5 */, double b /* = 0.75 */,
-                       double k3 /* = 500.0 */)
-    : _k1{k1}, _b{b}, _k3{k3}
-{/* nothing */
+const std::string okapi_bm25::id = "bm25";
+
+okapi_bm25::okapi_bm25(double k1, double b, double k3) : _k1{k1}, _b{b}, _k3{k3}
+{
+    /* nothing */
 }
 
 double okapi_bm25::score_one(const score_data& sd)
@@ -36,5 +37,25 @@ double okapi_bm25::score_one(const score_data& sd)
 
     return TF * IDF * QTF;
 }
+
+template <>
+std::unique_ptr<ranker>
+    make_ranker<okapi_bm25>(const cpptoml::toml_group& config)
+{
+    auto k1 = okapi_bm25::default_k1;
+    if (auto c_k1 = config.get_as<double>("k1"))
+        k1 = *c_k1;
+
+    auto b = okapi_bm25::default_b;
+    if (auto c_b = config.get_as<double>("b"))
+        b = *c_b;
+
+    auto k3 = okapi_bm25::default_k3;
+    if (auto c_k3 = config.get_as<double>("k3"))
+        k3 = *c_k3;
+
+    return make_unique<okapi_bm25>(k1, b, k3);
+}
+
 }
 }

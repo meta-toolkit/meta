@@ -11,6 +11,7 @@
 #define _DIRICHLET_PRIOR_H_
 
 #include "index/ranker/lm_ranker.h"
+#include "index/ranker/ranker_factory.h"
 
 namespace meta
 {
@@ -23,6 +24,11 @@ namespace index
 class dirichlet_prior : public language_model_ranker
 {
   public:
+    /**
+     * The identifier for this ranker.
+     */
+    const static std::string id;
+
     /**
      * @param mu
      */
@@ -44,7 +50,14 @@ class dirichlet_prior : public language_model_ranker
     /** the Dirichlet prior parameter*/
     const double _mu;
 };
-}
-}
 
+/**
+ * Specialization of the factory method used to create dirichlet_prior
+ * rankers.
+ */
+template <>
+std::unique_ptr<ranker>
+    make_ranker<dirichlet_prior>(const cpptoml::toml_group&);
+}
+}
 #endif

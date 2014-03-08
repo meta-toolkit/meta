@@ -5,32 +5,33 @@
 
 #include <vector>
 #include <unordered_map>
+
+#include "cpptoml.h"
 #include "classify/classifier/knn.h"
 #include "corpus/document.h"
 #include "index/postings_data.h"
+#include "index/ranker/ranker_factory.h"
 
 namespace meta {
 namespace classify {
 
-template <class Ranker>
-template <class... Args>
-knn<Ranker>::knn(std::shared_ptr<index::inverted_index> idx,
+const std::string knn::id = "knn";
+
+knn::knn(std::shared_ptr<index::inverted_index> idx,
                  std::shared_ptr<index::forward_index> f_idx, uint16_t k,
-                 Args&&... args)
+                 std::unique_ptr<index::ranker> ranker)
     : classifier{std::move(f_idx)},
       _inv_idx{std::move(idx)},
       _k{k},
-      _ranker{std::forward<Args>(args)...}
+      _ranker{std::move(ranker)}
 { /* nothing */ }
 
-template <class Ranker>
-void knn<Ranker>::train(const std::vector<doc_id> & docs)
+void knn::train(const std::vector<doc_id> & docs)
 {
     _legal_docs.insert(docs.begin(), docs.end());
 }
 
-template <class Ranker>
-class_label knn<Ranker>::classify(doc_id d_id)
+class_label knn::classify(doc_id d_id)
 {
     if(_k > _legal_docs.size())
         throw knn_exception{"k must be smaller than the "
@@ -41,7 +42,7 @@ class_label knn<Ranker>::classify(doc_id d_id)
         query.increment(_idx->term_text(count.first), count.second);
 
     auto scored =
-        _ranker.score(*_inv_idx, query, _inv_idx->num_docs(), [&](doc_id d_id)
+        _ranker->score(*_inv_idx, query, _inv_idx->num_docs(), [&](doc_id d_id)
         {
             return _legal_docs.find(d_id) != _legal_docs.end();
         });
@@ -69,8 +70,7 @@ class_label knn<Ranker>::classify(doc_id d_id)
     return select_best_label(scored, sorted);
 }
 
-template <class Ranker>
-class_label knn<Ranker>::select_best_label(
+class_label knn::select_best_label(
     const std::vector<std::pair<doc_id, double>> & scored,
     const std::vector<std::pair<class_label, uint16_t>> & sorted) const
 {
@@ -103,11 +103,28 @@ class_label knn<Ranker>::select_best_label(
     return sorted.begin()->first;
 }
 
-template <class Ranker>
-void knn<Ranker>::reset()
+void knn::reset()
 {
     _legal_docs.clear();
 }
 
+template <>
+std::unique_ptr<classifier> make_multi_index_classifier<knn>(
+    const cpptoml::toml_group& config,
+    std::shared_ptr<index::forward_index> idx,
+    std::shared_ptr<index::inverted_index> inv_idx)
+{
+    auto k = config.get_as<int64_t>("k");
+    if (!k)
+        throw classifier_factory::exception{
+            "knn requires k to be specified in its configuration"};
+    auto ranker = config.get_group("ranker");
+    if (!ranker)
+        throw classifier_factory::exception{
+            "knn requires a ranker to be specified in its configuration"};
+
+    return make_unique<knn>(std::move(inv_idx), std::move(idx), *k,
+                            index::make_ranker(*ranker));
+}
 }
 }

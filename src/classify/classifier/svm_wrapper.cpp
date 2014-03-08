@@ -4,11 +4,14 @@
  */
 
 #include <fstream>
-#include "util/invertible_map.h"
 #include "classify/classifier/svm_wrapper.h"
+#include "util/invertible_map.h"
+#include "util/utf.h"
 
 namespace meta {
 namespace classify {
+
+const std::string svm_wrapper::id = "libsvm";
 
 decltype(svm_wrapper::_options) svm_wrapper::_options = {
     {svm_wrapper::kernel::None,      ""},
@@ -105,6 +108,47 @@ void svm_wrapper::reset()
 {
     // nothing
 }
+
+template <>
+std::unique_ptr<classifier>
+    make_classifier<svm_wrapper>(const cpptoml::toml_group& config,
+                                 std::shared_ptr<index::forward_index> idx)
+{
+    auto path = config.get_as<std::string>("path");
+    if (!path)
+        throw classifier_factory::exception{
+            "path to libsvm modules must be present in config for svm wrapper"};
+
+    if (auto kernel = config.get_as<std::string>("kernel"))
+    {
+        auto k_type = utf::tolower(*kernel);
+        if (k_type == "none")
+            return make_unique<svm_wrapper>(std::move(idx), *path);
+
+        if (k_type == "quadratic")
+            return make_unique<svm_wrapper>(std::move(idx), *path,
+                                            svm_wrapper::kernel::Quadratic);
+
+        if (k_type == "cubic")
+            return make_unique<svm_wrapper>(std::move(idx), *path,
+                                            svm_wrapper::kernel::Cubic);
+
+        if (k_type == "quartic")
+            return make_unique<svm_wrapper>(std::move(idx), *path,
+                                            svm_wrapper::kernel::Quartic);
+
+        if (k_type == "rbf")
+            return make_unique<svm_wrapper>(std::move(idx), *path,
+                                            svm_wrapper::kernel::RBF);
+
+        if (k_type == "sigmoid")
+            return make_unique<svm_wrapper>(std::move(idx), *path,
+                                            svm_wrapper::kernel::Sigmoid);
+    }
+
+    return make_unique<svm_wrapper>(std::move(idx), *path);
+}
+
 
 }
 }

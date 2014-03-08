@@ -10,25 +10,16 @@
 #define _META_CLASSIFY_HUBER_LOSS_H_
 
 #include <cmath>
+#include "classify/loss/loss_function.h"
 
 namespace meta {
 namespace classify {
 namespace loss {
 
-struct huber {
-    double loss(double prediction, int expected) const {
-        double abs_diff = std::abs(prediction - expected);
-        if (abs_diff <= 1)
-            return abs_diff * abs_diff;
-        return 2 * abs_diff - 1;
-    }
-
-    double derivative(double prediction, int expected) const {
-        double diff = prediction - expected;
-        if (std::abs(diff) <= 1)
-            return 2 * diff;
-        return (2 * diff) / (std::sqrt(diff * diff));
-    }
+struct huber : public loss_function {
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
+    const static std::string id;
 };
 
 }

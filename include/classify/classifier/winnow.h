@@ -67,6 +67,11 @@ class winnow: public classifier
          */
         void reset() override;
 
+        /**
+         * The identifier for this classifier.
+         */
+        const static std::string id;
+
     private:
 
         /**

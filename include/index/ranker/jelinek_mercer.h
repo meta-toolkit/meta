@@ -11,6 +11,7 @@
 #define _JELINEK_MERCER_H_
 
 #include "index/ranker/lm_ranker.h"
+#include "index/ranker/ranker_factory.h"
 
 namespace meta
 {
@@ -27,9 +28,16 @@ class jelinek_mercer : public language_model_ranker
 {
   public:
     /**
+     * The identifier for this ranker.
+     */
+    const static std::string id;
+
+    const static constexpr double default_lambda = 0.7;
+
+    /**
      * @param lambda
      */
-    jelinek_mercer(double lambda = 0.7);
+    jelinek_mercer(double lambda = default_lambda);
 
     /**
      * Calculates the smoothed probability of a term.
@@ -47,6 +55,13 @@ class jelinek_mercer : public language_model_ranker
     /** the JM parameter*/
     const double _lambda;
 };
+
+/**
+ * Specialization of the factory method used to create jelinek_mercer
+ * rankers.
+ */
+template <>
+std::unique_ptr<ranker> make_ranker<jelinek_mercer>(const cpptoml::toml_group&);
 }
 }
 
