@@ -8,34 +8,38 @@
 #include "io/mmap_file.h"
 #include "util/shim.h"
 
-namespace meta {
-namespace io {
+namespace meta
+{
+namespace io
+{
 
-compressed_file_reader::compressed_file_reader(const std::string & filename,
-        std::function<uint64_t(uint64_t)> mapping):
-    file_{make_unique<mmap_file>(filename)},
-    start_{file_->begin()},
-    size_{file_->size()},
-    status_{notDone},
-    current_value_{0},
-    current_char_{0},
-    current_bit_{0},
-    mapping_{std::move(mapping)}
+compressed_file_reader::compressed_file_reader(const std::string& filename,
+                                               std::function
+                                               <uint64_t(uint64_t)> mapping)
+    : file_{make_unique<mmap_file>(filename)},
+      start_{file_->begin()},
+      size_{file_->size()},
+      status_{notDone},
+      current_value_{0},
+      current_char_{0},
+      current_bit_{0},
+      mapping_{std::move(mapping)}
 {
     // initialize the stream
     get_next();
 }
 
-compressed_file_reader::compressed_file_reader(const mmap_file & file,
-        std::function<uint64_t(uint64_t)> mapping):
-    file_{nullptr},
-    start_{file.begin()},
-    size_{file.size()},
-    status_{notDone},
-    current_value_{0},
-    current_char_{0},
-    current_bit_{0},
-    mapping_{std::move(mapping)}
+compressed_file_reader::compressed_file_reader(const mmap_file& file,
+                                               std::function
+                                               <uint64_t(uint64_t)> mapping)
+    : file_{nullptr},
+      start_{file.begin()},
+      size_{file.size()},
+      status_{notDone},
+      current_value_{0},
+      current_char_{0},
+      current_bit_{0},
+      mapping_{std::move(mapping)}
 {
     // initialize the stream
     get_next();
@@ -65,7 +69,7 @@ std::string compressed_file_reader::next_string()
 {
     uint64_t length = next();
     std::string str;
-    for(uint64_t i = 0; i < length; ++i)
+    for (uint64_t i = 0; i < length; ++i)
         str += static_cast<char>(next());
     return str;
 }
@@ -75,7 +79,7 @@ void compressed_file_reader::seek(uint64_t bit_offset)
     uint64_t byte = bit_offset / 8;
     uint8_t bit = bit_offset % 8;
 
-    if(byte < size_)
+    if (byte < size_)
     {
         current_char_ = byte;
         current_bit_ = bit;
@@ -84,7 +88,7 @@ void compressed_file_reader::seek(uint64_t bit_offset)
     }
     else
         throw compressed_file_reader_exception(
-                "error seeking: parameter out of bounds");
+            "error seeking: parameter out of bounds");
 }
 
 bool compressed_file_reader::has_next() const
@@ -94,10 +98,10 @@ bool compressed_file_reader::has_next() const
 
 uint64_t compressed_file_reader::next()
 {
-    if(status_ == userDone)
+    if (status_ == userDone)
         return 0;
 
-    if(status_ == readerDone)
+    if (status_ == readerDone)
     {
         status_ = userDone;
         return current_value_;
@@ -111,13 +115,13 @@ uint64_t compressed_file_reader::next()
 void compressed_file_reader::get_next()
 {
     uint64_t numberBits = 0;
-    while(status_ == 0 && !read_bit())
+    while (status_ == 0 && !read_bit())
         ++numberBits;
 
     current_value_ = 0;
-    for(int64_t bit = numberBits - 1; status_ == 0 && bit >= 0; --bit)
+    for (int64_t bit = numberBits - 1; status_ == 0 && bit >= 0; --bit)
     {
-        if(read_bit())
+        if (read_bit())
             current_value_ |= (1 << bit);
     }
 
@@ -128,10 +132,10 @@ bool compressed_file_reader::read_bit()
 {
     // (7 - current_Bit) to read from left to right
     bool bit = start_[current_char_] & (1 << (7 - current_bit_));
-    if(current_bit_ == 7)
+    if (current_bit_ == 7)
     {
         current_bit_ = 0;
-        if(++current_char_ == size_)
+        if (++current_char_ == size_)
             status_ = readerDone;
     }
     else
@@ -143,10 +147,9 @@ bool compressed_file_reader::read_bit()
 
 uint64_t default_compression_reader_func(uint64_t value)
 {
-    if(value == 1)
+    if (value == 1)
         return std::numeric_limits<uint64_t>::max(); // delimiter
     return value - 2;
 }
-
 }
 }

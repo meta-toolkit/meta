@@ -6,20 +6,22 @@
 #include "io/parser.h"
 #include "util/shim.h"
 
-namespace meta {
-namespace io {
+namespace meta
+{
+namespace io
+{
 
-parser::parser(const std::string & input, const std::string & delims,
-        input_type in_type /* = File */):
-    idx_{0}
+parser::parser(const std::string& input, const std::string& delims,
+               input_type in_type /* = File */)
+    : idx_{0}
 {
     // initialize delimiter array
     invalid_.fill(false);
-    for(const auto & ch: delims)
+    for (const auto& ch : delims)
         invalid_[static_cast<uint8_t>(ch)] = true;
 
     // determine whether we're parsing an mmap_file or a std::string
-    if(in_type == input_type::File)
+    if (in_type == input_type::File)
     {
         filename_ = input;
         mmap_file_ = make_unique<io::mmap_file>(input);
@@ -43,11 +45,11 @@ parser& parser::operator=(parser&&) = default;
 void parser::get_next()
 {
     next_ = "";
-    for(size_t i = idx_; i < size_; ++i)
+    for (size_t i = idx_; i < size_; ++i)
     {
-        if(invalid_[static_cast<uint8_t>(data_[i])])
+        if (invalid_[static_cast<uint8_t>(data_[i])])
         {
-            if(idx_ != i)
+            if (idx_ != i)
             {
                 next_ = std::string{data_ + idx_, i - idx_};
                 idx_ = i + 1;
@@ -58,7 +60,7 @@ void parser::get_next()
     }
 
     // get last token if there is no delimiter at the EOF
-    if(idx_ != size_)
+    if (idx_ != size_)
     {
         next_ = std::string{data_ + idx_, size_ - idx_};
         idx_ = size_;
@@ -86,6 +88,5 @@ bool parser::has_next() const
 {
     return next_ != "";
 }
-
 }
 }
