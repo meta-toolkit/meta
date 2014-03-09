@@ -1,5 +1,5 @@
 /**
- * @file no_stemmer.h
+ * @file no_stemmer.cpp
  */
 
 #include <algorithm>

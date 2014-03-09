@@ -1,12 +1,13 @@
 /**
  * @file no_stemmer.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _NO_STEMMER_H_
-#define _NO_STEMMER_H_
+#ifndef _META_NO_STEMMER_H_
+#define _META_NO_STEMMER_H_
 
 #include <string>
 

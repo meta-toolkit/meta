@@ -1,12 +1,13 @@
 /**
  * @file porter2.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _STRUCT_PORTER2_H_
-#define _STRUCT_PORTER2_H_
+#ifndef _META_STRUCT_PORTER2_H_
+#define _META_STRUCT_PORTER2_H_
 
 #include "porter2_stemmer.h"
 
