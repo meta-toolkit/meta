@@ -1,13 +1,14 @@
 /**
  * @file ngram_distribution.h
+ * @author Sean Massung
  * Declaration of a smoothed ngram language model class.
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _NGRAM_DISTRIBUTION_
-#define _NGRAM_DISTRIBUTION_
+#ifndef _META_NGRAM_DISTRIBUTION_
+#define _META_NGRAM_DISTRIBUTION_
 
 #include <iostream>
 #include <random>
@@ -38,7 +39,7 @@ class ngram_distribution
          * Constructor.
          * @param docPath The training document.
          */
-        ngram_distribution(const std::string & docPath);
+        ngram_distribution(const std::string & doc_path);
 
         /**
          * @param prev
@@ -73,7 +74,7 @@ class ngram_distribution
          * Generates a random sentence using the current language model.
          * @return a random sentence likely to be generated with this model
          */
-        std::string random_sentence(unsigned int seed, size_t numWords) const;
+        std::string random_sentence(unsigned int seed, size_t num_words) const;
 
         /**
          * @return the value of N for this model
@@ -107,7 +108,7 @@ class ngram_distribution
          * Tokenizes a training document, counting frequencies of ngrams.
          * @param docPath The training document
          */
-        void calc_freqs(const std::string & docPath);
+        void calc_freqs(const std::string & doc_path);
 
         /**
          * Calculates a smoothed probability distribution over ngrams.
@@ -144,16 +145,16 @@ class ngram_distribution
         std::string to_prev(const std::deque<std::string> & ngram) const;
 
         /** Frequency of each ngram, used for probability calculation. */
-        FreqMap _freqs;
+        FreqMap freqs_;
 
         /** Distribution for this ngram. */
-        ProbMap _dist;
+        ProbMap dist_;
 
         /** N-1 prior distribution. */
-        ngram_distribution<N - 1> _lower;
+        ngram_distribution<N - 1> lower_;
 
         /** Discounting factor for absolute discounting smoothing. */
-        double _discount;
+        double discount_;
 };
 
 /**
@@ -163,19 +164,16 @@ template <>
 class ngram_distribution<0>
 {
     public:
-    
-        typedef std::unordered_map<std::string, std::unordered_map<std::string, double>> ProbMap;
 
-        ngram_distribution(const std::string & docPath):
-            _dist(ProbMap()){ /* nothing */ }
+        typedef std::unordered_map<std::string, std::unordered_map<std::string, double>> ProbMap;
 
         double prob(const std::string & str) { return 0.0; }
 
-        const ProbMap & kth_distribution(size_t k) const { return _dist; }
-    
+        const ProbMap & kth_distribution(size_t k) const { return dist_; }
+
     private:
-        
-        ProbMap _dist;
+
+        ProbMap dist_;
 };
 
 }

@@ -26,7 +26,7 @@ double ngram_distribution<N>::perplexity(const index::document & document) const
 }
 
 template <size_t N>
-std::string ngram_distribution<N>::random_sentence(unsigned int seed, size_t numWords) const
+std::string ngram_distribution<N>::random_sentence(unsigned int seed, size_t num_words) const
 {
     std::default_random_engine gen(seed);
     std::uniform_real_distribution<double> rdist(0.0, 1.0);
@@ -44,8 +44,8 @@ std::string ngram_distribution<N>::random_sentence(unsigned int seed, size_t num
     }
 
     // append likely words, creating a sentence
-    std::string word = get_word(rdist(gen), _dist.at(sentence));
-    for(size_t i = 0; i < numWords; ++i)
+    std::string word = get_word(rdist(gen), dist_.at(sentence));
+    for(size_t i = 0; i < num_words; ++i)
     {
         ngram.push_back(word);
         if(word == "-rrb-")
@@ -59,7 +59,7 @@ std::string ngram_distribution<N>::random_sentence(unsigned int seed, size_t num
         sentence += " " + word;
         ngram.pop_front();
         std::string prev = to_prev(ngram);
-        auto it = _dist.find(prev);
+        auto it = dist_.find(prev);
         word = get_word(rdist(gen), it->second);
     }
 
@@ -79,12 +79,12 @@ template <size_t N>
 std::string ngram_distribution<N>::get_prev(double rand) const
 {
     double range = 0.0;
-    for(auto & d: _dist)
+    for(auto & d: dist_)
         range += d.second.size();
     rand *= range;
 
     double sum = 0.0;
-    for(auto & d: _dist)
+    for(auto & d: dist_)
     {
         if(sum > rand)
             return d.first;
@@ -121,19 +121,19 @@ const ProbMap & ngram_distribution<N>::kth_distribution(size_t k) const
         throw std::out_of_range("kth_distribution value is 0");
 
     if(k == 1)
-        return _dist;
+        return dist_;
 
-    return _lower.kth_distribution(k - 1);
+    return lower_.kth_distribution(k - 1);
 }
 
 template <size_t N>
-ngram_distribution<N>::ngram_distribution(const std::string & docPath):
-    _freqs(FreqMap()),
-    _dist(ProbMap()),
-    _lower(ngram_distribution<N - 1>(docPath))
+ngram_distribution<N>::ngram_distribution(const std::string & doc_path):
+    freqs_(FreqMap()),
+    dist_(ProbMap()),
+    lower_(ngram_distribution<N - 1>(doc_path))
 {
     std::cerr << " Creating " << N << "-gram model..." << std::endl;
-    calc_freqs(docPath);
+    calc_freqs(doc_path);
     calc_discount_factor();
     calc_dist();
 }
@@ -144,7 +144,7 @@ void ngram_distribution<N>::calc_discount_factor()
     size_t n1 = 0;
     size_t n2 = 0;
 
-    for(auto & pmap: _freqs)
+    for(auto & pmap: freqs_)
     {
         for(auto & wmap: pmap.second)
         {
@@ -155,14 +155,14 @@ void ngram_distribution<N>::calc_discount_factor()
         }
     }
 
-    _discount = static_cast<double>(n1) / (n1 + 2 * n2);
+    discount_ = static_cast<double>(n1) / (n1 + 2 * n2);
 }
 
 template <size_t N>
-void ngram_distribution<N>::calc_freqs(const std::string & docPath)
+void ngram_distribution<N>::calc_freqs(const std::string & doc_path)
 {
     using namespace tokenizers;
-    index::document doc(docPath);
+    index::document doc(doc_path);
     ngram_word_tokenizer<stemmers::no_stemmer> tok(N, ngram_word_traits::NoStopwords);
     tok.tokenize(doc);
 
@@ -172,7 +172,7 @@ void ngram_distribution<N>::calc_freqs(const std::string & docPath)
         std::string word = get_last(str);
         std::string rest = get_rest(str);
         std::remove(word.begin(), word.end(), ' ');
-        _freqs[rest][word] += p.second;
+        freqs_[rest][word] += p.second;
     }
 }
 
@@ -195,7 +195,7 @@ std::string ngram_distribution<N>::get_rest(const std::string & words) const
 template <size_t N>
 void ngram_distribution<N>::calc_dist()
 {
-    for(auto & pmap: _freqs)
+    for(auto & pmap: freqs_)
     {
         // string of previous words up to w_n
         std::string prev = pmap.first;
@@ -207,13 +207,13 @@ void ngram_distribution<N>::calc_dist()
 
         // how many different prev there are
         size_t s_w = pmap.second.size();
-        
+
         for(auto & wmap: pmap.second)
         {
             std::string word = wmap.first;
             size_t c_prevw = wmap.second;
-            _dist[prev][word] = std::max(c_prevw - _discount, 0.0) / c_prev;
-            _dist[prev][word] += (_discount / c_prev) * s_w * _lower.prob(prev);
+            dist_[prev][word] = std::max(c_prevw - discount_, 0.0) / c_prev;
+            dist_[prev][word] += (discount_ / c_prev) * s_w * lower_.prob(prev);
         }
     }
 }
@@ -223,13 +223,13 @@ double ngram_distribution<N>::prob(const std::string & str) const
 {
     std::string word = get_last(str);
     std::string prev = get_rest(str);
-    return _dist.at(prev).at(word);
+    return dist_.at(prev).at(word);
 }
 
 template <size_t N>
 double ngram_distribution<N>::prob(const std::string & prev, const std::string & word) const
 {
-    return _dist(prev).at(word);
+    return dist_(prev).at(word);
 }
 
 }
