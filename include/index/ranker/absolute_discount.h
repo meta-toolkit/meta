@@ -7,8 +7,8 @@
  * @author Sean Massung
  */
 
-#ifndef _ABSOLUTE_DISCOUNT_H_
-#define _ABSOLUTE_DISCOUNT_H_
+#ifndef _META_ABSOLUTE_DISCOUNT_H_
+#define _META_ABSOLUTE_DISCOUNT_H_
 
 #include "index/ranker/lm_ranker.h"
 #include "index/ranker/ranker_factory.h"
@@ -48,7 +48,7 @@ class absolute_discount : public language_model_ranker
 
   private:
     /** the absolute discounting parameter */
-    const double _delta;
+    const double delta_;
 };
 
 /**

@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _CACHED_INDEX_H_
-#define _CACHED_INDEX_H_
+#ifndef _META_CACHED_INDEX_H_
+#define _META_CACHED_INDEX_H_
 
 #include <memory>
 
@@ -35,7 +35,7 @@ class cached_index : public Index {
          *
          * @param config the configuration that specifies how the index
          *  should be constructed
-         * @param args the remaining arguments to send to the Cache
+         * @param args The remaining arguments to send to the Cache
          *  constructor
          */
         template <class... Args>

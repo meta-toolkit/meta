@@ -28,7 +28,7 @@ ranker::score(inverted_index& idx, corpus::document& query,
 
     // zeros out elements and (if necessary) resizes the vector; this eliminates
     // constructing a new vector each query for the same index
-    _results.assign(sd.num_docs, 0.0);
+    results_.assign(sd.num_docs, 0.0);
 
     for (auto& tpair : query.counts())
     {
@@ -44,7 +44,7 @@ ranker::score(inverted_index& idx, corpus::document& query,
             sd.doc_term_count = dpair.second;
             sd.doc_size = idx.doc_size(dpair.first);
             sd.doc_unique_terms = idx.unique_terms(dpair.first);
-            _results[dpair.first] += score_one(sd);
+            results_[dpair.first] += score_one(sd);
         }
     }
 
@@ -55,12 +55,12 @@ ranker::score(inverted_index& idx, corpus::document& query,
     std::priority_queue
         <doc_pair, std::vector<doc_pair>, decltype(doc_pair_comp)> pq{
             doc_pair_comp};
-    for (uint64_t id = 0; id < _results.size(); ++id)
+    for (uint64_t id = 0; id < results_.size(); ++id)
     {
         if (!filter(doc_id{id}))
             continue;
 
-        pq.emplace(doc_id{id}, _results[id]);
+        pq.emplace(doc_id{id}, results_[id]);
         if (pq.size() > num_results)
             pq.pop();
     }

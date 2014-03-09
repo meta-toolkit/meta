@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _SCORE_DATA_H_
-#define _SCORE_DATA_H_
+#ifndef _META_SCORE_DATA_H_
+#define _META_SCORE_DATA_H_
 
 #include "meta.h"
 

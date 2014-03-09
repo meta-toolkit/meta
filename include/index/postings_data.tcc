@@ -12,7 +12,7 @@ namespace index {
 
 template <class PrimaryKey, class SecondaryKey>
 postings_data<PrimaryKey, SecondaryKey>::postings_data(PrimaryKey p_id):
-    _p_id{p_id}
+    p_id_{p_id}
 { /* nothing */ }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -25,22 +25,22 @@ void postings_data<PrimaryKey, SecondaryKey>::merge_with(
     // O(n log n) now, could be O(n)
 
     // if the primary_key doesn't exist, add onto back
-    uint64_t orig_length = _counts.size();
-    for(auto & p: other._counts)
+    uint64_t orig_length = counts_.size();
+    for(auto & p: other.counts_)
     {
-        auto it = std::lower_bound(_counts.begin(),
-                                   _counts.begin() + orig_length,
+        auto it = std::lower_bound(counts_.begin(),
+                                   counts_.begin() + orig_length,
                                    p.first,
                                    searcher);
-        if(it == _counts.end() || it->first != p.first)
-            _counts.emplace_back(std::move(p));
+        if(it == counts_.end() || it->first != p.first)
+            counts_.emplace_back(std::move(p));
         else
             it->second += p.second;
     }
 
-    // sort _counts again to fix new elements added onto back
-    if (_counts.size() > orig_length) {
-        std::sort(_counts.begin(), _counts.end(),
+    // sort counts_ again to fix new elements added onto back
+    if (counts_.size() > orig_length) {
+        std::sort(counts_.begin(), counts_.end(),
             [](const pair_t & a, const pair_t & b) {
                 return a.first < b.first;
             }
@@ -52,16 +52,16 @@ template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::increase_count(
         SecondaryKey s_id, double amount)
 {
-    auto it = std::lower_bound(_counts.begin(), _counts.end(), s_id,
+    auto it = std::lower_bound(counts_.begin(), counts_.end(), s_id,
         [](const pair_t & p, const SecondaryKey & s) {
             return p.first < s;
         }
     );
 
-    if(it == _counts.end())
-        _counts.emplace_back(s_id, amount);
+    if(it == counts_.end())
+        counts_.emplace_back(s_id, amount);
     else if(it->first != s_id)
-        _counts.emplace(it, s_id, amount);
+        counts_.emplace(it, s_id, amount);
     else
         it->second += amount;
 }
@@ -69,13 +69,13 @@ void postings_data<PrimaryKey, SecondaryKey>::increase_count(
 template <class PrimaryKey, class SecondaryKey>
 double postings_data<PrimaryKey, SecondaryKey>::count(SecondaryKey s_id) const
 {
-    auto it = std::lower_bound(_counts.begin(), _counts.end(), s_id,
+    auto it = std::lower_bound(counts_.begin(), counts_.end(), s_id,
         [](const pair_t & p, const SecondaryKey & s) {
             return p.first < s;
         }
     );
 
-    if(it == _counts.end() || it->first != s_id)
+    if(it == counts_.end() || it->first != s_id)
         return 0.0;
     return it->second;
 }
@@ -84,14 +84,14 @@ template <class PrimaryKey, class SecondaryKey>
 const std::vector<std::pair<SecondaryKey, double>> &
 postings_data<PrimaryKey, SecondaryKey>::counts() const
 {
-    return _counts;
+    return counts_;
 }
 
 template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::set_counts(const count_t & counts)
 {
-    _counts = counts;
-    std::sort(_counts.begin(), _counts.end(),
+    counts_ = counts;
+    std::sort(counts_.begin(), counts_.end(),
         [](const pair_t & a, const pair_t & b) {
             return a.first < b.first;
         }
@@ -101,7 +101,7 @@ void postings_data<PrimaryKey, SecondaryKey>::set_counts(const count_t & counts)
 template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::set_primary_key(PrimaryKey new_key)
 {
-    _p_id = new_key;
+    p_id_ = new_key;
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -119,14 +119,14 @@ bool operator==(const postings_data<PrimaryKey, SecondaryKey> & lhs,
 template <class PrimaryKey, class SecondaryKey>
 PrimaryKey postings_data<PrimaryKey, SecondaryKey>::primary_key() const
 {
-    return _p_id;
+    return p_id_;
 }
 
 template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
         io::compressed_file_writer & writer) const
 {
-    count_t mutable_counts{_counts};
+    count_t mutable_counts{counts_};
     writer.write(mutable_counts[0].first);
     if(std::is_same<PrimaryKey, term_id>::value
        || std::is_same<PrimaryKey, std::string>::value)
@@ -161,14 +161,14 @@ void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
     }
 
     // mark end of postings_data
-    writer.write(_delimiter);
+    writer.write(delimiter_);
 }
 
 template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         io::compressed_file_reader & reader)
 {
-    _counts.clear();
+    counts_.clear();
     uint64_t last_id = 0;
 
     while(true)
@@ -176,7 +176,7 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         uint64_t this_id = reader.next();
 
         // have we reached a delimiter?
-        if(this_id == _delimiter)
+        if(this_id == delimiter_)
             break;
 
         // we're using gap encoding
@@ -189,12 +189,12 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         else
             std::memcpy(&count, &next, sizeof(next));
 
-        _counts.emplace_back(key, count);
+        counts_.emplace_back(key, count);
     }
 
     // compress vector to conserve memory (it shouldn't be modified again after
     // this)
-    _counts.shrink_to_fit();
+    counts_.shrink_to_fit();
 }
 
 namespace {
@@ -218,7 +218,7 @@ namespace {
 template <class PrimaryKey, class SecondaryKey>
 uint64_t postings_data<PrimaryKey, SecondaryKey>::bytes_used() const
 {
-    return sizeof(pair_t) * _counts.size() + length(_p_id);
+    return sizeof(pair_t) * counts_.size() + length(p_id_);
 }
 
 }

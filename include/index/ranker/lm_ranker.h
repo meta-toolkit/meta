@@ -7,8 +7,8 @@
  * @author Sean Massung
  */
 
-#ifndef _LM_RANKER_H_
-#define _LM_RANKER_H_
+#ifndef _META_LM_RANKER_H_
+#define _META_LM_RANKER_H_
 
 #include "index/ranker/ranker.h"
 

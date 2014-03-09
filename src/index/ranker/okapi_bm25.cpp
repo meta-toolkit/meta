@@ -15,7 +15,7 @@ namespace index
 
 const std::string okapi_bm25::id = "bm25";
 
-okapi_bm25::okapi_bm25(double k1, double b, double k3) : _k1{k1}, _b{b}, _k3{k3}
+okapi_bm25::okapi_bm25(double k1, double b, double k3) : k1_{k1}, b_{b}, k3_{k3}
 {
     /* nothing */
 }
@@ -28,12 +28,12 @@ double okapi_bm25::score_one(const score_data& sd)
     double IDF = std::log(1.0 + (sd.num_docs - sd.doc_count + 0.5)
                                 / (sd.doc_count + 0.5));
 
-    double TF = ((_k1 + 1.0) * sd.doc_term_count)
-                / ((_k1 * ((1.0 - _b) + _b * doc_len / sd.avg_dl))
+    double TF = ((k1_ + 1.0) * sd.doc_term_count)
+                / ((k1_ * ((1.0 - b_) + b_ * doc_len / sd.avg_dl))
                    + sd.doc_term_count);
 
-    double QTF = ((_k3 + 1.0) * sd.query_term_count)
-                 / (_k3 + sd.query_term_count);
+    double QTF = ((k3_ + 1.0) * sd.query_term_count)
+                 / (k3_ + sd.query_term_count);
 
     return TF * IDF * QTF;
 }

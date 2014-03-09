@@ -7,8 +7,8 @@
  * @author Sean Massung
  */
 
-#ifndef _JELINEK_MERCER_H_
-#define _JELINEK_MERCER_H_
+#ifndef _META_JELINEK_MERCER_H_
+#define _META_JELINEK_MERCER_H_
 
 #include "index/ranker/lm_ranker.h"
 #include "index/ranker/ranker_factory.h"
@@ -53,7 +53,7 @@ class jelinek_mercer : public language_model_ranker
 
   private:
     /** the JM parameter*/
-    const double _lambda;
+    const double lambda_;
 };
 
 /**

@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _POSTINGS_DATA_
-#define _POSTINGS_DATA_
+#ifndef _META_POSTINGS_DATA_
+#define _META_POSTINGS_DATA_
 
 #include <fstream>
 #include <limits>
@@ -120,13 +120,13 @@ class postings_data
             io::compressed_file_reader & in,
             postings_data<PrimaryKey, SecondaryKey> & pd)
         {
-            pd._counts.clear();
+            pd.counts_.clear();
             uint32_t num_pairs = in.next();
             for(uint32_t i = 0; i < num_pairs; ++i)
             {
                 SecondaryKey s_id = SecondaryKey{in.next()};
                 uint64_t count = in.next();
-                pd._counts.emplace_back(s_id, static_cast<double>(count));
+                pd.counts_.emplace_back(s_id, static_cast<double>(count));
             }
         }
 
@@ -150,13 +150,13 @@ class postings_data
                 io::compressed_file_writer & out,
                 const postings_data<PrimaryKey, SecondaryKey> & pd)
         {
-            if(pd._counts.empty())
+            if(pd.counts_.empty())
                 return out;
 
-            out.write(pd._p_id);
-            uint32_t size = pd._counts.size();
+            out.write(pd.p_id_);
+            uint32_t size = pd.counts_.size();
             out.write(size);
-            for(auto & p: pd._counts)
+            for(auto & p: pd.counts_)
             {
                 out.write(p.first);
                 out.write(p.second);
@@ -188,8 +188,8 @@ class postings_data
          */
         void write_libsvm(std::ofstream & out) const
         {
-            out << _p_id;
-            for(auto & c: _counts)
+            out << p_id_;
+            for(auto & c: counts_)
                 out << ' ' << (c.first + 1) << ':' << c.second;
             out << '\n';
         }
@@ -216,13 +216,13 @@ class postings_data
 
     private:
         /** the primary id this postings_data represents */
-        PrimaryKey _p_id;
+        PrimaryKey p_id_;
 
         /** the (secondary_key_type, count) pairs */
-        count_t _counts;
+        count_t counts_;
 
         /** delimiter used when writing to compressed files */
-        const static uint64_t _delimiter = std::numeric_limits<uint64_t>::max();
+        const static uint64_t delimiter_ = std::numeric_limits<uint64_t>::max();
 };
 
 /**
@@ -236,7 +236,7 @@ io::compressed_file_reader&
     operator>>(io::compressed_file_reader& in,
                postings_data<PrimaryKey, SecondaryKey>& pd)
 {
-    pd._p_id = in.next();
+    pd.p_id_ = in.next();
     stream_helper(in, pd);
     return in;
 }
@@ -252,7 +252,7 @@ inline io::compressed_file_reader & operator>><>(
         io::compressed_file_reader & in,
         postings_data<std::string, doc_id> & pd)
 {
-    pd._p_id = in.next_string();
+    pd.p_id_ = in.next_string();
     stream_helper(in, pd);
     return in;
 }

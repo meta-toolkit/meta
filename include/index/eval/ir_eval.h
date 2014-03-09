@@ -126,12 +126,12 @@ class ir_eval
      * query_id -> (doc_id -> relevance) mapping
      * If the doc_id isn't in the map, it is non-relevant.
      */
-    std::unordered_map<query_id, std::unordered_map<doc_id, uint8_t>> _qrels;
+    std::unordered_map<query_id, std::unordered_map<doc_id, uint8_t>> qrels_;
 
     /**
      * Collection of scores used to calculate MAP and gMAP.
      */
-    std::vector<double> _scores;
+    std::vector<double> scores_;
 
     /**
      * Initializes the _byte_index member with pointers into the _judgements

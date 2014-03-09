@@ -23,7 +23,7 @@ chunk<PrimaryKey, SecondaryKey>::chunk(const std::string & path):
 template <class PrimaryKey, class SecondaryKey>
 void chunk<PrimaryKey, SecondaryKey>::set_size()
 {
-    _size = filesystem::file_size(_path);
+    size_ = filesystem::file_size(_path);
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -42,7 +42,7 @@ std::string chunk<PrimaryKey, SecondaryKey>::path() const
 template <class PrimaryKey, class SecondaryKey>
 uint64_t chunk<PrimaryKey, SecondaryKey>::size() const
 {
-    return _size;
+    return size_;
 }
 
 template <class PrimaryKey, class SecondaryKey>

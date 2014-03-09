@@ -47,9 +47,9 @@ class okapi_bm25 : public ranker
     double score_one(const score_data& sd) override;
 
   private:
-    const double _k1;
-    const double _b;
-    const double _k3;
+    const double k1_;
+    const double b_;
+    const double k3_;
 };
 
 /**

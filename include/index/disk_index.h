@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _DISK_INDEX_H_
-#define _DISK_INDEX_H_
+#ifndef _META_DISK_INDEX_H_
+#define _META_DISK_INDEX_H_
 
 #include <memory>
 #include <vector>
@@ -41,7 +41,8 @@ namespace index {
 
 /**
  * Holds generic data structures and functions that inverted_index and
- * forward_index both use.
+ * forward_index both use. Provides common interface for both and is implemented
+ * using the pointer-to-implementation method.
  */
 class disk_index
 {

@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _CHUNK_H_
-#define _CHUNK_H_
+#ifndef _META_CHUNK_H_
+#define _META_CHUNK_H_
 
 #include <cstdint>
 #include <string>
@@ -76,7 +76,7 @@ class chunk
         std::string _path;
 
         /** the number of bytes this chunk takes up */
-        uint64_t _size;
+        uint64_t size_;
 };
 
 }

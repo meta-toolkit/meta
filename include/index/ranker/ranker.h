@@ -67,7 +67,7 @@ class ranker
     virtual ~ranker() = default;
 
   private:
-    std::vector<double> _results;
+    std::vector<double> results_;
 };
 }
 }

@@ -14,7 +14,7 @@ namespace index
 
 const std::string dirichlet_prior::id = "dirichlet-prior";
 
-dirichlet_prior::dirichlet_prior(double mu) : _mu{mu}
+dirichlet_prior::dirichlet_prior(double mu) : mu_{mu}
 {
     /* nothing */
 }
@@ -22,14 +22,14 @@ dirichlet_prior::dirichlet_prior(double mu) : _mu{mu}
 double dirichlet_prior::smoothed_prob(const score_data& sd) const
 {
     double pc = static_cast<double>(sd.corpus_term_count) / sd.total_terms;
-    double numerator = sd.doc_term_count + _mu * pc;
-    double denominator = sd.doc_size + _mu;
+    double numerator = sd.doc_term_count + mu_ * pc;
+    double denominator = sd.doc_size + mu_;
     return numerator / denominator;
 }
 
 double dirichlet_prior::doc_constant(const score_data& sd) const
 {
-    return _mu / (sd.doc_size + _mu);
+    return mu_ / (sd.doc_size + mu_);
 }
 
 template <>

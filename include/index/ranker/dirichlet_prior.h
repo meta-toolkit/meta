@@ -7,8 +7,8 @@
  * @author Sean Massung
  */
 
-#ifndef _DIRICHLET_PRIOR_H_
-#define _DIRICHLET_PRIOR_H_
+#ifndef _META_DIRICHLET_PRIOR_H_
+#define _META_DIRICHLET_PRIOR_H_
 
 #include "index/ranker/lm_ranker.h"
 #include "index/ranker/ranker_factory.h"
@@ -48,7 +48,7 @@ class dirichlet_prior : public language_model_ranker
 
   private:
     /** the Dirichlet prior parameter*/
-    const double _mu;
+    const double mu_;
 };
 
 /**

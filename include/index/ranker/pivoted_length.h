@@ -7,8 +7,8 @@
  * @author Sean Massung
  */
 
-#ifndef _PIVOTED_LENGTH_H_
-#define _PIVOTED_LENGTH_H_
+#ifndef _META_PIVOTED_LENGTH_H_
+#define _META_PIVOTED_LENGTH_H_
 
 #include "index/ranker/ranker.h"
 #include "index/ranker/ranker_factory.h"
@@ -44,7 +44,7 @@ class pivoted_length : public ranker
     double score_one(const score_data& sd) override;
 
   private:
-    const double _s;
+    const double s_;
 };
 
 /**

@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _INVERTED_INDEX_H_
-#define _INVERTED_INDEX_H_
+#ifndef _META_INVERTED_INDEX_H_
+#define _META_INVERTED_INDEX_H_
 
 #include <queue>
 #include <stdexcept>
@@ -156,9 +156,8 @@ class inverted_index: public disk_index
 
     private:
         /**
-         * This function initializes the disk index. It cannot be part of the
-         * constructor since dynamic binding doesn't work in a base class's
-         * constructor, so it is invoked from a factory method.
+         * This function initializes the disk index; it is called by the
+         * make_index factory function.
          * @param config_file The configuration to be used
          */
         void create_index(const std::string & config_file);
