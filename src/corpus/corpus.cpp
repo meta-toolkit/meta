@@ -8,8 +8,10 @@
 #include "cpptoml.h"
 #include "util/shim.h"
 
-namespace meta {
-namespace corpus {
+namespace meta
+{
+namespace corpus
+{
 
 corpus::corpus(std::string encoding) : encoding_{std::move(encoding)}
 {
@@ -21,7 +23,7 @@ const std::string& corpus::encoding() const
     return encoding_;
 }
 
-std::unique_ptr<corpus> corpus::load(const std::string & config_file)
+std::unique_ptr<corpus> corpus::load(const std::string& config_file)
 {
     auto config = cpptoml::parse_file(config_file);
 
@@ -44,23 +46,23 @@ std::unique_ptr<corpus> corpus::load(const std::string & config_file)
     else
         encoding = "utf-8";
 
-    if(*type == "file-corpus")
+    if (*type == "file-corpus")
     {
         auto file_list = config.get_as<std::string>("list");
         if (!file_list)
             throw corpus_exception{"list missing from configuration file"};
 
-        std::string file = *prefix + "/"
-            + *dataset + "/" + *file_list + "-full-corpus.txt";
-        return make_unique<file_corpus>(*prefix + "/" + *dataset + "/", file,
-                                        encoding);
+        std::string file =
+            *prefix + "/" + *dataset + "/" + *file_list + "-full-corpus.txt";
+        return make_unique<file_corpus>(*prefix + "/"
+                                        + *dataset + "/", file, encoding);
     }
-    else if(*type == "line-corpus")
+    else if (*type == "line-corpus")
     {
-        std::string filename = *prefix + "/"
-            + *dataset + "/" + *dataset + ".dat";
+        std::string filename =
+            *prefix + "/" + *dataset + "/" + *dataset + ".dat";
         auto lines = config.get_as<int64_t>("num-lines");
-        if(!lines)
+        if (!lines)
             return make_unique<line_corpus>(filename, encoding);
         return make_unique<line_corpus>(filename, encoding,
                                         static_cast<uint64_t>(*lines));
@@ -68,6 +70,5 @@ std::unique_ptr<corpus> corpus::load(const std::string & config_file)
     else
         throw corpus_exception{"corpus type was not able to be determined"};
 }
-
 }
 }

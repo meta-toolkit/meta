@@ -15,66 +15,67 @@
 #include "meta.h"
 #include "corpus/document.h"
 
-namespace meta {
-namespace corpus {
+namespace meta
+{
+namespace corpus
+{
 
 /**
  * Provides interface to with multiple corpus input formats.
  */
 class corpus
 {
-    public:
-        /**
-         * Constructs a new corpus with the given encoding.
-         * @param encoding The encoding to interpret the text as
-         */
-        corpus(std::string encoding);
+  public:
+    /**
+     * Constructs a new corpus with the given encoding.
+     * @param encoding The encoding to interpret the text as
+     */
+    corpus(std::string encoding);
 
-        /**
-         * @return whether there is another document in this corpus
-         */
-        virtual bool has_next() const = 0;
+    /**
+     * @return whether there is another document in this corpus
+     */
+    virtual bool has_next() const = 0;
 
-        /**
-         * @return the next document from this corpus
-         */
-        virtual document next() = 0;
+    /**
+     * @return the next document from this corpus
+     */
+    virtual document next() = 0;
 
-        /**
-         * @return the number of documents in this corpus
-         */
-        virtual uint64_t size() const = 0;
+    /**
+     * @return the number of documents in this corpus
+     */
+    virtual uint64_t size() const = 0;
 
-        /**
-         * Destructor.
-         */
-        virtual ~corpus() = default;
+    /**
+     * Destructor.
+     */
+    virtual ~corpus() = default;
 
-        /**
-         * Gets the encoding for the corpus.
-         */
-        const std::string& encoding() const;
+    /**
+     * Gets the encoding for the corpus.
+     */
+    const std::string& encoding() const;
 
-        /**
-         * @param config_file The cpptoml config file containing what type of
-         * corpus to load
-         * @return a unique_ptr to the corpus object containing the documents
-         */
-        static std::unique_ptr<corpus> load(const std::string & config_file);
+    /**
+     * @param config_file The cpptoml config file containing what type of
+     * corpus to load
+     * @return a unique_ptr to the corpus object containing the documents
+     */
+    static std::unique_ptr<corpus> load(const std::string& config_file);
 
-        /**
-         * Basic exception for corpus interactions.
-         */
-        class corpus_exception: public std::runtime_error
-        {
-            public:
-                using std::runtime_error::runtime_error;
-        };
+    /**
+     * Basic exception for corpus interactions.
+     */
+    class corpus_exception : public std::runtime_error
+    {
+      public:
+        using std::runtime_error::runtime_error;
+    };
 
-    private:
-        std::string encoding_;
+  private:
+    std::string encoding_;
 };
-
 }
 }
 

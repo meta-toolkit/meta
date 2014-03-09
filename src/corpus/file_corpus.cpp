@@ -6,23 +6,22 @@
 #include "corpus/file_corpus.h"
 #include "io/parser.h"
 
-namespace meta {
-namespace corpus {
+namespace meta
+{
+namespace corpus
+{
 
-file_corpus::file_corpus(const std::string & prefix,
-        const std::string & doc_list,
-        std::string encoding):
-    corpus{std::move(encoding)},
-    cur_{0},
-    prefix_{prefix}
+file_corpus::file_corpus(const std::string& prefix, const std::string& doc_list,
+                         std::string encoding)
+    : corpus{std::move(encoding)}, cur_{0}, prefix_{prefix}
 {
     io::parser psr{doc_list, "\n"};
     uint64_t idx = 0;
-    while(psr.has_next())
+    while (psr.has_next())
     {
         std::string line = psr.next();
         size_t space = line.find_first_of(" ");
-        if(space != std::string::npos)
+        if (space != std::string::npos)
         {
             std::string file{line.substr(space + 1)};
             class_label label{line.substr(0, space)};
@@ -51,6 +50,5 @@ uint64_t file_corpus::size() const
 {
     return docs_.size();
 }
-
 }
 }

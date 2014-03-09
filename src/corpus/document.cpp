@@ -8,23 +8,20 @@
 #include "corpus/document.h"
 #include "util/mapping.h"
 
-namespace meta {
-namespace corpus {
+namespace meta
+{
+namespace corpus
+{
 
-document::document(const std::string & path,
-                   doc_id d_id,
-                   const class_label & label):
-    path_{path},
-    d_id_{d_id},
-    label_{label},
-    length_{0},
-    encoding_{"utf-8"}
+document::document(const std::string& path, doc_id d_id,
+                   const class_label& label)
+    : path_{path}, d_id_{d_id}, label_{label}, length_{0}, encoding_{"utf-8"}
 {
     size_t idx = path.find_last_of("/") + 1;
     name_ = path.substr(idx);
 }
 
-void document::increment(const std::string & term, double amount)
+void document::increment(const std::string& term, double amount)
 {
     counts_[term] += amount;
     length_ += amount;
@@ -35,7 +32,7 @@ std::string document::path() const
     return path_;
 }
 
-const class_label & document::label() const
+const class_label& document::label() const
 {
     return label_;
 }
@@ -50,26 +47,24 @@ uint64_t document::length() const
     return length_;
 }
 
-double document::count(const std::string & term) const
+double document::count(const std::string& term) const
 {
     return map::safe_at(counts_, term);
 }
 
-const std::unordered_map<std::string, double> & document::counts() const
+const std::unordered_map<std::string, double>& document::counts() const
 {
     return counts_;
 }
 
-double document::cosine_similarity(const document & a, const document & b)
+double document::cosine_similarity(const document& a, const document& b)
 {
-    return clustering::similarity::cosine_similarity(a.counts_,
-                                                     b.counts_);
+    return clustering::similarity::cosine_similarity(a.counts_, b.counts_);
 }
 
-double document::jaccard_similarity(const document & a, const document & b)
+double document::jaccard_similarity(const document& a, const document& b)
 {
-    return clustering::similarity::jaccard_similarity(a.counts_,
-                                                      b.counts_);
+    return clustering::similarity::jaccard_similarity(a.counts_, b.counts_);
 }
 
 void document::content(const std::string& content,
@@ -84,7 +79,7 @@ void document::encoding(const std::string& encoding)
     encoding_ = encoding;
 }
 
-const std::string & document::content() const
+const std::string& document::content() const
 {
     if (content_)
         return *content_;
@@ -111,6 +106,5 @@ void document::label(class_label label)
 {
     label_ = label;
 }
-
 }
 }
