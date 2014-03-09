@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _MMAP_FILE_H_
-#define _MMAP_FILE_H_
+#ifndef _META_MMAP_FILE_H_
+#define _META_MMAP_FILE_H_
 
 #include <stdexcept>
 #include <string>
@@ -70,16 +70,16 @@ class mmap_file
 
   private:
     /** filename of the text file */
-    std::string _path;
+    std::string path_;
 
     /** pointer to the beginning of the text file */
-    char* _start;
+    char* start_;
 
     /** size of the current text file */
-    uint64_t _size;
+    uint64_t size_;
 
     /** file descriptor for the open text file */
-    int _file_descriptor;
+    int file_descriptor_;
 
     /** no copying */
     mmap_file(const mmap_file& other) = delete;

@@ -17,78 +17,78 @@ namespace io
 {
 
 mmap_file::mmap_file(const std::string& path)
-    : _path{path}, _start{nullptr}, _size{filesystem::file_size(path)}
+    : path_{path}, start_{nullptr}, size_{filesystem::file_size(path)}
 {
-    _file_descriptor = open(_path.c_str(), O_RDONLY);
-    if (_file_descriptor < 0)
+    file_descriptor_ = open(path_.c_str(), O_RDONLY);
+    if (file_descriptor_ < 0)
         throw mmap_file_exception{"error obtaining file descriptor for "
-                                  + _path};
+                                  + path_};
 
-    _start = (char*)mmap(nullptr, _size, PROT_READ, MAP_SHARED,
-                         _file_descriptor, 0);
-    if (_start == nullptr)
+    start_ = (char*)mmap(nullptr, size_, PROT_READ, MAP_SHARED,
+                         file_descriptor_, 0);
+    if (start_ == nullptr)
     {
-        close(_file_descriptor);
-        throw mmap_file_exception("error memory-mapping " + _path);
+        close(file_descriptor_);
+        throw mmap_file_exception("error memory-mapping " + path_);
     }
 }
 
 mmap_file::mmap_file(mmap_file&& other)
-    : _path{std::move(other._path)},
-      _start{std::move(other._start)},
-      _size{std::move(other._size)},
-      _file_descriptor{std::move(other._file_descriptor)}
+    : path_{std::move(other.path_)},
+      start_{std::move(other.start_)},
+      size_{std::move(other.size_)},
+      file_descriptor_{std::move(other.file_descriptor_)}
 {
-    other._start = nullptr;
+    other.start_ = nullptr;
 }
 
 char mmap_file::operator[](uint64_t index) const
 {
-    if (index > _size)
+    if (index > size_)
         throw mmap_file_exception{"index out of bounds"};
 
-    return _start[index];
+    return start_[index];
 }
 
 char* mmap_file::begin() const
 {
-    return _start;
+    return start_;
 }
 
 mmap_file& mmap_file::operator=(mmap_file&& other)
 {
     if (this != &other)
     {
-        if (_start)
+        if (start_)
         {
-            munmap(_start, _size);
-            close(_file_descriptor);
+            munmap(start_, size_);
+            close(file_descriptor_);
         }
-        _path = std::move(other._path);
-        _start = std::move(other._start);
-        _size = std::move(other._size);
-        _file_descriptor = std::move(other._file_descriptor);
-        other._start = nullptr;
+        path_ = std::move(other.path_);
+        start_ = std::move(other.start_);
+        size_ = std::move(other.size_);
+        file_descriptor_ = std::move(other.file_descriptor_);
+        other.start_ = nullptr;
     }
     return *this;
 }
 
 uint64_t mmap_file::size() const
 {
-    return _size;
+    return size_;
 }
 
 std::string mmap_file::path() const
 {
-    return _path;
+    return path_;
 }
 
 mmap_file::~mmap_file()
 {
-    if (_start != nullptr)
+    if (start_ != nullptr)
     {
-        munmap(_start, _size);
-        close(_file_descriptor);
+        munmap(start_, size_);
+        close(file_descriptor_);
     }
 }
 }

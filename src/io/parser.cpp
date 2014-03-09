@@ -11,26 +11,26 @@ namespace io {
 
 parser::parser(const std::string & input, const std::string & delims,
         input_type in_type /* = File */):
-    _idx{0}
+    idx_{0}
 {
     // initialize delimiter array
-    _invalid.fill(false);
+    invalid_.fill(false);
     for(const auto & ch: delims)
-        _invalid[static_cast<uint8_t>(ch)] = true;
+        invalid_[static_cast<uint8_t>(ch)] = true;
 
     // determine whether we're parsing an mmap_file or a std::string
     if(in_type == input_type::File)
     {
-        _filename = input;
-        _mmap_file = make_unique<io::mmap_file>(input);
-        _data = _mmap_file->begin();
-        _size = _mmap_file->size();
+        filename_ = input;
+        mmap_file_ = make_unique<io::mmap_file>(input);
+        data_ = mmap_file_->begin();
+        size_ = mmap_file_->size();
     }
     else /* in_type == input_type::String */
     {
-        _filename = "";
-        _data = input.data();
-        _size = input.size();
+        filename_ = "";
+        data_ = input.data();
+        size_ = input.size();
     }
 
     get_next();
@@ -42,49 +42,49 @@ parser& parser::operator=(parser&&) = default;
 
 void parser::get_next()
 {
-    _next = "";
-    for(size_t i = _idx; i < _size; ++i)
+    next_ = "";
+    for(size_t i = idx_; i < size_; ++i)
     {
-        if(_invalid[static_cast<uint8_t>(_data[i])])
+        if(invalid_[static_cast<uint8_t>(data_[i])])
         {
-            if(_idx != i)
+            if(idx_ != i)
             {
-                _next = std::string{_data + _idx, i - _idx};
-                _idx = i + 1;
+                next_ = std::string{data_ + idx_, i - idx_};
+                idx_ = i + 1;
                 return;
             }
-            _idx = i + 1;
+            idx_ = i + 1;
         }
     }
 
     // get last token if there is no delimiter at the EOF
-    if(_idx != _size)
+    if(idx_ != size_)
     {
-        _next = std::string{_data + _idx, _size - _idx};
-        _idx = _size;
+        next_ = std::string{data_ + idx_, size_ - idx_};
+        idx_ = size_;
     }
 }
 
 std::string parser::filename() const
 {
-    return _filename;
+    return filename_;
 }
 
 std::string parser::peek() const
 {
-    return _next;
+    return next_;
 }
 
 std::string parser::next()
 {
-    std::string ret{_next};
+    std::string ret{next_};
     get_next();
     return ret;
 }
 
 bool parser::has_next() const
 {
-    return _next != "";
+    return next_ != "";
 }
 
 }

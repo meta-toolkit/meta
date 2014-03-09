@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _COMPRESSED_FILE_READER_H_
-#define _COMPRESSED_FILE_READER_H_
+#ifndef _META_COMPRESSED_FILE_READER_H_
+#define _META_COMPRESSED_FILE_READER_H_
 
 #include <functional>
 #include <memory>
@@ -33,16 +33,27 @@ class compressed_file_reader
         /**
          * Constructor; opens a compressed file for reading using the given
          * mapping.
+         * @param file The file to read from
+         * @param mapping A function to map the original numbers to their
+         * compressed id, usually to take advantage of a skewed distribution of
+         * towards many small numbers
          */
         compressed_file_reader(const mmap_file & file,
                 std::function<uint64_t(uint64_t)> mapping);
 
         /**
          * Constructor to create a new mmap file for reading.
+         * @param file The filename for the new file to read from
+         * @param mapping A function to map the original numbers to their
+         * compressed id, usually to take advantage of a skewed distribution of
+         * towards many small numbers
          */
         compressed_file_reader(const std::string & filename,
                 std::function<uint64_t(uint64_t)> mapping);
 
+        /**
+         * Destructor.
+         */
         ~compressed_file_reader();
 
         /**
@@ -85,45 +96,49 @@ class compressed_file_reader
         /**
          * @return whether reading from this compressed file is still good
          */
-        operator bool() const { return _status != userDone; }
+        operator bool() const { return status_ != userDone; }
 
     private:
         /**
-         * Sets _currentValue to the value of the next number.
+         * Seeks to the next compressed number and returns the current cached
+         * value.
          */
         void get_next();
 
         /**
-         * Advances readCursors.
          * @return the next bit in the file
          */
         bool read_bit();
 
-        /** ptr to the mmap_file we are reading: nullptr if we don't own it,
-         * initialized if we do */
-        std::unique_ptr<mmap_file> _file;
+        /**
+         * Pointer to the mmap_file we are reading: nullptr if we don't own it,
+         * initialized if we do
+         */
+        std::unique_ptr<mmap_file> file_;
 
-        /** pointer to the beginning of the compressed file (which will be in
-         * memory most of the time) */
-        char* _start;
+        /**
+         * Pointer to the beginning of the compressed file (which will be in
+         * memory most of the time)
+         */
+        char* start_;
 
         /** the number of bytes in this compressed file */
-        uint64_t _size;
+        uint64_t size_;
 
         /** reading/writing status */
-        int _status;
+        int status_;
 
         /** current numeric value that was read */
-        uint64_t _current_value;
+        uint64_t current_value_;
 
         /** current byte in the compressed file */
-        uint64_t _current_char;
+        uint64_t current_char_;
 
         /** current bit inside the current byte */
-        uint8_t _current_bit;
+        uint8_t current_bit_;
 
         /** hold the (actual -> compressed id) mapping */
-        std::function<uint64_t(uint64_t)> _mapping;
+        std::function<uint64_t(uint64_t)> mapping_;
 
     public:
         /**

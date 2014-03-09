@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _LIBSVM_PARSER_H_
-#define _LIBSVM_PARSER_H_
+#ifndef _META_LIBSVM_PARSER_H_
+#define _META_LIBSVM_PARSER_H_
 
 #include <string>
 #include <utility>
