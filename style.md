@@ -1,5 +1,7 @@
 # MeTA Style Guide
 
+## Code Formatting
+
 - We will follow the code formatting options provided by `clang-format`. Visit
   the file `.clang-format` for our settings.
 
@@ -31,6 +33,7 @@ void myclass::member(const type&);
   C++14](www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3841.pdf).
 - Use `#ifndef _META_FILE_NAME_H_` for double inclusion guards.
 - `#define` kept to a minimum, and ALL_CAPS_SNAKE if used.
+- Lines should be no longer than 80 characters
 
 ## Documentation
 
