@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
         {
             std::getline(queries, content);
             corpus::document query{"[user input]", doc_id{0}};
-            query.set_content(content);
+            query.content(content);
             std::cout << "Ranking query " << i++ << ": " << query.path()
                       << std::endl;
 

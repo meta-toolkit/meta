@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _FILE_CORPUS_H_
-#define _FILE_CORPUS_H_
+#ifndef _META_FILE_CORPUS_H_
+#define _META_FILE_CORPUS_H_
 
 #include <string>
 #include <vector>
@@ -50,13 +50,13 @@ class file_corpus: public corpus
 
     private:
         /** the current document we are on */
-        uint64_t _cur;
+        uint64_t cur_;
 
         /** the path to all the documents */
-        std::string _prefix;
+        std::string prefix_;
 
         /** contains doc class labels and paths */
-        std::vector<std::pair<std::string, class_label>> _docs;
+        std::vector<std::pair<std::string, class_label>> docs_;
 };
 
 }

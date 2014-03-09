@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _LINE_CORPUS_H_
-#define _LINE_CORPUS_H_
+#ifndef _META_LINE_CORPUS_H_
+#define _META_LINE_CORPUS_H_
 
 #include <string>
 #include <vector>
@@ -54,19 +54,19 @@ class line_corpus: public corpus
 
     private:
         /** the current document we are on */
-        doc_id _cur_id;
+        doc_id cur_id_;
 
         /** the number of lines in the file */
-        uint64_t _num_lines;
+        uint64_t num_lines_;
 
         /** parser to read the corpus file */
-        io::parser _parser;
+        io::parser parser_;
 
         /** parser to read the class labels */
-        std::unique_ptr<io::parser> _class_parser;
+        std::unique_ptr<io::parser> class_parser_;
 
         /** parser to read the document names */
-        std::unique_ptr<io::parser> _name_parser;
+        std::unique_ptr<io::parser> name_parser_;
 };
 
 }

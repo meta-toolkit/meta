@@ -18,7 +18,7 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding)
     {
         auto d_id = idx.docs()[i];
         corpus::document query{idx.doc_path(d_id), doc_id{i}};
-        query.set_encoding(encoding);
+        query.encoding(encoding);
 
         auto ranking = r.score(idx, query);
         ASSERT_EQUAL(ranking.size(), 10); // default is 10 docs

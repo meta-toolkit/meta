@@ -50,7 +50,7 @@ int content_tokenize()
 
     // "one" is a stopword
     std::string content = "one one two two two three four one five";
-    doc.set_content(content);
+    doc.content(content);
     int num_failed = 0;
 
     num_failed += testing::run_test("content-unigram-word-analyzer", [&]()

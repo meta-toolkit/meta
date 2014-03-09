@@ -21,7 +21,7 @@ void libsvm_analyzer::tokenize(corpus::document & doc)
 
     // label info is inside the document content for libsvm format; the line
     // corpus will not set it since it's not in a separate file
-    doc.set_label(io::libsvm_parser::label(doc.content()));
+    doc.label(io::libsvm_parser::label(doc.content()));
 }
 
 }

@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _CORPUS_H_
-#define _CORPUS_H_
+#ifndef _META_CORPUS_H_
+#define _META_CORPUS_H_
 
 #include <stdexcept>
 #include <memory>
@@ -19,20 +19,14 @@ namespace meta {
 namespace corpus {
 
 /**
- * Deals with multiple corpus formats.
- * - one file per doc (meta default format)
- * - LDA format
- * - liblinear format
- * - one doc per line (e.g. wikipedia)
- * - etc
- *
- * @todo Have corpus assign doc_ids to a member in document
+ * Provides interface to with multiple corpus input formats.
  */
 class corpus
 {
     public:
         /**
          * Constructs a new corpus with the given encoding.
+         * @param encoding The encoding to interpret the text as
          */
         corpus(std::string encoding);
 

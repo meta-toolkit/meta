@@ -13,8 +13,8 @@ file_corpus::file_corpus(const std::string & prefix,
         const std::string & doc_list,
         std::string encoding):
     corpus{std::move(encoding)},
-    _cur{0},
-    _prefix{prefix}
+    cur_{0},
+    prefix_{prefix}
 {
     io::parser psr{doc_list, "\n"};
     uint64_t idx = 0;
@@ -26,30 +26,30 @@ file_corpus::file_corpus(const std::string & prefix,
         {
             std::string file{line.substr(space + 1)};
             class_label label{line.substr(0, space)};
-            _docs.emplace_back(std::make_pair(file, label));
+            docs_.emplace_back(std::make_pair(file, label));
         }
         else
-            _docs.emplace_back(std::make_pair(line, class_label{""}));
+            docs_.emplace_back(std::make_pair(line, class_label{""}));
         ++idx;
     }
 }
 
 bool file_corpus::has_next() const
 {
-    return _cur < _docs.size();
+    return cur_ < docs_.size();
 }
 
 document file_corpus::next()
 {
-    document doc{_prefix + _docs[_cur].first, doc_id{_cur}, _docs[_cur].second};
-    doc.set_encoding(encoding());
-    ++_cur;
+    document doc{prefix_ + docs_[cur_].first, doc_id{cur_}, docs_[cur_].second};
+    doc.encoding(encoding());
+    ++cur_;
     return doc;
 }
 
 uint64_t file_corpus::size() const
 {
-    return _docs.size();
+    return docs_.size();
 }
 
 }

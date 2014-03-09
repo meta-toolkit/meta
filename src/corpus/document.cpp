@@ -14,102 +14,102 @@ namespace corpus {
 document::document(const std::string & path,
                    doc_id d_id,
                    const class_label & label):
-    _path{path},
-    _d_id{d_id},
-    _label{label},
-    _length{0},
-    _encoding{"utf-8"}
+    path_{path},
+    d_id_{d_id},
+    label_{label},
+    length_{0},
+    encoding_{"utf-8"}
 {
     size_t idx = path.find_last_of("/") + 1;
-    _name = path.substr(idx);
+    name_ = path.substr(idx);
 }
 
 void document::increment(const std::string & term, double amount)
 {
-    _counts[term] += amount;
-    _length += amount;
+    counts_[term] += amount;
+    length_ += amount;
 }
 
 std::string document::path() const
 {
-    return _path;
+    return path_;
 }
 
 const class_label & document::label() const
 {
-    return _label;
+    return label_;
 }
 
 std::string document::name() const
 {
-    return _name;
+    return name_;
 }
 
 uint64_t document::length() const
 {
-    return _length;
+    return length_;
 }
 
 double document::count(const std::string & term) const
 {
-    return map::safe_at(_counts, term);
+    return map::safe_at(counts_, term);
 }
 
 const std::unordered_map<std::string, double> & document::counts() const
 {
-    return _counts;
+    return counts_;
 }
 
 double document::cosine_similarity(const document & a, const document & b)
 {
-    return clustering::similarity::cosine_similarity(a._counts,
-                                                     b._counts);
+    return clustering::similarity::cosine_similarity(a.counts_,
+                                                     b.counts_);
 }
 
 double document::jaccard_similarity(const document & a, const document & b)
 {
-    return clustering::similarity::jaccard_similarity(a._counts,
-                                                      b._counts);
+    return clustering::similarity::jaccard_similarity(a.counts_,
+                                                      b.counts_);
 }
 
-void document::set_content(const std::string& content,
-                           const std::string& encoding /* = "utf-8" */)
+void document::content(const std::string& content,
+                       const std::string& encoding /* = "utf-8" */)
 {
-    _content = content;
-    _encoding = encoding;
+    content_ = content;
+    encoding_ = encoding;
 }
 
-void document::set_encoding(const std::string& encoding)
+void document::encoding(const std::string& encoding)
 {
-    _encoding = encoding;
+    encoding_ = encoding;
 }
 
 const std::string & document::content() const
 {
-    if (_content)
-        return *_content;
+    if (content_)
+        return *content_;
     throw corpus::corpus_exception{
         "there is no content for the requested document"};
 }
 
 const std::string& document::encoding() const
 {
-    return _encoding;
+    return encoding_;
 }
 
 doc_id document::id() const
 {
-    return _d_id;
+    return d_id_;
 }
 
 bool document::contains_content() const
 {
-    return static_cast<bool>(_content);
+    return static_cast<bool>(content_);
 }
 
-void document::set_label(class_label label)
+void document::label(class_label label)
 {
-    _label = label;
+    label_ = label;
 }
 
 }

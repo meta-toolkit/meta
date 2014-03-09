@@ -18,35 +18,35 @@ namespace corpus
 line_corpus::line_corpus(const std::string& file, std::string encoding,
                          uint64_t num_lines /* = 0 */)
     : corpus{std::move(encoding)},
-      _cur_id{0},
-      _num_lines{num_lines},
-      _parser{file, "\n"}
+      cur_id_{0},
+      num_lines_{num_lines},
+      parser_{file, "\n"}
 {
     // init class label info
     if (filesystem::file_exists(file + ".labels"))
     {
-        _class_parser = make_unique<io::parser>(file + ".labels", "\n");
-        if (_num_lines == 0)
-            _num_lines = filesystem::num_lines(file + ".labels");
+        class_parser_ = make_unique<io::parser>(file + ".labels", "\n");
+        if (num_lines_ == 0)
+            num_lines_ = filesystem::num_lines(file + ".labels");
     }
 
     // init class label info
     if (filesystem::file_exists(file + ".names"))
     {
-        _name_parser = make_unique<io::parser>(file + ".names", "\n");
-        if (_num_lines == 0)
-            _num_lines = filesystem::num_lines(file + ".names");
+        name_parser_ = make_unique<io::parser>(file + ".names", "\n");
+        if (num_lines_ == 0)
+            num_lines_ = filesystem::num_lines(file + ".names");
     }
 
     // if we couldn't determine the number of lines in the constructor and the
     // two optional files don't exist, we have to count newlines here
-    if (_num_lines == 0)
-        _num_lines = filesystem::num_lines(file);
+    if (num_lines_ == 0)
+        num_lines_ = filesystem::num_lines(file);
 }
 
 bool line_corpus::has_next() const
 {
-    return _parser.has_next();
+    return parser_.has_next();
 }
 
 document line_corpus::next()
@@ -54,21 +54,21 @@ document line_corpus::next()
     class_label label{"[none]"};
     std::string name{"[none]"};
 
-    if (_class_parser)
-        label = class_label{_class_parser->next()};
+    if (class_parser_)
+        label = class_label{class_parser_->next()};
 
-    if (_name_parser)
-        name = _name_parser->next();
+    if (name_parser_)
+        name = name_parser_->next();
 
-    document doc{name, _cur_id++, label};
-    doc.set_content(_parser.next(), encoding());
+    document doc{name, cur_id_++, label};
+    doc.content(parser_.next(), encoding());
 
     return doc;
 }
 
 uint64_t line_corpus::size() const
 {
-    return _num_lines;
+    return num_lines_;
 }
 }
 }

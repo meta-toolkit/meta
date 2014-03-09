@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _DOCUMENT_H_
-#define _DOCUMENT_H_
+#ifndef _META_DOCUMENT_H_
+#define _META_DOCUMENT_H_
 
 #include <string>
 #include <unordered_map>
@@ -100,14 +100,14 @@ class document
          * formats; not all documents are guaranteed to have content stored in
          * the object itself
          */
-        void set_content(const std::string& content,
-                         const std::string& encoding = "utf-8");
+        void content(const std::string& content,
+                     const std::string& encoding = "utf-8");
 
         /**
          * Sets the encoding for the document to be the parameter
          * @param encoding
          */
-        void set_encoding(const std::string& encoding);
+        void encoding(const std::string& encoding);
 
         /**
          * @return the contents of this document
@@ -132,32 +132,32 @@ class document
         /**
          * @param label The label for this document
          */
-        void set_label(class_label label);
+        void label(class_label label);
 
     private:
         /** where this document is on disk */
-        std::string _path;
+        std::string path_;
 
         /** the document id for this document */
-        doc_id _d_id;
+        doc_id d_id_;
 
         /** which category this document would be classified into */
-        class_label _label;
+        class_label label_;
 
         /** the short name for this document (not the full path) */
-        std::string _name;
+        std::string name_;
 
         /** the number of (non-unique) tokens in this document */
-        size_t _length;
+        size_t length_;
 
         /** counts of how many times each token appears */
-        std::unordered_map<std::string, double> _counts;
+        std::unordered_map<std::string, double> counts_;
 
         /** what the document contains */
-        util::optional<std::string> _content;
+        util::optional<std::string> content_;
 
         /** the encoding for the content */
-        std::string _encoding;
+        std::string encoding_;
 };
 
 }

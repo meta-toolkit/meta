@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
         {
             auto d_id = docs[i];
             corpus::document query{idx->doc_path(d_id), doc_id{0}};
-            query.set_encoding(encoding);
+            query.encoding(encoding);
             cout << "Ranking query " << (i + 1) << ": " << query.path() << endl;
 
             auto ranking = ranker.score(*idx, query);

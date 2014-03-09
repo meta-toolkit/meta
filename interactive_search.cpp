@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
             break;
 
         corpus::document query{"[user input]", doc_id{0}};
-        query.set_content(text);
+        query.content(text);
 
         std::vector<std::pair<doc_id, double>> ranking;
         auto time = common::time([&](){
