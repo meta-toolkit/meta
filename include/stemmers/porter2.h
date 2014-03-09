@@ -11,18 +11,20 @@
 
 #include "porter2_stemmer.h"
 
-namespace meta {
-namespace stemmers {
+namespace meta
+{
+namespace stemmers
+{
 
 /**
  * A function object that uses the Porter2Stemmer library for stemming.
  * Typically used as a policy for tokenizers, but it is not limited to
  * just this use case.
  */
-struct porter2 {
-    void operator()(std::string & term) const;
+struct porter2
+{
+    void operator()(std::string& term) const;
 };
-
 }
 }
 

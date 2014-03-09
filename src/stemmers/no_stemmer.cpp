@@ -6,12 +6,14 @@
 
 #include "stemmers/no_stemmer.h"
 
-namespace meta {
-namespace stemmers {
+namespace meta
+{
+namespace stemmers
+{
 
-void no_stemmer::operator()(std::string & term) const {
+void no_stemmer::operator()(std::string& term) const
+{
     std::transform(term.begin(), term.end(), term.begin(), ::tolower);
 }
-
 }
 }
