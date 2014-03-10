@@ -1,14 +1,13 @@
 /**
  * @file ranker.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
  */
 
-#ifndef _RANKER_H_
-#define _RANKER_H_
+#ifndef META_RANKER_H_
+#define META_RANKER_H_
 
 #include <utility>
 #include <vector>
@@ -52,9 +51,9 @@ class ranker
     std::vector<std::pair<doc_id, double>>
     score(inverted_index& idx, corpus::document& query,
           uint64_t num_results = 10,
-          const std::function<bool(doc_id d_id)>& filter = [](doc_id d_id)
-            { return true; }
-    );
+          const std::function<bool(doc_id d_id)>& filter = [](doc_id d_id) {
+              return true;
+          });
 
     /**
      * @param sd

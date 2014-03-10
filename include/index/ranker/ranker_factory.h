@@ -1,6 +1,9 @@
 /**
  * @file ranker_factory.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef META_RANKER_FACTORY_H_
@@ -25,8 +28,8 @@ namespace index
  * files. Clients should use the register_ranker method instead of this
  * class directly to add their own rankers.
  */
-class ranker_factory
-    : public util::factory<ranker_factory, ranker, const cpptoml::toml_group&>
+class ranker_factory : public util::factory<ranker_factory,
+                                            ranker, const cpptoml::toml_group&>
 {
     friend base_factory;
 

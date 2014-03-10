@@ -16,7 +16,8 @@ namespace index
 
 string_list_writer::string_list_writer(const std::string& path, uint64_t size)
     : string_file_{make_file(path)},
-      write_pos_{0}, index_{path + "_index", size}
+      write_pos_{0},
+      index_{path + "_index", size}
 {
     // nothing
 }
@@ -31,7 +32,8 @@ string_list_writer::string_list_writer(string_list_writer&& other)
 
 string_list_writer& string_list_writer::operator=(string_list_writer&& other)
 {
-    if (this != &other) {
+    if (this != &other)
+    {
         string_file_ = std::move(other.string_file_);
         write_pos_ = std::move(other.write_pos_);
         index_ = std::move(other.index_);

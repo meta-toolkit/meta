@@ -139,7 +139,7 @@ class forward_index : public disk_index
      * This function initializes the forward index.
      * @param config_file The configuration file used to create the index
      */
-    void create_index(const std::string & config_file);
+    void create_index(const std::string& config_file);
 
     class impl;
     util::pimpl<impl> fwd_impl_;

@@ -83,10 +83,10 @@ class string_list_writer
     }
 #endif
 
-    std::mutex mutex_;            /// writes are internally synchronized
-    ofstream string_file_;        /// the file containing the strings
-    uint64_t write_pos_;          /// keeps track of the write position
-    util::disk_vector<uint64_t> index_; /// the index vector---stores byte positions
+    std::mutex mutex_;     /// writes are internally synchronized
+    ofstream string_file_; /// the file containing the strings
+    uint64_t write_pos_;   /// keeps track of the write position
+    util::disk_vector<uint64_t> index_; /// index vector---stores byte positions
 };
 }
 }

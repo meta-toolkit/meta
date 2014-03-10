@@ -36,6 +36,5 @@ std::unique_ptr<ranker> make_ranker(const cpptoml::toml_group& config)
             "ranking-function required to construct a ranker"};
     return ranker_factory::get().create(*function, config);
 }
-
 }
 }

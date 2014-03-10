@@ -14,8 +14,10 @@
 #include "index/cached_index.h"
 #include "util/filesystem.h"
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 class inverted_index;
 class forward_index;
@@ -41,8 +43,9 @@ std::shared_ptr<Index> make_index(const std::string& config_file,
     auto config = cpptoml::parse_file(config_file);
 
     // check if we have paths specified for either kind of index
-    if (!(config.contains("forward-index") &&
-          config.contains("inverted-index"))) {
+    if (!(config.contains("forward-index")
+          && config.contains("inverted-index")))
+    {
         throw typename Index::exception{
             "forward-index or inverted-index missing from configuration file"};
     }

@@ -15,29 +15,36 @@
 #include "util/pimpl.h"
 #include "meta.h"
 
-namespace cpptoml {
+namespace cpptoml
+{
 class toml_group;
 }
 
-namespace meta {
+namespace meta
+{
 
-namespace index {
+namespace index
+{
 class string_list;
 class vocabulary_map;
 }
 
-namespace tokenizers {
+namespace tokenizers
+{
 class tokenizer;
 }
 
-namespace util {
+namespace util
+{
 template <class>
 class disk_vector;
 }
 }
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 /**
  * Holds generic data structures and functions that inverted_index and
@@ -114,7 +121,7 @@ class disk_index
      * @param term
      * @return the term_id associated with the parameter
      */
-    term_id get_term_id(const std::string & term);
+    term_id get_term_id(const std::string& term);
 
     /**
      * @param t_id The term_id to get the original text for
@@ -131,20 +138,19 @@ class disk_index
      * @param config_file The config settings used to create this index
      * @param name The name of this disk_index
      */
-    disk_index(const cpptoml::toml_group & config, const std::string& name);
+    disk_index(const cpptoml::toml_group& config, const std::string& name);
 
     /**
      * disk_index may not be copy-constructed.
      */
-    disk_index(const disk_index &) = delete;
+    disk_index(const disk_index&) = delete;
 
     /**
      * disk_index may not be copy-assigned.
      */
-    disk_index &operator=(const disk_index &) = delete;
+    disk_index& operator=(const disk_index&) = delete;
 
   public:
-
     /**
      * Move constructs a disk_index.
      **/
@@ -155,7 +161,6 @@ class disk_index
      */
     disk_index& operator=(disk_index&&) = default;
 };
-
 }
 }
 

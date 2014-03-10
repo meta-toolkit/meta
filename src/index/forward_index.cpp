@@ -81,11 +81,11 @@ class forward_index::impl
      */
     void compressed_postings_to_libsvm();
 
-    /** the total number of unique terms if _term_id_mapping is unused */
-    uint64_t _total_unique_terms;
+    /** the total number of unique terms if term_id_mapping_ is unused */
+    uint64_t total_unique_terms_;
 
     /** doc_id -> postings file byte location */
-    util::optional<util::disk_vector<uint64_t>> _doc_byte_locations;
+    util::optional<util::disk_vector<uint64_t>> doc_byte_locations_;
 
   private:
     forward_index* idx_;
@@ -100,7 +100,7 @@ forward_index::forward_index(const cpptoml::toml_group& config)
 
 forward_index::impl::impl(forward_index* idx) : idx_{idx}
 {
-  /* nothing */
+    /* nothing */
 }
 
 forward_index::forward_index(forward_index&&) = default;
@@ -112,11 +112,11 @@ std::string forward_index::liblinear_data(doc_id d_id) const
     if (d_id >= num_docs())
         throw forward_index_exception{"invalid doc_id in search_primary"};
 
-    uint64_t begin = (*fwd_impl_->_doc_byte_locations)[d_id];
+    uint64_t begin = (*fwd_impl_->doc_byte_locations_)[d_id];
     uint64_t length = 0;
     while (impl_->postings()[begin + length] != '\n')
     {
-        ++length; // TODO maybe save lengths as well?
+        ++length;
         if (begin + length >= impl_->postings().size())
             throw forward_index_exception{"out of bounds!"};
     }
@@ -140,7 +140,7 @@ void forward_index::load_index()
     impl_->load_label_id_mapping();
 
     std::ifstream unique_terms_file{index_name() + "/corpus.uniqueterms"};
-    unique_terms_file >> fwd_impl_->_total_unique_terms;
+    unique_terms_file >> fwd_impl_->total_unique_terms_;
 }
 
 void forward_index::create_index(const std::string& config_file)
@@ -171,20 +171,20 @@ void forward_index::create_index(const std::string& config_file)
         impl_->load_postings();
         fwd_impl_->set_doc_byte_locations();
         impl_->load_term_id_mapping();
-        fwd_impl_->_total_unique_terms = impl_->total_unique_terms();
+        fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
     }
 
     // now that the files are tokenized, we can create the string_list
     impl_->load_doc_id_mapping();
 
     std::ofstream unique_terms_file{index_name() + "/corpus.uniqueterms"};
-    unique_terms_file << fwd_impl_->_total_unique_terms;
+    unique_terms_file << fwd_impl_->total_unique_terms_;
 
     LOG(info) << "Done creating index: " << index_name() << ENDLG;
 }
 
-void forward_index::impl::create_libsvm_postings(
-    const cpptoml::toml_group& config)
+void forward_index::impl::create_libsvm_postings(const cpptoml::toml_group
+                                                 & config)
 {
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)
@@ -216,7 +216,7 @@ void forward_index::impl::set_doc_byte_locations()
     {
         if (last_byte == '\n')
         {
-            (*_doc_byte_locations)[d_id] = idx;
+            (*doc_byte_locations_)[d_id] = idx;
             ++d_id;
         }
         last_byte = idx_->impl_->postings()[idx];
@@ -225,16 +225,17 @@ void forward_index::impl::set_doc_byte_locations()
 
 void forward_index::impl::init_metadata()
 {
-    uint64_t num_docs = filesystem::num_lines(idx_->index_name() +
-                                              idx_->impl_->files[POSTINGS]);
+    uint64_t num_docs = filesystem::num_lines(idx_->index_name()
+                                              + idx_->impl_->files[POSTINGS]);
     idx_->impl_->initialize_metadata(num_docs);
-    _doc_byte_locations = util::disk_vector<uint64_t>(
-        idx_->index_name() + "/lexicon.index", num_docs);
+    doc_byte_locations_ = util::disk_vector<uint64_t>(idx_->index_name()
+                                                      + "/lexicon.index",
+                                                      num_docs);
 }
 
 void forward_index::impl::create_libsvm_metadata()
 {
-    _total_unique_terms = 0;
+    total_unique_terms_ = 0;
 
     doc_id d_id{0};
     std::ifstream in{idx_->index_name() + idx_->impl_->files[POSTINGS]};
@@ -254,9 +255,9 @@ void forward_index::impl::create_libsvm_metadata()
         for (const auto& count_pair : io::libsvm_parser::counts(line))
         {
             ++num_unique;
-            if (count_pair.first > _total_unique_terms)
-                _total_unique_terms = count_pair.first;
-            length += static_cast<uint64_t>(count_pair.second); // TODO
+            if (count_pair.first > total_unique_terms_)
+                total_unique_terms_ = count_pair.first;
+            length += static_cast<uint64_t>(count_pair.second);
         }
 
         docid_writer.insert(d_id, "[no path]");
@@ -266,11 +267,11 @@ void forward_index::impl::create_libsvm_metadata()
         ++d_id;
     }
 
-    ++_total_unique_terms; // since we subtracted one from the ids earlier
+    ++total_unique_terms_; // since we subtracted one from the ids earlier
 }
 
-void forward_index::impl::create_uninverted_metadata(
-    const cpptoml::toml_group& config)
+void forward_index::impl::create_uninverted_metadata(const cpptoml::toml_group
+                                                     & config)
 {
     auto files = {DOC_IDS_MAPPING,  DOC_IDS_MAPPING_INDEX,   DOC_SIZES,
                   DOC_LABELS,       DOC_UNIQUETERMS,         LABEL_IDS_MAPPING,
@@ -282,8 +283,8 @@ void forward_index::impl::create_uninverted_metadata(
                               idx_->index_name() + idx_->impl_->files[file]);
 }
 
-bool forward_index::impl::is_libsvm_format(const cpptoml::toml_group& config)
-    const
+bool forward_index::impl::is_libsvm_format(const cpptoml::toml_group
+                                           & config) const
 {
     auto analyzers = config.get_group_array("analyzers")->array();
     if (analyzers.size() != 1)
@@ -298,11 +299,11 @@ bool forward_index::impl::is_libsvm_format(const cpptoml::toml_group& config)
 
 uint64_t forward_index::unique_terms() const
 {
-    return fwd_impl_->_total_unique_terms;
+    return fwd_impl_->total_unique_terms_;
 }
 
-auto forward_index::search_primary(doc_id d_id)
-    const -> std::shared_ptr<postings_data_type>
+auto forward_index::search_primary(doc_id d_id) const
+    -> std::shared_ptr<postings_data_type>
 {
     auto pdata = std::make_shared<postings_data_type>(d_id);
     auto line = liblinear_data(d_id);
@@ -313,8 +314,8 @@ auto forward_index::search_primary(doc_id d_id)
 void forward_index::impl::uninvert(const cpptoml::toml_group& config)
 {
     auto inv_name = *cpptoml::get_as<std::string>(config, "inverted-index");
-    io::compressed_file_reader inv_reader{inv_name +
-                                              idx_->impl_->files[POSTINGS],
+    io::compressed_file_reader inv_reader{inv_name
+                                          + idx_->impl_->files[POSTINGS],
                                           io::default_compression_reader_func};
 
     term_id t_id{0};
@@ -350,8 +351,8 @@ void forward_index::impl::compressed_postings_to_libsvm()
     while (input >> pdata)
     {
         doc_id d_id = pdata.primary_key();
-        pdata.set_primary_key(
-            static_cast<doc_id>(idx_->impl_->doc_label_id(d_id)));
+        pdata.set_primary_key(static_cast<doc_id>(
+                    idx_->impl_->doc_label_id(d_id)));
         pdata.write_libsvm(output);
     }
 

@@ -16,8 +16,8 @@ namespace index
 
 std::vector<std::pair<doc_id, double>>
 ranker::score(inverted_index& idx, corpus::document& query,
-             uint64_t num_results /* = 10 */,
-             const std::function<bool(doc_id d_id)>& filter /* = return true */)
+              uint64_t num_results /* = 10 */,
+              const std::function<bool(doc_id d_id)>& filter /* return true */)
 {
     if (query.counts().empty())
         idx.tokenize(query);
@@ -52,9 +52,9 @@ ranker::score(inverted_index& idx, corpus::document& query,
     auto doc_pair_comp = [](const doc_pair& a, const doc_pair& b)
     { return a.second > b.second; };
 
-    std::priority_queue
-        <doc_pair, std::vector<doc_pair>, decltype(doc_pair_comp)> pq{
-            doc_pair_comp};
+    std::priority_queue<doc_pair,
+                        std::vector<doc_pair>,
+                        decltype(doc_pair_comp)> pq{doc_pair_comp};
     for (uint64_t id = 0; id < results_.size(); ++id)
     {
         if (!filter(doc_id{id}))

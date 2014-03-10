@@ -42,8 +42,8 @@ void chunk_handler<Index>::producer::operator()(const secondary_key_type& key,
 
             // note: we can modify elements in this set because we do not change
             // how comparisons are made (the primary_key value)
-            const_cast<index_pdata_type&>(*it)
-                .increase_count(key, count.second);
+            const_cast<index_pdata_type&>(*it).increase_count(key,
+                                                              count.second);
             chunk_size_ += it->bytes_used();
         }
 
@@ -103,8 +103,8 @@ void chunk_handler<Index>::write_chunk(std::vector<index_pdata_type>& pdata)
 
     if (!top) // pqueue was empty
     {
-        std::string chunk_name =
-            prefix_ + "/chunk-" + std::to_string(chunk_num);
+        std::string chunk_name = prefix_ + "/chunk-"
+                                 + std::to_string(chunk_num);
         io::compressed_file_writer outfile{chunk_name,
                                            io::default_compression_writer_func};
         for (auto& p : pdata)
@@ -132,8 +132,10 @@ void chunk_handler<Index>::merge_chunks()
 {
     size_t remaining = chunks_.size() - 1;
     std::mutex mutex;
-    auto task = [&]() {
-        while (true) {
+    auto task = [&]()
+    {
+        while (true)
+        {
             util::optional<chunk_t> first;
             util::optional<chunk_t> second;
             {
@@ -145,10 +147,11 @@ void chunk_handler<Index>::merge_chunks()
                 second = chunks_.top();
                 chunks_.pop();
                 LOG(progress) << "> Merging " << first->path() << " ("
-                    << printing::bytes_to_units(first->size())
-                    << ") and " << second->path() << " ("
-                    << printing::bytes_to_units(second->size())
-                    << "), " << --remaining << " remaining        \r" << ENDLG;
+                              << printing::bytes_to_units(first->size())
+                              << ") and " << second->path() << " ("
+                              << printing::bytes_to_units(second->size())
+                              << "), " << --remaining << " remaining        \r"
+                              << ENDLG;
             }
             first->merge_with(*second);
             {
@@ -164,7 +167,7 @@ void chunk_handler<Index>::merge_chunks()
     for (size_t i = 0; i < thread_ids.size(); ++i)
         futures.emplace_back(pool.submit_task(task));
 
-    for (auto & fut : futures)
+    for (auto& fut : futures)
         fut.get();
 
     LOG(progress) << '\n' << ENDLG;

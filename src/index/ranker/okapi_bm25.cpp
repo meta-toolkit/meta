@@ -39,8 +39,8 @@ double okapi_bm25::score_one(const score_data& sd)
 }
 
 template <>
-std::unique_ptr<ranker>
-    make_ranker<okapi_bm25>(const cpptoml::toml_group& config)
+std::unique_ptr<ranker>make_ranker<okapi_bm25>(
+        const cpptoml::toml_group& config)
 {
     auto k1 = okapi_bm25::default_k1;
     if (auto c_k1 = config.get_as<double>("k1"))

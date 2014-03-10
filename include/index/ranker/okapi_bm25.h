@@ -1,14 +1,13 @@
 /**
  * @file okapi_bm25.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
  */
 
-#ifndef _OKAPI_BM25_H_
-#define _OKAPI_BM25_H_
+#ifndef META_OKAPI_BM25_H_
+#define META_OKAPI_BM25_H_
 
 #include "index/ranker/ranker.h"
 #include "index/ranker/ranker_factory.h"

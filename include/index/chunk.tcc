@@ -10,12 +10,14 @@
 #include "io/compressed_file_writer.h"
 #include "util/filesystem.h"
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 template <class PrimaryKey, class SecondaryKey>
-chunk<PrimaryKey, SecondaryKey>::chunk(const std::string & path):
-    _path{path}
+chunk<PrimaryKey, SecondaryKey>::chunk(const std::string& path)
+    : path_{path}
 {
     set_size();
 }
@@ -23,11 +25,11 @@ chunk<PrimaryKey, SecondaryKey>::chunk(const std::string & path):
 template <class PrimaryKey, class SecondaryKey>
 void chunk<PrimaryKey, SecondaryKey>::set_size()
 {
-    size_ = filesystem::file_size(_path);
+    size_ = filesystem::file_size(path_);
 }
 
 template <class PrimaryKey, class SecondaryKey>
-bool chunk<PrimaryKey, SecondaryKey>::operator<(const chunk & other) const
+bool chunk<PrimaryKey, SecondaryKey>::operator<(const chunk& other) const
 {
     // merge smaller chunks first
     return size() > other.size();
@@ -36,7 +38,7 @@ bool chunk<PrimaryKey, SecondaryKey>::operator<(const chunk & other) const
 template <class PrimaryKey, class SecondaryKey>
 std::string chunk<PrimaryKey, SecondaryKey>::path() const
 {
-    return _path;
+    return path_;
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -46,16 +48,16 @@ uint64_t chunk<PrimaryKey, SecondaryKey>::size() const
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
+void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk& other)
 {
-    std::string temp_name = _path + "_merge";
+    std::string temp_name = path_ + "_merge";
 
-    io::compressed_file_reader my_data{_path,
-        io::default_compression_reader_func};
-    io::compressed_file_reader other_data{other._path,
-        io::default_compression_reader_func};
+    io::compressed_file_reader my_data{path_,
+                                       io::default_compression_reader_func};
+    io::compressed_file_reader other_data{other.path_,
+                                          io::default_compression_reader_func};
     io::compressed_file_writer output{temp_name,
-        io::default_compression_writer_func};
+                                      io::default_compression_writer_func};
 
     postings_data<PrimaryKey, SecondaryKey> my_pd;
     postings_data<PrimaryKey, SecondaryKey> other_pd;
@@ -64,9 +66,11 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
 
     uint64_t terms = 0;
     // merge while both have postings data
-    while (my_data && other_data) {
+    while (my_data && other_data)
+    {
         ++terms;
-        if (my_pd.primary_key() == other_pd.primary_key()) {
+        if (my_pd.primary_key() == other_pd.primary_key())
+        {
             // merge
             my_pd.merge_with(other_pd);
             // write
@@ -75,12 +79,16 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
             // read next two postings data
             my_data >> my_pd;
             other_data >> other_pd;
-        } else if (my_pd.primary_key() < other_pd.primary_key()) {
+        }
+        else if (my_pd.primary_key() < other_pd.primary_key())
+        {
             // write the winner
             output << my_pd;
             // read next from the current chunk
             my_data >> my_pd;
-        } else {
+        }
+        else
+        {
             // write the winner
             output << other_pd;
             // read next from the other chunk
@@ -89,12 +97,14 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
     }
 
     // finish merging when one runs out
-    while (my_data) {
+    while (my_data)
+    {
         ++terms;
         output << my_pd;
         my_data >> my_pd;
     }
-    while (other_data) {
+    while (other_data)
+    {
         ++terms;
         output << other_pd;
         other_data >> other_pd;
@@ -103,24 +113,24 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk & other)
     my_data.close();
     other_data.close();
     output.close();
-    filesystem::delete_file(_path);
-    filesystem::delete_file(_path + ".numterms");
-    filesystem::delete_file(other._path);
-    filesystem::delete_file(other._path + ".numterms");
-    filesystem::rename_file(temp_name, _path);
+    filesystem::delete_file(path_);
+    filesystem::delete_file(path_ + ".numterms");
+    filesystem::delete_file(other.path_);
+    filesystem::delete_file(other.path_ + ".numterms");
+    filesystem::rename_file(temp_name, path_);
 
-    std::ofstream termfile{_path + ".numterms"};
+    std::ofstream termfile{path_ + ".numterms"};
     termfile << terms;
     set_size();
 }
 
 template <class PrimaryKey, class SecondaryKey>
 template <class Container>
-void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container & pdata)
+void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container& pdata)
 {
-    std::string temp_name = _path + "_merge";
+    std::string temp_name = path_ + "_merge";
 
-    io::compressed_file_reader my_data{_path,
+    io::compressed_file_reader my_data{path_,
                                        io::default_compression_reader_func};
     io::compressed_file_writer output{temp_name,
                                       io::default_compression_writer_func};
@@ -133,14 +143,14 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container & pdata)
     while (my_data && other_pd != pdata.end())
     {
         ++terms;
-        if(my_pd.primary_key() == other_pd->primary_key())
+        if (my_pd.primary_key() == other_pd->primary_key())
         {
             my_pd.merge_with(*other_pd);
             output << my_pd;
             my_data >> my_pd;
             ++other_pd;
         }
-        else if(my_pd.primary_key() < other_pd->primary_key())
+        else if (my_pd.primary_key() < other_pd->primary_key())
         {
             output << my_pd;
             my_data >> my_pd;
@@ -153,13 +163,13 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container & pdata)
     }
 
     // finish merging when one runs out
-    while(my_data)
+    while (my_data)
     {
         ++terms;
         output << my_pd;
         my_data >> my_pd;
     }
-    while(other_pd != pdata.end())
+    while (other_pd != pdata.end())
     {
         ++terms;
         output << *other_pd;
@@ -168,15 +178,14 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container & pdata)
 
     my_data.close();
     output.close();
-    filesystem::delete_file(_path);
-    filesystem::delete_file(_path + ".numterms");
-    filesystem::rename_file(temp_name, _path);
+    filesystem::delete_file(path_);
+    filesystem::delete_file(path_ + ".numterms");
+    filesystem::rename_file(temp_name, path_);
     pdata.clear();
 
-    std::ofstream termfile{_path + ".numterms"};
+    std::ofstream termfile{path_ + ".numterms"};
     termfile << terms;
     set_size();
 }
-
 }
 }

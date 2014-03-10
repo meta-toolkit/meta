@@ -25,6 +25,5 @@ uint64_t string_list::size() const
 {
     return index_.size();
 }
-
 }
 }

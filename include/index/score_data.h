@@ -11,20 +11,24 @@
 
 #include "meta.h"
 
-namespace meta {
+namespace meta
+{
 
-namespace corpus {
+namespace corpus
+{
 class document;
 }
 
-namespace index {
+namespace index
+{
 class inverted_index;
 }
-
 }
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 /**
  * A score_data object contains information needed to evaluate a ranking
@@ -35,11 +39,11 @@ struct score_data
 {
     // general info
 
-    inverted_index & idx;
+    inverted_index& idx;
     double avg_dl;
     uint64_t num_docs;
     uint64_t total_terms;
-    const corpus::document & query;
+    const corpus::document& query;
 
     // term-based info
 
@@ -55,19 +59,17 @@ struct score_data
     uint64_t doc_size;
     uint64_t doc_unique_terms;
 
-    score_data(inverted_index & p_idx,
-               double p_avg_dl,
-               uint64_t p_num_docs,
-               uint64_t p_total_terms,
-               const corpus::document & p_query):
-        idx(p_idx), // gcc no non-const ref init from brace init list
-        avg_dl{p_avg_dl},
-        num_docs{p_num_docs},
-        total_terms{p_total_terms},
-        query(p_query) // gcc no non-const ref init from brace init list
-    { /* nothing */ }
+    score_data(inverted_index& p_idx, double p_avg_dl, uint64_t p_num_docs,
+               uint64_t p_total_terms, const corpus::document& p_query)
+        : idx(p_idx), // gcc no non-const ref init from brace init list
+          avg_dl{p_avg_dl},
+          num_docs{p_num_docs},
+          total_terms{p_total_terms},
+          query(p_query) // gcc no non-const ref init from brace init list
+    {
+        /* nothing */
+    }
 };
-
 }
 }
 

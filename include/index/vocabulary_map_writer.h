@@ -136,7 +136,6 @@ class vocabulary_map_writer
      * level.
      */
     uint64_t written_nodes_;
-
 };
 }
 }

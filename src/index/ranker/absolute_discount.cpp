@@ -35,10 +35,10 @@ double absolute_discount::doc_constant(const score_data& sd) const
 }
 
 template <>
-std::unique_ptr<ranker>
-    make_ranker<absolute_discount>(const cpptoml::toml_group& config)
+std::unique_ptr<ranker> make_ranker<absolute_discount>(
+        const cpptoml::toml_group& config)
 {
-    if(auto gamma = config.get_as<double>("gamma"))
+    if (auto gamma = config.get_as<double>("gamma"))
         return make_unique<absolute_discount>(*gamma);
     return make_unique<absolute_discount>();
 }

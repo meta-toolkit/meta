@@ -45,8 +45,7 @@ class ir_eval
      * retrieved~docs} \f$
      */
     double precision(const result_type& results, query_id q_id,
-                     uint64_t num_docs = std::numeric_limits<uint64_t>::max()
-    ) const;
+             uint64_t num_docs = std::numeric_limits<uint64_t>::max()) const;
 
     /**
      * @param results The ranked list of results
@@ -56,8 +55,7 @@ class ir_eval
      * relevant~docs} \f$
      */
     double recall(const result_type& results, query_id q_id,
-                  uint64_t num_docs = std::numeric_limits<uint64_t>::max()
-    ) const;
+              uint64_t num_docs = std::numeric_limits<uint64_t>::max()) const;
 
     /**
      * @param results The ranked list of results
@@ -134,8 +132,7 @@ class ir_eval
     std::vector<double> scores_;
 
     /**
-     * Initializes the _byte_index member with pointers into the _judgements
-     * file
+     * @param path The path to the relevance judgements
      */
     void init_index(const std::string& path);
 

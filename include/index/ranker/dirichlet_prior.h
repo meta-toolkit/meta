@@ -1,10 +1,9 @@
 /**
  * @file dirichlet_prior.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
  */
 
 #ifndef META_DIRICHLET_PRIOR_H_
@@ -56,8 +55,8 @@ class dirichlet_prior : public language_model_ranker
  * rankers.
  */
 template <>
-std::unique_ptr<ranker>
-    make_ranker<dirichlet_prior>(const cpptoml::toml_group&);
+std::unique_ptr<ranker> make_ranker<dirichlet_prior>(
+        const cpptoml::toml_group&);
 }
 }
 #endif
