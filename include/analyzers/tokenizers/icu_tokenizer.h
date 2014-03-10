@@ -1,6 +1,9 @@
 /**
  * @file icu_tokenizer.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _META_ICU_TOKENIZER_H_

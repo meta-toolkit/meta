@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _MULTI_TOKENIZER_
-#define _MULTI_TOKENIZER_
+#ifndef _META_MULTI_ANALYZER_
+#define _META_MULTI_ANALYZER_
 
 #include <vector>
 #include <memory>

@@ -1,6 +1,9 @@
 /**
  * @file porter2_stemmer.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _META_FILTER_PORTER2_STEMMER_H_

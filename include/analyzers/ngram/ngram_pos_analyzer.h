@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _NGRAM_POS_TOKENIZER_H_
-#define _NGRAM_POS_TOKENIZER_H_
+#ifndef _META_NGRAM_POS_ANALYZER_H_
+#define _META_NGRAM_POS_ANALYZER_H_
 
 #include "analyzers/analyzer_factory.h"
 #include "analyzers/ngram/ngram_simple_analyzer.h"

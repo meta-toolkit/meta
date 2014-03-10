@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_TOKENIZERS_SKELETON_TOKENIZER_H_
-#define _META_TOKENIZERS_SKELETON_TOKENIZER_H_
+#ifndef _META_SKELETON_ANALYZER_H_
+#define _META_SKELETON_ANALYZER_H_
 
 #include "analyzers/tree/tree_analyzer.h"
 #include "util/clonable.h"

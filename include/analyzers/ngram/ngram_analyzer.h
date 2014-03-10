@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _NGRAM_TOKENIZER_H_
-#define _NGRAM_TOKENIZER_H_
+#ifndef _META_NGRAM_ANALYZER_H_
+#define _META_NGRAM_ANALYZER_H_
 
 #include <deque>
 

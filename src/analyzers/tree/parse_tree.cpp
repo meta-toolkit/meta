@@ -11,10 +11,10 @@ namespace analyzers {
 
 parse_tree::parse_tree(const std::string & tags)
 {
-    _syntactic_category = root_category(tags);
+    syntactic_category_ = root_category(tags);
     std::vector<std::string> trans{transitions(tags)};
     for(auto & transition: trans)
-        _children.push_back(parse_tree(transition));
+        children_.push_back(parse_tree(transition));
 }
 
 std::vector<std::string> parse_tree::transitions(std::string tags) const
@@ -65,23 +65,23 @@ std::string parse_tree::root_category(const std::string & tags) const
 
 std::string parse_tree::get_category() const
 {
-    return _syntactic_category;
+    return syntactic_category_;
 }
 
 std::vector<parse_tree> parse_tree::children() const
 {
-    return _children;
+    return children_;
 }
 
 uint64_t parse_tree::num_children() const
 {
-    return _children.size();
+    return children_.size();
 }
 
 std::string parse_tree::get_string() const
 {
-    std::string ret{"(" + _syntactic_category};
-    for(auto & child: _children)
+    std::string ret{"(" + syntactic_category_};
+    for(auto & child: children_)
         ret += child.get_string();
     ret += ")";
     return ret;
@@ -90,7 +90,7 @@ std::string parse_tree::get_string() const
 std::string parse_tree::skeleton() const
 {
     std::string ret{"("};
-    for(auto & child: _children)
+    for(auto & child: children_)
         ret += child.skeleton();
     ret += ")";
     return ret;
@@ -108,8 +108,8 @@ void parse_tree::pretty_print(const parse_tree & tree, uint64_t depth,
 {
     std::string padding(depth, ' ');
     output << padding << "(" << std::endl << padding
-           << "  " << tree._syntactic_category << std::endl;
-    for(auto & child: tree._children)
+           << "  " << tree.syntactic_category_ << std::endl;
+    for(auto & child: tree.children_)
         pretty_print(child, depth + 2, output);
     output << padding << ")" << std::endl;
 }
@@ -117,8 +117,8 @@ void parse_tree::pretty_print(const parse_tree & tree, uint64_t depth,
 std::string parse_tree::get_children_string() const
 {
     std::string ret{""};
-    for(auto & child: _children)
-        ret += "(" + child._syntactic_category + ")";
+    for(auto & child: children_)
+        ret += "(" + child.syntactic_category_ + ")";
     return ret;
 }
 
@@ -154,7 +154,7 @@ uint64_t parse_tree::height(const parse_tree & curr)
 std::string parse_tree::get_skeleton_children() const
 {
     std::string ret{""};
-    for(uint64_t i = 0; i < _children.size(); ++i)
+    for(uint64_t i = 0; i < children_.size(); ++i)
         ret += "()";
     return ret;
 }

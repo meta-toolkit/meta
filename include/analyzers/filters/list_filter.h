@@ -1,6 +1,9 @@
 /**
  * @file list_filter.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _META_LIST_FILTER_H_
@@ -26,7 +29,6 @@ namespace analyzers
 class list_filter : public util::clonable<token_stream, list_filter>
 {
   public:
-
     /**
      * Strongly typed flag to indicate whether the list_filter rejects
      * tokens in the list or only accepts tokens in the list.

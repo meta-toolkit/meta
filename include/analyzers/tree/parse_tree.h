@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _PARSE_TREE_H_
-#define _PARSE_TREE_H_
+#ifndef _META_PARSE_TREE_H_
+#define _META_PARSE_TREE_H_
 
 #include <cstdint>
 #include <sstream>
@@ -88,10 +88,10 @@ class parse_tree
 
     private:
         /** the tag label on the root of this subtree */
-        std::string _syntactic_category;
+        std::string syntactic_category_;
 
         /** ordered collection of children of the current parse tree */
-        std::vector<parse_tree> _children;
+        std::vector<parse_tree> children_;
 
         /**
          * @return a vector of subtrees in string representation.

@@ -1,13 +1,14 @@
 /**
  * @file analyzer.h
  * @author Sean Massung
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _TOKENIZER_H_
-#define _TOKENIZER_H_
+#ifndef _META_ANALYZER_H_
+#define _META_ANALYZER_H_
 
 #include <stdexcept>
 #include <memory>

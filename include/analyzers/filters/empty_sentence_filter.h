@@ -1,6 +1,9 @@
 /**
  * @file empty_sentence_filter.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef _META_EMPTY_SENTENCE_FILTER_H_
@@ -63,6 +66,7 @@ class empty_sentence_filter
     std::unique_ptr<token_stream> source_;
 
     util::optional<std::string> first_;
+
     util::optional<std::string> second_;
 };
 }
