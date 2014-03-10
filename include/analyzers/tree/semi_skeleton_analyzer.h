@@ -13,8 +13,10 @@
 #include "analyzers/tree/tree_analyzer.h"
 #include "util/clonable.h"
 
-namespace meta {
-namespace analyzers {
+namespace meta
+{
+namespace analyzers
+{
 
 /**
  * Tokenizes parse trees by keeping track of only a single node label and
@@ -22,23 +24,21 @@ namespace analyzers {
  */
 class semi_skeleton_analyzer
     : public util::multilevel_clonable<analyzer,
-                                       tree_analyzer<semi_skeleton_analyzer>,
-                                       semi_skeleton_analyzer>
+        tree_analyzer<semi_skeleton_analyzer>, semi_skeleton_analyzer>
 {
-    public:
-        /**
-         * Keeps track of one node's tag and the skeleton structure beneath it.
-         * @param doc The document to parse
-         * @param tree The current parse_tree in the document
-         */
-        void tree_tokenize(corpus::document & doc, const parse_tree & tree);
+  public:
+    /**
+     * Keeps track of one node's tag and the skeleton structure beneath it.
+     * @param doc The document to parse
+     * @param tree The current parse_tree in the document
+     */
+    void tree_tokenize(corpus::document& doc, const parse_tree& tree);
 
-        /**
-         * Identifier for this analyzer.
-         */
-        const static std::string id;
+    /**
+     * Identifier for this analyzer.
+     */
+    const static std::string id;
 };
-
 }
 }
 

@@ -47,7 +47,7 @@ class ngram_analyzer: public analyzer
 
     private:
         /** The value of n for this ngram analyzer */
-        uint16_t _n_val;
+        uint16_t n_val_;
 };
 
 }

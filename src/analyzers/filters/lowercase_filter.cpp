@@ -42,6 +42,5 @@ lowercase_filter::operator bool() const
 {
     return *source_;
 }
-
 }
 }

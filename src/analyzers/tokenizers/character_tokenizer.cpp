@@ -37,6 +37,5 @@ character_tokenizer::operator bool() const
 {
     return idx_ < content_.size();
 }
-
 }
 }

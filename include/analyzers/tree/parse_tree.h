@@ -15,8 +15,10 @@
 #include <string>
 #include <vector>
 
-namespace meta {
-namespace analyzers {
+namespace meta
+{
+namespace analyzers
+{
 
 /**
  * Represents a static parse tree that was generated from the Stanford
@@ -24,103 +26,103 @@ namespace analyzers {
  */
 class parse_tree
 {
-    public:
-        /**
-         * Constructor.
-         * Detects whether the parameter is a subtree or a leaf, and recursively
-         *  builds subtrees.
-         */
-        parse_tree(const std::string & tags);
+  public:
+    /**
+     * Constructor.
+     * Detects whether the parameter is a subtree or a leaf, and recursively
+     *  builds subtrees.
+     */
+    parse_tree(const std::string& tags);
 
-        /**
-         * @return the toplevel part of speech for this parse_tree.
-         */
-        std::string get_category() const;
+    /**
+     * @return the toplevel part of speech for this parse_tree.
+     */
+    std::string get_category() const;
 
-        /**
-         * @return a vector of this parse_tree's immediate children.
-         */
-        std::vector<parse_tree> children() const;
+    /**
+     * @return a vector of this parse_tree's immediate children.
+     */
+    std::vector<parse_tree> children() const;
 
-        /**
-         * @param curr
-         * @return the height of the current tree
-         */
-        static uint64_t height(const parse_tree & curr);
+    /**
+     * @param curr
+     * @return the height of the current tree
+     */
+    static uint64_t height(const parse_tree& curr);
 
-        /**
-         * @return the number of immediate children for this parse_tree.
-         */
-        uint64_t num_children() const;
+    /**
+     * @return the number of immediate children for this parse_tree.
+     */
+    uint64_t num_children() const;
 
-        /**
-         * @return a string representation of the parse_tree.
-         */
-        std::string get_string() const;
+    /**
+     * @return a string representation of the parse_tree.
+     */
+    std::string get_string() const;
 
-        /**
-         * @return a string representation of the parse_tree structure.
-         */
-        std::string skeleton() const;
+    /**
+     * @return a string representation of the parse_tree structure.
+     */
+    std::string skeleton() const;
 
-        /**
-         * @param tree - the tree to print
-         * @return a nice multiline string representation of the tree
-         */
-        static std::string pretty_print(const parse_tree & tree);
+    /**
+     * @param tree - the tree to print
+     * @return a nice multiline string representation of the tree
+     */
+    static std::string pretty_print(const parse_tree& tree);
 
-        /**
-         * @return a string representation of the parse_tree's children.
-         */
-        std::string get_children_string() const;
+    /**
+     * @return a string representation of the parse_tree's children.
+     */
+    std::string get_children_string() const;
 
-        /**
-         * @return a string representation of the parse_tree's children without
-         * tags.
-         */
-        std::string get_skeleton_children() const;
+    /**
+     * @return a string representation of the parse_tree's children without
+     * tags.
+     */
+    std::string get_skeleton_children() const;
 
-        /**
-         * @param filename - where to read the trees from
-         * @return a vector of parse_trees generated from the given file
-         */
-        static std::vector<parse_tree> get_trees(const std::string & filename);
+    /**
+     * @param filename - where to read the trees from
+     * @return a vector of parse_trees generated from the given file
+     */
+    static std::vector<parse_tree> get_trees(const std::string& filename);
 
-    private:
-        /** the tag label on the root of this subtree */
-        std::string syntactic_category_;
+  private:
+    /** the tag label on the root of this subtree */
+    std::string syntactic_category_;
 
-        /** ordered collection of children of the current parse tree */
-        std::vector<parse_tree> children_;
+    /** ordered collection of children of the current parse tree */
+    std::vector<parse_tree> children_;
 
-        /**
-         * @return a vector of subtrees in string representation.
-         */
-        std::vector<std::string> transitions(std::string tags) const;
+    /**
+     * @return a vector of subtrees in string representation.
+     */
+    std::vector<std::string> transitions(std::string tags) const;
 
-        /**
-         * @return the root part of speech for a transition.
-         */
-        std::string root_category(const std::string & tags) const;
+    /**
+     * @return the root part of speech for a transition.
+     */
+    std::string root_category(const std::string& tags) const;
 
-        /**
-         * @param tree
-         * @param depth
-         * @param output
-         */
-        static void pretty_print(const parse_tree & tree, uint64_t depth,
-                std::stringstream & output);
-    public:
-        /**
-         * Basic exception for parse_tree interactions.
-         */
-        class parse_tree_exception: public std::runtime_error
-        {
-            public:
-                using std::runtime_error::runtime_error;
-        };
+    /**
+     * @param tree
+     * @param depth
+     * @param output
+     */
+    static void pretty_print(const parse_tree& tree, uint64_t depth,
+                             std::stringstream& output);
+
+  public:
+    /**
+     * Basic exception for parse_tree interactions.
+     */
+    class parse_tree_exception : public std::runtime_error
+    {
+      public:
+        using std::runtime_error::runtime_error;
+    };
 };
-
 }
 }
 

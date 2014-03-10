@@ -13,30 +13,30 @@
 #include "analyzers/tree/tree_analyzer.h"
 #include "util/clonable.h"
 
-namespace meta {
-namespace analyzers {
+namespace meta
+{
+namespace analyzers
+{
 
 /**
  * Tokenizes parse trees by extracting depth features.
  */
-class depth_analyzer
-    : public util::multilevel_clonable<analyzer, tree_analyzer<depth_analyzer>,
-                                       depth_analyzer>
+class depth_analyzer : public util::multilevel_clonable<analyzer,
+                                tree_analyzer<depth_analyzer>, depth_analyzer>
 {
-    public:
-        /**
-         * Extracts the height of each parse tree.
-         * @param doc The document to parse
-         * @param tree The current parse_tree in the document
-         */
-        void tree_tokenize(corpus::document & doc, const parse_tree & tree);
+  public:
+    /**
+     * Extracts the height of each parse tree.
+     * @param doc The document to parse
+     * @param tree The current parse_tree in the document
+     */
+    void tree_tokenize(corpus::document& doc, const parse_tree& tree);
 
-        /**
-         * Identifier for this analyzer.
-         */
-        const static std::string id;
+    /**
+     * Identifier for this analyzer.
+     */
+    const static std::string id;
 };
-
 }
 }
 

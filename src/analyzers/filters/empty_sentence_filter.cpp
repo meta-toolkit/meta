@@ -13,7 +13,7 @@ namespace analyzers
 const std::string empty_sentence_filter::id = "empty-sentence";
 
 empty_sentence_filter::empty_sentence_filter(
-    std::unique_ptr<token_stream> source)
+        std::unique_ptr<token_stream> source)
     : source_{std::move(source)}
 {
     next_token();
@@ -66,6 +66,5 @@ empty_sentence_filter::operator bool() const
 {
     return static_cast<bool>(first_);
 }
-
 }
 }

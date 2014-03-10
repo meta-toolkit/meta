@@ -12,29 +12,30 @@
 #include "analyzers/analyzer.h"
 #include "util/clonable.h"
 
-namespace meta {
-namespace analyzers {
+namespace meta
+{
+namespace analyzers
+{
 
 /**
  * libsvm_analyzer tokenizes documents that have been created from a
  * line_corpus, where each line is in libsvm input format and stored in the
  * document's content field.
  */
-class libsvm_analyzer: public util::clonable<analyzer, libsvm_analyzer>
+class libsvm_analyzer : public util::clonable<analyzer, libsvm_analyzer>
 {
-    public:
-        /**
-         * Tokenizes a file into a document.
-         * @param doc The document to store the tokenized information in
-         */
-        virtual void tokenize(corpus::document & doc) override;
+  public:
+    /**
+     * Tokenizes a file into a document.
+     * @param doc The document to store the tokenized information in
+     */
+    virtual void tokenize(corpus::document& doc) override;
 
-        /**
-         * Identifier for this analyzer.
-         */
-        const static std::string id;
+    /**
+     * Identifier for this analyzer.
+     */
+    const static std::string id;
 };
-
 }
 }
 

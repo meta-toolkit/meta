@@ -15,8 +15,10 @@
 #include "analyzers/analyzer.h"
 #include "util/clonable.h"
 
-namespace meta {
-namespace analyzers {
+namespace meta
+{
+namespace analyzers
+{
 
 /**
  * The multi_analyzer class contains more than one analyzer. This is useful
@@ -26,32 +28,30 @@ namespace analyzers {
  * rewrite rules. The multi_analyzer keeps track of all the features in one set
  * for however many internal analyzers it contains.
  */
-class multi_analyzer: public util::clonable<analyzer, multi_analyzer>
+class multi_analyzer : public util::clonable<analyzer, multi_analyzer>
 {
-    public:
-        /**
-         * Constructs a multi_analyzer from a vector of other analyzers.
-         * @param toks
-         */
-        multi_analyzer(std::vector<std::unique_ptr<analyzer>>&& toks);
+  public:
+    /**
+     * Constructs a multi_analyzer from a vector of other analyzers.
+     * @param toks
+     */
+    multi_analyzer(std::vector<std::unique_ptr<analyzer>>&& toks);
 
-        /**
-         * Copy constructor.
-         */
-        multi_analyzer(const multi_analyzer& other);
+    /**
+     * Copy constructor.
+     */
+    multi_analyzer(const multi_analyzer& other);
 
-        /**
-         * Tokenizes a file into a document.
-         * @param doc The document to store the tokenized information in
-         */
-        virtual void tokenize(corpus::document & doc) override;
+    /**
+     * Tokenizes a file into a document.
+     * @param doc The document to store the tokenized information in
+     */
+    virtual void tokenize(corpus::document& doc) override;
 
-    private:
-
-        /** Holds all the analyzers in this multi_analyzer */
-        std::vector<std::unique_ptr<analyzer>> _analyzers;
+  private:
+    /** Holds all the analyzers in this multi_analyzer */
+    std::vector<std::unique_ptr<analyzer>> analyzers_;
 };
-
 }
 }
 

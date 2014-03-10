@@ -13,30 +13,31 @@
 #include "analyzers/tree/tree_analyzer.h"
 #include "util/clonable.h"
 
-namespace meta {
-namespace analyzers {
+namespace meta
+{
+namespace analyzers
+{
 
 /**
  * Tokenizes parse trees by only tokenizing the tree structure itself.
  */
 class skeleton_analyzer
-    : public util::multilevel_clonable<
-          analyzer, tree_analyzer<skeleton_analyzer>, skeleton_analyzer>
+    : public util::multilevel_clonable<analyzer,
+        tree_analyzer<skeleton_analyzer>, skeleton_analyzer>
 {
-    public:
-        /**
-         * Ignores node labels and only tokenizes the tree structure.
-         * @param doc The document to parse
-         * @param tree The current parse_tree in the document
-         */
-        void tree_tokenize(corpus::document & doc, const parse_tree & tree);
+  public:
+    /**
+     * Ignores node labels and only tokenizes the tree structure.
+     * @param doc The document to parse
+     * @param tree The current parse_tree in the document
+     */
+    void tree_tokenize(corpus::document& doc, const parse_tree& tree);
 
-        /**
-         * Identifier for this analyzer.
-         */
-        const static std::string id;
+    /**
+     * Identifier for this analyzer.
+     */
+    const static std::string id;
 };
-
 }
 }
 

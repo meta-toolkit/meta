@@ -11,8 +11,10 @@
 #include "analyzers/ngram/ngram_word_analyzer.h"
 #include "analyzers/token_stream.h"
 
-namespace meta {
-namespace analyzers {
+namespace meta
+{
+namespace analyzers
+{
 
 const std::string ngram_word_analyzer::id = "ngram-word";
 
@@ -29,7 +31,7 @@ ngram_word_analyzer::ngram_word_analyzer(const ngram_word_analyzer& other)
     // nothing
 }
 
-void ngram_word_analyzer::tokenize(corpus::document & doc)
+void ngram_word_analyzer::tokenize(corpus::document& doc)
 {
     // first, get tokens
     stream_->set_content(get_content(doc));
@@ -38,10 +40,10 @@ void ngram_word_analyzer::tokenize(corpus::document & doc)
         tokens.push_back(stream_->next());
 
     // second, create ngrams from them
-    for(size_t i = n_value() - 1; i < tokens.size(); ++i)
+    for (size_t i = n_value() - 1; i < tokens.size(); ++i)
     {
         std::string combined = tokens[i];
-        for(size_t j = 1; j < n_value(); ++j)
+        for (size_t j = 1; j < n_value(); ++j)
             combined = tokens[i - j] + "_" + combined;
 
         doc.increment(combined, 1);
@@ -49,9 +51,9 @@ void ngram_word_analyzer::tokenize(corpus::document & doc)
 }
 
 template <>
-std::unique_ptr<analyzer>
-    make_analyzer<ngram_word_analyzer>(const cpptoml::toml_group& global,
-                                       const cpptoml::toml_group& config)
+std::unique_ptr<analyzer> make_analyzer
+    <ngram_word_analyzer>(const cpptoml::toml_group& global,
+                          const cpptoml::toml_group& config)
 {
     auto n_val = config.get_as<int64_t>("ngram");
     if (!n_val)
@@ -61,6 +63,5 @@ std::unique_ptr<analyzer>
     auto filts = analyzer::load_filters(global, config);
     return make_unique<ngram_word_analyzer>(*n_val, std::move(filts));
 }
-
 }
 }

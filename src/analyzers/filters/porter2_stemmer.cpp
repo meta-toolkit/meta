@@ -57,6 +57,5 @@ porter2_stemmer::operator bool() const
 {
     return static_cast<bool>(token_);
 }
-
 }
 }

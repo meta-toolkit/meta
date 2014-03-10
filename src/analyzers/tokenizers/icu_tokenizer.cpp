@@ -28,9 +28,7 @@ class icu_tokenizer::impl
     void set_content(std::string content)
     {
         auto pred = [](char c)
-        {
-            return c == '\n' || c == '\v' || c == '\f' || c == '\r';
-        };
+        { return c == '\n' || c == '\v' || c == '\f' || c == '\r'; };
         // doing this because the sentence segmenter gets confused by
         // newlines appearing within a pargraph. Plus, we don't really care
         // about the kind of whitespace that was used for IR tasks.
@@ -64,6 +62,7 @@ class icu_tokenizer::impl
     {
         return !tokens_.empty();
     }
+
   private:
     utf::segmenter segmenter_;
     std::deque<std::string> tokens_;
@@ -72,8 +71,7 @@ class icu_tokenizer::impl
 icu_tokenizer::icu_tokenizer() = default;
 icu_tokenizer::icu_tokenizer(icu_tokenizer&&) = default;
 
-icu_tokenizer::icu_tokenizer(const icu_tokenizer& other)
-    : impl_{*other.impl_}
+icu_tokenizer::icu_tokenizer(const icu_tokenizer& other) : impl_{*other.impl_}
 {
 }
 
@@ -93,6 +91,5 @@ icu_tokenizer::operator bool() const
 {
     return static_cast<bool>(*impl_);
 }
-
 }
 }

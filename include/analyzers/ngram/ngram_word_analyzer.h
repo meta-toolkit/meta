@@ -13,53 +13,56 @@
 #include "analyzers/ngram/ngram_analyzer.h"
 #include "util/clonable.h"
 
-namespace meta {
-namespace analyzers {
+namespace meta
+{
+namespace analyzers
+{
 
 class ngram_word_analyzer : public util::multilevel_clonable<
-                                analyzer, ngram_analyzer, ngram_word_analyzer>
+                            analyzer, ngram_analyzer, ngram_word_analyzer>
 {
-    using base = util::multilevel_clonable<analyzer, ngram_analyzer,
+    using base = util::multilevel_clonable<analyzer,
+                                           ngram_analyzer,
                                            ngram_word_analyzer>;
-    public:
-        /**
-         * Constructor.
-         * @param n The value of n to use for the ngrams.
-         * @param stream The stream to read tokens from.
-         */
-        ngram_word_analyzer(uint16_t n, std::unique_ptr<token_stream> stream);
 
-        /**
-         * Copy constructor.
-         */
-        ngram_word_analyzer(const ngram_word_analyzer& other);
+  public:
+    /**
+     * Constructor.
+     * @param n The value of n to use for the ngrams.
+     * @param stream The stream to read tokens from.
+     */
+    ngram_word_analyzer(uint16_t n, std::unique_ptr<token_stream> stream);
 
-        /**
-         * Tokenizes a file into a document.
-         * @param doc The document to store the tokenized information in
-         */
-        virtual void tokenize(corpus::document & doc) override;
+    /**
+     * Copy constructor.
+     */
+    ngram_word_analyzer(const ngram_word_analyzer& other);
 
-        /**
-         * Identifier for this analyzer.
-         */
-        const static std::string id;
+    /**
+     * Tokenizes a file into a document.
+     * @param doc The document to store the tokenized information in
+     */
+    virtual void tokenize(corpus::document& doc) override;
 
-    private:
-        /**
-         * The token stream to be used for extracting tokens.
-         */
-        std::unique_ptr<token_stream> stream_;
+    /**
+     * Identifier for this analyzer.
+     */
+    const static std::string id;
+
+  private:
+    /**
+     * The token stream to be used for extracting tokens.
+     */
+    std::unique_ptr<token_stream> stream_;
 };
 
 /**
  * Specialization of the factory method for creating ngram_word_analyzers.
  */
 template <>
-std::unique_ptr<analyzer>
-    make_analyzer<ngram_word_analyzer>(const cpptoml::toml_group&,
-                                       const cpptoml::toml_group&);
+std::unique_ptr<analyzer> make_analyzer<ngram_word_analyzer>(
+        const cpptoml::toml_group&,
+        const cpptoml::toml_group&);
 }
-
 }
 #endif

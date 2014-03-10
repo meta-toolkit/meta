@@ -13,42 +13,44 @@
 #include "analyzers/ngram/ngram_simple_analyzer.h"
 #include "util/clonable.h"
 
-namespace meta {
-namespace analyzers {
-
-class ngram_pos_analyzer
-    : public util::multilevel_clonable<analyzer, ngram_simple_analyzer,
-                                       ngram_pos_analyzer>
+namespace meta
 {
-    using base = util::multilevel_clonable<analyzer, ngram_simple_analyzer,
+namespace analyzers
+{
+
+class ngram_pos_analyzer : public util::multilevel_clonable
+                           <analyzer, ngram_simple_analyzer, ngram_pos_analyzer>
+{
+    using base = util::multilevel_clonable<analyzer,
+                                           ngram_simple_analyzer,
                                            ngram_pos_analyzer>;
-    public:
-        /**
-         * Constructor.
-         * @param n The value of n in ngram.
-         */
-        ngram_pos_analyzer(uint16_t n);
 
-        /**
-         * Tokenizes a file into a document.
-         * @param doc The document to store the tokenized information in
-         */
-        virtual void tokenize(corpus::document & doc) override;
+  public:
+    /**
+     * Constructor.
+     * @param n The value of n in ngram.
+     */
+    ngram_pos_analyzer(uint16_t n);
 
-        /**
-         * Identifier for this analyzer.
-         */
-        const static std::string id;
+    /**
+     * Tokenizes a file into a document.
+     * @param doc The document to store the tokenized information in
+     */
+    virtual void tokenize(corpus::document& doc) override;
+
+    /**
+     * Identifier for this analyzer.
+     */
+    const static std::string id;
 };
 
 /**
  * Specialization of the factory method for creating ngram_pos_analyzers.
  */
 template <>
-std::unique_ptr<analyzer>
-    make_analyzer<ngram_pos_analyzer>(const cpptoml::toml_group&,
-                                      const cpptoml::toml_group&);
-
+std::unique_ptr<analyzer> make_analyzer<ngram_pos_analyzer>(
+        const cpptoml::toml_group&,
+        const cpptoml::toml_group&);
 }
 }
 

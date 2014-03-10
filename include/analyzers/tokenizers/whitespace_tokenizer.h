@@ -30,40 +30,40 @@ namespace analyzers
  * tokenizer preserves the whitespace, but combines adjacent non-whitespace
  * characters together into individual tokens.
  */
-class whitespace_tokenizer
-    : public util::clonable<token_stream, whitespace_tokenizer>
+class whitespace_tokenizer : public util::clonable<token_stream,
+                                                   whitespace_tokenizer>
 {
-    public:
-        /**
-         * Creates a whitespace_tokenizer.
-         */
-        whitespace_tokenizer();
+  public:
+    /**
+     * Creates a whitespace_tokenizer.
+     */
+    whitespace_tokenizer();
 
-        /**
-         * Sets the content for the tokenizer to parse.
-         */
-        void set_content(const std::string& content) override;
+    /**
+     * Sets the content for the tokenizer to parse.
+     */
+    void set_content(const std::string& content) override;
 
-        /**
-         * Obtains the next token in the document. This will either be a
-         * whitespace character, or a token consisting of a sequence of
-         * non-whitespace characters.
-         */
-        std::string next() override;
+    /**
+     * Obtains the next token in the document. This will either be a
+     * whitespace character, or a token consisting of a sequence of
+     * non-whitespace characters.
+     */
+    std::string next() override;
 
-        /**
-         * Determines if there are more tokens in the document.
-         */
-        operator bool() const override;
+    /**
+     * Determines if there are more tokens in the document.
+     */
+    operator bool() const override;
 
-        /**
-         * Identifier for this tokenizer.
-         */
-        const static std::string id;
+    /**
+     * Identifier for this tokenizer.
+     */
+    const static std::string id;
 
-    private:
-        std::string content_;
-        uint64_t idx_;
+  private:
+    std::string content_;
+    uint64_t idx_;
 };
 }
 }

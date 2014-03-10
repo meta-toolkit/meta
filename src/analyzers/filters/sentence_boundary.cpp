@@ -157,8 +157,8 @@ bool sentence_boundary::possible_punc(const std::string& token)
 
 bool sentence_boundary::possible_end(const std::string& token)
 {
-    return end_exception_set.find(token) == end_exception_set.end()
-           && token[0] != '.';
+    return end_exception_set.find(token) == end_exception_set.end() && token[0]
+                                                                       != '.';
 }
 
 bool sentence_boundary::possible_start(const std::string& token)
@@ -167,12 +167,12 @@ bool sentence_boundary::possible_start(const std::string& token)
 }
 
 template <>
-std::unique_ptr<token_stream> make_filter<sentence_boundary>(
-        std::unique_ptr<token_stream> src, const cpptoml::toml_group& config)
+std::unique_ptr<token_stream> make_filter
+    <sentence_boundary>(std::unique_ptr<token_stream> src,
+                        const cpptoml::toml_group& config)
 {
     sentence_boundary::load_heuristics(config);
     return make_unique<sentence_boundary>(std::move(src));
 }
-
 }
 }

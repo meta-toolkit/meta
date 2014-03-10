@@ -29,39 +29,39 @@ namespace analyzers
  * Converts documents into streams of characters. This is the simplest
  * tokenizer.
  */
-class character_tokenizer
-    : public util::clonable<token_stream, character_tokenizer>
+class character_tokenizer : public util::clonable<
+                            token_stream, character_tokenizer>
 {
   public:
-      /**
-       * Creates a character_tokenizer.
-       */
-      character_tokenizer();
+    /**
+     * Creates a character_tokenizer.
+     */
+    character_tokenizer();
 
-      /**
-       * Sets the content for the tokenizer.
-       */
-      void set_content(const std::string& content) override;
+    /**
+     * Sets the content for the tokenizer.
+     */
+    void set_content(const std::string& content) override;
 
-      /**
-       * Obtains the next token in the document. This token will contain a
-       * single character.
-       */
-      std::string next() override;
+    /**
+     * Obtains the next token in the document. This token will contain a
+     * single character.
+     */
+    std::string next() override;
 
-      /**
-       * Determines if there are more tokens in the document.
-       */
-      operator bool() const override;
+    /**
+     * Determines if there are more tokens in the document.
+     */
+    operator bool() const override;
 
-      /**
-       * Identifier for this tokenizer.
-       */
-      const static std::string id;
+    /**
+     * Identifier for this tokenizer.
+     */
+    const static std::string id;
 
   private:
-      std::string content_;
-      uint64_t idx_;
+    std::string content_;
+    uint64_t idx_;
 };
 }
 }
