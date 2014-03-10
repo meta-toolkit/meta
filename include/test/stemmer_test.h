@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_STEMMER_TEST_H_
-#define _META_STEMMER_TEST_H_
+#ifndef META_STEMMER_TEST_H_
+#define META_STEMMER_TEST_H_
 
 #include <fstream>
 

@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_FILTER_PORTER2_STEMMER_H_
-#define _META_FILTER_PORTER2_STEMMER_H_
+#ifndef META_FILTER_PORTER2_STEMMER_H_
+#define META_FILTER_PORTER2_STEMMER_H_
 
 #include <memory>
 #include "analyzers/token_stream.h"

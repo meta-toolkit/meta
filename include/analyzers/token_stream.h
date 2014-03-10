@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_TOKEN_STREAM_H_
-#define _META_TOKEN_STREAM_H_
+#ifndef META_TOKEN_STREAM_H_
+#define META_TOKEN_STREAM_H_
 
 #include <memory>
 #include <string>

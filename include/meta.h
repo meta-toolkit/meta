@@ -8,8 +8,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_H_
-#define _META_H_
+#ifndef META_H_
+#define META_H_
 
 #include <cstdint>
 #include <string>

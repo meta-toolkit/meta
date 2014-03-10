@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CLASSIFY_ONE_VS_ALL_H_
-#define _META_CLASSIFY_ONE_VS_ALL_H_
+#ifndef META_CLASSIFY_ONE_VS_ALL_H_
+#define META_CLASSIFY_ONE_VS_ALL_H_
 
 #include "classify/classifier/binary_classifier.h"
 #include "classify/classifier_factory.h"

@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#ifndef _META_RANKER_FACTORY_H_
-#define _META_RANKER_FACTORY_H_
+#ifndef META_RANKER_FACTORY_H_
+#define META_RANKER_FACTORY_H_
 
 #include "index/ranker/ranker.h"
 #include "util/factory.h"

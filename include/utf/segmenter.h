@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#ifndef _META_UTF_SEGMENTER_H_
-#define _META_UTF_SEGMENTER_H_
+#ifndef META_UTF_SEGMENTER_H_
+#define META_UTF_SEGMENTER_H_
 
 #include <string>
 #include <vector>

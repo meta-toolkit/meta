@@ -11,8 +11,8 @@
 #include "classify/kernel/polynomial.h"
 #include "meta.h"
 
-#ifndef _META_CLASSIFY_KERNEL_SIGMOID_H_
-#define _META_CLASSIFY_KERNEL_SIGMOID_H_
+#ifndef META_CLASSIFY_KERNEL_SIGMOID_H_
+#define META_CLASSIFY_KERNEL_SIGMOID_H_
 
 namespace meta {
 namespace classify {

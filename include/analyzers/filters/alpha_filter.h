@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_ALPHA_FILTER_H_
-#define _META_ALPHA_FILTER_H_
+#ifndef META_ALPHA_FILTER_H_
+#define META_ALPHA_FILTER_H_
 
 #include "analyzers/token_stream.h"
 #include "util/clonable.h"

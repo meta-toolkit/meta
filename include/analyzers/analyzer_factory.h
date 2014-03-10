@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_ANALYZER_FACTORY_H_
-#define _META_ANALYZER_FACTORY_H_
+#ifndef META_ANALYZER_FACTORY_H_
+#define META_ANALYZER_FACTORY_H_
 
 #include "analyzers/analyzer.h"
 #include "util/factory.h"

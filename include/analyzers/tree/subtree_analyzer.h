@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_SUBTREE_ANALYZER_H_
-#define _META_SUBTREE_ANALYZER_H_
+#ifndef META_SUBTREE_ANALYZER_H_
+#define META_SUBTREE_ANALYZER_H_
 
 #include "analyzers/tree/tree_analyzer.h"
 #include "util/clonable.h"

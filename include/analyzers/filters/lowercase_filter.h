@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_LOWERCASE_FILTER_H_
-#define _META_LOWERCASE_FILTER_H_
+#ifndef META_LOWERCASE_FILTER_H_
+#define META_LOWERCASE_FILTER_H_
 
 #include <memory>
 #include "analyzers/token_stream.h"

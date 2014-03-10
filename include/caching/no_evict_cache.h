@@ -7,8 +7,8 @@
  * @author Chase Geigle
  */
 
-#ifndef _META_NO_EVICT_CACHE_H_
-#define _META_NO_EVICT_CACHE_H_
+#ifndef META_NO_EVICT_CACHE_H_
+#define META_NO_EVICT_CACHE_H_
 
 #include <deque>
 #include <memory>

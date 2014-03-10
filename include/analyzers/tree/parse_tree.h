@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_PARSE_TREE_H_
-#define _META_PARSE_TREE_H_
+#ifndef META_PARSE_TREE_H_
+#define META_PARSE_TREE_H_
 
 #include <cstdint>
 #include <sstream>

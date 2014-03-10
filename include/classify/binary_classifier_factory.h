@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#ifndef _META_BINARY_CLASSIFIER_FACTORY_H_
-#define _META_BINARY_CLASSIFIER_FACTORY_H_
+#ifndef META_BINARY_CLASSIFIER_FACTORY_H_
+#define META_BINARY_CLASSIFIER_FACTORY_H_
 
 #include "classify/classifier/binary_classifier.h"
 #include "util/factory.h"

@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_INDEX_DISK_INDEX_IMPL_H_
-#define _META_INDEX_DISK_INDEX_IMPL_H_
+#ifndef META_INDEX_DISK_INDEX_IMPL_H_
+#define META_INDEX_DISK_INDEX_IMPL_H_
 
 #include <mutex>
 

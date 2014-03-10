@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_NGRAM_DISTRIBUTION_
-#define _META_NGRAM_DISTRIBUTION_
+#ifndef META_NGRAM_DISTRIBUTION_
+#define META_NGRAM_DISTRIBUTION_
 
 #include <iostream>
 #include <random>

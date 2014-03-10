@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_LIBSVM_ANALYZER_
-#define _META_LIBSVM_ANALYZER_
+#ifndef META_LIBSVM_ANALYZER_
+#define META_LIBSVM_ANALYZER_
 
 #include "analyzers/analyzer.h"
 #include "util/clonable.h"

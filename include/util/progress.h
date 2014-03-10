@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#ifndef _META_UTIL_PROGRESS_H_
-#define _META_UTIL_PROGRESS_H_
+#ifndef META_UTIL_PROGRESS_H_
+#define META_UTIL_PROGRESS_H_
 
 #include <chrono>
 #include <string>

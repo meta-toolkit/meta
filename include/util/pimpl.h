@@ -4,8 +4,8 @@
  * @see http://herbsutter.com/gotw/_101/
  */
 
-#ifndef _META_UTIL_PIMPL_H_
-#define _META_UTIL_PIMPL_H_
+#ifndef META_UTIL_PIMPL_H_
+#define META_UTIL_PIMPL_H_
 
 #include <memory>
 #include "util/shim.h"

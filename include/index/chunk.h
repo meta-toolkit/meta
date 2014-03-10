@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CHUNK_H_
-#define _META_CHUNK_H_
+#ifndef META_CHUNK_H_
+#define META_CHUNK_H_
 
 #include <cstdint>
 #include <string>

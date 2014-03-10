@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CORPUS_H_
-#define _META_CORPUS_H_
+#ifndef META_CORPUS_H_
+#define META_CORPUS_H_
 
 #include <stdexcept>
 #include <memory>

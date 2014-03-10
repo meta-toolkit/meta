@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_VOCABULARY_MAP_WRITER_TEST_H_
-#define _META_VOCABULARY_MAP_WRITER_TEST_H_
+#ifndef META_VOCABULARY_MAP_WRITER_TEST_H_
+#define META_VOCABULARY_MAP_WRITER_TEST_H_
 
 #include <iostream>
 #include "io/binary.h"

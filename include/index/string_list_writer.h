@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_STRING_LIST_WRITER_H_
-#define _META_STRING_LIST_WRITER_H_
+#ifndef META_STRING_LIST_WRITER_H_
+#define META_STRING_LIST_WRITER_H_
 
 #include <fstream>
 #include <mutex>

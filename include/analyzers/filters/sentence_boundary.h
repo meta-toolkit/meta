@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_SENTENCE_BOUNDARY_H_
-#define _META_SENTENCE_BOUNDARY_H_
+#ifndef META_SENTENCE_BOUNDARY_H_
+#define META_SENTENCE_BOUNDARY_H_
 
 #include <deque>
 #include <memory>

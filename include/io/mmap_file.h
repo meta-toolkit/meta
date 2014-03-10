@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_MMAP_FILE_H_
-#define _META_MMAP_FILE_H_
+#ifndef META_MMAP_FILE_H_
+#define META_MMAP_FILE_H_
 
 #include <stdexcept>
 #include <string>

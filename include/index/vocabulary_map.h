@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_VOCABULARY_MAP_H_
-#define _META_VOCABULARY_MAP_H_
+#ifndef META_VOCABULARY_MAP_H_
+#define META_VOCABULARY_MAP_H_
 
 #include "io/mmap_file.h"
 #include "util/disk_vector.h"

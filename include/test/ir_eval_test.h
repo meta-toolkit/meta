@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_IR_EVAL_TEST_H_
-#define _META_IR_EVAL_TEST_H_
+#ifndef META_IR_EVAL_TEST_H_
+#define META_IR_EVAL_TEST_H_
 
 #include "test/inverted_index_test.h"
 #include "index/eval/ir_eval.h"

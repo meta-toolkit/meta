@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#ifndef _META_CLASSIFY_LOSS_FUNCTION_H_
-#define _META_CLASSIFY_LOSS_FUNCTION_H_
+#ifndef META_CLASSIFY_LOSS_FUNCTION_H_
+#define META_CLASSIFY_LOSS_FUNCTION_H_
 
 #include <string>
 

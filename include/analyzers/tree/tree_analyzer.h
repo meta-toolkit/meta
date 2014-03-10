@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_TREE_ANALYZER_H_
-#define _META_TREE_ANALYZER_H_
+#ifndef META_TREE_ANALYZER_H_
+#define META_TREE_ANALYZER_H_
 
 #include "corpus/document.h"
 #include "analyzers/analyzer.h"

@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_INVERTED_INDEX_H_
-#define _META_INVERTED_INDEX_H_
+#ifndef META_INVERTED_INDEX_H_
+#define META_INVERTED_INDEX_H_
 
 #include <queue>
 #include <stdexcept>

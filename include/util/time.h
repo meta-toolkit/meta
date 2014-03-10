@@ -2,8 +2,8 @@
  * @file time.h
  */
 
-#ifndef _META_UTIL_TIME_H_
-#define _META_UTIL_TIME_H_
+#ifndef META_UTIL_TIME_H_
+#define META_UTIL_TIME_H_
 
 #include <chrono>
 

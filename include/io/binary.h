@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_IO_BINARY_H_
-#define _META_IO_BINARY_H_
+#ifndef META_IO_BINARY_H_
+#define META_IO_BINARY_H_
 
 #include <istream>
 #include <ostream>

@@ -8,8 +8,8 @@
 
 #include "meta.h"
 
-#ifndef _META_CLASSIFY_KERNEL_RADIAL_BASIS_H_
-#define _META_CLASSIFY_KERNEL_RADIAL_BASIS_H_
+#ifndef META_CLASSIFY_KERNEL_RADIAL_BASIS_H_
+#define META_CLASSIFY_KERNEL_RADIAL_BASIS_H_
 
 namespace meta {
 namespace classify {

@@ -7,8 +7,8 @@
  * @author Sean Massung
  */
 
-#ifndef _META_PIVOTED_LENGTH_H_
-#define _META_PIVOTED_LENGTH_H_
+#ifndef META_PIVOTED_LENGTH_H_
+#define META_PIVOTED_LENGTH_H_
 
 #include "index/ranker/ranker.h"
 #include "index/ranker/ranker_factory.h"

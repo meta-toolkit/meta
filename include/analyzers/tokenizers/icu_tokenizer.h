@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_ICU_TOKENIZER_H_
-#define _META_ICU_TOKENIZER_H_
+#ifndef META_ICU_TOKENIZER_H_
+#define META_ICU_TOKENIZER_H_
 
 #include "analyzers/token_stream.h"
 #include "util/clonable.h"

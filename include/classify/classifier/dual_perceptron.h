@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CLASSIFY_DUAL_PERCEPTRON_H_
-#define _META_CLASSIFY_DUAL_PERCEPTRON_H_
+#ifndef META_CLASSIFY_DUAL_PERCEPTRON_H_
+#define META_CLASSIFY_DUAL_PERCEPTRON_H_
 
 #include "classify/classifier_factory.h"
 #include "classify/classifier/classifier.h"

@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#ifndef _META_VOCABULARY_MAP_WRITER_H_
-#define _META_VOCABULARY_MAP_WRITER_H_
+#ifndef META_VOCABULARY_MAP_WRITER_H_
+#define META_VOCABULARY_MAP_WRITER_H_
 
 #include <cstdint>
 #include <fstream>

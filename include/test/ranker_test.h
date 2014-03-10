@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_RANKER_TEST_H_
-#define _META_RANKER_TEST_H_
+#ifndef META_RANKER_TEST_H_
+#define META_RANKER_TEST_H_
 
 #include "test/unit_test.h"
 #include "test/inverted_index_test.h"

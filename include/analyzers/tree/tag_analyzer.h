@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_TAG_ANALYZER_H_
-#define _META_TAG_ANALYZER_H_
+#ifndef META_TAG_ANALYZER_H_
+#define META_TAG_ANALYZER_H_
 
 #include "analyzers/tree/tree_analyzer.h"
 #include "util/clonable.h"

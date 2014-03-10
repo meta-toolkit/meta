@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#ifndef _META_UTIL_CLONABLE_H_
-#define _META_UTIL_CLONABLE_H_
+#ifndef META_UTIL_CLONABLE_H_
+#define META_UTIL_CLONABLE_H_
 
 #include <memory>
 #include "util/shim.h"

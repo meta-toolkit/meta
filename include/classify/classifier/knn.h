@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_KNN_H_
-#define _META_KNN_H_
+#ifndef META_KNN_H_
+#define META_KNN_H_
 
 #include <unordered_set>
 #include "index/inverted_index.h"

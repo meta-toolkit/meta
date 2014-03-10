@@ -4,8 +4,8 @@
  * standardization.
  */
 
-#ifndef _META_UTIL_SHIM_H_
-#define _META_UTIL_SHIM_H_
+#ifndef META_UTIL_SHIM_H_
+#define META_UTIL_SHIM_H_
 
 #include <memory>
 

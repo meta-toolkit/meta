@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_FILTER_FACTORY_H_
-#define _META_FILTER_FACTORY_H_
+#ifndef META_FILTER_FACTORY_H_
+#define META_FILTER_FACTORY_H_
 
 #include "analyzers/token_stream.h"
 #include "util/factory.h"

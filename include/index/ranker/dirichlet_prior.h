@@ -7,8 +7,8 @@
  * @author Sean Massung
  */
 
-#ifndef _META_DIRICHLET_PRIOR_H_
-#define _META_DIRICHLET_PRIOR_H_
+#ifndef META_DIRICHLET_PRIOR_H_
+#define META_DIRICHLET_PRIOR_H_
 
 #include "index/ranker/lm_ranker.h"
 #include "index/ranker/ranker_factory.h"

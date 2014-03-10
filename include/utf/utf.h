@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#ifndef _META_UTF8_H_
-#define _META_UTF8_H_
+#ifndef META_UTF8_H_
+#define META_UTF8_H_
 
 #include <functional>
 #include <string>

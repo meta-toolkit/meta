@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_PARSER_H_
-#define _META_PARSER_H_
+#ifndef META_PARSER_H_
+#define META_PARSER_H_
 
 #include <array>
 #include <memory>

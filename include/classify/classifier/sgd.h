@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CLASSIFY_SGD_H_
-#define _META_CLASSIFY_SGD_H_
+#ifndef META_CLASSIFY_SGD_H_
+#define META_CLASSIFY_SGD_H_
 
 #include <vector>
 #include "classify/binary_classifier_factory.h"

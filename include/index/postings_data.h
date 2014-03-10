@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_POSTINGS_DATA_
-#define _META_POSTINGS_DATA_
+#ifndef META_POSTINGS_DATA_
+#define META_POSTINGS_DATA_
 
 #include <fstream>
 #include <limits>

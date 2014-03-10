@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_COMPRESSED_FILE_WRITER_H_
-#define _META_COMPRESSED_FILE_WRITER_H_
+#ifndef META_COMPRESSED_FILE_WRITER_H_
+#define META_COMPRESSED_FILE_WRITER_H_
 
 #include <functional>
 #include <stdexcept>
