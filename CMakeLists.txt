@@ -141,8 +141,6 @@ add_library(meta-corpus
 target_link_libraries(meta-corpus meta-io)
 
 add_library(meta-stemmers
-            src/stemmers/no_stemmer.cpp
-            src/stemmers/porter2.cpp
             deps/porter2_stemmer/porter2_stemmer.cpp)
 
 add_library(meta-analyzers
