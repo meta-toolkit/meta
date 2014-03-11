@@ -47,7 +47,17 @@ class binary_classifier : public classifier
      */
     virtual double predict(doc_id d_id) const = 0;
 
-  protected:
+    /**
+     * @return the "positive" label for this classifier
+     */
+    const class_label& positive_label() const;
+
+    /**
+     * @return the "negative" label for this classifier
+     */
+    const class_label& negative_label() const;
+
+  private:
     /**
      * The label that marks positive examples.
      */

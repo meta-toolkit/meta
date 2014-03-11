@@ -25,5 +25,15 @@ class_label binary_classifier::classify(doc_id d_id)
     return prediction >= 0 ? positive_ : negative_;
 }
 
+const class_label& binary_classifier::positive_label() const
+{
+    return positive_;
+}
+
+const class_label& binary_classifier::negative_label() const
+{
+    return negative_;
+}
+
 }
 }

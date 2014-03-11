@@ -31,6 +31,7 @@ classifier_factory::classifier_factory()
 {
     // built-in classifiers
     reg<one_vs_all>();
+    reg<one_vs_one>();
     reg<naive_bayes>();
     reg<svm_wrapper>();
     reg<winnow>();

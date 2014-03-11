@@ -50,7 +50,7 @@ void sgd::train( const std::vector<doc_id> & docs ) {
     std::vector<int> labels( docs.size() );
     for( size_t i = 0; i < docs.size(); ++i ) {
         indices[i] = i;
-        labels[i] = idx_->label(docs[i]) == positive_ ? 1 : -1;
+        labels[i] = idx_->label(docs[i]) == positive_label() ? 1 : -1;
     }
     std::random_device d;
     std::mt19937 g{ d() };

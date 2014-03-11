@@ -208,6 +208,7 @@ add_library(meta-classify
             src/classify/classifier/svm_wrapper.cpp
             src/classify/classifier/winnow.cpp
             src/classify/classifier/one_vs_all.cpp
+            src/classify/classifier/one_vs_one.cpp
             src/classify/classifier/dual_perceptron.cpp
             src/classify/classifier/knn.cpp
             src/classify/loss/hinge.cpp
