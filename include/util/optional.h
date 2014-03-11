@@ -29,6 +29,7 @@ constexpr struct trivial_init_t
  */
 struct nullopt_t
 {
+    /** An empty object */
     struct init
     {
     };

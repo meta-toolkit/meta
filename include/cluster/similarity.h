@@ -41,6 +41,10 @@ template <class Key, class Value>
 double cosine_similarity(const unordered_map<Key, Value>& a,
                          const unordered_map<Key, Value>& b);
 
+/**
+ * Class to compute the cosine similarity between two sparse vectors.
+ * \f$ similarity(a, b) = \frac{a\cdot b}{||a||\cdot ||b||} \f$
+ */
 struct cosine
 {
     template <class Key, class Value>
@@ -62,6 +66,10 @@ template <class Key, class Value>
 double jaccard_similarity(const unordered_map<Key, Value>& a,
                           const unordered_map<Key, Value>& b);
 
+/**
+ * Class to compute the Jaccard similarity between two sparse vectors.
+ * \f$ similarity(a, b) = \frac{|a\cap b|}{|a\cup b|} \f$
+ */
 struct jaccard
 {
     template <class Key, class Value>

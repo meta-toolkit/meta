@@ -18,6 +18,10 @@ namespace meta
 namespace classify
 {
 
+/**
+ * Generalizes binary classifiers to operate over multiclass types using the
+ * one vs all method.
+ */
 class one_vs_all : public classifier
 {
   public:

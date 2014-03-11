@@ -22,7 +22,7 @@ namespace caching
 {
 
 /**
- * A splay_cache is a fixed-height splay tree for cache operations
+ * A splay_cache is a fixed-height splay tree for cache operations.
  */
 template <class Key, class Value>
 class splay_cache
@@ -90,6 +90,10 @@ class splay_cache
     /** disallow assignment */
     splay_cache& operator=(const splay_cache& rhs) = delete;
 
+    /**
+     * One node in the splay tree contains pointers to children and the
+     * templated (key, value) pair.
+     */
     struct node
     {
         node* left;

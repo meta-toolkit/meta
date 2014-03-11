@@ -29,11 +29,18 @@ void assert_read(std::ifstream& file, const std::string& expect);
 
 struct file_guard
 {
+    /**
+     * Always makes sure that a new file is created.
+     */
     file_guard(const std::string& path) : path_{path}
     {
         filesystem::delete_file(path_);
     }
 
+    /**
+     * Always makes sure that the file is deleted when the object's destructor
+     * is called.
+     */
     ~file_guard()
     {
         filesystem::delete_file(path_);

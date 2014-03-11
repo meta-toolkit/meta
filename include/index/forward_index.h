@@ -141,6 +141,7 @@ class forward_index : public disk_index
      */
     void create_index(const std::string& config_file);
 
+    /** forward declare the implementation */
     class impl;
     util::pimpl<impl> fwd_impl_;
 };

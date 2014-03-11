@@ -18,7 +18,7 @@ namespace meta {
 namespace analyzers {
 
 /**
- * Tokenizes documents based on an ngram word model, where the value for n is
+ * Analyzes documents based on an ngram word model, where the value for n is
  * supplied by the user.  This class is abstract, as it only provides the
  * framework for ngram tokenization.
  */

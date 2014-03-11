@@ -92,6 +92,9 @@ class thread_pool
     }
 
   private:
+    /**
+     * A generic task object.
+     */
     struct task
     {
         virtual void run() = 0;
@@ -100,6 +103,9 @@ class thread_pool
         } // silence g++ errors
     };
 
+    /**
+     * A concrete task is templated with a result type.
+     */
     template <class R>
     struct concrete_task : task
     {

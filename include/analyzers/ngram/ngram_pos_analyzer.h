@@ -18,6 +18,9 @@ namespace meta
 namespace analyzers
 {
 
+/**
+ * Analyzes documents based on part-of-speech tags instead of words.
+ */
 class ngram_pos_analyzer : public util::multilevel_clonable
                            <analyzer, ngram_simple_analyzer, ngram_pos_analyzer>
 {
