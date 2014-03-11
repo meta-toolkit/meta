@@ -1,5 +1,6 @@
 /**
  * @file similarity.tcc
+ * @author Sean Massung
  */
 
 #include <cmath>

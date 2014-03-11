@@ -1,12 +1,13 @@
 /**
  * @file basic_single_link_policy.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _SINGLE_LINK_POLICY_H_
-#define _SINGLE_LINK_POLICY_H_
+#ifndef META_SINGLE_LINK_POLICY_H_
+#define META_SINGLE_LINK_POLICY_H_
 
 #include <iostream>
 #include <cstddef>
@@ -19,7 +20,7 @@
 
 namespace meta {
 namespace clustering {
-    
+
 /**
  * A simple linking policy for agglomerative clustering utilizing the
  * single-link metric. The single link metric is one that merges cluster
@@ -42,8 +43,8 @@ class basic_single_link_policy {
             parallel::thread_pool pool;
 
             std::vector<std::future<std::tuple<size_t, iterator, iterator>>> futures;
-            for( auto it = current_roots.begin(); 
-                    it != current_roots.end(); 
+            for( auto it = current_roots.begin();
+                    it != current_roots.end();
                     ++it ) {
                 futures.push_back(
                         pool.submit_task( [&,it]() {
@@ -63,9 +64,9 @@ class basic_single_link_policy {
                         )
                     );
             }
-            
+
             auto best_merge = std::make_tuple( std::numeric_limits<size_t>::max(),
-                                               current_roots.begin(), 
+                                               current_roots.begin(),
                                                current_roots.begin() );
             for( auto & fut : futures ) {
                 auto tuple = fut.get();
@@ -82,20 +83,20 @@ class basic_single_link_policy {
             current_roots.erase( std::get<2>( best_merge ) );
 
             using treenode = typename treeptr::element_type;
-            current_roots.emplace_back( 
+            current_roots.emplace_back(
                 new treenode{ std::move( left ), std::move( right ) } );
         }
     private:
 
         template <class TreeNodePtr>
-        double single_link_distance( const TreeNodePtr & first, 
+        double single_link_distance( const TreeNodePtr & first,
                                      const TreeNodePtr & second ) {
             double min_distance = std::numeric_limits<double>::max();
             for( const auto & first_point : first->points() ) {
                 for( const auto & second_point : second->points() ) {
                     min_distance = std::min(
                         min_distance,
-                        sim_( first_point->vector(), 
+                        sim_( first_point->vector(),
                               second_point->vector() ) );
                 }
             }

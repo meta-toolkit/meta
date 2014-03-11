@@ -1,12 +1,13 @@
 /**
  * @file similarity.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _SIMILARITY_H_
-#define _SIMILARITY_H_
+#ifndef META_CLUSTERING_SIMILARITY_H_
+#define META_CLUSTERING_SIMILARITY_H_
 
 #include <unordered_map>
 #include <unordered_set>
@@ -77,7 +78,7 @@ namespace similarity
         template <class Key, class Value>
         unordered_set<Key> get_space(const unordered_map<Key, Value> & a,
                                      const unordered_map<Key, Value> & b);
-        
+
         /**
          * @param map The sparse vector.
          * @return the magnitude of a sparse vector.

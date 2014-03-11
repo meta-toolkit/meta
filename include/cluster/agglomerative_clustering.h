@@ -1,12 +1,13 @@
 /**
  * @file agglomerative_clustering.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _AGGLOMERATIVE_CLUSTERING_H_
-#define _AGGLOMERATIVE_CLUSTERING_H_
+#ifndef META_AGGLOMERATIVE_CLUSTERING_H_
+#define META_AGGLOMERATIVE_CLUSTERING_H_
 
 #include <iostream>
 #include <list>
@@ -17,7 +18,7 @@
 
 namespace meta {
 namespace clustering {
-    
+
 template <class Element, class LinkPolicy>
 class agglomerative_clustering {
     public:
@@ -37,27 +38,27 @@ class agglomerative_clustering {
                 link_policy_.merge_clusters( current_roots_ );
             }
         }
-        
+
         struct treenode {
             using treeptr = std::unique_ptr<treenode>;
 
             // I really wish there was an easier way of getting the point
             // type for a given element non-intrusively. This works, but it
             // quite a bit of voodoo...
-            using Point = decltype( 
-                    make_point( *(static_cast<Element *>( nullptr ) ) ) 
+            using Point = decltype(
+                    make_point( *(static_cast<Element *>( nullptr ) ) )
                 );
 
             using elem_vector = std::vector<const Element *>;
             using point_vector = std::vector<const Point *>;
-            
+
             treeptr left_;
             treeptr right_;
-            
-            treenode( treeptr left, treeptr right ) 
+
+            treenode( treeptr left, treeptr right )
                 : left_( std::move( left ) ),
                   right_( std::move( right ) ) { }
-            
+
             virtual const Element * get_element() {
                 return nullptr;
             }
@@ -85,23 +86,23 @@ class agglomerative_clustering {
                     right_->find_points( points );
                 }
         };
-        
+
         struct leafnode : public treenode {
             using Point = typename treenode::Point;
             using elem_vector = typename treenode::elem_vector;
             using point_vector = typename treenode::point_vector;
 
             Point point_;
-            
+
             virtual const Element * get_element() {
                 return point_.element();
             }
 
-            leafnode( const Element & e ) 
+            leafnode( const Element & e )
                     : treenode{ nullptr, nullptr }, point_{ make_point( e ) }
                 { }
 
-            private: 
+            private:
                 virtual void find_elements( elem_vector & elems ) const {
                     elems.push_back( point_.element() );
                 }

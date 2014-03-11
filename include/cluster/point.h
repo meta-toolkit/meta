@@ -1,12 +1,13 @@
 /**
  * @file point.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _DST_CLUSTER_CENTER_H_
-#define _DST_CLUSTER_CENTER_H_
+#ifndef META_CLUSTER_CENTER_H_
+#define META_CLUSTER_CENTER_H_
 
 #include <cstddef>
 #include <unordered_map>
