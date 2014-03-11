@@ -215,3 +215,5 @@ proprietary software.
 [Indexes]({{site.baseurl}}/index-tutorial.html)
 &nbsp; | &nbsp;
 [Classifiers]({{site.baseurl}}/classify-tutorial.html)
+&nbsp; | &nbsp;
+[Topic Models]({{site.baseurl}}/topic-models-tutorial.html)

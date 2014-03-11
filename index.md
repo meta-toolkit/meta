@@ -46,6 +46,8 @@ We have walkthroughs for the following parts of MeTA:
 
  - [Classifiers]({{site.baseurl}}/classify-tutorial.html)
 
+ - [Topic Models]({{site.baseurl}}/topic-models-tutorial.html)
+
 ## Project setup
 
  - This project requires a very well conforming C++11 compiler. Currently,
