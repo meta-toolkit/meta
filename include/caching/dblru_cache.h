@@ -1,14 +1,13 @@
 /**
  * @file dblru_cache.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Chase Geigle
  */
 
-#ifndef _DBLRU_CACHE_H_
-#define _DBLRU_CACHE_H_
+#ifndef META_DBLRU_CACHE_H_
+#define META_DBLRU_CACHE_H_
 
 #if META_HAS_STD_SHARED_PTR_ATOMICS
 #include <atomic>

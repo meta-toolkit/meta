@@ -1,10 +1,9 @@
 /**
  * @file no_evict_cache.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Chase Geigle
  */
 
 #ifndef META_NO_EVICT_CACHE_H_

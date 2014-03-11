@@ -1,14 +1,13 @@
 /**
  * @file locking_map.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Chase Geigle
  */
 
-#ifndef _LOCKING_MAP_H_
-#define _LOCKING_MAP_H_
+#ifndef META_LOCKING_MAP_H_
+#define META_LOCKING_MAP_H_
 
 #include <unordered_map>
 #include <memory>

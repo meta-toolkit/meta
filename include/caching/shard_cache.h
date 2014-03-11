@@ -1,14 +1,13 @@
 /**
  * @file shard_cache.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Chase Geigle
  */
 
-#ifndef _SHARD_CACHE_H_
-#define _SHARD_CACHE_H_
+#ifndef META_SHARD_CACHE_H_
+#define META_SHARD_CACHE_H_
 
 #include <mutex>
 #include <vector>

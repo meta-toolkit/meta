@@ -9,14 +9,14 @@ namespace caching {
 
 template <class Key, class Value>
 splay_cache<Key, Value>::splay_cache(uint64_t max_size):
-    _size{0}, _max_size(max_size), _root(nullptr)
+    size_{0}, max_size_(max_size), root_(nullptr)
 { /* nothing */ }
 
 template <class Key, class Value>
 splay_cache<Key, Value>::splay_cache(splay_cache && other):
-    _size{std::move(other._size)},
-    _max_size{std::move(other._max_size)},
-    _root{std::move(other._root)}
+    size_{std::move(other.size_)},
+    max_size_{std::move(other.max_size_)},
+    root_{std::move(other.root_)}
 { /* nothing */ }
 
 template <class Key, class Value>
@@ -25,9 +25,9 @@ splay_cache<Key, Value>::operator=(splay_cache && rhs)
 {
     if(this != &rhs)
     {
-        _size = std::move(rhs._size);
-        _max_size = std::move(rhs._max_size);
-        _root = std::move(rhs._root);
+        size_ = std::move(rhs.size_);
+        max_size_ = std::move(rhs.max_size_);
+        root_ = std::move(rhs.root_);
     }
     return *this;
 }
@@ -35,14 +35,14 @@ splay_cache<Key, Value>::operator=(splay_cache && rhs)
 template <class Key, class Value>
 splay_cache<Key, Value>::~splay_cache()
 {
-    clear(_root);
+    clear(root_);
 }
 
 template <class Key, class Value>
 void splay_cache<Key, Value>::insert(const Key & key, const Value & value)
 {
-    std::lock_guard<std::mutex> lock{_mutables};
-    insert(_root, key, value);
+    std::lock_guard<std::mutex> lock{mutables_};
+    insert(root_, key, value);
 }
 
 template <class Key, class Value>
@@ -52,11 +52,11 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
     if(subroot == nullptr)
     {
         subroot = new node{key, value};
-        ++_size;
+        ++size_;
     }
     else if(key < subroot->key)
     {
-        if(_size == _max_size && !subroot->left)
+        if(size_ == max_size_ && !subroot->left)
         {
             replace(subroot, key, value);
         }
@@ -68,7 +68,7 @@ void splay_cache<Key, Value>::insert(node* & subroot, const Key & key,
     }
     else if(key > subroot->key)
     {
-        if(_size == _max_size && !subroot->right)
+        if(size_ == max_size_ && !subroot->right)
         {
             replace(subroot, key, value);
         }
@@ -88,7 +88,7 @@ template <class Key, class Value>
 void splay_cache<Key, Value>::replace(node* subroot, const Key & key,
                                       const Value & value)
 {
-    for (auto & callback : _drop_callbacks)
+    for (auto & callback : drop_callbacks_)
         callback(subroot->key, subroot->value);
     subroot->key = key;
     subroot->value = value;
@@ -97,12 +97,12 @@ void splay_cache<Key, Value>::replace(node* subroot, const Key & key,
 template <class Key, class Value>
 util::optional<Value> splay_cache<Key, Value>::find(const Key & key)
 {
-    std::lock_guard<std::mutex> lock{_mutables};
-    if(_root != nullptr)
+    std::lock_guard<std::mutex> lock{mutables_};
+    if(root_ != nullptr)
     {
-        find(_root, key);
-        if(_root->key == key)
-            return {_root->value};
+        find(root_, key);
+        if(root_->key == key)
+            return {root_->value};
     }
     return {util::nullopt};
 }
@@ -134,7 +134,7 @@ void splay_cache<Key, Value>::clear(node* & subroot)
     {
         clear(subroot->left);
         clear(subroot->right);
-        for (auto & callback : _drop_callbacks)
+        for (auto & callback : drop_callbacks_)
             callback(subroot->key, subroot->value);
         delete subroot;
         subroot = nullptr;
@@ -167,19 +167,19 @@ void splay_cache<Key, Value>::rotate_right(node* & subroot)
 template <class Key, class Value>
 uint64_t splay_cache<Key, Value>::size() const
 {
-    return _size;
+    return size_;
 }
 
 template <class Key, class Value>
 template <class Functor>
 void splay_cache<Key, Value>::on_drop(Functor && fun) {
-    _drop_callbacks.emplace_back(std::forward<Functor>(fun));
+    drop_callbacks_.emplace_back(std::forward<Functor>(fun));
 }
 
 template <class Key, class Value>
 void splay_cache<Key, Value>::clear() {
-    std::lock_guard<std::mutex> lock{_mutables};
-    clear(_root);
+    std::lock_guard<std::mutex> lock{mutables_};
+    clear(root_);
 }
 
 }

@@ -1,14 +1,13 @@
 /**
  * @file splay_cache.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
  */
 
-#ifndef _SPLAY_CACHE_H_
-#define _SPLAY_CACHE_H_
+#ifndef META_SPLAY_CACHE_H_
+#define META_SPLAY_CACHE_H_
 
 #include <memory>
 #include <mutex>
@@ -102,13 +101,13 @@ class splay_cache
             { /* nothing */ }
         };
 
-        uint64_t _size;
-        uint64_t _max_size;
-        node* _root;
-        mutable std::mutex _mutables;
+        uint64_t size_;
+        uint64_t max_size_;
+        node* root_;
+        mutable std::mutex mutables_;
 
         std::vector<std::function<void(const Key & key, const Value & value)>>
-        _drop_callbacks;
+        drop_callbacks_;
 
         void clear(node* & subroot);
         void insert(node* & subroot, const Key & key, const Value & value);
@@ -123,21 +122,10 @@ class splay_cache
         /**
          * Basic exception for splay_cache interactions.
          */
-        class splay_cache_exception: public std::exception
+        class splay_cache_exception: public std::runtime_error
         {
             public:
-
-                splay_cache_exception(const std::string & error):
-                    _error(error) { /* nothing */ }
-
-                const char* what () const throw ()
-                {
-                    return _error.c_str();
-                }
-
-            private:
-
-                std::string _error;
+                using std::runtime_error::runtime_error;
         };
 
 };
