@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _CLASSIFIER_TEST_H_
-#define _CLASSIFIER_TEST_H_
+#ifndef META_CLASSIFIER_TEST_H_
+#define META_CLASSIFIER_TEST_H_
 
 #include <fstream>
 #include <iostream>

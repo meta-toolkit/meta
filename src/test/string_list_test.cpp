@@ -65,7 +65,8 @@ int string_list_tests()
         ASSERT_EQUAL(std::strcmp(list.at(2), "other stuff"), 0);
         ASSERT_EQUAL(std::strcmp(list.at(1), "cat"), 0);
         ASSERT_EQUAL(std::strcmp(list.at(4), "dog"), 0);
-        ASSERT_EQUAL(std::strcmp(list.at(3), "a no good very dead ex-parrot"), 0);
+        ASSERT_EQUAL(std::strcmp(list.at(3), "a no good very dead ex-parrot"),
+                     0);
     });
 
     return num_failed;

@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _UNIT_TEST_H_
-#define _UNIT_TEST_H_
+#ifndef META_UNIT_TEST_H_
+#define META_UNIT_TEST_H_
 
 #include <cmath>
 #include <iomanip>
@@ -208,8 +208,8 @@ class unit_test_exception: public std::runtime_error
 
 /**
  * Runs a unit test in a semi-controlled environment.
- * @param testName - the name to display when running this test
- * @param func - the function (unit test) to run. This function should take
+ * @param testName The name to display when running this test
+ * @param func The function (unit test) to run. This function should take
  *  no parameters and return void.
  */
 template <class Func>

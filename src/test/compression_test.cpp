@@ -48,7 +48,7 @@ int compression_tests()
         ASSERT_EQUAL(reader.next_string(), "some random string");
     });
 
-    if(filesystem::file_exists(filename))
+    if (filesystem::file_exists(filename))
         filesystem::delete_file(filename);
 
     return num_failed;

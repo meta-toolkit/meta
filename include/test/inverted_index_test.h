@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _INVERTED_INDEX_TEST_H_
-#define _INVERTED_INDEX_TEST_H_
+#ifndef META_INVERTED_INDEX_TEST_H_
+#define META_INVERTED_INDEX_TEST_H_
 
 #include <fstream>
 #include <iostream>

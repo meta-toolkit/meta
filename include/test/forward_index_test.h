@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _FORWARD_INDEX_TEST_H_
-#define _FORWARD_INDEX_TEST_H_
+#ifndef META_FORWARD_INDEX_TEST_H_
+#define META_FORWARD_INDEX_TEST_H_
 
 #include <fstream>
 #include <iostream>

@@ -17,7 +17,6 @@ namespace meta
 {
 namespace testing
 {
-
 namespace
 {
 
@@ -41,33 +40,31 @@ int filter_tests()
         auto norm = make_unique<analyzers::english_normalizer>(std::move(tok));
         norm->set_content("\"This \t\n\f\ris a quote,'' said Dr. Smith.");
 
-        std::vector<std::string> expected = {
-            "``", "This", " ",    "is", " ",  "a", " ", "quote", ",",
-            "''", " ",    "said", " ",  "Dr", ".", " ", "Smith", "."};
+        std::vector<std::string> expected
+            = {"``", "This", " ",    "is", " ",  "a", " ", "quote", ",",
+               "''", " ",    "said", " ",  "Dr", ".", " ", "Smith", "."};
 
         check_expected(*norm, expected);
     });
 
     num_failed += testing::run_test("english_normalizer_test_contraction", []()
     {
-
         auto tok = make_unique<analyzers::whitespace_tokenizer>();
         auto norm = make_unique<analyzers::english_normalizer>(std::move(tok));
-        norm->set_content("What about when we don't want to knee-jerk? We'll have to do something.");
+        norm->set_content("What about when we don't want to knee-jerk? We'll "
+                          "have to do something.");
 
-        std::vector<std::string> expected = {
-            "What", " ",   "about", " ",         "when", " ",
-            "we",   " ",   "don",   "'t",        " ",    "want",
-            " ",    "to",  " ",     "knee-jerk", "?",    " ",
-            "We",   "'ll", " ",     "have",      " ",    "to",
-            " ",    "do",  " ",     "something", "."};
+        std::vector<std::string> expected
+            = {"What", " ",   "about", " ",         "when", " ",
+               "we",   " ",   "don",   "'t",        " ",    "want",
+               " ",    "to",  " ",     "knee-jerk", "?",    " ",
+               "We",   "'ll", " ",     "have",      " ",    "to",
+               " ",    "do",  " ",     "something", "."};
 
         check_expected(*norm, expected);
     });
 
     return num_failed;
 }
-
-
 }
 }

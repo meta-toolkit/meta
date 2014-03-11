@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _TOKENIZER_TEST_H_
-#define _TOKENIZER_TEST_H_
+#ifndef META_ANALYZER_TEST_H_
+#define META_ANALYZER_TEST_H_
 
 #include <string>
 #include "test/unit_test.h"
