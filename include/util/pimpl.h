@@ -18,6 +18,9 @@ namespace meta
 namespace util
 {
 
+/**
+ * Class to assist in simple pointer-to-implementation classes.
+ */
 template <class Impl>
 class pimpl
 {

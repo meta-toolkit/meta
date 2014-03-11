@@ -171,6 +171,7 @@ class inverted_index : public disk_index
      */
     void load_index();
 
+    /** forward declare the implementation */
     class impl;
     util::pimpl<impl> inv_impl_;
 };

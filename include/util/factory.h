@@ -30,6 +30,7 @@ class factory
     using pointer = std::unique_ptr<Type>;
     using factory_method = std::function<pointer(Arguments...)>;
 
+    /** Simple exception for factories */
     class exception : public std::runtime_error
     {
       public:

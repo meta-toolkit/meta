@@ -18,6 +18,9 @@ namespace meta
 namespace analyzers
 {
 
+/**
+ * Analyzes documents using their tokenized words.
+ */
 class ngram_word_analyzer : public util::multilevel_clonable<
                             analyzer, ngram_analyzer, ngram_word_analyzer>
 {

@@ -21,6 +21,10 @@ namespace meta
 namespace clustering
 {
 
+/**
+ * Creates clusters based on a bottom-up approach hierarchical approach. Various
+ * elements and link policies are able to be used.
+ */
 template <class Element, class LinkPolicy>
 class agglomerative_clustering
 {
@@ -46,6 +50,9 @@ class agglomerative_clustering
         }
     }
 
+    /**
+     * Represents an internal node that has children clusters.
+     */
     struct treenode
     {
         using treeptr = std::unique_ptr<treenode>;
@@ -100,6 +107,9 @@ class agglomerative_clustering
         }
     };
 
+    /**
+     * Represents a leaf node in the hierarchical clustering.
+     */
     struct leafnode : public treenode
     {
         using Point = typename treenode::Point;

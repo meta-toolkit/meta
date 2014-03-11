@@ -26,6 +26,9 @@ namespace meta
 namespace analyzers
 {
 
+/**
+ * Filter that either removes or keeps tokens from a given list.
+ */
 class list_filter : public util::clonable<token_stream, list_filter>
 {
   public:

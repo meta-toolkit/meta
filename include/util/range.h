@@ -17,10 +17,18 @@ namespace meta
 namespace util
 {
 
+/**
+ * Implements a range that spans a loop's extension and termination conditions,
+ * most useful for iterating over a range of numbers with a range-based for
+ * loop.
+ */
 template <class T>
 class basic_range
 {
   public:
+    /**
+     * Iterator to traverse the generic range.
+     */
     template <class Plus>
     class iterator_t
     {

@@ -20,6 +20,9 @@ namespace meta
 namespace clustering
 {
 
+/**
+ * Represents a point in high-dimensional space to be used in clustering.
+ */
 template <class DimensionKey, class Element>
 class point
 {
