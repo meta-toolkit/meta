@@ -1,10 +1,13 @@
 /**
  * @file detail.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_UTF_DETAIL_H_
-#define _META_UTF_DETAIL_H_
+#ifndef META_UTF_DETAIL_H_
+#define META_UTF_DETAIL_H_
 
 #include <array>
 #include <stdexcept>

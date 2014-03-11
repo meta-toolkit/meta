@@ -1,10 +1,13 @@
 /**
  * @file transformer.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_UTIL_TRANSFORMER_H_
-#define META_UTIL_TRANSFORMER_H_
+#ifndef META_TRANSFORMER_H_
+#define META_TRANSFORMER_H_
 
 #include <string>
 
