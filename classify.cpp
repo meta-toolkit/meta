@@ -11,7 +11,6 @@
 #include "classify/loss/all.h"
 #include "index/forward_index.h"
 #include "index/ranker/all.h"
-#include "util/invertible_map.h"
 #include "util/printing.h"
 #include "util/progress.h"
 #include "util/time.h"
