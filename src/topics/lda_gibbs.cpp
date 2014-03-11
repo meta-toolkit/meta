@@ -1,5 +1,6 @@
 /**
  * @file lda_gibbs.cpp
+ * @author Chase Geigle
  */
 
 #include <algorithm>
@@ -64,22 +65,22 @@ topic_id lda_gibbs::sample_topic(term_id term, doc_id doc)
 double lda_gibbs::compute_probability(term_id term, doc_id doc,
                                       topic_id topic) const
 {
-    return compute_term_topic_probability(term, topic) *
-           compute_doc_topic_probability(doc, topic);
+    return compute_term_topic_probability(term, topic)
+           * compute_doc_topic_probability(doc, topic);
 }
 
 double lda_gibbs::compute_term_topic_probability(term_id term,
                                                  topic_id topic) const
 {
-    return (count_term(term, topic) + beta_) /
-           (count_topic(topic) + num_words_ * beta_);
+    return (count_term(term, topic) + beta_)
+           / (count_topic(topic) + num_words_ * beta_);
 }
 
 double lda_gibbs::compute_doc_topic_probability(doc_id doc,
                                                 topic_id topic) const
 {
-    return (count_doc(doc, topic) + alpha_) /
-           (count_doc(doc) + num_topics_ * alpha_);
+    return (count_doc(doc, topic) + alpha_)
+           / (count_doc(doc) + num_topics_ * alpha_);
 }
 
 double lda_gibbs::count_term(term_id term, topic_id topic) const

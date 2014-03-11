@@ -1,5 +1,6 @@
 /**
  * @file parallel_lda_gibbs.cpp
+ * @author Chase Geigle
  */
 
 #include "index/postings_data.h"
@@ -79,16 +80,17 @@ void parallel_lda_gibbs::perform_iteration(uint64_t iter,
         {
             for (auto& diff : topic_term_map.second)
             {
-                topic_term_count_[topic_term_map.first][diff.first] +=
-                    diff.second;
+                topic_term_count_[topic_term_map.first][diff.first]
+                    += diff.second;
             }
-            topic_count_[topic_term_map.first] +=
-                topic_diffs_[thread_map.first][topic_term_map.first];
+            topic_count_[topic_term_map.first]
+                += topic_diffs_[thread_map.first][topic_term_map.first];
         }
     }
 }
 
-void parallel_lda_gibbs::decrease_counts(topic_id topic, term_id term, doc_id doc)
+void parallel_lda_gibbs::decrease_counts(topic_id topic, term_id term,
+                                         doc_id doc)
 {
     std::thread::id tid = std::this_thread::get_id();
     // decrease topic_term_diff_ for the given assignment
@@ -105,7 +107,8 @@ void parallel_lda_gibbs::decrease_counts(topic_id topic, term_id term, doc_id do
     topic_diffs_.at(tid)[topic] -= 1;
 }
 
-void parallel_lda_gibbs::increase_counts(topic_id topic, term_id term, doc_id doc)
+void parallel_lda_gibbs::increase_counts(topic_id topic, term_id term,
+                                         doc_id doc)
 {
     std::thread::id tid = std::this_thread::get_id();
     topic_term_diffs_.at(tid)[topic][term] += 1;

@@ -1,5 +1,6 @@
 /**
  * @file lda_model.cpp
+ * @author Chase Geigle
  */
 
 #include "topics/lda_model.h"

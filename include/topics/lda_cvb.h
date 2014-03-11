@@ -1,12 +1,13 @@
 /**
  * @file lda_cvb.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _DST_TOPICS_LDA_CVB_H_
-#define _DST_TOPICS_LDA_CVB_H_
+#ifndef META_TOPICS_LDA_CVB_H_
+#define META_TOPICS_LDA_CVB_H_
 
 #include "topics/lda_model.h"
 
@@ -105,9 +106,11 @@ class lda_cvb : public lda_model
     /**
      * Variational parameters \f$\gamma_{dij}\f$.
      */
-    std::unordered_map<
-        doc_id, std::unordered_map<
-                    term_id, std::unordered_map<topic_id, double>>> gamma_;
+    std::unordered_map<doc_id,
+                       std::unordered_map<term_id,
+                                          std::unordered_map<topic_id, double>
+                                         >
+                      > gamma_;
 
     /**
      * Hyperparameter on \f$\theta\f$, the topic proportions.

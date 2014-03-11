@@ -1,12 +1,13 @@
 /**
  * @file topics/lda_gibbs.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _DST_LDA_GIBBS_H_
-#define _DST_LDA_GIBBS_H_
+#ifndef META_LDA_GIBBS_H_
+#define META_LDA_GIBBS_H_
 
 #include <random>
 
@@ -189,7 +190,6 @@ class lda_gibbs : public lda_model
      * lda_gibbs cannot be copy constructed.
      */
     lda_gibbs(const lda_gibbs& other) = delete;
-
 
     /**
      * The topic assignment for every word in every document. Note that

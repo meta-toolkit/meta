@@ -1,12 +1,13 @@
 /**
  * @file topics/parallel_lda_gibbs.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _DST_PARALLEL_LDA_GIBBS_H_
-#define _DST_PARALLEL_LDA_GIBBS_H_
+#ifndef META_PARALLEL_LDA_GIBBS_H_
+#define META_PARALLEL_LDA_GIBBS_H_
 
 #include <thread>
 
@@ -67,10 +68,11 @@ class parallel_lda_gibbs : public lda_gibbs
      * Stores the difference in topic_term counts on a per-thread basis
      * for use in the reduction step.
      */
-    std::unordered_map<
-        std::thread::id,
-        std::unordered_map<topic_id, std::unordered_map<term_id, ssize_t>>>
-        topic_term_diffs_;
+    std::unordered_map<std::thread::id,
+                       std::unordered_map<topic_id,
+                                          std::unordered_map<term_id, ssize_t>
+                                         >
+                      > topic_term_diffs_;
 
     /**
      * Stores the difference in topic counts on a per-thread basis for
