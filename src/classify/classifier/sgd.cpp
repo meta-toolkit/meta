@@ -32,7 +32,7 @@ sgd::sgd(std::shared_ptr<index::forward_index> idx, class_label positive,
 }
 
 double sgd::predict(doc_id d_id) const {
-    auto pdata = _idx->search_primary(d_id);
+    auto pdata = idx_->search_primary(d_id);
     return predict(pdata->counts());
 }
 
@@ -44,13 +44,13 @@ double sgd::predict(const counts_t & doc) const {
 }
 
 void sgd::train( const std::vector<doc_id> & docs ) {
-    weights_.resize(_idx->unique_terms());
+    weights_.resize(idx_->unique_terms());
 
     std::vector<size_t> indices( docs.size() );
     std::vector<int> labels( docs.size() );
     for( size_t i = 0; i < docs.size(); ++i ) {
         indices[i] = i;
-        labels[i] = _idx->label(docs[i]) == positive_ ? 1 : -1;
+        labels[i] = idx_->label(docs[i]) == positive_ ? 1 : -1;
     }
     std::random_device d;
     std::mt19937 g{ d() };
@@ -71,7 +71,7 @@ void sgd::train( const std::vector<doc_id> & docs ) {
                 sum_loss = 0;
             }
 
-            auto pdata = _idx->search_primary(docs[indices[i]]);
+            auto pdata = idx_->search_primary(docs[indices[i]]);
             const counts_t & doc = pdata->counts();
 
             // get output prediction

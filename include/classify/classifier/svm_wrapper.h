@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _SVM_WRAPPER_H_
-#define _SVM_WRAPPER_H_
+#ifndef META_SVM_WRAPPER_H_
+#define META_SVM_WRAPPER_H_
 
 #include <unordered_map>
 #include "classify/classifier_factory.h"
@@ -31,7 +31,6 @@ namespace classify {
 class svm_wrapper: public classifier
 {
     public:
-
         /**
          * Selects which kernel to use. "None" uses liblinear. Any other kernel
          * uses libsvm.
@@ -83,18 +82,18 @@ class svm_wrapper: public classifier
     private:
 
         /** the path to the liblinear/libsvm library */
-        const std::string _svm_path;
+        const std::string svm_path_;
 
         /** keeps track of which arguments are necessary for which kernel
          * function */
         const static std::unordered_map<kernel, std::string, std::hash<int>>
-        _options;
+        options_;
 
         /** which kernel function to use for this SVM */
-        kernel _kernel;
+        kernel kernel_;
 
         /** used to select which executable to use (libsvm or liblinear) */
-        std::string _executable;
+        std::string executable_;
 };
 
 template <>

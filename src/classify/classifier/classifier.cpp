@@ -1,5 +1,5 @@
 /**
- * @file classifier.tcc
+ * @file classifier.cpp
  * @author Sean Massung
  */
 
@@ -11,14 +11,14 @@ namespace meta {
 namespace classify {
 
 classifier::classifier(std::shared_ptr<index::forward_index> idx):
-    _idx(std::move(idx))
+    idx_(std::move(idx))
 { /* nothing */ }
 
 confusion_matrix classifier::test(const std::vector<doc_id> & docs)
 {
     confusion_matrix matrix;
     for(auto & d_id: docs)
-        matrix.add(classify(d_id), _idx->label(d_id));
+        matrix.add(classify(d_id), idx_->label(d_id));
 
     return matrix;
 }

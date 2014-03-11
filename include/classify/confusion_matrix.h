@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _CONFUSION_MATRIX_H_
-#define _CONFUSION_MATRIX_H_
+#ifndef META_CONFUSION_MATRIX_H_
+#define META_CONFUSION_MATRIX_H_
 
 #include <iostream>
 #include <utility>
@@ -26,7 +26,6 @@ namespace classify {
 class confusion_matrix
 {
     public:
-        
         /**
          * Creates an empty confusion matrix.
          */
@@ -78,7 +77,7 @@ class confusion_matrix
         /**
          * operator+ for confusion matrices. All counts are agglomerated for all
          * predictions.
-         * @param other 
+         * @param other
          * @return a confusion_matrix containing all predictions of the parameters
          */
         confusion_matrix operator+(const confusion_matrix & other) const;
@@ -86,7 +85,7 @@ class confusion_matrix
         /**
          * operator+= for confusion matrices. All counts are agglomerated for all
          * predictions.
-         * @param other 
+         * @param other
          * @return a confusion_matrix containing all predictions of the parameters
          */
         confusion_matrix & operator+=(const confusion_matrix & other);
@@ -114,19 +113,19 @@ class confusion_matrix
                 double & prec, double & rec, double & f1, size_t width) const;
 
         /** maps predicted class to actual class frequencies */
-        prediction_counts _predictions;
+        prediction_counts predictions_;
 
         /**
          * Keeps track of the number of classes. We use a std::set here so the
          * class labels are sorted alphabetically.
          */
-        std::set<class_label> _classes;
+        std::set<class_label> classes_;
 
         /** how many times each class was predicted */
-        std::unordered_map<class_label, size_t> _counts;
+        std::unordered_map<class_label, size_t> counts_;
 
         /** total number of classification attempts */
-        size_t _total;
+        size_t total_;
 };
 
 }

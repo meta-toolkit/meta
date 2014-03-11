@@ -21,38 +21,38 @@ knn::knn(std::shared_ptr<index::inverted_index> idx,
                  std::shared_ptr<index::forward_index> f_idx, uint16_t k,
                  std::unique_ptr<index::ranker> ranker)
     : classifier{std::move(f_idx)},
-      _inv_idx{std::move(idx)},
-      _k{k},
-      _ranker{std::move(ranker)}
+      inv_idx_{std::move(idx)},
+      k_{k},
+      ranker_{std::move(ranker)}
 { /* nothing */ }
 
 void knn::train(const std::vector<doc_id> & docs)
 {
-    _legal_docs.insert(docs.begin(), docs.end());
+    legal_docs_.insert(docs.begin(), docs.end());
 }
 
 class_label knn::classify(doc_id d_id)
 {
-    if(_k > _legal_docs.size())
+    if(k_ > legal_docs_.size())
         throw knn_exception{"k must be smaller than the "
             "number of documents in the index (training documents)"};
 
     corpus::document query{"[no path]", d_id};
-    for (const auto& count: _idx->search_primary(d_id)->counts())
-        query.increment(_idx->term_text(count.first), count.second);
+    for (const auto& count: idx_->search_primary(d_id)->counts())
+        query.increment(idx_->term_text(count.first), count.second);
 
     auto scored =
-        _ranker->score(*_inv_idx, query, _inv_idx->num_docs(), [&](doc_id d_id)
+        ranker_->score(*inv_idx_, query, inv_idx_->num_docs(), [&](doc_id d_id)
         {
-            return _legal_docs.find(d_id) != _legal_docs.end();
+            return legal_docs_.find(d_id) != legal_docs_.end();
         });
 
     std::unordered_map<class_label, uint16_t> counts;
     uint16_t i = 0;
     for(auto & s: scored)
     {
-        ++counts[_idx->label(s.first)];
-        if(++i > _k)
+        ++counts[idx_->label(s.first)];
+        if(++i > k_)
             break;
     }
 
@@ -93,7 +93,7 @@ class_label knn::select_best_label(
 
     for(auto & p: scored)
     {
-        class_label lbl{_inv_idx->label(p.first)};
+        class_label lbl{inv_idx_->label(p.first)};
         auto f = best.find(lbl);
         if(f != best.end())
             return *f;
@@ -105,7 +105,7 @@ class_label knn::select_best_label(
 
 void knn::reset()
 {
-    _legal_docs.clear();
+    legal_docs_.clear();
 }
 
 template <>

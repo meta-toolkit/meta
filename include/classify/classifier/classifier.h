@@ -1,14 +1,13 @@
 /**
  * @file classifier.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
  */
 
-#ifndef _CLASSIFIER_H_
-#define _CLASSIFIER_H_
+#ifndef META_CLASSIFIER_H_
+#define META_CLASSIFIER_H_
 
 #include <vector>
 #include "classify/confusion_matrix.h"
@@ -73,7 +72,7 @@ class classifier
     protected:
 
         /** the index that the classifer is run on */
-        std::shared_ptr<index::forward_index> _idx;
+        std::shared_ptr<index::forward_index> idx_;
 };
 
 }

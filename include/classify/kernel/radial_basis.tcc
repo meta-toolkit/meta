@@ -1,3 +1,8 @@
+/**
+ * @file radial_basis.tcc
+ * @author Chase Geigle
+ */
+
 #include <cmath>
 #include <unordered_set>
 

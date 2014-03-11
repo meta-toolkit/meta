@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _NAIVE_BAYES_H_
-#define _NAIVE_BAYES_H_
+#ifndef META_NAIVE_BAYES_H_
+#define META_NAIVE_BAYES_H_
 
 #include <unordered_map>
 #include "index/forward_index.h"
@@ -68,21 +68,21 @@ class naive_bayes: public classifier
         std::unordered_map<
             class_label,
             std::unordered_map<term_id, double>
-        > _term_probs;
+        > term_probs_;
 
         /**
          * Contains the number of documents in each class
          */
-        std::unordered_map<class_label, size_t> _class_counts;
+        std::unordered_map<class_label, size_t> class_counts_;
 
         /** The number of training documents */
-        size_t _total_docs;
+        size_t total_docs_;
 
         /** smoothing parameter for term counts */
-        const double _alpha;
+        const double alpha_;
 
         /** smoothing parameter for class counts */
-        const double _beta;
+        const double beta_;
 };
 
 }

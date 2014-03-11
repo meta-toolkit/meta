@@ -25,11 +25,11 @@ class one_vs_all : public classifier
     one_vs_all(std::shared_ptr<index::forward_index> idx, Function&& create)
         : classifier{std::move(idx)}
     {
-        for (const auto& d_id : _idx->docs())
+        for (const auto& d_id : idx_->docs())
         {
-            if (classifiers_.find(_idx->label(d_id)) != classifiers_.end())
+            if (classifiers_.find(idx_->label(d_id)) != classifiers_.end())
                 continue;
-            classifiers_.emplace(_idx->label(d_id), create(_idx->label(d_id)));
+            classifiers_.emplace(idx_->label(d_id), create(idx_->label(d_id)));
         }
     }
 

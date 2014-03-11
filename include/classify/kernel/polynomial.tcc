@@ -1,3 +1,8 @@
+/**
+ * @file polynomial.tcc
+ * @author Chase Geigle
+ */
+
 #include <cmath>
 
 #include "classify/kernel/polynomial.h"

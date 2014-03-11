@@ -25,7 +25,7 @@ void dual_perceptron::train(const std::vector<doc_id>& docs)
 {
     weights_ = {};
     for (const auto& d_id : docs)
-        weights_[_idx->label(d_id)] = {};
+        weights_[idx_->label(d_id)] = {};
 
     std::vector<uint64_t> indices(docs.size());
     std::iota(begin(indices), end(indices), 0);
@@ -43,7 +43,7 @@ void dual_perceptron::train(const std::vector<doc_id>& docs)
         {
             progress(doc++);
             auto guess = classify(docs[i]);
-            auto actual = _idx->label(docs[i]);
+            auto actual = idx_->label(docs[i]);
             if (guess != actual)
             {
                 ++error_count;
@@ -69,7 +69,7 @@ void dual_perceptron::decrease_weight(const class_label& label,
 
 class_label dual_perceptron::classify(doc_id d_id)
 {
-    auto doc = _idx->search_primary(d_id);
+    auto doc = idx_->search_primary(d_id);
     class_label best_label = weights_.begin()->first;
     double best_dot = 0;
     for (const auto& w : weights_)
@@ -78,7 +78,7 @@ class_label dual_perceptron::classify(doc_id d_id)
         for (const auto& mistakes : w.second)
         {
             dot += mistakes.second *
-                   (kernel_(doc, _idx->search_primary(mistakes.first)) + bias_);
+                   (kernel_(doc, idx_->search_primary(mistakes.first)) + bias_);
         }
         dot *= alpha_;
         if (dot > best_dot)

@@ -69,18 +69,18 @@ class knn: public classifier
             const std::vector<std::pair<class_label, uint16_t>> & sorted) const;
 
         /** the inverted index used for ranking */
-        std::shared_ptr<index::inverted_index> _inv_idx;
+        std::shared_ptr<index::inverted_index> inv_idx_;
 
         /** the value of k in k-NN */
-        uint16_t _k;
+        uint16_t k_;
 
         /**
          * The ranker that is used to score the queries in the index.
          */
-        std::unique_ptr<index::ranker> _ranker;
+        std::unique_ptr<index::ranker> ranker_;
 
         /** documents that are "legal" to be used in the results */
-        std::unordered_set<doc_id> _legal_docs;
+        std::unordered_set<doc_id> legal_docs_;
 
     public:
         /**

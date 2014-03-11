@@ -1,3 +1,8 @@
+/**
+ * @file sigmoid.tcc
+ * @author Chase Geigle
+ */
+
 #include "classify/kernel/sigmoid.h"
 
 namespace meta {

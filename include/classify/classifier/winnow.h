@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _WINNOW_H_
-#define _WINNOW_H_
+#ifndef META_WINNOW_H_
+#define META_WINNOW_H_
 
 #include <vector>
 #include <unordered_map>

@@ -1,5 +1,5 @@
 /**
- * @file smooth_hinge.cpp
+ * @file squared_hinge.cpp
  * @author Chase Geigle
  */
 
