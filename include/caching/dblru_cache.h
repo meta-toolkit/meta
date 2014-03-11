@@ -21,8 +21,10 @@
 #include "caching/maps/locking_map.h"
 #include "util/optional.h"
 
-namespace meta {
-namespace caching {
+namespace meta
+{
+namespace caching
+{
 
 /**
  * A double-barrel approach at a LRU cache.
@@ -42,119 +44,121 @@ namespace caching {
  *
  * @see https://issues.apache.org/jira/browse/LUCENE-2075
  */
-template <class Key, class Value,
-          template <class, class> class Map = locking_map>
-class dblru_cache {
-    public:
-        /**
-         * Constructs a dlbru_cache with a given fixed size.
-         * @param max_size the maximum allowed size for this cache
-         */
-        dblru_cache(uint64_t max_size);
+template<class Key, class Value,
+         template <class, class> class Map = locking_map>
+class dblru_cache
+{
+  public:
+    /**
+     * Constructs a dlbru_cache with a given fixed size.
+     * @param max_size the maximum allowed size for this cache
+     */
+    dblru_cache(uint64_t max_size);
 
-        /**
-         * dblru_cache may be move constructed.
-         */
-        dblru_cache(dblru_cache &&);
+    /**
+     * dblru_cache may be move constructed.
+     */
+    dblru_cache(dblru_cache&&);
 
-        /**
-         * dlbru_cache may be be assigned.
-         */
-        dblru_cache & operator=(dblru_cache rhs);
+    /**
+     * dlbru_cache may be be assigned.
+     */
+    dblru_cache& operator=(dblru_cache rhs);
 
-        /**
-         * Default destructor.
-         */
-        ~dblru_cache() = default;
+    /**
+     * Default destructor.
+     */
+    ~dblru_cache() = default;
 
-        /**
-         * Swaps the current dlbru_cache with a given one.
-         * @param other the cache to swap with
-         */
-        void swap(dblru_cache & other);
+    /**
+     * Swaps the current dlbru_cache with a given one.
+     * @param other the cache to swap with
+     */
+    void swap(dblru_cache& other);
 
-        /**
-         * Insert a given (key, value) pair into the cache.
-         * @param key
-         * @param value
-         */
-        void insert(const Key & key, const Value & value);
+    /**
+     * Insert a given (key, value) pair into the cache.
+     * @param key
+     * @param value
+     */
+    void insert(const Key& key, const Value& value);
 
-        /**
-         * Inserts a key value pair into the cache using in-place
-         * construction if possible.
-         *
-         * @param args the list of arguments to forward to constructing
-         *  the (key, value) pair
-         */
-        template <class... Args>
-        void emplace(Args &&... args);
+    /**
+     * Inserts a key value pair into the cache using in-place
+     * construction if possible.
+     *
+     * @param args the list of arguments to forward to constructing
+     *  the (key, value) pair
+     */
+    template <class... Args>
+    void emplace(Args&&... args);
 
-        /**
-         * Finds a value in the cache. If it exists, the optional will be
-         * engaged, otherwise, it will be disengaged.
-         *
-         * @param key the key to find the corresponding value for
-         */
-        util::optional<Value> find(const Key & key);
+    /**
+     * Finds a value in the cache. If it exists, the optional will be
+     * engaged, otherwise, it will be disengaged.
+     *
+     * @param key the key to find the corresponding value for
+     */
+    util::optional<Value> find(const Key& key);
 
-        /**
-         * Adds a callback to be invoked when a key/value pair is dropped
-         * from the map.
-         */
-        template <class Functor>
-        void on_drop(Functor && functor);
+    /**
+     * Adds a callback to be invoked when a key/value pair is dropped
+     * from the map.
+     */
+    template <class Functor>
+    void on_drop(Functor&& functor);
 
-        /** Empties the cache. */
-        void clear();
-    private:
-        /**
-         * Helper function to ensure that the primary and secondary map
-         * swapping occurs at the correct moment.
-         */
-        void handle_insert();
+    /** Empties the cache. */
+    void clear();
 
-        /**
-         * Gets the primary map.
-         */
-        std::shared_ptr<Map<Key, Value>> get_primary_map() const;
+  private:
+    /**
+     * Helper function to ensure that the primary and secondary map
+     * swapping occurs at the correct moment.
+     */
+    void handle_insert();
 
-        /**
-         * Gets the secondary map.
-         */
-        std::shared_ptr<Map<Key, Value>> get_secondary_map() const;
+    /**
+     * Gets the primary map.
+     */
+    std::shared_ptr<Map<Key, Value>> get_primary_map() const;
 
-        /**
-         * The maximum allowed size for the cache.
-         */
-        uint64_t max_size_;
+    /**
+     * Gets the secondary map.
+     */
+    std::shared_ptr<Map<Key, Value>> get_secondary_map() const;
 
-        /**
-         * The current size of the primary map.
-         */
+    /**
+     * The maximum allowed size for the cache.
+     */
+    uint64_t max_size_;
+
+/**
+ * The current size of the primary map.
+ */
 #if META_HAS_STD_SHARED_PTR_ATOMICS
-        std::atomic<uint64_t> current_size_;
+    std::atomic<uint64_t> current_size_;
 #else
-        uint64_t current_size_;
-        std::unique_ptr<std::mutex> mutables_{make_unique<std::mutex>()};
+    uint64_t current_size_;
+    std::unique_ptr<std::mutex> mutables_{make_unique<std::mutex>()};
 #endif
 
-        /**
-         * The primary map.
-         */
-        std::shared_ptr<Map<Key, Value>> primary_;
+    /**
+     * The primary map.
+     */
+    std::shared_ptr<Map<Key, Value>> primary_;
 
-        /**
-         * The secondary map.
-         */
-        std::shared_ptr<Map<Key, Value>> secondary_;
+    /**
+     * The secondary map.
+     */
+    std::shared_ptr<Map<Key, Value>> secondary_;
 
-        /**
-         * List of functions to be invoked when a key/value pair is
-         * dropped.
-         */
-        std::vector<std::function<void(const Key & key, const Value & value)>>
-        drop_callbacks_;
+    /**
+     * List of functions to be invoked when a key/value pair is
+     * dropped.
+     */
+    std::vector<std::function<void(const Key& key, const Value& value)>>
+    drop_callbacks_;
 };
 
 /**
@@ -162,7 +166,6 @@ class dblru_cache {
  */
 template <class Key, class Value>
 using default_dblru_cache = dblru_cache<Key, Value>;
-
 }
 }
 
