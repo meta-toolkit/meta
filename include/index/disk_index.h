@@ -107,6 +107,12 @@ class disk_index
     class_label class_label_from_id(label_id l_id) const;
 
     /**
+     * @return the distinct class labels possible for documents in this
+     * index
+     */
+    std::vector<class_label> class_labels() const;
+
+    /**
      * @param d_id
      * @return the number of unique terms in d_id
      */

@@ -54,6 +54,11 @@ class_label disk_index::class_label_from_id(label_id l_id) const
     return impl_->label_ids_.get_key(l_id);
 }
 
+std::vector<class_label> disk_index::class_labels() const
+{
+    return impl_->class_labels();
+}
+
 uint64_t disk_index::unique_terms(doc_id d_id) const
 {
     return impl_->unique_terms_->at(d_id);
@@ -196,6 +201,15 @@ uint64_t disk_index::disk_index_impl::total_unique_terms() const
 label_id disk_index::disk_index_impl::doc_label_id(doc_id id) const
 {
     return labels_->at(id);
+}
+
+std::vector<class_label> disk_index::disk_index_impl::class_labels() const
+{
+    std::vector<class_label> labels;
+    labels.reserve(label_ids_.size());
+    for (const auto& pair : label_ids_)
+        labels.emplace_back(pair.first);
+    return labels;
 }
 
 std::string disk_index::term_text(term_id t_id) const

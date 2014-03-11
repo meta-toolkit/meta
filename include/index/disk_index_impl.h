@@ -148,6 +148,11 @@ class disk_index::disk_index_impl
      */
     label_id doc_label_id(doc_id id) const;
 
+    /**
+     * @return the possible class labels for this index
+     */
+    std::vector<class_label> class_labels() const;
+
   private:
     /**
      * @param lbl the string class label to find the id for
