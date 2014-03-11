@@ -21,9 +21,8 @@ namespace loss
 struct loss_function
 {
     virtual double loss(double prediction, int expected) const = 0;
-    virtual double derivative(double prediction, int expected) const  = 0;
+    virtual double derivative(double prediction, int expected) const = 0;
 };
-
 }
 }
 }

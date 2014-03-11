@@ -36,6 +36,5 @@ std::unique_ptr<binary_classifier>
     return binary_classifier_factory::get().create(*id, config, std::move(idx),
                                                    positive, negative);
 }
-
 }
 }

@@ -77,8 +77,9 @@ class_label dual_perceptron::classify(doc_id d_id)
         double dot = 0;
         for (const auto& mistakes : w.second)
         {
-            dot += mistakes.second *
-                   (kernel_(doc, idx_->search_primary(mistakes.first)) + bias_);
+            dot += mistakes.second
+                   * (kernel_(doc, idx_->search_primary(mistakes.first))
+                      + bias_);
         }
         dot *= alpha_;
         if (dot > best_dot)
@@ -96,9 +97,9 @@ void dual_perceptron::reset()
 }
 
 template <>
-std::unique_ptr<classifier>
-    make_classifier<dual_perceptron>(const cpptoml::toml_group& config,
-                                     std::shared_ptr<index::forward_index> idx)
+std::unique_ptr<classifier> make_classifier
+    <dual_perceptron>(const cpptoml::toml_group& config,
+                      std::shared_ptr<index::forward_index> idx)
 {
     auto alpha = dual_perceptron::default_alpha;
     if (auto c_alpha = config.get_as<double>("alpha"))
@@ -132,9 +133,9 @@ std::unique_ptr<classifier>
         if (!rbf_gamma)
             throw classifier_factory::exception{
                 "rbf kernel requires rbf-gamma in configuration"};
-        return make_unique<dual_perceptron>(std::move(idx),
-                                            kernel::radial_basis{*rbf_gamma},
-                                            alpha, gamma, bias, max_iter);
+        return make_unique
+            <dual_perceptron>(std::move(idx), kernel::radial_basis{*rbf_gamma},
+                              alpha, gamma, bias, max_iter);
     }
 
     if (kern == "sigmoid")

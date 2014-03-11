@@ -11,16 +11,19 @@
 
 #include "classify/loss/loss_function.h"
 
-namespace meta {
-namespace classify {
-namespace loss {
+namespace meta
+{
+namespace classify
+{
+namespace loss
+{
 
-struct smooth_hinge : public loss_function {
+struct smooth_hinge : public loss_function
+{
     const static std::string id;
     double loss(double prediction, int expected) const override;
     double derivative(double prediction, int expected) const override;
 };
-
 }
 }
 }

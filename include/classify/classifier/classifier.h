@@ -12,8 +12,10 @@
 #include <vector>
 #include "classify/confusion_matrix.h"
 
-namespace meta {
-namespace classify {
+namespace meta
+{
+namespace classify
+{
 
 /**
  * A classifier uses a document's feature space to identify which group it
@@ -21,60 +23,56 @@ namespace classify {
  */
 class classifier
 {
-    public:
-        /**
-         * @param idx The index to run the classifier on
-         */
-        classifier(std::shared_ptr<index::forward_index> idx);
+  public:
+    /**
+     * @param idx The index to run the classifier on
+     */
+    classifier(std::shared_ptr<index::forward_index> idx);
 
-        /**
-         * Classifies a document into a specific group, as determined by
-         * training data.
-         * @param d_id The document to classify
-         * @return the class it belongs to
-         */
-        virtual class_label classify(doc_id d_id) = 0;
+    /**
+     * Classifies a document into a specific group, as determined by
+     * training data.
+     * @param d_id The document to classify
+     * @return the class it belongs to
+     */
+    virtual class_label classify(doc_id d_id) = 0;
 
-        /**
-         * Creates a classification model based on training documents.
-         * @param docs The training documents
-         */
-        virtual void train(const std::vector<doc_id> & docs) = 0;
+    /**
+     * Creates a classification model based on training documents.
+     * @param docs The training documents
+     */
+    virtual void train(const std::vector<doc_id>& docs) = 0;
 
-        /**
-         * Classifies a collection document into specific groups, as determined
-         * by training data; this function will make repeated calls to
-         * classify().
-         * @param docs The documents to classify
-         * @return a confusion_matrix detailing the performance of the
-         * classifier
-         */
-        virtual confusion_matrix test(const std::vector<doc_id> & docs);
+    /**
+     * Classifies a collection document into specific groups, as determined
+     * by training data; this function will make repeated calls to
+     * classify().
+     * @param docs The documents to classify
+     * @return a confusion_matrix detailing the performance of the
+     * classifier
+     */
+    virtual confusion_matrix test(const std::vector<doc_id>& docs);
 
-        /**
-         * Performs k-fold cross-validation on a set of documents. When using
-         * this function, it is not necessary to call train() or test() first.
-         * @param input_docs Testing documents
-         * @param k The number of folds
-         * @param seed The seed for the RNG used to shuffle the documents
-         * @return a confusion_matrix containing the results over all the folds
-         */
-        virtual confusion_matrix cross_validate(
-                const std::vector<doc_id> & input_docs,
-                size_t k,
-                int seed = 1);
+    /**
+     * Performs k-fold cross-validation on a set of documents. When using
+     * this function, it is not necessary to call train() or test() first.
+     * @param input_docs Testing documents
+     * @param k The number of folds
+     * @param seed The seed for the RNG used to shuffle the documents
+     * @return a confusion_matrix containing the results over all the folds
+     */
+    virtual confusion_matrix cross_validate(
+            const std::vector<doc_id>& input_docs, size_t k, int seed = 1);
 
-        /**
-         * Clears any learning data associated with this classifier.
-         */
-        virtual void reset() = 0;
+    /**
+     * Clears any learning data associated with this classifier.
+     */
+    virtual void reset() = 0;
 
-    protected:
-
-        /** the index that the classifer is run on */
-        std::shared_ptr<index::forward_index> idx_;
+  protected:
+    /** the index that the classifer is run on */
+    std::shared_ptr<index::forward_index> idx_;
 };
-
 }
 }
 #endif

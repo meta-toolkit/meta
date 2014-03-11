@@ -12,16 +12,19 @@
 #include <cmath>
 #include "classify/loss/loss_function.h"
 
-namespace meta {
-namespace classify {
-namespace loss {
+namespace meta
+{
+namespace classify
+{
+namespace loss
+{
 
-struct huber : public loss_function {
+struct huber : public loss_function
+{
     double loss(double prediction, int expected) const override;
     double derivative(double prediction, int expected) const override;
     const static std::string id;
 };
-
 }
 }
 }

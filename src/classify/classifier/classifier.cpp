@@ -7,24 +7,28 @@
 #include "logging/logger.h"
 #include "classify/classifier/classifier.h"
 
-namespace meta {
-namespace classify {
+namespace meta
+{
+namespace classify
+{
 
-classifier::classifier(std::shared_ptr<index::forward_index> idx):
-    idx_(std::move(idx))
-{ /* nothing */ }
+classifier::classifier(std::shared_ptr<index::forward_index> idx)
+    : idx_(std::move(idx))
+{
+    /* nothing */
+}
 
-confusion_matrix classifier::test(const std::vector<doc_id> & docs)
+confusion_matrix classifier::test(const std::vector<doc_id>& docs)
 {
     confusion_matrix matrix;
-    for(auto & d_id: docs)
+    for (auto& d_id : docs)
         matrix.add(classify(d_id), idx_->label(d_id));
 
     return matrix;
 }
 
 confusion_matrix classifier::cross_validate(
-        const std::vector<doc_id> & input_docs,
+        const std::vector<doc_id>& input_docs,
         size_t k, int seed)
 {
     // docs might be ordered by class, so make sure things are shuffled
@@ -34,19 +38,19 @@ confusion_matrix classifier::cross_validate(
 
     confusion_matrix matrix;
     size_t step_size = docs.size() / k;
-    for(size_t i = 0; i < k; ++i)
+    for (size_t i = 0; i < k; ++i)
     {
-        LOG(progress) << "\rCross-validating fold " << (i + 1) << "/" << k << ENDLG;
+        LOG(progress) << "\rCross-validating fold " << (i + 1) << "/" << k
+                      << ENDLG;
         reset(); // clear any learning data already calculated
         train(std::vector<doc_id>{docs.begin() + step_size, docs.end()});
-        matrix +=
-            test(std::vector<doc_id>{docs.begin(), docs.begin() + step_size});
+        matrix += test(std::vector
+                       <doc_id>{docs.begin(), docs.begin() + step_size});
         std::rotate(docs.begin(), docs.begin() + step_size, docs.end());
     }
     LOG(progress) << '\n' << ENDLG;
 
     return matrix;
 }
-
 }
 }
