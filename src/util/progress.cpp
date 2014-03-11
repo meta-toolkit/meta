@@ -28,9 +28,9 @@ std::string eta_str(int milliseconds)
     int sec = ms / 1000;
 
     std::stringstream ss;
-    ss << "ETA " << std::setfill('0') << std::setw(2) << hrs
-       << ':' << std::setfill('0') << std::setw(2) << min
-       << ':' << std::setfill('0') << std::setw(2) << sec;
+    ss << "ETA " << std::setfill('0') << std::setw(2) << hrs << ':'
+       << std::setfill('0') << std::setw(2) << min << ':' << std::setfill('0')
+       << std::setw(2) << sec;
     return ss.str();
 }
 }
@@ -79,8 +79,8 @@ void progress::operator()(uint64_t iter)
 
     auto eta = eta_str(remain);
     // 4 comes from +2 for the [], +5 for the %, +2 for space
-    auto remaining_width =
-        std::max<int>(0, 80 - prefix_.length() - eta.length() - 9);
+    auto remaining_width = std::max
+        <int>(0, 80 - prefix_.length() - eta.length() - 9);
     if (remaining_width > 15)
     {
         auto filled = static_cast<int>(remaining_width * percent);

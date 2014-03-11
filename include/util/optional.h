@@ -1,45 +1,54 @@
 /**
  * @file optional.h
+ * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Chase Geigle
  */
 
-#ifndef _OPTIONAL_H_
-#define _OPTIONAL_H_
+#ifndef META_OPTIONAL_H_
+#define META_OPTIONAL_H_
 
 #include <stdexcept>
 #include <type_traits>
 
-namespace meta {
-namespace util {
+namespace meta
+{
+namespace util
+{
 
 /**
  * A tag for trivial initialization of optional storage.
  */
-constexpr struct trivial_init_t{} trivial_init{};
+constexpr struct trivial_init_t
+{
+} trivial_init{};
 
 /**
  * A dummy type for representing a disengaged option<T>.
  */
-struct nullopt_t {
-    struct init{};
-    constexpr nullopt_t(init){};
+struct nullopt_t
+{
+    struct init
+    {
+    };
+    constexpr nullopt_t(init) {};
 };
 constexpr nullopt_t nullopt{nullopt_t::init{}};
 
 /**
  * A dummy type for optional storage.
  */
-struct optional_dummy_t{};
+struct optional_dummy_t
+{
+};
 
 /**
  * A storage class for the optional<T> class.
  */
 template <class T>
-union optional_storage {
+union optional_storage
+{
     /**
      * A dummy value.
      */
@@ -60,12 +69,14 @@ union optional_storage {
      * internal value.
      */
     template <class... Args>
-    optional_storage(Args &&... args);
+    optional_storage(Args&&... args);
 
     /**
      * no-op destructor.
      */
-    ~optional_storage() { /* nothing */ }
+    ~optional_storage()
+    {/* nothing */
+    }
 };
 
 /**
@@ -79,123 +90,125 @@ union optional_storage {
  * @see https://github.com/akrzemi1/Optional/
  */
 template <class T>
-class optional {
-    public:
-        /**
-         * Default constructor, creates a disengaged optional value.
-         */
-        optional();
+class optional
+{
+  public:
+    /**
+     * Default constructor, creates a disengaged optional value.
+     */
+    optional();
 
-        /**
-         * Conversion constructor from nullopt, creates a disengaged
-         * optional value.
-         */
-        optional(nullopt_t);
+    /**
+     * Conversion constructor from nullopt, creates a disengaged
+     * optional value.
+     */
+    optional(nullopt_t);
 
-        /**
-         * Creates an optional value with the given contents.
-         * @param value the desired value to be contained in the optional
-         */
-        optional(const T & value);
+    /**
+     * Creates an optional value with the given contents.
+     * @param value the desired value to be contained in the optional
+     */
+    optional(const T& value);
 
-        /**
-         * Creates an optional value with the given contents via move
-         * construction.
-         * @param value the desired value to be moved into the optional
-         */
-        optional(T && value);
+    /**
+     * Creates an optional value with the given contents via move
+     * construction.
+     * @param value the desired value to be moved into the optional
+     */
+    optional(T&& value);
 
-        /**
-         * Copy constructor.
-         */
-        optional(const optional & opt);
+    /**
+     * Copy constructor.
+     */
+    optional(const optional& opt);
 
-        /**
-         * Move constructor.
-         */
-        optional(optional && opt);
+    /**
+     * Move constructor.
+     */
+    optional(optional&& opt);
 
-        /**
-         * Assignment operator.
-         */
-        optional & operator=(optional rhs);
+    /**
+     * Assignment operator.
+     */
+    optional& operator=(optional rhs);
 
-        /**
-         * Destructor. Responsible for ensuring the proper destruction of
-         * the contained type, if it is engaged.
-         */
-        ~optional();
+    /**
+     * Destructor. Responsible for ensuring the proper destruction of
+     * the contained type, if it is engaged.
+     */
+    ~optional();
 
-        /**
-         * Swaps the current optional instance with the parameter.
-         * @param other the optional to swap with
-         */
-        void swap(optional & other);
+    /**
+     * Swaps the current optional instance with the parameter.
+     * @param other the optional to swap with
+     */
+    void swap(optional& other);
 
-        /**
-         * Obtains the value contained in the optional. Const version.
-         */
-        const T & operator*() const;
+    /**
+     * Obtains the value contained in the optional. Const version.
+     */
+    const T& operator*() const;
 
-        /**
-         * Obtains the value contained in the optional. Non-const version.
-         */
-        T & operator*();
+    /**
+     * Obtains the value contained in the optional. Non-const version.
+     */
+    T& operator*();
 
-        /**
-         * Member access operator to the value contained in the optional.
-         * Const version.
-         */
-        const T * operator->() const;
+    /**
+     * Member access operator to the value contained in the optional.
+     * Const version.
+     */
+    const T* operator->() const;
 
-        /**
-         * Member access operator to the value contained in the optional.
-         * Non-const version.
-         */
-        T * operator->();
+    /**
+     * Member access operator to the value contained in the optional.
+     * Non-const version.
+     */
+    T* operator->();
 
-        /**
-         * Determines if the optional is engaged.
-         */
-        explicit operator bool() const;
+    /**
+     * Determines if the optional is engaged.
+     */
+    explicit operator bool() const;
 
-        /**
-         * Empties the optional.
-         */
-        void clear();
-    private:
-        /**
-         * Helper function to obtain the address of the contained value.
-         * const version.
-         */
-        const T * dataptr() const;
+    /**
+     * Empties the optional.
+     */
+    void clear();
 
-        /**
-         * Helper function to obtain the address of the contained value.
-         * non-const version.
-         */
-        T * dataptr();
+  private:
+    /**
+     * Helper function to obtain the address of the contained value.
+     * const version.
+     */
+    const T* dataptr() const;
 
-        /**
-         * Whether or not this optional is engaged.
-         */
-        bool initialized_;
+    /**
+     * Helper function to obtain the address of the contained value.
+     * non-const version.
+     */
+    T* dataptr();
 
-        /**
-         * The storage for this optional.
-         */
-        optional_storage<T> storage_;
+    /**
+     * Whether or not this optional is engaged.
+     */
+    bool initialized_;
+
+    /**
+     * The storage for this optional.
+     */
+    optional_storage<T> storage_;
 };
 
 /**
  * Exception thrown when trying to obtain the value of a non-engaged
  * optional.
  */
-class bad_optional_access : public std::runtime_error {
-    public:
-        using std::runtime_error::runtime_error;
+class bad_optional_access : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
-
 }
 }
 

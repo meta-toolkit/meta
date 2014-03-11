@@ -1,6 +1,9 @@
 /**
  * @file clonable.h
  * @author Chase Geigle
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef META_UTIL_CLONABLE_H_
@@ -24,12 +27,12 @@ template <class Root, class Base, class Derived>
 class multilevel_clonable : public Base
 {
   public:
-      using Base::Base;
+    using Base::Base;
 
-      virtual std::unique_ptr<Root> clone() const
-      {
-          return make_unique<Derived>(static_cast<const Derived&>(*this));
-      }
+    virtual std::unique_ptr<Root> clone() const
+    {
+        return make_unique<Derived>(static_cast<const Derived&>(*this));
+    }
 };
 
 /**
@@ -39,7 +42,6 @@ class multilevel_clonable : public Base
  */
 template <class Base, class Derived>
 using clonable = multilevel_clonable<Base, Base, Derived>;
-
 }
 }
 #endif

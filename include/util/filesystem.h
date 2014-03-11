@@ -1,13 +1,14 @@
 /**
  * @file filesystem.h
+ * @author Sean Massung
  * Includes code shared by many classes.
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _COMMON_FILESYSTEM_H_
-#define _COMMON_FILESYSTEM_H_
+#ifndef META_FILESYSTEM_H_
+#define META_FILESYSTEM_H_
 
 #include <string>
 #include <fstream>
@@ -16,14 +17,16 @@
 #include "util/printing.h"
 #include "util/progress.h"
 
-namespace meta {
-namespace filesystem {
+namespace meta
+{
+namespace filesystem
+{
 
 /**
  * Deletes the given file.
  * @param filename
  */
-inline void delete_file(const std::string & filename)
+inline void delete_file(const std::string& filename)
 {
     remove(filename.c_str());
 }
@@ -33,7 +36,8 @@ inline void delete_file(const std::string & filename)
  * @param old_name
  * @param new_name
  */
-inline void rename_file(const std::string & old_name, const std::string & new_name)
+inline void rename_file(const std::string& old_name,
+                        const std::string& new_name)
 {
     rename(old_name.c_str(), new_name.c_str());
 }
@@ -42,7 +46,7 @@ inline void rename_file(const std::string & old_name, const std::string & new_na
  * Attempts to create the directory
  * @return whether a new directory was created
  */
-inline bool make_directory(const std::string & dir_name)
+inline bool make_directory(const std::string& dir_name)
 {
     return mkdir(dir_name.c_str(), 0755) == -1;
 }
@@ -51,10 +55,10 @@ inline bool make_directory(const std::string & dir_name)
  * @param filename
  * @return true if the file exists
  */
-inline bool file_exists(const std::string & filename)
+inline bool file_exists(const std::string& filename)
 {
     FILE* f = fopen(filename.c_str(), "r");
-    if(f != nullptr)
+    if (f != nullptr)
     {
         fclose(f);
         return true;
@@ -68,9 +72,9 @@ inline bool file_exists(const std::string & filename)
  * @param dest
  * @return whether the copy was successful
  */
-inline bool copy_file(const std::string & source, const std::string & dest)
+inline bool copy_file(const std::string& source, const std::string& dest)
 {
-    if(!file_exists(source))
+    if (!file_exists(source))
         return false;
 
     std::ifstream source_file{source, std::ios::binary};
@@ -85,9 +89,9 @@ inline bool copy_file(const std::string & source, const std::string & dest)
  * @param filename The path for the file
  * @return the number of bytes in the file
  */
-inline uint64_t file_size(const std::string & filename)
+inline uint64_t file_size(const std::string& filename)
 {
-    if(!file_exists(filename))
+    if (!file_exists(filename))
         return 0;
 
     struct stat64 st;
@@ -101,23 +105,22 @@ inline uint64_t file_size(const std::string & filename)
  * @return the number of delimiter (default newline) characters in the
  * paramter
  */
-inline uint64_t num_lines(const std::string & filename, char delimiter = '\n')
+inline uint64_t num_lines(const std::string& filename, char delimiter = '\n')
 {
     io::mmap_file file{filename};
     uint64_t num = 0;
 
     printing::progress progress{" > Counting lines in file: ", file.size(), 500,
                                 32 * 1024 * 1024};
-    for(uint64_t idx = 0; idx < file.size(); ++idx)
+    for (uint64_t idx = 0; idx < file.size(); ++idx)
     {
         progress(idx);
-        if(file[idx] == delimiter)
+        if (file[idx] == delimiter)
             ++num;
     }
 
     return num;
 }
-
 }
 }
 

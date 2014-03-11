@@ -1,32 +1,34 @@
 /**
  * @file printing.h
- * Includes code shared by many classes.
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _COMMON_PRINTING_H_
-#define _COMMON_PRINTING_H_
+#ifndef META_PRINTING_H_
+#define META_PRINTING_H_
 
 #include <iostream>
 #include <string>
 #include "logging/logger.h"
 
-namespace meta {
-namespace printing {
+namespace meta
+{
+namespace printing
+{
 
 /**
  * @param number
  * @return the parameter with commas added every thousandths place
  */
-inline std::string add_commas(const std::string & number)
+inline std::string add_commas(const std::string& number)
 {
     std::string ret{""};
     size_t counter = 0;
-    for(auto it = number.rbegin(); it != number.rend(); ++it, ++counter)
+    for (auto it = number.rbegin(); it != number.rend(); ++it, ++counter)
     {
-        if(counter != 0 && counter != number.size() && counter % 3 == 0)
+        if (counter != 0 && counter != number.size() && counter % 3 == 0)
             ret = ',' + ret;
         ret = *it + ret;
     }
@@ -69,9 +71,9 @@ inline std::string make_bold(std::string str)
 inline std::string bytes_to_units(double num_bytes)
 {
     std::string units = "bytes";
-    for(auto & u: {"KB", "MB", "GB", "TB"})
+    for (auto& u : {"KB", "MB", "GB", "TB"})
     {
-        if(num_bytes >= 1024)
+        if (num_bytes >= 1024)
         {
             num_bytes /= 1024;
             units = u;
@@ -89,23 +91,22 @@ inline std::string bytes_to_units(double num_bytes)
  * @param prefix The text to show before the percentage
  */
 inline void show_progress(size_t idx, size_t max, size_t freq,
-        const std::string & prefix = "")
+                          const std::string& prefix = "")
 {
-    if(idx % freq == 0)
+    if (idx % freq == 0)
         LOG(progress) << prefix << static_cast<double>(idx) / max * 100
-            << "%    \r" << ENDLG;
+                      << "%    \r" << ENDLG;
 }
 
 /**
  * Ends output from a call to show_progess by displaying 100% completion.
  * @param prefix The text to show before the percentage
  */
-inline void end_progress(const std::string & prefix)
+inline void end_progress(const std::string& prefix)
 {
     LOG(progress) << prefix << "100%         \n" << ENDLG;
     LOG(info) << prefix << "100%" << ENDLG;
 }
-
 }
 }
 

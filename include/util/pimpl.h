@@ -2,6 +2,9 @@
  * @file pimpl.h
  * @author Chase Geigle
  * @see http://herbsutter.com/gotw/_101/
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef META_UTIL_PIMPL_H_
@@ -32,6 +35,7 @@ class pimpl
     const Impl* operator->() const;
     Impl& operator*();
     const Impl& operator*() const;
+
   private:
     std::unique_ptr<Impl> impl_;
 };

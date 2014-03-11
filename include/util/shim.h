@@ -1,7 +1,11 @@
 /**
  * @file shim.h
+ * @author Chase Geigle
  * Contains functions from future C++ standards that we find useful before
  * standardization.
+ *
+ * All files in META are released under the MIT license. For more details,
+ * consult the file LICENSE in the root of the project.
  */
 
 #ifndef META_UTIL_SHIM_H_
