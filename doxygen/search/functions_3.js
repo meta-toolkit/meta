@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['dataptr',['dataptr',['../classmeta_1_1util_1_1optional.html#a9a74e8a0071aff3f66ed4d5ea5a7040f',1,'meta::util::optional::dataptr() const '],['../classmeta_1_1util_1_1optional.html#abeb38d15a0590768ed4884e9738a079e',1,'meta::util::optional::dataptr()']]],
+  ['dblru_5fcache',['dblru_cache',['../classmeta_1_1caching_1_1dblru__cache.html#ad4016b04359982e6bcc5d62a7ac41494',1,'meta::caching::dblru_cache::dblru_cache(uint64_t max_size)'],['../classmeta_1_1caching_1_1dblru__cache.html#adcfbcc4da71abfe6d44725ba9c3a37db',1,'meta::caching::dblru_cache::dblru_cache(dblru_cache &amp;&amp;)']]],
+  ['decrease_5fcounts',['decrease_counts',['../classmeta_1_1topics_1_1lda__gibbs.html#a59e6665bc9d5fc76e9c726e19f48a370',1,'meta::topics::lda_gibbs::decrease_counts()'],['../classmeta_1_1topics_1_1parallel__lda__gibbs.html#a29855fe80ca2507a2a1118686af7332f',1,'meta::topics::parallel_lda_gibbs::decrease_counts()']]],
+  ['decrease_5fweight',['decrease_weight',['../classmeta_1_1classify_1_1dual__perceptron.html#ae19b7774c49520fb4e8275b86fcd89d1',1,'meta::classify::dual_perceptron']]],
+  ['default_5ffilter_5fchain',['default_filter_chain',['../classmeta_1_1analyzers_1_1analyzer.html#aa2034823bd2d6e58e0a83bcbefe13f50',1,'meta::analyzers::analyzer']]],
+  ['derived',['derived',['../classmeta_1_1analyzers_1_1tree__analyzer.html#aeb955be670cb3e59e97b986bdd6e414c',1,'meta::analyzers::tree_analyzer']]],
+  ['dirichlet_5fprior',['dirichlet_prior',['../classmeta_1_1index_1_1dirichlet__prior.html#ab6597ca03e7bb993795e757da9ef36a3',1,'meta::index::dirichlet_prior']]],
+  ['disk_5findex',['disk_index',['../classmeta_1_1index_1_1disk__index.html#a9ee399358ca6493645b300001eea54c8',1,'meta::index::disk_index::disk_index(const cpptoml::toml_group &amp;config, const std::string &amp;name)'],['../classmeta_1_1index_1_1disk__index.html#ab71151e851626b1ad3816b8d1128988e',1,'meta::index::disk_index::disk_index(const disk_index &amp;)=delete'],['../classmeta_1_1index_1_1disk__index.html#a952e8c4b36a5b76d4d673197f178239b',1,'meta::index::disk_index::disk_index(disk_index &amp;&amp;)=default']]],
+  ['disk_5fvector',['disk_vector',['../classmeta_1_1util_1_1disk__vector.html#a7d151853f47ff2b6e5f6d6b5396633e9',1,'meta::util::disk_vector::disk_vector(const std::string &amp;path, uint64_t size=0)'],['../classmeta_1_1util_1_1disk__vector.html#ab46585f80d1dceea0b6bf22807e7739e',1,'meta::util::disk_vector::disk_vector(disk_vector &amp;&amp;)']]],
+  ['doc_5fconstant',['doc_constant',['../classmeta_1_1index_1_1absolute__discount.html#a607112121f79647ff1be55acb07f6544',1,'meta::index::absolute_discount::doc_constant()'],['../classmeta_1_1index_1_1dirichlet__prior.html#aa13293f930dd0b1ae840b00e0e6d546e',1,'meta::index::dirichlet_prior::doc_constant()'],['../classmeta_1_1index_1_1jelinek__mercer.html#ac94974947417f5536a6f6ca885adeb3a',1,'meta::index::jelinek_mercer::doc_constant()'],['../classmeta_1_1index_1_1language__model__ranker.html#aa16528a81d3023fa4db0592525b29549',1,'meta::index::language_model_ranker::doc_constant()']]],
+  ['doc_5ffreq',['doc_freq',['../classmeta_1_1index_1_1inverted__index.html#a60932e2e103a03ce289c7ff86fb6c228',1,'meta::index::inverted_index']]],
+  ['doc_5flabel_5fid',['doc_label_id',['../classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a40e4d334189343be8bbf58c8bb8cbf92',1,'meta::index::disk_index::disk_index_impl']]],
+  ['doc_5fname',['doc_name',['../classmeta_1_1index_1_1disk__index.html#a04e9f9861b8ad03a64ddc0b492ee6e1a',1,'meta::index::disk_index']]],
+  ['doc_5fpath',['doc_path',['../classmeta_1_1index_1_1disk__index.html#ab8b5649737fc4c322afd51ede624b70e',1,'meta::index::disk_index']]],
+  ['doc_5fsize',['doc_size',['../classmeta_1_1index_1_1disk__index.html#a7fc53d3c56f56b5d4182f153b8327a80',1,'meta::index::disk_index']]],
+  ['docs',['docs',['../classmeta_1_1index_1_1disk__index.html#a3b709dc678a83ba5f36798d1a59b1823',1,'meta::index::disk_index']]],
+  ['document',['document',['../classmeta_1_1corpus_1_1document.html#a7335167d7f02346e5b0b9c8239718fa3',1,'meta::corpus::document']]],
+  ['dual_5fperceptron',['dual_perceptron',['../classmeta_1_1classify_1_1dual__perceptron.html#a320396850f4b578e44a1a8a4c7aa9f06',1,'meta::classify::dual_perceptron']]]
+];

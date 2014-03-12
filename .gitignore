@@ -11,7 +11,6 @@ doc/
 *.pyc
 learn
 features
-search
 lm
 tester
 .*
