@@ -47,7 +47,9 @@ it will be un-inverted to create the `forward_index`. The process of
 un-inverting is a one-time cost, and is necessary to provide efficient
 access to the document vectors for the classifiers. Once you have
 generated your `forward_index`, you *never need to generate it again*
-unless you want to change your document representation.
+unless you want to change your document representation. Once you have a
+`forward_index`, you can use it with *any* of the classifiers provided by
+MeTA.
 
 ## Creating a Forward Index from LIBSVM Data
 
