@@ -81,7 +81,7 @@ input to create a `forward_index`.
 
 Additionally, until MeTA has support for part-of-speech tagging and parse tree
 generation, we support `.pos` and `.tree` input formats for file corpora. See
-[meta-stanford-preprocessor](https://bitbucket.org/smassung/meta-stanford-preprocessor)
+[meta-stanford-preprocessor](https://github.com/meta-toolkit/meta-stanford-preprocessor)
 for information on how to generate POS tag or parse tree files.
 
 ## Datasets
