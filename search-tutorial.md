@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Tutorial - Creating an Index
+title: Tutorial - Search
 ---
 
 As mentioned in the overview, at the heart of MeTA lies its indexes. Every
@@ -56,7 +56,7 @@ More control over your index.
 &nbsp; | &nbsp;
 [Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
 &nbsp; | &nbsp;
-[Indexes]({{site.baseurl}}/index-tutorial.html)
+[Search]({{site.baseurl}}/search-tutorial.html)
 &nbsp; | &nbsp;
 [Classifiers]({{site.baseurl}}/classify-tutorial.html)
 &nbsp; | &nbsp;
