@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -113,6 +112,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1caching_1_1splay__cache_1_1node.html">node</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One node in the splay tree contains pointers to children and the templated (key, value) pair.  <a href="structmeta_1_1caching_1_1splay__cache_1_1node.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1splay__cache_1_1splay__cache__exception.html">splay_cache_exception</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic exception for <a class="el" href="classmeta_1_1caching_1_1splay__cache.html" title="A splay_cache is a fixed-height splay tree for cache operations. ">splay_cache</a> interactions.  <a href="classmeta_1_1caching_1_1splay__cache_1_1splay__cache__exception.html#details">More...</a><br/></td></tr>
@@ -181,23 +181,23 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>rotate_right</b> (<a 
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a66f2b411fcc63fe4998def198c12a963"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66f2b411fcc63fe4998def198c12a963"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>_size</b></td></tr>
-<tr class="separator:a66f2b411fcc63fe4998def198c12a963"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4fbd3031f499a1ee3f2ca0c0b1c313a4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4fbd3031f499a1ee3f2ca0c0b1c313a4"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>_max_size</b></td></tr>
-<tr class="separator:a4fbd3031f499a1ee3f2ca0c0b1c313a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8acddf234e657b680ba86ae19b2afecd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8acddf234e657b680ba86ae19b2afecd"></a>
-<a class="el" href="structmeta_1_1caching_1_1splay__cache_1_1node.html">node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>_root</b></td></tr>
-<tr class="separator:a8acddf234e657b680ba86ae19b2afecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24604aedb920ddbaad20d59662418833"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a24604aedb920ddbaad20d59662418833"></a>
-std::mutex&#160;</td><td class="memItemRight" valign="bottom"><b>_mutables</b></td></tr>
-<tr class="separator:a24604aedb920ddbaad20d59662418833"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a278180e08c2084c087849d384c9c1787"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a278180e08c2084c087849d384c9c1787"></a>
+<tr class="memitem:ab91129a9bf0ce4b1b674e601c10f4e1a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab91129a9bf0ce4b1b674e601c10f4e1a"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>size_</b></td></tr>
+<tr class="separator:ab91129a9bf0ce4b1b674e601c10f4e1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6618b698d7208e3fa7891a1a688e3069"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6618b698d7208e3fa7891a1a688e3069"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>max_size_</b></td></tr>
+<tr class="separator:a6618b698d7208e3fa7891a1a688e3069"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2b062689912b16859c85cbdd7e92d26"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad2b062689912b16859c85cbdd7e92d26"></a>
+<a class="el" href="structmeta_1_1caching_1_1splay__cache_1_1node.html">node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>root_</b></td></tr>
+<tr class="separator:ad2b062689912b16859c85cbdd7e92d26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63b6de08ae585fe16a551e5f1abe1ffd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a63b6de08ae585fe16a551e5f1abe1ffd"></a>
+std::mutex&#160;</td><td class="memItemRight" valign="bottom"><b>mutables_</b></td></tr>
+<tr class="separator:a63b6de08ae585fe16a551e5f1abe1ffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accccadb4eab7b5d5d71d98cbcbf8588f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="accccadb4eab7b5d5d71d98cbcbf8588f"></a>
 std::vector&lt; std::function<br class="typebreak"/>
 &lt; void(const Key &amp;key, const <br class="typebreak"/>
-Value &amp;value)&gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_drop_callbacks</b></td></tr>
-<tr class="separator:a278180e08c2084c087849d384c9c1787"><td class="memSeparator" colspan="2">&#160;</td></tr>
+Value &amp;value)&gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>drop_callbacks_</b></td></tr>
+<tr class="separator:accccadb4eab7b5d5d71d98cbcbf8588f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class Key, class Value&gt;<br/>
@@ -335,13 +335,13 @@ template&lt;class Functor &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/include/caching/<a class="el" href="splay__cache_8h_source.html">splay_cache.h</a></li>
-<li>/home/sean/projects/meta/include/caching/<a class="el" href="splay__cache_8tcc.html">splay_cache.tcc</a></li>
+<li>/home/chase/projects/meta/include/caching/<a class="el" href="splay__cache_8h_source.html">splay_cache.h</a></li>
+<li>/home/chase/projects/meta/include/caching/<a class="el" href="splay__cache_8tcc.html">splay_cache.tcc</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:38 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:42:56 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -151,22 +150,22 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a3b7414868d644809ae61155ead7c2bc1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3b7414868d644809ae61155ead7c2bc1"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1disk__vector.html#a3b7414868d644809ae61155ead7c2bc1">_path</a></td></tr>
-<tr class="memdesc:a3b7414868d644809ae61155ead7c2bc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">the path to the file this <a class="el" href="classmeta_1_1util_1_1disk__vector.html" title="disk_vector represents a large constant-size vector that does not necessarily fit in memory...">disk_vector</a> uses for storage <br/></td></tr>
-<tr class="separator:a3b7414868d644809ae61155ead7c2bc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27002fd6d097b26f1d62227bac94eb20"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a27002fd6d097b26f1d62227bac94eb20"></a>
-T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1disk__vector.html#a27002fd6d097b26f1d62227bac94eb20">_start</a></td></tr>
-<tr class="memdesc:a27002fd6d097b26f1d62227bac94eb20"><td class="mdescLeft">&#160;</td><td class="mdescRight">the beginning of where the storage file is memory mapped <br/></td></tr>
-<tr class="separator:a27002fd6d097b26f1d62227bac94eb20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42e36df60fad5d960ed0e2c44bd23ad4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42e36df60fad5d960ed0e2c44bd23ad4"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1disk__vector.html#a42e36df60fad5d960ed0e2c44bd23ad4">_size</a></td></tr>
-<tr class="memdesc:a42e36df60fad5d960ed0e2c44bd23ad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">this size of the memory-mapped file (in regards to T objects) <br/></td></tr>
-<tr class="separator:a42e36df60fad5d960ed0e2c44bd23ad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05218e9f36930556b55ba721980f43ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a05218e9f36930556b55ba721980f43ef"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1disk__vector.html#a05218e9f36930556b55ba721980f43ef">_file_desc</a></td></tr>
-<tr class="memdesc:a05218e9f36930556b55ba721980f43ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">the file descriptor used to open and close the mmap file <br/></td></tr>
-<tr class="separator:a05218e9f36930556b55ba721980f43ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a560617748115d2610ca425f3eaef1393"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a560617748115d2610ca425f3eaef1393"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1disk__vector.html#a560617748115d2610ca425f3eaef1393">path_</a></td></tr>
+<tr class="memdesc:a560617748115d2610ca425f3eaef1393"><td class="mdescLeft">&#160;</td><td class="mdescRight">the path to the file this <a class="el" href="classmeta_1_1util_1_1disk__vector.html" title="disk_vector represents a large constant-size vector that does not necessarily fit in memory...">disk_vector</a> uses for storage <br/></td></tr>
+<tr class="separator:a560617748115d2610ca425f3eaef1393"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb0f3249c3b80e7ebb5a09e59e8eae3f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb0f3249c3b80e7ebb5a09e59e8eae3f"></a>
+T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1disk__vector.html#aeb0f3249c3b80e7ebb5a09e59e8eae3f">start_</a></td></tr>
+<tr class="memdesc:aeb0f3249c3b80e7ebb5a09e59e8eae3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">the beginning of where the storage file is memory mapped <br/></td></tr>
+<tr class="separator:aeb0f3249c3b80e7ebb5a09e59e8eae3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56358419694a35d1b2f1e0f2800ed798"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a56358419694a35d1b2f1e0f2800ed798"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1disk__vector.html#a56358419694a35d1b2f1e0f2800ed798">size_</a></td></tr>
+<tr class="memdesc:a56358419694a35d1b2f1e0f2800ed798"><td class="mdescLeft">&#160;</td><td class="mdescRight">this size of the memory-mapped file (in regards to T objects) <br/></td></tr>
+<tr class="separator:a56358419694a35d1b2f1e0f2800ed798"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1da41cd727783666012865e5c752b4c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1da41cd727783666012865e5c752b4c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1disk__vector.html#ad1da41cd727783666012865e5c752b4c">file_desc_</a></td></tr>
+<tr class="memdesc:ad1da41cd727783666012865e5c752b4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">the file descriptor used to open and close the mmap file <br/></td></tr>
+<tr class="separator:ad1da41cd727783666012865e5c752b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class&gt;<br/>
@@ -367,14 +366,14 @@ template&lt;class T &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/include/index/<a class="el" href="disk__index_8h_source.html">disk_index.h</a></li>
-<li>/home/sean/projects/meta/include/util/<a class="el" href="disk__vector_8h_source.html">disk_vector.h</a></li>
-<li>/home/sean/projects/meta/include/util/<a class="el" href="disk__vector_8tcc.html">disk_vector.tcc</a></li>
+<li>/home/chase/projects/meta/include/index/<a class="el" href="disk__index_8h_source.html">disk_index.h</a></li>
+<li>/home/chase/projects/meta/include/util/<a class="el" href="disk__vector_8h_source.html">disk_vector.h</a></li>
+<li>/home/chase/projects/meta/include/util/<a class="el" href="disk__vector_8tcc.html">disk_vector.tcc</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:45 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:07 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -131,17 +130,22 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a654d76becbe4fe820e6350cd20561ddf"><td class="memItemLeft" align="right" valign="top">const std::unordered_map<br class="typebreak"/>
 &lt; std::string, double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a654d76becbe4fe820e6350cd20561ddf">counts</a> () const </td></tr>
 <tr class="separator:a654d76becbe4fe820e6350cd20561ddf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac60dc07194b9eb8ea7b47fed97e18430"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#ac60dc07194b9eb8ea7b47fed97e18430">set_content</a> (const std::string &amp;<a class="el" href="classmeta_1_1corpus_1_1document.html#a13b0679af054975d26b3ad89dac2a64d">content</a>)</td></tr>
-<tr class="memdesc:ac60dc07194b9eb8ea7b47fed97e18430"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the content of the document to be the parameter.  <a href="#ac60dc07194b9eb8ea7b47fed97e18430">More...</a><br/></td></tr>
-<tr class="separator:ac60dc07194b9eb8ea7b47fed97e18430"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7865b3cf3a158b61936fa6cb66d5103"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#ac7865b3cf3a158b61936fa6cb66d5103">content</a> (const std::string &amp;content, const std::string &amp;<a class="el" href="classmeta_1_1corpus_1_1document.html#a21cde9f39eb8a8b3392464cce482c35b">encoding</a>=&quot;utf-8&quot;)</td></tr>
+<tr class="memdesc:ac7865b3cf3a158b61936fa6cb66d5103"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the content of the document to be the parameter.  <a href="#ac7865b3cf3a158b61936fa6cb66d5103">More...</a><br/></td></tr>
+<tr class="separator:ac7865b3cf3a158b61936fa6cb66d5103"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21cde9f39eb8a8b3392464cce482c35b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a21cde9f39eb8a8b3392464cce482c35b">encoding</a> (const std::string &amp;encoding)</td></tr>
+<tr class="memdesc:a21cde9f39eb8a8b3392464cce482c35b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the encoding for the document to be the parameter.  <a href="#a21cde9f39eb8a8b3392464cce482c35b">More...</a><br/></td></tr>
+<tr class="separator:a21cde9f39eb8a8b3392464cce482c35b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13b0679af054975d26b3ad89dac2a64d"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a13b0679af054975d26b3ad89dac2a64d">content</a> () const </td></tr>
 <tr class="separator:a13b0679af054975d26b3ad89dac2a64d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8f8a4aa59fcc23789ce88fa93dd95f7"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#aa8f8a4aa59fcc23789ce88fa93dd95f7">encoding</a> () const </td></tr>
+<tr class="separator:aa8f8a4aa59fcc23789ce88fa93dd95f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace60ea1bc76e41c9110da68be85595c7"><td class="memItemLeft" align="right" valign="top">doc_id&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#ace60ea1bc76e41c9110da68be85595c7">id</a> () const </td></tr>
 <tr class="separator:ace60ea1bc76e41c9110da68be85595c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac2e75bf986d07ab707c04acedeac77ac"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#ac2e75bf986d07ab707c04acedeac77ac">contains_content</a> () const </td></tr>
 <tr class="separator:ac2e75bf986d07ab707c04acedeac77ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40b7720f39e4b821d2d0d50d265418ba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a40b7720f39e4b821d2d0d50d265418ba">set_label</a> (class_label <a class="el" href="classmeta_1_1corpus_1_1document.html#a6e03105687f1e3c62231b581646e8977">label</a>)</td></tr>
-<tr class="separator:a40b7720f39e4b821d2d0d50d265418ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b59ae5847e069d85c6196b359f4375d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a2b59ae5847e069d85c6196b359f4375d">label</a> (class_label label)</td></tr>
+<tr class="separator:a2b59ae5847e069d85c6196b359f4375d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -154,39 +158,39 @@ Static Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a3e347b384fc1c94609aac11f83e8966c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e347b384fc1c94609aac11f83e8966c"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a3e347b384fc1c94609aac11f83e8966c">_path</a></td></tr>
-<tr class="memdesc:a3e347b384fc1c94609aac11f83e8966c"><td class="mdescLeft">&#160;</td><td class="mdescRight">where this document is on disk <br/></td></tr>
-<tr class="separator:a3e347b384fc1c94609aac11f83e8966c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ce84e38bba5247a7bdc882f366365cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ce84e38bba5247a7bdc882f366365cf"></a>
-doc_id&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a3ce84e38bba5247a7bdc882f366365cf">_d_id</a></td></tr>
-<tr class="memdesc:a3ce84e38bba5247a7bdc882f366365cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">the document id for this document <br/></td></tr>
-<tr class="separator:a3ce84e38bba5247a7bdc882f366365cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a044a471ed82ef0409be220de4704e63f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a044a471ed82ef0409be220de4704e63f"></a>
-class_label&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a044a471ed82ef0409be220de4704e63f">_label</a></td></tr>
-<tr class="memdesc:a044a471ed82ef0409be220de4704e63f"><td class="mdescLeft">&#160;</td><td class="mdescRight">which category this document would be classified into <br/></td></tr>
-<tr class="separator:a044a471ed82ef0409be220de4704e63f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e4c0ddfc78252bf05e2b7b7b207f3db"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8e4c0ddfc78252bf05e2b7b7b207f3db"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a8e4c0ddfc78252bf05e2b7b7b207f3db">_name</a></td></tr>
-<tr class="memdesc:a8e4c0ddfc78252bf05e2b7b7b207f3db"><td class="mdescLeft">&#160;</td><td class="mdescRight">the short name for this document (not the full path) <br/></td></tr>
-<tr class="separator:a8e4c0ddfc78252bf05e2b7b7b207f3db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26a090175e0734d695607ae0c68e08cc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26a090175e0734d695607ae0c68e08cc"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a26a090175e0734d695607ae0c68e08cc">_length</a></td></tr>
-<tr class="memdesc:a26a090175e0734d695607ae0c68e08cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of (non-unique) tokens in this document <br/></td></tr>
-<tr class="separator:a26a090175e0734d695607ae0c68e08cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a928138219e5f5c00b28b248198e4a4f5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a928138219e5f5c00b28b248198e4a4f5"></a>
+<tr class="memitem:a14579c29f025cc4b4ee4f5a4a09495ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a14579c29f025cc4b4ee4f5a4a09495ce"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a14579c29f025cc4b4ee4f5a4a09495ce">path_</a></td></tr>
+<tr class="memdesc:a14579c29f025cc4b4ee4f5a4a09495ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">where this document is on disk <br/></td></tr>
+<tr class="separator:a14579c29f025cc4b4ee4f5a4a09495ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8668df179c28d041cebd14ea64b9fb8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8668df179c28d041cebd14ea64b9fb8b"></a>
+doc_id&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a8668df179c28d041cebd14ea64b9fb8b">d_id_</a></td></tr>
+<tr class="memdesc:a8668df179c28d041cebd14ea64b9fb8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">the document id for this document <br/></td></tr>
+<tr class="separator:a8668df179c28d041cebd14ea64b9fb8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affcbe310383aa43765991bd1d8225530"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="affcbe310383aa43765991bd1d8225530"></a>
+class_label&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#affcbe310383aa43765991bd1d8225530">label_</a></td></tr>
+<tr class="memdesc:affcbe310383aa43765991bd1d8225530"><td class="mdescLeft">&#160;</td><td class="mdescRight">which category this document would be classified into <br/></td></tr>
+<tr class="separator:affcbe310383aa43765991bd1d8225530"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc3abc535931e2e9629532ccd74982cb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc3abc535931e2e9629532ccd74982cb"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#acc3abc535931e2e9629532ccd74982cb">name_</a></td></tr>
+<tr class="memdesc:acc3abc535931e2e9629532ccd74982cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">the short name for this document (not the full path) <br/></td></tr>
+<tr class="separator:acc3abc535931e2e9629532ccd74982cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abed5c2aceb2fdf129c267e0cd2035d2d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abed5c2aceb2fdf129c267e0cd2035d2d"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#abed5c2aceb2fdf129c267e0cd2035d2d">length_</a></td></tr>
+<tr class="memdesc:abed5c2aceb2fdf129c267e0cd2035d2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of (non-unique) tokens in this document <br/></td></tr>
+<tr class="separator:abed5c2aceb2fdf129c267e0cd2035d2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7402358c4a21c791dac95af0c9314836"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7402358c4a21c791dac95af0c9314836"></a>
 std::unordered_map<br class="typebreak"/>
-&lt; std::string, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a928138219e5f5c00b28b248198e4a4f5">_counts</a></td></tr>
-<tr class="memdesc:a928138219e5f5c00b28b248198e4a4f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">counts of how many times each token appears <br/></td></tr>
-<tr class="separator:a928138219e5f5c00b28b248198e4a4f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a139f55c15d4ecdfcce3deeebd0c1ae23"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a139f55c15d4ecdfcce3deeebd0c1ae23"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a139f55c15d4ecdfcce3deeebd0c1ae23">_content</a></td></tr>
-<tr class="memdesc:a139f55c15d4ecdfcce3deeebd0c1ae23"><td class="mdescLeft">&#160;</td><td class="mdescRight">what the document contains <br/></td></tr>
-<tr class="separator:a139f55c15d4ecdfcce3deeebd0c1ae23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1921445af1076002274712090c400a3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1921445af1076002274712090c400a3"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#ab1921445af1076002274712090c400a3">_contains_content</a></td></tr>
-<tr class="memdesc:ab1921445af1076002274712090c400a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates whether this document has the original content stored in it. <br/></td></tr>
-<tr class="separator:ab1921445af1076002274712090c400a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+&lt; std::string, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a7402358c4a21c791dac95af0c9314836">counts_</a></td></tr>
+<tr class="memdesc:a7402358c4a21c791dac95af0c9314836"><td class="mdescLeft">&#160;</td><td class="mdescRight">counts of how many times each token appears <br/></td></tr>
+<tr class="separator:a7402358c4a21c791dac95af0c9314836"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb1dcde1f6e84c541807e87c1b114392"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb1dcde1f6e84c541807e87c1b114392"></a>
+<a class="el" href="classmeta_1_1util_1_1optional.html">util::optional</a>&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#adb1dcde1f6e84c541807e87c1b114392">content_</a></td></tr>
+<tr class="memdesc:adb1dcde1f6e84c541807e87c1b114392"><td class="mdescLeft">&#160;</td><td class="mdescRight">what the document contains <br/></td></tr>
+<tr class="separator:adb1dcde1f6e84c541807e87c1b114392"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1b312beae6a7f62df11af5016f80f35"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1b312beae6a7f62df11af5016f80f35"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#ad1b312beae6a7f62df11af5016f80f35">encoding_</a></td></tr>
+<tr class="memdesc:ad1b312beae6a7f62df11af5016f80f35"><td class="mdescLeft">&#160;</td><td class="mdescRight">the encoding for the content <br/></td></tr>
+<tr class="separator:ad1b312beae6a7f62df11af5016f80f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents an indexable document. </p>
@@ -461,16 +465,26 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="ac60dc07194b9eb8ea7b47fed97e18430"></a>
+<a class="anchor" id="ac7865b3cf3a158b61936fa6cb66d5103"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void meta::corpus::document::set_content </td>
+          <td class="memname">void meta::corpus::document::content </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>content</em></td><td>)</td>
+          <td class="paramname"><em>content</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>encoding</em> = <code>&quot;utf-8&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -479,10 +493,35 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">content</td><td></td></tr>
+    <tr><td class="paramname">encoding</td><td>the encoding of content, which defaults to utf-8 </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>saving the document's content is only used by some corpora formats; not all documents are guaranteed to have content stored in the object itself </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a21cde9f39eb8a8b3392464cce482c35b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::corpus::document::encoding </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>encoding</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the encoding for the document to be the parameter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">encoding</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -499,6 +538,22 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the contents of this document </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa8f8a4aa59fcc23789ce88fa93dd95f7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string &amp; meta::corpus::document::encoding </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the encoding for this document </dd></dl>
 
 </div>
 </div>
@@ -534,12 +589,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a class="anchor" id="a40b7720f39e4b821d2d0d50d265418ba"></a>
+<a class="anchor" id="a2b59ae5847e069d85c6196b359f4375d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void meta::corpus::document::set_label </td>
+          <td class="memname">void meta::corpus::document::label </td>
           <td>(</td>
           <td class="paramtype">class_label&#160;</td>
           <td class="paramname"><em>label</em></td><td>)</td>
@@ -557,13 +612,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/include/corpus/<a class="el" href="document_8h_source.html">document.h</a></li>
-<li>/home/sean/projects/meta/src/corpus/<a class="el" href="document_8cpp.html">document.cpp</a></li>
+<li>/home/chase/projects/meta/include/corpus/<a class="el" href="document_8h_source.html">document.h</a></li>
+<li>/home/chase/projects/meta/src/corpus/<a class="el" href="document_8cpp.html">document.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:40 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:01 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

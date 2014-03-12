@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,24 +104,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">meta::index::disk_index::disk_index_impl Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>The implementation of a <a class="el" href="classmeta_1_1index_1_1disk__index.html" title="Holds generic data structures and functions that inverted_index and forward_index both use...">disk_index</a>.  
+ <a href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="disk__index__impl_8h_source.html">disk_index_impl.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0ef13846755f4f0e3e8803ee7789aa1f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ef13846755f4f0e3e8803ee7789aa1f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a0ef13846755f4f0e3e8803ee7789aa1f">initialize_metadata</a> (uint64_t <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a>=0)</td></tr>
-<tr class="memdesc:a0ef13846755f4f0e3e8803ee7789aa1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the following metadata maps: doc_sizes_, labels_, unique_terms_. <br/></td></tr>
+<tr class="memitem:a0ef13846755f4f0e3e8803ee7789aa1f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a0ef13846755f4f0e3e8803ee7789aa1f">initialize_metadata</a> (uint64_t <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a>=0)</td></tr>
+<tr class="memdesc:a0ef13846755f4f0e3e8803ee7789aa1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the following metadata maps: doc_sizes_, labels_, unique_terms_.  <a href="#a0ef13846755f4f0e3e8803ee7789aa1f">More...</a><br/></td></tr>
 <tr class="separator:a0ef13846755f4f0e3e8803ee7789aa1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad78262fccc671ca5bd869fd5a006825f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad78262fccc671ca5bd869fd5a006825f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#ad78262fccc671ca5bd869fd5a006825f">load_doc_sizes</a> (uint64_t <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a>=0)</td></tr>
-<tr class="memdesc:ad78262fccc671ca5bd869fd5a006825f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the doc sizes. <br/></td></tr>
+<tr class="memitem:ad78262fccc671ca5bd869fd5a006825f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#ad78262fccc671ca5bd869fd5a006825f">load_doc_sizes</a> (uint64_t <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a>=0)</td></tr>
+<tr class="memdesc:ad78262fccc671ca5bd869fd5a006825f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the doc sizes.  <a href="#ad78262fccc671ca5bd869fd5a006825f">More...</a><br/></td></tr>
 <tr class="separator:ad78262fccc671ca5bd869fd5a006825f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0148d36179f894ca1d2e874d49dd842"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0148d36179f894ca1d2e874d49dd842"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#ac0148d36179f894ca1d2e874d49dd842">load_labels</a> (uint64_t <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a>=0)</td></tr>
-<tr class="memdesc:ac0148d36179f894ca1d2e874d49dd842"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the doc labels. <br/></td></tr>
+<tr class="memitem:ac0148d36179f894ca1d2e874d49dd842"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#ac0148d36179f894ca1d2e874d49dd842">load_labels</a> (uint64_t <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a>=0)</td></tr>
+<tr class="memdesc:ac0148d36179f894ca1d2e874d49dd842"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the doc labels.  <a href="#ac0148d36179f894ca1d2e874d49dd842">More...</a><br/></td></tr>
 <tr class="separator:ac0148d36179f894ca1d2e874d49dd842"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e3f4691ee044741d662e21845627622"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e3f4691ee044741d662e21845627622"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a5e3f4691ee044741d662e21845627622">load_unique_terms</a> (uint64_t <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a>=0)</td></tr>
-<tr class="memdesc:a5e3f4691ee044741d662e21845627622"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the unique terms per document. <br/></td></tr>
+<tr class="memitem:a5e3f4691ee044741d662e21845627622"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a5e3f4691ee044741d662e21845627622">load_unique_terms</a> (uint64_t <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a>=0)</td></tr>
+<tr class="memdesc:a5e3f4691ee044741d662e21845627622"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads the unique terms per document.  <a href="#a5e3f4691ee044741d662e21845627622">More...</a><br/></td></tr>
 <tr class="separator:a5e3f4691ee044741d662e21845627622"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12e9d4c2e96d7fbde7d80596f3c88185"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a12e9d4c2e96d7fbde7d80596f3c88185"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a12e9d4c2e96d7fbde7d80596f3c88185">load_doc_id_mapping</a> ()</td></tr>
@@ -144,34 +144,26 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a6d57d2ffcf2fd96bd27b343f3f7efca8">save_label_id_mapping</a> ()</td></tr>
 <tr class="memdesc:a6d57d2ffcf2fd96bd27b343f3f7efca8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the label_id mapping. <br/></td></tr>
 <tr class="separator:a6d57d2ffcf2fd96bd27b343f3f7efca8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b4a309313b99b3e9843c366491c5ea3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5b4a309313b99b3e9843c366491c5ea3"></a>
-<a class="el" href="classmeta_1_1index_1_1string__list__writer.html">string_list_writer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a5b4a309313b99b3e9843c366491c5ea3">make_doc_id_writer</a> (uint64_t size) const </td></tr>
-<tr class="memdesc:a5b4a309313b99b3e9843c366491c5ea3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a string_writer for writing the docids mapping. <br/></td></tr>
-<tr class="separator:a5b4a309313b99b3e9843c366491c5ea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b15757b1a306bf9d23bb14d55d186cd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b15757b1a306bf9d23bb14d55d186cd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a1b15757b1a306bf9d23bb14d55d186cd">set_label</a> (doc_id id, const class_label &amp;<a class="el" href="classmeta_1_1index_1_1disk__index.html#a9ac1bf325ba1971299b9bcd9b49b539e">label</a>)</td></tr>
-<tr class="memdesc:a1b15757b1a306bf9d23bb14d55d186cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the label for a document. <br/></td></tr>
+<tr class="memitem:a775bc023b00e8b019cedbc34fac79457"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1index_1_1string__list__writer.html">string_list_writer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a775bc023b00e8b019cedbc34fac79457">make_doc_id_writer</a> (uint64_t <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a>) const </td></tr>
+<tr class="memdesc:a775bc023b00e8b019cedbc34fac79457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a string_writer for writing the docids mapping.  <a href="#a775bc023b00e8b019cedbc34fac79457">More...</a><br/></td></tr>
+<tr class="separator:a775bc023b00e8b019cedbc34fac79457"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b15757b1a306bf9d23bb14d55d186cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a1b15757b1a306bf9d23bb14d55d186cd">set_label</a> (doc_id id, const class_label &amp;<a class="el" href="classmeta_1_1index_1_1disk__index.html#a9ac1bf325ba1971299b9bcd9b49b539e">label</a>)</td></tr>
+<tr class="memdesc:a1b15757b1a306bf9d23bb14d55d186cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the label for a document.  <a href="#a1b15757b1a306bf9d23bb14d55d186cd">More...</a><br/></td></tr>
 <tr class="separator:a1b15757b1a306bf9d23bb14d55d186cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30c2155f9a77df1fdbc011c4f430a9cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a30c2155f9a77df1fdbc011c4f430a9cf"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a30c2155f9a77df1fdbc011c4f430a9cf">set_length</a> (doc_id id, uint64_t length)</td></tr>
-<tr class="memdesc:a30c2155f9a77df1fdbc011c4f430a9cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the size of a document. <br/></td></tr>
+<tr class="memitem:a30c2155f9a77df1fdbc011c4f430a9cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a30c2155f9a77df1fdbc011c4f430a9cf">set_length</a> (doc_id id, uint64_t length)</td></tr>
+<tr class="memdesc:a30c2155f9a77df1fdbc011c4f430a9cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the size of a document.  <a href="#a30c2155f9a77df1fdbc011c4f430a9cf">More...</a><br/></td></tr>
 <tr class="separator:a30c2155f9a77df1fdbc011c4f430a9cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af14618ec8595328e4bef545270fbee0a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af14618ec8595328e4bef545270fbee0a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#af14618ec8595328e4bef545270fbee0a">set_unique_terms</a> (doc_id id, uint64_t terms)</td></tr>
-<tr class="memdesc:af14618ec8595328e4bef545270fbee0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the number of unique terms for a document. <br/></td></tr>
+<tr class="memitem:af14618ec8595328e4bef545270fbee0a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#af14618ec8595328e4bef545270fbee0a">set_unique_terms</a> (doc_id id, uint64_t terms)</td></tr>
+<tr class="memdesc:af14618ec8595328e4bef545270fbee0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the number of unique terms for a document.  <a href="#af14618ec8595328e4bef545270fbee0a">More...</a><br/></td></tr>
 <tr class="separator:af14618ec8595328e4bef545270fbee0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a178b80bd7690506120740030d4b0a314"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a178b80bd7690506120740030d4b0a314"></a>
-const <a class="el" href="classmeta_1_1io_1_1mmap__file.html">io::mmap_file</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a178b80bd7690506120740030d4b0a314">postings</a> () const </td></tr>
-<tr class="memdesc:a178b80bd7690506120740030d4b0a314"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the mmap file for the postings. <br/></td></tr>
+<tr class="memitem:a178b80bd7690506120740030d4b0a314"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmeta_1_1io_1_1mmap__file.html">io::mmap_file</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a178b80bd7690506120740030d4b0a314">postings</a> () const </td></tr>
 <tr class="separator:a178b80bd7690506120740030d4b0a314"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a314f7b993bf0a884c4efdf420575297b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a314f7b993bf0a884c4efdf420575297b"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a314f7b993bf0a884c4efdf420575297b">total_unique_terms</a> () const </td></tr>
-<tr class="memdesc:a314f7b993bf0a884c4efdf420575297b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the total number of unique terms in the index. <br/></td></tr>
+<tr class="memitem:a314f7b993bf0a884c4efdf420575297b"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a314f7b993bf0a884c4efdf420575297b">total_unique_terms</a> () const </td></tr>
 <tr class="separator:a314f7b993bf0a884c4efdf420575297b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40e4d334189343be8bbf58c8bb8cbf92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a40e4d334189343be8bbf58c8bb8cbf92"></a>
-label_id&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a40e4d334189343be8bbf58c8bb8cbf92">doc_label_id</a> (doc_id id) const </td></tr>
-<tr class="memdesc:a40e4d334189343be8bbf58c8bb8cbf92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the label id for a given document. <br/></td></tr>
+<tr class="memitem:a40e4d334189343be8bbf58c8bb8cbf92"><td class="memItemLeft" align="right" valign="top">label_id&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a40e4d334189343be8bbf58c8bb8cbf92">doc_label_id</a> (doc_id id) const </td></tr>
 <tr class="separator:a40e4d334189343be8bbf58c8bb8cbf92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a348a3b8828ff10b2a3c031d392f0e31d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; class_label &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a348a3b8828ff10b2a3c031d392f0e31d">class_labels</a> () const </td></tr>
+<tr class="separator:a348a3b8828ff10b2a3c031d392f0e31d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -229,7 +221,305 @@ std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <tr class="memdesc:a6b52068309025d845b4dc22a731c07f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">mutex for thread-safe operations <br/></td></tr>
 <tr class="separator:a6b52068309025d845b4dc22a731c07f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The implementation of a <a class="el" href="classmeta_1_1index_1_1disk__index.html" title="Holds generic data structures and functions that inverted_index and forward_index both use...">disk_index</a>. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a0ef13846755f4f0e3e8803ee7789aa1f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::index::disk_index::disk_index_impl::initialize_metadata </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>num_docs</em> = <code>0</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initializes the following metadata maps: doc_sizes_, labels_, unique_terms_. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">num_docs</td><td>The number of documents stored in the index </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ad78262fccc671ca5bd869fd5a006825f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::index::disk_index::disk_index_impl::load_doc_sizes </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>num_docs</em> = <code>0</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Loads the doc sizes. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">num_docs</td><td>The number of documents stored in the index </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ac0148d36179f894ca1d2e874d49dd842"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::index::disk_index::disk_index_impl::load_labels </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>num_docs</em> = <code>0</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Loads the doc labels. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">num_docs</td><td>The number of documents stored in the index </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a5e3f4691ee044741d662e21845627622"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::index::disk_index::disk_index_impl::load_unique_terms </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>num_docs</em> = <code>0</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Loads the unique terms per document. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">num_docs</td><td>The number of documents stored in the index </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a775bc023b00e8b019cedbc34fac79457"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmeta_1_1index_1_1string__list__writer.html">string_list_writer</a> meta::index::disk_index::disk_index_impl::make_doc_id_writer </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>num_docs</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a string_writer for writing the docids mapping. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">num_docs</td><td>The number of documents stored in the index, as the size of the <a class="el" href="classmeta_1_1index_1_1string__list__writer.html" title="A class for writing large lists of strings to disk with an associated index file for fast random acce...">string_list_writer</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a1b15757b1a306bf9d23bb14d55d186cd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::index::disk_index::disk_index_impl::set_label </td>
+          <td>(</td>
+          <td class="paramtype">doc_id&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const class_label &amp;&#160;</td>
+          <td class="paramname"><em>label</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the label for a document. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td></td></tr>
+    <tr><td class="paramname">label</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a30c2155f9a77df1fdbc011c4f430a9cf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::index::disk_index::disk_index_impl::set_length </td>
+          <td>(</td>
+          <td class="paramtype">doc_id&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the size of a document. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td></td></tr>
+    <tr><td class="paramname">length</td><td>The number of terms that will appear in the document </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="af14618ec8595328e4bef545270fbee0a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::index::disk_index::disk_index_impl::set_unique_terms </td>
+          <td>(</td>
+          <td class="paramtype">doc_id&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>terms</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the number of unique terms for a document. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td></td></tr>
+    <tr><td class="paramname">terms</td><td>The number of unique terms that will appear in the document </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a178b80bd7690506120740030d4b0a314"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classmeta_1_1io_1_1mmap__file.html">io::mmap_file</a> &amp; meta::index::disk_index::disk_index_impl::postings </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the mmap file for the postings. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a314f7b993bf0a884c4efdf420575297b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t meta::index::disk_index::disk_index_impl::total_unique_terms </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the total number of unique terms in the index. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a40e4d334189343be8bbf58c8bb8cbf92"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">label_id meta::index::disk_index::disk_index_impl::doc_label_id </td>
+          <td>(</td>
+          <td class="paramtype">doc_id&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the label id for a given document. </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a348a3b8828ff10b2a3c031d392f0e31d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; class_label &gt; meta::index::disk_index::disk_index_impl::class_labels </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the possible class labels for this index </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="aca425126ae9cddfb3bb0438065716663"></a>
 <div class="memitem">
 <div class="memproto">
@@ -279,10 +569,9 @@ std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">    <span class="stringliteral">&quot;/docids.mapping&quot;</span>, <span class="stringliteral">&quot;/docids.mapping_index&quot;</span>, <span class="stringliteral">&quot;/docsizes.counts&quot;</span>,</div>
-<div class="line">    <span class="stringliteral">&quot;/docs.labels&quot;</span>,    <span class="stringliteral">&quot;/docs.uniqueterms&quot;</span>,     <span class="stringliteral">&quot;/labelids.mapping&quot;</span>,</div>
-<div class="line">    <span class="stringliteral">&quot;/postings.index&quot;</span>, <span class="stringliteral">&quot;/termids.mapping&quot;</span>,      <span class="stringliteral">&quot;/termids.mapping.inverse&quot;</span>}</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {<span class="stringliteral">&quot;/docids.mapping&quot;</span>, <span class="stringliteral">&quot;/docids.mapping_index&quot;</span>, <span class="stringliteral">&quot;/docsizes.counts&quot;</span>,</div>
+<div class="line">       <span class="stringliteral">&quot;/docs.labels&quot;</span>,    <span class="stringliteral">&quot;/docs.uniqueterms&quot;</span>,     <span class="stringliteral">&quot;/labelids.mapping&quot;</span>,</div>
+<div class="line">       <span class="stringliteral">&quot;/postings.index&quot;</span>, <span class="stringliteral">&quot;/termids.mapping&quot;</span>,      <span class="stringliteral">&quot;/termids.mapping.inverse&quot;</span>}</div>
 </div><!-- fragment -->
 <p>Filenames used in the index. </p>
 
@@ -404,13 +693,13 @@ std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/include/index/<a class="el" href="disk__index__impl_8h_source.html">disk_index_impl.h</a></li>
-<li>/home/sean/projects/meta/src/index/<a class="el" href="disk__index_8cpp.html">disk_index.cpp</a></li>
+<li>/home/chase/projects/meta/include/index/<a class="el" href="disk__index__impl_8h_source.html">disk_index_impl.h</a></li>
+<li>/home/chase/projects/meta/src/index/<a class="el" href="disk__index_8cpp.html">disk_index.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:40 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:02 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

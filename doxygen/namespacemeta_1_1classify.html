@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -77,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -112,6 +111,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1binary__classifier__factory.html">binary_classifier_factory</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory that is responsible for creating binary classifiers from configuration files.  <a href="classmeta_1_1classify_1_1binary__classifier__factory.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1binary__classifier.html">binary_classifier</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A classifier which classifies documents as "positive" or "negative".  <a href="classmeta_1_1classify_1_1binary__classifier.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A classifier uses a document's feature space to identify which group it belongs to.  <a href="classmeta_1_1classify_1_1classifier.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -119,12 +124,16 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements a perceptron classifier, but using the dual formulation of the problem.  <a href="classmeta_1_1classify_1_1dual__perceptron.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1knn.html">knn</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the k-Nearest Neighber lazy learning classification algorithm.  <a href="classmeta_1_1classify_1_1knn.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the k-Nearest Neighbor lazy learning classification algorithm.  <a href="classmeta_1_1classify_1_1knn.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1naive__bayes.html">naive_bayes</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the Naive Bayes classifier, a simplistic probabilistic classifier that uses Bayes' theorem with strong feature independence assumptions.  <a href="classmeta_1_1classify_1_1naive__bayes.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1one__vs__all.html">one_vs_all</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generalizes binary classifiers to operate over multiclass types using the one vs all method.  <a href="classmeta_1_1classify_1_1one__vs__all.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1one__vs__one.html">one_vs_one</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensemble method adaptor for extending binary_classifiers to the multi-class classification case by using a one-vs-one strategy.  <a href="classmeta_1_1classify_1_1one__vs__one.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1sgd.html">sgd</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements stochastic gradient descent for learning binary linear classifiers.  <a href="classmeta_1_1classify_1_1sgd.html#details">More...</a><br/></td></tr>
@@ -135,30 +144,152 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html">winnow</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements the Winnow classifier, a simplistic linear classifier for linearly-separable data.  <a href="classmeta_1_1classify_1_1winnow.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1classifier__factory.html">classifier_factory</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory that is responsible for creating classifiers from configuration files.  <a href="classmeta_1_1classify_1_1classifier__factory.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html">confusion_matrix</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows interpretation of classification errors.  <a href="classmeta_1_1classify_1_1confusion__matrix.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a41397c337597195b837db1e0ac815997"><td class="memTemplParams" colspan="2">template&lt;class Kernel , class... Args&gt; </td></tr>
-<tr class="memitem:a41397c337597195b837db1e0ac815997"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html">dual_perceptron</a>&lt; Kernel &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#a41397c337597195b837db1e0ac815997">make_perceptron</a> (<a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &amp;idx, Kernel &amp;&amp;kernel, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a41397c337597195b837db1e0ac815997"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a <a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html" title="Implements a perceptron classifier, but using the dual formulation of the problem. ">dual_perceptron</a> with the given arguments, for convenience.  <a href="#a41397c337597195b837db1e0ac815997">More...</a><br/></td></tr>
-<tr class="separator:a41397c337597195b837db1e0ac815997"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6c031e94f7ab153fb56e4afbb213c73"><td class="memItemLeft" align="right" valign="top">std::unique_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classmeta_1_1classify_1_1binary__classifier.html">binary_classifier</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#ac6c031e94f7ab153fb56e4afbb213c73">make_binary_classifier</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;config, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, class_label positive, class_label negative)</td></tr>
+<tr class="memdesc:ac6c031e94f7ab153fb56e4afbb213c73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience method for creating a binary classifier using the factory.  <a href="#ac6c031e94f7ab153fb56e4afbb213c73">More...</a><br/></td></tr>
+<tr class="separator:ac6c031e94f7ab153fb56e4afbb213c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a483626d531093af8e1d5c02cf8686136"><td class="memTemplParams" colspan="2">template&lt;class Classifier &gt; </td></tr>
+<tr class="memitem:a483626d531093af8e1d5c02cf8686136"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#a483626d531093af8e1d5c02cf8686136">register_binary_classifier</a> ()</td></tr>
+<tr class="memdesc:a483626d531093af8e1d5c02cf8686136"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registration method for binary classifiers.  <a href="#a483626d531093af8e1d5c02cf8686136">More...</a><br/></td></tr>
+<tr class="separator:a483626d531093af8e1d5c02cf8686136"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaef1453120f5a11872727e7f95bd69d6"><td class="memTemplParams" colspan="2"><a class="anchor" id="aaef1453120f5a11872727e7f95bd69d6"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:aaef1453120f5a11872727e7f95bd69d6"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#aaef1453120f5a11872727e7f95bd69d6">make_classifier&lt; dual_perceptron &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt;)</td></tr>
+<tr class="memdesc:aaef1453120f5a11872727e7f95bd69d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory function used to create dual_perceptrons. <br/></td></tr>
+<tr class="separator:aaef1453120f5a11872727e7f95bd69d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c9fff3e62a7bee8ce3037c06c64d0f3"><td class="memTemplParams" colspan="2">template&lt;class Kernel , class... Args&gt; </td></tr>
+<tr class="memitem:a3c9fff3e62a7bee8ce3037c06c64d0f3"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html">dual_perceptron</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#a3c9fff3e62a7bee8ce3037c06c64d0f3">make_perceptron</a> (std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, Kernel &amp;&amp;kernel, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a3c9fff3e62a7bee8ce3037c06c64d0f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a <a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html" title="Implements a perceptron classifier, but using the dual formulation of the problem. ">dual_perceptron</a> with the given arguments, for convenience.  <a href="#a3c9fff3e62a7bee8ce3037c06c64d0f3">More...</a><br/></td></tr>
+<tr class="separator:a3c9fff3e62a7bee8ce3037c06c64d0f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66775028cf0eb77db1f9ef6d8e858d9d"><td class="memTemplParams" colspan="2"><a class="anchor" id="a66775028cf0eb77db1f9ef6d8e858d9d"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a66775028cf0eb77db1f9ef6d8e858d9d"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#a66775028cf0eb77db1f9ef6d8e858d9d">make_multi_index_classifier&lt; knn &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt;, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1inverted__index.html">index::inverted_index</a> &gt;)</td></tr>
+<tr class="memdesc:a66775028cf0eb77db1f9ef6d8e858d9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create knn classifiers. <br/></td></tr>
+<tr class="separator:a66775028cf0eb77db1f9ef6d8e858d9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa79b080ef2229cb9ddc4144aff434a3a"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa79b080ef2229cb9ddc4144aff434a3a"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:aa79b080ef2229cb9ddc4144aff434a3a"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#aa79b080ef2229cb9ddc4144aff434a3a">make_classifier&lt; one_vs_all &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx)</td></tr>
+<tr class="memdesc:aa79b080ef2229cb9ddc4144aff434a3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1classify_1_1one__vs__all.html" title="Generalizes binary classifiers to operate over multiclass types using the one vs all method...">one_vs_all</a> classifiers. <br/></td></tr>
+<tr class="separator:aa79b080ef2229cb9ddc4144aff434a3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d1d1035287941c5744a1c1d919bf4c4"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1d1d1035287941c5744a1c1d919bf4c4"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a1d1d1035287941c5744a1c1d919bf4c4"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#a1d1d1035287941c5744a1c1d919bf4c4">make_classifier&lt; one_vs_one &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx)</td></tr>
+<tr class="memdesc:a1d1d1035287941c5744a1c1d919bf4c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1classify_1_1one__vs__all.html" title="Generalizes binary classifiers to operate over multiclass types using the one vs all method...">one_vs_all</a> classifiers. <br/></td></tr>
+<tr class="separator:a1d1d1035287941c5744a1c1d919bf4c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9946f10c532af84b4ca2a4b637577c62"><td class="memTemplParams" colspan="2"><a class="anchor" id="a9946f10c532af84b4ca2a4b637577c62"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a9946f10c532af84b4ca2a4b637577c62"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classmeta_1_1classify_1_1binary__classifier.html">binary_classifier</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>make_binary_classifier&lt; sgd &gt;</b> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;config, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, class_label positive, class_label negative)</td></tr>
+<tr class="separator:a9946f10c532af84b4ca2a4b637577c62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc0c753034a0c05e9eb463b256fa2246"><td class="memTemplParams" colspan="2"><a class="anchor" id="adc0c753034a0c05e9eb463b256fa2246"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:adc0c753034a0c05e9eb463b256fa2246"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>make_classifier&lt; svm_wrapper &gt;</b> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt;)</td></tr>
+<tr class="separator:adc0c753034a0c05e9eb463b256fa2246"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a235fe254b6cae10d59a6aec8c8c49f75"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a235fe254b6cae10d59a6aec8c8c49f75"></a>
+std::unique_ptr&lt; <a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#a235fe254b6cae10d59a6aec8c8c49f75">make_classifier</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;config, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1inverted__index.html">index::inverted_index</a> &gt; inv_idx=nullptr)</td></tr>
+<tr class="memdesc:a235fe254b6cae10d59a6aec8c8c49f75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience method for creating a classifier using the factory. <br/></td></tr>
+<tr class="separator:a235fe254b6cae10d59a6aec8c8c49f75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a636104ace47b058719b30b1079f8c163"><td class="memTemplParams" colspan="2">template&lt;class Classifier &gt; </td></tr>
+<tr class="memitem:a636104ace47b058719b30b1079f8c163"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#a636104ace47b058719b30b1079f8c163">make_classifier</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx)</td></tr>
+<tr class="memdesc:a636104ace47b058719b30b1079f8c163"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory method for creating a classifier.  <a href="#a636104ace47b058719b30b1079f8c163">More...</a><br/></td></tr>
+<tr class="separator:a636104ace47b058719b30b1079f8c163"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c8a8b4f9d7c79929a4541ee122119dc"><td class="memTemplParams" colspan="2">template&lt;class Classifier &gt; </td></tr>
+<tr class="memitem:a8c8a8b4f9d7c79929a4541ee122119dc"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#a8c8a8b4f9d7c79929a4541ee122119dc">make_multi_index_classifier</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1inverted__index.html">index::inverted_index</a> &gt; inv_idx)</td></tr>
+<tr class="memdesc:a8c8a8b4f9d7c79929a4541ee122119dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory method for creating a classifier that takes both index types.  <a href="#a8c8a8b4f9d7c79929a4541ee122119dc">More...</a><br/></td></tr>
+<tr class="separator:a8c8a8b4f9d7c79929a4541ee122119dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab47bcaf9755b7b6a6f7de9ce3ba2fb80"><td class="memTemplParams" colspan="2">template&lt;class Classifier &gt; </td></tr>
+<tr class="memitem:ab47bcaf9755b7b6a6f7de9ce3ba2fb80"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#ab47bcaf9755b7b6a6f7de9ce3ba2fb80">register_classifier</a> ()</td></tr>
+<tr class="memdesc:ab47bcaf9755b7b6a6f7de9ce3ba2fb80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registration method for classifiers.  <a href="#ab47bcaf9755b7b6a6f7de9ce3ba2fb80">More...</a><br/></td></tr>
+<tr class="separator:ab47bcaf9755b7b6a6f7de9ce3ba2fb80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99d322bfd5cca8395ced460726608001"><td class="memTemplParams" colspan="2">template&lt;class Classifier &gt; </td></tr>
+<tr class="memitem:a99d322bfd5cca8395ced460726608001"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1classify.html#a99d322bfd5cca8395ced460726608001">register_multi_index_classifier</a> ()</td></tr>
+<tr class="memdesc:a99d322bfd5cca8395ced460726608001"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registration method for multi-index classifiers.  <a href="#a99d322bfd5cca8395ced460726608001">More...</a><br/></td></tr>
+<tr class="separator:a99d322bfd5cca8395ced460726608001"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Algorithms for feature selection, KNN search, and confusion matrices. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a41397c337597195b837db1e0ac815997"></a>
+<a class="anchor" id="ac6c031e94f7ab153fb56e4afbb213c73"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classmeta_1_1classify_1_1binary__classifier.html">binary_classifier</a> &gt; meta::classify::make_binary_classifier </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;&#160;</td>
+          <td class="paramname"><em>config</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; index::forward_index &gt;&#160;</td>
+          <td class="paramname"><em>idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">class_label&#160;</td>
+          <td class="paramname"><em>positive</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">class_label&#160;</td>
+          <td class="paramname"><em>negative</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convenience method for creating a binary classifier using the factory. </p>
+<p>Factory method for creating a binary classifier.</p>
+<p>This should be specialized if your given binary classifier requires special construction behavior (e.g., reading parameters). </p>
+
+</div>
+</div>
+<a class="anchor" id="a483626d531093af8e1d5c02cf8686136"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Classifier &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::classify::register_binary_classifier </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Registration method for binary classifiers. </p>
+<p>Clients should use this method to register any new binary classifiers they write. </p>
+
+</div>
+</div>
+<a class="anchor" id="a3c9fff3e62a7bee8ce3037c06c64d0f3"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Kernel , class... Args&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html">dual_perceptron</a>&lt; Kernel &gt; meta::classify::make_perceptron </td>
+          <td class="memname"><a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html">dual_perceptron</a> meta::classify::make_perceptron </td>
           <td>(</td>
-          <td class="paramtype">index::forward_index &amp;&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; index::forward_index &gt;&#160;</td>
           <td class="paramname"><em>idx</em>, </td>
         </tr>
         <tr>
@@ -194,10 +325,118 @@ template&lt;class Kernel , class... Args&gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="a636104ace47b058719b30b1079f8c163"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Classifier &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt;<a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a>&gt; meta::classify::make_classifier </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; index::forward_index &gt;&#160;</td>
+          <td class="paramname"><em>idx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Factory method for creating a classifier. </p>
+<p>This should be specialized if your given classifier requires special construction behavior (e.g., reading parameters). </p>
+
+</div>
+</div>
+<a class="anchor" id="a8c8a8b4f9d7c79929a4541ee122119dc"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Classifier &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt;<a class="el" href="classmeta_1_1classify_1_1classifier.html">classifier</a>&gt; meta::classify::make_multi_index_classifier </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; index::forward_index &gt;&#160;</td>
+          <td class="paramname"><em>idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; index::inverted_index &gt;&#160;</td>
+          <td class="paramname"><em>inv_idx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Factory method for creating a classifier that takes both index types. </p>
+<p>This should be specialized if your given classifier requires special construction behavior. </p>
+
+</div>
+</div>
+<a class="anchor" id="ab47bcaf9755b7b6a6f7de9ce3ba2fb80"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Classifier &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::classify::register_classifier </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Registration method for classifiers. </p>
+<p>Clients should use this method to register any new classifiers they write that operate on just a forward_index (this should be most). </p>
+
+</div>
+</div>
+<a class="anchor" id="a99d322bfd5cca8395ced460726608001"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Classifier &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::classify::register_multi_index_classifier </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Registration method for multi-index classifiers. </p>
+<p>Clients should use this method to register any new classifiers they write that operate on both a forward_index and an inverted_index (this is rare). </p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:38 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:42:56 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

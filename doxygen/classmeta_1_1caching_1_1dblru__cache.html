@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -154,6 +153,16 @@ Private Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a32113f3d0909eceafb8a29599428e60c">handle_insert</a> ()</td></tr>
 <tr class="memdesc:a32113f3d0909eceafb8a29599428e60c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function to ensure that the primary and secondary map swapping occurs at the correct moment. <br/></td></tr>
 <tr class="separator:a32113f3d0909eceafb8a29599428e60c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21901bf988ddf09b6e8169222e5125a5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21901bf988ddf09b6e8169222e5125a5"></a>
+std::shared_ptr&lt; Map&lt; Key, <br class="typebreak"/>
+Value &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a21901bf988ddf09b6e8169222e5125a5">get_primary_map</a> () const </td></tr>
+<tr class="memdesc:a21901bf988ddf09b6e8169222e5125a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the primary map. <br/></td></tr>
+<tr class="separator:a21901bf988ddf09b6e8169222e5125a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a20cbde50385874fafe687ac9509e2c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a20cbde50385874fafe687ac9509e2c"></a>
+std::shared_ptr&lt; Map&lt; Key, <br class="typebreak"/>
+Value &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a7a20cbde50385874fafe687ac9509e2c">get_secondary_map</a> () const </td></tr>
+<tr class="memdesc:a7a20cbde50385874fafe687ac9509e2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the secondary map. <br/></td></tr>
+<tr class="separator:a7a20cbde50385874fafe687ac9509e2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -161,10 +170,13 @@ Private Attributes</h2></td></tr>
 uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#af7ae814d3ad0d500acc5ef6081796d90">max_size_</a></td></tr>
 <tr class="memdesc:af7ae814d3ad0d500acc5ef6081796d90"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum allowed size for the cache. <br/></td></tr>
 <tr class="separator:af7ae814d3ad0d500acc5ef6081796d90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b92ccba4740b270f49686d71d72d537"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b92ccba4740b270f49686d71d72d537"></a>
-std::atomic&lt; uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a6b92ccba4740b270f49686d71d72d537">current_size_</a></td></tr>
-<tr class="memdesc:a6b92ccba4740b270f49686d71d72d537"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current size of the primary map. <br/></td></tr>
-<tr class="separator:a6b92ccba4740b270f49686d71d72d537"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a010421a3f6f93f8a44ac34430ab65d47"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a010421a3f6f93f8a44ac34430ab65d47"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a010421a3f6f93f8a44ac34430ab65d47">current_size_</a></td></tr>
+<tr class="memdesc:a010421a3f6f93f8a44ac34430ab65d47"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current size of the primary map. <br/></td></tr>
+<tr class="separator:a010421a3f6f93f8a44ac34430ab65d47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d16c0b1f3b2d279e4c771e0773d926a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d16c0b1f3b2d279e4c771e0773d926a"></a>
+std::unique_ptr&lt; std::mutex &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mutables_</b> {<a class="el" href="namespacemeta.html#af738d8b4ab5ad1b9995af711d4a91199">make_unique</a>&lt;std::mutex&gt;()}</td></tr>
+<tr class="separator:a6d16c0b1f3b2d279e4c771e0773d926a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acef136c03c1a655cbe22489466f5c62d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acef136c03c1a655cbe22489466f5c62d"></a>
 std::shared_ptr&lt; Map&lt; Key, <br class="typebreak"/>
 Value &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#acef136c03c1a655cbe22489466f5c62d">primary_</a></td></tr>
@@ -175,12 +187,12 @@ std::shared_ptr&lt; Map&lt; Key, <br class="typebreak"/>
 Value &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a1e20648d6e699282c5be2efd3342f262">secondary_</a></td></tr>
 <tr class="memdesc:a1e20648d6e699282c5be2efd3342f262"><td class="mdescLeft">&#160;</td><td class="mdescRight">The secondary map. <br/></td></tr>
 <tr class="separator:a1e20648d6e699282c5be2efd3342f262"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22ad946ce91b0ba4812a7cd77b9a74da"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22ad946ce91b0ba4812a7cd77b9a74da"></a>
+<tr class="memitem:a78446602be9f7f0aabc44b2d21e8585c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78446602be9f7f0aabc44b2d21e8585c"></a>
 std::vector&lt; std::function<br class="typebreak"/>
 &lt; void(const Key &amp;key, const <br class="typebreak"/>
-Value &amp;value)&gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a22ad946ce91b0ba4812a7cd77b9a74da">drop_callbacks_</a></td></tr>
-<tr class="memdesc:a22ad946ce91b0ba4812a7cd77b9a74da"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of functions to be invoked when a key/value pair is dropped. <br/></td></tr>
-<tr class="separator:a22ad946ce91b0ba4812a7cd77b9a74da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+Value &amp;value)&gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a78446602be9f7f0aabc44b2d21e8585c">drop_callbacks_</a></td></tr>
+<tr class="memdesc:a78446602be9f7f0aabc44b2d21e8585c"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of functions to be invoked when a key/value pair is dropped. <br/></td></tr>
+<tr class="separator:a78446602be9f7f0aabc44b2d21e8585c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class Key, class Value, template&lt; class, class &gt; class Map = locking_map&gt;<br/>
@@ -357,13 +369,13 @@ template&lt;class Key , class Value , template&lt; class, class &gt; class Map&g
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/include/caching/<a class="el" href="dblru__cache_8h_source.html">dblru_cache.h</a></li>
-<li>/home/sean/projects/meta/include/caching/<a class="el" href="dblru__cache_8tcc.html">dblru_cache.tcc</a></li>
+<li>/home/chase/projects/meta/include/caching/<a class="el" href="dblru__cache_8h_source.html">dblru_cache.h</a></li>
+<li>/home/chase/projects/meta/include/caching/<a class="el" href="dblru__cache_8tcc.html">dblru_cache.tcc</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:38 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:42:56 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

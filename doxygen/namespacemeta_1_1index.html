@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -77,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -110,12 +109,16 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decorator class for wrapping indexes with a cache.  <a href="classmeta_1_1index_1_1cached__index.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk.html">chunk</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a portion of the <a class="el" href="classmeta_1_1index_1_1inverted__index.html" title="The inverted_index class stores information on a corpus indexed by term_ids. ">inverted_index</a>'s postings file.  <a href="classmeta_1_1index_1_1chunk.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a portion of a <a class="el" href="classmeta_1_1index_1_1disk__index.html" title="Holds generic data structures and functions that inverted_index and forward_index both use...">disk_index</a>'s postings file.  <a href="classmeta_1_1index_1_1chunk.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html">chunk_handler</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An interface for writing and merging inverted chunks of <a class="el" href="classmeta_1_1index_1_1postings__data.html" title="A class to represent the per-PrimaryKey data in an index&#39;s postings file. ">postings_data</a> for a <a class="el" href="classmeta_1_1index_1_1disk__index.html" title="Holds generic data structures and functions that inverted_index and forward_index both use...">disk_index</a>.  <a href="classmeta_1_1index_1_1chunk__handler.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index.html">disk_index</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds generic data structures and functions that <a class="el" href="classmeta_1_1index_1_1inverted__index.html" title="The inverted_index class stores information on a corpus indexed by term_ids. ">inverted_index</a> and <a class="el" href="classmeta_1_1index_1_1forward__index.html" title="The forward_index stores information on a corpus by doc_ids. ">forward_index</a> both use.  <a href="classmeta_1_1index_1_1disk__index.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1ir__eval.html">ir_eval</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates lists of ranked documents returned from a search engine; can give stats per-query (e.g.  <a href="classmeta_1_1index_1_1ir__eval.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1postings__data.html">postings_data</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class to represent the per-PrimaryKey data in an index's postings file.  <a href="classmeta_1_1index_1_1postings__data.html#details">More...</a><br/></td></tr>
@@ -148,6 +151,9 @@ Models Applied to Ad Hoc Information Retrieval" by Zhai and Lafferty, 2001.  <a 
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A ranker scores a query against all the documents in an inverted index, returning a list of documents sorted by relevance.  <a href="classmeta_1_1index_1_1ranker.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1ranker__factory.html">ranker_factory</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory that is responsible for creating rankers from configuration files.  <a href="classmeta_1_1index_1_1ranker__factory.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1index_1_1score__data.html">score_data</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A <a class="el" href="structmeta_1_1index_1_1score__data.html" title="A score_data object contains information needed to evaluate a ranking function. ">score_data</a> object contains information needed to evaluate a ranking function.  <a href="structmeta_1_1index_1_1score__data.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -166,7 +172,7 @@ Models Applied to Ad Hoc Information Retrieval" by Zhai and Lafferty, 2001.  <a 
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a45e2b7c0e48c7813644bae00c9271fc8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>index_file</b> { <br/>
+<tr class="memitem:a45e2b7c0e48c7813644bae00c9271fc8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a45e2b7c0e48c7813644bae00c9271fc8">index_file</a> { <br/>
 &#160;&#160;<b>DOC_IDS_MAPPING</b> = 0, 
 <b>DOC_IDS_MAPPING_INDEX</b>, 
 <b>DOC_SIZES</b>, 
@@ -180,33 +186,71 @@ Enumerations</h2></td></tr>
 &#160;&#160;<b>TERM_IDS_MAPPING_INVERSE</b>
 <br/>
  }</td></tr>
+<tr class="memdesc:a45e2b7c0e48c7813644bae00c9271fc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collection of all the files that comprise a disk_index. <br/></td></tr>
 <tr class="separator:a45e2b7c0e48c7813644bae00c9271fc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa3f095e92bf16262ede79c3c75ffc891"><td class="memTemplParams" colspan="2">template&lt;class Index , class... Args&gt; </td></tr>
-<tr class="memitem:aa3f095e92bf16262ede79c3c75ffc891"><td class="memTemplItemLeft" align="right" valign="top">Index&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891">make_index</a> (const std::string &amp;config_file, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:aa3f095e92bf16262ede79c3c75ffc891"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory method for creating indexes.  <a href="#aa3f095e92bf16262ede79c3c75ffc891">More...</a><br/></td></tr>
-<tr class="separator:aa3f095e92bf16262ede79c3c75ffc891"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0342389c7f91fbfe72e16bfe39307512"><td class="memTemplParams" colspan="2">template&lt;class Index , template&lt; class, class &gt; class Cache, class... Args&gt; </td></tr>
-<tr class="memitem:a0342389c7f91fbfe72e16bfe39307512"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1index_1_1cached__index.html">cached_index</a>&lt; Index, Cache &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a0342389c7f91fbfe72e16bfe39307512">make_index</a> (const std::string &amp;config_file, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a0342389c7f91fbfe72e16bfe39307512"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory method for creating indexes that are cached.  <a href="#a0342389c7f91fbfe72e16bfe39307512">More...</a><br/></td></tr>
-<tr class="separator:a0342389c7f91fbfe72e16bfe39307512"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf1602d06a418ef014256f77cab2ac43"><td class="memTemplParams" colspan="2">template&lt;class Index , class... Args&gt; </td></tr>
+<tr class="memitem:aaf1602d06a418ef014256f77cab2ac43"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Index &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#aaf1602d06a418ef014256f77cab2ac43">make_index</a> (const std::string &amp;config_file, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:aaf1602d06a418ef014256f77cab2ac43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory method for creating indexes.  <a href="#aaf1602d06a418ef014256f77cab2ac43">More...</a><br/></td></tr>
+<tr class="separator:aaf1602d06a418ef014256f77cab2ac43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af40ac3f5a0ed5fe852c32bf1f55463b6"><td class="memTemplParams" colspan="2">template&lt;class Index , template&lt; class, class &gt; class Cache, class... Args&gt; </td></tr>
+<tr class="memitem:af40ac3f5a0ed5fe852c32bf1f55463b6"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1cached__index.html">cached_index</a><br class="typebreak"/>
+&lt; Index, Cache &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#af40ac3f5a0ed5fe852c32bf1f55463b6">make_index</a> (const std::string &amp;config_file, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:af40ac3f5a0ed5fe852c32bf1f55463b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory method for creating indexes that are cached.  <a href="#af40ac3f5a0ed5fe852c32bf1f55463b6">More...</a><br/></td></tr>
+<tr class="separator:af40ac3f5a0ed5fe852c32bf1f55463b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a705b54cb03f3d1f1acd7251c9e9eae03"><td class="memTemplParams" colspan="2">template&lt;class PrimaryKey , class SecondaryKey &gt; </td></tr>
+<tr class="memitem:a705b54cb03f3d1f1acd7251c9e9eae03"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html">io::compressed_file_reader</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a705b54cb03f3d1f1acd7251c9e9eae03">operator&gt;&gt;</a> (<a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html">io::compressed_file_reader</a> &amp;in, <a class="el" href="classmeta_1_1index_1_1postings__data.html">postings_data</a>&lt; PrimaryKey, SecondaryKey &gt; &amp;pd)</td></tr>
+<tr class="memdesc:a705b54cb03f3d1f1acd7251c9e9eae03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads semi-compressed postings data from a compressed file.  <a href="#a705b54cb03f3d1f1acd7251c9e9eae03">More...</a><br/></td></tr>
+<tr class="separator:a705b54cb03f3d1f1acd7251c9e9eae03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac00490c0d677a72a38e20ccebfcd108a"><td class="memTemplParams" colspan="2">template&lt;&gt; </td></tr>
+<tr class="memitem:ac00490c0d677a72a38e20ccebfcd108a"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html">io::compressed_file_reader</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#ac00490c0d677a72a38e20ccebfcd108a">operator&gt;&gt;</a> (<a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html">io::compressed_file_reader</a> &amp;in, <a class="el" href="classmeta_1_1index_1_1postings__data.html">postings_data</a>&lt; std::string, doc_id &gt; &amp;pd)</td></tr>
+<tr class="memdesc:ac00490c0d677a72a38e20ccebfcd108a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads semi-compressed postings data from a compressed file.  <a href="#ac00490c0d677a72a38e20ccebfcd108a">More...</a><br/></td></tr>
+<tr class="separator:ac00490c0d677a72a38e20ccebfcd108a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf1ddfb1e7259834696c901f9e68d58f"><td class="memTemplParams" colspan="2">template&lt;class PrimaryKey , class SecondaryKey &gt; </td></tr>
 <tr class="memitem:abf1ddfb1e7259834696c901f9e68d58f"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#abf1ddfb1e7259834696c901f9e68d58f">operator==</a> (const <a class="el" href="classmeta_1_1index_1_1postings__data.html">postings_data</a>&lt; PrimaryKey, SecondaryKey &gt; &amp;lhs, const <a class="el" href="classmeta_1_1index_1_1postings__data.html">postings_data</a>&lt; PrimaryKey, SecondaryKey &gt; &amp;rhs)</td></tr>
 <tr class="separator:abf1ddfb1e7259834696c901f9e68d58f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb87dacdfb63e76caa7ce96d6e998d60"><td class="memTemplParams" colspan="2"><a class="anchor" id="adb87dacdfb63e76caa7ce96d6e998d60"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:adb87dacdfb63e76caa7ce96d6e998d60"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#adb87dacdfb63e76caa7ce96d6e998d60">make_ranker&lt; absolute_discount &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memdesc:adb87dacdfb63e76caa7ce96d6e998d60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1index_1_1absolute__discount.html" title="Implements the absolute discounting smoothing method. ">absolute_discount</a> rankers. <br/></td></tr>
+<tr class="separator:adb87dacdfb63e76caa7ce96d6e998d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89f969a9b794e492fdf606454eba12e4"><td class="memTemplParams" colspan="2"><a class="anchor" id="a89f969a9b794e492fdf606454eba12e4"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a89f969a9b794e492fdf606454eba12e4"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a89f969a9b794e492fdf606454eba12e4">make_ranker&lt; dirichlet_prior &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memdesc:a89f969a9b794e492fdf606454eba12e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html" title="Implements Bayesian smoothing with a Dirichlet prior. ">dirichlet_prior</a> rankers. <br/></td></tr>
+<tr class="separator:a89f969a9b794e492fdf606454eba12e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91ed65d5ee3c9beaaf72559d22b4fd2e"><td class="memTemplParams" colspan="2"><a class="anchor" id="a91ed65d5ee3c9beaaf72559d22b4fd2e"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a91ed65d5ee3c9beaaf72559d22b4fd2e"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a91ed65d5ee3c9beaaf72559d22b4fd2e">make_ranker&lt; jelinek_mercer &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memdesc:a91ed65d5ee3c9beaaf72559d22b4fd2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1index_1_1jelinek__mercer.html" title="Implements the Jelinek-Mercer smoothed ranking model. ">jelinek_mercer</a> rankers. <br/></td></tr>
+<tr class="separator:a91ed65d5ee3c9beaaf72559d22b4fd2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe586595efb7049b237adf9416d576f5"><td class="memTemplParams" colspan="2"><a class="anchor" id="abe586595efb7049b237adf9416d576f5"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:abe586595efb7049b237adf9416d576f5"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#abe586595efb7049b237adf9416d576f5">make_ranker&lt; okapi_bm25 &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memdesc:abe586595efb7049b237adf9416d576f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1index_1_1okapi__bm25.html" title="The Okapi BM25 scoring function. ">okapi_bm25</a> rankers. <br/></td></tr>
+<tr class="separator:abe586595efb7049b237adf9416d576f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fd1fe9bdf88cedaddf468a3e155d853"><td class="memTemplParams" colspan="2"><a class="anchor" id="a4fd1fe9bdf88cedaddf468a3e155d853"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a4fd1fe9bdf88cedaddf468a3e155d853"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a4fd1fe9bdf88cedaddf468a3e155d853">make_ranker&lt; pivoted_length &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memdesc:a4fd1fe9bdf88cedaddf468a3e155d853"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1index_1_1pivoted__length.html" title="The pivoted document length normalization ranking function. ">pivoted_length</a> rankers. <br/></td></tr>
+<tr class="separator:a4fd1fe9bdf88cedaddf468a3e155d853"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a024ba8376cbcbaea515e6e6f32c8ea62"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">make_ranker</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memdesc:a024ba8376cbcbaea515e6e6f32c8ea62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience method for creating a ranker using the factory.  <a href="#a024ba8376cbcbaea515e6e6f32c8ea62">More...</a><br/></td></tr>
+<tr class="separator:a024ba8376cbcbaea515e6e6f32c8ea62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Indexes to create efficient representations of data. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="aa3f095e92bf16262ede79c3c75ffc891"></a>
+<a class="anchor" id="aaf1602d06a418ef014256f77cab2ac43"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Index , class... Args&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Index meta::index::make_index </td>
+          <td class="memname">std::shared_ptr&lt;Index&gt; meta::index::make_index </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>config_file</em>, </td>
@@ -242,14 +286,14 @@ template&lt;class Index , class... Args&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a0342389c7f91fbfe72e16bfe39307512"></a>
+<a class="anchor" id="af40ac3f5a0ed5fe852c32bf1f55463b6"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Index , template&lt; class, class &gt; class Cache, class... Args&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmeta_1_1index_1_1cached__index.html">cached_index</a>&lt;Index, Cache&gt; meta::index::make_index </td>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classmeta_1_1index_1_1cached__index.html">cached_index</a>&lt;Index, Cache&gt; &gt; meta::index::make_index </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>config_file</em>, </td>
@@ -274,7 +318,7 @@ template&lt;class Index , template&lt; class, class &gt; class Cache, class... A
 <p><a class="el" href="classmeta_1_1index_1_1forward__index.html" title="The forward_index stores information on a corpus by doc_ids. ">forward_index</a> is a friend of the factory method used to create it.</p>
 <p>Usage:</p>
 <div class="fragment"><div class="line"><span class="keyword">auto</span> idx =</div>
-<div class="line">    <a class="code" href="namespacemeta_1_1index.html#aa3f095e92bf16262ede79c3c75ffc891">index::make_index</a>&lt;dervied_index_type,</div>
+<div class="line">    <a class="code" href="namespacemeta_1_1index.html#aaf1602d06a418ef014256f77cab2ac43">index::make_index</a>&lt;dervied_index_type,</div>
 <div class="line">                      cache_type&gt;(config_path, other, options);</div>
 </div><!-- fragment --><p>Other options will be forwarded to the constructor for the chosen cache class.</p>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -285,6 +329,90 @@ template&lt;class Index , template&lt; class, class &gt; class Cache, class... A
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A properly initialized, and automatically cached, index. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a705b54cb03f3d1f1acd7251c9e9eae03"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class PrimaryKey , class SecondaryKey &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html">io::compressed_file_reader</a> &amp; meta::index::operator&gt;&gt; </td>
+          <td>(</td>
+          <td class="paramtype">io::compressed_file_reader &amp;&#160;</td>
+          <td class="paramname"><em>in</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">postings_data&lt; PrimaryKey, SecondaryKey &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pd</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads semi-compressed postings data from a compressed file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in</td><td>The stream to read from </td></tr>
+    <tr><td class="paramname">pd</td><td>The postings data object to write the stream info to </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the input stream </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac00490c0d677a72a38e20ccebfcd108a"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html">io::compressed_file_reader</a>&amp; meta::index::operator&gt;&gt; </td>
+          <td>(</td>
+          <td class="paramtype">io::compressed_file_reader &amp;&#160;</td>
+          <td class="paramname"><em>in</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">postings_data&lt; std::string, doc_id &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pd</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reads semi-compressed postings data from a compressed file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in</td><td>The stream to read from </td></tr>
+    <tr><td class="paramname">pd</td><td>The postings data object to write the stream info to </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the input stream </dd></dl>
 
 </div>
 </div>
@@ -324,10 +452,30 @@ template&lt;class PrimaryKey , class SecondaryKey &gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="a024ba8376cbcbaea515e6e6f32c8ea62"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt; meta::index::make_ranker </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;&#160;</td>
+          <td class="paramname"><em>config</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convenience method for creating a ranker using the factory. </p>
+<p>Factory method for creating a ranker.</p>
+<p>This should be specialized if your given ranker requires special construction behavior (e.g., reading parameters). </p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:40 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:02 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

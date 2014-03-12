@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -118,7 +117,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -138,23 +137,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classmeta_1_1index_1_1disk__index.html#a825dbe41ade1b3577995379b1f4925bb">meta::index::disk_index</a>
 </li>
 <li>test()
-: <a class="el" href="classmeta_1_1classify_1_1classifier.html#a6423f5db3346d1aa3060bfb3b5f7486c">meta::classify::classifier&lt; Index &gt;</a>
+: <a class="el" href="classmeta_1_1classify_1_1classifier.html#af44cac2530b2eb2d2dbf1cffb5c92d9c">meta::classify::classifier</a>
 , <a class="el" href="classmeta_1_1classify_1_1svm__wrapper.html#a85d446e3f27dd49ef9401141b1982d3c">meta::classify::svm_wrapper</a>
+</li>
+<li>thread_ids()
+: <a class="el" href="classmeta_1_1parallel_1_1thread__pool.html#a9d61735f259c10abd8705d25ae68f82b">meta::parallel::thread_pool</a>
+</li>
+<li>thread_pool()
+: <a class="el" href="classmeta_1_1parallel_1_1thread__pool.html#a2a2b9f6220127058e401953ce920f078">meta::parallel::thread_pool</a>
 </li>
 <li>to_prev()
 : <a class="el" href="classmeta_1_1language__model_1_1ngram__distribution.html#ab469589b89fe1f9c26f369ab25f47ded">meta::language_model::ngram_distribution&lt; N &gt;</a>
 </li>
 <li>tokenize()
-: <a class="el" href="classmeta_1_1index_1_1inverted__index.html#a5d69d0a5f32336f86fde686a1f0e6759">meta::index::inverted_index</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1libsvm__tokenizer.html#ad7121e026cf470985441ad65c7617ce5">meta::tokenizers::libsvm_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1multi__tokenizer.html#a333ee9a1aa7b4f219576401feed65cc1">meta::tokenizers::multi_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1ngram__char__tokenizer.html#a2136f3e64882c31f10be4ef10f9c6d55">meta::tokenizers::ngram_char_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1ngram__fw__tokenizer.html#ade4acdf43640acd49730dc6a0ef5a211">meta::tokenizers::ngram_fw_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1ngram__lex__tokenizer.html#ac91701ff345a502509964a566e4e2875">meta::tokenizers::ngram_lex_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1ngram__pos__tokenizer.html#ae2ae2c2b1c48d9d58596836d4e75dcd4">meta::tokenizers::ngram_pos_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1ngram__word__tokenizer.html#adc330fc77595b001f3ada27fafc49d88">meta::tokenizers::ngram_word_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html#aa9081fec6ed3639e60a0e0d053ed30a2">meta::tokenizers::tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1tree__tokenizer.html#aaa08b4d8ec19ca3b722ac08f040d77df">meta::tokenizers::tree_tokenizer&lt; DerivedTokenizer &gt;</a>
+: <a class="el" href="classmeta_1_1analyzers_1_1analyzer.html#abb5c22cd049f14b92a03e1283d6d796c">meta::analyzers::analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1libsvm__analyzer.html#ac8b07b2085319fe13e5326bfdb643045">meta::analyzers::libsvm_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1multi__analyzer.html#a2ae6e0dfff55680e5cd0623d78a33688">meta::analyzers::multi_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#a70d72003e612c17e8ac34768d7b96e32">meta::analyzers::ngram_lex_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1ngram__pos__analyzer.html#a3c0ddfdfc84f9e158cc9c2f3ea071080">meta::analyzers::ngram_pos_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1ngram__word__analyzer.html#a0ee21134c23f0c0aff89cb599b409a88">meta::analyzers::ngram_word_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1tree__analyzer.html#a94f3f2cb8ef65db3828998e2e52a2216">meta::analyzers::tree_analyzer&lt; DerivedTokenizer &gt;</a>
+, <a class="el" href="classmeta_1_1index_1_1inverted__index.html#a5d69d0a5f32336f86fde686a1f0e6759">meta::index::inverted_index</a>
 </li>
 <li>tokenize_docs()
 : <a class="el" href="classmeta_1_1index_1_1inverted__index_1_1impl.html#a8cddb1c7c5f26ae2b18aa96740287b0a">meta::index::inverted_index::impl</a>
@@ -172,31 +175,35 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a314f7b993bf0a884c4efdf420575297b">meta::index::disk_index::disk_index_impl</a>
 </li>
 <li>train()
-: <a class="el" href="classmeta_1_1classify_1_1classifier.html#a27f1e34b37076dbbfca1b3c0af0b8d3d">meta::classify::classifier&lt; Index &gt;</a>
-, <a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html#aee0f683d5b7242ff1cbe2264a9049187">meta::classify::dual_perceptron&lt; Kernel &gt;</a>
-, <a class="el" href="classmeta_1_1classify_1_1knn.html#a5a0be49000c41ca4a157bd38b3f3abaf">meta::classify::knn&lt; Ranker &gt;</a>
+: <a class="el" href="classmeta_1_1classify_1_1classifier.html#a9ebbcf8e5b9418c72d689b3f12ecb81c">meta::classify::classifier</a>
+, <a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html#a5e0c214c194ec23c7013006ebaf3aa35">meta::classify::dual_perceptron</a>
+, <a class="el" href="classmeta_1_1classify_1_1knn.html#a6ed6afe1d12f23f365b491204d647263">meta::classify::knn</a>
 , <a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#acadabba9fb9583bb03d2c83b642cfa34">meta::classify::naive_bayes</a>
-, <a class="el" href="classmeta_1_1classify_1_1one__vs__all.html#ae96ab5e0cce193c96c17be237e53a1c0">meta::classify::one_vs_all&lt; Classifier &gt;</a>
-, <a class="el" href="classmeta_1_1classify_1_1sgd.html#a72fe830f32d506eff232b7be6a9333b9">meta::classify::sgd&lt; LossFunction &gt;</a>
+, <a class="el" href="classmeta_1_1classify_1_1one__vs__all.html#a1464dda4ac41c5d6c6574d6c6075468b">meta::classify::one_vs_all</a>
+, <a class="el" href="classmeta_1_1classify_1_1one__vs__one.html#af70bb4effb6b1d6fb575330c7f505744">meta::classify::one_vs_one</a>
+, <a class="el" href="classmeta_1_1classify_1_1sgd.html#a5b85d2c4217569dce6fd9f89fd40e03b">meta::classify::sgd</a>
 , <a class="el" href="classmeta_1_1classify_1_1svm__wrapper.html#a633f10b960b5a5e34b64b4430f427f6c">meta::classify::svm_wrapper</a>
 , <a class="el" href="classmeta_1_1classify_1_1winnow.html#a2cf14c168f7f65af780fff642accf2aa">meta::classify::winnow</a>
 </li>
+<li>transformer()
+: <a class="el" href="classmeta_1_1utf_1_1transformer.html#aa5d38e4cf0de8c7ca7495cdca571327d">meta::utf::transformer</a>
+</li>
 <li>transitions()
-: <a class="el" href="classmeta_1_1tokenizers_1_1parse__tree.html#af0bdab1ab55f1d2428a55aa4c69e2a0b">meta::tokenizers::parse_tree</a>
+: <a class="el" href="classmeta_1_1analyzers_1_1parse__tree.html#a0ae5c06886be346c1c4bbd6e13b5d41c">meta::analyzers::parse_tree</a>
 </li>
 <li>tree_tokenize()
-: <a class="el" href="classmeta_1_1tokenizers_1_1branch__tokenizer.html#a0b63e40a59f5514033a41588e7dc9889">meta::tokenizers::branch_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1depth__tokenizer.html#a1fe9f1ee938e5647e562fa86c43c046a">meta::tokenizers::depth_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1semi__skeleton__tokenizer.html#a411463c9e11b7207d63927a323da1e99">meta::tokenizers::semi_skeleton_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1skeleton__tokenizer.html#ab896b73aea9f140daaa04a314cd3079a">meta::tokenizers::skeleton_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1subtree__tokenizer.html#a4ed844341aecc8e146f1527ea4c9b236">meta::tokenizers::subtree_tokenizer</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1tag__tokenizer.html#a326c01841ea52463f4c0154790ccb9f4">meta::tokenizers::tag_tokenizer</a>
+: <a class="el" href="classmeta_1_1analyzers_1_1branch__analyzer.html#a54e29fe3db5bb5b2186e896aed01468c">meta::analyzers::branch_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1depth__analyzer.html#aa6d84c0e921a52409203aec45d6e69d4">meta::analyzers::depth_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1semi__skeleton__analyzer.html#ad7347f6df020b38ddb829bf51fe0e991">meta::analyzers::semi_skeleton_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1skeleton__analyzer.html#a1aaa76d9f4d839fc15eee21376eb8d6d">meta::analyzers::skeleton_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1subtree__analyzer.html#a526b7cbef4f94cb7ee9c09a85d2f0145">meta::analyzers::subtree_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1tag__analyzer.html#ac78f84e52755c51cc0bf579d0cb4e679">meta::analyzers::tag_analyzer</a>
 </li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:46 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:10 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

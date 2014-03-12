@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -104,7 +103,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>Represents a portion of the <a class="el" href="classmeta_1_1index_1_1inverted__index.html" title="The inverted_index class stores information on a corpus indexed by term_ids. ">inverted_index</a>'s postings file.  
+<p>Represents a portion of a <a class="el" href="classmeta_1_1index_1_1disk__index.html" title="Holds generic data structures and functions that inverted_index and forward_index both use...">disk_index</a>'s postings file.  
  <a href="classmeta_1_1index_1_1chunk.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="chunk_8h_source.html">chunk.h</a>&gt;</code></p>
@@ -128,24 +127,27 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:ad8c46fc1a6f5568249936d9fd072cf29"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8c46fc1a6f5568249936d9fd072cf29"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_size</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk.html#ad8c46fc1a6f5568249936d9fd072cf29">set_size</a> ()</td></tr>
+<tr class="memdesc:ad8c46fc1a6f5568249936d9fd072cf29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the size of the file this chunk represents in bytes. <br/></td></tr>
 <tr class="separator:ad8c46fc1a6f5568249936d9fd072cf29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:adb60558c6689fe62a779c2b32f969a23"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb60558c6689fe62a779c2b32f969a23"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>_path</b></td></tr>
-<tr class="separator:adb60558c6689fe62a779c2b32f969a23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6249beeb3fca6d9ae8c390f4f41b0037"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6249beeb3fca6d9ae8c390f4f41b0037"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>_size</b></td></tr>
-<tr class="separator:a6249beeb3fca6d9ae8c390f4f41b0037"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d8ac6dfc251254583a199e884bc32f1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d8ac6dfc251254583a199e884bc32f1"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk.html#a5d8ac6dfc251254583a199e884bc32f1">path_</a></td></tr>
+<tr class="memdesc:a5d8ac6dfc251254583a199e884bc32f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">the path to this chunk file on disk <br/></td></tr>
+<tr class="separator:a5d8ac6dfc251254583a199e884bc32f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0ed349a7a7856d1691af80f80906bbf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0ed349a7a7856d1691af80f80906bbf"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk.html#ae0ed349a7a7856d1691af80f80906bbf">size_</a></td></tr>
+<tr class="memdesc:ae0ed349a7a7856d1691af80f80906bbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of bytes this chunk takes up <br/></td></tr>
+<tr class="separator:ae0ed349a7a7856d1691af80f80906bbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class PrimaryKey, class SecondaryKey&gt;<br/>
 class meta::index::chunk&lt; PrimaryKey, SecondaryKey &gt;</h3>
 
-<p>Represents a portion of the <a class="el" href="classmeta_1_1index_1_1inverted__index.html" title="The inverted_index class stores information on a corpus indexed by term_ids. ">inverted_index</a>'s postings file. </p>
-<p>It is an intermediate file mapping primary keys to secondary keys. The chunks are sorted to enable efficient merging. </p>
+<p>Represents a portion of a <a class="el" href="classmeta_1_1index_1_1disk__index.html" title="Holds generic data structures and functions that inverted_index and forward_index both use...">disk_index</a>'s postings file. </p>
+<p>It is an intermediate file mapping primary keys to secondary keys. The chunks are sorted to enable efficient merging, and define an operator&lt; to allow them to be sorted or stored in a priority queue. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ae0d04a4ecb04cae9a2d5b5d473e7d56e"></a>
 <div class="memitem">
@@ -289,13 +291,13 @@ template&lt;class Container &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/include/index/<a class="el" href="chunk_8h_source.html">chunk.h</a></li>
-<li>/home/sean/projects/meta/include/index/<a class="el" href="chunk_8tcc.html">chunk.tcc</a></li>
+<li>/home/chase/projects/meta/include/index/<a class="el" href="chunk_8h_source.html">chunk.h</a></li>
+<li>/home/chase/projects/meta/include/index/<a class="el" href="chunk_8tcc.html">chunk.tcc</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:40 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:02 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

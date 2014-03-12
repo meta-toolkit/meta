@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,7 +104,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>A generic base TOML value used for type erasure.  
  <a href="classcpptoml_1_1toml__base.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="__site_2deps_2cpptoml_2include_2cpptoml_8h_source.html">cpptoml.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="cpptoml_8h_source.html">cpptoml.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for cpptoml::toml_base:</div>
 <div class="dyncontent">
@@ -113,11 +112,8 @@ Inheritance diagram for cpptoml::toml_base:</div>
   <img src="classcpptoml_1_1toml__base.png" usemap="#cpptoml::toml_base_map" alt=""/>
   <map id="cpptoml::toml_base_map" name="cpptoml::toml_base_map">
 <area href="classcpptoml_1_1toml__group.html" title="Represents a TOML keygroup. " alt="cpptoml::toml_group" shape="rect" coords="0,112,256,136"/>
-<area href="classcpptoml_1_1toml__group.html" title="Represents a TOML keygroup. " alt="cpptoml::toml_group" shape="rect" coords="266,112,522,136"/>
-<area href="classcpptoml_1_1toml__group__array.html" alt="cpptoml::toml_group_array" shape="rect" coords="532,112,788,136"/>
-<area href="classcpptoml_1_1toml__group__array.html" alt="cpptoml::toml_group_array" shape="rect" coords="798,112,1054,136"/>
-<area href="classcpptoml_1_1toml__value.html" title="A concrete TOML value representing the &quot;leaves&quot; of the &quot;tree&quot;. " alt="cpptoml::toml_value&lt; T &gt;" shape="rect" coords="1064,112,1320,136"/>
-<area href="classcpptoml_1_1toml__value.html" title="A concrete TOML value representing the &quot;leaves&quot; of the &quot;tree&quot;. " alt="cpptoml::toml_value&lt; T &gt;" shape="rect" coords="1330,112,1586,136"/>
+<area href="classcpptoml_1_1toml__group__array.html" alt="cpptoml::toml_group_array" shape="rect" coords="266,112,522,136"/>
+<area href="classcpptoml_1_1toml__value.html" title="A concrete TOML value representing the &quot;leaves&quot; of the &quot;tree&quot;. " alt="cpptoml::toml_value&lt; T &gt;" shape="rect" coords="532,112,788,136"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -144,37 +140,16 @@ template&lt;class T &gt; </td></tr>
 <tr class="memitem:a11034ca6f1966c2afb726006ed9f8c74"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classcpptoml_1_1toml__value.html">toml_value</a>&lt; T &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcpptoml_1_1toml__base.html#a11034ca6f1966c2afb726006ed9f8c74">as</a> ()</td></tr>
 <tr class="memdesc:a11034ca6f1966c2afb726006ed9f8c74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempts to coerce the TOML element into a concrete TOML value of type T. <br/></td></tr>
 <tr class="separator:a11034ca6f1966c2afb726006ed9f8c74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a377350534545e33a0bc3ed2ed9dd898f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a377350534545e33a0bc3ed2ed9dd898f"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcpptoml_1_1toml__base.html#a377350534545e33a0bc3ed2ed9dd898f">is_value</a> () const </td></tr>
-<tr class="memdesc:a377350534545e33a0bc3ed2ed9dd898f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines if the given TOML element is a value. <br/></td></tr>
-<tr class="separator:a377350534545e33a0bc3ed2ed9dd898f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05eaac2e84559a2eeffe59b6413f1f34"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a05eaac2e84559a2eeffe59b6413f1f34"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcpptoml_1_1toml__base.html#a05eaac2e84559a2eeffe59b6413f1f34">is_group</a> () const </td></tr>
-<tr class="memdesc:a05eaac2e84559a2eeffe59b6413f1f34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines if the given TOML element is a group. <br/></td></tr>
-<tr class="separator:a05eaac2e84559a2eeffe59b6413f1f34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add70495755e781e1d7965ccf2323e754"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add70495755e781e1d7965ccf2323e754"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcpptoml_1_1toml__base.html#add70495755e781e1d7965ccf2323e754">is_group_array</a> () const </td></tr>
-<tr class="memdesc:add70495755e781e1d7965ccf2323e754"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines if the given TOML element is an array of groups. <br/></td></tr>
-<tr class="separator:add70495755e781e1d7965ccf2323e754"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa4b63c44023aa2f40d7cb1c5470a9b3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa4b63c44023aa2f40d7cb1c5470a9b3"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcpptoml_1_1toml__base.html#aaa4b63c44023aa2f40d7cb1c5470a9b3">print</a> (std::ostream &amp;stream) const =0</td></tr>
-<tr class="memdesc:aaa4b63c44023aa2f40d7cb1c5470a9b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the TOML element to the given stream. <br/></td></tr>
-<tr class="separator:aaa4b63c44023aa2f40d7cb1c5470a9b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c6e132d3bcf1324e5277b781e1f346c"><td class="memTemplParams" colspan="2"><a class="anchor" id="a2c6e132d3bcf1324e5277b781e1f346c"></a>
-template&lt;class T &gt; </td></tr>
-<tr class="memitem:a2c6e132d3bcf1324e5277b781e1f346c"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classcpptoml_1_1toml__value.html">toml_value</a>&lt; T &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcpptoml_1_1toml__base.html#a2c6e132d3bcf1324e5277b781e1f346c">as</a> ()</td></tr>
-<tr class="memdesc:a2c6e132d3bcf1324e5277b781e1f346c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempts to coerce the TOML element into a concrete TOML value of type T. <br/></td></tr>
-<tr class="separator:a2c6e132d3bcf1324e5277b781e1f346c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A generic base TOML value used for type erasure. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/sean/projects/meta/_site/deps/cpptoml/include/<a class="el" href="__site_2deps_2cpptoml_2include_2cpptoml_8h_source.html">cpptoml.h</a></li>
+<li>/home/chase/projects/meta/_site/deps/cpptoml/include/<a class="el" href="cpptoml_8h_source.html">cpptoml.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:38 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:42:49 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

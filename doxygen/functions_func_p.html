@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -118,7 +117,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -131,14 +130,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 &#160;
 
 <h3><a class="anchor" id="index_p"></a>- p -</h3><ul>
-<li>parallel_lda_gibbs()
-: <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#ae1afe951bf338da09c573fb74bd597c9">meta::topics::parallel_lda_gibbs</a>
-</li>
 <li>parse()
 : <a class="el" href="classcpptoml_1_1parser.html#aa6ce1e760eb90675175a209aabcf98c5">cpptoml::parser</a>
 </li>
+<li>parse_token()
+: <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1english__normalizer.html#a6cb9f2244d03bc8d01c24d17b9638221">meta::analyzers::filters::english_normalizer</a>
+</li>
 <li>parse_tree()
-: <a class="el" href="classmeta_1_1tokenizers_1_1parse__tree.html#aeb6e0897b3d1096d4ed6f5e741ed89b2">meta::tokenizers::parse_tree</a>
+: <a class="el" href="classmeta_1_1analyzers_1_1parse__tree.html#aee14cca6875e375fbf325b89c451a1e9">meta::analyzers::parse_tree</a>
 </li>
 <li>parser()
 : <a class="el" href="classcpptoml_1_1parser.html#a9f30ede84441ecc93e431f38fb794fd7">cpptoml::parser</a>
@@ -153,39 +152,52 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classmeta_1_1io_1_1parser.html#a23db4931f03a7ff4370cfeccfd2cbb42">meta::io::parser</a>
 </li>
 <li>perform_iteration()
-: <a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#aa94450d70e5d9e390b975c84d1bcb5de">meta::topics::lda_cvb</a>
-, <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#aaae62c736e0e8c59b7f3aa2e0f28e81f">meta::topics::lda_gibbs</a>
-, <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a433140d41f50ac7b8ec13941b040f483">meta::topics::parallel_lda_gibbs</a>
-</li>
-<li>perform_mutation()
-: <a class="el" href="classmeta_1_1caching_1_1lock__free__map.html#a90c1bd982020f7ea051353294f1fe388">meta::caching::lock_free_map&lt; Key, Value &gt;</a>
-</li>
-<li>perform_operation()
-: <a class="el" href="classmeta_1_1caching_1_1lock__free__map.html#a27439dcc7d7e2451e82021f5a2aec710">meta::caching::lock_free_map&lt; Key, Value &gt;</a>
+: <a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#aabd9e3e9310c5e393022b33c7357fc7d">meta::topics::lda_cvb</a>
+, <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a94886f2bb0b5da974d0b4fe1c02658f7">meta::topics::lda_gibbs</a>
+, <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#afa8d4bf4cb59cb69a190ac06ed681837">meta::topics::parallel_lda_gibbs</a>
 </li>
 <li>perplexity()
 : <a class="el" href="classmeta_1_1language__model_1_1ngram__distribution.html#aa5a4eccd0b20c725aed8204d9da9223a">meta::language_model::ngram_distribution&lt; N &gt;</a>
 </li>
 <li>pivoted_length()
-: <a class="el" href="classmeta_1_1index_1_1pivoted__length.html#a1cb31cc0432efe30899fbe2ab7b4126a">meta::index::pivoted_length</a>
+: <a class="el" href="classmeta_1_1index_1_1pivoted__length.html#a9f12d1b406e6dbc6c3ded45873f72d8b">meta::index::pivoted_length</a>
 </li>
 <li>polynomial()
 : <a class="el" href="classmeta_1_1classify_1_1kernel_1_1polynomial.html#af36f46e81b95db3f084486147a46c4d9">meta::classify::kernel::polynomial</a>
+</li>
+<li>porter2_stemmer()
+: <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a0748dcd17e3cb6cfdedc9a8a87204f46">meta::analyzers::filters::porter2_stemmer</a>
+</li>
+<li>positive_label()
+: <a class="el" href="classmeta_1_1classify_1_1binary__classifier.html#a07fbb22a4ec4a7cb7c0217ca7d1b0e15">meta::classify::binary_classifier</a>
+</li>
+<li>possible_end()
+: <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1sentence__boundary.html#a86d628619ed803a4aea171d159eb2d7f">meta::analyzers::filters::sentence_boundary</a>
+</li>
+<li>possible_punc()
+: <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1sentence__boundary.html#abf61e7b811654d7599239440b3a58eff">meta::analyzers::filters::sentence_boundary</a>
+</li>
+<li>possible_start()
+: <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1sentence__boundary.html#a5b980d750d6c8719f6d13f5737e05c9a">meta::analyzers::filters::sentence_boundary</a>
 </li>
 <li>postings()
 : <a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a178b80bd7690506120740030d4b0a314">meta::index::disk_index::disk_index_impl</a>
 </li>
 <li>postings_data()
-: <a class="el" href="classmeta_1_1index_1_1postings__data.html#a0fd32bae5bbec2f1895d2d71c418d63d">meta::index::postings_data&lt; class, class &gt;</a>
+: <a class="el" href="classmeta_1_1index_1_1postings__data.html#a087d16a54003bdbad90404fabffc866f">meta::index::postings_data&lt; class, class &gt;</a>
+</li>
+<li>precision()
+: <a class="el" href="classmeta_1_1index_1_1ir__eval.html#a6897207b0b1c532d9283792be01d231c">meta::index::ir_eval</a>
 </li>
 <li>predict()
-: <a class="el" href="classmeta_1_1classify_1_1sgd.html#aa6851424c6d215ec60b1bc10db8c1157">meta::classify::sgd&lt; LossFunction &gt;</a>
+: <a class="el" href="classmeta_1_1classify_1_1binary__classifier.html#aa758f4b37393eda910f28a528da78e61">meta::classify::binary_classifier</a>
+, <a class="el" href="classmeta_1_1classify_1_1sgd.html#a658d450377cce0add3ac593cd64eb848">meta::classify::sgd</a>
 </li>
 <li>predictions()
 : <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#af5439b6f9c4c0d143749a20a75b99e3a">meta::classify::confusion_matrix</a>
 </li>
 <li>pretty_print()
-: <a class="el" href="classmeta_1_1tokenizers_1_1parse__tree.html#a29d84bcbeafae5d830b2617fa9f4ba39">meta::tokenizers::parse_tree</a>
+: <a class="el" href="classmeta_1_1analyzers_1_1parse__tree.html#ab0eae81a58c6413b5a0fb8ef250f17c1">meta::analyzers::parse_tree</a>
 </li>
 <li>primary_key()
 : <a class="el" href="classmeta_1_1index_1_1postings__data.html#aa1838c9fc80cef9cc23a98037e8d0a2f">meta::index::postings_data&lt; class, class &gt;</a>
@@ -200,14 +212,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>print_class_stats()
 : <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a3d1ce66c0add4a68e8b6b833fc539be9">meta::classify::confusion_matrix</a>
 </li>
+<li>print_endline()
+: <a class="el" href="classmeta_1_1printing_1_1progress.html#a00fd0721f1067b036de6716fc485e22a">meta::printing::progress</a>
+</li>
 <li>print_result_pairs()
 : <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#a56fbbb79c71553abc6ee5289c5f49694">meta::classify::confusion_matrix</a>
 </li>
 <li>print_stats()
 : <a class="el" href="classmeta_1_1classify_1_1confusion__matrix.html#af8811c0e7f6e6c8a564d07fb784f8821">meta::classify::confusion_matrix</a>
+, <a class="el" href="classmeta_1_1index_1_1ir__eval.html#a9544f1e2ab5788a6473fff866e8a58e4">meta::index::ir_eval</a>
 </li>
 <li>prob()
 : <a class="el" href="classmeta_1_1language__model_1_1ngram__distribution.html#aea14ea8727ae48e2055b1903fe9c780c">meta::language_model::ngram_distribution&lt; N &gt;</a>
+</li>
+<li>producer()
+: <a class="el" href="classmeta_1_1index_1_1chunk__handler_1_1producer.html#ac01f2936240d2888a689b2510b6a6902">meta::index::chunk_handler&lt; Index &gt;::producer</a>
 </li>
 <li>progress()
 : <a class="el" href="classmeta_1_1printing_1_1progress.html#a8b00a67630ade0148a7be92447234f91">meta::printing::progress</a>
@@ -216,7 +235,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:46 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:10 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

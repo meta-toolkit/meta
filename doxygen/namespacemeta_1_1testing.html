@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -77,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -93,6 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">meta::testing Namespace Reference</div>  </div>
@@ -102,8 +102,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Contains unit testing functions for the META toolkit.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1testing_1_1file__guard.html">file_guard</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1testing_1_1unit__test__exception.html">unit_test_exception</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception class used to report errors in the unit test.  <a href="classmeta_1_1testing_1_1unit__test__exception.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:aea18935fc2d861a207217a271e57cae9"><td class="memTemplParams" colspan="2"><a class="anchor" id="aea18935fc2d861a207217a271e57cae9"></a>
+template&lt;class Tokenizer &gt; </td></tr>
+<tr class="memitem:aea18935fc2d861a207217a271e57cae9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>check_analyzer_expected</b> (Tokenizer &amp;tok, <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> doc, uint64_t num_unique, uint64_t length)</td></tr>
+<tr class="separator:aea18935fc2d861a207217a271e57cae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1fc731ba8f86c9b17aab88bacf12994"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1fc731ba8f86c9b17aab88bacf12994"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>content_tokenize</b> ()</td></tr>
+<tr class="separator:ac1fc731ba8f86c9b17aab88bacf12994"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6057948591b853ba12aca1140bc19555"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6057948591b853ba12aca1140bc19555"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>file_tokenize</b> ()</td></tr>
+<tr class="separator:a6057948591b853ba12aca1140bc19555"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33cb372b865b505986d0bbc99fad9add"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33cb372b865b505986d0bbc99fad9add"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>analyzer_tests</b> ()</td></tr>
+<tr class="separator:a33cb372b865b505986d0bbc99fad9add"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea59801c20fcb405732b4ae85b2df0a0"><td class="memTemplParams" colspan="2"><a class="anchor" id="aea59801c20fcb405732b4ae85b2df0a0"></a>
 template&lt;class Index , class Classifier &gt; </td></tr>
 <tr class="memitem:aea59801c20fcb405732b4ae85b2df0a0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>check_cv</b> (Index &amp;idx, Classifier &amp;c, double min_accuracy)</td></tr>
@@ -112,12 +133,19 @@ template&lt;class Index , class Classifier &gt; </td></tr>
 template&lt;class Index , class Classifier &gt; </td></tr>
 <tr class="memitem:a4d92c5c8438c229f122382bce3f1a9b9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>check_split</b> (Index &amp;idx, Classifier &amp;c, double min_accuracy)</td></tr>
 <tr class="separator:a4d92c5c8438c229f122382bce3f1a9b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53975a1948e6fe6bdbc3315cae6146ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53975a1948e6fe6bdbc3315cae6146ef"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>run_tests</b> (const std::string &amp;type)</td></tr>
-<tr class="separator:a53975a1948e6fe6bdbc3315cae6146ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace46f39935f2b7f83cca08bede2ed533"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ace46f39935f2b7f83cca08bede2ed533"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>classifier_tests</b> ()</td></tr>
-<tr class="separator:ace46f39935f2b7f83cca08bede2ed533"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03103dadbf83bcfecf4bc6a64a7962a3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03103dadbf83bcfecf4bc6a64a7962a3"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>run_tests</b> (const std::string &amp;type)</td></tr>
+<tr class="separator:a03103dadbf83bcfecf4bc6a64a7962a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ef9bd4b49b00a4ae59c45bd96756db9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ef9bd4b49b00a4ae59c45bd96756db9"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>classifier_tests</b> ()</td></tr>
+<tr class="separator:a3ef9bd4b49b00a4ae59c45bd96756db9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53738d4e4e4d922a03ce2a13744e9825"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53738d4e4e4d922a03ce2a13744e9825"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a53738d4e4e4d922a03ce2a13744e9825">compression_tests</a> ()</td></tr>
+<tr class="memdesc:a53738d4e4e4d922a03ce2a13744e9825"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tests compressed_file_reader and compressed_file_writer. <br/></td></tr>
+<tr class="separator:a53738d4e4e4d922a03ce2a13744e9825"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a875ce8c5610366d92bacbcc293a9d3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a875ce8c5610366d92bacbcc293a9d3"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>filter_tests</b> ()</td></tr>
+<tr class="separator:a7a875ce8c5610366d92bacbcc293a9d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f82afc18805d8ee7398feaeb6fd1b98"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0f82afc18805d8ee7398feaeb6fd1b98"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>create_libsvm_config</b> ()</td></tr>
 <tr class="separator:a0f82afc18805d8ee7398feaeb6fd1b98"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,9 +171,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>ceeaus_forward_test</
 <tr class="memitem:a0364bdfc552a7e697dcf4d8d7291a84c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0364bdfc552a7e697dcf4d8d7291a84c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>bcancer_forward_test</b> ()</td></tr>
 <tr class="separator:a0364bdfc552a7e697dcf4d8d7291a84c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a494056dcce20f31118bf08093b5adde5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a494056dcce20f31118bf08093b5adde5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>forward_index_tests</b> ()</td></tr>
-<tr class="separator:a494056dcce20f31118bf08093b5adde5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a609545b65c613ba592b24c63fc085384"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a609545b65c613ba592b24c63fc085384"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>forward_index_tests</b> ()</td></tr>
+<tr class="separator:a609545b65c613ba592b24c63fc085384"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a7a43c6b97a98ae91b39ea0b2162453"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2a7a43c6b97a98ae91b39ea0b2162453"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>create_config</b> (const std::string &amp;corpus_type)</td></tr>
 <tr class="separator:a2a7a43c6b97a98ae91b39ea0b2162453"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,12 +185,27 @@ template&lt;class Index &gt; </td></tr>
 template&lt;class Index &gt; </td></tr>
 <tr class="memitem:a31f76fe615de4fe1bb2f9e1bcb1531c9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>check_term_id</b> (Index &amp;idx)</td></tr>
 <tr class="separator:a31f76fe615de4fe1bb2f9e1bcb1531c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbf96eceedd7f45056e72fb004796223"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abbf96eceedd7f45056e72fb004796223"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>inverted_index_tests</b> ()</td></tr>
-<tr class="separator:abbf96eceedd7f45056e72fb004796223"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86aef07710b664c3802df7cbf32db15e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86aef07710b664c3802df7cbf32db15e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>libsvm_parser_tests</b> ()</td></tr>
-<tr class="separator:a86aef07710b664c3802df7cbf32db15e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52f5821d138f3ad4b4718715711adfcf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a52f5821d138f3ad4b4718715711adfcf"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>inverted_index_tests</b> ()</td></tr>
+<tr class="separator:a52f5821d138f3ad4b4718715711adfcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ed2ff4dd7176b48bbf4f35990f158db"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4ed2ff4dd7176b48bbf4f35990f158db"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>ir_eval_tests</b> ()</td></tr>
+<tr class="separator:a4ed2ff4dd7176b48bbf4f35990f158db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5468a49628d1d84362f4def14b863bc4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5468a49628d1d84362f4def14b863bc4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>label</b> ()</td></tr>
+<tr class="separator:a5468a49628d1d84362f4def14b863bc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0676579da69f24cffcba056a61111e5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0676579da69f24cffcba056a61111e5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>no_label</b> ()</td></tr>
+<tr class="separator:ac0676579da69f24cffcba056a61111e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4227276ca7fc01b376ef73dcea7edf0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4227276ca7fc01b376ef73dcea7edf0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>bad_label</b> ()</td></tr>
+<tr class="separator:aa4227276ca7fc01b376ef73dcea7edf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88c158f067d9419e6bac74bf21477fe5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88c158f067d9419e6bac74bf21477fe5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>bad_counts</b> ()</td></tr>
+<tr class="separator:a88c158f067d9419e6bac74bf21477fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97a3a1b303550653a3c10ee7ad064aa5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a97a3a1b303550653a3c10ee7ad064aa5"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>libsvm_parser_tests</b> ()</td></tr>
+<tr class="separator:a97a3a1b303550653a3c10ee7ad064aa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56bfe21bab8c448f6635781d7c98f77a"><td class="memTemplParams" colspan="2"><a class="anchor" id="a56bfe21bab8c448f6635781d7c98f77a"></a>
 template&lt;class Type &gt; </td></tr>
 <tr class="memitem:a56bfe21bab8c448f6635781d7c98f77a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>hard_func</b> (Type &amp;x)</td></tr>
@@ -171,92 +214,192 @@ template&lt;class Type &gt; </td></tr>
 template&lt;class Type &gt; </td></tr>
 <tr class="memitem:a7efda1e8c2f021941f05d896a3cc48a5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>easy_func</b> (Type &amp;x)</td></tr>
 <tr class="separator:a7efda1e8c2f021941f05d896a3cc48a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac06ccd0f004e2e6b611426d56aaa47cd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac06ccd0f004e2e6b611426d56aaa47cd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#ac06ccd0f004e2e6b611426d56aaa47cd">test_speed</a> (std::vector&lt; double &gt; &amp;v)</td></tr>
-<tr class="memdesc:ac06ccd0f004e2e6b611426d56aaa47cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assumes multi-core machine... <br/></td></tr>
-<tr class="separator:ac06ccd0f004e2e6b611426d56aaa47cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af29cfcccb258bb4e08caef199fad8542"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af29cfcccb258bb4e08caef199fad8542"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>test_correctness</b> (std::vector&lt; double &gt; &amp;v)</td></tr>
-<tr class="separator:af29cfcccb258bb4e08caef199fad8542"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa164ae5a36d677a9e29f872f4a5d12ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa164ae5a36d677a9e29f872f4a5d12ae"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>test_threadpool</b> ()</td></tr>
-<tr class="separator:aa164ae5a36d677a9e29f872f4a5d12ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3749f5863ecabc4c5df8f349f198901"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa3749f5863ecabc4c5df8f349f198901"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>parallel_tests</b> ()</td></tr>
-<tr class="separator:aa3749f5863ecabc4c5df8f349f198901"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee6ab9148e9d44b889a23a8bbac5270f"><td class="memTemplParams" colspan="2"><a class="anchor" id="aee6ab9148e9d44b889a23a8bbac5270f"></a>
-template&lt;class Stemmer &gt; </td></tr>
-<tr class="memitem:aee6ab9148e9d44b889a23a8bbac5270f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>test_stem</b> (Stemmer &amp;stemmer, std::ifstream &amp;in, bool do_stem)</td></tr>
-<tr class="separator:aee6ab9148e9d44b889a23a8bbac5270f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcfec7497995ebf6eb4d6dbea72e8dd1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcfec7497995ebf6eb4d6dbea72e8dd1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>stemmer_tests</b> ()</td></tr>
-<tr class="separator:afcfec7497995ebf6eb4d6dbea72e8dd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a210eb7410d2bed5ee0db8092fd997fc4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a210eb7410d2bed5ee0db8092fd997fc4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>string_list_tests</b> ()</td></tr>
-<tr class="separator:a210eb7410d2bed5ee0db8092fd997fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80716d9db0ae2292c4bb61a655cc2613"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80716d9db0ae2292c4bb61a655cc2613"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>tokenizer_tests</b> ()</td></tr>
-<tr class="separator:a80716d9db0ae2292c4bb61a655cc2613"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b5647dec771ab3bec8865541e4da5e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a6b5647dec771ab3bec8865541e4da5e2">sig_catch</a> (int sig)</td></tr>
-<tr class="memdesc:a6b5647dec771ab3bec8865541e4da5e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Signal handler for unit tests.  <a href="#a6b5647dec771ab3bec8865541e4da5e2">More...</a><br/></td></tr>
-<tr class="separator:a6b5647dec771ab3bec8865541e4da5e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63f184adf9638af46879c37380ea256a"><td class="memTemplParams" colspan="2">template&lt;class Func &gt; </td></tr>
-<tr class="memitem:a63f184adf9638af46879c37380ea256a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a63f184adf9638af46879c37380ea256a">run_test</a> (const std::string &amp;test_name, int timeout, Func &amp;&amp;func)</td></tr>
-<tr class="memdesc:a63f184adf9638af46879c37380ea256a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs a unit test in a semi-controlled environment.  <a href="#a63f184adf9638af46879c37380ea256a">More...</a><br/></td></tr>
-<tr class="separator:a63f184adf9638af46879c37380ea256a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18780f1a465a7f9d01190c8e5a7fd804"><td class="memTemplParams" colspan="2"><a class="anchor" id="a18780f1a465a7f9d01190c8e5a7fd804"></a>
-template&lt;class Func &gt; </td></tr>
-<tr class="memitem:a18780f1a465a7f9d01190c8e5a7fd804"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>run_test</b> (const std::string &amp;test_name, Func &amp;&amp;func)</td></tr>
-<tr class="separator:a18780f1a465a7f9d01190c8e5a7fd804"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d6b51beb3621883733e76975bd7110d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d6b51beb3621883733e76975bd7110d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>vocabulary_map_tests</b> ()</td></tr>
-<tr class="separator:a5d6b51beb3621883733e76975bd7110d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0ec75e76c0277322e662051f5f97c39"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0ec75e76c0277322e662051f5f97c39"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#ac0ec75e76c0277322e662051f5f97c39">test_speed</a> (std::vector&lt; double &gt; &amp;v)</td></tr>
+<tr class="memdesc:ac0ec75e76c0277322e662051f5f97c39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assumes multi-core machine... <br/></td></tr>
+<tr class="separator:ac0ec75e76c0277322e662051f5f97c39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9330fdfa9eb893470473b0167956411d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9330fdfa9eb893470473b0167956411d"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>test_correctness</b> (std::vector&lt; double &gt; &amp;v)</td></tr>
+<tr class="separator:a9330fdfa9eb893470473b0167956411d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb5eac6fbb694edd4a30cb4170e3b7f7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb5eac6fbb694edd4a30cb4170e3b7f7"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>test_threadpool</b> ()</td></tr>
+<tr class="separator:adb5eac6fbb694edd4a30cb4170e3b7f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae171b44a741d884a03f0181976cb038a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae171b44a741d884a03f0181976cb038a"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>parallel_tests</b> ()</td></tr>
+<tr class="separator:ae171b44a741d884a03f0181976cb038a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca7bf5fea0ab6968efce81cd54a7ece6"><td class="memTemplParams" colspan="2"><a class="anchor" id="aca7bf5fea0ab6968efce81cd54a7ece6"></a>
+template&lt;class Ranker , class Index &gt; </td></tr>
+<tr class="memitem:aca7bf5fea0ab6968efce81cd54a7ece6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>test_rank</b> (Ranker &amp;r, Index &amp;idx)</td></tr>
+<tr class="separator:aca7bf5fea0ab6968efce81cd54a7ece6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9398baad0ab61271c675a2bf24c35e95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9398baad0ab61271c675a2bf24c35e95"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>ranker_tests</b> ()</td></tr>
+<tr class="separator:a9398baad0ab61271c675a2bf24c35e95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0c2e94edb93383574d099f3292fdd52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab0c2e94edb93383574d099f3292fdd52"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>stemmer_tests</b> ()</td></tr>
+<tr class="separator:ab0c2e94edb93383574d099f3292fdd52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe2dd91acbe102aefe6f227697403b99"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afe2dd91acbe102aefe6f227697403b99"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>assert_read</b> (std::ifstream &amp;file, const std::string &amp;expect)</td></tr>
+<tr class="separator:afe2dd91acbe102aefe6f227697403b99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04b0f2ae70cbc29c51e1704c21452531"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04b0f2ae70cbc29c51e1704c21452531"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>string_list_tests</b> ()</td></tr>
+<tr class="separator:a04b0f2ae70cbc29c51e1704c21452531"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38862eab75c07bb2db05a217de20b900"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a38862eab75c07bb2db05a217de20b900">filename</a> (const std::string &amp;path)</td></tr>
+<tr class="separator:a38862eab75c07bb2db05a217de20b900"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02450043a9c527f45fb39c044ac41586"><td class="memTemplParams" colspan="2">template&lt;class T , class K , class BinOp &gt; </td></tr>
+<tr class="memitem:a02450043a9c527f45fb39c044ac41586"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a02450043a9c527f45fb39c044ac41586">assert_equal</a> (const T &amp;expected, const K &amp;actual, const char *expstr, const char *actstr, BinOp &amp;&amp;binop)</td></tr>
+<tr class="memdesc:a02450043a9c527f45fb39c044ac41586"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows the user to see what the evaluated statements are.  <a href="#a02450043a9c527f45fb39c044ac41586">More...</a><br/></td></tr>
+<tr class="separator:a02450043a9c527f45fb39c044ac41586"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a950571a9762f92c3f030432be8e2bd36"><td class="memTemplParams" colspan="2"><a class="anchor" id="a950571a9762f92c3f030432be8e2bd36"></a>
+template&lt;class T , class K &gt; </td></tr>
+<tr class="memitem:a950571a9762f92c3f030432be8e2bd36"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><b>assert_equal</b> (const T &amp;expected, const K &amp;actual, const char *expstr, const char *actstr)</td></tr>
+<tr class="separator:a950571a9762f92c3f030432be8e2bd36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa33b9cd3529d887c71ea007562017b16"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa33b9cd3529d887c71ea007562017b16"></a>
+template&lt;class T , class K &gt; </td></tr>
+<tr class="memitem:aa33b9cd3529d887c71ea007562017b16"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><b>assert_approx_equal</b> (const T &amp;expected, const K &amp;actual, const char *expstr, const char *actstr)</td></tr>
+<tr class="separator:aa33b9cd3529d887c71ea007562017b16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a816c33e4ee91bc6f62e1fddad5092649"><td class="memTemplParams" colspan="2"><a class="anchor" id="a816c33e4ee91bc6f62e1fddad5092649"></a>
+template&lt;class T , class K &gt; </td></tr>
+<tr class="memitem:a816c33e4ee91bc6f62e1fddad5092649"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><b>assert_less</b> (const T &amp;expected, const K &amp;actual, const char *expstr, const char *actstr)</td></tr>
+<tr class="separator:a816c33e4ee91bc6f62e1fddad5092649"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1030a2b0c93b26bab5246c22723d6ea6"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1030a2b0c93b26bab5246c22723d6ea6"></a>
+template&lt;class T , class K &gt; </td></tr>
+<tr class="memitem:a1030a2b0c93b26bab5246c22723d6ea6"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><b>assert_greater</b> (const T &amp;expected, const K &amp;actual, const char *expstr, const char *actstr)</td></tr>
+<tr class="separator:a1030a2b0c93b26bab5246c22723d6ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1acc141d9c8afac5b415ce49320d2106"><td class="memTemplParams" colspan="2">template&lt;class Func &gt; </td></tr>
+<tr class="memitem:a1acc141d9c8afac5b415ce49320d2106"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a1acc141d9c8afac5b415ce49320d2106">run_test</a> (const std::string &amp;test_name, Func &amp;&amp;func)</td></tr>
+<tr class="memdesc:a1acc141d9c8afac5b415ce49320d2106"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs a unit test in a semi-controlled environment.  <a href="#a1acc141d9c8afac5b415ce49320d2106">More...</a><br/></td></tr>
+<tr class="separator:a1acc141d9c8afac5b415ce49320d2106"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fa0eaac4806d94178ee6f7983bedbb9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9fa0eaac4806d94178ee6f7983bedbb9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>write_file</b> (uint16_t size=20)</td></tr>
+<tr class="separator:a9fa0eaac4806d94178ee6f7983bedbb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8948369b9082664da45579408ca912c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8948369b9082664da45579408ca912c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>assert_correctness</b> (uint16_t size=20)</td></tr>
+<tr class="separator:ad8948369b9082664da45579408ca912c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14dade2daf6f02e1378199fc0aa64628"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a14dade2daf6f02e1378199fc0aa64628"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>read_file</b> (uint16_t size=20)</td></tr>
+<tr class="separator:a14dade2daf6f02e1378199fc0aa64628"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a266aa9d81b43bf360be3d63014d260e7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a266aa9d81b43bf360be3d63014d260e7"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>vocabulary_map_tests</b> ()</td></tr>
+<tr class="separator:a266aa9d81b43bf360be3d63014d260e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a812b37239799eb3325493947e95a635e"><td class="memTemplParams" colspan="2"><a class="anchor" id="a812b37239799eb3325493947e95a635e"></a>
+template&lt;class Analyzer &gt; </td></tr>
+<tr class="memitem:a812b37239799eb3325493947e95a635e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>check_analyzer_expected</b> (Analyzer &amp;ana, <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> doc, uint64_t num_unique, uint64_t length)</td></tr>
+<tr class="separator:a812b37239799eb3325493947e95a635e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac76cac6cc0b05ad5a33ee414e9c5aa98"><td class="memTemplParams" colspan="2"><a class="anchor" id="ac76cac6cc0b05ad5a33ee414e9c5aa98"></a>
+template&lt;class Ranker , class Index &gt; </td></tr>
+<tr class="memitem:ac76cac6cc0b05ad5a33ee414e9c5aa98"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>test_rank</b> (Ranker &amp;r, Index &amp;idx, const std::string &amp;encoding)</td></tr>
+<tr class="separator:ac76cac6cc0b05ad5a33ee414e9c5aa98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Contains unit testing functions for the META toolkit. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a6b5647dec771ab3bec8865541e4da5e2"></a>
+<a class="anchor" id="a38862eab75c07bb2db05a217de20b900"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void meta::testing::sig_catch </td>
+          <td class="memname">std::string meta::testing::filename </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>sig</em></td><td>)</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
-
-<p>Signal handler for unit tests. </p>
-<p>Catches signals and responds appropriately, usually by failing the current test. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">sig</td><td>The caught signal ID </td></tr>
+    <tr><td class="paramname">path</td><td>The path to truncate </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="a63f184adf9638af46879c37380ea256a"></a>
+<a class="anchor" id="a02450043a9c527f45fb39c044ac41586"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T , class K , class BinOp &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string meta::testing::assert_equal </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>expected</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>actual</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>expstr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>actstr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">BinOp &amp;&amp;&#160;</td>
+          <td class="paramname"><em>binop</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Allows the user to see what the evaluated statements are. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">expected</td><td>The expected expression </td></tr>
+    <tr><td class="paramname">actual</td><td>The actual expression </td></tr>
+    <tr><td class="paramname">expstr</td><td>The expected string </td></tr>
+    <tr><td class="paramname">actstr</td><td>The actual string </td></tr>
+    <tr><td class="paramname">binop</td><td>The binary operator to compare the expressions; by default std::equal_to </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a1acc141d9c8afac5b415ce49320d2106"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Func &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void meta::testing::run_test </td>
+          <td class="memname">int meta::testing::run_test </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>test_name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>timeout</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -275,9 +418,8 @@ template&lt;class Func &gt; </div>
 <p>Runs a unit test in a semi-controlled environment. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">testName</td><td>- the name to display when running this test </td></tr>
-    <tr><td class="paramname">timeout</td><td>- how long to allow this test to execute (in seconds). Default is one second. </td></tr>
-    <tr><td class="paramname">func</td><td>- the function (unit test) to run. This function should take no parameters and return void. </td></tr>
+    <tr><td class="paramname">testName</td><td>The name to display when running this test </td></tr>
+    <tr><td class="paramname">func</td><td>The function (unit test) to run. This function should take no parameters and return void. </td></tr>
   </table>
   </dd>
 </dl>
@@ -287,7 +429,7 @@ template&lt;class Func &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:43 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:06 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

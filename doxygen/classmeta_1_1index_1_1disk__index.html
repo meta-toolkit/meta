@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -123,6 +122,7 @@ Inheritance diagram for meta::index::disk_index:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html">disk_index_impl</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The implementation of a <a class="el" href="classmeta_1_1index_1_1disk__index.html" title="Holds generic data structures and functions that inverted_index and forward_index both use...">disk_index</a>.  <a href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -131,9 +131,7 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index.html#ae127eaae83d08818b396b986a6397efe">~disk_index</a> ()=default</td></tr>
 <tr class="memdesc:ae127eaae83d08818b396b986a6397efe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default destructor. <br/></td></tr>
 <tr class="separator:ae127eaae83d08818b396b986a6397efe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8400f749e6cf15ec6d2639434d1bc9ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8400f749e6cf15ec6d2639434d1bc9ef"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index.html#a8400f749e6cf15ec6d2639434d1bc9ef">index_name</a> () const </td></tr>
-<tr class="memdesc:a8400f749e6cf15ec6d2639434d1bc9ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">The name of this index. <br/></td></tr>
+<tr class="memitem:a8400f749e6cf15ec6d2639434d1bc9ef"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index.html#a8400f749e6cf15ec6d2639434d1bc9ef">index_name</a> () const </td></tr>
 <tr class="separator:a8400f749e6cf15ec6d2639434d1bc9ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f02d3debd804a184d74531448b37689"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a> () const </td></tr>
 <tr class="separator:a5f02d3debd804a184d74531448b37689"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,6 +147,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <tr class="separator:a9ac1bf325ba1971299b9bcd9b49b539e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2ee31de0207df034452af9859cb92ef"><td class="memItemLeft" align="right" valign="top">class_label&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index.html#ab2ee31de0207df034452af9859cb92ef">class_label_from_id</a> (label_id l_id) const </td></tr>
 <tr class="separator:ab2ee31de0207df034452af9859cb92ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8672437bfe14bb98749946b49a2259b6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; class_label &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index.html#a8672437bfe14bb98749946b49a2259b6">class_labels</a> () const </td></tr>
+<tr class="separator:a8672437bfe14bb98749946b49a2259b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ed2324e961615f7dc4bc6971e27ebd6"><td class="memItemLeft" align="right" valign="top">virtual uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index.html#a3ed2324e961615f7dc4bc6971e27ebd6">unique_terms</a> (doc_id d_id) const </td></tr>
 <tr class="separator:a3ed2324e961615f7dc4bc6971e27ebd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e1237a5c626a000fff8f6f9737bd540"><td class="memItemLeft" align="right" valign="top">virtual uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index.html#a8e1237a5c626a000fff8f6f9737bd540">unique_terms</a> () const </td></tr>
@@ -188,6 +188,7 @@ Protected Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Holds generic data structures and functions that <a class="el" href="classmeta_1_1index_1_1inverted__index.html" title="The inverted_index class stores information on a corpus indexed by term_ids. ">inverted_index</a> and <a class="el" href="classmeta_1_1index_1_1forward__index.html" title="The forward_index stores information on a corpus by doc_ids. ">forward_index</a> both use. </p>
+<p>Provides common interface for both and is implemented using the pointer-to-implementation method. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a9ee399358ca6493645b300001eea54c8"></a>
 <div class="memitem">
@@ -224,7 +225,8 @@ Protected Attributes</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">config_file</td><td></td></tr>
+    <tr><td class="paramname">config_file</td><td>The config settings used to create this index </td></tr>
+    <tr><td class="paramname">name</td><td>The name of this <a class="el" href="classmeta_1_1index_1_1disk__index.html" title="Holds generic data structures and functions that inverted_index and forward_index both use...">disk_index</a> </td></tr>
   </table>
   </dd>
 </dl>
@@ -232,6 +234,22 @@ Protected Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a8400f749e6cf15ec6d2639434d1bc9ef"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string meta::index::disk_index::index_name </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the name of this index. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a5f02d3debd804a184d74531448b37689"></a>
 <div class="memitem">
 <div class="memproto">
@@ -379,6 +397,22 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a8672437bfe14bb98749946b49a2259b6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; class_label &gt; meta::index::disk_index::class_labels </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the distinct class labels possible for documents in this index </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a3ed2324e961615f7dc4bc6971e27ebd6"></a>
 <div class="memitem">
 <div class="memproto">
@@ -478,18 +512,18 @@ Protected Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The string representation of the term </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the string representation of the term </dd></dl>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/include/index/<a class="el" href="disk__index_8h_source.html">disk_index.h</a></li>
-<li>/home/sean/projects/meta/src/index/<a class="el" href="disk__index_8cpp.html">disk_index.cpp</a></li>
+<li>/home/chase/projects/meta/include/index/<a class="el" href="disk__index_8h_source.html">disk_index.h</a></li>
+<li>/home/chase/projects/meta/src/index/<a class="el" href="disk__index_8cpp.html">disk_index.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:40 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:02 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

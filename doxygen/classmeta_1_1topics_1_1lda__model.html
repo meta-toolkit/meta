@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -122,27 +121,21 @@ Inheritance diagram for meta::topics::lda_model:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:adea74d6103bb86e220021a6e8ca835cc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adea74d6103bb86e220021a6e8ca835cc"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>lda_model</b> (std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;docs, size_t num_topics, const std::shared_ptr&lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt; &amp;tok)</td></tr>
-<tr class="separator:adea74d6103bb86e220021a6e8ca835cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1c5f2342a2e7135fd8f077169c4b7d3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1c5f2342a2e7135fd8f077169c4b7d3"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> (size_t num_iters, double convergence)=0</td></tr>
-<tr class="separator:ad1c5f2342a2e7135fd8f077169c4b7d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7459f802045a955b9630ea8f670b71dd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7459f802045a955b9630ea8f670b71dd"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>lda_model</b> (std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, uint64_t num_topics)</td></tr>
+<tr class="separator:a7459f802045a955b9630ea8f670b71dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a009ce545146c6f32594df33cf6fa4427"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a009ce545146c6f32594df33cf6fa4427"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> (uint64_t num_iters, double convergence)=0</td></tr>
+<tr class="separator:a009ce545146c6f32594df33cf6fa4427"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67d1d995e1bc3866ff3514d463e5894b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a67d1d995e1bc3866ff3514d463e5894b">save_doc_topic_distributions</a> (const std::string &amp;filename) const </td></tr>
 <tr class="memdesc:a67d1d995e1bc3866ff3514d463e5894b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the topic proportions \(\theta_d\) for each document to the given file.  <a href="#a67d1d995e1bc3866ff3514d463e5894b">More...</a><br/></td></tr>
 <tr class="separator:a67d1d995e1bc3866ff3514d463e5894b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3042b31608339a5b606c1cbdf2d88312"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a3042b31608339a5b606c1cbdf2d88312">save_topic_term_distributions</a> (const std::string &amp;filename) const </td></tr>
 <tr class="memdesc:a3042b31608339a5b606c1cbdf2d88312"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the term distributions \(\phi_j\) for each topic to the given file.  <a href="#a3042b31608339a5b606c1cbdf2d88312">More...</a><br/></td></tr>
 <tr class="separator:a3042b31608339a5b606c1cbdf2d88312"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a080a17446fa790b7871b0299bc8cb61c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a080a17446fa790b7871b0299bc8cb61c">save_term_mapping</a> (const std::string &amp;filename) const </td></tr>
-<tr class="memdesc:a080a17446fa790b7871b0299bc8cb61c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the term_id &ndash;&gt; String mapping to the given file.  <a href="#a080a17446fa790b7871b0299bc8cb61c">More...</a><br/></td></tr>
-<tr class="separator:a080a17446fa790b7871b0299bc8cb61c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84a17b141fd5e460bc996983f2ccafd0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a84a17b141fd5e460bc996983f2ccafd0">save</a> (const std::string &amp;prefix) const </td></tr>
 <tr class="memdesc:a84a17b141fd5e460bc996983f2ccafd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the current model to a set of files beginning with prefix: prefix.phi, prefix.theta, and prefix.terms.  <a href="#a84a17b141fd5e460bc996983f2ccafd0">More...</a><br/></td></tr>
 <tr class="separator:a84a17b141fd5e460bc996983f2ccafd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41cef049a68364e4d23b857792425e2e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair<br class="typebreak"/>
-&lt; term_id, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a41cef049a68364e4d23b857792425e2e">select</a> () const </td></tr>
-<tr class="separator:a41cef049a68364e4d23b857792425e2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -152,22 +145,19 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:adeef8d04c1757bc2c88711f9d7004592"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adeef8d04c1757bc2c88711f9d7004592"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>lda_model</b> (const <a class="el" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a> &amp;)=delete</td></tr>
 <tr class="separator:adeef8d04c1757bc2c88711f9d7004592"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9483d763bf58eef71c418709dad333b"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#ae9483d763bf58eef71c418709dad333b">compute_term_topic_probability</a> (term_id term, size_t topic) const =0</td></tr>
-<tr class="memdesc:ae9483d763bf58eef71c418709dad333b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the probability that the given term appears in the given topic.  <a href="#ae9483d763bf58eef71c418709dad333b">More...</a><br/></td></tr>
-<tr class="separator:ae9483d763bf58eef71c418709dad333b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f0f2b6e65a485394d85b509c1897fdb"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a7f0f2b6e65a485394d85b509c1897fdb">compute_doc_topic_probability</a> (doc_id doc, size_t topic) const =0</td></tr>
-<tr class="memdesc:a7f0f2b6e65a485394d85b509c1897fdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the probability that the given topic is picked for the given document.  <a href="#a7f0f2b6e65a485394d85b509c1897fdb">More...</a><br/></td></tr>
-<tr class="separator:a7f0f2b6e65a485394d85b509c1897fdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a662130970a61cbad29a79c221948884f"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a662130970a61cbad29a79c221948884f">compute_term_topic_probability</a> (term_id term, topic_id topic) const =0</td></tr>
+<tr class="memdesc:a662130970a61cbad29a79c221948884f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the probability that the given term appears in the given topic.  <a href="#a662130970a61cbad29a79c221948884f">More...</a><br/></td></tr>
+<tr class="separator:a662130970a61cbad29a79c221948884f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98b3e12c6f1f99d4ec1a417b5332738e"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1topics_1_1lda__model.html#a98b3e12c6f1f99d4ec1a417b5332738e">compute_doc_topic_probability</a> (doc_id doc, topic_id topic) const =0</td></tr>
+<tr class="memdesc:a98b3e12c6f1f99d4ec1a417b5332738e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the probability that the given topic is picked for the given document.  <a href="#a98b3e12c6f1f99d4ec1a417b5332738e">More...</a><br/></td></tr>
+<tr class="separator:a98b3e12c6f1f99d4ec1a417b5332738e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a3bedd226af703610dae0df9b9dda8cb5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3bedd226af703610dae0df9b9dda8cb5"></a>
-std::vector&lt; <a class="el" href="classmeta_1_1corpus_1_1document.html">corpus::document</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>docs_</b></td></tr>
-<tr class="separator:a3bedd226af703610dae0df9b9dda8cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab88ba4445497fa66306387526a3ee99f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab88ba4445497fa66306387526a3ee99f"></a>
+<tr class="memitem:af35657f144c3be7707832f838947d128"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af35657f144c3be7707832f838947d128"></a>
 std::shared_ptr<br class="typebreak"/>
-&lt; <a class="el" href="classmeta_1_1tokenizers_1_1tokenizer.html">tokenizers::tokenizer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tokenizer_</b></td></tr>
-<tr class="separator:ab88ba4445497fa66306387526a3ee99f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>idx_</b></td></tr>
+<tr class="separator:af35657f144c3be7707832f838947d128"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3ceda95c29bbd33083d68264718b3af"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac3ceda95c29bbd33083d68264718b3af"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_topics_</b></td></tr>
 <tr class="separator:ac3ceda95c29bbd33083d68264718b3af"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -229,30 +219,6 @@ readable" plain-text format.</p>
 
 </div>
 </div>
-<a class="anchor" id="a080a17446fa790b7871b0299bc8cb61c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void meta::topics::lda_model::save_term_mapping </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>filename</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Saves the term_id &ndash;&gt; String mapping to the given file. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">filename</td><td>The file to save the term mapping to. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="a84a17b141fd5e460bc996983f2ccafd0"></a>
 <div class="memitem">
 <div class="memproto">
@@ -277,23 +243,7 @@ readable" plain-text format.</p>
 
 </div>
 </div>
-<a class="anchor" id="a41cef049a68364e4d23b857792425e2e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; std::pair&lt; term_id, double &gt; &gt; meta::topics::lda_model::select </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>a list of the highest weighted terms from each class </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ae9483d763bf58eef71c418709dad333b"></a>
+<a class="anchor" id="a662130970a61cbad29a79c221948884f"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -309,7 +259,7 @@ readable" plain-text format.</p>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
+          <td class="paramtype">topic_id&#160;</td>
           <td class="paramname"><em>topic</em>&#160;</td>
         </tr>
         <tr>
@@ -334,11 +284,11 @@ readable" plain-text format.</p>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#ac6b5a34eef71150a3a6c2d808e0653a1">meta::topics::lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a36cefa19c4d14dba552e0335e19ea747">meta::topics::lda_cvb</a>.</p>
+<p>Implemented in <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a752253d8ff63f8b4bd1d89d0e3578062">meta::topics::lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#af2d6a042c1a7e264a241dabe962e9c89">meta::topics::lda_cvb</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a7f0f2b6e65a485394d85b509c1897fdb"></a>
+<a class="anchor" id="a98b3e12c6f1f99d4ec1a417b5332738e"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -354,7 +304,7 @@ readable" plain-text format.</p>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
+          <td class="paramtype">topic_id&#160;</td>
           <td class="paramname"><em>topic</em>&#160;</td>
         </tr>
         <tr>
@@ -379,18 +329,18 @@ readable" plain-text format.</p>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a644135cbcb855b333009995ec6d02e41">meta::topics::lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a860b2891c2042a87e5fdce53628104bb">meta::topics::lda_cvb</a>.</p>
+<p>Implemented in <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a97796b620b901df670a040d5559ecb47">meta::topics::lda_gibbs</a>, and <a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a913ac66c6f1d99ed107d4fdcef46e972">meta::topics::lda_cvb</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/include/topics/<a class="el" href="lda__model_8h_source.html">lda_model.h</a></li>
-<li>/home/sean/projects/meta/src/topics/<a class="el" href="lda__model_8cpp.html">lda_model.cpp</a></li>
+<li>/home/chase/projects/meta/include/topics/<a class="el" href="lda__model_8h_source.html">lda_model.h</a></li>
+<li>/home/chase/projects/meta/src/topics/<a class="el" href="lda__model_8cpp.html">lda_model.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:45 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:07 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

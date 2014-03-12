@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -120,9 +119,6 @@ std::unordered_map<br class="typebreak"/>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad4bf4171f72d3cee1639051a77a30fa5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad4bf4171f72d3cee1639051a77a30fa5"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ngram_distribution</b> (const std::string &amp;docPath)</td></tr>
-<tr class="separator:ad4bf4171f72d3cee1639051a77a30fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5c5d45fe6db3f065a6e7addd4829577"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae5c5d45fe6db3f065a6e7addd4829577"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>prob</b> (const std::string &amp;str)</td></tr>
 <tr class="separator:ae5c5d45fe6db3f065a6e7addd4829577"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,9 +128,9 @@ const ProbMap &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>kth_di
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a48d77925316c33c4f44732d98818e255"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a48d77925316c33c4f44732d98818e255"></a>
-ProbMap&#160;</td><td class="memItemRight" valign="bottom"><b>_dist</b></td></tr>
-<tr class="separator:a48d77925316c33c4f44732d98818e255"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea8b3d563bfde510afd87863fdcd52a3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea8b3d563bfde510afd87863fdcd52a3"></a>
+ProbMap&#160;</td><td class="memItemRight" valign="bottom"><b>dist_</b></td></tr>
+<tr class="separator:aea8b3d563bfde510afd87863fdcd52a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;&gt;<br/>
@@ -142,12 +138,12 @@ class meta::language_model::ngram_distribution&lt; 0 &gt;</h3>
 
 <p>Specialized "base case" class for a unigram model's prior distribution. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/sean/projects/meta/include/model/<a class="el" href="ngram__distribution_8h_source.html">ngram_distribution.h</a></li>
+<li>/home/chase/projects/meta/include/model/<a class="el" href="ngram__distribution_8h_source.html">ngram_distribution.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:42 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:06 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,12 +104,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">meta::index::chunk_handler&lt; Index &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>An interface for writing and merging inverted chunks of <a class="el" href="classmeta_1_1index_1_1postings__data.html" title="A class to represent the per-PrimaryKey data in an index&#39;s postings file. ">postings_data</a> for a <a class="el" href="classmeta_1_1index_1_1disk__index.html" title="Holds generic data structures and functions that inverted_index and forward_index both use...">disk_index</a>.  
+ <a href="classmeta_1_1index_1_1chunk__handler.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="chunk__handler_8h_source.html">chunk_handler.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler_1_1chunk__handler__exception.html">chunk_handler_exception</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">simple exception class for <a class="el" href="classmeta_1_1index_1_1chunk__handler.html" title="An interface for writing and merging inverted chunks of postings_data for a disk_index. ">chunk_handler</a> interactions  <a href="classmeta_1_1index_1_1chunk__handler_1_1chunk__handler__exception.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler_1_1producer.html">producer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The object that is fed <a class="el" href="classmeta_1_1index_1_1postings__data.html" title="A class to represent the per-PrimaryKey data in an index&#39;s postings file. ">postings_data</a> by the index.  <a href="classmeta_1_1index_1_1chunk__handler_1_1producer.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -131,40 +137,33 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>chunk_t</b> = <a cla
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a314a3356dbb2f86390f5c4659eb3c04f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#a314a3356dbb2f86390f5c4659eb3c04f">chunk_handler</a> (const std::string &amp;prefix)</td></tr>
-<tr class="memdesc:a314a3356dbb2f86390f5c4659eb3c04f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classmeta_1_1index_1_1chunk__handler.html">chunk_handler</a> that writes to the given prefix.  <a href="#a314a3356dbb2f86390f5c4659eb3c04f">More...</a><br/></td></tr>
+<tr class="memdesc:a314a3356dbb2f86390f5c4659eb3c04f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classmeta_1_1index_1_1chunk__handler.html" title="An interface for writing and merging inverted chunks of postings_data for a disk_index. ">chunk_handler</a> that writes to the given prefix.  <a href="#a314a3356dbb2f86390f5c4659eb3c04f">More...</a><br/></td></tr>
 <tr class="separator:a314a3356dbb2f86390f5c4659eb3c04f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec7ce8880dd7cfbe7855d82cd6ab55b5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1index_1_1chunk__handler_1_1producer.html">producer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#aec7ce8880dd7cfbe7855d82cd6ab55b5">make_producer</a> ()</td></tr>
-<tr class="memdesc:aec7ce8880dd7cfbe7855d82cd6ab55b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a producer for this <a class="el" href="classmeta_1_1index_1_1chunk__handler.html">chunk_handler</a>.  <a href="#aec7ce8880dd7cfbe7855d82cd6ab55b5">More...</a><br/></td></tr>
+<tr class="memdesc:aec7ce8880dd7cfbe7855d82cd6ab55b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a producer for this <a class="el" href="classmeta_1_1index_1_1chunk__handler.html" title="An interface for writing and merging inverted chunks of postings_data for a disk_index. ">chunk_handler</a>.  <a href="#aec7ce8880dd7cfbe7855d82cd6ab55b5">More...</a><br/></td></tr>
 <tr class="separator:aec7ce8880dd7cfbe7855d82cd6ab55b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add0d91489cd3ad8d17608872d55f9573"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add0d91489cd3ad8d17608872d55f9573"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#add0d91489cd3ad8d17608872d55f9573">size</a> () const </td></tr>
-<tr class="memdesc:add0d91489cd3ad8d17608872d55f9573"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of chunks this handler has written to disk. <br/></td></tr>
+<tr class="memitem:add0d91489cd3ad8d17608872d55f9573"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#add0d91489cd3ad8d17608872d55f9573">size</a> () const </td></tr>
 <tr class="separator:add0d91489cd3ad8d17608872d55f9573"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7ddd8fa4f3e32e35bb8b23fdae524d3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac7ddd8fa4f3e32e35bb8b23fdae524d3"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#ac7ddd8fa4f3e32e35bb8b23fdae524d3">final_size</a> () const </td></tr>
-<tr class="memdesc:ac7ddd8fa4f3e32e35bb8b23fdae524d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the size, in bytes, of the last chunk written to disk after merging. <br/></td></tr>
+<tr class="memitem:ac7ddd8fa4f3e32e35bb8b23fdae524d3"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#ac7ddd8fa4f3e32e35bb8b23fdae524d3">final_size</a> () const </td></tr>
 <tr class="separator:ac7ddd8fa4f3e32e35bb8b23fdae524d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80ff1cc117b37ed512e2d838a584a46b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80ff1cc117b37ed512e2d838a584a46b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#a80ff1cc117b37ed512e2d838a584a46b">merge_chunks</a> ()</td></tr>
 <tr class="memdesc:a80ff1cc117b37ed512e2d838a584a46b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Merge the remaining on-disk chunks. <br/></td></tr>
 <tr class="separator:a80ff1cc117b37ed512e2d838a584a46b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa423fb8c1970ada6289619d2dc9106a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa423fb8c1970ada6289619d2dc9106a"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#aaa423fb8c1970ada6289619d2dc9106a">unique_primary_keys</a> () const </td></tr>
-<tr class="memdesc:aaa423fb8c1970ada6289619d2dc9106a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of unique primary keys seen while merging chunks. <br/></td></tr>
+<tr class="memitem:aaa423fb8c1970ada6289619d2dc9106a"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#aaa423fb8c1970ada6289619d2dc9106a">unique_primary_keys</a> () const </td></tr>
 <tr class="separator:aaa423fb8c1970ada6289619d2dc9106a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:aebef255ae17bbfd1a77e7f6bf0860eb8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aebef255ae17bbfd1a77e7f6bf0860eb8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>write_chunk</b> (std::vector&lt; index_pdata_type &gt; &amp;pdata)</td></tr>
+<tr class="memitem:aebef255ae17bbfd1a77e7f6bf0860eb8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#aebef255ae17bbfd1a77e7f6bf0860eb8">write_chunk</a> (std::vector&lt; index_pdata_type &gt; &amp;pdata)</td></tr>
 <tr class="separator:aebef255ae17bbfd1a77e7f6bf0860eb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a2c3e3484d7cc979dfd7db95a3ba39365"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c3e3484d7cc979dfd7db95a3ba39365"></a>
-const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#a2c3e3484d7cc979dfd7db95a3ba39365">prefix_</a></td></tr>
-<tr class="memdesc:a2c3e3484d7cc979dfd7db95a3ba39365"><td class="mdescLeft">&#160;</td><td class="mdescRight">the prefix for all chunks to be written <br/></td></tr>
-<tr class="separator:a2c3e3484d7cc979dfd7db95a3ba39365"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab370de470b41061d43b78a16b4a4e25c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab370de470b41061d43b78a16b4a4e25c"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#ab370de470b41061d43b78a16b4a4e25c">prefix_</a></td></tr>
+<tr class="memdesc:ab370de470b41061d43b78a16b4a4e25c"><td class="mdescLeft">&#160;</td><td class="mdescRight">the prefix for all chunks to be written <br/></td></tr>
+<tr class="separator:ab370de470b41061d43b78a16b4a4e25c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78a3f9aaac8de6fdc625b0933a9b0efd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78a3f9aaac8de6fdc625b0933a9b0efd"></a>
 std::atomic&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1chunk__handler.html#a78a3f9aaac8de6fdc625b0933a9b0efd">chunk_num_</a> {0}</td></tr>
 <tr class="memdesc:a78a3f9aaac8de6fdc625b0933a9b0efd"><td class="mdescLeft">&#160;</td><td class="mdescRight">the current chunk number <br/></td></tr>
@@ -182,7 +181,12 @@ std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <tr class="memdesc:a5057aefda6803fb7a3c9d7af277c3679"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of unique primary keys encountered while merging <br/></td></tr>
 <tr class="separator:a5057aefda6803fb7a3c9d7af277c3679"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class Index&gt;<br/>
+class meta::index::chunk_handler&lt; Index &gt;</h3>
+
+<p>An interface for writing and merging inverted chunks of <a class="el" href="classmeta_1_1index_1_1postings__data.html" title="A class to represent the per-PrimaryKey data in an index&#39;s postings file. ">postings_data</a> for a <a class="el" href="classmeta_1_1index_1_1disk__index.html" title="Holds generic data structures and functions that inverted_index and forward_index both use...">disk_index</a>. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a314a3356dbb2f86390f5c4659eb3c04f"></a>
 <div class="memitem">
 <div class="memproto">
@@ -199,10 +203,10 @@ template&lt;class Index &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Constructs a <a class="el" href="classmeta_1_1index_1_1chunk__handler.html">chunk_handler</a> that writes to the given prefix. </p>
+<p>Constructs a <a class="el" href="classmeta_1_1index_1_1chunk__handler.html" title="An interface for writing and merging inverted chunks of postings_data for a disk_index. ">chunk_handler</a> that writes to the given prefix. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">prefix</td><td>the prefix for all chunks to be written </td></tr>
+    <tr><td class="paramname">prefix</td><td>The prefix for all chunks to be written </td></tr>
   </table>
   </dd>
 </dl>
@@ -225,19 +229,105 @@ template&lt;class Index &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Creates a producer for this <a class="el" href="classmeta_1_1index_1_1chunk__handler.html">chunk_handler</a>. </p>
+<p>Creates a producer for this <a class="el" href="classmeta_1_1index_1_1chunk__handler.html" title="An interface for writing and merging inverted chunks of postings_data for a disk_index. ">chunk_handler</a>. </p>
 <p>Producers are designed to be thread-local buffers of chunks that write to disk when their buffer is full. </p>
 
 </div>
 </div>
+<a class="anchor" id="add0d91489cd3ad8d17608872d55f9573"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Index &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t <a class="el" href="classmeta_1_1index_1_1chunk__handler.html">meta::index::chunk_handler</a>&lt; Index &gt;::size </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the number of chunks this handler has written to disk. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac7ddd8fa4f3e32e35bb8b23fdae524d3"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Index &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t <a class="el" href="classmeta_1_1index_1_1chunk__handler.html">meta::index::chunk_handler</a>&lt; Index &gt;::final_size </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the size, in bytes, of the last chunk written to disk after merging. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aaa423fb8c1970ada6289619d2dc9106a"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Index &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t <a class="el" href="classmeta_1_1index_1_1chunk__handler.html">meta::index::chunk_handler</a>&lt; Index &gt;::unique_primary_keys </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the number of unique primary keys seen while merging chunks. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aebef255ae17bbfd1a77e7f6bf0860eb8"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Index &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classmeta_1_1index_1_1chunk__handler.html">meta::index::chunk_handler</a>&lt; Index &gt;::write_chunk </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; index_pdata_type &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pdata</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pdata</td><td>The collection of <a class="el" href="classmeta_1_1index_1_1postings__data.html" title="A class to represent the per-PrimaryKey data in an index&#39;s postings file. ">postings_data</a> objects to combine into a chunk </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/sean/projects/meta/include/index/<a class="el" href="chunk__handler_8h_source.html">chunk_handler.h</a></li>
-<li>/home/sean/projects/meta/include/index/<a class="el" href="chunk__handler_8tcc.html">chunk_handler.tcc</a></li>
+<li>/home/chase/projects/meta/include/index/<a class="el" href="chunk__handler_8h_source.html">chunk_handler.h</a></li>
+<li>/home/chase/projects/meta/include/index/<a class="el" href="chunk__handler_8tcc.html">chunk_handler.tcc</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:40 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:02 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

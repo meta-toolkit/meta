@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -79,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -176,12 +175,12 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a453a6c6efa52fb00f8e8212923043c13"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a453a6c6efa52fb00f8e8212923043c13"></a>
 friend&#160;</td><td class="memItemRight" valign="bottom"><b>disk_vector</b></td></tr>
 <tr class="separator:a453a6c6efa52fb00f8e8212923043c13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03d1b29fdffb5f3bb707270dcdbc6900"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03d1b29fdffb5f3bb707270dcdbc6900"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>_idx</b></td></tr>
-<tr class="separator:a03d1b29fdffb5f3bb707270dcdbc6900"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e94bd5df01e139c44c2dac57ac0adfc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e94bd5df01e139c44c2dac57ac0adfc"></a>
-T *&#160;</td><td class="memItemRight" valign="bottom"><b>_data</b></td></tr>
-<tr class="separator:a3e94bd5df01e139c44c2dac57ac0adfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa30cfcac634b3ecfd263feeb1e1c81fb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa30cfcac634b3ecfd263feeb1e1c81fb"></a>
+uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>idx_</b></td></tr>
+<tr class="separator:aa30cfcac634b3ecfd263feeb1e1c81fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a787d4710066888d4d0423775d47cd158"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a787d4710066888d4d0423775d47cd158"></a>
+T *&#160;</td><td class="memItemRight" valign="bottom"><b>data_</b></td></tr>
+<tr class="separator:a787d4710066888d4d0423775d47cd158"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class&gt;<br/>
@@ -189,12 +188,12 @@ class meta::util::disk_vector&lt; class &gt;::iterator</h3>
 
 <p>Provides iterator functionality for the <a class="el" href="classmeta_1_1util_1_1disk__vector.html" title="disk_vector represents a large constant-size vector that does not necessarily fit in memory...">disk_vector</a> class. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/sean/projects/meta/include/util/<a class="el" href="disk__vector_8h_source.html">disk_vector.h</a></li>
+<li>/home/chase/projects/meta/include/util/<a class="el" href="disk__vector_8h_source.html">disk_vector.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:45 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:08 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

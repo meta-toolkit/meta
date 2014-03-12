@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>ModErn Text Analysis: /home/sean/projects/meta/test/unit_test.h File Reference</title>
+<title>ModErn Text Analysis: /home/chase/projects/meta/include/test/unit_test.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -77,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -88,11 +87,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_13e138d54eb8818da29c3992edef070a.html">test</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_f4e47f73b9eb56c122cba38d21e5108e.html">include</a></li><li class="navelem"><a class="el" href="dir_08eca97273cd8fb92e1908e9f5e030d0.html">test</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
@@ -100,19 +100,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">unit_test.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>Contains functions and defines used in unit testing.  
-<a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;unistd.h&gt;</code><br/>
-<code>#include &lt;sys/wait.h&gt;</code><br/>
-<code>#include &lt;signal.h&gt;</code><br/>
+<div class="textblock"><code>#include &lt;cmath&gt;</code><br/>
 <code>#include &lt;iomanip&gt;</code><br/>
 <code>#include &lt;string&gt;</code><br/>
+<code>#include &lt;functional&gt;</code><br/>
 <code>#include &lt;iostream&gt;</code><br/>
 <code>#include &quot;<a class="el" href="printing_8h_source.html">util/printing.h</a>&quot;</code><br/>
 </div>
 <p><a href="unit__test_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1testing_1_1unit__test__exception.html">meta::testing::unit_test_exception</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception class used to report errors in the unit test.  <a href="classmeta_1_1testing_1_1unit__test__exception.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacemeta"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta.html">meta</a></td></tr>
@@ -127,29 +129,57 @@ Macros</h2></td></tr>
 <tr class="memitem:a28301f76c53b643912da7c538f74e2c6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unit__test_8h.html#a28301f76c53b643912da7c538f74e2c6">ASSERT</a>(expr)</td></tr>
 <tr class="memdesc:a28301f76c53b643912da7c538f74e2c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fail if expr is false; otherwise continue.  <a href="#a28301f76c53b643912da7c538f74e2c6">More...</a><br/></td></tr>
 <tr class="separator:a28301f76c53b643912da7c538f74e2c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb3af98e6eaafa9db371f375f479add6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unit__test_8h.html#aeb3af98e6eaafa9db371f375f479add6">ASSERT_EQUAL</a>(exp1, exp2)</td></tr>
+<tr class="memdesc:aeb3af98e6eaafa9db371f375f479add6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fail if exp1 != exp2; otherwise continue.  <a href="#aeb3af98e6eaafa9db371f375f479add6">More...</a><br/></td></tr>
+<tr class="separator:aeb3af98e6eaafa9db371f375f479add6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a646cbe4cac7003c0bb3bb0491f8233e0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unit__test_8h.html#a646cbe4cac7003c0bb3bb0491f8233e0">ASSERT_APPROX_EQUAL</a>(exp1, exp2)</td></tr>
+<tr class="memdesc:a646cbe4cac7003c0bb3bb0491f8233e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fail if !(|exp1 - exp2| &lt; epsilon); otherwise continue.  <a href="#a646cbe4cac7003c0bb3bb0491f8233e0">More...</a><br/></td></tr>
+<tr class="separator:a646cbe4cac7003c0bb3bb0491f8233e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11dbc85aea7b43820759492f66a90fd1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unit__test_8h.html#a11dbc85aea7b43820759492f66a90fd1">ASSERT_BINOP</a>(exp1, exp2, binop)</td></tr>
+<tr class="memdesc:a11dbc85aea7b43820759492f66a90fd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fail if !binop(exp1, exp2).  <a href="#a11dbc85aea7b43820759492f66a90fd1">More...</a><br/></td></tr>
+<tr class="separator:a11dbc85aea7b43820759492f66a90fd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebe3b0b2cf32339bebc91dd13062437a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a>(why)</td></tr>
 <tr class="memdesc:aebe3b0b2cf32339bebc91dd13062437a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fail this test case with an explanation.  <a href="#aebe3b0b2cf32339bebc91dd13062437a">More...</a><br/></td></tr>
 <tr class="separator:aebe3b0b2cf32339bebc91dd13062437a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98aa08005de4001b135016ff1b380abc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unit__test_8h.html#a98aa08005de4001b135016ff1b380abc">FAIL_NOLINE</a>(why)</td></tr>
-<tr class="memdesc:a98aa08005de4001b135016ff1b380abc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as FAIL, except no line number is printed.  <a href="#a98aa08005de4001b135016ff1b380abc">More...</a><br/></td></tr>
-<tr class="separator:a98aa08005de4001b135016ff1b380abc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a189d393e88a1bbcb65bb9bddcdbc3a8a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unit__test_8h.html#a189d393e88a1bbcb65bb9bddcdbc3a8a">ASSERT_LESS</a>(exp1, exp2)</td></tr>
+<tr class="memdesc:a189d393e88a1bbcb65bb9bddcdbc3a8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fail if !(exp1 &lt; exp2)  <a href="#a189d393e88a1bbcb65bb9bddcdbc3a8a">More...</a><br/></td></tr>
+<tr class="separator:a189d393e88a1bbcb65bb9bddcdbc3a8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3abf4409b2fbe2c094da67a7636892b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unit__test_8h.html#ae3abf4409b2fbe2c094da67a7636892b">ASSERT_GREATER</a>(exp1, exp2)</td></tr>
+<tr class="memdesc:ae3abf4409b2fbe2c094da67a7636892b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fail if !(exp1 &gt; exp2)  <a href="#ae3abf4409b2fbe2c094da67a7636892b">More...</a><br/></td></tr>
+<tr class="separator:ae3abf4409b2fbe2c094da67a7636892b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6b5647dec771ab3bec8865541e4da5e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a6b5647dec771ab3bec8865541e4da5e2">meta::testing::sig_catch</a> (int sig)</td></tr>
-<tr class="memdesc:a6b5647dec771ab3bec8865541e4da5e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Signal handler for unit tests.  <a href="#a6b5647dec771ab3bec8865541e4da5e2">More...</a><br/></td></tr>
-<tr class="separator:a6b5647dec771ab3bec8865541e4da5e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63f184adf9638af46879c37380ea256a"><td class="memTemplParams" colspan="2">template&lt;class Func &gt; </td></tr>
-<tr class="memitem:a63f184adf9638af46879c37380ea256a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a63f184adf9638af46879c37380ea256a">meta::testing::run_test</a> (const std::string &amp;test_name, int timeout, Func &amp;&amp;func)</td></tr>
-<tr class="memdesc:a63f184adf9638af46879c37380ea256a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs a unit test in a semi-controlled environment.  <a href="#a63f184adf9638af46879c37380ea256a">More...</a><br/></td></tr>
-<tr class="separator:a63f184adf9638af46879c37380ea256a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18780f1a465a7f9d01190c8e5a7fd804"><td class="memTemplParams" colspan="2"><a class="anchor" id="a18780f1a465a7f9d01190c8e5a7fd804"></a>
-template&lt;class Func &gt; </td></tr>
-<tr class="memitem:a18780f1a465a7f9d01190c8e5a7fd804"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>meta::testing::run_test</b> (const std::string &amp;test_name, Func &amp;&amp;func)</td></tr>
-<tr class="separator:a18780f1a465a7f9d01190c8e5a7fd804"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38862eab75c07bb2db05a217de20b900"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a38862eab75c07bb2db05a217de20b900">meta::testing::filename</a> (const std::string &amp;path)</td></tr>
+<tr class="separator:a38862eab75c07bb2db05a217de20b900"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02450043a9c527f45fb39c044ac41586"><td class="memTemplParams" colspan="2">template&lt;class T , class K , class BinOp &gt; </td></tr>
+<tr class="memitem:a02450043a9c527f45fb39c044ac41586"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a02450043a9c527f45fb39c044ac41586">meta::testing::assert_equal</a> (const T &amp;expected, const K &amp;actual, const char *expstr, const char *actstr, BinOp &amp;&amp;binop)</td></tr>
+<tr class="memdesc:a02450043a9c527f45fb39c044ac41586"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows the user to see what the evaluated statements are.  <a href="#a02450043a9c527f45fb39c044ac41586">More...</a><br/></td></tr>
+<tr class="separator:a02450043a9c527f45fb39c044ac41586"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a950571a9762f92c3f030432be8e2bd36"><td class="memTemplParams" colspan="2"><a class="anchor" id="a950571a9762f92c3f030432be8e2bd36"></a>
+template&lt;class T , class K &gt; </td></tr>
+<tr class="memitem:a950571a9762f92c3f030432be8e2bd36"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><b>meta::testing::assert_equal</b> (const T &amp;expected, const K &amp;actual, const char *expstr, const char *actstr)</td></tr>
+<tr class="separator:a950571a9762f92c3f030432be8e2bd36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa33b9cd3529d887c71ea007562017b16"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa33b9cd3529d887c71ea007562017b16"></a>
+template&lt;class T , class K &gt; </td></tr>
+<tr class="memitem:aa33b9cd3529d887c71ea007562017b16"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><b>meta::testing::assert_approx_equal</b> (const T &amp;expected, const K &amp;actual, const char *expstr, const char *actstr)</td></tr>
+<tr class="separator:aa33b9cd3529d887c71ea007562017b16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a816c33e4ee91bc6f62e1fddad5092649"><td class="memTemplParams" colspan="2"><a class="anchor" id="a816c33e4ee91bc6f62e1fddad5092649"></a>
+template&lt;class T , class K &gt; </td></tr>
+<tr class="memitem:a816c33e4ee91bc6f62e1fddad5092649"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><b>meta::testing::assert_less</b> (const T &amp;expected, const K &amp;actual, const char *expstr, const char *actstr)</td></tr>
+<tr class="separator:a816c33e4ee91bc6f62e1fddad5092649"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1030a2b0c93b26bab5246c22723d6ea6"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1030a2b0c93b26bab5246c22723d6ea6"></a>
+template&lt;class T , class K &gt; </td></tr>
+<tr class="memitem:a1030a2b0c93b26bab5246c22723d6ea6"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><b>meta::testing::assert_greater</b> (const T &amp;expected, const K &amp;actual, const char *expstr, const char *actstr)</td></tr>
+<tr class="separator:a1030a2b0c93b26bab5246c22723d6ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1acc141d9c8afac5b415ce49320d2106"><td class="memTemplParams" colspan="2">template&lt;class Func &gt; </td></tr>
+<tr class="memitem:a1acc141d9c8afac5b415ce49320d2106"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1testing.html#a1acc141d9c8afac5b415ce49320d2106">meta::testing::run_test</a> (const std::string &amp;test_name, Func &amp;&amp;func)</td></tr>
+<tr class="memdesc:a1acc141d9c8afac5b415ce49320d2106"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs a unit test in a semi-controlled environment.  <a href="#a1acc141d9c8afac5b415ce49320d2106">More...</a><br/></td></tr>
+<tr class="separator:a1acc141d9c8afac5b415ce49320d2106"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Contains functions and defines used in unit testing. </p>
+<div class="textblock"><dl class="section author"><dt>Author</dt><dd>Sean Massung</dd></dl>
+<p>All files in META are released under the MIT license. For more details, consult the file LICENSE in the root of the project. </p>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="a28301f76c53b643912da7c538f74e2c6"></a>
 <div class="memitem">
@@ -169,9 +199,122 @@ template&lt;class Func &gt; </td></tr>
 <div class="line">        if (!(expr))                                                           <a class="code" href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">\</a></div>
 <div class="line"><a class="code" href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">            FAIL</a>(<span class="stringliteral">&quot;Assertion failed: &quot;</span> #expr);                                  \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
-<div class="ttc" id="unit__test_8h_html_aebe3b0b2cf32339bebc91dd13062437a"><div class="ttname"><a href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a></div><div class="ttdeci">#define FAIL(why)</div><div class="ttdoc">Fail this test case with an explanation. </div><div class="ttdef"><b>Definition:</b> unit_test.h:32</div></div>
+<div class="ttc" id="unit__test_8h_html_aebe3b0b2cf32339bebc91dd13062437a"><div class="ttname"><a href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a></div><div class="ttdeci">#define FAIL(why)</div><div class="ttdoc">Fail this test case with an explanation. </div><div class="ttdef"><b>Definition:</b> unit_test.h:68</div></div>
 </div><!-- fragment -->
 <p>Fail if expr is false; otherwise continue. </p>
+
+</div>
+</div>
+<a class="anchor" id="aeb3af98e6eaafa9db371f375f479add6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ASSERT_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">exp1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">exp2&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span>                                                                         \</div>
+<div class="line">    {                                                                          \</div>
+<div class="line">        std::string msg = testing::assert_equal(exp1, exp2, #exp1, #exp2);     \</div>
+<div class="line">        if (!msg.empty())                                                      \</div>
+<div class="line">            <a class="code" href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a>(msg);                                                         \</div>
+<div class="line">    } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="unit__test_8h_html_aebe3b0b2cf32339bebc91dd13062437a"><div class="ttname"><a href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a></div><div class="ttdeci">#define FAIL(why)</div><div class="ttdoc">Fail this test case with an explanation. </div><div class="ttdef"><b>Definition:</b> unit_test.h:68</div></div>
+</div><!-- fragment -->
+<p>Fail if exp1 != exp2; otherwise continue. </p>
+<dl class="section see"><dt>See Also</dt><dd><a href="https://bitbucket.org/jacktoole1/monad_hg/">https://bitbucket.org/jacktoole1/monad_hg/</a> for string printing </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a646cbe4cac7003c0bb3bb0491f8233e0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ASSERT_APPROX_EQUAL</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">exp1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">exp2&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span>                                                                         \</div>
+<div class="line">    {                                                                          \</div>
+<div class="line">        std::string msg                                                        \</div>
+<div class="line">            = testing::assert_approx_equal(exp1, exp2, #exp1, #exp2);          \</div>
+<div class="line">        if (!msg.empty())                                                      \</div>
+<div class="line">            <a class="code" href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a>(msg);                                                         \</div>
+<div class="line">    } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="unit__test_8h_html_aebe3b0b2cf32339bebc91dd13062437a"><div class="ttname"><a href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a></div><div class="ttdeci">#define FAIL(why)</div><div class="ttdoc">Fail this test case with an explanation. </div><div class="ttdef"><b>Definition:</b> unit_test.h:68</div></div>
+</div><!-- fragment -->
+<p>Fail if !(|exp1 - exp2| &lt; epsilon); otherwise continue. </p>
+
+</div>
+</div>
+<a class="anchor" id="a11dbc85aea7b43820759492f66a90fd1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ASSERT_BINOP</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">exp1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">exp2, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">binop&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span>                                                                         \</div>
+<div class="line">    {                                                                          \</div>
+<div class="line">        std::string msg = testing::assert(exp1, exp2, #exp1, #exp2, binop);    \</div>
+<div class="line">        if (!msg.empty())                                                      \</div>
+<div class="line">            <a class="code" href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a>(msg);                                                         \</div>
+<div class="line">    } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="unit__test_8h_html_aebe3b0b2cf32339bebc91dd13062437a"><div class="ttname"><a href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a></div><div class="ttdeci">#define FAIL(why)</div><div class="ttdoc">Fail this test case with an explanation. </div><div class="ttdef"><b>Definition:</b> unit_test.h:68</div></div>
+</div><!-- fragment -->
+<p>Fail if !binop(exp1, exp2). </p>
 
 </div>
 </div>
@@ -190,46 +333,93 @@ template&lt;class Func &gt; </td></tr>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span>                                                                         \</div>
 <div class="line">    {                                                                          \</div>
-<div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;[ &quot;</span> &lt;&lt; printing::make_red(<span class="stringliteral">&quot;FAIL&quot;</span>) &lt;&lt; <span class="stringliteral">&quot; ] &quot;</span> &lt;&lt; (why)      \</div>
-<div class="line">                  &lt;&lt; <span class="stringliteral">&quot; (&quot;</span>;                                                     \</div>
-<div class="line">        std::cerr &lt;&lt; __FILE__ &lt;&lt; <span class="stringliteral">&quot;:&quot;</span> &lt;&lt; __LINE__ &lt;&lt; <span class="stringliteral">&quot;)&quot;</span> &lt;&lt; std::endl;          \</div>
-<div class="line">        exit(1);                                                               \</div>
+<div class="line">        std::string fail_msg = <span class="stringliteral">&quot;[ &quot;</span> + <a class="code" href="namespacemeta_1_1printing.html#a6abf33a0ac018d362013ca6ac38a468e">printing::make_red</a>(<span class="stringliteral">&quot;FAIL&quot;</span>) + <span class="stringliteral">&quot; ] &quot;</span>       \</div>
+<div class="line">                               + (why) + <span class="stringliteral">&quot; (&quot;</span> + <a class="code" href="namespacemeta_1_1testing.html#a38862eab75c07bb2db05a217de20b900">testing::filename</a>(__FILE__)    \</div>
+<div class="line">                               + <span class="stringliteral">&quot;:&quot;</span> + std::to_string(__LINE__) + <span class="stringliteral">&quot;)&quot;</span>;         \</div>
+<div class="line">        throw testing::unit_test_exception{fail_msg};                          \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="namespacemeta_1_1printing_html_a6abf33a0ac018d362013ca6ac38a468e"><div class="ttname"><a href="namespacemeta_1_1printing.html#a6abf33a0ac018d362013ca6ac38a468e">meta::printing::make_red</a></div><div class="ttdeci">std::string make_red(std::string str)</div><div class="ttdef"><b>Definition:</b> printing.h:52</div></div>
+<div class="ttc" id="namespacemeta_1_1testing_html_a38862eab75c07bb2db05a217de20b900"><div class="ttname"><a href="namespacemeta_1_1testing.html#a38862eab75c07bb2db05a217de20b900">meta::testing::filename</a></div><div class="ttdeci">std::string filename(const std::string &amp;path)</div><div class="ttdef"><b>Definition:</b> unit_test.h:115</div></div>
 </div><!-- fragment -->
 <p>Fail this test case with an explanation. </p>
 <p>Give line number and file where the test case failed. </p>
 
 </div>
 </div>
-<a class="anchor" id="a98aa08005de4001b135016ff1b380abc"></a>
+<a class="anchor" id="a189d393e88a1bbcb65bb9bddcdbc3a8a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define FAIL_NOLINE</td>
+          <td class="memname">#define ASSERT_LESS</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">why</td><td>)</td>
+          <td class="paramname">exp1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">exp2&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span>                                                                         \</div>
 <div class="line">    {                                                                          \</div>
-<div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;[ &quot;</span> &lt;&lt; printing::make_red(<span class="stringliteral">&quot;FAIL&quot;</span>) &lt;&lt; <span class="stringliteral">&quot; ]&quot;</span>                \</div>
-<div class="line">                  &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; (why) &lt;&lt; std::endl;                                \</div>
-<div class="line">        exit(1);                                                               \</div>
+<div class="line">        std::string msg = testing::assert_less(exp1, exp2, #exp1, #exp2);      \</div>
+<div class="line">        if (!msg.empty())                                                      \</div>
+<div class="line">            <a class="code" href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a>(msg);                                                         \</div>
 <div class="line">    } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="unit__test_8h_html_aebe3b0b2cf32339bebc91dd13062437a"><div class="ttname"><a href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a></div><div class="ttdeci">#define FAIL(why)</div><div class="ttdoc">Fail this test case with an explanation. </div><div class="ttdef"><b>Definition:</b> unit_test.h:68</div></div>
 </div><!-- fragment -->
-<p>Same as FAIL, except no line number is printed. </p>
-<p>This is useful for failing after a segfault for example; the line number would be useless since it will report somewhere inside this file. </p>
+<p>Fail if !(exp1 &lt; exp2) </p>
+
+</div>
+</div>
+<a class="anchor" id="ae3abf4409b2fbe2c094da67a7636892b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ASSERT_GREATER</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">exp1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">exp2&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">do</span>                                                                         \</div>
+<div class="line">    {                                                                          \</div>
+<div class="line">        std::string msg = testing::assert_greater(exp1, exp2, #exp1, #exp2);   \</div>
+<div class="line">        if (!msg.empty())                                                      \</div>
+<div class="line">            <a class="code" href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a>(msg);                                                         \</div>
+<div class="line">    } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="unit__test_8h_html_aebe3b0b2cf32339bebc91dd13062437a"><div class="ttname"><a href="unit__test_8h.html#aebe3b0b2cf32339bebc91dd13062437a">FAIL</a></div><div class="ttdeci">#define FAIL(why)</div><div class="ttdoc">Fail this test case with an explanation. </div><div class="ttdef"><b>Definition:</b> unit_test.h:68</div></div>
+</div><!-- fragment -->
+<p>Fail if !(exp1 &gt; exp2) </p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:38 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:42:48 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

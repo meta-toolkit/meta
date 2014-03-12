@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -86,8 +85,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
   <div id="navrow4" class="tabs3">
     <ul class="tablist">
-      <li><a href="functions.html#index__"><span>_</span></a></li>
-      <li><a href="functions_a.html#index_a"><span>a</span></a></li>
+      <li><a href="functions.html#index_a"><span>a</span></a></li>
       <li><a href="functions_b.html#index_b"><span>b</span></a></li>
       <li><a href="functions_c.html#index_c"><span>c</span></a></li>
       <li><a href="functions_d.html#index_d"><span>d</span></a></li>
@@ -103,6 +101,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions_n.html#index_n"><span>n</span></a></li>
       <li><a href="functions_o.html#index_o"><span>o</span></a></li>
       <li><a href="functions_p.html#index_p"><span>p</span></a></li>
+      <li><a href="functions_q.html#index_q"><span>q</span></a></li>
       <li><a href="functions_r.html#index_r"><span>r</span></a></li>
       <li><a href="functions_s.html#index_s"><span>s</span></a></li>
       <li><a href="functions_t.html#index_t"><span>t</span></a></li>
@@ -119,7 +118,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -132,21 +131,63 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="textblock">Here is a list of all documented class members with links to the class documentation for each member:</div>
 
 <h3><a class="anchor" id="index_i"></a>- i -</h3><ul>
-<li>id()
-: <a class="el" href="classmeta_1_1corpus_1_1document.html#ace60ea1bc76e41c9110da68be85595c7">meta::corpus::document</a>
+<li>icu_filter()
+: <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1icu__filter.html#a9fea48136237a2740e359e87c6aafb54">meta::analyzers::filters::icu_filter</a>
+</li>
+<li>icu_tokenizer()
+: <a class="el" href="classmeta_1_1analyzers_1_1tokenizers_1_1icu__tokenizer.html#aa8d002ed02059ae5e8254eb58378b21c">meta::analyzers::tokenizers::icu_tokenizer</a>
+</li>
+<li>id
+: <a class="el" href="classmeta_1_1analyzers_1_1branch__analyzer.html#a18df5feedef382403a9a75decdc9effa">meta::analyzers::branch_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1depth__analyzer.html#a54107323edd2b36e20c6fc79a86fd545">meta::analyzers::depth_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1alpha__filter.html#a9d362a017f421c01fa45f1e9777464ce">meta::analyzers::filters::alpha_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1empty__sentence__filter.html#a52b2c4efa9df5586dc54565ecb1108b9">meta::analyzers::filters::empty_sentence_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1english__normalizer.html#a6a963888bdefc90dcaedd19bfc353800">meta::analyzers::filters::english_normalizer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1icu__filter.html#a4f6a51581f63c1d36f165c5f4ab56e4d">meta::analyzers::filters::icu_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1length__filter.html#ac8bb0921d7d74a09edb3854450015a8f">meta::analyzers::filters::length_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1list__filter.html#a0d44868eade29f5012d33aec888fc15b">meta::analyzers::filters::list_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1lowercase__filter.html#a3fc3da36e6a76a323ae7c8076acc71ff">meta::analyzers::filters::lowercase_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a1a30c64fad31325a1d941b68c997ded3">meta::analyzers::filters::porter2_stemmer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1sentence__boundary.html#a6161c463864ed90da6107bd363132b0a">meta::analyzers::filters::sentence_boundary</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1libsvm__analyzer.html#a67b79858adf5b6dcd4eb10be4ece5055">meta::analyzers::libsvm_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#ab6231991daf7cb9796c96f0b59706a57">meta::analyzers::ngram_lex_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1ngram__pos__analyzer.html#a42238b67fe4f1cbde5ebb9bafbfa2265">meta::analyzers::ngram_pos_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1ngram__word__analyzer.html#aa80e91a0c18b6f8f946a70bbb16f2098">meta::analyzers::ngram_word_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1semi__skeleton__analyzer.html#a5c8cbd69dfffe270d77a8dbdebc631e0">meta::analyzers::semi_skeleton_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1skeleton__analyzer.html#a54096e42db9a8eba01f034b33c67a793">meta::analyzers::skeleton_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1subtree__analyzer.html#a6770c8b6bd2691ad6869e95ce71b9287">meta::analyzers::subtree_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1tag__analyzer.html#ac27553c412e9be013efae48e0aedc6c9">meta::analyzers::tag_analyzer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1tokenizers_1_1character__tokenizer.html#aa80804b51bd3b61be425be114259d9c3">meta::analyzers::tokenizers::character_tokenizer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1tokenizers_1_1icu__tokenizer.html#aeae3be36b11f1354dd450aa4f08e4e05">meta::analyzers::tokenizers::icu_tokenizer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1tokenizers_1_1whitespace__tokenizer.html#ad5152e59699adc96a1f83947a33803ba">meta::analyzers::tokenizers::whitespace_tokenizer</a>
+, <a class="el" href="classmeta_1_1classify_1_1knn.html#ad7766d78b4d382180a9768191ae07e8e">meta::classify::knn</a>
+, <a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#a7f113c50659e44f8286fb20da9522be3">meta::classify::naive_bayes</a>
+, <a class="el" href="classmeta_1_1classify_1_1one__vs__one.html#a9b20c33fdaf43d1bddea2500e2d3a2d7">meta::classify::one_vs_one</a>
+, <a class="el" href="classmeta_1_1classify_1_1winnow.html#a0796b3f2c13cd2bdc589aea3eb1fc70b">meta::classify::winnow</a>
+, <a class="el" href="classmeta_1_1corpus_1_1document.html#ace60ea1bc76e41c9110da68be85595c7">meta::corpus::document</a>
+, <a class="el" href="classmeta_1_1index_1_1absolute__discount.html#ab5674bda9fdb10f9f4889249524d5803">meta::index::absolute_discount</a>
+, <a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html#adba528649f73a096648b7f80ca723cd4">meta::index::dirichlet_prior</a>
+, <a class="el" href="classmeta_1_1index_1_1jelinek__mercer.html#a0bc9efcf5616ff09d4cf72ea71772f69">meta::index::jelinek_mercer</a>
+, <a class="el" href="classmeta_1_1index_1_1language__model__ranker.html#adbbfe2d86b42774cec219b5c4b8b5df5">meta::index::language_model_ranker</a>
+, <a class="el" href="classmeta_1_1index_1_1okapi__bm25.html#a6b3f234464af7308ea99d38b9d2afe15">meta::index::okapi_bm25</a>
+, <a class="el" href="classmeta_1_1index_1_1pivoted__length.html#a9a3cf711088f7af4116c7895391bbf00">meta::index::pivoted_length</a>
 </li>
 <li>id_
 : <a class="el" href="structmeta_1_1util_1_1identifier.html#a76df0f82a67c4cd396baa2f10d41ce6f">meta::util::identifier&lt; Derived, T &gt;</a>
 </li>
 <li>identifier()
-: <a class="el" href="structmeta_1_1util_1_1identifier.html#aef5b800c860345bd3882baa526efec42">meta::util::identifier&lt; Derived, T &gt;</a>
+: <a class="el" href="structmeta_1_1util_1_1identifier.html#a69961f912caa8bc88e23a0f7f1337737">meta::util::identifier&lt; Derived, T &gt;</a>
+</li>
+<li>idx_
+: <a class="el" href="classmeta_1_1classify_1_1classifier.html#a1b29e1a5cb6a72273e952e814e8e3b10">meta::classify::classifier</a>
+, <a class="el" href="classmeta_1_1io_1_1parser.html#a7f77cc2666e776e856c825cd970eaa7d">meta::io::parser</a>
 </li>
 <li>increase_count()
 : <a class="el" href="classmeta_1_1index_1_1postings__data.html#a798e6d7f6df9ed28d92ec156e3bc709e">meta::index::postings_data&lt; class, class &gt;</a>
 </li>
 <li>increase_counts()
-: <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#ad3324fa342b831fb846a89dc95ed4990">meta::topics::lda_gibbs</a>
-, <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#abbf20d25da52245b50940290aeea1c23">meta::topics::parallel_lda_gibbs</a>
+: <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#ae0152ab1f7f439694539a0b403e76e59">meta::topics::lda_gibbs</a>
+, <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#af231e8feecb5ea4af101e3b846be9239">meta::topics::parallel_lda_gibbs</a>
 </li>
 <li>increment()
 : <a class="el" href="classmeta_1_1corpus_1_1document.html#a2fd6f61b1850865830527ecc90ace178">meta::corpus::document</a>
@@ -161,14 +202,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>index_name_
 : <a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#af73ecc2486e360bd1c22072fd019b383">meta::index::disk_index::disk_index_impl</a>
 </li>
-<li>infer()
-: <a class="el" href="classmeta_1_1topics_1_1slda.html#a29a950e24fc3005f0d948c61b45c3845">meta::topics::slda</a>
+<li>init_index()
+: <a class="el" href="classmeta_1_1index_1_1ir__eval.html#a5f2fdc87dbe7f7e18392e82ccd689c55">meta::index::ir_eval</a>
 </li>
 <li>init_metadata()
 : <a class="el" href="classmeta_1_1index_1_1forward__index_1_1impl.html#a91cfc676e9ab1d66d6d16384ec723041">meta::index::forward_index::impl</a>
-</li>
-<li>init_stopwords()
-: <a class="el" href="classmeta_1_1tokenizers_1_1ngram__word__tokenizer.html#a3dade785f549a9c906f81b2c2eb81e55">meta::tokenizers::ngram_word_tokenizer</a>
 </li>
 <li>initial_seek_pos_
 : <a class="el" href="classmeta_1_1index_1_1vocabulary__map.html#afd02ef51b2dd7088ec58934c633679b3">meta::index::vocabulary_map</a>
@@ -191,16 +229,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classmeta_1_1io_1_1parser.html#a2958c6795aa30bb02a8bbad37b5e2f89">meta::io::parser</a>
 </li>
 <li>insert()
-: <a class="el" href="classcpptoml_1_1toml__group.html#a9ff295253cef4151a27992f36a18a067">cpptoml::toml_group</a>
+: <a class="el" href="classcpptoml_1_1toml__group.html#a8b865b3f7cd2a9581e16146af6b113b3">cpptoml::toml_group</a>
 , <a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a60d97046da1e77408f12892ded405b66">meta::caching::dblru_cache&lt; Key, Value, Map &gt;</a>
 , <a class="el" href="classmeta_1_1caching_1_1generic__shard__cache.html#ae8998721b21f0ca28d433ddfe768eea3">meta::caching::generic_shard_cache&lt; Key, Value, Map &gt;</a>
-, <a class="el" href="classmeta_1_1caching_1_1lock__free__map.html#ab0d99a77e7f94f01e48bf223095df9ad">meta::caching::lock_free_map&lt; Key, Value &gt;</a>
 , <a class="el" href="classmeta_1_1caching_1_1locking__map.html#ace3a1784c462f21917296051ada3adda">meta::caching::locking_map&lt; Key, Value &gt;</a>
 , <a class="el" href="classmeta_1_1caching_1_1no__evict__cache.html#a61a49573de53049ef0166cbe458a5346">meta::caching::no_evict_cache&lt; Key, Value &gt;</a>
 , <a class="el" href="classmeta_1_1caching_1_1splay__cache.html#a5af70cab12102d70c933f76c9d2574cf">meta::caching::splay_cache&lt; Key, Value &gt;</a>
 , <a class="el" href="classmeta_1_1index_1_1string__list__writer.html#abfec67b5567365deed8a11231eb3cb19">meta::index::string_list_writer</a>
 , <a class="el" href="classmeta_1_1index_1_1vocabulary__map__writer.html#a23db6f9430deafdc6c9b838680f96921">meta::index::vocabulary_map_writer</a>
 , <a class="el" href="classmeta_1_1util_1_1invertible__map.html#a5e42789dbb7115aba650357f75d567e7">meta::util::invertible_map&lt; Key, Value &gt;</a>
+</li>
+<li>inv_idx_
+: <a class="el" href="classmeta_1_1classify_1_1knn.html#a9cd7d566b8e014fc45a47d48e9fcf5f6">meta::classify::knn</a>
+</li>
+<li>invalid_
+: <a class="el" href="classmeta_1_1io_1_1parser.html#a7f4b81d7d3ac9580b10c8d760aa421c9">meta::io::parser</a>
 </li>
 <li>inverse_
 : <a class="el" href="classmeta_1_1index_1_1vocabulary__map.html#aefd632501eda338f1530021f0c1f2d10">meta::index::vocabulary_map</a>
@@ -212,10 +255,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classmeta_1_1index_1_1postings__data.html#a79088d91dbfdb201d2585fb7a6564082">meta::index::postings_data&lt; class, class &gt;</a>
 </li>
 <li>inverted_index()
-: <a class="el" href="classmeta_1_1index_1_1inverted__index.html#ab4f385988f7b8b7baceb08f85dea7c0d">meta::index::inverted_index</a>
+: <a class="el" href="classmeta_1_1index_1_1inverted__index.html#aa306ed7b8bd4a499f1085312f26ea25f">meta::index::inverted_index</a>
 </li>
 <li>invertible_map()
 : <a class="el" href="classmeta_1_1util_1_1invertible__map.html#a63a6e7b1c0d2970c3a47f24751a179be">meta::util::invertible_map&lt; Key, Value &gt;</a>
+</li>
+<li>ir_eval()
+: <a class="el" href="classmeta_1_1index_1_1ir__eval.html#aacecef1b4f2ac751b011ee6084450b00">meta::index::ir_eval</a>
 </li>
 <li>is_group()
 : <a class="el" href="classcpptoml_1_1toml__base.html#a05eaac2e84559a2eeffe59b6413f1f34">cpptoml::toml_base</a>
@@ -228,26 +274,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>is_libsvm_format()
 : <a class="el" href="classmeta_1_1index_1_1forward__index_1_1impl.html#abbc104fe6b60c5f1dc84d1b08cb50c3a">meta::index::forward_index::impl</a>
 </li>
+<li>is_quote()
+: <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1english__normalizer.html#a84e8e46d5a4b32111c2494d6dad34ed0">meta::analyzers::filters::english_normalizer</a>
+</li>
 <li>is_value()
 : <a class="el" href="classcpptoml_1_1toml__base.html#a377350534545e33a0bc3ed2ed9dd898f">cpptoml::toml_base</a>
 , <a class="el" href="classcpptoml_1_1toml__value.html#aecf48d6b8caaf182aa26c3cf1739af01">cpptoml::toml_value&lt; T &gt;</a>
+</li>
+<li>is_whitespace()
+: <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1english__normalizer.html#af3bfad5c0deccd4b64bf5532ef3d3de3">meta::analyzers::filters::english_normalizer</a>
 </li>
 <li>iter
 : <a class="el" href="classmeta_1_1util_1_1invertible__map_1_1Iterator.html#a67e10468f6ba8c9f3d1924d776f5eca8">meta::util::invertible_map&lt; Key, Value &gt;::Iterator</a>
 </li>
 <li>iterator
 : <a class="el" href="classcpptoml_1_1toml__group.html#a3ce19c07d0bc4773dec8543a2e05d389">cpptoml::toml_group</a>
-, <a class="el" href="classmeta_1_1util_1_1disk__vector_1_1iterator.html#a82a8cf8fc1d3eb75b0659a7f0fb9e47a">meta::util::disk_vector&lt; class &gt;::iterator</a>
+, <a class="el" href="classmeta_1_1util_1_1disk__vector_1_1iterator.html#abc863154442406ab574c5a032e2e4df5">meta::util::disk_vector&lt; class &gt;::iterator</a>
 , <a class="el" href="classmeta_1_1util_1_1invertible__map.html#a802145b57fa94c2aaa41750668f89732">meta::util::invertible_map&lt; Key, Value &gt;</a>
 </li>
 <li>Iterator()
-: <a class="el" href="classmeta_1_1util_1_1invertible__map_1_1Iterator.html#aba04196c9923788f36df73d4e5dd44c2">meta::util::invertible_map&lt; Key, Value &gt;::Iterator</a>
+: <a class="el" href="classmeta_1_1util_1_1invertible__map_1_1Iterator.html#aa231674841bf7593bf5db2b4974a7575">meta::util::invertible_map&lt; Key, Value &gt;::Iterator</a>
 </li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:46 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:10 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

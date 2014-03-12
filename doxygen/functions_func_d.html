@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -118,7 +117,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -138,14 +137,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#adcfbcc4da71abfe6d44725ba9c3a37db">meta::caching::dblru_cache&lt; Key, Value, Map &gt;</a>
 </li>
 <li>decrease_counts()
-: <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a86a112593a81b55d90a65cc6212c2fd1">meta::topics::lda_gibbs</a>
-, <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#ad6c401a6132179dac68695d423f8e0f5">meta::topics::parallel_lda_gibbs</a>
+: <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a59e6665bc9d5fc76e9c726e19f48a370">meta::topics::lda_gibbs</a>
+, <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a29855fe80ca2507a2a1118686af7332f">meta::topics::parallel_lda_gibbs</a>
 </li>
 <li>decrease_weight()
-: <a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html#aff396f53a196add535e8d6a5753ad1ea">meta::classify::dual_perceptron&lt; Kernel &gt;</a>
+: <a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html#ae19b7774c49520fb4e8275b86fcd89d1">meta::classify::dual_perceptron</a>
+</li>
+<li>default_filter_chain()
+: <a class="el" href="classmeta_1_1analyzers_1_1analyzer.html#aa2034823bd2d6e58e0a83bcbefe13f50">meta::analyzers::analyzer</a>
 </li>
 <li>derived()
-: <a class="el" href="classmeta_1_1tokenizers_1_1tree__tokenizer.html#abc733233b2c513708645ddd203b1a4a8">meta::tokenizers::tree_tokenizer&lt; DerivedTokenizer &gt;</a>
+: <a class="el" href="classmeta_1_1analyzers_1_1tree__analyzer.html#aeb955be670cb3e59e97b986bdd6e414c">meta::analyzers::tree_analyzer&lt; DerivedTokenizer &gt;</a>
 </li>
 <li>dirichlet_prior()
 : <a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html#ab6597ca03e7bb993795e757da9ef36a3">meta::index::dirichlet_prior</a>
@@ -184,13 +186,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classmeta_1_1corpus_1_1document.html#a7335167d7f02346e5b0b9c8239718fa3">meta::corpus::document</a>
 </li>
 <li>dual_perceptron()
-: <a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html#a3508cd50e4642c8f7d79f6c771f66fd5">meta::classify::dual_perceptron&lt; Kernel &gt;</a>
+: <a class="el" href="classmeta_1_1classify_1_1dual__perceptron.html#a320396850f4b578e44a1a8a4c7aa9f06">meta::classify::dual_perceptron</a>
 </li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:46 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:10 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

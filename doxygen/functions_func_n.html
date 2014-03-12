@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -118,7 +117,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -132,17 +131,36 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <h3><a class="anchor" id="index_n"></a>- n -</h3><ul>
 <li>n_value()
-: <a class="el" href="classmeta_1_1language__model_1_1ngram__distribution.html#a3fb0707425afd1c8e0c50bf122654155">meta::language_model::ngram_distribution&lt; N &gt;</a>
-, <a class="el" href="classmeta_1_1tokenizers_1_1ngram__tokenizer.html#adad77409a13af5e0d4d0f276d4bae532">meta::tokenizers::ngram_tokenizer</a>
+: <a class="el" href="classmeta_1_1analyzers_1_1ngram__analyzer.html#ae7bb7d55eb439a9d10a2a2c01cdb95ae">meta::analyzers::ngram_analyzer</a>
+, <a class="el" href="classmeta_1_1language__model_1_1ngram__distribution.html#a3fb0707425afd1c8e0c50bf122654155">meta::language_model::ngram_distribution&lt; N &gt;</a>
 </li>
 <li>naive_bayes()
-: <a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#a6db5373f6391121e279ebc850c43d774">meta::classify::naive_bayes</a>
+: <a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#aa529985a3d2a0777ab8d315f52cf9f5a">meta::classify::naive_bayes</a>
 </li>
 <li>name()
 : <a class="el" href="classmeta_1_1corpus_1_1document.html#a9faa34ab9d1fa0a6b07e60d4a4b9926e">meta::corpus::document</a>
 </li>
+<li>ndcg()
+: <a class="el" href="classmeta_1_1index_1_1ir__eval.html#a18df529f0065d9becb22bf210e4f8fc2">meta::index::ir_eval</a>
+</li>
+<li>negative_label()
+: <a class="el" href="classmeta_1_1classify_1_1binary__classifier.html#afa38b117fc7453866b3a9935d8ee4d89">meta::classify::binary_classifier</a>
+</li>
 <li>next()
-: <a class="el" href="classmeta_1_1corpus_1_1corpus.html#a36d0103ebb9d70f5c5b47872b68c616f">meta::corpus::corpus</a>
+: <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1alpha__filter.html#ab101f3595e78d1464c8b92966786e963">meta::analyzers::filters::alpha_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1empty__sentence__filter.html#ac94b98faee91660670d0f00e44037a0c">meta::analyzers::filters::empty_sentence_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1english__normalizer.html#a6c35a81340aa0cf149c9145601dae207">meta::analyzers::filters::english_normalizer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1icu__filter.html#a98743d792bd8c9fac9f924f7065f5a5c">meta::analyzers::filters::icu_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1length__filter.html#a19fc7bb547bdea7f207fc47d00ca9b5e">meta::analyzers::filters::length_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1list__filter.html#a9a381cf4cbe3d2d10b7677924bd41c9b">meta::analyzers::filters::list_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1lowercase__filter.html#af247d08ed23df04e6746e85327802ce9">meta::analyzers::filters::lowercase_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a6baadb9c34bd290eb1d3c8c357ef28e8">meta::analyzers::filters::porter2_stemmer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1sentence__boundary.html#a2e4481c40cb897f2ceec47ff4bf185cf">meta::analyzers::filters::sentence_boundary</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1token__stream.html#a2065eac12a471976d0abe157d24ba27b">meta::analyzers::token_stream</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1tokenizers_1_1character__tokenizer.html#afd3bb61b413f39efdb41e53b3b6e582d">meta::analyzers::tokenizers::character_tokenizer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1tokenizers_1_1icu__tokenizer.html#ac236dc03d0b85cfc1e0621cedc71b888">meta::analyzers::tokenizers::icu_tokenizer</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1tokenizers_1_1whitespace__tokenizer.html#af5b708660180fb0f3bdc9a853cfbc32d">meta::analyzers::tokenizers::whitespace_tokenizer</a>
+, <a class="el" href="classmeta_1_1corpus_1_1corpus.html#a36d0103ebb9d70f5c5b47872b68c616f">meta::corpus::corpus</a>
 , <a class="el" href="classmeta_1_1corpus_1_1file__corpus.html#a930a994a9d92c8cd5db9515c533051b6">meta::corpus::file_corpus</a>
 , <a class="el" href="classmeta_1_1corpus_1_1line__corpus.html#a2fed0108983e23ec6cd08a9595ec1dc8">meta::corpus::line_corpus</a>
 , <a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#ae4d005477c8eb3c1bd828fd286909a21">meta::io::compressed_file_reader</a>
@@ -151,32 +169,30 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>next_string()
 : <a class="el" href="classmeta_1_1io_1_1compressed__file__reader.html#aa7a27f07b0ea891e9fad48a96fefe0b7">meta::io::compressed_file_reader</a>
 </li>
-<li>ngram_char_tokenizer()
-: <a class="el" href="classmeta_1_1tokenizers_1_1ngram__char__tokenizer.html#a51f94f0b73c1ccbc36649bd681d73891">meta::tokenizers::ngram_char_tokenizer</a>
+<li>next_token()
+: <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1length__filter.html#a9a1bf7b1790c386ebb184ccca202502c">meta::analyzers::filters::length_filter</a>
+, <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1list__filter.html#a1044d5bdee01fa5053dc9cb914c75110">meta::analyzers::filters::list_filter</a>
+</li>
+<li>ngram_analyzer()
+: <a class="el" href="classmeta_1_1analyzers_1_1ngram__analyzer.html#add92e1eebf5e9f5934dfcac202098347">meta::analyzers::ngram_analyzer</a>
 </li>
 <li>ngram_distribution()
-: <a class="el" href="classmeta_1_1language__model_1_1ngram__distribution.html#a7c729012562755727ab4c556ee5981b7">meta::language_model::ngram_distribution&lt; N &gt;</a>
+: <a class="el" href="classmeta_1_1language__model_1_1ngram__distribution.html#a46f08270d60e3d46ebf5136574671927">meta::language_model::ngram_distribution&lt; N &gt;</a>
 </li>
-<li>ngram_fw_tokenizer()
-: <a class="el" href="classmeta_1_1tokenizers_1_1ngram__fw__tokenizer.html#ad4014f1e3e08a11599a8c0882d35970b">meta::tokenizers::ngram_fw_tokenizer</a>
+<li>ngram_lex_analyzer()
+: <a class="el" href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#a2ae8d2e169b234aeea8264bad4435623">meta::analyzers::ngram_lex_analyzer</a>
 </li>
-<li>ngram_lex_tokenizer()
-: <a class="el" href="classmeta_1_1tokenizers_1_1ngram__lex__tokenizer.html#ab4c555cf9573a37b45855a87405a38c1">meta::tokenizers::ngram_lex_tokenizer</a>
+<li>ngram_pos_analyzer()
+: <a class="el" href="classmeta_1_1analyzers_1_1ngram__pos__analyzer.html#a5e215de99a03b331793410ae253152af">meta::analyzers::ngram_pos_analyzer</a>
 </li>
-<li>ngram_pos_tokenizer()
-: <a class="el" href="classmeta_1_1tokenizers_1_1ngram__pos__tokenizer.html#acfe015522e84bd16a5b21c96c5134744">meta::tokenizers::ngram_pos_tokenizer</a>
+<li>ngram_simple_analyzer()
+: <a class="el" href="classmeta_1_1analyzers_1_1ngram__simple__analyzer.html#a7b59732beee85c7718f768ae54a7ed74">meta::analyzers::ngram_simple_analyzer</a>
 </li>
-<li>ngram_simple_tokenizer()
-: <a class="el" href="classmeta_1_1tokenizers_1_1ngram__simple__tokenizer.html#a3aa533ee440fcdcaace096e0c4fabc91">meta::tokenizers::ngram_simple_tokenizer</a>
-</li>
-<li>ngram_tokenizer()
-: <a class="el" href="classmeta_1_1tokenizers_1_1ngram__tokenizer.html#a7a68c6e4b7c0ba04ba972653cd78a835">meta::tokenizers::ngram_tokenizer</a>
-</li>
-<li>ngram_word_tokenizer()
-: <a class="el" href="classmeta_1_1tokenizers_1_1ngram__word__tokenizer.html#aa95b3233b6772296c9dc67120cf565a1">meta::tokenizers::ngram_word_tokenizer</a>
+<li>ngram_word_analyzer()
+: <a class="el" href="classmeta_1_1analyzers_1_1ngram__word__analyzer.html#a9892cf7869d1f0f7b798c63b1b97c993">meta::analyzers::ngram_word_analyzer</a>
 </li>
 <li>num_children()
-: <a class="el" href="classmeta_1_1tokenizers_1_1parse__tree.html#a2904df091d9ad78fbdd0375d91a61aae">meta::tokenizers::parse_tree</a>
+: <a class="el" href="classmeta_1_1analyzers_1_1parse__tree.html#a167184428938ac8db614157d70bc4998">meta::analyzers::parse_tree</a>
 </li>
 <li>num_docs()
 : <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">meta::index::disk_index</a>
@@ -185,7 +201,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Feb 3 2014 19:55:46 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 12 2014 12:43:10 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
