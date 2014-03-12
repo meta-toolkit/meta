@@ -36,8 +36,9 @@ int filter_tests()
 
     num_failed += testing::run_test("english_normalizer_test_basic", []()
     {
-        auto tok = make_unique<analyzers::whitespace_tokenizer>();
-        auto norm = make_unique<analyzers::english_normalizer>(std::move(tok));
+        using namespace analyzers;
+        auto tok = make_unique<tokenizers::whitespace_tokenizer>();
+        auto norm = make_unique<filters::english_normalizer>(std::move(tok));
         norm->set_content("\"This \t\n\f\ris a quote,'' said Dr. Smith.");
 
         std::vector<std::string> expected
@@ -49,8 +50,9 @@ int filter_tests()
 
     num_failed += testing::run_test("english_normalizer_test_contraction", []()
     {
-        auto tok = make_unique<analyzers::whitespace_tokenizer>();
-        auto norm = make_unique<analyzers::english_normalizer>(std::move(tok));
+        using namespace analyzers;
+        auto tok = make_unique<tokenizers::whitespace_tokenizer>();
+        auto norm = make_unique<filters::english_normalizer>(std::move(tok));
         norm->set_content("What about when we don't want to knee-jerk? We'll "
                           "have to do something.");
 

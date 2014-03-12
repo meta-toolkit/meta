@@ -53,13 +53,13 @@ std::unique_ptr<token_stream>
 
     std::unique_ptr<token_stream> result;
 
-    result = make_unique<icu_tokenizer>();
-    result = make_unique<lowercase_filter>(std::move(result));
-    result = make_unique<alpha_filter>(std::move(result));
-    result = make_unique<length_filter>(std::move(result), 2, 35);
-    result = make_unique<list_filter>(std::move(result), *stopwords);
-    result = make_unique<porter2_stemmer>(std::move(result));
-    result = make_unique<empty_sentence_filter>(std::move(result));
+    result = make_unique<tokenizers::icu_tokenizer>();
+    result = make_unique<filters::lowercase_filter>(std::move(result));
+    result = make_unique<filters::alpha_filter>(std::move(result));
+    result = make_unique<filters::length_filter>(std::move(result), 2, 35);
+    result = make_unique<filters::list_filter>(std::move(result), *stopwords);
+    result = make_unique<filters::porter2_stemmer>(std::move(result));
+    result = make_unique<filters::empty_sentence_filter>(std::move(result));
     return result;
 }
 

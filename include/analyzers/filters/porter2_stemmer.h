@@ -18,6 +18,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 /**
  * Filter that stems words according to the porter2 stemmer algorithm.
@@ -70,6 +72,7 @@ class porter2_stemmer : public util::clonable<token_stream, porter2_stemmer>
      */
     util::optional<std::string> token_;
 };
+}
 }
 }
 #endif

@@ -25,6 +25,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 /**
  * Filter that either removes or keeps tokens from a given list.
@@ -112,6 +114,7 @@ template <>
 std::unique_ptr<token_stream>
     make_filter<list_filter>(std::unique_ptr<token_stream>,
                              const cpptoml::toml_group&);
+}
 }
 }
 #endif

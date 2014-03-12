@@ -24,6 +24,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 /**
  * Filter that only retains tokens that are within a certain length range,
@@ -99,6 +101,7 @@ template <>
 std::unique_ptr<token_stream>
     make_filter<length_filter>(std::unique_ptr<token_stream>,
                                const cpptoml::toml_group&);
+}
 }
 }
 #endif

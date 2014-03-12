@@ -17,6 +17,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 /**
  * Filter that removes any empty sentences from the token stream. Empty
  * sentences can be caused by filters in the filter chain that follow
@@ -71,5 +73,5 @@ class empty_sentence_filter
 };
 }
 }
-
+}
 #endif

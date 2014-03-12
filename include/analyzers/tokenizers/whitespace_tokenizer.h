@@ -24,6 +24,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace tokenizers
+{
 
 /**
  * Converts documents into streams of whitespace delimited tokens. This
@@ -65,6 +67,7 @@ class whitespace_tokenizer : public util::clonable<token_stream,
     std::string content_;
     uint64_t idx_;
 };
+}
 }
 }
 #endif

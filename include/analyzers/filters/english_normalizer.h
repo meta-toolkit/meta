@@ -19,6 +19,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 /**
  * Filter that normalizes english language tokens. Normalization occurs to
@@ -113,5 +115,5 @@ class english_normalizer
 };
 }
 }
-
+}
 #endif

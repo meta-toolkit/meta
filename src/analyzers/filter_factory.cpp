@@ -33,33 +33,33 @@ void filter_factory::register_tokenizer()
         if (source)
             throw typename Tokenizer::token_stream_exception{
                 "tokenizers must be the first filter"};
-        return make_tokenizer<Tokenizer>(config);
+        return tokenizers::make_tokenizer<Tokenizer>(config);
     });
 }
 
 template <class Filter>
 void filter_factory::register_filter()
 {
-    add(Filter::id, make_filter<Filter>);
+    add(Filter::id, filters::make_filter<Filter>);
 }
 
 filter_factory::filter_factory()
 {
     // built-in tokenizers
-    register_tokenizer<character_tokenizer>();
-    register_tokenizer<whitespace_tokenizer>();
-    register_tokenizer<icu_tokenizer>();
+    register_tokenizer<tokenizers::character_tokenizer>();
+    register_tokenizer<tokenizers::whitespace_tokenizer>();
+    register_tokenizer<tokenizers::icu_tokenizer>();
 
     // built-in filters
-    register_filter<alpha_filter>();
-    register_filter<empty_sentence_filter>();
-    register_filter<english_normalizer>();
-    register_filter<icu_filter>();
-    register_filter<length_filter>();
-    register_filter<list_filter>();
-    register_filter<lowercase_filter>();
-    register_filter<porter2_stemmer>();
-    register_filter<sentence_boundary>();
+    register_filter<filters::alpha_filter>();
+    register_filter<filters::empty_sentence_filter>();
+    register_filter<filters::english_normalizer>();
+    register_filter<filters::icu_filter>();
+    register_filter<filters::length_filter>();
+    register_filter<filters::list_filter>();
+    register_filter<filters::lowercase_filter>();
+    register_filter<filters::porter2_stemmer>();
+    register_filter<filters::sentence_boundary>();
 }
 }
 }

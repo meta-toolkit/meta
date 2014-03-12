@@ -17,6 +17,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 /**
  * Filter that converts all tokens to lowercase.
@@ -63,5 +65,5 @@ class lowercase_filter : public util::clonable<token_stream, lowercase_filter>
 };
 }
 }
-
+}
 #endif

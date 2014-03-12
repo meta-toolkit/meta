@@ -12,6 +12,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 const std::string lowercase_filter::id = "lowercase";
 
@@ -41,6 +43,7 @@ std::string lowercase_filter::next()
 lowercase_filter::operator bool() const
 {
     return *source_;
+}
 }
 }
 }

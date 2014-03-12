@@ -17,6 +17,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 /**
  * Filter that removes "non-letter" characters from tokens. "Letterness" is
@@ -70,5 +72,5 @@ class alpha_filter : public util::clonable<token_stream, alpha_filter>
 };
 }
 }
-
+}
 #endif

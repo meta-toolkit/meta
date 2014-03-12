@@ -11,6 +11,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 const std::string length_filter::id = "length";
 
@@ -90,6 +92,7 @@ std::unique_ptr<token_stream> make_filter<length_filter>(
     return make_unique
         <length_filter>(std::move(src), static_cast<uint64_t>(*min),
                         static_cast<uint64_t>(*max));
+}
 }
 }
 }

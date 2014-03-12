@@ -10,6 +10,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 const std::string porter2_stemmer::id = "porter2-stemmer";
 
@@ -56,6 +58,7 @@ void porter2_stemmer::next_token()
 porter2_stemmer::operator bool() const
 {
     return static_cast<bool>(token_);
+}
 }
 }
 }

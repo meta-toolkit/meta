@@ -25,6 +25,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace tokenizers
+{
 
 /**
  * Converts documents into streams of tokens by following the unicode
@@ -83,6 +85,7 @@ class icu_tokenizer : public util::clonable<token_stream, icu_tokenizer>
     class impl;
     util::pimpl<impl> impl_;
 };
+}
 }
 }
 #endif
