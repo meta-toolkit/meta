@@ -12,6 +12,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 const std::string sentence_boundary::id = "sentence-boundary";
 
@@ -173,6 +175,7 @@ std::unique_ptr<token_stream> make_filter
 {
     sentence_boundary::load_heuristics(config);
     return make_unique<sentence_boundary>(std::move(src));
+}
 }
 }
 }

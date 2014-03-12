@@ -14,6 +14,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace tokenizers
+{
 
 const std::string whitespace_tokenizer::id = "whitespace-tokenizer";
 
@@ -52,6 +54,7 @@ std::string whitespace_tokenizer::next()
 whitespace_tokenizer::operator bool() const
 {
     return idx_ < content_.size();
+}
 }
 }
 }

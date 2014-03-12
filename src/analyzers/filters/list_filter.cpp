@@ -11,6 +11,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 const std::string list_filter::id = "list";
 
@@ -113,6 +115,7 @@ std::unique_ptr<token_stream> make_filter<list_filter>(
     }
 
     return make_unique<list_filter>(std::move(src), *file, type);
+}
 }
 }
 }

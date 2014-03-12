@@ -11,6 +11,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 const std::string alpha_filter::id = "alpha";
 
@@ -51,9 +53,7 @@ void alpha_filter::next_token()
         }
 
         auto filt = utf::remove_if(tok, [](uint32_t codepoint)
-        {
-            return !utf::isalpha(codepoint) && codepoint != '\'';
-        });
+        { return !utf::isalpha(codepoint) && codepoint != '\''; });
         if (!filt.empty())
         {
             token_ = filt;
@@ -67,6 +67,6 @@ alpha_filter::operator bool() const
 {
     return static_cast<bool>(token_);
 }
-
+}
 }
 }

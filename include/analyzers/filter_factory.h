@@ -44,6 +44,8 @@ class filter_factory : public util::factory<filter_factory, token_stream,
     void register_filter();
 };
 
+namespace tokenizers
+{
 /**
  * Factory method for creating a tokenizer. This should be specialized if
  * your given tokenizer requires special construction behavior.
@@ -53,7 +55,10 @@ std::unique_ptr<token_stream> make_tokenizer(const cpptoml::toml_group&)
 {
     return make_unique<Tokenizer>();
 }
+}
 
+namespace filters
+{
 /**
  * Factory method for creating a filter. This should be specialized if your
  * given filter requires special behavior.
@@ -63,6 +68,7 @@ std::unique_ptr<token_stream> make_filter(std::unique_ptr<token_stream> source,
                                           const cpptoml::toml_group&)
 {
     return make_unique<Filter>(std::move(source));
+}
 }
 
 /**
@@ -79,7 +85,7 @@ void register_tokenizer()
         if (source)
             throw typename Tokenizer::token_stream_exception{
                 "tokenizers must be the first filter"};
-        return make_tokenizer<Tokenizer>(config);
+        return tokenizers::make_tokenizer<Tokenizer>(config);
     });
 }
 
@@ -90,7 +96,7 @@ void register_tokenizer()
 template <class Filter>
 void register_filter()
 {
-    filter_factory::get().add(Filter::id, make_filter<Filter>);
+    filter_factory::get().add(Filter::id, filters::make_filter<Filter>);
 }
 }
 }

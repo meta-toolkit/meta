@@ -26,6 +26,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 /**
  * Filter that adds sentence boundary tokens ("<s>" and "</s>") to streams of
@@ -142,6 +144,7 @@ template <>
 std::unique_ptr<token_stream>
     make_filter<sentence_boundary>(std::unique_ptr<token_stream>,
                                    const cpptoml::toml_group&);
+}
 }
 }
 #endif

@@ -152,6 +152,21 @@ namespace utf
  */
 namespace analyzers
 {
+
+/**
+ * Contains tokenizers that start off a filter chain.
+ */
+namespace tokenizers
+{
+}
+
+/**
+ * Contains filters that mutate existing token streams in a filter chain.
+ */
+namespace filters
+{
+}
+
 }
 
 /**

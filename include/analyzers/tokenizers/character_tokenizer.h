@@ -24,13 +24,15 @@ namespace meta
 {
 namespace analyzers
 {
+namespace tokenizers
+{
 
 /**
  * Converts documents into streams of characters. This is the simplest
  * tokenizer.
  */
-class character_tokenizer : public util::clonable<
-                            token_stream, character_tokenizer>
+class character_tokenizer
+    : public util::clonable<token_stream, character_tokenizer>
 {
   public:
     /**
@@ -65,5 +67,5 @@ class character_tokenizer : public util::clonable<
 };
 }
 }
-
+}
 #endif

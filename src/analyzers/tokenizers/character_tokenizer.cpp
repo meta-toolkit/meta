@@ -11,6 +11,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace tokenizers
+{
 
 const std::string character_tokenizer::id = "character-tokenizer";
 
@@ -36,6 +38,7 @@ std::string character_tokenizer::next()
 character_tokenizer::operator bool() const
 {
     return idx_ < content_.size();
+}
 }
 }
 }

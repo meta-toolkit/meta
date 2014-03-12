@@ -14,6 +14,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace tokenizers
+{
 
 const std::string icu_tokenizer::id = "icu-tokenizer";
 
@@ -90,6 +92,7 @@ std::string icu_tokenizer::next()
 icu_tokenizer::operator bool() const
 {
     return static_cast<bool>(*impl_);
+}
 }
 }
 }

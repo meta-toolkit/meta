@@ -14,13 +14,16 @@
 #include "util/optional.h"
 #include "utf/transformer.h"
 
-namespace cpptoml {
+namespace cpptoml
+{
 class toml_group;
 }
 
 namespace meta
 {
 namespace analyzers
+{
+namespace filters
 {
 
 /**
@@ -76,6 +79,7 @@ template <>
 std::unique_ptr<token_stream>
     make_filter<icu_filter>(std::unique_ptr<token_stream>,
                             const cpptoml::toml_group&);
+}
 }
 }
 #endif

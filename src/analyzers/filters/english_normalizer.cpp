@@ -11,6 +11,8 @@ namespace meta
 {
 namespace analyzers
 {
+namespace filters
+{
 
 const std::string english_normalizer::id = "normalize";
 
@@ -186,6 +188,7 @@ std::string english_normalizer::current_token()
     auto token = tokens_.front();
     tokens_.pop_front();
     return token;
+}
 }
 }
 }
