@@ -44,7 +44,6 @@ void lda_model::save_topic_term_distributions(const std::string& filename) const
     denoms.reserve(idx_->unique_terms());
     for (term_id t_id{0}; t_id < idx_->unique_terms(); ++t_id)
     {
-        std::vector<double> probs;
         double denom = 1.0;
         for (topic_id j{0}; j < num_topics_; ++j)
             denom *= compute_term_topic_probability(t_id, j);
