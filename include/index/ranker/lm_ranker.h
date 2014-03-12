@@ -24,9 +24,7 @@ namespace index
 class language_model_ranker : public ranker
 {
   public:
-    /**
-     * The identifier for this ranker.
-     */
+    /// The identifier for this ranker.
     const static std::string id;
 
     /**

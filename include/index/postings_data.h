@@ -48,6 +48,10 @@ class postings_data
     using pair_t = std::pair<SecondaryKey, double>;
     using count_t = std::vector<pair_t>;
 
+    /**
+     * PrimaryKeys may only be integral types or strings; SecondaryKeys may
+     * only be integral types.
+     */
     static_assert(
         (std::is_integral<PrimaryKey>::value
          || std::is_base_of<util::numeric, PrimaryKey>::value
@@ -57,6 +61,10 @@ class postings_data
          || std::is_base_of<util::numeric, SecondaryKey>::value),
         "primary and secondary keys in postings data must be numeric types");
 
+    /**
+     * uint64_t and double must take up the same number of bytes since they are
+     * being casted to each other when compressing.
+     */
     static_assert(sizeof(uint64_t) == sizeof(double),
                   "sizeof(uint64_t) must equal sizeof(double) since "
                   "reinterpret_cast is used in postings_data");
@@ -99,7 +107,7 @@ class postings_data
     const count_t& counts() const;
 
     /**
-     * @param map A map of counts to assign into this postings_data
+     * @param counts A map of counts to assign into this postings_data
      */
     void set_counts(const count_t& counts);
 
@@ -213,13 +221,13 @@ class postings_data
     uint64_t bytes_used() const;
 
   private:
-    /** the primary id this postings_data represents */
+    /// Primary id this postings_data represents
     PrimaryKey p_id_;
 
-    /** the (secondary_key_type, count) pairs */
+    /// The (secondary_key_type, count) pairs
     count_t counts_;
 
-    /** delimiter used when writing to compressed files */
+    /// delimiter used when writing to compressed files
     const static uint64_t delimiter_ = std::numeric_limits<uint64_t>::max();
 };
 
@@ -275,6 +283,10 @@ template <class PrimaryKey, class SecondaryKey>
 struct hash<meta::index::postings_data<PrimaryKey, SecondaryKey>>
 {
     using pdata_t = meta::index::postings_data<PrimaryKey, SecondaryKey>;
+    /**
+     * @param pd The postings_data to hash
+     * @return the hash of the given postings_data
+     */
     size_t operator()(const pdata_t& pd) const
     {
         return std::hash<PrimaryKey>{}(pd.primary_key());

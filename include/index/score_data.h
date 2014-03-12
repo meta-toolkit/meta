@@ -39,26 +39,47 @@ struct score_data
 {
     // general info
 
+    /// index queries are running on
     inverted_index& idx;
+    /// average document length
     double avg_dl;
+    /// total number of documents
     uint64_t num_docs;
+    /// total number of terms in the index
     uint64_t total_terms;
+    /// the current query
     const corpus::document& query;
 
     // term-based info
 
+    /// doc term id
     term_id t_id;
+    /// query term count
     uint64_t query_term_count;
+    /// number of docs that t_id appears in
     uint64_t doc_count;
+    /// number of times t_id appears in corpus
     uint64_t corpus_term_count;
 
     // document-based info
 
+    /// document id
     doc_id d_id;
+    /// number of times the term appears in the current doc
     uint64_t doc_term_count;
+    /// total number of terms in the doc
     uint64_t doc_size;
+    /// number of unique terms in the doc
     uint64_t doc_unique_terms;
 
+    /**
+     * Constructor to initialize most elements.
+     * @param p_idx The index that is being used
+     * @param p_avg_dl The average doc length in the index
+     * @param p_num_docs The number of docs in the index
+     * @param p_total_terms The total number of terms in the index
+     * @param p_query The current query
+     */
     score_data(inverted_index& p_idx, double p_avg_dl, uint64_t p_num_docs,
                uint64_t p_total_terms, const corpus::document& p_query)
         : idx(p_idx), // gcc no non-const ref init from brace init list

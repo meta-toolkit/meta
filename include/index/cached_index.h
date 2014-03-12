@@ -29,7 +29,7 @@ template <class Index, template <class, class> class Cache>
 class cached_index : public Index
 {
   public:
-    // inherit the constructors
+    /// inherit the constructors
     using Index::Index;
 
     /**

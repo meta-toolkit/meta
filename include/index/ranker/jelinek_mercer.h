@@ -26,11 +26,10 @@ namespace index
 class jelinek_mercer : public language_model_ranker
 {
   public:
-    /**
-     * The identifier for this ranker.
-     */
+    /// The identifier for this ranker.
     const static std::string id;
 
+    /// Default value of lambda
     const static constexpr double default_lambda = 0.7;
 
     /**
@@ -51,7 +50,7 @@ class jelinek_mercer : public language_model_ranker
     double doc_constant(const score_data& sd) const override;
 
   private:
-    /** the JM parameter*/
+    /// the JM parameter
     const double lambda_;
 };
 

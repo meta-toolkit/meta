@@ -50,10 +50,10 @@ class chunk
     std::string path() const;
 
     /**
-     * @param other The other chunk to merge merge_with
      * After this function ends, the current chunk file will contain
      * information from both chunks, and the "other" chunk file will be
      * deleted.
+     * @param other The other chunk to merge merge_with
      */
     void merge_with(const chunk& other);
 
@@ -69,15 +69,13 @@ class chunk
     void memory_merge_with(Container& pdata);
 
   private:
-    /**
-     * Calculates the size of the file this chunk represents in bytes.
-     */
+    /// Calculates the size of the file this chunk represents in bytes.
     void set_size();
 
-    /** the path to this chunk file on disk */
+    /// The path to this chunk file on disk
     std::string path_;
 
-    /** the number of bytes this chunk takes up */
+    /// The number of bytes this chunk takes up
     uint64_t size_;
 };
 }

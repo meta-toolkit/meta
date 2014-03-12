@@ -126,9 +126,7 @@ class ir_eval
      */
     std::unordered_map<query_id, std::unordered_map<doc_id, uint8_t>> qrels_;
 
-    /**
-     * Collection of scores used to calculate MAP and gMAP.
-     */
+    /// Collection of scores used to calculate MAP and gMAP
     std::vector<double> scores_;
 
     /**

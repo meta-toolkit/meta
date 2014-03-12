@@ -23,31 +23,37 @@ namespace index
 class okapi_bm25 : public ranker
 {
   public:
-    /**
-     * The identifier for this ranker.
-     */
+    /// The identifier for this ranker.
     const static std::string id;
 
+    /// Default k1, doc term smoothing
     const static constexpr double default_k1 = 1.2;
+
+    /// Default b, length normalization
     const static constexpr double default_b = 0.75;
+
+    /// Default k3, query term smoothing
     const static constexpr double default_k3 = 500.0;
 
     /**
-     * @param k1
-     * @param b
-     * @param k3
+     * @param k1 Doc term smoothing
+     * @param b Length normalization
+     * @param k3 Query term smoothing
      */
     okapi_bm25(double k1 = default_k1, double b = default_b,
                double k3 = default_k3);
 
     /**
-     * @param sd
+     * @param sd score_data for the current query
      */
     double score_one(const score_data& sd) override;
 
   private:
+    /// Doc term smoothing
     const double k1_;
+    /// Length normalization
     const double b_;
+    /// Query term smoothing
     const double k3_;
 };
 

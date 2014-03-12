@@ -23,30 +23,31 @@ namespace index
 class dirichlet_prior : public language_model_ranker
 {
   public:
-    /**
-     * The identifier for this ranker.
-     */
+    /// Identifier for this ranker.
     const static std::string id;
+
+    /// Default value of mu
+    const static constexpr double default_mu = 2000;
 
     /**
      * @param mu
      */
-    dirichlet_prior(double mu = 2000);
+    dirichlet_prior(double mu = default_mu);
 
     /**
      * Calculates the smoothed probability of a term.
-     * @param sd
+     * @param sd score_data for the current query
      */
     double smoothed_prob(const score_data& sd) const override;
 
     /**
      * A document-dependent constant.
-     * @param sd
+     * @param sd score_data for the current query
      */
     double doc_constant(const score_data& sd) const override;
 
   private:
-    /** the Dirichlet prior parameter*/
+    /// the Dirichlet prior parameter
     const double mu_;
 };
 

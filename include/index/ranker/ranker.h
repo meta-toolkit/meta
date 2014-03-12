@@ -42,8 +42,8 @@ class ranker
 {
   public:
     /**
-     * @param idx
-     * @param query
+     * @param idx The index this ranker is operating on
+     * @param query The current query
      * @param num_results The number of results to return in the vector
      * @param filter A filtering function to apply to each doc_id; returns true
      * if the document should be included in results
@@ -56,7 +56,7 @@ class ranker
           });
 
     /**
-     * @param sd
+     * @param sd The score_data for this query
      */
     virtual double score_one(const score_data& sd) = 0;
 
@@ -66,6 +66,7 @@ class ranker
     virtual ~ranker() = default;
 
   private:
+    /// results per doc_id
     std::vector<double> results_;
 };
 }

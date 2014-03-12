@@ -31,11 +31,18 @@ namespace index
 class ranker_factory : public util::factory<ranker_factory,
                                             ranker, const cpptoml::toml_group&>
 {
+    /// Friend the base ranker factory
     friend base_factory;
 
   private:
+    /**
+     * Constructor.
+     */
     ranker_factory();
 
+    /**
+     * Registers a ranking function.
+     */
     template <class Ranker>
     void reg();
 };

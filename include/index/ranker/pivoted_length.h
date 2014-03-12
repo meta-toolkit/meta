@@ -25,11 +25,10 @@ namespace index
 class pivoted_length : public ranker
 {
   public:
-    /**
-     * The identifier for this ranker.
-     */
+    /// Identifier for this ranker.
     const static std::string id;
 
+    /// Default value of s parameter
     const static constexpr double default_s = 0.20;
 
     /**
@@ -38,11 +37,12 @@ class pivoted_length : public ranker
     pivoted_length(double s = default_s);
 
     /**
-     * @param sd
+     * @param sd the score_data for this query
      */
     double score_one(const score_data& sd) override;
 
   private:
+    /// s parameter for pivoted_length normalization
     const double s_;
 };
 

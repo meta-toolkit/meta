@@ -47,6 +47,7 @@ enum index_file
 class disk_index::disk_index_impl
 {
   public:
+    /// friend the interface
     friend disk_index;
 
     /**
@@ -105,29 +106,30 @@ class disk_index::disk_index_impl
     void save_label_id_mapping();
 
     /**
-     * Creates a string_writer for writing the docids mapping.
+     * Creates a string_list_writer for writing the docids mapping.
      * @param num_docs The number of documents stored in the index, as the size
      * of the string_list_writer
+     * @return the string_list_writer to write doc ids
      */
     string_list_writer make_doc_id_writer(uint64_t num_docs) const;
 
     /**
      * Sets the label for a document.
-     * @param id
-     * @param label
+     * @param id The document id
+     * @param label The new label
      */
     void set_label(doc_id id, const class_label& label);
 
     /**
      * Sets the size of a document.
-     * @param id
+     * @param id The document id
      * @param length The number of terms that will appear in the document
      */
     void set_length(doc_id id, uint64_t length);
 
     /**
      * Sets the number of unique terms for a document.
-     * @param id
+     * @param id The document id
      * @param terms The number of unique terms that will appear in the document
      */
     void set_unique_terms(doc_id id, uint64_t terms);
@@ -144,7 +146,7 @@ class disk_index::disk_index_impl
 
     /**
      * @return the label id for a given document.
-     * @param id
+     * @param id The document id
      */
     label_id doc_label_id(doc_id id) const;
 
@@ -161,7 +163,7 @@ class disk_index::disk_index_impl
      */
     label_id get_label_id(const class_label& lbl);
 
-    /** the location of this index */
+    /// the location of this index
     std::string index_name_;
 
     /**
@@ -190,15 +192,10 @@ class disk_index::disk_index_impl
      */
     util::optional<util::disk_vector<uint64_t>> unique_terms_;
 
-    /**
-     * Maps string terms to term_ids.
-     */
+    /// Maps string terms to term_ids.
     util::optional<vocabulary_map> term_id_mapping_;
 
-    /**
-     * assigns an integer to each class label (used for liblinear and slda
-     * mappings)
-     */
+    /// Assigns an integer to each class label (used for liblinear mappings)
     util::invertible_map<class_label, label_id> label_ids_;
 
     /**
@@ -208,7 +205,7 @@ class disk_index::disk_index_impl
      */
     util::optional<io::mmap_file> postings_;
 
-    /** mutex for thread-safe operations */
+    /// mutex for thread-safe operations
     mutable std::mutex mutex_;
 };
 }

@@ -23,9 +23,15 @@ namespace meta
 namespace index
 {
 
+/**
+ * Implementation of a forward_index.
+ */
 class forward_index::impl
 {
   public:
+    /**
+     * Constructs an implementation based on a forward_index.
+     */
     impl(forward_index* idx);
 
     /**
@@ -41,8 +47,8 @@ class forward_index::impl
     void create_index(const std::string& config_file);
 
     /**
-      * Initializes this index's metadata structures.
-      */
+     * Initializes this index's metadata structures.
+     */
     void init_metadata();
 
     /**
@@ -51,6 +57,7 @@ class forward_index::impl
     void create_libsvm_postings(const cpptoml::toml_group& config);
 
     /**
+     * Initializes structures based on a libsvm-formatted file.
      */
     void create_libsvm_metadata();
 
@@ -81,13 +88,14 @@ class forward_index::impl
      */
     void compressed_postings_to_libsvm();
 
-    /** the total number of unique terms if term_id_mapping_ is unused */
+    /// the total number of unique terms if term_id_mapping_ is unused
     uint64_t total_unique_terms_;
 
-    /** doc_id -> postings file byte location */
+    /// doc_id -> postings file byte location
     util::optional<util::disk_vector<uint64_t>> doc_byte_locations_;
 
   private:
+    /// Pointer to the forward_index this is an implementation of
     forward_index* idx_;
 };
 

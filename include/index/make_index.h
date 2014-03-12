@@ -50,6 +50,7 @@ std::shared_ptr<Index> make_index(const std::string& config_file,
             "forward-index or inverted-index missing from configuration file"};
     }
 
+    // can't use std::make_shared here since the Index constructor is private
     auto idx =
         std::shared_ptr<Index>{new Index(config, std::forward<Args>(args)...)};
 

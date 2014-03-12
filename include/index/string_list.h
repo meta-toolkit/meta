@@ -56,14 +56,10 @@ class string_list
     uint64_t size() const;
 
   private:
-    /**
-     * The file containing the strings.
-     */
+    /// The file containing the strings.
     io::mmap_file string_file_;
 
-    /**
-     * An index that gives the starting byte for each index.
-     */
+    /// An index that gives the starting byte for each index.
     util::disk_vector<uint64_t> index_;
 };
 }

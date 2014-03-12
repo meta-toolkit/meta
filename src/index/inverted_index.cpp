@@ -24,16 +24,26 @@ namespace meta
 namespace index
 {
 
+/**
+ * Implementation of an inverted_index.
+ */
 class inverted_index::impl
 {
   private:
+    /// Pointer to the inverted_index this is an implementation of
     inverted_index* idx_;
 
   public:
+    /**
+     * Constructs an inverted_index impl.
+     * @param parent The parent of this impl
+     * @param config The config group
+     */
     impl(inverted_index* parent, const cpptoml::toml_group& config);
 
     /**
      * @param docs The documents to be tokenized
+     * @param handler The chunk handler for this index
      * @return the number of chunks created
      */
     void tokenize_docs(corpus::corpus* docs,
@@ -53,9 +63,7 @@ class inverted_index::impl
      */
     void compress(const std::string& filename, uint64_t num_unique_terms);
 
-    /**
-     * The analyzer used to tokenize documents.
-     */
+    /// The analyzer used to tokenize documents.
     std::unique_ptr<analyzers::analyzer> analyzer_;
 
     /**
@@ -64,7 +72,7 @@ class inverted_index::impl
      */
     util::optional<util::disk_vector<uint64_t>> term_bit_locations_;
 
-    /** the total number of term occurrences in the entire corpus */
+    /// the total number of term occurrences in the entire corpus
     uint64_t total_corpus_terms_;
 };
 

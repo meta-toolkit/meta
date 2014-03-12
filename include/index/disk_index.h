@@ -60,7 +60,7 @@ class disk_index
     virtual ~disk_index() = default;
 
     /**
-     * @return the name of this index.
+     * @return the name of this index
      */
     std::string index_name() const;
 
@@ -70,13 +70,13 @@ class disk_index
     uint64_t num_docs() const;
 
     /**
-     * @param doc_id
+     * @param d_id
      * @return the actual name of this document
      */
     std::string doc_name(doc_id d_id) const;
 
     /**
-     * @param doc_id
+     * @param d_id
      * @return the path to the file containing this document
      */
     std::string doc_path(doc_id d_id) const;
@@ -136,12 +136,14 @@ class disk_index
     std::string term_text(term_id t_id) const;
 
   protected:
+    /// Forward declare the implementation
     class disk_index_impl;
+    /// Implementation of this disk_index
     util::pimpl<disk_index_impl> impl_;
 
     /**
      * Constructor.
-     * @param config_file The config settings used to create this index
+     * @param config The config settings used to create this index
      * @param name The name of this disk_index
      */
     disk_index(const cpptoml::toml_group& config, const std::string& name);

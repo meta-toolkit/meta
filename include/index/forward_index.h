@@ -85,7 +85,6 @@ class forward_index : public disk_index
   public:
     /**
      * Move constructs a forward_index.
-     * @param other The forward_index to move into this one.
      */
     forward_index(forward_index&&);
 
@@ -141,8 +140,9 @@ class forward_index : public disk_index
      */
     void create_index(const std::string& config_file);
 
-    /** forward declare the implementation */
+    /// Forward declare the implementation
     class impl;
+    /// Implementation of this index
     util::pimpl<impl> fwd_impl_;
 };
 }
