@@ -38,14 +38,30 @@ void lda_model::save_doc_topic_distributions(const std::string& filename) const
 void lda_model::save_topic_term_distributions(const std::string& filename) const
 {
     std::ofstream file{filename};
+
+    // first, compute the denominators for each term's normalized score
+    std::vector<double> denoms;
+    denoms.reserve(idx_->unique_terms());
+    for (term_id t_id{0}; t_id < idx_->unique_terms(); ++t_id)
+    {
+        std::vector<double> probs;
+        double denom = 1.0;
+        for (topic_id j{0}; j < num_topics_; ++j)
+            denom *= compute_term_topic_probability(t_id, j);
+        denom = std::pow(denom, 1.0 / num_topics_);
+        denoms.push_back(denom);
+    }
+
+    // then, calculate and save each term's score
     for (topic_id j{0}; j < num_topics_; ++j)
     {
         file << j << "\t";
         for (term_id t_id{0}; t_id < idx_->unique_terms(); ++t_id)
         {
             double prob = compute_term_topic_probability(t_id, j);
-            if (prob > 0)
-                file << t_id << ":" << prob << "\t";
+            double norm_prob = prob * std::log(prob / denoms[t_id]);
+            if (norm_prob > 0)
+                file << t_id << ":" << norm_prob << "\t";
         }
         file << "\n";
     }
