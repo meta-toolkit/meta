@@ -50,6 +50,10 @@ class list_filter : public util::clonable<token_stream, list_filter>
      * method by default is to reject any tokens specified in the file, but
      * it may be optionally set to type::ACCEPT to allow only tokens that
      * appear in that list.
+     * @param source The source to construct the filter from
+     * @param filename A file that lists tokens that should either be accepted
+     * or rejected
+     * @param method Whether to accept or reject tokens from the list
      */
     list_filter(std::unique_ptr<token_stream> source,
                 const std::string& filename,
@@ -57,16 +61,18 @@ class list_filter : public util::clonable<token_stream, list_filter>
 
     /**
      * Copy constructor.
+     * @param other The list_filter to copy into this one
      */
     list_filter(const list_filter& other);
 
     /**
      * Sets the content for the beginning of the filter chain.
+     * @param content The string content to set
      */
     void set_content(const std::string& content) override;
 
     /**
-     * Obtains the next token in the sequence.
+     * @return the next token in the sequence.
      */
     std::string next() override;
 
@@ -75,9 +81,7 @@ class list_filter : public util::clonable<token_stream, list_filter>
      */
     operator bool() const override;
 
-    /**
-     * Identifier for this filter.
-     */
+    /// Identifier for this filter
     const static std::string id;
 
   private:
@@ -86,24 +90,16 @@ class list_filter : public util::clonable<token_stream, list_filter>
      */
     void next_token();
 
-    /**
-     * The source to read tokens from.
-     */
+    /// The source to read tokens from
     std::unique_ptr<token_stream> source_;
 
-    /**
-     * The next buffered token.
-     */
+    /// The next buffered token
     util::optional<std::string> token_;
 
-    /**
-     * The set of tokens used for filtering.
-     */
+    /// The set of tokens used for filtering
     std::unordered_set<std::string> list_;
 
-    /**
-     * Whether or not this filter accepts or rejects tokens in the list.
-     */
+    /// Whether or not this filter accepts or rejects tokens in the list
     type method_;
 };
 

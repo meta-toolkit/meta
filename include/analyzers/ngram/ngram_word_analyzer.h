@@ -38,6 +38,7 @@ class ngram_word_analyzer : public util::multilevel_clonable<
 
     /**
      * Copy constructor.
+     * @param other The other ngram_word_analyzer to copy from
      */
     ngram_word_analyzer(const ngram_word_analyzer& other);
 
@@ -47,15 +48,11 @@ class ngram_word_analyzer : public util::multilevel_clonable<
      */
     virtual void tokenize(corpus::document& doc) override;
 
-    /**
-     * Identifier for this analyzer.
-     */
+    /// Identifier for this analyzer.
     const static std::string id;
 
   private:
-    /**
-     * The token stream to be used for extracting tokens.
-     */
+    /// The token stream to be used for extracting tokens
     std::unique_ptr<token_stream> stream_;
 };
 

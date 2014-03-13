@@ -36,21 +36,25 @@ class icu_filter : public util::clonable<token_stream, icu_filter>
     /**
      * Constructs an icu_filter which reads tokens from the given source,
      * using a utf::transformer constructed with the specified id.
+     * @param source Where to read tokens from
+     * @param id To specify which utf::transformer to use
      */
     icu_filter(std::unique_ptr<token_stream> source, const std::string& id);
 
     /**
      * Copies an icu_filter.
+     * @param other The other filter to copy from
      */
     icu_filter(const icu_filter& other);
 
     /**
      * Sets the content for the beginning of the filter chain.
+     * @param content The string content to set
      */
     void set_content(const std::string& content) override;
 
     /**
-     * Obtains the next token in the sequence.
+     * @return the next token in the sequence.
      */
     std::string next() override;
 
@@ -59,16 +63,22 @@ class icu_filter : public util::clonable<token_stream, icu_filter>
      */
     operator bool() const override;
 
-    /**
-     * Identifier for this filter.
-     */
+    /// Identifier for this filter
     const static std::string id;
 
   private:
+    /**
+     * Finds the next valid token for this filter.
+     */
     void next_token();
 
+    /// The source to read tokens from
     std::unique_ptr<token_stream> source_;
+
+    /// The transformer to use
     utf::transformer trans_;
+
+    /// Current token (if available)
     util::optional<std::string> token_;
 };
 

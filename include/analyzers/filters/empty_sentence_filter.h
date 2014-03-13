@@ -31,16 +31,19 @@ class empty_sentence_filter
     /**
      * Constructs an empty_sentence_filter which reads tokens from the
      * given source.
+     * @param source The source to construct the filter from
      */
     empty_sentence_filter(std::unique_ptr<token_stream> source);
 
     /**
      * Copy constructor.
+     * @param other The empty_sentence_filter to copy into this one
      */
     empty_sentence_filter(const empty_sentence_filter& other);
 
     /**
      * Sets the content for the beginning of the filter chain.
+     * @param content The string content to set
      */
     void set_content(const std::string& content) override;
 
@@ -54,21 +57,22 @@ class empty_sentence_filter
      */
     operator bool() const override;
 
-    /**
-     * Identifier for this filter.
-     */
+    /// Identifier for this filter
     const static std::string id;
 
   private:
+    /**
+     * Finds the next valid token for this filter.
+     */
     void next_token();
 
-    /**
-     * The source to read tokens from.
-     */
+    /// The source to read tokens from
     std::unique_ptr<token_stream> source_;
 
+    /// Keeps track of the left hand side of a potentially empty sentence
     util::optional<std::string> first_;
 
+    /// Keeps track of the right hand side of a potentially empty sentence
     util::optional<std::string> second_;
 };
 }

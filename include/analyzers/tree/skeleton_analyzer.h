@@ -33,9 +33,7 @@ class skeleton_analyzer
      */
     void tree_tokenize(corpus::document& doc, const parse_tree& tree);
 
-    /**
-     * Identifier for this analyzer.
-     */
+    /// Identifier for this analyzer
     const static std::string id;
 };
 }

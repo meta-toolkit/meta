@@ -41,9 +41,7 @@ class ngram_pos_analyzer : public util::multilevel_clonable
      */
     virtual void tokenize(corpus::document& doc) override;
 
-    /**
-     * Identifier for this analyzer.
-     */
+    /// Identifier for this analyzer.
     const static std::string id;
 };
 

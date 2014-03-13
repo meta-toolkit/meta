@@ -29,16 +29,19 @@ class alpha_filter : public util::clonable<token_stream, alpha_filter>
   public:
     /**
      * Constructs an alpha filter reading tokens from the given source.
+     * @param source The source to construct the filter from
      */
     alpha_filter(std::unique_ptr<token_stream> source);
 
     /**
      * Copy constructor.
+     * @param other The alpha_filter to copy into this one
      */
     alpha_filter(const alpha_filter& other);
 
     /**
      * Sets the content for the beginning of the filter chain.
+     * @param content The string content to set
      */
     void set_content(const std::string& content) override;
 
@@ -52,22 +55,19 @@ class alpha_filter : public util::clonable<token_stream, alpha_filter>
      */
     operator bool() const override;
 
-    /**
-     * Identifier for this filter.
-     */
+    /// Identifier for this filter
     const static std::string id;
 
   private:
+    /**
+     * Finds the next valid token for this filter.
+     */
     void next_token();
 
-    /**
-     * The source to read tokens from.
-     */
+    /// The source to read tokens from
     std::unique_ptr<token_stream> source_;
 
-    /**
-     * The buffered token.
-     */
+    /// The buffered token.
     util::optional<std::string> token_;
 };
 }

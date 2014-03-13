@@ -25,8 +25,11 @@ const std::string icu_tokenizer::id = "icu-tokenizer";
 class icu_tokenizer::impl
 {
   public:
-    // TODO: can we make this be a streaming API instead of buffering all
-    // of the tokens?
+    /**
+     * @param content The string content to set
+     * TODO: can we make this be a streaming API instead of buffering all
+     * of the tokens?
+     */
     void set_content(std::string content)
     {
         auto pred = [](char c)
@@ -51,6 +54,9 @@ class icu_tokenizer::impl
         }
     }
 
+    /**
+     * @return the next token
+     */
     std::string next()
     {
         if (!*this)
@@ -60,13 +66,19 @@ class icu_tokenizer::impl
         return result;
     }
 
+    /**
+     * True if tokens is not empty.
+     */
     explicit operator bool() const
     {
         return !tokens_.empty();
     }
 
   private:
+    /// UTF segmenter to use for this tokenizer
     utf::segmenter segmenter_;
+
+    /// Buffered tokens
     std::deque<std::string> tokens_;
 };
 

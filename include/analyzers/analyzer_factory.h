@@ -32,14 +32,23 @@ class analyzer_factory : public util::factory<analyzer_factory, analyzer,
                                               const cpptoml::toml_group&,
                                               const cpptoml::toml_group&>
 {
+    /// friend the base class
     friend base_factory;
 
   private:
+    /**
+     * Constructor.
+     */
     analyzer_factory();
 
+    /**
+     * Adds (registers) an analyzer with this factory so it is able to be
+     * created.
+     */
     template <class Analyzer>
     void register_analyzer();
 
+    /// maps id strings to the factory method used to create that class
     std::unordered_map<std::string, factory_method> methods_;
 };
 

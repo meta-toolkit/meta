@@ -38,22 +38,27 @@ class length_filter : public util::clonable<token_stream, length_filter>
      * Constructs a length filter, reading tokens from the given source
      * and eliminating any that are shorter than min characters in length
      * or longer than max characters in length.
+     * @param source Where to read tokens from
+     * @param min The minimum token length
+     * @param max The maximum token length
      */
     length_filter(std::unique_ptr<token_stream> source, uint64_t min,
                   uint64_t max);
 
     /**
      * Copy constructor.
+     * @param other The length_filter to copy into this one
      */
     length_filter(const length_filter& other);
 
     /**
      * Sets the content for the beginning of the filter chain.
+     * @param content The string content to set
      */
     void set_content(const std::string& content) override;
 
     /**
-     * Obtains the next token in the sequence.
+     * @return the next token in the sequence
      */
     std::string next() override;
 
@@ -62,9 +67,7 @@ class length_filter : public util::clonable<token_stream, length_filter>
      */
     operator bool() const override;
 
-    /**
-     * Identifier for this filter.
-     */
+    /// Identifier for this filter
     const static std::string id;
 
   private:
@@ -73,24 +76,16 @@ class length_filter : public util::clonable<token_stream, length_filter>
      */
     void next_token();
 
-    /**
-     * The source to read tokens from.
-     */
+    /// The source to read tokens from
     std::unique_ptr<token_stream> source_;
 
-    /**
-     * The next buffered token.
-     */
+    /// The next buffered token
     util::optional<std::string> token_;
 
-    /**
-     * The minimum length of a token that can be emitted by this filter.
-     */
+    /// The minimum length of a token that can be emitted by this filter
     uint64_t min_length_;
 
-    /**
-     * The maximum length of a token that can be emitted by this filter.
-     */
+    /// The maximum length of a token that can be emitted by this filter
     uint64_t max_length_;
 };
 

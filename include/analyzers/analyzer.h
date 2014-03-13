@@ -57,11 +57,13 @@ class analyzer
     virtual std::unique_ptr<analyzer> clone() const = 0;
 
     /**
+     * @param config The config group used to create the analyzer from
      * @return an analyzer as specified by a config object
      */
     static std::unique_ptr<analyzer> load(const cpptoml::toml_group& config);
 
     /**
+     * @param config The config group used to create the analyzer from
      * @return the default filter chain for this version of MeTA,
      * based on a config object
      */
@@ -69,6 +71,8 @@ class analyzer
         default_filter_chain(const cpptoml::toml_group& config);
 
     /**
+     * @param global The original config object with all parameters
+     * @param config The config group used to create the filters from
      * @return a filter chain as specified by a config object
      */
     static std::unique_ptr<token_stream> load_filters(const cpptoml::toml_group
@@ -77,6 +81,8 @@ class analyzer
                                                       & config);
 
     /**
+     * @param src The token stream that will feed into this filter
+     * @param config The config group used to create the filter from
      * @return a single filter specified by a config object
      */
     static std::unique_ptr<token_stream> load_filter(std::unique_ptr

@@ -14,42 +14,42 @@
 #include "analyzers/analyzer.h"
 #include "util/clonable.h"
 
-namespace meta {
-namespace analyzers {
+namespace meta
+{
+namespace analyzers
+{
 
 /**
  * Analyzes documents based on an ngram word model, where the value for n is
  * supplied by the user.  This class is abstract, as it only provides the
  * framework for ngram tokenization.
  */
-class ngram_analyzer: public analyzer
+class ngram_analyzer : public analyzer
 {
-    public:
-        /**
-         * Constructor.
-         * @param n The value of n in ngram.
-         */
-        ngram_analyzer(uint16_t n);
+  public:
+    /**
+     * Constructor.
+     * @param n The value of n in ngram.
+     */
+    ngram_analyzer(uint16_t n);
 
-        /**
-         * @return the value of n used for the ngrams
-         */
-        virtual uint16_t n_value() const;
+    /**
+     * @return the value of n used for the ngrams
+     */
+    virtual uint16_t n_value() const;
 
-    protected:
-        /**
-         * Turns a list of words into an ngram string.
-         * @param words The deque representing a list of words
-         * @return the ngrams in string format
-         */
-        virtual std::string wordify(
-                const std::deque<std::string> & words) const;
+  protected:
+    /**
+     * Turns a list of words into an ngram string.
+     * @param words The deque representing a list of words
+     * @return the ngrams in string format
+     */
+    virtual std::string wordify(const std::deque<std::string>& words) const;
 
-    private:
-        /** The value of n for this ngram analyzer */
-        uint16_t n_val_;
+  private:
+    /// The value of n for this ngram analyzer
+    uint16_t n_val_;
 };
-
 }
 }
 

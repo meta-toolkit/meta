@@ -31,6 +31,7 @@ class parse_tree
      * Constructor.
      * Detects whether the parameter is a subtree or a leaf, and recursively
      *  builds subtrees.
+     * @param tags The string representation of the tree to construct
      */
     parse_tree(const std::string& tags);
 
@@ -45,7 +46,7 @@ class parse_tree
     std::vector<parse_tree> children() const;
 
     /**
-     * @param curr
+     * @param curr The current subtree
      * @return the height of the current tree
      */
     static uint64_t height(const parse_tree& curr);
@@ -66,7 +67,7 @@ class parse_tree
     std::string skeleton() const;
 
     /**
-     * @param tree - the tree to print
+     * @param tree The tree to print
      * @return a nice multiline string representation of the tree
      */
     static std::string pretty_print(const parse_tree& tree);
@@ -83,16 +84,16 @@ class parse_tree
     std::string get_skeleton_children() const;
 
     /**
-     * @param filename - where to read the trees from
+     * @param filename Where to read the trees from
      * @return a vector of parse_trees generated from the given file
      */
     static std::vector<parse_tree> get_trees(const std::string& filename);
 
   private:
-    /** the tag label on the root of this subtree */
+    /// the tag label on the root of this subtree
     std::string syntactic_category_;
 
-    /** ordered collection of children of the current parse tree */
+    /// ordered collection of children of the current parse tree
     std::vector<parse_tree> children_;
 
     /**
@@ -106,9 +107,9 @@ class parse_tree
     std::string root_category(const std::string& tags) const;
 
     /**
-     * @param tree
-     * @param depth
-     * @param output
+     * @param tree The parse_tree to print
+     * @param depth The current depth (used for indentation)
+     * @param output The stream to write to
      */
     static void pretty_print(const parse_tree& tree, uint64_t depth,
                              std::stringstream& output);

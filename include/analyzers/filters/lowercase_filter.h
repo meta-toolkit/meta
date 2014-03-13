@@ -29,16 +29,19 @@ class lowercase_filter : public util::clonable<token_stream, lowercase_filter>
     /**
      * Constructs a new lowercase_filter, reading tokens from the given
      * source.
+     * @param source The source to construct the filter from
      */
     lowercase_filter(std::unique_ptr<token_stream> source);
 
     /**
      * Copy constructor.
+     * @param other The lowercase_filter to copy into this one
      */
     lowercase_filter(const lowercase_filter& other);
 
     /**
      * Sets the content for the beginning of the filter chain.
+     * @param content The string content to set
      */
     void set_content(const std::string& content) override;
 
@@ -52,15 +55,11 @@ class lowercase_filter : public util::clonable<token_stream, lowercase_filter>
      */
     operator bool() const override;
 
-    /**
-     * Identifier for this filter.
-     */
+    /// Identifier for this filter
     const static std::string id;
 
   private:
-    /**
-     * The stream to read tokens from.
-     */
+    /// The stream to read tokens from.
     std::unique_ptr<token_stream> source_;
 };
 }

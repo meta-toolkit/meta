@@ -43,11 +43,12 @@ class whitespace_tokenizer : public util::clonable<token_stream,
 
     /**
      * Sets the content for the tokenizer to parse.
+     * @param content The string content to set
      */
     void set_content(const std::string& content) override;
 
     /**
-     * Obtains the next token in the document. This will either be a
+     * @return the next token in the document. This will either be a
      * whitespace character, or a token consisting of a sequence of
      * non-whitespace characters.
      */
@@ -58,13 +59,14 @@ class whitespace_tokenizer : public util::clonable<token_stream,
      */
     operator bool() const override;
 
-    /**
-     * Identifier for this tokenizer.
-     */
+    /// Identifier for this tokenizer
     const static std::string id;
 
   private:
+    /// Buffered string content for this tokenizer
     std::string content_;
+
+    /// Character index into the current buffer
     uint64_t idx_;
 };
 }

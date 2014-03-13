@@ -32,14 +32,26 @@ class filter_factory : public util::factory<filter_factory, token_stream,
                                             std::unique_ptr<token_stream>,
                                             const cpptoml::toml_group&>
 {
+    /// friend the base factory
     friend base_factory;
 
   private:
+    /**
+     * Constructor.
+     */
     filter_factory();
 
+    /**
+     * Adds (registers) a tokenizer with this factory so it is able to be
+     * created.
+     */
     template <class Tokenizer>
     void register_tokenizer();
 
+    /**
+     * Adds (registers) a filter with this factory so it is able to be
+     * created.
+     */
     template <class Filter>
     void register_filter();
 };

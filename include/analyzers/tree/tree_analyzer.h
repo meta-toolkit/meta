@@ -28,7 +28,7 @@ class tree_analyzer : public analyzer
   public:
     /**
      * Tokenizes a file into a document.
-     * @param do The document to store the tokenized information in
+     * @param doc The document to store the tokenized information in
      */
     void tokenize(corpus::document& doc) override
     {
@@ -41,6 +41,7 @@ class tree_analyzer : public analyzer
   private:
     /**
      * Convenience method to obtain this analyzer as its derived class.
+     * @return the derived version of the analyzer
      */
     DerivedTokenizer& derived()
     {

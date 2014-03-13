@@ -33,12 +33,13 @@ class multi_analyzer : public util::clonable<analyzer, multi_analyzer>
   public:
     /**
      * Constructs a multi_analyzer from a vector of other analyzers.
-     * @param toks
+     * @param toks A vector of analyzers to combine features from
      */
     multi_analyzer(std::vector<std::unique_ptr<analyzer>>&& toks);
 
     /**
      * Copy constructor.
+     * @param other The other multi_analyzer to copy from
      */
     multi_analyzer(const multi_analyzer& other);
 
@@ -49,7 +50,7 @@ class multi_analyzer : public util::clonable<analyzer, multi_analyzer>
     virtual void tokenize(corpus::document& doc) override;
 
   private:
-    /** Holds all the analyzers in this multi_analyzer */
+    /// Holds all the analyzers in this multi_analyzer
     std::vector<std::unique_ptr<analyzer>> analyzers_;
 };
 }

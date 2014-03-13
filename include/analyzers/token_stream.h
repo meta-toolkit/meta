@@ -39,6 +39,7 @@ class token_stream
 
     /**
      * Sets the content for the stream.
+     * @param content The string content to set
      */
     virtual void set_content(const std::string& content) = 0;
 
@@ -49,6 +50,7 @@ class token_stream
 
     /**
      * Clones the given token stream.
+     * @return a unique_ptr to copy this object
      */
     virtual std::unique_ptr<token_stream> clone() const = 0;
 
