@@ -209,7 +209,7 @@ std::unique_ptr<classifier>
 &nbsp; | &nbsp;
 [Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
 &nbsp; | &nbsp;
-[Indexes]({{site.baseurl}}/index-tutorial.html)
+[Search]({{site.baseurl}}/search-tutorial.html)
 &nbsp; | &nbsp;
 [Classifiers]({{site.baseurl}}/classify-tutorial.html)
 &nbsp; | &nbsp;

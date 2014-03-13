@@ -42,7 +42,7 @@ We have walkthroughs for the following parts of MeTA:
 
  - [Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
 
- - [Indexes]({{site.baseurl}}/index-tutorial.html)
+ - [Search]({{site.baseurl}}/search-tutorial.html)
 
  - [Classifiers]({{site.baseurl}}/classify-tutorial.html)
 

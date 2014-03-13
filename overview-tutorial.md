@@ -52,9 +52,9 @@ classification: **MeTA supports out-of-core classification by default!** If your
 dataset is small enough (like most other toolkits assume), you can use a cache
 such as `no_evict_cache` to keep it all in memory without sacrificing any speed.
 
-Index usage is explained in much more detail in the [Index
-Tutorial]({{site.baseurl}}/index-tutorial.html), though it might make more sense
-to read the about [Filters and Analyzers]
+Index usage is explained in much more detail in the [Search Tutorial]
+({{site.baseurl}}/index-tutorial.html), though it might make more sense to read
+the about [Filters and Analyzers]
 ({{site.baseurl}}/analyzers-filters-tutorial.html) first.
 
 ## Corpus input formats
@@ -81,7 +81,7 @@ input to create a `forward_index`.
 
 Additionally, until MeTA has support for part-of-speech tagging and parse tree
 generation, we support `.pos` and `.tree` input formats for file corpora. See
-[meta-stanford-preprocessor](https://bitbucket.org/smassung/meta-stanford-preprocessor)
+[meta-stanford-preprocessor](https://github.com/meta-toolkit/meta-stanford-preprocessor)
 for information on how to generate POS tag or parse tree files.
 
 ## Datasets
@@ -212,7 +212,7 @@ proprietary software.
 &nbsp; | &nbsp;
 [Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
 &nbsp; | &nbsp;
-[Indexes]({{site.baseurl}}/index-tutorial.html)
+[Search]({{site.baseurl}}/search-tutorial.html)
 &nbsp; | &nbsp;
 [Classifiers]({{site.baseurl}}/classify-tutorial.html)
 &nbsp; | &nbsp;
