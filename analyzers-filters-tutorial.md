@@ -108,7 +108,7 @@ Please look at the api documentation for more information. In particular,
 the [`analyzers::tokenizers`
 namespace](doxygen/namespacemeta_1_1analyzers_1_1tokenizers.html) and the
 [`analyzers::filters`
-namespace](http://localhost:4000/meta/doxygen/namespacemeta_1_1analyzers_1_1filters.html)
+namespace](doxygen/namespacemeta_1_1analyzers_1_1filters.html)
 should give you a good idea of the capabilities---the static public
 attribute `id` for a given class is the string you need to use for the
 "type" in the configuration file.
