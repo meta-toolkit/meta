@@ -28,7 +28,7 @@ data automatically from any existing `inverted_index`.
 To create a `forward_index` directly from your corpus input, your
 configuration file would look something like this:
 
-```toml
+{% highlight toml %}
 corpus-type = "line-corpus"
 dataset = "20newsgroups"
 list = "20news"
@@ -39,7 +39,7 @@ inverted-index = "20news-inv"
 method = "ngram-word"
 ngram = 1
 filter = "default-chain"
-```
+{% endhighlight %}
 
 The process looks something like this: first, an `inverted_index` will be
 created (or loaded if it already exists) over your corpus' data, and then
@@ -61,7 +61,7 @@ supports this format directly as an input corpus.
 To create a `forward_index` from data that is already in LIBSVM format,
 your configuration file would look something like this:
 
-```toml
+{% highlight toml %}
 corpus-type = "line-corpus"
 dataset = "rcv1"
 list = "rcv1"
@@ -70,7 +70,7 @@ inverted-index = "rcv1-inv"
 
 [[analyzers]]
 method = "libsvm"
-```
+{% endhighlight %}
 
 The `forward_index` will recognize that this is a LIBSVM formatted corpus
 and will simply generate a few metadata structures to ensure efficient
@@ -90,35 +90,58 @@ identifier you would use in the configuration file.
 A recommended default configuration is given below, which learns an SVM
 via stochastic gradient descent:
 
-```toml
+{% highlight toml %}
 [classifier]
 method = "one-vs-all"
     [classifier.base]
     method = "sgd"
     loss = "hinge"
-```
+{% endhighlight %}
 
 Here is an example configuration that uses Naive Bayes:
 
-```toml
+{% highlight toml %}
 [classifier]
 method = "naive-bayes"
-```
+{% endhighlight %}
 
 Here is an example that uses k-nearest neighbor with k = 10 and Okapi BM25
 as the ranking function:
 
-```toml
+{% highlight toml %}
 [classifier]
 method = "knn"
 k = 10
     [classifier.ranker]
     method = "bm25"
-```
+{% endhighlight %}
 
 Running `./classify config.toml` from your build directory will now create
 a `forward_index` (if necessary) and run 5-fold cross validation on your
-data using the prescribed classifier.
+data using the prescribed classifier. Here is some sample output:
+
+<div>
+<code>
+<pre>
+            chinese   english   japanese
+          ------------------------------
+  chinese | <strong>0.802</strong>     0.011     0.187
+  english | 0.0069    <strong>0.807</strong>     0.186
+ japanese | 0.0052    0.0039    <strong>0.991</strong>
+
+------------------------------------------------
+<strong>Class</strong>       <strong>F1 Score</strong>    <strong>Precision</strong>   <strong>Recall</strong>
+------------------------------------------------
+chinese     0.864       0.802       0.936
+english     0.88        0.807       0.967
+japanese    0.968       0.991       0.945
+------------------------------------------------
+<strong>Total</strong>       <strong>0.904</strong>       <strong>0.867</strong>       <strong>0.949</strong>
+------------------------------------------------
+1005 predictions attempted, overall accuracy: 0.947
+</pre>
+</code>
+</div>
 
 ## Manual Classification
 
@@ -126,7 +149,39 @@ If you want to customize the classification process (such as providing
 your own test/training split, or changing the number of cross-validation
 folds), you should interact with the classifiers directly by writing some
 code. Refer to `classify.cpp` and [the API documentation for
-`classifier](doxygen/classmeta_1_1classify_1_1classifier.html).
+`classifier`](doxygen/classmeta_1_1classify_1_1classifier.html).
+
+Here's a simple example that changes the number of folds to 10:
+
+{% highlight cpp %}
+auto f_idx = meta::index::make_index<index::memory_forward_index>(argv[1]);
+auto config = cpptoml::parse_file(argv[1]);
+
+auto class_config = config.get_group("classifier");
+auto classifier = meta::classify::make_classifier(*class_config, f_idx);
+
+auto confusion_mtrx = classifier->cross_validate(f_idx->docs(), 10);
+confusion_mtrx.print();
+confusion_mtrx.print_stats();
+{% endhighlight %}
+
+And here's a simple example that uses your own training/test split:
+
+{% highlight cpp %}
+auto f_idx = meta::index::make_index<index::memory_forward_index>(argv[1]);
+auto config = cpptoml::parse_file(argv[1]);
+
+auto class_config = config.get_group("classifier");
+auto classifier = meta::classify::make_classifier(*class_config, f_idx);
+
+auto train = /* filter f_idx->docs() for your training set */;
+auto test = /* filter f_idx->docs() for your test set */;
+
+classifier->train(train);
+auto confusion_mtrx = classifier->test(test);
+confusion_mtrx.print();
+confusion_mtrx.print_stats();
+{% endhighlight %}
 
 ## Writing Your Own Classifiers
 
@@ -141,7 +196,7 @@ a configuration file, you will need to provide a public static id member
 that specifies the text that identifies your classifier class, and
 register it with the toolkit somewhere in `main()` like this:
 
-```cpp
+{% highlight cpp %}
 // if you have a multi-class classifier
 meta::classify::register_classifier<my_classifier>();
 
@@ -151,12 +206,12 @@ meta::classify::register_multi_index_classifier<my_classifier>();
 
 // if you have a binary classifier
 meta::classify::register_binary_classifier<my_binary_classifier>();
-```
+{% endhighlight %}
 
 If you need to read parameters from the configuration group given for your
 classifier, you should specialize the `make_classifier()` function like so:
 
-```cpp
+{% highlight cpp %}
 // if you have a multi-class classifier
 namespace meta
 {
@@ -199,7 +254,7 @@ std::unique_ptr<classifier>
         class_label negative_label);
 }
 }
-```
+{% endhighlight %}
 
 ---
 

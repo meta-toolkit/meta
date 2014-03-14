@@ -136,23 +136,23 @@ We're using [ctest](http://www.cmake.org/cmake/help/v2.8.8/ctest.html), which
 is configured to run all the tests available in the `unit-test.cpp` file.
 You may run
 
-```bash
-CTEST_OUTPUT_ON_FAILURE=1 ctest
-```
+{% highlight bash %}
+ctest --output-on-failure
+{% endhighlight %}
 
 to execute the unit tests while displaying output from failed tests.
 
 The file `unit-test.cpp`, takes various tests as parameters. For example,
 
-```bash
+{% highlight bash %}
 ./unit-test inverted-index
-```
+{% endhighlight %}
 
 or
 
-```bash
+{% highlight bash %}
 ./unit-test all
-```
+{% endhighlight %}
 
 Please note that you must have a valid configuration file (config.toml) in the
 project root, since many unit tests create input based on paths stored there.

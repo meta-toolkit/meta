@@ -6,23 +6,14 @@ layout: default
 MeTA is a modern C++ data sciences toolkit featuring
 
  - text tokenization, including deep semantic features like parse trees
-
  - inverted and forward indexes with compression and various caching strategies
-
  - various ranking functions for the indexes
-
  - topic modeling algorithms
-
  - language modeling algorithms
-
  - clustering and similarity algorithms
-
  - classification algorithms
-
  - wrappers for liblinear and libsvm
-
  - UTF8 support for analysis on various languages
-
  - multithreaded algorithms
 
 Our current goal for MeTA is to publish in [JMLR's Machine Learning Open-Source
@@ -39,13 +30,9 @@ probably not as frequently updated as it should be.
 We have walkthroughs for the following parts of MeTA:
 
  - [System Overview]({{site.baseurl}}/overview-tutorial.html)
-
  - [Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
-
  - [Search]({{site.baseurl}}/search-tutorial.html)
-
  - [Classifiers]({{site.baseurl}}/classify-tutorial.html)
-
  - [Topic Models]({{site.baseurl}}/topic-models-tutorial.html)
 
 ## Project setup
@@ -65,22 +52,22 @@ We have walkthroughs for the following parts of MeTA:
    submodules](http://git-scm.com/book/en/Git-Tools-Submodules). To initialize
    these, run
 
-```bash
+{% highlight bash %}
 git submodule init
 git submodule update
-```
+{% endhighlight %}
 
    Then, make sure you compile liblinear and libsvm (located in
    deps/libsvm-modules). It is not necessary to compile any other submodules.
 
  - To compile initially, run the following commands
 
-```bash
+{% highlight bash %}
 mkdir build
 cd build
-CXX=clang++ LDFLAGS=-lc++abi cmake ../ -DCMAKE_BUILD_TYPE=Debug
+CXX=clang++ cmake ../ -DCMAKE_BUILD_TYPE=Debug
 make
-```
+{% endhighlight %}
 
  - There are rules for clean, tidy, and doc. (Also, once you run the cmake
    command once, you should be able to just run make like usual as you're
