@@ -28,7 +28,7 @@ data automatically from any existing `inverted_index`.
 To create a `forward_index` directly from your corpus input, your
 configuration file would look something like this:
 
-```toml
+{% highlight toml %}
 corpus-type = "line-corpus"
 dataset = "20newsgroups"
 list = "20news"
@@ -39,7 +39,7 @@ inverted-index = "20news-inv"
 method = "ngram-word"
 ngram = 1
 filter = "default-chain"
-```
+{% endhighlight %}
 
 The process looks something like this: first, an `inverted_index` will be
 created (or loaded if it already exists) over your corpus' data, and then
@@ -61,7 +61,7 @@ supports this format directly as an input corpus.
 To create a `forward_index` from data that is already in LIBSVM format,
 your configuration file would look something like this:
 
-```toml
+{% highlight toml %}
 corpus-type = "line-corpus"
 dataset = "rcv1"
 list = "rcv1"
@@ -70,7 +70,7 @@ inverted-index = "rcv1-inv"
 
 [[analyzers]]
 method = "libsvm"
-```
+{% endhighlight %}
 
 The `forward_index` will recognize that this is a LIBSVM formatted corpus
 and will simply generate a few metadata structures to ensure efficient
@@ -90,31 +90,31 @@ identifier you would use in the configuration file.
 A recommended default configuration is given below, which learns an SVM
 via stochastic gradient descent:
 
-```toml
+{% highlight toml %}
 [classifier]
 method = "one-vs-all"
     [classifier.base]
     method = "sgd"
     loss = "hinge"
-```
+{% endhighlight %}
 
 Here is an example configuration that uses Naive Bayes:
 
-```toml
+{% highlight toml %}
 [classifier]
 method = "naive-bayes"
-```
+{% endhighlight %}
 
 Here is an example that uses k-nearest neighbor with k = 10 and Okapi BM25
 as the ranking function:
 
-```toml
+{% highlight toml %}
 [classifier]
 method = "knn"
 k = 10
     [classifier.ranker]
     method = "bm25"
-```
+{% endhighlight %}
 
 Running `./classify config.toml` from your build directory will now create
 a `forward_index` (if necessary) and run 5-fold cross validation on your
@@ -153,7 +153,7 @@ code. Refer to `classify.cpp` and [the API documentation for
 
 Here's a simple example that changes the number of folds to 10:
 
-```cpp
+{% highlight cpp %}
 auto f_idx = meta::index::make_index<index::memory_forward_index>(argv[1]);
 auto config = cpptoml::parse_file(argv[1]);
 
@@ -163,11 +163,11 @@ auto classifier = meta::classify::make_classifier(*class_config, f_idx);
 auto confusion_mtrx = classifier->cross_validate(f_idx->docs(), 10);
 confusion_mtrx.print();
 confusion_mtrx.print_stats();
-```
+{% endhighlight %}
 
 And here's a simple example that uses your own training/test split:
 
-```cpp
+{% highlight cpp %}
 auto f_idx = meta::index::make_index<index::memory_forward_index>(argv[1]);
 auto config = cpptoml::parse_file(argv[1]);
 
@@ -181,7 +181,7 @@ classifier->train(train);
 auto confusion_mtrx = classifier->test(test);
 confusion_mtrx.print();
 confusion_mtrx.print_stats();
-```
+{% endhighlight %}
 
 ## Writing Your Own Classifiers
 
@@ -196,7 +196,7 @@ a configuration file, you will need to provide a public static id member
 that specifies the text that identifies your classifier class, and
 register it with the toolkit somewhere in `main()` like this:
 
-```cpp
+{% highlight cpp %}
 // if you have a multi-class classifier
 meta::classify::register_classifier<my_classifier>();
 
@@ -206,12 +206,12 @@ meta::classify::register_multi_index_classifier<my_classifier>();
 
 // if you have a binary classifier
 meta::classify::register_binary_classifier<my_binary_classifier>();
-```
+{% endhighlight %}
 
 If you need to read parameters from the configuration group given for your
 classifier, you should specialize the `make_classifier()` function like so:
 
-```cpp
+{% highlight cpp %}
 // if you have a multi-class classifier
 namespace meta
 {
@@ -254,7 +254,7 @@ std::unique_ptr<classifier>
         class_label negative_label);
 }
 }
-```
+{% endhighlight %}
 
 ---
 
