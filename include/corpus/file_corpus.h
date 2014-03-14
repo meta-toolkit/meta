@@ -51,13 +51,13 @@ class file_corpus : public corpus
     uint64_t size() const override;
 
   private:
-    /** the current document we are on */
+    /// the current document we are on
     uint64_t cur_;
 
-    /** the path to all the documents */
+    /// the path to all the documents
     std::string prefix_;
 
-    /** contains doc class labels and paths */
+    /// contains doc class labels and paths
     std::vector<std::pair<std::string, class_label>> docs_;
 };
 }

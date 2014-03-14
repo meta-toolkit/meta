@@ -33,6 +33,8 @@ class document
     /**
      * Constructor.
      * @param path The path to the document
+     * @param d_id The doc id to assign to this document
+     * @param label The optional class label to assign this document
      */
     document(const std::string& path, doc_id d_id,
              const class_label& label = class_label{"[NONE]"});
@@ -68,6 +70,7 @@ class document
     /**
      * Get the number of occurrences for a particular term.
      * @param term The string term to look up
+     * @return the number of times term appears in this document
      */
     double count(const std::string& term) const;
 
@@ -78,23 +81,23 @@ class document
 
     /**
      * Wrapper function for a document's cosine similarity measure.
-     * @param a
-     * @param b
+     * @param a The first doc to compare
+     * @param b The second doc to compare
      * @return the Jaccard similarity between the two parameters
      */
     static double jaccard_similarity(const document& a, const document& b);
 
     /**
      * Wrapper function for a document's cosine similarity measure.
-     * @param a
-     * @param b
+     * @param a The first doc to compare
+     * @param b The second doc to compare
      * @return the cosine similarity between the two parameters
      */
     static double cosine_similarity(const document& a, const document& b);
 
     /**
      * Sets the content of the document to be the parameter
-     * @param content
+     * @param content The string content to assign into this document
      * @param encoding the encoding of content, which defaults to utf-8
      * @note saving the document's content is only used by some corpora
      * formats; not all documents are guaranteed to have content stored in
@@ -105,7 +108,7 @@ class document
 
     /**
      * Sets the encoding for the document to be the parameter
-     * @param encoding
+     * @param encoding The string label for the encoding
      */
     void encoding(const std::string& encoding);
 
@@ -130,33 +133,34 @@ class document
     bool contains_content() const;
 
     /**
-     * @param label The label for this document
+     * Sets the label for this document.
+     * @param label The new label for this document
      */
     void label(class_label label);
 
   private:
-    /** where this document is on disk */
+    /// Where this document is on disk
     std::string path_;
 
-    /** the document id for this document */
+    /// The document id for this document
     doc_id d_id_;
 
-    /** which category this document would be classified into */
+    /// Which category this document would be classified into
     class_label label_;
 
-    /** the short name for this document (not the full path) */
+    /// The short name for this document (not the full path)
     std::string name_;
 
-    /** the number of (non-unique) tokens in this document */
+    /// The number of (non-unique) tokens in this document
     size_t length_;
 
-    /** counts of how many times each token appears */
+    /// Counts of how many times each token appears
     std::unordered_map<std::string, double> counts_;
 
-    /** what the document contains */
+    /// What the document contains
     util::optional<std::string> content_;
 
-    /** the encoding for the content */
+    /// The encoding for the content
     std::string encoding_;
 };
 }

@@ -53,7 +53,7 @@ class corpus
     virtual ~corpus() = default;
 
     /**
-     * Gets the encoding for the corpus.
+     * @return the encoding for the corpus.
      */
     const std::string& encoding() const;
 
@@ -74,6 +74,7 @@ class corpus
     };
 
   private:
+    /// The type of encoding this document uses
     std::string encoding_;
 };
 }

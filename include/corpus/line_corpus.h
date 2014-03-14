@@ -55,19 +55,19 @@ class line_corpus : public corpus
     uint64_t size() const override;
 
   private:
-    /** the current document we are on */
+    /// The current document we are on
     doc_id cur_id_;
 
-    /** the number of lines in the file */
+    /// The number of lines in the file
     uint64_t num_lines_;
 
-    /** parser to read the corpus file */
+    /// Parser to read the corpus file
     io::parser parser_;
 
-    /** parser to read the class labels */
+    /// Parser to read the class labels
     std::unique_ptr<io::parser> class_parser_;
 
-    /** parser to read the document names */
+    /// Parser to read the document names
     std::unique_ptr<io::parser> name_parser_;
 };
 }
