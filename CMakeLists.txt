@@ -262,8 +262,8 @@ target_link_libraries(search meta-index)
 add_executable(index index.cpp)
 target_link_libraries(index meta-index)
 
-add_executable(interactive_search interactive_search.cpp)
-target_link_libraries(interactive_search meta-index)
+add_executable(interactive-search interactive-search.cpp)
+target_link_libraries(interactive-search meta-index)
 
 add_executable(lda-test lda-test.cpp)
 target_link_libraries(lda-test meta-topics)
