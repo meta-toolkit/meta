@@ -8,28 +8,33 @@
 #include <string>
 #include <vector>
 
-#include "caching/all.h"
 #include "corpus/document.h"
 #include "index/inverted_index.h"
 #include "index/ranker/all.h"
-#include "analyzers/analyzer.h"
 #include "util/printing.h"
 #include "util/time.h"
 
 using namespace meta;
 
-std::string get_snippets(const std::string & filename, const std::string & text)
+/**
+ * @param filename The name of the file to open
+ * @return the text content of that file
+ */
+std::string get_content(const std::string& filename)
 {
     std::ifstream in{filename};
     std::string str{(std::istreambuf_iterator<char>(in)),
-                     std::istreambuf_iterator<char>()};
+                    std::istreambuf_iterator<char>()};
     std::replace(str.begin(), str.end(), '\n', ' ');
     return str;
 }
 
+/**
+ * Demo app to allow a user to create queries and search an index.
+ */
 int main(int argc, char* argv[])
 {
-    if(argc != 2)
+    if (argc != 2)
     {
         std::cerr << "Usage:\t" << argv[0] << " configFile" << std::endl;
         return 1;
@@ -51,38 +56,36 @@ int main(int argc, char* argv[])
         throw std::runtime_error{"\"ranker\" group needed in config file!"};
     auto ranker = index::make_ranker(*group);
 
-    std::cout << "Enter a query, or blank query to quit." << std::endl
-              << std::endl;
+    std::cout << "Enter a query, or blank to quit." << std::endl << std::endl;
 
     std::string text;
-    while(true)
+    while (true)
     {
         std::cout << "> ";
         std::getline(std::cin, text);
 
-        if(text.empty())
+        if (text.empty())
             break;
 
         corpus::document query{"[user input]", doc_id{0}};
-        query.content(text);
+        query.content(text); // set the doc's content to be user input
 
+        // Use the ranker to score the query over the index.
         std::vector<std::pair<doc_id, double>> ranking;
-        auto time = common::time([&](){
-            ranking = ranker->score(*idx, query);
-        });
+        auto time = common::time([&]()
+        { ranking = ranker->score(*idx, query, 5); });
 
-        std::cout << "Showing top 10 of " << ranking.size()
-                  << " results (" << time.count() << "ms)" << std::endl;
+        std::cout << "Showing top 5 of results (" << time.count() << "ms)"
+                  << std::endl;
 
-        for(size_t i = 0; i < ranking.size() && i < 5; ++i)
+        for (size_t i = 0; i < ranking.size() && i < 5; ++i)
         {
             std::string path{idx->doc_path(ranking[i].first)};
-            std::cout << printing::make_bold(
-                        std::to_string(i+1) + ". " + path + " ("
-                        + std::to_string(ranking[i].second) + ")"
-                    ) << std::endl;
-            std::cout << get_snippets(path, text) << std::endl << std::endl;
-
+            std::cout << printing::make_bold(std::to_string(i + 1) + ". " + path
+                                             + " ("
+                                             + std::to_string(ranking[i].second)
+                                             + ")") << std::endl;
+            std::cout << get_content(path) << std::endl << std::endl;
         }
 
         std::cout << std::endl;
