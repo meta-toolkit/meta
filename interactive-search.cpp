@@ -17,12 +17,12 @@
 using namespace meta;
 
 /**
- * @param filename The name of the file to open
+ * @param path The path to the file to open
  * @return the text content of that file
  */
-std::string get_content(const std::string& filename)
+std::string get_content(const std::string& path)
 {
-    std::ifstream in{filename};
+    std::ifstream in{path};
     std::string str{(std::istreambuf_iterator<char>(in)),
                     std::istreambuf_iterator<char>()};
     std::replace(str.begin(), str.end(), '\n', ' ');
@@ -56,6 +56,10 @@ int main(int argc, char* argv[])
         throw std::runtime_error{"\"ranker\" group needed in config file!"};
     auto ranker = index::make_ranker(*group);
 
+    // Find the path prefix to each document so we can print out the contents.
+    std::string prefix = *config.get_as<std::string>("prefix")
+                       + "/" + *config.get_as<std::string>("dataset") + "/";
+
     std::cout << "Enter a query, or blank to quit." << std::endl << std::endl;
 
     std::string text;
@@ -85,7 +89,7 @@ int main(int argc, char* argv[])
                                              + " ("
                                              + std::to_string(ranking[i].second)
                                              + ")") << std::endl;
-            std::cout << get_content(path) << std::endl << std::endl;
+            std::cout << get_content(prefix + path) << std::endl << std::endl;
         }
 
         std::cout << std::endl;
