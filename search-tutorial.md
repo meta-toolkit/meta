@@ -15,7 +15,7 @@ walk you through how to create your own `inverted_index` and how to use your
 By default, there are several fields at the top of your config file. These are
 general settings that deal with paths:
 
-```toml
+{% highlight toml %}
 prefix = "/home/sean/projects/meta-data/"
 libsvm-modules = "../deps/libsvm-modules/"
 punctuation = "../data/sentence-boundaries/sentence-punctuation.txt"
@@ -23,14 +23,14 @@ stop-words = "../data/lemur-stopwords.txt"
 start-exceptions = "../data/sentence-boundaries/sentence-start-exceptions.txt"
 end-exceptions = "../data/sentence-boundaries/sentence-end-exceptions.txt"
 function-words = "../data/function-words.txt"
-```
+{% endhighlight %}
 
 I have set `prefix` to be where I store my datasets. You can leave the other
 paths as they are; they'll work by default.
 
 Next, we have a section for the corpus (20newsgroups) and its analyzer.
 
-```toml
+{% highlight toml %}
 corpus-type = "line-corpus"
 dataset = "20newsgroups"
 #list = "20news"
@@ -42,7 +42,7 @@ encoding = "latin-1"
 method = "ngram-word"
 ngram = 1
 filter = "default-chain"
-```
+{% endhighlight %}
 
 `corpus-type` tells MeTA whether our dataset is a `line-corpus` (one doc per
 line in a large file) or a `file-corpus` (each doc is an individual file). If
@@ -53,21 +53,21 @@ dataset directory.
 If the executable needs to search the index, we can add the following to say
 which ranker to use:
 
-```toml
+{% highlight toml %}
 [ranker]
 method = "bm25"
-```
+{% endhighlight %}
 
 For all the premade ranking functions, you can additionally specify any of the
 ranking function parameters:
 
-```toml
+{% highlight toml %}
 [ranker]
 method = "bm25"
 k1 = 1.2
 b = 0.75
 k3 = 500
-```
+{% endhighlight %}
 
 For a list of MeTA's ranking functions, see the
 [index::ranker](http://meta-toolkit.github.io/meta/doxygen/classmeta_1_1index_1_1ranker.html)
@@ -88,9 +88,9 @@ Let's go through these one by one:
 
 ### Index
 
-```bash
+{% highlight bash %}
 ./index config.toml
-```
+{% endhighlight %}
 
 You can then see it being indexed. After it's done, some stats are printed out,
 such as number of documents, average document length, and number of unique
@@ -99,9 +99,9 @@ that the index has already been created.
 
 ### Interactive Search
 
-```bash
+{% highlight bash %}
 ./interactive-search config.toml
-```
+{% endhighlight %}
 
 Running this will first create an index if one does not exist. Then, it will
 prompt the user to type a query. The current analyzer is run on the text query
@@ -112,18 +112,18 @@ results are returned.
 
 For this app, we need to add a path to the query file.
 
-```toml
+{% highlight toml %}
 querypath = "./"
-```
+{% endhighlight %}
 
 The query file contains one query per line, and they are run on the current
 index. You quickly make your own query file in the current directory if you
 don't have one. It must be named `dataset-queries.txt`, where in our example
 `dataset` is `20newsgroups`.
 
-```bash
+{% highlight bash %}
 ./query-runner config.toml
-```
+{% endhighlight %}
 
 The top 10 documents for each query are then displayed along with the time
 taken to run the all the queries.
@@ -137,9 +137,9 @@ code can be found in the demo apps as well.
 
 This is the simplest way to make an inverted index:
 
-```cpp
+{% highlight cpp %}
 auto idx = index::make_index<index::inverted_index>(argv[1]);
-```
+{% endhighlight %}
 
 This assumes that `argv[1]` is the path to the TOML config file, which is
 standard MeTA practice.
@@ -150,7 +150,7 @@ don't need to do a disk seek for every term while scoring.
 
 Here are two different ways to specify a cache:
 
-```cpp
+{% highlight cpp %}
 // Create an inverted index using a DBLRU cache. The arguments forwarded to
 //  make_index are the config file for the index and any parameters for the
 //  cache. In this case, we set the maximum hash table size for the
@@ -162,26 +162,26 @@ auto idx = index::make_index<index::dblru_inverted_index>(argv[1], 10000);
 //  for the cache. In this case, we set the maximum number of nodes in
 //  the splay_cache to be 10000.
 auto idx = index::make_index<index::splay_inverted_index>(argv[1], 10000);
-```
+{% endhighlight %}
 
 ### Searching an index
 
 Now that we have an index, let's search it! First, we need to create a `ranker`:
 
-```cpp
+{% highlight cpp %}
 auto config = cpptoml::parse_file(argv[1]);
 auto group = config.get_group("ranker");
 if (!group)
     throw std::runtime_error{"\"ranker\" group needed in config file!"};
 auto ranker = index::make_ranker(*group);
-```
+{% endhighlight %}
 
 We can also manually specify our `ranker` instead of reading from the config
 file:
 
-```cpp
+{% highlight cpp %}
 index::okapi_bm25 ranker{1.2, 0.75, 500.0};
-```
+{% endhighlight %}
 
 We don't have to specify the arguments for the ranking parameters, but we did
 anyway.
@@ -190,20 +190,20 @@ Finally, we are able to search our index with our ranker. Let's assume we used
 `make_ranker` to create the ranker, so the `ranker` object is a
 `std::unique_ptr` to the actual object.
 
-```cpp
+{% highlight cpp %}
 corpus::document query{"[doc path]", doc_id{0}};
 query.content("my query text");
 
 auto ranking = ranker->score(*idx, query);
-```
+{% endhighlight %}
 
 `ranking` is a sorted vector of `pair`s of (`doc_id`,`double`). By default, the
 top 10 documents are returned. To return a different number, just add a third
 parameter:
 
-```cpp
+{% highlight cpp %}
 auto ranking = ranker->score(*idx, query, 25);
-```
+{% endhighlight %}
 
 Iterate through `ranking` and display your results! Check out the
 [index::ir_eval](http://meta-toolkit.github.io/meta/doxygen/classmeta_1_1index_1_1ir__eval.html)
@@ -222,14 +222,14 @@ configuration file, you will need to provide a public static string id member
 that specifies the text that identifies your ranker class, and register it with
 the toolkit somewhere in main() like this:
 
-```cpp
+{% highlight cpp %}
 meta::index::register_ranker<my_ranker>();
-```
+{% endhighlight %}
 
 If you need to read parameters from the config group, you should specialize the
 `make_ranker()` function as follows:
 
-```cpp
+{% highlight cpp %}
 namespace meta
 {
 namespace index
@@ -242,7 +242,7 @@ std::unique_ptr<ranker> make_ranker<my_ranker>(const cpptoml::toml_group& config
 }
 }
 }
-```
+{% endhighlight %}
 
 ---
 
