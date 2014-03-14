@@ -50,7 +50,7 @@ class compressed_file_reader
 
     /**
      * Constructor to create a new mmap file for reading.
-     * @param file The filename for the new file to read from
+     * @param filename The filename for the new file to read from
      * @param mapping A function to map the original numbers to their
      * compressed id, usually to take advantage of a skewed distribution of
      * towards many small numbers
@@ -132,22 +132,22 @@ class compressed_file_reader
      */
     char* start_;
 
-    /** the number of bytes in this compressed file */
+    /// the number of bytes in this compressed file
     uint64_t size_;
 
-    /** reading/writing status */
+    /// reading/writing status
     int status_;
 
-    /** current numeric value that was read */
+    /// current numeric value that was read
     uint64_t current_value_;
 
-    /** current byte in the compressed file */
+    /// current byte in the compressed file
     uint64_t current_char_;
 
-    /** current bit inside the current byte */
+    /// current bit inside the current byte
     uint8_t current_bit_;
 
-    /** hold the (actual -> compressed id) mapping */
+    /// hold the (actual -> compressed id) mapping
     std::function<uint64_t(uint64_t)> mapping_;
 
   public:
@@ -161,6 +161,12 @@ class compressed_file_reader
     };
 };
 
+/**
+ * Function that converts a compressed number back into its normal
+ * representation.
+ * @param value The value to transform
+ * @return the original form
+ */
 uint64_t default_compression_reader_func(uint64_t value);
 }
 }
