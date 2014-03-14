@@ -19,7 +19,7 @@ namespace printing
 {
 
 /**
- * @param number
+ * @param number The string-encoded number
  * @return the parameter with commas added every thousandths place
  */
 inline std::string add_commas(const std::string& number)
@@ -37,7 +37,7 @@ inline std::string add_commas(const std::string& number)
 }
 
 /**
- * @param str
+ * @param str The string to turn green
  * @return the parameter string colored green
  */
 inline std::string make_green(std::string str)
@@ -46,7 +46,7 @@ inline std::string make_green(std::string str)
 }
 
 /**
- * @param str
+ * @param str The string to turn red
  * @return the parameter string colored red
  */
 inline std::string make_red(std::string str)
@@ -55,7 +55,7 @@ inline std::string make_red(std::string str)
 }
 
 /**
- * @param str
+ * @param str The string to turn bold
  * @return the parameter string bolded
  */
 inline std::string make_bold(std::string str)
@@ -65,7 +65,7 @@ inline std::string make_bold(std::string str)
 
 /**
  * Converts a number of bytes into a human-readable number.
- * @param num_bytes
+ * @param num_bytes The number in bytes to convert
  * @return a human-readable string
  */
 inline std::string bytes_to_units(double num_bytes)

@@ -24,7 +24,7 @@ namespace filesystem
 
 /**
  * Deletes the given file.
- * @param filename
+ * @param filename The file to delete (path)
  */
 inline void delete_file(const std::string& filename)
 {
@@ -33,8 +33,8 @@ inline void delete_file(const std::string& filename)
 
 /**
  * Renames the given file.
- * @param old_name
- * @param new_name
+ * @param old_name The old filename
+ * @param new_name The new filename
  */
 inline void rename_file(const std::string& old_name,
                         const std::string& new_name)
@@ -44,6 +44,7 @@ inline void rename_file(const std::string& old_name,
 
 /**
  * Attempts to create the directory
+ * @param dir_name The name of the new directory
  * @return whether a new directory was created
  */
 inline bool make_directory(const std::string& dir_name)
@@ -52,7 +53,7 @@ inline bool make_directory(const std::string& dir_name)
 }
 
 /**
- * @param filename
+ * @param filename The file to check
  * @return true if the file exists
  */
 inline bool file_exists(const std::string& filename)
@@ -67,9 +68,9 @@ inline bool file_exists(const std::string& filename)
 }
 
 /**
- * Copies a file source to file dest
- * @param source
- * @param dest
+ * Copies a file source to file dest.
+ * @param source The source file
+ * @param dest The destination file
  * @return whether the copy was successful
  */
 inline bool copy_file(const std::string& source, const std::string& dest)
@@ -100,8 +101,8 @@ inline uint64_t file_size(const std::string& filename)
 }
 
 /**
- * @param filename
- * @param delimiter
+ * @param filename The file to count lines in
+ * @param delimiter How to denote lines
  * @return the number of delimiter (default newline) characters in the
  * paramter
  */

@@ -13,7 +13,8 @@ namespace util
 
 template <class Key, class Value>
 invertible_map<Key, Value>::invertible_map()
-{/* nothing */
+{
+    /* nothing */
 }
 
 template <class Key, class Value>
