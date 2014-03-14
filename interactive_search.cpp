@@ -10,7 +10,7 @@
 
 #include "corpus/document.h"
 #include "index/inverted_index.h"
-#include "index/ranker/all.h"
+#include "index/ranker/ranker_factory.h"
 #include "util/printing.h"
 #include "util/time.h"
 
