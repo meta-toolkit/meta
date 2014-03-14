@@ -6,6 +6,7 @@
 
 #include <numeric>
 #include <random>
+#include "cpptoml.h"
 #include "index/postings_data.h"
 #include "classify/classifier/winnow.h"
 
@@ -99,5 +100,26 @@ void winnow::reset()
 {
     weights_ = {};
 }
+
+template <>
+std::unique_ptr<classifier>
+    make_classifier<winnow>(const cpptoml::toml_group& config,
+                            std::shared_ptr<index::forward_index> idx)
+{
+    auto m = winnow::default_m;
+    if (auto c_m = config.get_as<double>("m"))
+        m = *c_m;
+
+    auto gamma = winnow::default_gamma;
+    if (auto c_gamma = config.get_as<double>("gamma"))
+        gamma = *c_gamma;
+
+    auto max_iter = winnow::default_max_iter;
+    if (auto c_max_iter = config.get_as<int64_t>("max-iter"))
+        max_iter = *c_max_iter;
+
+    return make_unique<winnow>(std::move(idx), m, gamma, max_iter);
+}
+
 }
 }

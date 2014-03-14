@@ -9,10 +9,6 @@
 #ifndef META_CONFUSION_MATRIX_H_
 #define META_CONFUSION_MATRIX_H_
 
-#include <iostream>
-#include <utility>
-#include <string>
-#include <unordered_map>
 #include <set>
 #include "index/forward_index.h"
 #include "meta.h"
@@ -61,12 +57,13 @@ class confusion_matrix
      * @param str_pair The pair of strings
      * @return the hash
      */
-    static size_t string_pair_hash(const std::pair
-                                   <std::string, std::string>& strPair);
+    static size_t
+        string_pair_hash(const std::pair<std::string, std::string>& strPair);
 
     /** typedef for predicted class assignments to counts. */
-    typedef std::unordered_map<std::pair<class_label, class_label>, size_t,
-         decltype(&confusion_matrix::string_pair_hash)> prediction_counts;
+    using prediction_counts =
+        std::unordered_map<std::pair<class_label, class_label>, size_t,
+                           decltype(&confusion_matrix::string_pair_hash)>;
 
     /**
      * @return all the predictions from this confusion_matrix.

@@ -37,17 +37,36 @@ class classifier_factory
     friend base_factory;
 
   private:
+    /**
+     * Constructs the classifier_factory singleton.
+     */
     classifier_factory();
 
+    /**
+     * Registers a single-index classifier. Used internally.
+     */
     template <class Classifier>
     void reg();
 
+    /**
+     * Registers a multi-index classifier. Used internally.
+     */
     template <class Classifier>
     void reg_mi();
 };
 
 /**
  * Convenience method for creating a classifier using the factory.
+ *
+ * @param config The configuration group that specifies the configuration
+ * for the classifier to be created
+ * @param idx The forward_index to be passed to the classifier being
+ * created
+ * @param inv_idx The inverted_index to be passed to the classifier being
+ * created (if needed)
+ *
+ * @return a unique_ptr to the classifier created from the given
+ * configuration
  */
 std::unique_ptr<classifier>
     make_classifier(const cpptoml::toml_group& config,
@@ -58,12 +77,21 @@ std::unique_ptr<classifier>
  * Factory method for creating a classifier. This should be specialized if
  * your given classifier requires special construction behavior (e.g.,
  * reading parameters).
+ *
+ * @param config The configuration group that specifies the configuration
+ * for the classifier to be created
+ * @param idx The forward_index to be passed to the classifier being
+ * created
+ *
+ * @return a unique_ptr to the classifier (of derived type Classifier)
+ * created from the given configuration
  */
 template <class Classifier>
 std::unique_ptr<classifier>
-    make_classifier(const cpptoml::toml_group&,
+    make_classifier(const cpptoml::toml_group& config,
                     std::shared_ptr<index::forward_index> idx)
 {
+    (void)config; // silence unused variable warning
     return make_unique<Classifier>(idx);
 }
 
@@ -71,13 +99,24 @@ std::unique_ptr<classifier>
  * Factory method for creating a classifier that takes both index types.
  * This should be specialized if your given classifier requires special
  * construction behavior.
+ *
+ * @param config The configuration group that specifies the configuration
+ * for the classifier to be created
+ * @param idx The forward_index to be passed to the classifier being
+ * created
+ * @param inv_idx The inverted_index to be passed to the classifier being
+ * created
+ *
+ * @return a unique_ptr to the classifier (of derived type Classifier)
+ * created from the given configuration
  */
 template <class Classifier>
 std::unique_ptr<classifier>
-    make_multi_index_classifier(const cpptoml::toml_group&,
+    make_multi_index_classifier(const cpptoml::toml_group& config,
                                 std::shared_ptr<index::forward_index> idx,
                                 std::shared_ptr<index::inverted_index> inv_idx)
 {
+    (void)config; // silence unused variable warning
     return make_unique<Classifier>(idx, inv_idx);
 }
 

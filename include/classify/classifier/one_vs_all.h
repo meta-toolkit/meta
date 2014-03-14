@@ -25,6 +25,17 @@ namespace classify
 class one_vs_all : public classifier
 {
   public:
+    /**
+     * Constructs a new one_vs_all classifier on the given index by using
+     * the given function to create binary_classifiers. The `create`
+     * parameter must take a single parameter: the positive label for the
+     * binary classifier to be created.
+     *
+     * @param idx The forward_index to be passed to each binary_classifier
+     * created for the ensemble
+     * @param create A Callable (function object, lambda, etc.) that is
+     * used to create the individual binary_classifiers.
+     */
     template <class Function>
     one_vs_all(std::shared_ptr<index::forward_index> idx, Function&& create)
         : classifier{std::move(idx)}
@@ -39,9 +50,15 @@ class one_vs_all : public classifier
 
     void reset() override;
 
+    /**
+     * The identifier for this classifier.
+     */
     const static std::string id;
 
   private:
+    /**
+     * The set of classifiers this ensemble uses for classification.
+     */
     std::unordered_map<class_label, std::unique_ptr<binary_classifier>>
         classifiers_;
 };
@@ -53,7 +70,7 @@ class one_vs_all : public classifier
 template <>
 std::unique_ptr<classifier>
     make_classifier<one_vs_all>(const cpptoml::toml_group&,
-                                std::shared_ptr<index::forward_index> idx);
+                                std::shared_ptr<index::forward_index>);
 }
 }
 #endif

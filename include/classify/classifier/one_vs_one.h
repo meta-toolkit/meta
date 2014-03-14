@@ -77,7 +77,7 @@ class one_vs_one : public classifier
 template <>
 std::unique_ptr<classifier>
     make_classifier<one_vs_one>(const cpptoml::toml_group&,
-                                std::shared_ptr<index::forward_index> idx);
+                                std::shared_ptr<index::forward_index>);
 
 }
 }

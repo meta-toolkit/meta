@@ -18,9 +18,18 @@ namespace classify
 namespace loss
 {
 
+/**
+ * The squared hinge loss function for SGD algorithms.
+ *
+ * Defined as \f$phi(p, y) = \max(0, 1 - py)^2\f$.
+ */
 struct squared_hinge : public loss_function
 {
+    /**
+     * The identifier for this loss function.
+     */
     const static std::string id;
+
     double loss(double prediction, int expected) const override;
     double derivative(double prediction, int expected) const override;
 };

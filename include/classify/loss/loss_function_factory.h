@@ -35,20 +35,29 @@ class loss_function_factory
     friend base_factory;
 
   private:
+    /**
+     * Constructs the loss_function_factory singleton.
+     */
     loss_function_factory();
 
+    /**
+     * Registers a loss function. Used internally.
+     */
     template <class Loss>
     void reg();
 };
 
 /**
  * Convenience method for making a loss function using the factory.
+ * @param identifier the identifier for the loss function to be created
+ * @return a unique_ptr to the loss function created
  */
 std::unique_ptr<loss_function>
     make_loss_function(const std::string& identifier);
 
 /**
  * Factory method for creating a loss function.
+ * @return a unique_ptr to a loss_function (of derived type Loss)
  */
 template <class Loss>
 std::unique_ptr<loss_function> make_loss_function()

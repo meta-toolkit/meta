@@ -86,6 +86,9 @@ class svm_wrapper : public classifier
      */
     void reset() override;
 
+    /**
+     * The identifier for this classifier.
+     */
     const static std::string id;
 
   private:
@@ -104,6 +107,10 @@ class svm_wrapper : public classifier
     std::string executable_;
 };
 
+/**
+ * Specialization of the factory method used for creating svm_wrapper
+ * classifiers.
+ */
 template <>
 std::unique_ptr<classifier> make_classifier<svm_wrapper>(
         const cpptoml::toml_group&,

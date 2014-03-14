@@ -26,7 +26,7 @@ namespace kernel
  * that is not linearly separable.
  *
  * Uses the general form of:
- * \f$K(x,y) = \tanh(\alphax^\intercal y + c)\f$
+ * \f$K(x,y) = \tanh(\alpha x^T y + c)\f$
  */
 class sigmoid
 {
@@ -41,11 +41,6 @@ class sigmoid
     {
         /* nothing */
     }
-
-    sigmoid(const sigmoid&) = default;
-    sigmoid(sigmoid&&) = default;
-    sigmoid& operator=(const sigmoid&) = default;
-    sigmoid& operator=(sigmoid&&) = default;
 
     /**
      * Computes the value of \f$K(first, second)\f$.
@@ -65,6 +60,9 @@ class sigmoid
      */
     double c_;
 
+    /**
+     * Internal "helper" kernel.
+     */
     polynomial dot_{1, 0.0};
 };
 }

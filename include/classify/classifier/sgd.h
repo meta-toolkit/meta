@@ -28,10 +28,15 @@ namespace classify
 class sgd : public binary_classifier
 {
   public:
+    /// The default \f$\alpha\f$ parameter.
     const static constexpr double default_alpha = 0.001;
+    /// The default \f$\gamma\f$ parameter.
     const static constexpr double default_gamma = 1e-6;
+    /// The default \f$b\f$ parameter.
     const static constexpr double default_bias = 1;
+    /// The default \f$\lambda\f$ parameter.
     const static constexpr double default_lambda = 0.0001;
+    /// The default number of allowed iterations.
     const static constexpr size_t default_max_iter = 50;
 
     /**
@@ -52,17 +57,6 @@ class sgd : public binary_classifier
         size_t max_iter = default_max_iter);
 
     /**
-     * Trains the sgd on the given training documents.
-     * Maintains a set of weight vectors \f$w_1,\ldots,w_K\f$ where
-     * \f$K\f$ is the number of classes and updates them for each
-     * training document seen in each iteration. This continues until
-     * the error threshold is met or the maximum number of iterations
-     * is completed.
-     * @param docs The training set.
-     */
-    void train(const std::vector<doc_id>& docs) override;
-
-    /**
      * Returns the dot product with the current weight vector. Used
      * mainly for generalization of a binary decision problem to a
      * multiclass decision problem.
@@ -71,12 +65,13 @@ class sgd : public binary_classifier
      */
     double predict(doc_id d_id) const;
 
-    /**
-     * Resets all learned information for this sgd so it may be
-     * re-learned.
-     */
+    void train(const std::vector<doc_id>& docs) override;
+
     void reset() override;
 
+    /**
+     * The identifier for this classifier.
+     */
     const static std::string id;
 
   private:
@@ -121,6 +116,9 @@ class sgd : public binary_classifier
     double predict(const counts_t& doc) const;
 };
 
+/**
+ * Specialization of the factory method used to create sgd classifiers.
+ */
 template <>
 std::unique_ptr<binary_classifier> make_binary_classifier<sgd>(
         const cpptoml::toml_group& config,
