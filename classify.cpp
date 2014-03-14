@@ -76,9 +76,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto f_idx = index::make_index<index::forward_index, caching::no_evict_cache>(argv[1]);
- // auto i_idx = index::make_index<index::inverted_index, caching::splay_cache>(argv[1]);
-
+    auto f_idx = index::make_index<index::memory_forward_index>(argv[1]);
 
     auto docs = f_idx->docs();
     printing::progress progress{" > Pre-fetching for cache: ", docs.size()};
@@ -92,8 +90,9 @@ int main(int argc, char* argv[])
     std::unique_ptr<classify::classifier> classifier;
     if (*class_config->get_as<std::string>("method") == "knn")
     {
-         auto i_idx = index::make_index<index::inverted_index, caching::splay_cache>(argv[1]);
-         classifier = classify::make_classifier(*class_config, f_idx, i_idx);
+        auto i_idx =
+            index::make_index<index::dblru_inverted_index>(argv[1], 10000);
+        classifier = classify::make_classifier(*class_config, f_idx, i_idx);
     }
     else
         classifier = classify::make_classifier(*class_config, f_idx);

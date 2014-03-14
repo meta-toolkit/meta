@@ -30,6 +30,17 @@ using dblru_inverted_index =
 /// Inverted index using splay cache
 using splay_inverted_index = cached_index<inverted_index, caching::splay_cache>;
 
+/// In-memory forward index
+using memory_forward_index =
+    cached_index<forward_index, caching::no_evict_cache>;
+
+/// Forward index using default DBLRU cache
+using dblru_forward_index =
+    cached_index<forward_index, caching::default_dblru_cache>;
+
+/// Forward index using splay cache
+using splay_forward_index = cached_index<forward_index, caching::splay_cache>;
+
 /**
  * Factory method for creating indexes.
  * Usage:
