@@ -16,7 +16,7 @@
 #include <deque>
 #include <unordered_map>
 #include <utility>
-#include "index/document.h"
+#include "corpus/document.h"
 #include "tokenizers/ngram/ngram_tokenizer.h"
 
 namespace meta
@@ -45,14 +45,14 @@ class ngram_distribution
     ngram_distribution(const std::string& doc_path);
 
     /**
-     * @param prev
-     * @param word
+     * @param prev The first word
+     * @param word The second word
      * @return the probability of seeing "prev+word".
      */
     double prob(const std::string& prev, const std::string& word) const;
 
     /**
-     * @param str
+     * @param str The string token
      * @return the probability of seeing "str".
      */
     double prob(const std::string& str) const;
@@ -60,21 +60,23 @@ class ngram_distribution
     /**
      * Calculates the log-likelihood of the given document using the current
      * language model.
-     * @param document
+     * @param document The document to calculate log-likelihood for
      * @return the log-likelihood
      */
-    double log_likelihood(const index::document& document) const;
+    double log_likelihood(const corpus::document& document) const;
 
     /**
      * Calculates the perplexity of the given document using the current
      * language model.
-     * @param document
+     * @param document The document to calculate perplexity for
      * @return the perplexity of the document
      */
-    double perplexity(const index::document& document) const;
+    double perplexity(const corpus::document& document) const;
 
     /**
      * Generates a random sentence using the current language model.
+     * @param seed A random seed
+     * @param num_words The number of words to generate
      * @return a random sentence likely to be generated with this model
      */
     std::string random_sentence(unsigned int seed, size_t num_words) const;
@@ -88,6 +90,7 @@ class ngram_distribution
     }
 
     /**
+     * @param k A smaller distribution
      * @return the language model for k-grams, where 1 <= k <= N.
      */
     const ProbMap& kth_distribution(size_t k) const;
@@ -104,7 +107,7 @@ class ngram_distribution
                          <std::string, double>& dist) const;
 
     /**
-     * @param rand
+     * @param rand A random number on [0,1]
      * @return N-1 previous tokens based on a uniform random number in
      * [0,1].
      */
@@ -150,16 +153,16 @@ class ngram_distribution
      */
     std::string to_prev(const std::deque<std::string>& ngram) const;
 
-    /** Frequency of each ngram, used for probability calculation. */
+    /// Frequency of each ngram, used for probability calculation
     FreqMap freqs_;
 
-    /** Distribution for this ngram. */
+    /// Distribution for this ngram
     ProbMap dist_;
 
-    /** N-1 prior distribution. */
+    /// N-1 prior distribution
     ngram_distribution<N - 1> lower_;
 
-    /** Discounting factor for absolute discounting smoothing. */
+    /// Discounting factor for absolute discounting smoothing
     double discount_;
 };
 
@@ -174,17 +177,26 @@ class ngram_distribution<0>
                                std::unordered_map<std::string, double>
                               > ProbMap;
 
+    /**
+     * @param str The string token
+     * @return the probability of seeing this token: always zero
+     */
     double prob(const std::string& str)
     {
         return 0.0;
     }
 
+    /**
+     * @param k The previous distribution number
+     * @return the previous distribution
+     */
     const ProbMap& kth_distribution(size_t k) const
     {
         return dist_;
     }
 
   private:
+    /// The (fake) underlying distribution of this distribution
     ProbMap dist_;
 };
 }
