@@ -118,7 +118,30 @@ k = 10
 
 Running `./classify config.toml` from your build directory will now create
 a `forward_index` (if necessary) and run 5-fold cross validation on your
-data using the prescribed classifier.
+data using the prescribed classifier. Here is some sample output:
+
+<div>
+<code>
+<pre>
+            chinese   english   japanese
+          ------------------------------
+  chinese | <strong>0.802</strong>     0.011     0.187
+  english | 0.0069    <strong>0.807</strong>     0.186
+ japanese | 0.0052    0.0039    <strong>0.991</strong>
+
+------------------------------------------------
+<strong>Class</strong>       <strong>F1 Score</strong>    <strong>Precision</strong>   <strong>Recall</strong>
+------------------------------------------------
+chinese     0.864       0.802       0.936
+english     0.88        0.807       0.967
+japanese    0.968       0.991       0.945
+------------------------------------------------
+<strong>Total</strong>       <strong>0.904</strong>       <strong>0.867</strong>       <strong>0.949</strong>
+------------------------------------------------
+1005 predictions attempted, overall accuracy: 0.947
+</pre>
+</code>
+</div>
 
 ## Manual Classification
 
@@ -126,7 +149,39 @@ If you want to customize the classification process (such as providing
 your own test/training split, or changing the number of cross-validation
 folds), you should interact with the classifiers directly by writing some
 code. Refer to `classify.cpp` and [the API documentation for
-`classifier](doxygen/classmeta_1_1classify_1_1classifier.html).
+`classifier`](doxygen/classmeta_1_1classify_1_1classifier.html).
+
+Here's a simple example that changes the number of folds to 10:
+
+```cpp
+auto f_idx = meta::index::make_index<index::memory_forward_index>(argv[1]);
+auto config = cpptoml::parse_file(argv[1]);
+
+auto class_config = config.get_group("classifier");
+auto classifier = meta::classify::make_classifier(*class_config, f_idx);
+
+auto confusion_mtrx = classifier->cross_validate(f_idx->docs(), 10);
+confusion_mtrx.print();
+confusion_mtrx.print_stats();
+```
+
+And here's a simple example that uses your own training/test split:
+
+```cpp
+auto f_idx = meta::index::make_index<index::memory_forward_index>(argv[1]);
+auto config = cpptoml::parse_file(argv[1]);
+
+auto class_config = config.get_group("classifier");
+auto classifier = meta::classify::make_classifier(*class_config, f_idx);
+
+auto train = /* filter f_idx->docs() for your training set */;
+auto test = /* filter f_idx->docs() for your test set */;
+
+classifier->train(train);
+auto confusion_mtrx = classifier->test(test);
+confusion_mtrx.print();
+confusion_mtrx.print_stats();
+```
 
 ## Writing Your Own Classifiers
 
