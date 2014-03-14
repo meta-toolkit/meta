@@ -1,88 +1,96 @@
 /**
  * @file search.cpp
+ * @author Sean Massung
  */
 
-#include <chrono>
-#include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include "index/ranker/ranker_factory.h"
 #include "caching/all.h"
 #include "corpus/document.h"
 #include "index/inverted_index.h"
-#include "index/ranker/all.h"
-#include "parallel/parallel_for.h"
 #include "analyzers/analyzer.h"
-#include "util/range.h"
 #include "util/time.h"
 
 using namespace meta;
-using std::cerr;
-using std::cout;
-using std::endl;
 
+/**
+ * Demo app to load (or create) an index, and query some documents that already
+ * exist in it. We create the query documents by setting each document's path.
+ * For this demo, we need the corpus type to be "file-corpus" so the documents
+ * can be recreated.
+ */
 int main(int argc, char* argv[])
 {
-    if(argc != 2)
+    if (argc != 2)
     {
-        cerr << "Usage:\t" << argv[0] << " configFile" << endl;
+        std::cerr << "Usage:\t" << argv[0] << " configFile" << std::endl;
         return 1;
     }
 
+    // Turn on logging to std::cerr.
     logging::set_cerr_logging();
-    auto idx = index::make_index<index::inverted_index,
-    //                           caching::splay_cache>(argv[1], uint32_t{10000});
-                                 caching::default_dblru_cache>(argv[1], uint64_t{10000});
-    //                           caching::lock_free_dblru_cache>(argv[1], uint64_t{2048});
-    //                           caching::locking_dblru_cache>(argv[1], uint64_t{2048});
-    //                           caching::locking_dblru_shard_cache>(argv[1], uint8_t{8}, uint64_t{2048});
-    //                           caching::lock_free_dblru_shard_cache>(argv[1], uint8_t{8}, uint64_t{2048});
-    //                           caching::splay_shard_cache>(argv[1], uint8_t{8}, uint32_t{10});
-    index::pivoted_length ranker;
-    //index::okapi_bm25 ranker;
+
+    // Create an inverted index using a DBLRU cache. The arguments forwarded to
+    //  make_index are the config file for the index and any parameters for the
+    //  cache. In this case, we set the maximum hash table size for the
+    //  dblru_cache to be 10000.
+    auto idx = index::make_index<index::dblru_inverted_index>(argv[1], 10000);
 
     auto config = cpptoml::parse_file(argv[1]);
+
+    // Create a ranking class based on the config file.
+    auto group = config.get_group("ranker");
+    if (!group)
+        throw std::runtime_error{"\"ranker\" group needed in config file!"};
+    auto ranker = index::make_ranker(*group);
+
+    // Use UTF-8 for the default encoding unless otherwise specified.
     std::string encoding = "utf-8";
     if (auto enc = config.get_as<std::string>("encoding"))
         encoding = *enc;
 
-    auto elapsed = common::time([&](){
-        // std::cout << "Beginning ranking..." << std::endl;
-        // auto range = util::range<size_t>(0, std::min<size_t>(1000, idx.num_docs()-1));
-        // parallel::parallel_for(range.begin(), range.end(), [&](size_t i) {
-        //     auto d_id = idx.docs()[i];
-        //     corpus::document query{idx.doc_path(d_id)};
-        //     auto ranking = ranker.score(idx, query);
-        // });
-
+    // Time how long it takes to create the index. By default, common::time's
+    //  unit of measurement is milliseconds.
+    auto elapsed = common::time([&]()
+    {
+        // Get a std::vector of doc_ids that have been indexed.
         auto docs = idx->docs();
-        for(size_t i = 0; i < 100 && i < idx->num_docs(); ++i)
+
+        // Search for up to the first 20 documents; we hope that the first
+        //  result is the original document itself since we're querying with
+        //  documents that are already indexed.
+        for (size_t i = 0; i < 20 && i < idx->num_docs(); ++i)
         {
-            auto d_id = docs[i];
-            corpus::document query{idx->doc_path(d_id), doc_id{0}};
+            // Create a document and specify its path; its content will be
+            //  filled by the analyzer.
+            corpus::document query{idx->doc_path(docs[i]), doc_id{docs[i]}};
             query.encoding(encoding);
-            cout << "Ranking query " << (i + 1) << ": " << query.path() << endl;
 
-            auto ranking = ranker.score(*idx, query);
-            cout << "Showing top 10 of " << ranking.size() << " results." << endl;
+            std::cout << "Ranking query " << (i + 1) << ": " << query.path()
+                      << std::endl;
 
-            for(size_t i = 0; i < ranking.size() && i < 10; ++i)
-                cout << (i+1) << ". " << idx->doc_name(ranking[i].first)
-                     << " " << ranking[i].second << endl;
+            // Use the ranker to score the query over the index. By default, the
+            //  ranker returns 10 documents, so we will display the "top 10 of
+            //  10" docs.
+            auto ranking = ranker->score(*idx, query);
+            std::cout << "Showing top 10 of " << ranking.size() << " results."
+                 << std::endl;
 
-            cout << endl;
+            // Print out the top ten results.
+            for (size_t i = 0; i < ranking.size() && i < 10; ++i)
+            {
+                std::cout << (i + 1) << ". " << idx->doc_name(ranking[i].first)
+                          << " " << ranking[i].second << std::endl;
+            }
+
+            std::cout << std::endl;
         }
     });
 
-#if META_HAS_STD_PUT_TIME
-    auto time =
-        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    std::cout << "Finished at " << std::put_time(std::localtime(&time), "%c")
-              << "\nElapsed time: " << elapsed.count() << "ms\n";
-#else
-    std::cout << "Elapsed time: " << elapsed.count() << "ms\n";
-#endif
+    std::cout << "Elapsed time: " << elapsed.count() / 1000.0 << " seconds"
+              << std::endl;
 
     return 0;
 }

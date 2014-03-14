@@ -11,6 +11,7 @@
 #define META_MAKE_INDEX_H_
 
 #include "cpptoml.h"
+#include "caching/all.h"
 #include "index/cached_index.h"
 #include "util/filesystem.h"
 
@@ -21,6 +22,13 @@ namespace index
 
 class inverted_index;
 class forward_index;
+
+/// Inverted index using default DBLRU cache
+using dblru_inverted_index =
+    cached_index<inverted_index, caching::default_dblru_cache>;
+
+/// Inverted index using splay cache
+using splay_inverted_index = cached_index<inverted_index, caching::splay_cache>;
 
 /**
  * Factory method for creating indexes.
