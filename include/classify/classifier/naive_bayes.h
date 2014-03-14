@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include "index/forward_index.h"
 #include "classify/classifier/classifier.h"
+#include "classify/classifier_factory.h"
 #include "meta.h"
 
 namespace meta
@@ -26,6 +27,11 @@ namespace classify
 class naive_bayes : public classifier
 {
   public:
+    /// The default \f$\alpha\f$ parameter.
+    const static constexpr double default_alpha = 0.1;
+    /// The default \f$beta\f$ parameter.
+    const static constexpr double default_beta = 0.1;
+
     /**
      * Constructor: learns class models based on a collection of training
      * documents.
@@ -33,12 +39,13 @@ class naive_bayes : public classifier
      * @param alpha Optional smoothing parameter for term frequencies
      * @param beta Optional smoothing parameter for class frequencies
      */
-    naive_bayes(std::shared_ptr<index::forward_index> idx, double alpha = 0.1,
-                double beta = 0.1);
+    naive_bayes(std::shared_ptr<index::forward_index> idx,
+                double alpha = default_alpha, double beta = default_beta);
 
     /**
      * Creates a classification model based on training documents.
-     * Calculates P(term|class) and P(class) for all the training documents.
+     * Calculates \f$P(term|class)\f$ and \f$P(class)\f$ for all the
+     * training documents.
      * @param docs The training documents
      */
     void train(const std::vector<doc_id>& docs) override;
@@ -65,8 +72,8 @@ class naive_bayes : public classifier
     /**
      * Contains P(term|class) for each class.
      */
-    std::unordered_map
-        <class_label, std::unordered_map<term_id, double>> term_probs_;
+    std::unordered_map<class_label, std::unordered_map<term_id, double>>
+        term_probs_;
 
     /**
      * Contains the number of documents in each class
@@ -82,7 +89,16 @@ class naive_bayes : public classifier
     /** smoothing parameter for class counts */
     const double beta_;
 };
-}
-}
 
+/**
+ * Specialization of the factory method used for creating naive bayes
+ * classifiers.
+ */
+template <>
+std::unique_ptr<classifier>
+    make_classifier<naive_bayes>(const cpptoml::toml_group& config,
+                                 std::shared_ptr<index::forward_index> idx);
+
+}
+}
 #endif

@@ -28,15 +28,15 @@ namespace kernel
 class radial_basis
 {
   public:
+    /**
+     * Constructs a new radial_basis kernel with the given parameter.
+     *
+     * @param gamma The parameter for the radial basis function.
+     */
     radial_basis(double gamma) : gamma_{gamma}
     {
         /* nothing */
     }
-
-    radial_basis(const radial_basis&) = default;
-    radial_basis(radial_basis&&) = default;
-    radial_basis& operator=(const radial_basis&) = default;
-    radial_basis& operator=(radial_basis&&) = default;
 
     /**
      * Computes the value of \f$K(first, second)\f$.

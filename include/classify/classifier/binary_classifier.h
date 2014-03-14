@@ -30,6 +30,10 @@ class binary_classifier : public classifier
      * positive example and everything else as a negative example. The
      * negative class label will be returned for anything that is deemed
      * negative.
+     *
+     * @param idx The forward_index to read documents from
+     * @param positive The class label to return for "positive" documents
+     * @param negative The class label to return for "negative" documents
      */
     binary_classifier(std::shared_ptr<index::forward_index> idx,
                       class_label positive, class_label negative);
@@ -37,13 +41,15 @@ class binary_classifier : public classifier
     /**
      * Classifies a document into a specific group, as determined by
      * training data.
+     *
      * @param d_id The document to classify
      * @return the class it belongs to
      */
     class_label classify(doc_id d_id) final;
 
     /**
-     * Returns the "confidence" that this document is a positive example.
+     * @param d_id The document to classify
+     * @return the "confidence" that this document is a positive example.
      */
     virtual double predict(doc_id d_id) const = 0;
 

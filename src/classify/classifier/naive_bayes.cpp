@@ -4,6 +4,7 @@
  */
 
 #include <unordered_set>
+#include "cpptoml.h"
 #include "cluster/similarity.h"
 #include "classify/classifier/naive_bayes.h"
 #include "index/postings_data.h"
@@ -78,6 +79,22 @@ class_label naive_bayes::classify(doc_id d_id)
     }
 
     return label;
+}
+
+template <>
+std::unique_ptr<classifier>
+    make_classifier<naive_bayes>(const cpptoml::toml_group& config,
+                                 std::shared_ptr<index::forward_index> idx)
+{
+    auto alpha = naive_bayes::default_alpha;
+    if (auto c_alpha = config.get_as<double>("alpha"))
+        alpha = *c_alpha;
+
+    auto beta = naive_bayes::default_beta;
+    if (auto c_beta = config.get_as<double>("beta"))
+        beta = *c_beta;
+
+    return make_unique<naive_bayes>(std::move(idx), alpha, beta);
 }
 }
 }

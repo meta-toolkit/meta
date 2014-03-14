@@ -18,9 +18,18 @@ namespace classify
 namespace loss
 {
 
+/**
+ * The least-squares loss function for SGD algorithms.
+ *
+ * Defined as \f$\phi(p, y) = (p - y)^2\f$.
+ */
 struct least_squares : public loss_function
 {
+    /**
+     * The identifier for this loss function.
+     */
     const static std::string id;
+
     double loss(double prediction, int expected) const override;
     double derivative(double prediction, int expected) const override;
 };

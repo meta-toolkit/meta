@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include "index/forward_index.h"
 #include "classify/classifier/classifier.h"
+#include "classify/classifier_factory.h"
 #include "meta.h"
 
 namespace meta
@@ -29,6 +30,13 @@ namespace classify
 class winnow : public classifier
 {
   public:
+    /// The default \f$m\f$ parameter.
+    const static constexpr double default_m = 1.5;
+    /// The default \f$gamma\f$ parameter.
+    const static constexpr double default_gamma = 0.05;
+    /// The default number of allowed iterations.
+    const static constexpr size_t default_max_iter = 100;
+
     /**
      * Constructs a winnow classifier with the given multiplier,
      * error threshold, and maximum iterations.
@@ -38,8 +46,8 @@ class winnow : public classifier
      * @param gamma \f$gamma\f$, the error threshold
      * @param max_iter The maximum number of iterations for training.
      */
-    winnow(std::shared_ptr<index::forward_index> idx, double m = 1.5,
-           double gamma = 0.05, size_t max_iter = 100);
+    winnow(std::shared_ptr<index::forward_index> idx, double m = default_m,
+           double gamma = default_gamma, size_t max_iter = default_max_iter);
 
     /**
      * Trains the winnow on the given training documents.
@@ -97,7 +105,7 @@ class winnow : public classifier
     std::unordered_map<class_label, std::unordered_map<term_id, double>>
         weights_;
 
-    /// \f$\m\f$, the multiplicative learning rate.
+    /// \f$m\f$, the multiplicative learning rate.
     const double m_;
 
     /// \f$\gamma\f$, the error threshold.
@@ -106,7 +114,15 @@ class winnow : public classifier
     /// The maximum number of iterations for training.
     const size_t max_iter_;
 };
-}
-}
 
+/**
+ * Specialization of the factory method used for creating winnow
+ * classifiers.
+ */
+template <>
+std::unique_ptr<classifier>
+    make_classifier<winnow>(const cpptoml::toml_group& config,
+                            std::shared_ptr<index::forward_index> idx);
+}
+}
 #endif

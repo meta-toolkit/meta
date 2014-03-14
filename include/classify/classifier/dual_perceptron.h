@@ -28,11 +28,19 @@ namespace classify
 class dual_perceptron : public classifier
 {
   public:
+    /// The default \f$\alpha\f$ parameter.
     const static constexpr double default_alpha = 0.1;
+
+    /// The default \f$\gamma\f$ parameter.
     const static constexpr double default_gamma = 0.05;
+
+    /// The default \f$b\f$ parameter.
     const static constexpr double default_bias = 0;
+
+    /// The default number of allowed iterations.
     const static constexpr uint64_t default_max_iter = 100;
 
+    /// The identifier for this classifier
     const static std::string id;
 
     /**
@@ -89,7 +97,7 @@ class dual_perceptron : public classifier
      * class whose associated weight vector gives the highest result.
      *
      * @param doc The document to be classified.
-     * @return The class label determined for the document.
+     * @return the class label determined for the document.
      */
     class_label classify(doc_id d_id) override;
 
@@ -103,15 +111,21 @@ class dual_perceptron : public classifier
     /**
      * Decreases the "weight" (mistake count) for a given class label
      * and document.
+     *
+     * @param label The class label
+     * @param id The document
      */
     void decrease_weight(const class_label& label, const doc_id& id);
 
     /**
      * The "weight" (mistake count) vectors for each class label.
      */
-    std::unordered_map
-        <class_label, std::unordered_map<doc_id, uint64_t>> weights_;
+    std::unordered_map<class_label, std::unordered_map<doc_id, uint64_t>>
+        weights_;
 
+    /**
+     * Convenience typedef for the postings data type.
+     */
     using pdata = decltype(idx_->search_primary(doc_id{}));
 
     /**
@@ -147,23 +161,6 @@ class dual_perceptron : public classifier
 template <>
 std::unique_ptr<classifier> make_classifier<dual_perceptron>(
         const cpptoml::toml_group&, std::shared_ptr<index::forward_index>);
-
-/**
- * Creates a dual_perceptron with the given arguments, for convenience.
- * Similar to make_pair in spirit---avoid typing the kernel type more than
- * once.
- *
- * @param idx the forward_index to be used for finding the documents
- * @param kernel the desired kernel function
- * @param args the remaining arguments to forward to the constructor
- */
-template <class Kernel, class... Args>
-dual_perceptron make_perceptron(std::shared_ptr<index::forward_index> idx,
-                                Kernel&& kernel, Args&&... args)
-{
-    return dual_perceptron{std::move(idx), std::forward<Kernel>(kernel),
-                           std::forward<Args>(args)...};
-}
 }
 }
 #endif

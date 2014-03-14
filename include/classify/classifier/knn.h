@@ -34,7 +34,7 @@ class knn : public classifier
 
     /**
      * @param idx The index to run the classifier on
-     * @param ranker
+     * @param ranker The ranker to be used internally
      * @param k The value of k in k-NN
      * @param args Arguments to the chosen ranker constructor
      */
@@ -65,6 +65,7 @@ class knn : public classifier
     /**
      * @param scored
      * @param sorted
+     * @return the best label
      */
     class_label
         select_best_label(const std::vector<std::pair<doc_id, double>>& scored,

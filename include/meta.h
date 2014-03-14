@@ -94,6 +94,12 @@ namespace classify
 namespace kernel
 {
 }
+/**
+ * Loss functions for sgd.
+ */
+namespace loss
+{
+}
 }
 
 /**

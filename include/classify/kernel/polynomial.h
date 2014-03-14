@@ -23,7 +23,7 @@ namespace kernel
  * data that is not linearly separable.
  *
  * Uses the general form of:
- * \f$K(x,z) = (x^\intercal z + c)^p\f$
+ * \f$K(x,z) = (x^T z + c)^p\f$
  */
 class polynomial
 {
@@ -37,12 +37,8 @@ class polynomial
      */
     polynomial(uint8_t power = 1, double c = 1) : power_{power}, c_{c}
     {
+        // nothing
     }
-
-    polynomial(const polynomial&) = default;
-    polynomial(polynomial&&) = default;
-    polynomial& operator=(const polynomial&) = default;
-    polynomial& operator=(polynomial&&) = default;
 
     /**
      * Computes the value of \f$K(first, second)\f$.
