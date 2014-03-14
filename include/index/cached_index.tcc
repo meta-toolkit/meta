@@ -12,10 +12,11 @@ namespace index
 
 template <class Index, template <class, class> class Cache>
 template <class... Args>
-cached_index
-    <Index, Cache>::cached_index(cpptoml::toml_group& config, Args&&... args)
-    : Index{config}, cache_{std::forward<Args>(args)...}
-{/* nothing */
+cached_index<Index, Cache>::cached_index(cpptoml::toml_group& config,
+                                         Args&&... args)
+    : Index{config}, cache_(std::forward<Args>(args)...)
+{
+    /* nothing */
 }
 
 template <class Index, template <class, class> class Cache>
