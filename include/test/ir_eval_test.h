@@ -18,7 +18,10 @@ namespace meta
 {
 namespace testing
 {
-
+/**
+ * Runs the IR evaluation tests.
+ * @return the number of tests failed
+ */
 int ir_eval_tests();
 }
 }

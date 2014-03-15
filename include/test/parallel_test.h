@@ -30,14 +30,30 @@ template <class Type>
 void easy_func(Type& x);
 
 /**
- * Assumes multi-core machine...
+ * Assumes multi-core machine: tests speed; serial should be slower than
+ * parallel.
+ * @param v A vector of doubles to perform math ops on
+ * @return positive number if failed
  */
 int test_speed(std::vector<double>& v);
 
+/**
+ * Checks that each thread touches each index exactly once.
+ * @param v A vector of doubles to perform math ops on
+ * @return positive number if failed
+ */
 int test_correctness(std::vector<double>& v);
 
+/**
+ * Tests the threadpool.
+ * @return the number of tests failed
+ */
 int test_threadpool();
 
+/**
+ * Tests all the parallel functions.
+ * @return the number of tests failed
+ */
 int parallel_tests();
 }
 }

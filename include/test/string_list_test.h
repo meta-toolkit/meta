@@ -24,9 +24,15 @@ namespace meta
 {
 namespace testing
 {
-
+/**
+ * @param file The file to read from
+ * @param expect What we expect to read
+ */
 void assert_read(std::ifstream& file, const std::string& expect);
 
+/**
+ * Always makes sure a new file is created.
+ */
 struct file_guard
 {
     /**
@@ -45,10 +51,14 @@ struct file_guard
     {
         filesystem::delete_file(path_);
     }
-
+    /// The path to this file
     const std::string& path_;
 };
 
+/**
+ * Runs the string list tests.
+ * @return the number of tests failed
+ */
 int string_list_tests();
 }
 }

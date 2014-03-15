@@ -21,27 +21,54 @@ namespace meta
 {
 namespace testing
 {
-
+/**
+ * Creates a test-config.toml with the desired settings.
+ */
 void create_libsvm_config();
 
+/**
+ * Asserts that the bcancer corpus was created correctly.
+ * @param idx The index to use
+ */
 template <class Index>
 void check_bcancer_expected(Index& idx);
 
+/**
+ * Asserts that the bcancer corpus was created correctly.
+ * @param idx The index to use
+ */
 template <class Index>
 void check_ceeaus_expected_fwd(Index& idx);
 
+/**
+ * Asserts that the ceeaus corpus was created correctly.
+ * @param idx The index to use
+ */
 template <class Index>
 void check_bcancer_doc_id(Index& idx);
 
+/**
+ * Asserts that the ceeaus corpus was created correctly.
+ * @param idx The index to use
+ */
 template <class Index>
 void check_ceeaus_doc_id(Index& idx);
 
+/**
+ * Runs the ceeaus forward index tests.
+ */
 void ceeaus_forward_test();
 
+/**
+ * Runs the bcancer forward index tests.
+ */
 void bcancer_forward_test();
 
+/**
+ * Runs all the forward_index tests.
+ * @return the number of tests failed
+ */
 int forward_index_tests();
-
 }
 }
 

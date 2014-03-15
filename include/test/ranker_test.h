@@ -17,10 +17,19 @@ namespace meta
 {
 namespace testing
 {
-
+/**
+ * Queries an index with its own docs to ensure that the query is the first doc
+ * returned.
+ * @param r The ranker to test
+ * @param idx The index to use
+ */
 template <class Ranker, class Index>
 void test_rank(Ranker& r, Index& idx);
 
+/**
+ * Runs all the ranking tests.
+ * @return the number of tests failed
+ */
 int ranker_tests();
 }
 }
