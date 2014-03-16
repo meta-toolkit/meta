@@ -102,7 +102,7 @@ ngram = 1
 {% endhighlight %}
 
 MeTA provides many different classes to support building filter chains.
-Please look at the api documentation for more information. In particular,
+Please look at the API documentation for more information. In particular,
 the [`analyzers::tokenizers`
 namespace](doxygen/namespacemeta_1_1analyzers_1_1tokenizers.html) and the
 [`analyzers::filters`

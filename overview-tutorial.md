@@ -52,10 +52,10 @@ classification: **MeTA supports out-of-core classification by default!** If your
 dataset is small enough (like most other toolkits assume), you can use a cache
 such as `no_evict_cache` to keep it all in memory without sacrificing any speed.
 
-Index usage is explained in much more detail in the [Search Tutorial]
-({{site.baseurl}}/index-tutorial.html), though it might make more sense to read
-the about [Filters and Analyzers]
-({{site.baseurl}}/analyzers-filters-tutorial.html) first.
+Index usage is explained in much more detail in the [Search
+Tutorial]({{site.baseurl}}/index-tutorial.html), though it might make more sense
+to read the about [Filters and
+Analyzers]({{site.baseurl}}/analyzers-filters-tutorial.html) first.
 
 ## Corpus input formats
 
@@ -98,12 +98,20 @@ format:
    dataset](http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/) can be
    used to create a `forward_index`.
 
-## Filters and Analyzers
+## Tokenizers, Filters, and Analyzers
 
-MeTA processes data with a system of filters and analyzers before it is indexed.
+MeTA processes data with a system of tokenizers, filters and analyzers before it
+is indexed.
 
-**Filters** come first, and can be chained together. They define ways that text
-can be segemented and transformed. Here are some examples of filters:
+**Tokenizers** come first. They define how to split a document's content into
+tokens. Some examples are:
+
+ - `icu_tokenizer`: converts documents into streams of tokens by following the
+   unicode standards for sentence and word segmentation.
+ - `character_tokenizer`: converts documents into streams of single characters.
+
+**Filters** come next, and can be chained together. They define ways that text
+can be modified or transformed. Here are some examples of filters:
 
  - `length_filter`: this filter accepts tokens that are within a certain length
    and rejects those that are not.

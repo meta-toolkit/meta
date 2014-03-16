@@ -3,11 +3,11 @@ title: MeTA
 layout: default
 ---
 
-MeTA is a modern C++ data sciences toolkit featuring
+## MeTA is a modern C++ data sciences toolkit featuring
 
  - text tokenization, including deep semantic features like parse trees
  - inverted and forward indexes with compression and various caching strategies
- - various ranking functions for the indexes
+ - various ranking functions for searching the indexes
  - topic modeling algorithms
  - language modeling algorithms
  - clustering and similarity algorithms
@@ -21,9 +21,7 @@ Software](http://jmlr.org/mloss/).
 
 ## Documentation
 
-Doxygen documentation can be found
-[here]({{site.baseurl}}/doxygen/). Note that this is
-probably not as frequently updated as it should be.
+Doxygen documentation can be found [here]({{site.baseurl}}/doxygen/).
 
 ## Tutorials
 
@@ -58,7 +56,8 @@ git submodule update
 {% endhighlight %}
 
    Then, make sure you compile liblinear and libsvm (located in
-   deps/libsvm-modules). It is not necessary to compile any other submodules.
+   deps/libsvm-modules). It is not necessary to compile or modify any other
+   submodules.
 
  - To compile initially, run the following commands
 
@@ -72,4 +71,19 @@ make
  - There are rules for clean, tidy, and doc. (Also, once you run the cmake
    command once, you should be able to just run make like usual as you're
    developing---it'll detect when the CMakeLists.txt file has changed and
-   rebuild Makefiles if it needs to.)
+   rebuild Makefiles if it needs to.) To compile in release mode, just replace
+   `Debug` with `Release`.
+
+---
+
+[Home]({{site.baseurl}}/)
+&nbsp; | &nbsp;
+[Overview]({{site.baseurl}}/overview-tutorial.html)
+&nbsp; | &nbsp;
+[Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
+&nbsp; | &nbsp;
+[Search]({{site.baseurl}}/search-tutorial.html)
+&nbsp; | &nbsp;
+[Classifiers]({{site.baseurl}}/classify-tutorial.html)
+&nbsp; | &nbsp;
+[Topic Models]({{site.baseurl}}/topic-models-tutorial.html)

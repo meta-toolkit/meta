@@ -126,7 +126,7 @@ don't have one. It must be named `dataset-queries.txt`, where in our example
 {% endhighlight %}
 
 The top 10 documents for each query are then displayed along with the time
-taken to run the all the queries.
+taken to run all the queries.
 
 ## Writing code
 

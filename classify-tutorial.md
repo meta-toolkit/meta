@@ -31,7 +31,6 @@ configuration file would look something like this:
 {% highlight toml %}
 corpus-type = "line-corpus"
 dataset = "20newsgroups"
-list = "20news"
 forward-index = "20news-fwd"
 inverted-index = "20news-inv"
 
@@ -64,7 +63,6 @@ your configuration file would look something like this:
 {% highlight toml %}
 corpus-type = "line-corpus"
 dataset = "rcv1"
-list = "rcv1"
 forward-index = "rcv1-fwd"
 inverted-index = "rcv1-inv"
 
@@ -105,7 +103,7 @@ Here is an example configuration that uses Naive Bayes:
 method = "naive-bayes"
 {% endhighlight %}
 
-Here is an example that uses k-nearest neighbor with k = 10 and Okapi BM25
+Here is an example that uses *k*-nearest neighbor with *k* = 10 and Okapi BM25
 as the ranking function:
 
 {% highlight toml %}
