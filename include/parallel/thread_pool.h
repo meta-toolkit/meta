@@ -91,6 +91,15 @@ class thread_pool
         return ids;
     }
 
+    /**
+     * @return the number of currently queued tasks
+     */
+    size_t tasks() const
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        return tasks_.size();
+    }
+
   private:
     /**
      * A generic task object.
@@ -155,7 +164,7 @@ class thread_pool
 
     bool running_;
 
-    std::mutex mutex_;
+    mutable std::mutex mutex_;
     std::condition_variable cond_;
 };
 }
