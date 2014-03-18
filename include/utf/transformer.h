@@ -49,11 +49,14 @@ class transformer
 
     /**
      * Transforms the given utf8 string.
+     * @return the transformed string, encoded in utf8
      */
     std::string operator()(const std::string& str);
 
   private:
+    /// The implementation class for transformers.
     class impl;
+    /// A pointer to the implementation class for this transformer.
     util::pimpl<impl> impl_;
 };
 }

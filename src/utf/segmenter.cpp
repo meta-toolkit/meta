@@ -20,6 +20,9 @@ namespace utf
 class segmenter::impl
 {
   public:
+    /**
+     * Constructs a new impl.
+     */
     impl()
     {
         auto status = U_ZERO_ERROR;
@@ -32,6 +35,10 @@ class segmenter::impl
             throw std::runtime_error{"failed to create segmenter"};
     }
 
+    /**
+     * Copy constructs an impl.
+     * @param other The impl to copy.
+     */
     impl(const impl& other)
         : u_str_{other.u_str_},
           sentence_iter_{other.sentence_iter_->clone()},
@@ -40,10 +47,12 @@ class segmenter::impl
         // nothing
     }
 
+    /// Defaulted move constructor.
     impl(impl&&) = default;
 
     /**
      * Sets the content of the segmenter.
+     * @param str The content to be set
      */
     void set_content(const std::string& str)
     {
@@ -54,6 +63,10 @@ class segmenter::impl
      * Obtains a utf-8 encoded string by first extracting the utf-16
      * encoded substring between the given indices and converting that
      * substring to utf-8.
+     *
+     * @param begin The beginning index
+     * @param end The ending index
+     * @return the substring between begin and end
      */
     std::string substr(int32_t begin, int32_t end) const
     {
@@ -72,6 +85,7 @@ class segmenter::impl
 
     /**
      * Segments the entire content into sentences.
+     * @return a vector of segments representing sentences
      */
     std::vector<segment> sentences() const
     {
@@ -80,6 +94,7 @@ class segmenter::impl
 
     /**
      * Segments the entire content into words.
+     * @return a vector of segments representing words
      */
     std::vector<segment> words() const
     {
@@ -90,6 +105,11 @@ class segmenter::impl
      * Generic segmentation method that operates on the substring between
      * the given indices, using the given strategy for segmenting that
      * substring.
+     *
+     * @param first The index of the beginning of the string to work on
+     * @param last The index of the end of the string to work on
+     * @param type The type of segmentation to perform
+     * @return a vector of segments (whose meaning depends on `type`)
      */
     std::vector<segment> segments(int32_t first, int32_t last,
                                   segment_t type) const
@@ -125,8 +145,11 @@ class segmenter::impl
     }
 
   private:
+    /// The internal ICU string
     icu::UnicodeString u_str_;
+    /// A pointer to a sentence break iterator
     std::unique_ptr<icu::BreakIterator> sentence_iter_;
+    /// A pointer to a word break iterator
     std::unique_ptr<icu::BreakIterator> word_iter_;
 };
 

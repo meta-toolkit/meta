@@ -32,13 +32,21 @@ class segmenter
     class segment
     {
       public:
+        /**
+         * Creates a segment.
+         *
+         * @param begin The starting index of the segment
+         * @param end The ending index of the segment
+         */
         segment(int32_t begin, int32_t end);
 
       private:
         friend segmenter;
         // using int32_t here because of ICU, which accepts only int32_t as
         // its indexes
+        /// The beginning index of this segment.
         int32_t begin_;
+        /// The ending index of this segment.
         int32_t end_;
     };
 
@@ -62,19 +70,23 @@ class segmenter
     /**
      * Resets the content of the segmenter to the given string.
      *
-     * @param str a utf-8 string that should be segmented
+     * @param str A utf-8 string that should be segmented
      */
     void set_content(const std::string& str);
 
     /**
      * Segments the current content into sentences by following the
      * unicode segmentation standard.
+     *
+     * @return a vector of segments that represent sentences
      */
     std::vector<segment> sentences() const;
 
     /**
      * Segments the current content into words by following the unicode
      * segmentation standard.
+     *
+     * @return a vector of segments that represent words
      */
     std::vector<segment> words() const;
 
@@ -84,19 +96,20 @@ class segmenter
      * segment a sentence segment into its constituent words.
      *
      * @param seg the segment to sub-segment into words
+     * @return a vector of segments that represent words
      */
     std::vector<segment> words(const segment& seg) const;
 
     /**
-     * Gets the content associated with a given segment as a utf-8 encoded
-     * string.
-     *
+     * @return the content associated with a given segment as a utf-8
+     * encoded string
      * @param seg the segment to get content for
      */
     std::string content(const segment& seg) const;
 
   private:
     class impl;
+    /// A pointer to the implementation class for the segmenter.
     util::pimpl<impl> impl_;
 };
 }

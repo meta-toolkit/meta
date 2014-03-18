@@ -20,6 +20,10 @@ namespace utf
 class transformer::impl
 {
   public:
+    /**
+     * Constructs a new impl.
+     * @param id The ICU id for the internal Transliterator to be created
+     */
     impl(const std::string& id)
     {
         icu_handle::get();
@@ -31,13 +35,23 @@ class transformer::impl
             throw std::runtime_error{"failed to create transformer"};
     }
 
+    /**
+     * Copy constructs an impl
+     * @param other The impl to copy
+     */
     impl(const impl& other) : translit_{other.translit_->clone()}
     {
         // nothing
     }
 
+    /// Defaulted move constructor
     impl(impl&&) = default;
 
+    /**
+     * Converts a string using the internal Transliterator.
+     * @param str The string to convert
+     * @return the converted string, encoded in utf8
+     */
     std::string convert(const std::string& str)
     {
         auto icu_str = icu::UnicodeString::fromUTF8(str);
@@ -46,6 +60,7 @@ class transformer::impl
     }
 
   private:
+    /// A pointer to the internal Transliterator
     std::unique_ptr<icu::Transliterator> translit_;
 };
 

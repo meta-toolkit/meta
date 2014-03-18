@@ -46,12 +46,21 @@ class icu_handle
         return handle;
     }
 
+    /**
+     * Destructor. Invokes the ICU cleanup method.
+     */
     ~icu_handle()
     {
         u_cleanup();
     }
 };
 
+/**
+ * Helper method that converts an ICU string to a std::u16string.
+ *
+ * @param icu_str The ICU string to be converted
+ * @return a std::u16string from the given ICU string
+ */
 inline std::u16string icu_to_u16str(const icu::UnicodeString& icu_str)
 {
     std::u16string u16str;
@@ -65,6 +74,12 @@ inline std::u16string icu_to_u16str(const icu::UnicodeString& icu_str)
     return u16str;
 }
 
+/**
+ * Helper method that converts an ICU string to a std::string in utf8.
+ *
+ * @param icu_str The ICU string to be converted
+ * @return a std::string in utf8 from the given ICU string
+ */
 inline std::string icu_to_u8str(const icu::UnicodeString& icu_str)
 {
     std::string u8str;
@@ -72,6 +87,11 @@ inline std::string icu_to_u8str(const icu::UnicodeString& icu_str)
     return u8str;
 }
 
+/**
+ * Helper method that appends a UTF-32 codepoint to the given utf8 string.
+ * @param dest The string to append the codepoint to
+ * @param codepoint The UTF-32 codepoint to append
+ */
 inline void utf8_append_codepoint(std::string& dest, uint32_t codepoint)
 {
     std::array<uint8_t, U8_MAX_LENGTH> buf;
