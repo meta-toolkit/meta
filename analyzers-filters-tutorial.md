@@ -93,10 +93,10 @@ ngram = 1
     type = "icu-tokenizer"
 
     [[analyzers.filter]]
-    type = "lowercase-filter"
+    type = "lowercase"
 
     [[analyzers.filter]]
-    type = "length-filter"
+    type = "length"
     min = 2
     max = 35
 {% endhighlight %}
