@@ -87,10 +87,10 @@ class logger
         /**
          * Constructs a new log line for the given logger.
          *
-         * @param log The logger this message was created for.
-         * @param sev The severity of this message.
-         * @param line The line number for this message.
-         * @param file The file for this message.
+         * @param log The logger this message was created for
+         * @param sev The severity of this message
+         * @param line The line number for this message
+         * @param file The file for this message
          */
         log_line(logger& log, severity_level sev, size_t line,
                  const std::string& file)
@@ -103,6 +103,9 @@ class logger
          * Simulates a std::endl, but for log entries. Flushes
          * all internal streams and then writes the log_line to
          * all sinks of the log object it was created with.
+         *
+         * @param logline The log line to be flushed to all sinks
+         * @return the log line given
          */
         static log_line& endlg(log_line& logline)
         {
@@ -116,6 +119,7 @@ class logger
          * manipulator is sent to the log_line stream.
          *
          * @param fn A function pointer sent to the stream.
+         * @return the current log_line, for chaining
          */
         log_line& operator<<(log_line& (*fn)(log_line&))
         {
@@ -127,6 +131,7 @@ class logger
          * to the internal stream.
          *
          * @param to_write The data to be written.
+         * @return the current log_line, for chaining
          */
         template <class T>
         log_line& operator<<(const T& to_write)
@@ -146,6 +151,7 @@ class logger
 
         /**
          * Converts the internal stream to a string.
+         * @return the string for this log_line
          */
         std::string str() const
         {
@@ -153,7 +159,7 @@ class logger
         }
 
         /**
-         * Gets the severity of this log_line.
+         * @return the severity of this log_line
          */
         severity_level severity() const
         {
@@ -161,7 +167,7 @@ class logger
         }
 
         /**
-         * Gets the file for this log_line.
+         * @return the file for this log_line
          */
         const std::string& file() const
         {
@@ -169,7 +175,7 @@ class logger
         }
 
         /**
-         * Gets the line number for this log_line.
+         * @return the line number for this log_line
          */
         size_t line() const
         {
@@ -209,22 +215,28 @@ class logger
     class sink
     {
       public:
-        typedef std::function<std::string(const log_line&)> formatter_func;
-        typedef std::function<bool(const log_line&)> filter_func;
+        /**
+         * Convenience typedef for functions that format log lines.
+         */
+        using formatter_func = std::function<std::string(const log_line&)>;
 
         /**
-         * Creates a new sink with the given formatting function
-         * and filtering function. A filtering function should take
-         * a log_line by const-reference and determine if it should
-         * or should not be written to the stream. If a formatting
-         * function is not provided, use a sane default formatter.
+         * Convenience typedef for functions that filter log lines.
+         */
+        using filter_func = std::function<bool(const log_line&)>;
+
+        /**
+         * Creates a new sink with the given formatting function and
+         * filtering function. A filtering function should take a log_line
+         * by const-reference and determine if it should or should not be
+         * written to the stream. If a formatting function is not provided,
+         * use a sane default formatter.
          *
-         * @param stream The stream this sink will write to.
-         * @param formatter The formatting function object to
-         *  use to format the log_lines written to the stream.
-         * @param filter The filtering function used to
-         *  determine if a given log_line should be written to
-         *  the stream or not.
+         * @param stream The stream this sink will write to
+         * @param formatter The formatting function object to use to format
+         * the log_lines written to the stream
+         * @param filter The filtering function used to determine if a
+         * given log_line should be written to the stream or not
          */
         sink(std::ostream& stream, const filter_func& filter =
             [](const log_line&) { return true; },
@@ -235,16 +247,15 @@ class logger
         }
 
         /**
-         * Creates a new sink on the given stream, filtering out
-         * all results that are greater than or equal to the
-         * specified severity, using the provided formatting
-         * function. If no formatting function is provided, use a
-         * sane default.
+         * Creates a new sink on the given stream, filtering out all
+         * results that are greater than or equal to the specified
+         * severity, using the provided formatting function. If no
+         * formatting function is provided, use a sane default.
          *
-         * @param stream The stream this sink will write to.
-         * @param sev The severity level at or above which log
-         *  lines will be kept.
-         * @param formatter The optional formatting function.
+         * @param stream The stream this sink will write to
+         * @param sev The severity level at or above which log lines will
+         * be kept
+         * @param formatter The optional formatting function
          */
         sink(std::ostream& stream, logger::severity_level sev,
              const formatter_func& formatter = &default_formatter)
@@ -257,10 +268,10 @@ class logger
         }
 
         /**
-         * Writes the given log_line to the stream, formatting
-         * and filtering it as necessary.
+         * Writes the given log_line to the stream, formatting and
+         * filtering it as necessary.
          *
-         * @param line The log_line to be written.
+         * @param line The log_line to be written
          */
         void write(const log_line& line)
         {
@@ -277,9 +288,9 @@ class logger
         /**
          * The default formatting function.
          *
-         * @param line The log_line to format.
-         * @return A string representation of the log_line
-         *  suitable for writing to a std::ostream.
+         * @param line The log_line to format
+         * @return a string representation of the log_line suitable for
+         * writing to a std::ostream
          */
         static std::string default_formatter(const log_line& line)
         {
@@ -326,7 +337,7 @@ class logger
     /**
      * Adds a sink to the given logger.
      *
-     * @param s The sink to add.
+     * @param s The sink to add
      */
     void add_sink(const sink& s)
     {
@@ -336,7 +347,7 @@ class logger
     /**
      * Adds a sink to the given logger.
      *
-     * @param s The sink to add.
+     * @param s The sink to add
      */
     void add_sink(sink&& s)
     {
@@ -346,7 +357,7 @@ class logger
     /**
      * Writes the given log_line to all sinks.
      *
-     * @param line The log_line to write.
+     * @param line The log_line to write
      */
     void write_to_sinks(const log_line& line)
     {
@@ -362,7 +373,7 @@ class logger
 };
 
 /**
- * Gets a static instance of a logger.
+ * @return a static instance of a logger
  */
 inline logger& get_logger()
 {
@@ -372,6 +383,7 @@ inline logger& get_logger()
 
 /**
  * Adds a sink to a static instance of a logger.
+ * @param s The sink to add to the static logger instance
  */
 inline void add_sink(const logger::sink& s)
 {
@@ -380,6 +392,7 @@ inline void add_sink(const logger::sink& s)
 
 /**
  * Adds a sink to a static instance of a logger.
+ * @param s The sink to add to the static logger instance
  */
 inline void add_sink(logger::sink&& s)
 {
@@ -389,6 +402,9 @@ inline void add_sink(logger::sink&& s)
 /**
  * Sets up default logging to cerr. Useful for a lot of the demo apps
  * to reduce verbosity in setup.
+ *
+ * @param sev The severity level below which to filter out (defaults to
+ * `trace`)
  */
 inline void set_cerr_logging(logging::logger::severity_level sev
                              = logging::logger::severity_level::trace)
