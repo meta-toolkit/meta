@@ -61,6 +61,8 @@ class thread_pool
     /**
      * Adds a task to the thread_pool.
      * @param func The function (task) to add
+     * @return a std::future that wraps the return value of the task for
+     * retrieval later
      */
     template <class Function>
     std::future<typename std::result_of<Function()>::type>
@@ -106,10 +108,15 @@ class thread_pool
      */
     struct task
     {
+        /**
+         * Runs the given task.
+         */
         virtual void run() = 0;
-        virtual ~task()
-        {
-        } // silence g++ errors
+
+        /**
+         * Virtual destructor to support deletion from base pointers.
+         */
+        virtual ~task() = default;
     };
 
     /**
@@ -118,29 +125,43 @@ class thread_pool
     template <class R>
     struct concrete_task : task
     {
+        /**
+         * Constructs a new concrete task.
+         *
+         * @param f The function to run.
+         */
         template <class Function>
         concrete_task(const Function& f)
             : task_(f)
         {
         }
 
-        virtual ~concrete_task()
-        {
-        } // silence g++ errors
+        /**
+         * Virtual destructor to support deletion from base pointers.
+         */
+        virtual ~concrete_task() = default;
 
-        virtual void run()
+        virtual void run() override
         {
             task_();
         }
 
+        /**
+         * @return the future associated with this task
+         */
         std::future<R> get_future()
         {
             return task_.get_future();
         }
 
+        /// the internal task representation
         std::packaged_task<R()> task_;
     };
 
+    /**
+     * Function invoked by the worker threads to process tasks off the
+     * internal queue.
+     */
     void worker()
     {
         while (true)
@@ -159,12 +180,17 @@ class thread_pool
         }
     }
 
+    /// the threads in the pool
     std::vector<std::thread> threads_;
+    /// the queue containing the tasks to be run
     std::queue<std::unique_ptr<task>> tasks_;
 
+    /// whether or not the pool is currently running
     bool running_;
 
+    /// the mutex to wrap queue operations
     mutable std::mutex mutex_;
+    /// the condition variable that workers sleep on when waiting for work
     std::condition_variable cond_;
 };
 }
