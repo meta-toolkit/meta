@@ -38,7 +38,8 @@ class disk_vector
      * @param path The path to save this vector as. If the file
      * exists, it is treated as disk_vector. If the file doesn't exist, a
      * new one is created.
-     * @param size The number of elements that will be in this vector
+     * @param size The number of elements that will be in this vector. If not
+     * specified, the disk_vector assumes that the file already exists.
      */
     disk_vector(const std::string& path, uint64_t size = 0);
 
@@ -103,43 +104,54 @@ class disk_vector
      */
     class iterator : public std::iterator<std::random_access_iterator_tag, T>
     {
+        /// Need to access disk_vector representation
         friend disk_vector;
 
       private:
+        /// The current index this iterator is at
         uint64_t idx_;
+
+        /// The current element this iterator is at
         T* data_;
 
-        /** constructor for disk_vector */
+        /**
+         * Constructor for disk_vector to use.
+         * @param idx The index to start out at
+         * @param data The data element to initially contain
+         */
         iterator(uint64_t idx, T* data) : idx_{idx}, data_{data}
-        {/* nothing */
+        {
+            /* nothing */
         }
 
       public:
-        /** constructor */
+        /// Constructor.
         iterator() : idx_{0}, data_{nullptr}
-        {/* nothing */
+        {
+            /* nothing */
         }
 
-        /** copy constructor */
+        /// Copy constructor.
         iterator(const iterator& other) : idx_{other.idx_}, data_{other.data_}
-        {/* nothing */
+        {
+            /* nothing */
         }
 
-        /** assignment operator */
+        /// assignment operator.
         iterator& operator=(iterator other)
         {
             std::swap(*this, other);
             return *this;
         }
 
-        /** pre-increment */
+        /// Pre-increment.
         iterator& operator++()
         {
             ++idx_;
             return *this;
         }
 
-        /** post-increment */
+        /// Post-increment.
         iterator operator++(int)
         {
             iterator save{*this};
@@ -147,14 +159,14 @@ class disk_vector
             return save;
         }
 
-        /** pre-decrement */
+        /// Pre-decrement.
         iterator& operator--()
         {
             --idx_;
             return *this;
         }
 
-        /** post-decrement */
+        /// Post-decrement.
         iterator operator--(int)
         {
             iterator save{*this};
@@ -162,31 +174,53 @@ class disk_vector
             return *this;
         }
 
-        /** equality */
+        /// Equality.
         bool operator==(const iterator& other)
         {
             return other.idx_ == idx_ && other.data_ == data_;
         }
 
-        /** inequality */
+        /// Inequality.
         bool operator!=(const iterator& other)
         {
             return !(*this == other);
         }
 
-        /** dereference operator */
+        /// Dereference operator.
         T& operator*()
         {
             return data_[idx_];
         }
 
-        /** arrow operator */
+        /// Arrow operator.
         const T* operator->()
         {
             return &data_[idx_];
         }
 
-        // TODO not all random_access_iterator functions are defined
+        /// Operator<.
+        bool operator<(const iterator& other) const
+        {
+            return idx_ < other.idx_;
+        }
+
+        /// Operator>.
+        bool operator>(const iterator& other) const
+        {
+            return idx_ > other.idx_;
+        }
+
+        /// Operator<=.
+        bool operator<=(const iterator& other) const
+        {
+            return idx_ <= other.idx_;
+        }
+
+        /// Operator>=.
+        bool operator>=(const iterator& other) const
+        {
+            return idx_ >= other.idx_;
+        }
     };
 
     /**
@@ -200,16 +234,16 @@ class disk_vector
     iterator end() const;
 
   private:
-    /** the path to the file this disk_vector uses for storage */
+    /// the path to the file this disk_vector uses for storage
     std::string path_;
 
-    /** the beginning of where the storage file is memory mapped */
+    /// the beginning of where the storage file is memory mapped
     T* start_;
 
-    /** this size of the memory-mapped file (in regards to T objects) */
+    /// this size of the memory-mapped file (in regards to T objects)
     uint64_t size_;
 
-    /** the file descriptor used to open and close the mmap file */
+    /// the file descriptor used to open and close the mmap file
     int file_desc_;
 
   public:

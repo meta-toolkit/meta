@@ -60,10 +60,13 @@ class confusion_matrix
     static size_t
         string_pair_hash(const std::pair<std::string, std::string>& strPair);
 
+    // note: the following *cannot* be converted to a using declaration
+    // without causing in internal compiler error (segmentation fault) in
+    // GCC 4.8.2
     /** typedef for predicted class assignments to counts. */
-    using prediction_counts =
-        std::unordered_map<std::pair<class_label, class_label>, size_t,
-                           decltype(&confusion_matrix::string_pair_hash)>;
+    typedef std::unordered_map<std::pair<class_label, class_label>, size_t,
+                               decltype(&confusion_matrix::string_pair_hash)>
+        prediction_counts;
 
     /**
      * @return all the predictions from this confusion_matrix.

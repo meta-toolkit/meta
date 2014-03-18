@@ -13,9 +13,11 @@ namespace meta
 {
 namespace testing
 {
-
+/**
+ * Tests filters.
+ * @return the number of tests failed
+ */
 int filter_tests();
-
 }
 }
 #endif

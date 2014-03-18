@@ -76,28 +76,28 @@ class compressed_file_writer
      */
     void write_buffer() const;
 
-    /** where to write the compressed data */
+    /// Where to write the compressed data
     FILE* outfile_;
 
-    /** the current byte this reader is on */
+    /// The current byte this reader is on
     uint64_t char_cursor_;
 
-    /** the current bit of the current byte this reader is on */
+    /// The current bit of the current byte this reader is on
     uint64_t bit_cursor_;
 
-    /** how large to make the internal writer buffer */
+    /// How large to make the internal writer buffer
     uint64_t buffer_size_;
 
-    /** saved data that is not yet written to disk */
+    /// Saved data that is not yet written to disk
     unsigned char* buffer_;
 
-    /** the mapping to use (actual -> compressed id) */
+    /// The mapping to use (actual -> compressed id)
     std::function<uint64_t(uint64_t)> mapping_;
 
-    /** the number of total bits that have been written (for seeking )*/
+    /// The number of total bits that have been written (for seeking)
     uint64_t bit_location_;
 
-    /** ensures the file isn't closed more than once */
+    /// Ensures the file isn't closed more than once
     bool closed_;
 
   public:
@@ -111,6 +111,11 @@ class compressed_file_writer
     };
 };
 
+/**
+ * Shows how to convert a number into its compressed form.
+ * @param key The value to transform
+ * @return the compressed form
+ */
 uint64_t default_compression_writer_func(uint64_t key);
 }
 }

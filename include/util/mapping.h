@@ -22,6 +22,8 @@ namespace map
 
 /**
  * This safe_at allows the use of a hash function to be specified.
+ * @param map The map to search
+ * @param key The key in the map to search for
  * @return the value for a given key in map if it exists; otherwise,
  * the default Value() is returned.
  */

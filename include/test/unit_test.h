@@ -104,9 +104,7 @@ namespace meta
  */
 namespace testing
 {
-/**
- * Used to compare floating point equality
- */
+/// Used to compare floating point equality
 static double epsilon = 0.0000001;
 
 /**
@@ -144,6 +142,12 @@ inline std::string assert_equal(const T& expected, const K& actual,
     return "";
 }
 
+/**
+ * @param expected The expected expression
+ * @param actual The actual expression
+ * @param expstr The expected string
+ * @param actstr The actual string
+ */
 template <class T, class K>
 inline std::string assert_equal(const T& expected, const K& actual,
                                 const char* expstr, const char* actstr)
@@ -155,6 +159,12 @@ inline std::string assert_equal(const T& expected, const K& actual,
     });
 }
 
+/**
+ * @param expected The expected expression
+ * @param actual The actual expression
+ * @param expstr The expected string
+ * @param actstr The actual string
+ */
 template <class T, class K>
 inline std::string assert_approx_equal(const T& expected, const K& actual,
                                        const char* expstr, const char* actstr)
@@ -169,6 +179,12 @@ inline std::string assert_approx_equal(const T& expected, const K& actual,
     return "";
 }
 
+/**
+ * @param expected The expected expression
+ * @param actual The actual expression
+ * @param expstr The expected string
+ * @param actstr The actual string
+ */
 template <class T, class K>
 inline std::string assert_less(const T& expected, const K& actual,
                                const char* expstr, const char* actstr)
@@ -183,6 +199,12 @@ inline std::string assert_less(const T& expected, const K& actual,
     return "";
 }
 
+/**
+ * @param expected The expected expression
+ * @param actual The actual expression
+ * @param expstr The expected string
+ * @param actstr The actual string
+ */
 template <class T, class K>
 inline std::string assert_greater(const T& expected, const K& actual,
                                   const char* expstr, const char* actstr)

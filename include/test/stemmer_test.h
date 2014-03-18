@@ -17,6 +17,10 @@ namespace meta
 {
 namespace testing
 {
+/**
+ * Runs all the stemming tests.
+ * @return the number of tests failed
+ */
 int stemmer_tests();
 }
 }

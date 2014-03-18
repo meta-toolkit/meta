@@ -45,27 +45,33 @@ class invertible_map
     size_t size() const;
 
     /**
+     * @param value The value to search by
      * @return a key given a value
      */
     Key get_key(const Value& value) const;
 
     /**
+     * @param key The key to search by
      * @return a value given a key
      */
     Value get_value(const Key& key) const;
 
     /**
+     * @param key The key to search for
      * @return whether the map contains the given key
      */
     bool contains_key(const Key& key) const;
 
     /**
+     * @param value The value to search for
      * @return whether the map contains the given value
      */
     bool contains_value(const Value& value) const;
 
     /**
      * Inserts a (key, value) pair into the invertible map
+     * @param key The key to insert
+     * @param value The value to insert
      */
     void insert(const Key& key, const Value& value);
 
@@ -96,28 +102,30 @@ class invertible_map
                      <std::bidirectional_iterator_tag, InnerIterator>
     {
       private:
-        /** the iterator of the underlying unordered_map */
+        /// The iterator of the underlying unordered_map
         InnerIterator iter;
 
       public:
-        /** Constructor */
+        /// Constructor.
         Iterator()
-        {/* nothing */
+        {
+            /* nothing */
         }
 
-        /** Copy constructor */
+        /// Copy constructor.
         Iterator(const InnerIterator& other) : iter{other}
-        {/* nothing */
+        {
+            /* nothing */
         }
 
-        /** Pre-Increment */
+        /// Pre-Increment.
         Iterator& operator++()
         {
             ++iter;
             return *this;
         }
 
-        /** Post-increment */
+        /// Post-increment.
         Iterator operator++(int)
         {
             InnerIterator save = iter;
@@ -125,14 +133,14 @@ class invertible_map
             return Iterator{save};
         }
 
-        /** Pre-decrement */
+        /// Pre-decrement.
         Iterator& operator--()
         {
             --iter;
             return *this;
         }
 
-        /** Post-decrement */
+        /// Post-decrement.
         Iterator operator--(int)
         {
             InnerIterator save = iter;
@@ -140,13 +148,13 @@ class invertible_map
             return Iterator{save};
         }
 
-        /** Iterator equality */
+        /// Iterator equality.
         bool operator==(const Iterator& other)
         {
             return iter == other.iter;
         }
 
-        /** Iterator inequality */
+        /// Iterator inequality.
         bool operator!=(const Iterator& other)
         {
             return iter != other.iter;
@@ -155,6 +163,7 @@ class invertible_map
         /**
          * Dereference operator. Returns the underlying value_type,
          *  which will always be a std::pair<Key, Value>
+         * @return a reference to the value of the object that is dereferenced
          */
         const typename InnerIterator::value_type& operator*()
         {
@@ -164,6 +173,7 @@ class invertible_map
         /**
          * Arrow operator. Returns a pointer to the underlying
          * value_type, which will always be a std::pair<Key, Value>
+         * @return a pointer to the value of the object that is dereferenced
          */
         const typename InnerIterator::value_type* operator->()
         {
@@ -177,7 +187,7 @@ class invertible_map
      */
     typedef Iterator iterator;
 
-    /** Lets const_iterator be interchangeable with "iterator" */
+    /// Lets const_iterator be interchangeable with "iterator"
     typedef Iterator const_iterator;
 
     /**
@@ -191,10 +201,10 @@ class invertible_map
     const_iterator end() const;
 
   private:
-    /** the internal map representing Key -> Value pairs */
+    /// The internal map representing Key -> Value pairs
     std::unordered_map<Key, Value> forward_;
 
-    /** the internal map representing Value -> Key pairs */
+    /// The internal map representing Value -> Key pairs
     std::unordered_map<Value, Key> backward_;
 
   public:

@@ -16,15 +16,30 @@ namespace meta
 {
 namespace testing
 {
-
+/**
+ * Tests libsvm strings containing a class label.
+ */
 void label();
 
+/**
+ * Tests libsvm strings not containing a class label.
+ */
 void no_label();
 
+/**
+ * Tests libsvm strings containing a bad class label.
+ */
 void bad_label();
 
+/**
+ * Tests libsvm strings containing a bad count data.
+ */
 void bad_counts();
 
+/**
+ * Runs all the libsvm parser tests.
+ * @return the number of tests failed
+ */
 int libsvm_parser_tests();
 }
 }

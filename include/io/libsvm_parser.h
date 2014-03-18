@@ -21,7 +21,7 @@ namespace io
 {
 namespace libsvm_parser
 {
-
+/// Collection of (term_id, double)
 using counts_t = const std::vector<std::pair<term_id, double>>;
 
 /**

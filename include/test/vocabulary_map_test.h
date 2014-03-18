@@ -21,13 +21,28 @@ namespace meta
 {
 namespace testing
 {
-
+/**
+ * Writes a file to decode
+ * @param size The number of bytes in the file
+ */
 void write_file(uint16_t size = 20);
 
+/**
+ * Makes sure the content in the vocab map is correct.
+ * @param size The number of bytes in the file
+ */
 void assert_correctness(uint16_t size = 20);
 
+/**
+ * Reads data from the vocab map file.
+ * @param size The number of bytes in the file
+ */
 void read_file(uint16_t size = 20);
 
+/**
+ * Runs the vocab map tests.
+ * @return the number of tests failed
+ */
 int vocabulary_map_tests();
 }
 }

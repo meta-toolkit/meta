@@ -88,28 +88,25 @@ class parser
      */
     void get_next();
 
-    /** the current position of the "cursor" into the file or string */
+    /// The current position of the "cursor" into the file or string
     size_t idx_;
 
-    /**
-     * Array of booleans indicating whether or not a character is a
-     * delimiter.
-     */
+    /// Array of booleans indicating whether or not a character is a delimiter
     std::array<bool, 256> invalid_;
 
-    /** saves the name of the file if the parser is parsing a file */
+    /// Saves the name of the file if the parser is parsing a file
     std::string filename_;
 
-    /** memory-mapped file pointer if the parser is parsing a file */
+    /// Memory-mapped file pointer if the parser is parsing a file
     std::unique_ptr<io::mmap_file> mmap_file_;
 
-    /** the number of characters that will be read */
+    /// The number of characters that will be read
     uint64_t size_;
 
-    /** pointer into a string or memory-mapped file */
+    /// Pointer into a string or memory-mapped file
     const char* data_;
 
-    /** the next token to be returned; "" if none */
+    /// The next token to be returned; "" if none
     std::string next_;
 };
 }
