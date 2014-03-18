@@ -22,15 +22,15 @@ namespace caching
 {
 
 /**
- * A splay_cache is a fixed-height splay tree for cache operations.
+ * A splay_cache is a fixed-size splay tree for cache operations.
  */
 template <class Key, class Value>
 class splay_cache
 {
   public:
     /**
-     * Creates a splay tree cache with maximum size (or not, if no size is
-     * given).
+     * Creates a splay tree cache with maximum size (or unlimited size, if
+     * no size is given).
      *
      * @param max_size The maximum number of nodes that will be in the splay
      * tree
@@ -40,12 +40,13 @@ class splay_cache
     /**
      * splay_cache can be move constructed
      */
-    splay_cache(splay_cache&& other);
+    splay_cache(splay_cache&&);
 
     /**
      * splay_cache can be move assigned
+     * @return the current splay_cache
      */
-    splay_cache& operator=(splay_cache&& other);
+    splay_cache& operator=(splay_cache&&);
 
     /**
      * Frees all objects in the cache
@@ -62,7 +63,8 @@ class splay_cache
 
     /**
      * @param key The key to find the corresponding value for
-     * @return the associated value for the given key
+     * @return an optional containing the associated value for the given
+     * key, if found
      */
     util::optional<Value> find(const Key& key);
 
@@ -74,6 +76,8 @@ class splay_cache
     /**
      * Adds a listener for when key/value pairs are removed. Useful for
      * implementing write-back caches.
+     *
+     * @param fun The callback to be registered
      */
     template <class Functor>
     void on_drop(Functor&& fun);
@@ -85,10 +89,10 @@ class splay_cache
 
   private:
     /** disallow copying */
-    splay_cache(const splay_cache& other) = delete;
+    splay_cache(const splay_cache&) = delete;
 
     /** disallow assignment */
-    splay_cache& operator=(const splay_cache& rhs) = delete;
+    splay_cache& operator=(const splay_cache&) = delete;
 
     /**
      * One node in the splay tree contains pointers to children and the
@@ -96,11 +100,20 @@ class splay_cache
      */
     struct node
     {
+        /// pointer to the left child
         node* left;
+        /// pointer to the right child
         node* right;
+        /// the key
         Key key;
+        /// the value
         Value value;
 
+        /**
+         * Constructs a new leaf node with the given key and value pair
+         * @param new_key The desired key
+         * @param new_value The desired value
+         */
         node(const Key& new_key, const Value& new_value)
             : left(nullptr), right(nullptr), key(new_key), value(new_value)
         {
@@ -108,20 +121,68 @@ class splay_cache
         }
     };
 
+    /// the current size of the cache
     uint64_t size_;
+    /// the maximum allowed size for the cache
     uint64_t max_size_;
+    /// the root of the tree
     node* root_;
+    /// the mutex that synchronizes access to the cache
     mutable std::mutex mutables_;
 
+    /**
+     * The list of callbacks to be invoked when a key/value pair is
+     * dropped from the map.
+     */
     std::vector<std::function<void(const Key& key, const Value& value)>>
         drop_callbacks_;
 
+    /**
+     * Deletes everything at this subroot and below.
+     * @param subroot The root of the subtree to clear
+     */
     void clear(node*& subroot);
+
+    /**
+     * Inserts the given key, value pair into the tree rooted at subroot.
+     *
+     * @param subroot The root of the subtree to insert into
+     * @param key
+     * @param value
+     */
     void insert(node*& subroot, const Key& key, const Value& value);
+
+    /**
+     * Replaces the key, value pair contained in the node pointed to by
+     * subroot with the given key, value pair.
+     *
+     * @param subroot
+     * @param key
+     * @param value
+     */
     void replace(node* subroot, const Key& key, const Value& value);
+
+    /**
+     * "Finds" the given key in the tree rooted at subroot. This function
+     * does not return anything because it splays the desired value to the
+     * root, so the public find() can simply return the root after calling
+     * this function.
+     *
+     * @param subroot
+     * @param key
+     */
     void find(node*& subroot, const Key& key);
 
+    /**
+     * Rotates the tree rooted at subroot to the left.
+     * @param subroot
+     */
     void rotate_left(node*& subroot);
+
+    /**
+     * Rotates the tree rooted at subroot to the right.
+     * @param subroot
+     */
     void rotate_right(node*& subroot);
 
   public:

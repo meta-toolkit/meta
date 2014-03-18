@@ -36,10 +36,11 @@ class locking_map
     /**
      * locking_map may be move constructed.
      */
-    locking_map(locking_map&& other);
+    locking_map(locking_map&&);
 
     /**
      * Locking map may be assigned.
+     * @return the current locking_map
      */
     locking_map& operator=(locking_map rhs);
 
@@ -59,8 +60,8 @@ class locking_map
     /**
      * Inserts a (key, value) pair into the map, using in-place
      * construction.
-     * @param args the paramters to be used for creating the (key,
-     *  value) pair
+     * @param args the parameters to be used for creating the (key,
+     * value) pair
      */
     template <class... Args>
     void emplace(Args&&... args);
@@ -70,21 +71,40 @@ class locking_map
      * engaged, otherwise, it will be disengaged.
      *
      * @param key the key to find the corresponding value for
+     * @return an optional that may contain the value, if found
      */
     util::optional<Value> find(const Key& key) const;
 
+    /// iterator type for locking_maps
     using iterator = typename std::unordered_map<Key, Value>::iterator;
-    using const_iterator = typename std::unordered_map
-        <Key, Value>::const_iterator;
+    /// const_iterator type for locking_maps
+    using const_iterator =
+        typename std::unordered_map<Key, Value>::const_iterator;
 
+    /**
+     * @return an iterator to the beginning of the map
+     */
     iterator begin();
+
+    /**
+     * @return an iterator to the end of the map
+     */
     iterator end();
 
+    /**
+     * @return a const_iterator to the beginning of the map
+     */
     const_iterator begin() const;
+
+    /**
+     * @return a const_iterator to the end of the map
+     */
     const_iterator end() const;
 
   private:
+    /// the underlying map used for storage
     std::unordered_map<Key, Value> map_;
+    /// the mutex that synchronizes accesses into the map
     mutable std::mutex mutables_;
 };
 }

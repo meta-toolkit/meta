@@ -37,7 +37,8 @@ class no_evict_cache
 
     /**
      * Inserts the given key, value pair into the cache. May be slow
-     * while the cache is initially populated.
+     * while the cache is initially populated as it needs to resize the
+     * internal storage.
      * @param key the key to insert
      * @param value the value to insert
      */
@@ -46,6 +47,7 @@ class no_evict_cache
     /**
      * Finds the value associated with the given key.
      * @param key the key to find the associated value for, if it exists
+     * @return an optional that may contain the value, if found
      */
     util::optional<Value> find(const Key& key) const;
 

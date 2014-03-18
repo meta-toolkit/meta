@@ -62,8 +62,9 @@ class dblru_cache
 
     /**
      * dlbru_cache may be be assigned.
+     * @return the current dblru_cache
      */
-    dblru_cache& operator=(dblru_cache rhs);
+    dblru_cache& operator=(dblru_cache);
 
     /**
      * Default destructor.
@@ -88,7 +89,7 @@ class dblru_cache
      * construction if possible.
      *
      * @param args the list of arguments to forward to constructing
-     *  the (key, value) pair
+     * the (key, value) pair
      */
     template <class... Args>
     void emplace(Args&&... args);
@@ -98,12 +99,15 @@ class dblru_cache
      * engaged, otherwise, it will be disengaged.
      *
      * @param key the key to find the corresponding value for
+     * @return an optional that may contain the value, if found
      */
     util::optional<Value> find(const Key& key);
 
     /**
      * Adds a callback to be invoked when a key/value pair is dropped
      * from the map.
+     *
+     * @param functor The callback to be installed
      */
     template <class Functor>
     void on_drop(Functor&& functor);
@@ -137,6 +141,7 @@ class dblru_cache
  * The current size of the primary map.
  */
 #if META_HAS_STD_SHARED_PTR_ATOMICS
+    /// the current size of the map
     std::atomic<uint64_t> current_size_;
 #else
     uint64_t current_size_;

@@ -32,13 +32,12 @@ class generic_shard_cache
 {
   public:
     /**
-     * Constructs a shard cache with the given number of shards,
-     * passing any additional parameters to the underlying Map classes
-     * created.
+     * Constructs a shard cache with the given number of shards, passing
+     * any additional parameters to the underlying Map classes created.
      *
      * @param shards the number of shards to create
-     * @param args the remaining arguments to be used in creating the
-     *  Map for each shard
+     * @param args the remaining arguments to be used in creating the Map
+     * for each shard
      */
     template <class... Args>
     generic_shard_cache(uint8_t shards, Args&&... args);
@@ -70,6 +69,7 @@ class generic_shard_cache
      * engaged, otherwise, it will be disengaged.
      *
      * @param key the key to find the corresponding value for
+     * @return an optional that may contain the value, if found
      */
     util::optional<Value> find(const Key& key);
 
@@ -93,7 +93,7 @@ template <class Key, class Value>
 using splay_shard_cache = generic_shard_cache<Key, Value, splay_cache>;
 
 /**
- * A sharding cache that uses a locking dblru_cache as the internal map.
+ * A sharding cache that uses a default_dblru_cache as the internal map.
  */
 template <class Key, class Value>
 using dblru_shard_cache = generic_shard_cache<Key, Value, default_dblru_cache>;
