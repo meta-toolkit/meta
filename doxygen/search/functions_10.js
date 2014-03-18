@@ -18,6 +18,7 @@ var searchData=
   ['register_5ffilter',['register_filter',['../classmeta_1_1analyzers_1_1filter__factory.html#ad06b455c6bf17d7820bb0bd934440400',1,'meta::analyzers::filter_factory::register_filter()'],['../namespacemeta_1_1analyzers.html#a57ae6ef9852a791551b719fcde9b3147',1,'meta::analyzers::register_filter()']]],
   ['register_5floss_5ffunction',['register_loss_function',['../namespacemeta_1_1classify_1_1loss.html#a122ac3e0cdd08ec3f34ce600dbcd2007',1,'meta::classify::loss']]],
   ['register_5fmulti_5findex_5fclassifier',['register_multi_index_classifier',['../namespacemeta_1_1classify.html#a99d322bfd5cca8395ced460726608001',1,'meta::classify']]],
+  ['register_5franker',['register_ranker',['../namespacemeta_1_1index.html#a4c4442e5fd3c024dfea0a05cdbe01d4c',1,'meta::index']]],
   ['register_5ftokenizer',['register_tokenizer',['../classmeta_1_1analyzers_1_1filter__factory.html#af55459fc5197d407679da44d2c5cab2f',1,'meta::analyzers::filter_factory::register_tokenizer()'],['../namespacemeta_1_1analyzers.html#a1e20cf8a47e92eb30fd432475529bb31',1,'meta::analyzers::register_tokenizer()']]],
   ['relevant_5fretrieved',['relevant_retrieved',['../classmeta_1_1index_1_1ir__eval.html#a7bd99f7bff2f5ac71a190856c5ed5782',1,'meta::index::ir_eval']]],
   ['remove_5fif',['remove_if',['../namespacemeta_1_1utf.html#ac64de4aee11423135b9f7b56c9c1a621',1,'meta::utf']]],

@@ -132,13 +132,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;{</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">return</span> make_unique&lt;Ranker&gt;();</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;}</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;}</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Ranker&gt;</div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#a4c4442e5fd3c024dfea0a05cdbe01d4c">   71</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacemeta_1_1index.html#a4c4442e5fd3c024dfea0a05cdbe01d4c">register_ranker</a>()</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;{</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <a class="code" href="classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e">ranker_factory::get</a>().<a class="code" href="classmeta_1_1util_1_1factory.html#a67e514eb8b151fc77e2c74ee416e38cd">add</a>(Ranker::id, make_ranker&lt;Ranker&gt;);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;}</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;}</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="ranker_8h_html"><div class="ttname"><a href="ranker_8h.html">ranker.h</a></div></div>
+<div class="ttc" id="classmeta_1_1util_1_1factory_html_a67e514eb8b151fc77e2c74ee416e38cd"><div class="ttname"><a href="classmeta_1_1util_1_1factory.html#a67e514eb8b151fc77e2c74ee416e38cd">meta::util::factory::add</a></div><div class="ttdeci">void add(const std::string &amp;identifier, Function &amp;&amp;fn)</div><div class="ttdoc">Associates the given identifier with the given factory method. </div><div class="ttdef"><b>Definition:</b> factory.h:60</div></div>
+<div class="ttc" id="namespacemeta_1_1index_html_a4c4442e5fd3c024dfea0a05cdbe01d4c"><div class="ttname"><a href="namespacemeta_1_1index.html#a4c4442e5fd3c024dfea0a05cdbe01d4c">meta::index::register_ranker</a></div><div class="ttdeci">void register_ranker()</div><div class="ttdoc">Registration method for rankers. </div><div class="ttdef"><b>Definition:</b> ranker_factory.h:71</div></div>
 <div class="ttc" id="classmeta_1_1index_1_1ranker__factory_html"><div class="ttname"><a href="classmeta_1_1index_1_1ranker__factory.html">meta::index::ranker_factory</a></div><div class="ttdoc">Factory that is responsible for creating rankers from configuration files. </div><div class="ttdef"><b>Definition:</b> ranker_factory.h:31</div></div>
 <div class="ttc" id="classmeta_1_1util_1_1factory_html"><div class="ttname"><a href="classmeta_1_1util_1_1factory.html">meta::util::factory</a></div><div class="ttdoc">Generic factory that can be subclassed to create factories for specific types. </div><div class="ttdef"><b>Definition:</b> factory.h:26</div></div>
+<div class="ttc" id="classmeta_1_1util_1_1factory_html_af4ce9596474aea2a23b3efa30c4c193e"><div class="ttname"><a href="classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e">meta::util::factory&lt; ranker_factory, ranker, const cpptoml::toml_group &amp; &gt;::get</a></div><div class="ttdeci">static ranker_factory &amp; get()</div><div class="ttdoc">Obtains the singleton. </div><div class="ttdef"><b>Definition:</b> factory.h:47</div></div>
 <div class="ttc" id="factory_8h_html"><div class="ttname"><a href="factory_8h.html">factory.h</a></div></div>
 <div class="ttc" id="classmeta_1_1index_1_1ranker__factory_html_a168f31f4fc7d2f815da7a7d70ed909bf"><div class="ttname"><a href="classmeta_1_1index_1_1ranker__factory.html#a168f31f4fc7d2f815da7a7d70ed909bf">meta::index::ranker_factory::ranker_factory</a></div><div class="ttdeci">ranker_factory()</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> ranker_factory.cpp:21</div></div>
 <div class="ttc" id="shim_8h_html"><div class="ttname"><a href="shim_8h.html">shim.h</a></div></div>
@@ -148,7 +157,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 14:02:32 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
