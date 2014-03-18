@@ -19,7 +19,8 @@ lda_gibbs::lda_gibbs(std::shared_ptr<index::forward_index> idx,
                      uint64_t num_topics, double alpha, double beta)
     : lda_model{std::move(idx), num_topics}, alpha_{alpha}, beta_{beta}
 {
-    /* nothing */
+    std::random_device dev;
+    rng_.seed(dev());
 }
 
 void lda_gibbs::run(uint64_t num_iters, double convergence /* = 1e-6 */)

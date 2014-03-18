@@ -233,8 +233,7 @@ class lda_gibbs : public lda_model
     /**
      * The random number generator for the sampler.
      */
-    std::mt19937 rng_;
-    std::random_device dev_;
+    std::mt19937_64 rng_;
 };
 }
 }
