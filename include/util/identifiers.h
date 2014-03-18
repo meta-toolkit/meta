@@ -91,6 +91,9 @@ struct identifier : public comparable<identifier<Derived, T>>
      *
      * my_ident y = 1; // not fine, compiler error
      * ~~~
+     *
+     * @param t The base type to assign into the identifier
+     * @return the current identifier
      */
     identifier& operator=(const T& t)
     {
@@ -101,6 +104,8 @@ struct identifier : public comparable<identifier<Derived, T>>
     /**
      * identifiers may be converted into their base type. This is the const
      * version.
+     *
+     * @return the base type representation for this identifier
      */
     operator const T&() const
     {
@@ -110,6 +115,8 @@ struct identifier : public comparable<identifier<Derived, T>>
     /**
      * identifiers may be converted into their base type. This is the
      * non-const version.
+     *
+     * @return the base type representation for this identifier
      */
     operator T&()
     {
@@ -120,7 +127,9 @@ struct identifier : public comparable<identifier<Derived, T>>
      * identifiers are comparable by their base types. This allows for
      * storage in comparison-based containers like std::map or std::set.
      *
-     * @param other the other identifier to compare with.
+     * @param lhs
+     * @param rhs
+     * @return whether lhs < rhs based on T::operator<.
      */
     inline friend bool operator<(const identifier& lhs, const identifier& rhs)
     {
@@ -129,6 +138,9 @@ struct identifier : public comparable<identifier<Derived, T>>
 
     /**
      * identifiers may be printed to output streams.
+     * @param stream The stream to write to
+     * @param ident The identifier to write to the stream
+     * @return `stream`
      */
     inline friend std::ostream& operator<<(std::ostream& stream,
                                            const identifier& ident)
@@ -138,6 +150,9 @@ struct identifier : public comparable<identifier<Derived, T>>
 
     /**
      * identifiers may be read from input streams.
+     * @param stream The stream to read from
+     * @param ident The identifier to read into
+     * @return `stream`
      */
     inline friend std::istream& operator>>(std::istream& stream,
                                            identifier& ident)
@@ -158,22 +173,41 @@ struct numerical_identifier : public identifier<Derived, T>, numeric
     using identifier<Derived, T>::id_;
     using identifier<Derived, T>::operator=;
 
+    /**
+     * Prefix-increment.
+     * @return the current identifier after being incremented
+     */
     Derived& operator++()
     {
         ++id_;
         return *derived();
     }
+
+    /**
+     * Postifx-increment.
+     * @return the old value of the identifier
+     */
     Derived operator++(int)
     {
         Derived t = *derived();
         ++(*this);
         return t;
     }
+
+    /**
+     * Prefix-decrement.
+     * @return the current identifier after being decremented
+     */
     Derived& operator--()
     {
         --id_;
         return *derived();
     }
+
+    /**
+     * Postfix-decrement.
+     * @return the old value of the identifier
+     */
     Derived operator--(int)
     {
         Derived t = *derived();
@@ -181,23 +215,44 @@ struct numerical_identifier : public identifier<Derived, T>, numeric
         return t;
     }
 
+    /**
+     * @param step How much to increase the current identifier by
+     * @return the current identifier
+     */
     Derived& operator+=(const T& step)
     {
         id_ += step;
         return *derived();
     }
+
+    /**
+     * @param step How much to decrease the current identifier by
+     * @return the current identifier
+     */
     Derived& operator-=(const T& step)
     {
         id_ -= step;
         return *derived();
     }
 
+    /**
+     * @param lhs
+     * @param rhs
+     * @return lhs + rhs, defined in terms of
+     * numerical_identifier::operator+=.
+     */
     friend inline Derived operator+(Derived lhs, const Derived& rhs)
     {
         lhs += static_cast<T>(rhs);
         return lhs;
     }
 
+    /**
+     * @param lhs
+     * @param rhs
+     * @return lhs - rhs, defined in terms of
+     * numerical_identifier::operator-=.
+     */
     friend inline Derived operator-(Derived lhs, const Derived& rhs)
     {
         lhs -= static_cast<T>(rhs);
@@ -205,6 +260,10 @@ struct numerical_identifier : public identifier<Derived, T>, numeric
     }
 
   private:
+    /**
+     * Reinterprets the current numerical_identifier as is underlying
+     * Derived type.
+     */
     Derived* derived()
     {
         return static_cast<Derived*>(this);
@@ -223,13 +282,16 @@ namespace std
 template <template <class> class Wrapped>
 struct hash<meta::util::hash_wrapper<Wrapped>>
 {
+    /**
+     * @param to_hash The identifier to be hashed
+     * @return the hash code for the given identifier, defined in terms of
+     * std::hash of its underlying type
+     */
     template <class T>
-    size_t operator()(const meta::util::identifier
-                      <meta::util::hash_wrapper<Wrapped>, T>& to_hash) const
+    size_t operator()(const meta::util::identifier<
+        meta::util::hash_wrapper<Wrapped>, T>& to_hash) const
     {
-        return hash<T>
-        {}
-        (static_cast<T>(to_hash));
+        return hash<T>{}(static_cast<T>(to_hash));
     }
 };
 }

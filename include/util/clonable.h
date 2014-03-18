@@ -27,8 +27,15 @@ template <class Root, class Base, class Derived>
 class multilevel_clonable : public Base
 {
   public:
+    /// Inherit the constructors from the base class
     using Base::Base;
 
+    /**
+     * Clones the given object. This requires that the Derived class be
+     * capable of being copy-constructed.
+     *
+     * @return a unique_ptr to the Root type object.
+     */
     virtual std::unique_ptr<Root> clone() const
     {
         return make_unique<Derived>(static_cast<const Derived&>(*this));

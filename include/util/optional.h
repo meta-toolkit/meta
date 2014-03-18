@@ -35,6 +35,7 @@ struct nullopt_t
     };
     constexpr nullopt_t(init) {};
 };
+/// A global nullopt_t constant.
 constexpr nullopt_t nullopt{nullopt_t::init{}};
 
 /**
@@ -68,6 +69,9 @@ union optional_storage
     /**
      * Forwarding constructor for the storage class, to create the
      * internal value.
+     *
+     * @param args The arguments to forward to the internal value's
+     * constructor
      */
     template <class... Args>
     optional_storage(Args&&... args);
@@ -76,7 +80,8 @@ union optional_storage
      * no-op destructor.
      */
     ~optional_storage()
-    {/* nothing */
+    {
+        /* nothing */
     }
 };
 
@@ -121,17 +126,17 @@ class optional
     /**
      * Copy constructor.
      */
-    optional(const optional& opt);
+    optional(const optional&);
 
     /**
      * Move constructor.
      */
-    optional(optional&& opt);
+    optional(optional&&);
 
     /**
      * Assignment operator.
      */
-    optional& operator=(optional rhs);
+    optional& operator=(optional);
 
     /**
      * Destructor. Responsible for ensuring the proper destruction of
@@ -147,28 +152,38 @@ class optional
 
     /**
      * Obtains the value contained in the optional. Const version.
+     *
+     * @return the value in the optional
      */
     const T& operator*() const;
 
     /**
      * Obtains the value contained in the optional. Non-const version.
+     *
+     * @return the value in the optional
      */
     T& operator*();
 
     /**
      * Member access operator to the value contained in the optional.
      * Const version.
+     *
+     * @return a pointer to the current value in the optional (member
+     * access)
      */
     const T* operator->() const;
 
     /**
      * Member access operator to the value contained in the optional.
      * Non-const version.
+     *
+     * @return a pointer to the current value in the optional (member
+     * access)
      */
     T* operator->();
 
     /**
-     * Determines if the optional is engaged.
+     * @return whether the optional is engaged
      */
     explicit operator bool() const;
 
@@ -181,12 +196,16 @@ class optional
     /**
      * Helper function to obtain the address of the contained value.
      * const version.
+     *
+     * @return the address of the contained value
      */
     const T* dataptr() const;
 
     /**
      * Helper function to obtain the address of the contained value.
      * non-const version.
+     *
+     * @return the address of the contained value
      */
     T* dataptr();
 

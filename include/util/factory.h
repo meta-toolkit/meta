@@ -26,8 +26,11 @@ template <class DerivedFactory, class Type, class... Arguments>
 class factory
 {
   public:
+    /// Convenience typedef for the derived classes
     using base_factory = factory;
+    /// The return type for the create method
     using pointer = std::unique_ptr<Type>;
+    /// Convenience typedef for the factory methods used to create objects
     using factory_method = std::function<pointer(Arguments...)>;
 
     /** Simple exception for factories */
@@ -39,6 +42,7 @@ class factory
 
     /**
      * Obtains the singleton.
+     * @return a singleton of type DerivedFactory
      */
     inline static DerivedFactory& get()
     {
@@ -48,6 +52,9 @@ class factory
 
     /**
      * Associates the given identifier with the given factory method.
+     * @param identifier The identifier to associate the factory method
+     * with
+     * @param fn The factory method
      */
     template <class Function>
     void add(const std::string& identifier, Function&& fn)
@@ -59,6 +66,10 @@ class factory
 
     /**
      * Creates a new object based on the factory method parameters.
+     *
+     * @param identifier The identifier to use to select a factory method
+     * @param args The arguments to forward to that factory method
+     * @return a unique_ptr to the new object created
      */
     template <class... Args>
     pointer create(const std::string& identifier, Args&&... args)
@@ -69,6 +80,7 @@ class factory
     }
 
   private:
+    /// The internal map of identifiers to factory_methods.
     std::unordered_map<std::string, factory_method> methods_;
 };
 }

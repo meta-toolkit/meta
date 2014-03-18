@@ -25,21 +25,59 @@ template <class Impl>
 class pimpl
 {
   public:
+    /**
+     * Constructor.
+     */
     pimpl();
+
+    /**
+     * Move constructor.
+     */
     pimpl(pimpl&&);
+
+    /**
+     * Move assignment.
+     */
     pimpl& operator=(pimpl&&);
 
+    /**
+     * Forwarding constructor.
+     * @param args The arguments to forward to the Impl class.
+     */
     template <class... Args>
     pimpl(Args&&... args);
 
+    /**
+     * Destructor.
+     */
     ~pimpl();
 
+    /**
+     * Member access operator.
+     * @return a pointer to the underlying Impl class (member access).
+     */
     Impl* operator->();
+
+    /**
+     * Member access operator. Const version.
+     * @return a pointer to the underlying Impl class (member access).
+     */
     const Impl* operator->() const;
+
+    /**
+     * Dereference operator.
+     * @return the underlying Impl class.
+     */
     Impl& operator*();
+
+    /**
+     * Dereference operator. Const version.
+     * @return the underlying Impl class.
+     */
     const Impl& operator*() const;
 
   private:
+    /// The internal pointer to the Impl class.
     std::unique_ptr<Impl> impl_;
 };
 }

@@ -25,33 +25,72 @@ template <class Derived>
 class comparable
 {
   public:
+    /**
+     * Determines if two comparables are equivalent, as defined by their
+     * operator<.
+     *
+     * @param lhs
+     * @param rhs
+     * @return whether lhs == rhs
+     */
     friend bool operator==(const comparable& lhs, const comparable& rhs)
     {
         return !(lhs.as_derived() < rhs.as_derived())
                && !(rhs.as_derived() < lhs.as_derived());
     }
 
+    /**
+     * Determines if two comparables are *not* equivalent, as defined by
+     * negation of the comparable::operator==.
+     *
+     * @param lhs
+     * @param rhs
+     * @return whether lhs != rhs
+     */
     friend bool operator!=(const comparable& lhs, const comparable& rhs)
     {
         return !(lhs == rhs);
     }
 
+    /**
+     * @param lhs
+     * @param rhs
+     * @return whether lhs > rhs, as defined by their operator<.
+     */
     friend bool operator>(const comparable& lhs, const comparable& rhs)
     {
         return rhs.as_derived() < lhs.as_derived();
     }
 
+    /**
+     * @param lhs
+     * @param rhs
+     * @return whether lhs <= rhs, as defined by their operator< and
+     * comparable::operator==.
+     */
     friend bool operator<=(const comparable& lhs, const comparable& rhs)
     {
         return lhs.as_derived() < rhs.as_derived() || lhs == rhs;
     }
 
+    /**
+     * @param lhs
+     * @param rhs
+     * @return whether lhs >= rhs, as defined by comparable::operator> and
+     * comparable::operator==.
+     */
     friend bool operator>=(const comparable& lhs, const comparable& rhs)
     {
         return lhs > rhs || lhs == rhs;
     }
 
   private:
+    /**
+     * Helper method to cast the current comparable to its Derived
+     * representation.
+     *
+     * @return the Derived form of the current comparable
+     */
     inline const Derived& as_derived() const
     {
         return static_cast<const Derived&>(*this);

@@ -19,7 +19,8 @@ namespace functional
 
 /**
  * Memoizes a std::function.
- * @param fun the std::function to be memoized
+ * @param fun The std::function to be memoized
+ * @return a memoized version of the parameter
  */
 template <class Result, class... Args>
 std::function<Result(Args...)> memoize(std::function<Result(Args...)> fun)

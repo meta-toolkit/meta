@@ -19,6 +19,7 @@ namespace meta
 /**
  * Constructs a unique ptr in place.
  * @param args The parameters to the constructor
+ * @return a unique_ptr<T>
  */
 template <class T, class... Args>
 std::unique_ptr<T> make_unique(Args&&... args)
