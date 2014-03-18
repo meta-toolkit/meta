@@ -61,7 +61,8 @@ class sgd : public binary_classifier
      * mainly for generalization of a binary decision problem to a
      * multiclass decision problem.
      *
-     * @param doc The document to compute the dot product with.
+     * @param doc The document to compute the dot product with
+     * @return the dot product with the current weight vector
      */
     double predict(doc_id d_id) const;
 
@@ -112,6 +113,7 @@ class sgd : public binary_classifier
      * performance optimization during training.
      *
      * @param doc the document to form a prediction for
+     * @return the dot product with the current weight vector
      */
     double predict(const counts_t& doc) const;
 };

@@ -56,7 +56,7 @@ class binary_classifier_factory
  * using the factory.
  *
  * @param config The toml_group that specifies the binary classifier's
- * configuration.
+ * configuration
  * @param idx The forward_index the binary classifier is being constructed
  * over
  * @param positive The class_label for positive documents
@@ -76,7 +76,7 @@ std::unique_ptr<binary_classifier>
  * construction behavior (e.g., reading parameters).
  *
  * @param config The toml_group that specifies the binary classifier's
- * configuration.
+ * configuration
  * @param idx The forward_index the binary classifier is being constructed
  * over
  * @param positive The class_label for positive documents

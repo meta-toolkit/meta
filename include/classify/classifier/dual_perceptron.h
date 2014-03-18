@@ -28,16 +28,16 @@ namespace classify
 class dual_perceptron : public classifier
 {
   public:
-    /// The default \f$\alpha\f$ parameter.
+    /// The default \f$\alpha\f$ parameter
     const static constexpr double default_alpha = 0.1;
 
-    /// The default \f$\gamma\f$ parameter.
+    /// The default \f$\gamma\f$ parameter
     const static constexpr double default_gamma = 0.05;
 
-    /// The default \f$b\f$ parameter.
+    /// The default \f$b\f$ parameter
     const static constexpr double default_bias = 0;
 
-    /// The default number of allowed iterations.
+    /// The default number of allowed iterations
     const static constexpr uint64_t default_max_iter = 100;
 
     /// The identifier for this classifier
@@ -48,7 +48,7 @@ class dual_perceptron : public classifier
      * and with the given paramters.
      *
      * @param idx The index to run the classifier on
-     * @param kernel_fn The kernel function to be used.
+     * @param kernel_fn The kernel function to be used
      * @param alpha \f$\alpha\f$, the learning rate
      * @param gamma \f$\gamma\f$, the error threshold (in terms of
      *  percentage of mistakes on one training run)
@@ -86,7 +86,7 @@ class dual_perceptron : public classifier
      * formulation, its vectors are "mistake vectors" that keep track
      * of how often a given training instance was misclassified.
      *
-     * @param docs The training set.
+     * @param docs The training set
      */
     void train(const std::vector<doc_id>& docs) override;
 
@@ -96,8 +96,8 @@ class dual_perceptron : public classifier
      * \f$\arg\!\max_k(\sum_d(w_k^d*(K(d,x) + b))\f$---in other words, the
      * class whose associated weight vector gives the highest result.
      *
-     * @param doc The document to be classified.
-     * @return the class label determined for the document.
+     * @param doc The document to be classified
+     * @return the class label determined for the document
      */
     class_label classify(doc_id d_id) override;
 

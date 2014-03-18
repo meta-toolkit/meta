@@ -38,7 +38,7 @@ class one_vs_one : public classifier
      * @param idx The forward_index to retrieve documents from
      * @param create A function to create binary_classifiers: should
      * return a unique_ptr to a binary_classifier when given two class
-     * labels as parameters.
+     * labels as parameters
      */
     template <class Function>
     one_vs_one(std::shared_ptr<index::forward_index> idx, Function&& create)

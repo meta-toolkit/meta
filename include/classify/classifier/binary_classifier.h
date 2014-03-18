@@ -49,7 +49,7 @@ class binary_classifier : public classifier
 
     /**
      * @param d_id The document to classify
-     * @return the "confidence" that this document is a positive example.
+     * @return the "confidence" that this document is a positive example
      */
     virtual double predict(doc_id d_id) const = 0;
 
@@ -65,12 +65,12 @@ class binary_classifier : public classifier
 
   private:
     /**
-     * The label that marks positive examples.
+     * The label that marks positive examples
      */
     const class_label positive_;
 
     /**
-     * The label to return when an example is classified as "negative".
+     * The label to return when an example is classified as "negative"
      */
     const class_label negative_;
 };

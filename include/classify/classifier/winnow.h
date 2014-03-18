@@ -44,7 +44,7 @@ class winnow : public classifier
      * @param idx The index to run the classifier on
      * @param m \f$m\f$, the multiplicative learning rate
      * @param gamma \f$gamma\f$, the error threshold
-     * @param max_iter The maximum number of iterations for training.
+     * @param max_iter The maximum number of iterations for training
      */
     winnow(std::shared_ptr<index::forward_index> idx, double m = default_m,
            double gamma = default_gamma, size_t max_iter = default_max_iter);
@@ -56,7 +56,7 @@ class winnow : public classifier
      * training document seen in each iteration. This continues until
      * the error threshold is met or the maximum number of iterations
      * is completed.
-     * @param docs The training set.
+     * @param docs The training set
      */
     void train(const std::vector<doc_id>& docs) override;
 
@@ -66,8 +66,8 @@ class winnow : public classifier
      * \f$\argmax_k(w_k^\intercal x_n + b)\f$---in other words, the
      * class whose associated weight vector gives the highest result.
      *
-     * @param doc The document to be classified.
-     * @return The class label determined for the document.
+     * @param doc The document to be classified
+     * @return the class label determined for the document
      */
     class_label classify(doc_id d_id) override;
 
@@ -84,11 +84,11 @@ class winnow : public classifier
 
   private:
     /**
-     * Returns the given term's weight in the weight vector for the
-     * given class.
+     * @return the given term's weight in the weight vector for the given
+     * class
      *
-     * @param label The class label for the weight vector we want.
-     * @param term The term whose weight should be returned.
+     * @param label The class label for the weight vector we want
+     * @param term The term whose weight should be returned
      */
     double get_weight(const class_label& label, const term_id& term) const;
 

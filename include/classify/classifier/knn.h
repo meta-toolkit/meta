@@ -67,10 +67,9 @@ class knn : public classifier
      * @param sorted
      * @return the best label
      */
-    class_label
-        select_best_label(const std::vector<std::pair<doc_id, double>>& scored,
-                          const std::vector<std::pair<class_label,
-                          uint16_t>>& sorted) const;
+    class_label select_best_label(
+        const std::vector<std::pair<doc_id, double>>& scored,
+        const std::vector<std::pair<class_label, uint16_t>>& sorted) const;
 
     /** the inverted index used for ranking */
     std::shared_ptr<index::inverted_index> inv_idx_;

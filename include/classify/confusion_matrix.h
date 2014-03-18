@@ -38,17 +38,23 @@ class confusion_matrix
              size_t times = 1);
 
     /**
-     * Prints this matrix to out.
+     * Prints this matrix's statistics to out.
+     *
+     * @param out The stream to write to (defaults to `std::cout`)
      */
     void print_stats(std::ostream& out = std::cout) const;
 
     /**
      * Prints this matrix to out.
+     *
+     * @param out The stream to write to (defaults to `std::cout`)
      */
     void print(std::ostream& out = std::cout) const;
 
     /**
      * Prints (predicted, actual) pairs for all judgements
+     *
+     * @param out The stream to write to (defaults to `std::cout`)
      */
     void print_result_pairs(std::ostream& out = std::cout) const;
 
