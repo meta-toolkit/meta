@@ -37,7 +37,7 @@ class parallel_lda_gibbs : public lda_gibbs
     virtual ~parallel_lda_gibbs() = default;
 
   protected:
-    virtual void initialize();
+    virtual void initialize() override;
 
     /**
      * Performs a sampling iteration of the AD-LDA algorithm. This
@@ -46,8 +46,12 @@ class parallel_lda_gibbs : public lda_gibbs
      * in counts for the potentially shared topic counts. Once the
      * sampling has finished, the counts are reduced down (serially)
      * before the iteration is completed.
+     *
+     * @param iter The current iteration number
+     * @param init Whether or not this iteration should use the online
+     * method for initializing the sampler
      */
-    virtual void perform_iteration(uint64_t iter, bool init = false);
+    virtual void perform_iteration(uint64_t iter, bool init = false) override;
 
     virtual void decrease_counts(topic_id topic, term_id term,
                                  doc_id doc) override;
@@ -55,9 +59,9 @@ class parallel_lda_gibbs : public lda_gibbs
     virtual void increase_counts(topic_id topic, term_id term,
                                  doc_id doc) override;
 
-    virtual double count_term(term_id term, topic_id topic) const;
+    virtual double count_term(term_id term, topic_id topic) const override;
 
-    virtual double count_topic(topic_id topic) const;
+    virtual double count_topic(topic_id topic) const override;
 
     /**
      * The thread pool used for parallelization.
@@ -68,11 +72,10 @@ class parallel_lda_gibbs : public lda_gibbs
      * Stores the difference in topic_term counts on a per-thread basis
      * for use in the reduction step.
      */
-    std::unordered_map<std::thread::id,
-                       std::unordered_map<topic_id,
-                                          std::unordered_map<term_id, ssize_t>
-                                         >
-                      > topic_term_diffs_;
+    std::unordered_map<
+        std::thread::id,
+        std::unordered_map<topic_id, std::unordered_map<term_id, ssize_t>>>
+        topic_term_diffs_;
 
     /**
      * Stores the difference in topic counts on a per-thread basis for

@@ -24,10 +24,29 @@ namespace topics
 class lda_model
 {
   public:
+    /**
+     * Constructs an lda_model over the given set of documents and with a
+     * fixed number of topics.
+     *
+     * @param idx The index containing the documents to use for the model
+     * @param num_topics The number of topics to find
+     */
     lda_model(std::shared_ptr<index::forward_index> idx, uint64_t num_topics);
 
+    /**
+     * Destructor. Made virtual to allow for deletion through pointer to
+     * base.
+     */
     virtual ~lda_model() = default;
 
+    /**
+     * Runs the model for a given number of iterations, or until a
+     * convergence criteria is met.
+     *
+     * @param num_iters The maximum allowed number of iterations
+     * @param convergence The convergence criteria (this has different
+     * meanings for different subclass models)
+     */
     virtual void run(uint64_t num_iters, double convergence) = 0;
 
     /**
@@ -35,7 +54,7 @@ class lda_model
      * the given file. Saves the distributions in a simple "human
      * readable" plain-text format.
      *
-     * @param filename The file to save \f$theta\f$ to.
+     * @param filename The file to save \f$\theta\f$ to
      */
     void save_doc_topic_distributions(const std::string& filename) const;
 
@@ -44,7 +63,7 @@ class lda_model
      * given file. Saves the distributions in a simple "human readable"
      * plain-text format.
      *
-     * @param filename The file to save \f$\phi\f$ to.
+     * @param filename The file to save \f$\phi\f$ to
      */
     void save_topic_term_distributions(const std::string& filename) const;
 
@@ -52,37 +71,54 @@ class lda_model
      * Saves the current model to a set of files beginning with prefix:
      * prefix.phi, prefix.theta, and prefix.terms.
      *
-     * @param prefix The prefix for all generated files over this
-     *  model.
+     * @param prefix The prefix for all generated files over this model
      */
     void save(const std::string& prefix) const;
 
   protected:
+    /**
+     * lda_models cannot be copy assigned.
+     */
     lda_model& operator=(const lda_model&) = delete;
+
+    /**
+     * lda_models cannot be copy constructed.
+     */
     lda_model(const lda_model&) = delete;
 
     /**
-     * Computes the probability that the given term appears in the
-     * given topic.
+     * @return the probability that the given term appears in the given
+     * topic
      *
-     * @param term The term we are concerned with.
-     * @param topic The topic we are concerned with.
+     * @param term The term we are concerned with
+     * @param topic The topic we are concerned with
      */
     virtual double compute_term_topic_probability(term_id term,
                                                   topic_id topic) const = 0;
 
     /**
-     * Computes the probability that the given topic is picked for the
-     * given document.
+     * @return the probability that the given topic is picked for the given
+     * document
      *
-     * @param doc The document we are concerned with.
-     * @param topic The topic we are concerned with.
+     * @param doc The document we are concerned with
+     * @param topic The topic we are concerned with
      */
     virtual double compute_doc_topic_probability(doc_id doc,
                                                  topic_id topic) const = 0;
 
+    /**
+     * The index containing the documents for the model.
+     */
     std::shared_ptr<index::forward_index> idx_;
+
+    /**
+     * The number of topics.
+     */
     size_t num_topics_;
+
+    /**
+     * The number of total unique words.
+     */
     size_t num_words_;
 };
 }

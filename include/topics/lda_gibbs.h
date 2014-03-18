@@ -35,9 +35,9 @@ class lda_gibbs : public lda_model
      * @param idx The index that contains the documents to model
      * @param num_topics The number of topics to infer
      * @param alpha The hyperparameter for the Dirichlet prior over
-     *  \f$\phi\f$
+     * \f$\phi\f$
      * @param beta The hyperparameter for the Dirichlet prior over
-     *  \f$\theta\f$
+     * \f$\theta\f$
      */
     lda_gibbs(std::shared_ptr<index::forward_index> idx, uint64_t num_topics,
               double alpha, double beta);
@@ -54,10 +54,10 @@ class lda_gibbs : public lda_model
      * corpus likelihood between two iterations.
      *
      * @param num_iters The maximum number of iterations to run the
-     *  sampler for.
-     * @param convergence The lowest relative difference in log corpus
-     *  likelihood to be allowed before considering the sampler to have
-     *  converged.
+     * sampler for
+     * @param convergence The lowest relative difference in \f$\log
+     * P(\mathbf{w} \mid \mathbf{z})\f$ to be allowed before considering
+     * the sampler to have converged
      */
     virtual void run(uint64_t num_iters, double convergence = 1e-6);
 
@@ -69,24 +69,27 @@ class lda_gibbs : public lda_model
      * current value of \f$z_i\f$ from the vector of assignments
      * \f$\boldsymbol{z}\f$.
      *
-     * @param term The term we are sampling a topic assignment for.
-     * @param doc The document the term resides in.
+     * @param term The term we are sampling a topic assignment for
+     * @param doc The document the term resides in
+     * @return the topic sampled the given (term, doc) pair
      */
     topic_id sample_topic(term_id term, doc_id doc);
 
     /**
      * Computes \f$P(z_i = j | w, \boldsymbol{z})\f$.
      *
-     * @param term The current word we are sampling for.
-     * @param doc The document in which the term resides.
+     * @param term The current word we are sampling for
+     * @param doc The document in which the term resides
      * @param topic The topic \f$j\f$ we want to compute the
-     *  probability for.
+     * probability for
+     * @return the probability that the given term in the given document
+     * belongs to the given topic
      */
     double compute_probability(term_id term, doc_id doc, topic_id topic) const;
 
     /**
-     * Computes the probability that the given term appears in the
-     * given topic.
+     * @return the probability that the given term appears in the given
+     * topic
      *
      * @param term The term we are concerned with.
      * @param topic The topic we are concerned with.
@@ -96,8 +99,8 @@ class lda_gibbs : public lda_model
         override;
 
     /**
-     * Computes the probability that the given topic is picked for the
-     * given document.
+     * @return the probability that the given topic is picked for the given
+     * document
      *
      * @param doc The document we are concerned with.
      * @param topic The topic we are concerned with.
@@ -106,8 +109,8 @@ class lda_gibbs : public lda_model
                                                  topic_id topic) const override;
 
     /**
-     * Computes how many times the given term has been assigned the
-     * given topic in the vector of assignments \f$\boldsymbol{z}\f$.
+     * @return how many times the given term has been assigned the given
+     * topic in the vector of assignments \f$\boldsymbol{z}\f$
      *
      * @param term The term we are concerned with.
      * @param topic The topic we are concerned with.
@@ -115,16 +118,16 @@ class lda_gibbs : public lda_model
     virtual double count_term(term_id term, topic_id topic) const;
 
     /**
-     * Computes how many times the given topic has been assigned for
-     * *any* word in the corpus.
+     * @return the number of times the given topic has been assigned for
+     * *any* word in the corpus
      *
      * @param topic The topic we are concerned with.
      */
     virtual double count_topic(topic_id topic) const;
 
     /**
-     * Computes how may times the given topic has been chosen for a
-     * *any* word in the given document.
+     * @return the number of times the given topic has been chosen for a
+     * *any* word in the given document
      *
      * @param doc The document we are concerned with.
      * @param topic The topic we are concerned with.
@@ -132,8 +135,8 @@ class lda_gibbs : public lda_model
     virtual double count_doc(doc_id doc, topic_id topic) const;
 
     /**
-     * Computes how may times a topic has been assigned to a word in
-     * the given document.
+     * @return the number of times a topic has been assigned to a word in
+     * the given document
      *
      * @param doc The document we are concerned with.
      */
@@ -150,8 +153,8 @@ class lda_gibbs : public lda_model
      * Performs a sampling iteration.
      *
      * @param iter The iteration number
-     * @param init Whether or not to employ the online method.
-     *  (defaults to `false`)
+     * @param init Whether or not to employ the online method (defaults to
+     * `false`)
      */
     virtual void perform_iteration(uint64_t iter, bool init = false);
 
@@ -159,9 +162,9 @@ class lda_gibbs : public lda_model
      * Decreases all counts associated with the given topic, term, and
      * document by one.
      *
-     * @param topic The topic in question.
-     * @param term The term in question.
-     * @param doc The document in question.
+     * @param topic The topic in question
+     * @param term The term in question
+     * @param doc The document in question
      */
     virtual void decrease_counts(topic_id topic, term_id term, doc_id doc);
 
@@ -169,15 +172,14 @@ class lda_gibbs : public lda_model
      * Increases all counts associated with the given topic, term, and
      * document by one.
      *
-     * @param topic The topic in question.
-     * @param term The term in question.
-     * @param doc The document in question.
+     * @param topic The topic in question
+     * @param term The term in question
+     * @param doc The document in question
      */
     virtual void increase_counts(topic_id topic, term_id term, doc_id doc);
 
     /**
-     * Computes the current courpus log likelihood, given the vector of
-     * assignments \f$\boldsymbol{z}\f$.
+     * @return \f$\log P(\mathbf{w} \mid \mathbf{z})\f$
      */
     double corpus_likelihood() const;
 

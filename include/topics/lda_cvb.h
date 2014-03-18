@@ -38,9 +38,9 @@ class lda_cvb : public lda_model
      * @param idx The index containing the documents to model
      * @param num_topics The number of topics to infer
      * @param alpha The hyperparameter for the Dirichlet prior over
-     *  \f$\phi\f$.
+     *  \f$\phi\f$
      * @param beta The hyperparameter for the Dirichlet prior over
-     *  \f$\theta\f$.
+     *  \f$\theta\f$
      */
     lda_cvb(std::shared_ptr<index::forward_index> idx, uint64_t num_topics,
             double alpha, double beta);
@@ -58,10 +58,10 @@ class lda_cvb : public lda_model
      * iteration.
      *
      * @param num_iters The maximum number of iterations to run the
-     *  sampler for.
+     *  sampler for
      * @param convergence The lowest maximum difference in any
      *  \f$\gamma_{dij}\f$ to be allowed before considering the
-     *  inference to have converged.
+     *  inference to have converged
      */
     void run(uint64_t num_iters, double convergence = 1e-3);
 
@@ -74,8 +74,8 @@ class lda_cvb : public lda_model
     /**
      * Performs one iteration of the inference algorithm.
      *
-     * @param iter the current iteration number
-     * @return The maximum change in any of the \f$\gamma_{dij}\f$s.
+     * @param iter The current iteration number
+     * @return the maximum change in any of the \f$\gamma_{dij}\f$s
      */
     double perform_iteration(uint64_t iter);
 
@@ -106,11 +106,9 @@ class lda_cvb : public lda_model
     /**
      * Variational parameters \f$\gamma_{dij}\f$.
      */
-    std::unordered_map<doc_id,
-                       std::unordered_map<term_id,
-                                          std::unordered_map<topic_id, double>
-                                         >
-                      > gamma_;
+    std::unordered_map<
+        doc_id, std::unordered_map<
+                    term_id, std::unordered_map<topic_id, double>>> gamma_;
 
     /**
      * Hyperparameter on \f$\theta\f$, the topic proportions.
