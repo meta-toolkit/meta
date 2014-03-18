@@ -3,7 +3,6 @@
  * @author Sean Massung
  */
 
-#include "cluster/similarity.h"
 #include "corpus/corpus.h"
 #include "corpus/document.h"
 #include "util/mapping.h"
@@ -55,16 +54,6 @@ double document::count(const std::string& term) const
 const std::unordered_map<std::string, double>& document::counts() const
 {
     return counts_;
-}
-
-double document::cosine_similarity(const document& a, const document& b)
-{
-    return clustering::similarity::cosine_similarity(a.counts_, b.counts_);
-}
-
-double document::jaccard_similarity(const document& a, const document& b)
-{
-    return clustering::similarity::jaccard_similarity(a.counts_, b.counts_);
 }
 
 void document::content(const std::string& content,

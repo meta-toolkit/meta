@@ -5,7 +5,6 @@
 
 #include <unordered_set>
 #include "cpptoml.h"
-#include "cluster/similarity.h"
 #include "classify/classifier/naive_bayes.h"
 #include "index/postings_data.h"
 

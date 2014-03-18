@@ -103,13 +103,6 @@ namespace loss
 }
 
 /**
- * Similarity measures and various clustering algorithms.
- */
-namespace clustering
-{
-}
-
-/**
  * Indexes to create efficient representations of data.
  */
 namespace index
@@ -128,14 +121,6 @@ namespace io
 namespace libsvm_parser
 {
 }
-}
-
-/**
- * A simple smoothed n-gram language model, with the ability for corpus
- * log-likelihood, perplexity, and random sentence generation.
- */
-namespace language_model
-{
 }
 
 /**

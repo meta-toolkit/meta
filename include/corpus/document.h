@@ -80,22 +80,6 @@ class document
     const std::unordered_map<std::string, double>& counts() const;
 
     /**
-     * Wrapper function for a document's cosine similarity measure.
-     * @param a The first doc to compare
-     * @param b The second doc to compare
-     * @return the Jaccard similarity between the two parameters
-     */
-    static double jaccard_similarity(const document& a, const document& b);
-
-    /**
-     * Wrapper function for a document's cosine similarity measure.
-     * @param a The first doc to compare
-     * @param b The second doc to compare
-     * @return the cosine similarity between the two parameters
-     */
-    static double cosine_similarity(const document& a, const document& b);
-
-    /**
      * Sets the content of the document to be the parameter
      * @param content The string content to assign into this document
      * @param encoding the encoding of content, which defaults to utf-8
