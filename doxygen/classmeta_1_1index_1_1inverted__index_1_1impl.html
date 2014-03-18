@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -102,11 +102,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">meta::index::inverted_index::impl Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Implementation of an <a class="el" href="classmeta_1_1index_1_1inverted__index.html" title="The inverted_index class stores information on a corpus indexed by term_ids. ">inverted_index</a>.  
+ <a href="classmeta_1_1index_1_1inverted__index_1_1impl.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7571d218a3b609973dc1188e310271de"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7571d218a3b609973dc1188e310271de"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>impl</b> (<a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a> *parent, const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;config)</td></tr>
+<tr class="memitem:a7571d218a3b609973dc1188e310271de"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1inverted__index_1_1impl.html#a7571d218a3b609973dc1188e310271de">impl</a> (<a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a> *parent, const cpptoml::toml_group &amp;config)</td></tr>
+<tr class="memdesc:a7571d218a3b609973dc1188e310271de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an <a class="el" href="classmeta_1_1index_1_1inverted__index.html" title="The inverted_index class stores information on a corpus indexed by term_ids. ">inverted_index</a> impl.  <a href="#a7571d218a3b609973dc1188e310271de">More...</a><br/></td></tr>
 <tr class="separator:a7571d218a3b609973dc1188e310271de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cddb1c7c5f26ae2b18aa96740287b0a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1inverted__index_1_1impl.html#a8cddb1c7c5f26ae2b18aa96740287b0a">tokenize_docs</a> (<a class="el" href="classmeta_1_1corpus_1_1corpus.html">corpus::corpus</a> *<a class="el" href="classmeta_1_1index_1_1disk__index.html#a3b709dc678a83ba5f36798d1a59b1823">docs</a>, <a class="el" href="classmeta_1_1index_1_1chunk__handler.html">chunk_handler</a>&lt; <a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a> &gt; &amp;handler)</td></tr>
 <tr class="separator:a8cddb1c7c5f26ae2b18aa96740287b0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -137,9 +140,48 @@ uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:aa3de7d244732eb792c253caaba333363"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa3de7d244732eb792c253caaba333363"></a>
-<a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>idx_</b></td></tr>
+<a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1inverted__index_1_1impl.html#aa3de7d244732eb792c253caaba333363">idx_</a></td></tr>
+<tr class="memdesc:aa3de7d244732eb792c253caaba333363"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the <a class="el" href="classmeta_1_1index_1_1inverted__index.html" title="The inverted_index class stores information on a corpus indexed by term_ids. ">inverted_index</a> this is an implementation of. <br/></td></tr>
 <tr class="separator:aa3de7d244732eb792c253caaba333363"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Implementation of an <a class="el" href="classmeta_1_1index_1_1inverted__index.html" title="The inverted_index class stores information on a corpus indexed by term_ids. ">inverted_index</a>. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a7571d218a3b609973dc1188e310271de"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">meta::index::inverted_index::impl::impl </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a> *&#160;</td>
+          <td class="paramname"><em>parent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const cpptoml::toml_group &amp;&#160;</td>
+          <td class="paramname"><em>config</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructs an <a class="el" href="classmeta_1_1index_1_1inverted__index.html" title="The inverted_index class stores information on a corpus indexed by term_ids. ">inverted_index</a> impl. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">parent</td><td>The parent of this impl </td></tr>
+    <tr><td class="paramname">config</td><td>The config group </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a8cddb1c7c5f26ae2b18aa96740287b0a"></a>
 <div class="memitem">
@@ -167,6 +209,7 @@ Private Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">docs</td><td>The documents to be tokenized </td></tr>
+    <tr><td class="paramname">handler</td><td>The chunk handler for this index </td></tr>
   </table>
   </dd>
 </dl>
@@ -231,7 +274,7 @@ Private Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:43:03 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:11 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

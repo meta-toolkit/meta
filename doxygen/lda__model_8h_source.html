@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_f4e47f73b9eb56c122cba38d21e5108e.html">include</a></li><li class="navelem"><a class="el" href="dir_8dab6b1831efe0ba97b9926ebd765a46.html">topics</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_0da7c670a7a00ac2352fb8798973f3ba.html">topics</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -111,43 +111,49 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classmeta_1_1topics_1_1lda__model.html">   24</a></span>&#160;<span class="keyword">class </span><a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>(std::shared_ptr&lt;index::forward_index&gt; idx, uint64_t num_topics);</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> run(uint64_t num_iters, <span class="keywordtype">double</span> convergence) = 0;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">void</span> save_doc_topic_distributions(<span class="keyword">const</span> std::string&amp; <a class="code" href="namespacemeta_1_1testing.html#a38862eab75c07bb2db05a217de20b900">filename</a>) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>(std::shared_ptr&lt;index::forward_index&gt; idx, uint64_t num_topics);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> save_topic_term_distributions(<span class="keyword">const</span> std::string&amp; filename) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> save(<span class="keyword">const</span> std::string&amp; prefix) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>(<span class="keyword">const</span> <a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">double</span> compute_term_topic_probability(term_id term,</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                                                  topic_id topic) <span class="keyword">const</span> = 0;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">double</span> compute_doc_topic_probability(doc_id doc,</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                                                 topic_id topic) <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> run(uint64_t num_iters, <span class="keywordtype">double</span> convergence) = 0;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> save_doc_topic_distributions(<span class="keyword">const</span> std::string&amp; <a class="code" href="namespacemeta_1_1testing.html#a38862eab75c07bb2db05a217de20b900">filename</a>) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> save_topic_term_distributions(<span class="keyword">const</span> std::string&amp; filename) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> save(<span class="keyword">const</span> std::string&amp; prefix) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>&amp;) = <span class="keyword">delete</span>;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    std::shared_ptr&lt;index::forward_index&gt; idx_;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">size_t</span> num_topics_;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">size_t</span> num_words_;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;};</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>(<span class="keyword">const</span> <a class="code" href="classmeta_1_1topics_1_1lda__model.html">lda_model</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">double</span> compute_term_topic_probability(term_id term,</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                                                  topic_id topic) <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">double</span> compute_doc_topic_probability(doc_id doc,</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                                                 topic_id topic) <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="classmeta_1_1topics_1_1lda__model.html#af35657f144c3be7707832f838947d128">  112</a></span>&#160;    std::shared_ptr&lt;index::forward_index&gt; <a class="code" href="classmeta_1_1topics_1_1lda__model.html#af35657f144c3be7707832f838947d128">idx_</a>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
+<div class="line"><a name="l00117"></a><span class="lineno"><a class="line" href="classmeta_1_1topics_1_1lda__model.html#ac3ceda95c29bbd33083d68264718b3af">  117</a></span>&#160;    <span class="keywordtype">size_t</span> <a class="code" href="classmeta_1_1topics_1_1lda__model.html#ac3ceda95c29bbd33083d68264718b3af">num_topics_</a>;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="classmeta_1_1topics_1_1lda__model.html#a0d3befa03adb92c26a65234eafdb5089">  122</a></span>&#160;    <span class="keywordtype">size_t</span> <a class="code" href="classmeta_1_1topics_1_1lda__model.html#a0d3befa03adb92c26a65234eafdb5089">num_words_</a>;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;};</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;}</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="classmeta_1_1topics_1_1lda__model_html"><div class="ttname"><a href="classmeta_1_1topics_1_1lda__model.html">meta::topics::lda_model</a></div><div class="ttdoc">An LDA topic model base class. </div><div class="ttdef"><b>Definition:</b> lda_model.h:24</div></div>
+<div class="ttc" id="classmeta_1_1topics_1_1lda__model_html_a0d3befa03adb92c26a65234eafdb5089"><div class="ttname"><a href="classmeta_1_1topics_1_1lda__model.html#a0d3befa03adb92c26a65234eafdb5089">meta::topics::lda_model::num_words_</a></div><div class="ttdeci">size_t num_words_</div><div class="ttdoc">The number of total unique words. </div><div class="ttdef"><b>Definition:</b> lda_model.h:122</div></div>
+<div class="ttc" id="classmeta_1_1topics_1_1lda__model_html_ac3ceda95c29bbd33083d68264718b3af"><div class="ttname"><a href="classmeta_1_1topics_1_1lda__model.html#ac3ceda95c29bbd33083d68264718b3af">meta::topics::lda_model::num_topics_</a></div><div class="ttdeci">size_t num_topics_</div><div class="ttdoc">The number of topics. </div><div class="ttdef"><b>Definition:</b> lda_model.h:117</div></div>
 <div class="ttc" id="forward__index_8h_html"><div class="ttname"><a href="forward__index_8h.html">forward_index.h</a></div></div>
-<div class="ttc" id="namespacemeta_1_1testing_html_a38862eab75c07bb2db05a217de20b900"><div class="ttname"><a href="namespacemeta_1_1testing.html#a38862eab75c07bb2db05a217de20b900">meta::testing::filename</a></div><div class="ttdeci">std::string filename(const std::string &amp;path)</div><div class="ttdef"><b>Definition:</b> unit_test.h:115</div></div>
+<div class="ttc" id="classmeta_1_1topics_1_1lda__model_html_af35657f144c3be7707832f838947d128"><div class="ttname"><a href="classmeta_1_1topics_1_1lda__model.html#af35657f144c3be7707832f838947d128">meta::topics::lda_model::idx_</a></div><div class="ttdeci">std::shared_ptr&lt; index::forward_index &gt; idx_</div><div class="ttdoc">The index containing the documents for the model. </div><div class="ttdef"><b>Definition:</b> lda_model.h:112</div></div>
+<div class="ttc" id="namespacemeta_1_1testing_html_a38862eab75c07bb2db05a217de20b900"><div class="ttname"><a href="namespacemeta_1_1testing.html#a38862eab75c07bb2db05a217de20b900">meta::testing::filename</a></div><div class="ttdeci">std::string filename(const std::string &amp;path)</div><div class="ttdef"><b>Definition:</b> unit_test.h:113</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:48 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_f4e47f73b9eb56c122cba38d21e5108e.html">include</a></li><li class="navelem"><a class="el" href="dir_dbbdf2c7bf222ce38f07071d8f78bb72.html">analyzers</a></li><li class="navelem"><a class="el" href="dir_190710aa9d9cc832d00f221a860d3ffa.html">ngram</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_9f4cdd3e4fb570202e8822a8a4084a6d.html">analyzers</a></li><li class="navelem"><a class="el" href="dir_21fecfd3c1b1bf02f3f52b8799d9b270.html">ngram</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -120,19 +120,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#a70d72003e612c17e8ac34768d7b96e32">tokenize</a>(<a class="code" href="classmeta_1_1corpus_1_1document.html">corpus::document</a>&amp; doc) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#ab6231991daf7cb9796c96f0b59706a57">   47</a></span>&#160;    <span class="keyword">const</span> <span class="keyword">static</span> std::string <a class="code" href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#ab6231991daf7cb9796c96f0b59706a57">id</a>;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;};</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;std::unique_ptr&lt;analyzer&gt; <a class="code" href="namespacemeta_1_1analyzers.html#a9341c12d66090d5a784c8c46dde19f16">make_analyzer&lt;ngram_lex_analyzer&gt;</a>(</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keyword">const</span> <a class="code" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a>&amp;,</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keyword">const</span> <a class="code" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a>&amp;);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="classmeta_1_1analyzers_1_1ngram__lex__analyzer_html_ab6231991daf7cb9796c96f0b59706a57"><div class="ttname"><a href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#ab6231991daf7cb9796c96f0b59706a57">meta::analyzers::ngram_lex_analyzer::id</a></div><div class="ttdeci">static const std::string id</div><div class="ttdoc">Identifier for this analyzer. </div><div class="ttdef"><b>Definition:</b> ngram_lex_analyzer.h:47</div></div>
-<div class="ttc" id="classcpptoml_1_1toml__group_html"><div class="ttname"><a href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a></div><div class="ttdoc">Represents a TOML keygroup. </div><div class="ttdef"><b>Definition:</b> cpptoml.h:180</div></div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#ab6231991daf7cb9796c96f0b59706a57">   45</a></span>&#160;    <span class="keyword">const</span> <span class="keyword">static</span> std::string <a class="code" href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#ab6231991daf7cb9796c96f0b59706a57">id</a>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;};</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;std::unique_ptr&lt;analyzer&gt; <a class="code" href="namespacemeta_1_1analyzers.html#a9341c12d66090d5a784c8c46dde19f16">make_analyzer&lt;ngram_lex_analyzer&gt;</a>(</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keyword">const</span> cpptoml::toml_group&amp;,</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keyword">const</span> cpptoml::toml_group&amp;);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;}</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classmeta_1_1analyzers_1_1ngram__lex__analyzer_html_ab6231991daf7cb9796c96f0b59706a57"><div class="ttname"><a href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#ab6231991daf7cb9796c96f0b59706a57">meta::analyzers::ngram_lex_analyzer::id</a></div><div class="ttdeci">static const std::string id</div><div class="ttdoc">Identifier for this analyzer. </div><div class="ttdef"><b>Definition:</b> ngram_lex_analyzer.h:45</div></div>
 <div class="ttc" id="namespacemeta_1_1analyzers_html_a9341c12d66090d5a784c8c46dde19f16"><div class="ttname"><a href="namespacemeta_1_1analyzers.html#a9341c12d66090d5a784c8c46dde19f16">meta::analyzers::make_analyzer&lt; ngram_lex_analyzer &gt;</a></div><div class="ttdeci">std::unique_ptr&lt; analyzer &gt; make_analyzer&lt; ngram_lex_analyzer &gt;(const cpptoml::toml_group &amp;, const cpptoml::toml_group &amp;)</div><div class="ttdoc">Specialization of the factory method for creating ngram_lex_analyzers. </div><div class="ttdef"><b>Definition:</b> ngram_lex_analyzer.cpp:27</div></div>
 <div class="ttc" id="classmeta_1_1analyzers_1_1ngram__lex__analyzer_html_a70d72003e612c17e8ac34768d7b96e32"><div class="ttname"><a href="classmeta_1_1analyzers_1_1ngram__lex__analyzer.html#a70d72003e612c17e8ac34768d7b96e32">meta::analyzers::ngram_lex_analyzer::tokenize</a></div><div class="ttdeci">virtual void tokenize(corpus::document &amp;doc) override</div><div class="ttdoc">Tokenizes a file into a document. </div><div class="ttdef"><b>Definition:</b> ngram_lex_analyzer.cpp:19</div></div>
 <div class="ttc" id="analyzer__factory_8h_html"><div class="ttname"><a href="analyzer__factory_8h.html">analyzer_factory.h</a></div></div>
@@ -147,7 +146,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:48 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

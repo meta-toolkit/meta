@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -116,21 +116,31 @@ Inheritance diagram for meta::parallel::thread_pool::concrete_task&lt; R &gt;:</
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abbfae95b05bc6b4b8a8ff0e40fd38ccc"><td class="memTemplParams" colspan="2"><a class="anchor" id="abbfae95b05bc6b4b8a8ff0e40fd38ccc"></a>
-template&lt;class Function &gt; </td></tr>
-<tr class="memitem:abbfae95b05bc6b4b8a8ff0e40fd38ccc"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>concrete_task</b> (const Function &amp;f)</td></tr>
+<tr class="memitem:abbfae95b05bc6b4b8a8ff0e40fd38ccc"><td class="memTemplParams" colspan="2">template&lt;class Function &gt; </td></tr>
+<tr class="memitem:abbfae95b05bc6b4b8a8ff0e40fd38ccc"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structmeta_1_1parallel_1_1thread__pool_1_1concrete__task.html#abbfae95b05bc6b4b8a8ff0e40fd38ccc">concrete_task</a> (const Function &amp;f)</td></tr>
+<tr class="memdesc:abbfae95b05bc6b4b8a8ff0e40fd38ccc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a new concrete task.  <a href="#abbfae95b05bc6b4b8a8ff0e40fd38ccc">More...</a><br/></td></tr>
 <tr class="separator:abbfae95b05bc6b4b8a8ff0e40fd38ccc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72ce840c6782edc676388b11b6ce1756"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72ce840c6782edc676388b11b6ce1756"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> ()</td></tr>
-<tr class="separator:a72ce840c6782edc676388b11b6ce1756"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08178d5a0e8fd5f78ff5379e6f582ee1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a08178d5a0e8fd5f78ff5379e6f582ee1"></a>
-std::future&lt; R &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>get_future</b> ()</td></tr>
+<tr class="memitem:a932585c5d62f98aca8f075f83d475ca1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a932585c5d62f98aca8f075f83d475ca1"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1parallel_1_1thread__pool_1_1concrete__task.html#a932585c5d62f98aca8f075f83d475ca1">~concrete_task</a> ()=default</td></tr>
+<tr class="memdesc:a932585c5d62f98aca8f075f83d475ca1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor to support deletion from base pointers. <br/></td></tr>
+<tr class="separator:a932585c5d62f98aca8f075f83d475ca1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6749ec502beaba804c71700f48114810"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6749ec502beaba804c71700f48114810"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1parallel_1_1thread__pool_1_1concrete__task.html#a6749ec502beaba804c71700f48114810">run</a> () override</td></tr>
+<tr class="memdesc:a6749ec502beaba804c71700f48114810"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the given task. <br/></td></tr>
+<tr class="separator:a6749ec502beaba804c71700f48114810"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08178d5a0e8fd5f78ff5379e6f582ee1"><td class="memItemLeft" align="right" valign="top">std::future&lt; R &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1parallel_1_1thread__pool_1_1concrete__task.html#a08178d5a0e8fd5f78ff5379e6f582ee1">get_future</a> ()</td></tr>
 <tr class="separator:a08178d5a0e8fd5f78ff5379e6f582ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_structmeta_1_1parallel_1_1thread__pool_1_1task"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structmeta_1_1parallel_1_1thread__pool_1_1task')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structmeta_1_1parallel_1_1thread__pool_1_1task.html">meta::parallel::thread_pool::task</a></td></tr>
+<tr class="memitem:a49e3804a7735ac4ddde454e46664adb9 inherit pub_methods_structmeta_1_1parallel_1_1thread__pool_1_1task"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a49e3804a7735ac4ddde454e46664adb9"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1parallel_1_1thread__pool_1_1task.html#a49e3804a7735ac4ddde454e46664adb9">~task</a> ()=default</td></tr>
+<tr class="memdesc:a49e3804a7735ac4ddde454e46664adb9 inherit pub_methods_structmeta_1_1parallel_1_1thread__pool_1_1task"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual destructor to support deletion from base pointers. <br/></td></tr>
+<tr class="separator:a49e3804a7735ac4ddde454e46664adb9 inherit pub_methods_structmeta_1_1parallel_1_1thread__pool_1_1task"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a606afc9ae0af10bc4adb81d70accb45e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a606afc9ae0af10bc4adb81d70accb45e"></a>
-std::packaged_task&lt; R()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>task_</b></td></tr>
+std::packaged_task&lt; R()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1parallel_1_1thread__pool_1_1concrete__task.html#a606afc9ae0af10bc4adb81d70accb45e">task_</a></td></tr>
+<tr class="memdesc:a606afc9ae0af10bc4adb81d70accb45e"><td class="mdescLeft">&#160;</td><td class="mdescRight">the internal task representation <br/></td></tr>
 <tr class="separator:a606afc9ae0af10bc4adb81d70accb45e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -138,13 +148,77 @@ std::packaged_task&lt; R()&gt;&#160;</td><td class="memItemRight" valign="bottom
 struct meta::parallel::thread_pool::concrete_task&lt; R &gt;</h3>
 
 <p>A concrete task is templated with a result type. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="abbfae95b05bc6b4b8a8ff0e40fd38ccc"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class R &gt; </div>
+<div class="memtemplate">
+template&lt;class Function &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structmeta_1_1parallel_1_1thread__pool_1_1concrete__task.html">meta::parallel::thread_pool::concrete_task</a>&lt; R &gt;::<a class="el" href="structmeta_1_1parallel_1_1thread__pool_1_1concrete__task.html">concrete_task</a> </td>
+          <td>(</td>
+          <td class="paramtype">const Function &amp;&#160;</td>
+          <td class="paramname"><em>f</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructs a new concrete task. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f</td><td>The function to run. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a08178d5a0e8fd5f78ff5379e6f582ee1"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class R &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::future&lt;R&gt; <a class="el" href="structmeta_1_1parallel_1_1thread__pool_1_1concrete__task.html">meta::parallel::thread_pool::concrete_task</a>&lt; R &gt;::get_future </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the future associated with this task </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/chase/projects/meta/include/parallel/<a class="el" href="thread__pool_8h_source.html">thread_pool.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:43:06 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:14 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

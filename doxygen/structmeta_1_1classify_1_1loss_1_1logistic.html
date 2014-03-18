@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -89,7 +89,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacemeta.html">meta</a></li><li class="navelem"><a class="el" href="namespacemeta_1_1classify.html">classify</a></li><li class="navelem"><b>loss</b></li><li class="navelem"><a class="el" href="structmeta_1_1classify_1_1loss_1_1logistic.html">logistic</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacemeta.html">meta</a></li><li class="navelem"><a class="el" href="namespacemeta_1_1classify.html">classify</a></li><li class="navelem"><a class="el" href="namespacemeta_1_1classify_1_1loss.html">loss</a></li><li class="navelem"><a class="el" href="structmeta_1_1classify_1_1loss_1_1logistic.html">logistic</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -101,31 +101,133 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">meta::classify::loss::logistic Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>The logistic loss for SGD algorithms.  
+ <a href="structmeta_1_1classify_1_1loss_1_1logistic.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="logistic_8h_source.html">logistic.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for meta::classify::loss::logistic:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="structmeta_1_1classify_1_1loss_1_1logistic.png" usemap="#meta::classify::loss::logistic_map" alt=""/>
   <map id="meta::classify::loss::logistic_map" name="meta::classify::loss::logistic_map">
-<area href="structmeta_1_1classify_1_1loss_1_1loss__function.html" alt="meta::classify::loss::loss_function" shape="rect" coords="0,0,195,24"/>
+<area href="structmeta_1_1classify_1_1loss_1_1loss__function.html" title="Base class for all loss functions that can be passed to the sgd classifier. " alt="meta::classify::loss::loss_function" shape="rect" coords="0,0,195,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acb199d8fe161d16da4ce82bfedd78ea8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb199d8fe161d16da4ce82bfedd78ea8"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>loss</b> (double prediction, int expected) const override</td></tr>
+<tr class="memitem:acb199d8fe161d16da4ce82bfedd78ea8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1classify_1_1loss_1_1logistic.html#acb199d8fe161d16da4ce82bfedd78ea8">loss</a> (double prediction, int expected) const override</td></tr>
+<tr class="memdesc:acb199d8fe161d16da4ce82bfedd78ea8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The loss incurred in assigning the given prediction value, given the correct value of the prediction.  <a href="#acb199d8fe161d16da4ce82bfedd78ea8">More...</a><br/></td></tr>
 <tr class="separator:acb199d8fe161d16da4ce82bfedd78ea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab2ae9c7605a23767f79ee2833df6681"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aab2ae9c7605a23767f79ee2833df6681"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>derivative</b> (double prediction, int expected) const override</td></tr>
+<tr class="memitem:aab2ae9c7605a23767f79ee2833df6681"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1classify_1_1loss_1_1logistic.html#aab2ae9c7605a23767f79ee2833df6681">derivative</a> (double prediction, int expected) const override</td></tr>
+<tr class="memdesc:aab2ae9c7605a23767f79ee2833df6681"><td class="mdescLeft">&#160;</td><td class="mdescRight">The derivative of the loss function given a predicted value and the expected result of that prediction.  <a href="#aab2ae9c7605a23767f79ee2833df6681">More...</a><br/></td></tr>
 <tr class="separator:aab2ae9c7605a23767f79ee2833df6681"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a206ea79d85767501b234451b50692351"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a206ea79d85767501b234451b50692351"></a>
-static const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>id</b> = &quot;logistic&quot;</td></tr>
+static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1classify_1_1loss_1_1logistic.html#a206ea79d85767501b234451b50692351">id</a> = &quot;logistic&quot;</td></tr>
+<tr class="memdesc:a206ea79d85767501b234451b50692351"><td class="mdescLeft">&#160;</td><td class="mdescRight">The identifier for this loss function. <br/></td></tr>
 <tr class="separator:a206ea79d85767501b234451b50692351"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The logistic loss for SGD algorithms. </p>
+<p>Defined as \(\phi(p, y) = \ln(1 + e^{-py})\). </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="acb199d8fe161d16da4ce82bfedd78ea8"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double meta::classify::loss::logistic::loss </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>prediction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>expected</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The loss incurred in assigning the given prediction value, given the correct value of the prediction. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">prediction</td><td>The prediction obtained from the model (dot product) </td></tr>
+    <tr><td class="paramname">expected</td><td>The expected (as in, correct) value of the model's prediction </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the loss incurred </dd></dl>
+
+<p>Implements <a class="el" href="structmeta_1_1classify_1_1loss_1_1loss__function.html#ae09b3fba7c0695fcd6189ba0863c536e">meta::classify::loss::loss_function</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aab2ae9c7605a23767f79ee2833df6681"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double meta::classify::loss::logistic::derivative </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>prediction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>expected</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The derivative of the loss function given a predicted value and the expected result of that prediction. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">prediction</td><td>The prediction obtained from the model (dot product) </td></tr>
+    <tr><td class="paramname">expected</td><td>The expected (as in, correct) value of the model's prediction </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the derivative of the loss function at that point </dd></dl>
+
+<p>Implements <a class="el" href="structmeta_1_1classify_1_1loss_1_1loss__function.html#ac475257a6d5ce33d2c6a327357a70854">meta::classify::loss::loss_function</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
 <li>/home/chase/projects/meta/include/classify/loss/<a class="el" href="logistic_8h_source.html">logistic.h</a></li>
 <li>/home/chase/projects/meta/src/classify/loss/<a class="el" href="logistic_8cpp.html">logistic.cpp</a></li>
@@ -133,7 +235,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>i
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:59 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:07 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

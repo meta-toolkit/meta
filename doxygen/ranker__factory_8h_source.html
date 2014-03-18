@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_f4e47f73b9eb56c122cba38d21e5108e.html">include</a></li><li class="navelem"><a class="el" href="dir_8f251f7ce13e7be7d375173629aa26e3.html">index</a></li><li class="navelem"><a class="el" href="dir_7103c21e8fd13fd9387626e6d40a8cd5.html">ranker</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_11cfc4c1cff4c5895d582e2213b399cb.html">index</a></li><li class="navelem"><a class="el" href="dir_b3f85f2b0d2bd28a40e4c7a312982d7e.html">ranker</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -116,37 +116,39 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classmeta_1_1index_1_1ranker__factory.html">   31</a></span>&#160;<span class="keyword">class </span><a class="code" href="classmeta_1_1index_1_1ranker__factory.html">ranker_factory</a> : <span class="keyword">public</span> <a class="code" href="classmeta_1_1util_1_1factory.html">util::factory</a>&lt;ranker_factory,</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                                            ranker, const cpptoml::toml_group&amp;&gt;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;{</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">friend</span> <a class="code" href="classmeta_1_1util_1_1factory.html">base_factory</a>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="classmeta_1_1index_1_1ranker__factory.html">ranker_factory</a>();</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Ranker&gt;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">void</span> reg();</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;};</div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classmeta_1_1index_1_1ranker__factory.html#a7100a5131cd2ece1334f5c71110a870c">   35</a></span>&#160;    <span class="keyword">friend</span> <a class="code" href="classmeta_1_1index_1_1ranker__factory.html#a7100a5131cd2ece1334f5c71110a870c">base_factory</a>;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <a class="code" href="classmeta_1_1index_1_1ranker__factory.html#a168f31f4fc7d2f815da7a7d70ed909bf">ranker_factory</a>();</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;std::unique_ptr&lt;ranker&gt; <a class="code" href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">make_ranker</a>(<span class="keyword">const</span> <a class="code" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a>&amp;);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Ranker&gt;</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">   54</a></span>&#160;std::unique_ptr&lt;ranker&gt; <a class="code" href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">make_ranker</a>(<span class="keyword">const</span> <a class="code" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a>&amp;)</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;{</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordflow">return</span> make_unique&lt;Ranker&gt;();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="classcpptoml_1_1toml__group_html"><div class="ttname"><a href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a></div><div class="ttdoc">Represents a TOML keygroup. </div><div class="ttdef"><b>Definition:</b> cpptoml.h:180</div></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Ranker&gt;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmeta_1_1index_1_1ranker__factory.html#ad2da4f0178b5a371c7a9570baf10e5bb">reg</a>();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;};</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;std::unique_ptr&lt;ranker&gt; <a class="code" href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">make_ranker</a>(<span class="keyword">const</span> cpptoml::toml_group&amp;);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Ranker&gt;</div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">   61</a></span>&#160;std::unique_ptr&lt;ranker&gt; <a class="code" href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">make_ranker</a>(<span class="keyword">const</span> cpptoml::toml_group&amp;)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;{</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">return</span> make_unique&lt;Ranker&gt;();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;}</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;}</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="ranker_8h_html"><div class="ttname"><a href="ranker_8h.html">ranker.h</a></div></div>
 <div class="ttc" id="classmeta_1_1index_1_1ranker__factory_html"><div class="ttname"><a href="classmeta_1_1index_1_1ranker__factory.html">meta::index::ranker_factory</a></div><div class="ttdoc">Factory that is responsible for creating rankers from configuration files. </div><div class="ttdef"><b>Definition:</b> ranker_factory.h:31</div></div>
 <div class="ttc" id="classmeta_1_1util_1_1factory_html"><div class="ttname"><a href="classmeta_1_1util_1_1factory.html">meta::util::factory</a></div><div class="ttdoc">Generic factory that can be subclassed to create factories for specific types. </div><div class="ttdef"><b>Definition:</b> factory.h:26</div></div>
 <div class="ttc" id="factory_8h_html"><div class="ttname"><a href="factory_8h.html">factory.h</a></div></div>
+<div class="ttc" id="classmeta_1_1index_1_1ranker__factory_html_a168f31f4fc7d2f815da7a7d70ed909bf"><div class="ttname"><a href="classmeta_1_1index_1_1ranker__factory.html#a168f31f4fc7d2f815da7a7d70ed909bf">meta::index::ranker_factory::ranker_factory</a></div><div class="ttdeci">ranker_factory()</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> ranker_factory.cpp:21</div></div>
 <div class="ttc" id="shim_8h_html"><div class="ttname"><a href="shim_8h.html">shim.h</a></div></div>
-<div class="ttc" id="namespacemeta_1_1index_html_a024ba8376cbcbaea515e6e6f32c8ea62"><div class="ttname"><a href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">meta::index::make_ranker</a></div><div class="ttdeci">std::unique_ptr&lt; ranker &gt; make_ranker(const cpptoml::toml_group &amp;)</div><div class="ttdoc">Convenience method for creating a ranker using the factory. </div><div class="ttdef"><b>Definition:</b> ranker_factory.h:54</div></div>
+<div class="ttc" id="namespacemeta_1_1index_html_a024ba8376cbcbaea515e6e6f32c8ea62"><div class="ttname"><a href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">meta::index::make_ranker</a></div><div class="ttdeci">std::unique_ptr&lt; ranker &gt; make_ranker(const cpptoml::toml_group &amp;)</div><div class="ttdoc">Convenience method for creating a ranker using the factory. </div><div class="ttdef"><b>Definition:</b> ranker_factory.h:61</div></div>
+<div class="ttc" id="classmeta_1_1index_1_1ranker__factory_html_ad2da4f0178b5a371c7a9570baf10e5bb"><div class="ttname"><a href="classmeta_1_1index_1_1ranker__factory.html#ad2da4f0178b5a371c7a9570baf10e5bb">meta::index::ranker_factory::reg</a></div><div class="ttdeci">void reg()</div><div class="ttdoc">Registers a ranking function. </div><div class="ttdef"><b>Definition:</b> ranker_factory.cpp:16</div></div>
+<div class="ttc" id="classmeta_1_1index_1_1ranker__factory_html_a7100a5131cd2ece1334f5c71110a870c"><div class="ttname"><a href="classmeta_1_1index_1_1ranker__factory.html#a7100a5131cd2ece1334f5c71110a870c">meta::index::ranker_factory::base_factory</a></div><div class="ttdeci">friend base_factory</div><div class="ttdoc">Friend the base ranker factory. </div><div class="ttdef"><b>Definition:</b> ranker_factory.h:35</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:48 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

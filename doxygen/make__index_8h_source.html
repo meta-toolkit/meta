@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_f4e47f73b9eb56c122cba38d21e5108e.html">include</a></li><li class="navelem"><a class="el" href="dir_8f251f7ce13e7be7d375173629aa26e3.html">index</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_11cfc4c1cff4c5895d582e2213b399cb.html">index</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -99,63 +99,79 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#ifndef META_MAKE_INDEX_H_</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define META_MAKE_INDEX_H_</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="cpptoml_8h.html">cpptoml.h</a>&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="cached__index_8h.html">index/cached_index.h</a>&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="filesystem_8h.html">util/filesystem.h</a>&quot;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span>meta</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span>index</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">class </span>inverted_index;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">class </span>forward_index;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>Index, <span class="keyword">class</span>... Args&gt;</div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#aaf1602d06a418ef014256f77cab2ac43">   40</a></span>&#160;std::shared_ptr&lt;Index&gt; <a class="code" href="namespacemeta_1_1index.html#aaf1602d06a418ef014256f77cab2ac43">make_index</a>(<span class="keyword">const</span> std::string&amp; config_file,</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                                  Args&amp;&amp;... args)</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;{</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">auto</span> config = cpptoml::parse_file(config_file);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="comment">// check if we have paths specified for either kind of index</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordflow">if</span> (!(config.contains(<span class="stringliteral">&quot;forward-index&quot;</span>)</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;          &amp;&amp; config.contains(<span class="stringliteral">&quot;inverted-index&quot;</span>)))</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordflow">throw</span> <span class="keyword">typename</span> Index::exception{</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            <span class="stringliteral">&quot;forward-index or inverted-index missing from configuration file&quot;</span>};</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">auto</span> idx =</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        std::shared_ptr&lt;Index&gt;{<span class="keyword">new</span> Index(config, std::forward&lt;Args&gt;(args)...)};</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="comment">// if index has already been made, load it</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordflow">if</span> (filesystem::make_directory(idx-&gt;index_name()))</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        idx-&gt;load_index();</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        idx-&gt;create_index(config_file);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordflow">return</span> idx;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;}</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Index, <span class="keyword">template</span> &lt;<span class="keyword">class</span>, <span class="keyword">class</span>&gt; <span class="keyword">class </span>Cache, <span class="keyword">class</span>... Args&gt;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;std::shared_ptr&lt;cached_index&lt;Index, Cache&gt;&gt;</div>
-<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#af40ac3f5a0ed5fe852c32bf1f55463b6">   86</a></span>&#160;    <a class="code" href="namespacemeta_1_1index.html#aaf1602d06a418ef014256f77cab2ac43">make_index</a>(<span class="keyword">const</span> std::string&amp; config_file, Args&amp;&amp;... args)</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;{</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">return</span> make_index&lt;cached_index&lt;Index, Cache&gt;&gt;(config_file,</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                                                  std::forward&lt;Args&gt;(args)...);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;}</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;}</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;}</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;cpptoml.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;caching/all.h&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="cached__index_8h.html">index/cached_index.h</a>&quot;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="filesystem_8h.html">util/filesystem.h</a>&quot;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span>meta</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;{</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span>index</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;{</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">class </span>inverted_index;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">class </span>forward_index;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">using</span> <a class="code" href="namespacemeta_1_1index.html#ab253a089456a159d13450e70ce0c6d26">dblru_inverted_index</a> =</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#ab253a089456a159d13450e70ce0c6d26">   28</a></span>&#160;    <a class="code" href="classmeta_1_1index_1_1cached__index.html">cached_index&lt;inverted_index, caching::default_dblru_cache&gt;</a>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#afd73dd38401258636a6dd0a7c7b131e9">   31</a></span>&#160;<span class="keyword">using</span> <a class="code" href="classmeta_1_1index_1_1cached__index.html">splay_inverted_index</a> = <a class="code" href="classmeta_1_1index_1_1cached__index.html">cached_index&lt;inverted_index, caching::splay_cache&gt;</a>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">using</span> <a class="code" href="classmeta_1_1index_1_1cached__index.html">memory_forward_index</a> =</div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#a96a767bbdf3ff8110342b82c1c187b88">   35</a></span>&#160;    <a class="code" href="classmeta_1_1index_1_1cached__index.html">cached_index&lt;forward_index, caching::no_evict_cache&gt;</a>;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">using</span> <a class="code" href="classmeta_1_1index_1_1cached__index.html">dblru_forward_index</a> =</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#a29dc960afb6388fdabff985a97ccf637">   39</a></span>&#160;    <a class="code" href="classmeta_1_1index_1_1cached__index.html">cached_index&lt;forward_index, caching::default_dblru_cache&gt;</a>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#acc798c8ad9ab406c5b3c275266d35831">   42</a></span>&#160;<span class="keyword">using</span> <a class="code" href="classmeta_1_1index_1_1cached__index.html">splay_forward_index</a> = <a class="code" href="classmeta_1_1index_1_1cached__index.html">cached_index&lt;forward_index, caching::splay_cache&gt;</a>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>Index, <span class="keyword">class</span>... Args&gt;</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#aaf1602d06a418ef014256f77cab2ac43">   59</a></span>&#160;std::shared_ptr&lt;Index&gt; <a class="code" href="namespacemeta_1_1index.html#aaf1602d06a418ef014256f77cab2ac43">make_index</a>(<span class="keyword">const</span> std::string&amp; config_file,</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                                  Args&amp;&amp;... args)</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;{</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">auto</span> config = cpptoml::parse_file(config_file);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="comment">// check if we have paths specified for either kind of index</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordflow">if</span> (!(config.contains(<span class="stringliteral">&quot;forward-index&quot;</span>)</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;          &amp;&amp; config.contains(<span class="stringliteral">&quot;inverted-index&quot;</span>)))</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordflow">throw</span> <span class="keyword">typename</span> Index::exception{</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            <span class="stringliteral">&quot;forward-index or inverted-index missing from configuration file&quot;</span>};</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="comment">// can&#39;t use std::make_shared here since the Index constructor is private</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keyword">auto</span> idx =</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        std::shared_ptr&lt;Index&gt;{<span class="keyword">new</span> Index(config, std::forward&lt;Args&gt;(args)...)};</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="comment">// if index has already been made, load it</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">if</span> (filesystem::make_directory(idx-&gt;index_name()))</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        idx-&gt;load_index();</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        idx-&gt;create_index(config_file);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> idx;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;}</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Index, <span class="keyword">template</span> &lt;<span class="keyword">class</span>, <span class="keyword">class</span>&gt; <span class="keyword">class </span>Cache, <span class="keyword">class</span>... Args&gt;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;std::shared_ptr&lt;cached_index&lt;Index, Cache&gt;&gt;</div>
+<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="namespacemeta_1_1index.html#af40ac3f5a0ed5fe852c32bf1f55463b6">  106</a></span>&#160;    <a class="code" href="namespacemeta_1_1index.html#aaf1602d06a418ef014256f77cab2ac43">make_index</a>(<span class="keyword">const</span> std::string&amp; config_file, Args&amp;&amp;... args)</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;{</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordflow">return</span> make_index&lt;cached_index&lt;Index, Cache&gt;&gt;(config_file,</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                                                  std::forward&lt;Args&gt;(args)...);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;}</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;}</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;}</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classmeta_1_1index_1_1cached__index_html"><div class="ttname"><a href="classmeta_1_1index_1_1cached__index.html">meta::index::cached_index</a></div><div class="ttdoc">Decorator class for wrapping indexes with a cache. </div><div class="ttdef"><b>Definition:</b> cached_index.h:29</div></div>
 <div class="ttc" id="filesystem_8h_html"><div class="ttname"><a href="filesystem_8h.html">filesystem.h</a></div></div>
 <div class="ttc" id="cached__index_8h_html"><div class="ttname"><a href="cached__index_8h.html">cached_index.h</a></div></div>
-<div class="ttc" id="namespacemeta_1_1index_html_aaf1602d06a418ef014256f77cab2ac43"><div class="ttname"><a href="namespacemeta_1_1index.html#aaf1602d06a418ef014256f77cab2ac43">meta::index::make_index</a></div><div class="ttdeci">std::shared_ptr&lt; Index &gt; make_index(const std::string &amp;config_file, Args &amp;&amp;...args)</div><div class="ttdoc">Factory method for creating indexes. </div><div class="ttdef"><b>Definition:</b> make_index.h:40</div></div>
-<div class="ttc" id="cpptoml_8h_html"><div class="ttname"><a href="cpptoml_8h.html">cpptoml.h</a></div></div>
+<div class="ttc" id="namespacemeta_1_1index_html_ab253a089456a159d13450e70ce0c6d26"><div class="ttname"><a href="namespacemeta_1_1index.html#ab253a089456a159d13450e70ce0c6d26">meta::index::dblru_inverted_index</a></div><div class="ttdeci">cached_index&lt; inverted_index, caching::default_dblru_cache &gt; dblru_inverted_index</div><div class="ttdoc">Inverted index using default DBLRU cache. </div><div class="ttdef"><b>Definition:</b> make_index.h:28</div></div>
+<div class="ttc" id="namespacemeta_1_1index_html_aaf1602d06a418ef014256f77cab2ac43"><div class="ttname"><a href="namespacemeta_1_1index.html#aaf1602d06a418ef014256f77cab2ac43">meta::index::make_index</a></div><div class="ttdeci">std::shared_ptr&lt; Index &gt; make_index(const std::string &amp;config_file, Args &amp;&amp;...args)</div><div class="ttdoc">Factory method for creating indexes. </div><div class="ttdef"><b>Definition:</b> make_index.h:59</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:48 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

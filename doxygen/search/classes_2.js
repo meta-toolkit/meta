@@ -16,6 +16,5 @@ var searchData=
   ['concrete_5ftask',['concrete_task',['../structmeta_1_1parallel_1_1thread__pool_1_1concrete__task.html',1,'meta::parallel::thread_pool']]],
   ['confusion_5fmatrix',['confusion_matrix',['../classmeta_1_1classify_1_1confusion__matrix.html',1,'meta::classify']]],
   ['corpus',['corpus',['../classmeta_1_1corpus_1_1corpus.html',1,'meta::corpus']]],
-  ['corpus_5fexception',['corpus_exception',['../classmeta_1_1corpus_1_1corpus_1_1corpus__exception.html',1,'meta::corpus::corpus']]],
-  ['cosine',['cosine',['../structmeta_1_1clustering_1_1similarity_1_1cosine.html',1,'meta::clustering::similarity']]]
+  ['corpus_5fexception',['corpus_exception',['../classmeta_1_1corpus_1_1corpus_1_1corpus__exception.html',1,'meta::corpus::corpus']]]
 ];

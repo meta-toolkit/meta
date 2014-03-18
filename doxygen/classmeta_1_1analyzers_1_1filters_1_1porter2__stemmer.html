@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -107,7 +107,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Filter that stems words according to the porter2 stemmer algorithm.  
  <a href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="include_2analyzers_2filters_2porter2__stemmer_8h_source.html">porter2_stemmer.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="porter2__stemmer_8h_source.html">porter2_stemmer.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for meta::analyzers::filters::porter2_stemmer:</div>
 <div class="dyncontent">
@@ -120,17 +120,14 @@ Inheritance diagram for meta::analyzers::filters::porter2_stemmer:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0748dcd17e3cb6cfdedc9a8a87204f46"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0748dcd17e3cb6cfdedc9a8a87204f46"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a0748dcd17e3cb6cfdedc9a8a87204f46">porter2_stemmer</a> (std::unique_ptr&lt; <a class="el" href="classmeta_1_1analyzers_1_1token__stream.html">token_stream</a> &gt; source)</td></tr>
-<tr class="memdesc:a0748dcd17e3cb6cfdedc9a8a87204f46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a new porter2 stemmer filter, reading tokens from the given source. <br/></td></tr>
+<tr class="memitem:a0748dcd17e3cb6cfdedc9a8a87204f46"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a0748dcd17e3cb6cfdedc9a8a87204f46">porter2_stemmer</a> (std::unique_ptr&lt; <a class="el" href="classmeta_1_1analyzers_1_1token__stream.html">token_stream</a> &gt; source)</td></tr>
+<tr class="memdesc:a0748dcd17e3cb6cfdedc9a8a87204f46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a new porter2 stemmer filter, reading tokens from the given source.  <a href="#a0748dcd17e3cb6cfdedc9a8a87204f46">More...</a><br/></td></tr>
 <tr class="separator:a0748dcd17e3cb6cfdedc9a8a87204f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9dc426a17ead93b1daec986ae208e53b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9dc426a17ead93b1daec986ae208e53b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a9dc426a17ead93b1daec986ae208e53b">porter2_stemmer</a> (const <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html">porter2_stemmer</a> &amp;other)</td></tr>
-<tr class="memdesc:a9dc426a17ead93b1daec986ae208e53b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br/></td></tr>
+<tr class="memitem:a9dc426a17ead93b1daec986ae208e53b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a9dc426a17ead93b1daec986ae208e53b">porter2_stemmer</a> (const <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html">porter2_stemmer</a> &amp;other)</td></tr>
+<tr class="memdesc:a9dc426a17ead93b1daec986ae208e53b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <a href="#a9dc426a17ead93b1daec986ae208e53b">More...</a><br/></td></tr>
 <tr class="separator:a9dc426a17ead93b1daec986ae208e53b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a157abf4e1ab466defbad133335c52a5b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a157abf4e1ab466defbad133335c52a5b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a157abf4e1ab466defbad133335c52a5b">set_content</a> (const std::string &amp;content) override</td></tr>
-<tr class="memdesc:a157abf4e1ab466defbad133335c52a5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the content for the beginning of the filter chain. <br/></td></tr>
+<tr class="memitem:a157abf4e1ab466defbad133335c52a5b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a157abf4e1ab466defbad133335c52a5b">set_content</a> (const std::string &amp;content) override</td></tr>
+<tr class="memdesc:a157abf4e1ab466defbad133335c52a5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the content for the beginning of the filter chain.  <a href="#a157abf4e1ab466defbad133335c52a5b">More...</a><br/></td></tr>
 <tr class="separator:a157abf4e1ab466defbad133335c52a5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6baadb9c34bd290eb1d3c8c357ef28e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6baadb9c34bd290eb1d3c8c357ef28e8"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a6baadb9c34bd290eb1d3c8c357ef28e8">next</a> () override</td></tr>
@@ -141,8 +138,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <tr class="memdesc:a6ea8ab68aec4e3710cac06ea4d50c76a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines if there are more tokens available in the stream. <br/></td></tr>
 <tr class="separator:a6ea8ab68aec4e3710cac06ea4d50c76a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classmeta_1_1util_1_1multilevel__clonable"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classmeta_1_1util_1_1multilevel__clonable')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classmeta_1_1util_1_1multilevel__clonable.html">meta::util::multilevel_clonable&lt; Root, Base, Derived &gt;</a></td></tr>
-<tr class="memitem:ae14dcee72c461b85fce773f563dc31cd inherit pub_methods_classmeta_1_1util_1_1multilevel__clonable"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae14dcee72c461b85fce773f563dc31cd"></a>
-virtual std::unique_ptr&lt; Root &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>clone</b> () const </td></tr>
+<tr class="memitem:ae14dcee72c461b85fce773f563dc31cd inherit pub_methods_classmeta_1_1util_1_1multilevel__clonable"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; Root &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1multilevel__clonable.html#ae14dcee72c461b85fce773f563dc31cd">clone</a> () const </td></tr>
+<tr class="memdesc:ae14dcee72c461b85fce773f563dc31cd inherit pub_methods_classmeta_1_1util_1_1multilevel__clonable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clones the given object.  <a href="#ae14dcee72c461b85fce773f563dc31cd">More...</a><br/></td></tr>
 <tr class="separator:ae14dcee72c461b85fce773f563dc31cd inherit pub_methods_classmeta_1_1util_1_1multilevel__clonable"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
@@ -155,7 +152,8 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a03f0aa0bcff033fc13edb6d7d805e567"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03f0aa0bcff033fc13edb6d7d805e567"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>next_token</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html#a03f0aa0bcff033fc13edb6d7d805e567">next_token</a> ()</td></tr>
+<tr class="memdesc:a03f0aa0bcff033fc13edb6d7d805e567"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the next valid token for this filter. <br/></td></tr>
 <tr class="separator:a03f0aa0bcff033fc13edb6d7d805e567"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
@@ -172,14 +170,96 @@ std::unique_ptr&lt; <a class="el" href="classmeta_1_1analyzers_1_1token__stream.
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Filter that stems words according to the porter2 stemmer algorithm. </p>
 <p>Requires that the porter2 stemmer project submodule be downloaded. </p>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/chase/projects/meta/include/analyzers/filters/<a class="el" href="include_2analyzers_2filters_2porter2__stemmer_8h_source.html">porter2_stemmer.h</a></li>
-<li>/home/chase/projects/meta/src/analyzers/filters/porter2_stemmer.cpp</li>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a0748dcd17e3cb6cfdedc9a8a87204f46"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">meta::analyzers::filters::porter2_stemmer::porter2_stemmer </td>
+          <td>(</td>
+          <td class="paramtype">std::unique_ptr&lt; <a class="el" href="classmeta_1_1analyzers_1_1token__stream.html">token_stream</a> &gt;&#160;</td>
+          <td class="paramname"><em>source</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructs a new porter2 stemmer filter, reading tokens from the given source. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td>The source to construct the filter from </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a9dc426a17ead93b1daec986ae208e53b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">meta::analyzers::filters::porter2_stemmer::porter2_stemmer </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html">porter2_stemmer</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>The <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1porter2__stemmer.html" title="Filter that stems words according to the porter2 stemmer algorithm. ">porter2_stemmer</a> to copy into this one </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a157abf4e1ab466defbad133335c52a5b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void meta::analyzers::filters::porter2_stemmer::set_content </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>content</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the content for the beginning of the filter chain. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">content</td><td>The string content to set </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>/home/chase/projects/meta/include/analyzers/filters/<a class="el" href="porter2__stemmer_8h_source.html">porter2_stemmer.h</a></li>
+<li>/home/chase/projects/meta/src/analyzers/filters/<a class="el" href="porter2__stemmer_8cpp.html">porter2_stemmer.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:55 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:03 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

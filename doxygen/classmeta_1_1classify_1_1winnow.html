@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -120,9 +120,9 @@ Inheritance diagram for meta::classify::winnow:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab3222419db974cb6b40758c3e6a90a30"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#ab3222419db974cb6b40758c3e6a90a30">winnow</a> (std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, double m=1.5, double gamma=0.05, size_t max_iter=100)</td></tr>
-<tr class="memdesc:ab3222419db974cb6b40758c3e6a90a30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a winnow classifier with the given multiplier, error threshold, and maximum iterations.  <a href="#ab3222419db974cb6b40758c3e6a90a30">More...</a><br/></td></tr>
-<tr class="separator:ab3222419db974cb6b40758c3e6a90a30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0dc66d9fcb75adf07115e37d28ff7b86"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#a0dc66d9fcb75adf07115e37d28ff7b86">winnow</a> (std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, double m=<a class="el" href="classmeta_1_1classify_1_1winnow.html#a8c52999036fd01fbd28c5fd2b1607acb">default_m</a>, double gamma=<a class="el" href="classmeta_1_1classify_1_1winnow.html#a8db19907f0bb7206887b8cda1da8592b">default_gamma</a>, size_t max_iter=<a class="el" href="classmeta_1_1classify_1_1winnow.html#ab19240531b6edab3af3c6665dc233d85">default_max_iter</a>)</td></tr>
+<tr class="memdesc:a0dc66d9fcb75adf07115e37d28ff7b86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a winnow classifier with the given multiplier, error threshold, and maximum iterations.  <a href="#a0dc66d9fcb75adf07115e37d28ff7b86">More...</a><br/></td></tr>
+<tr class="separator:a0dc66d9fcb75adf07115e37d28ff7b86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cf14c168f7f65af780fff642accf2aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#a2cf14c168f7f65af780fff642accf2aa">train</a> (const std::vector&lt; doc_id &gt; &amp;docs) override</td></tr>
 <tr class="memdesc:a2cf14c168f7f65af780fff642accf2aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trains the winnow on the given training documents.  <a href="#a2cf14c168f7f65af780fff642accf2aa">More...</a><br/></td></tr>
 <tr class="separator:a2cf14c168f7f65af780fff642accf2aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -145,6 +145,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
+<tr class="memitem:a8c52999036fd01fbd28c5fd2b1607acb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c52999036fd01fbd28c5fd2b1607acb"></a>
+static const constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#a8c52999036fd01fbd28c5fd2b1607acb">default_m</a> = 1.5</td></tr>
+<tr class="memdesc:a8c52999036fd01fbd28c5fd2b1607acb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default \(m\) parameter. <br/></td></tr>
+<tr class="separator:a8c52999036fd01fbd28c5fd2b1607acb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8db19907f0bb7206887b8cda1da8592b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8db19907f0bb7206887b8cda1da8592b"></a>
+static const constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#a8db19907f0bb7206887b8cda1da8592b">default_gamma</a> = 0.05</td></tr>
+<tr class="memdesc:a8db19907f0bb7206887b8cda1da8592b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default \(gamma\) parameter. <br/></td></tr>
+<tr class="separator:a8db19907f0bb7206887b8cda1da8592b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab19240531b6edab3af3c6665dc233d85"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab19240531b6edab3af3c6665dc233d85"></a>
+static const constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#ab19240531b6edab3af3c6665dc233d85">default_max_iter</a> = 100</td></tr>
+<tr class="memdesc:ab19240531b6edab3af3c6665dc233d85"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default number of allowed iterations. <br/></td></tr>
+<tr class="separator:ab19240531b6edab3af3c6665dc233d85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0796b3f2c13cd2bdc589aea3eb1fc70b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0796b3f2c13cd2bdc589aea3eb1fc70b"></a>
 static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#a0796b3f2c13cd2bdc589aea3eb1fc70b">id</a> = &quot;winnow&quot;</td></tr>
 <tr class="memdesc:a0796b3f2c13cd2bdc589aea3eb1fc70b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The identifier for this classifier. <br/></td></tr>
@@ -153,7 +165,6 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a61401648fc78b1959e17680abe112232"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#a61401648fc78b1959e17680abe112232">get_weight</a> (const class_label &amp;label, const term_id &amp;term) const </td></tr>
-<tr class="memdesc:a61401648fc78b1959e17680abe112232"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the given term's weight in the weight vector for the given class.  <a href="#a61401648fc78b1959e17680abe112232">More...</a><br/></td></tr>
 <tr class="separator:a61401648fc78b1959e17680abe112232"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1bf64a43502edff67df34c2d90f9cd41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#a1bf64a43502edff67df34c2d90f9cd41">zero_weights</a> (const std::vector&lt; doc_id &gt; &amp;docs)</td></tr>
 <tr class="memdesc:a1bf64a43502edff67df34c2d90f9cd41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the weight vectors to zero for every class label.  <a href="#a1bf64a43502edff67df34c2d90f9cd41">More...</a><br/></td></tr>
@@ -170,7 +181,7 @@ double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 <tr class="separator:ae18bf9437bec24aac10ec133ee1425e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa62acf8ab88de5990d9ab6dba30fff04"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa62acf8ab88de5990d9ab6dba30fff04"></a>
 const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#aa62acf8ab88de5990d9ab6dba30fff04">m_</a></td></tr>
-<tr class="memdesc:aa62acf8ab88de5990d9ab6dba30fff04"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(\m\), the multiplicative learning rate. <br/></td></tr>
+<tr class="memdesc:aa62acf8ab88de5990d9ab6dba30fff04"><td class="mdescLeft">&#160;</td><td class="mdescRight">\(m\), the multiplicative learning rate. <br/></td></tr>
 <tr class="separator:aa62acf8ab88de5990d9ab6dba30fff04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b4f4b52f49c6c27c891ad19e6785e85"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b4f4b52f49c6c27c891ad19e6785e85"></a>
 const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1winnow.html#a1b4f4b52f49c6c27c891ad19e6785e85">gamma_</a></td></tr>
@@ -194,7 +205,7 @@ std::shared_ptr<br class="typebreak"/>
 <div class="textblock"><p>Implements the Winnow classifier, a simplistic linear classifier for linearly-separable data. </p>
 <p>As opposed to winnow (which uses an additive update rule), winnow uses a multiplicative update rule. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ab3222419db974cb6b40758c3e6a90a30"></a>
+<a class="anchor" id="a0dc66d9fcb75adf07115e37d28ff7b86"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -208,19 +219,19 @@ std::shared_ptr<br class="typebreak"/>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>m</em> = <code>1.5</code>, </td>
+          <td class="paramname"><em>m</em> = <code><a class="el" href="classmeta_1_1classify_1_1winnow.html#a8c52999036fd01fbd28c5fd2b1607acb">default_m</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>gamma</em> = <code>0.05</code>, </td>
+          <td class="paramname"><em>gamma</em> = <code><a class="el" href="classmeta_1_1classify_1_1winnow.html#a8db19907f0bb7206887b8cda1da8592b">default_gamma</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>max_iter</em> = <code>100</code>&#160;</td>
+          <td class="paramname"><em>max_iter</em> = <code><a class="el" href="classmeta_1_1classify_1_1winnow.html#ab19240531b6edab3af3c6665dc233d85">default_max_iter</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -236,7 +247,7 @@ std::shared_ptr<br class="typebreak"/>
     <tr><td class="paramname">idx</td><td>The index to run the classifier on </td></tr>
     <tr><td class="paramname">m</td><td>\(m\), the multiplicative learning rate </td></tr>
     <tr><td class="paramname">gamma</td><td>\(gamma\), the error threshold </td></tr>
-    <tr><td class="paramname">max_iter</td><td>The maximum number of iterations for training. </td></tr>
+    <tr><td class="paramname">max_iter</td><td>The maximum number of iterations for training </td></tr>
   </table>
   </dd>
 </dl>
@@ -270,7 +281,7 @@ std::shared_ptr<br class="typebreak"/>
 <p>Maintains a set of weight vectors \(w_1,\ldots,w_K\) where \(K\) is the number of classes and updates them for each training document seen in each iteration. This continues until the error threshold is met or the maximum number of iterations is completed. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">docs</td><td>The training set. </td></tr>
+    <tr><td class="paramname">docs</td><td>The training set </td></tr>
   </table>
   </dd>
 </dl>
@@ -305,11 +316,11 @@ std::shared_ptr<br class="typebreak"/>
 <p>The class label returned is \(\argmax_k(w_k^\intercal x_n + b)\)&mdash;in other words, the class whose associated weight vector gives the highest result.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">doc</td><td>The document to be classified. </td></tr>
+    <tr><td class="paramname">doc</td><td>The document to be classified </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The class label determined for the document. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the class label determined for the document </dd></dl>
 
 <p>Implements <a class="el" href="classmeta_1_1classify_1_1classifier.html#affc375139594f8368b74b991631daec5">meta::classify::classifier</a>.</p>
 
@@ -346,12 +357,11 @@ std::shared_ptr<br class="typebreak"/>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Returns the given term's weight in the weight vector for the given class. </p>
+<dl class="section return"><dt>Returns</dt><dd>the given term's weight in the weight vector for the given class</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">label</td><td>The class label for the weight vector we want. </td></tr>
-    <tr><td class="paramname">term</td><td>The term whose weight should be returned. </td></tr>
+    <tr><td class="paramname">label</td><td>The class label for the weight vector we want </td></tr>
+    <tr><td class="paramname">term</td><td>The term whose weight should be returned </td></tr>
   </table>
   </dd>
 </dl>
@@ -397,7 +407,7 @@ std::shared_ptr<br class="typebreak"/>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:58 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:06 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

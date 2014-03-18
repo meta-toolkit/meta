@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_f4e47f73b9eb56c122cba38d21e5108e.html">include</a></li><li class="navelem"><a class="el" href="dir_dbbdf2c7bf222ce38f07071d8f78bb72.html">analyzers</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_9f4cdd3e4fb570202e8822a8a4084a6d.html">analyzers</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -115,17 +115,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="classmeta_1_1analyzers_1_1multi__analyzer.html#a2f28ca739302ab158c17b5920be488b3">multi_analyzer</a>(std::vector&lt;std::unique_ptr&lt;analyzer&gt;&gt;&amp;&amp; toks);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="classmeta_1_1analyzers_1_1multi__analyzer.html#a2f28ca739302ab158c17b5920be488b3">multi_analyzer</a>(<span class="keyword">const</span> <a class="code" href="classmeta_1_1analyzers_1_1multi__analyzer.html">multi_analyzer</a>&amp; other);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classmeta_1_1analyzers_1_1multi__analyzer.html#a2ae6e0dfff55680e5cd0623d78a33688">tokenize</a>(<a class="code" href="classmeta_1_1corpus_1_1document.html">corpus::document</a>&amp; doc) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classmeta_1_1analyzers_1_1multi__analyzer.html#af8770adfc0a3ceecc8b0fcd7a6adca13">   53</a></span>&#160;    std::vector&lt;std::unique_ptr&lt;analyzer&gt;&gt; <a class="code" href="classmeta_1_1analyzers_1_1multi__analyzer.html#af8770adfc0a3ceecc8b0fcd7a6adca13">analyzers_</a>;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;};</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;}</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <a class="code" href="classmeta_1_1analyzers_1_1multi__analyzer.html#a2f28ca739302ab158c17b5920be488b3">multi_analyzer</a>(<span class="keyword">const</span> <a class="code" href="classmeta_1_1analyzers_1_1multi__analyzer.html">multi_analyzer</a>&amp; other);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classmeta_1_1analyzers_1_1multi__analyzer.html#a2ae6e0dfff55680e5cd0623d78a33688">tokenize</a>(<a class="code" href="classmeta_1_1corpus_1_1document.html">corpus::document</a>&amp; doc) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classmeta_1_1analyzers_1_1multi__analyzer.html#af8770adfc0a3ceecc8b0fcd7a6adca13">   54</a></span>&#160;    std::vector&lt;std::unique_ptr&lt;analyzer&gt;&gt; <a class="code" href="classmeta_1_1analyzers_1_1multi__analyzer.html#af8770adfc0a3ceecc8b0fcd7a6adca13">analyzers_</a>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;};</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="classmeta_1_1analyzers_1_1multi__analyzer_html"><div class="ttname"><a href="classmeta_1_1analyzers_1_1multi__analyzer.html">meta::analyzers::multi_analyzer</a></div><div class="ttdoc">The multi_analyzer class contains more than one analyzer. </div><div class="ttdef"><b>Definition:</b> multi_analyzer.h:31</div></div>
 <div class="ttc" id="analyzer_8h_html"><div class="ttname"><a href="analyzer_8h.html">analyzer.h</a></div></div>
 <div class="ttc" id="classmeta_1_1analyzers_1_1multi__analyzer_html_a2ae6e0dfff55680e5cd0623d78a33688"><div class="ttname"><a href="classmeta_1_1analyzers_1_1multi__analyzer.html#a2ae6e0dfff55680e5cd0623d78a33688">meta::analyzers::multi_analyzer::tokenize</a></div><div class="ttdeci">virtual void tokenize(corpus::document &amp;doc) override</div><div class="ttdoc">Tokenizes a file into a document. </div><div class="ttdef"><b>Definition:</b> multi_analyzer.cpp:24</div></div>
@@ -133,11 +133,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="clonable_8h_html"><div class="ttname"><a href="clonable_8h.html">clonable.h</a></div></div>
 <div class="ttc" id="classmeta_1_1corpus_1_1document_html"><div class="ttname"><a href="classmeta_1_1corpus_1_1document.html">meta::corpus::document</a></div><div class="ttdoc">Represents an indexable document. </div><div class="ttdef"><b>Definition:</b> document.h:30</div></div>
 <div class="ttc" id="classmeta_1_1analyzers_1_1multi__analyzer_html_a2f28ca739302ab158c17b5920be488b3"><div class="ttname"><a href="classmeta_1_1analyzers_1_1multi__analyzer.html#a2f28ca739302ab158c17b5920be488b3">meta::analyzers::multi_analyzer::multi_analyzer</a></div><div class="ttdeci">multi_analyzer(std::vector&lt; std::unique_ptr&lt; analyzer &gt;&gt; &amp;&amp;toks)</div><div class="ttdoc">Constructs a multi_analyzer from a vector of other analyzers. </div><div class="ttdef"><b>Definition:</b> multi_analyzer.cpp:12</div></div>
-<div class="ttc" id="classmeta_1_1analyzers_1_1multi__analyzer_html_af8770adfc0a3ceecc8b0fcd7a6adca13"><div class="ttname"><a href="classmeta_1_1analyzers_1_1multi__analyzer.html#af8770adfc0a3ceecc8b0fcd7a6adca13">meta::analyzers::multi_analyzer::analyzers_</a></div><div class="ttdeci">std::vector&lt; std::unique_ptr&lt; analyzer &gt; &gt; analyzers_</div><div class="ttdoc">Holds all the analyzers in this multi_analyzer. </div><div class="ttdef"><b>Definition:</b> multi_analyzer.h:53</div></div>
+<div class="ttc" id="classmeta_1_1analyzers_1_1multi__analyzer_html_af8770adfc0a3ceecc8b0fcd7a6adca13"><div class="ttname"><a href="classmeta_1_1analyzers_1_1multi__analyzer.html#af8770adfc0a3ceecc8b0fcd7a6adca13">meta::analyzers::multi_analyzer::analyzers_</a></div><div class="ttdeci">std::vector&lt; std::unique_ptr&lt; analyzer &gt; &gt; analyzers_</div><div class="ttdoc">Holds all the analyzers in this multi_analyzer. </div><div class="ttdef"><b>Definition:</b> multi_analyzer.h:54</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:48 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

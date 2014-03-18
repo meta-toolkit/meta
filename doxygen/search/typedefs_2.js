@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['inneriterator',['InnerIterator',['../classmeta_1_1util_1_1invertible__map.html#a9bc1f47b923b4406b45b3105e8ed724f',1,'meta::util::invertible_map']]],
-  ['iterator',['iterator',['../classcpptoml_1_1toml__group.html#a3ce19c07d0bc4773dec8543a2e05d389',1,'cpptoml::toml_group::iterator()'],['../classmeta_1_1util_1_1invertible__map.html#a802145b57fa94c2aaa41750668f89732',1,'meta::util::invertible_map::iterator()']]]
+  ['dblru_5fforward_5findex',['dblru_forward_index',['../namespacemeta_1_1index.html#a29dc960afb6388fdabff985a97ccf637',1,'meta::index']]],
+  ['dblru_5finverted_5findex',['dblru_inverted_index',['../namespacemeta_1_1index.html#ab253a089456a159d13450e70ce0c6d26',1,'meta::index']]],
+  ['dblru_5fshard_5fcache',['dblru_shard_cache',['../namespacemeta_1_1caching.html#aec68a4f58002a32044c3cc500a1a249c',1,'meta::caching']]],
+  ['default_5fdblru_5fcache',['default_dblru_cache',['../namespacemeta_1_1caching.html#a7bc75f9e5ef2bceef493e292c1ee36b0',1,'meta::caching']]],
+  ['difference_5ftype',['difference_type',['../classmeta_1_1util_1_1basic__range_1_1iterator__t.html#aa05cb3740d1715f6916014cb35cef9b9',1,'meta::util::basic_range::iterator_t']]]
 ];

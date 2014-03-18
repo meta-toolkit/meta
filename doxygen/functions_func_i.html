@@ -117,7 +117,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -142,6 +142,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>identifier()
 : <a class="el" href="structmeta_1_1util_1_1identifier.html#aef5b800c860345bd3882baa526efec42">meta::util::identifier&lt; Derived, T &gt;</a>
 </li>
+<li>impl()
+: <a class="el" href="classmeta_1_1index_1_1forward__index_1_1impl.html#ad9408f328bb09790a71056f0cda33e14">meta::index::forward_index::impl</a>
+, <a class="el" href="classmeta_1_1index_1_1inverted__index_1_1impl.html#a7571d218a3b609973dc1188e310271de">meta::index::inverted_index::impl</a>
+, <a class="el" href="classmeta_1_1utf_1_1segmenter_1_1impl.html#a4c0f8e488461f71ce9ba0a0f4108af1d">meta::utf::segmenter::impl</a>
+, <a class="el" href="classmeta_1_1utf_1_1transformer_1_1impl.html#a9491c3c01d4b5d7bec848e6a9975c017">meta::utf::transformer::impl</a>
+</li>
 <li>increase_count()
 : <a class="el" href="classmeta_1_1index_1_1postings__data.html#a798e6d7f6df9ed28d92ec156e3bc709e">meta::index::postings_data&lt; class, class &gt;</a>
 </li>
@@ -164,21 +170,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>initialize()
 : <a class="el" href="classmeta_1_1topics_1_1lda__cvb.html#a472b8b7da764d84d078f9067063d7ae9">meta::topics::lda_cvb</a>
 , <a class="el" href="classmeta_1_1topics_1_1lda__gibbs.html#a3e39c78b915c0e7a57380183d76fa991">meta::topics::lda_gibbs</a>
-, <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a80d0ea910766b78e6af45a3bc04d09f5">meta::topics::parallel_lda_gibbs</a>
+, <a class="el" href="classmeta_1_1topics_1_1parallel__lda__gibbs.html#a014b7bfca0f916591df5e9e091de2521">meta::topics::parallel_lda_gibbs</a>
 </li>
 <li>initialize_metadata()
 : <a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a0ef13846755f4f0e3e8803ee7789aa1f">meta::index::disk_index::disk_index_impl</a>
 </li>
 <li>insert()
-: <a class="el" href="classcpptoml_1_1toml__group.html#a9ff295253cef4151a27992f36a18a067">cpptoml::toml_group</a>
-, <a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a60d97046da1e77408f12892ded405b66">meta::caching::dblru_cache&lt; Key, Value, Map &gt;</a>
+: <a class="el" href="classmeta_1_1caching_1_1dblru__cache.html#a60d97046da1e77408f12892ded405b66">meta::caching::dblru_cache&lt; Key, Value, Map &gt;</a>
 , <a class="el" href="classmeta_1_1caching_1_1generic__shard__cache.html#ae8998721b21f0ca28d433ddfe768eea3">meta::caching::generic_shard_cache&lt; Key, Value, Map &gt;</a>
 , <a class="el" href="classmeta_1_1caching_1_1locking__map.html#ace3a1784c462f21917296051ada3adda">meta::caching::locking_map&lt; Key, Value &gt;</a>
 , <a class="el" href="classmeta_1_1caching_1_1no__evict__cache.html#a61a49573de53049ef0166cbe458a5346">meta::caching::no_evict_cache&lt; Key, Value &gt;</a>
 , <a class="el" href="classmeta_1_1caching_1_1splay__cache.html#a5af70cab12102d70c933f76c9d2574cf">meta::caching::splay_cache&lt; Key, Value &gt;</a>
 , <a class="el" href="classmeta_1_1index_1_1string__list__writer.html#abfec67b5567365deed8a11231eb3cb19">meta::index::string_list_writer</a>
 , <a class="el" href="classmeta_1_1index_1_1vocabulary__map__writer.html#a23db6f9430deafdc6c9b838680f96921">meta::index::vocabulary_map_writer</a>
-, <a class="el" href="classmeta_1_1util_1_1invertible__map.html#a5608fedb61845f8495744e14d41f3b5c">meta::util::invertible_map&lt; Key, Value &gt;</a>
+, <a class="el" href="classmeta_1_1util_1_1invertible__map.html#a5e42789dbb7115aba650357f75d567e7">meta::util::invertible_map&lt; Key, Value &gt;</a>
 </li>
 <li>inverse_frequency()
 : <a class="el" href="classmeta_1_1index_1_1postings__data.html#a79088d91dbfdb201d2585fb7a6564082">meta::index::postings_data&lt; class, class &gt;</a>
@@ -192,23 +197,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>ir_eval()
 : <a class="el" href="classmeta_1_1index_1_1ir__eval.html#aacecef1b4f2ac751b011ee6084450b00">meta::index::ir_eval</a>
 </li>
-<li>is_group()
-: <a class="el" href="classcpptoml_1_1toml__base.html#a05eaac2e84559a2eeffe59b6413f1f34">cpptoml::toml_base</a>
-, <a class="el" href="classcpptoml_1_1toml__group.html#aee361c9019496496207c3e0be93ac905">cpptoml::toml_group</a>
-</li>
-<li>is_group_array()
-: <a class="el" href="classcpptoml_1_1toml__base.html#add70495755e781e1d7965ccf2323e754">cpptoml::toml_base</a>
-, <a class="el" href="classcpptoml_1_1toml__group__array.html#a74affe1fadd8f2c0349e36f46940939f">cpptoml::toml_group_array</a>
-</li>
 <li>is_libsvm_format()
 : <a class="el" href="classmeta_1_1index_1_1forward__index_1_1impl.html#abbc104fe6b60c5f1dc84d1b08cb50c3a">meta::index::forward_index::impl</a>
 </li>
 <li>is_quote()
 : <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1english__normalizer.html#a84e8e46d5a4b32111c2494d6dad34ed0">meta::analyzers::filters::english_normalizer</a>
-</li>
-<li>is_value()
-: <a class="el" href="classcpptoml_1_1toml__base.html#a377350534545e33a0bc3ed2ed9dd898f">cpptoml::toml_base</a>
-, <a class="el" href="classcpptoml_1_1toml__value.html#aecf48d6b8caaf182aa26c3cf1739af01">cpptoml::toml_value&lt; T &gt;</a>
 </li>
 <li>is_whitespace()
 : <a class="el" href="classmeta_1_1analyzers_1_1filters_1_1english__normalizer.html#af3bfad5c0deccd4b64bf5532ef3d3de3">meta::analyzers::filters::english_normalizer</a>
@@ -217,13 +210,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classmeta_1_1util_1_1disk__vector_1_1iterator.html#a784e5da39b5b4cd712e661b53b7600a6">meta::util::disk_vector&lt; class &gt;::iterator</a>
 </li>
 <li>Iterator()
-: <a class="el" href="classmeta_1_1util_1_1invertible__map_1_1Iterator.html#aa231674841bf7593bf5db2b4974a7575">meta::util::invertible_map&lt; Key, Value &gt;::Iterator</a>
+: <a class="el" href="classmeta_1_1util_1_1invertible__map_1_1Iterator.html#aba04196c9923788f36df73d4e5dd44c2">meta::util::invertible_map&lt; Key, Value &gt;::Iterator</a>
+</li>
+<li>iterator_t()
+: <a class="el" href="classmeta_1_1util_1_1basic__range_1_1iterator__t.html#aa2d93d69b84b730a15d105a079929646">meta::util::basic_range&lt; T &gt;::iterator_t&lt; Plus &gt;</a>
 </li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:43:10 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:17 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

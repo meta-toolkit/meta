@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -120,8 +120,8 @@ Inheritance diagram for meta::index::dirichlet_prior:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab6597ca03e7bb993795e757da9ef36a3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html#ab6597ca03e7bb993795e757da9ef36a3">dirichlet_prior</a> (double mu=2000)</td></tr>
-<tr class="separator:ab6597ca03e7bb993795e757da9ef36a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a145b60fd8fb3448c46a61d2cbefae53a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html#a145b60fd8fb3448c46a61d2cbefae53a">dirichlet_prior</a> (double mu=<a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html#a834a8060be453818fd281d655ed3bb81">default_mu</a>)</td></tr>
+<tr class="separator:a145b60fd8fb3448c46a61d2cbefae53a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bc834ba47bf41dc6906068a92f5e29e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html#a7bc834ba47bf41dc6906068a92f5e29e">smoothed_prob</a> (const <a class="el" href="structmeta_1_1index_1_1score__data.html">score_data</a> &amp;sd) const override</td></tr>
 <tr class="memdesc:a7bc834ba47bf41dc6906068a92f5e29e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the smoothed probability of a term.  <a href="#a7bc834ba47bf41dc6906068a92f5e29e">More...</a><br/></td></tr>
 <tr class="separator:a7bc834ba47bf41dc6906068a92f5e29e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,8 +148,12 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:adba528649f73a096648b7f80ca723cd4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adba528649f73a096648b7f80ca723cd4"></a>
 static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html#adba528649f73a096648b7f80ca723cd4">id</a> = &quot;dirichlet-prior&quot;</td></tr>
-<tr class="memdesc:adba528649f73a096648b7f80ca723cd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The identifier for this ranker. <br/></td></tr>
+<tr class="memdesc:adba528649f73a096648b7f80ca723cd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Identifier for this ranker. <br/></td></tr>
 <tr class="separator:adba528649f73a096648b7f80ca723cd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a834a8060be453818fd281d655ed3bb81"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a834a8060be453818fd281d655ed3bb81"></a>
+static const constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html#a834a8060be453818fd281d655ed3bb81">default_mu</a> = 2000</td></tr>
+<tr class="memdesc:a834a8060be453818fd281d655ed3bb81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default value of mu. <br/></td></tr>
+<tr class="separator:a834a8060be453818fd281d655ed3bb81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_attribs_classmeta_1_1index_1_1language__model__ranker"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_classmeta_1_1index_1_1language__model__ranker')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="classmeta_1_1index_1_1language__model__ranker.html">meta::index::language_model_ranker</a></td></tr>
 <tr class="memitem:adbbfe2d86b42774cec219b5c4b8b5df5 inherit pub_static_attribs_classmeta_1_1index_1_1language__model__ranker"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adbbfe2d86b42774cec219b5c4b8b5df5"></a>
 static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1language__model__ranker.html#adbbfe2d86b42774cec219b5c4b8b5df5">id</a> = &quot;language-model&quot;</td></tr>
@@ -166,7 +170,7 @@ const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements Bayesian smoothing with a Dirichlet prior. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ab6597ca03e7bb993795e757da9ef36a3"></a>
+<a class="anchor" id="a145b60fd8fb3448c46a61d2cbefae53a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -174,7 +178,7 @@ const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
           <td class="memname">meta::index::dirichlet_prior::dirichlet_prior </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>mu</em> = <code>2000</code></td><td>)</td>
+          <td class="paramname"><em>mu</em> = <code><a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html#a834a8060be453818fd281d655ed3bb81">default_mu</a></code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -214,7 +218,7 @@ const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <p>Calculates the smoothed probability of a term. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">sd</td><td></td></tr>
+    <tr><td class="paramname">sd</td><td><a class="el" href="structmeta_1_1index_1_1score__data.html" title="A score_data object contains information needed to evaluate a ranking function. ">score_data</a> for the current query </td></tr>
   </table>
   </dd>
 </dl>
@@ -248,7 +252,7 @@ const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <p>A document-dependent constant. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">sd</td><td></td></tr>
+    <tr><td class="paramname">sd</td><td><a class="el" href="structmeta_1_1index_1_1score__data.html" title="A score_data object contains information needed to evaluate a ranking function. ">score_data</a> for the current query </td></tr>
   </table>
   </dd>
 </dl>
@@ -264,7 +268,7 @@ const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:43:04 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:11 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

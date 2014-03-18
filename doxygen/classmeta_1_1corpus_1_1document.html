@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -95,7 +95,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classmeta_1_1corpus_1_1document-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -145,51 +144,43 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac2e75bf986d07ab707c04acedeac77ac"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#ac2e75bf986d07ab707c04acedeac77ac">contains_content</a> () const </td></tr>
 <tr class="separator:ac2e75bf986d07ab707c04acedeac77ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b59ae5847e069d85c6196b359f4375d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a2b59ae5847e069d85c6196b359f4375d">label</a> (class_label label)</td></tr>
+<tr class="memdesc:a2b59ae5847e069d85c6196b359f4375d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the label for this document.  <a href="#a2b59ae5847e069d85c6196b359f4375d">More...</a><br/></td></tr>
 <tr class="separator:a2b59ae5847e069d85c6196b359f4375d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a59083256054535dc0b4aff3d9a197505"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a59083256054535dc0b4aff3d9a197505">jaccard_similarity</a> (const <a class="el" href="classmeta_1_1corpus_1_1document.html">document</a> &amp;a, const <a class="el" href="classmeta_1_1corpus_1_1document.html">document</a> &amp;b)</td></tr>
-<tr class="memdesc:a59083256054535dc0b4aff3d9a197505"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper function for a document's cosine similarity measure.  <a href="#a59083256054535dc0b4aff3d9a197505">More...</a><br/></td></tr>
-<tr class="separator:a59083256054535dc0b4aff3d9a197505"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93616e0cdb34c888cfa8d9b493293f81"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a93616e0cdb34c888cfa8d9b493293f81">cosine_similarity</a> (const <a class="el" href="classmeta_1_1corpus_1_1document.html">document</a> &amp;a, const <a class="el" href="classmeta_1_1corpus_1_1document.html">document</a> &amp;b)</td></tr>
-<tr class="memdesc:a93616e0cdb34c888cfa8d9b493293f81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper function for a document's cosine similarity measure.  <a href="#a93616e0cdb34c888cfa8d9b493293f81">More...</a><br/></td></tr>
-<tr class="separator:a93616e0cdb34c888cfa8d9b493293f81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a14579c29f025cc4b4ee4f5a4a09495ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a14579c29f025cc4b4ee4f5a4a09495ce"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a14579c29f025cc4b4ee4f5a4a09495ce">path_</a></td></tr>
-<tr class="memdesc:a14579c29f025cc4b4ee4f5a4a09495ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">where this document is on disk <br/></td></tr>
+<tr class="memdesc:a14579c29f025cc4b4ee4f5a4a09495ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where this document is on disk. <br/></td></tr>
 <tr class="separator:a14579c29f025cc4b4ee4f5a4a09495ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8668df179c28d041cebd14ea64b9fb8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8668df179c28d041cebd14ea64b9fb8b"></a>
 doc_id&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a8668df179c28d041cebd14ea64b9fb8b">d_id_</a></td></tr>
-<tr class="memdesc:a8668df179c28d041cebd14ea64b9fb8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">the document id for this document <br/></td></tr>
+<tr class="memdesc:a8668df179c28d041cebd14ea64b9fb8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The document id for this document. <br/></td></tr>
 <tr class="separator:a8668df179c28d041cebd14ea64b9fb8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affcbe310383aa43765991bd1d8225530"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="affcbe310383aa43765991bd1d8225530"></a>
 class_label&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#affcbe310383aa43765991bd1d8225530">label_</a></td></tr>
-<tr class="memdesc:affcbe310383aa43765991bd1d8225530"><td class="mdescLeft">&#160;</td><td class="mdescRight">which category this document would be classified into <br/></td></tr>
+<tr class="memdesc:affcbe310383aa43765991bd1d8225530"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which category this document would be classified into. <br/></td></tr>
 <tr class="separator:affcbe310383aa43765991bd1d8225530"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc3abc535931e2e9629532ccd74982cb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc3abc535931e2e9629532ccd74982cb"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#acc3abc535931e2e9629532ccd74982cb">name_</a></td></tr>
-<tr class="memdesc:acc3abc535931e2e9629532ccd74982cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">the short name for this document (not the full path) <br/></td></tr>
+<tr class="memdesc:acc3abc535931e2e9629532ccd74982cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The short name for this document (not the full path) <br/></td></tr>
 <tr class="separator:acc3abc535931e2e9629532ccd74982cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abed5c2aceb2fdf129c267e0cd2035d2d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abed5c2aceb2fdf129c267e0cd2035d2d"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#abed5c2aceb2fdf129c267e0cd2035d2d">length_</a></td></tr>
-<tr class="memdesc:abed5c2aceb2fdf129c267e0cd2035d2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of (non-unique) tokens in this document <br/></td></tr>
+<tr class="memdesc:abed5c2aceb2fdf129c267e0cd2035d2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of (non-unique) tokens in this document. <br/></td></tr>
 <tr class="separator:abed5c2aceb2fdf129c267e0cd2035d2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7402358c4a21c791dac95af0c9314836"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7402358c4a21c791dac95af0c9314836"></a>
 std::unordered_map<br class="typebreak"/>
 &lt; std::string, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#a7402358c4a21c791dac95af0c9314836">counts_</a></td></tr>
-<tr class="memdesc:a7402358c4a21c791dac95af0c9314836"><td class="mdescLeft">&#160;</td><td class="mdescRight">counts of how many times each token appears <br/></td></tr>
+<tr class="memdesc:a7402358c4a21c791dac95af0c9314836"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counts of how many times each token appears. <br/></td></tr>
 <tr class="separator:a7402358c4a21c791dac95af0c9314836"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb1dcde1f6e84c541807e87c1b114392"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb1dcde1f6e84c541807e87c1b114392"></a>
 <a class="el" href="classmeta_1_1util_1_1optional.html">util::optional</a>&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#adb1dcde1f6e84c541807e87c1b114392">content_</a></td></tr>
-<tr class="memdesc:adb1dcde1f6e84c541807e87c1b114392"><td class="mdescLeft">&#160;</td><td class="mdescRight">what the document contains <br/></td></tr>
+<tr class="memdesc:adb1dcde1f6e84c541807e87c1b114392"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the document contains. <br/></td></tr>
 <tr class="separator:adb1dcde1f6e84c541807e87c1b114392"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1b312beae6a7f62df11af5016f80f35"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1b312beae6a7f62df11af5016f80f35"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1corpus_1_1document.html#ad1b312beae6a7f62df11af5016f80f35">encoding_</a></td></tr>
-<tr class="memdesc:ad1b312beae6a7f62df11af5016f80f35"><td class="mdescLeft">&#160;</td><td class="mdescRight">the encoding for the content <br/></td></tr>
+<tr class="memdesc:ad1b312beae6a7f62df11af5016f80f35"><td class="mdescLeft">&#160;</td><td class="mdescRight">The encoding for the content. <br/></td></tr>
 <tr class="separator:ad1b312beae6a7f62df11af5016f80f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -231,6 +222,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">path</td><td>The path to the document </td></tr>
+    <tr><td class="paramname">d_id</td><td>The doc id to assign to this document </td></tr>
+    <tr><td class="paramname">label</td><td>The optional class label to assign this document </td></tr>
   </table>
   </dd>
 </dl>
@@ -358,6 +351,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>the number of times term appears in this document </dd></dl>
 
 </div>
 </div>
@@ -374,94 +368,6 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the map of counts for this document. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a59083256054535dc0b4aff3d9a197505"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double meta::corpus::document::jaccard_similarity </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmeta_1_1corpus_1_1document.html">document</a> &amp;&#160;</td>
-          <td class="paramname"><em>a</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classmeta_1_1corpus_1_1document.html">document</a> &amp;&#160;</td>
-          <td class="paramname"><em>b</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Wrapper function for a document's cosine similarity measure. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">a</td><td></td></tr>
-    <tr><td class="paramname">b</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the Jaccard similarity between the two parameters </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a93616e0cdb34c888cfa8d9b493293f81"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double meta::corpus::document::cosine_similarity </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmeta_1_1corpus_1_1document.html">document</a> &amp;&#160;</td>
-          <td class="paramname"><em>a</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classmeta_1_1corpus_1_1document.html">document</a> &amp;&#160;</td>
-          <td class="paramname"><em>b</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Wrapper function for a document's cosine similarity measure. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">a</td><td></td></tr>
-    <tr><td class="paramname">b</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the cosine similarity between the two parameters </dd></dl>
 
 </div>
 </div>
@@ -492,7 +398,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Sets the content of the document to be the parameter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">content</td><td></td></tr>
+    <tr><td class="paramname">content</td><td>The string content to assign into this document </td></tr>
     <tr><td class="paramname">encoding</td><td>the encoding of content, which defaults to utf-8 </td></tr>
   </table>
   </dd>
@@ -518,7 +424,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <p>Sets the encoding for the document to be the parameter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">encoding</td><td></td></tr>
+    <tr><td class="paramname">encoding</td><td>The string label for the encoding </td></tr>
   </table>
   </dd>
 </dl>
@@ -602,9 +508,11 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Sets the label for this document. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">label</td><td>The label for this document </td></tr>
+    <tr><td class="paramname">label</td><td>The new label for this document </td></tr>
   </table>
   </dd>
 </dl>
@@ -618,7 +526,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:43:01 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:09 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

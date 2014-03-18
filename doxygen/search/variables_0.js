@@ -1,6 +1,11 @@
 var searchData=
 [
-  ['alpha_5f',['alpha_',['../classmeta_1_1classify_1_1dual__perceptron.html#a95c86e72e065df6fc6a28b3e5317d292',1,'meta::classify::dual_perceptron::alpha_()'],['../classmeta_1_1classify_1_1naive__bayes.html#acf494bdac8c06305376bfa1ceb44873d',1,'meta::classify::naive_bayes::alpha_()'],['../classmeta_1_1classify_1_1sgd.html#ab96559a7dd1802757f67e63ead5085f7',1,'meta::classify::sgd::alpha_()'],['../classmeta_1_1classify_1_1kernel_1_1sigmoid.html#a783b9fce6197e1ea2bc48f4678667669',1,'meta::classify::kernel::sigmoid::alpha_()'],['../classmeta_1_1topics_1_1lda__cvb.html#af77d551ab71cae9949d122da4840f836',1,'meta::topics::lda_cvb::alpha_()'],['../classmeta_1_1topics_1_1lda__gibbs.html#abdf67a25af315a4beef297cc213a151b',1,'meta::topics::lda_gibbs::alpha_()']]],
-  ['analyzer_5f',['analyzer_',['../classmeta_1_1index_1_1inverted__index_1_1impl.html#a00e2c6e763565d72e16e2ae798aa0fd4',1,'meta::index::inverted_index::impl']]],
-  ['analyzers_5f',['analyzers_',['../classmeta_1_1analyzers_1_1multi__analyzer.html#af8770adfc0a3ceecc8b0fcd7a6adca13',1,'meta::analyzers::multi_analyzer']]]
+  ['_5fbegin',['_begin',['../classmeta_1_1util_1_1basic__range.html#aeccab555631c308022813293012a2632',1,'meta::util::basic_range']]],
+  ['_5fcurr',['_curr',['../classmeta_1_1util_1_1basic__range_1_1iterator__t.html#a37b5b18566aeb2802ba54c99ad552114',1,'meta::util::basic_range::iterator_t']]],
+  ['_5fend',['_end',['../classmeta_1_1util_1_1basic__range.html#a00675fd01ab554be893c7f4fcae5986b',1,'meta::util::basic_range']]],
+  ['_5fidx',['_idx',['../classmeta_1_1util_1_1basic__range_1_1iterator__t.html#ac0617de55dc0d863085bca2ac25e3ab1',1,'meta::util::basic_range::iterator_t']]],
+  ['_5fnum',['_num',['../classmeta_1_1util_1_1basic__range.html#adf3051404cbe5bdbdbbb08ccbaf1929a',1,'meta::util::basic_range']]],
+  ['_5fplus',['_plus',['../classmeta_1_1util_1_1basic__range_1_1iterator__t.html#a935795f480696fcd3aeaab9537c64b0d',1,'meta::util::basic_range::iterator_t']]],
+  ['_5frange',['_range',['../classmeta_1_1util_1_1basic__range_1_1iterator__t.html#a73b1e8c5ccf6ef88b098c72eb0aff407',1,'meta::util::basic_range::iterator_t']]],
+  ['_5fstep',['_step',['../classmeta_1_1util_1_1basic__range.html#a035c7c4dd7f6efb908601da2e2e3bde7',1,'meta::util::basic_range']]]
 ];

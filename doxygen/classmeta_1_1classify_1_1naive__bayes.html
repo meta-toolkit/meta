@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -119,9 +119,9 @@ Inheritance diagram for meta::classify::naive_bayes:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa529985a3d2a0777ab8d315f52cf9f5a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#aa529985a3d2a0777ab8d315f52cf9f5a">naive_bayes</a> (std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, double alpha=0.1, double beta=0.1)</td></tr>
-<tr class="memdesc:aa529985a3d2a0777ab8d315f52cf9f5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor: learns class models based on a collection of training documents.  <a href="#aa529985a3d2a0777ab8d315f52cf9f5a">More...</a><br/></td></tr>
-<tr class="separator:aa529985a3d2a0777ab8d315f52cf9f5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c17936b5f6f9c32f30e24f922532be7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#a1c17936b5f6f9c32f30e24f922532be7">naive_bayes</a> (std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, double alpha=<a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#a967f96202bc19e931f40d80750da83ca">default_alpha</a>, double beta=<a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#ada67a19d1905dc5f37e35974e4c7457b">default_beta</a>)</td></tr>
+<tr class="memdesc:a1c17936b5f6f9c32f30e24f922532be7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor: learns class models based on a collection of training documents.  <a href="#a1c17936b5f6f9c32f30e24f922532be7">More...</a><br/></td></tr>
+<tr class="separator:a1c17936b5f6f9c32f30e24f922532be7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acadabba9fb9583bb03d2c83b642cfa34"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#acadabba9fb9583bb03d2c83b642cfa34">train</a> (const std::vector&lt; doc_id &gt; &amp;docs) override</td></tr>
 <tr class="memdesc:acadabba9fb9583bb03d2c83b642cfa34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a classification model based on training documents.  <a href="#acadabba9fb9583bb03d2c83b642cfa34">More...</a><br/></td></tr>
 <tr class="separator:acadabba9fb9583bb03d2c83b642cfa34"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,6 +144,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
+<tr class="memitem:a967f96202bc19e931f40d80750da83ca"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a967f96202bc19e931f40d80750da83ca"></a>
+static const constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#a967f96202bc19e931f40d80750da83ca">default_alpha</a> = 0.1</td></tr>
+<tr class="memdesc:a967f96202bc19e931f40d80750da83ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default \(\alpha\) parameter. <br/></td></tr>
+<tr class="separator:a967f96202bc19e931f40d80750da83ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada67a19d1905dc5f37e35974e4c7457b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ada67a19d1905dc5f37e35974e4c7457b"></a>
+static const constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#ada67a19d1905dc5f37e35974e4c7457b">default_beta</a> = 0.1</td></tr>
+<tr class="memdesc:ada67a19d1905dc5f37e35974e4c7457b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default \(beta\) parameter. <br/></td></tr>
+<tr class="separator:ada67a19d1905dc5f37e35974e4c7457b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f113c50659e44f8286fb20da9522be3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f113c50659e44f8286fb20da9522be3"></a>
 static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#a7f113c50659e44f8286fb20da9522be3">id</a> = &quot;naive-bayes&quot;</td></tr>
 <tr class="memdesc:a7f113c50659e44f8286fb20da9522be3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The identifier for this classifier. <br/></td></tr>
@@ -188,7 +196,7 @@ std::shared_ptr<br class="typebreak"/>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements the Naive Bayes classifier, a simplistic probabilistic classifier that uses Bayes' theorem with strong feature independence assumptions. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="aa529985a3d2a0777ab8d315f52cf9f5a"></a>
+<a class="anchor" id="a1c17936b5f6f9c32f30e24f922532be7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -202,13 +210,13 @@ std::shared_ptr<br class="typebreak"/>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>alpha</em> = <code>0.1</code>, </td>
+          <td class="paramname"><em>alpha</em> = <code><a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#a967f96202bc19e931f40d80750da83ca">default_alpha</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>beta</em> = <code>0.1</code>&#160;</td>
+          <td class="paramname"><em>beta</em> = <code><a class="el" href="classmeta_1_1classify_1_1naive__bayes.html#ada67a19d1905dc5f37e35974e4c7457b">default_beta</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -254,7 +262,7 @@ std::shared_ptr<br class="typebreak"/>
 </div><div class="memdoc">
 
 <p>Creates a classification model based on training documents. </p>
-<p>Calculates P(term|class) and P(class) for all the training documents. </p>
+<p>Calculates \(P(term|class)\) and \(P(class)\) for all the training documents. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">docs</td><td>The training documents </td></tr>
@@ -308,7 +316,7 @@ std::shared_ptr<br class="typebreak"/>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:05 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

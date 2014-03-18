@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -145,7 +145,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a6d57d2ffcf2fd96bd27b343f3f7efca8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the label_id mapping. <br/></td></tr>
 <tr class="separator:a6d57d2ffcf2fd96bd27b343f3f7efca8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a775bc023b00e8b019cedbc34fac79457"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1index_1_1string__list__writer.html">string_list_writer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a775bc023b00e8b019cedbc34fac79457">make_doc_id_writer</a> (uint64_t <a class="el" href="classmeta_1_1index_1_1disk__index.html#a5f02d3debd804a184d74531448b37689">num_docs</a>) const </td></tr>
-<tr class="memdesc:a775bc023b00e8b019cedbc34fac79457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a string_writer for writing the docids mapping.  <a href="#a775bc023b00e8b019cedbc34fac79457">More...</a><br/></td></tr>
+<tr class="memdesc:a775bc023b00e8b019cedbc34fac79457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a <a class="el" href="classmeta_1_1index_1_1string__list__writer.html" title="A class for writing large lists of strings to disk with an associated index file for fast random acce...">string_list_writer</a> for writing the docids mapping.  <a href="#a775bc023b00e8b019cedbc34fac79457">More...</a><br/></td></tr>
 <tr class="separator:a775bc023b00e8b019cedbc34fac79457"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b15757b1a306bf9d23bb14d55d186cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a1b15757b1a306bf9d23bb14d55d186cd">set_label</a> (doc_id id, const class_label &amp;<a class="el" href="classmeta_1_1index_1_1disk__index.html#a9ac1bf325ba1971299b9bcd9b49b539e">label</a>)</td></tr>
 <tr class="memdesc:a1b15757b1a306bf9d23bb14d55d186cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the label for a document.  <a href="#a1b15757b1a306bf9d23bb14d55d186cd">More...</a><br/></td></tr>
@@ -168,7 +168,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a5a6d5bbdd9574cfd5be9d702f639d9cc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a6d5bbdd9574cfd5be9d702f639d9cc"></a>
-friend&#160;</td><td class="memItemRight" valign="bottom"><b>disk_index</b></td></tr>
+friend&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a5a6d5bbdd9574cfd5be9d702f639d9cc">disk_index</a></td></tr>
+<tr class="memdesc:a5a6d5bbdd9574cfd5be9d702f639d9cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">friend the interface <br/></td></tr>
 <tr class="separator:a5a6d5bbdd9574cfd5be9d702f639d9cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
@@ -211,7 +212,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <tr class="memitem:a2d1e76783df1346f89fd644d413aec42"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2d1e76783df1346f89fd644d413aec42"></a>
 <a class="el" href="classmeta_1_1util_1_1invertible__map.html">util::invertible_map</a><br class="typebreak"/>
 &lt; class_label, label_id &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a2d1e76783df1346f89fd644d413aec42">label_ids_</a></td></tr>
-<tr class="memdesc:a2d1e76783df1346f89fd644d413aec42"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns an integer to each class label (used for liblinear and slda mappings) <br/></td></tr>
+<tr class="memdesc:a2d1e76783df1346f89fd644d413aec42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assigns an integer to each class label (used for liblinear mappings) <br/></td></tr>
 <tr class="separator:a2d1e76783df1346f89fd644d413aec42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea0e0f064e3f9a133bb0a3eb2f72a47b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1util_1_1optional.html">util::optional</a>&lt; <a class="el" href="classmeta_1_1io_1_1mmap__file.html">io::mmap_file</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#aea0e0f064e3f9a133bb0a3eb2f72a47b">postings_</a></td></tr>
 <tr class="memdesc:aea0e0f064e3f9a133bb0a3eb2f72a47b"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to a memory-mapped postings file.  <a href="#aea0e0f064e3f9a133bb0a3eb2f72a47b">More...</a><br/></td></tr>
@@ -334,13 +335,14 @@ std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
       </table>
 </div><div class="memdoc">
 
-<p>Creates a string_writer for writing the docids mapping. </p>
+<p>Creates a <a class="el" href="classmeta_1_1index_1_1string__list__writer.html" title="A class for writing large lists of strings to disk with an associated index file for fast random acce...">string_list_writer</a> for writing the docids mapping. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">num_docs</td><td>The number of documents stored in the index, as the size of the <a class="el" href="classmeta_1_1index_1_1string__list__writer.html" title="A class for writing large lists of strings to disk with an associated index file for fast random acce...">string_list_writer</a> </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>the <a class="el" href="classmeta_1_1index_1_1string__list__writer.html" title="A class for writing large lists of strings to disk with an associated index file for fast random acce...">string_list_writer</a> to write doc ids </dd></dl>
 
 </div>
 </div>
@@ -371,8 +373,8 @@ std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <p>Sets the label for a document. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">id</td><td></td></tr>
-    <tr><td class="paramname">label</td><td></td></tr>
+    <tr><td class="paramname">id</td><td>The document id </td></tr>
+    <tr><td class="paramname">label</td><td>The new label </td></tr>
   </table>
   </dd>
 </dl>
@@ -406,7 +408,7 @@ std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <p>Sets the size of a document. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">id</td><td></td></tr>
+    <tr><td class="paramname">id</td><td>The document id </td></tr>
     <tr><td class="paramname">length</td><td>The number of terms that will appear in the document </td></tr>
   </table>
   </dd>
@@ -441,7 +443,7 @@ std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <p>Sets the number of unique terms for a document. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">id</td><td></td></tr>
+    <tr><td class="paramname">id</td><td>The document id </td></tr>
     <tr><td class="paramname">terms</td><td>The number of unique terms that will appear in the document </td></tr>
   </table>
   </dd>
@@ -497,7 +499,7 @@ std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <dl class="section return"><dt>Returns</dt><dd>the label id for a given document. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">id</td><td></td></tr>
+    <tr><td class="paramname">id</td><td>The document id </td></tr>
   </table>
   </dd>
 </dl>
@@ -699,7 +701,7 @@ std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:43:02 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:10 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -89,7 +89,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacemeta.html">meta</a></li><li class="navelem"><a class="el" href="namespacemeta_1_1classify.html">classify</a></li><li class="navelem"><b>loss</b></li><li class="navelem"><a class="el" href="structmeta_1_1classify_1_1loss_1_1loss__function.html">loss_function</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacemeta.html">meta</a></li><li class="navelem"><a class="el" href="namespacemeta_1_1classify.html">classify</a></li><li class="navelem"><a class="el" href="namespacemeta_1_1classify_1_1loss.html">loss</a></li><li class="navelem"><a class="el" href="structmeta_1_1classify_1_1loss_1_1loss__function.html">loss_function</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -100,39 +100,141 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">meta::classify::loss::loss_function Struct Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Base class for all loss functions that can be passed to the sgd classifier.  
+ <a href="structmeta_1_1classify_1_1loss_1_1loss__function.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="loss__function_8h_source.html">loss_function.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for meta::classify::loss::loss_function:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="structmeta_1_1classify_1_1loss_1_1loss__function.png" usemap="#meta::classify::loss::loss_function_map" alt=""/>
   <map id="meta::classify::loss::loss_function_map" name="meta::classify::loss::loss_function_map">
-<area href="structmeta_1_1classify_1_1loss_1_1hinge.html" alt="meta::classify::loss::hinge" shape="rect" coords="218,56,426,80"/>
-<area href="structmeta_1_1classify_1_1loss_1_1huber.html" alt="meta::classify::loss::huber" shape="rect" coords="218,112,426,136"/>
-<area href="structmeta_1_1classify_1_1loss_1_1least__squares.html" alt="meta::classify::loss::least_squares" shape="rect" coords="218,168,426,192"/>
-<area href="structmeta_1_1classify_1_1loss_1_1logistic.html" alt="meta::classify::loss::logistic" shape="rect" coords="218,224,426,248"/>
-<area href="structmeta_1_1classify_1_1loss_1_1modified__huber.html" alt="meta::classify::loss::modified_huber" shape="rect" coords="218,280,426,304"/>
-<area href="structmeta_1_1classify_1_1loss_1_1perceptron.html" alt="meta::classify::loss::perceptron" shape="rect" coords="218,336,426,360"/>
-<area href="structmeta_1_1classify_1_1loss_1_1smooth__hinge.html" alt="meta::classify::loss::smooth_hinge" shape="rect" coords="218,392,426,416"/>
-<area href="structmeta_1_1classify_1_1loss_1_1squared__hinge.html" alt="meta::classify::loss::squared_hinge" shape="rect" coords="218,448,426,472"/>
+<area href="structmeta_1_1classify_1_1loss_1_1hinge.html" title="The hinge loss for SGD algorithms. " alt="meta::classify::loss::hinge" shape="rect" coords="218,56,426,80"/>
+<area href="structmeta_1_1classify_1_1loss_1_1huber.html" title="The huber loss for SGD algorithms. " alt="meta::classify::loss::huber" shape="rect" coords="218,112,426,136"/>
+<area href="structmeta_1_1classify_1_1loss_1_1least__squares.html" title="The least-squares loss function for SGD algorithms. " alt="meta::classify::loss::least_squares" shape="rect" coords="218,168,426,192"/>
+<area href="structmeta_1_1classify_1_1loss_1_1logistic.html" title="The logistic loss for SGD algorithms. " alt="meta::classify::loss::logistic" shape="rect" coords="218,224,426,248"/>
+<area href="structmeta_1_1classify_1_1loss_1_1modified__huber.html" title="The modified huber loss function for SGD algorithms. " alt="meta::classify::loss::modified_huber" shape="rect" coords="218,280,426,304"/>
+<area href="structmeta_1_1classify_1_1loss_1_1perceptron.html" title="The perceptron loss function for SGD algorithms. " alt="meta::classify::loss::perceptron" shape="rect" coords="218,336,426,360"/>
+<area href="structmeta_1_1classify_1_1loss_1_1smooth__hinge.html" title="The smooth hinge loss function for SGD algorithms. " alt="meta::classify::loss::smooth_hinge" shape="rect" coords="218,392,426,416"/>
+<area href="structmeta_1_1classify_1_1loss_1_1squared__hinge.html" title="The squared hinge loss function for SGD algorithms. " alt="meta::classify::loss::squared_hinge" shape="rect" coords="218,448,426,472"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae09b3fba7c0695fcd6189ba0863c536e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae09b3fba7c0695fcd6189ba0863c536e"></a>
-virtual double&#160;</td><td class="memItemRight" valign="bottom"><b>loss</b> (double prediction, int expected) const =0</td></tr>
+<tr class="memitem:ae09b3fba7c0695fcd6189ba0863c536e"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1classify_1_1loss_1_1loss__function.html#ae09b3fba7c0695fcd6189ba0863c536e">loss</a> (double prediction, int expected) const =0</td></tr>
+<tr class="memdesc:ae09b3fba7c0695fcd6189ba0863c536e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The loss incurred in assigning the given prediction value, given the correct value of the prediction.  <a href="#ae09b3fba7c0695fcd6189ba0863c536e">More...</a><br/></td></tr>
 <tr class="separator:ae09b3fba7c0695fcd6189ba0863c536e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac475257a6d5ce33d2c6a327357a70854"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac475257a6d5ce33d2c6a327357a70854"></a>
-virtual double&#160;</td><td class="memItemRight" valign="bottom"><b>derivative</b> (double prediction, int expected) const =0</td></tr>
+<tr class="memitem:ac475257a6d5ce33d2c6a327357a70854"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmeta_1_1classify_1_1loss_1_1loss__function.html#ac475257a6d5ce33d2c6a327357a70854">derivative</a> (double prediction, int expected) const =0</td></tr>
+<tr class="memdesc:ac475257a6d5ce33d2c6a327357a70854"><td class="mdescLeft">&#160;</td><td class="mdescRight">The derivative of the loss function given a predicted value and the expected result of that prediction.  <a href="#ac475257a6d5ce33d2c6a327357a70854">More...</a><br/></td></tr>
 <tr class="separator:ac475257a6d5ce33d2c6a327357a70854"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Base class for all loss functions that can be passed to the sgd classifier. </p>
+<p>Each loss function must specify the value of the loss for a given prediction vs. expected value, and also the derivative of the loss function for a given prediction vs. expected value.</p>
+<dl class="section see"><dt>See Also</dt><dd><a href="http://dl.acm.org/citation.cfm?id=1015332">http://dl.acm.org/citation.cfm?id=1015332</a> </dd></dl>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="ae09b3fba7c0695fcd6189ba0863c536e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double meta::classify::loss::loss_function::loss </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>prediction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>expected</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The loss incurred in assigning the given prediction value, given the correct value of the prediction. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">prediction</td><td>The prediction obtained from the model (dot product) </td></tr>
+    <tr><td class="paramname">expected</td><td>The expected (as in, correct) value of the model's prediction </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the loss incurred </dd></dl>
+
+<p>Implemented in <a class="el" href="structmeta_1_1classify_1_1loss_1_1hinge.html#a82ae83421fcf360e8d5f2093e2a86788">meta::classify::loss::hinge</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1huber.html#a9e8321766e23a15d334a0287510a2f26">meta::classify::loss::huber</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1logistic.html#acb199d8fe161d16da4ce82bfedd78ea8">meta::classify::loss::logistic</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1modified__huber.html#a849f7739179fedc125adbe1f84c96807">meta::classify::loss::modified_huber</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1smooth__hinge.html#af0ec16a100131586e99eb05725614b72">meta::classify::loss::smooth_hinge</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1least__squares.html#a14dbb8aac365f51a83829ecd8cae24c1">meta::classify::loss::least_squares</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1perceptron.html#abc5eaf7730dc817f4d96d0a64c1be683">meta::classify::loss::perceptron</a>, and <a class="el" href="structmeta_1_1classify_1_1loss_1_1squared__hinge.html#ae12520e4183ac9ff5f70cd0f7245a577">meta::classify::loss::squared_hinge</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac475257a6d5ce33d2c6a327357a70854"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual double meta::classify::loss::loss_function::derivative </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>prediction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>expected</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The derivative of the loss function given a predicted value and the expected result of that prediction. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">prediction</td><td>The prediction obtained from the model (dot product) </td></tr>
+    <tr><td class="paramname">expected</td><td>The expected (as in, correct) value of the model's prediction </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the derivative of the loss function at that point </dd></dl>
+
+<p>Implemented in <a class="el" href="structmeta_1_1classify_1_1loss_1_1hinge.html#ae639533db95f3ba333c0a4f98b79b848">meta::classify::loss::hinge</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1huber.html#ae58887f2b06fbc8d9f4262e38c50fd54">meta::classify::loss::huber</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1logistic.html#aab2ae9c7605a23767f79ee2833df6681">meta::classify::loss::logistic</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1modified__huber.html#a3285bb4e9d673cb51ad5619dac6970b3">meta::classify::loss::modified_huber</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1smooth__hinge.html#a806ef5c741eb326377ed081b8dad47fb">meta::classify::loss::smooth_hinge</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1least__squares.html#a2712a146bae193b384dafe17ece21dd7">meta::classify::loss::least_squares</a>, <a class="el" href="structmeta_1_1classify_1_1loss_1_1perceptron.html#a039772fdd91fb23c325439e8f4d1a765">meta::classify::loss::perceptron</a>, and <a class="el" href="structmeta_1_1classify_1_1loss_1_1squared__hinge.html#aa6dc0b88dfde400887f20c68a163940b">meta::classify::loss::squared_hinge</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/chase/projects/meta/include/classify/loss/<a class="el" href="loss__function_8h_source.html">loss_function.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:59 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:07 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

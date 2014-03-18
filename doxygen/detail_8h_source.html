@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_952592b530ba8e62be863761e90c1815.html">src</a></li><li class="navelem"><a class="el" href="dir_c91d95cec8d19c8547bbbc4cf83fe0e7.html">utf</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_0ce280eb0906a532b6c1475d922b1299.html">utf</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -115,9 +115,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="classmeta_1_1utf_1_1icu__handle.html">icu_handle</a>()</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    {</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keyword">auto</span> status = <a class="code" href="1_87_2unicode_2utypes_8h.html#a3343c1c8a8377277046774691c98d78caa43dbfc9499c5f911d04e1a0ca3bf6f9">U_ZERO_ERROR</a>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="keyword">auto</span> status = U_ZERO_ERROR;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        u_init(&amp;status);</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keywordflow">if</span> (!<a class="code" href="1_87_2unicode_2utypes_8h.html#a527f2c69e6b2e3b2c53ad8a99fb36711">U_SUCCESS</a>(status))</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keywordflow">if</span> (!U_SUCCESS(status))</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            <span class="keywordflow">throw</span> std::runtime_error{<span class="stringliteral">&quot;Failed to initialize icu&quot;</span>};</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    }</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
@@ -128,52 +128,54 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordflow">return</span> handle;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    }</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    ~<a class="code" href="classmeta_1_1utf_1_1icu__handle.html">icu_handle</a>()</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        u_cleanup();</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    }</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;};</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">inline</span> std::u16string icu_to_u16str(<span class="keyword">const</span> icu::UnicodeString&amp; icu_str)</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;{</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    std::u16string u16str;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    u16str.resize(icu_str.length());</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keyword">auto</span> status = <a class="code" href="1_87_2unicode_2utypes_8h.html#a3343c1c8a8377277046774691c98d78caa43dbfc9499c5f911d04e1a0ca3bf6f9">U_ZERO_ERROR</a>;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="comment">// looks dangerous, actually isn&#39;t: UChar is guaranteed to be a 16-bit</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="comment">// integer type, so all we&#39;re doing here is going between signed vs.</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="comment">// unsigned</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    icu_str.extract(reinterpret_cast&lt;UChar*&gt;(&amp;u16str[0]), u16str.length(),</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                    status);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordflow">return</span> u16str;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;}</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keyword">inline</span> std::string icu_to_u8str(<span class="keyword">const</span> icu::UnicodeString&amp; icu_str)</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;{</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    std::string u8str;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    icu_str.toUTF8String(u8str);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordflow">return</span> u8str;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;}</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> utf8_append_codepoint(std::string&amp; dest, uint32_t codepoint)</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;{</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    std::array&lt;uint8_t, U8_MAX_LENGTH&gt; buf;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    int32_t len = 0;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    UBool err = FALSE;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    U8_APPEND(&amp;buf[0], len, U8_MAX_LENGTH, codepoint, err);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">if</span> (err)</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error{<span class="stringliteral">&quot;failed to add codepoint to string&quot;</span>};</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    dest.append(reinterpret_cast&lt;char*&gt;(&amp;buf[0]), len);</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;}</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;}</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;}</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="1_87_2unicode_2utypes_8h_html_a527f2c69e6b2e3b2c53ad8a99fb36711"><div class="ttname"><a href="1_87_2unicode_2utypes_8h.html#a527f2c69e6b2e3b2c53ad8a99fb36711">U_SUCCESS</a></div><div class="ttdeci">#define U_SUCCESS(x)</div><div class="ttdoc">Does the error code indicate success? . </div><div class="ttdef"><b>Definition:</b> utypes.h:376</div></div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="classmeta_1_1utf_1_1icu__handle.html#aab6b9ba8fb3ec8fd118124bd60701e42">   52</a></span>&#160;    <a class="code" href="classmeta_1_1utf_1_1icu__handle.html#aab6b9ba8fb3ec8fd118124bd60701e42">~icu_handle</a>()</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        u_cleanup();</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;};</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="namespacemeta_1_1utf.html#ada865db826bfd0b9fd974975e20f8a62">   64</a></span>&#160;<span class="keyword">inline</span> std::u16string <a class="code" href="namespacemeta_1_1utf.html#ada865db826bfd0b9fd974975e20f8a62">icu_to_u16str</a>(<span class="keyword">const</span> icu::UnicodeString&amp; icu_str)</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;{</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    std::u16string u16str;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    u16str.resize(icu_str.length());</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">auto</span> status = U_ZERO_ERROR;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="comment">// looks dangerous, actually isn&#39;t: UChar is guaranteed to be a 16-bit</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="comment">// integer type, so all we&#39;re doing here is going between signed vs.</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="comment">// unsigned</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    icu_str.extract(reinterpret_cast&lt;UChar*&gt;(&amp;u16str[0]), u16str.length(),</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                    status);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordflow">return</span> u16str;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;}</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="namespacemeta_1_1utf.html#a9d6388339c5852df2422d6934c32fb64">   83</a></span>&#160;<span class="keyword">inline</span> std::string <a class="code" href="namespacemeta_1_1utf.html#a9d6388339c5852df2422d6934c32fb64">icu_to_u8str</a>(<span class="keyword">const</span> icu::UnicodeString&amp; icu_str)</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;{</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    std::string u8str;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    icu_str.toUTF8String(u8str);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordflow">return</span> u8str;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="namespacemeta_1_1utf.html#a330b89923664541dcf240794fb8f9cab">   95</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacemeta_1_1utf.html#a330b89923664541dcf240794fb8f9cab">utf8_append_codepoint</a>(std::string&amp; dest, uint32_t codepoint)</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;{</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    std::array&lt;uint8_t, U8_MAX_LENGTH&gt; buf;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    int32_t len = 0;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    UBool err = FALSE;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    U8_APPEND(&amp;buf[0], len, U8_MAX_LENGTH, codepoint, err);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordflow">if</span> (err)</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error{<span class="stringliteral">&quot;failed to add codepoint to string&quot;</span>};</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    dest.append(reinterpret_cast&lt;char*&gt;(&amp;buf[0]), len);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;}</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;}</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;}</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="namespacemeta_1_1utf_html_a330b89923664541dcf240794fb8f9cab"><div class="ttname"><a href="namespacemeta_1_1utf.html#a330b89923664541dcf240794fb8f9cab">meta::utf::utf8_append_codepoint</a></div><div class="ttdeci">void utf8_append_codepoint(std::string &amp;dest, uint32_t codepoint)</div><div class="ttdoc">Helper method that appends a UTF-32 codepoint to the given utf8 string. </div><div class="ttdef"><b>Definition:</b> detail.h:95</div></div>
+<div class="ttc" id="classmeta_1_1utf_1_1icu__handle_html_aab6b9ba8fb3ec8fd118124bd60701e42"><div class="ttname"><a href="classmeta_1_1utf_1_1icu__handle.html#aab6b9ba8fb3ec8fd118124bd60701e42">meta::utf::icu_handle::~icu_handle</a></div><div class="ttdeci">~icu_handle()</div><div class="ttdoc">Destructor. </div><div class="ttdef"><b>Definition:</b> detail.h:52</div></div>
+<div class="ttc" id="namespacemeta_1_1utf_html_a9d6388339c5852df2422d6934c32fb64"><div class="ttname"><a href="namespacemeta_1_1utf.html#a9d6388339c5852df2422d6934c32fb64">meta::utf::icu_to_u8str</a></div><div class="ttdeci">std::string icu_to_u8str(const icu::UnicodeString &amp;icu_str)</div><div class="ttdoc">Helper method that converts an ICU string to a std::string in utf8. </div><div class="ttdef"><b>Definition:</b> detail.h:83</div></div>
+<div class="ttc" id="namespacemeta_1_1utf_html_ada865db826bfd0b9fd974975e20f8a62"><div class="ttname"><a href="namespacemeta_1_1utf.html#ada865db826bfd0b9fd974975e20f8a62">meta::utf::icu_to_u16str</a></div><div class="ttdeci">std::u16string icu_to_u16str(const icu::UnicodeString &amp;icu_str)</div><div class="ttdoc">Helper method that converts an ICU string to a std::u16string. </div><div class="ttdef"><b>Definition:</b> detail.h:64</div></div>
 <div class="ttc" id="classmeta_1_1utf_1_1icu__handle_html"><div class="ttname"><a href="classmeta_1_1utf_1_1icu__handle.html">meta::utf::icu_handle</a></div><div class="ttdoc">Internal class that ensures that ICU cleans up all of its &quot;still-reachable&quot; memory before program ter...</div><div class="ttdef"><b>Definition:</b> detail.h:27</div></div>
-<div class="ttc" id="1_87_2unicode_2utypes_8h_html_a3343c1c8a8377277046774691c98d78caa43dbfc9499c5f911d04e1a0ca3bf6f9"><div class="ttname"><a href="1_87_2unicode_2utypes_8h.html#a3343c1c8a8377277046774691c98d78caa43dbfc9499c5f911d04e1a0ca3bf6f9">U_ZERO_ERROR</a></div><div class="ttdoc">No error, no warning. </div><div class="ttdef"><b>Definition:</b> utypes.h:329</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:48 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

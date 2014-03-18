@@ -1,32 +1,4 @@
 var searchData=
 [
-  ['_7eanalyzer',['~analyzer',['../classmeta_1_1analyzers_1_1analyzer.html#a291118c53bf91f055c3e8ec836ac784a',1,'meta::analyzers::analyzer']]],
-  ['_7ecompressed_5ffile_5freader',['~compressed_file_reader',['../classmeta_1_1io_1_1compressed__file__reader.html#a38bad71d1a88ac4af844d970ae34fba3',1,'meta::io::compressed_file_reader']]],
-  ['_7ecompressed_5ffile_5fwriter',['~compressed_file_writer',['../classmeta_1_1io_1_1compressed__file__writer.html#aeff9b4ba3f7b41cd825afc7a41b67335',1,'meta::io::compressed_file_writer']]],
-  ['_7ecorpus',['~corpus',['../classmeta_1_1corpus_1_1corpus.html#afdd2cb05cb63dbdb4383d72e90fe7062',1,'meta::corpus::corpus']]],
-  ['_7edblru_5fcache',['~dblru_cache',['../classmeta_1_1caching_1_1dblru__cache.html#a37cc87545c38296647888df2e7289156',1,'meta::caching::dblru_cache']]],
-  ['_7edisk_5findex',['~disk_index',['../classmeta_1_1index_1_1disk__index.html#ae127eaae83d08818b396b986a6397efe',1,'meta::index::disk_index']]],
-  ['_7edisk_5fvector',['~disk_vector',['../classmeta_1_1util_1_1disk__vector.html#a890fc1a09b9b73e260da8bc1e8a6eea3',1,'meta::util::disk_vector']]],
-  ['_7efile_5fguard',['~file_guard',['../structmeta_1_1testing_1_1file__guard.html#a8a61608a0565d9132962d969fffb3eaa',1,'meta::testing::file_guard']]],
-  ['_7eforward_5findex',['~forward_index',['../classmeta_1_1index_1_1forward__index.html#a16c57a86fcd4dd22ad44caed550ed36f',1,'meta::index::forward_index']]],
-  ['_7egeneric_5fshard_5fcache',['~generic_shard_cache',['../classmeta_1_1caching_1_1generic__shard__cache.html#a2d973737145f8ad6dfc4f6a415e9937e',1,'meta::caching::generic_shard_cache']]],
-  ['_7eicu_5ftokenizer',['~icu_tokenizer',['../classmeta_1_1analyzers_1_1tokenizers_1_1icu__tokenizer.html#a808490779706cac079ddef0ee36e3417',1,'meta::analyzers::tokenizers::icu_tokenizer']]],
-  ['_7einverted_5findex',['~inverted_index',['../classmeta_1_1index_1_1inverted__index.html#a793b90a8afbb5da308fb67578eef4084',1,'meta::index::inverted_index']]],
-  ['_7elanguage_5fmodel_5franker',['~language_model_ranker',['../classmeta_1_1index_1_1language__model__ranker.html#ade1295f9233e3bcaa711226027c19549',1,'meta::index::language_model_ranker']]],
-  ['_7elda_5fcvb',['~lda_cvb',['../classmeta_1_1topics_1_1lda__cvb.html#a3ea14d5f51d6b7f8189927248d13ea0d',1,'meta::topics::lda_cvb']]],
-  ['_7elda_5fgibbs',['~lda_gibbs',['../classmeta_1_1topics_1_1lda__gibbs.html#a27d499c8237058925d88a3234b63f8a9',1,'meta::topics::lda_gibbs']]],
-  ['_7emmap_5ffile',['~mmap_file',['../classmeta_1_1io_1_1mmap__file.html#af28b11315815d6b2bb4705427ec00212',1,'meta::io::mmap_file']]],
-  ['_7eoptional',['~optional',['../classmeta_1_1util_1_1optional.html#a5eaf926a794776a492c6ddf44b41b175',1,'meta::util::optional']]],
-  ['_7eoptional_5fstorage',['~optional_storage',['../unionmeta_1_1util_1_1optional__storage.html#a05048fe66013167fa06a9e585a98c597',1,'meta::util::optional_storage']]],
-  ['_7eparallel_5flda_5fgibbs',['~parallel_lda_gibbs',['../classmeta_1_1topics_1_1parallel__lda__gibbs.html#a9d292b586f329e0b6d2c397dc240e97f',1,'meta::topics::parallel_lda_gibbs']]],
-  ['_7eparser',['~parser',['../classmeta_1_1io_1_1parser.html#a540f996c5e4ea33f5cd94b597030e0ca',1,'meta::io::parser']]],
-  ['_7eproducer',['~producer',['../classmeta_1_1index_1_1chunk__handler_1_1producer.html#a4cb4fd89dc5c8ed5cfb972072464ef1d',1,'meta::index::chunk_handler::producer']]],
-  ['_7eprogress',['~progress',['../classmeta_1_1printing_1_1progress.html#a856c2d876b71fbdd5d1be66c3f89934e',1,'meta::printing::progress']]],
-  ['_7eranker',['~ranker',['../classmeta_1_1index_1_1ranker.html#a7b675ab9f79f341746ff75ab1e089c9b',1,'meta::index::ranker']]],
-  ['_7esegmenter',['~segmenter',['../classmeta_1_1utf_1_1segmenter.html#af63cd2e2c881859a597622a97b098acf',1,'meta::utf::segmenter']]],
-  ['_7esplay_5fcache',['~splay_cache',['../classmeta_1_1caching_1_1splay__cache.html#a9eeeef1accc7fbda3057fc7213e364cc',1,'meta::caching::splay_cache']]],
-  ['_7ethread_5fpool',['~thread_pool',['../classmeta_1_1parallel_1_1thread__pool.html#aea242a69fc63ea86326665fa26ed8b94',1,'meta::parallel::thread_pool']]],
-  ['_7etoken_5fstream',['~token_stream',['../classmeta_1_1analyzers_1_1token__stream.html#a6775d53d24939ed45e49018c61768040',1,'meta::analyzers::token_stream']]],
-  ['_7etransformer',['~transformer',['../classmeta_1_1utf_1_1transformer.html#ae0e44c374496d6774113d6b758384537',1,'meta::utf::transformer']]],
-  ['_7evocabulary_5fmap_5fwriter',['~vocabulary_map_writer',['../classmeta_1_1index_1_1vocabulary__map__writer.html#a9920dd47cb977ef84b73016f0aa17786',1,'meta::index::vocabulary_map_writer']]]
+  ['zero_5fweights',['zero_weights',['../classmeta_1_1classify_1_1winnow.html#a1bf64a43502edff67df34c2d90f9cd41',1,'meta::classify::winnow']]]
 ];

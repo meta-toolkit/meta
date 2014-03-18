@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -119,7 +119,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes to a file of unsigned integers using gamma compression.  <a href="classmeta_1_1io_1_1compressed__file__writer.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1mmap__file.html">mmap_file</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory maps a text file for better I/O performance and allows you to read it.  <a href="classmeta_1_1io_1_1mmap__file.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory maps a text file readonly.  <a href="classmeta_1_1io_1_1mmap__file.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1io_1_1parser.html">parser</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses a text file by reading it completely into memory, delimiting tokens by user request.  <a href="classmeta_1_1io_1_1parser.html#details">More...</a><br/></td></tr>
@@ -150,11 +150,11 @@ Functions</h2></td></tr>
 <tr class="memitem:a09a81ae333ed52fcc9274cf1a56bc784"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1io.html#a09a81ae333ed52fcc9274cf1a56bc784">read_binary</a> (std::istream &amp;in, std::string &amp;str)</td></tr>
 <tr class="memdesc:a09a81ae333ed52fcc9274cf1a56bc784"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a string in binary from a stream.  <a href="#a09a81ae333ed52fcc9274cf1a56bc784">More...</a><br/></td></tr>
 <tr class="separator:a09a81ae333ed52fcc9274cf1a56bc784"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9eca417f0212a5c467c829a63f26cf6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad9eca417f0212a5c467c829a63f26cf6"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>default_compression_reader_func</b> (uint64_t value)</td></tr>
+<tr class="memitem:ad9eca417f0212a5c467c829a63f26cf6"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1io.html#ad9eca417f0212a5c467c829a63f26cf6">default_compression_reader_func</a> (uint64_t value)</td></tr>
+<tr class="memdesc:ad9eca417f0212a5c467c829a63f26cf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function that converts a compressed number back into its normal representation.  <a href="#ad9eca417f0212a5c467c829a63f26cf6">More...</a><br/></td></tr>
 <tr class="separator:ad9eca417f0212a5c467c829a63f26cf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a101cb327b42d086c17e660f3c0bddfdc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a101cb327b42d086c17e660f3c0bddfdc"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>default_compression_writer_func</b> (uint64_t key)</td></tr>
+<tr class="memitem:a101cb327b42d086c17e660f3c0bddfdc"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1io.html#a101cb327b42d086c17e660f3c0bddfdc">default_compression_writer_func</a> (uint64_t key)</td></tr>
+<tr class="memdesc:a101cb327b42d086c17e660f3c0bddfdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows how to convert a number into its compressed form.  <a href="#a101cb327b42d086c17e660f3c0bddfdc">More...</a><br/></td></tr>
 <tr class="separator:a101cb327b42d086c17e660f3c0bddfdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -320,10 +320,60 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="ad9eca417f0212a5c467c829a63f26cf6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t meta::io::default_compression_reader_func </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Function that converts a compressed number back into its normal representation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>The value to transform </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the original form </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a101cb327b42d086c17e660f3c0bddfdc"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t meta::io::default_compression_writer_func </td>
+          <td>(</td>
+          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Shows how to convert a number into its compressed form. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>The value to transform </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the compressed form </dd></dl>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:43:05 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:13 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

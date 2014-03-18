@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -123,30 +123,87 @@ virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class=
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1token__stream.html#ae4d02f1ee528014abf17b2f68df38be3">operator bool</a> () const =0</td></tr>
 <tr class="memdesc:ae4d02f1ee528014abf17b2f68df38be3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether there are more tokens available in the stream. <br/></td></tr>
 <tr class="separator:ae4d02f1ee528014abf17b2f68df38be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae310cb5108800cf5575d8a7ca888fece"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae310cb5108800cf5575d8a7ca888fece"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1token__stream.html#ae310cb5108800cf5575d8a7ca888fece">set_content</a> (const std::string &amp;content)=0</td></tr>
-<tr class="memdesc:ae310cb5108800cf5575d8a7ca888fece"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the content for the stream. <br/></td></tr>
+<tr class="memitem:ae310cb5108800cf5575d8a7ca888fece"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1token__stream.html#ae310cb5108800cf5575d8a7ca888fece">set_content</a> (const std::string &amp;content)=0</td></tr>
+<tr class="memdesc:ae310cb5108800cf5575d8a7ca888fece"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the content for the stream.  <a href="#ae310cb5108800cf5575d8a7ca888fece">More...</a><br/></td></tr>
 <tr class="separator:ae310cb5108800cf5575d8a7ca888fece"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6775d53d24939ed45e49018c61768040"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6775d53d24939ed45e49018c61768040"></a>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1token__stream.html#a6775d53d24939ed45e49018c61768040">~token_stream</a> ()=default</td></tr>
 <tr class="memdesc:a6775d53d24939ed45e49018c61768040"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br/></td></tr>
 <tr class="separator:a6775d53d24939ed45e49018c61768040"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb1d037e0e5f6cdd8ce14a1ec1190d94"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb1d037e0e5f6cdd8ce14a1ec1190d94"></a>
-virtual std::unique_ptr<br class="typebreak"/>
+<tr class="memitem:afb1d037e0e5f6cdd8ce14a1ec1190d94"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classmeta_1_1analyzers_1_1token__stream.html">token_stream</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1analyzers_1_1token__stream.html#afb1d037e0e5f6cdd8ce14a1ec1190d94">clone</a> () const =0</td></tr>
-<tr class="memdesc:afb1d037e0e5f6cdd8ce14a1ec1190d94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clones the given token stream. <br/></td></tr>
+<tr class="memdesc:afb1d037e0e5f6cdd8ce14a1ec1190d94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clones the given token stream.  <a href="#afb1d037e0e5f6cdd8ce14a1ec1190d94">More...</a><br/></td></tr>
 <tr class="separator:afb1d037e0e5f6cdd8ce14a1ec1190d94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Base class that represents a stream of tokens that have been extracted from a document. </p>
 <p>These tokens may be raw tokens (in the case of a tokenizer class) or filtered tokens (from the filter classes). </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="ae310cb5108800cf5575d8a7ca888fece"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void meta::analyzers::token_stream::set_content </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>content</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets the content for the stream. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">content</td><td>The string content to set </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="afb1d037e0e5f6cdd8ce14a1ec1190d94"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::unique_ptr&lt;<a class="el" href="classmeta_1_1analyzers_1_1token__stream.html">token_stream</a>&gt; meta::analyzers::token_stream::clone </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clones the given token stream. </p>
+<dl class="section return"><dt>Returns</dt><dd>a unique_ptr to copy this object </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/chase/projects/meta/include/analyzers/<a class="el" href="token__stream_8h_source.html">token_stream.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:51 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:00 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

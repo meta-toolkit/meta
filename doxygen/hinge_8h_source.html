@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_f4e47f73b9eb56c122cba38d21e5108e.html">include</a></li><li class="navelem"><a class="el" href="dir_b48a571bc9b0f0280a11290e25d740e7.html">classify</a></li><li class="navelem"><a class="el" href="dir_ee6b4bdcc2441f432706ba65ed9ce5e7.html">loss</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_a72934a8b3696e2fa59a0e8e69d63781.html">classify</a></li><li class="navelem"><a class="el" href="dir_e229d662321d5683f81e2fc0e0f94bb1.html">loss</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -106,26 +106,30 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;{</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span>classify</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span>loss</div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="namespacemeta_1_1classify_1_1loss.html">   19</a></span>&#160;<span class="keyword">namespace </span>loss</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="structmeta_1_1classify_1_1loss_1_1hinge.html">   22</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structmeta_1_1classify_1_1loss_1_1hinge.html">hinge</a> : <span class="keyword">public</span> <a class="code" href="structmeta_1_1classify_1_1loss_1_1loss__function.html">loss_function</a></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">double</span> loss(<span class="keywordtype">double</span> prediction, <span class="keywordtype">int</span> expected) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">double</span> derivative(<span class="keywordtype">double</span> prediction, <span class="keywordtype">int</span> expected) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">const</span> <span class="keyword">static</span> std::string id;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;};</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;}</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="structmeta_1_1classify_1_1loss_1_1loss__function_html"><div class="ttname"><a href="structmeta_1_1classify_1_1loss_1_1loss__function.html">meta::classify::loss::loss_function</a></div><div class="ttdef"><b>Definition:</b> loss_function.h:21</div></div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="structmeta_1_1classify_1_1loss_1_1hinge.html">   31</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structmeta_1_1classify_1_1loss_1_1hinge.html">hinge</a> : <span class="keyword">public</span> <a class="code" href="structmeta_1_1classify_1_1loss_1_1loss__function.html">loss_function</a></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;{</div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="structmeta_1_1classify_1_1loss_1_1hinge.html#a605254ff30f364e1fa34cf94d9367e85">   36</a></span>&#160;    <span class="keyword">const</span> <span class="keyword">static</span> std::string <a class="code" href="structmeta_1_1classify_1_1loss_1_1hinge.html#a605254ff30f364e1fa34cf94d9367e85">id</a>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structmeta_1_1classify_1_1loss_1_1hinge.html#a82ae83421fcf360e8d5f2093e2a86788">loss</a>(<span class="keywordtype">double</span> prediction, <span class="keywordtype">int</span> expected) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="structmeta_1_1classify_1_1loss_1_1hinge.html#ae639533db95f3ba333c0a4f98b79b848">derivative</a>(<span class="keywordtype">double</span> prediction, <span class="keywordtype">int</span> expected) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;}</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="structmeta_1_1classify_1_1loss_1_1hinge_html_ae639533db95f3ba333c0a4f98b79b848"><div class="ttname"><a href="structmeta_1_1classify_1_1loss_1_1hinge.html#ae639533db95f3ba333c0a4f98b79b848">meta::classify::loss::hinge::derivative</a></div><div class="ttdeci">double derivative(double prediction, int expected) const override</div><div class="ttdoc">The derivative of the loss function given a predicted value and the expected result of that predictio...</div><div class="ttdef"><b>Definition:</b> hinge.cpp:25</div></div>
+<div class="ttc" id="structmeta_1_1classify_1_1loss_1_1loss__function_html"><div class="ttname"><a href="structmeta_1_1classify_1_1loss_1_1loss__function.html">meta::classify::loss::loss_function</a></div><div class="ttdoc">Base class for all loss functions that can be passed to the sgd classifier. </div><div class="ttdef"><b>Definition:</b> loss_function.h:29</div></div>
+<div class="ttc" id="structmeta_1_1classify_1_1loss_1_1hinge_html_a82ae83421fcf360e8d5f2093e2a86788"><div class="ttname"><a href="structmeta_1_1classify_1_1loss_1_1hinge.html#a82ae83421fcf360e8d5f2093e2a86788">meta::classify::loss::hinge::loss</a></div><div class="ttdeci">double loss(double prediction, int expected) const override</div><div class="ttdoc">The loss incurred in assigning the given prediction value, given the correct value of the prediction...</div><div class="ttdef"><b>Definition:</b> hinge.cpp:17</div></div>
 <div class="ttc" id="loss__function_8h_html"><div class="ttname"><a href="loss__function_8h.html">loss_function.h</a></div></div>
-<div class="ttc" id="structmeta_1_1classify_1_1loss_1_1hinge_html"><div class="ttname"><a href="structmeta_1_1classify_1_1loss_1_1hinge.html">meta::classify::loss::hinge</a></div><div class="ttdef"><b>Definition:</b> hinge.h:22</div></div>
+<div class="ttc" id="structmeta_1_1classify_1_1loss_1_1hinge_html"><div class="ttname"><a href="structmeta_1_1classify_1_1loss_1_1hinge.html">meta::classify::loss::hinge</a></div><div class="ttdoc">The hinge loss for SGD algorithms. </div><div class="ttdef"><b>Definition:</b> hinge.h:31</div></div>
+<div class="ttc" id="structmeta_1_1classify_1_1loss_1_1hinge_html_a605254ff30f364e1fa34cf94d9367e85"><div class="ttname"><a href="structmeta_1_1classify_1_1loss_1_1hinge.html#a605254ff30f364e1fa34cf94d9367e85">meta::classify::loss::hinge::id</a></div><div class="ttdeci">static const std::string id</div><div class="ttdoc">The identifier for this loss function. </div><div class="ttdef"><b>Definition:</b> hinge.h:36</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:48 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

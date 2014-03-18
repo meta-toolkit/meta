@@ -117,7 +117,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -134,7 +134,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classmeta_1_1index_1_1ir__eval.html#a7e358be574c6a3b2800a7d6796f7a664">meta::index::ir_eval</a>
 </li>
 <li>file()
-: <a class="el" href="classmeta_1_1logging_1_1logger_1_1log__line.html#ac0459d0a1eca33c337516f0a716943f4">meta::logging::logger::log_line</a>
+: <a class="el" href="classmeta_1_1index_1_1string__list__writer.html#a13264733d6d0ab05292ed9a67872eaaa">meta::index::string_list_writer</a>
+, <a class="el" href="classmeta_1_1logging_1_1logger_1_1log__line.html#ac0459d0a1eca33c337516f0a716943f4">meta::logging::logger::log_line</a>
 </li>
 <li>file_corpus()
 : <a class="el" href="classmeta_1_1corpus_1_1file__corpus.html#aff04835033ac2259afac410ca08002ae">meta::corpus::file_corpus</a>
@@ -144,6 +145,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>filename()
 : <a class="el" href="classmeta_1_1io_1_1parser.html#a73be7e5894d42a0b0bf696a975645991">meta::io::parser</a>
+</li>
+<li>filter_factory()
+: <a class="el" href="classmeta_1_1analyzers_1_1filter__factory.html#ad40ed8a73924664aa60fd832083ba8d3">meta::analyzers::filter_factory</a>
 </li>
 <li>final_size()
 : <a class="el" href="classmeta_1_1index_1_1chunk__handler.html#ac7ddd8fa4f3e32e35bb8b23fdae524d3">meta::index::chunk_handler&lt; Index &gt;</a>
@@ -159,17 +163,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>find_term()
 : <a class="el" href="classmeta_1_1index_1_1vocabulary__map.html#a5219b80a91c03c6e77e439a5beb9e861">meta::index::vocabulary_map</a>
 </li>
+<li>flush()
+: <a class="el" href="classmeta_1_1index_1_1vocabulary__map__writer.html#af01827a3ae055dd0546a51ab7b6df9d2">meta::index::vocabulary_map_writer</a>
+</li>
 <li>flush_chunk()
 : <a class="el" href="classmeta_1_1index_1_1chunk__handler_1_1producer.html#ae05efe41cc951b285c6ad7d95ca8fc0a">meta::index::chunk_handler&lt; Index &gt;::producer</a>
 </li>
 <li>forward_index()
-: <a class="el" href="classmeta_1_1index_1_1forward__index.html#aeee9949b54b9048dbffd9d918c706b24">meta::index::forward_index</a>
+: <a class="el" href="classmeta_1_1index_1_1forward__index.html#a5e648a7d6eba62183e74999724dde695">meta::index::forward_index</a>
 </li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:43:10 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:17 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_f4e47f73b9eb56c122cba38d21e5108e.html">include</a></li><li class="navelem"><a class="el" href="dir_dbbdf2c7bf222ce38f07071d8f78bb72.html">analyzers</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_9f4cdd3e4fb570202e8822a8a4084a6d.html">analyzers</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -117,75 +117,78 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                                            std::unique_ptr&lt;token_stream&gt;,</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                                            const cpptoml::toml_group&amp;&gt;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;{</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">friend</span> <a class="code" href="classmeta_1_1util_1_1factory.html">base_factory</a>;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="classmeta_1_1analyzers_1_1filter__factory.html">filter_factory</a>();</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Tokenizer&gt;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">void</span> register_tokenizer();</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Filter&gt;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">void</span> register_filter();</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;};</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers_1_1tokenizers.html">   47</a></span>&#160;<span class="keyword">namespace </span>tokenizers</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;{</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Tokenizer&gt;</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers_1_1tokenizers.html#a003340cafae5f648dcf45a77efa0cdd6">   54</a></span>&#160;std::unique_ptr&lt;token_stream&gt; <a class="code" href="namespacemeta_1_1analyzers_1_1tokenizers.html#a003340cafae5f648dcf45a77efa0cdd6">make_tokenizer</a>(<span class="keyword">const</span> <a class="code" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a>&amp;)</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;{</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordflow">return</span> make_unique&lt;Tokenizer&gt;();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers_1_1filters.html">   60</a></span>&#160;<span class="keyword">namespace </span>filters</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;{</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Filter&gt;</div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers_1_1filters.html#a2f965f3445f8e4a821cc597f600e8826">   67</a></span>&#160;std::unique_ptr&lt;token_stream&gt; <a class="code" href="namespacemeta_1_1analyzers_1_1filters.html#a2f965f3445f8e4a821cc597f600e8826">make_filter</a>(std::unique_ptr&lt;token_stream&gt; source,</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                                          <span class="keyword">const</span> <a class="code" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a>&amp;)</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;{</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordflow">return</span> make_unique&lt;Filter&gt;(std::move(source));</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;}</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;}</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Tokenizer&gt;</div>
-<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers.html#a1e20cf8a47e92eb30fd432475529bb31">   79</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacemeta_1_1analyzers.html#a1e20cf8a47e92eb30fd432475529bb31">register_tokenizer</a>()</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;{</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <a class="code" href="classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e">filter_factory::get</a>().<a class="code" href="classmeta_1_1util_1_1factory.html#a67e514eb8b151fc77e2c74ee416e38cd">add</a>(Tokenizer::id,</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                              [](std::unique_ptr&lt;token_stream&gt; source,</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                                 <span class="keyword">const</span> <a class="code" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a>&amp; config)</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordflow">if</span> (source)</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <span class="keywordflow">throw</span> <span class="keyword">typename</span> Tokenizer::token_stream_exception{</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                <span class="stringliteral">&quot;tokenizers must be the first filter&quot;</span>};</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="keywordflow">return</span> tokenizers::make_tokenizer&lt;Tokenizer&gt;(config);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    });</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;}</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Filter&gt;</div>
-<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers.html#a57ae6ef9852a791551b719fcde9b3147">   97</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacemeta_1_1analyzers.html#a57ae6ef9852a791551b719fcde9b3147">register_filter</a>()</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;{</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <a class="code" href="classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e">filter_factory::get</a>().<a class="code" href="classmeta_1_1util_1_1factory.html#a67e514eb8b151fc77e2c74ee416e38cd">add</a>(Filter::id, filters::make_filter&lt;Filter&gt;);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;}</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;}</div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classmeta_1_1analyzers_1_1filter__factory.html#a9c5ee935b6d80643c202308d3b2de861">   36</a></span>&#160;    <span class="keyword">friend</span> <a class="code" href="classmeta_1_1analyzers_1_1filter__factory.html#a9c5ee935b6d80643c202308d3b2de861">base_factory</a>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <a class="code" href="classmeta_1_1analyzers_1_1filter__factory.html#ad40ed8a73924664aa60fd832083ba8d3">filter_factory</a>();</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Tokenizer&gt;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmeta_1_1analyzers_1_1filter__factory.html#af55459fc5197d407679da44d2c5cab2f">register_tokenizer</a>();</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Filter&gt;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmeta_1_1analyzers_1_1filter__factory.html#ad06b455c6bf17d7820bb0bd934440400">register_filter</a>();</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;};</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers_1_1tokenizers.html">   59</a></span>&#160;<span class="keyword">namespace </span>tokenizers</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;{</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Tokenizer&gt;</div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers_1_1tokenizers.html#a003340cafae5f648dcf45a77efa0cdd6">   66</a></span>&#160;std::unique_ptr&lt;token_stream&gt; <a class="code" href="namespacemeta_1_1analyzers_1_1tokenizers.html#a003340cafae5f648dcf45a77efa0cdd6">make_tokenizer</a>(<span class="keyword">const</span> cpptoml::toml_group&amp;)</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;{</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordflow">return</span> make_unique&lt;Tokenizer&gt;();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;}</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers_1_1filters.html">   72</a></span>&#160;<span class="keyword">namespace </span>filters</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;{</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Filter&gt;</div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers_1_1filters.html#a2f965f3445f8e4a821cc597f600e8826">   79</a></span>&#160;std::unique_ptr&lt;token_stream&gt; <a class="code" href="namespacemeta_1_1analyzers_1_1filters.html#a2f965f3445f8e4a821cc597f600e8826">make_filter</a>(std::unique_ptr&lt;token_stream&gt; source,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                                          <span class="keyword">const</span> cpptoml::toml_group&amp;)</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;{</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> make_unique&lt;Filter&gt;(std::move(source));</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;}</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;}</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Tokenizer&gt;</div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers.html#a1e20cf8a47e92eb30fd432475529bb31">   91</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacemeta_1_1analyzers.html#a1e20cf8a47e92eb30fd432475529bb31">register_tokenizer</a>()</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;{</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <a class="code" href="classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e">filter_factory::get</a>().<a class="code" href="classmeta_1_1util_1_1factory.html#a67e514eb8b151fc77e2c74ee416e38cd">add</a>(Tokenizer::id,</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                              [](std::unique_ptr&lt;token_stream&gt; source,</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                                 <span class="keyword">const</span> cpptoml::toml_group&amp; config)</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    {</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordflow">if</span> (source)</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <span class="keywordflow">throw</span> <span class="keyword">typename</span> Tokenizer::token_stream_exception{</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                <span class="stringliteral">&quot;tokenizers must be the first filter&quot;</span>};</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keywordflow">return</span> tokenizers::make_tokenizer&lt;Tokenizer&gt;(config);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    });</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;}</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="classcpptoml_1_1toml__group_html"><div class="ttname"><a href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a></div><div class="ttdoc">Represents a TOML keygroup. </div><div class="ttdef"><b>Definition:</b> cpptoml.h:180</div></div>
-<div class="ttc" id="classmeta_1_1util_1_1factory_html_a67e514eb8b151fc77e2c74ee416e38cd"><div class="ttname"><a href="classmeta_1_1util_1_1factory.html#a67e514eb8b151fc77e2c74ee416e38cd">meta::util::factory::add</a></div><div class="ttdeci">void add(const std::string &amp;identifier, Function &amp;&amp;fn)</div><div class="ttdoc">Associates the given identifier with the given factory method. </div><div class="ttdef"><b>Definition:</b> factory.h:53</div></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Filter&gt;</div>
+<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="namespacemeta_1_1analyzers.html#a57ae6ef9852a791551b719fcde9b3147">  109</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacemeta_1_1analyzers.html#a57ae6ef9852a791551b719fcde9b3147">register_filter</a>()</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;{</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <a class="code" href="classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e">filter_factory::get</a>().<a class="code" href="classmeta_1_1util_1_1factory.html#a67e514eb8b151fc77e2c74ee416e38cd">add</a>(Filter::id, filters::make_filter&lt;Filter&gt;);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;}</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;}</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classmeta_1_1util_1_1factory_html_a67e514eb8b151fc77e2c74ee416e38cd"><div class="ttname"><a href="classmeta_1_1util_1_1factory.html#a67e514eb8b151fc77e2c74ee416e38cd">meta::util::factory::add</a></div><div class="ttdeci">void add(const std::string &amp;identifier, Function &amp;&amp;fn)</div><div class="ttdoc">Associates the given identifier with the given factory method. </div><div class="ttdef"><b>Definition:</b> factory.h:60</div></div>
+<div class="ttc" id="classmeta_1_1analyzers_1_1filter__factory_html_ad06b455c6bf17d7820bb0bd934440400"><div class="ttname"><a href="classmeta_1_1analyzers_1_1filter__factory.html#ad06b455c6bf17d7820bb0bd934440400">meta::analyzers::filter_factory::register_filter</a></div><div class="ttdeci">void register_filter()</div><div class="ttdoc">Adds (registers) a filter with this factory so it is able to be created. </div><div class="ttdef"><b>Definition:</b> filter_factory.cpp:41</div></div>
+<div class="ttc" id="classmeta_1_1analyzers_1_1filter__factory_html_a9c5ee935b6d80643c202308d3b2de861"><div class="ttname"><a href="classmeta_1_1analyzers_1_1filter__factory.html#a9c5ee935b6d80643c202308d3b2de861">meta::analyzers::filter_factory::base_factory</a></div><div class="ttdeci">friend base_factory</div><div class="ttdoc">friend the base factory </div><div class="ttdef"><b>Definition:</b> filter_factory.h:36</div></div>
 <div class="ttc" id="classmeta_1_1util_1_1factory_html"><div class="ttname"><a href="classmeta_1_1util_1_1factory.html">meta::util::factory</a></div><div class="ttdoc">Generic factory that can be subclassed to create factories for specific types. </div><div class="ttdef"><b>Definition:</b> factory.h:26</div></div>
-<div class="ttc" id="namespacemeta_1_1analyzers_html_a57ae6ef9852a791551b719fcde9b3147"><div class="ttname"><a href="namespacemeta_1_1analyzers.html#a57ae6ef9852a791551b719fcde9b3147">meta::analyzers::register_filter</a></div><div class="ttdeci">void register_filter()</div><div class="ttdoc">Registration method for filters. </div><div class="ttdef"><b>Definition:</b> filter_factory.h:97</div></div>
-<div class="ttc" id="namespacemeta_1_1analyzers_html_a1e20cf8a47e92eb30fd432475529bb31"><div class="ttname"><a href="namespacemeta_1_1analyzers.html#a1e20cf8a47e92eb30fd432475529bb31">meta::analyzers::register_tokenizer</a></div><div class="ttdeci">void register_tokenizer()</div><div class="ttdoc">Registration method for tokenizers. </div><div class="ttdef"><b>Definition:</b> filter_factory.h:79</div></div>
-<div class="ttc" id="classmeta_1_1util_1_1factory_html_af4ce9596474aea2a23b3efa30c4c193e"><div class="ttname"><a href="classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e">meta::util::factory&lt; filter_factory, token_stream, std::unique_ptr&lt; token_stream &gt;, const cpptoml::toml_group &amp; &gt;::get</a></div><div class="ttdeci">static filter_factory &amp; get()</div><div class="ttdoc">Obtains the singleton. </div><div class="ttdef"><b>Definition:</b> factory.h:43</div></div>
-<div class="ttc" id="namespacemeta_1_1analyzers_1_1filters_html_a2f965f3445f8e4a821cc597f600e8826"><div class="ttname"><a href="namespacemeta_1_1analyzers_1_1filters.html#a2f965f3445f8e4a821cc597f600e8826">meta::analyzers::filters::make_filter</a></div><div class="ttdeci">std::unique_ptr&lt; token_stream &gt; make_filter(std::unique_ptr&lt; token_stream &gt; source, const cpptoml::toml_group &amp;)</div><div class="ttdoc">Factory method for creating a filter. </div><div class="ttdef"><b>Definition:</b> filter_factory.h:67</div></div>
+<div class="ttc" id="namespacemeta_1_1analyzers_html_a57ae6ef9852a791551b719fcde9b3147"><div class="ttname"><a href="namespacemeta_1_1analyzers.html#a57ae6ef9852a791551b719fcde9b3147">meta::analyzers::register_filter</a></div><div class="ttdeci">void register_filter()</div><div class="ttdoc">Registration method for filters. </div><div class="ttdef"><b>Definition:</b> filter_factory.h:109</div></div>
+<div class="ttc" id="namespacemeta_1_1analyzers_html_a1e20cf8a47e92eb30fd432475529bb31"><div class="ttname"><a href="namespacemeta_1_1analyzers.html#a1e20cf8a47e92eb30fd432475529bb31">meta::analyzers::register_tokenizer</a></div><div class="ttdeci">void register_tokenizer()</div><div class="ttdoc">Registration method for tokenizers. </div><div class="ttdef"><b>Definition:</b> filter_factory.h:91</div></div>
+<div class="ttc" id="classmeta_1_1analyzers_1_1filter__factory_html_af55459fc5197d407679da44d2c5cab2f"><div class="ttname"><a href="classmeta_1_1analyzers_1_1filter__factory.html#af55459fc5197d407679da44d2c5cab2f">meta::analyzers::filter_factory::register_tokenizer</a></div><div class="ttdeci">void register_tokenizer()</div><div class="ttdoc">Adds (registers) a tokenizer with this factory so it is able to be created. </div><div class="ttdef"><b>Definition:</b> filter_factory.cpp:28</div></div>
+<div class="ttc" id="classmeta_1_1util_1_1factory_html_af4ce9596474aea2a23b3efa30c4c193e"><div class="ttname"><a href="classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e">meta::util::factory&lt; filter_factory, token_stream, std::unique_ptr&lt; token_stream &gt;, const cpptoml::toml_group &amp; &gt;::get</a></div><div class="ttdeci">static filter_factory &amp; get()</div><div class="ttdoc">Obtains the singleton. </div><div class="ttdef"><b>Definition:</b> factory.h:47</div></div>
+<div class="ttc" id="namespacemeta_1_1analyzers_1_1filters_html_a2f965f3445f8e4a821cc597f600e8826"><div class="ttname"><a href="namespacemeta_1_1analyzers_1_1filters.html#a2f965f3445f8e4a821cc597f600e8826">meta::analyzers::filters::make_filter</a></div><div class="ttdeci">std::unique_ptr&lt; token_stream &gt; make_filter(std::unique_ptr&lt; token_stream &gt; source, const cpptoml::toml_group &amp;)</div><div class="ttdoc">Factory method for creating a filter. </div><div class="ttdef"><b>Definition:</b> filter_factory.h:79</div></div>
 <div class="ttc" id="factory_8h_html"><div class="ttname"><a href="factory_8h.html">factory.h</a></div></div>
-<div class="ttc" id="namespacemeta_1_1analyzers_1_1tokenizers_html_a003340cafae5f648dcf45a77efa0cdd6"><div class="ttname"><a href="namespacemeta_1_1analyzers_1_1tokenizers.html#a003340cafae5f648dcf45a77efa0cdd6">meta::analyzers::tokenizers::make_tokenizer</a></div><div class="ttdeci">std::unique_ptr&lt; token_stream &gt; make_tokenizer(const cpptoml::toml_group &amp;)</div><div class="ttdoc">Factory method for creating a tokenizer. </div><div class="ttdef"><b>Definition:</b> filter_factory.h:54</div></div>
+<div class="ttc" id="namespacemeta_1_1analyzers_1_1tokenizers_html_a003340cafae5f648dcf45a77efa0cdd6"><div class="ttname"><a href="namespacemeta_1_1analyzers_1_1tokenizers.html#a003340cafae5f648dcf45a77efa0cdd6">meta::analyzers::tokenizers::make_tokenizer</a></div><div class="ttdeci">std::unique_ptr&lt; token_stream &gt; make_tokenizer(const cpptoml::toml_group &amp;)</div><div class="ttdoc">Factory method for creating a tokenizer. </div><div class="ttdef"><b>Definition:</b> filter_factory.h:66</div></div>
 <div class="ttc" id="shim_8h_html"><div class="ttname"><a href="shim_8h.html">shim.h</a></div></div>
 <div class="ttc" id="classmeta_1_1analyzers_1_1filter__factory_html"><div class="ttname"><a href="classmeta_1_1analyzers_1_1filter__factory.html">meta::analyzers::filter_factory</a></div><div class="ttdoc">Factory that is responsible for creating filters during analyzer construction. </div><div class="ttdef"><b>Definition:</b> filter_factory.h:31</div></div>
+<div class="ttc" id="classmeta_1_1analyzers_1_1filter__factory_html_ad40ed8a73924664aa60fd832083ba8d3"><div class="ttname"><a href="classmeta_1_1analyzers_1_1filter__factory.html#ad40ed8a73924664aa60fd832083ba8d3">meta::analyzers::filter_factory::filter_factory</a></div><div class="ttdeci">filter_factory()</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> filter_factory.cpp:46</div></div>
 <div class="ttc" id="token__stream_8h_html"><div class="ttname"><a href="token__stream_8h.html">token_stream.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:47 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

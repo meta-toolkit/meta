@@ -4,7 +4,6 @@ var searchData=
   ['lda_5fcvb',['lda_cvb',['../classmeta_1_1topics_1_1lda__cvb.html',1,'meta::topics']]],
   ['lda_5fgibbs',['lda_gibbs',['../classmeta_1_1topics_1_1lda__gibbs.html',1,'meta::topics']]],
   ['lda_5fmodel',['lda_model',['../classmeta_1_1topics_1_1lda__model.html',1,'meta::topics']]],
-  ['leafnode',['leafnode',['../structmeta_1_1clustering_1_1agglomerative__clustering_1_1leafnode.html',1,'meta::clustering::agglomerative_clustering']]],
   ['least_5fsquares',['least_squares',['../structmeta_1_1classify_1_1loss_1_1least__squares.html',1,'meta::classify::loss']]],
   ['length_5ffilter',['length_filter',['../classmeta_1_1analyzers_1_1filters_1_1length__filter.html',1,'meta::analyzers::filters']]],
   ['libsvm_5fanalyzer',['libsvm_analyzer',['../classmeta_1_1analyzers_1_1libsvm__analyzer.html',1,'meta::analyzers']]],

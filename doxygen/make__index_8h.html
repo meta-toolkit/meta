@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,18 +87,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_f4e47f73b9eb56c122cba38d21e5108e.html">include</a></li><li class="navelem"><a class="el" href="dir_8f251f7ce13e7be7d375173629aa26e3.html">index</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_11cfc4c1cff4c5895d582e2213b399cb.html">index</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">make_index.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="cpptoml_8h_source.html">cpptoml.h</a>&quot;</code><br/>
+<div class="textblock"><code>#include &quot;cpptoml.h&quot;</code><br/>
+<code>#include &quot;caching/all.h&quot;</code><br/>
 <code>#include &quot;<a class="el" href="cached__index_8h_source.html">index/cached_index.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="filesystem_8h_source.html">util/filesystem.h</a>&quot;</code><br/>
 </div>
@@ -112,6 +114,29 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespacemeta_1_1index"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html">meta::index</a></td></tr>
 <tr class="memdesc:namespacemeta_1_1index"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indexes to create efficient representations of data. <br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ab253a089456a159d13450e70ce0c6d26"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab253a089456a159d13450e70ce0c6d26"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#ab253a089456a159d13450e70ce0c6d26">meta::index::dblru_inverted_index</a> = cached_index&lt; inverted_index, caching::default_dblru_cache &gt;</td></tr>
+<tr class="memdesc:ab253a089456a159d13450e70ce0c6d26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverted index using default DBLRU cache. <br/></td></tr>
+<tr class="separator:ab253a089456a159d13450e70ce0c6d26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd73dd38401258636a6dd0a7c7b131e9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd73dd38401258636a6dd0a7c7b131e9"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#afd73dd38401258636a6dd0a7c7b131e9">meta::index::splay_inverted_index</a> = cached_index&lt; inverted_index, caching::splay_cache &gt;</td></tr>
+<tr class="memdesc:afd73dd38401258636a6dd0a7c7b131e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverted index using splay cache. <br/></td></tr>
+<tr class="separator:afd73dd38401258636a6dd0a7c7b131e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96a767bbdf3ff8110342b82c1c187b88"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96a767bbdf3ff8110342b82c1c187b88"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a96a767bbdf3ff8110342b82c1c187b88">meta::index::memory_forward_index</a> = cached_index&lt; forward_index, caching::no_evict_cache &gt;</td></tr>
+<tr class="memdesc:a96a767bbdf3ff8110342b82c1c187b88"><td class="mdescLeft">&#160;</td><td class="mdescRight">In-memory forward index. <br/></td></tr>
+<tr class="separator:a96a767bbdf3ff8110342b82c1c187b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29dc960afb6388fdabff985a97ccf637"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a29dc960afb6388fdabff985a97ccf637"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a29dc960afb6388fdabff985a97ccf637">meta::index::dblru_forward_index</a> = cached_index&lt; forward_index, caching::default_dblru_cache &gt;</td></tr>
+<tr class="memdesc:a29dc960afb6388fdabff985a97ccf637"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward index using default DBLRU cache. <br/></td></tr>
+<tr class="separator:a29dc960afb6388fdabff985a97ccf637"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc798c8ad9ab406c5b3c275266d35831"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc798c8ad9ab406c5b3c275266d35831"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#acc798c8ad9ab406c5b3c275266d35831">meta::index::splay_forward_index</a> = cached_index&lt; forward_index, caching::splay_cache &gt;</td></tr>
+<tr class="memdesc:acc798c8ad9ab406c5b3c275266d35831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward index using splay cache. <br/></td></tr>
+<tr class="separator:acc798c8ad9ab406c5b3c275266d35831"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -133,7 +158,7 @@ Chase Geigle</dd></dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:48 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

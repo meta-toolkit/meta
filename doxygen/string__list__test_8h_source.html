@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_f4e47f73b9eb56c122cba38d21e5108e.html">include</a></li><li class="navelem"><a class="el" href="dir_08eca97273cd8fb92e1908e9f5e030d0.html">test</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_69f6b0b437b9d7106ae46b3b241ba72b.html">test</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -114,41 +114,42 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">namespace </span>testing</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keywordtype">void</span> assert_read(std::ifstream&amp; file, <span class="keyword">const</span> std::string&amp; expect);</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="structmeta_1_1testing_1_1file__guard.html">   30</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structmeta_1_1testing_1_1file__guard.html">file_guard</a></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="structmeta_1_1testing_1_1file__guard.html#a87b187db3136ec1affd7e0f5902bb706">   35</a></span>&#160;    <a class="code" href="structmeta_1_1testing_1_1file__guard.html#a87b187db3136ec1affd7e0f5902bb706">file_guard</a>(<span class="keyword">const</span> std::string&amp; path) : path_{path}</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        filesystem::delete_file(path_);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    }</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="structmeta_1_1testing_1_1file__guard.html#a8a61608a0565d9132962d969fffb3eaa">   44</a></span>&#160;    <a class="code" href="structmeta_1_1testing_1_1file__guard.html#a8a61608a0565d9132962d969fffb3eaa">~file_guard</a>()</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    {</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        filesystem::delete_file(path_);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    }</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">const</span> std::string&amp; path_;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;};</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keywordtype">int</span> string_list_tests();</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;}</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;}</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacemeta_1_1testing.html#afe2dd91acbe102aefe6f227697403b99">assert_read</a>(std::ifstream&amp; file, <span class="keyword">const</span> std::string&amp; expect);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="structmeta_1_1testing_1_1file__guard.html">   36</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structmeta_1_1testing_1_1file__guard.html">file_guard</a></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structmeta_1_1testing_1_1file__guard.html#a87b187db3136ec1affd7e0f5902bb706">   41</a></span>&#160;    <a class="code" href="structmeta_1_1testing_1_1file__guard.html#a87b187db3136ec1affd7e0f5902bb706">file_guard</a>(<span class="keyword">const</span> std::string&amp; path) : <a class="code" href="structmeta_1_1testing_1_1file__guard.html#a0ce4adb43104fb67a81e464e57d0eb44">path_</a>{path}</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    {</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        filesystem::delete_file(<a class="code" href="structmeta_1_1testing_1_1file__guard.html#a0ce4adb43104fb67a81e464e57d0eb44">path_</a>);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="structmeta_1_1testing_1_1file__guard.html#a8a61608a0565d9132962d969fffb3eaa">   50</a></span>&#160;    <a class="code" href="structmeta_1_1testing_1_1file__guard.html#a8a61608a0565d9132962d969fffb3eaa">~file_guard</a>()</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        filesystem::delete_file(<a class="code" href="structmeta_1_1testing_1_1file__guard.html#a0ce4adb43104fb67a81e464e57d0eb44">path_</a>);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="structmeta_1_1testing_1_1file__guard.html#a0ce4adb43104fb67a81e464e57d0eb44">   55</a></span>&#160;    <span class="keyword">const</span> std::string&amp; <a class="code" href="structmeta_1_1testing_1_1file__guard.html#a0ce4adb43104fb67a81e464e57d0eb44">path_</a>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;};</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keywordtype">int</span> <a class="code" href="namespacemeta_1_1testing.html#a04b0f2ae70cbc29c51e1704c21452531">string_list_tests</a>();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;}</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="string__list__writer_8h_html"><div class="ttname"><a href="string__list__writer_8h.html">string_list_writer.h</a></div></div>
+<div class="ttc" id="namespacemeta_1_1testing_html_a04b0f2ae70cbc29c51e1704c21452531"><div class="ttname"><a href="namespacemeta_1_1testing.html#a04b0f2ae70cbc29c51e1704c21452531">meta::testing::string_list_tests</a></div><div class="ttdeci">int string_list_tests()</div><div class="ttdoc">Runs the string list tests. </div><div class="ttdef"><b>Definition:</b> string_list_test.cpp:20</div></div>
 <div class="ttc" id="binary_8h_html"><div class="ttname"><a href="binary_8h.html">binary.h</a></div></div>
-<div class="ttc" id="structmeta_1_1testing_1_1file__guard_html_a8a61608a0565d9132962d969fffb3eaa"><div class="ttname"><a href="structmeta_1_1testing_1_1file__guard.html#a8a61608a0565d9132962d969fffb3eaa">meta::testing::file_guard::~file_guard</a></div><div class="ttdeci">~file_guard()</div><div class="ttdoc">Always makes sure that the file is deleted when the object&#39;s destructor is called. </div><div class="ttdef"><b>Definition:</b> string_list_test.h:44</div></div>
-<div class="ttc" id="structmeta_1_1testing_1_1file__guard_html_a87b187db3136ec1affd7e0f5902bb706"><div class="ttname"><a href="structmeta_1_1testing_1_1file__guard.html#a87b187db3136ec1affd7e0f5902bb706">meta::testing::file_guard::file_guard</a></div><div class="ttdeci">file_guard(const std::string &amp;path)</div><div class="ttdoc">Always makes sure that a new file is created. </div><div class="ttdef"><b>Definition:</b> string_list_test.h:35</div></div>
+<div class="ttc" id="structmeta_1_1testing_1_1file__guard_html_a8a61608a0565d9132962d969fffb3eaa"><div class="ttname"><a href="structmeta_1_1testing_1_1file__guard.html#a8a61608a0565d9132962d969fffb3eaa">meta::testing::file_guard::~file_guard</a></div><div class="ttdeci">~file_guard()</div><div class="ttdoc">Always makes sure that the file is deleted when the object&#39;s destructor is called. </div><div class="ttdef"><b>Definition:</b> string_list_test.h:50</div></div>
+<div class="ttc" id="structmeta_1_1testing_1_1file__guard_html_a87b187db3136ec1affd7e0f5902bb706"><div class="ttname"><a href="structmeta_1_1testing_1_1file__guard.html#a87b187db3136ec1affd7e0f5902bb706">meta::testing::file_guard::file_guard</a></div><div class="ttdeci">file_guard(const std::string &amp;path)</div><div class="ttdoc">Always makes sure that a new file is created. </div><div class="ttdef"><b>Definition:</b> string_list_test.h:41</div></div>
+<div class="ttc" id="structmeta_1_1testing_1_1file__guard_html_a0ce4adb43104fb67a81e464e57d0eb44"><div class="ttname"><a href="structmeta_1_1testing_1_1file__guard.html#a0ce4adb43104fb67a81e464e57d0eb44">meta::testing::file_guard::path_</a></div><div class="ttdeci">const std::string &amp; path_</div><div class="ttdoc">The path to this file. </div><div class="ttdef"><b>Definition:</b> string_list_test.h:55</div></div>
 <div class="ttc" id="filesystem_8h_html"><div class="ttname"><a href="filesystem_8h.html">filesystem.h</a></div></div>
 <div class="ttc" id="string__list_8h_html"><div class="ttname"><a href="string__list_8h.html">string_list.h</a></div></div>
 <div class="ttc" id="unit__test_8h_html"><div class="ttname"><a href="unit__test_8h.html">unit_test.h</a></div></div>
-<div class="ttc" id="structmeta_1_1testing_1_1file__guard_html"><div class="ttname"><a href="structmeta_1_1testing_1_1file__guard.html">meta::testing::file_guard</a></div><div class="ttdef"><b>Definition:</b> string_list_test.h:30</div></div>
+<div class="ttc" id="structmeta_1_1testing_1_1file__guard_html"><div class="ttname"><a href="structmeta_1_1testing_1_1file__guard.html">meta::testing::file_guard</a></div><div class="ttdoc">Always makes sure a new file is created. </div><div class="ttdef"><b>Definition:</b> string_list_test.h:36</div></div>
+<div class="ttc" id="namespacemeta_1_1testing_html_afe2dd91acbe102aefe6f227697403b99"><div class="ttname"><a href="namespacemeta_1_1testing.html#afe2dd91acbe102aefe6f227697403b99">meta::testing::assert_read</a></div><div class="ttdeci">void assert_read(std::ifstream &amp;file, const std::string &amp;expect)</div><div class="ttdef"><b>Definition:</b> string_list_test.cpp:13</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:48 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:58:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

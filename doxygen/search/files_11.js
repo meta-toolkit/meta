@@ -14,8 +14,6 @@ var searchData=
   ['shim_2eh',['shim.h',['../shim_8h.html',1,'']]],
   ['sigmoid_2eh',['sigmoid.h',['../sigmoid_8h.html',1,'']]],
   ['sigmoid_2etcc',['sigmoid.tcc',['../sigmoid_8tcc.html',1,'']]],
-  ['similarity_2eh',['similarity.h',['../similarity_8h.html',1,'']]],
-  ['similarity_2etcc',['similarity.tcc',['../similarity_8tcc.html',1,'']]],
   ['skeleton_5fanalyzer_2eh',['skeleton_analyzer.h',['../skeleton__analyzer_8h.html',1,'']]],
   ['smooth_5fhinge_2ecpp',['smooth_hinge.cpp',['../smooth__hinge_8cpp.html',1,'']]],
   ['smooth_5fhinge_2eh',['smooth_hinge.h',['../smooth__hinge_8h.html',1,'']]],

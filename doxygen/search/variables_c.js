@@ -1,10 +1,18 @@
 var searchData=
 [
-  ['n_5fval_5f',['n_val_',['../classmeta_1_1analyzers_1_1ngram__analyzer.html#a97e2099fb45ec6257b5b5675259af163',1,'meta::analyzers::ngram_analyzer']]],
-  ['name_5f',['name_',['../classmeta_1_1corpus_1_1document.html#acc3abc535931e2e9629532ccd74982cb',1,'meta::corpus::document']]],
-  ['name_5fparser_5f',['name_parser_',['../classmeta_1_1corpus_1_1line__corpus.html#a96d6cd2c9b0bb28d74b54dbc5434f117',1,'meta::corpus::line_corpus']]],
-  ['negative_5f',['negative_',['../classmeta_1_1classify_1_1binary__classifier.html#a3a18668ef5aca90af7d4128631aea0ef',1,'meta::classify::binary_classifier']]],
-  ['next_5f',['next_',['../classmeta_1_1io_1_1parser.html#a87d3b49f3bd22e4109bb6001e7ee2167',1,'meta::io::parser']]],
-  ['num_5flines_5f',['num_lines_',['../classmeta_1_1corpus_1_1line__corpus.html#aead9e3f109a06186ae35554d85e325e7',1,'meta::corpus::line_corpus']]],
-  ['num_5fterms_5f',['num_terms_',['../classmeta_1_1index_1_1vocabulary__map__writer.html#a653404745ceb91d414cb6ca5cb1f11d7',1,'meta::index::vocabulary_map_writer']]]
+  ['m_5f',['m_',['../classmeta_1_1classify_1_1winnow.html#aa62acf8ab88de5990d9ab6dba30fff04',1,'meta::classify::winnow']]],
+  ['map_5f',['map_',['../classmeta_1_1caching_1_1locking__map.html#a60c4faa55fb6bb54fb61cbeb39e1d95d',1,'meta::caching::locking_map']]],
+  ['mapping_5f',['mapping_',['../classmeta_1_1io_1_1compressed__file__reader.html#a4e1d4b6c9a07cadf8988c52bcdbf8874',1,'meta::io::compressed_file_reader::mapping_()'],['../classmeta_1_1io_1_1compressed__file__writer.html#a1ad78c0271476163b8bed30a333d4699',1,'meta::io::compressed_file_writer::mapping_()']]],
+  ['max_5fiter_5f',['max_iter_',['../classmeta_1_1classify_1_1dual__perceptron.html#ab11532c20b5a1c09b08bc1013a3171d2',1,'meta::classify::dual_perceptron::max_iter_()'],['../classmeta_1_1classify_1_1sgd.html#a918f42e88e8a847e6b23286f3da8f715',1,'meta::classify::sgd::max_iter_()'],['../classmeta_1_1classify_1_1winnow.html#a398691f4c7f2b6cfe04c6412a27eb769',1,'meta::classify::winnow::max_iter_()']]],
+  ['max_5flength_5f',['max_length_',['../classmeta_1_1analyzers_1_1filters_1_1length__filter.html#a58ed2d6f897f584cb5c5a5c124d5e847',1,'meta::analyzers::filters::length_filter']]],
+  ['max_5fsize',['max_size',['../classmeta_1_1index_1_1chunk__handler_1_1producer.html#a2df2dfadf4fcd7103365a317c03e237a',1,'meta::index::chunk_handler::producer']]],
+  ['max_5fsize_5f',['max_size_',['../classmeta_1_1caching_1_1dblru__cache.html#af7ae814d3ad0d500acc5ef6081796d90',1,'meta::caching::dblru_cache::max_size_()'],['../classmeta_1_1caching_1_1splay__cache.html#a6618b698d7208e3fa7891a1a688e3069',1,'meta::caching::splay_cache::max_size_()']]],
+  ['method_5f',['method_',['../classmeta_1_1analyzers_1_1filters_1_1list__filter.html#ade997d9ddcae05efe3fd2d8a3fce08dd',1,'meta::analyzers::filters::list_filter']]],
+  ['methods_5f',['methods_',['../classmeta_1_1analyzers_1_1analyzer__factory.html#afee87a043d66f95a2c240d34c3e09940',1,'meta::analyzers::analyzer_factory::methods_()'],['../classmeta_1_1util_1_1factory.html#a994a8ec90655b78ab3893f8e95b4bdf6',1,'meta::util::factory::methods_()']]],
+  ['min_5fiters_5f',['min_iters_',['../classmeta_1_1printing_1_1progress.html#afeb231a28a4a9bbbc248b37a01e8ebec',1,'meta::printing::progress']]],
+  ['min_5flength_5f',['min_length_',['../classmeta_1_1analyzers_1_1filters_1_1length__filter.html#ada7b51a0883ec69ab06754346139da21',1,'meta::analyzers::filters::length_filter']]],
+  ['mmap_5ffile_5f',['mmap_file_',['../classmeta_1_1io_1_1parser.html#ad23b5943fe88fc6fcf335eb15efeaff3',1,'meta::io::parser']]],
+  ['mu_5f',['mu_',['../classmeta_1_1index_1_1dirichlet__prior.html#ad47e703ce7c58c620e5e4bb90f2cc70e',1,'meta::index::dirichlet_prior']]],
+  ['mutables_5f',['mutables_',['../classmeta_1_1caching_1_1locking__map.html#a4ffd416000ed689449f27f90ff33bc59',1,'meta::caching::locking_map::mutables_()'],['../classmeta_1_1caching_1_1no__evict__cache.html#a714c189d393677c4015f774e73e850ff',1,'meta::caching::no_evict_cache::mutables_()'],['../classmeta_1_1caching_1_1splay__cache.html#a63b6de08ae585fe16a551e5f1abe1ffd',1,'meta::caching::splay_cache::mutables_()'],['../classmeta_1_1index_1_1chunk__handler.html#ad67058b330e5b647737f62e3308c5fac',1,'meta::index::chunk_handler::mutables_()']]],
+  ['mutex_5f',['mutex_',['../classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a6b52068309025d845b4dc22a731c07f0',1,'meta::index::disk_index::disk_index_impl::mutex_()'],['../classmeta_1_1index_1_1string__list__writer.html#a6a24a971b117ec84d4b5df222d75fb0d',1,'meta::index::string_list_writer::mutex_()'],['../classmeta_1_1parallel_1_1thread__pool.html#afc36cb77e9e736495ca95df46f1cef27',1,'meta::parallel::thread_pool::mutex_()']]]
 ];

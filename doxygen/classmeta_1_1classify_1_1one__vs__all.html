@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -119,9 +119,9 @@ Inheritance diagram for meta::classify::one_vs_all:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1176517123e26a783a0af57f86548e13"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1176517123e26a783a0af57f86548e13"></a>
-template&lt;class Function &gt; </td></tr>
-<tr class="memitem:a1176517123e26a783a0af57f86548e13"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>one_vs_all</b> (std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, Function &amp;&amp;create)</td></tr>
+<tr class="memitem:a1176517123e26a783a0af57f86548e13"><td class="memTemplParams" colspan="2">template&lt;class Function &gt; </td></tr>
+<tr class="memitem:a1176517123e26a783a0af57f86548e13"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1one__vs__all.html#a1176517123e26a783a0af57f86548e13">one_vs_all</a> (std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt; idx, Function &amp;&amp;create)</td></tr>
+<tr class="memdesc:a1176517123e26a783a0af57f86548e13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a new <a class="el" href="classmeta_1_1classify_1_1one__vs__all.html" title="Generalizes binary classifiers to operate over multiclass types using the one vs all method...">one_vs_all</a> classifier on the given index by using the given function to create binary_classifiers.  <a href="#a1176517123e26a783a0af57f86548e13">More...</a><br/></td></tr>
 <tr class="separator:a1176517123e26a783a0af57f86548e13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1464dda4ac41c5d6c6574d6c6075468b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1one__vs__all.html#a1464dda4ac41c5d6c6574d6c6075468b">train</a> (const std::vector&lt; doc_id &gt; &amp;docs) override</td></tr>
 <tr class="memdesc:a1464dda4ac41c5d6c6574d6c6075468b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a classification model based on training documents.  <a href="#a1464dda4ac41c5d6c6574d6c6075468b">More...</a><br/></td></tr>
@@ -146,7 +146,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a307b7c47c1475c2ce0f2a16f1469a683"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a307b7c47c1475c2ce0f2a16f1469a683"></a>
-static const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>id</b> = &quot;one-vs-all&quot;</td></tr>
+static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1one__vs__all.html#a307b7c47c1475c2ce0f2a16f1469a683">id</a> = &quot;one-vs-all&quot;</td></tr>
+<tr class="memdesc:a307b7c47c1475c2ce0f2a16f1469a683"><td class="mdescLeft">&#160;</td><td class="mdescRight">The identifier for this classifier. <br/></td></tr>
 <tr class="separator:a307b7c47c1475c2ce0f2a16f1469a683"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
@@ -154,7 +155,8 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:ad06791d9052feba99c05423dbd7c7af8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad06791d9052feba99c05423dbd7c7af8"></a>
 std::unordered_map<br class="typebreak"/>
 &lt; class_label, std::unique_ptr<br class="typebreak"/>
-&lt; <a class="el" href="classmeta_1_1classify_1_1binary__classifier.html">binary_classifier</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>classifiers_</b></td></tr>
+&lt; <a class="el" href="classmeta_1_1classify_1_1binary__classifier.html">binary_classifier</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1classify_1_1one__vs__all.html#ad06791d9052feba99c05423dbd7c7af8">classifiers_</a></td></tr>
+<tr class="memdesc:ad06791d9052feba99c05423dbd7c7af8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The set of classifiers this ensemble uses for classification. <br/></td></tr>
 <tr class="separator:ad06791d9052feba99c05423dbd7c7af8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
@@ -168,7 +170,54 @@ std::shared_ptr<br class="typebreak"/>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Generalizes binary classifiers to operate over multiclass types using the one vs all method. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a1176517123e26a783a0af57f86548e13"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Function &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">meta::classify::one_vs_all::one_vs_all </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">index::forward_index</a> &gt;&#160;</td>
+          <td class="paramname"><em>idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Function &amp;&amp;&#160;</td>
+          <td class="paramname"><em>create</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructs a new <a class="el" href="classmeta_1_1classify_1_1one__vs__all.html" title="Generalizes binary classifiers to operate over multiclass types using the one vs all method...">one_vs_all</a> classifier on the given index by using the given function to create binary_classifiers. </p>
+<p>The <code>create</code> parameter must take a single parameter: the positive label for the binary classifier to be created.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">idx</td><td>The forward_index to be passed to each <a class="el" href="classmeta_1_1classify_1_1binary__classifier.html" title="A classifier which classifies documents as &quot;positive&quot; or &quot;negative&quot;. ">binary_classifier</a> created for the ensemble </td></tr>
+    <tr><td class="paramname">create</td><td>A Callable (function object, lambda, etc.) that is used to create the individual binary_classifiers. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a1464dda4ac41c5d6c6574d6c6075468b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -245,7 +294,7 @@ std::shared_ptr<br class="typebreak"/>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:42:57 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:05 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

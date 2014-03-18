@@ -76,7 +76,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -93,6 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
@@ -170,6 +171,29 @@ Models Applied to Ad Hoc Information Retrieval" by Zhai and Lafferty, 2001.  <a 
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class that writes the B+-tree-like data structure used for storing the term id mapping in an index.  <a href="classmeta_1_1index_1_1vocabulary__map__writer.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ab253a089456a159d13450e70ce0c6d26"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab253a089456a159d13450e70ce0c6d26"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#ab253a089456a159d13450e70ce0c6d26">dblru_inverted_index</a> = <a class="el" href="classmeta_1_1index_1_1cached__index.html">cached_index</a>&lt; <a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a>, <a class="el" href="namespacemeta_1_1caching.html#a7bc75f9e5ef2bceef493e292c1ee36b0">caching::default_dblru_cache</a> &gt;</td></tr>
+<tr class="memdesc:ab253a089456a159d13450e70ce0c6d26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverted index using default DBLRU cache. <br/></td></tr>
+<tr class="separator:ab253a089456a159d13450e70ce0c6d26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd73dd38401258636a6dd0a7c7b131e9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd73dd38401258636a6dd0a7c7b131e9"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#afd73dd38401258636a6dd0a7c7b131e9">splay_inverted_index</a> = <a class="el" href="classmeta_1_1index_1_1cached__index.html">cached_index</a>&lt; <a class="el" href="classmeta_1_1index_1_1inverted__index.html">inverted_index</a>, <a class="el" href="classmeta_1_1caching_1_1splay__cache.html">caching::splay_cache</a> &gt;</td></tr>
+<tr class="memdesc:afd73dd38401258636a6dd0a7c7b131e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverted index using splay cache. <br/></td></tr>
+<tr class="separator:afd73dd38401258636a6dd0a7c7b131e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96a767bbdf3ff8110342b82c1c187b88"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96a767bbdf3ff8110342b82c1c187b88"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a96a767bbdf3ff8110342b82c1c187b88">memory_forward_index</a> = <a class="el" href="classmeta_1_1index_1_1cached__index.html">cached_index</a>&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">forward_index</a>, <a class="el" href="classmeta_1_1caching_1_1no__evict__cache.html">caching::no_evict_cache</a> &gt;</td></tr>
+<tr class="memdesc:a96a767bbdf3ff8110342b82c1c187b88"><td class="mdescLeft">&#160;</td><td class="mdescRight">In-memory forward index. <br/></td></tr>
+<tr class="separator:a96a767bbdf3ff8110342b82c1c187b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29dc960afb6388fdabff985a97ccf637"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a29dc960afb6388fdabff985a97ccf637"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a29dc960afb6388fdabff985a97ccf637">dblru_forward_index</a> = <a class="el" href="classmeta_1_1index_1_1cached__index.html">cached_index</a>&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">forward_index</a>, <a class="el" href="namespacemeta_1_1caching.html#a7bc75f9e5ef2bceef493e292c1ee36b0">caching::default_dblru_cache</a> &gt;</td></tr>
+<tr class="memdesc:a29dc960afb6388fdabff985a97ccf637"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward index using default DBLRU cache. <br/></td></tr>
+<tr class="separator:a29dc960afb6388fdabff985a97ccf637"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc798c8ad9ab406c5b3c275266d35831"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc798c8ad9ab406c5b3c275266d35831"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#acc798c8ad9ab406c5b3c275266d35831">splay_forward_index</a> = <a class="el" href="classmeta_1_1index_1_1cached__index.html">cached_index</a>&lt; <a class="el" href="classmeta_1_1index_1_1forward__index.html">forward_index</a>, <a class="el" href="classmeta_1_1caching_1_1splay__cache.html">caching::splay_cache</a> &gt;</td></tr>
+<tr class="memdesc:acc798c8ad9ab406c5b3c275266d35831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forward index using splay cache. <br/></td></tr>
+<tr class="separator:acc798c8ad9ab406c5b3c275266d35831"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:a45e2b7c0e48c7813644bae00c9271fc8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a45e2b7c0e48c7813644bae00c9271fc8">index_file</a> { <br/>
@@ -213,30 +237,30 @@ Functions</h2></td></tr>
 <tr class="separator:abf1ddfb1e7259834696c901f9e68d58f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb87dacdfb63e76caa7ce96d6e998d60"><td class="memTemplParams" colspan="2"><a class="anchor" id="adb87dacdfb63e76caa7ce96d6e998d60"></a>
 template&lt;&gt; </td></tr>
-<tr class="memitem:adb87dacdfb63e76caa7ce96d6e998d60"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#adb87dacdfb63e76caa7ce96d6e998d60">make_ranker&lt; absolute_discount &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memitem:adb87dacdfb63e76caa7ce96d6e998d60"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#adb87dacdfb63e76caa7ce96d6e998d60">make_ranker&lt; absolute_discount &gt;</a> (const cpptoml::toml_group &amp;)</td></tr>
 <tr class="memdesc:adb87dacdfb63e76caa7ce96d6e998d60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1index_1_1absolute__discount.html" title="Implements the absolute discounting smoothing method. ">absolute_discount</a> rankers. <br/></td></tr>
 <tr class="separator:adb87dacdfb63e76caa7ce96d6e998d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89f969a9b794e492fdf606454eba12e4"><td class="memTemplParams" colspan="2"><a class="anchor" id="a89f969a9b794e492fdf606454eba12e4"></a>
 template&lt;&gt; </td></tr>
-<tr class="memitem:a89f969a9b794e492fdf606454eba12e4"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a89f969a9b794e492fdf606454eba12e4">make_ranker&lt; dirichlet_prior &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memitem:a89f969a9b794e492fdf606454eba12e4"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a89f969a9b794e492fdf606454eba12e4">make_ranker&lt; dirichlet_prior &gt;</a> (const cpptoml::toml_group &amp;)</td></tr>
 <tr class="memdesc:a89f969a9b794e492fdf606454eba12e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1index_1_1dirichlet__prior.html" title="Implements Bayesian smoothing with a Dirichlet prior. ">dirichlet_prior</a> rankers. <br/></td></tr>
 <tr class="separator:a89f969a9b794e492fdf606454eba12e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91ed65d5ee3c9beaaf72559d22b4fd2e"><td class="memTemplParams" colspan="2"><a class="anchor" id="a91ed65d5ee3c9beaaf72559d22b4fd2e"></a>
 template&lt;&gt; </td></tr>
-<tr class="memitem:a91ed65d5ee3c9beaaf72559d22b4fd2e"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a91ed65d5ee3c9beaaf72559d22b4fd2e">make_ranker&lt; jelinek_mercer &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memitem:a91ed65d5ee3c9beaaf72559d22b4fd2e"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a91ed65d5ee3c9beaaf72559d22b4fd2e">make_ranker&lt; jelinek_mercer &gt;</a> (const cpptoml::toml_group &amp;)</td></tr>
 <tr class="memdesc:a91ed65d5ee3c9beaaf72559d22b4fd2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1index_1_1jelinek__mercer.html" title="Implements the Jelinek-Mercer smoothed ranking model. ">jelinek_mercer</a> rankers. <br/></td></tr>
 <tr class="separator:a91ed65d5ee3c9beaaf72559d22b4fd2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe586595efb7049b237adf9416d576f5"><td class="memTemplParams" colspan="2"><a class="anchor" id="abe586595efb7049b237adf9416d576f5"></a>
 template&lt;&gt; </td></tr>
-<tr class="memitem:abe586595efb7049b237adf9416d576f5"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#abe586595efb7049b237adf9416d576f5">make_ranker&lt; okapi_bm25 &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memitem:abe586595efb7049b237adf9416d576f5"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#abe586595efb7049b237adf9416d576f5">make_ranker&lt; okapi_bm25 &gt;</a> (const cpptoml::toml_group &amp;)</td></tr>
 <tr class="memdesc:abe586595efb7049b237adf9416d576f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1index_1_1okapi__bm25.html" title="The Okapi BM25 scoring function. ">okapi_bm25</a> rankers. <br/></td></tr>
 <tr class="separator:abe586595efb7049b237adf9416d576f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fd1fe9bdf88cedaddf468a3e155d853"><td class="memTemplParams" colspan="2"><a class="anchor" id="a4fd1fe9bdf88cedaddf468a3e155d853"></a>
 template&lt;&gt; </td></tr>
-<tr class="memitem:a4fd1fe9bdf88cedaddf468a3e155d853"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a4fd1fe9bdf88cedaddf468a3e155d853">make_ranker&lt; pivoted_length &gt;</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memitem:a4fd1fe9bdf88cedaddf468a3e155d853"><td class="memTemplItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a4fd1fe9bdf88cedaddf468a3e155d853">make_ranker&lt; pivoted_length &gt;</a> (const cpptoml::toml_group &amp;)</td></tr>
 <tr class="memdesc:a4fd1fe9bdf88cedaddf468a3e155d853"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization of the factory method used to create <a class="el" href="classmeta_1_1index_1_1pivoted__length.html" title="The pivoted document length normalization ranking function. ">pivoted_length</a> rankers. <br/></td></tr>
 <tr class="separator:a4fd1fe9bdf88cedaddf468a3e155d853"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a024ba8376cbcbaea515e6e6f32c8ea62"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">make_ranker</a> (const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;)</td></tr>
+<tr class="memitem:a024ba8376cbcbaea515e6e6f32c8ea62"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemeta_1_1index.html#a024ba8376cbcbaea515e6e6f32c8ea62">make_ranker</a> (const cpptoml::toml_group &amp;)</td></tr>
 <tr class="memdesc:a024ba8376cbcbaea515e6e6f32c8ea62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience method for creating a ranker using the factory.  <a href="#a024ba8376cbcbaea515e6e6f32c8ea62">More...</a><br/></td></tr>
 <tr class="separator:a024ba8376cbcbaea515e6e6f32c8ea62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -459,7 +483,7 @@ template&lt;class PrimaryKey , class SecondaryKey &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classmeta_1_1index_1_1ranker.html">ranker</a> &gt; meta::index::make_ranker </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classcpptoml_1_1toml__group.html">cpptoml::toml_group</a> &amp;&#160;</td>
+          <td class="paramtype">const cpptoml::toml_group &amp;&#160;</td>
           <td class="paramname"><em>config</em></td><td>)</td>
           <td></td>
         </tr>
@@ -475,7 +499,7 @@ template&lt;class PrimaryKey , class SecondaryKey &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:43:02 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:09 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

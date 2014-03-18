@@ -78,7 +78,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -119,40 +119,41 @@ Classes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a90c32e6530b4fe864418431773bfb1b0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a90c32e6530b4fe864418431773bfb1b0"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>base_factory</b> = <a class="el" href="classmeta_1_1util_1_1factory.html">factory</a></td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1factory.html#a90c32e6530b4fe864418431773bfb1b0">base_factory</a> = <a class="el" href="classmeta_1_1util_1_1factory.html">factory</a></td></tr>
+<tr class="memdesc:a90c32e6530b4fe864418431773bfb1b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience typedef for the derived classes. <br/></td></tr>
 <tr class="separator:a90c32e6530b4fe864418431773bfb1b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abbddedbeda6d463a12cda30aa3b33dad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abbddedbeda6d463a12cda30aa3b33dad"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>pointer</b> = std::unique_ptr&lt; Type &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1factory.html#abbddedbeda6d463a12cda30aa3b33dad">pointer</a> = std::unique_ptr&lt; Type &gt;</td></tr>
+<tr class="memdesc:abbddedbeda6d463a12cda30aa3b33dad"><td class="mdescLeft">&#160;</td><td class="mdescRight">The return type for the create method. <br/></td></tr>
 <tr class="separator:abbddedbeda6d463a12cda30aa3b33dad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a23a7411bfe5c66e456aa9b7f52651fd6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a23a7411bfe5c66e456aa9b7f52651fd6"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>factory_method</b> = std::function&lt; pointer(Arguments...)&gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1factory.html#a23a7411bfe5c66e456aa9b7f52651fd6">factory_method</a> = std::function&lt; <a class="el" href="classmeta_1_1util_1_1factory.html#abbddedbeda6d463a12cda30aa3b33dad">pointer</a>(Arguments...)&gt;</td></tr>
+<tr class="memdesc:a23a7411bfe5c66e456aa9b7f52651fd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience typedef for the factory methods used to create objects. <br/></td></tr>
 <tr class="separator:a23a7411bfe5c66e456aa9b7f52651fd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a67e514eb8b151fc77e2c74ee416e38cd"><td class="memTemplParams" colspan="2"><a class="anchor" id="a67e514eb8b151fc77e2c74ee416e38cd"></a>
-template&lt;class Function &gt; </td></tr>
+<tr class="memitem:a67e514eb8b151fc77e2c74ee416e38cd"><td class="memTemplParams" colspan="2">template&lt;class Function &gt; </td></tr>
 <tr class="memitem:a67e514eb8b151fc77e2c74ee416e38cd"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1factory.html#a67e514eb8b151fc77e2c74ee416e38cd">add</a> (const std::string &amp;<a class="el" href="structmeta_1_1util_1_1identifier.html">identifier</a>, Function &amp;&amp;fn)</td></tr>
-<tr class="memdesc:a67e514eb8b151fc77e2c74ee416e38cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associates the given identifier with the given factory method. <br/></td></tr>
+<tr class="memdesc:a67e514eb8b151fc77e2c74ee416e38cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associates the given identifier with the given factory method.  <a href="#a67e514eb8b151fc77e2c74ee416e38cd">More...</a><br/></td></tr>
 <tr class="separator:a67e514eb8b151fc77e2c74ee416e38cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba295f57b3315e9394073cb469f4cf08"><td class="memTemplParams" colspan="2"><a class="anchor" id="aba295f57b3315e9394073cb469f4cf08"></a>
-template&lt;class... Args&gt; </td></tr>
-<tr class="memitem:aba295f57b3315e9394073cb469f4cf08"><td class="memTemplItemLeft" align="right" valign="top">pointer&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1factory.html#aba295f57b3315e9394073cb469f4cf08">create</a> (const std::string &amp;<a class="el" href="structmeta_1_1util_1_1identifier.html">identifier</a>, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:aba295f57b3315e9394073cb469f4cf08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new object based on the factory method parameters. <br/></td></tr>
+<tr class="memitem:aba295f57b3315e9394073cb469f4cf08"><td class="memTemplParams" colspan="2">template&lt;class... Args&gt; </td></tr>
+<tr class="memitem:aba295f57b3315e9394073cb469f4cf08"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmeta_1_1util_1_1factory.html#abbddedbeda6d463a12cda30aa3b33dad">pointer</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1factory.html#aba295f57b3315e9394073cb469f4cf08">create</a> (const std::string &amp;<a class="el" href="structmeta_1_1util_1_1identifier.html">identifier</a>, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:aba295f57b3315e9394073cb469f4cf08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new object based on the factory method parameters.  <a href="#aba295f57b3315e9394073cb469f4cf08">More...</a><br/></td></tr>
 <tr class="separator:aba295f57b3315e9394073cb469f4cf08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:af4ce9596474aea2a23b3efa30c4c193e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4ce9596474aea2a23b3efa30c4c193e"></a>
-static DerivedFactory &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e">get</a> ()</td></tr>
-<tr class="memdesc:af4ce9596474aea2a23b3efa30c4c193e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtains the singleton. <br/></td></tr>
+<tr class="memitem:af4ce9596474aea2a23b3efa30c4c193e"><td class="memItemLeft" align="right" valign="top">static DerivedFactory &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e">get</a> ()</td></tr>
+<tr class="memdesc:af4ce9596474aea2a23b3efa30c4c193e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtains the singleton.  <a href="#af4ce9596474aea2a23b3efa30c4c193e">More...</a><br/></td></tr>
 <tr class="separator:af4ce9596474aea2a23b3efa30c4c193e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a994a8ec90655b78ab3893f8e95b4bdf6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a994a8ec90655b78ab3893f8e95b4bdf6"></a>
 std::unordered_map<br class="typebreak"/>
-&lt; std::string, factory_method &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>methods_</b></td></tr>
+&lt; std::string, <a class="el" href="classmeta_1_1util_1_1factory.html#a23a7411bfe5c66e456aa9b7f52651fd6">factory_method</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmeta_1_1util_1_1factory.html#a994a8ec90655b78ab3893f8e95b4bdf6">methods_</a></td></tr>
+<tr class="memdesc:a994a8ec90655b78ab3893f8e95b4bdf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The internal map of identifiers to factory_methods. <br/></td></tr>
 <tr class="separator:a994a8ec90655b78ab3893f8e95b4bdf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -160,13 +161,137 @@ std::unordered_map<br class="typebreak"/>
 class meta::util::factory&lt; DerivedFactory, Type, Arguments &gt;</h3>
 
 <p>Generic factory that can be subclassed to create factories for specific types. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="af4ce9596474aea2a23b3efa30c4c193e"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DerivedFactory, class Type, class... Arguments&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static DerivedFactory&amp; <a class="el" href="classmeta_1_1util_1_1factory.html">meta::util::factory</a>&lt; DerivedFactory, Type, Arguments &gt;::get </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Obtains the singleton. </p>
+<dl class="section return"><dt>Returns</dt><dd>a singleton of type DerivedFactory </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a67e514eb8b151fc77e2c74ee416e38cd"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DerivedFactory, class Type, class... Arguments&gt; </div>
+<div class="memtemplate">
+template&lt;class Function &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classmeta_1_1util_1_1factory.html">meta::util::factory</a>&lt; DerivedFactory, Type, Arguments &gt;::add </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>identifier</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Function &amp;&amp;&#160;</td>
+          <td class="paramname"><em>fn</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Associates the given identifier with the given factory method. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">identifier</td><td>The identifier to associate the factory method with </td></tr>
+    <tr><td class="paramname">fn</td><td>The factory method </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aba295f57b3315e9394073cb469f4cf08"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DerivedFactory, class Type, class... Arguments&gt; </div>
+<div class="memtemplate">
+template&lt;class... Args&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmeta_1_1util_1_1factory.html#abbddedbeda6d463a12cda30aa3b33dad">pointer</a> <a class="el" href="classmeta_1_1util_1_1factory.html">meta::util::factory</a>&lt; DerivedFactory, Type, Arguments &gt;::create </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>identifier</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Args &amp;&amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a new object based on the factory method parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">identifier</td><td>The identifier to use to select a factory method </td></tr>
+    <tr><td class="paramname">args</td><td>The arguments to forward to that factory method </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a unique_ptr to the new object created </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/chase/projects/meta/include/util/<a class="el" href="factory_8h_source.html">factory.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 12 2014 12:43:08 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 18 2014 13:59:16 for ModErn Text Analysis by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
