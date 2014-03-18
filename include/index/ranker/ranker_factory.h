@@ -62,7 +62,17 @@ std::unique_ptr<ranker> make_ranker(const cpptoml::toml_group&)
 {
     return make_unique<Ranker>();
 }
-}
+
+/**
+ * Registration method for rankers. Clients should use this method to
+ * register any new rankers they write.
+ */
+template <class Ranker>
+void register_ranker()
+{
+    ranker_factory::get().add(Ranker::id, make_ranker<Ranker>);
 }
 
+}
+}
 #endif
