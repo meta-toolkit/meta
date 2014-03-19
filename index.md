@@ -9,8 +9,6 @@ layout: default
  - inverted and forward indexes with compression and various caching strategies
  - various ranking functions for searching the indexes
  - topic modeling algorithms
- - language modeling algorithms
- - clustering and similarity algorithms
  - classification algorithms
  - wrappers for liblinear and libsvm
  - UTF8 support for analysis on various languages
