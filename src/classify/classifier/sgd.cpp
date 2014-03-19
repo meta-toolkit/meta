@@ -15,11 +15,13 @@ namespace classify {
 
 const std::string sgd::id = "sgd";
 
-sgd::sgd(std::shared_ptr<index::forward_index> idx, class_label positive,
-         class_label negative, std::unique_ptr<loss::loss_function> loss,
-         double alpha, double gamma, double bias, double lambda,
-         size_t max_iter)
+sgd::sgd(const std::string& prefix, std::shared_ptr<index::forward_index> idx,
+         class_label positive, class_label negative,
+         std::unique_ptr<loss::loss_function> loss, double alpha, double gamma,
+         double bias, double lambda, size_t max_iter)
     : binary_classifier{std::move(idx), positive, negative},
+      weights_{prefix + "_" + std::to_string(idx_->id(positive)) + ".model",
+               idx_->unique_terms()},
       alpha_{alpha},
       gamma_{gamma},
       bias_{0},
@@ -28,7 +30,7 @@ sgd::sgd(std::shared_ptr<index::forward_index> idx, class_label positive,
       max_iter_{max_iter},
       loss_{std::move(loss)}
 {
-    /* nothing */
+    reset();
 }
 
 double sgd::predict(doc_id d_id) const {
@@ -44,8 +46,6 @@ double sgd::predict(const counts_t & doc) const {
 }
 
 void sgd::train( const std::vector<doc_id> & docs ) {
-    weights_.resize(idx_->unique_terms());
-
     std::vector<size_t> indices( docs.size() );
     std::vector<int> labels( docs.size() );
     for( size_t i = 0; i < docs.size(); ++i ) {
@@ -104,7 +104,8 @@ void sgd::train( const std::vector<doc_id> & docs ) {
 }
 
 void sgd::reset() {
-    weights_.clear();
+    for (auto& w : weights_)
+        w = 0;
     coeff_ = 1;
     bias_ = 0;
 }
@@ -119,6 +120,11 @@ std::unique_ptr<binary_classifier>
     if (!loss)
         throw binary_classifier_factory::exception{
             "loss function must be specified for sgd in config"};
+
+    auto prefix = config.get_as<std::string>("prefix");
+    if (!prefix)
+        throw binary_classifier_factory::exception{
+            "prefix must be specified for sgd in config"};
 
     auto alpha = sgd::default_alpha;
     if (auto c_alpha = config.get_as<double>("alpha"))
@@ -141,7 +147,7 @@ std::unique_ptr<binary_classifier>
         max_iter = *c_max_iter;
 
     return make_unique<sgd>(
-        std::move(idx), std::move(positive), std::move(negative),
+        *prefix, std::move(idx), std::move(positive), std::move(negative),
         loss::make_loss_function(*loss), alpha, gamma, bias, lambda, max_iter);
 }
 

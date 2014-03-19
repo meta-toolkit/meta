@@ -9,10 +9,10 @@
 #ifndef META_CLASSIFY_SGD_H_
 #define META_CLASSIFY_SGD_H_
 
-#include <vector>
 #include "classify/binary_classifier_factory.h"
 #include "classify/classifier/binary_classifier.h"
 #include "classify/loss/loss_function.h"
+#include "util/disk_vector.h"
 #include "meta.h"
 
 namespace meta
@@ -40,6 +40,7 @@ class sgd : public binary_classifier
     const static constexpr size_t default_max_iter = 50;
 
     /**
+     * @param prefix The prefix for the model file
      * @param idx The index to run the classifier on
      * @param positive The label for the positive class (all others
      *  are assumed to be negative).
@@ -50,11 +51,11 @@ class sgd : public binary_classifier
      * @param lambda \f$\lambda\f$, the regularization constant
      * @param max_iter The maximum number of iterations for training.
      */
-    sgd(std::shared_ptr<index::forward_index> idx, class_label positive,
-        class_label negative, std::unique_ptr<loss::loss_function> loss,
-        double alpha = default_alpha, double gamma = default_gamma,
-        double bias = default_bias, double lambda = default_lambda,
-        size_t max_iter = default_max_iter);
+    sgd(const std::string& prefix, std::shared_ptr<index::forward_index> idx,
+        class_label positive, class_label negative,
+        std::unique_ptr<loss::loss_function> loss, double alpha = default_alpha,
+        double gamma = default_gamma, double bias = default_bias,
+        double lambda = default_lambda, size_t max_iter = default_max_iter);
 
     /**
      * Returns the dot product with the current weight vector. Used
@@ -77,7 +78,7 @@ class sgd : public binary_classifier
 
   private:
     /// The weights vector.
-    std::vector<double> weights_;
+    util::disk_vector<double> weights_;
 
     /// The scalar coefficient for the weights vector.
     double coeff_{1.0};

@@ -80,14 +80,14 @@ int run_tests(const std::string& type)
     {
         one_vs_all hinge_sgd{f_idx, [&](class_label positive)
         {
-            return make_unique<sgd>(f_idx, positive, class_label{"negative"},
-                                    make_unique<loss::hinge>());
+            return make_unique<sgd>("sgd-model-test", f_idx, positive,
+                class_label{"negative"}, make_unique<loss::hinge>());
         }};
         check_cv(*f_idx, hinge_sgd, 0.93);
         one_vs_all perceptron{f_idx, [&](class_label positive)
         {
-            return make_unique<sgd>(f_idx, positive, class_label{"negative"},
-                                    make_unique<loss::perceptron>());
+            return make_unique<sgd>("sgd-model-test", f_idx, positive,
+                class_label{"negative"}, make_unique<loss::perceptron>());
         }};
         check_cv(*f_idx, perceptron, 0.89);
     });
@@ -96,14 +96,14 @@ int run_tests(const std::string& type)
     {
         one_vs_all hinge_sgd{f_idx, [&](class_label positive)
         {
-            return make_unique<sgd>(f_idx, positive, class_label{"negative"},
-                                    make_unique<loss::hinge>());
+            return make_unique<sgd>("sgd-model-test", f_idx, positive,
+                class_label{"negative"}, make_unique<loss::hinge>());
         }};
         check_split(*f_idx, hinge_sgd, 0.89);
         one_vs_all perceptron{f_idx, [&](class_label positive)
         {
-            return make_unique<sgd>(f_idx, positive, class_label{"negative"},
-                                    make_unique<loss::perceptron>());
+            return make_unique<sgd>("sgd-model-test", f_idx, positive,
+                class_label{"negative"}, make_unique<loss::perceptron>());
         }};
         check_split(*f_idx, perceptron, 0.85);
     });

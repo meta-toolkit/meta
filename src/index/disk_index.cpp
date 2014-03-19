@@ -49,6 +49,11 @@ class_label disk_index::label(doc_id d_id) const
     return class_label_from_id(impl_->labels_->at(d_id));
 }
 
+label_id disk_index::id(class_label label) const
+{
+    return impl_->label_ids_.get_value(label);
+}
+
 class_label disk_index::class_label_from_id(label_id l_id) const
 {
     return impl_->label_ids_.get_key(l_id);

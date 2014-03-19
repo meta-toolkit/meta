@@ -101,6 +101,12 @@ class disk_index
     class_label label(doc_id d_id) const;
 
     /**
+     * @param label The class label
+     * @return the label_id for the given class label
+     */
+    label_id id(class_label label) const;
+
+    /**
      * @param l_id The id of the class label in question
      * @return the integer label id of a document
      */
