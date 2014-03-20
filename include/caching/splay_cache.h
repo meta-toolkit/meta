@@ -74,15 +74,6 @@ class splay_cache
     uint64_t size() const;
 
     /**
-     * Adds a listener for when key/value pairs are removed. Useful for
-     * implementing write-back caches.
-     *
-     * @param fun The callback to be registered
-     */
-    template <class Functor>
-    void on_drop(Functor&& fun);
-
-    /**
      * Empties the cache.
      */
     void clear();
@@ -129,13 +120,6 @@ class splay_cache
     node* root_;
     /// the mutex that synchronizes access to the cache
     mutable std::mutex mutables_;
-
-    /**
-     * The list of callbacks to be invoked when a key/value pair is
-     * dropped from the map.
-     */
-    std::vector<std::function<void(const Key& key, const Value& value)>>
-        drop_callbacks_;
 
     /**
      * Deletes everything at this subroot and below.

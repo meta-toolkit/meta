@@ -103,15 +103,6 @@ class dblru_cache
      */
     util::optional<Value> find(const Key& key);
 
-    /**
-     * Adds a callback to be invoked when a key/value pair is dropped
-     * from the map.
-     *
-     * @param functor The callback to be installed
-     */
-    template <class Functor>
-    void on_drop(Functor&& functor);
-
     /** Empties the cache. */
     void clear();
 
@@ -157,13 +148,6 @@ class dblru_cache
      * The secondary map.
      */
     std::shared_ptr<Map<Key, Value>> secondary_;
-
-    /**
-     * List of functions to be invoked when a key/value pair is
-     * dropped.
-     */
-    std::vector<std::function<void(const Key& key, const Value& value)>>
-    drop_callbacks_;
 };
 
 /**

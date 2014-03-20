@@ -142,14 +142,6 @@ void dblru_cache<Key, Value, Map>::handle_insert()
         std::atomic_store(&primary_, std::make_shared<Map<Key, Value>>());
         // reset counter
         current_size_.store(0);
-
-        for (const auto& p : *secondary)
-        {
-            for (auto& callback : drop_callbacks_)
-            {
-                callback(p.first, p.second);
-            }
-        }
     }
 }
 #else
@@ -170,25 +162,8 @@ void dblru_cache<Key, Value, Map>::handle_insert()
             current_size_ = 0;
         }
     }
-    if (old_secondary)
-    {
-        for (const auto& p : *old_secondary)
-        {
-            for (auto& callback : drop_callbacks_)
-            {
-                callback(p.first, p.second);
-            }
-        }
-    }
 }
 #endif
-
-template <class Key, class Value, template <class, class> class Map>
-template <class Functor>
-void dblru_cache<Key, Value, Map>::on_drop(Functor&& functor)
-{
-    drop_callbacks_.emplace_back(std::forward<Functor>(functor));
-}
 
 template <class Key, class Value, template <class, class> class Map>
 void dblru_cache<Key, Value, Map>::clear()
@@ -211,14 +186,6 @@ void dblru_cache<Key, Value, Map>::clear()
         current_size_ = 0;
     }
 #endif
-
-    for (auto& callback : drop_callbacks_)
-    {
-        for (const auto& p : *primary)
-            callback(p.first, p.second);
-        for (const auto& p : *secondary)
-            callback(p.first, p.second);
-    }
 }
 }
 }

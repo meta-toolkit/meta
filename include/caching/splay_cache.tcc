@@ -93,8 +93,6 @@ template <class Key, class Value>
 void splay_cache
     <Key, Value>::replace(node* subroot, const Key& key, const Value& value)
 {
-    for (auto& callback : drop_callbacks_)
-        callback(subroot->key, subroot->value);
     subroot->key = key;
     subroot->value = value;
 }
@@ -139,8 +137,6 @@ void splay_cache<Key, Value>::clear(node*& subroot)
     {
         clear(subroot->left);
         clear(subroot->right);
-        for (auto& callback : drop_callbacks_)
-            callback(subroot->key, subroot->value);
         delete subroot;
         subroot = nullptr;
     }
@@ -173,13 +169,6 @@ template <class Key, class Value>
 uint64_t splay_cache<Key, Value>::size() const
 {
     return size_;
-}
-
-template <class Key, class Value>
-template <class Functor>
-void splay_cache<Key, Value>::on_drop(Functor&& fun)
-{
-    drop_callbacks_.emplace_back(std::forward<Functor>(fun));
 }
 
 template <class Key, class Value>
