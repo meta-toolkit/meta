@@ -33,13 +33,19 @@ We have walkthroughs for the following parts of MeTA:
 
 ## Project setup
 
- - This project requires a very well conforming C++11 compiler. Currently,
-   clang is the de-facto compiler for use with this project
+ - This project requires a conforming C++11 compiler. Currently, clang >=
+   3.3 is the de-facto compiler for use with this project, but it will work
+   with GCC >= 4.8 as of writing.
 
- - Additionally, you will need a conformant implementation of the C++11 standard
-   library and ABI---currently libc++ and libc++abi are the best options for
-   this. See your distribution's package manager for more information on
-   installing these dependencies.
+ - Additionally, you will need a conforming implementation of the C++11
+   standard library and ABI---currently libc++ and libc++abi are the best
+   options for this if you are using clang. These are installed by default
+   on OS X, but may need to be installed as separate packages on other
+   systems (e.g., Arch). See your distribution's package manager for more
+   information on installing these dependencies.
+
+   If you are using GCC >= 4.8, its packaged standard library and ABI is
+   sufficient.
 
  - Windows users: YMMV. It is not currently supported, but things may
    work. You will likely need Visual Studio 2013 for the C++11 features.
@@ -62,7 +68,13 @@ git submodule update
 {% highlight bash %}
 mkdir build
 cd build
+
+# to use clang
 CXX=clang++ cmake ../ -DCMAKE_BUILD_TYPE=Debug
+# OR
+# to use gcc
+CXX=g++ cmake ../ -DCMAKE_BUILD_TYPE=Debug
+
 make
 {% endhighlight %}
 
