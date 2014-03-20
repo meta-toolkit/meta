@@ -90,6 +90,8 @@ std::unique_ptr<token_stream> analyzer::load_filters(const cpptoml::toml_group
     }
 
     auto filters = config.get_group_array("filter");
+    if (!filters)
+        throw analyzer_exception{"analyzer group missing filter configuration"};
     std::unique_ptr<token_stream> result;
     for (const auto filter : filters->array())
         result = load_filter(std::move(result), *filter);
