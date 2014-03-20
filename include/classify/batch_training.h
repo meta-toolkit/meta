@@ -48,7 +48,7 @@ void batch_train(Index& idx, Classifier& cls,
     {
         LOG(progress) << "\rTraining batch " << i + 1 << "/" << num_batches
                       << ENDLG;
-        auto end = std::min((i + 1) * batch_size, docs.size());
+        auto end = std::min<uint64_t>((i + 1) * batch_size, docs.size());
         std::vector<doc_id> batch{docs.begin() + (i * batch_size),
                                   docs.begin() + end};
         idx.clear_cache();

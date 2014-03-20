@@ -72,7 +72,7 @@ double ir_eval::precision(const std::vector<std::pair<doc_id, double>>& results,
     if (ht == qrels_.end())
         return 0.0;
 
-    uint64_t denominator = std::min(results.size(), num_docs);
+    uint64_t denominator = std::min<uint64_t>(results.size(), num_docs);
     return relevant_retrieved(results, q_id, num_docs) / denominator;
 }
 
