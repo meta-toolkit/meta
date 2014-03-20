@@ -60,6 +60,12 @@ class cached_index : public Index
     virtual std::shared_ptr<postings_data_type>
         search_primary(primary_key_type p_id) const override;
 
+    /**
+     * Clears the cache for the index. Useful if you're using something
+     * like no-evict cache and want to reclaim memory.
+     */
+    void clear_cache();
+
   private:
     /**
      * The internal cache object.

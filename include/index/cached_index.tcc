@@ -30,5 +30,11 @@ auto cached_index<Index, Cache>::search_primary(primary_key_type p_id)
     cache_.insert(p_id, result);
     return result;
 }
+
+template <class Index, template <class, class> class Cache>
+void cached_index<Index, Cache>::clear_cache()
+{
+    cache_.clear();
+}
 }
 }
