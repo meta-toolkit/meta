@@ -51,6 +51,11 @@ class no_evict_cache
      */
     util::optional<Value> find(const Key& key) const;
 
+    /**
+     * Clears the cache.
+     */
+    void clear();
+
   private:
     /**
      * Mutex for locking operations.

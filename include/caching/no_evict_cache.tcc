@@ -21,5 +21,11 @@ util::optional<Value> no_evict_cache<Key, Value>::find(const Key& key) const
         return util::nullopt;
     return values_[key];
 }
+
+template <class Key, class Value>
+void no_evict_cache<Key, Value>::clear()
+{
+    values_.clear();
+}
 }
 }
