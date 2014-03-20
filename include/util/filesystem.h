@@ -95,8 +95,14 @@ inline uint64_t file_size(const std::string& filename)
     if (!file_exists(filename))
         return 0;
 
+#if META_IS_DARWIN
+    // Darwin is large file aware by default
+    struct stat st;
+    stat(filename.c_str(), &st);
+#else
     struct stat64 st;
     stat64(filename.c_str(), &st);
+#endif
     return st.st_size;
 }
 

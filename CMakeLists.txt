@@ -49,6 +49,11 @@ if(UNIX)
     endif()
 endif()
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_definitions(-D_DARWIN_USE_64_BIT_INODE=1)
+    add_definitions(-DMETA_IS_DARWIN=1)
+endif()
+
 include(CheckCXXSourceCompiles)
 include(CheckCXXSourceRuns)
 check_cxx_source_compiles("
