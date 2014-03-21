@@ -191,8 +191,8 @@ void forward_index::create_index(const std::string& config_file)
     LOG(info) << "Done creating index: " << index_name() << ENDLG;
 }
 
-void forward_index::impl::create_libsvm_postings(const cpptoml::toml_group
-                                                 & config)
+void forward_index::impl::create_libsvm_postings(
+    const cpptoml::toml_group& config)
 {
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)
@@ -220,8 +220,11 @@ void forward_index::impl::set_doc_byte_locations()
 {
     doc_id d_id{0};
     uint8_t last_byte = '\n';
+    printing::progress progress{" > Setting document locations: ",
+                                idx_->impl_->postings().size()};
     for (uint64_t idx = 0; idx < idx_->impl_->postings().size(); ++idx)
     {
+        progress(idx);
         if (last_byte == '\n')
         {
             (*doc_byte_locations_)[d_id] = idx;
@@ -245,6 +248,9 @@ void forward_index::impl::create_libsvm_metadata()
 {
     total_unique_terms_ = 0;
 
+    printing::progress progress{" > Creating metadata: ",
+                                doc_byte_locations_->size()};
+
     doc_id d_id{0};
     std::ifstream in{idx_->index_name() + idx_->impl_->files[POSTINGS]};
     std::string line;
@@ -254,6 +260,8 @@ void forward_index::impl::create_libsvm_metadata()
         std::getline(in, line);
         if (line.empty())
             break;
+
+        progress(d_id);
 
         class_label lbl = io::libsvm_parser::label(line);
         idx_->impl_->set_label(d_id, lbl);
