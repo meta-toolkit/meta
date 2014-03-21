@@ -142,6 +142,11 @@ japanese    0.968       0.991       0.945
 </code>
 </div>
 
+## Online Learning
+If your dataset cannot be loaded into memory, you should look at [the
+online learning tutorial](online-learning.html) for more information about
+how to handle this case.
+
 ## Manual Classification
 
 If you want to customize the classification process (such as providing
