@@ -94,6 +94,7 @@ method = "one-vs-all"
     [classifier.base]
     method = "sgd"
     loss = "hinge"
+    prefix = "sgd-model"
 {% endhighlight %}
 
 Here is an example configuration that uses Naive Bayes:
