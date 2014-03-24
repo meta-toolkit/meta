@@ -233,6 +233,11 @@ add_library(meta-topics
             src/topics/parallel_lda_gibbs.cpp)
 target_link_libraries(meta-topics meta-index)
 
+add_library(meta-sequence
+            src/sequence/sequence.cpp
+            src/sequence/observation.cpp)
+target_link_libraries(meta-sequence meta-util)
+
 add_library(meta-testing
             src/test/classifier_test.cpp
             src/test/forward_index_test.cpp
