@@ -43,5 +43,10 @@ void observation::tag(tag_t t)
 {
     tag_ = std::move(t);
 }
+
+bool observation::tagged() const
+{
+    return static_cast<bool>(tag_);
+}
 }
 }

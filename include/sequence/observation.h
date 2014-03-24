@@ -66,6 +66,11 @@ class observation
     void tag(tag_t t);
 
     /**
+     * @return whether or not this observation is tagged
+     */
+    bool tagged() const;
+
+    /**
      * Basic exception class for observation interactions.
      */
     class exception : public std::runtime_error
