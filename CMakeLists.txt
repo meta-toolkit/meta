@@ -235,7 +235,8 @@ target_link_libraries(meta-topics meta-index)
 
 add_library(meta-sequence
             src/sequence/sequence.cpp
-            src/sequence/observation.cpp)
+            src/sequence/observation.cpp
+            src/sequence/io/ptb_parser.cpp)
 target_link_libraries(meta-sequence meta-util)
 
 add_library(meta-testing
