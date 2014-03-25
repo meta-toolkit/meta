@@ -9,6 +9,7 @@
 #ifndef META_UTIL_FUNCTIONAL_H_
 #define META_UTIL_FUNCTIONAL_H_
 
+#include <algorithm>
 #include <functional>
 #include <map>
 
@@ -34,6 +35,25 @@ std::function<Result(Args...)> memoize(std::function<Result(Args...)> fun)
         return map_[std::make_tuple(args...)] = fun(args...);
     };
 }
+
+/**
+ * Obtains the argument that maximizes the output of a function on a
+ * sequence.
+ *
+ * @param begin The beginning iterator
+ * @param end The ending iterator
+ * @param fn The function to apply to each element
+ */
+template <class Iter, class Function>
+Iter argmax(Iter begin, Iter end, Function&& fn)
+{
+    using T = decltype(*begin);
+    return std::max_element(begin, end, [&](const T& a, const T& b)
+    {
+        return fn(a) < fn(b);
+    });
+}
+
 }
 }
 #endif

@@ -93,7 +93,7 @@ class sgd : public binary_classifier
     double bias_;
 
     /// The weight of the bias term for each document (defaults to 1)
-    double bias_weight_;
+    const double bias_weight_;
 
     /// \f$\lambda\f$, the regularization constant
     const double lambda_;

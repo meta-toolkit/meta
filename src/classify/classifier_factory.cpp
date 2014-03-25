@@ -36,6 +36,7 @@ classifier_factory::classifier_factory()
     reg<svm_wrapper>();
     reg<winnow>();
     reg<dual_perceptron>();
+    reg<logistic_regression>();
 
     // built-in multi-index classifiers
     reg_mi<knn>();

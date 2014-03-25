@@ -108,6 +108,18 @@ int run_tests(const std::string& type)
         check_split(*f_idx, perceptron, 0.85);
     });
 
+    num_failed += testing::run_test("log-reg-cv-" + type, [&]()
+    {
+        logistic_regression logreg{"logreg-model-test", f_idx};
+        check_cv(*f_idx, logreg, 0.92);
+    });
+
+    num_failed += testing::run_test("log-reg-split-" + type, [&]()
+    {
+        logistic_regression logreg{"logreg-model-test", f_idx};
+        check_split(*f_idx, logreg, 0.87);
+    });
+
     num_failed += testing::run_test("winnow-cv-" + type, [&]()
     {
         winnow win{f_idx};
