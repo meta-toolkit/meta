@@ -6,3 +6,4 @@
 #include "classify/classifier/svm_wrapper.h"
 #include "classify/classifier/winnow.h"
 #include "classify/classifier/dual_perceptron.h"
+#include "classify/classifier/logistic_regression.h"

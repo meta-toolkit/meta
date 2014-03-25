@@ -216,6 +216,7 @@ add_library(meta-classify
             src/classify/classifier/one_vs_one.cpp
             src/classify/classifier/dual_perceptron.cpp
             src/classify/classifier/knn.cpp
+            src/classify/classifier/logistic_regression.cpp
             src/classify/loss/hinge.cpp
             src/classify/loss/huber.cpp
             src/classify/loss/least_squares.cpp
@@ -314,7 +315,7 @@ set_tests_properties(vocabulary-map PROPERTIES TIMEOUT 10)
 add_test(libsvm-parser unit-test libsvm-parser)
 set_tests_properties(libsvm-parser PROPERTIES TIMEOUT 10)
 add_test(classifiers unit-test classifiers)
-set_tests_properties(classifiers PROPERTIES TIMEOUT 60)
+set_tests_properties(classifiers PROPERTIES TIMEOUT 80)
 add_test(rankers unit-test rankers)
 set_tests_properties(rankers PROPERTIES TIMEOUT 75)
 add_test(ir-eval unit-test ir-eval)
