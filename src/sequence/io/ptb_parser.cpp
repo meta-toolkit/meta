@@ -19,20 +19,23 @@ std::vector<sequence> extract_sequences(const std::string& filename)
     sequence seq;
     while (std::getline(file, line))
     {
-        if (seq.size() > 0)
+        // blank line
+        if (line.length() == 0)
         {
-            if (std::regex_match(line, regex))
-            {
-                results.emplace_back(std::move(seq));
-                continue;
-            }
-
-            if (line.length() == 0)
+            if (seq.size() > 0)
             {
                 if (seq[seq.size() - 1].tag() == tag_t{"."})
                     results.emplace_back(std::move(seq));
-                continue;
             }
+            continue;
+        }
+
+        // paragraph divider
+        if (std::regex_match(line, regex))
+        {
+            if (seq.size() > 0)
+                results.emplace_back(std::move(seq));
+            continue;
         }
 
         std::stringstream ss{line};
@@ -45,6 +48,7 @@ std::vector<sequence> extract_sequences(const std::string& filename)
             if (pos == word.npos)
             {
                 LOG(warning) << "could not find '/' in word/tag pair" << ENDLG;
+                LOG(warning) << "word/tag pair is: " << word << ENDLG;
                 continue;
             }
             auto sym = symbol_t{word.substr(0, pos)};
