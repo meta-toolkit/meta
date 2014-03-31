@@ -33,10 +33,6 @@ counts_t counts(const std::string& text, bool contains_label /* = true */)
     if (contains_label)
         stream >> token; // ignore it
 
-    if (!stream.good())
-        throw libsvm_parser_exception{"incorrectly formatted libsvm data: "
-                                      + text};
-
     std::vector<std::pair<term_id, double>> counts;
     term_id term;
     double count;
@@ -65,10 +61,6 @@ counts_t counts(const std::string& text, bool contains_label /* = true */)
         term_id minus_term{static_cast<uint64_t>(term) - 1};
         counts.emplace_back(minus_term, count);
     }
-
-    if (counts.empty())
-        throw libsvm_parser_exception{"incorrectly formatted libsvm data: "
-                                      + text};
 
     return counts;
 }
