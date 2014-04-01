@@ -12,6 +12,7 @@
 #include <array>
 #include <memory>
 #include <string>
+#include "util/optional.h"
 
 namespace meta
 {
@@ -107,7 +108,7 @@ class parser
     const char* data_;
 
     /// The next token to be returned; "" if none
-    std::string next_;
+    util::optional<std::string> next_;
 };
 }
 }

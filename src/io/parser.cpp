@@ -44,18 +44,14 @@ parser& parser::operator=(parser&&) = default;
 
 void parser::get_next()
 {
-    next_ = "";
+    next_ = util::nullopt;
     for (size_t i = idx_; i < size_; ++i)
     {
         if (invalid_[static_cast<uint8_t>(data_[i])])
         {
-            if (idx_ != i)
-            {
-                next_ = std::string{data_ + idx_, i - idx_};
-                idx_ = i + 1;
-                return;
-            }
+            next_ = std::string{data_ + idx_, i - idx_};
             idx_ = i + 1;
+            return;
         }
     }
 
@@ -74,19 +70,19 @@ std::string parser::filename() const
 
 std::string parser::peek() const
 {
-    return next_;
+    return *next_;
 }
 
 std::string parser::next()
 {
-    std::string ret{next_};
+    std::string ret{*next_};
     get_next();
     return ret;
 }
 
 bool parser::has_next() const
 {
-    return next_ != "";
+    return static_cast<bool>(next_);
 }
 }
 }
