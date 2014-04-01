@@ -177,6 +177,15 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
 
             analyzer->tokenize(*doc);
 
+            // warn if there is an empty document
+            if (doc->counts().empty())
+            {
+                std::lock_guard<std::mutex> lock{mutex};
+                LOG(progress) << '\n' << ENDLG;
+                LOG(warning) << "Empty document (id = " << doc->id()
+                             << ") generated!" << ENDLG;
+            }
+
             // save metadata
             docid_writer.insert(doc->id(), doc->path());
             idx_->impl_->set_length(doc->id(), doc->length());
