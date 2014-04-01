@@ -31,7 +31,11 @@ counts_t counts(const std::string& text, bool contains_label /* = true */)
     std::string token;
 
     if (contains_label)
-        stream >> token; // ignore it
+    {
+        if (!(stream >> token)) // ignore class label, but check that it's there
+            throw libsvm_parser_exception{
+                "incorrectly formatted libsvm data: " + text};
+    }
 
     std::vector<std::pair<term_id, double>> counts;
     term_id term;
