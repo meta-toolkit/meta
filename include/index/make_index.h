@@ -69,6 +69,16 @@ std::shared_ptr<Index> make_index(const std::string& config_file,
             "forward-index or inverted-index missing from configuration file"};
     }
 
+    // make sure that the index names are different!
+    auto fwd_name = config.get_as<std::string>("forward-index");
+    auto inv_name = config.get_as<std::string>("inverted-index");
+
+    if (*fwd_name == *inv_name)
+    {
+        throw typename Index::exception{
+            "forward and inverted index names must be different!"};
+    }
+
     // can't use std::make_shared here since the Index constructor is private
     auto idx =
         std::shared_ptr<Index>{new Index(config, std::forward<Args>(args)...)};
