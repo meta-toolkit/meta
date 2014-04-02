@@ -25,12 +25,16 @@ void lda_model::save_doc_topic_distributions(const std::string& filename) const
     for (const auto& d_id : idx_->docs())
     {
         file << d_id << "\t";
+        double sum = 0;
         for (topic_id j{0}; j < num_topics_; ++j)
         {
             double prob = compute_doc_topic_probability(d_id, j);
             if (prob > 0)
                 file << j << ":" << prob << "\t";
+            sum += prob;
         }
+        if (std::abs(sum - 1) > 1e-6)
+            throw std::runtime_error{"invalid probability distribution"};
         file << "\n";
     }
 }
