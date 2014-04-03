@@ -1,10 +1,14 @@
 /**
  * @file vocabulary_map_writer.h
  * @author Chase Geigle
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _META_VOCABULARY_MAP_WRITER_H_
-#define _META_VOCABULARY_MAP_WRITER_H_
+#ifndef META_VOCABULARY_MAP_WRITER_H_
+#define META_VOCABULARY_MAP_WRITER_H_
 
 #include <cstdint>
 #include <fstream>
@@ -91,12 +95,17 @@ class vocabulary_map_writer
     };
 
   private:
+    /**
+     * Writes null bytes to fill up the current block.
+     */
     void write_padding();
-    void flush();
 
     /**
-     * The file containing the forward mapping tree.
+     * Flushes a node to disk after writing the padding bytes.
      */
+    void flush();
+
+    /// The file containing the forward mapping tree.
     std::ofstream file_;
 
     /**
@@ -106,37 +115,23 @@ class vocabulary_map_writer
      */
     uint64_t file_write_pos_;
 
-    /**
-     * The file containing the reverse mapping.
-     */
+    /// The file containing the reverse mapping
     std::ofstream inverse_file_;
 
-    /**
-     * The path to the tree file.
-     */
+    /// The path to the tree file
     std::string path_;
 
-    /**
-     * The block size of every node in the tree, in bytes.
-     */
+    /// The block size of every node in the tree, in bytes
     uint16_t block_size_;
 
-    /**
-     * The total number of terms inserted so far.
-     */
+    /// The total number of terms inserted so far
     uint64_t num_terms_;
 
-    /**
-     * The remaining space in the block currently being written.
-     */
+    /// The remaining space in the block currently being written
     uint16_t remaining_block_space_;
 
-    /**
-     * The number of written nodes to be "merged" when writing the next
-     * level.
-     */
+    /// Number of written nodes to be "merged" when writing the next level
     uint64_t written_nodes_;
-
 };
 }
 }

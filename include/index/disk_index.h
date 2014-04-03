@@ -1,46 +1,56 @@
 /**
  * @file disk_index.h
  * @author Sean Massung
+ * @author Chase Geigle
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _DISK_INDEX_H_
-#define _DISK_INDEX_H_
+#ifndef META_DISK_INDEX_H_
+#define META_DISK_INDEX_H_
 
 #include <memory>
 #include <vector>
 #include "util/pimpl.h"
 #include "meta.h"
 
-namespace cpptoml {
+namespace cpptoml
+{
 class toml_group;
 }
 
-namespace meta {
+namespace meta
+{
 
-namespace index {
+namespace index
+{
 class string_list;
 class vocabulary_map;
 }
 
-namespace tokenizers {
+namespace tokenizers
+{
 class tokenizer;
 }
 
-namespace util {
+namespace util
+{
 template <class>
 class disk_vector;
 }
 }
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 /**
  * Holds generic data structures and functions that inverted_index and
- * forward_index both use.
+ * forward_index both use. Provides common interface for both and is implemented
+ * using the pointer-to-implementation method.
  */
 class disk_index
 {
@@ -51,7 +61,7 @@ class disk_index
     virtual ~disk_index() = default;
 
     /**
-     * The name of this index.
+     * @return the name of this index
      */
     std::string index_name() const;
 
@@ -61,13 +71,13 @@ class disk_index
     uint64_t num_docs() const;
 
     /**
-     * @param doc_id
+     * @param d_id
      * @return the actual name of this document
      */
     std::string doc_name(doc_id d_id) const;
 
     /**
-     * @param doc_id
+     * @param d_id
      * @return the path to the file containing this document
      */
     std::string doc_path(doc_id d_id) const;
@@ -92,10 +102,22 @@ class disk_index
     class_label label(doc_id d_id) const;
 
     /**
+     * @param label The class label
+     * @return the label_id for the given class label
+     */
+    label_id id(class_label label) const;
+
+    /**
      * @param l_id The id of the class label in question
      * @return the integer label id of a document
      */
     class_label class_label_from_id(label_id l_id) const;
+
+    /**
+     * @return the distinct class labels possible for documents in this
+     * index
+     */
+    std::vector<class_label> class_labels() const;
 
     /**
      * @param d_id
@@ -112,36 +134,38 @@ class disk_index
      * @param term
      * @return the term_id associated with the parameter
      */
-    term_id get_term_id(const std::string & term);
+    term_id get_term_id(const std::string& term);
 
     /**
      * @param t_id The term_id to get the original text for
-     * @return The string representation of the term
+     * @return the string representation of the term
      */
     std::string term_text(term_id t_id) const;
 
   protected:
+    /// Forward declare the implementation
     class disk_index_impl;
+    /// Implementation of this disk_index
     util::pimpl<disk_index_impl> impl_;
 
     /**
      * Constructor.
-     * @param config_file
+     * @param config The config settings used to create this index
+     * @param name The name of this disk_index
      */
-    disk_index(const cpptoml::toml_group & config, const std::string& name);
+    disk_index(const cpptoml::toml_group& config, const std::string& name);
 
     /**
      * disk_index may not be copy-constructed.
      */
-    disk_index(const disk_index &) = delete;
+    disk_index(const disk_index&) = delete;
 
     /**
      * disk_index may not be copy-assigned.
      */
-    disk_index &operator=(const disk_index &) = delete;
+    disk_index& operator=(const disk_index&) = delete;
 
   public:
-
     /**
      * Move constructs a disk_index.
      **/
@@ -152,7 +176,6 @@ class disk_index
      */
     disk_index& operator=(disk_index&&) = default;
 };
-
 }
 }
 

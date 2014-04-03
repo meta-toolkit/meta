@@ -3,111 +3,97 @@
  * @author Sean Massung
  */
 
-#include "cluster/similarity.h"
 #include "corpus/corpus.h"
 #include "corpus/document.h"
 #include "util/mapping.h"
 
-namespace meta {
-namespace corpus {
+namespace meta
+{
+namespace corpus
+{
 
-document::document(const std::string & path,
-                   doc_id d_id,
-                   const class_label & label):
-    _path{path},
-    _d_id{d_id},
-    _label{label},
-    _length{0},
-    _content{""},
-    _contains_content{false}
+document::document(const std::string& path, doc_id d_id,
+                   const class_label& label)
+    : path_{path}, d_id_{d_id}, label_{label}, length_{0}, encoding_{"utf-8"}
 {
     size_t idx = path.find_last_of("/") + 1;
-    _name = path.substr(idx);
-
-    // make sure class label doesn't contain a path (we only want the label, not
-    // the entire file)
-    std::string str_lbl = _label;
-    size_t slash = str_lbl.find_first_of("/\\");
-    if(slash != std::string::npos)
-        _label = str_lbl.substr(0, slash);
+    name_ = path.substr(idx);
 }
 
-void document::increment(const std::string & term, double amount)
+void document::increment(const std::string& term, double amount)
 {
-    _counts[term] += amount;
-    _length += amount;
+    counts_[term] += amount;
+    length_ += amount;
 }
 
 std::string document::path() const
 {
-    return _path;
+    return path_;
 }
 
-const class_label & document::label() const
+const class_label& document::label() const
 {
-    return _label;
+    return label_;
 }
 
 std::string document::name() const
 {
-    return _name;
+    return name_;
 }
 
 uint64_t document::length() const
 {
-    return _length;
+    return length_;
 }
 
-double document::count(const std::string & term) const
+double document::count(const std::string& term) const
 {
-    return map::safe_at(_counts, term);
+    return map::safe_at(counts_, term);
 }
 
-const std::unordered_map<std::string, double> & document::counts() const
+const std::unordered_map<std::string, double>& document::counts() const
 {
-    return _counts;
+    return counts_;
 }
 
-double document::cosine_similarity(const document & a, const document & b)
+void document::content(const std::string& content,
+                       const std::string& encoding /* = "utf-8" */)
 {
-    return clustering::similarity::cosine_similarity(a._counts,
-                                                     b._counts);
+    content_ = content;
+    encoding_ = encoding;
 }
 
-double document::jaccard_similarity(const document & a, const document & b)
+void document::encoding(const std::string& encoding)
 {
-    return clustering::similarity::jaccard_similarity(a._counts,
-                                                      b._counts);
+    encoding_ = encoding;
 }
 
-void document::set_content(const std::string & content)
+const std::string& document::content() const
 {
-    _content = content;
-    _contains_content = true;
-}
-
-const std::string & document::content() const
-{
-    if(_contains_content)
-        return _content;
+    if (content_)
+        return *content_;
     throw corpus::corpus_exception{
         "there is no content for the requested document"};
 }
 
+const std::string& document::encoding() const
+{
+    return encoding_;
+}
+
 doc_id document::id() const
 {
-    return _d_id;
+    return d_id_;
 }
 
 bool document::contains_content() const
 {
-    return _contains_content;
+    return static_cast<bool>(content_);
 }
 
-void document::set_label(class_label label)
+void document::label(class_label label)
 {
-    _label = label;
+    label_ = label;
 }
-
 }
 }

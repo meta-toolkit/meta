@@ -1,123 +1,161 @@
 /**
  * @file optional.tcc
+ * @author Chase Geigle
  */
 
 #include "util/optional.h"
 
-namespace meta {
-namespace util {
+namespace meta
+{
+namespace util
+{
 
 template <class T>
 optional_storage<T>::optional_storage(trivial_init_t)
-    : dummy_{} { /* nothing */ }
+    : dummy_{}
+{
+    /* nothing */
+}
 
 template <class T>
 template <class... Args>
-optional_storage<T>::optional_storage(Args &&... args)
-    : value_{std::forward<Args>(args)...} { /* nothing */ }
+optional_storage<T>::optional_storage(Args&&... args)
+    : value_{std::forward<Args>(args)...}
+{
+    /* nothing */
+}
 
 template <class T>
 optional<T>::optional()
-    : initialized_{false}, storage_{trivial_init} { /* nothing */ }
+    : initialized_{false}, storage_{trivial_init}
+{
+    /* nothing */
+}
 
 template <class T>
-optional<T>::optional(nullopt_t) : optional() { /* nothing */ }
+optional<T>::optional(nullopt_t)
+    : optional()
+{
+    /* nothing */
+}
 
 template <class T>
-optional<T>::optional(const T & value)
-    : initialized_{true}, storage_{value} { /* nothing */ }
+optional<T>::optional(const T& value)
+    : initialized_{true}, storage_{value}
+{
+    /* nothing */
+}
 
 template <class T>
-optional<T>::optional(T && value)
-    : initialized_{true}, storage_{std::move(value)} { /* nothing */ }
+optional<T>::optional(T&& value)
+    : initialized_{true}, storage_{std::move(value)}
+{
+    /* nothing */
+}
 
 template <class T>
-optional<T>::optional(const optional & opt)
+optional<T>::optional(const optional& opt)
     : initialized_{opt.initialized_}, storage_{trivial_init}
 {
-    if(opt.initialized_)
+    if (opt.initialized_)
         new (dataptr()) T{*opt}; // placement new
 }
 
 template <class T>
-optional<T>::optional(optional && opt)
+optional<T>::optional(optional&& opt)
     : initialized_{opt.initialized_}, storage_{trivial_init}
 {
-    if(opt.initialized_)
+    if (opt.initialized_)
         new (dataptr()) T{std::move(*opt)};
 }
 
 template <class T>
-optional<T> & optional<T>::operator=(optional<T> rhs) {
+optional<T>& optional<T>::operator=(optional<T> rhs)
+{
     swap(rhs);
     return *this;
 }
 
 template <class T>
-void optional<T>::swap(optional<T> & other) {
-    if(initialized_ && !other.initialized_) {
+void optional<T>::swap(optional<T>& other)
+{
+    if (initialized_ && !other.initialized_)
+    {
         clear();
-    } else if(!initialized_ && other.initialized_) {
+    }
+    else if (!initialized_ && other.initialized_)
+    {
         initialized_ = true;
         new (dataptr()) T{std::move(*other)};
         other.clear();
-    } else if(initialized_ && other.initialized_) {
+    }
+    else if (initialized_ && other.initialized_)
+    {
         std::swap(storage_.value_, other.storage_.value_);
     }
 }
 
 template <class T>
-optional<T>::~optional() {
+optional<T>::~optional()
+{
     clear();
 }
 
 template <class T>
-const T & optional<T>::operator*() const {
-    if(!initialized_)
+const T& optional<T>::operator*() const
+{
+    if (!initialized_)
         throw bad_optional_access{"access attempted on uninitialized option"};
     return storage_.value_;
 }
 
 template <class T>
-T & optional<T>::operator*() {
-    if(!initialized_)
+T& optional<T>::operator*()
+{
+    if (!initialized_)
         throw bad_optional_access{"access attempted on uninitialized option"};
     return storage_.value_;
 }
 
 template <class T>
-const T * optional<T>::operator->() const {
-    if(!initialized_)
+const T* optional<T>::operator->() const
+{
+    if (!initialized_)
         throw bad_optional_access{"access attempted on uninitialized option"};
     return dataptr();
 }
 
 template <class T>
-T * optional<T>::operator->() {
-    if(!initialized_)
+T* optional<T>::operator->()
+{
+    if (!initialized_)
         throw bad_optional_access{"access attempted on uninitialized option"};
     return dataptr();
 }
 
 template <class T>
-optional<T>::operator bool() const {
+optional<T>::operator bool() const
+{
     return initialized_;
 }
 
 template <class T>
-void optional<T>::clear() {
-    if(initialized_)
+void optional<T>::clear()
+{
+    if (initialized_)
         storage_.value_.T::~T(); // yes, this is real life
     initialized_ = false;
 }
 
 template <class T>
-const T * optional<T>::dataptr() const {
+const T* optional<T>::dataptr() const
+{
     return std::addressof(storage_.value_);
 }
 
 template <class T>
-T * optional<T>::dataptr() {
+T* optional<T>::dataptr()
+{
     return std::addressof(storage_.value_);
 }
 }

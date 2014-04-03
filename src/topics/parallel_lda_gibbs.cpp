@@ -1,5 +1,6 @@
 /**
  * @file parallel_lda_gibbs.cpp
+ * @author Chase Geigle
  */
 
 #include "index/postings_data.h"
@@ -14,7 +15,7 @@ namespace topics
 
 void parallel_lda_gibbs::initialize()
 {
-    for (doc_id i{0}; i < idx_.num_docs(); ++i)
+    for (doc_id i{0}; i < idx_->num_docs(); ++i)
     {
         doc_topic_count_[i] = {};
         doc_word_topic_[i] = {};
@@ -30,10 +31,10 @@ void parallel_lda_gibbs::perform_iteration(uint64_t iter,
         str = "Initialization: ";
     else
         str = "Iteration " + std::to_string(iter) + ": ";
-    printing::progress progress{str, idx_.num_docs()};
+    printing::progress progress{str, idx_->num_docs()};
     progress.print_endline(false);
 
-    auto range = util::range<doc_id>(doc_id{0}, doc_id{idx_.num_docs() - 1});
+    auto range = util::range<doc_id>(doc_id{0}, doc_id{idx_->num_docs() - 1});
 
     for (auto& id : pool_.thread_ids())
     {
@@ -52,7 +53,7 @@ void parallel_lda_gibbs::perform_iteration(uint64_t iter,
         size_t n = 0; // term number within document---constructed
                       // so that each occurrence of the same term
                       // can still be assigned a different topic
-        for (const auto& freq : idx_.search_primary(i)->counts())
+        for (const auto& freq : idx_->search_primary(i)->counts())
         {
             for (size_t j = 0; j < freq.second; ++j)
             {
@@ -79,16 +80,17 @@ void parallel_lda_gibbs::perform_iteration(uint64_t iter,
         {
             for (auto& diff : topic_term_map.second)
             {
-                topic_term_count_[topic_term_map.first][diff.first] +=
-                    diff.second;
+                topic_term_count_[topic_term_map.first][diff.first]
+                    += diff.second;
             }
-            topic_count_[topic_term_map.first] +=
-                topic_diffs_[thread_map.first][topic_term_map.first];
+            topic_count_[topic_term_map.first]
+                += topic_diffs_[thread_map.first][topic_term_map.first];
         }
     }
 }
 
-void parallel_lda_gibbs::decrease_counts(topic_id topic, term_id term, doc_id doc)
+void parallel_lda_gibbs::decrease_counts(topic_id topic, term_id term,
+                                         doc_id doc)
 {
     std::thread::id tid = std::this_thread::get_id();
     // decrease topic_term_diff_ for the given assignment
@@ -105,7 +107,8 @@ void parallel_lda_gibbs::decrease_counts(topic_id topic, term_id term, doc_id do
     topic_diffs_.at(tid)[topic] -= 1;
 }
 
-void parallel_lda_gibbs::increase_counts(topic_id topic, term_id term, doc_id doc)
+void parallel_lda_gibbs::increase_counts(topic_id topic, term_id term,
+                                         doc_id doc)
 {
     std::thread::id tid = std::this_thread::get_id();
     topic_term_diffs_.at(tid)[topic][term] += 1;

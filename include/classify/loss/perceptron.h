@@ -6,27 +6,33 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CLASSIFY_PERCEPTRON_LOSS_H_
-#define _META_CLASSIFY_PERCEPTRON_LOSS_H_
+#ifndef META_CLASSIFY_PERCEPTRON_LOSS_H_
+#define META_CLASSIFY_PERCEPTRON_LOSS_H_
 
-namespace meta {
-namespace classify {
-namespace loss {
+#include "classify/loss/loss_function.h"
 
-struct perceptron {
-    double loss(double prediction, int expected) const {
-        if( prediction * expected <= 0 )
-            return -expected * prediction;
-        return 0;
-    }
+namespace meta
+{
+namespace classify
+{
+namespace loss
+{
 
-    double derivative(double prediction, int expected) const {
-        if( prediction * expected <= 0 )
-            return -expected;
-        return 0;
-    }
+/**
+ * The perceptron loss function for SGD algorithms.
+ *
+ * Defined as \f$\phi(p, y) = -py\f$ if \f$py \leq 0\f$, 0 otherwise.
+ */
+struct perceptron : public loss_function
+{
+    /**
+     * The identifier for this loss function.
+     */
+    const static std::string id;
+
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
 };
-
 }
 }
 }

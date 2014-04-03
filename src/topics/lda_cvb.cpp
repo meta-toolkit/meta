@@ -1,5 +1,6 @@
 /**
  * @file lda_cvb.cpp
+ * @author Chase Geigle
  */
 
 #include <random>
@@ -12,9 +13,9 @@ namespace meta
 namespace topics
 {
 
-lda_cvb::lda_cvb(index::forward_index& idx, uint64_t num_topics, double alpha,
-                 double beta)
-    : lda_model{idx, num_topics}, alpha_{alpha}, beta_{beta}
+lda_cvb::lda_cvb(std::shared_ptr<index::forward_index> idx, uint64_t num_topics,
+                 double alpha, double beta)
+    : lda_model{std::move(idx), num_topics}, alpha_{alpha}, beta_{beta}
 {
     /* nothing */
 }
@@ -45,26 +46,44 @@ void lda_cvb::initialize()
 {
     std::random_device rdev;
     std::mt19937 rng(rdev());
-    printing::progress progress{"Initialization: ", idx_.num_docs()};
-    for (doc_id i{0}; i < idx_.num_docs(); ++i)
+    printing::progress progress{"Initialization: ", idx_->num_docs()};
+
+    gamma_.resize(idx_->num_docs());
+    doc_topic_count_.resize(idx_->num_docs());
+    topic_term_count_.resize(num_topics_);
+    for (auto& v : topic_term_count_)
+        v.resize(idx_->unique_terms());
+    topic_count_.resize(num_topics_);
+
+    for (doc_id d{0}; d < idx_->num_docs(); ++d)
     {
-        progress(i);
-        for (auto& freq : idx_.search_primary(i)->counts())
+        progress(d);
+
+        doc_topic_count_[d].resize(num_topics_);
+        gamma_[d].resize(idx_->doc_size(d));
+
+        uint64_t i = 0; // i here is the inter-document term id, since we need
+                        // to handle each word occurrence separately
+        for (auto& freq : idx_->search_primary(d)->counts())
         {
-            double sum = 0;
-            for (topic_id k{0}; k < num_topics_; ++k)
+            for (uint64_t count = 0; count < freq.second; ++count)
             {
-                double random = rng();
-                gamma_[i][freq.first][k] = random;
-                sum += random;
-            }
-            for (topic_id k{0}; k < num_topics_; ++k)
-            {
-                gamma_[i][freq.first][k] /= sum;
-                double contrib = freq.second * gamma_[i][freq.first][k];
-                doc_topic_mean_[i][k] += contrib;
-                topic_term_mean_[k][freq.first] += contrib;
-                topic_mean_[k] += contrib;
+                double sum = 0;
+                gamma_[d][i].resize(num_topics_);
+                for (topic_id k{0}; k < num_topics_; ++k)
+                {
+                    auto random = rng();
+                    gamma_[d][i][k] = random;
+                    sum += random;
+                }
+                for (topic_id k{0}; k < num_topics_; ++k)
+                {
+                    gamma_[d][i][k] /= sum;
+                    topic_term_count_[k][freq.first] += gamma_[d][i][k];
+                    doc_topic_count_[d][k] += gamma_[d][i][k];
+                    topic_count_[k] += gamma_[d][i][k];
+                }
+                i += 1;
             }
         }
     }
@@ -73,47 +92,52 @@ void lda_cvb::initialize()
 double lda_cvb::perform_iteration(uint64_t iter)
 {
     printing::progress progress{"Iteration " + std::to_string(iter) + ": ",
-                                idx_.num_docs()};
+                                idx_->num_docs()};
     progress.print_endline(false);
     double max_change = 0;
-    for (doc_id i{0}; i < idx_.num_docs(); ++i)
+    for (doc_id d{0}; d < idx_->num_docs(); ++d)
     {
-        progress(i);
-        for (auto& freq : idx_.search_primary(i)->counts())
+        progress(d);
+
+        uint64_t i = 0; // term number within document---constructed
+                        // so that each occurrence of the same term
+                        // can still be assigned a different topic
+        for (auto& freq : idx_->search_primary(d)->counts())
         {
-            // remove this word occurrence from means
-            for (topic_id k{0}; k < num_topics_; ++k)
+            for (uint64_t count = 0; count < freq.second; ++count)
             {
-                double contrib = freq.second * gamma_[i][freq.first][k];
-                doc_topic_mean_[i][k] -= contrib;
-                topic_term_mean_[k][freq.first] -= contrib;
-                topic_mean_[k] -= contrib;
-            }
-            double min = 0;
-            double max = 0;
-            std::unordered_map<topic_id, double> old_gammas =
-                gamma_[i][freq.first];
-            for (topic_id k{0}; k < num_topics_; ++k)
-            {
-                // recompute gamma using CVB0 formula
-                gamma_[i][freq.first][k] =
-                    compute_term_topic_probability(freq.first, k) *
-                    doc_topic_mean_.at(i).at(k);
-                min = std::min(min, gamma_[i][freq.first][k]);
-                max = std::max(max, gamma_[i][freq.first][k]);
-            }
-            // normalize gamma and update means
-            for (topic_id k{0}; k < num_topics_; ++k)
-            {
-                gamma_[i][freq.first][k] =
-                    (gamma_[i][freq.first][k] - min) / (max - min);
-                double contrib = freq.second * gamma_[i][freq.first][k];
-                doc_topic_mean_[i][k] += contrib;
-                topic_term_mean_[k][freq.first] += contrib;
-                topic_mean_[k] += contrib;
-                max_change =
-                    std::max(max_change, std::abs(old_gammas[k] -
-                                                  gamma_[i][freq.first][k]));
+                auto old_gamma = gamma_[d][i];
+                for (topic_id k{0}; k < num_topics_; ++k)
+                {
+                    // remove this word occurrence from expectations
+                    topic_term_count_[k][freq.first] -= gamma_[d][i][k];
+                    doc_topic_count_[d][k] -= gamma_[d][i][k];
+                    topic_count_[k] -= gamma_[d][i][k];
+                }
+
+                double sum = 0;
+                for (topic_id k{0}; k < num_topics_; ++k)
+                {
+                    // "sample" the next topic: we are doing soft-assignment here
+                    // so we actually just compute the probability of this topic
+                    gamma_[d][i][k] = (topic_term_count_[k][freq.first] + beta_)
+                                      / (topic_count_[k] + num_words_ * beta_)
+                                      * (doc_topic_count_[d][k] + alpha_);
+                    sum += gamma_[d][i][k];
+                }
+
+                double delta = 0;
+                for (topic_id k{0}; k < num_topics_; ++k)
+                {
+                    // renormalize and recontribute to expected counts
+                    gamma_[d][i][k] /= sum;
+                    topic_term_count_[k][freq.first] += gamma_[d][i][k];
+                    doc_topic_count_[d][k] += gamma_[d][i][k];
+                    topic_count_[k] += gamma_[d][i][k];
+                    delta += std::abs(gamma_[d][i][k] - old_gamma[k]);
+                }
+                max_change = std::max(max_change, delta);
+                i += 1;
             }
         }
     }
@@ -123,14 +147,14 @@ double lda_cvb::perform_iteration(uint64_t iter)
 double lda_cvb::compute_term_topic_probability(term_id term,
                                                topic_id topic) const
 {
-    return (topic_term_mean_.at(topic).at(term) + beta_) /
-           (topic_mean_.at(topic) + num_words_ * beta_);
+    return (topic_term_count_.at(topic).at(term) + beta_)
+           / (topic_count_.at(topic) + num_words_ * beta_);
 }
 
 double lda_cvb::compute_doc_topic_probability(doc_id doc, topic_id topic) const
 {
-    return (doc_topic_mean_.at(doc).at(topic) + alpha_) /
-           (idx_.doc_size(doc) + num_topics_ * alpha_);
+    return (doc_topic_count_.at(doc).at(topic) + alpha_)
+           / (idx_->doc_size(doc) + num_topics_ * alpha_);
 }
 }
 }

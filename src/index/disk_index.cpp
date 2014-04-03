@@ -10,32 +10,34 @@
 #include "index/string_list.h"
 #include "index/string_list_writer.h"
 #include "index/vocabulary_map.h"
-#include "tokenizers/tokenizer.h"
+#include "analyzers/analyzer.h"
 #include "util/disk_vector.h"
 #include "util/mapping.h"
 #include "util/optional.h"
 #include "util/pimpl.tcc"
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
-disk_index::disk_index(const cpptoml::toml_group & config,
+disk_index::disk_index(const cpptoml::toml_group& config,
                        const std::string& name)
 {
-   impl_->index_name_ = name;
+    impl_->index_name_ = name;
 }
 
 std::string disk_index::index_name() const
 {
-   return impl_->index_name_;
+    return impl_->index_name_;
 }
 
-term_id disk_index::get_term_id(const std::string & term)
+term_id disk_index::get_term_id(const std::string& term)
 {
     std::lock_guard<std::mutex> lock{impl_->mutex_};
 
     auto termID = impl_->term_id_mapping_->find(term);
-    if(termID)
+    if (termID)
         return term_id{*termID};
 
     uint64_t size = impl_->term_id_mapping_->size();
@@ -47,9 +49,19 @@ class_label disk_index::label(doc_id d_id) const
     return class_label_from_id(impl_->labels_->at(d_id));
 }
 
+label_id disk_index::id(class_label label) const
+{
+    return impl_->label_ids_.get_value(label);
+}
+
 class_label disk_index::class_label_from_id(label_id l_id) const
 {
     return impl_->label_ids_.get_key(l_id);
+}
+
+std::vector<class_label> disk_index::class_labels() const
+{
+    return impl_->class_labels();
 }
 
 uint64_t disk_index::unique_terms(doc_id d_id) const
@@ -92,17 +104,18 @@ std::vector<doc_id> disk_index::docs() const
 
 // disk_index_impl
 
-const std::vector<const char*> disk_index::disk_index_impl::files = {
-    "/docids.mapping", "/docids.mapping_index", "/docsizes.counts",
-    "/docs.labels",    "/docs.uniqueterms",     "/labelids.mapping",
-    "/postings.index", "/termids.mapping",      "/termids.mapping.inverse"};
+const std::vector<const char*> disk_index::disk_index_impl::files
+    = {"/docids.mapping", "/docids.mapping_index", "/docsizes.counts",
+       "/docs.labels",    "/docs.uniqueterms",     "/labelids.mapping",
+       "/postings.index", "/termids.mapping",      "/termids.mapping.inverse"};
 
-label_id disk_index::disk_index_impl::get_label_id(const class_label & lbl)
+label_id disk_index::disk_index_impl::get_label_id(const class_label& lbl)
 {
     std::lock_guard<std::mutex> lock{mutex_};
-    if(!label_ids_.contains_key(lbl))
+    if (!label_ids_.contains_key(lbl))
     {
-        label_id next_id{static_cast<label_id>(label_ids_.size())};
+        // SVM multiclass has label_ids starting at 1
+        label_id next_id{static_cast<label_id>(label_ids_.size() + 1)};
         label_ids_.insert(lbl, next_id);
         return next_id;
     }
@@ -112,21 +125,21 @@ label_id disk_index::disk_index_impl::get_label_id(const class_label & lbl)
 
 void disk_index::disk_index_impl::initialize_metadata(uint64_t num_docs)
 {
-   load_doc_sizes(num_docs);
-   load_labels(num_docs);
-   load_unique_terms(num_docs);
+    load_doc_sizes(num_docs);
+    load_labels(num_docs);
+    load_unique_terms(num_docs);
 }
 
 void disk_index::disk_index_impl::load_doc_sizes(uint64_t num_docs)
 {
-    doc_sizes_ =
-        util::disk_vector<double>{index_name_ + files[DOC_SIZES], num_docs};
+    doc_sizes_ = util::disk_vector<double>{index_name_ + files[DOC_SIZES],
+                                           num_docs};
 }
 
 void disk_index::disk_index_impl::load_labels(uint64_t num_docs)
 {
-    labels_ =
-        util::disk_vector<label_id>{index_name_ + files[DOC_LABELS], num_docs};
+    labels_ = util::disk_vector<label_id>{index_name_ + files[DOC_LABELS],
+                                          num_docs};
 }
 
 void disk_index::disk_index_impl::load_unique_terms(uint64_t num_docs)
@@ -161,9 +174,9 @@ void disk_index::disk_index_impl::save_label_id_mapping()
 }
 
 string_list_writer
-    disk_index::disk_index_impl::make_doc_id_writer(uint64_t size) const
+    disk_index::disk_index_impl::make_doc_id_writer(uint64_t num_docs) const
 {
-    return {index_name_ + files[DOC_IDS_MAPPING], size};
+    return {index_name_ + files[DOC_IDS_MAPPING], num_docs};
 }
 
 void disk_index::disk_index_impl::set_label(doc_id id, const class_label& label)
@@ -173,35 +186,43 @@ void disk_index::disk_index_impl::set_label(doc_id id, const class_label& label)
 
 void disk_index::disk_index_impl::set_length(doc_id id, uint64_t length)
 {
-   (*doc_sizes_)[id] = length;
+    (*doc_sizes_)[id] = length;
 }
 
 void disk_index::disk_index_impl::set_unique_terms(doc_id id, uint64_t terms)
 {
-   (*unique_terms_)[id] = terms;
+    (*unique_terms_)[id] = terms;
 }
 
 const io::mmap_file& disk_index::disk_index_impl::postings() const
 {
-   return *postings_;
+    return *postings_;
 }
 
 uint64_t disk_index::disk_index_impl::total_unique_terms() const
 {
-   return term_id_mapping_->size();
+    return term_id_mapping_->size();
 }
 
 label_id disk_index::disk_index_impl::doc_label_id(doc_id id) const
 {
-   return labels_->at(id);
+    return labels_->at(id);
+}
+
+std::vector<class_label> disk_index::disk_index_impl::class_labels() const
+{
+    std::vector<class_label> labels;
+    labels.reserve(label_ids_.size());
+    for (const auto& pair : label_ids_)
+        labels.emplace_back(pair.first);
+    return labels;
 }
 
 std::string disk_index::term_text(term_id t_id) const
 {
-    if(t_id >= impl_->term_id_mapping_->size())
+    if (t_id >= impl_->term_id_mapping_->size())
         return "";
     return impl_->term_id_mapping_->find_term(t_id);
 }
-
 }
 }

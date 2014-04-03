@@ -1,21 +1,27 @@
 /**
  * @file cached_index.tcc
+ * @author Chase Geigle
  */
 
 #include "index/cached_index.h"
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 template <class Index, template <class, class> class Cache>
 template <class... Args>
-cached_index<Index, Cache>::cached_index(cpptoml::toml_group & config,
-                                         Args &&... args)
-    : Index{config}, cache_{std::forward<Args>(args)...} { /* nothing */ }
+cached_index<Index, Cache>::cached_index(cpptoml::toml_group& config,
+                                         Args&&... args)
+    : Index{config}, cache_(std::forward<Args>(args)...)
+{
+    /* nothing */
+}
 
 template <class Index, template <class, class> class Cache>
-auto cached_index<Index, Cache>::search_primary(primary_key_type p_id) const
-    -> std::shared_ptr<postings_data_type>
+auto cached_index<Index, Cache>::search_primary(primary_key_type p_id)
+    const -> std::shared_ptr<postings_data_type>
 {
     auto opt = cache_.find(p_id);
     if (opt)
@@ -25,5 +31,10 @@ auto cached_index<Index, Cache>::search_primary(primary_key_type p_id) const
     return result;
 }
 
+template <class Index, template <class, class> class Cache>
+void cached_index<Index, Cache>::clear_cache()
+{
+    cache_.clear();
+}
 }
 }

@@ -1,10 +1,14 @@
 /**
  * @file vocabulary_map.h
  * @author Chase Geigle
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _META_VOCABULARY_MAP_H_
-#define _META_VOCABULARY_MAP_H_
+#ifndef META_VOCABULARY_MAP_H_
+#define META_VOCABULARY_MAP_H_
 
 #include "io/mmap_file.h"
 #include "util/disk_vector.h"

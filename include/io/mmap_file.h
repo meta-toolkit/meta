@@ -2,12 +2,13 @@
  * @file mmap_file.h
  * @author Sean Massung
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _MMAP_FILE_H_
-#define _MMAP_FILE_H_
+#ifndef META_MMAP_FILE_H_
+#define META_MMAP_FILE_H_
 
 #include <stdexcept>
 #include <string>
@@ -18,7 +19,7 @@ namespace io
 {
 
 /**
- * Memory maps a text file for better I/O performance and allows you to read it.
+ * Memory maps a text file readonly.
  */
 class mmap_file
 {
@@ -69,22 +70,22 @@ class mmap_file
     char* begin() const;
 
   private:
-    /** filename of the text file */
-    std::string _path;
+    /// Filename of the text file
+    std::string path_;
 
-    /** pointer to the beginning of the text file */
-    char* _start;
+    /// Pointer to the beginning of the text file
+    char* start_;
 
-    /** size of the current text file */
-    uint64_t _size;
+    /// Size of the current text file
+    uint64_t size_;
 
-    /** file descriptor for the open text file */
-    int _file_descriptor;
+    /// File descriptor for the open text file
+    int file_descriptor_;
 
-    /** no copying */
+    /// No copying */
     mmap_file(const mmap_file& other) = delete;
 
-    /** no copying */
+    /// no copying */
     const mmap_file& operator=(const mmap_file& other) = delete;
 
   public:

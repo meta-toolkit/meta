@@ -6,8 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_IR_EVAL_H_
-#define _META_IR_EVAL_H_
+#ifndef META_IR_EVAL_H_
+#define META_IR_EVAL_H_
 
 #include <iostream>
 #include <limits>
@@ -45,8 +45,7 @@ class ir_eval
      * retrieved~docs} \f$
      */
     double precision(const result_type& results, query_id q_id,
-                     uint64_t num_docs = std::numeric_limits<uint64_t>::max()
-    ) const;
+             uint64_t num_docs = std::numeric_limits<uint64_t>::max()) const;
 
     /**
      * @param results The ranked list of results
@@ -56,8 +55,7 @@ class ir_eval
      * relevant~docs} \f$
      */
     double recall(const result_type& results, query_id q_id,
-                  uint64_t num_docs = std::numeric_limits<uint64_t>::max()
-    ) const;
+              uint64_t num_docs = std::numeric_limits<uint64_t>::max()) const;
 
     /**
      * @param results The ranked list of results
@@ -126,16 +124,13 @@ class ir_eval
      * query_id -> (doc_id -> relevance) mapping
      * If the doc_id isn't in the map, it is non-relevant.
      */
-    std::unordered_map<query_id, std::unordered_map<doc_id, uint8_t>> _qrels;
+    std::unordered_map<query_id, std::unordered_map<doc_id, uint8_t>> qrels_;
+
+    /// Collection of scores used to calculate MAP and gMAP
+    std::vector<double> scores_;
 
     /**
-     * Collection of scores used to calculate MAP and gMAP.
-     */
-    std::vector<double> _scores;
-
-    /**
-     * Initializes the _byte_index member with pointers into the _judgements
-     * file
+     * @param path The path to the relevance judgements
      */
     void init_index(const std::string& path);
 

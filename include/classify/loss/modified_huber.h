@@ -6,33 +6,34 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CLASSIFY_MODIFIED_HUBER_LOSS_H_
-#define _META_CLASSIFY_MODIFIED_HUBER_LOSS_H_
+#ifndef META_CLASSIFY_MODIFIED_HUBER_LOSS_H_
+#define META_CLASSIFY_MODIFIED_HUBER_LOSS_H_
 
-namespace meta {
-namespace classify {
-namespace loss {
+#include "classify/loss/loss_function.h"
 
-struct modified_huber {
-    double loss(double prediction, int expected) const {
-        double z = prediction * expected;
-        if (z < -1)
-            return -2 * z;
-        if (z >= 1)
-            return 0;
-        return 0.5 * (1 - z) * (1 - z);
-    }
+namespace meta
+{
+namespace classify
+{
+namespace loss
+{
 
-    double derivative(double prediction, int expected) const {
-        double z = prediction * expected;
-        if (z < -1)
-            return -2 * expected;
-        if (z >= 1)
-            return 0;
-        return -expected * (1 - z);
-    }
+/**
+ * The modified huber loss function for SGD algorithms.
+ *
+ * Defined as \f$\phi(p, y) = \max(0, 1 - py)^2\f$ when \f$py \geq -1\f$
+ * and \f$\phi(p, y) = -4py\f$ otherwise.
+ */
+struct modified_huber : public loss_function
+{
+    /**
+     * The identifier for this loss function.
+     */
+    const static std::string id;
+
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
 };
-
 }
 }
 }

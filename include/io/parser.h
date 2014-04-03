@@ -2,19 +2,23 @@
  * @file parser.h
  * @author Sean Massung
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _PARSER_H_
-#define _PARSER_H_
+#ifndef META_PARSER_H_
+#define META_PARSER_H_
 
 #include <array>
 #include <memory>
 #include <string>
+#include "util/optional.h"
 
-namespace meta {
-namespace io {
+namespace meta
+{
+namespace io
+{
 
 class mmap_file;
 
@@ -24,79 +28,89 @@ class mmap_file;
  */
 class parser
 {
-    public:
-        /**
-         * Determines whether the parser parses a std::string or the contents
-         * of a file
-         */
-        enum class input_type { File, String };
+  public:
+    /**
+     * Determines whether the parser parses a std::string or the contents
+     * of a file.
+     */
+    enum class input_type
+    {
+        File,
+        String
+    };
 
-        /**
-         * @param path The path to the file to parse
-         * @param delims Delimiters to be used for separating tokens
-         * @param in_type
-         */
-        parser(const std::string & input, const std::string & delims,
-                input_type in_type = input_type::File);
+    /**
+     * @param path The path to the file to parse
+     * @param delims Delimiters to be used for separating tokens
+     * @param in_type Determines whether the input is a file or a string
+     */
+    parser(const std::string& input, const std::string& delims,
+           input_type in_type = input_type::File);
 
-        ~parser();
-        parser(parser &&);
-        parser & operator=(parser &&);
+    /**
+     * Destructor.
+     */
+    ~parser();
 
-        /**
-         * @return the filename of the file that is being parsed
-         */
-        std::string filename() const;
+    /**
+     * May be move-constructed.
+     */
+    parser(parser&&);
 
-        /**
-         * @return the next token in the parser without advancing the current
-         * position
-         */
-        std::string peek() const;
+    /**
+     * May be move-assigned.
+     */
+    parser& operator=(parser&&);
 
-        /**
-         * @return the next token in the parser, advancing to the next one if
-         * it exists
-         */
-        std::string next();
+    /**
+     * @return the filename of the file that is being parsed
+     */
+    std::string filename() const;
 
-        /**
-         * @return whether the parser contains another token
-         */
-        bool has_next() const;
+    /**
+     * @return the next token in the parser without advancing the current
+     * position
+     */
+    std::string peek() const;
 
-    private:
+    /**
+     * @return the next token in the parser, advancing to the next one if
+     * it exists
+     */
+    std::string next();
 
-        /**
-         * Advances to the next token in the file or string, saving the result.
-         */
-        void get_next();
+    /**
+     * @return whether the parser contains another token
+     */
+    bool has_next() const;
 
-        /** the current position of the "cursor" into the file or string */
-        size_t _idx;
+  private:
+    /**
+     * Advances to the next token in the file or string, saving the result.
+     */
+    void get_next();
 
-        /**
-         * Array of booleans indicating whether or not a character is a
-         * delimiter.
-         */
-        std::array<bool, 256> _invalid;
+    /// The current position of the "cursor" into the file or string
+    size_t idx_;
 
-        /** saves the name of the file if the parser is parsing a file */
-        std::string _filename;
+    /// Array of booleans indicating whether or not a character is a delimiter
+    std::array<bool, 256> invalid_;
 
-        /** memory-mapped file pointer if the parser is parsing a file */
-        std::unique_ptr<io::mmap_file> _mmap_file;
+    /// Saves the name of the file if the parser is parsing a file
+    std::string filename_;
 
-        /** the number of characters that will be read */
-        uint64_t _size;
+    /// Memory-mapped file pointer if the parser is parsing a file
+    std::unique_ptr<io::mmap_file> mmap_file_;
 
-        /** pointer into a string or memory-mapped file */
-        const char* _data;
+    /// The number of characters that will be read
+    uint64_t size_;
 
-        /** the next token to be returned; "" if none */
-        std::string _next;
+    /// Pointer into a string or memory-mapped file
+    const char* data_;
+
+    /// The next token to be returned; "" if none
+    util::optional<std::string> next_;
 };
-
 }
 }
 

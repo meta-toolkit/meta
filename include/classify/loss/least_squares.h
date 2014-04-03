@@ -6,23 +6,33 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CLASSIFY_LEAST_SQUARES_LOSS_H_
-#define _META_CLASSIFY_LEAST_SQUARES_LOSS_H_
+#ifndef META_CLASSIFY_LEAST_SQUARES_LOSS_H_
+#define META_CLASSIFY_LEAST_SQUARES_LOSS_H_
 
-namespace meta {
-namespace classify {
-namespace loss {
+#include "classify/loss/loss_function.h"
 
-struct least_squares {
-    double loss(double prediction, int expected) const {
-        return 0.5 * (prediction - expected) * (prediction - expected);
-    }
+namespace meta
+{
+namespace classify
+{
+namespace loss
+{
 
-    double derivative(double prediction, int expected) const {
-        return prediction - expected;
-    }
+/**
+ * The least-squares loss function for SGD algorithms.
+ *
+ * Defined as \f$\phi(p, y) = (p - y)^2\f$.
+ */
+struct least_squares : public loss_function
+{
+    /**
+     * The identifier for this loss function.
+     */
+    const static std::string id;
+
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
 };
-
 }
 }
 }

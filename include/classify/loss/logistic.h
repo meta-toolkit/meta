@@ -6,25 +6,34 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CLASSIFY_LOGISTIC_LOSS_H_
-#define _META_CLASSIFY_LOGISTIC_LOSS_H_
+#ifndef META_CLASSIFY_LOGISTIC_LOSS_H_
+#define META_CLASSIFY_LOGISTIC_LOSS_H_
 
 #include <cmath>
+#include "classify/loss/loss_function.h"
 
-namespace meta {
-namespace classify {
-namespace loss {
+namespace meta
+{
+namespace classify
+{
+namespace loss
+{
 
-struct logistic {
-    double loss(double prediction, int expected) const {
-        return std::log(1+std::exp(-prediction * expected));
-    }
+/**
+ * The logistic loss for SGD algorithms.
+ *
+ * Defined as \f$\phi(p, y) = \ln(1 + e^{-py})\f$.
+ */
+struct logistic : public loss_function
+{
+    /**
+     * The identifier for this loss function.
+     */
+    const static std::string id;
 
-    double derivative(double prediction, int expected) const {
-        return -expected / (std::exp(prediction * expected) + 1);
-    }
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
 };
-
 }
 }
 }

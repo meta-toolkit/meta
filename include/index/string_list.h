@@ -1,10 +1,14 @@
 /**
  * @file string_list.h
  * @author Chase Geigle
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _META_STRING_LIST_H_
-#define _META_STRING_LIST_H_
+#ifndef META_STRING_LIST_H_
+#define META_STRING_LIST_H_
 
 #include <string>
 
@@ -27,6 +31,7 @@ class string_list
   public:
     /**
      * Constructs the string list
+     * @param path The path to where this object is stored
      */
     string_list(const std::string& path);
 
@@ -41,24 +46,21 @@ class string_list
     string_list& operator=(string_list&&) = default;
 
     /**
-     * Gets the string at a given index.
+     * @param idx
+     * @return the string at a given index.
      */
     const char* at(uint64_t idx) const;
 
     /**
-     * Gets the number of strings in the list.
+     * @return the number of strings in the list.
      */
     uint64_t size() const;
 
   private:
-    /**
-     * The file containing the strings.
-     */
+    /// The file containing the strings.
     io::mmap_file string_file_;
 
-    /**
-     * An index that gives the starting byte for each index.
-     */
+    /// An index that gives the starting byte for each index.
     util::disk_vector<uint64_t> index_;
 };
 }

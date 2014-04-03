@@ -1,14 +1,13 @@
 /**
  * @file lm_ranker.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
  */
 
-#ifndef _LM_RANKER_H_
-#define _LM_RANKER_H_
+#ifndef META_LM_RANKER_H_
+#define META_LM_RANKER_H_
 
 #include "index/ranker/ranker.h"
 
@@ -25,6 +24,9 @@ namespace index
 class language_model_ranker : public ranker
 {
   public:
+    /// The identifier for this ranker.
+    const static std::string id;
+
     /**
      * @param sd
      */

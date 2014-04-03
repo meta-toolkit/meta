@@ -1,0 +1,5 @@
+stop-words = "../data/lemur-stopwords.txt"
+libsvm-modules = "../deps/libsvm-modules/"
+prefix = "../data/"
+function-words = "../data/function-words.txt"
+query-judgements = "../data/ceeaus/qrels.txt"

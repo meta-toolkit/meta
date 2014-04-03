@@ -1,12 +1,14 @@
 /**
  * @file lda_cvb.h
+ * @author Chase Geigle
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _DST_TOPICS_LDA_CVB_H_
-#define _DST_TOPICS_LDA_CVB_H_
+#ifndef META_TOPICS_LDA_CVB_H_
+#define META_TOPICS_LDA_CVB_H_
 
 #include "topics/lda_model.h"
 
@@ -37,12 +39,12 @@ class lda_cvb : public lda_model
      * @param idx The index containing the documents to model
      * @param num_topics The number of topics to infer
      * @param alpha The hyperparameter for the Dirichlet prior over
-     *  \f$\phi\f$.
+     *  \f$\phi\f$
      * @param beta The hyperparameter for the Dirichlet prior over
-     *  \f$\theta\f$.
+     *  \f$\theta\f$
      */
-    lda_cvb(index::forward_index& idx, uint64_t num_topics, double alpha,
-            double beta);
+    lda_cvb(std::shared_ptr<index::forward_index> idx, uint64_t num_topics,
+            double alpha, double beta);
 
     /**
      * Destructor: virtual for potential subclassing.
@@ -57,10 +59,10 @@ class lda_cvb : public lda_model
      * iteration.
      *
      * @param num_iters The maximum number of iterations to run the
-     *  sampler for.
+     *  sampler for
      * @param convergence The lowest maximum difference in any
      *  \f$\gamma_{dij}\f$ to be allowed before considering the
-     *  inference to have converged.
+     *  inference to have converged
      */
     void run(uint64_t num_iters, double convergence = 1e-3);
 
@@ -73,8 +75,8 @@ class lda_cvb : public lda_model
     /**
      * Performs one iteration of the inference algorithm.
      *
-     * @param iter the current iteration number
-     * @return The maximum change in any of the \f$\gamma_{dij}\f$s.
+     * @param iter The current iteration number
+     * @return the maximum change in any of the \f$\gamma_{dij}\f$s
      */
     double perform_iteration(uint64_t iter);
 
@@ -86,38 +88,44 @@ class lda_cvb : public lda_model
                                                  topic_id topic) const override;
 
     /**
-     * Means for (document, topic) assignment counts.
+     * Variational parameters \f$\gamma_{ijk}\f$, which represent the soft
+     * topic assignments for each word occurrence \f$i\f$ in document
+     * \f$j\f$ to topic \f$k\f$. Actually indexed as `gamma_[d][i][k]`,
+     * where `d` is a `doc_id`, `i` is the intra-document term id, and `k`
+     * is a `topic_id`.
      */
-    std::unordered_map<doc_id, std::unordered_map<topic_id, double>>
-        doc_topic_mean_;
+    std::vector<std::vector<std::vector<double>>> gamma_;
 
     /**
-     * Means for (topic, term) assignment counts.
+     * Contains the expected counts for each word being assigned a given
+     * topic.  Indexed as `topic_term_count_[k][w]` where `k` is a
+     * `topic_id` and `w` is a `term_id`.
      */
-    std::unordered_map<topic_id, std::unordered_map<term_id, double>>
-        topic_term_mean_;
+    std::vector<std::vector<double>> topic_term_count_;
 
     /**
-     * Means for topic assignments.
+     * Contains the expected counts for each topic being assigned in a
+     * given document. Indexed as `doc_topic_count_[d][k]` where `d` is a
+     * `doc_id` and `k` is a `topic_id`.
      */
-    std::unordered_map<topic_id, double> topic_mean_;
+    std::vector<std::vector<double>> doc_topic_count_;
 
     /**
-     * Variational parameters \f$\gamma_{dij}\f$.
+     * Contains the expected number of times the given topic has been
+     * assigned to a word. Can be inferred from the above maps, but is
+     * included here for performance reasons.
      */
-    std::unordered_map<
-        doc_id, std::unordered_map<
-                    term_id, std::unordered_map<topic_id, double>>> gamma_;
+    std::vector<double> topic_count_;
 
     /**
      * Hyperparameter on \f$\theta\f$, the topic proportions.
      */
-    double alpha_;
+    const double alpha_;
 
     /**
      * Hyperparameter on \f$\phi\f$, the topic distributions.
      */
-    double beta_;
+    const double beta_;
 };
 }
 }

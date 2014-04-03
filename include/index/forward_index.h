@@ -2,12 +2,13 @@
  * @file forward_index.h
  * @author Sean Massung
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _FORWARD_INDEX_H_
-#define _FORWARD_INDEX_H_
+#ifndef META_FORWARD_INDEX_H_
+#define META_FORWARD_INDEX_H_
 
 #include <stdexcept>
 
@@ -44,8 +45,8 @@ class forward_index : public disk_index
 {
   public:
     /**
-       * Basic exception for forward_index interactions.
-       */
+     * Basic exception for forward_index interactions.
+     */
     class forward_index_exception : public std::runtime_error
     {
       public:
@@ -57,15 +58,16 @@ class forward_index : public disk_index
      * it.
      */
     template <class Index, class... Args>
-    friend Index make_index(const std::string& config_file, Args&&... args);
+    friend std::shared_ptr<Index> make_index(const std::string& config_file,
+                                             Args&&... args);
 
     /**
      * forward_index is a friend of the factory method used to create
      * cached versions of it.
      */
     template <class Index, template <class, class> class Cache, class... Args>
-    friend cached_index<Index, Cache> make_index(const std::string& config_file,
-                                                 Args&&... args);
+    friend std::shared_ptr<cached_index<Index, Cache>>
+        make_index(const std::string& config_file, Args&&... args);
 
     using primary_key_type = doc_id;
     using secondary_key_type = term_id;
@@ -84,7 +86,6 @@ class forward_index : public disk_index
   public:
     /**
      * Move constructs a forward_index.
-     * @param other The forward_index to move into this one.
      */
     forward_index(forward_index&&);
 
@@ -138,9 +139,11 @@ class forward_index : public disk_index
      * This function initializes the forward index.
      * @param config_file The configuration file used to create the index
      */
-    void create_index(const std::string & config_file);
+    void create_index(const std::string& config_file);
 
+    /// Forward declare the implementation
     class impl;
+    /// Implementation of this index
     util::pimpl<impl> fwd_impl_;
 };
 }

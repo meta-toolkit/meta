@@ -1,16 +1,16 @@
 /**
  * @file jelinek_mercer.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
  */
 
-#ifndef _JELINEK_MERCER_H_
-#define _JELINEK_MERCER_H_
+#ifndef META_JELINEK_MERCER_H_
+#define META_JELINEK_MERCER_H_
 
 #include "index/ranker/lm_ranker.h"
+#include "index/ranker/ranker_factory.h"
 
 namespace meta
 {
@@ -26,10 +26,16 @@ namespace index
 class jelinek_mercer : public language_model_ranker
 {
   public:
+    /// The identifier for this ranker.
+    const static std::string id;
+
+    /// Default value of lambda
+    const static constexpr double default_lambda = 0.7;
+
     /**
      * @param lambda
      */
-    jelinek_mercer(double lambda = 0.7);
+    jelinek_mercer(double lambda = default_lambda);
 
     /**
      * Calculates the smoothed probability of a term.
@@ -44,9 +50,16 @@ class jelinek_mercer : public language_model_ranker
     double doc_constant(const score_data& sd) const override;
 
   private:
-    /** the JM parameter*/
-    const double _lambda;
+    /// the JM parameter
+    const double lambda_;
 };
+
+/**
+ * Specialization of the factory method used to create jelinek_mercer
+ * rankers.
+ */
+template <>
+std::unique_ptr<ranker> make_ranker<jelinek_mercer>(const cpptoml::toml_group&);
 }
 }
 

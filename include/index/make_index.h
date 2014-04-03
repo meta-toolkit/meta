@@ -2,20 +2,45 @@
  * @file make_index.h
  * @author Sean Massung
  * @author Chase Geigle
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _META_MAKE_INDEX_H_
-#define _META_MAKE_INDEX_H_
+#ifndef META_MAKE_INDEX_H_
+#define META_MAKE_INDEX_H_
 
 #include "cpptoml.h"
+#include "caching/all.h"
 #include "index/cached_index.h"
 #include "util/filesystem.h"
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 class inverted_index;
 class forward_index;
+
+/// Inverted index using default DBLRU cache
+using dblru_inverted_index =
+    cached_index<inverted_index, caching::default_dblru_cache>;
+
+/// Inverted index using splay cache
+using splay_inverted_index = cached_index<inverted_index, caching::splay_cache>;
+
+/// In-memory forward index
+using memory_forward_index =
+    cached_index<forward_index, caching::no_evict_cache>;
+
+/// Forward index using default DBLRU cache
+using dblru_forward_index =
+    cached_index<forward_index, caching::default_dblru_cache>;
+
+/// Forward index using splay cache
+using splay_forward_index = cached_index<forward_index, caching::splay_cache>;
 
 /**
  * Factory method for creating indexes.
@@ -32,23 +57,38 @@ class forward_index;
  * @return A properly initialized index
  */
 template <class Index, class... Args>
-Index make_index(const std::string &config_file, Args &&... args) {
+std::shared_ptr<Index> make_index(const std::string& config_file,
+                                  Args&&... args)
+{
     auto config = cpptoml::parse_file(config_file);
 
     // check if we have paths specified for either kind of index
-    if (!(config.contains("forward-index") &&
-          config.contains("inverted-index"))) {
+    if (!(config.contains("forward-index")
+          && config.contains("inverted-index")))
+    {
         throw typename Index::exception{
             "forward-index or inverted-index missing from configuration file"};
     }
 
-    Index idx{config, std::forward<Args>(args)...};
+    // make sure that the index names are different!
+    auto fwd_name = config.get_as<std::string>("forward-index");
+    auto inv_name = config.get_as<std::string>("inverted-index");
+
+    if (*fwd_name == *inv_name)
+    {
+        throw typename Index::exception{
+            "forward and inverted index names must be different!"};
+    }
+
+    // can't use std::make_shared here since the Index constructor is private
+    auto idx =
+        std::shared_ptr<Index>{new Index(config, std::forward<Args>(args)...)};
 
     // if index has already been made, load it
-    if (filesystem::make_directory(idx.index_name()))
-        idx.load_index();
+    if (filesystem::make_directory(idx->index_name()))
+        idx->load_index();
     else
-        idx.create_index(config_file);
+        idx->create_index(config_file);
 
     return idx;
 }
@@ -73,8 +113,9 @@ Index make_index(const std::string &config_file, Args &&... args) {
  * @return A properly initialized, and automatically cached, index.
  */
 template <class Index, template <class, class> class Cache, class... Args>
-cached_index<Index, Cache> make_index(const std::string &config_file,
-                                      Args &&... args) {
+std::shared_ptr<cached_index<Index, Cache>>
+    make_index(const std::string& config_file, Args&&... args)
+{
     return make_index<cached_index<Index, Cache>>(config_file,
                                                   std::forward<Args>(args)...);
 }

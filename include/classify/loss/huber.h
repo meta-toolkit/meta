@@ -6,31 +6,35 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CLASSIFY_HUBER_LOSS_H_
-#define _META_CLASSIFY_HUBER_LOSS_H_
+#ifndef META_CLASSIFY_HUBER_LOSS_H_
+#define META_CLASSIFY_HUBER_LOSS_H_
 
 #include <cmath>
+#include "classify/loss/loss_function.h"
 
-namespace meta {
-namespace classify {
-namespace loss {
+namespace meta
+{
+namespace classify
+{
+namespace loss
+{
 
-struct huber {
-    double loss(double prediction, int expected) const {
-        double abs_diff = std::abs(prediction - expected);
-        if (abs_diff <= 1)
-            return abs_diff * abs_diff;
-        return 2 * abs_diff - 1;
-    }
+/**
+ * The huber loss for SGD algorithms.
+ *
+ * Defined as \f$\phi(p, y) = (p - y)^2\f$ when \f$|p-y| \leq 1\f$ and
+ * \f$\phi(p, y) = 2|p - y| - 1\f$ otherwise.
+ */
+struct huber : public loss_function
+{
+    /**
+     * The identifier for this loss function.
+     */
+    const static std::string id;
 
-    double derivative(double prediction, int expected) const {
-        double diff = prediction - expected;
-        if (std::abs(diff) <= 1)
-            return 2 * diff;
-        return (2 * diff) / (std::sqrt(diff * diff));
-    }
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
 };
-
 }
 }
 }

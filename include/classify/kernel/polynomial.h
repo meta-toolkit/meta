@@ -8,55 +8,56 @@
 
 #include "meta.h"
 
-#ifndef _META_CLASSIFY_KERNEL_POLYNOMIAL_H_
-#define _META_CLASSIFY_KERNEL_POLYNOMIAL_H_
+#ifndef META_CLASSIFY_KERNEL_POLYNOMIAL_H_
+#define META_CLASSIFY_KERNEL_POLYNOMIAL_H_
 
-namespace meta {
-namespace classify {
-namespace kernel {
+namespace meta
+{
+namespace classify
+{
+namespace kernel
+{
 
 /**
  * A polynomial kernel function for a linear classifier to adapt it to
  * data that is not linearly separable.
  *
  * Uses the general form of:
- * \f$K(x,z) = (x^\intercal z + c)^p\f$
+ * \f$K(x,z) = (x^T z + c)^p\f$
  */
-class polynomial {
-    public:
-        /**
-         * Constructs a new polynomial kernel with the given parameters.
-         *
-         * @param power \f$p\f$, the power for the polynomial kernel.
-         * @param c \f$c\f$, the additional scalar term to allow for the
-         *  use of existing features in the original space
-         */
-        polynomial(uint8_t power = 1, double c = 1):
-            power_{power}, c_{c} { }
+class polynomial
+{
+  public:
+    /**
+     * Constructs a new polynomial kernel with the given parameters.
+     *
+     * @param power \f$p\f$, the power for the polynomial kernel.
+     * @param c \f$c\f$, the additional scalar term to allow for the
+     *  use of existing features in the original space
+     */
+    polynomial(uint8_t power = 1, double c = 1) : power_{power}, c_{c}
+    {
+        // nothing
+    }
 
-        polynomial(const polynomial &) = default;
-        polynomial(polynomial &&) = default;
-        polynomial & operator=(const polynomial &) = default;
-        polynomial & operator=(polynomial &&) = default;
+    /**
+     * Computes the value of \f$K(first, second)\f$.
+     */
+    template <class PostingsData>
+    double operator()(const PostingsData& first,
+                      const PostingsData& second) const;
 
-        /**
-         * Computes the value of \f$K(first, second)\f$.
-         */
-        template <class PostingsData>
-        double operator()(const PostingsData & first,
-                          const PostingsData & second) const;
-    private:
-        /**
-         * \f$p\f$, the power for the kernel
-         */
-        uint8_t power_;
+  private:
+    /**
+     * \f$p\f$, the power for the kernel
+     */
+    uint8_t power_;
 
-        /**
-         * \f$c\f$, the scalar term for the kernel
-         */
-        double c_;
+    /**
+     * \f$c\f$, the scalar term for the kernel
+     */
+    double c_;
 };
-
 }
 }
 }

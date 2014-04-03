@@ -1,16 +1,16 @@
 /**
  * @file pivoted_length.h
+ * @author Sean Massung
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
- *
- * @author Sean Massung
  */
 
-#ifndef _PIVOTED_LENGTH_H_
-#define _PIVOTED_LENGTH_H_
+#ifndef META_PIVOTED_LENGTH_H_
+#define META_PIVOTED_LENGTH_H_
 
 #include "index/ranker/ranker.h"
+#include "index/ranker/ranker_factory.h"
 
 namespace meta
 {
@@ -25,20 +25,33 @@ namespace index
 class pivoted_length : public ranker
 {
   public:
+    /// Identifier for this ranker.
+    const static std::string id;
+
+    /// Default value of s parameter
+    const static constexpr double default_s = 0.20;
+
     /**
      * @param s
      */
-    pivoted_length(double s = 0.20);
+    pivoted_length(double s = default_s);
 
     /**
-     * @param sd
+     * @param sd the score_data for this query
      */
     double score_one(const score_data& sd) override;
 
   private:
-    const double _s;
+    /// s parameter for pivoted_length normalization
+    const double s_;
 };
-}
-}
 
+/**
+ * Specialization of the factory method used to create pivoted_length
+ * rankers.
+ */
+template <>
+std::unique_ptr<ranker> make_ranker<pivoted_length>(const cpptoml::toml_group&);
+}
+}
 #endif

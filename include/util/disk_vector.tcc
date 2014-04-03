@@ -5,54 +5,54 @@
 
 #include "util/filesystem.h"
 
-namespace meta {
-namespace util {
+namespace meta
+{
+namespace util
+{
 
 template <class T>
-disk_vector<T>::disk_vector(const std::string & path, uint64_t size /* = 0 */):
-    _path{path},
-    _start{nullptr},
-    _size{size},
-    _file_desc{-1}
+disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
+    : path_{path}, start_{nullptr}, size_{size}, file_desc_{-1}
 {
-    _file_desc = open(_path.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-    if(_file_desc < 0)
+    file_desc_ = open(path_.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    if (file_desc_ < 0)
         throw disk_vector_exception{"error obtaining file descriptor for "
-            + _path};
+                                    + path_};
 
-    uint64_t actual_size = filesystem::file_size(_path);
-    if(_size != 0)
+    uint64_t actual_size = filesystem::file_size(path_);
+    if (size_ != 0)
     {
-        uint64_t size_bytes = sizeof(T) * _size;
+        uint64_t size_bytes = sizeof(T) * size_;
 
         // if file doesn't exist yet, make it the correct size by seeking to the
         // end and writing a byte
-        if(actual_size != size_bytes)
+        if (actual_size != size_bytes)
         {
-            if(lseek(_file_desc, size_bytes - 1, SEEK_SET) == -1)
+            if (lseek(file_desc_, size_bytes - 1, SEEK_SET) == -1)
                 throw disk_vector_exception{"error lseeking to extend file"};
-            if(write(_file_desc, " ", 1) != 1)
-                throw disk_vector_exception{"error writing to extend vector file"};
+            if (write(file_desc_, " ", 1) != 1)
+                throw disk_vector_exception{
+                    "error writing to extend vector file"};
         }
     }
     else
-        _size = actual_size / sizeof(T);
+        size_ = actual_size / sizeof(T);
 
-    _start = (T*) mmap(nullptr, sizeof(T) * _size, PROT_READ | PROT_WRITE,
-            MAP_SHARED, _file_desc, 0);
+    start_ = (T*)mmap(nullptr, sizeof(T) * size_, PROT_READ | PROT_WRITE,
+                      MAP_SHARED, file_desc_, 0);
 
-    if(_start == nullptr)
-        throw disk_vector_exception{"error memory-mapping the file " + _path};
+    if (start_ == nullptr)
+        throw disk_vector_exception{"error memory-mapping the file " + path_};
 }
 
 template <class T>
 disk_vector<T>::disk_vector(disk_vector&& other)
-    : _path{std::move(other._path)},
-      _start{std::move(other._start)},
-      _size{std::move(other._size)},
-      _file_desc{std::move(other._file_desc)}
+    : path_{std::move(other.path_)},
+      start_{std::move(other.start_)},
+      size_{std::move(other.size_)},
+      file_desc_{std::move(other.file_desc_)}
 {
-    other._start = nullptr;
+    other.start_ = nullptr;
 }
 
 template <class T>
@@ -60,16 +60,16 @@ disk_vector<T>& disk_vector<T>::operator=(disk_vector&& other)
 {
     if (this != &other)
     {
-        if (_start)
+        if (start_)
         {
-            munmap(_start, sizeof(T) * _size);
-            close(_file_desc);
+            munmap(start_, sizeof(T) * size_);
+            close(file_desc_);
         }
-        _path = std::move(other._path);
-        _start = std::move(other._start);
-        _size = std::move(other._size);
-        _file_desc = std::move(other._file_desc);
-        other._start = nullptr;
+        path_ = std::move(other.path_);
+        start_ = std::move(other.start_);
+        size_ = std::move(other.size_);
+        file_desc_ = std::move(other.file_desc_);
+        other.start_ = nullptr;
     }
     return *this;
 }
@@ -77,57 +77,56 @@ disk_vector<T>& disk_vector<T>::operator=(disk_vector&& other)
 template <class T>
 disk_vector<T>::~disk_vector()
 {
-    if (!_start)
+    if (!start_)
         return;
-    munmap(_start, sizeof(T) * _size);
-    close(_file_desc);
+    munmap(start_, sizeof(T) * size_);
+    close(file_desc_);
 }
 
 template <class T>
-T & disk_vector<T>::operator[](uint64_t idx)
+T& disk_vector<T>::operator[](uint64_t idx)
 {
-    return _start[idx];
+    return start_[idx];
 }
 
 template <class T>
-const T & disk_vector<T>::operator[](uint64_t idx) const
+const T& disk_vector<T>::operator[](uint64_t idx) const
 {
-    return _start[idx];
+    return start_[idx];
 }
 
 template <class T>
-T & disk_vector<T>::at(uint64_t idx)
+T& disk_vector<T>::at(uint64_t idx)
 {
-    if(idx >= _size)
+    if (idx >= size_)
         throw disk_vector_exception{"index out of range"};
-    return _start[idx];
+    return start_[idx];
 }
 
 template <class T>
-const T & disk_vector<T>::at(uint64_t idx) const
+const T& disk_vector<T>::at(uint64_t idx) const
 {
-    if(idx >= _size)
+    if (idx >= size_)
         throw disk_vector_exception{"index out of range"};
-    return _start[idx];
+    return start_[idx];
 }
 
 template <class T>
 uint64_t disk_vector<T>::size() const
 {
-    return _size;
+    return size_;
 }
 
 template <class T>
 typename disk_vector<T>::iterator disk_vector<T>::begin() const
 {
-    return iterator{0, _start};
+    return iterator{0, start_};
 }
 
 template <class T>
 typename disk_vector<T>::iterator disk_vector<T>::end() const
 {
-    return iterator{_size, _start};
+    return iterator{size_, start_};
 }
-
 }
 }

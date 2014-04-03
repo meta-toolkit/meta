@@ -8,88 +8,94 @@
 #include <limits>
 #include "io/compressed_file_writer.h"
 
-namespace meta {
-namespace io {
+namespace meta
+{
+namespace io
+{
 
-compressed_file_writer::compressed_file_writer(const std::string & filename,
-        std::function<uint64_t(uint64_t)> mapping):
-    _outfile{fopen(filename.c_str(), "w")},
-    _char_cursor{0},
-    _bit_cursor{0},
-    _buffer_size{1024 * 1024 * 64}, // 64 MB
-    _buffer{new unsigned char[_buffer_size]},
-    _mapping{std::move(mapping)},
-    _bit_location{0},
-    _closed{false}
+compressed_file_writer::compressed_file_writer(const std::string& filename,
+                                               std::function
+                                               <uint64_t(uint64_t)> mapping)
+    : outfile_{fopen(filename.c_str(), "w")},
+      char_cursor_{0},
+      bit_cursor_{0},
+      buffer_size_{1024 * 1024 * 64}, // 64 MB
+      buffer_{new unsigned char[buffer_size_]},
+      mapping_{std::move(mapping)},
+      bit_location_{0},
+      closed_{false}
 {
     // disable buffering
-    if(setvbuf(_outfile, nullptr, _IONBF, 0) != 0)
+    if (setvbuf(outfile_, nullptr, _IONBF, 0) != 0)
         throw compressed_file_writer_exception(
-                "error disabling buffering (setvbuf)");
+            "error disabling buffering (setvbuf)");
 
     // zero out, we'll only write ones
-    memset(_buffer, 0, _buffer_size);
+    memset(buffer_, 0, buffer_size_);
 }
 
-void compressed_file_writer::write(const std::string & str)
+void compressed_file_writer::write(const std::string& str)
 {
     uint64_t length = str.size();
     write(length);
-    for(auto & ch: str)
-        write(static_cast<uint64_t>(ch));
+    for (auto& ch : str)
+    {
+        auto uch = static_cast<uint8_t>(ch);
+        write(static_cast<uint64_t>(uch));
+    }
 }
 
 uint64_t compressed_file_writer::bit_location() const
 {
-    return _bit_location;
+    return bit_location_;
 }
 
 compressed_file_writer::~compressed_file_writer()
 {
-    if(!_closed)
+    if (!closed_)
         close();
 }
 
 void compressed_file_writer::close()
 {
-    if(!_closed)
+    if (!closed_)
     {
         // write the remaining bits, up to the nearest byte
-        fwrite(_buffer, 1, _char_cursor + 1, _outfile);
-        delete [] _buffer;
-        fclose(_outfile);
+        fwrite(buffer_, 1, char_cursor_ + 1, outfile_);
+        delete[] buffer_;
+        fclose(outfile_);
 
-        _closed = true;
+        closed_ = true;
     }
 }
 
 void compressed_file_writer::write(uint64_t value)
 {
-    uint64_t cvalue = _mapping(value);
+    uint64_t cvalue = mapping_(value);
     uint64_t length = std::log2(cvalue);
 
-    for(uint64_t bit = 0; bit < length; ++bit)
+    for (uint64_t bit = 0; bit < length; ++bit)
         write_bit(false);
 
     write_bit(true);
 
-    for(int64_t bit = length - 1; bit >= 0; --bit)
+    for (int64_t bit = length - 1; bit >= 0; --bit)
         write_bit(cvalue & 1 << bit);
 }
 
 void compressed_file_writer::write_bit(bool bit)
 {
-    ++_bit_location;
+    ++bit_location_;
 
-    if(bit)
-        _buffer[_char_cursor] |= (1 << (7 - _bit_cursor));
+    if (bit)
+        buffer_[char_cursor_] |= (1 << (7 - bit_cursor_));
 
-    if(++_bit_cursor == 8)
+    if (++bit_cursor_ == 8)
     {
-        _bit_cursor = 0;
-        if(++_char_cursor == _buffer_size)
+        bit_cursor_ = 0;
+        if (++char_cursor_ == buffer_size_)
         {
-            _char_cursor = 0;
+            char_cursor_ = 0;
             write_buffer();
         }
     }
@@ -97,17 +103,16 @@ void compressed_file_writer::write_bit(bool bit)
 
 void compressed_file_writer::write_buffer() const
 {
-    if(fwrite(_buffer, 1, _buffer_size, _outfile) != _buffer_size)
+    if (fwrite(buffer_, 1, buffer_size_, outfile_) != buffer_size_)
         throw compressed_file_writer_exception("error writing to file");
-    memset(_buffer, 0, _buffer_size);
+    memset(buffer_, 0, buffer_size_);
 }
 
 uint64_t default_compression_writer_func(uint64_t key)
 {
-    if(key == std::numeric_limits<uint64_t>::max()) // delimiter
+    if (key == std::numeric_limits<uint64_t>::max()) // delimiter
         return uint64_t{1};
     return key + 2;
 }
-
 }
 }

@@ -1,33 +1,57 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 project(meta)
 
 option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
 
 include_directories(include/
                     deps/cpptoml/include/
-                    deps/porter2_stemmer/
-                    test/)
+                    deps/porter2_stemmer/)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
+find_package(ICU COMPONENTS data i18n uc REQUIRED)
+include_directories(SYSTEM ${ICU_INCLUDE_DIRS})
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKDER_FLAGS} -ldl")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ldl")
+    set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -ldl")
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         if(USE_LIBCXX)
+            message("-- Locating libc++...")
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-            find_library(META_LIBCXXABI NAMES c++abi)
-            find_library(META_LIBCXXRT NAMES cxxrt)
-            if(META_LIBCXXABI)
-                set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi")
-                set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -lc++abi")
-            elseif(META_LIBCXXRT)
-                set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lcxxrt")
-                set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -lcxxrt")
+            find_library(META_LIBCXX NAMES c++ cxx)
+            if(META_LIBCXX)
+                message("-- Located libc++, using it.")
+                set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++")
+                set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -lc++")
+
+                message("--     Locating libc++'s abi...")
+                find_library(META_LIBCXXABI NAMES c++abi)
+                find_library(META_LIBCXXRT NAMES cxxrt)
+                if(META_LIBCXXABI)
+                    message("--     Found libc++abi, using it.")
+                    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lc++abi")
+                    set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -lc++abi")
+                elseif(META_LIBCXXRT)
+                    message("--     Found libcxxrt, using it.")
+                    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lcxxrt")
+                    set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -lcxxrt")
+                else()
+                    message("--     No abi library found. "
+                            "Attempting to continue without one...")
+                endif()
+            else()
+                message("-- Could not find libc++, will not use it.")
             endif()
         endif()
     endif()
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_definitions(-D_DARWIN_USE_64_BIT_INODE=1)
+    add_definitions(-DMETA_IS_DARWIN=1)
 endif()
 
 include(CheckCXXSourceCompiles)
@@ -98,6 +122,12 @@ endif()
 add_library(meta-util
             src/util/progress.cpp)
 
+add_library(meta-utf
+            src/utf/segmenter.cpp
+            src/utf/transformer.cpp
+            src/utf/utf.cpp)
+target_link_libraries(meta-utf ${ICU_LIBRARIES})
+
 add_library(meta-io
             src/io/compressed_file_reader.cpp
             src/io/parser.cpp
@@ -116,32 +146,40 @@ add_library(meta-corpus
 target_link_libraries(meta-corpus meta-io)
 
 add_library(meta-stemmers
-            src/stemmers/no_stemmer.cpp
-            src/stemmers/porter2.cpp
             deps/porter2_stemmer/porter2_stemmer.cpp)
 
-add_library(meta-tokenizers
-            src/tokenizers/multi_tokenizer.cpp
-            src/tokenizers/tokenizer.cpp
-            src/tokenizers/libsvm_tokenizer.cpp
-            src/tokenizers/ngram/ngram_char_tokenizer.cpp
-            src/tokenizers/ngram/ngram_fw_tokenizer.cpp
-            src/tokenizers/ngram/ngram_lex_tokenizer.cpp
-            src/tokenizers/ngram/ngram_pos_tokenizer.cpp
-            src/tokenizers/ngram/ngram_simple_tokenizer.cpp
-            src/tokenizers/ngram/ngram_tokenizer.cpp
-            src/tokenizers/ngram/ngram_word_tokenizer.cpp
-            src/tokenizers/tree/branch_tokenizer.cpp
-            src/tokenizers/tree/depth_tokenizer.cpp
-            src/tokenizers/tree/parse_tree.cpp
-            src/tokenizers/tree/semi_skeleton_tokenizer.cpp
-            src/tokenizers/tree/skeleton_tokenizer.cpp
-            src/tokenizers/tree/subtree_tokenizer.cpp
-            src/tokenizers/tree/tag_tokenizer.cpp)
+add_library(meta-analyzers
+            src/analyzers/filters/alpha_filter.cpp
+            src/analyzers/filters/empty_sentence_filter.cpp
+            src/analyzers/filters/english_normalizer.cpp
+            src/analyzers/filters/icu_filter.cpp
+            src/analyzers/filters/length_filter.cpp
+            src/analyzers/filters/list_filter.cpp
+            src/analyzers/filters/lowercase_filter.cpp
+            src/analyzers/filters/porter2_stemmer.cpp
+            src/analyzers/filters/sentence_boundary.cpp
+            src/analyzers/tokenizers/character_tokenizer.cpp
+            src/analyzers/tokenizers/icu_tokenizer.cpp
+            src/analyzers/tokenizers/whitespace_tokenizer.cpp
+            src/analyzers/filter_factory.cpp
+            src/analyzers/analyzer.cpp
+            src/analyzers/libsvm_analyzer.cpp
+            src/analyzers/multi_analyzer.cpp
+            src/analyzers/ngram/ngram_lex_analyzer.cpp
+            src/analyzers/ngram/ngram_pos_analyzer.cpp
+            src/analyzers/ngram/ngram_simple_analyzer.cpp
+            src/analyzers/ngram/ngram_analyzer.cpp
+            src/analyzers/ngram/ngram_word_analyzer.cpp
+            src/analyzers/tree/branch_analyzer.cpp
+            src/analyzers/tree/depth_analyzer.cpp
+            src/analyzers/tree/parse_tree.cpp
+            src/analyzers/tree/semi_skeleton_analyzer.cpp
+            src/analyzers/tree/skeleton_analyzer.cpp
+            src/analyzers/tree/subtree_analyzer.cpp
+            src/analyzers/tree/tag_analyzer.cpp
+            src/analyzers/analyzer_factory.cpp)
 
-# some tokenizer clases use io::parser
-# ngram_word_tokenizer needs access to the stemmers
-target_link_libraries(meta-tokenizers meta-io meta-corpus meta-stemmers)
+target_link_libraries(meta-analyzers meta-corpus meta-stemmers meta-utf)
 
 add_library(meta-index
             src/index/disk_index.cpp
@@ -158,69 +196,126 @@ add_library(meta-index
             src/index/ranker/jelinek_mercer.cpp
             src/index/ranker/dirichlet_prior.cpp
             src/index/ranker/absolute_discount.cpp
-            src/index/ranker/pivoted_length.cpp)
+            src/index/ranker/pivoted_length.cpp
+            src/index/ranker/ranker_factory.cpp)
 
-target_link_libraries(meta-index
-                      meta-util meta-io meta-corpus meta-tokenizers)
+target_link_libraries(meta-index meta-analyzers ${CMAKE_THREAD_LIBS_INIT})
 
 add_library(meta-classify
             src/classify/confusion_matrix.cpp
+            src/classify/classifier_factory.cpp
+            src/classify/binary_classifier_factory.cpp
+            src/classify/loss/loss_function_factory.cpp
+            src/classify/classifier/classifier.cpp
+            src/classify/classifier/binary_classifier.cpp
+            src/classify/classifier/sgd.cpp
             src/classify/classifier/naive_bayes.cpp
             src/classify/classifier/svm_wrapper.cpp
-            src/classify/classifier/winnow.cpp)
+            src/classify/classifier/winnow.cpp
+            src/classify/classifier/one_vs_all.cpp
+            src/classify/classifier/one_vs_one.cpp
+            src/classify/classifier/dual_perceptron.cpp
+            src/classify/classifier/knn.cpp
+            src/classify/classifier/logistic_regression.cpp
+            src/classify/loss/hinge.cpp
+            src/classify/loss/huber.cpp
+            src/classify/loss/least_squares.cpp
+            src/classify/loss/logistic.cpp
+            src/classify/loss/modified_huber.cpp
+            src/classify/loss/perceptron.cpp
+            src/classify/loss/smooth_hinge.cpp
+            src/classify/loss/squared_hinge.cpp)
 target_link_libraries(meta-classify meta-index)
 
 add_library(meta-topics
             src/topics/lda_cvb.cpp
             src/topics/lda_gibbs.cpp
             src/topics/lda_model.cpp
-            # src/topics/slda.cpp
             src/topics/parallel_lda_gibbs.cpp)
 target_link_libraries(meta-topics meta-index)
 
-add_executable(classify classify-test.cpp)
-target_link_libraries(classify
-                      meta-util
-                      meta-classify
-                      ${CMAKE_THREAD_LIBS_INIT})
+add_library(meta-testing
+            src/test/classifier_test.cpp
+            src/test/forward_index_test.cpp
+            src/test/inverted_index_test.cpp
+            src/test/ir_eval_test.cpp
+            src/test/libsvm_parser_test.cpp
+            src/test/parallel_test.cpp
+            src/test/ranker_test.cpp
+            src/test/stemmer_test.cpp
+            src/test/string_list_test.cpp
+            src/test/analyzer_test.cpp
+            src/test/filter_test.cpp
+            src/test/compression_test.cpp
+            src/test/vocabulary_map_test.cpp)
+target_link_libraries(meta-testing meta-index meta-classify)
+
+add_executable(corpus-gen corpus-gen.cpp)
+target_link_libraries(corpus-gen meta-corpus)
+
+add_executable(classify classify.cpp)
+target_link_libraries(classify meta-classify)
+
+add_executable(online-classify online-classify.cpp)
+target_link_libraries(online-classify meta-classify)
 
 add_executable(unit-test unit-test.cpp)
-target_link_libraries(unit-test
-                      meta-classify
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(unit-test meta-testing meta-classify meta-index)
 
 add_executable(query-runner query-runner.cpp)
-target_link_libraries(query-runner
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(query-runner meta-index)
 
 add_executable(search search.cpp)
-target_link_libraries(search
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(search meta-index)
 
 add_executable(index index.cpp)
-target_link_libraries(index
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(index meta-index)
 
-add_executable(interactive_search interactive_search.cpp)
-target_link_libraries(interactive_search
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+add_executable(interactive-search interactive-search.cpp)
+target_link_libraries(interactive-search meta-index)
 
-add_executable(lda-test lda-test.cpp)
-target_link_libraries(lda-test
-                      meta-topics
-                      ${CMAKE_THREAD_LIBS_INIT})
+add_executable(lda lda.cpp)
+target_link_libraries(lda meta-topics)
 
 add_executable(lda-topics lda-topics.cpp)
-target_link_libraries(lda-topics
-                      meta-index
-                      ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(lda-topics meta-index)
 
 add_executable(shuffle shuffle.cpp)
+
+add_executable(utf8-test utf8-test.cpp)
+target_link_libraries(utf8-test meta-utf)
+
+add_executable(print-vocab print_vocab.cpp)
+target_link_libraries(print-vocab meta-index)
+
+add_executable(search-vocab search-vocab.cpp)
+target_link_libraries(search-vocab meta-index)
+
+enable_testing()
+add_test(analyzers unit-test analyzers)
+set_tests_properties(analyzers PROPERTIES TIMEOUT 10)
+add_test(stemmers unit-test stemmers)
+set_tests_properties(stemmers PROPERTIES TIMEOUT 10)
+add_test(parallel unit-test parallel)
+set_tests_properties(parallel PROPERTIES TIMEOUT 30)
+add_test(inverted-index unit-test inverted-index)
+set_tests_properties(inverted-index PROPERTIES TIMEOUT 30)
+add_test(forward-index unit-test forward-index)
+set_tests_properties(forward-index PROPERTIES TIMEOUT 30)
+add_test(string-list unit-test string-list)
+set_tests_properties(string-list PROPERTIES TIMEOUT 10)
+add_test(vocabulary-map unit-test vocabulary-map)
+set_tests_properties(vocabulary-map PROPERTIES TIMEOUT 10)
+add_test(libsvm-parser unit-test libsvm-parser)
+set_tests_properties(libsvm-parser PROPERTIES TIMEOUT 10)
+add_test(classifiers unit-test classifiers)
+set_tests_properties(classifiers PROPERTIES TIMEOUT 80)
+add_test(rankers unit-test rankers)
+set_tests_properties(rankers PROPERTIES TIMEOUT 75)
+add_test(ir-eval unit-test ir-eval)
+set_tests_properties(ir-eval PROPERTIES TIMEOUT 10)
+add_test(compression unit-test compression)
+set_tests_properties(compression PROPERTIES TIMEOUT 10)
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf

@@ -32,6 +32,10 @@ ir_eval::ir_eval(const std::string& config_file)
 void ir_eval::init_index(const std::string& path)
 {
     std::ifstream in{path};
+
+    if (!in)
+        throw ir_eval_exception{"query judgements file unable to be opened!"};
+
     std::string line;
 
     // four (or three) fields per line
@@ -43,8 +47,9 @@ void ir_eval::init_index(const std::string& path)
     while (in.good())
     {
         std::getline(in, line);
-        bool trec = (std::count_if(line.begin(), line.end(), [](char ch)
-            { return ch == ' '; }) == 3); // 3 spaces == 4 columns
+        bool trec = (std::count_if(line.begin(), line.end(), [](char ch) {
+            return ch == ' ';
+        }) == 3); // 3 spaces == 4 columns
         std::istringstream iss{line};
         iss >> q_id;
         if (trec)
@@ -53,7 +58,7 @@ void ir_eval::init_index(const std::string& path)
         iss >> relevance;
 
         if (relevance != '0')
-            _qrels[q_id][d_id] = relevance;
+            qrels_[q_id][d_id] = relevance;
     }
 }
 
@@ -63,11 +68,11 @@ double ir_eval::precision(const std::vector<std::pair<doc_id, double>>& results,
     if (results.empty())
         return 0.0;
 
-    const auto& ht = _qrels.find(q_id);
-    if (ht == _qrels.end())
+    const auto& ht = qrels_.find(q_id);
+    if (ht == qrels_.end())
         return 0.0;
 
-    uint64_t denominator = std::min(results.size(), num_docs);
+    uint64_t denominator = std::min<uint64_t>(results.size(), num_docs);
     return relevant_retrieved(results, q_id, num_docs) / denominator;
 }
 
@@ -77,19 +82,19 @@ double ir_eval::recall(const std::vector<std::pair<doc_id, double>>& results,
     if (results.empty())
         return 0.0;
 
-    const auto& ht = _qrels.find(q_id);
-    if (ht == _qrels.end())
+    const auto& ht = qrels_.find(q_id);
+    if (ht == qrels_.end())
         return 0.0;
 
     return relevant_retrieved(results, q_id, num_docs) / ht->second.size();
 }
 
-double ir_eval::relevant_retrieved(const std::vector<
-                                       std::pair<doc_id, double>>& results,
-                                   query_id q_id, uint64_t num_docs) const
+double ir_eval::relevant_retrieved(
+        const std::vector<std::pair<doc_id, double>>& results,
+        query_id q_id, uint64_t num_docs) const
 {
     double rel = 0.0;
-    const auto& ht = _qrels.find(q_id);
+    const auto& ht = qrels_.find(q_id);
     uint64_t i = 1;
     for (auto& res : results)
     {
@@ -120,8 +125,8 @@ double ir_eval::ndcg(const std::vector<std::pair<doc_id, double>>& results,
                      query_id q_id, uint64_t num_docs) const
 {
     // find this query's judgements
-    const auto& ht = _qrels.find(q_id);
-    if (ht == _qrels.end() || results.empty())
+    const auto& ht = qrels_.find(q_id);
+    if (ht == qrels_.end() || results.empty())
         return 0.0;
 
     // calculate discounted cumulative gain
@@ -156,10 +161,10 @@ double ir_eval::ndcg(const std::vector<std::pair<doc_id, double>>& results,
 double ir_eval::avg_p(const std::vector<std::pair<doc_id, double>>& results,
                       query_id q_id, uint64_t num_docs)
 {
-    const auto& ht = _qrels.find(q_id);
-    if (ht == _qrels.end() || results.empty())
+    const auto& ht = qrels_.find(q_id);
+    if (ht == qrels_.end() || results.empty())
     {
-        _scores.push_back(0.0);
+        scores_.push_back(0.0);
         return 0.0;
     }
 
@@ -177,22 +182,22 @@ double ir_eval::avg_p(const std::vector<std::pair<doc_id, double>>& results,
             break;
     }
 
-    _scores.push_back(avgp / (i - 1.0));
+    scores_.push_back(avgp / (i - 1.0));
     return avgp / (i - 1.0);
 }
 
 double ir_eval::map() const
 {
-    return std::accumulate(_scores.begin(), _scores.end(), 0.0)
-           / _scores.size();
+    return std::accumulate(scores_.begin(), scores_.end(), 0.0)
+           / scores_.size();
 }
 
 double ir_eval::gmap() const
 {
     double sum = 0.0;
-    for (auto& s : _scores)
+    for (auto& s : scores_)
         sum += std::log(s + 1.0);
-    return sum / _scores.size();
+    return sum / scores_.size();
 }
 
 void ir_eval::print_stats(const std::vector<std::pair<doc_id, double>>& results,
@@ -216,7 +221,7 @@ void ir_eval::print_stats(const std::vector<std::pair<doc_id, double>>& results,
 
 void ir_eval::reset_stats()
 {
-    _scores.clear();
+    scores_.clear();
 }
 }
 }

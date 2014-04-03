@@ -3,12 +3,13 @@
  * @author Sean Massung
  * @author Chase Geigle
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _INVERTED_INDEX_H_
-#define _INVERTED_INDEX_H_
+#ifndef META_INVERTED_INDEX_H_
+#define META_INVERTED_INDEX_H_
 
 #include <queue>
 #include <stdexcept>
@@ -16,14 +17,17 @@
 #include "index/disk_index.h"
 #include "index/make_index.h"
 
-namespace meta {
+namespace meta
+{
 
-namespace corpus {
+namespace corpus
+{
 class corpus;
 class document;
 }
 
-namespace index {
+namespace index
+{
 
 template <class>
 class chunk_handler;
@@ -31,153 +35,148 @@ class chunk_handler;
 template <class, class>
 class postings_data;
 }
-
 }
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 /**
  * The inverted_index class stores information on a corpus indexed by term_ids.
- * Each term_id key is associated with an IDF (inverse document frequency) and
- * per-document frequency (by doc_id). The inverted index also stores the sizes
- * of each document.
+ * Each term_id key is associated with a per-document frequency (by doc_id).
  *
  * It is assumed all this information will not fit in memory, so a large
  * postings file containing the (term_id -> each doc_id) information is saved on
- * disk. A lexicon (or "dictionary") is used to store the document size
- * information and contains pointers into the large postings file. It is assumed
- * that the lexicon will fit in memory. The IDF can be calculated by counting
- * the number of doc_ids after a specific term in the postings data.
+ * disk. A lexicon (or "dictionary") contains pointers into the large postings
+ * file. It is assumed that the lexicon will fit in memory.
  */
-class inverted_index: public disk_index
+class inverted_index : public disk_index
 {
-    public:
-        /**
-         * Basic exception for inverted_index interactions.
-         */
-        class inverted_index_exception: public std::runtime_error
-        {
-            public:
-                using std::runtime_error::runtime_error;
-        };
+  public:
+    /**
+     * Basic exception for inverted_index interactions.
+     */
+    class inverted_index_exception : public std::runtime_error
+    {
+      public:
+        using std::runtime_error::runtime_error;
+    };
 
-        using primary_key_type   = term_id;
-        using secondary_key_type = doc_id;
-        using postings_data_type = postings_data<term_id, doc_id>;
-        using index_pdata_type = postings_data<std::string, doc_id>;
-        using exception = inverted_index_exception;
+    using primary_key_type = term_id;
+    using secondary_key_type = doc_id;
+    using postings_data_type = postings_data<term_id, doc_id>;
+    using index_pdata_type = postings_data<std::string, doc_id>;
+    using exception = inverted_index_exception;
 
-        /**
-         * inverted_index is a friend of the factory method used to create
-         * it.
-         */
-        template <class Index, class... Args>
-        friend Index make_index(const std::string &, Args&&...);
+    /**
+     * inverted_index is a friend of the factory method used to create
+     * it.
+     */
+    template <class Index, class... Args>
+    friend std::shared_ptr<Index> make_index(const std::string&, Args&&...);
 
-        /**
-         * inverted_index is a friend of the factory method used to create
-         * cached versions of it.
-         */
-        template <class Index,
-                  template <class, class> class Cache,
-                  class... Args>
-        friend cached_index<Index, Cache>
-        make_index(const std::string & config_file, Args &&... args);
+    /**
+     * inverted_index is a friend of the factory method used to create
+     * cached versions of it.
+     */
+    template <class Index, template <class, class> class Cache, class... Args>
+    friend std::shared_ptr<cached_index<Index, Cache>>
+        make_index(const std::string& config_file, Args&&... args);
 
-    protected:
-        /**
-         * @param config The toml_group that specifies how to create the
-         * index.
-         */
-        inverted_index(const cpptoml::toml_group & config);
+  protected:
+    /**
+     * @param config The toml_group that specifies how to create the
+     * index.
+     */
+    inverted_index(const cpptoml::toml_group& config);
 
-    public:
-        /**
-         * Move constructs a inverted_index.
-         */
-        inverted_index(inverted_index&&);
+  public:
+    /**
+     * Move constructs a inverted_index.
+     */
+    inverted_index(inverted_index&&);
 
-        /**
-         * Move assigns a inverted_index.
-         */
-        inverted_index & operator=(inverted_index&&);
+    /**
+     * Move assigns a inverted_index.
+     */
+    inverted_index& operator=(inverted_index&&);
 
-        /**
-         * inverted_index may not be copy-constructed.
-         */
-        inverted_index(const inverted_index &) = delete;
+    /**
+     * inverted_index may not be copy-constructed.
+     */
+    inverted_index(const inverted_index&) = delete;
 
-        /**
-         * inverted_index may not be copy-assigned.
-         */
-        inverted_index & operator=(const inverted_index &) = delete;
+    /**
+     * inverted_index may not be copy-assigned.
+     */
+    inverted_index& operator=(const inverted_index&) = delete;
 
-        /**
-         * Default destructor.
-         */
-        virtual ~inverted_index();
+    /**
+     * Default destructor.
+     */
+    virtual ~inverted_index();
 
-        /**
-         * @param doc The document to tokenize
-         */
-        void tokenize(corpus::document & doc);
+    /**
+     * @param doc The document to tokenize
+     */
+    void tokenize(corpus::document& doc);
 
-        /**
-         * @param t_id The term_id to search for
-         * @return the postings data for a given term_id
-         */
-        virtual std::shared_ptr<postings_data_type>
-            search_primary(term_id t_id) const;
+    /**
+     * @param t_id The term_id to search for
+     * @return the postings data for a given term_id
+     */
+    virtual std::shared_ptr<postings_data_type>
+        search_primary(term_id t_id) const;
 
-        /**
-         * @param t_id The term to search for
-         * @return the document frequency of a term (number of documents it
-         * appears in)
-         */
-        uint64_t doc_freq(term_id t_id) const;
+    /**
+     * @param t_id The term to search for
+     * @return the document frequency of a term (number of documents it
+     * appears in)
+     */
+    uint64_t doc_freq(term_id t_id) const;
 
-        /**
-         * @param t_id The term_id to search for
-         * @param d_id The doc_id to search for
-         */
-        uint64_t term_freq(term_id t_id, doc_id d_id) const;
+    /**
+     * @param t_id The term_id to search for
+     * @param d_id The doc_id to search for
+     */
+    uint64_t term_freq(term_id t_id, doc_id d_id) const;
 
-        /**
-         * @return the total number of terms in this index
-         */
-        uint64_t total_corpus_terms();
+    /**
+     * @return the total number of terms in this index
+     */
+    uint64_t total_corpus_terms();
 
-        /**
-         * @param t_id The specified term
-         * @return the number of times the given term appears in the corpus
-         */
-        uint64_t total_num_occurences(term_id t_id) const;
+    /**
+     * @param t_id The specified term
+     * @return the number of times the given term appears in the corpus
+     */
+    uint64_t total_num_occurences(term_id t_id) const;
 
-        /**
-         * @return the average document length in this index
-         */
-        double avg_doc_length();
+    /**
+     * @return the average document length in this index
+     */
+    double avg_doc_length();
 
-    private:
-        /**
-         * This function initializes the disk index. It cannot be part of the
-         * constructor since dynamic binding doesn't work in a base class's
-         * constructor, so it is invoked from a factory method.
-         * @param config_file The configuration to be used
-         */
-        void create_index(const std::string & config_file);
+  private:
+    /**
+     * This function initializes the disk index; it is called by the
+     * make_index factory function.
+     * @param config_file The configuration to be used
+     */
+    void create_index(const std::string& config_file);
 
-        /**
-         * This function loads a disk index from its filesystem
-         * representation.
-         */
-        void load_index();
+    /**
+     * This function loads a disk index from its filesystem
+     * representation.
+     */
+    void load_index();
 
-        class impl;
-        util::pimpl<impl> inv_impl_;
+    /// Forward declare the implementation
+    class impl;
+    /// Implementation of this index
+    util::pimpl<impl> inv_impl_;
 };
-
 }
 }
 

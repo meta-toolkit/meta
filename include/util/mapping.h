@@ -1,9 +1,14 @@
 /**
  * @file mapping.h
+ * @author Sean Massung
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _META_UTIL_MAPPING_H_
-#define _META_UTIL_MAPPING_H_
+#ifndef META_UTIL_MAPPING_H_
+#define META_UTIL_MAPPING_H_
 
 #include <fstream>
 #include <vector>
@@ -18,6 +23,8 @@ namespace map
 
 /**
  * This safe_at allows the use of a hash function to be specified.
+ * @param map The map to search
+ * @param key The key in the map to search for
  * @return the value for a given key in map if it exists; otherwise,
  * the default Value() is returned.
  */

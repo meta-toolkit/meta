@@ -1,9 +1,14 @@
 /**
  * @file time.h
+ * @author Chase Geigle
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _META_UTIL_TIME_H_
-#define _META_UTIL_TIME_H_
+#ifndef META_UTIL_TIME_H_
+#define META_UTIL_TIME_H_
 
 #include <chrono>
 
@@ -16,7 +21,7 @@ namespace common
  * Times a given function.
  * @param functor the function to be timed
  * @return the length of time, expressed as a Duration, the function
- *  took to run. Defaults to milliseconds.
+ * took to run. Defaults to milliseconds.
  */
 template <class Duration = std::chrono::milliseconds, class Functor>
 Duration time(Functor&& functor)

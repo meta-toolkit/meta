@@ -6,33 +6,34 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef _META_CLASSIFY_SMOOTH_HINGE_LOSS_H_
-#define _META_CLASSIFY_SMOOTH_HINGE_LOSS_H_
+#ifndef META_CLASSIFY_SMOOTH_HINGE_LOSS_H_
+#define META_CLASSIFY_SMOOTH_HINGE_LOSS_H_
 
-namespace meta {
-namespace classify {
-namespace loss {
+#include "classify/loss/loss_function.h"
 
-struct smooth_hinge {
-    double loss(double prediction, int expected) const {
-        double z = prediction * expected;
-        if (z <= 0)
-            return 0.5 - z;
-        if (z >= 1)
-            return 0;
-        return 0.5 * (1 - prediction * expected) * (1 - prediction * expected);
-    }
+namespace meta
+{
+namespace classify
+{
+namespace loss
+{
 
-    double derivative(double prediction, int expected) const {
-        double z = prediction * expected;
-        if (z <= 0)
-            return -expected;
-        if (z >= 1)
-            return 0;
-        return -expected * (1 - z);
-    }
+/**
+ * The smooth hinge loss function for SGD algorithms.
+ *
+ * Defined as \f$\phi(p, y) = \frac12 \max(0, 1 - py)^2\f$
+ * if \f$py \geq 0\f$ and \f$\phi(p, y) = \frac12 - py\f$ otherwise.
+ */
+struct smooth_hinge : public loss_function
+{
+    /**
+     * The identifier for this loss function.
+     */
+    const static std::string id;
+
+    double loss(double prediction, int expected) const override;
+    double derivative(double prediction, int expected) const override;
 };
-
 }
 }
 }

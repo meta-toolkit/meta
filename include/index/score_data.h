@@ -1,31 +1,35 @@
 /**
  * @file score_data.h
- *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
- * 
  * @author Sean Massung
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#ifndef _SCORE_DATA_H_
-#define _SCORE_DATA_H_
+#ifndef META_SCORE_DATA_H_
+#define META_SCORE_DATA_H_
 
 #include "meta.h"
 
-namespace meta {
+namespace meta
+{
 
-namespace corpus {
+namespace corpus
+{
 class document;
 }
 
-namespace index {
+namespace index
+{
 class inverted_index;
 }
-
 }
 
-namespace meta {
-namespace index {
+namespace meta
+{
+namespace index
+{
 
 /**
  * A score_data object contains information needed to evaluate a ranking
@@ -36,39 +40,58 @@ struct score_data
 {
     // general info
 
-    inverted_index & idx;
+    /// index queries are running on
+    inverted_index& idx;
+    /// average document length
     double avg_dl;
+    /// total number of documents
     uint64_t num_docs;
+    /// total number of terms in the index
     uint64_t total_terms;
-    const corpus::document & query;
+    /// the current query
+    const corpus::document& query;
 
     // term-based info
 
+    /// doc term id
     term_id t_id;
+    /// query term count
     uint64_t query_term_count;
+    /// number of docs that t_id appears in
     uint64_t doc_count;
+    /// number of times t_id appears in corpus
     uint64_t corpus_term_count;
 
     // document-based info
 
+    /// document id
     doc_id d_id;
+    /// number of times the term appears in the current doc
     uint64_t doc_term_count;
+    /// total number of terms in the doc
     uint64_t doc_size;
+    /// number of unique terms in the doc
     uint64_t doc_unique_terms;
 
-    score_data(inverted_index & p_idx,
-               double p_avg_dl,
-               uint64_t p_num_docs,
-               uint64_t p_total_terms,
-               const corpus::document & p_query):
-        idx(p_idx), // gcc no non-const ref init from brace init list
-        avg_dl{p_avg_dl},
-        num_docs{p_num_docs},
-        total_terms{p_total_terms},
-        query(p_query) // gcc no non-const ref init from brace init list
-    { /* nothing */ }
+    /**
+     * Constructor to initialize most elements.
+     * @param p_idx The index that is being used
+     * @param p_avg_dl The average doc length in the index
+     * @param p_num_docs The number of docs in the index
+     * @param p_total_terms The total number of terms in the index
+     * @param p_query The current query
+     */
+    score_data(inverted_index& p_idx, double p_avg_dl, uint64_t p_num_docs,
+               uint64_t p_total_terms, const corpus::document& p_query)
+        : idx(p_idx), // gcc no non-const ref init from brace init list
+          avg_dl{p_avg_dl},
+          num_docs{p_num_docs},
+          total_terms{p_total_terms},
+          query(p_query) // gcc no non-const ref init from brace init list
+    {
+        /* nothing */
+    }
 };
-
 }
 }
 
