@@ -4,8 +4,9 @@
  * Defines CRTP base classes that allow for the creation of type-safe
  * "typedef" classes that serve as identifiers in the project.
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
 #ifndef META_NUMERIC_IDENTIFIER_H_
