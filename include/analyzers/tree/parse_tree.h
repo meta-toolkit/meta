@@ -17,6 +17,10 @@
 
 namespace meta
 {
+namespace corpus
+{
+class document;
+}
 namespace analyzers
 {
 
@@ -84,10 +88,9 @@ class parse_tree
     std::string get_skeleton_children() const;
 
     /**
-     * @param filename Where to read the trees from
-     * @return a vector of parse_trees generated from the given file
+     * @param doc The document to read trees from
      */
-    static std::vector<parse_tree> get_trees(const std::string& filename);
+    static std::vector<parse_tree> get_trees(const corpus::document& doc);
 
   private:
     /// the tag label on the root of this subtree
@@ -95,6 +98,19 @@ class parse_tree
 
     /// ordered collection of children of the current parse tree
     std::vector<parse_tree> children_;
+
+    /**
+     * @param doc The document to read trees from. This assumes the parse tree
+     * objects are whitespace delimited.
+     * @return a vector of parse_trees generated from the document's content
+     */
+    static std::vector<parse_tree> content_trees(const corpus::document& doc);
+
+    /**
+     * @param doc The document that represents the path to the trees
+     * @return a vector of parse_trees generated from the document's file path
+     */
+    static std::vector<parse_tree> file_trees(const corpus::document& doc);
 
     /**
      * @return a vector of subtrees in string representation.

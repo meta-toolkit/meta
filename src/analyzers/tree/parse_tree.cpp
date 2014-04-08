@@ -4,6 +4,7 @@
 
 #include <fstream>
 
+#include "corpus/document.h"
 #include "analyzers/tree/parse_tree.h"
 
 namespace meta
@@ -124,15 +125,33 @@ std::string parse_tree::get_children_string() const
     return ret;
 }
 
-std::vector<parse_tree> parse_tree::get_trees(const std::string& filename)
+std::vector<parse_tree> parse_tree::get_trees(const corpus::document& doc)
+{
+    if (doc.contains_content())
+        return content_trees(doc);
+    return file_trees(doc);
+}
+
+std::vector<parse_tree> parse_tree::content_trees(const corpus::document& doc)
 {
     std::vector<parse_tree> trees;
+    std::istringstream stream{doc.content()};
+    std::string cur;
+    while (stream >> cur)
+        trees.emplace_back(cur);
+    return trees;
+}
+
+std::vector<parse_tree> parse_tree::file_trees(const corpus::document& doc)
+{
+    std::vector<parse_tree> trees;
+    std::string filename{doc.path() + ".tree"};
     std::ifstream treefile{filename, std::ifstream::in};
     if (treefile.is_open())
     {
         std::string line;
         while (treefile >> line)
-            trees.push_back(parse_tree{line});
+            trees.emplace_back(line);
         treefile.close();
     }
     else
