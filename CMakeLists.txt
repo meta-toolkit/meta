@@ -229,6 +229,7 @@ target_link_libraries(meta-classify meta-index)
 
 add_library(meta-topics
             src/topics/lda_cvb.cpp
+            src/topics/lda_scvb.cpp
             src/topics/lda_gibbs.cpp
             src/topics/lda_model.cpp
             src/topics/parallel_lda_gibbs.cpp)
