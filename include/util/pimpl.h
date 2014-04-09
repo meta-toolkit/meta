@@ -3,8 +3,9 @@
  * @author Chase Geigle
  * @see http://herbsutter.com/gotw/_101/
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
 #ifndef META_UTIL_PIMPL_H_

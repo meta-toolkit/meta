@@ -3,8 +3,9 @@
  * @author Sean Massung
  * @author Chase Geigle
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
 #ifndef META_MAKE_INDEX_H_
@@ -67,6 +68,16 @@ std::shared_ptr<Index> make_index(const std::string& config_file,
     {
         throw typename Index::exception{
             "forward-index or inverted-index missing from configuration file"};
+    }
+
+    // make sure that the index names are different!
+    auto fwd_name = config.get_as<std::string>("forward-index");
+    auto inv_name = config.get_as<std::string>("inverted-index");
+
+    if (*fwd_name == *inv_name)
+    {
+        throw typename Index::exception{
+            "forward and inverted index names must be different!"};
     }
 
     // can't use std::make_shared here since the Index constructor is private

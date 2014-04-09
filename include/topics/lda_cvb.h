@@ -2,8 +2,9 @@
  * @file lda_cvb.h
  * @author Chase Geigle
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
 #ifndef META_TOPICS_LDA_CVB_H_
@@ -87,38 +88,44 @@ class lda_cvb : public lda_model
                                                  topic_id topic) const override;
 
     /**
-     * Means for (document, topic) assignment counts.
+     * Variational parameters \f$\gamma_{ijk}\f$, which represent the soft
+     * topic assignments for each word occurrence \f$i\f$ in document
+     * \f$j\f$ to topic \f$k\f$. Actually indexed as `gamma_[d][i][k]`,
+     * where `d` is a `doc_id`, `i` is the intra-document term id, and `k`
+     * is a `topic_id`.
      */
-    std::unordered_map<doc_id, std::unordered_map<topic_id, double>>
-        doc_topic_mean_;
+    std::vector<std::vector<std::vector<double>>> gamma_;
 
     /**
-     * Means for (topic, term) assignment counts.
+     * Contains the expected counts for each word being assigned a given
+     * topic.  Indexed as `topic_term_count_[k][w]` where `k` is a
+     * `topic_id` and `w` is a `term_id`.
      */
-    std::unordered_map<topic_id, std::unordered_map<term_id, double>>
-        topic_term_mean_;
+    std::vector<std::vector<double>> topic_term_count_;
 
     /**
-     * Means for topic assignments.
+     * Contains the expected counts for each topic being assigned in a
+     * given document. Indexed as `doc_topic_count_[d][k]` where `d` is a
+     * `doc_id` and `k` is a `topic_id`.
      */
-    std::unordered_map<topic_id, double> topic_mean_;
+    std::vector<std::vector<double>> doc_topic_count_;
 
     /**
-     * Variational parameters \f$\gamma_{dij}\f$.
+     * Contains the expected number of times the given topic has been
+     * assigned to a word. Can be inferred from the above maps, but is
+     * included here for performance reasons.
      */
-    std::unordered_map<
-        doc_id, std::unordered_map<
-                    term_id, std::unordered_map<topic_id, double>>> gamma_;
+    std::vector<double> topic_count_;
 
     /**
      * Hyperparameter on \f$\theta\f$, the topic proportions.
      */
-    double alpha_;
+    const double alpha_;
 
     /**
      * Hyperparameter on \f$\phi\f$, the topic distributions.
      */
-    double beta_;
+    const double beta_;
 };
 }
 }

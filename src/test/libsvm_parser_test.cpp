@@ -48,27 +48,23 @@ void no_label()
     }
 }
 
-void bad_label()
+void missing_label()
 {
-    auto bad = {"thisdatahasnospaces", "thishasspacelast ", " missing"};
-    for (auto& text : bad)
+    try
     {
-        try
-        {
-            class_label lbl = io::libsvm_parser::label(text);
-            FAIL("An exception was not thrown on invalid input");
-        }
-        catch (io::libsvm_parser::libsvm_parser_exception ex)
-        {
-            // nothing, we want an exception!
-        }
+        class_label lbl = io::libsvm_parser::label(" missing");
+        FAIL("An exception was not thrown on invalid input");
+    }
+    catch (io::libsvm_parser::libsvm_parser_exception ex)
+    {
+        // nothing, we want an exception!
     }
 }
 
 void bad_counts()
 {
     auto bad = {"",       "lis:uvfs agi uy:", "label :9 5:5",   "label 9: 5:5",
-                "label ", "label : :::",      "label 9:9 9::9", "label 5:"};
+                "label : :::",      "label 9:9 9::9", "label 5:"};
     for (auto& text : bad)
     {
         try
@@ -93,7 +89,7 @@ int libsvm_parser_tests()
     num_failed += testing::run_test("libsvm-parser-no-label", [&]()
         { no_label(); });
     num_failed += testing::run_test("libsvm-parser-bad-label", [&]()
-        { bad_label(); });
+        { missing_label(); });
     num_failed += testing::run_test("libsvm-parser-bad-counts", [&]()
         { bad_counts(); });
 

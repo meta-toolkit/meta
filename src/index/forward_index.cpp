@@ -62,14 +62,14 @@ class forward_index::impl
     void create_libsvm_metadata();
 
     /**
-     * @param config the configuration settings for this index
+     * @param inv_idx The inverted index to uninvert
      */
-    void uninvert(const cpptoml::toml_group& config);
+    void uninvert(const inverted_index& inv_idx);
 
     /**
-     * @param config the configuration settings for this index
+     * @param name The name of the inverted index to copy data from
      */
-    void create_uninverted_metadata(const cpptoml::toml_group& config);
+    void create_uninverted_metadata(const std::string& name);
 
     /**
      * @param config the configuration settings for this index
@@ -85,8 +85,9 @@ class forward_index::impl
 
     /**
      * Converts postings.index into a libsvm formatted file
+     * @param num_docs The total number of documents
      */
-    void compressed_postings_to_libsvm();
+    void compressed_postings_to_libsvm(uint64_t num_docs);
 
     /// the total number of unique terms if term_id_mapping_ is unused
     uint64_t total_unique_terms_;
@@ -170,11 +171,11 @@ void forward_index::create_index(const std::string& config_file)
     else
     {
         LOG(info) << "Creating index by uninverting: " << index_name() << ENDLG;
-        make_index<inverted_index>(config_file);
+        auto inv_idx = make_index<inverted_index>(config_file);
 
-        fwd_impl_->create_uninverted_metadata(config);
+        fwd_impl_->create_uninverted_metadata(inv_idx->index_name());
         impl_->load_label_id_mapping();
-        fwd_impl_->uninvert(config);
+        fwd_impl_->uninvert(*inv_idx);
         fwd_impl_->init_metadata();
         impl_->load_postings();
         fwd_impl_->set_doc_byte_locations();
@@ -286,16 +287,14 @@ void forward_index::impl::create_libsvm_metadata()
     ++total_unique_terms_; // since we subtracted one from the ids earlier
 }
 
-void forward_index::impl::create_uninverted_metadata(const cpptoml::toml_group
-                                                     & config)
+void forward_index::impl::create_uninverted_metadata(const std::string& name)
 {
     auto files = {DOC_IDS_MAPPING,  DOC_IDS_MAPPING_INDEX,   DOC_SIZES,
                   DOC_LABELS,       DOC_UNIQUETERMS,         LABEL_IDS_MAPPING,
                   TERM_IDS_MAPPING, TERM_IDS_MAPPING_INVERSE};
 
-    auto inv_name = *config.get_as<std::string>("inverted-index");
     for (const auto& file : files)
-        filesystem::copy_file(inv_name + idx_->impl_->files[file],
+        filesystem::copy_file(name + idx_->impl_->files[file],
                               idx_->index_name() + idx_->impl_->files[file]);
 }
 
@@ -327,11 +326,10 @@ auto forward_index::search_primary(doc_id d_id) const
     return pdata;
 }
 
-void forward_index::impl::uninvert(const cpptoml::toml_group& config)
+void forward_index::impl::uninvert(const inverted_index& inv_idx)
 {
-    auto inv_name = *cpptoml::get_as<std::string>(config, "inverted-index");
-    io::compressed_file_reader inv_reader{inv_name
-                                          + idx_->impl_->files[POSTINGS],
+    io::compressed_file_reader inv_reader{inv_idx.index_name()
+                                              + idx_->impl_->files[POSTINGS],
                                           io::default_compression_reader_func};
 
     term_id t_id{0};
@@ -348,10 +346,10 @@ void forward_index::impl::uninvert(const cpptoml::toml_group& config)
     }
 
     handler.merge_chunks();
-    compressed_postings_to_libsvm();
+    compressed_postings_to_libsvm(inv_idx.num_docs());
 }
 
-void forward_index::impl::compressed_postings_to_libsvm()
+void forward_index::impl::compressed_postings_to_libsvm(uint64_t num_docs)
 {
     idx_->impl_->load_labels();
 
@@ -361,16 +359,39 @@ void forward_index::impl::compressed_postings_to_libsvm()
     io::compressed_file_reader input{filename + ".tmp",
                                      io::default_compression_reader_func};
 
+    // handler for writing gaps of blank documents
+    doc_id last_id{0};
+    auto write_gap = [&](doc_id next_id)
+    {
+        while (next_id > last_id + 1)
+        {
+            ++last_id;
+            index_pdata_type empty;
+            empty.set_primary_key(
+                static_cast<doc_id>(idx_->impl_->doc_label_id(last_id)));
+            empty.write_libsvm(output);
+        }
+    };
+
     // read from input, write to output, changing doc_id to class_label for the
     // correct libsvm format
     index_pdata_type pdata;
     while (input >> pdata)
     {
         doc_id d_id = pdata.primary_key();
-        pdata.set_primary_key(static_cast<doc_id>(
-                    idx_->impl_->doc_label_id(d_id)));
+
+        // write empty document lines for any documents in a gap
+        write_gap(d_id);
+
+        // write current document
+        pdata.set_primary_key(
+            static_cast<doc_id>(idx_->impl_->doc_label_id(d_id)));
         pdata.write_libsvm(output);
+        last_id = d_id;
     }
+
+    // write any trailing empty documents
+    write_gap(doc_id{num_docs});
 
     filesystem::delete_file(filename + ".tmp");
 }
