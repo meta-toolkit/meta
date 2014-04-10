@@ -2,8 +2,9 @@
  * @file parser.h
  * @author Sean Massung
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
 #ifndef META_PARSER_H_
@@ -12,6 +13,7 @@
 #include <array>
 #include <memory>
 #include <string>
+#include "util/optional.h"
 
 namespace meta
 {
@@ -107,7 +109,7 @@ class parser
     const char* data_;
 
     /// The next token to be returned; "" if none
-    std::string next_;
+    util::optional<std::string> next_;
 };
 }
 }

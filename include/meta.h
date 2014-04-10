@@ -4,8 +4,9 @@
  * documentation is included here because there is no main file in each
  * namespace that is a logical choice for such documentation.
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
 #ifndef META_H_

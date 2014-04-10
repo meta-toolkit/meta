@@ -114,7 +114,8 @@ label_id disk_index::disk_index_impl::get_label_id(const class_label& lbl)
     std::lock_guard<std::mutex> lock{mutex_};
     if (!label_ids_.contains_key(lbl))
     {
-        label_id next_id{static_cast<label_id>(label_ids_.size())};
+        // SVM multiclass has label_ids starting at 1
+        label_id next_id{static_cast<label_id>(label_ids_.size() + 1)};
         label_ids_.insert(lbl, next_id);
         return next_id;
     }
