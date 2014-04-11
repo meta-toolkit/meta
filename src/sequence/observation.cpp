@@ -48,5 +48,15 @@ bool observation::tagged() const
 {
     return static_cast<bool>(tag_);
 }
+
+void observation::increment(const std::string& feature, double amount)
+{
+    features_[feature] += amount;
+}
+
+const std::unordered_map<std::string, double>& observation::features() const
+{
+    return features_;
+}
 }
 }
