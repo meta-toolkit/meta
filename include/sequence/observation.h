@@ -10,6 +10,7 @@
 #define META_OBSERVATION_H_
 
 #include <string>
+#include <unordered_map>
 
 #include "util/identifiers.h"
 #include "util/optional.h"
@@ -71,6 +72,18 @@ class observation
     bool tagged() const;
 
     /**
+     * Increment the count for the specified feature.
+     * @param feature The feature to increment
+     * @param amount The amount to increment by
+     */
+    void increment(const std::string& feature, double amount);
+
+    /**
+     * @return the feature map for this observation
+     */
+    const std::unordered_map<std::string, double>& features() const;
+
+    /**
      * Basic exception class for observation interactions.
      */
     class exception : public std::runtime_error
@@ -84,6 +97,8 @@ class observation
     symbol_t symbol_;
     /// The tag for this observation, if it exists
     util::optional<tag_t> tag_;
+    /// The features for this observation
+    std::unordered_map<std::string, double> features_;
 };
 }
 }
