@@ -54,6 +54,7 @@ class crf
     void reset();
 
   private:
+    /// weights are scaled by scale_ automatically
     const double& weight(label_id, feature_id) const;
     double& weight(label_id, feature_id);
 
@@ -66,11 +67,31 @@ class crf
 
     double iteration(parameters params, const sequence& seq);
 
+    using double_matrix = std::vector<std::vector<double>>;
+
     void gradient_observation_expectation(const sequence& seq, double gain);
-    void gradient_model_expectation(const sequence& seq, double gain);
+    void gradient_model_expectation(const sequence& seq, double gain,
+                                    const double_matrix& state_mrg,
+                                    const double_matrix& trans_mrg);
+
+
+    void state_scores(const sequence& seq);
+
+    void transition_scores();
 
     forward_trellis forward(const sequence& seq) const;
+
     trellis backward(const sequence& seq, const forward_trellis& fwd) const;
+
+    double_matrix state_marginals(const forward_trellis& fwd,
+                                  const trellis& bwd) const;
+
+    double_matrix transition_marginals(const forward_trellis& fwd,
+                                       const trellis& bwd) const;
+
+    double loss(const sequence& seq, const forward_trellis& fwd) const;
+
+    double l2norm() const;
 
     /**
      * The weights for node-observation features, indexed as
@@ -86,10 +107,13 @@ class crf
      */
     util::disk_vector<double> transition_weights_;
 
-    /// The label_id mapping (class_label to label_id)
-    util::invertible_map<class_label, label_id> label_id_mapping_;
+    /// The label_id mapping (tag_t to label_id)
+    util::invertible_map<tag_t, label_id> label_id_mapping_;
 
     double scale_;
+
+    double_matrix state_;
+    double_matrix trans_;
 
     const std::string& prefix_;
 };

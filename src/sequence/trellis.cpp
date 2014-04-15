@@ -15,6 +15,11 @@ trellis::trellis(uint64_t size) : trellis_(size)
     // nothing
 }
 
+uint64_t trellis::size() const
+{
+    return trellis_.size();
+}
+
 void trellis::probability(uint64_t idx, const tag_t& tag, double prob)
 {
     trellis_[idx][tag] = prob;

@@ -27,6 +27,8 @@ class trellis
   public:
     trellis(uint64_t size);
 
+    uint64_t size() const;
+
     void probability(uint64_t idx, const tag_t& tag, double prob);
 
     double probability(uint64_t idx, const tag_t& tag) const;

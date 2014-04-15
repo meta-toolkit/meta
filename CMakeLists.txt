@@ -238,7 +238,10 @@ target_link_libraries(meta-topics meta-index)
 add_library(meta-sequence
             src/sequence/sequence.cpp
             src/sequence/observation.cpp
-            src/sequence/io/ptb_parser.cpp)
+            src/sequence/io/ptb_parser.cpp
+            src/sequence/analyzers/sequence_analyzer.cpp
+            src/sequence/trellis.cpp
+            src/sequence/crf.cpp)
 target_link_libraries(meta-sequence meta-util)
 
 add_library(meta-testing
@@ -297,6 +300,12 @@ target_link_libraries(print-vocab meta-index)
 
 add_executable(search-vocab search-vocab.cpp)
 target_link_libraries(search-vocab meta-index)
+
+add_executable(crf-feat-gen crf-feat-gen.cpp)
+target_link_libraries(crf-feat-gen meta-sequence)
+
+add_executable(crf-train crf-train.cpp)
+target_link_libraries(crf-train meta-sequence)
 
 enable_testing()
 add_test(analyzers unit-test analyzers)

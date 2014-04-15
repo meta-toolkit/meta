@@ -57,8 +57,8 @@ class sequence_analyzer
     feature_id feature(const std::string& feature);
     uint64_t num_features() const;
 
-    label_id label(class_label lbl) const;
-    class_label label(label_id lbl) const;
+    label_id label(tag_t lbl) const;
+    tag_t label(label_id lbl) const;
     uint64_t num_labels() const;
 
     const std::string& prefix() const;
@@ -100,8 +100,8 @@ class sequence_analyzer
     /// The feature_id mapping (string to id)
     std::unordered_map<std::string, feature_id> feature_id_mapping_;
 
-    /// The label_id mapping (class_label to label_id)
-    util::invertible_map<class_label, label_id> label_id_mapping_;
+    /// The label_id mapping (tag_t to label_id)
+    util::invertible_map<tag_t, label_id> label_id_mapping_;
 
     /// The prefix to write the analyzer files to
     const std::string prefix_;

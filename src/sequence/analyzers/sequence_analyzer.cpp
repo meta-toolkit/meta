@@ -66,7 +66,7 @@ void sequence_analyzer::save()
 {
     printing::progress progress{" > Saving feature mapping: ",
                                 feature_id_mapping_.size()};
-    std::ofstream output{prefix_, std::ios::binary};
+    std::ofstream output{prefix_ + "/feature.mapping", std::ios::binary};
     uint64_t i = 0;
     for (const auto& pair : feature_id_mapping_)
     {
@@ -84,6 +84,8 @@ void sequence_analyzer::analyze(sequence& sequence)
         collector coll{this, &sequence[t]};
         for (const auto& fn : obs_fns_)
             fn(sequence, t, coll);
+        auto sze = label_id_mapping_.size();
+        label_id_mapping_.insert(sequence[t].tag(), label_id{sze});
     }
 }
 
@@ -130,12 +132,12 @@ void sequence_analyzer::collector::add(const std::string& feature,
     feats_.emplace_back(fid, amount);
 }
 
-label_id sequence_analyzer::label(class_label lbl) const
+label_id sequence_analyzer::label(tag_t lbl) const
 {
     return label_id_mapping_.get_value(lbl);
 }
 
-class_label sequence_analyzer::label(label_id lbl) const
+tag_t sequence_analyzer::label(label_id lbl) const
 {
     return label_id_mapping_.get_key(lbl);
 }
