@@ -10,7 +10,7 @@
 #define META_OBSERVATION_H_
 
 #include <string>
-#include <unordered_map>
+#include <vector>
 
 #include "util/identifiers.h"
 #include "util/optional.h"
@@ -22,6 +22,7 @@ namespace sequence
 
 MAKE_IDENTIFIER(symbol_t, std::string)
 MAKE_IDENTIFIER(tag_t, std::string)
+MAKE_IDENTIFIER(feature_id, uint64_t)
 
 /**
  * Represents an observation in a tagged sequence. Contains a symbol and
@@ -30,6 +31,8 @@ MAKE_IDENTIFIER(tag_t, std::string)
 class observation
 {
   public:
+    using feature_vector = std::vector<std::pair<feature_id, double>>;
+
     /**
      * Constructs an observation with a tag.
      * @param sym The symbol for the observation
@@ -72,16 +75,14 @@ class observation
     bool tagged() const;
 
     /**
-     * Increment the count for the specified feature.
-     * @param feature The feature to increment
-     * @param amount The amount to increment by
-     */
-    void increment(const std::string& feature, double amount);
-
-    /**
      * @return the feature map for this observation
      */
-    const std::unordered_map<std::string, double>& features() const;
+    const feature_vector& features() const;
+
+    /**
+     * @param feats The new feature map for this observation
+     */
+    void features(feature_vector feats);
 
     /**
      * Basic exception class for observation interactions.
@@ -98,7 +99,7 @@ class observation
     /// The tag for this observation, if it exists
     util::optional<tag_t> tag_;
     /// The features for this observation
-    std::unordered_map<std::string, double> features_;
+    feature_vector features_;
 };
 }
 }

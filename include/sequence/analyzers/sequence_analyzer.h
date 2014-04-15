@@ -12,8 +12,11 @@
 
 #include <vector>
 #include <functional>
+#include <unordered_map>
 
+#include "meta.h"
 #include "sequence/sequence.h"
+#include "util/invertible_map.h"
 
 namespace meta
 {
@@ -39,21 +42,49 @@ namespace sequence
 class sequence_analyzer
 {
   public:
-    /**
-     * Fills in the features maps for the observations in this sequence
-     * by calling each of the observation functions in turn on every time
-     * step in the given sequence.
-     *
-     * @param sequence The sequence to find features for
-     */
-    void analyze(sequence& sequence) const;
+    sequence_analyzer(const std::string& prefix);
+
+    sequence_analyzer(const sequence_analyzer&) = default;
+    sequence_analyzer(sequence_analyzer&&) = default;
+    sequence_analyzer& operator=(const sequence_analyzer&) = default;
+    sequence_analyzer& operator=(sequence_analyzer&&) = default;
+
+    ~sequence_analyzer();
+    void save();
+
+    void analyze(sequence& sequence);
+
+    feature_id feature(const std::string& feature);
+    uint64_t num_features() const;
+
+    label_id label(class_label lbl) const;
+    class_label label(label_id lbl) const;
+    uint64_t num_labels() const;
+
+    const std::string& prefix() const;
 
     template <class Function>
     void add_observation_function(Function&& function)
     {
         obs_fns_.emplace_back(std::forward<Function>(function));
     }
+
+    class collector
+    {
+      public:
+        collector(sequence_analyzer* analyzer, observation* obs);
+        ~collector();
+        void add(const std::string& feature, double amount);
+      private:
+        sequence_analyzer* analyzer_;
+        observation* obs_;
+        observation::feature_vector feats_;
+    };
+
   private:
+    void load_feature_id_mapping();
+    void load_label_id_mapping();
+
     /**
      * Adds a feature to an observation.
      * @param obs The observation
@@ -64,17 +95,23 @@ class sequence_analyzer
                      double weight = 1.0);
 
     /// The observation functions
-    std::vector<std::function<void(sequence& seq, uint64_t index)>> obs_fns_;
+    std::vector<std::function<void(sequence&, uint64_t, collector&)>> obs_fns_;
 
     /// The feature_id mapping (string to id)
     std::unordered_map<std::string, feature_id> feature_id_mapping_;
+
+    /// The label_id mapping (class_label to label_id)
+    util::invertible_map<class_label, label_id> label_id_mapping_;
+
+    /// The prefix to write the analyzer files to
+    const std::string prefix_;
 };
 
 /**
  * Constructs a sequence_analyzer that is specialized for part-of-speech
  * tagging. Uses a predefined set of observation functions.
  */
-sequence_analyzer default_pos_analyzer();
+sequence_analyzer default_pos_analyzer(const std::string& filename);
 
 }
 }
