@@ -63,7 +63,7 @@ int main(int argc, char** argv)
     }
     analyzer.save();
 
-    sequence::crf crf{analyzer};
+    sequence::crf crf{"crf"};
     crf.train({}, training);
 
     return 0;

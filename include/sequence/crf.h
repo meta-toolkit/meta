@@ -21,6 +21,8 @@ namespace meta
 namespace sequence
 {
 
+MAKE_NUMERIC_IDENTIFIER(crf_feature_id, uint64_t)
+
 /**
  * Linear-chain conditional random field for POS tagging and chunking
  * applications. Learned using l2 regularized stochastic gradient descent.
@@ -37,7 +39,7 @@ class crf
   public:
     struct parameters
     {
-        double lr = 0.001;
+        double lr = 0.25;
         double delta = 1e-5;
         double lambda = 0.0001;
         uint64_t period = 10;
@@ -45,7 +47,6 @@ class crf
     };
 
     crf(const std::string& prefix);
-    crf(sequence_analyzer& analyzer);
 
     double train(parameters params, const std::vector<sequence>& examples);
 
@@ -54,12 +55,27 @@ class crf
     void reset();
 
   private:
-    /// weights are scaled by scale_ automatically
-    const double& weight(label_id, feature_id) const;
-    double& weight(label_id, feature_id);
 
-    const double& weight(label_id, label_id) const;
-    double& weight(label_id, label_id);
+    struct feature_range
+    {
+        const crf_feature_id start;
+        const crf_feature_id end;
+    };
+    void initialize(const std::vector<sequence>& examples);
+
+    label_id label(tag_t tag);
+
+    const double& obs_weight(crf_feature_id idx) const;
+    double& obs_weight(crf_feature_id idx);
+
+    const double& trans_weight(crf_feature_id idx) const;
+    double& trans_weight(crf_feature_id idx);
+
+    feature_range obs_range(feature_id fid) const;
+    feature_range trans_range(label_id lbl) const;
+
+    label_id observation(crf_feature_id idx) const;
+    label_id transition(crf_feature_id idx) const;
 
     double epoch(parameters params, printing::progress& progress,
                  const std::vector<uint64_t>& indices,
@@ -89,23 +105,58 @@ class crf
     double_matrix transition_marginals(const forward_trellis& fwd,
                                        const trellis& bwd) const;
 
-    double loss(const sequence& seq, const forward_trellis& fwd) const;
+    double loss(const sequence& seq, const forward_trellis& fwd);
 
     double l2norm() const;
 
-    /**
-     * The weights for node-observation features, indexed as
-     * `observation_weights_[l*M + i]` where `l` is a label_id, `i` is
-     * a feature_id, and `M` is the number of unique feature_ids
-     */
-    util::disk_vector<double> observation_weights_;
+    void rescale();
 
     /**
-     * The weights for transition features, indexed as
-     * `transition_weights_[i*L + j]` where `i` and `j` are label_ids and
-     * `L` is the number of labels
+     * Represents the feature id range for a given observation:
+     * `observation_ranges_[i]` gives the start of a range of
+     * crf_feature_ids (indexing into the `observation_weights_`) that have
+     * fired for feature_id `i`, and `observation_ranges_[i + 1]`
+     * gives the end of the range. (If `i` is the end, then the size of
+     * `observation_weights_` gives the last id.)
      */
-    util::disk_vector<double> transition_weights_;
+    util::optional<util::disk_vector<crf_feature_id>> observation_ranges_;
+
+    /**
+     * Analogous to the observation range, but for transitions.
+     * `transition_ranges_[i]` gives the start of a range of feature_ids
+     * (indexing into `transition_weights_`) that have fired for label_id
+     * `i`, and `transition_ranges_[i+1]` gives the end of the range. (If
+     * `i` is the end, then the size of `transition_weights_` gives the
+     * last id.)
+     */
+    util::optional<util::disk_vector<crf_feature_id>> transition_ranges_;
+
+    /**
+     * Represents the state that fired for a given observation
+     * feature. This is a parallel vector with `observation_weights_`,
+     * where `observations_[f]` gives the label_id for the observation
+     * feature `f`.
+     */
+    util::optional<util::disk_vector<label_id>> observations_;
+
+    /**
+     * Represents the destination label for a given transition feature.
+     * This is a parallel vector with `transition_weights_`, where
+     * `transitions_[f]` gives the destination for transition feature `f`.
+     */
+    util::optional<util::disk_vector<label_id>> transitions_;
+
+    /**
+     * The weights for all of the node-observation features. Indexes must
+     * be taken from the `observation_ranges_` vector.
+     */
+    util::optional<util::disk_vector<double>> observation_weights_;
+
+    /**
+     * Weights for all of the transition features. Indexes must be taken
+     * from the `transition_ranges_` vector.
+     */
+    util::optional<util::disk_vector<double>> transition_weights_;
 
     /// The label_id mapping (tag_t to label_id)
     util::invertible_map<tag_t, label_id> label_id_mapping_;

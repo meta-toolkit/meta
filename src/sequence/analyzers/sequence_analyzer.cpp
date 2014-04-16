@@ -84,8 +84,8 @@ void sequence_analyzer::analyze(sequence& sequence)
         collector coll{this, &sequence[t]};
         for (const auto& fn : obs_fns_)
             fn(sequence, t, coll);
-        auto sze = label_id_mapping_.size();
-        label_id_mapping_.insert(sequence[t].tag(), label_id{sze});
+        label_id id(label_id_mapping_.size());
+        label_id_mapping_.insert(sequence[t].tag(), id);
     }
 }
 
