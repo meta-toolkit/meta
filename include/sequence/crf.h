@@ -39,9 +39,11 @@ class crf
   public:
     struct parameters
     {
-        double lr = 0.25;
+        double lr = 0.001;
         double delta = 1e-5;
-        double lambda = 0.0001;
+        double c2 = 1;
+        double lambda = 0;
+        double t0 = 8157.5;
         uint64_t period = 10;
         uint64_t max_iters = 1000;
     };
@@ -78,10 +80,10 @@ class crf
     label_id transition(crf_feature_id idx) const;
 
     double epoch(parameters params, printing::progress& progress,
-                 const std::vector<uint64_t>& indices,
+                 uint64_t iter, const std::vector<uint64_t>& indices,
                  const std::vector<sequence>& examples);
 
-    double iteration(parameters params, const sequence& seq);
+    double iteration(parameters params, uint64_t iter, const sequence& seq);
 
     using double_matrix = std::vector<std::vector<double>>;
 
@@ -164,7 +166,9 @@ class crf
     double scale_;
 
     double_matrix state_;
+    double_matrix state_exp_;
     double_matrix trans_;
+    double_matrix trans_exp_;
 
     const std::string& prefix_;
 };

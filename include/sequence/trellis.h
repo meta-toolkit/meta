@@ -44,7 +44,7 @@ class forward_trellis : public trellis
     forward_trellis(uint64_t size, uint64_t labels);
 
     double normalizer(uint64_t idx) const;
-    void normalize(uint64_t idx, double value);
+    void normalize(uint64_t idx);
 };
 
 class viterbi_trellis : public trellis

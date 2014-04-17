@@ -3,6 +3,8 @@
  * @author Chase Geigle
  */
 
+#include <numeric>
+#include <algorithm>
 #include "sequence/trellis.h"
 
 namespace meta
@@ -62,11 +64,16 @@ double forward_trellis::normalizer(uint64_t idx) const
     return normalizers_[idx];
 }
 
-void forward_trellis::normalize(uint64_t idx, double value)
+void forward_trellis::normalize(uint64_t idx)
 {
-    for (auto & val : trellis_[idx])
-        val *= value;
-    normalizers_[idx] = value;
+    auto sum = std::accumulate(trellis_[idx].begin(), trellis_[idx].end(), 0.0);
+    auto normalizer = sum != 0 ? 1.0 / sum : 1;
+
+    std::transform(trellis_[idx].begin(), trellis_[idx].end(),
+                   trellis_[idx].begin(), [&](double val)
+    { return val * normalizer; });
+
+    normalizers_[idx] = normalizer;
 }
 }
 }
