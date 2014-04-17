@@ -194,27 +194,26 @@ double crf::train(parameters params, const std::vector<sequence>& examples)
         {
             loss = epoch(params, progress, iter - 1, indices, examples);
         });
-        rescale();
+        if (scale_ < 1e-9)
+            rescale();
         auto l2 = l2norm();
         loss += 0.5 * l2 * params.lambda * examples.size();;
         progress.end();
         progress.clear();
         ss << "elapsed time=" << time.count() / 1000.0 << "s";
         ss << ", l2norm=" << std::sqrt(l2) << ", loss=" << loss;
-        if (iter > 1)
+        if (iter > params.period)
         {
             delta = (old_loss - loss) / loss;
             ss << ", improvement=" << delta;
             if (iter % params.period == 0)
             {
-                if (iter > params.period)
+                if (delta < params.delta)
                 {
-                    if (delta < params.delta)
-                    {
-                        ss << ", converged!";
-                        LOG(progress) << "\r" << ss.str() << "\n" << ENDLG;
-                        return loss;
-                    }
+                    ss << ", converged!";
+                    LOG(progress) << "\r" << ss.str() << "\n" << ENDLG;
+                    rescale();
+                    return loss;
                 }
             }
         }
@@ -222,6 +221,7 @@ double crf::train(parameters params, const std::vector<sequence>& examples)
         old_loss = loss;
         loss = 0;
     }
+    rescale();
     return old_loss;
 }
 
@@ -291,6 +291,8 @@ void crf::gradient_observation_expectation(const sequence& seq, double gain)
                 }
             }
         }
+
+        prev = lbl;
     }
 }
 
@@ -343,8 +345,9 @@ void crf::state_scores(const sequence& seq)
         }
 
         // exponentiate and store in state_exp_
-        std::transform(state_[t].begin(), state_[t].end(), state_exp_[t].begin(),
-                       [](double val) { return std::exp(val); });
+        std::transform(state_[t].begin(), state_[t].end(),
+                       state_exp_[t].begin(), [](double val)
+        { return std::exp(val); });
     }
 }
 
