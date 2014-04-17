@@ -12,28 +12,25 @@ namespace meta
 namespace sequence
 {
 
-trellis::trellis(uint64_t size, uint64_t labels) : trellis_(size)
+trellis::trellis(uint64_t size, uint64_t labels)
+    : trellis_(size * labels, 0), labels_{labels}
 {
-    for (auto & v : trellis_)
-    {
-        v.resize(labels);
-        std::fill(v.begin(), v.end(), 0);
-    }
+    // nothing
 }
 
 uint64_t trellis::size() const
 {
-    return trellis_.size();
+    return trellis_.size() / labels_;
 }
 
 void trellis::probability(uint64_t idx, const label_id& tag, double prob)
 {
-    trellis_[idx][tag] = prob;
+    trellis_[idx * labels_ + tag] = prob;
 }
 
 double trellis::probability(uint64_t idx, const label_id& tag) const
 {
-    return trellis_[idx][tag];
+    return trellis_[idx * labels_ + tag];
 }
 
 viterbi_trellis::viterbi_trellis(uint64_t size, uint64_t labels)
@@ -66,12 +63,12 @@ double forward_trellis::normalizer(uint64_t idx) const
 
 void forward_trellis::normalize(uint64_t idx)
 {
-    auto sum = std::accumulate(trellis_[idx].begin(), trellis_[idx].end(), 0.0);
+    auto beg = trellis_.begin() + idx * labels_;
+    auto end = trellis_.begin() + (idx + 1) * labels_;
+    auto sum = std::accumulate(beg, end, 0.0);
     auto normalizer = sum != 0 ? 1.0 / sum : 1;
 
-    std::transform(trellis_[idx].begin(), trellis_[idx].end(),
-                   trellis_[idx].begin(), [&](double val)
-    { return val * normalizer; });
+    std::transform(beg, end, beg, [&](double val) { return val * normalizer; });
 
     normalizers_[idx] = normalizer;
 }

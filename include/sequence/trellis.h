@@ -24,7 +24,8 @@ namespace sequence
 class trellis
 {
   protected:
-    std::vector<std::vector<double>> trellis_;
+    std::vector<double> trellis_;
+    const uint64_t labels_;
 
   public:
     trellis(uint64_t size, uint64_t labels);
