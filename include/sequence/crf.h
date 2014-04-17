@@ -39,13 +39,16 @@ class crf
   public:
     struct parameters
     {
-        double lr = 0.001;
-        double delta = 1e-5;
         double c2 = 1;
+        double delta = 1e-5;
         double lambda = 0;
-        double t0 = 8157.5;
+        double t0 = 0;
         uint64_t period = 10;
         uint64_t max_iters = 1000;
+        double calibration_eta = 0.1;
+        double calibration_rate = 2.0;
+        uint64_t calibration_samples = 1000;
+        uint64_t calibration_trials = 10;
     };
 
     crf(const std::string& prefix);
@@ -63,7 +66,15 @@ class crf
         const crf_feature_id start;
         const crf_feature_id end;
     };
+
     void initialize(const std::vector<sequence>& examples);
+
+    /**
+     * Determines a good initial setting for the learning rate. Based on
+     * Leon Bottou's SGD implementation.
+     */
+    double calibrate(parameters params, const std::vector<uint64_t>& indices,
+                     const std::vector<sequence>& examples);
 
     label_id label(tag_t tag);
 

@@ -40,23 +40,28 @@ void crf::initialize(const std::vector<sequence>& examples)
     std::map<feature_id, std::unordered_set<label_id>> obs_feats;
     std::map<label_id, std::unordered_set<label_id>> trans_feats;
 
-    for (const auto& seq : examples)
     {
-        util::optional<label_id> prev;
-        for (uint64_t t = 0; t < seq.size(); ++t)
+        printing::progress progress{" > Feature generation: ", examples.size()};
+        uint64_t idx = 0;
+        for (const auto& seq : examples)
         {
-            // build label id mapping by side-effect
-            auto lbl = label(seq[t].tag());
+            progress(++idx);
+            util::optional<label_id> prev;
+            for (uint64_t t = 0; t < seq.size(); ++t)
+            {
+                // build label id mapping by side-effect
+                auto lbl = label(seq[t].tag());
 
-            // observation features
-            for (const auto& pair : seq[t].features())
-                obs_feats[pair.first].insert(lbl);
+                // observation features
+                for (const auto& pair : seq[t].features())
+                    obs_feats[pair.first].insert(lbl);
 
-            // transition features
-            if (prev)
-                trans_feats[*prev].insert(lbl);
+                // transition features
+                if (prev)
+                    trans_feats[*prev].insert(lbl);
 
-            prev = lbl;
+                prev = lbl;
+            }
         }
     }
 
@@ -172,13 +177,99 @@ label_id crf::transition(crf_feature_id fid) const
     return (*transitions_)[fid];
 }
 
+double crf::calibrate(parameters params, const std::vector<uint64_t>& indices,
+                      const std::vector<sequence>& examples)
+{
+    auto num_samples = std::min(params.calibration_samples, indices.size());
+    std::vector<uint64_t> samples{indices.begin(),
+                                  indices.begin() + num_samples};
+
+    double initial_loss = 0;
+    printing::progress progress{" > Initial loss: ", num_samples};
+    progress.print_endline(false);
+
+    for (uint64_t idx = 0; idx < num_samples; ++idx)
+    {
+        progress(idx);
+
+        const auto& seq = examples[samples[idx]];
+        state_scores(seq);
+        transition_scores();
+        auto fwd = forward(seq);
+        auto bwd = backward(seq, fwd);
+
+        auto state_mrg = state_marginals(fwd, bwd);
+        auto trans_mrg = transition_marginals(fwd, bwd);
+
+        initial_loss += loss(seq, fwd);
+    }
+    progress.end();
+    progress.clear();
+    LOG(progress) << "\r > Initial loss: " << initial_loss << '\n' << ENDLG;
+
+    auto eta = params.calibration_eta;
+    auto best_eta = eta;
+    auto best_loss = initial_loss;
+    uint64_t trial = 0;
+    bool increase = true;
+    while (trial < params.calibration_trials)
+    {
+        reset();
+        // set learning rate to eta
+        params.t0 = 1.0 / (params.lambda * eta);
+
+        std::stringstream ss;
+        ss << " > Trial " << trial + 1 << ": ";
+        printing::progress progress{ss.str(), num_samples};
+        progress.print_endline(false);
+        auto loss = epoch(params, progress, 0, samples, examples);
+        loss += 0.5 * l2norm() * params.lambda * examples.size();
+        progress.end();
+        progress.clear();
+
+        if (std::isfinite(loss) && loss < initial_loss)
+        {
+            LOG(progress) << "\r" << ss.str() << "eta=" << eta
+                          << ", loss=" << loss << " (possible)\n" << ENDLG;
+            ++trial;
+
+            if (loss < best_loss)
+            {
+                best_eta = eta;
+                best_loss = loss;
+            }
+
+            if (increase)
+                eta *= params.calibration_rate;
+            else
+                eta /= params.calibration_rate;
+        }
+        else
+        {
+            LOG(progress) << "\r" << ss.str() << "eta=" << eta
+                          << ", loss=" << loss << " (worse)\n" << ENDLG;
+            increase = false;
+            eta = params.calibration_eta / params.calibration_rate;
+        }
+    }
+
+    LOG(info) << "Picked learning rate: " << best_eta << ENDLG;
+
+    return 1.0 / (params.lambda * best_eta);
+}
+
 double crf::train(parameters params, const std::vector<sequence>& examples)
 {
     initialize(examples);
+
     params.lambda = 2.0 * params.c2 / examples.size();
+
     std::vector<uint64_t> indices(examples.size());
     std::iota(indices.begin(), indices.end(), 0);
     std::mt19937 rng{std::random_device{}()};
+    std::shuffle(indices.begin(), indices.end(), rng);
+
+    params.t0 = calibrate(params, indices, examples);
 
     double old_loss = std::numeric_limits<double>::max();
     double loss = old_loss;
@@ -197,7 +288,7 @@ double crf::train(parameters params, const std::vector<sequence>& examples)
         if (scale_ < 1e-9)
             rescale();
         auto l2 = l2norm();
-        loss += 0.5 * l2 * params.lambda * examples.size();;
+        loss += 0.5 * l2 * params.lambda * examples.size();
         progress.end();
         progress.clear();
         ss << "elapsed time=" << time.count() / 1000.0 << "s";
@@ -242,9 +333,9 @@ double crf::epoch(parameters params, printing::progress& progress,
 double crf::iteration(parameters params, uint64_t iter,
                       const sequence& seq)
 {
-    params.lr = 1 / (params.lambda * (params.t0 + iter));
-    scale_ *= (1 - params.lambda * params.lr);
-    auto gain = params.lr / scale_;
+    double lr = 1 / (params.lambda * (params.t0 + iter));
+    scale_ *= (1 - params.lambda * lr);
+    auto gain = lr / scale_;
 
     state_scores(seq);
     transition_scores();
