@@ -543,7 +543,7 @@ auto crf::transition_marginals(const forward_trellis& fwd,
 {
     double_matrix table(label_id_mapping_.size());
     for (label_id lbl{0}; lbl < table.size(); ++lbl)
-        table[lbl].resize(table.size());
+        table[lbl].resize(table.size(), 0);
 
     for (uint64_t t = 0; t < fwd.size() - 1; ++t)
     {
