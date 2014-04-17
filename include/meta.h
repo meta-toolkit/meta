@@ -69,6 +69,15 @@ MAKE_NUMERIC_IDENTIFIER(query_id, uint64_t)
 using query_id = uint64_t;
 #endif
 
+/*
+ * Numbering system for node ids.
+ */
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
+MAKE_NUMERIC_IDENTIFIER(node_id, uint64_t)
+#else
+using node_id = uint64_t;
+#endif
+
 /**
  * Containers to be used for caching purposes.
  */
