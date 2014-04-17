@@ -29,27 +29,13 @@ template <class Node = default_node, class Edge = default_edge>
 class directed_graph
 {
   public:
-    using AdjacencyList = std::unordered_map<node_id, Edge>;
-
-    /**
-     * Basic exception for directed_graph interactions.
-     */
-    class directed_graph_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
-    /**
-     * Constructor to create an empty directed_graph.
-     */
-    // directed_graph();
+    using adjacency_list = std::unordered_map<node_id, Edge>;
 
     /**
      * @param id
      * @return the adjacent edges and node_ids to the given node
      */
-    const AdjacencyList& adjacent(node_id id) const;
+    const adjacency_list& adjacent(node_id id) const;
 
     /**
      * @param id
@@ -71,10 +57,18 @@ class directed_graph
     node_id insert(const Node& node);
 
     /**
+     * @param edge
      * @param source
      * @param dest
      */
     void add_edge(const Edge& edge, node_id source, node_id dest);
+
+    /**
+     * Adds a default edge between the two nodes.
+     * @param source
+     * @param dest
+     */
+    void add_edge(node_id source, node_id dest);
 
     /**
      * @return the size of this graph (number of nodes), which is the
@@ -84,7 +78,16 @@ class directed_graph
 
   private:
     /// Each Node object is indexed by its id.
-    std::vector<std::pair<Node, AdjacencyList>> nodes_;
+    std::vector<std::pair<Node, adjacency_list>> nodes_;
+};
+
+/**
+ * Basic exception for directed_graph interactions.
+ */
+class directed_graph_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 }
 }

@@ -9,7 +9,7 @@ namespace graph
 {
 template <class Node, class Edge>
 auto directed_graph
-    <Node, Edge>::adjacent(node_id id) const -> const AdjacencyList &
+    <Node, Edge>::adjacent(node_id id) const -> const adjacency_list &
 {
     if (id >= size())
         throw directed_graph_exception{"node_id out of range"};
@@ -44,7 +44,7 @@ typename util::optional<Edge> directed_graph
 template <class Node, class Edge>
 node_id directed_graph<Node, Edge>::insert(const Node& node)
 {
-    nodes_.emplace_back(node, AdjacencyList{});
+    nodes_.emplace_back(node, adjacency_list{});
     return node_id{nodes_.size() - 1};
 }
 
@@ -60,7 +60,13 @@ void directed_graph
     if (it != list.end())
         throw directed_graph_exception{"attempted to add existing edge"};
 
-    it->emplace(dest, edge);
+    list.emplace(dest, edge);
+}
+
+template <class Node, class Edge>
+void directed_graph<Node, Edge>::add_edge(node_id source, node_id dest)
+{
+    add_edge(Edge{}, source, dest);
 }
 
 template <class Node, class Edge>

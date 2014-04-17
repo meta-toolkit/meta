@@ -293,7 +293,7 @@ add_executable(search-vocab search-vocab.cpp)
 target_link_libraries(search-vocab meta-index)
 
 add_executable(graph-test graph-test.cpp)
-target_link_libraries(graph-test meta-util)
+target_link_libraries(graph-test meta-io)
 
 enable_testing()
 add_test(analyzers unit-test analyzers)
