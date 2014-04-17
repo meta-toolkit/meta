@@ -250,6 +250,7 @@ double crf::calibrate(parameters params, const std::vector<uint64_t>& indices,
     }
 
     LOG(info) << "Picked learning rate: " << best_eta << ENDLG;
+    reset();
 
     return 1.0 / (params.lambda * best_eta);
 }
@@ -267,9 +268,10 @@ double crf::train(parameters params, const std::vector<sequence>& examples)
 
     params.t0 = calibrate(params, indices, examples);
 
-    double old_loss = std::numeric_limits<double>::max();
-    double loss = old_loss;
-    double delta;
+    std::vector<double> old_loss(params.period);
+
+    double loss = 0;
+    double delta = 0;
     for (uint64_t iter = 1; iter <= params.max_iters; ++iter)
     {
         std::stringstream ss;
@@ -289,9 +291,10 @@ double crf::train(parameters params, const std::vector<sequence>& examples)
         progress.clear();
         ss << "elapsed time=" << time.count() / 1000.0 << "s";
         ss << ", l2norm=" << std::sqrt(l2) << ", loss=" << loss;
+        old_loss[(iter - 1) % params.period] = loss;
         if (iter > params.period)
         {
-            delta = (old_loss - loss) / loss;
+            delta = (old_loss[(iter - 1) % params.period] - loss) / loss;
             ss << ", improvement=" << delta;
             if (iter % params.period == 0)
             {
@@ -305,11 +308,10 @@ double crf::train(parameters params, const std::vector<sequence>& examples)
             }
         }
         LOG(progress) << "\r" << ss.str() << "\n" << ENDLG;
-        old_loss = loss;
-        loss = 0;
+        old_loss[(iter - 1) % params.period] = loss;
     }
     rescale();
-    return old_loss;
+    return loss;
 }
 
 double crf::epoch(parameters params, printing::progress& progress,
