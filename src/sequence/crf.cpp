@@ -197,10 +197,6 @@ double crf::calibrate(parameters params, const std::vector<uint64_t>& indices,
         transition_scores();
         auto fwd = forward(seq);
         auto bwd = backward(seq, fwd);
-
-        auto state_mrg = state_marginals(fwd, bwd);
-        auto trans_mrg = transition_marginals(fwd, bwd);
-
         initial_loss += loss(seq, fwd);
     }
     progress.end();
