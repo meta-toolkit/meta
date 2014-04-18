@@ -297,7 +297,7 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
 };
 }
 
-#define MAKE_IDENTIFIER(ident_name, base_type)                                 \
+#define MAKE_OPAQUE_IDENTIFIER(ident_name, base_type)                          \
     template <class Wrapper>                                                   \
     struct ident_name##_dummy : public meta::util::identifier                  \
                                 <Wrapper, base_type>                           \
@@ -307,7 +307,7 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
     };                                                                         \
     using ident_name = meta::util::hash_wrapper<ident_name##_dummy>;
 
-#define MAKE_NUMERIC_IDENTIFIER(ident_name, base_type)                         \
+#define MAKE_OPAQUE_NUMERIC_IDENTIFIER(ident_name, base_type)                  \
     template <class Wrapper>                                                   \
     struct ident_name##_dummy : public meta::util::numerical_identifier        \
                                 <Wrapper, base_type>                           \
@@ -317,5 +317,20 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
         using meta::util::numerical_identifier<Wrapper, base_type>::operator=; \
     };                                                                         \
     using ident_name = meta::util::hash_wrapper<ident_name##_dummy>;
+
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
+#define MAKE_IDENTIFIER(ident_name, base_type)                                 \
+    MAKE_OPAQUE_IDENTIFIER(ident_name, base_type)
+#else
+#define MAKE_IDENTIFIER(ident_name, base_type) using ident_name = base_type;
+#endif
+
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
+#define MAKE_NUMERIC_IDENTIFIER(ident_name, base_type)                         \
+    MAKE_OPAQUE_NUMERIC_IDENTIFIER(ident_name, base_type)
+#else
+#define MAKE_NUMERIC_IDENTIFIER(ident_name, base_type)                         \
+    using ident_name = base_type;
+#endif
 
 #endif
