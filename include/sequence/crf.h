@@ -14,6 +14,7 @@
 #include "sequence/sequence.h"
 #include "sequence/analyzers/sequence_analyzer.h"
 #include "sequence/trellis.h"
+#include "util/dense_matrix.h"
 #include "util/disk_vector.h"
 
 namespace meta
@@ -96,31 +97,7 @@ class crf
 
     double iteration(parameters params, uint64_t iter, const sequence& seq);
 
-    class double_matrix
-    {
-      public:
-        double_matrix() = default;
-        double_matrix(const double_matrix&) = default;
-        double_matrix(double_matrix&&) = default;
-        double_matrix& operator=(const double_matrix&) = default;
-        double_matrix& operator=(double_matrix&&) = default;
-
-        double_matrix(uint64_t rows, uint64_t columns);
-
-        void resize(uint64_t rows, uint64_t columns);
-
-        double& operator()(uint64_t row, uint64_t column);
-        double operator()(uint64_t row, uint64_t column) const;
-
-        std::vector<double>::iterator begin(uint64_t row);
-        std::vector<double>::const_iterator begin(uint64_t row) const;
-
-        std::vector<double>::iterator end(uint64_t row);
-        std::vector<double>::const_iterator end(uint64_t row) const;
-      private:
-        std::vector<double> storage_;
-        uint64_t columns_;
-    };
+    using double_matrix = util::dense_matrix<double>;
 
     void gradient_observation_expectation(const sequence& seq, double gain);
     void gradient_model_expectation(const sequence& seq, double gain,

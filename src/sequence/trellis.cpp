@@ -13,24 +13,24 @@ namespace sequence
 {
 
 trellis::trellis(uint64_t size, uint64_t labels)
-    : trellis_(size * labels, 0), labels_{labels}
+    : trellis_(size, labels)
 {
     // nothing
 }
 
 uint64_t trellis::size() const
 {
-    return trellis_.size() / labels_;
+    return trellis_.rows();
 }
 
 void trellis::probability(uint64_t idx, const label_id& tag, double prob)
 {
-    trellis_[idx * labels_ + tag] = prob;
+    trellis_(idx, tag) = prob;
 }
 
 double trellis::probability(uint64_t idx, const label_id& tag) const
 {
-    return trellis_[idx * labels_ + tag];
+    return trellis_(idx, tag);
 }
 
 viterbi_trellis::viterbi_trellis(uint64_t size, uint64_t labels)
@@ -63,8 +63,8 @@ double forward_trellis::normalizer(uint64_t idx) const
 
 void forward_trellis::normalize(uint64_t idx)
 {
-    auto beg = trellis_.begin() + idx * labels_;
-    auto end = trellis_.begin() + (idx + 1) * labels_;
+    auto beg = trellis_.begin(idx);
+    auto end = trellis_.end(idx);
     auto sum = std::accumulate(beg, end, 0.0);
     auto normalizer = sum != 0 ? 1.0 / sum : 1;
 

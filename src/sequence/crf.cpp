@@ -19,50 +19,6 @@ namespace meta
 namespace sequence
 {
 
-crf::double_matrix::double_matrix(uint64_t rows, uint64_t columns)
-    : storage_(rows * columns, 0), columns_{columns}
-{
-    // nothing
-}
-
-double& crf::double_matrix::operator()(uint64_t row, uint64_t column)
-{
-    return storage_[row * columns_ + column];
-}
-
-double crf::double_matrix::operator()(uint64_t row, uint64_t column) const
-{
-    return storage_[row * columns_ + column];
-}
-
-void crf::double_matrix::resize(uint64_t rows, uint64_t columns)
-{
-    storage_.resize(rows * columns);
-    std::fill(storage_.begin(), storage_.end(), 0);
-    columns_ = columns;
-}
-
-std::vector<double>::iterator crf::double_matrix::begin(uint64_t row)
-{
-    return storage_.begin() + row * columns_;
-}
-
-std::vector<double>::const_iterator
-    crf::double_matrix::begin(uint64_t row) const
-{
-    return storage_.begin() + row * columns_;
-}
-
-std::vector<double>::iterator crf::double_matrix::end(uint64_t row)
-{
-    return storage_.begin() + (row + 1) * columns_;
-}
-
-std::vector<double>::const_iterator crf::double_matrix::end(uint64_t row) const
-{
-    return storage_.begin() + (row + 1) * columns_;
-}
-
 crf::crf(const std::string& prefix)
     : scale_{1}, prefix_{prefix}
 {
@@ -563,9 +519,9 @@ auto crf::state_marginals(const forward_trellis& fwd,
 {
     double_matrix table{fwd.size(), label_id_mapping_.size()};
 
-    for (uint64_t t = 0; t < fwd.size(); ++t)
+    for (uint64_t t = 0; t < table.rows(); ++t)
     {
-        for (label_id lbl{0}; lbl < label_id_mapping_.size(); ++lbl)
+        for (label_id lbl{0}; lbl < table.columns(); ++lbl)
         {
             table(t, lbl) = fwd.probability(t, lbl) * bwd.probability(t, lbl)
                             * (1.0 / fwd.normalizer(t));
@@ -581,9 +537,9 @@ auto crf::transition_marginals(const forward_trellis& fwd,
 
     for (uint64_t t = 0; t < fwd.size() - 1; ++t)
     {
-        for (label_id lbl{0}; lbl < label_id_mapping_.size(); ++lbl)
+        for (label_id lbl{0}; lbl < table.rows(); ++lbl)
         {
-            for (label_id in{0}; in < label_id_mapping_.size(); ++in)
+            for (label_id in{0}; in < table.columns(); ++in)
             {
                 table(lbl, in) += fwd.probability(t, lbl)
                                   * trans_exp_(lbl, in) * state_exp_(t + 1, in)

@@ -15,6 +15,7 @@
 
 #include "meta.h"
 #include "sequence/observation.h"
+#include "util/dense_matrix.h"
 
 namespace meta
 {
@@ -24,8 +25,7 @@ namespace sequence
 class trellis
 {
   protected:
-    std::vector<double> trellis_;
-    const uint64_t labels_;
+    util::dense_matrix<double> trellis_;
 
   public:
     trellis(uint64_t size, uint64_t labels);
@@ -39,6 +39,7 @@ class trellis
 
 class forward_trellis : public trellis
 {
+  private:
     std::vector<double> normalizers_;
 
   public:
