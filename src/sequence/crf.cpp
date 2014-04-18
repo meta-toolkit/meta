@@ -159,12 +159,14 @@ double& crf::trans_weight(crf_feature_id idx)
 
 auto crf::obs_range(feature_id fid) const -> feature_range
 {
-    return {(*observation_ranges_)[fid], (*observation_ranges_)[fid + 1]};
+    return util::range((*observation_ranges_)[fid],
+                       crf_feature_id{(*observation_ranges_)[fid + 1] - 1});
 }
 
 auto crf::trans_range(label_id lbl) const -> feature_range
 {
-    return {(*transition_ranges_)[lbl], (*transition_ranges_)[lbl + 1]};
+    return util::range((*transition_ranges_)[lbl],
+                       crf_feature_id{(*transition_ranges_)[lbl + 1] - 1});
 }
 
 label_id crf::observation(crf_feature_id fid) const
@@ -356,8 +358,7 @@ void crf::gradient_observation_expectation(const sequence& seq, double gain)
         auto lbl = label(obs.tag());
         for (const auto& pair : obs.features())
         {
-            const auto& range = obs_range(pair.first);
-            for (crf_feature_id idx{range.start}; idx < range.end; ++idx)
+            for (const auto& idx : obs_range(pair.first))
             {
                 if (observation(idx) == lbl)
                 {
@@ -369,8 +370,7 @@ void crf::gradient_observation_expectation(const sequence& seq, double gain)
 
         if (prev)
         {
-            const auto& range = trans_range(*prev);
-            for (crf_feature_id idx{range.start}; idx < range.end; ++idx)
+            for (const auto& idx : trans_range(*prev))
             {
                 if (transition(idx) == lbl)
                 {
@@ -392,8 +392,7 @@ void crf::gradient_model_expectation(const sequence& seq, double gain,
     {
         for (const auto& pair : seq[t].features())
         {
-            const auto& range = obs_range(pair.first);
-            for (crf_feature_id idx{range.start}; idx < range.end; ++idx)
+            for (const auto& idx : obs_range(pair.first))
             {
                 auto lbl = observation(idx);
                 obs_weight(idx) += gain * pair.second * state_mrg(t, lbl);
@@ -403,8 +402,7 @@ void crf::gradient_model_expectation(const sequence& seq, double gain,
 
     for (label_id i{0}; i < label_id_mapping_.size(); ++i)
     {
-        const auto& range = trans_range(i);
-        for (crf_feature_id idx{range.start}; idx < range.end; ++idx)
+        for (const auto& idx : trans_range(i))
         {
             auto j = transition(idx);
             trans_weight(idx) += gain * trans_mrg(i, j);
@@ -421,8 +419,7 @@ void crf::state_scores(const sequence& seq)
         for (const auto& pair : seq[t].features())
         {
             auto value = scale_ * pair.second;
-            const auto& range = obs_range(pair.first);
-            for (crf_feature_id idx{range.start}; idx < range.end; ++idx)
+            for (const auto& idx : obs_range(pair.first))
             {
                 auto lbl = observation(idx);
                 state_(t, lbl) += obs_weight(idx) * value;
@@ -443,8 +440,7 @@ void crf::transition_scores()
     trans_exp_.resize(num_labels, num_labels);
     for (label_id outer{0}; outer < num_labels; ++outer)
     {
-        const auto& range = trans_range(outer);
-        for (crf_feature_id idx{range.start}; idx < range.end; ++idx)
+        for (const auto& idx : trans_range(outer))
             trans_(outer, transition(idx)) = trans_weight(idx) * scale_;
 
         // exponentiate and store in trans_exp_

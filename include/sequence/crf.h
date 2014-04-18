@@ -16,6 +16,7 @@
 #include "sequence/trellis.h"
 #include "util/dense_matrix.h"
 #include "util/disk_vector.h"
+#include "util/range.h"
 
 namespace meta
 {
@@ -62,11 +63,7 @@ class crf
 
   private:
 
-    struct feature_range
-    {
-        const crf_feature_id start;
-        const crf_feature_id end;
-    };
+    using feature_range = util::basic_range<crf_feature_id>;
 
     void initialize(const std::vector<sequence>& examples);
 
