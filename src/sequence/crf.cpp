@@ -291,7 +291,6 @@ double crf::train(parameters params, const std::vector<sequence>& examples)
         progress.clear();
         ss << "elapsed time=" << time.count() / 1000.0 << "s";
         ss << ", l2norm=" << std::sqrt(l2) << ", loss=" << loss;
-        old_loss[(iter - 1) % params.period] = loss;
         if (iter > params.period)
         {
             delta = (old_loss[(iter - 1) % params.period] - loss) / loss;
