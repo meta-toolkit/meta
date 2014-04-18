@@ -12,6 +12,7 @@
 
 #include <stdexcept>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include "meta.h"
 #include "util/optional.h"
@@ -76,9 +77,52 @@ class directed_graph
      */
     uint64_t size() const;
 
+    /**
+     * @param source
+     * @param dest
+     * @return whether the given node is visited
+     */
+    bool edge_visited(node_id source, node_id dest) const;
+
+    /**
+     * @param source
+     * @param dest
+     * @param v
+     */
+    void edge_visited(node_id source, node_id dest, bool v);
+
+    /**
+     * Marks all nodes as not visited.
+     */
+    void reset_edge_visited();
+
+    /**
+     * @param id
+     * @return whether the given node is visited
+     */
+    bool visited(node_id id) const;
+
+    /**
+     * Sets the visited status of id to v
+     * @param id
+     * @param v
+     */
+    void visited(node_id id, bool v);
+
+    /**
+     * Marks all nodes as not visited.
+     */
+    void reset_visited();
+
   private:
     /// Each Node object is indexed by its id.
     std::vector<std::pair<Node, adjacency_list>> nodes_;
+
+    /// Keeps track of whether nodes have been visited for the user.
+    std::unordered_set<node_id> visited_;
+
+    /// Keeps track of whether edges have been visited for the user.
+    std::unordered_set<std::string> edge_visited_;
 };
 
 /**

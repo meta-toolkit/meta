@@ -74,5 +74,61 @@ uint64_t directed_graph<Node, Edge>::size() const
 {
     return nodes_.size();
 }
+
+template <class Node, class Edge>
+bool directed_graph<Node, Edge>::visited(node_id id) const
+{
+    return visited_.find(id) != visited_.end();
+}
+
+template <class Node, class Edge>
+void directed_graph<Node, Edge>::visited(node_id id, bool v)
+{
+    if (v)
+        visited_.insert(id);
+    else
+        visited_.erase(id);
+}
+
+template <class Node, class Edge>
+void directed_graph<Node, Edge>::reset_visited()
+{
+    visited_.clear();
+}
+
+template <class Node, class Edge>
+bool directed_graph
+    <Node, Edge>::edge_visited(node_id source, node_id dest) const
+{
+    auto key = std::to_string(source) + "_" + std::to_string(dest);
+    return edge_visited_.find(key) != edge_visited_.end();
+}
+
+template <class Node, class Edge>
+void directed_graph
+    <Node, Edge>::edge_visited(node_id source, node_id dest, bool v)
+{
+    if (v)
+    {
+        edge_visited_.insert(std::to_string(source) + "_"
+                             + std::to_string(dest));
+        if (edge(source, dest))
+            edge_visited_.insert(std::to_string(dest) + "_"
+                                 + std::to_string(source));
+    }
+    else
+    {
+        edge_visited_.erase(std::to_string(source) + "_"
+                            + std::to_string(dest));
+        edge_visited_.erase(std::to_string(dest) + "_"
+                            + std::to_string(source));
+    }
+}
+
+template <class Node, class Edge>
+void directed_graph<Node, Edge>::reset_edge_visited()
+{
+    edge_visited_.clear();
+}
 }
 }
