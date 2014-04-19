@@ -295,6 +295,9 @@ target_link_libraries(search-vocab meta-index)
 add_executable(graph-test graph-test.cpp)
 target_link_libraries(graph-test meta-io)
 
+add_executable(allpairs allpairs.cpp)
+target_link_libraries(allpairs meta-index)
+
 enable_testing()
 add_test(analyzers unit-test analyzers)
 set_tests_properties(analyzers PROPERTIES TIMEOUT 10)
