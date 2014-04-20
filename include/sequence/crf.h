@@ -16,6 +16,7 @@
 #include "sequence/trellis.h"
 #include "util/dense_matrix.h"
 #include "util/disk_vector.h"
+#include "util/optional.h"
 #include "util/range.h"
 
 namespace meta
@@ -63,7 +64,28 @@ class crf
 
   private:
 
+    using double_matrix = util::dense_matrix<double>;
     using feature_range = util::basic_range<crf_feature_id>;
+
+    class scorer
+    {
+      public:
+        void score(const crf& model, const sequence& seq);
+
+        double state(uint64_t time, label_id lbl) const;
+        double state_exp(uint64_t time, label_id lbl) const;
+        double trans(label_id from, label_id to) const;
+        double trans_exp(label_id from, label_id to) const;
+
+      private:
+        void transition_scores(const crf& model);
+        void state_scores(const crf& model, const sequence& seq);
+        double_matrix state_;
+        double_matrix state_exp_;
+        double_matrix trans_;
+        double_matrix trans_exp_;
+    };
+    friend scorer;
 
     void initialize(const std::vector<sequence>& examples);
 
@@ -94,17 +116,12 @@ class crf
 
     double iteration(parameters params, uint64_t iter, const sequence& seq);
 
-    using double_matrix = util::dense_matrix<double>;
 
     void gradient_observation_expectation(const sequence& seq, double gain);
     void gradient_model_expectation(const sequence& seq, double gain,
                                     const double_matrix& state_mrg,
                                     const double_matrix& trans_mrg);
 
-
-    void state_scores(const sequence& seq);
-
-    void transition_scores();
 
     forward_trellis forward(const sequence& seq) const;
 
@@ -173,11 +190,7 @@ class crf
     util::invertible_map<tag_t, label_id> label_id_mapping_;
 
     double scale_;
-
-    double_matrix state_;
-    double_matrix state_exp_;
-    double_matrix trans_;
-    double_matrix trans_exp_;
+    scorer scorer_;
 
     const std::string& prefix_;
 };

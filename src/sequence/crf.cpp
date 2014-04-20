@@ -19,6 +19,74 @@ namespace meta
 namespace sequence
 {
 
+void crf::scorer::score(const crf& model, const sequence& seq)
+{
+    transition_scores(model);
+    state_scores(model, seq);
+}
+
+void crf::scorer::transition_scores(const crf& model)
+{
+    auto num_labels = model.label_id_mapping_.size();
+    trans_.resize(num_labels, num_labels);
+    trans_exp_.resize(num_labels, num_labels);
+    for (label_id outer{0}; outer < num_labels; ++outer)
+    {
+        for (const auto& idx : model.trans_range(outer))
+            trans_(outer, model.transition(idx)) = model.trans_weight(idx)
+                                                   * model.scale_;
+
+        // exponentiate and store in trans_exp_
+        std::transform(trans_.begin(outer), trans_.end(outer),
+                       trans_exp_.begin(outer), [](double val)
+        { return std::exp(val); });
+    }
+}
+
+void crf::scorer::state_scores(const crf& model, const sequence& seq)
+{
+    auto num_labels = model.label_id_mapping_.size();
+    state_.resize(seq.size(), num_labels);
+    state_exp_.resize(seq.size(), num_labels);
+    for (uint64_t t = 0; t < seq.size(); ++t)
+    {
+        for (const auto& pair : seq[t].features())
+        {
+            auto value = model.scale_ * pair.second;
+            for (const auto& idx : model.obs_range(pair.first))
+            {
+                auto lbl = model.observation(idx);
+                state_(t, lbl) += model.obs_weight(idx) * value;
+            }
+        }
+
+        // exponentiate and store in state_exp_
+        std::transform(state_.begin(t), state_.end(t),
+                       state_exp_.begin(t), [](double val)
+        { return std::exp(val); });
+    }
+}
+
+double crf::scorer::state(uint64_t time, label_id lbl) const
+{
+    return state_(time, lbl);
+}
+
+double crf::scorer::state_exp(uint64_t time, label_id lbl) const
+{
+    return state_exp_(time, lbl);
+}
+
+double crf::scorer::trans(label_id from, label_id to) const
+{
+    return trans_(from, to);
+}
+
+double crf::scorer::trans_exp(label_id from, label_id to) const
+{
+    return trans_exp_(from, to);
+}
+
 crf::crf(const std::string& prefix)
     : scale_{1}, prefix_{prefix}
 {
@@ -195,8 +263,7 @@ double crf::calibrate(parameters params, const std::vector<uint64_t>& indices,
         progress(idx);
 
         const auto& seq = examples[samples[idx]];
-        state_scores(seq);
-        transition_scores();
+        scorer_.score(*this, seq);
         auto fwd = forward(seq);
         auto bwd = backward(seq, fwd);
         initial_loss += loss(seq, fwd);
@@ -336,8 +403,7 @@ double crf::iteration(parameters params, uint64_t iter,
     scale_ *= (1 - params.lambda * lr);
     auto gain = lr / scale_;
 
-    state_scores(seq);
-    transition_scores();
+    scorer_.score(*this, seq);
     auto fwd = forward(seq);
     auto bwd = backward(seq, fwd);
 
@@ -410,45 +476,7 @@ void crf::gradient_model_expectation(const sequence& seq, double gain,
     }
 }
 
-void crf::state_scores(const sequence& seq)
-{
-    state_.resize(seq.size(), label_id_mapping_.size());
-    state_exp_.resize(seq.size(), label_id_mapping_.size());
-    for (uint64_t t = 0; t < seq.size(); ++t)
-    {
-        for (const auto& pair : seq[t].features())
-        {
-            auto value = scale_ * pair.second;
-            for (const auto& idx : obs_range(pair.first))
-            {
-                auto lbl = observation(idx);
-                state_(t, lbl) += obs_weight(idx) * value;
-            }
-        }
 
-        // exponentiate and store in state_exp_
-        std::transform(state_.begin(t), state_.end(t),
-                       state_exp_.begin(t), [](double val)
-        { return std::exp(val); });
-    }
-}
-
-void crf::transition_scores()
-{
-    auto num_labels = label_id_mapping_.size();
-    trans_.resize(num_labels, num_labels);
-    trans_exp_.resize(num_labels, num_labels);
-    for (label_id outer{0}; outer < num_labels; ++outer)
-    {
-        for (const auto& idx : trans_range(outer))
-            trans_(outer, transition(idx)) = trans_weight(idx) * scale_;
-
-        // exponentiate and store in trans_exp_
-        std::transform(trans_.begin(outer), trans_.end(outer),
-                       trans_exp_.begin(outer), [](double val)
-        { return std::exp(val); });
-    }
-}
 
 forward_trellis crf::forward(const sequence& seq) const
 {
@@ -456,7 +484,7 @@ forward_trellis crf::forward(const sequence& seq) const
 
     // initialize first column of trellis
     for (label_id lbl{0}; lbl < label_id_mapping_.size(); ++lbl)
-        table.probability(0, lbl, state_exp_(0, lbl));
+        table.probability(0, lbl, scorer_.state_exp(0, lbl));
     // normalize to avoid underflow
     table.normalize(0);
 
@@ -465,11 +493,12 @@ forward_trellis crf::forward(const sequence& seq) const
     {
         for (label_id lbl{0}; lbl < label_id_mapping_.size(); ++lbl)
         {
-            auto score = state_exp_(t ,lbl);
+            auto score = scorer_.state_exp(t ,lbl);
             double sum = 0;
             for (label_id in{0}; in < label_id_mapping_.size(); ++in)
             {
-                sum += table.probability(t - 1, in) * trans_exp_(in, lbl);
+                sum += table.probability(t - 1, in)
+                       * scorer_.trans_exp(in, lbl);
             }
             table.probability(t, lbl, score * sum);
         }
@@ -500,8 +529,8 @@ trellis crf::backward(const sequence& seq, const forward_trellis& fwd) const
             double sum = 0;
             for (label_id j{0}; j < label_id_mapping_.size(); ++j)
             {
-                sum += table.probability(t, j) * state_exp_(t, j)
-                       * trans_exp_(i, j);
+                sum += table.probability(t, j) * scorer_.state_exp(t, j)
+                       * scorer_.trans_exp(i, j);
             }
             table.probability(t - 1, i, fwd.normalizer(t - 1) * sum);
         }
@@ -538,7 +567,8 @@ auto crf::transition_marginals(const forward_trellis& fwd,
             for (label_id in{0}; in < table.columns(); ++in)
             {
                 table(lbl, in) += fwd.probability(t, lbl)
-                                  * trans_exp_(lbl, in) * state_exp_(t + 1, in)
+                                  * scorer_.trans_exp(lbl, in)
+                                  * scorer_.state_exp(t + 1, in)
                                   * bwd.probability(t + 1, in);
             }
         }
@@ -554,9 +584,9 @@ double crf::loss(const sequence& seq, const forward_trellis& fwd)
     for (uint64_t t = 0; t < seq.size(); ++t)
     {
         auto curr = label(seq[t].tag());
-        score += state_(t, curr);
+        score += scorer_.state(t, curr);
         if (prev)
-            score += trans_(*prev, curr);
+            score += scorer_.trans(*prev, curr);
 
         // factor in log normalizer: log(Z(x)) = - \sum_t log(scale[t])
         // and loss = -score(x) + log(Z(x)), so we add on log(scale[t])
