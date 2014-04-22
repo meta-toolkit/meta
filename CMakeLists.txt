@@ -292,8 +292,8 @@ target_link_libraries(print-vocab meta-index)
 add_executable(search-vocab search-vocab.cpp)
 target_link_libraries(search-vocab meta-index)
 
-add_executable(graph-test graph-test.cpp)
-target_link_libraries(graph-test meta-io)
+add_executable(path-predict path-predict.cpp)
+target_link_libraries(path-predict meta-io)
 
 add_executable(allpairs allpairs.cpp)
 target_link_libraries(allpairs meta-index)
