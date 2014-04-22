@@ -67,6 +67,7 @@ void sequence_analyzer::save()
     printing::progress progress{" > Saving feature mapping: ",
                                 feature_id_mapping_.size()};
     std::ofstream output{prefix_ + "/feature.mapping", std::ios::binary};
+    io::write_binary(output, feature_id_mapping_.size());
     uint64_t i = 0;
     for (const auto& pair : feature_id_mapping_)
     {
