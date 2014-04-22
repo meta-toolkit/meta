@@ -1,5 +1,5 @@
 /**
- * @file sequence.cpp
+ * @file observation.cpp
  * @author Chase Geigle
  */
 
@@ -34,6 +34,13 @@ const tag_t& observation::tag() const
     throw exception{"no tag for this observation"};
 }
 
+const label_id& observation::label() const
+{
+    if (label_)
+        return *label_;
+    throw exception{"no label for this observation"};
+}
+
 void observation::symbol(symbol_t sym)
 {
     symbol_ = std::move(sym);
@@ -42,6 +49,11 @@ void observation::symbol(symbol_t sym)
 void observation::tag(tag_t t)
 {
     tag_ = std::move(t);
+}
+
+void observation::label(label_id lbl)
+{
+    label_ = std::move(lbl);
 }
 
 bool observation::tagged() const

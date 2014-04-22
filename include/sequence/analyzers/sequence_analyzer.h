@@ -63,6 +63,8 @@ class sequence_analyzer
 
     const std::string& prefix() const;
 
+    const util::invertible_map<tag_t, label_id>& labels() const;
+
     template <class Function>
     void add_observation_function(Function&& function)
     {

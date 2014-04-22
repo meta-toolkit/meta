@@ -1,5 +1,5 @@
 /**
- * @file sequence.h
+ * @file observation.h
  * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 
+#include "meta.h"
 #include "util/identifiers.h"
 #include "util/optional.h"
 
@@ -21,7 +22,7 @@ namespace sequence
 {
 
 MAKE_IDENTIFIER(symbol_t, std::string)
-MAKE_IDENTIFIER(tag_t, std::string)
+MAKE_IDENTIFIER(tag_t, std::string);
 MAKE_IDENTIFIER(feature_id, uint64_t)
 
 /**
@@ -58,6 +59,12 @@ class observation
     const tag_t& tag() const;
 
     /**
+     * @throw exception if there is no label
+     * @return the label for this observation
+     */
+    const label_id& label() const;
+
+    /**
      * Sets the current symbol
      * @param sym The new symbol for this observation
      */
@@ -68,6 +75,12 @@ class observation
      * @param t The new tag for this observation
      */
     void tag(tag_t t);
+
+    /**
+     * Sets the current label.
+     * @param t The new label for this observation
+     */
+    void label(label_id lbl);
 
     /**
      * @return whether or not this observation is tagged
@@ -98,6 +111,8 @@ class observation
     symbol_t symbol_;
     /// The tag for this observation, if it exists
     util::optional<tag_t> tag_;
+    /// The label_id for this observation's tag, if it exists
+    util::optional<label_id> label_;
     /// The features for this observation
     feature_vector features_;
 };

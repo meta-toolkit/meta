@@ -51,6 +51,7 @@ class forward_trellis : public trellis
 
 class viterbi_trellis : public trellis
 {
+  private:
     std::vector<std::unordered_map<tag_t, tag_t>> paths_;
 
   public:

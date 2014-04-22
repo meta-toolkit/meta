@@ -84,8 +84,12 @@ void sequence_analyzer::analyze(sequence& sequence)
         collector coll{this, &sequence[t]};
         for (const auto& fn : obs_fns_)
             fn(sequence, t, coll);
-        label_id id(label_id_mapping_.size());
-        label_id_mapping_.insert(sequence[t].tag(), id);
+        if (!label_id_mapping_.contains_key(sequence[t].tag()))
+        {
+            label_id id(label_id_mapping_.size());
+            label_id_mapping_.insert(sequence[t].tag(), id);
+        }
+        sequence[t].label(label_id_mapping_.get_value(sequence[t].tag()));
     }
 }
 
@@ -123,6 +127,11 @@ sequence_analyzer::collector::~collector()
 const std::string& sequence_analyzer::prefix() const
 {
     return prefix_;
+}
+
+const util::invertible_map<tag_t, label_id>& sequence_analyzer::labels() const
+{
+    return label_id_mapping_;
 }
 
 void sequence_analyzer::collector::add(const std::string& feature,

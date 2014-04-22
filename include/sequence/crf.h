@@ -62,6 +62,8 @@ class crf
 
     void reset();
 
+    uint64_t num_labels() const;
+
   private:
 
     using double_matrix = util::dense_matrix<double>;
@@ -72,18 +74,46 @@ class crf
       public:
         void score(const crf& model, const sequence& seq);
 
+        void forward();
+        void backward();
+        void marginals();
+
+        void viterbi();
+
         double state(uint64_t time, label_id lbl) const;
         double state_exp(uint64_t time, label_id lbl) const;
         double trans(label_id from, label_id to) const;
         double trans_exp(label_id from, label_id to) const;
 
+        double forward(uint64_t time, label_id lbl) const;
+        double backward(uint64_t time, label_id lbl) const;
+
+        double state_marginal(uint64_t time, label_id lbl) const;
+        double trans_marginal(label_id from, label_id to) const;
+
+        double loss(const sequence& seq) const;
+
+        class exception : public std::runtime_error
+        {
+            using std::runtime_error::runtime_error;
+        };
+
       private:
         void transition_scores(const crf& model);
         void state_scores(const crf& model, const sequence& seq);
+
+        void transition_marginals();
+        void state_marginals();
+
         double_matrix state_;
         double_matrix state_exp_;
         double_matrix trans_;
         double_matrix trans_exp_;
+
+        util::optional<forward_trellis> fwd_;
+        util::optional<trellis> bwd_;
+        util::optional<double_matrix> state_mrg_;
+        util::optional<double_matrix> trans_mrg_;
     };
     friend scorer;
 
@@ -95,8 +125,6 @@ class crf
      */
     double calibrate(parameters params, const std::vector<uint64_t>& indices,
                      const std::vector<sequence>& examples);
-
-    label_id label(tag_t tag);
 
     const double& obs_weight(crf_feature_id idx) const;
     double& obs_weight(crf_feature_id idx);
@@ -112,28 +140,14 @@ class crf
 
     double epoch(parameters params, printing::progress& progress,
                  uint64_t iter, const std::vector<uint64_t>& indices,
-                 const std::vector<sequence>& examples);
+                 const std::vector<sequence>& examples, scorer& scorer);
 
-    double iteration(parameters params, uint64_t iter, const sequence& seq);
-
+    double iteration(parameters params, uint64_t iter, const sequence& seq,
+                     scorer& scorer);
 
     void gradient_observation_expectation(const sequence& seq, double gain);
     void gradient_model_expectation(const sequence& seq, double gain,
-                                    const double_matrix& state_mrg,
-                                    const double_matrix& trans_mrg);
-
-
-    forward_trellis forward(const sequence& seq) const;
-
-    trellis backward(const sequence& seq, const forward_trellis& fwd) const;
-
-    double_matrix state_marginals(const forward_trellis& fwd,
-                                  const trellis& bwd) const;
-
-    double_matrix transition_marginals(const forward_trellis& fwd,
-                                       const trellis& bwd) const;
-
-    double loss(const sequence& seq, const forward_trellis& fwd);
+                                    const scorer& scr);
 
     double l2norm() const;
 
@@ -186,11 +200,8 @@ class crf
      */
     util::optional<util::disk_vector<double>> transition_weights_;
 
-    /// The label_id mapping (tag_t to label_id)
-    util::invertible_map<tag_t, label_id> label_id_mapping_;
-
     double scale_;
-    scorer scorer_;
+    uint64_t num_labels_;
 
     const std::string& prefix_;
 };
