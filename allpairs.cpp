@@ -22,8 +22,19 @@ template <class Doc>
 double cosine(const Doc& one, const Doc& two, double one_size, double two_size)
 {
     double num = 0.0;
+    auto two_counts = two->counts();
+    uint64_t two_idx = 0;
     for (auto& term : one->counts())
-        num += term.second * two->count(term.first);
+    {
+        while (two_idx < two_counts.size() && two_counts[two_idx].first
+                                              != term.first)
+            ++two_idx;
+
+        if (two_idx >= two_counts.size())
+            break;
+
+        num += term.second * two_counts[two_idx].second;
+    }
 
     return num / (one_size * two_size);
 }

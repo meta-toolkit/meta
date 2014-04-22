@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <algorithm>
 #include "util/progress.h"
 
 namespace meta
@@ -14,7 +15,7 @@ namespace algorithm
 template <class Graph>
 metapath_measures
     <Graph>::metapath_measures(Graph& g, const metapath_t& metapath)
-    : g_{g}, metapath_{metapath}
+    : g_(g), metapath_{metapath}
 {/* nothing */
 }
 

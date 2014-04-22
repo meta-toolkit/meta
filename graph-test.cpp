@@ -49,10 +49,10 @@ void measure(graph::directed_graph<graph::dblp_node>& g,
     { return a.second > b.second; };
     std::priority_queue
         <pair_t, std::vector<pair_t>, decltype(pair_comp)> pq{pair_comp};
-    // for (auto& m1 : m.path_count())
+    for (auto& m1 : m.path_count())
     // for (auto& m1 : m.normalized_path_count())
     // for (auto& m1 : m.random_walk())
-    for (auto& m1 : m.symmetric_random_walk())
+    // for (auto& m1 : m.symmetric_random_walk())
     {
         for (auto& m2 : m1.second)
         {
@@ -87,12 +87,13 @@ int main()
     graph::directed_graph<graph::dblp_node> g;
     // std::string prefix = "../data/mini-dblp/"; // testing
     std::string prefix = "/home/sean/projects/meta-data/dblp/"; // testing
-    graph::dblp_loader::load(g, prefix);
+    //graph::dblp_loader::load(g, prefix);
+    graph::dblp_loader::load(g, prefix, 2009, 2011);
     stats(g);
     // measure(g, {"author", "paper", "paper", "paper", "author"});
     // measure(g, {"author", "paper", "paper", "author"});
     // measure(g, {"author", "paper", "author", "paper", "author"});
-    // measure(g, {"author", "paper", "venue", "paper", "author"});
+    measure(g, {"author", "paper", "venue", "paper", "author"});
     // measure(g, {"author", "paper", "term", "paper", "author"});
-    measure(g, {"author", "paper", "author"});
+    // measure(g, {"author", "paper", "author"});
 }
