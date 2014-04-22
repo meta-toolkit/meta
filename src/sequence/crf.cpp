@@ -706,7 +706,7 @@ void crf::tagger::tag(sequence& seq)
 {
     auto trellis = scorer_.viterbi(seq);
 
-    auto lbls = util::range(label_id{0}, label_id{num_labels_ - 1});
+    auto lbls = util::range(label_id{0}, label_id(num_labels_ - 1));
     auto last_lbl = functional::argmax(lbls.begin(), lbls.end(),
                                       [&](label_id lbl)
     {
