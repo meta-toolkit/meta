@@ -146,6 +146,8 @@ class crf
   private:
     void initialize(const std::vector<sequence>& examples);
 
+    void load_model();
+
     /**
      * Determines a good initial setting for the learning rate. Based on
      * Leon Bottou's SGD implementation.

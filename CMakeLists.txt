@@ -307,6 +307,9 @@ target_link_libraries(crf-feat-gen meta-sequence)
 add_executable(crf-train crf-train.cpp)
 target_link_libraries(crf-train meta-sequence)
 
+add_executable(crf-test crf-test.cpp)
+target_link_libraries(crf-test meta-sequence meta-classify)
+
 enable_testing()
 add_test(analyzers unit-test analyzers)
 set_tests_properties(analyzers PROPERTIES TIMEOUT 10)

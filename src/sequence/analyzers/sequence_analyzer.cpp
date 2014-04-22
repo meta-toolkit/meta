@@ -82,7 +82,7 @@ void sequence_analyzer::analyze(sequence& sequence)
 {
     for (uint64_t t = 0; t < sequence.size(); ++t)
     {
-        collector coll{this, &sequence[t]};
+        default_collector coll{this, &sequence[t]};
         for (const auto& fn : obs_fns_)
             fn(sequence, t, coll);
         if (!label_id_mapping_.contains_key(sequence[t].tag()))
@@ -92,6 +92,26 @@ void sequence_analyzer::analyze(sequence& sequence)
         }
         sequence[t].label(label_id_mapping_.get_value(sequence[t].tag()));
     }
+}
+
+void sequence_analyzer::analyze(sequence& sequence) const
+{
+    for (uint64_t t = 0; t < sequence.size(); ++t)
+    {
+        const_collector coll{this, &sequence[t]};
+        for (const auto& fn : obs_fns_)
+            fn(sequence, t, coll);
+
+        if (!label_id_mapping_.contains_key(sequence[t].tag()))
+        {
+            sequence[t].label(label_id(label_id_mapping_.size()));
+        }
+        else
+        {
+            sequence[t].label(label_id_mapping_.get_value(sequence[t].tag()));
+        }
+    }
+
 }
 
 feature_id sequence_analyzer::feature(const std::string& feature)
@@ -104,25 +124,17 @@ feature_id sequence_analyzer::feature(const std::string& feature)
     return feature_id{sze};
 }
 
+feature_id sequence_analyzer::feature(const std::string& feature) const
+{
+    auto it = feature_id_mapping_.find(feature);
+    if (it != feature_id_mapping_.end())
+        return it->second;
+    return feature_id{feature_id_mapping_.size()};
+}
+
 uint64_t sequence_analyzer::num_features() const
 {
     return feature_id_mapping_.size();
-}
-
-sequence_analyzer::collector::collector(sequence_analyzer* analyzer,
-                                        observation* obs)
-    : analyzer_{analyzer}, obs_{obs}
-{
-    // nothing
-}
-
-sequence_analyzer::collector::~collector()
-{
-    using pair = std::pair<feature_id, double>;
-    std::sort(feats_.begin(), feats_.end(), [](const pair& lhs, const pair& rhs)
-    { return lhs.first < rhs.first; });
-
-    obs_->features(std::move(feats_));
 }
 
 const std::string& sequence_analyzer::prefix() const
@@ -135,19 +147,12 @@ const util::invertible_map<tag_t, label_id>& sequence_analyzer::labels() const
     return label_id_mapping_;
 }
 
-void sequence_analyzer::collector::add(const std::string& feature,
-                                       double amount)
-{
-    auto fid = analyzer_->feature(feature);
-    feats_.emplace_back(fid, amount);
-}
-
 label_id sequence_analyzer::label(tag_t lbl) const
 {
     return label_id_mapping_.get_value(lbl);
 }
 
-tag_t sequence_analyzer::label(label_id lbl) const
+tag_t sequence_analyzer::tag(label_id lbl) const
 {
     return label_id_mapping_.get_key(lbl);
 }

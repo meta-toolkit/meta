@@ -273,7 +273,32 @@ viterbi_trellis crf::viterbi_scorer::viterbi(const sequence& seq)
 crf::crf(const std::string& prefix)
     : scale_{1}, prefix_{prefix}
 {
-    filesystem::make_directory(prefix_);
+    if (filesystem::file_exists(prefix_ + "/observation_ranges.vector"))
+        load_model();
+    else
+        filesystem::make_directory(prefix_);
+}
+
+void crf::load_model()
+{
+    // ranges
+    observation_ranges_ = util::disk_vector<crf_feature_id>{
+        prefix_ + "/observation_ranges.vector"};
+    transition_ranges_ = util::disk_vector<crf_feature_id>{
+        prefix_ + "/transition_ranges.vector"};
+
+    // observations
+    observation_weights_ =
+        util::disk_vector<double>{prefix_ + "/observation_weights.vector"};
+    observations_ =
+        util::disk_vector<label_id>{prefix_ + "/observations.vector"};
+
+    // transitions
+    transition_weights_ =
+        util::disk_vector<double>{prefix_ + "/transition_weights.vector"};
+    transitions_ = util::disk_vector<label_id>{prefix_ + "/transitions.vector"};
+
+    num_labels_ = transition_ranges_->size() - 1;
 }
 
 void crf::initialize(const std::vector<sequence>& examples)
@@ -317,8 +342,6 @@ void crf::initialize(const std::vector<sequence>& examples)
     uint64_t id = 0;
     for (const auto& pair : obs_feats)
     {
-        if (id++ != pair.first)
-            throw std::runtime_error{"wat"};
         (*observation_ranges_)[pair.first] = obs_size;
         obs_size += pair.second.size();
     }
@@ -344,8 +367,6 @@ void crf::initialize(const std::vector<sequence>& examples)
     id = 0;
     for (const auto& pair : trans_feats)
     {
-        if (id++ != pair.first)
-            throw std::runtime_error{"wat_trans"};
         (*transition_ranges_)[pair.first] = trans_size;
         trans_size += pair.second.size();
     }
@@ -687,7 +708,7 @@ void crf::tagger::tag(sequence& seq)
 {
     auto trellis = scorer_.viterbi(seq);
 
-    auto lbls = util::range<label_id>(0, num_labels_ - 1);
+    auto lbls = util::range(label_id{0}, label_id{num_labels_ - 1});
     auto last_lbl = functional::argmax(lbls.begin(), lbls.end(),
                                       [&](label_id lbl)
     {

@@ -10,6 +10,7 @@
 #ifndef META_SEQUENCE_SEQUENCE_ANALYZER_H_
 #define META_SEQUENCE_SEQUENCE_ANALYZER_H_
 
+#include <algorithm>
 #include <vector>
 #include <functional>
 #include <unordered_map>
@@ -52,13 +53,28 @@ class sequence_analyzer
     ~sequence_analyzer();
     void save();
 
+    // analyzes a sequence, generating new label_ids and feature_ids for
+    // unseen elements
     void analyze(sequence& sequence);
 
+    // analyzes a sequence, but ignores any new label_ids or feature_ids.
+    // Used for analyzing test items, for example, so that existing models
+    // don't need to special case unseen feature ids.
+    void analyze(sequence& sequence) const;
+
+    // looks up the feature id for the given string representation. If one
+    // doesn't exist, it will assign the next feature_id to this string
     feature_id feature(const std::string& feature);
+
+    // looks up the feature_id for the given string represntation. If one
+    // doesn't exist, it will simply assign the next feature_id to the
+    // string, but it will not remember the assignment.
+    feature_id feature(const std::string& feature) const;
+
     uint64_t num_features() const;
 
     label_id label(tag_t lbl) const;
-    tag_t label(label_id lbl) const;
+    tag_t tag(label_id lbl) const;
     uint64_t num_labels() const;
 
     const std::string& prefix() const;
@@ -74,13 +90,72 @@ class sequence_analyzer
     class collector
     {
       public:
-        collector(sequence_analyzer* analyzer, observation* obs);
-        ~collector();
-        void add(const std::string& feature, double amount);
-      private:
-        sequence_analyzer* analyzer_;
+        collector(observation* obs) : obs_{obs}
+        {
+            // nothing
+        }
+
+        ~collector()
+        {
+            using pair = std::pair<feature_id, double>;
+            std::sort(feats_.begin(), feats_.end(),
+                      [](const pair& lhs, const pair& rhs)
+            { return lhs.first < rhs.first; });
+
+            obs_->features(std::move(feats_));
+        }
+
+        virtual void add(const std::string& feat, double amount)
+        {
+            feats_.emplace_back(feature(feat), amount);
+        }
+
+      protected:
+        virtual feature_id feature(const std::string& feat) = 0;
+
         observation* obs_;
         observation::feature_vector feats_;
+    };
+
+    template <class Analyzer>
+    class basic_collector : public collector
+    {
+      public:
+        basic_collector(Analyzer* analyzer, observation* obs)
+            : collector{obs}, analyzer_{analyzer}
+        {
+            // nothing
+        }
+
+      protected:
+        Analyzer* analyzer_;
+
+        virtual feature_id feature(const std::string& feat)
+        {
+            return analyzer_->feature(feat);
+        }
+
+    };
+
+    class default_collector : public basic_collector<sequence_analyzer>
+    {
+      public:
+        using basic_collector<sequence_analyzer>::basic_collector;
+    };
+
+    class const_collector : public basic_collector<const sequence_analyzer>
+    {
+        public:
+          using basic_collector<const sequence_analyzer>::basic_collector;
+
+          // special case add to not actually add if a brand new feature id
+          // is found
+          virtual void add(const std::string& feat, double amount)
+          {
+              auto fid = feature(feat);
+              if (fid != analyzer_->num_features())
+                  feats_.emplace_back(fid, amount);
+          }
     };
 
   private:

@@ -1,13 +1,9 @@
 #include <iostream>
 
-#include "logging/logger.h"
-#include "sequence/sequence.h"
-#include "util/progress.h"
-#include "sequence/analyzers/sequence_analyzer.h"
 #include "sequence/crf.h"
 #include "sequence/io/ptb_parser.h"
-#include "util/filesystem.h"
 #include "cpptoml.h"
+#include "classify/confusion_matrix.h"
 
 using namespace meta;
 
@@ -66,10 +62,10 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto train_sections = crf_grp->get_array("train-sections");
+    auto train_sections = crf_grp->get_array("test-sections");
     if (!train_sections)
     {
-        LOG(fatal) << "[crf] group must contain train-sections" << ENDLG;
+        LOG(fatal) << "[crf] group must contain test-sections" << ENDLG;
         return 1;
     }
 
@@ -83,7 +79,7 @@ int main(int argc, char** argv)
     std::string path =
         *prefix + "/" + *treebank + "/treebank-2/tagged/" + *corpus;
 
-    std::vector<sequence::sequence> training;
+    std::vector<sequence::sequence> testing;
     {
         auto begin = train_sections->at(0)->as<int64_t>()->value();
         auto end = train_sections->at(1)->as<int64_t>()->value();
@@ -99,27 +95,47 @@ int main(int argc, char** argv)
                 auto filename = path + "/" + folder + "/" + file;
                 auto sequences = sequence::extract_sequences(filename);
                 for (auto & seq : sequences)
-                    training.emplace_back(std::move(seq));
+                    testing.emplace_back(std::move(seq));
             }
         }
     }
 
-    filesystem::make_directory("crf");
-    auto analyzer = sequence::default_pos_analyzer("crf");
+    // const is *super important* here! This signals that we want the
+    // analyzer to be analyzing in "test mode", meaning that it will not
+    // generate new feature_ids while analyzing the sequences. This is
+    // exactly what we want when running a CRF to actually perform tagging.
+    const auto analyzer = sequence::default_pos_analyzer("crf");
     {
         printing::progress progress{" > Generating features: ",
-                                    training.size()};
+                                    testing.size()};
         uint64_t idx = 0;
-        for (auto& seq : training)
+        for (auto& seq : testing)
         {
             progress(++idx);
             analyzer.analyze(seq);
         }
     }
-    analyzer.save();
 
+    // load the model
     sequence::crf crf{*crf_prefix};
-    crf.train({}, training);
+
+    // make a tagger
+    auto tagger = crf.make_tagger();
+
+    // run the tagger on every sequence, measuring statistics for
+    // token-level accuracy, F1, etc.
+    classify::confusion_matrix matrix;
+    for (auto& seq : testing)
+    {
+        tagger.tag(seq);
+        for (const auto& obs : seq)
+        {
+            auto tag = analyzer.tag(obs.label());
+            matrix.add(class_label{tag}, class_label{obs.tag()}, 1);
+        }
+    }
+    matrix.print();
+    matrix.print_stats();
 
     return 0;
 }
