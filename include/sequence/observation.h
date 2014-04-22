@@ -22,7 +22,7 @@ namespace sequence
 {
 
 MAKE_IDENTIFIER(symbol_t, std::string)
-MAKE_IDENTIFIER(tag_t, std::string);
+MAKE_IDENTIFIER(tag_t, std::string)
 MAKE_IDENTIFIER(feature_id, uint64_t)
 
 /**
