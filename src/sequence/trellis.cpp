@@ -34,20 +34,21 @@ double trellis::probability(uint64_t idx, const label_id& tag) const
 }
 
 viterbi_trellis::viterbi_trellis(uint64_t size, uint64_t labels)
-    : trellis{size, labels}, paths_(size)
+    : trellis{size, labels}, paths_{size, labels}
 {
     // nothing
 }
 
-void viterbi_trellis::previous_tag(uint64_t idx, const tag_t& current,
-                                   const tag_t& previous)
+void viterbi_trellis::previous_tag(uint64_t idx, const label_id& current,
+                                   const label_id& previous)
 {
-    paths_[idx][current] = previous;
+    paths_(idx, current) = previous;
 }
 
-const tag_t& viterbi_trellis::previous_tag(uint64_t idx, const tag_t& current)
+const label_id& viterbi_trellis::previous_tag(uint64_t idx,
+                                              const label_id& current) const
 {
-    return paths_[idx][current];
+    return paths_(idx, current);
 }
 
 forward_trellis::forward_trellis(uint64_t size, uint64_t labels)

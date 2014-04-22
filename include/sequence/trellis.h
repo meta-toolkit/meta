@@ -52,15 +52,15 @@ class forward_trellis : public trellis
 class viterbi_trellis : public trellis
 {
   private:
-    std::vector<std::unordered_map<tag_t, tag_t>> paths_;
+    util::dense_matrix<label_id> paths_;
 
   public:
     viterbi_trellis(uint64_t size, uint64_t labels);
 
-    void previous_tag(uint64_t idx, const tag_t& current,
-                      const tag_t& previous);
+    void previous_tag(uint64_t idx, const label_id& current,
+                      const label_id& previous);
 
-    const tag_t& previous_tag(uint64_t idx, const tag_t& current);
+    const label_id& previous_tag(uint64_t idx, const label_id& current) const;
 };
 }
 }

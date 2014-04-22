@@ -54,11 +54,13 @@ class crf
         uint64_t calibration_trials = 10;
     };
 
+    class tagger;
+
     crf(const std::string& prefix);
 
     double train(parameters params, const std::vector<sequence>& examples);
 
-    void tag(sequence& seq);
+    tagger make_tagger() const;
 
     void reset();
 
@@ -72,13 +74,19 @@ class crf
     class scorer
     {
       public:
+        // finds both transition and state scores, in logarithm and
+        // exponential domains
         void score(const crf& model, const sequence& seq);
+
+        // finds just the transition scores in the logarithm domain
+        void transition_scores(const crf& model);
+
+        // finds just the state scores in the logarithm domain
+        void state_scores(const crf& model, const sequence& seq);
 
         void forward();
         void backward();
         void marginals();
-
-        void viterbi();
 
         double state(uint64_t time, label_id lbl) const;
         double state_exp(uint64_t time, label_id lbl) const;
@@ -99,9 +107,6 @@ class crf
         };
 
       private:
-        void transition_scores(const crf& model);
-        void state_scores(const crf& model, const sequence& seq);
-
         void transition_marginals();
         void state_marginals();
 
@@ -117,6 +122,28 @@ class crf
     };
     friend scorer;
 
+    class viterbi_scorer
+    {
+      public:
+        viterbi_scorer(const crf& model);
+        viterbi_trellis viterbi(const sequence& seq);
+      private:
+        scorer scorer_;
+        const crf* model_;
+    };
+
+  public:
+    class tagger
+    {
+      public:
+        tagger(const crf& model);
+        void tag(sequence& seq);
+      private:
+        viterbi_scorer scorer_;
+        uint64_t num_labels_;
+    };
+
+  private:
     void initialize(const std::vector<sequence>& examples);
 
     /**
