@@ -240,9 +240,15 @@ add_library(meta-sequence
             src/sequence/observation.cpp
             src/sequence/io/ptb_parser.cpp
             src/sequence/analyzers/sequence_analyzer.cpp
-            src/sequence/trellis.cpp
-            src/sequence/crf.cpp)
+            src/sequence/trellis.cpp)
 target_link_libraries(meta-sequence meta-util)
+
+add_library(meta-crf
+            src/sequence/crf/crf.cpp
+            src/sequence/crf/scorer.cpp
+            src/sequence/crf/tagger.cpp
+            src/sequence/crf/viterbi_scorer.cpp)
+target_link_libraries(meta-crf meta-sequence)
 
 add_library(meta-testing
             src/test/classifier_test.cpp
@@ -305,10 +311,10 @@ add_executable(crf-feat-gen crf-feat-gen.cpp)
 target_link_libraries(crf-feat-gen meta-sequence)
 
 add_executable(crf-train crf-train.cpp)
-target_link_libraries(crf-train meta-sequence)
+target_link_libraries(crf-train meta-crf)
 
 add_executable(crf-test crf-test.cpp)
-target_link_libraries(crf-test meta-sequence meta-classify)
+target_link_libraries(crf-test meta-crf meta-classify)
 
 enable_testing()
 add_test(analyzers unit-test analyzers)

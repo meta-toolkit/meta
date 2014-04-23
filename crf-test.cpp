@@ -1,6 +1,7 @@
 #include <iostream>
 
-#include "sequence/crf.h"
+#include "sequence/crf/crf.h"
+#include "sequence/crf/tagger.h"
 #include "sequence/io/ptb_parser.h"
 #include "cpptoml.h"
 #include "classify/confusion_matrix.h"

@@ -4,7 +4,7 @@
 #include "sequence/sequence.h"
 #include "util/progress.h"
 #include "sequence/analyzers/sequence_analyzer.h"
-#include "sequence/crf.h"
+#include "sequence/crf/crf.h"
 #include "sequence/io/ptb_parser.h"
 #include "util/filesystem.h"
 #include "cpptoml.h"
