@@ -178,7 +178,7 @@ sequence_analyzer default_pos_analyzer(const std::string& prefix)
     sequence_analyzer analyzer{prefix};
 
     // current word features
-    analyzer.add_observation_function([](sequence& seq, uint64_t t,
+    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
                                          sequence_analyzer::collector& coll)
     {
         std::string word = seq[t].symbol();
@@ -188,7 +188,7 @@ sequence_analyzer default_pos_analyzer(const std::string& prefix)
     });
 
     // previous word features
-    analyzer.add_observation_function([](sequence& seq, uint64_t t,
+    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
                                          sequence_analyzer::collector& coll)
     {
         std::string word = seq[t].symbol();
@@ -208,7 +208,7 @@ sequence_analyzer default_pos_analyzer(const std::string& prefix)
     });
 
     // next word features
-    analyzer.add_observation_function([](sequence& seq, uint64_t t,
+    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
                                          sequence_analyzer::collector& coll)
     {
         auto nextword = std::string{"-END-"};

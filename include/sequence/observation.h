@@ -32,6 +32,7 @@ MAKE_IDENTIFIER(feature_id, uint64_t)
 class observation
 {
   public:
+    /// internal feature vector for observations
     using feature_vector = std::vector<std::pair<feature_id, double>>;
 
     /**

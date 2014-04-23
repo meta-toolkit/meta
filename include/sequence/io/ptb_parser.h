@@ -17,8 +17,11 @@ namespace sequence
 {
 
 /**
- * Reads a Penn Treebank formatted "combined" file, extracting the
- * POS-tagged sequences from it by parsing the trees.
+ * Reads a Penn Treebank formatted part of speech tagged file and returns
+ * a set of sequences parsed from it.
+ *
+ * @param filename The name of the file to be parsed
+ * @return all of the sequences that were parsed from the given file
  */
 std::vector<sequence> extract_sequences(const std::string& filename);
 
