@@ -177,13 +177,13 @@ double& crf::trans_weight(crf_feature_id idx)
 auto crf::obs_range(feature_id fid) const -> feature_range
 {
     return util::range((*observation_ranges_)[fid],
-                       crf_feature_id{(*observation_ranges_)[fid + 1] - 1});
+                       crf_feature_id((*observation_ranges_)[fid + 1] - 1));
 }
 
 auto crf::trans_range(label_id lbl) const -> feature_range
 {
     return util::range((*transition_ranges_)[lbl],
-                       crf_feature_id{(*transition_ranges_)[lbl + 1] - 1});
+                       crf_feature_id((*transition_ranges_)[lbl + 1] - 1));
 }
 
 label_id crf::observation(crf_feature_id fid) const
