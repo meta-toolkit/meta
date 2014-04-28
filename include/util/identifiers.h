@@ -29,13 +29,19 @@ struct numeric
 
 /**
  * Helper class that allows the wrapped type to be hashed into standard
- * library continers such as unordered_map or unordered_set.
+ * library containers such as unordered_map or unordered_set.
  */
 template <template <class> class Wrapped>
 struct hash_wrapper : public Wrapped<hash_wrapper<Wrapped>>
 {
     using Wrapped<hash_wrapper>::Wrapped;
     using Wrapped<hash_wrapper>::operator=;
+
+    hash_wrapper() = default;
+    hash_wrapper(const hash_wrapper&) = default;
+    hash_wrapper(hash_wrapper&&) = default;
+    hash_wrapper& operator=(const hash_wrapper&) = default;
+    hash_wrapper& operator=(hash_wrapper&&) = default;
 };
 
 /**
@@ -70,6 +76,11 @@ struct identifier : public comparable<identifier<Derived, T>>
      * identifiers may be copy constructed.
      */
     identifier(const identifier&) = default;
+
+    /**
+     * identifiers may be move constructed.
+     */
+    identifier(identifier&&) = default;
 
     /**
      * identifiers may be copy assigned.
