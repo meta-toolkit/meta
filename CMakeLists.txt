@@ -307,9 +307,6 @@ target_link_libraries(print-vocab meta-index)
 add_executable(search-vocab search-vocab.cpp)
 target_link_libraries(search-vocab meta-index)
 
-add_executable(crf-feat-gen crf-feat-gen.cpp)
-target_link_libraries(crf-feat-gen meta-sequence)
-
 add_executable(crf-train crf-train.cpp)
 target_link_libraries(crf-train meta-crf)
 
