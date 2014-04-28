@@ -1,5 +1,4 @@
 #include <fstream>
-#include <regex>
 
 #include "logging/logger.h"
 #include "sequence/io/ptb_parser.h"
@@ -9,10 +8,21 @@ namespace meta
 namespace sequence
 {
 
+namespace
+{
+bool is_paragraph_divider(const std::string& str)
+{
+    auto pos = str.find("=====");
+    if (pos != 0)
+        return false;
+    if (str[str.size() - 1] != '=')
+        return false;
+    return true;
+}
+}
+
 std::vector<sequence> extract_sequences(const std::string& filename)
 {
-    std::regex regex{"=====+\\s*$"};
-
     std::vector<sequence> results;
     std::ifstream file{filename};
     std::string line;
@@ -31,7 +41,7 @@ std::vector<sequence> extract_sequences(const std::string& filename)
         }
 
         // paragraph divider
-        if (std::regex_match(line, regex))
+        if (is_paragraph_divider(line))
         {
             if (seq.size() > 0)
                 results.emplace_back(std::move(seq));
