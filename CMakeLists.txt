@@ -241,7 +241,7 @@ add_library(meta-sequence
             src/sequence/io/ptb_parser.cpp
             src/sequence/analyzers/sequence_analyzer.cpp
             src/sequence/trellis.cpp)
-target_link_libraries(meta-sequence meta-util)
+target_link_libraries(meta-sequence meta-util meta-utf)
 
 add_library(meta-crf
             src/sequence/crf/crf.cpp
