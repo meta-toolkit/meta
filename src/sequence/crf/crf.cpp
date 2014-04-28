@@ -6,8 +6,8 @@
 #include <algorithm>
 #include <random>
 #include <numeric>
-#include <unordered_set>
 #include <map>
+#include <set>
 #include "sequence/crf/crf.h"
 #include "sequence/crf/scorer.h"
 #include "util/mapping.h"
@@ -53,8 +53,8 @@ void crf::load_model()
 
 void crf::initialize(const std::vector<sequence>& examples)
 {
-    std::map<feature_id, std::unordered_set<label_id>> obs_feats;
-    std::map<label_id, std::unordered_set<label_id>> trans_feats;
+    std::map<feature_id, std::set<label_id>> obs_feats;
+    std::map<label_id, std::set<label_id>> trans_feats;
 
     {
         printing::progress progress{" > Feature generation: ", examples.size()};
