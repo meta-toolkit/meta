@@ -40,7 +40,7 @@ viterbi_trellis crf::viterbi_scorer::viterbi(const sequence& seq)
             for (label_id in{0}; in < model_->num_labels(); ++in)
             {
                 auto score = table.probability(t - 1, in)
-                             + scorer_.trans(lbl, in);
+                             + scorer_.trans(in, lbl);
 
                 if (score > max_score)
                 {
