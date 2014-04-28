@@ -132,7 +132,7 @@ int main(int argc, char** argv)
         for (const auto& obs : seq)
         {
             auto tag = analyzer.tag(obs.label());
-            matrix.add(class_label{tag}, class_label{obs.tag()}, 1);
+            matrix.add(class_label{tag}, class_label{obs.tag()});
         }
     }
     matrix.print();
