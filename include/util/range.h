@@ -194,6 +194,11 @@ class basic_range
         // nothing
     }
 
+    basic_range(const basic_range&) = default;
+    basic_range(basic_range&&) = default;
+    basic_range& operator=(const basic_range&) = default;
+    basic_range& operator=(basic_range&&) = default;
+
     /**
      * Defaulted destructor.
      */

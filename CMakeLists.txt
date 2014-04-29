@@ -235,6 +235,21 @@ add_library(meta-topics
             src/topics/parallel_lda_gibbs.cpp)
 target_link_libraries(meta-topics meta-index)
 
+add_library(meta-sequence
+            src/sequence/sequence.cpp
+            src/sequence/observation.cpp
+            src/sequence/io/ptb_parser.cpp
+            src/sequence/analyzers/sequence_analyzer.cpp
+            src/sequence/trellis.cpp)
+target_link_libraries(meta-sequence meta-util meta-utf)
+
+add_library(meta-crf
+            src/sequence/crf/crf.cpp
+            src/sequence/crf/scorer.cpp
+            src/sequence/crf/tagger.cpp
+            src/sequence/crf/viterbi_scorer.cpp)
+target_link_libraries(meta-crf meta-sequence)
+
 add_library(meta-testing
             src/test/classifier_test.cpp
             src/test/forward_index_test.cpp
@@ -291,6 +306,12 @@ target_link_libraries(print-vocab meta-index)
 
 add_executable(search-vocab search-vocab.cpp)
 target_link_libraries(search-vocab meta-index)
+
+add_executable(crf-train crf-train.cpp)
+target_link_libraries(crf-train meta-crf)
+
+add_executable(crf-test crf-test.cpp)
+target_link_libraries(crf-test meta-crf meta-classify)
 
 enable_testing()
 add_test(analyzers unit-test analyzers)

@@ -37,3 +37,12 @@ alpha = 1.0
 beta = 1.0
 topics = 4
 model-prefix = "lda-model"
+
+[crf]
+prefix = "crf"
+treebank = "penn-treebank" # relative to data prefix
+corpus = "wsj"
+section-size = 99
+train-sections = [0, 18]
+dev-sections = [19, 21]
+test-sections = [22, 24]

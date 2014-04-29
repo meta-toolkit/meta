@@ -29,13 +29,19 @@ struct numeric
 
 /**
  * Helper class that allows the wrapped type to be hashed into standard
- * library continers such as unordered_map or unordered_set.
+ * library containers such as unordered_map or unordered_set.
  */
 template <template <class> class Wrapped>
 struct hash_wrapper : public Wrapped<hash_wrapper<Wrapped>>
 {
     using Wrapped<hash_wrapper>::Wrapped;
     using Wrapped<hash_wrapper>::operator=;
+
+    hash_wrapper() = default;
+    hash_wrapper(const hash_wrapper&) = default;
+    hash_wrapper(hash_wrapper&&) = default;
+    hash_wrapper& operator=(const hash_wrapper&) = default;
+    hash_wrapper& operator=(hash_wrapper&&) = default;
 };
 
 /**
@@ -70,6 +76,11 @@ struct identifier : public comparable<identifier<Derived, T>>
      * identifiers may be copy constructed.
      */
     identifier(const identifier&) = default;
+
+    /**
+     * identifiers may be move constructed.
+     */
+    identifier(identifier&&) = default;
 
     /**
      * identifiers may be copy assigned.
@@ -297,7 +308,7 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
 };
 }
 
-#define MAKE_IDENTIFIER(ident_name, base_type)                                 \
+#define MAKE_OPAQUE_IDENTIFIER(ident_name, base_type)                          \
     template <class Wrapper>                                                   \
     struct ident_name##_dummy : public meta::util::identifier                  \
                                 <Wrapper, base_type>                           \
@@ -307,7 +318,7 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
     };                                                                         \
     using ident_name = meta::util::hash_wrapper<ident_name##_dummy>;
 
-#define MAKE_NUMERIC_IDENTIFIER(ident_name, base_type)                         \
+#define MAKE_OPAQUE_NUMERIC_IDENTIFIER(ident_name, base_type)                  \
     template <class Wrapper>                                                   \
     struct ident_name##_dummy : public meta::util::numerical_identifier        \
                                 <Wrapper, base_type>                           \
@@ -317,5 +328,20 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
         using meta::util::numerical_identifier<Wrapper, base_type>::operator=; \
     };                                                                         \
     using ident_name = meta::util::hash_wrapper<ident_name##_dummy>;
+
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
+#define MAKE_IDENTIFIER(ident_name, base_type)                                 \
+    MAKE_OPAQUE_IDENTIFIER(ident_name, base_type)
+#else
+#define MAKE_IDENTIFIER(ident_name, base_type) using ident_name = base_type;
+#endif
+
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
+#define MAKE_NUMERIC_IDENTIFIER(ident_name, base_type)                         \
+    MAKE_OPAQUE_NUMERIC_IDENTIFIER(ident_name, base_type)
+#else
+#define MAKE_NUMERIC_IDENTIFIER(ident_name, base_type)                         \
+    using ident_name = base_type;
+#endif
 
 #endif

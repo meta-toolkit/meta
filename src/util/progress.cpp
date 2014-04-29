@@ -112,6 +112,11 @@ void progress::end()
         LOG(progress) << '\n' << ENDLG;
 }
 
+void progress::clear() const
+{
+    LOG(progress) << '\r' << std::string(80, ' ') << '\r' << ENDLG;
+}
+
 progress::~progress()
 {
     if (!finished_)
