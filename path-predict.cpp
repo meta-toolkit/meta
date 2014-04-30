@@ -34,9 +34,8 @@ std::unordered_map<std::pair<node_id, node_id>, corpus::document>
 {
     using node_pair = std::pair<node_id, node_id>;
     std::unordered_map<node_pair, corpus::document> docs;
-    graph::algorithm::metapath_measures
-        <Graph> measures{g, {"author", "paper", "author", "paper", "author"}};
-    // g, {"author", "paper", "author", "paper", "author", "paper", "author"}};
+    graph::algorithm::metapath_measures<Graph> measures{
+        g, graph::metapath{"author -- paper -- author -- paper -- author"}};
     for (auto& srcp : measures.path_count())
     {
         for (auto& destp : srcp.second)
@@ -75,7 +74,7 @@ template <class Graph>
 bool coauthors(Graph& g, node_id one, node_id two)
 {
     graph::algorithm::metapath_measures
-        <Graph> measures{g, {"author", "paper", "author"}};
+        <Graph> measures{g, graph::metapath{"author -- paper -- author"}};
     typename graph::algorithm::metapath_measures<Graph>::measure_result res;
     measures.bfs_match(one, one, res, 0);
     auto map = res[one];
@@ -91,24 +90,24 @@ bool coauthors(Graph& g, node_id one, node_id two)
 template <class Graph>
 std::vector<corpus::document> create_docs(Graph& g)
 {
-    std::unordered_map<std::string, std::vector<std::string>> metapaths
-        = {{"A-P-V-P-A", {"author", "paper", "venue", "paper", "author"}},
-           {"A-P->P->P-A", {"author", "paper", "paper", "paper", "author"}},
-           {"A-P->P-A", {"author", "paper", "paper", "author"}},
-           {"A-P-A-P-A", {"author", "paper", "author", "paper", "author"}}};
+    std::vector<graph::metapath> metapaths
+        = {graph::metapath{"author -- paper -- venue -- paper -- author"},
+           graph::metapath{"author -- paper -> paper -> paper -- author"},
+           graph::metapath{"author -- paper -> paper -- author"},
+           graph::metapath{"author -- paper -- author -- paper -- author"}};
 
     using node_pair = std::pair<node_id, node_id>;
     std::unordered_map<node_pair, corpus::document> docs = three_hop_authors(g);
-    for (auto& metapath : metapaths)
+    for (auto& mpath : metapaths)
     {
-        std::cout << "Adding metapath feature " << metapath.first << std::endl;
-        graph::algorithm::metapath_measures<Graph> measures{g, metapath.second};
+        std::cout << "Adding metapath feature " << mpath.text() << std::endl;
+        graph::algorithm::metapath_measures<Graph> measures{g, mpath};
         auto pc = measures.path_count();
         for (auto& p : docs)
         {
             auto source = p.first.first;
             auto dest = p.first.second;
-            p.second.increment(metapath.first, pc[source][dest]);
+            p.second.increment(mpath.text(), pc[source][dest]);
         }
     }
 
@@ -121,7 +120,7 @@ std::vector<corpus::document> create_docs(Graph& g)
         auto src = p.first.first;
         auto dest = p.first.second;
         // only add pairs that are not currently co-authors
-        if(!coauthors(g, src, dest))
+        if (!coauthors(g, src, dest))
         {
             // save mapping
             ret_docs.push_back(p.second);
@@ -152,7 +151,7 @@ int main(int argc, char* argv[])
 
     graph::directed_graph<graph::dblp_node> g_after;
     graph::dblp_loader::load(g_after, prefix, 2006, 2012);
-    //set_labels(before_docs, g_after);
+    // set_labels(before_docs, g_after);
 
-    //write_dataset(before_docs);
+    // write_dataset(before_docs);
 }

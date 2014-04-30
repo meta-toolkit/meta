@@ -14,8 +14,8 @@ namespace algorithm
 {
 template <class Graph>
 metapath_measures
-    <Graph>::metapath_measures(Graph& g, const metapath_t& metapath)
-    : g_(g), metapath_{metapath}
+    <Graph>::metapath_measures(Graph& g, const metapath& mpath)
+    : g_(g), mpath_{mpath}
 {/* nothing */
 }
 
@@ -37,9 +37,9 @@ template <class Graph>
 auto metapath_measures<Graph>::symmetric_random_walk() -> measure_result
 {
     auto pc_fwd = random_walk();
-    std::reverse(metapath_.begin(), metapath_.end());
-    auto pc_bwd = random_walk(); // TODO assumes symmetric
-    std::reverse(metapath_.begin(), metapath_.end());
+    mpath_.reverse();
+    auto pc_bwd = random_walk();
+    mpath_.reverse(); // undo previous reverse
 
     measure_result result;
     for (auto& fwd : pc_fwd)
@@ -75,9 +75,9 @@ template <class Graph>
 auto metapath_measures<Graph>::normalized_path_count() -> measure_result
 {
     auto pc_fwd = path_count();
-    std::reverse(metapath_.begin(), metapath_.end());
-    auto pc_bwd = path_count(); // TODO assumes symmetric
-    std::reverse(metapath_.begin(), metapath_.end());
+    mpath_.reverse();
+    auto pc_bwd = path_count();
+    mpath_.reverse(); // undo previous reverse
 
     measure_result result;
     for (auto& fwd : pc_fwd)
@@ -111,15 +111,23 @@ void metapath_measures<Graph>::bfs_match(node_id orig_id, node_id id,
 {
     auto node = g_.node(id);
     // if at end of path
-    if (depth == metapath_.size() - 1)
+    if (depth == mpath_.size() - 1)
     {
-        if (node.type == metapath_.back() && id != orig_id)
+        if (node.type == mpath_[depth] && id != orig_id)
             ++result[orig_id][id];
     }
-    else if (node.type == metapath_[depth])
+    else if (node.type == mpath_[depth])
     {
-        for (auto& p : g_.adjacent(id))
-            bfs_match(orig_id, p.first, result, depth + 1);
+        if (mpath_.edge_dir(depth) == metapath::direction::backward)
+        {
+            for (auto& p : g_.incoming(id))
+                bfs_match(orig_id, p, result, depth + 1);
+        }
+        else
+        {
+            for (auto& p : g_.outgoing(id))
+                bfs_match(orig_id, p.first, result, depth + 1);
+        }
     }
 }
 }

@@ -9,12 +9,22 @@ namespace graph
 {
 template <class Node, class Edge>
 auto directed_graph
-    <Node, Edge>::adjacent(node_id id) const -> const adjacency_list &
+    <Node, Edge>::outgoing(node_id id) const -> const adjacency_list &
 {
     if (id >= size())
         throw directed_graph_exception{"node_id out of range"};
 
     return nodes_[id].second;
+}
+
+template <class Node, class Edge>
+const std::unordered_set<node_id>& directed_graph
+    <Node, Edge>::incoming(node_id id) const
+{
+    if (id >= size())
+        throw directed_graph_exception{"node_id out of range"};
+
+    return incoming_.at(id);
 }
 
 template <class Node, class Edge>
@@ -69,16 +79,6 @@ template <class Node, class Edge>
 void directed_graph<Node, Edge>::add_edge(node_id source, node_id dest)
 {
     add_edge(Edge{}, source, dest);
-}
-
-template <class Node, class Edge>
-std::unordered_set<node_id> directed_graph
-    <Node, Edge>::incoming(node_id id) const
-{
-    if(id >= size())
-        throw directed_graph_exception{"node_id out of range"};
-
-    return incoming_.at(id);
 }
 
 template <class Node, class Edge>

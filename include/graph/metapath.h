@@ -41,8 +41,8 @@ class metapath
      * Constructor.
      * @param str The string representation of the metapath.
      * The string must contain whitespace delimited nodes with edges between
-     * each node. Typically, a node is a capital letter. Edges are either "--",
-     * "->", or "<-" to represent directions.
+     * each node. Typically, a node is a word or single capital letter. Edges
+     * are either "--", "->", or "<-" to represent directions.
      */
     metapath(const std::string& str);
 

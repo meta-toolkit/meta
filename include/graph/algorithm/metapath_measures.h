@@ -9,6 +9,8 @@
 #ifndef META_METAPATH_MEASURES_H_
 #define META_METAPATH_MEASURES_H_
 
+#include "graph/metapath.h"
+
 namespace meta
 {
 namespace graph
@@ -21,13 +23,12 @@ class metapath_measures
   public:
     using measure_result = std::unordered_map
         <node_id, std::unordered_map<node_id, double>>;
-    using metapath_t = std::vector<std::string>;
 
     /**
      * @param g
      * @param metapath
      */
-    metapath_measures(Graph& g, const metapath_t& metapath);
+    metapath_measures(Graph& g, const metapath& mpath);
 
     /**
      * Performs the PathCount measure function on all pairs of nodes.
@@ -68,7 +69,6 @@ class metapath_measures
      */
     measure_result symmetric_random_walk();
 
-  private:
     /**
      * @param orig_id
      * @param id
@@ -78,6 +78,7 @@ class metapath_measures
     void bfs_match(node_id orig_id, node_id id, measure_result& result,
                    uint64_t depth);
 
+  private:
     /**
      * @param id
      * @param result
@@ -88,7 +89,7 @@ class metapath_measures
     Graph& g_;
 
     /// The metapath to use.
-    metapath_t metapath_;
+    metapath mpath_;
 };
 }
 }

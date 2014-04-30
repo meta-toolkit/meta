@@ -33,10 +33,16 @@ class directed_graph
     using adjacency_list = std::unordered_map<node_id, Edge>;
 
     /**
-     * @param id
-     * @return the adjacent edges and node_ids to the given node
+     * @param id The node id to get outgoing nodes from
+     * @return the outgoing edges and node_ids to the given node
      */
-    const adjacency_list& adjacent(node_id id) const;
+    const adjacency_list& outgoing(node_id id) const;
+
+    /**
+     * @param id The node id to get incoming nodes to
+     * @return a collection of node_ids that are incoming to the parameter node
+     */
+    const std::unordered_set<node_id>& incoming(node_id id) const;
 
     /**
      * @param id
@@ -70,12 +76,6 @@ class directed_graph
      * @param dest
      */
     void add_edge(node_id source, node_id dest);
-
-    /**
-     * @param id The node id to get incoming nodes to
-     * @return a collection of node_ids that are incoming to the parameter node
-     */
-    std::unordered_set<node_id> incoming(node_id id) const;
 
     /**
      * @return the size of this graph (number of nodes), which is the
