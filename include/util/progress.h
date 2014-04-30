@@ -66,6 +66,11 @@ class progress
      */
     void end();
 
+    /**
+     * Clears the last line the progress bar wrote.
+     */
+    void clear() const;
+
   private:
     /// The prefix for the progress report message.
     std::string prefix_;

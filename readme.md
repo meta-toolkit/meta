@@ -32,9 +32,9 @@ Software](http://jmlr.org/mloss/).
 
 ## Build Status (by branch)
 - master: [![Build
-  Status](https://travis-ci.org/meta-toolkit/meta.png?branch=master)](https://travis-ci.org/meta-toolkit/meta)
+  Status](https://travis-ci.org/meta-toolkit/meta.svg?branch=master)](https://travis-ci.org/meta-toolkit/meta)
 - develop: [![Build
-  Status](https://travis-ci.org/meta-toolkit/meta.png?branch=develop)](https://travis-ci.org/meta-toolkit/meta)
+  Status](https://travis-ci.org/meta-toolkit/meta.svg?branch=develop)](https://travis-ci.org/meta-toolkit/meta)
 
 ## Project setup
 
