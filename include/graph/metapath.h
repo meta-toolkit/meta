@@ -59,6 +59,16 @@ class metapath
     direction edge_dir(uint64_t idx) const;
 
     /**
+     * Reverses the metapath stored in this object.
+     */
+    void reverse();
+
+    /**
+     * @return the string version of this metapath
+     */
+    std::string text() const;
+
+    /**
      * @return the number of nodes in this metapath
      */
     uint64_t size() const;
@@ -69,6 +79,9 @@ class metapath
 
     /// The metapath transisitions
     std::vector<direction> trans_;
+
+    /// The string version of this metapath
+    std::string text_;
 };
 
 /**

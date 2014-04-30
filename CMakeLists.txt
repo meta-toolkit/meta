@@ -266,6 +266,7 @@ add_library(meta-testing
             src/test/analyzer_test.cpp
             src/test/filter_test.cpp
             src/test/compression_test.cpp
+            src/test/metapath_test.cpp
             src/test/vocabulary_map_test.cpp)
 target_link_libraries(meta-testing meta-index meta-classify)
 
@@ -279,7 +280,7 @@ add_executable(online-classify online-classify.cpp)
 target_link_libraries(online-classify meta-classify)
 
 add_executable(unit-test unit-test.cpp)
-target_link_libraries(unit-test meta-testing meta-classify meta-index)
+target_link_libraries(unit-test meta-testing meta-classify meta-index meta-graph)
 
 add_executable(query-runner query-runner.cpp)
 target_link_libraries(query-runner meta-index)
@@ -347,6 +348,8 @@ add_test(ir-eval unit-test ir-eval)
 set_tests_properties(ir-eval PROPERTIES TIMEOUT 10)
 add_test(compression unit-test compression)
 set_tests_properties(compression PROPERTIES TIMEOUT 10)
+add_test(metapath unit-test metapath)
+set_tests_properties(metapath PROPERTIES TIMEOUT 10)
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf

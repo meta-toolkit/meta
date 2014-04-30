@@ -19,6 +19,7 @@
 #include "test/parallel_test.h"
 #include "test/ir_eval_test.h"
 #include "test/compression_test.h"
+#include "test/metapath_test.h"
 #include "util/printing.h"
 
 using namespace meta;
@@ -43,6 +44,7 @@ int main(int argc, char* argv[])
         std::cerr << " \"rankers\": runs ranker tests" << std::endl;
         std::cerr << " \"ir-eval\": runs IR evaluation tests" << std::endl;
         std::cerr << " \"compression\": runs compression reading and writing tests" << std::endl;
+        std::cerr << " \"metapath\": runs metapath tests" << std::endl;
         return 1;
     }
 
@@ -76,6 +78,8 @@ int main(int argc, char* argv[])
         num_failed += testing::ir_eval_tests();
     if (all || args.find("compression") != args.end())
         num_failed += testing::compression_tests();
+    if (all || args.find("metapath") != args.end())
+        num_failed += testing::metapath_tests();
 
     return num_failed;
 }
