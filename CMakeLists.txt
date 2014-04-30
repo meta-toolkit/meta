@@ -136,6 +136,9 @@ add_library(meta-io
             src/io/mmap_file.cpp)
 target_link_libraries(meta-io meta-util)
 
+add_library(meta-graph
+            src/graph/metapath.cpp)
+
 add_library(meta-corpus
             src/corpus/document.cpp
             src/corpus/file_corpus.cpp
@@ -293,7 +296,7 @@ add_executable(search-vocab search-vocab.cpp)
 target_link_libraries(search-vocab meta-index)
 
 add_executable(path-predict path-predict.cpp)
-target_link_libraries(path-predict meta-io)
+target_link_libraries(path-predict meta-io meta-corpus meta-graph)
 
 add_executable(allpairs allpairs.cpp)
 target_link_libraries(allpairs meta-index)
