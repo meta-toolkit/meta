@@ -26,6 +26,9 @@ double cosine(const Doc& one, const Doc& two, double one_size, double two_size)
     uint64_t two_idx = 0;
     for (auto& term : one->counts())
     {
+        if(term.first == 0 || term.first == 1)
+            continue; // skip <s> and </s>
+
         while (two_idx < two_counts.size() && two_counts[two_idx].first
                                               != term.first)
             ++two_idx;
@@ -79,7 +82,8 @@ int main(int argc, char* argv[])
             double score = cosine(one, two, sizes[i], sizes[j]);
             std::lock_guard<std::mutex> lock{mtx};
             prog(done++);
-            out << i << " " << j << " " << score << std::endl;
+            if(score > 0.025)
+                out << i << " " << j << " " << score << std::endl;
         }
     });
 }
