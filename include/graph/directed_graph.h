@@ -72,6 +72,12 @@ class directed_graph
     void add_edge(node_id source, node_id dest);
 
     /**
+     * @param id The node id to get incoming nodes to
+     * @return a collection of node_ids that are incoming to the parameter node
+     */
+    std::unordered_set<node_id> incoming(node_id id) const;
+
+    /**
      * @return the size of this graph (number of nodes), which is the
      * range for a valid node_id
      */
@@ -115,8 +121,17 @@ class directed_graph
     void reset_visited();
 
   private:
-    /// Each Node object is indexed by its id.
+    /**
+     * Each Node object is indexed by its id. This keeps track of outgoing
+     * edges.
+     */
     std::vector<std::pair<Node, adjacency_list>> nodes_;
+
+    /**
+     * Each Node object is indexed by its id. This structure keeps track of
+     * incoming nodes to a specific node_id.
+     */
+    std::vector<std::unordered_set<node_id>> incoming_;
 
     /// Keeps track of whether nodes have been visited for the user.
     std::unordered_set<node_id> visited_;
