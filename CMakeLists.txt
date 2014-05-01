@@ -137,7 +137,10 @@ add_library(meta-io
 target_link_libraries(meta-io meta-util)
 
 add_library(meta-graph
+            src/graph/dblp_loader.cpp
+            src/graph/algorithm/path_predict.cpp
             src/graph/metapath.cpp)
+target_link_libraries(meta-graph meta-corpus)
 
 add_library(meta-corpus
             src/corpus/document.cpp
@@ -312,7 +315,7 @@ add_executable(search-vocab search-vocab.cpp)
 target_link_libraries(search-vocab meta-index)
 
 add_executable(path-predict path-predict.cpp)
-target_link_libraries(path-predict meta-io meta-corpus meta-graph)
+target_link_libraries(path-predict meta-graph)
 
 add_executable(allpairs allpairs.cpp)
 target_link_libraries(allpairs meta-index)
