@@ -3,6 +3,8 @@
  * @author Sean Massung
  */
 
+#include "cpptoml.h"
+#include "logging/logger.h"
 #include "graph/algorithm/path_predict.h"
 
 namespace meta
@@ -14,10 +16,47 @@ namespace algorithm
 
 path_predict::path_predict(const std::string& config_file)
 {
-    std::string prefix = "/home/sean/projects/meta-data/dblp/";
-    dblp_loader::load(g_before_, prefix, 0, 2005);
+    auto config = cpptoml::parse_file(config_file);
+    auto prefix = config.get_as<std::string>("prefix");
+    if (!prefix)
+        throw path_predict_exception{"prefix missing from config"};
+
+    auto dataset = config.get_as<std::string>("dataset");
+    if (!dataset)
+        throw path_predict_exception{"dataset missing from config"};
+
+    auto path = *prefix + "/" + *dataset + "/";
+
+    auto group = config.get_group("path-predict");
+    if (!group)
+        throw path_predict_exception{
+            "\"path-predict\" group missing from config"};
+
+    auto t0_end = group->get_as<int64_t>("t0-end");
+    if (!t0_end)
+        throw path_predict_exception{"t0-end missing from path-predict config "
+                                     "(this is the only time required)"};
+
+    uint64_t t0_start = 0;
+    if (auto time = group->get_as<int64_t>("t0-start"))
+        t0_start = *time;
+
+    uint64_t t1_start = *t0_end + 1;
+    if (auto time = group->get_as<int64_t>("t1-start"))
+        t1_start = *time;
+
+    uint64_t t1_end = std::numeric_limits<uint64_t>::max();
+    if (auto time = group->get_as<int64_t>("t1-end"))
+        t1_end = *time;
+
+    LOG(info) << "Running PathPredict\n data: " << path
+              << "\n t0 start: " << t0_start << "\n t0 end:   " << *t0_end
+              << "\n t1 start: " << t1_start << "\n t1 end:   " << t1_end
+              << ENDLG;
+
+    dblp_loader::load(g_before_, path, t0_start, *t0_end);
     create_docs();
-    dblp_loader::load(g_after_, prefix, 2006, 2012);
+    dblp_loader::load(g_after_, path, t1_start, t1_end);
 }
 
 auto path_predict::three_hop_authors() -> std::unordered_map
@@ -67,16 +106,15 @@ bool path_predict::coauthors(node_id one, node_id two, bool before)
 
 void path_predict::create_docs()
 {
-    std::vector<metapath> metapaths = {
-        metapath{"author -- paper -> paper -- author"},
-        metapath{"author -- paper <- paper -- author"},
-        metapath{"author -- paper -- venue -- paper -- author"},
-        metapath{"author -- paper -- author -- paper -- author"},
-        metapath{"author -- paper -> paper -> paper -- author"},
-        metapath{"author -- paper <- paper <- paper -- author"},
-        metapath{"author -- paper -> paper <- paper -- author"},
-        metapath{"author -- paper <- paper -> paper -- author"}
-    };
+    std::vector<metapath> metapaths
+        = {metapath{"author -- paper -> paper -- author"},
+           metapath{"author -- paper <- paper -- author"},
+       //  metapath{"author -- paper -- venue -- paper -- author"},
+       //  metapath{"author -- paper -- author -- paper -- author"},
+       //  metapath{"author -- paper -> paper -> paper -- author"},
+           metapath{"author -- paper <- paper <- paper -- author"},
+           metapath{"author -- paper -> paper <- paper -- author"},
+           metapath{"author -- paper <- paper -> paper -- author"}};
 
     auto hop_docs = three_hop_authors();
     std::cout << std::endl;

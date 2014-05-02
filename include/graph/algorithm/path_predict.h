@@ -82,6 +82,15 @@ class path_predict
     /// The documents representing potential links between nodes
     std::vector<corpus::document> docs_;
 };
+
+/**
+ * Basic exception for path_predict interactions.
+ */
+class path_predict_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
 }
 }
 }
