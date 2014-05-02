@@ -13,8 +13,7 @@ namespace graph
 namespace algorithm
 {
 template <class Graph>
-metapath_measures
-    <Graph>::metapath_measures(Graph& g, const metapath& mpath)
+metapath_measures<Graph>::metapath_measures(Graph& g, const metapath& mpath)
     : g_(g), mpath_{mpath}
 {/* nothing */
 }
@@ -29,7 +28,6 @@ auto metapath_measures<Graph>::path_count() -> measure_result
         prog(id);
         bfs_match(id, id, result, 0);
     }
-
     return result;
 }
 
@@ -57,15 +55,16 @@ auto metapath_measures<Graph>::symmetric_random_walk() -> measure_result
 template <class Graph>
 auto metapath_measures<Graph>::random_walk() -> measure_result
 {
-    auto pc_fwd = path_count();
+    auto pc = path_count();
     measure_result result;
-    for (auto& fwd : pc_fwd)
+    for (auto& src : pc)
     {
-        node_id src_id = fwd.first;
-        for (auto& fwd_dest : fwd.second)
+        node_id src_id = src.first;
+        double total_num_paths = meta_degree(src_id, pc);
+        for (auto& dest : src.second)
         {
-            result[src_id][fwd_dest.first] = fwd_dest.second
-                                             / meta_degree(src_id, pc_fwd);
+            node_id dest_id = dest.first;
+            result[src_id][dest_id] = dest.second / total_num_paths;
         }
     }
     return result;
@@ -87,8 +86,12 @@ auto metapath_measures<Graph>::normalized_path_count() -> measure_result
         {
             node_id dest_id = fwd_dest.first;
             double numerator = fwd_dest.second + pc_bwd[dest_id][src_id];
-            double denominator = meta_degree(src_id, pc_fwd)
-                                 + meta_degree(dest_id, pc_bwd);
+            double denominator
+                = (pc_fwd[src_id][src_id] + pc_bwd[dest_id][dest_id]);
+
+            if (denominator == 0)
+                continue;
+
             result[src_id][dest_id] = numerator / denominator;
         }
     }
@@ -113,11 +116,25 @@ void metapath_measures<Graph>::bfs_match(node_id orig_id, node_id id,
     // if at end of path
     if (depth == mpath_.size() - 1)
     {
-        if (node.type == mpath_[depth] && id != orig_id)
+        if (node.type == mpath_[depth])
+        {
+            cur_path_.push_back(node.name);
             ++result[orig_id][id];
+
+            // print path found that ends here
+            if (print_paths)
+            {
+                for (auto& n : cur_path_)
+                    std::cout << n << " ";
+                std::cout << std::endl;
+                cur_path_.pop_back();
+            }
+        }
     }
     else if (node.type == mpath_[depth])
     {
+        if (print_paths)
+            cur_path_.push_back(node.name);
         if (mpath_.edge_dir(depth) == metapath::direction::backward)
         {
             for (auto& p : g_.incoming(id))
@@ -128,6 +145,8 @@ void metapath_measures<Graph>::bfs_match(node_id orig_id, node_id id,
             for (auto& p : g_.outgoing(id))
                 bfs_match(orig_id, p.first, result, depth + 1);
         }
+        if (print_paths)
+            cur_path_.pop_back();
     }
 }
 }

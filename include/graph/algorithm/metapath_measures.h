@@ -90,6 +90,10 @@ class metapath_measures
 
     /// The metapath to use.
     metapath mpath_;
+
+    std::vector<std::string> cur_path_;
+
+    static bool constexpr print_paths = false;
 };
 }
 }
