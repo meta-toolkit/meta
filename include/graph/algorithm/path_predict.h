@@ -53,10 +53,10 @@ class path_predict
     /**
      * @param one
      * @param two
-     * @param before whether to use the before time step
+     * @param g The graph to use to check for coauthors
      * @return whether the two nodes are linked
      */
-    bool coauthors(node_id one, node_id two, bool before = true);
+    bool coauthors(node_id one, node_id two, graph_t& g);
 
     /**
      * @return a mapping of (node id, node id) -> document of authors that are
@@ -81,6 +81,9 @@ class path_predict
 
     /// The documents representing potential links between nodes
     std::vector<corpus::document> docs_;
+
+    /// The prefix to store the result
+    std::string prefix_;
 };
 
 /**

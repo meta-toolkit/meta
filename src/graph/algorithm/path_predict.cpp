@@ -21,6 +21,8 @@ path_predict::path_predict(const std::string& config_file)
     if (!prefix)
         throw path_predict_exception{"prefix missing from config"};
 
+    prefix_ = *prefix + "/path-predict/";
+
     auto dataset = config.get_as<std::string>("dataset");
     if (!dataset)
         throw path_predict_exception{"dataset missing from config"};
@@ -55,8 +57,8 @@ path_predict::path_predict(const std::string& config_file)
               << ENDLG;
 
     dblp_loader::load(g_before_, path, t0_start, *t0_end);
-    create_docs();
     dblp_loader::load(g_after_, path, t1_start, t1_end);
+    create_docs();
 }
 
 auto path_predict::three_hop_authors() -> std::unordered_map
@@ -88,18 +90,16 @@ uint64_t path_predict::get_id(const std::string& feature)
     {
         auto next_id = feature_map_.size();
         feature_map_[feature] = next_id;
-        return next_id;
+        return next_id + 1;
     }
-    return it->second;
+    return it->second + 1;
 }
 
-bool path_predict::coauthors(node_id one, node_id two, bool before)
+bool path_predict::coauthors(node_id one, node_id two, graph_t& g)
 {
-    // TODO check if before or not
-    metapath_measures
-        <graph_t> measures{g_before_, metapath{"author -- paper -- author"}};
+    metapath_measures<graph_t> meas{g, metapath{"author -- paper -- author"}};
     typename metapath_measures<graph_t>::measure_result res;
-    measures.bfs_match(one, one, res, 0);
+    meas.bfs_match(one, one, res, 0);
     auto map = res[one];
     return map.find(two) != map.end();
 }
@@ -109,9 +109,9 @@ void path_predict::create_docs()
     std::vector<metapath> metapaths
         = {metapath{"author -- paper -> paper -- author"},
            metapath{"author -- paper <- paper -- author"},
-       //  metapath{"author -- paper -- venue -- paper -- author"},
-       //  metapath{"author -- paper -- author -- paper -- author"},
-       //  metapath{"author -- paper -> paper -> paper -- author"},
+           metapath{"author -- paper -- venue -- paper -- author"},
+           metapath{"author -- paper -- author -- paper -- author"},
+           metapath{"author -- paper -> paper -> paper -- author"},
            metapath{"author -- paper <- paper <- paper -- author"},
            metapath{"author -- paper -> paper <- paper -- author"},
            metapath{"author -- paper <- paper -> paper -- author"}};
@@ -133,14 +133,14 @@ void path_predict::create_docs()
         std::cout << std::endl;
     }
 
-    std::ofstream out{"dblp.dat"};
-    std::ofstream mapout{"dblp.mapping"};
+    std::ofstream out{prefix_ + "/path-predict.dat"};
+    std::ofstream mapout{prefix_ + "/path-predict.mapping"};
     for (auto& p : hop_docs)
     {
         auto src = p.first.first;
         auto dest = p.first.second;
         // only add pairs that are not currently co-authors
-        if (!coauthors(src, dest))
+        if (!coauthors(src, dest, g_before_))
         {
             // save mapping
             docs_.push_back(p.second);
@@ -148,7 +148,10 @@ void path_predict::create_docs()
                    << g_before_.node(dest).name << std::endl;
 
             // save classifier input
-            out << p.second.label();
+            if (coauthors(src, dest, g_after_))
+                out << "1";
+            else
+                out << "0";
             for (auto& count : p.second.counts())
             {
                 auto id = get_id(count.first);
