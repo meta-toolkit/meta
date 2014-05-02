@@ -1,5 +1,0 @@
-algorithm
-network
-parse
-sentiment
-olap

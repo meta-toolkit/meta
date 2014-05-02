@@ -1,4 +1,0 @@
-bob
-joe
-fred
-bill
