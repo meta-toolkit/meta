@@ -270,6 +270,7 @@ add_library(meta-testing
             src/test/filter_test.cpp
             src/test/compression_test.cpp
             src/test/metapath_test.cpp
+            src/test/path_predict_test.cpp
             src/test/vocabulary_map_test.cpp)
 target_link_libraries(meta-testing meta-index meta-classify)
 
@@ -353,6 +354,8 @@ add_test(compression unit-test compression)
 set_tests_properties(compression PROPERTIES TIMEOUT 10)
 add_test(metapath unit-test metapath)
 set_tests_properties(metapath PROPERTIES TIMEOUT 10)
+add_test(path-predict unit-test path-predict)
+set_tests_properties(path-predict PROPERTIES TIMEOUT 10)
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf
