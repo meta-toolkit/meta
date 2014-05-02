@@ -46,9 +46,11 @@ class metapath_measures
      * Performs the NormalizedPathCount measure function on all pairs of nodes.
      * @return all possible NPC measures on the graph
      * \f$ NPC_R(a_i, a_j) = \frac{PC_R(a_i, a_j) + PC_{R^{-1}}(a_j,
-     * a_i)}{PC_R(a_i,\cdot) + PC_R(\cdot, a_j)} \f$
-     * @see Co-Author Relationship Prediction in Heterogeneous Bibliographic
-     * Networks, Sun et. al. 2011.
+     * a_i)}{PC_R(a_i,a_i) + PC_R(a_j, a_j)} \f$
+     * Note that this is NOT the formulation given in the PathPredict paper.
+     * This is the corrected version as it appears in:
+     * @see Mining Heterogeneous Information Networks: Principles and
+     * Methodologies, Yizhou Sun and Jiawei Han. 2012.
      */
     measure_result normalized_path_count();
 
