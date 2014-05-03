@@ -139,6 +139,7 @@ target_link_libraries(meta-io meta-util)
 add_library(meta-graph
             src/graph/dblp_loader.cpp
             src/graph/algorithm/path_predict.cpp
+            src/graph/algorithm/path_predict_eval.cpp
             src/graph/metapath.cpp)
 target_link_libraries(meta-graph meta-corpus)
 
