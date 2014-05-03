@@ -316,7 +316,7 @@ add_executable(search-vocab search-vocab.cpp)
 target_link_libraries(search-vocab meta-index)
 
 add_executable(path-predict path-predict.cpp)
-target_link_libraries(path-predict meta-graph)
+target_link_libraries(path-predict meta-graph meta-index meta-classify)
 
 add_executable(allpairs allpairs.cpp)
 target_link_libraries(allpairs meta-index)

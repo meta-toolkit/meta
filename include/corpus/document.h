@@ -63,6 +63,11 @@ class document
     std::string name() const;
 
     /**
+     * @param n The new name for this document
+     */
+    void name(const std::string& n);
+
+    /**
      * @return the total of transitions recorded for this document.
      * This is not the number of unique transitions.
      */

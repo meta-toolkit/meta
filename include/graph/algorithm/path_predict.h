@@ -43,6 +43,11 @@ class path_predict
      */
     path_predict(const std::string& config_file);
 
+    /**
+     * @return a corpus made from the graph
+     */
+    std::vector<corpus::document> docs() const;
+
   private:
     /**
      * @return positive and negative documents representing pairs of
@@ -64,26 +69,14 @@ class path_predict
      */
     std::unordered_map<node_pair, corpus::document> three_hop_authors();
 
-    /**
-     * @param feature The metapath string
-     * @return the feature id of the parameter, creating a new one if necessary
-     */
-    uint64_t get_id(const std::string& feature);
-
     /// The graph at time step 0
     graph_t g_before_;
 
     /// The graph at time step 1
     graph_t g_after_;
 
-    /// Keeps track of the mapping of metapath feature ids
-    std::unordered_map<std::string, uint64_t> feature_map_;
-
     /// The documents representing potential links between nodes
     std::vector<corpus::document> docs_;
-
-    /// The prefix to store the result
-    std::string prefix_;
 };
 
 /**

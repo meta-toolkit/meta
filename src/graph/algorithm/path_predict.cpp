@@ -21,8 +21,6 @@ path_predict::path_predict(const std::string& config_file)
     if (!prefix)
         throw path_predict_exception{"prefix missing from config"};
 
-    prefix_ = *prefix + "/path-predict/";
-
     auto dataset = config.get_as<std::string>("dataset");
     if (!dataset)
         throw path_predict_exception{"dataset missing from config"};
@@ -66,8 +64,10 @@ auto path_predict::three_hop_authors() -> std::unordered_map
 {
     std::unordered_map<node_pair, corpus::document> docs;
     metapath_measures<graph_t> measures{
-        g_before_, metapath{"author -- paper -- author -- paper -- author -- paper -- author"}};
-        //g_before_, metapath{"author -- paper -- author -- paper -- author"}};
+        g_before_,
+        metapath{
+            "author -- paper -- author -- paper -- author -- paper -- author"}};
+    // g_before_, metapath{"author -- paper -- author -- paper -- author"}};
     for (auto& srcp : measures.path_count())
     {
         for (auto& destp : srcp.second)
@@ -84,18 +84,6 @@ auto path_predict::three_hop_authors() -> std::unordered_map
     return docs;
 }
 
-uint64_t path_predict::get_id(const std::string& feature)
-{
-    auto it = feature_map_.find(feature);
-    if (it == feature_map_.end())
-    {
-        auto next_id = feature_map_.size();
-        feature_map_[feature] = next_id;
-        return next_id + 1;
-    }
-    return it->second + 1;
-}
-
 bool path_predict::coauthors(node_id one, node_id two, graph_t& g)
 {
     metapath_measures<graph_t> meas{g, metapath{"author -- paper -- author"}};
@@ -108,8 +96,7 @@ bool path_predict::coauthors(node_id one, node_id two, graph_t& g)
 void path_predict::create_docs()
 {
     std::vector<metapath> metapaths
-        = {
-           metapath{"author -- paper -> paper -- author"},
+        = {metapath{"author -- paper -> paper -- author"},
            metapath{"author -- paper <- paper -- author"},
            metapath{"author -- paper -- venue -- paper -- author"},
            metapath{"author -- paper -- term -- paper -- author"},
@@ -126,10 +113,10 @@ void path_predict::create_docs()
         std::cout << "Adding metapath feature: \"" << mpath.text() << "\""
                   << std::endl;
         metapath_measures<graph_t> measures{g_before_, mpath};
-        //auto pc = measures.path_count();
+        // auto pc = measures.path_count();
         auto pc = measures.normalized_path_count();
-        //auto pc = measures.random_walk();
-        //auto pc = measures.symmetric_random_walk();
+        // auto pc = measures.random_walk();
+        // auto pc = measures.symmetric_random_walk();
         for (auto& p : hop_docs)
         {
             auto source = p.first.first;
@@ -139,8 +126,6 @@ void path_predict::create_docs()
         std::cout << std::endl;
     }
 
-    std::ofstream out{prefix_ + "/path-predict.dat"};
-    std::ofstream mapout{prefix_ + "/path-predict.mapping"};
     for (auto& p : hop_docs)
     {
         auto src = p.first.first;
@@ -149,24 +134,26 @@ void path_predict::create_docs()
         if (!coauthors(src, dest, g_before_))
         {
             // save mapping
-            docs_.push_back(p.second);
-            mapout << g_before_.node(src).name << " <-> "
-                   << g_before_.node(dest).name << std::endl;
+            std::string dname = g_before_.node(src).name + "\t"
+                                + g_before_.node(dest).name;
+            p.second.name(dname);
 
             // save classifier input
             if (coauthors(src, dest, g_after_))
-                out << "1";
+                p.second.label(class_label{"1"});
             else
-                out << "0";
-            for (auto& count : p.second.counts())
-            {
-                auto id = get_id(count.first);
-                out << " " << id << ":" << count.second;
-            }
-            out << std::endl;
+                p.second.label(class_label{"0"});
+
+            docs_.push_back(p.second);
         }
     }
 }
+
+std::vector<corpus::document> path_predict::docs() const
+{
+    return docs_;
+}
+
 }
 }
 }
