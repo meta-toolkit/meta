@@ -42,6 +42,8 @@ void confusion_matrix::print_result_pairs(std::ostream& out) const
 
 void confusion_matrix::print(std::ostream& out) const
 {
+    auto saved_precision = out.precision();
+
     auto max_label = std::max_element(classes_.begin(), classes_.end(),
         [](const class_label& a, const class_label& b)
         {
@@ -91,6 +93,8 @@ void confusion_matrix::print(std::ostream& out) const
         out << std::endl;
     }
     out << std::endl;
+
+    out.precision(saved_precision);
 }
 
 void confusion_matrix::print_class_stats(std::ostream& out,
@@ -127,6 +131,7 @@ void confusion_matrix::print_stats(std::ostream& out) const
     double t_rec = 0.0;
     double t_f1 = 0.0;
     double t_corr = 0.0;
+    auto saved_precision = out.precision();
 
     auto max_label
         = std::max_element(classes_.begin(), classes_.end(),
@@ -177,6 +182,8 @@ void confusion_matrix::print_stats(std::ostream& out) const
         << std::string(width + 12 * 3, '-') << std::endl << total_
         << " predictions attempted, overall accuracy: " << t_corr / total_
         << std::endl;
+
+    out.precision(saved_precision);
 }
 
 double confusion_matrix::accuracy() const
