@@ -17,7 +17,10 @@ namespace meta
 namespace testing
 {
 /**
- * Runs the path_predict and metapath_measures tests.
+ * Runs the path_predict and metapath_measures tests using the small example
+ * DBLP dataset found in Figure 3 of
+ * @see Co-Author Relationship Prediction in Heterogeneous Bibliographic
+ * Networks, Sun et. al. 2011.
  * @return the number of tests failed.
  */
 int path_predict_tests();
