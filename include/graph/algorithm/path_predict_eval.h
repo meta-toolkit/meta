@@ -10,6 +10,7 @@
 #ifndef META_PATH_PREDICT_EVAL_H_
 #define META_PATH_PREDICT_EVAL_H_
 
+#include <set>
 #include "classify/classifier/all.h"
 #include "index/forward_index.h"
 
@@ -37,7 +38,35 @@ class path_predict_eval
      */
     void rankings();
 
+    /**
+     * @param orig_docs The original dataset
+     * @return a vector of evenly-partitioned documents
+     */
+    template <class Index>
+    static std::vector<doc_id> partition(const std::vector<doc_id>& orig_docs,
+                                         Index& idx);
+
   private:
+    struct rank_result
+    {
+        rank_result(const std::string& n, double s, class_label r)
+            : name{n}, score{s}, relevance{r}
+        {
+            // nothing
+        }
+        bool operator<(const rank_result& other) const
+        {
+            return other.score < score;
+        }
+        std::string name;
+        double score;
+        class_label relevance;
+    };
+
+    void eval_ranks();
+
+    std::unordered_map<std::string, std::set<rank_result>> ranks_;
+
     /// The file used to create classifiers and indexes
     std::string config_file_;
 };

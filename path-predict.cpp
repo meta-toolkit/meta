@@ -14,31 +14,6 @@
 using namespace meta;
 
 /**
- * @param orig_docs The original dataset
- * @return a vector of evenly-partitioned documents
- */
-std::vector<corpus::document> partition(const std::vector
-                                        <corpus::document>& orig_docs)
-{
-    std::vector<corpus::document> pos;
-    std::vector<corpus::document> neg;
-    for (auto& d : orig_docs)
-    {
-        if (d.label() == class_label{"0"})
-            neg.push_back(d);
-        else
-            pos.push_back(d);
-    }
-
-    std::mt19937 gen(1);
-    std::shuffle(neg.begin(), neg.end(), gen);
-    neg.erase(neg.begin() + pos.size(), neg.end());
-
-    pos.insert(pos.end(), neg.begin(), neg.end());
-    return pos;
-}
-
-/**
  * @param docs The collection of documents to write to a file in libsvm format
  */
 void create_dataset(const std::vector<corpus::document>& docs)
@@ -52,9 +27,7 @@ void create_dataset(const std::vector<corpus::document>& docs)
         size_t feature = 1;
         out << doc.label();
         std::vector<pair_t> sorted{doc.counts().begin(), doc.counts().end()};
-        std::sort(sorted.begin(), sorted.end(),
-                  [&](const pair_t& a, const pair_t& b)
-        { return a.first < b.first; });
+        std::sort(sorted.begin(), sorted.end());
 
         for (auto& count : sorted)
             out << " " << feature++ << ":" << count.second;
@@ -75,10 +48,10 @@ int main(int argc, char* argv[])
 
     graph::algorithm::path_predict ppredict{argv[1]};
     auto orig_docs = ppredict.docs();
-    auto docs = partition(orig_docs);
-    create_dataset(docs);
+    //auto docs = partition(orig_docs);
+    create_dataset(orig_docs);
 
     graph::algorithm::path_predict_eval pp_eval{"pp-config.toml"};
-    pp_eval.predictions();
+    //pp_eval.predictions();
     pp_eval.rankings();
 }
