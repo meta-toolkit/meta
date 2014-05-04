@@ -8,7 +8,7 @@
 #include "corpus/document.h"
 #include "io/parser.h"
 #include "classify/classifier/sgd.h"
-#include "classify/loss/hinge.h"
+#include "classify/loss/all.h"
 #include "graph/algorithm/path_predict_eval.h"
 
 namespace meta
@@ -72,7 +72,7 @@ void path_predict_eval::rankings()
 
     std::mt19937 gen(1);
     std::shuffle(train_docs.begin(), train_docs.end(), gen);
-    uint64_t half = train_docs.size() / 2;
+    uint64_t half = train_docs.size() / 4;
     std::vector
         <doc_id> test_docs{train_docs.begin(), train_docs.begin() + half};
     train_docs.erase(train_docs.begin() + half, train_docs.end());
@@ -94,19 +94,28 @@ void path_predict_eval::rankings()
     for (auto& d : test_docs)
     {
         auto score = classifier->predict(d);
-     // if (score > 0)
-     // {
-            std::string name = names[d];
-            size_t tab = name.find_first_of("\t");
-            std::string n1 = name.substr(0, tab);
-            std::string n2 = name.substr(tab + 1);
-            auto label = idx->label(d);
-            ranks_[n1].emplace(n2, score, label);
-            ranks_[n2].emplace(n1, score, label);
-     // }
+        std::string name = names[d];
+        size_t tab = name.find_first_of("\t");
+        std::string n1 = name.substr(0, tab);
+        std::string n2 = name.substr(tab + 1);
+        auto label = idx->label(d);
+        ranks_[n1].emplace(n2, score, label);
+        ranks_[n2].emplace(n1, score, label);
     }
 
     eval_ranks();
+}
+
+doc_id path_predict_eval::get_id(const std::string& name)
+{
+    auto it = id_mapping_.find(name);
+    if(it == id_mapping_.end())
+    {
+        auto next = id_mapping_.size();
+        id_mapping_[name] = next;
+        return doc_id{next};
+    }
+    return it->second;
 }
 
 void path_predict_eval::eval_ranks()
@@ -114,7 +123,6 @@ void path_predict_eval::eval_ranks()
     // build results vectors and build qrel file
 
     std::ofstream qrels{"pp-qrels.txt"};
-    std::unordered_map<std::string, doc_id> id_mapping;
     std::vector<std::vector<std::pair<doc_id, double>>> all_results;
     query_id qid{0};
     for (auto& author : ranks_)
@@ -122,16 +130,7 @@ void path_predict_eval::eval_ranks()
         std::vector<std::pair<doc_id, double>> result;
         for (auto& pred : author.second)
         {
-            auto it = id_mapping.find(pred.name);
-            doc_id did{0};
-            if(it == id_mapping.end())
-            {
-                auto next = id_mapping.size();
-                id_mapping[pred.name] = next;
-                did = next;
-            }
-            else
-                did = it->second;
+            auto did = get_id(pred.name);
             qrels << qid << " " << did << " " << pred.relevance << std::endl;
             result.emplace_back(did, pred.score);
         }
@@ -151,6 +150,7 @@ void path_predict_eval::eval_ranks()
 
     std::cout << "MAP: " << eval.map() << std::endl;
 }
+
 }
 }
 }

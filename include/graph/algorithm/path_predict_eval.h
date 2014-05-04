@@ -65,7 +65,12 @@ class path_predict_eval
 
     void eval_ranks();
 
+    doc_id get_id(const std::string& name);
+
     std::unordered_map<std::string, std::set<rank_result>> ranks_;
+
+    /// Maps author names to their graph node id
+    std::unordered_map<std::string, doc_id> id_mapping_;
 
     /// The file used to create classifiers and indexes
     std::string config_file_;

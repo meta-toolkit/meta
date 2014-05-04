@@ -48,7 +48,6 @@ int main(int argc, char* argv[])
 
     graph::algorithm::path_predict ppredict{argv[1]};
     auto orig_docs = ppredict.docs();
-    //auto docs = partition(orig_docs);
     create_dataset(orig_docs);
 
     graph::algorithm::path_predict_eval pp_eval{"pp-config.toml"};

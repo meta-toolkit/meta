@@ -208,16 +208,17 @@ void ir_eval::print_stats(const std::vector<std::pair<doc_id, double>>& results,
     auto w1 = std::setw(8);
     auto w2 = std::setw(6);
     size_t p = 3;
+    uint64_t max = 5;
     out << w1 << printing::make_bold("  NDCG:") << w2 << std::setprecision(p)
-        << ndcg(results, q_id);
+        << ndcg(results, q_id, max);
     out << w1 << printing::make_bold("  Avg. P:") << w2 << std::setprecision(p)
-        << avg_p(results, q_id);
+        << avg_p(results, q_id, max);
     out << w1 << printing::make_bold("  F1 Score:") << w2
         << std::setprecision(p) << f1(results, q_id);
     out << w1 << printing::make_bold("  Precision:") << w2
-        << std::setprecision(p) << precision(results, q_id);
+        << std::setprecision(p) << precision(results, q_id, max);
     out << w1 << printing::make_bold("  Recall:") << w2 << std::setprecision(p)
-        << recall(results, q_id);
+        << recall(results, q_id, max);
     out << std::endl;
 }
 
