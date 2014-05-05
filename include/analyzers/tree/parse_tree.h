@@ -88,6 +88,13 @@ class parse_tree
     std::string get_skeleton_children() const;
 
     /**
+     * @return the yield of this parse tree as a string
+     */
+    std::string yield() const;
+
+    /**
+     * @param filename Where to read the trees from
+     * @return a vector of parse_trees generated from the given file
      * @param doc The document to read trees from
      */
     static std::vector<parse_tree> get_trees(const corpus::document& doc);

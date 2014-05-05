@@ -20,6 +20,7 @@ void analyzer_factory::register_analyzer()
 analyzer_factory::analyzer_factory()
 {
     // built-in analyzers
+    register_analyzer<phrase_analyzer>();
     register_analyzer<branch_analyzer>();
     register_analyzer<depth_analyzer>();
     register_analyzer<semi_skeleton_analyzer>();

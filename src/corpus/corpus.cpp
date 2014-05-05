@@ -46,9 +46,10 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
     else
         encoding = "utf-8";
 
+    auto file_list = config.get_as<std::string>("list");
+
     if (*type == "file-corpus")
     {
-        auto file_list = config.get_as<std::string>("list");
         if (!file_list)
             throw corpus_exception{"list missing from configuration file"};
 
@@ -59,8 +60,11 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
     }
     else if (*type == "line-corpus")
     {
+        std::string ext{""};
+        if (file_list)
+            ext = "." + *file_list;
         std::string filename =
-            *prefix + "/" + *dataset + "/" + *dataset + ".dat";
+            *prefix + "/" + *dataset + "/" + *dataset + ".dat" + ext;
         auto lines = config.get_as<int64_t>("num-lines");
         if (!lines)
             return make_unique<line_corpus>(filename, encoding);

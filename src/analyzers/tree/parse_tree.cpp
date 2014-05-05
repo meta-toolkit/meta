@@ -179,5 +179,20 @@ std::string parse_tree::get_skeleton_children() const
         ret += "()";
     return ret;
 }
+
+std::string parse_tree::yield() const
+{
+    std::string result{""};
+    for(auto& child: children_)
+    {
+        if(child.num_children() == 0)
+            result += child.get_category() + " ";
+        else
+            result += child.yield();
+    }
+
+    return result;
+}
+
 }
 }

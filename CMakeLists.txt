@@ -177,6 +177,7 @@ add_library(meta-analyzers
             src/analyzers/tree/skeleton_analyzer.cpp
             src/analyzers/tree/subtree_analyzer.cpp
             src/analyzers/tree/tag_analyzer.cpp
+            src/analyzers/tree/phrase_analyzer.cpp
             src/analyzers/analyzer_factory.cpp)
 
 target_link_libraries(meta-analyzers meta-corpus meta-stemmers meta-utf)
@@ -312,6 +313,10 @@ target_link_libraries(crf-train meta-crf)
 
 add_executable(crf-test crf-test.cpp)
 target_link_libraries(crf-test meta-crf meta-classify)
+
+add_executable(window-lda window-lda.cpp
+                          src/topics/window_lda.cpp)
+target_link_libraries(window-lda meta-sequence meta-topics)
 
 enable_testing()
 add_test(analyzers unit-test analyzers)

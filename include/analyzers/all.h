@@ -9,6 +9,7 @@
 #include "analyzers/ngram/ngram_analyzer.h"
 #include "analyzers/ngram/ngram_word_analyzer.h"
 
+#include "analyzers/tree/phrase_analyzer.h"
 #include "analyzers/tree/branch_analyzer.h"
 #include "analyzers/tree/depth_analyzer.h"
 #include "analyzers/tree/parse_tree.h"
