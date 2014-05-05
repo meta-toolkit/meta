@@ -12,7 +12,6 @@
 #include <unordered_set>
 #include "analyzers/tree/tree_analyzer.h"
 #include "util/clonable.h"
-#include "corpus/annotation.h"
 
 namespace meta
 {
