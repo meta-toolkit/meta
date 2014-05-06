@@ -227,5 +227,31 @@ double lda_gibbs::corpus_likelihood() const
     }
     return likelihood;
 }
+
+void lda_gibbs::save_topic_assignments(const std::string& filename) const
+{
+    std::ofstream file{filename};
+    for (const auto& i : idx_->docs())
+    {
+        uint64_t n = 0; // term number within document---constructed
+                        // so that each occurrence of the same term
+                        // can still be assigned a different topic
+        for (const auto& freq : idx_->search_primary(i)->counts())
+        {
+            std::vector<uint64_t> counts(num_topics_);
+            for (uint64_t j = 0; j < freq.second; ++j)
+            {
+                topic_id topic = doc_word_topic_.at(i).at(n);
+                counts[topic]++;
+                n++;
+            }
+            file << freq.first << "\t";
+            for (const auto& c : counts)
+                file << c << "\t";
+            file << "\n";
+        }
+        file << "\n";
+    }
+}
 }
 }

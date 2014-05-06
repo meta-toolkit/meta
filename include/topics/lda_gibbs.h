@@ -64,6 +64,14 @@ class lda_gibbs : public lda_model
      */
     virtual void run(uint64_t num_iters, double convergence = 1e-6);
 
+    /**
+     * Saves the topic assignment counts for every term in every document
+     * based on the current state of the sampler.
+     *
+     * @param filename The file to save the assignments to
+     */
+    void save_topic_assignments(const std::string& filename) const;
+
   protected:
     /**
      * Samples a topic from the full conditional distribution

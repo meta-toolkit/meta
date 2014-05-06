@@ -22,6 +22,7 @@ int run_lda(Index& idx, uint64_t num_iters, uint64_t burn_in, uint64_t topics,
     Gibbs model{idx, topics, alpha, beta, burn_in};
     model.run(num_iters);
     model.save(save_prefix);
+    model.save_topic_assignments(save_prefix + ".assignments");
     return 0;
 }
 
