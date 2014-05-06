@@ -28,7 +28,7 @@ void window_lda::learn(const dataset& dset, uint64_t burn_in, uint64_t iters,
     ss << "Initialization: ";
     printing::progress progress{ss.str(), dset.size()};
     progress.print_endline(false);
-    perform_iteration(dset, progress, 0);
+    initialize(dset, progress);
     progress.clear();
     double likelihood = corpus_likelihood(dset);
     ss << "log likelihood: " << likelihood;
@@ -70,6 +70,21 @@ void window_lda::learn(const dataset& dset, uint64_t burn_in, uint64_t iters,
         }
     }
     LOG(info) << "Finished maximum iterations, or found convergence!" << ENDLG;
+}
+
+void window_lda::initialize(const dataset& dset, printing::progress& progress)
+{
+    // set up memory structure
+    sigma_.resize(dset.size(), num_topics_);
+    delta_.resize(dset.vocab_size(), num_topics_);
+    topic_count_.resize(num_topics_);
+
+    segment_topics_.resize(dset.size());
+    for (doc_id j{0}; j < dset.size(); ++j)
+        segment_topics_[j].resize(dset.at(j).size());
+
+    // perform on-line initialization iteration
+    perform_iteration(dset, progress, 0);
 }
 
 void window_lda::perform_iteration(const dataset& dset,
@@ -182,6 +197,7 @@ void window_lda::save(const std::string& prefix, const dataset& dset) const
     save_segments(prefix + ".segments", dset);
 
     dset.save_vocabulary(prefix + ".vocab");
+    save_for_lrr(prefix + ".lrr", dset);
 }
 
 void window_lda::save_doc_topic_distributions(const std::string& filename) const
@@ -239,6 +255,57 @@ void window_lda::save_segments(const std::string& filename,
             file << "\n";
         }
         file << "\n";
+    }
+}
+
+void window_lda::save_for_lrr(const std::string& filename,
+                              const dataset& dset) const
+{
+    // group all of the segment ids by their topic assignment within a
+    // document
+    std::vector<std::vector<std::vector<uint64_t>>> partitions(dset.size());
+    for (doc_id m{0}; m < dset.size(); ++m)
+    {
+        partitions[m].resize(num_topics_);
+        const auto& seq = dset.at(m);
+        for (uint64_t n = 0; n < seq.size(); ++n)
+        {
+            partitions[m][segment_topics_[m][n]].push_back(n);
+        }
+    }
+
+    std::ofstream file{filename};
+    for (doc_id m{0}; m < dset.size(); ++m)
+    {
+        std::string label = dset.label(m);
+        std::replace(label.begin(), label.end(), ',', '\t');
+        file << m << "\t" << label << "\n";
+        // loop over the lists of segment ids for each topic partition of m
+        for (const auto& seg_ids : partitions[m])
+        {
+            // generate a sparse vector for each topic within each document
+            std::map<sequence::feature_id, double> feats;
+            for (const auto& n : seg_ids)
+            {
+                for (const auto& feat : dset.at(m)[n].features())
+                {
+                    feats[feat.first] += feat.second;
+                }
+            }
+
+            // write out the vector to disk
+            for (const auto& feat : feats)
+            {
+                file << feat.first << ":" << feat.second << "\t";
+            }
+            file << "\n";
+        }
+    }
+
+    std::ofstream vfile{filename + ".vocab"};
+    for (term_id r{0}; r < dset.vocab_size(); ++r)
+    {
+        vfile << dset.vocab_map(r) << "\n";
     }
 }
 

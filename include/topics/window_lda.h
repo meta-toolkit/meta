@@ -45,9 +45,10 @@ class window_lda
         using sequence_list = std::vector<sequence::sequence>;
 
       public:
-        void add_sequence(sequence::sequence seq)
+        void add_sequence(sequence::sequence seq, class_label label)
         {
             sequences_.emplace_back(std::move(seq));
+            labels_.emplace_back(label);
         }
 
         sequence_list::const_iterator begin() const
@@ -65,9 +66,19 @@ class window_lda
             return sequences_.at(i);
         }
 
+        const class_label& label(uint64_t i) const
+        {
+            return labels_.at(i);
+        }
+
         uint64_t vocab_map(const std::string& str)
         {
             return vmap_(str);
+        }
+
+        std::string vocab_map(uint64_t id) const
+        {
+            return vmap_(id);
         }
 
         uint64_t size() const
@@ -110,6 +121,11 @@ class window_lda
                 return map_.get_value(str);
             }
 
+            std::string operator()(uint64_t id) const
+            {
+                return map_.get_key(id);
+            }
+
             uint64_t size() const
             {
                 return map_.size();
@@ -125,7 +141,8 @@ class window_lda
 
         } vmap_;
 
-        std::vector<sequence::sequence> sequences_;
+        sequence_list sequences_;
+        std::vector<class_label> labels_;
     };
 
     window_lda(uint64_t num_topics, double alpha, double beta);
@@ -136,6 +153,8 @@ class window_lda
     void save(const std::string& prefix, const dataset& dset) const;
 
   private:
+    void initialize(const dataset& dset, printing::progress& progress);
+
     void perform_iteration(const dataset& dset, printing::progress& progress,
                            uint64_t iter);
 
@@ -154,6 +173,7 @@ class window_lda
     void save_topic_term_distributions(const std::string& filename,
                                        const dataset& dset) const;
     void save_segments(const std::string& filename, const dataset& dset) const;
+    void save_for_lrr(const std::string& filename, const dataset& dset) const;
 
     /**
      * \f$\sigma\f$, indexed as \f$(j, i)\f$, the number of segments in

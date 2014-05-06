@@ -36,8 +36,10 @@ topics::window_lda::dataset
     topics::window_lda::dataset dset;
     analyzers::phrase_analyzer ph_ana;
 
+    printing::progress progress{" > Analyzing documents: ", docs->size()};
     while (docs->has_next())
     {
+        progress(dset.size());
         auto doc = docs->next();
         ph_ana.tokenize(doc);
         auto phrases = ph_ana.phrases();
@@ -45,21 +47,22 @@ topics::window_lda::dataset
         sequence::sequence seq;
         for (const auto& phrase : phrases)
         {
-            corpus::document d{"[NONE]", 0};
+            corpus::document d{"[NONE]", doc_id{0}};
             d.content(phrase, docs->encoding());
             ana->tokenize(d);
 
             sequence::observation::feature_vector fvect;
             fvect.reserve(d.counts().size());
             for (const auto& p : d.counts())
-                fvect.emplace_back(dset.vocab_map(p.first), p.second);
+                fvect.emplace_back(
+                    sequence::feature_id{dset.vocab_map(p.first)}, p.second);
             std::sort(fvect.begin(), fvect.end());
 
-            sequence::observation obs{"[NONE]"};
+            sequence::observation obs{sequence::symbol_t{"[NONE]"}};
             obs.features(fvect);
             seq.add_observation(std::move(obs));
         }
-        dset.add_sequence(std::move(seq));
+        dset.add_sequence(std::move(seq), doc.label());
     }
 
     return dset;
@@ -85,7 +88,7 @@ std::vector<std::vector<sequence::sequence>>
             for (const auto& word : segmenter.words(sent))
             {
                 auto wrd = segmenter.content(word);
-                seq.add_symbol(wrd);
+                seq.add_symbol(sequence::symbol_t{wrd});
             }
             seqs.emplace_back(std::move(seq));
         }
