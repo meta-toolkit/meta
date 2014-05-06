@@ -13,27 +13,19 @@ namespace meta
 namespace topics
 {
 
-void parallel_lda_gibbs::initialize()
+void parallel_lda_gibbs::initialize(printing::progress& progress)
 {
     for (doc_id i{0}; i < idx_->num_docs(); ++i)
     {
         doc_topic_count_[i] = {};
         doc_word_topic_[i] = {};
     }
-    lda_gibbs::initialize();
+    lda_gibbs::initialize(progress);
 }
 
-void parallel_lda_gibbs::perform_iteration(uint64_t iter,
-                                           bool init /* = false */)
+void parallel_lda_gibbs::perform_iteration(printing::progress& progress,
+                                           uint64_t iter)
 {
-    std::string str;
-    if (init)
-        str = "Initialization: ";
-    else
-        str = "Iteration " + std::to_string(iter) + ": ";
-    printing::progress progress{str, idx_->num_docs()};
-    progress.print_endline(false);
-
     auto range = util::range<doc_id>(doc_id{0}, doc_id{idx_->num_docs() - 1});
 
     for (auto& id : pool_.thread_ids())
@@ -60,7 +52,7 @@ void parallel_lda_gibbs::perform_iteration(uint64_t iter,
                 topic_id old_topic = doc_word_topic_[i][n];
                 // don't include current topic assignment in
                 // probability calculation
-                if (!init)
+                if (iter > 0)
                     decrease_counts(old_topic, freq.first, i);
 
                 // sample a new topic assignment

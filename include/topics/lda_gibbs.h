@@ -38,10 +38,12 @@ class lda_gibbs : public lda_model
      * @param alpha The hyperparameter for the Dirichlet prior over
      * \f$\phi\f$
      * @param beta The hyperparameter for the Dirichlet prior over
+     * @param burn_in The number of burn-in iterations to be performed
+     * before checking for convergence
      * \f$\theta\f$
      */
     lda_gibbs(std::shared_ptr<index::forward_index> idx, uint64_t num_topics,
-              double alpha, double beta);
+              double alpha, double beta, uint64_t burn_in);
 
     /**
      * Destructor: virtual for potential subclassing.
@@ -147,8 +149,10 @@ class lda_gibbs : public lda_model
      * Initializes the first set of topic assignments for inference.
      * Employs an online application of the sampler where counts are
      * only considered for the words observed so far through the loop.
+     *
+     * @param progress Reporter for progress
      */
-    virtual void initialize();
+    virtual void initialize(printing::progress& progress);
 
     /**
      * Performs a sampling iteration.
@@ -157,7 +161,7 @@ class lda_gibbs : public lda_model
      * @param init Whether or not to employ the online method (defaults to
      * `false`)
      */
-    virtual void perform_iteration(uint64_t iter, bool init = false);
+    virtual void perform_iteration(printing::progress& progress, uint64_t iter);
 
     /**
      * Decreases all counts associated with the given topic, term, and
@@ -232,6 +236,12 @@ class lda_gibbs : public lda_model
      * Hyperparameter for the Dirichlet prior over \f$\phi\f$.
      */
     double beta_;
+
+    /**
+     * The number of burn-in iterations to run before assessing
+     * convergence begins.
+     */
+    const uint64_t burn_in_;
 
     /**
      * The random number generator for the sampler.

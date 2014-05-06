@@ -38,7 +38,7 @@ class parallel_lda_gibbs : public lda_gibbs
     virtual ~parallel_lda_gibbs() = default;
 
   protected:
-    virtual void initialize() override;
+    virtual void initialize(printing::progress& progress) override;
 
     /**
      * Performs a sampling iteration of the AD-LDA algorithm. This
@@ -48,11 +48,12 @@ class parallel_lda_gibbs : public lda_gibbs
      * sampling has finished, the counts are reduced down (serially)
      * before the iteration is completed.
      *
-     * @param iter The current iteration number
+     * @param progress Reporter for progress
      * @param init Whether or not this iteration should use the online
      * method for initializing the sampler
      */
-    virtual void perform_iteration(uint64_t iter, bool init = false) override;
+    virtual void perform_iteration(printing::progress& progress,
+                                   uint64_t iter) override;
 
     virtual void decrease_counts(topic_id topic, term_id term,
                                  doc_id doc) override;

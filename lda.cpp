@@ -15,6 +15,16 @@
 
 using namespace meta;
 
+template <class Gibbs, class Index>
+int run_lda(Index& idx, uint64_t num_iters, uint64_t burn_in, uint64_t topics,
+            double alpha, double beta, const std::string& save_prefix)
+{
+    Gibbs model{idx, topics, alpha, beta, burn_in};
+    model.run(num_iters);
+    model.save(save_prefix);
+    return 0;
+}
+
 template <class Model, class Index>
 int run_lda(Index& idx, uint64_t num_iters, uint64_t topics, double alpha,
             double beta, const std::string& save_prefix)
@@ -71,17 +81,23 @@ int run_lda(const std::string& config_file)
             config_file);
     if (type == "gibbs")
     {
+        if (!check_parameter(config_file, *lda_group, "burn-in"))
+            return 1;
+        uint64_t burn_in = *lda_group->get_as<int64_t>("burn-in");
         std::cout << "Beginning LDA using serial Gibbs sampling..."
                   << std::endl;
-        return run_lda<lda_gibbs>(f_idx, iters, topics, alpha, beta,
+        return run_lda<lda_gibbs>(f_idx, iters, burn_in, topics, alpha, beta,
                                   save_prefix);
     }
     else if (type == "pargibbs")
     {
+        if (!check_parameter(config_file, *lda_group, "burn-in"))
+            return 1;
+        uint64_t burn_in = *lda_group->get_as<int64_t>("burn-in");
         std::cout << "Beginning LDA using parallel Gibbs sampling..."
                   << std::endl;
-        return run_lda<parallel_lda_gibbs>(f_idx, iters, topics, alpha, beta,
-                                           save_prefix);
+        return run_lda<parallel_lda_gibbs>(f_idx, iters, burn_in, topics, alpha,
+                                           beta, save_prefix);
     }
     else if (type == "cvb")
     {

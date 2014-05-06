@@ -16,8 +16,12 @@ namespace topics
 {
 
 lda_gibbs::lda_gibbs(std::shared_ptr<index::forward_index> idx,
-                     uint64_t num_topics, double alpha, double beta)
-    : lda_model{std::move(idx), num_topics}, alpha_{alpha}, beta_{beta}
+                     uint64_t num_topics, double alpha, double beta,
+                     uint64_t burn_in)
+    : lda_model{std::move(idx), num_topics},
+      alpha_{alpha},
+      beta_{beta},
+      burn_in_{burn_in}
 {
     std::random_device dev;
     rng_.seed(dev());
@@ -25,24 +29,44 @@ lda_gibbs::lda_gibbs(std::shared_ptr<index::forward_index> idx,
 
 void lda_gibbs::run(uint64_t num_iters, double convergence /* = 1e-6 */)
 {
-    initialize();
-    double likelihood = corpus_likelihood();
+    // initialization step
     std::stringstream ss;
-    ss << "Initialization log likelihood: " << likelihood;
-    std::string spacing(std::max<int>(0, 80 - ss.tellp()), ' ');
-    ss << spacing;
+    ss << "Initialization: ";
+    printing::progress progress{ss.str(), idx_->num_docs()};
+    progress.print_endline(false);
+    initialize(progress);
+    progress.clear();
+    double likelihood = corpus_likelihood();
+    ss << "log likelihood: " << likelihood;
     LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
 
+    // burn in iterations
+    for (uint64_t i = 0; i < burn_in_; ++i)
+    {
+        std::stringstream ss;
+        ss << "Burn-in iteration " << i + 1 << ": ";
+        printing::progress progress{ss.str(), idx_->num_docs()};
+        progress.print_endline(false);
+        perform_iteration(progress, i + 1);
+        progress.clear();
+        double likelihood = corpus_likelihood();
+        ss << "log-likelihood: " << likelihood;
+        LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
+    }
+
+    // actual sampling iterations
     for (uint64_t i = 0; i < num_iters; ++i)
     {
-        perform_iteration(i + 1);
+        std::stringstream ss;
+        ss << "Iteration " << i + 1 << ": ";
+        printing::progress progress{ss.str(), idx_->num_docs()};
+        progress.print_endline(false);
+        perform_iteration(progress, i + 1);
+        progress.clear();
         double likelihood_update = corpus_likelihood();
         double ratio = std::fabs((likelihood - likelihood_update) / likelihood);
         likelihood = likelihood_update;
-        std::stringstream ss;
-        ss << "Iteration " << i + 1 << " log likelihood: " << likelihood;
-        std::string spacing(std::max<int>(0, 80 - ss.tellp()), ' ');
-        ss << spacing;
+        ss << "log-likelihood: " << likelihood;
         LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
         if (ratio <= convergence)
         {
@@ -119,20 +143,13 @@ double lda_gibbs::count_doc(doc_id doc) const
     return idx_->doc_size(doc);
 }
 
-void lda_gibbs::initialize()
+void lda_gibbs::initialize(printing::progress& progress)
 {
-    perform_iteration(0, true);
+    perform_iteration(progress, 0);
 }
 
-void lda_gibbs::perform_iteration(uint64_t iter, bool init /* = false */)
+void lda_gibbs::perform_iteration(printing::progress& progress, uint64_t iter)
 {
-    std::string str;
-    if (init)
-        str = "Initialization: ";
-    else
-        str = "Iteration " + std::to_string(iter) + ": ";
-    printing::progress progress{str, idx_->num_docs()};
-    progress.print_endline(false);
     for (const auto& i : idx_->docs())
     {
         progress(i);
@@ -146,7 +163,7 @@ void lda_gibbs::perform_iteration(uint64_t iter, bool init /* = false */)
                 topic_id old_topic = doc_word_topic_[i][n];
                 // don't include current topic assignment in
                 // probability calculation
-                if (!init)
+                if (iter > 0)
                     decrease_counts(old_topic, freq.first, i);
 
                 // sample a new topic assignment
