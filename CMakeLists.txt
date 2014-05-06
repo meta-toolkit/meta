@@ -240,6 +240,7 @@ add_library(meta-sequence
             src/sequence/sequence.cpp
             src/sequence/observation.cpp
             src/sequence/io/ptb_parser.cpp
+            src/sequence/io/conll_parser.cpp
             src/sequence/analyzers/sequence_analyzer.cpp
             src/sequence/trellis.cpp)
 target_link_libraries(meta-sequence meta-util meta-utf)
@@ -313,6 +314,9 @@ target_link_libraries(crf-train meta-crf)
 
 add_executable(crf-test crf-test.cpp)
 target_link_libraries(crf-test meta-crf meta-classify)
+
+add_executable(chunker-train chunker-train.cpp)
+target_link_libraries(chunker-train meta-crf)
 
 add_executable(window-lda window-lda.cpp
                           src/topics/window_lda.cpp)

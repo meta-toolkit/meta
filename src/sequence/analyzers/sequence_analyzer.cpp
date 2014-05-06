@@ -284,5 +284,108 @@ sequence_analyzer default_pos_analyzer(const std::string& folder)
 
     return analyzer;
 }
+
+sequence_analyzer default_chunking_analyzer(const std::string& folder)
+{
+    sequence_analyzer analyzer{folder};
+
+    // remember: we assume that the sequences coming in are pre-tagged
+    // with their POS tags, *not* their BIO tags! So it is safe to use
+    // features that depend on the tag of the observations in the sequence
+    // since it's not actually the label we are eventually going to predict
+
+    // features using t - 2
+    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
+                                         sequence_analyzer::collector& coll)
+    {
+        if (t < 2)
+            return;
+
+        std::string word_2 = seq[t - 2].symbol();
+        std::string pos_2  = seq[t - 2].tag();
+        std::string pos_1  = seq[t - 1].tag();
+        std::string pos_0  = seq[t].tag();
+
+        coll.add("w[t-2]=" + word_2, 1);
+        coll.add("pos[t-2]=" + pos_2, 1);
+        coll.add("pos[t-2]|pos[t-1]=" + pos_2 + "|" + pos_1, 1);
+        coll.add(
+            "pos[t-2]|pos[t-1]|pos[t]=" + pos_2 + "|" + pos_1 + "|" + pos_0, 1);
+    });
+
+    // features using t - 1
+    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
+                                         sequence_analyzer::collector& coll)
+    {
+        if (t < 1)
+            return;
+
+        std::string word_1 = seq[t - 1].symbol();
+        std::string pos_1  = seq[t - 1].tag();
+        std::string word_0 = seq[t].symbol();
+        std::string pos_0  = seq[t].tag();
+
+        coll.add("w[t-1]=" + word_1, 1);
+        coll.add("w[t-1]|w[t]=" + word_1 + "|" + word_0, 1);
+        coll.add("pos[t-1]=" + pos_1, 1);
+        coll.add("pos[t-1]|pos[t]=" + pos_1 + "|" + pos_0, 1);
+    });
+
+    // features using t - 1, t, t + 1
+    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
+                                         sequence_analyzer::collector& coll)
+    {
+        if (t < 1)
+            return;
+        if (t + 1 >= seq.size())
+            return;
+
+        std::string pos_l = seq[t - 1].tag();
+        std::string pos_m = seq[t].tag();
+        std::string pos_r = seq[t + 1].tag();
+
+        coll.add(
+            "pos[t-1]|pos[t]|pos[t+1]=" + pos_l + "|" + pos_m + "|" + pos_r, 1);
+    });
+
+    // features using t + 1
+    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
+                                         sequence_analyzer::collector& coll)
+    {
+        if (t + 1 >= seq.size())
+            return;
+
+        std::string word_1 = seq[t + 1].symbol();
+        std::string word_0 = seq[t].symbol();
+        std::string pos_1 = seq[t + 1].tag();
+        std::string pos_0 = seq[t].tag();
+
+        coll.add("w[t+1]=" + word_1, 1);
+        coll.add("w[t]|w[t+1]=" + word_0 + "|" + word_1, 1);
+        coll.add("pos[t+1]=" + pos_1, 1);
+        coll.add("pos[t]|pos[t+1]=" + pos_0 + "|" + pos_1, 1);
+    });
+
+    // features using t + 2
+    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
+                                         sequence_analyzer::collector& coll)
+    {
+        if (t + 2 >= seq.size())
+            return;
+
+        std::string word_2 = seq[t + 2].symbol();
+        std::string pos_2 = seq[t + 2].tag();
+        std::string pos_1 = seq[t + 1].tag();
+        std::string pos_0 = seq[t].tag();
+
+        coll.add("w[t+2]=" + word_2, 1);
+        coll.add("pos[t+2]=" + pos_2, 1);
+        coll.add("pos[t+1]|pos[t+2]=" + pos_1 + "|" + pos_2, 1);
+        coll.add(
+            "pos[t]|pos[t+1]|pos[t+2]=" + pos_0 + "|" + pos_1 + "|" + pos_0, 1);
+    });
+
+    return analyzer;
+}
 }
 }

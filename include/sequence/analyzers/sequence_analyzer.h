@@ -318,9 +318,18 @@ class sequence_analyzer
  * Constructs a sequence_analyzer that is specialized for part-of-speech
  * tagging. Uses a predefined set of observation functions.
  *
- * @param filename The prefix to be passed to the analyzer constructed
+ * @param folder The prefix to be passed to the analyzer constructed
  */
-sequence_analyzer default_pos_analyzer(const std::string& filename);
+sequence_analyzer default_pos_analyzer(const std::string& folder);
+
+/**
+ * Constructs a sequence_analyzer that is specialized for chunking BIO
+ * tagging. Uses a predefined set of observation functions, and assumes
+ * that all sequences passed to it are POS tagged already.
+ *
+ * @param folder The prefix to be passed to the analyzer constructed
+ */
+sequence_analyzer default_chunking_analyzer(const std::string& folder);
 
 }
 }
