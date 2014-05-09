@@ -44,13 +44,13 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    logging::set_cerr_logging();
+    //logging::set_cerr_logging();
 
     graph::algorithm::path_predict ppredict{argv[1]};
     auto orig_docs = ppredict.docs();
     create_dataset(orig_docs);
 
     graph::algorithm::path_predict_eval pp_eval{"pp-config.toml"};
-    //pp_eval.predictions();
     pp_eval.rankings();
+    //pp_eval.predictions();
 }

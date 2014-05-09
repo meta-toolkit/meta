@@ -60,8 +60,8 @@ void ir_eval::init_index(const std::string& path)
             qrels_[q_id][d_id] = relevance;
     }
 
-    std::cerr << "Found relevance judgements for " << qrels_.size()
-              << " queries" << std::endl;
+ // std::cerr << "Found relevance judgements for " << qrels_.size()
+ //           << " queries" << std::endl;
 }
 
 double ir_eval::precision(const std::vector<std::pair<doc_id, double>>& results,

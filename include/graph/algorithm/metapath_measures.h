@@ -36,11 +36,12 @@ class metapath_measures
      * PathCount is simply the number of path instances between two objects
      * following a given metapath, denoted as \f$PC_R\f$, where \f$R\f$ is the
      * relation defined by the metapath.
+     * @param is_weighted Whether or not to take weighted nodes into account
      * @return all possible PC measures on the graph
      * @see Co-Author Relationship Prediction in Heterogeneous Bibliographic
      * Networks, Sun et. al. 2011.
      */
-    measure_result path_count();
+    measure_result path_count(bool is_weighted = false);
 
     /**
      * Performs the NormalizedPathCount measure function on all pairs of nodes.
@@ -79,8 +80,7 @@ class metapath_measures
      * @param depth
      */
     void bfs_match(node_id orig_id, node_id id, measure_result& result,
-                   uint64_t depth);
-
+                   uint64_t depth, bool is_weighted = false);
   private:
     /**
      * @param id
@@ -93,6 +93,8 @@ class metapath_measures
 
     /// The metapath to use.
     metapath mpath_;
+
+    double cur_weight_;
 
     std::vector<std::string> cur_path_;
 

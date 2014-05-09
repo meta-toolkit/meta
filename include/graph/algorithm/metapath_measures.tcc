@@ -20,14 +20,16 @@ metapath_measures<Graph>::metapath_measures(Graph& g, const metapath& mpath)
 }
 
 template <class Graph>
-auto metapath_measures<Graph>::path_count() -> measure_result
+auto metapath_measures<Graph>::path_count(bool is_weighted) -> measure_result
 {
     printing::progress prog{"Calculating PathCount ", g_.size()};
     measure_result result;
+    if(mpath_[2] == "similarity")
+        is_weighted = true;
     for (node_id id{0}; id < g_.size(); ++id)
     {
         prog(id);
-        bfs_match(id, id, result, 0);
+        bfs_match(id, id, result, 0, is_weighted);
     }
     return result;
 }
@@ -65,7 +67,8 @@ auto metapath_measures<Graph>::random_walk() -> measure_result
         for (auto& dest : src.second)
         {
             node_id dest_id = dest.first;
-            result[src_id][dest_id] = dest.second / total_num_paths;
+            if(total_num_paths != 0)
+                result[src_id][dest_id] = dest.second / total_num_paths;
         }
     }
     return result;
@@ -110,8 +113,9 @@ uint64_t metapath_measures
 }
 
 template <class Graph>
-void metapath_measures<Graph>::bfs_match(node_id orig_id, node_id id,
-                                         measure_result& result, uint64_t depth)
+void metapath_measures
+    <Graph>::bfs_match(node_id orig_id, node_id id, measure_result& result,
+                       uint64_t depth, bool is_weighted)
 {
     auto node = g_.node(id);
     // if at end of path
@@ -119,8 +123,15 @@ void metapath_measures<Graph>::bfs_match(node_id orig_id, node_id id,
     {
         if (node.type == mpath_[depth])
         {
+            cur_weight_ += node.weight;
+
             cur_path_.push_back(node.name);
-            ++result[orig_id][id];
+            if(is_weighted)
+                result[orig_id][id] += cur_weight_;
+            else
+                ++result[orig_id][id];
+
+            cur_weight_ = 0;
 
             // print path found that ends here
             if (print_paths)
@@ -134,17 +145,19 @@ void metapath_measures<Graph>::bfs_match(node_id orig_id, node_id id,
     }
     else if (node.type == mpath_[depth])
     {
+        cur_weight_ += node.weight;
+
         if (print_paths)
             cur_path_.push_back(node.name);
         if (mpath_.edge_dir(depth) == metapath::direction::backward)
         {
             for (auto& p : g_.incoming(id))
-                bfs_match(orig_id, p, result, depth + 1);
+                bfs_match(orig_id, p, result, depth + 1, is_weighted);
         }
         else
         {
             for (auto& p : g_.outgoing(id))
-                bfs_match(orig_id, p.first, result, depth + 1);
+                bfs_match(orig_id, p.first, result, depth + 1, is_weighted);
         }
         if (print_paths)
             cur_path_.pop_back();
