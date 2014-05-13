@@ -11,9 +11,8 @@
 #define META_DIRECTED_GRAPH_H_
 
 #include <stdexcept>
-#include <unordered_map>
-#include <unordered_set>
 #include <vector>
+#include <unordered_set>
 #include "meta.h"
 #include "util/optional.h"
 #include "graph/default_node.h"
@@ -30,7 +29,7 @@ template <class Node = default_node, class Edge = default_edge>
 class directed_graph
 {
   public:
-    using adjacency_list = std::unordered_map<node_id, Edge>;
+    using adjacency_list = std::vector<std::pair<node_id, Edge>>;
 
     /**
      * @param id The node id to get outgoing nodes from
@@ -42,7 +41,7 @@ class directed_graph
      * @param id The node id to get incoming nodes to
      * @return a collection of node_ids that are incoming to the parameter node
      */
-    const std::unordered_set<node_id>& incoming(node_id id) const;
+    const std::vector<node_id>& incoming(node_id id) const;
 
     /**
      * @param id
@@ -131,7 +130,7 @@ class directed_graph
      * Each Node object is indexed by its id. This structure keeps track of
      * incoming nodes to a specific node_id.
      */
-    std::vector<std::unordered_set<node_id>> incoming_;
+    std::vector<std::vector<node_id>> incoming_;
 
     /// Keeps track of whether nodes have been visited for the user.
     std::unordered_set<node_id> visited_;

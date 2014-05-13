@@ -18,7 +18,7 @@ auto directed_graph
 }
 
 template <class Node, class Edge>
-const std::unordered_set<node_id>& directed_graph
+const std::vector<node_id>& directed_graph
     <Node, Edge>::incoming(node_id id) const
 {
     if (id >= size())
@@ -44,7 +44,9 @@ typename util::optional<Edge> directed_graph
         throw directed_graph_exception{"node_id out of range"};
 
     auto& list = nodes_[source].second;
-    auto it = list.find(dest);
+    auto it = std::find_if(list.begin(), list.end(),
+                           [&](const std::pair<node_id, Edge>& p)
+    { return p.first == dest; });
     if (it != list.end())
         return {it->second};
 
@@ -55,7 +57,7 @@ template <class Node, class Edge>
 node_id directed_graph<Node, Edge>::insert(const Node& node)
 {
     nodes_.emplace_back(node, adjacency_list{});
-    incoming_.emplace_back(std::unordered_set<node_id>{});
+    incoming_.emplace_back(std::vector<node_id>{});
     return node_id{nodes_.size() - 1};
 }
 
@@ -67,12 +69,14 @@ void directed_graph
         throw directed_graph_exception{"node_id out of range"};
 
     auto& list = nodes_[source].second;
-    auto it = list.find(dest);
+    auto it = std::find_if(list.begin(), list.end(),
+                           [&](const std::pair<node_id, Edge>& p)
+    { return p.first == dest; });
     if (it != list.end())
         throw directed_graph_exception{"attempted to add existing edge"};
 
-    list.emplace(dest, edge);       // add outgoing edge from source to dest
-    incoming_[source].insert(dest); // add incoming edge to source
+    list.emplace_back(dest, edge);     // add outgoing edge from source to dest
+    incoming_[source].push_back(dest); // add incoming edge to source
 }
 
 template <class Node, class Edge>

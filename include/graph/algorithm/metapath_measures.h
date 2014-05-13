@@ -9,6 +9,7 @@
 #ifndef META_METAPATH_MEASURES_H_
 #define META_METAPATH_MEASURES_H_
 
+#include <unordered_map>
 #include "graph/directed_graph.h"
 #include "graph/metapath.h"
 
