@@ -45,7 +45,6 @@ confusion_matrix classifier::cross_validate(
         reset(); // clear any learning data already calculated
         train(std::vector<doc_id>{docs.begin() + step_size, docs.end()});
         auto m = test(std::vector<doc_id>{docs.begin(), docs.begin() + step_size});
-        LOG(info) << " -> Accuracy: " << m.accuracy() << ENDLG;
         std::cout << m.accuracy() << std::endl;
         matrix += m;
         std::rotate(docs.begin(), docs.begin() + step_size, docs.end());

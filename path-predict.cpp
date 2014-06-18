@@ -51,6 +51,7 @@ int main(int argc, char* argv[])
     create_dataset(orig_docs);
 
     graph::algorithm::path_predict_eval pp_eval{"pp-config.toml"};
-    pp_eval.rankings();
+    for(size_t i = 0; i < 50; ++i)
+       pp_eval.rankings();
     //pp_eval.predictions();
 }

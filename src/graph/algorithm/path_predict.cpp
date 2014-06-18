@@ -66,7 +66,6 @@ auto path_predict::three_hop_authors() -> std::unordered_map
 
     metapath_measures<graph_t> measures{
       g_before_, metapath{"author -- paper -- author -- paper -- author -- paper -- author"}};
-    // g_before_, metapath{"author -- paper -- author -- paper -- author"}};
     for (auto& srcp : measures.path_count())
     {
         for (auto& destp : srcp.second)
@@ -79,7 +78,19 @@ auto path_predict::three_hop_authors() -> std::unordered_map
         }
     }
 
-    std::cout << "Found " << docs.size() << " three-hop author pairs"
+    metapath_measures<graph_t> m2{g_before_, metapath{"author -- paper -- author -- paper -- author"}};
+    for (auto& srcp : m2.path_count())
+    {
+        for (auto& destp : srcp.second)
+        {
+            if (srcp.first < destp.first)
+            {
+                docs[std::make_pair(srcp.first, destp.first)]
+                    = corpus::document{};
+            }
+        }
+    }
+    std::cout << "Found " << docs.size() << " two- and three-hop author pairs"
               << std::endl;
 
     return docs;
@@ -98,16 +109,16 @@ void path_predict::create_docs()
 {
     std::vector<metapath> metapaths
         = {
-       //  metapath{"author -- paper -> paper -- author"},
-       //  metapath{"author -- paper <- paper -- author"},
-       //  metapath{"author -- paper -- venue -- paper -- author"},
-       //  metapath{"author -- paper -- term -- paper -- author"},
-           metapath{"author -- paper -- similarity -- paper -- author"}};
-       //  metapath{"author -- paper -- author -- paper -- author"},
-       //  metapath{"author -- paper -> paper -> paper -- author"},
-       //  metapath{"author -- paper <- paper <- paper -- author"},
-       //  metapath{"author -- paper -> paper <- paper -- author"},
-       //  metapath{"author -- paper <- paper -> paper -- author"}};
+           metapath{"author -- paper -> paper -- author"},
+           metapath{"author -- paper <- paper -- author"},
+           metapath{"author -- paper -- venue -- paper -- author"},
+           metapath{"author -- paper -- term -- paper -- author"},
+           metapath{"author -- paper -- similarity -- paper -- author"},
+           metapath{"author -- paper -- author -- paper -- author"},
+           metapath{"author -- paper -> paper -> paper -- author"},
+           metapath{"author -- paper <- paper <- paper -- author"},
+           metapath{"author -- paper -> paper <- paper -- author"},
+           metapath{"author -- paper <- paper -> paper -- author"}};
 
     auto hop_docs = three_hop_authors();
     std::cout << std::endl;
@@ -116,17 +127,17 @@ void path_predict::create_docs()
         std::cout << "Adding metapath feature: \"" << mpath.text() << "\""
                   << std::endl;
         metapath_measures<graph_t> measures{g_before_, mpath};
-        //auto pc = measures.path_count();
+        auto pc = measures.path_count();
         //auto pc = measures.normalized_path_count();
         //auto pc = measures.random_walk();
-        auto pc = measures.symmetric_random_walk();
+        //auto pc = measures.symmetric_random_walk();
         for (auto& p : hop_docs)
         {
             auto source = p.first.first;
             auto dest = p.first.second;
             p.second.increment(mpath.text() + "PC", pc[source][dest]);
         }
-
+        /*
         //std::cout << std::endl;
         pc = measures.normalized_path_count();
         for (auto& p : hop_docs)
@@ -155,8 +166,8 @@ void path_predict::create_docs()
             auto dest = p.first.second;
             p.second.increment(mpath.text() + "SRW", pc[source][dest]);
         }
-
         //std::cout << std::endl;
+        */
     }
     for (auto& p : hop_docs)
     {

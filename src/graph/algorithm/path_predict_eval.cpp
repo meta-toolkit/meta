@@ -55,6 +55,7 @@ void path_predict_eval::predictions()
     auto classifier = classify::make_classifier(*class_config, idx);
     auto even_docs = partition(idx->docs(), idx);
     auto matrix = classifier->cross_validate(even_docs, 10);
+    std::cout << matrix.accuracy() << std::endl;
     //matrix.print();
     //matrix.print_stats();
 }
@@ -166,7 +167,8 @@ void path_predict_eval::eval_ranks()
         ++qid;
     }
 
-    std::cout << "MAP: " << eval.map() << std::endl;
+    //std::cout << "MAP: " << eval.map() << std::endl;
+    std::cout << eval.map() << std::endl;
 }
 
 }

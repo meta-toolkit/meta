@@ -124,13 +124,14 @@ void load(graph::directed_graph<graph::dblp_node>& g, const std::string& prefix,
             ++pt_edges;
         }
     }
+    //return;
     // load similarities
     std::ifstream sims{prefix + "similarities.txt"};
     double score;
     size_t snodes_added = 0;
     while(sims >> source >> dest >> score)
     {
-        if (node_map[source + 1] != 0 && node_map[dest + 1] != 0 && score > 0.02)
+        if (node_map[source + 1] != 0 && node_map[dest + 1] != 0 && score > 0.0)
         {
             ++snodes_added;
             node_id s_id = g.insert(dblp_node{"similarity", score});
