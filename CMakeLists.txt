@@ -313,6 +313,9 @@ target_link_libraries(crf-train meta-crf)
 add_executable(crf-test crf-test.cpp)
 target_link_libraries(crf-test meta-crf meta-classify)
 
+add_executable(lm-test lm-test.cpp)
+target_link_libraries(lm-test meta-index)
+
 enable_testing()
 add_test(analyzers unit-test analyzers)
 set_tests_properties(analyzers PROPERTIES TIMEOUT 10)
