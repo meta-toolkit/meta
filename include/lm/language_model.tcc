@@ -8,6 +8,7 @@
  */
 
 #include <iostream>
+#include <sstream>
 #include <random>
 #include "analyzers/analyzer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
@@ -44,7 +45,7 @@ language_model<N>::language_model(const std::string& config_file)
 
         // get ngram stream started
         std::deque<std::string> ngram;
-        for (size_t i = 0; i < N; ++i)
+        for (size_t i = 1; i < N; ++i)
             ngram.push_back("<s>");
 
         // count each ngram occurrence
@@ -103,7 +104,6 @@ std::string language_model<N>::generate(unsigned int seed) const
     std::deque<std::string> ngram;
     for (size_t n = 1; n < N; ++n)
         ngram.push_back("<s>");
-    ngram.push_back("<s>");
 
     // keep generating until we see </s>
     std::string output;
@@ -119,6 +119,67 @@ std::string language_model<N>::generate(unsigned int seed) const
 
     output += make_string(ngram);
     return output;
+}
+
+template <size_t N>
+double language_model<N>::prob(std::deque<std::string> tokens) const
+{
+    std::deque<std::string> interp_tokens{tokens};
+    interp_tokens.pop_back();
+    auto interp_prob = interp_.prob(interp_tokens);
+
+    auto last = tokens.back();
+    tokens.pop_front();
+
+    auto ngram = make_string(tokens);
+
+    auto endings = dist_.find(ngram);
+    if (endings == dist_.end())
+        return (1.0 - lambda_) * interp_prob;
+
+    auto prob = endings->second.find(last);
+    if (prob == endings->second.end())
+        return (1.0 - lambda_) * interp_prob;
+
+    return lambda_ * prob->second + (1.0 - lambda_) * interp_prob;
+}
+
+template <size_t N>
+double language_model<N>::perplexity(const std::string& tokens) const
+{
+    std::deque<std::string> ngram;
+    for (size_t i = 1; i < N; ++i)
+        ngram.push_back("<s>");
+
+    double perp = 0.0;
+    for (auto& token : make_deque(tokens))
+    {
+        ngram.push_back(token);
+        double cur_prob = std::log(1.0 + prob(ngram));
+        perp += cur_prob;
+        ngram.pop_front();
+    }
+
+    return std::pow(perp, 1.0 / N);
+}
+
+template <size_t N>
+double language_model<N>::perplexity_per_word(const std::string& tokens) const
+{
+    return perplexity(tokens) / tokens.size();
+}
+
+template <size_t N>
+std::deque<std::string> language_model
+    <N>::make_deque(const std::string& tokens) const
+{
+    std::deque<std::string> d;
+    std::stringstream sstream{tokens};
+    std::string token;
+    while (sstream >> token)
+        d.push_back(token);
+
+    return d;
 }
 
 template <size_t N>

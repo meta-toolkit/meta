@@ -42,6 +42,28 @@ class language_model
     std::string next_token(const std::deque<std::string>& tokens,
                            double random) const;
 
+    /**
+     * @param tokens A sequence of tokens
+     * @return the perplexity of this token sequence given the current language
+     * model: \f$ \sqrt[n]{\prod_{i=1}^n\frac{1}{p(w_i|w_{i-n}\cdots w_{i-1})}}
+     * \f$
+     */
+    double perplexity(const std::string& tokens) const;
+
+    /**
+     * @param tokens A sequence of tokens
+     * @return the perplexity of this token sequence given the current language
+     * model normalized by the length of the sequence
+     */
+    double perplexity_per_word(const std::string& tokens) const;
+
+    /**
+     * @param tokens A sequence of n tokens
+     * @return the probability of seeing the nth token based on the previous n
+     * - 1 tokens
+     */
+    double prob(std::deque<std::string> tokens) const;
+
   private:
     /**
      * @param tokens A deque of tokens to convert to a string
@@ -49,12 +71,21 @@ class language_model
      */
     std::string make_string(const std::deque<std::string>& tokens) const;
 
+    /**
+     * @param tokens A string of space-delimited tokens to convert to a deque
+     * @return a deque of the tokens
+     */
+    std::deque<std::string> make_deque(const std::string& tokens) const;
+
     /// The language_model used to interpolate with this one for smoothing
     language_model<N - 1> interp_;
 
     /// Contains the N-gram distribution probabilities (N-1 words -> (w, prob))
     std::unordered_map
         <std::string, std::unordered_map<std::string, double>> dist_;
+
+    /// The interpolation coefficient for smoothing LM probabilities
+    constexpr static double lambda_ = 0.7;
 };
 
 template <>
@@ -66,7 +97,17 @@ class language_model<0>
     }
 
     std::string next_token(const std::deque<std::string>& tokens,
-                           double random) const {}
+                           double random) const
+    {
+        throw std::runtime_error{
+            "next_token should not be called on a 0-gram language model"};
+    }
+
+    double prob(std::deque<std::string> tokens) const
+    {
+        return 1.0;
+    }
+
   private:
 };
 }
