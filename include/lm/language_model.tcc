@@ -44,8 +44,8 @@ language_model<N>::language_model(const std::string& config_file)
 
         // get ngram stream started
         std::deque<std::string> ngram;
-        for (size_t i = 0; i < N - 1 && *stream; ++i)
-            ngram.push_back(stream->next());
+        for (size_t i = 0; i < N; ++i)
+            ngram.push_back("<s>");
 
         // count each ngram occurrence
         while (*stream)
@@ -80,7 +80,7 @@ std::string language_model
     auto str = make_string(tokens);
     auto it = dist_.find(str);
     if (it == dist_.end())
-        throw std::runtime_error{"couldn't find previous n - 1 tokens"};
+        throw std::runtime_error{"couldn't find previous n - 1 tokens: " + str};
 
     double cur = 0.0;
     for (auto& end : it->second)
@@ -90,21 +90,7 @@ std::string language_model
             return end.first;
     }
 
-    throw std::runtime_error{"could not generate next token"};
-}
-
-template <size_t N>
-std::string language_model
-    <N>::kth_dist_next_token(size_t k, const std::deque<std::string>& tokens,
-                             double random) const
-{
-    if (k == 0)
-        throw std::out_of_range{"kth distribution value is 0"};
-
-    if (k == 1)
-        return next_token(tokens, random);
-
-    return interp_.kth_dist_next_token(k - 1, tokens, random);
+    throw std::runtime_error{"could not generate next token: " + str};
 }
 
 template <size_t N>
@@ -115,17 +101,13 @@ std::string language_model<N>::generate(unsigned int seed) const
 
     // start generating at the beginning of a sequence
     std::deque<std::string> ngram;
-    std::string next;
-    std::string output;
+    for (size_t n = 1; n < N; ++n)
+        ngram.push_back("<s>");
     ngram.push_back("<s>");
-    for (size_t n = 2; n < N; ++n)
-    {
-        next = kth_dist_next_token(n, ngram, rdist(gen));
-        ngram.push_back(next);
-    }
 
     // keep generating until we see </s>
-    next = next_token(ngram, rdist(gen));
+    std::string output;
+    std::string next = next_token(ngram, rdist(gen));
     while (next != "</s>")
     {
         if (ngram.front() != "<s>")

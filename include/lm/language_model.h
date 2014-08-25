@@ -42,9 +42,6 @@ class language_model
     std::string next_token(const std::deque<std::string>& tokens,
                            double random) const;
 
-    std::string kth_dist_next_token(size_t k,
-                                    const std::deque<std::string>& tokens,
-                                    double random) const;
   private:
     /**
      * @param tokens A deque of tokens to convert to a string
@@ -70,10 +67,6 @@ class language_model<0>
 
     std::string next_token(const std::deque<std::string>& tokens,
                            double random) const {}
-
-    std::string kth_dist_next_token(size_t k,
-                                    const std::deque<std::string>& tokens,
-                                    double random) const {}
   private:
 };
 }
