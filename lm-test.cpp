@@ -18,4 +18,13 @@ int main(int argc, char* argv[])
         std::cout << "  -> perplexity_per_word: "
                   << model.perplexity_per_word(sentence) << std::endl;
     }
+
+    std::cout << "Input a sentence to score (blank to quit):" << std::endl;
+    std::string line;
+    while (true)
+    {
+        std::cout << "> ";
+        std::getline(std::cin, line);
+        std::cout << model.perplexity_per_word(line) << std::endl;
+    }
 }

@@ -124,12 +124,15 @@ std::string language_model<N>::generate(unsigned int seed) const
 template <size_t N>
 double language_model<N>::prob(std::deque<std::string> tokens) const
 {
+    if(tokens.size() != N)
+        throw std::runtime_error{"prob() needs one N-gram"};
+
     std::deque<std::string> interp_tokens{tokens};
-    interp_tokens.pop_back();
+    interp_tokens.pop_front(); // look at prev N - 1
     auto interp_prob = interp_.prob(interp_tokens);
 
     auto last = tokens.back();
-    tokens.pop_front();
+    tokens.pop_back();
 
     auto ngram = make_string(tokens);
 
@@ -155,8 +158,7 @@ double language_model<N>::perplexity(const std::string& tokens) const
     for (auto& token : make_deque(tokens))
     {
         ngram.push_back(token);
-        double cur_prob = std::log(1.0 + prob(ngram));
-        perp += cur_prob;
+        perp += std::log(1.0 + 1.0 / prob(ngram));
         ngram.pop_front();
     }
 

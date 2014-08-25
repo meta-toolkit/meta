@@ -105,7 +105,7 @@ class language_model<0>
 
     double prob(std::deque<std::string> tokens) const
     {
-        return 1.0;
+        return 0.0;
     }
 
   private:
