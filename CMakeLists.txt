@@ -250,6 +250,10 @@ add_library(meta-crf
             src/sequence/crf/viterbi_scorer.cpp)
 target_link_libraries(meta-crf meta-sequence)
 
+add_library(meta-language-model
+            src/lm/language_model.cpp)
+target_link_libraries(meta-language-model meta-corpus)
+
 add_library(meta-testing
             src/test/classifier_test.cpp
             src/test/forward_index_test.cpp
@@ -314,7 +318,7 @@ add_executable(crf-test crf-test.cpp)
 target_link_libraries(crf-test meta-crf meta-classify)
 
 add_executable(lm-test lm-test.cpp)
-target_link_libraries(lm-test meta-index)
+target_link_libraries(lm-test meta-language-model meta-index)
 
 enable_testing()
 add_test(analyzers unit-test analyzers)

@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <iostream>
 #include "meta.h"
 #include "lm/language_model.h"
 
@@ -10,7 +11,7 @@ using namespace meta;
 
 int main(int argc, char* argv[])
 {
-    lm::language_model<3> model{argv[1]};
+    lm::language_model model{argv[1], 3};
     for (size_t i = 1; i < 10; ++i)
     {
         auto sentence = model.generate(i);

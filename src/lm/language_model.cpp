@@ -1,5 +1,5 @@
 /**
- * @file language_model.tcc
+ * @file language_model.cpp
  * @author Sean Massung
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -10,6 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include <random>
+#include "cpptoml.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
 #include "analyzers/filters/lowercase_filter.h"
@@ -17,17 +18,41 @@
 #include "analyzers/filters/empty_sentence_filter.h"
 #include "corpus/corpus.h"
 #include "util/shim.h"
+#include "lm/language_model.h"
 
 namespace meta
 {
 namespace lm
 {
 
-template <size_t N>
-language_model<N>::language_model(const std::string& config_file)
-    : interp_{config_file}
+language_model::language_model(const std::string& config_file)
 {
-    std::cout << "Creating " << N << "-gram language model" << std::endl;
+    auto config = cpptoml::parse_file(config_file);
+    auto group = config.get_group("language-model");
+    auto nval = group->get_as<size_t>("n-value");
+    if(!nval)
+        throw std::runtime_error{"no n-value specified in language-model group"};
+
+    N_ = *nval;
+
+    if (N_ > 1)
+        interp_ = make_unique<language_model>(config_file, N_ - 1);
+
+    learn_model(config_file);
+}
+
+language_model::language_model(const std::string& config_file, size_t n):
+    N_{n}
+{
+    if (N_ > 1)
+        interp_ = make_unique<language_model>(config_file, N_ - 1);
+
+    learn_model(config_file);
+}
+
+void language_model::learn_model(const std::string& config_file)
+{
+    std::cout << "Creating " << N_ << "-gram language model" << std::endl;
 
     auto corpus = corpus::corpus::load(config_file);
 
@@ -45,14 +70,14 @@ language_model<N>::language_model(const std::string& config_file)
 
         // get ngram stream started
         std::deque<std::string> ngram;
-        for (size_t i = 1; i < N; ++i)
+        for (size_t i = 1; i < N_; ++i)
             ngram.push_back("<s>");
 
         // count each ngram occurrence
         while (*stream)
         {
             auto token = stream->next();
-            if (N > 1)
+            if (N_ > 1)
             {
                 ++dist_[make_string(ngram)][token];
                 ngram.pop_front();
@@ -74,9 +99,8 @@ language_model<N>::language_model(const std::string& config_file)
     }
 }
 
-template <size_t N>
-std::string language_model
-    <N>::next_token(const std::deque<std::string>& tokens, double random) const
+std::string language_model::next_token(const std::deque<std::string>& tokens,
+                                       double random) const
 {
     auto str = make_string(tokens);
     auto it = dist_.find(str);
@@ -94,15 +118,14 @@ std::string language_model
     throw std::runtime_error{"could not generate next token: " + str};
 }
 
-template <size_t N>
-std::string language_model<N>::generate(unsigned int seed) const
+std::string language_model::generate(unsigned int seed) const
 {
     std::default_random_engine gen(seed);
     std::uniform_real_distribution<double> rdist(0.0, 1.0);
 
     // start generating at the beginning of a sequence
     std::deque<std::string> ngram;
-    for (size_t n = 1; n < N; ++n)
+    for (size_t n = 1; n < N_; ++n)
         ngram.push_back("<s>");
 
     // keep generating until we see </s>
@@ -121,15 +144,14 @@ std::string language_model<N>::generate(unsigned int seed) const
     return output;
 }
 
-template <size_t N>
-double language_model<N>::prob(std::deque<std::string> tokens) const
+double language_model::prob(std::deque<std::string> tokens) const
 {
-    if(tokens.size() != N)
+    if (tokens.size() != N_)
         throw std::runtime_error{"prob() needs one N-gram"};
 
     std::deque<std::string> interp_tokens{tokens};
     interp_tokens.pop_front(); // look at prev N - 1
-    auto interp_prob = interp_.prob(interp_tokens);
+    auto interp_prob = interp_ ? interp_->prob(interp_tokens) : 1.0;
 
     auto last = tokens.back();
     tokens.pop_back();
@@ -147,11 +169,10 @@ double language_model<N>::prob(std::deque<std::string> tokens) const
     return lambda_ * prob->second + (1.0 - lambda_) * interp_prob;
 }
 
-template <size_t N>
-double language_model<N>::perplexity(const std::string& tokens) const
+double language_model::perplexity(const std::string& tokens) const
 {
     std::deque<std::string> ngram;
-    for (size_t i = 1; i < N; ++i)
+    for (size_t i = 1; i < N_; ++i)
         ngram.push_back("<s>");
 
     double perp = 0.0;
@@ -162,18 +183,16 @@ double language_model<N>::perplexity(const std::string& tokens) const
         ngram.pop_front();
     }
 
-    return std::pow(perp, 1.0 / N);
+    return std::pow(perp, 1.0 / N_);
 }
 
-template <size_t N>
-double language_model<N>::perplexity_per_word(const std::string& tokens) const
+double language_model::perplexity_per_word(const std::string& tokens) const
 {
     return perplexity(tokens) / tokens.size();
 }
 
-template <size_t N>
-std::deque<std::string> language_model
-    <N>::make_deque(const std::string& tokens) const
+std::deque<std::string> language_model::make_deque(const std::string
+                                                   & tokens) const
 {
     std::deque<std::string> d;
     std::stringstream sstream{tokens};
@@ -184,9 +203,8 @@ std::deque<std::string> language_model
     return d;
 }
 
-template <size_t N>
-std::string language_model
-    <N>::make_string(const std::deque<std::string>& tokens) const
+std::string language_model::make_string(const std::deque
+                                        <std::string>& tokens) const
 {
     std::string result{""};
     if (tokens.empty())

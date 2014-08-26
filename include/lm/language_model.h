@@ -18,7 +18,6 @@ namespace meta
 {
 namespace lm
 {
-template <size_t N>
 class language_model
 {
   public:
@@ -27,6 +26,13 @@ class language_model
      * config file.
      */
     language_model(const std::string& config_file);
+
+    /**
+     * Creates an N-gram language model based on the corpus specified in the
+     * config file.
+     * @param n The value of n, which overrides any setting in the config file
+     */
+    language_model(const std::string& config_file, size_t n);
 
     /**
      * Randomly generates one token sequence based on <s> and </s> symbols.
@@ -65,6 +71,14 @@ class language_model
     double prob(std::deque<std::string> tokens) const;
 
   private:
+
+    /**
+     * Builds the probabilities associated with this language model.
+     * @param config_file The config file that specifies the location of the
+     * corpus
+     */
+    void learn_model(const std::string& config_file);
+
     /**
      * @param tokens A deque of tokens to convert to a string
      * @return the string version of the deque (space delimited)
@@ -78,41 +92,20 @@ class language_model
     std::deque<std::string> make_deque(const std::string& tokens) const;
 
     /// The language_model used to interpolate with this one for smoothing
-    language_model<N - 1> interp_;
+    std::unique_ptr<language_model> interp_;
 
     /// Contains the N-gram distribution probabilities (N-1 words -> (w, prob))
     std::unordered_map
         <std::string, std::unordered_map<std::string, double>> dist_;
 
+    /// The value of N in this n-gram
+    size_t N_;
+
     /// The interpolation coefficient for smoothing LM probabilities
     constexpr static double lambda_ = 0.7;
 };
-
-template <>
-class language_model<0>
-{
-  public:
-    language_model(const std::string& config_file)
-    {/* nothing */
-    }
-
-    std::string next_token(const std::deque<std::string>& tokens,
-                           double random) const
-    {
-        throw std::runtime_error{
-            "next_token should not be called on a 0-gram language model"};
-    }
-
-    double prob(std::deque<std::string> tokens) const
-    {
-        return 0.0;
-    }
-
-  private:
-};
 }
 }
 
-#include "language_model.tcc"
 #endif
 
