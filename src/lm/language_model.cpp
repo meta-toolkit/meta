@@ -118,6 +118,34 @@ std::string language_model::next_token(const std::deque<std::string>& tokens,
     throw std::runtime_error{"could not generate next token: " + str};
 }
 
+std::vector<std::pair<std::string, double>>
+    language_model::top_k(const std::deque<std::string>& prev, size_t k) const
+{
+    if (prev.size() != N_ - 1)
+        throw std::runtime_error{"prev should contain n - 1 tokens"};
+
+    auto it = dist_.find(make_string(prev));
+    if (it == dist_.end())
+        throw std::runtime_error{"no transitions found"};
+
+    using pair_t = std::pair<std::string, double>;
+    std::vector<pair_t> probs{it->second.begin(), it->second.end()};
+
+    auto comp = [&](const pair_t& a, const pair_t& b)
+    { return a.second > b.second; };
+    if (k >= probs.size())
+    {
+        std::sort(probs.begin(), probs.end(), comp);
+        return probs;
+    }
+
+    std::nth_element(probs.begin(), probs.begin() + k, probs.end(), comp);
+    std::vector<pair_t> sorted{probs.begin(), probs.begin() + k};
+    std::sort(sorted.begin(), sorted.end(), comp);
+
+    return sorted;
+}
+
 std::string language_model::generate(unsigned int seed) const
 {
     std::default_random_engine gen(seed);

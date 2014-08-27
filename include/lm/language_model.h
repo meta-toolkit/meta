@@ -54,6 +54,14 @@ class language_model
                            double random) const;
 
     /**
+     * @param prev A sequence of n - 1 tokens preceding the desired token
+     * @param k
+     * @return a list of up to k most likely tokens to come next
+     */
+    std::vector<std::pair<std::string, double>>
+        top_k(const std::deque<std::string>& prev, size_t k) const;
+
+    /**
      * @param tokens A sequence of tokens
      * @return the perplexity of this token sequence given the current language
      * model: \f$ \sqrt[n]{\prod_{i=1}^n\frac{1}{p(w_i|w_{i-n}\cdots w_{i-1})}}
