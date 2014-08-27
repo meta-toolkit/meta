@@ -13,6 +13,7 @@
 #include <string>
 #include <deque>
 #include <unordered_map>
+#include <vector>
 
 namespace meta
 {
@@ -21,6 +22,10 @@ namespace lm
 class language_model
 {
   public:
+    /// An analysis consists of each n-gram from a sequence and its probability
+    //   under the current model.
+    using lm_analysis = std::vector<std::pair<std::deque<std::string>, double>>;
+
     /**
      * Creates an N-gram language model based on the corpus specified in the
      * config file.
@@ -64,14 +69,26 @@ class language_model
     double perplexity_per_word(const std::string& tokens) const;
 
     /**
+     * @param tokens A sequence of tokens
+     * @return the log likelihood of the sequence of tokens under this
+     * language model
+     */
+    double log_likelihood(const std::string& tokens) const;
+
+    /**
      * @param tokens A sequence of n tokens
      * @return the probability of seeing the nth token based on the previous n
      * - 1 tokens
      */
     double prob(std::deque<std::string> tokens) const;
 
-  private:
+    /**
+     * @param tokens A sequence of tokens
+     * @return statistical information about each n-gram of the sequence
+     */
+    lm_analysis analysis(const std::string& tokens) const;
 
+  private:
     /**
      * Builds the probabilities associated with this language model.
      * @param config_file The config file that specifies the location of the
@@ -102,7 +119,7 @@ class language_model
     size_t N_;
 
     /// The interpolation coefficient for smoothing LM probabilities
-    constexpr static double lambda_ = 0.7;
+    constexpr static double lambda_ = 0.85;
 };
 }
 }

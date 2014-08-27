@@ -30,8 +30,9 @@ language_model::language_model(const std::string& config_file)
     auto config = cpptoml::parse_file(config_file);
     auto group = config.get_group("language-model");
     auto nval = group->get_as<size_t>("n-value");
-    if(!nval)
-        throw std::runtime_error{"no n-value specified in language-model group"};
+    if (!nval)
+        throw std::runtime_error{
+            "no n-value specified in language-model group"};
 
     N_ = *nval;
 
@@ -41,8 +42,7 @@ language_model::language_model(const std::string& config_file)
     learn_model(config_file);
 }
 
-language_model::language_model(const std::string& config_file, size_t n):
-    N_{n}
+language_model::language_model(const std::string& config_file, size_t n) : N_{n}
 {
     if (N_ > 1)
         interp_ = make_unique<language_model>(config_file, N_ - 1);
@@ -169,21 +169,39 @@ double language_model::prob(std::deque<std::string> tokens) const
     return lambda_ * prob->second + (1.0 - lambda_) * interp_prob;
 }
 
-double language_model::perplexity(const std::string& tokens) const
+auto language_model::analysis(const std::string& tokens) const -> lm_analysis
 {
     std::deque<std::string> ngram;
     for (size_t i = 1; i < N_; ++i)
         ngram.push_back("<s>");
 
-    double perp = 0.0;
-    for (auto& token : make_deque(tokens))
+    lm_analysis result;
+    auto dq = make_deque(tokens);
+    dq.push_back("</s>");
+    for (auto& token : dq)
     {
         ngram.push_back(token);
-        perp += std::log(1.0 + 1.0 / prob(ngram));
+        result.emplace_back(ngram, prob(ngram));
         ngram.pop_front();
     }
 
+    return result;
+}
+
+double language_model::perplexity(const std::string& tokens) const
+{
+    double perp = 0.0;
+    for (auto& p : analysis(tokens))
+        perp += std::log(1.0 + 1.0 / p.second);
     return std::pow(perp, 1.0 / N_);
+}
+
+double language_model::log_likelihood(const std::string& tokens) const
+{
+    double like = 0.0;
+    for (auto& p : analysis(tokens))
+        like += std::log(1.0 + p.second);
+    return like;
 }
 
 double language_model::perplexity_per_word(const std::string& tokens) const
