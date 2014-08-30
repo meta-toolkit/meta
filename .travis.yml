@@ -9,9 +9,8 @@ compiler:
 
 install:
   - sudo apt-get install libicu-dev
-  - sudo add-apt-repository -y ppa:purplekarrot/cmake
-  - sudo apt-get update -qq
-  - sudo apt-get -y install cmake
+  - wget http://www.cmake.org/files/v3.0/cmake-3.0.1-Linux-i386.sh
+  - sudo sh cmake-3.0.1-Linux-i386.sh --prefix=/usr/local --exclude-subdir
   # credit: https://github.com/beark/ftl/
   # install g++ 4.8, if tests are run with g++
   - if [ "`echo $CXX`" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
@@ -56,6 +55,6 @@ before_script:
   - cp ../config.toml ./
 
 script:
-  - cmake ../ -DCMAKE_BUILD_TYPE=Debug
+  - /usr/local/bin/cmake ../ -DCMAKE_BUILD_TYPE=Debug
   - make
-  - ctest --output-on-failure
+  - /usr/local/bin/ctest --output-on-failure
