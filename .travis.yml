@@ -9,10 +9,9 @@ compiler:
 
 install:
   - sudo apt-get install libicu-dev
-  - sudo add-apt-repository -y ppa:andykimpe/cmake3
+  - sudo add-apt-repository -y ppa:purplekarrot/cmake
   - sudo apt-get update -qq
-  - sudo apt-get -y purge cmake
-  - sudo apt-get -y install cmake3
+  - sudo apt-get -y install cmake
   # credit: https://github.com/beark/ftl/
   # install g++ 4.8, if tests are run with g++
   - if [ "`echo $CXX`" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
