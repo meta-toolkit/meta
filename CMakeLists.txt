@@ -1,10 +1,9 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.0)
 project(meta)
 
 option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
 
-include_directories(include/
-                    deps/cpptoml/include/)
+include_directories(include/)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
@@ -55,43 +54,6 @@ endif()
 
 include(CheckCXXSourceCompiles)
 include(CheckCXXSourceRuns)
-check_cxx_source_compiles("
-#include <iomanip>
-int main() {
-    std::tm t;
-    std::put_time(&t, \"%Y\");
-    return 0;
-}" META_HAS_STD_PUT_TIME)
-
-if(META_HAS_STD_PUT_TIME)
-    add_definitions(-DMETA_HAS_STD_PUT_TIME=1)
-    add_definitions(-DCPPTOML_HAS_STD_PUT_TIME=1)
-endif()
-
-check_cxx_source_runs("
-#include <cstring>
-#include <ctime>
-#include <regex>
-int main() {
-    std::string to_match = \"2014-02-05T14:30:05Z\";
-    std::regex pattern{\"(\\\\\\\\d{4})-(\\\\\\\\d{2})-(\\\\\\\\d{2})T(\\\\\\\\d{2}):(\\\\\\\\d{2}):(\\\\\\\\d{2})Z\"};
-    std::match_results<std::string::const_iterator> results;
-    std::regex_match(to_match, results, pattern);
-
-    std::tm date;
-    std::memset( &date, '\\\\0', sizeof( date ) );
-    date.tm_year = stoi( results[1] ) - 1900;
-    date.tm_mon = stoi( results[2] ) - 1;
-    date.tm_mday = stoi( results[3] );
-    date.tm_hour = stoi( results[4] );
-    date.tm_min = stoi( results[5] );
-    date.tm_sec = stoi( results[6] );
-    return 0;
-}" META_HAS_STD_REGEX)
-
-if(META_HAS_STD_REGEX)
-    add_definitions(-DCPPTOML_HAS_STD_REGEX=1)
-endif()
 
 check_cxx_source_compiles("
 #include <atomic>
@@ -120,8 +82,7 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-add_subdirectory(src)
-add_subdirectory(deps/porter2_stemmer)
+link_libraries(cpptoml)
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf
@@ -131,7 +92,7 @@ add_custom_target(tidy
                   *.theta)
 
 find_package(Doxygen)
-if(DOXYGEN_FOUND)
+if(DOXYGEN_FOUND AND NOT TARGET doc)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/meta.doxygen.in
                    ${CMAKE_CURRENT_BINARY_DIR}/meta.doxygen @ONLY)
     add_custom_target(doc
@@ -139,3 +100,7 @@ if(DOXYGEN_FOUND)
                       ${CMAKE_CURRENT_BINARY_DIR}/meta.doxygen
                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endif()
+
+add_subdirectory(src)
+add_subdirectory(deps/porter2_stemmer EXCLUDE_FROM_ALL)
+add_subdirectory(deps/cpptoml EXCLUDE_FROM_ALL)
