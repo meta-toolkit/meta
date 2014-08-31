@@ -8,6 +8,9 @@ compiler:
     - gcc
 
 install:
+  - sudo apt-get install libc6-i386
+  - wget http://www.cmake.org/files/v3.0/cmake-3.0.1-Linux-i386.sh
+  - sudo sh cmake-3.0.1-Linux-i386.sh --prefix=/usr/local --exclude-subdir
   - sudo apt-get install libicu-dev
   # credit: https://github.com/beark/ftl/
   # install g++ 4.8, if tests are run with g++
@@ -37,9 +40,6 @@ install:
   - if [ "`echo $CXX`" == "clang++" ]; then cd $cwd; fi
 
 before_script:
-  - mkdir bin
-  - wget http://www.cmake.org/files/v3.0/cmake-3.0.1-Linux-i386.sh
-  - sh cmake-3.0.1-Linux-i386.sh --prefix=bin --exclude-subdir
   - cd deps/libsvm-modules/liblinear
   - make
   - cd ../libsvm
@@ -56,6 +56,6 @@ before_script:
   - cp ../config.toml ./
 
 script:
-  - ../bin/cmake ../ -DCMAKE_BUILD_TYPE=Debug
+  - cmake ../ -DCMAKE_BUILD_TYPE=Debug
   - make
-  - ../bin/ctest --output-on-failure
+  - ctest --output-on-failure
