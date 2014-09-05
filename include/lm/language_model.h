@@ -10,8 +10,9 @@
 #ifndef META_LANGUAGE_MODEL_H_
 #define META_LANGUAGE_MODEL_H_
 
-#include <string>
 #include <deque>
+#include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
