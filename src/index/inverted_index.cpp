@@ -86,8 +86,7 @@ inverted_index::impl::impl(inverted_index* idx,
 }
 
 inverted_index::inverted_index(const cpptoml::toml_group& config)
-    : disk_index{config,
-                 *cpptoml::get_as<std::string>(config, "inverted-index")},
+    : disk_index{config, *config.get_as<std::string>("inverted-index")},
       inv_impl_{this, config}
 {
     // nothing
