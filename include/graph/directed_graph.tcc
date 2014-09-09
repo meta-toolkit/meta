@@ -8,8 +8,8 @@ namespace meta
 namespace graph
 {
 template <class Node, class Edge>
-auto directed_graph
-    <Node, Edge>::outgoing(node_id id) const -> const adjacency_list &
+auto directed_graph<Node, Edge>::outgoing(node_id id) const -> const
+    adjacency_list &
 {
     if (id >= size())
         throw directed_graph_exception{"node_id out of range"};
@@ -18,8 +18,8 @@ auto directed_graph
 }
 
 template <class Node, class Edge>
-const std::vector<node_id>& directed_graph
-    <Node, Edge>::incoming(node_id id) const
+const std::vector<node_id>&
+    directed_graph<Node, Edge>::incoming(node_id id) const
 {
     if (id >= size())
         throw directed_graph_exception{"node_id out of range"};
@@ -37,8 +37,8 @@ Node& directed_graph<Node, Edge>::node(node_id id)
 }
 
 template <class Node, class Edge>
-typename util::optional<Edge> directed_graph
-    <Node, Edge>::edge(node_id source, node_id dest)
+typename util::optional<Edge> directed_graph<Node, Edge>::edge(node_id source,
+                                                               node_id dest)
 {
     if (source >= size() || dest >= size())
         throw directed_graph_exception{"node_id out of range"};
@@ -46,7 +46,9 @@ typename util::optional<Edge> directed_graph
     auto& list = nodes_[source].second;
     auto it = std::find_if(list.begin(), list.end(),
                            [&](const std::pair<node_id, Edge>& p)
-    { return p.first == dest; });
+                           {
+        return p.first == dest;
+    });
     if (it != list.end())
         return {it->second};
 
@@ -62,8 +64,8 @@ node_id directed_graph<Node, Edge>::insert(const Node& node)
 }
 
 template <class Node, class Edge>
-void directed_graph
-    <Node, Edge>::add_edge(const Edge& edge, node_id source, node_id dest)
+void directed_graph<Node, Edge>::add_edge(const Edge& edge, node_id source,
+                                          node_id dest)
 {
     if (source >= size() || dest >= size())
         throw directed_graph_exception{"node_id out of range"};
@@ -71,7 +73,9 @@ void directed_graph
     auto& list = nodes_[source].second;
     auto it = std::find_if(list.begin(), list.end(),
                            [&](const std::pair<node_id, Edge>& p)
-    { return p.first == dest; });
+                           {
+        return p.first == dest;
+    });
     if (it != list.end())
         throw directed_graph_exception{"attempted to add existing edge"};
 
