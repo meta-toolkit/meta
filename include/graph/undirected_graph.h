@@ -76,15 +76,20 @@ class undirected_graph
      */
     uint64_t size() const;
 
+    /**
+     * @return the number of edges in the graph
+     */
+    uint64_t num_edges() const;
+
     #include "node_iterator.h"
- // #include "edge_iterator.h"
+    #include "edge_iterator.h"
 
     /**
      * @return an iterator to the beginning ("first" node) of this graph
      */
     node_iterator begin()
     {
-        return node_iterator{this, node_id{0}};
+        return {this, node_id{0}};
     }
 
     /**
@@ -92,24 +97,32 @@ class undirected_graph
      */
     node_iterator end()
     {
-        return node_iterator{this, node_id{nodes_.size()}};
+        return {this, node_id{nodes_.size()}};
     }
 
- // /**
- //  * @return an iterator to the beginning ("first" edge) of this graph
- //  */
- // edge_iterator edges_begin() const;
+    /**
+     * @return an iterator to the beginning ("first" edge) of this graph
+     */
+    edge_iterator edges_begin()
+    {
+        return {this, node_id{0}, false};
+    }
 
- // /**
- //  * @return an iterator that represents one past the last node of this graph
- //  */
- // edge_iterator edges_end() const;
+    /**
+     * @return an iterator that represents one past the last node of this graph
+     */
+    edge_iterator edges_end()
+    {
+        return {this, node_id{nodes_.size()}, true};
+    }
 
   private:
     /**
      * Each Node object is indexed by its id.
      */
     std::vector<std::pair<Node, adjacency_list>> nodes_;
+
+    uint64_t num_edges_ = 0;
 };
 
 /**

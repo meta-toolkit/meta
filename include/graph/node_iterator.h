@@ -7,7 +7,6 @@ class node_iterator : public std::iterator<std::forward_iterator_tag, Node>
 {
   public:
     typedef undirected_graph<Node, Edge> graph_t;
-    friend graph_t;
 
     typedef node_iterator self_type;
     typedef Node value_type;
@@ -26,8 +25,10 @@ class node_iterator : public std::iterator<std::forward_iterator_tag, Node>
         return !(lhs == rhs);
     }
 
-    node_iterator(graph_t* handle, node_id idx): handle_{handle}, cur_id_{idx}
-        { }
+    node_iterator(graph_t* handle, node_id idx)
+        : nodes_{handle->nodes_}, cur_id_{idx}
+    {
+    }
 
     self_type operator++()
     {
@@ -42,17 +43,11 @@ class node_iterator : public std::iterator<std::forward_iterator_tag, Node>
         return saved;
     }
 
-    reference operator*()
-    {
-        return handle_->nodes_[cur_id_].first;
-    }
+    reference operator*() { return nodes_[cur_id_].first; }
 
-    pointer operator->()
-    {
-        return &handle_->nodes_[cur_id_].first;
-    }
+    pointer operator->() { return &nodes_[cur_id_].first; }
 
   private:
-    graph_t* handle_;
+    std::vector<std::pair<Node, adjacency_list>>& nodes_;
     node_id cur_id_;
 };
