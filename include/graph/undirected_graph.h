@@ -7,8 +7,8 @@
  * project.
  */
 
-#ifndef META_UNundirected_GRAPH_H_
-#define META_UNundirected_GRAPH_H_
+#ifndef META_UNDIRECTED_GRAPH_H_
+#define META_UNDIRECTED_GRAPH_H_
 
 #include <stdexcept>
 #include <vector>
@@ -54,7 +54,7 @@ class undirected_graph
      * @param node The new object to add into the graph
      * @return the id of the inserted node
      */
-    node_id insert(const Node& node);
+    node_id insert(Node node);
 
     /**
      * @param edge
@@ -75,6 +75,35 @@ class undirected_graph
      * range for a valid node_id
      */
     uint64_t size() const;
+
+    #include "node_iterator.h"
+ // #include "edge_iterator.h"
+
+    /**
+     * @return an iterator to the beginning ("first" node) of this graph
+     */
+    node_iterator begin()
+    {
+        return node_iterator{this, node_id{0}};
+    }
+
+    /**
+     * @return an iterator that represents one past the last node of this graph
+     */
+    node_iterator end()
+    {
+        return node_iterator{this, node_id{nodes_.size()}};
+    }
+
+ // /**
+ //  * @return an iterator to the beginning ("first" edge) of this graph
+ //  */
+ // edge_iterator edges_begin() const;
+
+ // /**
+ //  * @return an iterator that represents one past the last node of this graph
+ //  */
+ // edge_iterator edges_end() const;
 
   private:
     /**

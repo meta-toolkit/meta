@@ -47,10 +47,11 @@ typename util::optional<Edge> undirected_graph<Node, Edge>::edge(node_id source,
 }
 
 template <class Node, class Edge>
-node_id undirected_graph<Node, Edge>::insert(const Node& node)
+node_id undirected_graph<Node, Edge>::insert(Node node)
 {
+    node.id = nodes_.size();
     nodes_.emplace_back(node, adjacency_list{});
-    return node_id{nodes_.size() - 1};
+    return node.id;
 }
 
 template <class Node, class Edge>
@@ -71,7 +72,7 @@ void undirected_graph<Node, Edge>::add_edge(const Edge& edge, node_id source,
 
     // add connections to both adjacency lists
     list.emplace_back(dest, edge);
-    nodes_[dest].second.push_back(source);
+    nodes_[dest].second.emplace_back(source, edge);
 }
 
 template <class Node, class Edge>

@@ -34,6 +34,7 @@ struct default_node
 
     /// the text label for this node
     std::string label;
+    node_id id;
 };
 }
 }
