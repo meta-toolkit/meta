@@ -29,7 +29,12 @@ class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
     edge_iterator(graph_t* handle, node_id idx, bool end)
         : nodes_{handle->nodes_}, cur_id_{idx}, end_{end}
     {
-        if (idx < nodes_.size())
+        if(handle->num_edges() == 0)
+        {
+            cur_id_ = nodes_.size();
+            end_ = true;
+        }
+        else if (idx < nodes_.size())
         {
             iter_ = nodes_[idx].second.begin();
             if (nodes_[idx].second.empty())
