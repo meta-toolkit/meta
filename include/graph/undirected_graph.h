@@ -48,7 +48,7 @@ class undirected_graph
      * @param dest
      * @return an optional edge connecting source and dest
      */
-    util::optional<Edge> edge(node_id source, node_id dest);
+    util::optional<Edge> edge(node_id source, node_id dest) const;
 
     /**
      * @param node The new object to add into the graph

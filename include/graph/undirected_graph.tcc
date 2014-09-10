@@ -28,8 +28,8 @@ Node& undirected_graph<Node, Edge>::node(node_id id)
 }
 
 template <class Node, class Edge>
-typename util::optional<Edge> undirected_graph<Node, Edge>::edge(node_id source,
-                                                                 node_id dest)
+typename util::optional<Edge>
+    undirected_graph<Node, Edge>::edge(node_id source, node_id dest) const
 {
     if (source >= size() || dest >= size())
         throw undirected_graph_exception{"node_id out of range"};
@@ -58,7 +58,7 @@ template <class Node, class Edge>
 void undirected_graph<Node, Edge>::add_edge(const Edge& edge, node_id source,
                                             node_id dest)
 {
-    if(source == dest)
+    if (source == dest)
         throw undirected_graph_exception{"can not create self-loops"};
 
     if (source >= size() || dest >= size())
@@ -66,11 +66,10 @@ void undirected_graph<Node, Edge>::add_edge(const Edge& edge, node_id source,
 
     auto& list = nodes_[source].second;
     auto it = std::find_if(list.begin(), list.end(),
-        [&](const std::pair<node_id, Edge>& p)
-        {
-            return p.first == dest;
-        }
-    );
+                           [&](const std::pair<node_id, Edge>& p)
+                           {
+        return p.first == dest;
+    });
     if (it != list.end())
         throw undirected_graph_exception{"attempted to add existing edge"};
 

@@ -10,6 +10,7 @@
 
 #include "meta.h"
 #include "graph/undirected_graph.h"
+#include "graph/algorithms.h"
 
 using namespace meta;
 
@@ -52,19 +53,23 @@ graph::undirected_graph<> load(const std::string& filename)
 
 void degree_dist(graph::undirected_graph<>& g)
 {
-    std::ofstream outfile{"degrees.dat"};
-    std::unordered_map<size_t, size_t> counts;
-    for(auto& node: g)
-        ++counts[g.adjacent(node.id).size()];
+    using pair_t = std::pair<node_id, size_t>;
+    std::vector<pair_t> degrees;
+    for (auto& node : g)
+        degrees.emplace_back(node.id, g.adjacent(node.id).size());
 
-    using pair_t = std::pair<size_t, size_t>;
-    std::vector<pair_t> sorted{counts.begin(), counts.end()};
-    std::sort(sorted.begin(), sorted.end(), [&](const pair_t& a, const pair_t& b)
-    {
-        return a.first > b.first;
+    std::sort(degrees.begin(), degrees.end(),
+              [&](const pair_t& a, const pair_t& b)
+              {
+        return a.second > b.second;
     });
 
-    for(auto& c: sorted)
+    std::cout << "Clustering coefficient of top author: ";
+    std::cout << graph::algorithms::clustering_coefficient(g, degrees[0].first)
+              << std::endl;
+
+    std::ofstream outfile{"degrees.dat"};
+    for (auto& c : degrees)
         outfile << c.first << " " << c.second << "\n";
 }
 
@@ -75,7 +80,7 @@ int main(int argc, char* argv[])
     std::cout << "Number of nodes: " << g.size() << std::endl;
 
     size_t num_edges = 0;
-    for(auto it = g.edges_begin(); it != g.edges_end(); ++it)
+    for (auto it = g.edges_begin(); it != g.edges_end(); ++it)
         ++num_edges;
 
     std::cout << "Number of edges: " << num_edges << std::endl;
