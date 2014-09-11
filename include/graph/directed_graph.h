@@ -62,6 +62,29 @@ class directed_graph : public graph<Node, Edge>
     virtual void add_edge(const Edge& edge, node_id source,
                           node_id dest) override;
 
+    #include "node_iterator.h"
+    #include "edge_iterator.h"
+
+    /**
+     * @return an iterator to the beginning ("first" node) of this graph
+     */
+    node_iterator begin() { return {this, node_id{0}}; }
+
+    /**
+     * @return an iterator that represents one past the last node of this graph
+     */
+    node_iterator end() { return {this, node_id{nodes_.size()}}; }
+
+    /**
+     * @return an iterator to the beginning ("first" edge) of this graph
+     */
+    edge_iterator edges_begin() { return {this, node_id{0}, false}; }
+
+    /**
+     * @return an iterator that represents one past the last node of this graph
+     */
+    edge_iterator edges_end() { return {this, node_id{nodes_.size()}, true}; }
+
   private:
     /**
      * Each Node object is indexed by its id. This structure keeps track of

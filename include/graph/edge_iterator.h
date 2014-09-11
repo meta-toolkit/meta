@@ -1,14 +1,21 @@
 /**
  * @file edge_iterator.h
  * @author Sean Massung
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
+
+// forward declare both graph types so they can be used in constructor
+template <class A, class B>
+class undirected_graph;
+template <class A, class B>
+class directed_graph;
 
 class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
 {
   public:
-    typedef undirected_graph<Node, Edge> graph_t;
-    typedef typename graph_t::adjacency_list::iterator al_iter;
-
     typedef edge_iterator self_type;
     typedef Edge value_type;
     typedef Edge& reference;
@@ -26,18 +33,29 @@ class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
         return !(lhs == rhs);
     }
 
-    edge_iterator(graph_t* handle, node_id idx, bool end)
-        : nodes_{handle->nodes_}, cur_id_{idx}, end_{end}
+    edge_iterator(undirected_graph<Node, Edge>* handle, node_id idx, bool end)
+        : nodes_{handle->nodes_}, cur_id_{idx}, end_{end}, is_undirected_{true}
     {
-        if(handle->num_edges() == 0)
+        init(handle->num_edges());
+    }
+
+    edge_iterator(directed_graph<Node, Edge>* handle, node_id idx, bool end)
+        : nodes_{handle->nodes_}, cur_id_{idx}, end_{end}, is_undirected_{false}
+    {
+        init(handle->num_edges());
+    }
+
+    void init(uint64_t num_edges)
+    {
+        if (num_edges == 0)
         {
             cur_id_ = nodes_.size();
             end_ = true;
         }
-        else if (idx < nodes_.size())
+        else if (cur_id_ < nodes_.size())
         {
-            iter_ = nodes_[idx].second.begin();
-            if (nodes_[idx].second.empty())
+            iter_ = nodes_[cur_id_].second.begin();
+            if (nodes_[cur_id_].second.empty())
                 ++(*this);
         }
     }
@@ -46,8 +64,7 @@ class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
     {
         if (++iter_ == nodes_[cur_id_].second.end())
         {
-            while (++cur_id_ < nodes_.size()
-                   && nodes_[cur_id_].second.empty())
+            while (++cur_id_ < nodes_.size() && nodes_[cur_id_].second.empty())
                 /* nothing */;
             if (cur_id_ < nodes_.size())
                 iter_ = nodes_[cur_id_].second.begin();
@@ -56,8 +73,8 @@ class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
         }
 
         // use this inequality to not display duplicate edges since each edge is
-        // stored twice
-        if(!end_ && iter_->first < cur_id_)
+        // stored twice in an undirected graph
+        if (is_undirected_ && !end_ && iter_->first < cur_id_)
             return ++(*this);
 
         return *this;
@@ -77,6 +94,7 @@ class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
   private:
     std::vector<std::pair<Node, adjacency_list>>& nodes_;
     node_id cur_id_;
-    al_iter iter_;
+    typename graph<Node, Edge>::adjacency_list::iterator iter_;
     bool end_;
+    bool is_undirected_;
 };

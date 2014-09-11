@@ -75,7 +75,15 @@ void degree_dist(graph::undirected_graph<>& g)
 
 int main(int argc, char* argv[])
 {
-    auto g = load("CA-GrQc.txt");
+    if (argc != 2)
+    {
+        std::cout << "Usage: " << argv[0] << " graph-file.txt" << std::endl;
+        std::cout << "The file contains space-delimited pairs of vertices, "
+                     "representing edges in the graph" << std::endl;
+        return 1;
+    }
+
+    auto g = load(argv[1]);
     degree_dist(g);
     std::cout << "Number of nodes: " << g.size() << std::endl;
 

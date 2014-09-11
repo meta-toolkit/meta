@@ -1,13 +1,21 @@
 /**
  * @file node_iterator.h
  * @author Sean Massung
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
+
+// forward declare both graph types so they can be used in constructor
+template <class A, class B>
+class undirected_graph;
+template <class A, class B>
+class directed_graph;
 
 class node_iterator : public std::iterator<std::forward_iterator_tag, Node>
 {
   public:
-    typedef undirected_graph<Node, Edge> graph_t;
-
     typedef node_iterator self_type;
     typedef Node value_type;
     typedef Node& reference;
@@ -25,7 +33,12 @@ class node_iterator : public std::iterator<std::forward_iterator_tag, Node>
         return !(lhs == rhs);
     }
 
-    node_iterator(graph_t* handle, node_id idx)
+    node_iterator(undirected_graph<Node, Edge>* handle, node_id idx)
+        : nodes_{handle->nodes_}, cur_id_{idx}
+    {
+    }
+
+    node_iterator(directed_graph<Node, Edge>* handle, node_id idx)
         : nodes_{handle->nodes_}, cur_id_{idx}
     {
     }

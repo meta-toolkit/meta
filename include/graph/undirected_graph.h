@@ -56,8 +56,8 @@ class undirected_graph : public graph<Node, Edge>
     virtual void add_edge(const Edge& edge, node_id source,
                           node_id dest) override;
 
-#include "node_iterator.h"
-#include "edge_iterator.h"
+    #include "node_iterator.h"
+    #include "edge_iterator.h"
 
     /**
      * @return an iterator to the beginning ("first" node) of this graph
