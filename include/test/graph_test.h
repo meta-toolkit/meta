@@ -1,5 +1,5 @@
 /**
- * @file undirected_graph_test.h
+ * @file graph_test.h
  * @author Sean Massung
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -7,10 +7,11 @@
  * project.
  */
 
-#ifndef META_UNDIRECTED_GRAPH_TEST_H_
-#define META_UNDIRECTED_GRAPH_TEST_H_
+#ifndef META_GRAPH_TEST_H_
+#define META_GRAPH_TEST_H_
 
 #include "graph/undirected_graph.h"
+#include "graph/directed_graph.h"
 #include "test/unit_test.h"
 
 namespace meta
@@ -18,10 +19,10 @@ namespace meta
 namespace testing
 {
 /**
- * Runs the undirected graph tests.
+ * Runs the undirected and directed graph tests.
  * @return the number of tests failed.
  */
-int undirected_graph_tests();
+int graph_tests();
 }
 }
 

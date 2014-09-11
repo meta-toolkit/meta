@@ -14,7 +14,7 @@ add_library(meta-testing analyzer_test.cpp
                          ranker_test.cpp
                          stemmer_test.cpp
                          string_list_test.cpp
-                         undirected_graph_test.cpp
+                         graph_test.cpp
                          vocabulary_map_test.cpp)
 target_link_libraries(meta-testing meta-index meta-classify)
 
@@ -42,5 +42,5 @@ add_test(ir-eval unit-test ir-eval)
 set_tests_properties(ir-eval PROPERTIES TIMEOUT 10 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 add_test(compression unit-test compression)
 set_tests_properties(compression PROPERTIES TIMEOUT 10 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-add_test(undirected-graph unit-test undirected-graph)
-set_tests_properties(undirected-graph PROPERTIES TIMEOUT 10 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+add_test(graph unit-test graph)
+set_tests_properties(graph PROPERTIES TIMEOUT 10 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

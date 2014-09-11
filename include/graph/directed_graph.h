@@ -52,7 +52,7 @@ class directed_graph : public graph<Node, Edge>
      * @param node The new object to add into the graph
      * @return the id of the inserted node
      */
-    virtual node_id insert(const Node& node) override;
+    virtual node_id insert(Node node) override;
 
     /**
      * @param edge
