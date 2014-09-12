@@ -66,9 +66,9 @@ void create_config(const std::string& corpus_type)
 template <class Index>
 void check_ceeaus_expected(Index& idx)
 {
-    double epsilon = 0.000001;
+    double epsilon = 0.001;
     ASSERT_EQUAL(idx.num_docs(), 1008);
-    ASSERT_LESS(abs(idx.avg_doc_length() - 128.556), epsilon);
+    ASSERT_LESS(std::abs(idx.avg_doc_length() - 128.236), epsilon);
     ASSERT_EQUAL(idx.unique_terms(), 3944);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};

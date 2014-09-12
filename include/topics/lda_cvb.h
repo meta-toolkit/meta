@@ -33,9 +33,6 @@ class lda_cvb : public lda_model
      * \f$\beta\f$ for the priors on \f$\phi\f$ (topic distributions)
      * and \f$\theta\f$ (topic proportions), respectively.
      *
-     * Assumes that the given vector of documents will live for as long
-     * as or longer than the lda_cvb instance.
-     *
      * @param idx The index containing the documents to model
      * @param num_topics The number of topics to infer
      * @param alpha The hyperparameter for the Dirichlet prior over

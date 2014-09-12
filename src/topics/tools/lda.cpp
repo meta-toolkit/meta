@@ -5,6 +5,7 @@
 #include "topics/lda_gibbs.h"
 #include "topics/parallel_lda_gibbs.h"
 #include "topics/lda_cvb.h"
+#include "topics/lda_scvb.h"
 
 #include "cpptoml.h"
 
@@ -87,6 +88,14 @@ int run_lda(const std::string& config_file)
         std::cout << "Beginning LDA using serial collapsed variational bayes..."
                   << std::endl;
         return run_lda<lda_cvb>(f_idx, iters, topics, alpha, beta, save_prefix);
+    }
+    else if (type == "scvb")
+    {
+        std::cout
+            << "Beginning LDA using stochastic collapsed variational bayes..."
+            << std::endl;
+        return run_lda<lda_scvb>(f_idx, iters, topics, alpha, beta,
+                                 save_prefix);
     }
     std::cout << "Incorrect method selected: must be gibbs, pargibbs, or cvb"
               << std::endl;

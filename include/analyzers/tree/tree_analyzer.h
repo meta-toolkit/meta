@@ -33,7 +33,7 @@ class tree_analyzer : public analyzer
     void tokenize(corpus::document& doc) override
     {
         std::vector<parse_tree> trees
-            = parse_tree::get_trees(doc.path() + ".tree");
+            = parse_tree::get_trees(doc);
         for (auto& tree : trees)
             derived().tree_tokenize(doc, tree);
     }

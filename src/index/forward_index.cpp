@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include "cpptoml.h"
 #include "index/chunk_handler.h"
 #include "index/disk_index_impl.h"
 #include "index/forward_index.h"
