@@ -12,7 +12,7 @@ namespace testing
 {
 
 template <class Graph>
-void check_sizes(Graph& g, uint64_t num_nodes, uint64_t num_edges)
+void check_sizes(const Graph& g, uint64_t num_nodes, uint64_t num_edges)
 {
     ASSERT_EQUAL(g.size(), num_nodes);
     ASSERT_EQUAL(g.num_edges(), num_edges);

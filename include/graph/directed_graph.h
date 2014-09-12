@@ -31,6 +31,7 @@ class directed_graph : public graph<Node, Edge>
 {
   public:
     using adjacency_list = typename graph<Node, Edge>::adjacency_list;
+    using vec_t = std::vector<std::pair<Node, adjacency_list>>;
     using graph<Node, Edge>::nodes_;
     using graph<Node, Edge>::num_edges_;
     using graph<Node, Edge>::size;
@@ -63,27 +64,46 @@ class directed_graph : public graph<Node, Edge>
                           node_id dest) override;
 
     #include "node_iterator.h"
-    #include "edge_iterator.h"
+    typedef node_iterator<typename vec_t::iterator> iterator;
+    typedef node_iterator<typename vec_t::const_iterator> const_iterator;
 
     /**
      * @return an iterator to the beginning ("first" node) of this graph
      */
-    node_iterator begin() { return {this, node_id{0}}; }
+    iterator begin() { return {nodes_.begin()}; }
+
+    const_iterator begin() const { return {nodes_.cbegin()}; }
 
     /**
      * @return an iterator that represents one past the last node of this graph
      */
-    node_iterator end() { return {this, node_id{nodes_.size()}}; }
+    iterator end() { return {nodes_.end()}; }
+
+    const_iterator end() const { return {nodes_.cend()}; }
+
+    #include "edge_iterator.h"
+    typedef edge_iterator<typename vec_t::iterator> e_iterator;
+    typedef edge_iterator<typename vec_t::const_iterator> const_e_iterator;
 
     /**
      * @return an iterator to the beginning ("first" edge) of this graph
      */
-    edge_iterator edges_begin() { return {this, node_id{0}, false}; }
+    e_iterator edges_begin() { return {this, nodes_.begin(), nodes_.end()}; }
+
+    const_e_iterator edges_begin() const
+    {
+        return {this, nodes_.cbegin(), nodes_.cend()};
+    }
 
     /**
      * @return an iterator that represents one past the last node of this graph
      */
-    edge_iterator edges_end() { return {this, node_id{nodes_.size()}, true}; }
+    e_iterator edges_end() { return {this, nodes_.end(), nodes_.end()}; }
+
+    const_e_iterator edges_end() const
+    {
+        return {this, nodes_.cend(), nodes_.cend()};
+    }
 
   private:
     /**

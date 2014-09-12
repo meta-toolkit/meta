@@ -13,19 +13,23 @@ class undirected_graph;
 template <class A, class B>
 class directed_graph;
 
+template <class Iter>
 class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
 {
   public:
+    typedef typename graph<Node, Edge>::adjacency_list adj_list;
     typedef edge_iterator self_type;
-    typedef Edge value_type;
-    typedef Edge& reference;
-    typedef Edge* pointer;
+    typedef typename std::
+        conditional<std::is_same<Iter, typename vec_t::const_iterator>::value,
+                    const Edge, Edge>::type value_type;
+    typedef value_type& reference;
+    typedef value_type* pointer;
     typedef std::forward_iterator_tag iterator_category;
     typedef ptrdiff_t difference_type;
 
     friend bool operator==(const self_type& lhs, const self_type& rhs)
     {
-        return lhs.cur_id_ == rhs.cur_id_ && lhs.end_ == rhs.end_;
+        return lhs.iter_ == rhs.iter_ && lhs.end_ == rhs.end_;
     }
 
     friend bool operator!=(const self_type& lhs, const self_type& rhs)
@@ -33,14 +37,24 @@ class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
         return !(lhs == rhs);
     }
 
-    edge_iterator(undirected_graph<Node, Edge>* handle, node_id idx, bool end)
-        : nodes_{handle->nodes_}, cur_id_{idx}, end_{end}, is_undirected_{true}
+    edge_iterator(const undirected_graph<Node, Edge>* handle, const Iter& iter,
+                  const Iter& end_iter)
+        : iter_{iter},
+          end_{iter == end_iter},
+          beg_iter_{iter},
+          end_iter_{end_iter},
+          is_undirected_{true}
     {
         init(handle->num_edges());
     }
 
-    edge_iterator(directed_graph<Node, Edge>* handle, node_id idx, bool end)
-        : nodes_{handle->nodes_}, cur_id_{idx}, end_{end}, is_undirected_{false}
+    edge_iterator(const directed_graph<Node, Edge>* handle, const Iter& iter,
+                  const Iter& end_iter)
+        : iter_{iter},
+          end_{iter == end_iter},
+          beg_iter_{iter},
+          end_iter_{end_iter},
+          is_undirected_{false}
     {
         init(handle->num_edges());
     }
@@ -49,32 +63,33 @@ class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
     {
         if (num_edges == 0)
         {
-            cur_id_ = nodes_.size();
+            iter_ = end_iter_;
             end_ = true;
         }
-        else if (cur_id_ < nodes_.size())
+        else if (iter_ != end_iter_)
         {
-            iter_ = nodes_[cur_id_].second.begin();
-            if (nodes_[cur_id_].second.empty())
+            al_iter_ = iter_->second.begin();
+            if (iter_->second.empty())
                 ++(*this);
         }
     }
 
     self_type operator++()
     {
-        if (++iter_ == nodes_[cur_id_].second.end())
+        if (++al_iter_ == iter_->second.end())
         {
-            while (++cur_id_ < nodes_.size() && nodes_[cur_id_].second.empty())
+            while (++iter_ != end_iter_ && iter_->second.empty())
                 /* nothing */;
-            if (cur_id_ < nodes_.size())
-                iter_ = nodes_[cur_id_].second.begin();
+            if (iter_ != end_iter_)
+                al_iter_ = iter_->second.begin();
             else
                 end_ = true;
         }
 
         // use this inequality to not display duplicate edges since each edge is
         // stored twice in an undirected graph
-        if (is_undirected_ && !end_ && iter_->first < cur_id_)
+        if (is_undirected_ && !end_
+            && al_iter_->first < std::distance(beg_iter_, iter_))
             return ++(*this);
 
         return *this;
@@ -87,14 +102,18 @@ class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
         return saved;
     }
 
-    reference operator*() { return iter_->second; }
+    reference operator*() { return al_iter_->second; }
 
-    pointer operator->() { return &iter_->second; }
+    pointer operator->() { return &al_iter_->second; }
 
   private:
-    std::vector<std::pair<Node, adjacency_list>>& nodes_;
-    node_id cur_id_;
-    typename graph<Node, Edge>::adjacency_list::iterator iter_;
+    Iter iter_;
+    typename std::
+        conditional<std::is_same<Iter, typename vec_t::const_iterator>::value,
+                    typename adj_list::const_iterator,
+                    typename adj_list::iterator>::type al_iter_;
     bool end_;
+    Iter beg_iter_;
+    Iter end_iter_;
     bool is_undirected_;
 };
