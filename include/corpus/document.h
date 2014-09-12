@@ -37,7 +37,7 @@ class document
      * @param d_id The doc id to assign to this document
      * @param label The optional class label to assign this document
      */
-    document(const std::string& path, doc_id d_id,
+    document(const std::string& path = "[NONE]", doc_id d_id = doc_id{0},
              const class_label& label = class_label{"[NONE]"});
 
     /**
@@ -61,6 +61,11 @@ class document
      * @return the name of this document
      */
     std::string name() const;
+
+    /**
+     * @param n The new name for this document
+     */
+    void name(const std::string& n);
 
     /**
      * @return the total of transitions recorded for this document.

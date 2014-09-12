@@ -47,9 +47,8 @@ void ir_eval::init_index(const std::string& path)
     while (in.good())
     {
         std::getline(in, line);
-        bool trec = (std::count_if(line.begin(), line.end(), [](char ch) {
-            return ch == ' ';
-        }) == 3); // 3 spaces == 4 columns
+        bool trec = (std::count_if(line.begin(), line.end(), [](char ch)
+        { return ch == ' '; }) == 3); // 3 spaces == 4 columns
         std::istringstream iss{line};
         iss >> q_id;
         if (trec)
@@ -89,9 +88,9 @@ double ir_eval::recall(const std::vector<std::pair<doc_id, double>>& results,
     return relevant_retrieved(results, q_id, num_docs) / ht->second.size();
 }
 
-double ir_eval::relevant_retrieved(
-        const std::vector<std::pair<doc_id, double>>& results,
-        query_id q_id, uint64_t num_docs) const
+double ir_eval::relevant_retrieved(const std::vector
+                                   <std::pair<doc_id, double>>& results,
+                                   query_id q_id, uint64_t num_docs) const
 {
     double rel = 0.0;
     const auto& ht = qrels_.find(q_id);
@@ -206,16 +205,17 @@ void ir_eval::print_stats(const std::vector<std::pair<doc_id, double>>& results,
     auto w1 = std::setw(8);
     auto w2 = std::setw(6);
     size_t p = 3;
+    uint64_t max = 5;
     out << w1 << printing::make_bold("  NDCG:") << w2 << std::setprecision(p)
-        << ndcg(results, q_id);
+        << ndcg(results, q_id, max);
     out << w1 << printing::make_bold("  Avg. P:") << w2 << std::setprecision(p)
-        << avg_p(results, q_id);
+        << avg_p(results, q_id, max);
     out << w1 << printing::make_bold("  F1 Score:") << w2
         << std::setprecision(p) << f1(results, q_id);
     out << w1 << printing::make_bold("  Precision:") << w2
-        << std::setprecision(p) << precision(results, q_id);
+        << std::setprecision(p) << precision(results, q_id, max);
     out << w1 << printing::make_bold("  Recall:") << w2 << std::setprecision(p)
-        << recall(results, q_id);
+        << recall(results, q_id, max);
     out << std::endl;
 }
 

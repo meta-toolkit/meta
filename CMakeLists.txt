@@ -3,6 +3,7 @@ project(meta)
 
 option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
 
+include(CTest)
 include_directories(include/)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
