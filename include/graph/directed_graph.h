@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <vector>
 #include <unordered_set>
+#include <cstddef>
 #include "meta.h"
 #include "util/optional.h"
 #include "graph/graph.h"
