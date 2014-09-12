@@ -21,7 +21,7 @@ graph::undirected_graph<> load(const std::string& filename)
 
     std::string src;
     std::string dest;
-    std::ifstream infile{"CA-GrQc.txt"};
+    std::ifstream infile{filename};
     std::unordered_map<std::string, node_id> seen;
     size_t tried = 0;
     size_t errors = 0;
