@@ -1,4 +1,0 @@
-kdd
-sigmod
-sdm
-icdm
