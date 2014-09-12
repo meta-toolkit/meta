@@ -3,6 +3,8 @@
  * @author Sean Massung
  */
 
+#include <algorithm>
+
 namespace meta
 {
 namespace graph
@@ -30,9 +32,9 @@ typename util::optional<Edge> graph<Node, Edge>::edge(node_id source,
         return p.first == dest;
     });
     if (it != list.end())
-        return {it->second};
+        return util::optional<Edge>{it->second};
 
-    return {util::nullopt};
+    return util::optional<Edge>{util::nullopt};
 }
 
 template <class Node, class Edge>
