@@ -7,11 +7,16 @@
  * project.
  */
 
-// forward declare both graph types so they can be used in constructor
+// forward declare (if necessary) both graph types so they can be used in
+// edge_iterator constructor
+#ifndef META_UNDIRECTED_GRAPH_H_
 template <class A, class B>
 class undirected_graph;
+#endif
+#ifndef META_DIRECTED_GRAPH_H_
 template <class A, class B>
 class directed_graph;
+#endif
 
 template <class Iter>
 class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
