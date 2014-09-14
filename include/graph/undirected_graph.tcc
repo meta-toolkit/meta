@@ -3,6 +3,8 @@
  * @author Sean Massung
  */
 
+#include <iostream>
+
 namespace meta
 {
 namespace graph
@@ -18,7 +20,6 @@ auto undirected_graph<Node, Edge>::adjacent(node_id id) const -> const
     return nodes_.at(id).second;
 }
 
-
 template <class Node, class Edge>
 node_id undirected_graph<Node, Edge>::insert(Node node)
 {
@@ -28,7 +29,7 @@ node_id undirected_graph<Node, Edge>::insert(Node node)
 }
 
 template <class Node, class Edge>
-void undirected_graph<Node, Edge>::add_edge(const Edge& edge, node_id source,
+void undirected_graph<Node, Edge>::add_edge(Edge edge, node_id source,
                                             node_id dest)
 {
     if (source == dest)
@@ -46,6 +47,8 @@ void undirected_graph<Node, Edge>::add_edge(const Edge& edge, node_id source,
     if (it != list.end())
         throw undirected_graph_exception{"attempted to add existing edge"};
 
+    edge.src = source;
+    edge.dest = dest;
     ++num_edges_;
 
     // add connections to both adjacency lists

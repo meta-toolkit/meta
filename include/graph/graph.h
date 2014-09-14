@@ -57,8 +57,7 @@ class graph
      * @param source
      * @param dest
      */
-    virtual void add_edge(const Edge& edge, node_id source,
-                          node_id dest) = 0;
+    virtual void add_edge(Edge edge, node_id source, node_id dest) = 0;
 
     /**
      * Adds a default edge between the two nodes.

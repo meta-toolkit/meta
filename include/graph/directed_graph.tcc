@@ -37,7 +37,7 @@ node_id directed_graph<Node, Edge>::insert(Node node)
 }
 
 template <class Node, class Edge>
-void directed_graph<Node, Edge>::add_edge(const Edge& edge, node_id source,
+void directed_graph<Node, Edge>::add_edge(Edge edge, node_id source,
                                           node_id dest)
 {
     if (source >= size() || dest >= size())
@@ -52,6 +52,8 @@ void directed_graph<Node, Edge>::add_edge(const Edge& edge, node_id source,
     if (it != list.end())
         throw directed_graph_exception{"attempted to add existing edge"};
 
+    edge.src = source;
+    edge.dest = dest;
     ++num_edges_;
 
     list.emplace_back(dest, edge);     // add outgoing edge from source to dest

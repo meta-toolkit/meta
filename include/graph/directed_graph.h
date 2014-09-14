@@ -61,8 +61,7 @@ class directed_graph : public graph<Node, Edge>
      * @param source
      * @param dest
      */
-    virtual void add_edge(const Edge& edge, node_id source,
-                          node_id dest) override;
+    virtual void add_edge(Edge edge, node_id source, node_id dest) override;
 
     #include "node_iterator.h"
     typedef node_iterator<typename vec_t::iterator> iterator;
