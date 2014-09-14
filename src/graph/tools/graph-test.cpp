@@ -21,19 +21,25 @@ graph::undirected_graph<> load(const std::string& filename)
 
     std::string src;
     std::string dest;
-    std::ifstream infile{"CA-GrQc.txt"};
+    std::ifstream infile{filename};
     std::unordered_map<std::string, node_id> seen;
     size_t tried = 0;
     size_t errors = 0;
     while (infile >> src >> dest)
     {
+        ++tried;
+
+        if (src == dest)
+        {
+            std::cout << "Found self-loop: " << src << std::endl;
+            continue;
+        }
+
         if (seen.find(src) == seen.end())
             seen[src] = g.insert(graph::default_node{src});
 
         if (seen.find(dest) == seen.end())
             seen[dest] = g.insert(graph::default_node{dest});
-
-        ++tried;
 
         try
         {
@@ -65,13 +71,38 @@ void degree_dist(graph::undirected_graph<>& g)
         return a.second > b.second;
     });
 
-    std::cout << "Clustering coefficient of top author: ";
-    std::cout << graph::algorithms::clustering_coefficient(g, degrees[0].first)
-              << std::endl;
-
     std::ofstream outfile{"degrees.dat"};
     for (auto& c : degrees)
         outfile << c.first << " " << c.second << "\n";
+
+    std::cout << "Clustering coefficient of top 5 authors: " << std::endl;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        auto id = degrees[i].first;
+        std::cout << (i + 1) << ". id=" << g.node(id).label << " "
+                  << graph::algorithms::clustering_coefficient(g, id)
+                  << std::endl;
+    }
+
+    // print out all clustering coefficients sorted by descending node degree
+    std::ofstream ccout{"cc.dat"};
+    for (auto& p : degrees)
+    {
+        ccout << g.adjacent(g.node(p.first).id).size() << " "
+              << graph::algorithms::clustering_coefficient(g, p.first)
+              << std::endl;
+    }
+}
+
+void overlap(const graph::undirected_graph<>& g)
+{
+    std::ofstream out{"overlap.dat"};
+    for (auto e = g.edges_begin(); e != g.edges_end(); ++e)
+    {
+        out << e->src << " " << e->dest << " "
+            << graph::algorithms::neighborhood_overlap(g, e->src, e->dest)
+            << std::endl;
+    }
 }
 
 int main(int argc, char* argv[])
@@ -85,13 +116,8 @@ int main(int argc, char* argv[])
     }
 
     auto g = load(argv[1]);
-    degree_dist(g);
     std::cout << "Number of nodes: " << g.size() << std::endl;
-
-    size_t num_edges = 0;
-    for (auto it = g.edges_begin(); it != g.edges_end(); ++it)
-        ++num_edges;
-
-    std::cout << "Number of edges: " << num_edges << std::endl;
     std::cout << "Number of edges: " << g.num_edges() << std::endl;
+    degree_dist(g);
+    overlap(g);
 }

@@ -37,34 +37,36 @@ int test_undirected()
 {
     return testing::run_test("undirected-graph", [&]()
     {
-        graph::undirected_graph<> g;
+        using namespace graph;
+        undirected_graph<> g;
         check_sizes(g, 0, 0);
 
-        node_id a = g.insert(graph::default_node{"A"});
-        node_id b = g.insert(graph::default_node{"B"});
-        node_id c = g.insert(graph::default_node{"C"});
-        node_id d = g.insert(graph::default_node{"D"});
+        node_id a = g.insert(default_node{"A"});
+        node_id b = g.insert(default_node{"B"});
+        node_id c = g.insert(default_node{"C"});
+        node_id d = g.insert(default_node{"D"});
         check_sizes(g, 4, 0);
-        ASSERT_APPROX_EQUAL(graph::algorithms::clustering_coefficient(g, a),
-                            0.0);
+        ASSERT_APPROX_EQUAL(algorithms::clustering_coefficient(g, a), 0.0);
 
         g.add_edge(a, b);
         g.add_edge(a, c);
         g.add_edge(a, d);
         check_sizes(g, 4, 3);
-        ASSERT_APPROX_EQUAL(graph::algorithms::clustering_coefficient(g, a),
-                            0.0);
+        ASSERT_APPROX_EQUAL(algorithms::clustering_coefficient(g, a), 0.0);
+        ASSERT_APPROX_EQUAL(algorithms::neighborhood_overlap(g, a, b), 0.0);
 
         g.add_edge(c, d);
         check_sizes(g, 4, 4);
-        ASSERT_APPROX_EQUAL(graph::algorithms::clustering_coefficient(g, a),
-                            1.0 / 3.0);
+        ASSERT_APPROX_EQUAL(algorithms::clustering_coefficient(g, a), 1.0 / 3);
+        ASSERT_APPROX_EQUAL(algorithms::neighborhood_overlap(g, a, c), 0.5);
+        ASSERT_APPROX_EQUAL(algorithms::neighborhood_overlap(g, d, c), 1.0);
 
         g.add_edge(b, c);
+        ASSERT_APPROX_EQUAL(algorithms::neighborhood_overlap(g, b, c), 0.5);
         g.add_edge(b, d);
         check_sizes(g, 4, 6);
-        ASSERT_APPROX_EQUAL(graph::algorithms::clustering_coefficient(g, a),
-                            1.0);
+        ASSERT_APPROX_EQUAL(algorithms::clustering_coefficient(g, a), 1.0);
+        ASSERT_APPROX_EQUAL(algorithms::neighborhood_overlap(g, b, c), 1.0);
     });
 }
 
@@ -72,13 +74,14 @@ int test_directed()
 {
     return testing::run_test("directed-graph", [&]()
     {
-        graph::directed_graph<> g;
+        using namespace graph;
+        directed_graph<> g;
         check_sizes(g, 0, 0);
 
-        node_id a = g.insert(graph::default_node{"A"});
-        node_id b = g.insert(graph::default_node{"B"});
-        node_id c = g.insert(graph::default_node{"C"});
-        node_id d = g.insert(graph::default_node{"D"});
+        node_id a = g.insert(default_node{"A"});
+        node_id b = g.insert(default_node{"B"});
+        node_id c = g.insert(default_node{"C"});
+        node_id d = g.insert(default_node{"D"});
         check_sizes(g, 4, 0);
 
         g.add_edge(a, b);
