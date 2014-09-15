@@ -41,6 +41,11 @@ std::string document::name() const
     return name_;
 }
 
+void document::name(const std::string& n)
+{
+    name_ = n;
+}
+
 uint64_t document::length() const
 {
     return length_;
