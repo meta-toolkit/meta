@@ -19,6 +19,14 @@ sparse_vector<Index, Value>::sparse_vector(uint64_t size)
 }
 
 template <class Index, class Value>
+template <class Iter>
+sparse_vector<Index, Value>::sparse_vector(Iter begin, Iter end)
+    : storage_{begin, end}
+{
+    // nothing
+}
+
+template <class Index, class Value>
 Value& sparse_vector<Index, Value>::operator[](const Index& index)
 {
     auto it = std::lower_bound(std::begin(storage_), std::end(storage_), index,

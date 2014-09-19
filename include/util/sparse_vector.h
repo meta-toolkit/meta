@@ -45,6 +45,14 @@ class sparse_vector
     sparse_vector(uint64_t size);
 
     /**
+     * Creates a sparse vector from a pair of iterators of pairs.
+     * @param begin The iterator to the beginning of the sequence
+     * @param end The iterator to the end of the sequence
+     */
+    template <class Iter>
+    sparse_vector(Iter begin, Iter end);
+
+    /**
      * Gets the value associated with a given index in the vector, adding
      * it with a value-initialized Value if not present.
      *
