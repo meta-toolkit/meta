@@ -14,7 +14,10 @@ namespace stats
 
 template <class T>
 dirichlet<T>::dirichlet(double alpha, uint64_t n)
-    : type_{type::SYMMETRIC}, params_{alpha}, alpha_sum_{n * alpha} {};
+    : type_{type::SYMMETRIC}, params_{alpha}, alpha_sum_{n * alpha}
+{
+    // nothing
+}
 
 template <class T>
 template <class Iter>
@@ -76,7 +79,7 @@ dirichlet<T>::~dirichlet()
         case type::SYMMETRIC:
             return;
         case type::ASYMMETRIC:
-            params_.sparse_alpha_.~sparse_vector<T, double>();
+            params_.sparse_alpha_.~sparse_vector();
             return;
     }
 }
@@ -91,6 +94,7 @@ double dirichlet<T>::pseudo_counts(const T& event) const
         case type::ASYMMETRIC:
             return params_.sparse_alpha_.at(event);
     }
+    return 0.0; // unreachable
 }
 
 template <class T>
@@ -110,14 +114,14 @@ void dirichlet<T>::swap(dirichlet& other)
                 // other is ASYMMETRIC
                 new (&params_.sparse_alpha_) util::sparse_vector<T, double>{
                     std::move(other.params_.sparse_alpha_)};
-                other.params_.sparse_alpha_.~sparse_vector<T, double>();
+                other.params_.sparse_alpha_.~sparse_vector();
                 break;
             case type::ASYMMETRIC:
                 // other is SYMMETRIC
                 new (&other.params_.sparse_alpha_)
                     util::sparse_vector<T, double>{
                         std::move(params_.sparse_alpha_)};
-                params_.sparse_alpha_.~sparse_vector<T, double>();
+                params_.sparse_alpha_.~sparse_vector();
                 break;
         }
         std::swap(type_, other.type_);
