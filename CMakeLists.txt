@@ -3,6 +3,8 @@ project(meta)
 
 option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+
 include(CTest)
 include_directories(include/)
 
