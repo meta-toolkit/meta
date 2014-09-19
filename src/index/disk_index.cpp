@@ -49,6 +49,11 @@ class_label disk_index::label(doc_id d_id) const
     return class_label_from_id(impl_->labels_->at(d_id));
 }
 
+label_id disk_index::lbl_id(doc_id d_id) const
+{
+    return impl_->labels_->at(d_id);
+}
+
 label_id disk_index::id(class_label label) const
 {
     return impl_->label_ids_.get_value(label);
@@ -57,6 +62,11 @@ label_id disk_index::id(class_label label) const
 class_label disk_index::class_label_from_id(label_id l_id) const
 {
     return impl_->label_ids_.get_key(l_id);
+}
+
+uint64_t disk_index::num_labels() const
+{
+    return impl_->label_ids_.size();
 }
 
 std::vector<class_label> disk_index::class_labels() const

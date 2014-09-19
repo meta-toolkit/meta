@@ -14,6 +14,8 @@
 #include "classify/classifier/classifier.h"
 #include "classify/classifier_factory.h"
 #include "meta.h"
+#include "stats/multinomial.h"
+#include "util/sparse_vector.h"
 
 namespace meta
 {
@@ -72,22 +74,12 @@ class naive_bayes : public classifier
     /**
      * Contains P(term|class) for each class.
      */
-    std::unordered_map<class_label, std::unordered_map<term_id, double>>
-        term_probs_;
+    util::sparse_vector<class_label, stats::multinomial<term_id>> term_probs_;
 
     /**
      * Contains the number of documents in each class
      */
-    std::unordered_map<class_label, size_t> class_counts_;
-
-    /** The number of training documents */
-    size_t total_docs_;
-
-    /** smoothing parameter for term counts */
-    const double alpha_;
-
-    /** smoothing parameter for class counts */
-    const double beta_;
+    stats::multinomial<class_label> class_probs_;
 };
 
 /**
