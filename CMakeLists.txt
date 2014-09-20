@@ -93,6 +93,7 @@ if(UNIX)
 endif()
 
 add_library(meta-definitions INTERFACE)
+target_include_directories(meta-definitions INTERFACE ${PROJECT_SOURCE_DIR}/include)
 
 if(HAS_CXX14 OR HAS_CXX1Y)
     target_compile_definitions(meta-definitions INTERFACE -DMETA_HAS_CXX14=1)
