@@ -155,6 +155,11 @@ if(META_HAS_STD_MAKE_UNIQUE)
                                -DMETA_HAS_STD_MAKE_UNIQUE)
 endif()
 
+if(ICU_VERSION VERSION_LESS "4.4")
+  target_compile_definitions(meta-definitions INTERFACE
+                             -DMETA_ICU_NO_TEMP_SUBSTRING)
+endif()
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 link_libraries(cpptoml meta-definitions)
