@@ -70,7 +70,7 @@ class segmenter::impl
      */
     std::string substr(int32_t begin, int32_t end) const
     {
-#ifdef META_ICU_NO_TEMPSUBSTRING
+#ifdef META_ICU_NO_TEMP_SUBSTRING
         icu::UnicodeString substring{u_str_, begin, end - begin};
 #else
         auto substring = u_str_.tempSubStringBetween(begin, end);
