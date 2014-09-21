@@ -54,5 +54,12 @@ void graph<Node, Edge>::add_edge(node_id source, node_id dest)
 {
     add_edge(Edge{}, source, dest);
 }
+
+template <class Node, class Edge>
+template <class... Args>
+node_id graph<Node, Edge>::emplace(Args&&... args)
+{
+    return insert(Node{std::forward<Args>(args)...});
+}
 }
 }

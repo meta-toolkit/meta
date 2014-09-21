@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <random>
 #include <unordered_set>
 
 namespace meta
@@ -34,6 +35,17 @@ double clustering_coefficient(const UndirectedGraph& graph, node_id id)
 
     return (2.0 * numerator) / (adj.size() * (adj.size() - 1));
 }
+
+template <class UndirectedGraph>
+double clustering_coefficient(const UndirectedGraph& graph)
+{
+    double total = 0.0;
+    for(auto& n: graph)
+        total += clustering_coefficient(graph, n.id);
+
+    return total / graph.size();
+}
+
 template <class UndirectedGraph>
 double neighborhood_overlap(const UndirectedGraph& graph, node_id src,
                             node_id dest)
@@ -59,6 +71,56 @@ double neighborhood_overlap(const UndirectedGraph& graph, node_id src,
 
     // minus 2 so src doesn't count dest and vice versa
     return num_shared / (total.size() - 2);
+}
+
+template <class UndirectedGraph>
+void random_graph(UndirectedGraph& g, uint64_t num_nodes, uint64_t num_edges)
+{
+    uint64_t start_id = g.size();
+    for (uint64_t i = start_id; i < start_id + num_nodes; ++i)
+        g.emplace(std::to_string(i));
+
+    uint64_t possible = g.size() * (g.size() - 1) - g.num_edges();
+    if (num_edges > possible)
+        throw undirected_graph_exception{
+            "impossible to add required number of edges to graph"};
+
+    std::default_random_engine gen;
+    std::uniform_int_distribution<uint64_t> dist(0, g.size() - 1);
+    uint64_t edges_added = 0;
+    while (edges_added != num_edges)
+    {
+        node_id src{dist(gen)};
+        node_id dest{dist(gen)};
+
+        if (src == dest || g.edge(src, dest))
+            continue;
+
+        g.add_edge(src, dest);
+        ++edges_added;
+    }
+}
+
+template <class UndirectedGraph>
+void watts_strogatz(UndirectedGraph& g, uint64_t num_nodes,
+                    uint64_t num_neighbors, uint64_t num_random_edges)
+{
+    if (g.size() != 0)
+        throw undirected_graph_exception{
+            "watts-strogatz graph generation must be called on an empty graph"};
+
+    if (num_neighbors % 2 != 0)
+        throw undirected_graph_exception{
+            "num_neighbors for watts-strogatz graph model must be even"};
+
+    for (uint64_t i = 0; i < num_nodes; ++i)
+        g.emplace(std::to_string(i));
+
+    for (uint64_t i = 0; i < num_nodes; ++i)
+        for(uint64_t j = 1; j <= num_neighbors / 2; ++j)
+            g.add_edge(node_id{i}, node_id{(i + j) % g.size()});
+
+    random_graph(g, 0, num_random_edges);
 }
 }
 }

@@ -58,7 +58,7 @@ graph::undirected_graph<> load(const std::string& filename)
     return g;
 }
 
-void degree_dist(graph::undirected_graph<>& g)
+void degree_dist(graph::undirected_graph<>& g, const std::string& outfile)
 {
     using pair_t = std::pair<node_id, size_t>;
     std::vector<pair_t> degrees;
@@ -71,38 +71,9 @@ void degree_dist(graph::undirected_graph<>& g)
         return a.second > b.second;
     });
 
-    std::ofstream outfile{"degrees.dat"};
+    std::ofstream out{outfile};
     for (auto& c : degrees)
-        outfile << c.first << " " << c.second << "\n";
-
-    std::cout << "Clustering coefficient of top 5 authors: " << std::endl;
-    for (size_t i = 0; i < 5; ++i)
-    {
-        auto id = degrees[i].first;
-        std::cout << (i + 1) << ". id=" << g.node(id).label << " "
-                  << graph::algorithms::clustering_coefficient(g, id)
-                  << std::endl;
-    }
-
-    // print out all clustering coefficients sorted by descending node degree
-    std::ofstream ccout{"cc.dat"};
-    for (auto& p : degrees)
-    {
-        ccout << g.adjacent(g.node(p.first).id).size() << " "
-              << graph::algorithms::clustering_coefficient(g, p.first)
-              << std::endl;
-    }
-}
-
-void overlap(const graph::undirected_graph<>& g)
-{
-    std::ofstream out{"overlap.dat"};
-    for (auto e = g.edges_begin(); e != g.edges_end(); ++e)
-    {
-        out << e->src << " " << e->dest << " "
-            << graph::algorithms::neighborhood_overlap(g, e->src, e->dest)
-            << std::endl;
-    }
+        out << c.first << " " << c.second << "\n";
 }
 
 int main(int argc, char* argv[])
@@ -115,9 +86,20 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto g = load(argv[1]);
-    std::cout << "Number of nodes: " << g.size() << std::endl;
-    std::cout << "Number of edges: " << g.num_edges() << std::endl;
-    degree_dist(g);
-    overlap(g);
+    graph::undirected_graph<> g1;
+    graph::algorithms::random_graph(g1, 5242, 14496);
+    degree_dist(g1, "g1-degrees.dat");
+    std::cout << "g1 CC: " << graph::algorithms::clustering_coefficient(g1)
+              << std::endl;
+
+    graph::undirected_graph<> g2;
+    graph::algorithms::watts_strogatz(g2, 5242, 4, 4012);
+    degree_dist(g2, "g2-degrees.dat");
+    std::cout << "g2 CC: " << graph::algorithms::clustering_coefficient(g2)
+              << std::endl;
+
+    auto g3 = load(argv[1]);
+    degree_dist(g3, "g3-degrees.dat");
+    std::cout << "g3 CC: " << graph::algorithms::clustering_coefficient(g3)
+              << std::endl;
 }

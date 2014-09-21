@@ -53,6 +53,13 @@ class graph
     virtual node_id insert(Node node) = 0;
 
     /**
+     * Constructs a node with forwarded arguments.
+     * @return the id of the inserted node
+     */
+    template <class... Args>
+    node_id emplace(Args&&... args);
+
+    /**
      * @param edge
      * @param source
      * @param dest
