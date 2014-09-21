@@ -17,7 +17,7 @@
 namespace meta
 {
 
-#ifndef META_HAS_CXX14
+#ifndef META_HAS_STD_MAKE_UNIQUE
 /**
  * Constructs a unique ptr in place.
  * @param args The parameters to the constructor

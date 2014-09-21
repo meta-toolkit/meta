@@ -21,34 +21,6 @@ include_directories(SYSTEM ${ICU_INCLUDE_DIRS})
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
-    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-        if(USE_LIBCXX)
-            message("-- Locating libc++...")
-            find_library(LIBCXX_LIBRARY NAMES c++ cxx)
-            if(LIBCXX_LIBRARY)
-                message("-- Located libc++, using it.")
-                set(LIBCXX_OPTIONS "-stdlib=libc++")
-                message("--     Locating libc++'s abi...")
-                find_library(LIBCXXABI_LIBRARY NAMES c++abi)
-                find_library(LIBCXXRT_LIBRARY NAMES cxxrt)
-                if(LIBCXXABI_LIBRARY)
-                    message("--     Found libc++abi, using it.")
-                    set(CXXABI_LIBRARY ${LIBCXXABI_LIBRARY})
-                elseif(LIBCXXRT_LIBRARY)
-                    message("--     Found libcxxrt, using it.")
-                    set(CXXABI_LIBRARY ${LIBCXXRT_LIBRARY})
-                else()
-                    message("--     No abi library found. "
-                            "Attempting to continue without one...")
-                endif()
-            else()
-                message("-- Could not find libc++, will not use it.")
-            endif()
-        endif()
-    endif()
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIBCXX_OPTIONS}")
-    set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${CXXABI_LIBRARY}")
 
     # if we don't already set the standard for the compiler, detect the
     # best one available and use it
@@ -90,6 +62,40 @@ if(UNIX)
 
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${STDOPT}")
     endif()
+
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        if(USE_LIBCXX)
+            message("-- Locating libc++...")
+            find_library(LIBCXX_LIBRARY NAMES c++ cxx)
+            if(LIBCXX_LIBRARY)
+                message("-- Located libc++, using it.")
+                set(LIBCXX_OPTIONS "-stdlib=libc++")
+                message("--     Locating libc++'s abi...")
+                find_library(LIBCXXABI_LIBRARY NAMES c++abi)
+                find_library(LIBCXXRT_LIBRARY NAMES cxxrt)
+                if(LIBCXXABI_LIBRARY)
+                    message("--     Found libc++abi, using it.")
+                    set(CXXABI_LIBRARY ${LIBCXXABI_LIBRARY})
+                elseif(LIBCXXRT_LIBRARY)
+                    message("--     Found libcxxrt, using it.")
+                    set(CXXABI_LIBRARY ${LIBCXXRT_LIBRARY})
+                else()
+                    message("--     No abi library found. "
+                            "Attempting to continue without one...")
+                endif()
+            else()
+                message("-- Could not find libc++, will not use it.")
+            endif()
+        endif()
+    endif()
+
+    find_library(LIBDL_LIBRARY NAMES dl ldl)
+    if(LIBDL_LIBRARY)
+      set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${LIBDL_LIBRARY}")
+    endif()
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIBCXX_OPTIONS}")
+    set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${CXXABI_LIBRARY}")
 endif()
 
 add_library(meta-definitions INTERFACE)
@@ -99,13 +105,16 @@ if(HAS_CXX14 OR HAS_CXX1Y)
     target_compile_definitions(meta-definitions INTERFACE -DMETA_HAS_CXX14=1)
 endif()
 
+if(LIBDL_LIBRARY)
+  target_link_libraries(meta-definitions INTERFACE ${LIBDL_LIBRARY})
+endif()
+
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_compile_definitions(meta-definitions INTERFACE
                                -D_DARWIN_USE_64_BIT_INODE=1)
     target_compile_definitions(meta-definitions INTERFACE
                                -DMETA_IS_DARWIN=1)
 endif()
-
 
 check_cxx_source_compiles("
 #include <atomic>
@@ -132,6 +141,18 @@ int main() {
 if(META_HAS_STREAM_MOVE)
     target_compile_definitions(meta-definitions INTERFACE
                                -DMETA_HAS_STREAM_MOVE=1)
+endif()
+
+check_cxx_source_compiles("
+#include <memory>
+int main() {
+    auto i = std::make_unique<int>(1);
+    return 0;
+}" META_HAS_STD_MAKE_UNIQUE)
+
+if(META_HAS_STD_MAKE_UNIQUE)
+    target_compile_definitions(meta-definitions INTERFACE
+                               -DMETA_HAS_STD_MAKE_UNIQUE)
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
