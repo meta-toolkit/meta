@@ -98,6 +98,15 @@ class undirected_graph : public graph<Node, Edge>
     {
         return {this, nodes_.cend(), nodes_.cend()};
     }
+
+    /**
+     * @param filename The file that contains a list of edges in the form "v1
+     * v2"
+     * @param display_errors Whether to display errors found in the file
+     * @return the newly-created graph
+     */
+    static undirected_graph<Node, Edge> load(const std::string& filename,
+                                             bool display_errors = false);
 };
 
 /**
