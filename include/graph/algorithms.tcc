@@ -5,6 +5,8 @@
 
 #include <random>
 #include <unordered_set>
+#include <unordered_map>
+#include <queue>
 
 namespace meta
 {
@@ -12,8 +14,8 @@ namespace graph
 {
 namespace algorithms
 {
-template <class UndirectedGraph>
-double clustering_coefficient(const UndirectedGraph& graph, node_id id)
+template <class Graph>
+double clustering_coefficient(const Graph& graph, node_id id)
 {
     auto adj = graph.adjacent(id);
     if (adj.empty())
@@ -36,18 +38,18 @@ double clustering_coefficient(const UndirectedGraph& graph, node_id id)
     return (2.0 * numerator) / (adj.size() * (adj.size() - 1));
 }
 
-template <class UndirectedGraph>
-double clustering_coefficient(const UndirectedGraph& graph)
+template <class Graph>
+double clustering_coefficient(const Graph& graph)
 {
     double total = 0.0;
-    for(auto& n: graph)
+    for (auto& n : graph)
         total += clustering_coefficient(graph, n.id);
 
     return total / graph.size();
 }
 
-template <class UndirectedGraph>
-double neighborhood_overlap(const UndirectedGraph& graph, node_id src,
+template <class Graph>
+double neighborhood_overlap(const Graph& graph, node_id src,
                             node_id dest)
 {
     if (!graph.edge(src, dest))
@@ -73,8 +75,8 @@ double neighborhood_overlap(const UndirectedGraph& graph, node_id src,
     return num_shared / (total.size() - 2);
 }
 
-template <class UndirectedGraph>
-void random_graph(UndirectedGraph& g, uint64_t num_nodes, uint64_t num_edges)
+template <class Graph>
+void random_graph(Graph& g, uint64_t num_nodes, uint64_t num_edges)
 {
     uint64_t start_id = g.size();
     for (uint64_t i = start_id; i < start_id + num_nodes; ++i)
@@ -82,7 +84,7 @@ void random_graph(UndirectedGraph& g, uint64_t num_nodes, uint64_t num_edges)
 
     uint64_t possible = g.size() * (g.size() - 1) - g.num_edges();
     if (num_edges > possible)
-        throw undirected_graph_exception{
+        throw graph_algorithm_exception{
             "impossible to add required number of edges to graph"};
 
     std::default_random_engine gen;
