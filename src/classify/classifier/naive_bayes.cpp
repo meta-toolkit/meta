@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <cassert>
 #include <unordered_set>
 #include "cpptoml.h"
 #include "classify/classifier/naive_bayes.h"
@@ -17,57 +18,58 @@ const std::string naive_bayes::id = "naive-bayes";
 
 naive_bayes::naive_bayes(std::shared_ptr<index::forward_index> idx,
                          double alpha, double beta)
-    : classifier{std::move(idx)}, total_docs_{0}, alpha_{alpha}, beta_{beta}
+    : classifier{std::move(idx)},
+      class_probs_{stats::dirichlet<class_label>{beta, idx_->num_labels()}}
 {
-    /* nothing */
+    stats::dirichlet<term_id> term_prior{alpha, idx_->unique_terms()};
+    auto lbls = idx_->class_labels();
+    std::sort(std::begin(lbls), std::end(lbls));
+    term_probs_.reserve(lbls.size());
+    for (const auto& lbl : lbls)
+        term_probs_.emplace_back(lbl, term_prior);
 }
 
 void naive_bayes::reset()
 {
-    term_probs_.clear();
-    class_counts_.clear();
-    total_docs_ = 0;
+    for (auto & term_dist : term_probs_)
+        term_dist.second.clear();
+    class_probs_.clear();
 }
 
 void naive_bayes::train(const std::vector<doc_id>& docs)
 {
     for (auto& d_id : docs)
     {
-        ++total_docs_;
         auto pdata = idx_->search_primary(d_id);
+        auto lbl = idx_->label(d_id);
         for (auto& p : pdata->counts())
-            term_probs_[idx_->label(d_id)][p.first] += p.second;
-        ++class_counts_[idx_->label(d_id)];
-    }
-
-    // calculate P(term|class) for all classes based on c(term|class)
-    for (auto& cls : term_probs_)
-    {
-        for (auto& p : cls.second)
-            p.second /= class_counts_[cls.first];
+        {
+            term_probs_[lbl].increment(p.first, p.second);
+            assert(term_probs_[lbl].probability(p.first) > 0);
+        }
+        class_probs_.increment(lbl, 1);
     }
 }
 
 class_label naive_bayes::classify(doc_id d_id)
 {
     class_label label;
-    double best = std::numeric_limits<double>::min();
+    double best = std::numeric_limits<double>::lowest();
 
     // calculate prob of test doc for each class
     for (auto& cls : term_probs_)
     {
+        const auto& lbl = cls.first;
+        const auto& term_dist = cls.second;
+
         double sum = 0.0;
-        double class_prob = static_cast<double>(class_counts_.at(cls.first))
-                            / total_docs_;
-        class_prob += beta_;
-        sum += log(1 + class_prob);
+        assert(class_probs_.probability(lbl) > 0);
+        sum += log(class_probs_.probability(lbl));
         auto pdata = idx_->search_primary(d_id);
         for (auto& t : pdata->counts())
         {
-            auto it = cls.second.find(t.first);
-            double term_prob = (it == cls.second.end()) ? 0.0 : it->second;
-            term_prob += alpha_;
-            sum += log(1 + term_prob);
+            assert(term_dist.probability(t.first) > 0);
+            sum += t.second * log(term_dist.probability(t.first));
         }
 
         if (sum > best)
