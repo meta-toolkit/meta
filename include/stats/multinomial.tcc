@@ -15,30 +15,42 @@ namespace stats
 
 template <class T>
 multinomial<T>::multinomial()
-    : total_counts_{0}, prior_{0.0, 0ul}
+    : total_counts_{0.0}, prior_{0.0, 0ul}
 {
     // nothing
 }
 
 template <class T>
 multinomial<T>::multinomial(dirichlet<T> prior)
-    : total_counts_{0}, prior_{std::move(prior)}
+    : total_counts_{0.0}, prior_{std::move(prior)}
 {
     // nothing
 }
 
 template <class T>
-void multinomial<T>::increment(const T& event, uint64_t count)
+void multinomial<T>::increment(const T& event, double count)
 {
     counts_[event] += count;
     total_counts_ += count;
 }
 
 template <class T>
-void multinomial<T>::decrement(const T& event, uint64_t count)
+void multinomial<T>::decrement(const T& event, double count)
 {
     counts_[event] -= count;
     total_counts_ -= count;
+}
+
+template <class T>
+double multinomial<T>::counts(const T& event) const
+{
+    return counts_.at(event) + prior_.pseudo_counts(event);
+}
+
+template <class T>
+double multinomial<T>::counts() const
+{
+    return total_counts_ + prior_.pseudo_counts();
 }
 
 template <class T>
@@ -51,8 +63,13 @@ void multinomial<T>::clear()
 template <class T>
 double multinomial<T>::probability(const T& event) const
 {
-    return static_cast<double>(prior_.pseudo_counts(event) + counts_.at(event))
-      / (prior_.pseudo_counts() + total_counts_);
+    return counts(event) / counts();
+}
+
+template <class T>
+const dirichlet<T>& multinomial<T>::prior() const
+{
+    return prior_;
 }
 
 template <class T>
@@ -69,5 +86,15 @@ const T& multinomial<T>::operator()(Generator&& gen) const
     }
     throw std::runtime_error{"failed to generate sample"};
 }
+
+template <class T>
+multinomial<T>& multinomial<T>::operator+=(const multinomial<T>& rhs)
+{
+    for (const auto& p : rhs.counts_)
+        counts_[p.first] += p.second;
+    total_counts_ += rhs.total_counts_;
+    return *this;
+}
+
 }
 }

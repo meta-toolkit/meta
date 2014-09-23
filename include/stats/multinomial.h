@@ -47,7 +47,7 @@ class multinomial
      * @param event The event observed
      * @param count The number of times it was observed
      */
-    void increment(const T& event, uint64_t count);
+    void increment(const T& event, double count);
 
     /**
      * Removes observations of an event and adjusts the distribution's
@@ -56,7 +56,19 @@ class multinomial
      * @param event The event
      * @param count The number of counts of this event to remove
      */
-    void decrement(const T& event, uint64_t count);
+    void decrement(const T& event, double count);
+
+    /**
+     * @param event The event
+     * @return the number of observations (including the prior) for this
+     * event
+     */
+    double counts(const T& event) const;
+
+    /**
+     * @return the total number of observations (including the prior)
+     */
+    double counts() const;
 
     /**
      * Removes all observations.
@@ -69,17 +81,55 @@ class multinomial
     double probability(const T& event) const;
 
     /**
+     * @return the prior
+     */
+    const dirichlet<T>& prior() const;
+
+    /**
      * Samples from the distribution.
      * @param gen The random number generator to be used
      */
     template <class Generator>
     const T& operator()(Generator&& gen) const;
 
+    /**
+     * Adds in the observations of another multinomial to this one.
+     *
+     * @param other The other multinomial to merge with.
+     */
+    multinomial<T>& operator+=(const multinomial<T>& other);
+
   private:
-    util::sparse_vector<T, uint64_t> counts_;
-    uint64_t total_counts_;
+    util::sparse_vector<T, double> counts_;
+    double total_counts_;
     dirichlet<T> prior_;
 };
+
+template <class T>
+multinomial<T> operator+(const multinomial<T>& lhs, const multinomial<T>& rhs)
+{
+    multinomial<T> res{lhs};
+    res += rhs;
+    return res;
+}
+
+template <class T>
+multinomial<T> operator+(multinomial<T>&& lhs, const multinomial<T>& rhs)
+{
+    return lhs += rhs;
+}
+
+template <class T>
+multinomial<T> operator+(const multinomial<T>& lhs, multinomial<T>&& rhs)
+{
+    return rhs += lhs;
+}
+
+template <class T>
+multinomial<T> operator+(multinomial<T>&& lhs, multinomial<T>&& rhs)
+{
+    return lhs += rhs;
+}
 
 }
 }
