@@ -8,7 +8,7 @@ namespace meta
 namespace graph
 {
 template <class Node, class Edge>
-auto directed_graph<Node, Edge>::outgoing(node_id id) const -> const
+auto directed_graph<Node, Edge>::adjacent(node_id id) const -> const
     adjacency_list &
 {
     if (id >= size())

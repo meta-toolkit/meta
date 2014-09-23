@@ -42,7 +42,7 @@ class directed_graph : public graph<Node, Edge>
      * @param id The node id to get outgoing nodes from
      * @return the outgoing edges and node_ids to the given node
      */
-    const adjacency_list& outgoing(node_id id) const;
+    const adjacency_list& adjacent(node_id id) const;
 
     /**
      * @param id The node id to get incoming nodes to

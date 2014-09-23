@@ -23,16 +23,16 @@ namespace algorithms
  * @param id
  * @return the clustering coefficient of the given node
  */
-template <class UndirectedGraph>
-double clustering_coefficient(const UndirectedGraph& graph, node_id id);
+template <class Graph>
+double clustering_coefficient(const Graph& graph, node_id id);
 
 /**
  * Computes the clustering coefficient of the entire graph as the average
  * clustering coefficient of each node.
  * @return the graph's clustering coefficient
  */
-template <class UndirectedGraph>
-double clustering_coefficient(const UndirectedGraph& graph);
+template <class Graph>
+double clustering_coefficient(const Graph& graph);
 
 /**
  * The neighborhood overlap is the ratio of shared neighbors between src and
@@ -42,17 +42,16 @@ double clustering_coefficient(const UndirectedGraph& graph);
  * @param dest
  * @return the neighborhood overlap between the two given nodes
  */
-template <class UndirectedGraph>
-double neighborhood_overlap(const UndirectedGraph& graph, node_id src,
-                            node_id dest);
+template <class Graph>
+double neighborhood_overlap(const Graph& graph, node_id src, node_id dest);
 
 /**
  * @param g
  * @param num_nodes The total number of nodes in the graph
  * @param num_edges The total number of edges in the graph
  */
-template <class UndirectedGraph>
-void random_graph(UndirectedGraph& g, uint64_t num_nodes, uint64_t num_edges);
+template <class Graph>
+void random_graph(Graph& g, uint64_t num_nodes, uint64_t num_edges);
 
 /**
  * @param g
@@ -60,9 +59,10 @@ void random_graph(UndirectedGraph& g, uint64_t num_nodes, uint64_t num_edges);
  * @param num_neighbors An even number of neighbor nodes to connect to
  * @param num_random_edges The number of random edges to add to the ring network
  */
-template <class UndirectedGraph>
-void watts_strogatz(UndirectedGraph& g, uint64_t num_nodes,
-                    uint64_t num_neighbors, uint64_t num_random_edges);
+template <class Graph>
+void watts_strogatz(Graph& g, uint64_t num_nodes, uint64_t num_neighbors,
+                    uint64_t num_random_edges);
+
 
 /**
  * Exception for errors in graph algorithms.
