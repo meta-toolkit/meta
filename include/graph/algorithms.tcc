@@ -49,8 +49,7 @@ double clustering_coefficient(const Graph& graph)
 }
 
 template <class Graph>
-double neighborhood_overlap(const Graph& graph, node_id src,
-                            node_id dest)
+double neighborhood_overlap(const Graph& graph, node_id src, node_id dest)
 {
     if (!graph.edge(src, dest))
         throw graph_algorithm_exception{
@@ -103,26 +102,109 @@ void random_graph(Graph& g, uint64_t num_nodes, uint64_t num_edges)
     }
 }
 
-template <class UndirectedGraph>
-void watts_strogatz(UndirectedGraph& g, uint64_t num_nodes,
-                    uint64_t num_neighbors, uint64_t num_random_edges)
+template <class Graph>
+void watts_strogatz(Graph& g, uint64_t num_nodes, uint64_t num_neighbors,
+                    uint64_t num_random_edges)
 {
     if (g.size() != 0)
-        throw undirected_graph_exception{
+        throw graph_algorithm_exception{
             "watts-strogatz graph generation must be called on an empty graph"};
 
     if (num_neighbors % 2 != 0)
-        throw undirected_graph_exception{
+        throw graph_algorithm_exception{
             "num_neighbors for watts-strogatz graph model must be even"};
 
     for (uint64_t i = 0; i < num_nodes; ++i)
         g.emplace(std::to_string(i));
 
     for (uint64_t i = 0; i < num_nodes; ++i)
-        for(uint64_t j = 1; j <= num_neighbors / 2; ++j)
-            g.add_edge(node_id{i}, node_id{(i + j) % g.size()});
+    {
+        for (uint64_t j = 1; j <= num_neighbors / 2; ++j)
+        {
+            auto src = node_id{i};
+            auto dest = node_id{(i + j) % g.size()};
+            g.add_edge(src, dest);
+            if (!g.edge(dest, src))
+                g.add_edge(dest, src);
+        }
+    }
 
     random_graph(g, 0, num_random_edges);
+}
+
+template <class Graph>
+std::vector<node_id> myopic_search(Graph& g, node_id src, node_id dest)
+{
+    auto cur = src;
+    std::vector<node_id> path;
+    path.push_back(src);
+    while (cur != dest)
+    {
+        if (path.size() > g.size())
+            throw graph_algorithm_exception{"no path found in myopic search"};
+        node_id best_id;
+        double best_distance = std::numeric_limits<double>::max();
+        for (auto& n : g.adjacent(cur))
+        {
+            double distance = std::abs(static_cast<double>(n.first)
+                                       - static_cast<double>(dest));
+            if (distance < best_distance)
+            {
+                best_distance = distance;
+                best_id = n.first;
+            }
+        }
+
+        cur = best_id;
+        path.push_back(cur);
+    }
+
+    return path;
+}
+
+template <class Graph>
+std::vector<node_id> bfs(Graph& g, node_id src, node_id dest)
+{
+    std::unordered_set<node_id> seen;
+    std::unordered_map<node_id, node_id> parent;
+    std::queue<node_id> q;
+    q.push(src);
+
+    // find path
+    while (!q.empty())
+    {
+        auto cur = q.front();
+        q.pop();
+        seen.insert(cur);
+        for (auto& n : g.adjacent(cur))
+        {
+            if (seen.find(n.first) == seen.end())
+            {
+                q.push(n.first);
+                parent[n.first] = cur;
+
+                if (n.first == dest)
+                    break;
+            }
+        }
+    }
+
+    // find parents
+    std::vector<node_id> path;
+    node_id cur{dest};
+    path.push_back(dest);
+    while (true)
+    {
+        path.push_back(parent[cur]);
+        cur = parent[cur];
+        if (cur == src)
+        {
+            path.push_back(cur);
+            break;
+        }
+    }
+
+    return path;
 }
 }
 }

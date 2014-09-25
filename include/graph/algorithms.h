@@ -63,6 +63,22 @@ template <class Graph>
 void watts_strogatz(Graph& g, uint64_t num_nodes, uint64_t num_neighbors,
                     uint64_t num_random_edges);
 
+/**
+ * @param g
+ * @param src
+ * @param dest
+ * @return a path from src to dest
+ */
+template <class Graph>
+std::vector<node_id> myopic_search(Graph& g, node_id src, node_id dest);
+/**
+ * @param g
+ * @param src
+ * @param dest
+ * @return the shortest path from src to dest in number of edges
+ */
+template <class Graph>
+std::vector<node_id> bfs(Graph& g, node_id src, node_id dest);
 
 /**
  * Exception for errors in graph algorithms.
