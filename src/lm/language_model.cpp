@@ -29,7 +29,7 @@ language_model::language_model(const std::string& config_file)
 {
     auto config = cpptoml::parse_file(config_file);
     auto group = config.get_group("language-model");
-    auto nval = group->get_as<size_t>("n-value");
+    auto nval = group->get_as<int64_t>("n-value");
     if (!nval)
         throw std::runtime_error{
             "no n-value specified in language-model group"};
@@ -39,21 +39,45 @@ language_model::language_model(const std::string& config_file)
     if (N_ > 1)
         interp_ = make_unique<language_model>(config_file, N_ - 1);
 
-    learn_model(config_file);
+    select_method(config_file);
 }
 
-language_model::language_model(const std::string& config_file, size_t n) : N_{n}
+void language_model::select_method(const std::string& config_file)
+{
+    std::cout << "Creating " << N_ << "-gram language model" << std::endl;
+
+    auto config = cpptoml::parse_file(config_file);
+    auto group = config.get_group("language-model");
+    auto format = group->get_as<std::string>("format");
+    if (!format)
+        throw std::runtime_error{"no format specified in language-model group"};
+
+    if (*format == "precomputed")
+    {
+        auto prefix = group->get_as<std::string>("prefix");
+        if (!prefix)
+            throw std::runtime_error{
+                "no prefix specified for precomputed language model"};
+        read_precomputed(*prefix);
+    }
+    else if (*format == "learn")
+        learn_model(config_file);
+    else
+        throw std::runtime_error{
+            "language-model format could not be determined"};
+}
+
+language_model::language_model(const std::string& config_file, size_t n):
+    N_{n}
 {
     if (N_ > 1)
         interp_ = make_unique<language_model>(config_file, N_ - 1);
 
-    learn_model(config_file);
+    select_method(config_file);
 }
 
 void language_model::learn_model(const std::string& config_file)
 {
-    std::cout << "Creating " << N_ << "-gram language model" << std::endl;
-
     auto corpus = corpus::corpus::load(config_file);
 
     using namespace analyzers;
@@ -85,6 +109,47 @@ void language_model::learn_model(const std::string& config_file)
             }
             else
                 ++dist_[""][token]; // unigram has no previous tokens
+        }
+    }
+
+    // turn counts into probabilities
+    for (auto& map : dist_)
+    {
+        double sum = 0.0;
+        for (auto& end : map.second)
+            sum += end.second;
+        for (auto& end : map.second)
+            end.second /= sum;
+    }
+}
+
+void language_model::read_precomputed(const std::string& prefix)
+{
+    std::ifstream in{prefix + std::to_string(N_) + "-grams.txt"};
+    std::string line;
+    uint64_t count;
+    while (in)
+    {
+        std::getline(in, line);
+        std::istringstream iss{line};
+        iss >> count;
+        std::deque<std::string> ngram;
+        std::string token;
+        for (size_t i = 0; i < N_ - 1; ++i)
+        {
+            iss >> token;
+            ngram.push_back(token);
+        }
+
+        // if there is one remaining token to read
+        if (iss)
+        {
+            iss >> token;
+            dist_[make_string(ngram)][token] = count;
+        }
+        else // if unigram
+        {
+            dist_[""][make_string(ngram)] = count;
         }
     }
 
@@ -132,7 +197,9 @@ std::vector<std::pair<std::string, double>>
     std::vector<pair_t> probs{it->second.begin(), it->second.end()};
 
     auto comp = [&](const pair_t& a, const pair_t& b)
-    { return a.second > b.second; };
+    {
+        return a.second > b.second;
+    };
     if (k >= probs.size())
     {
         std::sort(probs.begin(), probs.end(), comp);
@@ -197,39 +264,21 @@ double language_model::prob(std::deque<std::string> tokens) const
     return lambda_ * prob->second + (1.0 - lambda_) * interp_prob;
 }
 
-auto language_model::analysis(const std::string& tokens) const -> lm_analysis
+double language_model::perplexity(const std::string& tokens) const
 {
     std::deque<std::string> ngram;
     for (size_t i = 1; i < N_; ++i)
         ngram.push_back("<s>");
 
-    lm_analysis result;
-    auto dq = make_deque(tokens);
-    dq.push_back("</s>");
-    for (auto& token : dq)
+    double perp = 0.0;
+    for (auto& token : make_deque(tokens))
     {
         ngram.push_back(token);
-        result.emplace_back(ngram, prob(ngram));
+        perp += std::log(1.0 + 1.0 / prob(ngram));
         ngram.pop_front();
     }
 
-    return result;
-}
-
-double language_model::perplexity(const std::string& tokens) const
-{
-    double perp = 0.0;
-    for (auto& p : analysis(tokens))
-        perp += std::log(1.0 + 1.0 / p.second);
     return std::pow(perp, 1.0 / N_);
-}
-
-double language_model::log_likelihood(const std::string& tokens) const
-{
-    double like = 0.0;
-    for (auto& p : analysis(tokens))
-        like += std::log(1.0 + p.second);
-    return like;
 }
 
 double language_model::perplexity_per_word(const std::string& tokens) const
@@ -237,8 +286,8 @@ double language_model::perplexity_per_word(const std::string& tokens) const
     return perplexity(tokens) / tokens.size();
 }
 
-std::deque<std::string> language_model::make_deque(const std::string
-                                                   & tokens) const
+std::deque<std::string>
+    language_model::make_deque(const std::string& tokens) const
 {
     std::deque<std::string> d;
     std::stringstream sstream{tokens};
@@ -249,8 +298,8 @@ std::deque<std::string> language_model::make_deque(const std::string
     return d;
 }
 
-std::string language_model::make_string(const std::deque
-                                        <std::string>& tokens) const
+std::string
+    language_model::make_string(const std::deque<std::string>& tokens) const
 {
     std::string result{""};
     if (tokens.empty())

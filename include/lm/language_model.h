@@ -11,10 +11,10 @@
 #define META_LANGUAGE_MODEL_H_
 
 #include <deque>
+#include <vector>
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <vector>
 
 namespace meta
 {
@@ -23,10 +23,6 @@ namespace lm
 class language_model
 {
   public:
-    /// An analysis consists of each n-gram from a sequence and its probability
-    //   under the current model.
-    using lm_analysis = std::vector<std::pair<std::deque<std::string>, double>>;
-
     /**
      * Creates an N-gram language model based on the corpus specified in the
      * config file.
@@ -55,14 +51,6 @@ class language_model
                            double random) const;
 
     /**
-     * @param prev A sequence of n - 1 tokens preceding the desired token
-     * @param k
-     * @return a list of up to k most likely tokens to come next
-     */
-    std::vector<std::pair<std::string, double>>
-        top_k(const std::deque<std::string>& prev, size_t k) const;
-
-    /**
      * @param tokens A sequence of tokens
      * @return the perplexity of this token sequence given the current language
      * model: \f$ \sqrt[n]{\prod_{i=1}^n\frac{1}{p(w_i|w_{i-n}\cdots w_{i-1})}}
@@ -78,13 +66,6 @@ class language_model
     double perplexity_per_word(const std::string& tokens) const;
 
     /**
-     * @param tokens A sequence of tokens
-     * @return the log likelihood of the sequence of tokens under this
-     * language model
-     */
-    double log_likelihood(const std::string& tokens) const;
-
-    /**
      * @param tokens A sequence of n tokens
      * @return the probability of seeing the nth token based on the previous n
      * - 1 tokens
@@ -92,10 +73,12 @@ class language_model
     double prob(std::deque<std::string> tokens) const;
 
     /**
-     * @param tokens A sequence of tokens
-     * @return statistical information about each n-gram of the sequence
+     * @param prev Seen tokens to base the next token off of
+     * @param k Number of results to return
+     * @return a sorted vector of likely next tokens
      */
-    lm_analysis analysis(const std::string& tokens) const;
+    std::vector<std::pair<std::string, double>>
+        top_k(const std::deque<std::string>& prev, size_t k) const;
 
   private:
     /**
@@ -104,6 +87,16 @@ class language_model
      * corpus
      */
     void learn_model(const std::string& config_file);
+
+    /**
+     * @param config_file
+     */
+    void select_method(const std::string& config_file);
+
+    /**
+     * @param prefix Path to where the counts files are stored
+     */
+    void read_precomputed(const std::string& prefix);
 
     /**
      * @param tokens A deque of tokens to convert to a string
@@ -121,14 +114,14 @@ class language_model
     std::unique_ptr<language_model> interp_;
 
     /// Contains the N-gram distribution probabilities (N-1 words -> (w, prob))
-    std::unordered_map
-        <std::string, std::unordered_map<std::string, double>> dist_;
+    std::unordered_map<std::string, std::unordered_map<std::string, double>>
+        dist_;
 
     /// The value of N in this n-gram
     size_t N_;
 
     /// The interpolation coefficient for smoothing LM probabilities
-    constexpr static double lambda_ = 0.85;
+    constexpr static double lambda_ = 0.7;
 };
 }
 }
