@@ -10,11 +10,11 @@
 #ifndef META_LANGUAGE_MODEL_H_
 #define META_LANGUAGE_MODEL_H_
 
-#include <deque>
 #include <vector>
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include "lm/sentence.h"
 
 namespace meta
 {
@@ -43,34 +43,33 @@ class language_model
     std::string generate(unsigned int seed) const;
 
     /**
-     * @param tokens The previous N - 1 tokens
+     * @param sentence The previous N - 1 tokens
      * @param random A random number on [0, 1] used for choosing the next token
      * @return the next token based on the previous tokens
      */
-    std::string next_token(const std::deque<std::string>& tokens,
-                           double random) const;
+    std::string next_token(const sentence& sen, double random) const;
 
     /**
-     * @param tokens A sequence of tokens
+     * @param sentence A sequence of tokens
      * @return the perplexity of this token sequence given the current language
      * model: \f$ \sqrt[n]{\prod_{i=1}^n\frac{1}{p(w_i|w_{i-n}\cdots w_{i-1})}}
      * \f$
      */
-    double perplexity(const std::string& tokens) const;
+    double perplexity(const sentence& tokens) const;
 
     /**
-     * @param tokens A sequence of tokens
+     * @param sentence A sequence of tokens
      * @return the perplexity of this token sequence given the current language
      * model normalized by the length of the sequence
      */
-    double perplexity_per_word(const std::string& tokens) const;
+    double perplexity_per_word(const sentence& tokens) const;
 
     /**
      * @param tokens A sequence of n tokens
      * @return the probability of seeing the nth token based on the previous n
      * - 1 tokens
      */
-    double prob(std::deque<std::string> tokens) const;
+    double prob(sentence tokens) const;
 
     /**
      * @param prev Seen tokens to base the next token off of
@@ -78,7 +77,7 @@ class language_model
      * @return a sorted vector of likely next tokens
      */
     std::vector<std::pair<std::string, double>>
-        top_k(const std::deque<std::string>& prev, size_t k) const;
+        top_k(const sentence& prev, size_t k) const;
 
   private:
     /**
@@ -97,18 +96,6 @@ class language_model
      * @param prefix Path to where the counts files are stored
      */
     void read_precomputed(const std::string& prefix);
-
-    /**
-     * @param tokens A deque of tokens to convert to a string
-     * @return the string version of the deque (space delimited)
-     */
-    std::string make_string(const std::deque<std::string>& tokens) const;
-
-    /**
-     * @param tokens A string of space-delimited tokens to convert to a deque
-     * @return a deque of the tokens
-     */
-    std::deque<std::string> make_deque(const std::string& tokens) const;
 
     /// The language_model used to interpolate with this one for smoothing
     std::unique_ptr<language_model> interp_;
