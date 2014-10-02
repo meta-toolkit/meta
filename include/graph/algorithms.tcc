@@ -133,6 +133,42 @@ void watts_strogatz(Graph& g, uint64_t num_nodes, uint64_t num_neighbors,
 }
 
 template <class Graph>
+void preferential_attachment(
+    Graph& g, uint64_t num_nodes, uint64_t node_edges,
+    std::function<double(node_id)> attr /* = return 1.0 */)
+{
+    if (g.size() != 0)
+        throw graph_algorithm_exception{"preferential attachment graph "
+                                        "generation must be called on an empty "
+                                        "graph"};
+
+    if (node_edges > num_nodes)
+        throw graph_algorithm_exception{
+            "num_nodes should be significantly higher than node_edges"};
+
+    // first, create a complete graph of node_edges nodes
+    for (uint64_t i = 0; i < node_edges; ++i)
+        g.emplace(std::to_string(i));
+
+    for (uint64_t i = 0; i < node_edges; ++i)
+        for (uint64_t j = i + 1; j < node_edges; ++j)
+            g.add_edge(node_id{i}, node_id{j});
+
+    // now, add a single node each time step, connecting to node_edges nodes
+    std::vector<node_id> ids(node_edges);
+    std::iota(ids.begin(), ids.end(), 0);
+    std::default_random_engine gen;
+    for (uint64_t i = node_edges; i < num_nodes; ++i)
+    {
+        g.emplace(std::to_string(i));
+        std::shuffle(ids.begin(), ids.end(), gen);
+        ids.push_back(node_id{i});
+        for(uint64_t j = 0; j < node_edges; ++j)
+            g.add_edge(node_id{i}, ids[j]);
+    }
+}
+
+template <class Graph>
 std::vector<node_id> myopic_search(Graph& g, node_id src, node_id dest)
 {
     auto cur = src;

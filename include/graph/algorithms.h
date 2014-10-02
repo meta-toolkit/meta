@@ -65,12 +65,27 @@ void watts_strogatz(Graph& g, uint64_t num_nodes, uint64_t num_neighbors,
 
 /**
  * @param g
+ * @param num_nodes The number of nodes to add to the graph (the total number
+ * of time steps)
+ * @param node_edges How many edges to create per node
+ * @param attr A function that takes a node_id and returns its attractiveness
+ * in [0, 1]; nodes with higher attractiveness are more likely to be connected
+ * to. The default attractiveness function makes all nodes have the same
+ * attractiveness.
+ */
+template <class Graph>
+void preferential_attachment(Graph& g, uint64_t num_nodes, uint64_t node_edges,
+        std::function<double(node_id)> attr = [](node_id id) { return 1.0; });
+
+/**
+ * @param g
  * @param src
  * @param dest
  * @return a path from src to dest
  */
 template <class Graph>
 std::vector<node_id> myopic_search(Graph& g, node_id src, node_id dest);
+
 /**
  * @param g
  * @param src

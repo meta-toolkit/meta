@@ -114,23 +114,7 @@ int main(int argc, char* argv[])
     logging::set_cerr_logging();
     using namespace graph;
 
-    undirected_graph<> g1;
-    algorithms::random_graph(g1, 5242, 14496);
-    degree_dist(g1, "g1-degrees.dat");
-    std::cout << "g1 CC: " << algorithms::clustering_coefficient(g1)
-              << std::endl;
-
-    undirected_graph<> g2;
-    algorithms::watts_strogatz(g2, 5242, 4, 4012);
-    degree_dist(g2, "g2-degrees.dat");
-    std::cout << "g2 CC: " << algorithms::clustering_coefficient(g2)
-              << std::endl;
-
-    auto g3 = undirected_graph<>::load(argv[1]);
-    degree_dist(g3, "g3-degrees.dat");
-    std::cout << "g3 CC: " << algorithms::clustering_coefficient(g3)
-              << std::endl;
-
-    for (double q = 0.05; q < 2.0001; q += 0.05)
-        ring_world(q);
+    undirected_graph<> g;
+    algorithms::preferential_attachment(g, 10000, 10);
+    degree_dist(g, "pa.dat");
 }
