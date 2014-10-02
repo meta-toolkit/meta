@@ -59,7 +59,7 @@ template <class Node, class Edge>
 template <class... Args>
 node_id graph<Node, Edge>::emplace(Args&&... args)
 {
-    return insert(Node{std::forward<Args>(args)...});
+    return insert(Node(std::forward<Args>(args)...));
 }
 }
 }
