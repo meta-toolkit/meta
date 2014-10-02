@@ -6,6 +6,7 @@
 #include <array>
 #include <stdexcept>
 #include <unicode/brkiter.h>
+#include <unicode/uchar.h>
 #include <unicode/uclean.h>
 #include <unicode/unistr.h>
 #include <unicode/translit.h>

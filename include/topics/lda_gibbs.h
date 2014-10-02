@@ -12,7 +12,9 @@
 
 #include <random>
 
+#include "stats/multinomial.h"
 #include "topics/lda_model.h"
+#include "util/dense_matrix.h"
 
 namespace meta
 {
@@ -77,16 +79,17 @@ class lda_gibbs : public lda_model
     topic_id sample_topic(term_id term, doc_id doc);
 
     /**
-     * Computes \f$P(z_i = j | w, \boldsymbol{z})\f$.
+     * Computes a weight proportional to \f$P(z_i = j | w, \boldsymbol{z})\f$.
      *
      * @param term The current word we are sampling for
      * @param doc The document in which the term resides
      * @param topic The topic \f$j\f$ we want to compute the
      * probability for
-     * @return the probability that the given term in the given document
-     * belongs to the given topic
+     * @return a weight proportional to the probability that the given term
+     * in the given document belongs to the given topic
      */
-    double compute_probability(term_id term, doc_id doc, topic_id topic) const;
+    virtual double compute_sampling_weight(term_id term, doc_id doc,
+                                           topic_id topic) const;
 
     /**
      * @return the probability that the given term appears in the given
@@ -95,9 +98,9 @@ class lda_gibbs : public lda_model
      * @param term The term we are concerned with.
      * @param topic The topic we are concerned with.
      */
-    virtual double compute_term_topic_probability(term_id term,
-                                                  topic_id topic) const
-        override;
+    virtual double
+        compute_term_topic_probability(term_id term,
+                                       topic_id topic) const override;
 
     /**
      * @return the probability that the given topic is picked for the given
@@ -108,40 +111,6 @@ class lda_gibbs : public lda_model
      */
     virtual double compute_doc_topic_probability(doc_id doc,
                                                  topic_id topic) const override;
-
-    /**
-     * @return how many times the given term has been assigned the given
-     * topic in the vector of assignments \f$\boldsymbol{z}\f$
-     *
-     * @param term The term we are concerned with.
-     * @param topic The topic we are concerned with.
-     */
-    virtual double count_term(term_id term, topic_id topic) const;
-
-    /**
-     * @return the number of times the given topic has been assigned for
-     * *any* word in the corpus
-     *
-     * @param topic The topic we are concerned with.
-     */
-    virtual double count_topic(topic_id topic) const;
-
-    /**
-     * @return the number of times the given topic has been chosen for a
-     * *any* word in the given document
-     *
-     * @param doc The document we are concerned with.
-     * @param topic The topic we are concerned with.
-     */
-    virtual double count_doc(doc_id doc, topic_id topic) const;
-
-    /**
-     * @return the number of times a topic has been assigned to a word in
-     * the given document
-     *
-     * @param doc The document we are concerned with.
-     */
-    virtual double count_doc(doc_id doc) const;
 
     /**
      * Initializes the first set of topic assignments for inference.
@@ -182,7 +151,7 @@ class lda_gibbs : public lda_model
     /**
      * @return \f$\log P(\mathbf{w} \mid \mathbf{z})\f$
      */
-    double corpus_likelihood() const;
+    double corpus_log_likelihood() const;
 
     /**
      * lda_gibbs cannot be copy assigned.
@@ -199,39 +168,20 @@ class lda_gibbs : public lda_model
      * the same word occurring multiple times in one document could
      * potentially have many different topics assigned to it, so we are
      * not using term_ids here, but our own contrived intra document term id.
+     *
+     * Indexed as [doc_id][position].
      */
-    std::unordered_map<doc_id, std::unordered_map<uint64_t, topic_id>>
-        doc_word_topic_;
+    std::vector<std::vector<topic_id>> doc_word_topic_;
 
     /**
-     * Contains the counts for each word being assigned a given topic.
+     * The word distributions for each topic, \f$\phi_t\f$.
      */
-    std::unordered_map<topic_id, std::unordered_map<term_id, uint64_t>>
-        topic_term_count_;
+    std::vector<stats::multinomial<term_id>> phi_;
 
     /**
-     * Contains the counts for each topic being assigned in a given
-     * document.
+     * The topic distributions for each document, \f$\theta_d\f$.
      */
-    std::unordered_map<doc_id, std::unordered_map<topic_id, uint64_t>>
-        doc_topic_count_;
-
-    /**
-     * Contains the number of times the given topic has been assigned
-     * to a word. Can be inferred from the above maps, but is included
-     * here for performance reasons.
-     */
-    std::unordered_map<topic_id, uint64_t> topic_count_;
-
-    /**
-     * Hyperparameter for the Dirichlet prior over \f$\theta\f$.
-     */
-    double alpha_;
-
-    /**
-     * Hyperparameter for the Dirichlet prior over \f$\phi\f$.
-     */
-    double beta_;
+    std::vector<stats::multinomial<topic_id>> theta_;
 
     /**
      * The random number generator for the sampler.

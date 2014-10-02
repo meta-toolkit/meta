@@ -54,50 +54,27 @@ template <class PrimaryKey, class SecondaryKey>
 void postings_data
     <PrimaryKey, SecondaryKey>::increase_count(SecondaryKey s_id, double amount)
 {
-    auto it = std::lower_bound(counts_.begin(), counts_.end(), s_id,
-        [](const pair_t& p, const SecondaryKey& s) {
-            return p.first < s;
-        }
-    );
-
-    if (it == counts_.end())
-        counts_.emplace_back(s_id, amount);
-    else if (it->first != s_id)
-        counts_.emplace(it, s_id, amount);
-    else
-        it->second += amount;
+    counts_[s_id] += amount;
 }
 
 template <class PrimaryKey, class SecondaryKey>
 double postings_data<PrimaryKey, SecondaryKey>::count(SecondaryKey s_id) const
 {
-    auto it = std::lower_bound(counts_.begin(), counts_.end(), s_id,
-        [](const pair_t& p, const SecondaryKey& s) {
-            return p.first < s;
-        }
-    );
-
-    if (it == counts_.end() || it->first != s_id)
-        return 0.0;
-    return it->second;
+    return counts_.at(s_id);
 }
 
 template <class PrimaryKey, class SecondaryKey>
 const std::vector<std::pair<SecondaryKey, double>>& postings_data
     <PrimaryKey, SecondaryKey>::counts() const
 {
-    return counts_;
+    return counts_.contents();
 }
 
 template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::set_counts(const count_t& counts)
 {
-    counts_ = counts;
-    std::sort(counts_.begin(), counts_.end(),
-        [](const pair_t& a, const pair_t& b) {
-            return a.first < b.first;
-        }
-    );
+    // no sort needed: sparse_vector::contents() sorts the parameter
+    counts_.contents(counts);
 }
 
 template <class PrimaryKey, class SecondaryKey>
@@ -132,7 +109,7 @@ void postings_data
     <PrimaryKey, SecondaryKey>::write_compressed(io::compressed_file_writer
                                                  & writer) const
 {
-    count_t mutable_counts{counts_};
+    count_t mutable_counts{counts_.contents()};
     writer.write(mutable_counts[0].first);
     if (std::is_same<PrimaryKey, term_id>::value
         || std::is_same<PrimaryKey, std::string>::value)

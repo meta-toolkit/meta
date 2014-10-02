@@ -17,8 +17,26 @@ namespace topics
 
 lda_gibbs::lda_gibbs(std::shared_ptr<index::forward_index> idx,
                      uint64_t num_topics, double alpha, double beta)
-    : lda_model{std::move(idx), num_topics}, alpha_{alpha}, beta_{beta}
+    : lda_model{std::move(idx), num_topics}
 {
+    doc_word_topic_.resize(idx_->num_docs());
+
+    // each theta_ is a multinomial over topics with a symmetric
+    // Dirichlet(\alpha) prior
+    theta_.reserve(idx_->num_docs());
+    for (doc_id doc{0}; doc < idx_->num_docs(); ++doc)
+    {
+        theta_.emplace_back(stats::dirichlet<topic_id>{alpha, num_topics_});
+        doc_word_topic_[doc].resize(idx_->doc_size(doc));
+    }
+
+    // each phi_ is a multinomial over terms with a symmetric
+    // Dirichlet(\beta) prior
+    phi_.reserve(num_topics_);
+    for (topic_id topic{0}; topic < num_topics_; ++topic)
+        phi_.emplace_back(
+            stats::dirichlet<term_id>{beta, idx_->unique_terms()});
+
     std::random_device dev;
     rng_.seed(dev());
 }
@@ -26,9 +44,9 @@ lda_gibbs::lda_gibbs(std::shared_ptr<index::forward_index> idx,
 void lda_gibbs::run(uint64_t num_iters, double convergence /* = 1e-6 */)
 {
     initialize();
-    double likelihood = corpus_likelihood();
+    double likelihood = corpus_log_likelihood();
     std::stringstream ss;
-    ss << "Initialization log likelihood: " << likelihood;
+    ss << "Initialization log likelihood (log P(W|Z)): " << likelihood;
     std::string spacing(std::max<int>(0, 80 - ss.tellp()), ' ');
     ss << spacing;
     LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
@@ -36,11 +54,12 @@ void lda_gibbs::run(uint64_t num_iters, double convergence /* = 1e-6 */)
     for (uint64_t i = 0; i < num_iters; ++i)
     {
         perform_iteration(i + 1);
-        double likelihood_update = corpus_likelihood();
+        double likelihood_update = corpus_log_likelihood();
         double ratio = std::fabs((likelihood - likelihood_update) / likelihood);
         likelihood = likelihood_update;
         std::stringstream ss;
-        ss << "Iteration " << i + 1 << " log likelihood: " << likelihood;
+        ss << "Iteration " << i + 1
+           << " log likelihood (log P(W|Z)): " << likelihood;
         std::string spacing(std::max<int>(0, 80 - ss.tellp()), ' ');
         ss << spacing;
         LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
@@ -56,15 +75,17 @@ void lda_gibbs::run(uint64_t num_iters, double convergence /* = 1e-6 */)
 
 topic_id lda_gibbs::sample_topic(term_id term, doc_id doc)
 {
-    std::vector<double> weights(num_topics_);
-    for (topic_id j{0}; j < weights.size(); ++j)
-        weights[j] = compute_probability(term, doc, j);
-    std::discrete_distribution<uint64_t> dist(weights.begin(), weights.end());
-    return topic_id{dist(rng_)};
+    stats::multinomial<topic_id> full_conditional;
+    for (topic_id topic{0}; topic < num_topics_; ++topic)
+    {
+        auto weight = compute_sampling_weight(term, doc, topic);
+        full_conditional.increment(topic, weight);
+    }
+    return full_conditional(rng_);
 }
 
-double lda_gibbs::compute_probability(term_id term, doc_id doc,
-                                      topic_id topic) const
+double lda_gibbs::compute_sampling_weight(term_id term, doc_id doc,
+                                          topic_id topic) const
 {
     return compute_term_topic_probability(term, topic)
            * compute_doc_topic_probability(doc, topic);
@@ -73,50 +94,13 @@ double lda_gibbs::compute_probability(term_id term, doc_id doc,
 double lda_gibbs::compute_term_topic_probability(term_id term,
                                                  topic_id topic) const
 {
-    return (count_term(term, topic) + beta_)
-           / (count_topic(topic) + num_words_ * beta_);
+    return phi_[topic].probability(term);
 }
 
 double lda_gibbs::compute_doc_topic_probability(doc_id doc,
                                                 topic_id topic) const
 {
-    return (count_doc(doc, topic) + alpha_)
-           / (count_doc(doc) + num_topics_ * alpha_);
-}
-
-double lda_gibbs::count_term(term_id term, topic_id topic) const
-{
-    auto it = topic_term_count_.find(topic);
-    if (it == topic_term_count_.end())
-        return 0;
-    auto iit = it->second.find(term);
-    if (iit == it->second.end())
-        return 0;
-    return iit->second;
-}
-
-double lda_gibbs::count_topic(topic_id topic) const
-{
-    auto it = topic_count_.find(topic);
-    if (it == topic_count_.end())
-        return 0;
-    return it->second;
-}
-
-double lda_gibbs::count_doc(doc_id doc, topic_id topic) const
-{
-    auto it = doc_topic_count_.find(doc);
-    if (it == doc_topic_count_.end())
-        return 0;
-    auto iit = it->second.find(topic);
-    if (iit == it->second.end())
-        return 0;
-    return iit->second;
-}
-
-double lda_gibbs::count_doc(doc_id doc) const
-{
-    return idx_->doc_size(doc);
+    return theta_[doc].probability(topic);
 }
 
 void lda_gibbs::initialize()
@@ -143,14 +127,14 @@ void lda_gibbs::perform_iteration(uint64_t iter, bool init /* = false */)
         {
             for (uint64_t j = 0; j < freq.second; ++j)
             {
-                topic_id old_topic = doc_word_topic_[i][n];
+                auto old_topic = doc_word_topic_[i][n];
                 // don't include current topic assignment in
                 // probability calculation
                 if (!init)
                     decrease_counts(old_topic, freq.first, i);
 
                 // sample a new topic assignment
-                topic_id topic = sample_topic(freq.first, i);
+                auto topic = sample_topic(freq.first, i);
                 doc_word_topic_[i][n] = topic;
 
                 // increase counts
@@ -163,50 +147,32 @@ void lda_gibbs::perform_iteration(uint64_t iter, bool init /* = false */)
 
 void lda_gibbs::decrease_counts(topic_id topic, term_id term, doc_id doc)
 {
-    // decrease topic_term_count_ for the given assignment
-    auto& tt_count = topic_term_count_.at(topic).at(term);
-    if (tt_count == 1)
-        topic_term_count_.at(topic).erase(term);
-    else
-        tt_count -= 1;
-
-    // decrease doc_topic_count_ for the given assignment
-    auto& dt_count = doc_topic_count_.at(doc).at(topic);
-    if (dt_count == 1)
-        doc_topic_count_.at(doc).erase(topic);
-    else
-        dt_count -= 1;
-
-    // decrease topic count
-    auto& tc = topic_count_.at(topic);
-    if (tc == 1)
-        topic_count_.erase(topic);
-    else
-        tc -= 1;
+    phi_[topic].decrement(term, 1);
+    theta_[doc].decrement(topic, 1);
 }
 
 void lda_gibbs::increase_counts(topic_id topic, term_id term, doc_id doc)
 {
-    topic_term_count_[topic][term] += 1;
-    doc_topic_count_[doc][topic] += 1;
-    topic_count_[topic] += 1;
+    phi_[topic].increment(term, 1);
+    theta_[doc].increment(topic, 1);
 }
 
-double lda_gibbs::corpus_likelihood() const
+double lda_gibbs::corpus_log_likelihood() const
 {
-    double likelihood = num_topics_ * (std::lgamma(num_words_ * beta_)
-                                       - num_words_ * std::lgamma(beta_));
+    auto tid0 = topic_id{0};
+    // V * \beta if symmetric, \sum_{r=1}^V \beta_r otherwise
+    auto total_pcs = phi_[tid0].prior().pseudo_counts();
+
+    double likelihood = num_topics_ * std::lgamma(total_pcs);
+
     for (topic_id j{0}; j < num_topics_; ++j)
     {
-        for (const auto& d_id : idx_->docs())
+        for (term_id t{0}; t < num_words_; ++t)
         {
-            for (const auto& freq : idx_->search_primary(d_id)->counts())
-            {
-                likelihood += freq.second
-                              * std::lgamma(count_term(freq.first, j) + beta_);
-            }
+            likelihood += std::lgamma(phi_[j].counts(t))
+                          - std::lgamma(phi_[j].prior().pseudo_counts(t));
         }
-        likelihood -= std::lgamma(count_topic(j) + num_words_ * beta_);
+        likelihood -= std::lgamma(phi_[j].counts());
     }
     return likelihood;
 }
