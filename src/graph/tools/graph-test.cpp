@@ -27,8 +27,8 @@ void degree_dist(graph::undirected_graph<>& g, const std::string& outfile)
         degrees.emplace_back(node.id, g.adjacent(node.id).size());
 
     std::sort(degrees.begin(), degrees.end(),
-    [&](const pair_t& a, const pair_t& b)
-    {
+              [&](const pair_t& a, const pair_t& b)
+              {
         return a.second > b.second;
     });
 
@@ -114,7 +114,44 @@ int main(int argc, char* argv[])
     logging::set_cerr_logging();
     using namespace graph;
 
-    undirected_graph<> g;
-    algorithms::preferential_attachment(g, 10000, 10);
-    degree_dist(g, "pa.dat");
+    uint64_t num_nodes = 3000;
+    uint64_t num_edges = 10;
+
+    // Uniform
+
+    undirected_graph<> g1;
+    algorithms::preferential_attachment(g1, num_nodes, num_edges);
+    degree_dist(g1, "pa-uniform.dat");
+
+    // Standard normal
+
+    std::default_random_engine gen;
+    std::normal_distribution<> std_norm{0, 1};
+    undirected_graph<> g2;
+    algorithms::preferential_attachment(g2, num_nodes, num_edges, [&](node_id id)
+    {
+        return std::abs(std_norm(gen));
+    });
+    degree_dist(g2, "pa-norm01.dat");
+
+    // Beta(a,b) = Gamma(a,1) / (Gamma(a,1) + Gamma(b,1))
+
+    std::gamma_distribution<> gamma1{0.5, 1.0};
+    std::gamma_distribution<> gamma2{0.5, 1.0};
+    undirected_graph<> g3;
+    algorithms::preferential_attachment(g3, num_nodes, num_edges, [&](node_id id)
+    {
+        auto x = gamma1(gen);
+        return x / (x + gamma2(gen));
+    });
+    degree_dist(g3, "pa-beta-half-half.dat");
+
+    // piecewise
+
+    undirected_graph<> g4;
+    algorithms::preferential_attachment(g4, num_nodes, num_edges, [&](node_id id)
+    {
+        return (id % 2) ? 1.0 : 100;
+    });
+    degree_dist(g4, "pa-piecewise.dat");
 }

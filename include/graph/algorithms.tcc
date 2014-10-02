@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <queue>
+#include "stats/multinomial.h"
 
 namespace meta
 {
@@ -27,9 +28,8 @@ double clustering_coefficient(const Graph& graph, node_id id)
     double numerator = 0.0;
     for (size_t i = 0; i < adj.size(); ++i)
     {
-        for (size_t j = i + 1; j < adj.size(); ++j)
+        for (size_t j = i; j < adj.size(); ++j)
         {
-            // count if two neighbors are connected
             if (graph.edge(adj[i].first, adj[j].first))
                 ++numerator;
         }
@@ -147,24 +147,36 @@ void preferential_attachment(
             "num_nodes should be significantly higher than node_edges"};
 
     // first, create a complete graph of node_edges nodes
+    stats::multinomial<node_id> probs;
     for (uint64_t i = 0; i < node_edges; ++i)
+    {
         g.emplace(std::to_string(i));
+        probs.increment(node_id{i}, attr(node_id{i}));
+    }
 
     for (uint64_t i = 0; i < node_edges; ++i)
         for (uint64_t j = i + 1; j < node_edges; ++j)
             g.add_edge(node_id{i}, node_id{j});
 
     // now, add a single node each time step, connecting to node_edges nodes
-    std::vector<node_id> ids(node_edges);
-    std::iota(ids.begin(), ids.end(), 0);
     std::default_random_engine gen;
     for (uint64_t i = node_edges; i < num_nodes; ++i)
     {
+        std::cout << i << std::endl;
         g.emplace(std::to_string(i));
-        std::shuffle(ids.begin(), ids.end(), gen);
-        ids.push_back(node_id{i});
-        for(uint64_t j = 0; j < node_edges; ++j)
-            g.add_edge(node_id{i}, ids[j]);
+        auto src = node_id{i};
+        for (uint64_t j = 0; j < node_edges; ++j)
+        {
+            auto dest = probs(gen);
+            try
+            {
+                g.add_edge(src, dest);
+            }
+            catch (...)
+            { /* ignore */
+            }
+        }
+        probs.increment(src, attr(src));
     }
 }
 
