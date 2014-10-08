@@ -10,6 +10,7 @@
 #include "meta.h"
 #include "graph/undirected_graph.h"
 #include "graph/algorithms/algorithms.h"
+#include "logging/logger.h"
 
 using namespace meta;
 
@@ -50,6 +51,16 @@ void write_json(const Graph& g, const std::string& filename)
     out << "}";
 }
 
+template <class Graph>
+void write_centrality(const Graph& g,
+                      const graph::algorithms::centrality_result& centrality,
+                      const std::string& filename)
+{
+    std::ofstream out{filename};
+    for (auto& p : centrality)
+        out << g.node(p.first).label << " " << p.second << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
     if (argc != 2)
@@ -60,8 +71,13 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    logging::set_cerr_logging();
     using namespace graph;
 
     auto g = undirected_graph<>::load(argv[1]);
-    write_json(g, "yelp-social.json");
+ // write_json(g, "yelp-social.json");
+ // write_centrality(g, algorithms::degree_centrality(g),
+ //                  "degree-centrality.txt");
+    write_centrality(g, algorithms::betweenness_centrality(g),
+                     "betweenness-centrality.txt");
 }

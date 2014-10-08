@@ -27,6 +27,7 @@ class graph
      * @return the Node object that the id represents
      */
     virtual Node& node(node_id id);
+    virtual const Node& node(node_id id) const;
 
     /**
      * @param source
