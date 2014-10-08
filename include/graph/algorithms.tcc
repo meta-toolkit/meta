@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <queue>
+#include "util/progress.h"
 #include "stats/multinomial.h"
 
 namespace meta
@@ -160,9 +161,10 @@ void preferential_attachment(
 
     // now, add a single node each time step, connecting to node_edges nodes
     std::default_random_engine gen;
+    printing::progress prog{" Generating graph ", num_nodes};
     for (uint64_t i = node_edges; i < num_nodes; ++i)
     {
-        std::cout << i << std::endl;
+        prog(i);
         g.emplace(std::to_string(i));
         auto src = node_id{i};
         for (uint64_t j = 0; j < node_edges; ++j)
@@ -178,6 +180,7 @@ void preferential_attachment(
         }
         probs.increment(src, attr(src));
     }
+    prog.end();
 }
 
 template <class Graph>
