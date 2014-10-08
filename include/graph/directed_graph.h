@@ -1,5 +1,5 @@
 /**
- * @file graph.h
+ * @file directed_graph.h
  * @author Sean Massung
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more

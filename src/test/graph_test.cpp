@@ -4,7 +4,7 @@
  */
 
 #include "test/graph_test.h"
-#include "graph/algorithms.h"
+#include "graph/algorithms/algorithms.h"
 
 namespace meta
 {

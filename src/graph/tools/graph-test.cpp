@@ -14,7 +14,7 @@
 #include "util/progress.h"
 #include "graph/undirected_graph.h"
 #include "graph/directed_graph.h"
-#include "graph/algorithms.h"
+#include "graph/algorithms/algorithms.h"
 #include "logging/logger.h"
 
 using namespace meta;
