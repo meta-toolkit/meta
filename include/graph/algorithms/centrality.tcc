@@ -59,6 +59,39 @@ centrality_result betweenness_centrality(const Graph& g)
     return cb;
 }
 
+template <class Graph>
+centrality_result eigenvector_centrality(const Graph& g,
+                                         uint64_t max_iters /* = 100 */)
+{
+    std::vector<double> v(g.size(), 1.0);
+    std::vector<double> w(g.size(), 0.0);
+
+    printing::progress prog{" Calculating eigenvector centrality ", max_iters};
+    for (uint64_t iter = 0; iter < max_iters; ++iter)
+    {
+        prog(iter);
+        w.assign(w.size(), 0.0);
+        for (uint64_t i = 0; i < g.size(); ++i)
+            for (auto& n : g.adjacent(node_id{i}))
+                w[n.first] += v[i];
+        v.swap(w);
+    }
+    prog.end();
+
+    centrality_result evc;
+    evc.reserve(g.size());
+    node_id id{0};
+    double sum = std::accumulate(v.begin(), v.end(), 0.0);
+    for (auto& n : v)
+        evc.emplace_back(id++, n / sum);
+
+    std::sort(evc.begin(), evc.end(), [&](auto a, auto b)
+              {
+        return a.second > b.second;
+    });
+    return evc;
+}
+
 namespace internal
 {
 template <class Graph>

@@ -34,13 +34,29 @@ centrality_result degree_centrality(const Graph& g);
 
 /**
  * Find the betweenness centrality of each node in the graph using the algorithm
- * from Ulrik Brandes, 2001.
+ * from Ulrik Brandes, 2001. This function is parallelized as it takes some time
+ * to compute on large networks.
  * @see http://www.inf.uni-konstanz.de/algo/publications/b-fabc-01.pdf
  * @param g
  * @return a collection of (id, centrality) pairs
  */
 template <class Graph>
 centrality_result betweenness_centrality(const Graph& g);
+
+/**
+ * Finds the eigenvector centrality of each node (i.e. "prestige") using power
+ * iteration.
+ * @param g
+ * @param max_iters The maximum number of iterations to run the power iteration
+ * @return a collection of (id, centrality) pairs
+ */
+template <class Graph>
+centrality_result eigenvector_centrality(const Graph& g,
+                                         uint64_t max_iters = 100);
+
+/**
+ * Contains helper functions used by the centrality measures.
+ */
 namespace internal
 {
 /**

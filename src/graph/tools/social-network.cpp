@@ -78,6 +78,8 @@ int main(int argc, char* argv[])
  // write_json(g, "yelp-social.json");
  // write_centrality(g, algorithms::degree_centrality(g),
  //                  "degree-centrality.txt");
-    write_centrality(g, algorithms::betweenness_centrality(g),
-                     "betweenness-centrality.txt");
+ // write_centrality(g, algorithms::betweenness_centrality(g),
+ //                  "betweenness-centrality.txt");
+    write_centrality(g, algorithms::eigenvector_centrality(g, 40),
+                     "eigenvector-centrality.txt");
 }
