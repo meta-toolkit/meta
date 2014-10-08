@@ -103,7 +103,7 @@ void betweenness_step(const Graph& g, centrality_result& cb, node_id n,
         auto w = stack.top();
         stack.pop();
         for (auto& v : parent[w])
-            d[v] += (sigma[v] / sigma[w]) * (1.0 + delta[w]);
+            delta[v] += (sigma[v] / sigma[w]) * (1.0 + delta[w]);
         if (w != n)
         {
             std::lock_guard<std::mutex> lock{calc_mut};

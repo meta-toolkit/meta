@@ -97,11 +97,75 @@ int test_directed()
     });
 }
 
+int test_betweenness()
+{
+    int num_failed = 0;
+
+    num_failed += testing::run_test("betweenness", [&]()
+    {
+        using namespace graph;
+        undirected_graph<> g;
+
+        auto a = g.emplace("a");
+        auto b = g.emplace("b");
+        auto c = g.emplace("c");
+        auto d = g.emplace("d");
+        auto e = g.emplace("e");
+        g.add_edge(a, b);
+        g.add_edge(b, c);
+        g.add_edge(c, d);
+        g.add_edge(d, e);
+
+        auto scores = algorithms::betweenness_centrality(g);
+        ASSERT_APPROX_EQUAL(scores[0].second, 8.0);
+        ASSERT_EQUAL(scores[0].first, node_id{2});
+        ASSERT_APPROX_EQUAL(scores[1].second, 6.0);
+        ASSERT_APPROX_EQUAL(scores[2].second, 6.0);
+        ASSERT_APPROX_EQUAL(scores[3].second, 0.0);
+        ASSERT_APPROX_EQUAL(scores[4].second, 0.0);
+    });
+
+    num_failed += testing::run_test("betweenness", [&]()
+    {
+        using namespace graph;
+        undirected_graph<> g;
+
+        auto a = g.emplace("a");
+        auto b = g.emplace("b");
+        auto c = g.emplace("c");
+        auto d = g.emplace("d");
+        auto e = g.emplace("e");
+        auto f = g.emplace("f");
+        auto h = g.emplace("h");
+        g.add_edge(a, b);
+        g.add_edge(b, c);
+        g.add_edge(a, c);
+        g.add_edge(c, d);
+        g.add_edge(d, e);
+        g.add_edge(e, f);
+        g.add_edge(e, h);
+        g.add_edge(f, h);
+
+        auto scores = algorithms::betweenness_centrality(g);
+        ASSERT_APPROX_EQUAL(scores[0].second, 18.0);
+        ASSERT_EQUAL(scores[0].first, node_id{3});
+        ASSERT_APPROX_EQUAL(scores[1].second, 16.0);
+        ASSERT_APPROX_EQUAL(scores[2].second, 16.0);
+        ASSERT_APPROX_EQUAL(scores[3].second, 0.0);
+        ASSERT_APPROX_EQUAL(scores[4].second, 0.0);
+        ASSERT_APPROX_EQUAL(scores[5].second, 0.0);
+        ASSERT_APPROX_EQUAL(scores[6].second, 0.0);
+    });
+
+    return num_failed;
+}
+
 int graph_tests()
 {
     int num_failed = 0;
     num_failed += test_undirected();
     num_failed += test_directed();
+    num_failed += test_betweenness();
     return num_failed;
 }
 }
