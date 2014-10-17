@@ -7,6 +7,7 @@
 #define META_SENTENCE_H_
 
 #include <deque>
+#include <vector>
 #include <string>
 
 namespace meta
@@ -62,6 +63,8 @@ class sentence
      */
     void insert(size_type idx, const std::string& token);
 
+    const std::vector<std::string>& operations() const;
+
     std::string front() const;
 
     std::string back() const;
@@ -101,6 +104,7 @@ class sentence
 
   private:
     std::deque<std::string> tokens_;
+    std::vector<std::string> ops_;
 };
 }
 }

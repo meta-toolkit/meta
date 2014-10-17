@@ -46,7 +46,7 @@ std::vector<std::pair<sentence, double>> diff::candidates(const sentence& sent)
 template <class PQ>
 void diff::step(const sentence& sent, PQ& candidates, size_t depth)
 {
-    if (depth == 2 || seen_.find(sent.to_string()) != seen_.end())
+    if (depth == 3 || seen_.find(sent.to_string()) != seen_.end())
         return;
 
     for (size_t i = 0; i < sent.size(); ++i)

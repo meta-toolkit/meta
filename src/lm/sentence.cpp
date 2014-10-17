@@ -50,14 +50,26 @@ const std::string& sentence::operator[](size_type idx) const
 
 void sentence::substitute(size_type idx, const std::string& token)
 {
+    ops_.push_back("substitute(" + std::to_string(idx) + ", " + tokens_[idx]
+                   + " -> " + token + ")");
     tokens_[idx] = token;
 }
 
-void sentence::remove(size_type idx) { tokens_.erase(tokens_.begin() + idx); }
+void sentence::remove(size_type idx)
+{
+    ops_.push_back("remove(" + std::to_string(idx) + ", " + (*this)[idx] + ")");
+    tokens_.erase(tokens_.begin() + idx);
+}
 
 void sentence::insert(size_type idx, const std::string& token)
 {
     tokens_.insert(tokens_.begin() + idx, token);
+    ops_.push_back("insert(" + std::to_string(idx) + ", " + token + ")");
+}
+
+const std::vector<std::string>& sentence::operations() const
+{
+    return ops_;
 }
 
 std::string sentence::front() const { return tokens_.front(); }
