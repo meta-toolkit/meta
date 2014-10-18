@@ -13,7 +13,8 @@ namespace meta
 {
 namespace lm
 {
-diff::diff(const std::string& config_file) : lm_{config_file}
+diff::diff(const std::string& config_file, uint64_t max_depth)
+    : lm_{config_file}, max_depth_{max_depth}
 {
     set_stems(config_file);
     set_function_words(config_file);
@@ -46,7 +47,7 @@ std::vector<std::pair<sentence, double>> diff::candidates(const sentence& sent)
 template <class PQ>
 void diff::step(const sentence& sent, PQ& candidates, size_t depth)
 {
-    if (depth == 3 || seen_.find(sent.to_string()) != seen_.end())
+    if (depth == max_depth_)
         return;
 
     for (size_t i = 0; i < sent.size(); ++i)

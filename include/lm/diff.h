@@ -24,7 +24,8 @@ class diff
     /**
      * @param config_file The file containing configuration information
      */
-    diff(const std::string& config_file);
+    diff(const std::string& config_file,
+         uint64_t max_depth = default_max_depth_);
 
     /**
      * @param sent The sentence to transform
@@ -55,6 +56,8 @@ class diff
     std::vector<std::string> fwords_;
     std::unordered_map<std::string, std::vector<std::string>> stems_;
     std::unordered_set<std::string> seen_;
+    uint64_t max_depth_;
+    static constexpr uint64_t default_max_depth_ = 2;
 };
 }
 }
