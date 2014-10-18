@@ -45,6 +45,60 @@ std::vector<std::pair<sentence, double>> diff::candidates(const sentence& sent)
 }
 
 template <class PQ>
+void diff::remove(const sentence& sent, size_t idx, PQ& candidates,
+                  uint64_t depth)
+{
+    sentence rem_cpy{sent};
+    rem_cpy.remove(idx);
+    if (seen_.find(rem_cpy.to_string()) == seen_.end())
+    {
+        seen_.insert(rem_cpy.to_string());
+        candidates.emplace(rem_cpy, lm_.perplexity_per_word(rem_cpy));
+        step(rem_cpy, candidates, depth + 1);
+    }
+}
+
+template <class PQ>
+void diff::insert(const sentence& sent, size_t idx, PQ& candidates,
+                  uint64_t depth)
+{
+    for (auto& fw : fwords_)
+    {
+        sentence ins_cpy{sent};
+        ins_cpy.insert(idx, fw);
+        if (seen_.find(ins_cpy.to_string()) == seen_.end())
+        {
+            seen_.insert(ins_cpy.to_string());
+            candidates.emplace(ins_cpy, lm_.perplexity_per_word(ins_cpy));
+            step(ins_cpy, candidates, depth + 1);
+        }
+    }
+}
+
+template <class PQ>
+void diff::substitute(const sentence& sent, size_t idx, PQ& candidates,
+                      uint64_t depth)
+{
+    std::string stemmed{sent[idx]};
+    Porter2Stemmer::stem(stemmed);
+    auto it = stems_.find(stemmed);
+    if (it != stems_.end() && it->second.size() != 1)
+    {
+        for (auto& stem : it->second)
+        {
+            sentence subbed{sent};
+            subbed.substitute(idx, stem);
+            if (seen_.find(subbed.to_string()) == seen_.end())
+            {
+                seen_.insert(subbed.to_string());
+                candidates.emplace(subbed, lm_.perplexity_per_word(subbed));
+                step(subbed, candidates, depth + 1);
+            }
+        }
+    }
+}
+
+template <class PQ>
 void diff::step(const sentence& sent, PQ& candidates, size_t depth)
 {
     if (depth == max_depth_)
@@ -52,50 +106,9 @@ void diff::step(const sentence& sent, PQ& candidates, size_t depth)
 
     for (size_t i = 0; i < sent.size(); ++i)
     {
-        // remove
-
-        sentence rem_cpy{sent};
-        rem_cpy.remove(i);
-        if (seen_.find(rem_cpy.to_string()) == seen_.end())
-        {
-            seen_.insert(rem_cpy.to_string());
-            candidates.emplace(rem_cpy, lm_.perplexity_per_word(rem_cpy));
-            step(rem_cpy, candidates, depth + 1);
-        }
-
-        // insert
-
-        for (auto& fw : fwords_)
-        {
-            sentence ins_cpy{sent};
-            ins_cpy.insert(i, fw);
-            if (seen_.find(ins_cpy.to_string()) == seen_.end())
-            {
-                seen_.insert(ins_cpy.to_string());
-                candidates.emplace(ins_cpy, lm_.perplexity_per_word(ins_cpy));
-                step(ins_cpy, candidates, depth + 1);
-            }
-        }
-
-        // substitute
-
-        std::string stemmed = sent[i];
-        Porter2Stemmer::stem(stemmed);
-        auto it = stems_.find(stemmed);
-        if (it != stems_.end() && it->second.size() != 1)
-        {
-            for (auto& stem : it->second)
-            {
-                sentence subbed{sent};
-                subbed.substitute(i, stem);
-                if (seen_.find(subbed.to_string()) == seen_.end())
-                {
-                    seen_.insert(subbed.to_string());
-                    candidates.emplace(subbed, lm_.perplexity_per_word(subbed));
-                    step(subbed, candidates, depth + 1);
-                }
-            }
-        }
+        remove(sent, i, candidates, depth);
+        insert(sent, i, candidates, depth);
+        substitute(sent, i, candidates, depth);
     }
 }
 

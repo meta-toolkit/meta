@@ -52,6 +52,36 @@ class diff
     template <class PQ>
     void step(const sentence& sent, PQ& candidates, size_t depth);
 
+    /**
+     * @param sent
+     * @param idx
+     * @param candidates
+     * @param depth
+     */
+    template <class PQ>
+    void insert(const sentence& sent, size_t idx, PQ& candidates,
+                uint64_t depth);
+
+    /**
+     * @param sent
+     * @param idx
+     * @param candidates
+     * @param depth
+     */
+    template <class PQ>
+    void remove(const sentence& sent, size_t idx, PQ& candidates,
+                uint64_t depth);
+
+    /**
+     * @param sent
+     * @param idx
+     * @param candidates
+     * @param depth
+     */
+    template <class PQ>
+    void substitute(const sentence& sent, size_t idx, PQ& candidates,
+                    uint64_t depth);
+
     language_model lm_;
     std::vector<std::string> fwords_;
     std::unordered_map<std::string, std::vector<std::string>> stems_;
