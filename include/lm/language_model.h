@@ -76,8 +76,8 @@ class language_model
      * @param k Number of results to return
      * @return a sorted vector of likely next tokens
      */
-    std::vector<std::pair<std::string, double>>
-        top_k(const sentence& prev, size_t k) const;
+    std::vector<std::pair<std::string, double>> top_k(const sentence& prev,
+                                                      size_t k) const;
 
   private:
     /**
@@ -109,6 +109,11 @@ class language_model
 
     /// The interpolation coefficient for smoothing LM probabilities
     constexpr static double lambda_ = 0.7;
+};
+
+class language_model_exception : public std::runtime_error
+{
+    using std::runtime_error::runtime_error;
 };
 }
 }

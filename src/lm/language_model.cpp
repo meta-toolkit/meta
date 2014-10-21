@@ -31,7 +31,7 @@ language_model::language_model(const std::string& config_file)
     auto group = config.get_group("language-model");
     auto nval = group->get_as<int64_t>("n-value");
     if (!nval)
-        throw std::runtime_error{
+        throw language_model_exception{
             "no n-value specified in language-model group"};
 
     N_ = *nval;
@@ -50,20 +50,21 @@ void language_model::select_method(const std::string& config_file)
     auto group = config.get_group("language-model");
     auto format = group->get_as<std::string>("format");
     if (!format)
-        throw std::runtime_error{"no format specified in language-model group"};
+        throw language_model_exception{
+            "no format specified in language-model group"};
 
     if (*format == "precomputed")
     {
         auto prefix = group->get_as<std::string>("prefix");
         if (!prefix)
-            throw std::runtime_error{
+            throw language_model_exception{
                 "no prefix specified for precomputed language model"};
         read_precomputed(*prefix);
     }
     else if (*format == "learn")
         learn_model(config_file);
     else
-        throw std::runtime_error{
+        throw language_model_exception{
             "language-model format could not be determined"};
 }
 
@@ -168,8 +169,8 @@ std::string language_model::next_token(const sentence& tokens,
 {
     auto it = dist_.find(tokens.to_string());
     if (it == dist_.end())
-        throw std::runtime_error{"couldn't find previous n - 1 tokens: "
-                                 + tokens.to_string()};
+        throw language_model_exception{"couldn't find previous n - 1 tokens: "
+                                       + tokens.to_string()};
 
     double cur = 0.0;
     for (auto& end : it->second)
@@ -179,19 +180,19 @@ std::string language_model::next_token(const sentence& tokens,
             return end.first;
     }
 
-    throw std::runtime_error{"could not generate next token: "
-                             + tokens.to_string()};
+    throw language_model_exception{"could not generate next token: "
+                                   + tokens.to_string()};
 }
 
 std::vector<std::pair<std::string, double>>
     language_model::top_k(const sentence& prev, size_t k) const
 {
     if (prev.size() != N_ - 1)
-        throw std::runtime_error{"prev should contain n - 1 tokens"};
+        throw language_model_exception{"prev should contain n - 1 tokens"};
 
     auto it = dist_.find(prev.to_string());
     if (it == dist_.end())
-        throw std::runtime_error{"no transitions found"};
+        throw language_model_exception{"no transitions found"};
 
     using pair_t = std::pair<std::string, double>;
     std::vector<pair_t> probs{it->second.begin(), it->second.end()};
@@ -242,7 +243,7 @@ std::string language_model::generate(unsigned int seed) const
 double language_model::prob(sentence tokens) const
 {
     if (tokens.size() != N_)
-        throw std::runtime_error{"prob() needs one N-gram"};
+        throw language_model_exception{"prob() needs one N-gram"};
 
     sentence interp_tokens{tokens};
     interp_tokens.pop_front(); // look at prev N - 1
