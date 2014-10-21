@@ -29,9 +29,11 @@ class diff
 
     /**
      * @param sent The sentence to transform
+     * @param use_lm
      * @return a sorted list of candidate corrections and their scores
      */
-    std::vector<std::pair<sentence, double>> candidates(const sentence& sent);
+    std::vector<std::pair<sentence, double>> candidates(const sentence& sent,
+                                                        bool use_lm = true);
 
   private:
     /**
@@ -54,6 +56,14 @@ class diff
 
     /**
      * @param sent
+     * @param candidates
+     * @param depth
+     */
+    template <class PQ>
+    void step_lm(const sentence& sent, PQ& candidates, size_t depth);
+
+    /**
+     * @param sent
      * @param idx
      * @param candidates
      * @param depth
@@ -62,6 +72,16 @@ class diff
     void insert(const sentence& sent, size_t idx, PQ& candidates,
                 uint64_t depth);
 
+    /**
+     * @param sent
+     * @param idx
+     * @param candidates
+     * @param depth
+     * @param substitute
+     */
+    template <class PQ>
+    void lm_ops(const sentence& sent, size_t idx, PQ& candidates,
+                uint64_t depth, bool substitute);
     /**
      * @param sent
      * @param idx
@@ -88,6 +108,7 @@ class diff
     std::unordered_set<std::string> seen_;
     uint64_t max_depth_;
     static constexpr uint64_t default_max_depth_ = 2;
+    static constexpr uint64_t n_val_ = 3;
 };
 }
 }

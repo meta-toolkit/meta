@@ -20,7 +20,8 @@ diff::diff(const std::string& config_file, uint64_t max_depth)
     set_function_words(config_file);
 }
 
-std::vector<std::pair<sentence, double>> diff::candidates(const sentence& sent)
+std::vector<std::pair<sentence, double>>
+    diff::candidates(const sentence& sent, bool use_lm /* = false */)
 {
     using pair_t = std::pair<sentence, double>;
     auto comp = [](const pair_t& a, const pair_t& b)
@@ -32,7 +33,10 @@ std::vector<std::pair<sentence, double>> diff::candidates(const sentence& sent)
     candidates.emplace(sent, lm_.perplexity_per_word(sent));
 
     seen_.clear();
-    step(sent, candidates, 0);
+    if (use_lm)
+        step_lm(sent, candidates, 0);
+    else
+        step(sent, candidates, 0);
 
     std::vector<pair_t> sorted;
     while (!candidates.empty())
@@ -55,6 +59,40 @@ void diff::remove(const sentence& sent, size_t idx, PQ& candidates,
         seen_.insert(rem_cpy.to_string());
         candidates.emplace(rem_cpy, lm_.perplexity_per_word(rem_cpy));
         step(rem_cpy, candidates, depth + 1);
+    }
+}
+
+template <class PQ>
+void diff::lm_ops(const sentence& sent, size_t idx, PQ& candidates,
+                  uint64_t depth, bool substitute)
+{
+    if (idx < n_val_ - 1)
+        return;
+
+    auto spliced = sent(idx - (n_val_ - 1), idx);
+    try
+    {
+        auto best = lm_.top_k(spliced, 5);
+        for (auto& p : best)
+        {
+            if (p.first == "</s>")
+                continue;
+            sentence ins_cpy{sent};
+            if (substitute)
+                ins_cpy.insert(idx, p.first);
+            else
+                ins_cpy.substitute(idx, p.first);
+            if (seen_.find(ins_cpy.to_string()) == seen_.end())
+            {
+                seen_.insert(ins_cpy.to_string());
+                candidates.emplace(ins_cpy, lm_.perplexity_per_word(ins_cpy));
+                step_lm(ins_cpy, candidates, depth + 1);
+            }
+        }
+    }
+    catch (language_model_exception& ex)
+    {
+        // ignore if there are no transitions found
     }
 }
 
@@ -108,6 +146,22 @@ void diff::step(const sentence& sent, PQ& candidates, size_t depth)
     {
         remove(sent, i, candidates, depth);
         insert(sent, i, candidates, depth);
+        substitute(sent, i, candidates, depth);
+    }
+}
+
+template <class PQ>
+void diff::step_lm(const sentence& sent, PQ& candidates, size_t depth)
+{
+    if (depth == max_depth_)
+        return;
+
+    for (size_t i = 0; i <= sent.size(); ++i)
+    {
+        remove(sent, i, candidates, depth);
+        insert(sent, i, candidates, depth);
+        lm_ops(sent, i, candidates, depth, true);
+        lm_ops(sent, i, candidates, depth, false);
         substitute(sent, i, candidates, depth);
     }
 }

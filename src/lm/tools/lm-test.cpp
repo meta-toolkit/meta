@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
             break;
 
         lm::sentence sent{line};
-        auto candidates = correcter.candidates(sent);
+        auto candidates = correcter.candidates(sent, true);
         std::cout << "Found " << candidates.size() << " candidates."
                   << std::endl;
 
