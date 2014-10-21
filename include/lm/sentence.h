@@ -44,6 +44,8 @@ class sentence
      */
     const std::string& operator[](size_type idx) const;
 
+    sentence operator()(size_type from, size_type to) const;
+
     /**
      * @param idx
      * @param token
@@ -105,6 +107,11 @@ class sentence
   private:
     std::deque<std::string> tokens_;
     std::vector<std::string> ops_;
+};
+
+class sentence_exception : public std::runtime_error
+{
+    using std::runtime_error::runtime_error;
 };
 }
 }

@@ -48,6 +48,18 @@ const std::string& sentence::operator[](size_type idx) const
     return tokens_[idx];
 }
 
+sentence sentence::operator()(size_type from, size_type to) const
+{
+    sentence ret;
+    if (from > to || to > tokens_.size())
+        throw sentence_exception{"operator() out of bounds: from = "
+                                 + std::to_string(from) + ", to = "
+                                 + std::to_string(to)};
+    ret.tokens_.insert(ret.tokens_.begin(), tokens_.begin() + from,
+                       tokens_.begin() + to);
+    return ret;
+}
+
 void sentence::substitute(size_type idx, const std::string& token)
 {
     ops_.push_back("substitute(" + std::to_string(idx) + ", " + tokens_[idx]
@@ -67,10 +79,7 @@ void sentence::insert(size_type idx, const std::string& token)
     ops_.push_back("insert(" + std::to_string(idx) + ", " + token + ")");
 }
 
-const std::vector<std::string>& sentence::operations() const
-{
-    return ops_;
-}
+const std::vector<std::string>& sentence::operations() const { return ops_; }
 
 std::string sentence::front() const { return tokens_.front(); }
 
