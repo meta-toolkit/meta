@@ -102,6 +102,13 @@ class diff
     void substitute(const sentence& sent, size_t idx, PQ& candidates,
                     uint64_t depth);
 
+    /**
+     * @param candidates
+     * @param sent
+     */
+    template <class PQ>
+    void add(PQ& candidates, sentence& sent);
+
     language_model lm_;
     std::vector<std::string> fwords_;
     std::unordered_map<std::string, std::vector<std::string>> stems_;
@@ -109,6 +116,7 @@ class diff
     uint64_t max_depth_;
     static constexpr uint64_t default_max_depth_ = 2;
     static constexpr uint64_t n_val_ = 3;
+    static constexpr uint64_t max_cand_size_ = 100;
 };
 }
 }

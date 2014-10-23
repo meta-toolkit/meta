@@ -3,6 +3,8 @@
  * @author Sean Massung
  */
 
+#include <iostream>
+
 #include <algorithm>
 #include <queue>
 #include "lm/diff.h"
@@ -41,11 +43,20 @@ std::vector<std::pair<sentence, double>>
     std::vector<pair_t> sorted;
     while (!candidates.empty())
     {
-        sorted.push_back(candidates.top());
+        sorted.emplace_back(std::move(candidates.top()));
         candidates.pop();
     }
     std::reverse(sorted.begin(), sorted.end());
     return sorted;
+}
+
+template <class PQ>
+void diff::add(PQ& candidates, sentence& sent)
+{
+    seen_.insert(sent.to_string());
+    candidates.emplace(sent, lm_.perplexity_per_word(sent));
+    if (candidates.size() > max_cand_size_)
+        candidates.pop();
 }
 
 template <class PQ>
@@ -56,8 +67,7 @@ void diff::remove(const sentence& sent, size_t idx, PQ& candidates,
     rem_cpy.remove(idx);
     if (seen_.find(rem_cpy.to_string()) == seen_.end())
     {
-        seen_.insert(rem_cpy.to_string());
-        candidates.emplace(rem_cpy, lm_.perplexity_per_word(rem_cpy));
+        add(candidates, rem_cpy);
         step(rem_cpy, candidates, depth + 1);
     }
 }
@@ -77,16 +87,15 @@ void diff::lm_ops(const sentence& sent, size_t idx, PQ& candidates,
         {
             if (p.first == "</s>")
                 continue;
-            sentence ins_cpy{sent};
+            sentence cpy{sent};
             if (substitute)
-                ins_cpy.insert(idx, p.first);
+                cpy.insert(idx, p.first);
             else
-                ins_cpy.substitute(idx, p.first);
-            if (seen_.find(ins_cpy.to_string()) == seen_.end())
+                cpy.substitute(idx, p.first);
+            if (seen_.find(cpy.to_string()) == seen_.end())
             {
-                seen_.insert(ins_cpy.to_string());
-                candidates.emplace(ins_cpy, lm_.perplexity_per_word(ins_cpy));
-                step_lm(ins_cpy, candidates, depth + 1);
+                add(candidates, cpy);
+                step_lm(cpy, candidates, depth + 1);
             }
         }
     }
@@ -106,8 +115,7 @@ void diff::insert(const sentence& sent, size_t idx, PQ& candidates,
         ins_cpy.insert(idx, fw);
         if (seen_.find(ins_cpy.to_string()) == seen_.end())
         {
-            seen_.insert(ins_cpy.to_string());
-            candidates.emplace(ins_cpy, lm_.perplexity_per_word(ins_cpy));
+            add(candidates, ins_cpy);
             step(ins_cpy, candidates, depth + 1);
         }
     }
@@ -128,8 +136,7 @@ void diff::substitute(const sentence& sent, size_t idx, PQ& candidates,
             subbed.substitute(idx, stem);
             if (seen_.find(subbed.to_string()) == seen_.end())
             {
-                seen_.insert(subbed.to_string());
-                candidates.emplace(subbed, lm_.perplexity_per_word(subbed));
+                add(candidates, subbed);
                 step(subbed, candidates, depth + 1);
             }
         }
