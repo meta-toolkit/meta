@@ -56,14 +56,6 @@ class diff
 
     /**
      * @param sent
-     * @param candidates
-     * @param depth
-     */
-    template <class PQ>
-    void step_lm(const sentence& sent, PQ& candidates, size_t depth);
-
-    /**
-     * @param sent
      * @param idx
      * @param candidates
      * @param depth
@@ -114,6 +106,7 @@ class diff
     std::unordered_map<std::string, std::vector<std::string>> stems_;
     std::unordered_set<std::string> seen_;
     uint64_t max_depth_;
+    bool use_lm_;
     static constexpr uint64_t default_max_depth_ = 2;
     static constexpr uint64_t n_val_ = 3;
     static constexpr uint64_t max_cand_size_ = 100;

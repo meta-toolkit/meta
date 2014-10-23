@@ -3,8 +3,6 @@
  * @author Sean Massung
  */
 
-#include <iostream>
-
 #include <algorithm>
 #include <queue>
 #include "lm/diff.h"
@@ -25,6 +23,7 @@ diff::diff(const std::string& config_file, uint64_t max_depth)
 std::vector<std::pair<sentence, double>>
     diff::candidates(const sentence& sent, bool use_lm /* = false */)
 {
+    use_lm_ = use_lm;
     using pair_t = std::pair<sentence, double>;
     auto comp = [](const pair_t& a, const pair_t& b)
     {
@@ -35,10 +34,7 @@ std::vector<std::pair<sentence, double>>
     candidates.emplace(sent, lm_.perplexity_per_word(sent));
 
     seen_.clear();
-    if (use_lm)
-        step_lm(sent, candidates, 0);
-    else
-        step(sent, candidates, 0);
+    step(sent, candidates, 0);
 
     std::vector<pair_t> sorted;
     while (!candidates.empty())
@@ -95,7 +91,7 @@ void diff::lm_ops(const sentence& sent, size_t idx, PQ& candidates,
             if (seen_.find(cpy.to_string()) == seen_.end())
             {
                 add(candidates, cpy);
-                step_lm(cpy, candidates, depth + 1);
+                step(cpy, candidates, depth + 1);
             }
         }
     }
@@ -153,22 +149,11 @@ void diff::step(const sentence& sent, PQ& candidates, size_t depth)
     {
         remove(sent, i, candidates, depth);
         insert(sent, i, candidates, depth);
-        substitute(sent, i, candidates, depth);
-    }
-}
-
-template <class PQ>
-void diff::step_lm(const sentence& sent, PQ& candidates, size_t depth)
-{
-    if (depth == max_depth_)
-        return;
-
-    for (size_t i = 0; i <= sent.size(); ++i)
-    {
-        remove(sent, i, candidates, depth);
-        insert(sent, i, candidates, depth);
-        lm_ops(sent, i, candidates, depth, true);
-        lm_ops(sent, i, candidates, depth, false);
+        if (use_lm_)
+        {
+            lm_ops(sent, i, candidates, depth, true);
+            lm_ops(sent, i, candidates, depth, false);
+        }
         substitute(sent, i, candidates, depth);
     }
 }
