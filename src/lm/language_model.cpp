@@ -44,8 +44,6 @@ language_model::language_model(const std::string& config_file)
 
 void language_model::select_method(const std::string& config_file)
 {
-    std::cout << "Creating " << N_ << "-gram language model" << std::endl;
-
     auto config = cpptoml::parse_file(config_file);
     auto group = config.get_group("language-model");
     auto format = group->get_as<std::string>("format");
@@ -78,6 +76,7 @@ language_model::language_model(const std::string& config_file, size_t n) : N_{n}
 
 void language_model::learn_model(const std::string& config_file)
 {
+    std::cout << "Learning " << N_ << "-gram language model" << std::endl;
     auto corpus = corpus::corpus::load(config_file);
 
     using namespace analyzers;
@@ -125,6 +124,7 @@ void language_model::learn_model(const std::string& config_file)
 
 void language_model::read_precomputed(const std::string& prefix)
 {
+    std::cout << "Reading " << N_ << "-gram language model" << std::endl;
     std::ifstream in{prefix + std::to_string(N_) + "-grams.txt"};
     std::string line;
     uint64_t count;
@@ -236,7 +236,7 @@ std::string language_model::generate(unsigned int seed) const
         next = next_token(ngram, rdist(gen));
     }
 
-    output += ngram.to_string();
+    output += " " + ngram.to_string();
     return output;
 }
 
@@ -267,12 +267,15 @@ double language_model::perplexity(const sentence& tokens) const
 {
     sentence ngram;
     for (size_t i = 1; i < N_; ++i)
+  //    ngram.push_back(tokens[i - 1]);
         ngram.push_back("<s>");
 
     double perp = 0.0;
     for (auto& token : tokens)
+ // for (size_t i = N_; i < tokens.size(); ++i)
     {
         ngram.push_back(token);
+    //  ngram.push_back(tokens[i]);
         perp += std::log(1.0 / prob(ngram));
         ngram.pop_front();
     }
