@@ -66,14 +66,11 @@ class diff
 
     /**
      * @param sent
-     * @param idx
      * @param candidates
      * @param depth
-     * @param substitute
      */
     template <class PQ>
-    void lm_ops(const sentence& sent, size_t idx, PQ& candidates,
-                uint64_t depth, bool substitute);
+    void lm_ops(const sentence& sent, PQ& candidates, uint64_t depth);
     /**
      * @param sent
      * @param idx
@@ -107,7 +104,7 @@ class diff
     std::unordered_set<std::string> seen_;
     uint64_t max_depth_;
     bool use_lm_;
-    static constexpr uint64_t default_max_depth_ = 2;
+    static constexpr uint64_t default_max_depth_ = 4;
     static constexpr uint64_t n_val_ = 3;
     static constexpr uint64_t max_cand_size_ = 100;
 };

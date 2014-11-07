@@ -3,6 +3,8 @@
  * @author Sean Massung
  */
 
+#include <iostream>
+
 #include <algorithm>
 #include <queue>
 #include "lm/diff.h"
@@ -69,30 +71,48 @@ void diff::remove(const sentence& sent, size_t idx, PQ& candidates,
 }
 
 template <class PQ>
-void diff::lm_ops(const sentence& sent, size_t idx, PQ& candidates,
-                  uint64_t depth, bool substitute)
+void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
 {
-    if (idx < n_val_ - 1)
+    if (sent.size() < n_val_)
         return;
 
-    auto spliced = sent(idx - (n_val_ - 1), idx);
+    double min_prob = 1;
+    uint64_t best_idx = 0;
+    sentence best;
+    for (uint64_t i = n_val_ - 1; i < sent.size(); ++i)
+    {
+        auto ngram = sent(i - (n_val_ - 1), i + 1);
+        auto prob = lm_.prob(ngram);
+        if (prob < min_prob)
+        {
+            min_prob = prob;
+            best_idx = i;
+            best = ngram;
+        }
+    }
+
+    sentence rem_cpy{sent};
+    rem_cpy.remove(best_idx);
+    add(candidates, rem_cpy);
+    step(rem_cpy, candidates, depth + 1);
+
+    best.pop_back();
     try
     {
-        auto best = lm_.top_k(spliced, 5);
-        for (auto& p : best)
+        for (auto& next : lm_.top_k(best, 5))
         {
-            if (p.first == "</s>")
+            if (next.first == "</s>")
                 continue;
-            sentence cpy{sent};
-            if (substitute)
-                cpy.insert(idx, p.first);
-            else
-                cpy.substitute(idx, p.first);
-            if (seen_.find(cpy.to_string()) == seen_.end())
-            {
-                add(candidates, cpy);
-                step(cpy, candidates, depth + 1);
-            }
+
+            sentence ins_cpy{sent};
+            ins_cpy.insert(best_idx, next.first);
+            add(candidates, ins_cpy);
+            step(ins_cpy, candidates, depth + 1);
+
+            sentence sub_cpy{sent};
+            sub_cpy.substitute(best_idx, next.first);
+            add(candidates, sub_cpy);
+            step(sub_cpy, candidates, depth + 1);
         }
     }
     catch (language_model_exception& ex)
@@ -145,16 +165,16 @@ void diff::step(const sentence& sent, PQ& candidates, size_t depth)
     if (depth == max_depth_)
         return;
 
-    for (size_t i = 0; i < sent.size(); ++i)
+    if (use_lm_)
+        lm_ops(sent, candidates, depth);
+    else
     {
-        remove(sent, i, candidates, depth);
-        insert(sent, i, candidates, depth);
-        if (use_lm_)
+        for (size_t i = 0; i < sent.size(); ++i)
         {
-            lm_ops(sent, i, candidates, depth, true);
-            lm_ops(sent, i, candidates, depth, false);
+            remove(sent, i, candidates, depth);
+            insert(sent, i, candidates, depth);
+            substitute(sent, i, candidates, depth);
         }
-        substitute(sent, i, candidates, depth);
     }
 }
 
