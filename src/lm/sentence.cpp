@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <numeric>
 #include "lm/sentence.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
@@ -60,24 +61,37 @@ sentence sentence::operator()(size_type from, size_type to) const
     return ret;
 }
 
-void sentence::substitute(size_type idx, const std::string& token)
+void sentence::substitute(size_type idx, const std::string& token,
+                          double weight /* = 0.0 */)
 {
     ops_.push_back("substitute(" + std::to_string(idx) + ", " + tokens_[idx]
                    + " -> " + token + ")");
     tokens_[idx] = token;
+    weights_.push_back(weight);
 }
 
-void sentence::remove(size_type idx)
+void sentence::remove(size_type idx, double weight /* = 0.0 */)
 {
     ops_.push_back("remove(" + std::to_string(idx) + ", " + (*this)[idx] + ")");
     tokens_.erase(tokens_.begin() + idx);
+    weights_.push_back(weight);
 }
 
-void sentence::insert(size_type idx, const std::string& token)
+void sentence::insert(size_type idx, const std::string& token,
+                      double weight /* = 0.0 */)
 {
     tokens_.insert(tokens_.begin() + idx, token);
     ops_.push_back("insert(" + std::to_string(idx) + ", " + token + ")");
+    weights_.push_back(weight);
 }
+
+double sentence::average_weight() const
+{
+    double sum = std::accumulate(weights_.begin(), weights_.end(), 0.0);
+    return sum / weights_.size();
+}
+
+std::vector<double> sentence::weights() const { return weights_; }
 
 const std::vector<std::string>& sentence::operations() const { return ops_; }
 
