@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
             std::cout << (i + 1) << "." << std::endl;
             std::cout << " Sentence: " << candidates[i].first.to_string()
                       << std::endl;
-            std::cout << " PPW: " << candidates[i].second << std::endl;
+            std::cout << " Score: " << candidates[i].second << std::endl;
             std::cout << " Edits:" << std::endl;
             for(auto& e: candidates[i].first.operations())
                 std::cout << "    " << e << std::endl;

@@ -33,7 +33,7 @@ std::vector<std::pair<sentence, double>>
     };
     std::priority_queue<pair_t, std::vector<pair_t>, decltype(comp)> candidates{
         comp};
-    candidates.emplace(sent, lm_.perplexity_per_word(sent));
+    add(candidates, sent);
 
     seen_.clear();
     step(sent, candidates, 0);
@@ -49,10 +49,12 @@ std::vector<std::pair<sentence, double>>
 }
 
 template <class PQ>
-void diff::add(PQ& candidates, sentence& sent)
+void diff::add(PQ& candidates, const sentence& sent)
 {
     seen_.insert(sent.to_string());
-    candidates.emplace(sent, lm_.perplexity_per_word(sent));
+    auto score = lambda_ * lm_.perplexity_per_word(sent)
+                 + (1.0 - lambda_) * sent.average_weight();
+    candidates.emplace(sent, score);
     if (candidates.size() > max_cand_size_)
         candidates.pop();
 }

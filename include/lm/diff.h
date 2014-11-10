@@ -96,7 +96,7 @@ class diff
      * @param sent
      */
     template <class PQ>
-    void add(PQ& candidates, sentence& sent);
+    void add(PQ& candidates, const sentence& sent);
 
     language_model lm_;
     std::vector<std::string> fwords_;
@@ -104,9 +104,12 @@ class diff
     std::unordered_set<std::string> seen_;
     uint64_t max_depth_;
     bool use_lm_;
-    static constexpr uint64_t default_max_depth_ = 4;
+    static constexpr uint64_t default_max_depth_ = 3;
     static constexpr uint64_t n_val_ = 3;
     static constexpr uint64_t max_cand_size_ = 100;
+
+    /// balance between perplexity and edit weights
+    static constexpr double lambda_ = 0.5;
 };
 }
 }
