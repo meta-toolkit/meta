@@ -93,8 +93,11 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
 
     sentence rem_cpy{sent};
     rem_cpy.remove(best_idx);
-    add(candidates, rem_cpy);
-    step(rem_cpy, candidates, depth + 1);
+    if (seen_.find(rem_cpy.to_string()) == seen_.end())
+    {
+        add(candidates, rem_cpy);
+        step(rem_cpy, candidates, depth + 1);
+    }
 
     best.pop_back();
     try
@@ -106,13 +109,21 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
 
             sentence ins_cpy{sent};
             ins_cpy.insert(best_idx, next.first);
-            add(candidates, ins_cpy);
-            step(ins_cpy, candidates, depth + 1);
+
+            if (seen_.find(ins_cpy.to_string()) == seen_.end())
+            {
+                add(candidates, ins_cpy);
+                step(ins_cpy, candidates, depth + 1);
+            }
 
             sentence sub_cpy{sent};
             sub_cpy.substitute(best_idx, next.first);
-            add(candidates, sub_cpy);
-            step(sub_cpy, candidates, depth + 1);
+
+            if (seen_.find(sub_cpy.to_string()) == seen_.end())
+            {
+                add(candidates, sub_cpy);
+                step(sub_cpy, candidates, depth + 1);
+            }
         }
     }
     catch (language_model_exception& ex)
