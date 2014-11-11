@@ -87,6 +87,8 @@ void sentence::insert(size_type idx, const std::string& token,
 
 double sentence::average_weight() const
 {
+    if (weights_.empty())
+        return 0.0;
     double sum = std::accumulate(weights_.begin(), weights_.end(), 0.0);
     return sum / weights_.size();
 }
