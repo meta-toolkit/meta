@@ -48,7 +48,7 @@ class node
     template <class Node>
     Node& as()
     {
-        return static_cast<Node>(*this);
+        return static_cast<Node&>(*this);
     }
 
     /**
@@ -59,9 +59,9 @@ class node
      * @return this node cast to the given node type
      */
     template <class Node>
-    const Node& as() const
+    typename std::add_const<Node>::type& as() const
     {
-        return static_cast<const Node>(*this);
+        return static_cast<typename std::add_const<Node>::type&>(*this);
     }
 
   private:

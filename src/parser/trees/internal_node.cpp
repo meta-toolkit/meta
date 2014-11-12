@@ -22,5 +22,10 @@ void internal_node::add_child(std::unique_ptr<node> child)
     children_.emplace_back(std::move(child));
 }
 
+bool internal_node::is_leaf() const
+{
+    return false;
+}
+
 }
 }

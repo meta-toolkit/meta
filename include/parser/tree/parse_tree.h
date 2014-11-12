@@ -39,12 +39,16 @@ class parse_tree
        */
       parse_tree(std::unique_ptr<node> root);
 
+      friend std::ostream& operator<<(std::ostream& os, const parse_tree& tree);
+
   private:
       /**
        * The root of the parse tree.
        */
       std::unique_ptr<node> root_;
 };
+
+
 }
 }
 

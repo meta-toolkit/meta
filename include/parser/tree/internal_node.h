@@ -61,6 +61,22 @@ class internal_node : public node
      */
     void add_child(std::unique_ptr<node> child);
 
+    bool is_leaf() const override;
+
+    template <class Fun>
+    void each_child(Fun&& fn) const
+    {
+        for (const auto& child : children_)
+            fn(child.get());
+    }
+
+    template <class Fun>
+    void each_child(Fun&& fn)
+    {
+        for (auto& child : children_)
+            fn(child.get());
+    }
+
   private:
     /**
      * A list of the children of this node, from left to right
