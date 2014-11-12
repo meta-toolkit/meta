@@ -8,9 +8,11 @@ add_subdirectory(tree)
 add_library(meta-analyzers analyzer.cpp
                            analyzer_factory.cpp
                            libsvm_analyzer.cpp
+                           diff_analyzer.cpp
                            multi_analyzer.cpp)
 target_link_libraries(meta-analyzers meta-corpus
                                      meta-filters
                                      meta-ngram-analyzers
                                      meta-tokenizers
-                                     meta-tree-analyzers)
+                                     meta-tree-analyzers
+                                     meta-language-model)

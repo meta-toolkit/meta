@@ -1,5 +1,6 @@
 #include "analyzers/analyzer.h"
 #include "analyzers/multi_analyzer.h"
+#include "analyzers/diff_analyzer.h"
 
 #include "analyzers/libsvm_analyzer.h"
 

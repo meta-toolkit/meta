@@ -30,6 +30,7 @@ analyzer_factory::analyzer_factory()
     register_analyzer<ngram_lex_analyzer>();
     register_analyzer<ngram_pos_analyzer>();
     register_analyzer<libsvm_analyzer>();
+    register_analyzer<diff_analyzer>();
 }
 }
 }
