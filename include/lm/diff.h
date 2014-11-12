@@ -25,8 +25,7 @@ class diff
     /**
      * @param config_file The file containing configuration information
      */
-    diff(const cpptoml::toml_group& config,
-         uint64_t max_depth = default_max_depth_);
+    diff(const cpptoml::toml_group& config);
 
     /**
      * @param sent The sentence to transform
@@ -100,17 +99,21 @@ class diff
     void add(PQ& candidates, const sentence& sent);
 
     language_model lm_;
-    std::vector<std::string> fwords_;
+    uint64_t n_val_;
+    uint64_t max_edits_;
     std::unordered_map<std::string, std::vector<std::string>> stems_;
+    std::vector<std::string> fwords_;
     std::unordered_set<std::string> seen_;
-    uint64_t max_depth_;
-    bool use_lm_;
-    static constexpr uint64_t default_max_depth_ = 3;
-    static constexpr uint64_t n_val_ = 3;
     static constexpr uint64_t max_cand_size_ = 100;
+    bool use_lm_;
 
     /// balance between perplexity and edit weights
     static constexpr double lambda_ = 0.5;
+};
+
+class diff_exception : public std::runtime_error
+{
+    using std::runtime_error::runtime_error;
 };
 }
 }

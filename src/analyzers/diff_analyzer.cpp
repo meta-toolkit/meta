@@ -34,11 +34,38 @@ void diff_analyzer::tokenize(corpus::document& doc)
 {
     // first, get tokens
     stream_->set_content(get_content(doc));
-    std::vector<std::string> tokens;
-    while (*stream_)
-        tokens.push_back(stream_->next());
+    std::vector<std::string> sentences;
+    std::string buffer{""};
 
-    doc.increment(tokens[0], 1);
+    while (*stream_)
+    {
+        auto next = stream_->next();
+        buffer += next + " ";
+        if (next == "</s>")
+            sentences.emplace_back(std::move(buffer));
+    }
+
+    for(auto& s: sentences)
+    {
+        try
+        {
+            lm::sentence sent{s};
+            auto candidates = diff_.candidates(sent, true);
+            auto edits = candidates[0].first.operations();
+            if (edits.empty())
+                doc.increment("unmodified", 1);
+            else
+            {
+                for (auto& e : edits)
+                    doc.increment(e, 1);
+            }
+        }
+        catch (lm::sentence_exception& ex)
+        {
+            doc.increment("error", 1);
+        }
+
+    }
 }
 
 template <>

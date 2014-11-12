@@ -14,9 +14,18 @@ namespace meta
 {
 namespace lm
 {
-diff::diff(const cpptoml::toml_group& config, uint64_t max_depth)
-    : lm_{config}, max_depth_{max_depth}
+diff::diff(const cpptoml::toml_group& config) : lm_{config}
 {
+    auto nval = config.get_as<int64_t>("n-value");
+    if (!nval)
+        throw diff_exception{"n-value not specified in config"};
+    n_val_ = *nval;
+
+    auto edits = config.get_as<int64_t>("max-edits");
+    if (!edits)
+        throw diff_exception{"max-edits not specified in config"};
+    max_edits_ = *edits;
+
     set_stems(config);
     set_function_words(config);
 }
@@ -174,7 +183,7 @@ void diff::substitute(const sentence& sent, size_t idx, PQ& candidates,
 template <class PQ>
 void diff::step(const sentence& sent, PQ& candidates, size_t depth)
 {
-    if (depth == max_depth_)
+    if (depth == max_edits_)
         return;
 
     if (use_lm_)
