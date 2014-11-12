@@ -3,6 +3,8 @@
  * @author Sean Massung
  */
 
+#include <iostream>
+
 #include <numeric>
 #include "lm/sentence.h"
 #include "analyzers/analyzer.h"
@@ -27,9 +29,15 @@ sentence::sentence(const std::string& text)
     while (*stream)
         tokens_.push_back(stream->next());
 
+    if (tokens_.empty())
+        throw sentence_exception{"empty token stream"};
+
     // remove sentence markers (they're inserted by the LM)
     tokens_.pop_front();
     tokens_.pop_back();
+
+    if (tokens_.empty())
+        throw sentence_exception{"empty token stream"};
 }
 
 std::string sentence::to_string() const
