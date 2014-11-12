@@ -26,7 +26,11 @@ const std::string& corpus::encoding() const
 std::unique_ptr<corpus> corpus::load(const std::string& config_file)
 {
     auto config = cpptoml::parse_file(config_file);
+    return load(config);
+}
 
+std::unique_ptr<corpus> corpus::load(const cpptoml::toml_group& config)
+{
     auto type = config.get_as<std::string>("corpus-type");
     if (!type)
         throw corpus_exception{"corpus-type missing from configuration file"};

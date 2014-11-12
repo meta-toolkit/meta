@@ -10,7 +10,6 @@
 #include <iostream>
 #include <sstream>
 #include <random>
-#include "cpptoml.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
 #include "analyzers/filters/lowercase_filter.h"
@@ -25,9 +24,8 @@ namespace meta
 namespace lm
 {
 
-language_model::language_model(const std::string& config_file)
+language_model::language_model(const cpptoml::toml_group& config)
 {
-    auto config = cpptoml::parse_file(config_file);
     auto group = config.get_group("language-model");
     auto nval = group->get_as<int64_t>("n-value");
     if (!nval)
@@ -37,14 +35,13 @@ language_model::language_model(const std::string& config_file)
     N_ = *nval;
 
     if (N_ > 1)
-        interp_ = make_unique<language_model>(config_file, N_ - 1);
+        interp_ = std::make_shared<language_model>(config, N_ - 1);
 
-    select_method(config_file);
+    select_method(config);
 }
 
-void language_model::select_method(const std::string& config_file)
+void language_model::select_method(const cpptoml::toml_group& config)
 {
-    auto config = cpptoml::parse_file(config_file);
     auto group = config.get_group("language-model");
     auto format = group->get_as<std::string>("format");
     if (!format)
@@ -60,24 +57,25 @@ void language_model::select_method(const std::string& config_file)
         read_precomputed(*prefix);
     }
     else if (*format == "learn")
-        learn_model(config_file);
+        learn_model(config);
     else
         throw language_model_exception{
             "language-model format could not be determined"};
 }
 
-language_model::language_model(const std::string& config_file, size_t n) : N_{n}
+language_model::language_model(const cpptoml::toml_group& config, size_t n)
+    : N_{n}
 {
     if (N_ > 1)
-        interp_ = make_unique<language_model>(config_file, N_ - 1);
+        interp_ = std::make_shared<language_model>(config, N_ - 1);
 
-    select_method(config_file);
+    select_method(config);
 }
 
-void language_model::learn_model(const std::string& config_file)
+void language_model::learn_model(const cpptoml::toml_group& config)
 {
     std::cout << "Learning " << N_ << "-gram language model" << std::endl;
-    auto corpus = corpus::corpus::load(config_file);
+    auto corpus = corpus::corpus::load(config);
 
     using namespace analyzers;
     std::unique_ptr<token_stream> stream;
@@ -267,15 +265,15 @@ double language_model::perplexity(const sentence& tokens) const
 {
     sentence ngram;
     for (size_t i = 1; i < N_; ++i)
-  //    ngram.push_back(tokens[i - 1]);
-        ngram.push_back("<s>");
+        ngram.push_back(tokens[i - 1]);
+    // ngram.push_back("<s>");
 
     double perp = 0.0;
-    for (auto& token : tokens)
- // for (size_t i = N_; i < tokens.size(); ++i)
+    // for (auto& token : tokens)
+    for (size_t i = N_; i < tokens.size(); ++i)
     {
-        ngram.push_back(token);
-    //  ngram.push_back(tokens[i]);
+        // ngram.push_back(token);
+        ngram.push_back(tokens[i]);
         perp += std::log(1.0 / prob(ngram));
         ngram.pop_front();
     }
@@ -285,6 +283,9 @@ double language_model::perplexity(const sentence& tokens) const
 
 double language_model::perplexity_per_word(const sentence& tokens) const
 {
+    if (tokens.size() == 0)
+        throw language_model_exception{
+            "perplexity_per_word called on empty sentence"};
     return perplexity(tokens) / tokens.size();
 }
 }

@@ -4,6 +4,7 @@
  */
 
 #include <iostream>
+#include "cpptoml.h"
 #include "meta.h"
 #include "lm/diff.h"
 #include "lm/sentence.h"
@@ -12,7 +13,7 @@ using namespace meta;
 
 int main(int argc, char* argv[])
 {
-    lm::diff correcter{argv[1]};
+    lm::diff correcter{cpptoml::parse_file(argv[1])};
     std::string line;
     while (true)
     {

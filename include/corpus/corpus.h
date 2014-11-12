@@ -12,7 +12,7 @@
 
 #include <stdexcept>
 #include <memory>
-
+#include "cpptoml.h"
 #include "meta.h"
 #include "corpus/document.h"
 
@@ -64,6 +64,8 @@ class corpus
      * @return a unique_ptr to the corpus object containing the documents
      */
     static std::unique_ptr<corpus> load(const std::string& config_file);
+
+    static std::unique_ptr<corpus> load(const cpptoml::toml_group& config);
 
     /**
      * Basic exception for corpus interactions.

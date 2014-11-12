@@ -14,6 +14,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include "cpptoml.h"
 #include "lm/sentence.h"
 
 namespace meta
@@ -27,14 +28,14 @@ class language_model
      * Creates an N-gram language model based on the corpus specified in the
      * config file.
      */
-    language_model(const std::string& config_file);
+    language_model(const cpptoml::toml_group& config);
 
     /**
      * Creates an N-gram language model based on the corpus specified in the
      * config file.
      * @param n The value of n, which overrides any setting in the config file
      */
-    language_model(const std::string& config_file, size_t n);
+    language_model(const cpptoml::toml_group& config, size_t n);
 
     /**
      * Randomly generates one token sequence based on <s> and </s> symbols.
@@ -82,15 +83,15 @@ class language_model
   private:
     /**
      * Builds the probabilities associated with this language model.
-     * @param config_file The config file that specifies the location of the
+     * @param config The config file that specifies the location of the
      * corpus
      */
-    void learn_model(const std::string& config_file);
+    void learn_model(const cpptoml::toml_group& config);
 
     /**
-     * @param config_file
+     * @param config
      */
-    void select_method(const std::string& config_file);
+    void select_method(const cpptoml::toml_group& config);
 
     /**
      * @param prefix Path to where the counts files are stored
@@ -98,7 +99,7 @@ class language_model
     void read_precomputed(const std::string& prefix);
 
     /// The language_model used to interpolate with this one for smoothing
-    std::unique_ptr<language_model> interp_;
+    std::shared_ptr<language_model> interp_; // shared to allow copying
 
     /// Contains the N-gram distribution probabilities (N-1 words -> (w, prob))
     std::unordered_map<std::string, std::unordered_map<std::string, double>>

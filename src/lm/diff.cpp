@@ -8,18 +8,17 @@
 #include <algorithm>
 #include <queue>
 #include "lm/diff.h"
-#include "cpptoml.h"
 #include "porter2_stemmer.h"
 
 namespace meta
 {
 namespace lm
 {
-diff::diff(const std::string& config_file, uint64_t max_depth)
-    : lm_{config_file}, max_depth_{max_depth}
+diff::diff(const cpptoml::toml_group& config, uint64_t max_depth)
+    : lm_{config}, max_depth_{max_depth}
 {
-    set_stems(config_file);
-    set_function_words(config_file);
+    set_stems(config);
+    set_function_words(config);
 }
 
 std::vector<std::pair<sentence, double>>
@@ -191,19 +190,17 @@ void diff::step(const sentence& sent, PQ& candidates, size_t depth)
     }
 }
 
-void diff::set_function_words(const std::string& config_file)
+void diff::set_function_words(const cpptoml::toml_group& config)
 {
-    auto config = cpptoml::parse_file(config_file);
     std::ifstream in{*config.get_as<std::string>("function-words")};
     std::string word;
     while (in >> word)
         fwords_.push_back(word);
 }
 
-void diff::set_stems(const std::string& config_file)
+void diff::set_stems(const cpptoml::toml_group& config)
 {
     std::unordered_set<std::string> vocab;
-    auto config = cpptoml::parse_file(config_file);
     auto prefix = *config.get_as<std::string>("prefix");
     auto dataset = *config.get_as<std::string>("dataset");
     std::ifstream in{prefix + "/" + dataset + "/" + dataset + ".dat"};

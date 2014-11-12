@@ -12,6 +12,7 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include "cpptoml.h"
 #include "lm/language_model.h"
 
 namespace meta
@@ -24,7 +25,7 @@ class diff
     /**
      * @param config_file The file containing configuration information
      */
-    diff(const std::string& config_file,
+    diff(const cpptoml::toml_group& config,
          uint64_t max_depth = default_max_depth_);
 
     /**
@@ -39,12 +40,12 @@ class diff
     /**
      * @param config_file The file containing configuration information
      */
-    void set_stems(const std::string& config_file);
+    void set_stems(const cpptoml::toml_group& config);
 
     /**
      * @param config_file The file containing configuration information
      */
-    void set_function_words(const std::string& config_file);
+    void set_function_words(const cpptoml::toml_group& config);
 
     /**
      * @param sent
