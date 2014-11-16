@@ -104,7 +104,7 @@ class diff
     std::unordered_map<std::string, std::vector<std::string>> stems_;
     std::vector<std::string> fwords_;
     std::unordered_set<std::string> seen_;
-    static constexpr uint64_t max_cand_size_ = 100;
+    static constexpr uint64_t max_cand_size_ = 20;
     bool use_lm_;
 
     /// balance between perplexity and edit weights
