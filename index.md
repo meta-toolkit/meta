@@ -12,6 +12,7 @@ layout: default
  - classification algorithms
  - graph algorithms
  - language models
+ - CRF implementation
  - wrappers for liblinear and libsvm (including libsvm dataset parsers)
  - UTF8 support for analysis on various languages
  - multithreaded algorithms
@@ -83,7 +84,7 @@ make
  - There are rules for clean, tidy, and doc. (Also, once you run the cmake
    command once, you should be able to just run make like usual as you're
    developing---it'll detect when the CMakeLists.txt file has changed and
-   rebuild Makefiles if it needs to.) To compile in release mode, just replace
+   rebuild Makefiles if it needs to.) To compile in debug mode, just replace
    `Release` with `Debug`.
 
 ---
