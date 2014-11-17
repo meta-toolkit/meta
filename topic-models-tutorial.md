@@ -28,7 +28,7 @@ max-iters = 1000
 alpha = 0.1
 beta = 0.1
 topics = 10
-model-prefix = "lda_model"
+model-prefix = "lda-model"
 {% endhighlight %}
 
 (For more information on the parameters, please see the documentation for
@@ -58,7 +58,7 @@ we found two topics and used the default filter chain for text analysis
 (which includes `porter2_stemmer`).
 
 ~~~
-$ ./lda-topics config.toml lda_model.phi 15
+$ ./lda-topics config.toml lda-model.phi 15
 Topic 0:
 -----------------------
 smoke (3274): 0.391293

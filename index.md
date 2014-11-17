@@ -7,10 +7,12 @@ layout: default
 
  - text tokenization, including deep semantic features like parse trees
  - inverted and forward indexes with compression and various caching strategies
- - various ranking functions for searching the indexes
- - topic modeling algorithms
+ - a collection of ranking functions for searching the indexes
+ - topic models
  - classification algorithms
- - wrappers for liblinear and libsvm
+ - graph algorithms
+ - language models
+ - wrappers for liblinear and libsvm (including libsvm dataset parsers)
  - UTF8 support for analysis on various languages
  - multithreaded algorithms
 
@@ -70,10 +72,10 @@ mkdir build
 cd build
 
 # to use clang
-CXX=clang++ cmake ../ -DCMAKE_BUILD_TYPE=Debug
+CXX=clang++ cmake ../ -DCMAKE_BUILD_TYPE=Release
 # OR
 # to use gcc
-CXX=g++ cmake ../ -DCMAKE_BUILD_TYPE=Debug
+CXX=g++ cmake ../ -DCMAKE_BUILD_TYPE=Release
 
 make
 {% endhighlight %}
@@ -82,7 +84,7 @@ make
    command once, you should be able to just run make like usual as you're
    developing---it'll detect when the CMakeLists.txt file has changed and
    rebuild Makefiles if it needs to.) To compile in release mode, just replace
-   `Debug` with `Release`.
+   `Release` with `Debug`.
 
 ---
 
