@@ -12,13 +12,10 @@ layout: default
  - classification algorithms
  - graph algorithms
  - language models
- - CRF implementation
+ - CRF implementation (POS-tagging, shallow parsing)
  - wrappers for liblinear and libsvm (including libsvm dataset parsers)
  - UTF8 support for analysis on various languages
  - multithreaded algorithms
-
-Our current goal for MeTA is to publish in [JMLR's Machine Learning Open-Source
-Software](http://jmlr.org/mloss/).
 
 ## Documentation
 

@@ -79,10 +79,10 @@ There are currently two corpus input formats:
 If only being used for classification, MeTA can also take libsvm-formatted
 input to create a `forward_index`.
 
-Additionally, until MeTA has support for part-of-speech tagging and parse tree
-generation, we support `.pos` and `.tree` input formats for file corpora. See
+Additionally, until MeTA has support for parse tree generation, we support the
+`.tree` extension for documents in file corpora. See
 [meta-stanford-preprocessor](https://github.com/meta-toolkit/meta-stanford-preprocessor)
-for information on how to generate POS tag or parse tree files.
+for information on how to generate parse tree files.
 
 ## Datasets
 
@@ -129,7 +129,7 @@ counts from documents. Here are some examples of analyzers:
  - `ngram_word_analyzer`: collects and counts sequences of *n* words (tokens)
    that have been filtered by the filter chain
  - `ngram_pos_analyzer`: same as `ngram_word_analyzer`, but operates on
-   part-of-speech tags instead
+   part-of-speech tags from MeTA's CRF
  - `skeleton_analyzer`: collects and counts occurrences of parse tree structural
    skeletons, currently the only known implementation of work described in [this
    paper](http://web.engr.illinois.edu/~massung1/files/icsc-2013.pdf).
