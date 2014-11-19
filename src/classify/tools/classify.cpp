@@ -21,13 +21,15 @@ using std::endl;
 using namespace meta;
 
 template <class Index, class Classifier>
-classify::confusion_matrix cv(Index & idx, Classifier & c)
+classify::confusion_matrix cv(Index& idx, Classifier& c, bool even)
 {
     std::vector<doc_id> docs = idx.docs();
     classify::confusion_matrix matrix;
-    auto seconds = common::time<std::chrono::seconds>([&]() {
-        matrix = c.cross_validate(docs, 5);
-    });
+    auto seconds = common::time<std::chrono::seconds>(
+        [&]()
+        {
+            matrix = c.cross_validate(docs, 5, even);
+        });
     std::cerr << "time elapsed: " << seconds.count() << "s" << std::endl;
     matrix.print();
     matrix.print_stats();
@@ -35,25 +37,24 @@ classify::confusion_matrix cv(Index & idx, Classifier & c)
 }
 
 template <class Index>
-void compare_cv(classify::confusion_matrix &, Index &) {
+void compare_cv(classify::confusion_matrix&, Index&)
+{
     std::cout << "finished cv comparison!" << std::endl;
 }
 
 template <class Index, class Alternative, class... Alternatives>
-void compare_cv(classify::confusion_matrix & matrix,
-                Index & idx,
-                Alternative & alt,
-                Alternatives &... alts)
+void compare_cv(classify::confusion_matrix& matrix, Index& idx,
+                Alternative& alt, Alternatives&... alts)
 {
     auto m = cv(idx, alt);
     std::cout << "significant: " << std::boolalpha
-        << classify::confusion_matrix::mcnemar_significant(matrix, m)
-        << std::endl;
+              << classify::confusion_matrix::mcnemar_significant(matrix, m)
+              << std::endl;
     compare_cv(matrix, idx, alts...);
 }
 
 template <class Index, class Classifier, class... Alternatives>
-void compare_cv(Index & idx, Classifier & c, Alternatives &... alts)
+void compare_cv(Index& idx, Classifier& c, Alternatives&... alts)
 {
     auto matrix = cv(idx, c);
     compare_cv(matrix, idx, alts...);
@@ -61,7 +62,7 @@ void compare_cv(Index & idx, Classifier & c, Alternatives &... alts)
 
 int main(int argc, char* argv[])
 {
-    if(argc != 2)
+    if (argc != 2)
     {
         cerr << "Usage:\t" << argv[0] << " config.toml" << endl;
         return 1;
@@ -81,7 +82,8 @@ int main(int argc, char* argv[])
     auto docs = f_idx->docs();
     printing::progress progress{" > Pre-fetching for cache: ", docs.size()};
     // load the documents into the cache
-    for (size_t i = 0; i < docs.size(); ++i) {
+    for (size_t i = 0; i < docs.size(); ++i)
+    {
         progress(i);
         f_idx->search_primary(docs[i]);
     }
@@ -90,14 +92,18 @@ int main(int argc, char* argv[])
     std::unique_ptr<classify::classifier> classifier;
     if (*class_config->get_as<std::string>("method") == "knn")
     {
-        auto i_idx =
-            index::make_index<index::dblru_inverted_index>(argv[1], 10000);
+        auto i_idx
+            = index::make_index<index::dblru_inverted_index>(argv[1], 10000);
         classifier = classify::make_classifier(*class_config, f_idx, i_idx);
     }
     else
         classifier = classify::make_classifier(*class_config, f_idx);
 
-    cv(*f_idx, *classifier);
+    bool even = false;
+    auto even_split = class_config->get_as<std::string>("even-split");
+    if (even_split && *even_split == "true")
+        even = true;
+    cv(*f_idx, *classifier, even);
 
     return 0;
 }

@@ -60,9 +60,8 @@ class parallel_lda_gibbs : public lda_gibbs
     virtual void increase_counts(topic_id topic, term_id term,
                                  doc_id doc) override;
 
-    virtual double count_term(term_id term, topic_id topic) const override;
-
-    virtual double count_topic(topic_id topic) const override;
+    virtual double compute_sampling_weight(term_id term, doc_id doc,
+                                           topic_id topic) const override;
 
     /**
      * The thread pool used for parallelization.
@@ -72,18 +71,11 @@ class parallel_lda_gibbs : public lda_gibbs
     /**
      * Stores the difference in topic_term counts on a per-thread basis
      * for use in the reduction step.
+     *
+     * Indexed as [thread_id][topic]
      */
-    std::unordered_map<
-        std::thread::id,
-        std::unordered_map<topic_id, std::unordered_map<term_id, ssize_t>>>
-        topic_term_diffs_;
-
-    /**
-     * Stores the difference in topic counts on a per-thread basis for
-     * use in the reduction step.
-     */
-    std::unordered_map<std::thread::id, std::unordered_map<topic_id, ssize_t>>
-        topic_diffs_;
+    std::unordered_map<std::thread::id,
+                       std::vector<stats::multinomial<term_id>>> phi_diffs_;
 };
 }
 }

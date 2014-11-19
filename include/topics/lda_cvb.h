@@ -10,6 +10,7 @@
 #ifndef META_TOPICS_LDA_CVB_H_
 #define META_TOPICS_LDA_CVB_H_
 
+#include "stats/multinomial.h"
 #include "topics/lda_model.h"
 
 namespace meta
@@ -77,54 +78,32 @@ class lda_cvb : public lda_model
      */
     double perform_iteration(uint64_t iter);
 
-    virtual double compute_term_topic_probability(term_id term,
-                                                  topic_id topic) const
-        override;
+    virtual double
+        compute_term_topic_probability(term_id term,
+                                       topic_id topic) const override;
 
     virtual double compute_doc_topic_probability(doc_id doc,
                                                  topic_id topic) const override;
 
     /**
-     * Variational parameters \f$\gamma_{ijk}\f$, which represent the soft
+     * Variational distributions \f$\gamma_{ij}\f$, which represent the soft
      * topic assignments for each word occurrence \f$i\f$ in document
-     * \f$j\f$ to topic \f$k\f$. Actually indexed as `gamma_[d][i][k]`,
-     * where `d` is a `doc_id`, `i` is the intra-document term id, and `k`
-     * is a `topic_id`.
+     * \f$j\f$.
+     *
+     * Indexed as gamma_[d][i]
      */
-    std::vector<std::vector<std::vector<double>>> gamma_;
+    std::vector<std::vector<stats::multinomial<topic_id>>> gamma_;
 
     /**
-     * Contains the expected counts for each word being assigned a given
-     * topic.  Indexed as `topic_term_count_[k][w]` where `k` is a
-     * `topic_id` and `w` is a `term_id`.
+     * The word distributions for each topic, \f$\phi_t\f$.
      */
-    std::vector<std::vector<double>> topic_term_count_;
+    std::vector<stats::multinomial<term_id>> phi_;
 
     /**
-     * Contains the expected counts for each topic being assigned in a
-     * given document. Indexed as `doc_topic_count_[d][k]` where `d` is a
-     * `doc_id` and `k` is a `topic_id`.
+     * The topic distributions for each document, \f$\theta_d\f$.
      */
-    std::vector<std::vector<double>> doc_topic_count_;
-
-    /**
-     * Contains the expected number of times the given topic has been
-     * assigned to a word. Can be inferred from the above maps, but is
-     * included here for performance reasons.
-     */
-    std::vector<double> topic_count_;
-
-    /**
-     * Hyperparameter on \f$\theta\f$, the topic proportions.
-     */
-    const double alpha_;
-
-    /**
-     * Hyperparameter on \f$\phi\f$, the topic distributions.
-     */
-    const double beta_;
+    std::vector<stats::multinomial<topic_id>> theta_;
 };
 }
 }
-
 #endif

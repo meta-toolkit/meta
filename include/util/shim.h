@@ -17,6 +17,7 @@
 namespace meta
 {
 
+#ifndef META_HAS_STD_MAKE_UNIQUE
 /**
  * Constructs a unique ptr in place.
  * @param args The parameters to the constructor
@@ -27,5 +28,8 @@ std::unique_ptr<T> make_unique(Args&&... args)
 {
     return std::unique_ptr<T>{new T(std::forward<Args>(args)...)};
 }
+#else
+using std::make_unique;
+#endif
 }
 #endif

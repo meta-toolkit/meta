@@ -102,6 +102,12 @@ class disk_index
     class_label label(doc_id d_id) const;
 
     /**
+     * @param d_id THe doc id to find the label_id for
+     * @return the label_id of the class that to document belongs to
+     */
+    label_id lbl_id(doc_id d_id) const;
+
+    /**
      * @param label The class label
      * @return the label_id for the given class label
      */
@@ -112,6 +118,11 @@ class disk_index
      * @return the integer label id of a document
      */
     class_label class_label_from_id(label_id l_id) const;
+
+    /**
+     * @return the number of labels in this index
+     */
+    uint64_t num_labels() const;
 
     /**
      * @return the distinct class labels possible for documents in this
