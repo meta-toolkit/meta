@@ -21,4 +21,7 @@ add_library(meta-analyzers analyzer.cpp
                            tree/tag_analyzer.cpp)
 target_link_libraries(meta-analyzers meta-corpus
                                      meta-filters
-                                     meta-tokenizers)
+                                     meta-tokenizers
+                                     meta-sequence
+                                     meta-crf
+                                     meta-sequence-analyzers)
