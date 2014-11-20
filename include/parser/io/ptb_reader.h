@@ -9,6 +9,7 @@
 #ifndef META_PARSER_PTB_READER_H_
 #define META_PARSER_PTB_READER_H_
 
+#include <istream>
 #include <vector>
 #include "parser/trees/parse_tree.h"
 
@@ -30,6 +31,21 @@ namespace io
  * @return all of the trees that were read from the given file
  */
 std::vector<parse_tree> extract_trees(const std::string& filename);
+
+/**
+ * Reads Penn Treebank formatted trees from a stream and returns a set of
+ * trees parsed from it. This overload can be used both for reading from
+ * files as well as reading from standard in, strings (via stringstream),
+ * etc.
+ *
+ * We are assuming here that the trees being read are also POS-tagged
+ * (e.g., are from the mrg/ folder in the distribution).
+ *
+ * @param filename The name of the file to be parsed
+ * @return all of the trees that were read from the given stream
+ */
+std::vector<parse_tree> extract_trees(std::istream& stream);
+
 }
 }
 }

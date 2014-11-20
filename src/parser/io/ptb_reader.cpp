@@ -21,7 +21,7 @@ namespace io
 namespace
 {
 
-void read_whitespace(std::ifstream& file)
+void read_whitespace(std::istream& file)
 {
     while (file && std::isspace(file.get()))
     {
@@ -29,7 +29,7 @@ void read_whitespace(std::ifstream& file)
     file.unget();
 }
 
-void read_lparen(std::ifstream& file)
+void read_lparen(std::istream& file)
 {
     if (!file || file.peek() != '(')
         throw std::runtime_error{
@@ -39,7 +39,7 @@ void read_lparen(std::ifstream& file)
     file.get();
 }
 
-void read_rparen(std::ifstream& file)
+void read_rparen(std::istream& file)
 {
     if (!file || file.peek() != ')')
         throw std::runtime_error{
@@ -48,7 +48,7 @@ void read_rparen(std::ifstream& file)
     file.get();
 }
 
-std::string read_word(std::ifstream& file)
+std::string read_word(std::istream& file)
 {
     std::string word;
     while (file && file.peek() != '(' && file.peek() != ')'
@@ -61,13 +61,13 @@ std::string read_word(std::ifstream& file)
     return word;
 }
 
-class_label read_label(std::ifstream& file)
+class_label read_label(std::istream& file)
 {
     read_whitespace(file);
     return class_label{read_word(file)};
 }
 
-std::unique_ptr<node> read_subtree(std::ifstream& file)
+std::unique_ptr<node> read_subtree(std::istream& file)
 {
     read_whitespace(file);
     read_lparen(file);
@@ -96,7 +96,7 @@ std::unique_ptr<node> read_subtree(std::ifstream& file)
     }
 }
 
-std::unique_ptr<node> read_tree(std::ifstream& file)
+std::unique_ptr<node> read_tree(std::istream& file)
 {
     read_lparen(file);
 
@@ -112,21 +112,27 @@ std::unique_ptr<node> read_tree(std::ifstream& file)
 }
 }
 
-std::vector<parse_tree> extract_trees(const std::string& filename)
+std::vector<parse_tree> extract_trees(std::istream& stream)
 {
     std::vector<parse_tree> results;
 
-    std::ifstream file{filename};
-    read_whitespace(file);
+    read_whitespace(stream);
 
-    while (file)
+    while (stream)
     {
-        results.emplace_back(read_tree(file));
-        read_whitespace(file);
+        results.emplace_back(read_tree(stream));
+        read_whitespace(stream);
     }
 
     return results;
 }
+
+std::vector<parse_tree> extract_trees(const std::string& filename)
+{
+    std::ifstream file{filename};
+    return extract_trees(file);
+}
+
 }
 }
 }
