@@ -42,6 +42,12 @@ class node
     virtual bool is_leaf() const = 0;
 
     /**
+     * @param other The other subtree to compare with
+     * @return whether this subtree is equal to the other subtree
+     */
+    virtual bool equal(const node& other) const = 0;
+
+    /**
      * Accepts a transformer.
      * @param trns The transformer to be run on this subtree
      * @return the transformed root of the tree, or null if it was removed

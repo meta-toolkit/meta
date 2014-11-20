@@ -75,6 +75,8 @@ class internal_node : public node
 
     bool is_leaf() const override;
 
+    bool equal(const node& other) const override;
+
     std::unique_ptr<node> accept(tree_transformer&) const override;
 
     template <class Fun>

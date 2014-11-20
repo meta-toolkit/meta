@@ -27,6 +27,12 @@ bool leaf_node::is_leaf() const
     return true;
 }
 
+bool leaf_node::equal(const node& other) const
+{
+    return other.is_leaf() && category() == other.category()
+           && word() == other.as<leaf_node>().word();
+}
+
 std::unique_ptr<node> leaf_node::accept(tree_transformer& trns) const
 {
     return trns.transform(*this);

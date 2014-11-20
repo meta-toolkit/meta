@@ -57,5 +57,11 @@ std::ostream& operator<<(std::ostream& os, const parse_tree& tree)
     pretty_print(os, tree.root_.get(), 0);
     return os;
 }
+
+bool operator==(const parse_tree& lhs, const parse_tree& rhs)
+{
+    return lhs.root_->equal(*rhs.root_);
+}
+
 }
 }

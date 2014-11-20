@@ -38,6 +38,22 @@ bool internal_node::is_leaf() const
     return false;
 }
 
+bool internal_node::equal(const node& other) const
+{
+    if (other.is_leaf() || category() != other.category())
+        return false;
+
+    const auto& internal = other.as<internal_node>();
+
+    if (num_children() != internal.num_children())
+        return false;
+
+    bool ret = true;
+    for (size_t i = 0; i < num_children(); ++i)
+        ret &= children_[i]->equal(*internal.children_[i]);
+    return ret;
+}
+
 std::unique_ptr<node> internal_node::accept(tree_transformer& trns) const
 {
     return trns.transform(*this);
