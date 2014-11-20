@@ -4,6 +4,7 @@
 #include "parser/io/ptb_reader.h"
 #include "parser/trees/transformers/annotation_remover.h"
 #include "parser/trees/transformers/empty_remover.h"
+#include "parser/trees/transformers/unary_chain_remover.h"
 
 int main(int argc, char** argv)
 {
@@ -19,6 +20,7 @@ int main(int argc, char** argv)
 
     parser::annotation_remover ann_rem;
     parser::empty_remover empty_rem;
+    parser::unary_chain_remover uchain_rem;
     for (auto& tree : parser::io::extract_trees(argv[1]))
     {
         parser::parse_tree t{std::move(tree)};
@@ -28,6 +30,7 @@ int main(int argc, char** argv)
         std::cout << "Transformed: " << std::endl;
         t.transform(ann_rem);
         t.transform(empty_rem);
+        t.transform(uchain_rem);
         std::cout << t << std::endl;
     }
     return 0;

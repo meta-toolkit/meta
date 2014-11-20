@@ -23,6 +23,16 @@ void internal_node::add_child(std::unique_ptr<node> child)
     children_.emplace_back(std::move(child));
 }
 
+const node* internal_node::child(uint64_t idx) const
+{
+    return children_.at(idx).get();
+}
+
+uint64_t internal_node::num_children() const
+{
+    return children_.size();
+}
+
 bool internal_node::is_leaf() const
 {
     return false;

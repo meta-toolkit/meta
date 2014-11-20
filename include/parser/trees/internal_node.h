@@ -61,6 +61,18 @@ class internal_node : public node
      */
     void add_child(std::unique_ptr<node> child);
 
+    /**
+     * @return the number of children this node has
+     */
+    uint64_t num_children() const;
+
+    /**
+     * @param idx The index of the child to fetch
+     * @return a non-owning pointer to the child at that index from
+     * left to right
+     */
+    const node* child(uint64_t idx) const;
+
     bool is_leaf() const override;
 
     std::unique_ptr<node> accept(tree_transformer&) const override;
