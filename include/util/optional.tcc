@@ -158,5 +158,20 @@ T* optional<T>::dataptr()
 {
     return std::addressof(storage_.value_);
 }
+
+template <class T>
+bool operator==(const optional<T>& lhs, const optional<T>& rhs)
+{
+    // two disengaged optionals
+    if (!lhs && !rhs)
+        return true;
+
+    // if they are not both engaged
+    if (!(lhs && rhs))
+        return false;
+
+    // both are engaged
+    return *lhs == *rhs;
+}
 }
 }

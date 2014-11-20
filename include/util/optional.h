@@ -221,6 +221,9 @@ class optional
     optional_storage<T> storage_;
 };
 
+template <class T>
+bool operator==(const optional<T>& lhs, const optional<T>& rhs);
+
 /**
  * Exception thrown when trying to obtain the value of a non-engaged
  * optional.
