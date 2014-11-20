@@ -6,10 +6,10 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_PARSE_LEAF_H_
-#define META_PARSE_LEAF_H_
+#ifndef META_PARSE_LEAF_NODE_H_
+#define META_PARSE_LEAF_NODE_H_
 
-#include "parser/tree/node.h"
+#include "parser/trees/node.h"
 #include "util/optional.h"
 
 namespace meta
@@ -36,6 +36,8 @@ class leaf_node : public node
     const util::optional<std::string>& word() const;
 
     bool is_leaf() const override;
+
+    std::unique_ptr<node> accept(tree_transformer&) const override;
 
   private:
     /**

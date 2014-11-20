@@ -3,9 +3,10 @@
  */
 
 #include <ostream>
-#include "parser/tree/parse_tree.h"
-#include "parser/tree/leaf_node.h"
-#include "parser/tree/internal_node.h"
+#include "parser/trees/parse_tree.h"
+#include "parser/trees/leaf_node.h"
+#include "parser/trees/internal_node.h"
+#include "parser/trees/transformers/tree_transformer.h"
 
 namespace meta
 {
@@ -44,6 +45,11 @@ parse_tree::parse_tree(std::unique_ptr<node> root)
     : root_{std::move(root)}
 {
     // nothing
+}
+
+void parse_tree::transform(tree_transformer& trns)
+{
+    root_ = root_->accept(trns);
 }
 
 std::ostream& operator<<(std::ostream& os, const parse_tree& tree)

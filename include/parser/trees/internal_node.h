@@ -11,7 +11,7 @@
 
 #include <memory>
 #include <vector>
-#include "parser/tree/node.h"
+#include "parser/trees/node.h"
 
 namespace meta
 {
@@ -62,6 +62,8 @@ class internal_node : public node
     void add_child(std::unique_ptr<node> child);
 
     bool is_leaf() const override;
+
+    std::unique_ptr<node> accept(tree_transformer&) const override;
 
     template <class Fun>
     void each_child(Fun&& fn) const

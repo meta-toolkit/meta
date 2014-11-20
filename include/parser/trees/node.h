@@ -9,12 +9,15 @@
 #ifndef META_PARSE_TREE_NODE_H_
 #define META_PARSE_TREE_NODE_H_
 
+#include <memory>
 #include "meta.h"
 
 namespace meta
 {
 namespace parser
 {
+
+class tree_transformer;
 
 /**
  * A single node in a parse tree for a sentence.
@@ -37,6 +40,13 @@ class node
      * @return whether this node is a leaf node
      */
     virtual bool is_leaf() const = 0;
+
+    /**
+     * Accepts a transformer.
+     * @param trns The transformer to be run on this subtree
+     * @return the transformed root of the tree, or null if it was removed
+     */
+    virtual std::unique_ptr<node> accept(tree_transformer&) const = 0;
 
     /**
      * Casting operation for nodes to derived types. Node can only be a

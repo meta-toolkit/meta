@@ -10,7 +10,7 @@
 #define META_PARSE_PARSE_TREE_H_
 
 #include <memory>
-#include "parser/tree/node.h"
+#include "parser/trees/node.h"
 
 namespace meta
 {
@@ -38,6 +38,8 @@ class parse_tree
        * @param root The desired root of the parse tree
        */
       parse_tree(std::unique_ptr<node> root);
+
+      void transform(tree_transformer&);
 
       friend std::ostream& operator<<(std::ostream& os, const parse_tree& tree);
 

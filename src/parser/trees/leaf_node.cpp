@@ -3,7 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "parser/tree/leaf_node.h"
+#include "parser/trees/leaf_node.h"
+#include "parser/trees/transformers/tree_transformer.h"
 
 namespace meta
 {
@@ -24,6 +25,11 @@ const util::optional<std::string>& leaf_node::word() const
 bool leaf_node::is_leaf() const
 {
     return true;
+}
+
+std::unique_ptr<node> leaf_node::accept(tree_transformer& trns) const
+{
+    return trns.transform(*this);
 }
 }
 }

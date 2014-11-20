@@ -3,7 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "parser/tree/internal_node.h"
+#include "parser/trees/internal_node.h"
+#include "parser/trees/transformers/tree_transformer.h"
 
 namespace meta
 {
@@ -25,6 +26,11 @@ void internal_node::add_child(std::unique_ptr<node> child)
 bool internal_node::is_leaf() const
 {
     return false;
+}
+
+std::unique_ptr<node> internal_node::accept(tree_transformer& trns) const
+{
+    return trns.transform(*this);
 }
 
 }

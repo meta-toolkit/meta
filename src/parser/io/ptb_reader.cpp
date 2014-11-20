@@ -6,8 +6,8 @@
 #include <iostream>
 #include <fstream>
 #include "parser/io/ptb_reader.h"
-#include "parser/tree/internal_node.h"
-#include "parser/tree/leaf_node.h"
+#include "parser/trees/internal_node.h"
+#include "parser/trees/leaf_node.h"
 #include "utf/utf.h"
 #include "util/shim.h"
 

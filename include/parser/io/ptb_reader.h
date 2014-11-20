@@ -10,7 +10,7 @@
 #define META_PARSER_PTB_READER_H_
 
 #include <vector>
-#include "parser/tree/parse_tree.h"
+#include "parser/trees/parse_tree.h"
 
 namespace meta
 {
