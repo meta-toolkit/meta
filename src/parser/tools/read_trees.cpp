@@ -3,6 +3,7 @@
 #include "logging/logger.h"
 #include "parser/io/ptb_reader.h"
 #include "parser/trees/transformers/annotation_remover.h"
+#include "parser/trees/transformers/empty_remover.h"
 
 int main(int argc, char** argv)
 {
@@ -16,7 +17,8 @@ int main(int argc, char** argv)
 
     logging::set_cerr_logging();
 
-    parser::annotation_remover trns;
+    parser::annotation_remover ann_rem;
+    parser::empty_remover empty_rem;
     for (auto& tree : parser::io::extract_trees(argv[1]))
     {
         parser::parse_tree t{std::move(tree)};
@@ -24,7 +26,8 @@ int main(int argc, char** argv)
         std::cout << t << std::endl;
 
         std::cout << "Transformed: " << std::endl;
-        t.transform(trns);
+        t.transform(ann_rem);
+        t.transform(empty_rem);
         std::cout << t << std::endl;
     }
     return 0;
