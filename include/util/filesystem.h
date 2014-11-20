@@ -68,24 +68,6 @@ inline bool file_exists(const std::string& filename)
 }
 
 /**
- * Copies a file source to file dest.
- * @param source The source file
- * @param dest The destination file
- * @return whether the copy was successful
- */
-inline bool copy_file(const std::string& source, const std::string& dest)
-{
-    if (!file_exists(source))
-        return false;
-
-    std::ifstream source_file{source, std::ios::binary};
-    std::ofstream dest_file{dest, std::ios::binary};
-    dest_file << source_file.rdbuf();
-
-    return true;
-}
-
-/**
  * Calculates a file's size in bytes with support for files over 4GB.
  * @param filename The path for the file
  * @return the number of bytes in the file
@@ -104,6 +86,47 @@ inline uint64_t file_size(const std::string& filename)
     stat64(filename.c_str(), &st);
 #endif
     return st.st_size;
+}
+
+/**
+ * Copies a file source to file dest.
+ * @param source The source file
+ * @param dest The destination file
+ * @return whether the copy was successful
+ */
+inline bool copy_file(const std::string& source, const std::string& dest)
+{
+    if (!file_exists(source))
+        return false;
+
+    // if file is larger than 128 MB, show copy progress
+    auto size = file_size(source);
+    uint64_t max_size = 1024 * 1024 * 1024 * 128;
+    printing::progress prog{"Copying file ", size};
+    if(size > max_size)
+    {
+        std::ifstream source_file{source};
+        std::ofstream dest_file{dest};
+        uint64_t buf_size = 1024 * 1024 * 32; // 32 MB buffer
+        auto buffer = std::make_unique<char[]>(buf_size);
+        while (source_file)
+        {
+            source_file.read(buffer.get(), buf_size);
+            auto processed = source_file.gcount();
+            dest_file.write(buffer.get(), processed);
+            prog(processed);
+        }
+        prog.end();
+    }
+    // otherwise, copy the file normally
+    else
+    {
+        std::ifstream source_file{source, std::ios::binary};
+        std::ofstream dest_file{dest, std::ios::binary};
+        dest_file << source_file.rdbuf();
+    }
+
+    return true;
 }
 
 /**
