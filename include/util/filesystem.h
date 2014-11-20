@@ -103,17 +103,19 @@ inline bool copy_file(const std::string& source, const std::string& dest)
     auto size = file_size(source);
     uint64_t max_size = 1024 * 1024 * 1024 * 128;
     printing::progress prog{"Copying file ", size};
-    if(size > max_size)
+    if (size > max_size)
     {
         std::ifstream source_file{source};
         std::ofstream dest_file{dest};
         uint64_t buf_size = 1024 * 1024 * 32; // 32 MB buffer
+        uint64_t total_processed = 0;
         auto buffer = std::make_unique<char[]>(buf_size);
         while (source_file)
         {
             source_file.read(buffer.get(), buf_size);
             auto processed = source_file.gcount();
-            dest_file.write(buffer.get(), processed);
+            total_processed += processed;
+            dest_file.write(buffer.get(), total_processed);
             prog(processed);
         }
         prog.end();
