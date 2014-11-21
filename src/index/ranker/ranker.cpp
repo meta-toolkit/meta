@@ -28,7 +28,7 @@ ranker::score(inverted_index& idx, corpus::document& query,
 
     // zeros out elements and (if necessary) resizes the vector; this eliminates
     // constructing a new vector each query for the same index
-    results_.assign(sd.num_docs, 0.0);
+    results_.assign(sd.num_docs, std::numeric_limits<double>::lowest());
 
     for (auto& tpair : query.counts())
     {
