@@ -21,11 +21,12 @@ const std::string knn::id = "knn";
 
 knn::knn(std::shared_ptr<index::inverted_index> idx,
          std::shared_ptr<index::forward_index> f_idx, uint16_t k,
-         std::unique_ptr<index::ranker> ranker)
+         std::unique_ptr<index::ranker> ranker, bool weighted /* = false */)
     : classifier{std::move(f_idx)},
       inv_idx_{std::move(idx)},
       k_{k},
-      ranker_{std::move(ranker)}
+      ranker_{std::move(ranker)},
+      weighted_{weighted}
 { /* nothing */
 }
 
@@ -51,11 +52,18 @@ class_label knn::classify(doc_id d_id)
         return legal_docs_.find(d_id) != legal_docs_.end();
     });
 
-    std::unordered_map<class_label, uint16_t> counts;
+    std::unordered_map<class_label, double> counts;
     uint16_t i = 0;
     for (auto& s : scored)
     {
-        ++counts[idx_->label(s.first)];
+        // normally, weighted k-nn weights neighbors by 1/distance, but since
+        // our scores are similarity scores, we weight by the similarity
+        if (weighted_)
+            counts[idx_->label(s.first)] += s.second;
+        // if not weighted, each neighbor gets an equal vote
+        else
+            ++counts[idx_->label(s.first)];
+
         if (++i > k_)
             break;
     }
@@ -87,13 +95,12 @@ class_label knn::select_best_label(
     }
 
     // now best contains all the class labels that are tied for the highest vote
-
     if (best.size() == 1)
         return *best.begin();
 
     // since there is a tie, return the class label that appeared first in the
-    // rankings
-
+    // rankings; this will usually only happen if the neighbor scores are not
+    // weighted
     for (auto& p : scored)
     {
         class_label lbl{inv_idx_->label(p.first)};
@@ -127,8 +134,13 @@ std::unique_ptr<classifier> make_multi_index_classifier<knn>(
         throw classifier_factory::exception{
             "knn requires a ranker to be specified in its configuration"};
 
+    bool use_weighted = false;
+    auto weighted = config.get_as<bool>("weighted");
+    if (weighted)
+        use_weighted = *weighted;
+
     return make_unique<knn>(std::move(inv_idx), std::move(idx), *k,
-                            index::make_ranker(*ranker));
+                            index::make_ranker(*ranker), use_weighted);
 }
 }
 }

@@ -37,10 +37,12 @@ class knn : public classifier
      * @param ranker The ranker to be used internally
      * @param k The value of k in k-NN
      * @param args Arguments to the chosen ranker constructor
+     * @param weighted Whether to weight the neighbors by distance to the query
      */
     knn(std::shared_ptr<index::inverted_index> idx,
         std::shared_ptr<index::forward_index> f_idx, uint16_t k,
-        std::unique_ptr<index::ranker> ranker);
+        std::unique_ptr<index::ranker> ranker,
+        bool weighted = false);
 
     /**
      * Creates a classification model based on training documents.
@@ -84,6 +86,9 @@ class knn : public classifier
 
     /** documents that are "legal" to be used in the results */
     std::unordered_set<doc_id> legal_docs_;
+
+    /** Whether we want the neighbors to be weighted by distance or not */
+    const bool weighted_;
 
   public:
     /**
