@@ -10,6 +10,7 @@
 #include "parser/trees/transformers/annotation_remover.h"
 #include "parser/trees/transformers/empty_remover.h"
 #include "parser/trees/transformers/unary_chain_remover.h"
+#include "parser/trees/transformers/multi_transformer.h"
 
 namespace meta
 {
@@ -40,6 +41,9 @@ int transformer_tests()
     empty_remover empty_rem;
     unary_chain_remover uchain_rem;
 
+    multi_transformer<annotation_remover, empty_remover, unary_chain_remover>
+        multi;
+
     num_failed += testing::run_test("annotation_remover", [&]()
                                     {
         auto tree = "((X (Y (Z-XXX (Y z))) (Z|Q (Y=1 (X x)))))";
@@ -62,6 +66,15 @@ int transformer_tests()
         auto tree_nochain = "((X (X (Y y) (Z z)) (X x)))";
 
         assert_tree_equal(tree, tree_nochain, uchain_rem);
+    });
+
+    num_failed += testing::run_test("multi_transformer", [&]()
+                                    {
+        auto tree = "((X (Y-NNN (-NONE- *)) (Z (Z (Z z))) (W (W (Y (-NONE- *) "
+                    "(Q q))))))";
+        auto tree_trans = "((X (Z z) (W (Y (Q q)))))";
+
+        assert_tree_equal(tree, tree_trans, multi);
     });
 
     return num_failed;
