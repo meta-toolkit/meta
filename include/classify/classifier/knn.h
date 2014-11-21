@@ -100,9 +100,10 @@ class knn : public classifier
  * Specialization of the factory method used to create knn classifiers.
  */
 template <>
-std::unique_ptr<classifier> make_multi_index_classifier<knn>(
-        const cpptoml::toml_group&, std::shared_ptr<index::forward_index>,
-        std::shared_ptr<index::inverted_index>);
+std::unique_ptr<classifier>
+    make_multi_index_classifier<knn>(const cpptoml::toml_group&,
+                                     std::shared_ptr<index::forward_index>,
+                                     std::shared_ptr<index::inverted_index>);
 }
 }
 #endif
