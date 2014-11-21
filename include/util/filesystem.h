@@ -104,9 +104,9 @@ inline bool copy_file(const std::string& source, const std::string& dest)
     // if file is larger than 128 MB, show copy progress
     auto size = file_size(source);
     uint64_t max_size = 1024UL * 1024UL * 1024UL * 128UL;
-    printing::progress prog{"Copying file ", size};
     if (size > max_size)
     {
+        printing::progress prog{"Copying file ", size};
         std::ifstream source_file{source};
         std::ofstream dest_file{dest};
         uint64_t buf_size = 1024UL * 1024UL * 32UL; // 32 MB buffer
