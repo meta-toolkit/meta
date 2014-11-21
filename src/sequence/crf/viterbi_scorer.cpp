@@ -36,7 +36,7 @@ viterbi_trellis crf::viterbi_scorer::viterbi(const sequence& seq)
     {
         for (label_id lbl{0}; lbl < model_->num_labels(); ++lbl)
         {
-            double max_score = std::numeric_limits<double>::min();
+            double max_score = std::numeric_limits<double>::lowest();
             for (label_id in{0}; in < model_->num_labels(); ++in)
             {
                 auto score = table.probability(t - 1, in)
