@@ -76,6 +76,18 @@ int run_tests(const std::string& type)
         check_split(*f_idx, kn, 0.88);
     });
 
+    num_failed += testing::run_test("nearest-centroid-cv-" + type, [&]()
+    {
+        nearest_centroid nc{i_idx, f_idx};
+        check_cv(*f_idx, nc, 0.88);
+    });
+
+    num_failed += testing::run_test("nearest-centroid-split-" + type, [&]()
+    {
+        nearest_centroid nc{i_idx, f_idx};
+        check_split(*f_idx, nc, 0.84);
+    });
+
     num_failed += testing::run_test("sgd-cv-" + type, [&]()
     {
         one_vs_all hinge_sgd{f_idx, [&](class_label positive)
