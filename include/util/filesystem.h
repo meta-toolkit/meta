@@ -12,6 +12,7 @@
 
 #include <string>
 #include <fstream>
+#include <vector>
 #include <sys/stat.h>
 #include "io/mmap_file.h"
 #include "util/printing.h"
@@ -110,13 +111,13 @@ inline bool copy_file(const std::string& source, const std::string& dest)
         std::ofstream dest_file{dest};
         uint64_t buf_size = 1024UL * 1024UL * 32UL; // 32 MB buffer
         uint64_t total_processed = 0;
-        auto buffer = make_unique<char[]>(buf_size);
+        std::vector<char> buffer(buf_size);
         while (source_file)
         {
-            source_file.read(buffer.get(), buf_size);
+            source_file.read(buffer.data(), buf_size);
             auto processed = source_file.gcount();
             total_processed += processed;
-            dest_file.write(buffer.get(), total_processed);
+            dest_file.write(buffer.data(), total_processed);
             prog(processed);
         }
         prog.end();
