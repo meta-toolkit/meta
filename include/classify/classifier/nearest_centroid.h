@@ -6,13 +6,11 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_nearest_centroid_H_
-#define META_nearest_centroid_H_
+#ifndef META_NEAREST_CENTROID_H_
+#define META_NEAREST_CENTROID_H_
 
-#include <unordered_set>
 #include "index/inverted_index.h"
 #include "index/forward_index.h"
-#include "index/ranker/ranker.h"
 #include "classify/classifier_factory.h"
 #include "classify/classifier/classifier.h"
 
@@ -22,26 +20,25 @@ namespace classify
 {
 
 /**
- * Implements the k-Nearest Neighbor lazy learning classification algorithm.
+ * Implements the nearest centroid classification algorithm. nearest_centroid
+ * creates a prototype document for each distinct class as an average of all
+ * documents in that class. This is called the centroid. A query (testing
+ * document) is then compared against each centroid. The class label of the
+ * centroid they query is closest to is returned.
+ * @see Centroid-Based Document Classification: Analysis and Experimental
+ * Results, Eui-Hong Han and George Karypis, 2000
  */
 class nearest_centroid : public classifier
 {
   public:
-    /**
-     * Identifier for this classifier.
-     */
+    /// Identifier for this classifier.
     const static std::string id;
 
     /**
      * @param idx The index to run the classifier on
-     * @param ranker The ranker to be used internally
-     * @param args Arguments to the chosen ranker constructor
-     * @param weighted Whether to weight the neighbors by distance to the query
      */
     nearest_centroid(std::shared_ptr<index::inverted_index> idx,
-                     std::shared_ptr<index::forward_index> f_idx,
-                     std::unique_ptr<index::ranker> ranker,
-                     bool weighted = false);
+                     std::shared_ptr<index::forward_index> f_idx);
 
     /**
      * Creates a classification model based on training documents.
@@ -63,14 +60,20 @@ class nearest_centroid : public classifier
     void reset() override;
 
   private:
+    /**
+     * @param d_id
+     * @param centroid
+     * @return the cosine similarity between the query and a centroid
+     */
+    double cosine_sim(const std::vector<std::pair<term_id, double>>& doc,
+                      const std::unordered_map<term_id, double>& centroid);
+
     /// Inverted index used for ranking
     std::shared_ptr<index::inverted_index> inv_idx_;
 
-    /// The ranker that is used to score the queries in the index.
-    std::unique_ptr<index::ranker> ranker_;
-
-    /// Whether we want the centroids to be weighted by distance or not
-    const bool weighted_;
+    /// The document centroids for this learner
+    std::unordered_map<class_label, std::unordered_map<term_id, double>>
+        centroids_;
 
   public:
     /**
