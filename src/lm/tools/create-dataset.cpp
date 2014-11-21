@@ -14,7 +14,9 @@ using namespace meta;
 
 int main(int argc, char* argv[])
 {
-    lm::diff correcter{cpptoml::parse_file(argv[1])};
+    bool diagnostic = true;
+    auto config = cpptoml::parse_file(argv[1]);
+    lm::diff correcter{*config.get_group("diff-config")};
     std::string line;
     std::ifstream in{argv[2]};
     std::ofstream out{"edits.dat"};
@@ -25,6 +27,11 @@ int main(int argc, char* argv[])
             continue;
         try
         {
+            if (diagnostic)
+            {
+                out << std::endl;
+                out << line << std::endl;
+            }
             lm::sentence sent{line};
             auto candidates = correcter.candidates(sent, true);
             auto edits = candidates[0].first.operations();
@@ -36,6 +43,8 @@ int main(int argc, char* argv[])
                     out << e << " ";
                 out << std::endl;
             }
+            if (diagnostic)
+                out << candidates[0].first.to_string() << std::endl;
         }
         catch (lm::sentence_exception& ex)
         {
