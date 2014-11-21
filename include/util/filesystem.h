@@ -16,6 +16,7 @@
 #include "io/mmap_file.h"
 #include "util/printing.h"
 #include "util/progress.h"
+#include "shim.h"
 
 namespace meta
 {
@@ -101,15 +102,15 @@ inline bool copy_file(const std::string& source, const std::string& dest)
 
     // if file is larger than 128 MB, show copy progress
     auto size = file_size(source);
-    uint64_t max_size = 1024 * 1024 * 1024 * 128;
+    uint64_t max_size = 1024UL * 1024UL * 1024UL * 128UL;
     printing::progress prog{"Copying file ", size};
     if (size > max_size)
     {
         std::ifstream source_file{source};
         std::ofstream dest_file{dest};
-        uint64_t buf_size = 1024 * 1024 * 32; // 32 MB buffer
+        uint64_t buf_size = 1024UL * 1024UL * 32UL; // 32 MB buffer
         uint64_t total_processed = 0;
-        auto buffer = std::make_unique<char[]>(buf_size);
+        auto buffer = make_unique<char[]>(buf_size);
         while (source_file)
         {
             source_file.read(buffer.get(), buf_size);
