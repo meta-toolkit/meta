@@ -8,6 +8,7 @@ add_library(meta-classify binary_classifier_factory.cpp
                           classifier/classifier.cpp
                           classifier/dual_perceptron.cpp
                           classifier/knn.cpp
+                          classifier/nearest_centroid.cpp
                           classifier/logistic_regression.cpp
                           classifier/naive_bayes.cpp
                           classifier/one_vs_all.cpp

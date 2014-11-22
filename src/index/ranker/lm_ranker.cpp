@@ -18,10 +18,15 @@ const std::string language_model_ranker::id = "language-model";
 double language_model_ranker::score_one(const score_data& sd)
 {
     double ps = smoothed_prob(sd);
-    double doc_const = doc_constant(sd);
     double pc = static_cast<double>(sd.corpus_term_count) / sd.total_terms;
 
-    return ps / doc_const * pc + sd.query.length() * std::log(1 + doc_const);
+    return sd.query_term_count * std::log(ps / (doc_constant(sd) * pc));
 }
+
+double language_model_ranker::initial_score(const score_data& sd) const
+{
+    return sd.query.length() * std::log(doc_constant(sd));
+}
+
 }
 }

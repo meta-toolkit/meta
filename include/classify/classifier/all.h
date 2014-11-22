@@ -1,4 +1,5 @@
 #include "classify/classifier/knn.h"
+#include "classify/classifier/nearest_centroid.h"
 #include "classify/classifier/one_vs_all.h"
 #include "classify/classifier/one_vs_one.h"
 #include "classify/classifier/naive_bayes.h"

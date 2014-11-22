@@ -28,7 +28,7 @@ ranker::score(inverted_index& idx, corpus::document& query,
 
     // zeros out elements and (if necessary) resizes the vector; this eliminates
     // constructing a new vector each query for the same index
-    results_.assign(sd.num_docs, 0.0);
+    results_.assign(sd.num_docs, std::numeric_limits<double>::lowest());
 
     for (auto& tpair : query.counts())
     {
@@ -44,6 +44,12 @@ ranker::score(inverted_index& idx, corpus::document& query,
             sd.doc_term_count = dpair.second;
             sd.doc_size = idx.doc_size(dpair.first);
             sd.doc_unique_terms = idx.unique_terms(dpair.first);
+
+            // if this is the first time we've seen this document, compute
+            // its initial score
+            if (results_[dpair.first] == std::numeric_limits<double>::lowest())
+                results_[dpair.first] = initial_score(sd);
+
             results_[dpair.first] += score_one(sd);
         }
     }
@@ -75,5 +81,11 @@ ranker::score(inverted_index& idx, corpus::document& query,
 
     return sorted;
 }
+
+double ranker::initial_score(const score_data&) const
+{
+    return 0.0;
+}
+
 }
 }

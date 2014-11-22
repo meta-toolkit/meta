@@ -11,21 +11,26 @@ MeTA is a modern C++ data sciences toolkit featuring
 
  - inverted and forward indexes with compression and various caching strategies
 
- - various ranking functions for the indexes
+ - a collection of ranking functions for searching the indexes
 
- - topic modeling algorithms
-
- - language modeling algorithms
-
- - clustering and similarity algorithms
+ - topic models with different inference methods
 
  - classification algorithms
 
- - wrappers for liblinear and slda
+ - graph representations and algorithms
+
+ - language models
+
+ - CRF implementation (for POS-tagging, shallow parsing)
+
+ - wrappers for liblinear and libsvm (including libsvm dataset parsers)
+
+ - UTF8 support for analysis on various languages
+
+ - multithreaded algorithms
 
 Doxygen documentation can be found
-[here](http://web.engr.illinois.edu/~massung1/toolkit-doc/). Note that this is
-probably not as frequently updated as it should be.
+[here](http://meta-toolkit.github.io/meta/doxygen/).
 
 Our current goal for MeTA is to publish in [JMLR's Machine Learning Open-Source
 Software](http://jmlr.org/mloss/).
@@ -66,7 +71,7 @@ git submodule update
 mkdir build
 cd build
 # omit CXX=clang++ if you want to use your default compiler
-CXX=clang++ cmake ../ -DCMAKE_BUILD_TYPE=Debug
+CXX=clang++ cmake ../ -DCMAKE_BUILD_TYPE=Release
 make
 ```
 
