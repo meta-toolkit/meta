@@ -57,6 +57,16 @@ class information_gain : public feature_selector
         double gain_ntc = p_ntc * std::log(p_ntc / (p_nt * p_c));
         double gain_tnc = p_tnc * std::log(p_tnc / (p_t * p_nc));
 
+        // if any denominators were zero, make the expression zero
+        if (std::isnan(gain_tc))
+            gain_tc = 0.0;
+        if (std::isnan(gain_ntnc))
+            gain_ntnc = 0.0;
+        if (std::isnan(gain_ntc))
+            gain_ntc = 0.0;
+        if (std::isnan(gain_tnc))
+            gain_tnc = 0.0;
+
         return gain_tc + gain_ntnc + gain_ntc + gain_tnc;
     }
 };

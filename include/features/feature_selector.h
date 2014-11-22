@@ -11,13 +11,11 @@
 #define META_FEATURE_SELECTOR_H_
 
 #include <string>
-#include <fstream>
 #include <vector>
 #include <memory>
 
 #include "util/disk_vector.h"
 #include "index/forward_index.h"
-#include "io/binary.h"
 
 namespace meta
 {
@@ -163,9 +161,6 @@ class feature_selector
 
     /// Whether or not a term_id is currently selected
     util::disk_vector<bool> selected_;
-
-    /// Binary files containing features sorted by scores, indexed by label_id
-    std::vector<std::ifstream> sorted_features_;
 
     /// P(t) in the entire collection, indexed by term_id
     std::vector<double> term_prob_;

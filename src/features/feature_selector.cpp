@@ -4,10 +4,13 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include "util/filesystem.h"
 #include "util/progress.h"
+#include "parallel/parallel_for.h"
 #include "features/feature_selector.h"
 #include "index/postings_data.h"
+#include "io/binary.h"
 
 namespace meta
 {
@@ -45,14 +48,38 @@ void feature_selector::init()
 
 void feature_selector::score_all()
 {
+    using pair_t = std::pair<term_id, double>;
+    std::vector<std::vector<pair_t>> scores(
+        class_prob_.size(), std::vector<pair_t>(term_prob_.size()));
+
     printing::progress prog{" > Selecting features: ", term_prob_.size()};
     for (uint64_t tid = 0; tid < term_prob_.size(); ++tid)
     {
         prog(tid);
         for (uint64_t lbl = 0; lbl < class_prob_.size(); ++lbl)
-            score(label_id{lbl + 1}, term_id{tid});
+            scores[lbl][tid]
+                = std::make_pair(tid, score(label_id{lbl + 1}, term_id{tid}));
     }
     prog.end();
+
+    parallel::parallel_for(scores.begin(), scores.end(), [&](auto& v)
+                           {
+        std::sort(v.begin(), v.end(), [&](const auto& a, const auto& b)
+                  {
+            return a.second < b.second;
+        });
+    });
+
+    for (uint64_t lbl = 0; lbl < class_prob_.size(); ++lbl)
+    {
+        // write (term_id, score) pairs
+        std::ofstream out{prefix_ + "." + std::to_string(lbl + 1)};
+        for (auto& score : scores[lbl])
+        {
+            io::write_binary(out, score.first);
+            io::write_binary(out, score.second);
+        }
+    }
 }
 
 void feature_selector::select(uint64_t k /* = 25 */)
@@ -73,8 +100,7 @@ void feature_selector::select_percent(double p /* = 0.05 */)
 
 void feature_selector::calc_probs()
 {
-    printing::progress prog{" > Calculating feature probs: ",
-                            idx_->num_docs()};
+    printing::progress prog{" > Calculating feature probs: ", idx_->num_docs()};
     uint64_t total_terms = 0;
     for (doc_id did = doc_id{0}; did < idx_->num_docs(); ++did)
     {
@@ -103,7 +129,25 @@ void feature_selector::calc_probs()
 
 void feature_selector::print_summary(uint64_t k /* = 20 */) const
 {
-    std::cout << "Feature summary: top " << k << " features" << std::endl;
+    term_id tid;
+    double score;
+    for (uint64_t lbl = 0; lbl < class_prob_.size(); ++lbl)
+    {
+        std::cout << std::endl << "Top " << k << " features for \""
+                  << idx_->class_label_from_id(label_id{lbl + 1})
+                  << "\":" << std::endl
+                  << "===============================" << std::endl;
+
+        // read (term_id, score) pairs
+        std::ifstream in{prefix_ + "." + std::to_string(lbl + 1)};
+        for (uint64_t i = 0; i < k; ++i)
+        {
+            io::read_binary(in, tid);
+            io::read_binary(in, score);
+            std::cout << (i + 1) << ". " << idx_->term_text(tid) << " ("
+                      << score << ")" << std::endl;
+        }
+    }
 }
 
 double feature_selector::prob_term(term_id id) const
