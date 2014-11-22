@@ -51,7 +51,7 @@ void nearest_centroid::train(const std::vector<doc_id>& docs)
 
 class_label nearest_centroid::classify(doc_id d_id)
 {
-    double best_score = std::numeric_limits<double>::min();
+    double best_score = std::numeric_limits<double>::lowest();
     class_label best_label;
 
     auto pdata = idx_->search_primary(d_id);
