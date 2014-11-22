@@ -40,6 +40,8 @@ ranker::score(inverted_index& idx, corpus::document& query,
         sd.corpus_term_count = idx.total_num_occurences(sd.t_id);
         for (auto& dpair : pdata->counts())
         {
+            if (results_[dpair.first] == std::numeric_limits<double>::lowest())
+                results_[dpair.first] = 0;
             sd.d_id = dpair.first;
             sd.doc_term_count = dpair.second;
             sd.doc_size = idx.doc_size(dpair.first);
