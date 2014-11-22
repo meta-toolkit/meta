@@ -9,7 +9,8 @@
 
 #include <iostream>
 #include "cpptoml.h"
-#include "features/feature_selector.h"
+#include "util/shim.h"
+#include "features/information_gain.h"
 #include "index/forward_index.h"
 
 using namespace meta;
@@ -34,7 +35,6 @@ int main(int argc, char* argv[])
 
     auto f_idx = index::make_index<index::memory_forward_index>(argv[1]);
     auto f_prefix = feature_config->get_as<std::string>("prefix");
-    features::feature_selector selector{*f_prefix, f_idx};
-
+    features::information_gain selector{*f_prefix, f_idx};
     selector.print_summary();
 }
