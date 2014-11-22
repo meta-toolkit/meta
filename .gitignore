@@ -7,9 +7,4 @@ doc/
 .*.swp
 *.o
 *.class
-*.pyc
-learn
-features
-search
-tester
 .*
