@@ -56,9 +56,18 @@ class ranker
           });
 
     /**
+     * Computes the contribution to the score of a document for a matched
+     * query term.
      * @param sd The score_data for this query
      */
     virtual double score_one(const score_data& sd) = 0;
+
+    /**
+     * Computes the constant contribution to the score of a particular
+     * document.
+     * @param sd The score_data for the query
+     */
+    virtual double initial_score(const score_data& sd) const;
 
     /**
      * Default destructor.

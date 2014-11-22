@@ -58,11 +58,14 @@ class classifier
      * this function, it is not necessary to call train() or test() first.
      * @param input_docs Testing documents
      * @param k The number of folds
+     * @param even_split Whether to evenly split the data by class for a fair
+     * baseline
      * @param seed The seed for the RNG used to shuffle the documents
      * @return a confusion_matrix containing the results over all the folds
      */
-    virtual confusion_matrix cross_validate(
-            const std::vector<doc_id>& input_docs, size_t k, int seed = 1);
+    virtual confusion_matrix
+        cross_validate(const std::vector<doc_id>& input_docs, size_t k,
+                       bool even_split = false, int seed = 1);
 
     /**
      * Clears any learning data associated with this classifier.
@@ -72,6 +75,15 @@ class classifier
   protected:
     /** the index that the classifer is run on */
     std::shared_ptr<index::forward_index> idx_;
+
+  private:
+    /**
+     * Modifies input_docs to be a vector of size <= the original vector size
+     * with an even distribution of class labels per document
+     * @param input_docs
+     * @param seed The seed for the RNG used to shuffle the documents
+     */
+    void create_even_split(std::vector<doc_id>& docs, int seed = 2) const;
 };
 }
 }

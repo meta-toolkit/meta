@@ -70,7 +70,11 @@ class segmenter::impl
      */
     std::string substr(int32_t begin, int32_t end) const
     {
+#ifdef META_ICU_NO_TEMP_SUBSTRING
+        icu::UnicodeString substring{u_str_, begin, end - begin};
+#else
         auto substring = u_str_.tempSubStringBetween(begin, end);
+#endif
         return icu_to_u8str(substring);
     }
 
@@ -131,7 +135,12 @@ class segmenter::impl
             throw std::runtime_error{err};
         }
 
+#ifdef META_ICU_NO_TEMP_SUBSTRING
+        icu::UnicodeString substring{u_str_, first, last - first};
+        iter->setText(substring);
+#else
         iter->setText(u_str_.tempSubStringBetween(first, last));
+#endif
 
         auto start = iter->first();
         auto end = iter->next();

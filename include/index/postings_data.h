@@ -18,6 +18,7 @@
 #include "meta.h"
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
+#include "util/sparse_vector.h"
 
 namespace meta
 {
@@ -226,7 +227,7 @@ class postings_data
     PrimaryKey p_id_;
 
     /// The (secondary_key_type, count) pairs
-    count_t counts_;
+    util::sparse_vector<SecondaryKey, double> counts_;
 
     /// delimiter used when writing to compressed files
     const static uint64_t delimiter_ = std::numeric_limits<uint64_t>::max();
