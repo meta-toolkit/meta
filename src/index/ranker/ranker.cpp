@@ -40,12 +40,16 @@ ranker::score(inverted_index& idx, corpus::document& query,
         sd.corpus_term_count = idx.total_num_occurences(sd.t_id);
         for (auto& dpair : pdata->counts())
         {
-            if (results_[dpair.first] == std::numeric_limits<double>::lowest())
-                results_[dpair.first] = 0;
             sd.d_id = dpair.first;
             sd.doc_term_count = dpair.second;
             sd.doc_size = idx.doc_size(dpair.first);
             sd.doc_unique_terms = idx.unique_terms(dpair.first);
+
+            // if this is the first time we've seen this document, compute
+            // its initial score
+            if (results_[dpair.first] == std::numeric_limits<double>::lowest())
+                results_[dpair.first] = initial_score(sd);
+
             results_[dpair.first] += score_one(sd);
         }
     }
@@ -77,5 +81,11 @@ ranker::score(inverted_index& idx, corpus::document& query,
 
     return sorted;
 }
+
+double ranker::initial_score(const score_data&) const
+{
+    return 0.0;
+}
+
 }
 }

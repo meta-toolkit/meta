@@ -47,13 +47,12 @@ int ranker_tests()
         encoding = *enc;
 
     int num_failed = 0;
-    /* TODO why does this not always work?
     num_failed += testing::run_test("ranker-absolute-discount", [&]()
     {
         index::absolute_discount r;
-        test_rank(r, idx);
+        test_rank(r, *idx, encoding);
     });
-    */
+
     num_failed += testing::run_test("ranker-dirichlet-prior", [&]()
     {
         index::dirichlet_prior r;
