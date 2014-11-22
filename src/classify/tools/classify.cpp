@@ -90,7 +90,8 @@ int main(int argc, char* argv[])
     progress.end();
 
     std::unique_ptr<classify::classifier> classifier;
-    if (*class_config->get_as<std::string>("method") == "knn")
+    auto classifier_method = *class_config->get_as<std::string>("method");
+    if (classifier_method == "knn" || classifier_method == "nearest-centroid")
     {
         auto i_idx
             = index::make_index<index::dblru_inverted_index>(argv[1], 10000);

@@ -32,6 +32,8 @@ class language_model_ranker : public ranker
      */
     double score_one(const score_data& sd) override;
 
+    double initial_score(const score_data& sd) const override;
+
     /**
      * Calculates the smoothed probability of a term.
      * @param sd
