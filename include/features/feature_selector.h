@@ -57,7 +57,7 @@ class feature_selector
      * Sets the top k features for *each class* to be "selected"
      * @param k
      */
-    virtual void select(uint64_t k = 25);
+    virtual void select(uint64_t k = 20);
 
     /**
      * Selects approximately the top p percent features for the entire dataset,
@@ -72,8 +72,9 @@ class feature_selector
      * Creates the state of this feature_selector if necessary; this logic is
      * outside the constructor since it requires pure virtual functions
      * implemented by deriving classes.
+     * @param features_per_class
      */
-    void init();
+    void init(uint64_t features_per_class);
 
     /**
      * Scores a (label, term) pair in the index according to the derived class's

@@ -29,10 +29,11 @@ class information_gain : public feature_selector
      * Constructor.
      */
     information_gain(const std::string& prefix,
-                     std::shared_ptr<index::forward_index> idx)
-        : feature_selector{prefix, std::move(idx)}
+                     std::shared_ptr<index::forward_index> idx,
+                     uint64_t features_per_class = 20)
+        : feature_selector{prefix + ".ig", std::move(idx)}
     {
-        init();
+        init(features_per_class);
     }
 
     /**

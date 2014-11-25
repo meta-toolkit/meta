@@ -24,11 +24,11 @@ feature_selector::feature_selector(const std::string& prefix,
 { /* nothing */
 }
 
-void feature_selector::init()
+void feature_selector::init(uint64_t features_per_class)
 {
     // if the first class distribution doesn't exist, we haven't created the
     // data for this feature_selector yet
-    if (!filesystem::file_exists(prefix_ + ".0"))
+    if (!filesystem::file_exists(prefix_ + ".1"))
     {
         // initially set all probabilities to zero; this allows fast random
         // access to the probabilities
@@ -38,11 +38,7 @@ void feature_selector::init()
                          std::vector<double>(idx_->unique_terms(), 0.0));
         calc_probs();
         score_all();
-    }
-    else
-    {
-        std::cout << "Loading feature_selector not implemented yet"
-                  << std::endl;
+        select(features_per_class);
     }
 }
 
@@ -53,10 +49,10 @@ void feature_selector::score_all()
         class_prob_.size(), std::vector<pair_t>(term_prob_.size()));
 
     printing::progress prog{" > Selecting features: ", term_prob_.size()};
-    for (uint64_t tid = 0; tid < term_prob_.size(); ++tid)
+    for (uint64_t tid = 0; tid < idx_->unique_terms(); ++tid)
     {
         prog(tid);
-        for (uint64_t lbl = 0; lbl < class_prob_.size(); ++lbl)
+        for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
             scores[lbl][tid]
                 = std::make_pair(tid, score(label_id{lbl + 1}, term_id{tid}));
     }
@@ -70,7 +66,7 @@ void feature_selector::score_all()
         });
     });
 
-    for (uint64_t lbl = 0; lbl < class_prob_.size(); ++lbl)
+    for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
     {
         // write (term_id, score) pairs
         std::ofstream out{prefix_ + "." + std::to_string(lbl + 1)};
@@ -82,13 +78,34 @@ void feature_selector::score_all()
     }
 }
 
-void feature_selector::select(uint64_t k /* = 25 */)
+void feature_selector::select(uint64_t features_per_class /* = 20 */)
 {
+    term_id id;
+    double score;
+    std::unordered_set<term_id> terms;
+    for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
+    {
+        std::ifstream in{prefix_ + "." + std::to_string(lbl + 1)};
+        for (uint64_t i = 0; i < features_per_class; ++i)
+        {
+            io::read_binary(in, id);
+            io::read_binary(in, score);
+            terms.insert(id);
+        }
+    }
+
+    // zero out old vector
+    for (auto& b : selected_)
+        b = false;
+
+    // select new features
+    for (auto& term : terms)
+        selected_[term] = true;
 }
 
 bool feature_selector::selected(term_id term) const
 {
-    return false;
+    return selected_[term];
 }
 
 void feature_selector::select_percent(double p /* = 0.05 */)
@@ -131,7 +148,7 @@ void feature_selector::print_summary(uint64_t k /* = 20 */) const
 {
     term_id tid;
     double score;
-    for (uint64_t lbl = 0; lbl < class_prob_.size(); ++lbl)
+    for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
     {
         std::cout << std::endl << "Top " << k << " features for \""
                   << idx_->class_label_from_id(label_id{lbl + 1})
