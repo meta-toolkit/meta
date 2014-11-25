@@ -40,6 +40,7 @@ classifier_factory::classifier_factory()
 
     // built-in multi-index classifiers
     reg_mi<knn>();
+    reg_mi<nearest_centroid>();
 }
 
 std::unique_ptr<classifier> make_classifier(
