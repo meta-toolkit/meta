@@ -2,9 +2,9 @@
 
 #include "logging/logger.h"
 #include "parser/io/ptb_reader.h"
-#include "parser/trees/transformers/annotation_remover.h"
-#include "parser/trees/transformers/empty_remover.h"
-#include "parser/trees/transformers/unary_chain_remover.h"
+#include "parser/trees/visitors/annotation_remover.h"
+#include "parser/trees/visitors/empty_remover.h"
+#include "parser/trees/visitors/unary_chain_remover.h"
 
 int main(int argc, char** argv)
 {

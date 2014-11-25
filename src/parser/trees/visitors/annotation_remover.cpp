@@ -3,7 +3,9 @@
  * @author Chase Geigle
  */
 
-#include "parser/trees/transformers/annotation_remover.h"
+#include "parser/trees/visitors/annotation_remover.h"
+#include "parser/trees/internal_node.h"
+#include "parser/trees/leaf_node.h"
 #include "util/shim.h"
 
 namespace meta
@@ -34,14 +36,14 @@ std::string normalize(const std::string& cat)
 }
 }
 
-std::unique_ptr<node> annotation_remover::transform(const leaf_node& lnode)
+std::unique_ptr<node> annotation_remover::operator()(const leaf_node& lnode)
 {
     // we leave leaf nodes as-is: this avoids special casing things like
     // -LRB-, etc.
     return make_unique<leaf_node>(lnode);
 }
 
-std::unique_ptr<node> annotation_remover::transform(const internal_node& inode)
+std::unique_ptr<node> annotation_remover::operator()(const internal_node& inode)
 {
     auto norm = normalize(inode.category());
     auto ret = make_unique<internal_node>(class_label{std::move(norm)});

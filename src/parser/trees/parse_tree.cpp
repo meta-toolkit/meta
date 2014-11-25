@@ -6,7 +6,7 @@
 #include "parser/trees/parse_tree.h"
 #include "parser/trees/leaf_node.h"
 #include "parser/trees/internal_node.h"
-#include "parser/trees/transformers/tree_transformer.h"
+#include "parser/trees/visitors/tree_transformer.h"
 
 namespace meta
 {

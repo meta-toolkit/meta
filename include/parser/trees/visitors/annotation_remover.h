@@ -9,7 +9,7 @@
 #ifndef META_ANNOTATION_REMOVER_H_
 #define META_ANNOTATION_REMOVER_H_
 
-#include "parser/trees/transformers/tree_transformer.h"
+#include "parser/trees/visitors/tree_transformer.h"
 
 namespace meta
 {
@@ -26,8 +26,8 @@ namespace parser
 class annotation_remover : public tree_transformer
 {
   public:
-    std::unique_ptr<node> transform(const leaf_node&) override;
-    std::unique_ptr<node> transform(const internal_node&) override;
+    std::unique_ptr<node> operator()(const leaf_node&) override;
+    std::unique_ptr<node> operator()(const internal_node&) override;
 };
 }
 }

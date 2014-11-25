@@ -4,7 +4,6 @@
  */
 
 #include "parser/trees/internal_node.h"
-#include "parser/trees/transformers/tree_transformer.h"
 
 namespace meta
 {
@@ -72,11 +71,6 @@ const node* internal_node::head_constituent() const
 void internal_node::head_constituent(const node* n)
 {
     head_constituent_ = n;
-}
-
-std::unique_ptr<node> internal_node::accept(tree_transformer& trns) const
-{
-    return trns.transform(*this);
 }
 }
 }

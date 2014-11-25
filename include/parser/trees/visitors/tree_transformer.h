@@ -10,22 +10,23 @@
 #define META_PARSE_TREE_TRANSFORMER_H_
 
 #include <memory>
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
+#include "parser/trees/visitors/visitor.h"
 
 namespace meta
 {
 namespace parser
 {
 
+class node;
+
 /**
  * Abstract base class for tree transformers.
  */
-class tree_transformer
+class tree_transformer : public const_visitor<std::unique_ptr<node>>
 {
   public:
-    virtual std::unique_ptr<node> transform(const leaf_node&) = 0;
-    virtual std::unique_ptr<node> transform(const internal_node&) = 0;
+    virtual std::unique_ptr<node> operator()(const leaf_node&) = 0;
+    virtual std::unique_ptr<node> operator()(const internal_node&) = 0;
 };
 }
 }

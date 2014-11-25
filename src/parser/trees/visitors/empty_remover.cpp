@@ -3,7 +3,9 @@
  * @author Chase Geigle
  */
 
-#include "parser/trees/transformers/empty_remover.h"
+#include "parser/trees/visitors/empty_remover.h"
+#include "parser/trees/leaf_node.h"
+#include "parser/trees/internal_node.h"
 #include "util/shim.h"
 
 namespace meta
@@ -11,7 +13,7 @@ namespace meta
 namespace parser
 {
 
-std::unique_ptr<node> empty_remover::transform(const leaf_node& lnode)
+std::unique_ptr<node> empty_remover::operator()(const leaf_node& lnode)
 {
     const static class_label none{"-NONE-"};
     if (lnode.category() == none)
@@ -19,7 +21,7 @@ std::unique_ptr<node> empty_remover::transform(const leaf_node& lnode)
     return make_unique<leaf_node>(lnode);
 }
 
-std::unique_ptr<node> empty_remover::transform(const internal_node& inode)
+std::unique_ptr<node> empty_remover::operator()(const internal_node& inode)
 {
     std::vector<std::unique_ptr<node>> children;
     inode.each_child([&](const node* child)

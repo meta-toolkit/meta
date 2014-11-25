@@ -39,8 +39,6 @@ class leaf_node : public node
 
     bool equal(const node& other) const override;
 
-    std::unique_ptr<node> accept(tree_transformer&) const override;
-
   private:
     /**
      * The optional word for this leaf node

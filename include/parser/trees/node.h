@@ -11,13 +11,12 @@
 
 #include <memory>
 #include "meta.h"
+#include "parser/trees/visitors/visitor.h"
 
 namespace meta
 {
 namespace parser
 {
-
-class tree_transformer;
 
 /**
  * A single node in a parse tree for a sentence.
@@ -48,11 +47,36 @@ class node
     virtual bool equal(const node& other) const = 0;
 
     /**
-     * Accepts a transformer.
-     * @param trns The transformer to be run on this subtree
-     * @return the transformed root of the tree, or null if it was removed
+     * Accepts a visitor.
+     * @param vtor The visitor to visit each of the nodes in this subtree
+     * @return the visitor result for this subtree
      */
-    virtual std::unique_ptr<node> accept(tree_transformer&) const = 0;
+    template <class Visitor>
+    typename std::remove_reference<Visitor>::type::result_type
+        accept(Visitor&& vtor)
+    {
+        // this is ugly, but since we cannot have virtual template member
+        // functions, it's a necessary evil
+        if (is_leaf())
+            return vtor(as<leaf_node>());
+        return vtor(as<internal_node>());
+    }
+
+    /**
+     * Accepts a visitor (const version). Can only accept visitors that do
+     * not modify the tree directly.
+     *
+     * @param vtor The visitor to visit each of the nodes in this subtree
+     * @return the visitor result for this subtree
+     */
+    template <class Visitor>
+    typename std::remove_reference<Visitor>::type::result_type
+        accept(Visitor&& vtor) const
+    {
+        if (is_leaf())
+            return vtor(as<leaf_node>());
+        return vtor(as<internal_node>());
+    }
 
     /**
      * Casting operation for nodes to derived types. Node can only be a

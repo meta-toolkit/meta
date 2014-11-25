@@ -87,8 +87,6 @@ class internal_node : public node
 
     void head_constituent(const node* n);
 
-    std::unique_ptr<node> accept(tree_transformer&) const override;
-
     template <class Fun>
     void each_child(Fun&& fn) const
     {

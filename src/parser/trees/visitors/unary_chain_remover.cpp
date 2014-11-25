@@ -3,7 +3,9 @@
  * @author Chase Geigle
  */
 
-#include "parser/trees/transformers/unary_chain_remover.h"
+#include "parser/trees/visitors/unary_chain_remover.h"
+#include "parser/trees/internal_node.h"
+#include "parser/trees/leaf_node.h"
 #include "util/shim.h"
 
 namespace meta
@@ -11,12 +13,12 @@ namespace meta
 namespace parser
 {
 
-std::unique_ptr<node> unary_chain_remover::transform(const leaf_node& lnode)
+std::unique_ptr<node> unary_chain_remover::operator()(const leaf_node& lnode)
 {
     return make_unique<leaf_node>(lnode);
 }
 
-std::unique_ptr<node> unary_chain_remover::transform(const internal_node& inode)
+std::unique_ptr<node> unary_chain_remover::operator()(const internal_node& inode)
 {
     // not a unary chain, so just invoke recursively on the children and
     // return the new tree

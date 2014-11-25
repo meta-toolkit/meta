@@ -11,6 +11,7 @@
 
 #include <memory>
 #include "parser/trees/node.h"
+#include "parser/trees/visitors/tree_transformer.h"
 
 namespace meta
 {
@@ -31,28 +32,38 @@ namespace parser
 class parse_tree
 {
   public:
-      /**
-       * Creates a new parse tree by taking ownership of a subtree pointed
-       * to by the argument.
-       *
-       * @param root The desired root of the parse tree
-       */
-      parse_tree(std::unique_ptr<node> root);
+    /**
+     * Creates a new parse tree by taking ownership of a subtree pointed
+     * to by the argument.
+     *
+     * @param root The desired root of the parse tree
+     */
+    parse_tree(std::unique_ptr<node> root);
 
-      void transform(tree_transformer&);
+    void transform(tree_transformer&);
 
-      friend std::ostream& operator<<(std::ostream& os, const parse_tree& tree);
+    template <class Visitor>
+    typename Visitor::result_type visit(Visitor&& vtor)
+    {
+        return root_->accept(vtor);
+    }
 
-      friend bool operator==(const parse_tree& lhs, const parse_tree& rhs);
+    template <class Visitor>
+    typename Visitor::result_type visit(Visitor&& vtor) const
+    {
+        return root_->accept(vtor);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const parse_tree& tree);
+
+    friend bool operator==(const parse_tree& lhs, const parse_tree& rhs);
 
   private:
-      /**
-       * The root of the parse tree.
-       */
-      std::unique_ptr<node> root_;
+    /**
+     * The root of the parse tree.
+     */
+    std::unique_ptr<node> root_;
 };
-
-
 }
 }
 
