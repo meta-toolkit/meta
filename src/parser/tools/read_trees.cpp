@@ -5,6 +5,7 @@
 #include "parser/trees/visitors/annotation_remover.h"
 #include "parser/trees/visitors/empty_remover.h"
 #include "parser/trees/visitors/unary_chain_remover.h"
+#include "parser/trees/visitors/multi_transformer.h"
 
 int main(int argc, char** argv)
 {
@@ -18,9 +19,9 @@ int main(int argc, char** argv)
 
     logging::set_cerr_logging();
 
-    parser::annotation_remover ann_rem;
-    parser::empty_remover empty_rem;
-    parser::unary_chain_remover uchain_rem;
+    parser::multi_transformer<parser::annotation_remover, parser::empty_remover,
+                              parser::unary_chain_remover> transformer;
+
     for (auto& tree : parser::io::extract_trees(argv[1]))
     {
         parser::parse_tree t{std::move(tree)};
@@ -28,9 +29,7 @@ int main(int argc, char** argv)
         std::cout << t << std::endl;
 
         std::cout << "Transformed: " << std::endl;
-        t.transform(ann_rem);
-        t.transform(empty_rem);
-        t.transform(uchain_rem);
+        t.transform(transformer);
         std::cout << t << std::endl;
     }
     return 0;

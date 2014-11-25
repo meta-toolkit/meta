@@ -10,7 +10,10 @@
 #define META_PARSER_MULTI_TRANSFORMER_H_
 
 #include <array>
-#include "parser/trees/transformers/tree_transformer.h"
+#include "parser/trees/visitors/tree_transformer.h"
+#include "parser/trees/node.h"
+#include "parser/trees/internal_node.h"
+#include "parser/trees/leaf_node.h"
 #include "util/shim.h"
 
 namespace meta
@@ -26,7 +29,7 @@ class multi_transformer : public tree_transformer
                                                "be specified with at least two "
                                                "transformers to be run");
 
-    multi_transformer() : transforms_{make_unique<Transformers>()...}
+    multi_transformer() : transforms_{{make_unique<Transformers>()...}}
     {
         // nothing
     }
@@ -37,12 +40,12 @@ class multi_transformer : public tree_transformer
         // nothing
     }
 
-    std::unique_ptr<node> transform(const leaf_node& lnode) override
+    std::unique_ptr<node> operator()(const leaf_node& lnode) override
     {
         return run_transforms(lnode);
     }
 
-    std::unique_ptr<node> transform(const internal_node& inode) override
+    std::unique_ptr<node> operator()(const internal_node& inode) override
     {
         return run_transforms(inode);
     }
