@@ -54,10 +54,29 @@ bool internal_node::equal(const node& other) const
     return ret;
 }
 
+const leaf_node* internal_node::head_lexicon() const
+{
+    return head_lexicon_;
+}
+
+void internal_node::head_lexicon(const leaf_node* l)
+{
+    head_lexicon_ = l;
+}
+
+const node* internal_node::head_constituent() const
+{
+    return head_constituent_;
+}
+
+void internal_node::head_constituent(const node* n)
+{
+    head_constituent_ = n;
+}
+
 std::unique_ptr<node> internal_node::accept(tree_transformer& trns) const
 {
     return trns.transform(*this);
 }
-
 }
 }

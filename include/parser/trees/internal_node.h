@@ -18,6 +18,8 @@ namespace meta
 namespace parser
 {
 
+class leaf_node;
+
 class internal_node : public node
 {
   public:
@@ -77,6 +79,14 @@ class internal_node : public node
 
     bool equal(const node& other) const override;
 
+    const leaf_node* head_lexicon() const;
+
+    void head_lexicon(const leaf_node* l);
+
+    const node* head_constituent() const;
+
+    void head_constituent(const node* n);
+
     std::unique_ptr<node> accept(tree_transformer&) const override;
 
     template <class Fun>
@@ -98,6 +108,17 @@ class internal_node : public node
      * A list of the children of this node, from left to right
      */
     std::vector<std::unique_ptr<node>> children_;
+
+    /**
+     * A pointer to the head **word** for this subtree.
+     */
+    const leaf_node* head_lexicon_ = nullptr;
+
+    /**
+     * A pointer to the head constituent for this subtree (one of this
+     * tree's children)
+     */
+    const node* head_constituent_ = nullptr;
 };
 }
 }
