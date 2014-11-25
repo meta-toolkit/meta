@@ -53,8 +53,8 @@ void feature_selector::score_all()
     {
         prog(tid);
         for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
-            scores[lbl][tid]
-                = std::make_pair(tid, score(label_id{lbl + 1}, term_id{tid}));
+            scores[lbl][tid] = std::make_pair(
+                tid, score(static_cast<label_id>(lbl + 1), term_id{tid}));
     }
     prog.end();
 
@@ -65,6 +65,7 @@ void feature_selector::score_all()
             return a.second < b.second;
         });
     });
+
 
     for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
     {
@@ -151,7 +152,7 @@ void feature_selector::print_summary(uint64_t k /* = 20 */) const
     for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
     {
         std::cout << std::endl << "Top " << k << " features for \""
-                  << idx_->class_label_from_id(label_id{lbl + 1})
+                  << idx_->class_label_from_id(static_cast<label_id>(lbl + 1))
                   << "\":" << std::endl
                   << "===============================" << std::endl;
 
