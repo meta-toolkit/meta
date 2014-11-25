@@ -25,16 +25,15 @@ namespace features
 class information_gain : public feature_selector
 {
   public:
+    /// Inherit constructor.
+    using feature_selector::feature_selector;
+
     /**
-     * Constructor.
+     * This feature_selector is a friend of the factory method used to create it
      */
-    information_gain(const std::string& prefix,
-                     std::shared_ptr<index::forward_index> idx,
-                     uint64_t features_per_class = 20)
-        : feature_selector{prefix + ".ig", std::move(idx)}
-    {
-        init(features_per_class);
-    }
+    template <class Selector, class ForwardIndex, class... Args>
+    friend std::shared_ptr<Selector>
+        make_selector(const std::string&, ForwardIndex, Args&&...);
 
     /**
      * Scores the (label, term) pair according to this feature selection
