@@ -48,4 +48,6 @@ dev-sections = [19, 21]
 test-sections = [22, 24]
 
 [features]
+method = "info-gain"
 prefix = "features"
+features-per-class = 20
