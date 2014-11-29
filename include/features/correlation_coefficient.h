@@ -18,10 +18,10 @@ namespace features
 {
 /**
  * Performs correlation coefficient feature selection:
- * \f$ \chi^2(t, c_i) =
- * \frac{(P(t,c_i) P(\overline{t}, \overline{c_i}) - P(t, \overline{c_i})
- * P(\overline{t},c_i))^2}
- *  {P(t) P(\overline{t}) P(c_i) P(\overline{c_i})} \f$
+ * \f$ CC(t, c_i) =
+ * \frac{P(t,c_i) P(\overline{t}, \overline{c_i}) - P(t, \overline{c_i})
+ * P(\overline{t},c_i)}
+ *  {\sqrt{P(t) P(\overline{t}) P(c_i) P(\overline{c_i})}} \f$
  */
 class correlation_coefficient : public feature_selector
 {
