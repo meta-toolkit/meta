@@ -11,7 +11,7 @@
 #include "cpptoml.h"
 #include "util/shim.h"
 #include "features/all.h"
-#include "features/make_feature_selector.h"
+#include "features/selector_factory.h"
 #include "index/forward_index.h"
 
 using namespace meta;
@@ -35,10 +35,7 @@ int main(int argc, char* argv[])
     }
 
     auto f_idx = index::make_index<index::memory_forward_index>(argv[1]);
-    auto selector
-        = features::make_selector<features::information_gain>(argv[1], f_idx);
-    // auto selector = features::make_selector<features::chi_square>{argv[1],
-    // f_idx};
+    auto selector = features::make_selector(config, f_idx);
     selector->select(100);
     selector->print_summary(10);
 }

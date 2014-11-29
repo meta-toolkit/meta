@@ -29,12 +29,8 @@ class chi_square : public feature_selector
     /// Inherit constructor.
     using feature_selector::feature_selector;
 
-    /**
-     * This feature_selector is a friend of the factory method used to create it
-     */
-    template <class Selector, class ForwardIndex, class... Args>
-    friend std::shared_ptr<Selector>
-        make_selector(const std::string&, ForwardIndex, Args&&...);
+    /// Identifier for this feature_selector.
+    const static std::string id;
 
     /**
      * Scores the (label_id, term) pair according to this feature selection
@@ -42,20 +38,7 @@ class chi_square : public feature_selector
      * @param lid
      * @param tid
      */
-    virtual double score(label_id lid, term_id tid) const override
-    {
-        double p_tc = term_and_class(tid, lid);
-        double p_ntnc = not_term_and_not_class(tid, lid);
-        double p_ntc = not_term_and_class(tid, lid);
-        double p_tnc = term_and_not_class(tid, lid);
-        double p_c = prob_class(lid);
-        double p_t = prob_term(tid);
-
-        double numerator = p_tc * p_ntnc - p_ntc * p_tnc;
-        double denominator = p_c * (1.0 - p_c) * p_t * (1.0 - p_t);
-
-        return (numerator * numerator) / denominator;
-    }
+    virtual double score(label_id lid, term_id tid) const override;
 };
 }
 }
