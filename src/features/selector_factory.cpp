@@ -23,6 +23,7 @@ selector_factory::selector_factory()
     // built-in feature-selection algorithms
     reg<information_gain>();
     reg<chi_square>();
+    reg<correlation_coefficient>();
 }
 
 std::unique_ptr<feature_selector>
