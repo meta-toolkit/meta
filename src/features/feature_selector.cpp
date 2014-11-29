@@ -62,7 +62,7 @@ void feature_selector::score_all()
                            {
         std::sort(v.begin(), v.end(), [&](const auto& a, const auto& b)
                   {
-            return a.second < b.second;
+            return a.second > b.second;
         });
     });
 
@@ -134,7 +134,7 @@ void feature_selector::calc_probs()
     prog.end();
 
     for (auto& p : class_prob_)
-        p /= idx_->num_labels();
+        p /= idx_->num_docs();
 
     for (auto& p : term_prob_)
         p /= total_terms;
@@ -169,34 +169,52 @@ void feature_selector::print_summary(uint64_t k /* = 20 */) const
 
 double feature_selector::prob_term(term_id id) const
 {
-    return term_prob_.at(id);
+    auto p = term_prob_.at(id);
+    if(p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    return p;
 }
 
 double feature_selector::prob_class(label_id id) const
 {
-    return class_prob_.at(id - 1);
+    auto p = class_prob_.at(id - 1);
+    if(p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    return p;
 }
 
 double feature_selector::term_and_class(term_id term, label_id label) const
 {
-    return co_occur_.at(label - 1).at(term);
+    auto p = co_occur_.at(label - 1).at(term);
+    if(p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    return p;
 }
 
 double feature_selector::not_term_and_not_class(term_id term,
                                                 label_id label) const
 {
-    return 1.0 - term_and_class(term, label) - not_term_and_class(term, label)
+    auto p = 1.0 - term_and_class(term, label) - not_term_and_class(term, label)
            - term_and_not_class(term, label);
+    if(p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    return p;
 }
 
 double feature_selector::term_and_not_class(term_id term, label_id label) const
 {
-    return term_prob_.at(term) - term_and_class(term, label);
+    auto p = term_prob_.at(term) - term_and_class(term, label);
+    if(p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    return p;
 }
 
 double feature_selector::not_term_and_class(term_id term, label_id label) const
 {
-    return class_prob_.at(label - 1) - term_and_class(term, label);
+    auto p = class_prob_.at(label - 1) - term_and_class(term, label);
+    if(p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    return p;
 }
 }
 }

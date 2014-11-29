@@ -14,7 +14,6 @@
 #include <vector>
 #include <memory>
 
-#include "features/make_feature_selector.h"
 #include "util/disk_vector.h"
 #include "index/forward_index.h"
 
