@@ -14,7 +14,6 @@
 #include <vector>
 #include <memory>
 
-#include "features/make_feature_selector.h"
 #include "util/disk_vector.h"
 #include "index/forward_index.h"
 
@@ -31,11 +30,19 @@ class feature_selector
 {
   public:
     /**
-     * This feature_selector is a friend of the factory method used to create it
+     * @param config
+     * @param idx
      */
-    template <class Selector, class ForwardIndex, class... Args>
-    friend std::shared_ptr<Selector>
-        make_selector(const std::string&, ForwardIndex, Args&&...);
+    feature_selector(const std::string& prefix,
+                     std::shared_ptr<index::forward_index> idx);
+
+    /**
+     * Creates the state of this feature_selector if necessary; this logic is
+     * outside the constructor since it requires pure virtual functions
+     * implemented by deriving classes.
+     * @param features_per_class
+     */
+    void init(uint64_t features_per_class);
 
     /**
      * Default destructor.
@@ -69,21 +76,6 @@ class feature_selector
     virtual void select_percent(double p = 0.05);
 
   protected:
-    /**
-     * @param config
-     * @param idx
-     */
-    feature_selector(const std::string& prefix,
-                     std::shared_ptr<index::forward_index> idx);
-
-    /**
-     * Creates the state of this feature_selector if necessary; this logic is
-     * outside the constructor since it requires pure virtual functions
-     * implemented by deriving classes.
-     * @param features_per_class
-     */
-    void init(uint64_t features_per_class);
-
     /**
      * Scores a (label, term) pair in the index according to the derived class's
      * feature selection method

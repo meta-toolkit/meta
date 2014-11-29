@@ -1,5 +1,5 @@
 /**
- * @file information_gain.h
+ * @file correlation_coefficient.h
  * @author Sean Massung
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -7,8 +7,8 @@
  * project.
  */
 
-#ifndef META_INFORMATION_GAIN_H_
-#define META_INFORMATION_GAIN_H_
+#ifndef META_CORRELATION_COEFFICIENT_H_
+#define META_CORRELATION_COEFFICIENT_H_
 
 #include "features/feature_selector.h"
 
@@ -17,12 +17,13 @@ namespace meta
 namespace features
 {
 /**
- * Performs information gain feature selection:
- * \f$ IG(t, c_i) =
- * \sum_{c\in\{c_i, \overline{c_i}\}} \sum_{t'\in\{t,t'\}}P(t',c) \log
- * \frac{P(t',c)}{P(t')P(c)} \f$
+ * Performs correlation coefficient feature selection:
+ * \f$ CC(t, c_i) =
+ * \frac{P(t,c_i) P(\overline{t}, \overline{c_i}) - P(t, \overline{c_i})
+ * P(\overline{t},c_i)}
+ *  {\sqrt{P(t) P(\overline{t}) P(c_i) P(\overline{c_i})}} \f$
  */
-class information_gain : public feature_selector
+class correlation_coefficient : public feature_selector
 {
   public:
     /// Inherit constructor.
@@ -32,7 +33,7 @@ class information_gain : public feature_selector
     const static std::string id;
 
     /**
-     * Scores the (label, term) pair according to this feature selection
+     * Scores the (label_id, term) pair according to this feature selection
      * metric.
      * @param lid
      * @param tid
