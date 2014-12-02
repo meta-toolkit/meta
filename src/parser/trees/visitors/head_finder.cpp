@@ -4,6 +4,7 @@
  */
 
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include "meta.h"
 #include "parser/trees/visitors/head_finder.h"
@@ -17,6 +18,27 @@ namespace parser
 
 namespace
 {
+
+void set_head(internal_node& inode, const node* child)
+{
+    inode.head_constituent(child);
+
+    if (child->is_leaf())
+        inode.head_lexicon(&child->as<leaf_node>());
+    else
+        inode.head_lexicon(child->as<internal_node>().head_lexicon());
+}
+
+bool handle_child(internal_node& inode, const node* child,
+                  const class_label& cand)
+{
+    if (child->category() == cand)
+    {
+        set_head(inode, child);
+        return true;
+    }
+    return false;
+}
 
 /**
  * A normal head rule following Collins' head finding algorithm.
@@ -46,12 +68,15 @@ struct head_initial : public normal_head_rule
         {
             for (uint64_t idx = 0; idx < inode.num_children(); ++idx)
             {
-                if (inode.child(idx)->category() == cand)
-                {
-                    // TODO
-                }
+                auto child = inode.child(idx);
+                if (handle_child(inode, child, cand))
+                    return;
             }
         }
+
+        // no matches, use left most node
+        auto child = inode.child(0);
+        set_head(inode, child);
     }
 };
 
@@ -70,24 +95,91 @@ struct head_final : public normal_head_rule
             {
                 // iterate in reverse, from right to left
                 auto ridx = inode.num_children() - 1 - idx;
-                if (inode.child(ridx)->category() == cand)
-                {
-                    // TODO
-                }
+                auto child = inode.child(ridx);
+                if (handle_child(inode, child, cand))
+                    return;
             }
         }
+
+        // no matches, use right most node
+        auto child = inode.child(inode.num_children() - 1);
+        set_head(inode, child);
     }
 };
 
 /**
  * The special case for noun phrases in Collins' head finding algorithm.
+ * @see Collins' thesis, page 238-239
  */
-class head_np : public head_rule
+struct head_np : public head_rule
 {
+    struct head_final_np
+    {
+        std::unordered_set<class_label> candidates_;
+
+        bool find_head(internal_node& inode) const
+        {
+            for (uint64_t idx = 0; idx < inode.num_children(); ++idx)
+            {
+                auto ridx = inode.num_children() - 1 - idx;
+                auto child = inode.child(ridx);
+                if (candidates_.find(child->category()) != candidates_.end())
+                {
+                    set_head(inode, child);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    struct head_initial_np
+    {
+        std::unordered_set<class_label> candidates_;
+
+        bool find_head(internal_node& inode) const
+        {
+            for (uint64_t idx = 0; idx < inode.num_children(); ++idx)
+            {
+                auto child = inode.child(idx);
+                if (candidates_.find(child->category()) != candidates_.end())
+                {
+                    set_head(inode, child);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
     void find_head(internal_node& inode) const override
     {
-        // TODO
-        return;
+        head_final_np first_pass{
+            {"NN", "NNP", "NNPS", "NNS", "NX", "POS", "JJR"}};
+        if (first_pass.find_head(inode))
+            return;
+
+        head_initial_np second_pass{{"NP"}};
+        if (second_pass.find_head(inode))
+            return;
+
+        head_final_np third_pass{{"$", "ADJP", "PRN"}};
+        if (third_pass.find_head(inode))
+            return;
+
+        head_final_np fourth_pass{{"CD"}};
+        if (fourth_pass.find_head(inode))
+            return;
+
+        head_final_np fifth_pass{{"JJ", "JJS", "RB", "QP"}};
+        if (fifth_pass.find_head(inode))
+            return;
+
+        // no matches, just use last child
+        auto child = inode.child(inode.num_children() - 1);
+        set_head(inode, child);
     }
 };
 }
@@ -167,6 +259,5 @@ head_finder::head_finder(rule_table&& table) : rules_{std::move(table)}
 {
     // nothing
 }
-
 }
 }
