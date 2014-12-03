@@ -13,6 +13,7 @@
 #include "parser/trees/visitors/unary_chain_remover.h"
 #include "parser/trees/visitors/multi_transformer.h"
 #include "parser/trees/visitors/head_finder.h"
+#include "parser/trees/visitors/binarizer.h"
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"
 
@@ -109,8 +110,29 @@ struct annotation_checker : public parser::const_visitor<bool>
         bool res = true;
         inode.each_child([&](const parser::node* child)
                          {
-            res &= child->accept(*this);
-        });
+                             res = res && child->accept(*this);
+                         });
+        return res;
+    }
+};
+
+struct binary_checker : public parser::const_visitor<bool>
+{
+    bool operator()(const parser::leaf_node&) override
+    {
+        return true;
+    }
+
+    bool operator()(const parser::internal_node& inode) override
+    {
+        if (inode.num_children() > 2)
+            return false;
+
+        bool res = true;
+        inode.each_child([&](const parser::node* child)
+                         {
+                             res = res && child->accept(*this);
+                         });
         return res;
     }
 };
@@ -136,12 +158,65 @@ int head_finder_tests()
     return num_failed;
 }
 
+int binarizer_tests()
+{
+    using namespace parser;
+
+    auto num_failed = int{0};
+
+    head_finder hf;
+    binarizer bin;
+    binary_checker bin_check;
+    annotation_checker ann_check;
+
+    num_failed += testing::run_test("binarizer_is_binary", [&]()
+                                    {
+        auto tr
+            = tree("((S (NP (PRP$ My) (NN dog)) (ADVP (RB also)) (VP (VBZ "
+                   "likes) (S (VP (VBG eating) (NP (NN sausage))))) (. .)))");
+
+        tr.visit(hf);
+        tr.transform(bin);
+        ASSERT(tr.visit(bin_check));
+    });
+
+    num_failed += testing::run_test("binarizer_keeps_annotations", [&]()
+                                    {
+        auto tr
+            = tree("((S (NP (PRP$ My) (NN dog)) (ADVP (RB also)) (VP (VBZ "
+                   "likes) (S (VP (VBG eating) (NP (NN sausage))))) (. .)))");
+
+        tr.visit(hf);
+        tr.transform(bin);
+        ASSERT(tr.visit(ann_check));
+    });
+
+    num_failed += testing::run_test("binarizer_correct_output", [&]()
+                                    {
+        auto tr
+            = tree("((S (NP (PRP$ My) (NN dog)) (ADVP (RB also)) (VP (VBZ "
+                   "likes) (S (VP (VBG eating) (NP (NN sausage))))) (. .)))");
+
+        tr.visit(hf);
+        tr.transform(bin);
+
+        auto expected = tree(
+            "((S (S* (NP (PRP$ My) (NN dog)) (S* (ADVP (RB also)) (VP "
+            "(VBZ likes) (S (VP (VBG eating) (NP (NN sausage))))))) (. .)))");
+
+        ASSERT(tr == expected);
+    });
+
+    return num_failed;
+}
+
 int parser_tests()
 {
     logging::set_cerr_logging();
     auto num_failed = int{0};
     num_failed += transformer_tests();
     num_failed += head_finder_tests();
+    num_failed += binarizer_tests();
     return num_failed;
 }
 }
