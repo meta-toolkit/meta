@@ -11,6 +11,7 @@
 #include "parser/trees/visitors/multi_transformer.h"
 #include "parser/trees/visitors/head_finder.h"
 #include "parser/trees/visitors/binarizer.h"
+#include "parser/trees/visitors/debinarizer.h"
 
 using namespace meta;
 
@@ -91,15 +92,18 @@ int main(int argc, char** argv)
     annotation_checker ann_check;
     binary_checker bin_check;
     parser::binarizer bin;
+    parser::debinarizer debin;
 
     for (size_t arg = 1; arg < args.size(); ++arg)
     {
         if (args[arg] == "--print")
             continue;
         std::cout << "Parsing: " << args[arg] << "..." << std::endl;
-        for (auto& tree : parser::io::extract_trees(argv[arg]))
+        auto orig_trees = parser::io::extract_trees(args[arg]);
+        auto mod_trees = parser::io::extract_trees(args[arg]);
+        for (size_t i = 0; i < orig_trees.size(); ++i)
         {
-            parser::parse_tree t{std::move(tree)};
+            parser::parse_tree t{std::move(mod_trees[i])};
             if (print)
             {
                 std::cout << "Original: " << std::endl;
@@ -129,6 +133,17 @@ int main(int argc, char** argv)
                 std::cout << "Binarized: " << std::endl;
                 std::cout << t << std::endl;
             }
+
+            t.transform(debin);
+            if (print)
+            {
+                std::cout << "Debinarized: " << std::endl;
+                std::cout << t << std::endl;
+            }
+
+            orig_trees[i].transform(transformer);
+            if (!(t == orig_trees[i]))
+                throw std::runtime_error{"Debinarization failed"};
         }
     }
     return 0;
