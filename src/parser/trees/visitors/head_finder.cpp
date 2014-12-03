@@ -242,6 +242,12 @@ head_finder::head_finder()
 
     rules_["NP"_cl] = make_unique<head_np>();
 
+    rules_["NX"_cl]
+        = make_unique<head_initial>(); // not present in collins' thesis...
+
+    rules_["X"_cl]
+        = make_unique<head_final>(); // not present in collins' thesis...
+
     rules_["ROOT"_cl] = make_unique<head_initial>();
 }
 
