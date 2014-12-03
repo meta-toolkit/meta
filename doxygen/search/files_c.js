@@ -1,16 +1,14 @@
 var searchData=
 [
-  ['naive_5fbayes_2ecpp',['naive_bayes.cpp',['../naive__bayes_8cpp.html',1,'']]],
-  ['naive_5fbayes_2eh',['naive_bayes.h',['../naive__bayes_8h.html',1,'']]],
-  ['ngram_5fanalyzer_2ecpp',['ngram_analyzer.cpp',['../ngram__analyzer_8cpp.html',1,'']]],
-  ['ngram_5fanalyzer_2eh',['ngram_analyzer.h',['../ngram__analyzer_8h.html',1,'']]],
-  ['ngram_5flex_5fanalyzer_2ecpp',['ngram_lex_analyzer.cpp',['../ngram__lex__analyzer_8cpp.html',1,'']]],
-  ['ngram_5flex_5fanalyzer_2eh',['ngram_lex_analyzer.h',['../ngram__lex__analyzer_8h.html',1,'']]],
-  ['ngram_5fpos_5fanalyzer_2ecpp',['ngram_pos_analyzer.cpp',['../ngram__pos__analyzer_8cpp.html',1,'']]],
-  ['ngram_5fpos_5fanalyzer_2eh',['ngram_pos_analyzer.h',['../ngram__pos__analyzer_8h.html',1,'']]],
-  ['ngram_5fsimple_5fanalyzer_2ecpp',['ngram_simple_analyzer.cpp',['../ngram__simple__analyzer_8cpp.html',1,'']]],
-  ['ngram_5fsimple_5fanalyzer_2eh',['ngram_simple_analyzer.h',['../ngram__simple__analyzer_8h.html',1,'']]],
-  ['ngram_5fword_5fanalyzer_2ecpp',['ngram_word_analyzer.cpp',['../ngram__word__analyzer_8cpp.html',1,'']]],
-  ['ngram_5fword_5fanalyzer_2eh',['ngram_word_analyzer.h',['../ngram__word__analyzer_8h.html',1,'']]],
-  ['no_5fevict_5fcache_2eh',['no_evict_cache.h',['../no__evict__cache_8h.html',1,'']]]
+  ['make_5findex_2eh',['make_index.h',['../make__index_8h.html',1,'']]],
+  ['mapping_2eh',['mapping.h',['../mapping_8h.html',1,'']]],
+  ['meta_2eh',['meta.h',['../meta_8h.html',1,'']]],
+  ['mmap_5ffile_2ecpp',['mmap_file.cpp',['../mmap__file_8cpp.html',1,'']]],
+  ['mmap_5ffile_2eh',['mmap_file.h',['../mmap__file_8h.html',1,'']]],
+  ['modified_5fhuber_2ecpp',['modified_huber.cpp',['../modified__huber_8cpp.html',1,'']]],
+  ['modified_5fhuber_2eh',['modified_huber.h',['../modified__huber_8h.html',1,'']]],
+  ['multi_5fanalyzer_2ecpp',['multi_analyzer.cpp',['../multi__analyzer_8cpp.html',1,'']]],
+  ['multi_5fanalyzer_2eh',['multi_analyzer.h',['../multi__analyzer_8h.html',1,'']]],
+  ['multinomial_2eh',['multinomial.h',['../multinomial_8h.html',1,'']]],
+  ['multinomial_2etcc',['multinomial.tcc',['../multinomial_8tcc.html',1,'']]]
 ];

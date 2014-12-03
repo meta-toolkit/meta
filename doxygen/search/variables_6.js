@@ -1,7 +1,9 @@
 var searchData=
 [
+  ['feats_5f',['feats_',['../classmeta_1_1sequence_1_1sequence__analyzer_1_1collector.html#ac61e0681c313866c477f912f20f1b4b1',1,'meta::sequence::sequence_analyzer::collector']]],
+  ['feature_5fid_5fmapping_5f',['feature_id_mapping_',['../classmeta_1_1sequence_1_1sequence__analyzer.html#a20d7ba0d76e73c0a9de98307a7b48e5a',1,'meta::sequence::sequence_analyzer']]],
+  ['features_5f',['features_',['../classmeta_1_1sequence_1_1observation.html#a53ce4eb6a711233294c0a62f99a06812',1,'meta::sequence::observation']]],
   ['file_5f',['file_',['../classmeta_1_1index_1_1vocabulary__map.html#a45fc44edb699a2d5076ab5d091cce638',1,'meta::index::vocabulary_map::file_()'],['../classmeta_1_1index_1_1vocabulary__map__writer.html#a544cc04d6a49cfb26e37d0fbb6baa8d7',1,'meta::index::vocabulary_map_writer::file_()'],['../classmeta_1_1io_1_1compressed__file__reader.html#a9038d526fe9726daa14d77c390992a26',1,'meta::io::compressed_file_reader::file_()'],['../classmeta_1_1logging_1_1logger_1_1log__line.html#a2909da8f69f081600040e5596993fec3',1,'meta::logging::logger::log_line::file_()']]],
-  ['file_5fdesc_5f',['file_desc_',['../classmeta_1_1util_1_1disk__vector.html#ad1da41cd727783666012865e5c752b4c',1,'meta::util::disk_vector']]],
   ['file_5fdescriptor_5f',['file_descriptor_',['../classmeta_1_1io_1_1mmap__file.html#a4c76a851b397252608eab265d4aa93ad',1,'meta::io::mmap_file']]],
   ['file_5fwrite_5fpos_5f',['file_write_pos_',['../classmeta_1_1index_1_1vocabulary__map__writer.html#ae3c29680496f79ee2793cd9bd47531c7',1,'meta::index::vocabulary_map_writer']]],
   ['filename_5f',['filename_',['../classmeta_1_1io_1_1parser.html#a80297aa73f800f66c56bfa8959e4afaf',1,'meta::io::parser']]],
@@ -11,5 +13,6 @@ var searchData=
   ['first_5f',['first_',['../classmeta_1_1analyzers_1_1filters_1_1empty__sentence__filter.html#ad4fea1f21f42688b093df94a01b1f1aa',1,'meta::analyzers::filters::empty_sentence_filter']]],
   ['formatter_5f',['formatter_',['../classmeta_1_1logging_1_1logger_1_1sink.html#a7450b958ca1a154325e2231d2dfaa2e1',1,'meta::logging::logger::sink']]],
   ['forward_5f',['forward_',['../classmeta_1_1util_1_1invertible__map.html#a65f02b851ccb68fb387a9ed43b732e76',1,'meta::util::invertible_map']]],
+  ['fwd_5f',['fwd_',['../classmeta_1_1sequence_1_1crf_1_1scorer.html#ab1ce8e7098c5b3db128f45c3dbdcceb2',1,'meta::sequence::crf::scorer']]],
   ['fwd_5fimpl_5f',['fwd_impl_',['../classmeta_1_1index_1_1forward__index.html#a9afe7bfa2a0552e1859ae38b298e0c35',1,'meta::index::forward_index']]]
 ];

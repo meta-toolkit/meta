@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['gamma_5f',['gamma_',['../classmeta_1_1classify_1_1dual__perceptron.html#acd88a8914c5508921caa5aa83a019b93',1,'meta::classify::dual_perceptron::gamma_()'],['../classmeta_1_1classify_1_1sgd.html#ab2d453c837d769b7f488e5f79b65d865',1,'meta::classify::sgd::gamma_()'],['../classmeta_1_1classify_1_1winnow.html#a1b4f4b52f49c6c27c891ad19e6785e85',1,'meta::classify::winnow::gamma_()'],['../classmeta_1_1classify_1_1kernel_1_1radial__basis.html#a4b2f00118e6a8558949570c6e017fab6',1,'meta::classify::kernel::radial_basis::gamma_()'],['../classmeta_1_1topics_1_1lda__cvb.html#aad29324a268951dbd29b5f73a83b2182',1,'meta::topics::lda_cvb::gamma_()']]],
+  ['gamma_5f',['gamma_',['../classmeta_1_1classify_1_1dual__perceptron.html#acd88a8914c5508921caa5aa83a019b93',1,'meta::classify::dual_perceptron::gamma_()'],['../classmeta_1_1classify_1_1sgd.html#ab2d453c837d769b7f488e5f79b65d865',1,'meta::classify::sgd::gamma_()'],['../classmeta_1_1classify_1_1winnow.html#a1b4f4b52f49c6c27c891ad19e6785e85',1,'meta::classify::winnow::gamma_()'],['../classmeta_1_1classify_1_1kernel_1_1radial__basis.html#a4b2f00118e6a8558949570c6e017fab6',1,'meta::classify::kernel::radial_basis::gamma_()'],['../classmeta_1_1topics_1_1lda__cvb.html#a46123aae76ac6891ec79a7d1d5ac36d4',1,'meta::topics::lda_cvb::gamma_()']]],
+  ['generate',['generate',['../classmeta_1_1lm_1_1language__model.html#a374a520f59133f456acb2e852b5650ce',1,'meta::lm::language_model']]],
   ['generic_5fshard_5fcache',['generic_shard_cache',['../classmeta_1_1caching_1_1generic__shard__cache.html',1,'meta::caching']]],
   ['generic_5fshard_5fcache',['generic_shard_cache',['../classmeta_1_1caching_1_1generic__shard__cache.html#a03468521e3a4098e4cfe20ee5d7fe32a',1,'meta::caching::generic_shard_cache::generic_shard_cache(uint8_t shards, Args &amp;&amp;...args)'],['../classmeta_1_1caching_1_1generic__shard__cache.html#acf07c4532ab5b5c6494b324cf1175d68',1,'meta::caching::generic_shard_cache::generic_shard_cache(generic_shard_cache &amp;&amp;)=default']]],
   ['get',['get',['../classmeta_1_1util_1_1factory.html#af4ce9596474aea2a23b3efa30c4c193e',1,'meta::util::factory::get()'],['../classmeta_1_1utf_1_1icu__handle.html#a09337b918dfe7aba41d7d3f5a9392b1a',1,'meta::utf::icu_handle::get()']]],
@@ -17,8 +18,17 @@ var searchData=
   ['get_5fskeleton_5fchildren',['get_skeleton_children',['../classmeta_1_1analyzers_1_1parse__tree.html#a004da70c9c9e76469d676372a640dd5a',1,'meta::analyzers::parse_tree']]],
   ['get_5fstring',['get_string',['../classmeta_1_1analyzers_1_1parse__tree.html#abb2a579d8e37e0bfdd56b86d1f8d61fc',1,'meta::analyzers::parse_tree']]],
   ['get_5fterm_5fid',['get_term_id',['../classmeta_1_1index_1_1disk__index.html#abaa71a024c26b4f563d10f600f431c0d',1,'meta::index::disk_index']]],
-  ['get_5ftrees',['get_trees',['../classmeta_1_1analyzers_1_1parse__tree.html#a18662aeb03d52c3dc7774e3c9dcbd794',1,'meta::analyzers::parse_tree']]],
+  ['get_5ftrees',['get_trees',['../classmeta_1_1analyzers_1_1parse__tree.html#a11b07f139b48fae88d32c1dc18b93c33',1,'meta::analyzers::parse_tree']]],
   ['get_5fvalue',['get_value',['../classmeta_1_1util_1_1invertible__map.html#ae975eb257bdcda68e77b4b42bf6a1603',1,'meta::util::invertible_map']]],
   ['get_5fweight',['get_weight',['../classmeta_1_1classify_1_1winnow.html#a61401648fc78b1959e17680abe112232',1,'meta::classify::winnow']]],
-  ['gmap',['gmap',['../classmeta_1_1index_1_1ir__eval.html#a9f73ee30ca38d629bb321af27956bbf4',1,'meta::index::ir_eval']]]
+  ['gmap',['gmap',['../classmeta_1_1index_1_1ir__eval.html#a9f73ee30ca38d629bb321af27956bbf4',1,'meta::index::ir_eval']]],
+  ['gradient_5fmodel_5fexpectation',['gradient_model_expectation',['../classmeta_1_1sequence_1_1crf.html#ac2667d17d6c8c8b43b39a2eed79bc16a',1,'meta::sequence::crf']]],
+  ['gradient_5fobservation_5fexpectation',['gradient_observation_expectation',['../classmeta_1_1sequence_1_1crf.html#aa9e4e99def3aa7552df6862de5b4c6ba',1,'meta::sequence::crf']]],
+  ['graph',['graph',['../classmeta_1_1graph_1_1graph.html',1,'meta::graph']]],
+  ['graph_2dtest_2ecpp',['graph-test.cpp',['../graph-test_8cpp.html',1,'']]],
+  ['graph_2eh',['graph.h',['../graph_8h.html',1,'']]],
+  ['graph_2etcc',['graph.tcc',['../graph_8tcc.html',1,'']]],
+  ['graph_5fexception',['graph_exception',['../classmeta_1_1graph_1_1graph__exception.html',1,'meta::graph']]],
+  ['graph_5ftest_2eh',['graph_test.h',['../graph__test_8h.html',1,'']]],
+  ['graph_5ftests',['graph_tests',['../namespacemeta_1_1testing.html#aa1ee0378dddb9d9db46c21e7b6064c5d',1,'meta::testing']]]
 ];

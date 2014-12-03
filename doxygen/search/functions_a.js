@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['knn',['knn',['../classmeta_1_1classify_1_1knn.html#aecd9cb09ffb57a6fcc6b4b48dfe9d9c3',1,'meta::classify::knn']]]
+  ['knn',['knn',['../classmeta_1_1classify_1_1knn.html#a2d743d8641b39bd56f4757bcf9a79fcd',1,'meta::classify::knn']]]
 ];

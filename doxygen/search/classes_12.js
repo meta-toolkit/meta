@@ -1,6 +1,7 @@
 var searchData=
 [
   ['tag_5fanalyzer',['tag_analyzer',['../classmeta_1_1analyzers_1_1tag__analyzer.html',1,'meta::analyzers']]],
+  ['tagger',['tagger',['../classmeta_1_1sequence_1_1crf_1_1tagger.html',1,'meta::sequence::crf']]],
   ['task',['task',['../structmeta_1_1parallel_1_1thread__pool_1_1task.html',1,'meta::parallel::thread_pool']]],
   ['thread_5fpool',['thread_pool',['../classmeta_1_1parallel_1_1thread__pool.html',1,'meta::parallel']]],
   ['token_5fstream',['token_stream',['../classmeta_1_1analyzers_1_1token__stream.html',1,'meta::analyzers']]],
@@ -13,5 +14,6 @@ var searchData=
   ['tree_5fanalyzer_3c_20skeleton_5fanalyzer_20_3e',['tree_analyzer&lt; skeleton_analyzer &gt;',['../classmeta_1_1analyzers_1_1tree__analyzer.html',1,'meta::analyzers']]],
   ['tree_5fanalyzer_3c_20subtree_5fanalyzer_20_3e',['tree_analyzer&lt; subtree_analyzer &gt;',['../classmeta_1_1analyzers_1_1tree__analyzer.html',1,'meta::analyzers']]],
   ['tree_5fanalyzer_3c_20tag_5fanalyzer_20_3e',['tree_analyzer&lt; tag_analyzer &gt;',['../classmeta_1_1analyzers_1_1tree__analyzer.html',1,'meta::analyzers']]],
+  ['trellis',['trellis',['../classmeta_1_1sequence_1_1trellis.html',1,'meta::sequence']]],
   ['trivial_5finit_5ft',['trivial_init_t',['../structmeta_1_1util_1_1trivial__init__t.html',1,'meta::util']]]
 ];

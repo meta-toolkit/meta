@@ -26,5 +26,7 @@ var searchData=
   ['confusion_5fmatrix_2eh',['confusion_matrix.h',['../confusion__matrix_8h.html',1,'']]],
   ['corpus_2dgen_2ecpp',['corpus-gen.cpp',['../corpus-gen_8cpp.html',1,'']]],
   ['corpus_2ecpp',['corpus.cpp',['../corpus_8cpp.html',1,'']]],
-  ['corpus_2eh',['corpus.h',['../corpus_8h.html',1,'']]]
+  ['corpus_2eh',['corpus.h',['../corpus_8h.html',1,'']]],
+  ['crf_2ecpp',['crf.cpp',['../crf_8cpp.html',1,'']]],
+  ['crf_2eh',['crf.h',['../crf_8h.html',1,'']]]
 ];

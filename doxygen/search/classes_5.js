@@ -11,5 +11,6 @@ var searchData=
   ['file_5fguard',['file_guard',['../structmeta_1_1testing_1_1file__guard.html',1,'meta::testing']]],
   ['filter_5ffactory',['filter_factory',['../classmeta_1_1analyzers_1_1filter__factory.html',1,'meta::analyzers']]],
   ['forward_5findex',['forward_index',['../classmeta_1_1index_1_1forward__index.html',1,'meta::index']]],
-  ['forward_5findex_5fexception',['forward_index_exception',['../classmeta_1_1index_1_1forward__index_1_1forward__index__exception.html',1,'meta::index::forward_index']]]
+  ['forward_5findex_5fexception',['forward_index_exception',['../classmeta_1_1index_1_1forward__index_1_1forward__index__exception.html',1,'meta::index::forward_index']]],
+  ['forward_5ftrellis',['forward_trellis',['../classmeta_1_1sequence_1_1forward__trellis.html',1,'meta::sequence']]]
 ];

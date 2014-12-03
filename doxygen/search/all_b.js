@@ -7,7 +7,7 @@ var searchData=
   ['kernel_5f',['kernel_',['../classmeta_1_1classify_1_1dual__perceptron.html#a3b82b0af302a91108fe077dd13a72048',1,'meta::classify::dual_perceptron::kernel_()'],['../classmeta_1_1classify_1_1svm__wrapper.html#a70f30cd8e0b663db9492fb5f78ded0db',1,'meta::classify::svm_wrapper::kernel_()']]],
   ['key',['key',['../structmeta_1_1caching_1_1splay__cache_1_1node.html#a5f2db711c11c456dc279fd44577b736f',1,'meta::caching::splay_cache::node']]],
   ['knn',['knn',['../classmeta_1_1classify_1_1knn.html',1,'meta::classify']]],
-  ['knn',['knn',['../classmeta_1_1classify_1_1knn.html#aecd9cb09ffb57a6fcc6b4b48dfe9d9c3',1,'meta::classify::knn']]],
+  ['knn',['knn',['../classmeta_1_1classify_1_1knn.html#a2d743d8641b39bd56f4757bcf9a79fcd',1,'meta::classify::knn']]],
   ['knn_2ecpp',['knn.cpp',['../knn_8cpp.html',1,'']]],
   ['knn_2eh',['knn.h',['../knn_8h.html',1,'']]],
   ['knn_5fexception',['knn_exception',['../classmeta_1_1classify_1_1knn_1_1knn__exception.html',1,'meta::classify::knn']]]

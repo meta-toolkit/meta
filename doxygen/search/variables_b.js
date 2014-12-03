@@ -1,9 +1,12 @@
 var searchData=
 [
-  ['label_5f',['label_',['../classmeta_1_1corpus_1_1document.html#affcbe310383aa43765991bd1d8225530',1,'meta::corpus::document']]],
+  ['label',['label',['../structmeta_1_1graph_1_1default__node.html#a8e35833f32fbb3774072c61a506b1660',1,'meta::graph::default_node']]],
+  ['label_5f',['label_',['../classmeta_1_1corpus_1_1document.html#affcbe310383aa43765991bd1d8225530',1,'meta::corpus::document::label_()'],['../classmeta_1_1sequence_1_1observation.html#ac222510ef2c4b0a2e9638f158b597df2',1,'meta::sequence::observation::label_()']]],
+  ['label_5fid_5fmapping_5f',['label_id_mapping_',['../classmeta_1_1sequence_1_1sequence__analyzer.html#a02442f9f455104f0fd58e9039470cb57',1,'meta::sequence::sequence_analyzer']]],
   ['label_5fids_5f',['label_ids_',['../classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a2d1e76783df1346f89fd644d413aec42',1,'meta::index::disk_index::disk_index_impl']]],
   ['labels_5f',['labels_',['../classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#aa1b8835a8bd4148e29c85f8e23e2a197',1,'meta::index::disk_index::disk_index_impl']]],
-  ['lambda_5f',['lambda_',['../classmeta_1_1classify_1_1sgd.html#a481257400040fad4b95b3a2c433f6d96',1,'meta::classify::sgd::lambda_()'],['../classmeta_1_1index_1_1jelinek__mercer.html#ae164d8f6e15113adbc83cc2c4a711786',1,'meta::index::jelinek_mercer::lambda_()']]],
+  ['lambda',['lambda',['../structmeta_1_1sequence_1_1crf_1_1parameters.html#a028e15708b32d6237b312997e2a4c6b2',1,'meta::sequence::crf::parameters']]],
+  ['lambda_5f',['lambda_',['../classmeta_1_1classify_1_1sgd.html#a481257400040fad4b95b3a2c433f6d96',1,'meta::classify::sgd::lambda_()'],['../classmeta_1_1index_1_1jelinek__mercer.html#ae164d8f6e15113adbc83cc2c4a711786',1,'meta::index::jelinek_mercer::lambda_()'],['../classmeta_1_1lm_1_1language__model.html#ad9a8e1d8ef9ebf317c82c13b5f4c4b35',1,'meta::lm::language_model::lambda_()']]],
   ['last_5fiter_5f',['last_iter_',['../classmeta_1_1printing_1_1progress.html#a02ab09f7870fd1dd1a756db665b2b147',1,'meta::printing::progress']]],
   ['last_5fupdate_5f',['last_update_',['../classmeta_1_1printing_1_1progress.html#a27905065925545fd127be411e44074ae',1,'meta::printing::progress']]],
   ['leaf_5fend_5fpos_5f',['leaf_end_pos_',['../classmeta_1_1index_1_1vocabulary__map.html#ad27bb1f000cc24eda67223b9f9954e11',1,'meta::index::vocabulary_map']]],
