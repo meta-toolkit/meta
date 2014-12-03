@@ -9,9 +9,10 @@
 #ifndef META_PARSER_HEAD_FINDER_H_
 #define META_PARSER_HEAD_FINDER_H_
 
+#include <unordered_map>
+
 #include "meta.h"
 #include "parser/trees/visitors/visitor.h"
-#include "util/sparse_vector.h"
 #include "util/shim.h"
 
 namespace meta
@@ -36,7 +37,7 @@ class head_finder : public visitor<void>
 {
   public:
     using rule_table
-        = util::sparse_vector<class_label, std::unique_ptr<head_rule>>;
+        = std::unordered_map<class_label, std::unique_ptr<head_rule>>;
 
     head_finder();
     head_finder(rule_table&& table);

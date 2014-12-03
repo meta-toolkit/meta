@@ -3,9 +3,10 @@
  * @author Chase Geigle
  */
 
-#include <unordered_map>
 #include <unordered_set>
 #include <vector>
+
+#include "logging/logger.h"
 #include "meta.h"
 #include "parser/trees/visitors/head_finder.h"
 #include "parser/trees/internal_node.h"
@@ -138,24 +139,24 @@ struct head_np : public head_rule
 
     uint64_t find_head(const internal_node& inode) const override
     {
-        head_final_np first_pass{
-            {"NN", "NNP", "NNPS", "NNS", "NX", "POS", "JJR"}};
+        head_final_np first_pass{{"NN"_cl, "NNP"_cl, "NNPS"_cl, "NNS"_cl,
+                                  "NX"_cl, "POS"_cl, "JJR"_cl}};
         if (auto idx = first_pass.find_head(inode))
             return *idx;
 
-        head_initial_np second_pass{{"NP"}};
+        head_initial_np second_pass{{"NP"_cl}};
         if (auto idx = second_pass.find_head(inode))
             return *idx;
 
-        head_final_np third_pass{{"$", "ADJP", "PRN"}};
+        head_final_np third_pass{{"$"_cl, "ADJP"_cl, "PRN"_cl}};
         if (auto idx = third_pass.find_head(inode))
             return *idx;
 
-        head_final_np fourth_pass{{"CD"}};
+        head_final_np fourth_pass{{"CD"_cl}};
         if (auto idx = fourth_pass.find_head(inode))
             return *idx;
 
-        head_final_np fifth_pass{{"JJ", "JJS", "RB", "QP"}};
+        head_final_np fifth_pass{{"JJ"_cl, "JJS"_cl, "RB"_cl, "QP"_cl}};
         if (auto idx = fifth_pass.find_head(inode))
             return *idx;
 
@@ -169,71 +170,79 @@ head_finder::head_finder()
 {
     /// @see: http://www.cs.columbia.edu/~mcollins/papers/heads
     /// @see Collins' thesis, page 240
-    rules_["ADJP"] = make_unique<head_initial>(
-        "NNS", "QP", "NN", "$", "ADVP", "JJ", "VBN", "VBG", "ADJP", "JJR", "NP",
-        "JJS", "DT", "FW", "RBR", "RBS", "SBAR", "RB");
+    rules_["ADJP"_cl] = make_unique<head_initial>(
+        "NNS"_cl, "QP"_cl, "NN"_cl, "$"_cl, "ADVP"_cl, "JJ"_cl, "VBN"_cl,
+        "VBG"_cl, "ADJP"_cl, "JJR"_cl, "NP"_cl, "JJS"_cl, "DT"_cl, "FW"_cl,
+        "RBR"_cl, "RBS"_cl, "SBAR"_cl, "RB"_cl);
 
-    rules_["ADVP"]
-        = make_unique<head_final>("RB", "RBR", "RBS", "FW", "ADVP", "TO", "CD",
-                                  "JJR", "JJ", "IN", "NP", "JJS", "NN");
+    rules_["ADVP"_cl] = make_unique<head_final>(
+        "RB"_cl, "RBR"_cl, "RBS"_cl, "FW"_cl, "ADVP"_cl, "TO"_cl, "CD"_cl,
+        "JJR"_cl, "JJ"_cl, "IN"_cl, "NP"_cl, "JJS"_cl, "NN"_cl);
 
-    rules_["CONJP"] = make_unique<head_final>("CC", "RB", "IN");
+    rules_["CONJP"_cl] = make_unique<head_final>("CC"_cl, "RB"_cl, "IN"_cl);
 
-    rules_["FRAG"] = make_unique<head_final>();
+    rules_["FRAG"_cl] = make_unique<head_final>();
 
-    rules_["INTJ"] = make_unique<head_initial>();
+    rules_["INTJ"_cl] = make_unique<head_initial>();
 
-    rules_["LST"] = make_unique<head_final>("LS", ":");
+    rules_["LST"_cl] = make_unique<head_final>("LS"_cl, ":"_cl);
 
-    rules_["NAC"] = make_unique<head_initial>(
-        "NN", "NNS", "NNP", "NNPS", "NP", "NAC", "EX", "$", "CD", "QP", "PRP",
-        "VBG", "JJ", "JJS", "JJR", "ADJP", "FW");
+    rules_["NAC"_cl] = make_unique<head_initial>(
+        "NN"_cl, "NNS"_cl, "NNP"_cl, "NNPS"_cl, "NP"_cl, "NAC"_cl, "EX"_cl,
+        "$"_cl, "CD"_cl, "QP"_cl, "PRP"_cl, "VBG"_cl, "JJ"_cl, "JJS"_cl,
+        "JJR"_cl, "ADJP"_cl, "FW"_cl);
 
-    rules_["PP"]
-        = make_unique<head_final>("IN", "TO", "VBG", "VBN", "RP", "FW");
+    rules_["PP"_cl] = make_unique<head_final>("IN"_cl, "TO"_cl, "VBG"_cl,
+                                              "VBN"_cl, "RP"_cl, "FW"_cl);
 
-    rules_["PRN"] = make_unique<head_initial>();
+    rules_["PRN"_cl] = make_unique<head_initial>();
 
-    rules_["PRT"] = make_unique<head_final>("RP");
+    rules_["PRT"_cl] = make_unique<head_final>("RP"_cl);
 
-    rules_["QP"]
-        = make_unique<head_initial>("$", "IN", "NNS", "NN", "JJ", "RB", "DT",
-                                    "CD", "NCD", "QP", "JJR", "JJS");
+    rules_["QP"_cl] = make_unique<head_initial>(
+        "$"_cl, "IN"_cl, "NNS"_cl, "NN"_cl, "JJ"_cl, "RB"_cl, "DT"_cl, "CD"_cl,
+        "NCD"_cl, "QP"_cl, "JJR"_cl, "JJS"_cl);
 
-    rules_["RRC"] = make_unique<head_final>("VP", "NP", "ADVP", "ADJP", "PP");
+    rules_["RRC"_cl] = make_unique<head_final>("VP"_cl, "NP"_cl, "ADVP"_cl,
+                                               "ADJP"_cl, "PP"_cl);
 
-    rules_["S"] = make_unique<head_initial>("TO", "IN", "VP", "S", "SBAR",
-                                            "ADJP", "UCP", "NP");
+    rules_["S"_cl]
+        = make_unique<head_initial>("TO"_cl, "IN"_cl, "VP"_cl, "S"_cl,
+                                    "SBAR"_cl, "ADJP"_cl, "UCP"_cl, "NP"_cl);
 
-    rules_["SBAR"]
-        = make_unique<head_initial>("WHNP", "WHPP", "WHADVP", "WHADJP", "IN",
-                                    "DT", "S", "SQ", "SINV", "SBAR", "FRAG");
+    rules_["SBAR"_cl] = make_unique<head_initial>(
+        "WHNP"_cl, "WHPP"_cl, "WHADVP"_cl, "WHADJP"_cl, "IN"_cl, "DT"_cl,
+        "S"_cl, "SQ"_cl, "SINV"_cl, "SBAR"_cl, "FRAG"_cl);
 
-    rules_["SBARQ"]
-        = make_unique<head_initial>("SQ", "S", "SINV", "SBARQ", "FRAG");
+    rules_["SBARQ"_cl] = make_unique<head_initial>("SQ"_cl, "S"_cl, "SINV"_cl,
+                                                   "SBARQ"_cl, "FRAG"_cl);
 
-    rules_["SINV"] = make_unique<head_initial>("VBZ", "VBD", "VBP", "VB", "MD",
-                                               "VP", "S", "SINV", "ADJP", "NP");
+    rules_["SINV"_cl] = make_unique<head_initial>(
+        "VBZ"_cl, "VBD"_cl, "VBP"_cl, "VB"_cl, "MD"_cl, "VP"_cl, "S"_cl,
+        "SINV"_cl, "ADJP"_cl, "NP"_cl);
 
-    rules_["SQ"] = make_unique<head_initial>("VBZ", "VBD", "VBP", "VB", "MD",
-                                             "VP", "SQ");
+    rules_["SQ"_cl] = make_unique<head_initial>(
+        "VBZ"_cl, "VBD"_cl, "VBP"_cl, "VB"_cl, "MD"_cl, "VP"_cl, "SQ"_cl);
 
-    rules_["UCP"] = make_unique<head_final>();
+    rules_["UCP"_cl] = make_unique<head_final>();
 
-    rules_["VP"] = make_unique<head_initial>("TO", "VBD", "VBN", "MD", "VBZ",
-                                             "VB", "VBG", "VBP", "VP", "ADJP",
-                                             "NN", "NNS", "NP");
+    rules_["VP"_cl] = make_unique<head_initial>(
+        "TO"_cl, "VBD"_cl, "VBN"_cl, "MD"_cl, "VBZ"_cl, "VB"_cl, "VBG"_cl,
+        "VBP"_cl, "VP"_cl, "ADJP"_cl, "NN"_cl, "NNS"_cl, "NP"_cl);
 
-    rules_["WHADJP"] = make_unique<head_initial>("CC", "WRB", "JJ", "ADJP");
+    rules_["WHADJP"_cl]
+        = make_unique<head_initial>("CC"_cl, "WRB"_cl, "JJ"_cl, "ADJP"_cl);
 
-    rules_["WHADVP"] = make_unique<head_final>("CC", "WRB");
+    rules_["WHADVP"_cl] = make_unique<head_final>("CC"_cl, "WRB"_cl);
 
-    rules_["WHNP"] = make_unique<head_initial>("WDT", "WP", "WP$", "WHADJP",
-                                               "WHPP", "WHNP");
+    rules_["WHNP"_cl] = make_unique<head_initial>(
+        "WDT"_cl, "WP"_cl, "WP$"_cl, "WHADJP"_cl, "WHPP"_cl, "WHNP"_cl);
 
-    rules_["WHPP"] = make_unique<head_final>("IN", "TO", "FW");
+    rules_["WHPP"_cl] = make_unique<head_final>("IN"_cl, "TO"_cl, "FW"_cl);
 
-    rules_["NP"] = make_unique<head_np>();
+    rules_["NP"_cl] = make_unique<head_np>();
+
+    rules_["ROOT"_cl] = make_unique<head_initial>();
 }
 
 head_finder::head_finder(rule_table&& table) : rules_{std::move(table)}
@@ -252,9 +261,13 @@ void head_finder::operator()(internal_node& inode)
 {
     // recurse, as we need the head annotations of all child nodes first
     inode.each_child([&](node* child)
-    {
-        child->accept(*this);
-    });
+                     {
+                         child->accept(*this);
+                     });
+
+    if (rules_.find(inode.category()) == rules_.end())
+        LOG(fatal) << "No rule found for category " << inode.category()
+                   << " in rule table" << ENDLG;
 
     // run the head finder for the syntactic category of the current node
     auto idx = rules_.at(inode.category())->find_head(inode);
@@ -264,6 +277,5 @@ void head_finder::operator()(internal_node& inode)
     if (idx > 1 && inode.child(idx - 1)->category() == class_label{"CC"})
         set_head(inode, inode.child(idx - 2));
 }
-
 }
 }

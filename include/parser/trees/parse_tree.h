@@ -43,13 +43,15 @@ class parse_tree
     void transform(tree_transformer&);
 
     template <class Visitor>
-    typename Visitor::result_type visit(Visitor&& vtor)
+    typename std::remove_reference<Visitor>::type::result_type
+        visit(Visitor&& vtor)
     {
         return root_->accept(vtor);
     }
 
     template <class Visitor>
-    typename Visitor::result_type visit(Visitor&& vtor) const
+    typename std::remove_reference<Visitor>::type::result_type
+        visit(Visitor&& vtor) const
     {
         return root_->accept(vtor);
     }
