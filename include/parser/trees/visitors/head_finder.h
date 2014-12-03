@@ -21,7 +21,7 @@ namespace parser
 
 struct head_rule
 {
-    virtual void find_head(internal_node&) const = 0;
+    virtual uint64_t find_head(const internal_node&) const = 0;
 };
 
 /**

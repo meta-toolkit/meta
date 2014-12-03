@@ -10,6 +10,7 @@
 #include "parser/trees/visitors/head_finder.h"
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"
+#include "util/optional.h"
 
 namespace meta
 {
@@ -27,17 +28,6 @@ void set_head(internal_node& inode, const node* child)
         inode.head_lexicon(&child->as<leaf_node>());
     else
         inode.head_lexicon(child->as<internal_node>().head_lexicon());
-}
-
-bool handle_child(internal_node& inode, const node* child,
-                  const class_label& cand)
-{
-    if (child->category() == cand)
-    {
-        set_head(inode, child);
-        return true;
-    }
-    return false;
 }
 
 /**
@@ -62,21 +52,20 @@ struct head_initial : public normal_head_rule
 {
     using normal_head_rule::normal_head_rule;
 
-    void find_head(internal_node& inode) const override
+    uint64_t find_head(const internal_node& inode) const override
     {
         for (const auto& cand : candidates_)
         {
             for (uint64_t idx = 0; idx < inode.num_children(); ++idx)
             {
                 auto child = inode.child(idx);
-                if (handle_child(inode, child, cand))
-                    return;
+                if (child->category() == cand)
+                    return idx;
             }
         }
 
         // no matches, use left most node
-        auto child = inode.child(0);
-        set_head(inode, child);
+        return 0;
     }
 };
 
@@ -87,7 +76,7 @@ struct head_final : public normal_head_rule
 {
     using normal_head_rule::normal_head_rule;
 
-    void find_head(internal_node& inode) const override
+    uint64_t find_head(const internal_node& inode) const override
     {
         for (const auto& cand : candidates_)
         {
@@ -96,14 +85,13 @@ struct head_final : public normal_head_rule
                 // iterate in reverse, from right to left
                 auto ridx = inode.num_children() - 1 - idx;
                 auto child = inode.child(ridx);
-                if (handle_child(inode, child, cand))
-                    return;
+                if (child->category() == cand)
+                    return ridx;
             }
         }
 
         // no matches, use right most node
-        auto child = inode.child(inode.num_children() - 1);
-        set_head(inode, child);
+        return inode.num_children() - 1;
     }
 };
 
@@ -117,20 +105,17 @@ struct head_np : public head_rule
     {
         std::unordered_set<class_label> candidates_;
 
-        bool find_head(internal_node& inode) const
+        util::optional<uint64_t> find_head(const internal_node& inode) const
         {
             for (uint64_t idx = 0; idx < inode.num_children(); ++idx)
             {
                 auto ridx = inode.num_children() - 1 - idx;
                 auto child = inode.child(ridx);
                 if (candidates_.find(child->category()) != candidates_.end())
-                {
-                    set_head(inode, child);
-                    return true;
-                }
+                    return {ridx};
             }
 
-            return false;
+            return util::nullopt;
         }
     };
 
@@ -138,48 +123,44 @@ struct head_np : public head_rule
     {
         std::unordered_set<class_label> candidates_;
 
-        bool find_head(internal_node& inode) const
+        util::optional<uint64_t> find_head(const internal_node& inode) const
         {
             for (uint64_t idx = 0; idx < inode.num_children(); ++idx)
             {
                 auto child = inode.child(idx);
                 if (candidates_.find(child->category()) != candidates_.end())
-                {
-                    set_head(inode, child);
-                    return true;
-                }
+                    return {idx};
             }
 
-            return false;
+            return util::nullopt;
         }
     };
 
-    void find_head(internal_node& inode) const override
+    uint64_t find_head(const internal_node& inode) const override
     {
         head_final_np first_pass{
             {"NN", "NNP", "NNPS", "NNS", "NX", "POS", "JJR"}};
-        if (first_pass.find_head(inode))
-            return;
+        if (auto idx = first_pass.find_head(inode))
+            return *idx;
 
         head_initial_np second_pass{{"NP"}};
-        if (second_pass.find_head(inode))
-            return;
+        if (auto idx = second_pass.find_head(inode))
+            return *idx;
 
         head_final_np third_pass{{"$", "ADJP", "PRN"}};
-        if (third_pass.find_head(inode))
-            return;
+        if (auto idx = third_pass.find_head(inode))
+            return *idx;
 
         head_final_np fourth_pass{{"CD"}};
-        if (fourth_pass.find_head(inode))
-            return;
+        if (auto idx = fourth_pass.find_head(inode))
+            return *idx;
 
         head_final_np fifth_pass{{"JJ", "JJS", "RB", "QP"}};
-        if (fifth_pass.find_head(inode))
-            return;
+        if (auto idx = fifth_pass.find_head(inode))
+            return *idx;
 
         // no matches, just use last child
-        auto child = inode.child(inode.num_children() - 1);
-        set_head(inode, child);
+        return inode.num_children() - 1;
     }
 };
 }
@@ -259,5 +240,30 @@ head_finder::head_finder(rule_table&& table) : rules_{std::move(table)}
 {
     // nothing
 }
+
+void head_finder::operator()(leaf_node&)
+{
+    // head annotations are only populated for internal nodes; leaf nodes
+    // are the trivial case
+    return;
+}
+
+void head_finder::operator()(internal_node& inode)
+{
+    // recurse, as we need the head annotations of all child nodes first
+    inode.each_child([&](node* child)
+    {
+        child->accept(*this);
+    });
+
+    // run the head finder for the syntactic category of the current node
+    auto idx = rules_.at(inode.category())->find_head(inode);
+    set_head(inode, inode.child(idx));
+
+    // clean up stage for handling coordinating clauses
+    if (idx > 1 && inode.child(idx - 1)->category() == class_label{"CC"})
+        set_head(inode, inode.child(idx - 2));
+}
+
 }
 }
