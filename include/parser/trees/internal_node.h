@@ -87,6 +87,8 @@ class internal_node : public node
 
     void head_constituent(const node* n);
 
+    void head(const node* n);
+
     template <class Fun>
     void each_child(Fun&& fn) const
     {

@@ -21,16 +21,6 @@ namespace parser
 namespace
 {
 
-void set_head(internal_node& inode, const node* child)
-{
-    inode.head_constituent(child);
-
-    if (child->is_leaf())
-        inode.head_lexicon(&child->as<leaf_node>());
-    else
-        inode.head_lexicon(child->as<internal_node>().head_lexicon());
-}
-
 /**
  * A normal head rule following Collins' head finding algorithm.
  */
@@ -277,11 +267,11 @@ void head_finder::operator()(internal_node& inode)
 
     // run the head finder for the syntactic category of the current node
     auto idx = rules_.at(inode.category())->find_head(inode);
-    set_head(inode, inode.child(idx));
+    inode.head(inode.child(idx));
 
     // clean up stage for handling coordinating clauses
     if (idx > 1 && inode.child(idx - 1)->category() == class_label{"CC"})
-        set_head(inode, inode.child(idx - 2));
+        inode.head(inode.child(idx - 2));
 }
 }
 }

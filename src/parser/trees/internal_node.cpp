@@ -4,6 +4,7 @@
  */
 
 #include "parser/trees/internal_node.h"
+#include "parser/trees/leaf_node.h"
 
 namespace meta
 {
@@ -71,6 +72,23 @@ const node* internal_node::head_constituent() const
 void internal_node::head_constituent(const node* n)
 {
     head_constituent_ = n;
+}
+
+void internal_node::head(const node* n)
+{
+#if DEBUG
+    bool found = false;
+    for (const auto& child : children_)
+        found = found || (child.get() == n);
+    if (!found)
+        throw std::runtime_error{"Cannot set head to a non-child node"};
+#endif
+    head_constituent(n);
+
+    if (n->is_leaf())
+        head_lexicon(&n->as<leaf_node>());
+    else
+        head_lexicon(n->as<internal_node>().head_lexicon());
 }
 }
 }
