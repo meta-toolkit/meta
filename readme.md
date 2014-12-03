@@ -1,39 +1,7 @@
 # MeTA: ModErn Text Analysis
 
 Please visit our [web page](http://meta-toolkit.github.io/meta/) for information
-about MeTA!
-
-## Overview
-
-MeTA is a modern C++ data sciences toolkit featuring
-
- - text tokenization, including deep semantic features like parse trees
-
- - inverted and forward indexes with compression and various caching strategies
-
- - a collection of ranking functions for searching the indexes
-
- - topic models with different inference methods
-
- - classification algorithms
-
- - graph representations and algorithms
-
- - language models
-
- - CRF implementation (for POS-tagging, shallow parsing)
-
- - wrappers for liblinear and libsvm (including libsvm dataset parsers)
-
- - UTF8 support for analysis on various languages
-
- - multithreaded algorithms
-
-Doxygen documentation can be found
-[here](http://meta-toolkit.github.io/meta/doxygen/).
-
-Our current goal for MeTA is to publish in [JMLR's Machine Learning Open-Source
-Software](http://jmlr.org/mloss/).
+and tutorials about MeTA!
 
 ## Build Status (by branch)
 - master: [![Build
@@ -79,3 +47,39 @@ make
    command once, you should be able to just run make like usual as you're
    developing---it'll detect when the CMakeLists.txt file has changed and
    rebuild Makefiles if it needs to.)
+
+## Overview
+
+MeTA is a modern C++ data sciences toolkit featuring
+
+ - text tokenization, including deep semantic features like parse trees
+
+ - inverted and forward indexes with compression and various caching strategies
+
+ - a collection of ranking functions for searching the indexes
+
+ - topic models with different inference methods
+
+ - classification algorithms
+
+ - graph representations and algorithms
+
+ - language models
+
+ - CRF implementation (for POS-tagging, shallow parsing)
+
+ - wrappers for liblinear and libsvm (including libsvm dataset parsers)
+
+ - UTF8 support for analysis on various languages
+
+ - multithreaded algorithms
+
+## Tutorials
+
+Walkthrough tutorials on several areas of MeTA can be found
+[here](http://meta-toolkit.github.io/meta/).
+
+## API Documentation
+
+Doxygen documentation can be found
+[here](http://meta-toolkit.github.io/meta/doxygen/).
