@@ -16,18 +16,22 @@ namespace lm
 {
 diff::diff(const cpptoml::toml_group& config) : lm_{config}
 {
-    auto nval = config.get_as<int64_t>("n-value");
+    auto group = config.get_group("diff");
+    if (!group)
+        throw diff_exception{"missing [diff] group from config"};
+
+    auto nval = group->get_as<int64_t>("n-value");
     if (!nval)
         throw diff_exception{"n-value not specified in config"};
     n_val_ = *nval;
 
-    auto edits = config.get_as<int64_t>("max-edits");
+    auto edits = group->get_as<int64_t>("max-edits");
     if (!edits)
         throw diff_exception{"max-edits not specified in config"};
     max_edits_ = *edits;
 
-    set_stems(config);
-    set_function_words(config);
+    set_stems(*group);
+    set_function_words(*group);
 }
 
 std::vector<std::pair<sentence, double>>

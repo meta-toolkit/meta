@@ -265,15 +265,12 @@ double language_model::perplexity(const sentence& tokens) const
 {
     sentence ngram;
     for (size_t i = 1; i < N_; ++i)
-    //  ngram.push_back(tokens[i - 1]);
-     ngram.push_back("<s>");
+        ngram.push_back("<s>");
 
     double perp = 0.0;
-     for (auto& token : tokens)
-    //for (size_t i = N_; i < tokens.size(); ++i)
+    for (auto& token : tokens)
     {
         ngram.push_back(token);
-        //ngram.push_back(tokens[i]);
         perp += std::log(1.0 / prob(ngram));
         ngram.pop_front();
     }

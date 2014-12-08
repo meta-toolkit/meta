@@ -74,11 +74,7 @@ std::unique_ptr<analyzer>
                                  const cpptoml::toml_group& config)
 {
     auto filts = analyzer::load_filters(global, config);
-    auto diff_config = global.get_group("diff-config");
-    if (!diff_config)
-        throw analyzer::analyzer_exception{
-            "diff-config section needed for diff analyzer"};
-    return make_unique<diff_analyzer>(*diff_config, std::move(filts));
+    return make_unique<diff_analyzer>(global, std::move(filts));
 }
 }
 }

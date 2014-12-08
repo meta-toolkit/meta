@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 {
     bool diagnostic = true;
     auto config = cpptoml::parse_file(argv[1]);
-    lm::diff correcter{*config.get_group("diff-config")};
+    lm::diff correcter{*config.get_group("diff")};
     std::string line;
     std::ifstream in{argv[2]};
     std::ofstream out{"edits.dat"};

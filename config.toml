@@ -47,6 +47,16 @@ train-sections = [0, 18]
 dev-sections = [19, 21]
 test-sections = [22, 24]
 
+[diff]
+prefix = "../data"
+dataset = "20newsgroups"
+n-value = 3
+max-edits = 3
+
+[language-model]
+format = "learn"
+n-value = 3
+
 [features]
 method = "info-gain"
 prefix = "features"
