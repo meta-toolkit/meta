@@ -8,17 +8,7 @@
 #include "analyzers/tokenizers/character_tokenizer.h"
 #include "analyzers/tokenizers/whitespace_tokenizer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
-
-#include "analyzers/filters/alpha_filter.h"
-#include "analyzers/filters/empty_sentence_filter.h"
-#include "analyzers/filters/english_normalizer.h"
-#include "analyzers/filters/icu_filter.h"
-#include "analyzers/filters/blank_filter.h"
-#include "analyzers/filters/length_filter.h"
-#include "analyzers/filters/list_filter.h"
-#include "analyzers/filters/lowercase_filter.h"
-#include "analyzers/filters/porter2_stemmer.h"
-#include "analyzers/filters/sentence_boundary.h"
+#include "analyzers/filters/all.h"
 
 namespace meta
 {
