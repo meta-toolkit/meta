@@ -13,6 +13,7 @@
 #include "analyzers/filters/empty_sentence_filter.h"
 #include "analyzers/filters/english_normalizer.h"
 #include "analyzers/filters/icu_filter.h"
+#include "analyzers/filters/blank_filter.h"
 #include "analyzers/filters/length_filter.h"
 #include "analyzers/filters/list_filter.h"
 #include "analyzers/filters/lowercase_filter.h"
@@ -60,6 +61,7 @@ filter_factory::filter_factory()
     register_filter<filters::lowercase_filter>();
     register_filter<filters::porter2_stemmer>();
     register_filter<filters::sentence_boundary>();
+    register_filter<filters::blank_filter>();
 }
 }
 }

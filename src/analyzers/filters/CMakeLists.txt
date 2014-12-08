@@ -6,6 +6,7 @@ add_library(meta-filters alpha_filter.cpp
                          filter_factory.cpp
                          icu_filter.cpp
                          length_filter.cpp
+                         blank_filter.cpp
                          list_filter.cpp
                          lowercase_filter
                          porter2_stemmer.cpp

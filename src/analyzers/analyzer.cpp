@@ -11,6 +11,7 @@
 #include "analyzers/filters/length_filter.h"
 #include "analyzers/filters/list_filter.h"
 #include "analyzers/filters/lowercase_filter.h"
+#include "analyzers/filters/blank_filter.h"
 #include "analyzers/filters/porter2_stemmer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
 #include "corpus/document.h"
