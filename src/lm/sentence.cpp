@@ -10,7 +10,7 @@
 #include "analyzers/analyzer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
 #include "analyzers/filters/lowercase_filter.h"
-#include "analyzers/filters/alpha_filter.h"
+#include "analyzers/filters/blank_filter.h"
 #include "analyzers/filters/empty_sentence_filter.h"
 
 namespace meta
@@ -23,7 +23,7 @@ sentence::sentence(const std::string& text)
     std::unique_ptr<token_stream> stream;
     stream = make_unique<tokenizers::icu_tokenizer>();
     stream = make_unique<filters::lowercase_filter>(std::move(stream));
-    stream = make_unique<filters::alpha_filter>(std::move(stream));
+    stream = make_unique<filters::blank_filter>(std::move(stream));
     stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
     stream->set_content(text);
     while (*stream)
