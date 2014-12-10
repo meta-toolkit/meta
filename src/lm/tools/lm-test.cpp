@@ -8,6 +8,9 @@
 #include "meta.h"
 #include "lm/diff.h"
 #include "lm/sentence.h"
+#include "logging/logger.h"
+#include "util/progress.h"
+#include "util/filesystem.h"
 
 using namespace meta;
 
@@ -20,22 +23,31 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    logging::set_cerr_logging();
+
     lm::diff correcter{cpptoml::parse_file(argv[1])};
     std::ifstream in{argv[2]};
+    auto num_sentences = filesystem::num_lines(argv[2]);
+    printing::progress prog{"Editing sentences ", num_sentences};
     std::ofstream out{std::string{argv[2]} + ".out"};
     std::ofstream log{std::string{argv[2]} + ".log"};
     std::string line;
+    size_t done = 0;
+    double do_nothing = 0;
     while (in)
     {
         std::getline(in, line);
         if (line.empty())
             continue;
 
+        prog(done++);
         lm::sentence sent{line};
         auto candidates = correcter.candidates(sent, true);
         out << candidates[0].first.to_string() << std::endl;
         log << sent.to_string() << std::endl;
         log << "====================================" << std::endl;
+        if (candidates[0].first.operations().empty())
+            ++do_nothing;
 
         for (size_t i = 0; i < 5 && i < candidates.size(); ++i)
         {
@@ -50,4 +62,7 @@ int main(int argc, char* argv[])
         }
         log << "====================================" << std::endl;
     }
+    prog.end();
+
+    std::cout << "Percent no-ops: " << do_nothing / done << std::endl;
 }

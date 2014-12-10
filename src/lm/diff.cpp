@@ -30,6 +30,18 @@ diff::diff(const cpptoml::toml_group& config) : lm_{config}
         throw diff_exception{"max-edits not specified in config"};
     max_edits_ = *edits;
 
+    auto b_pen = group->get_as<double>("base-penalty");
+    base_penalty_ = b_pen ? *b_pen : 0.0;
+
+    auto i_pen = group->get_as<double>("insert-penalty");
+    insert_penalty_ = i_pen ? *i_pen : 0.0;
+
+    auto s_pen = group->get_as<double>("substitute-penalty");
+    substitute_penalty_ = s_pen ? *s_pen : 0.0;
+
+    auto r_pen = group->get_as<double>("remove-penalty");
+    remove_penalty_ = r_pen ? *r_pen : 0.0;
+
     set_stems(*group);
     set_function_words(*group);
 }
@@ -72,19 +84,6 @@ void diff::add(PQ& candidates, const sentence& sent)
 }
 
 template <class PQ>
-void diff::remove(const sentence& sent, size_t idx, PQ& candidates,
-                  uint64_t depth)
-{
-    sentence rem_cpy{sent};
-    rem_cpy.remove(idx);
-    if (seen_.find(rem_cpy.to_string()) == seen_.end())
-    {
-        add(candidates, rem_cpy);
-        step(rem_cpy, candidates, depth + 1);
-    }
-}
-
-template <class PQ>
 void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
 {
     if (sent.size() < n_val_)
@@ -105,14 +104,11 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
         }
     }
 
-    sentence rem_cpy{sent};
-    rem_cpy.remove(best_idx); // EDIT
-    if (seen_.find(rem_cpy.to_string()) == seen_.end())
-    {
-        add(candidates, rem_cpy);
-        step(rem_cpy, candidates, depth + 1);
-    }
+    insert(sent, best_idx, candidates, depth);
+    remove(sent, best_idx, candidates, depth);
+    substitute(sent, best_idx, candidates, depth);
 
+    /*
     best.pop_back();
     try
     {
@@ -122,7 +118,8 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
                 continue;
 
             sentence ins_cpy{sent};
-            ins_cpy.insert(best_idx, next.first); // EDIT
+            ins_cpy.insert(best_idx, next.first,
+                           base_penalty_ + insert_penalty_);
 
             if (seen_.find(ins_cpy.to_string()) == seen_.end())
             {
@@ -131,7 +128,8 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
             }
 
             sentence sub_cpy{sent};
-            sub_cpy.substitute(best_idx, next.first); // EDIT
+            sub_cpy.substitute(best_idx, next.first,
+                               base_penalty_ + substitute_penalty_);
 
             if (seen_.find(sub_cpy.to_string()) == seen_.end())
             {
@@ -144,6 +142,7 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
     {
         // ignore if there are no transitions found
     }
+    */
 }
 
 template <class PQ>
@@ -153,7 +152,7 @@ void diff::insert(const sentence& sent, size_t idx, PQ& candidates,
     for (auto& fw : fwords_)
     {
         sentence ins_cpy{sent};
-        ins_cpy.insert(idx, fw);
+        ins_cpy.insert(idx, fw, base_penalty_ + substitute_penalty_);
         if (seen_.find(ins_cpy.to_string()) == seen_.end())
         {
             add(candidates, ins_cpy);
@@ -174,13 +173,26 @@ void diff::substitute(const sentence& sent, size_t idx, PQ& candidates,
         for (auto& stem : it->second)
         {
             sentence subbed{sent};
-            subbed.substitute(idx, stem);
+            subbed.substitute(idx, stem, base_penalty_ + substitute_penalty_);
             if (seen_.find(subbed.to_string()) == seen_.end())
             {
                 add(candidates, subbed);
                 step(subbed, candidates, depth + 1);
             }
         }
+    }
+}
+
+template <class PQ>
+void diff::remove(const sentence& sent, size_t idx, PQ& candidates,
+                  uint64_t depth)
+{
+    sentence rem_cpy{sent};
+    rem_cpy.remove(idx, base_penalty_ + remove_penalty_);
+    if (seen_.find(rem_cpy.to_string()) == seen_.end())
+    {
+        add(candidates, rem_cpy);
+        step(rem_cpy, candidates, depth + 1);
     }
 }
 

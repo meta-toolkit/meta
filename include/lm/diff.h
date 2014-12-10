@@ -99,15 +99,23 @@ class diff
     void add(PQ& candidates, const sentence& sent);
 
     language_model lm_;
+
     uint64_t n_val_;
     uint64_t max_edits_;
+
+    double base_penalty_;
+    double insert_penalty_;
+    double substitute_penalty_;
+    double remove_penalty_;
+
+    bool use_lm_;
     std::unordered_map<std::string, std::vector<std::string>> stems_;
     std::vector<std::string> fwords_;
     std::unordered_set<std::string> seen_;
-    static constexpr uint64_t max_cand_size_ = 20;
-    bool use_lm_;
 
-    /// balance between perplexity and edit weights
+    static constexpr uint64_t max_cand_size_ = 20;
+    /// balance between perplexity and edit weights; doesn't necessarily matter
+    /// since penalty weights will scale with different values of lambda
     static constexpr double lambda_ = 0.5;
 };
 
