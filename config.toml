@@ -52,6 +52,11 @@ prefix = "../data"
 dataset = "20newsgroups"
 n-value = 3
 max-edits = 3
+# penalty defaults are all zero (no penalty)
+base-penalty = 0.0 # base penalty is for any edit
+insert-penalty = 0.0
+substitute-penalty = 0.0
+remove-penalty = 0.0
 
 [language-model]
 format = "learn"
