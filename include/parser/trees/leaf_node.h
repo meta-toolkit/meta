@@ -10,6 +10,7 @@
 #define META_PARSE_LEAF_NODE_H_
 
 #include "parser/trees/node.h"
+#include "util/clonable.h"
 #include "util/optional.h"
 
 namespace meta
@@ -17,11 +18,12 @@ namespace meta
 namespace parser
 {
 
-class leaf_node : public node
+class leaf_node : public util::clonable<node, leaf_node>
 {
   public:
+    using base = util::clonable<node, leaf_node>;
     /// Use the category constructor from the node class
-    using node::node;
+    using base::base;
 
     /**
      * Constructs a new leaf node with the given category and word.

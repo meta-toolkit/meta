@@ -13,9 +13,20 @@ namespace parser
 
 internal_node::internal_node(class_label cat,
                              std::vector<std::unique_ptr<node>>&& children)
-    : node{std::move(cat)}, children_{std::move(children)}
+    : base{std::move(cat)}, children_{std::move(children)}
 {
     // nothing
+}
+
+internal_node::internal_node(const internal_node& other)
+    : base{other.category()}
+{
+    other.each_child([&](const node* n)
+                     {
+                         children_.emplace_back(n->clone());
+                         if (n == other.head_constituent())
+                             head(children_.back().get());
+                     });
 }
 
 void internal_node::add_child(std::unique_ptr<node> child)

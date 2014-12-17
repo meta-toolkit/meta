@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 #include "parser/trees/node.h"
+#include "util/clonable.h"
 
 namespace meta
 {
@@ -20,10 +21,12 @@ namespace parser
 
 class leaf_node;
 
-class internal_node : public node
+class internal_node : public util::clonable<node, internal_node>
 {
   public:
-    using node::node;
+    using base = util::clonable<node, internal_node>;
+
+    using base::base;
 
     /**
      * Constructs a new internal node by **moving** the children into
@@ -37,7 +40,7 @@ class internal_node : public node
      */
     template <class FwdIt>
     internal_node(class_label cat, FwdIt begin, FwdIt end)
-        : node{std::move(cat)}
+        : base{std::move(cat)}
     {
         auto dist = std::distance(begin, end);
         children_.reserve(dist);
@@ -55,6 +58,11 @@ class internal_node : public node
      */
     internal_node(class_label cat,
                   std::vector<std::unique_ptr<node>>&& children);
+
+    /**
+     * Copies an internal node.
+     */
+    internal_node(const internal_node&);
 
     /**
      * Adds a child to this node.

@@ -160,18 +160,15 @@ T* optional<T>::dataptr()
 }
 
 template <class T>
-bool operator==(const optional<T>& lhs, const optional<T>& rhs)
+bool operator<(const optional<T>& lhs, const optional<T>& rhs)
 {
-    // two disengaged optionals
-    if (!lhs && !rhs)
-        return true;
+    if (lhs && rhs)
+        return *lhs < *rhs;
 
-    // if they are not both engaged
-    if (!(lhs && rhs))
+    if (!lhs)
         return false;
 
-    // both are engaged
-    return *lhs == *rhs;
+    return true;
 }
 }
 }

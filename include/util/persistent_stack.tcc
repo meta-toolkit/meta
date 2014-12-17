@@ -11,6 +11,13 @@ namespace util
 {
 
 template <class T>
+persistent_stack<T>::node::node(T item, std::shared_ptr<node> previous)
+    : data{std::move(item)}, prev{std::move(previous)}
+{
+    // nothing
+}
+
+template <class T>
 persistent_stack<T>::persistent_stack()
     : head_{nullptr}, size_{0}
 {
@@ -18,10 +25,9 @@ persistent_stack<T>::persistent_stack()
 }
 
 template <class T>
-template <class D>
-persistent_stack<T> persistent_stack<T>::push(D&& data) const
+persistent_stack<T> persistent_stack<T>::push(T data) const
 {
-    auto n = std::make_shared<node>(std::forward<D>(data), head_);
+    auto n = std::make_shared<node>(std::move(data), head_);
     return {n, size_ + 1};
 }
 
@@ -37,6 +43,9 @@ persistent_stack<T> persistent_stack<T>::pop() const
 template <class T>
 const T& persistent_stack<T>::peek() const
 {
+    if (!head_)
+        throw exception{"peek() called on empty stack"};
+
     return head_->data;
 }
 

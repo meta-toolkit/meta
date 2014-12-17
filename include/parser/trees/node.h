@@ -47,6 +47,12 @@ class node
     virtual bool equal(const node& other) const = 0;
 
     /**
+     * Clones the given node.
+     * @return a unique_ptr to a copy of this object
+     */
+    virtual std::unique_ptr<node> clone() const = 0;
+
+    /**
      * Accepts a visitor.
      * @param vtor The visitor to visit each of the nodes in this subtree
      * @return the visitor result for this subtree

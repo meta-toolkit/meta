@@ -11,7 +11,7 @@ namespace parser
 {
 
 leaf_node::leaf_node(class_label cat, std::string word)
-    : node{std::move(cat)}, word_{std::move(word)}
+    : base{std::move(cat)}, word_{std::move(word)}
 {
     // nothing
 }

@@ -23,8 +23,7 @@ class persistent_stack
   public:
     persistent_stack();
 
-    template <class D>
-    persistent_stack<T> push(D&& data) const;
+    persistent_stack<T> push(T data) const;
 
     persistent_stack<T> pop() const;
 
@@ -41,6 +40,8 @@ class persistent_stack
   private:
     struct node
     {
+        node(T item, std::shared_ptr<node> previous);
+
         T data;
         std::shared_ptr<node> prev;
     };
