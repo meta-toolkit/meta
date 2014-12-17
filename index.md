@@ -51,23 +51,26 @@ We have walkthroughs for the following parts of MeTA:
    work. You will likely need Visual Studio 2013 for the C++11 features.
 
  - This project makes use of several [git
-   submodules](http://git-scm.com/book/en/Git-Tools-Submodules). To initialize
-   these, run
+   submodules](http://git-scm.com/book/en/Git-Tools-Submodules). Instructions on
+   how to use them is included in the code snippet below.
+
+ - Make sure you compile liblinear and libsvm (located in deps/libsvm-modules)
+   if you want to use them. It is not necessary to compile or modify any other
+    submodules.
+
+ - To get started, run the following commands in the root of the project:
 
 {% highlight bash %}
+# checkout the project
+git clone git@github.com:meta-toolkit/meta.git
+cd meta/
+
+# set up submodules
 git submodule init
 git submodule update
-{% endhighlight %}
 
-   Then, make sure you compile liblinear and libsvm (located in
-   deps/libsvm-modules). It is not necessary to compile or modify any other
-   submodules.
-
- - To compile initially, run the following commands
-
-{% highlight bash %}
 mkdir build
-cd build
+cd build/
 
 # to use clang
 CXX=clang++ cmake ../ -DCMAKE_BUILD_TYPE=Release
@@ -78,11 +81,12 @@ CXX=g++ cmake ../ -DCMAKE_BUILD_TYPE=Release
 make
 {% endhighlight %}
 
- - There are rules for clean, tidy, and doc. (Also, once you run the cmake
-   command once, you should be able to just run make like usual as you're
+ - There are rules for clean, tidy, and doc. **After you run the cmake command
+   once, you will be able to just run `make` as usual** when you're
    developing---it'll detect when the CMakeLists.txt file has changed and
-   rebuild Makefiles if it needs to.) To compile in debug mode, just replace
-   `Release` with `Debug`.
+   rebuild Makefiles if it needs to.
+
+ - To compile in debug mode, just replace `Release` with `Debug`.
 
 ---
 
