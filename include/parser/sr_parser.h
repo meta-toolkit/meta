@@ -45,12 +45,26 @@ class sr_parser
         uint64_t seed = std::random_device{}();
         training_algorithm algorithm = training_algorithm::EARLY_TERMINATION;
 
+        training_options() = default;
         training_options(const training_options&) = default;
     };
 
+    sr_parser() = default;
+
+    sr_parser(const std::string& prefix);
+
     void train(std::vector<parse_tree>& trees, training_options options);
 
+    void save(const std::string& prefix) const;
+
+    class exception : public std::runtime_error
+    {
+      public:
+        using std::runtime_error::runtime_error;
+    };
+
   private:
+
     struct parser_state
     {
         parser_state(const parse_tree& tree);
@@ -91,6 +105,8 @@ class sr_parser
 
     using weight_vector = util::sparse_vector<std::string, double>;
     using weight_vectors = util::sparse_vector<transition, weight_vector>;
+
+    void load(const std::string& prefix);
 
     weight_vectors train_batch(training_batch batch);
 

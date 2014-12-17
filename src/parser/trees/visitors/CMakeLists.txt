@@ -5,4 +5,5 @@ add_library(meta-tree-visitors annotation_remover.cpp
                                debinarizer.cpp
                                empty_remover.cpp
                                head_finder.cpp
+                               transition_finder.cpp
                                unary_chain_remover.cpp)

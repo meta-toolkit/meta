@@ -44,6 +44,7 @@ void transition_finder::operator()(const internal_node& in)
 
 std::vector<transition> transition_finder::transitions()
 {
+    transitions_.emplace_back(transition::type_t::FINALIZE);
     transitions_.emplace_back(transition::type_t::IDLE);
     return std::move(transitions_);
 }

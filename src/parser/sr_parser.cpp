@@ -4,8 +4,10 @@
  */
 
 #include <cassert>
+#include <fstream>
 #include <numeric>
 
+#include "io/binary.h"
 #include "parser/sr_parser.h"
 #include "parser/trees/visitors/annotation_remover.h"
 #include "parser/trees/visitors/empty_remover.h"
@@ -15,6 +17,7 @@
 #include "parser/trees/visitors/binarizer.h"
 #include "parser/trees/visitors/debinarizer.h"
 #include "parser/trees/visitors/transition_finder.h"
+#include "util/progress.h"
 
 namespace meta
 {
@@ -88,9 +91,7 @@ void sr_parser::parser_state::advance(transition trans)
     {
         case transition::type_t::SHIFT:
         {
-            //stack = stack.push(std::move(make_unique<leaf_node>(queue[q_idx])));
-            std::unique_ptr<node> n;
-            stack.push(std::move(n));
+            stack = stack.push(queue[q_idx]->clone());
             ++q_idx;
         }
         break;
@@ -157,8 +158,12 @@ sr_parser::training_data::training_data(training_options opt,
     head_finder hf;
     binarizer bin;
 
+    printing::progress progress{" > Preprocessing training trees: ",
+                                trees.size()};
+    size_t idx = 0;
     for (auto& tree : trees)
     {
+        progress(++idx);
         tree.transform(transformer);
         tree.visit(hf);
         tree.transform(bin);
@@ -192,6 +197,11 @@ const std::vector<transition>&
     return all_transitions[indices[idx]];
 }
 
+sr_parser::sr_parser(const std::string& prefix)
+{
+    load(prefix);
+}
+
 void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 {
     training_data data{options, trees};
@@ -205,9 +215,12 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 
     for (uint64_t iter = 1; iter <= options.max_iterations; ++iter)
     {
+        printing::progress progress{
+            " > Iteration " + std::to_string(iter) + ": ", trees.size()};
         data.shuffle();
         for (size_t start = 0; start < data.size(); start += options.batch_size)
         {
+            progress(start);
             auto end = std::min(start + options.batch_size, data.size());
 
             auto update = train_batch({data, start, end});
@@ -499,6 +512,128 @@ void sr_parser::child_feats(const node* n, std::string prefix,
         // TODO: better condition for this?
         if (doubs && prefix == "s0")
             child_feats(in.child(0), prefix + "u", feats, false);
+    }
+}
+
+void sr_parser::save(const std::string& prefix) const
+{
+    std::ofstream model{prefix + "/parser.model", std::ios::binary};
+
+    io::write_binary(model, weights_.size());
+    for (const auto& class_vector : weights_)
+    {
+        const auto& trans = class_vector.first;
+        const auto& weights = class_vector.second;
+
+        switch (trans.type())
+        {
+            case transition::type_t::SHIFT:
+                io::write_binary(model, 0);
+                break;
+
+            case transition::type_t::REDUCE_L:
+                io::write_binary(model, 1);
+                io::write_binary(model, trans.label());
+                break;
+
+            case transition::type_t::REDUCE_R:
+                io::write_binary(model, 2);
+                io::write_binary(model, trans.label());
+                break;
+
+            case transition::type_t::UNARY:
+                io::write_binary(model, 3);
+                io::write_binary(model, trans.label());
+                break;
+
+            case transition::type_t::FINALIZE:
+                io::write_binary(model, 4);
+                break;
+
+            case transition::type_t::IDLE:
+                io::write_binary(model, 5);
+                break;
+        }
+
+        io::write_binary(model, weights.size());
+        for (const auto& feat : weights)
+        {
+            io::write_binary(model, feat.first);
+            io::write_binary(model, feat.second);
+        }
+    }
+}
+
+void sr_parser::load(const std::string& prefix)
+{
+    std::ifstream model{prefix + "/parser.model", std::ios::binary};
+
+    if (!model)
+        throw exception{"model file not found"};
+
+    size_t num_classes;
+    io::read_binary(model, num_classes);
+
+    for (size_t i = 0; i < num_classes; ++i)
+    {
+        if (!model)
+            throw exception{"malformed model file (too few classes written)"};
+
+        int trans_type;
+        io::read_binary(model, trans_type);
+
+        util::optional<transition> trans;
+        if (trans_type == 0)
+        {
+            trans = transition{transition::type_t::SHIFT};
+        }
+        else if (trans_type == 1)
+        {
+            class_label lbl;
+            io::read_binary(model, lbl);
+            trans = transition{transition::type_t::REDUCE_L, lbl};
+        }
+        else if (trans_type == 2)
+        {
+            class_label lbl;
+            io::read_binary(model, lbl);
+            trans = transition{transition::type_t::REDUCE_R, lbl};
+        }
+        else if (trans_type == 3)
+        {
+            class_label lbl;
+            io::read_binary(model, lbl);
+            trans = transition{transition::type_t::UNARY, lbl};
+        }
+        else if (trans_type == 4)
+        {
+            trans = transition{transition::type_t::FINALIZE};
+        }
+        else if (trans_type == 5)
+        {
+            trans = transition{transition::type_t::IDLE};
+        }
+        else
+        {
+            throw exception{"invalid transition identifier in model file"};
+        }
+
+        size_t num_feats;
+        io::read_binary(model, num_feats);
+
+        for (size_t j = 0; j < num_feats; ++j)
+        {
+            if (!model)
+                throw exception{
+                    "malformed model file (too few features written)"};
+            std::string feat;
+            double val;
+
+            io::read_binary(model, feat);
+            io::read_binary(model, val);
+
+            weights_[*trans][feat] = val;
+        }
     }
 }
 }
