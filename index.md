@@ -62,7 +62,7 @@ We have walkthroughs for the following parts of MeTA:
 
 {% highlight bash %}
 # checkout the project
-git clone git@github.com:meta-toolkit/meta.git
+git clone https://github.com/meta-toolkit/meta.git
 cd meta/
 
 # set up submodules
