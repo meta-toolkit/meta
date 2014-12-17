@@ -63,7 +63,7 @@ homepage](http://meta-toolkit.github.io/meta/).
 
 ```bash
 # checkout the project
-git clone git@github.com:meta-toolkit/meta.git
+git clone https://github.com/meta-toolkit/meta.git
 cd meta/
 
 # set up submodules
