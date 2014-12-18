@@ -31,7 +31,7 @@ void pretty_print(std::ostream& os, const node* n, uint64_t depth)
     else
     {
         const auto& inode = n->as<internal_node>();
-        os << padding << "(\n" << padding << "  " << inode.category() << "\n";
+        os << padding << "(" << inode.category() << "\n";
         inode.each_child([&](const node* child)
                              {
                                  pretty_print(os, child, depth + 2);
