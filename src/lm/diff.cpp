@@ -108,7 +108,6 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
     remove(sent, best_idx, candidates, depth);
     substitute(sent, best_idx, candidates, depth);
 
-    /*
     best.pop_back();
     try
     {
@@ -142,7 +141,6 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
     {
         // ignore if there are no transitions found
     }
-    */
 }
 
 template <class PQ>
@@ -152,7 +150,7 @@ void diff::insert(const sentence& sent, size_t idx, PQ& candidates,
     for (auto& fw : fwords_)
     {
         sentence ins_cpy{sent};
-        ins_cpy.insert(idx, fw, base_penalty_ + substitute_penalty_);
+        ins_cpy.insert(idx, fw, base_penalty_ + insert_penalty_);
         if (seen_.find(ins_cpy.to_string()) == seen_.end())
         {
             add(candidates, ins_cpy);
@@ -168,10 +166,13 @@ void diff::substitute(const sentence& sent, size_t idx, PQ& candidates,
     std::string stemmed{sent[idx]};
     Porter2Stemmer::stem(stemmed);
     auto it = stems_.find(stemmed);
-    if (it != stems_.end() && it->second.size() != 1)
+    if (it != stems_.end())
     {
         for (auto& stem : it->second)
         {
+            // don't replace with same word!
+            if (sent[idx] == stem)
+                continue;
             sentence subbed{sent};
             subbed.substitute(idx, stem, base_penalty_ + substitute_penalty_);
             if (seen_.find(subbed.to_string()) == seen_.end())

@@ -40,9 +40,14 @@ void diff_analyzer::tokenize(corpus::document& doc)
     while (*stream_)
     {
         auto next = stream_->next();
-        buffer += next + " ";
         if (next == "</s>")
+        {
+            // sentence constructor adds <s> and </s> itself
             sentences.emplace_back(std::move(buffer));
+            continue;
+        }
+        else if (next != "<s>")
+            buffer += next + " ";
     }
 
     for(auto& s: sentences)

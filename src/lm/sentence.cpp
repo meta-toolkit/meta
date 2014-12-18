@@ -9,9 +9,7 @@
 #include "lm/sentence.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
-#include "analyzers/filters/lowercase_filter.h"
-#include "analyzers/filters/blank_filter.h"
-#include "analyzers/filters/empty_sentence_filter.h"
+#include "analyzers/filters/all.h"
 
 namespace meta
 {
@@ -23,6 +21,7 @@ sentence::sentence(const std::string& text)
     std::unique_ptr<token_stream> stream;
     stream = make_unique<tokenizers::icu_tokenizer>();
     stream = make_unique<filters::lowercase_filter>(std::move(stream));
+    stream = make_unique<filters::alpha_filter>(std::move(stream));
     stream = make_unique<filters::blank_filter>(std::move(stream));
     stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
     stream->set_content(text);
@@ -32,7 +31,7 @@ sentence::sentence(const std::string& text)
     if (tokens_.empty())
         throw sentence_exception{"empty token stream"};
 
-    // remove sentence markers (they're inserted by the LM)
+    // remove sentence markers
     tokens_.pop_front();
     tokens_.pop_back();
 
