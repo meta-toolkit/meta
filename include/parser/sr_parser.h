@@ -15,6 +15,7 @@
 #include "util/optional.h"
 #include "util/persistent_stack.h"
 #include "util/sparse_vector.h"
+#include "parallel/parallel_for.h"
 #include "parser/trees/parse_tree.h"
 #include "parser/transition.h"
 
@@ -64,7 +65,6 @@ class sr_parser
     };
 
   private:
-
     struct parser_state
     {
         parser_state(const parse_tree& tree);
@@ -108,7 +108,8 @@ class sr_parser
 
     void load(const std::string& prefix);
 
-    weight_vectors train_batch(training_batch batch);
+    weight_vectors train_batch(training_batch batch,
+                               parallel::thread_pool& pool);
 
     transition best_transition(const weight_vector& features) const;
 

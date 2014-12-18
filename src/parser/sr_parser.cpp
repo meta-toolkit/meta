@@ -8,6 +8,7 @@
 #include <numeric>
 
 #include "io/binary.h"
+#include "parallel/parallel_for.h"
 #include "parser/sr_parser.h"
 #include "parser/trees/visitors/annotation_remover.h"
 #include "parser/trees/visitors/empty_remover.h"
@@ -18,6 +19,7 @@
 #include "parser/trees/visitors/debinarizer.h"
 #include "parser/trees/visitors/transition_finder.h"
 #include "util/progress.h"
+#include "util/range.h"
 
 namespace meta
 {
@@ -213,17 +215,20 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
             weights_[trans] = {};
     }
 
+    parallel::thread_pool pool;
+
     for (uint64_t iter = 1; iter <= options.max_iterations; ++iter)
     {
         printing::progress progress{
             " > Iteration " + std::to_string(iter) + ": ", trees.size()};
         data.shuffle();
+
         for (size_t start = 0; start < data.size(); start += options.batch_size)
         {
             progress(start);
             auto end = std::min(start + options.batch_size, data.size());
 
-            auto update = train_batch({data, start, end});
+            auto update = train_batch({data, start, end}, pool);
 
             for (const auto& class_vector : update)
             {
@@ -237,14 +242,18 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
     }
 }
 
-auto sr_parser::train_batch(training_batch batch) -> weight_vectors
+auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
+    -> weight_vectors
 {
     // TODO: real beam search
 
     weight_vectors update;
+    std::mutex lock;
 
-    for (size_t i = batch.start; i < batch.end; ++i)
-    {
+    auto range = util::range(batch.start, batch.end - 1); // inclusive range
+
+    parallel::parallel_for(range.begin(), range.end(), pool, [&](size_t i)
+                           {
         auto& tree = batch.data.tree(i);
         auto& transitions = batch.data.transitions(i);
 
@@ -261,6 +270,7 @@ auto sr_parser::train_batch(training_batch batch) -> weight_vectors
             }
             else
             {
+                std::lock_guard<std::mutex> lg{lock};
                 for (const auto& feat : feats)
                 {
                     update[gold_trans][feat.first] += feat.second;
@@ -269,7 +279,7 @@ auto sr_parser::train_batch(training_batch batch) -> weight_vectors
                 break;
             }
         }
-    }
+    });
 
     return update;
 }
