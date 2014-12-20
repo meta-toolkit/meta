@@ -66,6 +66,19 @@ Value sparse_vector<Index, Value>::at(const Index& index) const
 }
 
 template <class Index, class Value>
+auto sparse_vector<Index, Value>::find(
+    const Index& index) const -> const_iterator
+{
+    auto it = std::lower_bound(std::begin(storage_), std::end(storage_), index,
+                               [](const pair_type& p, const Index& idx)
+                               {
+        return p.first < idx;
+    });
+
+    return it;
+}
+
+template <class Index, class Value>
 template <class... Ts>
 void sparse_vector<Index, Value>::emplace_back(Ts&&... ts)
 {
@@ -91,6 +104,21 @@ void sparse_vector<Index, Value>::shrink_to_fit()
 }
 
 template <class Index, class Value>
+void sparse_vector<Index, Value>::condense()
+{
+    Value default_value{};
+
+    // erase-remove idiom looking for value-initalized elements
+    storage_.erase(std::remove_if(storage_.begin(), storage_.end(),
+                                  [&](const pair_type& p)
+                                  {
+                       return p.second == default_value;
+                   }),
+                   storage_.end());
+    shrink_to_fit();
+}
+
+template <class Index, class Value>
 uint64_t sparse_vector<Index, Value>::size() const
 {
     return storage_.size();
@@ -103,7 +131,7 @@ bool sparse_vector<Index, Value>::empty() const
 }
 
 template <class Index, class Value>
-auto sparse_vector<Index, Value>::contents() const -> const container_type&
+auto sparse_vector<Index, Value>::contents() const -> const container_type &
 {
     return storage_;
 }
@@ -113,10 +141,10 @@ void sparse_vector<Index, Value>::contents(container_type cont)
 {
     storage_ = std::move(cont);
     std::sort(std::begin(storage_), std::end(storage_),
-        [](const pair_type& a, const pair_type& b) {
-            return a.first < b.first;
-        }
-    );
+              [](const pair_type& a, const pair_type& b)
+              {
+        return a.first < b.first;
+    });
 }
 
 template <class Index, class Value>
@@ -154,6 +182,5 @@ auto sparse_vector<Index, Value>::cend() const -> const_iterator
 {
     return storage_.cend();
 }
-
 }
 }

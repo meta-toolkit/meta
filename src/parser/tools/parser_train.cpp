@@ -84,6 +84,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    auto num_threads = parser_grp->get_as<int64_t>("train-threads");
+
     std::string path =
         *prefix + "/" + *treebank + "/treebank-3/parsed/mrg/" + *corpus;
 
@@ -111,7 +113,10 @@ int main(int argc, char** argv)
     filesystem::make_directory("parser");
     parser::sr_parser parser;
 
-    parser::sr_parser::training_options options;
+    parser::sr_parser::training_options options{};
+    if (num_threads)
+        options.num_threads = *num_threads;
+
     parser.train(training, options);
 
     parser.save("parser");

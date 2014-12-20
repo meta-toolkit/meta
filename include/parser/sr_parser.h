@@ -9,7 +9,9 @@
 #ifndef META_PARSER_SR_PARSER_H_
 #define META_PARSER_SR_PARSER_H_
 
+#include <map>
 #include <random>
+#include <unordered_map>
 
 #include "meta.h"
 #include "util/optional.h"
@@ -44,6 +46,7 @@ class sr_parser
         uint64_t beam_size = 8;
         uint64_t max_iterations = 40;
         uint64_t seed = std::random_device{}();
+        uint64_t num_threads = std::thread::hardware_concurrency();
         training_algorithm algorithm = training_algorithm::EARLY_TERMINATION;
 
         training_options() = default;
@@ -103,35 +106,46 @@ class sr_parser
         size_t end;
     };
 
-    using weight_vector = util::sparse_vector<std::string, double>;
-    using weight_vectors = util::sparse_vector<transition, weight_vector>;
+    /*
+    using feature_vector = util::sparse_vector<std::string, double>;
+
+    using weight_vector = util::sparse_vector<transition, double>;
+    using weight_vectors = util::sparse_vector<std::string, weight_vector>;
+    */
+
+    using feature_vector = std::unordered_map<std::string, double>;
+
+    using weight_vector = util::sparse_vector<transition, double>;
+    using weight_vectors = std::unordered_map<std::string, weight_vector>;
 
     void load(const std::string& prefix);
 
     weight_vectors train_batch(training_batch batch,
                                parallel::thread_pool& pool);
 
-    transition best_transition(const weight_vector& features) const;
+    transition best_transition(const feature_vector& features) const;
 
-    weight_vector featurize(const parser_state& state) const;
+    feature_vector featurize(const parser_state& state) const;
 
     void unigram_featurize(const parser_state& state,
-                           weight_vector& feats) const;
+                           feature_vector& feats) const;
 
     void bigram_featurize(const parser_state& state,
-                          weight_vector& feats) const;
+                          feature_vector& feats) const;
 
     void trigram_featurize(const parser_state& state,
-                           weight_vector& feats) const;
+                           feature_vector& feats) const;
 
     void children_featurize(const parser_state& state,
-                            weight_vector& feats) const;
+                            feature_vector& feats) const;
 
     void unigram_stack_feats(const node* n, std::string prefix,
-                             weight_vector& feats) const;
+                             feature_vector& feats) const;
 
-    void child_feats(const node* n, std::string prefix, weight_vector& feats,
+    void child_feats(const node* n, std::string prefix, feature_vector& feats,
                      bool doubs) const;
+
+    void condense();
 
     /// Storage for the weights for each possible transition
     weight_vectors weights_;

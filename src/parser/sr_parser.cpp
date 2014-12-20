@@ -208,14 +208,7 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 {
     training_data data{options, trees};
 
-    for (size_t i = 0; i < data.size(); ++i)
-    {
-        auto& transitions = data.transitions(i);
-        for (auto& trans : transitions)
-            weights_[trans] = {};
-    }
-
-    parallel::thread_pool pool;
+    parallel::thread_pool pool{options.num_threads};
 
     for (uint64_t iter = 1; iter <= options.max_iterations; ++iter)
     {
@@ -230,15 +223,16 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 
             auto update = train_batch({data, start, end}, pool);
 
-            for (const auto& class_vector : update)
+            for (const auto& feat_vec : update)
             {
-                auto cls = class_vector.first;
-                for (const auto& up : class_vector.second)
-                {
-                    weights_[cls][up.first] += up.second;
-                }
+                const auto& feat = feat_vec.first;
+                auto& wv = weights_[feat];
+                for (const auto& up : feat_vec.second)
+                    wv[up.first] += up.second;
             }
         }
+
+        condense();
     }
 }
 
@@ -248,9 +242,13 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
     // TODO: real beam search
 
     weight_vectors update;
-    std::mutex lock;
-
     auto range = util::range(batch.start, batch.end - 1); // inclusive range
+
+    // Perform a reduction across threads: each thread stores its update in
+    // a separate location, and we then add them all up after we join
+    util::sparse_vector<std::thread::id, weight_vectors> updates;
+    for (const auto& tid : pool.thread_ids())
+        updates[tid] = {};
 
     parallel::parallel_for(range.begin(), range.end(), pool, [&](size_t i)
                            {
@@ -270,49 +268,70 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
             }
             else
             {
-                std::lock_guard<std::mutex> lg{lock};
+                auto& update = updates[std::this_thread::get_id()];
                 for (const auto& feat : feats)
                 {
-                    update[gold_trans][feat.first] += feat.second;
-                    update[trans][feat.first] -= feat.second;
+                    auto& wv = update[feat.first];
+                    wv[gold_trans] += feat.second;
+                    wv[trans] -= feat.second;
                 }
                 break;
             }
         }
     });
 
+    // Reduce partial results down to final update vector
+    for (const auto& thread_update : updates)
+    {
+        for (const auto& feat : thread_update.second)
+        {
+            auto& wv = update[feat.first];
+            for (const auto& weight : feat.second)
+                wv[weight.first] += weight.second;
+        }
+    }
+
     return update;
 }
 
-transition sr_parser::best_transition(const weight_vector& features) const
+transition sr_parser::best_transition(const feature_vector& features) const
 {
+    weight_vector class_scores;
+    for (const auto& feat : features)
+    {
+        const auto& name = feat.first;
+        double val = feat.second;
+
+        auto it = weights_.find(name);
+        if (it == weights_.end())
+            continue;
+
+        for (const auto& trans_weight : it->second)
+        {
+            const auto& trans = trans_weight.first;
+            double trans_w = trans_weight.second;
+
+            class_scores[trans] += val * trans_w;
+        }
+    }
+
     auto best_score = std::numeric_limits<double>::lowest();
     transition best_trans{transition::type_t::SHIFT};
-    for (const auto& class_vector : weights_)
+    for (const auto& score : class_scores)
     {
-        const auto& trans = class_vector.first;
-        const auto& weights = class_vector.second;
-
-        auto score = std::accumulate(
-            features.begin(), features.end(), 0.0,
-            [&](double sum, const std::pair<std::string, double>& weight)
-            {
-                return sum += weight.second * weights.at(weight.first);
-            });
-
-        if (score > best_score)
+        if (score.second > best_score)
         {
-            best_score = score;
-            best_trans = trans;
+            best_trans = score.first;
+            best_score = score.second;
         }
     }
 
     return best_trans;
 }
 
-auto sr_parser::featurize(const parser_state& state) const -> weight_vector
+auto sr_parser::featurize(const parser_state& state) const -> feature_vector
 {
-    weight_vector feats;
+    feature_vector feats;
 
     unigram_featurize(state, feats);
     bigram_featurize(state, feats);
@@ -323,7 +342,7 @@ auto sr_parser::featurize(const parser_state& state) const -> weight_vector
 }
 
 void sr_parser::unigram_featurize(const parser_state& state,
-                                  weight_vector& feats) const
+                                  feature_vector& feats) const
 {
     if (state.stack.size() > 0)
     {
@@ -358,7 +377,7 @@ void sr_parser::unigram_featurize(const parser_state& state,
 }
 
 void sr_parser::unigram_stack_feats(const node* n, std::string prefix,
-                                    weight_vector& feats) const
+                                    feature_vector& feats) const
 {
     head_info hi{n};
 
@@ -367,7 +386,7 @@ void sr_parser::unigram_stack_feats(const node* n, std::string prefix,
 }
 
 void sr_parser::bigram_featurize(const parser_state& state,
-                                 weight_vector& feats) const
+                                 feature_vector& feats) const
 {
     if (state.stack.size() > 0 && state.q_idx < state.queue.size())
     {
@@ -423,7 +442,7 @@ void sr_parser::bigram_featurize(const parser_state& state,
 }
 
 void sr_parser::trigram_featurize(const parser_state& state,
-                                  weight_vector& feats) const
+                                  feature_vector& feats) const
 {
     if (state.stack.size() < 2)
         return;
@@ -477,7 +496,7 @@ void sr_parser::trigram_featurize(const parser_state& state,
 }
 
 void sr_parser::children_featurize(const parser_state& state,
-                                   weight_vector& feats) const
+                                   feature_vector& feats) const
 {
     if (state.stack.size() > 0)
     {
@@ -493,7 +512,7 @@ void sr_parser::children_featurize(const parser_state& state,
 }
 
 void sr_parser::child_feats(const node* n, std::string prefix,
-                            weight_vector& feats, bool doubs) const
+                            feature_vector& feats, bool doubs) const
 {
     if (n->is_leaf())
         return;
@@ -525,51 +544,70 @@ void sr_parser::child_feats(const node* n, std::string prefix,
     }
 }
 
+void sr_parser::condense()
+{
+    // build feature set
+    std::vector<std::string> features;
+    features.reserve(weights_.size());
+    for (const auto& feat_vec : weights_)
+        features.push_back(feat_vec.first);
+
+    for (const auto& feat : features)
+    {
+        auto it = weights_.find(feat);
+        it->second.condense();
+        if (it->second.empty())
+            weights_.erase(it);
+    }
+}
+
 void sr_parser::save(const std::string& prefix) const
 {
     std::ofstream model{prefix + "/parser.model", std::ios::binary};
 
     io::write_binary(model, weights_.size());
-    for (const auto& class_vector : weights_)
+    for (const auto& feat_vec : weights_)
     {
-        const auto& trans = class_vector.first;
-        const auto& weights = class_vector.second;
+        const auto& feat = feat_vec.first;
+        const auto& weights = feat_vec.second;
 
-        switch (trans.type())
-        {
-            case transition::type_t::SHIFT:
-                io::write_binary(model, 0);
-                break;
-
-            case transition::type_t::REDUCE_L:
-                io::write_binary(model, 1);
-                io::write_binary(model, trans.label());
-                break;
-
-            case transition::type_t::REDUCE_R:
-                io::write_binary(model, 2);
-                io::write_binary(model, trans.label());
-                break;
-
-            case transition::type_t::UNARY:
-                io::write_binary(model, 3);
-                io::write_binary(model, trans.label());
-                break;
-
-            case transition::type_t::FINALIZE:
-                io::write_binary(model, 4);
-                break;
-
-            case transition::type_t::IDLE:
-                io::write_binary(model, 5);
-                break;
-        }
-
+        io::write_binary(model, feat);
         io::write_binary(model, weights.size());
-        for (const auto& feat : weights)
+
+        for (const auto& weight : weights)
         {
-            io::write_binary(model, feat.first);
-            io::write_binary(model, feat.second);
+            const auto& trans = weight.first;
+            double val = weight.second;
+            switch (trans.type())
+            {
+                case transition::type_t::SHIFT:
+                    io::write_binary(model, 0);
+                    break;
+
+                case transition::type_t::REDUCE_L:
+                    io::write_binary(model, 1);
+                    io::write_binary(model, trans.label());
+                    break;
+
+                case transition::type_t::REDUCE_R:
+                    io::write_binary(model, 2);
+                    io::write_binary(model, trans.label());
+                    break;
+
+                case transition::type_t::UNARY:
+                    io::write_binary(model, 3);
+                    io::write_binary(model, trans.label());
+                    break;
+
+                case transition::type_t::FINALIZE:
+                    io::write_binary(model, 4);
+                    break;
+
+                case transition::type_t::IDLE:
+                    io::write_binary(model, 5);
+                    break;
+            }
+            io::write_binary(model, val);
         }
     }
 }
@@ -581,68 +619,68 @@ void sr_parser::load(const std::string& prefix)
     if (!model)
         throw exception{"model file not found"};
 
-    size_t num_classes;
-    io::read_binary(model, num_classes);
+    size_t num_feats;
+    io::read_binary(model, num_feats);
 
-    for (size_t i = 0; i < num_classes; ++i)
+    for (size_t i = 0; i < num_feats; ++i)
     {
         if (!model)
-            throw exception{"malformed model file (too few classes written)"};
+            throw exception{"malformed model file (too few features written)"};
 
-        int trans_type;
-        io::read_binary(model, trans_type);
+        std::string feature_name;
+        io::read_binary(model, feature_name);
 
-        util::optional<transition> trans;
-        if (trans_type == 0)
-        {
-            trans = transition{transition::type_t::SHIFT};
-        }
-        else if (trans_type == 1)
-        {
-            class_label lbl;
-            io::read_binary(model, lbl);
-            trans = transition{transition::type_t::REDUCE_L, lbl};
-        }
-        else if (trans_type == 2)
-        {
-            class_label lbl;
-            io::read_binary(model, lbl);
-            trans = transition{transition::type_t::REDUCE_R, lbl};
-        }
-        else if (trans_type == 3)
-        {
-            class_label lbl;
-            io::read_binary(model, lbl);
-            trans = transition{transition::type_t::UNARY, lbl};
-        }
-        else if (trans_type == 4)
-        {
-            trans = transition{transition::type_t::FINALIZE};
-        }
-        else if (trans_type == 5)
-        {
-            trans = transition{transition::type_t::IDLE};
-        }
-        else
-        {
-            throw exception{"invalid transition identifier in model file"};
-        }
+        size_t num_trans;
+        io::read_binary(model, num_trans);
 
-        size_t num_feats;
-        io::read_binary(model, num_feats);
-
-        for (size_t j = 0; j < num_feats; ++j)
+        for (size_t j = 0; j < num_trans; ++j)
         {
             if (!model)
-                throw exception{
-                    "malformed model file (too few features written)"};
-            std::string feat;
-            double val;
+                throw exception{"malformed model file (too few transitions "
+                                "written for feature)"};
 
-            io::read_binary(model, feat);
+            int trans_type;
+            double val;
+            io::read_binary(model, trans_type);
             io::read_binary(model, val);
 
-            weights_[*trans][feat] = val;
+            util::optional<transition> trans;
+            if (trans_type == 0)
+            {
+                trans = transition{transition::type_t::SHIFT};
+            }
+            else if (trans_type == 1)
+            {
+                class_label lbl;
+                io::read_binary(model, lbl);
+                trans = transition{transition::type_t::REDUCE_L, lbl};
+            }
+            else if (trans_type == 2)
+            {
+                class_label lbl;
+                io::read_binary(model, lbl);
+                trans = transition{transition::type_t::REDUCE_R, lbl};
+            }
+            else if (trans_type == 3)
+            {
+                class_label lbl;
+                io::read_binary(model, lbl);
+                trans = transition{transition::type_t::UNARY, lbl};
+            }
+            else if (trans_type == 4)
+            {
+                trans = transition{transition::type_t::FINALIZE};
+            }
+            else if (trans_type == 5)
+            {
+                trans = transition{transition::type_t::IDLE};
+            }
+            else
+            {
+                throw exception{"invalid transition identifier in model file"};
+            }
+
+            weights_[feature_name][*trans] = val;
         }
     }
 }
