@@ -75,6 +75,9 @@ auto sparse_vector<Index, Value>::find(
         return p.first < idx;
     });
 
+    if (it == std::end(storage_) || it->first != index)
+        return std::end(storage_);
+
     return it;
 }
 
