@@ -435,8 +435,11 @@ void sr_parser::unigram_stack_feats(const node* n, std::string prefix,
 {
     head_info hi{n};
 
-    feats[prefix + "tc=" + hi.head_tag + "-" + (std::string)n->category()] = 1;
+    feats[prefix + "c=" + n->category()] = 1;
+    feats[prefix + "t=" + hi.head_tag] = 1;
     feats[prefix + "wc=" + hi.head_word + "-" + (std::string)n->category()] = 1;
+    feats[prefix + "wt=" + hi.head_word + "-" + hi.head_tag] = 1;
+    feats[prefix + "tc=" + hi.head_tag + "-" + (std::string)n->category()] = 1;
 }
 
 void sr_parser::bigram_featurize(const parser_state& state,
@@ -773,7 +776,7 @@ void sr_parser::load(const std::string& prefix)
                                 "written for feature)"};
 
             trans_id tid;
-            int val;
+            float val;
             io::read_binary(model, tid);
             io::read_binary(model, val);
 
