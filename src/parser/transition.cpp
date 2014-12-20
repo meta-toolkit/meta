@@ -3,6 +3,9 @@
  * @author Chase Geigle
  */
 
+#include <cassert>
+#include <ostream>
+#include <string>
 #include "parser/transition.h"
 
 namespace meta
@@ -37,5 +40,37 @@ bool transition::operator<(const transition& rhs) const
 {
     return std::tie(type_, label_) < std::tie(rhs.type_, rhs.label_);
 }
+
+std::ostream& operator<<(std::ostream& os, const transition& trans)
+{
+    switch (trans.type())
+    {
+        case transition::type_t::SHIFT:
+            os << "SHIFT";
+            break;
+
+        case transition::type_t::REDUCE_L:
+            os << "REDUCE-L-" << trans.label();
+            break;
+
+        case transition::type_t::REDUCE_R:
+            os << "REDUCE-R-" << trans.label();
+            break;
+
+        case transition::type_t::UNARY:
+            os << "UNARY-" << trans.label();
+            break;
+
+        case transition::type_t::FINALIZE:
+            os << "FINALIZE";
+            break;
+
+        case transition::type_t::IDLE:
+            os << "IDLE";
+            break;
+    }
+    return os;
+}
+
 }
 }

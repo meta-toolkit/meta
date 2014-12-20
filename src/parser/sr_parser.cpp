@@ -8,6 +8,7 @@
 #include <numeric>
 
 #include "io/binary.h"
+#include "logging/logger.h"
 #include "parallel/parallel_for.h"
 #include "parser/sr_parser.h"
 #include "parser/trees/visitors/annotation_remover.h"
@@ -154,6 +155,13 @@ sr_parser::training_data::training_data(training_options opt,
                                         std::vector<parse_tree>& trs)
     : options(opt), trees(trs), indices(trs.size()), rng{opt.seed}
 {
+    std::iota(indices.begin(), indices.end(), 0ul);
+}
+
+auto sr_parser::training_data::preprocess() -> transition_map
+{
+    transition_map trans_map;
+
     multi_transformer<annotation_remover, empty_remover, unary_chain_remover>
         transformer;
 
@@ -173,9 +181,15 @@ sr_parser::training_data::training_data(training_options opt,
         transition_finder trans;
         tree.visit(trans);
 
-        all_transitions.emplace_back(std::move(trans.transitions()));
+        auto transitions = trans.transitions();
+        std::vector<trans_id> tids;
+        tids.reserve(transitions.size());
+        for (const auto& trans : transitions)
+            tids.push_back(trans_map[trans]);
+        all_transitions.emplace_back(std::move(tids));
     }
-    std::iota(indices.begin(), indices.end(), 0ul);
+
+    return trans_map;
 }
 
 void sr_parser::training_data::shuffle()
@@ -193,13 +207,49 @@ const parse_tree& sr_parser::training_data::tree(size_t idx) const
     return trees[indices[idx]];
 }
 
-const std::vector<transition>&
-    sr_parser::training_data::transitions(size_t idx) const
+auto sr_parser::training_data::transitions(
+    size_t idx) const -> const std::vector<trans_id> &
 {
     return all_transitions[indices[idx]];
 }
 
-sr_parser::sr_parser(const std::string& prefix)
+const transition& sr_parser::transition_map::at(trans_id id) const
+{
+    return transitions_.at(id);
+}
+
+auto sr_parser::transition_map::at(const transition& trans) const -> trans_id
+{
+    auto it = map_.find(trans);
+    if (it == map_.end())
+        throw std::out_of_range{"index out of bounds"};
+
+    return it->second;
+}
+
+transition& sr_parser::transition_map::operator[](trans_id id)
+{
+    return transitions_.at(id);
+}
+
+auto sr_parser::transition_map::operator[](const transition& trans) -> trans_id
+{
+    auto it = map_.find(trans);
+    if (it != map_.end())
+        return it->second;
+
+    transitions_.push_back(trans);
+    auto id = static_cast<trans_id>(map_.size());
+    return map_[trans] = id;
+}
+
+uint64_t sr_parser::transition_map::size() const
+{
+    assert(map_.size() == transitions_.size());
+    return map_.size();
+}
+
+sr_parser::sr_parser(const std::string& prefix) : trans_{prefix}
 {
     load(prefix);
 }
@@ -207,6 +257,9 @@ sr_parser::sr_parser(const std::string& prefix)
 void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 {
     training_data data{options, trees};
+    trans_ = data.preprocess();
+
+    LOG(info) << "Found " << trans_.size() << " transitions" << ENDLG;
 
     parallel::thread_pool pool{options.num_threads};
 
@@ -264,7 +317,7 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
 
             if (trans == gold_trans)
             {
-                state.advance(trans);
+                state.advance(trans_[trans]);
             }
             else
             {
@@ -294,7 +347,8 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
     return update;
 }
 
-transition sr_parser::best_transition(const feature_vector& features) const
+auto sr_parser::best_transition(
+    const feature_vector& features) const -> trans_id
 {
     weight_vector class_scores;
     for (const auto& feat : features)
@@ -308,15 +362,15 @@ transition sr_parser::best_transition(const feature_vector& features) const
 
         for (const auto& trans_weight : it->second)
         {
-            const auto& trans = trans_weight.first;
+            auto tid = trans_weight.first;
             double trans_w = trans_weight.second;
 
-            class_scores[trans] += val * trans_w;
+            class_scores[tid] += val * trans_w;
         }
     }
 
     auto best_score = std::numeric_limits<double>::lowest();
-    transition best_trans{transition::type_t::SHIFT};
+    trans_id best_trans{};
     for (const auto& score : class_scores)
     {
         if (score.second > best_score)
@@ -561,8 +615,48 @@ void sr_parser::condense()
     }
 }
 
+void sr_parser::transition_map::save(const std::string& prefix) const
+{
+    std::ofstream store{prefix + "/parser.trans", std::ios::binary};
+
+    io::write_binary(store, transitions_.size());
+    for (const auto& trans : transitions_)
+    {
+        switch (trans.type())
+        {
+            case transition::type_t::SHIFT:
+                io::write_binary(store, 0);
+                break;
+
+            case transition::type_t::REDUCE_L:
+                io::write_binary(store, 1);
+                io::write_binary(store, trans.label());
+                break;
+
+            case transition::type_t::REDUCE_R:
+                io::write_binary(store, 2);
+                io::write_binary(store, trans.label());
+                break;
+
+            case transition::type_t::UNARY:
+                io::write_binary(store, 3);
+                io::write_binary(store, trans.label());
+                break;
+
+            case transition::type_t::FINALIZE:
+                io::write_binary(store, 4);
+                break;
+
+            case transition::type_t::IDLE:
+                io::write_binary(store, 5);
+                break;
+        }
+    }
+}
+
 void sr_parser::save(const std::string& prefix) const
 {
+    trans_.save(prefix);
     std::ofstream model{prefix + "/parser.model", std::ios::binary};
 
     io::write_binary(model, weights_.size());
@@ -576,39 +670,73 @@ void sr_parser::save(const std::string& prefix) const
 
         for (const auto& weight : weights)
         {
-            const auto& trans = weight.first;
+            auto tid = weight.first;
             double val = weight.second;
-            switch (trans.type())
-            {
-                case transition::type_t::SHIFT:
-                    io::write_binary(model, 0);
-                    break;
-
-                case transition::type_t::REDUCE_L:
-                    io::write_binary(model, 1);
-                    io::write_binary(model, trans.label());
-                    break;
-
-                case transition::type_t::REDUCE_R:
-                    io::write_binary(model, 2);
-                    io::write_binary(model, trans.label());
-                    break;
-
-                case transition::type_t::UNARY:
-                    io::write_binary(model, 3);
-                    io::write_binary(model, trans.label());
-                    break;
-
-                case transition::type_t::FINALIZE:
-                    io::write_binary(model, 4);
-                    break;
-
-                case transition::type_t::IDLE:
-                    io::write_binary(model, 5);
-                    break;
-            }
+            io::write_binary(model, tid);
             io::write_binary(model, val);
         }
+    }
+}
+
+sr_parser::transition_map::transition_map(const std::string& prefix)
+{
+    std::ifstream store{prefix + "/parser.trans", std::ios::binary};
+
+    size_t num_trans;
+    io::read_binary(store, num_trans);
+
+    if (!store)
+        throw exception{"malformed transitions model file"};
+
+    transitions_.reserve(num_trans);
+    for (size_t i = 0; i < num_trans; ++i)
+    {
+        if (!store)
+            throw exception{"malformed transition model file (too few "
+                            "transitions written)"};
+
+        int trans_type;
+        io::read_binary(store, trans_type);
+
+        util::optional<transition> trans;
+        if (trans_type == 0)
+        {
+            trans = transition{transition::type_t::SHIFT};
+        }
+        else if (trans_type == 1)
+        {
+            class_label lbl;
+            io::read_binary(store, lbl);
+            trans = transition{transition::type_t::REDUCE_L, lbl};
+        }
+        else if (trans_type == 2)
+        {
+            class_label lbl;
+            io::read_binary(store, lbl);
+            trans = transition{transition::type_t::REDUCE_R, lbl};
+        }
+        else if (trans_type == 3)
+        {
+            class_label lbl;
+            io::read_binary(store, lbl);
+            trans = transition{transition::type_t::UNARY, lbl};
+        }
+        else if (trans_type == 4)
+        {
+            trans = transition{transition::type_t::FINALIZE};
+        }
+        else if (trans_type == 5)
+        {
+            trans = transition{transition::type_t::IDLE};
+        }
+        else
+        {
+            throw exception{"invalid transition identifier in model file"};
+        }
+
+        auto id = static_cast<trans_id>(map_.size());
+        map_[*trans] = id;
+        transitions_.emplace_back(std::move(*trans));
     }
 }
 
@@ -639,48 +767,12 @@ void sr_parser::load(const std::string& prefix)
                 throw exception{"malformed model file (too few transitions "
                                 "written for feature)"};
 
-            int trans_type;
+            trans_id tid;
             double val;
-            io::read_binary(model, trans_type);
+            io::read_binary(model, tid);
             io::read_binary(model, val);
 
-            util::optional<transition> trans;
-            if (trans_type == 0)
-            {
-                trans = transition{transition::type_t::SHIFT};
-            }
-            else if (trans_type == 1)
-            {
-                class_label lbl;
-                io::read_binary(model, lbl);
-                trans = transition{transition::type_t::REDUCE_L, lbl};
-            }
-            else if (trans_type == 2)
-            {
-                class_label lbl;
-                io::read_binary(model, lbl);
-                trans = transition{transition::type_t::REDUCE_R, lbl};
-            }
-            else if (trans_type == 3)
-            {
-                class_label lbl;
-                io::read_binary(model, lbl);
-                trans = transition{transition::type_t::UNARY, lbl};
-            }
-            else if (trans_type == 4)
-            {
-                trans = transition{transition::type_t::FINALIZE};
-            }
-            else if (trans_type == 5)
-            {
-                trans = transition{transition::type_t::IDLE};
-            }
-            else
-            {
-                throw exception{"invalid transition identifier in model file"};
-            }
-
-            weights_[feature_name][*trans] = val;
+            weights_[feature_name][tid] = val;
         }
     }
 }

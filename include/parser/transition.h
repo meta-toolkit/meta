@@ -23,7 +23,7 @@ class transition : public util::comparable<transition>
   public:
     enum class type_t
     {
-        SHIFT,
+        SHIFT = 0,
         REDUCE_L,
         REDUCE_R,
         UNARY,
@@ -51,6 +51,8 @@ class transition : public util::comparable<transition>
     type_t type_;
     util::optional<class_label> label_;
 };
+
+std::ostream& operator<<(std::ostream& os, const transition& trans);
 
 }
 }

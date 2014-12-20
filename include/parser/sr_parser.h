@@ -80,19 +80,44 @@ class sr_parser
         bool done;
     };
 
+    MAKE_NUMERIC_IDENTIFIER(trans_id, uint32_t)
+
+    class transition_map
+    {
+      public:
+        transition_map() = default;
+        transition_map(const std::string& prefix);
+
+        const transition& at(trans_id id) const;
+        trans_id at(const transition& trans) const;
+
+        transition& operator[](trans_id id);
+        trans_id operator[](const transition& trans);
+
+        void save(const std::string& prefix) const;
+
+        uint64_t size() const;
+
+      private:
+        util::sparse_vector<transition, trans_id> map_;
+        std::vector<transition> transitions_;
+    };
+
     struct training_data
     {
         training_data(training_options options, std::vector<parse_tree>& trees);
 
+        transition_map preprocess();
+
         void shuffle();
         size_t size() const;
         const parse_tree& tree(size_t idx) const;
-        const std::vector<transition>& transitions(size_t idx) const;
+        const std::vector<trans_id>& transitions(size_t idx) const;
 
         training_options options;
 
         std::vector<parse_tree>& trees;
-        std::vector<std::vector<transition>> all_transitions;
+        std::vector<std::vector<trans_id>> all_transitions;
 
         std::vector<size_t> indices;
 
@@ -115,7 +140,7 @@ class sr_parser
 
     using feature_vector = std::unordered_map<std::string, double>;
 
-    using weight_vector = util::sparse_vector<transition, double>;
+    using weight_vector = util::sparse_vector<trans_id, double>;
     using weight_vectors = std::unordered_map<std::string, weight_vector>;
 
     void load(const std::string& prefix);
@@ -123,7 +148,7 @@ class sr_parser
     weight_vectors train_batch(training_batch batch,
                                parallel::thread_pool& pool);
 
-    transition best_transition(const feature_vector& features) const;
+    trans_id best_transition(const feature_vector& features) const;
 
     feature_vector featurize(const parser_state& state) const;
 
@@ -146,6 +171,9 @@ class sr_parser
                      bool doubs) const;
 
     void condense();
+
+    /// Storage for the ids for each transition
+    transition_map trans_;
 
     /// Storage for the weights for each possible transition
     weight_vectors weights_;
