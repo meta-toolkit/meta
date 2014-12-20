@@ -110,6 +110,11 @@ class node
         return static_cast<typename std::add_const<Node>::type&>(*this);
     }
 
+    /**
+     * Default virtual destructor for deriving classes.
+     */
+    virtual ~node() = default;
+
   private:
     /**
      * The category for this node
