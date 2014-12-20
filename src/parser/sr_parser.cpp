@@ -435,7 +435,7 @@ void sr_parser::unigram_stack_feats(const node* n, std::string prefix,
 {
     head_info hi{n};
 
-    feats[prefix + "c=" + n->category()] = 1;
+    feats[prefix + "c=" + (std::string)n->category()] = 1;
     feats[prefix + "t=" + hi.head_tag] = 1;
     feats[prefix + "wc=" + hi.head_word + "-" + (std::string)n->category()] = 1;
     feats[prefix + "wt=" + hi.head_word + "-" + hi.head_tag] = 1;
