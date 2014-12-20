@@ -28,7 +28,7 @@ struct normal_head_rule : public head_rule
 {
     template <class... Args>
     normal_head_rule(Args&&... args)
-        : candidates_{{std::forward<Args>(args)...}}
+        : candidates_({std::forward<Args>(args)...})
     {
         // nothing
     }
