@@ -69,9 +69,52 @@ void create_topic_corpus(const std::string& prefix, const std::string& dataset,
     auto new_file = prefix + "/" + dataset + "/" + dataset
                     + "-topics.dat.labels";
     std::ofstream out_labels{new_file};
+    size_t num_topics = 0;
     for (auto& topic : topic_ids)
+    {
+        if (topic > num_topics)
+            num_topics = topic;
         out_labels << "t" << topic << std::endl;
+    }
+    ++num_topics; // total is one more than highest id
     std::cout << "Saved new labels file: " << new_file << std::endl;
+
+    // for each topic, what is the distribution of original class labels?
+
+    auto labels_file = prefix + "/" + dataset + "/" + dataset + ".dat.labels";
+    std::ifstream orig_labels_in{labels_file};
+    std::vector<std::string> orig_labels;
+    std::string buf;
+    while (orig_labels_in >> buf)
+        orig_labels.push_back(buf);
+
+    std::cout << orig_labels.size() << std::endl;
+
+    std::unordered_map<std::string, std::vector<double>> counts;
+    uint64_t idx = 0;
+    for (auto& topic : topic_ids)
+    {
+        auto label = orig_labels[idx];
+        if (counts[label].empty())
+            counts[label].resize(num_topics, 0.0);
+        ++counts[label][topic];
+        ++idx;
+    }
+
+    std::ofstream out_dist{dataset + ".topic-dist"};
+    for (auto& label : counts)
+    {
+        out_dist << label.first;
+        double total = 0.0;
+        for (auto& count : label.second)
+            total += count;
+        for (auto& count : label.second)
+            out_dist << "\t" << count / total;
+        out_dist << std::endl;
+    }
+
+    std::cout << "Saved topic dist file: " << (dataset + ".topic-dist")
+              << std::endl;
 }
 
 int main(int argc, char* argv[])
