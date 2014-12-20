@@ -284,6 +284,7 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
                     wv[up.first] += up.second;
             }
         }
+        progress.end();
 
         condense();
     }
@@ -343,7 +344,6 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
                 wv[weight.first] += weight.second;
         }
     }
-
     return update;
 }
 
@@ -354,7 +354,7 @@ auto sr_parser::best_transition(
     for (const auto& feat : features)
     {
         const auto& name = feat.first;
-        double val = feat.second;
+        auto val = feat.second;
 
         auto it = weights_.find(name);
         if (it == weights_.end())
@@ -363,13 +363,13 @@ auto sr_parser::best_transition(
         for (const auto& trans_weight : it->second)
         {
             auto tid = trans_weight.first;
-            double trans_w = trans_weight.second;
+            auto trans_w = trans_weight.second;
 
             class_scores[tid] += val * trans_w;
         }
     }
 
-    auto best_score = std::numeric_limits<double>::lowest();
+    auto best_score = std::numeric_limits<float>::lowest();
     trans_id best_trans{};
     for (const auto& score : class_scores)
     {
@@ -560,7 +560,7 @@ void sr_parser::children_featurize(const parser_state& state,
 
     if (state.stack.size() > 1)
     {
-        const auto& s1 = state.stack.peek().get();
+        const auto& s1 = state.stack.pop().peek().get();
         child_feats(s1, "s1", feats, true);
     }
 }
@@ -606,13 +606,18 @@ void sr_parser::condense()
     for (const auto& feat_vec : weights_)
         features.push_back(feat_vec.first);
 
+    uint64_t nnz = 0;
     for (const auto& feat : features)
     {
         auto it = weights_.find(feat);
         it->second.condense();
         if (it->second.empty())
             weights_.erase(it);
+        else
+            nnz += it->second.size();
     }
+
+    LOG(info) << "Number of nonzero weights: " << nnz << ENDLG;
 }
 
 void sr_parser::transition_map::save(const std::string& prefix) const
@@ -671,7 +676,7 @@ void sr_parser::save(const std::string& prefix) const
         for (const auto& weight : weights)
         {
             auto tid = weight.first;
-            double val = weight.second;
+            int val = weight.second;
             io::write_binary(model, tid);
             io::write_binary(model, val);
         }
@@ -768,7 +773,7 @@ void sr_parser::load(const std::string& prefix)
                                 "written for feature)"};
 
             trans_id tid;
-            double val;
+            int val;
             io::read_binary(model, tid);
             io::read_binary(model, val);
 

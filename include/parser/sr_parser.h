@@ -80,7 +80,7 @@ class sr_parser
         bool done;
     };
 
-    MAKE_NUMERIC_IDENTIFIER(trans_id, uint32_t)
+    MAKE_NUMERIC_IDENTIFIER(trans_id, uint16_t)
 
     class transition_map
     {
@@ -131,16 +131,9 @@ class sr_parser
         size_t end;
     };
 
-    /*
-    using feature_vector = util::sparse_vector<std::string, double>;
+    using feature_vector = std::unordered_map<std::string, float>;
 
-    using weight_vector = util::sparse_vector<transition, double>;
-    using weight_vectors = util::sparse_vector<std::string, weight_vector>;
-    */
-
-    using feature_vector = std::unordered_map<std::string, double>;
-
-    using weight_vector = util::sparse_vector<trans_id, double>;
+    using weight_vector = util::sparse_vector<trans_id, float>;
     using weight_vectors = std::unordered_map<std::string, weight_vector>;
 
     void load(const std::string& prefix);
