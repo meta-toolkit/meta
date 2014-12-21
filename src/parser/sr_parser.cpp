@@ -19,6 +19,7 @@
 #include "parser/trees/visitors/binarizer.h"
 #include "parser/trees/visitors/debinarizer.h"
 #include "parser/trees/visitors/transition_finder.h"
+#include "parser/trees/visitors/leaf_node_finder.h"
 #include "util/progress.h"
 #include "util/range.h"
 
@@ -52,31 +53,6 @@ struct head_info
     }
 };
 }
-
-class leaf_node_finder : public const_visitor<void>
-{
-  public:
-    void operator()(const leaf_node& ln) override
-    {
-        leaves_.push_back(make_unique<leaf_node>(ln));
-    }
-
-    void operator()(const internal_node& in) override
-    {
-        in.each_child([&](const node* n)
-                      {
-                          n->accept(*this);
-                      });
-    }
-
-    std::vector<std::unique_ptr<leaf_node>> leaves()
-    {
-        return std::move(leaves_);
-    }
-
-  private:
-    std::vector<std::unique_ptr<leaf_node>> leaves_;
-};
 
 sr_parser::parser_state::parser_state(const parse_tree& tree)
 {
