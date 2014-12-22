@@ -19,7 +19,7 @@
 #include "util/sparse_vector.h"
 #include "parallel/parallel_for.h"
 #include "parser/trees/parse_tree.h"
-#include "parser/transition.h"
+#include "parser/transition_map.h"
 
 namespace meta
 {
@@ -70,28 +70,6 @@ class sr_parser
   private:
     class state;
 
-    MAKE_NUMERIC_IDENTIFIER(trans_id, uint16_t)
-
-    class transition_map
-    {
-      public:
-        transition_map() = default;
-        transition_map(const std::string& prefix);
-
-        const transition& at(trans_id id) const;
-        trans_id at(const transition& trans) const;
-
-        transition& operator[](trans_id id);
-        trans_id operator[](const transition& trans);
-
-        void save(const std::string& prefix) const;
-
-        uint64_t size() const;
-
-      private:
-        util::sparse_vector<transition, trans_id> map_;
-        std::vector<transition> transitions_;
-    };
 
     class training_data
     {

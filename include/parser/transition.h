@@ -18,6 +18,8 @@ namespace meta
 namespace parser
 {
 
+MAKE_NUMERIC_IDENTIFIER(trans_id, uint16_t)
+
 class transition : public util::comparable<transition>
 {
   public:

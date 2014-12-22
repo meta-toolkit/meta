@@ -7,7 +7,8 @@ add_subdirectory(tools)
 add_library(meta-parser sr_parser.cpp
                         state.cpp
                         state_analyzer.cpp
-                        transition.cpp)
+                        transition.cpp
+                        transition_map.cpp)
 target_link_libraries(meta-parser meta-parser-trees
                                   meta-parser-io
                                   meta-util
