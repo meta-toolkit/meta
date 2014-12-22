@@ -12,7 +12,9 @@
 #include <memory>
 #include <vector>
 
-#include "parser/sr_parser.h"
+#include "parser/transition.h"
+#include "parser/trees/node.h"
+#include "parser/trees/parse_tree.h"
 #include "util/persistent_stack.h"
 
 namespace meta
@@ -20,7 +22,7 @@ namespace meta
 namespace parser
 {
 
-class sr_parser::state
+class state
 {
   public:
     using stack_type = util::persistent_stack<std::unique_ptr<node>>;

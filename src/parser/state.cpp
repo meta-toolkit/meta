@@ -13,7 +13,7 @@ namespace meta
 namespace parser
 {
 
-sr_parser::state::state(const parse_tree& tree)
+state::state(const parse_tree& tree)
 {
     leaf_node_finder lnf;
     tree.visit(lnf);
@@ -22,7 +22,7 @@ sr_parser::state::state(const parse_tree& tree)
     done_ = false;
 }
 
-void sr_parser::state::advance(transition trans)
+void state::advance(transition trans)
 {
     switch (trans.type())
     {
@@ -85,17 +85,17 @@ void sr_parser::state::advance(transition trans)
     }
 }
 
-uint64_t sr_parser::state::stack_size() const
+uint64_t state::stack_size() const
 {
     return stack_.size();
 }
 
-uint64_t sr_parser::state::queue_size() const
+uint64_t state::queue_size() const
 {
     return queue_.size() - q_idx_;
 }
 
-const node* sr_parser::state::stack_item(size_t depth) const
+const node* state::stack_item(size_t depth) const
 {
     auto st = stack_;
     for (uint64_t i = 0; i < depth; ++i)
@@ -103,7 +103,7 @@ const node* sr_parser::state::stack_item(size_t depth) const
     return st.peek().get();
 }
 
-const leaf_node* sr_parser::state::queue_item(size_t depth) const
+const leaf_node* state::queue_item(size_t depth) const
 {
     return queue_.at(q_idx_ + depth).get();
 }

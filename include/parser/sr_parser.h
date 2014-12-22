@@ -69,8 +69,6 @@ class sr_parser
     };
 
   private:
-    class state;
-
     class training_data;
 
     struct training_batch
@@ -93,8 +91,6 @@ class sr_parser
                                parallel::thread_pool& pool);
 
     trans_id best_transition(const feature_vector& features) const;
-
-    feature_vector featurize(const state& state) const;
 
     void condense();
 

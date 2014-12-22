@@ -10,6 +10,7 @@
 #define META_PARSER_STATE_ANALYZER_H_
 
 #include "parser/sr_parser.h"
+#include "parser/state.h"
 
 namespace meta
 {
