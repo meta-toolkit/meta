@@ -93,8 +93,9 @@ class sr_parser
         std::vector<transition> transitions_;
     };
 
-    struct training_data
+    class training_data
     {
+      public:
         training_data(training_options options, std::vector<parse_tree>& trees);
 
         transition_map preprocess();
@@ -103,6 +104,8 @@ class sr_parser
         size_t size() const;
         const parse_tree& tree(size_t idx) const;
         const std::vector<trans_id>& transitions(size_t idx) const;
+
+      private:
 
         training_options options;
 
