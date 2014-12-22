@@ -15,9 +15,8 @@
 
 #include "meta.h"
 #include "util/optional.h"
-#include "util/persistent_stack.h"
 #include "util/sparse_vector.h"
-#include "parallel/parallel_for.h"
+#include "parallel/thread_pool.h"
 #include "parser/trees/parse_tree.h"
 #include "parser/transition_map.h"
 
@@ -25,6 +24,8 @@ namespace meta
 {
 namespace parser
 {
+
+class parse_tree;
 
 /**
  * A shift-reduce constituency parser.
@@ -70,30 +71,7 @@ class sr_parser
   private:
     class state;
 
-
-    class training_data
-    {
-      public:
-        training_data(training_options options, std::vector<parse_tree>& trees);
-
-        transition_map preprocess();
-
-        void shuffle();
-        size_t size() const;
-        const parse_tree& tree(size_t idx) const;
-        const std::vector<trans_id>& transitions(size_t idx) const;
-
-      private:
-
-        training_options options;
-
-        std::vector<parse_tree>& trees;
-        std::vector<std::vector<trans_id>> all_transitions;
-
-        std::vector<size_t> indices;
-
-        std::default_random_engine rng;
-    };
+    class training_data;
 
     struct training_batch
     {
