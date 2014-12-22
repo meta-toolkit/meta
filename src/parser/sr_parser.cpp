@@ -157,7 +157,6 @@ auto sr_parser::best_transition(
     return best_trans;
 }
 
-
 void sr_parser::condense()
 {
     // build feature set
@@ -177,10 +176,9 @@ void sr_parser::condense()
             nnz += it->second.size();
     }
 
+    LOG(info) << "Number of total features: " << weights_.size() << ENDLG;
     LOG(info) << "Number of nonzero weights: " << nnz << ENDLG;
 }
-
-
 
 void sr_parser::save(const std::string& prefix) const
 {
