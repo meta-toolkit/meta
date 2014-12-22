@@ -24,7 +24,6 @@ sr_parser::state::state(const parse_tree& tree)
 
 void sr_parser::state::advance(transition trans)
 {
-    // TODO: Inheritance hierarchy?
     switch (trans.type())
     {
         case transition::type_t::SHIFT:
