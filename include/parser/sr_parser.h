@@ -68,17 +68,7 @@ class sr_parser
     };
 
   private:
-    struct parser_state
-    {
-        parser_state(const parse_tree& tree);
-
-        void advance(transition trans);
-
-        util::persistent_stack<std::unique_ptr<node>> stack;
-        std::vector<std::unique_ptr<leaf_node>> queue;
-        size_t q_idx;
-        bool done;
-    };
+    class state;
 
     MAKE_NUMERIC_IDENTIFIER(trans_id, uint16_t)
 
@@ -143,19 +133,15 @@ class sr_parser
 
     trans_id best_transition(const feature_vector& features) const;
 
-    feature_vector featurize(const parser_state& state) const;
+    feature_vector featurize(const state& state) const;
 
-    void unigram_featurize(const parser_state& state,
-                           feature_vector& feats) const;
+    void unigram_featurize(const state& state, feature_vector& feats) const;
 
-    void bigram_featurize(const parser_state& state,
-                          feature_vector& feats) const;
+    void bigram_featurize(const state& state, feature_vector& feats) const;
 
-    void trigram_featurize(const parser_state& state,
-                           feature_vector& feats) const;
+    void trigram_featurize(const state& state, feature_vector& feats) const;
 
-    void children_featurize(const parser_state& state,
-                            feature_vector& feats) const;
+    void children_featurize(const state& state, feature_vector& feats) const;
 
     void unigram_stack_feats(const node* n, std::string prefix,
                              feature_vector& feats) const;

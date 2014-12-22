@@ -11,6 +11,7 @@
 #include "logging/logger.h"
 #include "parallel/parallel_for.h"
 #include "parser/sr_parser.h"
+#include "parser/state.h"
 #include "parser/trees/visitors/annotation_remover.h"
 #include "parser/trees/visitors/empty_remover.h"
 #include "parser/trees/visitors/unary_chain_remover.h"
@@ -52,79 +53,6 @@ struct head_info
         }
     }
 };
-}
-
-sr_parser::parser_state::parser_state(const parse_tree& tree)
-{
-    leaf_node_finder lnf;
-    tree.visit(lnf);
-    queue = lnf.leaves();
-    q_idx = 0;
-    done = false;
-}
-
-void sr_parser::parser_state::advance(transition trans)
-{
-    // TODO: Inheritance hierarchy?
-    switch (trans.type())
-    {
-        case transition::type_t::SHIFT:
-        {
-            stack = stack.push(queue[q_idx]->clone());
-            ++q_idx;
-        }
-        break;
-
-        case transition::type_t::REDUCE_L:
-        case transition::type_t::REDUCE_R:
-        {
-            auto right = stack.peek()->clone();
-            stack = stack.pop();
-            auto left = stack.peek()->clone();
-            stack = stack.pop();
-
-            auto bin = make_unique<internal_node>(trans.label());
-            bin->add_child(std::move(left));
-            bin->add_child(std::move(right));
-
-            if (trans.type() == transition::type_t::REDUCE_L)
-            {
-                bin->head(bin->child(0));
-            }
-            else
-            {
-                bin->head(bin->child(1));
-            }
-
-            stack = stack.push(std::move(bin));
-        }
-        break;
-
-        case transition::type_t::UNARY:
-        {
-            auto child = stack.peek()->clone();
-            stack = stack.pop();
-
-            auto un = make_unique<internal_node>(trans.label());
-            un->add_child(std::move(child));
-            un->head(un->child(0));
-
-            stack = stack.push(std::move(un));
-        }
-        break;
-
-        case transition::type_t::FINALIZE:
-        {
-            done = true;
-        }
-        break;
-
-        case transition::type_t::IDLE:
-        {
-            // nothing
-        }
-        break;
-    }
 }
 
 sr_parser::training_data::training_data(training_options opt,
@@ -285,7 +213,7 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
         auto& tree = batch.data.tree(i);
         auto& transitions = batch.data.transitions(i);
 
-        parser_state state{tree};
+        state state{tree};
 
         for (const auto& gold_trans : transitions)
         {
@@ -359,7 +287,7 @@ auto sr_parser::best_transition(
     return best_trans;
 }
 
-auto sr_parser::featurize(const parser_state& state) const -> feature_vector
+auto sr_parser::featurize(const state& state) const -> feature_vector
 {
     feature_vector feats;
 
@@ -371,37 +299,37 @@ auto sr_parser::featurize(const parser_state& state) const -> feature_vector
     return feats;
 }
 
-void sr_parser::unigram_featurize(const parser_state& state,
+void sr_parser::unigram_featurize(const state& state,
                                   feature_vector& feats) const
 {
-    if (state.stack.size() > 0)
+    if (state.stack_size() > 0)
     {
-        const auto& s0 = state.stack.peek().get();
+        auto s0 = state.stack_item(0);
         unigram_stack_feats(s0, "s0", feats);
     }
 
-    if (state.stack.size() > 1)
+    if (state.stack_size() > 1)
     {
-        const auto& s1 = state.stack.pop().peek().get();
+        auto s1 = state.stack_item(1);
         unigram_stack_feats(s1, "s1", feats);
     }
 
-    if (state.stack.size() > 2)
+    if (state.stack_size() > 2)
     {
-        const auto& s2 = state.stack.pop().pop().peek().get();
+        auto s2 = state.stack_item(2);
         unigram_stack_feats(s2, "s2", feats);
     }
 
-    if (state.stack.size() > 3)
+    if (state.stack_size() > 3)
     {
-        const auto& s3 = state.stack.pop().pop().pop().peek().get();
+        auto s3 = state.stack_item(3);
         unigram_stack_feats(s3, "s3", feats);
     }
 
-    for (int i = 0; i <= 3 && state.q_idx + i < state.queue.size(); ++i)
+    for (int i = 0; i <= 3 && state.queue_size() - i > 0; ++i)
     {
-        auto word = *state.queue[state.q_idx + i]->word();
-        const std::string& tag = state.queue[state.q_idx + i]->category();
+        auto word = *state.queue_item(i)->word();
+        const std::string& tag = state.queue_item(i)->category();
         feats["q" + std::to_string(i) + "wt=" + word + "-" + tag] = 1;
     }
 }
@@ -418,14 +346,14 @@ void sr_parser::unigram_stack_feats(const node* n, std::string prefix,
     feats[prefix + "tc=" + hi.head_tag + "-" + (std::string)n->category()] = 1;
 }
 
-void sr_parser::bigram_featurize(const parser_state& state,
+void sr_parser::bigram_featurize(const state& state,
                                  feature_vector& feats) const
 {
-    if (state.stack.size() > 0 && state.q_idx < state.queue.size())
+    if (state.stack_size() > 0 && state.queue_size() > 0)
     {
         // can access s0 and q0
-        const auto& s0 = state.stack.peek().get();
-        const auto& q0 = state.queue[state.q_idx].get();
+        auto s0 = state.stack_item(0);
+        auto q0 = state.queue_item(0);
 
         head_info s0h{s0};
         head_info q0h{q0};
@@ -436,10 +364,10 @@ void sr_parser::bigram_featurize(const parser_state& state,
             = 1;
         feats["s0cq0t=" + (std::string)s0->category() + "-" + q0h.head_tag] = 1;
 
-        if (state.stack.size() > 1)
+        if (state.stack_size() > 1)
         {
             // can access s1
-            const auto& s1 = state.stack.pop().peek().get();
+            auto s1 = state.stack_item(1);
 
             head_info s1h{s1};
 
@@ -459,10 +387,10 @@ void sr_parser::bigram_featurize(const parser_state& state,
                 = 1;
         }
 
-        if (state.q_idx + 1 < state.queue.size())
+        if (state.queue_size() > 1)
         {
             // can access q1
-            const auto& q1 = state.queue[state.q_idx + 1].get();
+            auto q1 = state.queue_item(1);
 
             head_info q1h{q1};
 
@@ -474,22 +402,22 @@ void sr_parser::bigram_featurize(const parser_state& state,
     }
 }
 
-void sr_parser::trigram_featurize(const parser_state& state,
+void sr_parser::trigram_featurize(const state& state,
                                   feature_vector& feats) const
 {
-    if (state.stack.size() < 2)
+    if (state.stack_size() < 2)
         return;
 
-    const auto& s0 = state.stack.peek().get();
-    const auto& s1 = state.stack.pop().peek().get();
+    auto s0 = state.stack_item(0);
+    auto s1 = state.stack_item(1);
 
     head_info s0h{s0};
     head_info s1h{s1};
 
-    if (state.stack.size() > 2)
+    if (state.stack_size() > 2)
     {
         // can access s2
-        const auto& s2 = state.stack.pop().pop().peek().get();
+        auto s2 = state.stack_item(2);
 
         head_info s2h{s2};
 
@@ -504,10 +432,10 @@ void sr_parser::trigram_featurize(const parser_state& state,
               + (std::string)s1->category() + "-" + s2h.head_word] = 1;
     }
 
-    if (state.q_idx < state.queue.size())
+    if (state.queue_size() > 0)
     {
         // can access q0
-        const auto& q0 = state.queue[state.q_idx].get();
+        auto q0 = state.queue_item(0);
 
         head_info q0h{q0};
 
@@ -528,18 +456,18 @@ void sr_parser::trigram_featurize(const parser_state& state,
     }
 }
 
-void sr_parser::children_featurize(const parser_state& state,
+void sr_parser::children_featurize(const state& state,
                                    feature_vector& feats) const
 {
-    if (state.stack.size() > 0)
+    if (state.stack_size() > 0)
     {
-        const auto& s0 = state.stack.peek().get();
+        auto s0 = state.stack_item(0);
         child_feats(s0, "s0", feats, true);
     }
 
-    if (state.stack.size() > 1)
+    if (state.stack_size() > 1)
     {
-        const auto& s1 = state.stack.pop().peek().get();
+        auto s1 = state.stack_item(1);
         child_feats(s1, "s1", feats, true);
     }
 }

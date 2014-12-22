@@ -109,6 +109,7 @@ int main(int argc, char** argv)
             }
         }
     }
+    LOG(info) << training.size() << " training examples" << ENDLG;
 
     filesystem::make_directory("parser");
     parser::sr_parser parser;
