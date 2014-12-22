@@ -126,6 +126,8 @@ class sr_parser
     using weight_vector = util::sparse_vector<trans_id, float>;
     using weight_vectors = std::unordered_map<std::string, weight_vector>;
 
+    class state_analyzer;
+
     void load(const std::string& prefix);
 
     weight_vectors train_batch(training_batch batch,
@@ -134,20 +136,6 @@ class sr_parser
     trans_id best_transition(const feature_vector& features) const;
 
     feature_vector featurize(const state& state) const;
-
-    void unigram_featurize(const state& state, feature_vector& feats) const;
-
-    void bigram_featurize(const state& state, feature_vector& feats) const;
-
-    void trigram_featurize(const state& state, feature_vector& feats) const;
-
-    void children_featurize(const state& state, feature_vector& feats) const;
-
-    void unigram_stack_feats(const node* n, std::string prefix,
-                             feature_vector& feats) const;
-
-    void child_feats(const node* n, std::string prefix, feature_vector& feats,
-                     bool doubs) const;
 
     void condense();
 
