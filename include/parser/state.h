@@ -29,13 +29,24 @@ class state
 
     state(const parse_tree& tree);
 
-    void advance(transition trans);
+    void advance(const transition& trans);
+
+    /**
+     * Checks if a transition is legal from a current state.
+     *
+     * @see http://www.aclweb.org/anthology/W09-3825 Appendix
+     * @param trans The transition to chck
+     * @return whether that transition is legal
+     */
+    bool legal(const transition& trans) const;
 
     const node* stack_item(size_t depth) const;
     const leaf_node* queue_item(size_t depth) const;
 
     size_t stack_size() const;
     size_t queue_size() const;
+
+    bool finalized() const;
 
   private:
     stack_type stack_;
