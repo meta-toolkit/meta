@@ -19,6 +19,7 @@
 #include "parallel/thread_pool.h"
 #include "parser/trees/parse_tree.h"
 #include "parser/transition_map.h"
+#include "sequence/sequence.h"
 
 namespace meta
 {
@@ -26,6 +27,7 @@ namespace parser
 {
 
 class parse_tree;
+class state;
 
 /**
  * A shift-reduce constituency parser.
@@ -57,6 +59,8 @@ class sr_parser
     sr_parser() = default;
 
     sr_parser(const std::string& prefix);
+
+    parse_tree parse(const sequence::sequence& sentence) const;
 
     void train(std::vector<parse_tree>& trees, training_options options);
 
@@ -90,7 +94,8 @@ class sr_parser
     weight_vectors train_batch(training_batch batch,
                                parallel::thread_pool& pool);
 
-    trans_id best_transition(const feature_vector& features) const;
+    trans_id best_transition(const feature_vector& features, const state& state,
+                             bool check_legality = false) const;
 
     void condense();
 

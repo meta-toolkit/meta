@@ -12,5 +12,6 @@ add_library(meta-parser sr_parser.cpp
                         transition_map.cpp)
 target_link_libraries(meta-parser meta-parser-trees
                                   meta-parser-io
+                                  meta-sequence
                                   meta-util
                                   ${CMAKE_THREAD_LIBS_INIT})

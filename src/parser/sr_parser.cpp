@@ -3,6 +3,7 @@
  * @author Chase Geigle
  */
 
+#include <cassert>
 #include <fstream>
 
 #include "io/binary.h"
@@ -25,6 +26,24 @@ namespace parser
 sr_parser::sr_parser(const std::string& prefix) : trans_{prefix}
 {
     load(prefix);
+}
+
+parse_tree sr_parser::parse(const sequence::sequence& sentence) const
+{
+    state state{sentence};
+    state_analyzer analyzer;
+
+    while (!state.finalized())
+    {
+        auto feats = analyzer.featurize(state);
+        auto tid = best_transition(feats, state);
+
+        state.advance(trans_.at(tid));
+    }
+
+    assert(state.stack_size() == 1 && state.queue_size() == 0);
+
+    return {state.stack_item(0)->clone()};
 }
 
 void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
@@ -88,7 +107,7 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
         for (const auto& gold_trans : transitions)
         {
             auto feats = analyzer.featurize(state);
-            auto trans = best_transition(feats);
+            auto trans = best_transition(feats, state);
 
             if (trans == gold_trans)
             {
@@ -122,7 +141,8 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
 }
 
 auto sr_parser::best_transition(
-    const feature_vector& features) const -> trans_id
+    const feature_vector& features, const state& state,
+    bool check_legality /* = false */) const -> trans_id
 {
     weight_vector class_scores;
     for (const auto& feat : features)
@@ -147,7 +167,10 @@ auto sr_parser::best_transition(
     trans_id best_trans{};
     for (const auto& score : class_scores)
     {
-        if (score.second > best_score)
+        auto tid = score.first;
+        const auto& trans = trans_.at(tid);
+        if (score.second > best_score
+            && (!check_legality || state.legal(trans)))
         {
             best_trans = score.first;
             best_score = score.second;

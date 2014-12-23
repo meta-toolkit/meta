@@ -15,6 +15,7 @@
 #include "parser/transition.h"
 #include "parser/trees/node.h"
 #include "parser/trees/parse_tree.h"
+#include "sequence/sequence.h"
 #include "util/persistent_stack.h"
 
 namespace meta
@@ -28,6 +29,7 @@ class state
     using stack_type = util::persistent_stack<std::unique_ptr<node>>;
 
     state(const parse_tree& tree);
+    state(const sequence::sequence& sentence);
 
     void advance(const transition& trans);
 

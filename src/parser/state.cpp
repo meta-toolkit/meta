@@ -7,6 +7,8 @@
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"
 #include "parser/state.h"
+#include "parser/sr_parser.h"
+#include "sequence/observation.h"
 
 namespace meta
 {
@@ -20,6 +22,20 @@ state::state(const parse_tree& tree)
     queue_ = lnf.leaves();
     q_idx_ = 0;
     done_ = false;
+}
+
+state::state(const sequence::sequence& sentence) : q_idx_{0}, done_{false}
+{
+    for (const auto& obs : sentence)
+    {
+        if (!obs.tagged())
+            throw sr_parser::exception{"sentence must be POS tagged"};
+
+        std::string word = obs.symbol();
+        class_label tag{obs.tag()};
+        queue_.emplace_back(
+            make_unique<leaf_node>(std::move(tag), std::move(word)));
+    }
 }
 
 void state::advance(const transition& trans)
