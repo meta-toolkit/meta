@@ -346,8 +346,7 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
 #define MAKE_IDENTIFIER(ident_name, base_type)                                 \
     MAKE_OPAQUE_IDENTIFIER(ident_name, base_type)
 #else
-#define MAKE_IDENTIFIER(ident_name, base_type, suffix)                         \
-    using ident_name = base_type;
+#define MAKE_IDENTIFIER(ident_name, base_type) using ident_name = base_type;
 #endif
 
 #if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
