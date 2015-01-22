@@ -18,6 +18,9 @@ transition_map::transition_map(const std::string& prefix)
 {
     std::ifstream store{prefix + "/parser.trans", std::ios::binary};
 
+    if (!store)
+        throw exception{"missing transitions model file"};
+
     size_t num_trans;
     io::read_binary(store, num_trans);
 
