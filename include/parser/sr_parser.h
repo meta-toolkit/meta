@@ -92,7 +92,17 @@ class sr_parser
     void load(const std::string& prefix);
 
     weight_vectors train_batch(training_batch batch,
-                               parallel::thread_pool& pool);
+                               parallel::thread_pool& pool,
+                               const training_options& options);
+
+    void train_instance(const parse_tree& tree,
+                        const std::vector<trans_id>& transitions,
+                        const training_options& options,
+                        weight_vectors& update) const;
+
+    void train_early_termination(const parse_tree& tree,
+                                 const std::vector<trans_id>& transitions,
+                                 weight_vectors& update) const;
 
     trans_id best_transition(const feature_vector& features, const state& state,
                              bool check_legality = false) const;

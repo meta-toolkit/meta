@@ -71,7 +71,7 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
             progress(start);
             auto end = std::min(start + options.batch_size, data.size());
 
-            auto update = train_batch({data, start, end}, pool);
+            auto update = train_batch({data, start, end}, pool, options);
 
             for (const auto& feat_vec : update)
             {
@@ -87,8 +87,8 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
     }
 }
 
-auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
-    -> weight_vectors
+auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool,
+                            const training_options& options) -> weight_vectors
 {
     // TODO: real beam search
 
@@ -101,35 +101,13 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
     for (const auto& tid : pool.thread_ids())
         updates[tid] = {};
 
-    state_analyzer analyzer;
     parallel::parallel_for(range.begin(), range.end(), pool, [&](size_t i)
                            {
         auto& tree = batch.data.tree(i);
         auto& transitions = batch.data.transitions(i);
+        auto& update = updates[std::this_thread::get_id()];
 
-        state state{tree};
-
-        for (const auto& gold_trans : transitions)
-        {
-            auto feats = analyzer.featurize(state);
-            auto trans = best_transition(feats, state);
-
-            if (trans == gold_trans)
-            {
-                state.advance(trans_[trans]);
-            }
-            else
-            {
-                auto& update = updates[std::this_thread::get_id()];
-                for (const auto& feat : feats)
-                {
-                    auto& wv = update[feat.first];
-                    wv[gold_trans] += feat.second;
-                    wv[trans] -= feat.second;
-                }
-                break;
-            }
-        }
+        train_instance(tree, transitions, options, update);
     });
 
     // Reduce partial results down to final update vector
@@ -143,6 +121,50 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool)
         }
     }
     return update;
+}
+
+void sr_parser::train_instance(const parse_tree& tree,
+                               const std::vector<trans_id>& transitions,
+                               const training_options& options,
+                               weight_vectors& update) const
+{
+    // TODO: add beam search
+    switch (options.algorithm)
+    {
+        case training_algorithm::EARLY_TERMINATION:
+            train_early_termination(tree, transitions, update);
+            break;
+    }
+}
+
+void
+    sr_parser::train_early_termination(const parse_tree& tree,
+                                       const std::vector<trans_id>& transitions,
+                                       weight_vectors& update) const
+{
+    state state{tree};
+    state_analyzer analyzer;
+
+    for (const auto& gold_trans : transitions)
+    {
+        auto feats = analyzer.featurize(state);
+        auto trans = best_transition(feats, state);
+
+        if (trans == gold_trans)
+        {
+            state.advance(trans_.at(trans));
+        }
+        else
+        {
+            for (const auto& feat : feats)
+            {
+                auto& wv = update[feat.first];
+                wv[gold_trans] += feat.second;
+                wv[trans] -= feat.second;
+            }
+            break;
+        }
+    }
 }
 
 auto sr_parser::best_transition(
