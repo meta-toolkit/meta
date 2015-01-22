@@ -15,6 +15,7 @@
 #include "parser/training_data.h"
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"
+#include "parser/trees/visitors/debinarizer.h"
 #include "util/progress.h"
 #include "util/range.h"
 
@@ -43,7 +44,11 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
 
     assert(state.stack_size() == 1 && state.queue_size() == 0);
 
-    return {state.stack_item(0)->clone()};
+    parse_tree tree{state.stack_item(0)->clone()};
+    debinarizer debin;
+    tree.transform(debin);
+
+    return tree;
 }
 
 void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
