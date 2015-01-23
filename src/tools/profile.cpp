@@ -15,6 +15,8 @@
 #include "analyzers/filters/porter2_stemmer.h"
 #include "analyzers/filters/empty_sentence_filter.h"
 #include "analyzers/filters/list_filter.h"
+#include "analyzers/ngram/ngram_word_analyzer.h"
+#include "corpus/document.h"
 #include "sequence/crf/crf.h"
 #include "sequence/crf/tagger.h"
 #include "sequence/io/ptb_parser.h"
@@ -174,7 +176,7 @@ void pos(const std::string& file, const cpptoml::toml_group& config,
 
     // write output to file
     auto out_name = no_ext(file)
-                   + (replace ? ".pos-replace.txt" : ".pos-tagged.txt");
+                    + (replace ? ".pos-replace.txt" : ".pos-tagged.txt");
     std::ofstream outfile{out_name};
     for (auto& obs : seq)
     {
@@ -201,11 +203,29 @@ void pos(const std::string& file, const cpptoml::toml_group& config,
  * @param n The n-gram value to use in tokenization
  */
 void freq(const std::string& file, const cpptoml::toml_group& config,
-          uint64_t n)
+          uint16_t n)
 {
     std::cout << "Running frequency analysis on " << n << "-grams" << std::endl;
+
+    std::unique_ptr<analyzers::token_stream> stream
+        = make_unique<analyzers::tokenizers::icu_tokenizer>();
+    analyzers::ngram_word_analyzer ana{n, std::move(stream)};
+
+    corpus::document doc;
+    doc.content(file_text(file));
+    ana.tokenize(doc);
+
+    using pair_t = std::pair<std::string, double>;
+    std::vector<pair_t> sorted(doc.counts().begin(), doc.counts().end());
+    std::sort(sorted.begin(), sorted.end(), [](const pair_t& a, const pair_t& b)
+    {
+        return a.second > b.second;
+    });
+
     auto out_name = no_ext(file) + ".freq." + std::to_string(n) + ".txt";
     std::ofstream outfile{out_name};
+    for (auto& token : sorted)
+        outfile << token.first << ": " << token.second << std::endl;
 
     std::cout << " -> file saved as " << out_name << std::endl;
 }
