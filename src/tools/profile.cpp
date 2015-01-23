@@ -161,7 +161,7 @@ void pos(const std::string& file, const cpptoml::toml_group& config,
     std::unique_ptr<analyzers::token_stream> stream
         = make_unique<analyzers::tokenizers::icu_tokenizer>();
     stream->set_content(file_text(file));
-    sequence::sequence seq;
+    meta::sequence::sequence seq;
     while (*stream)
     {
         auto token = stream->next();
