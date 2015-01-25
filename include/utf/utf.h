@@ -108,6 +108,12 @@ uint64_t length(const std::string& str);
  * @param codepoint The codepoint in question
  */
 bool isalpha(uint32_t codepoint);
+
+/**
+ * @return whether a code point is a blank character
+ * @param codepoint The codepoint in question
+ */
+bool isblank(uint32_t codepoint);
 }
 }
 

@@ -92,6 +92,7 @@ void stem(const std::string& file, const cpptoml::toml_group& config)
         = make_unique<tokenizers::icu_tokenizer>();
     stream = make_unique<filters::lowercase_filter>(std::move(stream));
     stream = make_unique<filters::porter2_stemmer>(std::move(stream));
+    stream = make_unique<filters::blank_filter>(std::move(stream));
     stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
 
     auto out_name = no_ext(file) + ".stems.txt";
@@ -114,6 +115,7 @@ void stop(const std::string& file, const cpptoml::toml_group& config)
         = make_unique<tokenizers::icu_tokenizer>();
     stream = make_unique<filters::lowercase_filter>(std::move(stream));
     stream = make_unique<filters::list_filter>(std::move(stream), *stopwords);
+    stream = make_unique<filters::blank_filter>(std::move(stream));
     stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
 
     auto out_name = no_ext(file) + ".stops.txt";
@@ -194,6 +196,7 @@ void freq(const std::string& file, const cpptoml::toml_group& config,
 
     std::unique_ptr<analyzers::token_stream> stream
         = make_unique<analyzers::tokenizers::icu_tokenizer>();
+    stream = make_unique<analyzers::filters::blank_filter>(std::move(stream));
     analyzers::ngram_word_analyzer ana{n, std::move(stream)};
 
     corpus::document doc;
@@ -210,7 +213,7 @@ void freq(const std::string& file, const cpptoml::toml_group& config,
     auto out_name = no_ext(file) + ".freq." + std::to_string(n) + ".txt";
     std::ofstream outfile{out_name};
     for (auto& token : sorted)
-        outfile << token.first << ": " << token.second << std::endl;
+        outfile << token.first << " " << token.second << std::endl;
 
     std::cout << " -> file saved as " << out_name << std::endl;
 }

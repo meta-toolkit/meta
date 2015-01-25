@@ -128,6 +128,11 @@ bool isalpha(uint32_t codepoint)
     return u_isalpha(codepoint);
 }
 
+bool isblank(uint32_t codepoint)
+{
+    return u_isblank(codepoint);
+}
+
 uint64_t length(const std::string& str)
 {
     const char* s = str.c_str();
