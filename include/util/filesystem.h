@@ -134,6 +134,18 @@ inline bool copy_file(const std::string& source, const std::string& dest)
 }
 
 /**
+ * @param in_name The filename to read
+ * @return string content from the given file
+ */
+inline std::string file_text(const std::string& in_name)
+{
+    std::ifstream infile{in_name};
+    std::ostringstream buf;
+    buf << infile.rdbuf();
+    return buf.str();
+}
+
+/**
  * @param filename The file to count lines in
  * @param delimiter How to denote lines
  * @return the number of delimiter (default newline) characters in the

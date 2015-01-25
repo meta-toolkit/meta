@@ -9,19 +9,16 @@
 #include <string>
 #include "cpptoml.h"
 #include "util/shim.h"
+#include "util/filesystem.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
-#include "analyzers/filters/lowercase_filter.h"
-#include "analyzers/filters/porter2_stemmer.h"
-#include "analyzers/filters/empty_sentence_filter.h"
-#include "analyzers/filters/list_filter.h"
+#include "analyzers/filters/all.h"
 #include "analyzers/ngram/ngram_word_analyzer.h"
 #include "corpus/document.h"
 #include "sequence/crf/crf.h"
 #include "sequence/crf/tagger.h"
 #include "sequence/io/ptb_parser.h"
 #include "sequence/sequence.h"
-#include "sequence/crf/tagger.h"
 
 using namespace meta;
 
@@ -60,18 +57,6 @@ std::string no_ext(const std::string& file)
 }
 
 /**
- * @param in_name The filename to read
- * @return string content from the given file
- */
-std::string file_text(const std::string& in_name)
-{
-    std::ifstream infile{in_name};
-    std::ostringstream buf;
-    buf << infile.rdbuf();
-    return buf.str();
-}
-
-/**
  * @param stream Token stream to read from
  * @param in_name Input filename
  * @param out_name Output filename
@@ -81,7 +66,7 @@ void write_file(Stream& stream, const std::string& in_name,
                 const std::string& out_name)
 {
     std::ofstream outfile{out_name};
-    stream->set_content(file_text(in_name));
+    stream->set_content(filesystem::file_text(in_name));
     while (*stream)
     {
         auto next = stream->next();
@@ -160,7 +145,7 @@ void pos(const std::string& file, const cpptoml::toml_group& config,
     // read file into a sequence
     std::unique_ptr<analyzers::token_stream> stream
         = make_unique<analyzers::tokenizers::icu_tokenizer>();
-    stream->set_content(file_text(file));
+    stream->set_content(filesystem::file_text(file));
     meta::sequence::sequence seq;
     while (*stream)
     {
@@ -212,7 +197,7 @@ void freq(const std::string& file, const cpptoml::toml_group& config,
     analyzers::ngram_word_analyzer ana{n, std::move(stream)};
 
     corpus::document doc;
-    doc.content(file_text(file));
+    doc.content(filesystem::file_text(file));
     ana.tokenize(doc);
 
     using pair_t = std::pair<std::string, double>;
