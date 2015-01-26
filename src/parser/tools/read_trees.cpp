@@ -107,14 +107,16 @@ int main(int argc, char** argv)
             if (print)
             {
                 std::cout << "Original: " << std::endl;
-                std::cout << t << std::endl;
+                t.pretty_print(std::cout);
+                std::cout << std::endl;
             }
 
             t.transform(transformer);
             if (print)
             {
                 std::cout << "Transformed: " << std::endl;
-                std::cout << t << std::endl;
+                t.pretty_print(std::cout);
+                std::cout << std::endl;
             }
 
             t.visit(hf);
@@ -131,14 +133,16 @@ int main(int argc, char** argv)
             if (print)
             {
                 std::cout << "Binarized: " << std::endl;
-                std::cout << t << std::endl;
+                t.pretty_print(std::cout);
+                std::cout << std::endl;
             }
 
             t.transform(debin);
             if (print)
             {
                 std::cout << "Debinarized: " << std::endl;
-                std::cout << t << std::endl;
+                t.pretty_print(std::cout);
+                std::cout << std::endl;
             }
 
             orig_trees[i].transform(transformer);

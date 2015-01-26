@@ -41,6 +41,12 @@ class node
     virtual bool is_leaf() const = 0;
 
     /**
+     * @return whether this node is a temporary node inserted during
+     * binarization
+     */
+    bool is_temporary() const;
+
+    /**
      * @param other The other subtree to compare with
      * @return whether this subtree is equal to the other subtree
      */

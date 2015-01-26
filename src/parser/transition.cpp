@@ -41,24 +41,24 @@ bool transition::operator<(const transition& rhs) const
     return std::tie(type_, label_) < std::tie(rhs.type_, rhs.label_);
 }
 
-std::ostream& operator<<(std::ostream& os, const transition& trans)
+std::ostream& operator<<(std::ostream& os, transition::type_t type)
 {
-    switch (trans.type())
+    switch (type)
     {
         case transition::type_t::SHIFT:
             os << "SHIFT";
             break;
 
         case transition::type_t::REDUCE_L:
-            os << "REDUCE-L-" << trans.label();
+            os << "REDUCE-L";
             break;
 
         case transition::type_t::REDUCE_R:
-            os << "REDUCE-R-" << trans.label();
+            os << "REDUCE-R";
             break;
 
         case transition::type_t::UNARY:
-            os << "UNARY-" << trans.label();
+            os << "UNARY";
             break;
 
         case transition::type_t::FINALIZE:
@@ -67,6 +67,27 @@ std::ostream& operator<<(std::ostream& os, const transition& trans)
 
         case transition::type_t::IDLE:
             os << "IDLE";
+            break;
+
+        default:
+            os << "ERROR-" << (int)type;
+            break;
+    }
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const transition& trans)
+{
+    os << trans.type();
+    switch (trans.type())
+    {
+        case transition::type_t::REDUCE_L:
+        case transition::type_t::REDUCE_R:
+        case transition::type_t::UNARY:
+            os << "-" << trans.label();
+            break;
+
+        default:
             break;
     }
     return os;

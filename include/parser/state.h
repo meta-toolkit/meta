@@ -37,13 +37,20 @@ class state
      * Checks if a transition is legal from a current state.
      *
      * @see http://www.aclweb.org/anthology/W09-3825 Appendix
-     * @param trans The transition to chck
+     * @param trans The transition to check
      * @return whether that transition is legal
      */
     bool legal(const transition& trans) const;
 
+    /**
+     * Returns a transition used in situations where there is not a
+     * transition in the model satisfying the constraints given in the
+     * original paper so that the parser can at least make progress.
+     */
+    transition emergency_transition() const;
+
     const node* stack_item(size_t depth) const;
-    const leaf_node* queue_item(size_t depth) const;
+    const leaf_node* queue_item(ssize_t depth) const;
 
     size_t stack_size() const;
     size_t queue_size() const;

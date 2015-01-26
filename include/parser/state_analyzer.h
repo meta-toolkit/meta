@@ -34,6 +34,9 @@ class sr_parser::state_analyzer
     void unigram_stack_feats(const node* n, std::string prefix,
                              feature_vector& feats) const;
 
+    void bigram_features(const node* n1, std::string name1, const node* n2,
+                         std::string name2, feature_vector& feats) const;
+
     void child_feats(const node* n, std::string prefix, feature_vector& feats,
                      bool doubs) const;
 };

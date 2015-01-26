@@ -58,6 +58,8 @@ class parse_tree
 
     friend std::ostream& operator<<(std::ostream& os, const parse_tree& tree);
 
+    void pretty_print(std::ostream& os) const;
+
     friend bool operator==(const parse_tree& lhs, const parse_tree& rhs);
 
   private:

@@ -26,36 +26,24 @@ std::unique_ptr<node> debinarizer::operator()(const internal_node& in)
 
     auto res = make_unique<internal_node>(in.category());
 
-    class_label bin_cat{static_cast<std::string>(in.category()) + "*"};
     in.each_child([&](const node* child)
                   {
-                      debinarize_subtree(in, bin_cat, child, *res);
+                      auto n = child->accept(*this);
+                      if (n->is_temporary())
+                      {
+                          n->as<internal_node>().each_child(
+                              [&](const node* c)
+                              {
+                                  res->add_child(c->clone());
+                              });
+                      }
+                      else
+                      {
+                          res->add_child(std::move(n));
+                      }
                   });
+
     return std::move(res);
-}
-
-void debinarizer::debinarize_subtree(const internal_node& in,
-                                     const class_label& bin_cat,
-                                     const node* subroot, internal_node& res)
-{
-
-    if (subroot->category() != bin_cat)
-    {
-        res.add_child(subroot->accept(*this));
-
-        if (subroot == in.head_constituent())
-            res.head(res.child(res.num_children() - 1));
-    }
-    else
-    {
-        assert(!subroot->is_leaf());
-        auto& sr = subroot->as<internal_node>();
-        sr.each_child(
-            [&](const node* child)
-            {
-                debinarize_subtree(sr, bin_cat, child, res);
-            });
-    }
 }
 }
 }

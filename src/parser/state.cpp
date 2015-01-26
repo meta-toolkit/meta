@@ -44,10 +44,10 @@ void state::advance(const transition& trans)
     {
         case transition::type_t::SHIFT:
         {
-            stack_ = stack_.push(queue_[q_idx_]->clone());
+            stack_ = stack_.push(queue_.at(q_idx_)->clone());
             ++q_idx_;
+            break;
         }
-        break;
 
         case transition::type_t::REDUCE_L:
         case transition::type_t::REDUCE_R:
@@ -71,8 +71,8 @@ void state::advance(const transition& trans)
             }
 
             stack_ = stack_.push(std::move(bin));
+            break;
         }
-        break;
 
         case transition::type_t::UNARY:
         {
@@ -84,38 +84,28 @@ void state::advance(const transition& trans)
             un->head(un->child(0));
 
             stack_ = stack_.push(std::move(un));
+            break;
         }
-        break;
 
         case transition::type_t::FINALIZE:
         {
             done_ = true;
+            break;
         }
-        break;
 
         case transition::type_t::IDLE:
         {
             // nothing
+            break;
         }
-        break;
     }
 }
 
 namespace
 {
-
 bool is_temporary(const std::string& lbl)
 {
     return lbl[lbl.length() - 1] == '*';
-}
-
-bool is_temporary(const node* n)
-{
-    if (n->is_leaf())
-        return false;
-
-    const auto& lbl = n->category();
-    return is_temporary(lbl);
 }
 
 bool shift_legal(const state& state)
@@ -130,7 +120,7 @@ bool shift_legal(const state& state)
     if (state.stack_size() > 0)
     {
         auto top = state.stack_item(0);
-        if (is_temporary(top))
+        if (top->is_temporary())
         {
             const auto& in = top->as<internal_node>();
             if (in.num_children() == 2 && in.head_constituent() == in.child(1))
@@ -141,9 +131,27 @@ bool shift_legal(const state& state)
     return true;
 }
 
-bool unary_legal(const state& state)
+bool unary_legal(const state& state, const transition& trans)
 {
+    // Only IDLE is legal after FINALIZE
+    if (state.finalized())
+        return false;
+
+    // Need an item to reduce in the stack
     if (state.stack_size() == 0)
+        return false;
+
+    // Only FINALIZE is legal after ROOT
+    if (state.stack_item(0)->category() == "ROOT"_cl)
+        return false;
+
+    // ROOT transition can only be the very last thing
+    if (trans.label() == "ROOT"_cl
+        && (state.stack_size() > 1 || state.queue_size() > 0))
+        return false;
+
+    // no unary chains
+    if (state.stack_item(0)->category() == trans.label())
         return false;
 
     // From Zhang and Clark (2009): no more than three unary reduce actions
@@ -151,19 +159,18 @@ bool unary_legal(const state& state)
     if (!state.stack_item(0)->is_leaf())
     {
         const auto& in = state.stack_item(0)->as<internal_node>();
-        if (in.num_children() > 1 || in.child(0)->is_leaf())
-            return true;
-
-        const auto& in2 = in.child(0)->as<internal_node>();
-
-        if (in2.num_children() > 1 || in.child(0)->is_leaf())
-            return true;
-
-        const auto& in3 = in2.child(0)->as<internal_node>();
-        if (in3.num_children() > 1)
-            return true;
-        else
-            return false;
+        if (in.num_children() == 1)
+        {
+            const auto& child = in.child(0)->as<internal_node>();
+            if (!child.is_leaf() && child.num_children() == 1)
+            {
+                const auto& grand_child = child.child(0)->as<internal_node>();
+                if (!grand_child.is_leaf() && grand_child.num_children() == 1)
+                {
+                    return false;
+                }
+            }
+        }
     }
 
     return true;
@@ -182,12 +189,12 @@ bool reduce_legal(const state& state, const transition& trans)
 
     // binary reduce actions can only be performed with at least one of the
     // two nodes at the top of the stack being non-temporary
-    if (is_temporary(left) && is_temporary(right))
+    if (left->is_temporary() && right->is_temporary())
         return false;
 
     // if L is temporary with label X*, the resulting node must be labeled
     // X or X* and left-headed
-    if (is_temporary(left))
+    if (left->is_temporary())
     {
         if (trans.type() == transition::type_t::REDUCE_R)
             return false;
@@ -201,7 +208,7 @@ bool reduce_legal(const state& state, const transition& trans)
 
     // if R is a temporary with label X*, the resulting node must be
     // labeled X or X* and be right-headed
-    if (is_temporary(right))
+    if (right->is_temporary())
     {
         if (trans.type() == transition::type_t::REDUCE_L)
             return false;
@@ -221,10 +228,11 @@ bool reduce_legal(const state& state, const transition& trans)
 
     // if the stack contains only two nodes, temporary resulting nodes
     // from binary reduce must be left-headed
-    if (state.stack_size() == 2 && trans.type() == transition::type_t::REDUCE_R)
+    if (state.stack_size() == 2 && is_temporary(trans.label())
+        && trans.type() == transition::type_t::REDUCE_R)
         return false;
 
-    if (state.stack_size() > 2 && is_temporary(state.stack_item(2)))
+    if (state.stack_size() > 2 && state.stack_item(2)->is_temporary())
     {
         // if the queue is empty and the stack contains more than two nodes,
         // with the third node from the top being temporary, binary reduce can
@@ -245,7 +253,9 @@ bool reduce_legal(const state& state, const transition& trans)
 
 bool finalize_legal(const state& state)
 {
-    return state.queue_size() == 0 && state.stack_size() == 1;
+    return !state.finalized() && state.queue_size() == 0
+           && state.stack_size() == 1
+           && state.stack_item(0)->category() == "ROOT"_cl;
 }
 
 bool idle_legal(const state& state)
@@ -269,7 +279,7 @@ bool state::legal(const transition& trans) const
             return reduce_legal(*this, trans);
 
         case transition::type_t::UNARY:
-            return unary_legal(*this);
+            return unary_legal(*this, trans);
 
         case transition::type_t::FINALIZE:
             return finalize_legal(*this);
@@ -277,6 +287,44 @@ bool state::legal(const transition& trans) const
         case transition::type_t::IDLE:
             return idle_legal(*this);
     }
+}
+
+transition state::emergency_transition() const
+{
+    if (stack_item(0)->is_temporary()
+        && (stack_size() == 1 || stack_item(1)->is_temporary()))
+    {
+        const std::string& c = stack_item(0)->category();
+        auto lbl = class_label{c.substr(0, c.length() - 1)};
+        return {transition::type_t::UNARY, lbl};
+    }
+
+    if (stack_size() == 1 && queue_size() == 0)
+    {
+        if (stack_item(0)->category() != "ROOT"_cl)
+            return {transition::type_t::UNARY, "ROOT"_cl};
+        else
+            return {transition::type_t::FINALIZE};
+    }
+
+    if (stack_size() > 1)
+    {
+        if (stack_item(0)->is_temporary())
+        {
+            const std::string& rc = stack_item(0)->category();
+            auto lbl = class_label{rc.substr(0, rc.length() - 1)};
+            return {transition::type_t::REDUCE_R, lbl};
+        }
+
+        if (stack_item(1)->is_temporary())
+        {
+            const std::string& lc = stack_item(0)->category();
+            auto lbl = class_label{lc.substr(0, lc.length() - 1)};
+            return {transition::type_t::REDUCE_L, lbl};
+        }
+    }
+
+    throw sr_parser::exception{"emergency transition impossible"};
 }
 
 uint64_t state::stack_size() const
@@ -291,15 +339,20 @@ uint64_t state::queue_size() const
 
 const node* state::stack_item(size_t depth) const
 {
+    if (depth >= stack_size())
+        return nullptr;
+
     auto st = stack_;
     for (uint64_t i = 0; i < depth; ++i)
         st = st.pop();
     return st.peek().get();
 }
 
-const leaf_node* state::queue_item(size_t depth) const
+const leaf_node* state::queue_item(ssize_t depth) const
 {
-    return queue_.at(q_idx_ + depth).get();
+    if (q_idx_ + depth < queue_.size())
+        return queue_.at(q_idx_ + depth).get();
+    return nullptr;
 }
 
 bool state::finalized() const

@@ -37,9 +37,13 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
     while (!state.finalized())
     {
         auto feats = analyzer.featurize(state);
-        auto tid = best_transition(feats, state);
+        auto tid = best_transition(feats, state, true);
+        auto trans = trans_.at(tid);
 
-        state.advance(trans_.at(tid));
+        if (!state.legal(trans))
+            trans = state.emergency_transition();
+
+        state.advance(trans);
     }
 
     assert(state.stack_size() == 1 && state.queue_size() == 0);
@@ -51,6 +55,35 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
     return tree;
 }
 
+namespace
+{
+void condense(sr_parser::weight_vectors& weights, bool log = true)
+{
+    // build feature set
+    std::vector<std::string> features;
+    features.reserve(weights.size());
+    for (const auto& feat_vec : weights)
+        features.push_back(feat_vec.first);
+
+    uint64_t nnz = 0;
+    for (const auto& feat : features)
+    {
+        auto it = weights.find(feat);
+        it->second.condense();
+        if (it->second.empty())
+            weights.erase(it);
+        else
+            nnz += it->second.size();
+    }
+
+    if (log)
+    {
+        LOG(info) << "Number of total features: " << weights.size() << ENDLG;
+        LOG(info) << "Number of nonzero weights: " << nnz << ENDLG;
+    }
+}
+}
+
 void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 {
     training_data data{options, trees};
@@ -60,39 +93,68 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 
     parallel::thread_pool pool{options.num_threads};
 
+    weight_vectors for_avg;
+    uint64_t total_updates = 0;
     for (uint64_t iter = 1; iter <= options.max_iterations; ++iter)
     {
         printing::progress progress{
             " > Iteration " + std::to_string(iter) + ": ", trees.size()};
         data.shuffle();
 
+        uint64_t num_correct = 0;
+        uint64_t num_incorrect = 0;
         for (size_t start = 0; start < data.size(); start += options.batch_size)
         {
             progress(start);
             auto end = std::min(start + options.batch_size, data.size());
 
-            auto update = train_batch({data, start, end}, pool, options);
+            auto result = train_batch({data, start, end}, pool, options);
 
-            for (const auto& feat_vec : update)
+            ++total_updates;
+            for (const auto& feat_vec : std::get<0>(result))
             {
                 const auto& feat = feat_vec.first;
                 auto& wv = weights_[feat];
+                auto& awv = for_avg[feat];
+
                 for (const auto& up : feat_vec.second)
+                {
                     wv[up.first] += up.second;
+
+                    awv[up.first] += (total_updates - 1) * up.second;
+                }
             }
+
+            num_correct += std::get<1>(result);
+            num_incorrect += std::get<2>(result);
         }
         progress.end();
 
-        condense();
+        LOG(info) << "Correct transitions: " << num_correct
+                  << ", incorrect transitions: " << num_incorrect << ENDLG;
+
+        condense(weights_);
+    }
+
+    // update weights to be average over all parameters
+    for (const auto& wv : for_avg)
+    {
+        const auto& feat = wv.first;
+        const auto& vec = wv.second;
+        for (const auto& weight : vec)
+        {
+            weights_[feat][weight.first] -= (weight.second / total_updates);
+        }
     }
 }
 
 auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool,
-                            const training_options& options) -> weight_vectors
+                            const training_options& options)
+    -> std::tuple<weight_vectors, uint64_t, uint64_t>
 {
     // TODO: real beam search
+    std::tuple<weight_vectors, uint64_t, uint64_t> result;
 
-    weight_vectors update;
     auto range = util::range(batch.start, batch.end - 1); // inclusive range
 
     // Perform a reduction across threads: each thread stores its update in
@@ -107,7 +169,9 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool,
         auto& transitions = batch.data.transitions(i);
         auto& update = updates[std::this_thread::get_id()];
 
-        train_instance(tree, transitions, options, update);
+        auto res = train_instance(tree, transitions, options, update);
+        std::get<1>(result) += res.first;
+        std::get<2>(result) += res.second;
     });
 
     // Reduce partial results down to final update vector
@@ -115,33 +179,32 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool,
     {
         for (const auto& feat : thread_update.second)
         {
-            auto& wv = update[feat.first];
+            auto& wv = std::get<0>(result)[feat.first];
             for (const auto& weight : feat.second)
                 wv[weight.first] += weight.second;
         }
     }
-    return update;
+    return result;
 }
 
-void sr_parser::train_instance(const parse_tree& tree,
-                               const std::vector<trans_id>& transitions,
-                               const training_options& options,
-                               weight_vectors& update) const
+std::pair<uint64_t, uint64_t> sr_parser::train_instance(
+    const parse_tree& tree, const std::vector<trans_id>& transitions,
+    const training_options& options, weight_vectors& update) const
 {
     // TODO: add beam search
     switch (options.algorithm)
     {
         case training_algorithm::EARLY_TERMINATION:
-            train_early_termination(tree, transitions, update);
-            break;
+            return train_early_termination(tree, transitions, update);
     }
 }
 
-void
+std::pair<uint64_t, uint64_t>
     sr_parser::train_early_termination(const parse_tree& tree,
                                        const std::vector<trans_id>& transitions,
                                        weight_vectors& update) const
 {
+    std::pair<uint64_t, uint64_t> result{0, 0};
     state state{tree};
     state_analyzer analyzer;
 
@@ -153,6 +216,7 @@ void
         if (trans == gold_trans)
         {
             state.advance(trans_.at(trans));
+            ++result.first;
         }
         else
         {
@@ -162,9 +226,11 @@ void
                 wv[gold_trans] += feat.second;
                 wv[trans] -= feat.second;
             }
+            ++result.second;
             break;
         }
     }
+    return result;
 }
 
 auto sr_parser::best_transition(
@@ -207,28 +273,7 @@ auto sr_parser::best_transition(
     return best_trans;
 }
 
-void sr_parser::condense()
-{
-    // build feature set
-    std::vector<std::string> features;
-    features.reserve(weights_.size());
-    for (const auto& feat_vec : weights_)
-        features.push_back(feat_vec.first);
 
-    uint64_t nnz = 0;
-    for (const auto& feat : features)
-    {
-        auto it = weights_.find(feat);
-        it->second.condense();
-        if (it->second.empty())
-            weights_.erase(it);
-        else
-            nnz += it->second.size();
-    }
-
-    LOG(info) << "Number of total features: " << weights_.size() << ENDLG;
-    LOG(info) << "Number of nonzero weights: " << nnz << ENDLG;
-}
 
 void sr_parser::save(const std::string& prefix) const
 {
@@ -246,10 +291,8 @@ void sr_parser::save(const std::string& prefix) const
 
         for (const auto& weight : weights)
         {
-            auto tid = weight.first;
-            int val = weight.second;
-            io::write_binary(model, tid);
-            io::write_binary(model, val);
+            io::write_binary(model, weight.first);
+            io::write_binary(model, weight.second);
         }
     }
 }

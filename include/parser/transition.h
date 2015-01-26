@@ -56,6 +56,8 @@ class transition : public util::comparable<transition>
 
 std::ostream& operator<<(std::ostream& os, const transition& trans);
 
+std::ostream& operator<<(std::ostream& os, const transition::type_t type);
+
 }
 }
 

@@ -34,43 +34,25 @@ transition_map::transition_map(const std::string& prefix)
             throw exception{"malformed transition model file (too few "
                             "transitions written)"};
 
-        int trans_type;
+        transition::type_t trans_type;
         io::read_binary(store, trans_type);
 
         util::optional<transition> trans;
-        if (trans_type == 0)
+        switch (trans_type)
         {
-            trans = transition{transition::type_t::SHIFT};
-        }
-        else if (trans_type == 1)
-        {
-            class_label lbl;
-            io::read_binary(store, lbl);
-            trans = transition{transition::type_t::REDUCE_L, lbl};
-        }
-        else if (trans_type == 2)
-        {
-            class_label lbl;
-            io::read_binary(store, lbl);
-            trans = transition{transition::type_t::REDUCE_R, lbl};
-        }
-        else if (trans_type == 3)
-        {
-            class_label lbl;
-            io::read_binary(store, lbl);
-            trans = transition{transition::type_t::UNARY, lbl};
-        }
-        else if (trans_type == 4)
-        {
-            trans = transition{transition::type_t::FINALIZE};
-        }
-        else if (trans_type == 5)
-        {
-            trans = transition{transition::type_t::IDLE};
-        }
-        else
-        {
-            throw exception{"invalid transition identifier in model file"};
+            case transition::type_t::REDUCE_L:
+            case transition::type_t::REDUCE_R:
+            case transition::type_t::UNARY:
+            {
+                class_label lbl;
+                io::read_binary(store, lbl);
+                trans = transition{trans_type, lbl};
+                break;
+            }
+
+            default:
+                trans = transition{trans_type};
+                break;
         }
 
         auto id = static_cast<trans_id>(map_.size());
@@ -78,6 +60,7 @@ transition_map::transition_map(const std::string& prefix)
         transitions_.emplace_back(std::move(*trans));
     }
 }
+
 const transition& transition_map::at(trans_id id) const
 {
     return transitions_.at(id);
@@ -121,33 +104,16 @@ void transition_map::save(const std::string& prefix) const
     io::write_binary(store, transitions_.size());
     for (const auto& trans : transitions_)
     {
+        io::write_binary(store, trans.type());
         switch (trans.type())
         {
-            case transition::type_t::SHIFT:
-                io::write_binary(store, 0);
-                break;
-
             case transition::type_t::REDUCE_L:
-                io::write_binary(store, 1);
-                io::write_binary(store, trans.label());
-                break;
-
             case transition::type_t::REDUCE_R:
-                io::write_binary(store, 2);
-                io::write_binary(store, trans.label());
-                break;
-
             case transition::type_t::UNARY:
-                io::write_binary(store, 3);
                 io::write_binary(store, trans.label());
                 break;
 
-            case transition::type_t::FINALIZE:
-                io::write_binary(store, 4);
-                break;
-
-            case transition::type_t::IDLE:
-                io::write_binary(store, 5);
+            default:
                 break;
         }
     }

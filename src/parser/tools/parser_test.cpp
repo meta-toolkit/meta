@@ -9,6 +9,15 @@
 #include "logging/logger.h"
 #include "parser/io/ptb_reader.h"
 #include "parser/sr_parser.h"
+#include "parser/trees/visitors/annotation_remover.h"
+#include "parser/trees/visitors/empty_remover.h"
+#include "parser/trees/visitors/unary_chain_remover.h"
+#include "parser/trees/visitors/multi_transformer.h"
+#include "parser/trees/visitors/head_finder.h"
+#include "parser/trees/visitors/binarizer.h"
+#include "parser/trees/visitors/debinarizer.h"
+#include "parser/trees/visitors/transition_finder.h"
+#include "parser/trees/visitors/leaf_node_finder.h"
 #include "parser/trees/visitors/sequence_extractor.h"
 #include "util/filesystem.h"
 #include "util/progress.h"
@@ -25,9 +34,9 @@ std::string two_digit(uint8_t num)
 int main(int argc, char** argv)
 {
 
-    if (argc < 2)
+    if (argc < 3)
     {
-        std::cerr << "Usage: " << argv[0] << " config.toml" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " config.toml output_file" << std::endl;
         return 1;
     }
 
@@ -52,8 +61,9 @@ int main(int argc, char** argv)
     auto parser_prefix = parser_grp->get_as<std::string>("prefix");
     if (!parser_prefix)
     {
-        LOG(fatal) << "[parser] group must contain a prefix to store model files"
-                   << ENDLG;
+        LOG(fatal)
+            << "[parser] group must contain a prefix to store model files"
+            << ENDLG;
         return 1;
     }
 
@@ -71,10 +81,10 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto train_sections = parser_grp->get_array("test-sections");
-    if (!train_sections)
+    auto test_sections = parser_grp->get_array("test-sections");
+    if (!test_sections)
     {
-        LOG(fatal) << "[parser] group must contain train-sections" << ENDLG;
+        LOG(fatal) << "[parser] group must contain test-sections" << ENDLG;
         return 1;
     }
 
@@ -85,13 +95,16 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    std::string path =
-        *prefix + "/" + *treebank + "/treebank-3/parsed/mrg/" + *corpus;
+    std::string path = *prefix + "/" + *treebank + "/treebank-3/parsed/mrg/"
+                       + *corpus;
+
+    parser::multi_transformer<parser::annotation_remover, parser::empty_remover,
+                              parser::unary_chain_remover> transformer;
 
     std::vector<sequence::sequence> testing;
     {
-        auto begin = train_sections->at(0)->as<int64_t>()->value();
-        auto end = train_sections->at(1)->as<int64_t>()->value();
+        auto begin = test_sections->at(0)->as<int64_t>()->value();
+        auto end = test_sections->at(1)->as<int64_t>()->value();
         printing::progress progress(" > Reading testing data: ",
                                     (end - begin + 1) * *section_size);
         for (uint8_t i = begin; i <= end; ++i)
@@ -103,9 +116,10 @@ int main(int argc, char** argv)
                 auto file = *corpus + "_" + folder + two_digit(j) + ".mrg";
                 auto filename = path + "/" + folder + "/" + file;
                 auto trees = parser::io::extract_trees(filename);
-                for (auto & tree : trees)
+                for (auto& tree : trees)
                 {
                     parser::sequence_extractor seq_ex;
+                    tree.transform(transformer);
                     tree.visit(seq_ex);
                     testing.emplace_back(seq_ex.sequence());
                 }
@@ -116,10 +130,18 @@ int main(int argc, char** argv)
 
     parser::sr_parser parser{*parser_prefix};
 
+    std::ofstream output{argv[2]};
     for (const auto& seq : testing)
     {
+        std::cout << "Parsing:";
+        for (const auto& obs : seq)
+            std::cout << " " <<  obs.symbol();
+        std::cout << "\n";
+
         auto tree = parser.parse(seq);
-        std::cout << tree << std::endl;
+        tree.pretty_print(std::cout);
+        std::cout << "\n\n";
+        output << tree << "\n";
     }
 
     return 0;

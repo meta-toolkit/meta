@@ -9,6 +9,16 @@
 #include "logging/logger.h"
 #include "parser/io/ptb_reader.h"
 #include "parser/sr_parser.h"
+#include "parser/trees/visitors/annotation_remover.h"
+#include "parser/trees/visitors/empty_remover.h"
+#include "parser/trees/visitors/unary_chain_remover.h"
+#include "parser/trees/visitors/multi_transformer.h"
+#include "parser/trees/visitors/head_finder.h"
+#include "parser/trees/visitors/binarizer.h"
+#include "parser/trees/visitors/debinarizer.h"
+#include "parser/trees/visitors/transition_finder.h"
+#include "parser/trees/visitors/leaf_node_finder.h"
+#include "parser/trees/visitors/sequence_extractor.h"
 #include "util/filesystem.h"
 #include "util/progress.h"
 
@@ -77,6 +87,13 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    auto test_sections = parser_grp->get_array("test-sections");
+    if (!test_sections)
+    {
+        LOG(fatal) << "[parser] group must contain test-sections" << ENDLG;
+        return 1;
+    }
+
     auto section_size = parser_grp->get_as<int64_t>("section-size");
     if (!section_size)
     {
@@ -111,6 +128,36 @@ int main(int argc, char** argv)
     }
     LOG(info) << training.size() << " training examples" << ENDLG;
 
+    parser::multi_transformer<parser::annotation_remover, parser::empty_remover,
+                              parser::unary_chain_remover> transformer;
+
+    std::vector<sequence::sequence> testing;
+    {
+        auto begin = test_sections->at(0)->as<int64_t>()->value();
+        auto end = test_sections->at(1)->as<int64_t>()->value();
+        printing::progress progress(" > Reading testing data: ",
+                                    (end - begin + 1) * *section_size);
+        for (uint8_t i = begin; i <= end; ++i)
+        {
+            auto folder = two_digit(i);
+            for (uint8_t j = 0; j <= *section_size; ++j)
+            {
+                progress((i - begin) * 99 + j);
+                auto file = *corpus + "_" + folder + two_digit(j) + ".mrg";
+                auto filename = path + "/" + folder + "/" + file;
+                auto trees = parser::io::extract_trees(filename);
+                for (auto& tree : trees)
+                {
+                    parser::sequence_extractor seq_ex;
+                    tree.transform(transformer);
+                    tree.visit(seq_ex);
+                    testing.emplace_back(seq_ex.sequence());
+                }
+            }
+        }
+    }
+    LOG(info) << testing.size() << " test examples" << ENDLG;
+
     filesystem::make_directory("parser");
     parser::sr_parser parser;
 
@@ -121,6 +168,20 @@ int main(int argc, char** argv)
     parser.train(training, options);
 
     parser.save("parser");
+
+    std::ofstream output{"parser_output"};
+    for (const auto& seq : testing)
+    {
+        std::cout << "Parsing:";
+        for (const auto& obs : seq)
+            std::cout << " " <<  obs.symbol();
+        std::cout << "\n";
+
+        auto tree = parser.parse(seq);
+        tree.pretty_print(std::cout);
+        std::cout << "\n\n";
+        output << tree << "\n";
+    }
 
     return 0;
 }

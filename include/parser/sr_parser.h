@@ -72,6 +72,11 @@ class sr_parser
         using std::runtime_error::runtime_error;
     };
 
+    using feature_vector = std::unordered_map<std::string, float>;
+
+    using weight_vector = util::sparse_vector<trans_id, float>;
+    using weight_vectors = std::unordered_map<std::string, weight_vector>;
+
   private:
     class training_data;
 
@@ -82,32 +87,25 @@ class sr_parser
         size_t end;
     };
 
-    using feature_vector = std::unordered_map<std::string, float>;
-
-    using weight_vector = util::sparse_vector<trans_id, float>;
-    using weight_vectors = std::unordered_map<std::string, weight_vector>;
-
     class state_analyzer;
 
     void load(const std::string& prefix);
 
-    weight_vectors train_batch(training_batch batch,
-                               parallel::thread_pool& pool,
-                               const training_options& options);
+    std::tuple<weight_vectors, uint64_t, uint64_t>
+        train_batch(training_batch batch, parallel::thread_pool& pool,
+                    const training_options& options);
 
-    void train_instance(const parse_tree& tree,
-                        const std::vector<trans_id>& transitions,
-                        const training_options& options,
-                        weight_vectors& update) const;
+    std::pair<uint64_t, uint64_t> train_instance(
+        const parse_tree& tree, const std::vector<trans_id>& transitions,
+        const training_options& options, weight_vectors& update) const;
 
-    void train_early_termination(const parse_tree& tree,
-                                 const std::vector<trans_id>& transitions,
-                                 weight_vectors& update) const;
+    std::pair<uint64_t, uint64_t>
+        train_early_termination(const parse_tree& tree,
+                                const std::vector<trans_id>& transitions,
+                                weight_vectors& update) const;
 
     trans_id best_transition(const feature_vector& features, const state& state,
                              bool check_legality = false) const;
-
-    void condense();
 
     /// Storage for the ids for each transition
     transition_map trans_;

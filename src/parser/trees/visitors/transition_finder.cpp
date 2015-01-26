@@ -36,9 +36,14 @@ void transition_finder::operator()(const internal_node& in)
     {
         transitions_.emplace_back(transition::type_t::REDUCE_L, in.category());
     }
-    else
+    else if (in.child(1) == in.head_constituent())
     {
         transitions_.emplace_back(transition::type_t::REDUCE_R, in.category());
+    }
+    else
+    {
+        throw exception{"Incorrect head annotations (head was neither left nor "
+                        "right child)"};
     }
 }
 
@@ -48,6 +53,5 @@ std::vector<transition> transition_finder::transitions()
     transitions_.emplace_back(transition::type_t::IDLE);
     return std::move(transitions_);
 }
-
 }
 }
