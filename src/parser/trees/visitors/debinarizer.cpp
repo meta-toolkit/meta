@@ -26,22 +26,30 @@ std::unique_ptr<node> debinarizer::operator()(const internal_node& in)
 
     auto res = make_unique<internal_node>(in.category());
 
-    in.each_child([&](const node* child)
-                  {
-                      auto n = child->accept(*this);
-                      if (n->is_temporary())
-                      {
-                          n->as<internal_node>().each_child(
-                              [&](const node* c)
-                              {
-                                  res->add_child(c->clone());
-                              });
-                      }
-                      else
-                      {
-                          res->add_child(std::move(n));
-                      }
-                  });
+    in.each_child(
+        [&](const node* child)
+        {
+            auto n = child->accept(*this);
+            if (n->is_temporary())
+            {
+                n->as<internal_node>().each_child(
+                    [&](const node* c)
+                    {
+                        res->add_child(c->clone());
+                        if (child == in.head_constituent()
+                            && c == n->as<internal_node>().head_constituent())
+                        {
+                            res->head(res->child(res->num_children() - 1));
+                        }
+                    });
+            }
+            else
+            {
+                res->add_child(std::move(n));
+                if (child == in.head_constituent())
+                    res->head(res->child(res->num_children() - 1));
+            }
+        });
 
     return std::move(res);
 }
