@@ -163,6 +163,8 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool,
     for (const auto& tid : pool.thread_ids())
         updates[tid] = {};
 
+    std::atomic<uint64_t> num_correct{0};
+    std::atomic<uint64_t> num_incorrect{0};
     parallel::parallel_for(range.begin(), range.end(), pool, [&](size_t i)
                            {
         auto& tree = batch.data.tree(i);
@@ -170,8 +172,8 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool,
         auto& update = updates[std::this_thread::get_id()];
 
         auto res = train_instance(tree, transitions, options, update);
-        std::get<1>(result) += res.first;
-        std::get<2>(result) += res.second;
+        num_correct += res.first;
+        num_incorrect += res.second;
     });
 
     // Reduce partial results down to final update vector
@@ -184,6 +186,8 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool,
                 wv[weight.first] += weight.second;
         }
     }
+    std::get<1>(result) = num_correct.load();
+    std::get<2>(result) = num_incorrect.load();
     return result;
 }
 
