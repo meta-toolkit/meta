@@ -9,6 +9,7 @@
 #include "logging/logger.h"
 #include "parser/io/ptb_reader.h"
 #include "parser/sr_parser.h"
+#include "parser/trees/evalb.h"
 #include "parser/trees/visitors/empty_remover.h"
 #include "parser/trees/visitors/sequence_extractor.h"
 #include "util/filesystem.h"
@@ -28,7 +29,8 @@ int main(int argc, char** argv)
 
     if (argc < 3)
     {
-        std::cerr << "Usage: " << argv[0] << " config.toml output_file" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " config.toml output_file"
+                  << std::endl;
         return 1;
     }
 
@@ -93,6 +95,7 @@ int main(int argc, char** argv)
     parser::empty_remover transformer;
 
     std::vector<sequence::sequence> testing;
+    std::vector<parser::parse_tree> gold_trees;
     {
         auto begin = test_sections->at(0)->as<int64_t>()->value();
         auto end = test_sections->at(1)->as<int64_t>()->value();
@@ -109,6 +112,7 @@ int main(int argc, char** argv)
                 auto trees = parser::io::extract_trees(filename);
                 for (auto& tree : trees)
                 {
+                    gold_trees.push_back(tree);
                     parser::sequence_extractor seq_ex;
                     tree.transform(transformer);
                     tree.visit(seq_ex);
@@ -121,19 +125,30 @@ int main(int argc, char** argv)
 
     parser::sr_parser parser{*parser_prefix};
 
+    parser::evalb eval;
     std::ofstream output{argv[2]};
-    for (const auto& seq : testing)
+    printing::progress progress{" > Parsing: ", testing.size()};
+    for (uint64_t i = 0; i < testing.size(); ++i)
     {
-        std::cout << "Parsing:";
-        for (const auto& obs : seq)
-            std::cout << " " <<  obs.symbol();
-        std::cout << "\n";
+        progress(i);
+        auto tree = parser.parse(testing[i]);
 
-        auto tree = parser.parse(seq);
-        tree.pretty_print(std::cout);
-        std::cout << "\n\n";
         output << tree << "\n";
+
+        eval.add_tree(tree, gold_trees[i]);
     }
+    progress.end();
+
+    std::cout << "Matched: " << eval.matched() << "\n"
+              << "Gold:    " << eval.gold_total() << "\n"
+              << "Test:    " << eval.proposed_total() << std::endl;
+
+    std::cout << "Labeled Recall:    " << eval.labeled_recall() << "\n"
+              << "Labeled Precision: " << eval.labeled_precision() << "\n"
+              << "Labeled F1:        " << eval.labeled_f1() << "\n"
+              << "Perfect Matching:  " << eval.perfect() << "\n"
+              << "Average Crossing:  " << eval.average_crossing() << "\n"
+              << "Zero crossing:     " << eval.zero_crossing() << std::endl;
 
     return 0;
 }

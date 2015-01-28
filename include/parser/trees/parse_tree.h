@@ -40,6 +40,13 @@ class parse_tree
      */
     parse_tree(std::unique_ptr<node> root);
 
+    parse_tree(const parse_tree&);
+    parse_tree(parse_tree&&) = default;
+
+    parse_tree& operator=(parse_tree);
+
+    void swap(parse_tree&);
+
     void transform(tree_transformer&);
 
     template <class Visitor>

@@ -69,6 +69,22 @@ parse_tree::parse_tree(std::unique_ptr<node> root) : root_{std::move(root)}
     // nothing
 }
 
+parse_tree::parse_tree(const parse_tree& other) : root_{other.root_->clone()}
+{
+    // nothing
+}
+
+parse_tree& parse_tree::operator=(parse_tree rhs)
+{
+    swap(rhs);
+    return *this;
+}
+
+void parse_tree::swap(parse_tree& other)
+{
+    std::swap(root_, other.root_);
+}
+
 void parse_tree::transform(tree_transformer& trns)
 {
     root_ = root_->accept(trns);
