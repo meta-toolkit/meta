@@ -9,15 +9,7 @@
 #include "logging/logger.h"
 #include "parser/io/ptb_reader.h"
 #include "parser/sr_parser.h"
-#include "parser/trees/visitors/annotation_remover.h"
 #include "parser/trees/visitors/empty_remover.h"
-#include "parser/trees/visitors/unary_chain_remover.h"
-#include "parser/trees/visitors/multi_transformer.h"
-#include "parser/trees/visitors/head_finder.h"
-#include "parser/trees/visitors/binarizer.h"
-#include "parser/trees/visitors/debinarizer.h"
-#include "parser/trees/visitors/transition_finder.h"
-#include "parser/trees/visitors/leaf_node_finder.h"
 #include "parser/trees/visitors/sequence_extractor.h"
 #include "util/filesystem.h"
 #include "util/progress.h"
@@ -98,8 +90,7 @@ int main(int argc, char** argv)
     std::string path = *prefix + "/" + *treebank + "/treebank-3/parsed/mrg/"
                        + *corpus;
 
-    parser::multi_transformer<parser::annotation_remover, parser::empty_remover,
-                              parser::unary_chain_remover> transformer;
+    parser::empty_remover transformer;
 
     std::vector<sequence::sequence> testing;
     {
