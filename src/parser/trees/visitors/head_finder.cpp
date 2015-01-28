@@ -269,9 +269,32 @@ void head_finder::operator()(internal_node& inode)
     auto idx = rules_.at(inode.category())->find_head(inode);
     inode.head(inode.child(idx));
 
+    if (idx < 2)
+        return;
+
+    static auto is_punctuation = [](const class_label& cat)
+    {
+        static std::unordered_set<class_label> punctuation = {
+            "''"_cl, "``"_cl, "-LRB-"_cl, "-RRB-"_cl, "."_cl, ":"_cl, ";"_cl};
+
+        return punctuation.find(cat) != punctuation.end();
+    };
+
     // clean up stage for handling coordinating clauses
-    if (idx > 1 && inode.child(idx - 1)->category() == class_label{"CC"})
-        inode.head(inode.child(idx - 2));
+    if (inode.child(idx - 1)->category() == "CC"_cl
+        || inode.child(idx - 1)->category() == "CONJP"_cl)
+    {
+        for (uint64_t i = 0; i <= idx - 2; ++i)
+        {
+            auto nidx = idx - 2 - i;
+            auto child = inode.child(nidx);
+            if (child->is_leaf() || !is_punctuation(child->category()))
+            {
+                inode.head(child);
+                return;
+            }
+        }
+    }
 }
 }
 }
