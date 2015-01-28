@@ -123,7 +123,7 @@ class collinizer : public tree_transformer
 
   private:
     const std::unordered_set<class_label> punct_cats
-        = {"''", "'", "``", "``", ".", ":", ","};
+        = {"''"_cl, "'"_cl, "``"_cl, "``"_cl, "."_cl, ":"_cl, ","_cl};
 };
 }
 
