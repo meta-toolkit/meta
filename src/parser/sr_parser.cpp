@@ -19,6 +19,10 @@
 #include "util/progress.h"
 #include "util/range.h"
 
+#ifdef META_HAS_ZLIB
+#include "util/gzstream.h"
+#endif
+
 namespace meta
 {
 namespace parser
@@ -282,7 +286,12 @@ auto sr_parser::best_transition(
 void sr_parser::save(const std::string& prefix) const
 {
     trans_.save(prefix);
+
+#ifdef META_HAS_ZLIB
+    util::gzofstream model{prefix + "/parser.model.gz"};
+#else
     std::ofstream model{prefix + "/parser.model", std::ios::binary};
+#endif
 
     io::write_binary(model, weights_.size());
     for (const auto& feat_vec : weights_)
@@ -303,7 +312,11 @@ void sr_parser::save(const std::string& prefix) const
 
 void sr_parser::load(const std::string& prefix)
 {
+#ifdef META_HAS_ZLIB
+    util::gzifstream model{prefix + "/parser.model.gz"};
+#else
     std::ifstream model{prefix + "/parser.model", std::ios::binary};
+#endif
 
     if (!model)
         throw exception{"model file not found"};

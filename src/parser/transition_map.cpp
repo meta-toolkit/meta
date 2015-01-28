@@ -9,6 +9,10 @@
 #include "io/binary.h"
 #include "parser/transition_map.h"
 
+#ifdef META_HAS_ZLIB
+#include "util/gzstream.h"
+#endif
+
 namespace meta
 {
 namespace parser
@@ -16,7 +20,11 @@ namespace parser
 
 transition_map::transition_map(const std::string& prefix)
 {
+#ifdef META_HAS_ZLIB
+    util::gzifstream store{prefix + "/parser.trans.gz"};
+#else
     std::ifstream store{prefix + "/parser.trans", std::ios::binary};
+#endif
 
     if (!store)
         throw exception{"missing transitions model file"};
@@ -44,9 +52,9 @@ transition_map::transition_map(const std::string& prefix)
             case transition::type_t::REDUCE_R:
             case transition::type_t::UNARY:
             {
-                class_label lbl;
+                std::string lbl;
                 io::read_binary(store, lbl);
-                trans = transition{trans_type, lbl};
+                trans = transition{trans_type, class_label{lbl}};
                 break;
             }
 
@@ -99,7 +107,11 @@ uint64_t transition_map::size() const
 
 void transition_map::save(const std::string& prefix) const
 {
+#ifdef META_HAS_ZLIB
+    util::gzofstream store{prefix + "/parser.trans.gz"};
+#else
     std::ofstream store{prefix + "/parser.trans", std::ios::binary};
+#endif
 
     io::write_binary(store, transitions_.size());
     for (const auto& trans : transitions_)
@@ -110,7 +122,8 @@ void transition_map::save(const std::string& prefix) const
             case transition::type_t::REDUCE_L:
             case transition::type_t::REDUCE_R:
             case transition::type_t::UNARY:
-                io::write_binary(store, trans.label());
+                io::write_binary(store,
+                                 static_cast<std::string>(trans.label()));
                 break;
 
             default:
