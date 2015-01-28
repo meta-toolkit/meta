@@ -35,15 +35,14 @@ struct lexicon_populator : public visitor<void>
     void operator()(internal_node& inode) override
     {
         inode.each_child([&](node* child)
-        {
-            child->accept(*this);
-        });
+                         {
+                             child->accept(*this);
+                         });
 
         if (!inode.head_lexicon())
             inode.head(inode.head_constituent());
     }
 };
-
 }
 
 std::unique_ptr<node> binarizer::operator()(const leaf_node& ln)
@@ -54,86 +53,84 @@ std::unique_ptr<node> binarizer::operator()(const leaf_node& ln)
 std::unique_ptr<node> binarizer::operator()(const internal_node& in)
 {
     auto res = make_unique<internal_node>(in.category());
+
     if (in.num_children() <= 2)
     {
-        in.each_child(
-            [&](const node* child)
-            {
-                auto nchild = child->accept(*this);
-                auto nc = nchild.get();
-                res->add_child(std::move(nchild));
-                if (in.head_constituent() == child)
-                    res->head(nc);
-            });
+        in.each_child([&](const node* child)
+                      {
+                          res->add_child(child->accept(*this));
+                          if (child == in.head_constituent())
+                              res->head(res->child(res->num_children() - 1));
+                      });
+
         return std::move(res);
     }
 
     auto bin_lbl = class_label{static_cast<std::string>(in.category()) + "*"};
-    lexicon_populator pop;
 
     // locate head node
     auto head = in.head_constituent();
     if (!head)
         throw exception{"Head constituent not labeled"};
 
-    // binarize to the right of the head node
-    auto curr = res.get();
+    uint64_t head_idx = 0;
     for (uint64_t idx = 0; idx < in.num_children(); ++idx)
     {
-        assert(curr);
-        auto ridx = in.num_children() - 1 - idx;
-        auto end = in.child(ridx);
-
-        // this is a special case for handling when the head is the very
-        // first child: in this case, when we're one away from the head we
-        // should just add the head and the current end child to the
-        // current binary node and return (e.g., don't make things like
-        // NP* -> NP)
-        if (ridx == 1 && in.child(ridx - 1) == head)
-        {
-            curr->add_child(head->accept(*this));
-            curr->add_child(end->accept(*this));
-            curr->head_constituent(curr->child(0));
-            res->accept(pop);
-            return std::move(res);
-        }
-
-        if (end == head)
-            break;
-
-        auto bin = make_unique<internal_node>(bin_lbl);
-        auto next = bin.get();
-
-        curr->add_child(std::move(bin));
-        curr->add_child(end->accept(*this));
-        curr->head(curr->child(0));
-
-        curr = next;
+        if (in.child(idx) == in.head_constituent())
+            head_idx = idx;
     }
 
-    // binarize to the left of the head node
-    for (uint64_t idx = 0; idx < in.num_children(); ++idx)
+    // eat left nodes
+    auto curr = res.get();
+    for (uint64_t idx = 0; idx < head_idx; ++idx)
     {
-        assert(curr);
-        auto beg = in.child(idx);
-        if (in.child(idx + 1) == head)
+        curr->add_child(in.child(idx)->accept(*this));
+
+        // special case: if the head is the very last node, just add the
+        // remaining child (the head) to the current node
+        if (idx + 1 == head_idx && head_idx == in.num_children() - 1)
         {
-            curr->add_child(beg->accept(*this));
-            curr->add_child(head->accept(*this));
+            curr->add_child(in.child(idx + 1)->accept(*this));
             curr->head(curr->child(1));
             break;
         }
+        else
+        {
+            auto bin = make_unique<internal_node>(bin_lbl);
+            auto next = bin.get();
 
-        auto bin = make_unique<internal_node>(bin_lbl);
-        auto next = bin.get();
+            curr->add_child(std::move(bin));
+            curr->head(curr->child(1));
 
-        curr->add_child(beg->accept(*this));
-        curr->add_child(std::move(bin));
-        curr->head(curr->child(1));
-
-        curr = next;
+            curr = next;
+        }
     }
 
+    // eat right nodes
+    for (uint64_t ridx = in.num_children() - 1; ridx > head_idx; --ridx)
+    {
+        // if the head is the next node, just add it and the current child
+        if (head_idx + 1 == ridx)
+        {
+            curr->add_child(in.child(ridx - 1)->accept(*this));
+            curr->head(curr->child(0));
+            curr->add_child(in.child(ridx)->accept(*this));
+            break;
+        }
+        else
+        {
+            auto bin = make_unique<internal_node>(bin_lbl);
+            auto next = bin.get();
+
+            curr->add_child(std::move(bin));
+            curr->head(curr->child(0));
+            curr->add_child(in.child(ridx)->accept(*this));
+
+            curr = next;
+        }
+    }
+
+    lexicon_populator pop;
     res->accept(pop);
     return std::move(res);
 }
