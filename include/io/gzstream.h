@@ -19,7 +19,7 @@
 
 namespace meta
 {
-namespace util
+namespace io
 {
 
 class gzstreambuf : public std::streambuf

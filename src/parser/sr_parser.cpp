@@ -20,7 +20,7 @@
 #include "util/range.h"
 
 #ifdef META_HAS_ZLIB
-#include "util/gzstream.h"
+#include "io/gzstream.h"
 #endif
 
 namespace meta
@@ -288,7 +288,7 @@ void sr_parser::save(const std::string& prefix) const
     trans_.save(prefix);
 
 #ifdef META_HAS_ZLIB
-    util::gzofstream model{prefix + "/parser.model.gz"};
+    io::gzofstream model{prefix + "/parser.model.gz"};
 #else
     std::ofstream model{prefix + "/parser.model", std::ios::binary};
 #endif
@@ -313,7 +313,7 @@ void sr_parser::save(const std::string& prefix) const
 void sr_parser::load(const std::string& prefix)
 {
 #ifdef META_HAS_ZLIB
-    util::gzifstream model{prefix + "/parser.model.gz"};
+    io::gzifstream model{prefix + "/parser.model.gz"};
 #else
     std::ifstream model{prefix + "/parser.model", std::ios::binary};
 #endif

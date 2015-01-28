@@ -10,7 +10,7 @@
 #include "parser/transition_map.h"
 
 #ifdef META_HAS_ZLIB
-#include "util/gzstream.h"
+#include "io/gzstream.h"
 #endif
 
 namespace meta
@@ -21,7 +21,7 @@ namespace parser
 transition_map::transition_map(const std::string& prefix)
 {
 #ifdef META_HAS_ZLIB
-    util::gzifstream store{prefix + "/parser.trans.gz"};
+    io::gzifstream store{prefix + "/parser.trans.gz"};
 #else
     std::ifstream store{prefix + "/parser.trans", std::ios::binary};
 #endif
@@ -108,7 +108,7 @@ uint64_t transition_map::size() const
 void transition_map::save(const std::string& prefix) const
 {
 #ifdef META_HAS_ZLIB
-    util::gzofstream store{prefix + "/parser.trans.gz"};
+    io::gzofstream store{prefix + "/parser.trans.gz"};
 #else
     std::ofstream store{prefix + "/parser.trans", std::ios::binary};
 #endif

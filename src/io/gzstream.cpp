@@ -4,11 +4,11 @@
  */
 
 #include <iostream>
-#include "util/gzstream.h"
+#include "io/gzstream.h"
 
 namespace meta
 {
-namespace util
+namespace io
 {
 
 gzstreambuf::gzstreambuf(const char* filename, const char* openmode,
