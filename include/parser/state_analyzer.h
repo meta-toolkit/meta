@@ -31,6 +31,8 @@ class sr_parser::state_analyzer
 
     void children_featurize(const state& state, feature_vector& feats) const;
 
+    void dependents_featurize(const state& state, feature_vector& feats) const;
+
     void unigram_stack_feats(const node* n, std::string prefix,
                              feature_vector& feats) const;
 

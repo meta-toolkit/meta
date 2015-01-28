@@ -49,6 +49,7 @@ auto sr_parser::state_analyzer::featurize(
     bigram_featurize(state, feats);
     trigram_featurize(state, feats);
     children_featurize(state, feats);
+    dependents_featurize(state, feats);
 
     if (state.queue_size() == 0)
     {
@@ -269,6 +270,72 @@ void sr_parser::state_analyzer::child_feats(const node* n, std::string prefix,
         if (doubs && prefix == "s0")
             child_feats(in.child(0), prefix + "u", feats, false);
     }
+}
+
+namespace
+{
+const node* left_dependent(const node* n)
+{
+    if (n)
+    {
+        head_info hi{n};
+
+        while (!n->is_leaf())
+        {
+            const auto& in = n->as<internal_node>();
+            auto child = in.child(0);
+            head_info chi{child};
+
+            if (chi.head_word != hi.head_word)
+                return child;
+
+            n = child;
+        }
+    }
+
+    return nullptr;
+}
+
+const node* right_dependent(const node* n)
+{
+    if (n)
+    {
+        head_info hi{n};
+
+        while (!n->is_leaf())
+        {
+            const auto& in = n->as<internal_node>();
+            if (in.num_children() == 1)
+            {
+                n = in.child(0);
+            }
+            else
+            {
+                assert(in.num_children() == 2);
+
+                auto child = in.child(1);
+                head_info chi{child};
+
+                if (chi.head_word != hi.head_word)
+                    return child;
+
+                n = child;
+            }
+        }
+    }
+
+    return nullptr;
+}
+}
+
+void
+    sr_parser::state_analyzer::dependents_featurize(const state& state,
+                                                    feature_vector& feats) const
+{
+    unigram_stack_feats(left_dependent(state.stack_item(0)), "rs0l", feats);
+    unigram_stack_feats(left_dependent(state.stack_item(1)), "rs1l", feats);
+    unigram_stack_feats(right_dependent(state.stack_item(0)), "rs0r", feats);
+    unigram_stack_feats(right_dependent(state.stack_item(1)), "rs1r", feats);
 }
 }
 }
