@@ -6,7 +6,7 @@
 #include <array>
 #include <iostream>
 #include <fstream>
-#include "util/gzstream.h"
+#include "io/gzstream.h"
 
 using namespace meta;
 
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
     {
         std::ifstream file{argv[1], std::ios::in | std::ios::binary};
-        util::gzofstream output{argv[2]};
+        io::gzofstream output{argv[2]};
         while (file)
         {
             file.read(&buffer[0], 1024);
@@ -31,13 +31,14 @@ int main(int argc, char** argv)
     }
 
     {
-        util::gzifstream input{argv[2]};
+        io::gzifstream input{argv[2]};
         std::ofstream output{std::string{argv[2]} + ".decompressed",
                              std::ios::out | std::ios::binary};
-        std::string in;
-        while (std::getline(input, in))
+
+        while (input)
         {
-            output << in << "\n";
+            input.read(&buffer[0], 1024);
+            output.write(&buffer[0], input.gcount());
         }
     }
 
