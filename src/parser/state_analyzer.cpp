@@ -17,13 +17,18 @@ namespace parser
 
 namespace
 {
-struct head_info
+struct node_info
 {
-    std::string head_tag;
-    std::string head_word;
+    std::string head_tag = "-NULL-";
+    std::string head_word = "-NULL-";
+    std::string category = "-NULL-";
 
-    head_info(const node* n)
+    node_info(const node* n)
     {
+        if (!n)
+            return;
+
+        category = n->category();
         if (n->is_leaf())
         {
             head_tag = n->category();
@@ -78,16 +83,9 @@ void sr_parser::state_analyzer::unigram_featurize(const state& state,
 
     for (ssize_t i = -2; i <= 3; ++i)
     {
-        if (!state.queue_item(i))
-        {
-            feats["q" + std::to_string(i) + "wt=null"] = 1;
-        }
-        else
-        {
-            auto word = *state.queue_item(i)->word();
-            const std::string& tag = state.queue_item(i)->category();
-            feats["q" + std::to_string(i) + "wt=" + word + "-" + tag] = 1;
-        }
+        node_info info{state.queue_item(i)};
+        feats["q" + std::to_string(i) + "wt=" + info.head_word + "-"
+              + info.head_tag] = 1;
     }
 }
 
@@ -95,22 +93,13 @@ void sr_parser::state_analyzer::unigram_stack_feats(const node* n,
                                                     std::string prefix,
                                                     feature_vector& feats) const
 {
-    if (!n)
-    {
-        feats[prefix + "c=null"] = 1;
-    }
-    else
-    {
-        head_info hi{n};
+    node_info hi{n};
 
-        feats[prefix + "c=" + (std::string)n->category()] = 1;
-        feats[prefix + "t=" + hi.head_tag] = 1;
-        feats[prefix + "wc=" + hi.head_word + "-" + (std::string)n->category()]
-            = 1;
-        feats[prefix + "wt=" + hi.head_word + "-" + hi.head_tag] = 1;
-        feats[prefix + "tc=" + hi.head_tag + "-" + (std::string)n->category()]
-            = 1;
-    }
+    feats[prefix + "c=" + hi.category] = 1;
+    feats[prefix + "t=" + hi.head_tag] = 1;
+    feats[prefix + "wc=" + hi.head_word + "-" + hi.category] = 1;
+    feats[prefix + "wt=" + hi.head_word + "-" + hi.head_tag] = 1;
+    feats[prefix + "tc=" + hi.head_tag + "-" + hi.category] = 1;
 }
 
 void sr_parser::state_analyzer::bigram_features(const node* n1,
@@ -119,36 +108,13 @@ void sr_parser::state_analyzer::bigram_features(const node* n1,
                                                 std::string name2,
                                                 feature_vector& feats) const
 {
-    if (n1 && n2)
-    {
-        head_info n1h{n1};
-        head_info n2h{n2};
+    node_info n1h{n1};
+    node_info n2h{n2};
 
-        feats[name1 + "w" + name2 + "w=" + n1h.head_word + "-" + n2h.head_word]
-            = 1;
-        feats[name1 + "w" + name2 + "c=" + n1h.head_word + "-"
-              + (std::string)n2->category()] = 1;
-        feats[name1 + "c" + name2 + "w=" + (std::string)n1->category() + "-"
-              + n2h.head_word] = 1;
-        feats[name1 + "c" + name2 + "c=" + (std::string)n1->category() + "-"
-              + (std::string)n1->category()] = 1;
-    }
-    else if (n1)
-    {
-        head_info n1h{n1};
-        feats[name1 + "w" + name2 + "n=" + n1h.head_word] = 1;
-        feats[name1 + "c" + name2 + "n=" + (std::string)n1->category()] = 1;
-    }
-    else if (n2)
-    {
-        head_info n2h{n2};
-        feats[name1 + "n" + name2 + "w=" + n2h.head_word] = 1;
-        feats[name1 + "n" + name2 + "c=" + (std::string)n2->category()] = 1;
-    }
-    else
-    {
-        feats[name1 + "n" + name2 + "n"] = 1;
-    }
+    feats[name1 + "w" + name2 + "w=" + n1h.head_word + "-" + n2h.head_word] = 1;
+    feats[name1 + "w" + name2 + "c=" + n1h.head_word + "-" + n2h.category] = 1;
+    feats[name1 + "c" + name2 + "w=" + n1h.category + "-" + n2h.head_word] = 1;
+    feats[name1 + "c" + name2 + "c=" + n1h.category + "-" + n2h.category] = 1;
 }
 
 void sr_parser::state_analyzer::bigram_featurize(const state& state,
@@ -167,59 +133,42 @@ void sr_parser::state_analyzer::bigram_featurize(const state& state,
 void sr_parser::state_analyzer::trigram_featurize(const state& state,
                                                   feature_vector& feats) const
 {
-    // TODO: null features?
-    if (state.stack_size() < 2)
-        return;
-
     auto s0 = state.stack_item(0);
     auto s1 = state.stack_item(1);
+    auto s2 = state.stack_item(2);
+    auto q0 = state.queue_item(0);
 
-    head_info s0h{s0};
-    head_info s1h{s1};
+    node_info s0h{s0};
+    node_info s1h{s1};
+    node_info s2h{s2};
+    node_info q0h{q0};
 
-    if (state.stack_size() > 2)
-    {
-        // can access s2
-        auto s2 = state.stack_item(2);
+    feats["s0cs1cs2c=" + s0h.category + "-" + s1h.category + "-" + s2h.category]
+        = 1;
 
-        head_info s2h{s2};
+    feats["s0ws1cs2c=" + s0h.head_word + "-" + s1h.category + "-"
+          + s2h.category] = 1;
 
-        feats["s0cs1cs2c=" + (std::string)s0->category() + "-"
-              + (std::string)s1->category() + "-" + (std::string)s2->category()]
-            = 1;
+    feats["s0cs1ws2c=" + s0h.category + "-" + s1h.head_word + "-"
+          + s2h.category] = 1;
 
-        feats["s0ws1cs2c=" + s0h.head_word + "-" + (std::string)s1->category()
-              + "-" + (std::string)s2->category()] = 1;
+    feats["s0cs1cs2w=" + s0h.category + "-" + s1h.category + "-"
+          + s2h.head_word] = 1;
 
-        feats["s0cs1ws2c=" + (std::string)s0->category() + "-" + s1h.head_word
-              + "-" + (std::string)s2->category()] = 1;
+    feats["s0cs1wq0t=" + s0h.category + "-" + s1h.head_word + "-"
+          + q0h.head_tag] = 1;
 
-        feats["s0cs1cs2w=" + (std::string)s0->category() + "-"
-              + (std::string)s1->category() + "-" + s2h.head_word] = 1;
-    }
+    feats["s0cs1cq0t=" + s0h.category + "-" + s1h.category + "-" + q0h.head_tag]
+        = 1;
 
-    if (state.queue_size() > 0)
-    {
-        // can access q0
-        auto q0 = state.queue_item(0);
+    feats["s0ws1cq0t=" + s0h.head_word + "-" + s1h.category + "-"
+          + q0h.head_tag] = 1;
 
-        head_info q0h{q0};
+    feats["s0cs1wq0t=" + s0h.category + "-" + s1h.head_word + "-"
+          + q0h.head_tag] = 1;
 
-        feats["s0cs1wq0t=" + (std::string)s0->category() + "-" + s1h.head_word
-              + "-" + q0h.head_tag] = 1;
-
-        feats["s0cs1cq0t=" + (std::string)s0->category() + "-"
-              + (std::string)s1->category() + "-" + q0h.head_tag] = 1;
-
-        feats["s0ws1cq0t=" + s0h.head_word + "-" + (std::string)s1->category()
-              + "-" + q0h.head_tag] = 1;
-
-        feats["s0cs1wq0t=" + (std::string)s0->category() + "-" + s1h.head_word
-              + "-" + q0h.head_tag] = 1;
-
-        feats["s0cs1cq0w=" + (std::string)s0->category() + "-"
-              + (std::string)s1->category() + "-" + q0h.head_word] = 1;
-    }
+    feats["s0cs1cq0w=" + s0h.category + "-" + s1h.category + "-"
+          + q0h.head_word] = 1;
 }
 
 void sr_parser::state_analyzer::children_featurize(const state& state,
@@ -278,13 +227,13 @@ const node* left_dependent(const node* n)
 {
     if (n)
     {
-        head_info hi{n};
+        node_info hi{n};
 
         while (!n->is_leaf())
         {
             const auto& in = n->as<internal_node>();
             auto child = in.child(0);
-            head_info chi{child};
+            node_info chi{child};
 
             if (chi.head_word != hi.head_word)
                 return child;
@@ -300,7 +249,7 @@ const node* right_dependent(const node* n)
 {
     if (n)
     {
-        head_info hi{n};
+        node_info hi{n};
 
         while (!n->is_leaf())
         {
@@ -314,7 +263,7 @@ const node* right_dependent(const node* n)
                 assert(in.num_children() == 2);
 
                 auto child = in.child(1);
-                head_info chi{child};
+                node_info chi{child};
 
                 if (chi.head_word != hi.head_word)
                     return child;
