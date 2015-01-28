@@ -201,9 +201,9 @@ int binarizer_tests()
         tr.visit(hf);
         tr.transform(bin);
 
-        auto expected = tree(
-            "((S (S* (NP (PRP$ My) (NN dog)) (S* (ADVP (RB also)) (VP "
-            "(VBZ likes) (S (VP (VBG eating) (NP (NN sausage))))))) (. .)))");
+        auto expected = tree("((S (NP (PRP$ My) (NN dog)) (S* (ADVP (RB also)) "
+                             "(S* (VP (VBZ likes) (S (VP (VBG eating) (NP (NN "
+                             "sausage))))) (. .)))))");
 
         ASSERT(tr == expected);
     });
