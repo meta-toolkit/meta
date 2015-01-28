@@ -123,12 +123,6 @@ int main(int argc, char** argv)
             if (!t.visit(ann_check))
                 throw std::runtime_error{"Failed to fully annotate heads"};
             t.transform(bin);
-            if (!t.visit(bin_check))
-                throw std::runtime_error{
-                    "Binarizer failed to fully binarize the tree"};
-            if (!t.visit(ann_check))
-                throw std::runtime_error{
-                    "Binarized tree missing head annotations"};
 
             if (print)
             {
@@ -136,6 +130,13 @@ int main(int argc, char** argv)
                 t.pretty_print(std::cout);
                 std::cout << std::endl;
             }
+
+            if (!t.visit(bin_check))
+                throw std::runtime_error{
+                    "Binarizer failed to fully binarize the tree"};
+            if (!t.visit(ann_check))
+                throw std::runtime_error{
+                    "Binarized tree missing head annotations"};
 
             t.transform(debin);
             if (print)
