@@ -72,9 +72,10 @@ void write_file(Stream& stream, const std::string& in_name,
         auto next = stream->next();
         if (next == "<s>" || next == " ")
             continue;
-        outfile << next;
-        if (next == "</s>")
+        else if (next == "</s>")
             outfile << std::endl;
+        else
+            outfile << next << " ";
     }
 }
 
@@ -206,7 +207,7 @@ void freq(const std::string& file, const cpptoml::toml_group& config,
     using pair_t = std::pair<std::string, double>;
     std::vector<pair_t> sorted(doc.counts().begin(), doc.counts().end());
     std::sort(sorted.begin(), sorted.end(), [](const pair_t& a, const pair_t& b)
-    {
+              {
         return a.second > b.second;
     });
 
