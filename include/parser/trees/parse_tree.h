@@ -40,15 +40,36 @@ class parse_tree
      */
     parse_tree(std::unique_ptr<node> root);
 
+    /**
+     * Copy constructor.
+     */
     parse_tree(const parse_tree&);
+
+    /**
+     * Move constructor.
+     */
     parse_tree(parse_tree&&) = default;
 
+    /**
+     * Assignment operator.
+     */
     parse_tree& operator=(parse_tree);
 
+    /**
+     * Swaps this parse tree with the given parse tree.
+     */
     void swap(parse_tree&);
 
+    /**
+     * Transforms the current parse tree by using the given tree_transformer.
+     */
     void transform(tree_transformer&);
 
+    /**
+     * Runs a visitor over the parse tree. Non-const version.
+     *
+     * @return the result from the visitor.
+     */
     template <class Visitor>
     typename std::remove_reference<Visitor>::type::result_type
         visit(Visitor&& vtor)
@@ -56,6 +77,11 @@ class parse_tree
         return root_->accept(vtor);
     }
 
+    /**
+     * Runs a visitor over the parse tree. Const version.
+     *
+     * @return the result from the visitor.
+     */
     template <class Visitor>
     typename std::remove_reference<Visitor>::type::result_type
         visit(Visitor&& vtor) const
@@ -63,10 +89,25 @@ class parse_tree
         return root_->accept(vtor);
     }
 
+    /**
+     * Prints a parse tree to a stream. This is non-indented.
+     * @param os The stream to print to
+     * @param tree The tree to be printed
+     * @return the stream
+     */
     friend std::ostream& operator<<(std::ostream& os, const parse_tree& tree);
 
+    /**
+     * Prints a parse tree to a stream. This is indented.
+     * @param os The stream to print to
+     */
     void pretty_print(std::ostream& os) const;
 
+    /**
+     * @param lhs The left hand side of the expression
+     * @param rhs The right hand side of the expression
+     * @return whether the two parse trees are equivalent
+     */
     friend bool operator==(const parse_tree& lhs, const parse_tree& rhs);
 
   private:
