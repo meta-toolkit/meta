@@ -27,10 +27,6 @@ class debinarizer : public tree_transformer
   public:
     std::unique_ptr<node> operator()(const leaf_node&) override;
     std::unique_ptr<node> operator()(const internal_node&) override;
-
-  private:
-    void debinarize_subtree(const internal_node& in, const class_label& bin_cat,
-                            const node* subroot, internal_node& res);
 };
 }
 }
