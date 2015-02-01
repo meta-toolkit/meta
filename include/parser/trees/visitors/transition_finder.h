@@ -33,6 +33,12 @@ class transition_finder : public const_visitor<void>
     void operator()(const leaf_node&) override;
     void operator()(const internal_node&) override;
 
+    /**
+     * Extracts the transitions out of the visitor. This moves the
+     * transition vector from the visitor.
+     *
+     * @return the transtions found when running the visitor on the tree
+     */
     std::vector<transition> transitions();
 
     class exception : public std::runtime_error
@@ -42,6 +48,9 @@ class transition_finder : public const_visitor<void>
     };
 
   private:
+    /**
+     * Storage for the transitions.
+     */
     std::vector<transition> transitions_;
 };
 }
