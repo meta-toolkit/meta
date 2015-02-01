@@ -21,6 +21,10 @@ namespace parser
 
 class leaf_node;
 
+/**
+ * An internal node in a parse tree. Every node in the parse tree that is
+ * not a pre-terminal is an internal node.
+ */
 class internal_node : public util::clonable<node, internal_node>
 {
   public:
@@ -87,16 +91,39 @@ class internal_node : public util::clonable<node, internal_node>
 
     bool equal(const node& other) const override;
 
+    /**
+     * @return the head lexicon of this node
+     */
     const leaf_node* head_lexicon() const;
 
+    /**
+     * @param l The desired head lexicon for this node
+     */
     void head_lexicon(const leaf_node* l);
 
+    /**
+     * @return the head constituent for this node
+     */
     const node* head_constituent() const;
 
+    /**
+     * @param n The desired head constituent for this node
+     */
     void head_constituent(const node* n);
 
+    /**
+     * Sets the head constituent and head lexicon based on a node whose
+     * head lexicon has already been determined.
+     *
+     * @param n The desired head constituent for this node (must have the
+     * head lexicon determined)
+     */
     void head(const node* n);
 
+    /**
+     * Runs a functor over each child. Const version.
+     * @param fn The functor to run over each child
+     */
     template <class Fun>
     void each_child(Fun&& fn) const
     {
@@ -104,6 +131,10 @@ class internal_node : public util::clonable<node, internal_node>
             fn(child.get());
     }
 
+    /**
+     * Runs a functor over each child. Non-const version.
+     * @param fn The functor to run over each child.
+     */
     template <class Fun>
     void each_child(Fun&& fn)
     {
