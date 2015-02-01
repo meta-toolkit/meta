@@ -21,10 +21,6 @@ namespace parser
  * A tree transformer that converts any n-ary productions to binary
  * productions using provided head annotations. This class assumes that its
  * input has its heads annotated by e.g. running a head_finder first.
- *
- * The algorithm is taken from Zhang and Clark (2009).
- *
- * @see http://www.aclweb.org/anthology/W09-3825, Figure 2
  */
 class binarizer : public tree_transformer
 {
