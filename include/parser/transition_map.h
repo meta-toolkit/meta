@@ -17,22 +17,57 @@ namespace meta
 namespace parser
 {
 
+/**
+ * An invertible map that maps transitions to ids.
+ */
 class transition_map
 {
   public:
+    /**
+     * Default constructor.
+     */
     transition_map() = default;
+
+    /**
+     * Loads a transition map from a prefix.
+     * @param prefix The folder to load the map from
+     */
     transition_map(const std::string& prefix);
 
+    /**
+     * @param id The id to look up
+     * @return the transition corresponding to that id
+     */
     const transition& at(trans_id id) const;
+
+    /**
+     * @param trans The transition to look up
+     * @return the trans_id associated with that transition
+     */
     trans_id at(const transition& trans) const;
 
-    transition& operator[](trans_id id);
+    /**
+     * Adds a transition to the map, if it doesn't already exist.
+     *
+     * @param trans The transition to look up
+     * @param the trans_id associated with that transition.
+     */
     trans_id operator[](const transition& trans);
 
+    /**
+     * Saves the map to a file stored in the folder indicated by prefix.
+     * @param prefix The folder to save the map to
+     */
     void save(const std::string& prefix) const;
 
+    /**
+     * @return the number of transitions in the map.
+     */
     uint64_t size() const;
 
+    /**
+     * Exception thrown from interactions with the transition_map.
+     */
     class exception : public std::runtime_error
     {
       public:
@@ -40,7 +75,14 @@ class transition_map
     };
 
   private:
+    /**
+     * The map from transition to id.
+     */
     util::sparse_vector<transition, trans_id> map_;
+
+    /**
+     * The "map" from id to transition.
+     */
     std::vector<transition> transitions_;
 };
 }

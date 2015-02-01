@@ -83,11 +83,6 @@ trans_id transition_map::at(const transition& trans) const
     return it->second;
 }
 
-transition& transition_map::operator[](trans_id id)
-{
-    return transitions_.at(id);
-}
-
 trans_id transition_map::operator[](const transition& trans)
 {
     auto it = map_.find(trans);
