@@ -18,6 +18,9 @@ namespace meta
 namespace parser
 {
 
+/**
+ * A leaf node (pre-terminal) in a parse tree.
+ */
 class leaf_node : public util::clonable<node, leaf_node>
 {
   public:
