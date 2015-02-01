@@ -20,11 +20,11 @@ namespace meta
 namespace parser
 {
 
-sr_parser::training_data::training_data(training_options opt,
-                                        std::vector<parse_tree>& trs)
-    : options(opt), trees(trs), indices(trs.size()), rng{opt.seed}
+sr_parser::training_data::training_data(std::vector<parse_tree>& trs,
+                                        uint64_t seed)
+    : trees_(trs), indices_(trs.size()), rng_{seed}
 {
-    std::iota(indices.begin(), indices.end(), 0ul);
+    std::iota(indices_.begin(), indices_.end(), 0ul);
 }
 
 auto sr_parser::training_data::preprocess() -> transition_map
@@ -38,9 +38,9 @@ auto sr_parser::training_data::preprocess() -> transition_map
     binarizer bin;
 
     printing::progress progress{" > Preprocessing training trees: ",
-                                trees.size()};
+                                trees_.size()};
     size_t idx = 0;
-    for (auto& tree : trees)
+    for (auto& tree : trees_)
     {
         progress(++idx);
         tree.transform(transformer);
@@ -55,7 +55,7 @@ auto sr_parser::training_data::preprocess() -> transition_map
         tids.reserve(transitions.size());
         for (const auto& trans : transitions)
             tids.push_back(trans_map[trans]);
-        all_transitions.emplace_back(std::move(tids));
+        all_transitions_.emplace_back(std::move(tids));
     }
 
     return trans_map;
@@ -63,23 +63,23 @@ auto sr_parser::training_data::preprocess() -> transition_map
 
 void sr_parser::training_data::shuffle()
 {
-    std::shuffle(indices.begin(), indices.end(), rng);
+    std::shuffle(indices_.begin(), indices_.end(), rng_);
 }
 
 size_t sr_parser::training_data::size() const
 {
-    return indices.size();
+    return indices_.size();
 }
 
 const parse_tree& sr_parser::training_data::tree(size_t idx) const
 {
-    return trees[indices[idx]];
+    return trees_[indices_[idx]];
 }
 
 auto sr_parser::training_data::transitions(
     size_t idx) const -> const std::vector<trans_id> &
 {
-    return all_transitions[indices[idx]];
+    return all_transitions_[indices_[idx]];
 }
 }
 }

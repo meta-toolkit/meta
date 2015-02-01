@@ -90,7 +90,7 @@ void condense(sr_parser::weight_vectors& weights, bool log = true)
 
 void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 {
-    training_data data{options, trees};
+    training_data data{trees, options.seed};
     trans_ = data.preprocess();
 
     LOG(info) << "Found " << trans_.size() << " transitions" << ENDLG;

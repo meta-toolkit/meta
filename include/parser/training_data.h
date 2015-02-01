@@ -16,27 +16,76 @@ namespace meta
 namespace parser
 {
 
+/**
+ * Training data for the parser.
+ */
 class sr_parser::training_data
 {
   public:
-    training_data(training_options options, std::vector<parse_tree>& trees);
+    /**
+     * @param trees The raw training data
+     * @param seed The seed to used for seeding the rng for shuffling
+     * examples
+     */
+    training_data(std::vector<parse_tree>& trees, uint64_t seed);
 
+    /**
+     * Preprocesses all of the training trees. This currently runs the
+     * following transformations across all of the training data:
+     *
+     * - annotation_remover
+     * - empty_remover
+     * - unary_chain_remover
+     * - head_finder
+     * - binarizer
+     *
+     * @return a transition_map to associate all transition names with ids
+     * in the binarized training data
+     */
     transition_map preprocess();
 
+    /**
+     * Shuffles the training data.
+     */
     void shuffle();
+
+    /**
+     * @return the number of training examples
+     */
     size_t size() const;
+
+    /**
+     * @param idx The index to seek into the training data
+     * @return the parse tree at that position in the training data
+     */
     const parse_tree& tree(size_t idx) const;
+
+    /**
+     * @param idx The index to seek into the training data
+     * @return the transitions taken to assemble the gold tree
+     */
     const std::vector<trans_id>& transitions(size_t idx) const;
 
   private:
-    training_options options;
+    /**
+     * A reference to the collection of training trees.
+     */
+    std::vector<parse_tree>& trees_;
 
-    std::vector<parse_tree>& trees;
-    std::vector<std::vector<trans_id>> all_transitions;
+    /**
+     * The gold standard transitions for each tree.
+     */
+    std::vector<std::vector<trans_id>> all_transitions_;
 
-    std::vector<size_t> indices;
+    /**
+     * The vector of indices used for fast shuffling.
+     */
+    std::vector<size_t> indices_;
 
-    std::default_random_engine rng;
+    /**
+     * The random number generator used for shuffling.
+     */
+    std::default_random_engine rng_;
 };
 }
 }
