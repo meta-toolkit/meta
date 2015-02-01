@@ -37,15 +37,30 @@ struct head_rule
 class head_finder : public visitor<void>
 {
   public:
+    /**
+     * The storage type used for holding the head finding rules.
+     */
     using rule_table
         = std::unordered_map<class_label, std::unique_ptr<head_rule>>;
 
+    /**
+     * Constructs a default head finder, using the head finding rules for
+     * English from Michael Collins' thesis.
+     */
     head_finder();
+
+    /**
+     * Constructs a head finder using the supplied head finding rules.
+     */
     head_finder(rule_table&& table);
+
     void operator()(leaf_node&) override;
     void operator()(internal_node&) override;
 
   private:
+    /**
+     * The head finding rules used for this head_finder.
+     */
     rule_table rules_;
 };
 }
