@@ -27,6 +27,13 @@ class sequence_extractor : public const_visitor<void>
     void operator()(const leaf_node&) override;
     void operator()(const internal_node&) override;
 
+    /**
+     * Extracts the sequence found. This moves the sequence out of the
+     * extractor.
+     *
+     * @return the sequence that was extracted from the tree the visitor
+     * was run on
+     */
     sequence::sequence sequence();
 
   private:
