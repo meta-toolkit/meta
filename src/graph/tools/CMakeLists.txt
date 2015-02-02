@@ -1,5 +1,2 @@
 add_executable(graph-test graph-test.cpp)
 target_link_libraries(graph-test meta-util ${CMAKE_THREAD_LIBS_INIT})
-
-add_executable(social-network social-network.cpp)
-target_link_libraries(social-network meta-util ${CMAKE_THREAD_LIBS_INIT})
