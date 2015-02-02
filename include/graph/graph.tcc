@@ -19,6 +19,15 @@ Node& graph<Node, Edge>::node(node_id id)
 }
 
 template <class Node, class Edge>
+const Node& graph<Node, Edge>::node(node_id id) const
+{
+    if (id >= size())
+        throw graph_exception{"node_id out of range"};
+
+    return nodes_[id].first;
+}
+
+template <class Node, class Edge>
 typename util::optional<Edge> graph<Node, Edge>::edge(node_id source,
                                                       node_id dest) const
 {
@@ -53,6 +62,13 @@ template <class Node, class Edge>
 void graph<Node, Edge>::add_edge(node_id source, node_id dest)
 {
     add_edge(Edge{}, source, dest);
+}
+
+template <class Node, class Edge>
+template <class... Args>
+node_id graph<Node, Edge>::emplace(Args&&... args)
+{
+    return insert(Node(std::forward<Args>(args)...));
 }
 }
 }
