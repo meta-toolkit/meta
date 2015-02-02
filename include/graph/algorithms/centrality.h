@@ -10,6 +10,7 @@
 #ifndef META_GRAPH_ALGORITHMS_CENTRALITY_H_
 #define META_GRAPH_ALGORITHMS_CENTRALITY_H_
 
+#include <mutex>
 #include "graph/undirected_graph.h"
 #include "graph/directed_graph.h"
 
