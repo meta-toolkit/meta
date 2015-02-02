@@ -24,7 +24,8 @@ centrality_result degree_centrality(const Graph& g)
     for (auto& n : g)
         res.emplace_back(n.id, g.adjacent(n.id).size());
 
-    std::sort(res.begin(), res.end(), [&](auto a, auto b)
+    using pair_t = std::pair<node_id, double>;
+    std::sort(res.begin(), res.end(), [&](const pair_t& a, const pair_t& b)
               {
         return a.second > b.second;
     });
@@ -44,7 +45,7 @@ centrality_result betweenness_centrality(const Graph& g)
 
     printing::progress prog{" Calculating betweenness centrality ", g.size()};
     size_t done = 0;
-    parallel::parallel_for(g.begin(), g.end(), [&](auto n)
+    parallel::parallel_for(g.begin(), g.end(), [&](decltype(*g.begin()) n)
                            {
         internal::betweenness_step(g, cb, n.id, calc_mut);
         std::lock_guard<std::mutex> lock{print_mut};
@@ -52,7 +53,8 @@ centrality_result betweenness_centrality(const Graph& g)
     });
     prog.end();
 
-    std::sort(cb.begin(), cb.end(), [&](auto a, auto b)
+    using pair_t = std::pair<node_id, double>;
+    std::sort(cb.begin(), cb.end(), [&](const pair_t& a, const pair_t& b)
               {
         return a.second > b.second;
     });
@@ -85,7 +87,8 @@ centrality_result eigenvector_centrality(const Graph& g,
     for (auto& n : v)
         evc.emplace_back(id++, n / sum);
 
-    std::sort(evc.begin(), evc.end(), [&](auto a, auto b)
+    using pair_t = std::pair<node_id, double>;
+    std::sort(evc.begin(), evc.end(), [&](const pair_t& a, const pair_t& b)
               {
         return a.second > b.second;
     });
