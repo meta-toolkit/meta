@@ -9,6 +9,7 @@ about MeTA!
 - develop: [![Build
   Status](https://travis-ci.org/meta-toolkit/meta.svg?branch=develop)](https://travis-ci.org/meta-toolkit/meta)
 
+### Outline
 - [Intro](#intro)
     - [Documentation](#documentation)
     - [Tutorials](#tutorials)
