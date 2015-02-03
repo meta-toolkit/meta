@@ -9,6 +9,7 @@ include(CTest)
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 include(CheckCXXSourceRuns)
+include(ExternalProject)
 include(FindZLIB)
 
 include_directories(include/)

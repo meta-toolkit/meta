@@ -3,6 +3,20 @@ project(meta-classify)
 add_subdirectory(loss)
 add_subdirectory(tools)
 
+ExternalProject_Add(liblinear
+  SOURCE_DIR ${meta_SOURCE_DIR}/../deps/libsvm-modules/liblinear
+  BUILD_IN_SOURCE 1
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND make
+  INSTALL_COMMAND "")
+
+ExternalProject_Add(libsvm
+  SOURCE_DIR ${meta_SOURCE_DIR}/../deps/libsvm-modules/libsvm
+  BUILD_IN_SOURCE 1
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND make
+  INSTALL_COMMAND "")
+
 add_library(meta-classify binary_classifier_factory.cpp
                           classifier/binary_classifier.cpp
                           classifier/classifier.cpp
@@ -19,3 +33,4 @@ add_library(meta-classify binary_classifier_factory.cpp
                           classifier_factory.cpp
                           confusion_matrix.cpp)
 target_link_libraries(meta-classify meta-index meta-loss)
+add_dependencies(meta-classify liblinear libsvm)

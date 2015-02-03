@@ -1,5 +1,3 @@
-project(meta-testing)
-
 add_subdirectory(tools)
 
 add_library(meta-testing analyzer_test.cpp

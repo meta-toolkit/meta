@@ -41,19 +41,8 @@ install:
   - if [ "`echo $CXX`" == "clang++" ]; then cd $cwd; fi
 
 before_script:
-  - cd deps/libsvm-modules/liblinear
-  - make
-  - cd ../libsvm
-  - make
-  - cd ../../../
   - mkdir build
   - cd build
-  - wget http://web.engr.illinois.edu/~massung1/files/ceeaus.tar.gz
-  - wget http://web.engr.illinois.edu/~massung1/files/breast-cancer.tar.gz
-  - tar -xzvf ceeaus.tar.gz > /dev/null
-  - tar -xzvf breast-cancer.tar.gz > /dev/null
-  - mv ceeaus ../data/
-  - mv breast-cancer ../data/
   - cp ../config.toml ./
 
 script:
