@@ -300,18 +300,31 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
      * std::hash of its underlying type
      */
     template <class T>
-    size_t operator()(const meta::util::identifier<
-        meta::util::hash_wrapper<Wrapped>, T>& to_hash) const
+    size_t operator()(
+        const meta::util::identifier<meta::util::hash_wrapper<Wrapped>,
+                                     T>& to_hash) const
     {
         return hash<T>{}(static_cast<T>(to_hash));
     }
 };
 }
 
+#define MAKE_USER_DEFINED_LITERAL(ident_name, base_type, suffix)               \
+    inline ident_name operator"" suffix(const char* str, std::size_t len)      \
+    {                                                                          \
+        return ident_name{base_type{str, len}};                                \
+    }
+
+#define MAKE_USER_DEFINED_NUMERIC_LITERAL(ident_name, base_type, suffix)       \
+    inline ident_name operator"" suffix(unsigned long long int val)            \
+    {                                                                          \
+        return ident_name{base_type(val)};                                     \
+    }
+
 #define MAKE_OPAQUE_IDENTIFIER(ident_name, base_type)                          \
     template <class Wrapper>                                                   \
-    struct ident_name##_dummy : public meta::util::identifier                  \
-                                <Wrapper, base_type>                           \
+    struct ident_name##_dummy                                                  \
+        : public meta::util::identifier<Wrapper, base_type>                    \
     {                                                                          \
         using meta::util::identifier<Wrapper, base_type>::identifier;          \
         using meta::util::identifier<Wrapper, base_type>::operator=;           \
@@ -320,11 +333,11 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
 
 #define MAKE_OPAQUE_NUMERIC_IDENTIFIER(ident_name, base_type)                  \
     template <class Wrapper>                                                   \
-    struct ident_name##_dummy : public meta::util::numerical_identifier        \
-                                <Wrapper, base_type>                           \
+    struct ident_name##_dummy                                                  \
+        : public meta::util::numerical_identifier<Wrapper, base_type>          \
     {                                                                          \
-        using meta::util::numerical_identifier                                 \
-            <Wrapper, base_type>::numerical_identifier;                        \
+        using meta::util::numerical_identifier<Wrapper, base_type>::           \
+            numerical_identifier;                                              \
         using meta::util::numerical_identifier<Wrapper, base_type>::operator=; \
     };                                                                         \
     using ident_name = meta::util::hash_wrapper<ident_name##_dummy>;
@@ -342,6 +355,26 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
 #else
 #define MAKE_NUMERIC_IDENTIFIER(ident_name, base_type)                         \
     using ident_name = base_type;
+#endif
+
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
+#define MAKE_IDENTIFIER_UDL(ident_name, base_type, suffix)                     \
+    MAKE_OPAQUE_IDENTIFIER(ident_name, base_type)                              \
+    MAKE_USER_DEFINED_LITERAL(ident_name, base_type, suffix)
+#else
+#define MAKE_IDENTIFIER_UDL(ident_name, base_type, suffix)                     \
+    using ident_name = base_type;                                              \
+    MAKE_USER_DEFINED_LITERAL(ident_name, base_type, suffix)
+#endif
+
+#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
+#define MAKE_NUMERIC_IDENTIFIER_UDL(ident_name, base_type, suffix)             \
+    MAKE_OPAQUE_NUMERIC_IDENTIFIER(ident_name, base_type)                      \
+    MAKE_USER_DEFINED_NUMERIC_LITERAL(ident_name, base_type, suffix)
+#else
+#define MAKE_NUMERIC_IDENTIFIER_UDL(ident_name, base_type, suffix)             \
+    using ident_name = base_type;                                              \
+    MAKE_USER_DEFINED_NUMERIC_LITERAL(ident_name, base_type, suffix)
 #endif
 
 #endif
