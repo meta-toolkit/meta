@@ -327,12 +327,12 @@ transition state::emergency_transition() const
     throw sr_parser::exception{"emergency transition impossible"};
 }
 
-uint64_t state::stack_size() const
+size_t state::stack_size() const
 {
     return stack_.size();
 }
 
-uint64_t state::queue_size() const
+size_t state::queue_size() const
 {
     return queue_.size() - q_idx_;
 }

@@ -74,7 +74,7 @@ class sr_parser
          * The seed for the random number generator used for shuffling
          * examples during training.
          */
-        uint64_t seed = std::random_device{}();
+        std::random_device::result_type seed = std::random_device{}();
 
         /**
          * How many threads to use for training.

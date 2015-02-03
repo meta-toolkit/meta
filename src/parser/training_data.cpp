@@ -20,8 +20,8 @@ namespace meta
 namespace parser
 {
 
-sr_parser::training_data::training_data(std::vector<parse_tree>& trs,
-                                        uint64_t seed)
+sr_parser::training_data::training_data(
+    std::vector<parse_tree>& trs, std::default_random_engine::result_type seed)
     : trees_(trs), indices_(trs.size()), rng_{seed}
 {
     std::iota(indices_.begin(), indices_.end(), 0ul);

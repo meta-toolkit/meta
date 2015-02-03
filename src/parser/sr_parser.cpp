@@ -110,7 +110,8 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
         for (size_t start = 0; start < data.size(); start += options.batch_size)
         {
             progress(start);
-            auto end = std::min(start + options.batch_size, data.size());
+            auto end
+                = std::min<uint64_t>(start + options.batch_size, data.size());
 
             auto result = train_batch({data, start, end}, pool, options);
 
@@ -280,8 +281,6 @@ auto sr_parser::best_transition(
 
     return best_trans;
 }
-
-
 
 void sr_parser::save(const std::string& prefix) const
 {

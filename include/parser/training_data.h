@@ -27,7 +27,8 @@ class sr_parser::training_data
      * @param seed The seed to used for seeding the rng for shuffling
      * examples
      */
-    training_data(std::vector<parse_tree>& trees, uint64_t seed);
+    training_data(std::vector<parse_tree>& trees,
+                  std::default_random_engine::result_type seed);
 
     /**
      * Preprocesses all of the training trees. This currently runs the
