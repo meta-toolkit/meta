@@ -8,6 +8,7 @@ ExternalProject_Add(liblinear
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND ""
   BUILD_COMMAND make
+  LOG_BUILD 0
   INSTALL_COMMAND "")
 
 ExternalProject_Add(libsvm
@@ -15,6 +16,7 @@ ExternalProject_Add(libsvm
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND ""
   BUILD_COMMAND make
+  LOG_BUILD 0
   INSTALL_COMMAND "")
 
 add_library(meta-classify binary_classifier_factory.cpp
