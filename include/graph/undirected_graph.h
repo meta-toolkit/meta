@@ -1,5 +1,5 @@
 /**
- * @file unundirected_graph.h
+ * @file undirected_graph.h
  * @author Sean Massung
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -25,7 +25,7 @@ namespace meta
 namespace graph
 {
 /**
- * A (currently) simple class to represent a directed graph in memory.
+ * A simple class to represent a directed graph in memory.
  */
 template <class Node = default_node, class Edge = default_edge>
 class undirected_graph : public graph<Node, Edge>
@@ -55,8 +55,7 @@ class undirected_graph : public graph<Node, Edge>
      * @param source
      * @param dest
      */
-    virtual void add_edge(const Edge& edge, node_id source,
-                          node_id dest) override;
+    virtual void add_edge(Edge edge, node_id source, node_id dest) override;
 
 #include "node_iterator.h"
     typedef node_iterator<typename vec_t::iterator> iterator;
@@ -99,6 +98,15 @@ class undirected_graph : public graph<Node, Edge>
     {
         return {this, nodes_.cend(), nodes_.cend()};
     }
+
+    /**
+     * @param filename The file that contains a list of edges in the form "v1
+     * v2"
+     * @param display_errors Whether to display errors found in the file
+     * @return the newly-created graph
+     */
+    static undirected_graph<Node, Edge> load(const std::string& filename,
+                                             bool display_errors = false);
 };
 
 /**
