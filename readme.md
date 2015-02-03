@@ -17,6 +17,7 @@ about MeTA!
     - [Mac OS X](#mac-os-x-build-guide)
     - [Ubuntu](#ubuntu-build-guide)
     - [Arch Linux](#arch-linux-build-guide)
+    - [EWS/EngrIT](#ews-engrit-build-guide) (this is UIUC-specific)
     - [Generic Setup Notes](#generic-setup-notes)
 
 # Intro
@@ -305,6 +306,81 @@ cp ../config.toml .
 
 # configure and build the project
 CXX=clang++ cmake ../ -DCMAKE_BUILD_TYPE=Release
+make
+```
+
+You can now test the system by running the following command:
+
+```bash
+ctest --output-on-failure
+```
+
+If everything passes, congratulations! MeTA seems to be working on your
+system.
+
+## EWS/EngrIT Build Guide
+If you are on a machine managed by Engineering IT at UIUC, you should
+follow this guide. These systems have software that is much too old for
+building MeTA, but EngrIT has been kind enough to package updated versions
+of research software as modules. The modules provided for GCC and CMake are
+recent enough to build MeTA, so it is actually mostly straightforward.
+
+To set up your dependencies (**you will need to do this every time you log
+back in to the system**), run the following commands:
+
+```bash
+module load gcc
+module load cmake
+```
+
+Once you have done this, double check your versions by running the
+following commands.
+
+```bash
+g++ --version
+```
+
+should output
+
+```
+g++ (GCC) 4.8.2
+Copyright (C) 2013 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```
+
+and
+
+```bash
+cmake --version
+```
+
+should output
+
+```
+cmake version 3.1.1
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+```
+
+If your versions are correct, you should be ready to build. To get started,
+run the following commands:
+
+```bash
+# clone the project
+git clone https://github.com/meta-toolkit/meta.git
+cd meta/
+
+# set up submodules
+git submodule update --init --recursive
+
+# set up a build directory
+mkdir build
+cd build
+cp ../config.toml .
+
+# configure and build the project
+CXX="/software/gcc-4.8.2/bin/g++" cmake ../ -DCMAKE_BUILD_TYPE=Release
 make
 ```
 
