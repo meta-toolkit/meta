@@ -9,7 +9,7 @@ about MeTA!
 - develop: [![Build
   Status](https://travis-ci.org/meta-toolkit/meta.svg?branch=develop)](https://travis-ci.org/meta-toolkit/meta)
 
-### Outline
+# Outline
 - [Intro](#intro)
     - [Documentation](#documentation)
     - [Tutorials](#tutorials)
@@ -19,7 +19,7 @@ about MeTA!
     - [Arch Linux](#arch-linux-build-guide)
     - [Generic Setup Notes](#generic-setup-notes)
 
-## Intro
+# Intro
 
 MeTA is a modern C++ data sciences toolkit featuring
 
@@ -35,18 +35,18 @@ MeTA is a modern C++ data sciences toolkit featuring
  - UTF8 support for analysis on various languages
  - multithreaded algorithms
 
-### Documentation
+## Documentation
 
 Doxygen documentation can be found [here][doxygen].
 
-### Tutorials
+## Tutorials
 
 We have walkthroughs for a few different parts of MeTA on the
 [MeTA homepage][meta-website].
 
-## Project setup
+# Project setup
 
-### Mac OS X Build Guide
+## Mac OS X Build Guide
 Mac OS X 10.6 or higher is required. You may have success with 10.5, but
 this is not tested.
 
@@ -93,7 +93,7 @@ ctest --output-on-failure
 If everything passes, congratulations! MeTA seems to be working on your
 system.
 
-### Ubuntu Build Guide
+## Ubuntu Build Guide
 
 The directions here depend greatly on your installed version of Ubuntu. To
 check what version you are on, run the following command:
@@ -110,7 +110,7 @@ version is less than 12.04 LTS, your operating system is not supported
 (even by your vendor) and you should upgrade to at least 12.04 LTS (or
 14.04 LTS, if possible).
 
-#### Ubuntu 12.04 LTS Build Guide
+### Ubuntu 12.04 LTS Build Guide
 Building on Ubuntu 12.04 LTS requires more work than its more up-to-date
 14.04 sister, but it can be done relatively easily. You will, however, need
 to install a newer C++ compiler from a ppa, and switch to it in order to
@@ -197,7 +197,7 @@ You can now test the system by running the following command:
 If everything passes, congratulations! MeTA seems to be working on your
 system.
 
-#### Ubuntu 14.04 LTS Build Guide
+### Ubuntu 14.04 LTS Build Guide
 Ubuntu 14.04 has a recent enough GCC for building MeTA, but we'll need to
 add a ppa for a more recent version of CMake.
 
@@ -277,7 +277,7 @@ ctest --output-on-failure
 If everything passes, congratulations! MeTA seems to be working on your
 system.
 
-### Arch Linux Build Guide
+## Arch Linux Build Guide
 Arch Linux consistently has the most up to date packages due to its rolling
 release setup, so it's often the easiest platform to get set up on.
 
@@ -317,7 +317,7 @@ ctest --output-on-failure
 If everything passes, congratulations! MeTA seems to be working on your
 system.
 
-### Generic Setup Notes
+## Generic Setup Notes
 
  - There are rules for clean, tidy, and doc. **After you run the cmake command
    once, you will be able to just run `make` as usual** when you're
