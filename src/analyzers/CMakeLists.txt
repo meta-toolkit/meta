@@ -2,6 +2,7 @@ project(meta-analyzers)
 
 add_subdirectory(filters)
 add_subdirectory(tokenizers)
+add_subdirectory(tools)
 
 add_library(meta-analyzers analyzer.cpp
                            analyzer_factory.cpp
