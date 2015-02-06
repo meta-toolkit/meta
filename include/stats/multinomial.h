@@ -27,6 +27,11 @@ class multinomial
 {
   public:
     /**
+     * The event type for this distribution.
+     */
+    using event_type = T;
+
+    /**
      * Creates a multinomial distribution. No events or probabilities are
      * initialized.
      */
