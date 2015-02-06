@@ -71,6 +71,17 @@ class multinomial
     double counts() const;
 
     /**
+     * Runs a function for each observed event for this distribution. Note
+     * that this does **not** include the prior, only events that have been
+     * explicitly observed with e.g. the increment() function.
+     *
+     * @param fun The function to run for each seen event for this
+     * distribution
+     */
+    template <class Fun>
+    void each_seen_event(Fun&& fun) const;
+
+    /**
      * Removes all observations.
      */
     void clear();
