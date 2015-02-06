@@ -18,6 +18,7 @@
 #include "parser/trees/visitors/debinarizer.h"
 #include "util/progress.h"
 #include "util/range.h"
+#include "util/time.h"
 
 #ifdef META_HAS_ZLIB
 #include "io/gzstream.h"
@@ -35,28 +36,106 @@ sr_parser::sr_parser(const std::string& prefix) : trans_{prefix}
 
 parse_tree sr_parser::parse(const sequence::sequence& sentence) const
 {
-    state state{sentence};
     state_analyzer analyzer;
+    state st{sentence};
 
-    while (!state.finalized())
+    if (beam_size_ == 1)
     {
-        auto feats = analyzer.featurize(state);
-        auto tid = best_transition(feats, state, true);
-        auto trans = trans_.at(tid);
+        while (!st.finalized())
+        {
+            auto feats = analyzer.featurize(st);
+            auto tid = best_transition(feats, st, true);
+            auto trans = trans_.at(tid);
 
-        if (!state.legal(trans))
-            trans = state.emergency_transition();
+            if (!st.legal(trans))
+                trans = st.emergency_transition();
 
-        state = state.advance(trans);
+            st = st.advance(trans);
+        }
+
+        assert(st.stack_size() == 1 && st.queue_size() == 0);
+
+        parse_tree tree{st.stack_item(0)->clone()};
+        debinarizer debin;
+        tree.transform(debin);
+
+        return tree;
     }
+    else
+    {
+        using scored_state = std::pair<state, float>;
+        auto comp = [&](const scored_state& lhs, const scored_state& rhs)
+        {
+            return std::get<1>(lhs) > std::get<1>(rhs);
+        };
 
-    assert(state.stack_size() == 1 && state.queue_size() == 0);
+        auto fin = [&](const scored_state& ss)
+        {
+            return std::get<0>(ss).finalized();
+        };
 
-    parse_tree tree{state.stack_item(0)->clone()};
-    debinarizer debin;
-    tree.transform(debin);
+        std::vector<scored_state> agenda;
+        agenda.emplace_back(st, 0);
 
-    return tree;
+        while (!std::all_of(agenda.begin(), agenda.end(), fin))
+        {
+            std::vector<scored_state> new_agenda;
+
+            for (const auto& ss : agenda)
+            {
+                const auto& c_state = std::get<0>(ss);
+                auto score = std::get<1>(ss);
+
+                auto feats = analyzer.featurize(c_state);
+
+                auto transitions
+                    = best_transitions(feats, c_state, beam_size_, true);
+
+                for (const auto& scored_trans : transitions)
+                {
+                    auto trans = std::get<0>(scored_trans);
+                    auto t_score = std::get<1>(scored_trans);
+
+                    new_agenda.emplace_back(c_state.advance(trans_.at(trans)),
+                                            score + t_score);
+                    std::push_heap(new_agenda.begin(), new_agenda.end(), comp);
+
+                    if (new_agenda.size() > beam_size_)
+                    {
+                        std::pop_heap(new_agenda.begin(), new_agenda.end(),
+                                      comp);
+                        new_agenda.pop_back();
+                    }
+                }
+            }
+
+            if (new_agenda.size() == 0)
+            {
+                for (const auto& ss : agenda)
+                {
+                    const auto& c_state = std::get<0>(ss);
+                    auto score = std::get<1>(ss);
+
+                    auto trans = c_state.emergency_transition();
+                    new_agenda.emplace_back(c_state.advance(trans), score);
+                }
+            }
+
+            if (new_agenda.size() == 0)
+                throw exception{"unparsable"};
+
+            agenda = std::move(new_agenda);
+        }
+
+        // min because comp is backwards
+        auto best = std::min_element(agenda.begin(), agenda.end(), comp);
+
+        parse_tree tree{std::get<0>(*best).stack_item(0)->clone()};
+        debinarizer debin;
+        tree.transform(debin);
+
+        return tree;
+    }
 }
 
 namespace
@@ -90,6 +169,9 @@ void condense(sr_parser::weight_vectors& weights, bool log = true)
 
 void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 {
+    if (options.algorithm == training_algorithm::BEAM_SEARCH)
+        beam_size_ = options.beam_size;
+
     training_data data{trees, options.seed};
     trans_ = data.preprocess();
 
@@ -101,39 +183,48 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
     uint64_t total_updates = 0;
     for (uint64_t iter = 1; iter <= options.max_iterations; ++iter)
     {
-        printing::progress progress{
-            " > Iteration " + std::to_string(iter) + ": ", trees.size()};
-        data.shuffle();
-
         uint64_t num_correct = 0;
         uint64_t num_incorrect = 0;
-        for (size_t start = 0; start < data.size(); start += options.batch_size)
-        {
-            progress(start);
-            auto end
-                = std::min<uint64_t>(start + options.batch_size, data.size());
 
-            auto result = train_batch({data, start, end}, pool, options);
-
-            ++total_updates;
-            for (const auto& feat_vec : std::get<0>(result))
+        auto time = common::time(
+            [&]()
             {
-                const auto& feat = feat_vec.first;
-                auto& wv = weights_[feat];
-                auto& awv = for_avg[feat];
+                printing::progress progress{" > Iteration "
+                                            + std::to_string(iter) + ": ",
+                                            trees.size()};
+                data.shuffle();
 
-                for (const auto& up : feat_vec.second)
+                for (size_t start = 0; start < data.size();
+                     start += options.batch_size)
                 {
-                    wv[up.first] += up.second;
+                    progress(start);
+                    auto end = std::min<uint64_t>(start + options.batch_size,
+                                                  data.size());
 
-                    awv[up.first] += (total_updates - 1) * up.second;
+                    auto result
+                        = train_batch({data, start, end}, pool, options);
+
+                    ++total_updates;
+                    for (const auto& feat_vec : std::get<0>(result))
+                    {
+                        const auto& feat = feat_vec.first;
+                        auto& wv = weights_[feat];
+                        auto& awv = for_avg[feat];
+
+                        for (const auto& up : feat_vec.second)
+                        {
+                            wv[up.first] += up.second;
+
+                            awv[up.first] += (total_updates - 1) * up.second;
+                        }
+                    }
+
+                    num_correct += std::get<1>(result);
+                    num_incorrect += std::get<2>(result);
                 }
-            }
+            });
 
-            num_correct += std::get<1>(result);
-            num_incorrect += std::get<2>(result);
-        }
-        progress.end();
+        LOG(info) << "Took " << time.count() / 1000.0 << "s" << ENDLG;
 
         LOG(info) << "Correct transitions: " << num_correct
                   << ", incorrect transitions: " << num_incorrect << ENDLG;
@@ -205,6 +296,9 @@ std::pair<uint64_t, uint64_t> sr_parser::train_instance(
     {
         case training_algorithm::EARLY_TERMINATION:
             return train_early_termination(tree, transitions, update);
+
+        case training_algorithm::BEAM_SEARCH:
+            return train_beam_search(tree, transitions, options, update);
     }
 }
 
@@ -239,6 +333,125 @@ std::pair<uint64_t, uint64_t>
             break;
         }
     }
+    return result;
+}
+
+std::pair<uint64_t, uint64_t> sr_parser::train_beam_search(
+    const parse_tree& tree, const std::vector<trans_id>& transitions,
+    const training_options& options, weight_vectors& update) const
+{
+    std::pair<uint64_t, uint64_t> result{0, 0};
+    state gold_state{tree};
+    state_analyzer analyzer;
+
+    using scored_state = std::tuple<state, double, bool>;
+    // get<0>() is the state
+    // get<1>() is the score
+    // get<2>() is whether or not it is the same as the gold state
+
+    auto score_compare = [](const scored_state& a, const scored_state& b)
+    {
+        return std::get<1>(a) > std::get<1>(b);
+    };
+
+    std::vector<scored_state> agenda;
+    agenda.emplace_back(state{tree}, 0, true);
+
+    for (const auto& gold_trans : transitions)
+    {
+        std::vector<scored_state> new_agenda;
+
+        // keep track if any of the new states is the gold one
+        bool any_gold = false;
+
+        // keep track of the best state that is currently on the agenda
+        util::optional<scored_state> best_state;
+
+        // keep track of the best state that is on the new agenda
+        util::optional<scored_state> best_new_state;
+
+        // keep track of the transition taken for moving from best_state to
+        // best_new_state
+        trans_id best_trans;
+
+        for (const auto& ss : agenda)
+        {
+            const auto& st = std::get<0>(ss);
+            const auto& score = std::get<1>(ss);
+            bool is_gold = std::get<2>(ss);
+
+            auto feats = analyzer.featurize(std::get<0>(ss));
+
+            auto transitions
+                = best_transitions(feats, st, options.beam_size, true);
+
+            for (const auto& scored_trans : transitions)
+            {
+                auto trans = std::get<0>(scored_trans);
+                auto t_score = std::get<1>(scored_trans);
+
+                auto new_state = st.advance(trans_.at(trans));
+                auto new_score = score + t_score;
+                auto new_is_gold = is_gold && trans == gold_trans;
+
+                any_gold = any_gold || new_is_gold;
+
+                auto new_ss
+                    = std::make_tuple(new_state, new_score, new_is_gold);
+
+                if (!best_new_state
+                    || std::get<1>(new_ss) > std::get<1>(*best_new_state))
+                {
+                    best_state = ss;
+                    best_new_state = new_ss;
+                    best_trans = trans;
+                }
+
+                new_agenda.emplace_back(new_state, new_score, new_is_gold);
+                std::push_heap(new_agenda.begin(), new_agenda.end(),
+                               score_compare);
+
+                if (new_agenda.size() > options.beam_size)
+                {
+                    std::pop_heap(new_agenda.begin(), new_agenda.end(),
+                                  score_compare);
+                    new_agenda.pop_back();
+                }
+            }
+        }
+
+        assert(new_agenda.size() <= options.beam_size);
+
+        if (!best_new_state || !std::get<2>(*best_new_state))
+        {
+            ++result.second;
+
+            if (best_state)
+            {
+                auto best_feats = analyzer.featurize(std::get<0>(*best_state));
+
+                for (const auto& feat : best_feats)
+                    update[feat.first][best_trans] -= feat.second;
+            }
+
+            {
+                auto gold_feats = analyzer.featurize(gold_state);
+                for (const auto& feat : gold_feats)
+                    update[feat.first][gold_trans] += feat.second;
+            }
+        }
+        else
+        {
+            ++result.first;
+        }
+
+        if (!any_gold)
+            break;
+
+        gold_state = gold_state.advance(trans_.at(gold_trans));
+        agenda = std::move(new_agenda);
+    }
+
     return result;
 }
 
@@ -282,6 +495,54 @@ auto sr_parser::best_transition(
     return best_trans;
 }
 
+auto sr_parser::best_transitions(
+    const feature_vector& features, const state& state, size_t num,
+    bool check_legality) const -> std::vector<scored_trans>
+{
+    weight_vector class_scores;
+    for (const auto& feat : features)
+    {
+        const auto& name = feat.first;
+        auto val = feat.second;
+
+        auto it = weights_.find(name);
+        if (it == weights_.end())
+            continue;
+
+        for (const auto& trans_weight : it->second)
+        {
+            auto tid = trans_weight.first;
+            auto trans_w = trans_weight.second;
+
+            class_scores[tid] += val * trans_w;
+        }
+    }
+
+    auto comp = [](const scored_trans& lhs, const scored_trans& rhs)
+    {
+        return lhs.second > rhs.second;
+    };
+
+    std::vector<scored_trans> result;
+    for (const auto& score : class_scores)
+    {
+        auto tid = score.first;
+        const auto& trans = trans_.at(tid);
+        if (!check_legality || state.legal(trans))
+            result.push_back(score);
+    }
+
+    std::make_heap(result.begin(), result.end(), comp);
+    while (result.size() > num)
+    {
+        std::pop_heap(result.begin(), result.end(), comp);
+        result.pop_back();
+    }
+
+    std::reverse(result.begin(), result.end());
+    return result;
+}
+
 void sr_parser::save(const std::string& prefix) const
 {
     trans_.save(prefix);
@@ -292,6 +553,7 @@ void sr_parser::save(const std::string& prefix) const
     std::ofstream model{prefix + "/parser.model", std::ios::binary};
 #endif
 
+    io::write_binary(model, beam_size_);
     io::write_binary(model, weights_.size());
     for (const auto& feat_vec : weights_)
     {
@@ -319,6 +581,11 @@ void sr_parser::load(const std::string& prefix)
 
     if (!model)
         throw exception{"model file not found"};
+
+    io::read_binary(model, beam_size_);
+
+    if (!model)
+        throw exception{"malformed model file (no features written)"};
 
     size_t num_feats;
     io::read_binary(model, num_feats);

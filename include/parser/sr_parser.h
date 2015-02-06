@@ -45,7 +45,8 @@ class sr_parser
      */
     enum class training_algorithm
     {
-        EARLY_TERMINATION
+        EARLY_TERMINATION,
+        BEAM_SEARCH
     };
 
     /**
@@ -225,6 +226,19 @@ class sr_parser
                                 weight_vectors& update) const;
 
     /**
+     * Calculates a weight update on a single tree, using beam search.
+     *
+     * @param tree The training tree
+     * @param transitions The correct transitions for parsing this tree
+     * @param options The training options
+     * @param update The weight vector to place the update in
+     * @return (correct actions, incorrect actions)
+     */
+    std::pair<uint64_t, uint64_t> train_beam_search(
+        const parse_tree& tree, const std::vector<trans_id>& transitions,
+        const training_options& options, weight_vectors& update) const;
+
+    /**
      * Computes the most likely transition according to the current model
      *
      * @param features The feature vector representation for the current
@@ -237,6 +251,22 @@ class sr_parser
     trans_id best_transition(const feature_vector& features, const state& state,
                              bool check_legality = false) const;
 
+    using scored_trans = std::pair<trans_id, float>;
+
+    /**
+     * Computes the \f$k\f$ most likely transitions according to the
+     * current model.
+     * @param features The feature vector representation for the current
+     * state
+     * @param state The current state
+     * @param check_legality Whether or not to limit the transitions to
+     * only those that are "legal" according to the constraints given for
+     * each transition
+     */
+    std::vector<scored_trans>
+        best_transitions(const feature_vector& features, const state& state,
+                         size_t num, bool check_legality = false) const;
+
     /**
      * Storage for the ids for each transition
      */
@@ -246,6 +276,11 @@ class sr_parser
      * Storage for the weights for each possible transition
      */
     weight_vectors weights_;
+
+    /**
+     * Beam size used during training.
+     */
+    uint64_t beam_size_ = 1;
 };
 }
 }
