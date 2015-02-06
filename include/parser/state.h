@@ -42,6 +42,11 @@ class state
     using stack_type = util::persistent_stack<std::unique_ptr<node>>;
 
     /**
+     * The underlying queue type.
+     */
+    using queue_type = std::vector<std::unique_ptr<leaf_node>>;
+
+    /**
      * Constructs a state from a parse tree. This is used to generate the
      * starting state for parsing during training.
      */
@@ -57,7 +62,7 @@ class state
      * Advances the current state by taking the given transition.
      * @param trans The transition to take to move the state forward
      */
-    void advance(const transition& trans);
+    state advance(const transition& trans) const;
 
     /**
      * Checks if a transition is legal from a current state.
@@ -103,6 +108,9 @@ class state
     bool finalized() const;
 
   private:
+    state(stack_type stack, std::shared_ptr<queue_type> queue, size_t q_idx,
+          bool done);
+
     /**
      * The stack of partial parse trees.
      */
@@ -111,7 +119,7 @@ class state
     /**
      * The queue of preterminals.
      */
-    std::vector<std::unique_ptr<leaf_node>> queue_;
+    std::shared_ptr<queue_type> queue_;
 
     /**
      * The index of the front of the queue.

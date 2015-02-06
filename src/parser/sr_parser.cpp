@@ -47,7 +47,7 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
         if (!state.legal(trans))
             trans = state.emergency_transition();
 
-        state.advance(trans);
+        state = state.advance(trans);
     }
 
     assert(state.stack_size() == 1 && state.queue_size() == 0);
@@ -224,7 +224,7 @@ std::pair<uint64_t, uint64_t>
 
         if (trans == gold_trans)
         {
-            state.advance(trans_.at(trans));
+            state = state.advance(trans_.at(trans));
             ++result.first;
         }
         else
