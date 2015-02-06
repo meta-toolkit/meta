@@ -41,7 +41,7 @@ double expected_value(Dist&& dist, Fun&& fun)
 }
 
 /**
- * Computes the entropy \f$H(X) = - \sum_{x \in X} p(x) \log_2 x\f$.
+ * Computes the entropy \f$H(X) = - \sum_{x \in X} p(x) \log_2 p(x)\f$.
  *
  * @param dist The distribution to compute the entropy over
  * @return the entropy of the supplied distribution
