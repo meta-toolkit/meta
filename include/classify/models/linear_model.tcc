@@ -169,7 +169,11 @@ auto linear_model<FeatureId, FeatureValue, ClassId>::best_classes(
         result.pop_back();
     }
 
-    std::reverse(result.begin(), result.end());
+    std::sort(result.begin(), result.end(),
+              [](const scored_class& lhs, const scored_class& rhs)
+              {
+        return lhs.second < rhs.second;
+    });
     return result;
 }
 
