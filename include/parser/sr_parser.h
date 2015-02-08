@@ -13,13 +13,14 @@
 #include <random>
 #include <unordered_map>
 
+#include "classify/models/linear_model.h"
 #include "meta.h"
-#include "util/optional.h"
-#include "util/sparse_vector.h"
 #include "parallel/thread_pool.h"
 #include "parser/trees/parse_tree.h"
 #include "parser/transition_map.h"
 #include "sequence/sequence.h"
+#include "util/optional.h"
+#include "util/sparse_vector.h"
 
 namespace meta
 {
@@ -275,7 +276,7 @@ class sr_parser
     /**
      * Storage for the weights for each possible transition
      */
-    weight_vectors weights_;
+    classify::linear_model<std::string, float, trans_id> model_;
 
     /**
      * Beam size used during training.

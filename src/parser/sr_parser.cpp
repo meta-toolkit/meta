@@ -138,35 +138,6 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
     }
 }
 
-namespace
-{
-void condense(sr_parser::weight_vectors& weights, bool log = true)
-{
-    // build feature set
-    std::vector<std::string> features;
-    features.reserve(weights.size());
-    for (const auto& feat_vec : weights)
-        features.push_back(feat_vec.first);
-
-    uint64_t nnz = 0;
-    for (const auto& feat : features)
-    {
-        auto it = weights.find(feat);
-        it->second.condense();
-        if (it->second.empty())
-            weights.erase(it);
-        else
-            nnz += it->second.size();
-    }
-
-    if (log)
-    {
-        LOG(info) << "Number of total features: " << weights.size() << ENDLG;
-        LOG(info) << "Number of nonzero weights: " << nnz << ENDLG;
-    }
-}
-}
-
 void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 {
     if (options.algorithm == training_algorithm::BEAM_SEARCH)
@@ -179,7 +150,7 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
 
     parallel::thread_pool pool{options.num_threads};
 
-    weight_vectors for_avg;
+    classify::linear_model<std::string, float, trans_id> for_avg;
     uint64_t total_updates = 0;
     for (uint64_t iter = 1; iter <= options.max_iterations; ++iter)
     {
@@ -205,19 +176,8 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
                         = train_batch({data, start, end}, pool, options);
 
                     ++total_updates;
-                    for (const auto& feat_vec : std::get<0>(result))
-                    {
-                        const auto& feat = feat_vec.first;
-                        auto& wv = weights_[feat];
-                        auto& awv = for_avg[feat];
-
-                        for (const auto& up : feat_vec.second)
-                        {
-                            wv[up.first] += up.second;
-
-                            awv[up.first] += (total_updates - 1) * up.second;
-                        }
-                    }
+                    model_.update(std::get<0>(result));
+                    for_avg.update(std::get<0>(result), total_updates - 1);
 
                     num_correct += std::get<1>(result);
                     num_incorrect += std::get<2>(result);
@@ -229,19 +189,12 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
         LOG(info) << "Correct transitions: " << num_correct
                   << ", incorrect transitions: " << num_incorrect << ENDLG;
 
-        condense(weights_);
+        model_.condense(true);
+        for_avg.condense(false);
     }
 
     // update weights to be average over all parameters
-    for (const auto& wv : for_avg)
-    {
-        const auto& feat = wv.first;
-        const auto& vec = wv.second;
-        for (const auto& weight : vec)
-        {
-            weights_[feat][weight.first] -= (weight.second / total_updates);
-        }
-    }
+    model_.update(for_avg.weights(), -1.0f / total_updates);
 }
 
 auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool,
@@ -459,88 +412,20 @@ auto sr_parser::best_transition(
     const feature_vector& features, const state& state,
     bool check_legality /* = false */) const -> trans_id
 {
-    weight_vector class_scores;
-    for (const auto& feat : features)
+    return model_.best_class(features, [&](trans_id tid)
     {
-        const auto& name = feat.first;
-        auto val = feat.second;
-
-        auto it = weights_.find(name);
-        if (it == weights_.end())
-            continue;
-
-        for (const auto& trans_weight : it->second)
-        {
-            auto tid = trans_weight.first;
-            auto trans_w = trans_weight.second;
-
-            class_scores[tid] += val * trans_w;
-        }
-    }
-
-    auto best_score = std::numeric_limits<float>::lowest();
-    trans_id best_trans{};
-    for (const auto& score : class_scores)
-    {
-        auto tid = score.first;
-        const auto& trans = trans_.at(tid);
-        if (score.second > best_score
-            && (!check_legality || state.legal(trans)))
-        {
-            best_trans = score.first;
-            best_score = score.second;
-        }
-    }
-
-    return best_trans;
+        return !check_legality || state.legal(trans_.at(tid));
+    });
 }
 
 auto sr_parser::best_transitions(
     const feature_vector& features, const state& state, size_t num,
     bool check_legality) const -> std::vector<scored_trans>
 {
-    weight_vector class_scores;
-    for (const auto& feat : features)
+    return model_.best_classes(features, num, [&](trans_id tid)
     {
-        const auto& name = feat.first;
-        auto val = feat.second;
-
-        auto it = weights_.find(name);
-        if (it == weights_.end())
-            continue;
-
-        for (const auto& trans_weight : it->second)
-        {
-            auto tid = trans_weight.first;
-            auto trans_w = trans_weight.second;
-
-            class_scores[tid] += val * trans_w;
-        }
-    }
-
-    auto comp = [](const scored_trans& lhs, const scored_trans& rhs)
-    {
-        return lhs.second > rhs.second;
-    };
-
-    std::vector<scored_trans> result;
-    for (const auto& score : class_scores)
-    {
-        auto tid = score.first;
-        const auto& trans = trans_.at(tid);
-        if (!check_legality || state.legal(trans))
-            result.push_back(score);
-    }
-
-    std::make_heap(result.begin(), result.end(), comp);
-    while (result.size() > num)
-    {
-        std::pop_heap(result.begin(), result.end(), comp);
-        result.pop_back();
-    }
-
-    std::reverse(result.begin(), result.end());
-    return result;
+        return !check_legality || state.legal(trans_.at(tid));
+    });
 }
 
 void sr_parser::save(const std::string& prefix) const
@@ -554,21 +439,8 @@ void sr_parser::save(const std::string& prefix) const
 #endif
 
     io::write_binary(model, beam_size_);
-    io::write_binary(model, weights_.size());
-    for (const auto& feat_vec : weights_)
-    {
-        const auto& feat = feat_vec.first;
-        const auto& weights = feat_vec.second;
 
-        io::write_binary(model, feat);
-        io::write_binary(model, weights.size());
-
-        for (const auto& weight : weights)
-        {
-            io::write_binary(model, weight.first);
-            io::write_binary(model, weight.second);
-        }
-    }
+    model_.save(model);
 }
 
 void sr_parser::load(const std::string& prefix)
@@ -583,38 +455,7 @@ void sr_parser::load(const std::string& prefix)
         throw exception{"model file not found"};
 
     io::read_binary(model, beam_size_);
-
-    if (!model)
-        throw exception{"malformed model file (no features written)"};
-
-    size_t num_feats;
-    io::read_binary(model, num_feats);
-
-    for (size_t i = 0; i < num_feats; ++i)
-    {
-        if (!model)
-            throw exception{"malformed model file (too few features written)"};
-
-        std::string feature_name;
-        io::read_binary(model, feature_name);
-
-        size_t num_trans;
-        io::read_binary(model, num_trans);
-
-        for (size_t j = 0; j < num_trans; ++j)
-        {
-            if (!model)
-                throw exception{"malformed model file (too few transitions "
-                                "written for feature)"};
-
-            trans_id tid;
-            float val;
-            io::read_binary(model, tid);
-            io::read_binary(model, val);
-
-            weights_[feature_name][tid] = val;
-        }
-    }
+    model_.load(model);
 }
 }
 }
