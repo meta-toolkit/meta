@@ -7,6 +7,9 @@
 #include <fstream>
 #include <sstream>
 #include "io/binary.h"
+#if META_HAS_ZLIB
+#include "io/gzstream.h"
+#endif
 #include "sequence/analyzers/sequence_analyzer.h"
 #include "utf/utf.h"
 #include "util/filesystem.h"
@@ -33,7 +36,11 @@ void sequence_analyzer::load(const std::string& prefix)
 
 void sequence_analyzer::load_feature_id_mapping(const std::string& prefix)
 {
+#if META_HAS_ZLIB
+    io::gzifstream input{prefix + "/feature.mapping.gz"};
+#else
     std::ifstream input{prefix + "/feature.mapping", std::ios::binary};
+#endif
 
     if (!input)
         throw exception{"missing feature id mapping"};
@@ -61,11 +68,16 @@ void sequence_analyzer::load_label_id_mapping(const std::string& prefix)
     map::load_mapping(label_id_mapping_, prefix + "/label.mapping");
 }
 
-void sequence_analyzer::save(const std::string& prefix)
+void sequence_analyzer::save(const std::string& prefix) const
 {
     printing::progress progress{" > Saving feature mapping: ",
                                 feature_id_mapping_.size()};
+
+#if META_HAS_ZLIB
+    io::gzofstream output{prefix + "/feature.mapping.gz"};
+#else
     std::ofstream output{prefix + "/feature.mapping", std::ios::binary};
+#endif
     io::write_binary(output, feature_id_mapping_.size());
     uint64_t i = 0;
     for (const auto& pair : feature_id_mapping_)

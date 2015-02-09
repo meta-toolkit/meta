@@ -93,7 +93,7 @@ class sequence_analyzer
      *
      * @param prefix The folder to save the analyzer to
      */
-    void save(const std::string& prefix);
+    void save(const std::string& prefix) const;
 
     /**
      * Analyzes a sequence, generating new label_ids and feature_ids for
