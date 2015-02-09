@@ -101,19 +101,22 @@ int main(int argc, char** argv)
         }
     }
 
-    // const is *super important* here! This signals that we want the
-    // analyzer to be analyzing in "test mode", meaning that it will not
-    // generate new feature_ids while analyzing the sequences. This is
-    // exactly what we want when running a CRF to actually perform tagging.
-    const auto analyzer = sequence::default_pos_analyzer("crf");
+    auto analyzer = sequence::default_pos_analyzer();
+    analyzer.load(*crf_prefix);
     {
+        // const is *super important* here! This signals that we want the
+        // analyzer to be analyzing in "test mode", meaning that it will not
+        // generate new feature_ids while analyzing the sequences. This is
+        // exactly what we want when running a CRF to actually perform tagging.
+
+        const auto& ana = analyzer;
         printing::progress progress{" > Generating features: ",
                                     testing.size()};
         uint64_t idx = 0;
         for (auto& seq : testing)
         {
             progress(++idx);
-            analyzer.analyze(seq);
+            ana.analyze(seq);
         }
     }
 

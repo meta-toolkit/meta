@@ -19,21 +19,24 @@ namespace sequence
 {
 
 sequence_analyzer::sequence_analyzer(const std::string& prefix)
-    : prefix_{prefix}
 {
-    filesystem::make_directory(prefix);
-    load_feature_id_mapping();
-    load_label_id_mapping();
+    load(prefix);
 }
 
-void sequence_analyzer::load_feature_id_mapping()
+void sequence_analyzer::load(const std::string& prefix)
 {
-    if (!filesystem::file_exists(prefix_ + "/feature.mapping"))
-        return;
+    feature_id_mapping_.clear();
+    label_id_mapping_.clear();
+    load_feature_id_mapping(prefix);
+    load_label_id_mapping(prefix);
+}
 
-    std::ifstream input{prefix_ + "/feature.mapping", std::ios::binary};
+void sequence_analyzer::load_feature_id_mapping(const std::string& prefix)
+{
+    std::ifstream input{prefix + "/feature.mapping", std::ios::binary};
+
     if (!input)
-        return;
+        throw exception{"missing feature id mapping"};
 
     uint64_t num_keys;
     io::read_binary(input, num_keys);
@@ -50,24 +53,19 @@ void sequence_analyzer::load_feature_id_mapping()
     }
 }
 
-void sequence_analyzer::load_label_id_mapping()
+void sequence_analyzer::load_label_id_mapping(const std::string& prefix)
 {
-    if (!filesystem::file_exists(prefix_ + "/label.mapping"))
-        return;
+    if (!filesystem::file_exists(prefix + "/label.mapping"))
+        throw exception{"missing label mapping"};
 
-    map::load_mapping(label_id_mapping_, prefix_ + "/label.mapping");
+    map::load_mapping(label_id_mapping_, prefix + "/label.mapping");
 }
 
-sequence_analyzer::~sequence_analyzer()
-{
-    save();
-}
-
-void sequence_analyzer::save()
+void sequence_analyzer::save(const std::string& prefix)
 {
     printing::progress progress{" > Saving feature mapping: ",
                                 feature_id_mapping_.size()};
-    std::ofstream output{prefix_ + "/feature.mapping", std::ios::binary};
+    std::ofstream output{prefix + "/feature.mapping", std::ios::binary};
     io::write_binary(output, feature_id_mapping_.size());
     uint64_t i = 0;
     for (const auto& pair : feature_id_mapping_)
@@ -76,38 +74,44 @@ void sequence_analyzer::save()
         io::write_binary(output, pair.first);
         io::write_binary(output, pair.second);
     }
-    map::save_mapping(label_id_mapping_, prefix_ + "/label.mapping");
+    map::save_mapping(label_id_mapping_, prefix + "/label.mapping");
 }
 
 void sequence_analyzer::analyze(sequence& sequence)
 {
     for (uint64_t t = 0; t < sequence.size(); ++t)
+        analyze(sequence, t);
+}
+
+void sequence_analyzer::analyze(sequence& sequence, uint64_t t)
+{
+    default_collector coll{this, &sequence[t]};
+    for (const auto& fn : obs_fns_)
+        fn(sequence, t, coll);
+    if (!label_id_mapping_.contains_key(sequence[t].tag()))
     {
-        default_collector coll{this, &sequence[t]};
-        for (const auto& fn : obs_fns_)
-            fn(sequence, t, coll);
-        if (!label_id_mapping_.contains_key(sequence[t].tag()))
-        {
-            label_id id(label_id_mapping_.size());
-            label_id_mapping_.insert(sequence[t].tag(), id);
-        }
-        sequence[t].label(label_id_mapping_.get_value(sequence[t].tag()));
+        label_id id(label_id_mapping_.size());
+        label_id_mapping_.insert(sequence[t].tag(), id);
     }
+    sequence[t].label(label_id_mapping_.get_value(sequence[t].tag()));
 }
 
 void sequence_analyzer::analyze(sequence& sequence) const
 {
     for (uint64_t t = 0; t < sequence.size(); ++t)
-    {
-        const_collector coll{this, &sequence[t]};
-        for (const auto& fn : obs_fns_)
-            fn(sequence, t, coll);
+        analyze(sequence, t);
+}
 
-        if (!label_id_mapping_.contains_key(sequence[t].tag()))
-            sequence[t].label(label_id(label_id_mapping_.size()));
-        else
-            sequence[t].label(label_id_mapping_.get_value(sequence[t].tag()));
-    }
+void sequence_analyzer::analyze(sequence& sequence, uint64_t t) const
+{
+    const_collector coll{this, &sequence[t]};
+    for (const auto& fn : obs_fns_)
+        fn(sequence, t, coll);
+
+    if (!label_id_mapping_.contains_key(sequence[t].tag()))
+        sequence[t].label(label_id(label_id_mapping_.size()));
+    else
+        sequence[t].label(label_id_mapping_.get_value(sequence[t].tag()));
 }
 
 feature_id sequence_analyzer::feature(const std::string& feature)
@@ -131,11 +135,6 @@ feature_id sequence_analyzer::feature(const std::string& feature) const
 uint64_t sequence_analyzer::num_features() const
 {
     return feature_id_mapping_.size();
-}
-
-const std::string& sequence_analyzer::prefix() const
-{
-    return prefix_;
 }
 
 const util::invertible_map<tag_t, label_id>& sequence_analyzer::labels() const
@@ -175,9 +174,9 @@ std::string prefix(const std::string& input, uint64_t length)
 }
 }
 
-sequence_analyzer default_pos_analyzer(const std::string& folder)
+sequence_analyzer default_pos_analyzer()
 {
-    sequence_analyzer analyzer{folder};
+    sequence_analyzer analyzer;
 
     auto word_feats = [](const std::string& word, uint64_t t,
                          sequence_analyzer::collector& coll)
@@ -193,7 +192,9 @@ sequence_analyzer default_pos_analyzer(const std::string& folder)
 
         // additional binary word features
         if (std::any_of(word.begin(), word.end(), [](char c)
-        { return std::isdigit(c); }))
+                        {
+                return std::isdigit(c);
+            }))
         {
             coll.add("w[t]_has_digit=1", 1);
         }
@@ -202,7 +203,9 @@ sequence_analyzer default_pos_analyzer(const std::string& folder)
             coll.add("w[t]_has_hyphen=1", 1);
 
         if (std::any_of(word.begin(), word.end(), [](char c)
-        { return std::isupper(c); }))
+                        {
+                return std::isupper(c);
+            }))
         {
             coll.add("w[t]_has_upper=1", 1);
             if (t != 0)
@@ -212,75 +215,79 @@ sequence_analyzer default_pos_analyzer(const std::string& folder)
         }
 
         if (std::all_of(word.begin(), word.end(), [](char c)
-        { return std::isupper(c); }))
+                        {
+                return std::isupper(c);
+            }))
         {
             coll.add("w[t]_all_upper=1", 1);
         }
     };
 
     // current word features
-    analyzer.add_observation_function([=](const sequence& seq, uint64_t t,
-                                          sequence_analyzer::collector& coll)
-    {
-        std::string word = seq[t].symbol();
-        word_feats(word, t, coll);
-    });
+    analyzer.add_observation_function(
+        [=](const sequence& seq, uint64_t t, sequence_analyzer::collector& coll)
+        {
+            std::string word = seq[t].symbol();
+            word_feats(word, t, coll);
+        });
 
     // previous word features
-    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
-                                         sequence_analyzer::collector& coll)
-    {
-        std::string word = seq[t].symbol();
-        if (t > 0)
+    analyzer.add_observation_function(
+        [](const sequence& seq, uint64_t t, sequence_analyzer::collector& coll)
         {
-            auto prevword = seq[t - 1].symbol();
-            coll.add("w[t-1]=" + utf::foldcase(prevword), 1);
-            if (t > 1)
+            std::string word = seq[t].symbol();
+            if (t > 0)
             {
-                auto prev2word = seq[t - 2].symbol();
-                coll.add("w[t-2]=" + utf::foldcase(prev2word), 1);
+                auto prevword = seq[t - 1].symbol();
+                coll.add("w[t-1]=" + utf::foldcase(prevword), 1);
+                if (t > 1)
+                {
+                    auto prev2word = seq[t - 2].symbol();
+                    coll.add("w[t-2]=" + utf::foldcase(prev2word), 1);
+                }
+                else
+                {
+                    coll.add("w[t-2]=<s>", 1);
+                }
             }
             else
             {
-                coll.add("w[t-2]=<s>", 1);
+                coll.add("w[t-1]=<s>", 1);
+                coll.add("w[t-2]=<s1>", 1);
             }
-        }
-        else
-        {
-            coll.add("w[t-1]=<s>", 1);
-            coll.add("w[t-2]=<s1>", 1);
-        }
-    });
+        });
 
     // next word features
-    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
-                                         sequence_analyzer::collector& coll)
-    {
-        if (t + 1 < seq.size())
+    analyzer.add_observation_function(
+        [](const sequence& seq, uint64_t t, sequence_analyzer::collector& coll)
         {
-            auto nextword = seq[t + 1].symbol();
-            coll.add("w[t+1]=" + utf::foldcase(nextword), 1);
-            if (t + 2 < seq.size())
+            if (t + 1 < seq.size())
             {
-                auto next2word = seq[t + 2].symbol();
-                coll.add("w[t+2]=" + utf::foldcase(next2word), 1);
+                auto nextword = seq[t + 1].symbol();
+                coll.add("w[t+1]=" + utf::foldcase(nextword), 1);
+                if (t + 2 < seq.size())
+                {
+                    auto next2word = seq[t + 2].symbol();
+                    coll.add("w[t+2]=" + utf::foldcase(next2word), 1);
+                }
+                else
+                {
+                    coll.add("w[t+2]=</s>", 1);
+                }
             }
             else
             {
-                coll.add("w[t+2]=</s>", 1);
+                coll.add("w[t+1]=</s>", 1);
+                coll.add("w[t+2]=</s1>", 1);
             }
-        }
-        else
-        {
-            coll.add("w[t+1]=</s>", 1);
-            coll.add("w[t+2]=</s1>", 1);
-        }
-    });
+        });
 
     // bias term
-    analyzer.add_observation_function([](const sequence&, uint64_t,
-                                         sequence_analyzer::collector& coll)
-    { coll.add("bias", 1); });
+    analyzer.add_observation_function(
+        [](const sequence&, uint64_t, sequence_analyzer::collector& coll)
+        {
+            coll.add("bias", 1);
+        });
 
     return analyzer;
 }

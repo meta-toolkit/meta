@@ -50,7 +50,12 @@ class sequence_analyzer
 {
   public:
     /**
-     * Constructs a new sequence analyzer that will load/save its output to
+     * Default constructor.
+     */
+    sequence_analyzer() = default;
+
+    /**
+     * Constructs a new sequence analyzer that will load its output from
      * the given prefix (folder).
      *
      * @param prefix The folder to load/save mappings to
@@ -78,15 +83,17 @@ class sequence_analyzer
     sequence_analyzer& operator=(sequence_analyzer&&) = default;
 
     /**
-     * Destroys the current sequence analyzer, ensuring that its output is
-     * flushed to disk.
+     * Loads a sequence analyzer from a folder given by prefix.
+     * @param prefix the prefix to load the analyzer from
      */
-    ~sequence_analyzer();
+    void load(const std::string& prefix);
 
     /**
-     * Manually requests that a sequence analyzer flush its output to disk.
+     * Saves the sequence analyzer into the folder given by prefix.
+     *
+     * @param prefix The folder to save the analyzer to
      */
-    void save();
+    void save(const std::string& prefix);
 
     /**
      * Analyzes a sequence, generating new label_ids and feature_ids for
@@ -95,6 +102,15 @@ class sequence_analyzer
      * @param sequence The sequence to be analyzed
      */
     void analyze(sequence& sequence);
+
+    /**
+     * Analyzes a single point in a sequence, generating new label_ids and
+     * feature_ids for unseen elements.
+     *
+     * @param sequence The sequence to be analyzed
+     * @param t The position in the sequence to be analyzed
+     */
+    void analyze(sequence& sequence, uint64_t idx);
 
     /**
      * Analyzes a sequence, but ignores any new label_ids or feature_ids.
@@ -106,9 +122,17 @@ class sequence_analyzer
     void analyze(sequence& sequence) const;
 
     /**
+     * Analyzes a single point in a sequence,b ut ignores any new
+     * label_ids or feature_ids. Used for analyzing test items, for
+     * example, so that existing models don't need to special case unseen
+     * feature ids.
+     */
+    void analyze(sequence& sequence, uint64_t idx) const;
+
+    /**
      * Looks up the feature id for the given string representation. If one
      * doesn't exist, it will assign the next feature_id to this string
-     * 
+     *
      * @param feature The string representation of the feature
      * @return the feature id associated (or just assigned to) this feature
      */
@@ -193,7 +217,9 @@ class sequence_analyzer
             using pair = std::pair<feature_id, double>;
             std::sort(feats_.begin(), feats_.end(),
                       [](const pair& lhs, const pair& rhs)
-            { return lhs.first < rhs.first; });
+                      {
+                return lhs.first < rhs.first;
+            });
 
             obs_->features(std::move(feats_));
         }
@@ -219,6 +245,12 @@ class sequence_analyzer
         observation* obs_;
         /// the feature vector that will be placed into the observation
         observation::feature_vector feats_;
+    };
+
+    class exception : public std::runtime_error
+    {
+      public:
+        using std::runtime_error::runtime_error;
     };
 
   private:
@@ -248,7 +280,6 @@ class sequence_analyzer
         {
             return analyzer_->feature(feat);
         }
-
     };
 
   public:
@@ -267,29 +298,31 @@ class sequence_analyzer
      */
     class const_collector : public basic_collector<const sequence_analyzer>
     {
-        public:
-          using basic_collector<const sequence_analyzer>::basic_collector;
+      public:
+        using basic_collector<const sequence_analyzer>::basic_collector;
 
-          // special case add to not actually add if a brand new feature id
-          // is found
-          virtual void add(const std::string& feat, double amount)
-          {
-              auto fid = feature(feat);
-              if (fid != analyzer_->num_features())
-                  feats_.emplace_back(fid, amount);
-          }
+        // special case add to not actually add if a brand new feature id
+        // is found
+        virtual void add(const std::string& feat, double amount)
+        {
+            auto fid = feature(feat);
+            if (fid != analyzer_->num_features())
+                feats_.emplace_back(fid, amount);
+        }
     };
 
   private:
     /**
      * Loads the feature_id mapping from disk.
+     * @param prefix The folder to load the mapping from
      */
-    void load_feature_id_mapping();
+    void load_feature_id_mapping(const std::string& prefix);
 
     /**
      * Loads the label_id mapping from disk.
+     * @param prefix The folder to load the mapping from
      */
-    void load_label_id_mapping();
+    void load_label_id_mapping(const std::string& prefix);
 
     /**
      * Adds a feature to an observation.
@@ -309,19 +342,13 @@ class sequence_analyzer
 
     /// The label_id mapping (tag_t to label_id)
     util::invertible_map<tag_t, label_id> label_id_mapping_;
-
-    /// The prefix to write the analyzer files to
-    const std::string prefix_;
 };
 
 /**
  * Constructs a sequence_analyzer that is specialized for part-of-speech
  * tagging. Uses a predefined set of observation functions.
- *
- * @param filename The prefix to be passed to the analyzer constructed
  */
-sequence_analyzer default_pos_analyzer(const std::string& filename);
-
+sequence_analyzer default_pos_analyzer();
 }
 }
 #endif

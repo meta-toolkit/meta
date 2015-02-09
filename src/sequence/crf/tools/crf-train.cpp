@@ -104,8 +104,8 @@ int main(int argc, char** argv)
         }
     }
 
-    filesystem::make_directory("crf");
-    auto analyzer = sequence::default_pos_analyzer("crf");
+    filesystem::make_directory(*crf_prefix);
+    auto analyzer = sequence::default_pos_analyzer();
     {
         printing::progress progress{" > Generating features: ",
                                     training.size()};
@@ -116,7 +116,7 @@ int main(int argc, char** argv)
             analyzer.analyze(seq);
         }
     }
-    analyzer.save();
+    analyzer.save(*crf_prefix);
 
     sequence::crf crf{*crf_prefix};
     crf.train({}, training);

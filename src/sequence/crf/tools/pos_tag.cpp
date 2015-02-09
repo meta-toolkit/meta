@@ -41,8 +41,9 @@ int main(int argc, char* argv[])
     }
 
     sequence::crf crf{*prefix};
-    const sequence::sequence_analyzer analyzer
-        = sequence::default_pos_analyzer(*prefix);
+    auto ana = sequence::default_pos_analyzer();
+    ana.load(*prefix);
+    const auto& analyzer = ana;
     auto tagger = crf.make_tagger();
 
     std::string line;
