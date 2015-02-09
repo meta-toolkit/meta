@@ -31,7 +31,7 @@ void linear_model<FeatureId, FeatureValue, ClassId>::load(std::istream& model)
         if (!model)
             throw exception{"malformed model file (too few features written)"};
 
-        std::string feature_name;
+        feature_id feature_name;
         io::read_binary(model, feature_name);
 
         size_t num_cids;
@@ -214,7 +214,7 @@ template <class FeatureId, class FeatureValue, class ClassId>
 void linear_model<FeatureId, FeatureValue, ClassId>::condense(bool log)
 {
     // build feature set
-    std::vector<std::string> features;
+    std::vector<feature_id> features;
     features.reserve(weights_.size());
     for (const auto& feat_vec : weights_)
         features.push_back(feat_vec.first);
