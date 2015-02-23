@@ -31,7 +31,7 @@ naive_bayes::naive_bayes(std::shared_ptr<index::forward_index> idx,
 
 void naive_bayes::reset()
 {
-    for (auto & term_dist : term_probs_)
+    for (auto& term_dist : term_probs_)
         term_dist.second.clear();
     class_probs_.clear();
 }
@@ -84,7 +84,7 @@ class_label naive_bayes::classify(doc_id d_id)
 
 template <>
 std::unique_ptr<classifier>
-    make_classifier<naive_bayes>(const cpptoml::toml_group& config,
+    make_classifier<naive_bayes>(const cpptoml::table& config,
                                  std::shared_ptr<index::forward_index> idx)
 {
     auto alpha = naive_bayes::default_alpha;

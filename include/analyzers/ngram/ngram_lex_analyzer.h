@@ -50,8 +50,8 @@ class ngram_lex_analyzer : public util::multilevel_clonable
  */
 template <>
 std::unique_ptr<analyzer> make_analyzer<ngram_lex_analyzer>(
-        const cpptoml::toml_group&,
-        const cpptoml::toml_group&);
+        const cpptoml::table&,
+        const cpptoml::table&);
 }
 }
 

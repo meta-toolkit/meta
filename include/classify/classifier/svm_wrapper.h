@@ -97,8 +97,8 @@ class svm_wrapper : public classifier
 
     /** keeps track of which arguments are necessary for which kernel
      * function */
-    const static std::unordered_map
-        <kernel, std::string, std::hash<int>> options_;
+    const static std::unordered_map<kernel, std::string, std::hash<int>>
+        options_;
 
     /** which kernel function to use for this SVM */
     kernel kernel_;
@@ -112,9 +112,9 @@ class svm_wrapper : public classifier
  * classifiers.
  */
 template <>
-std::unique_ptr<classifier> make_classifier<svm_wrapper>(
-        const cpptoml::toml_group&,
-        std::shared_ptr<index::forward_index>);
+std::unique_ptr<classifier>
+    make_classifier<svm_wrapper>(const cpptoml::table&,
+                                 std::shared_ptr<index::forward_index>);
 }
 }
 

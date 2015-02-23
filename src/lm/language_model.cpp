@@ -28,7 +28,7 @@ namespace lm
 language_model::language_model(const std::string& config_file)
 {
     auto config = cpptoml::parse_file(config_file);
-    auto group = config.get_group("language-model");
+    auto group = config.get_table("language-model");
     auto nval = group->get_as<int64_t>("n-value");
     if(!nval)
         throw std::runtime_error{"no n-value specified in language-model group"};

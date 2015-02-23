@@ -17,7 +17,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -95,7 +95,7 @@ class length_filter : public util::clonable<token_stream, length_filter>
 template <>
 std::unique_ptr<token_stream>
     make_filter<length_filter>(std::unique_ptr<token_stream>,
-                               const cpptoml::toml_group&);
+                               const cpptoml::table&);
 }
 }
 }

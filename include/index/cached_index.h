@@ -14,7 +14,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -44,7 +44,7 @@ class cached_index : public Index
      *  constructor
      */
     template <class... Args>
-    cached_index(cpptoml::toml_group& config, Args&&... args);
+    cached_index(cpptoml::table& config, Args&&... args);
 
     using primary_key_type = typename Index::primary_key_type;
     using secondary_key_type = typename Index::secondary_key_type;

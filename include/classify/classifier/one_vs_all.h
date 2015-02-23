@@ -69,7 +69,7 @@ class one_vs_all : public classifier
  */
 template <>
 std::unique_ptr<classifier>
-    make_classifier<one_vs_all>(const cpptoml::toml_group&,
+    make_classifier<one_vs_all>(const cpptoml::table&,
                                 std::shared_ptr<index::forward_index>);
 }
 }

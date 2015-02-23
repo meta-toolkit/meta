@@ -88,8 +88,8 @@ void ngram_pos_analyzer::tokenize(corpus::document& doc)
 
 template <>
 std::unique_ptr<analyzer>
-    make_analyzer<ngram_pos_analyzer>(const cpptoml::toml_group& global,
-                                      const cpptoml::toml_group& config)
+    make_analyzer<ngram_pos_analyzer>(const cpptoml::table& global,
+                                      const cpptoml::table& config)
 {
     auto n_val = config.get_as<int64_t>("ngram");
     if (!n_val)

@@ -41,7 +41,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto parser_grp = config.get_group("parser");
+    auto parser_grp = config.get_table("parser");
     if (!parser_grp)
     {
         LOG(fatal) << "Configuration must contain a [parser] group" << ENDLG;
@@ -100,8 +100,8 @@ int main(int argc, char** argv)
 
     std::vector<parser::parse_tree> training;
     {
-        auto begin = train_sections->at(0)->as<int64_t>()->value();
-        auto end = train_sections->at(1)->as<int64_t>()->value();
+        auto begin = train_sections->at(0)->as<int64_t>()->get();
+        auto end = train_sections->at(1)->as<int64_t>()->get();
         printing::progress progress(" > Reading training data: ",
                                     (end - begin + 1) * *section_size);
         for (uint8_t i = begin; i <= end; ++i)

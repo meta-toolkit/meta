@@ -61,7 +61,7 @@ class okapi_bm25 : public ranker
  * Specialization of the factory method used to create okapi_bm25 rankers.
  */
 template <>
-std::unique_ptr<ranker> make_ranker<okapi_bm25>(const cpptoml::toml_group&);
+std::unique_ptr<ranker> make_ranker<okapi_bm25>(const cpptoml::table&);
 }
 }
 #endif

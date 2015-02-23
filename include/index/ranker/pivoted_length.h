@@ -51,7 +51,7 @@ class pivoted_length : public ranker
  * rankers.
  */
 template <>
-std::unique_ptr<ranker> make_ranker<pivoted_length>(const cpptoml::toml_group&);
+std::unique_ptr<ranker> make_ranker<pivoted_length>(const cpptoml::table&);
 }
 }
 #endif
