@@ -94,7 +94,8 @@ class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
         // use this inequality to not display duplicate edges since each edge is
         // stored twice in an undirected graph
         if (is_undirected_ && !end_
-            && al_iter_->first < std::distance(beg_iter_, iter_))
+            && al_iter_->first
+               < static_cast<uint64_t>(std::distance(beg_iter_, iter_)))
             return ++(*this);
 
         return *this;
@@ -107,9 +108,15 @@ class edge_iterator : public std::iterator<std::forward_iterator_tag, Edge>
         return saved;
     }
 
-    reference operator*() { return al_iter_->second; }
+    reference operator*()
+    {
+        return al_iter_->second;
+    }
 
-    pointer operator->() { return &al_iter_->second; }
+    pointer operator->()
+    {
+        return &al_iter_->second;
+    }
 
   private:
     Iter iter_;

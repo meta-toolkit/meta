@@ -110,6 +110,11 @@ state state::advance(const transition& trans) const
         {
             return *this;
         }
+
+        default:
+        {
+            throw sr_parser::exception{"Unreachable"};
+        }
     }
 }
 
@@ -298,6 +303,9 @@ bool state::legal(const transition& trans) const
 
         case transition::type_t::IDLE:
             return idle_legal(*this);
+
+        default:
+            throw sr_parser::exception{"Unreachable"};
     }
 }
 

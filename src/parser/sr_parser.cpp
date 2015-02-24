@@ -244,7 +244,6 @@ std::pair<uint64_t, uint64_t> sr_parser::train_instance(
     const parse_tree& tree, const std::vector<trans_id>& transitions,
     const training_options& options, weight_vectors& update) const
 {
-    // TODO: add beam search
     switch (options.algorithm)
     {
         case training_algorithm::EARLY_TERMINATION:
@@ -252,6 +251,9 @@ std::pair<uint64_t, uint64_t> sr_parser::train_instance(
 
         case training_algorithm::BEAM_SEARCH:
             return train_beam_search(tree, transitions, options, update);
+
+        default:
+            throw exception{"Not yet implemented"};
     }
 }
 
