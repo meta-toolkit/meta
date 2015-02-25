@@ -6,6 +6,9 @@
 #include <algorithm>
 #include <deque>
 
+#include <unicode/utf.h>
+#include <unicode/uchar.h>
+
 #include "analyzers/tokenizers/icu_tokenizer.h"
 #include "util/pimpl.tcc"
 #include "utf/segmenter.h"
@@ -48,6 +51,13 @@ class icu_tokenizer::impl
                 auto wrd = segmenter_.content(word);
                 if (wrd.empty())
                     continue;
+
+                // check first character, if it's whitespace skip it
+                UChar32 codepoint;
+                U8_GET_UNSAFE(wrd.c_str(), 0, codepoint);
+                if (u_isUWhiteSpace(codepoint))
+                  continue;
+
                 tokens_.emplace_back(std::move(wrd));
             }
             tokens_.emplace_back("</s>");

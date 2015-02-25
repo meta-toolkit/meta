@@ -158,5 +158,17 @@ T* optional<T>::dataptr()
 {
     return std::addressof(storage_.value_);
 }
+
+template <class T>
+bool operator<(const optional<T>& lhs, const optional<T>& rhs)
+{
+    if (lhs && rhs)
+        return *lhs < *rhs;
+
+    if (!lhs)
+        return false;
+
+    return true;
+}
 }
 }

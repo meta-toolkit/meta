@@ -17,6 +17,7 @@
 #include "analyzers/filters/list_filter.h"
 #include "analyzers/filters/lowercase_filter.h"
 #include "analyzers/filters/porter2_stemmer.h"
+#include "analyzers/filters/ptb_normalizer.h"
 #include "analyzers/filters/sentence_boundary.h"
 
 namespace meta
@@ -59,6 +60,7 @@ filter_factory::filter_factory()
     register_filter<filters::list_filter>();
     register_filter<filters::lowercase_filter>();
     register_filter<filters::porter2_stemmer>();
+    register_filter<filters::ptb_normalizer>();
     register_filter<filters::sentence_boundary>();
 }
 }

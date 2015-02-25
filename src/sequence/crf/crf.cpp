@@ -199,7 +199,8 @@ label_id crf::transition(crf_feature_id fid) const
 double crf::calibrate(parameters params, const std::vector<uint64_t>& indices,
                       const std::vector<sequence>& examples)
 {
-    auto num_samples = std::min(params.calibration_samples, indices.size());
+    auto num_samples =
+        std::min<uint64_t>(params.calibration_samples, indices.size());
     std::vector<uint64_t> samples{indices.begin(),
                                   indices.begin() + num_samples};
 

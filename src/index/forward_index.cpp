@@ -172,6 +172,10 @@ void forward_index::create_index(const std::string& config_file)
     else
     {
         LOG(info) << "Creating index by uninverting: " << index_name() << ENDLG;
+        {
+            // Ensure all files are flushed before uninverting
+            make_index<inverted_index>(config_file);
+        }
         auto inv_idx = make_index<inverted_index>(config_file);
 
         fwd_impl_->create_uninverted_metadata(inv_idx->index_name());
@@ -205,8 +209,8 @@ void forward_index::impl::create_libsvm_postings(
         throw forward_index_exception{
             "dataset missing from configuration file"};
 
-    std::string existing_file =
-        *prefix + "/" + *dataset + "/" + *dataset + ".dat";
+    std::string existing_file = *prefix + "/" + *dataset + "/" + *dataset
+                                + ".dat";
 
     filesystem::copy_file(existing_file,
                           idx_->index_name() + idx_->impl_->files[POSTINGS]);
@@ -241,9 +245,8 @@ void forward_index::impl::init_metadata()
     uint64_t num_docs = filesystem::num_lines(idx_->index_name()
                                               + idx_->impl_->files[POSTINGS]);
     idx_->impl_->initialize_metadata(num_docs);
-    doc_byte_locations_ = util::disk_vector<uint64_t>(idx_->index_name()
-                                                      + "/lexicon.index",
-                                                      num_docs);
+    doc_byte_locations_ = util::disk_vector<uint64_t>(
+        idx_->index_name() + "/lexicon.index", num_docs);
 }
 
 void forward_index::impl::create_libsvm_metadata()
@@ -299,8 +302,8 @@ void forward_index::impl::create_uninverted_metadata(const std::string& name)
                               idx_->index_name() + idx_->impl_->files[file]);
 }
 
-bool forward_index::impl::is_libsvm_format(const cpptoml::toml_group
-                                           & config) const
+bool forward_index::impl::is_libsvm_format(
+    const cpptoml::toml_group& config) const
 {
     auto analyzers = config.get_group_array("analyzers")->array();
     if (analyzers.size() != 1)
@@ -318,8 +321,8 @@ uint64_t forward_index::unique_terms() const
     return fwd_impl_->total_unique_terms_;
 }
 
-auto forward_index::search_primary(doc_id d_id) const
-    -> std::shared_ptr<postings_data_type>
+auto forward_index::search_primary(
+    doc_id d_id) const -> std::shared_ptr<postings_data_type>
 {
     auto pdata = std::make_shared<postings_data_type>(d_id);
     auto line = liblinear_data(d_id);
@@ -330,7 +333,7 @@ auto forward_index::search_primary(doc_id d_id) const
 void forward_index::impl::uninvert(const inverted_index& inv_idx)
 {
     io::compressed_file_reader inv_reader{inv_idx.index_name()
-                                              + idx_->impl_->files[POSTINGS],
+                                          + idx_->impl_->files[POSTINGS],
                                           io::default_compression_reader_func};
 
     term_id t_id{0};
