@@ -7,3 +7,4 @@
 #include "analyzers/filters/length_filter.h"
 #include "analyzers/filters/sentence_boundary.h"
 #include "analyzers/filters/english_normalizer.h"
+#include "analyzers/filters/ptb_normalizer.h"
