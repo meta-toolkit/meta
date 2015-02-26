@@ -23,9 +23,13 @@ ngram_pos_analyzer::ngram_pos_analyzer(uint16_t n,
     : base{n},
       stream_{std::move(stream)},
       crf_{std::make_shared<sequence::crf>(crf_prefix)},
-      seq_analyzer_{sequence::default_pos_analyzer(crf_prefix)}
+      seq_analyzer_{[&]()
+                    {
+                        auto ana = sequence::default_pos_analyzer();
+                        ana.load(crf_prefix);
+                        return ana;
+                    }()}
 {
-    // nothing
 }
 
 ngram_pos_analyzer::ngram_pos_analyzer(const ngram_pos_analyzer& other)
@@ -84,8 +88,8 @@ void ngram_pos_analyzer::tokenize(corpus::document& doc)
 
 template <>
 std::unique_ptr<analyzer>
-    make_analyzer<ngram_pos_analyzer>(const cpptoml::toml_group& global,
-                                      const cpptoml::toml_group& config)
+    make_analyzer<ngram_pos_analyzer>(const cpptoml::table& global,
+                                      const cpptoml::table& config)
 {
     auto n_val = config.get_as<int64_t>("ngram");
     if (!n_val)

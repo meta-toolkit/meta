@@ -34,7 +34,7 @@ double dirichlet_prior::doc_constant(const score_data& sd) const
 
 template <>
 std::unique_ptr<ranker>
-    make_ranker<dirichlet_prior>(const cpptoml::toml_group& config)
+    make_ranker<dirichlet_prior>(const cpptoml::table& config)
 {
     if (auto mu = config.get_as<double>("mu"))
         return make_unique<dirichlet_prior>(*mu);

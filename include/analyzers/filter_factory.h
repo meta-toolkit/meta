@@ -16,7 +16,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -29,9 +29,9 @@ namespace analyzers
  * construction. Clients should use the register_X methods instead of this
  * class directly.
  */
-class filter_factory : public util::factory<filter_factory, token_stream,
-                                            std::unique_ptr<token_stream>,
-                                            const cpptoml::toml_group&>
+class filter_factory
+    : public util::factory<filter_factory, token_stream,
+                           std::unique_ptr<token_stream>, const cpptoml::table&>
 {
     /// friend the base factory
     friend base_factory;
@@ -64,7 +64,7 @@ namespace tokenizers
  * your given tokenizer requires special construction behavior.
  */
 template <class Tokenizer>
-std::unique_ptr<token_stream> make_tokenizer(const cpptoml::toml_group&)
+std::unique_ptr<token_stream> make_tokenizer(const cpptoml::table&)
 {
     return make_unique<Tokenizer>();
 }
@@ -78,7 +78,7 @@ namespace filters
  */
 template <class Filter>
 std::unique_ptr<token_stream> make_filter(std::unique_ptr<token_stream> source,
-                                          const cpptoml::toml_group&)
+                                          const cpptoml::table&)
 {
     return make_unique<Filter>(std::move(source));
 }
@@ -91,15 +91,15 @@ std::unique_ptr<token_stream> make_filter(std::unique_ptr<token_stream> source,
 template <class Tokenizer>
 void register_tokenizer()
 {
-    filter_factory::get().add(Tokenizer::id,
-                              [](std::unique_ptr<token_stream> source,
-                                 const cpptoml::toml_group& config)
-    {
-        if (source)
-            throw typename Tokenizer::token_stream_exception{
-                "tokenizers must be the first filter"};
-        return tokenizers::make_tokenizer<Tokenizer>(config);
-    });
+    filter_factory::get().add(
+        Tokenizer::id,
+        [](std::unique_ptr<token_stream> source, const cpptoml::table& config)
+        {
+            if (source)
+                throw typename Tokenizer::token_stream_exception{
+                    "tokenizers must be the first filter"};
+            return tokenizers::make_tokenizer<Tokenizer>(config);
+        });
 }
 
 /**

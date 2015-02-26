@@ -37,7 +37,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto crf_grp = config.get_group("crf");
+    auto crf_grp = config.get_table("crf");
     if (!crf_grp)
     {
         LOG(fatal) << "Configuration must contain a [crf] group" << ENDLG;
@@ -85,8 +85,8 @@ int main(int argc, char** argv)
 
     std::vector<sequence::sequence> training;
     {
-        auto begin = train_sections->at(0)->as<int64_t>()->value();
-        auto end = train_sections->at(1)->as<int64_t>()->value();
+        auto begin = train_sections->at(0)->as<int64_t>()->get();
+        auto end = train_sections->at(1)->as<int64_t>()->get();
         printing::progress progress(" > Reading training data: ",
                                     (end - begin + 1) * *section_size);
         for (uint8_t i = begin; i <= end; ++i)
@@ -104,8 +104,8 @@ int main(int argc, char** argv)
         }
     }
 
-    filesystem::make_directory("crf");
-    auto analyzer = sequence::default_pos_analyzer("crf");
+    filesystem::make_directory(*crf_prefix);
+    auto analyzer = sequence::default_pos_analyzer();
     {
         printing::progress progress{" > Generating features: ",
                                     training.size()};
@@ -116,7 +116,7 @@ int main(int argc, char** argv)
             analyzer.analyze(seq);
         }
     }
-    analyzer.save();
+    analyzer.save(*crf_prefix);
 
     sequence::crf crf{*crf_prefix};
     crf.train({}, training);

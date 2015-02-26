@@ -51,7 +51,7 @@ class ranker
     std::vector<std::pair<doc_id, double>>
     score(inverted_index& idx, corpus::document& query,
           uint64_t num_results = 10,
-          const std::function<bool(doc_id d_id)>& filter = [](doc_id d_id) {
+          const std::function<bool(doc_id d_id)>& filter = [](doc_id) {
               return true;
           });
 

@@ -86,10 +86,10 @@ class inverted_index : public disk_index
 
   protected:
     /**
-     * @param config The toml_group that specifies how to create the
+     * @param config The table that specifies how to create the
      * index.
      */
-    inverted_index(const cpptoml::toml_group& config);
+    inverted_index(const cpptoml::table& config);
 
   public:
     /**

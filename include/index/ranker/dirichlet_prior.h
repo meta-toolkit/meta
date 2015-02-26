@@ -56,8 +56,7 @@ class dirichlet_prior : public language_model_ranker
  * rankers.
  */
 template <>
-std::unique_ptr<ranker> make_ranker<dirichlet_prior>(
-        const cpptoml::toml_group&);
+std::unique_ptr<ranker> make_ranker<dirichlet_prior>(const cpptoml::table&);
 }
 }
 #endif

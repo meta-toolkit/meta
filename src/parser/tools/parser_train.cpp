@@ -41,7 +41,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto parser_grp = config.get_group("parser");
+    auto parser_grp = config.get_table("parser");
     if (!parser_grp)
     {
         LOG(fatal) << "Configuration must contain a [parser] group" << ENDLG;
@@ -51,8 +51,9 @@ int main(int argc, char** argv)
     auto parser_prefix = parser_grp->get_as<std::string>("prefix");
     if (!parser_prefix)
     {
-        LOG(fatal) << "[parser] group must contain a prefix to store model files"
-                   << ENDLG;
+        LOG(fatal)
+            << "[parser] group must contain a prefix to store model files"
+            << ENDLG;
         return 1;
     }
 
@@ -92,14 +93,15 @@ int main(int argc, char** argv)
     }
 
     auto num_threads = parser_grp->get_as<int64_t>("train-threads");
+    auto algorithm = parser_grp->get_as<std::string>("train-algorithm");
 
-    std::string path =
-        *prefix + "/" + *treebank + "/treebank-3/parsed/mrg/" + *corpus;
+    std::string path = *prefix + "/" + *treebank + "/treebank-3/parsed/mrg/"
+                       + *corpus;
 
     std::vector<parser::parse_tree> training;
     {
-        auto begin = train_sections->at(0)->as<int64_t>()->value();
-        auto end = train_sections->at(1)->as<int64_t>()->value();
+        auto begin = train_sections->at(0)->as<int64_t>()->get();
+        auto end = train_sections->at(1)->as<int64_t>()->get();
         printing::progress progress(" > Reading training data: ",
                                     (end - begin + 1) * *section_size);
         for (uint8_t i = begin; i <= end; ++i)
@@ -111,7 +113,7 @@ int main(int argc, char** argv)
                 auto file = *corpus + "_" + folder + two_digit(j) + ".mrg";
                 auto filename = path + "/" + folder + "/" + file;
                 auto trees = parser::io::extract_trees(filename);
-                for (auto & tree : trees)
+                for (auto& tree : trees)
                     training.emplace_back(std::move(tree));
             }
         }
@@ -125,9 +127,37 @@ int main(int argc, char** argv)
     if (num_threads)
         options.num_threads = *num_threads;
 
+    if (algorithm)
+    {
+        if (*algorithm == "early-termination")
+        {
+            LOG(info) << "Training using early termination" << ENDLG;
+            options.algorithm
+                = parser::sr_parser::training_algorithm::EARLY_TERMINATION;
+        }
+        else if (*algorithm == "beam-search")
+        {
+            options.algorithm
+                = parser::sr_parser::training_algorithm::BEAM_SEARCH;
+
+            auto beam_size = parser_grp->get_as<int64_t>("beam-size");
+            if (beam_size)
+                options.beam_size = *beam_size;
+
+            LOG(info) << "Training using beam search (of size "
+                      << options.beam_size << ")" << ENDLG;
+        }
+        else
+        {
+            LOG(fatal) << "Unrecognized training algorithm: " << *algorithm
+                       << ENDLG;
+            return 1;
+        }
+    }
+
     parser.train(training, options);
 
-    parser.save("parser");
+    parser.save(*parser_prefix);
 
     return 0;
 }

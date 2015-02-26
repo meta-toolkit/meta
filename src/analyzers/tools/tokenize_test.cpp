@@ -24,8 +24,8 @@ int main(int argc, char** argv)
 
     std::unique_ptr<analyzers::token_stream> stream;
 
-    auto analyzers = config.get_group_array("analyzers");
-    for (const auto& group : analyzers->array())
+    auto analyzers = config.get_table_array("analyzers");
+    for (const auto& group : analyzers->get())
     {
         auto method = group->get_as<std::string>("method");
         if (!method)

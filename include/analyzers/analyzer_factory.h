@@ -16,7 +16,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -29,9 +29,9 @@ namespace analyzers
  * files.  Clients should use the register_analyzer method instead of this
  * class directly.
  */
-class analyzer_factory : public util::factory<analyzer_factory, analyzer,
-                                              const cpptoml::toml_group&,
-                                              const cpptoml::toml_group&>
+class analyzer_factory
+    : public util::factory<analyzer_factory, analyzer, const cpptoml::table&,
+                           const cpptoml::table&>
 {
     /// friend the base class
     friend base_factory;
@@ -58,8 +58,8 @@ class analyzer_factory : public util::factory<analyzer_factory, analyzer,
  * your given tokenizer requires special construction behavior.
  */
 template <class Analyzer>
-std::unique_ptr<analyzer> make_analyzer(const cpptoml::toml_group&,
-                                        const cpptoml::toml_group&)
+std::unique_ptr<analyzer> make_analyzer(const cpptoml::table&,
+                                        const cpptoml::table&)
 {
     return make_unique<Analyzer>();
 }

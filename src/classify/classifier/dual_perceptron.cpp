@@ -97,9 +97,9 @@ void dual_perceptron::reset()
 }
 
 template <>
-std::unique_ptr<classifier> make_classifier
-    <dual_perceptron>(const cpptoml::toml_group& config,
-                      std::shared_ptr<index::forward_index> idx)
+std::unique_ptr<classifier>
+    make_classifier<dual_perceptron>(const cpptoml::table& config,
+                                     std::shared_ptr<index::forward_index> idx)
 {
     auto alpha = dual_perceptron::default_alpha;
     if (auto c_alpha = config.get_as<double>("alpha"))
@@ -133,9 +133,9 @@ std::unique_ptr<classifier> make_classifier
         if (!rbf_gamma)
             throw classifier_factory::exception{
                 "rbf kernel requires rbf-gamma in configuration"};
-        return make_unique
-            <dual_perceptron>(std::move(idx), kernel::radial_basis{*rbf_gamma},
-                              alpha, gamma, bias, max_iter);
+        return make_unique<dual_perceptron>(std::move(idx),
+                                            kernel::radial_basis{*rbf_gamma},
+                                            alpha, gamma, bias, max_iter);
     }
 
     if (kern == "sigmoid")

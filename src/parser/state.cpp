@@ -3,6 +3,8 @@
  * @author Chase Geigle
  */
 
+#include <memory>
+
 #include "parser/trees/visitors/leaf_node_finder.h"
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"
@@ -19,13 +21,15 @@ state::state(const parse_tree& tree)
 {
     leaf_node_finder lnf;
     tree.visit(lnf);
-    queue_ = lnf.leaves();
+    queue_ = std::make_shared<queue_type>(lnf.leaves());
     q_idx_ = 0;
     done_ = false;
 }
 
-state::state(const sequence::sequence& sentence) : q_idx_{0}, done_{false}
+state::state(const sequence::sequence& sentence)
+    : queue_{std::make_shared<queue_type>()}, q_idx_{0}, done_{false}
 {
+    queue_->reserve(sentence.size());
     for (const auto& obs : sentence)
     {
         if (!obs.tagged())
@@ -33,29 +37,38 @@ state::state(const sequence::sequence& sentence) : q_idx_{0}, done_{false}
 
         std::string word = obs.symbol();
         class_label tag{obs.tag()};
-        queue_.emplace_back(
+        queue_->emplace_back(
             make_unique<leaf_node>(std::move(tag), std::move(word)));
     }
 }
 
-void state::advance(const transition& trans)
+state::state(stack_type stack, std::shared_ptr<queue_type> queue, size_t q_idx,
+             bool done)
+    : stack_{std::move(stack)},
+      queue_{std::move(queue)},
+      q_idx_{q_idx},
+      done_{done}
+{
+    // nothing
+}
+
+state state::advance(const transition& trans) const
 {
     switch (trans.type())
     {
         case transition::type_t::SHIFT:
         {
-            stack_ = stack_.push(queue_.at(q_idx_)->clone());
-            ++q_idx_;
-            break;
+            auto stack = stack_.push(queue_item(0)->clone());
+            return {stack, queue_, q_idx_ + 1, done_};
         }
 
         case transition::type_t::REDUCE_L:
         case transition::type_t::REDUCE_R:
         {
             auto right = stack_.peek()->clone();
-            stack_ = stack_.pop();
-            auto left = stack_.peek()->clone();
-            stack_ = stack_.pop();
+            auto stack = stack_.pop();
+            auto left = stack.peek()->clone();
+            stack = stack.pop();
 
             auto bin = make_unique<internal_node>(trans.label());
             bin->add_child(std::move(left));
@@ -70,33 +83,37 @@ void state::advance(const transition& trans)
                 bin->head(bin->child(1));
             }
 
-            stack_ = stack_.push(std::move(bin));
-            break;
+            stack = stack.push(std::move(bin));
+
+            return {stack, queue_, q_idx_, done_};
         }
 
         case transition::type_t::UNARY:
         {
             auto child = stack_.peek()->clone();
-            stack_ = stack_.pop();
+            auto stack = stack_.pop();
 
             auto un = make_unique<internal_node>(trans.label());
             un->add_child(std::move(child));
             un->head(un->child(0));
 
-            stack_ = stack_.push(std::move(un));
-            break;
+            stack = stack.push(std::move(un));
+            return {stack, queue_, q_idx_, done_};
         }
 
         case transition::type_t::FINALIZE:
         {
-            done_ = true;
-            break;
+            return {stack_, queue_, q_idx_, true};
         }
 
         case transition::type_t::IDLE:
         {
-            // nothing
-            break;
+            return *this;
+        }
+
+        default:
+        {
+            throw sr_parser::exception{"Unreachable"};
         }
     }
 }
@@ -286,6 +303,9 @@ bool state::legal(const transition& trans) const
 
         case transition::type_t::IDLE:
             return idle_legal(*this);
+
+        default:
+            throw sr_parser::exception{"Unreachable"};
     }
 }
 
@@ -334,7 +354,7 @@ size_t state::stack_size() const
 
 size_t state::queue_size() const
 {
-    return queue_.size() - q_idx_;
+    return queue_->size() - q_idx_;
 }
 
 const node* state::stack_item(size_t depth) const
@@ -350,8 +370,8 @@ const node* state::stack_item(size_t depth) const
 
 const leaf_node* state::queue_item(ssize_t depth) const
 {
-    if (q_idx_ + depth < queue_.size())
-        return queue_.at(q_idx_ + depth).get();
+    if (q_idx_ + depth < queue_->size())
+        return queue_->at(q_idx_ + depth).get();
     return nullptr;
 }
 

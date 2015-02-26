@@ -56,8 +56,7 @@ class absolute_discount : public language_model_ranker
  * rankers.
  */
 template <>
-std::unique_ptr<ranker> make_ranker<absolute_discount>(
-        const cpptoml::toml_group&);
+std::unique_ptr<ranker> make_ranker<absolute_discount>(const cpptoml::table&);
 }
 }
 #endif

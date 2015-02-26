@@ -19,7 +19,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -41,7 +41,7 @@ class sentence_boundary : public util::clonable<token_stream, sentence_boundary>
      * Loads the maps that contain the heuristics for the sentence
      * boundary instances.
      */
-    static void load_heuristics(const cpptoml::toml_group& config);
+    static void load_heuristics(const cpptoml::table& config);
 
     /**
      * Constructs a sentence_boundary filter, reading tokens from the
@@ -139,7 +139,7 @@ class sentence_boundary : public util::clonable<token_stream, sentence_boundary>
 template <>
 std::unique_ptr<token_stream>
     make_filter<sentence_boundary>(std::unique_ptr<token_stream>,
-                                   const cpptoml::toml_group&);
+                                   const cpptoml::table&);
 }
 }
 }

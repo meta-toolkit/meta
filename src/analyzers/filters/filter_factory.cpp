@@ -28,9 +28,9 @@ namespace analyzers
 template <class Tokenizer>
 void filter_factory::register_tokenizer()
 {
-    add(Tokenizer::id, [](std::unique_ptr<token_stream> source,
-                          const cpptoml::toml_group& config)
-    {
+    add(Tokenizer::id,
+        [](std::unique_ptr<token_stream> source, const cpptoml::table& config)
+        {
         if (source)
             throw typename Tokenizer::token_stream_exception{
                 "tokenizers must be the first filter"};

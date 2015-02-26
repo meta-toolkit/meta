@@ -21,8 +21,7 @@ namespace meta
 namespace index
 {
 
-disk_index::disk_index(const cpptoml::toml_group& config,
-                       const std::string& name)
+disk_index::disk_index(const cpptoml::table&, const std::string& name)
 {
     impl_->index_name_ = name;
 }
@@ -142,8 +141,8 @@ void disk_index::disk_index_impl::initialize_metadata(uint64_t num_docs)
 
 void disk_index::disk_index_impl::load_doc_sizes(uint64_t num_docs)
 {
-    doc_sizes_ = util::disk_vector<double>{index_name_ + files[DOC_SIZES],
-                                           num_docs};
+    doc_sizes_
+        = util::disk_vector<double>{index_name_ + files[DOC_SIZES], num_docs};
 }
 
 void disk_index::disk_index_impl::load_labels(uint64_t num_docs)

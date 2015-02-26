@@ -25,7 +25,7 @@ if(ZLIB_FOUND)
 endif()
 
 if(UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 
     # if we don't already set the standard for the compiler, detect the
     # best one available and use it
@@ -69,6 +69,9 @@ if(UNIX)
     endif()
 
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        if(CMAKE_GENERATOR STREQUAL "Ninja")
+          set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
+        endif()
         if(USE_LIBCXX)
             message("-- Locating libc++...")
             find_library(LIBCXX_LIBRARY NAMES c++ cxx)

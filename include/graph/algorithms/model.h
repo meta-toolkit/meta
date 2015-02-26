@@ -49,7 +49,7 @@ void watts_strogatz(Graph& g, uint64_t num_nodes, uint64_t num_neighbors,
  */
 template <class Graph>
 void preferential_attachment(Graph& g, uint64_t num_nodes, uint64_t node_edges,
-        std::function<double(node_id)> attr = [](node_id id) { return 1.0; });
+        std::function<double(node_id)> attr = [](node_id) { return 1.0; });
 }
 }
 }

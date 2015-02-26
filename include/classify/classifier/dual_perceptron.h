@@ -160,7 +160,7 @@ class dual_perceptron : public classifier
  */
 template <>
 std::unique_ptr<classifier> make_classifier<dual_perceptron>(
-        const cpptoml::toml_group&, std::shared_ptr<index::forward_index>);
+        const cpptoml::table&, std::shared_ptr<index::forward_index>);
 }
 }
 #endif

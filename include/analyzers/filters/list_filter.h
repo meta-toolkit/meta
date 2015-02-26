@@ -18,7 +18,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -56,8 +56,7 @@ class list_filter : public util::clonable<token_stream, list_filter>
      * @param method Whether to accept or reject tokens from the list
      */
     list_filter(std::unique_ptr<token_stream> source,
-                const std::string& filename,
-                type method = type::REJECT);
+                const std::string& filename, type method = type::REJECT);
 
     /**
      * Copy constructor.
@@ -109,7 +108,7 @@ class list_filter : public util::clonable<token_stream, list_filter>
 template <>
 std::unique_ptr<token_stream>
     make_filter<list_filter>(std::unique_ptr<token_stream>,
-                             const cpptoml::toml_group&);
+                             const cpptoml::table&);
 }
 }
 }

@@ -28,11 +28,11 @@ namespace analyzers
  * letters and such may be used as features. Function words and stop words
  * should *not* be removed and words should not be stemmed for the same reason.
  */
-class ngram_pos_analyzer : public util::multilevel_clonable
-                           <analyzer, ngram_analyzer, ngram_pos_analyzer>
+class ngram_pos_analyzer
+    : public util::multilevel_clonable<analyzer, ngram_analyzer,
+                                       ngram_pos_analyzer>
 {
-    using base = util::multilevel_clonable<analyzer,
-                                           ngram_analyzer,
+    using base = util::multilevel_clonable<analyzer, ngram_analyzer,
                                            ngram_pos_analyzer>;
 
   public:
@@ -43,7 +43,7 @@ class ngram_pos_analyzer : public util::multilevel_clonable
      * @param crf_prefix
      */
     ngram_pos_analyzer(uint16_t n, std::unique_ptr<token_stream> stream,
-            const std::string& crf_prefix);
+                       const std::string& crf_prefix);
 
     /**
      * Copy constructor.
@@ -75,9 +75,9 @@ class ngram_pos_analyzer : public util::multilevel_clonable
  * Specialization of the factory method for creating ngram_pos_analyzers.
  */
 template <>
-std::unique_ptr<analyzer> make_analyzer<ngram_pos_analyzer>(
-        const cpptoml::toml_group&,
-        const cpptoml::toml_group&);
+std::unique_ptr<analyzer>
+    make_analyzer<ngram_pos_analyzer>(const cpptoml::table&,
+                                      const cpptoml::table&);
 }
 }
 

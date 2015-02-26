@@ -13,7 +13,7 @@ namespace analyzers
 const std::string ngram_lex_analyzer::id = "ngram-lex";
 
 ngram_lex_analyzer::ngram_lex_analyzer(uint16_t n) : base{n}
-{/* nothing */
+{ /* nothing */
 }
 
 void ngram_lex_analyzer::tokenize(corpus::document& doc)
@@ -23,9 +23,9 @@ void ngram_lex_analyzer::tokenize(corpus::document& doc)
 }
 
 template <>
-std::unique_ptr<analyzer> make_analyzer
-    <ngram_lex_analyzer>(const cpptoml::toml_group&,
-                         const cpptoml::toml_group& config)
+std::unique_ptr<analyzer>
+    make_analyzer<ngram_lex_analyzer>(const cpptoml::table&,
+                                      const cpptoml::table& config)
 {
     if (auto n_val = config.get_as<int64_t>("ngram"))
         return make_unique<ngram_lex_analyzer>(*n_val);

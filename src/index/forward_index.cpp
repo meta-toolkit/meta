@@ -55,7 +55,7 @@ class forward_index::impl
     /**
      * @param config the configuration settings for this index
      */
-    void create_libsvm_postings(const cpptoml::toml_group& config);
+    void create_libsvm_postings(const cpptoml::table& config);
 
     /**
      * Initializes structures based on a libsvm-formatted file.
@@ -77,7 +77,7 @@ class forward_index::impl
      * @return whether this index will be based off of a single
      * libsvm-formatted corpus file
      */
-    bool is_libsvm_format(const cpptoml::toml_group& config) const;
+    bool is_libsvm_format(const cpptoml::table& config) const;
 
     /**
      * Calculates which documents start at which bytes in the postings file.
@@ -101,7 +101,7 @@ class forward_index::impl
     forward_index* idx_;
 };
 
-forward_index::forward_index(const cpptoml::toml_group& config)
+forward_index::forward_index(const cpptoml::table& config)
     : disk_index{config, *config.get_as<std::string>("forward-index")},
       fwd_impl_{this}
 {
@@ -197,8 +197,7 @@ void forward_index::create_index(const std::string& config_file)
     LOG(info) << "Done creating index: " << index_name() << ENDLG;
 }
 
-void forward_index::impl::create_libsvm_postings(
-    const cpptoml::toml_group& config)
+void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
 {
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)
@@ -302,10 +301,9 @@ void forward_index::impl::create_uninverted_metadata(const std::string& name)
                               idx_->index_name() + idx_->impl_->files[file]);
 }
 
-bool forward_index::impl::is_libsvm_format(
-    const cpptoml::toml_group& config) const
+bool forward_index::impl::is_libsvm_format(const cpptoml::table& config) const
 {
-    auto analyzers = config.get_group_array("analyzers")->array();
+    auto analyzers = config.get_table_array("analyzers")->get();
     if (analyzers.size() != 1)
         return false;
 

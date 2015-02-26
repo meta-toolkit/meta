@@ -58,7 +58,9 @@ class_label logistic_regression::classify(doc_id d_id)
     auto probs = predict(d_id);
     auto it = argmax(probs.begin(), probs.end(),
                      [](const std::pair<class_label, double>& pair)
-    { return pair.second; });
+                     {
+        return pair.second;
+    });
     return it->first;
 }
 
@@ -70,7 +72,7 @@ void logistic_regression::train(const std::vector<doc_id>& docs)
     using T = decltype(*classifiers_.begin());
     parallel::parallel_for(classifiers_.begin(), classifiers_.end(),
                            [&](T& pair)
-    {
+                           {
         auto train_docs = docs_by_class[pair.first];
         auto pivot_docs = docs_by_class[pivot_];
         train_docs.insert(train_docs.end(), pivot_docs.begin(),
@@ -87,8 +89,7 @@ void logistic_regression::reset()
 
 template <>
 std::unique_ptr<classifier> make_classifier<logistic_regression>(
-    const cpptoml::toml_group& config,
-    std::shared_ptr<index::forward_index> idx)
+    const cpptoml::table& config, std::shared_ptr<index::forward_index> idx)
 {
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)

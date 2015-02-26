@@ -24,7 +24,7 @@ void one_vs_one::train(const std::vector<doc_id>& docs)
 
     parallel::parallel_for(classifiers_.begin(), classifiers_.end(),
                            [&](const std::unique_ptr<binary_classifier>& p)
-    {
+                           {
         const auto& pos = partitions[p->positive_label()];
         const auto& neg = partitions[p->negative_label()];
 
@@ -45,32 +45,34 @@ class_label one_vs_one::classify(doc_id d_id)
 
     parallel::parallel_for(classifiers_.begin(), classifiers_.end(),
                            [&](const std::unique_ptr<binary_classifier>& p)
-    {
+                           {
         auto lbl = p->classify(d_id);
         std::lock_guard<std::mutex> lock{mut};
         votes[lbl]++;
     });
 
     using count_type = std::pair<const class_label, int>;
-    auto iter =
-        std::max_element(votes.begin(), votes.end(),
-                         [](const count_type& lhs, const count_type& rhs)
-    { return lhs.second < rhs.second; });
+    auto iter
+        = std::max_element(votes.begin(), votes.end(),
+                           [](const count_type& lhs, const count_type& rhs)
+                           {
+            return lhs.second < rhs.second;
+        });
     return iter->first;
 }
 
 void one_vs_one::reset()
 {
-    for(auto& p : classifiers_)
+    for (auto& p : classifiers_)
         p->reset();
 }
 
 template <>
 std::unique_ptr<classifier>
-    make_classifier<one_vs_one>(const cpptoml::toml_group& config,
+    make_classifier<one_vs_one>(const cpptoml::table& config,
                                 std::shared_ptr<index::forward_index> idx)
 {
-    auto base = config.get_group("base");
+    auto base = config.get_table("base");
     if (!base)
         throw classifier_factory::exception{
             "one-vs-all missing base-classifier parameter in config file"};
@@ -81,6 +83,5 @@ std::unique_ptr<classifier>
     };
     return make_unique<one_vs_one>(idx, create);
 }
-
 }
 }

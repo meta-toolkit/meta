@@ -119,7 +119,7 @@ void simulations()
     std::normal_distribution<> std_norm{0, 1};
     undirected_graph<> g2;
     algorithms::preferential_attachment(g2, num_nodes, num_edges,
-                                        [&](node_id id)
+                                        [&](node_id)
                                         {
         return std::abs(std_norm(gen));
     });
@@ -131,7 +131,7 @@ void simulations()
     std::gamma_distribution<> gamma2{0.5, 1.0};
     undirected_graph<> g3;
     algorithms::preferential_attachment(g3, num_nodes, num_edges,
-                                        [&](node_id id)
+                                        [&](node_id)
                                         {
         auto x = gamma1(gen);
         return x / (x + gamma2(gen));

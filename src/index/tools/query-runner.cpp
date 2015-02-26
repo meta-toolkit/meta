@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 
     // Create a ranking class based on the config file.
     auto config = cpptoml::parse_file(argv[1]);
-    auto group = config.get_group("ranker");
+    auto group = config.get_table("ranker");
     if (!group)
         throw std::runtime_error{"\"ranker\" group needed in config file!"};
     auto ranker = index::make_ranker(*group);

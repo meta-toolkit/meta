@@ -41,8 +41,7 @@ class knn : public classifier
      */
     knn(std::shared_ptr<index::inverted_index> idx,
         std::shared_ptr<index::forward_index> f_idx, uint16_t k,
-        std::unique_ptr<index::ranker> ranker,
-        bool weighted = false);
+        std::unique_ptr<index::ranker> ranker, bool weighted = false);
 
     /**
      * Creates a classification model based on training documents.
@@ -106,7 +105,7 @@ class knn : public classifier
  */
 template <>
 std::unique_ptr<classifier>
-    make_multi_index_classifier<knn>(const cpptoml::toml_group&,
+    make_multi_index_classifier<knn>(const cpptoml::table&,
                                      std::shared_ptr<index::forward_index>,
                                      std::shared_ptr<index::inverted_index>);
 }

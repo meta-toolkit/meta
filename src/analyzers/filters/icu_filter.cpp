@@ -71,7 +71,7 @@ icu_filter::operator bool() const
 template <>
 std::unique_ptr<token_stream>
     make_filter<icu_filter>(std::unique_ptr<token_stream> src,
-                            const cpptoml::toml_group& config)
+                            const cpptoml::table& config)
 {
     if (auto id = config.get_as<std::string>("id"))
         return make_unique<icu_filter>(std::move(src), *id);

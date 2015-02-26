@@ -47,6 +47,15 @@ train-sections = [0, 18]
 dev-sections = [19, 21]
 test-sections = [22, 24]
 
+[sequence]
+prefix = "perceptron-tagger"
+treebank = "penn-treebank" # relative to data prefix
+corpus = "wsj"
+section-size = 99
+train-sections = [0, 18]
+dev-sections = [19, 21]
+test-sections = [22, 24]
+
 [parser]
 prefix = "parser"
 treebank = "penn-treebank" # relative to data prefix
