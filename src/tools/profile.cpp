@@ -84,7 +84,7 @@ void write_file(Stream& stream, const std::string& in_name,
  * @param file The input file
  * @param config Configuration settings
  */
-void stem(const std::string& file, const cpptoml::toml_group& config)
+void stem(const std::string& file, const cpptoml::table&)
 {
     std::cout << "Running stemming algorithm" << std::endl;
 
@@ -105,7 +105,7 @@ void stem(const std::string& file, const cpptoml::toml_group& config)
  * @param file The input file
  * @param config Configuration settings
  */
-void stop(const std::string& file, const cpptoml::toml_group& config)
+void stop(const std::string& file, const cpptoml::table& config)
 {
     std::cout << "Running stopword removal" << std::endl;
 
@@ -128,7 +128,7 @@ void stop(const std::string& file, const cpptoml::toml_group& config)
  * @param config Configuration settings
  * @param replace Whether or not to replace words with their POS tags
  */
-void pos(const std::string& file, const cpptoml::toml_group& config,
+void pos(const std::string& file, const cpptoml::table& config,
          bool replace)
 {
     std::cout << "Running POS-tagging with replace = " << std::boolalpha
@@ -137,10 +137,10 @@ void pos(const std::string& file, const cpptoml::toml_group& config,
     using namespace meta::sequence;
 
     // load POS-tagging model
-    auto crf_group = config.get_group("crf");
+    auto crf_group = config.get_table("crf");
     auto prefix = crf_group->get_as<std::string>("prefix");
     crf crf_model{*prefix};
-    const sequence_analyzer analyzer = default_pos_analyzer(*prefix);
+    const sequence_analyzer analyzer = default_pos_analyzer();
     auto tagger = crf_model.make_tagger();
 
     // read file into a sequence
@@ -188,7 +188,7 @@ void pos(const std::string& file, const cpptoml::toml_group& config,
  * @param config Configuration settings
  * @param n The n-gram value to use in tokenization
  */
-void freq(const std::string& file, const cpptoml::toml_group& config,
+void freq(const std::string& file, const cpptoml::table&,
           uint16_t n)
 {
     std::cout << "Running frequency analysis on " << n << "-grams" << std::endl;
