@@ -138,7 +138,19 @@ void pos(const std::string& file, const cpptoml::table& config,
 
     // load POS-tagging model
     auto crf_group = config.get_table("crf");
+    if (!crf_group)
+    {
+        std::cerr << "[crf] group needed in config file" << std::endl;
+        return;
+    }
+
     auto prefix = crf_group->get_as<std::string>("prefix");
+    if (!prefix)
+    {
+        std::cerr << "[crf] group needs a prefix key" << std::endl;
+        return;
+    }
+
     crf crf_model{*prefix};
     const sequence_analyzer analyzer = default_pos_analyzer();
     auto tagger = crf_model.make_tagger();
