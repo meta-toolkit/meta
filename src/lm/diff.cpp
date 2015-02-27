@@ -14,36 +14,36 @@ namespace meta
 {
 namespace lm
 {
-diff::diff(const cpptoml::toml_group& config) : lm_{config}
+diff::diff(const cpptoml::table& config) : lm_{config}
 {
-    auto group = config.get_group("diff");
-    if (!group)
-        throw diff_exception{"missing [diff] group from config"};
+    auto table = config.get_table("diff");
+    if (!table)
+        throw diff_exception{"missing [diff] table from config"};
 
-    auto nval = group->get_as<int64_t>("n-value");
+    auto nval = table->get_as<int64_t>("n-value");
     if (!nval)
         throw diff_exception{"n-value not specified in config"};
     n_val_ = *nval;
 
-    auto edits = group->get_as<int64_t>("max-edits");
+    auto edits = table->get_as<int64_t>("max-edits");
     if (!edits)
         throw diff_exception{"max-edits not specified in config"};
     max_edits_ = *edits;
 
-    auto b_pen = group->get_as<double>("base-penalty");
+    auto b_pen = table->get_as<double>("base-penalty");
     base_penalty_ = b_pen ? *b_pen : 0.0;
 
-    auto i_pen = group->get_as<double>("insert-penalty");
+    auto i_pen = table->get_as<double>("insert-penalty");
     insert_penalty_ = i_pen ? *i_pen : 0.0;
 
-    auto s_pen = group->get_as<double>("substitute-penalty");
+    auto s_pen = table->get_as<double>("substitute-penalty");
     substitute_penalty_ = s_pen ? *s_pen : 0.0;
 
-    auto r_pen = group->get_as<double>("remove-penalty");
+    auto r_pen = table->get_as<double>("remove-penalty");
     remove_penalty_ = r_pen ? *r_pen : 0.0;
 
-    set_stems(*group);
-    set_function_words(*group);
+    set_stems(*table);
+    set_function_words(*table);
 }
 
 std::vector<std::pair<sentence, double>>
@@ -216,7 +216,7 @@ void diff::step(const sentence& sent, PQ& candidates, size_t depth)
     }
 }
 
-void diff::set_function_words(const cpptoml::toml_group& config)
+void diff::set_function_words(const cpptoml::table& config)
 {
     std::ifstream in{*config.get_as<std::string>("function-words")};
     std::string word;
@@ -224,7 +224,7 @@ void diff::set_function_words(const cpptoml::toml_group& config)
         fwords_.push_back(word);
 }
 
-void diff::set_stems(const cpptoml::toml_group& config)
+void diff::set_stems(const cpptoml::table& config)
 {
     std::unordered_set<std::string> vocab;
     auto prefix = *config.get_as<std::string>("prefix");

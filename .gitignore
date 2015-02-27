@@ -8,3 +8,5 @@ doc/
 *.o
 *.class
 .*
+data/ceeaus
+data/breast-cancer

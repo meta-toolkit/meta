@@ -105,7 +105,7 @@ class logistic_regression : public classifier
  */
 template <>
 std::unique_ptr<classifier>
-    make_classifier<logistic_regression>(const cpptoml::toml_group&,
+    make_classifier<logistic_regression>(const cpptoml::table&,
                                          std::shared_ptr<index::forward_index>);
 }
 }

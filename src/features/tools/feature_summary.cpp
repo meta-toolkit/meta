@@ -27,10 +27,10 @@ int main(int argc, char* argv[])
     logging::set_cerr_logging();
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto feature_config = config.get_group("features");
+    auto feature_config = config.get_table("features");
     if (!feature_config)
     {
-        std::cerr << "Missing [features] config group" << std::endl;
+        std::cerr << "Missing [features] config table" << std::endl;
         return 1;
     }
 

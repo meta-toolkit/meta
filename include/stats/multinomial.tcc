@@ -54,6 +54,14 @@ double multinomial<T>::counts() const
 }
 
 template <class T>
+template <class Fun>
+void multinomial<T>::each_seen_event(Fun&& fun) const
+{
+    for (const auto& count : counts_)
+        fun(count.first);
+}
+
+template <class T>
 void multinomial<T>::clear()
 {
     counts_.clear();

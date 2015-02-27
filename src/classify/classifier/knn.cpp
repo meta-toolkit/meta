@@ -120,8 +120,7 @@ void knn::reset()
 
 template <>
 std::unique_ptr<classifier> make_multi_index_classifier<knn>(
-    const cpptoml::toml_group& config,
-    std::shared_ptr<index::forward_index> idx,
+    const cpptoml::table& config, std::shared_ptr<index::forward_index> idx,
     std::shared_ptr<index::inverted_index> inv_idx)
 {
     auto k = config.get_as<int64_t>("k");
@@ -129,7 +128,7 @@ std::unique_ptr<classifier> make_multi_index_classifier<knn>(
         throw classifier_factory::exception{
             "knn requires k to be specified in its configuration"};
 
-    auto ranker = config.get_group("ranker");
+    auto ranker = config.get_table("ranker");
     if (!ranker)
         throw classifier_factory::exception{
             "knn requires a ranker to be specified in its configuration"};

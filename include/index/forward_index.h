@@ -78,10 +78,10 @@ class forward_index : public disk_index
 
   protected:
     /**
-     * @param config The toml_group that specifies how to create the
+     * @param config The table that specifies how to create the
      * index.
      */
-    forward_index(const cpptoml::toml_group& config);
+    forward_index(const cpptoml::table& config);
 
   public:
     /**

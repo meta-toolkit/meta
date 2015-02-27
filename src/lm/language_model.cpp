@@ -22,13 +22,13 @@ namespace meta
 namespace lm
 {
 
-language_model::language_model(const cpptoml::toml_group& config)
+language_model::language_model(const cpptoml::table& config)
 {
-    auto group = config.get_group("language-model");
-    auto nval = group->get_as<int64_t>("n-value");
+    auto table = config.get_table("language-model");
+    auto nval = table->get_as<int64_t>("n-value");
     if (!nval)
         throw language_model_exception{
-            "no n-value specified in language-model group"};
+            "no n-value specified in language-model table"};
 
     N_ = *nval;
 
@@ -38,17 +38,17 @@ language_model::language_model(const cpptoml::toml_group& config)
     select_method(config);
 }
 
-void language_model::select_method(const cpptoml::toml_group& config)
+void language_model::select_method(const cpptoml::table& config)
 {
-    auto group = config.get_group("language-model");
-    auto format = group->get_as<std::string>("format");
+    auto table = config.get_table("language-model");
+    auto format = table->get_as<std::string>("format");
     if (!format)
         throw language_model_exception{
-            "no format specified in language-model group"};
+            "no format specified in language-model table"};
 
     if (*format == "precomputed")
     {
-        auto prefix = group->get_as<std::string>("prefix");
+        auto prefix = table->get_as<std::string>("prefix");
         if (!prefix)
             throw language_model_exception{
                 "no prefix specified for precomputed language model"};
@@ -61,7 +61,7 @@ void language_model::select_method(const cpptoml::toml_group& config)
             "language-model format could not be determined"};
 }
 
-language_model::language_model(const cpptoml::toml_group& config, size_t n)
+language_model::language_model(const cpptoml::table& config, size_t n)
     : N_{n}
 {
     if (N_ > 1)
@@ -70,7 +70,7 @@ language_model::language_model(const cpptoml::toml_group& config, size_t n)
     select_method(config);
 }
 
-void language_model::learn_model(const cpptoml::toml_group& config)
+void language_model::learn_model(const cpptoml::table& config)
 {
     std::cout << "Learning " << N_ << "-gram language model" << std::endl;
     auto corpus = corpus::corpus::load(config);
@@ -80,7 +80,6 @@ void language_model::learn_model(const cpptoml::toml_group& config)
     stream = make_unique<tokenizers::icu_tokenizer>();
     stream = make_unique<filters::lowercase_filter>(std::move(stream));
     stream = make_unique<filters::alpha_filter>(std::move(stream));
-    stream = make_unique<filters::blank_filter>(std::move(stream));
     stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
 
     while (corpus->has_next())

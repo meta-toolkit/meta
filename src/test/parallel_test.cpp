@@ -70,11 +70,11 @@ int test_threadpool()
         for (auto& fut : futures)
         {
             auto val = fut.get();
-            ASSERT_EQUAL(val, 1);
+            ASSERT_EQUAL(val, size_t{1});
             sum += val;
         }
 
-        ASSERT_EQUAL(sum, 16);
+        ASSERT_EQUAL(sum, size_t{16});
     });
 }
 

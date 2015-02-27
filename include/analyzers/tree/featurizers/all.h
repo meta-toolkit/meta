@@ -1,0 +1,6 @@
+#include "analyzers/tree/featurizers/branch_featurizer.h"
+#include "analyzers/tree/featurizers/depth_featurizer.h"
+#include "analyzers/tree/featurizers/semi_skeleton_featurizer.h"
+#include "analyzers/tree/featurizers/skeleton_featurizer.h"
+#include "analyzers/tree/featurizers/subtree_featurizer.h"
+#include "analyzers/tree/featurizers/tag_featurizer.h"

@@ -41,7 +41,7 @@ io::parser analyzer::create_parser(const corpus::document& doc,
 }
 
 std::unique_ptr<token_stream>
-    analyzer::default_filter_chain(const cpptoml::toml_group& config)
+    analyzer::default_filter_chain(const cpptoml::table& config)
 {
 
     auto stopwords = config.get_as<std::string>("stop-words");
@@ -58,10 +58,9 @@ std::unique_ptr<token_stream>
     return result;
 }
 
-std::unique_ptr<token_stream> analyzer::load_filter(std::unique_ptr
-                                                    <token_stream> src,
-                                                    const cpptoml::toml_group
-                                                    & config)
+std::unique_ptr<token_stream>
+    analyzer::load_filter(std::unique_ptr<token_stream> src,
+                          const cpptoml::table& config)
 {
     auto type = config.get_as<std::string>("type");
     if (!type)
@@ -69,10 +68,9 @@ std::unique_ptr<token_stream> analyzer::load_filter(std::unique_ptr
     return filter_factory::get().create(*type, std::move(src), config);
 }
 
-std::unique_ptr<token_stream> analyzer::load_filters(const cpptoml::toml_group
-                                                     & global,
-                                                     const cpptoml::toml_group
-                                                     & config)
+std::unique_ptr<token_stream>
+    analyzer::load_filters(const cpptoml::table& global,
+                           const cpptoml::table& config)
 {
 
     auto check = config.get_as<std::string>("filter");
@@ -84,21 +82,21 @@ std::unique_ptr<token_stream> analyzer::load_filters(const cpptoml::toml_group
             throw analyzer_exception{"unknown filter option: " + *check};
     }
 
-    auto filters = config.get_group_array("filter");
+    auto filters = config.get_table_array("filter");
     if (!filters)
         throw analyzer_exception{"analyzer group missing filter configuration"};
     std::unique_ptr<token_stream> result;
-    for (const auto filter : filters->array())
+    for (const auto filter : filters->get())
         result = load_filter(std::move(result), *filter);
     return result;
 }
 
-std::unique_ptr<analyzer> analyzer::load(const cpptoml::toml_group& config)
+std::unique_ptr<analyzer> analyzer::load(const cpptoml::table& config)
 {
     using namespace analyzers;
     std::vector<std::unique_ptr<analyzer>> toks;
-    auto analyzers = config.get_group_array("analyzers");
-    for (auto group : analyzers->array())
+    auto analyzers = config.get_table_array("analyzers");
+    for (auto group : analyzers->get())
     {
         auto method = group->get_as<std::string>("method");
         if (!method)

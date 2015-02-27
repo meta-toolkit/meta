@@ -24,7 +24,7 @@ binary_classifier_factory::binary_classifier_factory()
 }
 
 std::unique_ptr<binary_classifier>
-    make_binary_classifier(const cpptoml::toml_group& config,
+    make_binary_classifier(const cpptoml::table& config,
                            std::shared_ptr<index::forward_index> idx,
                            class_label positive, class_label negative)
 {

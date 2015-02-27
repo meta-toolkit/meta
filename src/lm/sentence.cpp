@@ -22,7 +22,6 @@ sentence::sentence(const std::string& text)
     stream = make_unique<tokenizers::icu_tokenizer>();
     stream = make_unique<filters::lowercase_filter>(std::move(stream));
     stream = make_unique<filters::alpha_filter>(std::move(stream));
-    stream = make_unique<filters::blank_filter>(std::move(stream));
     stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
     stream->set_content(text);
     while (*stream)

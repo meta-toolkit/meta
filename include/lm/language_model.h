@@ -28,14 +28,14 @@ class language_model
      * Creates an N-gram language model based on the corpus specified in the
      * config file.
      */
-    language_model(const cpptoml::toml_group& config);
+    language_model(const cpptoml::table& config);
 
     /**
      * Creates an N-gram language model based on the corpus specified in the
      * config file.
      * @param n The value of n, which overrides any setting in the config file
      */
-    language_model(const cpptoml::toml_group& config, size_t n);
+    language_model(const cpptoml::table& config, size_t n);
 
     /**
      * Randomly generates one token sequence based on <s> and </s> symbols.
@@ -86,12 +86,12 @@ class language_model
      * @param config The config file that specifies the location of the
      * corpus
      */
-    void learn_model(const cpptoml::toml_group& config);
+    void learn_model(const cpptoml::table& config);
 
     /**
      * @param config
      */
-    void select_method(const cpptoml::toml_group& config);
+    void select_method(const cpptoml::table& config);
 
     /**
      * @param prefix Path to where the counts files are stored
@@ -120,4 +120,3 @@ class language_model_exception : public std::runtime_error
 }
 
 #endif
-

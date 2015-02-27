@@ -26,7 +26,7 @@ namespace analyzers
 class diff_analyzer : public util::clonable<analyzer, diff_analyzer>
 {
   public:
-    diff_analyzer(const cpptoml::toml_group& config,
+    diff_analyzer(const cpptoml::table& config,
             std::unique_ptr<token_stream> stream);
 
     /**
@@ -56,8 +56,8 @@ class diff_analyzer : public util::clonable<analyzer, diff_analyzer>
  */
 template <>
 std::unique_ptr<analyzer> make_analyzer<diff_analyzer>(
-        const cpptoml::toml_group&,
-        const cpptoml::toml_group&);
+        const cpptoml::table&,
+        const cpptoml::table&);
 }
 }
 #endif

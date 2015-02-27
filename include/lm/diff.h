@@ -25,7 +25,7 @@ class diff
     /**
      * @param config_file The file containing configuration information
      */
-    diff(const cpptoml::toml_group& config);
+    diff(const cpptoml::table& config);
 
     /**
      * @param sent The sentence to transform
@@ -39,12 +39,12 @@ class diff
     /**
      * @param config_file The file containing configuration information
      */
-    void set_stems(const cpptoml::toml_group& config);
+    void set_stems(const cpptoml::table& config);
 
     /**
      * @param config_file The file containing configuration information
      */
-    void set_function_words(const cpptoml::toml_group& config);
+    void set_function_words(const cpptoml::table& config);
 
     /**
      * @param sent

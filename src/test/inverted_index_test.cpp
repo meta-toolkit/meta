@@ -67,9 +67,9 @@ template <class Index>
 void check_ceeaus_expected(Index& idx)
 {
     double epsilon = 0.001;
-    ASSERT_EQUAL(idx.num_docs(), 1008);
+    ASSERT_EQUAL(idx.num_docs(), 1008ul);
     ASSERT_LESS(std::abs(idx.avg_doc_length() - 128.236), epsilon);
-    ASSERT_EQUAL(idx.unique_terms(), 3944);
+    ASSERT_EQUAL(idx.unique_terms(), 3944ul);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};
     uint64_t size;
@@ -90,7 +90,7 @@ template <class Index>
 void check_term_id(Index& idx)
 {
     term_id t_id = idx.get_term_id("japanes");
-    ASSERT_EQUAL(idx.doc_freq(t_id), 69);
+    ASSERT_EQUAL(idx.doc_freq(t_id), 69ul);
 
     term_id first;
     double second;

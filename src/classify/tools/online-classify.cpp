@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 
     logging::set_cerr_logging();
     auto config = cpptoml::parse_file(argv[1]);
-    auto class_config = config.get_group("classifier");
+    auto class_config = config.get_table("classifier");
     if (!class_config)
     {
         std::cerr << "Missing classifier configuration group in " << argv[1]

@@ -18,7 +18,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -61,7 +61,7 @@ class analyzer
      * @param config The config group used to create the analyzer from
      * @return an analyzer as specified by a config object
      */
-    static std::unique_ptr<analyzer> load(const cpptoml::toml_group& config);
+    static std::unique_ptr<analyzer> load(const cpptoml::table& config);
 
     /**
      * @param config The config group used to create the analyzer from
@@ -69,27 +69,25 @@ class analyzer
      * based on a config object
      */
     static std::unique_ptr<token_stream>
-        default_filter_chain(const cpptoml::toml_group& config);
+        default_filter_chain(const cpptoml::table& config);
 
     /**
      * @param global The original config object with all parameters
      * @param config The config group used to create the filters from
      * @return a filter chain as specified by a config object
      */
-    static std::unique_ptr<token_stream> load_filters(const cpptoml::toml_group
-                                                      & global,
-                                                      const cpptoml::toml_group
-                                                      & config);
+    static std::unique_ptr<token_stream>
+        load_filters(const cpptoml::table& global,
+                     const cpptoml::table& config);
 
     /**
      * @param src The token stream that will feed into this filter
      * @param config The config group used to create the filter from
      * @return a single filter specified by a config object
      */
-    static std::unique_ptr<token_stream> load_filter(std::unique_ptr
-                                                     <token_stream> src,
-                                                     const cpptoml::toml_group
-                                                     & config);
+    static std::unique_ptr<token_stream>
+        load_filter(std::unique_ptr<token_stream> src,
+                    const cpptoml::table& config);
 
     /**
      * @param doc The document to parse

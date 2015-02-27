@@ -17,7 +17,7 @@ namespace analyzers
 
 const std::string diff_analyzer::id = "diff";
 
-diff_analyzer::diff_analyzer(const cpptoml::toml_group& config,
+diff_analyzer::diff_analyzer(const cpptoml::table& config,
                              std::unique_ptr<token_stream> stream)
     : stream_{std::move(stream)}, diff_{config}
 {
@@ -75,8 +75,8 @@ void diff_analyzer::tokenize(corpus::document& doc)
 
 template <>
 std::unique_ptr<analyzer>
-    make_analyzer<diff_analyzer>(const cpptoml::toml_group& global,
-                                 const cpptoml::toml_group& config)
+    make_analyzer<diff_analyzer>(const cpptoml::table& global,
+                                 const cpptoml::table& config)
 {
     auto filts = analyzer::load_filters(global, config);
     return make_unique<diff_analyzer>(global, std::move(filts));

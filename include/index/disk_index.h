@@ -18,7 +18,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -164,7 +164,7 @@ class disk_index
      * @param config The config settings used to create this index
      * @param name The name of this disk_index
      */
-    disk_index(const cpptoml::toml_group& config, const std::string& name);
+    disk_index(const cpptoml::table& config, const std::string& name);
 
     /**
      * disk_index may not be copy-constructed.

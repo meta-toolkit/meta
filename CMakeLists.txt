@@ -9,7 +9,8 @@ include(CTest)
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 include(CheckCXXSourceRuns)
-
+include(ExternalProject)
+include(FindZLIB)
 
 include_directories(include/)
 
@@ -19,8 +20,12 @@ find_package(Threads REQUIRED)
 find_package(ICU COMPONENTS data i18n uc REQUIRED)
 include_directories(SYSTEM ${ICU_INCLUDE_DIRS})
 
+if(ZLIB_FOUND)
+  include_directories(SYSTEM ${ZLIB_INCLUDE_DIRS})
+endif()
+
 if(UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 
     # if we don't already set the standard for the compiler, detect the
     # best one available and use it
@@ -64,6 +69,9 @@ if(UNIX)
     endif()
 
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        if(CMAKE_GENERATOR STREQUAL "Ninja")
+          set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
+        endif()
         if(USE_LIBCXX)
             message("-- Locating libc++...")
             find_library(LIBCXX_LIBRARY NAMES c++ cxx)
@@ -100,6 +108,12 @@ endif()
 
 add_library(meta-definitions INTERFACE)
 target_include_directories(meta-definitions INTERFACE ${PROJECT_SOURCE_DIR}/include)
+
+if(ZLIB_FOUND)
+  target_include_directories(meta-definitions INTERFACE
+                             ${ZLIB_INCLUDE_DIRS})
+  target_compile_definitions(meta-definitions INTERFACE -DMETA_HAS_ZLIB)
+endif()
 
 if(HAS_CXX14 OR HAS_CXX1Y)
     target_compile_definitions(meta-definitions INTERFACE -DMETA_HAS_CXX14=1)

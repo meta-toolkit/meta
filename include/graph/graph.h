@@ -27,6 +27,7 @@ class graph
      * @return the Node object that the id represents
      */
     virtual Node& node(node_id id);
+    virtual const Node& node(node_id id) const;
 
     /**
      * @param source
@@ -53,12 +54,18 @@ class graph
     virtual node_id insert(Node node) = 0;
 
     /**
+     * Constructs a node with forwarded arguments.
+     * @return the id of the inserted node
+     */
+    template <class... Args>
+    node_id emplace(Args&&... args);
+
+    /**
      * @param edge
      * @param source
      * @param dest
      */
-    virtual void add_edge(const Edge& edge, node_id source,
-                          node_id dest) = 0;
+    virtual void add_edge(Edge edge, node_id source, node_id dest) = 0;
 
     /**
      * Adds a default edge between the two nodes.

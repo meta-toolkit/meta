@@ -27,36 +27,32 @@ namespace meta
  * Represents the name of a class used in classification or feature
  * selection.
  */
-MAKE_IDENTIFIER(class_label, std::string)
+MAKE_IDENTIFIER_UDL(class_label, std::string, _cl)
 
 /*
  * Numbering system for string terms.
  */
-MAKE_NUMERIC_IDENTIFIER(term_id, uint64_t)
+MAKE_NUMERIC_IDENTIFIER_UDL(term_id, uint64_t, _tid)
 
 /*
  * Numbering system for documents.
  */
-MAKE_NUMERIC_IDENTIFIER(doc_id, uint64_t)
+MAKE_NUMERIC_IDENTIFIER_UDL(doc_id, uint64_t, _did)
 
 /*
  * Numbering system for class label ids.
  */
-MAKE_NUMERIC_IDENTIFIER(label_id, uint32_t)
+MAKE_NUMERIC_IDENTIFIER_UDL(label_id, uint32_t, _lid)
 
 /*
  * Numbering system for query ids.
  */
-MAKE_NUMERIC_IDENTIFIER(query_id, uint64_t)
+MAKE_NUMERIC_IDENTIFIER_UDL(query_id, uint64_t, _qid)
 
 /*
  * Numbering system for node ids.
  */
-#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
-MAKE_NUMERIC_IDENTIFIER(node_id, uint64_t)
-#else
-using node_id = uint64_t;
-#endif
+MAKE_NUMERIC_IDENTIFIER_UDL(node_id, uint64_t, _nid)
 
 /**
  * Containers to be used for caching purposes.

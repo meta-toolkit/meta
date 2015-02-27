@@ -15,10 +15,12 @@ namespace classify
 template <class Classifier>
 void classifier_factory::reg()
 {
-    add(Classifier::id, [](const cpptoml::toml_group& config,
+    add(Classifier::id, [](const cpptoml::table& config,
                            std::shared_ptr<index::forward_index> idx,
                            std::shared_ptr<index::inverted_index>)
-    { return make_classifier<Classifier>(config, std::move(idx)); });
+        {
+        return make_classifier<Classifier>(config, std::move(idx));
+    });
 }
 
 template <class Classifier>
@@ -44,8 +46,7 @@ classifier_factory::classifier_factory()
 }
 
 std::unique_ptr<classifier> make_classifier(
-    const cpptoml::toml_group& config,
-    std::shared_ptr<index::forward_index> idx,
+    const cpptoml::table& config, std::shared_ptr<index::forward_index> idx,
     std::shared_ptr<index::inverted_index> inv_idx /*= nullptr*/)
 {
     auto id = config.get_as<std::string>("method");

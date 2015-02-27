@@ -29,7 +29,7 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
     return load(config);
 }
 
-std::unique_ptr<corpus> corpus::load(const cpptoml::toml_group& config)
+std::unique_ptr<corpus> corpus::load(const cpptoml::table& config)
 {
     auto type = config.get_as<std::string>("corpus-type");
     if (!type)

@@ -16,7 +16,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -31,7 +31,7 @@ namespace classify
  */
 class classifier_factory
     : public util::factory<classifier_factory, classifier,
-                           const cpptoml::toml_group&,
+                           const cpptoml::table&,
                            std::shared_ptr<index::forward_index>,
                            std::shared_ptr<index::inverted_index>>
 {
@@ -70,7 +70,7 @@ class classifier_factory
  * configuration
  */
 std::unique_ptr<classifier>
-    make_classifier(const cpptoml::toml_group& config,
+    make_classifier(const cpptoml::table& config,
                     std::shared_ptr<index::forward_index> idx,
                     std::shared_ptr<index::inverted_index> inv_idx = nullptr);
 
@@ -89,10 +89,9 @@ std::unique_ptr<classifier>
  */
 template <class Classifier>
 std::unique_ptr<classifier>
-    make_classifier(const cpptoml::toml_group& config,
+    make_classifier(const cpptoml::table&,
                     std::shared_ptr<index::forward_index> idx)
 {
-    (void)config; // silence unused variable warning
     return make_unique<Classifier>(idx);
 }
 
@@ -113,11 +112,10 @@ std::unique_ptr<classifier>
  */
 template <class Classifier>
 std::unique_ptr<classifier>
-    make_multi_index_classifier(const cpptoml::toml_group& config,
+    make_multi_index_classifier(const cpptoml::table&,
                                 std::shared_ptr<index::forward_index> idx,
                                 std::shared_ptr<index::inverted_index> inv_idx)
 {
-    (void)config; // silence unused variable warning
     return make_unique<Classifier>(idx, inv_idx);
 }
 
@@ -132,10 +130,12 @@ void register_classifier()
     // wrap the make_classifier function to make it appear like it takes
     // two indexes, when we really only care about one.
     classifier_factory::get().add(Classifier::id,
-                                  [](const cpptoml::toml_group& config,
+                                  [](const cpptoml::table& config,
                                      std::shared_ptr<index::forward_index> idx,
                                      std::shared_ptr<index::inverted_index>)
-    { return make_classifier<Classifier>(config, std::move(idx)); });
+                                  {
+        return make_classifier<Classifier>(config, std::move(idx));
+    });
 }
 
 /**

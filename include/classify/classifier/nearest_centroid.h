@@ -92,7 +92,7 @@ class nearest_centroid : public classifier
  */
 template <>
 std::unique_ptr<classifier> make_multi_index_classifier<nearest_centroid>(
-    const cpptoml::toml_group&, std::shared_ptr<index::forward_index>,
+    const cpptoml::table&, std::shared_ptr<index::forward_index>,
     std::shared_ptr<index::inverted_index>);
 }
 }

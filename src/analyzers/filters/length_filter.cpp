@@ -78,9 +78,9 @@ void length_filter::next_token()
 }
 
 template <>
-std::unique_ptr<token_stream> make_filter<length_filter>(
-        std::unique_ptr<token_stream> src,
-        const cpptoml::toml_group& config)
+std::unique_ptr<token_stream>
+    make_filter<length_filter>(std::unique_ptr<token_stream> src,
+                               const cpptoml::table& config)
 {
     using exception = token_stream::token_stream_exception;
     auto min = config.get_as<int64_t>("min");
@@ -89,9 +89,9 @@ std::unique_ptr<token_stream> make_filter<length_filter>(
     auto max = config.get_as<int64_t>("max");
     if (!max)
         throw exception{"max required for length filter config"};
-    return make_unique
-        <length_filter>(std::move(src), static_cast<uint64_t>(*min),
-                        static_cast<uint64_t>(*max));
+    return make_unique<length_filter>(std::move(src),
+                                      static_cast<uint64_t>(*min),
+                                      static_cast<uint64_t>(*max));
 }
 }
 }

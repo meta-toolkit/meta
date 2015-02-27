@@ -27,30 +27,30 @@ selector_factory::selector_factory()
 }
 
 std::unique_ptr<feature_selector>
-    make_selector(const cpptoml::toml_group& config,
+    make_selector(const cpptoml::table& config,
                   std::shared_ptr<index::forward_index> idx)
 {
-    auto group = config.get_group("features");
-    if (!group)
+    auto table = config.get_table("features");
+    if (!table)
         throw selector_factory::exception{
-            "[features] group missing from config file"};
+            "[features] table missing from config file"};
 
-    auto prefix = group->get_as<std::string>("prefix");
+    auto prefix = table->get_as<std::string>("prefix");
     if (!prefix)
-        throw selector_factory::exception{"no prefix in [features] group"};
+        throw selector_factory::exception{"no prefix in [features] table"};
 
-    auto method = group->get_as<std::string>("method");
+    auto method = table->get_as<std::string>("method");
     if (!method)
         throw selector_factory::exception{
-            "feature selection method required in [features] group"};
+            "feature selection method required in [features] table"};
 
     uint64_t features_per_class = 20;
-    auto num_features = group->get_as<int64_t>("features-per-class");
+    auto num_features = table->get_as<int64_t>("features-per-class");
     if (num_features)
         features_per_class = *num_features;
 
     auto selector
-        = selector_factory::get().create(*method, *group, std::move(idx));
+        = selector_factory::get().create(*method, *table, std::move(idx));
     selector->init(features_per_class);
     return selector;
 }

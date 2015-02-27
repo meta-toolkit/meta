@@ -21,11 +21,11 @@ namespace analyzers
 /**
  * Analyzes documents using their tokenized words.
  */
-class ngram_word_analyzer : public util::multilevel_clonable<
-                            analyzer, ngram_analyzer, ngram_word_analyzer>
+class ngram_word_analyzer
+    : public util::multilevel_clonable<analyzer, ngram_analyzer,
+                                       ngram_word_analyzer>
 {
-    using base = util::multilevel_clonable<analyzer,
-                                           ngram_analyzer,
+    using base = util::multilevel_clonable<analyzer, ngram_analyzer,
                                            ngram_word_analyzer>;
 
   public:
@@ -60,9 +60,9 @@ class ngram_word_analyzer : public util::multilevel_clonable<
  * Specialization of the factory method for creating ngram_word_analyzers.
  */
 template <>
-std::unique_ptr<analyzer> make_analyzer<ngram_word_analyzer>(
-        const cpptoml::toml_group&,
-        const cpptoml::toml_group&);
+std::unique_ptr<analyzer>
+    make_analyzer<ngram_word_analyzer>(const cpptoml::table&,
+                                       const cpptoml::table&);
 }
 }
 #endif

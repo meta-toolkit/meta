@@ -114,7 +114,6 @@ bool isalpha(uint32_t codepoint);
  * @param codepoint The codepoint in question
  */
 bool isblank(uint32_t codepoint);
-
 }
 }
 

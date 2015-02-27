@@ -6,6 +6,7 @@
 #ifndef META_SENTENCE_H_
 #define META_SENTENCE_H_
 
+#include <stdexcept>
 #include <deque>
 #include <vector>
 #include <string>

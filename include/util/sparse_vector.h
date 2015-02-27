@@ -74,6 +74,13 @@ class sparse_vector
     Value at(const Index& index) const;
 
     /**
+     * @param index The index of the sparse vector to search for
+     * @return an iterator to that position, or the end iterator if it
+     * does not exist
+     */
+    const_iterator find(const Index& index) const;
+
+    /**
      * Adds a new element to the vector, placing it at the back.
      *
      * This assumes that you are adding elements in sorted order by
@@ -101,6 +108,12 @@ class sparse_vector
      * Optimises the memory usage of the vector.
      */
     void shrink_to_fit();
+
+    /**
+     * Condenses the vector to include only non-zero (value initialized)
+     * entries.
+     */
+    void condense();
 
     /**
      * @return the number of non-zero elements in the vector

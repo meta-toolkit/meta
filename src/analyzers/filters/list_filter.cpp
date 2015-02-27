@@ -95,9 +95,9 @@ void list_filter::next_token()
 }
 
 template <>
-std::unique_ptr<token_stream> make_filter<list_filter>(
-        std::unique_ptr<token_stream> src,
-        const cpptoml::toml_group& config)
+std::unique_ptr<token_stream>
+    make_filter<list_filter>(std::unique_ptr<token_stream> src,
+                             const cpptoml::table& config)
 {
     using exception = token_stream::token_stream_exception;
     auto method = config.get_as<std::string>("method");

@@ -16,7 +16,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -31,7 +31,7 @@ namespace features
  */
 class selector_factory
     : public util::factory<selector_factory, feature_selector,
-                           const cpptoml::toml_group&,
+                           const cpptoml::table&,
                            std::shared_ptr<index::forward_index>>
 {
     friend base_factory;
@@ -52,7 +52,7 @@ class selector_factory
 /**
  * Convenience method for creating a selector using the factory.
  *
- * @param config The configuration group that specifies the configuration
+ * @param config The configuration table that specifies the configuration
  * for the selector to be created
  * @param idx The forward_index to be passed to the selector being
  * created
@@ -61,7 +61,7 @@ class selector_factory
  * configuration
  */
 std::unique_ptr<feature_selector>
-    make_selector(const cpptoml::toml_group& config,
+    make_selector(const cpptoml::table& config,
                   std::shared_ptr<index::forward_index> idx);
 
 /**
@@ -71,17 +71,17 @@ std::unique_ptr<feature_selector>
  */
 template <class Selector>
 std::unique_ptr<feature_selector>
-    make_selector(const cpptoml::toml_group& config,
+    make_selector(const cpptoml::table& config,
                   std::shared_ptr<index::forward_index> idx)
 {
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)
-        throw selector_factory::exception{"no prefix in [features] group"};
+        throw selector_factory::exception{"no prefix in [features] table"};
 
     auto method = config.get_as<std::string>("method");
     if (!method)
         throw selector_factory::exception{
-            "feature selection method required in [features] group"};
+            "feature selection method required in [features] table"};
 
     return make_unique<Selector>(*prefix + "." + *method, std::move(idx));
 }
@@ -94,7 +94,7 @@ template <class Selector>
 void register_selector()
 {
     selector_factory::get().add(Selector::id,
-                                [](const cpptoml::toml_group& config,
+                                [](const cpptoml::table& config,
                                    std::shared_ptr<index::forward_index> idx)
                                 {
         return make_selector<feature_selector>(config, std::move(idx));

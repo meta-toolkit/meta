@@ -45,10 +45,10 @@ void one_vs_all::reset()
 
 template <>
 std::unique_ptr<classifier>
-    make_classifier<one_vs_all>(const cpptoml::toml_group& config,
+    make_classifier<one_vs_all>(const cpptoml::table& config,
                                 std::shared_ptr<index::forward_index> idx)
 {
-    auto base = config.get_group("base");
+    auto base = config.get_table("base");
     if (!base)
         throw classifier_factory::exception{
             "one-vs-all missing base-classifier parameter in config file"};
