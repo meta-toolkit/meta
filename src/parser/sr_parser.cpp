@@ -36,6 +36,9 @@ sr_parser::sr_parser(const std::string& prefix) : trans_{prefix}
 
 parse_tree sr_parser::parse(const sequence::sequence& sentence) const
 {
+    if (sentence.size() == 0)
+        return {make_unique<internal_node>("ROOT"_cl)};
+
     state_analyzer analyzer;
     state st{sentence};
 
