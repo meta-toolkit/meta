@@ -15,8 +15,8 @@
 #include "analyzers/filters/all.h"
 #include "analyzers/ngram/ngram_word_analyzer.h"
 #include "corpus/document.h"
-#include "sequence/crf/crf.h"
-#include "sequence/crf/tagger.h"
+#include "parser/sr_parser.h"
+#include "sequence/perceptron.h"
 #include "sequence/io/ptb_parser.h"
 #include "sequence/sequence.h"
 
@@ -128,67 +128,140 @@ void stop(const std::string& file, const cpptoml::table& config)
  * @param config Configuration settings
  * @param replace Whether or not to replace words with their POS tags
  */
-void pos(const std::string& file, const cpptoml::table& config,
-         bool replace)
+void pos(const std::string& file, const cpptoml::table& config, bool replace)
 {
     std::cout << "Running POS-tagging with replace = " << std::boolalpha
               << replace << std::endl;
 
-    using namespace meta::sequence;
-
-    // load POS-tagging model
-    auto crf_group = config.get_table("crf");
-    if (!crf_group)
+    auto seq_grp = config.get_table("sequence");
+    if (!seq_grp)
     {
-        std::cerr << "[crf] group needed in config file" << std::endl;
+        std::cerr << "[sequence] group needed in config file" << std::endl;
         return;
     }
 
-    auto prefix = crf_group->get_as<std::string>("prefix");
+    auto prefix = seq_grp->get_as<std::string>("prefix");
     if (!prefix)
     {
-        std::cerr << "[crf] group needs a prefix key" << std::endl;
+        std::cerr << "[sequence] group needs a prefix key" << std::endl;
         return;
     }
 
-    crf crf_model{*prefix};
-    const sequence_analyzer analyzer = default_pos_analyzer();
-    auto tagger = crf_model.make_tagger();
+    std::cout << "Loading tagging model" << std::endl;
+    sequence::perceptron tagger{*prefix};
 
-    // read file into a sequence
+    // construct the token filter chain
     std::unique_ptr<analyzers::token_stream> stream
         = make_unique<analyzers::tokenizers::icu_tokenizer>();
+    stream = make_unique<analyzers::filters::ptb_normalizer>(std::move(stream));
+
     stream->set_content(filesystem::file_text(file));
-    meta::sequence::sequence seq;
-    while (*stream)
-    {
-        auto token = stream->next();
-        if (token == " ")
-            continue;
-        seq.add_observation({symbol_t{token}, tag_t{"[UNK]"}});
-    }
 
-    // annotate sequence with POS tags
-    analyzer.analyze(seq);
-    tagger.tag(seq);
-
-    // write output to file
+    // tag each sentence in the file
+    // and write its output to the output file
     auto out_name = no_ext(file)
                     + (replace ? ".pos-replace.txt" : ".pos-tagged.txt");
     std::ofstream outfile{out_name};
-    for (auto& obs : seq)
+    sequence::sequence seq;
+    while (*stream)
     {
-        if (obs.symbol() == symbol_t{"<s>"})
-            continue;
-        if (obs.symbol() == symbol_t{"</s>"})
+        auto token = stream->next();
+        if (token == "<s>")
         {
-            outfile << std::endl;
-            continue;
+            seq = {};
         }
-        if (replace)
-            outfile << analyzer.tag(obs.label()) << " ";
+        else if (token == "</s>")
+        {
+            tagger.tag(seq);
+            for (const auto& obs : seq)
+            {
+                if (replace)
+                    outfile << obs.tag() << " ";
+                else
+                    outfile << obs.symbol() << "_" << obs.tag() << " ";
+            }
+            outfile << std::endl;
+        }
         else
-            outfile << obs.symbol() << "_" << analyzer.tag(obs.label()) << " ";
+        {
+            seq.add_symbol(sequence::symbol_t{token});
+        }
+    }
+
+    std::cout << " -> file saved as " << out_name << std::endl;
+}
+
+/**
+ * Parses all sentences in a text file.
+ */
+void parse(const std::string& file, const cpptoml::table& config)
+{
+    std::cout << "Running parser" << std::endl;
+
+    auto seq_grp = config.get_table("sequence");
+    if (!seq_grp)
+    {
+        std::cerr << "[sequence] group needed in config file" << std::endl;
+        return;
+    }
+
+    auto prefix = seq_grp->get_as<std::string>("prefix");
+    if (!prefix)
+    {
+        std::cerr << "[sequence] group needs a prefix key" << std::endl;
+        return;
+    }
+
+    auto parser_grp = config.get_table("parser");
+    if (!parser_grp)
+    {
+        std::cerr << "[parser] group needed in config file" << std::endl;
+        return;
+    }
+
+    auto parser_prefix = parser_grp->get_as<std::string>("prefix");
+    if (!parser_prefix)
+    {
+        std::cerr << "[parser] group needs a prefix key" << std::endl;
+        return;
+    }
+
+    std::cout << "Loading tagging model" << std::endl;
+    // load POS-tagging model
+    sequence::perceptron tagger{*prefix};
+
+    std::cout << "Loading parser model" << std::endl;
+    // load parser model
+    parser::sr_parser parser{*parser_prefix};
+
+    // construct the token filter chain
+    std::unique_ptr<analyzers::token_stream> stream
+        = make_unique<analyzers::tokenizers::icu_tokenizer>();
+    stream = make_unique<analyzers::filters::ptb_normalizer>(std::move(stream));
+
+    stream->set_content(filesystem::file_text(file));
+
+    // parse each sentence in the file
+    // and write its output to the output file
+    auto out_name = no_ext(file) + ".parsed.txt";
+    std::ofstream outfile{out_name};
+    sequence::sequence seq;
+    while (*stream)
+    {
+        auto token = stream->next();
+        if (token == "<s>")
+        {
+            seq = {};
+        }
+        else if (token == "</s>")
+        {
+            tagger.tag(seq);
+            parser.parse(seq).pretty_print(outfile);
+        }
+        else
+        {
+            seq.add_symbol(sequence::symbol_t{token});
+        }
     }
 
     std::cout << " -> file saved as " << out_name << std::endl;
@@ -200,8 +273,7 @@ void pos(const std::string& file, const cpptoml::table& config,
  * @param config Configuration settings
  * @param n The n-gram value to use in tokenization
  */
-void freq(const std::string& file, const cpptoml::table&,
-          uint16_t n)
+void freq(const std::string& file, const cpptoml::table&, uint16_t n)
 {
     std::cout << "Running frequency analysis on " << n << "-grams" << std::endl;
 
@@ -246,6 +318,8 @@ int main(int argc, char* argv[])
         pos(file, config, false);
     if (all || args.find("--pos-replace") != args.end())
         pos(file, config, true);
+    if (all || args.find("--parse") != args.end())
+        parse(file, config);
     if (all || args.find("--freq-unigram") != args.end())
         freq(file, config, 1);
     if (all || args.find("--freq-bigram") != args.end())
