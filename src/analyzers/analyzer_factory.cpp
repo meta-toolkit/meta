@@ -20,12 +20,7 @@ void analyzer_factory::register_analyzer()
 analyzer_factory::analyzer_factory()
 {
     // built-in analyzers
-    register_analyzer<branch_analyzer>();
-    register_analyzer<depth_analyzer>();
-    register_analyzer<semi_skeleton_analyzer>();
-    register_analyzer<skeleton_analyzer>();
-    register_analyzer<subtree_analyzer>();
-    register_analyzer<tag_analyzer>();
+    register_analyzer<tree_analyzer>();
     register_analyzer<ngram_word_analyzer>();
     register_analyzer<ngram_lex_analyzer>();
     register_analyzer<ngram_pos_analyzer>();

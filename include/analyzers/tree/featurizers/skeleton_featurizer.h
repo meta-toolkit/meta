@@ -1,5 +1,5 @@
 /**
- * @file skeleton_analyzer.h
+ * @file skeleton_featurizer.h
  * @author Sean Massung
  * @author Chase Geigle
  *
@@ -7,8 +7,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_SKELETON_ANALYZER_H_
-#define META_SKELETON_ANALYZER_H_
+#ifndef META_SKELETON_FEATURIZER_H_
+#define META_SKELETON_FEATURIZER_H_
 
 #include "analyzers/tree/tree_analyzer.h"
 #include "util/clonable.h"
@@ -21,9 +21,8 @@ namespace analyzers
 /**
  * Tokenizes parse trees by only tokenizing the tree structure itself.
  */
-class skeleton_analyzer
-    : public util::multilevel_clonable<analyzer,
-        tree_analyzer<skeleton_analyzer>, skeleton_analyzer>
+class skeleton_featurizer
+    : public util::clonable<tree_featurizer, skeleton_featurizer>
 {
   public:
     /**
@@ -31,9 +30,10 @@ class skeleton_analyzer
      * @param doc The document to parse
      * @param tree The current parse_tree in the document
      */
-    void tree_tokenize(corpus::document& doc, const parse_tree& tree);
+    void tree_tokenize(corpus::document& doc,
+                       const parser::parse_tree& tree) const override;
 
-    /// Identifier for this analyzer
+    /// Identifier for this featurizer
     const static std::string id;
 };
 }

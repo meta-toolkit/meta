@@ -1,5 +1,5 @@
 /**
- * @file depth_analyzer.h
+ * @file depth_featurizer.h
  * @author Sean Massung
  * @author Chase Geigle
  *
@@ -7,10 +7,10 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_DEPTH_ANALYZER_H_
-#define META_DEPTH_ANALYZER_H_
+#ifndef META_DEPTH_FEATURIZER_H_
+#define META_DEPTH_FEATURIZER_H_
 
-#include "analyzers/tree/tree_analyzer.h"
+#include "analyzers/tree/featurizers/tree_featurizer.h"
 #include "util/clonable.h"
 
 namespace meta
@@ -21,8 +21,8 @@ namespace analyzers
 /**
  * Tokenizes parse trees by extracting depth features.
  */
-class depth_analyzer : public util::multilevel_clonable<analyzer,
-                                tree_analyzer<depth_analyzer>, depth_analyzer>
+class depth_featurizer
+    : public util::clonable<tree_featurizer, depth_featurizer>
 {
   public:
     /**
@@ -30,9 +30,10 @@ class depth_analyzer : public util::multilevel_clonable<analyzer,
      * @param doc The document to parse
      * @param tree The current parse_tree in the document
      */
-    void tree_tokenize(corpus::document& doc, const parse_tree& tree);
+    void tree_tokenize(corpus::document& doc,
+                       const parser::parse_tree& tree) const override;
 
-    /// Identifier for this analyzer
+    /// Identifier for this featurizer
     const static std::string id;
 };
 }
