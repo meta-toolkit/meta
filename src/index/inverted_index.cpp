@@ -95,6 +95,21 @@ inverted_index::inverted_index(inverted_index&&) = default;
 inverted_index& inverted_index::operator=(inverted_index&&) = default;
 inverted_index::~inverted_index() = default;
 
+bool inverted_index::valid() const
+{
+    for (auto& f : impl_->files)
+    {
+        if (!filesystem::file_exists(index_name() + "/" + std::string{f}))
+        {
+            LOG(info)
+                << "Existing inverted index detected as invalid; recreating"
+                << ENDLG;
+            return false;
+        }
+    }
+    return true;
+}
+
 void inverted_index::create_index(const std::string& config_file)
 {
     // save the config file so we can recreate the analyzer

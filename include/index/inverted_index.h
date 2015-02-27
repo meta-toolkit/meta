@@ -172,6 +172,11 @@ class inverted_index : public disk_index
      */
     void load_index();
 
+    /**
+     * @return whether this index contains all necessary files
+     */
+    bool valid() const;
+
     /// Forward declare the implementation
     class impl;
     /// Implementation of this index
