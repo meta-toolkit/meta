@@ -120,7 +120,8 @@ void sequence_analyzer::analyze(sequence& sequence, uint64_t t) const
     for (const auto& fn : obs_fns_)
         fn(sequence, t, coll);
 
-    if (!label_id_mapping_.contains_key(sequence[t].tag()))
+    if (!sequence[t].tagged()
+        || !label_id_mapping_.contains_key(sequence[t].tag()))
         sequence[t].label(label_id(label_id_mapping_.size()));
     else
         sequence[t].label(label_id_mapping_.get_value(sequence[t].tag()));
