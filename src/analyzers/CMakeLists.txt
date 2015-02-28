@@ -9,9 +9,7 @@ add_library(meta-analyzers analyzer.cpp
                            libsvm_analyzer.cpp
                            multi_analyzer.cpp
                            ngram/ngram_analyzer.cpp
-                           ngram/ngram_lex_analyzer.cpp
                            ngram/ngram_pos_analyzer.cpp
-                           ngram/ngram_simple_analyzer.cpp
                            ngram/ngram_word_analyzer.cpp
                            tree/tree_analyzer.cpp
                            tree/featurizers/branch_featurizer.cpp
