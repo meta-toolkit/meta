@@ -149,6 +149,28 @@ int inverted_index_tests()
         check_term_id(*idx); // twice to check splay_caching
     });
 
+#if META_HAS_ZLIB
+    create_config("gz");
+    system("rm -rf ceeaus-inv");
+
+    num_failed += testing::run_test("inverted-index-build-gz-corpus", [&]()
+                                    {
+        auto idx
+            = index::make_index<index::inverted_index, caching::splay_cache>(
+                "test-config.toml", 10000);
+        check_ceeaus_expected(*idx);
+    });
+
+    num_failed += testing::run_test("inverted-index-read-gz-corpus", [&]()
+                                    {
+        auto idx
+            = index::make_index<index::inverted_index, caching::splay_cache>(
+                "test-config.toml", 10000);
+        check_ceeaus_expected(*idx);
+        check_term_id(*idx);
+    });
+#endif
+
     // test different caches
 
     num_failed += testing::run_test("inverted-index-dblru-cache", [&]()
