@@ -7,6 +7,8 @@
 #include "index/inverted_index.h"
 #include "caching/all.h"
 #include "logging/logger.h"
+#include "parser/analyzers/tree_analyzer.h"
+#include "sequence/analyzers/ngram_pos_analyzer.h"
 #include "util/time.h"
 
 using namespace meta;
@@ -24,6 +26,10 @@ int main(int argc, char* argv[])
 
     // Turn on logging to std::cerr.
     logging::set_cerr_logging();
+
+    // Register additional analyzers
+    parser::register_analyzers();
+    sequence::register_analyzers();
 
     // Time how long it takes to create the index. By default, common::time's
     //  unit of measurement is milliseconds.

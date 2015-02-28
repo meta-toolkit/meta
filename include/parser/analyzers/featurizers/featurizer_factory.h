@@ -10,7 +10,7 @@
 #ifndef META_ANALYZERS_TREE_FEATURIZER_FACTORY_H_
 #define META_ANALYZERS_TREE_FEATURIZER_FACTORY_H_
 
-#include "analyzers/tree/featurizers/tree_featurizer.h"
+#include "parser/analyzers/featurizers/tree_featurizer.h"
 #include "util/factory.h"
 #include "util/shim.h"
 

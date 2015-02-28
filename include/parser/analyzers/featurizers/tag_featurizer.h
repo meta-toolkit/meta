@@ -10,7 +10,7 @@
 #ifndef META_TAG_FEATURIZER_H_
 #define META_TAG_FEATURIZER_H_
 
-#include "analyzers/tree/featurizers/tree_featurizer.h"
+#include "parser/analyzers/featurizers/tree_featurizer.h"
 #include "util/clonable.h"
 
 namespace meta

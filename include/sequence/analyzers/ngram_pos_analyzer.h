@@ -11,7 +11,7 @@
 
 #include <string>
 #include "analyzers/analyzer_factory.h"
-#include "sequence/analyzers/sequence_analyzer.h"
+#include "sequence/sequence_analyzer.h"
 #include "analyzers/ngram/ngram_analyzer.h"
 #include "sequence/crf/crf.h"
 #include "util/clonable.h"
@@ -78,6 +78,14 @@ template <>
 std::unique_ptr<analyzer>
     make_analyzer<ngram_pos_analyzer>(const cpptoml::table&,
                                       const cpptoml::table&);
+}
+
+namespace sequence
+{
+/**
+ * Registers analyzers provided by the meta-sequence-analyzers library.
+ */
+void register_analyzers();
 }
 }
 

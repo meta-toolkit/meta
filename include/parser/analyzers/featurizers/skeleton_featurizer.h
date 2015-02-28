@@ -1,5 +1,5 @@
 /**
- * @file semi_skeleton_featurizer.h
+ * @file skeleton_featurizer.h
  * @author Sean Massung
  * @author Chase Geigle
  *
@@ -7,10 +7,10 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_SEMI_SKELETON_FEATURIZER_H_
-#define META_SEMI_SKELETON_FEATURIZER_H_
+#ifndef META_SKELETON_FEATURIZER_H_
+#define META_SKELETON_FEATURIZER_H_
 
-#include "analyzers/tree/featurizers/tree_featurizer.h"
+#include "parser/analyzers/tree_analyzer.h"
 #include "util/clonable.h"
 
 namespace meta
@@ -19,15 +19,14 @@ namespace analyzers
 {
 
 /**
- * Tokenizes parse trees by keeping track of only a single node label and
- * the underlying tree structure.
+ * Tokenizes parse trees by only tokenizing the tree structure itself.
  */
-class semi_skeleton_featurizer
-    : public util::clonable<tree_featurizer, semi_skeleton_featurizer>
+class skeleton_featurizer
+    : public util::clonable<tree_featurizer, skeleton_featurizer>
 {
   public:
     /**
-     * Keeps track of one node's tag and the skeleton structure beneath it.
+     * Ignores node labels and only tokenizes the tree structure.
      * @param doc The document to parse
      * @param tree The current parse_tree in the document
      */

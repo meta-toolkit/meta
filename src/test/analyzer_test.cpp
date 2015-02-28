@@ -6,6 +6,7 @@
 #include "test/analyzer_test.h"
 #include "test/inverted_index_test.h"
 #include "analyzers/token_stream.h"
+#include "corpus/document.h"
 #include "util/shim.h"
 
 namespace meta

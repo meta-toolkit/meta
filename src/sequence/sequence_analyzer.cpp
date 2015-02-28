@@ -10,7 +10,7 @@
 #if META_HAS_ZLIB
 #include "io/gzstream.h"
 #endif
-#include "sequence/analyzers/sequence_analyzer.h"
+#include "sequence/sequence_analyzer.h"
 #include "utf/utf.h"
 #include "util/filesystem.h"
 #include "util/mapping.h"

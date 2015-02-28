@@ -13,7 +13,7 @@
 #include "corpus/document.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/analyzer_factory.h"
-#include "analyzers/tree/featurizers/tree_featurizer.h"
+#include "parser/analyzers/featurizers/tree_featurizer.h"
 #include "parser/sr_parser.h"
 #include "sequence/perceptron.h"
 #include "util/clonable.h"
@@ -92,6 +92,14 @@ class tree_analyzer : public util::clonable<analyzer, tree_analyzer>
 template <>
 std::unique_ptr<analyzer> make_analyzer<tree_analyzer>(const cpptoml::table&,
                                                        const cpptoml::table&);
+}
+
+namespace parser
+{
+/**
+ * Register analyzers provided by the meta-parser-analyzers library.
+ */
+void register_analyzers();
 }
 }
 #endif

@@ -1,5 +1,5 @@
 /**
- * @file subtree_featurizer.h
+ * @file depth_featurizer.h
  * @author Sean Massung
  * @author Chase Geigle
  *
@@ -7,10 +7,10 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_SUBTREE_FEATURIZER_H_
-#define META_SUBTREE_FEATURIZER_H_
+#ifndef META_DEPTH_FEATURIZER_H_
+#define META_DEPTH_FEATURIZER_H_
 
-#include "analyzers/tree/featurizers/tree_featurizer.h"
+#include "parser/analyzers/featurizers/tree_featurizer.h"
 #include "util/clonable.h"
 
 namespace meta
@@ -19,15 +19,14 @@ namespace analyzers
 {
 
 /**
- * Tokenizes parse trees by counting occurrences of subtrees in a
- * document's parse tree.
+ * Tokenizes parse trees by extracting depth features.
  */
-class subtree_featurizer
-    : public util::clonable<tree_featurizer, subtree_featurizer>
+class depth_featurizer
+    : public util::clonable<tree_featurizer, depth_featurizer>
 {
   public:
     /**
-     * Counts occurrences of subtrees in this document's parse_trees.
+     * Extracts the height of each parse tree.
      * @param doc The document to parse
      * @param tree The current parse_tree in the document
      */

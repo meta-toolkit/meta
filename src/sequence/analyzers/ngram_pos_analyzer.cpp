@@ -7,8 +7,8 @@
 #include "corpus/document.h"
 #include "sequence/sequence.h"
 #include "sequence/crf/tagger.h"
-#include "analyzers/ngram/ngram_pos_analyzer.h"
 #include "analyzers/token_stream.h"
+#include "sequence/analyzers/ngram_pos_analyzer.h"
 
 namespace meta
 {
@@ -104,6 +104,14 @@ std::unique_ptr<analyzer>
     auto filts = analyzer::load_filters(global, config);
     return make_unique<ngram_pos_analyzer>(*n_val, std::move(filts),
                                            *crf_prefix);
+}
+}
+
+namespace sequence
+{
+void register_analyzers()
+{
+    analyzers::register_analyzer<analyzers::ngram_pos_analyzer>();
 }
 }
 }

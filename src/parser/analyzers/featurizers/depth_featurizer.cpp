@@ -1,4 +1,4 @@
-#include "analyzers/tree/featurizers/depth_featurizer.h"
+#include "parser/analyzers/featurizers/depth_featurizer.h"
 #include "parser/trees/visitors/visitor.h"
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"

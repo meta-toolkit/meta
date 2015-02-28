@@ -20,9 +20,7 @@ void analyzer_factory::register_analyzer()
 analyzer_factory::analyzer_factory()
 {
     // built-in analyzers
-    register_analyzer<tree_analyzer>();
     register_analyzer<ngram_word_analyzer>();
-    register_analyzer<ngram_pos_analyzer>();
     register_analyzer<libsvm_analyzer>();
 }
 }

@@ -1,8 +1,9 @@
 project(meta-parser)
 
-add_subdirectory(trees)
+add_subdirectory(analyzers)
 add_subdirectory(io)
 add_subdirectory(tools)
+add_subdirectory(trees)
 
 add_library(meta-parser sr_parser.cpp
                         state.cpp

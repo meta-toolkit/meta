@@ -6,11 +6,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "index/ranker/ranker_factory.h"
+#include "analyzers/analyzer.h"
 #include "caching/all.h"
 #include "corpus/document.h"
 #include "index/inverted_index.h"
-#include "analyzers/analyzer.h"
+#include "index/ranker/ranker_factory.h"
+#include "parser/analyzers/tree_analyzer.h"
+#include "sequence/analyzers/ngram_pos_analyzer.h"
 #include "util/time.h"
 
 using namespace meta;
@@ -31,6 +33,10 @@ int main(int argc, char* argv[])
 
     // Turn on logging to std::cerr.
     logging::set_cerr_logging();
+
+    // Register additional analyzers.
+    parser::register_analyzers();
+    sequence::register_analyzers();
 
     // Create an inverted index using a DBLRU cache. The arguments forwarded to
     //  make_index are the config file for the index and any parameters for the

@@ -5,8 +5,8 @@
 
 #include "cpptoml.h"
 #include "analyzers/token_stream.h"
-#include "analyzers/tree/tree_analyzer.h"
-#include "analyzers/tree/featurizers/featurizer_factory.h"
+#include "parser/analyzers/tree_analyzer.h"
+#include "parser/analyzers/featurizers/featurizer_factory.h"
 #include "utf/segmenter.h"
 
 namespace meta
@@ -100,6 +100,14 @@ std::unique_ptr<analyzer>
         ana->add(featurizer_factory::get().create(feat->get()));
 
     return std::move(ana);
+}
+}
+
+namespace parser
+{
+void register_analyzers()
+{
+    analyzers::register_analyzer<analyzers::tree_analyzer>();
 }
 }
 }
