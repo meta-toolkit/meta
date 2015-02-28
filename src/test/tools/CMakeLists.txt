@@ -2,7 +2,7 @@ ExternalProject_Add(ceeaus
   SOURCE_DIR ${meta_BINARY_DIR}/../../data/ceeaus
   DOWNLOAD_DIR ${meta_BINARY_DIR}/downloads
   URL http://web.engr.illinois.edu/~massung1/files/ceeaus.tar.gz
-  URL_HASH "SHA256=046c8135b51eec8ad045742618e838d37a5a51a05ce0c82f5d39bde09e1f7e90"
+  URL_HASH "SHA256=dbcdecc4098bd02dd31c35930fad9ae81a85dc07ac79f734a127fe915a52ca25"
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
   INSTALL_COMMAND "")
