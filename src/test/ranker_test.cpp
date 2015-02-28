@@ -77,6 +77,8 @@ int ranker_tests()
         test_rank(r, *idx, encoding);
     });
 
+    idx = nullptr;
+
     system("rm -rf ceeaus-inv test-config.toml");
     return num_failed;
 }
