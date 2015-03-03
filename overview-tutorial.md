@@ -55,7 +55,7 @@ dataset is small enough (like most other toolkits assume), you can use a cache
 such as `no_evict_cache` to keep it all in memory without sacrificing any speed.
 
 Index usage is explained in much more detail in the [Search
-Tutorial]({{site.baseurl}}/index-tutorial.html), though it might make more sense
+Tutorial]({{site.baseurl}}/search-tutorial.html), though it might make more sense
 to read the about [Filters and
 Analyzers]({{site.baseurl}}/analyzers-filters-tutorial.html) first.
 
