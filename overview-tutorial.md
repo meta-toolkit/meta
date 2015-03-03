@@ -61,7 +61,7 @@ Analyzers]({{site.baseurl}}/analyzers-filters-tutorial.html) first.
 
 ## Corpus input formats
 
-There are currently two corpus input formats:
+There are currently three corpus input formats:
 
  - `line_corpus`: each dataset consists of one to three files:
    * `corpusname.dat`: each document appears on one line.
@@ -73,6 +73,16 @@ There are currently two corpus input formats:
       the document on each line, again corresponding to the order in
       `corpusname.dat`. These are the labels that are used for the
       classification tasks.
+ - `gz_corpus`: similar to `line_corpus`, but each of its files and
+    metadata files are compressed using gzip compression:
+    * `corpusname.dat.gz`: compressed version of `corpusname.dat`
+    * `corpusname.dat.names.gz`: compressed version of
+      `corpusname.dat.names`
+    * `corpusname.dat.labels.gz`: compressed version of
+      `corpusname.dat.labels`
+    * `corpusname.dat.numdocs`: an uncompressed file containing only the
+       count of the number of documents in the corpus (this is used to be
+       able to provide progress reporting when tokenizing documents)
  - `file_corpus`: each document is its own file, and the name of the file
    becomes the name of the document. There is also a `corpusname-full-corpus.txt`
    which contains (on each line) an optional label for each document followed
@@ -127,8 +137,8 @@ counts from documents. Here are some examples of analyzers:
    that have been filtered by the filter chain
  - `ngram_pos_analyzer`: same as `ngram_word_analyzer`, but operates on
    part-of-speech tags from MeTA's CRF
- - `skeleton_analyzer`: collects and counts occurrences of parse tree structural
-   skeletons, currently the only known implementation of work described in [this
+ - `tree_analyzer`: collects and counts occurrences of parse tree structural
+   features, currently the only known implementation of work described in [this
    paper](http://web.engr.illinois.edu/~massung1/files/icsc-2013.pdf).
  - `libsvm_analyzer`: converts a libsvm `line_corpus` into MeTA format.
 
@@ -200,11 +210,13 @@ graduate student there, working on information retrieval and natural language
 processing with [Professor ChengXiang
 Zhai](http://www.cs.uiuc.edu/homes/czhai/).
 
-[Chase Geigle](https://www.google.com/search?q=chase+geigle) needs to write his
-bio.
+[Chase Geigle](https://chara.cs.illinois.edu/sites/cgeigle/) needs to write
+his bio.
 
 ## License
 
-MeTA is released under the [MIT License](http://opensource.org/licenses/MIT). It
-is a free, permissive license, meaning it is allowed to be included in
-proprietary software.
+MeTA is dual-licensed under the [MIT
+License](http://opensource.org/licenses/MIT) and the [University of
+Illinois/NCSA Open Source License](http://opensource.org/licenses/NCSA).
+These are free, permissive licenses, meaning it is allowed to be included
+in proprietary software.
