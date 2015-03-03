@@ -74,7 +74,29 @@ Each `[[analyzers]]` block defines a single analyzer and its corresponding
 filter chain: you can use as many as you would like---the tokens generated
 by each analyzer you specified will be counted and placed in a single
 sparse vector of counts. This is useful for combining multiple different
-kinds of features together into your document representation.
+kinds of features together into your document representation. For example,
+the following configuration would combine unigram words, bigram
+part-of-speech tags, tree skeleton features, and subtree features.
+
+{% highlight toml %}
+[[analyzers]]
+method = "ngram-word"
+ngram = 1
+filter = "default-chain"
+
+[[analyzers]]
+method = "ngram-pos"
+ngram = 2
+filter = [{type = "icu-tokenizer"}, {type = "ptb-normalizer"}]
+crf-prefix = "path/to/crf/model"
+
+[[analyzers]]
+method = "tree"
+filter = [{type = "icu-tokenizer"}, {type = "ptb-normalizer"}]
+features = ["skel", "subtree"]
+tagger = "path/to/greedy-tagger/model"
+parser = "path/to/sr-parser/model"
+{% endhighlight %}
 
 ## Getting Creative: Specifying Your Own Filter Chain
 
