@@ -1,0 +1,28 @@
+<nav>
+    <ul class="nav nav-pills nav-stacked">
+        <li><a href="{{ site.baseurl }}/">Home</a></li>
+        {% for section in site.sections %}
+            {% assign attr = section[0] %}
+            {% assign label = section[1] %}
+
+            {% for node in site.pages %}
+                {% if forloop.first %}
+                    <li class="nav-header">{{ label }}</li>
+                {% endif %}
+                {% if node.category == attr %}
+                    {% if page.url == node.url %}
+                        <li class="active" data-order="{{ node.order }}">
+                    {% else %}
+                        <li data-order="{{ node.order }}">
+                    {% endif %}
+                        <a href="{{ site.baseurl }}{{ node.url }}">{{ node.title }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        <li class="nav-header">Reference</li>
+        <li><a href="{{ site.baseurl }}/doxygen/namespaces.html">Doxygen</a></li>
+    <!-- List additional links. It is recommended to add a divider
+        e.g. <li class=divider></li> first to break up the content. -->
+    </ul>
+</nav>

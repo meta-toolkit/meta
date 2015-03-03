@@ -1,6 +1,8 @@
 ---
-layout: default
-title: Tutorial - Topic Models
+title: Topic Models
+category: tut
+layout: page
+order: 6
 ---
 
 ## Topic Modeling in MeTA
@@ -95,17 +97,3 @@ school (3119): 0.00852317
 parent (2602): 0.00835476
 societi (3296): 0.00793623
 ~~~
-
----
-
-[Home]({{site.baseurl}}/)
-&nbsp; | &nbsp;
-[Overview]({{site.baseurl}}/overview-tutorial.html)
-&nbsp; | &nbsp;
-[Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
-&nbsp; | &nbsp;
-[Search]({{site.baseurl}}/search-tutorial.html)
-&nbsp; | &nbsp;
-[Classifiers]({{site.baseurl}}/classify-tutorial.html)
-&nbsp; | &nbsp;
-[Topic Models]({{site.baseurl}}/topic-models-tutorial.html)

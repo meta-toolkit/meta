@@ -1,6 +1,8 @@
 ---
-layout: default
-title: Tutorial - Classification
+title: Classification
+layout: page
+category: tut
+order: 4
 ---
 
 ## Classification in MeTA
@@ -259,17 +261,3 @@ std::unique_ptr<classifier>
 }
 }
 {% endhighlight %}
-
----
-
-[Home]({{site.baseurl}}/)
-&nbsp; | &nbsp;
-[Overview]({{site.baseurl}}/overview-tutorial.html)
-&nbsp; | &nbsp;
-[Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
-&nbsp; | &nbsp;
-[Search]({{site.baseurl}}/search-tutorial.html)
-&nbsp; | &nbsp;
-[Classifiers]({{site.baseurl}}/classify-tutorial.html)
-&nbsp; | &nbsp;
-[Topic Models]({{site.baseurl}}/topic-models-tutorial.html)

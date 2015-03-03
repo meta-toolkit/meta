@@ -1,66 +1,91 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>
-      {% if page.title %} {{page.title}} | {% endif %} MeTA
-    </title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <script type="text/javascript"
-      src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-    </script>
-    <div class="wrapper">
-      <header>
-        <h1><a href="/meta/">MeTA</a></h1>
-        <p>A Modern C++ Data Sciences Toolkit</p>
-        <p class="view">
-          <a href="https://github.com/meta-toolkit/meta">
-            View the Project on GitHub
-            <small>meta-toolkit/meta</small>
-          </a>
-        </p>
-        <!--
-        <ul>
-          <li>
-            <a href="https://github.com/meta-toolkit/meta/zipball/master">
-              Download <strong>ZIP File</strong>
-            </a>
-          </li>
-          <li>
-            <a href="https://github.com/meta-toolkit/meta/tarball/master">
-              Download <strong>TAR Ball</strong>
-            </a>
-          </li>
-          <li>
-            <a href="https://github.com/meta-toolkit/meta">
-              View On <strong>GitHub</strong>
-            </a>
-          </li>
-        </ul>
-        -->
-      </header>
-      <section>
-        {{content}}
-      </section>
-      <footer>
-        <!--
-        <p>This project is maintained by
-          <a href="https://github.com/meta-toolkit">meta-toolkit</a>
-        </p>
-        -->
-        <p><small>Hosted on GitHub Pages &mdash; Theme by
-          <a href="https://github.com/orderedlist">orderedlist</a></small>
-        </p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <title>{{ site.title }}{% if page.title %} : {{ page.title }}{% endif %}</title>
+        <meta name="description" content="{{ site.subtitle }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ site.baseurl }}/css/syntax.css">
+        <link rel="stylesheet" href="{{ site.baseurl }}/css/main.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div id="header" class="span12">
+                    {% include header.html %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div id="navigation" class="col-md-3" role="complementary">
+                    {% include navigation.html %}
+                </div>
+
+                <div id="content" class="col-md-9" role="main">
+                    {{ content }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div id="footer" class="span12">
+                    {% include footer.html %}
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function orderNav() {
+                var list,
+                    section,
+                    header,
+                    sections = [],
+                    lists = {},
+                    headers = {};
+
+                var navUl = document.querySelectorAll('#navigation ul')[0],
+                    navLis = document.querySelectorAll('#navigation ul li');
+
+                if (!navUl) return;
+
+                for (var i = 0; i < navLis.length; i++) {
+                    var order, li = navLis[i];
+
+                    if (li.classList.contains('nav-header')) {
+                        section = li.textContent || li.innerText;
+                        sections.push(section);
+                        headers[section] = li;
+                        continue;
+                    }
+
+                    if (!lists[section]) {
+                        lists[section] = [];
+                    }
+
+                    order = parseFloat(li.getAttribute('data-order'))
+                    lists[section].push([order, li]);
+                }
+
+                for (var i = 0; i < sections.length; i++) {
+                    section = sections[i];
+                    list = lists[section].sort(function(a, b) {
+                        return a[0] - b[0];
+                    });
+
+                    if (header = headers[section]) {
+                        navUl.appendChild(header);
+                    }
+                    for (var j = 0; j < list.length; j++) {
+                        navUl.appendChild(list[j][1]);
+                    }
+                }
+            }
+
+            if (document.querySelectorAll) orderNav();
+        </script>
+        {% if site.google_analytics_id != "" %}
+        {% include google_analytics.html %}
+        {% endif %}
+    </body>
 </html>

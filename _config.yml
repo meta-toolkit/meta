@@ -1,2 +1,12 @@
 markdown: kramdown
 baseurl: "/meta"
+title: 'MeTA: ModErn Text Analysis'
+subtitle: 'A Modern C++ Data Sciences Toolkit'
+
+# URL to source code, used in _includes/footer.html
+codeurl: 'https://github.com/meta-toolkit/meta'
+
+# Default categories (in order) to appear in the navigation
+sections: [
+    ['tut', 'Tutorials']
+]

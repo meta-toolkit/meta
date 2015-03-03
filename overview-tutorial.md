@@ -1,6 +1,8 @@
 ---
-layout: default
-title: Tutorial - MeTA System Overview
+title: MeTA System Overview
+layout: page
+category: tut
+order: 1
 ---
 
 ## MeTA's goal
@@ -206,17 +208,3 @@ bio.
 MeTA is released under the [MIT License](http://opensource.org/licenses/MIT). It
 is a free, permissive license, meaning it is allowed to be included in
 proprietary software.
-
----
-
-[Home]({{site.baseurl}}/)
-&nbsp; | &nbsp;
-[Overview]({{site.baseurl}}/overview-tutorial.html)
-&nbsp; | &nbsp;
-[Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
-&nbsp; | &nbsp;
-[Search]({{site.baseurl}}/search-tutorial.html)
-&nbsp; | &nbsp;
-[Classifiers]({{site.baseurl}}/classify-tutorial.html)
-&nbsp; | &nbsp;
-[Topic Models]({{site.baseurl}}/topic-models-tutorial.html)

@@ -1,6 +1,8 @@
 ---
-layout: default
-title: Tutorial - Search
+title: Search
+category: tut
+layout: page
+order: 3
 ---
 
 ## Search in MeTA
@@ -243,17 +245,3 @@ std::unique_ptr<ranker> make_ranker<my_ranker>(const cpptoml::table& config)
 }
 }
 {% endhighlight %}
-
----
-
-[Home]({{site.baseurl}}/)
-&nbsp; | &nbsp;
-[Overview]({{site.baseurl}}/overview-tutorial.html)
-&nbsp; | &nbsp;
-[Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
-&nbsp; | &nbsp;
-[Search]({{site.baseurl}}/search-tutorial.html)
-&nbsp; | &nbsp;
-[Classifiers]({{site.baseurl}}/classify-tutorial.html)
-&nbsp; | &nbsp;
-[Topic Models]({{site.baseurl}}/topic-models-tutorial.html)

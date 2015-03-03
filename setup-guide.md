@@ -1,6 +1,8 @@
 ---
 title: Setup Guide
-layout: default
+layout: page
+order: 0
+category: tut
 ---
 
 # Setup Guide
@@ -357,7 +359,5 @@ system.
  - To compile in debug mode, just replace `Release` with `Debug` in the
    appropriate `cmake` command for your OS above and rebuild using `make`
    after.
-
-----
 
 [homebrew]: http://brew.sh

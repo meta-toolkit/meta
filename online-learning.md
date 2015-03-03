@@ -1,6 +1,8 @@
 ---
-layout: default
-title: Tutorial - Online Learning
+layout: page
+title: Online Learning
+category: tut
+order: 5
 ---
 
 ## Online Learning in MeTA
@@ -101,17 +103,3 @@ At the time of this tutorial's writing, this classification process peaks at
 about 95MB---a far cry away from the 1.2GB training set! This general process
 should be able to be extended to work with any dataset that cannot be fit into
 memory, provided an appropriate `batch-size` is set in the configuration file.
-
----
-
-[Home]({{site.baseurl}}/)
-&nbsp; | &nbsp;
-[Overview]({{site.baseurl}}/overview-tutorial.html)
-&nbsp; | &nbsp;
-[Analyzers and Filters]({{site.baseurl}}/analyzers-filters-tutorial.html)
-&nbsp; | &nbsp;
-[Search]({{site.baseurl}}/search-tutorial.html)
-&nbsp; | &nbsp;
-[Classifiers]({{site.baseurl}}/classify-tutorial.html)
-&nbsp; | &nbsp;
-[Topic Models]({{site.baseurl}}/topic-models-tutorial.html)
