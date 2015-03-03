@@ -18,6 +18,15 @@ code {
     color: inherit;
 }
 
+/* see:
+ * http://stackoverflow.com/questions/18329010/what-happened-to-nav-header-class
+ */
+.nav > li.nav-header {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
 #header {
     border-bottom: 1px solid #eee;
     margin-bottom: 20px;
