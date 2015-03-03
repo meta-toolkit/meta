@@ -10,3 +10,5 @@ codeurl: 'https://github.com/meta-toolkit/meta'
 sections: [
     ['tut', 'Tutorials']
 ]
+
+exclude: ['README.md']
