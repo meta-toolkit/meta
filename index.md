@@ -19,7 +19,8 @@ layout: default
 
 ## Documentation
 
-Doxygen documentation can be found [here]({{site.baseurl}}/doxygen/).
+Doxygen documentation can be found
+[here]({{site.baseurl}}/doxygen/namespaces.html).
 
 ## Tutorials
 
