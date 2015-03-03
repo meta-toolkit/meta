@@ -1,6 +1,8 @@
 var searchData=
 [
   ['factory_2eh',['factory.h',['../factory_8h.html',1,'']]],
+  ['featurizer_5ffactory_2ecpp',['featurizer_factory.cpp',['../featurizer__factory_8cpp.html',1,'']]],
+  ['featurizer_5ffactory_2eh',['featurizer_factory.h',['../featurizer__factory_8h.html',1,'']]],
   ['file_5fcorpus_2ecpp',['file_corpus.cpp',['../file__corpus_8cpp.html',1,'']]],
   ['file_5fcorpus_2eh',['file_corpus.h',['../file__corpus_8h.html',1,'']]],
   ['filesystem_2eh',['filesystem.h',['../filesystem_8h.html',1,'']]],

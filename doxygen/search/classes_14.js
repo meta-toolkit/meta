@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['visitor',['visitor',['../classmeta_1_1parser_1_1visitor.html',1,'meta::parser']]],
+  ['visitor_3c_20void_20_3e',['visitor&lt; void &gt;',['../classmeta_1_1parser_1_1visitor.html',1,'meta::parser']]],
   ['viterbi_5fscorer',['viterbi_scorer',['../classmeta_1_1sequence_1_1crf_1_1viterbi__scorer.html',1,'meta::sequence::crf']]],
   ['viterbi_5ftrellis',['viterbi_trellis',['../classmeta_1_1sequence_1_1viterbi__trellis.html',1,'meta::sequence']]],
   ['vocabulary_5fmap',['vocabulary_map',['../classmeta_1_1index_1_1vocabulary__map.html',1,'meta::index']]],

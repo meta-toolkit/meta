@@ -1,17 +1,11 @@
 var searchData=
 [
-  ['whitespace_5ftokenizer',['whitespace_tokenizer',['../classmeta_1_1analyzers_1_1tokenizers_1_1whitespace__tokenizer.html#a02463dd4100280b7e079f2eaa079ff79',1,'meta::analyzers::tokenizers::whitespace_tokenizer']]],
-  ['winnow',['winnow',['../classmeta_1_1classify_1_1winnow.html#a0dc66d9fcb75adf07115e37d28ff7b86',1,'meta::classify::winnow']]],
-  ['word',['word',['../classmeta_1_1analyzers_1_1filters_1_1english__normalizer.html#a7e76bc21e24fa31daa9232cb4f032286',1,'meta::analyzers::filters::english_normalizer']]],
-  ['wordify',['wordify',['../classmeta_1_1analyzers_1_1ngram__analyzer.html#a606232d65a8d9af0ec8a45cac74ea4b4',1,'meta::analyzers::ngram_analyzer']]],
-  ['words',['words',['../classmeta_1_1utf_1_1segmenter.html#ac8676233eb48baacdbf4c31c64f9178c',1,'meta::utf::segmenter::words() const '],['../classmeta_1_1utf_1_1segmenter.html#a9f89406fa865da6628590e80bf288efa',1,'meta::utf::segmenter::words(const segment &amp;seg) const '],['../classmeta_1_1utf_1_1segmenter_1_1impl.html#afa25171c74a5f34be07ecd2e33f31543',1,'meta::utf::segmenter::impl::words()']]],
-  ['worker',['worker',['../classmeta_1_1parallel_1_1thread__pool.html#a14ceabcc7d7f3b7a75b2062d28dd40ef',1,'meta::parallel::thread_pool']]],
-  ['write',['write',['../classmeta_1_1io_1_1compressed__file__writer.html#a2e66fae5ea1797deb371ec0b9d87f2c9',1,'meta::io::compressed_file_writer::write(uint64_t value)'],['../classmeta_1_1io_1_1compressed__file__writer.html#adf54227d68d3118fb347ee65fe7c7e69',1,'meta::io::compressed_file_writer::write(const std::string &amp;str)'],['../classmeta_1_1logging_1_1logger_1_1sink.html#a81110ce8eb36d319639d34e07906d9f3',1,'meta::logging::logger::sink::write()']]],
-  ['write_5fbinary',['write_binary',['../namespacemeta_1_1io.html#a7cd2998bfa2b18240800d88eeeae926a',1,'meta::io::write_binary(std::ostream &amp;out, const T &amp;elem)'],['../namespacemeta_1_1io.html#a88e989a2f96be49883884bca1ca95e75',1,'meta::io::write_binary(std::ostream &amp;out, const std::string &amp;str)']]],
-  ['write_5fbit',['write_bit',['../classmeta_1_1io_1_1compressed__file__writer.html#ad9857d46b755f6ba0a1550e28db27f5b',1,'meta::io::compressed_file_writer']]],
-  ['write_5fbuffer',['write_buffer',['../classmeta_1_1io_1_1compressed__file__writer.html#a8c0d94024895579c2d6b3d0a4fced677',1,'meta::io::compressed_file_writer']]],
-  ['write_5fchunk',['write_chunk',['../classmeta_1_1index_1_1chunk__handler.html#aebef255ae17bbfd1a77e7f6bf0860eb8',1,'meta::index::chunk_handler']]],
-  ['write_5ffile',['write_file',['../namespacemeta_1_1testing.html#a9fa0eaac4806d94178ee6f7983bedbb9',1,'meta::testing']]],
-  ['write_5fpadding',['write_padding',['../classmeta_1_1index_1_1vocabulary__map__writer.html#a26acc2d004515cf8b510d7858b38129d',1,'meta::index::vocabulary_map_writer']]],
-  ['write_5fto_5fsinks',['write_to_sinks',['../classmeta_1_1logging_1_1logger_1_1log__line.html#a407aa56719fcfc2670b3b7d68fef6dc8',1,'meta::logging::logger::log_line::write_to_sinks()'],['../classmeta_1_1logging_1_1logger.html#af89cee7f1a25ed22d6d77850ae9d70df',1,'meta::logging::logger::write_to_sinks()']]]
+  ['valid',['valid',['../classmeta_1_1index_1_1forward__index.html#a3264af6fddf163840d2635cd9a951ef0',1,'meta::index::forward_index::valid()'],['../classmeta_1_1index_1_1inverted__index.html#a005539fb121b34bdf3ed08409223ed31',1,'meta::index::inverted_index::valid()']]],
+  ['visit',['visit',['../classmeta_1_1parser_1_1parse__tree.html#a5f4a99c21905c0a86a163a5e123032b7',1,'meta::parser::parse_tree::visit(Visitor &amp;&amp;vtor)'],['../classmeta_1_1parser_1_1parse__tree.html#a98b1449f2ceab1ff8871a35976d874b2',1,'meta::parser::parse_tree::visit(Visitor &amp;&amp;vtor) const ']]],
+  ['viterbi',['viterbi',['../classmeta_1_1sequence_1_1crf_1_1viterbi__scorer.html#a64dc6e5efc6ba4a306005e6cdb7d4ef3',1,'meta::sequence::crf::viterbi_scorer']]],
+  ['viterbi_5fscorer',['viterbi_scorer',['../classmeta_1_1sequence_1_1crf_1_1viterbi__scorer.html#ab6eb0ce0b51c8a89236f3a7c4cc1a204',1,'meta::sequence::crf::viterbi_scorer']]],
+  ['viterbi_5ftrellis',['viterbi_trellis',['../classmeta_1_1sequence_1_1viterbi__trellis.html#a98ae356afd9d5a52a9e811fd74ecdfa8',1,'meta::sequence::viterbi_trellis']]],
+  ['vocabulary_5fmap',['vocabulary_map',['../classmeta_1_1index_1_1vocabulary__map.html#a1c0b5e5898a26131719caca9b6874175',1,'meta::index::vocabulary_map::vocabulary_map(const std::string &amp;path, uint16_t block_size=4096)'],['../classmeta_1_1index_1_1vocabulary__map.html#a8b9d7066b2b937acfdeb5cdd492b29df',1,'meta::index::vocabulary_map::vocabulary_map(vocabulary_map &amp;&amp;)=default']]],
+  ['vocabulary_5fmap_5ftests',['vocabulary_map_tests',['../namespacemeta_1_1testing.html#a266aa9d81b43bf360be3d63014d260e7',1,'meta::testing']]],
+  ['vocabulary_5fmap_5fwriter',['vocabulary_map_writer',['../classmeta_1_1index_1_1vocabulary__map__writer.html#ab1bf31d4681d06583e3e92e25609222c',1,'meta::index::vocabulary_map_writer']]]
 ];

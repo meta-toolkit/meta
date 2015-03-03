@@ -2,6 +2,8 @@ var searchData=
 [
   ['cached_5findex_2eh',['cached_index.h',['../cached__index_8h.html',1,'']]],
   ['cached_5findex_2etcc',['cached_index.tcc',['../cached__index_8tcc.html',1,'']]],
+  ['centrality_2eh',['centrality.h',['../centrality_8h.html',1,'']]],
+  ['centrality_2etcc',['centrality.tcc',['../centrality_8tcc.html',1,'']]],
   ['character_5ftokenizer_2ecpp',['character_tokenizer.cpp',['../character__tokenizer_8cpp.html',1,'']]],
   ['character_5ftokenizer_2eh',['character_tokenizer.h',['../character__tokenizer_8h.html',1,'']]],
   ['chunk_2eh',['chunk.h',['../chunk_8h.html',1,'']]],
@@ -22,6 +24,7 @@ var searchData=
   ['compressed_5ffile_5fwriter_2eh',['compressed_file_writer.h',['../compressed__file__writer_8h.html',1,'']]],
   ['compression_5ftest_2ecpp',['compression_test.cpp',['../compression__test_8cpp.html',1,'']]],
   ['compression_5ftest_2eh',['compression_test.h',['../compression__test_8h.html',1,'']]],
+  ['compressor_5ftest_2ecpp',['compressor_test.cpp',['../compressor__test_8cpp.html',1,'']]],
   ['confusion_5fmatrix_2ecpp',['confusion_matrix.cpp',['../confusion__matrix_8cpp.html',1,'']]],
   ['confusion_5fmatrix_2eh',['confusion_matrix.h',['../confusion__matrix_8h.html',1,'']]],
   ['corpus_2dgen_2ecpp',['corpus-gen.cpp',['../corpus-gen_8cpp.html',1,'']]],

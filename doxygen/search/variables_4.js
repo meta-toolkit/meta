@@ -2,7 +2,7 @@ var searchData=
 [
   ['d_5fid',['d_id',['../structmeta_1_1index_1_1score__data.html#a084b5196fb8911bd70d7e2cb0f7e3307',1,'meta::index::score_data']]],
   ['d_5fid_5f',['d_id_',['../classmeta_1_1corpus_1_1document.html#a8668df179c28d041cebd14ea64b9fb8b',1,'meta::corpus::document']]],
-  ['data_5f',['data_',['../classmeta_1_1io_1_1parser.html#a000221d1d737c96886f910b8732cf721',1,'meta::io::parser']]],
+  ['data_5f',['data_',['../classmeta_1_1io_1_1parser.html#a000221d1d737c96886f910b8732cf721',1,'meta::io::parser::data_()'],['../classmeta_1_1util_1_1disk__vector_1_1iterator.html#a12475d1170fd0c0b584c7b432185b7c3',1,'meta::util::disk_vector::iterator::data_()']]],
   ['default_5falpha',['default_alpha',['../classmeta_1_1classify_1_1dual__perceptron.html#ab8a0a909731449055d453961b6314242',1,'meta::classify::dual_perceptron::default_alpha()'],['../classmeta_1_1classify_1_1naive__bayes.html#a967f96202bc19e931f40d80750da83ca',1,'meta::classify::naive_bayes::default_alpha()'],['../classmeta_1_1classify_1_1sgd.html#a49b8f7d778b6797d91cf8115716ea2e8',1,'meta::classify::sgd::default_alpha()']]],
   ['default_5fb',['default_b',['../classmeta_1_1index_1_1okapi__bm25.html#a8641de3a47d1f43586b12fc8184639f1',1,'meta::index::okapi_bm25']]],
   ['default_5fbeta',['default_beta',['../classmeta_1_1classify_1_1naive__bayes.html#ada67a19d1905dc5f37e35974e4c7457b',1,'meta::classify::naive_bayes']]],
@@ -15,9 +15,12 @@ var searchData=
   ['default_5fmax_5fiter',['default_max_iter',['../classmeta_1_1classify_1_1dual__perceptron.html#aa0a431acbd934e2f75980a9193df37ba',1,'meta::classify::dual_perceptron::default_max_iter()'],['../classmeta_1_1classify_1_1sgd.html#ad0f8b790fdba2b8839ea2172742a2a50',1,'meta::classify::sgd::default_max_iter()'],['../classmeta_1_1classify_1_1winnow.html#ab19240531b6edab3af3c6665dc233d85',1,'meta::classify::winnow::default_max_iter()']]],
   ['default_5fmu',['default_mu',['../classmeta_1_1index_1_1dirichlet__prior.html#a834a8060be453818fd281d655ed3bb81',1,'meta::index::dirichlet_prior']]],
   ['default_5fs',['default_s',['../classmeta_1_1index_1_1pivoted__length.html#a7dd26c35f69e4b804b3c824e7068fe04',1,'meta::index::pivoted_length']]],
+  ['delimiter_5f',['delimiter_',['../classmeta_1_1index_1_1postings__data.html#a5680ec7f440f20f346dfaec87250a0a4',1,'meta::index::postings_data']]],
   ['delta',['delta',['../structmeta_1_1sequence_1_1crf_1_1parameters.html#aebafc04feb61868f059a05ea7059d3ed',1,'meta::sequence::crf::parameters']]],
   ['delta_5f',['delta_',['../classmeta_1_1index_1_1absolute__discount.html#a1dd330794c59b2e299373996b884ed41',1,'meta::index::absolute_discount']]],
+  ['dest',['dest',['../structmeta_1_1graph_1_1default__edge.html#ab0b3073bbc13fc6be5615d7bc3b13497',1,'meta::graph::default_edge']]],
   ['disk_5findex',['disk_index',['../classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a5a6d5bbdd9574cfd5be9d702f639d9cc',1,'meta::index::disk_index::disk_index_impl']]],
+  ['disk_5fvector',['disk_vector',['../classmeta_1_1util_1_1disk__vector_1_1iterator.html#a50a7fb0df5b3384fd4db787a256152cf',1,'meta::util::disk_vector::iterator']]],
   ['dist_5f',['dist_',['../classmeta_1_1lm_1_1language__model.html#a79f15d6b543dd9d63b46af7c49725ae0',1,'meta::lm::language_model']]],
   ['doc_5fbyte_5flocations_5f',['doc_byte_locations_',['../classmeta_1_1index_1_1forward__index_1_1impl.html#ac8ada19e6cd311b8a007c15749a7de6e',1,'meta::index::forward_index::impl']]],
   ['doc_5fcount',['doc_count',['../structmeta_1_1index_1_1score__data.html#a827f77d5d904f12ee7091249d80ac91a',1,'meta::index::score_data']]],
@@ -29,6 +32,7 @@ var searchData=
   ['doc_5funique_5fterms',['doc_unique_terms',['../structmeta_1_1index_1_1score__data.html#ad5f38b3a65ad646da5e3db174ef5e14f',1,'meta::index::score_data']]],
   ['doc_5fword_5ftopic_5f',['doc_word_topic_',['../classmeta_1_1topics_1_1lda__gibbs.html#ab8d8ddf9a352a49779d89229c234cfc1',1,'meta::topics::lda_gibbs']]],
   ['docs_5f',['docs_',['../classmeta_1_1corpus_1_1file__corpus.html#a555b3a39e77f242267212207ce4355c0',1,'meta::corpus::file_corpus']]],
+  ['done_5f',['done_',['../classmeta_1_1parser_1_1state.html#ae588dc2fe84c2fdbe3dc5df1857c4b9e',1,'meta::parser::state']]],
   ['dot_5f',['dot_',['../classmeta_1_1classify_1_1kernel_1_1sigmoid.html#a9ee3abba78f6b419385b8e961c5387df',1,'meta::classify::kernel::sigmoid']]],
   ['dummy_5f',['dummy_',['../unionmeta_1_1util_1_1optional__storage.html#aa6e98d0d5840f26e8ddab3f5835878d0',1,'meta::util::optional_storage']]]
 ];

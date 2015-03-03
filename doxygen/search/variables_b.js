@@ -1,7 +1,7 @@
 var searchData=
 [
   ['label',['label',['../structmeta_1_1graph_1_1default__node.html#a8e35833f32fbb3774072c61a506b1660',1,'meta::graph::default_node']]],
-  ['label_5f',['label_',['../classmeta_1_1corpus_1_1document.html#affcbe310383aa43765991bd1d8225530',1,'meta::corpus::document::label_()'],['../classmeta_1_1sequence_1_1observation.html#ac222510ef2c4b0a2e9638f158b597df2',1,'meta::sequence::observation::label_()']]],
+  ['label_5f',['label_',['../classmeta_1_1corpus_1_1document.html#affcbe310383aa43765991bd1d8225530',1,'meta::corpus::document::label_()'],['../classmeta_1_1parser_1_1transition.html#a000fc817a48099ea9d85033ba2f71589',1,'meta::parser::transition::label_()'],['../classmeta_1_1sequence_1_1observation.html#ac222510ef2c4b0a2e9638f158b597df2',1,'meta::sequence::observation::label_()']]],
   ['label_5fid_5fmapping_5f',['label_id_mapping_',['../classmeta_1_1sequence_1_1sequence__analyzer.html#a02442f9f455104f0fd58e9039470cb57',1,'meta::sequence::sequence_analyzer']]],
   ['label_5fids_5f',['label_ids_',['../classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#a2d1e76783df1346f89fd644d413aec42',1,'meta::index::disk_index::disk_index_impl']]],
   ['labels_5f',['labels_',['../classmeta_1_1index_1_1disk__index_1_1disk__index__impl.html#aa1b8835a8bd4148e29c85f8e23e2a197',1,'meta::index::disk_index::disk_index_impl']]],
@@ -10,6 +10,7 @@ var searchData=
   ['last_5fiter_5f',['last_iter_',['../classmeta_1_1printing_1_1progress.html#a02ab09f7870fd1dd1a756db665b2b147',1,'meta::printing::progress']]],
   ['last_5fupdate_5f',['last_update_',['../classmeta_1_1printing_1_1progress.html#a27905065925545fd127be411e44074ae',1,'meta::printing::progress']]],
   ['leaf_5fend_5fpos_5f',['leaf_end_pos_',['../classmeta_1_1index_1_1vocabulary__map.html#ad27bb1f000cc24eda67223b9f9954e11',1,'meta::index::vocabulary_map']]],
+  ['leaves_5f',['leaves_',['../classmeta_1_1parser_1_1leaf__node__finder.html#a95d41e9023c2007d2b5aaced989cac91',1,'meta::parser::leaf_node_finder']]],
   ['left',['left',['../structmeta_1_1caching_1_1splay__cache_1_1node.html#a741d7977ea873cbcd2e83a99101a41ec',1,'meta::caching::splay_cache::node']]],
   ['legal_5fdocs_5f',['legal_docs_',['../classmeta_1_1classify_1_1knn.html#a70a6c360e198e1955daa819b7994d123',1,'meta::classify::knn']]],
   ['length_5f',['length_',['../classmeta_1_1corpus_1_1document.html#abed5c2aceb2fdf129c267e0cd2035d2d',1,'meta::corpus::document::length_()'],['../classmeta_1_1printing_1_1progress.html#af2045b69ac5e62d1e73b00134b3a6843',1,'meta::printing::progress::length_()']]],

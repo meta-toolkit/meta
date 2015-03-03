@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ofstream',['ofstream',['../classmeta_1_1index_1_1string__list__writer.html#abec37989740273e69966d8adf86be3e7',1,'meta::index::string_list_writer']]]
+  ['memory_5fforward_5findex',['memory_forward_index',['../namespacemeta_1_1index.html#a96a767bbdf3ff8110342b82c1c187b88',1,'meta::index']]]
 ];
