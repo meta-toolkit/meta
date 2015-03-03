@@ -17,7 +17,7 @@ about MeTA!
     - [Mac OS X](#mac-os-x-build-guide)
     - [Ubuntu](#ubuntu-build-guide)
     - [Arch Linux](#arch-linux-build-guide)
-    - [EWS/EngrIT](#ews-engrit-build-guide) (this is UIUC-specific)
+    - [EWS/EngrIT](#ewsengrit-build-guide) (this is UIUC-specific)
     - [Generic Setup Notes](#generic-setup-notes)
 
 # Intro
