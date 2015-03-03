@@ -79,11 +79,6 @@ There are currently two corpus input formats:
 If only being used for classification, MeTA can also take libsvm-formatted
 input to create a `forward_index`.
 
-Additionally, until MeTA has support for parse tree generation, we support the
-`.tree` extension for documents in file corpora. See
-[meta-stanford-preprocessor](https://github.com/meta-toolkit/meta-stanford-preprocessor)
-for information on how to generate parse tree files.
-
 ## Datasets
 
 There are several public datasets that we've converted to the `line_corpus`

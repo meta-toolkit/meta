@@ -195,8 +195,8 @@ namespace analyzers
 {
 template <>
 std::unique_ptr<analyzer>
-    make_analyzer<my_analyzer>(const cpptoml::toml_group& global,
-                               const cpptoml::toml_group& local);
+    make_analyzer<my_analyzer>(const cpptoml::table& global,
+                               const cpptoml::table& local);
 }
 }
 {% endhighlight %}
@@ -267,7 +267,7 @@ namespace tokenizers
 {
 template <>
 std::unique_ptr<token_stream>
-    make_tokenizer<my_tokenizer>(const cpptoml::toml_group& config);
+    make_tokenizer<my_tokenizer>(const cpptoml::table& config);
 }
 }
 }
@@ -311,7 +311,7 @@ namespace filters
 template <>
 std::unique_ptr<token_stream>
     make_fitler<my_filter>(std::unique_ptr<token_stream> source,
-                           const cpptoml::toml_group& config);
+                           const cpptoml::table& config);
 }
 }
 }

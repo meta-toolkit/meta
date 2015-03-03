@@ -170,7 +170,7 @@ Now that we have an index, let's search it! First, we need to create a `ranker`:
 
 {% highlight cpp %}
 auto config = cpptoml::parse_file(argv[1]);
-auto group = config.get_group("ranker");
+auto group = config.get_table("ranker");
 if (!group)
     throw std::runtime_error{"\"ranker\" group needed in config file!"};
 auto ranker = index::make_ranker(*group);
@@ -235,7 +235,7 @@ namespace meta
 namespace index
 {
 template <>
-std::unique_ptr<ranker> make_ranker<my_ranker>(const cpptoml::toml_group& config)
+std::unique_ptr<ranker> make_ranker<my_ranker>(const cpptoml::table& config)
 {
     // read config file
     // set default params if config options not found (for example)

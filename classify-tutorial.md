@@ -161,7 +161,7 @@ Here's a simple example that changes the number of folds to 10:
 auto f_idx = meta::index::make_index<index::memory_forward_index>(argv[1]);
 auto config = cpptoml::parse_file(argv[1]);
 
-auto class_config = config.get_group("classifier");
+auto class_config = config.get_table("classifier");
 auto classifier = meta::classify::make_classifier(*class_config, f_idx);
 
 auto confusion_mtrx = classifier->cross_validate(f_idx->docs(), 10);
@@ -175,7 +175,7 @@ And here's a simple example that uses your own training/test split:
 auto f_idx = meta::index::make_index<index::memory_forward_index>(argv[1]);
 auto config = cpptoml::parse_file(argv[1]);
 
-auto class_config = config.get_group("classifier");
+auto class_config = config.get_table("classifier");
 auto classifier = meta::classify::make_classifier(*class_config, f_idx);
 
 auto train = /* filter f_idx->docs() for your training set */;
@@ -224,7 +224,7 @@ namespace classify
 template <>
 std::unique_ptr<classifier>
     make_classifier<my_classifier>(
-        const cpptoml::toml_group& config,
+        const cpptoml::table& config,
         std::shared_ptr<index::forward_index> idx);
 }
 }
@@ -238,7 +238,7 @@ namespace classify
 template <>
 std::unique_ptr<classifier>
     make_multi_indexclassifier<my_classifier>(
-        const cpptoml::toml_group& config,
+        const cpptoml::table& config,
         std::shared_ptr<index::forward_index> idx,
         std::shared_ptr<index::inverted_index> inv_idx);
 }
@@ -252,7 +252,7 @@ namespace classify
 template <>
 std::unique_ptr<classifier>
     make_binary_classifier<my_binary_classifier>(
-        const cpptoml::toml_group& config,
+        const cpptoml::table& config,
         std::shared_ptr<index::forward_index> idx,
         class_label positive_label,
         class_label negative_label);
