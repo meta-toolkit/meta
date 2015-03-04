@@ -2,7 +2,7 @@
 title: Topic Models
 category: tut
 layout: page
-order: 6
+order: 9
 ---
 
 ## Topic Modeling in MeTA
