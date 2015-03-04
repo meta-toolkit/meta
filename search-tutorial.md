@@ -2,7 +2,7 @@
 title: Search
 category: tut
 layout: page
-order: 3
+order: 4
 ---
 
 ## Search in MeTA

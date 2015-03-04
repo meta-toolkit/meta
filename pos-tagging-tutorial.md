@@ -2,7 +2,7 @@
 title: Part of Speech Tagging
 layout: page
 category: tut
-order: 6
+order: 7
 ---
 
 MeTA also provides models that can be used for

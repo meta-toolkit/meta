@@ -2,7 +2,7 @@
 title: Classification
 layout: page
 category: tut
-order: 4
+order: 5
 ---
 
 ## Classification in MeTA

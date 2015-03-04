@@ -2,7 +2,7 @@
 title: Parsing
 layout: page
 category: tut
-order: 7
+order: 8
 ---
 
 Many applications that deal with natural language desire constituency (or

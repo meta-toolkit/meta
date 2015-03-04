@@ -2,7 +2,7 @@
 title: Analyzers and Filters
 layout: page
 category: tut
-order: 2
+order: 3
 ---
 
 ## Analyzers, Tokenizers, and Filters

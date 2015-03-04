@@ -2,7 +2,7 @@
 layout: page
 title: Online Learning
 category: tut
-order: 5
+order: 6
 ---
 
 ## Online Learning in MeTA
