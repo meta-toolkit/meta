@@ -1,3 +1,4 @@
+{% assign pages = site.pages | sort: "order" %}
 <nav>
     <ul class="nav nav-pills nav-stacked">
         <li class="nav-header">Navigation</li>
@@ -13,7 +14,7 @@
             {% assign attr = section[0] %}
             {% assign label = section[1] %}
 
-            {% for node in site.pages %}
+            {% for node in pages %}
                 {% if forloop.first %}
                     <li class="nav-header">{{ label }}</li>
                 {% endif %}
