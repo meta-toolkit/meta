@@ -42,6 +42,7 @@ var searchData=
   ['make_5fstring',['make_string',['../classmeta_1_1lm_1_1language__model.html#a46c38f47a45912d192f859925a786076',1,'meta::lm::language_model']]],
   ['make_5ftagger',['make_tagger',['../classmeta_1_1sequence_1_1crf.html#a12e4dda7a6567bae6c2af32c72652816',1,'meta::sequence::crf']]],
   ['make_5ftokenizer',['make_tokenizer',['../namespacemeta_1_1analyzers_1_1tokenizers.html#aacf2fabd1de934c6bf62afab2fb69bc7',1,'meta::analyzers::tokenizers']]],
+  ['make_5ftransformer',['make_transformer',['../namespacemeta_1_1parser.html#aa9bc3f4faedbca46be0f3c78c24465a5',1,'meta::parser']]],
   ['make_5funique',['make_unique',['../namespacemeta.html#af738d8b4ab5ad1b9995af711d4a91199',1,'meta']]],
   ['map',['map',['../classmeta_1_1index_1_1ir__eval.html#a9226745411a4786a589821884e2e6607',1,'meta::index::ir_eval']]],
   ['marginals',['marginals',['../classmeta_1_1sequence_1_1crf_1_1scorer.html#a932fc083c1f89ca3aa2fbedc463b12e0',1,'meta::sequence::crf::scorer']]],

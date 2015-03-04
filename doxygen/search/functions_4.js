@@ -15,6 +15,9 @@ var searchData=
   ['end_5fprogress',['end_progress',['../namespacemeta_1_1printing.html#a255a97308e03980b1c1e21ea1d86b030',1,'meta::printing']]],
   ['endlg',['endlg',['../classmeta_1_1logging_1_1logger_1_1log__line.html#a562efe6421791f9932c2069e14eb396c',1,'meta::logging::logger::log_line']]],
   ['english_5fnormalizer',['english_normalizer',['../classmeta_1_1analyzers_1_1filters_1_1english__normalizer.html#a50d8283c11365bafc3b7f0cd17608a71',1,'meta::analyzers::filters::english_normalizer::english_normalizer(std::unique_ptr&lt; token_stream &gt; source)'],['../classmeta_1_1analyzers_1_1filters_1_1english__normalizer.html#aa218c0f15b42befe271c260e81c4c2fa',1,'meta::analyzers::filters::english_normalizer::english_normalizer(const english_normalizer &amp;other)']]],
+  ['entropy',['entropy',['../namespacemeta_1_1stats.html#a173906520e324491ec66175bc92631d5',1,'meta::stats']]],
   ['epoch',['epoch',['../classmeta_1_1sequence_1_1crf.html#ab305cc67787cac2c53efeb914e5894d9',1,'meta::sequence::crf']]],
-  ['equal',['equal',['../classmeta_1_1parser_1_1node.html#a7789a9eb1f9f00e61196b7999de09a6d',1,'meta::parser::node']]]
+  ['equal',['equal',['../classmeta_1_1parser_1_1node.html#a7789a9eb1f9f00e61196b7999de09a6d',1,'meta::parser::node']]],
+  ['expected_5fvalue',['expected_value',['../namespacemeta_1_1stats.html#a6123b8b7933d2e83e5a3a80504745918',1,'meta::stats']]],
+  ['extract_5fsequences',['extract_sequences',['../namespacemeta_1_1sequence.html#a2e2e1b4a1399b24607b6d07da4206792',1,'meta::sequence']]]
 ];
