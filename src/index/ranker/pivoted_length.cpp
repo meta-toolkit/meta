@@ -31,7 +31,7 @@ double pivoted_length::score_one(const score_data& sd)
 
 template <>
 std::unique_ptr<ranker>
-    make_ranker<pivoted_length>(const cpptoml::toml_group& config)
+    make_ranker<pivoted_length>(const cpptoml::table& config)
 {
     auto s = pivoted_length::default_s;
     if (auto c_s = config.get_as<double>("s"))

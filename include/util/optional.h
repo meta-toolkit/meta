@@ -12,6 +12,7 @@
 
 #include <stdexcept>
 #include <type_traits>
+#include "util/comparable.h"
 
 namespace meta
 {
@@ -97,7 +98,7 @@ union optional_storage
  * @see https://github.com/akrzemi1/Optional/
  */
 template <class T>
-class optional
+class optional : public util::comparable<optional<T>>
 {
   public:
     /**
@@ -220,6 +221,9 @@ class optional
      */
     optional_storage<T> storage_;
 };
+
+template <class T>
+bool operator<(const optional<T>& lhs, const optional<T>& rhs);
 
 /**
  * Exception thrown when trying to obtain the value of a non-engaged

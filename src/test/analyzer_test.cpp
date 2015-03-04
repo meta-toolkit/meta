@@ -6,6 +6,7 @@
 #include "test/analyzer_test.h"
 #include "test/inverted_index_test.h"
 #include "analyzers/token_stream.h"
+#include "corpus/document.h"
 #include "util/shim.h"
 
 namespace meta
@@ -31,7 +32,7 @@ void check_analyzer_expected(Analyzer& ana, corpus::document doc,
     ana.tokenize(doc);
     ASSERT_EQUAL(doc.counts().size(), num_unique);
     ASSERT_EQUAL(doc.length(), length);
-    ASSERT_EQUAL(doc.id(), 47);
+    ASSERT_EQUAL(doc.id(), 47ul);
     if (doc.contains_content())
     {
         ASSERT_EQUAL(doc.path(), "/home/person/filename.txt");

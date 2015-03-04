@@ -59,7 +59,7 @@ class jelinek_mercer : public language_model_ranker
  * rankers.
  */
 template <>
-std::unique_ptr<ranker> make_ranker<jelinek_mercer>(const cpptoml::toml_group&);
+std::unique_ptr<ranker> make_ranker<jelinek_mercer>(const cpptoml::table&);
 }
 }
 

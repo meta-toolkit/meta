@@ -123,10 +123,10 @@ class sgd : public binary_classifier
  * Specialization of the factory method used to create sgd classifiers.
  */
 template <>
-std::unique_ptr<binary_classifier> make_binary_classifier<sgd>(
-        const cpptoml::toml_group& config,
-        std::shared_ptr<index::forward_index> idx, class_label positive,
-        class_label negative);
+std::unique_ptr<binary_classifier>
+    make_binary_classifier<sgd>(const cpptoml::table& config,
+                                std::shared_ptr<index::forward_index> idx,
+                                class_label positive, class_label negative);
 }
 }
 #endif

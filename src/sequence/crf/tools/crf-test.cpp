@@ -34,7 +34,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto crf_grp = config.get_group("crf");
+    auto crf_grp = config.get_table("crf");
     if (!crf_grp)
     {
         LOG(fatal) << "Configuration must contain a [crf] group" << ENDLG;
@@ -82,8 +82,8 @@ int main(int argc, char** argv)
 
     std::vector<sequence::sequence> testing;
     {
-        auto begin = train_sections->at(0)->as<int64_t>()->value();
-        auto end = train_sections->at(1)->as<int64_t>()->value();
+        auto begin = train_sections->at(0)->as<int64_t>()->get();
+        auto end = train_sections->at(1)->as<int64_t>()->get();
         printing::progress progress(" > Reading training data: ",
                                     (end - begin + 1) * *section_size);
         for (uint8_t i = begin; i <= end; ++i)
@@ -101,19 +101,22 @@ int main(int argc, char** argv)
         }
     }
 
-    // const is *super important* here! This signals that we want the
-    // analyzer to be analyzing in "test mode", meaning that it will not
-    // generate new feature_ids while analyzing the sequences. This is
-    // exactly what we want when running a CRF to actually perform tagging.
-    const auto analyzer = sequence::default_pos_analyzer("crf");
+    auto analyzer = sequence::default_pos_analyzer();
+    analyzer.load(*crf_prefix);
     {
+        // const is *super important* here! This signals that we want the
+        // analyzer to be analyzing in "test mode", meaning that it will not
+        // generate new feature_ids while analyzing the sequences. This is
+        // exactly what we want when running a CRF to actually perform tagging.
+
+        const auto& ana = analyzer;
         printing::progress progress{" > Generating features: ",
                                     testing.size()};
         uint64_t idx = 0;
         for (auto& seq : testing)
         {
             progress(++idx);
-            analyzer.analyze(seq);
+            ana.analyze(seq);
         }
     }
 

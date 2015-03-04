@@ -39,7 +39,7 @@ class inverted_index::impl
      * @param parent The parent of this impl
      * @param config The config group
      */
-    impl(inverted_index* parent, const cpptoml::toml_group& config);
+    impl(inverted_index* parent, const cpptoml::table& config);
 
     /**
      * @param docs The documents to be tokenized
@@ -76,8 +76,7 @@ class inverted_index::impl
     uint64_t total_corpus_terms_;
 };
 
-inverted_index::impl::impl(inverted_index* idx,
-                           const cpptoml::toml_group& config)
+inverted_index::impl::impl(inverted_index* idx, const cpptoml::table& config)
     : idx_{idx},
       analyzer_{analyzers::analyzer::load(config)},
       total_corpus_terms_{0}
@@ -85,7 +84,7 @@ inverted_index::impl::impl(inverted_index* idx,
     // nothing
 }
 
-inverted_index::inverted_index(const cpptoml::toml_group& config)
+inverted_index::inverted_index(const cpptoml::table& config)
     : disk_index{config, *config.get_as<std::string>("inverted-index")},
       inv_impl_{this, config}
 {
@@ -95,6 +94,21 @@ inverted_index::inverted_index(const cpptoml::toml_group& config)
 inverted_index::inverted_index(inverted_index&&) = default;
 inverted_index& inverted_index::operator=(inverted_index&&) = default;
 inverted_index::~inverted_index() = default;
+
+bool inverted_index::valid() const
+{
+    for (auto& f : impl_->files)
+    {
+        if (!filesystem::file_exists(index_name() + "/" + std::string{f}))
+        {
+            LOG(info)
+                << "Existing inverted index detected as invalid; recreating"
+                << ENDLG;
+            return false;
+        }
+    }
+    return true;
+}
 
 void inverted_index::create_index(const std::string& config_file)
 {
@@ -142,8 +156,8 @@ void inverted_index::load_index()
     impl_->load_doc_id_mapping();
     impl_->load_term_id_mapping();
 
-    inv_impl_->term_bit_locations_ = util::disk_vector<uint64_t>(index_name()
-                                                            + "/lexicon.index");
+    inv_impl_->term_bit_locations_
+        = util::disk_vector<uint64_t>(index_name() + "/lexicon.index");
 
     impl_->load_label_id_mapping();
     impl_->load_postings();
@@ -225,11 +239,12 @@ void inverted_index::impl::compress(const std::string& filename,
 
         // allocate memory for the term_id -> term location mapping now
         // that we know how many terms there are
-        term_bit_locations_ = util::disk_vector
-            <uint64_t>(idx_->index_name() + "/lexicon.index", num_unique_terms);
+        term_bit_locations_ = util::disk_vector<uint64_t>(
+            idx_->index_name() + "/lexicon.index", num_unique_terms);
 
-        printing::progress progress{" > Compressing postings: ", length, 500,
-                                    8 * 1024 /* 1KB */};
+        printing::progress progress{
+            " > Compressing postings: ", length, 500, 8 * 1024 /* 1KB */
+        };
         // note: we will be accessing pdata in sorted order
         term_id t_id{0};
         while (in.has_next())
@@ -294,8 +309,8 @@ uint64_t inverted_index::doc_freq(term_id t_id) const
     return search_primary(t_id)->counts().size();
 }
 
-auto inverted_index::search_primary(term_id t_id) const -> std::shared_ptr
-    <postings_data_type>
+auto inverted_index::search_primary(
+    term_id t_id) const -> std::shared_ptr<postings_data_type>
 {
     uint64_t idx{t_id};
 

@@ -28,7 +28,7 @@ ranker_factory::ranker_factory()
     reg<pivoted_length>();
 }
 
-std::unique_ptr<ranker> make_ranker(const cpptoml::toml_group& config)
+std::unique_ptr<ranker> make_ranker(const cpptoml::table& config)
 {
     auto function = config.get_as<std::string>("method");
     if (!function)

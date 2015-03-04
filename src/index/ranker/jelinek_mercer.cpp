@@ -34,7 +34,7 @@ double jelinek_mercer::doc_constant(const score_data&) const
 
 template <>
 std::unique_ptr<ranker>
-    make_ranker<jelinek_mercer>(const cpptoml::toml_group& config)
+    make_ranker<jelinek_mercer>(const cpptoml::table& config)
 {
     if (auto lambda = config.get_as<double>("lambda"))
         return make_unique<jelinek_mercer>(*lambda);

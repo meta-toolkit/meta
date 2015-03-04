@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     logging::set_cerr_logging();
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto crf_group = config.get_group("crf");
+    auto crf_group = config.get_table("crf");
     if (!crf_group)
     {
         std::cerr << "[crf] group needed in config file" << std::endl;
@@ -41,8 +41,9 @@ int main(int argc, char* argv[])
     }
 
     sequence::crf crf{*prefix};
-    const sequence::sequence_analyzer analyzer
-        = sequence::default_pos_analyzer(*prefix);
+    auto ana = sequence::default_pos_analyzer();
+    ana.load(*prefix);
+    const auto& analyzer = ana;
     auto tagger = crf.make_tagger();
 
     std::string line;

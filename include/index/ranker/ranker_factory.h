@@ -15,7 +15,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -29,7 +29,7 @@ namespace index
  * class directly to add their own rankers.
  */
 class ranker_factory : public util::factory<ranker_factory,
-                                            ranker, const cpptoml::toml_group&>
+                                            ranker, const cpptoml::table&>
 {
     /// Friend the base ranker factory
     friend base_factory;
@@ -50,7 +50,7 @@ class ranker_factory : public util::factory<ranker_factory,
 /**
  * Convenience method for creating a ranker using the factory.
  */
-std::unique_ptr<ranker> make_ranker(const cpptoml::toml_group&);
+std::unique_ptr<ranker> make_ranker(const cpptoml::table&);
 
 /**
  * Factory method for creating a ranker. This should be specialized if
@@ -58,7 +58,7 @@ std::unique_ptr<ranker> make_ranker(const cpptoml::toml_group&);
  * reading parameters).
  */
 template <class Ranker>
-std::unique_ptr<ranker> make_ranker(const cpptoml::toml_group&)
+std::unique_ptr<ranker> make_ranker(const cpptoml::table&)
 {
     return make_unique<Ranker>();
 }

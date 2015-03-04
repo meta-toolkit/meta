@@ -122,7 +122,7 @@ void read_file(uint16_t size)
     }
     ASSERT(!map.find("0"));
     ASSERT(!map.find("zabawe"));
-    ASSERT_EQUAL(map.size(), 14);
+    ASSERT_EQUAL(map.size(), 14ul);
 }
 
 int vocabulary_map_tests()

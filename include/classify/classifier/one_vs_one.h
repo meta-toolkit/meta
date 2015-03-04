@@ -28,7 +28,6 @@ namespace classify
 class one_vs_one : public classifier
 {
   public:
-
     /**
      * Constructs a new one_vs_one classifier using the given
      * forward_index to retrieve document information and using the given
@@ -76,9 +75,8 @@ class one_vs_one : public classifier
  */
 template <>
 std::unique_ptr<classifier>
-    make_classifier<one_vs_one>(const cpptoml::toml_group&,
+    make_classifier<one_vs_one>(const cpptoml::table&,
                                 std::shared_ptr<index::forward_index>);
-
 }
 }
 #endif

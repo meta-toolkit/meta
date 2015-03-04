@@ -32,6 +32,8 @@ struct default_edge
 
     /// the weight for this edge
     double weight;
+    node_id src;    /// This field must exist in all edge objects.
+    node_id dest;   /// This field must exist in all edge objects.
 };
 }
 }

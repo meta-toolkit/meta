@@ -16,7 +16,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -88,7 +88,7 @@ class icu_filter : public util::clonable<token_stream, icu_filter>
 template <>
 std::unique_ptr<token_stream>
     make_filter<icu_filter>(std::unique_ptr<token_stream>,
-                            const cpptoml::toml_group&);
+                            const cpptoml::table&);
 }
 }
 }

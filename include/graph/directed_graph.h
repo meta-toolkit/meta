@@ -1,5 +1,5 @@
 /**
- * @file graph.h
+ * @file directed_graph.h
  * @author Sean Massung
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -42,7 +42,7 @@ class directed_graph : public graph<Node, Edge>
      * @param id The node id to get outgoing nodes from
      * @return the outgoing edges and node_ids to the given node
      */
-    const adjacency_list& outgoing(node_id id) const;
+    const adjacency_list& adjacent(node_id id) const;
 
     /**
      * @param id The node id to get incoming nodes to
@@ -61,8 +61,7 @@ class directed_graph : public graph<Node, Edge>
      * @param source
      * @param dest
      */
-    virtual void add_edge(const Edge& edge, node_id source,
-                          node_id dest) override;
+    virtual void add_edge(Edge edge, node_id source, node_id dest) override;
 
     #include "node_iterator.h"
     typedef node_iterator<typename vec_t::iterator> iterator;

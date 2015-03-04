@@ -15,7 +15,7 @@
 
 namespace cpptoml
 {
-class toml_group;
+class table;
 }
 
 namespace meta
@@ -31,7 +31,7 @@ namespace classify
  */
 class binary_classifier_factory
     : public util::factory<binary_classifier_factory, binary_classifier,
-                           const cpptoml::toml_group&,
+                           const cpptoml::table&,
                            std::shared_ptr<index::forward_index>, class_label,
                            class_label>
 {
@@ -56,7 +56,7 @@ class binary_classifier_factory
  * (Non-template): Convenience method for creating a binary classifier
  * using the factory.
  *
- * @param config The toml_group that specifies the binary classifier's
+ * @param config The table that specifies the binary classifier's
  * configuration
  * @param idx The forward_index the binary classifier is being constructed
  * over
@@ -67,7 +67,7 @@ class binary_classifier_factory
  *  configuration
  */
 std::unique_ptr<binary_classifier>
-    make_binary_classifier(const cpptoml::toml_group& config,
+    make_binary_classifier(const cpptoml::table& config,
                            std::shared_ptr<index::forward_index> idx,
                            class_label positive, class_label negative);
 
@@ -76,7 +76,7 @@ std::unique_ptr<binary_classifier>
  * be specialized if your given binary classifier requires special
  * construction behavior (e.g., reading parameters).
  *
- * @param config The toml_group that specifies the binary classifier's
+ * @param config The table that specifies the binary classifier's
  * configuration
  * @param idx The forward_index the binary classifier is being constructed
  * over
@@ -88,11 +88,10 @@ std::unique_ptr<binary_classifier>
  */
 template <class Classifier>
 std::unique_ptr<binary_classifier>
-    make_binary_classifier(const cpptoml::toml_group& config,
+    make_binary_classifier(const cpptoml::table&,
                            std::shared_ptr<index::forward_index> idx,
                            class_label positive, class_label negative)
 {
-    (void)config; // silence unused variable warning
     return make_unique<Classifier>(std::move(idx), positive, negative);
 }
 

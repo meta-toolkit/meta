@@ -25,7 +25,7 @@ int run_lda(Index& idx, uint64_t num_iters, uint64_t topics, double alpha,
     return 0;
 }
 
-bool check_parameter(const std::string& file, const cpptoml::toml_group& group,
+bool check_parameter(const std::string& file, const cpptoml::table& group,
                      const std::string& param)
 {
     if (!group.contains(param))
@@ -49,14 +49,14 @@ int run_lda(const std::string& config_file)
         return 1;
     }
 
-    auto lda_group = config.get_group("lda");
+    auto lda_group = config.get_table("lda");
 
-    if (!check_parameter(config_file, *lda_group, "alpha") ||
-        !check_parameter(config_file, *lda_group, "beta") ||
-        !check_parameter(config_file, *lda_group, "topics") ||
-        !check_parameter(config_file, *lda_group, "inference") ||
-        !check_parameter(config_file, *lda_group, "max-iters") ||
-        !check_parameter(config_file, *lda_group, "model-prefix"))
+    if (!check_parameter(config_file, *lda_group, "alpha")
+        || !check_parameter(config_file, *lda_group, "beta")
+        || !check_parameter(config_file, *lda_group, "topics")
+        || !check_parameter(config_file, *lda_group, "inference")
+        || !check_parameter(config_file, *lda_group, "max-iters")
+        || !check_parameter(config_file, *lda_group, "model-prefix"))
         return 1;
 
     auto type = *lda_group->get_as<std::string>("inference");
@@ -66,8 +66,8 @@ int run_lda(const std::string& config_file)
     uint64_t topics = *lda_group->get_as<int64_t>("topics");
     auto save_prefix = *lda_group->get_as<std::string>("model-prefix");
 
-    auto f_idx =
-        index::make_index<index::forward_index, caching::no_evict_cache>(
+    auto f_idx
+        = index::make_index<index::forward_index, caching::no_evict_cache>(
             config_file);
     if (type == "gibbs")
     {

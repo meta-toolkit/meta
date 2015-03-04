@@ -121,7 +121,7 @@ class winnow : public classifier
  */
 template <>
 std::unique_ptr<classifier>
-    make_classifier<winnow>(const cpptoml::toml_group& config,
+    make_classifier<winnow>(const cpptoml::table& config,
                             std::shared_ptr<index::forward_index> idx);
 }
 }

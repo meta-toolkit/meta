@@ -25,8 +25,8 @@ double okapi_bm25::score_one(const score_data& sd)
     double doc_len = sd.idx.doc_size(sd.d_id);
 
     // add 1.0 to the IDF to ensure that the result is positive
-    double IDF = std::log(1.0 + (sd.num_docs - sd.doc_count + 0.5)
-                                / (sd.doc_count + 0.5));
+    double IDF = std::log(
+        1.0 + (sd.num_docs - sd.doc_count + 0.5) / (sd.doc_count + 0.5));
 
     double TF = ((k1_ + 1.0) * sd.doc_term_count)
                 / ((k1_ * ((1.0 - b_) + b_ * doc_len / sd.avg_dl))
@@ -39,8 +39,7 @@ double okapi_bm25::score_one(const score_data& sd)
 }
 
 template <>
-std::unique_ptr<ranker>make_ranker<okapi_bm25>(
-        const cpptoml::toml_group& config)
+std::unique_ptr<ranker> make_ranker<okapi_bm25>(const cpptoml::table& config)
 {
     auto k1 = okapi_bm25::default_k1;
     if (auto c_k1 = config.get_as<double>("k1"))
@@ -56,6 +55,5 @@ std::unique_ptr<ranker>make_ranker<okapi_bm25>(
 
     return make_unique<okapi_bm25>(k1, b, k3);
 }
-
 }
 }

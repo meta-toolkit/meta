@@ -78,10 +78,10 @@ class forward_index : public disk_index
 
   protected:
     /**
-     * @param config The toml_group that specifies how to create the
+     * @param config The table that specifies how to create the
      * index.
      */
-    forward_index(const cpptoml::toml_group& config);
+    forward_index(const cpptoml::table& config);
 
   public:
     /**
@@ -140,6 +140,11 @@ class forward_index : public disk_index
      * @param config_file The configuration file used to create the index
      */
     void create_index(const std::string& config_file);
+
+    /**
+     * @return whether this index contains all necessary files
+     */
+    bool valid() const;
 
     /// Forward declare the implementation
     class impl;

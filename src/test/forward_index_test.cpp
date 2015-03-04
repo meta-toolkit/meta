@@ -28,8 +28,8 @@ void create_libsvm_config()
 template <class Index>
 void check_bcancer_expected(Index& idx)
 {
-    ASSERT_EQUAL(idx.num_docs(), 683);
-    ASSERT_EQUAL(idx.unique_terms(), 10);
+    ASSERT_EQUAL(idx.num_docs(), 683ul);
+    ASSERT_EQUAL(idx.unique_terms(), 10ul);
 
     std::ifstream in{"../data/bcancer-metadata.txt"};
     doc_id id{0};
@@ -45,8 +45,8 @@ void check_bcancer_expected(Index& idx)
 template <class Index>
 void check_ceeaus_expected_fwd(Index& idx)
 {
-    ASSERT_EQUAL(idx.num_docs(), 1008);
-    ASSERT_EQUAL(idx.unique_terms(), 3944);
+    ASSERT_EQUAL(idx.num_docs(), 1008ul);
+    ASSERT_EQUAL(idx.unique_terms(), 3944ul);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};
     uint64_t size;

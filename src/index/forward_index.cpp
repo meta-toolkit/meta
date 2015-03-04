@@ -55,7 +55,7 @@ class forward_index::impl
     /**
      * @param config the configuration settings for this index
      */
-    void create_libsvm_postings(const cpptoml::toml_group& config);
+    void create_libsvm_postings(const cpptoml::table& config);
 
     /**
      * Initializes structures based on a libsvm-formatted file.
@@ -77,7 +77,7 @@ class forward_index::impl
      * @return whether this index will be based off of a single
      * libsvm-formatted corpus file
      */
-    bool is_libsvm_format(const cpptoml::toml_group& config) const;
+    bool is_libsvm_format(const cpptoml::table& config) const;
 
     /**
      * Calculates which documents start at which bytes in the postings file.
@@ -101,7 +101,7 @@ class forward_index::impl
     forward_index* idx_;
 };
 
-forward_index::forward_index(const cpptoml::toml_group& config)
+forward_index::forward_index(const cpptoml::table& config)
     : disk_index{config, *config.get_as<std::string>("forward-index")},
       fwd_impl_{this}
 {
@@ -116,6 +116,28 @@ forward_index::impl::impl(forward_index* idx) : idx_{idx}
 forward_index::forward_index(forward_index&&) = default;
 forward_index::~forward_index() = default;
 forward_index& forward_index::operator=(forward_index&&) = default;
+
+bool forward_index::valid() const
+{
+    if (!filesystem::file_exists(index_name() + "/corpus.uniqueterms"))
+    {
+        LOG(info)
+            << "Existing forward index detected as invalid; recreating"
+            << ENDLG;
+        return false;
+    }
+    for (auto& f : impl_->files)
+    {
+        if (!filesystem::file_exists(index_name() + "/" + std::string{f}))
+        {
+            LOG(info)
+                << "Existing forward index detected as invalid; recreating"
+                << ENDLG;
+            return false;
+        }
+    }
+    return true;
+}
 
 std::string forward_index::liblinear_data(doc_id d_id) const
 {
@@ -172,6 +194,10 @@ void forward_index::create_index(const std::string& config_file)
     else
     {
         LOG(info) << "Creating index by uninverting: " << index_name() << ENDLG;
+        {
+            // Ensure all files are flushed before uninverting
+            make_index<inverted_index>(config_file);
+        }
         auto inv_idx = make_index<inverted_index>(config_file);
 
         fwd_impl_->create_uninverted_metadata(inv_idx->index_name());
@@ -193,8 +219,7 @@ void forward_index::create_index(const std::string& config_file)
     LOG(info) << "Done creating index: " << index_name() << ENDLG;
 }
 
-void forward_index::impl::create_libsvm_postings(
-    const cpptoml::toml_group& config)
+void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
 {
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)
@@ -205,8 +230,8 @@ void forward_index::impl::create_libsvm_postings(
         throw forward_index_exception{
             "dataset missing from configuration file"};
 
-    std::string existing_file =
-        *prefix + "/" + *dataset + "/" + *dataset + ".dat";
+    std::string existing_file = *prefix + "/" + *dataset + "/" + *dataset
+                                + ".dat";
 
     filesystem::copy_file(existing_file,
                           idx_->index_name() + idx_->impl_->files[POSTINGS]);
@@ -241,9 +266,8 @@ void forward_index::impl::init_metadata()
     uint64_t num_docs = filesystem::num_lines(idx_->index_name()
                                               + idx_->impl_->files[POSTINGS]);
     idx_->impl_->initialize_metadata(num_docs);
-    doc_byte_locations_ = util::disk_vector<uint64_t>(idx_->index_name()
-                                                      + "/lexicon.index",
-                                                      num_docs);
+    doc_byte_locations_ = util::disk_vector<uint64_t>(
+        idx_->index_name() + "/lexicon.index", num_docs);
 }
 
 void forward_index::impl::create_libsvm_metadata()
@@ -299,10 +323,9 @@ void forward_index::impl::create_uninverted_metadata(const std::string& name)
                               idx_->index_name() + idx_->impl_->files[file]);
 }
 
-bool forward_index::impl::is_libsvm_format(const cpptoml::toml_group
-                                           & config) const
+bool forward_index::impl::is_libsvm_format(const cpptoml::table& config) const
 {
-    auto analyzers = config.get_group_array("analyzers")->array();
+    auto analyzers = config.get_table_array("analyzers")->get();
     if (analyzers.size() != 1)
         return false;
 
@@ -318,8 +341,8 @@ uint64_t forward_index::unique_terms() const
     return fwd_impl_->total_unique_terms_;
 }
 
-auto forward_index::search_primary(doc_id d_id) const
-    -> std::shared_ptr<postings_data_type>
+auto forward_index::search_primary(
+    doc_id d_id) const -> std::shared_ptr<postings_data_type>
 {
     auto pdata = std::make_shared<postings_data_type>(d_id);
     auto line = liblinear_data(d_id);
@@ -330,7 +353,7 @@ auto forward_index::search_primary(doc_id d_id) const
 void forward_index::impl::uninvert(const inverted_index& inv_idx)
 {
     io::compressed_file_reader inv_reader{inv_idx.index_name()
-                                              + idx_->impl_->files[POSTINGS],
+                                          + idx_->impl_->files[POSTINGS],
                                           io::default_compression_reader_func};
 
     term_id t_id{0};

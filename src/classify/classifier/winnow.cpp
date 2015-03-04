@@ -103,7 +103,7 @@ void winnow::reset()
 
 template <>
 std::unique_ptr<classifier>
-    make_classifier<winnow>(const cpptoml::toml_group& config,
+    make_classifier<winnow>(const cpptoml::table& config,
                             std::shared_ptr<index::forward_index> idx)
 {
     auto m = winnow::default_m;
@@ -120,6 +120,5 @@ std::unique_ptr<classifier>
 
     return make_unique<winnow>(std::move(idx), m, gamma, max_iter);
 }
-
 }
 }

@@ -21,7 +21,7 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding)
         query.encoding(encoding);
 
         auto ranking = r.score(idx, query);
-        ASSERT_EQUAL(ranking.size(), 10); // default is 10 docs
+        ASSERT_EQUAL(ranking.size(), 10ul); // default is 10 docs
 
         // since we're searching for a document already in the index, the same
         // document should be ranked first, but there are a few duplicate
@@ -76,6 +76,8 @@ int ranker_tests()
         index::pivoted_length r;
         test_rank(r, *idx, encoding);
     });
+
+    idx = nullptr;
 
     system("rm -rf ceeaus-inv test-config.toml");
     return num_failed;

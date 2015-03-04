@@ -105,8 +105,7 @@ void nearest_centroid::reset()
 
 template <>
 std::unique_ptr<classifier> make_multi_index_classifier<nearest_centroid>(
-    const cpptoml::toml_group& config,
-    std::shared_ptr<index::forward_index> idx,
+    const cpptoml::table&, std::shared_ptr<index::forward_index> idx,
     std::shared_ptr<index::inverted_index> inv_idx)
 {
     return make_unique<nearest_centroid>(std::move(inv_idx), std::move(idx));
