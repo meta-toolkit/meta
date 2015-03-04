@@ -166,5 +166,42 @@ namespace util
 namespace printing
 {
 }
+
+/**
+ * Contains implementations of the graph data structure and algorithms
+ * that operate over them.
+ */
+namespace graph
+{
+}
+
+/**
+ * Contains implementations of statistical language models.
+ */
+namespace lm
+{
+}
+
+/**
+ * Contains functions that relate to phrase structure trees and parsing of
+ * natural language.
+ */
+namespace parser
+{
+}
+
+/**
+ * Sequence representations and labeling models/algorithms.
+ */
+namespace sequence
+{
+}
+
+/**
+ * Probability distributions and other statistics functions.
+ */
+namespace stats
+{
+}
 }
 #endif
