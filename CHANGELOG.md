@@ -2,6 +2,8 @@
 ## Bug fixes
 - fix calculation of average precision in `ir_eval` (the denominator was
     incorrect)
+- specify that labels are required for the `file_corpus` document list; this
+    allows spaces in the path to each document
 
 # [v1.3][1.3]
 ## New features
