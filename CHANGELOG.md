@@ -1,6 +1,6 @@
-# [Unreleased][unreleased]
+# [v1.3.1][1.3.1]
 ## Bug fixes
-- fix calculation of average precision in `ir_eval` (the denomnator was
+- fix calculation of average precision in `ir_eval` (the denominator was
     incorrect)
 
 # [v1.3][1.3]
@@ -91,7 +91,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.1...develop
+[1.3.1]: https://github.com/meta-toolkit/meta/compare/v1.3...v1.3.1
 [1.3]: https://github.com/meta-toolkit/meta/compare/v1.2...v1.3
 [1.2]: https://github.com/meta-toolkit/meta/compare/v1.1...v1.2
 [1.1]: https://github.com/meta-toolkit/meta/compare/v1.0...v1.1
