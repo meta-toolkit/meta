@@ -181,8 +181,8 @@ double ir_eval::avg_p(const std::vector<std::pair<doc_id, double>>& results,
             break;
     }
 
-    scores_.push_back(avgp / (i - 1.0));
-    return avgp / (i - 1.0);
+    scores_.push_back(avgp / ht->second.size());
+    return avgp / ht->second.size();
 }
 
 double ir_eval::map() const
