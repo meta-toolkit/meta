@@ -84,9 +84,11 @@ There are currently three corpus input formats:
        count of the number of documents in the corpus (this is used to be
        able to provide progress reporting when tokenizing documents)
  - `file_corpus`: each document is its own file, and the name of the file
-   becomes the name of the document. There is also a `corpusname-full-corpus.txt`
-   which contains (on each line) an optional label for each document followed
-   by the path to the file on disk.
+   becomes the name of the document. There is also a
+   `corpusname-full-corpus.txt` which contains (on each line) a required label
+   for each document followed by the path to the file on disk. If the documents
+   don't have specified class labels, just precede the line with [none] or
+   similar.
 
 If only being used for classification, MeTA can also take libsvm-formatted
 input to create a `forward_index`.
