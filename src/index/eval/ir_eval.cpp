@@ -167,6 +167,9 @@ double ir_eval::avg_p(const std::vector<std::pair<doc_id, double>>& results,
         return 0.0;
     }
 
+    // the total number of *possible* relevant documents given the num_docs
+    // cutoff point
+    auto total_relevant = std::min<uint64_t>(num_docs, ht->second.size());
     uint64_t i = 1;
     double avgp = 0.0;
     double num_rel = 1;
@@ -177,12 +180,12 @@ double ir_eval::avg_p(const std::vector<std::pair<doc_id, double>>& results,
             avgp += num_rel / i;
             ++num_rel;
         }
-        if (i++ == num_docs)
+        if (i++ == total_relevant)
             break;
     }
 
-    scores_.push_back(avgp / ht->second.size());
-    return avgp / ht->second.size();
+    scores_.push_back(avgp / total_relevant);
+    return avgp / total_relevant;
 }
 
 double ir_eval::map() const

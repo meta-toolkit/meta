@@ -1,5 +1,7 @@
 # [Unreleased][unreleased]
-- nothing yet!
+## Bug fixes
+- fix calculation of average precision in `ir_eval` (the denomnator was
+    incorrect)
 
 # [v1.3][1.3]
 ## New features
