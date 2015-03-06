@@ -56,21 +56,29 @@ std::unique_ptr<corpus> corpus::load(const cpptoml::table& config)
         if (!file_list)
             throw corpus_exception{"list missing from configuration file"};
 
-        std::string file =
-            *prefix + "/" + *dataset + "/" + *file_list + "-full-corpus.txt";
-        return make_unique<file_corpus>(*prefix + "/"
-                                        + *dataset + "/", file, encoding);
+        std::string file = *prefix + "/" + *dataset + "/" + *file_list
+                           + "-full-corpus.txt";
+        return make_unique<file_corpus>(*prefix + "/" + *dataset + "/", file,
+                                        encoding);
     }
     else if (*type == "line-corpus")
     {
-        std::string filename =
-            *prefix + "/" + *dataset + "/" + *dataset + ".dat";
+        std::string filename = *prefix + "/" + *dataset + "/" + *dataset
+                               + ".dat";
         auto lines = config.get_as<int64_t>("num-lines");
         if (!lines)
             return make_unique<line_corpus>(filename, encoding);
         return make_unique<line_corpus>(filename, encoding,
                                         static_cast<uint64_t>(*lines));
     }
+#if META_HAS_ZLIB
+    else if (*type == "gz-corpus")
+    {
+        std::string filename = *prefix + "/" + *dataset + "/" + *dataset
+                               + ".dat";
+        return make_unique<gz_corpus>(filename, encoding);
+    }
+#endif
     else
         throw corpus_exception{"corpus type was not able to be determined"};
 }

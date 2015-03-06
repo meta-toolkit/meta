@@ -117,6 +117,28 @@ forward_index::forward_index(forward_index&&) = default;
 forward_index::~forward_index() = default;
 forward_index& forward_index::operator=(forward_index&&) = default;
 
+bool forward_index::valid() const
+{
+    if (!filesystem::file_exists(index_name() + "/corpus.uniqueterms"))
+    {
+        LOG(info)
+            << "Existing forward index detected as invalid; recreating"
+            << ENDLG;
+        return false;
+    }
+    for (auto& f : impl_->files)
+    {
+        if (!filesystem::file_exists(index_name() + "/" + std::string{f}))
+        {
+            LOG(info)
+                << "Existing forward index detected as invalid; recreating"
+                << ENDLG;
+            return false;
+        }
+    }
+    return true;
+}
+
 std::string forward_index::liblinear_data(doc_id d_id) const
 {
     if (d_id >= num_docs())

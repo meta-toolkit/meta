@@ -85,7 +85,7 @@ std::shared_ptr<Index> make_index(const std::string& config_file,
         std::shared_ptr<Index>{new Index(config, std::forward<Args>(args)...)};
 
     // if index has already been made, load it
-    if (filesystem::make_directory(idx->index_name()))
+    if (filesystem::make_directory(idx->index_name()) && idx->valid())
         idx->load_index();
     else
         idx->create_index(config_file);
