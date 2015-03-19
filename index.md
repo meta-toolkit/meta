@@ -36,3 +36,20 @@ We have walkthroughs for the following parts of MeTA:
  - [Search]({{site.baseurl}}/search-tutorial.html)
  - [Classifiers]({{site.baseurl}}/classify-tutorial.html)
  - [Topic Models]({{site.baseurl}}/topic-models-tutorial.html)
+
+## Users
+
+ - The [TIMAN Research Group](http://sifaka.cs.uiuc.edu/ir/) from the [UIUC
+   Computer Science Department](http://cs.illinois.edu/) uses MeTA in their text
+   mining research
+ - The Coursera course [Text Retrieval and Search
+   Engines](https://www.coursera.org/course/textretrieval) uses MeTA in
+   programming assignments available to thousands of students
+ - An upcoming textbook [Text Data Analysis and Management: A Practical
+   Introduction to Text Mining and Information
+   Retrieval](https://github.com/smassung/text-data-book-comments) showcases the
+   MeTA toolkit with exercises and demos
+
+Contact us through our [GitHub issues
+page](https://github.com/meta-toolkit/meta/issues) if you'd like your
+application of MeTA on our site!
