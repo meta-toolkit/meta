@@ -1,3 +1,8 @@
+# [v1.3.2][1.3.2]
+## Bug fixes
+- fix potentially incorrect generation of vocabulary map files on 32-bit
+    systems (this appears to have only impacted non-default block sizes)
+
 # [v1.3.1][1.3.1]
 ## Bug fixes
 - fix calculation of average precision in `ir_eval` (the denominator was

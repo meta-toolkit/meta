@@ -106,7 +106,9 @@ vocabulary_map_writer::~vocabulary_map_writer()
             io::read_binary(reader, term);
             io::read_binary(reader, t_id);
 
-            auto length = sizeof(uint64_t) + term.length() + 1;
+            // signed int for safe negation below (auto causes a big on
+            // 32-bit systems)
+            int64_t length = sizeof(uint64_t) + term.length() + 1;
 
             // if we are out of room in the current block, flush it and start a
             // new one
