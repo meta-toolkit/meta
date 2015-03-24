@@ -30,7 +30,7 @@ class transition : public util::comparable<transition>
     /**
      * The transition types.
      */
-    enum class type_t
+    enum class type_t : uint8_t
     {
         SHIFT = 0,
         REDUCE_L,

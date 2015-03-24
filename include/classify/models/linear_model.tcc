@@ -23,10 +23,10 @@ void linear_model<FeatureId, FeatureValue, ClassId>::load(std::istream& model)
     if (!model)
         throw exception{"model not found"};
 
-    size_t num_feats;
+    uint64_t num_feats;
     io::read_binary(model, num_feats);
 
-    for (size_t i = 0; i < num_feats; ++i)
+    for (uint64_t i = 0; i < num_feats; ++i)
     {
         if (!model)
             throw exception{"malformed model file (too few features written)"};
@@ -34,10 +34,10 @@ void linear_model<FeatureId, FeatureValue, ClassId>::load(std::istream& model)
         feature_id feature_name;
         io::read_binary(model, feature_name);
 
-        size_t num_cids;
+        uint64_t num_cids;
         io::read_binary(model, num_cids);
 
-        for (size_t j = 0; j < num_cids; ++j)
+        for (uint64_t j = 0; j < num_cids; ++j)
         {
             if (!model)
                 throw exception{"malformed model file (too few classes "
@@ -57,14 +57,16 @@ template <class FeatureId, class FeatureValue, class ClassId>
 void linear_model<FeatureId, FeatureValue, ClassId>::save(
     std::ostream& model) const
 {
-    io::write_binary(model, weights_.size());
+    uint64_t sze = weights_.size();
+    io::write_binary(model, sze);
     for (const auto& feat_vec : weights_)
     {
         const auto& feat = feat_vec.first;
         const auto& weights = feat_vec.second;
 
         io::write_binary(model, feat);
-        io::write_binary(model, weights.size());
+        uint64_t size = weights.size();
+        io::write_binary(model, size);
 
         for (const auto& weight : weights)
         {
@@ -127,7 +129,7 @@ auto linear_model<FeatureId, FeatureValue, ClassId>::best_class(
 template <class FeatureId, class FeatureValue, class ClassId>
 template <class FeatureVector, class Filter>
 auto linear_model<FeatureId, FeatureValue, ClassId>::best_classes(
-    FeatureVector&& features, size_t num,
+    FeatureVector&& features, uint64_t num,
     Filter&& filter) const -> scored_classes
 {
     weight_vector class_scores;
@@ -180,7 +182,7 @@ auto linear_model<FeatureId, FeatureValue, ClassId>::best_classes(
 template <class FeatureId, class FeatureValue, class ClassId>
 template <class FeatureVector>
 auto linear_model<FeatureId, FeatureValue, ClassId>::best_classes(
-    FeatureVector&& features, size_t num) const -> scored_classes
+    FeatureVector&& features, uint64_t num) const -> scored_classes
 {
     return best_classes(std::forward<FeatureVector>(features), num,
                         [](const class_id&)

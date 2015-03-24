@@ -29,14 +29,14 @@ transition_map::transition_map(const std::string& prefix)
     if (!store)
         throw exception{"missing transitions model file"};
 
-    size_t num_trans;
+    uint64_t num_trans;
     io::read_binary(store, num_trans);
 
     if (!store)
         throw exception{"malformed transitions model file"};
 
     transitions_.reserve(num_trans);
-    for (size_t i = 0; i < num_trans; ++i)
+    for (uint64_t i = 0; i < num_trans; ++i)
     {
         if (!store)
             throw exception{"malformed transition model file (too few "
@@ -108,7 +108,8 @@ void transition_map::save(const std::string& prefix) const
     std::ofstream store{prefix + "/parser.trans", std::ios::binary};
 #endif
 
-    io::write_binary(store, transitions_.size());
+    uint64_t sze = transitions_.size();
+    io::write_binary(store, sze);
     for (const auto& trans : transitions_)
     {
         io::write_binary(store, trans.type());
