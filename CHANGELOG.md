@@ -3,6 +3,8 @@
 - Fix issues with system-defined integer widths in binary model files
     (mainly impacted the greedy tagger and parser); please re-download any
     parser model files you may have had before
+- Fix bug where parser model directory is not created if a non-standard
+    prefix is used (anything other than "parser")
 
 ## Enhancements
 - Silence inconsistent missing overrides warning on clang >= 3.6
