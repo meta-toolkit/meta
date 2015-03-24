@@ -1,3 +1,14 @@
+# [v1.3.3][1.3.3]
+## Bug fixes
+- Fix issues with system-defined integer widths in binary model files
+    (mainly impacted the greedy tagger and parser); please re-download any
+    parser model files you may have had before
+- Fix bug where parser model directory is not created if a non-standard
+    prefix is used (anything other than "parser")
+
+## Enhancements
+- Silence inconsistent missing overrides warning on clang >= 3.6
+
 # [v1.3.2][1.3.2]
 ## Bug fixes
 - fix potentially incorrect generation of vocabulary map files on 32-bit
@@ -98,7 +109,9 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.1...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.3...develop
+[1.3.3]: https://github.com/meta-toolkit/meta/compare/v1.3.2...v1.3.3
+[1.3.2]: https://github.com/meta-toolkit/meta/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/meta-toolkit/meta/compare/v1.3...v1.3.1
 [1.3]: https://github.com/meta-toolkit/meta/compare/v1.2...v1.3
 [1.2]: https://github.com/meta-toolkit/meta/compare/v1.1...v1.2

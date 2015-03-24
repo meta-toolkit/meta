@@ -65,7 +65,7 @@ class sgd : public binary_classifier
      * @param doc The document to compute the dot product with
      * @return the dot product with the current weight vector
      */
-    double predict(doc_id d_id) const;
+    double predict(doc_id d_id) const override;
 
     void train(const std::vector<doc_id>& docs) override;
 
