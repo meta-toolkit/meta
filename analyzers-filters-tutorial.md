@@ -98,6 +98,10 @@ tagger = "path/to/greedy-tagger/model"
 parser = "path/to/sr-parser/model"
 {% endhighlight %}
 
+The path to the models in the `tree` and `ngram-pos` analyzers is wherever you
+put the files downloaded from the [current
+release](https://github.com/meta-toolkit/meta/releases).
+
 ## Getting Creative: Specifying Your Own Filter Chain
 
 If your application requires specific text analysis operations, you can
