@@ -123,7 +123,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.3...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.4...develop
+[1.3.4]: https://github.com/meta-toolkit/meta/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/meta-toolkit/meta/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/meta-toolkit/meta/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/meta-toolkit/meta/compare/v1.3...v1.3.1
