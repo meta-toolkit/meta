@@ -40,9 +40,9 @@ void ir_eval::init_index(const std::string& path)
 
     // four (or three) fields per line
     query_id q_id;
-    uint8_t unused; // TREC compatability, optional
+    uint64_t unused; // TREC compatability, optional
     doc_id d_id;
-    uint8_t relevance;
+    uint64_t relevance;
 
     while (in.good())
     {
@@ -56,7 +56,7 @@ void ir_eval::init_index(const std::string& path)
         iss >> d_id;
         iss >> relevance;
 
-        if (relevance != '0')
+        if (relevance > 0)
             qrels_[q_id][d_id] = relevance;
     }
 }
@@ -133,14 +133,14 @@ double ir_eval::ndcg(const std::vector<std::pair<doc_id, double>>& results,
     uint64_t i = 1;
     for (auto& res : results)
     {
-        double rel = map::safe_at(ht->second, res.first); // 0 if non-relevant
-        dcg += (std::pow(2.0, rel) - 1.0) / std::log(i + 1.0);
+        auto rel = map::safe_at(ht->second, res.first); // 0 if non-relevant
+        dcg += (std::pow(2.0, rel) - 1.0) / std::log2(i + 1.0);
         if (i++ == num_docs)
             break;
     }
 
     // calculate ideal DCG
-    std::vector<uint8_t> rels;
+    std::vector<uint64_t> rels;
     for (const auto& s : ht->second)
         rels.push_back(s.second);
     std::sort(rels.begin(), rels.end());
@@ -149,7 +149,7 @@ double ir_eval::ndcg(const std::vector<std::pair<doc_id, double>>& results,
     i = 1;
     for (auto& rel : rels)
     {
-        idcg += (std::pow(2.0, rel) + 1.0) / std::log(i + 1.0);
+        idcg += (std::pow(2.0, rel) - 1.0) / std::log2(i + 1.0);
         if (i++ == num_docs)
             break;
     }
@@ -180,8 +180,9 @@ double ir_eval::avg_p(const std::vector<std::pair<doc_id, double>>& results,
             avgp += num_rel / i;
             ++num_rel;
         }
-        if (i++ == total_relevant)
+        if (num_rel - 1 == total_relevant)
             break;
+        ++i;
     }
 
     scores_.push_back(avgp / total_relevant);
@@ -190,16 +191,24 @@ double ir_eval::avg_p(const std::vector<std::pair<doc_id, double>>& results,
 
 double ir_eval::map() const
 {
+    if (scores_.empty())
+        return 0.0;
+
     return std::accumulate(scores_.begin(), scores_.end(), 0.0)
            / scores_.size();
 }
 
 double ir_eval::gmap() const
 {
+    if (scores_.empty())
+        return 0.0;
+
     double sum = 0.0;
     for (auto& s : scores_)
-        sum += std::log(s + 1.0);
-    return sum / scores_.size();
+        if (s > 0.0)
+            sum += std::log(s);
+
+    return std::exp(sum / scores_.size());
 }
 
 void ir_eval::print_stats(const std::vector<std::pair<doc_id, double>>& results,
