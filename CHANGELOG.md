@@ -1,3 +1,17 @@
+# [v1.3.4][1.3.4]
+## New features
+- Support building with biicode
+- Add Vagrantfile for virtual machine configuration
+- Add Dockerfile for Docker support
+
+## Enhancements
+- Improve `ir_eval` unit tests
+
+## Bug fixes
+- Fix `ir_eval::ndcg` incorrect log base and addition instead of subtraction in
+    IDCG calculation
+- Fix `ir_eval::avg_p` incorrect early termination
+
 # [v1.3.3][1.3.3]
 ## Bug fixes
 - Fix issues with system-defined integer widths in binary model files
