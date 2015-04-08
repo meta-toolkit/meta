@@ -10,3 +10,6 @@ doc/
 .*
 data/ceeaus
 data/breast-cancer
+biicode.conf
+bii/
+bin/

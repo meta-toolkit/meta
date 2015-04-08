@@ -131,7 +131,7 @@ class linear_model
      * @return a vector of (up to) \f$k\f$ scored classes sorted by score
      */
     template <class FeatureVector, class Filter>
-    scored_classes best_classes(FeatureVector&& features, size_t num,
+    scored_classes best_classes(FeatureVector&& features, uint64_t num,
                                 Filter&& filter) const;
 
     /**
@@ -142,7 +142,7 @@ class linear_model
      * @return a vector of (up to) \f$k\f$ scored classes sorted by score
      */
     template <class FeatureVector>
-    scored_classes best_classes(FeatureVector&& features, size_t num) const;
+    scored_classes best_classes(FeatureVector&& features, uint64_t num) const;
 
     /**
      * Updates all of the weights of this model by adding in the

@@ -15,7 +15,7 @@ namespace
 class height_visitor : public parser::const_visitor<size_t>
 {
   public:
-    size_t operator()(const parser::internal_node& in)
+    size_t operator()(const parser::internal_node& in) override
     {
         size_t max_height = 0;
         in.each_child([&](const parser::node* child)

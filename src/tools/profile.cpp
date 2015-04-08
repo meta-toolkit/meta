@@ -38,6 +38,8 @@ int print_usage(const std::string& prog)
     std::cerr << "\t--pos\tannotate words with POS tags" << std::endl;
     std::cerr << "\t--pos-replace\treplace words with their POS tags"
               << std::endl;
+    std::cerr << "\t--parse\tcreate grammatical parse trees from file content"
+              << std::endl;
     std::cerr << "\t--freq-unigram\tsort and count unigram words" << std::endl;
     std::cerr << "\t--freq-bigram\tsort and count bigram words" << std::endl;
     std::cerr << "\t--freq-trigram\tsort and count trigram words" << std::endl;

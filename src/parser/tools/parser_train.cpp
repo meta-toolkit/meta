@@ -120,7 +120,7 @@ int main(int argc, char** argv)
     }
     LOG(info) << training.size() << " training examples" << ENDLG;
 
-    filesystem::make_directory("parser");
+    filesystem::make_directory(*parser_prefix);
     parser::sr_parser parser;
 
     parser::sr_parser::training_options options{};

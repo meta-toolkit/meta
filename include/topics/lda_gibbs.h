@@ -62,7 +62,7 @@ class lda_gibbs : public lda_model
      * P(\mathbf{w} \mid \mathbf{z})\f$ to be allowed before considering
      * the sampler to have converged
      */
-    virtual void run(uint64_t num_iters, double convergence = 1e-6);
+    virtual void run(uint64_t num_iters, double convergence = 1e-6) override;
 
   protected:
     /**

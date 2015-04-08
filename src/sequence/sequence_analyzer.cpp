@@ -78,7 +78,8 @@ void sequence_analyzer::save(const std::string& prefix) const
 #else
     std::ofstream output{prefix + "/feature.mapping", std::ios::binary};
 #endif
-    io::write_binary(output, feature_id_mapping_.size());
+    uint64_t sze = feature_id_mapping_.size();
+    io::write_binary(output, sze);
     uint64_t i = 0;
     for (const auto& pair : feature_id_mapping_)
     {
