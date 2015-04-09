@@ -97,11 +97,6 @@ class disk_index::disk_index_impl
     void load_label_id_mapping();
 
     /**
-     * Loads the postings file.
-     */
-    void load_postings();
-
-    /**
      * Saves the label_id mapping.
      */
     void save_label_id_mapping();
@@ -134,11 +129,6 @@ class disk_index::disk_index_impl
      * @param terms The number of unique terms that will appear in the document
      */
     void set_unique_terms(doc_id id, uint64_t terms);
-
-    /**
-     * @return the mmap file for the postings.
-     */
-    const io::mmap_file& postings() const;
 
     /**
      * @return the total number of unique terms in the index.
@@ -198,13 +188,6 @@ class disk_index::disk_index_impl
 
     /// Assigns an integer to each class label (used for liblinear mappings)
     util::invertible_map<class_label, label_id> label_ids_;
-
-    /**
-     * A pointer to a memory-mapped postings file. It is a pointer because
-     * we want to delay the initialization of it until the postings file is
-     * created in some cases.
-     */
-    util::optional<io::mmap_file> postings_;
 
     /// mutex for thread-safe operations
     mutable std::mutex mutex_;

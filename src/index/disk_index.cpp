@@ -172,11 +172,6 @@ void disk_index::disk_index_impl::load_label_id_mapping()
     map::load_mapping(label_ids_, index_name_ + files[LABEL_IDS_MAPPING]);
 }
 
-void disk_index::disk_index_impl::load_postings()
-{
-    postings_ = io::mmap_file{index_name_ + files[POSTINGS]};
-}
-
 void disk_index::disk_index_impl::save_label_id_mapping()
 {
     map::save_mapping(label_ids_, index_name_ + files[LABEL_IDS_MAPPING]);
@@ -201,11 +196,6 @@ void disk_index::disk_index_impl::set_length(doc_id id, uint64_t length)
 void disk_index::disk_index_impl::set_unique_terms(doc_id id, uint64_t terms)
 {
     (*unique_terms_)[id] = terms;
-}
-
-const io::mmap_file& disk_index::disk_index_impl::postings() const
-{
-    return *postings_;
 }
 
 uint64_t disk_index::disk_index_impl::total_unique_terms() const

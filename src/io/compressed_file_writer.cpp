@@ -13,9 +13,8 @@ namespace meta
 namespace io
 {
 
-compressed_file_writer::compressed_file_writer(const std::string& filename,
-                                               std::function
-                                               <uint64_t(uint64_t)> mapping)
+compressed_file_writer::compressed_file_writer(
+    const std::string& filename, std::function<uint64_t(uint64_t)> mapping)
     : outfile_{fopen(filename.c_str(), "w")},
       char_cursor_{0},
       bit_cursor_{0},
@@ -43,6 +42,47 @@ void compressed_file_writer::write(const std::string& str)
         auto uch = static_cast<uint8_t>(ch);
         write(static_cast<uint64_t>(uch));
     }
+}
+
+void compressed_file_writer::write(double value)
+{
+    // http://stackoverflow.com/questions/5672960/how-can-i-extract-the-mantissa-of-a-double
+    // http://dlib.net/dlib/float_details.h.html
+    //
+    // Essentially, we write the double as two integers: the mantissa and
+    // the exponent, such that mantissa * std::pow(2, exponent) = value.
+    int exp;
+    auto digits = std::numeric_limits<double>::digits;
+    auto mantissa
+        = static_cast<int64_t>(std::frexp(value, &exp) * (1ul << digits));
+    int16_t exponent = exp - digits;
+
+    // see dlib link above; tries to shrink mantissa for more efficient
+    // serialization
+    for (int i = 0; i < 8 && (mantissa & 0xFF) == 0; ++i)
+    {
+        mantissa >>= 8;
+        exponent += 8;
+    }
+
+    // write in a weird backwards order to make reading in easier later
+    bool sign = false;
+    if (mantissa < 0)
+    {
+        sign = true;
+        mantissa *= -1;
+    }
+    write(static_cast<uint64_t>(mantissa));
+    write_bit(sign);
+
+    sign = false;
+    if (exponent < 0)
+    {
+        sign = true;
+        exponent *= -1;
+    }
+    write(static_cast<uint64_t>(exponent));
+    write_bit(sign);
 }
 
 uint64_t compressed_file_writer::bit_location() const

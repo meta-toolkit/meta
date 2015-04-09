@@ -8,7 +8,8 @@
 #include "index/disk_index_impl.h"
 #include "index/forward_index.h"
 #include "index/inverted_index.h"
-#include "index/postings_data.h"
+#include "index/postings_file.h"
+#include "index/postings_file_writer.h"
 #include "index/string_list.h"
 #include "index/string_list_writer.h"
 #include "index/vocabulary_map.h"
@@ -34,23 +35,6 @@ class forward_index::impl
      * Constructs an implementation based on a forward_index.
      */
     impl(forward_index* idx);
-
-    /**
-     * This function loads a disk index from its filesystem
-     * representation.
-     */
-    void load_index();
-
-    /**
-     * This function initializes the forward index.
-     * @param config_file The configuration file used to create the index
-     */
-    void create_index(const std::string& config_file);
-
-    /**
-     * Initializes this index's metadata structures.
-     */
-    void init_metadata();
 
     /**
      * @param config the configuration settings for this index
@@ -90,11 +74,25 @@ class forward_index::impl
      */
     void compressed_postings_to_libsvm(uint64_t num_docs);
 
+    /**
+     * Compresses the postings file created by uninverting.
+     * @param filename The file to compress
+     * @param num_docs The number of documents in that file
+     */
+    void compress(const std::string& filename, uint64_t num_docs);
+
+    /**
+     * Loads the postings file.
+     * @param filename The path to the postings file to load
+     */
+    void load_postings();
+
     /// the total number of unique terms if term_id_mapping_ is unused
     uint64_t total_unique_terms_;
 
-    /// doc_id -> postings file byte location
-    util::optional<util::disk_vector<uint64_t>> doc_byte_locations_;
+    /// the postings file
+    util::optional<postings_file<forward_index::primary_key_type,
+                                 forward_index::secondary_key_type>> postings_;
 
   private:
     /// Pointer to the forward_index this is an implementation of
@@ -144,32 +142,28 @@ std::string forward_index::liblinear_data(doc_id d_id) const
     if (d_id >= num_docs())
         throw forward_index_exception{"invalid doc_id in search_primary"};
 
-    uint64_t begin = (*fwd_impl_->doc_byte_locations_)[d_id];
-    uint64_t length = 0;
-    while (impl_->postings()[begin + length] != '\n')
-    {
-        ++length;
-        if (begin + length >= impl_->postings().size())
-            throw forward_index_exception{"out of bounds!"};
-    }
+    auto pdata = search_primary(d_id);
+    std::stringstream out;
 
-    return std::string{impl_->postings().begin() + begin, length};
+    out << lbl_id(d_id);
+    for (const auto& count : pdata->counts())
+        out << ' ' << (count.first + 1) << ':' << count.second;
+    return out.str();
 }
 
 void forward_index::load_index()
 {
     LOG(info) << "Loading index from disk: " << index_name() << ENDLG;
 
-    fwd_impl_->init_metadata();
-
+    impl_->initialize_metadata();
     impl_->load_doc_id_mapping();
-    impl_->load_postings();
 
     auto config = cpptoml::parse_file(index_name() + "/config.toml");
     if (!fwd_impl_->is_libsvm_format(config))
         impl_->load_term_id_mapping();
 
     impl_->load_label_id_mapping();
+    fwd_impl_->load_postings();
 
     std::ifstream unique_terms_file{index_name() + "/corpus.uniqueterms"};
     unique_terms_file >> fwd_impl_->total_unique_terms_;
@@ -188,7 +182,6 @@ void forward_index::create_index(const std::string& config_file)
                   << ENDLG;
 
         fwd_impl_->create_libsvm_postings(config);
-        fwd_impl_->create_libsvm_metadata();
         impl_->save_label_id_mapping();
     }
     else
@@ -201,20 +194,22 @@ void forward_index::create_index(const std::string& config_file)
         auto inv_idx = make_index<inverted_index>(config_file);
 
         fwd_impl_->create_uninverted_metadata(inv_idx->index_name());
-        impl_->load_label_id_mapping();
         fwd_impl_->uninvert(*inv_idx);
-        fwd_impl_->init_metadata();
-        impl_->load_postings();
-        fwd_impl_->set_doc_byte_locations();
         impl_->load_term_id_mapping();
         fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
     }
 
-    // now that the files are tokenized, we can create the string_list
+    impl_->load_label_id_mapping();
+    fwd_impl_->load_postings();
     impl_->load_doc_id_mapping();
+    impl_->initialize_metadata();
 
-    std::ofstream unique_terms_file{index_name() + "/corpus.uniqueterms"};
-    unique_terms_file << fwd_impl_->total_unique_terms_;
+    {
+        std::ofstream unique_terms_file{index_name() + "/corpus.uniqueterms"};
+        unique_terms_file << fwd_impl_->total_unique_terms_;
+    }
+
+    assert(filesystem::file_exists(index_name() + "/corpus.uniqueterms"));
 
     LOG(info) << "Done creating index: " << index_name() << ENDLG;
 }
@@ -230,93 +225,67 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
         throw forward_index_exception{
             "dataset missing from configuration file"};
 
-    std::string existing_file = *prefix + "/" + *dataset + "/" + *dataset
-                                + ".dat";
+    auto libsvm_data = *prefix + "/" + *dataset + "/" + *dataset + ".dat";
+    auto filename = idx_->index_name() + idx_->impl_->files[POSTINGS];
 
-    filesystem::copy_file(existing_file,
-                          idx_->index_name() + idx_->impl_->files[POSTINGS]);
+    uint64_t num_docs = filesystem::num_lines(libsvm_data);
+    idx_->impl_->initialize_metadata(num_docs);
 
-    init_metadata();
-
-    // now, assign byte locations for libsvm doc starting points
-    idx_->impl_->load_postings();
-    set_doc_byte_locations();
-}
-
-void forward_index::impl::set_doc_byte_locations()
-{
-    doc_id d_id{0};
-    uint8_t last_byte = '\n';
-    printing::progress progress{" > Setting document locations: ",
-                                idx_->impl_->postings().size()};
-    for (uint64_t idx = 0; idx < idx_->impl_->postings().size(); ++idx)
+    total_unique_terms_ = 0;
     {
-        progress(idx);
-        if (last_byte == '\n')
+        postings_file_writer out{filename, num_docs};
+
+        printing::progress progress{" > Creating postings from libsvm data: ",
+                                    num_docs};
+        doc_id d_id{0};
+        std::ifstream input{libsvm_data};
+        std::string line;
+        auto docid_writer = idx_->impl_->make_doc_id_writer(num_docs);
+        while (std::getline(input, line))
         {
-            (*doc_byte_locations_)[d_id] = idx;
+            progress(d_id);
+
+            auto lbl = io::libsvm_parser::label(line);
+            idx_->impl_->set_label(d_id, lbl);
+
+            uint64_t num_unique = 0;
+            double length = 0;
+            forward_index::postings_data_type pdata{d_id};
+
+            auto counts = io::libsvm_parser::counts(line);
+            for (const auto& count : counts)
+            {
+                ++num_unique;
+                if (count.first > total_unique_terms_)
+                    total_unique_terms_ = count.first;
+                length += count.second;
+            }
+
+            pdata.set_counts(counts);
+            out.write(pdata);
+
+            docid_writer.insert(d_id, "[no path]");
+            idx_->impl_->set_length(d_id, static_cast<uint64_t>(length));
+            idx_->impl_->set_unique_terms(d_id, num_unique);
+
             ++d_id;
         }
-        last_byte = idx_->impl_->postings()[idx];
-    }
-}
 
-void forward_index::impl::init_metadata()
-{
-    uint64_t num_docs = filesystem::num_lines(idx_->index_name()
-                                              + idx_->impl_->files[POSTINGS]);
-    idx_->impl_->initialize_metadata(num_docs);
-    doc_byte_locations_ = util::disk_vector<uint64_t>(
-        idx_->index_name() + "/lexicon.index", num_docs);
-}
-
-void forward_index::impl::create_libsvm_metadata()
-{
-    total_unique_terms_ = 0;
-
-    printing::progress progress{" > Creating metadata: ",
-                                doc_byte_locations_->size()};
-
-    doc_id d_id{0};
-    std::ifstream in{idx_->index_name() + idx_->impl_->files[POSTINGS]};
-    std::string line;
-    auto docid_writer = idx_->impl_->make_doc_id_writer(idx_->num_docs());
-    while (in.good())
-    {
-        std::getline(in, line);
-        if (line.empty())
-            break;
-
-        progress(d_id);
-
-        class_label lbl = io::libsvm_parser::label(line);
-        idx_->impl_->set_label(d_id, lbl);
-
-        uint64_t num_unique = 0;
-        uint64_t length = 0;
-        for (const auto& count_pair : io::libsvm_parser::counts(line))
-        {
-            ++num_unique;
-            if (count_pair.first > total_unique_terms_)
-                total_unique_terms_ = count_pair.first;
-            length += static_cast<uint64_t>(count_pair.second);
-        }
-
-        docid_writer.insert(d_id, "[no path]");
-        idx_->impl_->set_length(d_id, length);
-        idx_->impl_->set_unique_terms(d_id, num_unique);
-
-        ++d_id;
+        // +1 since we subtracted one from each of the ids in the
+        // libsvm_parser::counts() function
+        ++total_unique_terms_;
     }
 
-    ++total_unique_terms_; // since we subtracted one from the ids earlier
+    LOG(info) << "Created compressed postings file ("
+              << printing::bytes_to_units(filesystem::file_size(filename))
+              << ")" << ENDLG;
 }
 
 void forward_index::impl::create_uninverted_metadata(const std::string& name)
 {
-    auto files = {DOC_IDS_MAPPING,  DOC_IDS_MAPPING_INDEX,   DOC_SIZES,
-                  DOC_LABELS,       DOC_UNIQUETERMS,         LABEL_IDS_MAPPING,
-                  TERM_IDS_MAPPING, TERM_IDS_MAPPING_INVERSE};
+    auto files = {DOC_IDS_MAPPING, DOC_IDS_MAPPING_INDEX, DOC_SIZES, DOC_LABELS,
+                  DOC_UNIQUETERMS, LABEL_IDS_MAPPING, TERM_IDS_MAPPING,
+                  TERM_IDS_MAPPING_INVERSE};
 
     for (const auto& file : files)
         filesystem::copy_file(name + idx_->impl_->files[file],
@@ -341,19 +310,16 @@ uint64_t forward_index::unique_terms() const
     return fwd_impl_->total_unique_terms_;
 }
 
-auto forward_index::search_primary(
-    doc_id d_id) const -> std::shared_ptr<postings_data_type>
+auto forward_index::search_primary(doc_id d_id) const
+    -> std::shared_ptr<postings_data_type>
 {
-    auto pdata = std::make_shared<postings_data_type>(d_id);
-    auto line = liblinear_data(d_id);
-    pdata->set_counts(io::libsvm_parser::counts(line));
-    return pdata;
+    return fwd_impl_->postings_->find(d_id);
 }
 
 void forward_index::impl::uninvert(const inverted_index& inv_idx)
 {
     io::compressed_file_reader inv_reader{inv_idx.index_name()
-                                          + idx_->impl_->files[POSTINGS],
+                                              + idx_->impl_->files[POSTINGS],
                                           io::default_compression_reader_func};
 
     term_id t_id{0};
@@ -370,54 +336,49 @@ void forward_index::impl::uninvert(const inverted_index& inv_idx)
     }
 
     handler.merge_chunks();
-    compressed_postings_to_libsvm(inv_idx.num_docs());
+    compress(idx_->index_name() + idx_->impl_->files[POSTINGS],
+             inv_idx.num_docs());
 }
 
-void forward_index::impl::compressed_postings_to_libsvm(uint64_t num_docs)
+void forward_index::impl::compress(const std::string& filename,
+                                   uint64_t num_docs)
 {
-    idx_->impl_->load_labels();
+    auto ucfilename = filename + ".uncompressed";
+    filesystem::rename_file(filename, ucfilename);
 
-    auto filename = idx_->index_name() + idx_->impl_->files[POSTINGS];
-    filesystem::rename_file(filename, filename + ".tmp");
-    std::ofstream output{filename};
-    io::compressed_file_reader input{filename + ".tmp",
-                                     io::default_compression_reader_func};
-
-    // handler for writing gaps of blank documents
-    doc_id last_id{0};
-    auto write_gap = [&](doc_id next_id)
+    // create a scope to ensure the reader and writer close properly so we
+    // can calculate the size of the compressed file and delete the
+    // uncompressed version at the end
     {
-        while (next_id > last_id + 1)
+        postings_file_writer out{filename, num_docs};
+
+        forward_index::postings_data_type pdata;
+        auto length = filesystem::file_size(ucfilename) * 8; // number of bits
+        io::compressed_file_reader in{ucfilename,
+                                      io::default_compression_reader_func};
+
+        printing::progress progress{
+            " > Compressing postings: ", length, 500, 8 * 1024 /* 1KB */
+        };
+        // note: we will be accessing pdata in sorted order
+        while (in.has_next())
         {
-            ++last_id;
-            index_pdata_type empty;
-            empty.set_primary_key(
-                static_cast<doc_id>(idx_->impl_->doc_label_id(last_id)));
-            empty.write_libsvm(output);
+            in >> pdata;
+            progress(in.bit_location());
+            out.write(pdata);
         }
-    };
-
-    // read from input, write to output, changing doc_id to class_label for the
-    // correct libsvm format
-    index_pdata_type pdata;
-    while (input >> pdata)
-    {
-        doc_id d_id = pdata.primary_key();
-
-        // write empty document lines for any documents in a gap
-        write_gap(d_id);
-
-        // write current document
-        pdata.set_primary_key(
-            static_cast<doc_id>(idx_->impl_->doc_label_id(d_id)));
-        pdata.write_libsvm(output);
-        last_id = d_id;
     }
 
-    // write any trailing empty documents
-    write_gap(doc_id{num_docs});
+    LOG(info) << "Created compressed postings file ("
+              << printing::bytes_to_units(filesystem::file_size(filename))
+              << ")" << ENDLG;
 
-    filesystem::delete_file(filename + ".tmp");
+    filesystem::delete_file(ucfilename);
+}
+
+void forward_index::impl::load_postings()
+{
+    postings_ = {idx_->index_name() + idx_->impl_->files[POSTINGS]};
 }
 }
 }

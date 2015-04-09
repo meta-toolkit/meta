@@ -97,6 +97,11 @@ class compressed_file_reader
     std::string next_string();
 
     /**
+     * @return the next double from this compressed file
+     */
+    double next_double();
+
+    /**
      * @return the current bit location in this file
      */
     uint64_t bit_location() const;

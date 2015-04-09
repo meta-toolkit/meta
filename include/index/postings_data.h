@@ -162,12 +162,12 @@ class postings_data
             return out;
 
         out.write(pd.p_id_);
-        uint32_t size = pd.counts_.size();
+        uint64_t size = pd.counts_.size();
         out.write(size);
         for (auto& p : pd.counts_)
         {
             out.write(p.first);
-            out.write(p.second);
+            out.write(static_cast<uint64_t>(p.second));
         }
 
         return out;
@@ -190,17 +190,6 @@ class postings_data
      * @param reader The compressed file to read from
      */
     void read_compressed(io::compressed_file_reader& reader);
-
-    /**
-     * @param out The output stream to write to
-     */
-    void write_libsvm(std::ofstream& out) const
-    {
-        out << p_id_;
-        for (auto& c : counts_)
-            out << ' ' << (c.first + 1) << ':' << c.second;
-        out << '\n';
-    }
 
     /**
      * @return the term_id for this postings_data

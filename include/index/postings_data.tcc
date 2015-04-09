@@ -109,6 +109,9 @@ void postings_data
     <PrimaryKey, SecondaryKey>::write_compressed(io::compressed_file_writer
                                                  & writer) const
 {
+    // TODO: The special casing here for term_id as PrimaryKey only works
+    // under debug mode, so doubles will *always* get truncated under
+    // release mode...
     count_t mutable_counts{counts_.contents()};
     writer.write(mutable_counts[0].first);
     if (std::is_same<PrimaryKey, term_id>::value
@@ -118,10 +121,7 @@ void postings_data
     }
     else
     {
-        uint64_t to_write;
-        std::memcpy(&to_write, &mutable_counts[0].second,
-                    sizeof(mutable_counts[0].second));
-        writer.write(to_write);
+        writer.write(mutable_counts[0].second);
     }
 
     // use gap encoding on the SecondaryKeys (we know they are integral types)
@@ -140,10 +140,7 @@ void postings_data
         }
         else
         {
-            uint64_t to_write;
-            std::memcpy(&to_write, &mutable_counts[i].second,
-                        sizeof(mutable_counts[i].second));
-            writer.write(to_write);
+            writer.write(mutable_counts[i].second);
         }
     }
 
@@ -169,12 +166,18 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         // we're using gap encoding
         last_id += this_id;
         SecondaryKey key{last_id};
-        uint64_t next = reader.next();
+
         double count;
+        // TODO: see write_compressed; a similar problem here
         if (std::is_same<PrimaryKey, term_id>::value)
+        {
+            uint64_t next = reader.next();
             count = static_cast<double>(next);
+        }
         else
-            std::memcpy(&count, &next, sizeof(next));
+        {
+            count = reader.next_double();
+        }
 
         counts_.emplace_back(key, count);
     }
