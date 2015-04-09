@@ -30,7 +30,7 @@ class postings_file
      * @param filename The path to the file
      */
     postings_file(const std::string& filename)
-        : postings_{filename}, bit_locations_{filename + ".index"}
+        : postings_{filename}, bit_locations_{filename + "_index"}
     {
         // nothing
     }

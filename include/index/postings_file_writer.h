@@ -27,7 +27,7 @@ class postings_file_writer
      */
     postings_file_writer(const std::string& filename, uint64_t unique_keys)
         : output_{filename, io::default_compression_writer_func},
-          bit_locations_{filename + ".index", unique_keys},
+          bit_locations_{filename + "_index", unique_keys},
           id_{0}
     {
         // nothing
