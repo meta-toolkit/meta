@@ -122,10 +122,10 @@ void compressed_file_reader::get_next()
     for (int64_t bit = numberBits - 1; status_ == 0 && bit >= 0; --bit)
     {
         if (read_bit())
-            current_value_ |= (1 << bit);
+            current_value_ |= (1ul << bit);
     }
 
-    current_value_ |= (1 << numberBits);
+    current_value_ |= (1ul << numberBits);
 }
 
 bool compressed_file_reader::read_bit()

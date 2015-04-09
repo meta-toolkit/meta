@@ -80,7 +80,7 @@ void compressed_file_writer::write(uint64_t value)
     write_bit(true);
 
     for (int64_t bit = length - 1; bit >= 0; --bit)
-        write_bit(cvalue & 1 << bit);
+        write_bit(cvalue & (1ul << bit));
 }
 
 void compressed_file_writer::write_bit(bool bit)
