@@ -119,13 +119,17 @@ bool forward_index::valid() const
 {
     if (!filesystem::file_exists(index_name() + "/corpus.uniqueterms"))
     {
-        LOG(info)
-            << "Existing forward index detected as invalid; recreating"
-            << ENDLG;
+        LOG(info) << "Existing forward index detected as invalid; recreating"
+                  << ENDLG;
         return false;
     }
     for (auto& f : impl_->files)
     {
+        // this is not required if generated directly from libsvm data
+        if (f == impl_->files[TERM_IDS_MAPPING]
+            || f == impl_->files[TERM_IDS_MAPPING_INVERSE])
+            continue;
+
         if (!filesystem::file_exists(index_name() + "/" + std::string{f}))
         {
             LOG(info)
