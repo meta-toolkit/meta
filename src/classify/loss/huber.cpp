@@ -14,7 +14,7 @@ namespace loss
 
 const std::string huber::id = "huber";
 
-double huber::loss(double prediction, int expected) const
+double huber::loss(double prediction, double expected) const
 {
     double abs_diff = std::abs(prediction - expected);
     if (abs_diff <= 1)
@@ -22,7 +22,7 @@ double huber::loss(double prediction, int expected) const
     return 2 * abs_diff - 1;
 }
 
-double huber::derivative(double prediction, int expected) const
+double huber::derivative(double prediction, double expected) const
 {
     double diff = prediction - expected;
     if (std::abs(diff) <= 1)

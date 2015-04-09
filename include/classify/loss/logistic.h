@@ -31,8 +31,8 @@ struct logistic : public loss_function
      */
     const static std::string id;
 
-    double loss(double prediction, int expected) const override;
-    double derivative(double prediction, int expected) const override;
+    double loss(double prediction, double expected) const override;
+    double derivative(double prediction, double expected) const override;
 };
 }
 }

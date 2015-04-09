@@ -14,7 +14,7 @@ namespace loss
 
 const std::string smooth_hinge::id = "smooth-hinge";
 
-double smooth_hinge::loss(double prediction, int expected) const
+double smooth_hinge::loss(double prediction, double expected) const
 {
     double z = prediction * expected;
     if (z <= 0)
@@ -24,7 +24,7 @@ double smooth_hinge::loss(double prediction, int expected) const
     return 0.5 * (1 - prediction * expected) * (1 - prediction * expected);
 }
 
-double smooth_hinge::derivative(double prediction, int expected) const
+double smooth_hinge::derivative(double prediction, double expected) const
 {
     double z = prediction * expected;
     if (z <= 0)

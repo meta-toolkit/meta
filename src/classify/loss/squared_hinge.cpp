@@ -14,7 +14,7 @@ namespace loss
 
 const std::string squared_hinge::id = "squared-hinge";
 
-double squared_hinge::loss(double prediction, int expected) const
+double squared_hinge::loss(double prediction, double expected) const
 {
     double z = prediction * expected;
     if (z < 1)
@@ -22,7 +22,7 @@ double squared_hinge::loss(double prediction, int expected) const
     return 0;
 }
 
-double squared_hinge::derivative(double prediction, int expected) const
+double squared_hinge::derivative(double prediction, double expected) const
 {
     double z = prediction * expected;
     if (z < 1)

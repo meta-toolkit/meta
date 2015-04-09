@@ -14,7 +14,7 @@ namespace loss
 
 const std::string modified_huber::id = "modified-huber";
 
-double modified_huber::loss(double prediction, int expected) const
+double modified_huber::loss(double prediction, double expected) const
 {
     double z = prediction * expected;
     if (z < -1)
@@ -24,7 +24,7 @@ double modified_huber::loss(double prediction, int expected) const
     return 0.5 * (1 - z) * (1 - z);
 }
 
-double modified_huber::derivative(double prediction, int expected) const
+double modified_huber::derivative(double prediction, double expected) const
 {
     double z = prediction * expected;
     if (z < -1)

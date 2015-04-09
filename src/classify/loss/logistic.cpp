@@ -14,12 +14,12 @@ namespace loss
 
 const std::string logistic::id = "logistic";
 
-double logistic::loss(double prediction, int expected) const
+double logistic::loss(double prediction, double expected) const
 {
     return std::log(1 + std::exp(-prediction * expected));
 }
 
-double logistic::derivative(double prediction, int expected) const
+double logistic::derivative(double prediction, double expected) const
 {
     return -expected / (std::exp(prediction * expected) + 1);
 }
