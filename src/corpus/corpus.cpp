@@ -6,6 +6,7 @@
 #include "corpus/corpus.h"
 #include "corpus/all.h"
 #include "cpptoml.h"
+#include "util/filesystem.h"
 #include "util/shim.h"
 
 namespace meta
@@ -27,9 +28,9 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
 {
     auto config = cpptoml::parse_file(config_file);
 
-    auto type = config.get_as<std::string>("corpus-type");
-    if (!type)
-        throw corpus_exception{"corpus-type missing from configuration file"};
+    auto corpus = config.get_as<std::string>("corpus");
+    if (!corpus)
+        throw corpus_exception{"corpus missing from configuration file"};
 
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)
@@ -39,7 +40,17 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
     if (!dataset)
         throw corpus_exception{"dataset missing from configuration file"};
 
-    auto enc = config.get_as<std::string>("encoding");
+    auto corpus_filename = *prefix + "/" + *dataset + "/" + *corpus;
+    if (!filesystem::file_exists(corpus_filename))
+        throw corpus_exception{"corpus configuration file (" + corpus_filename
+                               + ") not present"};
+
+    auto corpus_config = cpptoml::parse_file(corpus_filename);
+    auto type = corpus_config.get_as<std::string>("type");
+    if (!type)
+        throw corpus_exception{"type missing from corpus configuration file"};
+
+    auto enc = corpus_config.get_as<std::string>("encoding");
     std::string encoding;
     if (enc)
         encoding = *enc;
@@ -48,9 +59,10 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
 
     if (*type == "file-corpus")
     {
-        auto file_list = config.get_as<std::string>("list");
+        auto file_list = corpus_config.get_as<std::string>("list");
         if (!file_list)
-            throw corpus_exception{"list missing from configuration file"};
+            throw corpus_exception{
+                "list missing from corpus configuration file"};
 
         std::string file = *prefix + "/" + *dataset + "/" + *file_list
                            + "-full-corpus.txt";
@@ -61,7 +73,7 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
     {
         std::string filename = *prefix + "/" + *dataset + "/" + *dataset
                                + ".dat";
-        auto lines = config.get_as<int64_t>("num-lines");
+        auto lines = corpus_config.get_as<int64_t>("num-lines");
         if (!lines)
             return make_unique<line_corpus>(filename, encoding);
         return make_unique<line_corpus>(filename, encoding,
