@@ -180,6 +180,7 @@ class postings_data
      * file.
      * @param writer The compressed file to write to
      */
+    template <class FeatureValue>
     void write_compressed(io::compressed_file_writer& writer) const;
 
     /**
@@ -189,6 +190,7 @@ class postings_data
      * file.
      * @param reader The compressed file to read from
      */
+    template <class FeatureValue>
     void read_compressed(io::compressed_file_reader& reader);
 
     /**

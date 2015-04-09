@@ -105,17 +105,14 @@ PrimaryKey postings_data<PrimaryKey, SecondaryKey>::primary_key() const
 }
 
 template <class PrimaryKey, class SecondaryKey>
+template <class FeatureValue>
 void postings_data
     <PrimaryKey, SecondaryKey>::write_compressed(io::compressed_file_writer
                                                  & writer) const
 {
-    // TODO: The special casing here for term_id as PrimaryKey only works
-    // under debug mode, so doubles will *always* get truncated under
-    // release mode...
     count_t mutable_counts{counts_.contents()};
     writer.write(mutable_counts[0].first);
-    if (std::is_same<PrimaryKey, term_id>::value
-        || std::is_same<PrimaryKey, std::string>::value)
+    if (std::is_same<FeatureValue, uint64_t>::value)
     {
         writer.write(static_cast<uint64_t>(mutable_counts[0].second));
     }
@@ -133,8 +130,7 @@ void postings_data
         cur_id = temp_id;
 
         writer.write(mutable_counts[i].first);
-        if (std::is_same<PrimaryKey, term_id>::value
-            || std::is_same<PrimaryKey, std::string>::value)
+        if (std::is_same<FeatureValue, uint64_t>::value)
         {
             writer.write(static_cast<uint64_t>(mutable_counts[i].second));
         }
@@ -149,6 +145,7 @@ void postings_data
 }
 
 template <class PrimaryKey, class SecondaryKey>
+template <class FeatureValue>
 void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         io::compressed_file_reader& reader)
 {
@@ -168,8 +165,7 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         SecondaryKey key{last_id};
 
         double count;
-        // TODO: see write_compressed; a similar problem here
-        if (std::is_same<PrimaryKey, term_id>::value)
+        if (std::is_same<FeatureValue, uint64_t>::value)
         {
             uint64_t next = reader.next();
             count = static_cast<double>(next);

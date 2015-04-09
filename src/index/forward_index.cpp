@@ -266,7 +266,7 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
             }
 
             pdata.set_counts(counts);
-            out.write(pdata);
+            out.write<double>(pdata);
 
             docid_writer.insert(d_id, "[no path]");
             idx_->impl_->set_length(d_id, static_cast<uint64_t>(length));
@@ -317,7 +317,7 @@ uint64_t forward_index::unique_terms() const
 auto forward_index::search_primary(doc_id d_id) const
     -> std::shared_ptr<postings_data_type>
 {
-    return fwd_impl_->postings_->find(d_id);
+    return fwd_impl_->postings_->find<double>(d_id);
 }
 
 void forward_index::impl::uninvert(const inverted_index& inv_idx)
@@ -333,7 +333,7 @@ void forward_index::impl::uninvert(const inverted_index& inv_idx)
         while (inv_reader.has_next())
         {
             inverted_pdata_type pdata{t_id};
-            pdata.read_compressed(inv_reader);
+            pdata.read_compressed<uint64_t>(inv_reader);
             producer(pdata.primary_key(), pdata.counts());
             ++t_id;
         }
@@ -369,7 +369,7 @@ void forward_index::impl::compress(const std::string& filename,
         {
             in >> pdata;
             progress(in.bit_location());
-            out.write(pdata);
+            out.write<double>(pdata);
         }
     }
 

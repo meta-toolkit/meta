@@ -41,6 +41,7 @@ class postings_file
      * @return a shared pointer to the postings data extracted from the
      * file
      */
+    template <class FeatureValue = uint64_t>
     std::shared_ptr<postings_data_type> find(PrimaryKey pk) const
     {
         auto pdata = std::make_shared<postings_data_type>(pk);
@@ -53,7 +54,7 @@ class postings_file
                 postings_, io::default_compression_reader_func};
             reader.seek(bit_locations_.at(idx));
 
-            pdata->read_compressed(reader);
+            pdata->template read_compressed<FeatureValue>(reader);
         }
 
         return pdata;

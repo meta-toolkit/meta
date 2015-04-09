@@ -37,11 +37,11 @@ class postings_file_writer
      * Writes a postings data object to the file.
      * @param pdata The postings_data to be written
      */
-    template <class PostingsData>
+    template <class FeatureValue = uint64_t, class PostingsData>
     void write(const PostingsData& pdata)
     {
         bit_locations_[id_] = output_.bit_location();
-        pdata.write_compressed(output_);
+        pdata.template write_compressed<FeatureValue>(output_);
         ++id_;
     }
 
