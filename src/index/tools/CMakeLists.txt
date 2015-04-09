@@ -23,3 +23,6 @@ target_link_libraries(print-vocab meta-index)
 
 add_executable(search-vocab search-vocab.cpp)
 target_link_libraries(search-vocab meta-index)
+
+add_executable(forward-to-libsvm forward-to-libsvm.cpp)
+target_link_libraries(forward-to-libsvm meta-index)
