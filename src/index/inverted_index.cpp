@@ -52,15 +52,6 @@ class inverted_index::impl
                        chunk_handler<inverted_index>& handler);
 
     /**
-     * Creates the lexicon file (or "dictionary") which has pointers into
-     * the large postings file
-     * @param postings_file
-     * @param lexicon_file
-     */
-    void create_lexicon(const std::string& postings_file,
-                        const std::string& lexicon_file);
-
-    /**
      * Compresses the large postings file.
      */
     void compress(const std::string& filename, uint64_t num_unique_terms);

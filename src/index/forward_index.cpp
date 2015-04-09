@@ -42,11 +42,6 @@ class forward_index::impl
     void create_libsvm_postings(const cpptoml::table& config);
 
     /**
-     * Initializes structures based on a libsvm-formatted file.
-     */
-    void create_libsvm_metadata();
-
-    /**
      * @param inv_idx The inverted index to uninvert
      */
     void uninvert(const inverted_index& inv_idx);
@@ -62,17 +57,6 @@ class forward_index::impl
      * libsvm-formatted corpus file
      */
     bool is_libsvm_format(const cpptoml::table& config) const;
-
-    /**
-     * Calculates which documents start at which bytes in the postings file.
-     */
-    void set_doc_byte_locations();
-
-    /**
-     * Converts postings.index into a libsvm formatted file
-     * @param num_docs The total number of documents
-     */
-    void compressed_postings_to_libsvm(uint64_t num_docs);
 
     /**
      * Compresses the postings file created by uninverting.
