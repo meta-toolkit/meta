@@ -6,7 +6,6 @@ add_subdirectory(tools)
 
 add_library(meta-analyzers analyzer.cpp
                            analyzer_factory.cpp
-                           libsvm_analyzer.cpp
                            multi_analyzer.cpp
                            ngram/ngram_analyzer.cpp
                            ngram/ngram_word_analyzer.cpp)

@@ -21,7 +21,6 @@ analyzer_factory::analyzer_factory()
 {
     // built-in analyzers
     register_analyzer<ngram_word_analyzer>();
-    register_analyzer<libsvm_analyzer>();
 }
 }
 }
