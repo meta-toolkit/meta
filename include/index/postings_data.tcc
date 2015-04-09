@@ -105,23 +105,20 @@ PrimaryKey postings_data<PrimaryKey, SecondaryKey>::primary_key() const
 }
 
 template <class PrimaryKey, class SecondaryKey>
+template <class FeatureValue>
 void postings_data
     <PrimaryKey, SecondaryKey>::write_compressed(io::compressed_file_writer
                                                  & writer) const
 {
     count_t mutable_counts{counts_.contents()};
     writer.write(mutable_counts[0].first);
-    if (std::is_same<PrimaryKey, term_id>::value
-        || std::is_same<PrimaryKey, std::string>::value)
+    if (std::is_same<FeatureValue, uint64_t>::value)
     {
         writer.write(static_cast<uint64_t>(mutable_counts[0].second));
     }
     else
     {
-        uint64_t to_write;
-        std::memcpy(&to_write, &mutable_counts[0].second,
-                    sizeof(mutable_counts[0].second));
-        writer.write(to_write);
+        writer.write(mutable_counts[0].second);
     }
 
     // use gap encoding on the SecondaryKeys (we know they are integral types)
@@ -133,17 +130,13 @@ void postings_data
         cur_id = temp_id;
 
         writer.write(mutable_counts[i].first);
-        if (std::is_same<PrimaryKey, term_id>::value
-            || std::is_same<PrimaryKey, std::string>::value)
+        if (std::is_same<FeatureValue, uint64_t>::value)
         {
             writer.write(static_cast<uint64_t>(mutable_counts[i].second));
         }
         else
         {
-            uint64_t to_write;
-            std::memcpy(&to_write, &mutable_counts[i].second,
-                        sizeof(mutable_counts[i].second));
-            writer.write(to_write);
+            writer.write(mutable_counts[i].second);
         }
     }
 
@@ -152,6 +145,7 @@ void postings_data
 }
 
 template <class PrimaryKey, class SecondaryKey>
+template <class FeatureValue>
 void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         io::compressed_file_reader& reader)
 {
@@ -169,12 +163,17 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
         // we're using gap encoding
         last_id += this_id;
         SecondaryKey key{last_id};
-        uint64_t next = reader.next();
+
         double count;
-        if (std::is_same<PrimaryKey, term_id>::value)
+        if (std::is_same<FeatureValue, uint64_t>::value)
+        {
+            uint64_t next = reader.next();
             count = static_cast<double>(next);
+        }
         else
-            std::memcpy(&count, &next, sizeof(next));
+        {
+            count = reader.next_double();
+        }
 
         counts_.emplace_back(key, count);
     }

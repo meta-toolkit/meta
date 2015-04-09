@@ -74,11 +74,15 @@ def GetCompilationInfoForFile(filename):
       compilation_info.compiler_flags_.append('c++')
     return compilation_info
 
-  if not os.path.exists(filename):
-    return None
+  compilation_info = database.GetCompilationInfoForFile(filename)
+  # if we can't find this file in our database, fall back to the flags for
+  # profile.cpp
+  if not compilation_info.compiler_flags_:
+    cpp_name = os.path.join(DirectoryOfThisScript(), 'src', 'tools',
+          'profile.cpp')
+    compilation_info = database.GetCompilationInfoForFile(cpp_name)
 
-  return database.GetCompilationInfoForFile(filename)
-
+  return compilation_info
 
 def FlagsForFile( filename ):
   compilation_info = GetCompilationInfoForFile(filename)

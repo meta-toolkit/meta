@@ -60,6 +60,12 @@ class compressed_file_writer
     void write(const std::string& str);
 
     /**
+     * Writes a double to the file.
+     * @param value The double to write
+     */
+    void write(double value);
+
+    /**
      * Closes this compressed file.
      */
     void close();
