@@ -11,6 +11,8 @@
 #include "classify/loss/all.h"
 #include "index/forward_index.h"
 #include "index/ranker/all.h"
+#include "parser/analyzers/tree_analyzer.h"
+#include "sequence/analyzers/ngram_pos_analyzer.h"
 #include "util/printing.h"
 #include "util/progress.h"
 #include "util/time.h"
@@ -69,6 +71,11 @@ int main(int argc, char* argv[])
     }
 
     logging::set_cerr_logging();
+
+    // Register additional analyzers
+    parser::register_analyzers();
+    sequence::register_analyzers();
+
     auto config = cpptoml::parse_file(argv[1]);
     auto class_config = config.get_table("classifier");
     if (!class_config)
