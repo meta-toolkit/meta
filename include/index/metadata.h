@@ -1,5 +1,5 @@
 /**
- * @file metadata_file.h
+ * @file metadata.h
  * @author Chase Geigle
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 
+#include "cpptoml.h"
 #include "io/binary.h"
 
 namespace meta
@@ -116,14 +117,12 @@ class metadata
 
         field_type type;
 
-        field(int64_t sgn)
-            : sign_int{sgn}, type{field_type::SIGNED_INT}
+        field(int64_t sgn) : sign_int{sgn}, type{field_type::SIGNED_INT}
         {
             // nothing
         }
 
-        field(uint64_t usgn)
-            : usign_int{usgn}, type{field_type::UNSIGNED_INT}
+        field(uint64_t usgn) : usign_int{usgn}, type{field_type::UNSIGNED_INT}
         {
             // nothing
         }
@@ -190,6 +189,13 @@ class metadata
     /// storage for decoded fields
     std::vector<field> stored_fields_;
 };
+
+/**
+ * Extracts a metadata schema from a configuration file.
+ * @param config The configuration group that specifies the metadata
+ * @return the corresponding metadata::schema object.
+ */
+metadata::schema metadata_schema(const cpptoml::table& config);
 }
 }
 #endif
