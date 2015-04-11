@@ -16,9 +16,7 @@ metadata::schema metadata_schema(const cpptoml::table& config)
     if (auto metadata = config.get_table_array("metadata"))
     {
         const auto& arr = metadata->get();
-        schema.reserve(arr.size() + 2);
-        schema.emplace_back("length", metadata::field_type::UNSIGNED_INT);
-        schema.emplace_back("unique-terms", metadata::field_type::UNSIGNED_INT);
+        schema.reserve(arr.size());
         for (const auto& table : arr)
         {
             auto name = table->get_as<std::string>("name");
