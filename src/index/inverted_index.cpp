@@ -8,6 +8,7 @@
 #include "index/chunk_handler.h"
 #include "index/disk_index_impl.h"
 #include "index/inverted_index.h"
+#include "index/metadata.h"
 #include "index/postings_file.h"
 #include "index/postings_file_writer.h"
 #include "index/string_list.h"
@@ -114,6 +115,15 @@ void inverted_index::create_index(const std::string& config_file)
 
     // load the documents from the corpus
     auto docs = corpus::corpus::load(config_file);
+
+    // load the metadata schema for the corpus
+    auto config = cpptoml::parse_file(config_file);
+    auto prefix = config.get_as<std::string>("prefix");
+    auto dataset = config.get_as<std::string>("dataset");
+    auto corpus = config.get_as<std::string>("corpus");
+    auto corpus_config
+        = cpptoml::parse_file(*prefix + "/" + *dataset + "/" + *corpus);
+    auto schema = metadata_schema(corpus_config);
 
     uint64_t num_docs = docs->size();
     impl_->initialize_metadata(num_docs);

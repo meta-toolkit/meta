@@ -43,9 +43,22 @@ class metadata
     {
         std::string name;
         field_type type;
+
+        field_info() = default;
+        field_info(std::string n, field_type ft) : name{std::move(n)}, type{ft}
+        {
+            // nothing
+        }
+        field_info(const field_info&) = default;
+        field_info(field_info&&) = default;
+        field_info& operator=(const field_info&) = default;
+        field_info& operator=(field_info&&) = default;
+        ~field_info() = default;
     };
 
-    using schema = std::vector<const field_info>;
+    // I want the below to be a const field_info, but g++ gives a cryptic
+    // compiler error in that case... clang++ accepts it just fine. -sigh-
+    using schema = std::vector<field_info>;
 
     metadata(const char* start, const schema& sch)
         : schema_{sch}, stream_{start}
@@ -141,7 +154,7 @@ class metadata
         {
             // invoke string destructor if needed
             if (type == field_type::STRING)
-                (&str)->~decltype(str)();
+                (&str)->~basic_string();
         }
 
         operator int64_t() const
