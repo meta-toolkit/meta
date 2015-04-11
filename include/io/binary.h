@@ -73,9 +73,10 @@ inline void read_binary(std::istream& in, std::string& str)
  * @see http://dlib.net/dlib/serialize.h.html
  * @param out The stream to write to
  * @param elem The integral type to write in packed format
+ * @return the number of bytes used to write out elem
  */
 template <class T>
-void write_packed_binary(std::ostream& out, T elem)
+uint64_t write_packed_binary(std::ostream& out, T elem)
 {
     static_assert(std::is_integral<T>::value,
                   "packed binary requires integers");
@@ -99,6 +100,7 @@ void write_packed_binary(std::ostream& out, T elem)
     }
     buffer[0] |= (idx - 1);
     out.write(reinterpret_cast<char*>(&buffer[0]), idx);
+    return idx;
 }
 
 /**
@@ -112,8 +114,9 @@ void write_packed_binary(std::ostream& out, T elem)
  * @see http://dlib.net/dlib/float_details.h.html
  * @param out The stream to write to
  * @param elem The double to write in packed format
+ * @return the number of bytes used to write out elem
  */
-inline void write_packed_binary(std::ostream& out, double elem)
+inline uint64_t write_packed_binary(std::ostream& out, double elem)
 {
     int exp;
     auto digits = std::numeric_limits<double>::digits;
@@ -129,8 +132,9 @@ inline void write_packed_binary(std::ostream& out, double elem)
         exponent += 8;
     }
 
-    write_packed_binary(out, mantissa);
-    write_packed_binary(out, exponent);
+    auto bytes = write_packed_binary(out, mantissa);
+    bytes += write_packed_binary(out, exponent);
+    return bytes;
 }
 
 /**
