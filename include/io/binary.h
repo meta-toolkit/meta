@@ -138,8 +138,8 @@ inline void write_packed_binary(std::ostream& out, double elem)
  * @param in The stream to read from
  * @param elem The element to write into
  */
-template <class T>
-void read_packed_binary(std::istream& in, T& elem)
+template <class InputStream, class T>
+void read_packed_binary(InputStream& in, T& elem)
 {
     static_assert(std::is_integral<T>::value,
                   "packed binary requires integers");
@@ -166,7 +166,8 @@ void read_packed_binary(std::istream& in, T& elem)
  * @param in The stream to read from
  * @param elem The element to write into
  */
-inline void read_packed_binary(std::istream& in, double& elem)
+template <class InputStream>
+void read_packed_binary(InputStream& in, double& elem)
 {
     int64_t mantissa;
     int16_t exponent;
