@@ -65,6 +65,11 @@ class metadata_file
      */
     metadata get(doc_id d_id) const;
 
+    /**
+     * @return the number of documents in this database
+     */
+    uint64_t size() const;
+
   private:
     /// the schema for this file
     metadata::schema schema_;

@@ -15,17 +15,22 @@ namespace
 {
 struct char_input_stream
 {
-    char_input_stream(const char* input) : input_{input}
+    char_input_stream(const char* input, const char* end)
+        : input_{input}, end_{end}
     {
         // nothing
     }
 
     char get()
     {
+        if (input_ == end_)
+            throw metadata::exception{"seeking past end of metadata file"};
+
         return *input_++;
     }
 
     const char* input_;
+    const char* end_;
 };
 }
 
@@ -33,7 +38,7 @@ metadata_file::metadata_file(const std::string& prefix)
     : index_{prefix + "/metadata.index"}, md_db_{prefix + "/metadata.db"}
 {
     // read in the header to populate the schema
-    char_input_stream stream{md_db_.begin()};
+    char_input_stream stream{md_db_.begin(), md_db_.begin() + md_db_.size()};
     uint64_t num_fields;
     io::read_packed_binary(stream, num_fields);
 
@@ -43,7 +48,9 @@ metadata_file::metadata_file(const std::string& prefix)
         metadata::field_info info;
         info.name = std::string{stream.input_};
         stream.input_ += info.name.size() + 1;
-        io::read_packed_binary(stream, info.type);
+        static_assert(sizeof(metadata::field_type) == sizeof(uint8_t),
+                      "metadata::field_type size not updated in metadata_file");
+        info.type = static_cast<metadata::field_type>(stream.get());
         schema_.emplace_back(std::move(info));
     }
 }
@@ -55,6 +62,11 @@ metadata metadata_file::get(doc_id d_id) const
 
     uint64_t seek_pos = index_[d_id];
     return {md_db_.begin() + seek_pos, schema_};
+}
+
+uint64_t metadata_file::size() const
+{
+    return index_.size();
 }
 }
 }

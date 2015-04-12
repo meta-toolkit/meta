@@ -16,6 +16,7 @@
 
 #include "cpptoml.h"
 #include "io/binary.h"
+#include "util/optional.h"
 
 namespace meta
 {
@@ -67,12 +68,12 @@ class metadata
     }
 
     template <class T>
-    T get(const std::string& name)
+    util::optional<T> get(const std::string& name)
     {
         for (uint64_t i = 0; i < stored_fields_.size(); ++i)
         {
             if (schema_[i].name == name)
-                return stored_fields_[i];
+                return {stored_fields_[i]};
         }
 
         for (uint64_t i = stored_fields_.size(); i < schema_.size(); ++i)
@@ -84,16 +85,19 @@ class metadata
                     io::read_packed_binary(stream_, si);
                     stored_fields_.emplace_back(si);
                     break;
+
                 case field_type::UNSIGNED_INT:
                     uint64_t ui;
                     io::read_packed_binary(stream_, ui);
                     stored_fields_.emplace_back(ui);
                     break;
+
                 case field_type::DOUBLE:
                     double d;
                     io::read_packed_binary(stream_, d);
                     stored_fields_.emplace_back(d);
                     break;
+
                 case field_type::STRING:
                     std::string s{stream_.input_};
                     stream_.input_ += s.size() + 1;
@@ -102,10 +106,10 @@ class metadata
             }
 
             if (schema_[i].name == name)
-                return stored_fields_[i];
+                return {stored_fields_[i]};
         }
 
-        throw exception{"metadata column \"" + name + "\" not found"};
+        return util::nullopt;
     }
 
     class exception : public std::runtime_error
@@ -114,7 +118,6 @@ class metadata
         using std::runtime_error::runtime_error;
     };
 
-  private:
     /**
      * Tagged union to represent a single metadata field.
      */
@@ -150,6 +153,28 @@ class metadata
             new (&str) std::string(std::move(s));
         }
 
+        field(field&& other) : type{other.type}
+        {
+            switch (type)
+            {
+                case field_type::SIGNED_INT:
+                    sign_int = other.sign_int;
+                    break;
+
+                case field_type::UNSIGNED_INT:
+                    usign_int = other.usign_int;
+                    break;
+
+                case field_type::DOUBLE:
+                    doub = other.doub;
+                    break;
+
+                case field_type::STRING:
+                    new (&str) std::string(std::move(other.str));
+                    break;
+            }
+        }
+
         ~field()
         {
             // invoke string destructor if needed
@@ -178,6 +203,7 @@ class metadata
         }
     };
 
+  private:
     struct metadata_input_stream
     {
         metadata_input_stream(const char* input) : input_{input}

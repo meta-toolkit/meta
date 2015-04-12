@@ -156,7 +156,7 @@ void read_packed_binary(InputStream& in, T& elem)
     elem = 0;
     for (uint8_t idx = 0; idx < size; ++idx)
     {
-        auto byte = static_cast<uint64_t>(in.get());
+        uint64_t byte = static_cast<uint8_t>(in.get());
         byte <<= 8 * idx;
         elem |= byte;
     }
