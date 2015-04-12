@@ -212,9 +212,8 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
                              << ") generated!" << ENDLG;
             }
 
-            // save metadata
             mdata_writer.write(doc->id(), doc->length(), doc->counts().size(),
-                               *mdata);
+                               doc->path(), *mdata);
             idx_->impl_->set_label(doc->id(), doc->label());
 
             // update chunk

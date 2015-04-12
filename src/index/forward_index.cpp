@@ -255,7 +255,7 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
             pdata.set_counts(counts);
             out.write<double>(pdata);
 
-            md_writer.write(d_id, static_cast<uint64_t>(length), num_unique,
+            md_writer.write(d_id, static_cast<uint64_t>(length), num_unique, "",
                             {});
             ++d_id;
         }

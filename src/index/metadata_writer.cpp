@@ -24,6 +24,8 @@ metadata_writer::metadata_writer(const std::string& prefix, uint64_t num_docs,
     byte_pos_ += io::write_binary(db_file_, metadata::field_type::UNSIGNED_INT);
     byte_pos_ += io::write_binary(db_file_, std::string{"unique-terms"});
     byte_pos_ += io::write_binary(db_file_, metadata::field_type::UNSIGNED_INT);
+    byte_pos_ += io::write_binary(db_file_, std::string{"path"});
+    byte_pos_ += io::write_binary(db_file_, metadata::field_type::STRING);
 
     for (const auto& finfo : schema_)
     {
@@ -33,6 +35,7 @@ metadata_writer::metadata_writer(const std::string& prefix, uint64_t num_docs,
 }
 
 void metadata_writer::write(doc_id d_id, uint64_t length, uint64_t num_unique,
+                            const std::string& path,
                             const std::vector<metadata::field>& mdata)
 {
     std::lock_guard<std::mutex> lock{lock_};
@@ -41,6 +44,7 @@ void metadata_writer::write(doc_id d_id, uint64_t length, uint64_t num_unique,
     // write "mandatory" metadata
     byte_pos_ += io::write_packed_binary(db_file_, length);
     byte_pos_ += io::write_packed_binary(db_file_, num_unique);
+    byte_pos_ += io::write_binary(db_file_, path);
 
     // write optional metadata
     if (mdata.size() != schema_.size())

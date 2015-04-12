@@ -27,6 +27,7 @@ class metadata_writer
                     const metadata::schema& schema);
 
     void write(doc_id d_id, uint64_t length, uint64_t num_unique,
+               const std::string& path,
                const std::vector<metadata::field>& mdata);
 
   private:

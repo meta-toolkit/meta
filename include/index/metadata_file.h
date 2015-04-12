@@ -29,7 +29,7 @@ namespace index
  *
  * - metadata.db: <MDDB>
  *   - <MDDB> => <Header> <DocumentMD>^<NumDocs>
- *   - <Header> => <FieldCount> <FieldHeader>^(<FieldCount> + 2)
+ *   - <Header> => <FieldCount> <FieldHeader>^(<FieldCount> + 3)
  *   - <FieldNum> => PackedInt
  *   - <FieldHeader> => <FieldName> <FieldType>
  *   - <FieldName> => String
@@ -43,7 +43,7 @@ namespace index
  * <FieldCount> is the number of user-supplied metadata fields (they must
  * be present for all documents). We add two in the grammar above since we
  * always represent the length (integer) and unique-terms (integer) as
- * metadata. The "length" and "unique-terms" metadata names are
+ * metadata. The "length", "unique-terms", and "path" metadata names are
  * **reserved**, but there can be more metadata if the user supplies it.
  */
 class metadata_file
