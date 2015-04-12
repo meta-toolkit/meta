@@ -145,6 +145,7 @@ void forward_index::load_index()
     LOG(info) << "Loading index from disk: " << index_name() << ENDLG;
 
     impl_->initialize_metadata();
+    impl_->load_labels();
 
     auto config = cpptoml::parse_file(index_name() + "/config.toml");
     if (!fwd_impl_->is_libsvm_format(config))
@@ -190,6 +191,7 @@ void forward_index::create_index(const std::string& config_file)
     impl_->load_label_id_mapping();
     fwd_impl_->load_postings();
     impl_->initialize_metadata();
+    impl_->load_labels();
 
     {
         std::ofstream unique_terms_file{index_name() + "/corpus.uniqueterms"};

@@ -39,7 +39,6 @@ void metadata_writer::write(doc_id d_id, uint64_t length, uint64_t num_unique,
 
     seek_pos_[d_id] = byte_pos_;
     // write "mandatory" metadata
-    assert(length < 100000);
     byte_pos_ += io::write_packed_binary(db_file_, length);
     byte_pos_ += io::write_packed_binary(db_file_, num_unique);
 
