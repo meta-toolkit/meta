@@ -70,43 +70,38 @@ class metadata
     template <class T>
     util::optional<T> get(const std::string& name)
     {
-        for (uint64_t i = 0; i < stored_fields_.size(); ++i)
-        {
-            if (schema_[i].name == name)
-                return {stored_fields_[i]};
-        }
-
-        for (uint64_t i = stored_fields_.size(); i < schema_.size(); ++i)
+        for (uint64_t i = 0; i < schema_.size(); ++i)
         {
             switch (schema_[i].type)
             {
                 case field_type::SIGNED_INT:
                     int64_t si;
                     io::read_packed_binary(stream_, si);
-                    stored_fields_.emplace_back(si);
+                    if (schema_[i].name == name)
+                        return {field{si}};
                     break;
 
                 case field_type::UNSIGNED_INT:
                     uint64_t ui;
                     io::read_packed_binary(stream_, ui);
-                    stored_fields_.emplace_back(ui);
+                    if (schema_[i].name == name)
+                        return {field{ui}};
                     break;
 
                 case field_type::DOUBLE:
                     double d;
                     io::read_packed_binary(stream_, d);
-                    stored_fields_.emplace_back(d);
+                    if (schema_[i].name == name)
+                        return {field{d}};
                     break;
 
                 case field_type::STRING:
                     std::string s{stream_.input_};
                     stream_.input_ += s.size() + 1;
-                    stored_fields_.emplace_back(std::move(s));
+                    if (schema_[i].name == name)
+                        return {field{std::move(s)}};
                     break;
             }
-
-            if (schema_[i].name == name)
-                return {stored_fields_[i]};
         }
 
         return util::nullopt;
@@ -224,9 +219,6 @@ class metadata
 
     /// the fake input stream used for read_packed_binary
     metadata_input_stream stream_;
-
-    /// storage for decoded fields
-    std::vector<field> stored_fields_;
 };
 
 /**
