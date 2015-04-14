@@ -12,6 +12,7 @@
 
 #include "index/metadata.h"
 #include "io/parser.h"
+#include "util/optional.h"
 
 namespace meta
 {
@@ -26,7 +27,7 @@ class metadata_parser
 
     std::vector<metadata::field> next();
   private:
-    io::parser parser_;
+    util::optional<io::parser> parser_;
     const metadata::schema& schema_;
 };
 }
