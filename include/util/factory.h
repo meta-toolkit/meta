@@ -12,6 +12,7 @@
 
 #include <functional>
 #include <memory>
+#include <string>
 #include <unordered_map>
 
 namespace meta
@@ -76,7 +77,7 @@ class factory
     pointer create(const std::string& identifier, Args&&... args)
     {
         if (methods_.find(identifier) == methods_.end())
-            throw exception{"unrecognized identifier"};
+            throw exception{"unrecognized identifier: \"" + identifier + "\""};
         return methods_[identifier](std::forward<Args>(args)...);
     }
 
