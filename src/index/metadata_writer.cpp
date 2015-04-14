@@ -19,7 +19,7 @@ metadata_writer::metadata_writer(const std::string& prefix, uint64_t num_docs,
       schema_{schema}
 {
     // write metadata header
-    byte_pos_ += io::write_packed_binary(db_file_, schema_.size() + 2);
+    byte_pos_ += io::write_packed_binary(db_file_, schema_.size() + 3);
     byte_pos_ += io::write_binary(db_file_, std::string{"length"});
     byte_pos_ += io::write_binary(db_file_, metadata::field_type::UNSIGNED_INT);
     byte_pos_ += io::write_binary(db_file_, std::string{"unique-terms"});
