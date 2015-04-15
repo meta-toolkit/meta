@@ -83,12 +83,12 @@ void document::label(class_label label)
     label_ = label;
 }
 
-const std::vector<metadata::field>& document::metadata() const
+const std::vector<metadata::field>& document::mdata() const
 {
     return mdata_;
 }
 
-void document::metadata(std::vector<metadata::field>&& metadata)
+void document::mdata(std::vector<metadata::field>&& metadata)
 {
     mdata_ = std::move(metadata);
 }

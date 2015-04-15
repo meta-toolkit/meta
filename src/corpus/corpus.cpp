@@ -43,8 +43,8 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
 {
     auto config = cpptoml::parse_file(config_file);
 
-    auto corpus = config.get_as<std::string>("corpus");
-    if (!corpus)
+    auto corp = config.get_as<std::string>("corpus");
+    if (!corp)
         throw corpus_exception{"corpus missing from configuration file"};
 
     auto prefix = config.get_as<std::string>("prefix");
@@ -55,7 +55,7 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
     if (!dataset)
         throw corpus_exception{"dataset missing from configuration file"};
 
-    auto corpus_filename = *prefix + "/" + *dataset + "/" + *corpus;
+    auto corpus_filename = *prefix + "/" + *dataset + "/" + *corp;
     if (!filesystem::file_exists(corpus_filename))
         throw corpus_exception{"corpus configuration file (" + corpus_filename
                                + ") not present"};
@@ -72,7 +72,7 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
     else
         encoding = "utf-8";
 
-    std::unique_ptr<corpus::corpus> result;
+    std::unique_ptr<corpus> result;
 
     if (*type == "file-corpus")
     {

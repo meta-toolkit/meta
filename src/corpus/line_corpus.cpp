@@ -50,7 +50,7 @@ document line_corpus::next()
 
     document doc{cur_id_++, label};
     doc.content(parser_.next(), encoding());
-    doc.metadata(next_metadata());
+    doc.mdata(next_metadata());
 
     return doc;
 }

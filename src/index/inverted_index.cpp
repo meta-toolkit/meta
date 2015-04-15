@@ -197,7 +197,7 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
             }
 
             mdata_writer.write(doc->id(), doc->length(), doc->counts().size(),
-                               doc->metadata());
+                               doc->mdata());
             idx_->impl_->set_label(doc->id(), doc->label());
 
             // update chunk

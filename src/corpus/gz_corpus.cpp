@@ -49,7 +49,7 @@ document gz_corpus::next()
 
     document doc{cur_id_++, label};
     doc.content(line, encoding());
-    doc.metadata(next_metadata());
+    doc.mdata(next_metadata());
 
     return doc;
 }

@@ -56,7 +56,7 @@ document file_corpus::next()
     auto mdata = next_metadata();
     // add "path" metadata manually
     mdata.insert(mdata.begin(), metadata::field{prefix_ + docs_[cur_].first});
-    doc.metadata(std::move(mdata));
+    doc.mdata(std::move(mdata));
 
     ++cur_;
     return doc;

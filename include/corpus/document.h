@@ -117,13 +117,13 @@ class document
     /**
      * @return the set of extra metadata fields for this document
      */
-    const std::vector<metadata::field>& metadata() const;
+    const std::vector<metadata::field>& mdata() const;
 
     /**
      * Sets the extra metadata fields for this document
      * @param metadata The new metadata for this document
      */
-    void metadata(std::vector<metadata::field>&& metadata);
+    void mdata(std::vector<metadata::field>&& metadata);
 
   private:
     /// The document id for this document
