@@ -19,18 +19,35 @@ namespace meta
 namespace corpus
 {
 
+/**
+ * Reads metadata from the metadata file of a corpus according to a schema.
+ */
 class metadata_parser
 {
   public:
+    /**
+     * Creates the parser.
+     * @param filename The name of the file to parse
+     * @param schema The schema to parse the file with
+     */
     metadata_parser(const std::string& filename,
                     metadata::schema schema);
 
+    /**
+     * @return the metadata vector for the next document in the file
+     */
     std::vector<metadata::field> next();
 
+    /**
+     * @return the schema for the metadata in this file
+     */
     const metadata::schema& schema() const;
 
   private:
+    /// the parser used to extract metadata
     util::optional<io::parser> parser_;
+
+    /// the schema for the metadata being extracted
     metadata::schema schema_;
 };
 }
