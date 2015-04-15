@@ -83,32 +83,40 @@ class metadata
             switch (schema_[i].type)
             {
                 case field_type::SIGNED_INT:
+                {
                     int64_t si;
                     io::read_packed_binary(stream_, si);
                     if (schema_[i].name == name)
                         return {field{si}};
                     break;
+                }
 
                 case field_type::UNSIGNED_INT:
+                {
                     uint64_t ui;
                     io::read_packed_binary(stream_, ui);
                     if (schema_[i].name == name)
                         return {field{ui}};
                     break;
+                }
 
                 case field_type::DOUBLE:
+                {
                     double d;
                     io::read_packed_binary(stream_, d);
                     if (schema_[i].name == name)
                         return {field{d}};
                     break;
+                }
 
                 case field_type::STRING:
+                {
                     std::string s{stream_.input_};
                     stream_.input_ += s.size() + 1;
                     if (schema_[i].name == name)
                         return {field{std::move(s)}};
                     break;
+                }
             }
         }
 
