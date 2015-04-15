@@ -169,5 +169,4 @@ inline uint64_t num_lines(const std::string& filename, char delimiter = '\n')
 }
 }
 }
-
 #endif

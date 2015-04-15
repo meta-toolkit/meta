@@ -62,10 +62,9 @@ int main(int argc, char* argv[])
         while (queries.good() && i <= 500) // only look at first 500 queries
         {
             std::getline(queries, content);
-            corpus::document query{"[user input]", doc_id{0}};
+            corpus::document query{doc_id{0}};
             query.content(content);
-            std::cout << "Ranking query " << i++ << ": " << query.path()
-                      << std::endl;
+            std::cout << "Ranking query " << i++ << ": " << std::endl;
 
             // Use the ranker to score the query over the index. By default, the
             //  ranker returns 10 documents, so we will display the "top 10 of

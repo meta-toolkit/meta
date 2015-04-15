@@ -24,7 +24,8 @@ struct char_input_stream
     char get()
     {
         if (input_ == end_)
-            throw metadata::exception{"seeking past end of metadata file"};
+            throw corpus::metadata::exception{
+                "seeking past end of metadata file"};
 
         return *input_++;
     }
@@ -45,20 +46,21 @@ metadata_file::metadata_file(const std::string& prefix)
     schema_.reserve(num_fields);
     for (uint64_t i = 0; i < num_fields; ++i)
     {
-        metadata::field_info info;
+        corpus::metadata::field_info info;
         info.name = std::string{stream.input_};
         stream.input_ += info.name.size() + 1;
-        static_assert(sizeof(metadata::field_type) == sizeof(uint8_t),
+        static_assert(sizeof(corpus::metadata::field_type) == sizeof(uint8_t),
                       "metadata::field_type size not updated in metadata_file");
-        info.type = static_cast<metadata::field_type>(stream.get());
+        info.type = static_cast<corpus::metadata::field_type>(stream.get());
         schema_.emplace_back(std::move(info));
     }
 }
 
-metadata metadata_file::get(doc_id d_id) const
+corpus::metadata metadata_file::get(doc_id d_id) const
 {
     if (d_id >= index_.size())
-        throw metadata::exception{"invalid doc id in metadata retrieval"};
+        throw corpus::metadata::exception{
+            "invalid doc id in metadata retrieval"};
 
     uint64_t seek_pos = index_[d_id];
     return {md_db_.begin() + seek_pos, schema_};

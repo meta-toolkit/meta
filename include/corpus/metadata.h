@@ -7,8 +7,8 @@
  * project.
  */
 
-#ifndef META_INDEX_METADATA_H_
-#define META_INDEX_METADATA_H_
+#ifndef META_CORPUS_METADATA_H_
+#define META_CORPUS_METADATA_H_
 
 #include <cstdint>
 #include <vector>
@@ -20,7 +20,7 @@
 
 namespace meta
 {
-namespace index
+namespace corpus
 {
 
 class metadata
@@ -143,7 +143,7 @@ class metadata
             // nothing
         }
 
-        field(std::string&& s) : type{field_type::STRING}
+        field(std::string s) : type{field_type::STRING}
         {
             new (&str) std::string(std::move(s));
         }
@@ -168,6 +168,83 @@ class metadata
                     new (&str) std::string(std::move(other.str));
                     break;
             }
+        }
+
+        field(const field& other) : type{other.type}
+        {
+            switch (type)
+            {
+                case field_type::SIGNED_INT:
+                    sign_int = other.sign_int;
+                    break;
+
+                case field_type::UNSIGNED_INT:
+                    usign_int = other.usign_int;
+                    break;
+
+                case field_type::DOUBLE:
+                    doub = other.doub;
+                    break;
+
+                case field_type::STRING:
+                    new (&str) std::string(other.str);
+                    break;
+            }
+        }
+
+        field& operator=(field&& other)
+        {
+            if (type == field_type::STRING)
+                (&str)->~basic_string();
+
+            switch (other.type)
+            {
+                case field_type::SIGNED_INT:
+                    sign_int = other.sign_int;
+                    break;
+
+                case field_type::UNSIGNED_INT:
+                    usign_int = other.usign_int;
+                    break;
+
+                case field_type::DOUBLE:
+                    doub = other.doub;
+                    break;
+
+                case field_type::STRING:
+                    new (&str) std::string(std::move(other.str));
+                    break;
+            }
+
+            type = other.type;
+            return *this;
+        }
+
+        field& operator=(const field& other)
+        {
+            if (type == field_type::STRING)
+                (&str)->~basic_string();
+
+            switch (other.type)
+            {
+                case field_type::SIGNED_INT:
+                    sign_int = other.sign_int;
+                    break;
+
+                case field_type::UNSIGNED_INT:
+                    usign_int = other.usign_int;
+                    break;
+
+                case field_type::DOUBLE:
+                    doub = other.doub;
+                    break;
+
+                case field_type::STRING:
+                    new (&str) std::string(other.str);
+                    break;
+            }
+
+            return *this;
         }
 
         ~field()

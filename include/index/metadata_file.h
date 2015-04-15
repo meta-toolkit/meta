@@ -11,7 +11,7 @@
 #define META_INDEX_METADATA_FILE_H_
 
 #include "util/disk_vector.h"
-#include "index/metadata.h"
+#include "corpus/metadata.h"
 #include "io/mmap_file.h"
 
 namespace meta
@@ -29,7 +29,7 @@ namespace index
  *
  * - metadata.db: <MDDB>
  *   - <MDDB> => <Header> <DocumentMD>^<NumDocs>
- *   - <Header> => <FieldCount> <FieldHeader>^(<FieldCount> + 3)
+ *   - <Header> => <FieldCount> <FieldHeader>^(<FieldCount> + 2)
  *   - <FieldNum> => PackedInt
  *   - <FieldHeader> => <FieldName> <FieldType>
  *   - <FieldName> => String
@@ -63,7 +63,7 @@ class metadata_file
      * @param d_id The document id to look up metadata for
      * @return the metadata for the document
      */
-    metadata get(doc_id d_id) const;
+    corpus::metadata get(doc_id d_id) const;
 
     /**
      * @return the number of documents in this database
@@ -72,7 +72,7 @@ class metadata_file
 
   private:
     /// the schema for this file
-    metadata::schema schema_;
+    corpus::metadata::schema schema_;
 
     /// the seek positions for every document in this file
     util::disk_vector<uint64_t> index_;

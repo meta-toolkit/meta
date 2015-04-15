@@ -12,12 +12,9 @@ namespace meta
 namespace corpus
 {
 
-document::document(const std::string& path, doc_id d_id,
-                   const class_label& label)
-    : path_{path}, d_id_{d_id}, label_{label}, length_{0}, encoding_{"utf-8"}
+document::document(doc_id d_id, const class_label& label)
+    : d_id_{d_id}, label_{label}, length_{0}, encoding_{"utf-8"}
 {
-    size_t idx = path.find_last_of("/") + 1;
-    name_ = path.substr(idx);
 }
 
 void document::increment(const std::string& term, double amount)
@@ -26,24 +23,9 @@ void document::increment(const std::string& term, double amount)
     length_ += amount;
 }
 
-std::string document::path() const
-{
-    return path_;
-}
-
 const class_label& document::label() const
 {
     return label_;
-}
-
-std::string document::name() const
-{
-    return name_;
-}
-
-void document::name(const std::string& n)
-{
-    name_ = n;
 }
 
 uint64_t document::length() const
@@ -99,6 +81,16 @@ bool document::contains_content() const
 void document::label(class_label label)
 {
     label_ = label;
+}
+
+const std::vector<metadata::field>& document::metadata() const
+{
+    return mdata_;
+}
+
+void document::metadata(std::vector<metadata::field>&& metadata)
+{
+    mdata_ = std::move(metadata);
 }
 }
 }

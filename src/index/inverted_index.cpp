@@ -8,7 +8,7 @@
 #include "index/chunk_handler.h"
 #include "index/disk_index_impl.h"
 #include "index/inverted_index.h"
-#include "index/metadata_parser.h"
+#include "corpus/metadata_parser.h"
 #include "index/metadata_writer.h"
 #include "index/postings_file.h"
 #include "index/postings_file_writer.h"
@@ -54,7 +54,6 @@ class inverted_index::impl
      */
     void tokenize_docs(corpus::corpus* docs,
                        chunk_handler<inverted_index>& handler,
-                       metadata_parser& mdata_parser,
                        metadata_writer& mdata_writer);
 
     /**
@@ -121,26 +120,14 @@ void inverted_index::create_index(const std::string& config_file)
     // load the documents from the corpus
     auto docs = corpus::corpus::load(config_file);
 
-    // load the metadata schema for the corpus
-    auto config = cpptoml::parse_file(config_file);
-    auto prefix = config.get_as<std::string>("prefix");
-    auto dataset = config.get_as<std::string>("dataset");
-    auto corpus = config.get_as<std::string>("corpus");
-    auto corpus_config
-        = cpptoml::parse_file(*prefix + "/" + *dataset + "/" + *corpus);
-    auto schema = metadata_schema(corpus_config);
-
     chunk_handler<inverted_index> handler{index_name()};
-
     {
-        metadata_parser mdata_parser{*prefix + "/" + *dataset + "/metadata.dat",
-                                     schema};
-        metadata_writer mdata_writer{index_name(), docs->size(), schema};
+        metadata_writer mdata_writer{index_name(), docs->size(),
+                                     docs->schema()};
         uint64_t num_docs = docs->size();
         impl_->load_labels(num_docs);
 
-        inv_impl_->tokenize_docs(docs.get(), handler, mdata_parser,
-                                 mdata_writer);
+        inv_impl_->tokenize_docs(docs.get(), handler, mdata_writer);
     }
 
     handler.merge_chunks();
@@ -176,7 +163,6 @@ void inverted_index::load_index()
 
 void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
                                          chunk_handler<inverted_index>& handler,
-                                         metadata_parser& mdata_parser,
                                          metadata_writer& mdata_writer)
 {
     std::mutex mutex;
@@ -189,7 +175,6 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
         while (true)
         {
             util::optional<corpus::document> doc;
-            util::optional<std::vector<metadata::field>> mdata;
             {
                 std::lock_guard<std::mutex> lock{mutex};
 
@@ -197,7 +182,6 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
                     return; // destructor for producer will write
                             // any intermediate chunks
                 doc = docs->next();
-                mdata = mdata_parser.next();
                 progress(doc->id());
             }
 
@@ -213,7 +197,7 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
             }
 
             mdata_writer.write(doc->id(), doc->length(), doc->counts().size(),
-                               doc->path(), *mdata);
+                               doc->metadata());
             idx_->impl_->set_label(doc->id(), doc->label());
 
             // update chunk

@@ -33,21 +33,11 @@ void check_analyzer_expected(Analyzer& ana, corpus::document doc,
     ASSERT_EQUAL(doc.counts().size(), num_unique);
     ASSERT_EQUAL(doc.length(), length);
     ASSERT_EQUAL(doc.id(), 47ul);
-    if (doc.contains_content())
-    {
-        ASSERT_EQUAL(doc.path(), "/home/person/filename.txt");
-        ASSERT_EQUAL(doc.name(), "filename.txt");
-    }
-    else
-    {
-        ASSERT_EQUAL(doc.path(), "../data/sample-document.txt");
-        ASSERT_EQUAL(doc.name(), "sample-document.txt");
-    }
 }
 
 int content_tokenize()
 {
-    corpus::document doc{"/home/person/filename.txt", doc_id{47}};
+    corpus::document doc{doc_id{47}};
 
     // "one" is a stopword
     std::string content = "one one two two two three four one five";
@@ -78,7 +68,8 @@ int content_tokenize()
 int file_tokenize()
 {
     int num_failed = 0;
-    corpus::document doc{"../data/sample-document.txt", doc_id{47}};
+    corpus::document doc{doc_id{47}};
+    doc.content(filesystem::file_text("../data/sample-document.txt"));
 
     num_failed += testing::run_test("file-unigram-word-analyzer", [&]()
     {

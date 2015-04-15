@@ -19,9 +19,24 @@ corpus::corpus(std::string encoding) : encoding_{std::move(encoding)}
     // nothing
 }
 
+std::vector<metadata::field> corpus::next_metadata()
+{
+    return mdata_parser_->next();
+}
+
+metadata::schema corpus::schema() const
+{
+    return mdata_parser_->schema();
+}
+
 const std::string& corpus::encoding() const
 {
     return encoding_;
+}
+
+void corpus::set_metadata_parser(metadata_parser&& parser)
+{
+    mdata_parser_ = std::move(parser);
 }
 
 std::unique_ptr<corpus> corpus::load(const std::string& config_file)
@@ -57,6 +72,8 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
     else
         encoding = "utf-8";
 
+    std::unique_ptr<corpus::corpus> result;
+
     if (*type == "file-corpus")
     {
         auto file_list = corpus_config.get_as<std::string>("list");
@@ -66,8 +83,8 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
 
         std::string file = *prefix + "/" + *dataset + "/" + *file_list
                            + "-full-corpus.txt";
-        return make_unique<file_corpus>(*prefix + "/" + *dataset + "/", file,
-                                        encoding);
+        result = make_unique<file_corpus>(*prefix + "/" + *dataset + "/", file,
+                                          encoding);
     }
     else if (*type == "line-corpus")
     {
@@ -75,20 +92,25 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
                                + ".dat";
         auto lines = corpus_config.get_as<int64_t>("num-lines");
         if (!lines)
-            return make_unique<line_corpus>(filename, encoding);
-        return make_unique<line_corpus>(filename, encoding,
-                                        static_cast<uint64_t>(*lines));
+            result = make_unique<line_corpus>(filename, encoding);
+        else
+            result = make_unique<line_corpus>(filename, encoding,
+                                              static_cast<uint64_t>(*lines));
     }
 #if META_HAS_ZLIB
     else if (*type == "gz-corpus")
     {
         std::string filename = *prefix + "/" + *dataset + "/" + *dataset
                                + ".dat";
-        return make_unique<gz_corpus>(filename, encoding);
+        result = make_unique<gz_corpus>(filename, encoding);
     }
 #endif
     else
         throw corpus_exception{"corpus type was not able to be determined"};
+
+    result->set_metadata_parser({*prefix + "/" + *dataset + "/metadata.dat",
+                                 metadata_schema(corpus_config)});
+    return result;
 }
 }
 }

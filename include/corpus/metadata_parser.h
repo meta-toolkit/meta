@@ -7,28 +7,31 @@
  * project.
  */
 
-#ifndef META_INDEX_METADATA_PARSER_H_
-#define META_INDEX_METADATA_PARSER_H_
+#ifndef META_CORPUS_METADATA_PARSER_H_
+#define META_CORPUS_METADATA_PARSER_H_
 
-#include "index/metadata.h"
+#include "corpus/metadata.h"
 #include "io/parser.h"
 #include "util/optional.h"
 
 namespace meta
 {
-namespace index
+namespace corpus
 {
 
 class metadata_parser
 {
   public:
     metadata_parser(const std::string& filename,
-                    const metadata::schema& schema);
+                    metadata::schema schema);
 
     std::vector<metadata::field> next();
+
+    const metadata::schema& schema() const;
+
   private:
     util::optional<io::parser> parser_;
-    const metadata::schema& schema_;
+    metadata::schema schema_;
 };
 }
 }

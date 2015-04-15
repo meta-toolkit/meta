@@ -59,41 +59,46 @@ int main(int argc, char* argv[])
 
     // Time how long it takes to create the index. By default, common::time's
     //  unit of measurement is milliseconds.
-    auto elapsed = common::time([&]()
-    {
-        // Get a std::vector of doc_ids that have been indexed.
-        auto docs = idx->docs();
-
-        // Search for up to the first 20 documents; we hope that the first
-        //  result is the original document itself since we're querying with
-        //  documents that are already indexed.
-        for (size_t i = 0; i < 20 && i < idx->num_docs(); ++i)
+    auto elapsed = common::time(
+        [&]()
         {
-            // Create a document and specify its path; its content will be
-            //  filled by the analyzer.
-            corpus::document query{idx->doc_path(docs[i]), doc_id{docs[i]}};
-            query.encoding(encoding);
+            // Get a std::vector of doc_ids that have been indexed.
+            auto docs = idx->docs();
 
-            std::cout << "Ranking query " << (i + 1) << ": " << query.path()
-                      << std::endl;
-
-            // Use the ranker to score the query over the index. By default, the
-            //  ranker returns 10 documents, so we will display the "top 10 of
-            //  10" docs.
-            auto ranking = ranker->score(*idx, query);
-            std::cout << "Showing top 10 of " << ranking.size() << " results."
-                 << std::endl;
-
-            // Print out the top ten results.
-            for (size_t i = 0; i < ranking.size() && i < 10; ++i)
+            // Search for up to the first 20 documents; we hope that the first
+            //  result is the original document itself since we're querying with
+            //  documents that are already indexed.
+            for (size_t i = 0; i < 20 && i < idx->num_docs(); ++i)
             {
-                std::cout << (i + 1) << ". " << idx->doc_name(ranking[i].first)
-                          << " " << ranking[i].second << std::endl;
-            }
+                auto path = idx->doc_path(docs[i]);
+                // Create a document and specify its path; its content will be
+                //  filled by the analyzer.
+                corpus::document query{doc_id{docs[i]}};
+                query.content(filesystem::file_text(path), encoding);
 
-            std::cout << std::endl;
-        }
-    });
+                std::cout << "Ranking query " << (i + 1) << ": " << path
+                          << std::endl;
+
+                // Use the ranker to score the query over the index. By default,
+                // the
+                //  ranker returns 10 documents, so we will display the "top 10
+                //  of
+                //  10" docs.
+                auto ranking = ranker->score(*idx, query);
+                std::cout << "Showing top 10 of " << ranking.size()
+                          << " results." << std::endl;
+
+                // Print out the top ten results.
+                for (size_t i = 0; i < ranking.size() && i < 10; ++i)
+                {
+                    std::cout << (i + 1) << ". "
+                              << idx->doc_name(ranking[i].first) << " "
+                              << ranking[i].second << std::endl;
+                }
+
+                std::cout << std::endl;
+            }
+        });
 
     std::cout << "Elapsed time: " << elapsed.count() / 1000.0 << " seconds"
               << std::endl;

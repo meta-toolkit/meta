@@ -42,7 +42,7 @@ class_label knn::classify(doc_id d_id)
             "k must be smaller than the "
             "number of documents in the index (training documents)"};
 
-    corpus::document query{"[no path]", d_id};
+    corpus::document query{d_id};
     for (const auto& count : idx_->search_primary(d_id)->counts())
         query.increment(idx_->term_text(count.first), count.second);
 

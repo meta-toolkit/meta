@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
         if (text.empty())
             break;
 
-        corpus::document query{"[user input]", doc_id{0}};
+        corpus::document query{doc_id{0}};
         query.content(text); // set the doc's content to be user input
 
         // Use the ranker to score the query over the index.

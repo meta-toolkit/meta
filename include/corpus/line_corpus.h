@@ -67,9 +67,6 @@ class line_corpus : public corpus
 
     /// Parser to read the class labels
     std::unique_ptr<io::parser> class_parser_;
-
-    /// Parser to read the document names
-    std::unique_ptr<io::parser> name_parser_;
 };
 }
 }

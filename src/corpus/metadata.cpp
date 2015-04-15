@@ -3,11 +3,11 @@
  * @author Chase Geigle
  */
 
-#include "index/metadata.h"
+#include "corpus/metadata.h"
 
 namespace meta
 {
-namespace index
+namespace corpus
 {
 
 metadata::schema metadata_schema(const cpptoml::table& config)
@@ -28,7 +28,7 @@ metadata::schema metadata_schema(const cpptoml::table& config)
             if (!type)
                 throw metadata::exception{"type needed for metadata field"};
 
-            index::metadata::field_type ftype;
+            metadata::field_type ftype;
             if (*type == "int")
             {
                 ftype = metadata::field_type::SIGNED_INT;

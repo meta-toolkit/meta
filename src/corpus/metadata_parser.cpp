@@ -3,17 +3,17 @@
  * @author Chase Geigle
  */
 
-#include "index/metadata_parser.h"
+#include "corpus/metadata_parser.h"
 #include "util/filesystem.h"
 
 namespace meta
 {
-namespace index
+namespace corpus
 {
 
 metadata_parser::metadata_parser(const std::string& filename,
-                                 const metadata::schema& schema)
-    : schema_{schema}
+                                 metadata::schema schema)
+    : schema_{std::move(schema)}
 {
     if (filesystem::file_exists(filename))
         parser_ = io::parser{filename, "\n\t"};
@@ -53,6 +53,11 @@ std::vector<metadata::field> metadata_parser::next()
         }
     }
     return mdata;
+}
+
+const metadata::schema& metadata_parser::schema() const
+{
+    return schema_;
 }
 }
 }

@@ -12,20 +12,20 @@ namespace index
 {
 
 metadata_writer::metadata_writer(const std::string& prefix, uint64_t num_docs,
-                                 const metadata::schema& schema)
+                                 corpus::metadata::schema schema)
     : seek_pos_{prefix + "/metadata.index", num_docs},
       byte_pos_{0},
       db_file_{prefix + "/metadata.db", std::ios::binary},
-      schema_{schema}
+      schema_{std::move(schema)}
 {
     // write metadata header
-    byte_pos_ += io::write_packed_binary(db_file_, schema_.size() + 3);
+    byte_pos_ += io::write_packed_binary(db_file_, schema_.size() + 2);
     byte_pos_ += io::write_binary(db_file_, std::string{"length"});
-    byte_pos_ += io::write_binary(db_file_, metadata::field_type::UNSIGNED_INT);
+    byte_pos_ += io::write_binary(db_file_,
+                                  corpus::metadata::field_type::UNSIGNED_INT);
     byte_pos_ += io::write_binary(db_file_, std::string{"unique-terms"});
-    byte_pos_ += io::write_binary(db_file_, metadata::field_type::UNSIGNED_INT);
-    byte_pos_ += io::write_binary(db_file_, std::string{"path"});
-    byte_pos_ += io::write_binary(db_file_, metadata::field_type::STRING);
+    byte_pos_ += io::write_binary(db_file_,
+                                  corpus::metadata::field_type::UNSIGNED_INT);
 
     for (const auto& finfo : schema_)
     {
@@ -35,8 +35,7 @@ metadata_writer::metadata_writer(const std::string& prefix, uint64_t num_docs,
 }
 
 void metadata_writer::write(doc_id d_id, uint64_t length, uint64_t num_unique,
-                            const std::string& path,
-                            const std::vector<metadata::field>& mdata)
+                            const std::vector<corpus::metadata::field>& mdata)
 {
     std::lock_guard<std::mutex> lock{lock_};
 
@@ -44,29 +43,29 @@ void metadata_writer::write(doc_id d_id, uint64_t length, uint64_t num_unique,
     // write "mandatory" metadata
     byte_pos_ += io::write_packed_binary(db_file_, length);
     byte_pos_ += io::write_packed_binary(db_file_, num_unique);
-    byte_pos_ += io::write_binary(db_file_, path);
 
     // write optional metadata
     if (mdata.size() != schema_.size())
-        throw metadata::exception{"schema mismatch when writing metadata"};
+        throw corpus::metadata::exception{
+            "schema mismatch when writing metadata"};
 
     for (const auto& fld : mdata)
     {
         switch (fld.type)
         {
-            case metadata::field_type::SIGNED_INT:
+            case corpus::metadata::field_type::SIGNED_INT:
                 byte_pos_ += io::write_packed_binary(db_file_, fld.sign_int);
                 break;
 
-            case metadata::field_type::UNSIGNED_INT:
+            case corpus::metadata::field_type::UNSIGNED_INT:
                 byte_pos_ += io::write_packed_binary(db_file_, fld.usign_int);
                 break;
 
-            case metadata::field_type::DOUBLE:
+            case corpus::metadata::field_type::DOUBLE:
                 byte_pos_ += io::write_packed_binary(db_file_, fld.doub);
                 break;
 
-            case metadata::field_type::STRING:
+            case corpus::metadata::field_type::STRING:
                 byte_pos_ += io::write_binary(db_file_, fld.str);
                 break;
         }

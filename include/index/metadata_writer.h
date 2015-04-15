@@ -12,7 +12,7 @@
 
 #include <mutex>
 #include "corpus/document.h"
-#include "index/metadata.h"
+#include "corpus/metadata.h"
 #include "util/disk_vector.h"
 
 namespace meta
@@ -24,18 +24,17 @@ class metadata_writer
 {
   public:
     metadata_writer(const std::string& prefix, uint64_t num_docs,
-                    const metadata::schema& schema);
+                    corpus::metadata::schema schema);
 
     void write(doc_id d_id, uint64_t length, uint64_t num_unique,
-               const std::string& path,
-               const std::vector<metadata::field>& mdata);
+               const std::vector<corpus::metadata::field>& mdata);
 
   private:
     std::mutex lock_;
     util::disk_vector<uint64_t> seek_pos_;
     uint64_t byte_pos_;
     std::ofstream db_file_;
-    const metadata::schema& schema_;
+    corpus::metadata::schema schema_;
 };
 }
 }

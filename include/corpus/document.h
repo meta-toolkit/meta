@@ -12,8 +12,10 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "meta.h"
+#include "corpus/metadata.h"
 #include "util/optional.h"
 
 namespace meta
@@ -33,11 +35,10 @@ class document
   public:
     /**
      * Constructor.
-     * @param path The path to the document
      * @param d_id The doc id to assign to this document
      * @param label The optional class label to assign this document
      */
-    document(const std::string& path = "[NONE]", doc_id d_id = doc_id{0},
+    document(doc_id d_id = doc_id{0},
              const class_label& label = class_label{"[NONE]"});
 
     /**
@@ -48,24 +49,9 @@ class document
     void increment(const std::string& term, double amount);
 
     /**
-     * @return the path to this document (the argument to the constructor)
-     */
-    std::string path() const;
-
-    /**
      * @return the classification category this document is in
      */
     const class_label& label() const;
-
-    /**
-     * @return the name of this document
-     */
-    std::string name() const;
-
-    /**
-     * @param n The new name for this document
-     */
-    void name(const std::string& n);
 
     /**
      * @return the total of transitions recorded for this document.
@@ -128,18 +114,26 @@ class document
      */
     void label(class_label label);
 
-  private:
-    /// Where this document is on disk
-    std::string path_;
+    /**
+     * @return the set of extra metadata fields for this document
+     */
+    const std::vector<metadata::field>& metadata() const;
 
+    /**
+     * Sets the extra metadata fields for this document
+     * @param metadata The new metadata for this document
+     */
+    void metadata(std::vector<metadata::field>&& metadata);
+
+  private:
     /// The document id for this document
     doc_id d_id_;
 
     /// Which category this document would be classified into
     class_label label_;
 
-    /// The short name for this document (not the full path)
-    std::string name_;
+    /// Other metadata fields for this document
+    std::vector<metadata::field> mdata_;
 
     /// The number of (non-unique) tokens in this document
     size_t length_;
