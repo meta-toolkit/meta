@@ -23,6 +23,9 @@ namespace meta
 namespace corpus
 {
 
+/**
+ * Represents the collection of metadata for a document.
+ */
 class metadata
 {
   public:
@@ -67,6 +70,11 @@ class metadata
         // nothing
     }
 
+    /**
+     * @param name The metadata field to obtain
+     * @return the metadata associated with that field, if it exists,
+     * converted to type T.
+     */
     template <class T>
     util::optional<T> get(const std::string& name)
     {
