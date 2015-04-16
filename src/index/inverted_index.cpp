@@ -8,6 +8,8 @@
 #include "index/chunk_handler.h"
 #include "index/disk_index_impl.h"
 #include "index/inverted_index.h"
+#include "corpus/metadata_parser.h"
+#include "index/metadata_writer.h"
 #include "index/postings_file.h"
 #include "index/postings_file_writer.h"
 #include "index/string_list.h"
@@ -46,10 +48,13 @@ class inverted_index::impl
     /**
      * @param docs The documents to be tokenized
      * @param handler The chunk handler for this index
+     * @param mdata_parser The parser for reading metadata
+     * @param mdata_writer The writer for metadata
      * @return the number of chunks created
      */
     void tokenize_docs(corpus::corpus* docs,
-                       chunk_handler<inverted_index>& handler);
+                       chunk_handler<inverted_index>& handler,
+                       metadata_writer& mdata_writer);
 
     /**
      * Compresses the large postings file.
@@ -115,13 +120,15 @@ void inverted_index::create_index(const std::string& config_file)
     // load the documents from the corpus
     auto docs = corpus::corpus::load(config_file);
 
-    uint64_t num_docs = docs->size();
-    impl_->initialize_metadata(num_docs);
-
     chunk_handler<inverted_index> handler{index_name()};
-    inv_impl_->tokenize_docs(docs.get(), handler);
+    {
+        metadata_writer mdata_writer{index_name(), docs->size(),
+                                     docs->schema()};
+        uint64_t num_docs = docs->size();
+        impl_->load_labels(num_docs);
 
-    impl_->load_doc_id_mapping();
+        inv_impl_->tokenize_docs(docs.get(), handler, mdata_writer);
+    }
 
     handler.merge_chunks();
 
@@ -134,6 +141,7 @@ void inverted_index::create_index(const std::string& config_file)
                         num_unique_terms);
 
     impl_->load_term_id_mapping();
+    impl_->initialize_metadata();
 
     impl_->save_label_id_mapping();
     inv_impl_->load_postings();
@@ -148,18 +156,16 @@ void inverted_index::load_index()
     auto config = cpptoml::parse_file(index_name() + "/config.toml");
 
     impl_->initialize_metadata();
-    impl_->load_doc_id_mapping();
     impl_->load_term_id_mapping();
     impl_->load_label_id_mapping();
     inv_impl_->load_postings();
 }
 
 void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
-                                         chunk_handler<inverted_index>& handler)
+                                         chunk_handler<inverted_index>& handler,
+                                         metadata_writer& mdata_writer)
 {
     std::mutex mutex;
-    auto docid_writer = idx_->impl_->make_doc_id_writer(docs->size());
-
     printing::progress progress{" > Tokenizing Docs: ", docs->size()};
 
     auto task = [&]()
@@ -190,11 +196,10 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
                              << ") generated!" << ENDLG;
             }
 
-            // save metadata
-            docid_writer.insert(doc->id(), doc->path());
-            idx_->impl_->set_length(doc->id(), doc->length());
-            idx_->impl_->set_unique_terms(doc->id(), doc->counts().size());
+            mdata_writer.write(doc->id(), doc->length(), doc->counts().size(),
+                               doc->mdata());
             idx_->impl_->set_label(doc->id(), doc->label());
+
             // update chunk
             producer(doc->id(), doc->counts());
         }

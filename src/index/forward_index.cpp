@@ -8,6 +8,7 @@
 #include "index/disk_index_impl.h"
 #include "index/forward_index.h"
 #include "index/inverted_index.h"
+#include "index/metadata_writer.h"
 #include "index/postings_file.h"
 #include "index/postings_file_writer.h"
 #include "index/string_list.h"
@@ -144,7 +145,7 @@ void forward_index::load_index()
     LOG(info) << "Loading index from disk: " << index_name() << ENDLG;
 
     impl_->initialize_metadata();
-    impl_->load_doc_id_mapping();
+    impl_->load_labels();
 
     auto config = cpptoml::parse_file(index_name() + "/config.toml");
     if (!fwd_impl_->is_libsvm_format(config))
@@ -189,8 +190,8 @@ void forward_index::create_index(const std::string& config_file)
 
     impl_->load_label_id_mapping();
     fwd_impl_->load_postings();
-    impl_->load_doc_id_mapping();
     impl_->initialize_metadata();
+    impl_->load_labels();
 
     {
         std::ofstream unique_terms_file{index_name() + "/corpus.uniqueterms"};
@@ -217,18 +218,20 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
     auto filename = idx_->index_name() + idx_->impl_->files[POSTINGS];
 
     uint64_t num_docs = filesystem::num_lines(libsvm_data);
-    idx_->impl_->initialize_metadata(num_docs);
+    idx_->impl_->load_labels(num_docs);
 
     total_unique_terms_ = 0;
     {
         postings_file_writer out{filename, num_docs};
+
+        // make md_writer with empty schema
+        metadata_writer md_writer{idx_->index_name(), num_docs, {}};
 
         printing::progress progress{" > Creating postings from libsvm data: ",
                                     num_docs};
         doc_id d_id{0};
         std::ifstream input{libsvm_data};
         std::string line;
-        auto docid_writer = idx_->impl_->make_doc_id_writer(num_docs);
         while (std::getline(input, line))
         {
             progress(d_id);
@@ -252,10 +255,8 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
             pdata.set_counts(counts);
             out.write<double>(pdata);
 
-            docid_writer.insert(d_id, "[no path]");
-            idx_->impl_->set_length(d_id, static_cast<uint64_t>(length));
-            idx_->impl_->set_unique_terms(d_id, num_unique);
-
+            md_writer.write(d_id, static_cast<uint64_t>(length), num_unique,
+                            {});
             ++d_id;
         }
 
@@ -271,9 +272,8 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
 
 void forward_index::impl::create_uninverted_metadata(const std::string& name)
 {
-    auto files = {DOC_IDS_MAPPING, DOC_IDS_MAPPING_INDEX, DOC_SIZES, DOC_LABELS,
-                  DOC_UNIQUETERMS, LABEL_IDS_MAPPING, TERM_IDS_MAPPING,
-                  TERM_IDS_MAPPING_INVERSE};
+    auto files = {DOC_LABELS, LABEL_IDS_MAPPING, TERM_IDS_MAPPING,
+                  TERM_IDS_MAPPING_INVERSE, METADATA_DB, METADATA_INDEX};
 
     for (const auto& file : files)
         filesystem::copy_file(name + idx_->impl_->files[file],

@@ -15,8 +15,7 @@ gz_corpus::gz_corpus(const std::string& file, std::string encoding)
     : corpus{std::move(encoding)},
       cur_id_{0},
       corpus_stream_{file + ".gz"},
-      class_stream_{file + ".labels.gz"},
-      name_stream_{file + ".names.gz"}
+      class_stream_{file + ".labels.gz"}
 {
     if (!filesystem::file_exists(file + ".numdocs"))
         throw corpus::corpus_exception{
@@ -41,19 +40,16 @@ bool gz_corpus::has_next() const
 document gz_corpus::next()
 {
     class_label label{"[none]"};
-    std::string name{"[none]"};
 
     if (class_stream_)
         std::getline(class_stream_, static_cast<std::string&>(label));
 
-    if (name_stream_)
-        std::getline(name_stream_, name);
-
     std::string line;
     std::getline(corpus_stream_, line);
 
-    document doc{name, cur_id_++, label};
+    document doc{cur_id_++, label};
     doc.content(line, encoding());
+    doc.mdata(next_metadata());
 
     return doc;
 }

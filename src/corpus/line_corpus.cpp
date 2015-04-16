@@ -30,14 +30,6 @@ line_corpus::line_corpus(const std::string& file, std::string encoding,
             num_lines_ = filesystem::num_lines(file + ".labels");
     }
 
-    // init class label info
-    if (filesystem::file_exists(file + ".names"))
-    {
-        name_parser_ = make_unique<io::parser>(file + ".names", "\n");
-        if (num_lines_ == 0)
-            num_lines_ = filesystem::num_lines(file + ".names");
-    }
-
     // if we couldn't determine the number of lines in the constructor and the
     // two optional files don't exist, we have to count newlines here
     if (num_lines_ == 0)
@@ -52,16 +44,13 @@ bool line_corpus::has_next() const
 document line_corpus::next()
 {
     class_label label{"[none]"};
-    std::string name{"[none]"};
 
     if (class_parser_)
         label = class_label{class_parser_->next()};
 
-    if (name_parser_)
-        name = name_parser_->next();
-
-    document doc{name, cur_id_++, label};
+    document doc{cur_id_++, label};
     doc.content(parser_.next(), encoding());
+    doc.mdata(next_metadata());
 
     return doc;
 }

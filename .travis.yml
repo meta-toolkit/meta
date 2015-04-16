@@ -3,23 +3,32 @@ notifications:
 
 language: cpp
 
+sudo: false
+
 compiler:
     - clang
     - gcc
 
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+      - libicu-dev
+
 install:
-  - sudo apt-get update -qq
-  - sudo apt-get install libc6-i386
-  - wget http://www.cmake.org/files/v3.0/cmake-3.0.1-Linux-i386.sh
-  - sudo sh cmake-3.0.1-Linux-i386.sh --prefix=/usr/local --exclude-subdir
-  - sudo apt-get install libicu-dev
-  # credit: https://github.com/beark/ftl/
-  # install g++ 4.8, if tests are run with g++
-  - if [ "`echo $CXX`" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
-  - if [ "`echo $CXX`" == "g++" ]; then sudo apt-get update; fi
-  - if [ "`echo $CXX`" == "g++" ]; then sudo apt-get install -qq g++-4.8; fi
-  - if [ "`echo $CXX`" == "g++" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50; fi
-  # install libc++ if tests are run with clang++
+  - mkdir $HOME/lib
+  - export LD_LIBRARY_PATH=$HOME/lib:$LD_LIBRARY_PATH
+  - mkdir $HOME/bin
+  - export PATH=$HOME/bin:$PATH
+  - mkdir $HOME/include
+  - export CPLUS_INCLUDE_PATH=$HOME/include:$CPLUS_INCLUDE_PATH
+  - wget http://www.cmake.org/files/v3.2/cmake-3.2.2-Linux-x86_64.sh
+  - sh cmake-3.2.2-Linux-x86_64.sh --prefix=$HOME --exclude-subdir
+    # use g++-4.8 if g++ is our compiler
+  - if [ "`echo $CXX`" == "g++" ]; then export CXX=g++-4.8; fi
+    # install libc++ if tests are run with clang++
   - if [ "`echo $CXX`" == "clang++" ]; then cwd=$(pwd); fi
   - if [ "`echo $CXX`" == "clang++" ]; then svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx; fi
   - if [ "`echo $CXX`" == "clang++" ]; then git clone https://github.com/pathscale/libcxxrt.git libcxxrt; fi
@@ -28,16 +37,16 @@ install:
   - if [ "`echo $CXX`" == "clang++" ]; then cd build; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cmake -DCMAKE_BUILD_TYPE=Release ../; fi
   - if [ "`echo $CXX`" == "clang++" ]; then make; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then sudo cp lib/libcxxrt.so /usr/lib; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then sudo ln -sf /usr/lib/libcxxrt.so /usr/lib/libcxxrt.so.1; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then sudo ln -sf /usr/lib/libcxxrt.so /usr/lib/libcxxrt.so.1.0; fi
+  - if [ "`echo $CXX`" == "clang++" ]; then cp lib/libcxxrt.so $HOME/lib; fi
+  - if [ "`echo $CXX`" == "clang++" ]; then ln -sf $HOME/lib/libcxxrt.so $HOME/lib/libcxxrt.so.1; fi
+  - if [ "`echo $CXX`" == "clang++" ]; then ln -sf $HOME/lib/libcxxrt.so $HOME/lib/libcxxrt.so.1.0; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cd $cwd; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cd libcxx; fi
   - if [ "`echo $CXX`" == "clang++" ]; then mkdir build; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cd build; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cmake -DLIBCXX_CXX_ABI=libcxxrt -DLIBCXX_CXX_ABI_INCLUDE_PATHS="../../libcxxrt/src" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..; fi
+  - if [ "`echo $CXX`" == "clang++" ]; then cmake -DLIBCXX_CXX_ABI=libcxxrt -DLIBCXX_CXX_ABI_INCLUDE_PATHS="../../libcxxrt/src" -DLIBCXX_CXX_ABI_LIBRARY_PATH=$HOME/lib -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME ..; fi
   - if [ "`echo $CXX`" == "clang++" ]; then make; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then sudo make install; fi
+  - if [ "`echo $CXX`" == "clang++" ]; then make install; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cd $cwd; fi
 
 before_script:

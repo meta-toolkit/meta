@@ -44,7 +44,10 @@ int ir_eval_bounds()
             // sanity test bounds
             for (size_t i = 0; i < 5; ++i)
             {
-                corpus::document query{idx->doc_path(doc_id{i}), doc_id{0}};
+                auto path = idx->doc_path(doc_id{i});
+                corpus::document query{doc_id{0}};
+                query.content(filesystem::file_text(path));
+
                 auto ranking = ranker.score(*idx, query);
                 auto f1 = eval.f1(ranking, query_id{i});
                 auto p = eval.precision(ranking, query_id{i});

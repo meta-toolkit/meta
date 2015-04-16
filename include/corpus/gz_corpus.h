@@ -59,9 +59,6 @@ class gz_corpus : public corpus
 
     /// The stream to read the class labels
     io::gzifstream class_stream_;
-
-    /// The stream to read the document names
-    io::gzifstream name_stream_;
 };
 }
 }

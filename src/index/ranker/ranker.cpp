@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <unordered_map>
 #include "corpus/document.h"
 #include "index/inverted_index.h"
 #include "index/postings_data.h"
@@ -26,6 +27,10 @@ ranker::score(inverted_index& idx, corpus::document& query,
                   idx.num_docs(), idx.total_corpus_terms(),
                   query};
 
+    // a map from doc_id -> (length, unique_terms) to prevent looking up
+    // metadata repeatedly in the ranking loop
+    std::unordered_map<doc_id, std::pair<uint64_t, uint64_t>> md_map;
+
     // zeros out elements and (if necessary) resizes the vector; this eliminates
     // constructing a new vector each query for the same index
     results_.assign(sd.num_docs, std::numeric_limits<double>::lowest());
@@ -42,8 +47,15 @@ ranker::score(inverted_index& idx, corpus::document& query,
         {
             sd.d_id = dpair.first;
             sd.doc_term_count = dpair.second;
-            sd.doc_size = idx.doc_size(dpair.first);
-            sd.doc_unique_terms = idx.unique_terms(dpair.first);
+
+            auto& md = md_map[dpair.first];
+            if (md.first == 0)
+            {
+                md.first = idx.doc_size(dpair.first);
+                md.second = idx.unique_terms(dpair.first);
+            }
+            sd.doc_size = md.first;
+            sd.doc_unique_terms = md.second;
 
             // if this is the first time we've seen this document, compute
             // its initial score

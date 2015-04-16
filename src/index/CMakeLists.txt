@@ -5,8 +5,10 @@ add_subdirectory(ranker)
 add_subdirectory(tools)
 
 add_library(meta-index disk_index.cpp
-                       inverted_index.cpp
                        forward_index.cpp
+                       inverted_index.cpp
+                       metadata_file.cpp
+                       metadata_writer.cpp
                        string_list.cpp
                        string_list_writer.cpp
                        vocabulary_map.cpp
