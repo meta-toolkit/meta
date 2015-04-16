@@ -75,16 +75,24 @@ if(UNIX)
             message("-- Locating libc++...")
             find_library(LIBCXX_LIBRARY NAMES c++ cxx)
             if(LIBCXX_LIBRARY)
-                message("-- Located libc++, using it.")
+                message("-- Located libc++: ${LIBCXX_LIBRARY}")
                 set(LIBCXX_OPTIONS "-stdlib=libc++")
+                get_filename_component(LIBCXX_LIB_PATH ${LIBCXX_LIBRARY}
+                                       DIRECTORY)
+                find_path(LIBCXX_PREFIX c++/v1/algorithm
+                          PATHS ${LIBCXX_LIB_PATH}/../include
+                          ${CMAKE_SYSTEM_PREFIX_PATH})
+                set(LIBCXX_INCLUDE_DIR ${LIBCXX_PREFIX}/c++/v1/)
+                message("-- Located libc++ include path: ${LIBCXX_INCLUDE_DIR}")
+
                 message("--     Locating libc++'s abi...")
                 find_library(LIBCXXABI_LIBRARY NAMES c++abi)
                 find_library(LIBCXXRT_LIBRARY NAMES cxxrt)
                 if(LIBCXXABI_LIBRARY)
-                    message("--     Found libc++abi, using it.")
+                    message("--     Found libc++abi: ${LIBCXXABI_LIBRARY}")
                     set(CXXABI_LIBRARY ${LIBCXXABI_LIBRARY})
                 elseif(LIBCXXRT_LIBRARY)
-                    message("--     Found libcxxrt, using it.")
+                    message("--     Found libcxxrt: ${LIBCXXRT_LIBRARY}")
                     set(CXXABI_LIBRARY ${LIBCXXRT_LIBRARY})
                 else()
                     message("--     No abi library found. "
@@ -102,7 +110,8 @@ if(UNIX)
     endif()
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIBCXX_OPTIONS}")
-    set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${CXXABI_LIBRARY}")
+    set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${LIBCXX_OPTIONS} ${CXXABI_LIBRARY} -L${LIBCXX_LIB_PATH}")
+    set(CMAKE_REQUIRED_INCLUDES "${CMAKE_REQUIRED_INCLUDES} ${LIBCXX_INCLUDE_DIR}")
 endif()
 
 add_library(meta-definitions INTERFACE)
@@ -120,6 +129,16 @@ endif()
 
 if(LIBDL_LIBRARY)
   target_link_libraries(meta-definitions INTERFACE ${LIBDL_LIBRARY})
+endif()
+
+if(CXXABI_LIBRARY)
+  target_link_libraries(meta-definitions INTERFACE ${CXXABI_LIBRARY})
+endif()
+
+if(LIBCXX_LIBRARY)
+  target_include_directories(meta-definitions SYSTEM INTERFACE ${LIBCXX_INCLUDE_DIR})
+  target_compile_options(meta-definitions INTERFACE ${LIBCXX_OPTIONS})
+  target_link_libraries(meta-definitions INTERFACE -L${LIBCXX_LIB_PATH})
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
