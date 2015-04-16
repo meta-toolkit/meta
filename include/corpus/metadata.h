@@ -65,7 +65,7 @@ class metadata
     using schema = std::vector<field_info>;
 
     metadata(const char* start, const schema& sch)
-        : schema_{sch}, stream_{start}
+        : schema_{&sch}, stream_{start}
     {
         // nothing
     }
@@ -78,15 +78,15 @@ class metadata
     template <class T>
     util::optional<T> get(const std::string& name)
     {
-        for (uint64_t i = 0; i < schema_.size(); ++i)
+        for (uint64_t i = 0; i < schema_->size(); ++i)
         {
-            switch (schema_[i].type)
+            switch ((*schema_)[i].type)
             {
                 case field_type::SIGNED_INT:
                 {
                     int64_t si;
                     io::read_packed_binary(stream_, si);
-                    if (schema_[i].name == name)
+                    if ((*schema_)[i].name == name)
                         return {field{si}};
                     break;
                 }
@@ -95,7 +95,7 @@ class metadata
                 {
                     uint64_t ui;
                     io::read_packed_binary(stream_, ui);
-                    if (schema_[i].name == name)
+                    if ((*schema_)[i].name == name)
                         return {field{ui}};
                     break;
                 }
@@ -104,7 +104,7 @@ class metadata
                 {
                     double d;
                     io::read_packed_binary(stream_, d);
-                    if (schema_[i].name == name)
+                    if ((*schema_)[i].name == name)
                         return {field{d}};
                     break;
                 }
@@ -113,7 +113,7 @@ class metadata
                 {
                     std::string s{stream_.input_};
                     stream_.input_ += s.size() + 1;
-                    if (schema_[i].name == name)
+                    if ((*schema_)[i].name == name)
                         return {field{std::move(s)}};
                     break;
                 }
@@ -307,8 +307,8 @@ class metadata
         const char* input_;
     };
 
-    /// reference to the metadata_file's schema
-    const schema& schema_;
+    /// pointer to the metadata_file's schema
+    const schema* schema_;
 
     /// the fake input stream used for read_packed_binary
     metadata_input_stream stream_;
