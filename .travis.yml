@@ -16,7 +16,6 @@ addons:
     packages:
       - g++-4.8
       - libicu-dev
-      - ninja-build
 
 install:
   - mkdir $HOME/lib
@@ -56,6 +55,6 @@ before_script:
   - cp ../config.toml ./
 
 script:
-  - cmake ../ -DCMAKE_BUILD_TYPE=Debug -G Ninja
-  - ninja
+  - cmake ../ -DCMAKE_BUILD_TYPE=Debug
+  - make
   - ctest --output-on-failure
