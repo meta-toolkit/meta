@@ -312,7 +312,6 @@ util::optional<postings_stream<term_id, double>>
 
 void forward_index::impl::uninvert(const inverted_index& inv_idx)
 {
-    term_id t_id{0};
     chunk_handler<forward_index> handler{idx_->index_name()};
     {
         auto producer = handler.make_producer();
