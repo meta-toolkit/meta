@@ -115,13 +115,12 @@ results are returned.
 For this app, we need to add a path to the query file.
 
 {% highlight toml %}
-querypath = "./"
+query-path = "./path-to-queries.txt"
 {% endhighlight %}
 
 The query file contains one query per line, and they are run on the current
-index. You quickly make your own query file in the current directory if you
-don't have one. It must be named `dataset-queries.txt`, where in our example
-`dataset` is `20newsgroups`.
+index. You can quickly make your own query file in the current directory if you
+don't have one.
 
 {% highlight bash %}
 ./query-runner config.toml
@@ -129,6 +128,52 @@ don't have one. It must be named `dataset-queries.txt`, where in our example
 
 The top 10 documents for each query are then displayed along with the time
 taken to run all the queries.
+
+### Relevance judgements
+
+Check out the
+[index::ir_eval](http://meta-toolkit.github.io/meta/doxygen/classmeta_1_1index_1_1ir__eval.html)
+class if you have relevance judgements for your queries.
+
+The format for the relevance judgements follow the format
+
+```
+queryid docid relevance
+```
+
+For two queries with a few judgements, you could have the following file:
+
+~~~
+0 6 2
+0 7 1
+0 45 2
+0 21 1
+0 99 1
+1 6 1
+1 4 1
+1 89 2
+~~~
+
+This corresponds to query id 0 having docids 6, 7, 45, 21, and 99 being relevant
+at levels 2, 1, 2, 1, and 1. For query id 1, the docids 6, 4, and 89 are
+relevant at levels 1, 1, and 2. These lines can appear in any order. Docids are
+assigned sequentially when indexing, or you can find docids by running search
+yourself and creating manual relevance judgements. The different relevance
+levels are used for NDCG scoring. If using something like precision or recall,
+any nonzero scores are counted as relevant.
+
+Note that it's not necessary to store irrelevant documents (relevance zero)
+since any document not in the relevance judgements file is assumed to be
+nonrelevant.
+
+The path to the relevance judgements file is set in the config file as
+
+{% highlight toml %}
+query-judgements = "path/to/judgements.txt"
+{% endhighlight %}
+
+If a relevance file is found when running `./query-runner`, then its evaluation
+results are displayed for each query.
 
 ## Writing code
 
@@ -207,9 +252,7 @@ parameter:
 auto ranking = ranker->score(*idx, query, 25);
 {% endhighlight %}
 
-Iterate through `ranking` and display your results! Check out the
-[index::ir_eval](http://meta-toolkit.github.io/meta/doxygen/classmeta_1_1index_1_1ir__eval.html)
-class if you have relevance judgements for your queries.
+Iterate through `ranking` and display your results!
 
 ## Writing your own ranker
 
