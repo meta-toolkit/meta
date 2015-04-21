@@ -114,6 +114,14 @@ class postings_data
     void set_counts(const count_t& counts);
 
     /**
+     * @param begin The beginning of the counts to assign into this
+     * postings_data
+     * @param end The end of the counts to assign into this postings_data
+     */
+    template <class InputIterator>
+    void set_counts(InputIterator begin, InputIterator end);
+
+    /**
      * @param other The postings_data to compare with
      * @return whether this postings_data is less than (has a smaller
      * PrimaryKey than) the parameter

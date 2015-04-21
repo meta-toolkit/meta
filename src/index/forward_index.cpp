@@ -304,22 +304,22 @@ auto forward_index::search_primary(doc_id d_id) const
     return fwd_impl_->postings_->find<double>(d_id);
 }
 
+util::optional<postings_stream<term_id, double>>
+    forward_index::stream_for(doc_id d_id) const
+{
+    return fwd_impl_->postings_->find_stream<double>(d_id);
+}
+
 void forward_index::impl::uninvert(const inverted_index& inv_idx)
 {
-    io::compressed_file_reader inv_reader{inv_idx.index_name()
-                                              + idx_->impl_->files[POSTINGS],
-                                          io::default_compression_reader_func};
-
     term_id t_id{0};
     chunk_handler<forward_index> handler{idx_->index_name()};
     {
         auto producer = handler.make_producer();
-        while (inv_reader.has_next())
+        for (term_id t_id{0}; t_id < inv_idx.unique_terms(); ++t_id)
         {
-            inverted_pdata_type pdata{t_id};
-            pdata.read_compressed<uint64_t>(inv_reader);
-            producer(pdata.primary_key(), pdata.counts());
-            ++t_id;
+            auto pdata = inv_idx.search_primary(t_id);
+            producer(pdata->primary_key(), pdata->counts());
         }
     }
 

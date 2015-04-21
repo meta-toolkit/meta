@@ -4,7 +4,7 @@
  */
 
 #include "index/metadata_file.h"
-#include "io/binary.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -41,7 +41,7 @@ metadata_file::metadata_file(const std::string& prefix)
     // read in the header to populate the schema
     char_input_stream stream{md_db_.begin(), md_db_.begin() + md_db_.size()};
     uint64_t num_fields;
-    io::read_packed_binary(stream, num_fields);
+    io::packed::read(stream, num_fields);
 
     schema_.reserve(num_fields);
     for (uint64_t i = 0; i < num_fields; ++i)

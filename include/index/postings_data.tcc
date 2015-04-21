@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <numeric>
 #include "index/postings_data.h"
 
 namespace meta
@@ -15,13 +16,14 @@ namespace index
 template <class PrimaryKey, class SecondaryKey>
 postings_data<PrimaryKey, SecondaryKey>::postings_data(PrimaryKey p_id)
     : p_id_{p_id}
-{/* nothing */
+{ /* nothing */
 }
 
 template <class PrimaryKey, class SecondaryKey>
 void postings_data<PrimaryKey, SecondaryKey>::merge_with(postings_data& other)
 {
-    auto searcher = [](const pair_t& p, const SecondaryKey& s) {
+    auto searcher = [](const pair_t& p, const SecondaryKey& s)
+    {
         return p.first < s;
     };
 
@@ -43,16 +45,16 @@ void postings_data<PrimaryKey, SecondaryKey>::merge_with(postings_data& other)
     if (counts_.size() > orig_length)
     {
         std::sort(counts_.begin(), counts_.end(),
-            [](const pair_t& a, const pair_t& b) {
-                return a.first < b.first;
-            }
-        );
+                  [](const pair_t& a, const pair_t& b)
+                  {
+                      return a.first < b.first;
+                  });
     }
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void postings_data
-    <PrimaryKey, SecondaryKey>::increase_count(SecondaryKey s_id, double amount)
+void postings_data<PrimaryKey, SecondaryKey>::increase_count(SecondaryKey s_id,
+                                                             double amount)
 {
     counts_[s_id] += amount;
 }
@@ -64,8 +66,8 @@ double postings_data<PrimaryKey, SecondaryKey>::count(SecondaryKey s_id) const
 }
 
 template <class PrimaryKey, class SecondaryKey>
-const std::vector<std::pair<SecondaryKey, double>>& postings_data
-    <PrimaryKey, SecondaryKey>::counts() const
+const std::vector<std::pair<SecondaryKey, double>>&
+    postings_data<PrimaryKey, SecondaryKey>::counts() const
 {
     return counts_.contents();
 }
@@ -78,15 +80,25 @@ void postings_data<PrimaryKey, SecondaryKey>::set_counts(const count_t& counts)
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void postings_data
-    <PrimaryKey, SecondaryKey>::set_primary_key(PrimaryKey new_key)
+template <class InputIterator>
+void postings_data<PrimaryKey, SecondaryKey>::set_counts(InputIterator begin,
+                                                         InputIterator end)
+{
+    for (; begin != end; ++begin)
+        counts_.emplace_back(*begin);
+    counts_.shrink_to_fit();
+}
+
+template <class PrimaryKey, class SecondaryKey>
+void postings_data<PrimaryKey, SecondaryKey>::set_primary_key(
+    PrimaryKey new_key)
 {
     p_id_ = new_key;
 }
 
 template <class PrimaryKey, class SecondaryKey>
-bool postings_data<PrimaryKey, SecondaryKey>::operator<(const postings_data
-                                                        & other) const
+bool postings_data<PrimaryKey, SecondaryKey>::
+    operator<(const postings_data& other) const
 {
     return primary_key() < other.primary_key();
 }
@@ -106,10 +118,16 @@ PrimaryKey postings_data<PrimaryKey, SecondaryKey>::primary_key() const
 
 template <class PrimaryKey, class SecondaryKey>
 template <class FeatureValue>
-void postings_data
-    <PrimaryKey, SecondaryKey>::write_compressed(io::compressed_file_writer
-                                                 & writer) const
+void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
+    io::compressed_file_writer& writer) const
 {
+    writer.write(counts_.size());
+    writer.write(std::accumulate(counts_.begin(), counts_.end(), uint64_t{0},
+                                 [](uint64_t cur, const pair_t& pr)
+                                 {
+                                     return cur
+                                            + static_cast<uint64_t>(pr.second);
+                                 }));
     count_t mutable_counts{counts_.contents()};
     writer.write(mutable_counts[0].first);
     if (std::is_same<FeatureValue, uint64_t>::value)
@@ -139,27 +157,26 @@ void postings_data
             writer.write(mutable_counts[i].second);
         }
     }
-
-    // mark end of postings_data
-    writer.write(delimiter_);
 }
 
 template <class PrimaryKey, class SecondaryKey>
 template <class FeatureValue>
 void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
-        io::compressed_file_reader& reader)
+    io::compressed_file_reader& reader)
 {
+    uint64_t size = reader.next();
+
+    // ignore total counts sum
+    reader.next();
+
     counts_.clear();
+    counts_.reserve(size);
+
     uint64_t last_id = 0;
 
-    while (true)
+    for (uint64_t i = 0; i < size; ++i)
     {
         uint64_t this_id = reader.next();
-
-        // have we reached a delimiter?
-        if (this_id == delimiter_)
-            break;
-
         // we're using gap encoding
         last_id += this_id;
         SecondaryKey key{last_id};
@@ -186,15 +203,17 @@ void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
 namespace
 {
 template <class T>
-uint64_t length(const T& elem, typename std::enable_if<
-                std::is_same<T, std::string>::value>::type* = nullptr)
+uint64_t length(const T& elem,
+                typename std::enable_if<std::is_same<T, std::string>::value>::
+                    type* = nullptr)
 {
     return elem.size();
 }
 
 template <class T>
-uint64_t length(const T& elem, typename std::enable_if<
-                !std::is_same<T, std::string>::value>::type* = nullptr)
+uint64_t length(const T& elem,
+                typename std::enable_if<!std::is_same<T, std::string>::value>::
+                    type* = nullptr)
 {
     return sizeof(elem);
 }

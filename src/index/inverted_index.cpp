@@ -307,5 +307,11 @@ auto inverted_index::search_primary(term_id t_id) const
 {
     return inv_impl_->postings_->find(t_id);
 }
+
+util::optional<postings_stream<doc_id>>
+    inverted_index::stream_for(term_id t_id) const
+{
+    return inv_impl_->postings_->find_stream(t_id);
+}
 }
 }

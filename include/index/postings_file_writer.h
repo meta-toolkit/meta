@@ -10,7 +10,9 @@
 #ifndef META_INDEX_POSTINGS_FILE_WRITER_H_
 #define META_INDEX_POSTINGS_FILE_WRITER_H_
 
-#include "io/compressed_file_writer.h"
+#include <fstream>
+#include <numeric>
+#include "io/packed.h"
 #include "util/disk_vector.h"
 
 namespace meta
@@ -26,8 +28,9 @@ class postings_file_writer
      * @param filename The filename (prefix) for the postings file.
      */
     postings_file_writer(const std::string& filename, uint64_t unique_keys)
-        : output_{filename, io::default_compression_writer_func},
-          bit_locations_{filename + "_index", unique_keys},
+        : output_{filename, std::ios::binary},
+          byte_locations_{filename + "_index", unique_keys},
+          byte_pos_{0},
           id_{0}
     {
         // nothing
@@ -40,14 +43,41 @@ class postings_file_writer
     template <class FeatureValue = uint64_t, class PostingsData>
     void write(const PostingsData& pdata)
     {
-        bit_locations_[id_] = output_.bit_location();
-        pdata.template write_compressed<FeatureValue>(output_);
+        byte_locations_[id_] = byte_pos_;
+        byte_pos_ += io::packed::write(output_, pdata.counts().size());
+
+        auto total_counts = std::accumulate(
+            pdata.counts().begin(), pdata.counts().end(), uint64_t{0},
+            [](uint64_t cur, const typename PostingsData::pair_t& pr)
+            {
+                return cur + static_cast<uint64_t>(pr.second);
+            });
+        byte_pos_ += io::packed::write(output_, total_counts);
+
+        uint64_t last_id = 0;
+        for (const auto& count : pdata.counts())
+        {
+            byte_pos_ += io::packed::write(output_, count.first - last_id);
+
+            if (std::is_same<FeatureValue, uint64_t>::value)
+            {
+                byte_pos_ += io::packed::write(
+                    output_, static_cast<uint64_t>(count.second));
+            }
+            else
+            {
+                byte_pos_ += io::packed::write(output_, count.second);
+            }
+
+            last_id = count.first;
+        }
         ++id_;
-    }
+   }
 
   private:
-    io::compressed_file_writer output_;
-    util::disk_vector<uint64_t> bit_locations_;
+    std::ofstream output_;
+    util::disk_vector<uint64_t> byte_locations_;
+    uint64_t byte_pos_;
     uint64_t id_;
 };
 }
