@@ -8,8 +8,10 @@
 #include <iostream>
 
 #include "util/time.h"
+#include "util/printing.h"
 #include "corpus/document.h"
 #include "index/inverted_index.h"
+#include "index/eval/ir_eval.h"
 #include "index/ranker/ranker_factory.h"
 #include "parser/analyzers/tree_analyzer.h"
 #include "sequence/analyzers/ngram_pos_analyzer.h"
@@ -24,7 +26,7 @@ int main(int argc, char* argv[])
 {
     if (argc != 2)
     {
-        std::cerr << "Usage:\t" << argv[0] << " configFile" << std::endl;
+        std::cerr << "Usage:\t" << argv[0] << " config.toml" << std::endl;
         return 1;
     }
 
@@ -49,41 +51,59 @@ int main(int argc, char* argv[])
     auto ranker = index::make_ranker(*group);
 
     // Get the path to the file containing queries
-    auto query_path = config.get_as<std::string>("querypath");
+    auto query_path = config.get_as<std::string>("query-path");
     if (!query_path)
-        throw std::runtime_error{"config file needs a \"querypath\" parameter"};
+        throw std::runtime_error{
+            "config file needs a \"query-path\" parameter"};
+    std::ifstream queries{*query_path};
 
-    std::ifstream queries{*query_path + *config.get_as<std::string>("dataset")
-                          + "-queries.txt"};
-    std::string content;
-    auto elapsed_seconds = common::time([&]()
+    std::unique_ptr<index::ir_eval> eval;
+    try
     {
-        size_t i = 1;
-        while (queries.good() && i <= 500) // only look at first 500 queries
+        eval = make_unique<index::ir_eval>(argv[1]);
+    }
+    catch (index::ir_eval::ir_eval_exception& ex)
+    {
+        LOG(info) << "Could not find relevance judgements; skipping eval"
+                  << ENDLG;
+    }
+
+    std::string content;
+    auto elapsed_seconds = common::time(
+        [&]()
         {
-            std::getline(queries, content);
-            corpus::document query{doc_id{0}};
-            query.content(content);
-            std::cout << "Ranking query " << i++ << ": " << std::endl;
-
-            // Use the ranker to score the query over the index. By default, the
-            //  ranker returns 10 documents, so we will display the "top 10 of
-            //  10" docs.
-            auto ranking = ranker->score(*idx, query);
-            std::cout << "Showing top 10 of " << ranking.size() << " results."
-                      << std::endl;
-
-            for (size_t i = 0; i < ranking.size() && i < 10; ++i)
+            size_t i = 0;
+            while (std::getline(queries, content))
             {
-                std::cout << (i + 1) << ". " << idx->doc_name(ranking[i].first)
-                          << " " << ranking[i].second << std::endl;
-            }
-            std::cout << std::endl;
-        }
-    });
+                corpus::document query{doc_id{0}};
+                query.content(content);
+                std::cout << "Query " << ++i << ": " << std::endl;
+                std::cout << std::string(20, '=') << std::endl;
 
+                // Use the ranker to score the query over the index.
+                auto ranking = ranker->score(*idx, query);
+                auto result_num = 1;
+                for (auto& result : ranking)
+                {
+                    std::cout << result_num << ". "
+                              << idx->doc_name(result.first) << " "
+                              << result.second << std::endl;
+                    if (result_num++ == 10)
+                        break;
+                }
+                if (eval)
+                    eval->print_stats(ranking, query_id{i - 1});
+                std::cout << std::endl;
+            }
+        });
+
+    if (eval)
+    {
+        std::cout << printing::make_bold("  MAP: ") << eval->map() << std::endl;
+        std::cout << printing::make_bold(" gMAP: ") << eval->gmap()
+                  << std::endl;
+        std::cout << std::endl;
+    }
     std::cout << "Elapsed time: " << elapsed_seconds.count() << "ms"
               << std::endl;
-
-    return 0;
 }
