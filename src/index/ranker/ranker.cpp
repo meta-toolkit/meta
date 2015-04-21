@@ -101,24 +101,27 @@ std::vector<std::pair<doc_id, double>> ranker::score(
         double score = initial_score(sd);
         for (auto& pc : postings)
         {
-            if (pc.begin == pc.end || pc.begin->first != cur_doc)
+            if (pc.begin == pc.end)
                 continue;
 
-            // set up this term
-            sd.t_id = pc.t_id;
-            sd.query_term_count = pc.query_term_count;
-            sd.doc_count = pc.doc_count;
-            sd.corpus_term_count = pc.corpus_term_count;
-            sd.doc_term_count = pc.begin->second;
-
-            score += score_one(sd);
-
-            // advance over this position in the current postings context
-            // until the next valid document
-            do
+            if (pc.begin->first == cur_doc)
             {
-                ++pc.begin;
-            } while (pc.begin != pc.end && !filter(pc.begin->first));
+                // set up this term
+                sd.t_id = pc.t_id;
+                sd.query_term_count = pc.query_term_count;
+                sd.doc_count = pc.doc_count;
+                sd.corpus_term_count = pc.corpus_term_count;
+                sd.doc_term_count = pc.begin->second;
+
+                score += score_one(sd);
+
+                // advance over this position in the current postings context
+                // until the next valid document
+                do
+                {
+                    ++pc.begin;
+                } while (pc.begin != pc.end && !filter(pc.begin->first));
+            }
 
             if (pc.begin != pc.end)
             {
