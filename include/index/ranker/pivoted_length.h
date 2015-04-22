@@ -29,21 +29,21 @@ class pivoted_length : public ranker
     const static std::string id;
 
     /// Default value of s parameter
-    const static constexpr double default_s = 0.20;
+    const static constexpr float default_s = 0.20;
 
     /**
      * @param s
      */
-    pivoted_length(double s = default_s);
+    pivoted_length(float s = default_s);
 
     /**
      * @param sd the score_data for this query
      */
-    double score_one(const score_data& sd) override;
+    float score_one(const score_data& sd) override;
 
   private:
     /// s parameter for pivoted_length normalization
-    const double s_;
+    const float s_;
 };
 
 /**

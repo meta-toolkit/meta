@@ -32,23 +32,23 @@ class absolute_discount : public language_model_ranker
     /**
      * @param delta
      */
-    absolute_discount(double delta = 0.7);
+    absolute_discount(float delta = 0.7);
 
     /**
      * Calculates the smoothed probability of a term.
      * @param sd score_data for the current query
      */
-    double smoothed_prob(const score_data& sd) const override;
+    float smoothed_prob(const score_data& sd) const override;
 
     /**
      * A document-dependent constant.
      * @param sd score_data for the current query
      */
-    double doc_constant(const score_data& sd) const override;
+    float doc_constant(const score_data& sd) const override;
 
   private:
     /// the absolute discounting parameter
-    const double delta_;
+    const float delta_;
 };
 
 /**

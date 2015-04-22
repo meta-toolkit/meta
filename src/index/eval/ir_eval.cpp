@@ -61,7 +61,7 @@ void ir_eval::init_index(const std::string& path)
     }
 }
 
-double ir_eval::precision(const std::vector<std::pair<doc_id, double>>& results,
+double ir_eval::precision(const std::vector<std::pair<doc_id, float>>& results,
                           query_id q_id, uint64_t num_docs) const
 {
     if (results.empty())
@@ -75,7 +75,7 @@ double ir_eval::precision(const std::vector<std::pair<doc_id, double>>& results,
     return relevant_retrieved(results, q_id, num_docs) / denominator;
 }
 
-double ir_eval::recall(const std::vector<std::pair<doc_id, double>>& results,
+double ir_eval::recall(const std::vector<std::pair<doc_id, float>>& results,
                        query_id q_id, uint64_t num_docs) const
 {
     if (results.empty())
@@ -89,7 +89,7 @@ double ir_eval::recall(const std::vector<std::pair<doc_id, double>>& results,
 }
 
 double ir_eval::relevant_retrieved(const std::vector
-                                   <std::pair<doc_id, double>>& results,
+                                   <std::pair<doc_id, float>>& results,
                                    query_id q_id, uint64_t num_docs) const
 {
     double rel = 0.0;
@@ -106,7 +106,7 @@ double ir_eval::relevant_retrieved(const std::vector
     return rel;
 }
 
-double ir_eval::f1(const std::vector<std::pair<doc_id, double>>& results,
+double ir_eval::f1(const std::vector<std::pair<doc_id, float>>& results,
                    query_id q_id, uint64_t num_docs, double beta) const
 {
     double p = precision(results, q_id, num_docs);
@@ -120,7 +120,7 @@ double ir_eval::f1(const std::vector<std::pair<doc_id, double>>& results,
     return numerator / denominator;
 }
 
-double ir_eval::ndcg(const std::vector<std::pair<doc_id, double>>& results,
+double ir_eval::ndcg(const std::vector<std::pair<doc_id, float>>& results,
                      query_id q_id, uint64_t num_docs) const
 {
     // find this query's judgements
@@ -157,7 +157,7 @@ double ir_eval::ndcg(const std::vector<std::pair<doc_id, double>>& results,
     return dcg / idcg;
 }
 
-double ir_eval::avg_p(const std::vector<std::pair<doc_id, double>>& results,
+double ir_eval::avg_p(const std::vector<std::pair<doc_id, float>>& results,
                       query_id q_id, uint64_t num_docs)
 {
     const auto& ht = qrels_.find(q_id);
@@ -211,7 +211,7 @@ double ir_eval::gmap() const
     return std::exp(sum / scores_.size());
 }
 
-void ir_eval::print_stats(const std::vector<std::pair<doc_id, double>>& results,
+void ir_eval::print_stats(const std::vector<std::pair<doc_id, float>>& results,
                           query_id q_id, std::ostream& out)
 {
     auto w1 = std::setw(8);

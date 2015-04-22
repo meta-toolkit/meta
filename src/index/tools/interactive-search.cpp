@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
         query.content(text); // set the doc's content to be user input
 
         // Use the ranker to score the query over the index.
-        std::vector<std::pair<doc_id, double>> ranking;
+        std::vector<std::pair<doc_id, float>> ranking;
         auto time = common::time([&]()
         { ranking = ranker->score(*idx, query, 5); });
 

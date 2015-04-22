@@ -18,7 +18,6 @@ namespace index
 
 namespace
 {
-
 struct postings_context
 {
     using postings_data_type = inverted_index::postings_data_type;
@@ -46,7 +45,7 @@ struct postings_context
 };
 }
 
-std::vector<std::pair<doc_id, double>> ranker::score(
+std::vector<std::pair<doc_id, float>> ranker::score(
     inverted_index& idx, corpus::document& query,
     uint64_t num_results /* = 10 */,
     const std::function<bool(doc_id d_id)>& filter /* return true */)
@@ -57,11 +56,11 @@ std::vector<std::pair<doc_id, double>> ranker::score(
     score_data sd{idx, idx.avg_doc_length(), idx.num_docs(),
                   idx.total_corpus_terms(), query};
 
-    std::vector<std::pair<doc_id, double>> results;
+    std::vector<std::pair<doc_id, float>> results;
     results.reserve(num_results + 1); // +1 since we use this as a heap and
                                       // prune when it exceeds size num_results
-    auto comp = [](const std::pair<doc_id, double>& a,
-                   const std::pair<doc_id, double>& b)
+    auto comp = [](const std::pair<doc_id, float>& a,
+                   const std::pair<doc_id, float>& b)
     {
         // comparison is reversed since we want a min-heap
         return a.second > b.second;
@@ -98,7 +97,7 @@ std::vector<std::pair<doc_id, double>> ranker::score(
         sd.doc_size = idx.doc_size(cur_doc);
         sd.doc_unique_terms = idx.unique_terms(cur_doc);
 
-        double score = initial_score(sd);
+        auto score = initial_score(sd);
         for (auto& pc : postings)
         {
             if (pc.begin == pc.end)
@@ -152,7 +151,7 @@ std::vector<std::pair<doc_id, double>> ranker::score(
     return results;
 }
 
-double ranker::initial_score(const score_data&) const
+float ranker::initial_score(const score_data&) const
 {
     return 0.0;
 }

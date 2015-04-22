@@ -78,7 +78,7 @@ class_label knn::classify(doc_id d_id)
 }
 
 class_label knn::select_best_label(
-    const std::vector<std::pair<doc_id, double>>& scored,
+    const std::vector<std::pair<doc_id, float>>& scored,
     const std::vector<std::pair<class_label, uint16_t>>& sorted) const
 {
     uint16_t highest = sorted.begin()->second;
