@@ -38,8 +38,8 @@ template <>
 std::unique_ptr<ranker>
     make_ranker<absolute_discount>(const cpptoml::table& config)
 {
-    if (auto gamma = config.get_as<double>("gamma"))
-        return make_unique<absolute_discount>(*gamma);
+    if (auto delta = config.get_as<double>("delta"))
+        return make_unique<absolute_discount>(*delta);
     return make_unique<absolute_discount>();
 }
 }
