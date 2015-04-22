@@ -6,6 +6,7 @@
 #include "index/inverted_index.h"
 #include "index/ranker/pivoted_length.h"
 #include "index/score_data.h"
+#include "util/fastapprox.h"
 
 namespace meta
 {
@@ -22,10 +23,11 @@ pivoted_length::pivoted_length(double s) : s_{s}
 double pivoted_length::score_one(const score_data& sd)
 {
     double doc_len = sd.idx.doc_size(sd.d_id);
-    double TF = 1 + log(1 + log(sd.doc_term_count));
+    double TF = 1 + fastapprox::fasterlog(
+                        1 + fastapprox::fasterlog(sd.doc_term_count));
     double norm = (1 - s_) + s_ * (doc_len / sd.avg_dl);
-    double IDF = log((sd.num_docs + 1) / (0.5 + sd.doc_count));
-
+    double IDF
+        = fastapprox::fasterlog((sd.num_docs + 1) / (0.5 + sd.doc_count));
     return TF / norm * sd.query_term_count * IDF;
 }
 

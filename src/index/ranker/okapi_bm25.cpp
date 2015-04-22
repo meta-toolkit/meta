@@ -7,6 +7,7 @@
 #include "index/inverted_index.h"
 #include "index/ranker/okapi_bm25.h"
 #include "index/score_data.h"
+#include "util/fastapprox.h"
 
 namespace meta
 {
@@ -25,7 +26,7 @@ double okapi_bm25::score_one(const score_data& sd)
     double doc_len = sd.idx.doc_size(sd.d_id);
 
     // add 1.0 to the IDF to ensure that the result is positive
-    double IDF = std::log(
+    double IDF = fastapprox::fasterlog(
         1.0 + (sd.num_docs - sd.doc_count + 0.5) / (sd.doc_count + 0.5));
 
     double TF = ((k1_ + 1.0) * sd.doc_term_count)
