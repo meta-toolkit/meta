@@ -55,6 +55,5 @@ before_script:
   - cp ../config.toml ./
 
 script:
-  - cmake ../ -DCMAKE_BUILD_TYPE=Debug
-  - make
-  - ctest --output-on-failure
+  - cmake ../ -DCMAKE_BUILD_TYPE=Debug && make && make clean
+  - rm -rf CMake* && cmake ../ -DCMAKE_BUILD_TYPE=Release && make && ctest --output-on-failure

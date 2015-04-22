@@ -11,14 +11,21 @@
 #define META_INDEX_POSTINGS_FILE_H_
 
 #include "index/postings_data.h"
+#include "index/postings_stream.h"
 #include "io/mmap_file.h"
 #include "util/disk_vector.h"
+#include "util/optional.h"
 
 namespace meta
 {
 namespace index
 {
 
+/**
+ * File that stores the postings list for an index on disk. Each postings
+ * list is indexed via PrimaryKey and consists of pairs of (SecondaryKey,
+ * double).
+ */
 template <class PrimaryKey, class SecondaryKey>
 class postings_file
 {
@@ -30,9 +37,25 @@ class postings_file
      * @param filename The path to the file
      */
     postings_file(const std::string& filename)
-        : postings_{filename}, bit_locations_{filename + "_index"}
+        : postings_{filename}, byte_locations_{filename + "_index"}
     {
         // nothing
+    }
+
+    /**
+     * Obtains a postings stream object for the given primary key.
+     * @param pk The primary key to look up
+     * @return a postings stream for this primary key, if it is in the
+     * postings file
+     */
+    template <class FeatureValue = uint64_t>
+    util::optional<postings_stream<SecondaryKey, FeatureValue>>
+        find_stream(PrimaryKey pk) const
+    {
+        if (pk < byte_locations_.size())
+            return postings_stream<SecondaryKey, FeatureValue>{
+                postings_, byte_locations_.at(pk)};
+        return util::nullopt;
     }
 
     /**
@@ -48,13 +71,10 @@ class postings_file
         uint64_t idx{pk};
 
         // if we are in-bounds of the postings file, populate counts
-        if (idx < bit_locations_.size())
+        if (idx < byte_locations_.size())
         {
-            io::compressed_file_reader reader{
-                postings_, io::default_compression_reader_func};
-            reader.seek(bit_locations_.at(idx));
-
-            pdata->template read_compressed<FeatureValue>(reader);
+            auto stream = find_stream<FeatureValue>(pk);
+            pdata->set_counts(stream->begin(), stream->end());
         }
 
         return pdata;
@@ -62,7 +82,7 @@ class postings_file
 
   private:
     io::mmap_file postings_;
-    util::disk_vector<uint64_t> bit_locations_;
+    util::disk_vector<uint64_t> byte_locations_;
 };
 }
 }

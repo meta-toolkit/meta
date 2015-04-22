@@ -100,8 +100,7 @@ int main(int argc, char* argv[])
     auto classifier_method = *class_config->get_as<std::string>("method");
     if (classifier_method == "knn" || classifier_method == "nearest-centroid")
     {
-        auto i_idx
-            = index::make_index<index::dblru_inverted_index>(argv[1], 10000);
+        auto i_idx = index::make_index<index::inverted_index>(argv[1]);
         classifier = classify::make_classifier(*class_config, f_idx, i_idx);
     }
     else

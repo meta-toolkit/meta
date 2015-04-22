@@ -49,11 +49,12 @@ class ranker
      * if the document should be included in results
      */
     std::vector<std::pair<doc_id, double>>
-    score(inverted_index& idx, corpus::document& query,
-          uint64_t num_results = 10,
-          const std::function<bool(doc_id d_id)>& filter = [](doc_id) {
-              return true;
-          });
+        score(inverted_index& idx, corpus::document& query,
+              uint64_t num_results = 10,
+              const std::function<bool(doc_id d_id)>& filter = [](doc_id)
+              {
+                  return true;
+              });
 
     /**
      * Computes the contribution to the score of a document for a matched
@@ -73,10 +74,6 @@ class ranker
      * Default destructor.
      */
     virtual ~ranker() = default;
-
-  private:
-    /// results per doc_id
-    std::vector<double> results_;
 };
 }
 }

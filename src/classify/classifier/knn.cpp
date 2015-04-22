@@ -46,14 +46,13 @@ class_label knn::classify(doc_id d_id)
     for (const auto& count : idx_->search_primary(d_id)->counts())
         query.increment(idx_->term_text(count.first), count.second);
 
-    auto scored = ranker_->score(*inv_idx_, query, inv_idx_->num_docs(),
-                                 [&](doc_id d_id)
+    auto scored = ranker_->score(*inv_idx_, query, k_, [&](doc_id d_id)
                                  {
-        return legal_docs_.find(d_id) != legal_docs_.end();
-    });
+                                     return legal_docs_.find(d_id)
+                                            != legal_docs_.end();
+                                 });
 
     std::unordered_map<class_label, double> counts;
-    uint16_t i = 0;
     for (auto& s : scored)
     {
         // normally, weighted k-nn weights neighbors by 1/distance, but since
@@ -63,9 +62,6 @@ class_label knn::classify(doc_id d_id)
         // if not weighted, each neighbor gets an equal vote
         else
             ++counts[idx_->label(s.first)];
-
-        if (++i > k_)
-            break;
     }
 
     if (counts.empty())
@@ -75,8 +71,8 @@ class_label knn::classify(doc_id d_id)
     std::vector<pair_t> sorted{counts.begin(), counts.end()};
     std::sort(sorted.begin(), sorted.end(), [](const pair_t& a, const pair_t& b)
               {
-        return a.second > b.second;
-    });
+                  return a.second > b.second;
+              });
 
     return select_best_label(scored, sorted);
 }
