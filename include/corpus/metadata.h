@@ -15,7 +15,7 @@
 #include <string>
 
 #include "cpptoml.h"
-#include "io/binary.h"
+#include "io/packed.h"
 #include "util/optional.h"
 
 namespace meta
@@ -85,7 +85,7 @@ class metadata
                 case field_type::SIGNED_INT:
                 {
                     int64_t si;
-                    io::read_packed_binary(stream_, si);
+                    io::packed::read(stream_, si);
                     if ((*schema_)[i].name == name)
                         return {field{si}};
                     break;
@@ -94,7 +94,7 @@ class metadata
                 case field_type::UNSIGNED_INT:
                 {
                     uint64_t ui;
-                    io::read_packed_binary(stream_, ui);
+                    io::packed::read(stream_, ui);
                     if ((*schema_)[i].name == name)
                         return {field{ui}};
                     break;
@@ -103,7 +103,7 @@ class metadata
                 case field_type::DOUBLE:
                 {
                     double d;
-                    io::read_packed_binary(stream_, d);
+                    io::packed::read(stream_, d);
                     if ((*schema_)[i].name == name)
                         return {field{d}};
                     break;
@@ -310,7 +310,7 @@ class metadata
     /// pointer to the metadata_file's schema
     const schema* schema_;
 
-    /// the fake input stream used for read_packed_binary
+    /// the fake input stream used for io::packed::read
     metadata_input_stream stream_;
 };
 

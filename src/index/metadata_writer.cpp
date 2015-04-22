@@ -5,6 +5,7 @@
 
 #include "index/metadata_writer.h"
 #include "io/binary.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -19,7 +20,7 @@ metadata_writer::metadata_writer(const std::string& prefix, uint64_t num_docs,
       schema_{std::move(schema)}
 {
     // write metadata header
-    byte_pos_ += io::write_packed_binary(db_file_, schema_.size() + 2);
+    byte_pos_ += io::packed::write(db_file_, schema_.size() + 2);
     byte_pos_ += io::write_binary(db_file_, std::string{"length"});
     byte_pos_ += io::write_binary(db_file_,
                                   corpus::metadata::field_type::UNSIGNED_INT);
@@ -41,8 +42,8 @@ void metadata_writer::write(doc_id d_id, uint64_t length, uint64_t num_unique,
 
     seek_pos_[d_id] = byte_pos_;
     // write "mandatory" metadata
-    byte_pos_ += io::write_packed_binary(db_file_, length);
-    byte_pos_ += io::write_packed_binary(db_file_, num_unique);
+    byte_pos_ += io::packed::write(db_file_, length);
+    byte_pos_ += io::packed::write(db_file_, num_unique);
 
     // write optional metadata
     if (mdata.size() != schema_.size())
@@ -54,15 +55,15 @@ void metadata_writer::write(doc_id d_id, uint64_t length, uint64_t num_unique,
         switch (fld.type)
         {
             case corpus::metadata::field_type::SIGNED_INT:
-                byte_pos_ += io::write_packed_binary(db_file_, fld.sign_int);
+                byte_pos_ += io::packed::write(db_file_, fld.sign_int);
                 break;
 
             case corpus::metadata::field_type::UNSIGNED_INT:
-                byte_pos_ += io::write_packed_binary(db_file_, fld.usign_int);
+                byte_pos_ += io::packed::write(db_file_, fld.usign_int);
                 break;
 
             case corpus::metadata::field_type::DOUBLE:
-                byte_pos_ += io::write_packed_binary(db_file_, fld.doub);
+                byte_pos_ += io::packed::write(db_file_, fld.doub);
                 break;
 
             case corpus::metadata::field_type::STRING:

@@ -14,7 +14,9 @@
 
 #include "index/disk_index.h"
 #include "index/make_index.h"
+#include "index/postings_stream.h"
 #include "util/disk_vector.h"
+#include "util/optional.h"
 #include "meta.h"
 
 namespace meta
@@ -116,6 +118,13 @@ class forward_index : public disk_index
      */
     virtual std::shared_ptr<postings_data_type>
         search_primary(doc_id d_id) const;
+
+    /**
+     * @param d_id The doc_id to search for
+     * @return the postings stream for a given doc_id
+     */
+    util::optional<postings_stream<term_id, double>>
+        stream_for(doc_id d_id) const;
 
     /**
      * @param d_id The document id of the doc to convert to liblinear format

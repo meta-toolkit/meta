@@ -230,18 +230,18 @@ void inverted_index::impl::compress(const std::string& filename,
                                     + idx_->impl_->files[TERM_IDS_MAPPING]};
 
         postings_data<std::string, doc_id> pdata;
-        auto length = filesystem::file_size(ucfilename) * 8; // number of bits
-        io::compressed_file_reader in{ucfilename,
-                                      io::default_compression_reader_func};
+        auto length = filesystem::file_size(ucfilename);
+        std::ifstream in{ucfilename, std::ios::binary};
+        uint64_t byte_pos = 0;
 
         printing::progress progress{
-            " > Compressing postings: ", length, 500, 8 * 1024 /* 1KB */
+            " > Compressing postings: ", length, 500, 1024 /* 1KB */
         };
         // note: we will be accessing pdata in sorted order
-        while (in.has_next())
+        while (auto bytes = pdata.read_packed(in))
         {
-            in >> pdata;
-            progress(in.bit_location());
+            byte_pos += bytes;
+            progress(byte_pos);
             vocab.insert(pdata.primary_key());
             out.write(pdata);
         }
@@ -306,6 +306,12 @@ auto inverted_index::search_primary(term_id t_id) const
     -> std::shared_ptr<postings_data_type>
 {
     return inv_impl_->postings_->find(t_id);
+}
+
+util::optional<postings_stream<doc_id>>
+    inverted_index::stream_for(term_id t_id) const
+{
+    return inv_impl_->postings_->find_stream(t_id);
 }
 }
 }

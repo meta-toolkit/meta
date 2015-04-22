@@ -51,8 +51,7 @@ int run_tests(const std::string& type)
     // other filesystems that might lock opened files
     {
         auto i_idx
-            = index::make_index<index::inverted_index, caching::no_evict_cache>(
-                "test-config.toml");
+            = index::make_index<index::inverted_index>("test-config.toml");
         auto f_idx
             = index::make_index<index::forward_index, caching::no_evict_cache>(
                 "test-config.toml");

@@ -304,22 +304,21 @@ auto forward_index::search_primary(doc_id d_id) const
     return fwd_impl_->postings_->find<double>(d_id);
 }
 
+util::optional<postings_stream<term_id, double>>
+    forward_index::stream_for(doc_id d_id) const
+{
+    return fwd_impl_->postings_->find_stream<double>(d_id);
+}
+
 void forward_index::impl::uninvert(const inverted_index& inv_idx)
 {
-    io::compressed_file_reader inv_reader{inv_idx.index_name()
-                                              + idx_->impl_->files[POSTINGS],
-                                          io::default_compression_reader_func};
-
-    term_id t_id{0};
     chunk_handler<forward_index> handler{idx_->index_name()};
     {
         auto producer = handler.make_producer();
-        while (inv_reader.has_next())
+        for (term_id t_id{0}; t_id < inv_idx.unique_terms(); ++t_id)
         {
-            inverted_pdata_type pdata{t_id};
-            pdata.read_compressed<uint64_t>(inv_reader);
-            producer(pdata.primary_key(), pdata.counts());
-            ++t_id;
+            auto pdata = inv_idx.search_primary(t_id);
+            producer(pdata->primary_key(), pdata->counts());
         }
     }
 
@@ -341,18 +340,19 @@ void forward_index::impl::compress(const std::string& filename,
         postings_file_writer out{filename, num_docs};
 
         forward_index::postings_data_type pdata;
-        auto length = filesystem::file_size(ucfilename) * 8; // number of bits
-        io::compressed_file_reader in{ucfilename,
-                                      io::default_compression_reader_func};
+        auto length = filesystem::file_size(ucfilename);
+
+        std::ifstream in{ucfilename, std::ios::binary};
+        uint64_t byte_pos = 0;
 
         printing::progress progress{
-            " > Compressing postings: ", length, 500, 8 * 1024 /* 1KB */
+            " > Compressing postings: ", length, 500, 1024 /* 1KB */
         };
         // note: we will be accessing pdata in sorted order
-        while (in.has_next())
+        while (auto bytes = pdata.read_packed(in))
         {
-            in >> pdata;
-            progress(in.bit_location());
+            byte_pos += bytes;
+            progress(byte_pos);
             out.write<double>(pdata);
         }
     }

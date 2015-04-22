@@ -49,11 +49,8 @@ int main(int argc, char* argv[])
     parser::register_analyzers();
     sequence::register_analyzers();
 
-    // Create an inverted index using a splay cache. The arguments forwarded
-    //  to make_index are the config file for the index and any parameters
-    //  for the cache. In this case, we set the maximum number of nodes in
-    //  the splay_cache to be 10000.
-    auto idx = index::make_index<index::splay_inverted_index>(argv[1], 10000);
+    // Create an inverted index based on the config file.
+    auto idx = index::make_index<index::inverted_index>(argv[1]);
 
     // Create a ranking class based on the config file.
     auto config = cpptoml::parse_file(argv[1]);

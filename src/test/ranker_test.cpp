@@ -39,8 +39,7 @@ int ranker_tests()
 {
     create_config("file");
     system("rm -rf ceeaus-inv");
-    auto idx = index::make_index<index::inverted_index, caching::splay_cache>(
-        "test-config.toml", uint32_t{10000});
+    auto idx = index::make_index<index::inverted_index>("test-config.toml");
 
     auto config = cpptoml::parse_file("test-config.toml");
     std::string encoding = "utf-8";

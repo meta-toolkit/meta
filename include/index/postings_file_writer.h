@@ -10,7 +10,9 @@
 #ifndef META_INDEX_POSTINGS_FILE_WRITER_H_
 #define META_INDEX_POSTINGS_FILE_WRITER_H_
 
-#include "io/compressed_file_writer.h"
+#include <fstream>
+#include <numeric>
+#include "io/packed.h"
 #include "util/disk_vector.h"
 
 namespace meta
@@ -26,8 +28,9 @@ class postings_file_writer
      * @param filename The filename (prefix) for the postings file.
      */
     postings_file_writer(const std::string& filename, uint64_t unique_keys)
-        : output_{filename, io::default_compression_writer_func},
-          bit_locations_{filename + "_index", unique_keys},
+        : output_{filename, std::ios::binary},
+          byte_locations_{filename + "_index", unique_keys},
+          byte_pos_{0},
           id_{0}
     {
         // nothing
@@ -40,14 +43,15 @@ class postings_file_writer
     template <class FeatureValue = uint64_t, class PostingsData>
     void write(const PostingsData& pdata)
     {
-        bit_locations_[id_] = output_.bit_location();
-        pdata.template write_compressed<FeatureValue>(output_);
+        byte_locations_[id_] = byte_pos_;
+        byte_pos_ += pdata.template write_packed_counts<FeatureValue>(output_);
         ++id_;
-    }
+   }
 
   private:
-    io::compressed_file_writer output_;
-    util::disk_vector<uint64_t> bit_locations_;
+    std::ofstream output_;
+    util::disk_vector<uint64_t> byte_locations_;
+    uint64_t byte_pos_;
     uint64_t id_;
 };
 }
