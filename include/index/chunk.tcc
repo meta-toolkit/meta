@@ -6,8 +6,6 @@
 #include "index/chunk.h"
 #include "index/postings_data.h"
 
-#include "io/compressed_file_reader.h"
-#include "io/compressed_file_writer.h"
 #include "util/filesystem.h"
 
 namespace meta
@@ -52,17 +50,14 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk& other)
 {
     std::string temp_name = path_ + "_merge";
 
-    io::compressed_file_reader my_data{path_,
-                                       io::default_compression_reader_func};
-    io::compressed_file_reader other_data{other.path_,
-                                          io::default_compression_reader_func};
-    io::compressed_file_writer output{temp_name,
-                                      io::default_compression_writer_func};
+    std::ifstream my_data{path_, std::ios::binary};
+    std::ifstream other_data{other.path_, std::ios::binary};
+    std::ofstream output{temp_name, std::ios::binary};
 
     postings_data<PrimaryKey, SecondaryKey> my_pd;
     postings_data<PrimaryKey, SecondaryKey> other_pd;
-    my_data >> my_pd;
-    other_data >> other_pd;
+    my_pd.read_packed(my_data);
+    other_pd.read_packed(other_data);
 
     uint64_t terms = 0;
     // merge while both have postings data
@@ -74,25 +69,25 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk& other)
             // merge
             my_pd.merge_with(other_pd);
             // write
-            output << my_pd;
+            my_pd.write_packed(output);
 
             // read next two postings data
-            my_data >> my_pd;
-            other_data >> other_pd;
+            my_pd.read_packed(my_data);
+            other_pd.read_packed(other_data);
         }
         else if (my_pd.primary_key() < other_pd.primary_key())
         {
             // write the winner
-            output << my_pd;
+            my_pd.write_packed(output);
             // read next from the current chunk
-            my_data >> my_pd;
+            my_pd.read_packed(my_data);
         }
         else
         {
             // write the winner
-            output << other_pd;
+            other_pd.write_packed(output);
             // read next from the other chunk
-            other_data >> other_pd;
+            other_pd.read_packed(other_data);
         }
     }
 
@@ -100,14 +95,14 @@ void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk& other)
     while (my_data)
     {
         ++terms;
-        output << my_pd;
-        my_data >> my_pd;
+        my_pd.write_packed(output);
+        my_pd.read_packed(my_data);
     }
     while (other_data)
     {
         ++terms;
-        output << other_pd;
-        other_data >> other_pd;
+        other_pd.write_packed(output);
+        other_pd.read_packed(other_data);
     }
 
     my_data.close();
@@ -130,13 +125,11 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container& pdata)
 {
     std::string temp_name = path_ + "_merge";
 
-    io::compressed_file_reader my_data{path_,
-                                       io::default_compression_reader_func};
-    io::compressed_file_writer output{temp_name,
-                                      io::default_compression_writer_func};
+    std::ifstream my_data{path_, std::ios::binary};
+    std::ofstream output{temp_name, std::ios::binary};
 
     postings_data<PrimaryKey, SecondaryKey> my_pd;
-    my_data >> my_pd;
+    my_pd.read_packed(my_data);
     auto other_pd = pdata.begin();
 
     uint64_t terms = 0;
@@ -146,18 +139,18 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container& pdata)
         if (my_pd.primary_key() == other_pd->primary_key())
         {
             my_pd.merge_with(*other_pd);
-            output << my_pd;
-            my_data >> my_pd;
+            my_pd.write_packed(output);
+            my_pd.read_packed(my_data);
             ++other_pd;
         }
         else if (my_pd.primary_key() < other_pd->primary_key())
         {
-            output << my_pd;
-            my_data >> my_pd;
+            my_pd.write_packed(output);
+            my_pd.read_packed(my_data);
         }
         else
         {
-            output << *other_pd;
+            other_pd->write_packed(output);
             ++other_pd;
         }
     }
@@ -166,13 +159,13 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container& pdata)
     while (my_data)
     {
         ++terms;
-        output << my_pd;
-        my_data >> my_pd;
+        my_pd.write_packed(output);
+        my_pd.read_packed(my_data);
     }
     while (other_pd != pdata.end())
     {
         ++terms;
-        output << *other_pd;
+        other_pd->write_packed(output);
         ++other_pd;
     }
 

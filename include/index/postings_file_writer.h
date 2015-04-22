@@ -44,33 +44,7 @@ class postings_file_writer
     void write(const PostingsData& pdata)
     {
         byte_locations_[id_] = byte_pos_;
-        byte_pos_ += io::packed::write(output_, pdata.counts().size());
-
-        auto total_counts = std::accumulate(
-            pdata.counts().begin(), pdata.counts().end(), uint64_t{0},
-            [](uint64_t cur, const typename PostingsData::pair_t& pr)
-            {
-                return cur + static_cast<uint64_t>(pr.second);
-            });
-        byte_pos_ += io::packed::write(output_, total_counts);
-
-        uint64_t last_id = 0;
-        for (const auto& count : pdata.counts())
-        {
-            byte_pos_ += io::packed::write(output_, count.first - last_id);
-
-            if (std::is_same<FeatureValue, uint64_t>::value)
-            {
-                byte_pos_ += io::packed::write(
-                    output_, static_cast<uint64_t>(count.second));
-            }
-            else
-            {
-                byte_pos_ += io::packed::write(output_, count.second);
-            }
-
-            last_id = count.first;
-        }
+        byte_pos_ += pdata.template write_packed_counts<FeatureValue>(output_);
         ++id_;
    }
 

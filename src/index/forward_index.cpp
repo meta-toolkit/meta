@@ -340,18 +340,19 @@ void forward_index::impl::compress(const std::string& filename,
         postings_file_writer out{filename, num_docs};
 
         forward_index::postings_data_type pdata;
-        auto length = filesystem::file_size(ucfilename) * 8; // number of bits
-        io::compressed_file_reader in{ucfilename,
-                                      io::default_compression_reader_func};
+        auto length = filesystem::file_size(ucfilename);
+
+        std::ifstream in{ucfilename, std::ios::binary};
+        uint64_t byte_pos = 0;
 
         printing::progress progress{
-            " > Compressing postings: ", length, 500, 8 * 1024 /* 1KB */
+            " > Compressing postings: ", length, 500, 1024 /* 1KB */
         };
         // note: we will be accessing pdata in sorted order
-        while (in.has_next())
+        while (auto bytes = pdata.read_packed(in))
         {
-            in >> pdata;
-            progress(in.bit_location());
+            byte_pos += bytes;
+            progress(byte_pos);
             out.write<double>(pdata);
         }
     }

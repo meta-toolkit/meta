@@ -7,6 +7,8 @@
 #include <cstring>
 #include <numeric>
 #include "index/postings_data.h"
+#include "io/binary.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -118,86 +120,52 @@ PrimaryKey postings_data<PrimaryKey, SecondaryKey>::primary_key() const
 
 template <class PrimaryKey, class SecondaryKey>
 template <class FeatureValue>
-void postings_data<PrimaryKey, SecondaryKey>::write_compressed(
-    io::compressed_file_writer& writer) const
+uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed(
+    std::ostream& out) const
 {
-    writer.write(counts_.size());
-    writer.write(std::accumulate(counts_.begin(), counts_.end(), uint64_t{0},
-                                 [](uint64_t cur, const pair_t& pr)
-                                 {
-                                     return cur
-                                            + static_cast<uint64_t>(pr.second);
-                                 }));
-    count_t mutable_counts{counts_.contents()};
-    writer.write(mutable_counts[0].first);
-    if (std::is_same<FeatureValue, uint64_t>::value)
-    {
-        writer.write(static_cast<uint64_t>(mutable_counts[0].second));
-    }
-    else
-    {
-        writer.write(mutable_counts[0].second);
-    }
+    uint64_t bytes = 0;
 
-    // use gap encoding on the SecondaryKeys (we know they are integral types)
-    uint64_t cur_id = mutable_counts[0].first;
-    for (size_t i = 1; i < mutable_counts.size(); ++i)
-    {
-        uint64_t temp_id = mutable_counts[i].first;
-        mutable_counts[i].first = mutable_counts[i].first - cur_id;
-        cur_id = temp_id;
+    if (std::is_same<PrimaryKey, std::string>::value)
+        bytes += io::write_binary(out, p_id_);
 
-        writer.write(mutable_counts[i].first);
-        if (std::is_same<FeatureValue, uint64_t>::value)
-        {
-            writer.write(static_cast<uint64_t>(mutable_counts[i].second));
-        }
-        else
-        {
-            writer.write(mutable_counts[i].second);
-        }
-    }
+    bytes += write_packed_counts<FeatureValue>(out);
+
+    return bytes;
 }
 
 template <class PrimaryKey, class SecondaryKey>
 template <class FeatureValue>
-void postings_data<PrimaryKey, SecondaryKey>::read_compressed(
-    io::compressed_file_reader& reader)
+uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed_counts(std::ostream& out) const
 {
-    uint64_t size = reader.next();
+    auto bytes = io::packed::write(out, counts_.size());
 
-    // ignore total counts sum
-    reader.next();
-
-    counts_.clear();
-    counts_.reserve(size);
+    auto total_counts
+        = std::accumulate(counts_.begin(), counts_.end(), uint64_t{0},
+                          [](uint64_t cur, const pair_t& pr)
+                          {
+                              return cur + static_cast<uint64_t>(pr.second);
+                          });
+    bytes += io::packed::write(out, total_counts);
 
     uint64_t last_id = 0;
-
-    for (uint64_t i = 0; i < size; ++i)
+    for (const auto& count : counts_)
     {
-        uint64_t this_id = reader.next();
-        // we're using gap encoding
-        last_id += this_id;
-        SecondaryKey key{last_id};
+        bytes += io::packed::write(out, count.first - last_id);
 
-        double count;
         if (std::is_same<FeatureValue, uint64_t>::value)
         {
-            uint64_t next = reader.next();
-            count = static_cast<double>(next);
+            bytes
+                += io::packed::write(out, static_cast<uint64_t>(count.second));
         }
         else
         {
-            count = reader.next_double();
+            bytes += io::packed::write(out, count.second);
         }
 
-        counts_.emplace_back(key, count);
+        last_id = count.first;
     }
 
-    // compress vector to conserve memory (it shouldn't be modified again after
-    // this)
-    counts_.shrink_to_fit();
+    return bytes;
 }
 
 namespace
@@ -217,6 +185,57 @@ uint64_t length(const T& elem,
 {
     return sizeof(elem);
 }
+}
+
+template <class PrimaryKey, class SecondaryKey>
+template <class FeatureValue>
+uint64_t postings_data<PrimaryKey, SecondaryKey>::read_packed(std::istream& in)
+{
+    if (in.get() == EOF)
+        return 0;
+    else
+        in.unget();
+
+    uint64_t bytes = 0;
+    if (std::is_same<PrimaryKey, std::string>::value)
+    {
+        io::read_binary(in, p_id_);
+        bytes += length(p_id_);
+    }
+
+    uint64_t size;
+    uint64_t total_counts;
+
+    bytes += io::packed::read(in, size);
+    bytes += io::packed::read(in, total_counts);
+
+    counts_.clear();
+    counts_.reserve(size);
+
+    SecondaryKey id{0};
+    for (uint64_t i = 0; i < size; ++i)
+    {
+        // gap encoding
+        uint64_t gap;
+        bytes += io::packed::read(in, gap);
+        id += gap;
+
+        double count;
+        if (std::is_same<FeatureValue, uint64_t>::value)
+        {
+            uint64_t next;
+            bytes += io::packed::read(in, next);
+            count = static_cast<double>(next);
+        }
+        else
+        {
+            bytes += io::packed::read(in, count);
+        }
+
+        counts_.emplace_back(id, count);
+    }
+
+    return bytes;
 }
 
 template <class PrimaryKey, class SecondaryKey>

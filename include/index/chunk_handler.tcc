@@ -105,12 +105,11 @@ void chunk_handler<Index>::write_chunk(std::vector<index_pdata_type>& pdata)
     {
         std::string chunk_name = prefix_ + "/chunk-"
                                  + std::to_string(chunk_num);
-        io::compressed_file_writer outfile{chunk_name,
-                                           io::default_compression_writer_func};
-        for (auto& p : pdata)
-            outfile << p;
-
-        outfile.close(); // close so we can read the file size in chunk ctr
+        {
+            std::ofstream outfile{chunk_name, std::ios::binary};
+            for (auto& p : pdata)
+                p.write_packed(outfile);
+        }
         std::ofstream termfile{chunk_name + ".numterms"};
         termfile << pdata.size();
         pdata.clear();
