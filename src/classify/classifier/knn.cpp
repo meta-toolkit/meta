@@ -58,10 +58,10 @@ class_label knn::classify(doc_id d_id)
         // normally, weighted k-nn weights neighbors by 1/distance, but since
         // our scores are similarity scores, we weight by the similarity
         if (weighted_)
-            counts[idx_->label(s.first)] += s.second;
+            counts[idx_->label(s.d_id)] += s.score;
         // if not weighted, each neighbor gets an equal vote
         else
-            ++counts[idx_->label(s.first)];
+            ++counts[idx_->label(s.d_id)];
     }
 
     if (counts.empty())
@@ -78,7 +78,7 @@ class_label knn::classify(doc_id d_id)
 }
 
 class_label knn::select_best_label(
-    const std::vector<std::pair<doc_id, float>>& scored,
+    const std::vector<index::search_result>& scored,
     const std::vector<std::pair<class_label, uint16_t>>& sorted) const
 {
     uint16_t highest = sorted.begin()->second;
@@ -97,9 +97,9 @@ class_label knn::select_best_label(
     // since there is a tie, return the class label that appeared first in the
     // rankings; this will usually only happen if the neighbor scores are not
     // weighted
-    for (auto& p : scored)
+    for (auto& result : scored)
     {
-        class_label lbl{inv_idx_->label(p.first)};
+        class_label lbl{inv_idx_->label(result.d_id)};
         auto f = best.find(lbl);
         if (f != best.end())
             return *f;

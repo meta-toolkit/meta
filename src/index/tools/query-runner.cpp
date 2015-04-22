@@ -83,8 +83,8 @@ int main(int argc, char* argv[])
                 for (auto& result : ranking)
                 {
                     std::cout << result_num << ". "
-                              << idx->doc_name(result.first) << " "
-                              << result.second << std::endl;
+                              << idx->doc_name(result.d_id) << " "
+                              << result.score << std::endl;
                     if (result_num++ == 10)
                         break;
                 }

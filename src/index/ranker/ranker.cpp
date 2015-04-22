@@ -45,7 +45,7 @@ struct postings_context
 };
 }
 
-std::vector<std::pair<doc_id, float>> ranker::score(
+std::vector<search_result> ranker::score(
     inverted_index& idx, corpus::document& query,
     uint64_t num_results /* = 10 */,
     const std::function<bool(doc_id d_id)>& filter /* return true */)
@@ -56,14 +56,13 @@ std::vector<std::pair<doc_id, float>> ranker::score(
     score_data sd{idx, idx.avg_doc_length(), idx.num_docs(),
                   idx.total_corpus_terms(), query};
 
-    std::vector<std::pair<doc_id, float>> results;
+    std::vector<search_result> results;
     results.reserve(num_results + 1); // +1 since we use this as a heap and
                                       // prune when it exceeds size num_results
-    auto comp = [](const std::pair<doc_id, float>& a,
-                   const std::pair<doc_id, float>& b)
+    auto comp = [](const search_result& a, const search_result& b)
     {
         // comparison is reversed since we want a min-heap
-        return a.second > b.second;
+        return a.score > b.score;
     };
 
     std::vector<postings_context> postings;

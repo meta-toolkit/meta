@@ -82,15 +82,16 @@ int main(int argc, char* argv[])
                 //  of
                 //  10" docs.
                 auto ranking = ranker->score(*idx, query);
-                std::cout << "Showing top 10 of " << ranking.size()
-                          << " results." << std::endl;
+                std::cout << "Showing top 10 results." << std::endl;
 
-                // Print out the top ten results.
-                for (size_t i = 0; i < ranking.size() && i < 10; ++i)
+                uint64_t result_num = 1;
+                for (auto& result : ranking)
                 {
-                    std::cout << (i + 1) << ". "
-                              << idx->doc_name(ranking[i].first) << " "
-                              << ranking[i].second << std::endl;
+                    std::cout << result_num << ". "
+                              << idx->doc_name(result.d_id) << " "
+                              << result.score << std::endl;
+                    if (result_num++ == 10)
+                        break;
                 }
 
                 std::cout << std::endl;
