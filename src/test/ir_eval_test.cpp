@@ -36,9 +36,8 @@ int ir_eval_bounds()
         {
             system("rm -rf ceeaus-inv");
             create_config("file");
-            auto idx = index::make_index<index::inverted_index,
-                                         caching::splay_cache>(
-                "test-config.toml", uint32_t{10000});
+            auto idx
+                = index::make_index<index::inverted_index>("test-config.toml");
             index::okapi_bm25 ranker;
             index::ir_eval eval{"test-config.toml"};
             // sanity test bounds
