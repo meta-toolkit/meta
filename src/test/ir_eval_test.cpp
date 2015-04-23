@@ -4,6 +4,7 @@
  */
 
 #include "test/ir_eval_test.h"
+#include "index/ranker/ranker.h"
 #include "corpus/document.h"
 
 namespace meta
@@ -12,7 +13,7 @@ namespace testing
 {
 
 void check_query(index::ir_eval& eval,
-                 const std::vector<std::pair<doc_id, double>>& ranking,
+                 const std::vector<index::search_result>& ranking,
                  query_id qid, double e_f1, double e_p, double e_r,
                  double e_avg_p, double e_ndcg,
                  uint64_t num_docs = std::numeric_limits<uint64_t>::max())
@@ -79,7 +80,7 @@ int ir_eval_results()
             ASSERT_APPROX_EQUAL(eval.gmap(), 0.0);
 
             // make some fake results based on the loaded qrels file
-            std::vector<std::pair<doc_id, double>> results;
+            std::vector<index::search_result> results;
             query_id qid{0};
             auto idcg_5 = 1.0 + 1.0 / std::log2(3.0) + 1.0 / std::log2(4.0)
                           + 1.0 / std::log2(5.0) + 1.0 / std::log2(6.0);
