@@ -23,11 +23,11 @@ pivoted_length::pivoted_length(float s) : s_{s}
 float pivoted_length::score_one(const score_data& sd)
 {
     float doc_len = sd.idx.doc_size(sd.d_id);
-    float TF = 1 + fastapprox::fasterlog(
-                        1 + fastapprox::fasterlog(sd.doc_term_count));
-    float norm = (1 - s_) + s_ * (doc_len / sd.avg_dl);
+    float TF = 1.0f + fastapprox::fasterlog(
+                          1.0f + fastapprox::fasterlog(sd.doc_term_count));
+    float norm = (1.0f - s_) + s_ * (doc_len / sd.avg_dl);
     float IDF
-        = fastapprox::fasterlog((sd.num_docs + 1) / (0.5 + sd.doc_count));
+        = fastapprox::fasterlog((sd.num_docs + 1.0f) / (0.5f + sd.doc_count));
     return TF / norm * sd.query_term_count * IDF;
 }
 

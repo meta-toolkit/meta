@@ -23,7 +23,7 @@ absolute_discount::absolute_discount(float delta) : delta_{delta}
 float absolute_discount::smoothed_prob(const score_data& sd) const
 {
     float pc = static_cast<float>(sd.corpus_term_count) / sd.total_terms;
-    float numerator = std::max<float>(sd.doc_term_count - delta_, 0);
+    float numerator = std::max<float>(sd.doc_term_count - delta_, 0.0f);
     float denominator = sd.doc_size;
     return numerator / denominator + doc_constant(sd) * pc;
 }

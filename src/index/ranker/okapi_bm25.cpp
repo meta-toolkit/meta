@@ -27,13 +27,13 @@ float okapi_bm25::score_one(const score_data& sd)
 
     // add 1.0 to the IDF to ensure that the result is positive
     float IDF = fastapprox::fasterlog(
-        1.0 + (sd.num_docs - sd.doc_count + 0.5) / (sd.doc_count + 0.5));
+        1.0f + (sd.num_docs - sd.doc_count + 0.5f) / (sd.doc_count + 0.5f));
 
-    float TF = ((k1_ + 1.0) * sd.doc_term_count)
-                / ((k1_ * ((1.0 - b_) + b_ * doc_len / sd.avg_dl))
+    float TF = ((k1_ + 1.0f) * sd.doc_term_count)
+                / ((k1_ * ((1.0f - b_) + b_ * doc_len / sd.avg_dl))
                    + sd.doc_term_count);
 
-    float QTF = ((k3_ + 1.0) * sd.query_term_count)
+    float QTF = ((k3_ + 1.0f) * sd.query_term_count)
                  / (k3_ + sd.query_term_count);
 
     return TF * IDF * QTF;

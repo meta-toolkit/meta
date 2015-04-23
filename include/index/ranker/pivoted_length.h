@@ -29,7 +29,7 @@ class pivoted_length : public ranker
     const static std::string id;
 
     /// Default value of s parameter
-    const static constexpr float default_s = 0.20;
+    const static constexpr float default_s = 0.2f;
 
     /**
      * @param s

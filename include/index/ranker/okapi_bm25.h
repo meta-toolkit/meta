@@ -27,13 +27,13 @@ class okapi_bm25 : public ranker
     const static std::string id;
 
     /// Default k1, doc term smoothing
-    const static constexpr float default_k1 = 1.2;
+    const static constexpr float default_k1 = 1.2f;
 
     /// Default b, length normalization
-    const static constexpr float default_b = 0.75;
+    const static constexpr float default_b = 0.75f;
 
     /// Default k3, query term smoothing
-    const static constexpr float default_k3 = 500.0;
+    const static constexpr float default_k3 = 500.0f;
 
     /**
      * @param k1 Doc term smoothing

@@ -27,7 +27,7 @@ class dirichlet_prior : public language_model_ranker
     const static std::string id;
 
     /// Default value of mu
-    const static constexpr float default_mu = 2000;
+    const static constexpr float default_mu = 2000.0f;
 
     /**
      * @param mu

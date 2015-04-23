@@ -32,7 +32,7 @@ class absolute_discount : public language_model_ranker
     /**
      * @param delta
      */
-    absolute_discount(float delta = 0.7);
+    absolute_discount(float delta = 0.7f);
 
     /**
      * Calculates the smoothed probability of a term.

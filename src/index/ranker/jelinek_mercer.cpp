@@ -24,7 +24,7 @@ float jelinek_mercer::smoothed_prob(const score_data& sd) const
     float max_likelihood = static_cast<float>(sd.doc_term_count)
                             / sd.doc_size;
     float pc = static_cast<float>(sd.corpus_term_count) / sd.total_terms;
-    return (1.0 - lambda_) * max_likelihood + lambda_ * pc;
+    return (1.0f - lambda_) * max_likelihood + lambda_ * pc;
 }
 
 float jelinek_mercer::doc_constant(const score_data&) const
