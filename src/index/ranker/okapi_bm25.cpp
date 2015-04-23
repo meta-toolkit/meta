@@ -26,7 +26,7 @@ float okapi_bm25::score_one(const score_data& sd)
     float doc_len = sd.idx.doc_size(sd.d_id);
 
     // add 1.0 to the IDF to ensure that the result is positive
-    float IDF = fastapprox::fasterlog(
+    float IDF = fastapprox::fastlog(
         1.0f + (sd.num_docs - sd.doc_count + 0.5f) / (sd.doc_count + 0.5f));
 
     float TF = ((k1_ + 1.0f) * sd.doc_term_count)
