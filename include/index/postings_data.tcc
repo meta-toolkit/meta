@@ -125,9 +125,7 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed(
 {
     uint64_t bytes = 0;
 
-    if (std::is_same<PrimaryKey, std::string>::value)
-        bytes += io::write_binary(out, p_id_);
-
+    bytes += io::write_binary(out, p_id_);
     bytes += write_packed_counts<FeatureValue>(out);
 
     return bytes;
@@ -196,12 +194,8 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::read_packed(std::istream& in)
     else
         in.unget();
 
-    uint64_t bytes = 0;
-    if (std::is_same<PrimaryKey, std::string>::value)
-    {
-        io::read_binary(in, p_id_);
-        bytes += length(p_id_);
-    }
+    io::read_binary(in, p_id_);
+    auto bytes = length(p_id_);
 
     uint64_t size;
     uint64_t total_counts;

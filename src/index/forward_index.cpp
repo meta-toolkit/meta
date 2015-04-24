@@ -348,12 +348,24 @@ void forward_index::impl::compress(const std::string& filename,
         printing::progress progress{
             " > Compressing postings: ", length, 500, 1024 /* 1KB */
         };
-        // note: we will be accessing pdata in sorted order
+        // note: we will be accessing pdata in sorted order, but not every
+        // doc_id is guaranteed to exist, so we must be mindful of document
+        // gaps
+        doc_id last_id{0};
         while (auto bytes = pdata.read_packed(in))
         {
             byte_pos += bytes;
             progress(byte_pos);
+
+            // write out any gaps
+            for (doc_id d_id{last_id + 1}; d_id < pdata.primary_key(); ++d_id)
+            {
+                forward_index::postings_data_type pd{d_id};
+                out.write<double>(pd);
+            }
+
             out.write<double>(pdata);
+            last_id = pdata.primary_key();
         }
     }
 
