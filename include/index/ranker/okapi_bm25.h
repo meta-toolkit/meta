@@ -27,34 +27,34 @@ class okapi_bm25 : public ranker
     const static std::string id;
 
     /// Default k1, doc term smoothing
-    const static constexpr double default_k1 = 1.2;
+    const static constexpr float default_k1 = 1.2f;
 
     /// Default b, length normalization
-    const static constexpr double default_b = 0.75;
+    const static constexpr float default_b = 0.75f;
 
     /// Default k3, query term smoothing
-    const static constexpr double default_k3 = 500.0;
+    const static constexpr float default_k3 = 500.0f;
 
     /**
      * @param k1 Doc term smoothing
      * @param b Length normalization
      * @param k3 Query term smoothing
      */
-    okapi_bm25(double k1 = default_k1, double b = default_b,
-               double k3 = default_k3);
+    okapi_bm25(float k1 = default_k1, float b = default_b,
+               float k3 = default_k3);
 
     /**
      * @param sd score_data for the current query
      */
-    double score_one(const score_data& sd) override;
+    float score_one(const score_data& sd) override;
 
   private:
     /// Doc term smoothing
-    const double k1_;
+    const float k1_;
     /// Length normalization
-    const double b_;
+    const float b_;
     /// Query term smoothing
-    const double k3_;
+    const float k3_;
 };
 
 /**

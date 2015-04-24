@@ -27,28 +27,28 @@ class dirichlet_prior : public language_model_ranker
     const static std::string id;
 
     /// Default value of mu
-    const static constexpr double default_mu = 2000;
+    const static constexpr float default_mu = 2000.0f;
 
     /**
      * @param mu
      */
-    dirichlet_prior(double mu = default_mu);
+    dirichlet_prior(float mu = default_mu);
 
     /**
      * Calculates the smoothed probability of a term.
      * @param sd score_data for the current query
      */
-    double smoothed_prob(const score_data& sd) const override;
+    float smoothed_prob(const score_data& sd) const override;
 
     /**
      * A document-dependent constant.
      * @param sd score_data for the current query
      */
-    double doc_constant(const score_data& sd) const override;
+    float doc_constant(const score_data& sd) const override;
 
   private:
     /// the Dirichlet prior parameter
-    const double mu_;
+    const float mu_;
 };
 
 /**

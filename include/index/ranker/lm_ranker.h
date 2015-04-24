@@ -30,21 +30,21 @@ class language_model_ranker : public ranker
     /**
      * @param sd
      */
-    double score_one(const score_data& sd) override;
+    float score_one(const score_data& sd) override;
 
-    double initial_score(const score_data& sd) const override;
+    float initial_score(const score_data& sd) const override;
 
     /**
      * Calculates the smoothed probability of a term.
      * @param sd
      */
-    virtual double smoothed_prob(const score_data& sd) const = 0;
+    virtual float smoothed_prob(const score_data& sd) const = 0;
 
     /**
      * A document-dependent constant.
      * @param sd
      */
-    virtual double doc_constant(const score_data& sd) const = 0;
+    virtual float doc_constant(const score_data& sd) const = 0;
 
     /**
      * Default destructor.
