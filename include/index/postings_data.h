@@ -47,12 +47,9 @@ class postings_data
      * only be integral types.
      */
     static_assert(
-        (std::is_integral<PrimaryKey>::value
-         || std::is_base_of<util::numeric, PrimaryKey>::value
+        (util::is_numeric<PrimaryKey>::value
          || std::is_same<PrimaryKey, std::string>::value)
-        &&
-        (std::is_integral<SecondaryKey>::value
-         || std::is_base_of<util::numeric, SecondaryKey>::value),
+            && (util::is_numeric<SecondaryKey>::value),
         "primary and secondary keys in postings data must be numeric types");
 
     /**

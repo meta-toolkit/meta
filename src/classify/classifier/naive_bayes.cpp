@@ -8,6 +8,11 @@
 #include "cpptoml.h"
 #include "classify/classifier/naive_bayes.h"
 #include "index/postings_data.h"
+#if META_HAS_ZLIB
+#include "io/gzstream.h"
+#endif
+#include "io/binary.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -80,6 +85,60 @@ class_label naive_bayes::classify(doc_id d_id)
     }
 
     return label;
+}
+
+void naive_bayes::save(const std::string& prefix) const
+{
+#if META_HAS_ZLIB
+    io::gzofstream tp_out{prefix + "/nb-term-probs.gz"};
+    io::gzofstream cp_out{prefix + "/nb-class-probs.gz"};
+#else
+    std::ofstream tp_out{prefix + "/nb-term-probs", std::ios::binary};
+    std::ofstream cp_out{prefix + "/nb-class-probs", std::ios::binary};
+#endif
+
+    io::packed::write(tp_out, term_probs_.size());
+    for (const auto& dist : term_probs_)
+    {
+        const auto& label = dist.first;
+        const auto& probs = dist.second;
+        io::write_binary(tp_out, static_cast<std::string>(label));
+        probs.save(tp_out);
+    }
+    class_probs_.save(cp_out);
+}
+
+void naive_bayes::load(const std::string& prefix)
+{
+#if META_HAS_ZLIB
+    io::gzifstream tp_in{prefix + "/nb-term-probs.gz"};
+    io::gzifstream cp_in{prefix + "/nb-class-probs.gz"};
+#else
+    std::ifstream tp_in{prefix + "/nb-term-probs", std::ios::binary};
+    std::ifstream cp_in{prefix + "/nb-class-probs", std::ios::binary};
+#endif
+
+    if (!tp_in)
+        throw exception{"term probability file not found at prefix " + prefix};
+
+    if (!cp_in)
+        throw exception{"class probability file not found at prefix " + prefix};
+
+    uint64_t size;
+    auto bytes = io::packed::read(tp_in, size);
+    if (bytes == 0)
+        throw exception{
+            "failed reading term probability file (no size written)"};
+
+    term_probs_.clear();
+    term_probs_.reserve(size);
+    for (uint64_t i = 0; i < size; ++i)
+    {
+        std::string label;
+        io::read_binary(tp_in, label);
+        term_probs_[class_label{label}].load(tp_in);
+    }
+    class_probs_.load(cp_in);
 }
 
 template <>

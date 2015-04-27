@@ -28,6 +28,16 @@ struct numeric
 };
 
 /**
+ * Type trait for numeric.
+ */
+template <class T>
+struct is_numeric
+{
+    const static constexpr bool value
+      = std::is_integral<T>::value || std::is_base_of<numeric, T>::value;
+};
+
+/**
  * Helper class that allows the wrapped type to be hashed into standard
  * library containers such as unordered_map or unordered_set.
  */
