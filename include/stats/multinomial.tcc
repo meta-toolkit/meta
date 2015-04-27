@@ -7,7 +7,6 @@
 #include <unordered_map>
 #include "stats/multinomial.h"
 #include "util/identifiers.h"
-#include "io/binary.h"
 #include "io/packed.h"
 
 namespace meta
@@ -106,50 +105,15 @@ multinomial<T>& multinomial<T>::operator+=(const multinomial<T>& rhs)
     return *this;
 }
 
-namespace multi_detail
-{
-template <class T>
-struct is_packable
-{
-    const static constexpr bool value
-        = util::is_numeric<T>::value || std::is_floating_point<T>::value;
-};
-
-template <class T>
-typename std::enable_if<is_packable<T>::value>::type
-    write(std::ostream& out, const T& elem)
-{
-    io::packed::write(out, elem);
-}
-
-inline void write(std::ostream& out, const std::string& elem)
-{
-    io::write_binary(out, elem);
-}
-
-template <class T>
-typename std::enable_if<is_packable<T>::value>::type
-    read(std::istream& in, T& elem)
-{
-    io::packed::read(in, elem);
-}
-
-inline void read(std::istream& in, std::string& elem)
-{
-    io::read_binary(in, elem);
-}
-}
-
 template <class T>
 void multinomial<T>::save(std::ostream& out) const
 {
-    using namespace multi_detail;
-    write(out, total_counts_);
-    write(out, counts_.size());
+    io::packed::write(out, total_counts_);
+    io::packed::write(out, counts_.size());
     for (const auto& count : counts_)
     {
-        write(out, count.first);
-        write(out, count.second);
+        io::packed::write(out, count.first);
+        io::packed::write(out, count.second);
     }
     prior_.save(out);
 }
@@ -157,7 +121,6 @@ void multinomial<T>::save(std::ostream& out) const
 template <class T>
 void multinomial<T>::load(std::istream& in)
 {
-    using namespace multi_detail;
     clear();
     double total_counts;
     auto bytes = io::packed::read(in, total_counts);
@@ -171,8 +134,8 @@ void multinomial<T>::load(std::istream& in)
     for (uint64_t i = 0; i < size; ++i)
     {
         T event;
-        read(in, event);
-        read(in, counts_[event]);
+        io::packed::read(in, event);
+        io::packed::read(in, counts_[event]);
     }
     prior_.load(in);
 }

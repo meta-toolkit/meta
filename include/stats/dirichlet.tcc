@@ -143,61 +143,26 @@ void dirichlet<T>::swap(dirichlet& other)
     std::swap(alpha_sum_, other.alpha_sum_);
 }
 
-namespace dirichlet_detail
-{
-template <class T>
-struct is_packable
-{
-    const static constexpr bool value
-        = util::is_numeric<T>::value || std::is_floating_point<T>::value;
-};
-
-template <class T>
-typename std::enable_if<is_packable<T>::value>::type
-    write(std::ostream& out, const T& elem)
-{
-    io::packed::write(out, elem);
-}
-
-inline void write(std::ostream& out, const std::string& elem)
-{
-    io::write_binary(out, elem);
-}
-
-template <class T>
-typename std::enable_if<is_packable<T>::value>::type
-    read(std::istream& in, T& elem)
-{
-    io::packed::read(in, elem);
-}
-
-inline void read(std::istream& in, std::string& elem)
-{
-    io::read_binary(in, elem);
-}
-}
-
 template <class T>
 void dirichlet<T>::save(std::ostream& out) const
 {
-    using namespace dirichlet_detail;
-    write(out, static_cast<uint64_t>(type_));
+    io::packed::write(out, static_cast<uint64_t>(type_));
     switch (type_)
     {
         case type::SYMMETRIC:
         {
-            write(out, params_.fixed_alpha_);
-            write(out,
-                  static_cast<uint64_t>(alpha_sum_ / params_.fixed_alpha_));
+            io::packed::write(out, params_.fixed_alpha_);
+            io::packed::write(
+                out, static_cast<uint64_t>(alpha_sum_ / params_.fixed_alpha_));
             break;
         }
         case type::ASYMMETRIC:
         {
-            write(out, params_.sparse_alpha_.size());
+            io::packed::write(out, params_.sparse_alpha_.size());
             for (const auto& alpha : params_.sparse_alpha_)
             {
-                write(out, alpha.first);
-                write(out, alpha.second);
+                io::packed::write(out, alpha.first);
+                io::packed::write(out, alpha.second);
             }
             break;
         }
@@ -207,7 +172,6 @@ void dirichlet<T>::save(std::ostream& out) const
 template <class T>
 void dirichlet<T>::load(std::istream& in)
 {
-    using namespace dirichlet_detail;
     uint64_t typ;
     auto bytes = io::packed::read(in, typ);
     if (bytes == 0)
@@ -234,9 +198,9 @@ void dirichlet<T>::load(std::istream& in)
             for (uint64_t i = 0; i < size; ++i)
             {
                 T event;
-                read(in, event);
+                io::packed::read(in, event);
                 double count;
-                read(in, count);
+                io::packed::read(in, count);
                 vec.emplace_back(std::move(event), count);
             }
             *this = dirichlet{vec.begin(), vec.end()};

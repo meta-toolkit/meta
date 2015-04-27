@@ -13,6 +13,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <string>
 
 namespace meta
 {
@@ -98,6 +99,26 @@ uint64_t write(OutputStream& stream, double value)
 }
 
 /**
+ * Writes a string in a packed representation. At the moment, the most
+ * efficient thing I can think to do here is just write it out as a
+ * standard C-string.
+ *
+ * @param stream The stream to write to
+ * @param value The value to write
+ * @return the number of bytes used to write out the value
+ */
+template <class OutputStream>
+uint64_t write(OutputStream& stream, const std::string& value)
+{
+    for (const auto& c : value)
+    {
+        stream.put(c);
+    }
+    stream.put('\0');
+    return value.size() + 1;
+}
+
+/**
  * Reads an unsigned integer from its packed representation.
  *
  * @param stream The stream to read from
@@ -158,6 +179,22 @@ uint64_t read(InputStream& stream, double& value)
     bytes += read(stream, exponent);
     value = mantissa * std::pow(2.0, exponent);
     return bytes;
+}
+
+/**
+ * Reads a string from its packed representation.
+ *
+ * @param stream The stream to read from
+ * @param value The element to write into
+ * @return the number of bytes read
+ */
+template <class InputStream>
+uint64_t read(InputStream& stream, std::string& value)
+{
+    value.clear();
+    for (auto c = stream.get(); c != '\0'; c = stream.get())
+        value += c;
+    return value.size() + 1;
 }
 }
 }
