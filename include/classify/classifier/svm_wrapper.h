@@ -87,6 +87,18 @@ class svm_wrapper : public classifier
     void reset() override;
 
     /**
+     * Loads in a model file.
+     * @param prefix The folder that contains the model file
+     */
+    void load(const std::string& prefix) const;
+
+    /**
+     * Saves the model to a file.
+     * @param prefix The folder to save the model into
+     */
+    void save(const std::string& prefix) const;
+
+    /**
      * The identifier for this classifier.
      */
     const static std::string id;

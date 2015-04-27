@@ -107,6 +107,16 @@ void svm_wrapper::reset()
     // nothing
 }
 
+void svm_wrapper::load(const std::string& prefix) const
+{
+    filesystem::copy_file(prefix + "/svm-train.model", "svm-train.model");
+}
+
+void svm_wrapper::save(const std::string& prefix) const
+{
+    filesystem::copy_file("svm-train.model", prefix + "/svm-train.model");
+}
+
 template <>
 std::unique_ptr<classifier>
     make_classifier<svm_wrapper>(const cpptoml::table& config,

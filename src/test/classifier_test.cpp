@@ -70,22 +70,6 @@ int run_tests(const std::string& type)
                                         });
 
         num_failed += testing::run_test(
-            "naive-bayes-save-load-" + type, [&]()
-            {
-                {
-                    naive_bayes nb{f_idx};
-                    check_split(*f_idx, nb, 0.83);
-                    filesystem::make_directory("naive-bayes-test");
-                    nb.save("naive-bayes-test");
-                }
-                naive_bayes nb{f_idx};
-                nb.load("naive-bayes-test");
-                check_split(*f_idx, nb, 0.83, false);
-            });
-
-        system("rm -rf naive-bayes-test");
-
-        num_failed += testing::run_test(
             "knn-cv-" + type, [&]()
             {
                 knn kn{i_idx, f_idx, 10, make_unique<index::okapi_bm25>()};
@@ -197,6 +181,64 @@ int run_tests(const std::string& type)
     return num_failed;
 }
 
+int run_load_save_tests()
+{
+    using namespace classify;
+    int num_failed = 0;
+
+    // scope to ensure that the index objects are destroyed before trying
+    // to delete their directory; this is needed for weirdness on NFS or
+    // other filesystems that might lock opened files
+    {
+        auto i_idx
+            = index::make_index<index::inverted_index>("test-config.toml");
+        auto f_idx
+            = index::make_index<index::forward_index, caching::no_evict_cache>(
+                "test-config.toml");
+
+        num_failed += testing::run_test(
+            "naive-bayes-save-load", [&]()
+            {
+                {
+                    naive_bayes nb{f_idx};
+                    check_split(*f_idx, nb, 0.83);
+                    filesystem::make_directory("naive-bayes-test");
+                    nb.save("naive-bayes-test");
+                }
+                naive_bayes nb{f_idx};
+                nb.load("naive-bayes-test");
+                check_split(*f_idx, nb, 0.83, false);
+            });
+
+        system("rm -rf naive-bayes-test");
+
+        num_failed += testing::run_test(
+            "svm-wrapper-save-load", [&]()
+            {
+                auto config = cpptoml::parse_file("test-config.toml");
+                auto mod_path = config.get_as<std::string>("libsvm-modules");
+                if (!mod_path)
+                    throw std::runtime_error{"no path for libsvm-modules"};
+                {
+                    svm_wrapper svm{f_idx, *mod_path};
+                    check_split(*f_idx, svm, .80);
+                    filesystem::make_directory("svm-wrapper-test");
+                    svm.save("svm-wrapper-test");
+                }
+                filesystem::delete_file("svm-train.model");
+                svm_wrapper svm{f_idx, *mod_path};
+                svm.load("svm-wrapper-test");
+                check_split(*f_idx, svm, 0.80);
+            });
+
+        system("rm -rf svm-wrapper-test");
+    }
+
+    system("rm -rf ceeaus-*");
+
+    return num_failed;
+}
+
 int classifier_tests()
 {
     int num_failed = 0;
@@ -205,6 +247,7 @@ int classifier_tests()
     num_failed += run_tests("file");
     create_config("line");
     num_failed += run_tests("line");
+    num_failed += run_load_save_tests();
     return num_failed;
 }
 }
