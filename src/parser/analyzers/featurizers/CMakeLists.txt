@@ -6,4 +6,5 @@ add_library(meta-parser-featurizers branch_featurizer.cpp
                                     subtree_featurizer.cpp
                                     tag_featurizer.cpp)
 
-target_link_libraries(meta-parser-featurizers meta-parser-trees)
+target_link_libraries(meta-parser-featurizers meta-parser-trees
+                                              meta-corpus)

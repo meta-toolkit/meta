@@ -34,5 +34,5 @@ add_library(meta-classify binary_classifier_factory.cpp
                           classifier/winnow.cpp
                           classifier_factory.cpp
                           confusion_matrix.cpp)
-target_link_libraries(meta-classify meta-index meta-loss)
+target_link_libraries(meta-classify meta-ranker meta-loss)
 add_dependencies(meta-classify liblinear libsvm)

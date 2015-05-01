@@ -3,7 +3,12 @@
  * @author Sean Massung
  */
 
+#ifndef _WIN32
 #include <sys/mman.h>
+#else
+#include "mman.h"
+#endif
+
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>

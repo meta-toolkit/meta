@@ -8,3 +8,4 @@ add_library(meta-ranker absolute_discount.cpp
                         pivoted_length.cpp
                         ranker.cpp
                         ranker_factory.cpp)
+target_link_libraries(meta-ranker meta-index)

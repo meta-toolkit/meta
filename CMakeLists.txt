@@ -23,7 +23,7 @@ if(ZLIB_FOUND)
   include_directories(SYSTEM ${ZLIB_INCLUDE_DIRS})
 endif()
 
-if(UNIX)
+if(UNIX OR MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 
     # if we don't already set the standard for the compiler, detect the

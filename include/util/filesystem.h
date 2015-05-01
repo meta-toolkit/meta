@@ -51,7 +51,11 @@ inline void rename_file(const std::string& old_name,
  */
 inline bool make_directory(const std::string& dir_name)
 {
+#ifndef _WIN32
     return mkdir(dir_name.c_str(), 0755) == -1;
+#else
+    return mkdir(dir_name.c_str()) == -1;
+#endif
 }
 
 /**
