@@ -7,7 +7,7 @@ ExternalProject_Add(liblinear
   SOURCE_DIR ${meta_SOURCE_DIR}/../deps/libsvm-modules/liblinear
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND make
+  BUILD_COMMAND CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} make
   LOG_BUILD 0
   INSTALL_COMMAND "")
 
@@ -15,7 +15,7 @@ ExternalProject_Add(libsvm
   SOURCE_DIR ${meta_SOURCE_DIR}/../deps/libsvm-modules/libsvm
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND make
+  BUILD_COMMAND CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} make
   LOG_BUILD 0
   INSTALL_COMMAND "")
 

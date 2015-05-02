@@ -82,7 +82,7 @@ uint64_t write(OutputStream& stream, double value)
     int exp;
     auto digits = std::numeric_limits<double>::digits;
     auto mantissa
-        = static_cast<int64_t>(std::frexp(value, &exp) * (1ul << digits));
+        = static_cast<int64_t>(std::frexp(value, &exp) * (uint64_t{1} << digits));
     int64_t exponent = exp - digits;
 
     // see dlib link above; tries to shrink mantissa for more efficient
