@@ -15,5 +15,4 @@ add_library(meta-index disk_index.cpp
                        vocabulary_map_writer.cpp)
 target_link_libraries(meta-index meta-analyzers
                                  meta-eval
-                                 meta-ranker
                                  ${CMAKE_THREAD_LIBS_INIT})

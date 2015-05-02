@@ -14,7 +14,11 @@
 #include <string>
 #include <fcntl.h>
 #include <stdio.h>
+#ifndef _WIN32
 #include <sys/mman.h>
+#else
+#include "mman.h"
+#endif
 #include <unistd.h>
 #include "meta.h"
 

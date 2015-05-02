@@ -10,7 +10,9 @@ add_library(meta-parser sr_parser.cpp
                         state_analyzer.cpp
                         training_data.cpp
                         transition.cpp
-                        transition_map.cpp)
+                        transition_map.cpp
+                        evalb.cpp
+                        $<TARGET_OBJECTS:meta-tree-visitors>)
 target_link_libraries(meta-parser meta-parser-trees
                                   meta-parser-io
                                   meta-io

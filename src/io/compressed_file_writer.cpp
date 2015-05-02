@@ -15,7 +15,7 @@ namespace io
 
 compressed_file_writer::compressed_file_writer(
     const std::string& filename, std::function<uint64_t(uint64_t)> mapping)
-    : outfile_{fopen(filename.c_str(), "w")},
+    : outfile_{fopen(filename.c_str(), "wb")},
       char_cursor_{0},
       bit_cursor_{0},
       buffer_size_{1024 * 1024 * 64}, // 64 MB

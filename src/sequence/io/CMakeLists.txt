@@ -1,3 +1,3 @@
 project(meta-sequence-io)
 
-add_library(meta-sequence-io ptb_parser.cpp)
+add_library(meta-sequence-io OBJECT ptb_parser.cpp)
