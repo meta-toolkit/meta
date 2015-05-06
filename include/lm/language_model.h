@@ -13,7 +13,6 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include "cpptoml.h"
 #include "lm/sentence.h"
 
@@ -29,13 +28,6 @@ class language_model
      * config file.
      */
     language_model(const cpptoml::table& config);
-
-    /**
-     * Creates an N-gram language model based on the corpus specified in the
-     * config file.
-     * @param n The value of n, which overrides any setting in the config file
-     */
-    language_model(const cpptoml::table& config, size_t n);
 
     /**
      * Randomly generates one token sequence based on <s> and </s> symbols.
@@ -81,35 +73,7 @@ class language_model
                                                       size_t k) const;
 
   private:
-    /**
-     * Builds the probabilities associated with this language model.
-     * @param config The config file that specifies the location of the
-     * corpus
-     */
-    void learn_model(const cpptoml::table& config);
-
-    /**
-     * @param config
-     */
-    void select_method(const cpptoml::table& config);
-
-    /**
-     * @param prefix Path to where the counts files are stored
-     */
-    void read_precomputed(const std::string& prefix);
-
-    /// The language_model used to interpolate with this one for smoothing
-    std::shared_ptr<language_model> interp_; // shared to allow copying
-
-    /// Contains the N-gram distribution probabilities (N-1 words -> (w, prob))
-    std::unordered_map<std::string, std::unordered_map<std::string, double>>
-        dist_;
-
-    /// The value of N in this n-gram
-    size_t N_;
-
-    /// The interpolation coefficient for smoothing LM probabilities
-    constexpr static double lambda_ = 0.7;
+    uint64_t N_;
 };
 
 class language_model_exception : public std::runtime_error
