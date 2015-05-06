@@ -4,6 +4,7 @@
  */
 
 #include "test/ir_eval_test.h"
+#include "index/ranker/ranker.h"
 #include "corpus/document.h"
 
 namespace meta
@@ -12,7 +13,7 @@ namespace testing
 {
 
 void check_query(index::ir_eval& eval,
-                 const std::vector<std::pair<doc_id, double>>& ranking,
+                 const std::vector<index::search_result>& ranking,
                  query_id qid, double e_f1, double e_p, double e_r,
                  double e_avg_p, double e_ndcg,
                  uint64_t num_docs = std::numeric_limits<uint64_t>::max())
@@ -36,15 +37,17 @@ int ir_eval_bounds()
         {
             system("rm -rf ceeaus-inv");
             create_config("file");
-            auto idx = index::make_index<index::inverted_index,
-                                         caching::splay_cache>(
-                "test-config.toml", uint32_t{10000});
+            auto idx
+                = index::make_index<index::inverted_index>("test-config.toml");
             index::okapi_bm25 ranker;
             index::ir_eval eval{"test-config.toml"};
             // sanity test bounds
             for (size_t i = 0; i < 5; ++i)
             {
-                corpus::document query{idx->doc_path(doc_id{i}), doc_id{0}};
+                auto path = idx->doc_path(doc_id{i});
+                corpus::document query{doc_id{0}};
+                query.content(filesystem::file_text(path));
+
                 auto ranking = ranker.score(*idx, query);
                 auto f1 = eval.f1(ranking, query_id{i});
                 auto p = eval.precision(ranking, query_id{i});
@@ -77,7 +80,7 @@ int ir_eval_results()
             ASSERT_APPROX_EQUAL(eval.gmap(), 0.0);
 
             // make some fake results based on the loaded qrels file
-            std::vector<std::pair<doc_id, double>> results;
+            std::vector<index::search_result> results;
             query_id qid{0};
             auto idcg_5 = 1.0 + 1.0 / std::log2(3.0) + 1.0 / std::log2(4.0)
                           + 1.0 / std::log2(5.0) + 1.0 / std::log2(6.0);

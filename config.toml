@@ -6,6 +6,7 @@ punctuation = "../data/sentence-boundaries/sentence-punctuation.txt"
 start-exceptions = "../data/sentence-boundaries/sentence-start-exceptions.txt"
 end-exceptions = "../data/sentence-boundaries/sentence-end-exceptions.txt"
 query-judgements = "../data/ceeaus-qrels.txt"
+query-path = "../queries.txt" # create this file
 
 corpus-type = "line-corpus"
 dataset = "20newsgroups"

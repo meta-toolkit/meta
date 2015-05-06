@@ -115,6 +115,18 @@ class multinomial
      */
     multinomial<T>& operator+=(const multinomial<T>& other);
 
+    /**
+     * Saves the distribution to a stream.
+     * @param out The stream to write to
+     */
+    void save(std::ostream& out) const;
+
+    /**
+     * Reads the distribution from a stream.
+     * @param in The stream to read from
+     */
+    void load(std::istream& in);
+
   private:
     util::sparse_vector<T, double> counts_;
     double total_counts_;

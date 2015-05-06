@@ -21,23 +21,11 @@ namespace analyzers
 
 std::string analyzer::get_content(const corpus::document& doc)
 {
-    if (doc.contains_content())
-        return utf::to_utf8(doc.content(), doc.encoding());
+    if (!doc.contains_content())
+        throw analyzer_exception{
+            "document content was not populated for analysis"};
 
-    io::mmap_file file{doc.path()};
-    return utf::to_utf8({file.begin(), file.size()}, doc.encoding());
-}
-
-io::parser analyzer::create_parser(const corpus::document& doc,
-                                   const std::string& extension,
-                                   const std::string& delims)
-{
-    if (doc.contains_content())
-        return io::parser{doc.content(), delims,
-                          io::parser::input_type::String};
-    else
-        return io::parser{doc.path() + extension, delims,
-                          io::parser::input_type::File};
+    return utf::to_utf8(doc.content(), doc.encoding());
 }
 
 std::unique_ptr<token_stream>

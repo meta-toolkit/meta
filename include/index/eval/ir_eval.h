@@ -16,6 +16,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include "index/ranker/ranker.h"
 #include "meta.h"
 
 namespace meta
@@ -30,7 +31,7 @@ namespace index
 class ir_eval
 {
   public:
-    using result_type = std::vector<std::pair<doc_id, double>>;
+    using result_type = std::vector<search_result>;
 
     /**
      * @param config_file Path to cpptoml configuration file

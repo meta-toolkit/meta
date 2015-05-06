@@ -11,7 +11,10 @@
 #ifndef META_IO_BINARY_H_
 #define META_IO_BINARY_H_
 
+#include <array>
+#include <cmath>
 #include <istream>
+#include <limits>
 #include <ostream>
 
 namespace meta
@@ -25,9 +28,10 @@ namespace io
  * @param elem The element to write
  */
 template <class T>
-void write_binary(std::ostream& out, const T& elem)
+uint64_t write_binary(std::ostream& out, const T& elem)
 {
     out.write(reinterpret_cast<const char*>(&elem), sizeof(T));
+    return sizeof(T);
 }
 
 /**
@@ -35,9 +39,10 @@ void write_binary(std::ostream& out, const T& elem)
  * @param out The stream to write to
  * @param str the string to write
  */
-inline void write_binary(std::ostream& out, const std::string& str)
+inline uint64_t write_binary(std::ostream& out, const std::string& str)
 {
     out.write(str.c_str(), str.size() + 1);
+    return str.size() + 1;
 }
 
 /**
@@ -62,5 +67,4 @@ inline void read_binary(std::istream& in, std::string& str)
 }
 }
 }
-
 #endif

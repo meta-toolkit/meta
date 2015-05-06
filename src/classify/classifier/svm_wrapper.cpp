@@ -41,9 +41,20 @@ class_label svm_wrapper::classify(doc_id d_id)
     out.close();
 
     // run liblinear/libsvm
+#ifndef _WIN32
     std::string command = svm_path_ + executable_
                           + "predict svm-input svm-train.model svm-predicted";
     command += " > /dev/null 2>&1";
+#else
+    // first set of quotes is around the exe name to make things work without
+    // having to use forward slashes in the path name.
+    //
+    // second set of quotes is around the entire command, since Windows does
+    // strange things in making the command to actually be sent to CMD.exe
+    auto command = "\"\"" + svm_path_ + executable_
+                   + "predict.exe\" svm-input svm-train.model svm-predicted";
+    command += " > NUL 2>&1\"";
+#endif
     system(command.c_str());
 
     // extract answer
@@ -65,9 +76,16 @@ confusion_matrix svm_wrapper::test(const std::vector<doc_id>& docs)
     out.close();
 
     // run liblinear/libsvm
+#ifndef _WIN32
     std::string command = svm_path_ + executable_
                           + "predict svm-input svm-train.model svm-predicted";
     command += " > /dev/null 2>&1";
+#else
+    // see comment in classify()
+    auto command = "\"\"" + svm_path_ + executable_
+                   + "predict.exe\" svm-input svm-train.model svm-predicted";
+    command += " > NUL 2>&1\"";
+#endif
     system(command.c_str());
 
     // extract answer
@@ -96,15 +114,32 @@ void svm_wrapper::train(const std::vector<doc_id>& docs)
         out << idx_->liblinear_data(d_id) << "\n";
     out.close();
 
+#ifndef _WIN32
     std::string command = svm_path_ + executable_ + "train "
                           + options_.at(kernel_) + " svm-train";
     command += " > /dev/null 2>&1";
+#else
+    // see comment in classify()
+    auto command = "\"\"" + svm_path_ + executable_ + "train.exe\" "
+                   + options_.at(kernel_) + " svm-train";
+    command += " > NUL 2>&1\"";
+#endif
     system(command.c_str());
 }
 
 void svm_wrapper::reset()
 {
     // nothing
+}
+
+void svm_wrapper::load(const std::string& prefix) const
+{
+    filesystem::copy_file(prefix + "/svm-train.model", "svm-train.model");
+}
+
+void svm_wrapper::save(const std::string& prefix) const
+{
+    filesystem::copy_file("svm-train.model", prefix + "/svm-train.model");
 }
 
 template <>

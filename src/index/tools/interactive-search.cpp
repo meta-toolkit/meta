@@ -49,11 +49,8 @@ int main(int argc, char* argv[])
     parser::register_analyzers();
     sequence::register_analyzers();
 
-    // Create an inverted index using a splay cache. The arguments forwarded
-    //  to make_index are the config file for the index and any parameters
-    //  for the cache. In this case, we set the maximum number of nodes in
-    //  the splay_cache to be 10000.
-    auto idx = index::make_index<index::splay_inverted_index>(argv[1], 10000);
+    // Create an inverted index based on the config file.
+    auto idx = index::make_index<index::inverted_index>(argv[1]);
 
     // Create a ranking class based on the config file.
     auto config = cpptoml::parse_file(argv[1]);
@@ -63,10 +60,11 @@ int main(int argc, char* argv[])
     auto ranker = index::make_ranker(*group);
 
     // Find the path prefix to each document so we can print out the contents.
-    std::string prefix = *config.get_as<std::string>("prefix")
-                       + "/" + *config.get_as<std::string>("dataset") + "/";
+    std::string prefix = *config.get_as<std::string>("prefix") + "/"
+                         + *config.get_as<std::string>("dataset") + "/";
 
-    std::cout << "Enter a query, or blank to quit." << std::endl << std::endl;
+    std::cout << "Enter a query, or blank to quit." << std::endl
+              << std::endl;
 
     std::string text;
     while (true)
@@ -77,25 +75,30 @@ int main(int argc, char* argv[])
         if (text.empty())
             break;
 
-        corpus::document query{"[user input]", doc_id{0}};
+        corpus::document query{doc_id{0}};
         query.content(text); // set the doc's content to be user input
 
         // Use the ranker to score the query over the index.
-        std::vector<std::pair<doc_id, double>> ranking;
+        std::vector<index::search_result> ranking;
         auto time = common::time([&]()
-        { ranking = ranker->score(*idx, query, 5); });
+                                 {
+                                     ranking = ranker->score(*idx, query, 5);
+                                 });
 
-        std::cout << "Showing top 5 of results (" << time.count() << "ms)"
+        std::cout << "Showing top 5 results (" << time.count() << "ms)"
                   << std::endl;
 
-        for (size_t i = 0; i < ranking.size() && i < 5; ++i)
+        uint64_t result_num = 1;
+        for (auto& result : ranking)
         {
-            std::string path{idx->doc_path(ranking[i].first)};
-            std::cout << printing::make_bold(std::to_string(i + 1) + ". " + path
-                                             + " ("
-                                             + std::to_string(ranking[i].second)
-                                             + ")") << std::endl;
-            std::cout << get_content(prefix + path) << std::endl << std::endl;
+            std::string path{idx->doc_path(result.d_id)};
+            std::cout << printing::make_bold(
+                             std::to_string(result_num) + ". " + path + " ("
+                             + std::to_string(result.score) + ")") << std::endl;
+            std::cout << get_content(prefix + path) << std::endl
+                      << std::endl;
+            if (result_num++ == 5)
+                break;
         }
 
         std::cout << std::endl;

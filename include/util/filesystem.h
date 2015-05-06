@@ -51,7 +51,11 @@ inline void rename_file(const std::string& old_name,
  */
 inline bool make_directory(const std::string& dir_name)
 {
+#ifndef _WIN32
     return mkdir(dir_name.c_str(), 0755) == -1;
+#else
+    return mkdir(dir_name.c_str()) == -1;
+#endif
 }
 
 /**
@@ -107,8 +111,8 @@ inline bool copy_file(const std::string& source, const std::string& dest)
     if (size > max_size)
     {
         printing::progress prog{"Copying file ", size};
-        std::ifstream source_file{source};
-        std::ofstream dest_file{dest};
+        std::ifstream source_file{source, std::ios::binary};
+        std::ofstream dest_file{dest, std::ios::binary};
         uint64_t buf_size = 1024UL * 1024UL * 32UL; // 32 MB buffer
         uint64_t total_processed = 0;
         std::vector<char> buffer(buf_size);
@@ -117,8 +121,8 @@ inline bool copy_file(const std::string& source, const std::string& dest)
             source_file.read(buffer.data(), buf_size);
             auto processed = source_file.gcount();
             total_processed += processed;
-            dest_file.write(buffer.data(), total_processed);
-            prog(processed);
+            dest_file.write(buffer.data(), processed);
+            prog(total_processed);
         }
         prog.end();
     }
@@ -169,5 +173,4 @@ inline uint64_t num_lines(const std::string& filename, char delimiter = '\n')
 }
 }
 }
-
 #endif

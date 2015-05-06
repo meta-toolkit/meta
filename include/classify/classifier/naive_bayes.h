@@ -66,9 +66,27 @@ class naive_bayes : public classifier
     void reset() override;
 
     /**
+     * Saves the model to a directory.
+     * @param prefix The directory to save the model files in
+     */
+    void save(const std::string& prefix) const;
+
+    /**
+     * Loads a model from a directory.
+     * @param prefix The directory to load the model from
+     */
+    void load(const std::string& prefix);
+
+    /**
      * The identifier for this classifier.
      */
     const static std::string id;
+
+    class exception : public std::runtime_error
+    {
+      public:
+        using std::runtime_error::runtime_error;
+    };
 
   private:
     /**
@@ -90,7 +108,6 @@ template <>
 std::unique_ptr<classifier>
     make_classifier<naive_bayes>(const cpptoml::table& config,
                                  std::shared_ptr<index::forward_index> idx);
-
 }
 }
 #endif

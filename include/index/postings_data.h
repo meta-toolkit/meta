@@ -25,14 +25,6 @@ namespace meta
 namespace index
 {
 
-template <class, class>
-class postings_data;
-
-template <class PrimaryKey, class SecondaryKey>
-io::compressed_file_reader& operator>>(io::compressed_file_reader&,
-                                       postings_data<PrimaryKey,
-                                                     SecondaryKey>&);
-
 /**
  * A class to represent the per-PrimaryKey data in an index's postings
  * file. For a given PrimaryKey, a mapping of SecondaryKey -> count information
@@ -55,12 +47,9 @@ class postings_data
      * only be integral types.
      */
     static_assert(
-        (std::is_integral<PrimaryKey>::value
-         || std::is_base_of<util::numeric, PrimaryKey>::value
+        (util::is_numeric<PrimaryKey>::value
          || std::is_same<PrimaryKey, std::string>::value)
-        &&
-        (std::is_integral<SecondaryKey>::value
-         || std::is_base_of<util::numeric, SecondaryKey>::value),
+            && (util::is_numeric<SecondaryKey>::value),
         "primary and secondary keys in postings data must be numeric types");
 
     /**
@@ -114,6 +103,14 @@ class postings_data
     void set_counts(const count_t& counts);
 
     /**
+     * @param begin The beginning of the counts to assign into this
+     * postings_data
+     * @param end The end of the counts to assign into this postings_data
+     */
+    template <class InputIterator>
+    void set_counts(InputIterator begin, InputIterator end);
+
+    /**
      * @param other The postings_data to compare with
      * @return whether this postings_data is less than (has a smaller
      * PrimaryKey than) the parameter
@@ -121,86 +118,32 @@ class postings_data
     bool operator<(const postings_data& other) const;
 
     /**
-     * Helper function used by istream operator.
-     * @param in The stream to read from
-     * @param pd The postings data object to write the stream info to
-     */
-    friend void stream_helper(io::compressed_file_reader& in,
-                              postings_data<PrimaryKey, SecondaryKey>& pd)
-    {
-        pd.counts_.clear();
-        uint32_t num_pairs = in.next();
-        for (uint32_t i = 0; i < num_pairs; ++i)
-        {
-            SecondaryKey s_id = SecondaryKey{in.next()};
-            uint64_t count = in.next();
-            pd.counts_.emplace_back(s_id, static_cast<double>(count));
-        }
-    }
-
-    /**
-     * Reads semi-compressed postings data from a compressed file.
-     * @param in The stream to read from
-     * @param pd The postings data object to write the stream info to
-     * @return the input stream
-     */
-    friend io::compressed_file_reader& operator>>
-        <>(io::compressed_file_reader& in,
-           postings_data<PrimaryKey, SecondaryKey>& pd);
-
-    /**
-     * Writes semi-compressed postings data to a compressed file.
+     * Writes this postings data to an output stream in a packed binary
+     * format.
      * @param out The stream to write to
-     * @param pd The postings data object to write to the stream
-     * @return the output stream
+     * @return the number of bytes used to write out this postings data
      */
-    friend io::compressed_file_writer& operator<<(
-        io::compressed_file_writer& out,
-        const postings_data<PrimaryKey, SecondaryKey>& pd)
-    {
-        if (pd.counts_.empty())
-            return out;
-
-        out.write(pd.p_id_);
-        uint32_t size = pd.counts_.size();
-        out.write(size);
-        for (auto& p : pd.counts_)
-        {
-            out.write(p.first);
-            out.write(p.second);
-        }
-
-        return out;
-    }
+    template <class FeatureValue = uint64_t>
+    uint64_t write_packed(std::ostream& out) const;
 
     /**
-     * Writes this postings_data to a compressed file. The mapping for the
-     * compressed file is already set, so we don't have to worry about it.
-     * We can also assume that we are already in the correct location of the
-     * file.
-     * @param writer The compressed file to write to
+     * Writes this postings data's counts to an output stream in a packed
+     * binary format.
+     * @param out The stream to write to
+     * @return the number of bytes used to write out this postings data's
+     * counts
      */
-    void write_compressed(io::compressed_file_writer& writer) const;
+    template <class FeatureValue = uint64_t>
+    uint64_t write_packed_counts(std::ostream& out) const;
 
     /**
-     * Reads compressed postings_data into this object. The mapping for the
-     * compressed file is already set, so we don't have to worry about it.
-     * We can also assume that we are already in the correct location of the
-     * file.
-     * @param reader The compressed file to read from
+     * Reads a postings data object from an input stream in a packed binary
+     * format.
+     * @param in The stream to read from
+     * @return the number of bytes read in consuming this postings data
      */
-    void read_compressed(io::compressed_file_reader& reader);
-
-    /**
-     * @param out The output stream to write to
-     */
-    void write_libsvm(std::ofstream& out) const
-    {
-        out << p_id_;
-        for (auto& c : counts_)
-            out << ' ' << (c.first + 1) << ':' << c.second;
-        out << '\n';
-    }
+    template <class FeatureValue = uint64_t>
+    uint64_t read_packed(std::istream& in);
 
     /**
      * @return the term_id for this postings_data
@@ -228,41 +171,7 @@ class postings_data
 
     /// The (secondary_key_type, count) pairs
     util::sparse_vector<SecondaryKey, double> counts_;
-
-    /// delimiter used when writing to compressed files
-    const static uint64_t delimiter_ = std::numeric_limits<uint64_t>::max();
 };
-
-/**
- * Reads semi-compressed postings data from a compressed file.
- * @param in The stream to read from
- * @param pd The postings data object to write the stream info to
- * @return the input stream
- */
-template <class PrimaryKey, class SecondaryKey>
-io::compressed_file_reader& operator>>(io::compressed_file_reader& in,
-                                       postings_data<PrimaryKey,
-                                                     SecondaryKey>& pd)
-{
-    pd.p_id_ = in.next();
-    stream_helper(in, pd);
-    return in;
-}
-
-/**
- * Reads semi-compressed postings data from a compressed file.
- * @param in The stream to read from
- * @param pd The postings data object to write the stream info to
- * @return the input stream
- */
-template <>
-inline io::compressed_file_reader& operator>>
-    <>(io::compressed_file_reader& in, postings_data<std::string, doc_id>& pd)
-{
-    pd.p_id_ = in.next_string();
-    stream_helper(in, pd);
-    return in;
-}
 
 /**
  * @param lhs The first postings_data

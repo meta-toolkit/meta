@@ -37,9 +37,10 @@ void check_cv(Index& idx, Classifier& c, double min_accuracy);
  * @param idx The index to run the classifier on
  * @param c The classifier to test
  * @param min_accuracy The mininum acceptable accuracy
+ * @param train Whether or not to train the model
  */
 template <class Index, class Classifier>
-void check_split(Index& idx, Classifier& c, double min_accuracy);
+void check_split(Index& idx, Classifier& c, double min_accuracy, bool train = true);
 
 /**
  * Runs the classifier tests.

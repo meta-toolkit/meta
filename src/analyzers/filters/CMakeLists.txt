@@ -12,4 +12,4 @@ add_library(meta-filters alpha_filter.cpp
                          porter2_stemmer.cpp
                          ptb_normalizer.cpp
                          sentence_boundary.cpp)
-target_link_libraries(meta-filters meta-utf porter2-stemmer)
+target_link_libraries(meta-filters meta-utf porter2-stemmer meta-tokenizers)

@@ -14,7 +14,7 @@ namespace loss
 
 const std::string hinge::id = "hinge";
 
-double hinge::loss(double prediction, int expected) const
+double hinge::loss(double prediction, double expected) const
 {
     double z = prediction * expected;
     if (z < 1)
@@ -22,7 +22,7 @@ double hinge::loss(double prediction, int expected) const
     return 0;
 }
 
-double hinge::derivative(double prediction, int expected) const
+double hinge::derivative(double prediction, double expected) const
 {
     double z = prediction * expected;
     if (z < 1)

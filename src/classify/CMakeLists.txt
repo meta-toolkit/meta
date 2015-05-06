@@ -7,7 +7,7 @@ ExternalProject_Add(liblinear
   SOURCE_DIR ${meta_SOURCE_DIR}/../deps/libsvm-modules/liblinear
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND make
+  BUILD_COMMAND CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} make
   LOG_BUILD 0
   INSTALL_COMMAND "")
 
@@ -15,7 +15,7 @@ ExternalProject_Add(libsvm
   SOURCE_DIR ${meta_SOURCE_DIR}/../deps/libsvm-modules/libsvm
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND make
+  BUILD_COMMAND CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} make
   LOG_BUILD 0
   INSTALL_COMMAND "")
 
@@ -34,5 +34,5 @@ add_library(meta-classify binary_classifier_factory.cpp
                           classifier/winnow.cpp
                           classifier_factory.cpp
                           confusion_matrix.cpp)
-target_link_libraries(meta-classify meta-index meta-loss)
+target_link_libraries(meta-classify meta-ranker meta-loss)
 add_dependencies(meta-classify liblinear libsvm)

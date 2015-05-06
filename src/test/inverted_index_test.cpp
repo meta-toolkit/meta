@@ -48,9 +48,8 @@ void create_config(const std::string& corpus_type)
                 << "\"\n"
                 << "query-judgements = \"" << *query_judgements << "\"\n"
                 << "libsvm-modules = \"" << *libsvm_modules << "\"\n"
-                << "corpus-type = \"" << corpus_type << "-corpus\"\n"
-                << "list= \"ceeaus\"\n"
                 << "dataset = \"ceeaus\"\n"
+                << "corpus = \"" << corpus_type << ".toml\"\n"
                 << "encoding = \"shift_jis\"\n"
                 << "forward-index = \"ceeaus-fwd\"\n"
                 << "inverted-index = \"ceeaus-inv\"\n"
@@ -107,98 +106,102 @@ int inverted_index_tests()
     create_config("file");
 
     int num_failed = 0;
-    num_failed += testing::run_test("inverted-index-build-file-corpus", [&]()
-                                    {
-        system("rm -rf ceeaus-inv");
-        auto idx
-            = index::make_index<index::inverted_index, caching::splay_cache>(
-                "test-config.toml", uint32_t{10000});
-        check_ceeaus_expected(*idx);
-    });
+    num_failed += testing::run_test(
+        "inverted-index-build-file-corpus", [&]()
+        {
+            system("rm -rf ceeaus-inv");
+            auto idx
+                = index::make_index<index::inverted_index>("test-config.toml");
+            check_ceeaus_expected(*idx);
+        });
 
-    num_failed += testing::run_test("inverted-index-read-file-corpus", [&]()
-                                    {
+    num_failed += testing::run_test(
+        "inverted-index-read-file-corpus", [&]()
+        {
+            {
+                auto idx = index::make_index<index::inverted_index>(
+                    "test-config.toml");
+                check_ceeaus_expected(*idx);
+                check_term_id(*idx);
+            }
+            system("rm -rf ceeaus-inv test-config.toml");
+        });
+
+    create_config("line");
+    system("rm -rf ceeaus-inv");
+
+    num_failed += testing::run_test(
+        "inverted-index-build-line-corpus", [&]()
+        {
+            auto idx
+                = index::make_index<index::inverted_index>("test-config.toml");
+            check_ceeaus_expected(*idx);
+        });
+
+    num_failed += testing::run_test(
+        "inverted-index-read-line-corpus", [&]()
         {
             auto idx = index::make_index<index::inverted_index,
                                          caching::splay_cache>(
                 "test-config.toml", uint32_t{10000});
             check_ceeaus_expected(*idx);
             check_term_id(*idx);
-        }
-        system("rm -rf ceeaus-inv test-config.toml");
-    });
-
-    create_config("line");
-    system("rm -rf ceeaus-inv");
-
-    num_failed += testing::run_test("inverted-index-build-line-corpus", [&]()
-                                    {
-        auto idx
-            = index::make_index<index::inverted_index, caching::splay_cache>(
-                "test-config.toml", uint32_t{10000});
-        check_ceeaus_expected(*idx);
-    });
-
-    num_failed += testing::run_test("inverted-index-read-line-corpus", [&]()
-                                    {
-        auto idx
-            = index::make_index<index::inverted_index, caching::splay_cache>(
-                "test-config.toml", uint32_t{10000});
-        check_ceeaus_expected(*idx);
-        check_term_id(*idx);
-        check_term_id(*idx); // twice to check splay_caching
-    });
+            check_term_id(*idx); // twice to check splay_caching
+        });
 
 #if META_HAS_ZLIB
     create_config("gz");
     system("rm -rf ceeaus-inv");
 
-    num_failed += testing::run_test("inverted-index-build-gz-corpus", [&]()
-                                    {
-        auto idx
-            = index::make_index<index::inverted_index, caching::splay_cache>(
-                "test-config.toml", 10000);
-        check_ceeaus_expected(*idx);
-    });
+    num_failed += testing::run_test(
+        "inverted-index-build-gz-corpus", [&]()
+        {
+            auto idx
+                = index::make_index<index::inverted_index>("test-config.toml");
+            check_ceeaus_expected(*idx);
+        });
 
-    num_failed += testing::run_test("inverted-index-read-gz-corpus", [&]()
-                                    {
-        auto idx
-            = index::make_index<index::inverted_index, caching::splay_cache>(
-                "test-config.toml", 10000);
-        check_ceeaus_expected(*idx);
-        check_term_id(*idx);
-    });
+    num_failed += testing::run_test(
+        "inverted-index-read-gz-corpus", [&]()
+        {
+            auto idx
+                = index::make_index<index::inverted_index>("test-config.toml");
+            check_ceeaus_expected(*idx);
+            check_term_id(*idx);
+        });
 #endif
 
     // test different caches
 
-    num_failed += testing::run_test("inverted-index-dblru-cache", [&]()
-                                    {
-        auto idx = index::make_index<index::inverted_index,
-                                     caching::default_dblru_cache>(
-            "test-config.toml", uint64_t{1000});
-        check_term_id(*idx);
-        check_term_id(*idx);
-    });
+    num_failed += testing::run_test(
+        "inverted-index-dblru-cache", [&]()
+        {
+            auto idx = index::make_index<index::inverted_index,
+                                         caching::default_dblru_cache>(
+                "test-config.toml", uint64_t{1000});
+            check_term_id(*idx);
+            check_term_id(*idx);
+        });
 
-    num_failed += testing::run_test("inverted-index-no-evict-cache", [&]()
-                                    {
-        auto idx
-            = index::make_index<index::inverted_index, caching::no_evict_cache>(
+    num_failed += testing::run_test(
+        "inverted-index-no-evict-cache", [&]()
+        {
+            auto idx = index::make_index<index::inverted_index,
+                                         caching::no_evict_cache>(
                 "test-config.toml");
-        check_term_id(*idx);
-        check_term_id(*idx);
-    });
+            check_term_id(*idx);
+            check_term_id(*idx);
+        });
 
-    num_failed += testing::run_test("inverted-index-shard-cache", [&]()
-                                    {
-        auto idx = index::make_index<index::inverted_index,
-                                     caching::splay_shard_cache>(
-            "test-config.toml", uint8_t{8});
-        check_term_id(*idx);
-        check_term_id(*idx);
-    });
+    num_failed += testing::run_test(
+        "inverted-index-shard-cache", [&]()
+        {
+            auto idx = index::make_index<index::inverted_index,
+                                         caching::splay_shard_cache>(
+                "test-config.toml", uint8_t{8});
+            check_term_id(*idx);
+            check_term_id(*idx);
+        });
 
     system("rm -rf ceeaus-inv test-config.toml");
     return num_failed;

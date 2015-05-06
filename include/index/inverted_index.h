@@ -16,6 +16,7 @@
 
 #include "index/disk_index.h"
 #include "index/make_index.h"
+#include "index/postings_stream.h"
 
 namespace meta
 {
@@ -128,6 +129,12 @@ class inverted_index : public disk_index
      */
     virtual std::shared_ptr<postings_data_type>
         search_primary(term_id t_id) const;
+
+    /**
+     * @param t_id The trem_id to search for
+     * @return the postings stream for a given term_id
+     */
+    util::optional<postings_stream<doc_id>> stream_for(term_id t_id) const;
 
     /**
      * @param t_id The term to search for

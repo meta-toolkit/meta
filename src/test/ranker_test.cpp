@@ -17,8 +17,9 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding)
     for (size_t i = 0; i < idx.num_docs(); ++i)
     {
         auto d_id = idx.docs()[i];
-        corpus::document query{idx.doc_path(d_id), doc_id{i}};
-        query.encoding(encoding);
+        auto path = idx.doc_path(d_id);
+        corpus::document query{doc_id{i}};
+        query.content(filesystem::file_text(path), encoding);
 
         auto ranking = r.score(idx, query);
         ASSERT_EQUAL(ranking.size(), 10ul); // default is 10 docs
@@ -26,10 +27,10 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding)
         // since we're searching for a document already in the index, the same
         // document should be ranked first, but there are a few duplicate
         // documents......
-        if (ranking[0].first != i)
+        if (ranking[0].d_id != i)
         {
-            ASSERT_EQUAL(ranking[1].first, i);
-            ASSERT_APPROX_EQUAL(ranking[0].second, ranking[1].second);
+            ASSERT_EQUAL(ranking[1].d_id, i);
+            ASSERT_APPROX_EQUAL(ranking[0].score, ranking[1].score);
         }
     }
 }
@@ -38,8 +39,7 @@ int ranker_tests()
 {
     create_config("file");
     system("rm -rf ceeaus-inv");
-    auto idx = index::make_index<index::inverted_index, caching::splay_cache>(
-        "test-config.toml", uint32_t{10000});
+    auto idx = index::make_index<index::inverted_index>("test-config.toml");
 
     auto config = cpptoml::parse_file("test-config.toml");
     std::string encoding = "utf-8";

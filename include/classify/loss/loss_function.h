@@ -38,7 +38,7 @@ struct loss_function
      * prediction
      * @return the loss incurred
      */
-    virtual double loss(double prediction, int expected) const = 0;
+    virtual double loss(double prediction, double expected) const = 0;
 
     /**
      * The derivative of the loss function given a predicted value and the
@@ -50,7 +50,7 @@ struct loss_function
      * prediction
      * @return the derivative of the loss function at that point
      */
-    virtual double derivative(double prediction, int expected) const = 0;
+    virtual double derivative(double prediction, double expected) const = 0;
 };
 }
 }

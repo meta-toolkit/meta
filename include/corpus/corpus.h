@@ -15,6 +15,8 @@
 #include "cpptoml.h"
 #include "meta.h"
 #include "corpus/document.h"
+#include "corpus/metadata_parser.h"
+#include "util/optional.h"
 
 namespace meta
 {
@@ -49,6 +51,11 @@ class corpus
     virtual uint64_t size() const = 0;
 
     /**
+     * @return the corpus' metadata schema
+     */
+    virtual metadata::schema schema() const;
+
+    /**
      * Destructor.
      */
     virtual ~corpus() = default;
@@ -75,9 +82,20 @@ class corpus
         using std::runtime_error::runtime_error;
     };
 
+  protected:
+    /**
+     * Helper function to be used by deriving classes in implementing
+     * next() to set the metadata for the current document.
+     */
+    std::vector<metadata::field> next_metadata();
+
   private:
+    void set_metadata_parser(metadata_parser&& mdparser);
+
     /// The type of encoding this document uses
     std::string encoding_;
+    /// The metadata parser
+    util::optional<metadata_parser> mdata_parser_;
 };
 }
 }

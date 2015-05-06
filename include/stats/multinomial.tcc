@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include "stats/multinomial.h"
 #include "util/identifiers.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -104,5 +105,39 @@ multinomial<T>& multinomial<T>::operator+=(const multinomial<T>& rhs)
     return *this;
 }
 
+template <class T>
+void multinomial<T>::save(std::ostream& out) const
+{
+    io::packed::write(out, total_counts_);
+    io::packed::write(out, counts_.size());
+    for (const auto& count : counts_)
+    {
+        io::packed::write(out, count.first);
+        io::packed::write(out, count.second);
+    }
+    prior_.save(out);
+}
+
+template <class T>
+void multinomial<T>::load(std::istream& in)
+{
+    clear();
+    double total_counts;
+    auto bytes = io::packed::read(in, total_counts);
+    uint64_t size;
+    bytes += io::packed::read(in, size);
+    if (bytes == 0)
+        return;
+
+    total_counts_ = total_counts;
+    counts_.reserve(size);
+    for (uint64_t i = 0; i < size; ++i)
+    {
+        T event;
+        io::packed::read(in, event);
+        io::packed::read(in, counts_[event]);
+    }
+    prior_.load(in);
+}
 }
 }

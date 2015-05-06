@@ -88,6 +88,18 @@ class dirichlet
      */
     void swap(dirichlet& other);
 
+    /**
+     * Writes the dirichlet to a stream.
+     * @param out The stream to write to
+     */
+    void save(std::ostream& out) const;
+
+    /**
+     * Reads the dirichlet from a stream.
+     * @param in The stream to read from
+     */
+    void load(std::istream& in);
+
   private:
 
     enum class type

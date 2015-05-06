@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <cmath>
 #include <limits>
 #include "io/compressed_file_reader.h"
 #include "io/mmap_file.h"
@@ -74,6 +75,22 @@ std::string compressed_file_reader::next_string()
     return str;
 }
 
+double compressed_file_reader::next_double()
+{
+    auto byte = mapping_(current_value_);
+    auto msign = read_bit() ? -1 : 1;
+    auto mantissa = static_cast<int64_t>(byte) * msign;
+
+    get_next();
+    byte = mapping_(current_value_);
+
+    auto esign = read_bit() ? -1 : 1;
+    auto exponent = static_cast<int16_t>(byte) * esign;
+    get_next();
+
+    return mantissa * std::pow(2.0, exponent);
+}
+
 void compressed_file_reader::seek(uint64_t bit_offset)
 {
     uint64_t byte = bit_offset / 8;
@@ -122,10 +139,10 @@ void compressed_file_reader::get_next()
     for (int64_t bit = numberBits - 1; status_ == 0 && bit >= 0; --bit)
     {
         if (read_bit())
-            current_value_ |= (1 << bit);
+            current_value_ |= (1ul << bit);
     }
 
-    current_value_ |= (1 << numberBits);
+    current_value_ |= (1ul << numberBits);
 }
 
 bool compressed_file_reader::read_bit()

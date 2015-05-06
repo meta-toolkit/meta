@@ -51,6 +51,11 @@ class file_corpus : public corpus
      */
     uint64_t size() const override;
 
+    /**
+     * @return the metadata schema for this corpus
+     */
+    metadata::schema schema() const override;
+
   private:
     /// the current document we are on
     uint64_t cur_;

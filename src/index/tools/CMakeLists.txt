@@ -1,10 +1,10 @@
 add_executable(query-runner query-runner.cpp)
-target_link_libraries(query-runner meta-index
+target_link_libraries(query-runner meta-ranker
                                    meta-sequence-analyzers
                                    meta-parser-analyzers)
 
 add_executable(search search.cpp)
-target_link_libraries(search meta-index
+target_link_libraries(search meta-ranker
                              meta-sequence-analyzers
                              meta-parser-analyzers)
 
@@ -14,7 +14,7 @@ target_link_libraries(index meta-index
                             meta-parser-analyzers)
 
 add_executable(interactive-search interactive-search.cpp)
-target_link_libraries(interactive-search meta-index
+target_link_libraries(interactive-search meta-ranker
                                          meta-sequence-analyzers
                                          meta-parser-analyzers)
 
@@ -23,3 +23,6 @@ target_link_libraries(print-vocab meta-index)
 
 add_executable(search-vocab search-vocab.cpp)
 target_link_libraries(search-vocab meta-index)
+
+add_executable(forward-to-libsvm forward-to-libsvm.cpp)
+target_link_libraries(forward-to-libsvm meta-index)

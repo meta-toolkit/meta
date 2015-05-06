@@ -90,18 +90,6 @@ class analyzer
                     const cpptoml::table& config);
 
     /**
-     * @param doc The document to parse
-     * @param extension The possible file extension for this document if it
-     * is represented by a file on disk
-     * @param delims Possible character delimiters to use when parsing the
-     * file
-     * @return a parser suited to read data that this document represents
-     */
-    static io::parser create_parser(const corpus::document& doc,
-                                    const std::string& extension,
-                                    const std::string& delims);
-
-    /**
      * @param doc The document to get content for
      * @return the contents of the document, as a string
      */
