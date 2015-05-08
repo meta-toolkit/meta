@@ -4,38 +4,50 @@
  */
 
 #include <iostream>
-
+#include <sstream>
 #include <numeric>
 #include "lm/sentence.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
+#include "analyzers/tokenizers/whitespace_tokenizer.h"
 #include "analyzers/filters/all.h"
 
 namespace meta
 {
 namespace lm
 {
-sentence::sentence(const std::string& text)
+sentence::sentence(const std::string& text, bool tokenize /* = true */)
 {
-    using namespace analyzers;
-    std::unique_ptr<token_stream> stream;
-    stream = make_unique<tokenizers::icu_tokenizer>();
-    stream = make_unique<filters::lowercase_filter>(std::move(stream));
-    stream = make_unique<filters::alpha_filter>(std::move(stream));
-    stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
-    stream->set_content(text);
-    while (*stream)
-        tokens_.push_back(stream->next());
+    if (tokenize)
+    {
+        using namespace analyzers;
+        std::unique_ptr<token_stream> stream;
+        stream = make_unique<tokenizers::whitespace_tokenizer>();
+        stream = make_unique<tokenizers::icu_tokenizer>();
+        stream = make_unique<filters::lowercase_filter>(std::move(stream));
+        stream = make_unique<filters::alpha_filter>(std::move(stream));
+        stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
+        stream->set_content(text);
+        while (*stream)
+            tokens_.push_back(stream->next());
 
-    if (tokens_.empty())
-        throw sentence_exception{"empty token stream"};
+        if (tokens_.empty())
+            throw sentence_exception{"empty token stream"};
 
-    // remove sentence markers
-    tokens_.pop_front();
-    tokens_.pop_back();
+        // remove sentence markers
+        tokens_.pop_front();
+        tokens_.pop_back();
 
-    if (tokens_.empty())
-        throw sentence_exception{"empty token stream"};
+        if (tokens_.empty())
+            throw sentence_exception{"empty token stream"};
+    }
+    else
+    {
+        std::istringstream iss{text};
+        std::copy(std::istream_iterator<std::string>(iss),
+                  std::istream_iterator<std::string>(),
+                  std::back_inserter(tokens_));
+    }
 }
 
 std::string sentence::to_string() const
@@ -70,7 +82,7 @@ sentence sentence::operator()(size_type from, size_type to) const
 void sentence::substitute(size_type idx, const std::string& token,
                           double weight /* = 0.0 */)
 {
-    //ops_.push_back("substitute(" + std::to_string(idx) + ", " + tokens_[idx]
+    // ops_.push_back("substitute(" + std::to_string(idx) + ", " + tokens_[idx]
     //               + " -> " + token + ")");
     ops_.push_back("substitute(" + tokens_[idx] + " -> " + token + ")");
     tokens_[idx] = token;
@@ -79,7 +91,8 @@ void sentence::substitute(size_type idx, const std::string& token,
 
 void sentence::remove(size_type idx, double weight /* = 0.0 */)
 {
-    //ops_.push_back("remove(" + std::to_string(idx) + ", " + (*this)[idx] + ")");
+    // ops_.push_back("remove(" + std::to_string(idx) + ", " + (*this)[idx] +
+    // ")");
     ops_.push_back("remove(" + (*this)[idx] + ")");
     tokens_.erase(tokens_.begin() + idx);
     weights_.push_back(weight);
@@ -89,7 +102,7 @@ void sentence::insert(size_type idx, const std::string& token,
                       double weight /* = 0.0 */)
 {
     tokens_.insert(tokens_.begin() + idx, token);
-    //ops_.push_back("insert(" + std::to_string(idx) + ", " + token + ")");
+    // ops_.push_back("insert(" + std::to_string(idx) + ", " + token + ")");
     ops_.push_back("insert(" + token + ")");
     weights_.push_back(weight);
 }
@@ -102,33 +115,69 @@ double sentence::average_weight() const
     return sum / weights_.size();
 }
 
-std::vector<double> sentence::weights() const { return weights_; }
+std::vector<double> sentence::weights() const
+{
+    return weights_;
+}
 
-const std::vector<std::string>& sentence::operations() const { return ops_; }
+const std::vector<std::string>& sentence::operations() const
+{
+    return ops_;
+}
 
-std::string sentence::front() const { return tokens_.front(); }
+std::string sentence::front() const
+{
+    return tokens_.front();
+}
 
-std::string sentence::back() const { return tokens_.back(); }
+std::string sentence::back() const
+{
+    return tokens_.back();
+}
 
 void sentence::push_front(const std::string& token)
 {
     tokens_.push_front(token);
 }
 
-void sentence::pop_front() { tokens_.pop_front(); }
+void sentence::pop_front()
+{
+    tokens_.pop_front();
+}
 
-void sentence::push_back(const std::string& token) { tokens_.push_back(token); }
+void sentence::push_back(const std::string& token)
+{
+    tokens_.push_back(token);
+}
 
-void sentence::pop_back() { tokens_.pop_back(); }
+void sentence::pop_back()
+{
+    tokens_.pop_back();
+}
 
-sentence::iterator sentence::begin() { return tokens_.begin(); }
+sentence::iterator sentence::begin()
+{
+    return tokens_.begin();
+}
 
-sentence::iterator sentence::end() { return tokens_.end(); }
+sentence::iterator sentence::end()
+{
+    return tokens_.end();
+}
 
-sentence::const_iterator sentence::begin() const { return tokens_.cbegin(); }
+sentence::const_iterator sentence::begin() const
+{
+    return tokens_.cbegin();
+}
 
-sentence::const_iterator sentence::end() const { return tokens_.cend(); }
+sentence::const_iterator sentence::end() const
+{
+    return tokens_.cend();
+}
 
-sentence::size_type sentence::size() const { return tokens_.size(); }
+sentence::size_type sentence::size() const
+{
+    return tokens_.size();
+}
 }
 }

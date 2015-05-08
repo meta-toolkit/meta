@@ -31,8 +31,9 @@ class sentence
      * Creates a sentence based on a text string, parsed with the default filter
      * chain.
      * @param text
+     * @param tokenize Whether or not to tokenize the input sentence
      */
-    sentence(const std::string& text);
+    sentence(const std::string& text, bool tokenize = true);
 
     /**
      * @return a string representation of this sentence

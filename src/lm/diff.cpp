@@ -95,7 +95,7 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
     for (uint64_t i = n_val_ - 1; i < sent.size(); ++i)
     {
         auto ngram = sent(i - (n_val_ - 1), i + 1);
-        auto prob = lm_.prob(ngram);
+        auto prob = lm_.log_prob(ngram);
         if (prob < min_prob)
         {
             min_prob = prob;

@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_map>
 #include <string>
 #include "cpptoml.h"
 #include "lm/sentence.h"
@@ -48,32 +49,60 @@ class language_model
      * model: \f$ \sqrt[n]{\prod_{i=1}^n\frac{1}{p(w_i|w_{i-n}\cdots w_{i-1})}}
      * \f$
      */
-    double perplexity(const sentence& tokens) const;
+    float perplexity(const sentence& tokens) const;
 
     /**
      * @param sentence A sequence of tokens
      * @return the perplexity of this token sequence given the current language
      * model normalized by the length of the sequence
      */
-    double perplexity_per_word(const sentence& tokens) const;
+    float perplexity_per_word(const sentence& tokens) const;
 
     /**
-     * @param tokens A sequence of n tokens
-     * @return the probability of seeing the nth token based on the previous n
-     * - 1 tokens
+     * @param tokens A sequence of n tokens (one sentence)
+     * @return the log probability of the likelihood of this sentence
      */
-    double prob(sentence tokens) const;
+    float log_prob(sentence tokens) const;
 
     /**
      * @param prev Seen tokens to base the next token off of
      * @param k Number of results to return
      * @return a sorted vector of likely next tokens
      */
-    std::vector<std::pair<std::string, double>> top_k(const sentence& prev,
+    std::vector<std::pair<std::string, float>> top_k(const sentence& prev,
                                                       size_t k) const;
 
   private:
-    uint64_t N_;
+    /**
+     * Reads precomputed LM data into this object.
+     * @param arpa_file The path to the ARPA-formatted file
+     */
+    void read_arpa_format(const std::string& arpa_file);
+
+    /**
+     * @param tokens
+     * @return the log probability of one ngram
+     */
+    float prob_calc(sentence tokens) const;
+
+    uint64_t N_; /// The "n" value for this n-gram language model
+
+    /**
+     * Simple struct to keep track of probabilities and backoff values.
+     */
+    struct lm_node
+    {
+        lm_node():
+            prob{0.0f}, backoff{0.0f} {}
+
+        lm_node(float p, float b):
+            prob{p}, backoff{b} {}
+
+        float prob;
+        float backoff;
+    };
+
+    std::unordered_map<std::string, lm_node> lm_;
 };
 
 class language_model_exception : public std::runtime_error
