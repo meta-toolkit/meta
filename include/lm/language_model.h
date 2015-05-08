@@ -102,7 +102,7 @@ class language_model
         float backoff;
     };
 
-    std::unordered_map<std::string, lm_node> lm_;
+    std::vector<std::unordered_map<std::string, lm_node>> lm_;
 };
 
 class language_model_exception : public std::runtime_error

@@ -32,13 +32,12 @@ void language_model::read_arpa_format(const std::string& arpa_file)
 
     // get to beginning of unigram data
     while (std::getline(infile, buffer))
-    {
         if (buffer.find("\\1-grams:") == 0)
             break;
-    }
 
     N_ = 0;
 
+    lm_.push_back({}); // add current n-value data
     while (std::getline(infile, buffer))
     {
         if (buffer.empty())
@@ -47,6 +46,7 @@ void language_model::read_arpa_format(const std::string& arpa_file)
         if (buffer[0] == '\\')
         {
             ++N_;
+            lm_.push_back({}); // add current n-value data
             continue;
         }
 
@@ -57,20 +57,20 @@ void language_model::read_arpa_format(const std::string& arpa_file)
         float backoff = 0.0;
         if (second_tab != std::string::npos)
             backoff = std::stof(buffer.substr(second_tab + 1));
-        lm_[ngram] = {prob, backoff};
+        lm_[N_][ngram] = {prob, backoff};
     }
 }
 
 std::string language_model::next_token(const sentence& tokens,
                                        double random) const
 {
-    throw language_model_exception{"could not generate next token: "
-                                   + tokens.to_string()};
+    throw language_model_exception{"not implemented!"};
 }
 
 std::vector<std::pair<std::string, float>>
     language_model::top_k(const sentence& prev, size_t k) const
 {
+    throw language_model_exception{"not implemented!"};
 }
 
 std::string language_model::generate(unsigned int seed) const
@@ -82,15 +82,15 @@ float language_model::prob_calc(sentence tokens) const
 {
     if (tokens.size() == 1)
     {
-        auto it = lm_.find(tokens[0]);
-        if (it != lm_.end())
+        auto it = lm_[0].find(tokens[0]);
+        if (it != lm_[0].end())
             return it->second.prob;
-        return lm_.at("<unk>").prob;
+        return lm_[0].at("<unk>").prob;
     }
     else
     {
-        auto it = lm_.find(tokens.to_string());
-        if (it != lm_.end())
+        auto it = lm_[tokens.size() - 1].find(tokens.to_string());
+        if (it != lm_[tokens.size() - 1].end())
             return it->second.prob;
 
         auto hist = tokens(0, tokens.size() - 1);
@@ -98,13 +98,13 @@ float language_model::prob_calc(sentence tokens) const
         if (tokens.size() == 1)
         {
             hist = hist(0, 1);
-            auto it = lm_.find(hist[0]);
-            if (it == lm_.end())
+            auto it = lm_[0].find(hist[0]);
+            if (it == lm_[0].end())
                 hist.substitute(0, "<unk>");
         }
 
-        it = lm_.find(hist.to_string());
-        if (it != lm_.end())
+        it = lm_[hist.size() - 1].find(hist.to_string());
+        if (it != lm_[hist.size() - 1].end())
             return it->second.backoff + prob_calc(tokens);
         return prob_calc(tokens);
     }
