@@ -10,6 +10,7 @@ add_library(meta-testing analyzer_test.cpp
                          libsvm_parser_test.cpp
                          parallel_test.cpp
                          ranker_test.cpp
+                         lm_test.cpp
                          stemmer_test.cpp
                          string_list_test.cpp
                          graph_test.cpp

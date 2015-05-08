@@ -21,6 +21,7 @@
 #include "test/graph_test.h"
 #include "test/compression_test.h"
 #include "test/parser_test.h"
+#include "test/lm_test.h"
 #include "util/printing.h"
 
 using namespace meta;
@@ -47,6 +48,7 @@ int main(int argc, char* argv[])
         std::cerr << " \"compression\": runs compression reading and writing tests" << std::endl;
         std::cerr << " \"graph\": runs undirected and directed graph tests" << std::endl;
         std::cerr << " \"parser\": runs parser tests" << std::endl;
+        std::cerr << " \"language-model\": runs language model tests" << std::endl;
         return 1;
     }
 
@@ -84,6 +86,8 @@ int main(int argc, char* argv[])
         num_failed += testing::graph_tests();
     if (all || args.find("parser") != args.end())
         num_failed += testing::parser_tests();
+    if (all || args.find("language-model") != args.end())
+        num_failed += testing::lm_tests();
 
     return num_failed;
 }

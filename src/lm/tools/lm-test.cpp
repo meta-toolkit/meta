@@ -17,26 +17,14 @@ using namespace meta;
 
 int main(int argc, char* argv[])
 {
-    logging::set_cerr_logging();
-    lm::language_model model{cpptoml::parse_file(argv[1])};
-    lm::sentence s1{"I disagree with this statement for several reasons .",
-                    false};
-    std::cout << s1.to_string() << ": " << model.log_prob(s1) << std::endl;
-    lm::sentence s2{"I disagree with this octopus for several reasons .",
-                    false};
-    std::cout << s2.to_string() << ": " << model.log_prob(s2) << std::endl;
-    lm::sentence s3{"Hello world !", false};
-    std::cout << s3.to_string() << ": " << model.log_prob(s3) << std::endl;
-    lm::sentence s4{"xyz xyz xyz", false};
-    std::cout << s4.to_string() << ": " << model.log_prob(s4) << std::endl;
-
-    /*
     if (argc != 3)
     {
         std::cerr << "Usage: " << argv[0] << " config.toml sentences.txt"
                   << std::endl;
         return 1;
     }
+
+    logging::set_cerr_logging();
 
     lm::diff correcter{cpptoml::parse_file(argv[1])};
     std::ifstream in{argv[2]};
@@ -78,5 +66,4 @@ int main(int argc, char* argv[])
     prog.end();
 
     std::cout << "Percent no-ops: " << do_nothing / done << std::endl;
-    */
 }
