@@ -31,19 +31,6 @@ class language_model
     language_model(const cpptoml::table& config);
 
     /**
-     * Randomly generates one token sequence based on <s> and </s> symbols.
-     * @return a random sequence of tokens based on this language model
-     */
-    std::string generate(unsigned int seed) const;
-
-    /**
-     * @param sentence The previous N - 1 tokens
-     * @param random A random number on [0, 1] used for choosing the next token
-     * @return the next token based on the previous tokens
-     */
-    std::string next_token(const sentence& sen, double random) const;
-
-    /**
      * @param sentence A sequence of tokens
      * @return the perplexity of this token sequence given the current language
      * model: \f$ \sqrt[n]{\prod_{i=1}^n\frac{1}{p(w_i|w_{i-n}\cdots w_{i-1})}}

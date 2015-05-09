@@ -61,12 +61,6 @@ void language_model::read_arpa_format(const std::string& arpa_file)
     }
 }
 
-std::string language_model::next_token(const sentence& tokens,
-                                       double random) const
-{
-    throw language_model_exception{"not implemented!"};
-}
-
 std::vector<std::pair<std::string, float>>
     language_model::top_k(const sentence& prev, size_t k) const
 {
@@ -81,7 +75,7 @@ std::vector<std::pair<std::string, float>>
     candidate.push_back("word"); // the last item is replaced each iteration
     for (auto& word : lm_[0])
     {
-        candidate.substitute(candidate.size() - 1, word.first);
+        auto candidate = sentence{prev.to_string() + " " + word.first};
         candidates.emplace_back(word.first, log_prob(candidate));
         std::push_heap(candidates.begin(), candidates.end(), comp);
         if (candidates.size() > k)
@@ -97,13 +91,11 @@ std::vector<std::pair<std::string, float>>
     return candidates;
 }
 
-std::string language_model::generate(unsigned int seed) const
-{
-    return "";
-}
-
 float language_model::prob_calc(sentence tokens) const
 {
+    if (tokens.size() == 0)
+        throw language_model_exception{"prob_calc: tokens is empty!"};
+
     if (tokens.size() == 1)
     {
         auto it = lm_[0].find(tokens[0]);
