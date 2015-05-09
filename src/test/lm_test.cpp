@@ -23,11 +23,13 @@ int lm_tests()
         {
             lm::language_model model{cpptoml::parse_file("config.toml")};
             lm::sentence s1{
-                "I disagree with this statement for several reasons .", false};
+                "<s> I disagree with this statement for several reasons . </s>",
+                false};
             lm::sentence s2{
-                "I disagree with this octopus for several reasons .", false};
-            lm::sentence s3{"Hello world !", false};
-            lm::sentence s4{"xyz xyz xyz", false};
+                "<s> I disagree with this octopus for several reasons . </s>",
+                false};
+            lm::sentence s3{"<s> Hello world ! </s>", false};
+            lm::sentence s4{"<s> xyz xyz xyz </s>", false};
 
             ASSERT_APPROX_EQUAL(model.log_prob(s1), -5.0682507);
             ASSERT_APPROX_EQUAL(model.log_prob(s2), -11.7275571);

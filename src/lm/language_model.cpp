@@ -70,7 +70,31 @@ std::string language_model::next_token(const sentence& tokens,
 std::vector<std::pair<std::string, float>>
     language_model::top_k(const sentence& prev, size_t k) const
 {
-    throw language_model_exception{"not implemented!"};
+    // this is horribly inefficient due to this LM's structure
+    using pair_t = std::pair<std::string, float>;
+    auto comp = [](const pair_t& a, const pair_t& b)
+    {
+        return a.second > b.second;
+    };
+    std::vector<pair_t> candidates;
+    sentence candidate = prev;
+    candidate.push_back("word"); // the last item is replaced each iteration
+    for (auto& word : lm_[0])
+    {
+        candidate.substitute(candidate.size() - 1, word.first);
+        candidates.emplace_back(word.first, log_prob(candidate));
+        std::push_heap(candidates.begin(), candidates.end(), comp);
+        if (candidates.size() > k)
+        {
+            std::pop_heap(candidates.begin(), candidates.end(), comp);
+            candidates.pop_back();
+        }
+    }
+
+    for (auto end = candidates.end(); end != candidates.begin(); --end)
+        std::pop_heap(candidates.begin(), end, comp);
+
+    return candidates;
 }
 
 std::string language_model::generate(unsigned int seed) const
@@ -112,8 +136,6 @@ float language_model::prob_calc(sentence tokens) const
 
 float language_model::log_prob(sentence tokens) const
 {
-    tokens.push_front("<s>");
-    tokens.push_back("</s>");
     float prob = 0.0f;
 
     // tokens < N
@@ -139,8 +161,7 @@ float language_model::perplexity(const sentence& tokens) const
 {
     if (tokens.size() == 0)
         throw language_model_exception{"perplexity() called on empty sentence"};
-    return std::pow(
-        10.0, -(log_prob(tokens) / (tokens.size() + 2))); // +2 for <s> and </s>
+    return std::pow(10.0, -(log_prob(tokens) / tokens.size()));
 }
 
 float language_model::perplexity_per_word(const sentence& tokens) const
@@ -148,7 +169,7 @@ float language_model::perplexity_per_word(const sentence& tokens) const
     if (tokens.size() == 0)
         throw language_model_exception{
             "perplexity_per_word() called on empty sentence"};
-    return perplexity(tokens) / (tokens.size() + 2); // +2 for <s> and </s>
+    return perplexity(tokens) / tokens.size();
 }
 }
 }
