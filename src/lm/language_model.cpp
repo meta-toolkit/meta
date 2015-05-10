@@ -10,8 +10,10 @@
 #include <iostream>
 #include <sstream>
 #include <random>
+#include "util/time.h"
 #include "util/shim.h"
 #include "lm/language_model.h"
+#include "logging/logger.h"
 
 namespace meta
 {
@@ -22,7 +24,12 @@ language_model::language_model(const cpptoml::table& config)
 {
     auto table = config.get_table("language-model");
     auto arpa_file = table->get_as<std::string>("arpa-file");
-    read_arpa_format(*arpa_file);
+    LOG(info) << "Loading language model from .arpa file... " << ENDLG;
+    auto time = common::time([&]()
+                             {
+                                 read_arpa_format(*arpa_file);
+                             });
+    LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
 }
 
 void language_model::read_arpa_format(const std::string& arpa_file)
@@ -45,7 +52,6 @@ void language_model::read_arpa_format(const std::string& arpa_file)
     }
 
     N_ = 0;
-
     lm_.emplace_back(count[N_]); // add current n-value data
     while (std::getline(infile, buffer))
     {
@@ -54,8 +60,7 @@ void language_model::read_arpa_format(const std::string& arpa_file)
 
         if (buffer[0] == '\\')
         {
-            ++N_;
-            lm_.emplace_back(count[N_]); // add current n-value data
+            lm_.emplace_back(count[N_++]); // add current n-value data
             continue;
         }
 
