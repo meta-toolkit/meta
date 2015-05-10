@@ -23,6 +23,26 @@ namespace lm
 {
 class language_model
 {
+  private:
+    /**
+     * Simple struct to keep track of probabilities and backoff values.
+     */
+    struct lm_node
+    {
+        lm_node() : prob{0.0f}, backoff{0.0f}
+        {
+        }
+
+        lm_node(float p, float b) : prob{p}, backoff{b}
+        {
+        }
+
+        float prob;
+        float backoff;
+    };
+
+    using map_t = std::unordered_map<std::string, lm_node>;
+
   public:
     /**
      * Creates an N-gram language model based on the corpus specified in the
@@ -57,7 +77,7 @@ class language_model
      * @return a sorted vector of likely next tokens
      */
     std::vector<std::pair<std::string, float>> top_k(const sentence& prev,
-                                                      size_t k) const;
+                                                     size_t k) const;
 
   private:
     /**
@@ -74,22 +94,7 @@ class language_model
 
     uint64_t N_; /// The "n" value for this n-gram language model
 
-    /**
-     * Simple struct to keep track of probabilities and backoff values.
-     */
-    struct lm_node
-    {
-        lm_node():
-            prob{0.0f}, backoff{0.0f} {}
-
-        lm_node(float p, float b):
-            prob{p}, backoff{b} {}
-
-        float prob;
-        float backoff;
-    };
-
-    std::vector<std::unordered_map<std::string, lm_node>> lm_;
+    std::vector<map_t> lm_;
 };
 
 class language_model_exception : public std::runtime_error

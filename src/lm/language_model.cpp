@@ -30,14 +30,23 @@ void language_model::read_arpa_format(const std::string& arpa_file)
     std::ifstream infile{arpa_file};
     std::string buffer;
 
-    // get to beginning of unigram data
+    // get to beginning of unigram data, saving the counts of each ngram type
+    std::vector<uint64_t> count;
     while (std::getline(infile, buffer))
+    {
+        if (buffer.find("ngram ") == 0)
+        {
+            auto equal = buffer.find_first_of("=");
+            count.emplace_back(std::stoi(buffer.substr(equal + 1)));
+        }
+
         if (buffer.find("\\1-grams:") == 0)
             break;
+    }
 
     N_ = 0;
 
-    lm_.push_back({}); // add current n-value data
+    lm_.emplace_back(count[N_]); // add current n-value data
     while (std::getline(infile, buffer))
     {
         if (buffer.empty())
@@ -46,7 +55,7 @@ void language_model::read_arpa_format(const std::string& arpa_file)
         if (buffer[0] == '\\')
         {
             ++N_;
-            lm_.push_back({}); // add current n-value data
+            lm_.emplace_back(count[N_]); // add current n-value data
             continue;
         }
 
