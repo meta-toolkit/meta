@@ -35,7 +35,7 @@ install:
   - if [ "`echo $CXX`" == "clang++" ]; then cd libcxx; fi
   - if [ "`echo $CXX`" == "clang++" ]; then mkdir build; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cd build; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cmake -DLIBCXX_CXX_ABI=libcxxrt -DLIBCXX_LIBCXXRT_INCLUDE_PATHS="../../libcxxrt/src" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..; fi
+  - if [ "`echo $CXX`" == "clang++" ]; then cmake -DLIBCXX_CXX_ABI=libcxxrt -DLIBCXX_CXX_ABI_INCLUDE_PATHS="../../libcxxrt/src" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..; fi
   - if [ "`echo $CXX`" == "clang++" ]; then make; fi
   - if [ "`echo $CXX`" == "clang++" ]; then sudo make install; fi
   - if [ "`echo $CXX`" == "clang++" ]; then cd $cwd; fi

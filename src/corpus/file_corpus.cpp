@@ -28,7 +28,10 @@ file_corpus::file_corpus(const std::string& prefix, const std::string& doc_list,
             docs_.emplace_back(std::make_pair(file, label));
         }
         else
-            docs_.emplace_back(std::make_pair(line, class_label{""}));
+        {
+            throw corpus_exception{"document list needs class label prefix "
+                                   "(add [none] if there are no labels)"};
+        }
         ++idx;
     }
 }

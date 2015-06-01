@@ -25,7 +25,7 @@ void easy_func(Type& x)
 }
 
 /**
- * Assumes multi-core machine...
+ * Assumes multi-core machine.
  */
 int test_speed(std::vector<double>& v)
 {
@@ -83,7 +83,11 @@ int parallel_tests()
     size_t n = 10000000;
     std::vector<double> v(n);
     int num_failed = 0;
-    num_failed += test_speed(v);
+
+    // if we only get one thread on this machine, skip the speed test
+    if (std::thread::hardware_concurrency() > 1)
+        num_failed += test_speed(v);
+
     num_failed += test_correctness(v);
     num_failed += test_threadpool();
     return num_failed;

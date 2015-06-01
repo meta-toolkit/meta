@@ -1,5 +1,43 @@
-# [Unreleased][unreleased]
-- nothing yet!
+# [v1.3.5][1.3.5]
+## Bug fixes
+- Fix missing support for sequence/parser analyzers in the classify tools
+
+# [v1.3.4][1.3.4]
+## New features
+- Support building with biicode
+- Add Vagrantfile for virtual machine configuration
+- Add Dockerfile for Docker support
+
+## Enhancements
+- Improve `ir_eval` unit tests
+
+## Bug fixes
+- Fix `ir_eval::ndcg` incorrect log base and addition instead of subtraction in
+    IDCG calculation
+- Fix `ir_eval::avg_p` incorrect early termination
+
+# [v1.3.3][1.3.3]
+## Bug fixes
+- Fix issues with system-defined integer widths in binary model files
+    (mainly impacted the greedy tagger and parser); please re-download any
+    parser model files you may have had before
+- Fix bug where parser model directory is not created if a non-standard
+    prefix is used (anything other than "parser")
+
+## Enhancements
+- Silence inconsistent missing overrides warning on clang >= 3.6
+
+# [v1.3.2][1.3.2]
+## Bug fixes
+- fix potentially incorrect generation of vocabulary map files on 32-bit
+    systems (this appears to have only impacted non-default block sizes)
+
+# [v1.3.1][1.3.1]
+## Bug fixes
+- fix calculation of average precision in `ir_eval` (the denominator was
+    incorrect)
+- specify that labels are required for the `file_corpus` document list; this
+    allows spaces in the path to each document
 
 # [v1.3][1.3]
 ## New features
@@ -89,7 +127,12 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.5...develop
+[1.3.5]: https://github.com/meta-toolkit/meta/compare/v1.3.4...v1.3.5
+[1.3.4]: https://github.com/meta-toolkit/meta/compare/v1.3.3...v1.3.4
+[1.3.3]: https://github.com/meta-toolkit/meta/compare/v1.3.2...v1.3.3
+[1.3.2]: https://github.com/meta-toolkit/meta/compare/v1.3.1...v1.3.2
+[1.3.1]: https://github.com/meta-toolkit/meta/compare/v1.3...v1.3.1
 [1.3]: https://github.com/meta-toolkit/meta/compare/v1.2...v1.3
 [1.2]: https://github.com/meta-toolkit/meta/compare/v1.1...v1.2
 [1.1]: https://github.com/meta-toolkit/meta/compare/v1.0...v1.1

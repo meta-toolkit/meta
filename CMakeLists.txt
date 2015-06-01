@@ -14,7 +14,6 @@ include(FindZLIB)
 
 include_directories(include/)
 
-
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
 find_package(ICU COMPONENTS data i18n uc REQUIRED)
@@ -173,6 +172,11 @@ if(ICU_VERSION VERSION_LESS "4.4")
   target_compile_definitions(meta-definitions INTERFACE
                              -DMETA_ICU_NO_TEMP_SUBSTRING)
 endif()
+
+if(BIICODE)
+  include(contrib/biicode/CMakeLists.txt)
+  return()
+ENDIF()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 

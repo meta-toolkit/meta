@@ -404,6 +404,6 @@ system.
    appropriate `cmake` command for your OS above and rebuild using `make`
    after.
 
-[meta-website]: https://meta-toolkit.github.io/meta/
+[meta-website]: https://meta-toolkit.org
 [doxygen]: https://meta-toolkit.github.io/meta/doxygen/namespaces.html
 [homebrew]: http://brew.sh
