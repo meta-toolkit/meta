@@ -56,7 +56,7 @@ struct score_data
     /// doc term id
     term_id t_id;
     /// query term count
-    uint64_t query_term_count;
+    double query_term_count;
     /// number of docs that t_id appears in
     uint64_t doc_count;
     /// number of times t_id appears in corpus
