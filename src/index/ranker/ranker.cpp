@@ -27,16 +27,16 @@ struct postings_context
     iterator begin;
     iterator end;
     term_id t_id;
-    uint64_t query_term_count;
+    double query_term_weight;
     uint64_t doc_count;
     uint64_t corpus_term_count;
 
-    postings_context(postings_stream<doc_id> strm, uint64_t qtf, term_id term)
+    postings_context(postings_stream<doc_id> strm, double qtf, term_id term)
         : stream{std::move(strm)},
           begin{stream.begin()},
           end{stream.end()},
           t_id{term},
-          query_term_count{qtf},
+          query_term_weight{qtf},
           doc_count{stream.size()},
           corpus_term_count{stream.total_counts()}
     {
@@ -106,7 +106,7 @@ std::vector<search_result> ranker::score(
             {
                 // set up this term
                 sd.t_id = pc.t_id;
-                sd.query_term_count = pc.query_term_count;
+                sd.query_term_weight = pc.query_term_weight;
                 sd.doc_count = pc.doc_count;
                 sd.corpus_term_count = pc.corpus_term_count;
                 sd.doc_term_count = pc.begin->second;

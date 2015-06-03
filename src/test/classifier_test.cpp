@@ -141,7 +141,7 @@ int run_tests(const std::string& type)
             "log-reg-cv-" + type, [&]()
             {
                 logistic_regression logreg{"logreg-model-test", f_idx};
-                check_cv(*f_idx, logreg, 0.92);
+                check_cv(*f_idx, logreg, 0.90);
             });
 
         num_failed += testing::run_test(

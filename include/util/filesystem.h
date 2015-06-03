@@ -169,6 +169,11 @@ inline uint64_t num_lines(const std::string& filename, char delimiter = '\n')
             ++num;
     }
 
+    // this fixes a potential off-by-one if the last line in the file
+    // doesn't end with the delimiter
+    if (file[file.size() - 1] != delimiter)
+        ++num;
+
     return num;
 }
 }
