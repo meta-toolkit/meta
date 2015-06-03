@@ -1,3 +1,11 @@
+# [v1.3.6][1.3.6]
+## Bug fixes
+- Fix potential off-by-one when calculating the number of documents in a
+    `line_corpus` when its files do not end in a newline
+
+## Enhancements
+- Change `score_data` to support floating-point weights on query terms
+
 # [v1.3.5][1.3.5]
 ## Bug fixes
 - Fix missing support for sequence/parser analyzers in the classify tools
@@ -127,7 +135,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.5...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.6...develop
+[1.3.6]: https://github.com/meta-toolkit/meta/compare/v1.3.5...v1.3.6
 [1.3.5]: https://github.com/meta-toolkit/meta/compare/v1.3.4...v1.3.5
 [1.3.4]: https://github.com/meta-toolkit/meta/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/meta-toolkit/meta/compare/v1.3.2...v1.3.3
