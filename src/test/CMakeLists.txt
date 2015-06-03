@@ -3,6 +3,7 @@ add_subdirectory(tools)
 add_library(meta-testing analyzer_test.cpp
                          classifier_test.cpp
                          compression_test.cpp
+                         filesystem_test.cpp
                          filter_test.cpp
                          forward_index_test.cpp
                          inverted_index_test.cpp
