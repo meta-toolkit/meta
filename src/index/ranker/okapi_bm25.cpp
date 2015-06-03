@@ -32,8 +32,8 @@ double okapi_bm25::score_one(const score_data& sd)
                 / ((k1_ * ((1.0 - b_) + b_ * doc_len / sd.avg_dl))
                    + sd.doc_term_count);
 
-    double QTF = ((k3_ + 1.0) * sd.query_term_count)
-                 / (k3_ + sd.query_term_count);
+    double QTF = ((k3_ + 1.0) * sd.query_term_weight)
+                 / (k3_ + sd.query_term_weight);
 
     return TF * IDF * QTF;
 }
