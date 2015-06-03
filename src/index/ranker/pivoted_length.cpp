@@ -26,7 +26,7 @@ double pivoted_length::score_one(const score_data& sd)
     double norm = (1 - s_) + s_ * (doc_len / sd.avg_dl);
     double IDF = log((sd.num_docs + 1) / (0.5 + sd.doc_count));
 
-    return TF / norm * sd.query_term_count * IDF;
+    return TF / norm * sd.query_term_weight * IDF;
 }
 
 template <>

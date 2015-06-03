@@ -36,7 +36,7 @@ ranker::score(inverted_index& idx, corpus::document& query,
         auto pdata = idx.search_primary(t_id);
         sd.doc_count = pdata->counts().size();
         sd.t_id = t_id;
-        sd.query_term_count = tpair.second;
+        sd.query_term_weight = tpair.second;
         sd.corpus_term_count = idx.total_num_occurences(sd.t_id);
         for (auto& dpair : pdata->counts())
         {
