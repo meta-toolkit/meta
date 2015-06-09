@@ -25,6 +25,20 @@ namespace analyzers
 
 /**
  * Base class tokenizing using parse tree features.
+ *
+ * Required config parameters:
+ * ```toml
+ * [[analyzers]]
+ * method = "tree" # this analyzer
+ * filter = [{type = "icu-tokenizer"}, {type = "ptb-normalizer"}] # example
+ * features = ["skel", "subtree"] # example
+ * tagger = "path"
+ * parser = "path"
+ *
+ * Optional config parameters: none.
+ *
+ * @see https://meta-toolkit.org/analyzers-filters-tutorial.html
+
  */
 class tree_analyzer : public util::clonable<analyzer, tree_analyzer>
 {
