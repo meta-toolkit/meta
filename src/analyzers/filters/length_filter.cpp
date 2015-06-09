@@ -20,6 +20,9 @@ length_filter::length_filter(std::unique_ptr<token_stream> source, uint64_t min,
                              uint64_t max)
     : source_{std::move(source)}, min_length_{min}, max_length_{max}
 {
+    using exception = token_stream::token_stream_exception;
+    if (min_length_ > max_length_)
+        throw exception{"min filter length is greater than max filter length"};
     next_token();
 }
 
