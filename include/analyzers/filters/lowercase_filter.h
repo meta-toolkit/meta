@@ -22,6 +22,9 @@ namespace filters
 
 /**
  * Filter that converts all tokens to lowercase.
+ *
+ * Required config parameters: none.
+ * Optional config parameters: none.
  */
 class lowercase_filter : public util::clonable<token_stream, lowercase_filter>
 {

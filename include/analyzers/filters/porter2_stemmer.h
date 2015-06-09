@@ -24,6 +24,9 @@ namespace filters
 /**
  * Filter that stems words according to the porter2 stemmer algorithm.
  * Requires that the porter2 stemmer project submodule be downloaded.
+ *
+ * Required config parameters: none.
+ * Optional config parameters: none.
  */
 class porter2_stemmer : public util::clonable<token_stream, porter2_stemmer>
 {

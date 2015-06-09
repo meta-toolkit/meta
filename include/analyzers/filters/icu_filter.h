@@ -29,6 +29,15 @@ namespace filters
 /**
  * Filter that applies an ICU transliteration to each token in the
  * sequence.
+ *
+ * Required config parameters:
+ * ```toml
+ * id = "transformer"
+ * ```
+ *
+ * Optional config parameters: none.
+ *
+ * @see http://userguide.icu-project.org/transforms/general/rules
  */
 class icu_filter : public util::clonable<token_stream, icu_filter>
 {

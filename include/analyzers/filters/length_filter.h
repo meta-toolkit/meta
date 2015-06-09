@@ -30,6 +30,14 @@ namespace filters
 /**
  * Filter that only retains tokens that are within a certain length range,
  * inclusive.
+ *
+ * Required config parameters:
+ * ```toml
+ * min = 2  # any integer
+ * max = 32 # any integer >= min
+ * ```
+ *
+ * Optional config parameters: none.
  */
 class length_filter : public util::clonable<token_stream, length_filter>
 {

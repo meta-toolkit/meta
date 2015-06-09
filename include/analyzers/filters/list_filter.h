@@ -30,6 +30,16 @@ namespace filters
 
 /**
  * Filter that either removes or keeps tokens from a given list.
+ *
+ * Required config parameters:
+ * ```toml
+ * file = "path"
+ * ```
+ * Optional config parameters:
+ * ```toml
+ * type = "accept" # or,
+ * type = "reject" # default
+ * ```
  */
 class list_filter : public util::clonable<token_stream, list_filter>
 {

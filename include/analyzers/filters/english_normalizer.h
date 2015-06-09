@@ -27,6 +27,9 @@ namespace filters
  * whitespace (adjacent whitespace tokens are converted to a single
  * normalized space token) and punctuation (which is split out from words
  * following basic heuristics).
+ *
+ * Required config parameters: none.
+ * Optional config parameters: none.
  */
 class english_normalizer
     : public util::clonable<token_stream, english_normalizer>

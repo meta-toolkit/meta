@@ -33,6 +33,15 @@ namespace filters
  * Filter that adds sentence boundary tokens ("<s>" and "</s>") to streams of
  * tokens. This filter requires that whitespace and punctuation be present
  * in the source stream.
+ *
+ * Required config parameters:
+ * ```toml
+ * punctuation = "path"
+ * start-exceptions = "path"
+ * end-exceptions = "path"
+ * ```
+ *
+ * Optional config parameters: none.
  */
 class sentence_boundary : public util::clonable<token_stream, sentence_boundary>
 {

@@ -23,6 +23,9 @@ namespace filters
  * Filter that removes any empty sentences from the token stream. Empty
  * sentences can be caused by filters in the filter chain that follow
  * sentence boundary detection.
+ *
+ * Required config parameters: none.
+ * Optional config parameters: none.
  */
 class empty_sentence_filter
     : public util::clonable<token_stream, empty_sentence_filter>
