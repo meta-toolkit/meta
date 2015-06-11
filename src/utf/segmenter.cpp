@@ -26,7 +26,7 @@ class segmenter::impl
     impl()
     {
         auto status = U_ZERO_ERROR;
-        const auto& locale = icu::Locale::getDefault();
+        const auto& locale = icu::Locale::getUS();
         sentence_iter_.reset(
             icu::BreakIterator::createSentenceInstance(locale, status));
         word_iter_.reset(
