@@ -41,8 +41,8 @@ class segmenter::impl
     impl(const std::string& language,
          const util::optional<std::string>& country)
     {
-        icu::Locale::Locale locale(language.c_str(),
-                                   country ? country->c_str() : nullptr);
+        icu::Locale locale(language.c_str(),
+                           country ? country->c_str() : nullptr);
         if (locale.isBogus())
             throw std::runtime_error{"failed to create locale"};
 
