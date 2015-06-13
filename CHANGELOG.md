@@ -1,3 +1,19 @@
+# [v1.3.7][1.3.7]
+## Bug fixes
+- Fix inconsistent behavior of `utf::segmenter` (and thus `icu_tokenizer`) for
+    different locales. Thanks @CanoeFZH and @tng-konrad for helping debug
+    this!
+
+## Enhancements
+- Allow for specifying the language and country for locale generation in
+    setting up `utf::segmenter` (and thus `icu_tokenizer`)
+- Allow for suppression of `<s>` and `</s>` tags within `icu_tokenizer`,
+    mostly useful for information retrieval experiments with unigram words.
+    Thanks @husseinhazimeh for the suggestion!
+- Add a `default-unigram-chain` filter chain preset which is suitable for
+    information retrieval experiments using unigram words. Thanks
+    @husseinhazimeh for the suggestion!
+
 # [v1.3.6][1.3.6]
 ## Bug fixes
 - Fix potential off-by-one when calculating the number of documents in a
@@ -135,7 +151,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.6...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.7...develop
+[1.3.7]: https://github.com/meta-toolkit/meta/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/meta-toolkit/meta/compare/v1.3.5...v1.3.6
 [1.3.5]: https://github.com/meta-toolkit/meta/compare/v1.3.4...v1.3.5
 [1.3.4]: https://github.com/meta-toolkit/meta/compare/v1.3.3...v1.3.4
