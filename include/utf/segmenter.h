@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include "util/optional.h"
 #include "util/pimpl.h"
 
 namespace meta
@@ -55,8 +56,26 @@ class segmenter
      * Constructs a segmenter. An instance of segmenter may be used to
      * segment many different unicode strings, and it is encouraged to
      * re-use one if you are segmenting many strings.
+     *
+     * This is appropriate for segmenting English.
      */
     segmenter();
+
+    /**
+     * Constructs a segmenter with a specific locale. The locale is used to
+     * construct the iterators that break words and sentences, which allows
+     * for the underlying ICU implementation to use langauge-specific rules
+     * for sentence/word splitting.
+     *
+     * An instance of segmenter may be used to segment many different
+     * unicode strings, and it is encouraged to re-use one if you are
+     * segmenting many strings.
+     *
+     * @param language The lowercase, two-letter or three-letter ISO-639 code.
+     * @param country The uppercase, two-letter ISO-3116 code (optional).
+     */
+    segmenter(const std::string& language,
+              const util::optional<std::string>& country = util::nullopt);
 
     /**
      * Copy constructs a segmenter.

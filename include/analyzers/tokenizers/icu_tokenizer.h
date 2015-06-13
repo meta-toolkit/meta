@@ -9,7 +9,9 @@
 #ifndef META_ICU_TOKENIZER_H_
 #define META_ICU_TOKENIZER_H_
 
+#include "analyzers/filter_factory.h"
 #include "analyzers/token_stream.h"
+#include "utf/segmenter.h"
 #include "util/clonable.h"
 #include "util/pimpl.h"
 
@@ -31,14 +33,40 @@ namespace tokenizers
 /**
  * Converts documents into streams of tokens by following the unicode
  * standards for sentence and word segmentation.
+ *
+ * Required config parameters: none.
+ *
+ * Optional config parameters:
+ *
+ * ~~~ toml
+ * # lowercase two-letter or three-letter ISO-639 code
+ * language = "en"
+ *
+ * # uppercase two-letter ISO-3116 code. If specified, the config must also
+ * # specify the language.
+ * country = "US"
+ *
+ * # whether to suppress the generation of "<s>" or "</s>"; useful for
+ * # information retrieval with unigrams. Default is false.
+ * suppress-tags = true
+ * ~~~
  */
 class icu_tokenizer : public util::clonable<token_stream, icu_tokenizer>
 {
   public:
     /**
      * Creates an icu_tokenizer.
+     * @param suppress_tags Whether to suppress "<s>" and "</s"> generation
      */
-    icu_tokenizer();
+    explicit icu_tokenizer(bool suppress_tags = false);
+
+    /**
+     * Creates an icu_tokenizer with a specific segmenter.
+     * @param segmenter The segmenter to use.
+     * @param suppress_tags Whether to suppress "<s>" and "</s>" generation
+     */
+    explicit icu_tokenizer(utf::segmenter segmenter,
+                           bool suppress_tags = false);
 
     /**
      * Copies an icu_tokenizer.
@@ -89,6 +117,13 @@ class icu_tokenizer : public util::clonable<token_stream, icu_tokenizer>
     /// The implementation for this tokenizer
     util::pimpl<impl> impl_;
 };
+
+/**
+ * Specialization of the factory method use to create icu_tokenizers.
+ */
+template <>
+std::unique_ptr<token_stream>
+    make_tokenizer<icu_tokenizer>(const cpptoml::table& config);
 }
 }
 }
