@@ -405,5 +405,5 @@ system.
    after.
 
 [meta-website]: https://meta-toolkit.org
-[doxygen]: https://meta-toolkit.github.io/meta/doxygen/namespaces.html
+[doxygen]: https://meta-toolkit.org/doxygen/namespaces.html
 [homebrew]: http://brew.sh
