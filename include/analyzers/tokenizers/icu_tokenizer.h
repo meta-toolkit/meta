@@ -39,9 +39,16 @@ namespace tokenizers
  * Optional config parameters:
  *
  * ~~~ toml
- * language = "en" # lowercase two-letter or three-letter ISO-639 code
- * country = "US"  # uppercase two-letter ISO-3116 code. If specified, the
- *                 # config must also specify the language.
+ * # lowercase two-letter or three-letter ISO-639 code
+ * language = "en"
+ *
+ * # uppercase two-letter ISO-3116 code. If specified, the config must also
+ * # specify the language.
+ * country = "US"
+ *
+ * # whether to suppress the generation of "<s>" or "</s>"; useful for
+ * # information retrieval with unigrams. Default is false.
+ * suppress-tags = true
  * ~~~
  */
 class icu_tokenizer : public util::clonable<token_stream, icu_tokenizer>
@@ -49,14 +56,17 @@ class icu_tokenizer : public util::clonable<token_stream, icu_tokenizer>
   public:
     /**
      * Creates an icu_tokenizer.
+     * @param suppress_tags Whether to suppress "<s>" and "</s"> generation
      */
-    icu_tokenizer();
+    explicit icu_tokenizer(bool suppress_tags = false);
 
     /**
      * Creates an icu_tokenizer with a specific segmenter.
      * @param segmenter The segmenter to use.
+     * @param suppress_tags Whether to suppress "<s>" and "</s>" generation
      */
-    icu_tokenizer(utf::segmenter segmenter);
+    explicit icu_tokenizer(utf::segmenter segmenter,
+                           bool suppress_tags = false);
 
     /**
      * Copies an icu_tokenizer.

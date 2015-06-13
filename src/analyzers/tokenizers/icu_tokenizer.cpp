@@ -29,9 +29,13 @@ const std::string icu_tokenizer::id = "icu-tokenizer";
 class icu_tokenizer::impl
 {
   public:
-    impl() = default;
+    impl(bool suppress_tags) : suppress_tags_{suppress_tags}
+    {
+        // nothing
+    }
 
-    impl(utf::segmenter segmenter) : segmenter_{std::move(segmenter)}
+    explicit impl(utf::segmenter segmenter, bool suppress_tags)
+        : suppress_tags_{suppress_tags}, segmenter_{std::move(segmenter)}
     {
         // nothing
     }
@@ -55,7 +59,8 @@ class icu_tokenizer::impl
         segmenter_.set_content(content);
         for (const auto& sentence : segmenter_.sentences())
         {
-            tokens_.emplace_back("<s>");
+            if (!suppress_tags_)
+                tokens_.emplace_back("<s>");
             for (const auto& word : segmenter_.words(sentence))
             {
                 auto wrd = segmenter_.content(word);
@@ -70,7 +75,8 @@ class icu_tokenizer::impl
 
                 tokens_.emplace_back(std::move(wrd));
             }
-            tokens_.emplace_back("</s>");
+            if (!suppress_tags_)
+                tokens_.emplace_back("</s>");
         }
     }
 
@@ -95,6 +101,9 @@ class icu_tokenizer::impl
     }
 
   private:
+    /// Whether or not to suppress "<s>" or "</s>" generation
+    const bool suppress_tags_;
+
     /// UTF segmenter to use for this tokenizer
     utf::segmenter segmenter_;
 
@@ -102,10 +111,13 @@ class icu_tokenizer::impl
     std::deque<std::string> tokens_;
 };
 
-icu_tokenizer::icu_tokenizer() = default;
+icu_tokenizer::icu_tokenizer(bool suppress_tags) : impl_{suppress_tags}
+{
+    // nothing
+}
 
-icu_tokenizer::icu_tokenizer(utf::segmenter segmenter)
-    : impl_{std::move(segmenter)}
+icu_tokenizer::icu_tokenizer(utf::segmenter segmenter, bool suppress_tags)
+    : impl_{std::move(segmenter), suppress_tags}
 {
     // nothing
 }
@@ -140,6 +152,10 @@ std::unique_ptr<token_stream>
 {
     auto language = config.get_as<std::string>("language");
     auto country = config.get_as<std::string>("country");
+    bool suppress_tags = false;
+
+    if (auto stags = config.get_as<bool>("suppress-tags"))
+        suppress_tags = *stags;
 
     using exception = token_stream::token_stream_exception;
 
@@ -149,12 +165,14 @@ std::unique_ptr<token_stream>
     if (language)
     {
         if (country)
-            return make_unique<icu_tokenizer>(utf::segmenter{*language, *country});
+            return make_unique<icu_tokenizer>(
+                utf::segmenter{*language, *country}, suppress_tags);
         else
-            return make_unique<icu_tokenizer>(utf::segmenter{*language});
+            return make_unique<icu_tokenizer>(utf::segmenter{*language},
+                                              suppress_tags);
     }
 
-    return make_unique<icu_tokenizer>();
+    return make_unique<icu_tokenizer>(suppress_tags);
 }
 }
 }
