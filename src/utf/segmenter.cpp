@@ -36,6 +36,26 @@ class segmenter::impl
     }
 
     /**
+     * Constructs a new impl based on the locale parameters.
+     */
+    impl(const std::string& language,
+         const util::optional<std::string>& country)
+    {
+        icu::Locale::Locale locale(language.c_str(),
+                                   country ? country->c_str() : nullptr);
+        if (locale.isBogus())
+            throw std::runtime_error{"failed to create locale"};
+
+        auto status = U_ZERO_ERROR;
+        sentence_iter_.reset(
+            icu::BreakIterator::createSentenceInstance(locale, status));
+        word_iter_.reset(
+            icu::BreakIterator::createWordInstance(locale, status));
+        if (!U_SUCCESS(status))
+            throw std::runtime_error{"failed to create segmenter"};
+    }
+
+    /**
      * Copy constructs an impl.
      * @param other The impl to copy.
      */
@@ -167,8 +187,14 @@ segmenter::segmenter()
     icu_handle::get();
 }
 
-segmenter::segmenter(const segmenter& other)
-    : impl_{*other.impl_}
+segmenter::segmenter(const std::string& language,
+                     const util::optional<std::string>& country)
+    : impl_{language, country}
+{
+    // nothing
+}
+
+segmenter::segmenter(const segmenter& other) : impl_{*other.impl_}
 {
     // nothing
 }
@@ -205,6 +231,5 @@ segmenter::segment::segment(int32_t begin, int32_t end)
 {
     // nothing
 }
-
 }
 }

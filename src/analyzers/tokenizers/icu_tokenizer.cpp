@@ -10,6 +10,7 @@
 #include <unicode/uchar.h>
 
 #include "analyzers/tokenizers/icu_tokenizer.h"
+#include "cpptoml.h"
 #include "util/pimpl.tcc"
 #include "utf/segmenter.h"
 
@@ -28,6 +29,13 @@ const std::string icu_tokenizer::id = "icu-tokenizer";
 class icu_tokenizer::impl
 {
   public:
+    impl() = default;
+
+    impl(utf::segmenter segmenter) : segmenter_{std::move(segmenter)}
+    {
+        // nothing
+    }
+
     /**
      * @param content The string content to set
      * TODO: can we make this be a streaming API instead of buffering all
@@ -36,7 +44,9 @@ class icu_tokenizer::impl
     void set_content(std::string content)
     {
         auto pred = [](char c)
-        { return c == '\n' || c == '\v' || c == '\f' || c == '\r'; };
+        {
+            return c == '\n' || c == '\v' || c == '\f' || c == '\r';
+        };
         // doing this because the sentence segmenter gets confused by
         // newlines appearing within a pargraph. Plus, we don't really care
         // about the kind of whitespace that was used for IR tasks.
@@ -56,7 +66,7 @@ class icu_tokenizer::impl
                 UChar32 codepoint;
                 U8_GET_UNSAFE(wrd.c_str(), 0, codepoint);
                 if (u_isUWhiteSpace(codepoint))
-                  continue;
+                    continue;
 
                 tokens_.emplace_back(std::move(wrd));
             }
@@ -93,10 +103,18 @@ class icu_tokenizer::impl
 };
 
 icu_tokenizer::icu_tokenizer() = default;
+
+icu_tokenizer::icu_tokenizer(utf::segmenter segmenter)
+    : impl_{std::move(segmenter)}
+{
+    // nothing
+}
+
 icu_tokenizer::icu_tokenizer(icu_tokenizer&&) = default;
 
 icu_tokenizer::icu_tokenizer(const icu_tokenizer& other) : impl_{*other.impl_}
 {
+    // nothing
 }
 
 icu_tokenizer::~icu_tokenizer() = default;
@@ -114,6 +132,29 @@ std::string icu_tokenizer::next()
 icu_tokenizer::operator bool() const
 {
     return static_cast<bool>(*impl_);
+}
+
+template <>
+std::unique_ptr<token_stream>
+    make_tokenizer<icu_tokenizer>(const cpptoml::table& config)
+{
+    auto language = config.get_as<std::string>("language");
+    auto country = config.get_as<std::string>("country");
+
+    using exception = token_stream::token_stream_exception;
+
+    if (country && !language)
+        throw exception{"icu_tokenizer cannot be created with just a country"};
+
+    if (language)
+    {
+        if (country)
+            return make_unique<icu_tokenizer>(utf::segmenter{*language, *country});
+        else
+            return make_unique<icu_tokenizer>(utf::segmenter{*language});
+    }
+
+    return make_unique<icu_tokenizer>();
 }
 }
 }
