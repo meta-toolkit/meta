@@ -83,6 +83,8 @@ inline std::u16string icu_to_u16str(const icu::UnicodeString& icu_str)
 inline std::string icu_to_u8str(const icu::UnicodeString& icu_str)
 {
     std::string u8str;
+    u8str.reserve(icu_str.length()); // this is not right in general, but is a
+                                     // reasonable guess for ascii
     icu_str.toUTF8String(u8str);
     return u8str;
 }
