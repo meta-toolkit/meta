@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(meta)
 
 option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
+option(ENABLE_PROFILING "Link against gperftools profiler library" OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
@@ -146,6 +147,12 @@ if(LIBCXX_LIBRARY)
   target_include_directories(meta-definitions SYSTEM INTERFACE ${LIBCXX_INCLUDE_DIR})
   target_compile_options(meta-definitions INTERFACE ${LIBCXX_OPTIONS})
   target_link_libraries(meta-definitions INTERFACE -L${LIBCXX_LIB_PATH})
+endif()
+
+if(ENABLE_PROFILING)
+  find_library(GPERFTOOLS_PROFILER NAMES profiler REQUIRED)
+  message("-- Found profiler: ${GPERFTOOLS_PROFILER}")
+  target_link_libraries(meta-definitions INTERFACE ${GPERFTOOLS_PROFILER})
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
