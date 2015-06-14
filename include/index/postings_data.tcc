@@ -113,7 +113,7 @@ bool operator==(const postings_data<PrimaryKey, SecondaryKey>& lhs,
 }
 
 template <class PrimaryKey, class SecondaryKey>
-PrimaryKey postings_data<PrimaryKey, SecondaryKey>::primary_key() const
+const PrimaryKey& postings_data<PrimaryKey, SecondaryKey>::primary_key() const
 {
     return p_id_;
 }
