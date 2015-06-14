@@ -106,23 +106,6 @@ std::string foldcase(const std::string& str)
     return result;
 }
 
-std::string remove_if(const std::string& str,
-                      std::function<bool(uint32_t)> pred)
-{
-    std::string result;
-    const char* s = str.c_str();
-    int32_t length = str.length();
-    for (int32_t i = 0; i < length;)
-    {
-        UChar32 codepoint;
-        U8_NEXT(s, i, length, codepoint);
-        if (pred(codepoint))
-          continue;
-        utf8_append_codepoint(result, codepoint);
-    }
-    return result;
-}
-
 bool isalpha(uint32_t codepoint)
 {
     return u_isalpha(codepoint);

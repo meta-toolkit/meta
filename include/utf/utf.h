@@ -13,10 +13,28 @@
 #include <functional>
 #include <string>
 
+#include <unicode/utf8.h>
+
 namespace meta
 {
 namespace utf
 {
+
+/**
+ * Helper method that appends a UTF-32 codepoint to the given utf8 string.
+ * @param dest The string to append the codepoint to
+ * @param codepoint The UTF-32 codepoint to append
+ */
+inline void utf8_append_codepoint(std::string& dest, uint32_t codepoint)
+{
+    std::array<uint8_t, U8_MAX_LENGTH> buf;
+    int32_t len = 0;
+    UBool err = FALSE;
+    U8_APPEND(&buf[0], len, U8_MAX_LENGTH, codepoint, err);
+    if (err)
+        throw std::runtime_error{"failed to add codepoint to string"};
+    dest.append(reinterpret_cast<char*>(&buf[0]), len);
+}
 
 /**
  * Converts a string from the given charset to utf8.
@@ -94,8 +112,23 @@ std::string transform(const std::string& str, const std::string& id);
  * @return a utf8 formatted string with all codepoints matching pred
  * removed
  */
-std::string remove_if(const std::string& str,
-                      std::function<bool(uint32_t)> pred);
+template <class Predicate>
+std::string remove_if(const std::string& str, Predicate&& pred)
+{
+    std::string result;
+    result.reserve(str.size());
+    const char* s = str.c_str();
+    int32_t length = str.length();
+    for (int32_t i = 0; i < length;)
+    {
+        UChar32 codepoint;
+        U8_NEXT(s, i, length, codepoint);
+        if (pred(codepoint))
+            continue;
+        utf8_append_codepoint(result, codepoint);
+    }
+    return result;
+}
 
 /**
  * @return the number of code points in a utf8 string.

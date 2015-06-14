@@ -87,21 +87,7 @@ inline std::string icu_to_u8str(const icu::UnicodeString& icu_str)
     return u8str;
 }
 
-/**
- * Helper method that appends a UTF-32 codepoint to the given utf8 string.
- * @param dest The string to append the codepoint to
- * @param codepoint The UTF-32 codepoint to append
- */
-inline void utf8_append_codepoint(std::string& dest, uint32_t codepoint)
-{
-    std::array<uint8_t, U8_MAX_LENGTH> buf;
-    int32_t len = 0;
-    UBool err = FALSE;
-    U8_APPEND(&buf[0], len, U8_MAX_LENGTH, codepoint, err);
-    if (err)
-        throw std::runtime_error{"failed to add codepoint to string"};
-    dest.append(reinterpret_cast<char*>(&buf[0]), len);
-}
+
 }
 }
 #endif
