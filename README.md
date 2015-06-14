@@ -17,6 +17,7 @@ about MeTA!
     - [Mac OS X](#mac-os-x-build-guide)
     - [Ubuntu](#ubuntu-build-guide)
     - [Arch Linux](#arch-linux-build-guide)
+    - [Fedora](#fedora-build-guide)
     - [EWS/EngrIT](#ewsengrit-build-guide) (this is UIUC-specific)
     - [Generic Setup Notes](#generic-setup-notes)
 
@@ -322,7 +323,8 @@ system.
 
 ## Fedora Build Guide
 
-This has been tested with Fedora 20+. You may have success with earlier versions, but this is not tested.
+This has been tested with Fedora 20+. You may have success with earlier
+versions, but this is not tested.
 
 To get started, install some dependencies:
 
@@ -331,11 +333,12 @@ To get started, install some dependencies:
 sudo yum install make git wget
 
 # libicu-devel is probably not installed by default
-sudo yum install g++ libicu-devel 
+sudo yum install g++ libicu-devel
 ```
-    
-Now, you will need [cmake](http://www.cmake.org/) to compile the toolkit. `cmake` 2.8 is available in Fedora repos, but a newer version (3.1) is required for this project.  
-Install cmake 3.1 with the following commands:  
+
+Now, you will need [cmake](http://www.cmake.org/) to compile the toolkit.
+`cmake` 2.8 is available in Fedora repos, but a newer version (3.1) is required
+for this project. Install cmake 3.1 with the following commands:
 
 ```
 wget http://www.cmake.org/files/v3.1/cmake-3.1.1-Linux-x86_64.sh
@@ -373,7 +376,7 @@ cmake version 3.1.1
 CMake suite maintained and supported by Kitware (kitware.com/cmake).
 ```
 
-Once the dependencies are all installed, you should be ready to build. Run 
+Once the dependencies are all installed, you should be ready to build. Run
 the following commands to get started:
 
 ```
@@ -391,7 +394,7 @@ cp ../config.toml .
 
 # configure and build the project
 CXX=g++ /usr/local/bin/cmake ../ -DCMAKE_BUILD_TYPE=Release
-make  
+make
 ```
 
 You can now test the system with the following command:
