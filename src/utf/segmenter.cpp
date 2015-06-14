@@ -59,8 +59,8 @@ class segmenter::impl
      * Copy constructs an impl.
      * @param other The impl to copy.
      */
-    impl(const impl& other)
-        : u_str_{other.u_str_},
+    impl(const impl& other) :
+          text_{other.text_},
           sentence_iter_{other.sentence_iter_->clone()},
           word_iter_{other.word_iter_->clone()}
     {
@@ -76,26 +76,17 @@ class segmenter::impl
      */
     void set_content(const std::string& str)
     {
-        u_str_ = icu::UnicodeString::fromUTF8(str);
+        text_ = str;
     }
 
     /**
-     * Obtains a utf-8 encoded string by first extracting the utf-16
-     * encoded substring between the given indices and converting that
-     * substring to utf-8.
-     *
      * @param begin The beginning index
      * @param end The ending index
      * @return the substring between begin and end
      */
     std::string substr(int32_t begin, int32_t end) const
     {
-#ifdef META_ICU_NO_TEMP_SUBSTRING
-        icu::UnicodeString substring{u_str_, begin, end - begin};
-#else
-        auto substring = u_str_.tempSubStringBetween(begin, end);
-#endif
-        return icu_to_u8str(substring);
+        return text_.substr(begin, end - begin);
     }
 
     /**
@@ -113,7 +104,7 @@ class segmenter::impl
      */
     std::vector<segment> sentences() const
     {
-        return segments(0, u_str_.length(), segment_t::SENTENCES);
+        return segments(0, text_.length(), segment_t::SENTENCES);
     }
 
     /**
@@ -122,7 +113,7 @@ class segmenter::impl
      */
     std::vector<segment> words() const
     {
-        return segments(0, u_str_.length(), segment_t::WORDS);
+        return segments(0, text_.length(), segment_t::WORDS);
     }
 
     /**
@@ -139,7 +130,6 @@ class segmenter::impl
                                   segment_t type) const
     {
         std::vector<segment> results;
-        auto status = U_ZERO_ERROR;
         icu::BreakIterator* iter;
         if (type == segment_t::SENTENCES)
             iter = sentence_iter_.get();
@@ -148,19 +138,24 @@ class segmenter::impl
         else
             throw std::runtime_error{"Unknown segmentation type"};
 
+        auto status = U_ZERO_ERROR;
+        UText utxt = UTEXT_INITIALIZER;
+        utext_openUTF8(&utxt, text_.c_str() + first, last - first, &status);
         if (!U_SUCCESS(status))
         {
-            std::string err = "Failed to segment: ";
+            std::string err = "Failed to open UText: ";
             err += u_errorName(status);
             throw std::runtime_error{err};
         }
 
-#ifdef META_ICU_NO_TEMP_SUBSTRING
-        icu::UnicodeString substring{u_str_, first, last - first};
-        iter->setText(substring);
-#else
-        iter->setText(u_str_.tempSubStringBetween(first, last));
-#endif
+        iter->setText(&utxt, status);
+        if (!U_SUCCESS(status))
+        {
+            utext_close(&utxt);
+            std::string err = "Failed to setText: ";
+            err += u_errorName(status);
+            throw std::runtime_error{err};
+        }
 
         auto start = iter->first();
         auto end = iter->next();
@@ -170,12 +165,13 @@ class segmenter::impl
             start = end;
             end = iter->next();
         }
+        utext_close(&utxt);
         return results;
     }
 
   private:
-    /// The internal ICU string
-    icu::UnicodeString u_str_;
+    /// The utf8 string we are segmenting
+    std::string text_;
     /// A pointer to a sentence break iterator
     std::unique_ptr<icu::BreakIterator> sentence_iter_;
     /// A pointer to a word break iterator
