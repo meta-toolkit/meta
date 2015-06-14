@@ -24,10 +24,6 @@ void create_config(const std::string& corpus_type)
     if (!libsvm_modules)
         throw std::runtime_error{"\"libsvm-modules\" not in config"};
 
-    auto query_judgements = orig_config.get_as<std::string>("query-judgements");
-    if (!query_judgements)
-        throw std::runtime_error{"\"query-judgements\" not in config"};
-
     auto punctuation = orig_config.get_as<std::string>("punctuation");
     if (!punctuation)
         throw std::runtime_error{"\"punctuation\" not in config"};
@@ -46,7 +42,7 @@ void create_config(const std::string& corpus_type)
                 << "end-exceptions = \"" << *end_exceptions << "\"\n"
                 << "prefix = \"" << *orig_config.get_as<std::string>("prefix")
                 << "\"\n"
-                << "query-judgements = \"" << *query_judgements << "\"\n"
+                << "query-judgements = \"../data/ceeaus-qrels.txt\"\n"
                 << "libsvm-modules = \"" << *libsvm_modules << "\"\n"
                 << "dataset = \"ceeaus\"\n"
                 << "corpus = \"" << corpus_type << ".toml\"\n"
