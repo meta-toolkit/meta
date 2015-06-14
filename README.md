@@ -318,6 +318,90 @@ ctest --output-on-failure
 If everything passes, congratulations! MeTA seems to be working on your
 system.
 
+
+
+## Fedora Build Guide
+
+This has been tested with Fedora 20+. You may have success with earlier versions, but this is not tested.
+
+To get started, install some dependencies:
+
+```bash
+# These may be already installed
+sudo yum install make git wget
+
+# libicu-devel is probably not installed by default
+sudo yum install g++ libicu-devel 
+```
+    
+Now, you will need [cmake](http://www.cmake.org/) to compile the toolkit. `cmake` 2.8 is available in Fedora repos, but a newer version (3.1) is required for this project.  
+Install cmake 3.1 with the following commands:  
+
+```
+wget http://www.cmake.org/files/v3.1/cmake-3.1.1-Linux-x86_64.sh
+sudo sh cmake-3.1.1-Linux-x86_64.sh --prefix=/usr/local
+```
+
+During CMake installation, you should agree to the license and then say "n"
+to including the subdirectory. You should be able to run the following
+commands and see the following output:
+
+```bash
+g++ --version
+```
+
+should print
+
+```
+g++ (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
+Copyright (C) 2013 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
+```
+
+and
+
+```bash
+/usr/local/bin/cmake --version
+```
+
+should print
+
+```
+cmake version 3.1.1
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+```
+
+Once the dependencies are all installed, you should be ready to build. Run 
+the following commands to get started:
+
+```
+# clone the project
+git clone https://github.com/meta-toolkit/meta.git
+cd meta/
+
+# set up submodules
+git submodule update --init --recursive
+
+# set up a build directory
+mkdir build
+cd build
+cp ../config.toml .
+
+# configure and build the project
+CXX=g++ /usr/local/bin/cmake ../ -DCMAKE_BUILD_TYPE=Release
+make  
+```
+
+You can now test the system with the following command:
+
+```bash
+ctest --output-on-failure
+```
+
+
+
 ## EWS/EngrIT Build Guide
 If you are on a machine managed by Engineering IT at UIUC, you should
 follow this guide. These systems have software that is much too old for
