@@ -40,10 +40,10 @@ list_filter::list_filter(const list_filter& other)
     // nothing
 }
 
-void list_filter::set_content(const std::string& content)
+void list_filter::set_content(std::string&& content)
 {
     token_ = util::nullopt;
-    source_->set_content(content);
+    source_->set_content(std::move(content));
     next_token();
 }
 

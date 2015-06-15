@@ -66,7 +66,7 @@ void language_model::learn_model(const std::string& config_file)
     while (corpus->has_next())
     {
         auto doc = corpus->next();
-        stream->set_content(doc.content());
+        stream->set_content(analyzer::get_content(doc));
 
         // get ngram stream started
         std::deque<std::string> ngram;

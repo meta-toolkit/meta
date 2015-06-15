@@ -42,7 +42,7 @@ class token_stream
      * Sets the content for the stream.
      * @param content The string content to set
      */
-    virtual void set_content(const std::string& content) = 0;
+    virtual void set_content(std::string&& content) = 0;
 
     /**
      * Destructor.

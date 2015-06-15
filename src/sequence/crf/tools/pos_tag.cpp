@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
         std::unique_ptr<analyzers::token_stream> stream
             = make_unique<analyzers::tokenizers::icu_tokenizer>();
-        stream->set_content(line);
+        stream->set_content(std::move(line));
         sequence::sequence seq;
         while (*stream)
         {

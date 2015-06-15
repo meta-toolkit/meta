@@ -23,9 +23,9 @@ whitespace_tokenizer::whitespace_tokenizer() : idx_{0}
 {
 }
 
-void whitespace_tokenizer::set_content(const std::string& content)
+void whitespace_tokenizer::set_content(std::string&& content)
 {
-    content_ = content;
+    content_ = std::move(content);
     idx_ = 0;
 }
 

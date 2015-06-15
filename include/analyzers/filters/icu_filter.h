@@ -60,7 +60,7 @@ class icu_filter : public util::clonable<token_stream, icu_filter>
      * Sets the content for the beginning of the filter chain.
      * @param content The string content to set
      */
-    void set_content(const std::string& content) override;
+    void set_content(std::string&& content) override;
 
     /**
      * @return the next token in the sequence.

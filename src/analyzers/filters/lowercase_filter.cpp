@@ -29,9 +29,9 @@ lowercase_filter::lowercase_filter(const lowercase_filter& other)
     // nothing
 }
 
-void lowercase_filter::set_content(const std::string& content)
+void lowercase_filter::set_content(std::string&& content)
 {
-    source_->set_content(content);
+    source_->set_content(std::move(content));
 }
 
 std::string lowercase_filter::next()

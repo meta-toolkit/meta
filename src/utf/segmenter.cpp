@@ -74,7 +74,7 @@ class segmenter::impl
      * Sets the content of the segmenter.
      * @param str The content to be set
      */
-    void set_content(const std::string& str)
+    void set_content(util::string_view str)
     {
         text_ = str;
     }
@@ -84,7 +84,7 @@ class segmenter::impl
      * @param end The ending index
      * @return the substring between begin and end
      */
-    std::string substr(int32_t begin, int32_t end) const
+    util::string_view substr(int32_t begin, int32_t end) const
     {
         return text_.substr(begin, end - begin);
     }
@@ -140,7 +140,7 @@ class segmenter::impl
 
         auto status = U_ZERO_ERROR;
         UText utxt = UTEXT_INITIALIZER;
-        utext_openUTF8(&utxt, text_.c_str() + first, last - first, &status);
+        utext_openUTF8(&utxt, text_.data() + first, last - first, &status);
         if (!U_SUCCESS(status))
         {
             std::string err = "Failed to open UText: ";
@@ -170,8 +170,8 @@ class segmenter::impl
     }
 
   private:
-    /// The utf8 string we are segmenting
-    std::string text_;
+    /// A view over the utf8 string we are segmenting
+    util::string_view text_;
     /// A pointer to a sentence break iterator
     std::unique_ptr<icu::BreakIterator> sentence_iter_;
     /// A pointer to a word break iterator
@@ -197,7 +197,7 @@ segmenter::segmenter(const segmenter& other) : impl_{*other.impl_}
 
 segmenter::~segmenter() = default;
 
-void segmenter::set_content(const std::string& str)
+void segmenter::set_content(util::string_view str)
 {
     impl_->set_content(str);
 }
@@ -217,7 +217,7 @@ auto segmenter::words(const segment& seg) const -> std::vector<segment>
     return impl_->segments(seg.begin_, seg.end_, impl::segment_t::WORDS);
 }
 
-std::string segmenter::content(const segment& seg) const
+util::string_view segmenter::content(const segment& seg) const
 {
     return impl_->substr(seg.begin_, seg.end_);
 }

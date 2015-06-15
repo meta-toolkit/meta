@@ -40,12 +40,12 @@ sentence_boundary::sentence_boundary(const sentence_boundary& other)
     // nothing
 }
 
-void sentence_boundary::set_content(const std::string& content)
+void sentence_boundary::set_content(std::string&& content)
 {
     tokens_.clear();
     tokens_.emplace_back("<s>");
     prev_ = util::nullopt;
-    source_->set_content(content);
+    source_->set_content(std::move(content));
 }
 
 void sentence_boundary::load_heuristics(const cpptoml::table& config)

@@ -28,10 +28,10 @@ english_normalizer::english_normalizer(const english_normalizer& other)
     // nothing
 }
 
-void english_normalizer::set_content(const std::string& content)
+void english_normalizer::set_content(std::string&& content)
 {
     tokens_.clear();
-    source_->set_content(content);
+    source_->set_content(std::move(content));
 }
 
 std::string english_normalizer::next()

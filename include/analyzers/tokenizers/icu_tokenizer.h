@@ -92,7 +92,7 @@ class icu_tokenizer : public util::clonable<token_stream, icu_tokenizer>
      * output as utf-8 encoded strings.
      * @param content The string content to set
      */
-    void set_content(const std::string& content) override;
+    void set_content(std::string&& content) override;
 
     /**
      * @return the next token in the document. This will either by a

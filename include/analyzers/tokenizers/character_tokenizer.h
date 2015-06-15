@@ -44,7 +44,7 @@ class character_tokenizer
      * Sets the content for the tokenizer.
      * @param content The string content to set
      */
-    void set_content(const std::string& content) override;
+    void set_content(std::string&& content) override;
 
     /**
      * @return the next token in the document. This token will contain a

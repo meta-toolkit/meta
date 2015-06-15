@@ -29,9 +29,9 @@ empty_sentence_filter::empty_sentence_filter(const empty_sentence_filter& other)
     // nothing
 }
 
-void empty_sentence_filter::set_content(const std::string& content)
+void empty_sentence_filter::set_content(std::string&& content)
 {
-    source_->set_content(content);
+    source_->set_content(std::move(content));
     first_ = second_ = util::nullopt;
     next_token();
 }

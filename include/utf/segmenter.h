@@ -14,6 +14,7 @@
 #include <vector>
 #include "util/optional.h"
 #include "util/pimpl.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -88,11 +89,14 @@ class segmenter
     ~segmenter();
 
     /**
-     * Resets the content of the segmenter to the given string.
+     * Resets the content of the segmenter to the given string. The
+     * segmenter *does not own the data it operates over*, rather, the
+     * caller is responsible for guaranteeing that the string does not
+     * invalidate while the segmenter is acting over it.
      *
      * @param str A utf-8 string that should be segmented
      */
-    void set_content(const std::string& str);
+    void set_content(util::string_view str);
 
     /**
      * Segments the current content into sentences by following the
@@ -125,7 +129,7 @@ class segmenter
      * encoded string
      * @param seg the segment to get content for
      */
-    std::string content(const segment& seg) const;
+    util::string_view content(const segment& seg) const;
 
   private:
     class impl;

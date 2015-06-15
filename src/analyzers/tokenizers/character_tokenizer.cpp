@@ -21,10 +21,10 @@ character_tokenizer::character_tokenizer() : idx_{0}
     // nothing
 }
 
-void character_tokenizer::set_content(const std::string& content)
+void character_tokenizer::set_content(std::string&& content)
 {
     idx_ = 0;
-    content_ = content;
+    content_ = std::move(content);
 }
 
 std::string character_tokenizer::next()

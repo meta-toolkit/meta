@@ -35,10 +35,10 @@ length_filter::length_filter(const length_filter& other)
     // nothing
 }
 
-void length_filter::set_content(const std::string& content)
+void length_filter::set_content(std::string&& content)
 {
     token_ = util::nullopt;
-    source_->set_content(content);
+    source_->set_content(std::move(content));
     next_token();
 }
 
