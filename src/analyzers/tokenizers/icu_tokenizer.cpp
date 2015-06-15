@@ -87,7 +87,7 @@ class icu_tokenizer::impl
     {
         if (!*this)
             throw token_stream_exception{"next() called with no tokens left"};
-        auto result = tokens_.front();
+        auto result = std::move(tokens_.front());
         tokens_.pop_front();
         return result;
     }
