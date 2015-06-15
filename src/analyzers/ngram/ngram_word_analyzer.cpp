@@ -33,20 +33,20 @@ ngram_word_analyzer::ngram_word_analyzer(const ngram_word_analyzer& other)
 
 void ngram_word_analyzer::tokenize(corpus::document& doc)
 {
-    // first, get tokens
     stream_->set_content(get_content(doc));
-    std::vector<std::string> tokens;
+    std::deque<std::string> tokens;
     while (*stream_)
-        tokens.push_back(stream_->next());
-
-    // second, create ngrams from them
-    for (size_t i = n_value() - 1; i < tokens.size(); ++i)
     {
-        std::string combined = tokens[i];
-        for (size_t j = 1; j < n_value(); ++j)
-            combined = tokens[i - j] + "_" + combined;
+        tokens.emplace_back(stream_->next());
+        if (tokens.size() == n_value())
+        {
+            auto combined = std::move(tokens.front());
+            tokens.pop_front();
+            for (const auto& token : tokens)
+                combined += "_" + token;
 
-        doc.increment(combined, 1);
+            doc.increment(combined, 1);
+        }
     }
 }
 
