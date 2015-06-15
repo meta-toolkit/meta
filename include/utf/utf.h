@@ -10,6 +10,7 @@
 #ifndef META_UTF8_H_
 #define META_UTF8_H_
 
+#include <array>
 #include <functional>
 #include <string>
 
