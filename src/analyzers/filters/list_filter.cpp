@@ -49,7 +49,7 @@ void list_filter::set_content(std::string&& content)
 
 std::string list_filter::next()
 {
-    auto tok = *token_;
+    auto tok = std::move(*token_);
     next_token();
     return tok;
 }
@@ -76,14 +76,14 @@ void list_filter::next_token()
             case type::ACCEPT:
                 if (found)
                 {
-                    token_ = tok;
+                    token_ = std::move(tok);
                     return;
                 }
                 break;
             case type::REJECT:
                 if (!found)
                 {
-                    token_ = tok;
+                    token_ = std::move(tok);
                     return;
                 }
                 break;

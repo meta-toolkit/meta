@@ -44,7 +44,7 @@ void length_filter::set_content(std::string&& content)
 
 std::string length_filter::next()
 {
-    auto tok = *token_;
+    auto tok = std::move(*token_);
     next_token();
     return tok;
 }
@@ -67,13 +67,13 @@ void length_filter::next_token()
         auto tok = source_->next();
         if (tok == "<s>" || tok == "</s>")
         {
-            token_ = tok;
+            token_ = std::move(tok);
             return;
         }
         auto len = utf::length(tok);
         if (len >= min_length_ && len <= max_length_)
         {
-            token_ = tok;
+            token_ = std::move(tok);
             return;
         }
     }

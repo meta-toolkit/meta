@@ -48,7 +48,7 @@ void porter2_stemmer::next_token()
         Porter2Stemmer::stem(tok);
         if (!tok.empty())
         {
-            token_ = tok;
+            token_ = std::move(tok);
             return;
         }
     }

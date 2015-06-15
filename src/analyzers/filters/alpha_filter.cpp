@@ -36,7 +36,7 @@ void alpha_filter::set_content(std::string&& content)
 
 std::string alpha_filter::next()
 {
-    auto tok = *token_;
+    auto tok = std::move(*token_);
     next_token();
     return tok;
 }
@@ -48,7 +48,7 @@ void alpha_filter::next_token()
         auto tok = source_->next();
         if (tok == "<s>" || tok == "</s>")
         {
-            token_ = tok;
+            token_ = std::move(tok);
             return;
         }
 
@@ -56,7 +56,7 @@ void alpha_filter::next_token()
         { return !utf::isalpha(codepoint) && codepoint != '\''; });
         if (!filt.empty())
         {
-            token_ = filt;
+            token_ = std::move(filt);
             return;
         }
     }

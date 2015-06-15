@@ -36,8 +36,7 @@ void lowercase_filter::set_content(std::string&& content)
 
 std::string lowercase_filter::next()
 {
-    auto tok = source_->next();
-    return utf::foldcase(tok);
+    return utf::foldcase(source_->next());
 }
 
 lowercase_filter::operator bool() const
