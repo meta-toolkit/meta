@@ -27,6 +27,21 @@ namespace analyzers
  * other filters added. This tokenizer should be used to ensure that capital
  * letters and such may be used as features. Function words and stop words
  * should *not* be removed and words should not be stemmed for the same reason.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [[analyzers]]
+ * method = "ngram-pos" # this analyzer
+ * ngram = 1 # integer required
+ * crf-prefix = "path"
+ * [[analyzers.filter]]
+ *     type = "icu-tokenizer" # recommended
+ * ~~~
+ *
+ * Optional config parameters: none.
+ *
+ * @see https://meta-toolkit.org/analyzers-filters-tutorial.html
+
  */
 class ngram_pos_analyzer
     : public util::multilevel_clonable<analyzer, ngram_analyzer,

@@ -56,7 +56,7 @@ int main(int argc, char** argv)
         if (line.empty())
             break;
 
-        stream->set_content(line);
+        stream->set_content(std::move(line));
         while (*stream)
         {
             std::cout << stream->next();

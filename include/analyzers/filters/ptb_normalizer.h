@@ -25,6 +25,9 @@ namespace filters
  * A filter that normalizes text to match Penn Treebank conventions. This
  * is important as a preprocessing step for input to POS taggers and
  * parsers that were trained on Penn Treebank formatted data.
+ *
+ * Required config parameters: none.
+ * Optional config parameters: none.
  */
 class ptb_normalizer : public util::clonable<token_stream, ptb_normalizer>
 {
@@ -46,7 +49,7 @@ class ptb_normalizer : public util::clonable<token_stream, ptb_normalizer>
      * Sets the content for the beginning of the filter chain.
      * @param content The string content to set
      */
-    void set_content(const std::string& content) override;
+    void set_content(std::string&& content) override;
 
     /**
      * Obtains the next token in the sequence.

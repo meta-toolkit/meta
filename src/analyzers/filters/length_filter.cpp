@@ -20,6 +20,9 @@ length_filter::length_filter(std::unique_ptr<token_stream> source, uint64_t min,
                              uint64_t max)
     : source_{std::move(source)}, min_length_{min}, max_length_{max}
 {
+    using exception = token_stream::token_stream_exception;
+    if (min_length_ > max_length_)
+        throw exception{"min filter length is greater than max filter length"};
     next_token();
 }
 
@@ -32,16 +35,16 @@ length_filter::length_filter(const length_filter& other)
     // nothing
 }
 
-void length_filter::set_content(const std::string& content)
+void length_filter::set_content(std::string&& content)
 {
     token_ = util::nullopt;
-    source_->set_content(content);
+    source_->set_content(std::move(content));
     next_token();
 }
 
 std::string length_filter::next()
 {
-    auto tok = *token_;
+    auto tok = std::move(*token_);
     next_token();
     return tok;
 }
@@ -64,13 +67,13 @@ void length_filter::next_token()
         auto tok = source_->next();
         if (tok == "<s>" || tok == "</s>")
         {
-            token_ = tok;
+            token_ = std::move(tok);
             return;
         }
         auto len = utf::length(tok);
         if (len >= min_length_ && len <= max_length_)
         {
-            token_ = tok;
+            token_ = std::move(tok);
             return;
         }
     }

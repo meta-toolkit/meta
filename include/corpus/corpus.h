@@ -25,6 +25,20 @@ namespace corpus
 
 /**
  * Provides interface to with multiple corpus input formats.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * prefix = "prefix"
+ * dataset = "datasetname" # relative to prefix
+ * corpus = "corpus-spec-file" # e.g. "line.toml"
+ * ~~~
+ *
+ * The corpus spec toml file also requires a corpus type and an optional
+ * encoding for the corpus text.
+ *
+ * Optional config parameters: none.
+ *
+ * @see https://meta-toolkit.org/overview-tutorial.html
  */
 class corpus
 {

@@ -23,6 +23,9 @@ namespace filters
  * Filter that removes any empty sentences from the token stream. Empty
  * sentences can be caused by filters in the filter chain that follow
  * sentence boundary detection.
+ *
+ * Required config parameters: none.
+ * Optional config parameters: none.
  */
 class empty_sentence_filter
     : public util::clonable<token_stream, empty_sentence_filter>
@@ -45,7 +48,7 @@ class empty_sentence_filter
      * Sets the content for the beginning of the filter chain.
      * @param content The string content to set
      */
-    void set_content(const std::string& content) override;
+    void set_content(std::string&& content) override;
 
     /**
      * Obtains the next token in the sequence.

@@ -27,9 +27,9 @@ porter2_stemmer::porter2_stemmer(const porter2_stemmer& other)
     // nothing
 }
 
-void porter2_stemmer::set_content(const std::string& content)
+void porter2_stemmer::set_content(std::string&& content)
 {
-    source_->set_content(content);
+    source_->set_content(std::move(content));
     next_token();
 }
 
@@ -48,7 +48,7 @@ void porter2_stemmer::next_token()
         Porter2Stemmer::stem(tok);
         if (!tok.empty())
         {
-            token_ = tok;
+            token_ = std::move(tok);
             return;
         }
     }

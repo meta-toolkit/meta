@@ -28,10 +28,10 @@ ptb_normalizer::ptb_normalizer(const ptb_normalizer& other)
     // nothing
 }
 
-void ptb_normalizer::set_content(const std::string& content)
+void ptb_normalizer::set_content(std::string&& content)
 {
     tokens_.clear();
-    source_->set_content(content);
+    source_->set_content(std::move(content));
 }
 
 std::string ptb_normalizer::next()

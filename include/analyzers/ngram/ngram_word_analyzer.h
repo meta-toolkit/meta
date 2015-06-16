@@ -20,6 +20,18 @@ namespace analyzers
 
 /**
  * Analyzes documents using their tokenized words.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [[analyzers]]
+ * method = "ngram-word" # this analyzer
+ * ngram = 1 # integer required
+ * filter = "default-chain" # filter type required
+ * ~~~
+ *
+ * Optional config parameters: none.
+ *
+ * @see https://meta-toolkit.org/analyzers-filters-tutorial.html
  */
 class ngram_word_analyzer
     : public util::multilevel_clonable<analyzer, ngram_analyzer,

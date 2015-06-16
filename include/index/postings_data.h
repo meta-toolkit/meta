@@ -148,7 +148,7 @@ class postings_data
     /**
      * @return the term_id for this postings_data
      */
-    PrimaryKey primary_key() const;
+    const PrimaryKey& primary_key() const;
 
     /**
      * @param new_key

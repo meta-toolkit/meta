@@ -28,7 +28,7 @@ float pivoted_length::score_one(const score_data& sd)
     float norm = (1.0f - s_) + s_ * (doc_len / sd.avg_dl);
     float IDF
         = fastapprox::fastlog((sd.num_docs + 1.0f) / (0.5f + sd.doc_count));
-    return TF / norm * sd.query_term_count * IDF;
+    return TF / norm * sd.query_term_weight * IDF;
 }
 
 template <>

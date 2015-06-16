@@ -45,7 +45,7 @@ class whitespace_tokenizer : public util::clonable<token_stream,
      * Sets the content for the tokenizer to parse.
      * @param content The string content to set
      */
-    void set_content(const std::string& content) override;
+    void set_content(std::string&& content) override;
 
     /**
      * @return the next token in the document. This will either be a

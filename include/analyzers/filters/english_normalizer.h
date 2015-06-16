@@ -27,6 +27,9 @@ namespace filters
  * whitespace (adjacent whitespace tokens are converted to a single
  * normalized space token) and punctuation (which is split out from words
  * following basic heuristics).
+ *
+ * Required config parameters: none.
+ * Optional config parameters: none.
  */
 class english_normalizer
     : public util::clonable<token_stream, english_normalizer>
@@ -49,7 +52,7 @@ class english_normalizer
      * Sets the content for the beginning of the filter chain.
      * @param content The string content to set
      */
-    void set_content(const std::string& content) override;
+    void set_content(std::string&& content) override;
 
     /**
      * Obtains the next token in the sequence.

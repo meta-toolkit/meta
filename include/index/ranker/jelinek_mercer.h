@@ -22,6 +22,17 @@ namespace index
  * can be viewed as a linear interpolation between the query term probablity
  * and the collection term probability. The model parameter lambda is the
  * weighting of this interpolation.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [ranker]
+ * method = "jelinek-mercer"
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * lambda = 0.7
+ * ~~~
  */
 class jelinek_mercer : public language_model_ranker
 {

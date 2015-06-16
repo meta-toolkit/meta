@@ -72,6 +72,14 @@ class analyzer
         default_filter_chain(const cpptoml::table& config);
 
     /**
+     * @param config The config group used to create the analyzer from
+     * @return the default filter chain for unigram words for this version
+     * of MeTA, based on a config object
+     */
+    static std::unique_ptr<token_stream>
+        default_unigram_chain(const cpptoml::table& config);
+
+    /**
      * @param global The original config object with all parameters
      * @param config The config group used to create the filters from
      * @return a filter chain as specified by a config object

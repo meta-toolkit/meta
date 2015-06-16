@@ -27,7 +27,8 @@ sentence::sentence(const std::string& text, bool tokenize /* = true */)
         stream = make_unique<filters::lowercase_filter>(std::move(stream));
         stream = make_unique<filters::alpha_filter>(std::move(stream));
         stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
-        stream->set_content(text);
+        std::string text_copy{text}; // consider changing parameter to non-const
+        stream->set_content(std::move(text_copy));
         while (*stream)
             tokens_.push_back(stream->next());
 

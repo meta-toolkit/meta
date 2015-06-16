@@ -8,8 +8,8 @@ end-exceptions = "../data/sentence-boundaries/sentence-end-exceptions.txt"
 query-judgements = "../data/ceeaus-qrels.txt"
 query-path = "../queries.txt" # create this file
 
-corpus-type = "line-corpus"
 dataset = "20newsgroups"
+corpus = "line.toml" # located inside dataset folder
 forward-index = "20news-fwd"
 inverted-index = "20news-inv"
 

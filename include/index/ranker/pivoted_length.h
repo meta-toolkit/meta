@@ -21,6 +21,17 @@ namespace index
  * The pivoted document length normalization ranking function
  * @see Amit Singal, Chris Buckley, and Mandar Mitra. Pivoted document length
  * normalization. SIGIR '96, pages 21-29.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [ranker]
+ * method = "pivoted-length"
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * s = 0.2
+ * ~~~
  */
 class pivoted_length : public ranker
 {

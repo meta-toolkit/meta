@@ -30,9 +30,9 @@ icu_filter::icu_filter(const icu_filter& other)
     // nothing
 }
 
-void icu_filter::set_content(const std::string& content)
+void icu_filter::set_content(std::string&& content)
 {
-    source_->set_content(content);
+    source_->set_content(std::move(content));
     next_token();
 }
 
