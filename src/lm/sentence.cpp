@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <numeric>
+#include <iterator>
 #include "lm/sentence.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
