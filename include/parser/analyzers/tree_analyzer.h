@@ -27,13 +27,14 @@ namespace analyzers
  * Base class tokenizing using parse tree features.
  *
  * Required config parameters:
- * ```toml
+ * ~~~toml
  * [[analyzers]]
  * method = "tree" # this analyzer
  * filter = [{type = "icu-tokenizer"}, {type = "ptb-normalizer"}] # example
  * features = ["skel", "subtree"] # example
  * tagger = "path"
  * parser = "path"
+ * ~~~
  *
  * Optional config parameters: none.
  *

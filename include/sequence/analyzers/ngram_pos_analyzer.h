@@ -29,14 +29,14 @@ namespace analyzers
  * should *not* be removed and words should not be stemmed for the same reason.
  *
  * Required config parameters:
- * ```toml
+ * ~~~toml
  * [[analyzers]]
  * method = "ngram-pos" # this analyzer
  * ngram = 1 # integer required
  * crf-prefix = "path"
  * [[analyzers.filter]]
  *     type = "icu-tokenizer" # recommended
- * ```
+ * ~~~
  *
  * Optional config parameters: none.
  *

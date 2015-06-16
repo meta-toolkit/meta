@@ -32,10 +32,10 @@ namespace filters
  * inclusive.
  *
  * Required config parameters:
- * ```toml
+ * ~~~toml
  * min = 2  # any integer
  * max = 32 # any integer >= min
- * ```
+ * ~~~
  *
  * Optional config parameters: none.
  */

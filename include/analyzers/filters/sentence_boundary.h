@@ -35,11 +35,11 @@ namespace filters
  * in the source stream.
  *
  * Required config parameters:
- * ```toml
+ * ~~~toml
  * punctuation = "path"
  * start-exceptions = "path"
  * end-exceptions = "path"
- * ```
+ * ~~~
  *
  * Optional config parameters: none.
  */

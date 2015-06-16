@@ -31,9 +31,9 @@ namespace filters
  * sequence.
  *
  * Required config parameters:
- * ```toml
+ * ~~~toml
  * id = "transformer"
- * ```
+ * ~~~
  *
  * Optional config parameters: none.
  *

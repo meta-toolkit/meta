@@ -22,12 +22,12 @@ namespace analyzers
  * Analyzes documents using their tokenized words.
  *
  * Required config parameters:
- * ```toml
+ * ~~~toml
  * [[analyzers]]
  * method = "ngram-word" # this analyzer
  * ngram = 1 # integer required
  * filter = "default-chain" # filter type required
- * ```
+ * ~~~
  *
  * Optional config parameters: none.
  *
