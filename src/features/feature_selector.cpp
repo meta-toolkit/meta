@@ -58,9 +58,9 @@ void feature_selector::score_all()
     }
     prog.end();
 
-    parallel::parallel_for(scores.begin(), scores.end(), [&](auto& v)
+    parallel::parallel_for(scores.begin(), scores.end(), [&](std::vector<pair_t>& v)
                            {
-        std::sort(v.begin(), v.end(), [&](const auto& a, const auto& b)
+        std::sort(v.begin(), v.end(), [&](const pair_t& a, const pair_t& b)
                   {
             return a.second > b.second;
         });
