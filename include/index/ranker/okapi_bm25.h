@@ -19,6 +19,19 @@ namespace index
 
 /**
  * The Okapi BM25 scoring function.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [ranker]
+ * method = "bm25"
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * k1 = 1.2
+ * b = 0.75
+ * k3 = 500.0
+ * ~~~
  */
 class okapi_bm25 : public ranker
 {

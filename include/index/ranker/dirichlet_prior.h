@@ -19,6 +19,18 @@ namespace index
 
 /**
  * Implements Bayesian smoothing with a Dirichlet prior.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [ranker]
+ * method = "dirichlet-prior"
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * mu = 2000.0
+ * ~~~
+
  */
 class dirichlet_prior : public language_model_ranker
 {

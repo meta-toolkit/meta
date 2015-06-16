@@ -20,6 +20,17 @@ namespace index
 
 /**
  * Implements the absolute discounting smoothing method.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [ranker]
+ * method = "absolute-discount"
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * delta = 0.7
+ * ~~~
  */
 class absolute_discount : public language_model_ranker
 {
