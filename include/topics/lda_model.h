@@ -21,6 +21,18 @@ namespace topics
 
 /**
  * An LDA topic model base class.
+ *
+ * Required config parameters (for use with the ./lda executable):
+ * ~~~toml
+ * inference = "inference-method" # gibbs, pargibbs, cvb, scvb
+ * max-iters = 1000
+ * alpha = 1.0
+ * beta = 1.0
+ * topics = 4
+ * model-prefix = "prefix"
+ * ~~~
+ *
+ * Optional config parameters: none.
  */
 class lda_model
 {
