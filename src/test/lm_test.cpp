@@ -21,7 +21,7 @@ int lm_tests()
     num_failed += testing::run_test(
         "lm-test", [&]()
         {
-            lm::language_model model{cpptoml::parse_file("config.toml")};
+            lm::language_model model{cpptoml::parse_file("test-config.toml")};
             lm::sentence s1{
                 "<s> I disagree with this statement for several reasons . </s>",
                 false};
