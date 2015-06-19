@@ -14,6 +14,13 @@ using namespace meta;
 
 int main(int argc, char* argv[])
 {
+    if (argc != 3)
+    {
+        std::cerr << "Usage:\t" << argv[0] << " config.toml input.txt"
+                  << std::endl;
+        return 1;
+    }
+
     bool diagnostic = true;
     auto config = cpptoml::parse_file(argv[1]);
     lm::diff correcter{*config.get_table("diff")};
