@@ -59,10 +59,6 @@ insert-penalty = 0.0
 substitute-penalty = 0.0
 remove-penalty = 0.0
 
-[language-model]
-format = "learn"
-n-value = 3
-
 [features]
 method = "info-gain"
 prefix = "features"
