@@ -85,3 +85,6 @@ section-size = 99
 train-sections = [2, 21]
 dev-sections = [22, 22]
 test-sections = [23, 23]
+
+[language-model]
+arpa-file = "../data/english-sentences.arpa"

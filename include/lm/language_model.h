@@ -21,6 +21,23 @@ namespace meta
 {
 namespace lm
 {
+/**
+ * A very simple language model class that reads existing language model data
+ * from a .arpa file. Currently, estimation of the language model is not
+ * implemented. We recommend using KenLM to generate a .arpa file from a text
+ * corpus that has been (optionally) preprocessed by MeTA.
+ *
+ * @see http://www.speech.sri.com/projects/srilm/manpages/ngram-format.5.html
+ * @see https://kheafield.com/code/kenlm/
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [language-model]
+ * arpa-file = "path-to-file"
+ * ~~~
+ *
+ * Optional config parameters: none.
+ */
 class language_model
 {
   private:
@@ -41,6 +58,8 @@ class language_model
         float backoff;
     };
 
+    // This structure could be switched out for something more efficient, such
+    // as a static linear probing hash table
     using map_t = std::unordered_map<std::string, lm_node>;
 
   public:
