@@ -53,19 +53,19 @@ void feature_selector::score_all()
     {
         prog(tid);
         for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
-            scores[lbl][tid]
-                = std::make_pair(tid, score(static_cast<label_id>(lbl + 1), term_id{tid}));
+            scores[lbl][tid] = std::make_pair(
+                tid, score(static_cast<label_id>(lbl + 1), term_id{tid}));
     }
     prog.end();
 
-    parallel::parallel_for(scores.begin(), scores.end(), [&](std::vector<pair_t>& v)
-                           {
-        std::sort(v.begin(), v.end(), [&](const pair_t& a, const pair_t& b)
-                  {
-            return a.second > b.second;
+    parallel::parallel_for(
+        scores.begin(), scores.end(), [&](std::vector<pair_t>& v)
+        {
+            std::sort(v.begin(), v.end(), [&](const pair_t& a, const pair_t& b)
+                      {
+                          return a.second > b.second;
+                      });
         });
-    });
-
 
     for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
     {
@@ -151,7 +151,8 @@ void feature_selector::print_summary(uint64_t k /* = 20 */) const
     double score;
     for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
     {
-        std::cout << std::endl << "Top " << k << " features for \""
+        std::cout << std::endl
+                  << "Top " << k << " features for \""
                   << idx_->class_label_from_id(static_cast<label_id>(lbl + 1))
                   << "\":" << std::endl
                   << "===============================" << std::endl;
@@ -171,24 +172,27 @@ void feature_selector::print_summary(uint64_t k /* = 20 */) const
 double feature_selector::prob_term(term_id id) const
 {
     auto p = term_prob_.at(id);
-    if(p < 0 || p > 1)
-        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    if (p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": "
+                                 + std::to_string(p)};
     return p;
 }
 
 double feature_selector::prob_class(label_id id) const
 {
     auto p = class_prob_.at(id - 1);
-    if(p < 0 || p > 1)
-        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    if (p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": "
+                                 + std::to_string(p)};
     return p;
 }
 
 double feature_selector::term_and_class(term_id term, label_id label) const
 {
     auto p = co_occur_.at(label - 1).at(term);
-    if(p < 0 || p > 1)
-        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    if (p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": "
+                                 + std::to_string(p)};
     return p;
 }
 
@@ -196,25 +200,28 @@ double feature_selector::not_term_and_not_class(term_id term,
                                                 label_id label) const
 {
     auto p = 1.0 - term_and_class(term, label) - not_term_and_class(term, label)
-           - term_and_not_class(term, label);
-    if(p < 0 || p > 1)
-        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+             - term_and_not_class(term, label);
+    if (p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": "
+                                 + std::to_string(p)};
     return p;
 }
 
 double feature_selector::term_and_not_class(term_id term, label_id label) const
 {
     auto p = term_prob_.at(term) - term_and_class(term, label);
-    if(p < 0 || p > 1)
-        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    if (p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": "
+                                 + std::to_string(p)};
     return p;
 }
 
 double feature_selector::not_term_and_class(term_id term, label_id label) const
 {
     auto p = class_prob_.at(label - 1) - term_and_class(term, label);
-    if(p < 0 || p > 1)
-        throw std::runtime_error{std::string{__func__} + ": " + std::to_string(p)};
+    if (p < 0 || p > 1)
+        throw std::runtime_error{std::string{__func__} + ": "
+                                 + std::to_string(p)};
     return p;
 }
 }
