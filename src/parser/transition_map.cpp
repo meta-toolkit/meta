@@ -8,6 +8,7 @@
 
 #include "io/binary.h"
 #include "parser/transition_map.h"
+#include "util/filesystem.h"
 
 #ifdef META_HAS_ZLIB
 #include "io/gzstream.h"
@@ -21,11 +22,19 @@ namespace parser
 transition_map::transition_map(const std::string& prefix)
 {
 #ifdef META_HAS_ZLIB
-    io::gzifstream store{prefix + "/parser.trans.gz"};
-#else
-    std::ifstream store{prefix + "/parser.trans", std::ios::binary};
+    if (filesystem::file_exists(prefix + "/parser.trans.gz"))
+    {
+        io::gzifstream store{prefix + "/parser.trans.gz"};
+        load(store);
+        return;
+    }
 #endif
+    std::ifstream store{prefix + "/parser.trans", std::ios::binary};
+    load(store);
+}
 
+void transition_map::load(std::istream& store)
+{
     if (!store)
         throw exception{"missing transitions model file"};
 

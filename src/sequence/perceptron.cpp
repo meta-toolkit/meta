@@ -7,6 +7,7 @@
 
 #include "sequence/perceptron.h"
 #include "utf/utf.h"
+#include "util/filesystem.h"
 #include "util/progress.h"
 #include "util/time.h"
 
@@ -51,10 +52,14 @@ perceptron::perceptron(const std::string& prefix) : perceptron()
     analyzer_.load(prefix);
 
 #if META_HAS_ZLIB
-    io::gzifstream file{prefix + "/tagger.model.gz"};
-#else
-    std::ifstream file{prefix + "/tagger.model"};
+    if (filesystem::file_exists(prefix + "/tagger.model.gz"))
+    {
+        io::gzifstream file{prefix + "/tagger.model.gz"};
+        model_.load(file);
+        return;
+    }
 #endif
+    std::ifstream file{prefix + "/tagger.model"};
     model_.load(file);
 }
 

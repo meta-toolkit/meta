@@ -16,6 +16,7 @@
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"
 #include "parser/trees/visitors/debinarizer.h"
+#include "util/filesystem.h"
 #include "util/progress.h"
 #include "util/range.h"
 #include "util/time.h"
@@ -451,11 +452,19 @@ void sr_parser::save(const std::string& prefix) const
 void sr_parser::load(const std::string& prefix)
 {
 #ifdef META_HAS_ZLIB
-    io::gzifstream model{prefix + "/parser.model.gz"};
-#else
-    std::ifstream model{prefix + "/parser.model", std::ios::binary};
+    if (filesystem::file_exists(prefix + "/parser.model.gz"))
+    {
+        io::gzifstream model{prefix + "/parser.model.gz"};
+        load(model);
+        return;
+    }
 #endif
+    std::ifstream model{prefix + "/parser.model", std::ios::binary};
+    load(model);
+}
 
+void sr_parser::load(std::istream& model)
+{
     if (!model)
         throw exception{"model file not found"};
 
