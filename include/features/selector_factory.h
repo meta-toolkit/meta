@@ -65,9 +65,9 @@ std::unique_ptr<feature_selector>
                   std::shared_ptr<index::forward_index> idx);
 
 /**
- * Factory method for creating a ranker. This should be specialized if
- * your given ranker requires special construction behavior (e.g.,
- * reading parameters).
+ * Factory method for creating a feature selector. This should be specialized if
+ * your selector requires special construction behavior (e.g., reading
+ * parameters).
  */
 template <class Selector>
 std::unique_ptr<feature_selector>

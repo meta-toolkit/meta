@@ -25,6 +25,17 @@ namespace features
  * The base class that shows the feature selection interface for MeTA, allowing
  * dimensionality reduction for documents as well as descriptions of classes by
  * their useful features.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * method = "corr-coef" # choose the feature selection algorithm
+ * prefix = "file-prefix"
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * features-per-class = 20 # default
+ * ~~~
  */
 class feature_selector
 {
