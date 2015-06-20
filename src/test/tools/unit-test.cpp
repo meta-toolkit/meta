@@ -23,6 +23,7 @@
 #include "test/parser_test.h"
 #include "test/lm_test.h"
 #include "test/filesystem_test.h"
+#include "test/features_test.h"
 #include "util/printing.h"
 
 using namespace meta;
@@ -51,6 +52,7 @@ int main(int argc, char* argv[])
         std::cerr << " \"parser\": runs parser tests" << std::endl;
         std::cerr << " \"language-model\": runs language model tests" << std::endl;
         std::cerr << " \"filesystem\": runs filesystem tests" << std::endl;
+        std::cerr << " \"features\": runs feature selection tests" << std::endl;
         return 1;
     }
 
@@ -92,6 +94,8 @@ int main(int argc, char* argv[])
         num_failed += testing::lm_tests();
     if (all || args.find("filesystem") != args.end())
         num_failed += testing::filesystem_tests();
+    if (all || args.find("features") != args.end())
+        num_failed += testing::features_tests();
 
     return num_failed;
 }

@@ -15,9 +15,11 @@ add_library(meta-testing analyzer_test.cpp
                          stemmer_test.cpp
                          string_list_test.cpp
                          graph_test.cpp
+                         features_test.cpp
                          vocabulary_map_test.cpp
                          parser_test.cpp)
-target_link_libraries(meta-testing meta-index meta-classify meta-parser)
+target_link_libraries(meta-testing meta-index meta-classify meta-parser
+    meta-features)
 
 set(UNIT_TEST_EXE unit-test)
 include(unit_tests.cmake)
