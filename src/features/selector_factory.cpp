@@ -24,6 +24,7 @@ selector_factory::selector_factory()
     reg<information_gain>();
     reg<chi_square>();
     reg<correlation_coefficient>();
+    reg<odds_ratio>();
 }
 
 std::unique_ptr<feature_selector>
