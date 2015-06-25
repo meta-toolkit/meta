@@ -63,6 +63,10 @@ int features_tests()
                                     {
                                         test_construction(f_idx, "corr-coef");
                                     });
+        failed += testing::run_test("odds-ratio", [&]()
+                                    {
+                                        test_construction(f_idx, "odds-ratio");
+                                    });
     }
 
     system("rm -rf ceeaus-* test-features.*");
