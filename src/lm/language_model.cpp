@@ -7,7 +7,6 @@
  * project.
  */
 
-#include <iostream>
 #include <sstream>
 #include <random>
 #include "util/time.h"
@@ -55,12 +54,12 @@ void language_model::read_arpa_format(const std::string& arpa_file)
     lm_.emplace_back(count[N_]); // add current n-value data
     while (std::getline(infile, buffer))
     {
-        if (buffer.empty())
+        if (buffer.empty() || (buffer[0] == '\\' && buffer[1] == 'e'))
             continue;
 
         if (buffer[0] == '\\')
         {
-            lm_.emplace_back(count[N_++]); // add current n-value data
+            lm_.emplace_back(count[++N_]); // add current n-value data
             continue;
         }
 
