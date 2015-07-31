@@ -2,7 +2,6 @@
  * @file lm_test.cpp
  * @author Sean Massung
  */
-
 #include "lm/sentence.h"
 #include "lm/language_model.h"
 #include "test/lm_test.h"
@@ -31,10 +30,10 @@ int lm_tests()
             lm::sentence s3{"<s> Hello world ! </s>", false};
             lm::sentence s4{"<s> xyz xyz xyz </s>", false};
 
-            ASSERT_APPROX_EQUAL(model.log_prob(s1), -5.0682507);
-            ASSERT_APPROX_EQUAL(model.log_prob(s2), -11.7275571);
-            ASSERT_APPROX_EQUAL(model.log_prob(s3), -11.0764951);
-            ASSERT_APPROX_EQUAL(model.log_prob(s4), -16.4180412);
+            ASSERT_APPROX_EQUAL(model.log_prob(s1), -13.58225155);
+            ASSERT_APPROX_EQUAL(model.log_prob(s2), -16.32878304);
+            ASSERT_APPROX_EQUAL(model.log_prob(s3), -11.07649517);
+            ASSERT_APPROX_EQUAL(model.log_prob(s4), -16.41804123);
         });
 
     return num_failed;
