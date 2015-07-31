@@ -7,13 +7,13 @@
  * project.
  */
 
-#include <iostream>
 #include <sstream>
 #include <random>
 #include "util/time.h"
 #include "util/shim.h"
 #include "lm/language_model.h"
 #include "logging/logger.h"
+#include "util/static_probe_map.h"
 
 namespace meta
 {
@@ -55,12 +55,14 @@ void language_model::read_arpa_format(const std::string& arpa_file)
     lm_.emplace_back(count[N_]); // add current n-value data
     while (std::getline(infile, buffer))
     {
-        if (buffer.empty())
+        // if blank or end
+        if (buffer.empty() || (buffer[0] == '\\' && buffer[1] == 'e'))
             continue;
 
+        // if start of new ngram data
         if (buffer[0] == '\\')
         {
-            lm_.emplace_back(count[N_++]); // add current n-value data
+            lm_.emplace_back(count[++N_]); // add current n-value data
             continue;
         }
 

@@ -16,6 +16,7 @@
 #include <string>
 #include "cpptoml.h"
 #include "lm/sentence.h"
+#include "util/static_probe_map.h"
 
 namespace meta
 {
@@ -54,13 +55,19 @@ class language_model
         {
         }
 
+        bool operator==(const lm_node& other) const
+        {
+            return prob == other.prob && backoff == other.backoff;
+        }
+
         float prob;
         float backoff;
     };
 
     // This structure could be switched out for something more efficient, such
     // as a static linear probing hash table
-    using map_t = std::unordered_map<std::string, lm_node>;
+    using map_t = util::static_probe_map<std::string, lm_node>;
+    //using map_t = std::unordered_map<std::string, lm_node>;
 
   public:
     /**
