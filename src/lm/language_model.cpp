@@ -87,6 +87,7 @@ std::vector<std::pair<std::string, float>>
         return a.second > b.second;
     };
     std::vector<pair_t> candidates;
+    /*
     sentence candidate = prev;
     candidate.push_back("word"); // the last item is replaced each iteration
     for (auto& word : lm_[0])
@@ -103,6 +104,7 @@ std::vector<std::pair<std::string, float>>
 
     for (auto end = candidates.end(); end != candidates.begin(); --end)
         std::pop_heap(candidates.begin(), end, comp);
+    */
 
     return candidates;
 }

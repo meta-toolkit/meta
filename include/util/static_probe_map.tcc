@@ -16,16 +16,17 @@ static_probe_map<Key, Value>::static_probe_map(uint64_t num_elems)
 template <class Key, class Value>
 Value& static_probe_map<Key, Value>::operator[](const Key& key)
 {
-    auto idx = hash_(key) % table_.size();
+    auto hashed = hash_(key);
+    auto idx = hashed % table_.size();
     while (true)
     {
-        if (table_[idx] == empty_)
+        if (table_[idx].first == uint64_t{0})
         {
-            table_[idx].first = key;
+            table_[idx].first = hashed;
             return table_[idx].second;
         }
 
-        if (table_[idx].first == key)
+        if (table_[idx].first == hashed)
             return table_[idx].second;
 
         idx = (idx + 1) % table_.size();
@@ -47,13 +48,14 @@ const Value& static_probe_map<Key, Value>::at(const Key& key) const
 template <class Key, class Value>
 const Value& static_probe_map<Key, Value>::operator[](const Key& key) const
 {
-    auto idx = hash_(key) % table_.size();
+    auto hashed = hash_(key);
+    auto idx = hashed % table_.size();
     while (true)
     {
-        if (table_[idx] == empty_)
+        if (table_[idx].first == uint64_t{0})
             throw static_probe_map_exception{"key does not exist"};
 
-        if (table_[idx].first == key)
+        if (table_[idx].first == hashed)
             return table_[idx].second;
 
         idx = (idx + 1) % table_.size();
@@ -63,13 +65,14 @@ const Value& static_probe_map<Key, Value>::operator[](const Key& key) const
 template <class Key, class Value>
 auto static_probe_map<Key, Value>::find(const Key& key) const -> Iterator
 {
-    auto idx = hash_(key) % table_.size();
+    auto hashed = hash_(key);
+    auto idx = hashed % table_.size();
     while (true)
     {
-        if (table_[idx] == empty_)
+        if (table_[idx].first == uint64_t{0})
             return end();
 
-        if (table_[idx].first == key)
+        if (table_[idx].first == hashed)
             return {table_.begin() + idx};
 
         idx = (idx + 1) % table_.size();

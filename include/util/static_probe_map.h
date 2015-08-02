@@ -12,6 +12,7 @@
 
 #include <iterator>
 #include <utility>
+#include "util/disk_vector.h"
 
 namespace meta
 {
@@ -45,7 +46,7 @@ class static_probe_map
      * The "inner" iterator representation of the static_probe_map.
      */
     using InnerIterator =
-        typename std::vector<std::pair<Key, Value>>::const_iterator;
+        typename std::vector<std::pair<uint64_t, Value>>::const_iterator;
 
     /**
      * The static_probe_map iterator is really just a wrapper for the internal
@@ -147,13 +148,10 @@ class static_probe_map
 
   private:
     /// The internal map representing Key -> Value pairs
-    std::vector<std::pair<Key, Value>> table_;
+    std::vector<std::pair<uint64_t, Value>> table_;
 
     /// Hash function for this hash table
     std::hash<Key> hash_;
-
-    /// Empty pair
-    const std::pair<Key, Value> empty_;
 
   public:
     /**
@@ -162,7 +160,7 @@ class static_probe_map
     const_iterator begin() const
     {
         auto it = table_.begin();
-        while (*it == empty_ && it != table_.end())
+        while (it->first == uint64_t{0} && it != table_.end())
             ++it;
         return it;
     }
