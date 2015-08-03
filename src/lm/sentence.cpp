@@ -23,10 +23,7 @@ sentence::sentence(const std::string& text, bool tokenize /* = true */)
     {
         using namespace analyzers;
         std::unique_ptr<token_stream> stream;
-        stream = make_unique<tokenizers::whitespace_tokenizer>();
         stream = make_unique<tokenizers::icu_tokenizer>();
-        stream = make_unique<filters::lowercase_filter>(std::move(stream));
-        stream = make_unique<filters::alpha_filter>(std::move(stream));
         stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
         std::string text_copy{text}; // consider changing parameter to non-const
         stream->set_content(std::move(text_copy));

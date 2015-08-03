@@ -91,11 +91,8 @@ class language_model
     /**
      * Reads precomputed LM data into this object.
      * @param arpa_file The path to the ARPA-formatted file
-     * @param binary_prefix Prefix to store the precomputed language model
-     * mappings derived from the .arpa file
      */
-    void read_arpa_format(const std::string& arpa_file,
-                          const std::string& binary_prefix);
+    void read_arpa_format(const std::string& arpa_file);
 
     /**
      * @param tokens
@@ -103,9 +100,15 @@ class language_model
      */
     float prob_calc(sentence tokens) const;
 
+    void load_vocab();
+
     uint64_t N_; /// The "n" value for this n-gram language model
 
     std::vector<static_probe_map> lm_;
+
+    std::vector<std::string> vocabulary_;
+
+    std::string prefix_;
 };
 
 class language_model_exception : public std::runtime_error

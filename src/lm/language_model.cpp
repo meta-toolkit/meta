@@ -34,26 +34,30 @@ language_model::language_model(const cpptoml::table& config)
             {
                 while (filesystem::file_exists(*binary_file + std::to_string(N_)
                                                + ".binlm"))
-                    lm_.emplace_back(std::to_string(N_++) + ".binlm");
+                    lm_.emplace_back(*binary_file + std::to_string(N_++)
+                                     + ".binlm");
             });
         LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
+        prefix_ = *binary_file;
     }
     else if (arpa_file && binary_file)
     {
         LOG(info) << "Loading language model from .arpa file... " << ENDLG;
+        prefix_ = *binary_file;
         auto time = common::time([&]()
                                  {
-                                     read_arpa_format(*arpa_file, *binary_file);
+                                     read_arpa_format(*arpa_file);
                                  });
         LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
     }
     else
         throw language_model_exception{
             "arpa-file or binary-file-prefix needed in config file"};
+
+    load_vocab();
 }
 
-void language_model::read_arpa_format(const std::string& arpa_file,
-                                      const std::string& binary_prefix)
+void language_model::read_arpa_format(const std::string& arpa_file)
 {
     std::ifstream infile{arpa_file};
     std::string buffer;
@@ -72,7 +76,8 @@ void language_model::read_arpa_format(const std::string& arpa_file,
             break;
     }
 
-    lm_.emplace_back(binary_prefix + std::to_string(N_) + ".binlm", count[N_]);
+    lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm", count[N_]);
+    std::ofstream unigrams{prefix_ + "0.strings"};
     while (std::getline(infile, buffer))
     {
         // if blank or end
@@ -83,7 +88,7 @@ void language_model::read_arpa_format(const std::string& arpa_file,
         if (buffer[0] == '\\')
         {
             ++N_;
-            lm_.emplace_back(binary_prefix + std::to_string(N_) + ".binlm",
+            lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm",
                              count[N_]);
             continue;
         }
@@ -96,6 +101,9 @@ void language_model::read_arpa_format(const std::string& arpa_file,
         if (second_tab != std::string::npos)
             backoff = std::stof(buffer.substr(second_tab + 1));
         lm_[N_].insert(ngram, prob, backoff);
+
+        if (N_ == 0)
+            unigrams << ngram << std::endl;
     }
 
     ++N_;
@@ -111,13 +119,13 @@ std::vector<std::pair<std::string, float>>
         return a.second > b.second;
     };
     std::vector<pair_t> candidates;
-    /*
+
     sentence candidate = prev;
     candidate.push_back("word"); // the last item is replaced each iteration
-    for (auto& word : lm_[0])
+    for (auto& word : vocabulary_)
     {
-        auto candidate = sentence{prev.to_string() + " " + word.first};
-        candidates.emplace_back(word.first, log_prob(candidate));
+        auto candidate = sentence{prev.to_string() + " " + word};
+        candidates.emplace_back(word, log_prob(candidate));
         std::push_heap(candidates.begin(), candidates.end(), comp);
         if (candidates.size() > k)
         {
@@ -128,9 +136,21 @@ std::vector<std::pair<std::string, float>>
 
     for (auto end = candidates.end(); end != candidates.begin(); --end)
         std::pop_heap(candidates.begin(), end, comp);
-    */
 
     return candidates;
+}
+
+void language_model::load_vocab()
+{
+    std::string word;
+    std::ifstream unigrams{prefix_ + "0.strings"};
+    while (std::getline(unigrams, word))
+    {
+        if (word.empty())
+            continue;
+
+        vocabulary_.push_back(word);
+    }
 }
 
 float language_model::prob_calc(sentence tokens) const
@@ -174,7 +194,7 @@ float language_model::log_prob(sentence tokens) const
 
     // tokens < N
     sentence ngram;
-    for (uint64_t i = 0; i < N_ - 1; ++i)
+    for (uint64_t i = 0; i < N_ - 1 && i < tokens.size(); ++i)
     {
         ngram.push_back(tokens[i]);
         prob += prob_calc(ngram);

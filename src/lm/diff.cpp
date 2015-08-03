@@ -3,8 +3,6 @@
  * @author Sean Massung
  */
 
-#include <iostream>
-
 #include <algorithm>
 #include <queue>
 #include "lm/diff.h"
@@ -111,7 +109,7 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
     best.pop_back();
     try
     {
-        for (auto& next : lm_.top_k(best, 5))
+        for (auto& next : lm_.top_k(best, 3))
         {
             if (next.first == "</s>")
                 continue;
