@@ -11,6 +11,7 @@
 #define META_LM_NODE_H_
 
 #include <cstdint>
+#include <cstring>
 
 namespace meta
 {
@@ -32,8 +33,9 @@ struct lm_node
 
     lm_node(uint64_t packed)
     {
-        prob = *reinterpret_cast<float*>(&packed);
-        backoff = *(reinterpret_cast<float*>(&packed) + 1);
+        uint32_t buf = packed >> 32;
+        std::memcpy(&prob, &packed, sizeof(float));
+        std::memcpy(&backoff, &buf, sizeof(float));
     }
 
     bool operator==(const lm_node& other) const
