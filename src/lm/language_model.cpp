@@ -22,31 +22,38 @@ namespace lm
 language_model::language_model(const cpptoml::table& config)
 {
     auto table = config.get_table("language-model");
+    auto arpa_file = table->get_as<std::string>("arpa-file");
+    auto binary_file = table->get_as<std::string>("binary-file-prefix");
+
     N_ = 0;
-    if (filesystem::file_exists("0.binlm"))
+    if (binary_file && filesystem::file_exists(*binary_file + "0.binlm"))
     {
         LOG(info) << "Loading language model from binary file..." << ENDLG;
         auto time = common::time(
             [&]()
             {
-                while (filesystem::file_exists(std::to_string(N_) + ".binlm"))
+                while (filesystem::file_exists(*binary_file + std::to_string(N_)
+                                               + ".binlm"))
                     lm_.emplace_back(std::to_string(N_++) + ".binlm");
             });
         LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
     }
-    else
+    else if (arpa_file && binary_file)
     {
-        auto arpa_file = table->get_as<std::string>("arpa-file");
         LOG(info) << "Loading language model from .arpa file... " << ENDLG;
         auto time = common::time([&]()
                                  {
-                                     read_arpa_format(*arpa_file);
+                                     read_arpa_format(*arpa_file, *binary_file);
                                  });
         LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
     }
+    else
+        throw language_model_exception{
+            "arpa-file or binary-file-prefix needed in config file"};
 }
 
-void language_model::read_arpa_format(const std::string& arpa_file)
+void language_model::read_arpa_format(const std::string& arpa_file,
+                                      const std::string& binary_prefix)
 {
     std::ifstream infile{arpa_file};
     std::string buffer;
@@ -65,7 +72,7 @@ void language_model::read_arpa_format(const std::string& arpa_file)
             break;
     }
 
-    lm_.emplace_back(std::to_string(N_) + ".binlm", count[N_]);
+    lm_.emplace_back(binary_prefix + std::to_string(N_) + ".binlm", count[N_]);
     while (std::getline(infile, buffer))
     {
         // if blank or end
@@ -76,7 +83,8 @@ void language_model::read_arpa_format(const std::string& arpa_file)
         if (buffer[0] == '\\')
         {
             ++N_;
-            lm_.emplace_back(std::to_string(N_) + ".binlm", count[N_]);
+            lm_.emplace_back(binary_prefix + std::to_string(N_) + ".binlm",
+                             count[N_]);
             continue;
         }
 

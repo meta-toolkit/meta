@@ -34,10 +34,15 @@ namespace lm
  * Required config parameters:
  * ~~~toml
  * [language-model]
- * arpa-file = "path-to-file"
+ * binary-file-prefix = "path-to-binary-files"
+ * # only this key is needed if the LM is already binarized
  * ~~~
  *
- * Optional config parameters: none.
+ * Optional config parameters:
+ * ~~~toml
+ * [language-model]
+ * arpa-file = "path-to-arpa-file" # if no binary files have yet been created
+ * ~~~
  */
 class language_model
 {
@@ -48,6 +53,9 @@ class language_model
      */
     language_model(const cpptoml::table& config);
 
+    /**
+     * Default move constructor.
+     */
     language_model(language_model&&) = default;
 
     /**
@@ -83,8 +91,11 @@ class language_model
     /**
      * Reads precomputed LM data into this object.
      * @param arpa_file The path to the ARPA-formatted file
+     * @param binary_prefix Prefix to store the precomputed language model
+     * mappings derived from the .arpa file
      */
-    void read_arpa_format(const std::string& arpa_file);
+    void read_arpa_format(const std::string& arpa_file,
+                          const std::string& binary_prefix);
 
     /**
      * @param tokens

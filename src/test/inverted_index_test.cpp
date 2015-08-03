@@ -53,7 +53,9 @@ void create_config(const std::string& corpus_type)
                 << "method = \"ngram-word\"\n"
                 << "ngram = 1\n"
                 << "filter = \"default-chain\"\n"
-                << "[language-model]\narpa-file = \"../data/english-sentences.arpa\"";
+                << "[language-model]\n"
+                << "arpa-file = \"../data/english-sentences.arpa\"\n"
+                << "binary-file-prefix = \"test-lm-\"";
 }
 
 template <class Index>

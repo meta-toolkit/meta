@@ -84,3 +84,4 @@ test-sections = [23, 23]
 
 [language-model]
 arpa-file = "../data/english-sentences.arpa"
+binary-file-prefix = "english-sentences-"
