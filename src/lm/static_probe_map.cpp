@@ -18,7 +18,7 @@ static_probe_map::static_probe_map(const std::string& filename,
 
 void static_probe_map::insert(const std::string& key, float prob, float backoff)
 {
-    auto hashed = hash_(key);
+    auto hashed = hash(key);
     auto idx = (hashed % (table_.size() / 2)) * 2;
 
     while (true)
@@ -43,7 +43,7 @@ void static_probe_map::insert(const std::string& key, float prob, float backoff)
 
 util::optional<lm_node> static_probe_map::find(const std::string& key) const
 {
-    auto hashed = hash_(key);
+    auto hashed = hash(key);
     auto idx = (hashed % (table_.size() / 2)) * 2;
 
     while (true)
@@ -56,6 +56,14 @@ util::optional<lm_node> static_probe_map::find(const std::string& key) const
 
         idx = (idx + 2) % table_.size();
     }
+}
+
+uint64_t static_probe_map::hash(const std::string& str) const
+{
+    uint64_t result = 2166136261;
+    for (auto& ch : str)
+        result = 127 * result + static_cast<unsigned char>(ch);
+    return result;
 }
 }
 }

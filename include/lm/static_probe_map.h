@@ -59,11 +59,13 @@ class static_probe_map
     void insert(const std::string& key, float prob, float backoff);
 
   private:
+    /**
+     * Mersenne prime string hash
+     */
+    uint64_t hash(const std::string& str) const;
+
     /// The internal map representing std::string -> lm_node pairs
     util::disk_vector<uint64_t> table_;
-
-    /// Convert strings to uint64_ts
-    std::hash<std::string> hash_;
 
   public:
     /**
