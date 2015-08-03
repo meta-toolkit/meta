@@ -16,7 +16,7 @@
 #include <string>
 #include "cpptoml.h"
 #include "lm/sentence.h"
-#include "util/static_probe_map.h"
+#include "lm/static_probe_map.h"
 
 namespace meta
 {
@@ -41,40 +41,14 @@ namespace lm
  */
 class language_model
 {
-  private:
-    /**
-     * Simple struct to keep track of probabilities and backoff values.
-     */
-    struct lm_node
-    {
-        lm_node() : prob{0.0f}, backoff{0.0f}
-        {
-        }
-
-        lm_node(float p, float b) : prob{p}, backoff{b}
-        {
-        }
-
-        bool operator==(const lm_node& other) const
-        {
-            return prob == other.prob && backoff == other.backoff;
-        }
-
-        float prob;
-        float backoff;
-    };
-
-    // This structure could be switched out for something more efficient, such
-    // as a static linear probing hash table
-    using map_t = util::static_probe_map<std::string, lm_node>;
-    //using map_t = std::unordered_map<std::string, lm_node>;
-
   public:
     /**
      * Creates an N-gram language model based on the corpus specified in the
      * config file.
      */
     language_model(const cpptoml::table& config);
+
+    language_model(language_model&&) = default;
 
     /**
      * @param sentence A sequence of tokens
@@ -120,7 +94,7 @@ class language_model
 
     uint64_t N_; /// The "n" value for this n-gram language model
 
-    std::vector<map_t> lm_;
+    std::vector<static_probe_map> lm_;
 };
 
 class language_model_exception : public std::runtime_error

@@ -13,7 +13,6 @@
 #include "util/shim.h"
 #include "lm/language_model.h"
 #include "logging/logger.h"
-#include "util/static_probe_map.h"
 
 namespace meta
 {
@@ -23,13 +22,28 @@ namespace lm
 language_model::language_model(const cpptoml::table& config)
 {
     auto table = config.get_table("language-model");
-    auto arpa_file = table->get_as<std::string>("arpa-file");
-    LOG(info) << "Loading language model from .arpa file... " << ENDLG;
-    auto time = common::time([&]()
-                             {
-                                 read_arpa_format(*arpa_file);
-                             });
-    LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
+    N_ = 0;
+    if (filesystem::file_exists("0.binlm"))
+    {
+        LOG(info) << "Loading language model from binary file..." << ENDLG;
+        auto time = common::time(
+            [&]()
+            {
+                while (filesystem::file_exists(std::to_string(N_) + ".binlm"))
+                    lm_.emplace_back(std::to_string(N_++) + ".binlm");
+            });
+        LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
+    }
+    else
+    {
+        auto arpa_file = table->get_as<std::string>("arpa-file");
+        LOG(info) << "Loading language model from .arpa file... " << ENDLG;
+        auto time = common::time([&]()
+                                 {
+                                     read_arpa_format(*arpa_file);
+                                 });
+        LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
+    }
 }
 
 void language_model::read_arpa_format(const std::string& arpa_file)
@@ -51,8 +65,7 @@ void language_model::read_arpa_format(const std::string& arpa_file)
             break;
     }
 
-    N_ = 0;
-    lm_.emplace_back(count[N_]); // add current n-value data
+    lm_.emplace_back(std::to_string(N_) + ".binlm", count[N_]);
     while (std::getline(infile, buffer))
     {
         // if blank or end
@@ -62,7 +75,8 @@ void language_model::read_arpa_format(const std::string& arpa_file)
         // if start of new ngram data
         if (buffer[0] == '\\')
         {
-            lm_.emplace_back(count[++N_]); // add current n-value data
+            ++N_;
+            lm_.emplace_back(std::to_string(N_) + ".binlm", count[N_]);
             continue;
         }
 
@@ -73,8 +87,10 @@ void language_model::read_arpa_format(const std::string& arpa_file)
         float backoff = 0.0;
         if (second_tab != std::string::npos)
             backoff = std::stof(buffer.substr(second_tab + 1));
-        lm_[N_][ngram] = {prob, backoff};
+        lm_[N_].insert(ngram, prob, backoff);
     }
+
+    ++N_;
 }
 
 std::vector<std::pair<std::string, float>>
@@ -116,30 +132,30 @@ float language_model::prob_calc(sentence tokens) const
 
     if (tokens.size() == 1)
     {
-        auto it = lm_[0].find(tokens[0]);
-        if (it != lm_[0].end())
-            return it->second.prob;
-        return lm_[0].at("<unk>").prob;
+        auto opt = lm_[0].find(tokens[0]);
+        if (opt)
+            return opt->prob;
+        return lm_[0].find("<unk>")->prob;
     }
     else
     {
-        auto it = lm_[tokens.size() - 1].find(tokens.to_string());
-        if (it != lm_[tokens.size() - 1].end())
-            return it->second.prob;
+        auto opt = lm_[tokens.size() - 1].find(tokens.to_string());
+        if (opt)
+            return opt->prob;
 
         auto hist = tokens(0, tokens.size() - 1);
         tokens.pop_front();
         if (tokens.size() == 1)
         {
             hist = hist(0, 1);
-            auto it = lm_[0].find(hist[0]);
-            if (it == lm_[0].end())
+            auto opt = lm_[0].find(hist[0]);
+            if (!opt)
                 hist.substitute(0, "<unk>");
         }
 
-        it = lm_[hist.size() - 1].find(hist.to_string());
-        if (it != lm_[hist.size() - 1].end())
-            return it->second.backoff + prob_calc(tokens);
+        opt = lm_[hist.size() - 1].find(hist.to_string());
+        if (opt)
+            return opt->backoff + prob_calc(tokens);
         return prob_calc(tokens);
     }
 }

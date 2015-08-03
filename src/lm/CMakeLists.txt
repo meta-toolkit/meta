@@ -4,6 +4,7 @@ add_subdirectory(tools)
 
 add_library(meta-language-model language_model.cpp
                                 diff.cpp
+                                static_probe_map.cpp
                                 sentence.cpp)
 target_link_libraries(meta-language-model meta-corpus
                                           meta-analyzers

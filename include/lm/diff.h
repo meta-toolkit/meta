@@ -27,6 +27,8 @@ class diff
      */
     diff(const cpptoml::table& config);
 
+    diff(diff&&) = default;
+
     /**
      * @param sent The sentence to transform
      * @param use_lm

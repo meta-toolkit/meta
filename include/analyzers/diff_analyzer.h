@@ -48,7 +48,7 @@ class diff_analyzer : public util::clonable<analyzer, diff_analyzer>
     /// The token stream to be used for extracting tokens
     std::unique_ptr<token_stream> stream_;
 
-    lm::diff diff_;
+    std::shared_ptr<lm::diff> diff_;
 };
 
 /**

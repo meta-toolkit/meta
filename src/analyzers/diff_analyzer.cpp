@@ -19,7 +19,7 @@ const std::string diff_analyzer::id = "diff";
 
 diff_analyzer::diff_analyzer(const cpptoml::table& config,
                              std::unique_ptr<token_stream> stream)
-    : stream_{std::move(stream)}, diff_{config}
+    : stream_{std::move(stream)}, diff_{std::make_shared<lm::diff>(config)}
 {
     // nothing
 }
@@ -55,7 +55,7 @@ void diff_analyzer::tokenize(corpus::document& doc)
         try
         {
             lm::sentence sent{s};
-            auto candidates = diff_.candidates(sent, true);
+            auto candidates = diff_->candidates(sent, true);
             auto edits = candidates[0].first.operations();
             if (edits.empty())
                 doc.increment("unmodified", 1);
