@@ -37,11 +37,19 @@ void sequence_analyzer::load(const std::string& prefix)
 void sequence_analyzer::load_feature_id_mapping(const std::string& prefix)
 {
 #if META_HAS_ZLIB
-    io::gzifstream input{prefix + "/feature.mapping.gz"};
-#else
-    std::ifstream input{prefix + "/feature.mapping", std::ios::binary};
+    if (filesystem::file_exists(prefix + "/feature.mapping.gz"))
+    {
+        io::gzifstream input{prefix + "/feature.mapping.gz"};
+        load_feature_id_mapping(input);
+        return;
+    }
 #endif
+    std::ifstream input{prefix + "/feature.mapping", std::ios::binary};
+    load_feature_id_mapping(input);
+}
 
+void sequence_analyzer::load_feature_id_mapping(std::istream& input)
+{
     if (!input)
         throw exception{"missing feature id mapping"};
 

@@ -75,6 +75,13 @@ class transition_map
     };
 
   private:
+
+    /**
+     * Loads the transitions from the given file.
+     * @param store The transitions model input stream
+     */
+    void load(std::istream& store);
+
     /**
      * The map from transition to id.
      */
