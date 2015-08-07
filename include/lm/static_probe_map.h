@@ -42,6 +42,9 @@ class static_probe_map
      */
     static_probe_map(const std::string& filename, uint64_t num_elems = 0);
 
+    /**
+     * Default move constructor.
+     */
     static_probe_map(static_probe_map&&) = default;
 
     /**

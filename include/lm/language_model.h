@@ -100,6 +100,9 @@ class language_model
      */
     float prob_calc(sentence tokens) const;
 
+    /**
+     * Loads unigram vocabulary from text file to allow top_k to work.
+     */
     void load_vocab();
 
     uint64_t N_; /// The "n" value for this n-gram language model

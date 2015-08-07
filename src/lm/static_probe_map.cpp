@@ -56,7 +56,7 @@ util::optional<lm_node> static_probe_map::find(const std::string& key) const
             return util::nullopt;
 
         if (table_[idx] == hashed)
-            return util::optional<lm_node>{lm_node{table_[idx + 1]}};
+            return {table_[idx + 1]};
 
         idx = (idx + 2) % table_.size();
     }
