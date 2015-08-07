@@ -11,6 +11,7 @@
 #define META_UTIL_HASH_H_
 
 #include <cstdint>
+#include <random>
 
 namespace meta
 {
@@ -22,9 +23,9 @@ namespace util
  * will return a 32-bit or 64-bit hash value.
  */
 template <std::size_t = sizeof(std::size_t)>
-struct murmur_hash;
+class murmur_hash;
 
-namespace
+namespace detail
 {
 inline uint32_t rotl(uint32_t x, int8_t r)
 {
@@ -63,18 +64,25 @@ inline uint64_t fmix(uint64_t h)
  * Murmur3Hash for 32-bit outputs. Based on MurmurHash3_x86_32.
  */
 template <>
-struct murmur_hash<4>
+class murmur_hash<4>
 {
-    constexpr murmur_hash() = default;
-
-    std::size_t operator()(const uint8_t* data, int len, uint32_t seed)
+  public:
+    murmur_hash() : seed_{std::random_device{}()}
     {
-        std::size_t out = seed;
+    }
+
+    murmur_hash(std::size_t seed) : seed_{seed}
+    {
+    }
+
+    std::size_t operator()(const uint8_t* data, int len) const
+    {
+        std::size_t out = seed_;
 
         const auto nblocks = len / 4;
 
-        constexpr uint32_t c1 = 0xcc9e2d51;
-        constexpr uint32_t c2 = 0x1b873593;
+        const uint32_t c1 = 0xcc9e2d51;
+        const uint32_t c2 = 0x1b873593;
 
         auto blocks = reinterpret_cast<const uint32_t*>(data + nblocks * 4);
 
@@ -83,11 +91,11 @@ struct murmur_hash<4>
             auto k1 = blocks[i];
 
             k1 *= c1;
-            k1 = rotl(k1, 15);
+            k1 = detail::rotl(k1, 15);
             k1 *= c2;
 
             out ^= k1;
-            out = rotl(out, 13);
+            out = detail::rotl(out, 13);
             out = out * 5 + 0xe6546b64;
         }
 
@@ -103,31 +111,41 @@ struct murmur_hash<4>
             case 1:
                 k1 ^= tail[0];
                 k1 *= c1;
-                k1 = rotl(k1, 15);
+                k1 = detail::rotl(k1, 15);
                 k1 *= c2;
                 out ^= k1;
         }
 
         out ^= len;
 
-        return fmix(out);
+        return detail::fmix(out);
     }
+
+  private:
+    std::size_t seed_;
 };
 
 /**
  * MurmurHash3 for 64-bit outputs. Based on MurmurHash3_x64_128.
  */
 template <>
-struct murmur_hash<8>
+class murmur_hash<8>
 {
-    constexpr murmur_hash() = default;
+  public:
+    murmur_hash() : seed_{std::random_device{}()}
+    {
+    }
 
-    std::size_t operator()(const uint8_t* data, int len, uint64_t seed)
+    murmur_hash(uint64_t seed) : seed_{seed}
+    {
+    }
+
+    std::size_t operator()(const uint8_t* data, int len) const
     {
         const auto nblocks = len / 16;
 
-        auto h1 = seed;
-        auto h2 = seed;
+        auto h1 = seed_;
+        auto h2 = seed_;
 
         const uint64_t c1 = 0x87c37b91114253d5LLU;
         const uint64_t c2 = 0x4cf5ad432745937fLLU;
@@ -140,20 +158,20 @@ struct murmur_hash<8>
             auto k2 = blocks[i * 2 + 1];
 
             k1 *= c1;
-            k1 = rotl(k1, 31);
+            k1 = detail::rotl(k1, 31);
             k1 *= c2;
             h1 ^= k1;
 
-            h1 = rotl(h1, 27);
+            h1 = detail::rotl(h1, 27);
             h1 += h2;
             h1 = h1 * 5 + 0x52dce729;
 
             k2 *= c2;
-            k2 = rotl(k2, 33);
+            k2 = detail::rotl(k2, 33);
             k2 *= c1;
             h2 ^= k2;
 
-            h2 = rotl(h2, 31);
+            h2 = detail::rotl(h2, 31);
             h2 += h1;
             h2 = h2 * 5 + 0x38495ab5;
         }
@@ -180,7 +198,7 @@ struct murmur_hash<8>
             case 9:
                 k2 ^= static_cast<uint64_t>(tail[8]);
                 k2 *= c2;
-                k2 = rotl(k2, 33);
+                k2 = detail::rotl(k2, 33);
                 k2 *= c1;
                 h2 ^= k2;
 
@@ -201,7 +219,7 @@ struct murmur_hash<8>
             case 1:
                 k1 ^= static_cast<uint64_t>(tail[0]);
                 k1 *= c1;
-                k1 = rotl(k1, 31);
+                k1 = detail::rotl(k1, 31);
                 k1 *= c2;
                 h1 ^= k1;
         }
@@ -212,14 +230,17 @@ struct murmur_hash<8>
         h1 += h2;
         h2 += h1;
 
-        h1 = fmix(h1);
-        h2 = fmix(h2);
+        h1 = detail::fmix(h1);
+        h2 = detail::fmix(h2);
 
         h1 += h2;
         // h2 += h1, unneeded since we only want 64-bits.
 
         return h1;
     }
+
+  private:
+    uint64_t seed_;
 };
 }
 }
