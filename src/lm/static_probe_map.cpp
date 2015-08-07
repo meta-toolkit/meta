@@ -12,7 +12,8 @@ namespace lm
 {
 static_probe_map::static_probe_map(const std::string& filename,
                                    uint64_t num_elems)
-    : table_{filename, static_cast<uint64_t>((num_elems / 0.7) * 2)}
+    : table_{filename, static_cast<uint64_t>((num_elems / 0.7) * 2)},
+      hash_{seed_}
 // load factor of 0.7; x2 for keys and vals
 {
 }
@@ -63,10 +64,7 @@ util::optional<lm_node> static_probe_map::find(const std::string& key) const
 
 uint64_t static_probe_map::hash(const std::string& str) const
 {
-    uint64_t result = 2166136261;
-    for (auto& ch : str)
-        result = 127 * result + static_cast<unsigned char>(ch);
-    return result;
+    return hash_(reinterpret_cast<const uint8_t*>(str.c_str()), str.size());
 }
 }
 }

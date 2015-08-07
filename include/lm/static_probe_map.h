@@ -14,6 +14,7 @@
 #include "lm/lm_node.h"
 #include "util/disk_vector.h"
 #include "util/optional.h"
+#include "util/hash.h"
 
 namespace meta
 {
@@ -59,13 +60,19 @@ class static_probe_map
     void insert(const std::string& key, float prob, float backoff);
 
   private:
-    /**
-     * Mersenne prime string hash
-     */
-    uint64_t hash(const std::string& str) const;
+    /// A seed for the string hash function
+    static constexpr uint64_t seed_ = 0x2bedf99b3aa222d9;
 
     /// The internal map representing std::string -> lm_node pairs
     util::disk_vector<uint64_t> table_;
+
+    /// 64-bit hash function for strings
+    util::murmur_hash<> hash_;
+
+    /**
+     * Helper function to hash a string with util::murmur_hash
+     */
+    uint64_t hash(const std::string& str) const;
 
   public:
     /**
