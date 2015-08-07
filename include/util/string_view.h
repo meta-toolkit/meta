@@ -609,8 +609,9 @@ struct hash<meta::util::basic_string_view<Char, Traits>>
     size_t operator()(
         const meta::util::basic_string_view<Char, Traits>& view) const noexcept
     {
-        static constexpr meta::util::murmur_hash<> hasher{};
-        return hasher(view.data(), view.size());
+        static meta::util::murmur_hash<> hasher{};
+        return hasher(reinterpret_cast<const uint8_t*>(view.data()),
+                      view.size());
     }
 };
 }
