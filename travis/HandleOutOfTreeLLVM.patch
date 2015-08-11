@@ -1,0 +1,11 @@
+--- HandleOutOfTreeLLVM.cmake.orig	2015-08-01 20:53:23.716932808 -0500
++++ HandleOutOfTreeLLVM.cmake	2015-08-01 20:52:34.760265353 -0500
+@@ -35,7 +35,7 @@
+     set(LLVM_INCLUDE_DIR ${INCLUDE_DIR} CACHE PATH "Path to llvm/include")
+     set(LLVM_BINARY_DIR ${LLVM_OBJ_ROOT} CACHE PATH "Path to LLVM build tree")
+     set(LLVM_MAIN_SRC_DIR ${MAIN_SRC_DIR} CACHE PATH "Path to LLVM source tree")
+-    set(LLVM_CMAKE_PATH "${LLVM_BINARY_DIR}/share/llvm/cmake")
++    set(LLVM_CMAKE_PATH "${LLVM_BINARY_DIR}/share/llvm/cmake" CACHE PATH "Path to LLVM cmake modules")
+   else()
+     set(LLVM_FOUND OFF)
+     return()
