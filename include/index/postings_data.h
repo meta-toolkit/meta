@@ -72,6 +72,26 @@ class postings_data
     postings_data(PrimaryKey p_id);
 
     /**
+     * Postings data is copy constructable.
+     */
+    postings_data(const postings_data&) = default;
+
+    /**
+     * Postings data is move constructable.
+     */
+    postings_data(postings_data&&) = default;
+
+    /**
+     * Postings data is copy assignable.
+     */
+    postings_data& operator=(const postings_data&) = default;
+
+    /**
+     * Postings data is move assignable.
+     */
+    postings_data& operator=(postings_data&&) = default;
+
+    /**
      * @param other The other postings_data object to consume
      * Adds the parameter's data to this object's data
      */
