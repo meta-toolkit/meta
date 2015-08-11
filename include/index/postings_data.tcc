@@ -172,7 +172,7 @@ uint64_t length(const T& elem,
                 typename std::enable_if<std::is_same<T, std::string>::value>::
                     type* = nullptr)
 {
-    return elem.size();
+    return elem.capacity();
 }
 
 template <class T>
@@ -233,7 +233,7 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::read_packed(std::istream& in)
 template <class PrimaryKey, class SecondaryKey>
 uint64_t postings_data<PrimaryKey, SecondaryKey>::bytes_used() const
 {
-    return sizeof(pair_t) * counts_.size() + length(p_id_);
+    return sizeof(pair_t) * counts_.capacity() + length(p_id_);
 }
 }
 }
