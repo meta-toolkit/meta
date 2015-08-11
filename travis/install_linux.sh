@@ -1,4 +1,4 @@
-set -x
+set -v
 mkdir $HOME/lib
 export LD_LIBRARY_PATH=$HOME/lib:$LD_LIBRARY_PATH
 mkdir $HOME/bin
@@ -13,3 +13,4 @@ fi
 if [ "`echo $CXX`" == "clang++" ]; then
       export CXX=clang++-3.6 && travis/install_libcxx.sh
 fi
+set +v

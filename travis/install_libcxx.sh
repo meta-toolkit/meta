@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -v
 cwd=$(pwd)
 svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx
 git clone https://github.com/pathscale/libcxxrt.git libcxxrt
@@ -32,3 +32,4 @@ cmake -DLIBCXX_CXX_ABI=libcxxrt \
 make
 make install
 cd $cwd
+set +v
