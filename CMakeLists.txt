@@ -155,6 +155,14 @@ if(ENABLE_PROFILING)
   target_link_libraries(meta-definitions INTERFACE ${GPERFTOOLS_PROFILER})
 endif()
 
+find_library(JEMALLOC_LIB NAMES jemalloc)
+if(JEMALLOC_LIB)
+  message("-- Using jemalloc: ${JEMALLOC_LIB}")
+  target_link_libraries(meta-definitions INTERFACE ${JEMALLOC_LIB})
+else()
+  message("-- Using regular malloc; consider installing jemalloc")
+endif()
+
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_compile_definitions(meta-definitions INTERFACE
                                -D_DARWIN_USE_64_BIT_INODE=1)
