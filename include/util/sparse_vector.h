@@ -121,6 +121,11 @@ class sparse_vector
     uint64_t size() const;
 
     /**
+     * @return the total capacity of the underlying storage
+     */
+    uint64_t capacity() const;
+
+    /**
      * @return whether the vector is empty
      */
     bool empty() const;

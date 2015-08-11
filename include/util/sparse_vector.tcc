@@ -128,6 +128,12 @@ uint64_t sparse_vector<Index, Value>::size() const
 }
 
 template <class Index, class Value>
+uint64_t sparse_vector<Index, Value>::capacity() const
+{
+    return storage_.capacity();
+}
+
+template <class Index, class Value>
 bool sparse_vector<Index, Value>::empty() const
 {
     return storage_.empty();
