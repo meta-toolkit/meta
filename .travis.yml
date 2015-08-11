@@ -10,8 +10,14 @@ os:
   - osx
 
 compiler:
-    - clang
-    - gcc
+  - clang
+  - gcc
+
+# we only care about clang on OS X
+matrix:
+  exclude:
+    - os: osx
+      compiler: gcc
 
 addons:
   apt:
