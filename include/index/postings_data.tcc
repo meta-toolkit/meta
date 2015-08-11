@@ -7,7 +7,6 @@
 #include <cstring>
 #include <numeric>
 #include "index/postings_data.h"
-#include "io/binary.h"
 #include "io/packed.h"
 
 namespace meta
@@ -125,7 +124,7 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed(
 {
     uint64_t bytes = 0;
 
-    bytes += io::write_binary(out, p_id_);
+    bytes += io::packed::write(out, p_id_);
     bytes += write_packed_counts<FeatureValue>(out);
 
     return bytes;
@@ -194,8 +193,7 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::read_packed(std::istream& in)
     else
         in.unget();
 
-    io::read_binary(in, p_id_);
-    auto bytes = length(p_id_);
+    auto bytes = io::packed::read(in, p_id_);
 
     uint64_t size;
     uint64_t total_counts;
