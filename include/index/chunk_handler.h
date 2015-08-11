@@ -79,8 +79,12 @@ class chunk_handler
         /// Current size of the in-memory chunk
         uint64_t chunk_size_;
 
-        /// Maximum allowed size of a chunk in bytes before it is written
-        const static uint64_t constexpr max_size = 1024 * 1024 * 128; // 128 MB
+        /**
+         * Maximum allowed size of a chunk in bytes before it is written.
+         * This is an *estimate*, so you should make sure there's some slop
+         * in this number to make sure you don't run out of memory.
+         */
+        const static uint64_t constexpr max_size = 1024 * 1024 * 256; // 256 MB
 
         /// Back-pointer to the handler this producer is operating on
         chunk_handler* parent_;

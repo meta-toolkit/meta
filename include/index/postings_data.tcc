@@ -132,7 +132,8 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed(
 
 template <class PrimaryKey, class SecondaryKey>
 template <class FeatureValue>
-uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed_counts(std::ostream& out) const
+uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed_counts(
+    std::ostream& out) const
 {
     auto bytes = io::packed::write(out, counts_.size());
 
@@ -233,7 +234,8 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::read_packed(std::istream& in)
 template <class PrimaryKey, class SecondaryKey>
 uint64_t postings_data<PrimaryKey, SecondaryKey>::bytes_used() const
 {
-    return sizeof(pair_t) * counts_.capacity() + length(p_id_);
+    return sizeof(pair_t) * counts_.capacity() + length(p_id_)
+           + sizeof(count_t);
 }
 }
 }
