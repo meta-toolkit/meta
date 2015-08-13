@@ -49,8 +49,10 @@ class chunk_handler
         /**
          * @param parent A back-pointer to the handler this producer is
          * operating on
+         * @param ram_budget The **estimated** allowed size of the buffer
+         * for this producer
          */
-        producer(chunk_handler* parent);
+        producer(chunk_handler* parent, uint64_t ram_budget);
 
         /**
          * Handler for when a given secondary_key has been processed and is
@@ -84,7 +86,7 @@ class chunk_handler
          * This is an *estimate*, so you should make sure there's some slop
          * in this number to make sure you don't run out of memory.
          */
-        const static uint64_t constexpr max_size = 1024 * 1024 * 256; // 256 MB
+        uint64_t max_size_;
 
         /// Back-pointer to the handler this producer is operating on
         chunk_handler* parent_;
@@ -100,9 +102,11 @@ class chunk_handler
      * Creates a producer for this chunk_handler. Producers are designed to
      * be thread-local buffers of chunks that write to disk when their
      * buffer is full.
+     * @param ram_bugdet The estimated allowed size of this thread-local
+     * buffer
      * @return a new producer
      */
-    producer make_producer();
+    producer make_producer(uint64_t ram_budget);
 
     /**
      * @return the number of chunks this handler has written to disk.

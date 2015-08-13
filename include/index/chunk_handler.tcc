@@ -3,6 +3,7 @@
  * @author Chase Geigle
  */
 
+#include <cassert>
 #include <algorithm>
 
 #include "index/chunk_handler.h"
@@ -15,12 +16,14 @@ namespace index
 {
 
 template <class Index>
-chunk_handler<Index>::producer::producer(chunk_handler* parent)
-    : parent_{parent}
+chunk_handler<Index>::producer::producer(chunk_handler* parent,
+                                         uint64_t ram_budget)
+    : max_size_{ram_budget}, parent_{parent}
 {
     // sizeof(size_t): list size per bucket
     // sizeof(void*): head pointer per bucket
     chunk_size_ = pdata_.bucket_count() * (sizeof(size_t) + sizeof(void*));
+    assert(chunk_size_ < max_size_);
 }
 
 template <class Index>
@@ -66,7 +69,7 @@ void chunk_handler<Index>::producer::operator()(const secondary_key_type& key,
             chunk_size_ += (it->bytes_used() + sizeof(void*)) / 4;
         }
 
-        if (chunk_size_ >= max_size)
+        if (chunk_size_ >= max_size_)
             flush_chunk();
     }
 }
@@ -104,9 +107,9 @@ chunk_handler<Index>::chunk_handler(const std::string& prefix)
 }
 
 template <class Index>
-auto chunk_handler<Index>::make_producer() -> producer
+auto chunk_handler<Index>::make_producer(uint64_t ram_budget) -> producer
 {
-    return {this};
+    return {this, ram_budget};
 }
 
 template <class Index>
@@ -133,8 +136,6 @@ void chunk_handler<Index>::write_chunk(std::vector<index_pdata_type>& pdata)
             for (auto& p : pdata)
                 p.write_packed(outfile);
         }
-        std::ofstream termfile{chunk_name + ".numterms"};
-        termfile << pdata.size();
         pdata.clear();
 
         std::lock_guard<std::mutex> lock{mutables_};

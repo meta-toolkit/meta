@@ -12,6 +12,8 @@ dataset = "20newsgroups"
 corpus = "line.toml" # located inside dataset folder
 forward-index = "20news-fwd"
 inverted-index = "20news-inv"
+indexer-ram-budget = 1024 # **estimated** RAM budget for indexing in MB
+                          # always set this lower than your physical RAM!
 
 [[analyzers]]
 method = "ngram-word"
