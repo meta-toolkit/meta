@@ -35,7 +35,7 @@ set_tests_properties(classifiers PROPERTIES TIMEOUT 80 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 add_test(rankers ${UNIT_TEST_EXE} rankers)
-set_tests_properties(rankers PROPERTIES TIMEOUT 75 WORKING_DIRECTORY
+set_tests_properties(rankers PROPERTIES TIMEOUT 90 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 add_test(ir-eval ${UNIT_TEST_EXE} ir-eval)
