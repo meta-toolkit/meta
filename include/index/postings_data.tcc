@@ -21,7 +21,8 @@ postings_data<PrimaryKey, SecondaryKey>::postings_data(PrimaryKey p_id)
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void postings_data<PrimaryKey, SecondaryKey>::merge_with(postings_data& other)
+template <class Container>
+void postings_data<PrimaryKey, SecondaryKey>::merge_with(Container&& cont)
 {
     auto searcher = [](const pair_t& p, const SecondaryKey& s)
     {
@@ -32,7 +33,7 @@ void postings_data<PrimaryKey, SecondaryKey>::merge_with(postings_data& other)
 
     // if the primary_key doesn't exist, add onto back
     uint64_t orig_length = counts_.size();
-    for (auto& p : other.counts_)
+    for (auto& p : cont)
     {
         auto it = std::lower_bound(
             counts_.begin(), counts_.begin() + orig_length, p.first, searcher);

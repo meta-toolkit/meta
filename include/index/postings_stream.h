@@ -12,9 +12,8 @@
 
 #include <iterator>
 #include <utility>
+#include <tuple>
 
-#include "io/mmap_file.h"
-#include "io/compressed_file_reader.h"
 #include "util/optional.h"
 #include "io/packed.h"
 
@@ -49,19 +48,31 @@ class postings_stream
 
   public:
     /**
-     * Creates a postings stream reading from the given file at the given
-     * byte position.
+     * Creates a postings stream reading from the given buffer. Assumes
+     * that the size and total counts are the first two values in the
+     * buffer.
      *
-     * @param file The file that contains the postings lists
-     * @param seek_pos The position in the file to begin reading from
+     * @param buffer The buffer position to the start of the postings
      */
-    postings_stream(const io::mmap_file& file, uint64_t seek_pos)
-        : file_{&file}, seek_pos_{seek_pos}
+    postings_stream(const char* buffer) : start_{buffer}
     {
-        char_input_stream stream{file_->begin() + seek_pos_};
+        char_input_stream stream{start_};
 
         io::packed::read(stream, size_);
         io::packed::read(stream, total_counts_);
+        start_ = stream.input_;
+    }
+
+    /**
+     * Creates a postings stream reading from the given buffer. Assumes
+     * that the very first value in the buffer is the start of the
+     * postings, since the size and total counts are provided on
+     * construction.
+     */
+    postings_stream(const char* buffer, uint64_t size, uint64_t total_counts)
+        : start_{buffer}, size_{size}, total_counts_{total_counts}
+    {
+        // nothing
     }
 
     /**
@@ -82,6 +93,24 @@ class postings_stream
     }
 
     /**
+     * Writes this postings stream to an output stream in packed format.
+     * @return the number of bytes written
+     */
+    template <class OutputStream>
+    uint64_t write_packed(OutputStream& os) const
+    {
+        auto bytes = io::packed::write(os, size_);
+        bytes += io::packed::write(os, total_counts_);
+        for (const auto& pr : *this)
+        {
+            bytes += io::packed::write(os, pr.first);
+            bytes
+                += io::packed::write(os, static_cast<FeatureValue>(pr.second));
+        }
+        return bytes;
+    }
+
+    /**
      * An iterator over the (SecondaryKey, double) pairs of this postings
      * list.
      */
@@ -96,40 +125,37 @@ class postings_stream
 
         friend postings_stream;
 
-        iterator() : size_{0}, pos_{0}
+        iterator() : stream_{nullptr}, size_{0}, pos_{0}
         {
             // nothing
         }
 
         iterator& operator++()
         {
-            if (stor_)
+            if (pos_ == size_)
             {
-                if (pos_ == size_)
+                stream_ = {nullptr};
+                size_ = 0;
+                pos_ = 0;
+            }
+            else
+            {
+                uint64_t id;
+                io::packed::read(stream_, id);
+                // gap encoding
+                count_.first += id;
+
+                if (std::is_same<FeatureValue, uint64_t>::value)
                 {
-                    stor_ = util::nullopt;
-                    pos_ = 0;
-                    size_ = 0;
+                    uint64_t next;
+                    io::packed::read(stream_, next);
+                    count_.second = static_cast<double>(next);
                 }
                 else
                 {
-                    uint64_t id;
-                    io::packed::read(*stream_, id);
-                    // gap encoding
-                    stor_->first += id;
-
-                    if (std::is_same<FeatureValue, uint64_t>::value)
-                    {
-                        uint64_t next;
-                        io::packed::read(*stream_, next);
-                        stor_->second = static_cast<double>(next);
-                    }
-                    else
-                    {
-                        io::packed::read(*stream_, stor_->second);
-                    }
-                    ++pos_;
+                    io::packed::read(stream_, count_.second);
                 }
+                ++pos_;
             }
             return *this;
         }
@@ -143,18 +169,18 @@ class postings_stream
 
         reference operator*() const
         {
-            return *stor_;
+            return count_;
         }
 
         pointer operator->() const
         {
-            return &(*stor_);
+            return &count_;
         }
 
         bool operator==(const iterator& other)
         {
-            return std::tie(stor_, size_, pos_)
-                   == std::tie(other.stor_, other.size_, other.pos_);
+            return std::tie(stream_.input_, size_, pos_)
+                   == std::tie(other.stream_.input_, other.size_, other.pos_);
         }
 
         bool operator!=(const iterator& other)
@@ -163,23 +189,19 @@ class postings_stream
         }
 
       private:
-        iterator(const io::mmap_file& file, uint64_t seek_pos)
-            : stream_{file.begin() + seek_pos},
+        iterator(const char* start, uint64_t size)
+            : stream_{start},
+              size_{size},
               pos_{0},
-              stor_{std::make_pair(SecondaryKey{0}, 0.0)}
+              count_{std::make_pair(SecondaryKey{0}, 0.0)}
         {
-            io::packed::read(*stream_, size_);
-
-            // ignore total counts
-            uint64_t total_counts;
-            io::packed::read(*stream_, total_counts);
             ++(*this);
         }
 
-        util::optional<char_input_stream> stream_;
+        char_input_stream stream_;
         uint64_t size_;
         uint64_t pos_;
-        util::optional<std::pair<SecondaryKey, double>> stor_;
+        std::pair<SecondaryKey, double> count_;
     };
 
     /**
@@ -187,7 +209,7 @@ class postings_stream
      */
     iterator begin() const
     {
-        return {*file_, seek_pos_};
+        return {start_, size_};
     }
 
     /**
@@ -199,8 +221,7 @@ class postings_stream
     }
 
   private:
-    const io::mmap_file* file_;
-    uint64_t seek_pos_;
+    const char* start_;
     uint64_t size_;
     uint64_t total_counts_;
 };

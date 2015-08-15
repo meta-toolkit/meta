@@ -20,9 +20,7 @@ chunk_handler<Index>::producer::producer(chunk_handler* parent,
                                          uint64_t ram_budget)
     : max_size_{ram_budget}, parent_{parent}
 {
-    // sizeof(size_t): list size per bucket
-    // sizeof(void*): head pointer per bucket
-    chunk_size_ = pdata_.bucket_count() * (sizeof(size_t) + sizeof(void*));
+    chunk_size_ = pdata_.bytes_used();
     assert(chunk_size_ < max_size_);
 }
 
@@ -33,40 +31,44 @@ void chunk_handler<Index>::producer::operator()(const secondary_key_type& key,
 {
     for (const auto& count : counts)
     {
-        index_pdata_type pd{count.first};
-        pd.increase_count(key, count.second);
-        auto it = pdata_.find(pd);
+        postings_buffer_type pb{count.first};
+        auto it = pdata_.find(pb);
         if (it == pdata_.end())
         {
-            // sizeof(size_t): list size per bucket
-            // sizeof(void*): head pointer per bucket
-            chunk_size_ -= pdata_.bucket_count()
-                           * (sizeof(size_t) + sizeof(void*));
+            // check if we would resize on an insert
+            const auto& max_load_factor = pdata_.max_load_factor();
+            if (max_load_factor.denominator * (pdata_.size() + 1)
+                >= max_load_factor.numerator * pdata_.capacity())
+            {
+                // now check if roughly doubling our bytes used is going to
+                // cause problems
+                auto next_chunk_size = chunk_size_ + pdata_.bytes_used()
+                                       + pdata_.bytes_used() / 2;
+                if (next_chunk_size >= max_size_)
+                {
+                    // if so, flush the current chunk before carrying on
+                    flush_chunk();
+                }
+            }
 
-            // sizeof(void*): next pointer per element
-            chunk_size_ += pd.bytes_used() + sizeof(void*);
-            // 25% slop factor
-            chunk_size_ += (pd.bytes_used() + sizeof(void*)) / 4;
+            chunk_size_ -= pdata_.bytes_used();
 
-            pdata_.emplace(pd);
+            pb.write_count(key, static_cast<uint64_t>(count.second));
+            chunk_size_ += pb.bytes_used();
+            pdata_.emplace(std::move(pb));
 
-            // sizeof(size_t): list size per bucket
-            // sizeof(void*): head pointer per bucket
-            chunk_size_ += pdata_.bucket_count()
-                           * (sizeof(size_t) + sizeof(void*));
+            chunk_size_ += pdata_.bytes_used();
         }
         else
         {
-            chunk_size_ -= it->bytes_used() + sizeof(void*);
-            chunk_size_ -= (it->bytes_used() + sizeof(void*)) / 4;
+            chunk_size_ -= it->bytes_used();
 
             // note: we can modify elements in this set because we do not change
             // how comparisons are made (the primary_key value)
-            const_cast<index_pdata_type&>(*it)
-                .increase_count(key, count.second);
+            const_cast<postings_buffer_type&>(*it)
+                .write_count(key, static_cast<uint64_t>(count.second));
 
-            chunk_size_ += it->bytes_used() + sizeof(void*);
-            chunk_size_ += (it->bytes_used() + sizeof(void*)) / 4;
+            chunk_size_ += it->bytes_used();
         }
 
         if (chunk_size_ >= max_size_)
@@ -80,17 +82,20 @@ void chunk_handler<Index>::producer::flush_chunk()
     if (pdata_.empty())
         return;
 
-    std::vector<index_pdata_type> pdata;
-    for (auto it = pdata_.begin(); it != pdata_.end(); it = pdata_.erase(it))
-        pdata.emplace_back(std::move(*it));
-
-    pdata_.clear();
+    // extract the keys, emptying the hash set
+    auto pdata = pdata_.extract_keys();
     std::sort(pdata.begin(), pdata.end());
     parent_->write_chunk(pdata);
 
-    // sizeof(size_t): list size per bucket
-    // sizeof(void*): head pointer per bucket
-    chunk_size_ = pdata_.bucket_count() * (sizeof(size_t) + sizeof(void*));
+    chunk_size_ = pdata_.bytes_used();
+
+    // if the table itself is beyond the maximum chunk size, start over
+    // (this should rarely, if ever, happen)
+    if (chunk_size_ > max_size_)
+    {
+        decltype(pdata_){}.swap(pdata_);
+        chunk_size_ = pdata_.bytes_used();
+    }
 }
 
 template <class Index>
@@ -113,7 +118,7 @@ auto chunk_handler<Index>::make_producer(uint64_t ram_budget) -> producer
 }
 
 template <class Index>
-void chunk_handler<Index>::write_chunk(std::vector<index_pdata_type>& pdata)
+void chunk_handler<Index>::write_chunk(std::vector<postings_buffer_type>& pdata)
 {
     auto chunk_num = chunk_num_.fetch_add(1);
 
@@ -152,6 +157,12 @@ void chunk_handler<Index>::write_chunk(std::vector<index_pdata_type>& pdata)
 
 namespace detail
 {
+/**
+ * Represents an on-disk chunk to be merged with multi-way merge sort. Each
+ * input_chunk stores the file it's reading from, the total bytes needed to
+ * be read, and the current number of bytes read, as well as buffers in one
+ * postings.
+ */
 template <class Index>
 struct input_chunk
 {

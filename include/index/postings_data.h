@@ -92,10 +92,11 @@ class postings_data
     postings_data& operator=(postings_data&&) = default;
 
     /**
-     * @param other The other postings_data object to consume
+     * @param cont The other container (of SecondaryKey, count pairs) to merge
      * Adds the parameter's data to this object's data
      */
-    void merge_with(postings_data& other);
+    template <class Container>
+    void merge_with(Container&& cont);
 
     /**
      * @param s_id The SecondaryKey's id to add counts for
