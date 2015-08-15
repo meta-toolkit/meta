@@ -130,6 +130,10 @@ endif()
 add_library(meta-definitions INTERFACE)
 target_include_directories(meta-definitions INTERFACE ${PROJECT_SOURCE_DIR}/include)
 
+if (STDOPT)
+  target_compile_options(meta-definitions INTERFACE ${STDOPT})
+endif()
+
 if(ZLIB_FOUND)
   target_include_directories(meta-definitions INTERFACE
                              ${ZLIB_INCLUDE_DIRS})
