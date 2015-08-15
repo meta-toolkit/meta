@@ -13,6 +13,11 @@ include(CheckCXXSourceRuns)
 include(ExternalProject)
 include(FindZLIB)
 
+if (NOT CMAKE_BUILD_TYPE)
+  message("-- No build type selected, defaulting to Release")
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
+
 include_directories(include/)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
