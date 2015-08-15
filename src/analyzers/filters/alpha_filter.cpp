@@ -46,14 +46,18 @@ void alpha_filter::next_token()
     while (*source_)
     {
         auto tok = source_->next();
-        if (tok == "<s>" || tok == "</s>")
+        if (tok.size() <= 4 && tok.size() >= 3
+            && (tok == "<s>" || tok == "</s>"))
         {
             token_ = std::move(tok);
             return;
         }
 
         auto filt = utf::remove_if(tok, [](uint32_t codepoint)
-        { return !utf::isalpha(codepoint) && codepoint != '\''; });
+                                   {
+                                       return !utf::isalpha(codepoint)
+                                              && codepoint != '\'';
+                                   });
         if (!filt.empty())
         {
             token_ = std::move(filt);
