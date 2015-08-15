@@ -112,7 +112,7 @@ class postings_buffer
         ++num_ids_;
         total_counts_ += static_cast<uint64_t>(count);
 
-        assert(id > last_id_);
+        assert(id >= last_id_);
         io::packed::write(buffer_, id - last_id_);
         io::packed::write(buffer_, count);
 
