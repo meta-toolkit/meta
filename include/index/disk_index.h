@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <vector>
+#include "corpus/metadata.h"
 #include "util/pimpl.h"
 #include "meta.h"
 
@@ -129,6 +130,12 @@ class disk_index
      * index
      */
     std::vector<class_label> class_labels() const;
+
+    /**
+     * @param d_id The document id to fetch metadata for
+     * @return the metadata associated with this document id
+     */
+    corpus::metadata metadata(doc_id d_id) const;
 
     /**
      * @param d_id
