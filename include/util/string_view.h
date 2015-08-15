@@ -218,9 +218,20 @@ class basic_string_view
                    : basic_string_view{data() + pos, std::min(n, size() - pos)};
     }
 
-    constexpr int compare(basic_string_view s) const noexcept
+    int compare(basic_string_view s) const noexcept
     {
-        return Traits::compare(data(), s.data(), std::min(size(), s.size()));
+        auto cmp
+            = Traits::compare(data(), s.data(), std::min(size(), s.size()));
+        if (cmp != 0)
+            return cmp;
+
+        if (size() < s.size())
+            return -1;
+
+        if (size() == s.size())
+            return 0;
+
+        return 1;
     }
 
     constexpr int compare(size_type pos1, size_type n1,
@@ -603,10 +614,11 @@ namespace std
 template <class Char, class Traits>
 struct hash<meta::util::basic_string_view<Char, Traits>>
 {
+    meta::util::murmur_hash<> hasher;
+
     size_t operator()(
         const meta::util::basic_string_view<Char, Traits>& view) const noexcept
     {
-        static meta::util::murmur_hash<> hasher{};
         return hasher(reinterpret_cast<const uint8_t*>(view.data()),
                       view.size());
     }
