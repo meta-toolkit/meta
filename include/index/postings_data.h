@@ -72,10 +72,31 @@ class postings_data
     postings_data(PrimaryKey p_id);
 
     /**
-     * @param other The other postings_data object to consume
+     * Postings data is copy constructable.
+     */
+    postings_data(const postings_data&) = default;
+
+    /**
+     * Postings data is move constructable.
+     */
+    postings_data(postings_data&&) = default;
+
+    /**
+     * Postings data is copy assignable.
+     */
+    postings_data& operator=(const postings_data&) = default;
+
+    /**
+     * Postings data is move assignable.
+     */
+    postings_data& operator=(postings_data&&) = default;
+
+    /**
+     * @param cont The other container (of SecondaryKey, count pairs) to merge
      * Adds the parameter's data to this object's data
      */
-    void merge_with(postings_data& other);
+    template <class Container>
+    void merge_with(Container&& cont);
 
     /**
      * @param s_id The SecondaryKey's id to add counts for

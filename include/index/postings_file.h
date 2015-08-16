@@ -54,7 +54,7 @@ class postings_file
     {
         if (pk < byte_locations_.size())
             return postings_stream<SecondaryKey, FeatureValue>{
-                postings_, byte_locations_.at(pk)};
+                postings_.begin() + byte_locations_.at(pk)};
         return util::nullopt;
     }
 

@@ -46,80 +46,6 @@ uint64_t chunk<PrimaryKey, SecondaryKey>::size() const
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void chunk<PrimaryKey, SecondaryKey>::merge_with(const chunk& other)
-{
-    std::string temp_name = path_ + "_merge";
-
-    std::ifstream my_data{path_, std::ios::binary};
-    std::ifstream other_data{other.path_, std::ios::binary};
-    std::ofstream output{temp_name, std::ios::binary};
-
-    postings_data<PrimaryKey, SecondaryKey> my_pd;
-    postings_data<PrimaryKey, SecondaryKey> other_pd;
-    my_pd.read_packed(my_data);
-    other_pd.read_packed(other_data);
-
-    uint64_t terms = 0;
-    // merge while both have postings data
-    while (my_data && other_data)
-    {
-        ++terms;
-        if (my_pd.primary_key() == other_pd.primary_key())
-        {
-            // merge
-            my_pd.merge_with(other_pd);
-            // write
-            my_pd.write_packed(output);
-
-            // read next two postings data
-            my_pd.read_packed(my_data);
-            other_pd.read_packed(other_data);
-        }
-        else if (my_pd.primary_key() < other_pd.primary_key())
-        {
-            // write the winner
-            my_pd.write_packed(output);
-            // read next from the current chunk
-            my_pd.read_packed(my_data);
-        }
-        else
-        {
-            // write the winner
-            other_pd.write_packed(output);
-            // read next from the other chunk
-            other_pd.read_packed(other_data);
-        }
-    }
-
-    // finish merging when one runs out
-    while (my_data)
-    {
-        ++terms;
-        my_pd.write_packed(output);
-        my_pd.read_packed(my_data);
-    }
-    while (other_data)
-    {
-        ++terms;
-        other_pd.write_packed(output);
-        other_pd.read_packed(other_data);
-    }
-
-    my_data.close();
-    other_data.close();
-    output.close();
-    filesystem::delete_file(path_);
-    filesystem::delete_file(path_ + ".numterms");
-    filesystem::delete_file(other.path_);
-    filesystem::delete_file(other.path_ + ".numterms");
-    filesystem::rename_file(temp_name, path_);
-
-    std::ofstream termfile{path_ + ".numterms"};
-    termfile << terms;
-    set_size();
-}
-
-template <class PrimaryKey, class SecondaryKey>
 template <class Container>
 void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container& pdata)
 {
@@ -138,7 +64,7 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container& pdata)
         ++terms;
         if (my_pd.primary_key() == other_pd->primary_key())
         {
-            my_pd.merge_with(*other_pd);
+            my_pd.merge_with(other_pd->stream());
             my_pd.write_packed(output);
             my_pd.read_packed(my_data);
             ++other_pd;
@@ -172,12 +98,9 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container& pdata)
     my_data.close();
     output.close();
     filesystem::delete_file(path_);
-    filesystem::delete_file(path_ + ".numterms");
     filesystem::rename_file(temp_name, path_);
     pdata.clear();
 
-    std::ofstream termfile{path_ + ".numterms"};
-    termfile << terms;
     set_size();
 }
 }

@@ -51,14 +51,6 @@ class chunk
     std::string path() const;
 
     /**
-     * After this function ends, the current chunk file will contain
-     * information from both chunks, and the "other" chunk file will be
-     * deleted.
-     * @param other The other chunk to merge merge_with
-     */
-    void merge_with(const chunk& other);
-
-    /**
      * @param pdata A collection of postings data to combine with this chunk
      * pdata must:
      *  - support iteration in sorted order

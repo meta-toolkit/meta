@@ -20,7 +20,9 @@ metadata_writer::metadata_writer(const std::string& prefix, uint64_t num_docs,
       schema_{std::move(schema)}
 {
     // write metadata header
-    byte_pos_ += io::packed::write(db_file_, schema_.size() + 2);
+    // cast below is needed for OS X overload resolution
+    byte_pos_ += io::packed::write(db_file_,
+                                   static_cast<uint64_t>(schema_.size() + 2));
     byte_pos_ += io::write_binary(db_file_, std::string{"length"});
     byte_pos_ += io::write_binary(db_file_,
                                   corpus::metadata::field_type::UNSIGNED_INT);

@@ -5,49 +5,34 @@ language: cpp
 
 sudo: false
 
+os:
+  - linux
+  - osx
+
 compiler:
-    - clang
-    - gcc
+  - clang
+  - gcc
+
+# we only care about clang on OS X
+matrix:
+  exclude:
+    - os: osx
+      compiler: gcc
 
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise-3.6
     packages:
       - g++-4.8
       - libicu-dev
+      - llvm-3.6-dev
+      - clang-3.6
 
 install:
-  - mkdir $HOME/lib
-  - export LD_LIBRARY_PATH=$HOME/lib:$LD_LIBRARY_PATH
-  - mkdir $HOME/bin
-  - export PATH=$HOME/bin:$PATH
-  - mkdir $HOME/include
-  - export CPLUS_INCLUDE_PATH=$HOME/include:$CPLUS_INCLUDE_PATH
-  - wget http://www.cmake.org/files/v3.2/cmake-3.2.2-Linux-x86_64.sh
-  - sh cmake-3.2.2-Linux-x86_64.sh --prefix=$HOME --exclude-subdir
-    # use g++-4.8 if g++ is our compiler
-  - if [ "`echo $CXX`" == "g++" ]; then export CXX=g++-4.8; fi
-    # install libc++ if tests are run with clang++
-  - if [ "`echo $CXX`" == "clang++" ]; then cwd=$(pwd); fi
-  - if [ "`echo $CXX`" == "clang++" ]; then svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then git clone https://github.com/pathscale/libcxxrt.git libcxxrt; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cd libcxxrt; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then mkdir build; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cd build; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cmake -DCMAKE_BUILD_TYPE=Release ../; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then make; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cp lib/libcxxrt.so $HOME/lib; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then ln -sf $HOME/lib/libcxxrt.so $HOME/lib/libcxxrt.so.1; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then ln -sf $HOME/lib/libcxxrt.so $HOME/lib/libcxxrt.so.1.0; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cd $cwd; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cd libcxx; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then mkdir build; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cd build; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cmake -DLIBCXX_CXX_ABI=libcxxrt -DLIBCXX_CXX_ABI_INCLUDE_PATHS="../../libcxxrt/src" -DLIBCXX_CXX_ABI_LIBRARY_PATH=$HOME/lib -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME ..; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then make; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then make install; fi
-  - if [ "`echo $CXX`" == "clang++" ]; then cd $cwd; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then source travis/install_linux.sh; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then source travis/install_osx.sh; fi
 
 before_script:
   - mkdir build
@@ -55,5 +40,5 @@ before_script:
   - cp ../config.toml ./
 
 script:
-  - cmake ../ -DCMAKE_BUILD_TYPE=Debug && make && make clean
-  - rm -rf CMake* && cmake ../ -DCMAKE_BUILD_TYPE=Release && make && ctest --output-on-failure
+  - ../travis/cmake.sh Debug && make && make clean
+  - rm -rf CMake* && ../travis/cmake.sh Release && make && ctest --output-on-failure

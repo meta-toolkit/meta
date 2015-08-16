@@ -44,8 +44,10 @@ class forward_index::impl
 
     /**
      * @param inv_idx The inverted index to uninvert
+     * @param ram_budget The **estimated** allowed size of an in-memory
+     * chunk
      */
-    void uninvert(const inverted_index& inv_idx);
+    void uninvert(const inverted_index& inv_idx, uint64_t ram_budget);
 
     /**
      * @param name The name of the inverted index to copy data from
@@ -182,8 +184,13 @@ void forward_index::create_index(const std::string& config_file)
         }
         auto inv_idx = make_index<inverted_index>(config_file);
 
+        uint64_t ram_budget = 1024;
+        if (auto cfg_ram_budget = config.get_as<int64_t>("indexer-ram-budget"))
+            ram_budget = static_cast<uint64_t>(*cfg_ram_budget);
+
         fwd_impl_->create_uninverted_metadata(inv_idx->index_name());
-        fwd_impl_->uninvert(*inv_idx);
+        // RAM budget is given in MB
+        fwd_impl_->uninvert(*inv_idx, ram_budget * 1024 * 1024);
         impl_->load_term_id_mapping();
         fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
     }
@@ -310,11 +317,12 @@ util::optional<postings_stream<term_id, double>>
     return fwd_impl_->postings_->find_stream<double>(d_id);
 }
 
-void forward_index::impl::uninvert(const inverted_index& inv_idx)
+void forward_index::impl::uninvert(const inverted_index& inv_idx,
+                                   uint64_t ram_budget)
 {
     chunk_handler<forward_index> handler{idx_->index_name()};
     {
-        auto producer = handler.make_producer();
+        auto producer = handler.make_producer(ram_budget);
         for (term_id t_id{0}; t_id < inv_idx.unique_terms(); ++t_id)
         {
             auto pdata = inv_idx.search_primary(t_id);

@@ -13,6 +13,11 @@ include(CheckCXXSourceRuns)
 include(ExternalProject)
 include(FindZLIB)
 
+if (NOT CMAKE_BUILD_TYPE)
+  message("-- No build type selected, defaulting to Release")
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
+
 include_directories(include/)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
@@ -125,6 +130,10 @@ endif()
 add_library(meta-definitions INTERFACE)
 target_include_directories(meta-definitions INTERFACE ${PROJECT_SOURCE_DIR}/include)
 
+if (STDOPT)
+  target_compile_options(meta-definitions INTERFACE ${STDOPT})
+endif()
+
 if(ZLIB_FOUND)
   target_include_directories(meta-definitions INTERFACE
                              ${ZLIB_INCLUDE_DIRS})
@@ -153,6 +162,14 @@ if(ENABLE_PROFILING)
   find_library(GPERFTOOLS_PROFILER NAMES profiler REQUIRED)
   message("-- Found profiler: ${GPERFTOOLS_PROFILER}")
   target_link_libraries(meta-definitions INTERFACE ${GPERFTOOLS_PROFILER})
+endif()
+
+find_library(JEMALLOC_LIB NAMES jemalloc)
+if(JEMALLOC_LIB)
+  message("-- Using jemalloc: ${JEMALLOC_LIB}")
+  target_link_libraries(meta-definitions INTERFACE ${JEMALLOC_LIB})
+else()
+  message("-- Using regular malloc; consider installing jemalloc")
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")

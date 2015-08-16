@@ -50,11 +50,12 @@ class inverted_index::impl
      * @param handler The chunk handler for this index
      * @param mdata_parser The parser for reading metadata
      * @param mdata_writer The writer for metadata
+     * @param ram_budget The total **estimated** RAM budget
      * @return the number of chunks created
      */
     void tokenize_docs(corpus::corpus* docs,
                        chunk_handler<inverted_index>& handler,
-                       metadata_writer& mdata_writer);
+                       metadata_writer& mdata_writer, uint64_t ram_budget);
 
     /**
      * Compresses the large postings file.
@@ -120,6 +121,13 @@ void inverted_index::create_index(const std::string& config_file)
     // load the documents from the corpus
     auto docs = corpus::corpus::load(config_file);
 
+    auto config = cpptoml::parse_file(config_file);
+    auto cfg_ram_budget = config.get_as<int64_t>("indexer-ram-budget");
+
+    uint64_t ram_budget = 1024;
+    if (cfg_ram_budget)
+        ram_budget = static_cast<uint64_t>(*cfg_ram_budget);
+
     chunk_handler<inverted_index> handler{index_name()};
     {
         metadata_writer mdata_writer{index_name(), docs->size(),
@@ -127,7 +135,9 @@ void inverted_index::create_index(const std::string& config_file)
         uint64_t num_docs = docs->size();
         impl_->load_labels(num_docs);
 
-        inv_impl_->tokenize_docs(docs.get(), handler, mdata_writer);
+        // RAM budget is given in megabytes
+        inv_impl_->tokenize_docs(docs.get(), handler, mdata_writer,
+                                 ram_budget * 1024 * 1024);
     }
 
     handler.merge_chunks();
@@ -163,14 +173,15 @@ void inverted_index::load_index()
 
 void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
                                          chunk_handler<inverted_index>& handler,
-                                         metadata_writer& mdata_writer)
+                                         metadata_writer& mdata_writer,
+                                         uint64_t ram_budget)
 {
     std::mutex mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs->size()};
 
-    auto task = [&]()
+    auto task = [&](uint64_t ram_budget)
     {
-        auto producer = handler.make_producer();
+        auto producer = handler.make_producer(ram_budget);
         auto analyzer = analyzer_->clone();
         while (true)
         {
@@ -207,8 +218,12 @@ void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
 
     parallel::thread_pool pool;
     std::vector<std::future<void>> futures;
-    for (size_t i = 0; i < pool.thread_ids().size(); ++i)
-        futures.emplace_back(pool.submit_task(task));
+    auto num_threads = pool.thread_ids().size();
+    for (size_t i = 0; i < num_threads; ++i)
+    {
+        futures.emplace_back(
+            pool.submit_task(std::bind(task, ram_budget / num_threads)));
+    }
 
     for (auto& fut : futures)
         fut.get();

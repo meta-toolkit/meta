@@ -15,12 +15,13 @@
 #include <mutex>
 #include <queue>
 #include <stdexcept>
-#include <unordered_set>
 #include <utility>
 #include <vector>
 
 #include "index/chunk.h"
+#include "index/postings_buffer.h"
 #include "util/optional.h"
+#include "util/probe_set.h"
 
 namespace meta
 {
@@ -39,6 +40,8 @@ class chunk_handler
     using primary_key_type = typename index_pdata_type::primary_key_type;
     using secondary_key_type = typename index_pdata_type::secondary_key_type;
     using chunk_t = chunk<primary_key_type, secondary_key_type>;
+    using postings_buffer_type
+        = postings_buffer<primary_key_type, secondary_key_type>;
 
     /**
      * The object that is fed postings_data by the index.
@@ -49,8 +52,10 @@ class chunk_handler
         /**
          * @param parent A back-pointer to the handler this producer is
          * operating on
+         * @param ram_budget The **estimated** allowed size of the buffer
+         * for this producer
          */
-        producer(chunk_handler* parent);
+        producer(chunk_handler* parent, uint64_t ram_budget);
 
         /**
          * Handler for when a given secondary_key has been processed and is
@@ -74,13 +79,17 @@ class chunk_handler
         void flush_chunk();
 
         /// Current in-memory chunk
-        std::unordered_set<index_pdata_type> pdata_;
+        util::probe_set<postings_buffer_type> pdata_;
 
         /// Current size of the in-memory chunk
         uint64_t chunk_size_;
 
-        /// Maximum allowed size of a chunk in bytes before it is written
-        const static uint64_t constexpr max_size = 1024 * 1024 * 128; // 128 MB
+        /**
+         * Maximum allowed size of a chunk in bytes before it is written.
+         * This is an *estimate*, so you should make sure there's some slop
+         * in this number to make sure you don't run out of memory.
+         */
+        uint64_t max_size_;
 
         /// Back-pointer to the handler this producer is operating on
         chunk_handler* parent_;
@@ -96,9 +105,11 @@ class chunk_handler
      * Creates a producer for this chunk_handler. Producers are designed to
      * be thread-local buffers of chunks that write to disk when their
      * buffer is full.
+     * @param ram_bugdet The estimated allowed size of this thread-local
+     * buffer
      * @return a new producer
      */
-    producer make_producer();
+    producer make_producer(uint64_t ram_budget);
 
     /**
      * @return the number of chunks this handler has written to disk.
@@ -134,7 +145,7 @@ class chunk_handler
      * @param pdata The collection of postings_data objects to combine into a
      * chunk
      */
-    void write_chunk(std::vector<index_pdata_type>& pdata);
+    void write_chunk(std::vector<postings_buffer_type>& pdata);
 
     /// The prefix for all chunks to be written
     std::string prefix_;

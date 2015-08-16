@@ -141,7 +141,7 @@ class basic_string_view
         return data_[pos];
     }
 
-    constexpr const_reference at(size_type pos) const
+    const_reference at(size_type pos) const
     {
         if (pos >= size())
             throw std::out_of_range{"index out of bounds"};
@@ -163,24 +163,24 @@ class basic_string_view
         return data_;
     }
 
-    constexpr void clear() noexcept
+    void clear() noexcept
     {
         data_ = nullptr;
         size_ = 0;
     }
 
-    constexpr void remove_prefix(size_type n)
+    void remove_prefix(size_type n)
     {
         data_ += n;
         size_ -= n;
     }
 
-    constexpr void remove_suffix(size_type n)
+    void remove_suffix(size_type n)
     {
         size_ -= n;
     }
 
-    constexpr void swap(basic_string_view& s) noexcept
+    void swap(basic_string_view& s) noexcept
     {
         using ::std::swap;
         swap(data_, s.data_);
@@ -218,10 +218,20 @@ class basic_string_view
                    : basic_string_view{data() + pos, std::min(n, size() - pos)};
     }
 
-    constexpr int compare(basic_string_view s) const noexcept
+    int compare(basic_string_view s) const noexcept
     {
-        constexpr auto rlen = std::min(size(), s.size());
-        return Traits::compare(data(), s.data(), rlen);
+        auto cmp
+            = Traits::compare(data(), s.data(), std::min(size(), s.size()));
+        if (cmp != 0)
+            return cmp;
+
+        if (size() < s.size())
+            return -1;
+
+        if (size() == s.size())
+            return 0;
+
+        return 1;
     }
 
     constexpr int compare(size_type pos1, size_type n1,
@@ -252,8 +262,7 @@ class basic_string_view
         return substr(pos1, n1).compare(basic_string_view{s, n2});
     }
 
-    constexpr size_type find(basic_string_view s, size_type pos = 0) const
-        noexcept
+    size_type find(basic_string_view s, size_type pos = 0) const noexcept
     {
         if (pos >= size())
             return npos;
@@ -280,8 +289,7 @@ class basic_string_view
         return find(basic_string_view{s}, pos);
     }
 
-    constexpr size_type rfind(basic_string_view s, size_type pos = npos) const
-        noexcept
+    size_type rfind(basic_string_view s, size_type pos = npos) const noexcept
     {
         if (size() < s.size())
             return npos;
@@ -315,8 +323,8 @@ class basic_string_view
         return rfind(basic_string_view{s}, pos);
     }
 
-    constexpr size_type find_first_of(basic_string_view s,
-                                      size_type pos = 0) const noexcept
+    size_type find_first_of(basic_string_view s, size_type pos = 0) const
+        noexcept
     {
         if (pos >= size())
             return npos;
@@ -344,8 +352,8 @@ class basic_string_view
         return find_first_of(basic_string_view{s}, pos);
     }
 
-    constexpr size_type find_last_of(basic_string_view s,
-                                     size_type pos = npos) const noexcept
+    size_type find_last_of(basic_string_view s, size_type pos = npos) const
+        noexcept
     {
         if (pos >= size())
             return npos;
@@ -375,8 +383,8 @@ class basic_string_view
         return find_last_of(basic_string_view{s}, pos);
     }
 
-    constexpr size_type find_first_not_of(basic_string_view s,
-                                          size_type pos = 0) const noexcept
+    size_type find_first_not_of(basic_string_view s, size_type pos = 0) const
+        noexcept
     {
         if (pos >= size())
             return npos;
@@ -409,8 +417,8 @@ class basic_string_view
         return find_first_not_of(basic_string_view{s}, pos);
     }
 
-    constexpr size_type find_last_not_of(basic_string_view s,
-                                         size_type pos = npos) const noexcept
+    size_type find_last_not_of(basic_string_view s, size_type pos = npos) const
+        noexcept
     {
         if (pos >= size())
             return npos;
@@ -606,6 +614,8 @@ namespace std
 template <class Char, class Traits>
 struct hash<meta::util::basic_string_view<Char, Traits>>
 {
+    meta::util::murmur_hash<> hasher;
+
     size_t operator()(
         const meta::util::basic_string_view<Char, Traits>& view) const noexcept
     {

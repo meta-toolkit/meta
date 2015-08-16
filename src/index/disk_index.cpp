@@ -73,9 +73,14 @@ std::vector<class_label> disk_index::class_labels() const
     return impl_->class_labels();
 }
 
+corpus::metadata disk_index::metadata(doc_id d_id) const
+{
+    return impl_->metadata_->get(d_id);
+}
+
 uint64_t disk_index::unique_terms(doc_id d_id) const
 {
-    return *impl_->metadata_->get(d_id).get<uint64_t>("unique-terms");
+    return *metadata(d_id).get<uint64_t>("unique-terms");
 }
 
 uint64_t disk_index::unique_terms() const
@@ -85,7 +90,7 @@ uint64_t disk_index::unique_terms() const
 
 uint64_t disk_index::doc_size(doc_id d_id) const
 {
-    return *impl_->metadata_->get(d_id).get<uint64_t>("length");
+    return *metadata(d_id).get<uint64_t>("length");
 }
 
 uint64_t disk_index::num_docs() const

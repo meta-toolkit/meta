@@ -7,7 +7,6 @@
 #include <cstring>
 #include <numeric>
 #include "index/postings_data.h"
-#include "io/binary.h"
 #include "io/packed.h"
 
 namespace meta
@@ -22,7 +21,8 @@ postings_data<PrimaryKey, SecondaryKey>::postings_data(PrimaryKey p_id)
 }
 
 template <class PrimaryKey, class SecondaryKey>
-void postings_data<PrimaryKey, SecondaryKey>::merge_with(postings_data& other)
+template <class Container>
+void postings_data<PrimaryKey, SecondaryKey>::merge_with(Container&& cont)
 {
     auto searcher = [](const pair_t& p, const SecondaryKey& s)
     {
@@ -33,7 +33,7 @@ void postings_data<PrimaryKey, SecondaryKey>::merge_with(postings_data& other)
 
     // if the primary_key doesn't exist, add onto back
     uint64_t orig_length = counts_.size();
-    for (auto& p : other.counts_)
+    for (auto& p : cont)
     {
         auto it = std::lower_bound(
             counts_.begin(), counts_.begin() + orig_length, p.first, searcher);
@@ -125,7 +125,7 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed(
 {
     uint64_t bytes = 0;
 
-    bytes += io::write_binary(out, p_id_);
+    bytes += io::packed::write(out, p_id_);
     bytes += write_packed_counts<FeatureValue>(out);
 
     return bytes;
@@ -133,7 +133,8 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed(
 
 template <class PrimaryKey, class SecondaryKey>
 template <class FeatureValue>
-uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed_counts(std::ostream& out) const
+uint64_t postings_data<PrimaryKey, SecondaryKey>::write_packed_counts(
+    std::ostream& out) const
 {
     auto bytes = io::packed::write(out, counts_.size());
 
@@ -173,7 +174,7 @@ uint64_t length(const T& elem,
                 typename std::enable_if<std::is_same<T, std::string>::value>::
                     type* = nullptr)
 {
-    return elem.size();
+    return elem.capacity();
 }
 
 template <class T>
@@ -194,8 +195,7 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::read_packed(std::istream& in)
     else
         in.unget();
 
-    io::read_binary(in, p_id_);
-    auto bytes = length(p_id_);
+    auto bytes = io::packed::read(in, p_id_);
 
     uint64_t size;
     uint64_t total_counts;
@@ -235,7 +235,8 @@ uint64_t postings_data<PrimaryKey, SecondaryKey>::read_packed(std::istream& in)
 template <class PrimaryKey, class SecondaryKey>
 uint64_t postings_data<PrimaryKey, SecondaryKey>::bytes_used() const
 {
-    return sizeof(pair_t) * counts_.size() + length(p_id_);
+    return sizeof(pair_t) * counts_.capacity() + length(p_id_)
+           + sizeof(count_t);
 }
 }
 }

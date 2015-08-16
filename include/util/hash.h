@@ -77,7 +77,9 @@ class murmur_hash<4>
 
     std::size_t operator()(const uint8_t* data, int len) const
     {
-        std::size_t out = seed_;
+        // this *has* to be uint32_t for OS X clang to correctly resolve
+        // between the two versions of rotl/fmix in namespace detail above.
+        uint32_t out = seed_;
 
         const auto nblocks = len / 4;
 
