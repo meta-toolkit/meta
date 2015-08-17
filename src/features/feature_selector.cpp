@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <unordered_set>
 #include "util/filesystem.h"
 #include "util/progress.h"
 #include "parallel/parallel_for.h"
