@@ -27,7 +27,32 @@ class diff
      */
     diff(const cpptoml::table& config);
 
+    /**
+     * Default move constructor.
+     */
     diff(diff&&) = default;
+
+    /**
+     * @param sent The sentence object to inspect
+     * @return the index of the least-likely ngram according
+     */
+    uint64_t least_likely_ngram(const sentence& sent) const;
+
+    /**
+     * @return the order of the LM used by this diff object
+     */
+    uint64_t n_val() const
+    {
+        return n_val_;
+    }
+
+    /**
+     * @return the language model used by this diff object
+     */
+    const language_model& lm() const
+    {
+        return lm_;
+    }
 
     /**
      * @param sent The sentence to transform
@@ -102,6 +127,7 @@ class diff
 
     language_model lm_;
 
+    /// The order of the language model
     uint64_t n_val_;
     uint64_t max_edits_;
 
@@ -110,15 +136,24 @@ class diff
     double substitute_penalty_;
     double remove_penalty_;
 
+    /// Chooses whether to do edits at a low-probability location in the
+    /// sentence determined by / a LM; if false, edits are performed at every
+    /// index.
     bool use_lm_;
+
     std::unordered_map<std::string, std::vector<std::string>> stems_;
     std::vector<std::string> fwords_;
     std::unordered_set<std::string> seen_;
 
+    /// How many candidate sentences to store.
     static constexpr uint64_t max_cand_size_ = 20;
-    /// balance between perplexity and edit weights; doesn't necessarily matter
-    /// since penalty weights will scale with different values of lambda
+
+    /// Balances perplexity and edit weights.
     static constexpr double lambda_ = 0.5;
+
+    /// Whether to insert likely words based on the language model. This is
+    /// currently turned off due to the LM representation making it inefficient.
+    static constexpr bool lm_generate_ = false;
 };
 
 class diff_exception : public std::runtime_error

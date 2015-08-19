@@ -26,21 +26,6 @@ int main(int argc, char* argv[])
 
     logging::set_cerr_logging();
 
-    /*
-    lm::language_model model{cpptoml::parse_file(argv[1])};
-    std::string line;
-    std::ifstream in{argv[2]};
-    while (in)
-    {
-        std::getline(in, line);
-        if (line.empty())
-            continue;
-
-        lm::sentence sent{line};
-        std::cout << model.log_prob(sent) << std::endl;
-    }
-    */
-
     lm::diff correcter{cpptoml::parse_file(argv[1])};
     std::ifstream in{argv[2]};
     auto num_sentences = filesystem::num_lines(argv[2]);

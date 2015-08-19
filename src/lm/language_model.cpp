@@ -28,7 +28,8 @@ language_model::language_model(const cpptoml::table& config)
     N_ = 0;
     if (binary_file && filesystem::file_exists(*binary_file + "0.binlm"))
     {
-        LOG(info) << "Loading language model from binary file..." << ENDLG;
+        LOG(info) << "Loading language model from binary files: "
+                  << *binary_file << "*" << ENDLG;
         auto time = common::time(
             [&]()
             {
@@ -42,7 +43,8 @@ language_model::language_model(const cpptoml::table& config)
     }
     else if (arpa_file && binary_file)
     {
-        LOG(info) << "Loading language model from .arpa file... " << ENDLG;
+        LOG(info) << "Loading language model from .arpa file: " << *arpa_file
+                  << ENDLG;
         prefix_ = *binary_file;
         auto time = common::time([&]()
                                  {

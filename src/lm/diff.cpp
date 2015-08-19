@@ -81,63 +81,72 @@ void diff::add(PQ& candidates, const sentence& sent)
         candidates.pop();
 }
 
-template <class PQ>
-void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
+uint64_t diff::least_likely_ngram(const sentence& sent) const
 {
-    if (sent.size() < n_val_)
-        return;
-
     double min_prob = 1;
     uint64_t best_idx = 0;
-    sentence best;
-    for (uint64_t i = n_val_ - 1; i < sent.size(); ++i)
+    for (uint64_t i = n_val_; i < sent.size(); ++i)
     {
-        auto ngram = sent(i - (n_val_ - 1), i + 1);
+        auto ngram = sent(i - n_val_, i);
         auto prob = lm_.log_prob(ngram);
         if (prob < min_prob)
         {
             min_prob = prob;
-            best_idx = i;
-            best = ngram;
+            best_idx = i - 1;
         }
     }
 
-    insert(sent, best_idx, candidates, depth);
-    remove(sent, best_idx, candidates, depth);
-    substitute(sent, best_idx, candidates, depth);
+    return best_idx;
+}
 
-    best.pop_back();
-    try
+template <class PQ>
+void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
+{
+    auto best_idx = least_likely_ngram(sent);
+
+    for (uint64_t i = 0; i < n_val_ && i < best_idx; ++i)
     {
-        for (auto& next : lm_.top_k(best, 3))
+        insert(sent, best_idx - i, candidates, depth);
+        remove(sent, best_idx - i, candidates, depth);
+        substitute(sent, best_idx - i, candidates, depth);
+    }
+
+    if (lm_generate_)
+    {
+        auto best = sent(best_idx - n_val_, best_idx);
+        best.pop_back();
+        try
         {
-            if (next.first == "</s>")
-                continue;
-
-            sentence ins_cpy{sent};
-            ins_cpy.insert(best_idx, next.first,
-                           base_penalty_ + insert_penalty_);
-
-            if (seen_.find(ins_cpy.to_string()) == seen_.end())
+            for (auto& next : lm_.top_k(best, 3))
             {
-                add(candidates, ins_cpy);
-                step(ins_cpy, candidates, depth + 1);
-            }
+                if (next.first == "</s>")
+                    continue;
 
-            sentence sub_cpy{sent};
-            sub_cpy.substitute(best_idx, next.first,
-                               base_penalty_ + substitute_penalty_);
+                sentence ins_cpy{sent};
+                ins_cpy.insert(best_idx, next.first,
+                               base_penalty_ + insert_penalty_);
 
-            if (seen_.find(sub_cpy.to_string()) == seen_.end())
-            {
-                add(candidates, sub_cpy);
-                step(sub_cpy, candidates, depth + 1);
+                if (seen_.find(ins_cpy.to_string()) == seen_.end())
+                {
+                    add(candidates, ins_cpy);
+                    step(ins_cpy, candidates, depth + 1);
+                }
+
+                sentence sub_cpy{sent};
+                sub_cpy.substitute(best_idx, next.first,
+                                   base_penalty_ + substitute_penalty_);
+
+                if (seen_.find(sub_cpy.to_string()) == seen_.end())
+                {
+                    add(candidates, sub_cpy);
+                    step(sub_cpy, candidates, depth + 1);
+                }
             }
         }
-    }
-    catch (language_model_exception& ex)
-    {
-        // ignore if there are no transitions found
+        catch (language_model_exception& ex)
+        {
+            // ignore if there are no transitions found
+        }
     }
 }
 
