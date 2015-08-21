@@ -13,6 +13,8 @@
 #include "corpus/corpus.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/filters/all.h"
+#include "util/progress.h"
+#include "logging/logger.h"
 
 using namespace meta;
 
@@ -29,6 +31,8 @@ int main(int argc, char* argv[])
 
     uint64_t k = std::stoi(argv[2]);
 
+    logging::set_cerr_logging();
+
     auto config = cpptoml::parse_file(argv[1]);
     auto group = config.get_table_array("analyzers");
     if (!group)
@@ -39,14 +43,17 @@ int main(int argc, char* argv[])
 
     std::unordered_map<std::string, uint64_t> counts;
     auto docs = corpus::corpus::load(config);
+    printing::progress prog{" > Reading corpus: ", docs->size()};
     while (docs->has_next())
     {
         auto doc = docs->next();
+        prog(doc.id());
         auto content = doc.content();
         filts->set_content(std::move(content));
         while (*filts)
             ++counts[filts->next()];
     }
+    prog.end();
 
     using pair_t = std::pair<std::string, uint64_t>;
     auto comp = [](const pair_t& a, const pair_t& b)
