@@ -70,11 +70,15 @@ int main(int argc, char* argv[])
                 {sequence::symbol_t{token}, sequence::tag_t{"[UNK]"}});
         }
 
+        if (seq.size() == 0)
+            continue;
+
         analyzer.analyze(seq);
         tagger.tag(seq);
         for (auto& obs : seq)
         {
             auto word = obs.symbol();
+            std::transform(word.begin(), word.end(), word.begin(), ::tolower);
             if (keep_list.find(word) != keep_list.end())
                 std::cout << word << " ";
             else
