@@ -127,7 +127,8 @@ int main(int argc, char** argv)
             tagger.tag(seq);
 
             for (uint64_t t = 0; t < seq.size(); ++t)
-                matrix.add(class_label{seq[t].tag()}, class_label{correct[t]});
+                matrix.add(predicted_label{seq[t].tag()},
+                           class_label{correct[t]});
         }
     }
     matrix.print_stats();

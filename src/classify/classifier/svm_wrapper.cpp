@@ -80,7 +80,7 @@ confusion_matrix svm_wrapper::test(const std::vector<doc_id>& docs)
         // number of testing documents
         std::getline(in, str_val);
         uint32_t value = std::stoul(str_val);
-        class_label predicted = idx_->class_label_from_id(label_id{value});
+        predicted_label predicted{idx_->class_label_from_id(label_id{value})};
         class_label actual = idx_->label(d_id);
         matrix.add(predicted, actual);
     }

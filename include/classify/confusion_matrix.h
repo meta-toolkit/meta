@@ -35,7 +35,7 @@ class confusion_matrix
      * @param actual The actual class label
      * @param times The number of times this prediction was made
      */
-    void add(const class_label& predicted, const class_label& actual,
+    void add(const predicted_label& predicted, const class_label& actual,
              size_t times = 1);
 
     /**
@@ -71,7 +71,7 @@ class confusion_matrix
     // without causing in internal compiler error (segmentation fault) in
     // GCC 4.8.2
     /** typedef for predicted class assignments to counts. */
-    typedef std::unordered_map<std::pair<class_label, class_label>, size_t,
+    typedef std::unordered_map<std::pair<predicted_label, class_label>, size_t,
                                decltype(&confusion_matrix::string_pair_hash)>
         prediction_counts;
 

@@ -23,7 +23,7 @@ confusion_matrix classifier::test(const std::vector<doc_id>& docs)
 {
     confusion_matrix matrix;
     for (auto& d_id : docs)
-        matrix.add(classify(d_id), idx_->label(d_id));
+        matrix.add(predicted_label{classify(d_id)}, idx_->label(d_id));
 
     return matrix;
 }

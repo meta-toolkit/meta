@@ -187,20 +187,20 @@ int confusion_matrix_test()
         "matrix-test", [&]()
         {
             // We have 3 classes {A, B, C} and get the following predictions:
-            std::vector<std::pair<class_label, class_label>> preds;
-            preds.emplace_back("A"_cl, "A"_cl);
-            preds.emplace_back("B"_cl, "A"_cl);
-            preds.emplace_back("C"_cl, "A"_cl);
-            preds.emplace_back("B"_cl, "B"_cl);
-            preds.emplace_back("B"_cl, "B"_cl);
-            preds.emplace_back("B"_cl, "B"_cl);
-            preds.emplace_back("A"_cl, "C"_cl);
-            preds.emplace_back("A"_cl, "C"_cl);
-            preds.emplace_back("A"_cl, "C"_cl);
+            std::vector<std::pair<predicted_label, class_label>> preds;
+            preds.emplace_back("A"_pl, "A"_cl);
+            preds.emplace_back("B"_pl, "A"_cl);
+            preds.emplace_back("C"_pl, "A"_cl);
+            preds.emplace_back("B"_pl, "B"_cl);
+            preds.emplace_back("B"_pl, "B"_cl);
+            preds.emplace_back("B"_pl, "B"_cl);
+            preds.emplace_back("A"_pl, "C"_cl);
+            preds.emplace_back("A"_pl, "C"_cl);
+            preds.emplace_back("A"_pl, "C"_cl);
 
             classify::confusion_matrix mtx;
             for (auto& pair : preds)
-                mtx.add(class_label{pair.first}, class_label{pair.second});
+                mtx.add(pair.first, pair.second);
 
             ASSERT_APPROX_EQUAL(mtx.accuracy(), 4.0 / 9);
 

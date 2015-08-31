@@ -22,13 +22,12 @@ confusion_matrix::confusion_matrix()
     /* nothing */
 }
 
-void confusion_matrix::add(const class_label& predicted,
+void confusion_matrix::add(const predicted_label& predicted,
                            const class_label& actual, size_t times)
 {
-    std::pair<class_label, class_label> prediction{predicted, actual};
+    std::pair<predicted_label, class_label> prediction{predicted, actual};
     predictions_[prediction] += times;
     counts_[actual] += times;
-    classes_.insert(predicted);
     classes_.insert(actual);
     total_ += times;
 }
@@ -73,9 +72,11 @@ double confusion_matrix::precision(const class_label& lbl) const
 {
     double denom = 0.0;
     for (auto& cls : classes_)
-        denom += map::safe_at(predictions_, std::make_pair(lbl, cls));
+        denom += map::safe_at(predictions_,
+                              std::make_pair(predicted_label{lbl}, cls));
 
-    double correct = map::safe_at(predictions_, std::make_pair(lbl, lbl));
+    double correct
+        = map::safe_at(predictions_, std::make_pair(predicted_label{lbl}, lbl));
 
     if (denom != 0.0)
         return correct / denom;
@@ -96,9 +97,11 @@ double confusion_matrix::recall(const class_label& lbl) const
 {
     double denom = 0.0;
     for (auto& cls : classes_)
-        denom += map::safe_at(predictions_, std::make_pair(cls, lbl));
+        denom += map::safe_at(predictions_,
+                              std::make_pair(predicted_label{cls}, lbl));
 
-    double correct = map::safe_at(predictions_, std::make_pair(lbl, lbl));
+    double correct
+        = map::safe_at(predictions_, std::make_pair(predicted_label{lbl}, lbl));
 
     if (denom != 0.0)
         return correct / denom;
@@ -135,8 +138,8 @@ void confusion_matrix::print(std::ostream& out) const
             << " | ";
         for (auto& pred_class : classes_)
         {
-            auto it
-                = predictions_.find(std::make_pair(pred_class, actual_class));
+            auto it = predictions_.find(
+                std::make_pair(predicted_label{pred_class}, actual_class));
             if (it != predictions_.end())
             {
                 double percent = static_cast<double>(it->second)
@@ -223,7 +226,8 @@ double confusion_matrix::accuracy() const
 {
     double correct = 0.0;
     for (auto& cls : classes_)
-        correct += map::safe_at(predictions_, std::make_pair(cls, cls));
+        correct += map::safe_at(predictions_,
+                                std::make_pair(predicted_label{cls}, cls));
     return correct / total_;
 }
 
@@ -266,8 +270,10 @@ bool confusion_matrix::mcnemar_significant(const confusion_matrix& a,
 
     for (auto& cls : classes)
     {
-        auto a_count = map::safe_at(a.predictions_, std::make_pair(cls, cls));
-        auto b_count = map::safe_at(b.predictions_, std::make_pair(cls, cls));
+        auto a_count = map::safe_at(a.predictions_,
+                                    std::make_pair(predicted_label{cls}, cls));
+        auto b_count = map::safe_at(b.predictions_,
+                                    std::make_pair(predicted_label{cls}, cls));
         if (a_count > b_count)
             a_adv += (a_count - b_count);
         else if (b_count > a_count)
