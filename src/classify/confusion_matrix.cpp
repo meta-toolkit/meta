@@ -104,8 +104,8 @@ void confusion_matrix::print_class_stats(std::ostream& out,
 {
     for (auto& cls : classes_)
     {
-        prec += map::safe_at(predictions_, std::make_pair(cls, label));
-        rec += map::safe_at(predictions_, std::make_pair(label, cls));
+        prec += map::safe_at(predictions_, std::make_pair(label, cls));
+        rec += map::safe_at(predictions_, std::make_pair(cls, label));
     }
 
     double correct = map::safe_at(predictions_, std::make_pair(label, label));
