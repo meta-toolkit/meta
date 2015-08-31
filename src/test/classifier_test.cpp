@@ -187,39 +187,37 @@ int confusion_matrix_test()
         "matrix-test", [&]()
         {
             // We have 3 classes {A, B, C} and get the following predictions:
-            std::vector<std::pair<std::string, std::string>> preds;
-            preds.emplace_back("A", "A");
-            preds.emplace_back("B", "A");
-            preds.emplace_back("C", "A");
-            preds.emplace_back("B", "B");
-            preds.emplace_back("B", "B");
-            preds.emplace_back("B", "B");
-            preds.emplace_back("A", "C");
-            preds.emplace_back("A", "C");
-            preds.emplace_back("A", "C");
+            std::vector<std::pair<class_label, class_label>> preds;
+            preds.emplace_back("A"_cl, "A"_cl);
+            preds.emplace_back("B"_cl, "A"_cl);
+            preds.emplace_back("C"_cl, "A"_cl);
+            preds.emplace_back("B"_cl, "B"_cl);
+            preds.emplace_back("B"_cl, "B"_cl);
+            preds.emplace_back("B"_cl, "B"_cl);
+            preds.emplace_back("A"_cl, "C"_cl);
+            preds.emplace_back("A"_cl, "C"_cl);
+            preds.emplace_back("A"_cl, "C"_cl);
+
             classify::confusion_matrix mtx;
             for (auto& pair : preds)
                 mtx.add(class_label{pair.first}, class_label{pair.second});
 
             ASSERT_APPROX_EQUAL(mtx.accuracy(), 4.0 / 9);
 
-            // this is kind of a hack to check the output;
-            // ideally, the confusion matrix class would have precision(),
-            // recall(), etc, functions, and the user would have to specify when
-            // to calculate them (or they're calculated on demand)
-            std::stringstream stat_output;
-            mtx.print_stats(stat_output);
-            std::vector<std::string> lines;
-            for (std::string line; std::getline(stat_output, line);)
-            {
-                line.erase(std::remove_if(line.begin(), line.end(), ::isspace),
-                           line.end());
-                lines.emplace_back(line);
-            }
+            ASSERT_APPROX_EQUAL(mtx.precision("A"_cl), 1.0 / 4);
+            ASSERT_APPROX_EQUAL(mtx.precision("B"_cl), 3.0 / 4);
+            ASSERT_APPROX_EQUAL(mtx.precision("C"_cl), 0.0);
+            ASSERT_APPROX_EQUAL(mtx.precision(), 1.0 / 3);
 
-            ASSERT_EQUAL(lines[3], "A0.2860.250.333");
-            ASSERT_EQUAL(lines[4], "B0.8570.751");
-            ASSERT_EQUAL(lines[5], "C000");
+            ASSERT_APPROX_EQUAL(mtx.recall("A"_cl), 1.0 / 3);
+            ASSERT_APPROX_EQUAL(mtx.recall("B"_cl), 1.0);
+            ASSERT_APPROX_EQUAL(mtx.recall("C"_cl), 0.0);
+            ASSERT_APPROX_EQUAL(mtx.recall(), 4.0 / 9);
+
+            ASSERT_APPROX_EQUAL(mtx.f1_score("A"_cl), 2.0 / 7);
+            ASSERT_APPROX_EQUAL(mtx.f1_score("B"_cl), 6.0 / 7);
+            ASSERT_APPROX_EQUAL(mtx.f1_score("C"_cl), 0.0);
+            ASSERT_APPROX_EQUAL(mtx.f1_score(), (2.0 / 7 + 6.0 / 7) / 3);
         });
 }
 
