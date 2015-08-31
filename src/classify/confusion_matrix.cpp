@@ -44,39 +44,42 @@ void confusion_matrix::print(std::ostream& out) const
 {
     auto saved_precision = out.precision();
 
-    auto max_label = std::max_element(classes_.begin(), classes_.end(),
-        [](const class_label& a, const class_label& b)
-        {
-            return static_cast<std::string>(a).size() <
-                static_cast<std::string>(b).size();
-        });
+    auto max_label
+        = std::max_element(classes_.begin(), classes_.end(),
+                           [](const class_label& a, const class_label& b)
+                           {
+                               return static_cast<std::string>(a).size()
+                                      < static_cast<std::string>(b).size();
+                           });
 
     size_t w = std::max<size_t>(7, static_cast<std::string>(*max_label).size())
                + 2;
-    out << std::left << std::endl << std::setw(w) << "";
+    out << std::left << std::endl
+        << std::setw(w) << "";
     out << "  ";
-    for (auto& aClass : classes_)
-        out << std::setw(w) << aClass;
+    for (auto& actual_class : classes_)
+        out << std::setw(w) << actual_class;
     out << std::endl;
     out << std::string(w, ' ') << std::string(classes_.size() * w, '-')
         << std::endl;
 
-    for (auto& aClass : classes_)
+    for (auto& actual_class : classes_)
     {
-        out << std::setw(w - 1) << std::right << aClass << std::left << " | ";
-        for (auto& pClass : classes_)
+        out << std::setw(w - 1) << std::right << actual_class << std::left
+            << " | ";
+        for (auto& pred_class : classes_)
         {
-            auto predIt = predictions_.find(std::make_pair(pClass, aClass));
-            if (predIt != predictions_.end())
+            auto it
+                = predictions_.find(std::make_pair(pred_class, actual_class));
+            if (it != predictions_.end())
             {
-                size_t numPred = predIt->second;
-                double percent = static_cast<double>(numPred)
-                                 / counts_.at(aClass);
+                double percent = static_cast<double>(it->second)
+                                 / counts_.at(actual_class);
                 out.precision(3);
                 std::stringstream ss;
                 ss.precision(3);
                 ss << percent;
-                if (aClass == pClass)
+                if (actual_class == pred_class)
                 {
                     auto str = printing::make_bold(ss.str());
                     auto diff = str.size() - ss.str().size();
@@ -135,20 +138,20 @@ void confusion_matrix::print_stats(std::ostream& out) const
 
     auto max_label
         = std::max_element(classes_.begin(), classes_.end(),
-            [](const class_label& a, const class_label& b)
-            {
-                return static_cast<std::string>(a).size()
-                    < static_cast<std::string>(b).size();
-            });
+                           [](const class_label& a, const class_label& b)
+                           {
+                               return static_cast<std::string>(a).size()
+                                      < static_cast<std::string>(b).size();
+                           });
 
-    size_t width = std::max<size_t>(
-            12, static_cast<std::string>(*max_label).size() + 2);
+    size_t width
+        = std::max<size_t>(12, static_cast<std::string>(*max_label).size() + 2);
 
     auto w1 = std::setw(width + printing::make_bold("").size());
     auto w2 = std::setw(12 + printing::make_bold("").size());
     out.precision(3);
-    out << std::string(width + 12 * 3, '-') << std::endl << std::left << w1
-        << printing::make_bold("Class") << std::left << w2
+    out << std::string(width + 12 * 3, '-') << std::endl
+        << std::left << w1 << printing::make_bold("Class") << std::left << w2
         << printing::make_bold("F1 Score") << std::left << w2
         << printing::make_bold("Precision") << std::left << w2
         << printing::make_bold("Recall") << std::endl
@@ -174,12 +177,13 @@ void confusion_matrix::print_stats(std::ostream& out) const
         return ss.str();
     };
 
-    out << std::string(width + 12 * 3, '-') << std::endl << w1
-        << printing::make_bold("Total") << w2
+    out << std::string(width + 12 * 3, '-') << std::endl
+        << w1 << printing::make_bold("Total") << w2
         << printing::make_bold(limit(t_f1 / classes_.size())) << w2
         << printing::make_bold(limit(t_prec / classes_.size())) << w2
         << printing::make_bold(limit(t_rec / classes_.size())) << std::endl
-        << std::string(width + 12 * 3, '-') << std::endl << total_
+        << std::string(width + 12 * 3, '-') << std::endl
+        << total_
         << " predictions attempted, overall accuracy: " << t_corr / total_
         << std::endl;
 
@@ -194,8 +198,8 @@ double confusion_matrix::accuracy() const
     return correct / total_;
 }
 
-size_t confusion_matrix::string_pair_hash(const std::pair
-                                          <std::string, std::string>& str_pair)
+size_t confusion_matrix::string_pair_hash(
+    const std::pair<std::string, std::string>& str_pair)
 {
     return std::hash<std::string>()(str_pair.first + str_pair.second);
 }
@@ -205,8 +209,8 @@ const confusion_matrix::prediction_counts& confusion_matrix::predictions() const
     return predictions_;
 }
 
-confusion_matrix confusion_matrix::operator+(const confusion_matrix
-                                             & other) const
+confusion_matrix confusion_matrix::
+    operator+(const confusion_matrix& other) const
 {
     confusion_matrix sum{*this};
 
