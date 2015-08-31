@@ -40,6 +40,72 @@ void confusion_matrix::print_result_pairs(std::ostream& out) const
             out << p.first.first << " " << p.first.second << "\n";
 }
 
+double confusion_matrix::f1_score() const
+{
+    auto p = precision();
+    auto r = recall();
+    if (p + r != 0.0)
+        return (2.0 * p * r) / (p + r);
+
+    return 0.0;
+}
+
+double confusion_matrix::f1_score(const class_label& lbl) const
+{
+    auto p = precision(lbl);
+    auto r = recall(lbl);
+    if (p + r != 0.0)
+        return (2.0 * p * r) / (p + r);
+
+    return 0.0;
+}
+
+double confusion_matrix::precision() const
+{
+    double sum = 0.0; // weighted sum of precision() scores by class
+    for (auto& cls : classes_)
+        sum += (static_cast<double>(counts_.at(cls)) / total_) * precision(cls);
+
+    return sum;
+}
+
+double confusion_matrix::precision(const class_label& lbl) const
+{
+    double denom = 0.0;
+    for (auto& cls : classes_)
+        denom += map::safe_at(predictions_, std::make_pair(lbl, cls));
+
+    double correct = map::safe_at(predictions_, std::make_pair(lbl, lbl));
+
+    if (denom != 0.0)
+        return correct / denom;
+
+    return 0.0;
+}
+
+double confusion_matrix::recall() const
+{
+    double sum = 0.0; // weighted sum of recall() scores by class
+    for (auto& cls : classes_)
+        sum += (static_cast<double>(counts_.at(cls)) / total_) * recall(cls);
+
+    return sum;
+}
+
+double confusion_matrix::recall(const class_label& lbl) const
+{
+    double denom = 0.0;
+    for (auto& cls : classes_)
+        denom += map::safe_at(predictions_, std::make_pair(cls, lbl));
+
+    double correct = map::safe_at(predictions_, std::make_pair(lbl, lbl));
+
+    if (denom != 0.0)
+        return correct / denom;
+
+    return 0.0;
+}
+
 void confusion_matrix::print(std::ostream& out) const
 {
     auto saved_precision = out.precision();
@@ -100,40 +166,8 @@ void confusion_matrix::print(std::ostream& out) const
     out.precision(saved_precision);
 }
 
-void confusion_matrix::print_class_stats(std::ostream& out,
-                                         const class_label& label, double& prec,
-                                         double& rec, double& f1,
-                                         size_t width) const
-{
-    for (auto& cls : classes_)
-    {
-        prec += map::safe_at(predictions_, std::make_pair(label, cls));
-        rec += map::safe_at(predictions_, std::make_pair(cls, label));
-    }
-
-    double correct = map::safe_at(predictions_, std::make_pair(label, label));
-
-    if (rec != 0.0)
-        rec = correct / rec;
-
-    if (prec != 0.0)
-        prec = correct / prec;
-
-    if (prec + rec != 0.0)
-        f1 = (2.0 * prec * rec) / (prec + rec);
-
-    auto w1 = std::setw(width);
-    auto w2 = std::setw(12);
-    out << std::left << w1 << label << std::left << w2 << f1 << std::left << w2
-        << prec << std::left << w2 << rec << std::endl;
-}
-
 void confusion_matrix::print_stats(std::ostream& out) const
 {
-    double t_prec = 0.0;
-    double t_rec = 0.0;
-    double t_f1 = 0.0;
-    double t_corr = 0.0;
     auto saved_precision = out.precision();
 
     auto max_label
@@ -159,14 +193,10 @@ void confusion_matrix::print_stats(std::ostream& out) const
 
     for (auto& cls : classes_)
     {
-        double prec = 0.0, rec = 0.0, f1 = 0.0;
-        auto it = predictions_.find(std::make_pair(cls, cls));
-        if (it != predictions_.end())
-            t_corr += it->second;
-        print_class_stats(out, cls, prec, rec, f1, width);
-        t_prec += prec;
-        t_rec += rec;
-        t_f1 += f1;
+        auto w3 = std::setw(12); // different width for non-bold
+        out << std::left << std::setw(width) << cls << std::left << w3
+            << f1_score(cls) << std::left << w3 << precision(cls) << std::left
+            << w3 << recall(cls) << std::endl;
     }
 
     auto limit = [](double val)
@@ -179,12 +209,11 @@ void confusion_matrix::print_stats(std::ostream& out) const
 
     out << std::string(width + 12 * 3, '-') << std::endl
         << w1 << printing::make_bold("Total") << w2
-        << printing::make_bold(limit(t_f1 / classes_.size())) << w2
-        << printing::make_bold(limit(t_prec / classes_.size())) << w2
-        << printing::make_bold(limit(t_rec / classes_.size())) << std::endl
+        << printing::make_bold(limit(f1_score())) << w2
+        << printing::make_bold(limit(precision())) << w2
+        << printing::make_bold(limit(recall())) << std::endl
         << std::string(width + 12 * 3, '-') << std::endl
-        << total_
-        << " predictions attempted, overall accuracy: " << t_corr / total_
+        << total_ << " predictions attempted, overall accuracy: " << accuracy()
         << std::endl;
 
     out.precision(saved_precision);

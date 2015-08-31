@@ -86,6 +86,37 @@ class confusion_matrix
     double accuracy() const;
 
     /**
+     * @return the overall F1 score
+     */
+    double f1_score() const;
+
+    /**
+     * @param lbl
+     * @return the F1 score for the lbl class
+     */
+    double f1_score(const class_label& lbl) const;
+
+    /**
+     * @return the overall precision
+     */
+    double precision() const;
+
+    /**
+     * @return the precision for the lbl class
+     */
+    double precision(const class_label& lbl) const;
+
+    /**
+     * @return the overall recall
+     */
+    double recall() const;
+
+    /**
+     * @return the recall for the lbl class
+     */
+    double recall(const class_label& lbl) const;
+
+    /**
      * operator+ for confusion matrices. All counts are agglomerated for all
      * predictions.
      * @param other
@@ -112,19 +143,7 @@ class confusion_matrix
                                     const confusion_matrix& b);
 
   private:
-    /**
-     * Prints precision, recall, and F1 for each class and as a whole.
-     * @param out The stream to print to
-     * @param label The current class label to get statistics for
-     * @param prec The precision for this class
-     * @param rec The recall for this class
-     * @param f1 The F1 score for this class
-     */
-    void print_class_stats(std::ostream& out, const class_label& label,
-                           double& prec, double& rec, double& f1,
-                           size_t width) const;
-
-    /** maps predicted class to actual class frequencies */
+    /// Maps predicted class to actual class frequencies
     prediction_counts predictions_;
 
     /**
@@ -133,10 +152,10 @@ class confusion_matrix
      */
     std::set<class_label> classes_;
 
-    /** how many times each class was predicted */
+    /// How many times each class appears in the dataset
     std::unordered_map<class_label, size_t> counts_;
 
-    /** total number of classification attempts */
+    /// Total number of classification attempts
     size_t total_;
 };
 }
