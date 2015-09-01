@@ -1,5 +1,5 @@
 /**
- * @file lm-test.cpp
+ * @file diff_test.cpp
  * @author Sean Massung
  */
 
@@ -8,10 +8,9 @@
 #include "meta.h"
 #include "lm/diff.h"
 #include "lm/sentence.h"
-#include "lm/language_model.h"
 #include "logging/logger.h"
-#include "util/progress.h"
 #include "util/filesystem.h"
+#include "util/progress.h"
 
 using namespace meta;
 
