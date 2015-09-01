@@ -81,8 +81,6 @@ sentence sentence::operator()(size_type from, size_type to) const
 void sentence::substitute(size_type idx, const std::string& token,
                           double weight /* = 0.0 */)
 {
-    // ops_.push_back("substitute(" + std::to_string(idx) + ", " + tokens_[idx]
-    //               + " -> " + token + ")");
     ops_.push_back("substitute(" + tokens_[idx] + " -> " + token + ")");
     tokens_[idx] = token;
     weights_.push_back(weight);
@@ -90,8 +88,6 @@ void sentence::substitute(size_type idx, const std::string& token,
 
 void sentence::remove(size_type idx, double weight /* = 0.0 */)
 {
-    // ops_.push_back("remove(" + std::to_string(idx) + ", " + (*this)[idx] +
-    // ")");
     ops_.push_back("remove(" + (*this)[idx] + ")");
     tokens_.erase(tokens_.begin() + idx);
     weights_.push_back(weight);
@@ -101,7 +97,6 @@ void sentence::insert(size_type idx, const std::string& token,
                       double weight /* = 0.0 */)
 {
     tokens_.insert(tokens_.begin() + idx, token);
-    // ops_.push_back("insert(" + std::to_string(idx) + ", " + token + ")");
     ops_.push_back("insert(" + token + ")");
     weights_.push_back(weight);
 }
