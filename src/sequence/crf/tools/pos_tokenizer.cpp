@@ -4,13 +4,14 @@
  */
 
 #include <unordered_set>
+#include "analyzers/filters/ptb_normalizer.h"
+#include "analyzers/tokenizers/icu_tokenizer.h"
+#include "cpptoml.h"
 #include "sequence/crf/crf.h"
 #include "sequence/crf/tagger.h"
 #include "sequence/io/ptb_parser.h"
 #include "sequence/sequence.h"
-#include "sequence/crf/tagger.h"
-#include "analyzers/tokenizers/icu_tokenizer.h"
-#include "cpptoml.h"
+#include "utf/utf.h"
 
 using namespace meta;
 
@@ -18,7 +19,7 @@ int main(int argc, char* argv[])
 {
     if (argc != 2)
     {
-        std::cerr << "Usage:\t" << argv[0] << " configFile" << std::endl;
+        std::cerr << "Usage:\t" << argv[0] << " config.toml" << std::endl;
         return 1;
     }
 
@@ -59,6 +60,8 @@ int main(int argc, char* argv[])
     {
         std::unique_ptr<analyzers::token_stream> stream
             = make_unique<analyzers::tokenizers::icu_tokenizer>();
+        stream = make_unique<analyzers::filters::ptb_normalizer>(
+            std::move(stream));
         stream->set_content(std::move(line));
         sequence::sequence seq;
         while (*stream)
@@ -73,14 +76,21 @@ int main(int argc, char* argv[])
         if (seq.size() == 0)
             continue;
 
+        std::unordered_set<std::string> ptb_special
+            = {"-LRB-", "-RRB-", "-LSB-", "-RSB-", "-LCB-", "-RCB-"};
+
         analyzer.analyze(seq);
         tagger.tag(seq);
         for (auto& obs : seq)
         {
             auto word = obs.symbol();
-            std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-            if (keep_list.find(word) != keep_list.end())
+            if (ptb_special.find(word) != ptb_special.end())
                 std::cout << word << " ";
+            else if (keep_list.find(word) != keep_list.end())
+            {
+                word = utf::foldcase(word);
+                std::cout << word << " ";
+            }
             else
                 std::cout << analyzer.tag(obs.label()) << " ";
         }
