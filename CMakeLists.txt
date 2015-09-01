@@ -13,7 +13,11 @@ include(CheckCXXSourceRuns)
 include(ExternalProject)
 include(FindZLIB)
 
-if (NOT CMAKE_BUILD_TYPE)
+# Check if there is no build type set. If meta itself is the root project,
+# compile it in release mode instead. If we aren't the root project, just
+# continue along with whatever we would do ordinarily (they *really* should
+# be specifying a build type, but...)
+if (NOT CMAKE_BUILD_TYPE AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   message("-- No build type selected, defaulting to Release")
   set(CMAKE_BUILD_TYPE "Release")
 endif()
