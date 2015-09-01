@@ -1,3 +1,16 @@
+# [v1.3.8][1.3.8]
+## Bug fixes
+- Fix issue with `confusion_matrix` where precision and recall values were
+  swapped. Thanks to @husseinhazimeh for finding this!
+
+## Enhancements
+- Better unit tests for `confusion_matrix`
+- Add functions to `confusion_matrix` to directly access precision, recall, and
+    F1 score
+- Create a `predicted_label` opaque identifier to emphasize `class_labels` that
+    are output from some model (and thus shouldn't be interchangeable)
+
+
 # [v1.3.7][1.3.7]
 ## Bug fixes
 - Fix inconsistent behavior of `utf::segmenter` (and thus `icu_tokenizer`) for
@@ -151,7 +164,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.7...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.8...develop
+[1.3.8]: https://github.com/meta-toolkit/meta/compare/v1.3.7...v1.3.8
 [1.3.7]: https://github.com/meta-toolkit/meta/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/meta-toolkit/meta/compare/v1.3.5...v1.3.6
 [1.3.5]: https://github.com/meta-toolkit/meta/compare/v1.3.4...v1.3.5
