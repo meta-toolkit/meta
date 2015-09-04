@@ -1,5 +1,5 @@
 /**
- * @file chunk_handler.h
+ * @file posting_inverter.h
  * @author Chase Geigle
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -33,7 +33,7 @@ namespace index
  * disk_index.
  */
 template <class Index>
-class chunk_handler
+class postings_inverter
 {
   public:
     using index_pdata_type = typename Index::index_pdata_type;
@@ -55,7 +55,7 @@ class chunk_handler
          * @param ram_budget The **estimated** allowed size of the buffer
          * for this producer
          */
-        producer(chunk_handler* parent, uint64_t ram_budget);
+        producer(postings_inverter* parent, uint64_t ram_budget);
 
         /**
          * Handler for when a given secondary_key has been processed and is
@@ -92,17 +92,17 @@ class chunk_handler
         uint64_t max_size_;
 
         /// Back-pointer to the handler this producer is operating on
-        chunk_handler* parent_;
+        postings_inverter* parent_;
     };
 
     /**
-     * Constructs a chunk_handler that writes to the given prefix.
+     * Constructs a postings_inverter that writes to the given prefix.
      * @param prefix The prefix for all chunks to be written
      */
-    chunk_handler(const std::string& prefix);
+    postings_inverter(const std::string& prefix);
 
     /**
-     * Creates a producer for this chunk_handler. Producers are designed to
+     * Creates a producer for this postings_inverter. Producers are designed to
      * be thread-local buffers of chunks that write to disk when their
      * buffer is full.
      * @param ram_bugdet The estimated allowed size of this thread-local
@@ -133,9 +133,9 @@ class chunk_handler
     uint64_t unique_primary_keys() const;
 
     /**
-     * Simple exception class for chunk_handler interactions
+     * Simple exception class for postings_inverter interactions
      */
-    class chunk_handler_exception : public std::runtime_error
+    class postings_inverter_exception : public std::runtime_error
     {
         using std::runtime_error::runtime_error;
     };
@@ -165,5 +165,5 @@ class chunk_handler
 }
 }
 
-#include "index/chunk_handler.tcc"
+#include "index/postings_inverter.tcc"
 #endif

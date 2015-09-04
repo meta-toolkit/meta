@@ -59,7 +59,7 @@ uint64_t bytes_used(
  * allows us to store significantly larger in-memory chunks than if we were
  * to store the full materialized postings_data.
  */
-template <class PrimaryKey, class SecondaryKey>
+template <class PrimaryKey, class SecondaryKey, class FeatureValue = uint64_t>
 class postings_buffer
 {
   private:
@@ -106,11 +106,10 @@ class postings_buffer
      * @param id The SecondaryKey for the pair
      * @param count The count value associated with the id
      */
-    template <class FeatureValue = uint64_t>
     void write_count(SecondaryKey id, FeatureValue count)
     {
         ++num_ids_;
-        total_counts_ += static_cast<uint64_t>(count);
+        total_counts_ += count;
 
         assert(id >= last_id_);
         io::packed::write(buffer_, id - last_id_);
@@ -155,7 +154,6 @@ class postings_buffer
     /**
      * @return a postings_stream to iterate over the byte buffer
      */
-    template <class FeatureValue = uint64_t>
     postings_stream<SecondaryKey, FeatureValue> stream() const
     {
         return {reinterpret_cast<const char*>(buffer_.bytes_.get()), num_ids_,
@@ -292,7 +290,7 @@ class postings_buffer
     /// The total number of ids we've written
     uint64_t num_ids_ = 0;
     /// The sum of the counts we've written
-    uint64_t total_counts_ = 0;
+    FeatureValue total_counts_ = 0;
 };
 }
 }

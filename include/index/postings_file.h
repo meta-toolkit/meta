@@ -26,11 +26,12 @@ namespace index
  * list is indexed via PrimaryKey and consists of pairs of (SecondaryKey,
  * double).
  */
-template <class PrimaryKey, class SecondaryKey>
+template <class PrimaryKey, class SecondaryKey, class FeatureValue = uint64_t>
 class postings_file
 {
   public:
-    using postings_data_type = postings_data<PrimaryKey, SecondaryKey>;
+    using postings_data_type
+        = postings_data<PrimaryKey, SecondaryKey, FeatureValue>;
 
     /**
      * Opens a postings file.
@@ -48,7 +49,6 @@ class postings_file
      * @return a postings stream for this primary key, if it is in the
      * postings file
      */
-    template <class FeatureValue = uint64_t>
     util::optional<postings_stream<SecondaryKey, FeatureValue>>
         find_stream(PrimaryKey pk) const
     {
@@ -64,7 +64,6 @@ class postings_file
      * @return a shared pointer to the postings data extracted from the
      * file
      */
-    template <class FeatureValue = uint64_t>
     std::shared_ptr<postings_data_type> find(PrimaryKey pk) const
     {
         auto pdata = std::make_shared<postings_data_type>(pk);
@@ -73,7 +72,7 @@ class postings_file
         // if we are in-bounds of the postings file, populate counts
         if (idx < byte_locations_.size())
         {
-            auto stream = find_stream<FeatureValue>(pk);
+            auto stream = find_stream(pk);
             pdata->set_counts(stream->begin(), stream->end());
         }
 

@@ -69,7 +69,8 @@ class postings_stream
      * postings, since the size and total counts are provided on
      * construction.
      */
-    postings_stream(const char* buffer, uint64_t size, uint64_t total_counts)
+    postings_stream(const char* buffer, uint64_t size,
+                    FeatureValue total_counts)
         : start_{buffer}, size_{size}, total_counts_{total_counts}
     {
         // nothing
@@ -87,7 +88,7 @@ class postings_stream
      * @return the total sum of the counts for SecondaryKeys in this
      * postings list.
      */
-    uint64_t total_counts() const
+    FeatureValue total_counts() const
     {
         return total_counts_;
     }
@@ -223,7 +224,7 @@ class postings_stream
   private:
     const char* start_;
     uint64_t size_;
-    uint64_t total_counts_;
+    FeatureValue total_counts_;
 };
 }
 }

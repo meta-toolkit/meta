@@ -147,6 +147,14 @@ class probe_set
             return !(*this == rhs);
         }
 
+        /**
+         * @return the index of this key in the keys array
+         */
+        std::size_t index() const
+        {
+            return parent_->table_[idx_];
+        }
+
       private:
         /**
          * The private constructor used by the probe_set to create its
@@ -190,8 +198,9 @@ class probe_set
     /**
      * @param key an rvalue reference to the key to be inserted into the
      * table
+     * @return an iterator to the item inserted
      */
-    void emplace(Key&& key)
+    iterator emplace(Key&& key)
     {
         if (alpha_.denominator * (keys_.size() + 1) >= alpha_.numerator
                                                            * occupancy_.size())
@@ -208,6 +217,18 @@ class probe_set
         if (keys_.size() == keys_.capacity())
             keys_.reserve(keys_.size() + (keys_.size() + 1) / 2);
         keys_.emplace_back(std::move(key));
+
+        return {this, idx};
+    }
+
+    /**
+     * @param key a reference to the key to be inserted into the table
+     * @return an iterator to the item inserted
+     */
+    iterator insert(const Key& key)
+    {
+        Key to_insert{key};
+        return emplace(std::move(to_insert));
     }
 
     /**

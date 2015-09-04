@@ -5,15 +5,13 @@
  */
 
 #include "corpus/corpus.h"
-#include "index/chunk_handler.h"
 #include "index/disk_index_impl.h"
 #include "index/inverted_index.h"
 #include "corpus/metadata_parser.h"
 #include "index/metadata_writer.h"
 #include "index/postings_file.h"
 #include "index/postings_file_writer.h"
-#include "index/string_list.h"
-#include "index/string_list_writer.h"
+#include "index/postings_inverter.h"
 #include "index/vocabulary_map.h"
 #include "index/vocabulary_map_writer.h"
 #include "parallel/thread_pool.h"
@@ -47,14 +45,14 @@ class inverted_index::impl
 
     /**
      * @param docs The documents to be tokenized
-     * @param handler The chunk handler for this index
+     * @param inverter The postings inverter for this index
      * @param mdata_parser The parser for reading metadata
      * @param mdata_writer The writer for metadata
      * @param ram_budget The total **estimated** RAM budget
      * @return the number of chunks created
      */
     void tokenize_docs(corpus::corpus* docs,
-                       chunk_handler<inverted_index>& handler,
+                       postings_inverter<inverted_index>& inverter,
                        metadata_writer& mdata_writer, uint64_t ram_budget);
 
     /**
@@ -128,7 +126,7 @@ void inverted_index::create_index(const std::string& config_file)
     if (cfg_ram_budget)
         ram_budget = static_cast<uint64_t>(*cfg_ram_budget);
 
-    chunk_handler<inverted_index> handler{index_name()};
+    postings_inverter<inverted_index> inverter{index_name()};
     {
         metadata_writer mdata_writer{index_name(), docs->size(),
                                      docs->schema()};
@@ -136,17 +134,17 @@ void inverted_index::create_index(const std::string& config_file)
         impl_->load_labels(num_docs);
 
         // RAM budget is given in megabytes
-        inv_impl_->tokenize_docs(docs.get(), handler, mdata_writer,
+        inv_impl_->tokenize_docs(docs.get(), inverter, mdata_writer,
                                  ram_budget * 1024 * 1024);
     }
 
-    handler.merge_chunks();
+    inverter.merge_chunks();
 
     LOG(info) << "Created uncompressed postings file " << index_name()
               << impl_->files[POSTINGS] << " ("
-              << printing::bytes_to_units(handler.final_size()) << ")" << ENDLG;
+              << printing::bytes_to_units(inverter.final_size()) << ")" << ENDLG;
 
-    uint64_t num_unique_terms = handler.unique_primary_keys();
+    uint64_t num_unique_terms = inverter.unique_primary_keys();
     inv_impl_->compress(index_name() + impl_->files[POSTINGS],
                         num_unique_terms);
 
@@ -171,17 +169,16 @@ void inverted_index::load_index()
     inv_impl_->load_postings();
 }
 
-void inverted_index::impl::tokenize_docs(corpus::corpus* docs,
-                                         chunk_handler<inverted_index>& handler,
-                                         metadata_writer& mdata_writer,
-                                         uint64_t ram_budget)
+void inverted_index::impl::tokenize_docs(
+    corpus::corpus* docs, postings_inverter<inverted_index>& inverter,
+    metadata_writer& mdata_writer, uint64_t ram_budget)
 {
     std::mutex mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs->size()};
 
     auto task = [&](uint64_t ram_budget)
     {
-        auto producer = handler.make_producer(ram_budget);
+        auto producer = inverter.make_producer(ram_budget);
         auto analyzer = analyzer_->clone();
         while (true)
         {
@@ -239,12 +236,13 @@ void inverted_index::impl::compress(const std::string& filename,
     // can calculate the size of the compressed file and delete the
     // uncompressed version at the end
     {
-        postings_file_writer out{filename, num_unique_terms};
+        postings_file_writer<inverted_index::index_pdata_type> out{
+            filename, num_unique_terms};
 
         vocabulary_map_writer vocab{idx_->index_name()
                                     + idx_->impl_->files[TERM_IDS_MAPPING]};
 
-        postings_data<std::string, doc_id> pdata;
+        inverted_index::index_pdata_type pdata;
         auto length = filesystem::file_size(ucfilename);
         std::ifstream in{ucfilename, std::ios::binary};
         uint64_t byte_pos = 0;

@@ -33,13 +33,13 @@ namespace index
  * For example, for an inverted index, PrimaryKey = term_id, SecondaryKey =
  * doc_id. For a forward_index, PrimaryKey = doc_id, SecondaryKey = term_id.
  */
-template <class PrimaryKey, class SecondaryKey>
+template <class PrimaryKey, class SecondaryKey, class FeatureValue = uint64_t>
 class postings_data
 {
   public:
     using primary_key_type = PrimaryKey;
     using secondary_key_type = SecondaryKey;
-    using pair_t = std::pair<SecondaryKey, double>;
+    using pair_t = std::pair<SecondaryKey, FeatureValue>;
     using count_t = std::vector<pair_t>;
 
     /**
@@ -51,14 +51,6 @@ class postings_data
          || std::is_same<PrimaryKey, std::string>::value)
             && (util::is_numeric<SecondaryKey>::value),
         "primary and secondary keys in postings data must be numeric types");
-
-    /**
-     * uint64_t and double must take up the same number of bytes since they are
-     * being casted to each other when compressing.
-     */
-    static_assert(sizeof(uint64_t) == sizeof(double),
-                  "sizeof(uint64_t) must equal sizeof(double) since "
-                  "reinterpret_cast is used in postings_data");
 
     /**
      * postings_data is default-constructable.
@@ -103,14 +95,14 @@ class postings_data
      * @param amount The number of times to increase the count for a given
      * SecondaryKey
      */
-    void increase_count(SecondaryKey s_id, double amount);
+    void increase_count(SecondaryKey s_id, FeatureValue amount);
 
     /**
      * @param s_id The SecondaryKey id to query
      * @return the number of times SecondaryKey occurred in this
      * postings_data
      */
-    double count(SecondaryKey s_id) const;
+    FeatureValue count(SecondaryKey s_id) const;
 
     /**
      * @return the per-SecondaryKey frequency information for this
@@ -122,6 +114,11 @@ class postings_data
      * @param counts A map of counts to assign into this postings_data
      */
     void set_counts(const count_t& counts);
+
+    /**
+     * @param counts A vector of counts to assign into this postings_data
+     */
+    void set_counts(count_t&& counts);
 
     /**
      * @param begin The beginning of the counts to assign into this
@@ -144,7 +141,6 @@ class postings_data
      * @param out The stream to write to
      * @return the number of bytes used to write out this postings data
      */
-    template <class FeatureValue = uint64_t>
     uint64_t write_packed(std::ostream& out) const;
 
     /**
@@ -154,7 +150,6 @@ class postings_data
      * @return the number of bytes used to write out this postings data's
      * counts
      */
-    template <class FeatureValue = uint64_t>
     uint64_t write_packed_counts(std::ostream& out) const;
 
     /**
@@ -163,7 +158,6 @@ class postings_data
      * @param in The stream to read from
      * @return the number of bytes read in consuming this postings data
      */
-    template <class FeatureValue = uint64_t>
     uint64_t read_packed(std::istream& in);
 
     /**
@@ -191,7 +185,7 @@ class postings_data
     PrimaryKey p_id_;
 
     /// The (secondary_key_type, count) pairs
-    util::sparse_vector<SecondaryKey, double> counts_;
+    util::sparse_vector<SecondaryKey, FeatureValue> counts_;
 };
 
 /**
@@ -200,21 +194,24 @@ class postings_data
  * @return whether this postings_data has the same PrimaryKey as
  * the paramter
  */
-template <class PrimaryKey, class SecondaryKey>
-bool operator==(const postings_data<PrimaryKey, SecondaryKey>& lhs,
-                const postings_data<PrimaryKey, SecondaryKey>& rhs);
+template <class PrimaryKey, class SecondaryKey, class FeatureValue>
+bool operator==(
+    const postings_data<PrimaryKey, SecondaryKey, FeatureValue>& lhs,
+    const postings_data<PrimaryKey, SecondaryKey, FeatureValue>& rhs);
 }
 }
 
 namespace std
 {
-template <class PrimaryKey, class SecondaryKey>
 /**
- * Hash specialization for postings_data<PrimaryKey, SecondaryKey>
+ * Hash specialization for postings_data<PrimaryKey, SecondaryKey,
+ * FeatureValue>
  */
-struct hash<meta::index::postings_data<PrimaryKey, SecondaryKey>>
+template <class PrimaryKey, class SecondaryKey, class FeatureValue>
+struct hash<meta::index::postings_data<PrimaryKey, SecondaryKey, FeatureValue>>
 {
-    using pdata_t = meta::index::postings_data<PrimaryKey, SecondaryKey>;
+    using pdata_t
+        = meta::index::postings_data<PrimaryKey, SecondaryKey, FeatureValue>;
     /**
      * @param pd The postings_data to hash
      * @return the hash of the given postings_data
