@@ -321,7 +321,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
                     if (it == vocab.end())
                         it = vocab.insert(count.first);
 
-                    counts.emplace_back(it.index(), count.second);
+                    counts.emplace_back(term_id{it.index()}, count.second);
                 }
 
                 if (!exceeded_budget && vocab.bytes_used() > ram_budget)
@@ -430,7 +430,7 @@ void forward_index::impl::merge_chunks(size_t num_chunks,
             const auto& key = keys.at(count.first);
             auto it = vocab.find(key);
             assert(it != vocab.end());
-            counts.emplace_back(it.index(), count.second);
+            counts.emplace_back(term_id{it.index()}, count.second);
         }
 
         // set the new counts and write to the postings file
