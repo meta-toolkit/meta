@@ -4,7 +4,7 @@
 	branch = master
 [submodule "deps/porter2_stemmer"]
 	path = deps/porter2_stemmer
-	url = https://github.com/meta-toolkit/porter2_stemmer.git
+	url = https://github.com/smassung/porter2_stemmer.git
 	branch = master
 [submodule "deps/libsvm-modules"]
 	path = deps/libsvm-modules
