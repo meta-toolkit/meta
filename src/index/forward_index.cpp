@@ -290,6 +290,9 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
                     return;
 
                 doc = docs->next();
+            }
+            {
+                std::lock_guard<std::mutex> lock{io_mutex};
                 progress(doc->id());
             }
 
