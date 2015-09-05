@@ -28,7 +28,7 @@ class corpus;
 
 namespace index
 {
-template <class, class>
+template <class, class, class>
 class postings_data;
 }
 }
@@ -73,9 +73,9 @@ class forward_index : public disk_index
 
     using primary_key_type = doc_id;
     using secondary_key_type = term_id;
-    using postings_data_type = postings_data<doc_id, term_id>;
-    using inverted_pdata_type = postings_data<term_id, doc_id>;
-    using index_pdata_type = postings_data_type;
+    using postings_data_type = postings_data<doc_id, term_id, double>;
+    using inverted_pdata_type = postings_data<term_id, doc_id, uint64_t>;
+    using index_pdata_type = postings_data<doc_id, term_id, uint64_t>;
     using exception = forward_index_exception;
 
   protected:

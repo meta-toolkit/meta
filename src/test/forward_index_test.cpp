@@ -128,9 +128,25 @@ int forward_index_tests()
     num_failed += testing::run_test("forward-index-read-file-corpus", [&]()
     {
         ceeaus_forward_test();
-        system("rm -rf ceeaus-* test-config.toml");
     });
 
+    num_failed += testing::run_test("forward-index-build-uninvert", [&]()
+    {
+        system("rm -rf ceeaus-*");
+
+        // hack to inject "uninvert = true" at the top of the config file
+        auto cfg_contents = filesystem::file_text("test-config.toml");
+        cfg_contents = "uninvert = true\n" + cfg_contents;
+        filesystem::delete_file("test-config.toml");
+        {
+            std::ofstream file{"test-config.toml"};
+            file.write(cfg_contents.c_str(), cfg_contents.size());
+        }
+
+        ceeaus_forward_test();
+    });
+
+    filesystem::delete_file("test-config.toml");
     create_config("line");
 
     num_failed += testing::run_test("forward-index-build-line-corpus", [&]()
@@ -144,6 +160,7 @@ int forward_index_tests()
         ceeaus_forward_test();
         system("rm -rf ceeaus-* test-config.toml");
     });
+
 
     create_libsvm_config();
 

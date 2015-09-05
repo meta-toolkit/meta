@@ -33,7 +33,7 @@ namespace index
 template <class>
 class chunk_handler;
 
-template <class, class>
+template <class, class, class>
 class postings_data;
 }
 }
@@ -66,8 +66,8 @@ class inverted_index : public disk_index
 
     using primary_key_type = term_id;
     using secondary_key_type = doc_id;
-    using postings_data_type = postings_data<term_id, doc_id>;
-    using index_pdata_type = postings_data<std::string, doc_id>;
+    using postings_data_type = postings_data<term_id, doc_id, uint64_t>;
+    using index_pdata_type = postings_data<std::string, doc_id, uint64_t>;
     using exception = inverted_index_exception;
 
     /**

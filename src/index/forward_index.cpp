@@ -4,22 +4,27 @@
  */
 
 #include "cpptoml.h"
-#include "index/chunk_handler.h"
+#include "analyzers/analyzer.h"
+#include "corpus/corpus.h"
+#include "index/chunk_reader.h"
 #include "index/disk_index_impl.h"
 #include "index/forward_index.h"
 #include "index/inverted_index.h"
 #include "index/metadata_writer.h"
 #include "index/postings_file.h"
 #include "index/postings_file_writer.h"
+#include "index/postings_inverter.h"
 #include "index/string_list.h"
 #include "index/string_list_writer.h"
 #include "index/vocabulary_map.h"
+#include "index/vocabulary_map_writer.h"
 #include "io/libsvm_parser.h"
 #include "parallel/thread_pool.h"
 #include "util/disk_vector.h"
 #include "util/mapping.h"
 #include "util/pimpl.tcc"
 #include "util/shim.h"
+#include "util/time.h"
 
 namespace meta
 {
@@ -36,6 +41,26 @@ class forward_index::impl
      * Constructs an implementation based on a forward_index.
      */
     impl(forward_index* idx);
+
+    /**
+     * Tokenizes the documents in the corpus in parallel, yielding
+     * num_threads number of forward_index chunks that then need to be
+     * merged.
+     */
+    void tokenize_docs(corpus::corpus* corpus,
+                       const analyzers::analyzer& analyzer,
+                       metadata_writer& mdata_writer, uint64_t ram_budget);
+
+    /**
+     * Merges together num_chunks number of intermediate chunks, using the
+     * given vocabulary to do the renumbering.
+     *
+     * The vocabulary mapping will assign ids in insertion order, but we
+     * will want our ids in lexicographic order for vocabulary_map to
+     * work, so this function will sort the vocabulary and perform a
+     * re-numbering of the old ids.
+     */
+    void merge_chunks(size_t num_chunks, util::probe_set<std::string> vocab);
 
     /**
      * @param config the configuration settings for this index
@@ -79,7 +104,8 @@ class forward_index::impl
 
     /// the postings file
     util::optional<postings_file<forward_index::primary_key_type,
-                                 forward_index::secondary_key_type>> postings_;
+                                 forward_index::secondary_key_type, double>>
+        postings_;
 
   private:
     /// Pointer to the forward_index this is an implementation of
@@ -177,22 +203,48 @@ void forward_index::create_index(const std::string& config_file)
     }
     else
     {
-        LOG(info) << "Creating index by uninverting: " << index_name() << ENDLG;
-        {
-            // Ensure all files are flushed before uninverting
-            make_index<inverted_index>(config_file);
-        }
-        auto inv_idx = make_index<inverted_index>(config_file);
-
         uint64_t ram_budget = 1024;
         if (auto cfg_ram_budget = config.get_as<int64_t>("indexer-ram-budget"))
             ram_budget = static_cast<uint64_t>(*cfg_ram_budget);
 
-        fwd_impl_->create_uninverted_metadata(inv_idx->index_name());
-        // RAM budget is given in MB
-        fwd_impl_->uninvert(*inv_idx, ram_budget * 1024 * 1024);
-        impl_->load_term_id_mapping();
-        fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
+        auto uninvert = config.get_as<bool>("uninvert");
+        if (uninvert && *uninvert)
+        {
+            LOG(info) << "Creating index by uninverting: " << index_name()
+                      << ENDLG;
+            {
+                // Ensure all files are flushed before uninverting
+                make_index<inverted_index>(config_file);
+            }
+            auto inv_idx = make_index<inverted_index>(config_file);
+
+            fwd_impl_->create_uninverted_metadata(inv_idx->index_name());
+            // RAM budget is given in MB
+            fwd_impl_->uninvert(*inv_idx, ram_budget * 1024 * 1024);
+            impl_->load_term_id_mapping();
+            fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
+        }
+        else
+        {
+            LOG(info) << "Creating forward index: " << index_name() << ENDLG;
+
+            auto docs = corpus::corpus::load(config_file);
+
+            {
+                auto analyzer = analyzers::analyzer::load(config);
+
+                metadata_writer mdata_writer{index_name(), docs->size(),
+                                             docs->schema()};
+
+                impl_->load_labels(docs->size());
+
+                // RAM budget is given in MB
+                fwd_impl_->tokenize_docs(docs.get(), *analyzer, mdata_writer,
+                                         ram_budget * 1024 * 1024);
+                impl_->load_term_id_mapping();
+                fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
+            }
+        }
     }
 
     impl_->load_label_id_mapping();
@@ -208,6 +260,183 @@ void forward_index::create_index(const std::string& config_file)
     assert(filesystem::file_exists(index_name() + "/corpus.uniqueterms"));
 
     LOG(info) << "Done creating index: " << index_name() << ENDLG;
+}
+
+void forward_index::impl::tokenize_docs(corpus::corpus* docs,
+                                        const analyzers::analyzer& ana,
+                                        metadata_writer& mdata_writer,
+                                        uint64_t ram_budget)
+{
+    std::mutex io_mutex;
+    std::mutex corpus_mutex;
+    std::mutex vocab_mutex;
+    printing::progress progress{" > Tokenizing Docs: ", docs->size()};
+
+    util::probe_set<std::string> vocab;
+    bool exceeded_budget = false;
+    auto task = [&](size_t chunk_id)
+    {
+        std::ofstream chunk{idx_->index_name() + "/chunk-"
+                                + std::to_string(chunk_id),
+                            std::ios::binary};
+        auto analyzer = ana.clone();
+        while (true)
+        {
+            util::optional<corpus::document> doc;
+            {
+                std::lock_guard<std::mutex> lock{corpus_mutex};
+
+                if (!docs->has_next())
+                    return;
+
+                doc = docs->next();
+            }
+            {
+                std::lock_guard<std::mutex> lock{io_mutex};
+                progress(doc->id());
+            }
+
+            analyzer->tokenize(*doc);
+
+            // warn if there is an empty document
+            if (doc->counts().empty())
+            {
+                std::lock_guard<std::mutex> lock{io_mutex};
+                LOG(progress) << '\n' << ENDLG;
+                LOG(warning) << "Empty document (id = " << doc->id()
+                             << ") generated!" << ENDLG;
+            }
+
+            mdata_writer.write(doc->id(), doc->length(), doc->counts().size(),
+                               doc->mdata());
+            idx_->impl_->set_label(doc->id(), doc->label());
+
+            forward_index::postings_data_type::count_t counts;
+            counts.reserve(doc->counts().size());
+            {
+                std::lock_guard<std::mutex> lock{vocab_mutex};
+                for (const auto& count : doc->counts())
+                {
+                    auto it = vocab.find(count.first);
+                    if (it == vocab.end())
+                        it = vocab.insert(count.first);
+
+                    counts.emplace_back(term_id{it.index()}, count.second);
+                }
+
+                if (!exceeded_budget && vocab.bytes_used() > ram_budget)
+                {
+                    exceeded_budget = true;
+                    std::lock_guard<std::mutex> io_lock{io_mutex};
+                    LOG(progress) << '\n' << ENDLG;
+                    LOG(warning)
+                        << "Exceeding RAM budget; indexing cannot "
+                           "proceed without exceeding specified RAM budget"
+                        << ENDLG;
+                }
+            }
+
+            forward_index::postings_data_type pdata{doc->id()};
+            pdata.set_counts(std::move(counts));
+            pdata.write_packed(chunk);
+        }
+    };
+
+    parallel::thread_pool pool;
+    auto num_threads = pool.thread_ids().size();
+    std::vector<std::future<void>> futures;
+    futures.reserve(num_threads);
+    for (size_t i = 0; i < num_threads; ++i)
+        futures.emplace_back(pool.submit_task(std::bind(task, i)));
+
+    for (auto& fut : futures)
+        fut.get();
+
+    progress.end();
+
+    merge_chunks(num_threads, std::move(vocab));
+}
+
+void forward_index::impl::merge_chunks(size_t num_chunks,
+                                       util::probe_set<std::string> vocab)
+{
+    auto keys = vocab.extract_keys();
+    // vocab is now empty, but has enough space for the vocabulary
+
+    {
+        // we now create a new vocab with the keys in sorted order
+        vocabulary_map_writer writer{idx_->index_name() + "/"
+                                     + idx_->impl_->files[TERM_IDS_MAPPING]};
+        auto sorted_keys = keys;
+        std::sort(sorted_keys.begin(), sorted_keys.end());
+        for (const auto& key : sorted_keys)
+        {
+            // in memory vocab
+            vocab.insert(key);
+
+            // on disk vocab
+            writer.insert(key);
+        }
+    }
+
+    // term_id in a chunk file corresponds to the index into the keys
+    // vector, which we can then use the new vocab to map to an index
+    postings_file_writer<forward_index::postings_data_type> writer{
+        idx_->index_name() + "/" + idx_->impl_->files[POSTINGS], vocab.size()};
+
+    using input_chunk = chunk_reader<forward_index::postings_data_type>;
+    std::vector<input_chunk> chunks;
+    chunks.reserve(num_chunks);
+    for (size_t i = 0; i < num_chunks; ++i)
+        chunks.emplace_back(idx_->index_name() + "/chunk-" + std::to_string(i));
+
+    printing::progress progress{
+        " > Merging postings: ",
+        std::accumulate(chunks.begin(), chunks.end(), 0ul,
+                        [](uint64_t acc, const input_chunk& chunk)
+                        {
+                            return acc + chunk.total_bytes();
+                        })};
+
+    uint64_t total_read
+        = std::accumulate(chunks.begin(), chunks.end(), 0ul,
+                          [](uint64_t acc, const input_chunk& chunk)
+                          {
+                              return acc + chunk.bytes_read();
+                          });
+
+    while (!chunks.empty())
+    {
+        progress(total_read);
+
+        // find the lowest doc id
+        auto min_chunk = std::min_element(chunks.begin(), chunks.end());
+
+        // steal the postings and advance the chunk
+        auto to_write = min_chunk->postings();
+        auto before = min_chunk->bytes_read();
+        ++*min_chunk;
+        total_read += min_chunk->bytes_read() - before;
+
+        // if there were no more postings, remove the chunk for the input
+        if (!*min_chunk)
+            chunks.erase(min_chunk);
+
+        // renumber the postings
+        forward_index::postings_data_type::count_t counts;
+        counts.reserve(to_write.counts().size());
+        for (const auto& count : to_write.counts())
+        {
+            const auto& key = keys.at(count.first);
+            auto it = vocab.find(key);
+            assert(it != vocab.end());
+            counts.emplace_back(term_id{it.index()}, count.second);
+        }
+
+        // set the new counts and write to the postings file
+        to_write.set_counts(std::move(counts));
+        writer.write(to_write);
+    }
 }
 
 void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
@@ -229,7 +458,8 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
 
     total_unique_terms_ = 0;
     {
-        postings_file_writer out{filename, num_docs};
+        postings_file_writer<forward_index::postings_data_type> out{filename,
+                                                                    num_docs};
 
         // make md_writer with empty schema
         metadata_writer md_writer{idx_->index_name(), num_docs, {}};
@@ -259,11 +489,10 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
                 length += count.second;
             }
 
-            pdata.set_counts(counts);
-            out.write<double>(pdata);
+            pdata.set_counts(std::move(counts));
+            out.write(pdata);
 
-            md_writer.write(d_id, static_cast<uint64_t>(length), num_unique,
-                            {});
+            md_writer.write(d_id, length, num_unique, {});
             ++d_id;
         }
 
@@ -308,19 +537,19 @@ uint64_t forward_index::unique_terms() const
 auto forward_index::search_primary(doc_id d_id) const
     -> std::shared_ptr<postings_data_type>
 {
-    return fwd_impl_->postings_->find<double>(d_id);
+    return fwd_impl_->postings_->find(d_id);
 }
 
 util::optional<postings_stream<term_id, double>>
     forward_index::stream_for(doc_id d_id) const
 {
-    return fwd_impl_->postings_->find_stream<double>(d_id);
+    return fwd_impl_->postings_->find_stream(d_id);
 }
 
 void forward_index::impl::uninvert(const inverted_index& inv_idx,
                                    uint64_t ram_budget)
 {
-    chunk_handler<forward_index> handler{idx_->index_name()};
+    postings_inverter<forward_index> handler{idx_->index_name()};
     {
         auto producer = handler.make_producer(ram_budget);
         for (term_id t_id{0}; t_id < inv_idx.unique_terms(); ++t_id)
@@ -345,9 +574,10 @@ void forward_index::impl::compress(const std::string& filename,
     // can calculate the size of the compressed file and delete the
     // uncompressed version at the end
     {
-        postings_file_writer out{filename, num_docs};
+        postings_file_writer<forward_index::postings_data_type> out{filename,
+                                                                    num_docs};
 
-        forward_index::postings_data_type pdata;
+        forward_index::index_pdata_type pdata;
         auto length = filesystem::file_size(ucfilename);
 
         std::ifstream in{ucfilename, std::ios::binary};
@@ -369,10 +599,19 @@ void forward_index::impl::compress(const std::string& filename,
             for (doc_id d_id{last_id + 1}; d_id < pdata.primary_key(); ++d_id)
             {
                 forward_index::postings_data_type pd{d_id};
-                out.write<double>(pd);
+                out.write(pd);
             }
 
-            out.write<double>(pdata);
+            // convert from int to double for feature values
+            forward_index::postings_data_type::count_t counts;
+            counts.reserve(pdata.counts().size());
+            for (const auto& count : pdata.counts())
+                counts.emplace_back(count.first, count.second);
+
+            forward_index::postings_data_type to_write{pdata.primary_key()};
+            to_write.set_counts(std::move(counts));
+            out.write(to_write);
+
             last_id = pdata.primary_key();
         }
     }
