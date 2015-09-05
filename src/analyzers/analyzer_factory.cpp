@@ -11,16 +11,22 @@ namespace meta
 namespace analyzers
 {
 
+template <class T>
 template <class Analyzer>
-void analyzer_factory::register_analyzer()
+void analyzer_factory<T>::register_analyzer()
 {
-    add(Analyzer::id, make_analyzer<Analyzer>);
+    // this-> needed to find the add() method in dependent base class
+    this->add(Analyzer::id, make_analyzer<Analyzer>);
 }
 
-analyzer_factory::analyzer_factory()
+template <class T>
+analyzer_factory<T>::analyzer_factory()
 {
     // built-in analyzers
-    register_analyzer<ngram_word_analyzer>();
+    register_analyzer<ngram_word_analyzer<T>>();
 }
+
+template class analyzer_factory<uint64_t>;
+template class analyzer_factory<double>;
 }
 }

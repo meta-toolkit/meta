@@ -15,11 +15,13 @@ namespace meta
 namespace analyzers
 {
 
-const std::string ngram_pos_analyzer::id = "ngram-pos";
+template <class T>
+const std::string ngram_pos_analyzer<T>::id = "ngram-pos";
 
-ngram_pos_analyzer::ngram_pos_analyzer(uint16_t n,
-                                       std::unique_ptr<token_stream> stream,
-                                       const std::string& crf_prefix)
+template <class T>
+ngram_pos_analyzer<T>::ngram_pos_analyzer(uint16_t n,
+                                          std::unique_ptr<token_stream> stream,
+                                          const std::string& crf_prefix)
     : base{n},
       stream_{std::move(stream)},
       crf_{std::make_shared<sequence::crf>(crf_prefix)},
@@ -30,9 +32,11 @@ ngram_pos_analyzer::ngram_pos_analyzer(uint16_t n,
                         return ana;
                     }()}
 {
+    // nothing
 }
 
-ngram_pos_analyzer::ngram_pos_analyzer(const ngram_pos_analyzer& other)
+template <class T>
+ngram_pos_analyzer<T>::ngram_pos_analyzer(const ngram_pos_analyzer& other)
     : base{other.n_value()},
       stream_{other.stream_->clone()},
       crf_{other.crf_},
@@ -41,7 +45,8 @@ ngram_pos_analyzer::ngram_pos_analyzer(const ngram_pos_analyzer& other)
     // nothing
 }
 
-void ngram_pos_analyzer::tokenize(corpus::document& doc)
+template <class T>
+void ngram_pos_analyzer<T>::tokenize(corpus::document& doc)
 {
     // first, get tokens
     stream_->set_content(get_content(doc));
@@ -72,10 +77,10 @@ void ngram_pos_analyzer::tokenize(corpus::document& doc)
         tagger.tag(seq);
 
         // create ngrams
-        for (size_t i = n_value() - 1; i < seq.size(); ++i)
+        for (size_t i = this->n_value() - 1; i < seq.size(); ++i)
         {
             std::string combined = seq_analyzer_.tag(seq[i].label());
-            for (size_t j = 1; j < n_value(); ++j)
+            for (size_t j = 1; j < this->n_value(); ++j)
             {
                 std::string next = seq_analyzer_.tag(seq[i - j].label());
                 combined = next + "_" + combined;
@@ -86,10 +91,10 @@ void ngram_pos_analyzer::tokenize(corpus::document& doc)
     }
 }
 
-template <>
-std::unique_ptr<analyzer>
-    make_analyzer<ngram_pos_analyzer>(const cpptoml::table& global,
-                                      const cpptoml::table& config)
+template <class T>
+std::unique_ptr<analyzer<T>>
+    analyzer_traits<ngram_pos_analyzer<T>>::create(const cpptoml::table& global,
+                                                   const cpptoml::table& config)
 {
     auto n_val = config.get_as<int64_t>("ngram");
     if (!n_val)
@@ -102,16 +107,23 @@ std::unique_ptr<analyzer>
             "ngram-pos analyzer must contain a prefix to a crf model"};
 
     auto filts = load_filters(global, config);
-    return make_unique<ngram_pos_analyzer>(*n_val, std::move(filts),
-                                           *crf_prefix);
+    return make_unique<ngram_pos_analyzer<T>>(*n_val, std::move(filts),
+                                              *crf_prefix);
 }
+
+template class ngram_pos_analyzer<uint64_t>;
+template class ngram_pos_analyzer<double>;
+template struct analyzer_traits<ngram_pos_analyzer<uint64_t>>;
+template struct analyzer_traits<ngram_pos_analyzer<double>>;
 }
 
 namespace sequence
 {
 void register_analyzers()
 {
-    analyzers::register_analyzer<analyzers::ngram_pos_analyzer>();
+    using namespace analyzers;
+    register_analyzer<ngram_pos_analyzer<uint64_t>>();
+    register_analyzer<ngram_pos_analyzer<double>>();
 }
 }
 }

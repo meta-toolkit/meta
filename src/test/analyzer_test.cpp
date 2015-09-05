@@ -46,19 +46,19 @@ int content_tokenize()
 
     num_failed += testing::run_test("content-unigram-word-analyzer", [&]()
     {
-        analyzers::ngram_word_analyzer tok{1, make_filter()};
+        analyzers::ngram_word_analyzer<uint64_t> tok{1, make_filter()};
         check_analyzer_expected(tok, doc, 6, 8);
     });
 
     num_failed += testing::run_test("content-bigram-word-analyzer", [&]()
     {
-        analyzers::ngram_word_analyzer tok{2, make_filter()};
+        analyzers::ngram_word_analyzer<uint64_t> tok{2, make_filter()};
         check_analyzer_expected(tok, doc, 6, 7);
     });
 
     num_failed += testing::run_test("content-trigram-word-analyzer", [&]()
     {
-        analyzers::ngram_word_analyzer tok{3, make_filter()};
+        analyzers::ngram_word_analyzer<uint64_t> tok{3, make_filter()};
         check_analyzer_expected(tok, doc, 6, 6);
     });
 
@@ -73,19 +73,19 @@ int file_tokenize()
 
     num_failed += testing::run_test("file-unigram-word-analyzer", [&]()
     {
-        analyzers::ngram_word_analyzer tok{1, make_filter()};
+        analyzers::ngram_word_analyzer<uint64_t> tok{1, make_filter()};
         check_analyzer_expected(tok, doc, 93, 168);
     });
 
     num_failed += testing::run_test("file-bigram-word-analyzer", [&]()
     {
-        analyzers::ngram_word_analyzer tok{2, make_filter()};
+        analyzers::ngram_word_analyzer<uint64_t> tok{2, make_filter()};
         check_analyzer_expected(tok, doc, 140, 167);
     });
 
     num_failed += testing::run_test("file-trigram-word-analyzer", [&]()
     {
-        analyzers::ngram_word_analyzer tok{3, make_filter()};
+        analyzers::ngram_word_analyzer<uint64_t> tok{3, make_filter()};
         check_analyzer_expected(tok, doc, 159, 166);
     });
 

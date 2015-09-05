@@ -41,7 +41,8 @@ namespace analyzers
  * @see https://meta-toolkit.org/analyzers-filters-tutorial.html
 
  */
-class tree_analyzer : public util::clonable<analyzer, tree_analyzer>
+template <class T>
+class tree_analyzer : public util::clonable<analyzer<T>, tree_analyzer<T>>
 {
   public:
     /**
@@ -104,11 +105,20 @@ class tree_analyzer : public util::clonable<analyzer, tree_analyzer>
 };
 
 /**
- * Specialization of the factory method for creating tree analyzers.
+ * Specialization of the traits class used by the factory method for
+ * creating tree analyzers.
  */
-template <>
-std::unique_ptr<analyzer> make_analyzer<tree_analyzer>(const cpptoml::table&,
-                                                       const cpptoml::table&);
+template <class T>
+struct analyzer_traits<tree_analyzer<T>>
+{
+    static std::unique_ptr<analyzer<T>> create(const cpptoml::table&,
+                                               const cpptoml::table&);
+};
+
+extern template class tree_analyzer<uint64_t>;
+extern template class tree_analyzer<double>;
+extern template struct analyzer_traits<tree_analyzer<uint64_t>>;
+extern template struct analyzer_traits<tree_analyzer<double>>;
 }
 
 namespace parser

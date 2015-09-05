@@ -33,11 +33,12 @@ namespace analyzers
  *
  * @see https://meta-toolkit.org/analyzers-filters-tutorial.html
  */
+template <class T>
 class ngram_word_analyzer
-    : public util::multilevel_clonable<analyzer, ngram_analyzer,
-                                       ngram_word_analyzer>
+    : public util::multilevel_clonable<analyzer<T>, ngram_analyzer<T>,
+                                       ngram_word_analyzer<T>>
 {
-    using base = util::multilevel_clonable<analyzer, ngram_analyzer,
+    using base = util::multilevel_clonable<analyzer<T>, ngram_analyzer<T>,
                                            ngram_word_analyzer>;
 
   public:
@@ -69,12 +70,20 @@ class ngram_word_analyzer
 };
 
 /**
- * Specialization of the factory method for creating ngram_word_analyzers.
+ * Specialization of the traits class used by the factory method for
+ * creating ngram_word_analyzers.
  */
-template <>
-std::unique_ptr<analyzer>
-    make_analyzer<ngram_word_analyzer>(const cpptoml::table&,
-                                       const cpptoml::table&);
+template <class T>
+struct analyzer_traits<ngram_word_analyzer<T>>
+{
+    static std::unique_ptr<analyzer<T>> create(const cpptoml::table&,
+                                               const cpptoml::table&);
+};
+
+extern template class ngram_word_analyzer<uint64_t>;
+extern template class ngram_word_analyzer<double>;
+extern template struct analyzer_traits<ngram_word_analyzer<uint64_t>>;
+extern template struct analyzer_traits<ngram_word_analyzer<double>>;
 }
 }
 #endif

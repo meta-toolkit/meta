@@ -41,13 +41,13 @@ namespace analyzers
  * Optional config parameters: none.
  *
  * @see https://meta-toolkit.org/analyzers-filters-tutorial.html
-
  */
+template <class T>
 class ngram_pos_analyzer
-    : public util::multilevel_clonable<analyzer, ngram_analyzer,
-                                       ngram_pos_analyzer>
+    : public util::multilevel_clonable<analyzer<T>, ngram_analyzer<T>,
+                                       ngram_pos_analyzer<T>>
 {
-    using base = util::multilevel_clonable<analyzer, ngram_analyzer,
+    using base = util::multilevel_clonable<analyzer<T>, ngram_analyzer<T>,
                                            ngram_pos_analyzer>;
 
   public:
@@ -87,12 +87,20 @@ class ngram_pos_analyzer
 };
 
 /**
- * Specialization of the factory method for creating ngram_pos_analyzers.
+ * Specialization of the traits class used by the factory method for
+ * creating ngram_pos_analyzers.
  */
-template <>
-std::unique_ptr<analyzer>
-    make_analyzer<ngram_pos_analyzer>(const cpptoml::table&,
-                                      const cpptoml::table&);
+template <class T>
+struct analyzer_traits<ngram_pos_analyzer<T>>
+{
+    static std::unique_ptr<analyzer<T>> create(const cpptoml::table&,
+                                               const cpptoml::table&);
+};
+
+extern template class ngram_pos_analyzer<uint64_t>;
+extern template class ngram_pos_analyzer<double>;
+extern template struct analyzer_traits<ngram_pos_analyzer<uint64_t>>;
+extern template struct analyzer_traits<ngram_pos_analyzer<double>>;
 }
 
 namespace sequence

@@ -9,22 +9,30 @@ namespace meta
 namespace analyzers
 {
 
-multi_analyzer::multi_analyzer(std::vector<std::unique_ptr<analyzer>>&& toks)
+template <class T>
+multi_analyzer<T>::multi_analyzer(
+    std::vector<std::unique_ptr<analyzer<T>>>&& toks)
     : analyzers_{std::move(toks)}
-{/* nothing */
+{
+    /* nothing */
 }
 
-multi_analyzer::multi_analyzer(const multi_analyzer& other)
+template <class T>
+multi_analyzer<T>::multi_analyzer(const multi_analyzer& other)
 {
     analyzers_.reserve(other.analyzers_.size());
     for (const auto& an : other.analyzers_)
         analyzers_.emplace_back(an->clone());
 }
 
-void multi_analyzer::tokenize(corpus::document& doc)
+template <class T>
+void multi_analyzer<T>::tokenize(corpus::document& doc)
 {
     for (auto& tok : analyzers_)
         tok->tokenize(doc);
 }
+
+template class multi_analyzer<uint64_t>;
+template class multi_analyzer<double>;
 }
 }

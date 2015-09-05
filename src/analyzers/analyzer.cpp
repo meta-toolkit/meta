@@ -101,10 +101,11 @@ std::unique_ptr<token_stream> load_filters(const cpptoml::table& global,
     return result;
 }
 
-std::unique_ptr<analyzer> load(const cpptoml::table& config)
+template <class T>
+std::unique_ptr<analyzer<T>> load(const cpptoml::table& config)
 {
     using namespace analyzers;
-    std::vector<std::unique_ptr<analyzer>> toks;
+    std::vector<std::unique_ptr<analyzer<T>>> toks;
     auto analyzers = config.get_table_array("analyzers");
     for (auto group : analyzers->get())
     {
@@ -112,9 +113,14 @@ std::unique_ptr<analyzer> load(const cpptoml::table& config)
         if (!method)
             throw analyzer_exception{"failed to find analyzer method"};
         toks.emplace_back(
-            analyzer_factory::get().create(*method, config, *group));
+            analyzer_factory<T>::get().create(*method, config, *group));
     }
-    return make_unique<multi_analyzer>(std::move(toks));
+    return make_unique<multi_analyzer<T>>(std::move(toks));
 }
+
+// explicitly instantiate the load template function for the two valid
+// feature value types for analyzers
+template std::unique_ptr<analyzer<uint64_t>> load(const cpptoml::table&);
+template std::unique_ptr<analyzer<double>> load(const cpptoml::table&);
 }
 }

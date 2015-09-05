@@ -48,7 +48,7 @@ class forward_index::impl
      * merged.
      */
     void tokenize_docs(corpus::corpus* corpus,
-                       const analyzers::analyzer& analyzer,
+                       const analyzers::analyzer<double>& analyzer,
                        metadata_writer& mdata_writer, uint64_t ram_budget);
 
     /**
@@ -231,7 +231,7 @@ void forward_index::create_index(const std::string& config_file)
             auto docs = corpus::corpus::load(config_file);
 
             {
-                auto analyzer = analyzers::load(config);
+                auto analyzer = analyzers::load<double>(config);
 
                 metadata_writer mdata_writer{index_name(), docs->size(),
                                              docs->schema()};
@@ -263,7 +263,7 @@ void forward_index::create_index(const std::string& config_file)
 }
 
 void forward_index::impl::tokenize_docs(corpus::corpus* docs,
-                                        const analyzers::analyzer& ana,
+                                        const analyzers::analyzer<double>& ana,
                                         metadata_writer& mdata_writer,
                                         uint64_t ram_budget)
 {

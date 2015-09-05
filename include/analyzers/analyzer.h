@@ -37,10 +37,26 @@ class token_stream;
 /**
  * An class that provides a framework to produce token counts from documents.
  * All analyzers inherit from this class and (possibly) implement tokenize().
+ *
+ * The template argument for an analyzer indicates the supported feature
+ * value for the analyzer, which is either uint64_t for inverted_index or
+ * double for forward_index.
+ *
+ * When defining your own sublcass of analyzer, you should ensure to
+ * subclass from the appropriate type.
  */
+template <class T>
 class analyzer
 {
   public:
+    static_assert(std::is_same<T, uint64_t>::value
+                      || std::is_same<T, double>::value,
+                  "analyzers can only produce unsigned integer or real valued "
+                  "feature values");
+
+    using base_type = analyzer;
+    using feature_value_type = T;
+
     /**
      * A default virtual destructor.
      */
@@ -71,7 +87,13 @@ class analyzer_exception : public std::runtime_error
  * @param config The config group used to create the analyzer from
  * @return an analyzer as specified by a config object
  */
-std::unique_ptr<analyzer> load(const cpptoml::table& config);
+template <class T>
+std::unique_ptr<analyzer<T>> load(const cpptoml::table& config);
+
+extern template std::unique_ptr<analyzer<uint64_t>>
+    load(const cpptoml::table& config);
+extern template std::unique_ptr<analyzer<double>>
+    load(const cpptoml::table& config);
 
 /**
  * @param config The config group used to create the analyzer from
