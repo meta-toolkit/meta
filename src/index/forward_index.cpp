@@ -231,7 +231,7 @@ void forward_index::create_index(const std::string& config_file)
             auto docs = corpus::corpus::load(config_file);
 
             {
-                auto analyzer = analyzers::analyzer::load(config);
+                auto analyzer = analyzers::load(config);
 
                 metadata_writer mdata_writer{index_name(), docs->size(),
                                              docs->schema()};

@@ -57,52 +57,6 @@ class analyzer
      */
     virtual std::unique_ptr<analyzer> clone() const = 0;
 
-    /**
-     * @param config The config group used to create the analyzer from
-     * @return an analyzer as specified by a config object
-     */
-    static std::unique_ptr<analyzer> load(const cpptoml::table& config);
-
-    /**
-     * @param config The config group used to create the analyzer from
-     * @return the default filter chain for this version of MeTA,
-     * based on a config object
-     */
-    static std::unique_ptr<token_stream>
-        default_filter_chain(const cpptoml::table& config);
-
-    /**
-     * @param config The config group used to create the analyzer from
-     * @return the default filter chain for unigram words for this version
-     * of MeTA, based on a config object
-     */
-    static std::unique_ptr<token_stream>
-        default_unigram_chain(const cpptoml::table& config);
-
-    /**
-     * @param global The original config object with all parameters
-     * @param config The config group used to create the filters from
-     * @return a filter chain as specified by a config object
-     */
-    static std::unique_ptr<token_stream>
-        load_filters(const cpptoml::table& global,
-                     const cpptoml::table& config);
-
-    /**
-     * @param src The token stream that will feed into this filter
-     * @param config The config group used to create the filter from
-     * @return a single filter specified by a config object
-     */
-    static std::unique_ptr<token_stream>
-        load_filter(std::unique_ptr<token_stream> src,
-                    const cpptoml::table& config);
-
-    /**
-     * @param doc The document to get content for
-     * @return the contents of the document, as a string
-     */
-    static std::string get_content(const corpus::document& doc);
-
   public:
     /**
      * Basic exception for analyzer interactions.
@@ -113,6 +67,50 @@ class analyzer
         using std::runtime_error::runtime_error;
     };
 };
+
+/**
+ * @param config The config group used to create the analyzer from
+ * @return an analyzer as specified by a config object
+ */
+std::unique_ptr<analyzer> load(const cpptoml::table& config);
+
+/**
+ * @param config The config group used to create the analyzer from
+ * @return the default filter chain for this version of MeTA,
+ * based on a config object
+ */
+std::unique_ptr<token_stream>
+    default_filter_chain(const cpptoml::table& config);
+
+/**
+ * @param config The config group used to create the analyzer from
+ * @return the default filter chain for unigram words for this version
+ * of MeTA, based on a config object
+ */
+std::unique_ptr<token_stream>
+    default_unigram_chain(const cpptoml::table& config);
+
+/**
+ * @param global The original config object with all parameters
+ * @param config The config group used to create the filters from
+ * @return a filter chain as specified by a config object
+ */
+std::unique_ptr<token_stream> load_filters(const cpptoml::table& global,
+                                           const cpptoml::table& config);
+
+/**
+ * @param src The token stream that will feed into this filter
+ * @param config The config group used to create the filter from
+ * @return a single filter specified by a config object
+ */
+std::unique_ptr<token_stream> load_filter(std::unique_ptr<token_stream> src,
+                                          const cpptoml::table& config);
+
+/**
+ * @param doc The document to get content for
+ * @return the contents of the document, as a string
+ */
+std::string get_content(const corpus::document& doc);
 }
 }
 #endif

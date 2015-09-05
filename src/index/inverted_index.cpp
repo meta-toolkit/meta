@@ -76,9 +76,7 @@ class inverted_index::impl
 };
 
 inverted_index::impl::impl(inverted_index* idx, const cpptoml::table& config)
-    : idx_{idx},
-      analyzer_{analyzers::analyzer::load(config)},
-      total_corpus_terms_{0}
+    : idx_{idx}, analyzer_{analyzers::load(config)}, total_corpus_terms_{0}
 {
     // nothing
 }
@@ -142,7 +140,8 @@ void inverted_index::create_index(const std::string& config_file)
 
     LOG(info) << "Created uncompressed postings file " << index_name()
               << impl_->files[POSTINGS] << " ("
-              << printing::bytes_to_units(inverter.final_size()) << ")" << ENDLG;
+              << printing::bytes_to_units(inverter.final_size()) << ")"
+              << ENDLG;
 
     uint64_t num_unique_terms = inverter.unique_primary_keys();
     inv_impl_->compress(index_name() + impl_->files[POSTINGS],

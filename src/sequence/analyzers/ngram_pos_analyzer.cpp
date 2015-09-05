@@ -101,7 +101,7 @@ std::unique_ptr<analyzer>
         throw analyzer::analyzer_exception{
             "ngram-pos analyzer must contain a prefix to a crf model"};
 
-    auto filts = analyzer::load_filters(global, config);
+    auto filts = load_filters(global, config);
     return make_unique<ngram_pos_analyzer>(*n_val, std::move(filts),
                                            *crf_prefix);
 }

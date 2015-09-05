@@ -92,7 +92,7 @@ std::unique_ptr<analyzer>
         throw analyzer::analyzer_exception{
             "tree analyzer needs an array of features to generate"};
 
-    auto filts = analyzer::load_filters(global, config);
+    auto filts = load_filters(global, config);
     auto ana = make_unique<tree_analyzer>(std::move(filts), *tagger_prefix,
                                           *parser_prefix);
 
