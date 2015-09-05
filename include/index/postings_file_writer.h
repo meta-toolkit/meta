@@ -20,6 +20,7 @@ namespace meta
 namespace index
 {
 
+template <class PostingsData>
 class postings_file_writer
 {
   public:
@@ -38,13 +39,13 @@ class postings_file_writer
 
     /**
      * Writes a postings data object to the file.
+     *
      * @param pdata The postings_data to be written
      */
-    template <class FeatureValue = uint64_t, class PostingsData>
     void write(const PostingsData& pdata)
     {
         byte_locations_[id_] = byte_pos_;
-        byte_pos_ += pdata.template write_packed_counts<FeatureValue>(output_);
+        byte_pos_ += pdata.write_packed_counts(output_);
         ++id_;
    }
 

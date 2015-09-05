@@ -614,12 +614,16 @@ namespace std
 template <class Char, class Traits>
 struct hash<meta::util::basic_string_view<Char, Traits>>
 {
+#if META_HAS_NONEMPTY_HASH_SUPPORT
     meta::util::murmur_hash<> hasher;
+#endif
 
     size_t operator()(
         const meta::util::basic_string_view<Char, Traits>& view) const noexcept
     {
-        static meta::util::murmur_hash<> hasher{};
+#ifndef META_HAS_NONEMPTY_HASH_SUPPORT
+        meta::util::murmur_hash<> hasher{97562527};
+#endif
         return hasher(reinterpret_cast<const uint8_t*>(view.data()),
                       view.size());
     }

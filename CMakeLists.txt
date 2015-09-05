@@ -222,6 +222,21 @@ if(META_HAS_STD_MAKE_UNIQUE)
                                -DMETA_HAS_STD_MAKE_UNIQUE)
 endif()
 
+# work around a bug in libstdc++ provided with gcc < 4.8.3 where a static
+# assertion fires when you have a non-empty hash functor
+check_cxx_source_compiles("
+#include <unordered_set>
+struct nonempty_hasher : public std::hash<int> { int i = 3; };
+int main() {
+    std::unordered_set<int, nonempty_hasher> s;
+    return 0;
+}" META_HAS_NONEMPTY_HASH_SUPPORT)
+
+if (META_HAS_NONEMPTY_HASH_SUPPORT)
+  target_compile_definitions(meta-definitions INTERFACE
+                             -DMETA_HAS_NONEMPTY_HASH_SUPPORT)
+endif()
+
 if(ICU_VERSION VERSION_LESS "4.4")
   target_compile_definitions(meta-definitions INTERFACE
                              -DMETA_ICU_NO_TEMP_SUBSTRING)
