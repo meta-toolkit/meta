@@ -27,7 +27,7 @@ namespace analyzers
 std::string get_content(const corpus::document& doc)
 {
     if (!doc.contains_content())
-        throw analyzer::analyzer_exception{
+        throw analyzer_exception{
             "document content was not populated for analysis"};
 
     return utf::to_utf8(doc.content(), doc.encoding());
@@ -73,8 +73,7 @@ std::unique_ptr<token_stream> load_filter(std::unique_ptr<token_stream> src,
 {
     auto type = config.get_as<std::string>("type");
     if (!type)
-        throw analyzer::analyzer_exception{
-            "filter type missing in config file"};
+        throw analyzer_exception{"filter type missing in config file"};
     return filter_factory::get().create(*type, std::move(src), config);
 }
 
@@ -90,14 +89,12 @@ std::unique_ptr<token_stream> load_filters(const cpptoml::table& global,
         else if (*check == "default-unigram-chain")
             return default_unigram_chain(global);
         else
-            throw analyzer::analyzer_exception{"unknown filter option: "
-                                               + *check};
+            throw analyzer_exception{"unknown filter option: " + *check};
     }
 
     auto filters = config.get_table_array("filter");
     if (!filters)
-        throw analyzer::analyzer_exception{
-            "analyzer group missing filter configuration"};
+        throw analyzer_exception{"analyzer group missing filter configuration"};
     std::unique_ptr<token_stream> result;
     for (const auto filter : filters->get())
         result = load_filter(std::move(result), *filter);
@@ -113,8 +110,7 @@ std::unique_ptr<analyzer> load(const cpptoml::table& config)
     {
         auto method = group->get_as<std::string>("method");
         if (!method)
-            throw analyzer::analyzer_exception{
-                "failed to find analyzer method"};
+            throw analyzer_exception{"failed to find analyzer method"};
         toks.emplace_back(
             analyzer_factory::get().create(*method, config, *group));
     }

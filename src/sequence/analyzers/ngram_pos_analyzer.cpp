@@ -93,12 +93,12 @@ std::unique_ptr<analyzer>
 {
     auto n_val = config.get_as<int64_t>("ngram");
     if (!n_val)
-        throw analyzer::analyzer_exception{
+        throw analyzer_exception{
             "ngram size needed for ngram pos analyzer in config file"};
 
     auto crf_prefix = config.get_as<std::string>("crf-prefix");
     if (!crf_prefix)
-        throw analyzer::analyzer_exception{
+        throw analyzer_exception{
             "ngram-pos analyzer must contain a prefix to a crf model"};
 
     auto filts = load_filters(global, config);

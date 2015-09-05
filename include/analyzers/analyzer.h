@@ -56,16 +56,15 @@ class analyzer
      * Clones this analyzer.
      */
     virtual std::unique_ptr<analyzer> clone() const = 0;
+};
 
+/**
+ * Basic exception for analyzer interactions.
+ */
+class analyzer_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for analyzer interactions.
-     */
-    class analyzer_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 
 /**

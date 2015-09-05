@@ -57,7 +57,7 @@ std::unique_ptr<analyzer>
 {
     auto n_val = config.get_as<int64_t>("ngram");
     if (!n_val)
-        throw analyzer::analyzer_exception{
+        throw analyzer_exception{
             "ngram size needed for ngram word analyzer in config file"};
 
     auto filts = load_filters(global, config);

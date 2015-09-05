@@ -74,11 +74,13 @@ class tree_analyzer : public util::clonable<analyzer, tree_analyzer>
     const static std::string id;
 
   private:
+    using tree_featurizer_list
+        = std::vector<std::unique_ptr<const tree_featurizer>>;
+
     /**
      * A list of tree_featurizers to run on each parse tree.
      */
-    std::shared_ptr<std::vector<std::unique_ptr<const tree_featurizer>>>
-        featurizers_;
+    std::shared_ptr<tree_featurizer_list> featurizers_;
 
     /**
      * The token stream for extracting tokens.

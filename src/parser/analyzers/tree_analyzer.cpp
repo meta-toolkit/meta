@@ -19,11 +19,7 @@ const std::string tree_analyzer::id = "tree";
 tree_analyzer::tree_analyzer(std::unique_ptr<token_stream> stream,
                              const std::string& tagger_prefix,
                              const std::string& parser_prefix)
-    : featurizers_{
-          std::
-              make_shared<std::
-                              vector<std::
-                                         unique_ptr<const tree_featurizer>>>()},
+    : featurizers_{std::make_shared<tree_featurizer_list>()},
       stream_{std::move(stream)},
       tagger_{std::make_shared<sequence::perceptron>(tagger_prefix)},
       parser_{std::make_shared<parser::sr_parser>(parser_prefix)}
@@ -79,17 +75,15 @@ std::unique_ptr<analyzer>
 {
     auto tagger_prefix = config.get_as<std::string>("tagger");
     if (!tagger_prefix)
-        throw analyzer::analyzer_exception{
-            "tree analyzer requires a tagger directory"};
+        throw analyzer_exception{"tree analyzer requires a tagger directory"};
 
     auto parser_prefix = config.get_as<std::string>("parser");
     if (!parser_prefix)
-        throw analyzer::analyzer_exception{
-            "tree analyzer requires a parser directory"};
+        throw analyzer_exception{"tree analyzer requires a parser directory"};
 
     auto feat_arr = config.get_array("features");
     if (!feat_arr)
-        throw analyzer::analyzer_exception{
+        throw analyzer_exception{
             "tree analyzer needs an array of features to generate"};
 
     auto filts = load_filters(global, config);
