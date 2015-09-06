@@ -1,6 +1,7 @@
 project(meta-language-model)
 
 add_subdirectory(tools)
+add_subdirectory(analyzers)
 
 add_library(meta-language-model language_model.cpp
                                 diff.cpp

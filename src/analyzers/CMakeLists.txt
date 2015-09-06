@@ -6,11 +6,9 @@ add_subdirectory(tools)
 
 add_library(meta-analyzers analyzer.cpp
                            analyzer_factory.cpp
-                           diff_analyzer.cpp
                            multi_analyzer.cpp
                            ngram/ngram_analyzer.cpp
                            ngram/ngram_word_analyzer.cpp)
 target_link_libraries(meta-analyzers meta-corpus
                                      meta-filters
-                                     meta-language-model
                                      meta-tokenizers)

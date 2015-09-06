@@ -19,7 +19,7 @@ add_library(meta-testing analyzer_test.cpp
                          vocabulary_map_test.cpp
                          parser_test.cpp)
 target_link_libraries(meta-testing meta-index meta-classify meta-parser
-    meta-features)
+    meta-features meta-language-model)
 
 set(UNIT_TEST_EXE unit-test)
 include(unit_tests.cmake)
