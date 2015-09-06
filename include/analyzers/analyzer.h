@@ -13,8 +13,8 @@
 
 #include <stdexcept>
 #include <memory>
-
-#include "io/parser.h"
+#include <string>
+#include <unordered_map>
 
 namespace cpptoml
 {
@@ -33,6 +33,9 @@ namespace analyzers
 {
 
 class token_stream;
+
+template <class T>
+class multi_analyzer;
 
 /**
  * An class that provides a framework to produce token counts from documents.
@@ -57,6 +60,8 @@ class analyzer
     using base_type = analyzer;
     using feature_value_type = T;
 
+    using feature_map = std::unordered_map<std::string, T>;
+
     /**
      * A default virtual destructor.
      */
@@ -64,14 +69,28 @@ class analyzer
 
     /**
      * Tokenizes a document.
-     * @param doc The document to store the tokenized information in
+     * @param doc The document to be tokenized
+     * @return a feature_map that maps the observed features to their
+     *  counts in the document
      */
-    virtual void tokenize(corpus::document& doc) = 0;
+    feature_map analyze(const corpus::document& doc);
 
     /**
      * Clones this analyzer.
      */
     virtual std::unique_ptr<analyzer> clone() const = 0;
+
+    friend multi_analyzer<T>;
+
+  private:
+    /**
+     * The tokenization function that actually does the heavy lifting. This
+     * should be overridden in derived classes.
+     *
+     * @param doc The document to be tokenized
+     * @param counts The feature_map to place observed feature counts into
+     */
+    virtual void tokenize(const corpus::document& doc, feature_map& counts) = 0;
 };
 
 /**

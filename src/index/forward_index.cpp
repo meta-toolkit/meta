@@ -296,10 +296,10 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
                 progress(doc->id());
             }
 
-            analyzer->tokenize(*doc);
+            auto counts = analyzer->analyze(*doc);
 
             // warn if there is an empty document
-            if (doc->counts().empty())
+            if (counts.empty())
             {
                 std::lock_guard<std::mutex> lock{io_mutex};
                 LOG(progress) << '\n' << ENDLG;
@@ -307,21 +307,27 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
                              << ") generated!" << ENDLG;
             }
 
-            mdata_writer.write(doc->id(), doc->length(), doc->counts().size(),
-                               doc->mdata());
+            auto length = std::accumulate(
+                counts.begin(), counts.end(), 0ul,
+                [](uint64_t acc, const std::pair<std::string, double>& count)
+                {
+                    return acc + std::round(count.second);
+                });
+
+            mdata_writer.write(doc->id(), length, counts.size(), doc->mdata());
             idx_->impl_->set_label(doc->id(), doc->label());
 
-            forward_index::postings_data_type::count_t counts;
-            counts.reserve(doc->counts().size());
+            forward_index::postings_data_type::count_t pd_counts;
+            pd_counts.reserve(counts.size());
             {
                 std::lock_guard<std::mutex> lock{vocab_mutex};
-                for (const auto& count : doc->counts())
+                for (const auto& count : counts)
                 {
                     auto it = vocab.find(count.first);
                     if (it == vocab.end())
                         it = vocab.insert(count.first);
 
-                    counts.emplace_back(term_id{it.index()}, count.second);
+                    pd_counts.emplace_back(term_id{it.index()}, count.second);
                 }
 
                 if (!exceeded_budget && vocab.bytes_used() > ram_budget)
@@ -337,7 +343,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
             }
 
             forward_index::postings_data_type pdata{doc->id()};
-            pdata.set_counts(std::move(counts));
+            pdata.set_counts(std::move(pd_counts));
             pdata.write_packed(chunk);
         }
     };

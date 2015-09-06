@@ -285,10 +285,10 @@ void freq(const std::string& file, const cpptoml::table&, uint16_t n)
 
     corpus::document doc;
     doc.content(filesystem::file_text(file));
-    ana.tokenize(doc);
+    auto counts = ana.analyze(doc);
 
     using pair_t = std::pair<std::string, double>;
-    std::vector<pair_t> sorted(doc.counts().begin(), doc.counts().end());
+    std::vector<pair_t> sorted(counts.begin(), counts.end());
     std::sort(sorted.begin(), sorted.end(), [](const pair_t& a, const pair_t& b)
               {
         return a.second > b.second;

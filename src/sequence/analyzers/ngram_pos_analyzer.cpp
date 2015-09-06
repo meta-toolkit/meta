@@ -46,7 +46,8 @@ ngram_pos_analyzer<T>::ngram_pos_analyzer(const ngram_pos_analyzer& other)
 }
 
 template <class T>
-void ngram_pos_analyzer<T>::tokenize(corpus::document& doc)
+void ngram_pos_analyzer<T>::tokenize(const corpus::document& doc,
+                                     feature_map& counts)
 {
     // first, get tokens
     stream_->set_content(get_content(doc));
@@ -86,7 +87,7 @@ void ngram_pos_analyzer<T>::tokenize(corpus::document& doc)
                 combined = next + "_" + combined;
             }
 
-            doc.increment(combined, 1);
+            counts[combined] += 1;
         }
     }
 }

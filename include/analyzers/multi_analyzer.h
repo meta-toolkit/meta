@@ -33,6 +33,8 @@ template <class T>
 class multi_analyzer : public util::clonable<analyzer<T>, multi_analyzer<T>>
 {
   public:
+    using feature_map = typename analyzer<T>::feature_map;
+
     /**
      * Constructs a multi_analyzer from a vector of other analyzers.
      * @param toks A vector of analyzers to combine features from
@@ -45,11 +47,13 @@ class multi_analyzer : public util::clonable<analyzer<T>, multi_analyzer<T>>
      */
     multi_analyzer(const multi_analyzer& other);
 
+  private:
     /**
      * Tokenizes a file into a document.
      * @param doc The document to store the tokenized information in
      */
-    virtual void tokenize(corpus::document& doc) override;
+    virtual void tokenize(const corpus::document& doc,
+                          feature_map& counts) override;
 
   private:
     /// Holds all the analyzers in this multi_analyzer

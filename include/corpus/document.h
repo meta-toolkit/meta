@@ -42,42 +42,14 @@ class document
              const class_label& label = class_label{"[NONE]"});
 
     /**
-     * Increment the count of the specified transition.
-     * @param term The string token whose count to increment
-     * @param amount The amount to increment by
-     */
-    void increment(const std::string& term, double amount);
-
-    /**
      * @return the classification category this document is in
      */
     const class_label& label() const;
 
     /**
-     * @return the total of transitions recorded for this document.
-     * This is not the number of unique transitions.
-     */
-    uint64_t length() const;
-
-    /**
-     * Get the number of occurrences for a particular term.
-     * @param term The string term to look up
-     * @return the number of times term appears in this document
-     */
-    double count(const std::string& term) const;
-
-    /**
-     * @return the map of counts for this document.
-     */
-    const std::unordered_map<std::string, double>& counts() const;
-
-    /**
      * Sets the content of the document to be the parameter
      * @param content The string content to assign into this document
      * @param encoding the encoding of content, which defaults to utf-8
-     * @note saving the document's content is only used by some corpora
-     * formats; not all documents are guaranteed to have content stored in
-     * the object itself
      */
     void content(const std::string& content,
                  const std::string& encoding = "utf-8");
@@ -134,12 +106,6 @@ class document
 
     /// Other metadata fields for this document
     std::vector<metadata::field> mdata_;
-
-    /// The number of (non-unique) tokens in this document
-    size_t length_;
-
-    /// Counts of how many times each token appears
-    std::unordered_map<std::string, double> counts_;
 
     /// What the document contains
     util::optional<std::string> content_;

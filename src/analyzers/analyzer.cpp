@@ -24,6 +24,17 @@ namespace meta
 namespace analyzers
 {
 
+template <class T>
+auto analyzer<T>::analyze(const corpus::document& doc) -> feature_map
+{
+    feature_map counts;
+    tokenize(doc, counts);
+    return counts;
+}
+
+template class analyzer<uint64_t>;
+template class analyzer<double>;
+
 std::string get_content(const corpus::document& doc)
 {
     if (!doc.contains_content())

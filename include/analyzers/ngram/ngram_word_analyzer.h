@@ -42,6 +42,8 @@ class ngram_word_analyzer
                                            ngram_word_analyzer>;
 
   public:
+    using feature_map = typename ngram_word_analyzer::feature_map;
+
     /**
      * Constructor.
      * @param n The value of n to use for the ngrams.
@@ -55,16 +57,17 @@ class ngram_word_analyzer
      */
     ngram_word_analyzer(const ngram_word_analyzer& other);
 
-    /**
-     * Tokenizes a file into a document.
-     * @param doc The document to store the tokenized information in
-     */
-    virtual void tokenize(corpus::document& doc) override;
-
     /// Identifier for this analyzer.
     const static std::string id;
 
   private:
+    /**
+     * Tokenizes a file into a document.
+     * @param doc The document to store the tokenized information in
+     */
+    virtual void tokenize(const corpus::document& doc,
+                          feature_map& counts) override;
+
     /// The token stream to be used for extracting tokens
     std::unique_ptr<token_stream> stream_;
 };

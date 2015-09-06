@@ -11,6 +11,7 @@
 
 #include "corpus/document.h"
 #include "parser/trees/parse_tree.h"
+#include "analyzers/analyzer.h"
 
 namespace meta
 {
@@ -21,23 +22,27 @@ namespace analyzers
  * Base class for featurizers that convert trees into features in a
  * document.
  */
+template <class T>
 class tree_featurizer
 {
   public:
+    using feature_map = typename analyzer<T>::feature_map;
+    using feature_value_type = T;
+    using base_type = tree_featurizer;
+
     /**
      * Destructor.
      */
     virtual ~tree_featurizer() = default;
 
     /**
-     * @param doc The document to add feature counts to
      * @param tree The parse tree, belonging to doc, to extract features
      * from
+     * @param counts The feature_map to write to
      */
-    virtual void tree_tokenize(corpus::document& doc,
-                               const parser::parse_tree& tree) const = 0;
+    virtual void tree_tokenize(const parser::parse_tree& tree,
+                               feature_map& counts) const = 0;
 };
 }
 }
-
 #endif

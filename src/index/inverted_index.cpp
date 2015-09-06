@@ -194,10 +194,10 @@ void inverted_index::impl::tokenize_docs(
                 progress(doc->id());
             }
 
-            analyzer->tokenize(*doc);
+            auto counts = analyzer->analyze(*doc);
 
             // warn if there is an empty document
-            if (doc->counts().empty())
+            if (counts.empty())
             {
                 std::lock_guard<std::mutex> lock{mutex};
                 LOG(progress) << '\n' << ENDLG;
@@ -205,12 +205,18 @@ void inverted_index::impl::tokenize_docs(
                              << ") generated!" << ENDLG;
             }
 
-            mdata_writer.write(doc->id(), doc->length(), doc->counts().size(),
-                               doc->mdata());
+            auto length = std::accumulate(
+                counts.begin(), counts.end(), 0ul,
+                [](uint64_t acc, const std::pair<std::string, uint64_t>& count)
+                {
+                    return acc + count.second;
+                });
+
+            mdata_writer.write(doc->id(), length, counts.size(), doc->mdata());
             idx_->impl_->set_label(doc->id(), doc->label());
 
             // update chunk
-            producer(doc->id(), doc->counts());
+            producer(doc->id(), counts);
         }
     };
 
@@ -306,9 +312,10 @@ double inverted_index::avg_doc_length()
     return static_cast<double>(total_corpus_terms()) / num_docs();
 }
 
-void inverted_index::tokenize(corpus::document& doc)
+analyzers::analyzer<uint64_t>::feature_map
+    inverted_index::tokenize(const corpus::document& doc)
 {
-    inv_impl_->analyzer_->tokenize(doc);
+    return inv_impl_->analyzer_->analyze(doc);
 }
 
 uint64_t inverted_index::doc_freq(term_id t_id) const

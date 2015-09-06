@@ -40,13 +40,14 @@ tree_analyzer<T>::tree_analyzer(const tree_analyzer& other)
 }
 
 template <class T>
-void tree_analyzer<T>::add(std::unique_ptr<const tree_featurizer> featurizer)
+void tree_analyzer<T>::add(std::unique_ptr<const tree_featurizer<T>> featurizer)
 {
     featurizers_->emplace_back(std::move(featurizer));
 }
 
 template <class T>
-void tree_analyzer<T>::tokenize(corpus::document& doc)
+void tree_analyzer<T>::tokenize(const corpus::document& doc,
+                                feature_map& counts)
 {
     stream_->set_content(get_content(doc));
 
@@ -64,7 +65,7 @@ void tree_analyzer<T>::tokenize(corpus::document& doc)
             tagger_->tag(seq);
             auto tree = parser_->parse(seq);
             for (const auto& featurizer : *featurizers_)
-                featurizer->tree_tokenize(doc, tree);
+                featurizer->tree_tokenize(tree, counts);
         }
         else
         {
@@ -96,7 +97,7 @@ std::unique_ptr<analyzer<T>>
                                              *parser_prefix);
 
     for (const auto& feat : feat_arr->array_of<std::string>())
-        ana->add(featurizer_factory::get().create(feat->get()));
+        ana->add(featurizer_factory<T>::get().create(feat->get()));
 
     return std::move(ana);
 }

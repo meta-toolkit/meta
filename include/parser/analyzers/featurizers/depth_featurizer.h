@@ -21,22 +21,27 @@ namespace analyzers
 /**
  * Tokenizes parse trees by extracting depth features.
  */
+template <class T>
 class depth_featurizer
-    : public util::clonable<tree_featurizer, depth_featurizer>
+    : public util::clonable<tree_featurizer<T>, depth_featurizer<T>>
 {
   public:
+    using feature_map = typename depth_featurizer::feature_map;
+
     /**
      * Extracts the height of each parse tree.
-     * @param doc The document to parse
      * @param tree The current parse_tree in the document
+     * @param counts The feature_map to write to
      */
-    void tree_tokenize(corpus::document& doc,
-                       const parser::parse_tree& tree) const override;
+    void tree_tokenize(const parser::parse_tree& tree,
+                       feature_map& counts) const override;
 
     /// Identifier for this featurizer
     const static std::string id;
 };
-}
-}
 
+extern template class depth_featurizer<uint64_t>;
+extern template class depth_featurizer<double>;
+}
+}
 #endif

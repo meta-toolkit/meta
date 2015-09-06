@@ -35,7 +35,8 @@ ngram_word_analyzer<T>::ngram_word_analyzer(const ngram_word_analyzer& other)
 }
 
 template <class T>
-void ngram_word_analyzer<T>::tokenize(corpus::document& doc)
+void ngram_word_analyzer<T>::tokenize(const corpus::document& doc,
+                                      feature_map& counts)
 {
     stream_->set_content(get_content(doc));
     std::deque<std::string> tokens;
@@ -49,7 +50,7 @@ void ngram_word_analyzer<T>::tokenize(corpus::document& doc)
             for (const auto& token : tokens)
                 combined += "_" + token;
 
-            doc.increment(combined, 1);
+            counts[combined] += 1;
         }
     }
 }

@@ -29,9 +29,13 @@ namespace analyzers
  * configuration files.  Clients should use the register_featurizer method
  * instead of this class directly.
  */
+template <class T>
 class featurizer_factory
-    : public util::factory<featurizer_factory, tree_featurizer>
+    : public util::factory<featurizer_factory<T>, tree_featurizer<T>>
 {
+    using base_factory = typename featurizer_factory::base_factory;
+    using factory_method = typename featurizer_factory::factory_method;
+
     /// friend the base class
     friend base_factory;
 
@@ -53,12 +57,26 @@ class featurizer_factory
 };
 
 /**
+ * Traits class for featurizers. You should specialize this class if you
+ * need to customize creation behavior for your featurizer class. This is a
+ * class template to allow for partial specializations as well.
+ */
+template <class Featurizer>
+struct featurizer_traits
+{
+    static std::unique_ptr<typename Featurizer::base_type> create()
+    {
+        return make_unique<Featurizer>();
+    }
+};
+
+/**
  * Factory method for creating a featurizer.
  */
 template <class Featurizer>
-std::unique_ptr<tree_featurizer> make_featurizer()
+std::unique_ptr<typename Featurizer::base_type> make_featurizer()
 {
-    return make_unique<Featurizer>();
+    return featurizer_traits<Featurizer>::create();
 }
 
 /**
@@ -68,7 +86,8 @@ std::unique_ptr<tree_featurizer> make_featurizer()
 template <class Featurizer>
 void register_featurizer()
 {
-    featurizer_factory::get().add(Featurizer::id, make_featurizer<Featurizer>);
+    featurizer_factory<typename Featurizer::feature_value_type>::get().add(
+        Featurizer::id, make_featurizer<Featurizer>);
 }
 }
 }

@@ -16,45 +16,21 @@ namespace meta
 namespace index
 {
 
-namespace
+std::vector<search_result>
+    ranker::score(inverted_index& idx, const corpus::document& query,
+                  uint64_t num_results /* = 10 */,
+                  const filter_function_type& filter /* return true */)
 {
-struct postings_context
-{
-    using postings_data_type = inverted_index::postings_data_type;
-    using iterator = postings_stream<doc_id>::iterator;
-
-    postings_stream<doc_id> stream;
-    iterator begin;
-    iterator end;
-    term_id t_id;
-    double query_term_weight;
-    uint64_t doc_count;
-    uint64_t corpus_term_count;
-
-    postings_context(postings_stream<doc_id> strm, double qtf, term_id term)
-        : stream{std::move(strm)},
-          begin{stream.begin()},
-          end{stream.end()},
-          t_id{term},
-          query_term_weight{qtf},
-          doc_count{stream.size()},
-          corpus_term_count{stream.total_counts()}
-    {
-        // nothing
-    }
-};
+    auto counts = idx.tokenize(query);
+    return score(idx, counts.begin(), counts.end(), num_results, filter);
 }
 
-std::vector<search_result> ranker::score(
-    inverted_index& idx, corpus::document& query,
-    uint64_t num_results /* = 10 */,
-    const std::function<bool(doc_id d_id)>& filter /* return true */)
+std::vector<search_result> ranker::rank(detail::ranker_context& ctx,
+                                        uint64_t num_results,
+                                        const filter_function_type& filter)
 {
-    if (query.counts().empty())
-        idx.tokenize(query);
-
-    score_data sd{idx, idx.avg_doc_length(), idx.num_docs(),
-                  idx.total_corpus_terms(), query};
+    score_data sd{ctx.idx, ctx.idx.avg_doc_length(), ctx.idx.num_docs(),
+                  ctx.idx.total_corpus_terms(), ctx.query_length};
 
     std::vector<search_result> results;
     results.reserve(num_results + 1); // +1 since we use this as a heap and
@@ -65,44 +41,20 @@ std::vector<search_result> ranker::score(
         return a.score > b.score;
     };
 
-    std::vector<postings_context> postings;
-    postings.reserve(query.counts().size());
-
-    doc_id cur_doc{idx.num_docs()};
-    for (const auto& count : query.counts())
+    doc_id next_doc{ctx.idx.num_docs()};
+    while (ctx.cur_doc < ctx.idx.num_docs())
     {
-        auto term = idx.get_term_id(count.first);
-        auto pstream = idx.stream_for(term);
-        if (!pstream)
-            continue;
-
-        postings.emplace_back(*pstream, count.second, term);
-
-        while (postings.back().begin != postings.back().end
-               && !filter(postings.back().begin->first))
-            ++postings.back().begin;
-
-        if (postings.back().begin != postings.back().end)
-        {
-            if (postings.back().begin->first < cur_doc)
-                cur_doc = postings.back().begin->first;
-        }
-    }
-
-    doc_id next_doc{idx.num_docs()};
-    while (cur_doc < idx.num_docs())
-    {
-        sd.d_id = cur_doc;
-        sd.doc_size = idx.doc_size(cur_doc);
-        sd.doc_unique_terms = idx.unique_terms(cur_doc);
+        sd.d_id = ctx.cur_doc;
+        sd.doc_size = ctx.idx.doc_size(ctx.cur_doc);
+        sd.doc_unique_terms = ctx.idx.unique_terms(ctx.cur_doc);
 
         auto score = initial_score(sd);
-        for (auto& pc : postings)
+        for (auto& pc : ctx.postings)
         {
             if (pc.begin == pc.end)
                 continue;
 
-            if (pc.begin->first == cur_doc)
+            if (pc.begin->first == ctx.cur_doc)
             {
                 // set up this term
                 sd.t_id = pc.t_id;
@@ -131,7 +83,7 @@ std::vector<search_result> ranker::score(
         }
 
         // add doc to the heap and poll if needed
-        results.emplace_back(cur_doc, score);
+        results.emplace_back(ctx.cur_doc, score);
         std::push_heap(results.begin(), results.end(), comp);
         if (results.size() > num_results)
         {
@@ -139,8 +91,8 @@ std::vector<search_result> ranker::score(
             results.pop_back();
         }
 
-        cur_doc = next_doc;
-        next_doc = doc_id{idx.num_docs()};
+        ctx.cur_doc = next_doc;
+        next_doc = doc_id{ctx.idx.num_docs()};
     }
 
     // heap sort the values

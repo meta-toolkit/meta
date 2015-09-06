@@ -45,6 +45,8 @@ template <class T>
 class tree_analyzer : public util::clonable<analyzer<T>, tree_analyzer<T>>
 {
   public:
+    using feature_map = typename analyzer<T>::feature_map;
+
     /**
      * Creates a tree analyzer
      */
@@ -59,15 +61,9 @@ class tree_analyzer : public util::clonable<analyzer<T>, tree_analyzer<T>>
     tree_analyzer(const tree_analyzer& other);
 
     /**
-     * Tokenizes a file into a document.
-     * @param doc The document to store the tokenized information in
-     */
-    void tokenize(corpus::document& doc) override;
-
-    /**
      * Adds a tree featurizer to the list.
      */
-    void add(std::unique_ptr<const tree_featurizer> featurizer);
+    void add(std::unique_ptr<const tree_featurizer<T>> featurizer);
 
     /**
      * Identifier for this analyzer.
@@ -76,7 +72,13 @@ class tree_analyzer : public util::clonable<analyzer<T>, tree_analyzer<T>>
 
   private:
     using tree_featurizer_list
-        = std::vector<std::unique_ptr<const tree_featurizer>>;
+        = std::vector<std::unique_ptr<const tree_featurizer<T>>>;
+
+    /**
+     * Tokenizes a file into a document.
+     * @param doc The document to store the tokenized information in
+     */
+    void tokenize(const corpus::document& doc, feature_map& counts) override;
 
     /**
      * A list of tree_featurizers to run on each parse tree.

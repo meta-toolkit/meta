@@ -34,8 +34,8 @@ namespace analyzers
  * method = "ngram-pos" # this analyzer
  * ngram = 1 # integer required
  * crf-prefix = "path"
- * [[analyzers.filter]]
- *     type = "icu-tokenizer" # recommended
+ * filter = [{type = "icu-tokenizer"},
+ *           {type = "ptb-normalizer"}] # recommended
  * ~~~
  *
  * Optional config parameters: none.
@@ -49,6 +49,8 @@ class ngram_pos_analyzer
 {
     using base = util::multilevel_clonable<analyzer<T>, ngram_analyzer<T>,
                                            ngram_pos_analyzer>;
+
+    using feature_map = typename base::feature_map;
 
   public:
     /**
@@ -66,16 +68,17 @@ class ngram_pos_analyzer
      */
     ngram_pos_analyzer(const ngram_pos_analyzer& other);
 
-    /**
-     * Tokenizes a file into a document.
-     * @param doc The document to store the tokenized information in
-     */
-    virtual void tokenize(corpus::document& doc) override;
-
     /// Identifier for this analyzer.
     const static std::string id;
 
   private:
+    /**
+     * Tokenizes a file into a document.
+     * @param doc The document to store the tokenized information in
+     */
+    virtual void tokenize(const corpus::document& doc,
+                          feature_map& counts) override;
+
     /// The token stream to be used for extracting tokens
     std::unique_ptr<token_stream> stream_;
 

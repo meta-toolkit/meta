@@ -26,10 +26,11 @@ multi_analyzer<T>::multi_analyzer(const multi_analyzer& other)
 }
 
 template <class T>
-void multi_analyzer<T>::tokenize(corpus::document& doc)
+void multi_analyzer<T>::tokenize(const corpus::document& doc,
+                                 feature_map& counts)
 {
     for (auto& tok : analyzers_)
-        tok->tokenize(doc);
+        tok->tokenize(doc, counts);
 }
 
 template class multi_analyzer<uint64_t>;
