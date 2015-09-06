@@ -222,6 +222,30 @@ if(META_HAS_STD_MAKE_UNIQUE)
                                -DMETA_HAS_STD_MAKE_UNIQUE)
 endif()
 
+check_cxx_source_compiles("
+#include <experimental/optional>
+int main() {
+    std::experimental::optional<int> x;
+    return 0;
+}" META_HAS_EXPERIMENTAL_OPTIONAL)
+
+if (META_HAS_EXPERIMENTAL_OPTIONAL)
+  target_compile_definitions(meta-definitions INTERFACE
+                             -DMETA_HAS_EXPERIMENTAL_OPTIONAL)
+endif()
+
+check_cxx_source_compiles("
+#include <experimental/string_view>
+int main() {
+    std::experimental::string_view sv = \"hello world\";
+    return 0;
+}" META_HAS_EXPERIMENTAL_STRING_VIEW)
+
+if (META_HAS_EXPERIMENTAL_STRING_VIEW)
+  target_compile_definitions(meta-definitions INTERFACE
+                             -DMETA_HAS_EXPERIMENTAL_STRING_VIEW)
+endif()
+
 # work around a bug in libstdc++ provided with gcc < 4.8.3 where a static
 # assertion fires when you have a non-empty hash functor
 check_cxx_source_compiles("

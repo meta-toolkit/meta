@@ -7,9 +7,22 @@
  * project.
  */
 
-#ifndef META_OPTIONAL_H_
-#define META_OPTIONAL_H_
+#ifndef META_UTIL_OPTIONAL_H_
+#define META_UTIL_OPTIONAL_H_
 
+#if META_HAS_EXPERIMENTAL_OPTIONAL
+#include <experimental/optional>
+namespace meta
+{
+namespace util
+{
+template <class T>
+using optional = std::experimental::optional<T>;
+
+using std::experimental::nullopt;
+}
+}
+#else
 #include <stdexcept>
 #include <type_traits>
 #include "util/comparable.h"
@@ -254,4 +267,5 @@ class bad_optional_access : public std::runtime_error
 }
 
 #include "util/optional.tcc"
-#endif
+#endif // !META_HAS_EXPERIMENTAL_OPTIONAL
+#endif // META_UTIL_OPTIONAL_H_

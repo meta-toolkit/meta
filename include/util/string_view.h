@@ -10,6 +10,23 @@
 #ifndef META_UTIL_STRING_VIEW_H_
 #define META_UTIL_STRING_VIEW_H_
 
+#if META_HAS_EXPERIMENTAL_STRING_VIEW
+#include <experimental/string_view>
+namespace meta
+{
+namespace util
+{
+template <class Char, class Traits = std::char_traits<Char>>
+using basic_string_view = std::experimental::basic_string_view<Char, Traits>;
+
+using string_view = basic_string_view<char>;
+using u16string_view = basic_string_view<char16_t>;
+using u32string_view = basic_string_view<char32_t>;
+using wstring_view = basic_string_view<wchar_t>;
+}
+}
+#else
+
 #include <algorithm>
 #include <stdexcept>
 #include <string>
@@ -629,4 +646,5 @@ struct hash<meta::util::basic_string_view<Char, Traits>>
     }
 };
 }
-#endif
+#endif // !META_HAS_EXPERIMENTAL_STRING_VIEW
+#endif // META_UTIL_STRING_VIEW_H_
