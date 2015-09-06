@@ -29,13 +29,13 @@ double information_gain::score(label_id lid, term_id tid) const
     double gain_tnc = p_tnc * std::log(p_tnc / (p_t * p_nc));
 
     // if any denominators were zero, make the expression zero
-    if (std::isfinite(gain_tc))
+    if (!std::isfinite(gain_tc))
         gain_tc = 0.0;
-    if (std::isfinite(gain_ntnc))
+    if (!std::isfinite(gain_ntnc))
         gain_ntnc = 0.0;
-    if (std::isfinite(gain_ntc))
+    if (!std::isfinite(gain_ntc))
         gain_ntc = 0.0;
-    if (std::isfinite(gain_tnc))
+    if (!std::isfinite(gain_tnc))
         gain_tnc = 0.0;
 
     return gain_tc + gain_ntnc + gain_ntc + gain_tnc;
