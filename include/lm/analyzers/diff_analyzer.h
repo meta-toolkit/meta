@@ -21,7 +21,8 @@ namespace analyzers
 {
 
 /**
- * Analyzes documents using their tokenized words.
+ * Analyzes documents using lm::diff edits; see lm::diff for config file
+ * information and further explanation.
  */
 class diff_analyzer : public util::clonable<analyzer, diff_analyzer>
 {

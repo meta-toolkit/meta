@@ -41,6 +41,15 @@ diff::diff(const cpptoml::table& config) : lm_{config}
     auto r_pen = table->get_as<double>("remove-penalty");
     remove_penalty_ = r_pen ? *r_pen : 0.0;
 
+    auto max_cand = table->get_as<int64_t>("max-candidates");
+    max_cand_size_ = max_cand ? *max_cand : 20;
+
+    auto lambda = table->get_as<double>("lambda");
+    lambda_ = lambda ? *lambda : 0.5;
+
+    auto lm_gen = table->get_as<bool>("lm-generate");
+    lm_generate_ = lm_gen ? *lm_gen : false;
+
     set_stems(*table);
     set_function_words(*table);
 }

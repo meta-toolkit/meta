@@ -19,6 +19,38 @@ namespace meta
 {
 namespace lm
 {
+/**
+ * Uses a language model to transform sentences given a reference text
+ * collection. These transformations can be used directly or can be employed as
+ * features to represent text data in a wide variety of text mining
+ * applications.
+ * @see Sean Massung and ChengXiang Zhai. 2015. "SyntacticDiff: Operator-Based
+ * Transformation for Comparative Text Mining"
+ * @see http://web.engr.illinois.edu/~massung1/files/bigdata-2015.pdf
+ * @note It is *very important* that the language model .arpa file and the input
+ * to lm::diff are tokenized in the same way!
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [diff]
+ * n-value = 3 # e.g.
+ * max-edits = 2 # e.g., probably something in [1,5]
+ * function-words = "path-to-file.txt" # words that may be inserted into
+ *                                     # the sentence
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * [diff]
+ * base-penalty = 0.1
+ * insert-penalty = 0.1
+ * substitute-penalty = 0.1
+ * remove-penalty = 0.1
+ * max-candidates = 20
+ * lambda = 0.5 # balances scoring between perplexity and edits, in [0,1]
+ * lm-generate = false # use LM to insert likely words (may be slow!)
+ * ~~~
+ */
 class diff
 {
   public:
@@ -34,7 +66,9 @@ class diff
 
     /**
      * @param sent The sentence object to inspect
-     * @return the index of the least-likely ngram according
+     * @return the index of the least-likely ngram according to perplexity
+     * Runtime is linear in the sentence length, since log_prob is called on
+     * each ngram in the sentence.
      */
     uint64_t least_likely_ngram(const sentence& sent) const;
 
@@ -58,6 +92,9 @@ class diff
      * @param sent The sentence to transform
      * @param use_lm
      * @return a sorted list of candidate corrections and their scores
+     * The runtime depends on the value of parameters set in the config file:
+     * - exponential in the maximum number of edits
+     * - linear in n and the sentence length
      */
     std::vector<std::pair<sentence, double>> candidates(const sentence& sent,
                                                         bool use_lm = true);
@@ -127,10 +164,8 @@ class diff
 
     language_model lm_;
 
-    /// The order of the language model
     uint64_t n_val_;
     uint64_t max_edits_;
-
     double base_penalty_;
     double insert_penalty_;
     double substitute_penalty_;
@@ -141,19 +176,25 @@ class diff
     /// index.
     bool use_lm_;
 
+    /// map of "stem" -> [words that stem to "stem"]
     std::unordered_map<std::string, std::vector<std::string>> stems_;
+
+    /// List of words that can be inserted into the sentence (default is
+    /// function words)
     std::vector<std::string> fwords_;
+
+    /// Keeps track of sentences that have already been generated so we don't
+    /// perform redundant calcualtions
     std::unordered_set<std::string> seen_;
 
-    /// How many candidate sentences to store.
-    static constexpr uint64_t max_cand_size_ = 20;
+    /// How many candidate sentences to store when calling diff::candidates
+    uint64_t max_cand_size_;
 
     /// Balances perplexity and edit weights.
-    static constexpr double lambda_ = 0.5;
+    double lambda_;
 
-    /// Whether to insert likely words based on the language model. This is
-    /// currently turned off due to the LM representation making it inefficient.
-    static constexpr bool lm_generate_ = false;
+    /// Whether to insert likely words based on the language model.
+    bool lm_generate_;
 };
 
 class diff_exception : public std::runtime_error
