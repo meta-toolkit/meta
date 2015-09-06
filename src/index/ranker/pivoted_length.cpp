@@ -35,9 +35,7 @@ template <>
 std::unique_ptr<ranker>
     make_ranker<pivoted_length>(const cpptoml::table& config)
 {
-    auto s = pivoted_length::default_s;
-    if (auto c_s = config.get_as<double>("s"))
-        s = *c_s;
+    auto s = config.get_as<double>("s").value_or(pivoted_length::default_s);
     return make_unique<pivoted_length>(s);
 }
 }

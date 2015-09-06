@@ -203,12 +203,10 @@ void forward_index::create_index(const std::string& config_file)
     }
     else
     {
-        uint64_t ram_budget = 1024;
-        if (auto cfg_ram_budget = config.get_as<int64_t>("indexer-ram-budget"))
-            ram_budget = static_cast<uint64_t>(*cfg_ram_budget);
+        auto ram_budget = static_cast<uint64_t>(
+            config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
 
-        auto uninvert = config.get_as<bool>("uninvert");
-        if (uninvert && *uninvert)
+        if (config.get_as<bool>("uninvert").value_or(false))
         {
             LOG(info) << "Creating index by uninverting: " << index_name()
                       << ENDLG;

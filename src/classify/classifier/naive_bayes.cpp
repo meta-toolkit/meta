@@ -146,13 +146,11 @@ std::unique_ptr<classifier>
     make_classifier<naive_bayes>(const cpptoml::table& config,
                                  std::shared_ptr<index::forward_index> idx)
 {
-    auto alpha = naive_bayes::default_alpha;
-    if (auto c_alpha = config.get_as<double>("alpha"))
-        alpha = *c_alpha;
+    auto alpha
+        = config.get_as<double>("alpha").value_or(naive_bayes::default_alpha);
 
-    auto beta = naive_bayes::default_beta;
-    if (auto c_beta = config.get_as<double>("beta"))
-        beta = *c_beta;
+    auto beta
+        = config.get_as<double>("beta").value_or(naive_bayes::default_beta);
 
     return make_unique<naive_bayes>(std::move(idx), alpha, beta);
 }

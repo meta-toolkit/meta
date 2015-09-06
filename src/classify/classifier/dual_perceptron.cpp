@@ -101,21 +101,17 @@ std::unique_ptr<classifier>
     make_classifier<dual_perceptron>(const cpptoml::table& config,
                                      std::shared_ptr<index::forward_index> idx)
 {
-    auto alpha = dual_perceptron::default_alpha;
-    if (auto c_alpha = config.get_as<double>("alpha"))
-        alpha = *c_alpha;
+    auto alpha = config.get_as<double>("alpha")
+                     .value_or(dual_perceptron::default_alpha);
 
-    auto gamma = dual_perceptron::default_gamma;
-    if (auto c_gamma = config.get_as<double>("gamma"))
-        gamma = *c_gamma;
+    auto gamma = config.get_as<double>("gamma")
+                     .value_or(dual_perceptron::default_gamma);
 
-    auto bias = dual_perceptron::default_bias;
-    if (auto c_bias = config.get_as<double>("bias"))
-        bias = *c_bias;
+    auto bias
+        = config.get_as<double>("bias").value_or(dual_perceptron::default_bias);
 
-    auto max_iter = dual_perceptron::default_max_iter;
-    if (auto c_max_iter = config.get_as<int64_t>("max-iter"))
-        max_iter = *c_max_iter;
+    auto max_iter = config.get_as<int64_t>("max-iter")
+                        .value_or(dual_perceptron::default_max_iter);
 
     auto kernel = config.get_as<std::string>("kernel");
     if (!kernel)

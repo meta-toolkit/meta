@@ -65,13 +65,8 @@ std::unique_ptr<corpus> corpus::load(const std::string& config_file)
     if (!type)
         throw corpus_exception{"type missing from corpus configuration file"};
 
-    auto enc = corpus_config.get_as<std::string>("encoding");
-    std::string encoding;
-    if (enc)
-        encoding = *enc;
-    else
-        encoding = "utf-8";
-
+    auto encoding
+        = corpus_config.get_as<std::string>("encoding").value_or("utf-8");
     std::unique_ptr<corpus> result;
 
     if (*type == "file-corpus")

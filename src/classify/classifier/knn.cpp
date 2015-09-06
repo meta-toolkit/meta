@@ -134,11 +134,7 @@ std::unique_ptr<classifier> make_multi_index_classifier<knn>(
         throw classifier_factory::exception{
             "knn requires a ranker to be specified in its configuration"};
 
-    bool use_weighted = false;
-    auto weighted = config.get_as<bool>("weighted");
-    if (weighted)
-        use_weighted = *weighted;
-
+    auto use_weighted = config.get_as<bool>("weighted").value_or(false);
     return make_unique<knn>(std::move(inv_idx), std::move(idx), *k,
                             index::make_ranker(*ranker), use_weighted);
 }

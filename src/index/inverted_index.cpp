@@ -120,11 +120,8 @@ void inverted_index::create_index(const std::string& config_file)
     auto docs = corpus::corpus::load(config_file);
 
     auto config = cpptoml::parse_file(config_file);
-    auto cfg_ram_budget = config.get_as<int64_t>("indexer-ram-budget");
-
-    uint64_t ram_budget = 1024;
-    if (cfg_ram_budget)
-        ram_budget = static_cast<uint64_t>(*cfg_ram_budget);
+    auto ram_budget = static_cast<uint64_t>(
+        config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
 
     postings_inverter<inverted_index> inverter{index_name()};
     {
