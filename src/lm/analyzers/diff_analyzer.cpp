@@ -67,7 +67,7 @@ void diff_analyzer::tokenize(corpus::document& doc)
         }
         catch (lm::sentence_exception& ex)
         {
-            doc.increment("error", 1);
+            doc.increment("no-candidates", 1);
         }
 
     }
