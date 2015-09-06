@@ -9,7 +9,7 @@ namespace analyzers
 {
 
 template <class T>
-const std::string depth_featurizer<T>::id = "depth";
+const util::string_view depth_featurizer<T>::id = "depth";
 
 namespace
 {

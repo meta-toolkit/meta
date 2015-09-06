@@ -19,7 +19,7 @@ namespace meta
 namespace classify
 {
 
-const std::string dual_perceptron::id = "dual-perceptron";
+const util::string_view dual_perceptron::id = "dual-perceptron";
 
 void dual_perceptron::train(const std::vector<doc_id>& docs)
 {

@@ -14,7 +14,7 @@ namespace meta
 namespace index
 {
 
-const std::string okapi_bm25::id = "bm25";
+const util::string_view okapi_bm25::id = "bm25";
 
 okapi_bm25::okapi_bm25(float k1, float b, float k3) : k1_{k1}, b_{b}, k3_{k3}
 {

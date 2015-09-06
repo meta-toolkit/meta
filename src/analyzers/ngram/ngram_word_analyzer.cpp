@@ -17,7 +17,7 @@ namespace analyzers
 {
 
 template <class T>
-const std::string ngram_word_analyzer<T>::id = "ngram-word";
+const util::string_view ngram_word_analyzer<T>::id = "ngram-word";
 
 template <class T>
 ngram_word_analyzer<T>::ngram_word_analyzer(

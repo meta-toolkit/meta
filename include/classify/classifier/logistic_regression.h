@@ -90,7 +90,7 @@ class logistic_regression : public classifier
     virtual void reset() override;
 
     /// the identifier for this classifier
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /// the set of \f$K-1\f$ independent classifiers

@@ -12,7 +12,7 @@ namespace meta
 namespace index
 {
 
-const std::string jelinek_mercer::id = "jelinek-mercer";
+const util::string_view jelinek_mercer::id = "jelinek-mercer";
 
 jelinek_mercer::jelinek_mercer(float lambda) : lambda_{lambda}
 {

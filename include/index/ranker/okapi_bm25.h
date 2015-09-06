@@ -37,7 +37,7 @@ class okapi_bm25 : public ranker
 {
   public:
     /// The identifier for this ranker.
-    const static std::string id;
+    const static util::string_view id;
 
     /// Default k1, doc term smoothing
     const static constexpr float default_k1 = 1.2f;

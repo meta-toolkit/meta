@@ -12,7 +12,7 @@ namespace classify
 namespace loss
 {
 
-const std::string logistic::id = "logistic";
+const util::string_view logistic::id = "logistic";
 
 double logistic::loss(double prediction, double expected) const
 {

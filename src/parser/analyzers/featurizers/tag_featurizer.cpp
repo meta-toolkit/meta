@@ -9,7 +9,7 @@ namespace analyzers
 {
 
 template <class T>
-const std::string tag_featurizer<T>::id = "tag";
+const util::string_view tag_featurizer<T>::id = "tag";
 
 namespace
 {
@@ -26,7 +26,7 @@ class tag_visitor : public parser::const_visitor<void>
 
     void operator()(const parser::internal_node& in) override
     {
-        counts[tag_featurizer<T>::id + "-"
+        counts[tag_featurizer<T>::id.to_string() + "-"
                + static_cast<std::string>(in.category())] += 1;
         in.each_child([&](const parser::node* child)
                       {
@@ -36,7 +36,7 @@ class tag_visitor : public parser::const_visitor<void>
 
     void operator()(const parser::leaf_node& ln) override
     {
-        counts[tag_featurizer<T>::id + "-"
+        counts[tag_featurizer<T>::id.to_string() + "-"
                + static_cast<std::string>(ln.category())] += 1;
     }
 

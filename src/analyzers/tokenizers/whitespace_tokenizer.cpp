@@ -17,7 +17,7 @@ namespace analyzers
 namespace tokenizers
 {
 
-const std::string whitespace_tokenizer::id = "whitespace-tokenizer";
+const util::string_view whitespace_tokenizer::id = "whitespace-tokenizer";
 
 whitespace_tokenizer::whitespace_tokenizer() : idx_{0}
 {

@@ -11,6 +11,7 @@
 
 #include "analyzers/token_stream.h"
 #include "util/clonable.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -58,7 +59,7 @@ class character_tokenizer
     operator bool() const override;
 
     /// Identifier for this tokenizer.
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /// The buffered string content for this tokenizer

@@ -13,7 +13,7 @@ namespace meta
 namespace index
 {
 
-const std::string absolute_discount::id = "absolute-discount";
+const util::string_view absolute_discount::id = "absolute-discount";
 
 absolute_discount::absolute_discount(float delta) : delta_{delta}
 {

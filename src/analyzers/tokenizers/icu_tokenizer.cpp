@@ -21,7 +21,7 @@ namespace analyzers
 namespace tokenizers
 {
 
-const std::string icu_tokenizer::id = "icu-tokenizer";
+const util::string_view icu_tokenizer::id = "icu-tokenizer";
 
 /**
  * Implementation class for the icu_tokenizer.

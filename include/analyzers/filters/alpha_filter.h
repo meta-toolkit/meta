@@ -12,6 +12,7 @@
 #include "analyzers/token_stream.h"
 #include "util/clonable.h"
 #include "util/optional.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -59,7 +60,7 @@ class alpha_filter : public util::clonable<token_stream, alpha_filter>
     operator bool() const override;
 
     /// Identifier for this filter
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /**

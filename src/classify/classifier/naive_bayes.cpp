@@ -19,7 +19,7 @@ namespace meta
 namespace classify
 {
 
-const std::string naive_bayes::id = "naive-bayes";
+const util::string_view naive_bayes::id = "naive-bayes";
 
 naive_bayes::naive_bayes(std::shared_ptr<index::forward_index> idx,
                          double alpha, double beta)

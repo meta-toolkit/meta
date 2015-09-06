@@ -38,7 +38,7 @@ class jelinek_mercer : public language_model_ranker
 {
   public:
     /// The identifier for this ranker.
-    const static std::string id;
+    const static util::string_view id;
 
     /// Default value of lambda
     const static constexpr float default_lambda = 0.7f;

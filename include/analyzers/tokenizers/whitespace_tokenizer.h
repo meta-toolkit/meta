@@ -11,6 +11,7 @@
 
 #include "analyzers/token_stream.h"
 #include "util/clonable.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -60,7 +61,7 @@ class whitespace_tokenizer : public util::clonable<token_stream,
     operator bool() const override;
 
     /// Identifier for this tokenizer
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /// Buffered string content for this tokenizer

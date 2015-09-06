@@ -13,7 +13,7 @@ namespace meta
 namespace index
 {
 
-const std::string pivoted_length::id = "pivoted-length";
+const util::string_view pivoted_length::id = "pivoted-length";
 
 pivoted_length::pivoted_length(float s) : s_{s}
 {

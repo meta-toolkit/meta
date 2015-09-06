@@ -14,7 +14,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string alpha_filter::id = "alpha";
+const util::string_view alpha_filter::id = "alpha";
 
 alpha_filter::alpha_filter(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}

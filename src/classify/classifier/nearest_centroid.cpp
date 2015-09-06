@@ -16,7 +16,7 @@ namespace meta
 namespace classify
 {
 
-const std::string nearest_centroid::id = "nearest-centroid";
+const util::string_view nearest_centroid::id = "nearest-centroid";
 
 nearest_centroid::nearest_centroid(std::shared_ptr<index::inverted_index> idx,
                                    std::shared_ptr<index::forward_index> f_idx)

@@ -9,7 +9,7 @@ namespace analyzers
 {
 
 template <class T>
-const std::string skeleton_featurizer<T>::id = "skel";
+const util::string_view skeleton_featurizer<T>::id = "skel";
 
 namespace
 {

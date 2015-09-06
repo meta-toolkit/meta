@@ -12,6 +12,7 @@
 #include <memory>
 #include "analyzers/token_stream.h"
 #include "util/clonable.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -59,7 +60,7 @@ class lowercase_filter : public util::clonable<token_stream, lowercase_filter>
     operator bool() const override;
 
     /// Identifier for this filter
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /// The stream to read tokens from.

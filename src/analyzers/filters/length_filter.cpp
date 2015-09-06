@@ -14,7 +14,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string length_filter::id = "length";
+const util::string_view length_filter::id = "length";
 
 length_filter::length_filter(std::unique_ptr<token_stream> source, uint64_t min,
                              uint64_t max)

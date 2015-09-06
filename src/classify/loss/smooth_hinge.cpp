@@ -12,7 +12,7 @@ namespace classify
 namespace loss
 {
 
-const std::string smooth_hinge::id = "smooth-hinge";
+const util::string_view smooth_hinge::id = "smooth-hinge";
 
 double smooth_hinge::loss(double prediction, double expected) const
 {

@@ -76,7 +76,7 @@ class length_filter : public util::clonable<token_stream, length_filter>
     operator bool() const override;
 
     /// Identifier for this filter
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /**

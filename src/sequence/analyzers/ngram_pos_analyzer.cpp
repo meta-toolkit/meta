@@ -16,7 +16,7 @@ namespace analyzers
 {
 
 template <class T>
-const std::string ngram_pos_analyzer<T>::id = "ngram-pos";
+const util::string_view ngram_pos_analyzer<T>::id = "ngram-pos";
 
 template <class T>
 ngram_pos_analyzer<T>::ngram_pos_analyzer(uint16_t n,

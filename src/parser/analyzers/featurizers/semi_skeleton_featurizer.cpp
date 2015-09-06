@@ -9,7 +9,7 @@ namespace analyzers
 {
 
 template <class T>
-const std::string semi_skeleton_featurizer<T>::id = "semi-skel";
+const util::string_view semi_skeleton_featurizer<T>::id = "semi-skel";
 
 namespace
 {
@@ -34,13 +34,14 @@ class semi_skeleton_visitor : public parser::const_visitor<std::string>
                       });
         rep += ")";
 
-        counts[semi_skeleton_featurizer<T>::id + "-" + rep_cat + rep] += 1;
+        counts[semi_skeleton_featurizer<T>::id.to_string() + "-" + rep_cat
+               + rep] += 1;
         return "(" + rep;
     }
 
     std::string operator()(const parser::leaf_node& ln) override
     {
-        counts[semi_skeleton_featurizer<T>::id + "-("
+        counts[semi_skeleton_featurizer<T>::id.to_string() + "-("
                + static_cast<std::string>(ln.category()) + ")"] += 1;
         return "()";
     }

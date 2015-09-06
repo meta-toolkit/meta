@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include "classify/loss/loss_function.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -33,7 +34,7 @@ struct hinge : public loss_function
     /**
      * The identifier for this loss function.
      */
-    const static std::string id;
+    const static util::string_view id;
 
     double loss(double prediction, double expected) const override;
     double derivative(double prediction, double expected) const override;

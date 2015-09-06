@@ -14,7 +14,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string english_normalizer::id = "normalize";
+const util::string_view english_normalizer::id = "normalize";
 
 english_normalizer::english_normalizer(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}

@@ -15,7 +15,7 @@ namespace meta
 namespace classify
 {
 
-const std::string sgd::id = "sgd";
+const util::string_view sgd::id = "sgd";
 
 sgd::sgd(const std::string& prefix, std::shared_ptr<index::forward_index> idx,
          class_label positive, class_label negative,

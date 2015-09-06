@@ -15,7 +15,7 @@ namespace analyzers
 {
 
 template <class T>
-const std::string tree_analyzer<T>::id = "tree";
+const util::string_view tree_analyzer<T>::id = "tree";
 
 template <class T>
 tree_analyzer<T>::tree_analyzer(std::unique_ptr<token_stream> stream,

@@ -12,7 +12,7 @@ namespace meta
 namespace index
 {
 
-const std::string dirichlet_prior::id = "dirichlet-prior";
+const util::string_view dirichlet_prior::id = "dirichlet-prior";
 
 dirichlet_prior::dirichlet_prior(float mu) : mu_{mu}
 {

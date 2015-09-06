@@ -15,7 +15,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string sentence_boundary::id = "sentence-boundary";
+const util::string_view sentence_boundary::id = "sentence-boundary";
 
 // static members
 std::unordered_set<std::string> sentence_boundary::punc_set{};

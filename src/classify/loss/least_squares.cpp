@@ -12,7 +12,7 @@ namespace classify
 namespace loss
 {
 
-const std::string least_squares::id = "least-squares";
+const util::string_view least_squares::id = "least-squares";
 
 double least_squares::loss(double prediction, double expected) const
 {

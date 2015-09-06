@@ -14,7 +14,7 @@ namespace meta
 namespace classify
 {
 
-const std::string logistic_regression::id = "logistic-regression";
+const util::string_view logistic_regression::id = "logistic-regression";
 
 logistic_regression::logistic_regression(
     const std::string& prefix, std::shared_ptr<index::forward_index> idx,

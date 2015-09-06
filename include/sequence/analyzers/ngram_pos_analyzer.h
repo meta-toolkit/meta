@@ -69,7 +69,7 @@ class ngram_pos_analyzer
     ngram_pos_analyzer(const ngram_pos_analyzer& other);
 
     /// Identifier for this analyzer.
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /**

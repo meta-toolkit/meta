@@ -12,7 +12,7 @@ namespace classify
 namespace loss
 {
 
-const std::string huber::id = "huber";
+const util::string_view huber::id = "huber";
 
 double huber::loss(double prediction, double expected) const
 {

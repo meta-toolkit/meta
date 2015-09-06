@@ -10,6 +10,7 @@
 #define META_CLASSIFY_SQUARED_HINGE_LOSS_H_
 
 #include "classify/loss/loss_function.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -28,7 +29,7 @@ struct squared_hinge : public loss_function
     /**
      * The identifier for this loss function.
      */
-    const static std::string id;
+    const static util::string_view id;
 
     double loss(double prediction, double expected) const override;
     double derivative(double prediction, double expected) const override;

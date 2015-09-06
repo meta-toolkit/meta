@@ -68,7 +68,7 @@ class tree_analyzer : public util::clonable<analyzer<T>, tree_analyzer<T>>
     /**
      * Identifier for this analyzer.
      */
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     using tree_featurizer_list

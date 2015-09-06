@@ -80,7 +80,7 @@ class winnow : public classifier
     /**
      * The identifier for this classifier.
      */
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /**

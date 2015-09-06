@@ -9,7 +9,7 @@ namespace analyzers
 {
 
 template <class T>
-const std::string subtree_featurizer<T>::id = "subtree";
+const util::string_view subtree_featurizer<T>::id = "subtree";
 
 namespace
 {
@@ -36,13 +36,13 @@ class subtree_visitor : public parser::const_visitor<void>
             });
 
         rep += ")";
-        counts[subtree_featurizer<T>::id + "-" + rep] += 1;
+        counts[subtree_featurizer<T>::id.to_string() + "-" + rep] += 1;
     }
 
     void operator()(const parser::leaf_node& ln) override
     {
         auto rep = "(" + static_cast<std::string>(ln.category()) + ")";
-        counts[subtree_featurizer<T>::id + "-" + rep] += 1;
+        counts[subtree_featurizer<T>::id.to_string() + "-" + rep] += 1;
     }
 
   private:

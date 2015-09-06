@@ -12,7 +12,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string empty_sentence_filter::id = "empty-sentence";
+const util::string_view empty_sentence_filter::id = "empty-sentence";
 
 empty_sentence_filter::empty_sentence_filter(
     std::unique_ptr<token_stream> source)

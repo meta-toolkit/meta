@@ -51,9 +51,6 @@ class featurizer_factory
      */
     template <class Analyzer>
     void register_featurizer();
-
-    /// maps id strings to the factory method used to create that class
-    std::unordered_map<std::string, factory_method> methods_;
 };
 
 /**

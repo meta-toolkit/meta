@@ -14,7 +14,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string ptb_normalizer::id = "ptb-normalizer";
+const util::string_view ptb_normalizer::id = "ptb-normalizer";
 
 ptb_normalizer::ptb_normalizer(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}

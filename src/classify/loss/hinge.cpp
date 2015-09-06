@@ -12,7 +12,7 @@ namespace classify
 namespace loss
 {
 
-const std::string hinge::id = "hinge";
+const util::string_view hinge::id = "hinge";
 
 double hinge::loss(double prediction, double expected) const
 {

@@ -9,7 +9,7 @@ namespace analyzers
 {
 
 template <class T>
-const std::string branch_featurizer<T>::id = "branch";
+const util::string_view branch_featurizer<T>::id = "branch";
 
 namespace
 {

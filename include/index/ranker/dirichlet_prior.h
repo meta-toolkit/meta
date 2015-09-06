@@ -36,7 +36,7 @@ class dirichlet_prior : public language_model_ranker
 {
   public:
     /// Identifier for this ranker.
-    const static std::string id;
+    const static util::string_view id;
 
     /// Default value of mu
     const static constexpr float default_mu = 2000.0f;

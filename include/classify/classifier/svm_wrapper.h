@@ -101,7 +101,7 @@ class svm_wrapper : public classifier
     /**
      * The identifier for this classifier.
      */
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /** the path to the liblinear/libsvm library */

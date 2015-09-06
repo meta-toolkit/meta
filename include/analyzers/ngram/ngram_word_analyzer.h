@@ -58,7 +58,7 @@ class ngram_word_analyzer
     ngram_word_analyzer(const ngram_word_analyzer& other);
 
     /// Identifier for this analyzer.
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /**

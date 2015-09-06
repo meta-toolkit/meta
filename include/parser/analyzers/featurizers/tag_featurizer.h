@@ -12,6 +12,7 @@
 
 #include "parser/analyzers/featurizers/tree_featurizer.h"
 #include "util/clonable.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -37,7 +38,7 @@ class tag_featurizer
                        feature_map& counts) const override;
 
     /// Identifier for this featurizer
-    const static std::string id;
+    const static util::string_view id;
 };
 
 // declare the valid instantiations for this featurizer

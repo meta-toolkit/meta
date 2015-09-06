@@ -12,7 +12,7 @@ namespace classify
 namespace loss
 {
 
-const std::string perceptron::id = "perceptron";
+const util::string_view perceptron::id = "perceptron";
 
 double perceptron::loss(double prediction, double expected) const
 {

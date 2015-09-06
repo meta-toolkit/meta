@@ -17,7 +17,7 @@ namespace meta
 namespace classify
 {
 
-const std::string knn::id = "knn";
+const util::string_view knn::id = "knn";
 
 knn::knn(std::shared_ptr<index::inverted_index> idx,
          std::shared_ptr<index::forward_index> f_idx, uint16_t k,

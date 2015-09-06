@@ -13,7 +13,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string icu_filter::id = "icu";
+const util::string_view icu_filter::id = "icu";
 
 icu_filter::icu_filter(std::unique_ptr<token_stream> source,
                        const std::string& id)
