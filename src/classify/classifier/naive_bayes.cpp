@@ -20,6 +20,8 @@ namespace classify
 {
 
 const util::string_view naive_bayes::id = "naive-bayes";
+const constexpr double naive_bayes::default_alpha;
+const constexpr double naive_bayes::default_beta;
 
 naive_bayes::naive_bayes(std::shared_ptr<index::forward_index> idx,
                          double alpha, double beta)

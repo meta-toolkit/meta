@@ -20,6 +20,10 @@ namespace classify
 {
 
 const util::string_view dual_perceptron::id = "dual-perceptron";
+const constexpr double dual_perceptron::default_alpha;
+const constexpr double dual_perceptron::default_gamma;
+const constexpr double dual_perceptron::default_bias;
+const constexpr uint64_t dual_perceptron::default_max_iter;
 
 void dual_perceptron::train(const std::vector<doc_id>& docs)
 {

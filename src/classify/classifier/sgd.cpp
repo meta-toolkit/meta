@@ -16,6 +16,11 @@ namespace classify
 {
 
 const util::string_view sgd::id = "sgd";
+const constexpr double sgd::default_alpha;
+const constexpr double sgd::default_gamma;
+const constexpr double sgd::default_bias;
+const constexpr double sgd::default_lambda;
+const constexpr size_t sgd::default_max_iter;
 
 sgd::sgd(const std::string& prefix, std::shared_ptr<index::forward_index> idx,
          class_label positive, class_label negative,

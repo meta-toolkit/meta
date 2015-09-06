@@ -15,6 +15,10 @@ namespace index
 {
 
 const util::string_view okapi_bm25::id = "bm25";
+const constexpr float okapi_bm25::default_k1;
+const constexpr float okapi_bm25::default_b;
+const constexpr float okapi_bm25::default_k3;
+
 
 okapi_bm25::okapi_bm25(float k1, float b, float k3) : k1_{k1}, b_{b}, k3_{k3}
 {

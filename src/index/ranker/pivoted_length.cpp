@@ -14,6 +14,7 @@ namespace index
 {
 
 const util::string_view pivoted_length::id = "pivoted-length";
+const constexpr float pivoted_length::default_s;
 
 pivoted_length::pivoted_length(float s) : s_{s}
 {
