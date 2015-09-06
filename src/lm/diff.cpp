@@ -71,6 +71,7 @@ std::vector<std::pair<sentence, double>>
     step(sent, candidates, 0);
 
     std::vector<pair_t> sorted;
+    sorted.reserve(candidates.size());
     while (!candidates.empty())
     {
         sorted.emplace_back(std::move(candidates.top()));
