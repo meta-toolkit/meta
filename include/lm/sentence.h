@@ -15,6 +15,14 @@ namespace meta
 {
 namespace lm
 {
+/**
+ * A sequence of tokens that represents a sentence. Tokens are stored in a list
+ * format to enable operations such as insert, substitute, and remove. If an
+ * edit is performed, it is remembered as part of an ordered sequence of
+ * operations. Further, different weights may be assigned to any arbitrary edit
+ * operation, and these weights may also be returned as an ordered sequence.
+ * @see Useful in conjunction with lm::diff
+ */
 class sentence
 {
   public:
@@ -46,13 +54,18 @@ class sentence
      */
     const std::string& operator[](size_type idx) const;
 
+    /**
+     * Slicing/substring operator
+     * @param from index of left side of sentence
+     * @param to index of right side of sentence
+     */
     sentence operator()(size_type from, size_type to) const;
 
     /**
+     * Replace the token at the specified index with the provided token
      * @param idx
      * @param token
      * @param weight The weight that this edit carries
-     * @return replace the token at the specified index with the provided token
      */
     void substitute(size_type idx, const std::string& token,
                     double weight = 0.0);
@@ -78,29 +91,57 @@ class sentence
 
     /**
      * @return the sequence of edit weights to this sentence
+     * @see useful in conjunction with lm::diff
      */
     std::vector<double> weights() const;
 
     /**
-     * @return the operations (edits) performed on this sentence
+     * @return the string representations of the operations (edits) performed on
+     * this sentence
      */
     const std::vector<std::string>& operations() const;
 
+    /**
+     * @return the token at the front of the sentence
+     */
     const std::string& front() const;
 
+    /**
+     * @return the token at the end of the sentence
+     */
     const std::string& back() const;
 
+    /**
+     * Inserts a token at the beginning of the sentence
+     * @param token The token to insert
+     */
     void push_front(const std::string& token);
 
+    /**
+     * Remove the token at the beginning of the sentence
+     */
     void pop_front();
 
+    /**
+     * Inserts a token at the end of the sentence
+     * @param token The token to insert
+     */
     void push_back(const std::string& token);
 
+    /**
+     * Remove the token at the end of the sentence
+     */
     void pop_back();
 
+    /**
+     * Emplaces a token at the beginning of the sentence
+     */
     template <class... Args>
     void emplace_front(Args&&... args);
 
+    /**
+     * Emplaces a token at the end of the sentence
+     */
     template <class... Args>
     void emplace_back(Args&&... args);
 
@@ -130,8 +171,13 @@ class sentence
     size_type size() const;
 
   private:
+    /// The tokens (words) in the sentence
     std::deque<std::string> tokens_;
+
+    /// String representations of the sequence of edit oeprations performed
     std::vector<std::string> ops_;
+
+    /// Ordered sequence of edit weights
     std::vector<double> weights_;
 };
 
