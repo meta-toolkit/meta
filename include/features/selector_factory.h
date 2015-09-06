@@ -93,12 +93,7 @@ std::unique_ptr<feature_selector>
 template <class Selector>
 void register_selector()
 {
-    selector_factory::get().add(Selector::id,
-                                [](const cpptoml::table& config,
-                                   std::shared_ptr<index::forward_index> idx)
-                                {
-        return make_selector<feature_selector>(config, std::move(idx));
-    });
+    selector_factory::get().add(Selector::id, make_selector<Selector>);
 }
 }
 }
