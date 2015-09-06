@@ -23,7 +23,7 @@ std::vector<node_id> myopic_search(Graph& g, node_id src, node_id dest)
     {
         if (path.size() > g.size())
             throw graph_algorithm_exception{"no path found in myopic search"};
-        node_id best_id;
+        node_id best_id{cur};
         double best_distance = std::numeric_limits<double>::max();
         for (auto& n : g.adjacent(cur))
         {
