@@ -86,9 +86,9 @@ class sentence
      */
     const std::vector<std::string>& operations() const;
 
-    std::string front() const;
+    const std::string& front() const;
 
-    std::string back() const;
+    const std::string& back() const;
 
     void push_front(const std::string& token);
 
@@ -97,6 +97,12 @@ class sentence
     void push_back(const std::string& token);
 
     void pop_back();
+
+    template <class... Args>
+    void emplace_front(Args&&... args);
+
+    template <class... Args>
+    void emplace_back(Args&&... args);
 
     /**
      * @return an iterator to the beginning of the sequence

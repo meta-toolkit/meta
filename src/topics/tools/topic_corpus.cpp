@@ -30,9 +30,8 @@ std::vector<size_t> get_topic_ids(std::ifstream& thetas)
 {
     std::vector<size_t> topic_ids;
     std::string line;
-    while (thetas)
+    while (std::getline(thetas, line))
     {
-        std::getline(thetas, line);
         if (line.empty())
             continue;
         std::istringstream stream{line};
@@ -42,9 +41,8 @@ std::vector<size_t> get_topic_ids(std::ifstream& thetas)
         std::string to_split;
         size_t best_topic = 0;
         double best_prob = 0;
-        while (stream)
+        while (stream >> to_split)
         {
-            stream >> to_split;
             if (to_split.length() == 0)
                 continue;
             size_t idx = to_split.find_first_of(':');
@@ -106,9 +104,9 @@ void create_topic_corpus(const std::string& prefix, const std::string& dataset,
     {
         out_dist << label.first;
         double total = 0.0;
-        for (auto& count : label.second)
+        for (const auto& count : label.second)
             total += count;
-        for (auto& count : label.second)
+        for (const auto& count : label.second)
             out_dist << "\t" << count / total;
         out_dist << std::endl;
     }

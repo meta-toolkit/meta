@@ -34,9 +34,8 @@ int main(int argc, char* argv[])
     std::string line;
     size_t done = 0;
     double do_nothing = 0;
-    while (in)
+    while (std::getline(in, line))
     {
-        std::getline(in, line);
         if (line.empty())
             continue;
 

@@ -76,16 +76,15 @@ class static_probe_map
      * Helper function to hash a string with util::murmur_hash
      */
     uint64_t hash(const std::string& str) const;
+};
 
+/**
+ * Basic exception for static_probe_map interactions.
+ */
+class static_probe_map_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for static_probe_map interactions.
-     */
-    class static_probe_map_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 }
 }

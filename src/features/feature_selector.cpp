@@ -11,7 +11,7 @@
 #include "parallel/parallel_for.h"
 #include "features/feature_selector.h"
 #include "index/postings_data.h"
-#include "io/binary.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -22,7 +22,8 @@ feature_selector::feature_selector(const std::string& prefix,
     : prefix_{prefix},
       idx_{std::move(idx)},
       selected_{prefix_ + ".selected", idx_->unique_terms()}
-{ /* nothing */
+{
+    // nothing
 }
 
 void feature_selector::init(uint64_t features_per_class)
@@ -62,7 +63,7 @@ void feature_selector::score_all()
     parallel::parallel_for(
         scores.begin(), scores.end(), [&](std::vector<pair_t>& v)
         {
-            std::sort(v.begin(), v.end(), [&](const pair_t& a, const pair_t& b)
+            std::sort(v.begin(), v.end(), [](const pair_t& a, const pair_t& b)
                       {
                           return a.second > b.second;
                       });
@@ -71,38 +72,35 @@ void feature_selector::score_all()
     for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
     {
         // write (term_id, score) pairs
-        std::ofstream out{prefix_ + "." + std::to_string(lbl + 1)};
+        std::ofstream out{prefix_ + "." + std::to_string(lbl + 1),
+                          std::ios::binary};
         for (auto& score : scores[lbl])
         {
-            io::write_binary(out, score.first);
-            io::write_binary(out, score.second);
+            io::packed::write(out, score.first);
+            io::packed::write(out, score.second);
         }
     }
 }
 
 void feature_selector::select(uint64_t features_per_class /* = 20 */)
 {
-    term_id id;
-    double score;
-    std::unordered_set<term_id> terms;
-    for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
-    {
-        std::ifstream in{prefix_ + "." + std::to_string(lbl + 1)};
-        for (uint64_t i = 0; i < features_per_class; ++i)
-        {
-            io::read_binary(in, id);
-            io::read_binary(in, score);
-            terms.insert(id);
-        }
-    }
-
     // zero out old vector
     for (auto& b : selected_)
         b = false;
 
-    // select new features
-    for (auto& term : terms)
-        selected_[term] = true;
+    term_id id;
+    double score;
+    for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
+    {
+        std::ifstream in{prefix_ + "." + std::to_string(lbl + 1),
+                         std::ios::binary};
+        for (uint64_t i = 0; i < features_per_class; ++i)
+        {
+            io::packed::read(in, id);
+            io::packed::read(in, score);
+            selected_[id] = true;
+        }
+    }
 }
 
 bool feature_selector::selected(term_id term) const
@@ -112,6 +110,10 @@ bool feature_selector::selected(term_id term) const
 
 void feature_selector::select_percent(double p /* = 0.05 */)
 {
+    if (p <= 0.0 || p >= 1.0)
+        throw feature_selector_exception{
+            "select_percent needs a value p, 0 < p < 1"};
+
     double num_features = p * idx_->unique_terms();
     uint64_t per_class = num_features / idx_->num_labels(); // truncate to int
     select(per_class);
@@ -121,7 +123,7 @@ void feature_selector::calc_probs()
 {
     printing::progress prog{" > Calculating feature probs: ", idx_->num_docs()};
     uint64_t total_terms = 0;
-    for (doc_id did = doc_id{0}; did < idx_->num_docs(); ++did)
+    for (doc_id did{0}; did < idx_->num_docs(); ++did)
     {
         prog(did);
         auto lid = idx_->lbl_id(did);
@@ -150,20 +152,19 @@ void feature_selector::print_summary(uint64_t k /* = 20 */) const
 {
     term_id tid;
     double score;
-    for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
+    for (auto lbl = 1_lid; lbl <= idx_->num_labels(); ++lbl)
     {
         std::cout << std::endl
                   << "Top " << k << " features for \""
-                  << idx_->class_label_from_id(static_cast<label_id>(lbl + 1))
-                  << "\":" << std::endl
+                  << idx_->class_label_from_id(lbl) << "\":" << std::endl
                   << "===============================" << std::endl;
 
         // read (term_id, score) pairs
-        std::ifstream in{prefix_ + "." + std::to_string(lbl + 1)};
+        std::ifstream in{prefix_ + "." + std::to_string(lbl), std::ios::binary};
         for (uint64_t i = 0; i < k; ++i)
         {
-            io::read_binary(in, tid);
-            io::read_binary(in, score);
+            io::packed::read(in, tid);
+            io::packed::read(in, score);
             std::cout << (i + 1) << ". " << idx_->term_text(tid) << " ("
                       << score << ")" << std::endl;
         }

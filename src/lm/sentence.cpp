@@ -119,12 +119,12 @@ const std::vector<std::string>& sentence::operations() const
     return ops_;
 }
 
-std::string sentence::front() const
+const std::string& sentence::front() const
 {
     return tokens_.front();
 }
 
-std::string sentence::back() const
+const std::string& sentence::back() const
 {
     return tokens_.back();
 }
@@ -147,6 +147,18 @@ void sentence::push_back(const std::string& token)
 void sentence::pop_back()
 {
     tokens_.pop_back();
+}
+
+template <class... Args>
+void sentence::emplace_front(Args&&... args)
+{
+    tokens_.emplace_front(std::forward<Args>(args)...);
+}
+
+template <class... Args>
+void sentence::emplace_back(Args&&... args)
+{
+    tokens_.emplace_back(std::forward<Args>(args)...);
 }
 
 sentence::iterator sentence::begin()

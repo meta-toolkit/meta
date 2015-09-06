@@ -87,10 +87,7 @@ int main(int argc, char* argv[])
             if (ptb_special.find(word) != ptb_special.end())
                 std::cout << word << " ";
             else if (keep_list.find(word) != keep_list.end())
-            {
-                word = utf::foldcase(word);
-                std::cout << word << " ";
-            }
+                std::cout << utf::foldcase(word) << " ";
             else
                 std::cout << analyzer.tag(obs.label()) << " ";
         }

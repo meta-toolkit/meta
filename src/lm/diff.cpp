@@ -7,6 +7,7 @@
 #include <queue>
 #include "lm/diff.h"
 #include "porter2_stemmer.h"
+#include "utf/utf.h"
 
 namespace meta
 {
@@ -154,7 +155,7 @@ template <class PQ>
 void diff::insert(const sentence& sent, size_t idx, PQ& candidates,
                   uint64_t depth)
 {
-    for (auto& fw : fwords_)
+    for (const auto& fw : fwords_)
     {
         sentence ins_cpy{sent};
         ins_cpy.insert(idx, fw, base_penalty_ + insert_penalty_);
@@ -239,12 +240,9 @@ void diff::set_stems(const cpptoml::table& config)
     std::ifstream in{prefix + "/" + dataset + "/" + dataset + ".dat"};
     std::string token;
     while (in >> token)
-    {
-        std::transform(token.begin(), token.end(), token.begin(), ::tolower);
-        vocab.insert(token);
-    }
+        vocab.insert(utf::foldcase(token));
 
-    for (auto& t : vocab)
+    for (const auto& t : vocab)
     {
         std::string stemmed{t};
         Porter2Stemmer::stem(stemmed);

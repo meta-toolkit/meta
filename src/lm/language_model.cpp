@@ -124,7 +124,7 @@ std::vector<std::pair<std::string, float>>
 
     sentence candidate = prev;
     candidate.push_back("word"); // the last item is replaced each iteration
-    for (auto& word : vocabulary_)
+    for (const auto& word : vocabulary_)
     {
         auto candidate = sentence{prev.to_string() + " " + word};
         candidates.emplace_back(word, log_prob(candidate));
