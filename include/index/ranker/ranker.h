@@ -127,6 +127,13 @@ class ranker
   public:
     using filter_function_type = std::function<bool(doc_id did)>;
 
+#ifndef META_HAS_MEM_FN_TEMPLATE_LAMBDA_DEFAULT_ARGUMENT
+    static bool passthrough(doc_id)
+    {
+        return true;
+    }
+#endif
+
     /**
      * @param idx The index this ranker is operating on
      * @param begin A forward iterator to the beginning of the term
@@ -136,14 +143,20 @@ class ranker
      * @param filter A filtering function to apply to each doc_id; returns true
      * if the document should be included in results
      */
-    template <class ForwardIterator>
-    std::vector<search_result>
-        score(inverted_index& idx, ForwardIterator begin, ForwardIterator end,
-              uint64_t num_results = 10,
-              const filter_function_type& filter = [](doc_id)
-              {
-                  return true;
-              })
+    template <class ForwardIterator, class Function = bool (*)(doc_id)>
+    std::vector<search_result> score(inverted_index& idx, ForwardIterator begin,
+                                     ForwardIterator end,
+                                     uint64_t num_results = 10,
+#if META_HAS_MEM_FN_TEMPLATE_LAMBDA_DEFAULT_ARGUMENT
+                                     Function&& filter =
+                                         [](doc_id)
+                                     {
+                                         return true;
+                                     }
+#else
+                                     Function&& filter = passthrough
+#endif
+                                     )
     {
         detail::ranker_context ctx{idx, begin, end, filter};
         return rank(ctx, num_results, filter);
