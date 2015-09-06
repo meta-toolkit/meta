@@ -52,6 +52,7 @@ class ngram_analyzer : public analyzer<T>
     uint16_t n_val_;
 };
 
+// declare the valid instantiations for this analyzer
 extern template class ngram_analyzer<uint64_t>;
 extern template class ngram_analyzer<double>;
 }

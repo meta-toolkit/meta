@@ -40,6 +40,7 @@ class tag_featurizer
     const static std::string id;
 };
 
+// declare the valid instantiations for this featurizer
 extern template class tag_featurizer<uint64_t>;
 extern template class tag_featurizer<double>;
 }

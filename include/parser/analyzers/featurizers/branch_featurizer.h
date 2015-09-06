@@ -40,6 +40,7 @@ class branch_featurizer
     const static std::string id;
 };
 
+// declare the valid instantiations for this featurizer
 extern template class branch_featurizer<uint64_t>;
 extern template class branch_featurizer<double>;
 }

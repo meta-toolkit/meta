@@ -60,6 +60,7 @@ class multi_analyzer : public util::clonable<analyzer<T>, multi_analyzer<T>>
     std::vector<std::unique_ptr<analyzer<T>>> analyzers_;
 };
 
+// declare the valid instantiations for this analyzer
 extern template class multi_analyzer<uint64_t>;
 extern template class multi_analyzer<double>;
 }

@@ -57,6 +57,7 @@ class analyzer_factory
     std::unordered_map<std::string, factory_method> methods_;
 };
 
+// declare the valid instantiations for this factory
 extern template class analyzer_factory<uint64_t>;
 extern template class analyzer_factory<double>;
 

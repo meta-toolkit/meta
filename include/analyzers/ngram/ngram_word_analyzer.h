@@ -83,8 +83,11 @@ struct analyzer_traits<ngram_word_analyzer<T>>
                                                const cpptoml::table&);
 };
 
+// declare the valid instantiations for this analyzer
 extern template class ngram_word_analyzer<uint64_t>;
 extern template class ngram_word_analyzer<double>;
+
+// declare the valid instantiations for this analyzer's trait class
 extern template struct analyzer_traits<ngram_word_analyzer<uint64_t>>;
 extern template struct analyzer_traits<ngram_word_analyzer<double>>;
 }

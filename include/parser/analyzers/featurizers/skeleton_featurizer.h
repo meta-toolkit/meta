@@ -40,6 +40,7 @@ class skeleton_featurizer
     const static std::string id;
 };
 
+// declare the valid instantiations for this featurizer
 extern template class skeleton_featurizer<uint64_t>;
 extern template class skeleton_featurizer<double>;
 }

@@ -109,6 +109,7 @@ class analyzer_exception : public std::runtime_error
 template <class T>
 std::unique_ptr<analyzer<T>> load(const cpptoml::table& config);
 
+// declare the valid instantiations of the load function above
 extern template std::unique_ptr<analyzer<uint64_t>>
     load(const cpptoml::table& config);
 extern template std::unique_ptr<analyzer<double>>

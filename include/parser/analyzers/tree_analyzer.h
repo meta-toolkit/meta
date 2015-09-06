@@ -117,8 +117,11 @@ struct analyzer_traits<tree_analyzer<T>>
                                                const cpptoml::table&);
 };
 
+// declare the valid instantiations of this analyzer
 extern template class tree_analyzer<uint64_t>;
 extern template class tree_analyzer<double>;
+
+// declare the valid instantiations of this analyzer's traits class
 extern template struct analyzer_traits<tree_analyzer<uint64_t>>;
 extern template struct analyzer_traits<tree_analyzer<double>>;
 }

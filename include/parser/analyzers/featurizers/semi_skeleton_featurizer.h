@@ -41,6 +41,7 @@ class semi_skeleton_featurizer
     const static std::string id;
 };
 
+// declare the valid instantiations for this featurizer
 extern template class semi_skeleton_featurizer<uint64_t>;
 extern template class semi_skeleton_featurizer<double>;
 }
