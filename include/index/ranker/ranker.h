@@ -136,7 +136,7 @@ class ranker
      * @param filter A filtering function to apply to each doc_id; returns true
      * if the document should be included in results
      */
-    template <class ForwardIterator, class FilterFunction>
+    template <class ForwardIterator, class FilterFunction = bool(*)(doc_id)>
     std::vector<search_result>
         score(inverted_index& idx, ForwardIterator begin, ForwardIterator end,
               uint64_t num_results = 10, FilterFunction&& filter = [](doc_id)
