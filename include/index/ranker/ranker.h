@@ -140,7 +140,7 @@ class ranker
     std::vector<search_result>
         score(inverted_index& idx, ForwardIterator begin, ForwardIterator end,
               uint64_t num_results = 10,
-              std::function<bool(doc_id)> filter = [](doc_id)
+              const filter_function_type& filter = [](doc_id)
               {
                   return true;
               })
