@@ -66,7 +66,8 @@ class diff
 
     /**
      * @param sent The sentence object to inspect
-     * @return the index of the least-likely ngram according to perplexity
+     * @return the index of the last word in the least-likely ngram according to
+     * perplexity
      * Runtime is linear in the sentence length, since log_prob is called on
      * each ngram in the sentence.
      */
