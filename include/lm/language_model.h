@@ -83,6 +83,8 @@ class language_model
      * @param prev Seen tokens to base the next token off of
      * @param k Number of results to return
      * @return a sorted vector of likely next tokens
+     * Complexity is currently O(|V|) due to the LM structure; this should be
+     * changed in a future version of MeTA.
      */
     std::vector<std::pair<std::string, float>> top_k(const sentence& prev,
                                                      size_t k) const;
