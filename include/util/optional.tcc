@@ -148,6 +148,22 @@ void optional<T>::clear()
 }
 
 template <class T>
+template <class U>
+T optional<T>::value_or(U&& default_value) const &
+{
+    return bool(*this) ? **this
+                       : static_cast<T>(std::forward<U>(default_value));
+}
+
+template <class T>
+template <class U>
+T optional<T>::value_or(U&& default_value) &&
+{
+    return bool(*this) ? std::move(**this)
+                       : static_cast<T>(std::forward<U>(default_value));
+}
+
+template <class T>
 const T* optional<T>::dataptr() const
 {
     return std::addressof(storage_.value_);

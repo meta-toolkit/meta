@@ -194,6 +194,22 @@ class optional : public util::comparable<optional<T>>
      */
     void clear();
 
+    /**
+     * @param default_value The value to return if this optional is empty
+     * @return the contained value if there is on, or default_value
+     * otherwise
+     */
+    template <class U>
+    T value_or(U&& default_value) const&;
+
+    /**
+     * @param default_value The value to return if this optional is empty
+     * @return the contained value if there is on, or default_value
+     * otherwise
+     */
+    template <class U>
+    T value_or(U&& default_value) &&;
+
   private:
     /**
      * Helper function to obtain the address of the contained value.
