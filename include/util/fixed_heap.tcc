@@ -9,7 +9,7 @@ namespace util
 {
 template <class T, class Comp>
 fixed_heap<T, Comp>::fixed_heap(uint64_t max_elems, Comp comp)
-    : max_elems_{max_elems}, comp_{comp}, pq_{comp}
+    : max_elems_{max_elems}, comp_(comp), pq_{comp}
 {
     // nothing
 }
