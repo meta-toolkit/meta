@@ -8,6 +8,7 @@
 #include "lm/diff.h"
 #include "porter2_stemmer.h"
 #include "utf/utf.h"
+#include "util/fixed_heap.h"
 
 namespace meta
 {
@@ -46,6 +47,8 @@ diff::diff(const cpptoml::table& config) : lm_{config}
 
     auto lambda = table->get_as<double>("lambda");
     lambda_ = lambda ? *lambda : 0.5;
+    if (lambda_ < 0.0 || lambda_ > 1.0)
+        throw diff_exception{"lambda value has to be on [0,1]"};
 
     auto lm_gen = table->get_as<bool>("lm-generate");
     lm_generate_ = lm_gen ? *lm_gen : false;
@@ -63,22 +66,12 @@ std::vector<std::pair<sentence, double>>
     {
         return a.second < b.second;
     };
-    std::priority_queue<pair_t, std::vector<pair_t>, decltype(comp)> candidates{
-        comp};
-    add(candidates, sent);
 
+    util::fixed_heap<pair_t, decltype(comp)> candidates{max_cand_size_, comp};
     seen_.clear();
+    add(candidates, sent);
     step(sent, candidates, 0);
-
-    std::vector<pair_t> sorted;
-    sorted.reserve(candidates.size());
-    while (!candidates.empty())
-    {
-        sorted.emplace_back(std::move(candidates.top()));
-        candidates.pop();
-    }
-    std::reverse(sorted.begin(), sorted.end());
-    return sorted;
+    return candidates.reverse_and_clear();
 }
 
 template <class PQ>
@@ -88,8 +81,6 @@ void diff::add(PQ& candidates, const sentence& sent)
     auto score = lambda_ * lm_.perplexity_per_word(sent)
                  + (1.0 - lambda_) * sent.average_weight();
     candidates.emplace(sent, score);
-    if (candidates.size() > max_cand_size_)
-        candidates.pop();
 }
 
 uint64_t diff::least_likely_ngram(const sentence& sent) const
