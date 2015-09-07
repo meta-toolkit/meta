@@ -11,6 +11,7 @@
 #include <random>
 #include "util/time.h"
 #include "util/shim.h"
+#include "util/fixed_heap.h"
 #include "lm/language_model.h"
 #include "logging/logger.h"
 
@@ -120,26 +121,15 @@ std::vector<std::pair<std::string, float>>
     {
         return a.second > b.second;
     };
-    std::vector<pair_t> candidates;
+    util::fixed_heap<pair_t, decltype(comp)> candidates{k, comp};
 
-    sentence candidate = prev;
-    candidate.push_back("word"); // the last item is replaced each iteration
     for (const auto& word : vocabulary_)
     {
         auto candidate = sentence{prev.to_string() + " " + word};
-        candidates.emplace_back(word, log_prob(candidate));
-        std::push_heap(candidates.begin(), candidates.end(), comp);
-        if (candidates.size() > k)
-        {
-            std::pop_heap(candidates.begin(), candidates.end(), comp);
-            candidates.pop_back();
-        }
+        candidates.emplace(word, log_prob(candidate));
     }
 
-    for (auto end = candidates.end(); end != candidates.begin(); --end)
-        std::pop_heap(candidates.begin(), end, comp);
-
-    return candidates;
+    return candidates.reverse_and_clear();
 }
 
 void language_model::load_vocab()
