@@ -7,13 +7,13 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
-#include <queue>
 #include <string>
 #include "cpptoml.h"
 #include "corpus/corpus.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/filters/all.h"
 #include "util/progress.h"
+#include "util/fixed_heap.h"
 #include "logging/logger.h"
 
 using namespace meta;
@@ -60,22 +60,11 @@ int main(int argc, char* argv[])
     {
         return a.second > b.second;
     };
-    std::priority_queue<pair_t, std::vector<pair_t>, decltype(comp)> terms{
-        comp};
+    util::fixed_heap<pair_t, decltype(comp)> terms{k, comp};
     for (auto& term : counts)
-    {
         terms.emplace(term);
-        if (terms.size() > k)
-            terms.pop();
-    }
 
-    std::vector<pair_t> sorted;
-    while (!terms.empty())
-    {
-        sorted.emplace_back(std::move(terms.top()));
-        terms.pop();
-    }
-
-    for (auto it = sorted.rbegin(); it != sorted.rend(); ++it)
-        std::cout << it->first << "\t" << it->second << std::endl;
+    auto sorted = terms.reverse_and_clear();
+    for (const auto& it : sorted)
+        std::cout << it.first << "\t" << it.second << std::endl;
 }
