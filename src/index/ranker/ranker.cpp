@@ -10,6 +10,7 @@
 #include "index/postings_data.h"
 #include "index/ranker/ranker.h"
 #include "index/score_data.h"
+#include "util/fixed_heap.h"
 
 namespace meta
 {
@@ -56,14 +57,12 @@ std::vector<search_result> ranker::score(
     score_data sd{idx, idx.avg_doc_length(), idx.num_docs(),
                   idx.total_corpus_terms(), query};
 
-    std::vector<search_result> results;
-    results.reserve(num_results + 1); // +1 since we use this as a heap and
-                                      // prune when it exceeds size num_results
     auto comp = [](const search_result& a, const search_result& b)
     {
         // comparison is reversed since we want a min-heap
         return a.score > b.score;
     };
+    util::fixed_heap<search_result, decltype(comp)> results{num_results, comp};
 
     std::vector<postings_context> postings;
     postings.reserve(query.counts().size());
@@ -130,24 +129,12 @@ std::vector<search_result> ranker::score(
             }
         }
 
-        // add doc to the heap and poll if needed
-        results.emplace_back(cur_doc, score);
-        std::push_heap(results.begin(), results.end(), comp);
-        if (results.size() > num_results)
-        {
-            std::pop_heap(results.begin(), results.end(), comp);
-            results.pop_back();
-        }
-
+        results.emplace(cur_doc, score);
         cur_doc = next_doc;
         next_doc = doc_id{idx.num_docs()};
     }
 
-    // heap sort the values
-    for (auto end = results.end(); end != results.begin(); --end)
-        std::pop_heap(results.begin(), end, comp);
-
-    return results;
+    return results.reverse_and_clear();
 }
 
 float ranker::initial_score(const score_data&) const
