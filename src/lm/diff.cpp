@@ -77,7 +77,7 @@ std::vector<std::pair<sentence, double>>
 template <class PQ>
 void diff::add(PQ& candidates, const sentence& sent)
 {
-    seen_.insert(sent.to_string());
+    seen_.insert(sent);
     auto score = lambda_ * lm_.perplexity_per_word(sent)
                  + (1.0 - lambda_) * sent.average_weight();
     candidates.emplace(sent, score);
@@ -128,7 +128,7 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
                 ins_cpy.insert(best_idx, next.first,
                                base_penalty_ + insert_penalty_);
 
-                if (seen_.find(ins_cpy.to_string()) == seen_.end())
+                if (seen_.find(ins_cpy) == seen_.end())
                 {
                     add(candidates, ins_cpy);
                     step(ins_cpy, candidates, depth + 1);
@@ -138,7 +138,7 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
                 sub_cpy.substitute(best_idx, next.first,
                                    base_penalty_ + substitute_penalty_);
 
-                if (seen_.find(sub_cpy.to_string()) == seen_.end())
+                if (seen_.find(sub_cpy) == seen_.end())
                 {
                     add(candidates, sub_cpy);
                     step(sub_cpy, candidates, depth + 1);
@@ -160,7 +160,7 @@ void diff::insert(const sentence& sent, size_t idx, PQ& candidates,
     {
         sentence ins_cpy{sent};
         ins_cpy.insert(idx, fw, base_penalty_ + insert_penalty_);
-        if (seen_.find(ins_cpy.to_string()) == seen_.end())
+        if (seen_.find(ins_cpy) == seen_.end())
         {
             add(candidates, ins_cpy);
             step(ins_cpy, candidates, depth + 1);
@@ -184,7 +184,7 @@ void diff::substitute(const sentence& sent, size_t idx, PQ& candidates,
                 continue;
             sentence subbed{sent};
             subbed.substitute(idx, stem, base_penalty_ + substitute_penalty_);
-            if (seen_.find(subbed.to_string()) == seen_.end())
+            if (seen_.find(subbed) == seen_.end())
             {
                 add(candidates, subbed);
                 step(subbed, candidates, depth + 1);
@@ -199,7 +199,7 @@ void diff::remove(const sentence& sent, size_t idx, PQ& candidates,
 {
     sentence rem_cpy{sent};
     rem_cpy.remove(idx, base_penalty_ + remove_penalty_);
-    if (seen_.find(rem_cpy.to_string()) == seen_.end())
+    if (seen_.find(rem_cpy) == seen_.end())
     {
         add(candidates, rem_cpy);
         step(rem_cpy, candidates, depth + 1);

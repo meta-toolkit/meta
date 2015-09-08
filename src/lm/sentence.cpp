@@ -119,6 +119,11 @@ const std::vector<std::string>& sentence::operations() const
     return ops_;
 }
 
+const std::deque<std::string>& sentence::tokens() const
+{
+    return tokens_;
+}
+
 const std::string& sentence::front() const
 {
     return tokens_.front();

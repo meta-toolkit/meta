@@ -10,6 +10,7 @@
 #include <deque>
 #include <vector>
 #include <string>
+#include "util/hash.h"
 
 namespace meta
 {
@@ -102,6 +103,11 @@ class sentence
     const std::vector<std::string>& operations() const;
 
     /**
+     * @return the sequence of tokens that comprise this sentence
+     */
+    const std::deque<std::string>& tokens() const;
+
+    /**
      * @return the token at the front of the sentence
      */
     const std::string& front() const;
@@ -185,7 +191,44 @@ class sentence_exception : public std::runtime_error
 {
     using std::runtime_error::runtime_error;
 };
+
+inline bool operator==(const sentence& lhs, const sentence& rhs)
+{
+    return lhs.tokens() == rhs.tokens();
 }
+
+inline bool operator!=(const sentence& lhs, const sentence& rhs)
+{
+    return !(lhs == rhs);
+}
+}
+}
+
+namespace std
+{
+template <>
+struct hash<meta::lm::sentence>
+{
+#if META_HAS_NONEMPTY_HASH_SUPPORT
+    meta::util::murmur_hash<> hasher;
+#endif
+
+    size_t operator()(const meta::lm::sentence& sent) const noexcept
+    {
+#ifndef META_HAS_NONEMPTY_HASH_SUPPORT
+        meta::util::murmur_hash<> hasher{89122527};
+#endif
+        // create a vector of hashes of all the tokens in the sentence
+        std::vector<std::size_t> hashed;
+        for (const auto& word : sent)
+            hashed.push_back(hasher(
+                reinterpret_cast<const uint8_t*>(word.data()), word.size()));
+
+        // hash the hashes as sequences of uint8_ts
+        return hasher(reinterpret_cast<const uint8_t*>(hashed.data()),
+                      hashed.size() * sizeof(std::size_t));
+    }
+};
 }
 
 #endif

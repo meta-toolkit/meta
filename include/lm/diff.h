@@ -185,8 +185,8 @@ class diff
     std::vector<std::string> fwords_;
 
     /// Keeps track of sentences that have already been generated so we don't
-    /// perform redundant calcualtions
-    std::unordered_set<std::string> seen_;
+    /// perform redundant calculations
+    std::unordered_set<lm::sentence> seen_;
 
     /// How many candidate sentences to store when calling diff::candidates
     uint64_t max_cand_size_;
