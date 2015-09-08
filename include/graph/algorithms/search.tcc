@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <queue>
+#include "util/optional.h"
 
 namespace meta
 {
@@ -23,7 +24,7 @@ std::vector<node_id> myopic_search(Graph& g, node_id src, node_id dest)
     {
         if (path.size() > g.size())
             throw graph_algorithm_exception{"no path found in myopic search"};
-        node_id best_id;
+        util::optional<node_id> best_id;
         double best_distance = std::numeric_limits<double>::max();
         for (auto& n : g.adjacent(cur))
         {
@@ -36,7 +37,7 @@ std::vector<node_id> myopic_search(Graph& g, node_id src, node_id dest)
             }
         }
 
-        cur = best_id;
+        cur = *best_id;
         path.push_back(cur);
     }
 

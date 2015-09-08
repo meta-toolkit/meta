@@ -12,15 +12,7 @@
 
 #include "io/mmap_file.h"
 #include "util/disk_vector.h"
-
-namespace meta
-{
-namespace util
-{
-template <class>
-class optional;
-}
-}
+#include "util/optional.h"
 
 namespace meta
 {
