@@ -3,15 +3,13 @@
  * @author Sean Massung
  */
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <numeric>
 #include <iterator>
 #include "lm/sentence.h"
-#include "analyzers/analyzer.h"
-#include "analyzers/tokenizers/icu_tokenizer.h"
-#include "analyzers/tokenizers/whitespace_tokenizer.h"
-#include "analyzers/filters/all.h"
+#include "utf/segmenter.h"
 
 namespace meta
 {
@@ -21,21 +19,14 @@ sentence::sentence(const std::string& text, bool tokenize /* = true */)
 {
     if (tokenize)
     {
-        using namespace analyzers;
-        std::unique_ptr<token_stream> stream;
-        stream = make_unique<tokenizers::icu_tokenizer>();
-        stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
-        std::string text_copy{text}; // consider changing parameter to non-const
-        stream->set_content(std::move(text_copy));
-        while (*stream)
-            tokens_.push_back(stream->next());
-
-        if (tokens_.empty())
-            throw sentence_exception{"empty token stream"};
-
-        // remove sentence markers
-        tokens_.pop_front();
-        tokens_.pop_back();
+        utf::segmenter segmenter;
+        segmenter.set_content(text);
+        for (const auto& word : segmenter.words())
+        {
+            auto str = segmenter.content(word);
+            if (!str.empty() && !std::all_of(str.begin(), str.end(), ::isspace))
+                tokens_.emplace_back(std::move(str));
+        }
 
         if (tokens_.empty())
             throw sentence_exception{"empty token stream"};
