@@ -10,6 +10,8 @@
 #ifndef META_UTIL_STRING_VIEW_H_
 #define META_UTIL_STRING_VIEW_H_
 
+#include "util/hash.h"
+
 #if META_HAS_EXPERIMENTAL_STRING_VIEW
 #include <experimental/string_view>
 namespace meta
@@ -30,8 +32,6 @@ using wstring_view = basic_string_view<wchar_t>;
 #include <algorithm>
 #include <stdexcept>
 #include <string>
-
-#include "util/hash.h"
 
 namespace meta
 {
@@ -627,24 +627,34 @@ std::basic_ostream<Char, Traits>&
 
 namespace std
 {
-
 template <class Char, class Traits>
 struct hash<meta::util::basic_string_view<Char, Traits>>
+    : public meta::util::hash<>
 {
-#if META_HAS_NONEMPTY_HASH_SUPPORT
-    meta::util::murmur_hash<> hasher;
-#endif
-
-    size_t operator()(
-        const meta::util::basic_string_view<Char, Traits>& view) const noexcept
-    {
-#ifndef META_HAS_NONEMPTY_HASH_SUPPORT
-        meta::util::murmur_hash<> hasher{97562527};
-#endif
-        return hasher(reinterpret_cast<const uint8_t*>(view.data()),
-                      view.size());
-    }
 };
 }
 #endif // !META_HAS_EXPERIMENTAL_STRING_VIEW
+
+namespace meta
+{
+namespace util
+{
+template <class HashAlgorithm, class Char, class Traits>
+typename std::enable_if<is_contiguously_hashable<Char>::value>::type
+    hash_append(HashAlgorithm& h, const basic_string_view<Char, Traits>& s)
+{
+    h(s.data(), s.size() * sizeof(Char));
+    hash_append(h, s.size());
+}
+
+template <class HashAlgorithm, class Char, class Traits>
+typename std::enable_if<!is_contiguously_hashable<Char>::value>::type
+    hash_append(HashAlgorithm& h, const basic_string_view<Char, Traits>& s)
+{
+    for (const auto& c : s)
+        hash_append(h, c);
+    hash_append(h, s.size());
+}
+}
+}
 #endif // META_UTIL_STRING_VIEW_H_
