@@ -3,6 +3,8 @@
  * @author Sean Massung
  */
 
+#include <algorithm>
+
 namespace meta
 {
 namespace util
