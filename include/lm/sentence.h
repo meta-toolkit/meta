@@ -27,9 +27,9 @@ namespace lm
 class sentence
 {
   public:
-    using iterator = std::deque<std::string>::iterator;
-    using const_iterator = std::deque<std::string>::const_iterator;
-    using size_type = std::deque<std::string>::size_type;
+    using iterator = std::vector<std::string>::iterator;
+    using const_iterator = std::vector<std::string>::const_iterator;
+    using size_type = std::vector<std::string>::size_type;
 
     /**
      * Default constructor; an empty sentence.
@@ -105,7 +105,7 @@ class sentence
     /**
      * @return the sequence of tokens that comprise this sentence
      */
-    const std::deque<std::string>& tokens() const;
+    const std::vector<std::string>& tokens() const;
 
     /**
      * @return the token at the front of the sentence
@@ -140,12 +140,6 @@ class sentence
     void pop_back();
 
     /**
-     * Emplaces a token at the beginning of the sentence
-     */
-    template <class... Args>
-    void emplace_front(Args&&... args);
-
-    /**
      * Emplaces a token at the end of the sentence
      */
     template <class... Args>
@@ -178,7 +172,7 @@ class sentence
 
   private:
     /// The tokens (words) in the sentence
-    std::deque<std::string> tokens_;
+    std::vector<std::string> tokens_;
 
     /// String representations of the sequence of edit oeprations performed
     std::vector<std::string> ops_;
@@ -201,34 +195,16 @@ inline bool operator!=(const sentence& lhs, const sentence& rhs)
 {
     return !(lhs == rhs);
 }
+
+template <class HashAlgorithm>
+void hash_append(HashAlgorithm& h, const sentence& s)
+{
+    using util::hash_append;
+    for (const auto& word : s)
+        hash_append(h, word);
+    hash_append(h, s.size());
 }
 }
-
-namespace std
-{
-template <>
-struct hash<meta::lm::sentence>
-{
-#if META_HAS_NONEMPTY_HASH_SUPPORT
-    meta::util::murmur_hash<> hasher;
-#endif
-
-    size_t operator()(const meta::lm::sentence& sent) const noexcept
-    {
-#ifndef META_HAS_NONEMPTY_HASH_SUPPORT
-        meta::util::murmur_hash<> hasher{89122527};
-#endif
-        // create a vector of hashes of all the tokens in the sentence
-        std::vector<std::size_t> hashed;
-        for (const auto& word : sent)
-            hashed.push_back(hasher(
-                reinterpret_cast<const uint8_t*>(word.data()), word.size()));
-
-        // hash the hashes as sequences of uint8_ts
-        return hasher(reinterpret_cast<const uint8_t*>(hashed.data()),
-                      hashed.size() * sizeof(std::size_t));
-    }
-};
 }
 
 #endif

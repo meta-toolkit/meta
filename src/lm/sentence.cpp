@@ -110,7 +110,7 @@ const std::vector<std::string>& sentence::operations() const
     return ops_;
 }
 
-const std::deque<std::string>& sentence::tokens() const
+const std::vector<std::string>& sentence::tokens() const
 {
     return tokens_;
 }
@@ -127,12 +127,12 @@ const std::string& sentence::back() const
 
 void sentence::push_front(const std::string& token)
 {
-    tokens_.push_front(token);
+    tokens_.insert(tokens_.begin(), token);
 }
 
 void sentence::pop_front()
 {
-    tokens_.pop_front();
+    tokens_.erase(tokens_.begin());
 }
 
 void sentence::push_back(const std::string& token)
@@ -143,12 +143,6 @@ void sentence::push_back(const std::string& token)
 void sentence::pop_back()
 {
     tokens_.pop_back();
-}
-
-template <class... Args>
-void sentence::emplace_front(Args&&... args)
-{
-    tokens_.emplace_front(std::forward<Args>(args)...);
 }
 
 template <class... Args>
