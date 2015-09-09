@@ -14,8 +14,9 @@
 #include <vector>
 #include <memory>
 
-#include "util/disk_vector.h"
+#include "cpptoml.h"
 #include "index/forward_index.h"
+#include "util/disk_vector.h"
 
 namespace meta
 {
@@ -46,14 +47,6 @@ class feature_selector
      */
     feature_selector(const std::string& prefix,
                      std::shared_ptr<index::forward_index> idx);
-
-    /**
-     * Creates the state of this feature_selector if necessary; this logic is
-     * outside the constructor since it requires pure virtual functions
-     * implemented by deriving classes.
-     * @param features_per_class
-     */
-    void init(uint64_t features_per_class);
 
     /**
      * Default destructor.
@@ -153,6 +146,20 @@ class feature_selector
      * distributions which may be used to calculate different feature selection
      * scores, implemented as derived classes.
      */
+
+    /**
+     * Creates the state of this feature_selector if necessary; this logic is
+     * outside the constructor since it requires pure virtual functions
+     * implemented by deriving classes.
+     * @param features_per_class
+     */
+    void init(uint64_t features_per_class);
+
+    /// friend the factory function used to create feature_selectors, since
+    /// they need to call the init
+    friend std::unique_ptr<feature_selector>
+        make_selector(const cpptoml::table& config,
+                      std::shared_ptr<index::forward_index> idx);
 
     /**
      * Calculates the probabilities of terms and classes given the current

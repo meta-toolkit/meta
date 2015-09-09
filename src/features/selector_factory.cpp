@@ -52,7 +52,7 @@ std::unique_ptr<feature_selector>
 
     auto selector
         = selector_factory::get().create(*method, *table, std::move(idx));
-    selector->init(features_per_class);
+    selector->init(features_per_class); // make_selector is a friend
     return selector;
 }
 }
