@@ -127,11 +127,17 @@ const std::string& sentence::back() const
 
 void sentence::push_front(const std::string& token)
 {
+    // we use a std::vector instead of a std::deque because sentence's
+    // operator== (using std::vector) is significantly faster; push_front is not
+    // called as much as operator==
     tokens_.insert(tokens_.begin(), token);
 }
 
 void sentence::pop_front()
 {
+    // we use a std::vector instead of a std::deque because sentence's
+    // operator== (using std::vector) is significantly faster; pop_front is not
+    // called as much as operator==
     tokens_.erase(tokens_.begin());
 }
 
