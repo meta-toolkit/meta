@@ -23,24 +23,54 @@ namespace lm
  */
 struct lm_node
 {
+    /**
+     * Default constructor.
+     */
     lm_node() : prob{0.0f}, backoff{0.0f}
     {
     }
 
+    /**
+     * Parameter constructor.
+     * @param p The probability value
+     * @param b The backoff value
+     */
     lm_node(float p, float b) : prob{p}, backoff{b}
     {
     }
 
+    /**
+     * Constructor that takes a packed [prob][backoff] uint64_t to construct
+     * this node
+     * @param packed
+     */
     lm_node(uint64_t packed)
     {
-        uint32_t buf = packed >> 32;
-        std::memcpy(&prob, &packed, sizeof(float));
-        std::memcpy(&backoff, &buf, sizeof(float));
+        char* buf = reinterpret_cast<char*>(&packed);
+        std::memcpy(&prob, buf, sizeof(float));
+        std::memcpy(&backoff, buf + sizeof(float), sizeof(float));
     }
 
+    /**
+     * Equality operator defined so lm_node can be used in a dictionary
+     */
     bool operator==(const lm_node& other) const
     {
         return prob == other.prob && backoff == other.backoff;
+    }
+
+    /**
+     * @param p The probability value
+     * @param b The backoff value
+     * @return a packed uint64_t containing [prob][backoff]
+     */
+    static uint64_t write_packed(float p, float b)
+    {
+        uint64_t packed;
+        char* buf = reinterpret_cast<char*>(&packed);
+        std::memcpy(buf, &p, sizeof(float));
+        std::memcpy(buf + sizeof(float), &b, sizeof(float));
+        return packed;
     }
 
     float prob;

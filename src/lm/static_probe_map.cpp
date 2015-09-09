@@ -3,7 +3,6 @@
  * @author Sean Massung
  */
 
-#include <cstring>
 #include "lm/static_probe_map.h"
 #include "util/hash.h"
 
@@ -28,12 +27,7 @@ void static_probe_map::insert(const std::string& key, float prob, float backoff)
         if (table_[idx] == uint64_t{0})
         {
             table_[idx] = hashed;
-
-            // pack prob and float into uint64_t slot next to key val
-            uint64_t buf = 0;
-            std::memcpy(&table_[idx + 1], &prob, sizeof(float));
-            std::memcpy(&buf, &backoff, sizeof(float));
-            table_[idx + 1] |= (buf << 32);
+            table_[idx + 1] = lm_node::write_packed(prob, backoff);
             return;
         }
 
