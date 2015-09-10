@@ -21,6 +21,9 @@ namespace analyzers
 /**
  * Tokenizes parse trees by keeping track of only a single node label and
  * the underlying tree structure.
+ * @see Sean Massung, ChengXiang Zhai, and Julia Hockenmaier. 2013. "Structural
+ * Parse Tree Features for Text Representation"
+ * @see http://web.engr.illinois.edu/~massung1/files/icsc-2013.pdf
  */
 class semi_skeleton_featurizer
     : public util::clonable<tree_featurizer, semi_skeleton_featurizer>

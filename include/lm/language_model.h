@@ -10,15 +10,40 @@
 #ifndef META_LANGUAGE_MODEL_H_
 #define META_LANGUAGE_MODEL_H_
 
-#include <deque>
+#include <vector>
 #include <memory>
-#include <string>
 #include <unordered_map>
+#include <string>
+#include "cpptoml.h"
+#include "lm/sentence.h"
+#include "lm/static_probe_map.h"
 
 namespace meta
 {
 namespace lm
 {
+/**
+ * A very simple language model class that reads existing language model data
+ * from a .arpa file. Currently, estimation of the language model is not
+ * implemented. We recommend using KenLM to generate a .arpa file from a text
+ * corpus that has been (optionally) preprocessed by MeTA.
+ *
+ * @see http://www.speech.sri.com/projects/srilm/manpages/ngram-format.5.html
+ * @see https://kheafield.com/code/kenlm/
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [language-model]
+ * binary-file-prefix = "path-to-binary-files"
+ * # only this key is needed if the LM is already binarized
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * [language-model]
+ * arpa-file = "path-to-arpa-file" # if no binary files have yet been created
+ * ~~~
+ */
 class language_model
 {
   public:
@@ -26,87 +51,76 @@ class language_model
      * Creates an N-gram language model based on the corpus specified in the
      * config file.
      */
-    language_model(const std::string& config_file);
+    language_model(const cpptoml::table& config);
 
     /**
-     * Creates an N-gram language model based on the corpus specified in the
-     * config file.
-     * @param n The value of n, which overrides any setting in the config file
+     * Default move constructor.
      */
-    language_model(const std::string& config_file, size_t n);
+    language_model(language_model&&) = default;
 
     /**
-     * Randomly generates one token sequence based on <s> and </s> symbols.
-     * @return a random sequence of tokens based on this language model
-     */
-    std::string generate(unsigned int seed) const;
-
-    /**
-     * @param tokens The previous N - 1 tokens
-     * @param random A random number on [0, 1] used for choosing the next token
-     * @return the next token based on the previous tokens
-     */
-    std::string next_token(const std::deque<std::string>& tokens,
-                           double random) const;
-
-    /**
-     * @param tokens A sequence of tokens
+     * @param sentence A sequence of tokens
      * @return the perplexity of this token sequence given the current language
      * model: \f$ \sqrt[n]{\prod_{i=1}^n\frac{1}{p(w_i|w_{i-n}\cdots w_{i-1})}}
      * \f$
      */
-    double perplexity(const std::string& tokens) const;
+    float perplexity(const sentence& tokens) const;
 
     /**
-     * @param tokens A sequence of tokens
+     * @param sentence A sequence of tokens
      * @return the perplexity of this token sequence given the current language
      * model normalized by the length of the sequence
      */
-    double perplexity_per_word(const std::string& tokens) const;
+    float perplexity_per_word(const sentence& tokens) const;
 
     /**
-     * @param tokens A sequence of n tokens
-     * @return the probability of seeing the nth token based on the previous n
-     * - 1 tokens
+     * @param tokens A sequence of n tokens (one sentence)
+     * @return the log probability of the likelihood of this sentence
      */
-    double prob(std::deque<std::string> tokens) const;
+    float log_prob(sentence tokens) const;
+
+    /**
+     * @param prev Seen tokens to base the next token off of
+     * @param k Number of results to return
+     * @return a sorted vector of likely next tokens
+     * Complexity is currently O(|V|) due to the LM structure; this should be
+     * changed in a future version of MeTA.
+     */
+    std::vector<std::pair<std::string, float>> top_k(const sentence& prev,
+                                                     size_t k) const;
 
   private:
+    /**
+     * Reads precomputed LM data into this object.
+     * @param arpa_file The path to the ARPA-formatted file
+     */
+    void read_arpa_format(const std::string& arpa_file);
 
     /**
-     * Builds the probabilities associated with this language model.
-     * @param config_file The config file that specifies the location of the
-     * corpus
+     * @param tokens
+     * @return the log probability of one ngram
      */
-    void learn_model(const std::string& config_file);
+    float prob_calc(sentence tokens) const;
 
     /**
-     * @param tokens A deque of tokens to convert to a string
-     * @return the string version of the deque (space delimited)
+     * Loads unigram vocabulary from text file to allow top_k to work.
      */
-    std::string make_string(const std::deque<std::string>& tokens) const;
+    void load_vocab();
 
-    /**
-     * @param tokens A string of space-delimited tokens to convert to a deque
-     * @return a deque of the tokens
-     */
-    std::deque<std::string> make_deque(const std::string& tokens) const;
+    uint64_t N_; /// The "n" value for this n-gram language model
 
-    /// The language_model used to interpolate with this one for smoothing
-    std::unique_ptr<language_model> interp_;
+    std::vector<static_probe_map> lm_;
 
-    /// Contains the N-gram distribution probabilities (N-1 words -> (w, prob))
-    std::unordered_map
-        <std::string, std::unordered_map<std::string, double>> dist_;
+    std::vector<std::string> vocabulary_;
 
-    /// The value of N in this n-gram
-    size_t N_;
+    std::string prefix_;
+};
 
-    /// The interpolation coefficient for smoothing LM probabilities
-    constexpr static double lambda_ = 0.7;
+class language_model_exception : public std::runtime_error
+{
+    using std::runtime_error::runtime_error;
 };
 }
 }
 
 #endif
-
