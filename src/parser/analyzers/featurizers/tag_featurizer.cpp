@@ -8,23 +8,26 @@ namespace meta
 namespace analyzers
 {
 
-const std::string tag_featurizer::id = "tag";
+template <class T>
+const util::string_view tag_featurizer<T>::id = "tag";
 
 namespace
 {
+template <class T>
 class tag_visitor : public parser::const_visitor<void>
 {
   public:
-    tag_visitor(corpus::document& d) : doc(d)
+    using feature_map = typename tag_featurizer<T>::feature_map;
+
+    tag_visitor(feature_map& fm) : counts(fm)
     {
         // nothing
     }
 
     void operator()(const parser::internal_node& in) override
     {
-        doc.increment(tag_featurizer::id + "-"
-                      + static_cast<std::string>(in.category()),
-                      1);
+        counts[tag_featurizer<T>::id.to_string() + "-"
+               + static_cast<std::string>(in.category())] += 1;
         in.each_child([&](const parser::node* child)
                       {
                           child->accept(*this);
@@ -33,21 +36,24 @@ class tag_visitor : public parser::const_visitor<void>
 
     void operator()(const parser::leaf_node& ln) override
     {
-        doc.increment(tag_featurizer::id + "-"
-                      + static_cast<std::string>(ln.category()),
-                      1);
+        counts[tag_featurizer<T>::id.to_string() + "-"
+               + static_cast<std::string>(ln.category())] += 1;
     }
 
   private:
-    corpus::document& doc;
+    feature_map& counts;
 };
 }
 
-void tag_featurizer::tree_tokenize(corpus::document& doc,
-                                   const parser::parse_tree& tree) const
+template <class T>
+void tag_featurizer<T>::tree_tokenize(const parser::parse_tree& tree,
+                                      feature_map& counts) const
 {
-    tag_visitor vtor{doc};
+    tag_visitor<T> vtor{counts};
     tree.visit(vtor);
 }
+
+template class tag_featurizer<uint64_t>;
+template class tag_featurizer<double>;
 }
 }

@@ -80,7 +80,7 @@ class naive_bayes : public classifier
     /**
      * The identifier for this classifier.
      */
-    const static std::string id;
+    const static util::string_view id;
 
     class exception : public std::runtime_error
     {

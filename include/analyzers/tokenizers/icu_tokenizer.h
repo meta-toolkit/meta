@@ -108,7 +108,7 @@ class icu_tokenizer : public util::clonable<token_stream, icu_tokenizer>
     operator bool() const override;
 
     /// Identifier for this tokenizer
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /// Forward declaration of the impl

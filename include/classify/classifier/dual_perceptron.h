@@ -41,7 +41,7 @@ class dual_perceptron : public classifier
     const static constexpr uint64_t default_max_iter = 100;
 
     /// The identifier for this classifier
-    const static std::string id;
+    const static util::string_view id;
 
     /**
      * Constructs a dual_perceptron classifier over the given index

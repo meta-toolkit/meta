@@ -13,34 +13,14 @@ namespace corpus
 {
 
 document::document(doc_id d_id, const class_label& label)
-    : d_id_{d_id}, label_{label}, length_{0}, encoding_{"utf-8"}
+    : d_id_{d_id}, label_{label}, encoding_{"utf-8"}
 {
-}
-
-void document::increment(const std::string& term, double amount)
-{
-    counts_[term] += amount;
-    length_ += amount;
+    // nothing
 }
 
 const class_label& document::label() const
 {
     return label_;
-}
-
-uint64_t document::length() const
-{
-    return length_;
-}
-
-double document::count(const std::string& term) const
-{
-    return map::safe_at(counts_, term);
-}
-
-const std::unordered_map<std::string, double>& document::counts() const
-{
-    return counts_;
 }
 
 void document::content(const std::string& content,

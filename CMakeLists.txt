@@ -261,6 +261,27 @@ if (META_HAS_NONEMPTY_HASH_SUPPORT)
                              -DMETA_HAS_NONEMPTY_HASH_SUPPORT)
 endif()
 
+# work around a bug in gcc 4.8.1 where having a lambda as a default
+# argument to a member function template causes an internal compiler error
+check_cxx_source_compiles("
+struct h {
+  template <class Function = void(*)()>
+  void foo(Function&& fun = [](){}) {
+    fun();
+  }
+};
+
+int main() {
+  h b;
+  b.foo();
+  return 0;
+}" META_HAS_LAMBDA_AS_DEFAULT_ARGUMENT)
+
+if (META_HAS_LAMBDA_AS_DEFAULT_ARGUMENT)
+  target_compile_definitions(meta-definitions INTERFACE
+    -DMETA_HAS_MEM_FN_TEMPLATE_LAMBDA_DEFAULT_ARGUMENT)
+endif()
+
 if(ICU_VERSION VERSION_LESS "4.4")
   target_compile_definitions(meta-definitions INTERFACE
                              -DMETA_ICU_NO_TEMP_SUBSTRING)

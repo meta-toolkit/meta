@@ -29,10 +29,14 @@ namespace analyzers
  * files.  Clients should use the register_analyzer method instead of this
  * class directly.
  */
+template <class T>
 class analyzer_factory
-    : public util::factory<analyzer_factory, analyzer, const cpptoml::table&,
-                           const cpptoml::table&>
+    : public util::factory<analyzer_factory<T>, analyzer<T>,
+                           const cpptoml::table&, const cpptoml::table&>
 {
+    using base_factory = typename analyzer_factory::base_factory;
+    using factory_method = typename base_factory::factory_method;
+
     /// friend the base class
     friend base_factory;
 
@@ -53,15 +57,33 @@ class analyzer_factory
     std::unordered_map<std::string, factory_method> methods_;
 };
 
+// declare the valid instantiations for this factory
+extern template class analyzer_factory<uint64_t>;
+extern template class analyzer_factory<double>;
+
 /**
- * Factory method for creating an analyzer. This should be specialized if
- * your given tokenizer requires special construction behavior.
+ * Traits class for analyzers. You should specialize this class if you need
+ * to customize creation behavior for your analyzer class. This is a class
+ * template to allow for partial specializations as well.
  */
 template <class Analyzer>
-std::unique_ptr<analyzer> make_analyzer(const cpptoml::table&,
-                                        const cpptoml::table&)
+struct analyzer_traits
 {
-    return make_unique<Analyzer>();
+    static std::unique_ptr<typename Analyzer::base_type>
+        create(const cpptoml::table&, const cpptoml::table&)
+    {
+        return make_unique<Analyzer>();
+    }
+};
+
+/**
+ * Factory method for creating an analyzer.
+ */
+template <class Analyzer>
+std::unique_ptr<typename Analyzer::base_type>
+    make_analyzer(const cpptoml::table& global, const cpptoml::table& config)
+{
+    return analyzer_traits<Analyzer>::create(global, config);
 }
 
 /**
@@ -71,7 +93,8 @@ std::unique_ptr<analyzer> make_analyzer(const cpptoml::table&,
 template <class Analyzer>
 void register_analyzer()
 {
-    analyzer_factory::get().add(Analyzer::id, make_analyzer<Analyzer>);
+    analyzer_factory<typename Analyzer::feature_value_type>::get().add(
+        Analyzer::id, make_analyzer<Analyzer>);
 }
 }
 }

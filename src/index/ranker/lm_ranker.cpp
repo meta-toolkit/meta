@@ -14,7 +14,7 @@ namespace meta
 namespace index
 {
 
-const std::string language_model_ranker::id = "language-model";
+const util::string_view language_model_ranker::id = "language-model";
 
 float language_model_ranker::score_one(const score_data& sd)
 {
@@ -26,7 +26,7 @@ float language_model_ranker::score_one(const score_data& sd)
 
 float language_model_ranker::initial_score(const score_data& sd) const
 {
-    return sd.query.length() * fastapprox::fastlog(doc_constant(sd));
+    return sd.query_length * fastapprox::fastlog(doc_constant(sd));
 }
 }
 }

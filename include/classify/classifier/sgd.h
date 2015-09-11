@@ -74,7 +74,7 @@ class sgd : public binary_classifier
     /**
      * The identifier for this classifier.
      */
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /// The weights vector.

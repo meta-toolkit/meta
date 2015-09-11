@@ -10,6 +10,7 @@
 #define META_LM_RANKER_H_
 
 #include "index/ranker/ranker.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -25,7 +26,7 @@ class language_model_ranker : public ranker
 {
   public:
     /// The identifier for this ranker.
-    const static std::string id;
+    const static util::string_view id;
 
     /**
      * @param sd

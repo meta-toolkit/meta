@@ -8,14 +8,18 @@ namespace meta
 namespace analyzers
 {
 
-const std::string subtree_featurizer::id = "subtree";
+template <class T>
+const util::string_view subtree_featurizer<T>::id = "subtree";
 
 namespace
 {
+template <class T>
 class subtree_visitor : public parser::const_visitor<void>
 {
   public:
-    subtree_visitor(corpus::document& d) : doc(d)
+    using feature_map = typename subtree_featurizer<T>::feature_map;
+
+    subtree_visitor(feature_map& fm) : counts(fm)
     {
         // nothing
     }
@@ -24,33 +28,37 @@ class subtree_visitor : public parser::const_visitor<void>
     {
         auto rep = "(" + static_cast<std::string>(in.category());
 
-        in.each_child([&](const parser::node* child)
-        {
-            rep += " (" + static_cast<std::string>(child->category()) + ")";
-            child->accept(*this);
-        });
+        in.each_child(
+            [&](const parser::node* child)
+            {
+                rep += " (" + static_cast<std::string>(child->category()) + ")";
+                child->accept(*this);
+            });
 
         rep += ")";
-        doc.increment(subtree_featurizer::id + "-" + rep, 1);
+        counts[subtree_featurizer<T>::id.to_string() + "-" + rep] += 1;
     }
 
     void operator()(const parser::leaf_node& ln) override
     {
         auto rep = "(" + static_cast<std::string>(ln.category()) + ")";
-        doc.increment(subtree_featurizer::id + "-" + rep, 1);
+        counts[subtree_featurizer<T>::id.to_string() + "-" + rep] += 1;
     }
 
-
   private:
-    corpus::document& doc;
+    feature_map& counts;
 };
 }
 
-void subtree_featurizer::tree_tokenize(corpus::document& doc,
-                                       const parser::parse_tree& tree) const
+template <class T>
+void subtree_featurizer<T>::tree_tokenize(const parser::parse_tree& tree,
+                                          feature_map& counts) const
 {
-    subtree_visitor vtor{doc};
+    subtree_visitor<T> vtor{counts};
     tree.visit(vtor);
 }
+
+template class subtree_featurizer<uint64_t>;
+template class subtree_featurizer<double>;
 }
 }

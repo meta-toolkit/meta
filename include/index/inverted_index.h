@@ -14,6 +14,7 @@
 #include <queue>
 #include <stdexcept>
 
+#include "analyzers/analyzer.h"
 #include "index/disk_index.h"
 #include "index/make_index.h"
 #include "index/postings_stream.h"
@@ -120,8 +121,10 @@ class inverted_index : public disk_index
 
     /**
      * @param doc The document to tokenize
+     * @return the analyzed version of the document
      */
-    void tokenize(corpus::document& doc);
+    analyzers::analyzer<uint64_t>::feature_map
+        tokenize(const corpus::document& doc);
 
     /**
      * @param t_id The term_id to search for

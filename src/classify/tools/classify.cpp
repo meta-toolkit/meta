@@ -106,10 +106,7 @@ int main(int argc, char* argv[])
     else
         classifier = classify::make_classifier(*class_config, f_idx);
 
-    bool even = false;
-    auto even_split = class_config->get_as<std::string>("even-split");
-    if (even_split && *even_split == "true")
-        even = true;
+    auto even = class_config->get_as<bool>("even-split").value_or(false);
     cv(*f_idx, *classifier, even);
 
     return 0;

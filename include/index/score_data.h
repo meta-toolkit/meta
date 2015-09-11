@@ -48,8 +48,8 @@ struct score_data
     uint64_t num_docs;
     /// total number of terms in the index
     uint64_t total_terms;
-    /// the current query
-    const corpus::document& query;
+    /// the total length of the query (sum of all term weights)
+    double query_length;
 
     // term-based info
 
@@ -82,12 +82,12 @@ struct score_data
      * @param p_query The current query
      */
     score_data(inverted_index& p_idx, double p_avg_dl, uint64_t p_num_docs,
-               uint64_t p_total_terms, const corpus::document& p_query)
+               uint64_t p_total_terms, double p_length)
         : idx(p_idx), // gcc no non-const ref init from brace init list
           avg_dl{p_avg_dl},
           num_docs{p_num_docs},
           total_terms{p_total_terms},
-          query(p_query) // gcc no non-const ref init from brace init list
+          query_length{p_length}
     {
         /* nothing */
     }

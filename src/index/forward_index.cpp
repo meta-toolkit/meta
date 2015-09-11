@@ -48,7 +48,7 @@ class forward_index::impl
      * merged.
      */
     void tokenize_docs(corpus::corpus* corpus,
-                       const analyzers::analyzer& analyzer,
+                       const analyzers::analyzer<double>& analyzer,
                        metadata_writer& mdata_writer, uint64_t ram_budget);
 
     /**
@@ -203,12 +203,10 @@ void forward_index::create_index(const std::string& config_file)
     }
     else
     {
-        uint64_t ram_budget = 1024;
-        if (auto cfg_ram_budget = config.get_as<int64_t>("indexer-ram-budget"))
-            ram_budget = static_cast<uint64_t>(*cfg_ram_budget);
+        auto ram_budget = static_cast<uint64_t>(
+            config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
 
-        auto uninvert = config.get_as<bool>("uninvert");
-        if (uninvert && *uninvert)
+        if (config.get_as<bool>("uninvert").value_or(false))
         {
             LOG(info) << "Creating index by uninverting: " << index_name()
                       << ENDLG;
@@ -231,7 +229,7 @@ void forward_index::create_index(const std::string& config_file)
             auto docs = corpus::corpus::load(config_file);
 
             {
-                auto analyzer = analyzers::analyzer::load(config);
+                auto analyzer = analyzers::load<double>(config);
 
                 metadata_writer mdata_writer{index_name(), docs->size(),
                                              docs->schema()};
@@ -263,7 +261,7 @@ void forward_index::create_index(const std::string& config_file)
 }
 
 void forward_index::impl::tokenize_docs(corpus::corpus* docs,
-                                        const analyzers::analyzer& ana,
+                                        const analyzers::analyzer<double>& ana,
                                         metadata_writer& mdata_writer,
                                         uint64_t ram_budget)
 {
@@ -296,10 +294,10 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
                 progress(doc->id());
             }
 
-            analyzer->tokenize(*doc);
+            auto counts = analyzer->analyze(*doc);
 
             // warn if there is an empty document
-            if (doc->counts().empty())
+            if (counts.empty())
             {
                 std::lock_guard<std::mutex> lock{io_mutex};
                 LOG(progress) << '\n' << ENDLG;
@@ -307,21 +305,27 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
                              << ") generated!" << ENDLG;
             }
 
-            mdata_writer.write(doc->id(), doc->length(), doc->counts().size(),
-                               doc->mdata());
+            auto length = std::accumulate(
+                counts.begin(), counts.end(), 0ul,
+                [](uint64_t acc, const std::pair<std::string, double>& count)
+                {
+                    return acc + std::round(count.second);
+                });
+
+            mdata_writer.write(doc->id(), length, counts.size(), doc->mdata());
             idx_->impl_->set_label(doc->id(), doc->label());
 
-            forward_index::postings_data_type::count_t counts;
-            counts.reserve(doc->counts().size());
+            forward_index::postings_data_type::count_t pd_counts;
+            pd_counts.reserve(counts.size());
             {
                 std::lock_guard<std::mutex> lock{vocab_mutex};
-                for (const auto& count : doc->counts())
+                for (const auto& count : counts)
                 {
                     auto it = vocab.find(count.first);
                     if (it == vocab.end())
                         it = vocab.insert(count.first);
 
-                    counts.emplace_back(term_id{it.index()}, count.second);
+                    pd_counts.emplace_back(term_id{it.index()}, count.second);
                 }
 
                 if (!exceeded_budget && vocab.bytes_used() > ram_budget)
@@ -337,7 +341,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
             }
 
             forward_index::postings_data_type pdata{doc->id()};
-            pdata.set_counts(std::move(counts));
+            pdata.set_counts(std::move(pd_counts));
             pdata.write_packed(chunk);
         }
     };

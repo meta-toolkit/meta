@@ -31,9 +31,9 @@ int main(int argc, char** argv)
         if (!method)
             continue;
 
-        if (*method == analyzers::ngram_word_analyzer::id)
+        if (*method == analyzers::ngram_word_analyzer<uint64_t>::id)
         {
-            stream = analyzers::analyzer::load_filters(config, *group);
+            stream = analyzers::load_filters(config, *group);
             break;
         }
     }

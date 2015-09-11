@@ -17,7 +17,7 @@ namespace meta
 namespace classify
 {
 
-const std::string knn::id = "knn";
+const util::string_view knn::id = "knn";
 
 knn::knn(std::shared_ptr<index::inverted_index> idx,
          std::shared_ptr<index::forward_index> f_idx, uint16_t k,
@@ -27,7 +27,8 @@ knn::knn(std::shared_ptr<index::inverted_index> idx,
       k_{k},
       ranker_{std::move(ranker)},
       weighted_{weighted}
-{ /* nothing */
+{
+    // nothing
 }
 
 void knn::train(const std::vector<doc_id>& docs)
@@ -42,15 +43,19 @@ class_label knn::classify(doc_id d_id)
             "k must be smaller than the "
             "number of documents in the index (training documents)"};
 
-    corpus::document query{d_id};
-    for (const auto& count : idx_->search_primary(d_id)->counts())
-        query.increment(idx_->term_text(count.first), count.second);
+    analyzers::analyzer<uint64_t>::feature_map query;
+    {
+        auto pdata = idx_->search_primary(d_id);
+        query.reserve(pdata->counts().size());
+        for (const auto& count : pdata->counts())
+            query[idx_->term_text(count.first)] += count.second;
+    }
 
-    auto scored = ranker_->score(*inv_idx_, query, k_, [&](doc_id d_id)
-                                 {
-                                     return legal_docs_.find(d_id)
-                                            != legal_docs_.end();
-                                 });
+    auto scored = ranker_->score(
+        *inv_idx_, query.begin(), query.end(), k_, [&](doc_id d_id)
+        {
+            return legal_docs_.find(d_id) != legal_docs_.end();
+        });
 
     std::unordered_map<class_label, double> counts;
     for (auto& s : scored)
@@ -129,11 +134,7 @@ std::unique_ptr<classifier> make_multi_index_classifier<knn>(
         throw classifier_factory::exception{
             "knn requires a ranker to be specified in its configuration"};
 
-    bool use_weighted = false;
-    auto weighted = config.get_as<bool>("weighted");
-    if (weighted)
-        use_weighted = *weighted;
-
+    auto use_weighted = config.get_as<bool>("weighted").value_or(false);
     return make_unique<knn>(std::move(inv_idx), std::move(idx), *k,
                             index::make_ranker(*ranker), use_weighted);
 }

@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
         throw std::runtime_error{"[[analyzers]] missing from config"};
 
     // only use the feature representation of the first analyzer
-    auto filts = analyzers::analyzer::load_filters(config, *(group->get()[0]));
+    auto filts = analyzers::load_filters(config, *(group->get()[0]));
 
     std::unordered_map<std::string, uint64_t> counts;
     auto docs = corpus::corpus::load(config);

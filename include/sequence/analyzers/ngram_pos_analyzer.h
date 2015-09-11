@@ -34,21 +34,23 @@ namespace analyzers
  * method = "ngram-pos" # this analyzer
  * ngram = 1 # integer required
  * crf-prefix = "path"
- * [[analyzers.filter]]
- *     type = "icu-tokenizer" # recommended
+ * filter = [{type = "icu-tokenizer"},
+ *           {type = "ptb-normalizer"}] # recommended
  * ~~~
  *
  * Optional config parameters: none.
  *
  * @see https://meta-toolkit.org/analyzers-filters-tutorial.html
-
  */
+template <class T>
 class ngram_pos_analyzer
-    : public util::multilevel_clonable<analyzer, ngram_analyzer,
-                                       ngram_pos_analyzer>
+    : public util::multilevel_clonable<analyzer<T>, ngram_analyzer<T>,
+                                       ngram_pos_analyzer<T>>
 {
-    using base = util::multilevel_clonable<analyzer, ngram_analyzer,
+    using base = util::multilevel_clonable<analyzer<T>, ngram_analyzer<T>,
                                            ngram_pos_analyzer>;
+
+    using feature_map = typename base::feature_map;
 
   public:
     /**
@@ -66,16 +68,17 @@ class ngram_pos_analyzer
      */
     ngram_pos_analyzer(const ngram_pos_analyzer& other);
 
+    /// Identifier for this analyzer.
+    const static util::string_view id;
+
+  private:
     /**
      * Tokenizes a file into a document.
      * @param doc The document to store the tokenized information in
      */
-    virtual void tokenize(corpus::document& doc) override;
+    virtual void tokenize(const corpus::document& doc,
+                          feature_map& counts) override;
 
-    /// Identifier for this analyzer.
-    const static std::string id;
-
-  private:
     /// The token stream to be used for extracting tokens
     std::unique_ptr<token_stream> stream_;
 
@@ -87,12 +90,23 @@ class ngram_pos_analyzer
 };
 
 /**
- * Specialization of the factory method for creating ngram_pos_analyzers.
+ * Specialization of the traits class used by the factory method for
+ * creating ngram_pos_analyzers.
  */
-template <>
-std::unique_ptr<analyzer>
-    make_analyzer<ngram_pos_analyzer>(const cpptoml::table&,
-                                      const cpptoml::table&);
+template <class T>
+struct analyzer_traits<ngram_pos_analyzer<T>>
+{
+    static std::unique_ptr<analyzer<T>> create(const cpptoml::table&,
+                                               const cpptoml::table&);
+};
+
+// declare the valid instantiations for this analyzer
+extern template class ngram_pos_analyzer<uint64_t>;
+extern template class ngram_pos_analyzer<double>;
+
+// declare the valid instantiations for this analyzer's trait class
+extern template struct analyzer_traits<ngram_pos_analyzer<uint64_t>>;
+extern template struct analyzer_traits<ngram_pos_analyzer<double>>;
 }
 
 namespace sequence

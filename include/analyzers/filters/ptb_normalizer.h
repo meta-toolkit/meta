@@ -13,6 +13,7 @@
 #include <memory>
 #include "analyzers/token_stream.h"
 #include "util/clonable.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -62,7 +63,7 @@ class ptb_normalizer : public util::clonable<token_stream, ptb_normalizer>
     operator bool() const override;
 
     /// Identifier for this filter
-    const static std::string id;
+    const static util::string_view id;
 
   private:
     /**

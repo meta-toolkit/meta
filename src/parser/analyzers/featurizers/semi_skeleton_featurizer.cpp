@@ -8,14 +8,18 @@ namespace meta
 namespace analyzers
 {
 
-const std::string semi_skeleton_featurizer::id = "semi-skel";
+template <class T>
+const util::string_view semi_skeleton_featurizer<T>::id = "semi-skel";
 
 namespace
 {
+template <class T>
 class semi_skeleton_visitor : public parser::const_visitor<std::string>
 {
   public:
-    semi_skeleton_visitor(corpus::document& d) : doc(d)
+    using feature_map = typename semi_skeleton_featurizer<T>::feature_map;
+
+    semi_skeleton_visitor(feature_map& fm) : counts(fm)
     {
         // nothing
     }
@@ -30,28 +34,32 @@ class semi_skeleton_visitor : public parser::const_visitor<std::string>
                       });
         rep += ")";
 
-        doc.increment(semi_skeleton_featurizer::id + "-" + rep_cat + rep, 1);
+        counts[semi_skeleton_featurizer<T>::id.to_string() + "-" + rep_cat
+               + rep] += 1;
         return "(" + rep;
     }
 
     std::string operator()(const parser::leaf_node& ln) override
     {
-        doc.increment(semi_skeleton_featurizer::id + "-("
-                      + static_cast<std::string>(ln.category()) + ")",
-                      1);
+        counts[semi_skeleton_featurizer<T>::id.to_string() + "-("
+               + static_cast<std::string>(ln.category()) + ")"] += 1;
         return "()";
     }
 
   private:
-    corpus::document& doc;
+    feature_map& counts;
 };
 }
 
-void semi_skeleton_featurizer::tree_tokenize(
-    corpus::document& doc, const parser::parse_tree& tree) const
+template <class T>
+void semi_skeleton_featurizer<T>::tree_tokenize(const parser::parse_tree& tree,
+                                                feature_map& counts) const
 {
-    semi_skeleton_visitor vtor{doc};
+    semi_skeleton_visitor<T> vtor{counts};
     tree.visit(vtor);
 }
+
+template class semi_skeleton_featurizer<uint64_t>;
+template class semi_skeleton_featurizer<double>;
 }
 }

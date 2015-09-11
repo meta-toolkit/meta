@@ -12,6 +12,7 @@
 
 #include "parser/analyzers/featurizers/tree_featurizer.h"
 #include "util/clonable.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -21,21 +22,28 @@ namespace analyzers
 /**
  * Tokenizes parse trees by looking at labels of leaf and interior nodes.
  */
-class tag_featurizer : public util::clonable<tree_featurizer, tag_featurizer>
+template <class T>
+class tag_featurizer
+    : public util::clonable<tree_featurizer<T>, tag_featurizer<T>>
 {
   public:
+    using feature_map = typename tag_featurizer::feature_map;
+
     /**
      * Counts occurrences of leaf and interior node labels.
-     * @param doc The document to parse
      * @param tree The current parse_tree in the document
+     * @param counts The feature_map to write to
      */
-    void tree_tokenize(corpus::document& doc,
-                       const parser::parse_tree& tree) const override;
+    void tree_tokenize(const parser::parse_tree& tree,
+                       feature_map& counts) const override;
 
     /// Identifier for this featurizer
-    const static std::string id;
+    const static util::string_view id;
 };
-}
-}
 
+// declare the valid instantiations for this featurizer
+extern template class tag_featurizer<uint64_t>;
+extern template class tag_featurizer<double>;
+}
+}
 #endif

@@ -15,7 +15,7 @@ namespace meta
 namespace classify
 {
 
-const std::string winnow::id = "winnow";
+const util::string_view winnow::id = "winnow";
 
 winnow::winnow(std::shared_ptr<index::forward_index> idx, double m,
                double gamma, size_t max_iter)

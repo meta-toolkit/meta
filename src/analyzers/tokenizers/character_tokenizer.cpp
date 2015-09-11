@@ -14,7 +14,7 @@ namespace analyzers
 namespace tokenizers
 {
 
-const std::string character_tokenizer::id = "character-tokenizer";
+const util::string_view character_tokenizer::id = "character-tokenizer";
 
 character_tokenizer::character_tokenizer() : idx_{0}
 {

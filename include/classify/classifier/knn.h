@@ -30,7 +30,7 @@ class knn : public classifier
     /**
      * Identifier for this classifier.
      */
-    const static std::string id;
+    const static util::string_view id;
 
     /**
      * @param idx The index to run the classifier on

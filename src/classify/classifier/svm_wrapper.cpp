@@ -12,7 +12,7 @@ namespace meta
 namespace classify
 {
 
-const std::string svm_wrapper::id = "libsvm";
+const util::string_view svm_wrapper::id = "libsvm";
 
 decltype(svm_wrapper::options_) svm_wrapper::options_
     = {{svm_wrapper::kernel::None, ""},

@@ -50,9 +50,7 @@ int main(int argc, char* argv[])
     auto ranker = index::make_ranker(*group);
 
     // Use UTF-8 for the default encoding unless otherwise specified.
-    std::string encoding = "utf-8";
-    if (auto enc = config.get_as<std::string>("encoding"))
-        encoding = *enc;
+    auto encoding = config.get_as<std::string>("encoding").value_or("utf-8");
 
     // Time how long it takes to create the index. By default, common::time's
     //  unit of measurement is milliseconds.

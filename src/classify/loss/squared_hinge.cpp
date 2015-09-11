@@ -12,7 +12,7 @@ namespace classify
 namespace loss
 {
 
-const std::string squared_hinge::id = "squared-hinge";
+const util::string_view squared_hinge::id = "squared-hinge";
 
 double squared_hinge::loss(double prediction, double expected) const
 {

@@ -15,7 +15,12 @@ namespace meta
 namespace classify
 {
 
-const std::string sgd::id = "sgd";
+const util::string_view sgd::id = "sgd";
+const constexpr double sgd::default_alpha;
+const constexpr double sgd::default_gamma;
+const constexpr double sgd::default_bias;
+const constexpr double sgd::default_lambda;
+const constexpr size_t sgd::default_max_iter;
 
 sgd::sgd(const std::string& prefix, std::shared_ptr<index::forward_index> idx,
          class_label positive, class_label negative,
@@ -139,25 +144,12 @@ std::unique_ptr<binary_classifier>
         throw binary_classifier_factory::exception{
             "prefix must be specified for sgd in config"};
 
-    auto alpha = sgd::default_alpha;
-    if (auto c_alpha = config.get_as<double>("alpha"))
-        alpha = *c_alpha;
-
-    auto gamma = sgd::default_gamma;
-    if (auto c_gamma = config.get_as<double>("gamma"))
-        gamma = *c_gamma;
-
-    auto bias = sgd::default_bias;
-    if (auto c_bias = config.get_as<double>("bias"))
-        bias = *c_bias;
-
-    auto lambda = sgd::default_lambda;
-    if (auto c_lambda = config.get_as<double>("lambda"))
-        lambda = *c_lambda;
-
-    auto max_iter = sgd::default_max_iter;
-    if (auto c_max_iter = config.get_as<int64_t>("max-iter"))
-        max_iter = *c_max_iter;
+    auto alpha = config.get_as<double>("alpha").value_or(sgd::default_alpha);
+    auto gamma = config.get_as<double>("gamma").value_or(sgd::default_gamma);
+    auto bias = config.get_as<double>("bias").value_or(sgd::default_bias);
+    auto lambda = config.get_as<double>("lambda").value_or(sgd::default_lambda);
+    auto max_iter
+        = config.get_as<int64_t>("max-iter").value_or(sgd::default_max_iter);
 
     return make_unique<sgd>(
         *prefix, std::move(idx), std::move(positive), std::move(negative),

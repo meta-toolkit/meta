@@ -12,7 +12,7 @@ namespace meta
 namespace classify
 {
 
-const std::string one_vs_all::id = "one-vs-all";
+const util::string_view one_vs_all::id = "one-vs-all";
 
 void one_vs_all::train(const std::vector<doc_id>& docs)
 {

@@ -24,7 +24,18 @@ namespace meta
 namespace analyzers
 {
 
-std::string analyzer::get_content(const corpus::document& doc)
+template <class T>
+auto analyzer<T>::analyze(const corpus::document& doc) -> feature_map
+{
+    feature_map counts;
+    tokenize(doc, counts);
+    return counts;
+}
+
+template class analyzer<uint64_t>;
+template class analyzer<double>;
+
+std::string get_content(const corpus::document& doc)
 {
     if (!doc.contains_content())
         throw analyzer_exception{
@@ -52,8 +63,7 @@ std::unique_ptr<token_stream>
 }
 }
 
-std::unique_ptr<token_stream>
-    analyzer::default_filter_chain(const cpptoml::table& config)
+std::unique_ptr<token_stream> default_filter_chain(const cpptoml::table& config)
 {
     auto tokenizer = make_unique<tokenizers::icu_tokenizer>();
     auto result = add_default_filters(std::move(tokenizer), config);
@@ -62,16 +72,15 @@ std::unique_ptr<token_stream>
 }
 
 std::unique_ptr<token_stream>
-    analyzer::default_unigram_chain(const cpptoml::table& config)
+    default_unigram_chain(const cpptoml::table& config)
 {
     // suppress "<s>", "</s>"
     auto tokenizer = make_unique<tokenizers::icu_tokenizer>(true);
     return add_default_filters(std::move(tokenizer), config);
 }
 
-std::unique_ptr<token_stream>
-    analyzer::load_filter(std::unique_ptr<token_stream> src,
-                          const cpptoml::table& config)
+std::unique_ptr<token_stream> load_filter(std::unique_ptr<token_stream> src,
+                                          const cpptoml::table& config)
 {
     auto type = config.get_as<std::string>("type");
     if (!type)
@@ -79,9 +88,8 @@ std::unique_ptr<token_stream>
     return filter_factory::get().create(*type, std::move(src), config);
 }
 
-std::unique_ptr<token_stream>
-    analyzer::load_filters(const cpptoml::table& global,
-                           const cpptoml::table& config)
+std::unique_ptr<token_stream> load_filters(const cpptoml::table& global,
+                                           const cpptoml::table& config)
 {
 
     auto check = config.get_as<std::string>("filter");
@@ -104,10 +112,11 @@ std::unique_ptr<token_stream>
     return result;
 }
 
-std::unique_ptr<analyzer> analyzer::load(const cpptoml::table& config)
+template <class T>
+std::unique_ptr<analyzer<T>> load(const cpptoml::table& config)
 {
     using namespace analyzers;
-    std::vector<std::unique_ptr<analyzer>> toks;
+    std::vector<std::unique_ptr<analyzer<T>>> toks;
     auto analyzers = config.get_table_array("analyzers");
     for (auto group : analyzers->get())
     {
@@ -115,9 +124,14 @@ std::unique_ptr<analyzer> analyzer::load(const cpptoml::table& config)
         if (!method)
             throw analyzer_exception{"failed to find analyzer method"};
         toks.emplace_back(
-            analyzer_factory::get().create(*method, config, *group));
+            analyzer_factory<T>::get().create(*method, config, *group));
     }
-    return make_unique<multi_analyzer>(std::move(toks));
+    return make_unique<multi_analyzer<T>>(std::move(toks));
 }
+
+// explicitly instantiate the load template function for the two valid
+// feature value types for analyzers
+template std::unique_ptr<analyzer<uint64_t>> load(const cpptoml::table&);
+template std::unique_ptr<analyzer<double>> load(const cpptoml::table&);
 }
 }

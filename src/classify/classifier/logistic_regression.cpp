@@ -14,7 +14,7 @@ namespace meta
 namespace classify
 {
 
-const std::string logistic_regression::id = "logistic-regression";
+const util::string_view logistic_regression::id = "logistic-regression";
 
 logistic_regression::logistic_regression(
     const std::string& prefix, std::shared_ptr<index::forward_index> idx,
@@ -59,8 +59,8 @@ class_label logistic_regression::classify(doc_id d_id)
     auto it = argmax(probs.begin(), probs.end(),
                      [](const std::pair<class_label, double>& pair)
                      {
-        return pair.second;
-    });
+                         return pair.second;
+                     });
     return it->first;
 }
 
@@ -70,15 +70,15 @@ void logistic_regression::train(const std::vector<doc_id>& docs)
     for (const auto& d_id : docs)
         docs_by_class[idx_->label(d_id)].emplace_back(d_id);
     using T = decltype(*classifiers_.begin());
-    parallel::parallel_for(classifiers_.begin(), classifiers_.end(),
-                           [&](T& pair)
-                           {
-        auto train_docs = docs_by_class[pair.first];
-        auto pivot_docs = docs_by_class[pivot_];
-        train_docs.insert(train_docs.end(), pivot_docs.begin(),
-                          pivot_docs.end());
-        pair.second.train(train_docs);
-    });
+    parallel::parallel_for(
+        classifiers_.begin(), classifiers_.end(), [&](T& pair)
+        {
+            auto train_docs = docs_by_class[pair.first];
+            auto pivot_docs = docs_by_class[pivot_];
+            train_docs.insert(train_docs.end(), pivot_docs.begin(),
+                              pivot_docs.end());
+            pair.second.train(train_docs);
+        });
 }
 
 void logistic_regression::reset()
@@ -96,25 +96,12 @@ std::unique_ptr<classifier> make_classifier<logistic_regression>(
         throw classifier_factory::exception{
             "prefix must be specified for logistic-regression in config"};
 
-    auto alpha = sgd::default_alpha;
-    if (auto c_alpha = config.get_as<double>("alpha"))
-        alpha = *c_alpha;
-
-    auto gamma = sgd::default_gamma;
-    if (auto c_gamma = config.get_as<double>("gamma"))
-        gamma = *c_gamma;
-
-    auto bias = sgd::default_bias;
-    if (auto c_bias = config.get_as<double>("bias"))
-        bias = *c_bias;
-
-    auto lambda = sgd::default_lambda;
-    if (auto c_lambda = config.get_as<double>("lambda"))
-        lambda = *c_lambda;
-
-    auto max_iter = sgd::default_max_iter;
-    if (auto c_max_iter = config.get_as<int64_t>("max-iter"))
-        max_iter = *c_max_iter;
+    auto alpha = config.get_as<double>("alpha").value_or(sgd::default_alpha);
+    auto gamma = config.get_as<double>("gamma").value_or(sgd::default_gamma);
+    auto bias = config.get_as<double>("bias").value_or(sgd::default_bias);
+    auto lambda = config.get_as<double>("lambda").value_or(sgd::default_lambda);
+    auto max_iter
+        = config.get_as<int64_t>("max-iter").value_or(sgd::default_max_iter);
 
     return make_unique<logistic_regression>(*prefix, std::move(idx), alpha,
                                             gamma, bias, lambda, max_iter);

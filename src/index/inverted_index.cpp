@@ -66,7 +66,7 @@ class inverted_index::impl
     void load_postings();
 
     /// The analyzer used to tokenize documents.
-    std::unique_ptr<analyzers::analyzer> analyzer_;
+    std::unique_ptr<analyzers::analyzer<uint64_t>> analyzer_;
 
     util::optional<postings_file<inverted_index::primary_key_type,
                                  inverted_index::secondary_key_type>> postings_;
@@ -77,7 +77,7 @@ class inverted_index::impl
 
 inverted_index::impl::impl(inverted_index* idx, const cpptoml::table& config)
     : idx_{idx},
-      analyzer_{analyzers::analyzer::load(config)},
+      analyzer_{analyzers::load<uint64_t>(config)},
       total_corpus_terms_{0}
 {
     // nothing
@@ -120,11 +120,8 @@ void inverted_index::create_index(const std::string& config_file)
     auto docs = corpus::corpus::load(config_file);
 
     auto config = cpptoml::parse_file(config_file);
-    auto cfg_ram_budget = config.get_as<int64_t>("indexer-ram-budget");
-
-    uint64_t ram_budget = 1024;
-    if (cfg_ram_budget)
-        ram_budget = static_cast<uint64_t>(*cfg_ram_budget);
+    auto ram_budget = static_cast<uint64_t>(
+        config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
 
     postings_inverter<inverted_index> inverter{index_name()};
     {
@@ -142,7 +139,8 @@ void inverted_index::create_index(const std::string& config_file)
 
     LOG(info) << "Created uncompressed postings file " << index_name()
               << impl_->files[POSTINGS] << " ("
-              << printing::bytes_to_units(inverter.final_size()) << ")" << ENDLG;
+              << printing::bytes_to_units(inverter.final_size()) << ")"
+              << ENDLG;
 
     uint64_t num_unique_terms = inverter.unique_primary_keys();
     inv_impl_->compress(index_name() + impl_->files[POSTINGS],
@@ -193,10 +191,10 @@ void inverted_index::impl::tokenize_docs(
                 progress(doc->id());
             }
 
-            analyzer->tokenize(*doc);
+            auto counts = analyzer->analyze(*doc);
 
             // warn if there is an empty document
-            if (doc->counts().empty())
+            if (counts.empty())
             {
                 std::lock_guard<std::mutex> lock{mutex};
                 LOG(progress) << '\n' << ENDLG;
@@ -204,12 +202,18 @@ void inverted_index::impl::tokenize_docs(
                              << ") generated!" << ENDLG;
             }
 
-            mdata_writer.write(doc->id(), doc->length(), doc->counts().size(),
-                               doc->mdata());
+            auto length = std::accumulate(
+                counts.begin(), counts.end(), 0ul,
+                [](uint64_t acc, const std::pair<std::string, uint64_t>& count)
+                {
+                    return acc + count.second;
+                });
+
+            mdata_writer.write(doc->id(), length, counts.size(), doc->mdata());
             idx_->impl_->set_label(doc->id(), doc->label());
 
             // update chunk
-            producer(doc->id(), doc->counts());
+            producer(doc->id(), counts);
         }
     };
 
@@ -305,9 +309,10 @@ double inverted_index::avg_doc_length()
     return static_cast<double>(total_corpus_terms()) / num_docs();
 }
 
-void inverted_index::tokenize(corpus::document& doc)
+analyzers::analyzer<uint64_t>::feature_map
+    inverted_index::tokenize(const corpus::document& doc)
 {
-    inv_impl_->analyzer_->tokenize(doc);
+    return inv_impl_->analyzer_->analyze(doc);
 }
 
 uint64_t inverted_index::doc_freq(term_id t_id) const

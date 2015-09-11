@@ -41,9 +41,12 @@ namespace analyzers
  * @see https://meta-toolkit.org/analyzers-filters-tutorial.html
 
  */
-class tree_analyzer : public util::clonable<analyzer, tree_analyzer>
+template <class T>
+class tree_analyzer : public util::clonable<analyzer<T>, tree_analyzer<T>>
 {
   public:
+    using feature_map = typename analyzer<T>::feature_map;
+
     /**
      * Creates a tree analyzer
      */
@@ -58,27 +61,29 @@ class tree_analyzer : public util::clonable<analyzer, tree_analyzer>
     tree_analyzer(const tree_analyzer& other);
 
     /**
-     * Tokenizes a file into a document.
-     * @param doc The document to store the tokenized information in
-     */
-    void tokenize(corpus::document& doc) override;
-
-    /**
      * Adds a tree featurizer to the list.
      */
-    void add(std::unique_ptr<const tree_featurizer> featurizer);
+    void add(std::unique_ptr<const tree_featurizer<T>> featurizer);
 
     /**
      * Identifier for this analyzer.
      */
-    const static std::string id;
+    const static util::string_view id;
 
   private:
+    using tree_featurizer_list
+        = std::vector<std::unique_ptr<const tree_featurizer<T>>>;
+
+    /**
+     * Tokenizes a file into a document.
+     * @param doc The document to store the tokenized information in
+     */
+    void tokenize(const corpus::document& doc, feature_map& counts) override;
+
     /**
      * A list of tree_featurizers to run on each parse tree.
      */
-    std::shared_ptr<std::vector<std::unique_ptr<const tree_featurizer>>>
-        featurizers_;
+    std::shared_ptr<tree_featurizer_list> featurizers_;
 
     /**
      * The token stream for extracting tokens.
@@ -102,11 +107,23 @@ class tree_analyzer : public util::clonable<analyzer, tree_analyzer>
 };
 
 /**
- * Specialization of the factory method for creating tree analyzers.
+ * Specialization of the traits class used by the factory method for
+ * creating tree analyzers.
  */
-template <>
-std::unique_ptr<analyzer> make_analyzer<tree_analyzer>(const cpptoml::table&,
-                                                       const cpptoml::table&);
+template <class T>
+struct analyzer_traits<tree_analyzer<T>>
+{
+    static std::unique_ptr<analyzer<T>> create(const cpptoml::table&,
+                                               const cpptoml::table&);
+};
+
+// declare the valid instantiations of this analyzer
+extern template class tree_analyzer<uint64_t>;
+extern template class tree_analyzer<double>;
+
+// declare the valid instantiations of this analyzer's traits class
+extern template struct analyzer_traits<tree_analyzer<uint64_t>>;
+extern template struct analyzer_traits<tree_analyzer<double>>;
 }
 
 namespace parser

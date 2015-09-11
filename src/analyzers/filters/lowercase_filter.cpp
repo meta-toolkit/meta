@@ -15,7 +15,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string lowercase_filter::id = "lowercase";
+const util::string_view lowercase_filter::id = "lowercase";
 
 lowercase_filter::lowercase_filter(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}

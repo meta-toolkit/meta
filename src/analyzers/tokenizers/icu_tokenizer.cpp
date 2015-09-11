@@ -21,7 +21,7 @@ namespace analyzers
 namespace tokenizers
 {
 
-const std::string icu_tokenizer::id = "icu-tokenizer";
+const util::string_view icu_tokenizer::id = "icu-tokenizer";
 
 /**
  * Implementation class for the icu_tokenizer.
@@ -152,10 +152,7 @@ std::unique_ptr<token_stream>
 {
     auto language = config.get_as<std::string>("language");
     auto country = config.get_as<std::string>("country");
-    bool suppress_tags = false;
-
-    if (auto stags = config.get_as<bool>("suppress-tags"))
-        suppress_tags = *stags;
+    bool suppress_tags = config.get_as<bool>("suppress-tags").value_or(false);
 
     using exception = token_stream::token_stream_exception;
 

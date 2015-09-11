@@ -38,7 +38,7 @@ class absolute_discount : public language_model_ranker
     /**
      * The identifier of this ranker.
      */
-    const static std::string id;
+    const static util::string_view id;
 
     /**
      * @param delta

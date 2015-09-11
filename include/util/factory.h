@@ -14,6 +14,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -59,7 +60,7 @@ class factory
      * @param fn The factory method
      */
     template <class Function>
-    void add(const std::string& identifier, Function&& fn)
+    void add(util::string_view identifier, Function&& fn)
     {
         if (methods_.find(identifier) != methods_.end())
             throw exception{"classifier already registered with that id"};
@@ -74,16 +75,17 @@ class factory
      * @return a unique_ptr to the new object created
      */
     template <class... Args>
-    pointer create(const std::string& identifier, Args&&... args)
+    pointer create(util::string_view identifier, Args&&... args)
     {
         if (methods_.find(identifier) == methods_.end())
-            throw exception{"unrecognized identifier: \"" + identifier + "\""};
+            throw exception{"unrecognized identifier: \""
+                            + identifier.to_string() + "\""};
         return methods_[identifier](std::forward<Args>(args)...);
     }
 
   private:
     /// The internal map of identifiers to factory_methods.
-    std::unordered_map<std::string, factory_method> methods_;
+    std::unordered_map<util::string_view, factory_method> methods_;
 };
 }
 }
