@@ -7,213 +7,215 @@
  * project.
  */
 
-#include <iostream>
 #include <sstream>
 #include <random>
-#include "cpptoml.h"
-#include "analyzers/analyzer.h"
-#include "analyzers/tokenizers/icu_tokenizer.h"
-#include "analyzers/filters/lowercase_filter.h"
-#include "analyzers/filters/alpha_filter.h"
-#include "analyzers/filters/empty_sentence_filter.h"
-#include "corpus/corpus.h"
+#include "util/time.h"
 #include "util/shim.h"
+#include "util/fixed_heap.h"
 #include "lm/language_model.h"
+#include "logging/logger.h"
 
 namespace meta
 {
 namespace lm
 {
 
-language_model::language_model(const std::string& config_file)
+language_model::language_model(const cpptoml::table& config)
 {
-    auto config = cpptoml::parse_file(config_file);
-    auto group = config.get_table("language-model");
-    auto nval = group->get_as<int64_t>("n-value");
-    if(!nval)
-        throw std::runtime_error{"no n-value specified in language-model group"};
+    auto table = config.get_table("language-model");
+    auto arpa_file = table->get_as<std::string>("arpa-file");
+    auto binary_file = table->get_as<std::string>("binary-file-prefix");
 
-    N_ = *nval;
-
-    if (N_ > 1)
-        interp_ = make_unique<language_model>(config_file, N_ - 1);
-
-    learn_model(config_file);
-}
-
-language_model::language_model(const std::string& config_file, size_t n):
-    N_{n}
-{
-    if (N_ > 1)
-        interp_ = make_unique<language_model>(config_file, N_ - 1);
-
-    learn_model(config_file);
-}
-
-void language_model::learn_model(const std::string& config_file)
-{
-    std::cout << "Creating " << N_ << "-gram language model" << std::endl;
-
-    auto corpus = corpus::corpus::load(config_file);
-
-    using namespace analyzers;
-    std::unique_ptr<token_stream> stream;
-    stream = make_unique<tokenizers::icu_tokenizer>();
-    stream = make_unique<filters::lowercase_filter>(std::move(stream));
-    stream = make_unique<filters::alpha_filter>(std::move(stream));
-    stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
-
-    while (corpus->has_next())
+    N_ = 0;
+    if (binary_file && filesystem::file_exists(*binary_file + "0.binlm"))
     {
-        auto doc = corpus->next();
-        stream->set_content(analyzers::get_content(doc));
-
-        // get ngram stream started
-        std::deque<std::string> ngram;
-        for (size_t i = 1; i < N_; ++i)
-            ngram.push_back("<s>");
-
-        // count each ngram occurrence
-        while (*stream)
-        {
-            auto token = stream->next();
-            if (N_ > 1)
+        LOG(info) << "Loading language model from binary files: "
+                  << *binary_file << "*" << ENDLG;
+        auto time = common::time(
+            [&]()
             {
-                ++dist_[make_string(ngram)][token];
-                ngram.pop_front();
-                ngram.push_back(token);
-            }
-            else
-                ++dist_[""][token]; // unigram has no previous tokens
+                while (filesystem::file_exists(*binary_file + std::to_string(N_)
+                                               + ".binlm"))
+                    lm_.emplace_back(*binary_file + std::to_string(N_++)
+                                     + ".binlm");
+            });
+        LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
+        prefix_ = *binary_file;
+    }
+    else if (arpa_file && binary_file)
+    {
+        LOG(info) << "Loading language model from .arpa file: " << *arpa_file
+                  << ENDLG;
+        prefix_ = *binary_file;
+        auto time = common::time([&]()
+                                 {
+                                     read_arpa_format(*arpa_file);
+                                 });
+        LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
+    }
+    else
+        throw language_model_exception{
+            "arpa-file or binary-file-prefix needed in config file"};
+
+    load_vocab();
+}
+
+void language_model::read_arpa_format(const std::string& arpa_file)
+{
+    std::ifstream infile{arpa_file};
+    std::string buffer;
+
+    // get to beginning of unigram data, saving the counts of each ngram type
+    std::vector<uint64_t> count;
+    while (std::getline(infile, buffer))
+    {
+        if (buffer.find("ngram ") == 0)
+        {
+            auto equal = buffer.find_first_of("=");
+            count.emplace_back(std::stoi(buffer.substr(equal + 1)));
         }
+
+        if (buffer.find("\\1-grams:") == 0)
+            break;
     }
 
-    // turn counts into probabilities
-    for (auto& map : dist_)
+    lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm", count[N_]);
+    std::ofstream unigrams{prefix_ + "0.strings"};
+    while (std::getline(infile, buffer))
     {
-        double sum = 0.0;
-        for (auto& end : map.second)
-            sum += end.second;
-        for (auto& end : map.second)
-            end.second /= sum;
+        // if blank or end
+        if (buffer.empty() || (buffer[0] == '\\' && buffer[1] == 'e'))
+            continue;
+
+        // if start of new ngram data
+        if (buffer[0] == '\\')
+        {
+            ++N_;
+            lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm",
+                             count[N_]);
+            continue;
+        }
+
+        auto first_tab = buffer.find_first_of('\t');
+        float prob = std::stof(buffer.substr(0, first_tab));
+        auto second_tab = buffer.find_first_of('\t', first_tab + 1);
+        auto ngram = buffer.substr(first_tab + 1, second_tab - first_tab - 1);
+        float backoff = 0.0;
+        if (second_tab != std::string::npos)
+            backoff = std::stof(buffer.substr(second_tab + 1));
+        lm_[N_].insert(ngram, prob, backoff);
+
+        if (N_ == 0)
+            unigrams << ngram << std::endl;
+    }
+
+    ++N_;
+}
+
+std::vector<std::pair<std::string, float>>
+    language_model::top_k(const sentence& prev, size_t k) const
+{
+    // this is horribly inefficient due to this LM's structure
+    using pair_t = std::pair<std::string, float>;
+    auto comp = [](const pair_t& a, const pair_t& b)
+    {
+        return a.second > b.second;
+    };
+    util::fixed_heap<pair_t, decltype(comp)> candidates{k, comp};
+
+    for (const auto& word : vocabulary_)
+    {
+        auto candidate = sentence{prev.to_string() + " " + word};
+        candidates.emplace(word, log_prob(candidate));
+    }
+
+    return candidates.reverse_and_clear();
+}
+
+void language_model::load_vocab()
+{
+    std::string word;
+    std::ifstream unigrams{prefix_ + "0.strings"};
+    while (std::getline(unigrams, word))
+    {
+        if (word.empty())
+            continue;
+
+        vocabulary_.push_back(word);
     }
 }
 
-std::string language_model::next_token(const std::deque<std::string>& tokens,
-                                       double random) const
+float language_model::prob_calc(sentence tokens) const
 {
-    auto str = make_string(tokens);
-    auto it = dist_.find(str);
-    if (it == dist_.end())
-        throw std::runtime_error{"couldn't find previous n - 1 tokens: " + str};
+    if (tokens.size() == 0)
+        throw language_model_exception{"prob_calc: tokens is empty!"};
 
-    double cur = 0.0;
-    for (auto& end : it->second)
+    if (tokens.size() == 1)
     {
-        cur += end.second;
-        if (cur > random)
-            return end.first;
+        auto opt = lm_[0].find(tokens[0]);
+        if (opt)
+            return opt->prob;
+        return lm_[0].find("<unk>")->prob;
     }
+    else
+    {
+        auto opt = lm_[tokens.size() - 1].find(tokens.to_string());
+        if (opt)
+            return opt->prob;
 
-    throw std::runtime_error{"could not generate next token: " + str};
+        auto hist = tokens(0, tokens.size() - 1);
+        tokens.pop_front();
+        if (tokens.size() == 1)
+        {
+            hist = hist(0, 1);
+            auto opt = lm_[0].find(hist[0]);
+            if (!opt)
+                hist.substitute(0, "<unk>");
+        }
+
+        opt = lm_[hist.size() - 1].find(hist.to_string());
+        if (opt)
+            return opt->backoff + prob_calc(tokens);
+        return prob_calc(tokens);
+    }
 }
 
-std::string language_model::generate(unsigned int seed) const
+float language_model::log_prob(sentence tokens) const
 {
-    std::default_random_engine gen(seed);
-    std::uniform_real_distribution<double> rdist(0.0, 1.0);
+    float prob = 0.0f;
 
-    // start generating at the beginning of a sequence
-    std::deque<std::string> ngram;
-    for (size_t n = 1; n < N_; ++n)
-        ngram.push_back("<s>");
-
-    // keep generating until we see </s>
-    std::string output;
-    std::string next = next_token(ngram, rdist(gen));
-    while (next != "</s>")
+    // tokens < N
+    sentence ngram;
+    for (uint64_t i = 0; i < N_ - 1 && i < tokens.size(); ++i)
     {
-        if (ngram.front() != "<s>")
-            output += " " + ngram.front();
+        ngram.push_back(tokens[i]);
+        prob += prob_calc(ngram);
+    }
+
+    // tokens >= N
+    for (uint64_t i = N_ - 1; i < tokens.size(); ++i)
+    {
+        ngram.push_back(tokens[i]);
+        prob += prob_calc(ngram);
         ngram.pop_front();
-        ngram.push_back(next);
-        next = next_token(ngram, rdist(gen));
     }
 
-    output += make_string(ngram);
-    return output;
+    return prob;
 }
 
-double language_model::prob(std::deque<std::string> tokens) const
+float language_model::perplexity(const sentence& tokens) const
 {
-    if (tokens.size() != N_)
-        throw std::runtime_error{"prob() needs one N-gram"};
-
-    std::deque<std::string> interp_tokens{tokens};
-    interp_tokens.pop_front(); // look at prev N - 1
-    auto interp_prob = interp_ ? interp_->prob(interp_tokens) : 1.0;
-
-    auto last = tokens.back();
-    tokens.pop_back();
-
-    auto ngram = make_string(tokens);
-
-    auto endings = dist_.find(ngram);
-    if (endings == dist_.end())
-        return (1.0 - lambda_) * interp_prob;
-
-    auto prob = endings->second.find(last);
-    if (prob == endings->second.end())
-        return (1.0 - lambda_) * interp_prob;
-
-    return lambda_ * prob->second + (1.0 - lambda_) * interp_prob;
+    if (tokens.size() == 0)
+        throw language_model_exception{"perplexity() called on empty sentence"};
+    return std::pow(10.0, -(log_prob(tokens) / tokens.size()));
 }
 
-double language_model::perplexity(const std::string& tokens) const
+float language_model::perplexity_per_word(const sentence& tokens) const
 {
-    std::deque<std::string> ngram;
-    for (size_t i = 1; i < N_; ++i)
-        ngram.push_back("<s>");
-
-    double perp = 0.0;
-    for (auto& token : make_deque(tokens))
-    {
-        ngram.push_back(token);
-        perp += std::log(1.0 + 1.0 / prob(ngram));
-        ngram.pop_front();
-    }
-
-    return std::pow(perp, 1.0 / N_);
-}
-
-double language_model::perplexity_per_word(const std::string& tokens) const
-{
+    if (tokens.size() == 0)
+        throw language_model_exception{
+            "perplexity_per_word() called on empty sentence"};
     return perplexity(tokens) / tokens.size();
-}
-
-std::deque<std::string> language_model::make_deque(const std::string
-                                                   & tokens) const
-{
-    std::deque<std::string> d;
-    std::stringstream sstream{tokens};
-    std::string token;
-    while (sstream >> token)
-        d.push_back(token);
-
-    return d;
-}
-
-std::string language_model::make_string(const std::deque
-                                        <std::string>& tokens) const
-{
-    std::string result{""};
-    if (tokens.empty())
-        return result;
-
-    for (auto& token : tokens)
-        result += token + " ";
-
-    return result.substr(0, result.size() - 1); // remove trailing space
 }
 }
 }

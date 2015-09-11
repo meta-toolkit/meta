@@ -54,6 +54,14 @@ add_test(parser ${UNIT_TEST_EXE} parser)
 set_tests_properties(parser PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
+add_test(language-model ${UNIT_TEST_EXE} language-model)
+set_tests_properties(language-model PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
 add_test(filesystem ${UNIT_TEST_EXE} filesystem)
 set_tests_properties(filesystem PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+add_test(features ${UNIT_TEST_EXE} features)
+set_tests_properties(features PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

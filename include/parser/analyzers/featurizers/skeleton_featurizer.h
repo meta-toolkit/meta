@@ -21,6 +21,9 @@ namespace analyzers
 
 /**
  * Tokenizes parse trees by only tokenizing the tree structure itself.
+ * @see Sean Massung, ChengXiang Zhai, and Julia Hockenmaier. 2013. "Structural
+ * Parse Tree Features for Text Representation"
+ * @see http://web.engr.illinois.edu/~massung1/files/icsc-2013.pdf
  */
 template <class T>
 class skeleton_featurizer

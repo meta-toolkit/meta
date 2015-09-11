@@ -42,7 +42,11 @@ void corpus::set_metadata_parser(metadata_parser&& parser)
 std::unique_ptr<corpus> corpus::load(const std::string& config_file)
 {
     auto config = cpptoml::parse_file(config_file);
+    return load(config);
+}
 
+std::unique_ptr<corpus> corpus::load(const cpptoml::table& config)
+{
     auto corp = config.get_as<std::string>("corpus");
     if (!corp)
         throw corpus_exception{"corpus missing from configuration file"};
