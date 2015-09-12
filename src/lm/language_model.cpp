@@ -129,7 +129,7 @@ std::vector<std::pair<std::string, float>>
         candidates.emplace(word, log_prob(candidate));
     }
 
-    return candidates.reverse_and_clear();
+    return candidates.extract_top();
 }
 
 void language_model::load_vocab()

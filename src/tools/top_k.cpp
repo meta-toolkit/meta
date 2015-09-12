@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     for (auto& term : counts)
         terms.emplace(term);
 
-    auto sorted = terms.reverse_and_clear();
+    auto sorted = terms.extract_top();
     for (const auto& it : sorted)
         std::cout << it.first << "\t" << it.second << std::endl;
 }

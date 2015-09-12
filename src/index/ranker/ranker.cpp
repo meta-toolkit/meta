@@ -86,7 +86,7 @@ std::vector<search_result> ranker::rank(detail::ranker_context& ctx,
         next_doc = doc_id{ctx.idx.num_docs()};
     }
 
-    return results.reverse_and_clear();
+    return results.extract_top();
 }
 
 float ranker::initial_score(const score_data&) const

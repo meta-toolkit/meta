@@ -19,6 +19,14 @@ namespace util
 /**
  * Keeps a constant number of high-priority elements. This is useful for finding
  * the "top-k" T elements using the comparison function Comp.
+ *
+ * Internally, this class maintains a min-heap of max size `max_elems`,
+ * meaning that a push/emplace takes \f$O(\log k)\f$ where \f$k\f$ is
+ * `max_elems` passed on construction.
+ *
+ * Your comparison function should be the same as you would pass to e.g.
+ * std::sort such that the result would be the elements in **descending**
+ * order.
  */
 template <class T, class Comp>
 class fixed_heap
@@ -59,21 +67,10 @@ class fixed_heap
     size_type max_elems() const;
 
     /**
-     * @return a reverse-sorted list
+     * Clears the heap and returns the top elements
+     * @return the top elements in sorted order
      */
-    std::vector<T> reverse_and_clear();
-
-    /**
-     * @return an iterator to the beginning of the fixed_heap
-     * @note the heap is not fully sorted
-     */
-    iterator begin();
-
-    /**
-     * @return an iterator to the end of the fixed_heap
-     * @note the heap is not fully sorted
-     */
-    iterator end();
+    std::vector<T> extract_top();
 
     /**
      * @return a const_iterator to the beginning of the fixed_heap
