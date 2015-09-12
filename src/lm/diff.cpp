@@ -61,7 +61,7 @@ std::vector<std::pair<sentence, double>>
     seen_.clear();
     add(candidates, sent);
     step(sent, candidates, 0);
-    return candidates.reverse_and_clear();
+    return candidates.extract_top();
 }
 
 template <class PQ>

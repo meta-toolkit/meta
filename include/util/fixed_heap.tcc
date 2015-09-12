@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <cassert>
 #include <algorithm>
 
 namespace meta
@@ -54,30 +55,14 @@ auto fixed_heap<T, Comp>::max_elems() const -> size_type
 }
 
 template <class T, class Comp>
-std::vector<T> fixed_heap<T, Comp>::reverse_and_clear()
+std::vector<T> fixed_heap<T, Comp>::extract_top()
 {
-    std::vector<T> sorted;
-    sorted.reserve(size());
-    while (!pq_.empty())
-    {
-        sorted.emplace_back(std::move(pq_.front()));
-        std::pop_heap(pq_.begin(), pq_.end(), comp_);
-        pq_.pop_back();
-    }
-    std::reverse(sorted.begin(), sorted.end());
-    return sorted;
-}
+    for (size_type i = 0; i < pq_.size(); ++i)
+        std::pop_heap(pq_.begin(), pq_.end() - i, comp_);
 
-template <class T, class Comp>
-typename fixed_heap<T, Comp>::iterator fixed_heap<T, Comp>::begin()
-{
-    return pq_.begin();
-}
-
-template <class T, class Comp>
-typename fixed_heap<T, Comp>::iterator fixed_heap<T, Comp>::end()
-{
-    return pq_.end();
+    std::vector<T> result = std::move(pq_);
+    assert(pq_.empty());
+    return result;
 }
 
 template <class T, class Comp>

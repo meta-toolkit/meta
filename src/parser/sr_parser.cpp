@@ -17,6 +17,7 @@
 #include "parser/trees/leaf_node.h"
 #include "parser/trees/visitors/debinarizer.h"
 #include "util/filesystem.h"
+#include "util/fixed_heap.h"
 #include "util/progress.h"
 #include "util/range.h"
 #include "util/time.h"
@@ -68,22 +69,29 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
     else
     {
         using scored_state = std::pair<state, float>;
-        auto comp = [&](const scored_state& lhs, const scored_state& rhs)
+
+        struct comparator
         {
-            return std::get<1>(lhs) > std::get<1>(rhs);
+            bool operator()(const scored_state& lhs,
+                            const scored_state& rhs) const
+            {
+                return std::get<1>(lhs) > std::get<1>(rhs);
+            };
         };
 
-        auto fin = [&](const scored_state& ss)
+        auto fin = [](const scored_state& ss)
         {
             return std::get<0>(ss).finalized();
         };
 
-        std::vector<scored_state> agenda;
-        agenda.emplace_back(st, 0);
+        using fixed_heap = util::fixed_heap<scored_state, comparator>;
+
+        fixed_heap agenda{beam_size_, comparator{}};
+        agenda.emplace(st, 0);
 
         while (!std::all_of(agenda.begin(), agenda.end(), fin))
         {
-            std::vector<scored_state> new_agenda;
+            fixed_heap new_agenda{beam_size_, comparator{}};
 
             for (const auto& ss : agenda)
             {
@@ -100,16 +108,8 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
                     auto trans = std::get<0>(scored_trans);
                     auto t_score = std::get<1>(scored_trans);
 
-                    new_agenda.emplace_back(c_state.advance(trans_.at(trans)),
-                                            score + t_score);
-                    std::push_heap(new_agenda.begin(), new_agenda.end(), comp);
-
-                    if (new_agenda.size() > beam_size_)
-                    {
-                        std::pop_heap(new_agenda.begin(), new_agenda.end(),
-                                      comp);
-                        new_agenda.pop_back();
-                    }
+                    new_agenda.emplace(c_state.advance(trans_.at(trans)),
+                                       score + t_score);
                 }
             }
 
@@ -121,7 +121,7 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
                     auto score = std::get<1>(ss);
 
                     auto trans = c_state.emergency_transition();
-                    new_agenda.emplace_back(c_state.advance(trans), score);
+                    new_agenda.emplace(c_state.advance(trans), score);
                 }
             }
 
@@ -132,7 +132,8 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
         }
 
         // min because comp is backwards
-        auto best = std::min_element(agenda.begin(), agenda.end(), comp);
+        auto best
+            = std::min_element(agenda.begin(), agenda.end(), comparator{});
 
         parse_tree tree{std::get<0>(*best).stack_item(0)->clone()};
         debinarizer debin;
@@ -165,7 +166,7 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
             [&]()
             {
                 printing::progress progress{" > Iteration "
-                                            + std::to_string(iter) + ": ",
+                                                + std::to_string(iter) + ": ",
                                             trees.size()};
                 data.shuffle();
 
@@ -218,16 +219,17 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool,
 
     std::atomic<uint64_t> num_correct{0};
     std::atomic<uint64_t> num_incorrect{0};
-    parallel::parallel_for(range.begin(), range.end(), pool, [&](size_t i)
-                           {
-        auto& tree = batch.data.tree(i);
-        auto& transitions = batch.data.transitions(i);
-        auto& update = updates[std::this_thread::get_id()];
+    parallel::parallel_for(
+        range.begin(), range.end(), pool, [&](size_t i)
+        {
+            auto& tree = batch.data.tree(i);
+            auto& transitions = batch.data.transitions(i);
+            auto& update = updates[std::this_thread::get_id()];
 
-        auto res = train_instance(tree, transitions, options, update);
-        num_correct += res.first;
-        num_incorrect += res.second;
-    });
+            auto res = train_instance(tree, transitions, options, update);
+            num_correct += res.first;
+            num_incorrect += res.second;
+        });
 
     // Reduce partial results down to final update vector
     for (const auto& thread_update : updates)
@@ -308,17 +310,22 @@ std::pair<uint64_t, uint64_t> sr_parser::train_beam_search(
     // get<1>() is the score
     // get<2>() is whether or not it is the same as the gold state
 
-    auto score_compare = [](const scored_state& a, const scored_state& b)
+    struct score_compare
     {
-        return std::get<1>(a) > std::get<1>(b);
+        bool operator()(const scored_state& a, const scored_state& b) const
+        {
+            return std::get<1>(a) > std::get<1>(b);
+        }
     };
 
-    std::vector<scored_state> agenda;
-    agenda.emplace_back(state{tree}, 0, true);
+    using fixed_heap = util::fixed_heap<scored_state, score_compare>;
+
+    fixed_heap agenda{options.beam_size, score_compare{}};
+    agenda.emplace(state{tree}, 0, true);
 
     for (const auto& gold_trans : transitions)
     {
-        std::vector<scored_state> new_agenda;
+        fixed_heap new_agenda{options.beam_size, score_compare{}};
 
         // keep track if any of the new states is the gold one
         bool any_gold = false;
@@ -366,16 +373,7 @@ std::pair<uint64_t, uint64_t> sr_parser::train_beam_search(
                     best_trans = trans;
                 }
 
-                new_agenda.emplace_back(new_state, new_score, new_is_gold);
-                std::push_heap(new_agenda.begin(), new_agenda.end(),
-                               score_compare);
-
-                if (new_agenda.size() > options.beam_size)
-                {
-                    std::pop_heap(new_agenda.begin(), new_agenda.end(),
-                                  score_compare);
-                    new_agenda.pop_back();
-                }
+                new_agenda.emplace(new_state, new_score, new_is_gold);
             }
         }
 
@@ -414,24 +412,28 @@ std::pair<uint64_t, uint64_t> sr_parser::train_beam_search(
     return result;
 }
 
-auto sr_parser::best_transition(
-    const feature_vector& features, const state& state,
-    bool check_legality /* = false */) const -> trans_id
+auto sr_parser::best_transition(const feature_vector& features,
+                                const state& state,
+                                bool check_legality /* = false */) const
+    -> trans_id
 {
     return model_.best_class(features, [&](trans_id tid)
-    {
-        return !check_legality || state.legal(trans_.at(tid));
-    });
+                             {
+                                 return !check_legality
+                                        || state.legal(trans_.at(tid));
+                             });
 }
 
-auto sr_parser::best_transitions(
-    const feature_vector& features, const state& state, size_t num,
-    bool check_legality) const -> std::vector<scored_trans>
+auto sr_parser::best_transitions(const feature_vector& features,
+                                 const state& state, size_t num,
+                                 bool check_legality) const
+    -> std::vector<scored_trans>
 {
     return model_.best_classes(features, num, [&](trans_id tid)
-    {
-        return !check_legality || state.legal(trans_.at(tid));
-    });
+                               {
+                                   return !check_legality
+                                          || state.legal(trans_.at(tid));
+                               });
 }
 
 void sr_parser::save(const std::string& prefix) const

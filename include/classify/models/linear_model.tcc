@@ -6,11 +6,13 @@
  * consult the file LICENSE in the root of the project.
  */
 
+#include <cassert>
 #include <fstream>
 
 #include "classify/models/linear_model.h"
 #include "io/binary.h"
 #include "logging/logger.h"
+#include "util/fixed_heap.h"
 
 namespace meta
 {
@@ -156,27 +158,15 @@ auto linear_model<FeatureId, FeatureValue, ClassId>::best_classes(
         return lhs.second > rhs.second;
     };
 
-    std::vector<scored_class> result;
+    util::fixed_heap<scored_class, decltype(comp)> heap{num, comp};
     for (const auto& score : class_scores)
     {
         auto cid = score.first;
         if (filter(cid))
-            result.push_back(score);
+            heap.emplace(score);
     }
 
-    std::make_heap(result.begin(), result.end(), comp);
-    while (result.size() > num)
-    {
-        std::pop_heap(result.begin(), result.end(), comp);
-        result.pop_back();
-    }
-
-    std::sort(result.begin(), result.end(),
-              [](const scored_class& lhs, const scored_class& rhs)
-              {
-        return lhs.second < rhs.second;
-    });
-    return result;
+    return heap.extract_top();
 }
 
 template <class FeatureId, class FeatureValue, class ClassId>

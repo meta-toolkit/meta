@@ -5,6 +5,7 @@
 
 #include "caching/no_evict_cache.h"
 #include "index/forward_index.h"
+#include "util/fixed_heap.h"
 
 using namespace meta;
 
@@ -37,12 +38,15 @@ int print_topics(const std::string& config_file, const std::string& filename,
         stream >> topic;
         std::cout << "Topic " << topic << ":" << std::endl;
         std::cout << "-----------------------" << std::endl;
-        std::vector<std::pair<term_id, double>> pairs;
+
         auto comp = [](const std::pair<term_id, double>& first,
                        const std::pair<term_id, double>& second)
         {
             return first.second > second.second;
         };
+        util::fixed_heap<std::pair<term_id, double>, decltype(comp)> pairs{
+            num_words, comp};
+
         while (stream)
         {
             std::string to_split;
@@ -52,16 +56,9 @@ int print_topics(const std::string& config_file, const std::string& filename,
             size_t idx = to_split.find_first_of(':');
             term_id term{std::stoul(to_split.substr(0, idx))};
             double prob = std::stod(to_split.substr(idx + 1));
-            pairs.emplace_back(term, prob);
-            std::push_heap(pairs.begin(), pairs.end(), comp);
-            if (pairs.size() > num_words)
-            {
-                std::pop_heap(pairs.begin(), pairs.end(), comp);
-                pairs.pop_back();
-            }
+            pairs.emplace(term, prob);
         }
-        std::sort(pairs.begin(), pairs.end(), comp);
-        for (const auto& p : pairs)
+        for (const auto& p : pairs.extract_top())
             std::cout << idx->term_text(p.first) << " (" << p.first
                       << "): " << p.second << std::endl;
         std::cout << std::endl;
