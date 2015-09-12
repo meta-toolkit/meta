@@ -39,8 +39,7 @@ const std::string& document::content() const
 {
     if (content_)
         return *content_;
-    throw corpus::corpus_exception{
-        "there is no content for the requested document"};
+    throw corpus_exception{"there is no content for the requested document"};
 }
 
 const std::string& document::encoding() const

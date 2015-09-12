@@ -132,14 +132,6 @@ class postings_inverter
      */
     uint64_t unique_primary_keys() const;
 
-    /**
-     * Simple exception class for postings_inverter interactions
-     */
-    class postings_inverter_exception : public std::runtime_error
-    {
-        using std::runtime_error::runtime_error;
-    };
-
   private:
     /**
      * @param pdata The collection of postings_data objects to combine into a
@@ -161,6 +153,14 @@ class postings_inverter
 
     /// Number of unique primary keys encountered while merging
     util::optional<uint64_t> unique_primary_keys_;
+};
+
+/**
+ * Simple exception class for postings_inverter interactions
+ */
+class postings_inverter_exception : public std::runtime_error
+{
+    using std::runtime_error::runtime_error;
 };
 }
 }

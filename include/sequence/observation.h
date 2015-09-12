@@ -98,15 +98,6 @@ class observation
      */
     void features(feature_vector feats);
 
-    /**
-     * Basic exception class for observation interactions.
-     */
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
   private:
     /// The symbol for this observation
     symbol_t symbol_;
@@ -116,6 +107,15 @@ class observation
     util::optional<label_id> label_;
     /// The features for this observation
     feature_vector features_;
+};
+
+/**
+ * Basic exception class for observation interactions.
+ */
+class observation_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 }
 }

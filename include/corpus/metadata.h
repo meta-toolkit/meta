@@ -123,12 +123,6 @@ class metadata
         return util::nullopt;
     }
 
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
     /**
      * Tagged union to represent a single metadata field.
      */
@@ -320,6 +314,15 @@ class metadata
  * @return the corresponding metadata::schema object.
  */
 metadata::schema metadata_schema(const cpptoml::table& config);
+
+/**
+ * Exception class for metadata operations.
+ */
+class metadata_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
 }
 }
 #endif

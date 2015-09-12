@@ -25,6 +25,15 @@ namespace features
 {
 
 /**
+ * Exception for selector_factory operations.
+ */
+class selector_factory_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
+
+/**
  * Factory that is responsible for creating selectors from configuration
  * files. Clients should use the register_selector method instead of this
  * class directly to add their own selectors.
@@ -76,11 +85,11 @@ std::unique_ptr<feature_selector>
 {
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)
-        throw selector_factory::exception{"no prefix in [features] table"};
+        throw selector_factory_exception{"no prefix in [features] table"};
 
     auto method = config.get_as<std::string>("method");
     if (!method)
-        throw selector_factory::exception{
+        throw selector_factory_exception{
             "feature selection method required in [features] table"};
 
     return make_unique<Selector>(*prefix + "." + *method, std::move(idx));

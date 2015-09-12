@@ -31,12 +31,6 @@ class persistent_stack
 
     uint64_t size() const;
 
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
   private:
     struct node
     {
@@ -50,6 +44,12 @@ class persistent_stack
 
     std::shared_ptr<node> head_;
     uint64_t size_;
+};
+
+class persistent_stack_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 }
 }

@@ -106,16 +106,15 @@ class compressed_file_writer
 
     /// Ensures the file isn't closed more than once
     bool closed_;
+};
 
+/**
+ * Basic exception for compressed_file_writer interactions.
+ */
+class compressed_file_writer_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for compressed_file_writer interactions.
-     */
-    class compressed_file_writer_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 
 /**

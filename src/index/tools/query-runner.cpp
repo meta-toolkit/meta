@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
     {
         eval = make_unique<index::ir_eval>(*config);
     }
-    catch (index::ir_eval::ir_eval_exception& ex)
+    catch (index::ir_eval_exception& ex)
     {
         LOG(info) << "Could not find relevance judgements; skipping eval"
                   << ENDLG;

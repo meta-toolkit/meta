@@ -36,20 +36,21 @@ transition_map::transition_map(const std::string& prefix)
 void transition_map::load(std::istream& store)
 {
     if (!store)
-        throw exception{"missing transitions model file"};
+        throw transition_map_exception{"missing transitions model file"};
 
     uint64_t num_trans;
     io::read_binary(store, num_trans);
 
     if (!store)
-        throw exception{"malformed transitions model file"};
+        throw transition_map_exception{"malformed transitions model file"};
 
     transitions_.reserve(num_trans);
     for (uint64_t i = 0; i < num_trans; ++i)
     {
         if (!store)
-            throw exception{"malformed transition model file (too few "
-                            "transitions written)"};
+            throw transition_map_exception{
+                "malformed transition model file (too few "
+                "transitions written)"};
 
         transition::type_t trans_type;
         io::read_binary(store, trans_type);

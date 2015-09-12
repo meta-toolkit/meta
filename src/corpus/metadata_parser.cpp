@@ -28,7 +28,7 @@ std::vector<metadata::field> metadata_parser::next()
         for (const auto& finfo : schema_)
         {
             if (!parser_->has_next())
-                throw metadata::exception{
+                throw metadata_exception{
                     "metadata input file ended prematurely"};
             auto str = parser_->next();
 

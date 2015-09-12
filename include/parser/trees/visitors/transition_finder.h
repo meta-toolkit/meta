@@ -41,17 +41,20 @@ class transition_finder : public const_visitor<void>
      */
     std::vector<transition> transitions();
 
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
   private:
     /**
      * Storage for the transitions.
      */
     std::vector<transition> transitions_;
+};
+
+/**
+ * Basic exception for transition finder operations.
+ */
+class transition_finder_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 }
 }

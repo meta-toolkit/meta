@@ -24,7 +24,7 @@ struct char_input_stream
     char get()
     {
         if (input_ == end_)
-            throw corpus::metadata::exception{
+            throw corpus::metadata_exception{
                 "seeking past end of metadata file"};
 
         return *input_++;
@@ -59,7 +59,7 @@ metadata_file::metadata_file(const std::string& prefix)
 corpus::metadata metadata_file::get(doc_id d_id) const
 {
     if (d_id >= index_.size())
-        throw corpus::metadata::exception{
+        throw corpus::metadata_exception{
             "invalid doc id in metadata retrieval"};
 
     uint64_t seek_pos = index_[d_id];

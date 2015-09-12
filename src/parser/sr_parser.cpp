@@ -126,7 +126,7 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
             }
 
             if (new_agenda.size() == 0)
-                throw exception{"unparsable"};
+                throw sr_parser_exception{"unparsable"};
 
             agenda = std::move(new_agenda);
         }
@@ -257,7 +257,7 @@ std::pair<uint64_t, uint64_t> sr_parser::train_instance(
             return train_beam_search(tree, transitions, options, update);
 
         default:
-            throw exception{"Not yet implemented"};
+            throw sr_parser_exception{"Not yet implemented"};
     }
 }
 
@@ -466,7 +466,7 @@ void sr_parser::load(const std::string& prefix)
 void sr_parser::load(std::istream& model)
 {
     if (!model)
-        throw exception{"model file not found"};
+        throw sr_parser_exception{"model file not found"};
 
     io::read_binary(model, beam_size_);
     model_.load(model);

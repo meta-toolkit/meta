@@ -154,10 +154,9 @@ std::unique_ptr<token_stream>
     auto country = config.get_as<std::string>("country");
     bool suppress_tags = config.get_as<bool>("suppress-tags").value_or(false);
 
-    using exception = token_stream::token_stream_exception;
-
     if (country && !language)
-        throw exception{"icu_tokenizer cannot be created with just a country"};
+        throw token_stream_exception{
+            "icu_tokenizer cannot be created with just a country"};
 
     if (language)
     {

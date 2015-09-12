@@ -20,7 +20,7 @@ void transition_finder::operator()(const leaf_node&)
 void transition_finder::operator()(const internal_node& in)
 {
     if (in.num_children() > 2)
-        throw exception{
+        throw transition_finder_exception{
             "Trees must be binarized before transitions are generated"};
 
     in.each_child([&](const node* n)
@@ -42,8 +42,9 @@ void transition_finder::operator()(const internal_node& in)
     }
     else
     {
-        throw exception{"Incorrect head annotations (head was neither left nor "
-                        "right child)"};
+        throw transition_finder_exception{
+            "Incorrect head annotations (head was neither left nor "
+            "right child)"};
     }
 }
 

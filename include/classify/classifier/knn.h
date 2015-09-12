@@ -88,16 +88,15 @@ class knn : public classifier
 
     /** Whether we want the neighbors to be weighted by distance or not */
     const bool weighted_;
+};
 
+/**
+ * Basic exception for knn interactions.
+ */
+class knn_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for knn interactions.
-     */
-    class knn_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 
 /**

@@ -155,16 +155,15 @@ class compressed_file_reader
 
     /// hold the (actual -> compressed id) mapping
     std::function<uint64_t(uint64_t)> mapping_;
+};
 
+/**
+ * Basic exception for compressed_file_reader interactions.
+ */
+class compressed_file_reader_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for compressed_file_reader interactions.
-     */
-    class compressed_file_reader_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 
 /**

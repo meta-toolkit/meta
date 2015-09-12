@@ -46,7 +46,8 @@ class ir_eval
      * retrieved~docs} \f$
      */
     double precision(const result_type& results, query_id q_id,
-             uint64_t num_docs = std::numeric_limits<uint64_t>::max()) const;
+                     uint64_t num_docs
+                     = std::numeric_limits<uint64_t>::max()) const;
 
     /**
      * @param results The ranked list of results
@@ -56,7 +57,8 @@ class ir_eval
      * relevant~docs} \f$
      */
     double recall(const result_type& results, query_id q_id,
-              uint64_t num_docs = std::numeric_limits<uint64_t>::max()) const;
+                  uint64_t num_docs
+                  = std::numeric_limits<uint64_t>::max()) const;
 
     /**
      * @param results The ranked list of results
@@ -141,16 +143,15 @@ class ir_eval
      */
     double relevant_retrieved(const result_type& results, query_id q_id,
                               uint64_t num_docs) const;
+};
 
+/**
+ * Basic exception for ir_eval interactions.
+ */
+class ir_eval_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for ir_eval interactions.
-     */
-    class ir_eval_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 }
 }

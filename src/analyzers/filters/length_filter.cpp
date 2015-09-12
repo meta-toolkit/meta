@@ -20,9 +20,9 @@ length_filter::length_filter(std::unique_ptr<token_stream> source, uint64_t min,
                              uint64_t max)
     : source_{std::move(source)}, min_length_{min}, max_length_{max}
 {
-    using exception = token_stream::token_stream_exception;
     if (min_length_ > max_length_)
-        throw exception{"min filter length is greater than max filter length"};
+        throw token_stream_exception{
+            "min filter length is greater than max filter length"};
     next_token();
 }
 
@@ -86,13 +86,12 @@ std::unique_ptr<token_stream>
     make_filter<length_filter>(std::unique_ptr<token_stream> src,
                                const cpptoml::table& config)
 {
-    using exception = token_stream::token_stream_exception;
     auto min = config.get_as<int64_t>("min");
     if (!min)
-        throw exception{"min required for length filter config"};
+        throw token_stream_exception{"min required for length filter config"};
     auto max = config.get_as<int64_t>("max");
     if (!max)
-        throw exception{"max required for length filter config"};
+        throw token_stream_exception{"max required for length filter config"};
     return make_unique<length_filter>(std::move(src),
                                       static_cast<uint64_t>(*min),
                                       static_cast<uint64_t>(*max));

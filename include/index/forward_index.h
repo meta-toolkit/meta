@@ -37,6 +37,14 @@ namespace meta
 {
 namespace index
 {
+/**
+ * Basic exception for forward_index interactions.
+ */
+class forward_index_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
 
 /**
  * The forward_index stores information on a corpus by doc_ids.  Each doc_id key
@@ -46,15 +54,6 @@ namespace index
 class forward_index : public disk_index
 {
   public:
-    /**
-     * Basic exception for forward_index interactions.
-     */
-    class forward_index_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
     /**
      * forward_index is a friend of the factory method used to create
      * it.

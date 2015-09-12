@@ -49,7 +49,7 @@ void metadata_writer::write(doc_id d_id, uint64_t length, uint64_t num_unique,
 
     // write optional metadata
     if (mdata.size() != schema_.size())
-        throw corpus::metadata::exception{
+        throw corpus::metadata_exception{
             "schema mismatch when writing metadata"};
 
     for (const auto& fld : mdata)

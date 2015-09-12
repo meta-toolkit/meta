@@ -91,16 +91,16 @@ class invertible_map
     /**
      * The "inner" iterator representation of the invertible_map.
      */
-    typedef typename std::unordered_map
-        <Key, Value>::const_iterator InnerIterator;
+    typedef
+        typename std::unordered_map<Key, Value>::const_iterator InnerIterator;
 
     /**
      * The invertible_map iterator is really just a wrapper for the forward
      * (key -> value) unordered_map iterator. Use this iterator class the
      * same way you'd use it on an unordered_map.
      */
-    class Iterator : public std::iterator
-                     <std::bidirectional_iterator_tag, InnerIterator>
+    class Iterator
+        : public std::iterator<std::bidirectional_iterator_tag, InnerIterator>
     {
       private:
         /// The iterator of the underlying unordered_map
@@ -207,16 +207,15 @@ class invertible_map
 
     /// The internal map representing Value -> Key pairs
     std::unordered_map<Value, Key> backward_;
+};
 
+/**
+ * Basic exception for invertible_map interactions.
+ */
+class invertible_map_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for invertible_map interactions.
-     */
-    class invertible_map_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 }
 }

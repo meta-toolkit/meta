@@ -71,7 +71,7 @@ std::unique_ptr<node> binarizer::operator()(const internal_node& in)
     // locate head node
     auto head = in.head_constituent();
     if (!head)
-        throw exception{"Head constituent not labeled"};
+        throw tree_binarizer_exception{"Head constituent not labeled"};
 
     uint64_t head_idx = 0;
     for (uint64_t idx = 0; idx < in.num_children(); ++idx)

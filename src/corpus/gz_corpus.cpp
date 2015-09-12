@@ -18,7 +18,7 @@ gz_corpus::gz_corpus(const std::string& file, std::string encoding)
       class_stream_{file + ".labels.gz"}
 {
     if (!filesystem::file_exists(file + ".numdocs"))
-        throw corpus::corpus_exception{
+        throw corpus_exception{
             file + ".numdocs file does not exist (required for gz_corpus)"};
 
     try
@@ -27,8 +27,8 @@ gz_corpus::gz_corpus(const std::string& file, std::string encoding)
     }
     catch (const std::exception& ex)
     {
-        throw corpus::corpus_exception{"Malformed numdocs file " + file
-                                       + ".numdocs: " + ex.what()};
+        throw corpus_exception{"Malformed numdocs file " + file + ".numdocs: "
+                               + ex.what()};
     }
 }
 

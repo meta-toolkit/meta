@@ -87,16 +87,15 @@ class mmap_file
 
     /// no copying */
     const mmap_file& operator=(const mmap_file& other) = delete;
+};
 
+/**
+ * Basic exception for mmap_file interactions.
+ */
+class mmap_file_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for mmap_file interactions.
-     */
-    class mmap_file_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 }
 }

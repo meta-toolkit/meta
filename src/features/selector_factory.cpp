@@ -33,16 +33,16 @@ std::unique_ptr<feature_selector>
 {
     auto table = config.get_table("features");
     if (!table)
-        throw selector_factory::exception{
+        throw selector_factory_exception{
             "[features] table missing from config file"};
 
     auto prefix = table->get_as<std::string>("prefix");
     if (!prefix)
-        throw selector_factory::exception{"no prefix in [features] table"};
+        throw selector_factory_exception{"no prefix in [features] table"};
 
     auto method = table->get_as<std::string>("method");
     if (!method)
-        throw selector_factory::exception{
+        throw selector_factory_exception{
             "feature selection method required in [features] table"};
 
     uint64_t features_per_class = 20;

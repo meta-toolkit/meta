@@ -21,6 +21,13 @@ namespace meta
 namespace util
 {
 
+/** Simple exception for factories */
+class factory_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
+
 /**
  * Generic factory that can be subclassed to create factories for specific
  * types.
@@ -35,13 +42,7 @@ class factory
     using pointer = std::unique_ptr<Type>;
     /// Convenience typedef for the factory methods used to create objects
     using factory_method = std::function<pointer(Arguments...)>;
-
-    /** Simple exception for factories */
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using exception = factory_exception;
 
     /**
      * Obtains the singleton.

@@ -121,15 +121,17 @@ void naive_bayes::load(const std::string& prefix)
 #endif
 
     if (!tp_in)
-        throw exception{"term probability file not found at prefix " + prefix};
+        throw naive_bayes_exception{"term probability file not found at prefix "
+                                    + prefix};
 
     if (!cp_in)
-        throw exception{"class probability file not found at prefix " + prefix};
+        throw naive_bayes_exception{
+            "class probability file not found at prefix " + prefix};
 
     uint64_t size;
     auto bytes = io::packed::read(tp_in, size);
     if (bytes == 0)
-        throw exception{
+        throw naive_bayes_exception{
             "failed reading term probability file (no size written)"};
 
     term_probs_.clear();

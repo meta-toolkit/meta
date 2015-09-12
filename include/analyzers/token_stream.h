@@ -54,16 +54,15 @@ class token_stream
      * @return a unique_ptr to copy this object
      */
     virtual std::unique_ptr<token_stream> clone() const = 0;
-
-    /**
-     * Basic exception class for token stream interactions.
-     */
-    class token_stream_exception : public std::runtime_error
-    {
-        using std::runtime_error::runtime_error;
-    };
 };
 
+/**
+ * Basic exception class for token stream interactions.
+ */
+class token_stream_exception : public std::runtime_error
+{
+    using std::runtime_error::runtime_error;
+};
 }
 }
 #endif

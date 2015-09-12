@@ -199,6 +199,9 @@ class diff
     bool lm_generate_;
 };
 
+/**
+ * Exception class for diff operations.
+ */
 class diff_exception : public std::runtime_error
 {
     using std::runtime_error::runtime_error;

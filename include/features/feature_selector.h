@@ -190,6 +190,7 @@ class feature_selector
     /// P(c,t) indexed by [label_id][term_id]
     std::vector<std::vector<double>> co_occur_;
 };
+
 /**
  * Basic exception for feature selectors.
  */

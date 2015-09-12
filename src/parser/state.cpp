@@ -33,7 +33,7 @@ state::state(const sequence::sequence& sentence)
     for (const auto& obs : sentence)
     {
         if (!obs.tagged())
-            throw sr_parser::exception{"sentence must be POS tagged"};
+            throw sr_parser_exception{"sentence must be POS tagged"};
 
         std::string word = obs.symbol();
         class_label tag{obs.tag()};
@@ -113,7 +113,7 @@ state state::advance(const transition& trans) const
 
         default:
         {
-            throw sr_parser::exception{"Unreachable"};
+            throw sr_parser_exception{"Unreachable"};
         }
     }
 }
@@ -305,7 +305,7 @@ bool state::legal(const transition& trans) const
             return idle_legal(*this);
 
         default:
-            throw sr_parser::exception{"Unreachable"};
+            throw sr_parser_exception{"Unreachable"};
     }
 }
 
@@ -344,7 +344,7 @@ transition state::emergency_transition() const
         }
     }
 
-    throw sr_parser::exception{"emergency transition impossible"};
+    throw sr_parser_exception{"emergency transition impossible"};
 }
 
 size_t state::stack_size() const

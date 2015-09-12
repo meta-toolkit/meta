@@ -136,15 +136,6 @@ class sr_parser
     void save(const std::string& prefix) const;
 
     /**
-     * Exception thrown during parser actions
-     */
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
-    /**
      * Sparse vector representation of a state's features.
      */
     using feature_vector = std::unordered_map<std::string, float>;
@@ -288,6 +279,15 @@ class sr_parser
      * Beam size used during training.
      */
     uint64_t beam_size_ = 1;
+};
+
+/**
+ * Exception thrown during parser actions
+ */
+class sr_parser_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 }
 }

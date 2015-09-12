@@ -86,14 +86,6 @@ class vocabulary_map_writer
      */
     void insert(const std::string& term);
 
-    /**
-     * An exception that can be thrown during the building of the tree.
-     */
-    class vocabulary_map_writer_exception : public std::runtime_error
-    {
-        using std::runtime_error::runtime_error;
-    };
-
   private:
     /**
      * Writes null bytes to fill up the current block.
@@ -132,6 +124,14 @@ class vocabulary_map_writer
 
     /// Number of written nodes to be "merged" when writing the next level
     uint64_t written_nodes_;
+};
+
+/**
+ * An exception that can be thrown during the building of the tree.
+ */
+class vocabulary_map_writer_exception : public std::runtime_error
+{
+    using std::runtime_error::runtime_error;
 };
 }
 }

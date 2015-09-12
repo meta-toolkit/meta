@@ -23,10 +23,10 @@ metadata::schema metadata_schema(const cpptoml::table& config)
             auto type = table->get_as<std::string>("type");
 
             if (!name)
-                throw metadata::exception{"name needed for metadata field"};
+                throw metadata_exception{"name needed for metadata field"};
 
             if (!type)
-                throw metadata::exception{"type needed for metadata field"};
+                throw metadata_exception{"type needed for metadata field"};
 
             metadata::field_type ftype;
             if (*type == "int")
@@ -47,8 +47,8 @@ metadata::schema metadata_schema(const cpptoml::table& config)
             }
             else
             {
-                throw metadata::exception{"invalid metadata type: \"" + *type
-                                          + "\""};
+                throw metadata_exception{"invalid metadata type: \"" + *type
+                                         + "\""};
             }
             schema.emplace_back(*name, ftype);
         }

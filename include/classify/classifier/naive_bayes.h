@@ -82,12 +82,6 @@ class naive_bayes : public classifier
      */
     const static util::string_view id;
 
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
   private:
     /**
      * Contains P(term|class) for each class.
@@ -98,6 +92,12 @@ class naive_bayes : public classifier
      * Contains the number of documents in each class
      */
     stats::multinomial<class_label> class_probs_;
+};
+
+class naive_bayes_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 
 /**

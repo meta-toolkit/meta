@@ -87,15 +87,6 @@ class corpus
     static std::unique_ptr<corpus> load(const std::string& config_file);
     static std::unique_ptr<corpus> load(const cpptoml::table& config);
 
-    /**
-     * Basic exception for corpus interactions.
-     */
-    class corpus_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
   protected:
     /**
      * Helper function to be used by deriving classes in implementing
@@ -110,6 +101,15 @@ class corpus
     std::string encoding_;
     /// The metadata parser
     util::optional<metadata_parser> mdata_parser_;
+};
+
+/**
+ * Basic exception for corpus interactions.
+ */
+class corpus_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 }
 }

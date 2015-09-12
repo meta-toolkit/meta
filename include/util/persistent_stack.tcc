@@ -35,7 +35,7 @@ template <class T>
 persistent_stack<T> persistent_stack<T>::pop() const
 {
     if (size_ == 0)
-        throw exception{"pop() called on empty stack"};
+        throw persistent_stack_exception{"pop() called on empty stack"};
 
     return {head_->prev, size_ - 1};
 }
@@ -44,7 +44,7 @@ template <class T>
 const T& persistent_stack<T>::peek() const
 {
     if (!head_)
-        throw exception{"peek() called on empty stack"};
+        throw persistent_stack_exception{"peek() called on empty stack"};
 
     return head_->data;
 }

@@ -43,6 +43,14 @@ namespace meta
 {
 namespace index
 {
+/**
+ * Basic exception for inverted_index interactions.
+ */
+class inverted_index_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
 
 /**
  * The inverted_index class stores information on a corpus indexed by term_ids.
@@ -56,15 +64,6 @@ namespace index
 class inverted_index : public disk_index
 {
   public:
-    /**
-     * Basic exception for inverted_index interactions.
-     */
-    class inverted_index_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
     using primary_key_type = term_id;
     using secondary_key_type = doc_id;
     using postings_data_type = postings_data<term_id, doc_id, uint64_t>;

@@ -74,16 +74,15 @@ class nearest_centroid : public classifier
     /// The document centroids for this learner
     std::unordered_map<class_label, std::unordered_map<term_id, double>>
         centroids_;
+};
 
+/**
+ * Basic exception for nearest_centroid interactions.
+ */
+class nearest_centroid_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for nearest_centroid interactions.
-     */
-    class nearest_centroid_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 
 /**

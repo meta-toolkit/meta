@@ -99,11 +99,10 @@ std::unique_ptr<token_stream>
     make_filter<list_filter>(std::unique_ptr<token_stream> src,
                              const cpptoml::table& config)
 {
-    using exception = token_stream::token_stream_exception;
     auto method = config.get_as<std::string>("method");
     auto file = config.get_as<std::string>("file");
     if (!file)
-        throw exception{"file required for list_filter config"};
+        throw token_stream_exception{"file required for list_filter config"};
 
     list_filter::type type = list_filter::type::REJECT;
     if (method)
@@ -111,7 +110,7 @@ std::unique_ptr<token_stream>
         if (*method == "accept")
             type = list_filter::type::ACCEPT;
         else if (*method != "reject")
-            throw exception{"invalid method for list_filter"};
+            throw token_stream_exception{"invalid method for list_filter"};
     }
 
     return make_unique<list_filter>(std::move(src), *file, type);

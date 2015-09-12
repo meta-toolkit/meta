@@ -27,12 +27,15 @@ class binarizer : public tree_transformer
   public:
     std::unique_ptr<node> operator()(const leaf_node&) override;
     std::unique_ptr<node> operator()(const internal_node&) override;
+};
 
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+/**
+ * Simple exception class for tree binarizer operations.
+ */
+class tree_binarizer_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 }
 }

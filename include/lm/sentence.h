@@ -181,6 +181,9 @@ class sentence
     std::vector<double> weights_;
 };
 
+/**
+ * Exception for sentence operations.
+ */
 class sentence_exception : public std::runtime_error
 {
     using std::runtime_error::runtime_error;

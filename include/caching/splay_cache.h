@@ -169,16 +169,15 @@ class splay_cache
      * @param subroot
      */
     void rotate_right(node*& subroot);
+};
 
+/**
+ * Basic exception for splay_cache interactions.
+ */
+class splay_cache_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for splay_cache interactions.
-     */
-    class splay_cache_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 }
 }

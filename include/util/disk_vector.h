@@ -35,7 +35,7 @@ template <class T>
 class disk_vector
 {
     static_assert(std::is_integral<T>::value || std::is_floating_point<T>::value
-                  || std::is_base_of<util::numeric, T>::value,
+                      || std::is_base_of<util::numeric, T>::value,
                   "disk_vector templated types must be integral types");
 
   public:
@@ -250,16 +250,15 @@ class disk_vector
 
     /// the file descriptor used to open and close the mmap file
     int file_desc_;
+};
 
+/**
+ * Basic exception for disk_vector.
+ */
+class disk_vector_exception : public std::runtime_error
+{
   public:
-    /**
-     * Basic exception for disk_vector.
-     */
-    class disk_vector_exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
+    using std::runtime_error::runtime_error;
 };
 }
 }

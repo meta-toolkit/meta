@@ -65,17 +65,7 @@ class transition_map
      */
     uint64_t size() const;
 
-    /**
-     * Exception thrown from interactions with the transition_map.
-     */
-    class exception : public std::runtime_error
-    {
-      public:
-        using std::runtime_error::runtime_error;
-    };
-
   private:
-
     /**
      * Loads the transitions from the given file.
      * @param store The transitions model input stream
@@ -91,6 +81,15 @@ class transition_map
      * The "map" from id to transition.
      */
     std::vector<transition> transitions_;
+};
+
+/**
+ * Exception thrown from interactions with the transition_map.
+ */
+class transition_map_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 }
 }
