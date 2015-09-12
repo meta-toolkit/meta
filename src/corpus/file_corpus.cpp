@@ -22,6 +22,9 @@ file_corpus::file_corpus(const std::string& prefix, const std::string& doc_list,
     while (psr.has_next())
     {
         std::string line = psr.next();
+        if (line.empty())
+            throw corpus_exception{"empty line in corpus list: line #"
+                                   + std::to_string(idx + 1)};
         size_t space = line.find_first_of(" ");
         if (space != std::string::npos)
         {
@@ -34,6 +37,7 @@ file_corpus::file_corpus(const std::string& prefix, const std::string& doc_list,
             throw corpus_exception{"document list needs class label prefix "
                                    "(add [none] if there are no labels)"};
         }
+
         ++idx;
     }
 }
