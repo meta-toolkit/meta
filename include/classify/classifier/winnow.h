@@ -26,6 +26,17 @@ namespace classify
  * Implements the Winnow classifier, a simplistic linear classifier for
  * linearly-separable data. As opposed to winnow (which uses an additive
  * update rule), winnow uses a multiplicative update rule.
+ *
+ * Required config parameters: none
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * [classifier]
+ * method = "winnow"
+ * m = 1.5
+ * gamma = 0.05
+ * max-iter = 100
+ * ~~~
  */
 class winnow : public classifier
 {

@@ -24,6 +24,24 @@ namespace classify
  * Implements stochastic gradient descent for learning binary linear
  * classifiers. These may be extended to multiclass classification using
  * the one_vs_all or all_vs_all adapters.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [classifier]
+ * method = "sgd"
+ * prefix = "path-to-model"
+ * loss = "hinge" # or "huber", "least-squares", "logistic", etc
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * [classifier]
+ * alpha = 0.001
+ * gamma = 1e-6
+ * bias = 1.0
+ * lambda = 0.0001
+ * max-iter = 50
+ * ~~~
  */
 class sgd : public binary_classifier
 {

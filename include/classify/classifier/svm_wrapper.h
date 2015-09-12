@@ -29,6 +29,19 @@ namespace classify
  * submodule and have compiled both libsvm and liblinear.
  *
  * If no kernel is selected, liblinear is used. Otherwise, libsvm is used.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [classifier]
+ * method = "svm-wrapper"
+ * path = "path-to-libsvm-modules"
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * [classifier]
+ * kernel = "quadratic" # or "none", "cubic", "quartic", "rbf", or "sigmoid"
+ * ~~~
  */
 class svm_wrapper : public classifier
 {

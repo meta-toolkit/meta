@@ -24,6 +24,16 @@ namespace classify
  * entails creating a classifier for each pair of classes, and assigning
  * the label which gets the most "votes" from each individual
  * binary_classifier as the label for a given document.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [classifier]
+ * method = "one-vs-one"
+ * [classifier.base]
+ * method = "sgd" # for example
+ * loss = "hinge" # for example
+ * prefix = "sgd-model" # for example
+ * ~~~
  */
 class one_vs_one : public classifier
 {

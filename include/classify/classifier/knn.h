@@ -23,6 +23,22 @@ namespace classify
 
 /**
  * Implements the k-Nearest Neighbor lazy learning classification algorithm.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [classifier]
+ * method = "knn"
+ * k = 10
+ *
+ * [classifier.ranker]
+ * method = "dirichlet-prior" # any ranker id
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * [classifier]
+ * weighted = true # default is false
+ * ~~~
  */
 class knn : public classifier
 {

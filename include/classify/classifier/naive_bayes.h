@@ -25,6 +25,15 @@ namespace classify
 /**
  * Implements the Naive Bayes classifier, a simplistic probabilistic classifier
  * that uses Bayes' theorem with strong feature independence assumptions.
+ *
+ * Required config parameters: none.
+ * Optional config parameters:
+ * ~~~toml
+ * [classifier]
+ * method = "naive-bayes"
+ * alpha = 0.1
+ * beta = 0.1
+ * ~~~
  */
 class naive_bayes : public classifier
 {

@@ -24,6 +24,32 @@ namespace classify
  * Implements a perceptron classifier, but using the dual formulation of
  * the problem. This allows the perceptron to be used for data that is not
  * necessarily linearly separable via the use of a kernel function.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [classifier]
+ * method = "dual-perceptron"
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * [classifier]
+ * alpha = 0.1
+ * gamma = 0.05
+ * bias = 0.0
+ *
+ * # kernels (optional, but if used they have required params)
+ * kernel = "polynomial"
+ *
+ * # or
+ * kernel = "rbf"
+ * rbf-gamma = 0.1 # value required
+ *
+ * # or
+ * kernel = "sigmoid"
+ * sigmoid-alpha = 0.1 # value required
+ * sigmoid-c = 0.1 # value required
+ * ~~~
  */
 class dual_perceptron : public classifier
 {

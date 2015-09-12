@@ -48,6 +48,23 @@ namespace classify
  * The individual class probabilities may be recovered by using the
  * `predict` function: this returns an `unordered_map` of `class_label` to
  * probability.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [classifier]
+ * method = "logistic-regression"
+ * prefix = "path-to-model"
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * [classifier]
+ * alpha = 0.001
+ * gamma = 1e-6
+ * bias = 1.0
+ * lambda = 0.0001
+ * max-iter = 50
+ * ~~~
  */
 class logistic_regression : public classifier
 {

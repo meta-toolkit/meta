@@ -27,6 +27,9 @@ namespace classify
  * centroid they query is closest to is returned.
  * @see Centroid-Based Document Classification: Analysis and Experimental
  * Results, Eui-Hong Han and George Karypis, 2000
+ *
+ * Required config parameters: none
+ * Optional config parameters: none
  */
 class nearest_centroid : public classifier
 {

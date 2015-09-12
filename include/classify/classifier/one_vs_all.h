@@ -21,6 +21,16 @@ namespace classify
 /**
  * Generalizes binary classifiers to operate over multiclass types using the
  * one vs all method.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [classifier]
+ * method = "one-vs-all"
+ * [classifier.base]
+ * method = "sgd" # for example
+ * loss = "hinge" # for example
+ * prefix = "sgd-model" # for example
+ * ~~~
  */
 class one_vs_all : public classifier
 {
