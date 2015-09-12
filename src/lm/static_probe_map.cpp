@@ -59,7 +59,7 @@ util::optional<lm_node> static_probe_map::find(const token_list& key) const
 uint64_t static_probe_map::hash(const token_list& tokens) const
 {
     util::murmur_hash<> hasher{seed_};
-    hasher(tokens.tokens().data(), tokens.size() * sizeof(term_id));
+    hash_append(hasher, tokens);
     return static_cast<std::size_t>(hasher);
 }
 }

@@ -107,9 +107,7 @@ inline bool operator!=(const token_list& lhs, const token_list& rhs)
 template <class HashAlgorithm>
 void hash_append(HashAlgorithm& h, const token_list& list)
 {
-    using util::hash_append;
-    for (const auto& val : list.tokens())
-        hash_append(h, val);
+    h(list.tokens().data(), sizeof(term_id) * list.size());
     hash_append(h, list.size());
 }
 }
