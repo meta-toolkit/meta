@@ -4,7 +4,6 @@
  */
 
 #include "index/metadata_writer.h"
-#include "io/binary.h"
 #include "io/packed.h"
 
 namespace meta
@@ -23,17 +22,19 @@ metadata_writer::metadata_writer(const std::string& prefix, uint64_t num_docs,
     // cast below is needed for OS X overload resolution
     byte_pos_ += io::packed::write(db_file_,
                                    static_cast<uint64_t>(schema_.size() + 2));
-    byte_pos_ += io::write_binary(db_file_, std::string{"length"});
-    byte_pos_ += io::write_binary(db_file_,
-                                  corpus::metadata::field_type::UNSIGNED_INT);
-    byte_pos_ += io::write_binary(db_file_, std::string{"unique-terms"});
-    byte_pos_ += io::write_binary(db_file_,
-                                  corpus::metadata::field_type::UNSIGNED_INT);
+
+    byte_pos_ += io::packed::write(db_file_, std::string{"length"});
+    byte_pos_ += io::packed::write(db_file_,
+                                   corpus::metadata::field_type::UNSIGNED_INT);
+
+    byte_pos_ += io::packed::write(db_file_, "unique-terms");
+    byte_pos_ += io::packed::write(db_file_,
+                                   corpus::metadata::field_type::UNSIGNED_INT);
 
     for (const auto& finfo : schema_)
     {
-        byte_pos_ += io::write_binary(db_file_, finfo.name);
-        byte_pos_ += io::write_binary(db_file_, finfo.type);
+        byte_pos_ += io::packed::write(db_file_, finfo.name);
+        byte_pos_ += io::packed::write(db_file_, finfo.type);
     }
 }
 
@@ -69,7 +70,7 @@ void metadata_writer::write(doc_id d_id, uint64_t length, uint64_t num_unique,
                 break;
 
             case corpus::metadata::field_type::STRING:
-                byte_pos_ += io::write_binary(db_file_, fld.str);
+                byte_pos_ += io::packed::write(db_file_, fld.str);
                 break;
         }
     }

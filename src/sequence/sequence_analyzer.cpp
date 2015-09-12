@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
-#include "io/binary.h"
+#include "io/packed.h"
 #if META_HAS_ZLIB
 #include "io/gzstream.h"
 #endif
@@ -54,7 +54,7 @@ void sequence_analyzer::load_feature_id_mapping(std::istream& input)
         throw exception{"missing feature id mapping"};
 
     uint64_t num_keys;
-    io::read_binary(input, num_keys);
+    io::packed::read(input, num_keys);
     printing::progress progress{" > Loading feature mapping: ", num_keys};
     num_keys = 0;
     while (input)
@@ -62,8 +62,8 @@ void sequence_analyzer::load_feature_id_mapping(std::istream& input)
         progress(++num_keys);
         std::string key;
         feature_id value;
-        io::read_binary(input, key);
-        io::read_binary(input, value);
+        io::packed::read(input, key);
+        io::packed::read(input, value);
         feature_id_mapping_[key] = value;
     }
 }
@@ -86,14 +86,13 @@ void sequence_analyzer::save(const std::string& prefix) const
 #else
     std::ofstream output{prefix + "/feature.mapping", std::ios::binary};
 #endif
-    uint64_t sze = feature_id_mapping_.size();
-    io::write_binary(output, sze);
+    io::packed::write(output, feature_id_mapping_.size());
     uint64_t i = 0;
     for (const auto& pair : feature_id_mapping_)
     {
         progress(++i);
-        io::write_binary(output, pair.first);
-        io::write_binary(output, pair.second);
+        io::packed::write(output, pair.first);
+        io::packed::write(output, pair.second);
     }
     map::save_mapping(label_id_mapping_, prefix + "/label.mapping");
 }

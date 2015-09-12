@@ -11,7 +11,6 @@
 #if META_HAS_ZLIB
 #include "io/gzstream.h"
 #endif
-#include "io/binary.h"
 #include "io/packed.h"
 
 namespace meta
@@ -104,7 +103,7 @@ void naive_bayes::save(const std::string& prefix) const
     {
         const auto& label = dist.first;
         const auto& probs = dist.second;
-        io::write_binary(tp_out, static_cast<std::string>(label));
+        io::packed::write(tp_out, static_cast<const std::string&>(label));
         probs.save(tp_out);
     }
     class_probs_.save(cp_out);
@@ -139,7 +138,7 @@ void naive_bayes::load(const std::string& prefix)
     for (uint64_t i = 0; i < size; ++i)
     {
         std::string label;
-        io::read_binary(tp_in, label);
+        io::packed::read(tp_in, label);
         term_probs_[class_label{label}].load(tp_in);
     }
     class_probs_.load(cp_in);

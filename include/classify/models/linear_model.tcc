@@ -10,7 +10,7 @@
 #include <fstream>
 
 #include "classify/models/linear_model.h"
-#include "io/binary.h"
+#include "io/packed.h"
 #include "logging/logger.h"
 #include "util/fixed_heap.h"
 
@@ -26,7 +26,7 @@ void linear_model<FeatureId, FeatureValue, ClassId>::load(std::istream& model)
         throw exception{"model not found"};
 
     uint64_t num_feats;
-    io::read_binary(model, num_feats);
+    io::packed::read(model, num_feats);
 
     for (uint64_t i = 0; i < num_feats; ++i)
     {
@@ -34,10 +34,10 @@ void linear_model<FeatureId, FeatureValue, ClassId>::load(std::istream& model)
             throw exception{"malformed model file (too few features written)"};
 
         feature_id feature_name;
-        io::read_binary(model, feature_name);
+        io::packed::read(model, feature_name);
 
         uint64_t num_cids;
-        io::read_binary(model, num_cids);
+        io::packed::read(model, num_cids);
 
         for (uint64_t j = 0; j < num_cids; ++j)
         {
@@ -47,8 +47,8 @@ void linear_model<FeatureId, FeatureValue, ClassId>::load(std::istream& model)
 
             class_id cid;
             feature_value val;
-            io::read_binary(model, cid);
-            io::read_binary(model, val);
+            io::packed::read(model, cid);
+            io::packed::read(model, val);
 
             weights_[feature_name][cid] = val;
         }
@@ -60,20 +60,20 @@ void linear_model<FeatureId, FeatureValue, ClassId>::save(
     std::ostream& model) const
 {
     uint64_t sze = weights_.size();
-    io::write_binary(model, sze);
+    io::packed::write(model, sze);
     for (const auto& feat_vec : weights_)
     {
         const auto& feat = feat_vec.first;
         const auto& weights = feat_vec.second;
 
-        io::write_binary(model, feat);
+        io::packed::write(model, feat);
         uint64_t size = weights.size();
-        io::write_binary(model, size);
+        io::packed::write(model, size);
 
         for (const auto& weight : weights)
         {
-            io::write_binary(model, weight.first);
-            io::write_binary(model, weight.second);
+            io::packed::write(model, weight.first);
+            io::packed::write(model, weight.second);
         }
     }
 }
