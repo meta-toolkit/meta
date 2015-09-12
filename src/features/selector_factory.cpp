@@ -45,10 +45,8 @@ std::unique_ptr<feature_selector>
         throw selector_factory_exception{
             "feature selection method required in [features] table"};
 
-    uint64_t features_per_class = 20;
-    auto num_features = table->get_as<int64_t>("features-per-class");
-    if (num_features)
-        features_per_class = *num_features;
+    uint64_t features_per_class
+        = table->get_as<int64_t>("features-per-class").value_or(20);
 
     auto selector
         = selector_factory::get().create(*method, *table, std::move(idx));

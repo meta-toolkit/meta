@@ -30,28 +30,18 @@ diff::diff(const cpptoml::table& config) : lm_{config}
         throw diff_exception{"max-edits not specified in config"};
     max_edits_ = *edits;
 
-    auto b_pen = table->get_as<double>("base-penalty");
-    base_penalty_ = b_pen ? *b_pen : 0.0;
-
-    auto i_pen = table->get_as<double>("insert-penalty");
-    insert_penalty_ = i_pen ? *i_pen : 0.0;
-
-    auto s_pen = table->get_as<double>("substitute-penalty");
-    substitute_penalty_ = s_pen ? *s_pen : 0.0;
-
-    auto r_pen = table->get_as<double>("remove-penalty");
-    remove_penalty_ = r_pen ? *r_pen : 0.0;
-
-    auto max_cand = table->get_as<int64_t>("max-candidates");
-    max_cand_size_ = max_cand ? *max_cand : 20;
-
     auto lambda = table->get_as<double>("lambda");
     lambda_ = lambda ? *lambda : 0.5;
     if (lambda_ < 0.0 || lambda_ > 1.0)
         throw diff_exception{"lambda value has to be on [0,1]"};
 
-    auto lm_gen = table->get_as<bool>("lm-generate");
-    lm_generate_ = lm_gen ? *lm_gen : false;
+    base_penalty_ = table->get_as<double>("base-penalty").value_or(0.0);
+    insert_penalty_ = table->get_as<double>("insert-penalty").value_or(0.0);
+    substitute_penalty_
+        = table->get_as<double>("substitute-penalty").value_or(0.0);
+    remove_penalty_ = table->get_as<double>("remove-penalty").value_or(0.0);
+    max_cand_size_ = table->get_as<int64_t>("max-candidates").value_or(20);
+    lm_generate_ = table->get_as<bool>("lm-generate").value_or(false);
 
     set_stems(*table);
     set_function_words(*table);
