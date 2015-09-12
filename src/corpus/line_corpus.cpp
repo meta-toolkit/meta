@@ -30,8 +30,21 @@ line_corpus::line_corpus(const std::string& file, std::string encoding,
             num_lines_ = filesystem::num_lines(file + ".labels");
     }
 
+    if (num_lines_ == 0 && filesystem::file_exists(file + ".numdocs"))
+    {
+        try
+        {
+            num_lines_ = std::stoul(filesystem::file_text(file + ".numdocs"));
+        }
+        catch (const std::exception& ex)
+        {
+            throw corpus_exception{"Malformed numdocs file " + file
+                                   + ".numdocs: " + ex.what()};
+        }
+    }
+
     // if we couldn't determine the number of lines in the constructor and the
-    // two optional files don't exist, we have to count newlines here
+    // optional files don't exist, we have to count newlines here
     if (num_lines_ == 0)
         num_lines_ = filesystem::num_lines(file);
 }
