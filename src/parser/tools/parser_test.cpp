@@ -24,6 +24,9 @@ std::string two_digit(uint8_t num)
     return ss.str();
 }
 
+/**
+ * For config parameters, see parser_train.
+ */
 int main(int argc, char** argv)
 {
 

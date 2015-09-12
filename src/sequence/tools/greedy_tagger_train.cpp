@@ -20,7 +20,23 @@ std::string two_digit(uint8_t num)
     ss << std::setw(2) << std::setfill('0') << static_cast<int>(num);
     return ss.str();
 }
-
+/**
+ * Required config parameters:
+ * ~~~toml
+ * prefix = "global-data-prefix"
+ *
+ * [sequence]
+ * prefix = "path-to-model"
+ * treebank = "penn-treebank" # relative to data prefix
+ * corpus = "wsj"
+ * section-size = 99
+ * train-sections = [0, 18]
+ * dev-sections = [19, 21]
+ * test-sections = [22, 24]
+ * ~~~
+ *
+ * Optional config parameters: none
+ */
 int main(int argc, char** argv)
 {
     if (argc < 2)

@@ -21,6 +21,28 @@ std::string two_digit(uint8_t num)
     return ss.str();
 }
 
+/**
+ * Required config parameters:
+ * ~~~toml
+ * prefix = "global-data-prefix"
+ *
+ * [parser]
+ * prefix = "path-to-model"
+ * treebank = "penn-treebank" # relative to data prefix
+ * corpus = "wsj"
+ * section-size = 99
+ * train-sections = [0, 18]
+ * dev-sections = [19, 21]
+ * test-sections = [22, 24]
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * [parser]
+ * train-threads = 8
+ * train-algorithm = "early-termination" # or "beam-search"
+ * ~~~
+ */
 int main(int argc, char** argv)
 {
 

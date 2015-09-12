@@ -22,6 +22,9 @@ std::string two_digit(uint8_t num)
     return ss.str();
 }
 
+/**
+ * For config params, see greedy_tagger_train.
+ */
 int main(int argc, char** argv)
 {
     if (argc < 2)
