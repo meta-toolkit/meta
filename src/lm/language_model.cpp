@@ -34,13 +34,14 @@ language_model::language_model(const cpptoml::table& config)
         auto time = common::time(
             [&]()
             {
+                prefix_ = *binary_file;
+                load_vocab();
                 while (filesystem::file_exists(*binary_file + std::to_string(N_)
                                                + ".binlm"))
                     lm_.emplace_back(*binary_file + std::to_string(N_++)
                                      + ".binlm");
             });
         LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
-        prefix_ = *binary_file;
     }
     else if (arpa_file && binary_file)
     {
@@ -57,7 +58,8 @@ language_model::language_model(const cpptoml::table& config)
         throw language_model_exception{
             "arpa-file or binary-file-prefix needed in config file"};
 
-    load_vocab();
+    // cache this value
+    unk_prob_ = lm_[0].find(token_list{"<unk>", vocabulary_})->prob;
 }
 
 void language_model::read_arpa_format(const std::string& arpa_file)
@@ -81,6 +83,7 @@ void language_model::read_arpa_format(const std::string& arpa_file)
 
     lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm", count[N_]);
     std::ofstream unigrams{prefix_ + "0.strings"};
+    term_id unigram_id{0};
     while (std::getline(infile, buffer))
     {
         // if blank or end
@@ -103,10 +106,14 @@ void language_model::read_arpa_format(const std::string& arpa_file)
         float backoff = 0.0;
         if (second_tab != std::string::npos)
             backoff = std::stof(buffer.substr(second_tab + 1));
-        lm_[N_].insert(ngram, prob, backoff);
 
         if (N_ == 0)
+        {
             unigrams << ngram << std::endl;
+            vocabulary_.emplace(ngram, unigram_id++);
+        }
+
+        lm_[N_].insert(token_list{ngram, vocabulary_}, prob, backoff);
     }
 
     ++N_;
@@ -123,10 +130,12 @@ std::vector<std::pair<std::string, float>>
     };
     util::fixed_heap<pair_t, decltype(comp)> candidates{k, comp};
 
+    token_list candidate{prev, vocabulary_};
+    candidate.push_back(0_tid);
     for (const auto& word : vocabulary_)
     {
-        auto candidate = sentence{prev.to_string() + " " + word};
-        candidates.emplace(word, log_prob(candidate));
+        candidate[candidate.size() - 1] = word.second;
+        candidates.emplace(word.first, log_prob(candidate));
     }
 
     return candidates.reverse_and_clear();
@@ -136,56 +145,62 @@ void language_model::load_vocab()
 {
     std::string word;
     std::ifstream unigrams{prefix_ + "0.strings"};
+    term_id cur{0};
     while (std::getline(unigrams, word))
     {
         if (word.empty())
             continue;
 
-        vocabulary_.push_back(word);
+        vocabulary_.emplace(word, cur++);
     }
 }
 
-float language_model::prob_calc(sentence tokens) const
+float language_model::prob_calc(token_list tokens) const
 {
     if (tokens.size() == 0)
         throw language_model_exception{"prob_calc: tokens is empty!"};
 
     if (tokens.size() == 1)
     {
-        auto opt = lm_[0].find(tokens[0]);
+        auto opt = lm_[0].find(token_list{tokens[0]});
         if (opt)
             return opt->prob;
-        return lm_[0].find("<unk>")->prob;
+        return unk_prob_;
     }
     else
     {
-        auto opt = lm_[tokens.size() - 1].find(tokens.to_string());
+        auto opt = lm_[tokens.size() - 1].find(tokens);
         if (opt)
             return opt->prob;
 
-        auto hist = tokens(0, tokens.size() - 1);
+        auto hist = tokens;
+        hist.pop_back();
         tokens.pop_front();
         if (tokens.size() == 1)
         {
-            hist = hist(0, 1);
             auto opt = lm_[0].find(hist[0]);
             if (!opt)
-                hist.substitute(0, "<unk>");
+                hist[0] = vocabulary_.at("<unk>");
         }
 
-        opt = lm_[hist.size() - 1].find(hist.to_string());
+        opt = lm_[hist.size() - 1].find(hist);
         if (opt)
             return opt->backoff + prob_calc(tokens);
         return prob_calc(tokens);
     }
 }
 
-float language_model::log_prob(sentence tokens) const
+float language_model::log_prob(const sentence& tokens) const
+{
+    return log_prob(token_list{tokens, vocabulary_});
+}
+
+float language_model::log_prob(const token_list& tokens) const
 {
     float prob = 0.0f;
 
     // tokens < N
-    sentence ngram;
+    token_list ngram;
     for (uint64_t i = 0; i < N_ - 1 && i < tokens.size(); ++i)
     {
         ngram.push_back(tokens[i]);

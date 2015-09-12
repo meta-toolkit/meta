@@ -17,7 +17,7 @@ static_probe_map::static_probe_map(const std::string& filename,
 {
 }
 
-void static_probe_map::insert(const std::string& key, float prob, float backoff)
+void static_probe_map::insert(const token_list& key, float prob, float backoff)
 {
     auto hashed = hash(key);
     auto idx = (hashed % (table_.size() / 2)) * 2;
@@ -39,7 +39,7 @@ void static_probe_map::insert(const std::string& key, float prob, float backoff)
     }
 }
 
-util::optional<lm_node> static_probe_map::find(const std::string& key) const
+util::optional<lm_node> static_probe_map::find(const token_list& key) const
 {
     auto hashed = hash(key);
     auto idx = (hashed % (table_.size() / 2)) * 2;
@@ -56,10 +56,10 @@ util::optional<lm_node> static_probe_map::find(const std::string& key) const
     }
 }
 
-uint64_t static_probe_map::hash(const std::string& str) const
+uint64_t static_probe_map::hash(const token_list& tokens) const
 {
     util::murmur_hash<> hasher{seed_};
-    hasher(str.data(), str.length());
+    hasher(tokens.tokens().data(), tokens.size() * sizeof(term_id));
     return static_cast<std::size_t>(hasher);
 }
 }

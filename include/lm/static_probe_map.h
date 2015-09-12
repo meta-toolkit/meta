@@ -12,6 +12,7 @@
 
 #include <utility>
 #include "lm/lm_node.h"
+#include "lm/token_list.h"
 #include "util/disk_vector.h"
 #include "util/optional.h"
 
@@ -51,7 +52,7 @@ class static_probe_map
      * @return an optional language model node containing the probability and
      * backoff value for the key
      */
-    util::optional<lm_node> find(const std::string& key) const;
+    util::optional<lm_node> find(const token_list& key) const;
 
     /**
      * @param key The string key to insert (though only a uint64_t hash is
@@ -59,13 +60,13 @@ class static_probe_map
      * @param prob The probability of the key in this LM
      * @param backoff The backoff probability for this LM
      */
-    void insert(const std::string& key, float prob, float backoff);
+    void insert(const token_list& key, float prob, float backoff);
 
   private:
     /**
-     * Helper function to create hasher and hash str
+     * Helper function to create hasher and hash token list
      */
-    uint64_t hash(const std::string& str) const;
+    uint64_t hash(const token_list& tokens) const;
 
     /// A seed for the string hash function
     static constexpr uint64_t seed_ = 0x2bedf99b3aa222d9;

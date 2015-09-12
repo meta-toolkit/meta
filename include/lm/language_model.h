@@ -17,6 +17,7 @@
 #include "cpptoml.h"
 #include "lm/sentence.h"
 #include "lm/static_probe_map.h"
+#include "lm/token_list.h"
 
 namespace meta
 {
@@ -77,7 +78,7 @@ class language_model
      * @param tokens A sequence of n tokens (one sentence)
      * @return the log probability of the likelihood of this sentence
      */
-    float log_prob(sentence tokens) const;
+    float log_prob(const sentence& tokens) const;
 
     /**
      * @param prev Seen tokens to base the next token off of
@@ -100,10 +101,15 @@ class language_model
      * @param tokens
      * @return the log probability of one ngram
      */
-    float prob_calc(sentence tokens) const;
+    float prob_calc(token_list tokens) const;
 
     /**
-     * Loads unigram vocabulary from text file to allow top_k to work.
+     * Internal log_prob that takes a token_list
+     */
+    float log_prob(const token_list& tokens) const;
+
+    /**
+     * Loads unigram vocabulary from text file
      */
     void load_vocab();
 
@@ -111,9 +117,11 @@ class language_model
 
     std::vector<static_probe_map> lm_;
 
-    std::vector<std::string> vocabulary_;
+    std::unordered_map<std::string, term_id> vocabulary_;
 
     std::string prefix_;
+
+    float unk_prob_;
 };
 
 class language_model_exception : public std::runtime_error
