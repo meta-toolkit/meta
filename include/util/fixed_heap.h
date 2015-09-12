@@ -10,7 +10,7 @@
 #ifndef META_FIXED_HEAP_H_
 #define META_FIXED_HEAP_H_
 
-#include <queue>
+#include <vector>
 
 namespace meta
 {
@@ -24,6 +24,10 @@ template <class T, class Comp>
 class fixed_heap
 {
   public:
+    using iterator = typename std::vector<T>::iterator;
+    using const_iterator = typename std::vector<T>::const_iterator;
+    using size_type = typename std::vector<T>::size_type;
+
     /**
      * @param max_elems
      * @param comp The priority comparison function for elements in this heap
@@ -47,22 +51,46 @@ class fixed_heap
      * @return the current number of elements in this heap; will always be less
      * than or equal to max_elems()
      */
-    uint64_t size() const;
+    size_type size() const;
 
     /**
      * @return the maximum number of elements this heap will store
      */
-    uint64_t max_elems() const;
+    size_type max_elems() const;
 
     /**
      * @return a reverse-sorted list
      */
     std::vector<T> reverse_and_clear();
 
+    /**
+     * @return an iterator to the beginning of the fixed_heap
+     * @note the heap is not fully sorted
+     */
+    iterator begin();
+
+    /**
+     * @return an iterator to the end of the fixed_heap
+     * @note the heap is not fully sorted
+     */
+    iterator end();
+
+    /**
+     * @return a const_iterator to the beginning of the fixed_heap
+     * @note the heap is not fully sorted
+     */
+    const_iterator begin() const;
+
+    /**
+     * @return a const_iterator to the end of the fixed_heap
+     * @note the heap is not fully sorted
+     */
+    const_iterator end() const;
+
   private:
     uint64_t max_elems_;
     Comp comp_;
-    std::priority_queue<T, std::vector<T>, decltype(comp_)> pq_;
+    std::vector<T> pq_;
 };
 }
 }
