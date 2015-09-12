@@ -69,24 +69,29 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
     else
     {
         using scored_state = std::pair<state, float>;
-        auto comp = [&](const scored_state& lhs, const scored_state& rhs)
+
+        struct comparator
         {
-            return std::get<1>(lhs) > std::get<1>(rhs);
+            bool operator()(const scored_state& lhs,
+                            const scored_state& rhs) const
+            {
+                return std::get<1>(lhs) > std::get<1>(rhs);
+            };
         };
 
-        auto fin = [&](const scored_state& ss)
+        auto fin = [](const scored_state& ss)
         {
             return std::get<0>(ss).finalized();
         };
 
-        using fixed_heap = util::fixed_heap<scored_state, decltype(comp)>;
+        using fixed_heap = util::fixed_heap<scored_state, comparator>;
 
-        fixed_heap agenda{beam_size_, comp};
+        fixed_heap agenda{beam_size_, comparator{}};
         agenda.emplace(st, 0);
 
         while (!std::all_of(agenda.begin(), agenda.end(), fin))
         {
-            fixed_heap new_agenda{beam_size_, comp};
+            fixed_heap new_agenda{beam_size_, comparator{}};
 
             for (const auto& ss : agenda)
             {
@@ -127,7 +132,8 @@ parse_tree sr_parser::parse(const sequence::sequence& sentence) const
         }
 
         // min because comp is backwards
-        auto best = std::min_element(agenda.begin(), agenda.end(), comp);
+        auto best
+            = std::min_element(agenda.begin(), agenda.end(), comparator{});
 
         parse_tree tree{std::get<0>(*best).stack_item(0)->clone()};
         debinarizer debin;
@@ -304,19 +310,22 @@ std::pair<uint64_t, uint64_t> sr_parser::train_beam_search(
     // get<1>() is the score
     // get<2>() is whether or not it is the same as the gold state
 
-    auto score_compare = [](const scored_state& a, const scored_state& b)
+    struct score_compare
     {
-        return std::get<1>(a) > std::get<1>(b);
+        bool operator()(const scored_state& a, const scored_state& b) const
+        {
+            return std::get<1>(a) > std::get<1>(b);
+        }
     };
 
-    using fixed_heap = util::fixed_heap<scored_state, decltype(score_compare)>;
+    using fixed_heap = util::fixed_heap<scored_state, score_compare>;
 
-    fixed_heap agenda{options.beam_size, score_compare};
+    fixed_heap agenda{options.beam_size, score_compare{}};
     agenda.emplace(state{tree}, 0, true);
 
     for (const auto& gold_trans : transitions)
     {
-        fixed_heap new_agenda{options.beam_size, score_compare};
+        fixed_heap new_agenda{options.beam_size, score_compare{}};
 
         // keep track if any of the new states is the gold one
         bool any_gold = false;
