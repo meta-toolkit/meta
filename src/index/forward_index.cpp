@@ -392,7 +392,13 @@ void forward_index::impl::merge_chunks(size_t num_chunks,
     std::vector<input_chunk> chunks;
     chunks.reserve(num_chunks);
     for (size_t i = 0; i < num_chunks; ++i)
-        chunks.emplace_back(idx_->index_name() + "/chunk-" + std::to_string(i));
+    {
+        auto filename = idx_->index_name() + "/chunk-" + std::to_string(i);
+        if (filesystem::file_exists(filename)
+            && filesystem::file_size(filename) > 0)
+            chunks.emplace_back(idx_->index_name() + "/chunk-"
+                                + std::to_string(i));
+    }
 
     printing::progress progress{
         " > Merging postings: ",
