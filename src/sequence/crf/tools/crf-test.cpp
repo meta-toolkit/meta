@@ -27,14 +27,14 @@ int main(int argc, char** argv)
 
     auto config = cpptoml::parse_file(argv[1]);
 
-    auto prefix = config.get_as<std::string>("prefix");
+    auto prefix = config->get_as<std::string>("prefix");
     if (!prefix)
     {
         LOG(fatal) << "Global configuration must have a prefix key" << ENDLG;
         return 1;
     }
 
-    auto crf_grp = config.get_table("crf");
+    auto crf_grp = config->get_table("crf");
     if (!crf_grp)
     {
         LOG(fatal) << "Configuration must contain a [crf] group" << ENDLG;

@@ -60,7 +60,7 @@ class forward_index : public disk_index
      * it.
      */
     template <class Index, class... Args>
-    friend std::shared_ptr<Index> make_index(const std::string& config_file,
+    friend std::shared_ptr<Index> make_index(const cpptoml::table& config,
                                              Args&&... args);
 
     /**
@@ -69,7 +69,7 @@ class forward_index : public disk_index
      */
     template <class Index, template <class, class> class Cache, class... Args>
     friend std::shared_ptr<cached_index<Index, Cache>>
-        make_index(const std::string& config_file, Args&&... args);
+        make_index(const cpptoml::table& config_file, Args&&... args);
 
     using primary_key_type = doc_id;
     using secondary_key_type = term_id;
@@ -148,7 +148,7 @@ class forward_index : public disk_index
      * This function initializes the forward index.
      * @param config_file The configuration file used to create the index
      */
-    void create_index(const std::string& config_file);
+    void create_index(const cpptoml::table& config);
 
     /**
      * @return whether this index contains all necessary files

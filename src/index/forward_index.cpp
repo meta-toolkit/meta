@@ -176,7 +176,7 @@ void forward_index::load_index()
     impl_->load_labels();
 
     auto config = cpptoml::parse_file(index_name() + "/config.toml");
-    if (!fwd_impl_->is_libsvm_format(config))
+    if (!fwd_impl_->is_libsvm_format(*config))
         impl_->load_term_id_mapping();
 
     impl_->load_label_id_mapping();
@@ -186,10 +186,12 @@ void forward_index::load_index()
     unique_terms_file >> fwd_impl_->total_unique_terms_;
 }
 
-void forward_index::create_index(const std::string& config_file)
+void forward_index::create_index(const cpptoml::table& config)
 {
-    filesystem::copy_file(config_file, index_name() + "/config.toml");
-    auto config = cpptoml::parse_file(index_name() + "/config.toml");
+    {
+        std::ofstream config_file{index_name() + "/config.toml"};
+        config_file << config;
+    }
 
     // if the corpus is a single libsvm formatted file, then we are done;
     // otherwise, we will create an inverted index and the uninvert it
@@ -212,9 +214,9 @@ void forward_index::create_index(const std::string& config_file)
                       << ENDLG;
             {
                 // Ensure all files are flushed before uninverting
-                make_index<inverted_index>(config_file);
+                make_index<inverted_index>(config);
             }
-            auto inv_idx = make_index<inverted_index>(config_file);
+            auto inv_idx = make_index<inverted_index>(config);
 
             fwd_impl_->create_uninverted_metadata(inv_idx->index_name());
             // RAM budget is given in MB
@@ -226,7 +228,7 @@ void forward_index::create_index(const std::string& config_file)
         {
             LOG(info) << "Creating forward index: " << index_name() << ENDLG;
 
-            auto docs = corpus::corpus::load(config_file);
+            auto docs = corpus::corpus::load(config);
 
             {
                 auto analyzer = analyzers::load<double>(config);

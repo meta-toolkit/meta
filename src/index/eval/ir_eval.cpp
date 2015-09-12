@@ -19,9 +19,8 @@ namespace meta
 namespace index
 {
 
-ir_eval::ir_eval(const std::string& config_file)
+ir_eval::ir_eval(const cpptoml::table& config)
 {
-    auto config = cpptoml::parse_file(config_file);
     auto path = config.get_as<std::string>("query-judgements");
     if (!path)
         throw ir_eval_exception{"query judgement file was not specified"};

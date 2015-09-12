@@ -10,52 +10,61 @@ namespace meta
 namespace testing
 {
 
-void create_config(const std::string& corpus_type)
+std::shared_ptr<cpptoml::table> create_config(const std::string& corpus_type)
 {
     auto orig_config = cpptoml::parse_file("config.toml");
-    std::string config_filename{"test-config.toml"};
-    std::ofstream config_file{config_filename};
+    std::ofstream config_file{"test-config.toml"};
 
-    auto stop_words = orig_config.get_as<std::string>("stop-words");
+    auto stop_words = orig_config->get_as<std::string>("stop-words");
     if (!stop_words)
         throw std::runtime_error{"\"stop-words\" not in config"};
 
-    auto libsvm_modules = orig_config.get_as<std::string>("libsvm-modules");
+    auto libsvm_modules = orig_config->get_as<std::string>("libsvm-modules");
     if (!libsvm_modules)
         throw std::runtime_error{"\"libsvm-modules\" not in config"};
 
-    auto punctuation = orig_config.get_as<std::string>("punctuation");
+    auto punctuation = orig_config->get_as<std::string>("punctuation");
     if (!punctuation)
         throw std::runtime_error{"\"punctuation\" not in config"};
 
-    auto start_exeptions = orig_config.get_as<std::string>("start-exceptions");
+    auto start_exeptions = orig_config->get_as<std::string>("start-exceptions");
     if (!start_exeptions)
         throw std::runtime_error{"\"start-exceptions\" not in config"};
 
-    auto end_exceptions = orig_config.get_as<std::string>("end-exceptions");
+    auto end_exceptions = orig_config->get_as<std::string>("end-exceptions");
     if (!end_exceptions)
         throw std::runtime_error{"\"end-exceptions\" not in config"};
 
-    config_file << "stop-words = \"" << *stop_words << "\"\n"
-                << "punctuation = \"" << *punctuation << "\"\n"
-                << "start-exceptions = \"" << *start_exeptions << "\"\n"
-                << "end-exceptions = \"" << *end_exceptions << "\"\n"
-                << "prefix = \"" << *orig_config.get_as<std::string>("prefix")
-                << "\"\n"
-                << "query-judgements = \"../data/ceeaus-qrels.txt\"\n"
-                << "libsvm-modules = \"" << *libsvm_modules << "\"\n"
-                << "dataset = \"ceeaus\"\n"
-                << "corpus = \"" << corpus_type << ".toml\"\n"
-                << "encoding = \"shift_jis\"\n"
-                << "forward-index = \"ceeaus-fwd\"\n"
-                << "inverted-index = \"ceeaus-inv\"\n"
-                << "[[analyzers]]\n"
-                << "method = \"ngram-word\"\n"
-                << "ngram = 1\n"
-                << "filter = \"default-chain\"\n"
-                << "[language-model]\n"
-                << "arpa-file = \"../data/english-sentences.arpa\"\n"
-                << "binary-file-prefix = \"test-lm-\"";
+    auto table = cpptoml::make_table();
+    table->insert("stop-words", *stop_words);
+    table->insert("punctuation", *punctuation);
+    table->insert("start-exceptions", *start_exeptions);
+    table->insert("end-exceptions", *end_exceptions);
+    table->insert("prefix", *orig_config->get_as<std::string>("prefix"));
+    table->insert("query-judgements", "../data/ceeaus-qrels.txt");
+    table->insert("libsvm-modules", *libsvm_modules);
+    table->insert("dataset", "ceeaus");
+    table->insert("corpus", corpus_type + ".toml");
+    table->insert("encoding", "shift_jis");
+    table->insert("forward-index", "ceeaus-fwd");
+    table->insert("inverted-index", "ceeaus-inv");
+
+    auto anas = cpptoml::make_table_array();
+    auto ana = cpptoml::make_table();
+    ana->insert("method", "ngram-word");
+    ana->insert<int64_t>("ngram", 1);
+    ana->insert("filter", "default-chain");
+    anas->push_back(ana);
+
+    table->insert("analyzers", anas);
+
+    auto lm = cpptoml::make_table();
+    lm->insert("arpa-file", "../data/english-sentences.arpa");
+    lm->insert("binary-file-prefix", "test-lm-");
+
+    table->insert("language-model", lm);
+
+    return table;
 }
 
 template <class Index>
@@ -102,15 +111,14 @@ void check_term_id(Index& idx)
 
 int inverted_index_tests()
 {
-    create_config("file");
+    auto file_cfg = create_config("file");
 
     int num_failed = 0;
     num_failed += testing::run_test(
         "inverted-index-build-file-corpus", [&]()
         {
             system("rm -rf ceeaus-inv");
-            auto idx
-                = index::make_index<index::inverted_index>("test-config.toml");
+            auto idx = index::make_index<index::inverted_index>(*file_cfg);
             check_ceeaus_expected(*idx);
         });
 
@@ -118,22 +126,20 @@ int inverted_index_tests()
         "inverted-index-read-file-corpus", [&]()
         {
             {
-                auto idx = index::make_index<index::inverted_index>(
-                    "test-config.toml");
+                auto idx = index::make_index<index::inverted_index>(*file_cfg);
                 check_ceeaus_expected(*idx);
                 check_term_id(*idx);
             }
             system("rm -rf ceeaus-inv test-config.toml");
         });
 
-    create_config("line");
+    auto line_cfg = create_config("line");
     system("rm -rf ceeaus-inv");
 
     num_failed += testing::run_test(
         "inverted-index-build-line-corpus", [&]()
         {
-            auto idx
-                = index::make_index<index::inverted_index>("test-config.toml");
+            auto idx = index::make_index<index::inverted_index>(*line_cfg);
             check_ceeaus_expected(*idx);
         });
 
@@ -141,30 +147,28 @@ int inverted_index_tests()
         "inverted-index-read-line-corpus", [&]()
         {
             auto idx = index::make_index<index::inverted_index,
-                                         caching::splay_cache>(
-                "test-config.toml", uint32_t{10000});
+                                         caching::splay_cache>(*line_cfg,
+                                                               uint32_t{10000});
             check_ceeaus_expected(*idx);
             check_term_id(*idx);
             check_term_id(*idx); // twice to check splay_caching
         });
 
 #if META_HAS_ZLIB
-    create_config("gz");
+    auto gz_cfg = create_config("gz");
     system("rm -rf ceeaus-inv");
 
     num_failed += testing::run_test(
         "inverted-index-build-gz-corpus", [&]()
         {
-            auto idx
-                = index::make_index<index::inverted_index>("test-config.toml");
+            auto idx = index::make_index<index::inverted_index>(*gz_cfg);
             check_ceeaus_expected(*idx);
         });
 
     num_failed += testing::run_test(
         "inverted-index-read-gz-corpus", [&]()
         {
-            auto idx
-                = index::make_index<index::inverted_index>("test-config.toml");
+            auto idx = index::make_index<index::inverted_index>(*gz_cfg);
             check_ceeaus_expected(*idx);
             check_term_id(*idx);
         });
@@ -177,7 +181,7 @@ int inverted_index_tests()
         {
             auto idx = index::make_index<index::inverted_index,
                                          caching::default_dblru_cache>(
-                "test-config.toml", uint64_t{1000});
+                *line_cfg, uint64_t{1000});
             check_term_id(*idx);
             check_term_id(*idx);
         });
@@ -186,8 +190,7 @@ int inverted_index_tests()
         "inverted-index-no-evict-cache", [&]()
         {
             auto idx = index::make_index<index::inverted_index,
-                                         caching::no_evict_cache>(
-                "test-config.toml");
+                                         caching::no_evict_cache>(*line_cfg);
             check_term_id(*idx);
             check_term_id(*idx);
         });
@@ -197,7 +200,7 @@ int inverted_index_tests()
         {
             auto idx = index::make_index<index::inverted_index,
                                          caching::splay_shard_cache>(
-                "test-config.toml", uint8_t{8});
+                *line_cfg, uint8_t{8});
             check_term_id(*idx);
             check_term_id(*idx);
         });

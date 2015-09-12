@@ -62,15 +62,15 @@ int main(int argc, char* argv[])
     }
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto prefix = config.get_as<std::string>("prefix");
+    auto prefix = config->get_as<std::string>("prefix");
     if (!prefix)
         throw std::runtime_error{"prefix missing from configuration file"};
 
-    auto dataset = config.get_as<std::string>("dataset");
+    auto dataset = config->get_as<std::string>("dataset");
     if (!dataset)
         throw std::runtime_error{"dataset missing from configuration file"};
 
-    auto file_list = config.get_as<std::string>("list");
+    auto file_list = config->get_as<std::string>("list");
     if (!file_list)
         throw std::runtime_error{"list missing from configuration file"};
 

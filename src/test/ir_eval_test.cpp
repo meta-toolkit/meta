@@ -36,11 +36,11 @@ int ir_eval_bounds()
         "ir-eval-bounds", [&]()
         {
             system("rm -rf ceeaus-inv");
-            create_config("file");
+            auto file_cfg = create_config("file");
             auto idx
-                = index::make_index<index::inverted_index>("test-config.toml");
+                = index::make_index<index::inverted_index>(*file_cfg);
             index::okapi_bm25 ranker;
-            index::ir_eval eval{"test-config.toml"};
+            index::ir_eval eval{*file_cfg};
             // sanity test bounds
             for (size_t i = 0; i < 5; ++i)
             {
@@ -74,8 +74,8 @@ int ir_eval_results()
     return testing::run_test(
         "ir-eval-results", [&]()
         {
-            create_config("file");
-            index::ir_eval eval{"test-config.toml"};
+            auto file_cfg = create_config("file");
+            index::ir_eval eval{*file_cfg};
             ASSERT_APPROX_EQUAL(eval.map(), 0.0);
             ASSERT_APPROX_EQUAL(eval.gmap(), 0.0);
 
@@ -136,7 +136,6 @@ int ir_eval_results()
             check_query(eval, results, qid, 1.0, 1.0, 1.0, 1.0, 1.0);
             // recall is still not perfect @5
             check_query(eval, results, qid, 1.0 / 1.5, 1.0, 0.5, 1.0, 1.0, 5);
-            system("rm test-config.toml");
         });
 }
 

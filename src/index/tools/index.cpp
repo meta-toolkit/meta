@@ -37,7 +37,8 @@ int main(int argc, char* argv[])
     {
         // Creates an inverted index with no cache. We don't need a cache here
         //  since we're never searching the index, only building it.
-        auto idx = index::make_index<index::inverted_index>(argv[1]);
+        auto config = cpptoml::parse_file(argv[1]);
+        auto idx = index::make_index<index::inverted_index>(*config);
 
         // Print out some data about the corpus.
         std::cout << "Number of documents: " << idx->num_docs() << std::endl;

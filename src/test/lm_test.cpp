@@ -15,11 +15,11 @@ namespace testing
 int lm_tests()
 {
     int num_failed = 0;
-    create_config("line");
+    auto line_cfg = create_config("line");
 
     auto test = [&]()
     {
-        lm::language_model model{cpptoml::parse_file("test-config.toml")};
+        lm::language_model model{*line_cfg};
         lm::sentence s1{
             "<s> I disagree with this statement for several reasons . </s>",
             false};

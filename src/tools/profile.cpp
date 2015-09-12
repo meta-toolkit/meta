@@ -313,19 +313,19 @@ int main(int argc, char* argv[])
     bool all = args.find("--all") != args.end();
 
     if (all || args.find("--stem") != args.end())
-        stem(file, config);
+        stem(file, *config);
     if (all || args.find("--stop") != args.end())
-        stop(file, config);
+        stop(file, *config);
     if (all || args.find("--pos") != args.end())
-        pos(file, config, false);
+        pos(file, *config, false);
     if (all || args.find("--pos-replace") != args.end())
-        pos(file, config, true);
+        pos(file, *config, true);
     if (all || args.find("--parse") != args.end())
-        parse(file, config);
+        parse(file, *config);
     if (all || args.find("--freq-unigram") != args.end())
-        freq(file, config, 1);
+        freq(file, *config, 1);
     if (all || args.find("--freq-bigram") != args.end())
-        freq(file, config, 2);
+        freq(file, *config, 2);
     if (all || args.find("--freq-trigram") != args.end())
-        freq(file, config, 3);
+        freq(file, *config, 3);
 }

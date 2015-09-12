@@ -18,7 +18,8 @@ int main(int argc, char** argv)
 
     logging::set_cerr_logging();
 
-    auto idx = index::make_index<index::forward_index>(argv[1]);
+    auto config = cpptoml::parse_file(argv[1]);
+    auto idx = index::make_index<index::forward_index>(*config);
     {
         std::ofstream output{argv[2]};
         printing::progress progress{" > Converting to libsvm: ",

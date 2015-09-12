@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     logging::set_cerr_logging();
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto seq_grp = config.get_table("sequence");
+    auto seq_grp = config->get_table("sequence");
     if (!seq_grp)
         throw std::runtime_error{"[sequence] group needed in config file"};
 
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     if (!prefix)
         throw std::runtime_error{"[sequence] group needs a prefix key"};
 
-    auto parser_grp = config.get_table("parser");
+    auto parser_grp = config->get_table("parser");
     if (!parser_grp)
         throw std::runtime_error{"[parser] group needed in config file"};
 

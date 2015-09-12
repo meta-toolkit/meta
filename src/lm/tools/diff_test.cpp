@@ -25,7 +25,8 @@ int main(int argc, char* argv[])
 
     logging::set_cerr_logging();
 
-    lm::diff correcter{cpptoml::parse_file(argv[1])};
+    auto config = cpptoml::parse_file(argv[1]);
+    lm::diff correcter{*config};
     std::ifstream in{argv[2]};
     auto num_sentences = filesystem::num_lines(argv[2]);
     printing::progress prog{"Editing sentences ", num_sentences};

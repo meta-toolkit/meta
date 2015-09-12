@@ -25,7 +25,7 @@ namespace testing
 /**
  * Creates a test-config.toml with the desired settings.
  */
-void create_libsvm_config();
+std::shared_ptr<cpptoml::table> create_libsvm_config();
 
 /**
  * Asserts that the bcancer corpus was created correctly.
@@ -58,12 +58,12 @@ void check_ceeaus_doc_id(Index& idx);
 /**
  * Runs the ceeaus forward index tests.
  */
-void ceeaus_forward_test();
+void ceeaus_forward_test(const cpptoml::table& conf);
 
 /**
  * Runs the bcancer forward index tests.
  */
-void bcancer_forward_test();
+void bcancer_forward_test(const cpptoml::table& conf);
 
 /**
  * Runs all the forward_index tests.

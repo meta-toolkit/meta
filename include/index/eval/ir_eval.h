@@ -34,9 +34,9 @@ class ir_eval
     using result_type = std::vector<search_result>;
 
     /**
-     * @param config_file Path to cpptoml configuration file
+     * @param config Configuration group
      */
-    ir_eval(const std::string& config_file);
+    ir_eval(const cpptoml::table& config);
 
     /**
      * @param results The ranked list of results

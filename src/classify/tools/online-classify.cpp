@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     sequence::register_analyzers();
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto class_config = config.get_table("classifier");
+    auto class_config = config->get_table("classifier");
     if (!class_config)
     {
         std::cerr << "Missing classifier configuration group in " << argv[1]
@@ -35,21 +35,21 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto batch_size = config.get_as<int64_t>("batch-size");
+    auto batch_size = config->get_as<int64_t>("batch-size");
     if (!batch_size)
     {
         std::cerr << "Missing batch-size in " << argv[1] << std::endl;
         return 1;
     }
 
-    auto test_start = config.get_as<int64_t>("test-start");
+    auto test_start = config->get_as<int64_t>("test-start");
     if (!test_start)
     {
         std::cerr << "Missing test-start in " << argv[1] << std::endl;
         return 1;
     }
 
-    auto f_idx = index::make_index<index::memory_forward_index>(argv[1]);
+    auto f_idx = index::make_index<index::memory_forward_index>(*config);
 
     if (static_cast<uint64_t>(*test_start) > f_idx->num_docs())
     {

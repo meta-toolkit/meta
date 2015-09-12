@@ -23,10 +23,10 @@ namespace meta
 namespace testing
 {
 /**
- * Creates test-config.toml with the desired settings.
+ * Creates a configuration file with the desired settings.
  * @param corpus_type line or file corpus
  */
-void create_config(const std::string& corpus_type);
+std::shared_ptr<cpptoml::table> create_config(const std::string& corpus_type);
 
 /**
  * Checks that ceeaus index was built correctly.

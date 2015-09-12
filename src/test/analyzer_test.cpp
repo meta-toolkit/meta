@@ -19,9 +19,8 @@ namespace
 std::unique_ptr<analyzers::token_stream> make_filter()
 {
     using namespace analyzers;
-    create_config("line");
-    auto config = cpptoml::parse_file("test-config.toml");
-    return analyzers::default_filter_chain(config);
+    auto line_cfg = create_config("line");
+    return analyzers::default_filter_chain(*line_cfg);
 }
 }
 

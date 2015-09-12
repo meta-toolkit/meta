@@ -33,14 +33,14 @@ int main(int argc, char** argv)
 
     auto config = cpptoml::parse_file(argv[1]);
 
-    auto prefix = config.get_as<std::string>("prefix");
+    auto prefix = config->get_as<std::string>("prefix");
     if (!prefix)
     {
         LOG(fatal) << "Global configuration must have a prefix key" << ENDLG;
         return 1;
     }
 
-    auto seq_grp = config.get_table("sequence");
+    auto seq_grp = config->get_table("sequence");
     if (!seq_grp)
     {
         LOG(fatal) << "Configuration must contain a [sequence] group" << ENDLG;

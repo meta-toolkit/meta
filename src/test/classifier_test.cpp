@@ -51,11 +51,11 @@ int run_tests(const std::string& type)
     // to delete their directory; this is needed for weirdness on NFS or
     // other filesystems that might lock opened files
     {
-        auto i_idx
-            = index::make_index<index::inverted_index>("test-config.toml");
+        auto cfg = create_config(type);
+        auto i_idx = index::make_index<index::inverted_index>(*cfg);
         auto f_idx
             = index::make_index<index::forward_index, caching::no_evict_cache>(
-                "test-config.toml");
+                *cfg);
 
         num_failed += testing::run_test("naive-bayes-cv-" + type, [&]()
                                         {
@@ -168,8 +168,7 @@ int run_tests(const std::string& type)
         num_failed += testing::run_test(
             "svm-wrapper-" + type, [&]()
             {
-                auto config = cpptoml::parse_file("test-config.toml");
-                auto mod_path = config.get_as<std::string>("libsvm-modules");
+                auto mod_path = cfg->get_as<std::string>("libsvm-modules");
                 if (!mod_path)
                     throw std::runtime_error{"no path for libsvm-modules"};
                 svm_wrapper svm{f_idx, *mod_path};
@@ -190,11 +189,11 @@ int run_load_save_tests()
     // to delete their directory; this is needed for weirdness on NFS or
     // other filesystems that might lock opened files
     {
-        auto i_idx
-            = index::make_index<index::inverted_index>("test-config.toml");
+        auto line_cfg = create_config("line");
+        auto i_idx = index::make_index<index::inverted_index>(*line_cfg);
         auto f_idx
             = index::make_index<index::forward_index, caching::no_evict_cache>(
-                "test-config.toml");
+                *line_cfg);
 
         num_failed += testing::run_test(
             "naive-bayes-save-load", [&]()
@@ -215,8 +214,7 @@ int run_load_save_tests()
         num_failed += testing::run_test(
             "svm-wrapper-save-load", [&]()
             {
-                auto config = cpptoml::parse_file("test-config.toml");
-                auto mod_path = config.get_as<std::string>("libsvm-modules");
+                auto mod_path = line_cfg->get_as<std::string>("libsvm-modules");
                 if (!mod_path)
                     throw std::runtime_error{"no path for libsvm-modules"};
                 {
@@ -243,9 +241,7 @@ int classifier_tests()
 {
     int num_failed = 0;
     system("rm -rf ceeaus-*");
-    create_config("file");
     num_failed += run_tests("file");
-    create_config("line");
     num_failed += run_tests("line");
     num_failed += run_load_save_tests();
     return num_failed;

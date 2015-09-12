@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 
     auto config = cpptoml::parse_file(argv[1]);
 
-    auto ctype = *config.get_as<std::string>("corpus-type");
+    auto ctype = *config->get_as<std::string>("corpus-type");
     if (ctype != "line-corpus")
     {
         std::cerr << "Currently only line_corpus format is supported!"
@@ -130,8 +130,8 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto prefix = *config.get_as<std::string>("prefix");
-    auto dataset = *config.get_as<std::string>("dataset");
+    auto prefix = *config->get_as<std::string>("prefix");
+    auto dataset = *config->get_as<std::string>("dataset");
     std::ifstream thetas{argv[2]};
     create_topic_corpus(prefix, dataset, thetas);
 }

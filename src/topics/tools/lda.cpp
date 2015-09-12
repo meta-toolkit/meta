@@ -42,14 +42,14 @@ int run_lda(const std::string& config_file)
     using namespace meta::topics;
     auto config = cpptoml::parse_file(config_file);
 
-    if (!config.contains("lda"))
+    if (!config->contains("lda"))
     {
         std::cerr << "Missing lda configuration group in " << config_file
                   << std::endl;
         return 1;
     }
 
-    auto lda_group = config.get_table("lda");
+    auto lda_group = config->get_table("lda");
 
     if (!check_parameter(config_file, *lda_group, "alpha")
         || !check_parameter(config_file, *lda_group, "beta")
@@ -68,7 +68,7 @@ int run_lda(const std::string& config_file)
 
     auto f_idx
         = index::make_index<index::forward_index, caching::no_evict_cache>(
-            config_file);
+            *config);
     if (type == "gibbs")
     {
         std::cout << "Beginning LDA using serial Gibbs sampling..."

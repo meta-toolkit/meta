@@ -50,18 +50,18 @@ int main(int argc, char* argv[])
     sequence::register_analyzers();
 
     // Create an inverted index based on the config file.
-    auto idx = index::make_index<index::inverted_index>(argv[1]);
+    auto config = cpptoml::parse_file(argv[1]);
+    auto idx = index::make_index<index::inverted_index>(*config);
 
     // Create a ranking class based on the config file.
-    auto config = cpptoml::parse_file(argv[1]);
-    auto group = config.get_table("ranker");
+    auto group = config->get_table("ranker");
     if (!group)
         throw std::runtime_error{"\"ranker\" group needed in config file!"};
     auto ranker = index::make_ranker(*group);
 
     // Find the path prefix to each document so we can print out the contents.
-    std::string prefix = *config.get_as<std::string>("prefix") + "/"
-                         + *config.get_as<std::string>("dataset") + "/";
+    std::string prefix = *config->get_as<std::string>("prefix") + "/"
+                         + *config->get_as<std::string>("dataset") + "/";
 
     std::cout << "Enter a query, or blank to quit." << std::endl
               << std::endl;

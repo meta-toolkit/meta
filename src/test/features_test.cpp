@@ -19,12 +19,13 @@ namespace
 template <class Index>
 void test_construction(Index& idx, const std::string& id)
 {
-    std::ofstream fconfig{"feature-config.toml"};
-    fconfig << "[features]\nmethod = \"" << id << "\"\n"
-            << "prefix = \"test-features\"";
-    fconfig.close();
-    auto config = cpptoml::parse_file("feature-config.toml");
-    auto selector = features::make_selector(config, idx);
+    auto config = cpptoml::make_table();
+    auto fcfg = cpptoml::make_table();
+    fcfg->insert("method", id);
+    fcfg->insert("prefix", "test-features");
+    config->insert("features", fcfg);
+
+    auto selector = features::make_selector(*config, idx);
     selector->select(20);
     selector->select(50);
     selector->select_percent(0.05);
@@ -44,12 +45,11 @@ void test_construction(Index& idx, const std::string& id)
 int features_tests()
 {
     int failed = 0;
-    create_config("line");
+    auto line_cfg = create_config("line");
 
     // scope for forward index object
     {
-        auto f_idx = index::make_index<index::memory_forward_index>(
-            "test-config.toml");
+        auto f_idx = index::make_index<index::memory_forward_index>(*line_cfg);
 
         failed += testing::run_test("chi-square", [&]()
                                     {
@@ -70,7 +70,6 @@ int features_tests()
     }
 
     system("rm -rf ceeaus-* test-features.*");
-    filesystem::delete_file("feature-config.toml");
     return failed;
 }
 }

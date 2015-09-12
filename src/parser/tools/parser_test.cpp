@@ -38,14 +38,14 @@ int main(int argc, char** argv)
 
     auto config = cpptoml::parse_file(argv[1]);
 
-    auto prefix = config.get_as<std::string>("prefix");
+    auto prefix = config->get_as<std::string>("prefix");
     if (!prefix)
     {
         LOG(fatal) << "Global configuration must have a prefix key" << ENDLG;
         return 1;
     }
 
-    auto parser_grp = config.get_table("parser");
+    auto parser_grp = config->get_table("parser");
     if (!parser_grp)
     {
         LOG(fatal) << "Configuration must contain a [parser] group" << ENDLG;

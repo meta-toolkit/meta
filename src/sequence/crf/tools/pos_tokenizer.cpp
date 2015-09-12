@@ -27,14 +27,14 @@ int main(int argc, char* argv[])
 
     auto config = cpptoml::parse_file(argv[1]);
 
-    auto keep_list_filename = config.get_as<std::string>("function-words");
+    auto keep_list_filename = config->get_as<std::string>("function-words");
     std::unordered_set<std::string> keep_list;
     std::ifstream keep_list_file{*keep_list_filename};
     std::string word;
     while (keep_list_file >> word)
         keep_list.insert(word);
 
-    auto crf_group = config.get_table("crf");
+    auto crf_group = config->get_table("crf");
     if (!crf_group)
     {
         std::cerr << "[crf] group needed in config file" << std::endl;

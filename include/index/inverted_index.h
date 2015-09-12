@@ -76,7 +76,7 @@ class inverted_index : public disk_index
      * it.
      */
     template <class Index, class... Args>
-    friend std::shared_ptr<Index> make_index(const std::string&, Args&&...);
+    friend std::shared_ptr<Index> make_index(const cpptoml::table&, Args&&...);
 
     /**
      * inverted_index is a friend of the factory method used to create
@@ -84,7 +84,7 @@ class inverted_index : public disk_index
      */
     template <class Index, template <class, class> class Cache, class... Args>
     friend std::shared_ptr<cached_index<Index, Cache>>
-        make_index(const std::string& config_file, Args&&... args);
+        make_index(const cpptoml::table& config, Args&&... args);
 
   protected:
     /**
@@ -172,9 +172,9 @@ class inverted_index : public disk_index
     /**
      * This function initializes the disk index; it is called by the
      * make_index factory function.
-     * @param config_file The configuration to be used
+     * @param config The configuration to be used
      */
-    void create_index(const std::string& config_file);
+    void create_index(const cpptoml::table& config);
 
     /**
      * This function loads a disk index from its filesystem

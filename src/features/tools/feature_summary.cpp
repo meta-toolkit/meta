@@ -27,15 +27,15 @@ int main(int argc, char* argv[])
     logging::set_cerr_logging();
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto feature_config = config.get_table("features");
+    auto feature_config = config->get_table("features");
     if (!feature_config)
     {
         std::cerr << "Missing [features] config table" << std::endl;
         return 1;
     }
 
-    auto f_idx = index::make_index<index::memory_forward_index>(argv[1]);
-    auto selector = features::make_selector(config, f_idx);
+    auto f_idx = index::make_index<index::memory_forward_index>(*config);
+    auto selector = features::make_selector(*config, f_idx);
     selector->select(100);
     selector->print_summary(10);
 }

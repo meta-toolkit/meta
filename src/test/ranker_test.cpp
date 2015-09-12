@@ -37,45 +37,44 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding)
 
 int ranker_tests()
 {
-    create_config("file");
+    auto config = create_config("file");
     system("rm -rf ceeaus-inv");
-    auto idx = index::make_index<index::inverted_index>("test-config.toml");
+    auto idx = index::make_index<index::inverted_index>(*config);
 
-    auto config = cpptoml::parse_file("test-config.toml");
     std::string encoding = "utf-8";
-    if (auto enc = config.get_as<std::string>("encoding"))
+    if (auto enc = config->get_as<std::string>("encoding"))
         encoding = *enc;
 
     int num_failed = 0;
     num_failed += testing::run_test("ranker-absolute-discount", [&]()
-    {
-        index::absolute_discount r;
-        test_rank(r, *idx, encoding);
-    });
+                                    {
+                                        index::absolute_discount r;
+                                        test_rank(r, *idx, encoding);
+                                    });
 
     num_failed += testing::run_test("ranker-dirichlet-prior", [&]()
-    {
-        index::dirichlet_prior r;
-        test_rank(r, *idx, encoding);
-    });
+                                    {
+                                        index::dirichlet_prior r;
+                                        test_rank(r, *idx, encoding);
+                                    });
 
     num_failed += testing::run_test("ranker-jelinek-mercer", [&]()
-    {
-        index::jelinek_mercer r;
-        test_rank(r, *idx, encoding);
-    });
+                                    {
+                                        index::jelinek_mercer r;
+                                        test_rank(r, *idx, encoding);
+                                    });
 
     num_failed += testing::run_test("ranker-okapi-bm25", [&]()
-    {
-        index::okapi_bm25 r;
-        test_rank(r, *idx, encoding);
-    });
+                                    {
+                                        index::okapi_bm25 r;
+                                        test_rank(r, *idx, encoding);
+                                    });
 
     num_failed += testing::run_test("ranker-pivoted-length", [&]()
-    {
-        index::pivoted_length r;
-        test_rank(r, *idx, encoding);
-    });
+                                    {
+                                        index::pivoted_length r;
+                                        test_rank(r, *idx, encoding);
+                                    });
 
     idx = nullptr;
 

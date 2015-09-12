@@ -38,17 +38,17 @@ int main(int argc, char* argv[])
     sequence::register_analyzers();
 
     // Create an inverted index based on the config file
-    auto idx = index::make_index<index::inverted_index>(argv[1]);
+    auto config = cpptoml::parse_file(argv[1]);
+    auto idx = index::make_index<index::inverted_index>(*config);
 
     // Create a ranking class based on the config file.
-    auto config = cpptoml::parse_file(argv[1]);
-    auto group = config.get_table("ranker");
+    auto group = config->get_table("ranker");
     if (!group)
         throw std::runtime_error{"\"ranker\" group needed in config file!"};
     auto ranker = index::make_ranker(*group);
 
     // Get the path to the file containing queries
-    auto query_path = config.get_as<std::string>("query-path");
+    auto query_path = config->get_as<std::string>("query-path");
     if (!query_path)
         throw std::runtime_error{
             "config file needs a \"query-path\" parameter"};
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     std::unique_ptr<index::ir_eval> eval;
     try
     {
-        eval = make_unique<index::ir_eval>(argv[1]);
+        eval = make_unique<index::ir_eval>(*config);
     }
     catch (index::ir_eval::ir_eval_exception& ex)
     {

@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 
     std::unique_ptr<analyzers::token_stream> stream;
 
-    auto analyzers = config.get_table_array("analyzers");
+    auto analyzers = config->get_table_array("analyzers");
     for (const auto& group : analyzers->get())
     {
         auto method = group->get_as<std::string>("method");
@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 
         if (*method == analyzers::ngram_word_analyzer<uint64_t>::id)
         {
-            stream = analyzers::load_filters(config, *group);
+            stream = analyzers::load_filters(*config, *group);
             break;
         }
     }

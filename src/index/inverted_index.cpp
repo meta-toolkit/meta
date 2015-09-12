@@ -109,17 +109,19 @@ bool inverted_index::valid() const
     return true;
 }
 
-void inverted_index::create_index(const std::string& config_file)
+void inverted_index::create_index(const cpptoml::table& config)
 {
     // save the config file so we can recreate the analyzer
-    filesystem::copy_file(config_file, index_name() + "/config.toml");
+    {
+        std::ofstream config_file{index_name() + "/config.toml"};
+        config_file << config;
+    }
 
     LOG(info) << "Creating index: " << index_name() << ENDLG;
 
     // load the documents from the corpus
-    auto docs = corpus::corpus::load(config_file);
+    auto docs = corpus::corpus::load(config);
 
-    auto config = cpptoml::parse_file(config_file);
     auto ram_budget = static_cast<uint64_t>(
         config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
 
@@ -158,8 +160,6 @@ void inverted_index::create_index(const std::string& config_file)
 void inverted_index::load_index()
 {
     LOG(info) << "Loading index from disk: " << index_name() << ENDLG;
-
-    auto config = cpptoml::parse_file(index_name() + "/config.toml");
 
     impl_->initialize_metadata();
     impl_->load_term_id_mapping();

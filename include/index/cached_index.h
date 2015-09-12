@@ -30,9 +30,6 @@ template <class Index, template <class, class> class Cache>
 class cached_index : public Index
 {
   public:
-    /// inherit the constructors
-    using Index::Index;
-
     /**
      * Forwarding constructor: construct the Index part using the
      * config, but then forward the additional arguments to the
@@ -44,7 +41,7 @@ class cached_index : public Index
      *  constructor
      */
     template <class... Args>
-    cached_index(cpptoml::table& config, Args&&... args);
+    cached_index(const cpptoml::table& config, Args&&... args);
 
     using primary_key_type = typename Index::primary_key_type;
     using secondary_key_type = typename Index::secondary_key_type;

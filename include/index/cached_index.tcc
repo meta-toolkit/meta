@@ -12,15 +12,16 @@ namespace index
 
 template <class Index, template <class, class> class Cache>
 template <class... Args>
-cached_index<Index, Cache>::cached_index(cpptoml::table& config, Args&&... args)
+cached_index<Index, Cache>::cached_index(const cpptoml::table& config,
+                                         Args&&... args)
     : Index{config}, cache_(std::forward<Args>(args)...)
 {
     /* nothing */
 }
 
 template <class Index, template <class, class> class Cache>
-auto cached_index<Index, Cache>::search_primary(
-    primary_key_type p_id) const -> std::shared_ptr<postings_data_type>
+auto cached_index<Index, Cache>::search_primary(primary_key_type p_id) const
+    -> std::shared_ptr<postings_data_type>
 {
     auto opt = cache_.find(p_id);
     if (opt)

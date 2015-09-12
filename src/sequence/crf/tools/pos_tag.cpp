@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     logging::set_cerr_logging();
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto crf_group = config.get_table("crf");
+    auto crf_group = config->get_table("crf");
     if (!crf_group)
     {
         std::cerr << "[crf] group needed in config file" << std::endl;

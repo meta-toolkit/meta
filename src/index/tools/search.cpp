@@ -39,18 +39,18 @@ int main(int argc, char* argv[])
     sequence::register_analyzers();
 
     // Create an inverted index based on the config file.
-    auto idx = index::make_index<index::inverted_index>(argv[1]);
-
     auto config = cpptoml::parse_file(argv[1]);
+    auto idx = index::make_index<index::inverted_index>(*config);
+
 
     // Create a ranking class based on the config file.
-    auto group = config.get_table("ranker");
+    auto group = config->get_table("ranker");
     if (!group)
         throw std::runtime_error{"\"ranker\" group needed in config file!"};
     auto ranker = index::make_ranker(*group);
 
     // Use UTF-8 for the default encoding unless otherwise specified.
-    auto encoding = config.get_as<std::string>("encoding").value_or("utf-8");
+    auto encoding = config->get_as<std::string>("encoding").value_or("utf-8");
 
     // Time how long it takes to create the index. By default, common::time's
     //  unit of measurement is milliseconds.

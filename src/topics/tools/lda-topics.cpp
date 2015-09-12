@@ -21,8 +21,9 @@ int print_usage(const std::string& name)
 int print_topics(const std::string& config_file, const std::string& filename,
                  size_t num_words)
 {
+    auto config = cpptoml::parse_file(config_file);
     auto idx = index::make_index<index::forward_index, caching::no_evict_cache>(
-        config_file);
+        *config);
 
     std::ifstream file{filename};
     while (file)
@@ -39,7 +40,9 @@ int print_topics(const std::string& config_file, const std::string& filename,
         std::vector<std::pair<term_id, double>> pairs;
         auto comp = [](const std::pair<term_id, double>& first,
                        const std::pair<term_id, double>& second)
-        { return first.second > second.second; };
+        {
+            return first.second > second.second;
+        };
         while (stream)
         {
             std::string to_split;

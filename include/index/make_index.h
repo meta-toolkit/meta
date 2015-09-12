@@ -25,19 +25,19 @@ class inverted_index;
 class forward_index;
 
 /// Inverted index using default DBLRU cache
-using dblru_inverted_index =
-    cached_index<inverted_index, caching::default_dblru_cache>;
+using dblru_inverted_index
+    = cached_index<inverted_index, caching::default_dblru_cache>;
 
 /// Inverted index using splay cache
 using splay_inverted_index = cached_index<inverted_index, caching::splay_cache>;
 
 /// In-memory forward index
-using memory_forward_index =
-    cached_index<forward_index, caching::no_evict_cache>;
+using memory_forward_index
+    = cached_index<forward_index, caching::no_evict_cache>;
 
 /// Forward index using default DBLRU cache
-using dblru_forward_index =
-    cached_index<forward_index, caching::default_dblru_cache>;
+using dblru_forward_index
+    = cached_index<forward_index, caching::default_dblru_cache>;
 
 /// Forward index using splay cache
 using splay_forward_index = cached_index<forward_index, caching::splay_cache>;
@@ -47,21 +47,17 @@ using splay_forward_index = cached_index<forward_index, caching::splay_cache>;
  * Usage:
  *
  * ~~~cpp
- * auto idx = index::make_index<derived_index_type>(config_path);
+ * auto idx = index::make_index<derived_index_type>(config);
  * ~~~
  *
- * @param config_file The path to the configuration file to be
- *  used to build the index
+ * @param config The configuration to be used to build the index
  * @param args any additional arguments to forward to the
  *  constructor for the chosen index type (usually none)
  * @return A properly initialized index
  */
 template <class Index, class... Args>
-std::shared_ptr<Index> make_index(const std::string& config_file,
-                                  Args&&... args)
+std::shared_ptr<Index> make_index(const cpptoml::table& config, Args&&... args)
 {
-    auto config = cpptoml::parse_file(config_file);
-
     // check if we have paths specified for either kind of index
     if (!(config.contains("forward-index")
           && config.contains("inverted-index")))
@@ -80,15 +76,23 @@ std::shared_ptr<Index> make_index(const std::string& config_file,
             "forward and inverted index names must be different!"};
     }
 
-    // can't use std::make_shared here since the Index constructor is private
-    auto idx =
-        std::shared_ptr<Index>{new Index(config, std::forward<Args>(args)...)};
+    // below is needed so that make_shared can find a public ctor to invoke
+    struct make_shared_enabler : public Index
+    {
+        make_shared_enabler(const cpptoml::table& config, Args&&... args)
+            : Index(config, std::forward<Args>(args)...)
+        {
+            // nothing
+        }
+    };
+    auto idx = std::make_shared<make_shared_enabler>(
+        config, std::forward<Args>(args)...);
 
     // if index has already been made, load it
     if (filesystem::make_directory(idx->index_name()) && idx->valid())
         idx->load_index();
     else
-        idx->create_index(config_file);
+        idx->create_index(config);
 
     return idx;
 }
@@ -114,9 +118,9 @@ std::shared_ptr<Index> make_index(const std::string& config_file,
  */
 template <class Index, template <class, class> class Cache, class... Args>
 std::shared_ptr<cached_index<Index, Cache>>
-    make_index(const std::string& config_file, Args&&... args)
+    make_index(const cpptoml::table& config, Args&&... args)
 {
-    return make_index<cached_index<Index, Cache>>(config_file,
+    return make_index<cached_index<Index, Cache>>(config,
                                                   std::forward<Args>(args)...);
 }
 }

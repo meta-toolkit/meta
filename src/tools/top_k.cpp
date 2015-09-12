@@ -34,15 +34,15 @@ int main(int argc, char* argv[])
     logging::set_cerr_logging();
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto group = config.get_table_array("analyzers");
+    auto group = config->get_table_array("analyzers");
     if (!group)
         throw std::runtime_error{"[[analyzers]] missing from config"};
 
     // only use the feature representation of the first analyzer
-    auto filts = analyzers::load_filters(config, *(group->get()[0]));
+    auto filts = analyzers::load_filters(*config, *(group->get()[0]));
 
     std::unordered_map<std::string, uint64_t> counts;
-    auto docs = corpus::corpus::load(config);
+    auto docs = corpus::corpus::load(*config);
     printing::progress prog{" > Reading corpus: ", docs->size()};
     while (docs->has_next())
     {

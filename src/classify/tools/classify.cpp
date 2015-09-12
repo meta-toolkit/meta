@@ -77,14 +77,14 @@ int main(int argc, char* argv[])
     sequence::register_analyzers();
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto class_config = config.get_table("classifier");
+    auto class_config = config->get_table("classifier");
     if (!class_config)
     {
         cerr << "Missing classifier configuration group in " << argv[1] << endl;
         return 1;
     }
 
-    auto f_idx = index::make_index<index::memory_forward_index>(argv[1]);
+    auto f_idx = index::make_index<index::memory_forward_index>(*config);
 
     auto docs = f_idx->docs();
     printing::progress progress{" > Pre-fetching for cache: ", docs.size()};
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
     auto classifier_method = *class_config->get_as<std::string>("method");
     if (classifier_method == "knn" || classifier_method == "nearest-centroid")
     {
-        auto i_idx = index::make_index<index::inverted_index>(argv[1]);
+        auto i_idx = index::make_index<index::inverted_index>(*config);
         classifier = classify::make_classifier(*class_config, f_idx, i_idx);
     }
     else
