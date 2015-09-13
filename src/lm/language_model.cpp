@@ -59,7 +59,8 @@ language_model::language_model(const cpptoml::table& config)
             "arpa-file or binary-file-prefix needed in config file"};
 
     // cache this value
-    unk_prob_ = lm_[0].find(token_list{"<unk>", vocabulary_})->prob;
+    auto unk = vocabulary_.at("<unk>");
+    unk_node_ = *lm_[0].find(&unk, &unk + 1);
 }
 
 void language_model::read_arpa_format(const std::string& arpa_file)
@@ -165,7 +166,7 @@ float language_model::prob_calc(token_list tokens) const
         auto opt = lm_[0].find(token_list{tokens[0]});
         if (opt)
             return opt->prob;
-        return unk_prob_;
+        return unk_node_.prob;
     }
     else
     {
@@ -200,19 +201,17 @@ float language_model::log_prob(const token_list& tokens) const
     float prob = 0.0f;
 
     // tokens < N
-    token_list ngram;
     for (uint64_t i = 0; i < N_ - 1 && i < tokens.size(); ++i)
     {
-        ngram.push_back(tokens[i]);
-        prob += prob_calc(ngram);
+        prob += prob_calc(tokens.tokens().begin(),
+                          tokens.tokens().begin() + i + 1);
     }
 
     // tokens >= N
     for (uint64_t i = N_ - 1; i < tokens.size(); ++i)
     {
-        ngram.push_back(tokens[i]);
-        prob += prob_calc(ngram);
-        ngram.pop_front();
+        prob += prob_calc(tokens.tokens().begin() + (i - N_ + 1),
+                          tokens.tokens().begin() + i + 1);
     }
 
     return prob;

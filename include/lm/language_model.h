@@ -23,6 +23,11 @@ namespace meta
 {
 namespace lm
 {
+class language_model_exception : public std::runtime_error
+{
+    using std::runtime_error::runtime_error;
+};
+
 /**
  * A very simple language model class that reads existing language model data
  * from a .arpa file. Currently, estimation of the language model is not
@@ -104,6 +109,49 @@ class language_model
     float prob_calc(token_list tokens) const;
 
     /**
+     * @param begin The beginning of the list of tokens to score
+     * @param end The ending of the list of tokens to score
+     * @return the log probability of one ngram
+     */
+    template <class BidirectionalIterator>
+    float prob_calc(BidirectionalIterator begin,
+                    BidirectionalIterator end) const
+    {
+        auto size = std::distance(begin, end);
+        if (size == 0)
+            throw language_model_exception{"prob_calc: tokens is empty!"};
+
+        if (size == 1)
+        {
+            auto opt = lm_[0].find(begin, end);
+            if (opt)
+                return opt->prob;
+            return unk_node_.prob;
+        }
+        else
+        {
+            auto opt = lm_[size - 1].find(begin, end);
+            if (opt)
+                return opt->prob;
+
+            if (size - 1 == 1)
+            {
+                // look up history [begin, end - 1)
+                auto opt = lm_[0].find(begin, end - 1);
+                if (!opt)
+                    opt = unk_node_;
+            }
+
+            // opt might have been set above
+            if (!opt)
+                opt = lm_[size - 2].find(begin, end - 1);
+            if (opt)
+                return opt->backoff + prob_calc(begin + 1, end);
+            return prob_calc(begin + 1, end);
+        }
+    }
+
+    /**
      * Internal log_prob that takes a token_list
      */
     float log_prob(const token_list& tokens) const;
@@ -121,12 +169,7 @@ class language_model
 
     std::string prefix_;
 
-    float unk_prob_;
-};
-
-class language_model_exception : public std::runtime_error
-{
-    using std::runtime_error::runtime_error;
+    lm_node unk_node_;
 };
 }
 }
