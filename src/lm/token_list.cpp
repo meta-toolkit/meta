@@ -27,6 +27,7 @@ token_list::token_list(const std::string& ngram,
 token_list::token_list(const lm::sentence& ngram,
            const std::unordered_map<std::string, term_id>& vocab)
 {
+    tokens_.reserve(ngram.size());
     for (const auto& token : ngram)
     {
         auto it = vocab.find(token);
