@@ -66,7 +66,8 @@ typename std::enable_if<!std::is_floating_point<T>::value
                         uint64_t>::type
     write(OutputStream& stream, T value)
 {
-    uint64_t elem = (value << 1) ^ (value >> 63);
+    typename std::make_unsigned<T>::type elem
+        = (value << 1) ^ (value >> (sizeof(T) * 8 - 1));
     return write(stream, elem);
 }
 
@@ -142,7 +143,6 @@ typename std::enable_if<std::is_enum<T>::value, uint64_t>::type
     auto val = static_cast<typename std::underlying_type<T>::type>(value);
     return write(stream, val);
 }
-
 
 /**
  * Reads an unsigned integer from its packed representation.

@@ -103,7 +103,7 @@ void naive_bayes::save(const std::string& prefix) const
     {
         const auto& label = dist.first;
         const auto& probs = dist.second;
-        io::packed::write(tp_out, static_cast<const std::string&>(label));
+        io::packed::write(tp_out, label);
         probs.save(tp_out);
     }
     class_probs_.save(cp_out);

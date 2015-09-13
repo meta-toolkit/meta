@@ -14,6 +14,7 @@
 
 #include <functional> // for std::hash
 #include "util/comparable.h"
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -33,8 +34,8 @@ struct numeric
 template <class T>
 struct is_numeric
 {
-    const static constexpr bool value
-      = std::is_integral<T>::value || std::is_base_of<numeric, T>::value;
+    const static constexpr bool value = std::is_integral<T>::value
+                                        || std::is_base_of<numeric, T>::value;
 };
 
 /**
@@ -62,6 +63,8 @@ struct hash_wrapper : public Wrapped<hash_wrapper<Wrapped>>
 template <class Derived, class T>
 struct identifier : public comparable<identifier<Derived, T>>
 {
+    using underlying_type = T;
+
     /**
      * The underlying id for the identifier.
      */
@@ -73,8 +76,9 @@ struct identifier : public comparable<identifier<Derived, T>>
      *
      * @param t the underlying type to convert into an identifier
      */
-    explicit identifier(const T& t) : id_{t}
+    explicit constexpr identifier(const T& t) : id_{t}
     {
+        // nothing
     }
 
     /**
@@ -129,7 +133,7 @@ struct identifier : public comparable<identifier<Derived, T>>
      *
      * @return the base type representation for this identifier
      */
-    operator const T&() const
+    constexpr operator const T&() const
     {
         return id_;
     }
@@ -146,6 +150,20 @@ struct identifier : public comparable<identifier<Derived, T>>
     }
 
     /**
+     * Conversion to string_view. Enabled only if T is a std::string.
+     * @return the base type representation of this identifier, converted
+     *  to a string_view
+     */
+    template <
+        typename U = T,
+        typename
+        = typename std::enable_if<std::is_same<U, std::string>::value>::type>
+    constexpr operator util::string_view() const
+    {
+        return id_;
+    }
+
+    /**
      * identifiers are comparable by their base types. This allows for
      * storage in comparison-based containers like std::map or std::set.
      *
@@ -153,7 +171,8 @@ struct identifier : public comparable<identifier<Derived, T>>
      * @param rhs
      * @return whether lhs < rhs based on T::operator<.
      */
-    inline friend bool operator<(const identifier& lhs, const identifier& rhs)
+    inline friend constexpr bool operator<(const identifier& lhs,
+                                           const identifier& rhs)
     {
         return static_cast<T>(lhs) < static_cast<T>(rhs);
     }
@@ -311,11 +330,35 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
      */
     template <class T>
     size_t operator()(
-        const meta::util::identifier<meta::util::hash_wrapper<Wrapped>,
-                                     T>& to_hash) const
+        const meta::util::identifier<meta::util::hash_wrapper<Wrapped>, T>&
+            to_hash) const
     {
         return hash<T>{}(static_cast<T>(to_hash));
     }
+};
+
+/**
+ * A partial specialization for hash_wrapper types.
+ */
+template <template <class> class Wrapped>
+struct is_arithmetic<meta::util::hash_wrapper<Wrapped>>
+    : std::integral_constant<bool,
+                             std::is_arithmetic<
+                                 typename meta::util::hash_wrapper<Wrapped>::
+                                     underlying_type>::value>
+{
+    // nothing
+};
+
+/**
+ * A partial specialization for hash_wrapper types.
+ */
+template <template <class> class Wrapped>
+struct make_unsigned<meta::util::hash_wrapper<Wrapped>>
+    : std::make_unsigned<
+          typename meta::util::hash_wrapper<Wrapped>::underlying_type>
+{
+    // nothing
 };
 }
 
