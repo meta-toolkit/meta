@@ -157,9 +157,12 @@ class murmur_hash<4>
         // copy over the remaining 3 bytes or less for finalizing or use on
         // the next call to operator()
         const uint8_t* tail = data + nblocks * 4;
-        buflen_ = end - tail;
-        assert(buflen_ < 4);
-        std::copy(tail, end, buf_.begin());
+        if (end - tail)
+        {
+            buflen_ = end - tail;
+            assert(buflen_ < 4);
+            std::copy(tail, end, buf_.begin());
+        }
     }
 
     explicit operator std::size_t()
@@ -201,7 +204,7 @@ class murmur_hash<8>
     const static constexpr uint64_t c1 = 0x87c37b91114253d5LLU;
     const static constexpr uint64_t c2 = 0x4cf5ad432745937fLLU;
 
-    void handle_block_16(const uint8_t* start)
+    inline void handle_block_16(const uint8_t* start)
     {
         auto blocks = reinterpret_cast<const uint64_t*>(start);
         auto k1 = blocks[0];
@@ -261,9 +264,12 @@ class murmur_hash<8>
 
         // copy over the remaining 15 bytes or less for finalizing or use
         // on the next call to operator()
-        buflen_ = end - data;
-        assert(buflen_ < 16);
-        std::copy(data, end, buf_.begin());
+        if (end - data)
+        {
+            buflen_ = end - data;
+            assert(buflen_ < 16);
+            std::copy(data, end, buf_.begin());
+        }
     }
 
     explicit operator std::size_t()
