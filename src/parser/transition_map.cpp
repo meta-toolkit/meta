@@ -6,7 +6,7 @@
 #include <cassert>
 #include <fstream>
 
-#include "io/binary.h"
+#include "io/packed.h"
 #include "parser/transition_map.h"
 #include "util/filesystem.h"
 
@@ -39,7 +39,7 @@ void transition_map::load(std::istream& store)
         throw transition_map_exception{"missing transitions model file"};
 
     uint64_t num_trans;
-    io::read_binary(store, num_trans);
+    io::packed::read(store, num_trans);
 
     if (!store)
         throw transition_map_exception{"malformed transitions model file"};
@@ -53,7 +53,7 @@ void transition_map::load(std::istream& store)
                 "transitions written)"};
 
         transition::type_t trans_type;
-        io::read_binary(store, trans_type);
+        io::packed::read(store, trans_type);
 
         util::optional<transition> trans;
         switch (trans_type)
@@ -63,7 +63,7 @@ void transition_map::load(std::istream& store)
             case transition::type_t::UNARY:
             {
                 std::string lbl;
-                io::read_binary(store, lbl);
+                io::packed::read(store, lbl);
                 trans = transition{trans_type, class_label{lbl}};
                 break;
             }
@@ -118,18 +118,17 @@ void transition_map::save(const std::string& prefix) const
     std::ofstream store{prefix + "/parser.trans", std::ios::binary};
 #endif
 
-    uint64_t sze = transitions_.size();
-    io::write_binary(store, sze);
+    io::packed::write(store, transitions_.size());
     for (const auto& trans : transitions_)
     {
-        io::write_binary(store, trans.type());
+        io::packed::write(store, trans.type());
         switch (trans.type())
         {
             case transition::type_t::REDUCE_L:
             case transition::type_t::REDUCE_R:
             case transition::type_t::UNARY:
-                io::write_binary(store,
-                                 static_cast<std::string>(trans.label()));
+                io::packed::write(
+                    store, static_cast<const std::string&>(trans.label()));
                 break;
 
             default:

@@ -6,7 +6,7 @@
 #include <cassert>
 #include <fstream>
 
-#include "io/binary.h"
+#include "io/packed.h"
 #include "logging/logger.h"
 #include "parallel/parallel_for.h"
 #include "parser/sr_parser.h"
@@ -446,7 +446,7 @@ void sr_parser::save(const std::string& prefix) const
     std::ofstream model{prefix + "/parser.model", std::ios::binary};
 #endif
 
-    io::write_binary(model, beam_size_);
+    io::packed::write(model, beam_size_);
 
     model_.save(model);
 }
@@ -470,7 +470,7 @@ void sr_parser::load(std::istream& model)
     if (!model)
         throw sr_parser_exception{"model file not found"};
 
-    io::read_binary(model, beam_size_);
+    io::packed::read(model, beam_size_);
     model_.load(model);
 }
 }

@@ -6,7 +6,6 @@
 #include "stats/dirichlet.h"
 #include "util/identifiers.h"
 #include "util/shim.h"
-#include "io/binary.h"
 #include "io/packed.h"
 
 namespace meta

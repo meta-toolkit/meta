@@ -13,7 +13,8 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
-#include <string>
+#include <type_traits>
+#include "util/string_view.h"
 
 namespace meta
 {
@@ -31,8 +32,11 @@ namespace packed
  * @param value The value to write
  * @return the number of bytes used to write out the value
  */
-template <class OutputStream>
-uint64_t write(OutputStream& stream, uint64_t value)
+template <class OutputStream, class T>
+typename std::enable_if<!std::is_floating_point<T>::value
+                            && std::is_unsigned<T>::value,
+                        uint64_t>::type
+    write(OutputStream& stream, T value)
 {
     uint64_t size = 0;
     while (value > 127)
@@ -56,10 +60,14 @@ uint64_t write(OutputStream& stream, uint64_t value)
  * @param value The value to write
  * @return the number of bytes used to write out the value
  */
-template <class OutputStream>
-uint64_t write(OutputStream& stream, int64_t value)
+template <class OutputStream, class T>
+typename std::enable_if<!std::is_floating_point<T>::value
+                            && std::is_signed<T>::value,
+                        uint64_t>::type
+    write(OutputStream& stream, T value)
 {
-    uint64_t elem = (value << 1) ^ (value >> 63);
+    typename std::make_unsigned<T>::type elem
+        = (value << 1) ^ (value >> (sizeof(T) * 8 - 1));
     return write(stream, elem);
 }
 
@@ -69,20 +77,22 @@ uint64_t write(OutputStream& stream, int64_t value)
  * mantissa * std::pow(2.0, exponent) == elem. The mantissa and exponent
  * are integers are are written using the integer packed format.
  *
- * @see http://stackoverflow.com/questions/5672960/how-can-i-extract-the-mantissa-of-a-double
+ * @see
+ *http://stackoverflow.com/questions/5672960/how-can-i-extract-the-mantissa-of-a-double
  * @see http://dlib.net/dlib/float_details.h.html
  *
  * @param stream The stream to write to
  * @param value The value to write
  * @return the number of bytes used to write out the value
  */
-template <class OutputStream>
-uint64_t write(OutputStream& stream, double value)
+template <class OutputStream, class T>
+typename std::enable_if<std::is_floating_point<T>::value, uint64_t>::type
+    write(OutputStream& stream, T value)
 {
     int exp;
-    auto digits = std::numeric_limits<double>::digits;
-    auto mantissa
-        = static_cast<int64_t>(std::frexp(value, &exp) * (uint64_t{1} << digits));
+    auto digits = std::numeric_limits<T>::digits;
+    auto mantissa = static_cast<int64_t>(std::frexp(value, &exp)
+                                         * (uint64_t{1} << digits));
     int64_t exponent = exp - digits;
 
     // see dlib link above; tries to shrink mantissa for more efficient
@@ -108,7 +118,7 @@ uint64_t write(OutputStream& stream, double value)
  * @return the number of bytes used to write out the value
  */
 template <class OutputStream>
-uint64_t write(OutputStream& stream, const std::string& value)
+uint64_t write(OutputStream& stream, util::string_view value)
 {
     for (const auto& c : value)
     {
@@ -119,14 +129,33 @@ uint64_t write(OutputStream& stream, const std::string& value)
 }
 
 /**
+ * Writes an enumeration type in a packed representation. This determines
+ * the underlying type and serializes that.
+ *
+ * @param stream The stream to write to
+ * @param value The value to write
+ * @return the number of bytes used to write out the value
+ */
+template <class OutputStream, class T>
+typename std::enable_if<std::is_enum<T>::value, uint64_t>::type
+    write(OutputStream& stream, T value)
+{
+    auto val = static_cast<typename std::underlying_type<T>::type>(value);
+    return write(stream, val);
+}
+
+/**
  * Reads an unsigned integer from its packed representation.
  *
  * @param stream The stream to read from
  * @param value The element to write into
  * @return the number of bytes read
  */
-template <class InputStream>
-uint64_t read(InputStream& stream, uint64_t& value)
+template <class InputStream, class T>
+typename std::enable_if<!std::is_floating_point<T>::value
+                            && std::is_unsigned<T>::value,
+                        uint64_t>::type
+    read(InputStream& stream, T& value)
 {
     value = 0;
     uint64_t size = 0;
@@ -134,7 +163,7 @@ uint64_t read(InputStream& stream, uint64_t& value)
     do
     {
         byte = stream.get();
-        value |= static_cast<uint64_t>(byte & 127) << (7 * size);
+        value |= static_cast<T>(byte & 127) << (7 * size);
         ++size;
     } while (byte & 128);
     return size;
@@ -151,10 +180,13 @@ uint64_t read(InputStream& stream, uint64_t& value)
  * @param value The element to write into
  * @return the number of bytes read
  */
-template <class InputStream>
-uint64_t read(InputStream& stream, int64_t& value)
+template <class InputStream, class T>
+typename std::enable_if<!std::is_floating_point<T>::value
+                            && std::is_signed<T>::value,
+                        uint64_t>::type
+    read(InputStream& stream, T& value)
 {
-    uint64_t elem;
+    typename std::make_unsigned<T>::type elem;
     auto bytes = read(stream, elem);
 
     value = (elem >> 1) ^ (-(elem & 1));
@@ -169,8 +201,9 @@ uint64_t read(InputStream& stream, int64_t& value)
  * @param value The element to write into
  * @return the number of bytes read
  */
-template <class InputStream>
-uint64_t read(InputStream& stream, double& value)
+template <class InputStream, class T>
+typename std::enable_if<std::is_floating_point<T>::value, uint64_t>::type
+    read(InputStream& stream, T& value)
 {
     int64_t mantissa;
     int64_t exponent;
@@ -195,6 +228,24 @@ uint64_t read(InputStream& stream, std::string& value)
     for (auto c = stream.get(); c != '\0'; c = stream.get())
         value += c;
     return value.size() + 1;
+}
+
+/**
+ * Reads an enum from its packed representation. This reads an integer of
+ * the underlying type and then sets the enum accordingly.
+ *
+ * @param stream The stream to read from
+ * @param value The element to write to
+ * @return the number of bytes read
+ */
+template <class InputStream, class T>
+typename std::enable_if<std::is_enum<T>::value, uint64_t>::type
+    read(InputStream& stream, T& value)
+{
+    typename std::underlying_type<T>::type val;
+    auto size = read(stream, val);
+    value = static_cast<T>(val);
+    return size;
 }
 }
 }
