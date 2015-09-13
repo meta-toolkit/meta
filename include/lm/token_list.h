@@ -88,7 +88,7 @@ class token_list
     /**
      * @return the underlying container of term_id tokens
      */
-    const std::vector<term_id> tokens() const;
+    const std::vector<term_id>& tokens() const;
 
   private:
     std::vector<term_id> tokens_;

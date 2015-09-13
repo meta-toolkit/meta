@@ -72,7 +72,7 @@ void token_list::pop_back()
     tokens_.pop_back();
 }
 
-const std::vector<term_id> token_list::tokens() const
+const std::vector<term_id>& token_list::tokens() const
 {
     return tokens_;
 }
