@@ -53,7 +53,7 @@ struct file_guard
         filesystem::delete_file(path_);
     }
     /// The path to this file
-    const std::string& path_;
+    std::string path_;
 };
 
 /**
