@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include <sys/stat.h>
 #include "io/filesystem.h"
 
 namespace meta

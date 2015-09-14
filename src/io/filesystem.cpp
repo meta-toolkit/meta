@@ -72,7 +72,11 @@ std::uintmax_t remove_all(const path_type& path)
     if (!traits::file_exists(path.c_str()))
         return 0;
 
-    if (traits::is_file(path.c_str()) || traits::is_link(path.c_str()))
+    traits::stat_data_type st;
+    if (!traits::stat(path.c_str(), &st))
+        return 0;
+
+    if (traits::is_file(&st) || traits::is_link(&st))
     {
         if (traits::unlink_file(path.c_str()))
             return 1;
