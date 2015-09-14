@@ -126,24 +126,24 @@ int forward_index_tests()
 
     int num_failed = 0;
 
-    // num_failed += testing::run_test("forward-index-build-file-corpus", [&]()
-    //                                {
-    //                                    system("rm -rf ceeaus-*");
-    //                                    ceeaus_forward_test(*file_cfg);
-    //                                });
+    num_failed += testing::run_test("forward-index-build-file-corpus", [&]()
+                                    {
+                                        system("rm -rf ceeaus-*");
+                                        ceeaus_forward_test(*file_cfg);
+                                    });
 
-    // num_failed += testing::run_test("forward-index-read-file-corpus", [&]()
-    //                                {
-    //                                    ceeaus_forward_test(*file_cfg);
-    //                                });
+    num_failed += testing::run_test("forward-index-read-file-corpus", [&]()
+                                    {
+                                        ceeaus_forward_test(*file_cfg);
+                                    });
 
-    // num_failed += testing::run_test("forward-index-build-uninvert", [&]()
-    //                                {
-    //                                    system("rm -rf ceeaus-*");
+    num_failed += testing::run_test("forward-index-build-uninvert", [&]()
+                                    {
+                                        system("rm -rf ceeaus-*");
 
-    //                                    file_cfg->insert("uninvert", true);
-    //                                    ceeaus_forward_test(*file_cfg);
-    //                                });
+                                        file_cfg->insert("uninvert", true);
+                                        ceeaus_forward_test(*file_cfg);
+                                    });
 
     auto line_cfg = create_config("line");
 
@@ -153,25 +153,25 @@ int forward_index_tests()
                                         ceeaus_forward_test(*line_cfg);
                                     });
 
-    // num_failed += testing::run_test("forward-index-read-line-corpus", [&]()
-    //                                {
-    //                                    ceeaus_forward_test(*line_cfg);
-    //                                    system("rm -rf ceeaus-*");
-    //                                });
+    num_failed += testing::run_test("forward-index-read-line-corpus", [&]()
+                                    {
+                                        ceeaus_forward_test(*line_cfg);
+                                        system("rm -rf ceeaus-*");
+                                    });
 
-    // auto svm_cfg = create_libsvm_config();
+    auto svm_cfg = create_libsvm_config();
 
-    // num_failed += testing::run_test("forward-index-build-libsvm", [&]()
-    //                                {
-    //                                    system("rm -rf bcancer-*");
-    //                                    bcancer_forward_test(*svm_cfg);
-    //                                });
+    num_failed += testing::run_test("forward-index-build-libsvm", [&]()
+                                    {
+                                        system("rm -rf bcancer-*");
+                                        bcancer_forward_test(*svm_cfg);
+                                    });
 
-    // num_failed += testing::run_test("forward-index-load-libsvm", [&]()
-    //                                {
-    //                                    bcancer_forward_test(*svm_cfg);
-    //                                    system("rm -rf bcancer-*");
-    //                                });
+    num_failed += testing::run_test("forward-index-load-libsvm", [&]()
+                                    {
+                                        bcancer_forward_test(*svm_cfg);
+                                        system("rm -rf bcancer-*");
+                                    });
 
     return num_failed;
 }
