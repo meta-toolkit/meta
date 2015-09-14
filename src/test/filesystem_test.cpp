@@ -3,8 +3,9 @@
  * @author Chase Geigle
  */
 
+#include <fstream>
 #include "test/filesystem_test.h"
-#include "util/filesystem.h"
+#include "io/filesystem.h"
 
 namespace meta
 {

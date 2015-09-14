@@ -6,9 +6,9 @@
 #include <cassert>
 #include <fstream>
 
+#include "io/filesystem.h"
 #include "io/packed.h"
 #include "parser/transition_map.h"
-#include "util/filesystem.h"
 
 #ifdef META_HAS_ZLIB
 #include "io/gzstream.h"

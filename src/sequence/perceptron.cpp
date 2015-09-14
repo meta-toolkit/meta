@@ -5,9 +5,9 @@
 
 #include <fstream>
 
+#include "io/filesystem.h"
 #include "sequence/perceptron.h"
 #include "utf/utf.h"
-#include "util/filesystem.h"
 #include "util/progress.h"
 #include "util/time.h"
 

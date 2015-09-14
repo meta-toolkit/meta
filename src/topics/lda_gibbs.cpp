@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include "index/postings_data.h"
+#include "logging/logger.h"
 #include "topics/lda_gibbs.h"
 #include "util/progress.h"
 

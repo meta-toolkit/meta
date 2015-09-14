@@ -17,6 +17,7 @@
 #include "util/dense_matrix.h"
 #include "util/disk_vector.h"
 #include "util/optional.h"
+#include "util/progress.h"
 #include "util/range.h"
 
 namespace meta

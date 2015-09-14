@@ -12,10 +12,10 @@
 
 #include <iostream>
 #include "io/binary.h"
+#include "io/filesystem.h"
 #include "index/vocabulary_map_writer.h"
 #include "index/vocabulary_map.h"
 #include "util/disk_vector.h"
-#include "util/filesystem.h"
 #include "test/unit_test.h"
 
 namespace meta

@@ -16,7 +16,7 @@
 #include <memory>
 #include <string>
 
-#include "util/filesystem.h"
+#include "io/filesystem.h"
 #include "util/progress.h"
 #include "util/shim.h"
 

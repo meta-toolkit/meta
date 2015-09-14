@@ -3,10 +3,12 @@
  * @author Sean Massung
  */
 
+#include <iostream>
 #include <unordered_set>
 #include "analyzers/filters/ptb_normalizer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
 #include "cpptoml.h"
+#include "logging/logger.h"
 #include "sequence/crf/crf.h"
 #include "sequence/crf/tagger.h"
 #include "sequence/io/ptb_parser.h"

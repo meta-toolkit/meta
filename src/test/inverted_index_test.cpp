@@ -4,6 +4,7 @@
  */
 
 #include "test/inverted_index_test.h"
+#include "io/filesystem.h"
 
 namespace meta
 {
@@ -117,7 +118,7 @@ int inverted_index_tests()
     num_failed += testing::run_test(
         "inverted-index-build-file-corpus", [&]()
         {
-            system("rm -rf ceeaus-inv");
+            filesystem::remove_all("ceeaus-inv");
             auto idx = index::make_index<index::inverted_index>(*file_cfg);
             check_ceeaus_expected(*idx);
         });
@@ -130,11 +131,10 @@ int inverted_index_tests()
                 check_ceeaus_expected(*idx);
                 check_term_id(*idx);
             }
-            system("rm -rf ceeaus-inv test-config.toml");
         });
 
     auto line_cfg = create_config("line");
-    system("rm -rf ceeaus-inv");
+    filesystem::remove_all("ceeaus-inv");
 
     num_failed += testing::run_test(
         "inverted-index-build-line-corpus", [&]()
@@ -156,7 +156,7 @@ int inverted_index_tests()
 
 #if META_HAS_ZLIB
     auto gz_cfg = create_config("gz");
-    system("rm -rf ceeaus-inv");
+    filesystem::remove_all("ceeaus-inv");
 
     num_failed += testing::run_test(
         "inverted-index-build-gz-corpus", [&]()
@@ -205,7 +205,7 @@ int inverted_index_tests()
             check_term_id(*idx);
         });
 
-    system("rm -rf ceeaus-inv test-config.toml");
+    filesystem::remove_all("ceeaus-inv");
     return num_failed;
 }
 }

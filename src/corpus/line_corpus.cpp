@@ -6,8 +6,8 @@
 #include <algorithm>
 
 #include "corpus/line_corpus.h"
+#include "io/filesystem.h"
 #include "io/parser.h"
-#include "util/filesystem.h"
 #include "util/shim.h"
 
 namespace meta

@@ -3,9 +3,9 @@
  * @author Sean Massung
  */
 
-#include "cpptoml.h"
 #include "analyzers/analyzer.h"
 #include "corpus/corpus.h"
+#include "cpptoml.h"
 #include "index/chunk_reader.h"
 #include "index/disk_index_impl.h"
 #include "index/forward_index.h"
@@ -19,10 +19,12 @@
 #include "index/vocabulary_map.h"
 #include "index/vocabulary_map_writer.h"
 #include "io/libsvm_parser.h"
+#include "logging/logger.h"
 #include "parallel/thread_pool.h"
 #include "util/disk_vector.h"
 #include "util/mapping.h"
 #include "util/pimpl.tcc"
+#include "util/printing.h"
 #include "util/shim.h"
 #include "util/time.h"
 

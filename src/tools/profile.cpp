@@ -4,21 +4,21 @@
  */
 
 #include <iostream>
-#include <vector>
-#include <unordered_set>
 #include <string>
-#include "cpptoml.h"
-#include "util/shim.h"
-#include "util/filesystem.h"
+#include <unordered_set>
+#include <vector>
 #include "analyzers/analyzer.h"
 #include "analyzers/tokenizers/icu_tokenizer.h"
 #include "analyzers/filters/all.h"
 #include "analyzers/ngram/ngram_word_analyzer.h"
 #include "corpus/document.h"
+#include "cpptoml.h"
+#include "io/filesystem.h"
 #include "parser/sr_parser.h"
-#include "sequence/perceptron.h"
 #include "sequence/io/ptb_parser.h"
+#include "sequence/perceptron.h"
 #include "sequence/sequence.h"
+#include "util/shim.h"
 
 using namespace meta;
 

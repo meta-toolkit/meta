@@ -9,7 +9,7 @@
 #include "lm/diff.h"
 #include "lm/sentence.h"
 #include "logging/logger.h"
-#include "util/filesystem.h"
+#include "io/filesystem.h"
 #include "util/progress.h"
 
 using namespace meta;

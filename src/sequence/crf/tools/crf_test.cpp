@@ -1,10 +1,11 @@
 #include <iostream>
 
+#include "cpptoml.h"
+#include "classify/confusion_matrix.h"
+#include "logging/logger.h"
 #include "sequence/crf/crf.h"
 #include "sequence/crf/tagger.h"
 #include "sequence/io/ptb_parser.h"
-#include "cpptoml.h"
-#include "classify/confusion_matrix.h"
 
 using namespace meta;
 

@@ -15,9 +15,9 @@
 
 #include "test/unit_test.h"
 #include "io/binary.h"
+#include "io/filesystem.h"
 #include "index/string_list.h"
 #include "index/string_list_writer.h"
-#include "util/filesystem.h"
 
 #include "unit_test.h"
 

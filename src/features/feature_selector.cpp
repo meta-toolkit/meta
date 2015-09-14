@@ -3,15 +3,15 @@
  * @author Sean Massung
  */
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <unordered_set>
-#include "util/filesystem.h"
-#include "util/progress.h"
-#include "parallel/parallel_for.h"
 #include "features/feature_selector.h"
 #include "index/postings_data.h"
+#include "io/filesystem.h"
 #include "io/packed.h"
+#include "parallel/parallel_for.h"
+#include "util/progress.h"
 
 namespace meta
 {

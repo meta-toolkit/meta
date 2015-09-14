@@ -3,14 +3,15 @@
  * @author Sean Massung
  */
 
+#include "analyzers/tokenizers/icu_tokenizer.h"
+#include "classify/confusion_matrix.h"
+#include "cpptoml.h"
+#include "logging/logger.h"
 #include "sequence/crf/crf.h"
 #include "sequence/crf/tagger.h"
 #include "sequence/io/ptb_parser.h"
 #include "sequence/sequence.h"
 #include "sequence/crf/tagger.h"
-#include "analyzers/tokenizers/icu_tokenizer.h"
-#include "classify/confusion_matrix.h"
-#include "cpptoml.h"
 
 using namespace meta;
 

@@ -7,10 +7,10 @@
 
 #include "cpptoml.h"
 #include "classify/confusion_matrix.h"
+#include "io/filesystem.h"
 #include "logging/logger.h"
 #include "sequence/perceptron.h"
 #include "sequence/io/ptb_parser.h"
-#include "util/filesystem.h"
 #include "util/progress.h"
 
 using namespace meta;

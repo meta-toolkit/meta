@@ -38,7 +38,7 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding)
 int ranker_tests()
 {
     auto config = create_config("file");
-    system("rm -rf ceeaus-inv");
+    filesystem::remove_all("ceeaus-inv");
     auto idx = index::make_index<index::inverted_index>(*config);
 
     std::string encoding = "utf-8";
@@ -78,7 +78,7 @@ int ranker_tests()
 
     idx = nullptr;
 
-    system("rm -rf ceeaus-inv test-config.toml");
+    filesystem::remove_all("ceeaus-inv");
     return num_failed;
 }
 }

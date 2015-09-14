@@ -6,10 +6,10 @@
 #include <iostream>
 
 #include "cpptoml.h"
+#include "io/filesystem.h"
 #include "logging/logger.h"
 #include "parser/io/ptb_reader.h"
 #include "parser/sr_parser.h"
-#include "util/filesystem.h"
 #include "util/progress.h"
 
 using namespace meta;

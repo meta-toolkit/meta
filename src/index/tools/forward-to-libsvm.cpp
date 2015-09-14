@@ -3,7 +3,10 @@
  * @author Chase Geigle
  */
 
+#include <iostream>
 #include "index/forward_index.h"
+#include "logging/logger.h"
+#include "util/progress.h"
 
 using namespace meta;
 

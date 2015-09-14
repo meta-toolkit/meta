@@ -1,3 +1,4 @@
+#include <iostream>
 #include <memory>
 #include "util/optional.h"
 #include "index/vocabulary_map.h"

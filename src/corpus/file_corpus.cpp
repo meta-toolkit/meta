@@ -4,8 +4,8 @@
  */
 
 #include "corpus/file_corpus.h"
+#include "io/filesystem.h"
 #include "io/parser.h"
-#include "util/filesystem.h"
 #include "utf/utf.h"
 
 namespace meta
