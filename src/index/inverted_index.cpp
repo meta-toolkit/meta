@@ -4,20 +4,22 @@
  * @author Chase Geigle
  */
 
+#include "analyzers/analyzer.h"
 #include "corpus/corpus.h"
+#include "corpus/metadata_parser.h"
 #include "index/disk_index_impl.h"
 #include "index/inverted_index.h"
-#include "corpus/metadata_parser.h"
 #include "index/metadata_writer.h"
 #include "index/postings_file.h"
 #include "index/postings_file_writer.h"
 #include "index/postings_inverter.h"
 #include "index/vocabulary_map.h"
 #include "index/vocabulary_map_writer.h"
+#include "logging/logger.h"
 #include "parallel/thread_pool.h"
-#include "analyzers/analyzer.h"
 #include "util/mapping.h"
 #include "util/pimpl.tcc"
+#include "util/printing.h"
 #include "util/progress.h"
 #include "util/shim.h"
 

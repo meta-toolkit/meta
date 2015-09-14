@@ -11,6 +11,7 @@
 
 #include <vector>
 #include "classify/confusion_matrix.h"
+#include "index/forward_index.h"
 
 namespace meta
 {

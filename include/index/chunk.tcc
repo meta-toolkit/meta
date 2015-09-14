@@ -6,7 +6,7 @@
 #include "index/chunk.h"
 #include "index/postings_data.h"
 
-#include "util/filesystem.h"
+#include "io/filesystem.h"
 
 namespace meta
 {

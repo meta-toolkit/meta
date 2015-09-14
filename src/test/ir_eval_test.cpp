@@ -35,7 +35,7 @@ int ir_eval_bounds()
     return testing::run_test(
         "ir-eval-bounds", [&]()
         {
-            system("rm -rf ceeaus-inv");
+            filesystem::remove_all("ceeaus-inv");
             auto file_cfg = create_config("file");
             auto idx
                 = index::make_index<index::inverted_index>(*file_cfg);
@@ -65,7 +65,6 @@ int ir_eval_bounds()
             auto gmap = eval.gmap();
             ASSERT(map >= 0 && map <= 1);
             ASSERT(gmap >= 0 && gmap <= 1);
-            system("rm -rf ceeaus-inv test-config.toml");
         });
 }
 
@@ -144,6 +143,7 @@ int ir_eval_tests()
     int num_failed = 0;
     num_failed += ir_eval_bounds();
     num_failed += ir_eval_results();
+    filesystem::remove_all("ceeaus-inv");
     return num_failed;
 }
 }

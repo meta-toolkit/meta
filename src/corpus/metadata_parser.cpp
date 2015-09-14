@@ -4,7 +4,7 @@
  */
 
 #include "corpus/metadata_parser.h"
-#include "util/filesystem.h"
+#include "io/filesystem.h"
 
 namespace meta
 {

@@ -10,8 +10,9 @@
 #ifndef META_CONFUSION_MATRIX_H_
 #define META_CONFUSION_MATRIX_H_
 
+#include <iostream>
 #include <set>
-#include "index/forward_index.h"
+#include <unordered_map>
 #include "meta.h"
 
 namespace meta

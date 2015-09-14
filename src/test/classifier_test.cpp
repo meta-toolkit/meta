@@ -176,7 +176,8 @@ int run_tests(const std::string& type)
             });
     }
 
-    system("rm -rf ceeaus-*");
+    filesystem::remove_all("ceeaus-inv");
+    filesystem::remove_all("ceeaus-fwd");
     return num_failed;
 }
 
@@ -209,7 +210,7 @@ int run_load_save_tests()
                 check_split(*f_idx, nb, 0.83, false);
             });
 
-        system("rm -rf naive-bayes-test");
+        filesystem::remove_all("naive-bayes-test");
 
         num_failed += testing::run_test(
             "svm-wrapper-save-load", [&]()
@@ -229,10 +230,11 @@ int run_load_save_tests()
                 check_split(*f_idx, svm, 0.80);
             });
 
-        system("rm -rf svm-wrapper-test");
+        filesystem::remove_all("svm-wrapper-test");
     }
 
-    system("rm -rf ceeaus-*");
+    filesystem::remove_all("ceeaus-inv");
+    filesystem::remove_all("ceeaus-fwd");
 
     return num_failed;
 }
@@ -240,7 +242,8 @@ int run_load_save_tests()
 int classifier_tests()
 {
     int num_failed = 0;
-    system("rm -rf ceeaus-*");
+    filesystem::remove_all("ceeaus-inv");
+    filesystem::remove_all("ceeaus-fwd");
     num_failed += run_tests("file");
     num_failed += run_tests("line");
     num_failed += run_load_save_tests();

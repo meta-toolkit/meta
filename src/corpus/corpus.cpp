@@ -6,7 +6,7 @@
 #include "corpus/corpus.h"
 #include "corpus/all.h"
 #include "cpptoml.h"
-#include "util/filesystem.h"
+#include "io/filesystem.h"
 #include "util/shim.h"
 
 namespace meta

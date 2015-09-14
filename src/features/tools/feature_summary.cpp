@@ -9,10 +9,11 @@
 
 #include <iostream>
 #include "cpptoml.h"
-#include "util/shim.h"
 #include "features/all.h"
 #include "features/selector_factory.h"
 #include "index/forward_index.h"
+#include "logging/logger.h"
+#include "util/shim.h"
 
 using namespace meta;
 

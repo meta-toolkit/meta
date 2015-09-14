@@ -8,6 +8,7 @@
 #include <numeric>
 #include <map>
 #include <set>
+#include "logging/logger.h"
 #include "sequence/crf/crf.h"
 #include "sequence/crf/scorer.h"
 #include "util/mapping.h"

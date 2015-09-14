@@ -6,6 +6,7 @@
 #include <cassert>
 #include <fstream>
 
+#include "io/filesystem.h"
 #include "io/packed.h"
 #include "logging/logger.h"
 #include "parallel/parallel_for.h"
@@ -16,7 +17,6 @@
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"
 #include "parser/trees/visitors/debinarizer.h"
-#include "util/filesystem.h"
 #include "util/fixed_heap.h"
 #include "util/progress.h"
 #include "util/range.h"

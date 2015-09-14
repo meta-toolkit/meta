@@ -6,9 +6,9 @@
 #include <algorithm>
 #include <numeric>
 #include <random>
-#include "util/filesystem.h"
 #include "io/compressed_file_reader.h"
 #include "io/compressed_file_writer.h"
+#include "io/filesystem.h"
 #include "test/compression_test.h"
 
 namespace meta

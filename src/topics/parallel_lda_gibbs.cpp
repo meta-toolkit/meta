@@ -4,8 +4,10 @@
  */
 
 #include "index/postings_data.h"
+#include "logging/logger.h"
 #include "parallel/parallel_for.h"
 #include "topics/parallel_lda_gibbs.h"
+#include "util/progress.h"
 #include "util/range.h"
 
 namespace meta

@@ -282,6 +282,21 @@ if (META_HAS_LAMBDA_AS_DEFAULT_ARGUMENT)
     -DMETA_HAS_MEM_FN_TEMPLATE_LAMBDA_DEFAULT_ARGUMENT)
 endif()
 
+check_cxx_source_compiles("
+#include <experimental/filesystem>
+
+int main()
+{
+    return 0;
+}" META_HAS_EXPERIMENTAL_FILESYSTEM)
+
+if (META_HAS_EXPERIMENTAL_FILESYSTEM)
+  target_compile_definitions(meta-definitions INTERFACE
+    -DMETA_HAS_EXPERIMENTAL_FILESYSTEM)
+else()
+  target_include_directories(meta-definitions INTERFACE SYSTEM ${PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)
+endif()
+
 if(ICU_VERSION VERSION_LESS "4.4")
   target_compile_definitions(meta-definitions INTERFACE
                              -DMETA_ICU_NO_TEMP_SUBSTRING)
