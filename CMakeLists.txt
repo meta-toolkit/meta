@@ -294,7 +294,7 @@ if (META_HAS_EXPERIMENTAL_FILESYSTEM)
   target_compile_definitions(meta-definitions INTERFACE
     -DMETA_HAS_EXPERIMENTAL_FILESYSTEM)
 else()
-  target_include_directories(meta-definitions INTERFACE SYSTEM ${PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)
+  target_include_directories(meta-definitions SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)
 endif()
 
 if(ICU_VERSION VERSION_LESS "4.4")
