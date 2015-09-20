@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <limits>
 #include <type_traits>
+#include "util/identifiers.h"
 #include "util/string_view.h"
 
 namespace meta
@@ -145,6 +146,21 @@ typename std::enable_if<std::is_enum<T>::value, uint64_t>::type
 }
 
 /**
+ * Writes a hash_wrapped type in a packed representation. This just uses
+ * whatever packed representation its underlying type has.
+ *
+ * @param stream The stream to write to
+ * @param value The value to write
+ * @return the number of bytes used to write out the value
+ */
+template <class OutputStream, template <class> class Wrapped, class T>
+uint64_t write(OutputStream& stream,
+               const util::identifier<util::hash_wrapper<Wrapped>, T>& value)
+{
+    return write(stream, static_cast<const T&>(value));
+}
+
+/**
  * Reads an unsigned integer from its packed representation.
  *
  * @param stream The stream to read from
@@ -246,6 +262,21 @@ typename std::enable_if<std::is_enum<T>::value, uint64_t>::type
     auto size = read(stream, val);
     value = static_cast<T>(val);
     return size;
+}
+
+/**
+ * Reads a hash_wrapped type from a packed representation. This just uses
+ * whatever packed representation its underlying type has.
+ *
+ * @param stream The stream to write to
+ * @param value The value to write
+ * @return the number of bytes used to write out the value
+ */
+template <class InputStream, template <class> class Wrapped, class T>
+uint64_t read(InputStream& stream,
+              util::identifier<util::hash_wrapper<Wrapped>, T>& value)
+{
+    return read(stream, static_cast<T&>(value));
 }
 }
 }

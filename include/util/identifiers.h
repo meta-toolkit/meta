@@ -336,30 +336,6 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
         return hash<T>{}(static_cast<T>(to_hash));
     }
 };
-
-/**
- * A partial specialization for hash_wrapper types.
- */
-template <template <class> class Wrapped>
-struct is_arithmetic<meta::util::hash_wrapper<Wrapped>>
-    : std::integral_constant<bool,
-                             std::is_arithmetic<
-                                 typename meta::util::hash_wrapper<Wrapped>::
-                                     underlying_type>::value>
-{
-    // nothing
-};
-
-/**
- * A partial specialization for hash_wrapper types.
- */
-template <template <class> class Wrapped>
-struct make_unsigned<meta::util::hash_wrapper<Wrapped>>
-    : std::make_unsigned<
-          typename meta::util::hash_wrapper<Wrapped>::underlying_type>
-{
-    // nothing
-};
 }
 
 #define MAKE_USER_DEFINED_LITERAL(ident_name, base_type, suffix)               \
