@@ -49,7 +49,7 @@ logistic_regression::logistic_regression(multiclass_dataset_view docs,
                     return docs.label(instance) == pair.first;
                 }};
 
-            pair.second = std::make_unique<sgd>(
+            pair.second = make_unique<sgd>(
                 bdv, loss::make_loss_function<loss::logistic>(), alpha, gamma,
                 bias, lambda, max_iter);
         });
