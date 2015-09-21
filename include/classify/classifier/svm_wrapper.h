@@ -14,6 +14,7 @@
 #include "classify/classifier/classifier.h"
 #include "index/forward_index.h"
 #include "meta.h"
+#include "util/hash.h"
 
 namespace meta
 {
@@ -62,13 +63,21 @@ class svm_wrapper : public classifier
 
     /**
      * Constructor.
-     * @param idx The index to run the classifier on
+     * @param docs The training documents
      * @param svm_path The path to the liblinear/libsvm library
      * @param kernel_opt Which kind of kernel you want to use (default:
      * None)
      */
-    svm_wrapper(std::shared_ptr<index::forward_index> idx,
-                const std::string& svm_path, kernel kernel_opt = kernel::None);
+    svm_wrapper(dataset_view_type docs, const std::string& svm_path,
+                kernel kernel_opt = kernel::None);
+
+    /**
+     * Loads a svm_wrapper from a stream.
+     * @param in The stream to read from
+     */
+    svm_wrapper(std::istream& in);
+
+    void save(std::ostream& out) const override;
 
     /**
      * Classifies a document into a specific group, as determined by
@@ -76,40 +85,17 @@ class svm_wrapper : public classifier
      * @param doc The document to classify
      * @return the class it belongs to
      */
-    class_label classify(doc_id d_id) override;
-
-    /**
-     * Creates a classification model based on training documents.
-     * @param docs The training documents
-     */
-    void train(const std::vector<doc_id>& docs) override;
+    class_label classify(const feature_vector& doc) const override;
 
     /**
      * Classifies a collection document into specific groups, as determined
-     * by training data; this function will make repeated calls to
-     * classify().
+     * by training data.
+     *
      * @param docs The documents to classify
      * @return a confusion_matrix detailing the performance of the
      * classifier
      */
-    confusion_matrix test(const std::vector<doc_id>& docs) override;
-
-    /**
-     * Clears any learned data from this classifier.
-     */
-    void reset() override;
-
-    /**
-     * Loads in a model file.
-     * @param prefix The folder that contains the model file
-     */
-    void load(const std::string& prefix) const;
-
-    /**
-     * Saves the model to a file.
-     * @param prefix The folder to save the model into
-     */
-    void save(const std::string& prefix) const;
+    confusion_matrix test(dataset_view_type docs) const override;
 
     /**
      * The identifier for this classifier.
@@ -122,14 +108,16 @@ class svm_wrapper : public classifier
 
     /** keeps track of which arguments are necessary for which kernel
      * function */
-    const static std::unordered_map<kernel, std::string, std::hash<int>>
-        options_;
+    const static std::unordered_map<kernel, std::string, util::hash<>> options_;
 
     /** which kernel function to use for this SVM */
     kernel kernel_;
 
     /** used to select which executable to use (libsvm or liblinear) */
     std::string executable_;
+
+    /** the list of class_labels (mainly for serializing the model) */
+    std::vector<class_label> labels_;
 };
 
 /**
@@ -139,7 +127,7 @@ class svm_wrapper : public classifier
 template <>
 std::unique_ptr<classifier>
     make_classifier<svm_wrapper>(const cpptoml::table&,
-                                 std::shared_ptr<index::forward_index>);
+                                 multiclass_dataset_view training);
 }
 }
 

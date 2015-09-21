@@ -19,6 +19,19 @@ dirichlet_prior::dirichlet_prior(float mu) : mu_{mu}
     /* nothing */
 }
 
+dirichlet_prior::dirichlet_prior(std::istream& in)
+    : mu_{io::packed::read<float>(in)}
+{
+    // nothing
+}
+
+void dirichlet_prior::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, mu_);
+}
+
 float dirichlet_prior::smoothed_prob(const score_data& sd) const
 {
     float pc = static_cast<float>(sd.corpus_term_count) / sd.total_terms;

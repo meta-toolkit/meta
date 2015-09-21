@@ -147,9 +147,8 @@ bool forward_index::valid() const
 
         if (!filesystem::file_exists(index_name() + "/" + std::string{f}))
         {
-            LOG(info)
-                << "Existing forward index detected as invalid; recreating"
-                << ENDLG;
+            LOG(info) << "Existing forward index detected as invalid (missing "
+                      << f << "); recreating" << ENDLG;
             return false;
         }
     }

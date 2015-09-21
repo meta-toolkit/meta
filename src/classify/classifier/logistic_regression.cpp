@@ -16,32 +16,78 @@ namespace classify
 
 const util::string_view logistic_regression::id = "logistic-regression";
 
-logistic_regression::logistic_regression(
-    const std::string& prefix, std::shared_ptr<index::forward_index> idx,
-    double alpha, double gamma, double bias, double lambda, uint64_t max_iter)
-    : classifier{std::move(idx)}
+logistic_regression::logistic_regression(multiclass_dataset_view docs,
+                                         double alpha, double gamma,
+                                         double bias, double lambda,
+                                         uint64_t max_iter)
 {
-    auto labels = idx_->class_labels();
-    pivot_ = labels[labels.size() - 1];
-    for (uint64_t i = 0; i < labels.size() - 1; ++i)
+    using size_type = multiclass_dataset_view::size_type;
+    using indices_type = std::vector<size_type>;
+
+    pivot_ = docs.label(*docs.begin());
+
+    for (auto it = docs.labels_begin(), end = docs.labels_end(); it != end;
+         ++it)
+        classifiers_[it->first] = nullptr;
+
+    std::unordered_map<class_label, indices_type> docs_by_class;
+    for (auto it = docs.begin(), end = docs.end(); it != end; ++it)
+        docs_by_class[docs.label(*it)].push_back(it.index());
+
+    using T = decltype(*classifiers_.begin());
+    parallel::parallel_for(
+        classifiers_.begin(), classifiers_.end(), [&](T& pair)
+        {
+            auto train_docs = docs_by_class[pair.first];
+            auto pivot_docs = docs_by_class[pivot_];
+            train_docs.insert(train_docs.end(), pivot_docs.begin(),
+                              pivot_docs.end());
+
+            binary_dataset_view bdv{
+                docs, std::move(train_docs), [&](const instance_type& instance)
+                {
+                    return docs.label(instance) == pair.first;
+                }};
+
+            pair.second = std::make_unique<sgd>(
+                bdv, loss::make_loss_function<loss::logistic>(), alpha, gamma,
+                bias, lambda, max_iter);
+        });
+}
+
+logistic_regression::logistic_regression(std::istream& in)
+{
+    auto size = io::packed::read<std::size_t>(in);
+    classifiers_.reserve(size);
+    for (std::size_t i = 0; i < size; ++i)
     {
-        using namespace loss;
-        classifiers_.emplace(
-            std::piecewise_construct, std::forward_as_tuple(labels[i]),
-            std::forward_as_tuple(prefix, idx_, labels[i], pivot_,
-                                  make_loss_function<logistic>(), alpha, gamma,
-                                  bias, lambda, max_iter));
+        auto lbl = io::packed::read<class_label>(in);
+        classifiers_[lbl] = load_binary_classifier(in);
     }
+    io::packed::read(in, pivot_);
+}
+
+void logistic_regression::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, classifiers_.size());
+    for (const auto& pr : classifiers_)
+    {
+        io::packed::write(out, pr.first);
+        pr.second->save(out);
+    }
+    io::packed::write(out, pivot_);
 }
 
 std::unordered_map<class_label, double>
-    logistic_regression::predict(doc_id d_id)
+    logistic_regression::predict(const feature_vector& doc) const
 {
     std::unordered_map<class_label, double> probs;
     double denom = 0;
     for (auto& pair : classifiers_)
     {
-        auto prediction = std::exp(pair.second.predict(d_id));
+        auto prediction = std::exp(pair.second->predict(doc));
         probs[pair.first] = prediction;
         denom += prediction;
     }
@@ -52,10 +98,10 @@ std::unordered_map<class_label, double>
     return probs;
 }
 
-class_label logistic_regression::classify(doc_id d_id)
+class_label logistic_regression::classify(const feature_vector& doc) const
 {
     using namespace functional;
-    auto probs = predict(d_id);
+    auto probs = predict(doc);
     auto it = argmax(probs.begin(), probs.end(),
                      [](const std::pair<class_label, double>& pair)
                      {
@@ -64,38 +110,11 @@ class_label logistic_regression::classify(doc_id d_id)
     return it->first;
 }
 
-void logistic_regression::train(const std::vector<doc_id>& docs)
-{
-    std::unordered_map<class_label, std::vector<doc_id>> docs_by_class;
-    for (const auto& d_id : docs)
-        docs_by_class[idx_->label(d_id)].emplace_back(d_id);
-    using T = decltype(*classifiers_.begin());
-    parallel::parallel_for(
-        classifiers_.begin(), classifiers_.end(), [&](T& pair)
-        {
-            auto train_docs = docs_by_class[pair.first];
-            auto pivot_docs = docs_by_class[pivot_];
-            train_docs.insert(train_docs.end(), pivot_docs.begin(),
-                              pivot_docs.end());
-            pair.second.train(train_docs);
-        });
-}
-
-void logistic_regression::reset()
-{
-    for (auto& pair : classifiers_)
-        pair.second.reset();
-}
-
 template <>
-std::unique_ptr<classifier> make_classifier<logistic_regression>(
-    const cpptoml::table& config, std::shared_ptr<index::forward_index> idx)
+std::unique_ptr<classifier>
+    make_classifier<logistic_regression>(const cpptoml::table& config,
+                                         multiclass_dataset_view training)
 {
-    auto prefix = config.get_as<std::string>("prefix");
-    if (!prefix)
-        throw classifier_factory::exception{
-            "prefix must be specified for logistic-regression in config"};
-
     auto alpha = config.get_as<double>("alpha").value_or(sgd::default_alpha);
     auto gamma = config.get_as<double>("gamma").value_or(sgd::default_gamma);
     auto bias = config.get_as<double>("bias").value_or(sgd::default_bias);
@@ -103,8 +122,8 @@ std::unique_ptr<classifier> make_classifier<logistic_regression>(
     auto max_iter
         = config.get_as<int64_t>("max-iter").value_or(sgd::default_max_iter);
 
-    return make_unique<logistic_regression>(*prefix, std::move(idx), alpha,
-                                            gamma, bias, lambda, max_iter);
+    return make_unique<logistic_regression>(std::move(training), alpha, gamma,
+                                            bias, lambda, max_iter);
 }
 }
 }

@@ -46,6 +46,14 @@ class absolute_discount : public language_model_ranker
     absolute_discount(float delta = 0.7f);
 
     /**
+     * Loads an absolute_discount ranker from a stream.
+     * @param in The stream to read from
+     */
+    absolute_discount(std::istream& in);
+
+    void save(std::ostream& out) const override;
+
+    /**
      * Calculates the smoothed probability of a term.
      * @param sd score_data for the current query
      */

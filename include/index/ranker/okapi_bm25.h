@@ -57,9 +57,17 @@ class okapi_bm25 : public ranker
                float k3 = default_k3);
 
     /**
+     * Loads an okapi_bm25 ranker from a stream.
+     * @param in The stream to read from
+     */
+    okapi_bm25(std::istream& in);
+
+    /**
      * @param sd score_data for the current query
      */
     float score_one(const score_data& sd) override;
+
+    void save(std::ostream& out) const override;
 
   private:
     /// Doc term smoothing

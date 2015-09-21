@@ -47,6 +47,14 @@ class dirichlet_prior : public language_model_ranker
     dirichlet_prior(float mu = default_mu);
 
     /**
+     * Loads a dirichlet_prior ranker from a stream.
+     * @param in The stream to read from
+     */
+    dirichlet_prior(std::istream& in);
+
+    void save(std::ostream& out) const override;
+
+    /**
      * Calculates the smoothed probability of a term.
      * @param sd score_data for the current query
      */

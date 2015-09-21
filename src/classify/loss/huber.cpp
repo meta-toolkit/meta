@@ -4,6 +4,7 @@
  */
 
 #include "classify/loss/huber.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -28,6 +29,11 @@ double huber::derivative(double prediction, double expected) const
     if (std::abs(diff) <= 1)
         return 2 * diff;
     return (2 * diff) / (std::sqrt(diff * diff));
+}
+
+void huber::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
 }
 }
 }

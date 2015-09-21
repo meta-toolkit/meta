@@ -197,6 +197,12 @@ class ranker
      */
     virtual ~ranker() = default;
 
+    /**
+     * Saves the ranker to a stream. This should save the ranker's id,
+     * followed by any parameters needed for reconstruction.
+     */
+    virtual void save(std::ostream& out) const = 0;
+
   private:
     std::vector<search_result> rank(detail::ranker_context& ctx,
                                     uint64_t num_results,

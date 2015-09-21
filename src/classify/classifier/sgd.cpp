@@ -22,13 +22,10 @@ const constexpr double sgd::default_bias;
 const constexpr double sgd::default_lambda;
 const constexpr size_t sgd::default_max_iter;
 
-sgd::sgd(const std::string& prefix, std::shared_ptr<index::forward_index> idx,
-         class_label positive, class_label negative,
-         std::unique_ptr<loss::loss_function> loss, double alpha, double gamma,
-         double bias, double lambda, size_t max_iter)
-    : binary_classifier{std::move(idx), positive, negative},
-      weights_{prefix + "_" + std::to_string(idx_->id(positive)) + ".model",
-               idx_->unique_terms()},
+sgd::sgd(binary_dataset_view docs, std::unique_ptr<loss::loss_function> loss,
+         double alpha, double gamma, double bias, double lambda,
+         size_t max_iter)
+    : weights_(docs.total_features()),
       alpha_{alpha},
       gamma_{gamma},
       bias_{0},
@@ -37,41 +34,54 @@ sgd::sgd(const std::string& prefix, std::shared_ptr<index::forward_index> idx,
       max_iter_{max_iter},
       loss_{std::move(loss)}
 {
-    reset();
+    train(std::move(docs));
 }
 
-double sgd::predict(doc_id d_id) const
+sgd::sgd(std::istream& in)
+    : alpha_{io::packed::read<double>(in)},
+      gamma_{io::packed::read<double>(in)},
+      bias_weight_{io::packed::read<double>(in)},
+      lambda_{io::packed::read<double>(in)},
+      max_iter_{io::packed::read<std::size_t>(in)}
 {
-    auto pdata = idx_->search_primary(d_id);
-    return predict(pdata->counts());
+    auto size = io::packed::read<std::size_t>(in);
+    weights_.resize(size);
+    for (std::size_t i = 0; i < size; ++i)
+        io::packed::read(in, weights_[i]);
+
+    io::packed::read(in, coeff_);
+    io::packed::read(in, bias_);
+    loss_ = loss::load_loss_function(in);
 }
 
-double sgd::predict(const counts_t& doc) const
+void sgd::save(std::ostream& out) const
 {
-    double dot = coeff_ * bias_ * bias_weight_;
-    for (const auto& count : doc)
-        dot += coeff_ * count.second * weights_[count.first];
-    return dot;
+    io::packed::write(out, id);
+
+    io::packed::write(out, alpha_);
+    io::packed::write(out, gamma_);
+    io::packed::write(out, bias_weight_);
+    io::packed::write(out, lambda_);
+    io::packed::write(out, max_iter_);
+
+    io::packed::write(out, weights_.size());
+    for (const auto& w : weights_)
+        io::packed::write(out, w);
+
+    io::packed::write(out, coeff_);
+    io::packed::write(out, bias_);
+    loss_->save(out);
 }
 
-void sgd::train(const std::vector<doc_id>& docs)
+void sgd::train(binary_dataset_view docs)
 {
-    std::vector<size_t> indices(docs.size());
-    std::vector<int> labels(docs.size());
-    for (size_t i = 0; i < docs.size(); ++i)
-    {
-        indices[i] = i;
-        labels[i] = idx_->label(docs[i]) == positive_label() ? 1 : -1;
-    }
-    std::random_device d;
-    std::mt19937 g{d()};
     size_t t = 0;
     double sum_loss = 0;
     double prev_sum_loss = std::numeric_limits<double>::max();
     for (size_t iter = 0; iter < max_iter_; ++iter)
     {
-        std::shuffle(indices.begin(), indices.end(), g);
-        for (size_t i = 0; i < indices.size(); ++i)
+        docs.shuffle();
+        for (const auto& instance : docs)
         {
             t += 1;
 
@@ -85,64 +95,65 @@ void sgd::train(const std::vector<doc_id>& docs)
                 sum_loss = 0;
             }
 
-            auto pdata = idx_->search_primary(docs[indices[i]]);
-            const counts_t& doc = pdata->counts();
-
-            // get output prediction
-            // this is the binary case where p is either +1 or -1
-            double prediction = predict(doc);
-            int actual = labels[indices[i]];
-
-            sum_loss += loss_->loss(prediction, actual);
-
-            double error_derivative = loss_->derivative(prediction, actual);
-            coeff_ *= (1 - alpha_ * lambda_);
-
-            // renormalize vector of coefficient is too small
-            if (coeff_ < 1e-9)
-            {
-                bias_ *= coeff_;
-                for (auto& w : weights_)
-                    w *= coeff_;
-                coeff_ = 1;
-            }
-
-            double update = -alpha_ * error_derivative / coeff_;
-            if (update != 0)
-            {
-                for (const auto& count : doc)
-                {
-                    weights_[count.first] += update * count.second;
-                }
-                bias_ += update * bias_weight_;
-            }
+            sum_loss += train_instance(instance.weights, docs.label(instance));
         }
     }
 }
 
-void sgd::reset()
+void sgd::train_one(const feature_vector& doc, bool label)
 {
-    for (auto& w : weights_)
-        w = 0;
-    coeff_ = 1;
-    bias_ = 0;
+    train_instance(doc, label);
+}
+
+double sgd::train_instance(const feature_vector& doc, bool label)
+{
+    // get output prediction
+    // this is the binary case where p is either +1 or -1
+    double prediction = predict(doc);
+    int actual = label ? +1 : -1;
+
+    auto loss = loss_->loss(prediction, actual);
+
+    double error_derivative = loss_->derivative(prediction, actual);
+    coeff_ *= (1 - alpha_ * lambda_);
+
+    // renormalize vector of coefficient is too small
+    if (coeff_ < 1e-9)
+    {
+        bias_ *= coeff_;
+        for (auto& w : weights_)
+            w *= coeff_;
+        coeff_ = 1;
+    }
+
+    double update = -alpha_ * error_derivative / coeff_;
+    if (update != 0)
+    {
+        for (const auto& count : doc)
+            weights_[count.first] += update * count.second;
+        bias_ += update * bias_weight_;
+    }
+
+    return loss;
+}
+
+double sgd::predict(const feature_vector& doc) const
+{
+    double dot = coeff_ * bias_ * bias_weight_;
+    for (const auto& count : doc)
+        dot += coeff_ * count.second * weights_[count.first];
+    return dot;
 }
 
 template <>
 std::unique_ptr<binary_classifier>
     make_binary_classifier<sgd>(const cpptoml::table& config,
-                                std::shared_ptr<index::forward_index> idx,
-                                class_label positive, class_label negative)
+                                binary_dataset_view training)
 {
     auto loss = config.get_as<std::string>("loss");
     if (!loss)
         throw binary_classifier_factory::exception{
             "loss function must be specified for sgd in config"};
-
-    auto prefix = config.get_as<std::string>("prefix");
-    if (!prefix)
-        throw binary_classifier_factory::exception{
-            "prefix must be specified for sgd in config"};
 
     auto alpha = config.get_as<double>("alpha").value_or(sgd::default_alpha);
     auto gamma = config.get_as<double>("gamma").value_or(sgd::default_gamma);
@@ -151,9 +162,9 @@ std::unique_ptr<binary_classifier>
     auto max_iter
         = config.get_as<int64_t>("max-iter").value_or(sgd::default_max_iter);
 
-    return make_unique<sgd>(
-        *prefix, std::move(idx), std::move(positive), std::move(negative),
-        loss::make_loss_function(*loss), alpha, gamma, bias, lambda, max_iter);
+    return make_unique<sgd>(std::move(training),
+                            loss::make_loss_function(*loss), alpha, gamma, bias,
+                            lambda, max_iter);
 }
 }
 }

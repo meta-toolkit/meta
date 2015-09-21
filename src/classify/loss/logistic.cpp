@@ -4,6 +4,7 @@
  */
 
 #include "classify/loss/logistic.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -22,6 +23,11 @@ double logistic::loss(double prediction, double expected) const
 double logistic::derivative(double prediction, double expected) const
 {
     return -expected / (std::exp(prediction * expected) + 1);
+}
+
+void logistic::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
 }
 }
 }

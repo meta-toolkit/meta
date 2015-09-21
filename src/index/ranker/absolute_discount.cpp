@@ -20,6 +20,19 @@ absolute_discount::absolute_discount(float delta) : delta_{delta}
     /* nothing */
 }
 
+absolute_discount::absolute_discount(std::istream& in)
+    : delta_{io::packed::read<float>(in)}
+{
+    // nothing
+}
+
+void absolute_discount::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, delta_);
+}
+
 float absolute_discount::smoothed_prob(const score_data& sd) const
 {
     float pc = static_cast<float>(sd.corpus_term_count) / sd.total_terms;

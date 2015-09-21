@@ -65,7 +65,7 @@ class metadata
     using schema = std::vector<field_info>;
 
     metadata(const char* start, const schema& sch)
-        : schema_{&sch}, stream_{start}
+        : schema_{&sch}, start_{start}
     {
         // nothing
     }
@@ -76,8 +76,9 @@ class metadata
      * converted to type T.
      */
     template <class T>
-    util::optional<T> get(const std::string& name)
+    util::optional<T> get(const std::string& name) const
     {
+        metadata_input_stream stream{start_};
         for (uint64_t i = 0; i < schema_->size(); ++i)
         {
             switch ((*schema_)[i].type)
@@ -85,7 +86,7 @@ class metadata
                 case field_type::SIGNED_INT:
                 {
                     int64_t si;
-                    io::packed::read(stream_, si);
+                    io::packed::read(stream, si);
                     if ((*schema_)[i].name == name)
                         return {field{si}};
                     break;
@@ -94,7 +95,7 @@ class metadata
                 case field_type::UNSIGNED_INT:
                 {
                     uint64_t ui;
-                    io::packed::read(stream_, ui);
+                    io::packed::read(stream, ui);
                     if ((*schema_)[i].name == name)
                         return {field{ui}};
                     break;
@@ -103,7 +104,7 @@ class metadata
                 case field_type::DOUBLE:
                 {
                     double d;
-                    io::packed::read(stream_, d);
+                    io::packed::read(stream, d);
                     if ((*schema_)[i].name == name)
                         return {field{d}};
                     break;
@@ -111,8 +112,8 @@ class metadata
 
                 case field_type::STRING:
                 {
-                    std::string s{stream_.input_};
-                    stream_.input_ += s.size() + 1;
+                    std::string s{stream.input_};
+                    stream.input_ += s.size() + 1;
                     if ((*schema_)[i].name == name)
                         return {field{std::move(s)}};
                     break;
@@ -304,8 +305,8 @@ class metadata
     /// pointer to the metadata_file's schema
     const schema* schema_;
 
-    /// the fake input stream used for io::packed::read
-    metadata_input_stream stream_;
+    /// the start of the metadata within the metadata_file
+    const char* start_;
 };
 
 /**

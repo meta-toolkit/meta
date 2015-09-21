@@ -4,6 +4,7 @@
  */
 
 #include "classify/loss/least_squares.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -22,6 +23,11 @@ double least_squares::loss(double prediction, double expected) const
 double least_squares::derivative(double prediction, double expected) const
 {
     return prediction - expected;
+}
+
+void least_squares::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
 }
 }
 }

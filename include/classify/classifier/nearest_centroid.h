@@ -38,16 +38,19 @@ class nearest_centroid : public classifier
     const static util::string_view id;
 
     /**
+     * @param docs The training documents
      * @param idx The index to run the classifier on
      */
-    nearest_centroid(std::shared_ptr<index::inverted_index> idx,
-                     std::shared_ptr<index::forward_index> f_idx);
+    nearest_centroid(multiclass_dataset_view docs,
+                     std::shared_ptr<index::inverted_index> idx);
 
     /**
-     * Creates a classification model based on training documents.
-     * @param docs The training documents
+     * Loads a nearest_centroid classifier from a stream.
+     * @param in The stream to read from
      */
-    void train(const std::vector<doc_id>& docs) override;
+    nearest_centroid(std::istream& in);
+
+    void save(std::ostream& out) const override;
 
     /**
      * Classifies a document into a specific group, as determined by
@@ -55,12 +58,7 @@ class nearest_centroid : public classifier
      * @param d_id The document to classify
      * @return the class it belongs to
      */
-    class_label classify(doc_id d_id) override;
-
-    /**
-     * Resets any learning information associated with this classifier.
-     */
-    void reset() override;
+    class_label classify(const feature_vector& instance) const override;
 
   private:
     /**
@@ -68,8 +66,10 @@ class nearest_centroid : public classifier
      * @param centroid
      * @return the cosine similarity between the query and a centroid
      */
-    double cosine_sim(const std::vector<std::pair<term_id, double>>& doc,
-                      const std::unordered_map<term_id, double>& centroid);
+    template <class ForwardIterator>
+    double
+        cosine_sim(ForwardIterator begin, ForwardIterator end,
+                   const std::unordered_map<term_id, double>& centroid) const;
 
     /// Inverted index used for ranking
     std::shared_ptr<index::inverted_index> inv_idx_;
@@ -94,7 +94,7 @@ class nearest_centroid_exception : public std::runtime_error
  */
 template <>
 std::unique_ptr<classifier> make_multi_index_classifier<nearest_centroid>(
-    const cpptoml::table&, std::shared_ptr<index::forward_index>,
+    const cpptoml::table&, multiclass_dataset_view training,
     std::shared_ptr<index::inverted_index>);
 }
 }

@@ -11,6 +11,7 @@
 
 #include "classify/classifier/binary_classifier.h"
 #include "classify/classifier_factory.h"
+#include "classify/classifier/online_classifier.h"
 #include "meta.h"
 
 namespace meta
@@ -32,7 +33,7 @@ namespace classify
  * prefix = "sgd-model" # for example
  * ~~~
  */
-class one_vs_all : public classifier
+class one_vs_all : public online_classifier
 {
   public:
     /**
@@ -41,24 +42,25 @@ class one_vs_all : public classifier
      * parameter must take a single parameter: the positive label for the
      * binary classifier to be created.
      *
-     * @param idx The forward_index to be passed to each binary_classifier
-     * created for the ensemble
-     * @param create A Callable (function object, lambda, etc.) that is
-     * used to create the individual binary_classifiers.
+     * @param docs The training data
+     * @param base The configuration for the individual binary_classifiers
      */
-    template <class Function>
-    one_vs_all(std::shared_ptr<index::forward_index> idx, Function&& create)
-        : classifier{std::move(idx)}
-    {
-        for (const auto& label : idx_->class_labels())
-            classifiers_.emplace(label, create(label));
-    }
+    one_vs_all(multiclass_dataset_view docs, const cpptoml::table& base);
 
-    void train(const std::vector<doc_id>& docs) override;
+    /**
+     * Loads a one_vs_all classifier from a stream.
+     * @param in The stream to read from
+     */
+    one_vs_all(std::istream& in);
 
-    class_label classify(doc_id d_id) override;
+    void save(std::ostream& out) const override;
 
-    void reset() override;
+    class_label classify(const feature_vector& doc) const override;
+
+    void train(dataset_view_type docs) override;
+
+    void train_one(const feature_vector& doc,
+                   const class_label& label) override;
 
     /**
      * The identifier for this classifier.
@@ -80,7 +82,7 @@ class one_vs_all : public classifier
 template <>
 std::unique_ptr<classifier>
     make_classifier<one_vs_all>(const cpptoml::table&,
-                                std::shared_ptr<index::forward_index>);
+                                multiclass_dataset_view training);
 }
 }
 #endif

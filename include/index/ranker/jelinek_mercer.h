@@ -49,6 +49,14 @@ class jelinek_mercer : public language_model_ranker
     jelinek_mercer(float lambda = default_lambda);
 
     /**
+     * Loads a jelinek_mercer ranker from a stream.
+     * @param in The stream to read from
+     */
+    jelinek_mercer(std::istream& in);
+
+    void save(std::ostream& out) const override;
+
+    /**
      * Calculates the smoothed probability of a term.
      * @param sd
      */

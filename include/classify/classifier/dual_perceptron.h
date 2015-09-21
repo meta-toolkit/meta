@@ -12,7 +12,6 @@
 #include "classify/classifier_factory.h"
 #include "classify/classifier/classifier.h"
 #include "classify/kernel/polynomial.h"
-#include "util/functional.h"
 #include "meta.h"
 
 namespace meta
@@ -39,16 +38,21 @@ namespace classify
  * bias = 0.0
  *
  * # kernels (optional, but if used they have required params)
- * kernel = "polynomial"
+ * [classifier.kernel]
+ * method = "polynomial"
+ * power = 1 # optional, default 1
+ * c = 1 # optional, default 1
  *
  * # or
- * kernel = "rbf"
- * rbf-gamma = 0.1 # value required
+ * [classifier.kernel]
+ * method = "rbf"
+ * gamma = 0.1 # value required
  *
  * # or
- * kernel = "sigmoid"
- * sigmoid-alpha = 0.1 # value required
- * sigmoid-c = 0.1 # value required
+ * [classifier.kernel]
+ * method = "sigmoid"
+ * alpha = 0.1 # value required
+ * c = 0.1 # value required
  * ~~~
  */
 class dual_perceptron : public classifier
@@ -73,7 +77,7 @@ class dual_perceptron : public classifier
      * Constructs a dual_perceptron classifier over the given index
      * and with the given paramters.
      *
-     * @param idx The index to run the classifier on
+     * @param docs The training data
      * @param kernel_fn The kernel function to be used
      * @param alpha \f$\alpha\f$, the learning rate
      * @param gamma \f$\gamma\f$, the error threshold (in terms of
@@ -81,25 +85,32 @@ class dual_perceptron : public classifier
      * @param bias \f$b\f$, the bias
      * @param max_iter The maximum allowed iterations for training.
      */
-    template <class Kernel>
-    dual_perceptron(std::shared_ptr<index::forward_index> idx,
-                    Kernel&& kernel_fn = kernel::polynomial{},
+    dual_perceptron(multiclass_dataset_view docs,
+                    std::unique_ptr<kernel::kernel> kernel_fn,
                     double alpha = default_alpha, double gamma = default_gamma,
                     double bias = default_bias,
-                    uint64_t max_iter = default_max_iter)
-        : classifier{std::move(idx)},
-          alpha_{alpha},
-          gamma_{gamma},
-          bias_{bias},
-          max_iter_{max_iter}
-    {
-        std::function<double(pdata, pdata)> fun
-            = [=](const pdata& a, const pdata& b) {
-                return kernel_fn(a, b);
-            };
-        kernel_ = functional::memoize(fun);
-    }
+                    uint64_t max_iter = default_max_iter);
 
+    /**
+     * Loads a dual_perceptron model from a stream.
+     * @param in The input stream to read the model from
+     */
+    dual_perceptron(std::istream& in);
+
+    /**
+     * Classifies the given document.
+     * The class label returned is
+     * \f$\arg\!\max_k(\sum_d(w_k^d*(K(d,x) + b))\f$---in other words, the
+     * class whose associated weight vector gives the highest result.
+     *
+     * @param instance The document to be classified
+     * @return the class label determined for the document
+     */
+    class_label classify(const feature_vector& instance) const override;
+
+    void save(std::ostream& out) const override;
+
+  private:
     /**
      * Trains the perceptron on the given training documents.
      * Maintains a set of weight vectors \f$w_1,\ldots,w_K\f$ where
@@ -114,26 +125,8 @@ class dual_perceptron : public classifier
      *
      * @param docs The training set
      */
-    void train(const std::vector<doc_id>& docs) override;
+    void train(multiclass_dataset_view docs);
 
-    /**
-     * Classifies the given document.
-     * The class label returned is
-     * \f$\arg\!\max_k(\sum_d(w_k^d*(K(d,x) + b))\f$---in other words, the
-     * class whose associated weight vector gives the highest result.
-     *
-     * @param doc The document to be classified
-     * @return the class label determined for the document
-     */
-    class_label classify(doc_id d_id) override;
-
-    /**
-     * Resets all learned information for this perceptron so it may be
-     * re-learned.
-     */
-    void reset() override;
-
-  private:
     /**
      * Decreases the "weight" (mistake count) for a given class label
      * and document.
@@ -141,23 +134,24 @@ class dual_perceptron : public classifier
      * @param label The class label
      * @param id The document
      */
-    void decrease_weight(const class_label& label, const doc_id& id);
+    void decrease_weight(const class_label& label,
+                         const learn::instance_id& id);
 
     /**
      * The "weight" (mistake count) vectors for each class label.
      */
-    std::unordered_map<class_label, std::unordered_map<doc_id, uint64_t>>
-        weights_;
+    std::unordered_map<class_label, std::unordered_map<learn::instance_id,
+                                                       uint64_t>> weights_;
 
     /**
-     * Convenience typedef for the postings data type.
+     * The memorized training data vectors where mistakes were made.
      */
-    using pdata = decltype(idx_->search_primary(doc_id{}));
+    util::sparse_vector<learn::instance_id, feature_vector> svs_;
 
     /**
      * The kernel function to be used in lieu of a dot product.
      */
-    std::function<double(pdata, pdata)> kernel_;
+    std::unique_ptr<kernel::kernel> kernel_;
 
     /**
      * \f$\alpha\f$, the learning rate
@@ -185,8 +179,9 @@ class dual_perceptron : public classifier
  * Specialization of the factory function used to create dual_perceptrons.
  */
 template <>
-std::unique_ptr<classifier> make_classifier<dual_perceptron>(
-        const cpptoml::table&, std::shared_ptr<index::forward_index>);
+std::unique_ptr<classifier>
+    make_classifier<dual_perceptron>(const cpptoml::table&,
+                                     multiclass_dataset_view training);
 }
 }
 #endif

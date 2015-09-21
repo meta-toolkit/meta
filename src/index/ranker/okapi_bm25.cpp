@@ -25,6 +25,23 @@ okapi_bm25::okapi_bm25(float k1, float b, float k3) : k1_{k1}, b_{b}, k3_{k3}
     /* nothing */
 }
 
+okapi_bm25::okapi_bm25(std::istream& in)
+    : k1_{io::packed::read<float>(in)},
+      b_{io::packed::read<float>(in)},
+      k3_{io::packed::read<float>(in)}
+{
+    // nothing
+}
+
+void okapi_bm25::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, k1_);
+    io::packed::write(out, b_);
+    io::packed::write(out, k3_);
+}
+
 float okapi_bm25::score_one(const score_data& sd)
 {
     float doc_len = sd.idx.doc_size(sd.d_id);

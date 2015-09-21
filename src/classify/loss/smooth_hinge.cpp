@@ -4,6 +4,7 @@
  */
 
 #include "classify/loss/smooth_hinge.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -32,6 +33,11 @@ double smooth_hinge::derivative(double prediction, double expected) const
     if (z >= 1)
         return 0;
     return -expected * (1 - z);
+}
+
+void smooth_hinge::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
 }
 }
 }

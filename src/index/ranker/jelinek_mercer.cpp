@@ -19,6 +19,19 @@ jelinek_mercer::jelinek_mercer(float lambda) : lambda_{lambda}
     /* nothing */
 }
 
+jelinek_mercer::jelinek_mercer(std::istream& in)
+    : lambda_{io::packed::read<float>(in)}
+{
+    // nothing
+}
+
+void jelinek_mercer::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, lambda_);
+}
+
 float jelinek_mercer::smoothed_prob(const score_data& sd) const
 {
     float max_likelihood = static_cast<float>(sd.doc_term_count)

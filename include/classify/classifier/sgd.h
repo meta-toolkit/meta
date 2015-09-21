@@ -11,6 +11,7 @@
 
 #include "classify/binary_classifier_factory.h"
 #include "classify/classifier/binary_classifier.h"
+#include "classify/classifier/online_binary_classifier.h"
 #include "classify/loss/loss_function.h"
 #include "util/disk_vector.h"
 #include "meta.h"
@@ -43,7 +44,7 @@ namespace classify
  * max-iter = 50
  * ~~~
  */
-class sgd : public binary_classifier
+class sgd : public online_binary_classifier
 {
   public:
     /// The default \f$\alpha\f$ parameter.
@@ -58,22 +59,29 @@ class sgd : public binary_classifier
     const static constexpr size_t default_max_iter = 50;
 
     /**
-     * @param prefix The prefix for the model file
-     * @param idx The index to run the classifier on
-     * @param positive The label for the positive class (all others
-     *  are assumed to be negative).
-     * @param negative The label to return for negative documents.
+     * @param docs The training documents
      * @param alpha \f$alpha\f$, the learning rate
      * @param gamma \f$gamma\f$, the error threshold
      * @param bias \f$b\f$, the bias
      * @param lambda \f$\lambda\f$, the regularization constant
      * @param max_iter The maximum number of iterations for training.
      */
-    sgd(const std::string& prefix, std::shared_ptr<index::forward_index> idx,
-        class_label positive, class_label negative,
-        std::unique_ptr<loss::loss_function> loss, double alpha = default_alpha,
-        double gamma = default_gamma, double bias = default_bias,
-        double lambda = default_lambda, size_t max_iter = default_max_iter);
+    sgd(binary_dataset_view docs, std::unique_ptr<loss::loss_function> loss,
+        double alpha = default_alpha, double gamma = default_gamma,
+        double bias = default_bias, double lambda = default_lambda,
+        size_t max_iter = default_max_iter);
+
+    /**
+     * Loads an sgd classifier from a stream.
+     * @param in The stream to read from
+     */
+    sgd(std::istream& in);
+
+    void save(std::ostream& out) const override;
+
+    void train(binary_dataset_view docs) override;
+
+    void train_one(const feature_vector& doc, bool label) override;
 
     /**
      * Returns the dot product with the current weight vector. Used
@@ -83,11 +91,7 @@ class sgd : public binary_classifier
      * @param doc The document to compute the dot product with
      * @return the dot product with the current weight vector
      */
-    double predict(doc_id d_id) const override;
-
-    void train(const std::vector<doc_id>& docs) override;
-
-    void reset() override;
+    double predict(const feature_vector& doc) const override;
 
     /**
      * The identifier for this classifier.
@@ -95,8 +99,13 @@ class sgd : public binary_classifier
     const static util::string_view id;
 
   private:
+    /**
+     * Internal version of train_one that returns the loss.
+     */
+    double train_instance(const feature_vector& doc, bool label);
+
     /// The weights vector.
-    util::disk_vector<double> weights_;
+    std::vector<double> weights_;
 
     /// The scalar coefficient for the weights vector.
     double coeff_{1.0};
@@ -121,20 +130,6 @@ class sgd : public binary_classifier
 
     /// The loss function to be used for the update.
     std::unique_ptr<loss::loss_function> loss_;
-
-    /**
-     * Typedef for the sparse vector training/test instances.
-     */
-    using counts_t = std::vector<std::pair<term_id, double>>;
-
-    /**
-     * Helper function that takes a sparse vector. Used as a
-     * performance optimization during training.
-     *
-     * @param doc the document to form a prediction for
-     * @return the dot product with the current weight vector
-     */
-    double predict(const counts_t& doc) const;
 };
 
 /**
@@ -143,8 +138,7 @@ class sgd : public binary_classifier
 template <>
 std::unique_ptr<binary_classifier>
     make_binary_classifier<sgd>(const cpptoml::table& config,
-                                std::shared_ptr<index::forward_index> idx,
-                                class_label positive, class_label negative);
+                                binary_dataset_view training);
 }
 }
 #endif

@@ -6,10 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#include <cmath>
-
-#include "classify/kernel/polynomial.h"
-#include "meta.h"
+#include "classify/kernel/kernel.h"
+#include "classify/kernel/kernel_factory.h"
 
 #ifndef META_CLASSIFY_KERNEL_SIGMOID_H_
 #define META_CLASSIFY_KERNEL_SIGMOID_H_
@@ -28,7 +26,7 @@ namespace kernel
  * Uses the general form of:
  * \f$K(x,y) = \tanh(\alpha x^T y + c)\f$
  */
-class sigmoid
+class sigmoid : public kernel
 {
   public:
     /**
@@ -37,17 +35,20 @@ class sigmoid
      * @param alpha \f$\alpha\f$, the coefficient for the dot product
      * @param c \f$c\f$, the additional scalar term
      */
-    sigmoid(double alpha, double c) : alpha_{alpha}, c_{c}
-    {
-        /* nothing */
-    }
+    sigmoid(double alpha, double c);
 
     /**
-     * Computes the value of \f$K(first, second)\f$.
+     * Loads a sigmoid kernel from a stream.
+     * @param in The stream to read from
      */
-    template <class PostingsData>
-    double operator()(const PostingsData& first,
-                      const PostingsData& second) const;
+    sigmoid(std::istream& in);
+
+    double operator()(const feature_vector& first,
+                      const feature_vector& second) const override;
+
+    void save(std::ostream& out) const override;
+
+    static const util::string_view id;
 
   private:
     /**
@@ -59,15 +60,14 @@ class sigmoid
      * \f$c\f$, the additional scalar term
      */
     double c_;
-
-    /**
-     * Internal "helper" kernel.
-     */
-    polynomial dot_{1, 0.0};
 };
-}
-}
-}
 
-#include "classify/kernel/sigmoid.tcc"
+/**
+ * Specialization of the factory method used to create sigmoid kernels.
+ */
+template <>
+std::unique_ptr<kernel> make_kernel<sigmoid>(const cpptoml::table&);
+}
+}
+}
 #endif

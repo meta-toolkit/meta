@@ -21,6 +21,19 @@ pivoted_length::pivoted_length(float s) : s_{s}
     /* nothing */
 }
 
+pivoted_length::pivoted_length(std::istream& in)
+    : s_{io::packed::read<float>(in)}
+{
+    // nothing
+}
+
+void pivoted_length::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, s_);
+}
+
 float pivoted_length::score_one(const score_data& sd)
 {
     float doc_len = sd.idx.doc_size(sd.d_id);

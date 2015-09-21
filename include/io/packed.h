@@ -278,6 +278,19 @@ uint64_t read(InputStream& stream,
 {
     return read(stream, static_cast<T&>(value));
 }
+
+/**
+ * Convenience function for reading a value from packed representation.
+ * This assumes that T is default constructable and that you don't require
+ * knowing the number of bytes that were read.
+ */
+template <class T, class InputStream>
+T read(InputStream& stream)
+{
+    T val;
+    read(stream, val);
+    return val;
+}
 }
 }
 }

@@ -48,9 +48,17 @@ class pivoted_length : public ranker
     pivoted_length(float s = default_s);
 
     /**
+     * Loads a pivoted_length ranker from a stream.
+     * @param in The stream to read from
+     */
+    pivoted_length(std::istream& in);
+
+    /**
      * @param sd the score_data for this query
      */
     float score_one(const score_data& sd) override;
+
+    void save(std::ostream& out) const override;
 
   private:
     /// s parameter for pivoted_length normalization
