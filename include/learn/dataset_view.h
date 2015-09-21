@@ -13,7 +13,7 @@
 #include <iterator>
 #include "learn/dataset.h"
 #include "util/comparable.h"
-#include "util/functional.h"
+#include "util/random.h"
 
 namespace meta
 {
@@ -71,7 +71,7 @@ class dataset_view
         // of rng_ calls in std::uniform_int_distribution, either, so
         // that's out too.
         //
-        // We instead use functional::bounded_rand(), since we know that
+        // We instead use random::bounded_rand(), since we know that
         // the range of the RNG is definitely going to be larger than the
         // upper bounds we request here
 
@@ -79,8 +79,7 @@ class dataset_view
         {
             using std::swap;
             swap(indices_[indices_.size() - 1 - i],
-                 indices_[functional::bounded_rand(rng_,
-                                                   indices_.size() - i)]);
+                 indices_[random::bounded_rand(rng_, indices_.size() - i)]);
         }
     }
 
@@ -224,44 +223,7 @@ class dataset_view
 
     // type erase any random number generator in a way that still makes STL
     // algorithms happy
-    class any_rng
-    {
-      public:
-        using result_type = std::uint64_t;
-        static constexpr result_type min()
-        {
-            return 0;
-        }
-
-        static constexpr result_type max()
-        {
-            return std::numeric_limits<result_type>::max();
-        }
-
-        template <class RandomEngine>
-        using random_engine
-            = std::independent_bits_engine<RandomEngine, 64, result_type>;
-
-        template <class RandomEngine,
-                  class = typename std::
-                      enable_if<!std::is_same<
-                                    typename std::decay<RandomEngine>::type,
-                                    any_rng>::value>::type>
-        any_rng(RandomEngine&& rng)
-            : wrapped_(random_engine<typename std::decay<RandomEngine>::type>(
-                  std::forward<RandomEngine>(rng)))
-        {
-            // nothing
-        }
-
-        result_type operator()() const
-        {
-            return wrapped_();
-        }
-
-      private:
-        std::function<result_type()> wrapped_;
-    } rng_;
+    random::any_rng rng_;
 };
 }
 }

@@ -54,28 +54,6 @@ Iter argmax(Iter begin, Iter end, Function&& fn)
                                 return fn(a) < fn(b);
                             });
 }
-
-/**
- * Generate a random number between 0 and an (exclusive) upper bound. This
- * uses the rejection sampling technique, and it assumes that the
- * RandomEngine has a strictly larger range than the desired one.
- */
-template <class RandomEngine>
-typename RandomEngine::result_type
-    bounded_rand(RandomEngine& rng,
-                 typename RandomEngine::result_type upper_bound)
-{
-    auto random_max = RandomEngine::max() - RandomEngine::min();
-    auto threshold = random_max - (random_max + 1) % upper_bound;
-
-    while (true)
-    {
-        // proposal is in the range [0, random_range]
-        auto proposal = rng() - RandomEngine::min();
-        if (proposal <= threshold)
-            return proposal % upper_bound;
-    }
-}
 }
 }
 #endif
