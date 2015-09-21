@@ -70,10 +70,6 @@ struct instance
     const feature_vector weights;
 };
 
-constexpr struct empty_dataset_t
-{
-} empty_dataset{};
-
 /**
  * Represents an in-memory view of a set of documents for running learning
  * algorithms over.
