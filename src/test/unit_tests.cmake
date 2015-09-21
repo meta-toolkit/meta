@@ -31,7 +31,7 @@ set_tests_properties(libsvm-parser PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 add_test(classifiers ${UNIT_TEST_EXE} classifiers)
-set_tests_properties(classifiers PROPERTIES TIMEOUT 80 WORKING_DIRECTORY
+set_tests_properties(classifiers PROPERTIES TIMEOUT 100 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 add_test(rankers ${UNIT_TEST_EXE} rankers)
