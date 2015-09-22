@@ -25,8 +25,13 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
 
     /**
      * Creates an in-memory dataset from a forward_index. This loads the
-     * **entire index** into memory, so you should only use this on small
-     * datasets.
+     * **entire index** into memory, so you should only use this
+     * constructor with small datasets.
+     *
+     * For large datasets (where large is defined as "larger than available
+     * RAM", use one of the constructors that takes a range (or collection)
+     * of document ids to load in to load in just a specific section of the
+     * index.
      */
     multiclass_dataset(std::shared_ptr<index::forward_index> idx)
         : multiclass_dataset(
