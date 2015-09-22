@@ -63,24 +63,8 @@ class dataset_view
 
     void shuffle()
     {
-        // THERE IS A REASON we don't use std::shuffle here: we want
-        // reproducibility between compilers, who don't seem to agree on
-        // the number of times to call rng_ in the shuffle process.
-        //
-        // Furthermore, it seems that we can't rely on a canonical number
-        // of rng_ calls in std::uniform_int_distribution, either, so
-        // that's out too.
-        //
-        // We instead use random::bounded_rand(), since we know that
-        // the range of the RNG is definitely going to be larger than the
-        // upper bounds we request here
-
-        for (std::size_t i = 0; i < indices_.size(); ++i)
-        {
-            using std::swap;
-            swap(indices_[indices_.size() - 1 - i],
-                 indices_[random::bounded_rand(rng_, indices_.size() - i)]);
-        }
+        // use meta::random::shuffle for reproducibility between compilers
+        random::shuffle(indices_.begin(), indices_.end(), rng_);
     }
 
     void rotate(size_type block_size)

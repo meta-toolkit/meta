@@ -14,6 +14,11 @@
 
 namespace meta
 {
+
+/**
+ * A collection of utility classes/functions for randomness. (e.g. random
+ * number generation, shuffling, etc.).
+ */
 namespace random
 {
 
@@ -99,6 +104,39 @@ typename RandomEngine::result_type
         auto proposal = rng() - RandomEngine::min();
         if (proposal <= threshold)
             return proposal % upper_bound;
+    }
+}
+
+/**
+ * Shuffles the given range using the provided rng.
+ *
+ * THERE IS A REASON we don't use std::shuffle here: we want
+ * reproducibility between compilers, who don't seem to agree on the number
+ * of times to call rng_ in the shuffle process.
+ *
+ * Furthermore, it seems that we can't rely on a canonical number of rng_
+ * calls in std::uniform_int_distribution, either, so that's out too.
+ *
+ * We instead use random::bounded_rand(), since we know that the range of
+ * the RNG is definitely going to be larger than the upper bounds we
+ * request here.
+ *
+ * @param first The iterator to the beginning of the range to be shuffled
+ * @param last The iterator to the end of the range to be shuffled
+ * @param rng The random number generator to use
+ */
+template <class RandomAccessIterator, class RandomEngine>
+void shuffle(RandomAccessIterator first, RandomAccessIterator last,
+             RandomEngine&& rng)
+{
+    using difference_type =
+        typename std::iterator_traits<RandomAccessIterator>::difference_type;
+
+    auto dist = last - first;
+    for (difference_type i = 0; i < dist; ++i)
+    {
+        using std::swap;
+        swap(first[dist - 1 - i], first[bounded_rand(rng, dist - i)]);
     }
 }
 }
