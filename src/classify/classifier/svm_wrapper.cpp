@@ -40,7 +40,7 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
         executable_ = "libsvm/svm-";
 
     {
-        std::ofstream out("svm-train");
+        std::ofstream out{"svm-train"};
         for (const auto& instance : docs)
         {
             docs.print_liblinear(out, instance);
@@ -109,7 +109,7 @@ class_label svm_wrapper::classify(const feature_vector& doc) const
 {
     // create input for liblinear
     {
-        std::ofstream out("svm-input");
+        std::ofstream out{"svm-input"};
         out << "1 "; // dummy label
         learn::print_liblinear(out, doc);
         out << "\n";
@@ -135,7 +135,7 @@ class_label svm_wrapper::classify(const feature_vector& doc) const
     // extract answer
     std::string str_val;
     {
-        std::ifstream in("svm-predicted");
+        std::ifstream in{"svm-predicted"};
         std::getline(in, str_val);
     }
 
@@ -148,7 +148,7 @@ confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
 {
     // create input for liblinear/libsvm
     {
-        std::ofstream out("svm-input");
+        std::ofstream out{"svm-input"};
         for (const auto& instance : docs)
         {
             docs.print_liblinear(out, instance);
@@ -172,7 +172,7 @@ confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
     // extract answer
     confusion_matrix matrix;
     {
-        std::ifstream in("svm-predicted");
+        std::ifstream in{"svm-predicted"};
         std::string str_val;
         for (const auto& instance : docs)
         {
