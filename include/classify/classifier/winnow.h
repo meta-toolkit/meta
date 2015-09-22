@@ -52,7 +52,7 @@ class winnow : public classifier
      * Constructs a winnow classifier with the given multiplier,
      * error threshold, and maximum iterations.
      *
-     * This constructor the winnow on the given training documents.
+     * This constructor trains the winnow on the given training documents.
      * Maintains a set of weight vectors \f$w_1,\ldots,w_K\f$ where \f$K\f$
      * is the number of classes and updates them for each training document
      * seen in each iteration. This continues until the error threshold is

@@ -176,9 +176,8 @@ confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
         std::string str_val;
         for (const auto& instance : docs)
         {
-            // we can assume that the number of lines in the file is equal to
-            // the
-            // number of testing documents
+            // we can assume that the number of lines in the file is equal
+            // to the number of testing documents
             std::getline(in, str_val);
             uint32_t value = std::stoul(str_val);
             assert(value > 0);

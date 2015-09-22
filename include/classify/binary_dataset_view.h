@@ -20,7 +20,7 @@ namespace classify
 using binary_dataset = learn::labeled_dataset<bool>;
 
 /**
- * A non-owning view of a dataset with binary class albels. This is
+ * A non-owning view of a dataset with binary class labels. This is
  * designed to be used with binary classifiers.
  */
 class binary_dataset_view : public learn::dataset_view
