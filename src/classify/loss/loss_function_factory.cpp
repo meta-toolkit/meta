@@ -5,6 +5,7 @@
 
 #include "classify/loss/all.h"
 #include "classify/loss/loss_function_factory.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -35,6 +36,12 @@ loss_function_factory::loss_function_factory()
 std::unique_ptr<loss_function> make_loss_function(const std::string& identifier)
 {
     return loss_function_factory::get().create(identifier);
+}
+
+std::unique_ptr<loss_function> load_loss_function(std::istream& in)
+{
+    auto id = io::packed::read<std::string>(in);
+    return loss_function_factory::get().create(id);
 }
 }
 }

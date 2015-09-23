@@ -35,7 +35,8 @@ namespace packed
  */
 template <class OutputStream, class T>
 typename std::enable_if<!std::is_floating_point<T>::value
-                            && std::is_unsigned<T>::value,
+                            && std::is_unsigned<T>::value
+                            && !std::is_same<T, bool>::value,
                         uint64_t>::type
     write(OutputStream& stream, T value)
 {
@@ -48,6 +49,19 @@ typename std::enable_if<!std::is_floating_point<T>::value
     }
     stream.put(value);
     return size + 1;
+}
+
+/**
+ * Writes a boolean in a packed representation. We can't really do much
+ * better than a single byte, so we just store a 0 if the value was true
+ * and a 1 if the value was false.
+ */
+template <class OutputStream, class T>
+typename std::enable_if<std::is_same<T, bool>::value, uint64_t>::type
+    write(OutputStream& stream, T value)
+{
+    uint8_t val = value ? 1 : 0;
+    return write(stream, val);
 }
 
 /**
@@ -169,7 +183,8 @@ uint64_t write(OutputStream& stream,
  */
 template <class InputStream, class T>
 typename std::enable_if<!std::is_floating_point<T>::value
-                            && std::is_unsigned<T>::value,
+                            && std::is_unsigned<T>::value
+                            && !std::is_same<T, bool>::value,
                         uint64_t>::type
     read(InputStream& stream, T& value)
 {
@@ -183,6 +198,23 @@ typename std::enable_if<!std::is_floating_point<T>::value
         ++size;
     } while (byte & 128);
     return size;
+}
+
+/**
+ * Reads a boolean from its packed representation.
+ *
+ * @param stream The stream to read from
+ * @param value The value to write into
+ * @return the number of bytes read
+ */
+template <class InputStream, class T>
+typename std::enable_if<std::is_same<T, bool>::value, uint64_t>::type
+read(InputStream& stream, T& value)
+{
+    uint8_t byte;
+    auto bytes = read(stream, byte);
+    value = byte > 0;
+    return bytes;
 }
 
 /**
@@ -277,6 +309,19 @@ uint64_t read(InputStream& stream,
               util::identifier<util::hash_wrapper<Wrapped>, T>& value)
 {
     return read(stream, static_cast<T&>(value));
+}
+
+/**
+ * Convenience function for reading a value from packed representation.
+ * This assumes that T is default constructable and that you don't require
+ * knowing the number of bytes that were read.
+ */
+template <class T, class InputStream>
+T read(InputStream& stream)
+{
+    T val;
+    read(stream, val);
+    return val;
 }
 }
 }

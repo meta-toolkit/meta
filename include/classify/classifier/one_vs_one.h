@@ -11,7 +11,9 @@
 
 #include "classify/classifier/binary_classifier.h"
 #include "classify/classifier_factory.h"
+#include "classify/classifier/online_classifier.h"
 #include "meta.h"
+#include "util/hash.h"
 
 namespace meta
 {
@@ -35,7 +37,7 @@ namespace classify
  * prefix = "sgd-model" # for example
  * ~~~
  */
-class one_vs_one : public classifier
+class one_vs_one : public online_classifier
 {
   public:
     /**
@@ -44,30 +46,25 @@ class one_vs_one : public classifier
      * function to create individual binary_classifiers for each pair of
      * classes.
      *
-     * @param idx The forward_index to retrieve documents from
-     * @param create A function to create binary_classifiers: should
-     * return a unique_ptr to a binary_classifier when given two class
-     * labels as parameters
+     * @param docs The documents to train with
+     * @param base The configuration for the individual binary_classifiers
      */
-    template <class Function>
-    one_vs_one(std::shared_ptr<index::forward_index> idx, Function&& create)
-        : classifier{std::move(idx)}
-    {
-        auto labels = idx_->class_labels();
-        for (uint64_t i = 0; i < labels.size(); ++i)
-        {
-            for (uint64_t j = i + 1; j < labels.size(); ++j)
-            {
-                classifiers_.emplace_back(create(labels[i], labels[j]));
-            }
-        }
-    }
+    one_vs_one(multiclass_dataset_view docs, const cpptoml::table& base);
 
-    void train(const std::vector<doc_id>& docs) override;
+    /**
+     * Loads a one_vs_one classifier from a stream.
+     * @param in The stream to read from
+     */
+    one_vs_one(std::istream& in);
 
-    class_label classify(doc_id d_id) override;
+    void save(std::ostream& out) const override;
 
-    void reset() override;
+    class_label classify(const feature_vector& instance) const override;
+
+    void train(dataset_view_type docs) override;
+
+    void train_one(const feature_vector& doc,
+                   const class_label& label) override;
 
     /**
      * The identifier for this classifier.
@@ -75,8 +72,38 @@ class one_vs_one : public classifier
     const static util::string_view id;
 
   private:
-    /// the set of classifiers used in the ensemble
-    std::vector<std::unique_ptr<binary_classifier>> classifiers_;
+    struct problem_type
+    {
+        class_label positive;
+        class_label negative;
+
+        template <class HashAlgorithm>
+        friend void hash_append(HashAlgorithm& h, const problem_type& prob)
+        {
+            hash_append(h, prob.positive);
+            hash_append(h, prob.negative);
+        }
+
+        friend bool operator==(const problem_type& a, const problem_type& b)
+        {
+            return std::tie(a.positive, a.negative)
+                   == std::tie(b.positive, b.negative);
+        }
+
+        friend bool operator!=(const problem_type& a, const problem_type& b)
+        {
+            return !(a == b);
+        }
+    };
+
+    using classifier_map_type
+        = std::unordered_map<problem_type, std::unique_ptr<binary_classifier>,
+                             util::hash<>>;
+    /**
+     * the set of classifiers used in the ensemble, indexed by their
+     * positive/negative class pair
+     */
+    classifier_map_type classifiers_;
 };
 
 /**
@@ -86,7 +113,7 @@ class one_vs_one : public classifier
 template <>
 std::unique_ptr<classifier>
     make_classifier<one_vs_one>(const cpptoml::table&,
-                                std::shared_ptr<index::forward_index>);
+                                multiclass_dataset_view training);
 }
 }
 #endif

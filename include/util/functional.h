@@ -50,11 +50,10 @@ Iter argmax(Iter begin, Iter end, Function&& fn)
 {
     using T = decltype(*begin);
     return std::max_element(begin, end, [&](const T& a, const T& b)
-    {
-        return fn(a) < fn(b);
-    });
+                            {
+                                return fn(a) < fn(b);
+                            });
 }
-
 }
 }
 #endif

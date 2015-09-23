@@ -166,6 +166,7 @@ void inverted_index::load_index()
     impl_->initialize_metadata();
     impl_->load_term_id_mapping();
     impl_->load_label_id_mapping();
+    impl_->load_labels();
     inv_impl_->load_postings();
 }
 

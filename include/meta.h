@@ -69,8 +69,14 @@ namespace corpus
 }
 
 /**
- * Algorithms for feature selection, KNN search, and confusion
- * matrices.
+ * Generic learning algorithms and support data structures.
+ */
+namespace learn
+{
+}
+
+/**
+ * Algorithms for multi-class and binary classification.
  */
 namespace classify
 {
@@ -86,6 +92,13 @@ namespace kernel
 namespace loss
 {
 }
+}
+
+/**
+ * Algorithms for regression.
+ */
+namespace regress
+{
 }
 
 /**

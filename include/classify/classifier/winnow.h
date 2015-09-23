@@ -52,24 +52,27 @@ class winnow : public classifier
      * Constructs a winnow classifier with the given multiplier,
      * error threshold, and maximum iterations.
      *
-     * @param idx The index to run the classifier on
+     * This constructor trains the winnow on the given training documents.
+     * Maintains a set of weight vectors \f$w_1,\ldots,w_K\f$ where \f$K\f$
+     * is the number of classes and updates them for each training document
+     * seen in each iteration. This continues until the error threshold is
+     * met or the maximum number of iterations is completed.
+     *
+     * @param docs The training documents
      * @param m \f$m\f$, the multiplicative learning rate
      * @param gamma \f$gamma\f$, the error threshold
      * @param max_iter The maximum number of iterations for training
      */
-    winnow(std::shared_ptr<index::forward_index> idx, double m = default_m,
+    winnow(multiclass_dataset_view docs, double m = default_m,
            double gamma = default_gamma, size_t max_iter = default_max_iter);
 
     /**
-     * Trains the winnow on the given training documents.
-     * Maintains a set of weight vectors \f$w_1,\ldots,w_K\f$ where
-     * \f$K\f$ is the number of classes and updates them for each
-     * training document seen in each iteration. This continues until
-     * the error threshold is met or the maximum number of iterations
-     * is completed.
-     * @param docs The training set
+     * Loads a winnow classifier from a stream.
+     * @param in The stream to read from
      */
-    void train(const std::vector<doc_id>& docs) override;
+    winnow(std::istream& in);
+
+    void save(std::ostream& out) const override;
 
     /**
      * Classifies the given document.
@@ -80,13 +83,7 @@ class winnow : public classifier
      * @param doc The document to be classified
      * @return the class label determined for the document
      */
-    class_label classify(doc_id d_id) override;
-
-    /**
-     * Resets all learned information for this winnow so it may be
-     * re-learned.
-     */
-    void reset() override;
+    class_label classify(const feature_vector& doc) const override;
 
     /**
      * The identifier for this classifier.
@@ -108,7 +105,7 @@ class winnow : public classifier
      *
      * @param docs The set of documents to collect class labels from.
      */
-    void zero_weights(const std::vector<doc_id>& docs);
+    void zero_weights(const multiclass_dataset_view& docs);
 
     /**
      * The weight vectors for each class label.
@@ -133,7 +130,7 @@ class winnow : public classifier
 template <>
 std::unique_ptr<classifier>
     make_classifier<winnow>(const cpptoml::table& config,
-                            std::shared_ptr<index::forward_index> idx);
+                            multiclass_dataset_view training);
 }
 }
 #endif

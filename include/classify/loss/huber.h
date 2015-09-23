@@ -35,6 +35,7 @@ struct huber : public loss_function
 
     double loss(double prediction, double expected) const override;
     double derivative(double prediction, double expected) const override;
+    void save(std::ostream& out) const override;
 };
 }
 }

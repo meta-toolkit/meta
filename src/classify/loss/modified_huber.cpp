@@ -4,6 +4,7 @@
  */
 
 #include "classify/loss/modified_huber.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -32,6 +33,11 @@ double modified_huber::derivative(double prediction, double expected) const
     if (z >= 1)
         return 0;
     return -expected * (1 - z);
+}
+
+void modified_huber::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
 }
 }
 }

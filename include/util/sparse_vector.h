@@ -176,8 +176,38 @@ class sparse_vector
      */
     container_type storage_;
 };
-}
-}
 
+template <class SparseVector1, class SparseVector2>
+double dot_product(SparseVector1&& first, SparseVector2&& second)
+{
+    auto first_it = std::begin(first);
+    auto first_end = std::end(first);
+
+    auto second_it = std::begin(second);
+    auto second_end = std::end(second);
+
+    auto dot = 0.0;
+    while (first_it != first_end && second_it != second_end)
+    {
+        if (first_it->first == second_it->first)
+        {
+            dot += first_it->second * second_it->second;
+            ++first_it;
+            ++second_it;
+        }
+        else if (first_it->first < second_it->first)
+        {
+            ++first_it;
+        }
+        else
+        {
+            ++second_it;
+        }
+    }
+
+    return dot;
+}
+}
+}
 #include "util/sparse_vector.tcc"
 #endif

@@ -10,6 +10,7 @@
 #ifndef META_CLASSIFIER_FACTORY_H_
 #define META_CLASSIFIER_FACTORY_H_
 
+#include <istream>
 #include "classify/classifier/classifier.h"
 #include "util/factory.h"
 #include "util/shim.h"
@@ -31,8 +32,7 @@ namespace classify
  */
 class classifier_factory
     : public util::factory<classifier_factory, classifier,
-                           const cpptoml::table&,
-                           std::shared_ptr<index::forward_index>,
+                           const cpptoml::table&, multiclass_dataset_view,
                            std::shared_ptr<index::inverted_index>>
 {
     friend base_factory;
@@ -61,8 +61,6 @@ class classifier_factory
  *
  * @param config The configuration group that specifies the configuration
  * for the classifier to be created
- * @param idx The forward_index to be passed to the classifier being
- * created
  * @param inv_idx The inverted_index to be passed to the classifier being
  * created (if needed)
  *
@@ -71,7 +69,7 @@ class classifier_factory
  */
 std::unique_ptr<classifier>
     make_classifier(const cpptoml::table& config,
-                    std::shared_ptr<index::forward_index> idx,
+                    multiclass_dataset_view training,
                     std::shared_ptr<index::inverted_index> inv_idx = nullptr);
 
 /**
@@ -81,18 +79,15 @@ std::unique_ptr<classifier>
  *
  * @param config The configuration group that specifies the configuration
  * for the classifier to be created
- * @param idx The forward_index to be passed to the classifier being
- * created
  *
  * @return a unique_ptr to the classifier (of derived type Classifier)
  * created from the given configuration
  */
 template <class Classifier>
-std::unique_ptr<classifier>
-    make_classifier(const cpptoml::table&,
-                    std::shared_ptr<index::forward_index> idx)
+std::unique_ptr<classifier> make_classifier(const cpptoml::table&,
+                                            multiclass_dataset_view training)
 {
-    return make_unique<Classifier>(idx);
+    return make_unique<Classifier>(training);
 }
 
 /**
@@ -113,10 +108,59 @@ std::unique_ptr<classifier>
 template <class Classifier>
 std::unique_ptr<classifier>
     make_multi_index_classifier(const cpptoml::table&,
-                                std::shared_ptr<index::forward_index> idx,
+                                multiclass_dataset_view training,
                                 std::shared_ptr<index::inverted_index> inv_idx)
 {
-    return make_unique<Classifier>(idx, inv_idx);
+    return make_unique<Classifier>(training, inv_idx);
+}
+
+/**
+ * Factory that is responsible for loading classifiers from input streams.
+ * Clients should use the register_classifier method instead of this class
+ * directly to add their own classifiers.
+ */
+class classifier_loader
+    : public util::factory<classifier_loader, classifier, std::istream&>
+{
+    friend base_factory;
+
+  private:
+    /**
+      * Constructs the classifier_loader singleton.
+      */
+    classifier_loader();
+
+    /**
+     * Registers a classifier. Used internally.
+     */
+    template <class Classifier>
+    void reg();
+};
+
+/**
+ * Convenience method for loading a classifier using the factory.
+ *
+ * @param stream The stream to load the model from
+ *
+ * @return a unique_ptr to the classifier created from the given
+ * stream
+ */
+std::unique_ptr<classifier> load_classifier(std::istream& stream);
+
+/**
+ * Factory method for loading a classifier. This should be specialized if
+ * your given classifier requires special construction behavior (e.g.,
+ * reading parameters).
+ *
+ * @param stream The stream to load the model from
+ *
+ * @return a unique_ptr to the classifier (of derived type Classifier)
+ * created from the given stream
+ */
+template <class Classifier>
+std::unique_ptr<classifier> load_classifier(std::istream& input)
+{
+    return make_unique<Classifier>(input);
 }
 
 /**
@@ -129,13 +173,15 @@ void register_classifier()
 {
     // wrap the make_classifier function to make it appear like it takes
     // two indexes, when we really only care about one.
-    classifier_factory::get().add(Classifier::id,
-                                  [](const cpptoml::table& config,
-                                     std::shared_ptr<index::forward_index> idx,
-                                     std::shared_ptr<index::inverted_index>)
-                                  {
-        return make_classifier<Classifier>(config, std::move(idx));
-    });
+    classifier_factory::get().add(
+        Classifier::id,
+        [](const cpptoml::table& config, multiclass_dataset_view training,
+           std::shared_ptr<index::inverted_index>)
+        {
+            return make_classifier<Classifier>(config, training);
+        });
+
+    classifier_loader::get().add(Classifier::id, load_classifier<Classifier>);
 }
 
 /**
@@ -148,6 +194,8 @@ void register_multi_index_classifier()
 {
     classifier_factory::get().add(Classifier::id,
                                   make_multi_index_classifier<Classifier>);
+
+    classifier_loader::get().add(Classifier::id, load_classifier<Classifier>);
 }
 }
 }

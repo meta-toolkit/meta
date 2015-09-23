@@ -31,9 +31,7 @@ namespace classify
  */
 class binary_classifier_factory
     : public util::factory<binary_classifier_factory, binary_classifier,
-                           const cpptoml::table&,
-                           std::shared_ptr<index::forward_index>, class_label,
-                           class_label>
+                           const cpptoml::table&, binary_dataset_view>
 {
     friend base_factory;
 
@@ -58,18 +56,14 @@ class binary_classifier_factory
  *
  * @param config The table that specifies the binary classifier's
  * configuration
- * @param idx The forward_index the binary classifier is being constructed
- * over
- * @param positive The class_label for positive documents
- * @param negative The class_label for negative documents
+ * @param training The training data
  *
  * @return a unique_ptr to a binary_classifier constructed from the given
- *  configuration
+ *  configuration, trained on the given training data
  */
 std::unique_ptr<binary_classifier>
     make_binary_classifier(const cpptoml::table& config,
-                           std::shared_ptr<index::forward_index> idx,
-                           class_label positive, class_label negative);
+                           binary_dataset_view training);
 
 /**
  * (Template): Factory method for creating a binary classifier; this should
@@ -78,21 +72,66 @@ std::unique_ptr<binary_classifier>
  *
  * @param config The table that specifies the binary classifier's
  * configuration
- * @param idx The forward_index the binary classifier is being constructed
- * over
- * @param positive The class_label for positive documents
- * @param negative The class_label for negative documents
+ * @param training The training data
  *
  * @return a unique_ptr to a binary_classifier (of derived type
  * Classifier) that has been constructed from the given configuration
  */
 template <class Classifier>
 std::unique_ptr<binary_classifier>
-    make_binary_classifier(const cpptoml::table&,
-                           std::shared_ptr<index::forward_index> idx,
-                           class_label positive, class_label negative)
+    make_binary_classifier(const cpptoml::table&, binary_dataset_view training)
 {
-    return make_unique<Classifier>(std::move(idx), positive, negative);
+    return make_unique<Classifier>(training);
+}
+
+/**
+ * Factory that is responsible for loading binary_classifiers from input
+ * streams.  Clients should use the register_binary_classifier method
+ * instead of this class directly to add their own classifiers.
+ */
+class binary_classifier_loader
+    : public util::factory<binary_classifier_loader, binary_classifier,
+                           std::istream&>
+{
+    friend base_factory;
+
+  private:
+    /**
+      * Constructs the binary_classifier_loader singleton.
+      */
+    binary_classifier_loader();
+
+    /**
+     * Registers a classifier. Used internally.
+     */
+    template <class Classifier>
+    void reg();
+};
+
+/**
+ * Convenience method for loading a binary_classifier using the factory.
+ *
+ * @param stream The stream to load the model from
+ *
+ * @return a unique_ptr to the classifier created from the given
+ * stream
+ */
+std::unique_ptr<binary_classifier> load_binary_classifier(std::istream& stream);
+
+/**
+ * Factory method for loading a classifier. This should be specialized if
+ * your given classifier requires special construction behavior (e.g.,
+ * reading parameters).
+ *
+ * @param stream The stream to load the model from
+ *
+ * @return a unique_ptr to the classifier (of derived type Classifier)
+ * created from the given stream
+ */
+template <class Classifier>
+std::unique_ptr<binary_classifier> load_binary_classifier(std::istream& input)
+{
+    return make_unique<Classifier>(input);
 }
 
 /**
@@ -104,6 +143,8 @@ void register_binary_classifier()
 {
     binary_classifier_factory::get().add(Classifier::id,
                                          make_binary_classifier<Classifier>);
+    binary_classifier_loader::get().add(Classifier::id,
+                                        load_binary_classifier<Classifier>);
 }
 }
 }

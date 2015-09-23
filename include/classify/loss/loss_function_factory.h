@@ -9,6 +9,7 @@
 #ifndef META_CLASSIFY_LOSS_FUNCTION_FACTORY_H_
 #define META_CLASSIFY_LOSS_FUNCTION_FACTORY_H_
 
+#include <istream>
 #include <functional>
 #include <memory>
 #include <unordered_map>
@@ -64,6 +65,11 @@ std::unique_ptr<loss_function> make_loss_function()
 {
     return make_unique<Loss>();
 }
+
+/**
+ * Convenience method for loading a loss function from a stream.
+ */
+std::unique_ptr<loss_function> load_loss_function(std::istream&);
 
 /**
  * Registration method for loss functions. Clients should use this method

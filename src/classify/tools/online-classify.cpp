@@ -5,6 +5,7 @@
 #include <iostream>
 #include "classify/batch_training.h"
 #include "classify/classifier_factory.h"
+#include "classify/classifier/online_classifier.h"
 #include "logging/logger.h"
 #include "parser/analyzers/tree_analyzer.h"
 #include "sequence/analyzers/ngram_pos_analyzer.h"
@@ -58,7 +59,23 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto classifier = classify::make_classifier(*class_config, f_idx);
+    // construct the classifier using an empty dataset: this is a trick to
+    // ensure that the classifier gets the relevant metadata it needs for
+    // setting up e.g. its weight vector
+    auto none = util::range(0_did, 0_did);
+    classify::multiclass_dataset empty{f_idx, none.end(), none.end()};
+    auto classifier = classify::make_classifier(*class_config, empty);
+
+    auto online_classifier
+        = dynamic_cast<classify::online_classifier*>(classifier.get());
+
+    if (!online_classifier)
+    {
+        std::cerr << "The classifier you've chosen ("
+                  << *class_config->get_as<std::string>("method")
+                  << ") does not support online classification" << std::endl;
+        return 1;
+    }
 
     auto docs = f_idx->docs();
     auto test_begin = docs.begin() + *test_start;
@@ -66,14 +83,19 @@ int main(int argc, char* argv[])
     std::vector<doc_id> training_set{docs.begin(), test_begin};
     std::vector<doc_id> test_set{test_begin, docs.end()};
 
-    auto dur = common::time([&]()
-    {
-        classify::batch_train(*f_idx, *classifier, training_set, *batch_size);
+    auto dur
+        = common::time([&]()
+                       {
+                           classify::batch_train(f_idx, *online_classifier,
+                                                 training_set, *batch_size);
 
-        auto mtrx = classifier->test(test_set);
-        mtrx.print();
-        mtrx.print_stats();
-    });
+                           classify::multiclass_dataset test_data{
+                               f_idx, test_set.begin(), test_set.end()};
+
+                           auto mtrx = classifier->test(test_data);
+                           mtrx.print();
+                           mtrx.print_stats();
+                       });
 
     std::cout << "Took "
               << std::chrono::duration_cast<std::chrono::seconds>(dur).count()

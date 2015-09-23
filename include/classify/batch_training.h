@@ -17,6 +17,8 @@
 #include "logging/logger.h"
 #include "meta.h"
 
+#include "classify/multiclass_dataset.h"
+
 namespace meta
 {
 namespace classify
@@ -26,8 +28,8 @@ namespace classify
  * This trains a classifier in an online fashion, using batches of size
  * batch_size from the training_set.
  *
- * @param idx The index the classifier is using (so the cache may be
- * dropped between batches)
+ * @param idx The index the classifier is using (to load in new data
+ * chunks for each batch)
  * @param cls The classifier to train. This must be a classifier
  * supporting online learning (e.g., sgd or an ensemble of sgd)
  * @param training_set The list of document ids that comprise the training
@@ -50,14 +52,13 @@ void batch_train(Index& idx, Classifier& cls,
         LOG(progress) << "\rTraining batch " << i + 1 << "/" << num_batches
                       << ENDLG;
         auto end = std::min<uint64_t>((i + 1) * batch_size, docs.size());
-        std::vector<doc_id> batch{docs.begin() + (i * batch_size),
-                                  docs.begin() + end};
-        idx.clear_cache();
+
+        classify::multiclass_dataset batch{idx, docs.begin() + i * batch_size,
+                                           docs.begin() + end};
         cls.train(batch);
     }
     LOG(progress) << '\n' << ENDLG;
 }
-
 }
 }
 #endif

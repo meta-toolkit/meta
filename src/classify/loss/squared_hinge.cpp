@@ -4,6 +4,7 @@
  */
 
 #include "classify/loss/squared_hinge.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -28,6 +29,11 @@ double squared_hinge::derivative(double prediction, double expected) const
     if (z < 1)
         return -expected * (1 - z);
     return 0;
+}
+
+void squared_hinge::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
 }
 }
 }

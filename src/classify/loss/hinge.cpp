@@ -4,6 +4,7 @@
  */
 
 #include "classify/loss/hinge.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -28,6 +29,11 @@ double hinge::derivative(double prediction, double expected) const
     if (z < 1)
         return -expected;
     return 0;
+}
+
+void hinge::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
 }
 
 }

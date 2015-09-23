@@ -49,21 +49,21 @@ class knn : public classifier
     const static util::string_view id;
 
     /**
+     * @param docs The training documents
      * @param idx The index to run the classifier on
-     * @param ranker The ranker to be used internally
      * @param k The value of k in k-NN
-     * @param args Arguments to the chosen ranker constructor
+     * @param ranker The ranker to be used internally
      * @param weighted Whether to weight the neighbors by distance to the query
      */
-    knn(std::shared_ptr<index::inverted_index> idx,
-        std::shared_ptr<index::forward_index> f_idx, uint16_t k,
+    knn(multiclass_dataset_view docs,
+        std::shared_ptr<index::inverted_index> idx, uint16_t k,
         std::unique_ptr<index::ranker> ranker, bool weighted = false);
 
     /**
-     * Creates a classification model based on training documents.
-     * @param docs The training documents
+     * Loads a knn classifier from a stream.
+     * @param in The stream to read from
      */
-    void train(const std::vector<doc_id>& docs) override;
+    knn(std::istream& in);
 
     /**
      * Classifies a document into a specific group, as determined by
@@ -71,12 +71,9 @@ class knn : public classifier
      * @param d_id The document to classify
      * @return the class it belongs to
      */
-    class_label classify(doc_id d_id) override;
+    class_label classify(const feature_vector& instance) const override;
 
-    /**
-     * Resets any learning information associated with this classifier.
-     */
-    void reset() override;
+    void save(std::ostream& out) const override;
 
   private:
     /**
@@ -119,10 +116,9 @@ class knn_exception : public std::runtime_error
  * Specialization of the factory method used to create knn classifiers.
  */
 template <>
-std::unique_ptr<classifier>
-    make_multi_index_classifier<knn>(const cpptoml::table&,
-                                     std::shared_ptr<index::forward_index>,
-                                     std::shared_ptr<index::inverted_index>);
+std::unique_ptr<classifier> make_multi_index_classifier<knn>(
+    const cpptoml::table& config, multiclass_dataset_view training,
+    std::shared_ptr<index::inverted_index> inv_idx);
 }
 }
 #endif

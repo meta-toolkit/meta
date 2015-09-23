@@ -6,7 +6,8 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#include "meta.h"
+#include "classify/kernel/kernel.h"
+#include "classify/kernel/kernel_factory.h"
 
 #ifndef META_CLASSIFY_KERNEL_RADIAL_BASIS_H_
 #define META_CLASSIFY_KERNEL_RADIAL_BASIS_H_
@@ -25,7 +26,7 @@ namespace kernel
  * Uses the form of:
  * \f$K(x, z) = \exp(\gamma||x-z||_2^2)\f$
  */
-class radial_basis
+class radial_basis : public kernel
 {
   public:
     /**
@@ -33,17 +34,20 @@ class radial_basis
      *
      * @param gamma The parameter for the radial basis function.
      */
-    radial_basis(double gamma) : gamma_{gamma}
-    {
-        /* nothing */
-    }
+    radial_basis(double gamma);
 
     /**
-     * Computes the value of \f$K(first, second)\f$.
+     * Loads an rbf kernel from a stream.
+     * @param in The stream to read from
      */
-    template <class PostingsData>
-    double operator()(const PostingsData& first,
-                      const PostingsData& second) const;
+    radial_basis(std::istream& in);
+
+    double operator()(const feature_vector& first,
+                      const feature_vector& second) const override;
+
+    void save(std::ostream& out) const override;
+
+    static const util::string_view id;
 
   private:
     /**
@@ -52,8 +56,13 @@ class radial_basis
      */
     double gamma_;
 };
+
+/**
+ * Specialization of the factory method used to create rbf kernels.
+ */
+template <>
+std::unique_ptr<kernel> make_kernel<radial_basis>(const cpptoml::table&);
 }
 }
 }
-#include "classify/kernel/radial_basis.tcc"
 #endif

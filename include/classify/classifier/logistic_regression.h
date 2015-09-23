@@ -14,6 +14,7 @@
 #include "classify/classifier/sgd.h"
 #include "index/forward_index.h"
 #include "meta.h"
+#include "util/optional.h"
 
 namespace meta
 {
@@ -70,8 +71,7 @@ class logistic_regression : public classifier
 {
   public:
     /**
-     * @param prefix The prefix for the model files
-     * @param idx The index to run the classifier on
+     * @param docs The training data
      * @param alpha \f$\alpha\f$, the learning rate for each of the
      * independent regressions
      * @param gamma \f$\gamma\f$, the error threshold for each of the
@@ -83,13 +83,20 @@ class logistic_regression : public classifier
      * @param max_iter The maximum number of iterations for training each
      * independent regression
      */
-    logistic_regression(const std::string& prefix,
-                        std::shared_ptr<index::forward_index> idx,
+    logistic_regression(multiclass_dataset_view docs,
                         double alpha = sgd::default_alpha,
                         double gamma = sgd::default_gamma,
                         double bias = sgd::default_bias,
                         double lambda = sgd::default_lambda,
                         uint64_t max_iter = sgd::default_max_iter);
+
+    /**
+     * Loads a logistic_regression classifier from a stream.
+     * @param in The stream to read from
+     */
+    logistic_regression(std::istream& in);
+
+    void save(std::ostream& out) const override;
 
     /**
      * Obtains the probability that the given document belongs to each
@@ -98,20 +105,18 @@ class logistic_regression : public classifier
      * @param d_id The document to obtain class-membership probabilities for
      * @return a map from class label to probability of membership
      */
-    std::unordered_map<class_label, double> predict(doc_id d_id);
+    std::unordered_map<class_label, double>
+        predict(const feature_vector& doc) const;
 
-    virtual class_label classify(doc_id d_id) override;
-
-    virtual void train(const std::vector<doc_id>& docs) override;
-
-    virtual void reset() override;
+    class_label classify(const feature_vector& doc) const override;
 
     /// the identifier for this classifier
     const static util::string_view id;
 
   private:
     /// the set of \f$K-1\f$ independent classifiers
-    std::unordered_map<class_label, sgd> classifiers_;
+    std::unordered_map<class_label, std::unique_ptr<binary_classifier>>
+        classifiers_;
     /// the class chosen to be the pivot element
     class_label pivot_;
 };
@@ -123,7 +128,7 @@ class logistic_regression : public classifier
 template <>
 std::unique_ptr<classifier>
     make_classifier<logistic_regression>(const cpptoml::table&,
-                                         std::shared_ptr<index::forward_index>);
+                                         multiclass_dataset_view training);
 }
 }
 #endif

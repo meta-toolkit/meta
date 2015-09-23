@@ -2,6 +2,7 @@
  * @file classify-test.cpp
  */
 
+#include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -22,15 +23,16 @@ using std::cerr;
 using std::endl;
 using namespace meta;
 
-template <class Index, class Classifier>
-classify::confusion_matrix cv(Index& idx, Classifier& c, bool even)
+template <class Creator>
+classify::confusion_matrix cv(Creator&& creator,
+                              classify::multiclass_dataset_view docs, bool even)
 {
-    std::vector<doc_id> docs = idx.docs();
     classify::confusion_matrix matrix;
     auto seconds = common::time<std::chrono::seconds>(
         [&]()
         {
-            matrix = c.cross_validate(docs, 5, even);
+            matrix = classify::cross_validate(std::forward<Creator>(creator),
+                                              docs, 5, even);
         });
     std::cerr << "time elapsed: " << seconds.count() << "s" << std::endl;
     matrix.print();
@@ -84,30 +86,33 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto f_idx = index::make_index<index::memory_forward_index>(*config);
+    auto f_idx = index::make_index<index::forward_index>(*config);
+    // load the documents into a dataset
+    classify::multiclass_dataset dataset{f_idx};
 
-    auto docs = f_idx->docs();
-    printing::progress progress{" > Pre-fetching for cache: ", docs.size()};
-    // load the documents into the cache
-    for (size_t i = 0; i < docs.size(); ++i)
-    {
-        progress(i);
-        f_idx->search_primary(docs[i]);
-    }
-    progress.end();
-
-    std::unique_ptr<classify::classifier> classifier;
+    std::function<std::unique_ptr<classify::classifier>(
+        classify::multiclass_dataset_view)> creator;
     auto classifier_method = *class_config->get_as<std::string>("method");
+    auto even = class_config->get_as<bool>("even-split").value_or(false);
     if (classifier_method == "knn" || classifier_method == "nearest-centroid")
     {
         auto i_idx = index::make_index<index::inverted_index>(*config);
-        classifier = classify::make_classifier(*class_config, f_idx, i_idx);
+        creator = [=](classify::multiclass_dataset_view fold)
+        {
+            return classify::make_classifier(*class_config, std::move(fold),
+                                             i_idx);
+        };
     }
     else
-        classifier = classify::make_classifier(*class_config, f_idx);
+    {
 
-    auto even = class_config->get_as<bool>("even-split").value_or(false);
-    cv(*f_idx, *classifier, even);
+        creator = [&](classify::multiclass_dataset_view fold)
+        {
+            return classify::make_classifier(*class_config, std::move(fold));
+        };
+    }
+
+    cv(creator, dataset, even);
 
     return 0;
 }

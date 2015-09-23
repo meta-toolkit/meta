@@ -9,6 +9,7 @@
 #ifndef META_CLASSIFY_LOSS_FUNCTION_H_
 #define META_CLASSIFY_LOSS_FUNCTION_H_
 
+#include <ostream>
 #include <string>
 
 namespace meta
@@ -51,6 +52,12 @@ struct loss_function
      * @return the derivative of the loss function at that point
      */
     virtual double derivative(double prediction, double expected) const = 0;
+
+    /**
+     * Saves the loss function to a stream.
+     * @param out The stream to write to
+     */
+    virtual void save(std::ostream& out) const = 0;
 };
 }
 }

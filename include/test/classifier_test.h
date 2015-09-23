@@ -24,25 +24,6 @@ namespace meta
 namespace testing
 {
 /**
- * Checks that the CV accuracy is above a threshold.
- * @param idx The index to run the classifier on
- * @param c The classifier to test
- * @param min_accuracy The mininum acceptable accuracy
- */
-template <class Index, class Classifier>
-void check_cv(Index& idx, Classifier& c, double min_accuracy);
-
-/**
- * Checks that the split accuracy is above a threshold.
- * @param idx The index to run the classifier on
- * @param c The classifier to test
- * @param min_accuracy The mininum acceptable accuracy
- * @param train Whether or not to train the model
- */
-template <class Index, class Classifier>
-void check_split(Index& idx, Classifier& c, double min_accuracy, bool train = true);
-
-/**
  * Runs the classifier tests.
  * @param type The index type
  * @return the number of tests failed

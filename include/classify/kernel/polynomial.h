@@ -6,7 +6,9 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#include "meta.h"
+
+#include "classify/kernel/kernel.h"
+#include "classify/kernel/kernel_factory.h"
 
 #ifndef META_CLASSIFY_KERNEL_POLYNOMIAL_H_
 #define META_CLASSIFY_KERNEL_POLYNOMIAL_H_
@@ -25,9 +27,13 @@ namespace kernel
  * Uses the general form of:
  * \f$K(x,z) = (x^T z + c)^p\f$
  */
-class polynomial
+class polynomial : public kernel
 {
   public:
+    const static constexpr uint8_t default_power = 1;
+    const static constexpr double default_c = 1;
+    const static util::string_view id;
+
     /**
      * Constructs a new polynomial kernel with the given parameters.
      *
@@ -35,17 +41,20 @@ class polynomial
      * @param c \f$c\f$, the additional scalar term to allow for the
      *  use of existing features in the original space
      */
-    polynomial(uint8_t power = 1, double c = 1) : power_{power}, c_{c}
-    {
-        // nothing
-    }
+    polynomial(uint8_t power = default_power, double c = default_c);
+
+    /**
+     * Loads a polynomial kernel from a stream.
+     */
+    polynomial(std::istream& in);
 
     /**
      * Computes the value of \f$K(first, second)\f$.
      */
-    template <class PostingsData>
-    double operator()(const PostingsData& first,
-                      const PostingsData& second) const;
+    double operator()(const feature_vector& first,
+                      const feature_vector& second) const override;
+
+    void save(std::ostream& out) const override;
 
   private:
     /**
@@ -58,9 +67,13 @@ class polynomial
      */
     double c_;
 };
-}
-}
-}
 
-#include "classify/kernel/polynomial.tcc"
+/**
+ * Specialization of the factory method used to create polynomial kernels.
+ */
+template <>
+std::unique_ptr<kernel> make_kernel<polynomial>(const cpptoml::table&);
+}
+}
+}
 #endif

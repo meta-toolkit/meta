@@ -14,6 +14,7 @@
 
 #include <functional> // for std::hash
 #include "util/comparable.h"
+#include "util/hash.h"
 #include "util/string_view.h"
 
 namespace meta
@@ -201,6 +202,13 @@ struct identifier : public comparable<identifier<Derived, T>>
         return stream >> ident.id_;
     }
 };
+
+template <class HashAlgorithm, class Derived, class T>
+void hash_append(HashAlgorithm& h, const identifier<Derived, T>& id)
+{
+    using util::hash_append;
+    hash_append(h, static_cast<const T&>(id));
+}
 
 /**
  * A CRTP template base that adds numeric functionality to the identifier

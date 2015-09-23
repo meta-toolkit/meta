@@ -4,6 +4,7 @@
  */
 
 #include "classify/loss/perceptron.h"
+#include "io/packed.h"
 
 namespace meta
 {
@@ -26,6 +27,11 @@ double perceptron::derivative(double prediction, double expected) const
     if (prediction * expected <= 0)
         return -expected;
     return 0;
+}
+
+void perceptron::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
 }
 }
 }

@@ -9,9 +9,12 @@
 #ifndef META_CLASSIFIER_H_
 #define META_CLASSIFIER_H_
 
+#include <ostream>
 #include <vector>
 #include "classify/confusion_matrix.h"
 #include "index/forward_index.h"
+#include "learn/dataset.h"
+#include "classify/multiclass_dataset_view.h"
 
 namespace meta
 {
@@ -20,29 +23,28 @@ namespace classify
 
 /**
  * A classifier uses a document's feature space to identify which group it
- * belongs to.
+ * belongs to. This is a base class that defines an interface for
+ * multi-class classification.
  */
 class classifier
 {
   public:
-    /**
-     * @param idx The index to run the classifier on
-     */
-    classifier(std::shared_ptr<index::forward_index> idx);
+    using instance_type = multiclass_dataset::instance_type;
+    using feature_vector = learn::feature_vector;
+    using dataset_view_type = multiclass_dataset_view;
 
     /**
-     * Classifies a document into a specific group, as determined by
+     * Default destructor is virtual for polymorphic delete.
+     */
+    virtual ~classifier() = default;
+
+    /**
+     * Classifies an instance_type into a specific group, as determined by
      * training data.
-     * @param d_id The document to classify
+     * @param instance The instance to classify
      * @return the class it belongs to
      */
-    virtual class_label classify(doc_id d_id) = 0;
-
-    /**
-     * Creates a classification model based on training documents.
-     * @param docs The training documents
-     */
-    virtual void train(const std::vector<doc_id>& docs) = 0;
+    virtual class_label classify(const feature_vector& instance) const = 0;
 
     /**
      * Classifies a collection document into specific groups, as determined
@@ -52,40 +54,77 @@ class classifier
      * @return a confusion_matrix detailing the performance of the
      * classifier
      */
-    virtual confusion_matrix test(const std::vector<doc_id>& docs);
+    virtual confusion_matrix test(dataset_view_type docs) const;
 
     /**
-     * Performs k-fold cross-validation on a set of documents. When using
-     * this function, it is not necessary to call train() or test() first.
-     * @param input_docs Testing documents
-     * @param k The number of folds
-     * @param even_split Whether to evenly split the data by class for a fair
-     * baseline
-     * @param seed The seed for the RNG used to shuffle the documents
-     * @return a confusion_matrix containing the results over all the folds
+     * Saves the classifier model to the output stream.
+     * @param out The stream to write the model to
      */
-    virtual confusion_matrix
-        cross_validate(const std::vector<doc_id>& input_docs, size_t k,
-                       bool even_split = false, int seed = 1);
-
-    /**
-     * Clears any learning data associated with this classifier.
-     */
-    virtual void reset() = 0;
-
-  protected:
-    /** the index that the classifer is run on */
-    std::shared_ptr<index::forward_index> idx_;
-
-  private:
-    /**
-     * Modifies input_docs to be a vector of size <= the original vector size
-     * with an even distribution of class labels per document
-     * @param input_docs
-     * @param seed The seed for the RNG used to shuffle the documents
-     */
-    void create_even_split(std::vector<doc_id>& docs, int seed = 2) const;
+    virtual void save(std::ostream& out) const = 0;
 };
+
+/**
+ * Exception thrown from classifier operations.
+ */
+class classifier_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
+
+/**
+ * Performs k-fold cross-validation on a set of documents.
+ *
+ * @param creator A function to create classifiers given a
+ * multiclass_dataset_view
+ * @param docs Testing documents
+ * @param k The number of folds
+ * @param even_split Whether to evenly split the data by class for a fair
+ * baseline
+ * @return a confusion_matrix containing the results over all the folds
+ */
+template <class Creator>
+confusion_matrix cross_validate(Creator&& creator,
+                                classifier::dataset_view_type docs, size_t k,
+                                bool even_split = false)
+{
+    // docs might be ordered by class, so make sure things are shuffled
+    docs.shuffle();
+    if (even_split)
+        docs = docs.create_even_split();
+
+    confusion_matrix matrix;
+    size_t step_size = docs.size() / k;
+    for (size_t i = 0; i < k; ++i)
+    {
+        LOG(info) << "Cross-validating fold " << (i + 1) << "/" << k << ENDLG;
+        multiclass_dataset_view train_view{docs, docs.begin() + step_size,
+                                           docs.end()};
+
+        auto cls = creator(train_view);
+        multiclass_dataset_view test_view{docs, docs.begin(),
+                                          docs.begin() + step_size};
+        auto m = cls->test(test_view);
+        matrix += m;
+        docs.rotate(step_size);
+    }
+
+    return matrix;
+}
+
+/**
+ * Performs k-fold cross-validation on a set of documents.
+ *
+ * @param config The configuration to use to create the classifier
+ * @param docs Testing documents
+ * @param k The number of folds
+ * @param even_split Whether to evenly split the data by class for a fair
+ * baseline
+ * @return a confusion_matrix containing the results over all the folds
+ */
+confusion_matrix cross_validate(const cpptoml::table& config,
+                                classifier::dataset_view_type docs, size_t k,
+                                bool even_split = false);
 }
 }
 #endif
