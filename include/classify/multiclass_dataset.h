@@ -65,12 +65,8 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
                           }}
     {
         // build label_id_mapping
-        for (const auto& instance : *this)
-        {
-            if (!label_id_mapping_.contains_key(label(instance)))
-                label_id_mapping_.insert(label(instance),
-                                         label_id(label_id_mapping_.size()));
-        }
+        for (const auto& lbl : idx->class_labels())
+            label_id_mapping_.insert(lbl, label_id(label_id_mapping_.size()));
     }
 
     /**
