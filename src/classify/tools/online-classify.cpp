@@ -97,9 +97,7 @@ int main(int argc, char* argv[])
                            mtrx.print_stats();
                        });
 
-    std::cout << "Took "
-              << std::chrono::duration_cast<std::chrono::seconds>(dur).count()
-              << "s" << std::endl;
+    std::cout << "Took " << dur.count() / 1000.0 << "s" << std::endl;
 
     return 0;
 }
