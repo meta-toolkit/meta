@@ -25,6 +25,8 @@ namespace loss
  *
  * Defined as \f$\phi(p, y) = (p - y)^2\f$ when \f$|p-y| \leq 1\f$ and
  * \f$\phi(p, y) = 2|p - y| - 1\f$ otherwise.
+ *
+ * This loss is suitable for regression problems.
  */
 struct huber : public loss_function
 {

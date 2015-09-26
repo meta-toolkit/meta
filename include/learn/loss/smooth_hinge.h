@@ -24,6 +24,8 @@ namespace loss
  *
  * Defined as \f$\phi(p, y) = \frac12 \max(0, 1 - py)^2\f$
  * if \f$py \geq 0\f$ and \f$\phi(p, y) = \frac12 - py\f$ otherwise.
+ *
+ * This loss is suitable for binary classification.
  */
 struct smooth_hinge : public loss_function
 {

@@ -23,7 +23,8 @@ namespace loss
 /**
  * The logistic loss for SGD algorithms.
  *
- * Defined as \f$\phi(p, y) = \ln(1 + e^{-py})\f$.
+ * Defined as \f$\phi(p, y) = \ln(1 + e^{-py})\f$, this loss is suitable
+ * for binary classification.
  */
 struct logistic : public loss_function
 {

@@ -22,7 +22,9 @@ namespace loss
 /**
  * The squared hinge loss function for SGD algorithms.
  *
- * Defined as \f$phi(p, y) = \max(0, 1 - py)^2\f$.
+ * Defined as \f$phi(p, y) = \max(0, 1 - py)^2\f$, this loss is suitable
+ * for binary classification problems. This loss function has many other
+ * names, including modified least squares and quadratic SVM loss.
  */
 struct squared_hinge : public loss_function
 {

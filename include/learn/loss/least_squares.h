@@ -22,7 +22,8 @@ namespace loss
 /**
  * The least-squares loss function for SGD algorithms.
  *
- * Defined as \f$\phi(p, y) = (p - y)^2\f$.
+ * Defined as \f$\phi(p, y) = (p - y)^2\f$, this loss is suitable for
+ * regression problems.
  */
 struct least_squares : public loss_function
 {

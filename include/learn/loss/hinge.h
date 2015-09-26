@@ -28,6 +28,8 @@ namespace loss
  * the derivative doesn't always exist for straight hinge-loss, so this is
  * a subgradient approach. You can avoid this problem by using a smoothed
  * version of the hinge loss, like smooth_hinge).
+ *
+ * This loss is suitable for binary classification.
  */
 struct hinge : public loss_function
 {
