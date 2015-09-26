@@ -49,8 +49,8 @@ void batch_train(Index& idx, Classifier& cls,
     auto num_batches = (docs.size() + batch_size - 1) / batch_size;
     for (uint64_t i = 0; i < num_batches; ++i)
     {
-        LOG(progress) << "\rTraining batch " << i + 1 << "/" << num_batches
-                      << ENDLG;
+        LOG(progress) << "Training batch " << i + 1 << "/" << num_batches
+                      << '\n' << ENDLG;
         auto end = std::min<uint64_t>((i + 1) * batch_size, docs.size());
 
         classify::multiclass_dataset batch{idx, docs.begin() + i * batch_size,
