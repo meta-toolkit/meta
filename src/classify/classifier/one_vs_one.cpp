@@ -158,16 +158,14 @@ class_label one_vs_one::classify(const feature_vector& instance) const
     std::unordered_map<class_label, int> votes;
     std::mutex mut;
 
-    parallel::parallel_for(classifiers_.begin(), classifiers_.end(),
-                           [&](const classifier_map_type::value_type& val)
-                           {
-                               auto lbl = val.second->classify(instance);
-                               std::lock_guard<std::mutex> lock{mut};
-                               if (lbl)
-                                   ++votes[val.first.positive];
-                               else
-                                   ++votes[val.first.negative];
-                           });
+    for (const auto& val : classifiers_)
+    {
+        auto lbl = val.second->classify(instance);
+        if (lbl)
+            ++votes[val.first.positive];
+        else
+            ++votes[val.first.negative];
+    }
 
     using count_type = std::pair<const class_label, int>;
     auto iter
