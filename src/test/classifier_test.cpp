@@ -274,7 +274,7 @@ int run_tests(const std::string& type)
                                             auto cfg = cpptoml::make_table();
                                             cfg->insert("method",
                                                         winnow::id.to_string());
-                                            check_split(f_idx, *cfg, 0.90);
+                                            check_split(f_idx, *cfg, 0.86);
                                         });
 
         num_failed += testing::run_test(
@@ -401,7 +401,7 @@ int run_load_save_tests()
             {
                 auto cfg = cpptoml::make_table();
                 cfg->insert("method", winnow::id.to_string());
-                run_save_load_single(f_idx, *cfg, 0.90);
+                run_save_load_single(f_idx, *cfg, 0.86);
             });
 
         num_failed += testing::run_test(
