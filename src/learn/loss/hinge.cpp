@@ -3,12 +3,12 @@
  * @author Chase Geigle
  */
 
-#include "classify/loss/hinge.h"
+#include "learn/loss/hinge.h"
 #include "io/packed.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {

@@ -86,7 +86,6 @@ class logistic_regression : public classifier
     logistic_regression(multiclass_dataset_view docs,
                         double alpha = sgd::default_alpha,
                         double gamma = sgd::default_gamma,
-                        double bias = sgd::default_bias,
                         double lambda = sgd::default_lambda,
                         uint64_t max_iter = sgd::default_max_iter);
 

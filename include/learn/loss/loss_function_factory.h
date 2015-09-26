@@ -14,13 +14,13 @@
 #include <memory>
 #include <unordered_map>
 
-#include "classify/loss/loss_function.h"
+#include "learn/loss/loss_function.h"
 #include "util/factory.h"
 #include "util/shim.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {

@@ -3,12 +3,12 @@
  * @author Chase Geigle
  */
 
-#include "classify/loss/huber.h"
+#include "learn/loss/huber.h"
 #include "io/packed.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {

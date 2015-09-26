@@ -14,7 +14,7 @@
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {

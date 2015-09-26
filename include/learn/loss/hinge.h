@@ -10,12 +10,12 @@
 #define META_CLASSIFY_HINGE_LOSS_H_
 
 #include <algorithm>
-#include "classify/loss/loss_function.h"
+#include "learn/loss/loss_function.h"
 #include "util/string_view.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {

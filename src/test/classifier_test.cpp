@@ -6,7 +6,7 @@
 #include <random>
 
 #include "test/classifier_test.h"
-#include "classify/loss/all.h"
+#include "learn/loss/all.h"
 
 namespace meta
 {
@@ -192,7 +192,7 @@ int run_tests(const std::string& type)
 
         auto hinge_base_cfg = cpptoml::make_table();
         hinge_base_cfg->insert("method", sgd::id.to_string());
-        hinge_base_cfg->insert("loss", loss::hinge::id.to_string());
+        hinge_base_cfg->insert("loss", learn::loss::hinge::id.to_string());
 
         hinge_sgd_cfg->insert("base", hinge_base_cfg);
 
@@ -207,7 +207,7 @@ int run_tests(const std::string& type)
 
         auto perc_base_cfg = cpptoml::make_table();
         perc_base_cfg->insert("method", sgd::id.to_string());
-        perc_base_cfg->insert("loss", loss::perceptron::id.to_string());
+        perc_base_cfg->insert("loss", learn::loss::perceptron::id.to_string());
 
         perc_sgd_cfg->insert("base", perc_base_cfg);
 
@@ -250,7 +250,7 @@ int run_tests(const std::string& type)
             {
                 auto cfg = cpptoml::make_table();
                 cfg->insert("method", logistic_regression::id.to_string());
-                check_cv(f_idx, *cfg, 0.91);
+                check_cv(f_idx, *cfg, 0.89);
             });
 
         num_failed += testing::run_test(
@@ -258,7 +258,7 @@ int run_tests(const std::string& type)
             {
                 auto cfg = cpptoml::make_table();
                 cfg->insert("method", logistic_regression::id.to_string());
-                check_split(f_idx, *cfg, 0.91);
+                check_split(f_idx, *cfg, 0.87);
             });
 
         num_failed += testing::run_test("winnow-cv-" + type, [&]()
@@ -367,7 +367,7 @@ int run_load_save_tests()
 
         auto hinge_base_cfg = cpptoml::make_table();
         hinge_base_cfg->insert("method", sgd::id.to_string());
-        hinge_base_cfg->insert("loss", loss::hinge::id.to_string());
+        hinge_base_cfg->insert("loss", learn::loss::hinge::id.to_string());
 
         hinge_sgd_cfg->insert("base", hinge_base_cfg);
 
@@ -393,7 +393,7 @@ int run_load_save_tests()
             {
                 auto cfg = cpptoml::make_table();
                 cfg->insert("method", logistic_regression::id.to_string());
-                run_save_load_single(f_idx, *cfg, 0.91);
+                run_save_load_single(f_idx, *cfg, 0.87);
             });
 
         num_failed += testing::run_test(

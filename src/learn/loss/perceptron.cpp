@@ -3,12 +3,12 @@
  * @author Chase Geigle
  */
 
-#include "classify/loss/perceptron.h"
+#include "learn/loss/perceptron.h"
 #include "io/packed.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {

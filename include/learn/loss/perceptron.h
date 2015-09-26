@@ -9,12 +9,12 @@
 #ifndef META_CLASSIFY_PERCEPTRON_LOSS_H_
 #define META_CLASSIFY_PERCEPTRON_LOSS_H_
 
-#include "classify/loss/loss_function.h"
+#include "learn/loss/loss_function.h"
 #include "util/string_view.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {

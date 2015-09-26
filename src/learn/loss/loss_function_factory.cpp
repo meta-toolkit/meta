@@ -3,13 +3,13 @@
  * @author Chase Geigle
  */
 
-#include "classify/loss/all.h"
-#include "classify/loss/loss_function_factory.h"
+#include "learn/loss/all.h"
+#include "learn/loss/loss_function_factory.h"
 #include "io/packed.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {

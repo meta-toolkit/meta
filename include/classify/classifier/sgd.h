@@ -12,7 +12,8 @@
 #include "classify/binary_classifier_factory.h"
 #include "classify/classifier/binary_classifier.h"
 #include "classify/classifier/online_binary_classifier.h"
-#include "classify/loss/loss_function.h"
+#include "learn/loss/loss_function.h"
+#include "learn/sgd.h"
 #include "util/disk_vector.h"
 #include "meta.h"
 
@@ -37,9 +38,8 @@ namespace classify
  * Optional config parameters:
  * ~~~toml
  * [classifier]
- * alpha = 0.001
+ * alpha = 0.5
  * gamma = 1e-6
- * bias = 1.0
  * lambda = 0.0001
  * max-iter = 50
  * ~~~
@@ -48,15 +48,13 @@ class sgd : public online_binary_classifier
 {
   public:
     /// The default \f$\alpha\f$ parameter.
-    const static constexpr double default_alpha = 0.001;
+    const static constexpr double default_alpha = 0.5;
     /// The default \f$\gamma\f$ parameter.
-    const static constexpr double default_gamma = 1e-6;
-    /// The default \f$b\f$ parameter.
-    const static constexpr double default_bias = 1;
+    const static constexpr double default_gamma = 1e-3;
     /// The default \f$\lambda\f$ parameter.
-    const static constexpr double default_lambda = 0.0001;
+    const static constexpr double default_lambda = 1e-7;
     /// The default number of allowed iterations.
-    const static constexpr size_t default_max_iter = 50;
+    const static constexpr size_t default_max_iter = 5;
 
     /**
      * @param docs The training documents
@@ -66,10 +64,10 @@ class sgd : public online_binary_classifier
      * @param lambda \f$\lambda\f$, the regularization constant
      * @param max_iter The maximum number of iterations for training.
      */
-    sgd(binary_dataset_view docs, std::unique_ptr<loss::loss_function> loss,
+    sgd(binary_dataset_view docs,
+        std::unique_ptr<learn::loss::loss_function> loss,
         double alpha = default_alpha, double gamma = default_gamma,
-        double bias = default_bias, double lambda = default_lambda,
-        size_t max_iter = default_max_iter);
+        double lambda = default_lambda, size_t max_iter = default_max_iter);
 
     /**
      * Loads an sgd classifier from a stream.
@@ -104,32 +102,17 @@ class sgd : public online_binary_classifier
      */
     double train_instance(const feature_vector& doc, bool label);
 
-    /// The weights vector.
-    std::vector<double> weights_;
-
-    /// The scalar coefficient for the weights vector.
-    double coeff_{1.0};
-
-    /// \f$\alpha\f$, the learning rate.
-    const double alpha_;
+    /// The model
+    learn::sgd_model model_;
 
     /// \f$\gamma\f$, the error threshold.
     const double gamma_;
-
-    /// \f$b\f$, the bias.
-    double bias_;
-
-    /// The weight of the bias term for each document (defaults to 1)
-    const double bias_weight_;
-
-    /// \f$\lambda\f$, the regularization constant
-    const double lambda_;
 
     /// The maximum number of iterations for training.
     const size_t max_iter_;
 
     /// The loss function to be used for the update.
-    std::unique_ptr<loss::loss_function> loss_;
+    std::unique_ptr<learn::loss::loss_function> loss_;
 };
 
 /**

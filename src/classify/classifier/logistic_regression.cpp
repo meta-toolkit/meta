@@ -4,8 +4,8 @@
  */
 
 #include "classify/classifier/logistic_regression.h"
-#include "classify/loss/loss_function_factory.h"
-#include "classify/loss/logistic.h"
+#include "learn/loss/loss_function_factory.h"
+#include "learn/loss/logistic.h"
 #include "parallel/parallel_for.h"
 #include "util/functional.h"
 
@@ -18,8 +18,7 @@ const util::string_view logistic_regression::id = "logistic-regression";
 
 logistic_regression::logistic_regression(multiclass_dataset_view docs,
                                          double alpha, double gamma,
-                                         double bias, double lambda,
-                                         uint64_t max_iter)
+                                         double lambda, uint64_t max_iter)
 {
     using size_type = multiclass_dataset_view::size_type;
     using indices_type = std::vector<size_type>;
@@ -50,8 +49,8 @@ logistic_regression::logistic_regression(multiclass_dataset_view docs,
                 }};
 
             pair.second = make_unique<sgd>(
-                bdv, loss::make_loss_function<loss::logistic>(), alpha, gamma,
-                bias, lambda, max_iter);
+                bdv, learn::loss::make_loss_function<learn::loss::logistic>(),
+                alpha, gamma, lambda, max_iter);
         });
 }
 
@@ -117,13 +116,12 @@ std::unique_ptr<classifier>
 {
     auto alpha = config.get_as<double>("alpha").value_or(sgd::default_alpha);
     auto gamma = config.get_as<double>("gamma").value_or(sgd::default_gamma);
-    auto bias = config.get_as<double>("bias").value_or(sgd::default_bias);
     auto lambda = config.get_as<double>("lambda").value_or(sgd::default_lambda);
     auto max_iter
         = config.get_as<int64_t>("max-iter").value_or(sgd::default_max_iter);
 
     return make_unique<logistic_regression>(std::move(training), alpha, gamma,
-                                            bias, lambda, max_iter);
+                                            lambda, max_iter);
 }
 }
 }

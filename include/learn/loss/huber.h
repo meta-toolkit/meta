@@ -1,31 +1,32 @@
 /**
- * @file modified_huber.h
+ * @file huber.h
  * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_CLASSIFY_MODIFIED_HUBER_LOSS_H_
-#define META_CLASSIFY_MODIFIED_HUBER_LOSS_H_
+#ifndef META_CLASSIFY_HUBER_LOSS_H_
+#define META_CLASSIFY_HUBER_LOSS_H_
 
-#include "classify/loss/loss_function.h"
+#include <cmath>
+#include "learn/loss/loss_function.h"
 #include "util/string_view.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {
 
 /**
- * The modified huber loss function for SGD algorithms.
+ * The huber loss for SGD algorithms.
  *
- * Defined as \f$\phi(p, y) = \max(0, 1 - py)^2\f$ when \f$py \geq -1\f$
- * and \f$\phi(p, y) = -4py\f$ otherwise.
+ * Defined as \f$\phi(p, y) = (p - y)^2\f$ when \f$|p-y| \leq 1\f$ and
+ * \f$\phi(p, y) = 2|p - y| - 1\f$ otherwise.
  */
-struct modified_huber : public loss_function
+struct huber : public loss_function
 {
     /**
      * The identifier for this loss function.

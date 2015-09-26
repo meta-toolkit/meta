@@ -3,12 +3,12 @@
  * @author Chase Geigle
  */
 
-#include "classify/loss/least_squares.h"
+#include "learn/loss/least_squares.h"
 #include "io/packed.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {

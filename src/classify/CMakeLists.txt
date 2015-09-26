@@ -1,7 +1,6 @@
 project(meta-classify)
 
 add_subdirectory(kernel)
-add_subdirectory(loss)
 add_subdirectory(tools)
 
 ExternalProject_Add(liblinear
@@ -35,5 +34,5 @@ add_library(meta-classify binary_classifier_factory.cpp
                           classifier/winnow.cpp
                           classifier_factory.cpp
                           confusion_matrix.cpp)
-target_link_libraries(meta-classify meta-ranker meta-loss meta-kernel)
+target_link_libraries(meta-classify meta-ranker meta-learn meta-kernel)
 add_dependencies(meta-classify liblinear libsvm)

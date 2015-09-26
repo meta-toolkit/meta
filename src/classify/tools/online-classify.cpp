@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto f_idx = index::make_index<index::memory_forward_index>(*config);
+    auto f_idx = index::make_index<index::forward_index>(*config);
 
     if (static_cast<uint64_t>(*test_start) > f_idx->num_docs())
     {

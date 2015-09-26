@@ -9,7 +9,6 @@
 
 #include "caching/all.h"
 #include "classify/classifier/all.h"
-#include "classify/loss/all.h"
 #include "index/forward_index.h"
 #include "index/ranker/all.h"
 #include "parser/analyzers/tree_analyzer.h"
@@ -28,13 +27,13 @@ classify::confusion_matrix cv(Creator&& creator,
                               classify::multiclass_dataset_view docs, bool even)
 {
     classify::confusion_matrix matrix;
-    auto seconds = common::time<std::chrono::seconds>(
+    auto msec = common::time(
         [&]()
         {
             matrix = classify::cross_validate(std::forward<Creator>(creator),
                                               docs, 5, even);
         });
-    std::cerr << "time elapsed: " << seconds.count() << "s" << std::endl;
+    std::cerr << "time elapsed: " << msec.count() / 1000.0 << "s" << std::endl;
     matrix.print();
     matrix.print_stats();
     return matrix;

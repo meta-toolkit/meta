@@ -1,32 +1,30 @@
 /**
- * @file huber.h
+ * @file squared_hinge.h
  * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_CLASSIFY_HUBER_LOSS_H_
-#define META_CLASSIFY_HUBER_LOSS_H_
+#ifndef META_CLASSIFY_SQUARED_HINGE_LOSS_H_
+#define META_CLASSIFY_SQUARED_HINGE_LOSS_H_
 
-#include <cmath>
-#include "classify/loss/loss_function.h"
+#include "learn/loss/loss_function.h"
 #include "util/string_view.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {
 
 /**
- * The huber loss for SGD algorithms.
+ * The squared hinge loss function for SGD algorithms.
  *
- * Defined as \f$\phi(p, y) = (p - y)^2\f$ when \f$|p-y| \leq 1\f$ and
- * \f$\phi(p, y) = 2|p - y| - 1\f$ otherwise.
+ * Defined as \f$phi(p, y) = \max(0, 1 - py)^2\f$.
  */
-struct huber : public loss_function
+struct squared_hinge : public loss_function
 {
     /**
      * The identifier for this loss function.

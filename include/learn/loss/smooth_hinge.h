@@ -1,30 +1,31 @@
 /**
- * @file least_squares.h
+ * @file smooth_hinge.h
  * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_CLASSIFY_LEAST_SQUARES_LOSS_H_
-#define META_CLASSIFY_LEAST_SQUARES_LOSS_H_
+#ifndef META_CLASSIFY_SMOOTH_HINGE_LOSS_H_
+#define META_CLASSIFY_SMOOTH_HINGE_LOSS_H_
 
-#include "classify/loss/loss_function.h"
+#include "learn/loss/loss_function.h"
 #include "util/string_view.h"
 
 namespace meta
 {
-namespace classify
+namespace learn
 {
 namespace loss
 {
 
 /**
- * The least-squares loss function for SGD algorithms.
+ * The smooth hinge loss function for SGD algorithms.
  *
- * Defined as \f$\phi(p, y) = (p - y)^2\f$.
+ * Defined as \f$\phi(p, y) = \frac12 \max(0, 1 - py)^2\f$
+ * if \f$py \geq 0\f$ and \f$\phi(p, y) = \frac12 - py\f$ otherwise.
  */
-struct least_squares : public loss_function
+struct smooth_hinge : public loss_function
 {
     /**
      * The identifier for this loss function.
