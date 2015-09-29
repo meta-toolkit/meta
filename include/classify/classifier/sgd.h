@@ -38,21 +38,19 @@ namespace classify
  * Optional config parameters:
  * ~~~toml
  * [classifier]
- * alpha = 0.5
- * gamma = 1e-6
- * lambda = 0.0001
- * max-iter = 50
+ * learning-rate = 0.5
+ * convergence-threshold = 1e-3
+ * l2-regularization = 1e-7
+ * l1-regularization = 0
+ * max-iter = 5
  * ~~~
  */
 class sgd : public online_binary_classifier
 {
   public:
-    /// The default \f$\alpha\f$ parameter.
-    const static constexpr double default_alpha = 0.5;
     /// The default \f$\gamma\f$ parameter.
     const static constexpr double default_gamma = 1e-3;
-    /// The default \f$\lambda\f$ parameter.
-    const static constexpr double default_lambda = 1e-7;
+
     /// The default number of allowed iterations.
     const static constexpr size_t default_max_iter = 5;
 
@@ -66,8 +64,8 @@ class sgd : public online_binary_classifier
      */
     sgd(binary_dataset_view docs,
         std::unique_ptr<learn::loss::loss_function> loss,
-        double alpha = default_alpha, double gamma = default_gamma,
-        double lambda = default_lambda, size_t max_iter = default_max_iter);
+        learn::sgd_model::options_type options, double gamma = default_gamma,
+        size_t max_iter = default_max_iter);
 
     /**
      * Loads an sgd classifier from a stream.

@@ -231,6 +231,32 @@ int run_tests(const std::string& type)
                                      check_split(f_idx, *perc_sgd_cfg, 0.90);
                                  });
 
+        // disable l2 regularization and add a harsh l1 regularizer
+        hinge_base_cfg->insert("l2-regularization", 0.0);
+        hinge_base_cfg->insert("l1-regularization", 1e-4);
+
+        num_failed
+            += testing::run_test("ova-sgd-l1-cv-" + type, [&]()
+                                 {
+                                     check_cv(f_idx, *hinge_sgd_cfg, 0.88);
+                                 });
+
+        hinge_base_cfg->erase("l2-regularization");
+        hinge_base_cfg->erase("l1-regularization");
+
+        // enable both l1 and l2 regularization with rather harsh settings
+        hinge_base_cfg->insert("l2-regularization", 1e-3);
+        hinge_base_cfg->insert("l1-regularization", 1e-4);
+
+        num_failed
+            += testing::run_test("ova-sgd-l1-and-l2-cv-" + type, [&]()
+                                 {
+                                     check_cv(f_idx, *hinge_sgd_cfg, 0.84);
+                                 });
+
+        hinge_base_cfg->erase("l2-regularization");
+        hinge_base_cfg->erase("l1-regularization");
+
         num_failed
             += testing::run_test("ovo-sgd-cv-" + type, [&]()
                                  {

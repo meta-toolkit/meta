@@ -72,21 +72,15 @@ class logistic_regression : public classifier
   public:
     /**
      * @param docs The training data
-     * @param alpha \f$\alpha\f$, the learning rate for each of the
-     * independent regressions
+     * @param options The options for training the sub sgd models
      * @param gamma \f$\gamma\f$, the error threshold for each of the
      * independent regressions
-     * @param bias \f$b\f$, the bias term for each of the independent
-     * regressions
-     * @param lambda \f$\lambda\f$, the regularization constant for each
-     * of the independent regressions
      * @param max_iter The maximum number of iterations for training each
      * independent regression
      */
     logistic_regression(multiclass_dataset_view docs,
-                        double alpha = sgd::default_alpha,
+                        learn::sgd_model::options_type options,
                         double gamma = sgd::default_gamma,
-                        double lambda = sgd::default_lambda,
                         uint64_t max_iter = sgd::default_max_iter);
 
     /**

@@ -17,8 +17,8 @@ namespace classify
 const util::string_view logistic_regression::id = "logistic-regression";
 
 logistic_regression::logistic_regression(multiclass_dataset_view docs,
-                                         double alpha, double gamma,
-                                         double lambda, uint64_t max_iter)
+                                         learn::sgd_model::options_type options,
+                                         double gamma, uint64_t max_iter)
 {
     using size_type = multiclass_dataset_view::size_type;
     using indices_type = std::vector<size_type>;
@@ -50,7 +50,7 @@ logistic_regression::logistic_regression(multiclass_dataset_view docs,
 
             pair.second = make_unique<sgd>(
                 bdv, learn::loss::make_loss_function<learn::loss::logistic>(),
-                alpha, gamma, lambda, max_iter);
+                options, gamma, max_iter);
         });
 }
 
@@ -114,14 +114,23 @@ std::unique_ptr<classifier>
     make_classifier<logistic_regression>(const cpptoml::table& config,
                                          multiclass_dataset_view training)
 {
-    auto alpha = config.get_as<double>("alpha").value_or(sgd::default_alpha);
+    learn::sgd_model::options_type options;
+
+    if (auto alpha = config.get_as<double>("learning-rate"))
+        options.learning_rate = *alpha;
+
+    if (auto l2_lambda = config.get_as<double>("l2-regularization"))
+        options.l2_regularizer = *l2_lambda;
+
+    if (auto l1_lambda = config.get_as<double>("l1-regularization"))
+        options.l1_regularizer = *l1_lambda;
+
     auto gamma = config.get_as<double>("gamma").value_or(sgd::default_gamma);
-    auto lambda = config.get_as<double>("lambda").value_or(sgd::default_lambda);
     auto max_iter
         = config.get_as<int64_t>("max-iter").value_or(sgd::default_max_iter);
 
-    return make_unique<logistic_regression>(std::move(training), alpha, gamma,
-                                            lambda, max_iter);
+    return make_unique<logistic_regression>(std::move(training), options, gamma,
+                                            max_iter);
 }
 }
 }

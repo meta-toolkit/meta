@@ -16,15 +16,13 @@ namespace classify
 {
 
 const util::string_view sgd::id = "sgd";
-const constexpr double sgd::default_alpha;
 const constexpr double sgd::default_gamma;
-const constexpr double sgd::default_lambda;
 const constexpr size_t sgd::default_max_iter;
 
 sgd::sgd(binary_dataset_view docs,
-         std::unique_ptr<learn::loss::loss_function> loss, double alpha,
-         double gamma, double lambda, size_t max_iter)
-    : model_{docs.total_features(), alpha, lambda},
+         std::unique_ptr<learn::loss::loss_function> loss,
+         learn::sgd_model::options_type options, double gamma, size_t max_iter)
+    : model_{docs.total_features(), options},
       gamma_{gamma},
       max_iter_{max_iter},
       loss_{std::move(loss)}
@@ -105,15 +103,25 @@ std::unique_ptr<binary_classifier>
         throw binary_classifier_factory::exception{
             "loss function must be specified for sgd in config"};
 
-    auto alpha = config.get_as<double>("alpha").value_or(sgd::default_alpha);
-    auto gamma = config.get_as<double>("gamma").value_or(sgd::default_gamma);
-    auto lambda = config.get_as<double>("lambda").value_or(sgd::default_lambda);
+    learn::sgd_model::options_type options;
+
+    if (auto alpha = config.get_as<double>("learning-rate"))
+        options.learning_rate = *alpha;
+
+    if (auto l2_lambda = config.get_as<double>("l2-regularization"))
+        options.l2_regularizer = *l2_lambda;
+
+    if (auto l1_lambda = config.get_as<double>("l1-regularization"))
+        options.l1_regularizer = *l1_lambda;
+
+    auto gamma = config.get_as<double>("convergence-threshold")
+                     .value_or(sgd::default_gamma);
     auto max_iter
         = config.get_as<int64_t>("max-iter").value_or(sgd::default_max_iter);
 
     return make_unique<sgd>(std::move(training),
-                            learn::loss::make_loss_function(*loss), alpha,
-                            gamma, lambda, max_iter);
+                            learn::loss::make_loss_function(*loss), options,
+                            gamma, max_iter);
 }
 }
 }
