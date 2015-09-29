@@ -53,16 +53,21 @@ class sgd_model
         double learning_rate = default_learning_rate;
         double l2_regularizer = default_l2_regularizer;
         double l1_regularizer = default_l1_regularizer;
+
+        options_type()
+        {
+            // nothing; workaround for clang not liking the default
+            // initialized argument below without an explicit default
+            // constructor definition, and gcc 4.8 not being happy with a
+            // braced init list to set the values to work around clang...
+        }
     };
 
     /**
      * Constructs a new model with the specified number of features,
      * learning rate, and regularization.
      */
-    sgd_model(std::size_t num_features,
-              options_type options
-              = {default_learning_rate, default_l2_regularizer,
-                 default_l1_regularizer});
+    sgd_model(std::size_t num_features, options_type options = {});
 
     /**
      * Loads a model from a stream (so that one could continue training).
