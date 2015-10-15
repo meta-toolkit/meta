@@ -114,7 +114,7 @@ std::string disk_index::doc_path(doc_id d_id) const
 std::vector<doc_id> disk_index::docs() const
 {
     std::vector<doc_id> ret(num_docs());
-    std::iota(ret.begin(), ret.end(), 0);
+    std::iota(ret.begin(), ret.end(), 0_did);
     return ret;
 }
 

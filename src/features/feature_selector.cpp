@@ -51,7 +51,7 @@ void feature_selector::score_all()
         class_prob_.size(), std::vector<pair_t>(term_prob_.size()));
 
     printing::progress prog{" > Selecting features: ", term_prob_.size()};
-    for (uint64_t tid = 0; tid < idx_->unique_terms(); ++tid)
+    for (auto tid = 0_tid; tid < idx_->unique_terms(); ++tid)
     {
         prog(tid);
         for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)

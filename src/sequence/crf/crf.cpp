@@ -89,7 +89,7 @@ void crf::initialize(const std::vector<sequence>& examples)
     transition_ranges_ = util::disk_vector<crf_feature_id>{
         prefix_ + "/transition_ranges.vector", trans_feats.size() + 1};
 
-    uint64_t obs_size = 0;
+    crf_feature_id obs_size{0};
     for (const auto& pair : obs_feats)
     {
         (*observation_ranges_)[pair.first] = obs_size;
@@ -113,7 +113,7 @@ void crf::initialize(const std::vector<sequence>& examples)
         }
     }
 
-    uint64_t trans_size = 0;
+    crf_feature_id trans_size{0};
     for (const auto& pair : trans_feats)
     {
         (*transition_ranges_)[pair.first] = trans_size;

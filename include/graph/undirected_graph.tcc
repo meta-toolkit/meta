@@ -13,8 +13,8 @@ namespace graph
 {
 
 template <class Node, class Edge>
-auto undirected_graph<Node, Edge>::adjacent(node_id id) const -> const
-    adjacency_list &
+auto undirected_graph<Node, Edge>::adjacent(node_id id) const
+    -> const adjacency_list &
 {
     if (id >= size())
         throw undirected_graph_exception{"node_id out of range"};
@@ -25,7 +25,7 @@ auto undirected_graph<Node, Edge>::adjacent(node_id id) const -> const
 template <class Node, class Edge>
 node_id undirected_graph<Node, Edge>::insert(Node node)
 {
-    node.id = size();
+    node.id = node_id{size()};
     nodes_.emplace_back(node, adjacency_list{});
     return node.id;
 }
@@ -44,8 +44,8 @@ void undirected_graph<Node, Edge>::add_edge(Edge edge, node_id source,
     auto it = std::find_if(list.begin(), list.end(),
                            [&](const std::pair<node_id, Edge>& p)
                            {
-        return p.first == dest;
-    });
+                               return p.first == dest;
+                           });
     if (it != list.end())
         throw undirected_graph_exception{"attempted to add existing edge"};
 
@@ -60,8 +60,8 @@ void undirected_graph<Node, Edge>::add_edge(Edge edge, node_id source,
 
 template <class Node, class Edge>
 undirected_graph<Node, Edge>
-    undirected_graph<Node, Edge>::load(const std::string& filename,
-                                       bool display_errors /* = false */)
+undirected_graph<Node, Edge>::load(const std::string& filename,
+                                   bool display_errors /* = false */)
 {
     undirected_graph<Node, Edge> g;
 
@@ -77,7 +77,7 @@ undirected_graph<Node, Edge>
 
         if (src == dest)
         {
-            if(display_errors)
+            if (display_errors)
                 std::cout << "Found self-loop: " << src << std::endl;
             continue;
         }
@@ -94,7 +94,7 @@ undirected_graph<Node, Edge>
         }
         catch (undirected_graph_exception& e)
         {
-            if(display_errors)
+            if (display_errors)
             {
                 ++errors;
                 std::cout << e.what() << std::endl;
@@ -102,7 +102,7 @@ undirected_graph<Node, Edge>
         }
     }
 
-    if(display_errors)
+    if (display_errors)
     {
         std::cout << "Tried to add " << tried << " total edges." << std::endl;
         std::cout << "Got " << errors << " errors." << std::endl;

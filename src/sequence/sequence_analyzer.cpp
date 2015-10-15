@@ -140,9 +140,9 @@ feature_id sequence_analyzer::feature(const std::string& feature)
     auto it = feature_id_mapping_.find(feature);
     if (it != feature_id_mapping_.end())
         return it->second;
-    auto sze = feature_id_mapping_.size();
+    auto sze = feature_id{feature_id_mapping_.size()};
     feature_id_mapping_[feature] = sze;
-    return feature_id{sze};
+    return sze;
 }
 
 feature_id sequence_analyzer::feature(const std::string& feature) const

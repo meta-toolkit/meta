@@ -38,7 +38,7 @@ typename std::enable_if<!std::is_floating_point<T>::value
                             && std::is_unsigned<T>::value
                             && !std::is_same<T, bool>::value,
                         uint64_t>::type
-    write(OutputStream& stream, T value)
+write(OutputStream& stream, T value)
 {
     uint64_t size = 0;
     while (value > 127)
@@ -58,7 +58,7 @@ typename std::enable_if<!std::is_floating_point<T>::value
  */
 template <class OutputStream, class T>
 typename std::enable_if<std::is_same<T, bool>::value, uint64_t>::type
-    write(OutputStream& stream, T value)
+write(OutputStream& stream, T value)
 {
     uint8_t val = value ? 1 : 0;
     return write(stream, val);
@@ -79,7 +79,7 @@ template <class OutputStream, class T>
 typename std::enable_if<!std::is_floating_point<T>::value
                             && std::is_signed<T>::value,
                         uint64_t>::type
-    write(OutputStream& stream, T value)
+write(OutputStream& stream, T value)
 {
     typename std::make_unsigned<T>::type elem
         = (value << 1) ^ (value >> (sizeof(T) * 8 - 1));
@@ -102,7 +102,7 @@ typename std::enable_if<!std::is_floating_point<T>::value
  */
 template <class OutputStream, class T>
 typename std::enable_if<std::is_floating_point<T>::value, uint64_t>::type
-    write(OutputStream& stream, T value)
+write(OutputStream& stream, T value)
 {
     int exp;
     auto digits = std::numeric_limits<T>::digits;
@@ -153,23 +153,22 @@ uint64_t write(OutputStream& stream, util::string_view value)
  */
 template <class OutputStream, class T>
 typename std::enable_if<std::is_enum<T>::value, uint64_t>::type
-    write(OutputStream& stream, T value)
+write(OutputStream& stream, T value)
 {
     auto val = static_cast<typename std::underlying_type<T>::type>(value);
     return write(stream, val);
 }
 
 /**
- * Writes a hash_wrapped type in a packed representation. This just uses
+ * Writes an identifier type in a packed representation. This just uses
  * whatever packed representation its underlying type has.
  *
  * @param stream The stream to write to
  * @param value The value to write
  * @return the number of bytes used to write out the value
  */
-template <class OutputStream, template <class> class Wrapped, class T>
-uint64_t write(OutputStream& stream,
-               const util::identifier<util::hash_wrapper<Wrapped>, T>& value)
+template <class OutputStream, class Tag, class T>
+uint64_t write(OutputStream& stream, const util::identifier<Tag, T>& value)
 {
     return write(stream, static_cast<const T&>(value));
 }
@@ -186,7 +185,7 @@ typename std::enable_if<!std::is_floating_point<T>::value
                             && std::is_unsigned<T>::value
                             && !std::is_same<T, bool>::value,
                         uint64_t>::type
-    read(InputStream& stream, T& value)
+read(InputStream& stream, T& value)
 {
     value = 0;
     uint64_t size = 0;
@@ -232,7 +231,7 @@ template <class InputStream, class T>
 typename std::enable_if<!std::is_floating_point<T>::value
                             && std::is_signed<T>::value,
                         uint64_t>::type
-    read(InputStream& stream, T& value)
+read(InputStream& stream, T& value)
 {
     typename std::make_unsigned<T>::type elem;
     auto bytes = read(stream, elem);
@@ -251,7 +250,7 @@ typename std::enable_if<!std::is_floating_point<T>::value
  */
 template <class InputStream, class T>
 typename std::enable_if<std::is_floating_point<T>::value, uint64_t>::type
-    read(InputStream& stream, T& value)
+read(InputStream& stream, T& value)
 {
     int64_t mantissa;
     int64_t exponent;
@@ -288,7 +287,7 @@ uint64_t read(InputStream& stream, std::string& value)
  */
 template <class InputStream, class T>
 typename std::enable_if<std::is_enum<T>::value, uint64_t>::type
-    read(InputStream& stream, T& value)
+read(InputStream& stream, T& value)
 {
     typename std::underlying_type<T>::type val;
     auto size = read(stream, val);
@@ -297,16 +296,15 @@ typename std::enable_if<std::is_enum<T>::value, uint64_t>::type
 }
 
 /**
- * Reads a hash_wrapped type from a packed representation. This just uses
+ * Reads an identifier type from a packed representation. This just uses
  * whatever packed representation its underlying type has.
  *
  * @param stream The stream to write to
  * @param value The value to write
  * @return the number of bytes used to write out the value
  */
-template <class InputStream, template <class> class Wrapped, class T>
-uint64_t read(InputStream& stream,
-              util::identifier<util::hash_wrapper<Wrapped>, T>& value)
+template <class InputStream, class Tag, class T>
+uint64_t read(InputStream& stream, util::identifier<Tag, T>& value)
 {
     return read(stream, static_cast<T&>(value));
 }

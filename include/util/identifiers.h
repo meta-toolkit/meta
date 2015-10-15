@@ -35,34 +35,16 @@ struct numeric
 template <class T>
 struct is_numeric
 {
-    const static constexpr bool value = std::is_integral<T>::value
-                                        || std::is_base_of<numeric, T>::value;
+    const static constexpr bool value
+        = std::is_integral<T>::value || std::is_base_of<numeric, T>::value;
 };
 
 /**
- * Helper class that allows the wrapped type to be hashed into standard
- * library containers such as unordered_map or unordered_set.
+ * Base template that denotes an identifier. identifiers are comparable
+ * through normal relational operators defined on the underlying type T.
  */
-template <template <class> class Wrapped>
-struct hash_wrapper : public Wrapped<hash_wrapper<Wrapped>>
-{
-    using Wrapped<hash_wrapper>::Wrapped;
-    using Wrapped<hash_wrapper>::operator=;
-
-    hash_wrapper() = default;
-    hash_wrapper(const hash_wrapper&) = default;
-    hash_wrapper(hash_wrapper&&) = default;
-    hash_wrapper& operator=(const hash_wrapper&) = default;
-    hash_wrapper& operator=(hash_wrapper&&) = default;
-};
-
-/**
- * CRTP base template that denotes an identifier. identifiers are
- * comparable through normal relational operators defined on the underlying
- * type T.
- */
-template <class Derived, class T>
-struct identifier : public comparable<identifier<Derived, T>>
+template <class Tag, class T>
+struct identifier : public comparable<identifier<Tag, T>>
 {
     using underlying_type = T;
 
@@ -106,27 +88,6 @@ struct identifier : public comparable<identifier<Derived, T>>
      * identifiers may be move assigned.
      */
     identifier& operator=(identifier&&) = default;
-
-    /**
-     * identifiers may be assigned into from their base type, *provided
-     * they have already been constructed*.
-     *
-     * Example:
-     * ~~~cpp
-     * my_ident x{1};
-     * x = 2; // fine
-     *
-     * my_ident y = 1; // not fine, compiler error
-     * ~~~
-     *
-     * @param t The base type to assign into the identifier
-     * @return the current identifier
-     */
-    identifier& operator=(const T& t)
-    {
-        id_ = t;
-        return *this;
-    }
 
     /**
      * identifiers may be converted into their base type. This is the const
@@ -203,8 +164,8 @@ struct identifier : public comparable<identifier<Derived, T>>
     }
 };
 
-template <class HashAlgorithm, class Derived, class T>
-void hash_append(HashAlgorithm& h, const identifier<Derived, T>& id)
+template <class HashAlgorithm, class Tag, class T>
+void hash_append(HashAlgorithm& h, const identifier<Tag, T>& id)
 {
     using util::hash_append;
     hash_append(h, static_cast<const T&>(id));
@@ -215,30 +176,30 @@ void hash_append(HashAlgorithm& h, const identifier<Derived, T>& id)
  * type. numerical_identifiers support typical integer math functions on
  * top of the things supported by identifiers.
  */
-template <class Derived, class T>
-struct numerical_identifier : public identifier<Derived, T>, numeric
+template <class Tag, class T>
+struct numerical_identifier : public identifier<Tag, T>, numeric
 {
-    using identifier<Derived, T>::identifier;
-    using identifier<Derived, T>::id_;
-    using identifier<Derived, T>::operator=;
+    using identifier<Tag, T>::identifier;
+    using identifier<Tag, T>::id_;
+    using identifier<Tag, T>::operator=;
 
     /**
      * Prefix-increment.
      * @return the current identifier after being incremented
      */
-    Derived& operator++()
+    numerical_identifier& operator++()
     {
         ++id_;
-        return *derived();
+        return *this;
     }
 
     /**
      * Postifx-increment.
      * @return the old value of the identifier
      */
-    Derived operator++(int)
+    numerical_identifier operator++(int)
     {
-        Derived t = *derived();
+        auto t = *this;
         ++(*this);
         return t;
     }
@@ -247,19 +208,19 @@ struct numerical_identifier : public identifier<Derived, T>, numeric
      * Prefix-decrement.
      * @return the current identifier after being decremented
      */
-    Derived& operator--()
+    numerical_identifier& operator--()
     {
         --id_;
-        return *derived();
+        return *this;
     }
 
     /**
      * Postfix-decrement.
      * @return the old value of the identifier
      */
-    Derived operator--(int)
+    numerical_identifier operator--(int)
     {
-        Derived t = *derived();
+        auto t = *this;
         --(*this);
         return t;
     }
@@ -268,20 +229,24 @@ struct numerical_identifier : public identifier<Derived, T>, numeric
      * @param step How much to increase the current identifier by
      * @return the current identifier
      */
-    Derived& operator+=(const T& step)
+    template <class U, class = typename std::
+                           enable_if<std::is_convertible<U, T>::value>::type>
+    numerical_identifier& operator+=(const T& step)
     {
         id_ += step;
-        return *derived();
+        return *this;
     }
 
     /**
      * @param step How much to decrease the current identifier by
      * @return the current identifier
      */
-    Derived& operator-=(const T& step)
+    template <class U, class = typename std::
+                           enable_if<std::is_convertible<U, T>::value>::type>
+    numerical_identifier& operator-=(const T& step)
     {
         id_ -= step;
-        return *derived();
+        return *this;
     }
 
     /**
@@ -290,7 +255,8 @@ struct numerical_identifier : public identifier<Derived, T>, numeric
      * @return lhs + rhs, defined in terms of
      * numerical_identifier::operator+=.
      */
-    friend inline Derived operator+(Derived lhs, const Derived& rhs)
+    friend inline numerical_identifier
+    operator+(numerical_identifier lhs, const numerical_identifier& rhs)
     {
         lhs += static_cast<T>(rhs);
         return lhs;
@@ -302,20 +268,11 @@ struct numerical_identifier : public identifier<Derived, T>, numeric
      * @return lhs - rhs, defined in terms of
      * numerical_identifier::operator-=.
      */
-    friend inline Derived operator-(Derived lhs, const Derived& rhs)
+    friend inline numerical_identifier
+    operator-(numerical_identifier lhs, const numerical_identifier& rhs)
     {
         lhs -= static_cast<T>(rhs);
         return lhs;
-    }
-
-  private:
-    /**
-     * Reinterprets the current numerical_identifier as is underlying
-     * Derived type.
-     */
-    Derived* derived()
-    {
-        return static_cast<Derived*>(this);
     }
 };
 }
@@ -325,21 +282,37 @@ namespace std
 {
 
 /**
- * A partial specialization that allows for hashing of hash_wrapper types
+ * A partial specialization that allows for hashing of identifier types
  * based on their base type.
  */
-template <template <class> class Wrapped>
-struct hash<meta::util::hash_wrapper<Wrapped>>
+template <class Tag, class T>
+struct hash<meta::util::identifier<Tag, T>>
 {
     /**
      * @param to_hash The identifier to be hashed
      * @return the hash code for the given identifier, defined in terms of
      * std::hash of its underlying type
      */
-    template <class T>
-    size_t operator()(
-        const meta::util::identifier<meta::util::hash_wrapper<Wrapped>, T>&
-            to_hash) const
+    size_t operator()(const meta::util::identifier<Tag, T>& to_hash) const
+    {
+        return hash<T>{}(static_cast<T>(to_hash));
+    }
+};
+
+/**
+ * A partial specialization that allows for hashing of
+ * numerical_identifier types based on their base type.
+ */
+template <class Tag, class T>
+struct hash<meta::util::numerical_identifier<Tag, T>>
+{
+    /**
+     * @param to_hash The identifier to be hashed
+     * @return the hash code for the given identifier, defined in terms of
+     * std::hash of its underlying type
+     */
+    size_t
+    operator()(const meta::util::numerical_identifier<Tag, T>& to_hash) const
     {
         return hash<T>{}(static_cast<T>(to_hash));
     }
@@ -359,25 +332,17 @@ struct hash<meta::util::hash_wrapper<Wrapped>>
     }
 
 #define MAKE_OPAQUE_IDENTIFIER(ident_name, base_type)                          \
-    template <class Wrapper>                                                   \
-    struct ident_name##_dummy                                                  \
-        : public meta::util::identifier<Wrapper, base_type>                    \
+    struct ident_name##_tag                                                    \
     {                                                                          \
-        using meta::util::identifier<Wrapper, base_type>::identifier;          \
-        using meta::util::identifier<Wrapper, base_type>::operator=;           \
     };                                                                         \
-    using ident_name = meta::util::hash_wrapper<ident_name##_dummy>;
+    using ident_name = meta::util::identifier<ident_name##_tag, base_type>;
 
 #define MAKE_OPAQUE_NUMERIC_IDENTIFIER(ident_name, base_type)                  \
-    template <class Wrapper>                                                   \
-    struct ident_name##_dummy                                                  \
-        : public meta::util::numerical_identifier<Wrapper, base_type>          \
+    struct ident_name##_tag                                                    \
     {                                                                          \
-        using meta::util::numerical_identifier<Wrapper, base_type>::           \
-            numerical_identifier;                                              \
-        using meta::util::numerical_identifier<Wrapper, base_type>::operator=; \
     };                                                                         \
-    using ident_name = meta::util::hash_wrapper<ident_name##_dummy>;
+    using ident_name                                                           \
+        = meta::util::numerical_identifier<ident_name##_tag, base_type>;
 
 #if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
 #define MAKE_IDENTIFIER(ident_name, base_type)                                 \

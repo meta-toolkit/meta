@@ -30,7 +30,7 @@ const std::vector<node_id>&
 template <class Node, class Edge>
 node_id directed_graph<Node, Edge>::insert(Node node)
 {
-    node.id = size();
+    node.id = node_id{size()};
     nodes_.emplace_back(node, adjacency_list{});
     incoming_.emplace_back(std::vector<node_id>{});
     return node.id;
