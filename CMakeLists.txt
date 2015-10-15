@@ -287,13 +287,30 @@ check_cxx_source_compiles("
 
 int main()
 {
+    std::experimental::filesystem::path p1 = \"/usr\";
     return 0;
 }" META_HAS_EXPERIMENTAL_FILESYSTEM)
 
 if (META_HAS_EXPERIMENTAL_FILESYSTEM)
   target_compile_definitions(meta-definitions INTERFACE
     -DMETA_HAS_EXPERIMENTAL_FILESYSTEM)
-else()
+endif()
+
+check_cxx_source_compiles("
+#include <experimental/filesystem>
+
+int main()
+{
+    std::tr2::sys::filesystem::path p1 = \"/usr\";
+    return 0;
+}" META_HAS_TR2_SYS_FILESYSTEM)
+
+if (META_HAS_TR2_SYS_FILESYSTEM)
+  target_compile_definitions(meta-definitions INTERFACE
+    -DMETA_HAS_TR2_SYS_FILESYSTEM)
+endif()
+
+if(NOT META_HAS_EXPERIMENTAL_FILESYSTEM AND NOT META_HAS_TR2_SYS_FILESYSTEM)
   target_include_directories(meta-definitions SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)
 endif()
 
