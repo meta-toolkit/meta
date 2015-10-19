@@ -3,6 +3,8 @@
  * @author Chase Geigle
  */
 
+#include <numeric>
+
 #include "parser/training_data.h"
 #include "parser/trees/visitors/annotation_remover.h"
 #include "parser/trees/visitors/empty_remover.h"

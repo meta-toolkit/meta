@@ -23,7 +23,7 @@ namespace
 
 void read_whitespace(std::istream& file)
 {
-    while (file && std::isspace(file.get()))
+    while (file && isspace(file.get()))
     {
     }
     file.unget();
@@ -52,7 +52,7 @@ std::string read_word(std::istream& file)
 {
     std::string word;
     while (file && file.peek() != '(' && file.peek() != ')'
-           && !std::isspace(file.peek()))
+           && !isspace(file.peek()))
         word += file.get();
 
     if (word.length() == 0)

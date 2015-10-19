@@ -215,7 +215,9 @@ auto sr_parser::train_batch(training_batch batch, parallel::thread_pool& pool,
     // a separate location, and we then add them all up after we join
     util::sparse_vector<std::thread::id, weight_vectors> updates;
     for (const auto& tid : pool.thread_ids())
+    {
         updates[tid] = {};
+    }
 
     std::atomic<uint64_t> num_correct{0};
     std::atomic<uint64_t> num_incorrect{0};
