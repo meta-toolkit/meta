@@ -35,9 +35,9 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
     }
 
     if (kernel_opt == kernel::None)
-        executable_ = "liblinear/";
+        executable_ = "liblinear/build/";
     else
-        executable_ = "libsvm/svm-";
+        executable_ = "libsvm/build/svm-";
 
     {
         std::ofstream out{"svm-train"};
