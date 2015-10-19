@@ -7,14 +7,6 @@
 #include <fstream>
 #include <vector>
 
-#ifndef META_HAS_EXPERIMENTAL_FILESYSTEM
-#include <platformstl/filesystem/filesystem_traits.hpp>
-#include <platformstl/filesystem/path.hpp>
-#include <platformstl/filesystem/readdir_sequence.hpp>
-#else
-#include <experimental/filesystem>
-#endif
-
 #include "io/filesystem.h"
 #include "io/mmap_file.h"
 #include "util/printing.h"
@@ -113,7 +105,7 @@ std::uintmax_t remove_all(const std::string& path)
 }
 #else // filesystem namespace exists, somewhere
 #if META_HAS_EXPERIMENTAL_FILESYSTEM
-using fs = std::experimental::filesystem;
+namespace fs = std::experimental::filesystem;
 #elif META_HAS_TR2_SYS_FILESYSTEM
 using fs = std::tr2::sys::filesystem;
 #endif
