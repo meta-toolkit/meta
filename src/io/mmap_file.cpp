@@ -11,7 +11,12 @@
 
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#ifndef _WIN32
 #include <unistd.h>
+#else
+#include <io.h>
+#endif
 
 #include "io/filesystem.h"
 #include "io/mmap_file.h"
