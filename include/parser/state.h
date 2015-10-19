@@ -90,7 +90,7 @@ class state
      * @param depth The depth to seek to in the queue
      * @return the node on teh queue at the given depth
      */
-    const leaf_node* queue_item(ssize_t depth) const;
+    const leaf_node* queue_item(size_t depth) const;
 
     /**
      * @return the number of partial parse trees on the stack.
