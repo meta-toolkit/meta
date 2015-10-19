@@ -214,7 +214,7 @@ sequence_analyzer default_pos_analyzer()
         // additional binary word features
         if (std::any_of(word.begin(), word.end(), [](char c)
                         {
-                return std::isdigit(c);
+                return isdigit(c);
             }))
         {
             coll.add("w[t]_has_digit=1", 1);
@@ -225,7 +225,7 @@ sequence_analyzer default_pos_analyzer()
 
         if (std::any_of(word.begin(), word.end(), [](char c)
                         {
-                return std::isupper(c);
+                return isupper(c);
             }))
         {
             coll.add("w[t]_has_upper=1", 1);
@@ -237,7 +237,7 @@ sequence_analyzer default_pos_analyzer()
 
         if (std::all_of(word.begin(), word.end(), [](char c)
                         {
-                return std::isupper(c);
+                return isupper(c);
             }))
         {
             coll.add("w[t]_all_upper=1", 1);

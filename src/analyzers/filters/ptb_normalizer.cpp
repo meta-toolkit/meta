@@ -140,7 +140,7 @@ void ptb_normalizer::parse_token(const std::string& token)
         }
         else if (apos + 1 == token.length() - 1)
         {
-            auto after = std::tolower(token.at(apos + 1));
+            auto after = tolower(token.at(apos + 1));
 
             // as in it's, I'm, we'd
             if (after == 's' || after == 'm' || after == 'd')
@@ -151,7 +151,7 @@ void ptb_normalizer::parse_token(const std::string& token)
             }
             // n't
             else if (after == 't' && apos != 0
-                     && std::tolower(token.at(apos - 1)) == 'n')
+                     && tolower(token.at(apos - 1)) == 'n')
             {
                 tokens_.push_back(token.substr(0, apos - 1));
                 tokens_.push_back(token.substr(apos - 1));
@@ -160,8 +160,8 @@ void ptb_normalizer::parse_token(const std::string& token)
         }
         else if (apos + 2 == token.length() - 1)
         {
-            auto after1 = std::tolower(token.at(apos + 1));
-            auto after2 = std::tolower(token.at(apos + 2));
+            auto after1 = tolower(token.at(apos + 1));
+            auto after2 = tolower(token.at(apos + 2));
 
             if ((after1 == 'l' && after2 == 'l')
                 || ((after1 == 'r' || after1 == 'v') && after2 == 'e'))
@@ -176,7 +176,7 @@ void ptb_normalizer::parse_token(const std::string& token)
     auto lower = token;
     std::transform(token.begin(), token.end(), lower.begin(), [](char c)
                    {
-        return std::tolower(c);
+        return tolower(c);
     });
 
     if (lower.find("d'ye") != lower.npos)
@@ -197,7 +197,7 @@ void ptb_normalizer::parse_token(const std::string& token)
         auto lnxt = nxt;
         std::transform(lnxt.begin(), lnxt.end(), lnxt.begin(), [](char c)
                        {
-            return std::tolower(c);
+            return tolower(c);
         });
 
         if (lnxt == "twas" || lnxt == "tis")
