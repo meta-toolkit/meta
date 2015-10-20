@@ -8,6 +8,8 @@ about MeTA!
   Status](https://travis-ci.org/meta-toolkit/meta.svg?branch=master)](https://travis-ci.org/meta-toolkit/meta)
 - develop: [![Build
   Status](https://travis-ci.org/meta-toolkit/meta.svg?branch=develop)](https://travis-ci.org/meta-toolkit/meta)
+  [![Windows Build
+  Status](https://ci.appveyor.com//api/projects/status/github/meta-toolkit/meta?svg=true&branch=develop)](https://ci.appveyor.com/project/skystrife/meta)
 
 # Outline
 - [Intro](#intro)
@@ -19,6 +21,7 @@ about MeTA!
     - [Arch Linux](#arch-linux-build-guide)
     - [Fedora](#fedora-build-guide)
     - [EWS/EngrIT](#ewsengrit-build-guide) (this is UIUC-specific)
+    - [Windows](#windows-build-guide)
     - [Generic Setup Notes](#generic-setup-notes)
 
 # Intro
@@ -472,6 +475,60 @@ make
 ```
 
 You can now test the system by running the following command:
+
+```bash
+ctest --output-on-failure
+```
+
+If everything passes, congratulations! MeTA seems to be working on your
+system.
+
+## Windows Build Guide
+
+These steps have been verified with 64-bit Windows 7. You may have success
+with earlier versions, but this has not been tested.
+
+MeTA can currently be built using GCC on Windows using the
+[MinGW-w64](http://mingw-w64.org) toolchain. MSVC is currently
+unsupported, though this may change in future releases.
+
+This guide will walk you through getting a [MSYS2](https://msys2.github.io)
+based development environment set up, as this is currently the easiest way
+to obtain the required dependencies on Windows.
+
+To get started, you should download the appropriate [MSYS2
+installer](https://msys2.github.io) from the linked page. Follow the
+instructions on that page **exactly** before continuing with the
+instructions here.
+
+Next, launch a new "MSYS2" shell. At the prompt, run the following command
+to install the compiler and dependencies for MeTA:
+
+```bash
+pacman -Sy mingw-w64-x86_64-{gcc,cmake,make,icu,zlib,jemalloc} git
+```
+
+Then, exit the shell and launch the "MinGW-w64 Win64" shell. You can then
+obtain the toolkit and get started with:
+
+```bash
+git clone https://github.com/meta-toolkit/meta.git
+cd meta
+
+# set up submodules
+git submodule update --init --recursive
+
+# set up a build directory
+mkdir build
+cd build
+cp ../config.toml .
+
+# configure and build the project
+cmake .. -DCMAKE_BUILD_TYPE=Release -G "MSYS Makefiles"
+make
+```
+
+You can then test the system by running the following command:
 
 ```bash
 ctest --output-on-failure
