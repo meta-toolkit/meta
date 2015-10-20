@@ -133,8 +133,7 @@ struct identifier : public comparable<identifier<Tag, T>>
      * @param rhs
      * @return whether lhs < rhs based on T::operator<.
      */
-    inline friend bool operator<(const identifier& lhs,
-                                           const identifier& rhs)
+    inline friend bool operator<(const identifier& lhs, const identifier& rhs)
     {
         return static_cast<T>(lhs) < static_cast<T>(rhs);
     }
