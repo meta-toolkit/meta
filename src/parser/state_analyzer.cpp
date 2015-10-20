@@ -81,7 +81,7 @@ void sr_parser::state_analyzer::unigram_featurize(const state& state,
     auto s3 = state.stack_item(3);
     unigram_stack_feats(s3, "s3", feats);
 
-    for (size_t i = -2; i <= 3; ++i)
+    for (int64_t i = -2; i <= 3; ++i)
     {
         node_info info{state.queue_item(i)};
         feats["q" + std::to_string(i) + "wt=" + info.head_word + "-"

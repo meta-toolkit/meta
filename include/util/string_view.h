@@ -237,7 +237,7 @@ class basic_string_view
 
     constexpr bool operator==(const basic_string_view& rhs) const noexcept
     {
-        return this->compare(rhs) == 0;
+        return compare(rhs) == 0;
     }
 
     int compare(basic_string_view s) const noexcept

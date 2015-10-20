@@ -368,7 +368,7 @@ const node* state::stack_item(size_t depth) const
     return st.peek().get();
 }
 
-const leaf_node* state::queue_item(size_t depth) const
+const leaf_node* state::queue_item(int64_t depth) const
 {
     if (q_idx_ + depth < queue_->size())
         return queue_->at(q_idx_ + depth).get();

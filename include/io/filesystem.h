@@ -14,11 +14,7 @@
 #include <stdexcept>
 #include <string>
 
-#ifndef META_HAS_EXPERIMENTAL_FILESYSTEM
-#include <platformstl/filesystem/filesystem_traits.hpp>
-#include <platformstl/filesystem/path.hpp>
-#include <platformstl/filesystem/readdir_sequence.hpp>
-#else
+#ifdef META_HAS_EXPERIMENTAL_FILESYSTEM
 #include <experimental/filesystem>
 #endif
 

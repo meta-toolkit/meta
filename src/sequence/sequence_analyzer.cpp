@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <cctype>
 #include "io/packed.h"
 #include "io/filesystem.h"
 #if META_HAS_ZLIB
@@ -214,7 +215,7 @@ sequence_analyzer default_pos_analyzer()
         // additional binary word features
         if (std::any_of(word.begin(), word.end(), [](char c)
                         {
-                return isdigit(c);
+                return std::isdigit(c);
             }))
         {
             coll.add("w[t]_has_digit=1", 1);
@@ -225,7 +226,7 @@ sequence_analyzer default_pos_analyzer()
 
         if (std::any_of(word.begin(), word.end(), [](char c)
                         {
-                return isupper(c);
+                return std::isupper(c);
             }))
         {
             coll.add("w[t]_has_upper=1", 1);
@@ -237,7 +238,7 @@ sequence_analyzer default_pos_analyzer()
 
         if (std::all_of(word.begin(), word.end(), [](char c)
                         {
-                return isupper(c);
+                return std::isupper(c);
             }))
         {
             coll.add("w[t]_all_upper=1", 1);

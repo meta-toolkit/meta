@@ -7,6 +7,12 @@
 #include <fstream>
 #include <vector>
 
+#ifndef META_HAS_EXPERIMENTAL_FILESYSTEM
+#include <platformstl/filesystem/filesystem_traits.hpp>
+#include <platformstl/filesystem/path.hpp>
+#include <platformstl/filesystem/readdir_sequence.hpp>
+#endif
+
 #include "io/filesystem.h"
 #include "io/mmap_file.h"
 #include "util/printing.h"

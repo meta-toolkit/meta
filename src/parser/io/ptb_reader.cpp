@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cctype>
 #include "parser/io/ptb_reader.h"
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"
@@ -23,7 +24,7 @@ namespace
 
 void read_whitespace(std::istream& file)
 {
-    while (file && isspace(file.get()))
+    while (file && std::isspace(file.get()))
     {
     }
     file.unget();
@@ -52,7 +53,7 @@ std::string read_word(std::istream& file)
 {
     std::string word;
     while (file && file.peek() != '(' && file.peek() != ')'
-           && !isspace(file.peek()))
+           && !std::isspace(file.peek()))
         word += file.get();
 
     if (word.length() == 0)
