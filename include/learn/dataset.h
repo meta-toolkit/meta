@@ -91,7 +91,7 @@ class dataset
             ForwardIterator end)
         : total_features_{idx->unique_terms()}
     {
-        uint64_t size = std::distance(begin, end);
+        auto size = static_cast<uint64_t>(std::distance(begin, end));
         instances_.reserve(size);
 
         printing::progress progress{" > Loading instances into memory: ", size};
@@ -116,7 +116,7 @@ class dataset
             ForwardIterator end)
         : total_features_{idx->unique_terms()}
     {
-        uint64_t size = std::distance(begin, end);
+        auto size = static_cast<uint64_t>(std::distance(begin, end));
         instances_.reserve(size);
 
         printing::progress progress{" > Loading instances into memory: ", size};

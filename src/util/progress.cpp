@@ -72,32 +72,36 @@ void progress::operator()(uint64_t iter)
 
     auto percent = static_cast<double>(iter) / length_;
     auto elapsed = duration_cast<milliseconds>(tp - start_).count();
-    int remain = static_cast<double>(elapsed) / iter * (length_ - iter);
+    auto remain = static_cast<double>(elapsed) / iter * (length_ - iter);
 
     std::stringstream ss;
     ss << prefix_;
 
-    auto eta = eta_str(remain);
+    auto eta = eta_str(static_cast<int>(remain));
     // 4 comes from +2 for the [], +5 for the %, +2 for space
-    auto remaining_width = std::max
-        <int>(0, 80 - prefix_.length() - eta.length() - 9);
+    auto remaining_width
+        = std::max(0, 80 - static_cast<int>(prefix_.length())
+                          - static_cast<int>(eta.length()) - 9);
     if (remaining_width > 15)
     {
         auto filled = static_cast<int>(remaining_width * percent);
         auto empty = remaining_width - filled - 1;
 
-        ss << '[' << std::string(filled, '=');
+        ss << '[' << std::string(static_cast<std::size_t>(filled), '=');
         if (filled != remaining_width)
         {
-            ss << '>' << std::string(std::max<int>(0, empty), ' ');
+            ss << '>' << std::string(
+                             static_cast<std::size_t>(std::max(0, empty)), ' ');
         }
         ss << ']';
     }
 
     ss << ' ' << static_cast<int>(percent * 100) << "% " << eta;
 
-    std::string rem(std::max<int>(0, str_len_ - ss.tellp()), ' ');
-    str_len_ = ss.tellp();
+    std::string rem(static_cast<std::size_t>(
+                        std::max(0, str_len_ - static_cast<int>(ss.tellp()))),
+                    ' ');
+    str_len_ = static_cast<int>(ss.tellp());
     ss << rem;
 
     LOG(progress) << '\r' << ss.str() << ENDLG;

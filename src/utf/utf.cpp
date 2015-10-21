@@ -59,67 +59,43 @@ std::u16string to_utf16(const std::string& str)
 
 std::string tolower(const std::string& str)
 {
-    const char* s = str.c_str();
-    std::string result;
-    result.reserve(str.length());
-    int32_t length = str.length();
-    for (int32_t i = 0; i < length;)
-    {
-        UChar32 codepoint;
-        U8_NEXT(s, i, length, codepoint);
-        auto lower = u_tolower(codepoint);
-        utf8_append_codepoint(result, lower);
-    }
-    return result;
+    return transform(str, [](uint32_t cp)
+                     {
+                         return u_tolower(static_cast<UChar32>(cp));
+                     });
 }
 
 std::string toupper(const std::string& str)
 {
-    const char* s = str.c_str();
-    std::string result;
-    result.reserve(str.length());
-    int32_t length = str.length();
-    for (int32_t i = 0; i < length;)
-    {
-        UChar32 codepoint;
-        U8_NEXT(s, i, length, codepoint);
-        auto upper = u_toupper(codepoint);
-        utf8_append_codepoint(result, upper);
-    }
-    return result;
+    return transform(str, [](uint32_t cp)
+                     {
+                         return u_toupper(static_cast<UChar32>(cp));
+                     });
 }
 
 std::string foldcase(const std::string& str)
 {
-
-    const char* s = str.c_str();
-    std::string result;
-    result.reserve(str.length());
-    int32_t length = str.length();
-    for (int32_t i = 0; i < length;)
-    {
-        UChar32 codepoint;
-        U8_NEXT(s, i, length, codepoint);
-        auto folded = u_foldCase(codepoint, U_FOLD_CASE_DEFAULT);
-        utf8_append_codepoint(result, folded);
-    }
-    return result;
+    return transform(str, [](uint32_t cp)
+                     {
+                         return u_foldCase(static_cast<UChar32>(cp),
+                                           U_FOLD_CASE_DEFAULT);
+                     });
 }
 
 bool isalpha(uint32_t codepoint)
 {
-    return u_isalpha(codepoint);
+    return u_isalpha(static_cast<UChar32>(codepoint));
 }
 
 bool isblank(uint32_t codepoint)
 {
-    return u_isblank(codepoint);
+    return u_isblank(static_cast<UChar32>(codepoint));
 }
 
 uint64_t length(const std::string& str)
 {
     const char* s = str.c_str();
-    int32_t length = str.length();
+    auto length = static_cast<int32_t>(str.length());
     uint64_t count = 0;
     for (int32_t i = 0; i < length;)
     {
@@ -129,6 +105,5 @@ uint64_t length(const std::string& str)
     }
     return count;
 }
-
 }
 }

@@ -61,11 +61,11 @@ struct postings_context
     iterator begin;
     iterator end;
     term_id t_id;
-    double query_term_weight;
+    float query_term_weight;
     uint64_t doc_count;
     uint64_t corpus_term_count;
 
-    postings_context(postings_stream<doc_id> strm, double qtf, term_id term)
+    postings_context(postings_stream<doc_id> strm, float qtf, term_id term)
         : stream{std::move(strm)},
           begin{stream.begin()},
           end{stream.end()},
@@ -85,7 +85,7 @@ struct ranker_context
                    ForwardIterator end, FilterFunction&& filter)
         : idx(inv), cur_doc{idx.num_docs()}
     {
-        postings.reserve(std::distance(begin, end));
+        postings.reserve(static_cast<std::size_t>(std::distance(begin, end)));
 
         query_length = 0.0;
         for (; begin != end; ++begin)
@@ -113,7 +113,7 @@ struct ranker_context
 
     inverted_index& idx;
     std::vector<postings_context> postings;
-    double query_length;
+    float query_length;
     doc_id cur_doc;
 };
 }

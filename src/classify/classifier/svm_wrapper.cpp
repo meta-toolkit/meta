@@ -179,7 +179,7 @@ confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
             // we can assume that the number of lines in the file is equal
             // to the number of testing documents
             std::getline(in, str_val);
-            uint32_t value = std::stoul(str_val);
+            auto value = std::stoul(str_val);
             assert(value > 0);
             class_label predicted = labels_.at(value - 1);
             class_label actual = docs.label(instance);

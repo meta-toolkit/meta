@@ -504,7 +504,8 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
             pdata.set_counts(std::move(counts));
             out.write(pdata);
 
-            md_writer.write(d_id, length, num_unique, {});
+            md_writer.write(d_id, static_cast<uint64_t>(length), num_unique,
+                            {});
             ++d_id;
         }
 
@@ -520,8 +521,9 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
 
 void forward_index::impl::create_uninverted_metadata(const std::string& name)
 {
-    auto files = {DOC_LABELS, LABEL_IDS_MAPPING, TERM_IDS_MAPPING,
-                  TERM_IDS_MAPPING_INVERSE, METADATA_DB, METADATA_INDEX};
+    auto files = {DOC_LABELS,       LABEL_IDS_MAPPING,
+                  TERM_IDS_MAPPING, TERM_IDS_MAPPING_INVERSE,
+                  METADATA_DB,      METADATA_INDEX};
 
     for (const auto& file : files)
         filesystem::copy_file(name + idx_->impl_->files[file],
@@ -553,7 +555,7 @@ auto forward_index::search_primary(doc_id d_id) const
 }
 
 util::optional<postings_stream<term_id, double>>
-    forward_index::stream_for(doc_id d_id) const
+forward_index::stream_for(doc_id d_id) const
 {
     return fwd_impl_->postings_->find_stream(d_id);
 }

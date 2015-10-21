@@ -73,7 +73,8 @@ void transition_map::load(std::istream& store)
                 break;
         }
 
-        auto id = static_cast<trans_id>(map_.size());
+        assert(map_.size() <= std::numeric_limits<uint16_t>::max());
+        trans_id id{static_cast<uint16_t>(map_.size())};
         map_[*trans] = id;
         transitions_.emplace_back(std::move(*trans));
     }
@@ -100,7 +101,8 @@ trans_id transition_map::operator[](const transition& trans)
         return it->second;
 
     transitions_.push_back(trans);
-    auto id = static_cast<trans_id>(map_.size());
+    assert(map_.size() <= std::numeric_limits<uint16_t>::max());
+    trans_id id{static_cast<uint16_t>(map_.size())};
     return map_[trans] = id;
 }
 

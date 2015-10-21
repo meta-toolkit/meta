@@ -121,9 +121,9 @@ std::vector<doc_id> disk_index::docs() const
 // disk_index_impl
 
 const std::vector<const char*> disk_index::disk_index_impl::files
-    = {"/docs.labels", "/labelids.mapping", "/postings.index",
-       "/postings.index_index", "/termids.mapping", "/termids.mapping.inverse",
-       "/metadata.db", "/metadata.index"};
+    = {"/docs.labels",          "/labelids.mapping", "/postings.index",
+       "/postings.index_index", "/termids.mapping",  "/termids.mapping.inverse",
+       "/metadata.db",          "/metadata.index"};
 
 label_id disk_index::disk_index_impl::get_label_id(const class_label& lbl)
 {
@@ -131,7 +131,7 @@ label_id disk_index::disk_index_impl::get_label_id(const class_label& lbl)
     if (!label_ids_.contains_key(lbl))
     {
         // SVM multiclass has label_ids starting at 1
-        label_id next_id{static_cast<label_id>(label_ids_.size() + 1)};
+        label_id next_id{static_cast<uint32_t>(label_ids_.size() + 1)};
         label_ids_.insert(lbl, next_id);
         return next_id;
     }

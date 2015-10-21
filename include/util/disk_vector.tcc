@@ -5,6 +5,7 @@
 
 #include <sys/stat.h>
 #include "io/filesystem.h"
+#include "util/disk_vector.h"
 
 namespace meta
 {
@@ -29,7 +30,8 @@ disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
         // end and writing a byte
         if (actual_size != size_bytes)
         {
-            if (lseek(file_desc_, size_bytes - 1, SEEK_SET) == -1)
+            auto offset = static_cast<long>(size_bytes - 1);
+            if (lseek(file_desc_, offset, SEEK_SET) == -1)
                 throw disk_vector_exception{"error lseeking to extend file"};
             if (write(file_desc_, " ", 1) != 1)
                 throw disk_vector_exception{

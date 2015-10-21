@@ -170,7 +170,7 @@ uint64_t multiway_merge(std::ostream& outstream, ForwardIterator begin,
 {
     using input_chunk = chunk_reader<PostingsData>;
     std::vector<input_chunk> to_merge;
-    to_merge.reserve(std::distance(begin, end));
+    to_merge.reserve(static_cast<std::size_t>(std::distance(begin, end)));
     for (; begin != end; ++begin)
         to_merge.emplace_back(*begin);
 
@@ -205,7 +205,8 @@ uint64_t multiway_merge(std::ostream& outstream, ForwardIterator begin,
 
         using count_t = typename PostingsData::count_t;
         std::vector<count_t> to_write;
-        to_write.reserve(std::distance(range.first, range.second));
+        to_write.reserve(
+            static_cast<std::size_t>(std::distance(range.first, range.second)));
         std::for_each(range.first, range.second, [&](input_chunk& chunk)
                       {
                           to_write.emplace_back(chunk.postings().counts());

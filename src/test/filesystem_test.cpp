@@ -19,7 +19,7 @@ void num_lines_normal()
     {
         std::string data = "this is a test\ntwo lines\n";
         std::ofstream file{"filesystem-temp.txt", std::ios::binary};
-        file.write(data.c_str(), data.length());
+        file.write(data.c_str(), static_cast<std::streamsize>(data.length()));
     }
     ASSERT_EQUAL(filesystem::num_lines("filesystem-temp.txt"), uint64_t{2});
 }
@@ -29,7 +29,7 @@ void num_lines_notrailing()
     {
         std::string data = "this is a test\ntwo lines but no last newline";
         std::ofstream file{"filesystem-temp.txt", std::ios::binary};
-        file.write(data.c_str(), data.length());
+        file.write(data.c_str(), static_cast<std::streamsize>(data.length()));
     }
     ASSERT_EQUAL(filesystem::num_lines("filesystem-temp.txt"), uint64_t{2});
 }

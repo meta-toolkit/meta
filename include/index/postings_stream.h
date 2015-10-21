@@ -112,13 +112,13 @@ class postings_stream
     }
 
     /**
-     * An iterator over the (SecondaryKey, double) pairs of this postings
+     * An iterator over the (SecondaryKey, FeatureValue) pairs of this postings
      * list.
      */
     class iterator
     {
       public:
-        using value_type = std::pair<SecondaryKey, double>;
+        using value_type = std::pair<SecondaryKey, FeatureValue>;
         using reference = const value_type&;
         using pointer = const value_type*;
         using iterator_category = std::input_iterator_tag;
@@ -145,23 +145,13 @@ class postings_stream
                 io::packed::read(stream_, id);
                 // gap encoding
                 count_.first += id;
-
-                if (std::is_same<FeatureValue, uint64_t>::value)
-                {
-                    uint64_t next;
-                    io::packed::read(stream_, next);
-                    count_.second = static_cast<double>(next);
-                }
-                else
-                {
-                    io::packed::read(stream_, count_.second);
-                }
+                io::packed::read(stream_, count_.second);
                 ++pos_;
             }
             return *this;
         }
 
-        util::optional<std::pair<SecondaryKey, double>> operator++(int)
+        util::optional<value_type> operator++(int)
         {
             auto proxy = *(*this);
             ++(*this);
@@ -202,7 +192,7 @@ class postings_stream
         char_input_stream stream_;
         uint64_t size_;
         uint64_t pos_;
-        std::pair<SecondaryKey, double> count_;
+        value_type count_;
     };
 
     /**

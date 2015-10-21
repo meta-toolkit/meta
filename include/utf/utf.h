@@ -26,15 +26,20 @@ namespace utf
  * @param dest The string to append the codepoint to
  * @param codepoint The UTF-32 codepoint to append
  */
-inline void utf8_append_codepoint(std::string& dest, uint32_t codepoint)
+inline void utf8_append_codepoint(std::string& dest, UChar32 codepoint)
 {
     std::array<uint8_t, U8_MAX_LENGTH> buf;
     int32_t len = 0;
     UBool err = FALSE;
+    // ICU has some conversions within this macro, which we can't control
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
     U8_APPEND(&buf[0], len, U8_MAX_LENGTH, codepoint, err);
+#pragma GCC diagnostic pop
     if (err)
         throw std::runtime_error{"failed to add codepoint to string"};
-    dest.append(reinterpret_cast<char*>(&buf[0]), len);
+    dest.append(reinterpret_cast<char*>(&buf[0]),
+                static_cast<std::size_t>(len));
 }
 
 /**
@@ -119,14 +124,39 @@ std::string remove_if(const std::string& str, Predicate&& pred)
     std::string result;
     result.reserve(str.size());
     const char* s = str.c_str();
-    int32_t length = str.length();
+    auto length = static_cast<int32_t>(str.length());
     for (int32_t i = 0; i < length;)
     {
         UChar32 codepoint;
         U8_NEXT(s, i, length, codepoint);
-        if (pred(codepoint))
+        if (pred(static_cast<uint32_t>(codepoint)))
             continue;
         utf8_append_codepoint(result, codepoint);
+    }
+    return result;
+}
+
+/**
+ * Transforms a utf8 string using the provided function object applied to
+ * each codepoint in the string.
+ *
+ * @param str The string to transform
+ * @param fun The function to transform each codepoint with
+ * @return the transformed string
+ */
+template <class Function>
+std::string transform(const std::string& str, Function&& fun)
+{
+    auto s = str.c_str();
+    std::string result;
+    result.reserve(str.size()); // not always accurate, but close
+    auto length = static_cast<int32_t>(str.length());
+    for (int32_t i = 0; i < length;)
+    {
+        UChar32 codepoint;
+        U8_NEXT(s, i, length, codepoint);
+        auto transformed = fun(static_cast<uint32_t>(codepoint));
+        utf8_append_codepoint(result, transformed);
     }
     return result;
 }

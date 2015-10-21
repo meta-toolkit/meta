@@ -56,6 +56,7 @@ class multiclass_dataset_view : public learn::dataset_view
         LOG(info) << "Creating an even split of class labels" << ENDLG;
 
         using indices_type = std::vector<size_type>;
+        using diff_type = indices_type::iterator::difference_type;
 
         // partition by class label
         std::unordered_map<class_label, indices_type> partitioned;
@@ -75,8 +76,11 @@ class multiclass_dataset_view : public learn::dataset_view
         indices_type indices;
         indices.reserve(it->second.size() * partitioned.size());
         for (const auto& bucket : partitioned)
+        {
             indices.insert(indices.end(), bucket.second.begin(),
-                           bucket.second.begin() + it->second.size());
+                           bucket.second.begin()
+                               + static_cast<diff_type>(it->second.size()));
+        }
 
         LOG(info) << "Each of the " << partitioned.size() << " classes has "
                   << it->second.size()

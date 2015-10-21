@@ -164,14 +164,14 @@ bool copy_file(const std::string& source, const std::string& dest)
         printing::progress prog{"Copying file ", size};
         std::ifstream source_file{source, std::ios::binary};
         std::ofstream dest_file{dest, std::ios::binary};
-        uint64_t buf_size = 1024UL * 1024UL * 32UL; // 32 MB buffer
+        std::streamsize buf_size = 1024UL * 1024UL * 32UL; // 32 MB buffer
         uint64_t total_processed = 0;
-        std::vector<char> buffer(buf_size);
+        std::vector<char> buffer(static_cast<std::size_t>(buf_size));
         while (source_file)
         {
             source_file.read(buffer.data(), buf_size);
             auto processed = source_file.gcount();
-            total_processed += processed;
+            total_processed += static_cast<std::size_t>(processed);
             dest_file.write(buffer.data(), processed);
             prog(total_processed);
         }

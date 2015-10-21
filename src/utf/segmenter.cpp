@@ -59,8 +59,8 @@ class segmenter::impl
      * Copy constructs an impl.
      * @param other The impl to copy.
      */
-    impl(const impl& other) :
-          text_{other.text_},
+    impl(const impl& other)
+        : text_{other.text_},
           sentence_iter_{other.sentence_iter_->clone()},
           word_iter_{other.word_iter_->clone()}
     {
@@ -86,7 +86,9 @@ class segmenter::impl
      */
     util::string_view substr(int32_t begin, int32_t end) const
     {
-        return text_.substr(begin, end - begin);
+        assert(end >= begin);
+        return text_.substr(static_cast<std::size_t>(begin),
+                            static_cast<std::size_t>(end - begin));
     }
 
     /**
@@ -104,7 +106,8 @@ class segmenter::impl
      */
     std::vector<segment> sentences() const
     {
-        return segments(0, text_.length(), segment_t::SENTENCES);
+        return segments(0, static_cast<int32_t>(text_.length()),
+                        segment_t::SENTENCES);
     }
 
     /**
@@ -113,7 +116,8 @@ class segmenter::impl
      */
     std::vector<segment> words() const
     {
-        return segments(0, text_.length(), segment_t::WORDS);
+        return segments(0, static_cast<int32_t>(text_.length()),
+                        segment_t::WORDS);
     }
 
     /**
