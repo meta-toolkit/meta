@@ -216,7 +216,7 @@ void ir_eval::print_stats(const std::vector<search_result>& results,
 {
     auto w1 = std::setw(8);
     auto w2 = std::setw(6);
-    size_t p = 3;
+    int p = 3;
     uint64_t max = 5;
     out << w1 << printing::make_bold("  NDCG:") << w2 << std::setprecision(p)
         << ndcg(results, q_id, max);

@@ -43,8 +43,8 @@ struct static_add;
 template <std::size_t Size, std::size_t... Sizes>
 struct static_add<Size, Sizes...>
 {
-    const static constexpr std::size_t value = Size
-                                               + static_add<Sizes...>::value;
+    const static constexpr std::size_t value
+        = Size + static_add<Sizes...>::value;
 };
 
 template <>
@@ -107,8 +107,8 @@ class murmur_hash<4>
     // between the two versions of rotl/fmix in namespace detail above.
     uint32_t out_;
     std::array<uint8_t, 4> buf_;
-    std::size_t buflen_;
-    std::size_t total_length_;
+    uint32_t buflen_;
+    uint32_t total_length_;
 
     const static constexpr uint32_t c1 = 0xcc9e2d51;
     const static constexpr uint32_t c2 = 0x1b873593;
@@ -127,14 +127,15 @@ class murmur_hash<4>
   public:
     using result_type = std::size_t;
 
-    murmur_hash(std::size_t seed) : out_(seed), buflen_{0}, total_length_{0}
+    murmur_hash(std::size_t seed)
+        : out_{static_cast<uint32_t>(seed)}, buflen_{0}, total_length_{0}
     {
     }
 
     void operator()(const void* in, std::size_t len)
     {
         auto data = reinterpret_cast<const uint8_t*>(in);
-        total_length_ += len;
+        total_length_ += static_cast<uint32_t>(len);
 
         // handle 4-byte blocks at a time, starting from the data we had
         // "left over" from the last call to operator()
@@ -151,7 +152,7 @@ class murmur_hash<4>
         // now handle the remaining 4-byte blocks in this data
         const auto nblocks = (end - data) / 4;
         auto blocks = reinterpret_cast<const uint32_t*>(data + nblocks * 4);
-        for (int i = -nblocks; i; ++i)
+        for (long i = -nblocks; i; ++i)
             handle_block_4(blocks[i]);
 
         // copy over the remaining 3 bytes or less for finalizing or use on
@@ -159,7 +160,7 @@ class murmur_hash<4>
         const uint8_t* tail = data + nblocks * 4;
         if (end - tail)
         {
-            buflen_ = end - tail;
+            buflen_ = static_cast<uint32_t>(end - tail);
             assert(buflen_ < 4);
             std::copy(tail, end, buf_.begin());
         }
@@ -171,9 +172,9 @@ class murmur_hash<4>
         switch (buflen_ & 3)
         {
             case 3:
-                k1 ^= buf_[2] << 16;
+                k1 ^= static_cast<uint32_t>(buf_[2]) << 16;
             case 2:
-                k1 ^= buf_[1] << 8;
+                k1 ^= static_cast<uint32_t>(buf_[1]) << 8;
             case 1:
                 k1 ^= buf_[0];
                 k1 *= c1;
@@ -266,7 +267,7 @@ class murmur_hash<8>
         // on the next call to operator()
         if (end - data)
         {
-            buflen_ = end - data;
+            buflen_ = static_cast<std::size_t>(end - data);
             assert(buflen_ < 16);
             std::copy(data, end, buf_.begin());
         }
@@ -363,10 +364,10 @@ struct is_contiguously_hashable<T[N]> : public is_contiguously_hashable<T>
 template <class T, class U>
 struct is_contiguously_hashable<std::pair<T, U>>
 {
-    const static constexpr bool value = is_contiguously_hashable<T>::value
-                                        && is_contiguously_hashable<U>::value
-                                        && sizeof(T) + sizeof(U)
-                                               == sizeof(std::pair<T, U>);
+    const static constexpr bool value
+        = is_contiguously_hashable<T>::value
+          && is_contiguously_hashable<U>::value
+          && sizeof(T) + sizeof(U) == sizeof(std::pair<T, U>);
 };
 
 template <class... Ts>
@@ -381,21 +382,21 @@ struct is_contiguously_hashable<std::tuple<Ts...>>
 template <class T, std::size_t N>
 struct is_contiguously_hashable<std::array<T, N>>
 {
-    const static constexpr bool value = is_contiguously_hashable<T>::value
-                                        && sizeof(T) * N
-                                               == sizeof(std::array<T, N>);
+    const static constexpr bool value
+        = is_contiguously_hashable<T>::value
+          && sizeof(T) * N == sizeof(std::array<T, N>);
 };
 
 template <class HashAlgorithm, class T>
 inline typename std::enable_if<is_contiguously_hashable<T>::value>::type
-    hash_append(HashAlgorithm& h, const T& t)
+hash_append(HashAlgorithm& h, const T& t)
 {
     h(std::addressof(t), sizeof(t));
 }
 
 template <class HashAlgorithm, class T>
 inline typename std::enable_if<std::is_floating_point<T>::value>::type
-    hash_append(HashAlgorithm& h, T t)
+hash_append(HashAlgorithm& h, T t)
 {
     // -0 and 0 are the same, but have different bit patterns, so normalize
     // to positive zero before hashing
@@ -416,11 +417,11 @@ inline void hash_append(HashAlgorithm& h, std::nullptr_t)
 
 template <class HashAlgorithm, class T, std::size_t N>
 typename std::enable_if<!is_contiguously_hashable<T>::value>::type
-    hash_append(HashAlgorithm& h, T(&a)[N]);
+hash_append(HashAlgorithm& h, T(&a)[N]);
 
 template <class HashAlgorithm, class T, class U>
 typename std::enable_if<!is_contiguously_hashable<std::pair<T, U>>::value>::type
-    hash_append(HashAlgorithm& h, const std::pair<T, U>& p);
+hash_append(HashAlgorithm& h, const std::pair<T, U>& p);
 
 template <class HashAlgorithm, class... Ts>
 typename std::enable_if<!is_contiguously_hashable<std::tuple<Ts...>>::value>::
@@ -434,13 +435,11 @@ typename std::enable_if<!is_contiguously_hashable<std::array<T, N>>::value>::
 
 template <class HashAlgorithm, class Char, class Traits, class Alloc>
 typename std::enable_if<is_contiguously_hashable<Char>::value>::type
-    hash_append(HashAlgorithm& h,
-                const std::basic_string<Char, Traits, Alloc>& s);
+hash_append(HashAlgorithm& h, const std::basic_string<Char, Traits, Alloc>& s);
 
 template <class HashAlgorithm, class Char, class Traits, class Alloc>
 typename std::enable_if<!is_contiguously_hashable<Char>::value>::type
-    hash_append(HashAlgorithm& h,
-                const std::basic_string<Char, Traits, Alloc>& s);
+hash_append(HashAlgorithm& h, const std::basic_string<Char, Traits, Alloc>& s);
 
 template <class HashAlgorithm, class T1, class T2, class... Ts>
 void hash_append(HashAlgorithm& h, const T1& first, const T2& second,
@@ -450,7 +449,7 @@ void hash_append(HashAlgorithm& h, const T1& first, const T2& second,
 
 template <class HashAlgorithm, class T, std::size_t N>
 typename std::enable_if<!is_contiguously_hashable<T>::value>::type
-    hash_append(HashAlgorithm& h, T(&a)[N])
+hash_append(HashAlgorithm& h, T(&a)[N])
 {
     for (const auto& t : a)
         hash_append(h, t);
@@ -458,7 +457,7 @@ typename std::enable_if<!is_contiguously_hashable<T>::value>::type
 
 template <class HashAlgorithm, class T, class U>
 typename std::enable_if<!is_contiguously_hashable<std::pair<T, U>>::value>::type
-    hash_append(HashAlgorithm& h, const std::pair<T, U>& p)
+hash_append(HashAlgorithm& h, const std::pair<T, U>& p)
 {
     hash_append(h, p.first, p.second);
 }
@@ -508,8 +507,7 @@ typename std::enable_if<!is_contiguously_hashable<std::array<T, N>>::value>::
 
 template <class HashAlgorithm, class Char, class Traits, class Alloc>
 typename std::enable_if<is_contiguously_hashable<Char>::value>::type
-    hash_append(HashAlgorithm& h,
-                const std::basic_string<Char, Traits, Alloc>& s)
+hash_append(HashAlgorithm& h, const std::basic_string<Char, Traits, Alloc>& s)
 {
     h(s.data(), s.size() * sizeof(Char));
     hash_append(h, s.size());
@@ -517,8 +515,7 @@ typename std::enable_if<is_contiguously_hashable<Char>::value>::type
 
 template <class HashAlgorithm, class Char, class Traits, class Alloc>
 typename std::enable_if<!is_contiguously_hashable<Char>::value>::type
-    hash_append(HashAlgorithm& h,
-                const std::basic_string<Char, Traits, Alloc>& s)
+hash_append(HashAlgorithm& h, const std::basic_string<Char, Traits, Alloc>& s)
 {
     for (const auto& c : s)
         hash_append(h, c);

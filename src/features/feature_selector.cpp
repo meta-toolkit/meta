@@ -54,7 +54,7 @@ void feature_selector::score_all()
     for (auto tid = 0_tid; tid < idx_->unique_terms(); ++tid)
     {
         prog(tid);
-        for (uint64_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
+        for (uint32_t lbl = 0; lbl < idx_->num_labels(); ++lbl)
             scores[lbl][tid] = std::make_pair(
                 tid, score(static_cast<label_id>(lbl + 1), term_id{tid}));
     }
@@ -115,7 +115,8 @@ void feature_selector::select_percent(double p /* = 0.05 */)
             "select_percent needs a value p, 0 < p < 1"};
 
     double num_features = p * idx_->unique_terms();
-    uint64_t per_class = num_features / idx_->num_labels(); // truncate to int
+    // truncate to int
+    auto per_class = static_cast<uint64_t>(num_features / idx_->num_labels());
     select(per_class);
 }
 

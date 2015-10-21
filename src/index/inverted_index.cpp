@@ -304,12 +304,12 @@ uint64_t inverted_index::total_num_occurences(term_id t_id) const
     for (auto& c : pdata->counts())
         sum += c.second;
 
-    return sum;
+    return static_cast<uint64_t>(sum);
 }
 
-double inverted_index::avg_doc_length()
+float inverted_index::avg_doc_length()
 {
-    return static_cast<double>(total_corpus_terms()) / num_docs();
+    return static_cast<float>(total_corpus_terms()) / num_docs();
 }
 
 analyzers::analyzer<uint64_t>::feature_map

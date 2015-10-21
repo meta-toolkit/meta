@@ -131,7 +131,7 @@ uint64_t compressed_file_reader::next()
 
 void compressed_file_reader::get_next()
 {
-    uint64_t numberBits = 0;
+    int64_t numberBits = 0;
     while (status_ == 0 && !read_bit())
         ++numberBits;
 

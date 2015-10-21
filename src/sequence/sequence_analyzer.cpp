@@ -110,7 +110,7 @@ void sequence_analyzer::analyze(sequence& sequence, uint64_t t)
         fn(sequence, t, coll);
     if (!label_id_mapping_.contains_key(sequence[t].tag()))
     {
-        label_id id(label_id_mapping_.size());
+        label_id id(static_cast<uint32_t>(label_id_mapping_.size()));
         label_id_mapping_.insert(sequence[t].tag(), id);
     }
     sequence[t].label(label_id_mapping_.get_value(sequence[t].tag()));
@@ -130,7 +130,8 @@ void sequence_analyzer::analyze(sequence& sequence, uint64_t t) const
 
     if (!sequence[t].tagged()
         || !label_id_mapping_.contains_key(sequence[t].tag()))
-        sequence[t].label(label_id(label_id_mapping_.size()));
+        sequence[t].label(
+            label_id(static_cast<uint32_t>(label_id_mapping_.size())));
     else
         sequence[t].label(label_id_mapping_.get_value(sequence[t].tag()));
 }
@@ -189,9 +190,10 @@ std::string suffix(const std::string& input, uint64_t length)
 
 std::string prefix(const std::string& input, uint64_t length)
 {
+    using diff_type = std::string::iterator::difference_type;
     if (length > input.size())
         return {input.begin(), input.end()};
-    return {input.begin(), input.begin() + length};
+    return {input.begin(), input.begin() + static_cast<diff_type>(length)};
 }
 }
 
@@ -203,7 +205,7 @@ sequence_analyzer default_pos_analyzer()
                          sequence_analyzer::collector& coll)
     {
         auto norm = utf::foldcase(word);
-        for (int i = 1; i <= 4; i++)
+        for (uint64_t i = 1; i <= 4; i++)
         {
             auto len = std::to_string(i);
             coll.add("w[t]_suffix_" + len + "=" + suffix(norm, i), 1);
@@ -214,8 +216,8 @@ sequence_analyzer default_pos_analyzer()
         // additional binary word features
         if (std::any_of(word.begin(), word.end(), [](char c)
                         {
-                return std::isdigit(c);
-            }))
+                            return std::isdigit(c);
+                        }))
         {
             coll.add("w[t]_has_digit=1", 1);
         }
@@ -225,8 +227,8 @@ sequence_analyzer default_pos_analyzer()
 
         if (std::any_of(word.begin(), word.end(), [](char c)
                         {
-                return std::isupper(c);
-            }))
+                            return std::isupper(c);
+                        }))
         {
             coll.add("w[t]_has_upper=1", 1);
             if (t != 0)
@@ -237,8 +239,8 @@ sequence_analyzer default_pos_analyzer()
 
         if (std::all_of(word.begin(), word.end(), [](char c)
                         {
-                return std::isupper(c);
-            }))
+                            return std::isupper(c);
+                        }))
         {
             coll.add("w[t]_all_upper=1", 1);
         }

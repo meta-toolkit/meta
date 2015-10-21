@@ -16,9 +16,9 @@ int main(int argc, char** argv)
     std::ifstream file{argv[1]};
     std::string content;
     file.seekg(0, std::ios::end);
-    content.resize(file.tellg());
+    content.resize(static_cast<std::size_t>(file.tellg()));
     file.seekg(0, std::ios::beg);
-    file.read(&content[0], content.size());
+    file.read(&content[0], static_cast<std::streamsize>(content.size()));
 
     auto u16 = utf::to_utf16(content, argv[2]);
     auto u8 = utf::to_utf8(u16);

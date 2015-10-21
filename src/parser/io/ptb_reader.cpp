@@ -53,7 +53,7 @@ std::string read_word(std::istream& file)
     std::string word;
     while (file && file.peek() != '(' && file.peek() != ')'
            && !std::isspace(file.peek()))
-        word += file.get();
+        word += static_cast<char>(file.get());
 
     if (word.length() == 0)
         throw std::runtime_error{"invalid tree format reading text"};

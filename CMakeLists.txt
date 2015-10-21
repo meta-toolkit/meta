@@ -36,6 +36,14 @@ endif()
 if(UNIX OR MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 
+    # Enable -Wconversion on clang, since it's not *too* noisy there.
+    #
+    # As of GCC 5.2.0, there are too many spurious warnings to bother
+    # enabling this there.
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion")
+    endif()
+
     # if we don't already set the standard for the compiler, detect the
     # best one available and use it
     if(NOT "${CMAKE_CXX_FLAGS}" MATCHES "std=c\\+\\+(0x|11|1y|14)")

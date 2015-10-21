@@ -37,14 +37,14 @@ auto gzstreambuf::underflow() -> int_type
     if (!is_open())
         return traits_type::eof();
 
-    auto bytes = gzread(file_, &buffer_[0], buffer_.size());
+    auto bytes = gzread(file_, &buffer_[0], static_cast<unsigned>(buffer_.size()));
     if (bytes <= 0)
     {
         setg(&buffer_[0], &buffer_[0], &buffer_[0]);
         return traits_type::eof();
     }
 
-    setg(&buffer_[0], &buffer_[0], &buffer_[bytes]);
+    setg(&buffer_[0], &buffer_[0], &buffer_[static_cast<std::size_t>(bytes)]);
 
     return traits_type::to_int_type(*gptr());
 }
@@ -64,11 +64,11 @@ auto gzstreambuf::overflow(int_type ch) -> int_type
 
 int gzstreambuf::sync()
 {
-    auto bytes = pptr() - pbase();
+    auto bytes = static_cast<int>(pptr() - pbase());
     if (bytes > 0)
     {
 
-        if (gzwrite(file_, pbase(), bytes) != bytes)
+        if (gzwrite(file_, pbase(), static_cast<unsigned>(bytes)) != bytes)
             return -1;
         pbump(-bytes);
     }

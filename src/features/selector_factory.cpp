@@ -28,8 +28,8 @@ selector_factory::selector_factory()
 }
 
 std::unique_ptr<feature_selector>
-    make_selector(const cpptoml::table& config,
-                  std::shared_ptr<index::forward_index> idx)
+make_selector(const cpptoml::table& config,
+              std::shared_ptr<index::forward_index> idx)
 {
     auto table = config.get_table("features");
     if (!table)
@@ -45,8 +45,8 @@ std::unique_ptr<feature_selector>
         throw selector_factory_exception{
             "feature selection method required in [features] table"};
 
-    uint64_t features_per_class
-        = table->get_as<int64_t>("features-per-class").value_or(20);
+    auto features_per_class = static_cast<uint64_t>(
+        table->get_as<int64_t>("features-per-class").value_or(20));
 
     auto selector
         = selector_factory::get().create(*method, *table, std::move(idx));

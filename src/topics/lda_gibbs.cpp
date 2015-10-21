@@ -48,7 +48,9 @@ void lda_gibbs::run(uint64_t num_iters, double convergence /* = 1e-6 */)
     double likelihood = corpus_log_likelihood();
     std::stringstream ss;
     ss << "Initialization log likelihood (log P(W|Z)): " << likelihood;
-    std::string spacing(std::max<int>(0, 80 - ss.tellp()), ' ');
+    std::string spacing(
+        static_cast<std::size_t>(std::max<std::streamoff>(0, 80 - ss.tellp())),
+        ' ');
     ss << spacing;
     LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
 
@@ -61,7 +63,9 @@ void lda_gibbs::run(uint64_t num_iters, double convergence /* = 1e-6 */)
         std::stringstream ss;
         ss << "Iteration " << i + 1
            << " log likelihood (log P(W|Z)): " << likelihood;
-        std::string spacing(std::max<int>(0, 80 - ss.tellp()), ' ');
+        std::string spacing(static_cast<std::size_t>(
+                                std::max<std::streamoff>(0, 80 - ss.tellp())),
+                            ' ');
         ss << spacing;
         LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
         if (ratio <= convergence)

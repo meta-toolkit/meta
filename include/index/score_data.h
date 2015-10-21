@@ -43,20 +43,20 @@ struct score_data
     /// index queries are running on
     inverted_index& idx;
     /// average document length
-    double avg_dl;
+    float avg_dl;
     /// total number of documents
     uint64_t num_docs;
     /// total number of terms in the index
     uint64_t total_terms;
     /// the total length of the query (sum of all term weights)
-    double query_length;
+    float query_length;
 
     // term-based info
 
     /// doc term id
     term_id t_id;
     /// query term count (or weight in case of feedback)
-    double query_term_weight;
+    float query_term_weight;
     /// number of docs that t_id appears in
     uint64_t doc_count;
     /// number of times t_id appears in corpus
@@ -81,8 +81,8 @@ struct score_data
      * @param p_total_terms The total number of terms in the index
      * @param p_query The current query
      */
-    score_data(inverted_index& p_idx, double p_avg_dl, uint64_t p_num_docs,
-               uint64_t p_total_terms, double p_length)
+    score_data(inverted_index& p_idx, float p_avg_dl, uint64_t p_num_docs,
+               uint64_t p_total_terms, float p_length)
         : idx(p_idx), // gcc no non-const ref init from brace init list
           avg_dl{p_avg_dl},
           num_docs{p_num_docs},

@@ -88,22 +88,24 @@ confusion_matrix cross_validate(Creator&& creator,
                                 classifier::dataset_view_type docs, size_t k,
                                 bool even_split = false)
 {
+    using diff_type = decltype(docs.begin())::difference_type;
     // docs might be ordered by class, so make sure things are shuffled
     docs.shuffle();
     if (even_split)
         docs = docs.create_even_split();
 
     confusion_matrix matrix;
-    size_t step_size = docs.size() / k;
+    auto step_size = docs.size() / k;
     for (size_t i = 0; i < k; ++i)
     {
         LOG(info) << "Cross-validating fold " << (i + 1) << "/" << k << ENDLG;
-        multiclass_dataset_view train_view{docs, docs.begin() + step_size,
-                                           docs.end()};
+        multiclass_dataset_view train_view{
+            docs, docs.begin() + static_cast<diff_type>(step_size), docs.end()};
 
         auto cls = creator(train_view);
-        multiclass_dataset_view test_view{docs, docs.begin(),
-                                          docs.begin() + step_size};
+        multiclass_dataset_view test_view{
+            docs, docs.begin(),
+            docs.begin() + static_cast<diff_type>(step_size)};
         auto m = cls->test(test_view);
         matrix += m;
         docs.rotate(step_size);

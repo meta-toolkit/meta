@@ -60,10 +60,11 @@ int run_lda(const std::string& config_file)
         return 1;
 
     auto type = *lda_group->get_as<std::string>("inference");
-    uint64_t iters = *lda_group->get_as<int64_t>("max-iters");
+    auto iters
+        = static_cast<uint64_t>(*lda_group->get_as<int64_t>("max-iters"));
     auto alpha = *lda_group->get_as<double>("alpha");
     auto beta = *lda_group->get_as<double>("beta");
-    uint64_t topics = *lda_group->get_as<int64_t>("topics");
+    auto topics = static_cast<uint64_t>(*lda_group->get_as<int64_t>("topics"));
     auto save_prefix = *lda_group->get_as<std::string>("model-prefix");
 
     auto f_idx

@@ -55,7 +55,7 @@ void compressed_file_writer::write(double value)
     auto digits = std::numeric_limits<double>::digits;
     auto mantissa
         = static_cast<int64_t>(std::frexp(value, &exp) * (1ul << digits));
-    int16_t exponent = exp - digits;
+    auto exponent = static_cast<int16_t>(exp - digits);
 
     // see dlib link above; tries to shrink mantissa for more efficient
     // serialization
@@ -112,9 +112,9 @@ void compressed_file_writer::close()
 void compressed_file_writer::write(uint64_t value)
 {
     uint64_t cvalue = mapping_(value);
-    uint64_t length = std::log2(cvalue);
+    auto length = static_cast<int64_t>(std::log2(cvalue));
 
-    for (uint64_t bit = 0; bit < length; ++bit)
+    for (int64_t bit = 0; bit < length; ++bit)
         write_bit(false);
 
     write_bit(true);

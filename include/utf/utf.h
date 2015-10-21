@@ -21,20 +21,14 @@ namespace meta
 namespace utf
 {
 
+namespace detail
+{
 /**
  * Helper method that appends a UTF-32 codepoint to the given utf8 string.
  * @param dest The string to append the codepoint to
  * @param codepoint The UTF-32 codepoint to append
  */
-inline void utf8_append_codepoint(std::string& dest, uint32_t codepoint)
-{
-    std::array<uint8_t, U8_MAX_LENGTH> buf;
-    int32_t len = 0;
-    UBool err = FALSE;
-    U8_APPEND(&buf[0], len, U8_MAX_LENGTH, codepoint, err);
-    if (err)
-        throw std::runtime_error{"failed to add codepoint to string"};
-    dest.append(reinterpret_cast<char*>(&buf[0]), len);
+void utf8_append_codepoint(std::string& dest, UChar32 codepoint);
 }
 
 /**
@@ -119,14 +113,39 @@ std::string remove_if(const std::string& str, Predicate&& pred)
     std::string result;
     result.reserve(str.size());
     const char* s = str.c_str();
-    int32_t length = str.length();
+    auto length = static_cast<int32_t>(str.length());
     for (int32_t i = 0; i < length;)
     {
         UChar32 codepoint;
         U8_NEXT(s, i, length, codepoint);
-        if (pred(codepoint))
+        if (pred(static_cast<uint32_t>(codepoint)))
             continue;
-        utf8_append_codepoint(result, codepoint);
+        detail::utf8_append_codepoint(result, codepoint);
+    }
+    return result;
+}
+
+/**
+ * Transforms a utf8 string using the provided function object applied to
+ * each codepoint in the string.
+ *
+ * @param str The string to transform
+ * @param fun The function to transform each codepoint with
+ * @return the transformed string
+ */
+template <class Function>
+std::string transform(const std::string& str, Function&& fun)
+{
+    auto s = str.c_str();
+    std::string result;
+    result.reserve(str.size()); // not always accurate, but close
+    auto length = static_cast<int32_t>(str.length());
+    for (int32_t i = 0; i < length;)
+    {
+        UChar32 codepoint;
+        U8_NEXT(s, i, length, codepoint);
+        auto transformed = fun(static_cast<uint32_t>(codepoint));
+        detail::utf8_append_codepoint(result, transformed);
     }
     return result;
 }

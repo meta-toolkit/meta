@@ -117,7 +117,7 @@ class language_model
     float prob_calc(BidirectionalIterator begin,
                     BidirectionalIterator end) const
     {
-        auto size = std::distance(begin, end);
+        auto size = static_cast<std::size_t>(std::distance(begin, end));
         if (size == 0)
             throw language_model_exception{"prob_calc: tokens is empty!"};
 

@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    uint64_t k = std::stoi(argv[2]);
+    auto k = std::stoul(argv[2]);
 
     logging::set_cerr_logging();
 
