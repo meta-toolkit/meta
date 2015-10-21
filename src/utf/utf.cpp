@@ -20,6 +20,24 @@ namespace meta
 {
 namespace utf
 {
+namespace detail
+{
+void utf8_append_codepoint(std::string& dest, UChar32 codepoint)
+{
+    std::array<uint8_t, U8_MAX_LENGTH> buf;
+    int32_t len = 0;
+    UBool err = FALSE;
+    // ICU has some conversions within this macro, which we can't control
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+    U8_APPEND(&buf[0], len, U8_MAX_LENGTH, codepoint, err);
+#pragma GCC diagnostic pop
+    if (err)
+        throw std::runtime_error{"failed to add codepoint to string"};
+    dest.append(reinterpret_cast<char*>(&buf[0]),
+                static_cast<std::size_t>(len));
+}
+}
 
 std::string to_utf8(const std::string& str, const std::string& charset)
 {

@@ -21,25 +21,14 @@ namespace meta
 namespace utf
 {
 
+namespace detail
+{
 /**
  * Helper method that appends a UTF-32 codepoint to the given utf8 string.
  * @param dest The string to append the codepoint to
  * @param codepoint The UTF-32 codepoint to append
  */
-inline void utf8_append_codepoint(std::string& dest, UChar32 codepoint)
-{
-    std::array<uint8_t, U8_MAX_LENGTH> buf;
-    int32_t len = 0;
-    UBool err = FALSE;
-    // ICU has some conversions within this macro, which we can't control
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-    U8_APPEND(&buf[0], len, U8_MAX_LENGTH, codepoint, err);
-#pragma GCC diagnostic pop
-    if (err)
-        throw std::runtime_error{"failed to add codepoint to string"};
-    dest.append(reinterpret_cast<char*>(&buf[0]),
-                static_cast<std::size_t>(len));
+void utf8_append_codepoint(std::string& dest, UChar32 codepoint);
 }
 
 /**
@@ -131,7 +120,7 @@ std::string remove_if(const std::string& str, Predicate&& pred)
         U8_NEXT(s, i, length, codepoint);
         if (pred(static_cast<uint32_t>(codepoint)))
             continue;
-        utf8_append_codepoint(result, codepoint);
+        detail::utf8_append_codepoint(result, codepoint);
     }
     return result;
 }
@@ -156,7 +145,7 @@ std::string transform(const std::string& str, Function&& fun)
         UChar32 codepoint;
         U8_NEXT(s, i, length, codepoint);
         auto transformed = fun(static_cast<uint32_t>(codepoint));
-        utf8_append_codepoint(result, transformed);
+        detail::utf8_append_codepoint(result, transformed);
     }
     return result;
 }
