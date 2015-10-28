@@ -6,6 +6,7 @@
 
 #include "analyzers/analyzer.h"
 #include "corpus/corpus.h"
+#include "corpus/corpus_factory.h"
 #include "corpus/metadata_parser.h"
 #include "index/disk_index_impl.h"
 #include "index/inverted_index.h"
@@ -122,7 +123,7 @@ void inverted_index::create_index(const cpptoml::table& config)
     LOG(info) << "Creating index: " << index_name() << ENDLG;
 
     // load the documents from the corpus
-    auto docs = corpus::corpus::load(config);
+    auto docs = corpus::make_corpus(config);
 
     auto ram_budget = static_cast<uint64_t>(
         config.get_as<int64_t>("indexer-ram-budget").value_or(1024));

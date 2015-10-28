@@ -16,7 +16,7 @@ std::shared_ptr<cpptoml::table> create_libsvm_config()
 
     auto config = cpptoml::make_table();
     config->insert("prefix", *orig_config->get_as<std::string>("prefix"));
-    config->insert("corpus-type", "line-corpus");
+    config->insert("corpus", "libsvm.toml");
     config->insert("dataset", "breast-cancer");
     config->insert("forward-index", "bcancer-fwd");
     config->insert("inverted-index", "bcancer-inv");

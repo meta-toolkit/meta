@@ -79,14 +79,6 @@ class corpus
      */
     const std::string& encoding() const;
 
-    /**
-     * @param config_file The cpptoml config file containing what type of
-     * corpus to load
-     * @return a unique_ptr to the corpus object containing the documents
-     */
-    static std::unique_ptr<corpus> load(const std::string& config_file);
-    static std::unique_ptr<corpus> load(const cpptoml::table& config);
-
   protected:
     /**
      * Helper function to be used by deriving classes in implementing
@@ -95,6 +87,8 @@ class corpus
     std::vector<metadata::field> next_metadata();
 
   private:
+    friend std::unique_ptr<corpus> make_corpus(const cpptoml::table&);
+
     void set_metadata_parser(metadata_parser&& mdparser);
 
     /// The type of encoding this document uses

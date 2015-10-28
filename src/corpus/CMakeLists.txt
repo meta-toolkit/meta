@@ -3,8 +3,10 @@ project(meta-corpus)
 add_subdirectory(tools)
 
 set(CORPUS_SOURCES corpus.cpp
+                   corpus_factory.cpp
                    document.cpp
                    file_corpus.cpp
+                   libsvm_corpus.cpp
                    line_corpus.cpp
                    metadata.cpp
                    metadata_parser.cpp)

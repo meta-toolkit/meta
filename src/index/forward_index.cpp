@@ -5,6 +5,8 @@
 
 #include "analyzers/analyzer.h"
 #include "corpus/corpus.h"
+#include "corpus/corpus_factory.h"
+#include "corpus/libsvm_corpus.h"
 #include "cpptoml.h"
 #include "index/chunk_reader.h"
 #include "index/disk_index_impl.h"
@@ -229,7 +231,7 @@ void forward_index::create_index(const cpptoml::table& config)
         {
             LOG(info) << "Creating forward index: " << index_name() << ENDLG;
 
-            auto docs = corpus::corpus::load(config);
+            auto docs = corpus::make_corpus(config);
 
             {
                 auto analyzer = analyzers::load<double>(config);
@@ -453,19 +455,10 @@ void forward_index::impl::merge_chunks(size_t num_chunks,
 
 void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
 {
-    auto prefix = config.get_as<std::string>("prefix");
-    if (!prefix)
-        throw forward_index_exception{"prefix missing from configuration file"};
-
-    auto dataset = config.get_as<std::string>("dataset");
-    if (!dataset)
-        throw forward_index_exception{
-            "dataset missing from configuration file"};
-
-    auto libsvm_data = *prefix + "/" + *dataset + "/" + *dataset + ".dat";
     auto filename = idx_->index_name() + idx_->impl_->files[POSTINGS];
 
-    uint64_t num_docs = filesystem::num_lines(libsvm_data);
+    auto docs = corpus::make_corpus(config);
+    auto num_docs = docs->size();
     idx_->impl_->load_labels(num_docs);
 
     total_unique_terms_ = 0;
@@ -474,25 +467,21 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
                                                                     num_docs};
 
         // make md_writer with empty schema
-        metadata_writer md_writer{idx_->index_name(), num_docs, {}};
+        metadata_writer md_writer{idx_->index_name(), num_docs, docs->schema()};
 
         printing::progress progress{" > Creating postings from libsvm data: ",
                                     num_docs};
-        doc_id d_id{0};
-        std::ifstream input{libsvm_data};
-        std::string line;
-        while (std::getline(input, line))
+        while (docs->has_next())
         {
-            progress(d_id);
+            auto doc = docs->next();
+            progress(doc.id());
 
-            auto lbl = io::libsvm_parser::label(line);
-            idx_->impl_->set_label(d_id, lbl);
 
             uint64_t num_unique = 0;
             double length = 0;
-            forward_index::postings_data_type pdata{d_id};
+            forward_index::postings_data_type pdata{doc.id()};
 
-            auto counts = io::libsvm_parser::counts(line);
+            auto counts = io::libsvm_parser::counts(doc.content());
             for (const auto& count : counts)
             {
                 ++num_unique;
@@ -504,9 +493,9 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
             pdata.set_counts(std::move(counts));
             out.write(pdata);
 
-            md_writer.write(d_id, static_cast<uint64_t>(length), num_unique,
-                            {});
-            ++d_id;
+            md_writer.write(doc.id(), static_cast<uint64_t>(length), num_unique,
+                            doc.mdata());
+            idx_->impl_->set_label(doc.id(), doc.label());
         }
 
         // +1 since we subtracted one from each of the ids in the
@@ -532,6 +521,30 @@ void forward_index::impl::create_uninverted_metadata(const std::string& name)
 
 bool forward_index::impl::is_libsvm_format(const cpptoml::table& config) const
 {
+    auto prefix = config.get_as<std::string>("prefix");
+    auto dset = config.get_as<std::string>("dataset");
+    auto corp = config.get_as<std::string>("corpus");
+
+    if (!prefix || !dset || !corp)
+        throw forward_index_exception{"failed to determine corpus type"};
+
+    auto corp_filename = *prefix + "/" + *dset + "/" + *corp;
+    if (!filesystem::file_exists(corp_filename))
+    {
+        throw forward_index_exception{"corpus configuration file ("
+                                      + corp_filename + ") not present"};
+    }
+
+    auto corpus_config = cpptoml::parse_file(corp_filename);
+    auto type = corpus_config->get_as<std::string>("type");
+
+    if (!type)
+    {
+        throw forward_index_exception{
+            "'type' key not present in corpus configuration file "
+            + corp_filename};
+    }
+
     auto analyzers = config.get_table_array("analyzers")->get();
     if (analyzers.size() != 1)
         return false;
@@ -540,7 +553,15 @@ bool forward_index::impl::is_libsvm_format(const cpptoml::table& config) const
     if (!method)
         throw forward_index_exception{"failed to find analyzer method"};
 
-    return *method == "libsvm";
+    if (*method == "libsvm" && *type == corpus::libsvm_corpus::id)
+        return true;
+
+    if (*method == "libsvm" || *type == corpus::libsvm_corpus::id)
+        throw forward_index_exception{"both analyzer and corpus type must be "
+                                      "libsvm in order to use libsvm formatted "
+                                      "data"};
+
+    return false;
 }
 
 uint64_t forward_index::unique_terms() const
