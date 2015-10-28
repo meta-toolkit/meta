@@ -3,6 +3,7 @@
  * @author Chase Geigle
  */
 
+#include <algorithm>
 #include <cmath>
 #include <numeric>
 
