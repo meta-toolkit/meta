@@ -231,6 +231,28 @@ int rank_correlation_tests()
             ASSERT_APPROX_EQUAL(corr.tau_b(), 0.9207368);
         });
 
+    num_failed += testing::run_test(
+        "rank-correlation-ndpm-perfect", []
+        {
+            std::vector<std::size_t> rank_x = {1, 2, 3, 3, 4, 5, 6, 7};
+            std::vector<std::size_t> rank_y = {1, 1, 2, 2, 3, 4, 5, 6};
+            index::rank_correlation corr{rank_x, rank_y};
+
+            ASSERT_APPROX_EQUAL(corr.ndpm(), 0.0);
+        });
+
+    num_failed += testing::run_test(
+        "rank-correlation-ndpm-real", []
+        {
+            // this is example 3 in the NDPM paper
+            std::vector<std::size_t> rank_x = {1, 2, 3, 2, 1};
+            std::vector<std::size_t> rank_y = {1, 1, 2, 3, 3};
+            index::rank_correlation corr{rank_x, rank_y};
+
+            ASSERT_APPROX_EQUAL(corr.ndpm(), 8.0 / 16.0);
+        });
+
+
     return num_failed;
 }
 

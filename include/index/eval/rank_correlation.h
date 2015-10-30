@@ -100,6 +100,32 @@ class rank_correlation
      */
     double tau_b() const;
 
+    /**
+     * The normalized distance-based performance measure (NDPM).
+     * @see www2.cs.uregina.ca/~yyao/PAPERS/jasis_ndpm.pdf
+     * @see http://research.microsoft.com/apps/pubs/default.aspx?id=115396
+     *
+     * Defined as
+     * \f[
+         \frac{2C^- + C^{u0}}{2C^u},
+     * \f]
+     * where \f$C^+\f$ is the number of pairs where the ranks agree
+     * (concordant pairs), \f$C^-\f$ is the number of pairs where the ranks
+     * disagreed (discordant pairs), \f$C^u\f$ is the number of pairs for
+     * which the reference ranking (arbitrarily picked to be y from the
+     * constructor) asserts an ordering, and
+     * \f$C^{u0} = C^u - (C^+ - C^-)\f$ is the number of of pairs for which
+     * the reference ranking (y) does not tie but the system ranking (x) does.
+     *
+     * Translating this to our notation, we have that \f$C^+ = n_c\f$,
+     * \f$C^- = n_d\f$, \f$C^u = n_c + n_d + t_x\f$, and
+     * \f$C^{u0} = t_x\f$.
+     *
+     * @return the NDPM score for the ranking x against y, treating y as
+     * the reference ranking
+     */
+    double ndpm() const;
+
   private:
     double nc() const
     {

@@ -102,5 +102,12 @@ double rank_correlation::tau_b() const
     return (nc() - nd()) / std::sqrt((nc() + nd() + num_ties_x_)
                                      * (nc() + nd() + num_ties_y_));
 }
+
+double rank_correlation::ndpm() const
+{
+    auto cu = nc() + nd() + num_ties_x_;
+    auto cu0 = num_ties_x_;
+    return (2 * nd() + cu0) / (2 * cu);
+}
 }
 }
