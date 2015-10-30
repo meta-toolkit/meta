@@ -202,6 +202,23 @@ class labeled_dataset : public dataset
     using label_type = LabelType;
 
     /**
+     * Creates an in-memory dataset from a forward_index. This loads the
+     * **entire index** into memory, so you should only use this
+     * constructor with small datasets.
+     *
+     * For large datasets (where large is defined as "larger than available
+     * RAM", use one of the constructors that takes a range (or collection)
+     * of document ids to load in to load in just a specific section of the
+     * index.
+     */
+    labeled_dataset(std::shared_ptr<index::forward_index> idx)
+        : labeled_dataset(idx,
+                          util::range(doc_id{0}, doc_id{idx->num_docs() - 1}))
+    {
+        // nothing
+    }
+
+    /**
      * Creates an in-memory dataset from a forward_index and a range of
      * doc_ids, represented as iterators.
      */
