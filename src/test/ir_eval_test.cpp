@@ -147,8 +147,8 @@ int rank_correlation_tests()
     num_failed += testing::run_test(
         "rank-correlation-throw-nonequal-size", []()
         {
-            std::vector<std::size_t> rank_x = {1, 2, 3};
-            std::vector<std::size_t> rank_y = {1, 2, 3, 4};
+            std::vector<double> rank_x = {1, 2, 3};
+            std::vector<double> rank_y = {1, 2, 3, 4};
 
             try
             {
@@ -164,8 +164,8 @@ int rank_correlation_tests()
     num_failed += testing::run_test(
         "rank-correlation-tau-a-perfect", []()
         {
-            std::vector<std::size_t> rank_x = {1, 2, 3, 4, 5};
-            std::vector<std::size_t> rank_y = {1, 2, 3, 4, 5};
+            std::vector<double> rank_x = {1, 2, 3, 4, 5};
+            std::vector<double> rank_y = {1, 2, 3, 4, 5};
             index::rank_correlation corr{rank_x, rank_y};
 
             ASSERT_APPROX_EQUAL(corr.tau_a(), 1.0);
@@ -174,8 +174,8 @@ int rank_correlation_tests()
     num_failed += testing::run_test(
         "rank-correlation-tau-a-inverse", []()
         {
-            std::vector<std::size_t> rank_x = {1, 2, 3, 4, 5};
-            std::vector<std::size_t> rank_y = {5, 4, 3, 2, 1};
+            std::vector<double> rank_x = {1, 2, 3, 4, 5};
+            std::vector<double> rank_y = {5, 4, 3, 2, 1};
             index::rank_correlation corr{rank_x, rank_y};
 
             ASSERT_APPROX_EQUAL(corr.tau_a(), -1.0);
@@ -184,8 +184,8 @@ int rank_correlation_tests()
     num_failed += testing::run_test(
         "rank-correlation-tau-a-real", []()
         {
-            std::vector<std::size_t> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
-            std::vector<std::size_t> rank_y = {3, 4, 1, 5, 6, 7, 8, 2};
+            std::vector<double> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
+            std::vector<double> rank_y = {3, 4, 1, 5, 6, 7, 8, 2};
             index::rank_correlation corr{rank_x, rank_y};
 
             ASSERT_APPROX_EQUAL(corr.tau_a(), 0.4285715);
@@ -194,8 +194,8 @@ int rank_correlation_tests()
     num_failed += testing::run_test(
         "rank-correlation-tau-a-zero", []()
         {
-            std::vector<std::size_t> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
-            std::vector<std::size_t> rank_y = {1, 8, 7, 2, 5, 3, 6, 4};
+            std::vector<double> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
+            std::vector<double> rank_y = {1, 8, 7, 2, 5, 3, 6, 4};
             index::rank_correlation corr{rank_x, rank_y};
 
             ASSERT_APPROX_EQUAL(corr.tau_a(), 0.0);
@@ -204,8 +204,8 @@ int rank_correlation_tests()
     num_failed += testing::run_test(
         "rank-correlation-tau-b-noties", []()
         {
-            std::vector<std::size_t> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
-            std::vector<std::size_t> rank_y = {3, 4, 1, 5, 6, 7, 8, 2};
+            std::vector<double> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
+            std::vector<double> rank_y = {3, 4, 1, 5, 6, 7, 8, 2};
             index::rank_correlation corr{rank_x, rank_y};
 
             ASSERT_APPROX_EQUAL(corr.tau_a(), 0.4285715);
@@ -214,8 +214,8 @@ int rank_correlation_tests()
     num_failed += testing::run_test(
         "rank-correlation-tau-b-ties-x", []()
         {
-            std::vector<std::size_t> rank_x = {1, 1, 2, 2, 3, 4, 5, 6};
-            std::vector<std::size_t> rank_y = {1, 2, 3, 4, 5, 6, 7, 8};
+            std::vector<double> rank_x = {1, 1, 2, 2, 3, 4, 5, 6};
+            std::vector<double> rank_y = {1, 2, 3, 4, 5, 6, 7, 8};
             index::rank_correlation corr{rank_x, rank_y};
 
             ASSERT_APPROX_EQUAL(corr.tau_b(), 0.9636242);
@@ -224,8 +224,8 @@ int rank_correlation_tests()
     num_failed += testing::run_test(
         "rank-correlation-tau-b-ties-both", []()
         {
-            std::vector<std::size_t> rank_x = {1, 1, 2, 2, 3, 4, 5, 6};
-            std::vector<std::size_t> rank_y = {1, 2, 3, 3, 4, 4, 4, 5};
+            std::vector<double> rank_x = {1, 1, 2, 2, 3, 4, 5, 6};
+            std::vector<double> rank_y = {1, 2, 3, 3, 4, 4, 4, 5};
             index::rank_correlation corr{rank_x, rank_y};
 
             ASSERT_APPROX_EQUAL(corr.tau_b(), 0.9207368);
@@ -234,8 +234,8 @@ int rank_correlation_tests()
     num_failed += testing::run_test(
         "rank-correlation-ndpm-perfect", []
         {
-            std::vector<std::size_t> rank_x = {1, 2, 3, 3, 4, 5, 6, 7};
-            std::vector<std::size_t> rank_y = {1, 1, 2, 2, 3, 4, 5, 6};
+            std::vector<double> rank_x = {1, 2, 3, 3, 4, 5, 6, 7};
+            std::vector<double> rank_y = {1, 1, 2, 2, 3, 4, 5, 6};
             index::rank_correlation corr{rank_x, rank_y};
 
             ASSERT_APPROX_EQUAL(corr.ndpm(), 0.0);
@@ -245,8 +245,8 @@ int rank_correlation_tests()
         "rank-correlation-ndpm-real", []
         {
             // this is example 3 in the NDPM paper
-            std::vector<std::size_t> rank_x = {1, 2, 3, 2, 1};
-            std::vector<std::size_t> rank_y = {1, 1, 2, 3, 3};
+            std::vector<double> rank_x = {1, 2, 3, 2, 1};
+            std::vector<double> rank_y = {1, 1, 2, 3, 3};
             index::rank_correlation corr{rank_x, rank_y};
 
             ASSERT_APPROX_EQUAL(corr.ndpm(), 8.0 / 16.0);

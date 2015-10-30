@@ -56,8 +56,8 @@ class rank_correlation
      * @param x The ranks for the items in the first ranked list
      * @param y The ranks for the items in the second ranked list
      */
-    rank_correlation(const std::vector<std::size_t>& x,
-                     const std::vector<std::size_t>& y);
+    rank_correlation(const std::vector<double>& x,
+                     const std::vector<double>& y);
 
     /**
      * Goodman and Kruskal's gamma. This is an acceptable coefficient even

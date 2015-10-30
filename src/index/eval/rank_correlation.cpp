@@ -14,11 +14,11 @@ namespace
 {
 struct rank_pair
 {
-    std::size_t xi;
-    std::size_t yi;
+    double xi;
+    double yi;
 
-    std::size_t xj;
-    std::size_t yj;
+    double xj;
+    double yj;
 
     bool concordant() const
     {
@@ -47,8 +47,8 @@ struct rank_pair
 };
 }
 
-rank_correlation::rank_correlation(const std::vector<std::size_t>& x,
-                                   const std::vector<std::size_t>& y)
+rank_correlation::rank_correlation(const std::vector<double>& x,
+                                   const std::vector<double>& y)
     : num_concordant_{0},
       num_discordant_{0},
       num_ties_x_{0},
