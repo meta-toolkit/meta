@@ -62,6 +62,11 @@ class dataset_view
             indices_.emplace_back(first.index());
     }
 
+    void add_by_index(size_type idx)
+    {
+        indices_.push_back(idx);
+    }
+
     void shuffle()
     {
         // use meta::random::shuffle for reproducibility between compilers
@@ -202,6 +207,11 @@ class dataset_view
     const DerivedDataset& dset() const
     {
         return static_cast<const DerivedDataset&>(*dset_);
+    }
+
+    const std::vector<size_type> indices() const
+    {
+        return indices_;
     }
 
   private:
