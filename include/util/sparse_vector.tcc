@@ -191,5 +191,89 @@ auto sparse_vector<Index, Value>::cend() const -> const_iterator
 {
     return storage_.cend();
 }
+
+template <class Index, class Value>
+auto sparse_vector<Index, Value>::operator+=(const sparse_vector& rhs)
+    -> sparse_vector &
+{
+    // use index into the current vector so that we can properly handle
+    // invalidation of iterators during the loop
+    uint64_t idx = 0;
+    uint64_t end = size();
+
+    auto second_it = rhs.begin();
+    auto second_end = rhs.end();
+
+    while (idx != end && second_it != second_end)
+    {
+        if (storage_[idx].first == second_it->first)
+        {
+            storage_[idx].second += second_it->second;
+            ++idx;
+            ++second_it;
+        }
+        else if (storage_[idx].first < second_it->first)
+        {
+            ++idx;
+        }
+        else
+        {
+            using diff_type = typename iterator::difference_type;
+            storage_.emplace(begin() + static_cast<diff_type>(idx),
+                             second_it->first, second_it->second);
+            ++idx;
+            ++second_it;
+        }
+    }
+
+    for (; second_it != second_end; ++second_it)
+    {
+        storage_.emplace_back(second_it->first, second_it->second);
+    }
+
+    return *this;
+}
+
+template <class Index, class Value>
+auto sparse_vector<Index, Value>::operator-=(const sparse_vector& rhs)
+    -> sparse_vector &
+{
+    // use index into the current vector so that we can properly handle
+    // invalidation of iterators during the loop
+    uint64_t idx = 0;
+    uint64_t end = size();
+
+    auto second_it = rhs.begin();
+    auto second_end = rhs.end();
+
+    while (idx != end && second_it != second_end)
+    {
+        if (storage_[idx].first == second_it->first)
+        {
+            storage_[idx].second -= second_it->second;
+            ++idx;
+            ++second_it;
+        }
+        else if (storage_[idx].first < second_it->first)
+        {
+            ++idx;
+        }
+        else
+        {
+            using diff_type = typename iterator::difference_type;
+            storage_.emplace(begin() + static_cast<diff_type>(idx),
+                             second_it->first, -second_it->second);
+            ++idx;
+            ++second_it;
+        }
+    }
+
+    for (; second_it != second_end; ++second_it)
+    {
+        storage_.emplace_back(second_it->first, -second_it->second);
+    }
+
+    return *this;
+}
 }
 }
