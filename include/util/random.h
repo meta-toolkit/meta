@@ -7,6 +7,9 @@
  * project.
  */
 
+#ifndef META_UTIL_RANDOM_H_
+#define META_UTIL_RANDOM_H_
+
 #include <cstdint>
 #include <functional>
 #include <limits>
@@ -143,3 +146,4 @@ void shuffle(RandomAccessIterator first, RandomAccessIterator last,
 }
 }
 }
+#endif
