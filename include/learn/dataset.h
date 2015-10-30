@@ -211,9 +211,26 @@ class labeled_dataset : public dataset
      * of document ids to load in to load in just a specific section of the
      * index.
      */
-    labeled_dataset(std::shared_ptr<index::forward_index> idx)
+    template <class LabelFunction>
+    labeled_dataset(std::shared_ptr<index::forward_index> idx,
+                    LabelFunction&& labeller)
         : labeled_dataset(idx,
-                          util::range(doc_id{0}, doc_id{idx->num_docs() - 1}))
+                          util::range(doc_id{0}, doc_id{idx->num_docs() - 1}),
+                          std::forward<LabelFunction>(labeller))
+    {
+        // nothing
+    }
+
+    /**
+     * Creates an in-memory dataset from a forward_index, a range of
+     * document identifiers (as collection), and a LabelFunction to assign
+     * labels to document identifiers.
+     */
+    template <class DocIdContainer, class LabelFunction>
+    labeled_dataset(std::shared_ptr<index::forward_index> idx,
+                    DocIdContainer&& dcont, LabelFunction&& labeller)
+        : labeled_dataset(idx, std::begin(dcont), std::end(dcont),
+                          std::forward<LabelFunction>(labeller))
     {
         // nothing
     }
