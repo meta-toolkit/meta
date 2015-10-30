@@ -144,6 +144,21 @@ class dataset
     }
 
     /**
+     * Creates an in-memory dataset from a pair of iterators and a
+     * function to convert to a feature_vector.
+     */
+    template <class ForwardIterator, class FeatureVectorFunction>
+    dataset(ForwardIterator begin, ForwardIterator end,
+            size_type total_features, FeatureVectorFunction&& featurizer)
+        : total_features_{total_features}
+    {
+        instances_.reserve(std::distance(begin, end));
+        auto id = 0_inst_id;
+        for (; begin != end; ++begin, ++id)
+            instances_.emplace_back(id, featurizer(*begin));
+    }
+
+    /**
      * @return an iterator to the first instance
      */
     iterator begin() const
@@ -275,6 +290,23 @@ class labeled_dataset : public dataset
         : dataset{begin, end, total_features}, labels_{begin, end}
     {
         // nothing
+    }
+
+    /**
+     * Creates an in-memory dataset from a pair of iterators, a function
+     * to convert to a feature_vector, and a function to obtain a label.
+     */
+    template <class ForwardIterator, class FeatureVectorFunction,
+              class LabelFunction>
+    labeled_dataset(ForwardIterator begin, ForwardIterator end,
+                    size_type total_features,
+                    FeatureVectorFunction&& featurizer,
+                    LabelFunction&& labeller)
+        : dataset(begin, end, total_features,
+                  std::forward<FeatureVectorFunction>(featurizer))
+    {
+        labels_.reserve(size());
+        std::transform(begin, end, std::back_inserter(labels_), labeller);
     }
 
     /**
