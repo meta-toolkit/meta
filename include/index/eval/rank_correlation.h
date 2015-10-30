@@ -121,6 +121,10 @@ class rank_correlation
      * \f$C^- = n_d\f$, \f$C^u = n_c + n_d + t_x\f$, and
      * \f$C^{u0} = t_x\f$.
      *
+     * This measure assigns 0 to a perfect ranking, and 1 to the inverse
+     * ranking compared to the reference. Thus, \f$1-ndpm(x,y)\f$ can be
+     * used as a correlation metric.
+     *
      * @return the NDPM score for the ranking x against y, treating y as
      * the reference ranking
      */
