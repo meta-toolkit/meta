@@ -53,13 +53,13 @@ void sequence_analyzer::load_feature_id_mapping(std::istream& input)
     if (!input)
         throw exception{"missing feature id mapping"};
 
-    uint64_t num_keys;
-    io::packed::read(input, num_keys);
-    printing::progress progress{" > Loading feature mapping: ", num_keys};
-    num_keys = 0;
-    while (input)
+    uint64_t total_num_keys;
+    io::packed::read(input, total_num_keys);
+    printing::progress progress{" > Loading feature mapping: ", total_num_keys};
+
+    for (uint64_t num_keys = 0; num_keys < total_num_keys; ++num_keys)
     {
-        progress(++num_keys);
+        progress(num_keys);
         std::string key;
         feature_id value;
         io::packed::read(input, key);
