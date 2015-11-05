@@ -102,7 +102,9 @@ template <class T>
 T& disk_vector<T>::at(uint64_t idx)
 {
     if (idx >= size_)
-        throw disk_vector_exception{"index out of range"};
+        throw disk_vector_exception{"index " + std::to_string(idx)
+                                    + " out of range [0, "
+                                    + std::to_string(size_) + ")"};
     return start_[idx];
 }
 
@@ -110,7 +112,9 @@ template <class T>
 const T& disk_vector<T>::at(uint64_t idx) const
 {
     if (idx >= size_)
-        throw disk_vector_exception{"index out of range"};
+        throw disk_vector_exception{"index " + std::to_string(idx)
+                                    + " out of range [0, "
+                                    + std::to_string(size_) + ")"};
     return start_[idx];
 }
 
