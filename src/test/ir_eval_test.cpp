@@ -161,25 +161,25 @@ int rank_correlation_tests()
             }
         });
 
-    num_failed += testing::run_test(
-        "rank-correlation-tau-a-perfect", []()
-        {
-            std::vector<double> rank_x = {1, 2, 3, 4, 5};
-            std::vector<double> rank_y = {1, 2, 3, 4, 5};
-            index::rank_correlation corr{rank_x, rank_y};
+    num_failed
+        += testing::run_test("rank-correlation-tau-a-perfect", []()
+                             {
+                                 std::vector<double> rank_x = {1, 2, 3, 4, 5};
+                                 std::vector<double> rank_y = {1, 2, 3, 4, 5};
+                                 index::rank_correlation corr{rank_x, rank_y};
 
-            ASSERT_APPROX_EQUAL(corr.tau_a(), 1.0);
-        });
+                                 ASSERT_APPROX_EQUAL(corr.tau_a(), 1.0);
+                             });
 
-    num_failed += testing::run_test(
-        "rank-correlation-tau-a-inverse", []()
-        {
-            std::vector<double> rank_x = {1, 2, 3, 4, 5};
-            std::vector<double> rank_y = {5, 4, 3, 2, 1};
-            index::rank_correlation corr{rank_x, rank_y};
+    num_failed
+        += testing::run_test("rank-correlation-tau-a-inverse", []()
+                             {
+                                 std::vector<double> rank_x = {1, 2, 3, 4, 5};
+                                 std::vector<double> rank_y = {5, 4, 3, 2, 1};
+                                 index::rank_correlation corr{rank_x, rank_y};
 
-            ASSERT_APPROX_EQUAL(corr.tau_a(), -1.0);
-        });
+                                 ASSERT_APPROX_EQUAL(corr.tau_a(), -1.0);
+                             });
 
     num_failed += testing::run_test(
         "rank-correlation-tau-a-real", []()
