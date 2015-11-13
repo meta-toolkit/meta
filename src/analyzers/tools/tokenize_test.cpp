@@ -12,7 +12,7 @@ using namespace meta;
 
 int main(int argc, char** argv)
 {
-    if (argc < 1)
+    if (argc < 2)
     {
         std::cerr << "Usage: " << argv[0] << " config.toml" << std::endl;
         return 1;
