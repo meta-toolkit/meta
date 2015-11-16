@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cmath>
 #include <functional>
+#include <iterator>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -83,6 +84,9 @@ class key_storage_iterator
     friend key_storage_iterator<typename std::add_const<Storage>::type>;
 
     using storage_type = Storage;
+
+    using difference_type = std::ptrdiff_t;
+    using iterator_category = std::forward_iterator_tag;
 
     using reference = typename Storage::reference;
     using const_reference = typename Storage::const_reference;
@@ -179,11 +183,12 @@ class key_value_storage_iterator
 {
   public:
     constexpr static bool is_const = std::is_const<Storage>::value;
+    using difference_type = std::ptrdiff_t;
+    using iterator_category = std::forward_iterator_tag;
     using reference =
         typename std::conditional<is_const, typename Storage::const_reference,
                                   typename Storage::reference>::type;
     using const_reference = typename Storage::const_reference;
-
     using value_type = typename std::remove_reference<reference>::type;
     using pointer = typename std::add_pointer<value_type>::type;
     using const_pointer = typename std::add_const<pointer>::type;
