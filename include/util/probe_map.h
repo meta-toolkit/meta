@@ -10,14 +10,14 @@
 #ifndef META_UTIL_PROBE_MAP_H_
 #define META_UTIL_PROBE_MAP_H_
 
+#include "util/hash.h"
+#include "util/hash_traits.h"
+#include "util/probing.h"
+
 namespace meta
 {
 namespace util
 {
-
-#include "util/hash.h"
-#include "util/hash_traits.h"
-#include "util/probing.h"
 
 /**
  * An **insert-only** probing hash table.
