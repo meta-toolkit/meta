@@ -168,6 +168,7 @@ if(LIBCXX_LIBRARY)
   target_include_directories(meta-definitions SYSTEM INTERFACE ${LIBCXX_INCLUDE_DIR})
   target_compile_options(meta-definitions INTERFACE ${LIBCXX_OPTIONS})
   target_link_libraries(meta-definitions INTERFACE -L${LIBCXX_LIB_PATH})
+  target_link_libraries(meta-definitions INTERFACE ${LIBCXX_LIBRARY})
 endif()
 
 if(ENABLE_PROFILING)
