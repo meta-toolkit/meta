@@ -31,11 +31,7 @@ namespace util
 template <class T>
 struct key_traits
 {
-#if 0
     static constexpr bool inlineable = std::is_integral<T>::value;
-#else
-    static constexpr bool inlineable = false;
-#endif
 
     constexpr static T sentinel()
     {
