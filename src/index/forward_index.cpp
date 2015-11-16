@@ -27,6 +27,7 @@
 #include "util/mapping.h"
 #include "util/pimpl.tcc"
 #include "util/printing.h"
+#include "util/probe_map.h"
 #include "util/shim.h"
 #include "util/time.h"
 
@@ -64,7 +65,8 @@ class forward_index::impl
      * work, so this function will sort the vocabulary and perform a
      * re-numbering of the old ids.
      */
-    void merge_chunks(size_t num_chunks, util::probe_set<std::string> vocab);
+    void merge_chunks(size_t num_chunks,
+                      util::probe_map<std::string, term_id> vocab);
 
     /**
      * @param config the configuration settings for this index
@@ -275,7 +277,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
     std::mutex vocab_mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs->size()};
 
-    util::probe_set<std::string> vocab;
+    util::probe_map<std::string, term_id> vocab;
     bool exceeded_budget = false;
     auto task = [&](size_t chunk_id)
     {
@@ -328,9 +330,9 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
                 {
                     auto it = vocab.find(count.first);
                     if (it == vocab.end())
-                        it = vocab.insert(count.first);
+                        it = vocab.emplace(count.first, term_id{vocab.size()});
 
-                    pd_counts.emplace_back(term_id{it.index()}, count.second);
+                    pd_counts.emplace_back(it->value(), count.second);
                 }
 
                 if (!exceeded_budget && vocab.bytes_used() > ram_budget)
@@ -366,22 +368,27 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
     merge_chunks(num_threads, std::move(vocab));
 }
 
-void forward_index::impl::merge_chunks(size_t num_chunks,
-                                       util::probe_set<std::string> vocab)
+void forward_index::impl::merge_chunks(
+    size_t num_chunks, util::probe_map<std::string, term_id> vocab)
 {
-    auto keys = vocab.extract_keys();
-    // vocab is now empty, but has enough space for the vocabulary
+    std::vector<std::string> keys(vocab.size());
 
+    for (const auto& pr : vocab)
+        keys[pr.value()] = pr.key();
+
+    vocab.clear();
+    // vocab is now empty, but has enough space for the vocabulary
     {
         // we now create a new vocab with the keys in sorted order
         vocabulary_map_writer writer{idx_->index_name() + "/"
                                      + idx_->impl_->files[TERM_IDS_MAPPING]};
         auto sorted_keys = keys;
         std::sort(sorted_keys.begin(), sorted_keys.end());
+        auto id = 0_tid;
         for (const auto& key : sorted_keys)
         {
             // in memory vocab
-            vocab.insert(key);
+            vocab.emplace(key, id++);
 
             // on disk vocab
             writer.insert(key);
@@ -444,7 +451,7 @@ void forward_index::impl::merge_chunks(size_t num_chunks,
             const auto& key = keys.at(count.first);
             auto it = vocab.find(key);
             assert(it != vocab.end());
-            counts.emplace_back(term_id{it.index()}, count.second);
+            counts.emplace_back(it->value(), count.second);
         }
 
         // set the new counts and write to the postings file
@@ -475,7 +482,6 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
         {
             auto doc = docs->next();
             progress(doc.id());
-
 
             uint64_t num_unique = 0;
             double length = 0;
