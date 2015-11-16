@@ -52,12 +52,10 @@ class kv_pair
         return value_.get();
     }
 
-#if 0
     operator std::pair<K, V>() const
     {
         return {key_.get(), value_.get()};
     }
-#endif
 
   private:
     std::reference_wrapper<const K> key_;
