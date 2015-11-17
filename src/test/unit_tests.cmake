@@ -65,3 +65,7 @@ set_tests_properties(filesystem PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
 add_test(features ${UNIT_TEST_EXE} features)
 set_tests_properties(features PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+add_test(probing ${UNIT_TEST_EXE} probing)
+set_tests_properties(probing PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
