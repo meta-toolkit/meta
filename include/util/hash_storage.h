@@ -656,7 +656,7 @@ class inline_key_storage
 
     bool occupied(std::size_t idx) const
     {
-        return !equal(table_[idx], key_traits<T>::sentinel());
+        return !this->equal(table_[idx], key_traits<T>::sentinel());
     }
 
     const_reference operator[](std::size_t idx) const
@@ -704,7 +704,7 @@ class inline_key_storage
 
         for (std::size_t idx = 0; idx < temptable.size(); ++idx)
         {
-            if (!equal(temptable[idx], key_traits<T>::sentinel()))
+            if (!this->equal(temptable[idx], key_traits<T>::sentinel()))
                 table_[this->get_idx(temptable[idx])]
                     = std::move(temptable[idx]);
         }
@@ -769,7 +769,7 @@ class inline_key_value_storage
 
     bool occupied(std::size_t idx) const
     {
-        return !equal(table_[idx].first, key_traits<K>::sentinel());
+        return !this->equal(table_[idx].first, key_traits<K>::sentinel());
     }
 
     const_reference operator[](std::size_t idx) const
@@ -822,7 +822,7 @@ class inline_key_value_storage
 
         for (std::size_t i = 0; i < temptable.size(); ++i)
         {
-            if (!equal(temptable[i].first, key_traits<K>::sentinel()))
+            if (!this->equal(temptable[i].first, key_traits<K>::sentinel()))
                 table_[this->get_idx(temptable[i].first)]
                     = std::move(temptable[i]);
         }
@@ -877,7 +877,7 @@ class inline_key_external_value_storage
 
     bool occupied(std::size_t idx) const
     {
-        return !equal(table_[idx].first, key_traits<K>::sentinel());
+        return !this->equal(table_[idx].first, key_traits<K>::sentinel());
     }
 
     const_reference operator[](std::size_t idx) const
@@ -936,7 +936,7 @@ class inline_key_external_value_storage
 
         for (std::size_t i = 0; i < temptable.size(); ++i)
         {
-            if (!equal(temptable[i].first, key_traits<K>::sentinel()))
+            if (!this->equal(temptable[i].first, key_traits<K>::sentinel()))
                 table_[this->get_idx(temptable[i].first)]
                     = std::move(temptable[i]);
         }
