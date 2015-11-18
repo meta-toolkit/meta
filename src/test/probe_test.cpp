@@ -41,6 +41,20 @@ void count_unique(Set& set, const std::vector<T>& tokens)
     ASSERT(gold_sorted == set_sorted);
 }
 
+// exercise the const versions of functions
+template <class Map, class K>
+void compare(const Map& map, const std::unordered_map<K, uint64_t>& gold)
+{
+    using value_type = typename std::unordered_map<K, uint64_t>::value_type;
+    for (const auto& pr : gold)
+    {
+        auto it = map.find(pr.first);
+        ASSERT_EQUAL(it->value(), pr.second);
+        ASSERT(static_cast<value_type>(*it) == pr);
+    }
+    ASSERT_EQUAL(map.size(), gold.size());
+}
+
 template <class Map, class K>
 void count(Map& map, const std::vector<K>& tokens)
 {
@@ -64,6 +78,8 @@ void count(Map& map, const std::vector<K>& tokens)
     std::sort(gold_sorted.begin(), gold_sorted.end(), comp);
     std::sort(map_sorted.begin(), map_sorted.end(), comp);
     ASSERT(gold_sorted == map_sorted);
+
+    compare(map, gold);
 }
 
 int string_tests()

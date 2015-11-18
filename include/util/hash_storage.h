@@ -53,9 +53,10 @@ class kv_pair
         return value_.get();
     }
 
-    operator std::pair<K, V>() const
+    template <class K1, class V1>
+    operator std::pair<K1, V1>() const
     {
-        return {key_.get(), value_.get()};
+        return {key(), value()};
     }
 
   private:
@@ -185,52 +186,15 @@ class key_value_storage_iterator
     constexpr static bool is_const = std::is_const<Storage>::value;
     using difference_type = std::ptrdiff_t;
     using iterator_category = std::forward_iterator_tag;
-    using reference =
-        typename std::conditional<is_const, typename Storage::const_reference,
-                                  typename Storage::reference>::type;
-    using const_reference = typename Storage::const_reference;
-    using value_type = typename std::remove_reference<reference>::type;
+    using value_type =
+        typename std::conditional<is_const, typename Storage::const_value_type,
+                                  typename Storage::value_type>::type;
+    using const_value_type = typename std::add_const<value_type>::type;
+    using reference = typename std::add_lvalue_reference<value_type>::type;
+    using const_reference =
+        typename std::add_lvalue_reference<const_value_type>::type;
     using pointer = typename std::add_pointer<value_type>::type;
-    using const_pointer = typename std::add_const<pointer>::type;
-
-    class proxy
-    {
-      public:
-        proxy(reference ref) : ref_{ref}
-        {
-            // nothing
-        }
-
-        pointer operator->()
-        {
-            return &ref_;
-        }
-
-        const_pointer operator->() const
-        {
-            return &ref_;
-        }
-
-      private:
-        reference ref_;
-    };
-
-    class const_proxy
-    {
-      public:
-        const_proxy(const_reference ref) : ref_{ref}
-        {
-            // nothing
-        }
-
-        const_pointer operator->() const
-        {
-            return &ref_;
-        }
-
-      private:
-        const_reference ref_;
-    };
+    using const_pointer = typename std::add_pointer<const_value_type>::type;
 
     key_value_storage_iterator(Storage& stor)
         : table_{stor}, idx_{stor.capacity()}
@@ -284,7 +248,7 @@ class key_value_storage_iterator
     /**
      * @return the pair pointed to by this iterator
      */
-    const const_reference& operator*() const
+    const_reference operator*() const
     {
         assert(pair_);
         return *pair_;
@@ -293,7 +257,7 @@ class key_value_storage_iterator
     /**
      * @return the pair pointed to by this iterator
      */
-    typename std::enable_if<!is_const, reference&>::type operator*()
+    reference operator*()
     {
         assert(pair_);
         return *pair_;
@@ -303,18 +267,18 @@ class key_value_storage_iterator
      * @return a proxy that acts like a pointer to the conceptual pair
      * stored in the table
      */
-    const_proxy operator->() const
+    const_pointer operator->() const
     {
-        return {table_.get()[idx_]};
+        return &*pair_;
     }
 
     /**
      * @return a proxy that acts like a pointer to the conceptual pair
      * stored in the table
      */
-    typename std::enable_if<!is_const, proxy>::type operator->()
+    pointer operator->()
     {
-        return {table_.get()[idx_]};
+        return &*pair_;
     }
 
     /**
@@ -343,7 +307,7 @@ class key_value_storage_iterator
     std::size_t idx_;
 
     /// The buffered pair
-    util::optional<reference> pair_;
+    util::optional<value_type> pair_;
 };
 
 template <class Storage>
@@ -361,20 +325,12 @@ class storage_base
     using hash_type = typename storage_traits<Derived>::hash_type;
     using equal_type = typename storage_traits<Derived>::equal_type;
 
-    template <class U = Derived>
-    typename std::enable_if<!std::is_same<typename U::iterator,
-                                          typename U::const_iterator>::value,
-                            iterator>::type
-    begin()
+    iterator begin()
     {
         return {as_derived(), 0};
     }
 
-    template <class U = Derived>
-    typename std::enable_if<!std::is_same<typename U::iterator,
-                                          typename U::const_iterator>::value,
-                            iterator>::type
-    end()
+    iterator end()
     {
         return {as_derived()};
     }
@@ -478,11 +434,7 @@ class storage_base
      * @return an iterator to the key, if it exists, or to the end if it
      * doesn't
      */
-    template <class U = storage_base>
-    typename std::enable_if<!std::is_same<typename U::const_iterator,
-                                          typename U::iterator>::value,
-                            iterator>::type
-    find(const key_type& key)
+    iterator find(const key_type& key)
     {
         auto idx = get_idx(key);
 
@@ -756,8 +708,8 @@ class inline_key_value_storage
                                                    KeyEqual>>
 {
   public:
-    using reference = kv_pair<K, V>;
-    using const_reference = kv_pair<K, const V>;
+    using value_type = kv_pair<K, V>;
+    using const_value_type = kv_pair<K, const V>;
 
     inline_key_value_storage(std::size_t capacity)
         : table_(capacity, std::make_pair(key_traits<K>::sentinel(),
@@ -772,13 +724,13 @@ class inline_key_value_storage
         return !this->equal(table_[idx].first, key_traits<K>::sentinel());
     }
 
-    const_reference operator[](std::size_t idx) const
+    const_value_type operator[](std::size_t idx) const
     {
         const auto& pr = table_[idx];
         return {pr.first, pr.second};
     }
 
-    reference operator[](std::size_t idx)
+    value_type operator[](std::size_t idx)
     {
         auto& pr = table_[idx];
         return {pr.first, pr.second};
@@ -865,8 +817,8 @@ class inline_key_external_value_storage
                                                             Hash, KeyEqual>>
 {
   public:
-    using reference = kv_pair<K, V>;
-    using const_reference = kv_pair<K, const V>;
+    using value_type = kv_pair<K, V>;
+    using const_value_type = kv_pair<K, const V>;
 
     inline_key_external_value_storage(std::size_t capacity)
         : table_(capacity,
@@ -880,13 +832,13 @@ class inline_key_external_value_storage
         return !this->equal(table_[idx].first, key_traits<K>::sentinel());
     }
 
-    const_reference operator[](std::size_t idx) const
+    const_value_type operator[](std::size_t idx) const
     {
         const auto& pr = table_[idx];
         return {pr.first, values_[pr.second]};
     }
 
-    reference operator[](std::size_t idx)
+    value_type operator[](std::size_t idx)
     {
         auto& pr = table_[idx];
         return {pr.first, values_[pr.second]};
@@ -978,8 +930,8 @@ class external_key_value_storage
                                                      Hash, KeyEqual>>
 {
   public:
-    using reference = kv_pair<K, V>;
-    using const_reference = kv_pair<K, const V>;
+    using value_type = kv_pair<K, V>;
+    using const_value_type = kv_pair<K, const V>;
 
     external_key_value_storage(std::size_t capacity) : table_(capacity, 0)
     {
@@ -991,13 +943,13 @@ class external_key_value_storage
         return table_[idx] != 0;
     }
 
-    const_reference operator[](std::size_t idx) const
+    const_value_type operator[](std::size_t idx) const
     {
         const auto& pr = storage_[table_[idx] - 1];
         return {pr.first, pr.second};
     }
 
-    reference operator[](std::size_t idx)
+    value_type operator[](std::size_t idx)
     {
         auto& pr = storage_[table_[idx] - 1];
         return {pr.first, pr.second};
