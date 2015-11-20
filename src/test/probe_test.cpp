@@ -10,10 +10,10 @@
 #include <unordered_map>
 #include <vector>
 
+#include "hashing/probe_map.h"
+#include "hashing/probe_set.h"
 #include "io/filesystem.h"
 #include "test/probe_test.h"
-#include "util/probe_map.h"
-#include "util/probe_set.h"
 
 namespace meta
 {

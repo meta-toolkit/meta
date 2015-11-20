@@ -1,5 +1,5 @@
 /**
- * @file probe_map.h
+ * @file probe_set.h
  * @author Chase Geigle
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -7,12 +7,12 @@
  * project.
  */
 
-#ifndef META_UTIL_PROBE_MAP_H_
-#define META_UTIL_PROBE_MAP_H_
+#ifndef META_UTIL_PROBE_SET_H_
+#define META_UTIL_PROBE_SET_H_
 
-#include "util/hash.h"
-#include "util/hash_traits.h"
-#include "util/probing.h"
+#include "hashing/hash.h"
+#include "hashing/hash_traits.h"
+#include "hashing/probing.h"
 
 namespace meta
 {
@@ -20,11 +20,14 @@ namespace util
 {
 
 /**
- * An **insert-only** probing hash table.
+ * An **insert-only** probing hash set.
  *
- * The behavior of the map is configurable via the template parameters:
+ * The primary use case for this is for storing in-memory chunks of
+ * postings data during indexing, but it could easily be used in other
+ * places.
+ *
+ * The behavior of the set is configurable via the template parameters:
  * - Key: the data type to be stored, which must have a valid hash function
- * - Value: the data type to be mapped to
  * - ProbingStrategy: The strategy to use when probing the table (defaults
  *   to probing::binary)
  * - ResizingRatio: The ratio (> 1) to increase the table size by when
@@ -33,10 +36,10 @@ namespace util
  * - KeyEqual: The comparator to use on keys to determine equality
  *   (defaults to std::equal_to<Key>)
  */
-template <class Key, class Value, class ProbingStrategy = probing::binary,
+template <class Key, class ProbingStrategy = probing::binary,
           class Hash = hash<>, class KeyEqual = std::equal_to<Key>,
-          class Traits = hash_traits<kv_pair<Key, Value>>>
-class probe_map
+          class Traits = hash_traits<Key>>
+class probe_set
     : private Traits::template storage_type<ProbingStrategy, Hash, KeyEqual>
 {
   public:
@@ -46,6 +49,7 @@ class probe_map
     using typename storage_type::iterator;
     using typename storage_type::const_iterator;
 
+    using storage_type::storage_type;
     using storage_type::begin;
     using storage_type::end;
     using storage_type::max_load_factor;
@@ -59,58 +63,20 @@ class probe_map
     using storage_type::capacity;
     using storage_type::clear;
     using storage_type::bytes_used;
+    using storage_type::extract_keys;
 
-    probe_map() : storage_type{8}
+    probe_set() : storage_type{8}
     {
         // nothing
     }
 
-    iterator insert(const std::pair<Key, Value>& pr)
+    /**
+     * @param key a reference to the key to be inserted into the table
+     * @return an iterator to the item inserted
+     */
+    iterator insert(const Key& key)
     {
-        return emplace(pr);
-    }
-
-    iterator insert(const Key& key, const Value& value)
-    {
-        return emplace(key, value);
-    }
-
-    Value& operator[](const Key& key)
-    {
-        auto it = find(key);
-
-        if (it == end())
-            it = emplace(key, Value{});
-
-        return it->value();
-    }
-
-    Value& operator[](Key&& key)
-    {
-        auto it = find(key);
-
-        if (it == end())
-            it = emplace(std::move(key), Value{});
-
-        return it->value();
-    }
-
-    const Value& at(const Key& key) const
-    {
-        auto it = find(key);
-        if (it == end())
-            throw std::out_of_range{"invalid key"};
-
-        return it->value();
-    }
-
-    Value& at(const Key& key)
-    {
-        auto it = find(key);
-        if (it == end())
-            throw std::out_of_range{"invalid key"};
-
-        return it->value();
+        return emplace(key);
     }
 };
 }

@@ -10,11 +10,12 @@
 #define META_SVM_WRAPPER_H_
 
 #include <unordered_map>
+
 #include "classify/classifier_factory.h"
 #include "classify/classifier/classifier.h"
+#include "hashing/hash.h"
 #include "index/forward_index.h"
 #include "meta.h"
-#include "util/hash.h"
 
 namespace meta
 {

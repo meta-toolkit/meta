@@ -18,10 +18,10 @@
 #include <utility>
 #include <vector>
 
+#include "hashing/probe_set.h"
 #include "index/chunk.h"
 #include "index/postings_buffer.h"
 #include "util/optional.h"
-#include "util/probe_set.h"
 
 namespace meta
 {

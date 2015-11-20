@@ -8,6 +8,7 @@
 #include "corpus/corpus_factory.h"
 #include "corpus/libsvm_corpus.h"
 #include "cpptoml.h"
+#include "hashing/probe_map.h"
 #include "index/chunk_reader.h"
 #include "index/disk_index_impl.h"
 #include "index/forward_index.h"
@@ -27,7 +28,6 @@
 #include "util/mapping.h"
 #include "util/pimpl.tcc"
 #include "util/printing.h"
-#include "util/probe_map.h"
 #include "util/shim.h"
 #include "util/time.h"
 

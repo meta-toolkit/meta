@@ -12,8 +12,9 @@
 #include "classify/classifier/binary_classifier.h"
 #include "classify/classifier_factory.h"
 #include "classify/classifier/online_classifier.h"
+
+#include "hashing/hash.h"
 #include "meta.h"
-#include "util/hash.h"
 
 namespace meta
 {

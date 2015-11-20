@@ -12,9 +12,10 @@
 
 #include <unordered_map>
 #include <sstream>
-#include "meta.h"
+
+#include "hashing/hash.h"
 #include "lm/sentence.h"
-#include "util/hash.h"
+#include "meta.h"
 
 namespace meta
 {

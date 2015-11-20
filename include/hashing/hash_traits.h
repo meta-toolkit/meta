@@ -11,7 +11,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "util/hash_storage.h"
+#include "hashing/hash_storage.h"
 
 namespace meta
 {

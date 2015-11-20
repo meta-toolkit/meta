@@ -10,7 +10,8 @@
 #include <deque>
 #include <vector>
 #include <string>
-#include "util/hash.h"
+
+#include "hashing/hash.h"
 
 namespace meta
 {

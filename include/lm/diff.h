@@ -12,9 +12,10 @@
 
 #include <unordered_map>
 #include <unordered_set>
+
 #include "cpptoml.h"
 #include "lm/language_model.h"
-#include "util/hash.h"
+#include "hashing/hash.h"
 
 namespace meta
 {
