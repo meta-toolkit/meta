@@ -1,8 +1,10 @@
 /**
- * @file online-classify.cpp
+ * @file online_classify.cpp
+ * @author Chase Geigle
  */
 
 #include <iostream>
+
 #include "classify/batch_training.h"
 #include "classify/classifier_factory.h"
 #include "classify/classifier/online_classifier.h"

@@ -1,3 +1,8 @@
+/**
+ * @file lda_topics.cpp
+ * @author Chase Geigle
+ */
+
 #include <iostream>
 #include <fstream>
 #include <string>
