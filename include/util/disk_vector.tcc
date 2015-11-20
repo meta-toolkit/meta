@@ -48,7 +48,7 @@ disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
     start_ = (T*)mmap(nullptr, sizeof(T) * size_, PROT_READ | PROT_WRITE,
                       MAP_SHARED, file_desc_, 0);
 
-    if (start_ == nullptr)
+    if (start_ == MAP_FAILED)
         throw disk_vector_exception{"error memory-mapping the file " + path_};
 }
 
