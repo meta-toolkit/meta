@@ -16,6 +16,6 @@ ExternalProject_Add(breast-cancer
   BUILD_COMMAND ""
   INSTALL_COMMAND "")
 
-add_executable(unit-test unit-test.cpp)
+add_executable(unit-test unit_test.cpp)
 add_dependencies(unit-test ceeaus breast-cancer)
 target_link_libraries(unit-test meta-testing)
