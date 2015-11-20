@@ -39,7 +39,11 @@ disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
         }
     }
     else
+    {
         size_ = actual_size / sizeof(T);
+        if (size_ == 0)
+            throw disk_vector_exception{"cannot map empty file " + path};
+    }
 
     start_ = (T*)mmap(nullptr, sizeof(T) * size_, PROT_READ | PROT_WRITE,
                       MAP_SHARED, file_desc_, 0);
