@@ -7,14 +7,14 @@
  * project.
  */
 
-#ifndef META_UTIL_PROBING_H_
-#define META_UTIL_PROBING_H_
+#ifndef META_HASHING_PROBING_H_
+#define META_HASHING_PROBING_H_
 
 #include <cstdint>
 
 namespace meta
 {
-namespace util
+namespace hashing
 {
 namespace probing
 {

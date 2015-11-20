@@ -7,8 +7,8 @@
  * project.
  */
 
-#ifndef META_UTIL_HASH_H_
-#define META_UTIL_HASH_H_
+#ifndef META_HASHING_HASH_H_
+#define META_HASHING_HASH_H_
 
 #include <array>
 #include <cassert>
@@ -17,7 +17,7 @@
 
 namespace meta
 {
-namespace util
+namespace hashing
 {
 
 namespace detail
@@ -544,7 +544,7 @@ inline uint64_t get_process_seed()
  * @see
  * http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3980.html#seeding
  */
-template <class HashAlgorithm = util::murmur_hash<sizeof(std::size_t)>>
+template <class HashAlgorithm = hashing::murmur_hash<sizeof(std::size_t)>>
 struct hash
 {
     using result_type = typename HashAlgorithm::result_type;
@@ -554,7 +554,7 @@ struct hash
     {
         auto seed = detail::get_process_seed();
         HashAlgorithm h(seed);
-        using util::hash_append;
+        using hashing::hash_append;
         hash_append(h, t);
         return static_cast<result_type>(h);
     }

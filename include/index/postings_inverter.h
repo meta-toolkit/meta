@@ -79,7 +79,7 @@ class postings_inverter
         void flush_chunk();
 
         /// Current in-memory chunk
-        util::probe_set<postings_buffer_type> pdata_;
+        hashing::probe_set<postings_buffer_type> pdata_;
 
         /// Current size of the in-memory chunk
         uint64_t chunk_size_;
