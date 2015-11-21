@@ -222,6 +222,7 @@ void forward_index::create_index(const cpptoml::table& config)
             auto inv_idx = make_index<inverted_index>(config);
 
             fwd_impl_->create_uninverted_metadata(inv_idx->index_name());
+            impl_->load_labels();
             // RAM budget is given in MB
             fwd_impl_->uninvert(*inv_idx, ram_budget * 1024 * 1024);
             impl_->load_term_id_mapping();
@@ -253,7 +254,6 @@ void forward_index::create_index(const cpptoml::table& config)
     impl_->load_label_id_mapping();
     fwd_impl_->load_postings();
     impl_->initialize_metadata();
-    impl_->load_labels();
 
     {
         std::ofstream unique_terms_file{index_name() + "/corpus.uniqueterms"};
