@@ -247,6 +247,9 @@ void forward_index::create_index(const cpptoml::table& config)
                                          ram_budget * 1024 * 1024);
                 impl_->load_term_id_mapping();
                 fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
+
+                // reload the label file to ensure it was flushed
+                impl_->load_labels();
             }
         }
     }
@@ -502,6 +505,9 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
         // libsvm_parser::counts() function
         ++total_unique_terms_;
     }
+
+    // reload the label file to ensure it was flushed
+    idx_->impl_->load_labels();
 
     LOG(info) << "Created compressed postings file ("
               << printing::bytes_to_units(filesystem::file_size(filename))

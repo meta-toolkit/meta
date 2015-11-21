@@ -146,6 +146,11 @@ void disk_index::disk_index_impl::initialize_metadata()
 
 void disk_index::disk_index_impl::load_labels(uint64_t num_docs)
 {
+    // clear the current label set; this is so that the disk vector can
+    // flush via munmap() if needed
+    labels_ = util::nullopt;
+
+    // load in the new mapping
     labels_ = util::disk_vector<label_id>{index_name_ + files[DOC_LABELS],
                                           num_docs};
 }
