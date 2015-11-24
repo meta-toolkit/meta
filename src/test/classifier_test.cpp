@@ -271,7 +271,7 @@ int run_tests(const std::string& type)
         num_failed
             += testing::run_test("ovo-sgd-split-" + type, [&]()
                                  {
-                                     check_split(f_idx, *hinge_sgd_ovo, 0.91);
+                                     check_split(f_idx, *hinge_sgd_ovo, 0.904);
                                      check_split(f_idx, *perc_sgd_ovo, 0.88);
                                  });
 
@@ -415,7 +415,7 @@ int run_load_save_tests()
         num_failed += testing::run_test("ovo-sgd-save-load", [&]()
                                         {
                                             run_save_load_single(
-                                                f_idx, *hinge_sgd_ovo, 0.91);
+                                                f_idx, *hinge_sgd_ovo, 0.904);
                                         });
 
         num_failed += testing::run_test(

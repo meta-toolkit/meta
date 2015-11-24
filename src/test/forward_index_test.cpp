@@ -51,7 +51,7 @@ template <class Index>
 void check_ceeaus_expected_fwd(Index& idx)
 {
     ASSERT_EQUAL(idx.num_docs(), 1008ul);
-    ASSERT_EQUAL(idx.unique_terms(), 3944ul);
+    ASSERT_EQUAL(idx.unique_terms(), 4224ul);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};
     uint64_t size;
