@@ -1,4 +1,5 @@
 set -v
+brew update
 brew install icu4c
-brew install cmake
+brew outdated cmake || brew upgrade cmake
 set +v
