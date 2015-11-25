@@ -79,15 +79,18 @@ if (NOT ICU_FOUND OR ICU_VERSION VERSION_LESS 56.1)
 
     add_library(icudata IMPORTED STATIC)
     set_target_properties(icudata PROPERTIES IMPORTED_LOCATION
-      ${INSTALL_DIR}/lib/libicudata.a)
+      ${ICU_EP_PREFIX}/lib/libicudata.a)
+    add_dependencies(icudata ExternalICU)
 
     add_library(icui18n IMPORTED STATIC)
     set_target_properties(icui18n PROPERTIES IMPORTED_LOCATION
-      ${INSTALL_DIR}/lib/libicui18n.a)
+      ${ICU_EP_PREFIX}/lib/libicui18n.a)
+    add_dependencies(icui18n ExternalICU)
 
     add_library(icuuc IMPORTED STATIC)
     set_target_properties(icuuc PROPERTIES IMPORTED_LOCATION
-      ${INSTALL_DIR}/lib/libicuuc.a)
+      ${ICU_EP_PREFIX}/lib/libicuuc.a)
+    add_dependencies(icuuc ExternalICU)
 
     set(ICU_LIBRARIES icui18n icuuc icudata)
     set(ICU_IS_EXTERNAL TRUE)
@@ -101,7 +104,6 @@ message("-- ICU libraries: ${ICU_LIBRARIES}")
 
 add_library(icu INTERFACE)
 if (ICU_IS_EXTERNAL)
-  add_dependencies(icu ExternalICU)
   file(MAKE_DIRECTORY ${ICU_INCLUDE_DIRS})
 endif()
 target_link_libraries(icu INTERFACE ${ICU_LIBRARIES})
