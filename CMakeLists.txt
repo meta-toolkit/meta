@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.2.0)
 project(meta)
 
 option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
@@ -61,20 +61,21 @@ if (NOT ICU_FOUND OR ICU_VERSION VERSION_LESS 56.1)
       set(ICU_MAKE_EXTRA_FLAGS "-j${CORES}")
     endif()
 
+    set(ICU_EP_PREFIX ${PROJECT_SOURCE_DIR}/deps/icu)
+
     ExternalProject_Add(ExternalICU
-      PREFIX ${PROJECT_SOURCE_DIR}/deps/icu
+      PREFIX ${ICU_EP_PREFIX}
       URL http://download.icu-project.org/files/icu4c/56.1/icu4c-56_1-src.tgz
       URL_HASH MD5=c4a2d71ff56aec5ebfab2a3f059be99d
-      CONFIGURE_COMMAND <SOURCE_DIR>/source/runConfigureICU ${ICU_PLATFORM}
+      CONFIGURE_COMMAND ${ICU_EP_PREFIX}/src/ExternalICU/source/runConfigureICU ${ICU_PLATFORM}
       --disable-shared --enable-static --disable-dyload --disable-extras
       --disable-tests --disable-samples
       --prefix=<INSTALL_DIR>
       BUILD_COMMAND make ${ICU_MAKE_EXTRA_FLAGS}
       INSTALL_COMMAND make install
-      BUILD_BYPRODUCTS <INSTALL_DIR>/lib/libicudata.a;<INSTALL_DIR>/lib/libicui18n.a;<INSTALL_DIR>/lib/libicuuc.a
+      BUILD_BYPRODUCTS ${ICU_EP_PREFIX}/lib/libicudata.a;${ICU_EP_PREFIX}/lib/libicui18n.a;${ICU_EP_PREFIX}/lib/libicuuc.a
     )
-    ExternalProject_Get_Property(ExternalICU INSTALL_DIR)
-    set(ICU_INCLUDE_DIRS ${INSTALL_DIR}/include)
+    set(ICU_INCLUDE_DIRS ${ICU_EP_PREFIX}/include)
 
     add_library(icudata IMPORTED STATIC)
     set_target_properties(icudata PROPERTIES IMPORTED_LOCATION
