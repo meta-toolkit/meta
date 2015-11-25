@@ -18,4 +18,4 @@ endif()
 add_library(meta-corpus ${CORPUS_SOURCES})
 
 # some corpus classes use io::parser
-target_link_libraries(meta-corpus meta-io)
+target_link_libraries(meta-corpus meta-io meta-utf)
