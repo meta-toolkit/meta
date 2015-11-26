@@ -12,6 +12,7 @@ include(CheckCXXSourceCompiles)
 include(CheckCXXSourceRuns)
 include(ExternalProject)
 include(FindZLIB)
+include(cmake/FindOrBuildICU.cmake)
 
 # Check if there is no build type set. If meta itself is the root project,
 # compile it in release mode instead. If we aren't the root project, just
@@ -26,90 +27,13 @@ include_directories(include/)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
-find_package(ICU 56.1 COMPONENTS data i18n uc)
 
-if (NOT ICU_FOUND OR ICU_VERSION VERSION_LESS 56.1)
-  message("-- ICU version ${ICU_VERSION} is too old; attempting to build ICU...")
-  if (WIN32)
-    # not going to attempt to build ICU if we're on Windows for now
-    # probably could, but it's more trouble than it's worth I think
-    message("-- ICU building not supported on Windows.")
-    if (MINGW)
-      message(FATAL_ERROR "   -- If on MSYS2; please install the icu package via pacman")
-    else()
-      message(FATAL_ERROR "   -- Please download the latest ICU binaries from http://site.icu-project.org/download")
-    endif()
-  elseif(UNIX)
-
-    # determine platform for runConfigureICU
-    if (APPLE)
-      set(ICU_PLATFORM "MacOSX")
-    else()
-      set(ICU_PLATFORM "Linux")
-    endif()
-
-    # determine a reasonable number of threads to build ICU with
-    include(ProcessorCount)
-    ProcessorCount(CORES)
-    if (NOT CORES EQUAL 0)
-      # limit the number of cores to 4 on travis
-      if (CORES GREATER 4)
-        if ($ENV{TRAVIS})
-          set(CORES 4)
-        endif()
-      endif()
-      set(ICU_MAKE_EXTRA_FLAGS "-j${CORES}")
-    endif()
-
-    set(ICU_EP_PREFIX ${PROJECT_SOURCE_DIR}/deps/icu)
-
-    ExternalProject_Add(ExternalICU
-      PREFIX ${ICU_EP_PREFIX}
-      URL http://download.icu-project.org/files/icu4c/56.1/icu4c-56_1-src.tgz
-      URL_HASH MD5=c4a2d71ff56aec5ebfab2a3f059be99d
-      CONFIGURE_COMMAND ${ICU_EP_PREFIX}/src/ExternalICU/source/runConfigureICU ${ICU_PLATFORM}
-      --disable-shared --enable-static --disable-dyload --disable-extras
-      --disable-tests --disable-samples
-      --prefix=<INSTALL_DIR>
-      BUILD_COMMAND make ${ICU_MAKE_EXTRA_FLAGS}
-      INSTALL_COMMAND make install
-      BUILD_BYPRODUCTS ${ICU_EP_PREFIX}/lib/libicudata.a;${ICU_EP_PREFIX}/lib/libicui18n.a;${ICU_EP_PREFIX}/lib/libicuuc.a
-    )
-    set(ICU_INCLUDE_DIRS ${ICU_EP_PREFIX}/include)
-
-    add_library(icudata IMPORTED STATIC)
-    set_target_properties(icudata PROPERTIES IMPORTED_LOCATION
-      ${ICU_EP_PREFIX}/lib/libicudata.a)
-    add_dependencies(icudata ExternalICU)
-
-    add_library(icui18n IMPORTED STATIC)
-    set_target_properties(icui18n PROPERTIES IMPORTED_LOCATION
-      ${ICU_EP_PREFIX}/lib/libicui18n.a)
-    add_dependencies(icui18n ExternalICU)
-
-    add_library(icuuc IMPORTED STATIC)
-    set_target_properties(icuuc PROPERTIES IMPORTED_LOCATION
-      ${ICU_EP_PREFIX}/lib/libicuuc.a)
-    add_dependencies(icuuc ExternalICU)
-
-    set(ICU_LIBRARIES icui18n icuuc icudata)
-    set(ICU_IS_EXTERNAL TRUE)
-  else()
-    message(FATAL_ERROR "-- ICU building not supported for this platform")
-  endif()
-endif()
-
-message("-- ICU include dirs: ${ICU_INCLUDE_DIRS}")
-message("-- ICU libraries: ${ICU_LIBRARIES}")
-
-add_library(icu INTERFACE)
-if (ICU_IS_EXTERNAL)
-  file(MAKE_DIRECTORY ${ICU_INCLUDE_DIRS})
-endif()
-target_link_libraries(icu INTERFACE ${ICU_LIBRARIES})
-target_include_directories(icu SYSTEM INTERFACE ${ICU_INCLUDE_DIRS})
-
-#include_directories(SYSTEM ${ICU_INCLUDE_DIRS})
+# We require Unicode 8 for the unit tests, which was added in ICU 56.1
+FindOrBuildICU(
+  VERSION 56.1
+  URL http://download.icu-project.org/files/icu4c/56.1/icu4c-56_1-src.tgz
+  URL_HASH MD5=c4a2d71ff56aec5ebfab2a3f059be99d
+)
 
 if(ZLIB_FOUND)
   include_directories(SYSTEM ${ZLIB_INCLUDE_DIRS})
