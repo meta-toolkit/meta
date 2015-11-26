@@ -8,7 +8,6 @@
 #include "parser/io/ptb_reader.h"
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"
-#include "utf/utf.h"
 #include "util/shim.h"
 
 namespace meta
