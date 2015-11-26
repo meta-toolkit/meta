@@ -13,12 +13,12 @@
 
 #include "util/optional.h"
 
-#ifndef META_UTIL_HASH_STORAGE_H_
-#define META_UTIL_HASH_STORAGE_H_
+#ifndef META_HASHING_HASH_STORAGE_H_
+#define META_HASHING_HASH_STORAGE_H_
 
 namespace meta
 {
-namespace util
+namespace hashing
 {
 
 template <class T>

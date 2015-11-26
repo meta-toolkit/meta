@@ -10,11 +10,12 @@
 #define META_SVM_WRAPPER_H_
 
 #include <unordered_map>
+
 #include "classify/classifier_factory.h"
 #include "classify/classifier/classifier.h"
+#include "hashing/hash.h"
 #include "index/forward_index.h"
 #include "meta.h"
-#include "util/hash.h"
 
 namespace meta
 {
@@ -108,7 +109,8 @@ class svm_wrapper : public classifier
 
     /** keeps track of which arguments are necessary for which kernel
      * function */
-    const static std::unordered_map<kernel, std::string, util::hash<>> options_;
+    const static std::unordered_map<kernel, std::string, hashing::hash<>>
+        options_;
 
     /** which kernel function to use for this SVM */
     kernel kernel_;
@@ -126,8 +128,8 @@ class svm_wrapper : public classifier
  */
 template <>
 std::unique_ptr<classifier>
-    make_classifier<svm_wrapper>(const cpptoml::table&,
-                                 multiclass_dataset_view training);
+make_classifier<svm_wrapper>(const cpptoml::table&,
+                             multiclass_dataset_view training);
 }
 }
 

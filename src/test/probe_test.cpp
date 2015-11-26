@@ -10,10 +10,10 @@
 #include <unordered_map>
 #include <vector>
 
+#include "hashing/probe_map.h"
+#include "hashing/probe_set.h"
 #include "io/filesystem.h"
 #include "test/probe_test.h"
-#include "util/probe_map.h"
-#include "util/probe_set.h"
 
 namespace meta
 {
@@ -84,7 +84,7 @@ void count(Map& map, const std::vector<K>& tokens)
 
 int string_tests()
 {
-    using namespace util::probing;
+    using namespace hashing::probing;
 
     int num_failed = 0;
 
@@ -98,28 +98,28 @@ int string_tests()
     num_failed
         += testing::run_test("probe-set-linear", [&]()
                              {
-                                 util::probe_set<std::string, linear> set;
+                                 hashing::probe_set<std::string, linear> set;
                                  count_unique(set, tokens);
                              });
 
-    num_failed
-        += testing::run_test("probe-set-linear-nomod", [&]()
-                             {
-                                 util::probe_set<std::string, linear_nomod> set;
-                                 count_unique(set, tokens);
-                             });
+    num_failed += testing::run_test(
+        "probe-set-linear-nomod", [&]()
+        {
+            hashing::probe_set<std::string, linear_nomod> set;
+            count_unique(set, tokens);
+        });
 
     num_failed
         += testing::run_test("probe-set-binary", [&]()
                              {
-                                 util::probe_set<std::string, binary> set;
+                                 hashing::probe_set<std::string, binary> set;
                                  count_unique(set, tokens);
                              });
 
     num_failed
         += testing::run_test("probe-set-quadratic", [&]()
                              {
-                                 util::probe_set<std::string, quadratic> set;
+                                 hashing::probe_set<std::string, quadratic> set;
                                  // quadratic probing only works for power of
                                  // two sizes
                                  set.resize_ratio(2.0);
@@ -129,28 +129,28 @@ int string_tests()
     num_failed += testing::run_test(
         "probe-map-linear", [&]()
         {
-            util::probe_map<std::string, uint64_t, linear> map;
+            hashing::probe_map<std::string, uint64_t, linear> map;
             count(map, tokens);
         });
 
     num_failed += testing::run_test(
         "probe-map-linear-nomod", [&]()
         {
-            util::probe_map<std::string, uint64_t, linear_nomod> map;
+            hashing::probe_map<std::string, uint64_t, linear_nomod> map;
             count(map, tokens);
         });
 
     num_failed += testing::run_test(
         "probe-map-binary", [&]()
         {
-            util::probe_map<std::string, uint64_t, binary> map;
+            hashing::probe_map<std::string, uint64_t, binary> map;
             count(map, tokens);
         });
 
     num_failed += testing::run_test(
         "probe-map-quadratic", [&]()
         {
-            util::probe_map<std::string, uint64_t, quadratic> map;
+            hashing::probe_map<std::string, uint64_t, quadratic> map;
             // quadratic probing only works for power of two sizes
             map.resize_ratio(2.0);
             count(map, tokens);
@@ -161,7 +161,7 @@ int string_tests()
 
 int int_tests()
 {
-    using namespace util::probing;
+    using namespace hashing::probing;
 
     int num_failed = 0;
 
@@ -172,29 +172,31 @@ int int_tests()
     std::copy(std::istream_iterator<uint64_t>(iss),
               std::istream_iterator<uint64_t>(), std::back_inserter(numbers));
 
-    num_failed += testing::run_test("probe-set-linear-inline", [&]()
-                                    {
-                                        util::probe_set<uint64_t, linear> set;
-                                        count_unique(set, numbers);
-                                    });
+    num_failed
+        += testing::run_test("probe-set-linear-inline", [&]()
+                             {
+                                 hashing::probe_set<uint64_t, linear> set;
+                                 count_unique(set, numbers);
+                             });
 
     num_failed
         += testing::run_test("probe-set-linear-nomod-inline", [&]()
                              {
-                                 util::probe_set<uint64_t, linear_nomod> set;
+                                 hashing::probe_set<uint64_t, linear_nomod> set;
                                  count_unique(set, numbers);
                              });
 
-    num_failed += testing::run_test("probe-set-binary-inline", [&]()
-                                    {
-                                        util::probe_set<uint64_t, binary> set;
-                                        count_unique(set, numbers);
-                                    });
+    num_failed
+        += testing::run_test("probe-set-binary-inline", [&]()
+                             {
+                                 hashing::probe_set<uint64_t, binary> set;
+                                 count_unique(set, numbers);
+                             });
 
     num_failed
         += testing::run_test("probe-set-quadratic-inline", [&]()
                              {
-                                 util::probe_set<uint64_t, quadratic> set;
+                                 hashing::probe_set<uint64_t, quadratic> set;
                                  // quadratic probing only works for power of
                                  // two sizes
                                  set.resize_ratio(2.0);
@@ -204,28 +206,28 @@ int int_tests()
     num_failed += testing::run_test(
         "probe-map-linear-inline", [&]()
         {
-            util::probe_map<uint64_t, uint64_t, linear> map;
+            hashing::probe_map<uint64_t, uint64_t, linear> map;
             count(map, numbers);
         });
 
     num_failed += testing::run_test(
         "probe-map-linear-nomod-inline", [&]()
         {
-            util::probe_map<uint64_t, uint64_t, linear_nomod> map;
+            hashing::probe_map<uint64_t, uint64_t, linear_nomod> map;
             count(map, numbers);
         });
 
     num_failed += testing::run_test(
         "probe-map-binary-inline", [&]()
         {
-            util::probe_map<uint64_t, uint64_t, binary> map;
+            hashing::probe_map<uint64_t, uint64_t, binary> map;
             count(map, numbers);
         });
 
     num_failed += testing::run_test(
         "probe-map-quadratic-inline", [&]()
         {
-            util::probe_map<uint64_t, uint64_t, quadratic> map;
+            hashing::probe_map<uint64_t, uint64_t, quadratic> map;
             // quadratic probing only works for power of two sizes
             map.resize_ratio(2.0);
             count(map, numbers);

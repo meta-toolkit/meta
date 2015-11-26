@@ -13,8 +13,8 @@
 #define META_NUMERIC_IDENTIFIER_H_
 
 #include <functional> // for std::hash
+#include "hashing/hash.h"
 #include "util/comparable.h"
-#include "util/hash.h"
 #include "util/string_view.h"
 
 namespace meta

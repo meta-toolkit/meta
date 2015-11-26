@@ -8,6 +8,7 @@
 #include "corpus/corpus_factory.h"
 #include "corpus/libsvm_corpus.h"
 #include "cpptoml.h"
+#include "hashing/probe_map.h"
 #include "index/chunk_reader.h"
 #include "index/disk_index_impl.h"
 #include "index/forward_index.h"
@@ -27,7 +28,6 @@
 #include "util/mapping.h"
 #include "util/pimpl.tcc"
 #include "util/printing.h"
-#include "util/probe_map.h"
 #include "util/shim.h"
 #include "util/time.h"
 
@@ -66,7 +66,7 @@ class forward_index::impl
      * re-numbering of the old ids.
      */
     void merge_chunks(size_t num_chunks,
-                      util::probe_map<std::string, term_id> vocab);
+                      hashing::probe_map<std::string, term_id> vocab);
 
     /**
      * @param config the configuration settings for this index
@@ -277,7 +277,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
     std::mutex vocab_mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs->size()};
 
-    util::probe_map<std::string, term_id> vocab;
+    hashing::probe_map<std::string, term_id> vocab;
     bool exceeded_budget = false;
     auto task = [&](size_t chunk_id)
     {
@@ -369,7 +369,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
 }
 
 void forward_index::impl::merge_chunks(
-    size_t num_chunks, util::probe_map<std::string, term_id> vocab)
+    size_t num_chunks, hashing::probe_map<std::string, term_id> vocab)
 {
     std::vector<std::string> keys(vocab.size());
 

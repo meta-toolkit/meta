@@ -11,6 +11,7 @@
 #define META_STATIC_PROBE_MAP_H_
 
 #include <utility>
+
 #include "lm/lm_node.h"
 #include "lm/token_list.h"
 #include "util/disk_vector.h"
@@ -91,7 +92,7 @@ class static_probe_map
     template <class ForwardIterator>
     uint64_t hash(ForwardIterator begin, ForwardIterator end) const
     {
-        util::murmur_hash<> hasher{seed_};
+        hashing::murmur_hash<> hasher{seed_};
         auto dist = std::distance(begin, end);
         for (; begin != end; ++begin)
             hash_append(hasher, *begin);

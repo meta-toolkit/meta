@@ -7,16 +7,16 @@
  * project.
  */
 
-#ifndef META_UTIL_PROBE_MAP_H_
-#define META_UTIL_PROBE_MAP_H_
+#ifndef META_HASHING_PROBE_MAP_H_
+#define META_HASHING_PROBE_MAP_H_
 
-#include "util/hash.h"
-#include "util/hash_traits.h"
-#include "util/probing.h"
+#include "hashing/hash.h"
+#include "hashing/hash_traits.h"
+#include "hashing/probing.h"
 
 namespace meta
 {
-namespace util
+namespace hashing
 {
 
 /**
@@ -29,7 +29,7 @@ namespace util
  *   to probing::binary)
  * - ResizingRatio: The ratio (> 1) to increase the table size by when
  *   resizing (defaults to std::ratio<3, 2>)
- * - Hash: The hash function to use (defaults to util::hash<>)
+ * - Hash: The hash function to use (defaults to hashing::hash<>)
  * - KeyEqual: The comparator to use on keys to determine equality
  *   (defaults to std::equal_to<Key>)
  */

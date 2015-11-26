@@ -3,19 +3,19 @@
  * @author Chase Geigle
  */
 
-#ifndef META_UTIL_HASH_TRAITS_H_
-#define META_UTIL_HASH_TRAITS_H_
+#ifndef META_HASHING_HASH_TRAITS_H_
+#define META_HASHING_HASH_TRAITS_H_
 
 #include <string>
 #include <limits>
 #include <type_traits>
 #include <utility>
 
-#include "util/hash_storage.h"
+#include "hashing/hash_storage.h"
 
 namespace meta
 {
-namespace util
+namespace hashing
 {
 
 /**

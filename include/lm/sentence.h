@@ -10,7 +10,8 @@
 #include <deque>
 #include <vector>
 #include <string>
-#include "util/hash.h"
+
+#include "hashing/hash.h"
 
 namespace meta
 {
@@ -202,7 +203,7 @@ inline bool operator!=(const sentence& lhs, const sentence& rhs)
 template <class HashAlgorithm>
 void hash_append(HashAlgorithm& h, const sentence& s)
 {
-    using util::hash_append;
+    using hashing::hash_append;
     for (const auto& word : s)
         hash_append(h, word);
     hash_append(h, s.size());
