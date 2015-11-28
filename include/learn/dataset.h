@@ -91,7 +91,7 @@ class dataset
             ForwardIterator end)
         : total_features_{idx->unique_terms()}
     {
-        uint64_t size = std::distance(begin, end);
+        auto size = static_cast<uint64_t>(std::distance(begin, end));
         instances_.reserve(size);
 
         printing::progress progress{" > Loading instances into memory: ", size};
@@ -116,7 +116,7 @@ class dataset
             ForwardIterator end)
         : total_features_{idx->unique_terms()}
     {
-        uint64_t size = std::distance(begin, end);
+        auto size = static_cast<uint64_t>(std::distance(begin, end));
         instances_.reserve(size);
 
         printing::progress progress{" > Loading instances into memory: ", size};
@@ -141,6 +141,21 @@ class dataset
         auto id = 0_inst_id;
         for (; begin != end; ++begin, ++id)
             instances_.emplace_back(id, *begin);
+    }
+
+    /**
+     * Creates an in-memory dataset from a pair of iterators and a
+     * function to convert to a feature_vector.
+     */
+    template <class ForwardIterator, class FeatureVectorFunction>
+    dataset(ForwardIterator begin, ForwardIterator end,
+            size_type total_features, FeatureVectorFunction&& featurizer)
+        : total_features_{total_features}
+    {
+        instances_.reserve(std::distance(begin, end));
+        auto id = 0_inst_id;
+        for (; begin != end; ++begin, ++id)
+            instances_.emplace_back(id, featurizer(*begin));
     }
 
     /**
@@ -202,6 +217,40 @@ class labeled_dataset : public dataset
     using label_type = LabelType;
 
     /**
+     * Creates an in-memory dataset from a forward_index. This loads the
+     * **entire index** into memory, so you should only use this
+     * constructor with small datasets.
+     *
+     * For large datasets (where large is defined as "larger than available
+     * RAM", use one of the constructors that takes a range (or collection)
+     * of document ids to load in to load in just a specific section of the
+     * index.
+     */
+    template <class LabelFunction>
+    labeled_dataset(std::shared_ptr<index::forward_index> idx,
+                    LabelFunction&& labeller)
+        : labeled_dataset(idx,
+                          util::range(doc_id{0}, doc_id{idx->num_docs() - 1}),
+                          std::forward<LabelFunction>(labeller))
+    {
+        // nothing
+    }
+
+    /**
+     * Creates an in-memory dataset from a forward_index, a range of
+     * document identifiers (as collection), and a LabelFunction to assign
+     * labels to document identifiers.
+     */
+    template <class DocIdContainer, class LabelFunction>
+    labeled_dataset(std::shared_ptr<index::forward_index> idx,
+                    DocIdContainer&& dcont, LabelFunction&& labeller)
+        : labeled_dataset(idx, std::begin(dcont), std::end(dcont),
+                          std::forward<LabelFunction>(labeller))
+    {
+        // nothing
+    }
+
+    /**
      * Creates an in-memory dataset from a forward_index and a range of
      * doc_ids, represented as iterators.
      */
@@ -241,6 +290,23 @@ class labeled_dataset : public dataset
         : dataset{begin, end, total_features}, labels_{begin, end}
     {
         // nothing
+    }
+
+    /**
+     * Creates an in-memory dataset from a pair of iterators, a function
+     * to convert to a feature_vector, and a function to obtain a label.
+     */
+    template <class ForwardIterator, class FeatureVectorFunction,
+              class LabelFunction>
+    labeled_dataset(ForwardIterator begin, ForwardIterator end,
+                    size_type total_features,
+                    FeatureVectorFunction&& featurizer,
+                    LabelFunction&& labeller)
+        : dataset(begin, end, total_features,
+                  std::forward<FeatureVectorFunction>(featurizer))
+    {
+        labels_.reserve(size());
+        std::transform(begin, end, std::back_inserter(labels_), labeller);
     }
 
     /**

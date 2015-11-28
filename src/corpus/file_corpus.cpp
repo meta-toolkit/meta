@@ -7,11 +7,14 @@
 #include "io/filesystem.h"
 #include "io/parser.h"
 #include "utf/utf.h"
+#include "util/shim.h"
 
 namespace meta
 {
 namespace corpus
 {
+
+const util::string_view file_corpus::id = "file-corpus";
 
 file_corpus::file_corpus(const std::string& prefix, const std::string& doc_list,
                          std::string encoding)
@@ -77,6 +80,27 @@ metadata::schema file_corpus::schema() const
     schema.insert(schema.begin(),
                   metadata::field_info{"path", metadata::field_type::STRING});
     return schema;
+}
+
+template <>
+std::unique_ptr<corpus> make_corpus<file_corpus>(util::string_view prefix,
+                                                 util::string_view dataset,
+                                                 const cpptoml::table& config)
+{
+    auto encoding = config.get_as<std::string>("encoding").value_or("utf-8");
+
+    auto file_list = config.get_as<std::string>("list");
+    if (!file_list)
+        throw corpus_exception{"list missing from corpus configuration file"};
+
+    // string_view doesn't have operator+ overloads...
+    auto folder = prefix.to_string();
+    folder += "/";
+    folder.append(dataset.data(), dataset.size());
+    folder += "/";
+
+    auto file = folder + *file_list + "-full-corpus.txt";
+    return make_unique<file_corpus>(folder, file, encoding);
 }
 }
 }

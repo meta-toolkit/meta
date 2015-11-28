@@ -4,6 +4,7 @@
  */
 
 #include "test/ir_eval_test.h"
+#include "index/eval/rank_correlation.h"
 #include "index/ranker/ranker.h"
 #include "corpus/document.h"
 
@@ -13,9 +14,9 @@ namespace testing
 {
 
 void check_query(index::ir_eval& eval,
-                 const std::vector<index::search_result>& ranking,
-                 query_id qid, double e_f1, double e_p, double e_r,
-                 double e_avg_p, double e_ndcg,
+                 const std::vector<index::search_result>& ranking, query_id qid,
+                 double e_f1, double e_p, double e_r, double e_avg_p,
+                 double e_ndcg,
                  uint64_t num_docs = std::numeric_limits<uint64_t>::max())
 {
     auto f1 = eval.f1(ranking, qid, num_docs);
@@ -37,8 +38,7 @@ int ir_eval_bounds()
         {
             filesystem::remove_all("ceeaus-inv");
             auto file_cfg = create_config("file");
-            auto idx
-                = index::make_index<index::inverted_index>(*file_cfg);
+            auto idx = index::make_index<index::inverted_index>(*file_cfg);
             index::okapi_bm25 ranker;
             index::ir_eval eval{*file_cfg};
             // sanity test bounds
@@ -114,11 +114,12 @@ int ir_eval_results()
             results.emplace_back(doc_id{35}, 0.3);  // relevant
             results.emplace_back(doc_id{38}, 0.2);  // relevant
             results.emplace_back(doc_id{754}, 0.1); // relevant
-            auto avg_p_5 = (1.0 + 2.0 / 3.0 + 3.0 / 4.0 + 4.0 / 5.0 + 5.0 / 6.0)
-                           / 5.0;
+            auto avg_p_5
+                = (1.0 + 2.0 / 3.0 + 3.0 / 4.0 + 4.0 / 5.0 + 5.0 / 6.0) / 5.0;
             auto avg_p = (1.0 + 2.0 / 3.0 + 3.0 / 4.0 + 4.0 / 5.0 + 5.0 / 6.0
                           + 6.0 / 7.0 + 7.0 / 8.0 + 8.0 / 9.0 + 9.0 / 10.0
-                          + 10.0 / 11.0) / 10.0;
+                          + 10.0 / 11.0)
+                         / 10.0;
             auto dcg_5 = 1.0 + 1.0 / std::log2(4.0) + 1.0 / std::log2(5.0)
                          + 1.0 / std::log2(6.0); // 4 terms, 1 zero term
             auto dcg = dcg_5 + 1.0 / std::log2(7.0) + 1.0 / std::log2(8.0)
@@ -138,12 +139,140 @@ int ir_eval_results()
         });
 }
 
+// the magic numbers here are validated with an R implementation
+int rank_correlation_tests()
+{
+    int num_failed = 0;
+
+    num_failed += testing::run_test(
+        "rank-correlation-throw-nonequal-size", []()
+        {
+            std::vector<double> rank_x = {1, 2, 3};
+            std::vector<double> rank_y = {1, 2, 3, 4};
+
+            try
+            {
+                index::rank_correlation corr{rank_x, rank_y};
+                FAIL("rank_correlation ctor should have thrown");
+            }
+            catch (const index::rank_correlation_exception&)
+            {
+                // pass!
+            }
+        });
+
+    num_failed
+        += testing::run_test("rank-correlation-tau-a-perfect", []()
+                             {
+                                 std::vector<double> rank_x = {1, 2, 3, 4, 5};
+                                 std::vector<double> rank_y = {1, 2, 3, 4, 5};
+                                 index::rank_correlation corr{rank_x, rank_y};
+
+                                 ASSERT_APPROX_EQUAL(corr.tau_a(), 1.0);
+                             });
+
+    num_failed
+        += testing::run_test("rank-correlation-tau-a-inverse", []()
+                             {
+                                 std::vector<double> rank_x = {1, 2, 3, 4, 5};
+                                 std::vector<double> rank_y = {5, 4, 3, 2, 1};
+                                 index::rank_correlation corr{rank_x, rank_y};
+
+                                 ASSERT_APPROX_EQUAL(corr.tau_a(), -1.0);
+                             });
+
+    num_failed += testing::run_test(
+        "rank-correlation-tau-a-real", []()
+        {
+            std::vector<double> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
+            std::vector<double> rank_y = {3, 4, 1, 5, 6, 7, 8, 2};
+            index::rank_correlation corr{rank_x, rank_y};
+
+            ASSERT_APPROX_EQUAL(corr.tau_a(), 0.4285715);
+        });
+
+    num_failed += testing::run_test(
+        "rank-correlation-tau-a-zero", []()
+        {
+            std::vector<double> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
+            std::vector<double> rank_y = {1, 8, 7, 2, 5, 3, 6, 4};
+            index::rank_correlation corr{rank_x, rank_y};
+
+            ASSERT_APPROX_EQUAL(corr.tau_a(), 0.0);
+        });
+
+    num_failed += testing::run_test(
+        "rank-correlation-tau-b-noties", []()
+        {
+            std::vector<double> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
+            std::vector<double> rank_y = {3, 4, 1, 5, 6, 7, 8, 2};
+            index::rank_correlation corr{rank_x, rank_y};
+
+            ASSERT_APPROX_EQUAL(corr.tau_a(), 0.4285715);
+        });
+
+    num_failed += testing::run_test(
+        "rank-correlation-tau-b-ties-x", []()
+        {
+            std::vector<double> rank_x = {1, 1, 2, 2, 3, 4, 5, 6};
+            std::vector<double> rank_y = {1, 2, 3, 4, 5, 6, 7, 8};
+            index::rank_correlation corr{rank_x, rank_y};
+
+            ASSERT_APPROX_EQUAL(corr.tau_b(), 0.9636242);
+        });
+
+    num_failed += testing::run_test(
+        "rank-correlation-tau-b-ties-both", []()
+        {
+            std::vector<double> rank_x = {1, 1, 2, 2, 3, 4, 5, 6};
+            std::vector<double> rank_y = {1, 2, 3, 3, 4, 4, 4, 5};
+            index::rank_correlation corr{rank_x, rank_y};
+
+            ASSERT_APPROX_EQUAL(corr.tau_b(), 0.9207368);
+        });
+
+    num_failed += testing::run_test(
+        "rank-correlation-ndpm-perfect", []
+        {
+            std::vector<double> rank_x = {1, 2, 3, 3, 4, 5, 6, 7};
+            std::vector<double> rank_y = {1, 1, 2, 2, 3, 4, 5, 6};
+            index::rank_correlation corr{rank_x, rank_y};
+
+            ASSERT_APPROX_EQUAL(corr.ndpm(), 0.0);
+        });
+
+    num_failed
+        += testing::run_test("rank-correlation-ndpm-real", []
+                             {
+                                 // this is example 3 in the NDPM paper
+                                 std::vector<double> rank_x = {1, 2, 3, 2, 1};
+                                 std::vector<double> rank_y = {1, 1, 2, 3, 3};
+                                 index::rank_correlation corr{rank_x, rank_y};
+
+                                 ASSERT_APPROX_EQUAL(corr.ndpm(), 8.0 / 16.0);
+                             });
+
+    num_failed += testing::run_test(
+        "rank-correlation-ndpm-vs-tau-b", []
+        {
+            std::vector<double> rank_x = {1, 2, 3, 4, 5, 6};
+            std::vector<double> rank_y = {1, 1, 2, 2, 3, 4};
+            index::rank_correlation corr{rank_x, rank_y};
+
+            ASSERT_APPROX_EQUAL(corr.tau_b(), 0.9309493);
+            ASSERT_APPROX_EQUAL(corr.ndpm(), 0.0);
+        });
+
+    return num_failed;
+}
+
 int ir_eval_tests()
 {
     int num_failed = 0;
     num_failed += ir_eval_bounds();
     num_failed += ir_eval_results();
     filesystem::remove_all("ceeaus-inv");
+    num_failed += rank_correlation_tests();
     return num_failed;
 }
 }

@@ -116,6 +116,9 @@ double sgd_model::train_one(const feature_vector& x, double expected_label,
     {
         for (const auto& pr : x)
         {
+            if (pr.second == 0.0)
+                continue;
+
             // update using NAG update equation
             auto& weight_val = weights_.at(pr.first);
             weight_val.grad_squared += error_derivative * error_derivative

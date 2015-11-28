@@ -1,8 +1,10 @@
 /**
- * @file online-classify.cpp
+ * @file online_classify.cpp
+ * @author Chase Geigle
  */
 
 #include <iostream>
+
 #include "classify/batch_training.h"
 #include "classify/classifier_factory.h"
 #include "classify/classifier/online_classifier.h"
@@ -55,7 +57,8 @@ int main(int argc, char* argv[])
     if (static_cast<uint64_t>(*test_start) > f_idx->num_docs())
     {
         std::cerr << "The start of the test set is more than the number of "
-                     "docs in the index." << std::endl;
+                     "docs in the index."
+                  << std::endl;
         return 1;
     }
 
@@ -83,19 +86,19 @@ int main(int argc, char* argv[])
     std::vector<doc_id> training_set{docs.begin(), test_begin};
     std::vector<doc_id> test_set{test_begin, docs.end()};
 
-    auto dur
-        = common::time([&]()
-                       {
-                           classify::batch_train(f_idx, *online_classifier,
-                                                 training_set, *batch_size);
+    auto dur = common::time(
+        [&]()
+        {
+            classify::batch_train(f_idx, *online_classifier, training_set,
+                                  static_cast<uint64_t>(*batch_size));
 
-                           classify::multiclass_dataset test_data{
-                               f_idx, test_set.begin(), test_set.end()};
+            classify::multiclass_dataset test_data{f_idx, test_set.begin(),
+                                                   test_set.end()};
 
-                           auto mtrx = classifier->test(test_data);
-                           mtrx.print();
-                           mtrx.print_stats();
-                       });
+            auto mtrx = classifier->test(test_data);
+            mtrx.print();
+            mtrx.print_stats();
+        });
 
     std::cout << "Took " << dur.count() / 1000.0 << "s" << std::endl;
 

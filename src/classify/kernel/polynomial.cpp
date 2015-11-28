@@ -44,11 +44,11 @@ void polynomial::save(std::ostream& out) const
 template <>
 std::unique_ptr<kernel> make_kernel<polynomial>(const cpptoml::table& config)
 {
-    uint8_t power
+    auto power
         = config.get_as<int64_t>("power").value_or(polynomial::default_power);
     auto c = config.get_as<double>("c").value_or(polynomial::default_c);
 
-    return make_unique<polynomial>(power, c);
+    return make_unique<polynomial>(static_cast<uint8_t>(power), c);
 }
 }
 }

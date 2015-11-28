@@ -121,7 +121,7 @@ void language_model::read_arpa_format(const std::string& arpa_file)
 }
 
 std::vector<std::pair<std::string, float>>
-    language_model::top_k(const sentence& prev, size_t k) const
+language_model::top_k(const sentence& prev, size_t k) const
 {
     // this is horribly inefficient due to this LM's structure
     using pair_t = std::pair<std::string, float>;
@@ -198,20 +198,23 @@ float language_model::log_prob(const sentence& tokens) const
 
 float language_model::log_prob(const token_list& tokens) const
 {
+    using diff_type = decltype(tokens.tokens().begin())::difference_type;
     float prob = 0.0f;
 
     // tokens < N
     for (uint64_t i = 0; i < N_ - 1 && i < tokens.size(); ++i)
     {
         prob += prob_calc(tokens.tokens().begin(),
-                          tokens.tokens().begin() + i + 1);
+                          tokens.tokens().begin() + static_cast<diff_type>(i)
+                              + 1);
     }
 
     // tokens >= N
     for (uint64_t i = N_ - 1; i < tokens.size(); ++i)
     {
-        prob += prob_calc(tokens.tokens().begin() + (i - N_ + 1),
-                          tokens.tokens().begin() + i + 1);
+        prob += prob_calc(
+            tokens.tokens().begin() + static_cast<diff_type>(i - N_ + 1),
+            tokens.tokens().begin() + static_cast<diff_type>(i) + 1);
     }
 
     return prob;
@@ -221,7 +224,7 @@ float language_model::perplexity(const sentence& tokens) const
 {
     if (tokens.size() == 0)
         throw language_model_exception{"perplexity() called on empty sentence"};
-    return std::pow(10.0, -(log_prob(tokens) / tokens.size()));
+    return std::pow(10.0f, -(log_prob(tokens) / tokens.size()));
 }
 
 float language_model::perplexity_per_word(const sentence& tokens) const

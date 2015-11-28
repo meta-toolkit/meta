@@ -170,12 +170,64 @@ class sparse_vector
      */
     const_iterator cend() const;
 
+    sparse_vector& operator+=(const sparse_vector& rhs);
+    sparse_vector& operator-=(const sparse_vector& rhs);
+
   private:
     /**
      * Internal storage for the sparse vector: a sorted vector of pairs.
      */
     container_type storage_;
 };
+
+template <class Index, class Value>
+sparse_vector<Index, Value> operator+(const sparse_vector<Index, Value>& lhs,
+                                      const sparse_vector<Index, Value>& rhs)
+{
+    return sparse_vector<Index, Value>(lhs) += rhs;
+}
+
+template <class Index, class Value>
+sparse_vector<Index, Value> operator+(sparse_vector<Index, Value>&& lhs,
+                                      const sparse_vector<Index, Value>& rhs)
+{
+    return lhs += rhs;
+}
+
+template <class Index, class Value>
+sparse_vector<Index, Value> operator+(const sparse_vector<Index, Value>& lhs,
+                                      sparse_vector<Index, Value>&& rhs)
+{
+    return rhs += lhs;
+}
+
+template <class Index, class Value>
+sparse_vector<Index, Value> operator+(sparse_vector<Index, Value>&& lhs,
+                                      sparse_vector<Index, Value>&& rhs)
+{
+    return lhs += rhs;
+}
+
+template <class Index, class Value>
+sparse_vector<Index, Value> operator-(const sparse_vector<Index, Value>& lhs,
+                                      const sparse_vector<Index, Value>& rhs)
+{
+    return sparse_vector<Index, Value>(lhs) -= rhs;
+}
+
+template <class Index, class Value>
+sparse_vector<Index, Value> operator-(sparse_vector<Index, Value>&& lhs,
+                                      const sparse_vector<Index, Value>& rhs)
+{
+    return lhs -= rhs;
+}
+
+template <class Index, class Value>
+sparse_vector<Index, Value> operator-(sparse_vector<Index, Value>&& lhs,
+                                      sparse_vector<Index, Value>&& rhs)
+{
+    return lhs -= rhs;
+}
 
 template <class SparseVector1, class SparseVector2>
 double dot_product(SparseVector1&& first, SparseVector2&& second)

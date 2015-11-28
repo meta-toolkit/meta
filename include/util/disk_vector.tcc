@@ -5,6 +5,7 @@
 
 #include <sys/stat.h>
 #include "io/filesystem.h"
+#include "util/disk_vector.h"
 
 namespace meta
 {
@@ -34,7 +35,8 @@ disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
         // end and writing a byte
         if (actual_size != size_bytes)
         {
-            if (lseek(file_desc_, size_bytes - 1, SEEK_SET) == -1)
+            auto offset = static_cast<long>(size_bytes - 1);
+            if (lseek(file_desc_, offset, SEEK_SET) == -1)
                 throw disk_vector_exception{"error lseeking to extend file"};
             if (write(file_desc_, " ", 1) != 1)
                 throw disk_vector_exception{
@@ -42,12 +44,16 @@ disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
         }
     }
     else
+    {
         size_ = actual_size / sizeof(T);
+        if (size_ == 0)
+            throw disk_vector_exception{"cannot map empty file " + path};
+    }
 
     start_ = (T*)mmap(nullptr, sizeof(T) * size_, PROT_READ | PROT_WRITE,
                       MAP_SHARED, file_desc_, 0);
 
-    if (start_ == nullptr)
+    if (start_ == MAP_FAILED)
         throw disk_vector_exception{"error memory-mapping the file " + path_};
 }
 
@@ -105,7 +111,9 @@ template <class T>
 T& disk_vector<T>::at(uint64_t idx)
 {
     if (idx >= size_)
-        throw disk_vector_exception{"index out of range"};
+        throw disk_vector_exception{"index " + std::to_string(idx)
+                                    + " out of range [0, "
+                                    + std::to_string(size_) + ")"};
     return start_[idx];
 }
 
@@ -113,7 +121,9 @@ template <class T>
 const T& disk_vector<T>::at(uint64_t idx) const
 {
     if (idx >= size_)
-        throw disk_vector_exception{"index out of range"};
+        throw disk_vector_exception{"index " + std::to_string(idx)
+                                    + " out of range [0, "
+                                    + std::to_string(size_) + ")"};
     return start_[idx];
 }
 

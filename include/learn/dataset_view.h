@@ -56,9 +56,15 @@ class dataset_view
     dataset_view(const dataset_view& dv, iterator first, iterator last)
         : dset_{dv.dset_}, rng_{dv.rng_}
     {
-        indices_.reserve(std::distance(first, last));
+        assert(first <= last);
+        indices_.reserve(static_cast<std::size_t>(std::distance(first, last)));
         for (; first != last; ++first)
             indices_.emplace_back(first.index());
+    }
+
+    void add_by_index(size_type idx)
+    {
+        indices_.push_back(idx);
     }
 
     void shuffle()
@@ -69,7 +75,9 @@ class dataset_view
 
     void rotate(size_type block_size)
     {
-        std::rotate(indices_.begin(), indices_.begin() + block_size,
+        using diff_type = decltype(indices_.begin())::difference_type;
+        std::rotate(indices_.begin(),
+                    indices_.begin() + static_cast<diff_type>(block_size),
                     indices_.end());
     }
 
@@ -199,6 +207,11 @@ class dataset_view
     const DerivedDataset& dset() const
     {
         return static_cast<const DerivedDataset&>(*dset_);
+    }
+
+    const std::vector<size_type> indices() const
+    {
+        return indices_;
     }
 
   private:

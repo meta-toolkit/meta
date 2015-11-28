@@ -7,6 +7,9 @@
  * project.
  */
 
+#ifndef META_UTIL_RANDOM_H_
+#define META_UTIL_RANDOM_H_
+
 #include <cstdint>
 #include <functional>
 #include <limits>
@@ -56,11 +59,9 @@ class any_rng
      * it in a type-erased way. any_rng always produces 64-bit random
      * numbers.
      */
-    template <class RandomEngine,
-              class = typename std::
-                  enable_if<!std::is_same<
-                                typename std::decay<RandomEngine>::type,
-                                any_rng>::value>::type>
+    template <class RandomEngine, class = typename std::enable_if<!std::is_same<
+                                      typename std::decay<RandomEngine>::type,
+                                      any_rng>::value>::type>
     any_rng(RandomEngine&& rng)
         : wrapped_(random_engine<typename std::decay<RandomEngine>::type>(
               std::forward<RandomEngine>(rng)))
@@ -92,8 +93,7 @@ class any_rng
  */
 template <class RandomEngine>
 typename RandomEngine::result_type
-    bounded_rand(RandomEngine& rng,
-                 typename RandomEngine::result_type upper_bound)
+bounded_rand(RandomEngine& rng, typename RandomEngine::result_type upper_bound)
 {
     auto random_max = RandomEngine::max() - RandomEngine::min();
     auto threshold = random_max - (random_max + 1) % upper_bound;
@@ -129,15 +129,21 @@ template <class RandomAccessIterator, class RandomEngine>
 void shuffle(RandomAccessIterator first, RandomAccessIterator last,
              RandomEngine&& rng)
 {
+    using result_type =
+        typename std::remove_reference<RandomEngine>::type::result_type;
     using difference_type =
         typename std::iterator_traits<RandomAccessIterator>::difference_type;
 
     auto dist = last - first;
+    assert(dist > 0);
     for (difference_type i = 0; i < dist; ++i)
     {
         using std::swap;
-        swap(first[dist - 1 - i], first[bounded_rand(rng, dist - i)]);
+        auto bound = static_cast<result_type>(dist - i);
+        auto idx = static_cast<difference_type>(bounded_rand(rng, bound));
+        swap(first[dist - 1 - i], first[idx]);
     }
 }
 }
 }
+#endif

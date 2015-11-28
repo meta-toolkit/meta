@@ -53,9 +53,11 @@ std::unique_ptr<classify::classifier>
     multiclass_dataset dataset{idx};
     multiclass_dataset_view mcdv{dataset, std::mt19937_64{47}};
 
+    using diff_type = decltype(mcdv.begin())::difference_type;
+
     // create splits
     mcdv.shuffle();
-    size_t split_idx = mcdv.size() / 8;
+    auto split_idx = static_cast<diff_type>(mcdv.size() / 8);
 
     multiclass_dataset_view train_docs{mcdv, mcdv.begin() + split_idx,
                                        mcdv.end()};
@@ -92,9 +94,11 @@ void check_split(Index& idx, const classify::classifier& cls,
     multiclass_dataset dataset{idx};
     multiclass_dataset_view mcdv{dataset, std::mt19937_64{47}};
 
+    using diff_type = decltype(mcdv.begin())::difference_type;
+
     // create splits
     mcdv.shuffle();
-    size_t split_idx = mcdv.size() / 8;
+    auto split_idx = static_cast<diff_type>(mcdv.size() / 8);
 
     multiclass_dataset_view test_docs{mcdv, mcdv.begin(),
                                       mcdv.begin() + split_idx};
@@ -267,7 +271,7 @@ int run_tests(const std::string& type)
         num_failed
             += testing::run_test("ovo-sgd-split-" + type, [&]()
                                  {
-                                     check_split(f_idx, *hinge_sgd_ovo, 0.91);
+                                     check_split(f_idx, *hinge_sgd_ovo, 0.904);
                                      check_split(f_idx, *perc_sgd_ovo, 0.88);
                                  });
 
@@ -411,7 +415,7 @@ int run_load_save_tests()
         num_failed += testing::run_test("ovo-sgd-save-load", [&]()
                                         {
                                             run_save_load_single(
-                                                f_idx, *hinge_sgd_ovo, 0.91);
+                                                f_idx, *hinge_sgd_ovo, 0.904);
                                         });
 
         num_failed += testing::run_test(

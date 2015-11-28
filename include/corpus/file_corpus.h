@@ -14,6 +14,7 @@
 #include <vector>
 #include <utility>
 #include "corpus/corpus.h"
+#include "corpus/corpus_factory.h"
 
 namespace meta
 {
@@ -27,6 +28,9 @@ namespace corpus
 class file_corpus : public corpus
 {
   public:
+    /// The identifier for this corpus
+    const static util::string_view id;
+
     /**
      * @param prefix Path to where the files are located
      * @param doc_list A file containing the path to each document in the
@@ -66,7 +70,15 @@ class file_corpus : public corpus
     /// contains doc class labels and paths
     std::vector<std::pair<std::string, class_label>> docs_;
 };
-}
-}
 
+/**
+ * Specialization of the factory method used to create line_corpus
+ * instances.
+ */
+template <>
+std::unique_ptr<corpus> make_corpus<file_corpus>(util::string_view prefix,
+                                                 util::string_view dataset,
+                                                 const cpptoml::table& config);
+}
+}
 #endif

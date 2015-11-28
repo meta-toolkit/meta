@@ -88,14 +88,15 @@ int main(int argc, char** argv)
     {
         auto begin = train_sections->at(0)->as<int64_t>()->get();
         auto end = train_sections->at(1)->as<int64_t>()->get();
-        printing::progress progress(" > Reading training data: ",
-                                    (end - begin + 1) * *section_size);
-        for (uint8_t i = begin; i <= end; ++i)
+        printing::progress progress(
+            " > Reading training data: ",
+            static_cast<uint64_t>((end - begin + 1) * *section_size));
+        for (auto i = static_cast<uint8_t>(begin); i <= end; ++i)
         {
             auto folder = two_digit(i);
             for (uint8_t j = 0; j <= *section_size; ++j)
             {
-                progress((i - begin) * 99 + j);
+                progress(static_cast<uint64_t>(i - begin) * 99 + j);
                 auto file = *corpus + "_" + folder + two_digit(j) + ".pos";
                 auto filename = path + "/" + folder + "/" + file;
                 auto sequences = sequence::extract_sequences(filename);

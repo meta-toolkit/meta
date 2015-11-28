@@ -5,11 +5,14 @@
 
 #include "corpus/gz_corpus.h"
 #include "io/filesystem.h"
+#include "util/shim.h"
 
 namespace meta
 {
 namespace corpus
 {
+
+const util::string_view gz_corpus::id = "gz-corpus";
 
 gz_corpus::gz_corpus(const std::string& file, std::string encoding)
     : corpus{std::move(encoding)},
@@ -57,6 +60,24 @@ document gz_corpus::next()
 uint64_t gz_corpus::size() const
 {
     return num_lines_;
+}
+
+template <>
+std::unique_ptr<corpus> make_corpus<gz_corpus>(util::string_view prefix,
+                                               util::string_view dataset,
+                                               const cpptoml::table& config)
+{
+    auto encoding
+        = config.get_as<std::string>("encoding").value_or("utf-8");
+
+    // string_view doesn't have operator+ overloads...
+    auto filename = prefix.to_string();
+    filename += "/";
+    filename.append(dataset.data(), dataset.size());
+    filename += "/";
+    filename.append(dataset.data(), dataset.size());
+    filename += ".dat";
+    return make_unique<gz_corpus>(filename, encoding);
 }
 }
 }

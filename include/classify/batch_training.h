@@ -41,6 +41,8 @@ template <class Index, class Classifier>
 void batch_train(Index& idx, Classifier& cls,
                  const std::vector<doc_id>& training_set, uint64_t batch_size)
 {
+    using diff_type = decltype(training_set.begin())::difference_type;
+
     auto docs = training_set;
     std::mt19937 gen(std::random_device{}());
     std::shuffle(docs.begin(), docs.end(), gen);
@@ -53,8 +55,9 @@ void batch_train(Index& idx, Classifier& cls,
                       << '\n' << ENDLG;
         auto end = std::min<uint64_t>((i + 1) * batch_size, docs.size());
 
-        classify::multiclass_dataset batch{idx, docs.begin() + i * batch_size,
-                                           docs.begin() + end};
+        classify::multiclass_dataset batch{
+            idx, docs.begin() + static_cast<diff_type>(i * batch_size),
+            docs.begin() + static_cast<diff_type>(end)};
         cls.train(batch);
     }
     LOG(progress) << '\n' << ENDLG;

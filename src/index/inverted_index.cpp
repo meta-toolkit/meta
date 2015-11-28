@@ -6,6 +6,7 @@
 
 #include "analyzers/analyzer.h"
 #include "corpus/corpus.h"
+#include "corpus/corpus_factory.h"
 #include "corpus/metadata_parser.h"
 #include "index/disk_index_impl.h"
 #include "index/inverted_index.h"
@@ -122,7 +123,7 @@ void inverted_index::create_index(const cpptoml::table& config)
     LOG(info) << "Creating index: " << index_name() << ENDLG;
 
     // load the documents from the corpus
-    auto docs = corpus::corpus::load(config);
+    auto docs = corpus::make_corpus(config);
 
     auto ram_budget = static_cast<uint64_t>(
         config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
@@ -152,6 +153,9 @@ void inverted_index::create_index(const cpptoml::table& config)
 
     impl_->load_term_id_mapping();
     impl_->initialize_metadata();
+
+    // reload the label file to ensure it flushed
+    impl_->load_labels();
 
     impl_->save_label_id_mapping();
     inv_impl_->load_postings();
@@ -304,12 +308,12 @@ uint64_t inverted_index::total_num_occurences(term_id t_id) const
     for (auto& c : pdata->counts())
         sum += c.second;
 
-    return sum;
+    return static_cast<uint64_t>(sum);
 }
 
-double inverted_index::avg_doc_length()
+float inverted_index::avg_doc_length()
 {
-    return static_cast<double>(total_corpus_terms()) / num_docs();
+    return static_cast<float>(total_corpus_terms()) / num_docs();
 }
 
 analyzers::analyzer<uint64_t>::feature_map

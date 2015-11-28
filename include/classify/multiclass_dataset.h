@@ -66,7 +66,12 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
     {
         // build label_id_mapping
         for (const auto& lbl : idx->class_labels())
-            label_id_mapping_.insert(lbl, label_id(label_id_mapping_.size()));
+        {
+            assert(label_id_mapping_.size()
+                   < std::numeric_limits<uint32_t>::max());
+            label_id_mapping_.insert(
+                lbl, label_id(static_cast<uint32_t>(label_id_mapping_.size())));
+        }
     }
 
     /**

@@ -32,8 +32,8 @@ Value& sparse_vector<Index, Value>::operator[](const Index& index)
     auto it = std::lower_bound(std::begin(storage_), std::end(storage_), index,
                                [](const pair_type& p, const Index& idx)
                                {
-        return p.first < idx;
-    });
+                                   return p.first < idx;
+                               });
 
     if (it == std::end(storage_))
     {
@@ -57,8 +57,8 @@ Value sparse_vector<Index, Value>::at(const Index& index) const
     auto it = std::lower_bound(std::begin(storage_), std::end(storage_), index,
                                [](const pair_type& p, const Index& idx)
                                {
-        return p.first < idx;
-    });
+                                   return p.first < idx;
+                               });
 
     if (it == std::end(storage_) || it->first != index)
         return Value{};
@@ -66,14 +66,14 @@ Value sparse_vector<Index, Value>::at(const Index& index) const
 }
 
 template <class Index, class Value>
-auto sparse_vector<Index, Value>::find(
-    const Index& index) const -> const_iterator
+auto sparse_vector<Index, Value>::find(const Index& index) const
+    -> const_iterator
 {
     auto it = std::lower_bound(std::begin(storage_), std::end(storage_), index,
                                [](const pair_type& p, const Index& idx)
                                {
-        return p.first < idx;
-    });
+                                   return p.first < idx;
+                               });
 
     if (it == std::end(storage_) || it->first != index)
         return std::end(storage_);
@@ -115,8 +115,8 @@ void sparse_vector<Index, Value>::condense()
     storage_.erase(std::remove_if(storage_.begin(), storage_.end(),
                                   [&](const pair_type& p)
                                   {
-                       return p.second == default_value;
-                   }),
+                                      return p.second == default_value;
+                                  }),
                    storage_.end());
     shrink_to_fit();
 }
@@ -152,8 +152,8 @@ void sparse_vector<Index, Value>::contents(container_type cont)
     std::sort(std::begin(storage_), std::end(storage_),
               [](const pair_type& a, const pair_type& b)
               {
-        return a.first < b.first;
-    });
+                  return a.first < b.first;
+              });
 }
 
 template <class Index, class Value>
@@ -190,6 +190,90 @@ template <class Index, class Value>
 auto sparse_vector<Index, Value>::cend() const -> const_iterator
 {
     return storage_.cend();
+}
+
+template <class Index, class Value>
+auto sparse_vector<Index, Value>::operator+=(const sparse_vector& rhs)
+    -> sparse_vector &
+{
+    // use index into the current vector so that we can properly handle
+    // invalidation of iterators during the loop
+    uint64_t idx = 0;
+    uint64_t end = size();
+
+    auto second_it = rhs.begin();
+    auto second_end = rhs.end();
+
+    while (idx != end && second_it != second_end)
+    {
+        if (storage_[idx].first == second_it->first)
+        {
+            storage_[idx].second += second_it->second;
+            ++idx;
+            ++second_it;
+        }
+        else if (storage_[idx].first < second_it->first)
+        {
+            ++idx;
+        }
+        else
+        {
+            using diff_type = typename iterator::difference_type;
+            storage_.emplace(begin() + static_cast<diff_type>(idx),
+                             second_it->first, second_it->second);
+            ++idx;
+            ++second_it;
+        }
+    }
+
+    for (; second_it != second_end; ++second_it)
+    {
+        storage_.emplace_back(second_it->first, second_it->second);
+    }
+
+    return *this;
+}
+
+template <class Index, class Value>
+auto sparse_vector<Index, Value>::operator-=(const sparse_vector& rhs)
+    -> sparse_vector &
+{
+    // use index into the current vector so that we can properly handle
+    // invalidation of iterators during the loop
+    uint64_t idx = 0;
+    uint64_t end = size();
+
+    auto second_it = rhs.begin();
+    auto second_end = rhs.end();
+
+    while (idx != end && second_it != second_end)
+    {
+        if (storage_[idx].first == second_it->first)
+        {
+            storage_[idx].second -= second_it->second;
+            ++idx;
+            ++second_it;
+        }
+        else if (storage_[idx].first < second_it->first)
+        {
+            ++idx;
+        }
+        else
+        {
+            using diff_type = typename iterator::difference_type;
+            storage_.emplace(begin() + static_cast<diff_type>(idx),
+                             second_it->first, -second_it->second);
+            ++idx;
+            ++second_it;
+        }
+    }
+
+    for (; second_it != second_end; ++second_it)
+    {
+        storage_.emplace_back(second_it->first, -second_it->second);
+    }
+
+    return *this;
 }
 }
 }

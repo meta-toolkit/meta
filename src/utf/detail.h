@@ -64,13 +64,13 @@ class icu_handle
 inline std::u16string icu_to_u16str(const icu::UnicodeString& icu_str)
 {
     std::u16string u16str;
-    u16str.resize(icu_str.length());
+    u16str.resize(static_cast<std::size_t>(icu_str.length()));
     auto status = U_ZERO_ERROR;
     // looks dangerous, actually isn't: UChar is guaranteed to be a 16-bit
     // integer type, so all we're doing here is going between signed vs.
     // unsigned
-    icu_str.extract(reinterpret_cast<UChar*>(&u16str[0]), u16str.length(),
-                    status);
+    icu_str.extract(reinterpret_cast<UChar*>(&u16str[0]),
+                    static_cast<int32_t>(u16str.length()), status);
     return u16str;
 }
 
@@ -83,13 +83,12 @@ inline std::u16string icu_to_u16str(const icu::UnicodeString& icu_str)
 inline std::string icu_to_u8str(const icu::UnicodeString& icu_str)
 {
     std::string u8str;
-    u8str.reserve(icu_str.length()); // this is not right in general, but is a
-                                     // reasonable guess for ascii
+    auto len = static_cast<std::size_t>(icu_str.length());
+    u8str.reserve(len); // this is not right in general, but is a
+                        // reasonable guess for ascii
     icu_str.toUTF8String(u8str);
     return u8str;
 }
-
-
 }
 }
 #endif

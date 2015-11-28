@@ -90,7 +90,7 @@ class progress
      */
     uint64_t min_iters_;
     /// The length of the last progress output message.
-    uint64_t str_len_;
+    int str_len_;
     /// Whether or not we have finished the job.
     bool finished_;
     /// Whether or not we should print an endline when done.

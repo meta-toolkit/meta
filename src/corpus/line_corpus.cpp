@@ -15,6 +15,8 @@ namespace meta
 namespace corpus
 {
 
+const util::string_view line_corpus::id = "line-corpus";
+
 line_corpus::line_corpus(const std::string& file, std::string encoding,
                          uint64_t num_lines /* = 0 */)
     : corpus{std::move(encoding)},
@@ -71,6 +73,31 @@ document line_corpus::next()
 uint64_t line_corpus::size() const
 {
     return num_lines_;
+}
+
+template <>
+std::unique_ptr<corpus> make_corpus<line_corpus>(util::string_view prefix,
+                                                 util::string_view dataset,
+                                                 const cpptoml::table& config)
+{
+    auto encoding = config.get_as<std::string>("encoding").value_or("utf-8");
+
+    std::string derp{"herp"};
+
+    // string_view doesn't have operator+ overloads...
+    auto filename = prefix.to_string();
+    filename += "/";
+    filename.append(dataset.data(), dataset.size());
+    filename += "/";
+    filename.append(dataset.data(), dataset.size());
+    filename += ".dat";
+
+    auto lines = config.get_as<int64_t>("num-lines");
+    if (!lines)
+        return make_unique<line_corpus>(filename, encoding);
+    else
+        return make_unique<line_corpus>(filename, encoding,
+                                        static_cast<uint64_t>(*lines));
 }
 }
 }

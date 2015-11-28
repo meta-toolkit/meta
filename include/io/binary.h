@@ -42,7 +42,7 @@ uint64_t write_binary(std::ostream& out, const T& elem)
  */
 inline uint64_t write_binary(std::ostream& out, const std::string& str)
 {
-    out.write(str.c_str(), str.size() + 1);
+    out.write(str.c_str(), static_cast<std::streamsize>(str.size() + 1));
     return str.size() + 1;
 }
 

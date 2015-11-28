@@ -236,11 +236,11 @@ class postings_buffer
          * Writes a single byte to the buffer, resizing if needed.
          * @param byte the byte to write
          */
-        void put(uint8_t byte)
+        void put(char byte)
         {
             if (size_ == pos_)
                 resize();
-            bytes_[pos_] = byte;
+            bytes_[pos_] = static_cast<uint8_t>(byte);
             ++pos_;
         }
 
@@ -271,7 +271,8 @@ class postings_buffer
         template <class OutputStream>
         void write(OutputStream& os) const
         {
-            os.write(reinterpret_cast<const char*>(bytes_.get()), pos_);
+            os.write(reinterpret_cast<const char*>(bytes_.get()),
+                     static_cast<std::streamsize>(pos_));
         }
 
         /// The bytes in this buffer

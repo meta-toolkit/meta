@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.2.0)
 project(meta)
 
 option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
@@ -12,6 +12,7 @@ include(CheckCXXSourceCompiles)
 include(CheckCXXSourceRuns)
 include(ExternalProject)
 include(FindZLIB)
+include(cmake/FindOrBuildICU.cmake)
 
 # Check if there is no build type set. If meta itself is the root project,
 # compile it in release mode instead. If we aren't the root project, just
@@ -26,8 +27,13 @@ include_directories(include/)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
-find_package(ICU COMPONENTS data i18n uc REQUIRED)
-include_directories(SYSTEM ${ICU_INCLUDE_DIRS})
+
+# We require Unicode 8 for the unit tests, which was added in ICU 56.1
+FindOrBuildICU(
+  VERSION 56.1
+  URL http://download.icu-project.org/files/icu4c/56.1/icu4c-56_1-src.tgz
+  URL_HASH MD5=c4a2d71ff56aec5ebfab2a3f059be99d
+)
 
 if(ZLIB_FOUND)
   include_directories(SYSTEM ${ZLIB_INCLUDE_DIRS})
@@ -35,6 +41,14 @@ endif()
 
 if(UNIX OR MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+
+    # Enable -Wconversion on clang, since it's not *too* noisy there.
+    #
+    # As of GCC 5.2.0, there are too many spurious warnings to bother
+    # enabling this there.
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion")
+    endif()
 
     # if we don't already set the standard for the compiler, detect the
     # best one available and use it
@@ -160,6 +174,7 @@ if(LIBCXX_LIBRARY)
   target_include_directories(meta-definitions SYSTEM INTERFACE ${LIBCXX_INCLUDE_DIR})
   target_compile_options(meta-definitions INTERFACE ${LIBCXX_OPTIONS})
   target_link_libraries(meta-definitions INTERFACE -L${LIBCXX_LIB_PATH})
+  target_link_libraries(meta-definitions INTERFACE ${LIBCXX_LIBRARY})
 endif()
 
 if(ENABLE_PROFILING)

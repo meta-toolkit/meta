@@ -64,8 +64,10 @@ sentence sentence::operator()(size_type from, size_type to) const
         throw sentence_exception{"operator() out of bounds: from = "
                                  + std::to_string(from) + ", to = "
                                  + std::to_string(to)};
-    ret.tokens_.insert(ret.tokens_.begin(), tokens_.begin() + from,
-                       tokens_.begin() + to);
+    using diff_type = iterator::difference_type;
+    ret.tokens_.insert(ret.tokens_.begin(),
+                       tokens_.begin() + static_cast<diff_type>(from),
+                       tokens_.begin() + static_cast<diff_type>(to));
     return ret;
 }
 
@@ -80,14 +82,16 @@ void sentence::substitute(size_type idx, const std::string& token,
 void sentence::remove(size_type idx, double weight /* = 0.0 */)
 {
     ops_.push_back("remove(" + (*this)[idx] + ")");
-    tokens_.erase(tokens_.begin() + idx);
+    using diff_type = iterator::difference_type;
+    tokens_.erase(tokens_.begin() + static_cast<diff_type>(idx));
     weights_.push_back(weight);
 }
 
 void sentence::insert(size_type idx, const std::string& token,
                       double weight /* = 0.0 */)
 {
-    tokens_.insert(tokens_.begin() + idx, token);
+    using diff_type = iterator::difference_type;
+    tokens_.insert(tokens_.begin() + static_cast<diff_type>(idx), token);
     ops_.push_back("insert(" + token + ")");
     weights_.push_back(weight);
 }

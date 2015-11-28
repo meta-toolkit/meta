@@ -11,6 +11,7 @@
 #define META_GZ_CORPUS_H_
 
 #include "corpus/corpus.h"
+#include "corpus/corpus_factory.h"
 #include "io/gzstream.h"
 
 namespace meta
@@ -25,6 +26,9 @@ namespace corpus
 class gz_corpus : public corpus
 {
   public:
+    /// The identifier for this corpus
+    const static util::string_view id;
+
     /**
      * @param file The path to the compressed corpus file, where each line
      * represents a document
@@ -60,7 +64,14 @@ class gz_corpus : public corpus
     /// The stream to read the class labels
     io::gzifstream class_stream_;
 };
-}
-}
 
+/**
+ * Specialization of the factory method used to create gz_corpus instances.
+ */
+template <>
+std::unique_ptr<corpus> make_corpus<gz_corpus>(util::string_view prefix,
+                                               util::string_view dataset,
+                                               const cpptoml::table& config);
+}
+}
 #endif

@@ -44,10 +44,10 @@ write(OutputStream& stream, T value)
     while (value > 127)
     {
         ++size;
-        stream.put((value & 127) | 128);
+        stream.put(static_cast<char>((value & 127) | 128));
         value >>= 7;
     }
-    stream.put(value);
+    stream.put(static_cast<char>(value));
     return size + 1;
 }
 
@@ -81,8 +81,9 @@ typename std::enable_if<!std::is_floating_point<T>::value
                         uint64_t>::type
 write(OutputStream& stream, T value)
 {
-    typename std::make_unsigned<T>::type elem
-        = (value << 1) ^ (value >> (sizeof(T) * 8 - 1));
+    using usigned_type = typename std::make_unsigned<T>::type;
+    auto elem = static_cast<usigned_type>((value << 1)
+                                          ^ (value >> (sizeof(T) * 8 - 1)));
     return write(stream, elem);
 }
 
@@ -192,7 +193,7 @@ read(InputStream& stream, T& value)
     uint8_t byte;
     do
     {
-        byte = stream.get();
+        byte = static_cast<uint8_t>(stream.get());
         value |= static_cast<T>(byte & 127) << (7 * size);
         ++size;
     } while (byte & 128);
@@ -257,7 +258,7 @@ read(InputStream& stream, T& value)
 
     auto bytes = read(stream, mantissa);
     bytes += read(stream, exponent);
-    value = mantissa * std::pow(2.0, exponent);
+    value = static_cast<T>(mantissa * std::pow(2.0, exponent));
     return bytes;
 }
 
@@ -273,7 +274,7 @@ uint64_t read(InputStream& stream, std::string& value)
 {
     value.clear();
     for (auto c = stream.get(); c != '\0'; c = stream.get())
-        value += c;
+        value += static_cast<char>(c);
     return value.size() + 1;
 }
 

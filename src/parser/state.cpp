@@ -370,8 +370,9 @@ const node* state::stack_item(size_t depth) const
 
 const leaf_node* state::queue_item(int64_t depth) const
 {
-    if (q_idx_ + depth < queue_->size())
-        return queue_->at(q_idx_ + depth).get();
+    auto idx = static_cast<std::size_t>(static_cast<int64_t>(q_idx_) + depth);
+    if (idx < queue_->size())
+        return queue_->at(idx).get();
     return nullptr;
 }
 

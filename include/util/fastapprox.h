@@ -52,7 +52,7 @@ static inline float fastpow2(float p)
 {
     float offset = (p < 0) ? 1.0f : 0.0f;
     float clipp = (p < -126) ? -126.0f : p;
-    int w = clipp;
+    auto w = static_cast<int>(clipp);
     float z = clipp - w + offset;
     union
     {

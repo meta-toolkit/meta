@@ -35,11 +35,14 @@ void postings_data<PrimaryKey, SecondaryKey, FeatureValue>::merge_with(
     // O(n log n) now, could be O(n)
 
     // if the primary_key doesn't exist, add onto back
-    uint64_t orig_length = counts_.size();
+    using diff_type = typename decltype(counts_.begin())::difference_type;
+    auto orig_length = counts_.size();
     for (auto& p : cont)
     {
-        auto it = std::lower_bound(
-            counts_.begin(), counts_.begin() + orig_length, p.first, searcher);
+        auto it = std::lower_bound(counts_.begin(),
+                                   counts_.begin()
+                                       + static_cast<diff_type>(orig_length),
+                                   p.first, searcher);
         if (it == counts_.end() || it->first != p.first)
             counts_.emplace_back(std::move(p));
         else
@@ -113,22 +116,22 @@ void postings_data<PrimaryKey, SecondaryKey, FeatureValue>::set_primary_key(
 
 template <class PrimaryKey, class SecondaryKey, class FeatureValue>
 bool postings_data<PrimaryKey, SecondaryKey, FeatureValue>::
-    operator<(const postings_data& other) const
+operator<(const postings_data& other) const
 {
     return primary_key() < other.primary_key();
 }
 
 template <class PrimaryKey, class SecondaryKey, class FeatureValue>
 bool
-    operator==(const postings_data<PrimaryKey, SecondaryKey, FeatureValue>& lhs,
-               const postings_data<PrimaryKey, SecondaryKey, FeatureValue>& rhs)
+operator==(const postings_data<PrimaryKey, SecondaryKey, FeatureValue>& lhs,
+           const postings_data<PrimaryKey, SecondaryKey, FeatureValue>& rhs)
 {
     return lhs.primary_key() == rhs.primary_key();
 }
 
 template <class PrimaryKey, class SecondaryKey, class FeatureValue>
 const PrimaryKey&
-    postings_data<PrimaryKey, SecondaryKey, FeatureValue>::primary_key() const
+postings_data<PrimaryKey, SecondaryKey, FeatureValue>::primary_key() const
 {
     return p_id_;
 }
@@ -147,8 +150,8 @@ uint64_t postings_data<PrimaryKey, SecondaryKey, FeatureValue>::write_packed(
 
 template <class PrimaryKey, class SecondaryKey, class FeatureValue>
 uint64_t
-    postings_data<PrimaryKey, SecondaryKey, FeatureValue>::write_packed_counts(
-        std::ostream& out) const
+postings_data<PrimaryKey, SecondaryKey, FeatureValue>::write_packed_counts(
+    std::ostream& out) const
 {
     auto bytes = io::packed::write(out, counts_.size());
 
@@ -228,7 +231,7 @@ uint64_t postings_data<PrimaryKey, SecondaryKey, FeatureValue>::read_packed(
 
 template <class PrimaryKey, class SecondaryKey, class FeatureValue>
 uint64_t
-    postings_data<PrimaryKey, SecondaryKey, FeatureValue>::bytes_used() const
+postings_data<PrimaryKey, SecondaryKey, FeatureValue>::bytes_used() const
 {
     return sizeof(pair_t) * counts_.capacity() + length(p_id_)
            + sizeof(count_t);

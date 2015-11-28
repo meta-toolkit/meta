@@ -10,6 +10,7 @@
 #include <string>
 #include "cpptoml.h"
 #include "corpus/corpus.h"
+#include "corpus/corpus_factory.h"
 #include "analyzers/analyzer.h"
 #include "analyzers/filters/all.h"
 #include "util/progress.h"
@@ -29,7 +30,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    uint64_t k = std::stoi(argv[2]);
+    auto k = std::stoul(argv[2]);
 
     logging::set_cerr_logging();
 
@@ -42,7 +43,7 @@ int main(int argc, char* argv[])
     auto filts = analyzers::load_filters(*config, *(group->get()[0]));
 
     std::unordered_map<std::string, uint64_t> counts;
-    auto docs = corpus::corpus::load(*config);
+    auto docs = corpus::make_corpus(*config);
     printing::progress prog{" > Reading corpus: ", docs->size()};
     while (docs->has_next())
     {

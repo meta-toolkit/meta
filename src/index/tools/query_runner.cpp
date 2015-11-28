@@ -1,5 +1,5 @@
 /**
- * @file query-runner.cpp
+ * @file query_runner.cpp
  * @author Sean Massung
  */
 

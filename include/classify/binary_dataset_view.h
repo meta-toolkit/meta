@@ -80,7 +80,30 @@ class binary_dataset_view : public learn::dataset_view
         return 2;
     }
 
+    friend binary_dataset_view operator-(const binary_dataset_view& lhs,
+                                         const binary_dataset_view& rhs)
+    {
+        auto lhs_indices = lhs.indices();
+        auto rhs_indices = rhs.indices();
+        std::sort(std::begin(lhs_indices), std::end(lhs_indices));
+        std::sort(std::begin(rhs_indices), std::end(rhs_indices));
+
+        std::vector<size_type> diff_indices;
+        std::set_difference(std::begin(lhs_indices), std::end(lhs_indices),
+                            std::begin(rhs_indices), std::end(rhs_indices),
+                            std::back_inserter(diff_indices));
+
+        return {lhs, std::move(diff_indices)};
+    }
+
   private:
+    binary_dataset_view(const binary_dataset_view& bdv,
+                        std::vector<size_type>&& indices)
+        : dataset_view{bdv, std::move(indices)}, label_fn_{bdv.label_fn_}
+    {
+        // nothing
+    }
+
     /// function to obtain the labels for instances
     std::function<bool(const instance_type&)> label_fn_;
 };

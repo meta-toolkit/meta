@@ -41,25 +41,29 @@ void dense_matrix<T>::resize(uint64_t rows, uint64_t columns)
 template <class T>
 auto dense_matrix<T>::begin(uint64_t row) -> row_iterator
 {
-    return storage_.begin() + row * columns_;
+    using diff_type = typename row_iterator::difference_type;
+    return storage_.begin() + static_cast<diff_type>(row * columns_);
 }
 
 template <class T>
 auto dense_matrix<T>::begin(uint64_t row) const -> const_row_iterator
 {
-    return storage_.begin() + row * columns_;
+    using diff_type = typename const_row_iterator::difference_type;
+    return storage_.begin() + static_cast<diff_type>(row * columns_);
 }
 
 template <class T>
 auto dense_matrix<T>::end(uint64_t row) -> row_iterator
 {
-    return storage_.begin() + (row + 1) * columns_;
+    using diff_type = typename row_iterator::difference_type;
+    return storage_.begin() + static_cast<diff_type>((row + 1) * columns_);
 }
 
 template <class T>
 auto dense_matrix<T>::end(uint64_t row) const -> const_row_iterator
 {
-    return storage_.begin() + (row + 1) * columns_;
+    using diff_type = typename const_row_iterator::difference_type;
+    return storage_.begin() + static_cast<diff_type>((row + 1) * columns_);
 }
 
 template <class T>

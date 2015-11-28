@@ -121,9 +121,9 @@ std::vector<doc_id> disk_index::docs() const
 // disk_index_impl
 
 const std::vector<const char*> disk_index::disk_index_impl::files
-    = {"/docs.labels", "/labelids.mapping", "/postings.index",
-       "/postings.index_index", "/termids.mapping", "/termids.mapping.inverse",
-       "/metadata.db", "/metadata.index"};
+    = {"/docs.labels",          "/labelids.mapping", "/postings.index",
+       "/postings.index_index", "/termids.mapping",  "/termids.mapping.inverse",
+       "/metadata.db",          "/metadata.index"};
 
 label_id disk_index::disk_index_impl::get_label_id(const class_label& lbl)
 {
@@ -131,7 +131,7 @@ label_id disk_index::disk_index_impl::get_label_id(const class_label& lbl)
     if (!label_ids_.contains_key(lbl))
     {
         // SVM multiclass has label_ids starting at 1
-        label_id next_id{static_cast<label_id>(label_ids_.size() + 1)};
+        label_id next_id{static_cast<uint32_t>(label_ids_.size() + 1)};
         label_ids_.insert(lbl, next_id);
         return next_id;
     }
@@ -146,6 +146,11 @@ void disk_index::disk_index_impl::initialize_metadata()
 
 void disk_index::disk_index_impl::load_labels(uint64_t num_docs)
 {
+    // clear the current label set; this is so that the disk vector can
+    // flush via munmap() if needed
+    labels_ = util::nullopt;
+
+    // load in the new mapping
     labels_ = util::disk_vector<label_id>{index_name_ + files[DOC_LABELS],
                                           num_docs};
 }

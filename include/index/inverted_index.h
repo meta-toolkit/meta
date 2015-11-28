@@ -165,7 +165,7 @@ class inverted_index : public disk_index
     /**
      * @return the average document length in this index
      */
-    double avg_doc_length();
+    float avg_doc_length();
 
   private:
     /**

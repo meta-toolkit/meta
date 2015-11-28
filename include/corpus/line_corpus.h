@@ -15,6 +15,7 @@
 #include <utility>
 #include "io/parser.h"
 #include "corpus/corpus.h"
+#include "corpus/corpus_factory.h"
 
 namespace meta
 {
@@ -29,6 +30,9 @@ namespace corpus
 class line_corpus : public corpus
 {
   public:
+    /// The identifier for this corpus
+    const static util::string_view id;
+
     /**
      * @param file The path to the corpus file, where each line represents
      * a document
@@ -68,7 +72,15 @@ class line_corpus : public corpus
     /// Parser to read the class labels
     std::unique_ptr<io::parser> class_parser_;
 };
-}
-}
 
+/**
+ * Specialization of the factory method used to create line_corpus
+ * instances.
+ */
+template <>
+std::unique_ptr<corpus> make_corpus<line_corpus>(util::string_view prefix,
+                                                 util::string_view dataset,
+                                                 const cpptoml::table& config);
+}
+}
 #endif
