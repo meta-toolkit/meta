@@ -154,6 +154,9 @@ void inverted_index::create_index(const cpptoml::table& config)
     impl_->load_term_id_mapping();
     impl_->initialize_metadata();
 
+    // reload the label file to ensure it flushed
+    impl_->load_labels();
+
     impl_->save_label_id_mapping();
     inv_impl_->load_postings();
 

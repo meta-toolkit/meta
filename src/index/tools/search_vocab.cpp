@@ -1,7 +1,13 @@
+/**
+ * @file search_vocab.cpp
+ * @author Chase Geigle
+ */
+
 #include <iostream>
 #include <memory>
-#include "util/optional.h"
+
 #include "index/vocabulary_map.h"
+#include "util/optional.h"
 
 int main(int argc, char** argv)
 {

@@ -1,5 +1,5 @@
 /**
- * @file corpus-gen.cpp
+ * @file corpus_gen.cpp
  * @author Sean Massung
  */
 

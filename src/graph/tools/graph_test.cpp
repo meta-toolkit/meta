@@ -1,5 +1,5 @@
 /**
- * @file graph-test.cpp
+ * @file graph_test.cpp
  * @author Sean Massung
  */
 
@@ -10,12 +10,12 @@
 #include <string>
 #include <random>
 
-#include "meta.h"
-#include "util/progress.h"
-#include "graph/undirected_graph.h"
-#include "graph/directed_graph.h"
-#include "graph/algorithms/algorithms.h"
 #include "logging/logger.h"
+#include "meta.h"
+#include "graph/algorithms/algorithms.h"
+#include "graph/directed_graph.h"
+#include "graph/undirected_graph.h"
+#include "util/progress.h"
 
 using namespace meta;
 

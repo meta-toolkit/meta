@@ -56,10 +56,16 @@ void myclass::member(const type&);
 /**
  * ...
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
  ```
 
 - In the file comment, use `@file` and (preferrably) `@author`. Of course,
   multiple authors may be listed.
+
+## Source files
+
+- All source files should be in `snake_case`
+- Binaries should be `hyphenated-file-names`

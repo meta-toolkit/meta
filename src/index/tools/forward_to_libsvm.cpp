@@ -1,5 +1,5 @@
 /**
- * @file forward-to-libsvm.cpp
+ * @file forward_to_libsvm.cpp
  * @author Chase Geigle
  */
 
