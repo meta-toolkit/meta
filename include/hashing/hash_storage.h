@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "util/aligned_allocator.h"
 #include "util/optional.h"
 
 #ifndef META_HASHING_HASH_STORAGE_H_
@@ -599,6 +600,7 @@ class inline_key_storage
   public:
     using reference = T&;
     using const_reference = const T&;
+    using vector_type = std::vector<T, util::aligned_allocator<T, 64>>;
 
     inline_key_storage(std::size_t capacity)
         : table_(capacity, key_traits<T>::sentinel()), size_{0}
@@ -650,7 +652,7 @@ class inline_key_storage
     {
         assert(new_cap > capacity());
 
-        std::vector<T> temptable(new_cap, key_traits<T>::sentinel());
+        vector_type temptable(new_cap, key_traits<T>::sentinel());
         using std::swap;
         swap(table_, temptable);
 
@@ -680,7 +682,7 @@ class inline_key_storage
         return res;
     }
 
-    std::vector<T> table_;
+    vector_type table_;
     std::size_t size_;
 };
 
