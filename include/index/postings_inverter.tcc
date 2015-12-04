@@ -120,8 +120,9 @@ auto postings_inverter<Index>::make_producer(uint64_t ram_budget) -> producer
 }
 
 template <class Index>
+template <class Allocator>
 void postings_inverter<Index>::write_chunk(
-    std::vector<postings_buffer_type>& pdata)
+    std::vector<postings_buffer_type, Allocator>& pdata)
 {
     auto chunk_num = chunk_num_.fetch_add(1);
 

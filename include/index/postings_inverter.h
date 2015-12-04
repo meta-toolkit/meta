@@ -137,7 +137,8 @@ class postings_inverter
      * @param pdata The collection of postings_data objects to combine into a
      * chunk
      */
-    void write_chunk(std::vector<postings_buffer_type>& pdata);
+    template <class Allocator>
+    void write_chunk(std::vector<postings_buffer_type, Allocator>& pdata);
 
     /// The prefix for all chunks to be written
     std::string prefix_;

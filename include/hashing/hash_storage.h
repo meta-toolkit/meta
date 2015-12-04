@@ -495,6 +495,8 @@ class external_key_storage
   public:
     using reference = T&;
     using const_reference = const T&;
+    using idx_vector_type = util::aligned_vector<std::size_t>;
+    using key_vector_type = util::aligned_vector<T>;
 
     external_key_storage(std::size_t capacity) : table_(capacity, 0)
     {
@@ -542,7 +544,7 @@ class external_key_storage
 
     void clear()
     {
-        std::vector<T>{}.swap(keys_);
+        key_vector_type{}.swap(keys_);
         std::fill(std::begin(table_), std::end(table_), 0);
     }
 
@@ -563,15 +565,15 @@ class external_key_storage
                + sizeof(T) * keys_.capacity();
     }
 
-    std::vector<T> extract_keys()
+    key_vector_type extract_keys()
     {
         auto res = std::move(keys_);
         clear();
         return res;
     }
 
-    std::vector<std::size_t> table_;
-    std::vector<T> keys_;
+    idx_vector_type table_;
+    key_vector_type keys_;
 };
 
 template <class T, class ProbingStrategy, class Hash, class KeyEqual>
@@ -600,7 +602,7 @@ class inline_key_storage
   public:
     using reference = T&;
     using const_reference = const T&;
-    using vector_type = std::vector<T, util::aligned_allocator<T, 64>>;
+    using vector_type = util::aligned_vector<T>;
 
     inline_key_storage(std::size_t capacity)
         : table_(capacity, key_traits<T>::sentinel()), size_{0}
@@ -712,6 +714,7 @@ class inline_key_value_storage
   public:
     using value_type = kv_pair<K, V>;
     using const_value_type = kv_pair<K, const V>;
+    using vector_type = util::aligned_vector<std::pair<K, V>>;
 
     inline_key_value_storage(std::size_t capacity)
         : table_(capacity, std::make_pair(key_traits<K>::sentinel(),
@@ -768,9 +771,9 @@ class inline_key_value_storage
     {
         assert(new_cap > capacity());
 
-        std::vector<std::pair<K, V>> temptable(
-            new_cap, std::make_pair(key_traits<K>::sentinel(),
-                                    key_traits<V>::sentinel()));
+        vector_type temptable(new_cap,
+                              std::make_pair(key_traits<K>::sentinel(),
+                                             key_traits<V>::sentinel()));
         using std::swap;
         swap(table_, temptable);
 
@@ -788,7 +791,7 @@ class inline_key_value_storage
                + sizeof(std::size_t);
     }
 
-    std::vector<std::pair<K, V>> table_;
+    vector_type table_;
     std::size_t size_;
 };
 
@@ -821,6 +824,9 @@ class inline_key_external_value_storage
   public:
     using value_type = kv_pair<K, V>;
     using const_value_type = kv_pair<K, const V>;
+
+    using key_vector_type = util::aligned_vector<K>;
+    using value_vector_type = util::aligned_vector<V>;
 
     inline_key_external_value_storage(std::size_t capacity)
         : table_(capacity,

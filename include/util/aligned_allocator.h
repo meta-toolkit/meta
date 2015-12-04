@@ -13,6 +13,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <new>
+#include <vector>
 
 namespace meta
 {
@@ -65,6 +66,23 @@ struct aligned_allocator
         ::free(p);
     }
 };
+
+template <class T, std::size_t TAlignment, class U, std::size_t UAlignment>
+bool operator==(const aligned_allocator<T, TAlignment>&,
+                const aligned_allocator<U, UAlignment>&)
+{
+    return true;
+}
+
+template <class T, std::size_t TAlignment, class U, std::size_t UAlignment>
+bool operator!=(const aligned_allocator<T, TAlignment>&,
+                const aligned_allocator<U, UAlignment>&)
+{
+    return false;
+}
+
+template <class T, std::size_t Alignment = 64>
+using aligned_vector = std::vector<T, aligned_allocator<T, Alignment>>;
 }
 }
 #endif
