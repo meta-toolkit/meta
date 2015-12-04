@@ -73,8 +73,8 @@ void check_ceeaus_expected(Index& idx)
 {
     double epsilon = 0.001;
     ASSERT_EQUAL(idx.num_docs(), 1008ul);
-    ASSERT_LESS(std::abs(idx.avg_doc_length() - 128.236), epsilon);
-    ASSERT_EQUAL(idx.unique_terms(), 3944ul);
+    ASSERT_LESS(std::abs(idx.avg_doc_length() - 127.634), epsilon);
+    ASSERT_EQUAL(idx.unique_terms(), 4224ul);
 
     std::ifstream in{"../data/ceeaus-metadata.txt"};
     uint64_t size;
@@ -82,7 +82,11 @@ void check_ceeaus_expected(Index& idx)
     doc_id id{0};
     while (in >> size >> unique)
     {
+        std::cout << "size(" << id << "): " << idx.doc_size(id) << " vs "
+                  << size << std::endl;
         ASSERT_EQUAL(idx.doc_size(id), size);
+        std::cout << "uniq(" << id << "): " << idx.unique_terms(id) << " vs "
+                  << unique << std::endl;
         ASSERT_EQUAL(idx.unique_terms(id), unique);
         ++id;
     }
