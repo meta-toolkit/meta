@@ -43,19 +43,24 @@ struct aligned_allocator
 {
     using value_type = T;
 
-    const static constexpr std::size_t alignment_size
-        = (Alignment > alignof(T)) ? Alignment : alignof(T);
-
     aligned_allocator() = default;
 
-    template <class U, std::size_t OtherAlign>
-    aligned_allocator(const aligned_allocator<U, OtherAlign>&)
+    template <class U>
+    aligned_allocator(const aligned_allocator<U, Alignment>&)
     {
         // nothing
     }
 
+    template <class U>
+    struct rebind
+    {
+        using other = aligned_allocator<U, Alignment>;
+    };
+
     T* allocate(std::size_t n)
     {
+        const static constexpr std::size_t alignment_size
+            = (Alignment > alignof(T)) ? Alignment : alignof(T);
         // determine adjusted size
         // ::aligned_alloc requires the size to be an integer multiple of
         // the requested alignment
@@ -74,16 +79,16 @@ struct aligned_allocator
     }
 };
 
-template <class T, std::size_t TAlignment, class U, std::size_t UAlignment>
-bool operator==(const aligned_allocator<T, TAlignment>&,
-                const aligned_allocator<U, UAlignment>&)
+template <class T, class U, std::size_t Alignment>
+bool operator==(const aligned_allocator<T, Alignment>&,
+                const aligned_allocator<U, Alignment>&)
 {
     return true;
 }
 
-template <class T, std::size_t TAlignment, class U, std::size_t UAlignment>
-bool operator!=(const aligned_allocator<T, TAlignment>&,
-                const aligned_allocator<U, UAlignment>&)
+template <class T, class U, std::size_t Alignment>
+bool operator!=(const aligned_allocator<T, Alignment>&,
+                const aligned_allocator<U, Alignment>&)
 {
     return false;
 }
