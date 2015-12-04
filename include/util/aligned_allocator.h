@@ -11,9 +11,16 @@
 #define META_UTIL_ALIGNED_ALLOCATOR_H_
 
 #include <cstddef>
-#include <cstdlib>
 #include <new>
 #include <vector>
+
+#if META_HAS_ALIGNED_ALLOC
+#include "util/aligned_alloc.h"
+#elif META_HAS_POSIX_MEMALIGN
+#include "util/aligned_alloc_posix.h"
+#elif META_HAS_ALIGNED_MALLOC
+#include "util/aligned_alloc_msvc.h"
+#endif
 
 namespace meta
 {
@@ -54,7 +61,7 @@ struct aligned_allocator
         // the requested alignment
         auto size
             = alignment_size * detail::idiv_ceil(n * sizeof(T), alignment_size);
-        auto ptr = static_cast<T*>(::aligned_alloc(alignment_size, size));
+        auto ptr = static_cast<T*>(detail::aligned_alloc(alignment_size, size));
 
         if (!ptr && n > 0)
             throw std::bad_alloc{};
@@ -63,7 +70,7 @@ struct aligned_allocator
 
     void deallocate(T* p, std::size_t)
     {
-        ::free(p);
+        detail::aligned_free(p);
     }
 };
 
