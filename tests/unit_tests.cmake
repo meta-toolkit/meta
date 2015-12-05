@@ -4,11 +4,10 @@ set_tests_properties(analyzers PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
 add_test(stemmers ${UNIT_TEST_EXE} --only=stemmers)
 set_tests_properties(stemmers PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+add_test(parallel ${UNIT_TEST_EXE} --only=parallel)
+set_tests_properties(parallel PROPERTIES TIMEOUT 30 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-#add_test(parallel ${UNIT_TEST_EXE} parallel)
-#set_tests_properties(parallel PROPERTIES TIMEOUT 30 WORKING_DIRECTORY
-#                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-#
 #add_test(inverted-index ${UNIT_TEST_EXE} inverted-index)
 #set_tests_properties(inverted-index PROPERTIES TIMEOUT 30 WORKING_DIRECTORY
 #                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
