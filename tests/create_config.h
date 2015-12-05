@@ -16,7 +16,8 @@ namespace meta
 {
 namespace tests
 {
-std::shared_ptr<cpptoml::table> create_config(const std::string& corpus_type)
+inline std::shared_ptr<cpptoml::table> create_config(
+        const std::string& corpus_type)
 {
     auto orig_config = cpptoml::parse_file("../config.toml");
     std::ofstream config_file{"test-config.toml"};
