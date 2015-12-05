@@ -15,3 +15,6 @@
 [submodule "deps/meta-stlsoft"]
 	path = deps/meta-stlsoft
 	url = https://github.com/meta-toolkit/meta-stlsoft.git
+[submodule "deps/bandit"]
+	path = deps/bandit
+	url = https://github.com/joakimkarlsson/bandit.git

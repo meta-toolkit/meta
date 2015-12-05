@@ -23,7 +23,7 @@ if (NOT CMAKE_BUILD_TYPE AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-include_directories(include/)
+include_directories(include/ deps/bandit/)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
@@ -361,5 +361,6 @@ if(DOXYGEN_FOUND AND NOT TARGET doc)
 endif()
 
 add_subdirectory(src)
+add_subdirectory(tests)
 add_subdirectory(deps/porter2_stemmer EXCLUDE_FROM_ALL)
 add_subdirectory(deps/cpptoml EXCLUDE_FROM_ALL)
