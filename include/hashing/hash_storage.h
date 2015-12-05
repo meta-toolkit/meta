@@ -385,13 +385,13 @@ class storage_base
      * (or the next open slot).
      *
      * @param key The key to look for
+     * @param hc The hash code for the key
      */
-    uint64_t get_idx(const key_type& key) const
+    uint64_t get_idx(const key_type& key, std::size_t hc) const
     {
-        probing_strategy strategy{hash_(key), as_derived().capacity()};
+        probing_strategy strategy{hc, as_derived().capacity()};
         auto idx = strategy.probe();
-        while (as_derived().occupied(idx)
-               && !equal_(get_key(as_derived()[idx]), key))
+        while (as_derived().occupied(idx) && !as_derived().equal(idx, hc, key))
         {
             idx = strategy.probe();
         }
@@ -409,8 +409,10 @@ class storage_base
             as_derived().resize(next_size());
 
         stored_type stored(std::forward<Args>(args)...);
-        auto idx = get_idx(storage_traits<Derived>::get_key(stored));
-        as_derived().put(idx, std::move(stored));
+        const auto& key = storage_traits<Derived>::get_key(stored);
+        auto hc = hash_(key);
+        auto idx = get_idx(key, hc);
+        as_derived().put(idx, hc, std::move(stored));
 
         return {as_derived(), idx};
     }
@@ -422,7 +424,8 @@ class storage_base
      */
     const_iterator find(const key_type& key) const
     {
-        auto idx = get_idx(key);
+        auto hc = hash_(key);
+        auto idx = get_idx(key, hc);
 
         if (!as_derived().occupied(idx))
             return end();
@@ -437,7 +440,8 @@ class storage_base
      */
     iterator find(const key_type& key)
     {
-        auto idx = get_idx(key);
+        auto hc = hash_(key);
+        auto idx = get_idx(key, hc);
 
         if (!as_derived().occupied(idx))
             return end();
@@ -465,9 +469,14 @@ class storage_base
             std::ceil(as_derived().capacity() * resize_ratio()));
     }
 
-    bool equal(const key_type& k1, const key_type& k2) const
+    bool key_equal(const key_type& k1, const key_type& k2) const
     {
         return equal_(k1, k2);
+    }
+
+    std::size_t hash(const key_type& key) const
+    {
+        return hash_(key);
     }
 
   private:
@@ -495,41 +504,54 @@ class external_key_storage
   public:
     using reference = T&;
     using const_reference = const T&;
-    using idx_vector_type = util::aligned_vector<std::size_t>;
+
+    struct hash_idx
+    {
+        std::size_t hc = 0;
+        std::size_t idx = 0;
+    };
+
+    using idx_vector_type = util::aligned_vector<hash_idx>;
     using key_vector_type = util::aligned_vector<T>;
 
-    external_key_storage(std::size_t capacity) : table_(capacity, 0)
+    external_key_storage(std::size_t capacity) : table_(capacity)
     {
         // nothing
     }
 
     bool occupied(std::size_t idx) const
     {
-        return table_[idx] != 0;
+        return table_[idx].idx != 0;
+    }
+
+    bool equal(std::size_t idx, std::size_t hc, const_reference key) const
+    {
+        return table_[idx].hc == hc && this->key_equal((*this)[idx], key);
     }
 
     const_reference operator[](std::size_t idx) const
     {
-        return keys_[table_[idx] - 1];
+        return keys_[table_[idx].idx - 1];
     }
 
     reference operator[](std::size_t idx)
     {
-        return keys_[table_[idx] - 1];
+        return keys_[table_[idx].idx - 1];
     }
 
     template <class... Args>
-    void put(std::size_t idx, Args&&... args)
+    void put(std::size_t idx, std::size_t hc, Args&&... args)
     {
         if (occupied(idx))
         {
-            keys_[table_[idx] - 1] = T(std::forward<Args>(args)...);
+            keys_[table_[idx].idx - 1] = T(std::forward<Args>(args)...);
         }
         else
         {
-            table_[idx] = keys_.size() + 1;
+            table_[idx].idx = keys_.size() + 1;
             keys_.emplace_back(std::forward<Args>(args)...);
         }
+        table_[idx].hc = hc;
     }
 
     std::size_t size() const
@@ -545,7 +567,7 @@ class external_key_storage
     void clear()
     {
         key_vector_type{}.swap(keys_);
-        std::fill(std::begin(table_), std::end(table_), 0);
+        std::fill(std::begin(table_), std::end(table_), hash_idx{});
     }
 
     void resize(std::size_t new_cap)
@@ -553,15 +575,20 @@ class external_key_storage
         assert(new_cap > capacity());
 
         table_.resize(new_cap);
-        std::fill(std::begin(table_), std::end(table_), 0);
+        std::fill(std::begin(table_), std::end(table_), hash_idx{});
 
         for (std::size_t i = 0; i < keys_.size(); ++i)
-            table_[this->get_idx(keys_[i])] = i + 1;
+        {
+            auto hc = this->hash(keys_[i]);
+            auto nidx = this->get_idx(keys_[i], hc);
+            table_[nidx].hc = hc;
+            table_[nidx].idx = i + 1;
+        }
     }
 
     std::size_t bytes_used() const
     {
-        return sizeof(std::size_t) * table_.capacity()
+        return sizeof(hash_idx) * table_.capacity()
                + sizeof(T) * keys_.capacity();
     }
 
@@ -612,7 +639,12 @@ class inline_key_storage
 
     bool occupied(std::size_t idx) const
     {
-        return !this->equal(table_[idx], key_traits<T>::sentinel());
+        return !this->key_equal(table_[idx], key_traits<T>::sentinel());
+    }
+
+    bool equal(std::size_t idx, std::size_t /*hc*/, const_reference key) const
+    {
+        return this->key_equal(table_[idx], key);
     }
 
     const_reference operator[](std::size_t idx) const
@@ -626,7 +658,7 @@ class inline_key_storage
     }
 
     template <class... Args>
-    void put(std::size_t idx, Args&&... args)
+    void put(std::size_t idx, std::size_t /*hc*/, Args&&... args)
     {
         if (!occupied(idx))
             ++size_;
@@ -660,9 +692,12 @@ class inline_key_storage
 
         for (std::size_t idx = 0; idx < temptable.size(); ++idx)
         {
-            if (!this->equal(temptable[idx], key_traits<T>::sentinel()))
-                table_[this->get_idx(temptable[idx])]
+            if (!this->key_equal(temptable[idx], key_traits<T>::sentinel()))
+            {
+                auto hc = this->hash(temptable[idx]);
+                table_[this->get_idx(temptable[idx], hc)]
                     = std::move(temptable[idx]);
+            }
         }
     }
 
@@ -726,7 +761,12 @@ class inline_key_value_storage
 
     bool occupied(std::size_t idx) const
     {
-        return !this->equal(table_[idx].first, key_traits<K>::sentinel());
+        return !this->key_equal(table_[idx].first, key_traits<K>::sentinel());
+    }
+
+    bool equal(std::size_t idx, std::size_t /*hc*/, const K& key) const
+    {
+        return this->key_equal(table_[idx].first, key);
     }
 
     const_value_type operator[](std::size_t idx) const
@@ -742,7 +782,7 @@ class inline_key_value_storage
     }
 
     template <class... Args>
-    void put(std::size_t idx, Args&&... args)
+    void put(std::size_t idx, std::size_t /*hc*/, Args&&... args)
     {
         if (!occupied(idx))
             ++size_;
@@ -779,9 +819,12 @@ class inline_key_value_storage
 
         for (std::size_t i = 0; i < temptable.size(); ++i)
         {
-            if (!this->equal(temptable[i].first, key_traits<K>::sentinel()))
-                table_[this->get_idx(temptable[i].first)]
+            if (!this->key_equal(temptable[i].first, key_traits<K>::sentinel()))
+            {
+                auto hc = this->hash(temptable[i].first);
+                table_[this->get_idx(temptable[i].first, hc)]
                     = std::move(temptable[i]);
+            }
         }
     }
 
@@ -837,7 +880,12 @@ class inline_key_external_value_storage
 
     bool occupied(std::size_t idx) const
     {
-        return !this->equal(table_[idx].first, key_traits<K>::sentinel());
+        return !this->key_equal(table_[idx].first, key_traits<K>::sentinel());
+    }
+
+    bool equal(std::size_t idx, std::size_t /*hc*/, const K& key) const
+    {
+        return this->key_equal(table_[idx].first, key);
     }
 
     const_value_type operator[](std::size_t idx) const
@@ -853,7 +901,7 @@ class inline_key_external_value_storage
     }
 
     template <class... Args>
-    void put(std::size_t idx, Args&&... args)
+    void put(std::size_t idx, std::size_t /*hc*/, Args&&... args)
     {
         auto pr = std::pair<K, V>(std::forward<Args>(args)...);
         if (occupied(idx))
@@ -896,9 +944,12 @@ class inline_key_external_value_storage
 
         for (std::size_t i = 0; i < temptable.size(); ++i)
         {
-            if (!this->equal(temptable[i].first, key_traits<K>::sentinel()))
-                table_[this->get_idx(temptable[i].first)]
+            if (!this->key_equal(temptable[i].first, key_traits<K>::sentinel()))
+            {
+                auto hc = this->hash(temptable[i].first);
+                table_[this->get_idx(temptable[i].first, hc)]
                     = std::move(temptable[i]);
+            }
         }
     }
 
@@ -941,41 +992,56 @@ class external_key_value_storage
     using value_type = kv_pair<K, V>;
     using const_value_type = kv_pair<K, const V>;
 
-    external_key_value_storage(std::size_t capacity) : table_(capacity, 0)
+    struct hash_idx
+    {
+        std::size_t hc = 0;
+        std::size_t idx = 0;
+    };
+
+    using idx_vector_type = util::aligned_vector<hash_idx>;
+    using kv_vector_type = util::aligned_vector<std::pair<K, V>>;
+
+    external_key_value_storage(std::size_t capacity) : table_(capacity)
     {
         // nothing
     }
 
     bool occupied(std::size_t idx) const
     {
-        return table_[idx] != 0;
+        return table_[idx].idx != 0;
+    }
+
+    bool equal(std::size_t idx, std::size_t hc, const K& key) const
+    {
+        return table_[idx].hc == hc && this->key_equal((*this)[idx].key(), key);
     }
 
     const_value_type operator[](std::size_t idx) const
     {
-        const auto& pr = storage_[table_[idx] - 1];
+        const auto& pr = storage_[table_[idx].idx - 1];
         return {pr.first, pr.second};
     }
 
     value_type operator[](std::size_t idx)
     {
-        auto& pr = storage_[table_[idx] - 1];
+        auto& pr = storage_[table_[idx].idx - 1];
         return {pr.first, pr.second};
     }
 
     template <class... Args>
-    void put(std::size_t idx, Args&&... args)
+    void put(std::size_t idx, std::size_t hc, Args&&... args)
     {
         if (occupied(idx))
         {
-            storage_[table_[idx] - 1]
+            storage_[table_[idx].idx - 1]
                 = std::pair<K, V>(std::forward<Args>(args)...);
         }
         else
         {
-            table_[idx] = storage_.size() + 1;
+            table_[idx].idx = storage_.size() + 1;
             storage_.emplace_back(std::forward<Args>(args)...);
         }
+        table_[idx].hc = hc;
     }
 
     std::size_t size() const
@@ -990,8 +1056,8 @@ class external_key_value_storage
 
     void clear()
     {
-        std::vector<std::pair<K, V>>{}.swap(storage_);
-        std::fill(std::begin(table_), std::end(table_), 0);
+        kv_vector_type{}.swap(storage_);
+        std::fill(std::begin(table_), std::end(table_), hash_idx{});
     }
 
     void resize(std::size_t new_cap)
@@ -999,20 +1065,25 @@ class external_key_value_storage
         assert(new_cap > capacity());
 
         table_.resize(new_cap);
-        std::fill(std::begin(table_), std::end(table_), 0);
+        std::fill(std::begin(table_), std::end(table_), hash_idx{});
 
         for (std::size_t i = 0; i < storage_.size(); ++i)
-            table_[this->get_idx(storage_[i].first)] = i + 1;
+        {
+            auto hc = this->hash(storage_[i].first);
+            auto nidx = this->get_idx(storage_[i].first, hc);
+            table_[nidx].hc = hc;
+            table_[nidx].idx = i + 1;
+        }
     }
 
     std::size_t bytes_used() const
     {
-        return sizeof(std::size_t) * table_.capacity()
+        return sizeof(hash_idx) * table_.capacity()
                + sizeof(std::pair<K, V>) * storage_.capacity();
     }
 
-    std::vector<std::size_t> table_;
-    std::vector<std::pair<K, V>> storage_;
+    idx_vector_type table_;
+    kv_vector_type storage_;
 };
 
 template <class K, class V, class ProbingStrategy, class Hash, class KeyEqual>
