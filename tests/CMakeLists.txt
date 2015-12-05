@@ -21,7 +21,8 @@ file(GLOB IGNORE_BANDIT_WARNING_FILES *.cpp)
 set_property(SOURCE ${IGNORE_BANDIT_WARNING_FILES} APPEND PROPERTY COMPILE_FLAGS
     " -Wno-sign-conversion -Wno-conversion")
 add_executable(unit-test unit_test.cpp
-                         analyzer_test.cpp)
+                         analyzer_test.cpp
+                         stemmer_test.cpp)
                       #  classifier_test.cpp
                       #  compression_test.cpp
                       #  filesystem_test.cpp
@@ -33,7 +34,6 @@ add_executable(unit-test unit_test.cpp
                       #  parallel_test.cpp
                       #  ranker_test.cpp
                       #  lm_test.cpp
-                      #  stemmer_test.cpp
                       #  string_list_test.cpp
                       #  graph_test.cpp
                       #  features_test.cpp
