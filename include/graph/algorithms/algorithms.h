@@ -10,6 +10,8 @@
 #ifndef META_GRAPH_ALGORITHMS_ALL_H_
 #define META_GRAPH_ALGORITHMS_ALL_H_
 
+#include <stdexcept>
+
 namespace meta
 {
 namespace graph
