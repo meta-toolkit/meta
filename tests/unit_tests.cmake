@@ -13,6 +13,9 @@ set_tests_properties(inverted-index PROPERTIES TIMEOUT 30 WORKING_DIRECTORY
 add_test(forward-index ${UNIT_TEST_EXE} --only=forward-index)
 set_tests_properties(forward-index PROPERTIES TIMEOUT 30 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+add_test(classifier ${UNIT_TEST_EXE} --only=classifier)
+set_tests_properties(classifier PROPERTIES TIMEOUT 100 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 #add_test(string-list ${UNIT_TEST_EXE} string-list)
 #set_tests_properties(string-list PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
@@ -24,10 +27,6 @@ set_tests_properties(forward-index PROPERTIES TIMEOUT 30 WORKING_DIRECTORY
 #
 #add_test(libsvm-parser ${UNIT_TEST_EXE} libsvm-parser)
 #set_tests_properties(libsvm-parser PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
-#                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-#
-#add_test(classifiers ${UNIT_TEST_EXE} classifiers)
-#set_tests_properties(classifiers PROPERTIES TIMEOUT 100 WORKING_DIRECTORY
 #                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 #
 #add_test(rankers ${UNIT_TEST_EXE} rankers)
