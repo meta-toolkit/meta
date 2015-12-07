@@ -40,5 +40,6 @@ before_script:
   - cp ../config.toml ./
 
 script:
+  - git submodule update --init --recursive
   - ../travis/cmake.sh Debug && make && make clean
   - rm -rf CMake* && ../travis/cmake.sh Release && make && ctest --output-on-failure
