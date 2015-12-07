@@ -3,47 +3,50 @@
  * @author Sean Massung
  */
 
-#include "test/ir_eval_test.h"
-#include "index/eval/rank_correlation.h"
-#include "index/ranker/ranker.h"
+#include "bandit/bandit.h"
+#include "create_config.h"
 #include "corpus/document.h"
+#include "index/eval/ir_eval.h"
+#include "index/eval/rank_correlation.h"
+#include "index/ranker/okapi_bm25.h"
+#include "index/ranker/ranker.h"
 
-namespace meta
-{
-namespace testing
-{
+using namespace bandit;
+using namespace meta;
+
+namespace {
 
 void check_query(index::ir_eval& eval,
                  const std::vector<index::search_result>& ranking, query_id qid,
                  double e_f1, double e_p, double e_r, double e_avg_p,
                  double e_ndcg,
-                 uint64_t num_docs = std::numeric_limits<uint64_t>::max())
-{
+                 uint64_t num_docs = std::numeric_limits<uint64_t>::max()) {
     auto f1 = eval.f1(ranking, qid, num_docs);
     auto p = eval.precision(ranking, qid, num_docs);
     auto r = eval.recall(ranking, qid, num_docs);
     auto avg_p = eval.avg_p(ranking, qid, num_docs);
     auto ndcg = eval.ndcg(ranking, qid, num_docs);
-    ASSERT_APPROX_EQUAL(f1, e_f1);
-    ASSERT_APPROX_EQUAL(p, e_p);
-    ASSERT_APPROX_EQUAL(r, e_r);
-    ASSERT_APPROX_EQUAL(avg_p, e_avg_p);
-    ASSERT_APPROX_EQUAL(ndcg, e_ndcg);
+    const double delta = 0.000001;
+    AssertThat(f1, EqualsWithDelta(e_f1, delta));
+    AssertThat(p, EqualsWithDelta(e_p, delta));
+    AssertThat(r, EqualsWithDelta(e_r, delta));
+    AssertThat(avg_p, EqualsWithDelta(e_avg_p, delta));
+    AssertThat(ndcg, EqualsWithDelta(e_ndcg, delta));
+}
 }
 
-int ir_eval_bounds()
-{
-    return testing::run_test(
-        "ir-eval-bounds", [&]()
-        {
+go_bandit([]() {
+
+    describe("ir-eval retrieval metrics", []() {
+
+        it("should give results on [0, 1] for all measures", []() {
             filesystem::remove_all("ceeaus-inv");
-            auto file_cfg = create_config("file");
+            auto file_cfg = tests::create_config("file");
             auto idx = index::make_index<index::inverted_index>(*file_cfg);
             index::okapi_bm25 ranker;
             index::ir_eval eval{*file_cfg};
             // sanity test bounds
-            for (size_t i = 0; i < 5; ++i)
-            {
+            for (size_t i = 0; i < 5; ++i) {
                 auto path = idx->doc_path(doc_id{i});
                 corpus::document query{doc_id{0}};
                 query.content(filesystem::file_text(path));
@@ -54,29 +57,34 @@ int ir_eval_bounds()
                 auto r = eval.recall(ranking, query_id{i});
                 auto avg_p = eval.avg_p(ranking, query_id{i});
                 auto ndcg = eval.ndcg(ranking, query_id{i});
-                ASSERT(f1 >= 0 && f1 <= 1);
-                ASSERT(p >= 0 && p <= 1);
-                ASSERT(r >= 0 && r <= 1);
-                ASSERT(avg_p >= 0 && avg_p <= 1);
-                ASSERT(ndcg >= 0 && ndcg <= 1);
+                AssertThat(
+                    f1,
+                    Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
+                AssertThat(
+                    p, Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
+                AssertThat(
+                    r, Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
+                AssertThat(
+                    avg_p,
+                    Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
+                AssertThat(
+                    ndcg,
+                    Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
             }
 
-            auto map = eval.map();
-            auto gmap = eval.gmap();
-            ASSERT(map >= 0 && map <= 1);
-            ASSERT(gmap >= 0 && gmap <= 1);
+            AssertThat(eval.map(),
+                       Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
+            AssertThat(eval.gmap(),
+                       Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
         });
-}
 
-int ir_eval_results()
-{
-    return testing::run_test(
-        "ir-eval-results", [&]()
-        {
-            auto file_cfg = create_config("file");
+        it("should compute correct results", []() {
+
+            auto file_cfg = tests::create_config("file");
             index::ir_eval eval{*file_cfg};
-            ASSERT_APPROX_EQUAL(eval.map(), 0.0);
-            ASSERT_APPROX_EQUAL(eval.gmap(), 0.0);
+            const double delta = 0.000001;
+            AssertThat(eval.map(), EqualsWithDelta(0.0, delta));
+            AssertThat(eval.gmap(), EqualsWithDelta(0.0, delta));
 
             // make some fake results based on the loaded qrels file
             std::vector<index::search_result> results;
@@ -137,143 +145,92 @@ int ir_eval_results()
             // recall is still not perfect @5
             check_query(eval, results, qid, 1.0 / 1.5, 1.0, 0.5, 1.0, 1.0, 5);
         });
-}
+    });
 
-// the magic numbers here are validated with an R implementation
-int rank_correlation_tests()
-{
-    int num_failed = 0;
+    // the magic numbers here are validated with an R implementation
+    describe("ir-eval rank correlation metrics", []() {
+        const double delta = 0.000001;
 
-    num_failed += testing::run_test(
-        "rank-correlation-throw-nonequal-size", []()
-        {
+        it("should throw on nonequal list sizes", []() {
             std::vector<double> rank_x = {1, 2, 3};
             std::vector<double> rank_y = {1, 2, 3, 4};
-
-            try
-            {
+            auto bad_func = [&]() {
                 index::rank_correlation corr{rank_x, rank_y};
-                FAIL("rank_correlation ctor should have thrown");
-            }
-            catch (const index::rank_correlation_exception&)
-            {
-                // pass!
-            }
+            };
+            AssertThrows(index::rank_correlation_exception, bad_func());
         });
 
-    num_failed
-        += testing::run_test("rank-correlation-tau-a-perfect", []()
-                             {
-                                 std::vector<double> rank_x = {1, 2, 3, 4, 5};
-                                 std::vector<double> rank_y = {1, 2, 3, 4, 5};
-                                 index::rank_correlation corr{rank_x, rank_y};
+        it("should calculate Tau A with perfect score", [&]() {
+            std::vector<double> rank_x = {1, 2, 3, 4, 5};
+            std::vector<double> rank_y = {1, 2, 3, 4, 5};
+            index::rank_correlation corr{rank_x, rank_y};
+            AssertThat(corr.tau_a(), EqualsWithDelta(1.0, delta));
+        });
 
-                                 ASSERT_APPROX_EQUAL(corr.tau_a(), 1.0);
-                             });
+        it("should calculate Tau A with inverse correlation", [&]() {
+            std::vector<double> rank_x = {1, 2, 3, 4, 5};
+            std::vector<double> rank_y = {5, 4, 3, 2, 1};
+            index::rank_correlation corr{rank_x, rank_y};
+            AssertThat(corr.tau_a(), EqualsWithDelta(-1.0, delta));
+        });
 
-    num_failed
-        += testing::run_test("rank-correlation-tau-a-inverse", []()
-                             {
-                                 std::vector<double> rank_x = {1, 2, 3, 4, 5};
-                                 std::vector<double> rank_y = {5, 4, 3, 2, 1};
-                                 index::rank_correlation corr{rank_x, rank_y};
-
-                                 ASSERT_APPROX_EQUAL(corr.tau_a(), -1.0);
-                             });
-
-    num_failed += testing::run_test(
-        "rank-correlation-tau-a-real", []()
-        {
+        it("should calculate Tau A with real score", [&]() {
             std::vector<double> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
             std::vector<double> rank_y = {3, 4, 1, 5, 6, 7, 8, 2};
             index::rank_correlation corr{rank_x, rank_y};
-
-            ASSERT_APPROX_EQUAL(corr.tau_a(), 0.4285715);
+            AssertThat(corr.tau_a(), EqualsWithDelta(0.4285715, delta));
         });
 
-    num_failed += testing::run_test(
-        "rank-correlation-tau-a-zero", []()
-        {
+        it("should calculate Tau A with zero score", [&]() {
             std::vector<double> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
             std::vector<double> rank_y = {1, 8, 7, 2, 5, 3, 6, 4};
             index::rank_correlation corr{rank_x, rank_y};
-
-            ASSERT_APPROX_EQUAL(corr.tau_a(), 0.0);
+            AssertThat(corr.tau_a(), EqualsWithDelta(0.0, delta));
         });
 
-    num_failed += testing::run_test(
-        "rank-correlation-tau-b-noties", []()
-        {
+        it("should calculate Tau B with no ties", [&]() {
             std::vector<double> rank_x = {1, 2, 3, 4, 5, 6, 7, 8};
             std::vector<double> rank_y = {3, 4, 1, 5, 6, 7, 8, 2};
             index::rank_correlation corr{rank_x, rank_y};
-
-            ASSERT_APPROX_EQUAL(corr.tau_a(), 0.4285715);
+            AssertThat(corr.tau_a(), EqualsWithDelta(0.4285715, delta));
         });
 
-    num_failed += testing::run_test(
-        "rank-correlation-tau-b-ties-x", []()
-        {
+        it("should calculate Tau B with ties", [&]() {
             std::vector<double> rank_x = {1, 1, 2, 2, 3, 4, 5, 6};
             std::vector<double> rank_y = {1, 2, 3, 4, 5, 6, 7, 8};
             index::rank_correlation corr{rank_x, rank_y};
-
-            ASSERT_APPROX_EQUAL(corr.tau_b(), 0.9636242);
+            AssertThat(corr.tau_b(), EqualsWithDelta(0.9636242, delta));
         });
 
-    num_failed += testing::run_test(
-        "rank-correlation-tau-b-ties-both", []()
-        {
+        it("should calculate Tau B with ties again", [&]() {
             std::vector<double> rank_x = {1, 1, 2, 2, 3, 4, 5, 6};
             std::vector<double> rank_y = {1, 2, 3, 3, 4, 4, 4, 5};
             index::rank_correlation corr{rank_x, rank_y};
-
-            ASSERT_APPROX_EQUAL(corr.tau_b(), 0.9207368);
+            AssertThat(corr.tau_b(), EqualsWithDelta(0.9207368, delta));
         });
 
-    num_failed += testing::run_test(
-        "rank-correlation-ndpm-perfect", []
-        {
+        it("should calculate NDPM with zero score", [&]() {
             std::vector<double> rank_x = {1, 2, 3, 3, 4, 5, 6, 7};
             std::vector<double> rank_y = {1, 1, 2, 2, 3, 4, 5, 6};
             index::rank_correlation corr{rank_x, rank_y};
-
-            ASSERT_APPROX_EQUAL(corr.ndpm(), 0.0);
+            AssertThat(corr.ndpm(), EqualsWithDelta(0.0, delta));
         });
 
-    num_failed
-        += testing::run_test("rank-correlation-ndpm-real", []
-                             {
-                                 // this is example 3 in the NDPM paper
-                                 std::vector<double> rank_x = {1, 2, 3, 2, 1};
-                                 std::vector<double> rank_y = {1, 1, 2, 3, 3};
-                                 index::rank_correlation corr{rank_x, rank_y};
+        it("should calculate NDPM with a real score", [&]() {
+            // this is example 3 in
+            // the NDPM paper
+            std::vector<double> rank_x = {1, 2, 3, 2, 1};
+            std::vector<double> rank_y = {1, 1, 2, 3, 3};
+            index::rank_correlation corr{rank_x, rank_y};
+            AssertThat(corr.ndpm(), EqualsWithDelta(8.0 / 16.0, delta));
+        });
 
-                                 ASSERT_APPROX_EQUAL(corr.ndpm(), 8.0 / 16.0);
-                             });
-
-    num_failed += testing::run_test(
-        "rank-correlation-ndpm-vs-tau-b", []
-        {
+        it("should calculate correct comparative NDPM and Tau B scores", [&]() {
             std::vector<double> rank_x = {1, 2, 3, 4, 5, 6};
             std::vector<double> rank_y = {1, 1, 2, 2, 3, 4};
             index::rank_correlation corr{rank_x, rank_y};
-
-            ASSERT_APPROX_EQUAL(corr.tau_b(), 0.9309493);
-            ASSERT_APPROX_EQUAL(corr.ndpm(), 0.0);
+            AssertThat(corr.tau_b(), EqualsWithDelta(0.9309493, delta));
+            AssertThat(corr.ndpm(), EqualsWithDelta(0.0, delta));
         });
-
-    return num_failed;
-}
-
-int ir_eval_tests()
-{
-    int num_failed = 0;
-    num_failed += ir_eval_bounds();
-    num_failed += ir_eval_results();
-    filesystem::remove_all("ceeaus-inv");
-    num_failed += rank_correlation_tests();
-    return num_failed;
-}
-}
-}
+    });
+});
