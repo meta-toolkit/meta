@@ -31,11 +31,10 @@ set_tests_properties(rankers PROPERTIES TIMEOUT 90 WORKING_DIRECTORY
 add_test(ir-eval ${UNIT_TEST_EXE} --only=ir-eval)
 set_tests_properties(ir-eval PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+add_test(compression ${UNIT_TEST_EXE} --only=compression)
+set_tests_properties(compression PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-#add_test(compression ${UNIT_TEST_EXE} compression)
-#set_tests_properties(compression PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
-#                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-#
 #add_test(graph ${UNIT_TEST_EXE} graph)
 #set_tests_properties(graph PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
 #                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
