@@ -16,8 +16,6 @@
 #include <vector>
 
 #include "meta.h"
-#include "io/compressed_file_reader.h"
-#include "io/compressed_file_writer.h"
 #include "util/sparse_vector.h"
 
 namespace meta
