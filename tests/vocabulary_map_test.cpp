@@ -95,12 +95,12 @@ void read_file(uint16_t size) {
     index::vocabulary_map map{"meta-tmp-test.bin", size};
     for (const auto& p : expected) {
         auto elem = map.find(p.first);
-        AssertThat(elem, Is().Not().EqualTo(util::nullopt));
+        AssertThat(static_cast<bool>(elem), IsTrue());
         AssertThat(*elem, Equals(p.second));
         AssertThat(map.find_term(term_id{p.second}), Equals(p.first));
     }
-    AssertThat(map.find("0"), Equals(util::nullopt));
-    AssertThat(map.find("zabawe"), Equals(util::nullopt));
+    AssertThat(static_cast<bool>(map.find("0")), IsFalse());
+    AssertThat(static_cast<bool>(map.find("zabawe")), IsFalse());
     AssertThat(map.size(), Equals(14ul));
 }
 }
