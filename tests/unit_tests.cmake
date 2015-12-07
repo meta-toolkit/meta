@@ -16,11 +16,10 @@ set_tests_properties(forward-index PROPERTIES TIMEOUT 30 WORKING_DIRECTORY
 add_test(classifier ${UNIT_TEST_EXE} --only=classifier)
 set_tests_properties(classifier PROPERTIES TIMEOUT 100 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+add_test(string-list ${UNIT_TEST_EXE} --only=string-list)
+set_tests_properties(string-list PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-#add_test(string-list ${UNIT_TEST_EXE} string-list)
-#set_tests_properties(string-list PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
-#                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-#
 #add_test(vocabulary-map ${UNIT_TEST_EXE} vocabulary-map)
 #set_tests_properties(vocabulary-map PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
 #                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

@@ -26,7 +26,8 @@ add_executable(unit-test unit_test.cpp
                          parallel_test.cpp
                          inverted_index_test.cpp
                          forward_index_test.cpp
-                         classifier_test.cpp)
+                         classifier_test.cpp
+                         string_list_test.cpp)
                       #  compression_test.cpp
                       #  filesystem_test.cpp
                       #  filter_test.cpp
@@ -34,7 +35,6 @@ add_executable(unit-test unit_test.cpp
                       #  libsvm_parser_test.cpp
                       #  ranker_test.cpp
                       #  lm_test.cpp
-                      #  string_list_test.cpp
                       #  graph_test.cpp
                       #  features_test.cpp
                       #  vocabulary_map_test.cpp
