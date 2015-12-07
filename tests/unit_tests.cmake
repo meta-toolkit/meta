@@ -25,11 +25,10 @@ set_tests_properties(vocabulary-map PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
 add_test(libsvm-parser ${UNIT_TEST_EXE} --only=libsvm-parser)
 set_tests_properties(libsvm-parser PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+add_test(rankers ${UNIT_TEST_EXE} --only=rankers)
+set_tests_properties(rankers PROPERTIES TIMEOUT 90 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
-#add_test(rankers ${UNIT_TEST_EXE} rankers)
-#set_tests_properties(rankers PROPERTIES TIMEOUT 90 WORKING_DIRECTORY
-#                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-#
 #add_test(ir-eval ${UNIT_TEST_EXE} ir-eval)
 #set_tests_properties(ir-eval PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
 #                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

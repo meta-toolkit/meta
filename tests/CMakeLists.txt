@@ -29,12 +29,12 @@ add_executable(unit-test unit_test.cpp
                          classifier_test.cpp
                          string_list_test.cpp
                          vocabulary_map_test.cpp
-                         libsvm_parser_test.cpp)
+                         libsvm_parser_test.cpp
+                         ranker_test.cpp)
                       #  compression_test.cpp
                       #  filesystem_test.cpp
                       #  filter_test.cpp
                       #  ir_eval_test.cpp
-                      #  ranker_test.cpp
                       #  lm_test.cpp
                       #  graph_test.cpp
                       #  features_test.cpp
