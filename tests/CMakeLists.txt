@@ -27,7 +27,8 @@ add_executable(unit-test unit_test.cpp
                          inverted_index_test.cpp
                          forward_index_test.cpp
                          classifier_test.cpp
-                         string_list_test.cpp)
+                         string_list_test.cpp
+                         vocabulary_map_test.cpp)
                       #  compression_test.cpp
                       #  filesystem_test.cpp
                       #  filter_test.cpp
@@ -37,7 +38,6 @@ add_executable(unit-test unit_test.cpp
                       #  lm_test.cpp
                       #  graph_test.cpp
                       #  features_test.cpp
-                      #  vocabulary_map_test.cpp
                       #  parser_test.cpp)
 add_dependencies(unit-test ceeaus breast-cancer)
 target_link_libraries(unit-test meta-index meta-classify meta-parser
