@@ -36,7 +36,7 @@ go_bandit([]() {
     using namespace graph;
     const double delta = 0.000001;
 
-    describe("graph undirected_graph", [&]() {
+    describe("[graph] undirected_graph", [&]() {
 
         it("should be constructed empty", [&]() {
             undirected_graph<> g;
@@ -84,7 +84,7 @@ go_bandit([]() {
            });
     });
 
-    describe("graph directed_graph", [&]() {
+    describe("[graph] directed_graph", [&]() {
 
         it("should be constructed empty", [&]() {
             directed_graph<> g;
@@ -112,7 +112,7 @@ go_bandit([]() {
         });
     });
 
-    describe("graph betweenness centrality", [&]() {
+    describe("[graph] betweenness centrality", [&]() {
 
         it("should produce the correct results", [&]() {
             undirected_graph<> g;

@@ -17,7 +17,7 @@ using namespace meta;
 
 go_bandit([]() {
 
-    describe("compression", []() {
+    describe("[compression]", []() {
 
         std::string filename{"meta-tmp-compressed.dat"};
         std::string str{"some random string"};

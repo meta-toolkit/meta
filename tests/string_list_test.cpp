@@ -49,7 +49,7 @@ struct file_guard {
 
 go_bandit([]() {
 
-    describe("string-list", []() {
+    describe("[string-list]", []() {
 
         it("should write strings", [&]() {
             file_guard f{"meta-tmp-string-list.bin"};

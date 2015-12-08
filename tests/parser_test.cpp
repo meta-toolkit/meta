@@ -83,7 +83,7 @@ struct binary_checker : public parser::const_visitor<bool> {
 go_bandit([]() {
     using namespace parser;
 
-    describe("parser transformer", [&]() {
+    describe("[parser] transformer", [&]() {
 
         annotation_remover ann_remover;
         empty_remover empty_rem;
@@ -119,7 +119,7 @@ go_bandit([]() {
         });
     });
 
-    describe("parser head finder", [&]() {
+    describe("[parser] head finder", [&]() {
 
         it("should find all annotated heads", [&]() {
             head_finder hf;
@@ -132,7 +132,7 @@ go_bandit([]() {
         });
     });
 
-    describe("parser binarizer", [&]() {
+    describe("[parser] binarizer", [&]() {
 
         head_finder hf;
         binarizer bin;
@@ -171,7 +171,7 @@ go_bandit([]() {
         });
     });
 
-    describe("parser debinarizer", [&]() {
+    describe("[parser] debinarizer", [&]() {
 
         head_finder hf;
         binarizer bin;

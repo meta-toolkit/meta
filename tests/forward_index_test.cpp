@@ -119,7 +119,7 @@ void bcancer_forward_test(const cpptoml::table& conf) {
 
 go_bandit([]() {
 
-    describe("forward-index from file config", []() {
+    describe("[forward-index] from file config", []() {
         auto file_cfg = tests::create_config("file");
 
         it("should create the index", [&]() {
@@ -138,7 +138,7 @@ go_bandit([]() {
         });
     });
 
-    describe("forward-index from line config", []() {
+    describe("[forward-index] from line config", []() {
         auto line_cfg = tests::create_config("line");
 
         it("should create the index", [&]() {
@@ -157,7 +157,7 @@ go_bandit([]() {
         });
     });
 
-    describe("forward-index from svm config", []() {
+    describe("[forward-index] from svm config", []() {
         auto svm_cfg = create_libsvm_config();
 
         it("should create the index", [&]() {
@@ -169,7 +169,7 @@ go_bandit([]() {
     });
 
 #if META_HAS_ZLIB
-    describe("forward-index with zlib", []() {
+    describe("[forward-index] with zlib", []() {
 
         filesystem::remove_all("ceeaus-fwd");
         auto gz_cfg = tests::create_config("gz");

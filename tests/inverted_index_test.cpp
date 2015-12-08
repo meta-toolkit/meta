@@ -59,7 +59,7 @@ void check_term_id(Index& idx) {
 
 go_bandit([]() {
 
-    describe("inverted-index from file config", []() {
+    describe("[inverted-index] from file config", []() {
 
         auto file_cfg = tests::create_config("file");
 
@@ -76,7 +76,7 @@ go_bandit([]() {
         });
     });
 
-    describe("inverted-index from line config", []() {
+    describe("[inverted-index] from line config", []() {
 
         filesystem::remove_all("ceeaus-inv");
         auto line_cfg = tests::create_config("line");
@@ -96,7 +96,7 @@ go_bandit([]() {
         });
     });
 
-    describe("inverted-index with caches", []() {
+    describe("[inverted-index] with caches", []() {
 
         auto line_cfg = tests::create_config("line");
 
@@ -125,7 +125,7 @@ go_bandit([]() {
     });
 
 #if META_HAS_ZLIB
-    describe("inverted-index with zlib", []() {
+    describe("[inverted-index] with zlib", []() {
 
         filesystem::remove_all("ceeaus-inv");
         auto gz_cfg = tests::create_config("gz");

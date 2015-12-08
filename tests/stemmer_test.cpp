@@ -13,7 +13,7 @@ using namespace meta;
 
 go_bandit([]() {
 
-    describe("stemmers: porter2 stemmer", []() {
+    describe("[stemmers] porter2 stemmer", []() {
 
         it("should match given stems", []() {
             std::ifstream in{"../data/porter2_stems.txt"};

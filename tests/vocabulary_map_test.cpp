@@ -107,7 +107,7 @@ void read_file(uint16_t size) {
 
 go_bandit([]() {
 
-    describe("vocabulary-map", []() {
+    describe("[vocabulary-map]", []() {
 
         it("should write full blocks", []() {
             write_file(20);

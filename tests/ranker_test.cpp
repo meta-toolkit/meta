@@ -38,7 +38,7 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding) {
 
 go_bandit([]() {
 
-    describe("rankers", []() {
+    describe("[rankers]", []() {
 
         auto config = tests::create_config("file");
         filesystem::remove_all("ceeaus-inv");
@@ -74,6 +74,5 @@ go_bandit([]() {
 
         idx = nullptr;
         filesystem::remove_all("ceeaus-inv");
-
     });
 });

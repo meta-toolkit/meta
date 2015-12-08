@@ -11,7 +11,7 @@ using namespace meta;
 
 go_bandit([]() {
 
-    describe("libsvm-parser", []() {
+    describe("[libsvm-parser]", []() {
 
         it("should parse lines with class labels", []() {
             auto same = {"a 12:2e-3 15:4.01 99:22 122:1",

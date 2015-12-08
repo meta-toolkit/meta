@@ -27,7 +27,7 @@ void run_tests(const std::string& index_type) {
         = index::make_index<index::forward_index, caching::no_evict_cache>(
             *config);
 
-    std::string describe_msg{"classifier (multiclass) from " + index_type
+    std::string describe_msg{"[classifier] (multiclass) from " + index_type
                              + "index"};
     describe(describe_msg.c_str(), [&]() {
 
@@ -72,7 +72,7 @@ void run_tests(const std::string& index_type) {
            });
     });
 
-    describe_msg = "classifier ensemble methods from " + index_type + " index";
+    describe_msg = "[classifier] ensemble methods from " + index_type + " index";
     describe(describe_msg.c_str(), [&]() {
         using namespace classify;
         using namespace tests;
@@ -170,7 +170,7 @@ void run_tests(const std::string& index_type) {
         });
     });
 
-    describe("classifier SVM wrapper", [&]() {
+    describe("[classifier] SVM wrapper", [&]() {
         auto svm_cfg = cpptoml::make_table();
         svm_cfg->insert("method", svm_wrapper::id.to_string());
         auto mod_path = config->get_as<std::string>("libsvm-modules");
@@ -196,7 +196,7 @@ go_bandit([]() {
     filesystem::remove_all("ceeaus-fwd");
     run_tests("file");
 
-    describe("classifier saving and loading model files", [&]() {
+    describe("[classifier] saving and loading model files", [&]() {
         using namespace classify;
 
         auto line_cfg = tests::create_config("line");

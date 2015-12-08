@@ -30,7 +30,7 @@ void easy_func(double& x) {
 go_bandit([]() {
 
     std::vector<double> v(10000000);
-    describe("parallel: parallel_for", [&]() {
+    describe("[parallel] parallel_for", [&]() {
 
         it("should produce correct calculations in parallel", [&]() {
             std::fill(v.begin(), v.end(), 1.0);
@@ -60,7 +60,7 @@ go_bandit([]() {
         });
     });
 
-    describe("parallel: thread pool", []() {
+    describe("[parallel] thread pool", []() {
 
         parallel::thread_pool pool{};
         std::vector<std::future<size_t>> futures;

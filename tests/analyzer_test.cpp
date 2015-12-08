@@ -42,7 +42,7 @@ void check_analyzer_expected(Analyzer& ana, corpus::document doc,
 
 go_bandit([]() {
 
-    describe("analyzers: string content", []() {
+    describe("[analyzers]: string content", []() {
 
         corpus::document doc{doc_id{47}};
         // "one" is a stopword
@@ -65,7 +65,7 @@ go_bandit([]() {
         });
     });
 
-    describe("analyzers: file content", [&]() {
+    describe("[analyzers]: file content", [&]() {
 
         corpus::document doc{doc_id{47}};
         doc.content(filesystem::file_text("../data/sample-document.txt"));

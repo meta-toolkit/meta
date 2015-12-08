@@ -37,7 +37,7 @@ void check_query(index::ir_eval& eval,
 
 go_bandit([]() {
 
-    describe("ir-eval retrieval metrics", []() {
+    describe("[ir-eval] retrieval metrics", []() {
 
         it("should give results on [0, 1] for all measures", []() {
             filesystem::remove_all("ceeaus-inv");
@@ -148,7 +148,7 @@ go_bandit([]() {
     });
 
     // the magic numbers here are validated with an R implementation
-    describe("ir-eval rank correlation metrics", []() {
+    describe("[ir-eval] rank correlation metrics", []() {
         const double delta = 0.000001;
 
         it("should throw on nonequal list sizes", []() {
