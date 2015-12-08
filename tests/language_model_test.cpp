@@ -42,8 +42,6 @@ go_bandit([]() {
 
     describe("[language-model]", [&]() {
 
-        delete_lm_files();
-
         it("should create new binary files with correct output",
            [&]() { run_test(*line_cfg); });
 
