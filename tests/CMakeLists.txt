@@ -35,8 +35,8 @@ add_executable(unit-test unit_test.cpp
                          compression_test.cpp
                          graph_test.cpp
                          parser_test.cpp
-                         language_model_test.cpp)
-                      #  filesystem_test.cpp
+                         language_model_test.cpp
+                         filesystem_test.cpp)
                       #  filter_test.cpp
                       #  features_test.cpp
 add_dependencies(unit-test ceeaus breast-cancer)
