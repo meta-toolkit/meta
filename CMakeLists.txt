@@ -329,11 +329,6 @@ if(NOT META_HAS_EXPERIMENTAL_FILESYSTEM AND NOT META_HAS_TR2_SYS_FILESYSTEM)
   target_include_directories(meta-definitions SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)
 endif()
 
-if(ICU_VERSION VERSION_LESS "4.4")
-  target_compile_definitions(meta-definitions INTERFACE
-                             -DMETA_ICU_NO_TEMP_SUBSTRING)
-endif()
-
 if(BIICODE)
   include(contrib/biicode/CMakeLists.txt)
   return()
