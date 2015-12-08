@@ -34,10 +34,10 @@ add_executable(unit-test unit_test.cpp
                          ir_eval_test.cpp
                          compression_test.cpp
                          graph_test.cpp
-                         parser_test.cpp)
+                         parser_test.cpp
+                         language_model_test.cpp)
                       #  filesystem_test.cpp
                       #  filter_test.cpp
-                      #  lm_test.cpp
                       #  features_test.cpp
 add_dependencies(unit-test ceeaus breast-cancer)
 target_link_libraries(unit-test meta-index meta-classify meta-parser
