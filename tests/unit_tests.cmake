@@ -46,7 +46,9 @@ set_tests_properties(language-model PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
 add_test(filesystem ${UNIT_TEST_EXE} --only=[filesystem])
 set_tests_properties(filesystem PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-
-#add_test(features ${UNIT_TEST_EXE} features)
-#set_tests_properties(features PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
+add_test(feature-selection ${UNIT_TEST_EXE} --only=[feature-selection])
+set_tests_properties(feature-selection PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+#add_test(filters ${UNIT_TEST_EXE} --only=[filters])
+#set_tests_properties(filters PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
 #                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
