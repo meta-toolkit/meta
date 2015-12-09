@@ -32,7 +32,7 @@ add_executable(unit-test unit_test.cpp
                          libsvm_parser_test.cpp
                          ranker_test.cpp
                          ir_eval_test.cpp
-                         compression_test.cpp
+                         binary_io_test.cpp
                          graph_test.cpp
                          parser_test.cpp
                          language_model_test.cpp
