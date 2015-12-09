@@ -5,8 +5,9 @@
 
 #include <fstream>
 
-#include "cpptoml.h"
 #include "analyzers/filters/sentence_boundary.h"
+#include "cpptoml.h"
+#include "io/filesystem.h"
 
 namespace meta
 {
@@ -67,14 +68,26 @@ void sentence_boundary::load_heuristics(const cpptoml::table& config)
         throw token_stream_exception{
             "configuration missing end-exceptions file"};
 
+    if (!filesystem::file_exists(*punc))
+        throw token_stream_exception{"punctuation file does not exist: "
+            + *punc};
+
     std::ifstream punc_file{*punc};
     std::string line;
     while (std::getline(punc_file, line))
         punc_set.emplace(std::move(line));
 
+    if (!filesystem::file_exists(*start_exceptions))
+        throw token_stream_exception{"start exceptions file does not exist: "
+            + *start_exceptions};
+
     std::ifstream start_ex_file{*start_exceptions};
     while (std::getline(start_ex_file, line))
         start_exception_set.emplace(std::move(line));
+
+    if (!filesystem::file_exists(*end_exceptions))
+        throw token_stream_exception{"end exceptions file does not exist: "
+            + *end_exceptions};
 
     std::ifstream end_ex_file{*end_exceptions};
     while (std::getline(end_ex_file, line))
