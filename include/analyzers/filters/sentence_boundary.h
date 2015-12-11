@@ -31,8 +31,8 @@ namespace filters
 
 /**
  * Filter that adds sentence boundary tokens ("<s>" and "</s>") to streams of
- * tokens. This filter requires that whitespace and punctuation be present
- * in the source stream.
+ * tokens. This filter requires that tokenized whitespace and punctuation be
+ * present in the source stream.
  *
  * Required config parameters:
  * ~~~toml
