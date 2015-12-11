@@ -959,8 +959,8 @@ class inline_key_external_value_storage
                + sizeof(V) * values_.capacity();
     }
 
-    std::vector<std::pair<K, std::size_t>> table_;
-    std::vector<V> values_;
+    key_vector_type table_;
+    value_vector_type values_;
 };
 
 template <class K, class V, class ProbingStrategy, class Hash, class KeyEqual>
