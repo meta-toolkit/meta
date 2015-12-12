@@ -32,7 +32,7 @@ std::string character_tokenizer::next()
     if (!*this)
         throw token_stream_exception{"next() called with no tokens left"};
 
-    return {1, content_[idx_++]};
+    return {content_[idx_++]};
 }
 
 character_tokenizer::operator bool() const
