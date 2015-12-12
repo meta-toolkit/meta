@@ -15,8 +15,14 @@
 namespace meta {
 namespace tests {
 
+/**
+ * @param corpus_type "line" or "file"
+ * @param multi Whether to create an array of analyzers to test
+ * multi_analyzer
+ * @return an analyzer created based on a constructed config file
+ */
 inline std::shared_ptr<cpptoml::table>
-create_config(const std::string& corpus_type) {
+create_config(const std::string& corpus_type, bool multi = false) {
     auto orig_config = cpptoml::parse_file("../config.toml");
     std::ofstream config_file{"test-config.toml"};
 
@@ -60,6 +66,14 @@ create_config(const std::string& corpus_type) {
     ana->insert<int64_t>("ngram", 1);
     ana->insert("filter", "default-chain");
     anas->push_back(ana);
+
+    if (multi) {
+        auto ana = cpptoml::make_table();
+        ana->insert("method", "ngram-word");
+        ana->insert<int64_t>("ngram", 3);
+        ana->insert("filter", "default-chain");
+        anas->push_back(ana);
+    }
 
     table->insert("analyzers", anas);
 

@@ -42,47 +42,63 @@ void check_analyzer_expected(Analyzer& ana, corpus::document doc,
 
 go_bandit([]() {
 
-    describe("[analyzers]: string content", []() {
+    corpus::document doc{doc_id{47}};
 
-        corpus::document doc{doc_id{47}};
+    describe("[analyzers]: string content", [&]() {
+
         // "one" is a stopword
         std::string content = "one one two two two three four one five";
         doc.content(content);
 
         it("should tokenize unigrams from a string", [&]() {
-            analyzers::ngram_word_analyzer<uint64_t> tok{1, make_filter()};
-            check_analyzer_expected(tok, doc, 6, 8);
+            analyzers::ngram_word_analyzer<uint64_t> ana{1, make_filter()};
+            check_analyzer_expected(ana, doc, 6, 8);
         });
 
         it("should tokenize bigrams from a string", [&]() {
-            analyzers::ngram_word_analyzer<uint64_t> tok{2, make_filter()};
-            check_analyzer_expected(tok, doc, 6, 7);
+            analyzers::ngram_word_analyzer<uint64_t> ana{2, make_filter()};
+            check_analyzer_expected(ana, doc, 6, 7);
         });
 
         it("should tokenize trigrams from a string", [&]() {
-            analyzers::ngram_word_analyzer<uint64_t> tok{3, make_filter()};
-            check_analyzer_expected(tok, doc, 6, 6);
+            analyzers::ngram_word_analyzer<uint64_t> ana{3, make_filter()};
+            check_analyzer_expected(ana, doc, 6, 6);
         });
     });
 
     describe("[analyzers]: file content", [&]() {
 
-        corpus::document doc{doc_id{47}};
         doc.content(filesystem::file_text("../data/sample-document.txt"));
 
         it("should tokenize unigrams from a file", [&]() {
-            analyzers::ngram_word_analyzer<uint64_t> tok{1, make_filter()};
-            check_analyzer_expected(tok, doc, 93, 168);
+            analyzers::ngram_word_analyzer<uint64_t> ana{1, make_filter()};
+            check_analyzer_expected(ana, doc, 93, 168);
         });
 
         it("should tokenize bigrams from a file", [&]() {
-            analyzers::ngram_word_analyzer<uint64_t> tok{2, make_filter()};
-            check_analyzer_expected(tok, doc, 140, 167);
+            analyzers::ngram_word_analyzer<uint64_t> ana{2, make_filter()};
+            check_analyzer_expected(ana, doc, 140, 167);
         });
 
         it("should tokenize trigrams from a file", [&]() {
-            analyzers::ngram_word_analyzer<uint64_t> tok{3, make_filter()};
-            check_analyzer_expected(tok, doc, 159, 166);
+            analyzers::ngram_word_analyzer<uint64_t> ana{3, make_filter()};
+            check_analyzer_expected(ana, doc, 159, 166);
+        });
+    });
+
+    describe("[analyzers]: create from factory", [&]() {
+        doc.content(filesystem::file_text("../data/sample-document.txt"));
+
+        it("should create an analyzer from a config object", [&]() {
+            auto config = tests::create_config("line");
+            auto ana = analyzers::load<uint64_t>(*config);
+            check_analyzer_expected(*ana, doc, 93, 168);
+        });
+
+        it("should create a multi_analyzer from a config object", [&]() {
+            auto config = tests::create_config("line", true);
+            auto ana = analyzers::load<uint64_t>(*config);
+            check_analyzer_expected(*ana, doc, 93 + 159, 168 + 166);
         });
     });
 });
