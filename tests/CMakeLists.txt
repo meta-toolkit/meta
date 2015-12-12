@@ -38,7 +38,7 @@ add_executable(unit-test unit_test.cpp
                          language_model_test.cpp
                          filesystem_test.cpp
                          feature_selection_test.cpp
-                         filter_test.cpp)
+                         tokenizer_filter_test.cpp)
 add_dependencies(unit-test ceeaus breast-cancer)
 target_link_libraries(unit-test meta-index meta-classify meta-parser
     meta-features meta-language-model)
