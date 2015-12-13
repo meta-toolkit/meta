@@ -10,9 +10,9 @@
 #ifndef META_CORPUS_METADATA_PARSER_H_
 #define META_CORPUS_METADATA_PARSER_H_
 
+#include <fstream>
+
 #include "corpus/metadata.h"
-#include "io/parser.h"
-#include "util/optional.h"
 
 namespace meta
 {
@@ -30,8 +30,7 @@ class metadata_parser
      * @param filename The name of the file to parse
      * @param schema The schema to parse the file with
      */
-    metadata_parser(const std::string& filename,
-                    metadata::schema schema);
+    metadata_parser(const std::string& filename, metadata::schema schema);
 
     /**
      * @return the metadata vector for the next document in the file
@@ -45,7 +44,7 @@ class metadata_parser
 
   private:
     /// the parser used to extract metadata
-    util::optional<io::parser> parser_;
+    std::ifstream infile_;
 
     /// the schema for the metadata being extracted
     metadata::schema schema_;

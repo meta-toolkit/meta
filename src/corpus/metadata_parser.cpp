@@ -13,25 +13,25 @@ namespace corpus
 
 metadata_parser::metadata_parser(const std::string& filename,
                                  metadata::schema schema)
-    : schema_{std::move(schema)}
+    : infile_{filename}, schema_{std::move(schema)}
 {
-    if (filesystem::file_exists(filename))
-        parser_ = io::parser{filename, "\n\t"};
+    // nothing
 }
 
 std::vector<metadata::field> metadata_parser::next()
 {
     std::vector<metadata::field> mdata;
-    if (parser_)
+    std::string str;
+    if (infile_)
     {
         mdata.reserve(schema_.size());
         for (const auto& finfo : schema_)
         {
-            if (!parser_->has_next())
+            if (!infile_)
                 throw metadata_exception{
                     "metadata input file ended prematurely"};
-            auto str = parser_->next();
 
+            infile_ >> str;
             switch (finfo.type)
             {
                 case metadata::field_type::SIGNED_INT:

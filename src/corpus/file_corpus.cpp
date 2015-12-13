@@ -3,9 +3,10 @@
  * @author Sean Massung
  */
 
+#include <fstream>
+
 #include "corpus/file_corpus.h"
 #include "io/filesystem.h"
-#include "io/parser.h"
 #include "utf/utf.h"
 #include "util/shim.h"
 
@@ -20,11 +21,11 @@ file_corpus::file_corpus(const std::string& prefix, const std::string& doc_list,
                          std::string encoding)
     : corpus{std::move(encoding)}, cur_{0}, prefix_{prefix}
 {
-    io::parser psr{doc_list, "\n"};
+    std::ifstream input{doc_list};
     uint64_t idx = 0;
-    while (psr.has_next())
+    std::string line;
+    while (std::getline(input, line))
     {
-        std::string line = psr.next();
         if (line.empty())
             throw corpus_exception{"empty line in corpus list: line #"
                                    + std::to_string(idx + 1)};

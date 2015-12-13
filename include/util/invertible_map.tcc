@@ -4,7 +4,6 @@
  */
 
 #include <sstream>
-#include "io/parser.h"
 
 namespace meta
 {

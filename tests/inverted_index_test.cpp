@@ -4,7 +4,6 @@
  */
 
 #include <fstream>
-#include <iostream>
 
 #include "bandit/bandit.h"
 #include "caching/all.h"

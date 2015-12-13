@@ -4,8 +4,7 @@ add_subdirectory(tools)
 
 set(IO_SOURCES filesystem.cpp
                libsvm_parser.cpp
-               mmap_file.cpp
-               parser.cpp)
+               mmap_file.cpp)
 
 set(IO_DEPS meta-util)
 
