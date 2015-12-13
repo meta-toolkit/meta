@@ -64,6 +64,27 @@ class lda_gibbs : public lda_model
      */
     virtual void run(uint64_t num_iters, double convergence = 1e-6) override;
 
+    /**
+     * @return the probability that the given term appears in the given
+     * topic
+     *
+     * @param term The term we are concerned with.
+     * @param topic The topic we are concerned with.
+     */
+    virtual double
+        compute_term_topic_probability(term_id term,
+                                       topic_id topic) const override;
+
+    /**
+     * @return the probability that the given topic is picked for the given
+     * document
+     *
+     * @param doc The document we are concerned with.
+     * @param topic The topic we are concerned with.
+     */
+    virtual double compute_doc_topic_probability(doc_id doc,
+                                                 topic_id topic) const override;
+
   protected:
     /**
      * Samples a topic from the full conditional distribution
@@ -90,27 +111,6 @@ class lda_gibbs : public lda_model
      */
     virtual double compute_sampling_weight(term_id term, doc_id doc,
                                            topic_id topic) const;
-
-    /**
-     * @return the probability that the given term appears in the given
-     * topic
-     *
-     * @param term The term we are concerned with.
-     * @param topic The topic we are concerned with.
-     */
-    virtual double
-        compute_term_topic_probability(term_id term,
-                                       topic_id topic) const override;
-
-    /**
-     * @return the probability that the given topic is picked for the given
-     * document
-     *
-     * @param doc The document we are concerned with.
-     * @param topic The topic we are concerned with.
-     */
-    virtual double compute_doc_topic_probability(doc_id doc,
-                                                 topic_id topic) const override;
 
     /**
      * Initializes the first set of topic assignments for inference.

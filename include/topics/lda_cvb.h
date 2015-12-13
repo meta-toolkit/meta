@@ -64,6 +64,13 @@ class lda_cvb : public lda_model
      */
     void run(uint64_t num_iters, double convergence = 1e-3) override;
 
+    virtual double
+        compute_term_topic_probability(term_id term,
+                                       topic_id topic) const override;
+
+    virtual double compute_doc_topic_probability(doc_id doc,
+                                                 topic_id topic) const override;
+
   protected:
     /**
      * Initializes the parameters randomly.
@@ -77,13 +84,6 @@ class lda_cvb : public lda_model
      * @return the maximum change in any of the \f$\gamma_{dij}\f$s
      */
     double perform_iteration(uint64_t iter);
-
-    virtual double
-        compute_term_topic_probability(term_id term,
-                                       topic_id topic) const override;
-
-    virtual double compute_doc_topic_probability(doc_id doc,
-                                                 topic_id topic) const override;
 
     /**
      * Variational distributions \f$\gamma_{ij}\f$, which represent the soft
