@@ -100,8 +100,6 @@ std::unique_ptr<corpus> make_corpus<libsvm_corpus>(util::string_view prefix,
                                                    util::string_view dataset,
                                                    const cpptoml::table& config)
 {
-    std::string derp{"herp"};
-
     // string_view doesn't have operator+ overloads...
     auto filename = prefix.to_string();
     filename += "/";
