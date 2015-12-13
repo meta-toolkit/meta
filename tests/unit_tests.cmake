@@ -55,3 +55,6 @@ set_tests_properties(tokenizer-filter PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
 add_test(metadata ${UNIT_TEST_EXE} --only=[metadata])
 set_tests_properties(metadata PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+add_test(topics ${UNIT_TEST_EXE} --only=[topics])
+set_tests_properties(topics PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
