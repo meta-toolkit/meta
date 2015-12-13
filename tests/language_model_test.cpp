@@ -47,7 +47,7 @@ void run_test(const cpptoml::table& line_cfg) {
                EqualsWithDelta(model.perplexity(s3) / s3.size(), delta));
     AssertThat(model.perplexity_per_word(s4),
                EqualsWithDelta(model.perplexity(s4) / s4.size(), delta));
-};
+}
 }
 
 go_bandit([]() {

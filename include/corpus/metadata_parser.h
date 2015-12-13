@@ -13,6 +13,7 @@
 #include <fstream>
 
 #include "corpus/metadata.h"
+#include "util/optional.h"
 
 namespace meta
 {
@@ -44,7 +45,8 @@ class metadata_parser
 
   private:
     /// the parser used to extract metadata
-    std::ifstream infile_;
+    /// unique_ptr because GCC<5.0 can't move streams
+    std::unique_ptr<std::ifstream> infile_;
 
     /// the schema for the metadata being extracted
     metadata::schema schema_;
