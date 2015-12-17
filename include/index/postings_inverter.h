@@ -18,10 +18,10 @@
 #include <utility>
 #include <vector>
 
+#include "hashing/probe_set.h"
 #include "index/chunk.h"
 #include "index/postings_buffer.h"
 #include "util/optional.h"
-#include "util/probe_set.h"
 
 namespace meta
 {
@@ -79,7 +79,7 @@ class postings_inverter
         void flush_chunk();
 
         /// Current in-memory chunk
-        util::probe_set<postings_buffer_type> pdata_;
+        hashing::probe_set<postings_buffer_type> pdata_;
 
         /// Current size of the in-memory chunk
         uint64_t chunk_size_;
@@ -137,7 +137,8 @@ class postings_inverter
      * @param pdata The collection of postings_data objects to combine into a
      * chunk
      */
-    void write_chunk(std::vector<postings_buffer_type>& pdata);
+    template <class Allocator>
+    void write_chunk(std::vector<postings_buffer_type, Allocator>& pdata);
 
     /// The prefix for all chunks to be written
     std::string prefix_;

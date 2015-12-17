@@ -293,6 +293,14 @@ class postings_buffer
     /// The sum of the counts we've written
     FeatureValue total_counts_ = 0;
 };
+
+template <class HashAlgorithm, class PrimaryKey, class SecondaryKey>
+void hash_append(HashAlgorithm& h,
+                 const postings_buffer<PrimaryKey, SecondaryKey>& pb)
+{
+    using util::hash_append;
+    hash_append(h, pb.primary_key());
+}
 }
 }
 

@@ -17,6 +17,7 @@ add_library(meta-testing analyzer_test.cpp
                          graph_test.cpp
                          features_test.cpp
                          vocabulary_map_test.cpp
+                         probe_test.cpp
                          parser_test.cpp)
 target_link_libraries(meta-testing meta-index meta-classify meta-parser
     meta-features meta-language-model)

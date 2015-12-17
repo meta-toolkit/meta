@@ -3,8 +3,8 @@
  * @author Sean Massung
  */
 
+#include "hashing/hash.h"
 #include "lm/static_probe_map.h"
-#include "util/hash.h"
 
 namespace meta
 {

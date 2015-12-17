@@ -37,9 +37,8 @@ void postings_inverter<Index>::producer::
         if (it == pdata_.end())
         {
             // check if we would resize on an insert
-            const auto& max_load_factor = pdata_.max_load_factor();
-            if (max_load_factor.denominator * (pdata_.size() + 1)
-                >= max_load_factor.numerator * pdata_.capacity())
+            if ((pdata_.size() + 1) / static_cast<double>(pdata_.capacity())
+                    >= pdata_.max_load_factor())
             {
                 // now check if roughly doubling our bytes used is going to
                 // cause problems
@@ -94,7 +93,9 @@ void postings_inverter<Index>::producer::flush_chunk()
     // (this should rarely, if ever, happen)
     if (chunk_size_ > max_size_)
     {
-        decltype(pdata_){}.swap(pdata_);
+        decltype(pdata_) tmp{};
+        using std::swap;
+        swap(tmp, pdata_);
         chunk_size_ = pdata_.bytes_used();
     }
 }
@@ -119,8 +120,9 @@ auto postings_inverter<Index>::make_producer(uint64_t ram_budget) -> producer
 }
 
 template <class Index>
+template <class Allocator>
 void postings_inverter<Index>::write_chunk(
-    std::vector<postings_buffer_type>& pdata)
+    std::vector<postings_buffer_type, Allocator>& pdata)
 {
     auto chunk_num = chunk_num_.fetch_add(1);
 
