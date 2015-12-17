@@ -136,6 +136,11 @@ go_bandit([]() {
             count_unique(set, numbers);
         });
 
+        it("should use binary hybrid probing (probe_set)", [&]() {
+            hashing::probe_set<uint64_t, binary_hybrid<uint64_t>> set;
+            count_unique(set, numbers);
+        });
+
         it("should use quadratic probing (probe_set)", [&]() {
             hashing::probe_set<uint64_t, quadratic> set;
             // quadratic probing only works for power-of-two sizes
@@ -155,6 +160,13 @@ go_bandit([]() {
 
         it("should use binary probing (probe_map)", [&]() {
             hashing::probe_map<uint64_t, uint64_t, binary> map;
+            count(map, numbers);
+        });
+
+        it("should use binary hybrid probing (probe_map)", [&]() {
+            using stored_type = std::pair<uint64_t, uint64_t>;
+            using probing_strat = hashing::probing::binary_hybrid<stored_type>;
+            hashing::probe_map<uint64_t, uint64_t, probing_strat> map;
             count(map, numbers);
         });
 
@@ -192,6 +204,11 @@ go_bandit([]() {
             count_unique(set, tokens);
         });
 
+        it("should use binary hybrid probing (probe_set)", [&]() {
+            hashing::probe_set<std::string, binary_hybrid<std::size_t>> set;
+            count_unique(set, tokens);
+        });
+
         it("should use quadratic probing (probe_set)", [&]() {
             hashing::probe_set<std::string, quadratic> set;
             // quadratic probing only works for power-of-two sizes
@@ -214,6 +231,12 @@ go_bandit([]() {
             count(map, tokens);
         });
 
+        it("should use binary hybrid probing (probe_map)", [&]() {
+            using probe_strat = binary_hybrid<std::size_t>;
+            hashing::probe_map<std::string, uint64_t, probe_strat> map;
+            count(map, tokens);
+        });
+
         it("should use quadratic probing (probe_map)", [&]() {
             hashing::probe_map<std::string, uint64_t, quadratic> map;
             // quadratic probing only works for power of two sizes
@@ -233,7 +256,11 @@ go_bandit([]() {
         it("should visit all slots in the table (binary)",
            []() { check_range<hashing::probing::binary>(); });
 
+        it("should visit all slots in the table (binary_hybrid)",
+           []() { check_range<hashing::probing::binary_hybrid<uint64_t>>(); });
+
         it("should visit all slots in the table (quadratic)",
            []() { check_range<hashing::probing::quadratic>(); });
+
     });
 });
