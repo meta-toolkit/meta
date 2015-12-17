@@ -12,8 +12,9 @@
 #include "classify/classifier/binary_classifier.h"
 #include "classify/classifier_factory.h"
 #include "classify/classifier/online_classifier.h"
+
+#include "hashing/hash.h"
 #include "meta.h"
-#include "util/hash.h"
 
 namespace meta
 {
@@ -98,7 +99,7 @@ class one_vs_one : public online_classifier
 
     using classifier_map_type
         = std::unordered_map<problem_type, std::unique_ptr<binary_classifier>,
-                             util::hash<>>;
+                             hashing::hash<>>;
     /**
      * the set of classifiers used in the ensemble, indexed by their
      * positive/negative class pair

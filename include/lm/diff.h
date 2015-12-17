@@ -12,9 +12,10 @@
 
 #include <unordered_map>
 #include <unordered_set>
+
 #include "cpptoml.h"
 #include "lm/language_model.h"
-#include "util/hash.h"
+#include "hashing/hash.h"
 
 namespace meta
 {
@@ -187,7 +188,7 @@ class diff
 
     /// Keeps track of sentences that have already been generated so we don't
     /// perform redundant calculations
-    std::unordered_set<lm::sentence, util::hash<>> seen_;
+    std::unordered_set<lm::sentence, hashing::hash<>> seen_;
 
     /// How many candidate sentences to store when calling diff::candidates
     uint64_t max_cand_size_;
