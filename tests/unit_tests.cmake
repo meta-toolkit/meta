@@ -32,7 +32,7 @@ add_test(ir-eval ${UNIT_TEST_EXE} --only=[ir-eval] --reporter=spec)
 set_tests_properties(ir-eval PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 add_test(binary-io ${UNIT_TEST_EXE} --only=[binary-io] --reporter=spec)
-set_tests_properties(binary-io PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
+set_tests_properties(binary-io PROPERTIES TIMEOUT 30 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 add_test(graph ${UNIT_TEST_EXE} --only=[graph] --reporter=spec)
 set_tests_properties(graph PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
