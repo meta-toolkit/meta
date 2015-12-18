@@ -386,6 +386,20 @@ if (NOT META_FOUND_ALIGNED_ALLOC_IMPL)
   message(FATAL_ERROR "Failed to find a suitable aligned allocation routine")
 endif()
 
+check_cxx_source_compiles("
+int main()
+{
+    long x = 1;
+    if (__builtin_expect(x == 1, 0))
+        return 1;
+    return 0;
+}" META_HAS_BUILTIN_EXPECT)
+
+if (META_HAS_BUILTIN_EXPECT)
+  target_compile_definitions(meta-definitions INTERFACE
+    -DMETA_HAS_BUILTIN_EXPECT)
+endif()
+
 if(BIICODE)
   include(contrib/biicode/CMakeLists.txt)
   return()

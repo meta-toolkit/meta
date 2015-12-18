@@ -14,6 +14,7 @@
 #include <cstdint>
 
 #include "hashing/hash_traits.h"
+#include "util/likely.h"
 
 namespace meta
 {
@@ -111,7 +112,7 @@ class binary_hybrid
 
         // find the index of the last (potentially) partial block
         auto last_block_start = capacity & ~(block_size - 1);
-        if (hash_ >= last_block_start)
+        if (META_UNLIKELY(hash_ >= last_block_start))
         {
             step_ = block_size;
             idx_ = hash_;
@@ -126,13 +127,13 @@ class binary_hybrid
 
     uint64_t probe()
     {
-        if (step_ < block_size)
+        if (META_LIKELY(step_ < block_size))
         {
             return hash_ ^ step_++;
         }
         else
         {
-            if (idx_ > max_)
+            if (META_UNLIKELY(idx_ > max_))
                 idx_ = 0;
             return idx_++;
         }
