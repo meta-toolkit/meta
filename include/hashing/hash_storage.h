@@ -311,6 +311,12 @@ class key_value_storage_iterator
     util::optional<value_type> pair_;
 };
 
+struct hash_idx
+{
+    std::size_t hc = 0;
+    std::size_t idx = 0;
+};
+
 template <class Storage>
 struct storage_traits;
 
@@ -504,12 +510,6 @@ class external_key_storage
   public:
     using reference = T&;
     using const_reference = const T&;
-
-    struct hash_idx
-    {
-        std::size_t hc = 0;
-        std::size_t idx = 0;
-    };
 
     using idx_vector_type = util::aligned_vector<hash_idx>;
     using key_vector_type = util::aligned_vector<T>;
@@ -868,7 +868,7 @@ class inline_key_external_value_storage
     using value_type = kv_pair<K, V>;
     using const_value_type = kv_pair<K, const V>;
 
-    using key_vector_type = util::aligned_vector<K>;
+    using key_vector_type = util::aligned_vector<std::pair<K, std::size_t>>;
     using value_vector_type = util::aligned_vector<V>;
 
     inline_key_external_value_storage(std::size_t capacity)
@@ -991,12 +991,6 @@ class external_key_value_storage
   public:
     using value_type = kv_pair<K, V>;
     using const_value_type = kv_pair<K, const V>;
-
-    struct hash_idx
-    {
-        std::size_t hc = 0;
-        std::size_t idx = 0;
-    };
 
     using idx_vector_type = util::aligned_vector<hash_idx>;
     using kv_vector_type = util::aligned_vector<std::pair<K, V>>;

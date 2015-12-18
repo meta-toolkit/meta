@@ -13,6 +13,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "hashing/hash_traits.h"
+
 namespace meta
 {
 namespace hashing
@@ -96,9 +98,11 @@ template <class T, std::size_t Alignment = 64>
 class binary_hybrid
 {
   public:
-    static_assert(Alignment > sizeof(T),
+    using probe_entry = typename hash_traits<T>::probe_entry;
+
+    static_assert(Alignment > sizeof(probe_entry),
                   "Alignment should be larger than sizeof(T)");
-    const static uint64_t block_size = Alignment / sizeof(T);
+    const static uint64_t block_size = Alignment / sizeof(probe_entry);
 
     binary_hybrid(uint64_t hash, uint64_t capacity)
         : hash_{hash}, step_{0}, max_{capacity - 1}

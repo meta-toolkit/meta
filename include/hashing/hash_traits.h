@@ -69,6 +69,9 @@ struct hash_traits
                                                      KeyEqual>,
                                   external_key_storage<T, ProbingStrategy, Hash,
                                                        KeyEqual>>::type;
+
+    using probe_entry =
+        typename std::conditional<key_traits<T>::inlineable, T, hash_idx>::type;
 };
 
 /**
@@ -110,6 +113,14 @@ struct hash_traits<kv_pair<K, V>>
                     key_inlineable_storage<ProbingStrategy, Hash, KeyEqual>,
                     external_key_value_storage<K, V, ProbingStrategy, Hash,
                                                KeyEqual>>::type;
+
+    using key_inlineable_probe_entry =
+        typename std::conditional<key_traits<V>::inlineable, std::pair<K, V>,
+                                  std::pair<K, std::size_t>>::type;
+
+    using probe_entry =
+        typename std::conditional<key_traits<K>::inlineable,
+                                  key_inlineable_probe_entry, hash_idx>::type;
 };
 }
 }

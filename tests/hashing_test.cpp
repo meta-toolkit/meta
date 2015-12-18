@@ -164,8 +164,8 @@ go_bandit([]() {
         });
 
         it("should use binary hybrid probing (probe_map)", [&]() {
-            using stored_type = std::pair<uint64_t, uint64_t>;
-            using probing_strat = hashing::probing::binary_hybrid<stored_type>;
+            using value_type = hashing::kv_pair<uint64_t, uint64_t>;
+            using probing_strat = hashing::probing::binary_hybrid<value_type>;
             hashing::probe_map<uint64_t, uint64_t, probing_strat> map;
             count(map, numbers);
         });
@@ -232,7 +232,8 @@ go_bandit([]() {
         });
 
         it("should use binary hybrid probing (probe_map)", [&]() {
-            using probe_strat = binary_hybrid<std::size_t>;
+            using value_type = hashing::kv_pair<std::string, uint64_t>;
+            using probe_strat = binary_hybrid<value_type>;
             hashing::probe_map<std::string, uint64_t, probe_strat> map;
             count(map, tokens);
         });
