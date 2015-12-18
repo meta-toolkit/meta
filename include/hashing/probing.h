@@ -109,13 +109,19 @@ class binary_hybrid
     {
         hash_ %= capacity;
 
-        auto last_block_start = capacity / block_size * block_size;
+        // find the index of the last (potentially) partial block
+        auto last_block_start = capacity & ~(block_size - 1);
         if (hash_ >= last_block_start)
+        {
             step_ = block_size;
-
-        // idx_ is the index of the start of the next block. If this is off
-        // the table the condition in probe() will fix it.
-        idx_ = (hash_ | (block_size - 1)) + 1;
+            idx_ = hash_;
+        }
+        else
+        {
+            // idx_ is the index of the start of the next block. If this is off
+            // the table the condition in probe() will fix it.
+            idx_ = (hash_ | (block_size - 1)) + 1;
+        }
     }
 
     uint64_t probe()
