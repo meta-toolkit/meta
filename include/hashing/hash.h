@@ -249,7 +249,7 @@ class murmur_hash<8>
         while (buflen_ > 0 && buflen_ < 16 && data < end)
             buf_[buflen_++] = *(data++);
 
-        if (buflen_ / 16 > 0)
+        if (buflen_ == 16)
         {
             handle_block_16(buf_.data());
             buflen_ = 0;
