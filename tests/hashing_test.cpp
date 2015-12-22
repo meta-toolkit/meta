@@ -15,6 +15,7 @@
 #include "hashing/probe_map.h"
 #include "hashing/probe_set.h"
 #include "io/filesystem.h"
+#include "util/string_view.h"
 
 using namespace bandit;
 using namespace meta;
@@ -105,9 +106,148 @@ void count(Map& map, const std::vector<K>& tokens) {
 
     compare(map, gold);
 }
+
+template <class HashAlgorithm>
+void check_hash(uint64_t seed, util::string_view key, uint64_t expected) {
+    HashAlgorithm hash{seed};
+    hash(key.data(), key.size());
+    AssertThat(static_cast<std::size_t>(hash), Equals(expected));
+}
+
+template <class HashAlgorithm>
+void check_incremental_hash(uint64_t seed, util::string_view key,
+                            uint64_t expected) {
+    HashAlgorithm hash{seed};
+    hash(key.data(), key.size() / 2);
+    hash(key.data() + key.size() / 2, key.size() - key.size() / 2 - 1);
+    hash(key.data() + key.size() - 1, 1);
+    AssertThat(static_cast<std::size_t>(hash), Equals(expected));
+}
 }
 
 go_bandit([]() {
+
+    describe("[hashing] murmur3 x64", []() {
+        using hash_algorithm = meta::hashing::murmur_hash<8>;
+
+        it("should match reference hash for \"Hello world!\"", []() {
+            check_hash<hash_algorithm>(1234, "Hello world!",
+                                       12944812652653076492UL);
+        });
+
+        it("should match some reference hashes with a seed", []() {
+
+            check_hash<hash_algorithm>(
+                2538058380, "The quick brown fox jumps over the lazy dog",
+                8325606756057297185UL);
+
+            check_hash<hash_algorithm>(
+                2538058380, "The quick brown fox jumps over the lazy cog",
+                13316396088517878164UL);
+
+            check_hash<hash_algorithm>(
+                2538058380, "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+                8685632661660666476UL);
+
+            check_hash<hash_algorithm>(
+                2538058380, "THE QUICK BROWN FOX JUMPS OVER THE LAZY COG",
+                6844295310937526493UL);
+
+            check_hash<hash_algorithm>(
+                2538058380, "the quick brown fox jumps over the lazy dog",
+                14781144643632954024UL);
+
+            check_hash<hash_algorithm>(
+                2538058380, "the quick brown fox jumps over the lazy cog",
+                2858122053483646065UL);
+        });
+
+        it("should match reference hashes using incremental hashing", []() {
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "The quick brown fox jumps over the lazy dog",
+                8325606756057297185UL);
+
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "The quick brown fox jumps over the lazy cog",
+                13316396088517878164UL);
+
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+                8685632661660666476UL);
+
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "THE QUICK BROWN FOX JUMPS OVER THE LAZY COG",
+                6844295310937526493UL);
+
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "the quick brown fox jumps over the lazy dog",
+                14781144643632954024UL);
+
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "the quick brown fox jumps over the lazy cog",
+                2858122053483646065UL);
+        });
+    });
+
+    describe("[hashing] murmur3 x86", []() {
+        using hash_algorithm = meta::hashing::murmur_hash<4>;
+
+        it("should match reference hash for \"Hello world!\"", []() {
+            check_hash<hash_algorithm>(1234, "Hello world!", 1793378202U);
+        });
+
+        it("should match some reference hashes with a seed", []() {
+            check_hash<hash_algorithm>(
+                2538058380, "The quick brown fox jumps over the lazy dog",
+                799549133U);
+
+            check_hash<hash_algorithm>(
+                2538058380, "The quick brown fox jumps over the lazy cog",
+                2375851732U);
+
+            check_hash<hash_algorithm>(
+                2538058380, "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+                1669041397U);
+
+            check_hash<hash_algorithm>(
+                2538058380, "THE QUICK BROWN FOX JUMPS OVER THE LAZY COG",
+                565768758U);
+
+            check_hash<hash_algorithm>(
+                2538058380, "the quick brown fox jumps over the lazy dog",
+                3988795164U);
+
+            check_hash<hash_algorithm>(
+                2538058380, "the quick brown fox jumps over the lazy cog",
+                2541836075U);
+        });
+
+        it("should match reference hashes using incremental hashing", []() {
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "The quick brown fox jumps over the lazy dog",
+                799549133U);
+
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "The quick brown fox jumps over the lazy cog",
+                2375851732U);
+
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+                1669041397U);
+
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "THE QUICK BROWN FOX JUMPS OVER THE LAZY COG",
+                565768758U);
+
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "the quick brown fox jumps over the lazy dog",
+                3988795164U);
+
+            check_incremental_hash<hash_algorithm>(
+                2538058380, "the quick brown fox jumps over the lazy cog",
+                2541836075U);
+        });
+    });
 
     describe("[hashing] ints", []() {
 
@@ -260,8 +400,11 @@ go_bandit([]() {
         it("should visit all slots in the table (binary_hybrid)",
            []() { check_range<hashing::probing::binary_hybrid<uint64_t>>(); });
 
+        it("should visit all slots in the table (binary_hybrid string)", []() {
+            check_range<hashing::probing::binary_hybrid<std::string>>();
+        });
+
         it("should visit all slots in the table (quadratic)",
            []() { check_range<hashing::probing::quadratic>(); });
-
     });
 });
