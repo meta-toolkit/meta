@@ -40,13 +40,13 @@ template <class T>
 void test_read_write(const std::vector<T>& elems, bool use_packed) {
     const std::string filename{"meta-tmp-compressed.dat"};
     {
-        std::ofstream outfile{filename};
+        std::ofstream outfile{filename, std::ios::binary};
         for (const auto& elem : elems)
             test_write(elem, outfile, use_packed);
     }
     uint64_t bytes_read = 0;
     {
-        std::ifstream infile{filename};
+        std::ifstream infile{filename, std::ios::binary};
         for (const auto& elem : elems) {
             T read_elem;
             bytes_read += test_read(read_elem, infile, use_packed);
@@ -70,7 +70,7 @@ void test_multi_read_write(bool use_packed) {
     auto elem_7 = std::string{"the end!"};
     const std::string filename{"meta-tmp-compressed.dat"};
     {
-        std::ofstream outfile{filename};
+        std::ofstream outfile{filename, std::ios::binary};
         test_write(elem_0, outfile, use_packed);
         test_write(elem_1, outfile, use_packed);
         test_write(elem_2, outfile, use_packed);
@@ -89,7 +89,7 @@ void test_multi_read_write(bool use_packed) {
     float read_elem_6;
     std::string read_elem_7;
     {
-        std::ifstream infile{filename};
+        std::ifstream infile{filename, std::ios::binary};
         test_read(read_elem_0, infile, use_packed);
         AssertThat(read_elem_0, Equals(elem_0));
         test_read(read_elem_1, infile, use_packed);
