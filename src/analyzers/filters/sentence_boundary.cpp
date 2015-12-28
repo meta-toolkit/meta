@@ -5,9 +5,9 @@
 
 #include <fstream>
 
-#include "analyzers/filters/sentence_boundary.h"
+#include "meta/analyzers/filters/sentence_boundary.h"
 #include "cpptoml.h"
-#include "io/filesystem.h"
+#include "meta/io/filesystem.h"
 
 namespace meta
 {

@@ -5,7 +5,7 @@
 
 #include <sstream>
 
-#include "io/libsvm_parser.h"
+#include "meta/io/libsvm_parser.h"
 
 namespace meta
 {

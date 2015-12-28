@@ -4,8 +4,8 @@
  */
 
 #include "cpptoml.h"
-#include "index/ranker/jelinek_mercer.h"
-#include "index/score_data.h"
+#include "meta/index/ranker/jelinek_mercer.h"
+#include "meta/index/score_data.h"
 
 namespace meta
 {

@@ -9,8 +9,8 @@
 #include <random>
 
 #include "bandit/bandit.h"
-#include "cpptoml.h"
 #include "classifier_test_helper.h"
+#include "cpptoml.h"
 
 using namespace bandit;
 using namespace meta;

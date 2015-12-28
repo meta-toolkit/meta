@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "corpus/metadata.h"
+#include "meta/corpus/metadata.h"
 
 namespace meta
 {

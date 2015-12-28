@@ -6,14 +6,14 @@
 #include <iostream>
 
 #include "cpptoml.h"
-#include "io/filesystem.h"
-#include "logging/logger.h"
-#include "parser/io/ptb_reader.h"
-#include "parser/sr_parser.h"
-#include "parser/trees/evalb.h"
-#include "parser/trees/visitors/empty_remover.h"
-#include "parser/sequence_extractor.h"
-#include "util/progress.h"
+#include "meta/io/filesystem.h"
+#include "meta/logging/logger.h"
+#include "meta/parser/io/ptb_reader.h"
+#include "meta/parser/sr_parser.h"
+#include "meta/parser/trees/evalb.h"
+#include "meta/parser/trees/visitors/empty_remover.h"
+#include "meta/parser/sequence_extractor.h"
+#include "meta/util/progress.h"
 
 using namespace meta;
 

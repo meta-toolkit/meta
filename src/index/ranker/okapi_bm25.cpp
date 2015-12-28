@@ -4,10 +4,10 @@
  */
 
 #include <cmath>
-#include "index/inverted_index.h"
-#include "index/ranker/okapi_bm25.h"
-#include "index/score_data.h"
-#include "util/fastapprox.h"
+#include "meta/index/inverted_index.h"
+#include "meta/index/ranker/okapi_bm25.h"
+#include "meta/index/score_data.h"
+#include "meta/util/fastapprox.h"
 
 namespace meta
 {

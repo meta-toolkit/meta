@@ -6,8 +6,8 @@
 #include <unicode/brkiter.h>
 
 #include "detail.h"
-#include "utf/segmenter.h"
-#include "util/pimpl.tcc"
+#include "meta/utf/segmenter.h"
+#include "meta/util/pimpl.tcc"
 
 namespace meta
 {

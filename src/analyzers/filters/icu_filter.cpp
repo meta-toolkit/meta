@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "analyzers/filters/icu_filter.h"
+#include "meta/analyzers/filters/icu_filter.h"
 #include "cpptoml.h"
 
 namespace meta

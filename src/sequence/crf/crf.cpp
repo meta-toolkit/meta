@@ -8,13 +8,13 @@
 #include <numeric>
 #include <map>
 #include <set>
-#include "logging/logger.h"
-#include "sequence/crf/crf.h"
-#include "sequence/crf/scorer.h"
-#include "util/mapping.h"
-#include "util/optional.h"
-#include "util/progress.h"
-#include "util/time.h"
+#include "meta/logging/logger.h"
+#include "meta/sequence/crf/crf.h"
+#include "meta/sequence/crf/scorer.h"
+#include "meta/util/mapping.h"
+#include "meta/util/optional.h"
+#include "meta/util/progress.h"
+#include "meta/util/time.h"
 
 namespace meta
 {

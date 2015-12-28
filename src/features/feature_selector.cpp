@@ -6,12 +6,12 @@
 #include <fstream>
 #include <iostream>
 #include <unordered_set>
-#include "features/feature_selector.h"
-#include "index/postings_data.h"
-#include "io/filesystem.h"
-#include "io/packed.h"
-#include "parallel/parallel_for.h"
-#include "util/progress.h"
+#include "meta/features/feature_selector.h"
+#include "meta/index/postings_data.h"
+#include "meta/io/filesystem.h"
+#include "meta/io/packed.h"
+#include "meta/parallel/parallel_for.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {

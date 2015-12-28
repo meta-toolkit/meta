@@ -4,7 +4,7 @@
  */
 
 #include <iostream>
-#include "io/gzstream.h"
+#include "meta/io/gzstream.h"
 
 namespace meta
 {

@@ -6,9 +6,9 @@
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
-#include "logging/logger.h"
-#include "util/printing.h"
-#include "util/progress.h"
+#include "meta/logging/logger.h"
+#include "meta/util/printing.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {

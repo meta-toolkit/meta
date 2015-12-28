@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "learn/loss/perceptron.h"
-#include "io/packed.h"
+#include "meta/learn/loss/perceptron.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

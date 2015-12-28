@@ -3,11 +3,11 @@
  * @author Chase Geigle
  */
 
-#include "classify/classifier/logistic_regression.h"
-#include "learn/loss/loss_function_factory.h"
-#include "learn/loss/logistic.h"
-#include "parallel/parallel_for.h"
-#include "util/functional.h"
+#include "meta/classify/classifier/logistic_regression.h"
+#include "meta/learn/loss/loss_function_factory.h"
+#include "meta/learn/loss/logistic.h"
+#include "meta/parallel/parallel_for.h"
+#include "meta/util/functional.h"
 
 namespace meta
 {

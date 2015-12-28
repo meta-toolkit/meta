@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "classify/kernel/radial_basis.h"
-#include "io/packed.h"
+#include "meta/classify/kernel/radial_basis.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

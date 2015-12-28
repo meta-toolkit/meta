@@ -7,14 +7,14 @@
 #include <string>
 #include <iostream>
 
-#include "util/time.h"
-#include "util/printing.h"
-#include "corpus/document.h"
-#include "index/inverted_index.h"
-#include "index/eval/ir_eval.h"
-#include "index/ranker/ranker_factory.h"
-#include "parser/analyzers/tree_analyzer.h"
-#include "sequence/analyzers/ngram_pos_analyzer.h"
+#include "meta/util/time.h"
+#include "meta/util/printing.h"
+#include "meta/corpus/document.h"
+#include "meta/index/inverted_index.h"
+#include "meta/index/eval/ir_eval.h"
+#include "meta/index/ranker/ranker_factory.h"
+#include "meta/parser/analyzers/tree_analyzer.h"
+#include "meta/sequence/analyzers/ngram_pos_analyzer.h"
 
 using namespace meta;
 

@@ -6,10 +6,10 @@
 #include <algorithm>
 #include <cmath>
 
-#include "index/postings_data.h"
-#include "logging/logger.h"
-#include "topics/lda_gibbs.h"
-#include "util/progress.h"
+#include "meta/index/postings_data.h"
+#include "meta/logging/logger.h"
+#include "meta/topics/lda_gibbs.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {

@@ -15,10 +15,10 @@
 #include <experimental/filesystem>
 #endif
 
-#include "io/filesystem.h"
-#include "io/mmap_file.h"
-#include "util/printing.h"
-#include "util/progress.h"
+#include "meta/io/filesystem.h"
+#include "meta/io/mmap_file.h"
+#include "meta/util/printing.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {

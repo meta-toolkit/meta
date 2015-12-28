@@ -9,11 +9,11 @@
 
 #include <iostream>
 #include "cpptoml.h"
-#include "features/all.h"
-#include "features/selector_factory.h"
-#include "index/forward_index.h"
-#include "logging/logger.h"
-#include "util/shim.h"
+#include "meta/features/all.h"
+#include "meta/features/selector_factory.h"
+#include "meta/index/forward_index.h"
+#include "meta/logging/logger.h"
+#include "meta/util/shim.h"
 
 using namespace meta;
 

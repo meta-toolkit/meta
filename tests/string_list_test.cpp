@@ -8,10 +8,10 @@
 #include <fstream>
 
 #include "bandit/bandit.h"
-#include "index/string_list.h"
-#include "index/string_list_writer.h"
-#include "io/binary.h"
-#include "io/filesystem.h"
+#include "meta/index/string_list.h"
+#include "meta/index/string_list_writer.h"
+#include "meta/io/binary.h"
+#include "meta/io/filesystem.h"
 
 using namespace bandit;
 using namespace meta;

@@ -4,8 +4,8 @@
  */
 
 #include "cpptoml.h"
-#include "index/ranker/all.h"
-#include "index/ranker/ranker_factory.h"
+#include "meta/index/ranker/all.h"
+#include "meta/index/ranker/ranker_factory.h"
 
 namespace meta
 {

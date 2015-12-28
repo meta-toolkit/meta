@@ -6,11 +6,11 @@
 #include <iostream>
 
 #include "cpptoml.h"
-#include "io/filesystem.h"
-#include "logging/logger.h"
-#include "sequence/perceptron.h"
-#include "sequence/io/ptb_parser.h"
-#include "util/progress.h"
+#include "meta/io/filesystem.h"
+#include "meta/logging/logger.h"
+#include "meta/sequence/perceptron.h"
+#include "meta/sequence/io/ptb_parser.h"
+#include "meta/util/progress.h"
 
 using namespace meta;
 

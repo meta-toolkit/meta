@@ -6,15 +6,15 @@
 #ifndef _WIN32
 #include <sys/mman.h>
 #else
-#include "mman.h"
+#include "meta/mman.h"
 #endif
 
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "io/filesystem.h"
-#include "io/mmap_file.h"
+#include "meta/io/filesystem.h"
+#include "meta/io/mmap_file.h"
 
 namespace meta
 {

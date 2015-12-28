@@ -9,13 +9,13 @@
 #include <unordered_map>
 #include <string>
 #include "cpptoml.h"
-#include "corpus/corpus.h"
-#include "corpus/corpus_factory.h"
-#include "analyzers/analyzer.h"
-#include "analyzers/filters/all.h"
-#include "util/progress.h"
-#include "util/fixed_heap.h"
-#include "logging/logger.h"
+#include "meta/corpus/corpus.h"
+#include "meta/corpus/corpus_factory.h"
+#include "meta/analyzers/analyzer.h"
+#include "meta/analyzers/filters/all.h"
+#include "meta/util/progress.h"
+#include "meta/util/fixed_heap.h"
+#include "meta/logging/logger.h"
 
 using namespace meta;
 

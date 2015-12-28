@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "regression/models/sgd.h"
-#include "learn/loss/loss_function_factory.h"
+#include "meta/regression/models/sgd.h"
+#include "meta/learn/loss/loss_function_factory.h"
 
 namespace meta
 {

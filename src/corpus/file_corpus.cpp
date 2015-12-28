@@ -5,10 +5,10 @@
 
 #include <fstream>
 
-#include "corpus/file_corpus.h"
-#include "io/filesystem.h"
-#include "utf/utf.h"
-#include "util/shim.h"
+#include "meta/corpus/file_corpus.h"
+#include "meta/io/filesystem.h"
+#include "meta/utf/utf.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {

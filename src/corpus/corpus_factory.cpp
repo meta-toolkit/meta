@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "corpus/all.h"
-#include "corpus/corpus_factory.h"
+#include "meta/corpus/all.h"
+#include "meta/corpus/corpus_factory.h"
 
 namespace meta
 {

@@ -6,24 +6,24 @@
 #include <cassert>
 #include <fstream>
 
-#include "io/filesystem.h"
-#include "io/packed.h"
-#include "logging/logger.h"
-#include "parallel/parallel_for.h"
-#include "parser/sr_parser.h"
-#include "parser/state.h"
-#include "parser/state_analyzer.h"
-#include "parser/training_data.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
-#include "parser/trees/visitors/debinarizer.h"
-#include "util/fixed_heap.h"
-#include "util/progress.h"
-#include "util/range.h"
-#include "util/time.h"
+#include "meta/io/filesystem.h"
+#include "meta/io/packed.h"
+#include "meta/logging/logger.h"
+#include "meta/parallel/parallel_for.h"
+#include "meta/parser/sr_parser.h"
+#include "meta/parser/state.h"
+#include "meta/parser/state_analyzer.h"
+#include "meta/parser/training_data.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/parser/trees/visitors/debinarizer.h"
+#include "meta/util/fixed_heap.h"
+#include "meta/util/progress.h"
+#include "meta/util/range.h"
+#include "meta/util/time.h"
 
 #ifdef META_HAS_ZLIB
-#include "io/gzstream.h"
+#include "meta/io/gzstream.h"
 #endif
 
 namespace meta

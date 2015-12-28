@@ -4,10 +4,10 @@
  */
 
 #include <random>
-#include "index/postings_data.h"
-#include "logging/logger.h"
-#include "topics/lda_cvb.h"
-#include "util/progress.h"
+#include "meta/index/postings_data.h"
+#include "meta/logging/logger.h"
+#include "meta/topics/lda_cvb.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {

@@ -3,10 +3,10 @@
  * @author Sean Massung
  */
 
-#include "index/inverted_index.h"
-#include "index/ranker/pivoted_length.h"
-#include "index/score_data.h"
-#include "util/fastapprox.h"
+#include "meta/index/inverted_index.h"
+#include "meta/index/ranker/pivoted_length.h"
+#include "meta/index/score_data.h"
+#include "meta/util/fastapprox.h"
 
 namespace meta
 {

@@ -2,22 +2,22 @@
  * @file analyzer.cpp
  */
 
-#include "analyzers/analyzer_factory.h"
-#include "analyzers/filter_factory.h"
-#include "analyzers/multi_analyzer.h"
-#include "analyzers/token_stream.h"
-#include "analyzers/filters/alpha_filter.h"
-#include "analyzers/filters/empty_sentence_filter.h"
-#include "analyzers/filters/length_filter.h"
-#include "analyzers/filters/list_filter.h"
-#include "analyzers/filters/lowercase_filter.h"
-#include "analyzers/filters/porter2_stemmer.h"
-#include "analyzers/tokenizers/icu_tokenizer.h"
-#include "corpus/document.h"
+#include "meta/analyzers/analyzer_factory.h"
+#include "meta/analyzers/filter_factory.h"
+#include "meta/analyzers/multi_analyzer.h"
+#include "meta/analyzers/token_stream.h"
+#include "meta/analyzers/filters/alpha_filter.h"
+#include "meta/analyzers/filters/empty_sentence_filter.h"
+#include "meta/analyzers/filters/length_filter.h"
+#include "meta/analyzers/filters/list_filter.h"
+#include "meta/analyzers/filters/lowercase_filter.h"
+#include "meta/analyzers/filters/porter2_stemmer.h"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
+#include "meta/corpus/document.h"
 #include "cpptoml.h"
-#include "io/mmap_file.h"
-#include "util/shim.h"
-#include "utf/utf.h"
+#include "meta/io/mmap_file.h"
+#include "meta/util/shim.h"
+#include "meta/utf/utf.h"
 
 namespace meta
 {

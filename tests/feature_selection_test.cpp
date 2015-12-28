@@ -5,9 +5,9 @@
 
 #include "bandit/bandit.h"
 #include "create_config.h"
-#include "features/feature_selector.h"
-#include "features/selector_factory.h"
-#include "features/all.h"
+#include "meta/features/feature_selector.h"
+#include "meta/features/selector_factory.h"
+#include "meta/features/all.h"
 
 using namespace bandit;
 using namespace meta;

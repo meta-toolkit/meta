@@ -5,9 +5,9 @@
 
 #include <algorithm>
 
-#include "corpus/line_corpus.h"
-#include "io/filesystem.h"
-#include "util/shim.h"
+#include "meta/corpus/line_corpus.h"
+#include "meta/io/filesystem.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {

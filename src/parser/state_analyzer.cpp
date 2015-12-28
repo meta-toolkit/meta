@@ -5,10 +5,10 @@
 
 #include <cassert>
 
-#include "parser/state_analyzer.h"
-#include "parser/state.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
+#include "meta/parser/state_analyzer.h"
+#include "meta/parser/state.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
 
 namespace meta
 {

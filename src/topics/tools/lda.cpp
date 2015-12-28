@@ -2,16 +2,16 @@
 #include <string>
 #include <vector>
 
-#include "topics/lda_gibbs.h"
-#include "topics/parallel_lda_gibbs.h"
-#include "topics/lda_cvb.h"
-#include "topics/lda_scvb.h"
+#include "meta/topics/lda_gibbs.h"
+#include "meta/topics/parallel_lda_gibbs.h"
+#include "meta/topics/lda_cvb.h"
+#include "meta/topics/lda_scvb.h"
 
 #include "cpptoml.h"
 
-#include "caching/no_evict_cache.h"
-#include "index/forward_index.h"
-#include "logging/logger.h"
+#include "meta/caching/no_evict_cache.h"
+#include "meta/index/forward_index.h"
+#include "meta/logging/logger.h"
 
 using namespace meta;
 

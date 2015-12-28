@@ -5,9 +5,9 @@
 
 #include <iostream>
 #include <algorithm>
-#include "meta.h"
-#include "index/vocabulary_map_writer.h"
-#include "io/binary.h"
+#include "meta/meta.h"
+#include "meta/index/vocabulary_map_writer.h"
+#include "meta/io/binary.h"
 
 namespace meta
 {

@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "analyzers/analyzer_factory.h"
-#include "analyzers/all.h"
+#include "meta/analyzers/analyzer_factory.h"
+#include "meta/analyzers/all.h"
 
 namespace meta
 {

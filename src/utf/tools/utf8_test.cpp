@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "utf/utf.h"
+#include "meta/utf/utf.h"
 
 using namespace meta;
 

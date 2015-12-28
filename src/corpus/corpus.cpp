@@ -3,11 +3,11 @@
  * @author Sean Massung
  */
 
-#include "corpus/corpus.h"
-#include "corpus/all.h"
+#include "meta/corpus/corpus.h"
+#include "meta/corpus/all.h"
 #include "cpptoml.h"
-#include "io/filesystem.h"
-#include "util/shim.h"
+#include "meta/io/filesystem.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {

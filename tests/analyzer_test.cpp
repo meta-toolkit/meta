@@ -3,13 +3,13 @@
  * @author Sean Massung
  */
 
-#include "analyzers/all.h"
-#include "analyzers/token_stream.h"
+#include "meta/analyzers/all.h"
+#include "meta/analyzers/token_stream.h"
 #include "bandit/bandit.h"
-#include "corpus/document.h"
+#include "meta/corpus/document.h"
 #include "create_config.h"
-#include "io/filesystem.h"
-#include "util/shim.h"
+#include "meta/io/filesystem.h"
+#include "meta/util/shim.h"
 
 using namespace bandit;
 using namespace meta;

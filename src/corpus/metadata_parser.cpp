@@ -3,9 +3,9 @@
  * @author Chase Geigle
  */
 
-#include "corpus/metadata_parser.h"
-#include "io/filesystem.h"
-#include "util/shim.h"
+#include "meta/corpus/metadata_parser.h"
+#include "meta/io/filesystem.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {

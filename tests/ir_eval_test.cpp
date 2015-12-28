@@ -5,11 +5,11 @@
 
 #include "bandit/bandit.h"
 #include "create_config.h"
-#include "corpus/document.h"
-#include "index/eval/ir_eval.h"
-#include "index/eval/rank_correlation.h"
-#include "index/ranker/okapi_bm25.h"
-#include "index/ranker/ranker.h"
+#include "meta/corpus/document.h"
+#include "meta/index/eval/ir_eval.h"
+#include "meta/index/eval/rank_correlation.h"
+#include "meta/index/ranker/okapi_bm25.h"
+#include "meta/index/ranker/ranker.h"
 
 using namespace bandit;
 using namespace meta;

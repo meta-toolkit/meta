@@ -6,9 +6,9 @@
 #include <numeric>
 #include <random>
 
-#include "classify/classifier/sgd.h"
-#include "learn/loss/loss_function_factory.h"
-#include "index/postings_data.h"
+#include "meta/classify/classifier/sgd.h"
+#include "meta/learn/loss/loss_function_factory.h"
+#include "meta/index/postings_data.h"
 
 namespace meta
 {

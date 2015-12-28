@@ -4,10 +4,10 @@
  */
 
 #include "cpptoml.h"
-#include "analyzers/token_stream.h"
-#include "parser/analyzers/tree_analyzer.h"
-#include "parser/analyzers/featurizers/featurizer_factory.h"
-#include "utf/segmenter.h"
+#include "meta/analyzers/token_stream.h"
+#include "meta/parser/analyzers/tree_analyzer.h"
+#include "meta/parser/analyzers/featurizers/featurizer_factory.h"
+#include "meta/utf/segmenter.h"
 
 namespace meta
 {

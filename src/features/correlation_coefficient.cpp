@@ -3,7 +3,7 @@
  * @author Sean Massung
  */
 
-#include "features/correlation_coefficient.h"
+#include "meta/features/correlation_coefficient.h"
 
 namespace meta
 {

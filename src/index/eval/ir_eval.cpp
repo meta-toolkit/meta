@@ -9,10 +9,10 @@
 #include <fstream>
 #include <sstream>
 #include "cpptoml.h"
-#include "index/eval/ir_eval.h"
-#include "util/mapping.h"
-#include "util/printing.h"
-#include "util/shim.h"
+#include "meta/index/eval/ir_eval.h"
+#include "meta/util/mapping.h"
+#include "meta/util/printing.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {

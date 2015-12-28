@@ -6,14 +6,14 @@
 #include <numeric>
 #include <random>
 
-#include "classify/kernel/all.h"
-#include "classify/classifier/dual_perceptron.h"
-#include "index/postings_data.h"
-#include "io/packed.h"
-#include "util/functional.h"
-#include "util/printing.h"
-#include "util/progress.h"
-#include "utf/utf.h"
+#include "meta/classify/kernel/all.h"
+#include "meta/classify/classifier/dual_perceptron.h"
+#include "meta/index/postings_data.h"
+#include "meta/io/packed.h"
+#include "meta/util/functional.h"
+#include "meta/util/printing.h"
+#include "meta/util/progress.h"
+#include "meta/utf/utf.h"
 
 namespace meta
 {

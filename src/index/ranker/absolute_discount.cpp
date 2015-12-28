@@ -5,8 +5,8 @@
 
 #include <algorithm>
 #include "cpptoml.h"
-#include "index/ranker/absolute_discount.h"
-#include "index/score_data.h"
+#include "meta/index/ranker/absolute_discount.h"
+#include "meta/index/score_data.h"
 
 namespace meta
 {

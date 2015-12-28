@@ -3,9 +3,9 @@
  * @author Chase Geigle
  */
 
-#include "learn/loss/all.h"
-#include "learn/loss/loss_function_factory.h"
-#include "io/packed.h"
+#include "meta/learn/loss/all.h"
+#include "meta/learn/loss/loss_function_factory.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

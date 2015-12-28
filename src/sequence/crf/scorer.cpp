@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "sequence/crf/scorer.h"
+#include "meta/sequence/crf/scorer.h"
 
 namespace meta
 {

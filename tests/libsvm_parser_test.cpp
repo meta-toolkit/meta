@@ -4,7 +4,7 @@
  */
 
 #include "bandit/bandit.h"
-#include "io/libsvm_parser.h"
+#include "meta/io/libsvm_parser.h"
 
 using namespace bandit;
 using namespace meta;

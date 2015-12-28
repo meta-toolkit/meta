@@ -5,9 +5,9 @@
 
 #include <random>
 #include <numeric>
-#include "logging/logger.h"
-#include "classify/classifier/classifier.h"
-#include "classify/classifier_factory.h"
+#include "meta/logging/logger.h"
+#include "meta/classify/classifier/classifier.h"
+#include "meta/classify/classifier_factory.h"
 
 namespace meta
 {

@@ -5,12 +5,12 @@
 
 #include <iostream>
 #include "cpptoml.h"
-#include "meta.h"
-#include "lm/diff.h"
-#include "lm/sentence.h"
-#include "logging/logger.h"
-#include "io/filesystem.h"
-#include "util/progress.h"
+#include "meta/meta.h"
+#include "meta/lm/diff.h"
+#include "meta/lm/sentence.h"
+#include "meta/logging/logger.h"
+#include "meta/io/filesystem.h"
+#include "meta/util/progress.h"
 
 using namespace meta;
 

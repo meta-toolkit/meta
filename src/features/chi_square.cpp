@@ -3,7 +3,7 @@
  * @author Sean Massung
  */
 
-#include "features/chi_square.h"
+#include "meta/features/chi_square.h"
 
 namespace meta
 {

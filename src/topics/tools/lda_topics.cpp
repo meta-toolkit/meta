@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 
-#include "caching/no_evict_cache.h"
-#include "index/forward_index.h"
-#include "util/fixed_heap.h"
+#include "meta/caching/no_evict_cache.h"
+#include "meta/index/forward_index.h"
+#include "meta/util/fixed_heap.h"
 
 using namespace meta;
 

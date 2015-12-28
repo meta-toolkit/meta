@@ -5,11 +5,11 @@
 
 #include <cassert>
 
-#include "parser/trees/visitors/binarizer.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
-#include "util/shim.h"
-#include "logging/logger.h"
+#include "meta/parser/trees/visitors/binarizer.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/util/shim.h"
+#include "meta/logging/logger.h"
 
 namespace meta
 {

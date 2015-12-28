@@ -7,9 +7,9 @@
 #include <iomanip>
 #include <vector>
 
-#include "classify/confusion_matrix.h"
-#include "util/mapping.h"
-#include "util/printing.h"
+#include "meta/classify/confusion_matrix.h"
+#include "meta/util/mapping.h"
+#include "meta/util/printing.h"
 
 namespace meta
 {

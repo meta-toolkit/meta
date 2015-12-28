@@ -3,7 +3,7 @@
  * @author Sean Massung
  */
 
-#include "lm/token_list.h"
+#include "meta/lm/token_list.h"
 
 namespace meta
 {

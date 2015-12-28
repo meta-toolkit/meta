@@ -3,7 +3,7 @@
  * @author Sean Massung
  */
 
-#include "features/odds_ratio.h"
+#include "meta/features/odds_ratio.h"
 
 namespace meta
 {

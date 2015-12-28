@@ -6,8 +6,8 @@
 #include <iostream>
 #include <memory>
 
-#include "index/vocabulary_map.h"
-#include "util/optional.h"
+#include "meta/index/vocabulary_map.h"
+#include "meta/util/optional.h"
 
 int main(int argc, char** argv)
 {

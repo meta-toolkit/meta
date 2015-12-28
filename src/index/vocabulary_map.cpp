@@ -4,8 +4,8 @@
  */
 
 #include <cstring>
-#include "index/vocabulary_map.h"
-#include "util/optional.h"
+#include "meta/index/vocabulary_map.h"
+#include "meta/util/optional.h"
 
 namespace meta
 {

@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "learn/loss/least_squares.h"
-#include "io/packed.h"
+#include "meta/learn/loss/least_squares.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

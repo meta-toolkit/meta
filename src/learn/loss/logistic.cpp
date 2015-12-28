@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "learn/loss/logistic.h"
-#include "io/packed.h"
+#include "meta/learn/loss/logistic.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

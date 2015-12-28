@@ -5,7 +5,7 @@
 
 #include <numeric>
 #include <algorithm>
-#include "sequence/trellis.h"
+#include "meta/sequence/trellis.h"
 
 namespace meta
 {

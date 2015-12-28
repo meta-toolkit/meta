@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "learn/loss/squared_hinge.h"
-#include "io/packed.h"
+#include "meta/learn/loss/squared_hinge.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

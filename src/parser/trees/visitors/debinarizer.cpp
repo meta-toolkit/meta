@@ -6,10 +6,10 @@
 #include <algorithm>
 #include <cassert>
 
-#include "parser/trees/visitors/debinarizer.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
-#include "util/shim.h"
+#include "meta/parser/trees/visitors/debinarizer.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {

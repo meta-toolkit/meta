@@ -3,7 +3,7 @@
  * @author Sean Massung
  */
 
-#include "analyzers/ngram/ngram_analyzer.h"
+#include "meta/analyzers/ngram/ngram_analyzer.h"
 
 namespace meta
 {

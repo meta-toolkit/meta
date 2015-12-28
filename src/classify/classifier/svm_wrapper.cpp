@@ -4,8 +4,8 @@
  */
 
 #include <fstream>
-#include "classify/classifier/svm_wrapper.h"
-#include "utf/utf.h"
+#include "meta/classify/classifier/svm_wrapper.h"
+#include "meta/utf/utf.h"
 
 namespace meta
 {

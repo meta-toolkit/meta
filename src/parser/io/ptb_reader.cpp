@@ -5,10 +5,10 @@
 
 #include <iostream>
 #include <fstream>
-#include "parser/io/ptb_reader.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
-#include "util/shim.h"
+#include "meta/parser/io/ptb_reader.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {

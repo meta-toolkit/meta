@@ -5,16 +5,16 @@
 
 #include <numeric>
 
-#include "index/disk_index.h"
-#include "index/disk_index_impl.h"
-#include "index/string_list.h"
-#include "index/string_list_writer.h"
-#include "index/vocabulary_map.h"
-#include "analyzers/analyzer.h"
-#include "util/disk_vector.h"
-#include "util/mapping.h"
-#include "util/optional.h"
-#include "util/pimpl.tcc"
+#include "meta/index/disk_index.h"
+#include "meta/index/disk_index_impl.h"
+#include "meta/index/string_list.h"
+#include "meta/index/string_list_writer.h"
+#include "meta/index/vocabulary_map.h"
+#include "meta/analyzers/analyzer.h"
+#include "meta/util/disk_vector.h"
+#include "meta/util/mapping.h"
+#include "meta/util/optional.h"
+#include "meta/util/pimpl.tcc"
 
 namespace meta
 {

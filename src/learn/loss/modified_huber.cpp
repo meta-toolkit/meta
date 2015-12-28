@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "learn/loss/modified_huber.h"
-#include "io/packed.h"
+#include "meta/learn/loss/modified_huber.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

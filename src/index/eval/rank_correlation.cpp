@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "index/eval/rank_correlation.h"
+#include "meta/index/eval/rank_correlation.h"
 
 namespace meta
 {

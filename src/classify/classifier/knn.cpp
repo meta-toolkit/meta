@@ -7,11 +7,11 @@
 #include <unordered_map>
 
 #include "cpptoml.h"
-#include "classify/classifier/knn.h"
-#include "corpus/document.h"
-#include "index/postings_data.h"
-#include "index/ranker/ranker_factory.h"
-#include "index/make_index.h"
+#include "meta/classify/classifier/knn.h"
+#include "meta/corpus/document.h"
+#include "meta/index/postings_data.h"
+#include "meta/index/ranker/ranker_factory.h"
+#include "meta/index/make_index.h"
 
 namespace meta
 {

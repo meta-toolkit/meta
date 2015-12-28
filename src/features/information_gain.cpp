@@ -3,7 +3,7 @@
  * @author Sean Massung
  */
 
-#include "features/information_gain.h"
+#include "meta/features/information_gain.h"
 
 namespace meta
 {

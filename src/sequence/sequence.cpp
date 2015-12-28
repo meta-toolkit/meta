@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "sequence/sequence.h"
+#include "meta/sequence/sequence.h"
 
 namespace meta
 {

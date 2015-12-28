@@ -4,11 +4,11 @@
 
 #include <vector>
 #include "cpptoml.h"
-#include "corpus/document.h"
-#include "sequence/sequence.h"
-#include "sequence/crf/tagger.h"
-#include "analyzers/token_stream.h"
-#include "sequence/analyzers/ngram_pos_analyzer.h"
+#include "meta/corpus/document.h"
+#include "meta/sequence/sequence.h"
+#include "meta/sequence/crf/tagger.h"
+#include "meta/analyzers/token_stream.h"
+#include "meta/sequence/analyzers/ngram_pos_analyzer.h"
 
 namespace meta
 {

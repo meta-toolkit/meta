@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "regression/models/regressor.h"
+#include "meta/regression/models/regressor.h"
 
 namespace meta
 {

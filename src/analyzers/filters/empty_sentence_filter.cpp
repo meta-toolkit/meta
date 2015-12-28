@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "analyzers/filters/empty_sentence_filter.h"
+#include "meta/analyzers/filters/empty_sentence_filter.h"
 
 namespace meta
 {

@@ -6,8 +6,8 @@
 #include <unicode/translit.h>
 
 #include "detail.h"
-#include "utf/transformer.h"
-#include "util/pimpl.tcc"
+#include "meta/utf/transformer.h"
+#include "meta/util/pimpl.tcc"
 
 namespace meta
 {

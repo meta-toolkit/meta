@@ -3,10 +3,10 @@
  * @author Chase Geigle
  */
 
-#include "corpus/libsvm_corpus.h"
-#include "io/filesystem.h"
-#include "io/libsvm_parser.h"
-#include "util/shim.h"
+#include "meta/corpus/libsvm_corpus.h"
+#include "meta/io/filesystem.h"
+#include "meta/io/libsvm_parser.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {

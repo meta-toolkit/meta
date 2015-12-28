@@ -6,14 +6,14 @@
 
 #include <vector>
 
-#include "analyzers/tokenizers/whitespace_tokenizer.h"
-#include "analyzers/tokenizers/icu_tokenizer.h"
-#include "analyzers/tokenizers/character_tokenizer.h"
-#include "analyzers/filters/all.h"
+#include "meta/analyzers/tokenizers/whitespace_tokenizer.h"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
+#include "meta/analyzers/tokenizers/character_tokenizer.h"
+#include "meta/analyzers/filters/all.h"
 #include "bandit/bandit.h"
-#include "corpus/document.h"
+#include "meta/corpus/document.h"
 #include "create_config.h"
-#include "util/shim.h"
+#include "meta/util/shim.h"
 
 using namespace bandit;
 using namespace meta;

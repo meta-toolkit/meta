@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "sequence/crf/tagger.h"
-#include "util/functional.h"
+#include "meta/sequence/crf/tagger.h"
+#include "meta/util/functional.h"
 
 namespace meta
 {
