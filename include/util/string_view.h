@@ -235,6 +235,11 @@ class basic_string_view
                    : basic_string_view{data() + pos, std::min(n, size() - pos)};
     }
 
+    constexpr bool operator==(const basic_string_view& rhs) const noexcept
+    {
+        return compare(rhs) == 0;
+    }
+
     int compare(basic_string_view s) const noexcept
     {
         auto cmp

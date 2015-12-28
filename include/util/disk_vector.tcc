@@ -16,7 +16,12 @@ template <class T>
 disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
     : path_{path}, start_{nullptr}, size_{size}, file_desc_{-1}
 {
-    file_desc_ = open(path_.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+#ifndef _WIN32
+    auto S_RW = S_IRUSR | S_IWUSR;
+#else
+    auto S_RW = _S_IREAD | _S_IWRITE;
+#endif
+    file_desc_ = open(path_.c_str(), O_RDWR | O_CREAT, S_RW);
     if (file_desc_ < 0)
         throw disk_vector_exception{"error obtaining file descriptor for "
                                     + path_};

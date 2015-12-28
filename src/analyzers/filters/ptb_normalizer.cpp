@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <cctype>
 #include "analyzers/filters/ptb_normalizer.h"
 
 namespace meta

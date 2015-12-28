@@ -16,6 +16,7 @@
 #include <istream>
 #include <limits>
 #include <ostream>
+#include <string>
 
 namespace meta
 {

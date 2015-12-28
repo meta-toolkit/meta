@@ -4,6 +4,7 @@
  */
 
 #include <fstream>
+#include <numeric>
 
 #include "io/filesystem.h"
 #include "sequence/perceptron.h"

@@ -14,6 +14,11 @@
 #include <stdexcept>
 #include <string>
 
+#ifdef META_HAS_EXPERIMENTAL_FILESYSTEM
+#include <experimental/filesystem>
+#endif
+
+
 namespace meta
 {
 namespace filesystem

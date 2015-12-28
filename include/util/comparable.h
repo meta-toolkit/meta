@@ -58,7 +58,7 @@ class comparable
      * @param rhs
      * @return whether lhs > rhs, as defined by their operator<.
      */
-    friend constexpr bool operator>(const comparable& lhs, const comparable& rhs)
+    friend bool operator>(const comparable& lhs, const comparable& rhs)
     {
         return rhs.as_derived() < lhs.as_derived();
     }

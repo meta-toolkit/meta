@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <cctype>
 #include "io/packed.h"
 #include "io/filesystem.h"
 #if META_HAS_ZLIB
