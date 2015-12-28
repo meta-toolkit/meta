@@ -24,7 +24,7 @@ if (NOT CMAKE_BUILD_TYPE AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-include_directories(include/)
+include_directories(include/ deps/bandit/)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
 find_package(Threads REQUIRED)
@@ -386,9 +386,18 @@ if (NOT META_FOUND_ALIGNED_ALLOC_IMPL)
   message(FATAL_ERROR "Failed to find a suitable aligned allocation routine")
 endif()
 
-if(ICU_VERSION VERSION_LESS "4.4")
+check_cxx_source_compiles("
+int main()
+{
+    long x = 1;
+    if (__builtin_expect(x == 1, 0))
+        return 1;
+    return 0;
+}" META_HAS_BUILTIN_EXPECT)
+
+if (META_HAS_BUILTIN_EXPECT)
   target_compile_definitions(meta-definitions INTERFACE
-                             -DMETA_ICU_NO_TEMP_SUBSTRING)
+    -DMETA_HAS_BUILTIN_EXPECT)
 endif()
 
 if(BIICODE)
@@ -418,5 +427,6 @@ if(DOXYGEN_FOUND AND NOT TARGET doc)
 endif()
 
 add_subdirectory(src)
+add_subdirectory(tests)
 add_subdirectory(deps/porter2_stemmer EXCLUDE_FROM_ALL)
 add_subdirectory(deps/cpptoml EXCLUDE_FROM_ALL)

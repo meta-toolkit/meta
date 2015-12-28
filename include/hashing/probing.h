@@ -10,7 +10,11 @@
 #ifndef META_HASHING_PROBING_H_
 #define META_HASHING_PROBING_H_
 
+#include <cstddef>
 #include <cstdint>
+
+#include "hashing/hash_traits.h"
+#include "util/likely.h"
 
 namespace meta
 {
@@ -43,7 +47,8 @@ class linear
 class linear_nomod
 {
   public:
-    linear_nomod(uint64_t hash, uint64_t capacity) : hash_{hash}, max_{capacity - 1}
+    linear_nomod(uint64_t hash, uint64_t capacity)
+        : hash_{hash}, max_{capacity - 1}
     {
         hash_ %= capacity;
     }
@@ -55,7 +60,7 @@ class linear_nomod
     {
         hash_++;
         if (hash_ > max_)
-          hash_ = 0;
+            hash_ = 0;
         return hash_;
     }
 
@@ -67,7 +72,8 @@ class linear_nomod
 class binary
 {
   public:
-    binary(uint64_t hash, uint64_t capacity) : hash_{hash}, step_{0}, capacity_{capacity}
+    binary(uint64_t hash, uint64_t capacity)
+        : hash_{hash}, step_{0}, capacity_{capacity}
     {
         hash_ %= capacity;
     }
@@ -79,7 +85,7 @@ class binary
     {
         // discard hashes that fall off of the table
         for (; (hash_ ^ step_) >= capacity_; ++step_)
-          ;
+            ;
         return hash_ ^ step_++;
     }
 
@@ -87,6 +93,57 @@ class binary
     uint64_t hash_;
     uint64_t step_;
     uint64_t capacity_;
+};
+
+template <class T, std::size_t Alignment = 64>
+class binary_hybrid
+{
+  public:
+    using probe_entry = typename hash_traits<T>::probe_entry;
+
+    static_assert(Alignment > sizeof(probe_entry),
+                  "Alignment should be larger than sizeof(T)");
+    const static uint64_t block_size = Alignment / sizeof(probe_entry);
+
+    binary_hybrid(uint64_t hash, uint64_t capacity)
+        : hash_{hash}, step_{0}, max_{capacity - 1}
+    {
+        hash_ %= capacity;
+
+        // find the index of the last (potentially) partial block
+        auto last_block_start = capacity & ~(block_size - 1);
+        if (META_UNLIKELY(hash_ >= last_block_start))
+        {
+            step_ = block_size;
+            idx_ = hash_;
+        }
+        else
+        {
+            // idx_ is the index of the start of the next block. If this is off
+            // the table the condition in probe() will fix it.
+            idx_ = (hash_ | (block_size - 1)) + 1;
+        }
+    }
+
+    uint64_t probe()
+    {
+        if (META_LIKELY(step_ < block_size))
+        {
+            return hash_ ^ step_++;
+        }
+        else
+        {
+            if (META_UNLIKELY(idx_ > max_))
+                idx_ = 0;
+            return idx_++;
+        }
+    }
+
+  private:
+    uint64_t hash_;
+    uint64_t step_;
+    uint64_t idx_;
+    uint64_t max_;
 };
 
 // http://stackoverflow.com/questions/2348187

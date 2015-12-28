@@ -7,7 +7,6 @@
 
 #include "corpus/line_corpus.h"
 #include "io/filesystem.h"
-#include "io/parser.h"
 #include "util/shim.h"
 
 namespace meta
@@ -22,12 +21,12 @@ line_corpus::line_corpus(const std::string& file, std::string encoding,
     : corpus{std::move(encoding)},
       cur_id_{0},
       num_lines_{num_lines},
-      parser_{file, "\n"}
+      infile_{file}
 {
     // init class label info
     if (filesystem::file_exists(file + ".labels"))
     {
-        class_parser_ = make_unique<io::parser>(file + ".labels", "\n");
+        class_infile_ = make_unique<std::ifstream>(file + ".labels");
         if (num_lines_ == 0)
             num_lines_ = filesystem::num_lines(file + ".labels");
     }
@@ -53,18 +52,22 @@ line_corpus::line_corpus(const std::string& file, std::string encoding,
 
 bool line_corpus::has_next() const
 {
-    return parser_.has_next();
+    return cur_id_ < size();
 }
 
 document line_corpus::next()
 {
     class_label label{"[none]"};
 
-    if (class_parser_)
-        label = class_label{class_parser_->next()};
+    if (class_infile_)
+        *class_infile_ >> label;
 
     document doc{cur_id_++, label};
-    doc.content(parser_.next(), encoding());
+    std::string content;
+    if (!std::getline(infile_, content))
+        throw corpus_exception{"error parsing line_corpus line "
+                               + std::to_string(cur_id_)};
+    doc.content(content, encoding());
     doc.mdata(next_metadata());
 
     return doc;
@@ -81,8 +84,6 @@ std::unique_ptr<corpus> make_corpus<line_corpus>(util::string_view prefix,
                                                  const cpptoml::table& config)
 {
     auto encoding = config.get_as<std::string>("encoding").value_or("utf-8");
-
-    std::string derp{"herp"};
 
     // string_view doesn't have operator+ overloads...
     auto filename = prefix.to_string();

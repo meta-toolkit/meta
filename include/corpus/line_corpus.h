@@ -10,10 +10,11 @@
 #ifndef META_LINE_CORPUS_H_
 #define META_LINE_CORPUS_H_
 
+#include <fstream>
 #include <string>
 #include <vector>
 #include <utility>
-#include "io/parser.h"
+
 #include "corpus/corpus.h"
 #include "corpus/corpus_factory.h"
 
@@ -67,10 +68,10 @@ class line_corpus : public corpus
     uint64_t num_lines_;
 
     /// Parser to read the corpus file
-    io::parser parser_;
+    std::ifstream infile_;
 
     /// Parser to read the class labels
-    std::unique_ptr<io::parser> class_parser_;
+    std::unique_ptr<std::ifstream> class_infile_;
 };
 
 /**

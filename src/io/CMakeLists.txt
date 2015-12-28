@@ -2,12 +2,9 @@ project(meta-io)
 
 add_subdirectory(tools)
 
-set(IO_SOURCES compressed_file_reader.cpp
-               compressed_file_writer.cpp
-               filesystem.cpp
+set(IO_SOURCES filesystem.cpp
                libsvm_parser.cpp
-               mmap_file.cpp
-               parser.cpp)
+               mmap_file.cpp)
 
 set(IO_DEPS meta-util)
 

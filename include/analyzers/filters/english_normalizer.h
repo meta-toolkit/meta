@@ -24,7 +24,7 @@ namespace filters
 {
 
 /**
- * Filter that normalizes english language tokens. Normalization occurs to
+ * Filter that normalizes English language tokens. Normalization occurs to
  * whitespace (adjacent whitespace tokens are converted to a single
  * normalized space token) and punctuation (which is split out from words
  * following basic heuristics).

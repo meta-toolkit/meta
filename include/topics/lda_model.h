@@ -88,17 +88,6 @@ class lda_model
      */
     void save(const std::string& prefix) const;
 
-  protected:
-    /**
-     * lda_models cannot be copy assigned.
-     */
-    lda_model& operator=(const lda_model&) = delete;
-
-    /**
-     * lda_models cannot be copy constructed.
-     */
-    lda_model(const lda_model&) = delete;
-
     /**
      * @return the probability that the given term appears in the given
      * topic
@@ -118,6 +107,22 @@ class lda_model
      */
     virtual double compute_doc_topic_probability(doc_id doc,
                                                  topic_id topic) const = 0;
+
+    /**
+     * @return the number of topics in this model
+     */
+    uint64_t num_topics() const;
+
+  protected:
+    /**
+     * lda_models cannot be copy assigned.
+     */
+    lda_model& operator=(const lda_model&) = delete;
+
+    /**
+     * lda_models cannot be copy constructed.
+     */
+    lda_model(const lda_model&) = delete;
 
     /**
      * The index containing the documents for the model.

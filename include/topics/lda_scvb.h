@@ -63,7 +63,6 @@ class lda_scvb : public lda_model
      */
     virtual void run(uint64_t num_iters, double convergence = 0) override;
 
-  protected:
     virtual double compute_term_topic_probability(term_id term,
                                                   topic_id topic) const
         override;
