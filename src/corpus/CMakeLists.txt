@@ -17,4 +17,4 @@ endif()
 
 add_library(meta-corpus ${CORPUS_SOURCES})
 
-target_link_libraries(meta-corpus meta-io meta-utf)
+target_link_libraries(meta-corpus meta-io meta-utf cpptoml)

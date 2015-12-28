@@ -12,7 +12,7 @@
 #include "parser/sr_parser.h"
 #include "parser/trees/evalb.h"
 #include "parser/trees/visitors/empty_remover.h"
-#include "parser/trees/visitors/sequence_extractor.h"
+#include "parser/sequence_extractor.h"
 #include "util/progress.h"
 
 using namespace meta;

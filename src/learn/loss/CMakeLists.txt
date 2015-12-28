@@ -9,3 +9,4 @@ add_library(meta-loss hinge.cpp
                       perceptron.cpp
                       smooth_hinge.cpp
                       squared_hinge.cpp)
+target_link_libraries(meta-loss meta-definitions)

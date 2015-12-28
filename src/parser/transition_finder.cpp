@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "parser/trees/visitors/transition_finder.h"
+#include "parser/transition_finder.h"
 #include "parser/trees/internal_node.h"
 #include "parser/trees/leaf_node.h"
 

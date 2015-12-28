@@ -4,6 +4,7 @@
  */
 
 #include "parser/training_data.h"
+#include "parser/transition_finder.h"
 #include "parser/trees/visitors/annotation_remover.h"
 #include "parser/trees/visitors/empty_remover.h"
 #include "parser/trees/visitors/unary_chain_remover.h"
@@ -11,7 +12,6 @@
 #include "parser/trees/visitors/head_finder.h"
 #include "parser/trees/visitors/binarizer.h"
 #include "parser/trees/visitors/debinarizer.h"
-#include "parser/trees/visitors/transition_finder.h"
 #include "parser/trees/visitors/leaf_node_finder.h"
 #include "util/progress.h"
 

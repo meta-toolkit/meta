@@ -407,8 +407,6 @@ ENDIF()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-link_libraries(cpptoml meta-definitions)
-
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf
                   ./doc
