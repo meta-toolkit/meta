@@ -6,7 +6,7 @@
 #include <array>
 #include <iostream>
 #include <fstream>
-#include "io/gzstream.h"
+#include "meta/io/gzstream.h"
 
 using namespace meta;
 

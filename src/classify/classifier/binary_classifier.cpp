@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "classify/classifier/binary_classifier.h"
+#include "meta/classify/classifier/binary_classifier.h"
 
 namespace meta
 {

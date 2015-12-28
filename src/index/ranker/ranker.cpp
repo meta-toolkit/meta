@@ -5,12 +5,12 @@
  */
 
 #include <unordered_map>
-#include "corpus/document.h"
-#include "index/inverted_index.h"
-#include "index/postings_data.h"
-#include "index/ranker/ranker.h"
-#include "index/score_data.h"
-#include "util/fixed_heap.h"
+#include "meta/corpus/document.h"
+#include "meta/index/inverted_index.h"
+#include "meta/index/postings_data.h"
+#include "meta/index/ranker/ranker.h"
+#include "meta/index/score_data.h"
+#include "meta/util/fixed_heap.h"
 
 namespace meta
 {

@@ -7,7 +7,7 @@
 #include <fstream>
 
 #include "bandit/bandit.h"
-#include "io/filesystem.h"
+#include "meta/io/filesystem.h"
 
 using namespace bandit;
 using namespace meta;

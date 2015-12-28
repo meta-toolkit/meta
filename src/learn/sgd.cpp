@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "io/packed.h"
-#include "learn/sgd.h"
+#include "meta/io/packed.h"
+#include "meta/learn/sgd.h"
 
 namespace meta
 {

@@ -6,10 +6,10 @@
 #include <fstream>
 
 #include "bandit/bandit.h"
-#include "corpus/metadata.h"
-#include "corpus/metadata_parser.h"
+#include "meta/corpus/metadata.h"
+#include "meta/corpus/metadata_parser.h"
 #include "cpptoml.h"
-#include "io/filesystem.h"
+#include "meta/io/filesystem.h"
 
 using namespace bandit;
 using namespace meta;

@@ -10,12 +10,12 @@
 #include <string>
 #include <random>
 
-#include "logging/logger.h"
-#include "meta.h"
-#include "graph/algorithms/algorithms.h"
-#include "graph/directed_graph.h"
-#include "graph/undirected_graph.h"
-#include "util/progress.h"
+#include "meta/logging/logger.h"
+#include "meta/meta.h"
+#include "meta/graph/algorithms/algorithms.h"
+#include "meta/graph/directed_graph.h"
+#include "meta/graph/undirected_graph.h"
+#include "meta/util/progress.h"
 
 using namespace meta;
 

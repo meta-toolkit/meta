@@ -7,7 +7,7 @@
 #include <cmath>
 #include <numeric>
 
-#include "regression/metrics.h"
+#include "meta/regression/metrics.h"
 
 namespace meta
 {

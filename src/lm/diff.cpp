@@ -5,10 +5,11 @@
 
 #include <algorithm>
 #include <queue>
-#include "lm/diff.h"
+
 #include "porter2_stemmer.h"
-#include "utf/utf.h"
-#include "util/fixed_heap.h"
+#include "meta/lm/diff.h"
+#include "meta/utf/utf.h"
+#include "meta/util/fixed_heap.h"
 
 namespace meta
 {

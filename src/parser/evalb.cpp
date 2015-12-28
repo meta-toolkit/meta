@@ -6,16 +6,16 @@
 #include <iostream>
 #include <set>
 #include <unordered_set>
-#include "util/comparable.h"
-#include "parser/trees/evalb.h"
-#include "parser/trees/visitors/visitor.h"
-#include "parser/trees/visitors/annotation_remover.h"
-#include "parser/trees/visitors/tree_transformer.h"
-#include "parser/trees/visitors/empty_remover.h"
-#include "parser/trees/visitors/multi_transformer.h"
-#include "parser/trees/visitors/unary_chain_remover.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
+#include "meta/util/comparable.h"
+#include "meta/parser/trees/evalb.h"
+#include "meta/parser/trees/visitors/visitor.h"
+#include "meta/parser/trees/visitors/annotation_remover.h"
+#include "meta/parser/trees/visitors/tree_transformer.h"
+#include "meta/parser/trees/visitors/empty_remover.h"
+#include "meta/parser/trees/visitors/multi_transformer.h"
+#include "meta/parser/trees/visitors/unary_chain_remover.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
 
 namespace meta
 {

@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "io/filesystem.h"
-#include "logging/logger.h"
-#include "sequence/sequence.h"
-#include "util/progress.h"
-#include "sequence/sequence_analyzer.h"
-#include "sequence/crf/crf.h"
-#include "sequence/io/ptb_parser.h"
+#include "meta/io/filesystem.h"
+#include "meta/logging/logger.h"
+#include "meta/sequence/sequence.h"
+#include "meta/util/progress.h"
+#include "meta/sequence/sequence_analyzer.h"
+#include "meta/sequence/crf/crf.h"
+#include "meta/sequence/io/ptb_parser.h"
 #include "cpptoml.h"
 
 using namespace meta;

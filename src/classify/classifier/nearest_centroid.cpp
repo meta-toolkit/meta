@@ -7,9 +7,9 @@
 #include <unordered_map>
 
 #include "cpptoml.h"
-#include "classify/classifier/nearest_centroid.h"
-#include "corpus/document.h"
-#include "index/postings_data.h"
+#include "meta/classify/classifier/nearest_centroid.h"
+#include "meta/corpus/document.h"
+#include "meta/index/postings_data.h"
 
 namespace meta
 {

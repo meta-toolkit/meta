@@ -4,7 +4,7 @@
  */
 
 #include <fstream>
-#include "analyzers/filters/list_filter.h"
+#include "meta/analyzers/filters/list_filter.h"
 #include "cpptoml.h"
 
 namespace meta

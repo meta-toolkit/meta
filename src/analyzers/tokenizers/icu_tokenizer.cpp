@@ -9,10 +9,10 @@
 #include <unicode/utf.h>
 #include <unicode/uchar.h>
 
-#include "analyzers/tokenizers/icu_tokenizer.h"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
 #include "cpptoml.h"
-#include "util/pimpl.tcc"
-#include "utf/segmenter.h"
+#include "meta/util/pimpl.tcc"
+#include "meta/utf/segmenter.h"
 
 namespace meta
 {

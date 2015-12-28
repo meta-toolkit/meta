@@ -6,15 +6,15 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
-#include "io/packed.h"
-#include "io/filesystem.h"
+#include "meta/io/packed.h"
+#include "meta/io/filesystem.h"
 #if META_HAS_ZLIB
-#include "io/gzstream.h"
+#include "meta/io/gzstream.h"
 #endif
-#include "sequence/sequence_analyzer.h"
-#include "utf/utf.h"
-#include "util/mapping.h"
-#include "util/progress.h"
+#include "meta/sequence/sequence_analyzer.h"
+#include "meta/utf/utf.h"
+#include "meta/util/mapping.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {

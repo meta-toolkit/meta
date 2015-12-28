@@ -7,12 +7,12 @@
 #include <iostream>
 
 #include "bandit/bandit.h"
-#include "caching/all.h"
-#include "cpptoml.h"
 #include "create_config.h"
-#include "index/forward_index.h"
-#include "index/postings_data.h"
-#include "io/filesystem.h"
+#include "meta/caching/all.h"
+#include "cpptoml.h"
+#include "meta/index/forward_index.h"
+#include "meta/index/postings_data.h"
+#include "meta/io/filesystem.h"
 
 using namespace bandit;
 using namespace meta;

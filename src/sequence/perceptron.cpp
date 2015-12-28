@@ -5,14 +5,14 @@
 
 #include <fstream>
 
-#include "io/filesystem.h"
-#include "sequence/perceptron.h"
-#include "utf/utf.h"
-#include "util/progress.h"
-#include "util/time.h"
+#include "meta/io/filesystem.h"
+#include "meta/sequence/perceptron.h"
+#include "meta/utf/utf.h"
+#include "meta/util/progress.h"
+#include "meta/util/time.h"
 
 #if META_HAS_ZLIB
-#include "io/gzstream.h"
+#include "meta/io/gzstream.h"
 #endif
 
 namespace meta

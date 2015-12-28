@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "classify/binary_classifier_factory.h"
-#include "classify/classifier/sgd.h"
+#include "meta/classify/binary_classifier_factory.h"
+#include "meta/classify/classifier/sgd.h"
 
 namespace meta
 {

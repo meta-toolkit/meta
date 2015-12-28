@@ -3,13 +3,13 @@
  * @author Sean Massung
  */
 
-#include "analyzers/filters/all.h"
-#include "analyzers/tokenizers/icu_tokenizer.h"
-#include "parser/sr_parser.h"
-#include "sequence/perceptron.h"
-#include "sequence/io/ptb_parser.h"
-#include "sequence/sequence.h"
-#include "util/shim.h"
+#include "meta/analyzers/filters/all.h"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
+#include "meta/parser/sr_parser.h"
+#include "meta/sequence/perceptron.h"
+#include "meta/sequence/io/ptb_parser.h"
+#include "meta/sequence/sequence.h"
+#include "meta/util/shim.h"
 #include "cpptoml.h"
 
 using namespace meta;

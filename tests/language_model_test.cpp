@@ -5,8 +5,8 @@
 
 #include "bandit/bandit.h"
 #include "create_config.h"
-#include "lm/sentence.h"
-#include "lm/language_model.h"
+#include "meta/lm/sentence.h"
+#include "meta/lm/language_model.h"
 
 using namespace bandit;
 using namespace meta;

@@ -3,9 +3,9 @@
  * @author Chase Geigle
  */
 
-#include "analyzers/tokenizers/character_tokenizer.h"
-#include "corpus/document.h"
-#include "io/mmap_file.h"
+#include "meta/analyzers/tokenizers/character_tokenizer.h"
+#include "meta/corpus/document.h"
+#include "meta/io/mmap_file.h"
 
 namespace meta
 {

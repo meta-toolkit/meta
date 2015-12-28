@@ -4,9 +4,9 @@
  */
 
 #include "bandit/bandit.h"
-#include "corpus/document.h"
+#include "meta/corpus/document.h"
 #include "create_config.h"
-#include "index/ranker/all.h"
+#include "meta/index/ranker/all.h"
 
 using namespace bandit;
 using namespace meta;

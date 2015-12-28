@@ -5,8 +5,8 @@
 
 #include <cassert>
 #include "cpptoml.h"
-#include "classify/classifier/naive_bayes.h"
-#include "io/packed.h"
+#include "meta/classify/classifier/naive_bayes.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

@@ -5,10 +5,10 @@
 
 #include <iterator>
 
-#include "classify/binary_classifier_factory.h"
-#include "classify/classifier/one_vs_one.h"
-#include "classify/classifier/online_binary_classifier.h"
-#include "parallel/parallel_for.h"
+#include "meta/classify/binary_classifier_factory.h"
+#include "meta/classify/classifier/one_vs_one.h"
+#include "meta/classify/classifier/online_binary_classifier.h"
+#include "meta/parallel/parallel_for.h"
 
 namespace meta
 {

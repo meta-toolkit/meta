@@ -7,8 +7,8 @@
 #include <numeric>
 #include <random>
 #include "cpptoml.h"
-#include "index/postings_data.h"
-#include "classify/classifier/winnow.h"
+#include "meta/index/postings_data.h"
+#include "meta/classify/classifier/winnow.h"
 
 namespace meta
 {

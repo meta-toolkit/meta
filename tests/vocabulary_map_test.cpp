@@ -7,12 +7,12 @@
 #include <iostream>
 
 #include "bandit/bandit.h"
-#include "io/binary.h"
-#include "io/filesystem.h"
-#include "index/vocabulary_map_writer.h"
-#include "index/vocabulary_map.h"
-#include "util/disk_vector.h"
-#include "util/optional.h"
+#include "meta/io/binary.h"
+#include "meta/io/filesystem.h"
+#include "meta/index/vocabulary_map_writer.h"
+#include "meta/index/vocabulary_map.h"
+#include "meta/util/disk_vector.h"
+#include "meta/util/optional.h"
 
 using namespace bandit;
 using namespace meta;

@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "sequence/observation.h"
+#include "meta/sequence/observation.h"
 
 namespace meta
 {

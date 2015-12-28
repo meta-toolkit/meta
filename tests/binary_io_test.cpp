@@ -10,10 +10,10 @@
 #include <random>
 
 #include "bandit/bandit.h"
-#include "classify/classifier/svm_wrapper.h" // to use kernel enum
-#include "io/binary.h"
-#include "io/filesystem.h"
-#include "io/packed.h"
+#include "meta/classify/classifier/svm_wrapper.h" // to use kernel enum
+#include "meta/io/binary.h"
+#include "meta/io/filesystem.h"
+#include "meta/io/packed.h"
 
 using namespace bandit;
 using namespace meta;

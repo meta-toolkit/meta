@@ -8,8 +8,8 @@
 #include <sstream>
 #include <numeric>
 #include <iterator>
-#include "lm/sentence.h"
-#include "utf/segmenter.h"
+#include "meta/lm/sentence.h"
+#include "meta/utf/segmenter.h"
 
 namespace meta
 {

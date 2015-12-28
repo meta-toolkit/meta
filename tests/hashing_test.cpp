@@ -12,10 +12,10 @@
 #include <vector>
 
 #include "bandit/bandit.h"
-#include "hashing/probe_map.h"
-#include "hashing/probe_set.h"
-#include "io/filesystem.h"
-#include "util/string_view.h"
+#include "meta/hashing/probe_map.h"
+#include "meta/hashing/probe_set.h"
+#include "meta/io/filesystem.h"
+#include "meta/util/string_view.h"
 
 using namespace bandit;
 using namespace meta;

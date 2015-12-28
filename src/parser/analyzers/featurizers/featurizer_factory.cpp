@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "parser/analyzers/featurizers/featurizer_factory.h"
-#include "parser/analyzers/featurizers/all.h"
+#include "meta/parser/analyzers/featurizers/featurizer_factory.h"
+#include "meta/parser/analyzers/featurizers/all.h"
 
 namespace meta
 {

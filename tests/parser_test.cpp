@@ -7,17 +7,17 @@
 #include <sstream>
 
 #include "bandit/bandit.h"
-#include "parser/io/ptb_reader.h"
-#include "parser/trees/visitors/visitor.h"
-#include "parser/trees/visitors/annotation_remover.h"
-#include "parser/trees/visitors/empty_remover.h"
-#include "parser/trees/visitors/unary_chain_remover.h"
-#include "parser/trees/visitors/multi_transformer.h"
-#include "parser/trees/visitors/head_finder.h"
-#include "parser/trees/visitors/binarizer.h"
-#include "parser/trees/visitors/debinarizer.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
+#include "meta/parser/io/ptb_reader.h"
+#include "meta/parser/trees/visitors/visitor.h"
+#include "meta/parser/trees/visitors/annotation_remover.h"
+#include "meta/parser/trees/visitors/empty_remover.h"
+#include "meta/parser/trees/visitors/unary_chain_remover.h"
+#include "meta/parser/trees/visitors/multi_transformer.h"
+#include "meta/parser/trees/visitors/head_finder.h"
+#include "meta/parser/trees/visitors/binarizer.h"
+#include "meta/parser/trees/visitors/debinarizer.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
 
 using namespace bandit;
 using namespace meta;

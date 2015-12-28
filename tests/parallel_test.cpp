@@ -8,9 +8,9 @@
 #include <numeric>
 
 #include "bandit/bandit.h"
-#include "util/time.h"
-#include "parallel/parallel_for.h"
-#include "parallel/thread_pool.h"
+#include "meta/util/time.h"
+#include "meta/parallel/parallel_for.h"
+#include "meta/parallel/thread_pool.h"
 
 using namespace bandit;
 using namespace meta;

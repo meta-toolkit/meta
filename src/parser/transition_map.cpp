@@ -6,12 +6,12 @@
 #include <cassert>
 #include <fstream>
 
-#include "io/filesystem.h"
-#include "io/packed.h"
-#include "parser/transition_map.h"
+#include "meta/io/filesystem.h"
+#include "meta/io/packed.h"
+#include "meta/parser/transition_map.h"
 
 #ifdef META_HAS_ZLIB
-#include "io/gzstream.h"
+#include "meta/io/gzstream.h"
 #endif
 
 namespace meta

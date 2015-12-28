@@ -3,15 +3,15 @@
 #include <string>
 #include <vector>
 
-#include "logging/logger.h"
-#include "parser/io/ptb_reader.h"
-#include "parser/trees/visitors/annotation_remover.h"
-#include "parser/trees/visitors/empty_remover.h"
-#include "parser/trees/visitors/unary_chain_remover.h"
-#include "parser/trees/visitors/multi_transformer.h"
-#include "parser/trees/visitors/head_finder.h"
-#include "parser/trees/visitors/binarizer.h"
-#include "parser/trees/visitors/debinarizer.h"
+#include "meta/logging/logger.h"
+#include "meta/parser/io/ptb_reader.h"
+#include "meta/parser/trees/visitors/annotation_remover.h"
+#include "meta/parser/trees/visitors/empty_remover.h"
+#include "meta/parser/trees/visitors/unary_chain_remover.h"
+#include "meta/parser/trees/visitors/multi_transformer.h"
+#include "meta/parser/trees/visitors/head_finder.h"
+#include "meta/parser/trees/visitors/binarizer.h"
+#include "meta/parser/trees/visitors/debinarizer.h"
 
 using namespace meta;
 

@@ -4,9 +4,9 @@
  */
 
 #include "bandit/bandit.h"
-#include "graph/algorithms/algorithms.h"
-#include "graph/directed_graph.h"
-#include "graph/undirected_graph.h"
+#include "meta/graph/algorithms/algorithms.h"
+#include "meta/graph/directed_graph.h"
+#include "meta/graph/undirected_graph.h"
 
 using namespace bandit;
 using namespace meta;

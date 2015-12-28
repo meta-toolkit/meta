@@ -7,15 +7,15 @@
 #include <string>
 #include <vector>
 
-#include "caching/all.h"
-#include "classify/classifier/all.h"
-#include "index/forward_index.h"
-#include "index/ranker/all.h"
-#include "parser/analyzers/tree_analyzer.h"
-#include "sequence/analyzers/ngram_pos_analyzer.h"
-#include "util/printing.h"
-#include "util/progress.h"
-#include "util/time.h"
+#include "meta/caching/all.h"
+#include "meta/classify/classifier/all.h"
+#include "meta/index/forward_index.h"
+#include "meta/index/ranker/all.h"
+#include "meta/parser/analyzers/tree_analyzer.h"
+#include "meta/sequence/analyzers/ngram_pos_analyzer.h"
+#include "meta/util/printing.h"
+#include "meta/util/progress.h"
+#include "meta/util/time.h"
 
 using std::cout;
 using std::cerr;

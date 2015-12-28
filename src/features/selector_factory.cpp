@@ -4,8 +4,8 @@
  */
 
 #include "cpptoml.h"
-#include "features/all.h"
-#include "features/selector_factory.h"
+#include "meta/features/all.h"
+#include "meta/features/selector_factory.h"
 
 namespace meta
 {

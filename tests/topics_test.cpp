@@ -6,13 +6,13 @@
 #include <fstream>
 
 #include "bandit/bandit.h"
-#include "caching/no_evict_cache.h"
+#include "meta/caching/no_evict_cache.h"
 #include "create_config.h"
-#include "index/forward_index.h"
-#include "topics/lda_gibbs.h"
-#include "topics/parallel_lda_gibbs.h"
-#include "topics/lda_cvb.h"
-#include "topics/lda_scvb.h"
+#include "meta/index/forward_index.h"
+#include "meta/topics/lda_gibbs.h"
+#include "meta/topics/parallel_lda_gibbs.h"
+#include "meta/topics/lda_cvb.h"
+#include "meta/topics/lda_scvb.h"
 
 using namespace bandit;
 using namespace meta;

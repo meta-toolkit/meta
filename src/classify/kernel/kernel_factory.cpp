@@ -3,9 +3,9 @@
  * @author Chase Geigle
  */
 
-#include "classify/kernel/all.h"
-#include "classify/kernel/kernel_factory.h"
-#include "io/packed.h"
+#include "meta/classify/kernel/all.h"
+#include "meta/classify/kernel/kernel_factory.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

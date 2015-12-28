@@ -1,7 +1,7 @@
-#include "parser/analyzers/featurizers/depth_featurizer.h"
-#include "parser/trees/visitors/visitor.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
+#include "meta/parser/analyzers/featurizers/depth_featurizer.h"
+#include "meta/parser/trees/visitors/visitor.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
 
 namespace meta
 {

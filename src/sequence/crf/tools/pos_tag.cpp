@@ -3,15 +3,15 @@
  * @author Sean Massung
  */
 
-#include "analyzers/tokenizers/icu_tokenizer.h"
-#include "classify/confusion_matrix.h"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
+#include "meta/classify/confusion_matrix.h"
 #include "cpptoml.h"
-#include "logging/logger.h"
-#include "sequence/crf/crf.h"
-#include "sequence/crf/tagger.h"
-#include "sequence/io/ptb_parser.h"
-#include "sequence/sequence.h"
-#include "sequence/crf/tagger.h"
+#include "meta/logging/logger.h"
+#include "meta/sequence/crf/crf.h"
+#include "meta/sequence/crf/tagger.h"
+#include "meta/sequence/io/ptb_parser.h"
+#include "meta/sequence/sequence.h"
+#include "meta/sequence/crf/tagger.h"
 
 using namespace meta;
 

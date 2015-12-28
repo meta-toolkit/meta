@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "index/string_list.h"
+#include "meta/index/string_list.h"
 
 namespace meta
 {

@@ -4,9 +4,9 @@
  */
 
 #include <iostream>
-#include "index/forward_index.h"
-#include "logging/logger.h"
-#include "util/progress.h"
+#include "meta/index/forward_index.h"
+#include "meta/logging/logger.h"
+#include "meta/util/progress.h"
 
 using namespace meta;
 

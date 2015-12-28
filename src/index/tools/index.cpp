@@ -4,12 +4,12 @@
  */
 
 #include <iostream>
-#include "index/inverted_index.h"
-#include "caching/all.h"
-#include "logging/logger.h"
-#include "parser/analyzers/tree_analyzer.h"
-#include "sequence/analyzers/ngram_pos_analyzer.h"
-#include "util/time.h"
+#include "meta/index/inverted_index.h"
+#include "meta/caching/all.h"
+#include "meta/logging/logger.h"
+#include "meta/parser/analyzers/tree_analyzer.h"
+#include "meta/sequence/analyzers/ngram_pos_analyzer.h"
+#include "meta/util/time.h"
 
 using namespace meta;
 

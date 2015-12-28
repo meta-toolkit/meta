@@ -3,9 +3,9 @@
  * @author Sean Massung
  */
 
-#include "corpus/corpus.h"
-#include "corpus/document.h"
-#include "util/mapping.h"
+#include "meta/corpus/corpus.h"
+#include "meta/corpus/document.h"
+#include "meta/util/mapping.h"
 
 namespace meta
 {

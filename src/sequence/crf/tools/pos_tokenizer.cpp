@@ -5,15 +5,15 @@
 
 #include <iostream>
 #include <unordered_set>
-#include "analyzers/filters/ptb_normalizer.h"
-#include "analyzers/tokenizers/icu_tokenizer.h"
+#include "meta/analyzers/filters/ptb_normalizer.h"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
 #include "cpptoml.h"
-#include "logging/logger.h"
-#include "sequence/crf/crf.h"
-#include "sequence/crf/tagger.h"
-#include "sequence/io/ptb_parser.h"
-#include "sequence/sequence.h"
-#include "utf/utf.h"
+#include "meta/logging/logger.h"
+#include "meta/sequence/crf/crf.h"
+#include "meta/sequence/crf/tagger.h"
+#include "meta/sequence/io/ptb_parser.h"
+#include "meta/sequence/sequence.h"
+#include "meta/utf/utf.h"
 
 using namespace meta;
 

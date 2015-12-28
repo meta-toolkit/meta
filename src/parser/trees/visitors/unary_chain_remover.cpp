@@ -3,10 +3,10 @@
  * @author Chase Geigle
  */
 
-#include "parser/trees/visitors/unary_chain_remover.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
-#include "util/shim.h"
+#include "meta/parser/trees/visitors/unary_chain_remover.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {

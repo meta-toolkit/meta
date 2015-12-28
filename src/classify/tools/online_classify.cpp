@@ -5,13 +5,13 @@
 
 #include <iostream>
 
-#include "classify/batch_training.h"
-#include "classify/classifier_factory.h"
-#include "classify/classifier/online_classifier.h"
-#include "logging/logger.h"
-#include "parser/analyzers/tree_analyzer.h"
-#include "sequence/analyzers/ngram_pos_analyzer.h"
-#include "util/time.h"
+#include "meta/classify/batch_training.h"
+#include "meta/classify/classifier_factory.h"
+#include "meta/classify/classifier/online_classifier.h"
+#include "meta/logging/logger.h"
+#include "meta/parser/analyzers/tree_analyzer.h"
+#include "meta/sequence/analyzers/ngram_pos_analyzer.h"
+#include "meta/util/time.h"
 
 int main(int argc, char* argv[])
 {

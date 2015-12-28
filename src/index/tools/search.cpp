@@ -6,14 +6,14 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "analyzers/analyzer.h"
-#include "caching/all.h"
-#include "corpus/document.h"
-#include "index/inverted_index.h"
-#include "index/ranker/ranker_factory.h"
-#include "parser/analyzers/tree_analyzer.h"
-#include "sequence/analyzers/ngram_pos_analyzer.h"
-#include "util/time.h"
+#include "meta/analyzers/analyzer.h"
+#include "meta/caching/all.h"
+#include "meta/corpus/document.h"
+#include "meta/index/inverted_index.h"
+#include "meta/index/ranker/ranker_factory.h"
+#include "meta/parser/analyzers/tree_analyzer.h"
+#include "meta/sequence/analyzers/ngram_pos_analyzer.h"
+#include "meta/util/time.h"
 
 using namespace meta;
 

@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <cctype>
-#include "analyzers/filters/english_normalizer.h"
+#include "meta/analyzers/filters/english_normalizer.h"
 
 namespace meta
 {

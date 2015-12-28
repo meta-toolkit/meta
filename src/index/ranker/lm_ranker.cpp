@@ -4,10 +4,10 @@
  */
 
 #include <cmath>
-#include "corpus/document.h"
-#include "util/fastapprox.h"
-#include "index/score_data.h"
-#include "index/ranker/lm_ranker.h"
+#include "meta/corpus/document.h"
+#include "meta/util/fastapprox.h"
+#include "meta/index/score_data.h"
+#include "meta/index/ranker/lm_ranker.h"
 
 namespace meta
 {

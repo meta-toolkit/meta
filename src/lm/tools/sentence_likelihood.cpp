@@ -5,12 +5,12 @@
 
 #include <stdexcept>
 
-#include "analyzers/all.h"
-#include "analyzers/token_stream.h"
+#include "meta/analyzers/all.h"
+#include "meta/analyzers/token_stream.h"
 #include "cpptoml.h"
-#include "lm/language_model.h"
-#include "logging/logger.h"
-#include "util/time.h"
+#include "meta/lm/language_model.h"
+#include "meta/logging/logger.h"
+#include "meta/util/time.h"
 
 using namespace meta;
 

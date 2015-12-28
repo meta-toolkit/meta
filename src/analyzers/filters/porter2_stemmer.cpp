@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "analyzers/filters/porter2_stemmer.h"
+#include "meta/analyzers/filters/porter2_stemmer.h"
 #include "porter2_stemmer.h"
 
 namespace meta

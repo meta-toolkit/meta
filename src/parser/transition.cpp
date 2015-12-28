@@ -6,7 +6,7 @@
 #include <cassert>
 #include <ostream>
 #include <string>
-#include "parser/transition.h"
+#include "meta/parser/transition.h"
 
 namespace meta
 {

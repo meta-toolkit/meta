@@ -6,9 +6,9 @@
 #include <string>
 #include <vector>
 
-#include "corpus/document.h"
-#include "lm/analyzers/diff_analyzer.h"
-#include "analyzers/token_stream.h"
+#include "meta/corpus/document.h"
+#include "meta/lm/analyzers/diff_analyzer.h"
+#include "meta/analyzers/token_stream.h"
 
 namespace meta
 {

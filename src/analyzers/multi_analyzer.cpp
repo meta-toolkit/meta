@@ -2,7 +2,7 @@
  * @file multi_analyzer.cpp
  */
 
-#include "analyzers/multi_analyzer.h"
+#include "meta/analyzers/multi_analyzer.h"
 
 namespace meta
 {

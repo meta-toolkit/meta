@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "index/metadata_writer.h"
-#include "io/packed.h"
+#include "meta/index/metadata_writer.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

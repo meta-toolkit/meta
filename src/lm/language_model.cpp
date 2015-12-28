@@ -9,11 +9,11 @@
 
 #include <sstream>
 #include <random>
-#include "util/time.h"
-#include "util/shim.h"
-#include "util/fixed_heap.h"
-#include "lm/language_model.h"
-#include "logging/logger.h"
+#include "meta/util/time.h"
+#include "meta/util/shim.h"
+#include "meta/util/fixed_heap.h"
+#include "meta/lm/language_model.h"
+#include "meta/logging/logger.h"
 
 namespace meta
 {

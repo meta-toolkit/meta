@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "topics/lda_model.h"
+#include "meta/topics/lda_model.h"
 
 namespace meta
 {

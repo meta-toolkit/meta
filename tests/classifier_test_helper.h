@@ -10,14 +10,14 @@
 #ifndef META_TESTS_CLASSIFIER_TEST_HELPER_H_
 #define META_TESTS_CLASSIFIER_TEST_HELPER_H_
 
-#include "caching/all.h"
 #include "create_config.h"
-#include "classify/classifier/all.h"
-#include "classify/kernel/all.h"
-#include "index/forward_index.h"
-#include "index/inverted_index.h"
-#include "index/ranker/all.h"
-#include "learn/loss/all.h"
+#include "meta/caching/all.h"
+#include "meta/classify/classifier/all.h"
+#include "meta/classify/kernel/all.h"
+#include "meta/index/forward_index.h"
+#include "meta/index/inverted_index.h"
+#include "meta/index/ranker/all.h"
+#include "meta/learn/loss/all.h"
 
 namespace meta {
 namespace tests {

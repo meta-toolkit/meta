@@ -4,9 +4,9 @@
  */
 
 #include "cpptoml.h"
-#include "analyzers/all.h"
-#include "analyzers/token_stream.h"
-#include "logging/logger.h"
+#include "meta/analyzers/all.h"
+#include "meta/analyzers/token_stream.h"
+#include "meta/logging/logger.h"
 
 using namespace meta;
 

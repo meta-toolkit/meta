@@ -5,12 +5,12 @@
 
 #include <memory>
 
-#include "parser/trees/visitors/leaf_node_finder.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
-#include "parser/state.h"
-#include "parser/sr_parser.h"
-#include "sequence/observation.h"
+#include "meta/parser/trees/visitors/leaf_node_finder.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/parser/state.h"
+#include "meta/parser/sr_parser.h"
+#include "meta/sequence/observation.h"
 
 namespace meta
 {

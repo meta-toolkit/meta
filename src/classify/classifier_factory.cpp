@@ -4,8 +4,8 @@
  */
 
 #include "cpptoml.h"
-#include "classify/classifier/all.h"
-#include "classify/classifier_factory.h"
+#include "meta/classify/classifier/all.h"
+#include "meta/classify/classifier_factory.h"
 
 namespace meta
 {

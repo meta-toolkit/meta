@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "classify/kernel/polynomial.h"
-#include "io/packed.h"
+#include "meta/classify/kernel/polynomial.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {

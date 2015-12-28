@@ -11,10 +11,9 @@
 #include <unicode/unistr.h>
 #include <unicode/translit.h>
 
-#include "util/pimpl.tcc"
-#include "utf/utf.h"
-
 #include "detail.h"
+#include "meta/util/pimpl.tcc"
+#include "meta/utf/utf.h"
 
 namespace meta
 {

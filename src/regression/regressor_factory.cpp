@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "regression/models/sgd.h"
-#include "regression/regressor_factory.h"
+#include "meta/regression/models/sgd.h"
+#include "meta/regression/regressor_factory.h"
 
 namespace meta
 {
