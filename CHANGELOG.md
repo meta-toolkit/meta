@@ -43,8 +43,10 @@
 - Rank correlation measures have been added to the evaluation library
 
 ### Language Model
-- Rewrite of the language model library
-- [SyntacticDiff][syndiff] implementation for grammatical error correction
+- Rewrite of the language model library which can load models from the [arpa]
+  format
+- [SyntacticDiff][syndiff] implementation for comparative text mining, which may
+  include grammatical error correction, summarization, or feature generation
 
 ### Machine Learning
 - A feature selection library for selecting features for machine learning
@@ -61,7 +63,7 @@
 - The libsvm modules are now also built using CMake
 
 ### Miscellaneous
-- Packed binary i/o functions allow for writing integers/floating point
+- Packed binary I/O functions allow for writing integers/floating point
     values in a compressed format that can be efficiently decoded. This
     should be used for most binary I/O that needs to be performed in the
     toolkit unless there is a specific reason not to.
@@ -71,10 +73,10 @@
     used for non-owning references to strings. This will use
     `std::experimental::string_view` if available and our own
     implementation if not
-- Support for jemalloc has been added to the build system. We strongly
+- Support for jemalloc has been added to the build system. We **strongly**
     recommend installing and linking against jemalloc for improved indexing
     performance.
-- A tool has been added to print out the top k terms in a corpus
+- A tool has been added to print out the top *k* terms in a corpus
 - A new library for hashing has been added in namespace `meta::hashing`.
     This includes a generic framework for writing hash functions that are
     randomly keyed as well as (insertion only) probing-based hash sets/maps
@@ -95,9 +97,13 @@
     situations)
 - Bandit is now used for the unit tests, and these have been substantially
     improved upon
+- `io::parser` deprecated and removed; most uses simply converted to
+  `std::fstream`
+- `binary_file_{reader,writer}` deprecated and removed;
+  `io::packed` or `io::{read,write}_binary` should be used instead
 
 ## Bug fixes
-- knn classifier now only requests the top k when performing classification
+- knn classifier now only requests the top *k* when performing classification
 - An issue where uncompressed model files would not be found if using a
     zlib-enabled build (#101)
 
@@ -105,6 +111,7 @@
 - Travis CI integration has been switched to their container
     infrastructure, and it now builds with OS X with Clang in addition to
     Linux with Clang and GCC
+- Appveyor CI for Windows builds alongside Travis
 - Indexing speeds are dramatically faster (thanks to many changes both in
     the in-memory posting chunks as well as optimizations in the
     tokenization process)
@@ -115,6 +122,7 @@
 
 [syndiff]: http://web.engr.illinois.edu/~massung1/files/bigdata-2015.pdf
 [fastapprox]: https://code.google.com/p/fastapprox/
+[arpa]: [http://www.speech.sri.com/projects/srilm/manpages/ngram-format.5.html]
 
 # [v1.3.7][1.3.7]
 ## Bug fixes
