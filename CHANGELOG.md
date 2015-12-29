@@ -43,8 +43,8 @@
 - Rank correlation measures have been added to the evaluation library
 
 ### Language Model
-- Rewrite of the language model library which can load models from the [arpa]
-  format
+- Rewrite of the language model library which can load models from the
+  [.arpa][arpa] format
 - [SyntacticDiff][syndiff] implementation for comparative text mining, which may
   include grammatical error correction, summarization, or feature generation
 
@@ -122,7 +122,7 @@
 
 [syndiff]: http://web.engr.illinois.edu/~massung1/files/bigdata-2015.pdf
 [fastapprox]: https://code.google.com/p/fastapprox/
-[arpa]: [http://www.speech.sri.com/projects/srilm/manpages/ngram-format.5.html]
+[arpa]: http://www.speech.sri.com/projects/srilm/manpages/ngram-format.5.html
 
 # [v1.3.7][1.3.7]
 ## Bug fixes
