@@ -6,7 +6,7 @@
 #ifndef _WIN32
 #include <sys/mman.h>
 #else
-#include "meta/mman.h"
+#include "meta/io/mman-win32/mman.h"
 #endif
 
 #include <sys/stat.h>
