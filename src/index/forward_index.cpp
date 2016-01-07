@@ -65,7 +65,7 @@ class forward_index::impl
      * work, so this function will sort the vocabulary and perform a
      * re-numbering of the old ids.
      */
-    void merge_chunks(size_t num_chunks,
+    void merge_chunks(size_t num_chunks, uint64_t num_docs,
                       hashing::probe_map<std::string, term_id> vocab);
 
     /**
@@ -368,11 +368,12 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
 
     progress.end();
 
-    merge_chunks(num_threads, std::move(vocab));
+    merge_chunks(num_threads, docs->size(), std::move(vocab));
 }
 
 void forward_index::impl::merge_chunks(
-    size_t num_chunks, hashing::probe_map<std::string, term_id> vocab)
+    size_t num_chunks, uint64_t num_docs,
+    hashing::probe_map<std::string, term_id> vocab)
 {
     std::vector<std::string> keys(vocab.size());
 
@@ -401,7 +402,7 @@ void forward_index::impl::merge_chunks(
     // term_id in a chunk file corresponds to the index into the keys
     // vector, which we can then use the new vocab to map to an index
     postings_file_writer<forward_index::postings_data_type> writer{
-        idx_->index_name() + "/" + idx_->impl_->files[POSTINGS], vocab.size()};
+        idx_->index_name() + "/" + idx_->impl_->files[POSTINGS], num_docs};
 
     using input_chunk = chunk_reader<forward_index::postings_data_type>;
     std::vector<input_chunk> chunks;
