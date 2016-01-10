@@ -248,6 +248,7 @@ void forward_index::create_index(const cpptoml::table& config)
                 fwd_impl_->tokenize_docs(docs.get(), *analyzer, mdata_writer,
                                          ram_budget * 1024 * 1024);
                 impl_->load_term_id_mapping();
+                impl_->save_label_id_mapping();
                 fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
 
                 // reload the label file to ensure it was flushed
