@@ -14,25 +14,15 @@ namespace corpus
 
 const util::string_view gz_corpus::id = "gz-corpus";
 
-gz_corpus::gz_corpus(const std::string& file, std::string encoding)
+gz_corpus::gz_corpus(const std::string& file, std::string encoding,
+                     uint64_t num_docs)
     : corpus{std::move(encoding)},
       cur_id_{0},
+      num_lines_{num_docs},
       corpus_stream_{file + ".gz"},
       class_stream_{file + ".labels.gz"}
 {
-    if (!filesystem::file_exists(file + ".numdocs"))
-        throw corpus_exception{
-            file + ".numdocs file does not exist (required for gz_corpus)"};
-
-    try
-    {
-        num_lines_ = std::stoul(filesystem::file_text(file + ".numdocs"));
-    }
-    catch (const std::exception& ex)
-    {
-        throw corpus_exception{"Malformed numdocs file " + file + ".numdocs: "
-                               + ex.what()};
-    }
+    // nothing
 }
 
 bool gz_corpus::has_next() const
@@ -67,8 +57,11 @@ std::unique_ptr<corpus> make_corpus<gz_corpus>(util::string_view prefix,
                                                util::string_view dataset,
                                                const cpptoml::table& config)
 {
-    auto encoding
-        = config.get_as<std::string>("encoding").value_or("utf-8");
+    auto encoding = config.get_as<std::string>("encoding").value_or("utf-8");
+
+    auto num_docs = config.get_as<int64_t>("num-docs");
+    if (!num_docs)
+        throw corpus_exception{"num-docs config param required for gz_corpus"};
 
     // string_view doesn't have operator+ overloads...
     auto filename = prefix.to_string();
@@ -77,7 +70,9 @@ std::unique_ptr<corpus> make_corpus<gz_corpus>(util::string_view prefix,
     filename += "/";
     filename.append(dataset.data(), dataset.size());
     filename += ".dat";
-    return make_unique<gz_corpus>(filename, encoding);
+
+    return make_unique<gz_corpus>(filename, encoding,
+                                  static_cast<uint64_t>(*num_docs));
 }
 }
 }
