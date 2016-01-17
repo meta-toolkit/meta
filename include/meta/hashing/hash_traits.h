@@ -27,6 +27,12 @@ namespace hashing
  * keys into the table for efficiency when it makes sense. Typically, keys
  * are good to inline when they are small, but can be expensive to inline
  * when they are large object (e.g. std::string).
+ *
+ * The class provides the following members:
+ * - inlineable: a boolean indicating whether this type was inlineable
+ * - sentinel(): if inlineable, provides a sentinel value to sacrifice in
+ *   order to flag empty cells in the table. By default, this is the
+ *   largest representable T according to numeric_limits.
  */
 template <class T>
 struct key_traits
@@ -50,14 +56,8 @@ struct key_traits
  * This should be specialized if you desire custom behavior.
  *
  * The class provides the following members:
- * - inlineable: a boolean indicating whether this type was inlineable
  * - storage_type: the type to use to store the keys in the hash set
- * - iterator: the iterator type used by the selected storage_type
- * - const_iterator: the const_iterator type used by the selected
- *   storage_type
- * - sentinel(): if inlineable, provides a sentinel value to sacrifice in
- *   order to flag empty cells in the table. By default, this is the
- *   largest representable T according to numeric_limits.
+ * - probe_entry: the type stored in the table's probing array
  */
 template <class T>
 struct hash_traits
@@ -82,8 +82,6 @@ struct hash_traits
  * This specialization provides the following members:
  * - storage_type: the selected storage type for the key, value pairs in
  *   the table
- * - iterator: the iterator for the selected storage_type
- * - const_iterator: the const_iterator for the selected storage_type
  * - key_sentinel(): if the key of the key, value pair is inlineable, this
  *   provides a sentinel value for the key by delegating to
  *   hash_traits<K>::sentinel().

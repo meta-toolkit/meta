@@ -77,6 +77,9 @@ const K& get_key(const kv_pair<K, V>& kv)
     return kv.key();
 }
 
+/**
+ * A generic iterator over probing tables that store only keys.
+ */
 template <class Storage>
 class key_storage_iterator
 {
@@ -180,6 +183,9 @@ class key_storage_iterator
     std::size_t idx_;
 };
 
+/**
+ * A generic iterator over probing tables that store keys and values.
+ */
 template <class Storage>
 class key_value_storage_iterator
 {
@@ -311,15 +317,33 @@ class key_value_storage_iterator
     util::optional<value_type> pair_;
 };
 
+/**
+ * Used by probing arrays where keys (and possibly values) are stored
+ * externally from the probing array itself. Contains a cached hash code
+ * (hc) and an index into the external array (idx).
+ */
 struct hash_idx
 {
     std::size_t hc = 0;
     std::size_t idx = 0;
 };
 
+/**
+ * A traits class used internally for configuring the following types for
+ * the storage classes:
+ * - iterator
+ * - const_iterator
+ * - stored_type
+ * - probing_strategy
+ * - hash_type
+ * - equal_type
+ */
 template <class Storage>
 struct storage_traits;
 
+/**
+ * A CRTP base class for generic probing hash table/set storage.
+ */
 template <class Derived>
 class storage_base
 {
@@ -502,6 +526,9 @@ class storage_base
     double resize_ratio_ = 1.5;
 };
 
+/**
+ * Storage class for hash sets that have non-inlineable keys.
+ */
 template <class T, class ProbingStrategy, class Hash, class KeyEqual>
 class external_key_storage
     : public storage_base<external_key_storage<T, ProbingStrategy, Hash,
@@ -603,6 +630,10 @@ class external_key_storage
     key_vector_type keys_;
 };
 
+/**
+ * A specialization of the storage_traits configuration point for
+ * external_key_storage.
+ */
 template <class T, class ProbingStrategy, class Hash, class KeyEqual>
 struct storage_traits<external_key_storage<T, ProbingStrategy, Hash, KeyEqual>>
 {
@@ -621,6 +652,10 @@ struct storage_traits<external_key_storage<T, ProbingStrategy, Hash, KeyEqual>>
     }
 };
 
+/**
+ * Storage class for hash sets with keys that can be inlined into the
+ * probing table.
+ */
 template <class T, class ProbingStrategy, class Hash, class KeyEqual>
 class inline_key_storage
     : public storage_base<inline_key_storage<T, ProbingStrategy, Hash,
@@ -723,6 +758,10 @@ class inline_key_storage
     std::size_t size_;
 };
 
+/**
+ * A specialization of the storage_traits configuration point for
+ * inline_key_storage.
+ */
 template <class T, class ProbingStrategy, class Hash, class KeyEqual>
 struct storage_traits<inline_key_storage<T, ProbingStrategy, Hash, KeyEqual>>
 {
@@ -741,6 +780,10 @@ struct storage_traits<inline_key_storage<T, ProbingStrategy, Hash, KeyEqual>>
     }
 };
 
+/**
+ * Storage class for hash tables with keys and values that can both be
+ * inlined into the probing table.
+ */
 template <class K, class V, class ProbingStrategy, class Hash, class KeyEqual>
 class inline_key_value_storage
     : public storage_base<inline_key_value_storage<K, V, ProbingStrategy, Hash,
@@ -838,6 +881,10 @@ class inline_key_value_storage
     std::size_t size_;
 };
 
+/**
+ * A specialization of the storage_traits configuration point for
+ * inline_key_value_storage.
+ */
 template <class K, class V, class ProbingStrategy, class Hash, class KeyEqual>
 struct storage_traits<inline_key_value_storage<K, V, ProbingStrategy, Hash,
                                                KeyEqual>>
@@ -858,6 +905,10 @@ struct storage_traits<inline_key_value_storage<K, V, ProbingStrategy, Hash,
     }
 };
 
+/**
+ * Storage class for hash tables with keys that can be inlined into the
+ * probing table, but values that should be stored externally.
+ */
 template <class K, class V, class ProbingStrategy, class Hash, class KeyEqual>
 class inline_key_external_value_storage
     : public storage_base<inline_key_external_value_storage<K, V,
@@ -963,6 +1014,10 @@ class inline_key_external_value_storage
     value_vector_type values_;
 };
 
+/**
+ * A specialization of the storage_traits configuration point for
+ * inline_key_external_value_storage.
+ */
 template <class K, class V, class ProbingStrategy, class Hash, class KeyEqual>
 struct storage_traits<inline_key_external_value_storage<K, V, ProbingStrategy,
                                                         Hash, KeyEqual>>
@@ -983,6 +1038,10 @@ struct storage_traits<inline_key_external_value_storage<K, V, ProbingStrategy,
     }
 };
 
+/**
+ * Storage class for hash tables with key, value pairs that should be
+ * stored externally from the probing table.
+ */
 template <class K, class V, class ProbingStrategy, class Hash, class KeyEqual>
 class external_key_value_storage
     : public storage_base<external_key_value_storage<K, V, ProbingStrategy,
@@ -1080,6 +1139,10 @@ class external_key_value_storage
     kv_vector_type storage_;
 };
 
+/**
+ * A specialization of the storage_traits configuration point for
+ * external_key_value_storage.
+ */
 template <class K, class V, class ProbingStrategy, class Hash, class KeyEqual>
 struct storage_traits<external_key_value_storage<K, V, ProbingStrategy, Hash,
                                                  KeyEqual>>
