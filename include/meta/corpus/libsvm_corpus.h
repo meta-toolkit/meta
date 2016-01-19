@@ -41,13 +41,13 @@ class libsvm_corpus : public corpus
      * @param file The path to the corpus file
      * @param type The label type for the data (classification or
      * regression)
-     * @param num_lines The number of line sin the corpus file if known
-     * beforehand. If unknown, leave out this parameter and the value will
-     * be calculated in the constructor.
+     * @param num_docs The number of documents (i.e., lines) in the corpus file
+     * if known beforehand. If unknown, leave out this parameter and the value
+     * will be calculated in the constructor.
      */
     libsvm_corpus(const std::string& file,
                   label_type type = label_type::CLASSIFICATION,
-                  uint64_t num_lines = 0);
+                  uint64_t num_docs = 0);
 
     bool has_next() const override;
 

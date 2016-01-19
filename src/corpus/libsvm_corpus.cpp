@@ -17,28 +17,15 @@ const util::string_view libsvm_corpus::id = "libsvm-corpus";
 
 libsvm_corpus::libsvm_corpus(const std::string& file,
                              label_type type /* = label_type::CLASSIFICATION */,
-                             uint64_t num_lines /* = 0 */)
+                             uint64_t num_docs /* = 0 */)
     : corpus{"utf-8"},
       cur_id_{0},
       lbl_type_{type},
-      num_lines_{num_lines},
+      num_lines_{num_docs},
       input_{file}
 {
-    if (num_lines_ == 0 && filesystem::file_exists(file + ".numdocs"))
-    {
-        try
-        {
-            num_lines_ = std::stoul(filesystem::file_text(file + ".numdocs"));
-        }
-        catch (const std::exception& ex)
-        {
-            throw corpus_exception{"Malformed numdocs file " + file
-                                   + ".numdocs: " + ex.what()};
-        }
-    }
-
-    // if we couldn't determine the number of lines in the constructor and the
-    // optional files don't exist, we have to count newlines here
+    // if we couldn't determine the number of lines in the constructor, we have
+    // to count newlines
     if (num_lines_ == 0)
         num_lines_ = filesystem::num_lines(file);
 
@@ -122,7 +109,7 @@ std::unique_ptr<corpus> make_corpus<libsvm_corpus>(util::string_view prefix,
         }
     }
 
-    auto lines = config.get_as<int64_t>("num-lines");
+    auto lines = config.get_as<int64_t>("num-docs");
     if (!lines)
         return make_unique<libsvm_corpus>(filename, lbl_type);
     else

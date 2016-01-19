@@ -33,8 +33,9 @@ class gz_corpus : public corpus
      * @param file The path to the compressed corpus file, where each line
      * represents a document
      * @param encoding The encoding for the file
+     * @param num_docs The number of documents in this corpus
      */
-    gz_corpus(const std::string& file, std::string encoding);
+    gz_corpus(const std::string& file, std::string encoding, uint64_t num_docs);
 
     /**
      * @return whether there is another document in this corpus
