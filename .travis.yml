@@ -29,6 +29,7 @@ addons:
       - libicu-dev
       - llvm-3.6-dev
       - clang-3.6
+      - libjemalloc1
 
 install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then source travis/install_linux.sh; fi
