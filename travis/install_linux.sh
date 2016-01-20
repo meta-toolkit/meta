@@ -7,10 +7,7 @@ mkdir $HOME/include
 export CPLUS_INCLUDE_PATH=$HOME/include:$CPLUS_INCLUDE_PATH
 wget --no-check-certificate http://www.cmake.org/files/v3.2/cmake-3.2.2-Linux-x86_64.sh
 sh cmake-3.2.2-Linux-x86_64.sh --prefix=$HOME --exclude-subdir
-if [ "`echo $CXX`" == "g++" ]; then
-      export CXX=g++-4.8;
-fi
-if [ "`echo $CXX`" == "clang++" ]; then
-      export CXX=clang++-3.6 && travis/install_libcxx.sh
+if [ "$COMPILER" == "clang" ]; then
+      travis/install_libcxx.sh
 fi
 set +v

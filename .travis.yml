@@ -5,32 +5,68 @@ language: cpp
 
 sudo: false
 
-os:
-  - linux
-  - osx
-
-compiler:
-  - clang
-  - gcc
-
-# we only care about clang on OS X
-matrix:
-  exclude:
-    - os: osx
-      compiler: gcc
-
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-3.6
-    packages:
-      - g++-4.8
-      - libicu-dev
-      - llvm-3.6-dev
-      - clang-3.6
+    packages: &default-packages
       - libjemalloc-dev
       - zlib1g-dev
+
+matrix:
+  include:
+    # Linux/GCC 4.8
+    - os: linux
+      env: CC=gcc-4.8 CXX=gcc-4.8
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *default-packages
+            - gcc-4.8
+            - g++-4.8
+
+    # Linux/GCC 4.9
+    - os: linux
+      env: CC=gcc-4.9 CXX=gcc-4.9
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *default-packages
+            - gcc-4.9
+            - g++-4.9
+
+    # Linux/GCC 5
+    - os: linux
+      env: CC=gcc-5 CXX=g++-5
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *default-packages
+            - gcc-5
+            - g++-5
+
+    # Linux/Clang 3.6
+    - os: linux
+      env: COMPILER=clang CC=clang-3.6 CXX=clang++-3.6
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-precise-3.6
+          packages:
+            - *default-packages
+            - clang-3.6
+
+    # OSX/Clang
+    - os: osx
+      env: COMPILER=clang CC=clang CXX=clang
+
+    # OSX/GCC
+    - os: osx
+      env: COMPILER=gcc CC=gcc-5.3 CXX=g++-5.3
 
 install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then source travis/install_linux.sh; fi
