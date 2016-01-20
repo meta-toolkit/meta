@@ -15,7 +15,7 @@ matrix:
   include:
     # Linux/GCC 4.8
     - os: linux
-      env: CC=gcc-4.8 CXX=gcc-4.8
+      env: COMPILER=gcc GCC_VERSION=4.8
       addons:
         apt:
           sources:
@@ -27,7 +27,7 @@ matrix:
 
     # Linux/GCC 4.9
     - os: linux
-      env: CC=gcc-4.9 CXX=gcc-4.9
+      env: COMPILER=gcc GCC_VERSION=4.9
       addons:
         apt:
           sources:
@@ -39,7 +39,7 @@ matrix:
 
     # Linux/GCC 5
     - os: linux
-      env: CC=gcc-5 CXX=g++-5
+      env: COMPILER=gcc GCC_VERSION=5
       addons:
         apt:
           sources:
@@ -51,7 +51,7 @@ matrix:
 
     # Linux/Clang 3.6
     - os: linux
-      env: COMPILER=clang CC=clang-3.6 CXX=clang++-3.6
+      env: COMPILER=clang CLANG_VERSION=3.6
       addons:
         apt:
           sources:
@@ -60,13 +60,13 @@ matrix:
             - *default-packages
             - clang-3.6
 
-    # OSX/Clang
+    # OSX/Clang (XCode)
     - os: osx
-      env: COMPILER=clang CC=clang CXX=clang
+      env: COMPILER=clang
 
-    # OSX/GCC
+    # OSX/GCC 5
     - os: osx
-      env: COMPILER=gcc CC=gcc-5.3 CXX=g++-5.3
+      env: COMPILER=gcc
 
 install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then source travis/install_linux.sh; fi
