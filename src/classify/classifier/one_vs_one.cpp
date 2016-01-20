@@ -19,13 +19,25 @@ const util::string_view one_vs_one::id = "one-vs-one";
 
 one_vs_one::one_vs_one(multiclass_dataset_view docs, const cpptoml::table& base)
 {
-    for (auto outer = docs.labels_begin(), end = docs.labels_end();
-         outer != end; ++outer)
+    // for deterministic results, we create a list of the possible class
+    // labels and sort them so that we always create the same pairs for the
+    // one-vs-one reduction. This matters when using e.g. SGD where the
+    // termination depends on the loss, which depends on which class we
+    // treat as positive in the reduction.
     {
-        for (auto inner = outer; ++inner != end;)
+        std::vector<class_label> labels;
+        labels.reserve(docs.total_labels());
+        for (auto it = docs.labels_begin(); it != docs.labels_end(); ++it)
+            labels.push_back(it->first);
+        std::sort(labels.begin(), labels.end());
+
+        for (auto outer = labels.begin(), end = labels.end(); outer != end;
+             ++outer)
         {
-            classifiers_.emplace(problem_type{outer->first, inner->first},
-                                 nullptr);
+            for (auto inner = outer; ++inner != end;)
+            {
+                classifiers_.emplace(problem_type{*outer, *inner}, nullptr);
+            }
         }
     }
 
@@ -168,19 +180,24 @@ class_label one_vs_one::classify(const feature_vector& instance) const
     }
 
     using count_type = std::pair<const class_label, int>;
-    auto iter
-        = std::max_element(votes.begin(), votes.end(),
-                           [](const count_type& lhs, const count_type& rhs)
-                           {
-                               return lhs.second < rhs.second;
-                           });
+    auto iter = std::max_element(
+        votes.begin(), votes.end(),
+        [](const count_type& lhs, const count_type& rhs)
+        {
+            // a tie-breaking sort: if two classes have the same number of
+            // votes, arbitrarily pick the one that comes alphabetically
+            // before the other. This is mainly here for deterministic
+            // results.
+            return lhs.second < rhs.second
+                   || (lhs.second == rhs.second && lhs.first < rhs.first);
+        });
     return iter->first;
 }
 
 template <>
 std::unique_ptr<classifier>
-    make_classifier<one_vs_one>(const cpptoml::table& config,
-                                multiclass_dataset_view training)
+make_classifier<one_vs_one>(const cpptoml::table& config,
+                            multiclass_dataset_view training)
 {
     auto base = config.get_table("base");
     if (!base)
