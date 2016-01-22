@@ -57,19 +57,17 @@ class featurizer
      * @param feat The feature identifier
      * @param val The feature value
      */
-    void operator()(const std::string& feat, double val)
+    template <class T>
+    void operator()(const std::string& feat, T val)
     {
-        map_->increment(feat, val);
-    }
+        static_assert(std::is_integral<T>::value
+                          || std::is_floating_point<T>::value,
+                      "feature map must map to uint64_t or double");
 
-    /**
-     * Observes the given feature occurring val times.
-     * @param feat The feature identifier
-     * @param val The feature value
-     */
-    void operator()(const std::string& feat, uint64_t val)
-    {
-        map_->increment(feat, val);
+        if (std::is_floating_point<T>::value)
+            map_->increment(feat, static_cast<double>(val));
+        else
+            map_->increment(feat, static_cast<uint64_t>(val));
     }
 
   private:
