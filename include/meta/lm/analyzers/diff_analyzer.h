@@ -24,12 +24,9 @@ namespace analyzers
  * Analyzes documents using lm::diff edits; see lm::diff for config file
  * information and further explanation.
  */
-template <class T>
-class diff_analyzer : public util::clonable<analyzer<T>, diff_analyzer<T>>
+class diff_analyzer : public util::clonable<analyzer, diff_analyzer>
 {
   public:
-    using feature_map = typename diff_analyzer::feature_map;
-
     diff_analyzer(const cpptoml::table& config,
                   std::unique_ptr<token_stream> stream);
 
@@ -43,12 +40,8 @@ class diff_analyzer : public util::clonable<analyzer<T>, diff_analyzer<T>>
     const static util::string_view id;
 
   private:
-    /**
-     * Tokenizes a file into a document.
-     * @param doc The document to store the tokenized information in
-     */
     virtual void tokenize(const corpus::document& doc,
-                          feature_map& counts) override;
+                          featurizer& counts) override;
 
     /// The token stream to be used for extracting tokens
     std::unique_ptr<token_stream> stream_;
@@ -57,23 +50,11 @@ class diff_analyzer : public util::clonable<analyzer<T>, diff_analyzer<T>>
 };
 
 /**
- * Specialization of the traits class used by the factory method for
- * creating diff analyzers.
+ * Specialization of the factory method for creating diff analyzers.
  */
-template <class T>
-struct analyzer_traits<diff_analyzer<T>>
-{
-    static std::unique_ptr<analyzer<T>> create(const cpptoml::table&,
-                                               const cpptoml::table&);
-};
-
-// declare the valid instantiations for this analyzer
-extern template class diff_analyzer<uint64_t>;
-extern template class diff_analyzer<double>;
-
-// declare the valid instantiations for this analyzer's trait class
-extern template struct analyzer_traits<diff_analyzer<uint64_t>>;
-extern template struct analyzer_traits<diff_analyzer<double>>;
+template <>
+std::unique_ptr<analyzer> make_analyzer<diff_analyzer>(const cpptoml::table&,
+                                                       const cpptoml::table&);
 }
 }
 #endif

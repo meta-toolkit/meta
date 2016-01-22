@@ -24,17 +24,6 @@ namespace meta
 namespace analyzers
 {
 
-template <class T>
-auto analyzer<T>::analyze(const corpus::document& doc) -> feature_map
-{
-    feature_map counts;
-    tokenize(doc, counts);
-    return counts;
-}
-
-template class analyzer<uint64_t>;
-template class analyzer<double>;
-
 std::string get_content(const corpus::document& doc)
 {
     if (!doc.contains_content())
@@ -47,8 +36,8 @@ std::string get_content(const corpus::document& doc)
 namespace
 {
 std::unique_ptr<token_stream>
-    add_default_filters(std::unique_ptr<token_stream> tokenizer,
-                        const cpptoml::table& config)
+add_default_filters(std::unique_ptr<token_stream> tokenizer,
+                    const cpptoml::table& config)
 {
     auto stopwords = config.get_as<std::string>("stop-words");
 
@@ -72,7 +61,7 @@ std::unique_ptr<token_stream> default_filter_chain(const cpptoml::table& config)
 }
 
 std::unique_ptr<token_stream>
-    default_unigram_chain(const cpptoml::table& config)
+default_unigram_chain(const cpptoml::table& config)
 {
     // suppress "<s>", "</s>"
     auto tokenizer = make_unique<tokenizers::icu_tokenizer>(true);
@@ -112,11 +101,10 @@ std::unique_ptr<token_stream> load_filters(const cpptoml::table& global,
     return result;
 }
 
-template <class T>
-std::unique_ptr<analyzer<T>> load(const cpptoml::table& config)
+std::unique_ptr<analyzer> load(const cpptoml::table& config)
 {
     using namespace analyzers;
-    std::vector<std::unique_ptr<analyzer<T>>> toks;
+    std::vector<std::unique_ptr<analyzer>> toks;
     auto analyzers = config.get_table_array("analyzers");
     for (auto group : analyzers->get())
     {
@@ -124,14 +112,9 @@ std::unique_ptr<analyzer<T>> load(const cpptoml::table& config)
         if (!method)
             throw analyzer_exception{"failed to find analyzer method"};
         toks.emplace_back(
-            analyzer_factory<T>::get().create(*method, config, *group));
+            analyzer_factory::get().create(*method, config, *group));
     }
-    return make_unique<multi_analyzer<T>>(std::move(toks));
+    return make_unique<multi_analyzer>(std::move(toks));
 }
-
-// explicitly instantiate the load template function for the two valid
-// feature value types for analyzers
-template std::unique_ptr<analyzer<uint64_t>> load(const cpptoml::table&);
-template std::unique_ptr<analyzer<double>> load(const cpptoml::table&);
 }
 }

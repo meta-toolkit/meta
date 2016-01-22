@@ -69,7 +69,7 @@ class inverted_index::impl
     void load_postings();
 
     /// The analyzer used to tokenize documents.
-    std::unique_ptr<analyzers::analyzer<uint64_t>> analyzer_;
+    std::unique_ptr<analyzers::analyzer> analyzer_;
 
     util::optional<postings_file<inverted_index::primary_key_type,
                                  inverted_index::secondary_key_type>> postings_;
@@ -80,7 +80,7 @@ class inverted_index::impl
 
 inverted_index::impl::impl(inverted_index* idx, const cpptoml::table& config)
     : idx_{idx},
-      analyzer_{analyzers::load<uint64_t>(config)},
+      analyzer_{analyzers::load(config)},
       total_corpus_terms_{0}
 {
     // nothing
@@ -198,7 +198,7 @@ void inverted_index::impl::tokenize_docs(
                 progress(doc->id());
             }
 
-            auto counts = analyzer->analyze(*doc);
+            auto counts = analyzer->analyze<uint64_t>(*doc);
 
             // warn if there is an empty document
             if (counts.empty())
@@ -316,10 +316,10 @@ float inverted_index::avg_doc_length()
     return static_cast<float>(total_corpus_terms()) / num_docs();
 }
 
-analyzers::analyzer<uint64_t>::feature_map
+analyzers::feature_map<uint64_t>
     inverted_index::tokenize(const corpus::document& doc)
 {
-    return inv_impl_->analyzer_->analyze(doc);
+    return inv_impl_->analyzer_->analyze<uint64_t>(doc);
 }
 
 uint64_t inverted_index::doc_freq(term_id t_id) const

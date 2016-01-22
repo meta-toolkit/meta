@@ -65,6 +65,37 @@ class kv_pair
     std::reference_wrapper<V> value_;
 };
 
+template <class Pair>
+struct kv_traits;
+
+template <class K, class V>
+struct kv_traits<std::pair<K, V>>
+{
+    static const K& key(const std::pair<K, V>& pr)
+    {
+        return pr.first;
+    }
+
+    static const V& value(const std::pair<K, V>& pr)
+    {
+        return pr.second;
+    }
+};
+
+template <class K, class V>
+struct kv_traits<kv_pair<K, V>>
+{
+    static const K& key(const kv_pair<K, V>& pr)
+    {
+        return pr.key();
+    }
+
+    static const V& value(const kv_pair<K, V>& pr)
+    {
+        return pr.value();
+    }
+};
+
 template <class Key>
 const Key& get_key(const Key& key)
 {

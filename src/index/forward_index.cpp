@@ -53,7 +53,7 @@ class forward_index::impl
      * merged.
      */
     void tokenize_docs(corpus::corpus* corpus,
-                       const analyzers::analyzer<double>& analyzer,
+                       const analyzers::analyzer& analyzer,
                        metadata_writer& mdata_writer, uint64_t ram_budget);
 
     /**
@@ -237,7 +237,7 @@ void forward_index::create_index(const cpptoml::table& config)
             auto docs = corpus::make_corpus(config);
 
             {
-                auto analyzer = analyzers::load<double>(config);
+                auto analyzer = analyzers::load(config);
 
                 metadata_writer mdata_writer{index_name(), docs->size(),
                                              docs->schema()};
@@ -272,7 +272,7 @@ void forward_index::create_index(const cpptoml::table& config)
 }
 
 void forward_index::impl::tokenize_docs(corpus::corpus* docs,
-                                        const analyzers::analyzer<double>& ana,
+                                        const analyzers::analyzer& ana,
                                         metadata_writer& mdata_writer,
                                         uint64_t ram_budget)
 {
@@ -305,7 +305,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
                 progress(doc->id());
             }
 
-            auto counts = analyzer->analyze(*doc);
+            auto counts = analyzer->analyze<double>(*doc);
 
             // warn if there is an empty document
             if (counts.empty())
@@ -332,11 +332,11 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
                 std::lock_guard<std::mutex> lock{vocab_mutex};
                 for (const auto& count : counts)
                 {
-                    auto it = vocab.find(count.first);
+                    auto it = vocab.find(count.key());
                     if (it == vocab.end())
-                        it = vocab.emplace(count.first, term_id{vocab.size()});
+                        it = vocab.emplace(count.key(), term_id{vocab.size()});
 
-                    pd_counts.emplace_back(it->value(), count.second);
+                    pd_counts.emplace_back(it->value(), count.value());
                 }
 
                 if (!exceeded_budget && vocab.bytes_used() > ram_budget)

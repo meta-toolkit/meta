@@ -15,27 +15,22 @@ namespace meta
 namespace analyzers
 {
 
-template <class T>
-const util::string_view diff_analyzer<T>::id = "diff";
+const util::string_view diff_analyzer::id = "diff";
 
-template <class T>
-diff_analyzer<T>::diff_analyzer(const cpptoml::table& config,
-                                std::unique_ptr<token_stream> stream)
+diff_analyzer::diff_analyzer(const cpptoml::table& config,
+                             std::unique_ptr<token_stream> stream)
     : stream_{std::move(stream)}, diff_{std::make_shared<lm::diff>(config)}
 {
     // nothing
 }
 
-template <class T>
-diff_analyzer<T>::diff_analyzer(const diff_analyzer& other)
+diff_analyzer::diff_analyzer(const diff_analyzer& other)
     : stream_{other.stream_->clone()}, diff_{other.diff_}
 {
     // nothing
 }
 
-template <class T>
-void diff_analyzer<T>::tokenize(const corpus::document& doc,
-                                feature_map& counts)
+void diff_analyzer::tokenize(const corpus::document& doc, featurizer& counts)
 {
     // first, get tokens
     stream_->set_content(get_content(doc));
@@ -63,32 +58,27 @@ void diff_analyzer<T>::tokenize(const corpus::document& doc,
             auto candidates = diff_->candidates(sent, true);
             auto edits = candidates[0].first.operations();
             if (edits.empty())
-                counts["unmodified"] += 1;
+                counts("unmodified", 1ul);
             else
             {
                 for (auto& e : edits)
-                    counts[e] += 1;
+                    counts(e, 1ul);
             }
         }
         catch (lm::sentence_exception& ex)
         {
-            counts["no-candidates"] += 1;
+            counts("no-candidates", 1ul);
         }
     }
 }
 
-template <class T>
-std::unique_ptr<analyzer<T>>
-    analyzer_traits<diff_analyzer<T>>::create(const cpptoml::table& global,
-                                              const cpptoml::table& config)
+template <>
+std::unique_ptr<analyzer>
+make_analyzer<diff_analyzer>(const cpptoml::table& global,
+                             const cpptoml::table& config)
 {
     auto filts = load_filters(global, config);
-    return make_unique<diff_analyzer<T>>(global, std::move(filts));
+    return make_unique<diff_analyzer>(global, std::move(filts));
 }
-
-template class diff_analyzer<uint64_t>;
-template class diff_analyzer<double>;
-template struct analyzer_traits<diff_analyzer<uint64_t>>;
-template struct analyzer_traits<diff_analyzer<double>>;
 }
 }

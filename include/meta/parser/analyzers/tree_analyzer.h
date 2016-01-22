@@ -41,12 +41,9 @@ namespace analyzers
  * @see https://meta-toolkit.org/analyzers-filters-tutorial.html
 
  */
-template <class T>
-class tree_analyzer : public util::clonable<analyzer<T>, tree_analyzer<T>>
+class tree_analyzer : public util::clonable<analyzer, tree_analyzer>
 {
   public:
-    using feature_map = typename analyzer<T>::feature_map;
-
     /**
      * Creates a tree analyzer
      */
@@ -63,7 +60,7 @@ class tree_analyzer : public util::clonable<analyzer<T>, tree_analyzer<T>>
     /**
      * Adds a tree featurizer to the list.
      */
-    void add(std::unique_ptr<const tree_featurizer<T>> featurizer);
+    void add(std::unique_ptr<const tree_featurizer> featurizer);
 
     /**
      * Identifier for this analyzer.
@@ -72,13 +69,9 @@ class tree_analyzer : public util::clonable<analyzer<T>, tree_analyzer<T>>
 
   private:
     using tree_featurizer_list
-        = std::vector<std::unique_ptr<const tree_featurizer<T>>>;
+        = std::vector<std::unique_ptr<const tree_featurizer>>;
 
-    /**
-     * Tokenizes a file into a document.
-     * @param doc The document to store the tokenized information in
-     */
-    void tokenize(const corpus::document& doc, feature_map& counts) override;
+    void tokenize(const corpus::document& doc, featurizer& counts) override;
 
     /**
      * A list of tree_featurizers to run on each parse tree.
@@ -105,25 +98,6 @@ class tree_analyzer : public util::clonable<analyzer<T>, tree_analyzer<T>>
      */
     std::shared_ptr<const parser::sr_parser> parser_;
 };
-
-/**
- * Specialization of the traits class used by the factory method for
- * creating tree analyzers.
- */
-template <class T>
-struct analyzer_traits<tree_analyzer<T>>
-{
-    static std::unique_ptr<analyzer<T>> create(const cpptoml::table&,
-                                               const cpptoml::table&);
-};
-
-// declare the valid instantiations of this analyzer
-extern template class tree_analyzer<uint64_t>;
-extern template class tree_analyzer<double>;
-
-// declare the valid instantiations of this analyzer's traits class
-extern template struct analyzer_traits<tree_analyzer<uint64_t>>;
-extern template struct analyzer_traits<tree_analyzer<double>>;
 }
 
 namespace parser

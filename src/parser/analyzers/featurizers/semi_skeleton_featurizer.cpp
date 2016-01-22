@@ -8,18 +8,14 @@ namespace meta
 namespace analyzers
 {
 
-template <class T>
-const util::string_view semi_skeleton_featurizer<T>::id = "semi-skel";
+const util::string_view semi_skeleton_featurizer::id = "semi-skel";
 
 namespace
 {
-template <class T>
 class semi_skeleton_visitor : public parser::const_visitor<std::string>
 {
   public:
-    using feature_map = typename semi_skeleton_featurizer<T>::feature_map;
-
-    semi_skeleton_visitor(feature_map& fm) : counts(fm)
+    semi_skeleton_visitor(featurizer& fm) : counts(fm)
     {
         // nothing
     }
@@ -34,32 +30,29 @@ class semi_skeleton_visitor : public parser::const_visitor<std::string>
                       });
         rep += ")";
 
-        counts[semi_skeleton_featurizer<T>::id.to_string() + "-" + rep_cat
-               + rep] += 1;
+        counts(semi_skeleton_featurizer::id.to_string() + "-" + rep_cat + rep,
+               1ul);
         return "(" + rep;
     }
 
     std::string operator()(const parser::leaf_node& ln) override
     {
-        counts[semi_skeleton_featurizer<T>::id.to_string() + "-("
-               + static_cast<std::string>(ln.category()) + ")"] += 1;
+        counts(semi_skeleton_featurizer::id.to_string() + "-("
+                   + static_cast<std::string>(ln.category()) + ")",
+               1ul);
         return "()";
     }
 
   private:
-    feature_map& counts;
+    featurizer& counts;
 };
 }
 
-template <class T>
-void semi_skeleton_featurizer<T>::tree_tokenize(const parser::parse_tree& tree,
-                                                feature_map& counts) const
+void semi_skeleton_featurizer::tree_tokenize(const parser::parse_tree& tree,
+                                             featurizer& counts) const
 {
-    semi_skeleton_visitor<T> vtor{counts};
+    semi_skeleton_visitor vtor{counts};
     tree.visit(vtor);
 }
-
-template class semi_skeleton_featurizer<uint64_t>;
-template class semi_skeleton_featurizer<double>;
 }
 }

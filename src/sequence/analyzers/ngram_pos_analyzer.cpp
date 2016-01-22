@@ -15,13 +15,11 @@ namespace meta
 namespace analyzers
 {
 
-template <class T>
-const util::string_view ngram_pos_analyzer<T>::id = "ngram-pos";
+const util::string_view ngram_pos_analyzer::id = "ngram-pos";
 
-template <class T>
-ngram_pos_analyzer<T>::ngram_pos_analyzer(uint16_t n,
-                                          std::unique_ptr<token_stream> stream,
-                                          const std::string& crf_prefix)
+ngram_pos_analyzer::ngram_pos_analyzer(uint16_t n,
+                                       std::unique_ptr<token_stream> stream,
+                                       const std::string& crf_prefix)
     : base{n},
       stream_{std::move(stream)},
       crf_{std::make_shared<sequence::crf>(crf_prefix)},
@@ -35,8 +33,7 @@ ngram_pos_analyzer<T>::ngram_pos_analyzer(uint16_t n,
     // nothing
 }
 
-template <class T>
-ngram_pos_analyzer<T>::ngram_pos_analyzer(const ngram_pos_analyzer& other)
+ngram_pos_analyzer::ngram_pos_analyzer(const ngram_pos_analyzer& other)
     : base{other.n_value()},
       stream_{other.stream_->clone()},
       crf_{other.crf_},
@@ -45,9 +42,8 @@ ngram_pos_analyzer<T>::ngram_pos_analyzer(const ngram_pos_analyzer& other)
     // nothing
 }
 
-template <class T>
-void ngram_pos_analyzer<T>::tokenize(const corpus::document& doc,
-                                     feature_map& counts)
+void ngram_pos_analyzer::tokenize(const corpus::document& doc,
+                                  featurizer& counts)
 {
     // first, get tokens
     stream_->set_content(get_content(doc));
@@ -87,15 +83,15 @@ void ngram_pos_analyzer<T>::tokenize(const corpus::document& doc,
                 combined = next + "_" + combined;
             }
 
-            counts[combined] += 1;
+            counts(combined, 1ul);
         }
     }
 }
 
-template <class T>
-std::unique_ptr<analyzer<T>>
-    analyzer_traits<ngram_pos_analyzer<T>>::create(const cpptoml::table& global,
-                                                   const cpptoml::table& config)
+template <>
+std::unique_ptr<analyzer>
+make_analyzer<ngram_pos_analyzer>(const cpptoml::table& global,
+                                  const cpptoml::table& config)
 {
     auto n_val = config.get_as<int64_t>("ngram");
     if (!n_val)
@@ -108,14 +104,9 @@ std::unique_ptr<analyzer<T>>
             "ngram-pos analyzer must contain a prefix to a crf model"};
 
     auto filts = load_filters(global, config);
-    return make_unique<ngram_pos_analyzer<T>>(*n_val, std::move(filts),
-                                              *crf_prefix);
+    return make_unique<ngram_pos_analyzer>(*n_val, std::move(filts),
+                                           *crf_prefix);
 }
-
-template class ngram_pos_analyzer<uint64_t>;
-template class ngram_pos_analyzer<double>;
-template struct analyzer_traits<ngram_pos_analyzer<uint64_t>>;
-template struct analyzer_traits<ngram_pos_analyzer<double>>;
 }
 
 namespace sequence
@@ -123,8 +114,7 @@ namespace sequence
 void register_analyzers()
 {
     using namespace analyzers;
-    register_analyzer<ngram_pos_analyzer<uint64_t>>();
-    register_analyzer<ngram_pos_analyzer<double>>();
+    register_analyzer<ngram_pos_analyzer>();
 }
 }
 }

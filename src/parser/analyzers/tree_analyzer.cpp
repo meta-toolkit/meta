@@ -14,13 +14,11 @@ namespace meta
 namespace analyzers
 {
 
-template <class T>
-const util::string_view tree_analyzer<T>::id = "tree";
+const util::string_view tree_analyzer::id = "tree";
 
-template <class T>
-tree_analyzer<T>::tree_analyzer(std::unique_ptr<token_stream> stream,
-                                const std::string& tagger_prefix,
-                                const std::string& parser_prefix)
+tree_analyzer::tree_analyzer(std::unique_ptr<token_stream> stream,
+                             const std::string& tagger_prefix,
+                             const std::string& parser_prefix)
     : featurizers_{std::make_shared<tree_featurizer_list>()},
       stream_{std::move(stream)},
       tagger_{std::make_shared<sequence::perceptron>(tagger_prefix)},
@@ -29,8 +27,7 @@ tree_analyzer<T>::tree_analyzer(std::unique_ptr<token_stream> stream,
     // nothing
 }
 
-template <class T>
-tree_analyzer<T>::tree_analyzer(const tree_analyzer& other)
+tree_analyzer::tree_analyzer(const tree_analyzer& other)
     : featurizers_{other.featurizers_},
       stream_{other.stream_->clone()},
       tagger_{other.tagger_},
@@ -39,15 +36,12 @@ tree_analyzer<T>::tree_analyzer(const tree_analyzer& other)
     // nothing
 }
 
-template <class T>
-void tree_analyzer<T>::add(std::unique_ptr<const tree_featurizer<T>> featurizer)
+void tree_analyzer::add(std::unique_ptr<const tree_featurizer> featurizer)
 {
     featurizers_->emplace_back(std::move(featurizer));
 }
 
-template <class T>
-void tree_analyzer<T>::tokenize(const corpus::document& doc,
-                                feature_map& counts)
+void tree_analyzer::tokenize(const corpus::document& doc, featurizer& counts)
 {
     stream_->set_content(get_content(doc));
 
@@ -74,10 +68,10 @@ void tree_analyzer<T>::tokenize(const corpus::document& doc,
     }
 }
 
-template <class T>
-std::unique_ptr<analyzer<T>>
-    analyzer_traits<tree_analyzer<T>>::create(const cpptoml::table& global,
-                                              const cpptoml::table& config)
+template <>
+std::unique_ptr<analyzer>
+make_analyzer<tree_analyzer>(const cpptoml::table& global,
+                             const cpptoml::table& config)
 {
     auto tagger_prefix = config.get_as<std::string>("tagger");
     if (!tagger_prefix)
@@ -93,19 +87,14 @@ std::unique_ptr<analyzer<T>>
             "tree analyzer needs an array of features to generate"};
 
     auto filts = load_filters(global, config);
-    auto ana = make_unique<tree_analyzer<T>>(std::move(filts), *tagger_prefix,
-                                             *parser_prefix);
+    auto ana = make_unique<tree_analyzer>(std::move(filts), *tagger_prefix,
+                                          *parser_prefix);
 
     for (const auto& feat : feat_arr->array_of<std::string>())
-        ana->add(featurizer_factory<T>::get().create(feat->get()));
+        ana->add(featurizer_factory::get().create(feat->get()));
 
     return std::move(ana);
 }
-
-template class tree_analyzer<uint64_t>;
-template class tree_analyzer<double>;
-template struct analyzer_traits<tree_analyzer<uint64_t>>;
-template struct analyzer_traits<tree_analyzer<double>>;
 }
 
 namespace parser
@@ -113,8 +102,7 @@ namespace parser
 void register_analyzers()
 {
     using namespace analyzers;
-    register_analyzer<tree_analyzer<uint64_t>>();
-    register_analyzer<tree_analyzer<double>>();
+    register_analyzer<tree_analyzer>();
 }
 }
 }

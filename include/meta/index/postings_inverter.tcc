@@ -28,17 +28,20 @@ postings_inverter<Index>::producer::producer(postings_inverter* parent,
 template <class Index>
 template <class Container>
 void postings_inverter<Index>::producer::
-    operator()(const secondary_key_type& key, const Container& counts)
+operator()(const secondary_key_type& key, const Container& counts)
 {
     for (const auto& count : counts)
     {
-        postings_buffer_type pb{count.first};
+        using kv_traits
+            = hashing::kv_traits<typename std::decay<decltype(count)>::type>;
+
+        postings_buffer_type pb{kv_traits::key(count)};
         auto it = pdata_.find(pb);
         if (it == pdata_.end())
         {
             // check if we would resize on an insert
             if ((pdata_.size() + 1) / static_cast<double>(pdata_.capacity())
-                    >= pdata_.max_load_factor())
+                >= pdata_.max_load_factor())
             {
                 // now check if roughly doubling our bytes used is going to
                 // cause problems
@@ -53,7 +56,7 @@ void postings_inverter<Index>::producer::
 
             chunk_size_ -= pdata_.bytes_used();
 
-            pb.write_count(key, static_cast<uint64_t>(count.second));
+            pb.write_count(key, static_cast<uint64_t>(kv_traits::value(count)));
             chunk_size_ += pb.bytes_used();
             pdata_.emplace(std::move(pb));
 
@@ -65,8 +68,8 @@ void postings_inverter<Index>::producer::
 
             // note: we can modify elements in this set because we do not change
             // how comparisons are made (the primary_key value)
-            const_cast<postings_buffer_type&>(*it)
-                .write_count(key, static_cast<uint64_t>(count.second));
+            const_cast<postings_buffer_type&>(*it).write_count(
+                key, static_cast<uint64_t>(kv_traits::value(count)));
 
             chunk_size_ += it->bytes_used();
         }
@@ -138,8 +141,8 @@ void postings_inverter<Index>::write_chunk(
 
     if (!top) // pqueue was empty
     {
-        std::string chunk_name = prefix_ + "/chunk-"
-                                 + std::to_string(chunk_num);
+        std::string chunk_name
+            = prefix_ + "/chunk-" + std::to_string(chunk_num);
         {
             std::ofstream outfile{chunk_name, std::ios::binary};
             for (auto& p : pdata)

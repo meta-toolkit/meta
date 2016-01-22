@@ -13,8 +13,8 @@
 
 #include <stdexcept>
 #include <memory>
-#include <string>
-#include <unordered_map>
+
+#include "meta/analyzers/featurizer.h"
 
 namespace cpptoml
 {
@@ -34,7 +34,6 @@ namespace analyzers
 
 class token_stream;
 
-template <class T>
 class multi_analyzer;
 
 /**
@@ -48,20 +47,9 @@ class multi_analyzer;
  * When defining your own sublcass of analyzer, you should ensure to
  * subclass from the appropriate type.
  */
-template <class T>
 class analyzer
 {
   public:
-    static_assert(std::is_same<T, uint64_t>::value
-                      || std::is_same<T, double>::value,
-                  "analyzers can only produce unsigned integer or real valued "
-                  "feature values");
-
-    using base_type = analyzer;
-    using feature_value_type = T;
-
-    using feature_map = std::unordered_map<std::string, T>;
-
     /**
      * A default virtual destructor.
      */
@@ -73,14 +61,21 @@ class analyzer
      * @return a feature_map that maps the observed features to their
      *  counts in the document
      */
-    feature_map analyze(const corpus::document& doc);
+    template <class T>
+    feature_map<T> analyze(const corpus::document& doc)
+    {
+        feature_map<T> counts;
+        featurizer feats{counts};
+        tokenize(doc, feats);
+        return counts;
+    }
 
     /**
      * Clones this analyzer.
      */
     virtual std::unique_ptr<analyzer> clone() const = 0;
 
-    friend multi_analyzer<T>;
+    friend multi_analyzer;
 
   private:
     /**
@@ -88,9 +83,9 @@ class analyzer
      * should be overridden in derived classes.
      *
      * @param doc The document to be tokenized
-     * @param counts The feature_map to place observed feature counts into
+     * @param counts The featurizer to record feature values with
      */
-    virtual void tokenize(const corpus::document& doc, feature_map& counts) = 0;
+    virtual void tokenize(const corpus::document& doc, featurizer& counts) = 0;
 };
 
 /**
@@ -106,14 +101,7 @@ class analyzer_exception : public std::runtime_error
  * @param config The config group used to create the analyzer from
  * @return an analyzer as specified by a config object
  */
-template <class T>
-std::unique_ptr<analyzer<T>> load(const cpptoml::table& config);
-
-// declare the valid instantiations of the load function above
-extern template std::unique_ptr<analyzer<uint64_t>>
-    load(const cpptoml::table& config);
-extern template std::unique_ptr<analyzer<double>>
-    load(const cpptoml::table& config);
+std::unique_ptr<analyzer> load(const cpptoml::table& config);
 
 /**
  * @param config The config group used to create the analyzer from
@@ -121,7 +109,7 @@ extern template std::unique_ptr<analyzer<double>>
  * based on a config object
  */
 std::unique_ptr<token_stream>
-    default_filter_chain(const cpptoml::table& config);
+default_filter_chain(const cpptoml::table& config);
 
 /**
  * @param config The config group used to create the analyzer from
@@ -129,7 +117,7 @@ std::unique_ptr<token_stream>
  * of MeTA, based on a config object
  */
 std::unique_ptr<token_stream>
-    default_unigram_chain(const cpptoml::table& config);
+default_unigram_chain(const cpptoml::table& config);
 
 /**
  * @param global The original config object with all parameters

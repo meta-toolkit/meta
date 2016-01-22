@@ -91,13 +91,17 @@ struct ranker_context
         for (; begin != end; ++begin)
         {
             const auto& count = *begin;
-            query_length += count.second;
-            auto term = idx.get_term_id(count.first);
+
+            using kv_traits = hashing::kv_traits<
+                typename std::decay<decltype(count)>::type>;
+
+            query_length += kv_traits::value(count);
+            auto term = idx.get_term_id(kv_traits::key(count));
             auto pstream = idx.stream_for(term);
             if (!pstream)
                 continue;
 
-            postings.emplace_back(*pstream, count.second, term);
+            postings.emplace_back(*pstream, kv_traits::value(count), term);
 
             while (postings.back().begin != postings.back().end
                    && !filter(postings.back().begin->first))

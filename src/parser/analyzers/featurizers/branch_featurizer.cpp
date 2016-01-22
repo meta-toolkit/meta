@@ -8,18 +8,14 @@ namespace meta
 namespace analyzers
 {
 
-template <class T>
-const util::string_view branch_featurizer<T>::id = "branch";
+const util::string_view branch_featurizer::id = "branch";
 
 namespace
 {
-template <class T>
 class branch_visitor : public parser::const_visitor<void>
 {
   public:
-    using feature_map = typename branch_featurizer<T>::feature_map;
-
-    branch_visitor(feature_map& fm) : counts(fm)
+    branch_visitor(featurizer& fm) : counts(fm)
     {
         // nothing
     }
@@ -27,7 +23,7 @@ class branch_visitor : public parser::const_visitor<void>
     void operator()(const parser::internal_node& in) override
     {
         auto rep = "branch-" + std::to_string(in.num_children());
-        counts[rep] += 1;
+        counts(rep, 1ul);
 
         in.each_child([&](const parser::node* child)
                       {
@@ -41,19 +37,15 @@ class branch_visitor : public parser::const_visitor<void>
     }
 
   private:
-    feature_map& counts;
+    featurizer& counts;
 };
 }
 
-template <class T>
-void branch_featurizer<T>::tree_tokenize(const parser::parse_tree& tree,
-                                         feature_map& counts) const
+void branch_featurizer::tree_tokenize(const parser::parse_tree& tree,
+                                      featurizer& counts) const
 {
-    branch_visitor<T> vtor{counts};
+    branch_visitor vtor{counts};
     tree.visit(vtor);
 }
-
-template class branch_featurizer<uint64_t>;
-template class branch_featurizer<double>;
 }
 }

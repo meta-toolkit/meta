@@ -26,28 +26,16 @@ namespace analyzers
  * Parse Tree Features for Text Representation"
  * @see http://web.engr.illinois.edu/~massung1/files/icsc-2013.pdf
  */
-template <class T>
 class semi_skeleton_featurizer
-    : public util::clonable<tree_featurizer<T>, semi_skeleton_featurizer<T>>
+    : public util::clonable<tree_featurizer, semi_skeleton_featurizer>
 {
   public:
-    using feature_map = typename semi_skeleton_featurizer::feature_map;
-
-    /**
-     * Keeps track of one node's tag and the skeleton structure beneath it.
-     * @param tree The current parse_tree in the document
-     * @param counts The feature_map to write to
-     */
     void tree_tokenize(const parser::parse_tree& tree,
-                       feature_map& counts) const override;
+                       featurizer& counts) const override;
 
     /// Identifier for this featurizer
     const static util::string_view id;
 };
-
-// declare the valid instantiations for this featurizer
-extern template class semi_skeleton_featurizer<uint64_t>;
-extern template class semi_skeleton_featurizer<double>;
 }
 }
 #endif

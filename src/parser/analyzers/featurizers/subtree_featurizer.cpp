@@ -8,18 +8,14 @@ namespace meta
 namespace analyzers
 {
 
-template <class T>
-const util::string_view subtree_featurizer<T>::id = "subtree";
+const util::string_view subtree_featurizer::id = "subtree";
 
 namespace
 {
-template <class T>
 class subtree_visitor : public parser::const_visitor<void>
 {
   public:
-    using feature_map = typename subtree_featurizer<T>::feature_map;
-
-    subtree_visitor(feature_map& fm) : counts(fm)
+    subtree_visitor(featurizer& fm) : counts(fm)
     {
         // nothing
     }
@@ -36,29 +32,25 @@ class subtree_visitor : public parser::const_visitor<void>
             });
 
         rep += ")";
-        counts[subtree_featurizer<T>::id.to_string() + "-" + rep] += 1;
+        counts(subtree_featurizer::id.to_string() + "-" + rep, 1ul);
     }
 
     void operator()(const parser::leaf_node& ln) override
     {
         auto rep = "(" + static_cast<std::string>(ln.category()) + ")";
-        counts[subtree_featurizer<T>::id.to_string() + "-" + rep] += 1;
+        counts(subtree_featurizer::id.to_string() + "-" + rep, 1ul);
     }
 
   private:
-    feature_map& counts;
+    featurizer& counts;
 };
 }
 
-template <class T>
-void subtree_featurizer<T>::tree_tokenize(const parser::parse_tree& tree,
-                                          feature_map& counts) const
+void subtree_featurizer::tree_tokenize(const parser::parse_tree& tree,
+                                       featurizer& counts) const
 {
-    subtree_visitor<T> vtor{counts};
+    subtree_visitor vtor{counts};
     tree.visit(vtor);
 }
-
-template class subtree_featurizer<uint64_t>;
-template class subtree_featurizer<double>;
 }
 }

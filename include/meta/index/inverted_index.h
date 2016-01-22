@@ -83,7 +83,7 @@ class inverted_index : public disk_index
      */
     template <class Index, template <class, class> class Cache, class... Args>
     friend std::shared_ptr<cached_index<Index, Cache>>
-        make_index(const cpptoml::table& config, Args&&... args);
+    make_index(const cpptoml::table& config, Args&&... args);
 
   protected:
     /**
@@ -122,15 +122,14 @@ class inverted_index : public disk_index
      * @param doc The document to tokenize
      * @return the analyzed version of the document
      */
-    analyzers::analyzer<uint64_t>::feature_map
-        tokenize(const corpus::document& doc);
+    analyzers::feature_map<uint64_t> tokenize(const corpus::document& doc);
 
     /**
      * @param t_id The term_id to search for
      * @return the postings data for a given term_id
      */
     virtual std::shared_ptr<postings_data_type>
-        search_primary(term_id t_id) const;
+    search_primary(term_id t_id) const;
 
     /**
      * @param t_id The trem_id to search for

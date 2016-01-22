@@ -281,13 +281,13 @@ void freq(const std::string& file, const cpptoml::table&, uint16_t n)
 
     std::unique_ptr<analyzers::token_stream> stream
         = make_unique<analyzers::tokenizers::icu_tokenizer>();
-    analyzers::ngram_word_analyzer<uint64_t> ana{n, std::move(stream)};
+    analyzers::ngram_word_analyzer ana{n, std::move(stream)};
 
     corpus::document doc;
     doc.content(filesystem::file_text(file));
-    auto counts = ana.analyze(doc);
+    auto counts = ana.analyze<uint64_t>(doc);
 
-    using pair_t = std::pair<std::string, double>;
+    using pair_t = std::pair<std::string, uint64_t>;
     std::vector<pair_t> sorted(counts.begin(), counts.end());
     std::sort(sorted.begin(), sorted.end(), [](const pair_t& a, const pair_t& b)
               {

@@ -22,12 +22,9 @@ namespace analyzers
  * Base class for featurizers that convert trees into features in a
  * document.
  */
-template <class T>
 class tree_featurizer
 {
   public:
-    using feature_map = typename analyzer<T>::feature_map;
-    using feature_value_type = T;
     using base_type = tree_featurizer;
 
     /**
@@ -38,10 +35,10 @@ class tree_featurizer
     /**
      * @param tree The parse tree, belonging to doc, to extract features
      * from
-     * @param counts The feature_map to write to
+     * @param counts The featurizer to write to
      */
     virtual void tree_tokenize(const parser::parse_tree& tree,
-                               feature_map& counts) const = 0;
+                               featurizer& counts) const = 0;
 };
 }
 }

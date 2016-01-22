@@ -8,8 +8,7 @@ namespace meta
 namespace analyzers
 {
 
-template <class T>
-const util::string_view depth_featurizer<T>::id = "depth";
+const util::string_view depth_featurizer::id = "depth";
 
 namespace
 {
@@ -35,16 +34,12 @@ class height_visitor : public parser::const_visitor<size_t>
 };
 }
 
-template <class T>
-void depth_featurizer<T>::tree_tokenize(const parser::parse_tree& tree,
-                                        feature_map& counts) const
+void depth_featurizer::tree_tokenize(const parser::parse_tree& tree,
+                                     featurizer& counts) const
 {
     height_visitor vtor;
     auto rep = "depth-" + std::to_string(tree.visit(vtor));
-    counts[rep] += 1;
+    counts(rep, 1ul);
 }
-
-template class depth_featurizer<uint64_t>;
-template class depth_featurizer<double>;
 }
 }

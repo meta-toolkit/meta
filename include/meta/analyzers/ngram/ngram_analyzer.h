@@ -24,8 +24,7 @@ namespace analyzers
  * supplied by the user.  This class is abstract, as it only provides the
  * framework for ngram tokenization.
  */
-template <class T>
-class ngram_analyzer : public analyzer<T>
+class ngram_analyzer : public analyzer
 {
   public:
     /**
@@ -51,10 +50,6 @@ class ngram_analyzer : public analyzer<T>
     /// The value of n for this ngram analyzer
     uint16_t n_val_;
 };
-
-// declare the valid instantiations for this analyzer
-extern template class ngram_analyzer<uint64_t>;
-extern template class ngram_analyzer<double>;
 }
 }
 #endif
