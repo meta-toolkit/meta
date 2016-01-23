@@ -17,6 +17,8 @@
 #include "meta/io/filesystem.h"
 #include "meta/util/string_view.h"
 
+#include "farm_hash_test.h"
+
 using namespace bandit;
 using namespace meta;
 
@@ -246,6 +248,12 @@ go_bandit([]() {
             check_incremental_hash<hash_algorithm>(
                 2538058380, "the quick brown fox jumps over the lazy cog",
                 2541836075U);
+        });
+    });
+
+    describe("[hashing] farm_hash x64", []() {
+        it("should match test vectors from FarmHash", []() {
+            farm_hash_self_test();
         });
     });
 
