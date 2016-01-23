@@ -493,21 +493,21 @@ bool test(uint8_t data[], int offset, int len = 0)
             farm_hash_seeded hasher{create_seed(offset, 0),
                                     create_seed(offset, 1)};
             hasher(data, static_cast<std::size_t>(len++));
-            auto h = static_cast<uint64_t>(hasher);
+            uint64_t h = static_cast<std::size_t>(hasher);
             alive += (h >> 32) > 0;
             alive += ((h << 32) >> 32) > 0;
         }
         {
             farm_hash_seeded hasher{create_seed(offset, -1)};
             hasher(data, static_cast<std::size_t>(len++));
-            auto h = static_cast<uint64_t>(hasher);
+            uint64_t h = static_cast<std::size_t>(hasher);
             alive += (h >> 32) > 0;
             alive += ((h << 32) >> 32) > 0;
         }
         {
             farm_hash hasher;
             hasher(data, static_cast<std::size_t>(len++));
-            auto h = static_cast<uint64_t>(hasher);
+            uint64_t h = static_cast<std::size_t>(hasher);
             alive += (h >> 32) > 0;
             alive += ((h << 32) >> 32) > 0;
         }
@@ -517,21 +517,21 @@ bool test(uint8_t data[], int offset, int len = 0)
     {
         farm_hash_seeded hasher{create_seed(offset, 0), create_seed(offset, 1)};
         hasher(data + offset, static_cast<std::size_t>(len));
-        auto h = static_cast<uint64_t>(hasher);
+        uint64_t h = static_cast<std::size_t>(hasher);
         check(h >> 32);
         check((h << 32) >> 32);
     }
     {
         farm_hash_seeded hasher{create_seed(offset, -1)};
         hasher(data + offset, static_cast<std::size_t>(len));
-        auto h = static_cast<uint64_t>(hasher);
+        uint64_t h = static_cast<std::size_t>(hasher);
         check(h >> 32);
         check((h << 32) >> 32);
     }
     {
         farm_hash hasher;
         hasher(data + offset, static_cast<std::size_t>(len));
-        auto h = static_cast<uint64_t>(hasher);
+        uint64_t h = static_cast<std::size_t>(hasher);
         check(h >> 32);
         check((h << 32) >> 32);
     }
