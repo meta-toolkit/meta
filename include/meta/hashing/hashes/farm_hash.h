@@ -358,7 +358,8 @@ class farm_hash_seeded : public farm_hash
 
     inline explicit operator result_type()
     {
-        uint64_t result = static_cast<uint64_t>(static_cast<farm_hash&>(*this));
+        uint64_t result
+            = static_cast<std::size_t>(static_cast<farm_hash&>(*this));
         return farm::hash_len_16(result - seed_.low, seed_.high);
     }
 };
