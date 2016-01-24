@@ -110,8 +110,9 @@ postings_inverter<Index>::producer::~producer()
 }
 
 template <class Index>
-postings_inverter<Index>::postings_inverter(const std::string& prefix)
-    : prefix_{prefix}
+postings_inverter<Index>::postings_inverter(const std::string& prefix,
+                                            unsigned writers)
+    : prefix_{prefix}, sem_{writers}
 {
     // nothing
 }
@@ -127,6 +128,10 @@ template <class Allocator>
 void postings_inverter<Index>::write_chunk(
     std::vector<postings_buffer_type, Allocator>& pdata)
 {
+    // ensure we don't get too many writer threads by waiting on the
+    // semaphore
+    parallel::semaphore::wait_guard guard{sem_};
+
     auto chunk_num = chunk_num_.fetch_add(1);
 
     util::optional<chunk_t> top;

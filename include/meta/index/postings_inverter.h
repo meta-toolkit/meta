@@ -21,6 +21,7 @@
 #include "meta/hashing/probe_set.h"
 #include "meta/index/chunk.h"
 #include "meta/index/postings_buffer.h"
+#include "meta/parallel/semaphore.h"
 #include "meta/util/optional.h"
 
 namespace meta
@@ -98,8 +99,9 @@ class postings_inverter
     /**
      * Constructs a postings_inverter that writes to the given prefix.
      * @param prefix The prefix for all chunks to be written
+     * @param max_writers The maximum number of allowed writing threads
      */
-    postings_inverter(const std::string& prefix);
+    postings_inverter(const std::string& prefix, unsigned writers = 8);
 
     /**
      * Creates a producer for this postings_inverter. Producers are designed to
@@ -151,6 +153,9 @@ class postings_inverter
 
     /// Mutex used for protecting the chunk queue
     mutable std::mutex mutables_;
+
+    /// Semaphore used for limiting the number of threads writing to disk
+    parallel::semaphore sem_;
 
     /// Number of unique primary keys encountered while merging
     util::optional<uint64_t> unique_primary_keys_;

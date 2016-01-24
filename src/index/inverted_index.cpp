@@ -127,8 +127,10 @@ void inverted_index::create_index(const cpptoml::table& config)
 
     auto ram_budget = static_cast<uint64_t>(
         config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
+    auto max_writers = static_cast<unsigned>(
+        config.get_as<int64_t>("indexer-max-writers").value_or(8));
 
-    postings_inverter<inverted_index> inverter{index_name()};
+    postings_inverter<inverted_index> inverter{index_name(), max_writers};
     {
         metadata_writer mdata_writer{index_name(), docs->size(),
                                      docs->schema()};
