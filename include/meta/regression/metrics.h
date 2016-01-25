@@ -22,6 +22,22 @@ MAKE_NUMERIC_IDENTIFIER_UDL(predicted_response, double, _prsp)
 MAKE_NUMERIC_IDENTIFIER_UDL(response, double, _rsp)
 
 /**
+ * Metrics computed from a metrics_accumulator.
+ *
+ * - mean absolute error (MAE) as mean_absolute_error
+ * - mean squared error (MSE) as mean_squared_error
+ * - median absolute error (MedAE) as median_absolute_error
+ * - \f$R^2\f$-score (coefficient of determination) as r2_score
+ */
+struct metrics
+{
+    const double mean_absolute_error;
+    const double median_absolute_error;
+    const double mean_squared_error;
+    const double r2_score;
+};
+
+/**
  * Contains information needed to compute several regression evaluation
  * metrics. This currently supports the following metrics:
  *
@@ -34,7 +50,7 @@ MAKE_NUMERIC_IDENTIFIER_UDL(response, double, _rsp)
  * pairs. Thus, this class uses linear space and queries are performed in
  * linear time in the number of pairs add()ed to the structure.
  */
-class metrics
+class metrics_accumulator
 {
   public:
     /**
@@ -96,11 +112,16 @@ class metrics
      */
     double r2_score() const;
 
+    /**
+     * Obtains a metrics object from this metrics_accumulator.
+     */
+    operator metrics() const;
+
   private:
     struct response_pair
     {
-      double predicted;
-      double actual;
+        double predicted;
+        double actual;
     };
     std::vector<response_pair> responses_;
 };

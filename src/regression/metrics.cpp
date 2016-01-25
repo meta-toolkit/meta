@@ -24,13 +24,13 @@ double accumulate(Range&& range, BinaryOperator&& binop)
 }
 }
 
-void metrics::add(predicted_response predicted, response actual)
+void metrics_accumulator::add(predicted_response predicted, response actual)
 {
     responses_.emplace_back(response_pair{static_cast<double>(predicted),
                                           static_cast<double>(actual)});
 }
 
-double metrics::mean_absolute_error() const
+double metrics_accumulator::mean_absolute_error() const
 {
     return accumulate(responses_,
                       [](double accum, const response_pair& rp)
@@ -40,7 +40,7 @@ double metrics::mean_absolute_error() const
            / responses_.size();
 }
 
-double metrics::mean_squared_error() const
+double metrics_accumulator::mean_squared_error() const
 {
     return accumulate(responses_,
                       [](double accum, const response_pair& rp)
@@ -51,7 +51,7 @@ double metrics::mean_squared_error() const
            / responses_.size();
 }
 
-double metrics::median_absolute_error() const
+double metrics_accumulator::median_absolute_error() const
 {
     std::vector<double> errors(responses_.size());
 
@@ -75,7 +75,7 @@ double metrics::median_absolute_error() const
     return (errors[errors.size() / 2] + errors[errors.size() / 2 - 1]) / 2.0;
 }
 
-double metrics::r2_score() const
+double metrics_accumulator::r2_score() const
 {
     auto sq_err
         = accumulate(responses_, [](double accum, const response_pair& rp)
@@ -99,6 +99,12 @@ double metrics::r2_score() const
                      });
 
     return 1 - (sq_err / sq_diff_from_mean);
+}
+
+metrics_accumulator::operator metrics() const
+{
+    return {mean_absolute_error(), median_absolute_error(),
+            mean_squared_error(), r2_score()};
 }
 }
 }
