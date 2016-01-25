@@ -1,5 +1,7 @@
 project(meta-regression)
 
+add_subdirectory(tools)
+
 add_library(meta-regression metrics.cpp
                             regressor_factory.cpp
                             models/regressor.cpp
