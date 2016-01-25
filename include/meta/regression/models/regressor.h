@@ -59,6 +59,18 @@ class regressor
      */
     virtual void save(std::ostream& out) const = 0;
 };
+
+/**
+ * Performs k-fold cross-validation on a set of instances.
+ *
+ * @param config The configuration to use to create the regressor
+ * @param docs Testing documents
+ * @param k The number of folds
+ * @return a vector of metrics objects, one for each fold
+ */
+std::vector<metrics> cross_validate(const cpptoml::table& config,
+                                    regressor::dataset_view_type docs,
+                                    std::size_t k);
 }
 }
 #endif
