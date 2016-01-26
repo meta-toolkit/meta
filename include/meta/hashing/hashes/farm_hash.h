@@ -329,8 +329,6 @@ class farm_hash
         {
             return finalize(len);
         }
-
-        // return farm::hash_len_16(result - seed_.low, seed_.high);
     }
 };
 
