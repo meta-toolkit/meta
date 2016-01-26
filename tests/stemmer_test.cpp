@@ -6,7 +6,7 @@
 #include <fstream>
 
 #include "bandit/bandit.h"
-#include "porter2_stemmer.h"
+#include "meta/analyzers/filters/porter2_stemmer.h"
 
 using namespace bandit;
 using namespace meta;
@@ -21,7 +21,7 @@ go_bandit([]() {
             std::string stemmed;
             while (in >> to_stem >> stemmed) {
                 std::string orig{to_stem};
-                Porter2Stemmer::stem(to_stem);
+                analyzers::filters::porter2::stem(to_stem);
                 AssertThat(to_stem, Equals(stemmed));
             }
         });
@@ -30,7 +30,7 @@ go_bandit([]() {
             const static auto unchanged = {"'", "q", "<s>", "</s>"};
             for (const auto& unchanged_word : unchanged) {
                 std::string to_stem{unchanged_word};
-                Porter2Stemmer::stem(to_stem);
+                analyzers::filters::porter2::stem(to_stem);
                 AssertThat(to_stem, Equals(unchanged_word));
             }
         });

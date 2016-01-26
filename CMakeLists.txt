@@ -426,5 +426,4 @@ endif()
 
 add_subdirectory(src)
 add_subdirectory(tests)
-add_subdirectory(deps/porter2_stemmer EXCLUDE_FROM_ALL)
 add_subdirectory(deps/cpptoml EXCLUDE_FROM_ALL)

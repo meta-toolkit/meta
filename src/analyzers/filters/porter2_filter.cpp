@@ -4,7 +4,7 @@
  */
 
 #include "meta/analyzers/filters/porter2_filter.h"
-#include "porter2_stemmer.h"
+#include "meta/analyzers/filters/porter2_stemmer.h"
 
 namespace meta
 {
@@ -45,7 +45,7 @@ void porter2_filter::next_token()
     while (*source_)
     {
         auto tok = source_->next();
-        Porter2Stemmer::stem(tok);
+        porter2::stem(tok);
         if (!tok.empty())
         {
             token_ = std::move(tok);

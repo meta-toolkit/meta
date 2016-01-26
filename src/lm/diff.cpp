@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <queue>
 
-#include "porter2_stemmer.h"
+#include "meta/analyzers/filters/porter2_stemmer.h"
 #include "meta/lm/diff.h"
 #include "meta/utf/utf.h"
 #include "meta/util/fixed_heap.h"
@@ -165,7 +165,7 @@ void diff::substitute(const sentence& sent, size_t idx, PQ& candidates,
                       uint64_t depth)
 {
     std::string stemmed{sent[idx]};
-    Porter2Stemmer::stem(stemmed);
+    analyzers::filters::porter2::stem(stemmed);
     auto it = stems_.find(stemmed);
     if (it != stems_.end())
     {
@@ -238,7 +238,7 @@ void diff::set_stems(const cpptoml::table& config)
     for (const auto& t : vocab)
     {
         std::string stemmed{t};
-        Porter2Stemmer::stem(stemmed);
+        analyzers::filters::porter2::stem(stemmed);
         stems_[stemmed].push_back(t);
     }
 }

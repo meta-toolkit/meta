@@ -8,8 +8,10 @@ add_library(meta-filters alpha_filter.cpp
                          length_filter.cpp
                          list_filter.cpp
                          lowercase_filter
+                         porter2_stemmer.cpp
                          porter2_filter.cpp
                          ptb_normalizer.cpp
                          sentence_boundary.cpp)
-target_link_libraries(meta-filters meta-utf porter2-stemmer meta-tokenizers
-    meta-io)
+target_link_libraries(meta-filters meta-utf
+                                   meta-tokenizers
+                                   meta-io)
