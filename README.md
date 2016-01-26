@@ -65,8 +65,7 @@ dependencies for MeTA:
 
 ```bash
 brew update
-brew install cmake
-brew install icu4c
+brew install cmake jemalloc lzlib icu4c
 ```
 
 To get started, run the following commands:
@@ -108,9 +107,9 @@ cat /etc/issue
 ```
 
 If it reads "Ubuntu 12.04 LTS" or something of that nature, see the
-[Ubuntu 12.04 LTS Build Guide](#ubuntu-12.04-lts-build-guide). If it reads
+[Ubuntu 12.04 LTS Build Guide](#ubuntu-1204-lts-build-guide). If it reads
 "Ubuntu 14.04 LTS" (or 14.10), see the
-[Ubuntu 14.04 LTS Build Guide](#ubuntu-14.04-lts-build-guide). If your
+[Ubuntu 14.04 LTS Build Guide](#ubuntu-1404-lts-build-guide). If your
 version is less than 12.04 LTS, your operating system is not supported
 (even by your vendor) and you should upgrade to at least 12.04 LTS (or
 14.04 LTS, if possible).
@@ -135,10 +134,10 @@ sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt-get update
 
 # this will probably take a while
-sudo apt-get install g++ g++-4.8 libicu-dev git make wget
+sudo apt-get install g++ g++-4.8 git make wget libjemalloc-dev
 
-wget http://www.cmake.org/files/v3.1/cmake-3.1.1-Linux-x86_64.sh
-sudo sh cmake-3.1.1-Linux-x86_64.sh --prefix=/usr/local
+wget http://www.cmake.org/files/v3.2/cmake-3.2.0-Linux-x86_64.sh
+sudo sh cmake-3.2.0-Linux-x86_64.sh --prefix=/usr/local
 ```
 
 During CMake installation, you should agree to the license and then say "n"
@@ -151,12 +150,10 @@ g++-4.8 --version
 
 should print
 
-```
-g++-4.8 (Ubuntu 4.8.1-2ubuntu1~12.04) 4.8.1
-Copyright (C) 2013 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-```
+    g++-4.8 (Ubuntu 4.8.1-2ubuntu1~12.04) 4.8.1
+    Copyright (C) 2013 Free Software Foundation, Inc.
+    This is free software; see the source for copying conditions.  There is NO
+    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 and
 
@@ -166,11 +163,9 @@ and
 
 should print
 
-```
-cmake version 3.1.1
+    cmake version 3.2.0
 
-CMake suite maintained and supported by Kitware (kitware.com/cmake).
-```
+    CMake suite maintained and supported by Kitware (kitware.com/cmake).
 
 Once the dependencies are all installed, you should be ready to build. Run
 the following commands to get started:
@@ -219,7 +214,7 @@ sudo add-apt-repository ppa:george-edison55/cmake-3.x
 sudo apt-get update
 
 # install dependencies
-sudo apt-get install cmake libicu-dev git
+sudo apt-get install cmake libicu-dev git libjemalloc-dev
 ```
 
 Once the dependencies are all installed, you should double check your
@@ -231,12 +226,10 @@ g++ --version
 
 should output
 
-```
-g++ (Ubuntu 4.8.2-19ubuntu1) 4.8.2
-Copyright (C) 2013 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-```
+    g++ (Ubuntu 4.8.2-19ubuntu1) 4.8.2
+    Copyright (C) 2013 Free Software Foundation, Inc.
+    This is free software; see the source for copying conditions.  There is NO
+    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 and
 
@@ -246,11 +239,9 @@ cmake --version
 
 should output
 
-```
-cmake version 3.1.1
+    cmake version 3.2.2
 
-CMake suite maintained and supported by Kitware (kitware.com/cmake).
-```
+    CMake suite maintained and supported by Kitware (kitware.com/cmake).
 
 Once the dependencies are all installed, you should be ready to build. Run
 the following commands to get started:
@@ -290,8 +281,9 @@ To install the dependencies, run the following commands.
 
 ```bash
 sudo pacman -Sy
-sudo pacman -S clang cmake git icu libc++ make
+sudo pacman -S clang cmake git icu libc++ make jemalloc
 ```
+
 Once the dependencies are all installed, you should be ready to build. Run
 the following commands to get started:
 
@@ -322,35 +314,22 @@ ctest --output-on-failure
 If everything passes, congratulations! MeTA seems to be working on your
 system.
 
-
-
 ## Fedora Build Guide
 
-This has been tested with Fedora 20+. You may have success with earlier
-versions, but this is not tested.
+This has been tested with Fedora 22+ (the oldest currently supported Fedora
+as of the time of writing). You may have success with earlier versions, but
+this is not tested. (If you're on an older version of Fedora, use `yum`
+instead of `dnf` for the commands given below.)
 
 To get started, install some dependencies:
 
 ```bash
 # These may be already installed
-sudo yum install make git wget
-
-# libicu-devel is probably not installed by default
-sudo yum install g++ libicu-devel
+sudo dnf install make git wget gcc-c++ jemalloc-devel cmake zlib-devel
 ```
 
-Now, you will need [cmake](http://www.cmake.org/) to compile the toolkit.
-`cmake` 2.8 is available in Fedora repos, but a newer version (3.1) is required
-for this project. Install cmake 3.1 with the following commands:
-
-```
-wget http://www.cmake.org/files/v3.1/cmake-3.1.1-Linux-x86_64.sh
-sudo sh cmake-3.1.1-Linux-x86_64.sh --prefix=/usr/local
-```
-
-During CMake installation, you should agree to the license and then say "n"
-to including the subdirectory. You should be able to run the following
-commands and see the following output:
+You should be able to run the following commands and see the following
+output:
 
 ```bash
 g++ --version
@@ -358,31 +337,28 @@ g++ --version
 
 should print
 
-```
-g++ (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
-Copyright (C) 2013 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE
-```
+    g++ (GCC) 5.3.1 20151207 (Red Hat 5.3.1-2)
+    Copyright (C) 2015 Free Software Foundation, Inc.
+    This is free software; see the source for copying conditions.  There is NO
+    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 and
 
 ```bash
-/usr/local/bin/cmake --version
+cmake --version
 ```
 
 should print
 
-```
-cmake version 3.1.1
+    cmake version 3.3.2
 
-CMake suite maintained and supported by Kitware (kitware.com/cmake).
-```
+    CMake suite maintained and supported by Kitware (kitware.com/cmake).
+
 
 Once the dependencies are all installed, you should be ready to build. Run
 the following commands to get started:
 
-```
+```bash
 # clone the project
 git clone https://github.com/meta-toolkit/meta.git
 cd meta/
@@ -396,7 +372,7 @@ cd build
 cp ../config.toml .
 
 # configure and build the project
-CXX=g++ /usr/local/bin/cmake ../ -DCMAKE_BUILD_TYPE=Release
+cmake ../ -DCMAKE_BUILD_TYPE=Release
 make
 ```
 
@@ -405,8 +381,6 @@ You can now test the system with the following command:
 ```bash
 ctest --output-on-failure
 ```
-
-
 
 ## EWS/EngrIT Build Guide
 If you are on a machine managed by Engineering IT at UIUC, you should
@@ -420,7 +394,7 @@ back in to the system**), run the following commands:
 
 ```bash
 module load gcc
-module load cmake
+module load cmake/3.4.0
 ```
 
 Once you have done this, double check your versions by running the
@@ -432,12 +406,10 @@ g++ --version
 
 should output
 
-```
-g++ (GCC) 4.8.2
-Copyright (C) 2013 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-```
+    g++ (GCC) 4.8.2
+    Copyright (C) 2013 Free Software Foundation, Inc.
+    This is free software; see the source for copying conditions.  There is NO
+    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 and
 
@@ -447,11 +419,9 @@ cmake --version
 
 should output
 
-```
-cmake version 3.1.1
+    cmake version 3.4.0
 
-CMake suite maintained and supported by Kitware (kitware.com/cmake).
-```
+    CMake suite maintained and supported by Kitware (kitware.com/cmake).
 
 If your versions are correct, you should be ready to build. To get started,
 run the following commands:
@@ -485,33 +455,27 @@ system.
 
 ## Windows Build Guide
 
-These steps have been verified with 64-bit Windows 7. You may have success
-with earlier versions, but this has not been tested.
+MeTA can be built on Windows using the MinGW-w64 toolchain with gcc. We
+strongly recommend using [MSYS2][msys2] as this makes fetching the compiler
+and related libraries significantly easier than it would be otherwise, and
+it tends to have very up-to-date packages relative to other similar MinGW
+distributions.
 
-MeTA can currently be built using GCC on Windows using the
-[MinGW-w64](http://mingw-w64.org) toolchain. MSVC is currently
-unsupported, though this may change in future releases.
-
-This guide will walk you through getting a [MSYS2](https://msys2.github.io)
-based development environment set up, as this is currently the easiest way
-to obtain the required dependencies on Windows.
-
-To get started, you should download the appropriate [MSYS2
-installer](https://msys2.github.io) from the linked page. Follow the
-instructions on that page **exactly** before continuing with the
-instructions here.
-
-Next, launch a new "MSYS2" shell. At the prompt, run the following command
-to install the compiler and dependencies for MeTA:
+To start, [download the installer][msys2] for MSYS2 from the linked
+website and follow the instructions on that page. Once you've got it
+installed, you should use the MinGW shell to start a new terminal, in which
+you should run the following commands to download dependencies and related
+software needed for building:
 
 ```bash
-pacman -Sy mingw-w64-x86_64-{gcc,cmake,make,icu,zlib,jemalloc} git
+pacman -Syu git mingw-w64-x86_64-{gcc,cmake,make,icu,jemalloc}
 ```
 
-Then, exit the shell and launch the "MinGW-w64 Win64" shell. You can then
-obtain the toolkit and get started with:
+Then, exit the shell and launch the "MinGW-w64 Win64" shell. You can obtain
+the toolkit and get started with:
 
 ```bash
+# clone the project
 git clone https://github.com/meta-toolkit/meta.git
 cd meta
 
@@ -524,11 +488,11 @@ cd build
 cp ../config.toml .
 
 # configure and build the project
-cmake .. -DCMAKE_BUILD_TYPE=Release -G "MSYS Makefiles"
+cmake .. -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release
 make
 ```
 
-You can then test the system by running the following command:
+You can now test the system by running the following command:
 
 ```bash
 ctest --output-on-failure
@@ -537,10 +501,12 @@ ctest --output-on-failure
 If everything passes, congratulations! MeTA seems to be working on your
 system.
 
+[msys2]: https://msys2.github.io/
+
 ## Generic Setup Notes
 
- - There are rules for clean, tidy, and doc. **After you run the cmake command
-   once, you will be able to just run `make` as usual** when you're
+ - There are rules for clean, tidy, and doc. **After you run the `cmake`
+   command once, you will be able to just run `make` as usual** when you're
    developing---it'll detect when the CMakeLists.txt file has changed and
    rebuild Makefiles if it needs to.
 
@@ -548,6 +514,16 @@ system.
    appropriate `cmake` command for your OS above and rebuild using `make`
    after.
 
+ - Don't hesitate to reach out on [the forum][forum] if you encounter
+   problems getting set up. We routinely build with a wide variety of
+   compilers and operating systems through our continuous integration
+   setups ([travis-ci][travis-ci] for Linux and OS X and
+   [Appveyor][appveyor] for Windows), so we can be fairly certain that
+   things should build on nearly all major platforms.
+
+[homebrew]: http://brew.sh
+[forum]: https://forum.meta-toolkit.org
+[travis-ci]: https://travis-ci.org/meta-toolkit/meta
+[appveyor]: https://ci.appveyor.com/project/skystrife/meta
 [meta-website]: https://meta-toolkit.org
 [doxygen]: https://meta-toolkit.org/doxygen/namespaces.html
-[homebrew]: http://brew.sh
