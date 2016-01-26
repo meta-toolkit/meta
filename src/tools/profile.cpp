@@ -161,8 +161,8 @@ void pos(const std::string& file, const cpptoml::table& config, bool replace)
 
     // tag each sentence in the file
     // and write its output to the output file
-    auto out_name = no_ext(file)
-                    + (replace ? ".pos-replace.txt" : ".pos-tagged.txt");
+    auto out_name
+        = no_ext(file) + (replace ? ".pos-replace.txt" : ".pos-tagged.txt");
     std::ofstream outfile{out_name};
     sequence::sequence seq;
     while (*stream)
@@ -275,24 +275,28 @@ void parse(const std::string& file, const cpptoml::table& config)
  * @param config Configuration settings
  * @param n The n-gram value to use in tokenization
  */
-void freq(const std::string& file, const cpptoml::table&, uint16_t n)
+void freq(const std::string& file, cpptoml::table& config, int64_t n)
 {
     std::cout << "Running frequency analysis on " << n << "-grams" << std::endl;
+    using namespace meta::analyzers;
 
-    std::unique_ptr<analyzers::token_stream> stream
-        = make_unique<analyzers::tokenizers::icu_tokenizer>();
-    analyzers::ngram_word_analyzer ana{n, std::move(stream)};
+    // make sure we have the right n-gram
+    auto anas = config.get_table_array("analyzers");
+    auto local = *anas->begin();
+    local->erase("ngram");
+    local->insert("ngram", n);
+    auto ana = make_analyzer<ngram_word_analyzer>(config, *local);
 
     corpus::document doc;
     doc.content(filesystem::file_text(file));
-    auto counts = ana.analyze<uint64_t>(doc);
+    auto counts = ana->analyze<uint64_t>(doc);
 
     using pair_t = std::pair<std::string, uint64_t>;
     std::vector<pair_t> sorted(counts.begin(), counts.end());
     std::sort(sorted.begin(), sorted.end(), [](const pair_t& a, const pair_t& b)
               {
-        return a.second > b.second;
-    });
+                  return a.second > b.second;
+              });
 
     auto out_name = no_ext(file) + ".freq." + std::to_string(n) + ".txt";
     std::ofstream outfile{out_name};
