@@ -72,7 +72,8 @@ void run_tests(const std::string& index_type) {
            });
     });
 
-    describe_msg = "[classifier] ensemble methods from " + index_type + " index";
+    describe_msg
+        = "[classifier] ensemble methods from " + index_type + " index";
     describe(describe_msg.c_str(), [&]() {
         using namespace classify;
         using namespace tests;
@@ -272,4 +273,48 @@ go_bandit([]() {
 
     filesystem::remove_all("ceeaus-inv");
     filesystem::remove_all("ceeaus-fwd");
+
+    describe("[classifier] confusion matrix", [&]() {
+
+        // We have 3 classes {A, B, C} and get the following predictions:
+        std::vector<std::pair<predicted_label, class_label>> preds;
+        preds.emplace_back("A"_pl, "A"_cl);
+        preds.emplace_back("B"_pl, "A"_cl);
+        preds.emplace_back("C"_pl, "A"_cl);
+        preds.emplace_back("B"_pl, "B"_cl);
+        preds.emplace_back("B"_pl, "B"_cl);
+        preds.emplace_back("B"_pl, "B"_cl);
+        preds.emplace_back("A"_pl, "C"_cl);
+        preds.emplace_back("A"_pl, "C"_cl);
+        preds.emplace_back("A"_pl, "C"_cl);
+
+        classify::confusion_matrix mtx;
+        for (auto& pair : preds)
+            mtx.add(pair.first, pair.second);
+
+        const double delta = 0.000001;
+        AssertThat(mtx.accuracy(), EqualsWithDelta(4.0 / 9, delta));
+
+        it("should calculate precision", [&]() {
+            AssertThat(mtx.precision("A"_cl), EqualsWithDelta(1.0 / 4, delta));
+            AssertThat(mtx.precision("B"_cl), EqualsWithDelta(3.0 / 4, delta));
+            AssertThat(mtx.precision("C"_cl), EqualsWithDelta(0.0, delta));
+            AssertThat(mtx.precision(), EqualsWithDelta(1.0 / 3, delta));
+        });
+
+        it("should calculate recall", [&]() {
+            AssertThat(mtx.recall("A"_cl), EqualsWithDelta(1.0 / 3, delta));
+            AssertThat(mtx.recall("B"_cl), EqualsWithDelta(1.0, delta));
+            AssertThat(mtx.recall("C"_cl), EqualsWithDelta(0.0, delta));
+            AssertThat(mtx.recall(), EqualsWithDelta(4.0 / 9, delta));
+        });
+
+        it("should calculate F1", [&]() {
+            AssertThat(mtx.f1_score("A"_cl), EqualsWithDelta(2.0 / 7, delta));
+            AssertThat(mtx.f1_score("B"_cl), EqualsWithDelta(6.0 / 7, delta));
+            AssertThat(mtx.f1_score("C"_cl), EqualsWithDelta(0.0, delta));
+            AssertThat(mtx.f1_score(),
+                       EqualsWithDelta((2.0 / 7 + 6.0 / 7) / 3, delta));
+        });
+    });
 });
