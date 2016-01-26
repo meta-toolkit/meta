@@ -18,7 +18,7 @@
 #include "meta/util/identifiers.h"
 /**
  * The ModErn Text Analysis toolkit is a suite of natural language processing,
- * classification, information retreival, data mining, and other applications
+ * classification, information retrieval, data mining, and other applications
  * of text processing.
  */
 namespace meta
@@ -28,6 +28,12 @@ namespace meta
  * selection.
  */
 MAKE_IDENTIFIER_UDL(class_label, std::string, _cl)
+
+/*
+ * Represents a *predicted* class label that is used in classification or
+ * features selection; it may not be the true class label
+ */
+MAKE_IDENTIFIER_UDL(predicted_label, std::string, _pl)
 
 /*
  * Numbering system for string terms.

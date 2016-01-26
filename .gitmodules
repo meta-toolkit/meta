@@ -2,10 +2,6 @@
 	path = deps/cpptoml
 	url = https://github.com/skystrife/cpptoml.git
 	branch = master
-[submodule "deps/porter2_stemmer"]
-	path = deps/porter2_stemmer
-	url = https://github.com/smassung/porter2_stemmer.git
-	branch = master
 [submodule "deps/libsvm-modules"]
 	path = deps/libsvm-modules
 	url = https://github.com/meta-toolkit/meta-libsvm.git

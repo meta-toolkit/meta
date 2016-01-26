@@ -1,6 +1,6 @@
 set -v
 brew update
-brew install icu4c
+brew install icu4c jemalloc
 brew outdated cmake || brew upgrade cmake
 
 if [ "$COMPILER" == "gcc" ]; then

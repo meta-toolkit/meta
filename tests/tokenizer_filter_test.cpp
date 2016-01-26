@@ -167,11 +167,11 @@ go_bandit([]() {
         });
     });
 
-    describe("[tokenizer-filter] porter2_stemmer (filter)", [&]() {
+    describe("[tokenizer-filter] porter2_filter", [&]() {
 
         it("should transform tokens to their stems", [&]() {
             auto tok = make_unique<tokenizers::whitespace_tokenizer>();
-            auto norm = make_unique<filters::porter2_stemmer>(std::move(tok));
+            auto norm = make_unique<filters::porter2_filter>(std::move(tok));
             norm->set_content("In linguistic morphology and "
                               "information retrieval, stemming");
             // note that the comma on retrieval prevents the word

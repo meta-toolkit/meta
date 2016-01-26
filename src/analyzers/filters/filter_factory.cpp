@@ -9,16 +9,7 @@
 #include "meta/analyzers/tokenizers/whitespace_tokenizer.h"
 #include "meta/analyzers/tokenizers/icu_tokenizer.h"
 
-#include "meta/analyzers/filters/alpha_filter.h"
-#include "meta/analyzers/filters/empty_sentence_filter.h"
-#include "meta/analyzers/filters/english_normalizer.h"
-#include "meta/analyzers/filters/icu_filter.h"
-#include "meta/analyzers/filters/length_filter.h"
-#include "meta/analyzers/filters/list_filter.h"
-#include "meta/analyzers/filters/lowercase_filter.h"
-#include "meta/analyzers/filters/porter2_stemmer.h"
-#include "meta/analyzers/filters/ptb_normalizer.h"
-#include "meta/analyzers/filters/sentence_boundary.h"
+#include "meta/analyzers/filters/all.h"
 
 namespace meta
 {
@@ -59,7 +50,7 @@ filter_factory::filter_factory()
     register_filter<filters::length_filter>();
     register_filter<filters::list_filter>();
     register_filter<filters::lowercase_filter>();
-    register_filter<filters::porter2_stemmer>();
+    register_filter<filters::porter2_filter>();
     register_filter<filters::ptb_normalizer>();
     register_filter<filters::sentence_boundary>();
 }

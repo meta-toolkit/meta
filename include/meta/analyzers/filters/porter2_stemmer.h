@@ -1,18 +1,16 @@
 /**
  * @file porter2_stemmer.h
- * @author Chase Geigle
+ * @author Sean Massung
+ * @date September 2012
  *
- * All files in META are released under the MIT license. For more details,
- * consult the file LICENSE in the root of the project.
+ * Implementation of
+ * http://snowball.tartarus.org/algorithms/english/stemmer.html
  */
 
-#ifndef META_FILTER_PORTER2_STEMMER_H_
-#define META_FILTER_PORTER2_STEMMER_H_
+#ifndef PORTER2_STEMMER_H_
+#define PORTER2_STEMMER_H_
 
-#include <memory>
-#include "meta/analyzers/token_stream.h"
-#include "meta/util/clonable.h"
-#include "meta/util/optional.h"
+#include <string>
 #include "meta/util/string_view.h"
 
 namespace meta
@@ -21,61 +19,14 @@ namespace analyzers
 {
 namespace filters
 {
-
-/**
- * Filter that stems words according to the porter2 stemmer algorithm.
- * Requires that the porter2 stemmer project submodule be downloaded.
- *
- * Required config parameters: none.
- * Optional config parameters: none.
- */
-class porter2_stemmer : public util::clonable<token_stream, porter2_stemmer>
+namespace porter2
 {
-  public:
-    /**
-     * Constructs a new porter2 stemmer filter, reading tokens from
-     * the given source.
-     * @param source The source to construct the filter from
-     */
-    porter2_stemmer(std::unique_ptr<token_stream> source);
-
-    /**
-     * Copy constructor.
-     * @param other The porter2_stemmer to copy into this one
-     */
-    porter2_stemmer(const porter2_stemmer& other);
-
-    /**
-     * Sets the content for the beginning of the filter chain.
-     * @param content The string content to set
-     */
-    void set_content(std::string&& content) override;
-
-    /**
-     * Obtains the next token in the sequence.
-     */
-    std::string next() override;
-
-    /**
-     * Determines if there are more tokens available in the stream.
-     */
-    operator bool() const override;
-
-    /// Identifier for this filter
-    const static util::string_view id;
-
-  private:
-    /**
-     * Finds the next valid token for this filter.
-     */
-    void next_token();
-
-    /// The stream to read tokens from
-    std::unique_ptr<token_stream> source_;
-
-    /// The buffered next token.
-    util::optional<std::string> token_;
-};
+/**
+ * Stems a word in-place using the porter2 algorithm.
+ * @param word The word to stem
+ */
+void stem(std::string& word);
+}
 }
 }
 }
