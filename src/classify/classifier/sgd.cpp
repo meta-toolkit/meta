@@ -21,12 +21,20 @@ const constexpr size_t sgd::default_max_iter;
 
 sgd::sgd(binary_dataset_view docs,
          std::unique_ptr<learn::loss::loss_function> loss,
-         learn::sgd_model::options_type options, double gamma, size_t max_iter)
+         learn::sgd_model::options_type options, double gamma, size_t max_iter,
+         bool calibrate)
     : model_{docs.total_features(), options},
       gamma_{gamma},
       max_iter_{max_iter},
       loss_{std::move(loss)}
 {
+    if (calibrate)
+    {
+        model_.calibrate(docs, *loss_, [&](const learn::instance& inst)
+                         {
+                             return docs.label(inst) ? +1 : -1;
+                         });
+    }
     train(std::move(docs));
 }
 
@@ -95,8 +103,8 @@ double sgd::predict(const feature_vector& doc) const
 
 template <>
 std::unique_ptr<binary_classifier>
-    make_binary_classifier<sgd>(const cpptoml::table& config,
-                                binary_dataset_view training)
+make_binary_classifier<sgd>(const cpptoml::table& config,
+                            binary_dataset_view training)
 {
     auto loss = config.get_as<std::string>("loss");
     if (!loss)
@@ -119,9 +127,11 @@ std::unique_ptr<binary_classifier>
     auto max_iter
         = config.get_as<int64_t>("max-iter").value_or(sgd::default_max_iter);
 
+    auto calibrate = config.get_as<bool>("calibrate").value_or(false);
+
     return make_unique<sgd>(std::move(training),
                             learn::loss::make_loss_function(*loss), options,
-                            gamma, max_iter);
+                            gamma, max_iter, calibrate);
 }
 }
 }

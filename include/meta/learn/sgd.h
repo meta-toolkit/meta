@@ -35,7 +35,7 @@ namespace learn
 class sgd_model
 {
   public:
-    /// The default learning rate
+    /// The default initial learning rate
     const static constexpr double default_learning_rate = 0.5;
 
     /// The default l2 regularization parameter
@@ -80,6 +80,70 @@ class sgd_model
     void save(std::ostream& out) const;
 
     /**
+     * Calibrates the learning rate for the model based on sample data.
+     * Search strategy inspired by Leon Bottou's SGD package.
+     *
+     * @see http://leon.bottou.org/projects/sgd
+     *
+     * @param view The dataset_view that represents the sample
+     * @param loss The loss function used to calculate the training loss
+     * @param labeler A unary function object to convert an instance ->
+     *  double label
+     * @param calibration_rate How much to scale the learning rate by for
+     *  each subsequent trial
+     */
+    template <class SampleView, class LabelFunction>
+    void calibrate(SampleView view, const loss::loss_function& loss,
+                   LabelFunction&& labeler, double calibration_rate = 2.0,
+                   std::size_t calibration_samples = 1000)
+    {
+        using diff_type = typename decltype(view.begin())::difference_type;
+
+        view.shuffle();
+        auto samples = std::min(calibration_samples, view.size());
+        SampleView calib_view{view, view.begin(),
+                              view.begin() + static_cast<diff_type>(samples)};
+
+        lr_ *= calibration_rate;
+        reset();
+        auto hi_loss = avg_loss_on_sample(view, loss,
+                                          std::forward<LabelFunction>(labeler));
+
+        lr_ /= calibration_rate;
+        reset();
+        auto lo_loss = avg_loss_on_sample(view, loss,
+                                          std::forward<LabelFunction>(labeler));
+
+        if (lo_loss < hi_loss)
+        {
+            while (lo_loss < hi_loss)
+            {
+                lr_ /= calibration_rate;
+                hi_loss = lo_loss;
+                reset();
+                lo_loss = avg_loss_on_sample(
+                    view, loss, std::forward<LabelFunction>(labeler));
+            }
+            lr_ *= calibration_rate;
+        }
+        else if (hi_loss < lo_loss)
+        {
+            lr_ *= calibration_rate;
+            while (hi_loss < lo_loss)
+            {
+                lr_ *= calibration_rate;
+                lo_loss = hi_loss;
+                reset();
+                hi_loss = avg_loss_on_sample(
+                    view, loss, std::forward<LabelFunction>(labeler));
+            }
+            lr_ /= calibration_rate;
+        }
+
+        reset();
+    }
+
+    /**
      * Gives a prediction for an input vector. This is simply \f$w^T x\f$.
      * @return the prediction
      */
@@ -116,7 +180,32 @@ class sgd_model
         double cumulative_penalty = 0;
     };
 
+    template <class SampleView, class LabelFunction>
+    double avg_loss_on_sample(const SampleView& sample,
+                              const loss::loss_function& loss,
+                              LabelFunction&& labeler)
+    {
+        auto avg_loss = 0.0;
+        for (const auto& inst : sample)
+            avg_loss += train_one(inst.weights, labeler(inst), loss);
+        avg_loss /= sample.size();
+
+        if (l2_regularization_ > 0)
+            avg_loss += 0.5 * l2_regularization_ * l2norm();
+
+        if (l1_regularization_ > 0)
+            avg_loss += l1_regularization_ * l1norm();
+
+        return avg_loss;
+    }
+
     void penalize(weight_type& weight_val);
+
+    void reset();
+
+    double l2norm() const;
+
+    double l1norm() const;
 
     /// The per-feature weight information
     std::vector<weight_type> weights_;

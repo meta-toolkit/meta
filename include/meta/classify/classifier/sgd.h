@@ -43,6 +43,7 @@ namespace classify
  * l2-regularization = 1e-7
  * l1-regularization = 0
  * max-iter = 5
+ * calibrate = false
  * ~~~
  */
 class sgd : public online_binary_classifier
@@ -65,7 +66,7 @@ class sgd : public online_binary_classifier
     sgd(binary_dataset_view docs,
         std::unique_ptr<learn::loss::loss_function> loss,
         learn::sgd_model::options_type options, double gamma = default_gamma,
-        size_t max_iter = default_max_iter);
+        size_t max_iter = default_max_iter, bool calibrate = false);
 
     /**
      * Loads an sgd classifier from a stream.

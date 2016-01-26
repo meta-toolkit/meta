@@ -37,6 +37,7 @@ namespace regression
  * l2-regularization = 1e-7
  * l1-regularization = 0
  * max-iter = 5
+ * calibrate = true
  * ~~~
  */
 class sgd : public regressor
@@ -58,7 +59,7 @@ class sgd : public regressor
     sgd(dataset_view_type docs,
         std::unique_ptr<learn::loss::loss_function> loss,
         learn::sgd_model::options_type options, double gamma = default_gamma,
-        size_t max_iter = default_max_iter);
+        size_t max_iter = default_max_iter, bool calibrate = true);
 
     /**
      * Loads an sgd regressor from a stream.

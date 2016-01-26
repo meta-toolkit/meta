@@ -110,8 +110,8 @@ double sgd_model::train_one(const feature_vector& x, double expected_label,
         scale_ = 1;
     }
 
-    auto delta = -lr_ * std::sqrt(t_ / update_scale_) * error_derivative
-                 / scale_;
+    auto delta
+        = -lr_ * std::sqrt(t_ / update_scale_) * error_derivative / scale_;
     if (delta != 0.0)
     {
         for (const auto& pr : x)
@@ -121,8 +121,8 @@ double sgd_model::train_one(const feature_vector& x, double expected_label,
 
             // update using NAG update equation
             auto& weight_val = weights_.at(pr.first);
-            weight_val.grad_squared += error_derivative * error_derivative
-                                       * pr.second * pr.second;
+            weight_val.grad_squared
+                += error_derivative * error_derivative * pr.second * pr.second;
             weight_val.weight
                 += delta * 1.0
                    / (weight_val.scale * std::sqrt(weight_val.grad_squared))
@@ -156,6 +156,32 @@ void sgd_model::penalize(weight_type& weight_val)
             = std::min(0.0, z + (u - weight_val.cumulative_penalty)) / scale_;
     }
     weight_val.cumulative_penalty += (scale_ * weight_val.weight) - z;
+}
+
+void sgd_model::reset()
+{
+    std::fill(weights_.begin(), weights_.end(), weight_type{});
+    bias_ = weight_type{};
+    scale_ = 1;
+    update_scale_ = 0;
+    t_ = 0;
+}
+
+double sgd_model::l2norm() const
+{
+    auto norm = 0.0;
+    for (const auto& w : weights_)
+        norm += scale_ * w.weight * w.weight;
+    return norm;
+}
+
+double sgd_model::l1norm() const
+{
+    return std::count_if(weights_.begin(), weights_.end(),
+                         [&](const weight_type& w)
+                         {
+                             return scale_ * w.weight > 0;
+                         });
 }
 }
 }
