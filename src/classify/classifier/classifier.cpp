@@ -16,9 +16,11 @@ namespace classify
 
 confusion_matrix classifier::test(dataset_view_type docs) const
 {
+
     confusion_matrix matrix;
     for (const auto& instance : docs)
-        matrix.add(classify(instance.weights), docs.label(instance));
+        matrix.add(predicted_label{classify(instance.weights)},
+                   docs.label(instance));
 
     return matrix;
 }

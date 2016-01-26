@@ -181,7 +181,7 @@ confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
             std::getline(in, str_val);
             auto value = std::stoul(str_val);
             assert(value > 0);
-            class_label predicted = labels_.at(value - 1);
+            predicted_label predicted{labels_.at(value - 1)};
             class_label actual = docs.label(instance);
             matrix.add(predicted, actual);
         }
