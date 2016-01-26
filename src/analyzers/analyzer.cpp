@@ -11,7 +11,7 @@
 #include "meta/analyzers/filters/length_filter.h"
 #include "meta/analyzers/filters/list_filter.h"
 #include "meta/analyzers/filters/lowercase_filter.h"
-#include "meta/analyzers/filters/porter2_stemmer.h"
+#include "meta/analyzers/filters/porter2_filter.h"
 #include "meta/analyzers/tokenizers/icu_tokenizer.h"
 #include "meta/corpus/document.h"
 #include "cpptoml.h"
@@ -47,7 +47,7 @@ add_default_filters(std::unique_ptr<token_stream> tokenizer,
     result = make_unique<filters::alpha_filter>(std::move(result));
     result = make_unique<filters::length_filter>(std::move(result), 2, 35);
     result = make_unique<filters::list_filter>(std::move(result), *stopwords);
-    result = make_unique<filters::porter2_stemmer>(std::move(result));
+    result = make_unique<filters::porter2_filter>(std::move(result));
     return result;
 }
 }

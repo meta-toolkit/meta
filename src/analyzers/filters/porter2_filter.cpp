@@ -1,9 +1,9 @@
 /**
- * @file porter2_stemmer.cpp
+ * @file porter2_filter.cpp
  * @author Chase Geigle
  */
 
-#include "meta/analyzers/filters/porter2_stemmer.h"
+#include "meta/analyzers/filters/porter2_filter.h"
 #include "porter2_stemmer.h"
 
 namespace meta
@@ -13,34 +13,34 @@ namespace analyzers
 namespace filters
 {
 
-const util::string_view porter2_stemmer::id = "porter2-stemmer";
+const util::string_view porter2_filter::id = "porter2-filter";
 
-porter2_stemmer::porter2_stemmer(std::unique_ptr<token_stream> source)
+porter2_filter::porter2_filter(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}
 {
     next_token();
 }
 
-porter2_stemmer::porter2_stemmer(const porter2_stemmer& other)
+porter2_filter::porter2_filter(const porter2_filter& other)
     : source_{other.source_->clone()}, token_{other.token_}
 {
     // nothing
 }
 
-void porter2_stemmer::set_content(std::string&& content)
+void porter2_filter::set_content(std::string&& content)
 {
     source_->set_content(std::move(content));
     next_token();
 }
 
-std::string porter2_stemmer::next()
+std::string porter2_filter::next()
 {
     auto tok = *token_;
     next_token();
     return tok;
 }
 
-void porter2_stemmer::next_token()
+void porter2_filter::next_token()
 {
     while (*source_)
     {
@@ -55,7 +55,7 @@ void porter2_stemmer::next_token()
     token_ = util::nullopt;
 }
 
-porter2_stemmer::operator bool() const
+porter2_filter::operator bool() const
 {
     return static_cast<bool>(token_);
 }

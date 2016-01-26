@@ -1,13 +1,13 @@
 /**
- * @file porter2_stemmer.h
+ * @file porter2_filter.h
  * @author Chase Geigle
  *
  * All files in META are released under the MIT license. For more details,
  * consult the file LICENSE in the root of the project.
  */
 
-#ifndef META_FILTER_PORTER2_STEMMER_H_
-#define META_FILTER_PORTER2_STEMMER_H_
+#ifndef META_FILTER_PORTER2_FILTER_H_
+#define META_FILTER_PORTER2_FILTER_H_
 
 #include <memory>
 #include "meta/analyzers/token_stream.h"
@@ -29,7 +29,7 @@ namespace filters
  * Required config parameters: none.
  * Optional config parameters: none.
  */
-class porter2_stemmer : public util::clonable<token_stream, porter2_stemmer>
+class porter2_filter : public util::clonable<token_stream, porter2_filter>
 {
   public:
     /**
@@ -37,13 +37,13 @@ class porter2_stemmer : public util::clonable<token_stream, porter2_stemmer>
      * the given source.
      * @param source The source to construct the filter from
      */
-    porter2_stemmer(std::unique_ptr<token_stream> source);
+    porter2_filter(std::unique_ptr<token_stream> source);
 
     /**
      * Copy constructor.
-     * @param other The porter2_stemmer to copy into this one
+     * @param other The porter2_filter to copy into this one
      */
-    porter2_stemmer(const porter2_stemmer& other);
+    porter2_filter(const porter2_filter& other);
 
     /**
      * Sets the content for the beginning of the filter chain.

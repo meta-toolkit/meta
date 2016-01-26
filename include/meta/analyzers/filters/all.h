@@ -1,5 +1,5 @@
 #include "meta/analyzers/filters/lowercase_filter.h"
-#include "meta/analyzers/filters/porter2_stemmer.h"
+#include "meta/analyzers/filters/porter2_filter.h"
 #include "meta/analyzers/filters/empty_sentence_filter.h"
 #include "meta/analyzers/filters/list_filter.h"
 #include "meta/analyzers/filters/alpha_filter.h"
