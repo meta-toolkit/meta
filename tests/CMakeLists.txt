@@ -1,7 +1,7 @@
 ExternalProject_Add(ceeaus
   SOURCE_DIR ${meta_BINARY_DIR}/../../data/ceeaus
   DOWNLOAD_DIR ${meta_BINARY_DIR}/downloads
-  URL https://meta-toolkit.org/data/ceeaus.tar.gz
+  URL https://meta-toolkit.org/data/2016-01-26/ceeaus.tar.gz
   URL_HASH "SHA256=83616fe13563786a1a6701f40ee0dc044bf32d1273e0ad53ca72582a90bed9ef"
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
@@ -10,7 +10,7 @@ ExternalProject_Add(ceeaus
 ExternalProject_Add(breast-cancer
   SOURCE_DIR ${meta_BINARY_DIR}/../../data/breast-cancer
   DOWNLOAD_DIR ${meta_BINARY_DIR}/../downloads
-  URL https://meta-toolkit.org/data/breast-cancer.tar.gz
+  URL https://meta-toolkit.org/data/2016-01-26/breast-cancer.tar.gz
   URL_HASH "SHA256=28a87b30d651c9b14ebf4e125c9f532233d7970b7bb19e4b1cb8c4f4ccd0d125"
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
@@ -19,7 +19,7 @@ ExternalProject_Add(breast-cancer
 ExternalProject_Add(housing
   SOURCE_DIR ${meta_BINARY_DIR}/../../data/housing
   DOWNLOAD_DIR ${meta_BINARY_DIR}/../downloads
-  URL https://meta-toolkit.org/data/housing.tar.gz
+  URL https://meta-toolkit.org/data/2016-01-26/housing.tar.gz
   URL_HASH "SHA256=555aee6a3cc4fdae089eb91c60c682ef6136d15c33aa8d554cd1b47cb43a64d4"
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
