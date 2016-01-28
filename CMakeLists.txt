@@ -1,19 +1,33 @@
 cmake_minimum_required(VERSION 3.2.0)
 project(meta)
 
-option(USE_LIBCXX "Use libc++ for the C++ standard library" ON)
+option(ENABLE_LIBCXX "Use libc++ for the C++ standard library (only for clang)" ON)
 option(ENABLE_PROFILING "Link against gperftools profiler library" OFF)
 option(ENABLE_JEMALLOC "Link against jemalloc if available" ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
+# MeTA only requires C++11, but on all of our supported compilers at least
+# C++1y support exists, so we therefore set the standard to 14
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 include(CTest)
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 include(CheckCXXSourceRuns)
+include(CMakePushCheckState)
 include(ExternalProject)
 include(FindZLIB)
 include(cmake/FindOrBuildICU.cmake)
+
+find_package(Threads REQUIRED)
+
+cmake_push_check_state()
+
+# Work around CMake not propagating the standard flag down to the compiler
+set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${CMAKE_CXX14_STANDARD_COMPILE_OPTION}")
 
 # Check if there is no build type set. If meta itself is the root project,
 # compile it in release mode instead. If we aren't the root project, just
@@ -24,10 +38,7 @@ if (NOT CMAKE_BUILD_TYPE AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-include_directories(include/ deps/bandit/)
-
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
-find_package(Threads REQUIRED)
 
 # We require Unicode 8 for the unit tests, which was added in ICU 56.1
 FindOrBuildICU(
@@ -36,97 +47,53 @@ FindOrBuildICU(
   URL_HASH MD5=c4a2d71ff56aec5ebfab2a3f059be99d
 )
 
-if(ZLIB_FOUND)
-  include_directories(SYSTEM ${ZLIB_INCLUDE_DIRS})
-endif()
+add_library(meta-definitions INTERFACE)
+target_include_directories(meta-definitions INTERFACE ${PROJECT_SOURCE_DIR}/include)
 
 if(UNIX OR MINGW)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+  target_compile_options(meta-definitions INTERFACE -Wall -Wextra -pedantic)
 
+  if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # Enable -Wconversion on clang, since it's not *too* noisy there.
     #
-    # As of GCC 5.2.0, there are too many spurious warnings to bother
+    # As of GCC 5.2.0, there are still too many spurious warnings to bother
     # enabling this there.
-    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion")
+    target_compile_options(meta-definitions INTERFACE "-Wconversion")
+
+    if(CMAKE_GENERATOR STREQUAL "Ninja")
+      target_compile_options(meta-definitions INTERFACE "-fcolor-diagnostics")
     endif()
 
-    # if we don't already set the standard for the compiler, detect the
-    # best one available and use it
-    if(NOT "${CMAKE_CXX_FLAGS}" MATCHES "std=c\\+\\+(0x|11|1y|14)")
-        check_cxx_compiler_flag(-std=c++14 HAS_CXX14)
-        if(HAS_CXX14)
-            message("-- Compiler supports C++14 (using it)")
-            set(STDOPT "-std=c++14")
-        endif()
+    if(ENABLE_LIBCXX)
+      message("-- Locating libc++...")
+      find_library(LIBCXX_LIBRARY NAMES c++ cxx)
+      if(LIBCXX_LIBRARY)
+        message("-- Located libc++: ${LIBCXX_LIBRARY}")
+        set(LIBCXX_OPTIONS "-stdlib=libc++")
+        get_filename_component(LIBCXX_LIB_PATH ${LIBCXX_LIBRARY}
+                               DIRECTORY)
+        find_path(LIBCXX_PREFIX c++/v1/algorithm
+                  PATHS ${LIBCXX_LIB_PATH}/../include
+                  ${CMAKE_SYSTEM_PREFIX_PATH})
+        set(LIBCXX_INCLUDE_DIR ${LIBCXX_PREFIX}/c++/v1/)
+        message("-- Located libc++ include path: ${LIBCXX_INCLUDE_DIR}")
 
-        if(NOT STDOPT)
-            check_cxx_compiler_flag(-std=c++1y HAS_CXX1Y)
-            if(HAS_CXX1Y)
-                message("-- Compiler supports C++1y (using it)")
-                set(STDOPT "-std=c++1y")
-            endif()
+        message("--     Locating libc++'s abi...")
+        find_library(LIBCXXABI_LIBRARY NAMES c++abi)
+        find_library(LIBCXXRT_LIBRARY NAMES cxxrt)
+        if(LIBCXXABI_LIBRARY)
+          message("--     Found libc++abi: ${LIBCXXABI_LIBRARY}")
+          set(CXXABI_LIBRARY ${LIBCXXABI_LIBRARY})
+        elseif(LIBCXXRT_LIBRARY)
+          message("--     Found libcxxrt: ${LIBCXXRT_LIBRARY}")
+          set(CXXABI_LIBRARY ${LIBCXXRT_LIBRARY})
+        else()
+          message("--     No abi library found. "
+                  "Attempting to continue without one...")
         endif()
-
-        if(NOT STDOPT)
-            check_cxx_compiler_flag(-std=c++11 HAS_CXX11)
-            if(HAS_CXX11)
-                message("-- Compiler supports C++11 (using it)")
-                set(STDOPT "-std=c++11")
-            endif()
-        endif()
-
-        if(NOT STDOPT)
-            check_cxx_compiler_flag(-std=c++0x HAS_CXX0X)
-            if(HAS_CXXOX)
-                message("-- Compiler supports C++0x (using it)")
-                set(STDOPT "-std=c++0x")
-            endif()
-        endif()
-
-        if(NOT STDOPT)
-            message(FATAL_ERROR
-                    "meta requires a compiler with at least C++0x support")
-        endif()
-
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${STDOPT}")
-    endif()
-
-    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-        if(CMAKE_GENERATOR STREQUAL "Ninja")
-          set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
-        endif()
-        if(USE_LIBCXX)
-            message("-- Locating libc++...")
-            find_library(LIBCXX_LIBRARY NAMES c++ cxx)
-            if(LIBCXX_LIBRARY)
-                message("-- Located libc++: ${LIBCXX_LIBRARY}")
-                set(LIBCXX_OPTIONS "-stdlib=libc++")
-                get_filename_component(LIBCXX_LIB_PATH ${LIBCXX_LIBRARY}
-                                       DIRECTORY)
-                find_path(LIBCXX_PREFIX c++/v1/algorithm
-                          PATHS ${LIBCXX_LIB_PATH}/../include
-                          ${CMAKE_SYSTEM_PREFIX_PATH})
-                set(LIBCXX_INCLUDE_DIR ${LIBCXX_PREFIX}/c++/v1/)
-                message("-- Located libc++ include path: ${LIBCXX_INCLUDE_DIR}")
-
-                message("--     Locating libc++'s abi...")
-                find_library(LIBCXXABI_LIBRARY NAMES c++abi)
-                find_library(LIBCXXRT_LIBRARY NAMES cxxrt)
-                if(LIBCXXABI_LIBRARY)
-                    message("--     Found libc++abi: ${LIBCXXABI_LIBRARY}")
-                    set(CXXABI_LIBRARY ${LIBCXXABI_LIBRARY})
-                elseif(LIBCXXRT_LIBRARY)
-                    message("--     Found libcxxrt: ${LIBCXXRT_LIBRARY}")
-                    set(CXXABI_LIBRARY ${LIBCXXRT_LIBRARY})
-                else()
-                    message("--     No abi library found. "
-                            "Attempting to continue without one...")
-                endif()
-            else()
-                message("-- Could not find libc++, will not use it.")
-            endif()
-        endif()
+      else()
+        message("-- Could not find libc++, will not use it.")
+      endif()
     endif()
 
     find_library(LIBDL_LIBRARY NAMES dl ldl)
@@ -135,7 +102,7 @@ if(UNIX OR MINGW)
     endif()
 
     if(LIBCXX_OPTIONS)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIBCXX_OPTIONS}")
+      set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${LIBCXX_OPTIONS}")
     endif()
 
     if(CXXABI_LIBRARY)
@@ -144,23 +111,17 @@ if(UNIX OR MINGW)
     if(LIBCXX_INCLUDE_DIR)
       set(CMAKE_REQUIRED_INCLUDES "${CMAKE_REQUIRED_INCLUDES} ${LIBCXX_INCLUDE_DIR}")
     endif()
+  endif()
 endif()
 
-add_library(meta-definitions INTERFACE)
-target_include_directories(meta-definitions INTERFACE ${PROJECT_SOURCE_DIR}/include)
-
-if (STDOPT)
+if(STDOPT)
   target_compile_options(meta-definitions INTERFACE ${STDOPT})
 endif()
 
 if(ZLIB_FOUND)
-  target_include_directories(meta-definitions INTERFACE
+  target_include_directories(meta-definitions SYSTEM INTERFACE
                              ${ZLIB_INCLUDE_DIRS})
   target_compile_definitions(meta-definitions INTERFACE -DMETA_HAS_ZLIB)
-endif()
-
-if(HAS_CXX14 OR HAS_CXX1Y)
-    target_compile_definitions(meta-definitions INTERFACE -DMETA_HAS_CXX14=1)
 endif()
 
 if(LIBDL_LIBRARY)
@@ -193,10 +154,10 @@ else()
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_compile_definitions(meta-definitions INTERFACE
-                               -D_DARWIN_USE_64_BIT_INODE=1)
-    target_compile_definitions(meta-definitions INTERFACE
-                               -DMETA_IS_DARWIN=1)
+  target_compile_definitions(meta-definitions INTERFACE
+                             -D_DARWIN_USE_64_BIT_INODE=1)
+  target_compile_definitions(meta-definitions INTERFACE
+                             -DMETA_IS_DARWIN=1)
 endif()
 
 check_cxx_source_compiles("
@@ -209,8 +170,8 @@ int main () {
 }" META_HAS_STD_SHARED_PTR_ATOMICS)
 
 if(META_HAS_STD_SHARED_PTR_ATOMICS)
-    target_compile_definitions(meta-definitions INTERFACE
-                               -DMETA_HAS_STD_SHARED_PTR_ATOMICS=1)
+  target_compile_definitions(meta-definitions INTERFACE
+                             -DMETA_HAS_STD_SHARED_PTR_ATOMICS=1)
 endif()
 
 check_cxx_source_compiles("
@@ -222,8 +183,8 @@ int main() {
 }" META_HAS_STREAM_MOVE)
 
 if(META_HAS_STREAM_MOVE)
-    target_compile_definitions(meta-definitions INTERFACE
-                               -DMETA_HAS_STREAM_MOVE=1)
+  target_compile_definitions(meta-definitions INTERFACE
+                             -DMETA_HAS_STREAM_MOVE=1)
 endif()
 
 check_cxx_source_compiles("
@@ -234,8 +195,8 @@ int main() {
 }" META_HAS_STD_MAKE_UNIQUE)
 
 if(META_HAS_STD_MAKE_UNIQUE)
-    target_compile_definitions(meta-definitions INTERFACE
-                               -DMETA_HAS_STD_MAKE_UNIQUE)
+  target_compile_definitions(meta-definitions INTERFACE
+                             -DMETA_HAS_STD_MAKE_UNIQUE)
 endif()
 
 check_cxx_source_compiles("
@@ -260,21 +221,6 @@ int main() {
 if (META_HAS_EXPERIMENTAL_STRING_VIEW)
   target_compile_definitions(meta-definitions INTERFACE
                              -DMETA_HAS_EXPERIMENTAL_STRING_VIEW)
-endif()
-
-# work around a bug in libstdc++ provided with gcc < 4.8.3 where a static
-# assertion fires when you have a non-empty hash functor
-check_cxx_source_compiles("
-#include <unordered_set>
-struct nonempty_hasher : public std::hash<int> { int i = 3; };
-int main() {
-    std::unordered_set<int, nonempty_hasher> s;
-    return 0;
-}" META_HAS_NONEMPTY_HASH_SUPPORT)
-
-if (META_HAS_NONEMPTY_HASH_SUPPORT)
-  target_compile_definitions(meta-definitions INTERFACE
-                             -DMETA_HAS_NONEMPTY_HASH_SUPPORT)
 endif()
 
 # work around a bug in gcc 4.8.1 where having a lambda as a default
@@ -312,21 +258,7 @@ if (META_HAS_EXPERIMENTAL_FILESYSTEM)
     -DMETA_HAS_EXPERIMENTAL_FILESYSTEM)
 endif()
 
-check_cxx_source_compiles("
-#include <experimental/filesystem>
-
-int main()
-{
-    std::tr2::sys::filesystem::path p1 = \"/usr\";
-    return 0;
-}" META_HAS_TR2_SYS_FILESYSTEM)
-
-if (META_HAS_TR2_SYS_FILESYSTEM)
-  target_compile_definitions(meta-definitions INTERFACE
-    -DMETA_HAS_TR2_SYS_FILESYSTEM)
-endif()
-
-if(NOT META_HAS_EXPERIMENTAL_FILESYSTEM AND NOT META_HAS_TR2_SYS_FILESYSTEM)
+if(NOT META_HAS_EXPERIMENTAL_FILESYSTEM)
   target_include_directories(meta-definitions SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)
 endif()
 
@@ -399,6 +331,7 @@ if (META_HAS_BUILTIN_EXPECT)
   target_compile_definitions(meta-definitions INTERFACE
     -DMETA_HAS_BUILTIN_EXPECT)
 endif()
+cmake_pop_check_state()
 
 if(BIICODE)
   include(contrib/biicode/CMakeLists.txt)
@@ -416,12 +349,12 @@ add_custom_target(tidy
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND AND NOT TARGET doc)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/meta.doxygen.in
-                   ${CMAKE_CURRENT_BINARY_DIR}/meta.doxygen @ONLY)
-    add_custom_target(doc
-                      ${DOXYGEN_EXECUTABLE}
-                      ${CMAKE_CURRENT_BINARY_DIR}/meta.doxygen
-                      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/meta.doxygen.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/meta.doxygen @ONLY)
+  add_custom_target(doc
+                    ${DOXYGEN_EXECUTABLE}
+                    ${CMAKE_CURRENT_BINARY_DIR}/meta.doxygen
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
 add_subdirectory(src)
