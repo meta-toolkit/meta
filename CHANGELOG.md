@@ -1,4 +1,4 @@
-# [Unreleased][unreleased]
+# [v2.0.0][2.0.0]
 ## New features and major changes
 
 ### Indexing
@@ -286,7 +286,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v1.3.8...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.0.0...develop
+[2.0.0]: https://github.com/meta-toolkit/meta/compare/v1.3.8...v2.0.0
 [1.3.8]: https://github.com/meta-toolkit/meta/compare/v1.3.7...v1.3.8
 [1.3.7]: https://github.com/meta-toolkit/meta/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/meta-toolkit/meta/compare/v1.3.5...v1.3.6
