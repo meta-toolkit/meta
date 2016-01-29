@@ -6,6 +6,8 @@ about MeTA!
 ### Build Status (by branch)
 - master: [![Build
   Status](https://travis-ci.org/meta-toolkit/meta.svg?branch=master)](https://travis-ci.org/meta-toolkit/meta)
+  [![Windows Build
+  Status](https://ci.appveyor.com//api/projects/status/github/meta-toolkit/meta?svg=true&branch=master)](https://ci.appveyor.com/project/skystrife/meta)
 - develop: [![Build
   Status](https://travis-ci.org/meta-toolkit/meta.svg?branch=develop)](https://travis-ci.org/meta-toolkit/meta)
   [![Windows Build
