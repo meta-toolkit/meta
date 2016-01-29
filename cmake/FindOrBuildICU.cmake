@@ -27,12 +27,16 @@ function(FindOrBuildICU)
     message(FATAL_ERROR "You must provide a download url to the ICU sources")
   endif()
 
-  message("-- Searching for ICU >= ${FindOrBuildICU_VERSION}")
+  message("-- Searching for ICU ${FindOrBuildICU_VERSION}")
 
   find_package(ICU ${FindOrBuildICU_VERSION} COMPONENTS data i18n uc)
 
-  if (NOT ICU_FOUND OR ICU_VERSION VERSION_LESS "${FindOrBuildICU_VERSION}")
-    message("-- ICU version ${ICU_VERSION} is too old; attempting to build ICU...")
+  if (NOT ICU_FOUND OR NOT ICU_VERSION VERSION_EQUAL "${FindOrBuildICU_VERSION}")
+    if (NOT ICU_FOUND)
+      message("-- ICU not found; attempting to build it...")
+    else()
+      message("-- ICU version found is ${ICU_VERSION}, expected ${FindOrBuildICU_VERSION}; attempting to build ICU from scratch...")
+    endif()
     if (WIN32)
       # not going to attempt to build ICU if we're on Windows for now
       # probably could, but it's more trouble than it's worth I think
