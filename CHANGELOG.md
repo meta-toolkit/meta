@@ -25,12 +25,7 @@
     exact version of ICU that should be used per release for consistency.
     That version is 56.1 as of this release.
 - Analyzers have been modified to support both integral and floating point
-    values. Analyzers that support both can be template classes with
-    explicit instantiations for `uint64_t` and `double`, and those that
-    only support floating point values can just be regular classes. There
-    are factories for both feature value types (integral and floating
-    point); new analyzers should be registered with the correct factory and
-    should derive from the appropriate base class instantiation
+    values via the use of the `featurizer` object passed to `tokenize()`
 - Documents no longer store any count information during the analysis
     process
 
@@ -57,7 +52,7 @@
     represent data that is memory-resident
 - Support for regression has been added (currently only via SGD)
 - The SGD algorithm has been improved to use a normalized adaptive gradient
-    method whish should make it less sensitive to feature scaling
+    method which should make it less sensitive to feature scaling
 - The SGD algorithm now supports (approximate) L1 regularization via a
     cumulative penalty approach
 - The libsvm modules are now also built using CMake
@@ -73,6 +68,8 @@
     used for non-owning references to strings. This will use
     `std::experimental::string_view` if available and our own
     implementation if not
+- `meta::util::optional` will resolve to `std::experimental::optional` if
+    it is available
 - Support for jemalloc has been added to the build system. We **strongly**
     recommend installing and linking against jemalloc for improved indexing
     performance.
