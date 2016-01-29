@@ -553,7 +553,7 @@ class storage_base
 
     hash_type hash_;
     equal_type equal_;
-    double max_load_factor_ = 0.9;
+    double max_load_factor_ = 0.85;
     double resize_ratio_ = 1.5;
 };
 
