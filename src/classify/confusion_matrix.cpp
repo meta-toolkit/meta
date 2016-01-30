@@ -7,9 +7,9 @@
 #include <iomanip>
 #include <vector>
 
-#include "classify/confusion_matrix.h"
-#include "util/mapping.h"
-#include "util/printing.h"
+#include "meta/classify/confusion_matrix.h"
+#include "meta/util/mapping.h"
+#include "meta/util/printing.h"
 
 namespace meta
 {
@@ -121,21 +121,20 @@ void confusion_matrix::print(std::ostream& out) const
                                       < static_cast<std::string>(b).size();
                            });
 
-    size_t w = std::max<size_t>(7, static_cast<std::string>(*max_label).size())
-               + 2;
-    out << std::left << std::endl
-        << std::setw(w) << "";
+    auto w
+        = std::max<size_t>(7, static_cast<std::string>(*max_label).size()) + 2;
+    out << std::left << std::endl << std::setw(static_cast<int>(w)) << "";
     out << "  ";
     for (auto& actual_class : classes_)
-        out << std::setw(w) << actual_class;
+        out << std::setw(static_cast<int>(w)) << actual_class;
     out << std::endl;
     out << std::string(w, ' ') << std::string(classes_.size() * w, '-')
         << std::endl;
 
     for (auto& actual_class : classes_)
     {
-        out << std::setw(w - 1) << std::right << actual_class << std::left
-            << " | ";
+        out << std::setw(static_cast<int>(w - 1)) << std::right << actual_class
+            << std::left << " | ";
         for (auto& pred_class : classes_)
         {
             auto it = predictions_.find(
@@ -152,15 +151,15 @@ void confusion_matrix::print(std::ostream& out) const
                 {
                     auto str = printing::make_bold(ss.str());
                     auto diff = str.size() - ss.str().size();
-                    out << std::setw(w + diff) << str;
+                    out << std::setw(static_cast<int>(w + diff)) << str;
                 }
                 else
                 {
-                    out << std::setw(w) << ss.str();
+                    out << std::setw(static_cast<int>(w)) << ss.str();
                 }
             }
             else
-                out << std::setw(w) << "- ";
+                out << std::setw(static_cast<int>(w)) << "- ";
         }
         out << std::endl;
     }
@@ -184,8 +183,9 @@ void confusion_matrix::print_stats(std::ostream& out) const
     size_t width
         = std::max<size_t>(12, static_cast<std::string>(*max_label).size() + 2);
 
-    auto w1 = std::setw(width + printing::make_bold("").size());
-    auto w2 = std::setw(12 + printing::make_bold("").size());
+    auto w1
+        = std::setw(static_cast<int>(width + printing::make_bold("").size()));
+    auto w2 = std::setw(static_cast<int>(12 + printing::make_bold("").size()));
     out.precision(3);
     out << std::string(width + 12 * 3, '-') << std::endl
         << std::left << w1 << printing::make_bold("Class") << std::left << w2
@@ -197,9 +197,9 @@ void confusion_matrix::print_stats(std::ostream& out) const
     for (auto& cls : classes_)
     {
         auto w3 = std::setw(12); // different width for non-bold
-        out << std::left << std::setw(width) << cls << std::left << w3
-            << f1_score(cls) << std::left << w3 << precision(cls) << std::left
-            << w3 << recall(cls) << std::endl;
+        out << std::left << std::setw(static_cast<int>(width)) << cls
+            << std::left << w3 << f1_score(cls) << std::left << w3
+            << precision(cls) << std::left << w3 << recall(cls) << std::endl;
     }
 
     auto limit = [](double val)
@@ -243,7 +243,7 @@ const confusion_matrix::prediction_counts& confusion_matrix::predictions() const
 }
 
 confusion_matrix confusion_matrix::
-    operator+(const confusion_matrix& other) const
+operator+(const confusion_matrix& other) const
 {
     confusion_matrix sum{*this};
 

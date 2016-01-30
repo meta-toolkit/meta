@@ -6,14 +6,14 @@
 #include <iostream>
 
 #include "cpptoml.h"
-#include "logging/logger.h"
-#include "parser/io/ptb_reader.h"
-#include "parser/sr_parser.h"
-#include "parser/trees/evalb.h"
-#include "parser/trees/visitors/empty_remover.h"
-#include "parser/trees/visitors/sequence_extractor.h"
-#include "util/filesystem.h"
-#include "util/progress.h"
+#include "meta/io/filesystem.h"
+#include "meta/logging/logger.h"
+#include "meta/parser/io/ptb_reader.h"
+#include "meta/parser/sr_parser.h"
+#include "meta/parser/trees/evalb.h"
+#include "meta/parser/trees/visitors/empty_remover.h"
+#include "meta/parser/sequence_extractor.h"
+#include "meta/util/progress.h"
 
 using namespace meta;
 
@@ -24,6 +24,9 @@ std::string two_digit(uint8_t num)
     return ss.str();
 }
 
+/**
+ * For config parameters, see parser_train.
+ */
 int main(int argc, char** argv)
 {
 
@@ -38,14 +41,14 @@ int main(int argc, char** argv)
 
     auto config = cpptoml::parse_file(argv[1]);
 
-    auto prefix = config.get_as<std::string>("prefix");
+    auto prefix = config->get_as<std::string>("prefix");
     if (!prefix)
     {
         LOG(fatal) << "Global configuration must have a prefix key" << ENDLG;
         return 1;
     }
 
-    auto parser_grp = config.get_table("parser");
+    auto parser_grp = config->get_table("parser");
     if (!parser_grp)
     {
         LOG(fatal) << "Configuration must contain a [parser] group" << ENDLG;
@@ -89,8 +92,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    std::string path = *prefix + "/" + *treebank + "/treebank-3/parsed/mrg/"
-                       + *corpus;
+    std::string path
+        = *prefix + "/" + *treebank + "/treebank-3/parsed/mrg/" + *corpus;
 
     parser::empty_remover transformer;
 
@@ -99,14 +102,16 @@ int main(int argc, char** argv)
     {
         auto begin = test_sections->at(0)->as<int64_t>()->get();
         auto end = test_sections->at(1)->as<int64_t>()->get();
-        printing::progress progress(" > Reading testing data: ",
-                                    (end - begin + 1) * *section_size);
-        for (uint8_t i = begin; i <= end; ++i)
+        printing::progress progress(
+            " > Reading training data: ",
+            static_cast<uint64_t>((end - begin + 1) * *section_size));
+
+        for (auto i = static_cast<uint8_t>(begin); i <= end; ++i)
         {
             auto folder = two_digit(i);
             for (uint8_t j = 0; j <= *section_size; ++j)
             {
-                progress((i - begin) * 99 + j);
+                progress(static_cast<uint64_t>(i - begin) * 99 + j);
                 auto file = *corpus + "_" + folder + two_digit(j) + ".mrg";
                 auto filename = path + "/" + folder + "/" + file;
                 auto trees = parser::io::extract_trees(filename);

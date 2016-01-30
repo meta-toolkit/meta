@@ -7,62 +7,36 @@
 #include <numeric>
 #include <random>
 #include "cpptoml.h"
-#include "index/postings_data.h"
-#include "classify/classifier/winnow.h"
+#include "meta/index/postings_data.h"
+#include "meta/classify/classifier/winnow.h"
 
 namespace meta
 {
 namespace classify
 {
 
-const std::string winnow::id = "winnow";
+const util::string_view winnow::id = "winnow";
+constexpr const double winnow::default_m;
+constexpr const double winnow::default_gamma;
+constexpr const size_t winnow::default_max_iter;
 
-winnow::winnow(std::shared_ptr<index::forward_index> idx, double m,
-               double gamma, size_t max_iter)
-    : classifier{std::move(idx)}, m_{m}, gamma_{gamma}, max_iter_{max_iter}
-{
-    /* nothing */
-}
-
-double winnow::get_weight(const class_label& label, const term_id& term) const
-{
-    auto weight_it = weights_.find(label);
-    if (weight_it == weights_.end())
-        return 1;
-    auto term_it = weight_it->second.find(term);
-    if (term_it == weight_it->second.end())
-        return 1;
-    return term_it->second;
-}
-
-void winnow::zero_weights(const std::vector<doc_id>& docs)
-{
-    for (const auto& d_id : docs)
-        weights_[idx_->label(d_id)] = {};
-}
-
-void winnow::train(const std::vector<doc_id>& docs)
+winnow::winnow(multiclass_dataset_view docs, double m, double gamma,
+               size_t max_iter)
+    : m_{m}, gamma_{gamma}, max_iter_{max_iter}
 {
     zero_weights(docs);
-    std::vector<uint64_t> indices(docs.size());
-    std::iota(indices.begin(), indices.end(), 0);
-    std::random_device d;
-    std::mt19937 g{d()};
-
     for (size_t iter = 0; iter < max_iter_; ++iter)
     {
-        std::shuffle(indices.begin(), indices.end(), g);
+        docs.shuffle();
         double error_count = 0;
-        for (size_t i = 0; i < indices.size(); ++i)
+        for (const auto& instance : docs)
         {
-            const doc_id doc{docs[indices[i]]};
-            class_label guess = classify(doc);
-            class_label actual = idx_->label(doc);
+            class_label guess = classify(instance.weights);
+            class_label actual = docs.label(instance);
             if (guess != actual)
             {
                 error_count += 1;
-                auto pdata = idx_->search_primary(doc);
-                for (const auto& count : pdata->counts())
+                for (const auto& count : instance.weights)
                 {
                     double guess_weight = get_weight(guess, count.first);
                     weights_[guess][count.first] = guess_weight / m_;
@@ -76,15 +50,74 @@ void winnow::train(const std::vector<doc_id>& docs)
     }
 }
 
-class_label winnow::classify(doc_id d_id)
+winnow::winnow(std::istream& in)
+    : m_{io::packed::read<double>(in)},
+      gamma_{io::packed::read<double>(in)},
+      max_iter_{io::packed::read<std::size_t>(in)}
+{
+    auto size = io::packed::read<std::size_t>(in);
+    for (std::size_t i = 0; i < size; ++i)
+    {
+        auto lbl = io::packed::read<class_label>(in);
+        auto& map_ref = weights_[lbl];
+
+        auto isize = io::packed::read<std::size_t>(in);
+        for (std::size_t j = 0; j < isize; ++j)
+        {
+            auto id = io::packed::read<term_id>(in);
+            auto weight = io::packed::read<double>(in);
+            map_ref.emplace(id, weight);
+        }
+    }
+}
+
+void winnow::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, m_);
+    io::packed::write(out, gamma_);
+    io::packed::write(out, max_iter_);
+
+    io::packed::write(out, weights_.size());
+    for (const auto& pr : weights_)
+    {
+        io::packed::write(out, pr.first);
+        io::packed::write(out, pr.second.size());
+        for (const auto& ipr : pr.second)
+        {
+            io::packed::write(out, ipr.first);
+            io::packed::write(out, ipr.second);
+        }
+    }
+}
+
+double winnow::get_weight(const class_label& label, const term_id& term) const
+{
+    auto weight_it = weights_.find(label);
+    if (weight_it == weights_.end())
+        return 1;
+    auto term_it = weight_it->second.find(term);
+    if (term_it == weight_it->second.end())
+        return 1;
+    return term_it->second;
+}
+
+void winnow::zero_weights(const multiclass_dataset_view& docs)
+{
+    for (auto it = docs.labels_begin(), end = docs.labels_end(); it != end;
+         ++it)
+        weights_[it->first] = {};
+}
+
+class_label winnow::classify(const feature_vector& doc) const
 {
     class_label best_label = weights_.begin()->first;
     double best_dot = 0;
     for (const auto& w : weights_)
     {
         double dot = weights_.size() / 2; // bias term
-        auto pdata = idx_->search_primary(d_id);
-        for (const auto& count : pdata->counts())
+        for (const auto& count : doc)
             dot += count.second * get_weight(w.first, count.first);
 
         if (dot > best_dot)
@@ -96,29 +129,16 @@ class_label winnow::classify(doc_id d_id)
     return best_label;
 }
 
-void winnow::reset()
-{
-    weights_ = {};
-}
-
 template <>
 std::unique_ptr<classifier>
     make_classifier<winnow>(const cpptoml::table& config,
-                            std::shared_ptr<index::forward_index> idx)
+                            multiclass_dataset_view training)
 {
-    auto m = winnow::default_m;
-    if (auto c_m = config.get_as<double>("m"))
-        m = *c_m;
-
-    auto gamma = winnow::default_gamma;
-    if (auto c_gamma = config.get_as<double>("gamma"))
-        gamma = *c_gamma;
-
-    auto max_iter = winnow::default_max_iter;
-    if (auto c_max_iter = config.get_as<int64_t>("max-iter"))
-        max_iter = *c_max_iter;
-
-    return make_unique<winnow>(std::move(idx), m, gamma, max_iter);
+    auto m = config.get_as<double>("m").value_or(winnow::default_m);
+    auto gamma = config.get_as<double>("gamma").value_or(winnow::default_gamma);
+    auto max_iter
+        = config.get_as<int64_t>("max-iter").value_or(winnow::default_max_iter);
+    return make_unique<winnow>(std::move(training), m, gamma, max_iter);
 }
 }
 }

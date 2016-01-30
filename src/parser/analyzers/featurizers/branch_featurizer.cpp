@@ -1,21 +1,21 @@
-#include "parser/analyzers/featurizers/branch_featurizer.h"
-#include "parser/trees/visitors/visitor.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
+#include "meta/parser/analyzers/featurizers/branch_featurizer.h"
+#include "meta/parser/trees/visitors/visitor.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
 
 namespace meta
 {
 namespace analyzers
 {
 
-const std::string branch_featurizer::id = "branch";
+const util::string_view branch_featurizer::id = "branch";
 
 namespace
 {
 class branch_visitor : public parser::const_visitor<void>
 {
   public:
-    branch_visitor(corpus::document& d) : doc(d)
+    branch_visitor(featurizer& fm) : counts(fm)
     {
         // nothing
     }
@@ -23,7 +23,7 @@ class branch_visitor : public parser::const_visitor<void>
     void operator()(const parser::internal_node& in) override
     {
         auto rep = "branch-" + std::to_string(in.num_children());
-        doc.increment(rep, 1);
+        counts(rep, 1ul);
 
         in.each_child([&](const parser::node* child)
                       {
@@ -37,14 +37,14 @@ class branch_visitor : public parser::const_visitor<void>
     }
 
   private:
-    corpus::document& doc;
+    featurizer& counts;
 };
 }
 
-void branch_featurizer::tree_tokenize(corpus::document& doc,
-                                      const parser::parse_tree& tree) const
+void branch_featurizer::tree_tokenize(const parser::parse_tree& tree,
+                                      featurizer& counts) const
 {
-    branch_visitor vtor{doc};
+    branch_visitor vtor{counts};
     tree.visit(vtor);
 }
 }

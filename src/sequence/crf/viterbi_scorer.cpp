@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "sequence/crf/viterbi_scorer.h"
+#include "meta/sequence/crf/viterbi_scorer.h"
 
 namespace meta
 {

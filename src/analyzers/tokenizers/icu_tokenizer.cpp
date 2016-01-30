@@ -9,10 +9,10 @@
 #include <unicode/utf.h>
 #include <unicode/uchar.h>
 
-#include "analyzers/tokenizers/icu_tokenizer.h"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
 #include "cpptoml.h"
-#include "util/pimpl.tcc"
-#include "utf/segmenter.h"
+#include "meta/util/pimpl.tcc"
+#include "meta/utf/segmenter.h"
 
 namespace meta
 {
@@ -21,7 +21,7 @@ namespace analyzers
 namespace tokenizers
 {
 
-const std::string icu_tokenizer::id = "icu-tokenizer";
+const util::string_view icu_tokenizer::id = "icu-tokenizer";
 
 /**
  * Implementation class for the icu_tokenizer.
@@ -69,11 +69,11 @@ class icu_tokenizer::impl
 
                 // check first character, if it's whitespace skip it
                 UChar32 codepoint;
-                U8_GET_UNSAFE(wrd.c_str(), 0, codepoint);
+                U8_GET_UNSAFE(wrd.data(), 0, codepoint);
                 if (u_isUWhiteSpace(codepoint))
                     continue;
 
-                tokens_.emplace_back(std::move(wrd));
+                tokens_.emplace_back(wrd.to_string());
             }
             if (!suppress_tags_)
                 tokens_.emplace_back("</s>");
@@ -87,7 +87,7 @@ class icu_tokenizer::impl
     {
         if (!*this)
             throw token_stream_exception{"next() called with no tokens left"};
-        auto result = tokens_.front();
+        auto result = std::move(tokens_.front());
         tokens_.pop_front();
         return result;
     }
@@ -131,9 +131,9 @@ icu_tokenizer::icu_tokenizer(const icu_tokenizer& other) : impl_{*other.impl_}
 
 icu_tokenizer::~icu_tokenizer() = default;
 
-void icu_tokenizer::set_content(const std::string& content)
+void icu_tokenizer::set_content(std::string&& content)
 {
-    impl_->set_content(content);
+    impl_->set_content(std::move(content));
 }
 
 std::string icu_tokenizer::next()
@@ -152,15 +152,11 @@ std::unique_ptr<token_stream>
 {
     auto language = config.get_as<std::string>("language");
     auto country = config.get_as<std::string>("country");
-    bool suppress_tags = false;
-
-    if (auto stags = config.get_as<bool>("suppress-tags"))
-        suppress_tags = *stags;
-
-    using exception = token_stream::token_stream_exception;
+    bool suppress_tags = config.get_as<bool>("suppress-tags").value_or(false);
 
     if (country && !language)
-        throw exception{"icu_tokenizer cannot be created with just a country"};
+        throw token_stream_exception{
+            "icu_tokenizer cannot be created with just a country"};
 
     if (language)
     {

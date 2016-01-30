@@ -5,10 +5,10 @@
 
 #include <cassert>
 
-#include "parser/state_analyzer.h"
-#include "parser/state.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
+#include "meta/parser/state_analyzer.h"
+#include "meta/parser/state.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
 
 namespace meta
 {
@@ -81,7 +81,7 @@ void sr_parser::state_analyzer::unigram_featurize(const state& state,
     auto s3 = state.stack_item(3);
     unigram_stack_feats(s3, "s3", feats);
 
-    for (ssize_t i = -2; i <= 3; ++i)
+    for (int64_t i = -2; i <= 3; ++i)
     {
         node_info info{state.queue_item(i)};
         feats["q" + std::to_string(i) + "wt=" + info.head_word + "-"

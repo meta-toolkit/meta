@@ -4,18 +4,18 @@
 
 #include <vector>
 #include "cpptoml.h"
-#include "corpus/document.h"
-#include "sequence/sequence.h"
-#include "sequence/crf/tagger.h"
-#include "analyzers/token_stream.h"
-#include "sequence/analyzers/ngram_pos_analyzer.h"
+#include "meta/corpus/document.h"
+#include "meta/sequence/sequence.h"
+#include "meta/sequence/crf/tagger.h"
+#include "meta/analyzers/token_stream.h"
+#include "meta/sequence/analyzers/ngram_pos_analyzer.h"
 
 namespace meta
 {
 namespace analyzers
 {
 
-const std::string ngram_pos_analyzer::id = "ngram-pos";
+const util::string_view ngram_pos_analyzer::id = "ngram-pos";
 
 ngram_pos_analyzer::ngram_pos_analyzer(uint16_t n,
                                        std::unique_ptr<token_stream> stream,
@@ -30,6 +30,7 @@ ngram_pos_analyzer::ngram_pos_analyzer(uint16_t n,
                         return ana;
                     }()}
 {
+    // nothing
 }
 
 ngram_pos_analyzer::ngram_pos_analyzer(const ngram_pos_analyzer& other)
@@ -41,7 +42,8 @@ ngram_pos_analyzer::ngram_pos_analyzer(const ngram_pos_analyzer& other)
     // nothing
 }
 
-void ngram_pos_analyzer::tokenize(corpus::document& doc)
+void ngram_pos_analyzer::tokenize(const corpus::document& doc,
+                                  featurizer& counts)
 {
     // first, get tokens
     stream_->set_content(get_content(doc));
@@ -72,36 +74,36 @@ void ngram_pos_analyzer::tokenize(corpus::document& doc)
         tagger.tag(seq);
 
         // create ngrams
-        for (size_t i = n_value() - 1; i < seq.size(); ++i)
+        for (size_t i = this->n_value() - 1; i < seq.size(); ++i)
         {
             std::string combined = seq_analyzer_.tag(seq[i].label());
-            for (size_t j = 1; j < n_value(); ++j)
+            for (size_t j = 1; j < this->n_value(); ++j)
             {
                 std::string next = seq_analyzer_.tag(seq[i - j].label());
                 combined = next + "_" + combined;
             }
 
-            doc.increment(combined, 1);
+            counts(combined, 1ul);
         }
     }
 }
 
 template <>
 std::unique_ptr<analyzer>
-    make_analyzer<ngram_pos_analyzer>(const cpptoml::table& global,
-                                      const cpptoml::table& config)
+make_analyzer<ngram_pos_analyzer>(const cpptoml::table& global,
+                                  const cpptoml::table& config)
 {
     auto n_val = config.get_as<int64_t>("ngram");
     if (!n_val)
-        throw analyzer::analyzer_exception{
+        throw analyzer_exception{
             "ngram size needed for ngram pos analyzer in config file"};
 
     auto crf_prefix = config.get_as<std::string>("crf-prefix");
     if (!crf_prefix)
-        throw analyzer::analyzer_exception{
+        throw analyzer_exception{
             "ngram-pos analyzer must contain a prefix to a crf model"};
 
-    auto filts = analyzer::load_filters(global, config);
+    auto filts = load_filters(global, config);
     return make_unique<ngram_pos_analyzer>(*n_val, std::move(filts),
                                            *crf_prefix);
 }
@@ -111,7 +113,8 @@ namespace sequence
 {
 void register_analyzers()
 {
-    analyzers::register_analyzer<analyzers::ngram_pos_analyzer>();
+    using namespace analyzers;
+    register_analyzer<ngram_pos_analyzer>();
 }
 }
 }

@@ -4,30 +4,43 @@
  */
 
 #include "cpptoml.h"
-#include "index/ranker/dirichlet_prior.h"
-#include "index/score_data.h"
+#include "meta/index/ranker/dirichlet_prior.h"
+#include "meta/index/score_data.h"
 
 namespace meta
 {
 namespace index
 {
 
-const std::string dirichlet_prior::id = "dirichlet-prior";
+const util::string_view dirichlet_prior::id = "dirichlet-prior";
 
-dirichlet_prior::dirichlet_prior(double mu) : mu_{mu}
+dirichlet_prior::dirichlet_prior(float mu) : mu_{mu}
 {
     /* nothing */
 }
 
-double dirichlet_prior::smoothed_prob(const score_data& sd) const
+dirichlet_prior::dirichlet_prior(std::istream& in)
+    : mu_{io::packed::read<float>(in)}
 {
-    double pc = static_cast<double>(sd.corpus_term_count) / sd.total_terms;
-    double numerator = sd.doc_term_count + mu_ * pc;
-    double denominator = sd.doc_size + mu_;
+    // nothing
+}
+
+void dirichlet_prior::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, mu_);
+}
+
+float dirichlet_prior::smoothed_prob(const score_data& sd) const
+{
+    float pc = static_cast<float>(sd.corpus_term_count) / sd.total_terms;
+    float numerator = sd.doc_term_count + mu_ * pc;
+    float denominator = sd.doc_size + mu_;
     return numerator / denominator;
 }
 
-double dirichlet_prior::doc_constant(const score_data& sd) const
+float dirichlet_prior::doc_constant(const score_data& sd) const
 {
     return mu_ / (sd.doc_size + mu_);
 }

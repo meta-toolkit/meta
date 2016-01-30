@@ -1,91 +1,97 @@
 /**
  * @file ranker.cpp
  * @author Sean Massung
+ * @author Chase Geigle
  */
 
-#include "corpus/document.h"
-#include "index/inverted_index.h"
-#include "index/postings_data.h"
-#include "index/ranker/ranker.h"
-#include "index/score_data.h"
+#include <unordered_map>
+#include "meta/corpus/document.h"
+#include "meta/index/inverted_index.h"
+#include "meta/index/postings_data.h"
+#include "meta/index/ranker/ranker.h"
+#include "meta/index/score_data.h"
+#include "meta/util/fixed_heap.h"
 
 namespace meta
 {
 namespace index
 {
 
-std::vector<std::pair<doc_id, double>>
-ranker::score(inverted_index& idx, corpus::document& query,
-              uint64_t num_results /* = 10 */,
-              const std::function<bool(doc_id d_id)>& filter /* return true */)
+std::vector<search_result>
+    ranker::score(inverted_index& idx, const corpus::document& query,
+                  uint64_t num_results /* = 10 */,
+                  const filter_function_type& filter /* return true */)
 {
-    if (query.counts().empty())
-        idx.tokenize(query);
-
-    score_data sd{idx,            idx.avg_doc_length(),
-                  idx.num_docs(), idx.total_corpus_terms(),
-                  query};
-
-    // zeros out elements and (if necessary) resizes the vector; this eliminates
-    // constructing a new vector each query for the same index
-    results_.assign(sd.num_docs, std::numeric_limits<double>::lowest());
-
-    for (auto& tpair : query.counts())
-    {
-        term_id t_id{idx.get_term_id(tpair.first)};
-        auto pdata = idx.search_primary(t_id);
-        sd.doc_count = pdata->counts().size();
-        sd.t_id = t_id;
-        sd.query_term_weight = tpair.second;
-        sd.corpus_term_count = idx.total_num_occurences(sd.t_id);
-        for (auto& dpair : pdata->counts())
-        {
-            sd.d_id = dpair.first;
-            sd.doc_term_count = dpair.second;
-            sd.doc_size = idx.doc_size(dpair.first);
-            sd.doc_unique_terms = idx.unique_terms(dpair.first);
-
-            // if this is the first time we've seen this document, compute
-            // its initial score
-            if (results_[dpair.first] == std::numeric_limits<double>::lowest())
-                results_[dpair.first] = initial_score(sd);
-
-            results_[dpair.first] += score_one(sd);
-        }
-    }
-
-    using doc_pair = std::pair<doc_id, double>;
-    auto doc_pair_comp = [](const doc_pair& a, const doc_pair& b)
-    { return a.second > b.second; };
-
-    std::priority_queue<doc_pair,
-                        std::vector<doc_pair>,
-                        decltype(doc_pair_comp)> pq{doc_pair_comp};
-    for (uint64_t id = 0; id < results_.size(); ++id)
-    {
-        if (!filter(doc_id{id}))
-            continue;
-
-        pq.emplace(doc_id{id}, results_[id]);
-        if (pq.size() > num_results)
-            pq.pop();
-    }
-
-    std::vector<doc_pair> sorted;
-    while (!pq.empty())
-    {
-        sorted.emplace_back(pq.top());
-        pq.pop();
-    }
-    std::reverse(sorted.begin(), sorted.end());
-
-    return sorted;
+    auto counts = idx.tokenize(query);
+    return score(idx, counts.begin(), counts.end(), num_results, filter);
 }
 
-double ranker::initial_score(const score_data&) const
+std::vector<search_result> ranker::rank(detail::ranker_context& ctx,
+                                        uint64_t num_results,
+                                        const filter_function_type& filter)
+{
+    score_data sd{ctx.idx, ctx.idx.avg_doc_length(), ctx.idx.num_docs(),
+                  ctx.idx.total_corpus_terms(), ctx.query_length};
+
+    auto comp = [](const search_result& a, const search_result& b)
+    {
+        // comparison is reversed since we want a min-heap
+        return a.score > b.score;
+    };
+    util::fixed_heap<search_result, decltype(comp)> results{num_results, comp};
+
+    doc_id next_doc{ctx.idx.num_docs()};
+    while (ctx.cur_doc < ctx.idx.num_docs())
+    {
+        sd.d_id = ctx.cur_doc;
+        sd.doc_size = ctx.idx.doc_size(ctx.cur_doc);
+        sd.doc_unique_terms = ctx.idx.unique_terms(ctx.cur_doc);
+
+        auto score = initial_score(sd);
+        for (auto& pc : ctx.postings)
+        {
+            if (pc.begin == pc.end)
+                continue;
+
+            if (pc.begin->first == ctx.cur_doc)
+            {
+                // set up this term
+                sd.t_id = pc.t_id;
+                sd.query_term_weight = pc.query_term_weight;
+                sd.doc_count = pc.doc_count;
+                sd.corpus_term_count = pc.corpus_term_count;
+                sd.doc_term_count = pc.begin->second;
+
+                score += score_one(sd);
+
+                // advance over this position in the current postings context
+                // until the next valid document
+                do
+                {
+                    ++pc.begin;
+                } while (pc.begin != pc.end && !filter(pc.begin->first));
+            }
+
+            if (pc.begin != pc.end)
+            {
+                // check if the document in the next position is the
+                // smallest accepted doc_id
+                if (pc.begin->first < next_doc)
+                    next_doc = pc.begin->first;
+            }
+        }
+
+        results.emplace(ctx.cur_doc, score);
+        ctx.cur_doc = next_doc;
+        next_doc = doc_id{ctx.idx.num_docs()};
+    }
+
+    return results.extract_top();
+}
+
+float ranker::initial_score(const score_data&) const
 {
     return 0.0;
 }
-
 }
 }

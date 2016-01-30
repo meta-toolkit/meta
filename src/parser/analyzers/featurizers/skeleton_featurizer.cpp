@@ -1,21 +1,21 @@
-#include "parser/analyzers/featurizers/skeleton_featurizer.h"
-#include "parser/trees/visitors/visitor.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
+#include "meta/parser/analyzers/featurizers/skeleton_featurizer.h"
+#include "meta/parser/trees/visitors/visitor.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
 
 namespace meta
 {
 namespace analyzers
 {
 
-const std::string skeleton_featurizer::id = "skel";
+const util::string_view skeleton_featurizer::id = "skel";
 
 namespace
 {
 class skeleton_visitor : public parser::const_visitor<std::string>
 {
   public:
-    skeleton_visitor(corpus::document& d) : doc(d)
+    skeleton_visitor(featurizer& fm) : counts(fm)
     {
         // nothing
     }
@@ -24,30 +24,31 @@ class skeleton_visitor : public parser::const_visitor<std::string>
     {
         std::string rep = "(";
         in.each_child([&](const parser::node* child)
-        {
-            rep += child->accept(*this);
-        });
+                      {
+                          rep += child->accept(*this);
+                      });
         rep += ")";
 
-        doc.increment(rep, 1);
+        counts(rep, 1ul);
         return rep;
     }
 
     std::string operator()(const parser::leaf_node&) override
     {
         std::string rep = "()";
-        doc.increment(rep, 1);
+        counts(rep, 1ul);
         return rep;
     }
+
   private:
-    corpus::document& doc;
+    featurizer& counts;
 };
 }
 
-void skeleton_featurizer::tree_tokenize(corpus::document& doc,
-                                        const parser::parse_tree& tree) const
+void skeleton_featurizer::tree_tokenize(const parser::parse_tree& tree,
+                                        featurizer& counts) const
 {
-    skeleton_visitor vtor{doc};
+    skeleton_visitor vtor{counts};
     tree.visit(vtor);
 }
 }

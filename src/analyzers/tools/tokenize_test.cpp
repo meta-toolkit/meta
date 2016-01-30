@@ -4,15 +4,15 @@
  */
 
 #include "cpptoml.h"
-#include "analyzers/all.h"
-#include "analyzers/token_stream.h"
-#include "logging/logger.h"
+#include "meta/analyzers/all.h"
+#include "meta/analyzers/token_stream.h"
+#include "meta/logging/logger.h"
 
 using namespace meta;
 
 int main(int argc, char** argv)
 {
-    if (argc < 1)
+    if (argc < 2)
     {
         std::cerr << "Usage: " << argv[0] << " config.toml" << std::endl;
         return 1;
@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 
     std::unique_ptr<analyzers::token_stream> stream;
 
-    auto analyzers = config.get_table_array("analyzers");
+    auto analyzers = config->get_table_array("analyzers");
     for (const auto& group : analyzers->get())
     {
         auto method = group->get_as<std::string>("method");
@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 
         if (*method == analyzers::ngram_word_analyzer::id)
         {
-            stream = analyzers::analyzer::load_filters(config, *group);
+            stream = analyzers::load_filters(*config, *group);
             break;
         }
     }
@@ -56,7 +56,7 @@ int main(int argc, char** argv)
         if (line.empty())
             break;
 
-        stream->set_content(line);
+        stream->set_content(std::move(line));
         while (*stream)
         {
             std::cout << stream->next();

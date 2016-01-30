@@ -4,9 +4,9 @@
  */
 
 #include <random>
-#include "index/postings_data.h"
-#include "topics/lda_scvb.h"
-#include "util/progress.h"
+#include "meta/index/postings_data.h"
+#include "meta/topics/lda_scvb.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {

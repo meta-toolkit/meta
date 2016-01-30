@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "analyzers/filters/empty_sentence_filter.h"
+#include "meta/analyzers/filters/empty_sentence_filter.h"
 
 namespace meta
 {
@@ -12,7 +12,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string empty_sentence_filter::id = "empty-sentence";
+const util::string_view empty_sentence_filter::id = "empty-sentence";
 
 empty_sentence_filter::empty_sentence_filter(
     std::unique_ptr<token_stream> source)
@@ -29,9 +29,9 @@ empty_sentence_filter::empty_sentence_filter(const empty_sentence_filter& other)
     // nothing
 }
 
-void empty_sentence_filter::set_content(const std::string& content)
+void empty_sentence_filter::set_content(std::string&& content)
 {
-    source_->set_content(content);
+    source_->set_content(std::move(content));
     first_ = second_ = util::nullopt;
     next_token();
 }

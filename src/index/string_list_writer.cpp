@@ -3,10 +3,10 @@
  * @author Chase Geigle
  */
 
-#include "io/binary.h"
-#include "index/string_list_writer.h"
+#include "meta/io/binary.h"
+#include "meta/index/string_list_writer.h"
 #if !META_HAS_STREAM_MOVE
-#include "util/shim.h"
+#include "meta/util/shim.h"
 #endif
 
 namespace meta

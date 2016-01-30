@@ -64,13 +64,13 @@ class icu_handle
 inline std::u16string icu_to_u16str(const icu::UnicodeString& icu_str)
 {
     std::u16string u16str;
-    u16str.resize(icu_str.length());
+    u16str.resize(static_cast<std::size_t>(icu_str.length()));
     auto status = U_ZERO_ERROR;
     // looks dangerous, actually isn't: UChar is guaranteed to be a 16-bit
     // integer type, so all we're doing here is going between signed vs.
     // unsigned
-    icu_str.extract(reinterpret_cast<UChar*>(&u16str[0]), u16str.length(),
-                    status);
+    icu_str.extract(reinterpret_cast<UChar*>(&u16str[0]),
+                    static_cast<int32_t>(u16str.length()), status);
     return u16str;
 }
 
@@ -83,24 +83,11 @@ inline std::u16string icu_to_u16str(const icu::UnicodeString& icu_str)
 inline std::string icu_to_u8str(const icu::UnicodeString& icu_str)
 {
     std::string u8str;
+    auto len = static_cast<std::size_t>(icu_str.length());
+    u8str.reserve(len); // this is not right in general, but is a
+                        // reasonable guess for ascii
     icu_str.toUTF8String(u8str);
     return u8str;
-}
-
-/**
- * Helper method that appends a UTF-32 codepoint to the given utf8 string.
- * @param dest The string to append the codepoint to
- * @param codepoint The UTF-32 codepoint to append
- */
-inline void utf8_append_codepoint(std::string& dest, uint32_t codepoint)
-{
-    std::array<uint8_t, U8_MAX_LENGTH> buf;
-    int32_t len = 0;
-    UBool err = FALSE;
-    U8_APPEND(&buf[0], len, U8_MAX_LENGTH, codepoint, err);
-    if (err)
-        throw std::runtime_error{"failed to add codepoint to string"};
-    dest.append(reinterpret_cast<char*>(&buf[0]), len);
 }
 }
 }

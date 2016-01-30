@@ -5,13 +5,14 @@
 
 #include <fstream>
 
-#include "sequence/perceptron.h"
-#include "utf/utf.h"
-#include "util/progress.h"
-#include "util/time.h"
+#include "meta/io/filesystem.h"
+#include "meta/sequence/perceptron.h"
+#include "meta/utf/utf.h"
+#include "meta/util/progress.h"
+#include "meta/util/time.h"
 
 #if META_HAS_ZLIB
-#include "io/gzstream.h"
+#include "meta/io/gzstream.h"
 #endif
 
 namespace meta
@@ -51,10 +52,14 @@ perceptron::perceptron(const std::string& prefix) : perceptron()
     analyzer_.load(prefix);
 
 #if META_HAS_ZLIB
-    io::gzifstream file{prefix + "/tagger.model.gz"};
-#else
-    std::ifstream file{prefix + "/tagger.model"};
+    if (filesystem::file_exists(prefix + "/tagger.model.gz"))
+    {
+        io::gzifstream file{prefix + "/tagger.model.gz"};
+        model_.load(file);
+        return;
+    }
 #endif
+    std::ifstream file{prefix + "/tagger.model"};
     model_.load(file);
 }
 

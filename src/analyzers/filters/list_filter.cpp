@@ -4,7 +4,7 @@
  */
 
 #include <fstream>
-#include "analyzers/filters/list_filter.h"
+#include "meta/analyzers/filters/list_filter.h"
 #include "cpptoml.h"
 
 namespace meta
@@ -14,7 +14,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string list_filter::id = "list";
+const util::string_view list_filter::id = "list";
 
 list_filter::list_filter(std::unique_ptr<token_stream> source,
                          const std::string& filename, type method)
@@ -40,16 +40,16 @@ list_filter::list_filter(const list_filter& other)
     // nothing
 }
 
-void list_filter::set_content(const std::string& content)
+void list_filter::set_content(std::string&& content)
 {
     token_ = util::nullopt;
-    source_->set_content(content);
+    source_->set_content(std::move(content));
     next_token();
 }
 
 std::string list_filter::next()
 {
-    auto tok = *token_;
+    auto tok = std::move(*token_);
     next_token();
     return tok;
 }
@@ -76,14 +76,14 @@ void list_filter::next_token()
             case type::ACCEPT:
                 if (found)
                 {
-                    token_ = tok;
+                    token_ = std::move(tok);
                     return;
                 }
                 break;
             case type::REJECT:
                 if (!found)
                 {
-                    token_ = tok;
+                    token_ = std::move(tok);
                     return;
                 }
                 break;
@@ -99,11 +99,10 @@ std::unique_ptr<token_stream>
     make_filter<list_filter>(std::unique_ptr<token_stream> src,
                              const cpptoml::table& config)
 {
-    using exception = token_stream::token_stream_exception;
     auto method = config.get_as<std::string>("method");
     auto file = config.get_as<std::string>("file");
     if (!file)
-        throw exception{"file required for list_filter config"};
+        throw token_stream_exception{"file required for list_filter config"};
 
     list_filter::type type = list_filter::type::REJECT;
     if (method)
@@ -111,7 +110,7 @@ std::unique_ptr<token_stream>
         if (*method == "accept")
             type = list_filter::type::ACCEPT;
         else if (*method != "reject")
-            throw exception{"invalid method for list_filter"};
+            throw token_stream_exception{"invalid method for list_filter"};
     }
 
     return make_unique<list_filter>(std::move(src), *file, type);

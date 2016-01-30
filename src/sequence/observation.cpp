@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "sequence/observation.h"
+#include "meta/sequence/observation.h"
 
 namespace meta
 {
@@ -31,14 +31,14 @@ const tag_t& observation::tag() const
 {
     if (tag_)
         return *tag_;
-    throw exception{"no tag for this observation"};
+    throw observation_exception{"no tag for this observation"};
 }
 
 const label_id& observation::label() const
 {
     if (label_)
         return *label_;
-    throw exception{"no label for this observation"};
+    throw observation_exception{"no label for this observation"};
 }
 
 void observation::symbol(symbol_t sym)
@@ -61,7 +61,7 @@ bool observation::tagged() const
     return static_cast<bool>(tag_);
 }
 
-auto observation::features() const -> const feature_vector&
+auto observation::features() const -> const feature_vector &
 {
     return features_;
 }

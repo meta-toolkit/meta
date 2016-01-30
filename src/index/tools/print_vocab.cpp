@@ -1,4 +1,5 @@
-#include "index/vocabulary_map.h"
+#include <iostream>
+#include "meta/index/vocabulary_map.h"
 
 using namespace meta;
 

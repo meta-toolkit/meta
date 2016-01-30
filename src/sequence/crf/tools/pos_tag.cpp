@@ -3,14 +3,15 @@
  * @author Sean Massung
  */
 
-#include "sequence/crf/crf.h"
-#include "sequence/crf/tagger.h"
-#include "sequence/io/ptb_parser.h"
-#include "sequence/sequence.h"
-#include "sequence/crf/tagger.h"
-#include "analyzers/tokenizers/icu_tokenizer.h"
-#include "classify/confusion_matrix.h"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
+#include "meta/classify/confusion_matrix.h"
 #include "cpptoml.h"
+#include "meta/logging/logger.h"
+#include "meta/sequence/crf/crf.h"
+#include "meta/sequence/crf/tagger.h"
+#include "meta/sequence/io/ptb_parser.h"
+#include "meta/sequence/sequence.h"
+#include "meta/sequence/crf/tagger.h"
 
 using namespace meta;
 
@@ -25,7 +26,7 @@ int main(int argc, char* argv[])
     logging::set_cerr_logging();
 
     auto config = cpptoml::parse_file(argv[1]);
-    auto crf_group = config.get_table("crf");
+    auto crf_group = config->get_table("crf");
     if (!crf_group)
     {
         std::cerr << "[crf] group needed in config file" << std::endl;
@@ -59,7 +60,7 @@ int main(int argc, char* argv[])
 
         std::unique_ptr<analyzers::token_stream> stream
             = make_unique<analyzers::tokenizers::icu_tokenizer>();
-        stream->set_content(line);
+        stream->set_content(std::move(line));
         sequence::sequence seq;
         while (*stream)
         {

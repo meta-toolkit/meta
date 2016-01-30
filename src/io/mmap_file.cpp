@@ -3,13 +3,18 @@
  * @author Sean Massung
  */
 
+#ifndef _WIN32
 #include <sys/mman.h>
+#else
+#include "meta/io/mman-win32/mman.h"
+#endif
+
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "io/mmap_file.h"
-#include "util/filesystem.h"
+#include "meta/io/filesystem.h"
+#include "meta/io/mmap_file.h"
 
 namespace meta
 {

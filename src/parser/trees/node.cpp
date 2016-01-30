@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "parser/trees/node.h"
+#include "meta/parser/trees/node.h"
 
 namespace meta
 {

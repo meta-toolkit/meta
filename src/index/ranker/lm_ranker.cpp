@@ -4,29 +4,29 @@
  */
 
 #include <cmath>
-#include "corpus/document.h"
-#include "index/score_data.h"
-#include "index/ranker/lm_ranker.h"
+#include "meta/corpus/document.h"
+#include "meta/util/fastapprox.h"
+#include "meta/index/score_data.h"
+#include "meta/index/ranker/lm_ranker.h"
 
 namespace meta
 {
 namespace index
 {
 
-const std::string language_model_ranker::id = "language-model";
+const util::string_view language_model_ranker::id = "language-model";
 
-double language_model_ranker::score_one(const score_data& sd)
+float language_model_ranker::score_one(const score_data& sd)
 {
-    double ps = smoothed_prob(sd);
-    double pc = static_cast<double>(sd.corpus_term_count) / sd.total_terms;
-
-    return sd.query_term_weight * std::log(ps / (doc_constant(sd) * pc));
+    float ps = smoothed_prob(sd);
+    float pc = sd.corpus_term_count / sd.total_terms;
+    return sd.query_term_weight
+           * fastapprox::fastlog(ps / (doc_constant(sd) * pc));
 }
 
-double language_model_ranker::initial_score(const score_data& sd) const
+float language_model_ranker::initial_score(const score_data& sd) const
 {
-    return sd.query.length() * std::log(doc_constant(sd));
+    return sd.query_length * fastapprox::fastlog(doc_constant(sd));
 }
-
 }
 }

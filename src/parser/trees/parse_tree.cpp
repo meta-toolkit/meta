@@ -3,10 +3,10 @@
  */
 
 #include <ostream>
-#include "parser/trees/parse_tree.h"
-#include "parser/trees/leaf_node.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/visitors/tree_transformer.h"
+#include "meta/parser/trees/parse_tree.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/visitors/tree_transformer.h"
 
 namespace meta
 {

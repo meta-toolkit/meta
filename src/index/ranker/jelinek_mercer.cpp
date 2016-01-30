@@ -4,30 +4,43 @@
  */
 
 #include "cpptoml.h"
-#include "index/ranker/jelinek_mercer.h"
-#include "index/score_data.h"
+#include "meta/index/ranker/jelinek_mercer.h"
+#include "meta/index/score_data.h"
 
 namespace meta
 {
 namespace index
 {
 
-const std::string jelinek_mercer::id = "jelinek-mercer";
+const util::string_view jelinek_mercer::id = "jelinek-mercer";
 
-jelinek_mercer::jelinek_mercer(double lambda) : lambda_{lambda}
+jelinek_mercer::jelinek_mercer(float lambda) : lambda_{lambda}
 {
     /* nothing */
 }
 
-double jelinek_mercer::smoothed_prob(const score_data& sd) const
+jelinek_mercer::jelinek_mercer(std::istream& in)
+    : lambda_{io::packed::read<float>(in)}
 {
-    double max_likelihood = static_cast<double>(sd.doc_term_count)
-                            / sd.doc_size;
-    double pc = static_cast<double>(sd.corpus_term_count) / sd.total_terms;
-    return (1.0 - lambda_) * max_likelihood + lambda_ * pc;
+    // nothing
 }
 
-double jelinek_mercer::doc_constant(const score_data&) const
+void jelinek_mercer::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, lambda_);
+}
+
+float jelinek_mercer::smoothed_prob(const score_data& sd) const
+{
+    float max_likelihood = static_cast<float>(sd.doc_term_count)
+                            / sd.doc_size;
+    float pc = static_cast<float>(sd.corpus_term_count) / sd.total_terms;
+    return (1.0f - lambda_) * max_likelihood + lambda_ * pc;
+}
+
+float jelinek_mercer::doc_constant(const score_data&) const
 {
     return lambda_;
 }

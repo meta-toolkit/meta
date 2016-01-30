@@ -3,10 +3,10 @@
  * @author Chase Geigle
  */
 
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
-#include "parser/trees/visitors/leaf_node_finder.h"
-#include "util/shim.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/parser/trees/visitors/leaf_node_finder.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {

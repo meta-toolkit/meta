@@ -2,7 +2,7 @@
  * @file multi_analyzer.cpp
  */
 
-#include "analyzers/multi_analyzer.h"
+#include "meta/analyzers/multi_analyzer.h"
 
 namespace meta
 {
@@ -11,7 +11,8 @@ namespace analyzers
 
 multi_analyzer::multi_analyzer(std::vector<std::unique_ptr<analyzer>>&& toks)
     : analyzers_{std::move(toks)}
-{/* nothing */
+{
+    /* nothing */
 }
 
 multi_analyzer::multi_analyzer(const multi_analyzer& other)
@@ -21,10 +22,10 @@ multi_analyzer::multi_analyzer(const multi_analyzer& other)
         analyzers_.emplace_back(an->clone());
 }
 
-void multi_analyzer::tokenize(corpus::document& doc)
+void multi_analyzer::tokenize(const corpus::document& doc, featurizer& counts)
 {
     for (auto& tok : analyzers_)
-        tok->tokenize(doc);
+        tok->tokenize(doc, counts);
 }
 }
 }

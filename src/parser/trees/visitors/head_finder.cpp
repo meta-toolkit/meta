@@ -6,12 +6,12 @@
 #include <unordered_set>
 #include <vector>
 
-#include "logging/logger.h"
-#include "meta.h"
-#include "parser/trees/visitors/head_finder.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
-#include "util/optional.h"
+#include "meta/logging/logger.h"
+#include "meta/meta.h"
+#include "meta/parser/trees/visitors/head_finder.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/util/optional.h"
 
 namespace meta
 {

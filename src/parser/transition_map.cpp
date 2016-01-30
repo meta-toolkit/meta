@@ -6,11 +6,12 @@
 #include <cassert>
 #include <fstream>
 
-#include "io/binary.h"
-#include "parser/transition_map.h"
+#include "meta/io/filesystem.h"
+#include "meta/io/packed.h"
+#include "meta/parser/transition_map.h"
 
 #ifdef META_HAS_ZLIB
-#include "io/gzstream.h"
+#include "meta/io/gzstream.h"
 #endif
 
 namespace meta
@@ -21,29 +22,38 @@ namespace parser
 transition_map::transition_map(const std::string& prefix)
 {
 #ifdef META_HAS_ZLIB
-    io::gzifstream store{prefix + "/parser.trans.gz"};
-#else
-    std::ifstream store{prefix + "/parser.trans", std::ios::binary};
+    if (filesystem::file_exists(prefix + "/parser.trans.gz"))
+    {
+        io::gzifstream store{prefix + "/parser.trans.gz"};
+        load(store);
+        return;
+    }
 #endif
+    std::ifstream store{prefix + "/parser.trans", std::ios::binary};
+    load(store);
+}
 
+void transition_map::load(std::istream& store)
+{
     if (!store)
-        throw exception{"missing transitions model file"};
+        throw transition_map_exception{"missing transitions model file"};
 
     uint64_t num_trans;
-    io::read_binary(store, num_trans);
+    io::packed::read(store, num_trans);
 
     if (!store)
-        throw exception{"malformed transitions model file"};
+        throw transition_map_exception{"malformed transitions model file"};
 
     transitions_.reserve(num_trans);
     for (uint64_t i = 0; i < num_trans; ++i)
     {
         if (!store)
-            throw exception{"malformed transition model file (too few "
-                            "transitions written)"};
+            throw transition_map_exception{
+                "malformed transition model file (too few "
+                "transitions written)"};
 
         transition::type_t trans_type;
-        io::read_binary(store, trans_type);
+        io::packed::read(store, trans_type);
 
         util::optional<transition> trans;
         switch (trans_type)
@@ -53,7 +63,7 @@ transition_map::transition_map(const std::string& prefix)
             case transition::type_t::UNARY:
             {
                 std::string lbl;
-                io::read_binary(store, lbl);
+                io::packed::read(store, lbl);
                 trans = transition{trans_type, class_label{lbl}};
                 break;
             }
@@ -63,7 +73,8 @@ transition_map::transition_map(const std::string& prefix)
                 break;
         }
 
-        auto id = static_cast<trans_id>(map_.size());
+        assert(map_.size() <= std::numeric_limits<uint16_t>::max());
+        trans_id id{static_cast<uint16_t>(map_.size())};
         map_[*trans] = id;
         transitions_.emplace_back(std::move(*trans));
     }
@@ -90,7 +101,8 @@ trans_id transition_map::operator[](const transition& trans)
         return it->second;
 
     transitions_.push_back(trans);
-    auto id = static_cast<trans_id>(map_.size());
+    assert(map_.size() <= std::numeric_limits<uint16_t>::max());
+    trans_id id{static_cast<uint16_t>(map_.size())};
     return map_[trans] = id;
 }
 
@@ -108,18 +120,17 @@ void transition_map::save(const std::string& prefix) const
     std::ofstream store{prefix + "/parser.trans", std::ios::binary};
 #endif
 
-    uint64_t sze = transitions_.size();
-    io::write_binary(store, sze);
+    io::packed::write(store, transitions_.size());
     for (const auto& trans : transitions_)
     {
-        io::write_binary(store, trans.type());
+        io::packed::write(store, trans.type());
         switch (trans.type())
         {
             case transition::type_t::REDUCE_L:
             case transition::type_t::REDUCE_R:
             case transition::type_t::UNARY:
-                io::write_binary(store,
-                                 static_cast<std::string>(trans.label()));
+                io::packed::write(
+                    store, static_cast<const std::string&>(trans.label()));
                 break;
 
             default:

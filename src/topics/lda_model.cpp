@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "topics/lda_model.h"
+#include "meta/topics/lda_model.h"
 
 namespace meta
 {
@@ -74,6 +74,11 @@ void lda_model::save(const std::string& prefix) const
 {
     save_doc_topic_distributions(prefix + ".theta");
     save_topic_term_distributions(prefix + ".phi");
+}
+
+uint64_t lda_model::num_topics() const
+{
+    return num_topics_;
 }
 }
 }

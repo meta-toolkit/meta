@@ -5,12 +5,12 @@
 
 #include <memory>
 
-#include "parser/trees/visitors/leaf_node_finder.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
-#include "parser/state.h"
-#include "parser/sr_parser.h"
-#include "sequence/observation.h"
+#include "meta/parser/trees/visitors/leaf_node_finder.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/parser/state.h"
+#include "meta/parser/sr_parser.h"
+#include "meta/sequence/observation.h"
 
 namespace meta
 {
@@ -33,7 +33,7 @@ state::state(const sequence::sequence& sentence)
     for (const auto& obs : sentence)
     {
         if (!obs.tagged())
-            throw sr_parser::exception{"sentence must be POS tagged"};
+            throw sr_parser_exception{"sentence must be POS tagged"};
 
         std::string word = obs.symbol();
         class_label tag{obs.tag()};
@@ -113,7 +113,7 @@ state state::advance(const transition& trans) const
 
         default:
         {
-            throw sr_parser::exception{"Unreachable"};
+            throw sr_parser_exception{"Unreachable"};
         }
     }
 }
@@ -305,7 +305,7 @@ bool state::legal(const transition& trans) const
             return idle_legal(*this);
 
         default:
-            throw sr_parser::exception{"Unreachable"};
+            throw sr_parser_exception{"Unreachable"};
     }
 }
 
@@ -344,7 +344,7 @@ transition state::emergency_transition() const
         }
     }
 
-    throw sr_parser::exception{"emergency transition impossible"};
+    throw sr_parser_exception{"emergency transition impossible"};
 }
 
 size_t state::stack_size() const
@@ -368,10 +368,11 @@ const node* state::stack_item(size_t depth) const
     return st.peek().get();
 }
 
-const leaf_node* state::queue_item(ssize_t depth) const
+const leaf_node* state::queue_item(int64_t depth) const
 {
-    if (q_idx_ + depth < queue_->size())
-        return queue_->at(q_idx_ + depth).get();
+    auto idx = static_cast<std::size_t>(static_cast<int64_t>(q_idx_) + depth);
+    if (idx < queue_->size())
+        return queue_->at(idx).get();
     return nullptr;
 }
 

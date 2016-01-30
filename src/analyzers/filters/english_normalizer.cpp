@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <cctype>
-#include "analyzers/filters/english_normalizer.h"
+#include "meta/analyzers/filters/english_normalizer.h"
 
 namespace meta
 {
@@ -14,7 +14,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string english_normalizer::id = "normalize";
+const util::string_view english_normalizer::id = "english-normalizer";
 
 english_normalizer::english_normalizer(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}
@@ -28,10 +28,10 @@ english_normalizer::english_normalizer(const english_normalizer& other)
     // nothing
 }
 
-void english_normalizer::set_content(const std::string& content)
+void english_normalizer::set_content(std::string&& content)
 {
     tokens_.clear();
-    source_->set_content(content);
+    source_->set_content(std::move(content));
 }
 
 std::string english_normalizer::next()

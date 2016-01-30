@@ -4,21 +4,21 @@
  */
 
 #include <iostream>
-#include <vector>
-#include <unordered_set>
 #include <string>
+#include <unordered_set>
+#include <vector>
+#include "meta/analyzers/analyzer.h"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
+#include "meta/analyzers/filters/all.h"
+#include "meta/analyzers/ngram/ngram_word_analyzer.h"
+#include "meta/corpus/document.h"
 #include "cpptoml.h"
-#include "util/shim.h"
-#include "util/filesystem.h"
-#include "analyzers/analyzer.h"
-#include "analyzers/tokenizers/icu_tokenizer.h"
-#include "analyzers/filters/all.h"
-#include "analyzers/ngram/ngram_word_analyzer.h"
-#include "corpus/document.h"
-#include "parser/sr_parser.h"
-#include "sequence/perceptron.h"
-#include "sequence/io/ptb_parser.h"
-#include "sequence/sequence.h"
+#include "meta/io/filesystem.h"
+#include "meta/parser/sr_parser.h"
+#include "meta/sequence/io/ptb_parser.h"
+#include "meta/sequence/perceptron.h"
+#include "meta/sequence/sequence.h"
+#include "meta/util/shim.h"
 
 using namespace meta;
 
@@ -94,7 +94,7 @@ void stem(const std::string& file, const cpptoml::table&)
     std::unique_ptr<token_stream> stream
         = make_unique<tokenizers::icu_tokenizer>();
     stream = make_unique<filters::lowercase_filter>(std::move(stream));
-    stream = make_unique<filters::porter2_stemmer>(std::move(stream));
+    stream = make_unique<filters::porter2_filter>(std::move(stream));
     stream = make_unique<filters::empty_sentence_filter>(std::move(stream));
 
     auto out_name = no_ext(file) + ".stems.txt";
@@ -161,8 +161,8 @@ void pos(const std::string& file, const cpptoml::table& config, bool replace)
 
     // tag each sentence in the file
     // and write its output to the output file
-    auto out_name = no_ext(file)
-                    + (replace ? ".pos-replace.txt" : ".pos-tagged.txt");
+    auto out_name
+        = no_ext(file) + (replace ? ".pos-replace.txt" : ".pos-tagged.txt");
     std::ofstream outfile{out_name};
     sequence::sequence seq;
     while (*stream)
@@ -275,24 +275,28 @@ void parse(const std::string& file, const cpptoml::table& config)
  * @param config Configuration settings
  * @param n The n-gram value to use in tokenization
  */
-void freq(const std::string& file, const cpptoml::table&, uint16_t n)
+void freq(const std::string& file, cpptoml::table& config, int64_t n)
 {
     std::cout << "Running frequency analysis on " << n << "-grams" << std::endl;
+    using namespace meta::analyzers;
 
-    std::unique_ptr<analyzers::token_stream> stream
-        = make_unique<analyzers::tokenizers::icu_tokenizer>();
-    analyzers::ngram_word_analyzer ana{n, std::move(stream)};
+    // make sure we have the right n-gram
+    auto anas = config.get_table_array("analyzers");
+    auto local = *anas->begin();
+    local->erase("ngram");
+    local->insert("ngram", n);
+    auto ana = make_analyzer<ngram_word_analyzer>(config, *local);
 
     corpus::document doc;
     doc.content(filesystem::file_text(file));
-    ana.tokenize(doc);
+    auto counts = ana->analyze<uint64_t>(doc);
 
-    using pair_t = std::pair<std::string, double>;
-    std::vector<pair_t> sorted(doc.counts().begin(), doc.counts().end());
+    using pair_t = std::pair<std::string, uint64_t>;
+    std::vector<pair_t> sorted(counts.begin(), counts.end());
     std::sort(sorted.begin(), sorted.end(), [](const pair_t& a, const pair_t& b)
               {
-        return a.second > b.second;
-    });
+                  return a.second > b.second;
+              });
 
     auto out_name = no_ext(file) + ".freq." + std::to_string(n) + ".txt";
     std::ofstream outfile{out_name};
@@ -313,19 +317,19 @@ int main(int argc, char* argv[])
     bool all = args.find("--all") != args.end();
 
     if (all || args.find("--stem") != args.end())
-        stem(file, config);
+        stem(file, *config);
     if (all || args.find("--stop") != args.end())
-        stop(file, config);
+        stop(file, *config);
     if (all || args.find("--pos") != args.end())
-        pos(file, config, false);
+        pos(file, *config, false);
     if (all || args.find("--pos-replace") != args.end())
-        pos(file, config, true);
+        pos(file, *config, true);
     if (all || args.find("--parse") != args.end())
-        parse(file, config);
+        parse(file, *config);
     if (all || args.find("--freq-unigram") != args.end())
-        freq(file, config, 1);
+        freq(file, *config, 1);
     if (all || args.find("--freq-bigram") != args.end())
-        freq(file, config, 2);
+        freq(file, *config, 2);
     if (all || args.find("--freq-trigram") != args.end())
-        freq(file, config, 3);
+        freq(file, *config, 3);
 }

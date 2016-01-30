@@ -3,17 +3,17 @@
  * @author Chase Geigle
  */
 
-#include "parser/training_data.h"
-#include "parser/trees/visitors/annotation_remover.h"
-#include "parser/trees/visitors/empty_remover.h"
-#include "parser/trees/visitors/unary_chain_remover.h"
-#include "parser/trees/visitors/multi_transformer.h"
-#include "parser/trees/visitors/head_finder.h"
-#include "parser/trees/visitors/binarizer.h"
-#include "parser/trees/visitors/debinarizer.h"
-#include "parser/trees/visitors/transition_finder.h"
-#include "parser/trees/visitors/leaf_node_finder.h"
-#include "util/progress.h"
+#include "meta/parser/training_data.h"
+#include "meta/parser/trees/visitors/annotation_remover.h"
+#include "meta/parser/trees/visitors/empty_remover.h"
+#include "meta/parser/trees/visitors/unary_chain_remover.h"
+#include "meta/parser/trees/visitors/multi_transformer.h"
+#include "meta/parser/trees/visitors/head_finder.h"
+#include "meta/parser/trees/visitors/binarizer.h"
+#include "meta/parser/trees/visitors/debinarizer.h"
+#include "meta/parser/transition_finder.h"
+#include "meta/parser/trees/visitors/leaf_node_finder.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {

@@ -6,11 +6,14 @@ punctuation = "../data/sentence-boundaries/sentence-punctuation.txt"
 start-exceptions = "../data/sentence-boundaries/sentence-start-exceptions.txt"
 end-exceptions = "../data/sentence-boundaries/sentence-end-exceptions.txt"
 query-judgements = "../data/ceeaus-qrels.txt"
+query-path = "../queries.txt" # create this file
 
-corpus-type = "line-corpus"
 dataset = "20newsgroups"
+corpus = "line.toml" # located inside dataset folder
 forward-index = "20news-fwd"
 inverted-index = "20news-inv"
+indexer-ram-budget = 1024 # **estimated** RAM budget for indexing in MB
+                          # always set this lower than your physical RAM!
 
 [[analyzers]]
 method = "ngram-word"
@@ -47,6 +50,22 @@ train-sections = [0, 18]
 dev-sections = [19, 21]
 test-sections = [22, 24]
 
+[diff]
+prefix = "../data"
+dataset = "20newsgroups"
+n-value = 3
+max-edits = 3
+# penalty defaults are all zero (no penalty)
+base-penalty = 0.0 # base penalty is for any edit
+insert-penalty = 0.0
+substitute-penalty = 0.0
+remove-penalty = 0.0
+
+[features]
+method = "info-gain"
+prefix = "features"
+features-per-class = 20
+
 [sequence]
 prefix = "perceptron-tagger"
 treebank = "penn-treebank" # relative to data prefix
@@ -64,3 +83,7 @@ section-size = 99
 train-sections = [2, 21]
 dev-sections = [22, 22]
 test-sections = [23, 23]
+
+[language-model]
+arpa-file = "../data/english-sentences.arpa"
+binary-file-prefix = "english-sentences-"

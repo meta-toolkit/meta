@@ -5,8 +5,8 @@
 
 #include <algorithm>
 #include <cctype>
-#include "analyzers/filters/lowercase_filter.h"
-#include "utf/utf.h"
+#include "meta/analyzers/filters/lowercase_filter.h"
+#include "meta/utf/utf.h"
 
 namespace meta
 {
@@ -15,7 +15,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string lowercase_filter::id = "lowercase";
+const util::string_view lowercase_filter::id = "lowercase";
 
 lowercase_filter::lowercase_filter(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}
@@ -29,15 +29,14 @@ lowercase_filter::lowercase_filter(const lowercase_filter& other)
     // nothing
 }
 
-void lowercase_filter::set_content(const std::string& content)
+void lowercase_filter::set_content(std::string&& content)
 {
-    source_->set_content(content);
+    source_->set_content(std::move(content));
 }
 
 std::string lowercase_filter::next()
 {
-    auto tok = source_->next();
-    return utf::foldcase(tok);
+    return utf::foldcase(source_->next());
 }
 
 lowercase_filter::operator bool() const

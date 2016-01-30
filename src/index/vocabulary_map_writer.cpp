@@ -5,9 +5,9 @@
 
 #include <iostream>
 #include <algorithm>
-#include "meta.h"
-#include "index/vocabulary_map_writer.h"
-#include "io/binary.h"
+#include "meta/meta.h"
+#include "meta/index/vocabulary_map_writer.h"
+#include "meta/io/binary.h"
 
 namespace meta
 {
@@ -108,7 +108,8 @@ vocabulary_map_writer::~vocabulary_map_writer()
 
             // signed int for safe negation below (auto causes a big on
             // 32-bit systems)
-            int64_t length = sizeof(uint64_t) + term.length() + 1;
+            auto length
+                = static_cast<int64_t>(sizeof(uint64_t) + term.length() + 1);
 
             // if we are out of room in the current block, flush it and start a
             // new one

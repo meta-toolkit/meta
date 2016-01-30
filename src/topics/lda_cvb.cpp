@@ -4,9 +4,10 @@
  */
 
 #include <random>
-#include "index/postings_data.h"
-#include "topics/lda_cvb.h"
-#include "util/progress.h"
+#include "meta/index/postings_data.h"
+#include "meta/logging/logger.h"
+#include "meta/topics/lda_cvb.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {
@@ -45,7 +46,9 @@ void lda_cvb::run(uint64_t num_iters, double convergence)
         double max_change = perform_iteration(i);
         ss << "Iteration " << i + 1
            << " maximum change in gamma: " << max_change;
-        std::string spacing(std::max<int>(0, 80 - ss.tellp()), ' ');
+        std::string spacing(static_cast<std::size_t>(
+                                std::max<std::streamoff>(0, 80 - ss.tellp())),
+                            ' ');
         ss << spacing;
         LOG(progress) << '\r' << ss.str() << '\n' << ENDLG;
         if (max_change <= convergence)

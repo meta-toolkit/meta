@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "parser/analyzers/featurizers/featurizer_factory.h"
-#include "parser/analyzers/featurizers/all.h"
+#include "meta/parser/analyzers/featurizers/featurizer_factory.h"
+#include "meta/parser/analyzers/featurizers/all.h"
 
 namespace meta
 {
@@ -14,12 +14,13 @@ namespace analyzers
 template <class Featurizer>
 void featurizer_factory::register_featurizer()
 {
-    add(Featurizer::id, make_featurizer<Featurizer>);
+    // this-> needed to find  the add() method in dependent base class
+    this->add(Featurizer::id, make_featurizer<Featurizer>);
 }
 
 featurizer_factory::featurizer_factory()
 {
-    // built-in featurizer
+    // built-in featurizers
     register_featurizer<branch_featurizer>();
     register_featurizer<depth_featurizer>();
     register_featurizer<semi_skeleton_featurizer>();

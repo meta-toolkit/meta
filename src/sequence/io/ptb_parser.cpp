@@ -1,7 +1,7 @@
 #include <fstream>
 
-#include "logging/logger.h"
-#include "sequence/io/ptb_parser.h"
+#include "meta/logging/logger.h"
+#include "meta/sequence/io/ptb_parser.h"
 
 namespace meta
 {

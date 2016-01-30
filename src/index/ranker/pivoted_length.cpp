@@ -3,29 +3,45 @@
  * @author Sean Massung
  */
 
-#include "index/inverted_index.h"
-#include "index/ranker/pivoted_length.h"
-#include "index/score_data.h"
+#include "meta/index/inverted_index.h"
+#include "meta/index/ranker/pivoted_length.h"
+#include "meta/index/score_data.h"
+#include "meta/util/fastapprox.h"
 
 namespace meta
 {
 namespace index
 {
 
-const std::string pivoted_length::id = "pivoted-length";
+const util::string_view pivoted_length::id = "pivoted-length";
+const constexpr float pivoted_length::default_s;
 
-pivoted_length::pivoted_length(double s) : s_{s}
+pivoted_length::pivoted_length(float s) : s_{s}
 {
     /* nothing */
 }
 
-double pivoted_length::score_one(const score_data& sd)
+pivoted_length::pivoted_length(std::istream& in)
+    : s_{io::packed::read<float>(in)}
 {
-    double doc_len = sd.idx.doc_size(sd.d_id);
-    double TF = 1 + log(1 + log(sd.doc_term_count));
-    double norm = (1 - s_) + s_ * (doc_len / sd.avg_dl);
-    double IDF = log((sd.num_docs + 1) / (0.5 + sd.doc_count));
+    // nothing
+}
 
+void pivoted_length::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, s_);
+}
+
+float pivoted_length::score_one(const score_data& sd)
+{
+    float doc_len = sd.idx.doc_size(sd.d_id);
+    float TF = 1.0f + fastapprox::fastlog(
+                          1.0f + fastapprox::fastlog(sd.doc_term_count));
+    float norm = (1.0f - s_) + s_ * (doc_len / sd.avg_dl);
+    float IDF
+        = fastapprox::fastlog((sd.num_docs + 1.0f) / (0.5f + sd.doc_count));
     return TF / norm * sd.query_term_weight * IDF;
 }
 
@@ -33,9 +49,7 @@ template <>
 std::unique_ptr<ranker>
     make_ranker<pivoted_length>(const cpptoml::table& config)
 {
-    auto s = pivoted_length::default_s;
-    if (auto c_s = config.get_as<double>("s"))
-        s = *c_s;
+    auto s = config.get_as<double>("s").value_or(pivoted_length::default_s);
     return make_unique<pivoted_length>(s);
 }
 }

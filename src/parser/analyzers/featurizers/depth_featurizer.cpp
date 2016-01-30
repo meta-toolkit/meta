@@ -1,14 +1,14 @@
-#include "parser/analyzers/featurizers/depth_featurizer.h"
-#include "parser/trees/visitors/visitor.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
+#include "meta/parser/analyzers/featurizers/depth_featurizer.h"
+#include "meta/parser/trees/visitors/visitor.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
 
 namespace meta
 {
 namespace analyzers
 {
 
-const std::string depth_featurizer::id = "depth";
+const util::string_view depth_featurizer::id = "depth";
 
 namespace
 {
@@ -34,12 +34,12 @@ class height_visitor : public parser::const_visitor<size_t>
 };
 }
 
-void depth_featurizer::tree_tokenize(corpus::document& doc,
-                                     const parser::parse_tree& tree) const
+void depth_featurizer::tree_tokenize(const parser::parse_tree& tree,
+                                     featurizer& counts) const
 {
     height_visitor vtor;
     auto rep = "depth-" + std::to_string(tree.visit(vtor));
-    doc.increment(rep, 1);
+    counts(rep, 1ul);
 }
 }
 }

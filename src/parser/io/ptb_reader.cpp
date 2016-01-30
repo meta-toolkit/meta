@@ -5,11 +5,10 @@
 
 #include <iostream>
 #include <fstream>
-#include "parser/io/ptb_reader.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
-#include "utf/utf.h"
-#include "util/shim.h"
+#include "meta/parser/io/ptb_reader.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {
@@ -53,7 +52,7 @@ std::string read_word(std::istream& file)
     std::string word;
     while (file && file.peek() != '(' && file.peek() != ')'
            && !std::isspace(file.peek()))
-        word += file.get();
+        word += static_cast<char>(file.get());
 
     if (word.length() == 0)
         throw std::runtime_error{"invalid tree format reading text"};

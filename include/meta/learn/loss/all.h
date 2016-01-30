@@ -1,0 +1,8 @@
+#include "meta/learn/loss/hinge.h"
+#include "meta/learn/loss/huber.h"
+#include "meta/learn/loss/least_squares.h"
+#include "meta/learn/loss/logistic.h"
+#include "meta/learn/loss/modified_huber.h"
+#include "meta/learn/loss/perceptron.h"
+#include "meta/learn/loss/smooth_hinge.h"
+#include "meta/learn/loss/squared_hinge.h"

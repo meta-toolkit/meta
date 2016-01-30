@@ -8,20 +8,20 @@
 #include <numeric>
 #include <map>
 #include <set>
-#include "sequence/crf/crf.h"
-#include "sequence/crf/scorer.h"
-#include "util/mapping.h"
-#include "util/optional.h"
-#include "util/progress.h"
-#include "util/time.h"
+#include "meta/logging/logger.h"
+#include "meta/sequence/crf/crf.h"
+#include "meta/sequence/crf/scorer.h"
+#include "meta/util/mapping.h"
+#include "meta/util/optional.h"
+#include "meta/util/progress.h"
+#include "meta/util/time.h"
 
 namespace meta
 {
 namespace sequence
 {
 
-crf::crf(const std::string& prefix)
-    : scale_{1}, prefix_{prefix}
+crf::crf(const std::string& prefix) : scale_{1}, prefix_{prefix}
 {
     if (filesystem::file_exists(prefix_ + "/observation_ranges.vector"))
         load_model();
@@ -38,14 +38,14 @@ void crf::load_model()
         prefix_ + "/transition_ranges.vector"};
 
     // observations
-    observation_weights_ =
-        util::disk_vector<double>{prefix_ + "/observation_weights.vector"};
-    observations_ =
-        util::disk_vector<label_id>{prefix_ + "/observations.vector"};
+    observation_weights_
+        = util::disk_vector<double>{prefix_ + "/observation_weights.vector"};
+    observations_
+        = util::disk_vector<label_id>{prefix_ + "/observations.vector"};
 
     // transitions
-    transition_weights_ =
-        util::disk_vector<double>{prefix_ + "/transition_weights.vector"};
+    transition_weights_
+        = util::disk_vector<double>{prefix_ + "/transition_weights.vector"};
     transitions_ = util::disk_vector<label_id>{prefix_ + "/transitions.vector"};
 
     num_labels_ = transition_ranges_->size() - 1;
@@ -88,7 +88,7 @@ void crf::initialize(const std::vector<sequence>& examples)
     transition_ranges_ = util::disk_vector<crf_feature_id>{
         prefix_ + "/transition_ranges.vector", trans_feats.size() + 1};
 
-    uint64_t obs_size = 0;
+    crf_feature_id obs_size{0};
     for (const auto& pair : obs_feats)
     {
         (*observation_ranges_)[pair.first] = obs_size;
@@ -112,7 +112,7 @@ void crf::initialize(const std::vector<sequence>& examples)
         }
     }
 
-    uint64_t trans_size = 0;
+    crf_feature_id trans_size{0};
     for (const auto& pair : trans_feats)
     {
         (*transition_ranges_)[pair.first] = trans_size;
@@ -122,8 +122,8 @@ void crf::initialize(const std::vector<sequence>& examples)
 
     transition_weights_ = util::disk_vector<double>{
         prefix_ + "/transition_weights.vector", trans_size};
-    transitions_ = util::disk_vector<label_id>{
-        prefix_ + "/transitions.vector", trans_size};
+    transitions_ = util::disk_vector<label_id>{prefix_ + "/transitions.vector",
+                                               trans_size};
 
     idx = 0;
     for (const auto& pair : trans_feats)
@@ -136,8 +136,9 @@ void crf::initialize(const std::vector<sequence>& examples)
         }
     }
 
-    LOG(info) << "Num features: " << transition_weights_->size()
-                                     + observation_weights_->size() << ENDLG;
+    LOG(info) << "Num features: "
+              << transition_weights_->size() + observation_weights_->size()
+              << ENDLG;
 }
 
 void crf::reset()
@@ -199,10 +200,12 @@ label_id crf::transition(crf_feature_id fid) const
 double crf::calibrate(parameters params, const std::vector<uint64_t>& indices,
                       const std::vector<sequence>& examples)
 {
-    auto num_samples =
-        std::min<uint64_t>(params.calibration_samples, indices.size());
-    std::vector<uint64_t> samples{indices.begin(),
-                                  indices.begin() + num_samples};
+    auto num_samples
+        = std::min<uint64_t>(params.calibration_samples, indices.size());
+
+    using diff_type = decltype(indices.begin())::difference_type;
+    std::vector<uint64_t> samples{
+        indices.begin(), indices.begin() + static_cast<diff_type>(num_samples)};
 
     double initial_loss = 0;
     printing::progress progress{" > Initial loss: ", num_samples};
@@ -299,10 +302,12 @@ double crf::train(parameters params, const std::vector<sequence>& examples)
         printing::progress progress{ss.str(), examples.size()};
         progress.print_endline(false);
         std::shuffle(indices.begin(), indices.end(), rng);
-        auto time = common::time<std::chrono::milliseconds>([&]()
-        {
-            loss = epoch(params, progress, iter - 1, indices, examples, scorer);
-        });
+        auto time = common::time<std::chrono::milliseconds>(
+            [&]()
+            {
+                loss = epoch(params, progress, iter - 1, indices, examples,
+                             scorer);
+            });
         if (scale_ < 1e-9)
             rescale();
         auto l2 = l2norm();
@@ -347,8 +352,8 @@ double crf::epoch(parameters params, printing::progress& progress,
     return sum_loss;
 }
 
-double crf::iteration(parameters params, uint64_t iter,
-                      const sequence& seq, scorer& scorer)
+double crf::iteration(parameters params, uint64_t iter, const sequence& seq,
+                      scorer& scorer)
 {
     double lr = 1 / (params.lambda * (params.t0 + iter));
     scale_ *= (1 - params.lambda * lr);
@@ -407,8 +412,8 @@ void crf::gradient_model_expectation(const sequence& seq, double gain,
             for (const auto& idx : obs_range(pair.first))
             {
                 auto lbl = observation(idx);
-                obs_weight(idx) += gain * pair.second
-                                   * scr.state_marginal(t, lbl);
+                obs_weight(idx)
+                    += gain * pair.second * scr.state_marginal(t, lbl);
             }
         }
     }
@@ -441,6 +446,5 @@ void crf::rescale()
         w *= scale_;
     scale_ = 1;
 }
-
 }
 }

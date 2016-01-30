@@ -5,63 +5,57 @@
 
 #include <algorithm>
 
-#include "corpus/line_corpus.h"
-#include "io/parser.h"
-#include "util/filesystem.h"
-#include "util/shim.h"
+#include "meta/corpus/line_corpus.h"
+#include "meta/io/filesystem.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {
 namespace corpus
 {
 
+const util::string_view line_corpus::id = "line-corpus";
+
 line_corpus::line_corpus(const std::string& file, std::string encoding,
-                         uint64_t num_lines /* = 0 */)
+                         uint64_t num_docs /* = 0 */)
     : corpus{std::move(encoding)},
       cur_id_{0},
-      num_lines_{num_lines},
-      parser_{file, "\n"}
+      num_lines_{num_docs},
+      infile_{file}
 {
     // init class label info
     if (filesystem::file_exists(file + ".labels"))
     {
-        class_parser_ = make_unique<io::parser>(file + ".labels", "\n");
+        class_infile_ = make_unique<std::ifstream>(file + ".labels");
         if (num_lines_ == 0)
             num_lines_ = filesystem::num_lines(file + ".labels");
     }
 
-    // init class label info
-    if (filesystem::file_exists(file + ".names"))
-    {
-        name_parser_ = make_unique<io::parser>(file + ".names", "\n");
-        if (num_lines_ == 0)
-            num_lines_ = filesystem::num_lines(file + ".names");
-    }
-
-    // if we couldn't determine the number of lines in the constructor and the
-    // two optional files don't exist, we have to count newlines here
+    // if we couldn't determine the number of lines in the constructor, we have
+    // to count newlines
     if (num_lines_ == 0)
         num_lines_ = filesystem::num_lines(file);
 }
 
 bool line_corpus::has_next() const
 {
-    return parser_.has_next();
+    return cur_id_ < size();
 }
 
 document line_corpus::next()
 {
     class_label label{"[none]"};
-    std::string name{"[none]"};
 
-    if (class_parser_)
-        label = class_label{class_parser_->next()};
+    if (class_infile_)
+        *class_infile_ >> label;
 
-    if (name_parser_)
-        name = name_parser_->next();
-
-    document doc{name, cur_id_++, label};
-    doc.content(parser_.next(), encoding());
+    document doc{cur_id_++, label};
+    std::string content;
+    if (!std::getline(infile_, content))
+        throw corpus_exception{"error parsing line_corpus line "
+                               + std::to_string(cur_id_)};
+    doc.content(content, encoding());
+    doc.mdata(next_metadata());
 
     return doc;
 }
@@ -69,6 +63,29 @@ document line_corpus::next()
 uint64_t line_corpus::size() const
 {
     return num_lines_;
+}
+
+template <>
+std::unique_ptr<corpus> make_corpus<line_corpus>(util::string_view prefix,
+                                                 util::string_view dataset,
+                                                 const cpptoml::table& config)
+{
+    auto encoding = config.get_as<std::string>("encoding").value_or("utf-8");
+
+    // string_view doesn't have operator+ overloads...
+    auto filename = prefix.to_string();
+    filename += "/";
+    filename.append(dataset.data(), dataset.size());
+    filename += "/";
+    filename.append(dataset.data(), dataset.size());
+    filename += ".dat";
+
+    auto lines = config.get_as<int64_t>("num-docs");
+    if (!lines)
+        return make_unique<line_corpus>(filename, encoding);
+    else
+        return make_unique<line_corpus>(filename, encoding,
+                                        static_cast<uint64_t>(*lines));
 }
 }
 }

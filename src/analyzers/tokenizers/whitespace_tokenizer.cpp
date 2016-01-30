@@ -6,9 +6,9 @@
 #include <cassert>
 #include <cctype>
 
-#include "analyzers/tokenizers/whitespace_tokenizer.h"
-#include "corpus/document.h"
-#include "io/mmap_file.h"
+#include "meta/analyzers/tokenizers/whitespace_tokenizer.h"
+#include "meta/corpus/document.h"
+#include "meta/io/mmap_file.h"
 
 namespace meta
 {
@@ -17,15 +17,15 @@ namespace analyzers
 namespace tokenizers
 {
 
-const std::string whitespace_tokenizer::id = "whitespace-tokenizer";
+const util::string_view whitespace_tokenizer::id = "whitespace-tokenizer";
 
 whitespace_tokenizer::whitespace_tokenizer() : idx_{0}
 {
 }
 
-void whitespace_tokenizer::set_content(const std::string& content)
+void whitespace_tokenizer::set_content(std::string&& content)
 {
-    content_ = content;
+    content_ = std::move(content);
     idx_ = 0;
 }
 

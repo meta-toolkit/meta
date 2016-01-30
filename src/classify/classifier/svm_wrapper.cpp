@@ -4,15 +4,15 @@
  */
 
 #include <fstream>
-#include "classify/classifier/svm_wrapper.h"
-#include "utf/utf.h"
+#include "meta/classify/classifier/svm_wrapper.h"
+#include "meta/utf/utf.h"
 
 namespace meta
 {
 namespace classify
 {
 
-const std::string svm_wrapper::id = "libsvm";
+const util::string_view svm_wrapper::id = "libsvm";
 
 decltype(svm_wrapper::options_) svm_wrapper::options_
     = {{svm_wrapper::kernel::None, ""},
@@ -22,95 +22,178 @@ decltype(svm_wrapper::options_) svm_wrapper::options_
        {svm_wrapper::kernel::RBF, " -t 2 "},
        {svm_wrapper::kernel::Sigmoid, " -t 3 "}};
 
-svm_wrapper::svm_wrapper(std::shared_ptr<index::forward_index> idx,
-                         const std::string& svm_path,
+svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
                          kernel kernel_opt /* = None */)
-    : classifier{std::move(idx)}, svm_path_{svm_path}, kernel_{kernel_opt}
+    : svm_path_{svm_path}, kernel_{kernel_opt}
 {
+
+    labels_.resize(docs.total_labels());
+    for (auto it = docs.labels_begin(), end = docs.labels_end(); it != end;
+         ++it)
+    {
+        labels_.at(it->second) = it->first;
+    }
+
     if (kernel_opt == kernel::None)
-        executable_ = "liblinear/";
+        executable_ = "liblinear/build/";
     else
-        executable_ = "libsvm/svm-";
+        executable_ = "libsvm/build/svm-";
+
+    {
+        std::ofstream out{"svm-train"};
+        for (const auto& instance : docs)
+        {
+            docs.print_liblinear(out, instance);
+            out << "\n";
+        }
+    }
+
+#ifndef _WIN32
+    std::string command = svm_path_ + executable_ + "train "
+                          + options_.at(kernel_) + " svm-train";
+    command += " > /dev/null 2>&1";
+#else
+    // see comment in classify()
+    auto command = "\"\"" + svm_path_ + executable_ + "train.exe\" "
+                   + options_.at(kernel_) + " svm-train";
+    command += " > NUL 2>&1\"";
+#endif
+    system(command.c_str());
 }
 
-class_label svm_wrapper::classify(doc_id d_id)
+svm_wrapper::svm_wrapper(std::istream& in)
+    : svm_path_{io::packed::read<std::string>(in)}
+{
+    io::packed::read(in, kernel_);
+    io::packed::read(in, executable_);
+
+    auto size = io::packed::read<std::size_t>(in);
+    labels_.resize(size);
+    for (std::size_t i = 0; i < size; ++i)
+        io::packed::read(in, labels_[i]);
+
+    std::ofstream out{"svm-train.model"};
+    auto model_lines = io::packed::read<std::size_t>(in);
+    std::string line;
+    for (std::size_t i = 0; i < model_lines; ++i)
+    {
+        std::getline(in, line);
+        out << line << "\n";
+    }
+}
+
+void svm_wrapper::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, svm_path_);
+    io::packed::write(out, kernel_);
+    io::packed::write(out, executable_);
+
+    io::packed::write(out, labels_.size());
+    for (const auto& lbl : labels_)
+        io::packed::write(out, lbl);
+
+    auto num_lines = filesystem::num_lines("svm-train.model");
+    io::packed::write(out, num_lines);
+    std::ifstream in{"svm-train.model"};
+    std::string line;
+    for (std::size_t i = 0; i < num_lines; ++i)
+    {
+        std::getline(in, line);
+        out << line << "\n";
+    }
+}
+
+class_label svm_wrapper::classify(const feature_vector& doc) const
 {
     // create input for liblinear
-    std::ofstream out("svm-input");
-    out << idx_->liblinear_data(d_id);
-    out.close();
+    {
+        std::ofstream out{"svm-input"};
+        out << "1 "; // dummy label
+        learn::print_liblinear(out, doc);
+        out << "\n";
+    }
 
-    // run liblinear/libsvm
+// run liblinear/libsvm
+#ifndef _WIN32
     std::string command = svm_path_ + executable_
                           + "predict svm-input svm-train.model svm-predicted";
     command += " > /dev/null 2>&1";
+#else
+    // first set of quotes is around the exe name to make things work without
+    // having to use forward slashes in the path name.
+    //
+    // second set of quotes is around the entire command, since Windows does
+    // strange things in making the command to actually be sent to CMD.exe
+    auto command = "\"\"" + svm_path_ + executable_
+                   + "predict.exe\" svm-input svm-train.model svm-predicted";
+    command += " > NUL 2>&1\"";
+#endif
     system(command.c_str());
 
     // extract answer
-    std::ifstream in("svm-predicted");
     std::string str_val;
-    std::getline(in, str_val);
-    in.close();
+    {
+        std::ifstream in{"svm-predicted"};
+        std::getline(in, str_val);
+    }
 
-    label_id label{static_cast<uint32_t>(std::stoul(str_val))};
-    return idx_->class_label_from_id(label);
+    auto lbl = std::stoul(str_val);
+    assert(lbl > 0);
+    return labels_.at(lbl - 1);
 }
 
-confusion_matrix svm_wrapper::test(const std::vector<doc_id>& docs)
+confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
 {
     // create input for liblinear/libsvm
-    std::ofstream out("svm-input");
-    for (auto& d_id : docs)
-        out << idx_->liblinear_data(d_id) << "\n";
-    out.close();
+    {
+        std::ofstream out{"svm-input"};
+        for (const auto& instance : docs)
+        {
+            docs.print_liblinear(out, instance);
+            out << "\n";
+        }
+    }
 
-    // run liblinear/libsvm
+// run liblinear/libsvm
+#ifndef _WIN32
     std::string command = svm_path_ + executable_
                           + "predict svm-input svm-train.model svm-predicted";
     command += " > /dev/null 2>&1";
+#else
+    // see comment in classify()
+    auto command = "\"\"" + svm_path_ + executable_
+                   + "predict.exe\" svm-input svm-train.model svm-predicted";
+    command += " > NUL 2>&1\"";
+#endif
     system(command.c_str());
 
     // extract answer
     confusion_matrix matrix;
-    std::ifstream in("svm-predicted");
-    std::string str_val;
-    for (auto& d_id : docs)
     {
-        // we can assume that the number of lines in the file is equal to the
-        // number of testing documents
-        std::getline(in, str_val);
-        uint32_t value = std::stoul(str_val);
-        predicted_label predicted{idx_->class_label_from_id(label_id{value})};
-        class_label actual = idx_->label(d_id);
-        matrix.add(predicted, actual);
+        std::ifstream in{"svm-predicted"};
+        std::string str_val;
+        for (const auto& instance : docs)
+        {
+            // we can assume that the number of lines in the file is equal
+            // to the number of testing documents
+            std::getline(in, str_val);
+            auto value = std::stoul(str_val);
+            assert(value > 0);
+            predicted_label predicted{labels_.at(value - 1)};
+            class_label actual = docs.label(instance);
+            matrix.add(predicted, actual);
+        }
     }
-    in.close();
 
     return matrix;
-}
-
-void svm_wrapper::train(const std::vector<doc_id>& docs)
-{
-    std::ofstream out("svm-train");
-    for (auto& d_id : docs)
-        out << idx_->liblinear_data(d_id) << "\n";
-    out.close();
-
-    std::string command = svm_path_ + executable_ + "train "
-                          + options_.at(kernel_) + " svm-train";
-    command += " > /dev/null 2>&1";
-    system(command.c_str());
-}
-
-void svm_wrapper::reset()
-{
-    // nothing
 }
 
 template <>
 std::unique_ptr<classifier>
     make_classifier<svm_wrapper>(const cpptoml::table& config,
-                                 std::shared_ptr<index::forward_index> idx)
+                                 multiclass_dataset_view training)
 {
     auto path = config.get_as<std::string>("path");
     if (!path)
@@ -121,30 +204,30 @@ std::unique_ptr<classifier>
     {
         auto k_type = utf::tolower(*kernel);
         if (k_type == "none")
-            return make_unique<svm_wrapper>(std::move(idx), *path);
+            return make_unique<svm_wrapper>(std::move(training), *path);
 
         if (k_type == "quadratic")
-            return make_unique<svm_wrapper>(std::move(idx), *path,
+            return make_unique<svm_wrapper>(std::move(training), *path,
                                             svm_wrapper::kernel::Quadratic);
 
         if (k_type == "cubic")
-            return make_unique<svm_wrapper>(std::move(idx), *path,
+            return make_unique<svm_wrapper>(std::move(training), *path,
                                             svm_wrapper::kernel::Cubic);
 
         if (k_type == "quartic")
-            return make_unique<svm_wrapper>(std::move(idx), *path,
+            return make_unique<svm_wrapper>(std::move(training), *path,
                                             svm_wrapper::kernel::Quartic);
 
         if (k_type == "rbf")
-            return make_unique<svm_wrapper>(std::move(idx), *path,
+            return make_unique<svm_wrapper>(std::move(training), *path,
                                             svm_wrapper::kernel::RBF);
 
         if (k_type == "sigmoid")
-            return make_unique<svm_wrapper>(std::move(idx), *path,
+            return make_unique<svm_wrapper>(std::move(training), *path,
                                             svm_wrapper::kernel::Sigmoid);
     }
 
-    return make_unique<svm_wrapper>(std::move(idx), *path);
+    return make_unique<svm_wrapper>(std::move(training), *path);
 }
 }
 }

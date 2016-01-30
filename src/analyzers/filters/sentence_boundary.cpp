@@ -5,8 +5,9 @@
 
 #include <fstream>
 
+#include "meta/analyzers/filters/sentence_boundary.h"
 #include "cpptoml.h"
-#include "analyzers/filters/sentence_boundary.h"
+#include "meta/io/filesystem.h"
 
 namespace meta
 {
@@ -15,7 +16,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string sentence_boundary::id = "sentence-boundary";
+const util::string_view sentence_boundary::id = "sentence-boundary";
 
 // static members
 std::unordered_set<std::string> sentence_boundary::punc_set{};
@@ -40,12 +41,12 @@ sentence_boundary::sentence_boundary(const sentence_boundary& other)
     // nothing
 }
 
-void sentence_boundary::set_content(const std::string& content)
+void sentence_boundary::set_content(std::string&& content)
 {
     tokens_.clear();
     tokens_.emplace_back("<s>");
     prev_ = util::nullopt;
-    source_->set_content(content);
+    source_->set_content(std::move(content));
 }
 
 void sentence_boundary::load_heuristics(const cpptoml::table& config)
@@ -67,14 +68,26 @@ void sentence_boundary::load_heuristics(const cpptoml::table& config)
         throw token_stream_exception{
             "configuration missing end-exceptions file"};
 
+    if (!filesystem::file_exists(*punc))
+        throw token_stream_exception{"punctuation file does not exist: "
+            + *punc};
+
     std::ifstream punc_file{*punc};
     std::string line;
     while (std::getline(punc_file, line))
         punc_set.emplace(std::move(line));
 
+    if (!filesystem::file_exists(*start_exceptions))
+        throw token_stream_exception{"start exceptions file does not exist: "
+            + *start_exceptions};
+
     std::ifstream start_ex_file{*start_exceptions};
     while (std::getline(start_ex_file, line))
         start_exception_set.emplace(std::move(line));
+
+    if (!filesystem::file_exists(*end_exceptions))
+        throw token_stream_exception{"end exceptions file does not exist: "
+            + *end_exceptions};
 
     std::ifstream end_ex_file{*end_exceptions};
     while (std::getline(end_ex_file, line))

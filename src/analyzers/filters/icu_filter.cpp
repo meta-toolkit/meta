@@ -3,7 +3,7 @@
  * @author Chase Geigle
  */
 
-#include "analyzers/filters/icu_filter.h"
+#include "meta/analyzers/filters/icu_filter.h"
 #include "cpptoml.h"
 
 namespace meta
@@ -13,7 +13,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string icu_filter::id = "icu";
+const util::string_view icu_filter::id = "icu";
 
 icu_filter::icu_filter(std::unique_ptr<token_stream> source,
                        const std::string& id)
@@ -30,9 +30,9 @@ icu_filter::icu_filter(const icu_filter& other)
     // nothing
 }
 
-void icu_filter::set_content(const std::string& content)
+void icu_filter::set_content(std::string&& content)
 {
-    source_->set_content(content);
+    source_->set_content(std::move(content));
     next_token();
 }
 
@@ -75,7 +75,7 @@ std::unique_ptr<token_stream>
 {
     if (auto id = config.get_as<std::string>("id"))
         return make_unique<icu_filter>(std::move(src), *id);
-    throw token_stream::token_stream_exception{
+    throw token_stream_exception{
         "icu_filter requires id to be specified in config"};
 }
 }

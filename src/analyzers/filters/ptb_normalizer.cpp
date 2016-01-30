@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include "analyzers/filters/ptb_normalizer.h"
+#include "meta/analyzers/filters/ptb_normalizer.h"
 
 namespace meta
 {
@@ -14,7 +14,7 @@ namespace analyzers
 namespace filters
 {
 
-const std::string ptb_normalizer::id = "ptb-normalizer";
+const util::string_view ptb_normalizer::id = "ptb-normalizer";
 
 ptb_normalizer::ptb_normalizer(std::unique_ptr<token_stream> source)
     : source_{std::move(source)}
@@ -28,10 +28,10 @@ ptb_normalizer::ptb_normalizer(const ptb_normalizer& other)
     // nothing
 }
 
-void ptb_normalizer::set_content(const std::string& content)
+void ptb_normalizer::set_content(std::string&& content)
 {
     tokens_.clear();
-    source_->set_content(content);
+    source_->set_content(std::move(content));
 }
 
 std::string ptb_normalizer::next()

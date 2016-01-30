@@ -6,49 +6,147 @@
 #include <numeric>
 #include <random>
 
-#include "classify/kernel/all.h"
-#include "classify/classifier/dual_perceptron.h"
-#include "index/postings_data.h"
-#include "util/functional.h"
-#include "util/printing.h"
-#include "util/progress.h"
-#include "utf/utf.h"
+#include "meta/classify/kernel/all.h"
+#include "meta/classify/classifier/dual_perceptron.h"
+#include "meta/index/postings_data.h"
+#include "meta/io/packed.h"
+#include "meta/util/functional.h"
+#include "meta/util/printing.h"
+#include "meta/util/progress.h"
+#include "meta/utf/utf.h"
 
 namespace meta
 {
 namespace classify
 {
 
-const std::string dual_perceptron::id = "dual-perceptron";
+const util::string_view dual_perceptron::id = "dual-perceptron";
+const constexpr double dual_perceptron::default_alpha;
+const constexpr double dual_perceptron::default_gamma;
+const constexpr double dual_perceptron::default_bias;
+const constexpr uint64_t dual_perceptron::default_max_iter;
 
-void dual_perceptron::train(const std::vector<doc_id>& docs)
+dual_perceptron::dual_perceptron(multiclass_dataset_view docs,
+                                 std::unique_ptr<kernel::kernel> kernel_fn,
+                                 double alpha, double gamma, double bias,
+                                 uint64_t max_iter)
+    : kernel_{std::move(kernel_fn)},
+      alpha_{alpha},
+      gamma_{gamma},
+      bias_{bias},
+      max_iter_{max_iter}
 {
-    weights_ = {};
-    for (const auto& d_id : docs)
-        weights_[idx_->label(d_id)] = {};
+    train(std::move(docs));
+}
 
-    std::vector<uint64_t> indices(docs.size());
-    std::iota(begin(indices), end(indices), 0);
-    std::random_device d;
-    std::mt19937 g{d()};
+dual_perceptron::dual_perceptron(std::istream& in)
+    : alpha_{io::packed::read<double>(in)},
+      gamma_{io::packed::read<double>(in)},
+      bias_{io::packed::read<double>(in)},
+      max_iter_{io::packed::read<uint64_t>(in)}
+{
+    // mistake counts
+    auto size = io::packed::read<std::size_t>(in);
+    for (std::size_t i = 0; i < size; ++i)
+    {
+        auto lbl = io::packed::read<class_label>(in);
+        auto& map_ref = weights_[lbl];
+        auto isize = io::packed::read<std::size_t>(in);
+        for (std::size_t j = 0; j < isize; ++j)
+        {
+            auto id = io::packed::read<learn::instance_id>(in);
+            auto weight = io::packed::read<uint64_t>(in);
+            map_ref.emplace(id, weight);
+        }
+    }
+
+    // support vectors
+    io::packed::read(in, size);
+    for (std::size_t i = 0; i < size; ++i)
+    {
+        auto id = io::packed::read<learn::instance_id>(in);
+        auto& map_ref = svs_[id];
+        auto isize = io::packed::read<std::size_t>(in);
+        for (std::size_t j = 0; j < isize; ++j)
+        {
+            auto fid = io::packed::read<learn::feature_id>(in);
+            auto weight = io::packed::read<double>(in);
+            map_ref.emplace_back(fid, weight);
+        }
+    }
+
+    // kernel function
+    kernel_ = kernel::load_kernel(in);
+}
+
+void dual_perceptron::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    // training parameters
+    io::packed::write(out, alpha_);
+    io::packed::write(out, gamma_);
+    io::packed::write(out, bias_);
+    io::packed::write(out, max_iter_);
+
+    // mistake counts
+    io::packed::write(out, weights_.size());
+    for (const auto& pr : weights_)
+    {
+        io::packed::write(out, pr.first);
+        io::packed::write(out, pr.second.size());
+        for (const auto& ipr : pr.second)
+        {
+            io::packed::write(out, ipr.first);
+            io::packed::write(out, ipr.second);
+        }
+    }
+
+    // support vectors
+    io::packed::write(out, svs_.size());
+    for (const auto& pr : svs_)
+    {
+        io::packed::write(out, pr.first);
+        io::packed::write(out, pr.second.size());
+        for (const auto& ipr : pr.second)
+        {
+            io::packed::write(out, ipr.first);
+            io::packed::write(out, ipr.second);
+        }
+    }
+
+    // kernel function
+    kernel_->save(out);
+}
+
+void dual_perceptron::train(multiclass_dataset_view docs)
+{
+    for (auto it = docs.labels_begin(), end = docs.labels_end(); it != end;
+         ++it)
+        weights_[it->first] = {};
+
     for (uint64_t iter = 0; iter < max_iter_; ++iter)
     {
-        std::shuffle(begin(indices), end(indices), g);
+        docs.shuffle();
         uint64_t error_count = 0;
         std::stringstream ss;
         ss << " > iteration " << iter << ": ";
         printing::progress progress{ss.str(), docs.size()};
         uint64_t doc = 0;
-        for (const auto& i : indices)
+        for (const auto& instance : docs)
         {
             progress(doc++);
-            auto guess = classify(docs[i]);
-            auto actual = idx_->label(docs[i]);
+            auto guess = classify(instance.weights);
+            auto actual = docs.label(instance);
             if (guess != actual)
             {
                 ++error_count;
-                decrease_weight(guess, docs[i]);
-                weights_[actual][docs[i]]++;
+                // memorize the training instance if we haven't already
+                if (svs_.find(instance.id) == svs_.end())
+                    svs_[instance.id] = instance.weights;
+
+                decrease_weight(guess, instance.id);
+                weights_[actual][instance.id]++;
             }
         }
         if (static_cast<double>(error_count) / docs.size() < gamma_)
@@ -57,7 +155,7 @@ void dual_perceptron::train(const std::vector<doc_id>& docs)
 }
 
 void dual_perceptron::decrease_weight(const class_label& label,
-                                      const doc_id& d_id)
+                                      const learn::instance_id& d_id)
 {
     auto it = weights_[label].find(d_id);
     if (it == weights_[label].end())
@@ -67,9 +165,8 @@ void dual_perceptron::decrease_weight(const class_label& label,
         weights_[label].erase(it);
 }
 
-class_label dual_perceptron::classify(doc_id d_id)
+class_label dual_perceptron::classify(const feature_vector& doc) const
 {
-    auto doc = idx_->search_primary(d_id);
     class_label best_label = weights_.begin()->first;
     double best_dot = 0;
     for (const auto& w : weights_)
@@ -78,8 +175,7 @@ class_label dual_perceptron::classify(doc_id d_id)
         for (const auto& mistakes : w.second)
         {
             dot += mistakes.second
-                   * (kernel_(doc, idx_->search_primary(mistakes.first))
-                      + bias_);
+                   * ((*kernel_)(doc, svs_.at(mistakes.first)) + bias_);
         }
         dot *= alpha_;
         if (dot > best_dot)
@@ -91,72 +187,34 @@ class_label dual_perceptron::classify(doc_id d_id)
     return best_label;
 }
 
-void dual_perceptron::reset()
-{
-    weights_ = {};
-}
+
 
 template <>
 std::unique_ptr<classifier>
     make_classifier<dual_perceptron>(const cpptoml::table& config,
-                                     std::shared_ptr<index::forward_index> idx)
+                                     multiclass_dataset_view training)
 {
-    auto alpha = dual_perceptron::default_alpha;
-    if (auto c_alpha = config.get_as<double>("alpha"))
-        alpha = *c_alpha;
+    auto alpha = config.get_as<double>("alpha")
+                     .value_or(dual_perceptron::default_alpha);
 
-    auto gamma = dual_perceptron::default_gamma;
-    if (auto c_gamma = config.get_as<double>("gamma"))
-        gamma = *c_gamma;
+    auto gamma = config.get_as<double>("gamma")
+                     .value_or(dual_perceptron::default_gamma);
 
-    auto bias = dual_perceptron::default_bias;
-    if (auto c_bias = config.get_as<double>("bias"))
-        bias = *c_bias;
+    auto bias
+        = config.get_as<double>("bias").value_or(dual_perceptron::default_bias);
 
-    auto max_iter = dual_perceptron::default_max_iter;
-    if (auto c_max_iter = config.get_as<int64_t>("max-iter"))
-        max_iter = *c_max_iter;
+    auto max_iter = config.get_as<int64_t>("max-iter")
+                        .value_or(dual_perceptron::default_max_iter);
 
-    auto kernel = config.get_as<std::string>("kernel");
-    if (!kernel)
-        return make_unique<dual_perceptron>(
-            std::move(idx), kernel::polynomial{}, alpha, gamma, bias, max_iter);
-
-    auto kern = utf::tolower(*kernel);
-    if (kern == "polynomial")
-        return make_unique<dual_perceptron>(
-            std::move(idx), kernel::polynomial{}, alpha, gamma, bias, max_iter);
-
-    if (kern == "rbf")
-    {
-        auto rbf_gamma = config.get_as<double>("rbf-gamma");
-        if (!rbf_gamma)
-            throw classifier_factory::exception{
-                "rbf kernel requires rbf-gamma in configuration"};
-        return make_unique<dual_perceptron>(std::move(idx),
-                                            kernel::radial_basis{*rbf_gamma},
+    auto kernel_cfg = config.get_table("kernel");
+    if (!kernel_cfg)
+        return make_unique<dual_perceptron>(std::move(training),
+                                            make_unique<kernel::polynomial>(),
                                             alpha, gamma, bias, max_iter);
-    }
 
-    if (kern == "sigmoid")
-    {
-        auto sigmoid_alpha = config.get_as<double>("sigmoid-alpha");
-        if (!sigmoid_alpha)
-            throw classifier_factory::exception{
-                "sigmoid kernel requires sigmoid-alpha in configuration"};
-
-        auto sigmoid_c = config.get_as<double>("sigmoid-c");
-        if (!sigmoid_c)
-            throw classifier_factory::exception{
-                "sigmoid kernel requires sigmoid-c in configuration"};
-
-        return make_unique<dual_perceptron>(
-            std::move(idx), kernel::sigmoid{*sigmoid_alpha, *sigmoid_c}, alpha,
-            gamma, bias, max_iter);
-    }
-
-    throw classifier_factory::exception{
-        "dual perceptron requires kernel in configuration"};
+    return make_unique<dual_perceptron>(std::move(training),
+                                        kernel::make_kernel(*kernel_cfg), alpha,
+                                        gamma, bias, max_iter);
 }
 }
 }

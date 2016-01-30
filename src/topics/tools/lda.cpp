@@ -2,16 +2,16 @@
 #include <string>
 #include <vector>
 
-#include "topics/lda_gibbs.h"
-#include "topics/parallel_lda_gibbs.h"
-#include "topics/lda_cvb.h"
-#include "topics/lda_scvb.h"
+#include "meta/topics/lda_gibbs.h"
+#include "meta/topics/parallel_lda_gibbs.h"
+#include "meta/topics/lda_cvb.h"
+#include "meta/topics/lda_scvb.h"
 
 #include "cpptoml.h"
 
-#include "caching/no_evict_cache.h"
-#include "index/forward_index.h"
-#include "logging/logger.h"
+#include "meta/caching/no_evict_cache.h"
+#include "meta/index/forward_index.h"
+#include "meta/logging/logger.h"
 
 using namespace meta;
 
@@ -42,14 +42,14 @@ int run_lda(const std::string& config_file)
     using namespace meta::topics;
     auto config = cpptoml::parse_file(config_file);
 
-    if (!config.contains("lda"))
+    if (!config->contains("lda"))
     {
         std::cerr << "Missing lda configuration group in " << config_file
                   << std::endl;
         return 1;
     }
 
-    auto lda_group = config.get_table("lda");
+    auto lda_group = config->get_table("lda");
 
     if (!check_parameter(config_file, *lda_group, "alpha")
         || !check_parameter(config_file, *lda_group, "beta")
@@ -60,15 +60,16 @@ int run_lda(const std::string& config_file)
         return 1;
 
     auto type = *lda_group->get_as<std::string>("inference");
-    uint64_t iters = *lda_group->get_as<int64_t>("max-iters");
+    auto iters
+        = static_cast<uint64_t>(*lda_group->get_as<int64_t>("max-iters"));
     auto alpha = *lda_group->get_as<double>("alpha");
     auto beta = *lda_group->get_as<double>("beta");
-    uint64_t topics = *lda_group->get_as<int64_t>("topics");
+    auto topics = static_cast<uint64_t>(*lda_group->get_as<int64_t>("topics"));
     auto save_prefix = *lda_group->get_as<std::string>("model-prefix");
 
     auto f_idx
         = index::make_index<index::forward_index, caching::no_evict_cache>(
-            config_file);
+            *config);
     if (type == "gibbs")
     {
         std::cout << "Beginning LDA using serial Gibbs sampling..."

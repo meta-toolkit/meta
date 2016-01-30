@@ -1,21 +1,21 @@
-#include "parser/analyzers/featurizers/subtree_featurizer.h"
-#include "parser/trees/visitors/visitor.h"
-#include "parser/trees/internal_node.h"
-#include "parser/trees/leaf_node.h"
+#include "meta/parser/analyzers/featurizers/subtree_featurizer.h"
+#include "meta/parser/trees/visitors/visitor.h"
+#include "meta/parser/trees/internal_node.h"
+#include "meta/parser/trees/leaf_node.h"
 
 namespace meta
 {
 namespace analyzers
 {
 
-const std::string subtree_featurizer::id = "subtree";
+const util::string_view subtree_featurizer::id = "subtree";
 
 namespace
 {
 class subtree_visitor : public parser::const_visitor<void>
 {
   public:
-    subtree_visitor(corpus::document& d) : doc(d)
+    subtree_visitor(featurizer& fm) : counts(fm)
     {
         // nothing
     }
@@ -24,32 +24,32 @@ class subtree_visitor : public parser::const_visitor<void>
     {
         auto rep = "(" + static_cast<std::string>(in.category());
 
-        in.each_child([&](const parser::node* child)
-        {
-            rep += " (" + static_cast<std::string>(child->category()) + ")";
-            child->accept(*this);
-        });
+        in.each_child(
+            [&](const parser::node* child)
+            {
+                rep += " (" + static_cast<std::string>(child->category()) + ")";
+                child->accept(*this);
+            });
 
         rep += ")";
-        doc.increment(subtree_featurizer::id + "-" + rep, 1);
+        counts(subtree_featurizer::id.to_string() + "-" + rep, 1ul);
     }
 
     void operator()(const parser::leaf_node& ln) override
     {
         auto rep = "(" + static_cast<std::string>(ln.category()) + ")";
-        doc.increment(subtree_featurizer::id + "-" + rep, 1);
+        counts(subtree_featurizer::id.to_string() + "-" + rep, 1ul);
     }
 
-
   private:
-    corpus::document& doc;
+    featurizer& counts;
 };
 }
 
-void subtree_featurizer::tree_tokenize(corpus::document& doc,
-                                       const parser::parse_tree& tree) const
+void subtree_featurizer::tree_tokenize(const parser::parse_tree& tree,
+                                       featurizer& counts) const
 {
-    subtree_visitor vtor{doc};
+    subtree_visitor vtor{counts};
     tree.visit(vtor);
 }
 }

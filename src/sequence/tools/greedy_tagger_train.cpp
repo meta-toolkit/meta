@@ -6,11 +6,11 @@
 #include <iostream>
 
 #include "cpptoml.h"
-#include "logging/logger.h"
-#include "sequence/perceptron.h"
-#include "sequence/io/ptb_parser.h"
-#include "util/filesystem.h"
-#include "util/progress.h"
+#include "meta/io/filesystem.h"
+#include "meta/logging/logger.h"
+#include "meta/sequence/perceptron.h"
+#include "meta/sequence/io/ptb_parser.h"
+#include "meta/util/progress.h"
 
 using namespace meta;
 
@@ -20,7 +20,23 @@ std::string two_digit(uint8_t num)
     ss << std::setw(2) << std::setfill('0') << static_cast<int>(num);
     return ss.str();
 }
-
+/**
+ * Required config parameters:
+ * ~~~toml
+ * prefix = "global-data-prefix"
+ *
+ * [sequence]
+ * prefix = "path-to-model"
+ * treebank = "penn-treebank" # relative to data prefix
+ * corpus = "wsj"
+ * section-size = 99
+ * train-sections = [0, 18]
+ * dev-sections = [19, 21]
+ * test-sections = [22, 24]
+ * ~~~
+ *
+ * Optional config parameters: none
+ */
 int main(int argc, char** argv)
 {
     if (argc < 2)
@@ -33,14 +49,14 @@ int main(int argc, char** argv)
 
     auto config = cpptoml::parse_file(argv[1]);
 
-    auto prefix = config.get_as<std::string>("prefix");
+    auto prefix = config->get_as<std::string>("prefix");
     if (!prefix)
     {
         LOG(fatal) << "Global configuration must have a prefix key" << ENDLG;
         return 1;
     }
 
-    auto seq_grp = config.get_table("sequence");
+    auto seq_grp = config->get_table("sequence");
     if (!seq_grp)
     {
         LOG(fatal) << "Configuration must contain a [sequence] group" << ENDLG;
@@ -91,14 +107,15 @@ int main(int argc, char** argv)
     {
         auto begin = train_sections->at(0)->as<int64_t>()->get();
         auto end = train_sections->at(1)->as<int64_t>()->get();
-        printing::progress progress(" > Reading training data: ",
-                                    (end - begin + 1) * *section_size);
-        for (uint8_t i = begin; i <= end; ++i)
+        printing::progress progress(
+            " > Reading training data: ",
+            static_cast<uint64_t>((end - begin + 1) * *section_size));
+        for (auto i = static_cast<uint8_t>(begin); i <= end; ++i)
         {
             auto folder = two_digit(i);
             for (uint8_t j = 0; j <= *section_size; ++j)
             {
-                progress((i - begin) * 99 + j);
+                progress(static_cast<uint64_t>(i - begin) * 99 + j);
                 auto file = *corpus + "_" + folder + two_digit(j) + ".pos";
                 auto filename = path + "/" + folder + "/" + file;
                 auto sequences = sequence::extract_sequences(filename);
