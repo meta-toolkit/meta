@@ -50,8 +50,8 @@ int main(int argc, char** argv)
 
     // extract vocab building parameters
     auto embed_cfg = config->get_table("embeddings");
-    auto vocab_filename
-        = *embed_cfg->get_as<std::string>("prefix") + "/vocab.bin";
+    auto prefix = *embed_cfg->get_as<std::string>("prefix");
+    auto vocab_filename = prefix + "/vocab.bin";
     auto vocab_cfg = embed_cfg->get_table("vocab");
 
     auto min_count = vocab_cfg->get_as<int64_t>("min-count").value_or(100);
@@ -118,6 +118,7 @@ int main(int argc, char** argv)
     LOG(info) << "Vocab truncated to size " << size << ENDLG;
 
     {
+        filesystem::make_directory(prefix);
         std::ofstream output{vocab_filename, std::ios::binary};
         printing::progress progress{" > Writing vocab: ", size};
 
