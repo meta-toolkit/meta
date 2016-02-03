@@ -49,6 +49,9 @@ class probe_set
     using typename storage_type::iterator;
     using typename storage_type::const_iterator;
 
+    using storage_type::default_max_load_factor;
+    using storage_type::default_resize_ratio;
+
     using storage_type::storage_type;
     using storage_type::begin;
     using storage_type::end;
