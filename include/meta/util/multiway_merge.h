@@ -115,7 +115,7 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
         auto range = std::equal_range(to_merge.begin(), to_merge.end(),
                                       to_merge.front(), chunk_iter_comp);
 
-        Record merged{std::move(*(*range.first).get())};
+        auto merged = std::move(*(*range.first).get());
         ++(*range.first).get();
         ++range.first;
         std::for_each(range.first, range.second, [&](ChunkIterator& iter)
