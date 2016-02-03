@@ -76,7 +76,6 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
                         RecordHandler&& output)
 {
     using ChunkIterator = typename ForwardIterator::value_type;
-    using Record = typename ChunkIterator::value_type;
 
     uint64_t to_read = std::accumulate(
         begin, end, 0ul, [](uint64_t acc, const ChunkIterator& chunk)
