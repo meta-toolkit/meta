@@ -920,6 +920,15 @@ class inline_key_value_storage
 
     vector_type extract() &&
     {
+        // get rid of all blank cells
+        table_.erase(std::remove_if(table_.begin(), table_.end(),
+                                    [this](const std::pair<K, V>& pr)
+                                    {
+                                        return this->key_equal(
+                                            pr.first,
+                                            key_traits<K>::sentinel());
+                                    }),
+                     table_.end());
         return std::move(table_);
     }
 
