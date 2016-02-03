@@ -12,6 +12,7 @@
 #include "meta/analyzers/all.h"
 #include "meta/analyzers/token_stream.h"
 #include "meta/corpus/corpus_factory.h"
+#include "meta/embeddings/coocur_iterator.h"
 #include "meta/hashing/probe_map.h"
 #include "meta/io/packed.h"
 #include "meta/logging/logger.h"
@@ -37,126 +38,6 @@ struct key_traits<std::pair<K, V>>
     }
 };
 }
-}
-
-struct coocur_record
-{
-    uint64_t target;
-    uint64_t context;
-    double weight;
-
-    void merge_with(coocur_record&& other)
-    {
-        weight += other.weight;
-    }
-
-    template <class OutputStream>
-    uint64_t write(OutputStream& os) const
-    {
-        auto bytes = io::packed::write(os, target);
-        bytes += io::packed::write(os, context);
-        bytes += io::packed::write(os, weight);
-        return bytes;
-    }
-};
-
-bool operator==(const coocur_record& a, const coocur_record& b)
-{
-    return std::tie(a.target, a.context) == std::tie(b.target, b.context);
-}
-
-bool operator!=(const coocur_record& a, const coocur_record& b)
-{
-    return !(a == b);
-}
-
-bool operator<(const coocur_record& a, const coocur_record& b)
-{
-    return std::tie(a.target, a.context) < std::tie(b.target, b.context);
-}
-
-class coocur_chunk_iterator
-{
-  public:
-    using value_type = coocur_record;
-
-    coocur_chunk_iterator(const std::string& filename)
-        : path_{filename},
-          input_{make_unique<std::ifstream>(filename, std::ios::binary)},
-          total_bytes_{filesystem::file_size(filename)},
-          bytes_read_{0}
-    {
-        ++(*this);
-    }
-
-    coocur_chunk_iterator() = default;
-    coocur_chunk_iterator(coocur_chunk_iterator&&) = default;
-
-    ~coocur_chunk_iterator()
-    {
-        if (input_)
-        {
-            input_ = nullptr;
-            filesystem::delete_file(path_);
-        }
-    }
-
-    coocur_chunk_iterator& operator++()
-    {
-        if (input_->get() == EOF)
-            return *this;
-
-        input_->unget();
-        bytes_read_ += io::packed::read(*input_, record_.target);
-        bytes_read_ += io::packed::read(*input_, record_.context);
-        bytes_read_ += io::packed::read(*input_, record_.weight);
-        return *this;
-    }
-
-    coocur_record& operator*()
-    {
-        return record_;
-    }
-
-    const coocur_record& operator*() const
-    {
-        return record_;
-    }
-
-    bool operator==(const coocur_chunk_iterator& other) const
-    {
-        if (!other.input_)
-        {
-            return !input_ || !static_cast<bool>(*input_);
-        }
-        else
-        {
-            return std::tie(path_, bytes_read_)
-                   == std::tie(other.path_, other.bytes_read_);
-        }
-    }
-
-    uint64_t total_bytes() const
-    {
-        return total_bytes_;
-    }
-
-    uint64_t bytes_read() const
-    {
-        return bytes_read_;
-    }
-
-  private:
-    std::string path_;
-    std::unique_ptr<std::ifstream> input_;
-    coocur_record record_;
-    uint64_t total_bytes_;
-    uint64_t bytes_read_;
-};
-
-bool operator!=(const coocur_chunk_iterator& a, const coocur_chunk_iterator& b)
-{
-    return !(a == b);
 }
 
 class coocur_buffer
@@ -221,18 +102,28 @@ class coocur_buffer
     uint64_t merge_chunks()
     {
         coocur_ = map_t{};
-        std::vector<coocur_chunk_iterator> chunks;
+        std::vector<embeddings::coocur_iterator> chunks;
         chunks.reserve(num_chunks());
 
         for (std::size_t i = 0; i < num_chunks(); ++i)
             chunks.emplace_back(prefix_ + "/chunk-" + std::to_string(i));
 
         std::ofstream output{prefix_ + "/coocur.bin", std::ios::binary};
-        return util::multiway_merge(chunks.begin(), chunks.end(),
-                                    [&](coocur_record&& record)
-                                    {
-                                        record.write(output);
-                                    });
+        auto num_records
+            = util::multiway_merge(chunks.begin(), chunks.end(),
+                                   [&](embeddings::coocur_record&& record)
+                                   {
+                                       record.write(output);
+                                   });
+        chunks.clear();
+
+        // clean up temporary files
+        for (std::size_t i = 0; i < num_chunks(); ++i)
+        {
+            filesystem::delete_file(prefix_ + "/chunk-" + std::to_string(i));
+        }
+
+        return num_records;
     }
 
   private:
