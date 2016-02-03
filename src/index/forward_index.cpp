@@ -416,53 +416,25 @@ void forward_index::impl::merge_chunks(
             chunks.emplace_back(filename);
     }
 
-    printing::progress progress{
-        " > Merging postings: ",
-        std::accumulate(chunks.begin(), chunks.end(), 0ul,
-                        [](uint64_t acc, const input_chunk& chunk)
-                        {
-                            return acc + chunk.total_bytes();
-                        })};
+    util::multiway_merge(chunks.begin(), chunks.end(),
+                         [&](forward_index::postings_data_type&& to_write)
+                         {
+                             // renumber the postings
+                             forward_index::postings_data_type::count_t counts;
+                             counts.reserve(to_write.counts().size());
+                             for (const auto& count : to_write.counts())
+                             {
+                                 const auto& key = keys.at(count.first);
+                                 auto it = vocab.find(key);
+                                 assert(it != vocab.end());
+                                 counts.emplace_back(it->value(), count.second);
+                             }
 
-    uint64_t total_read
-        = std::accumulate(chunks.begin(), chunks.end(), 0ul,
-                          [](uint64_t acc, const input_chunk& chunk)
-                          {
-                              return acc + chunk.bytes_read();
-                          });
-
-    while (!chunks.empty())
-    {
-        progress(total_read);
-
-        // find the lowest doc id
-        auto min_chunk = std::min_element(chunks.begin(), chunks.end());
-
-        // steal the postings and advance the chunk
-        auto to_write = min_chunk->postings();
-        auto before = min_chunk->bytes_read();
-        ++*min_chunk;
-        total_read += min_chunk->bytes_read() - before;
-
-        // if there were no more postings, remove the chunk for the input
-        if (!*min_chunk)
-            chunks.erase(min_chunk);
-
-        // renumber the postings
-        forward_index::postings_data_type::count_t counts;
-        counts.reserve(to_write.counts().size());
-        for (const auto& count : to_write.counts())
-        {
-            const auto& key = keys.at(count.first);
-            auto it = vocab.find(key);
-            assert(it != vocab.end());
-            counts.emplace_back(it->value(), count.second);
-        }
-
-        // set the new counts and write to the postings file
-        to_write.set_counts(std::move(counts));
-        writer.write(to_write);
-    }
+                             // set the new counts and write to the postings
+                             // file
+                             to_write.set_counts(std::move(counts));
+                             writer.write(to_write);
+                         });
 }
 
 void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
