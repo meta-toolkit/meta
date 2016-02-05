@@ -470,7 +470,7 @@ you should run the following commands to download dependencies and related
 software needed for building:
 
 ```bash
-pacman -Syu git mingw-w64-x86_64-{gcc,cmake,make,icu,jemalloc}
+pacman -Syu git make mingw-w64-x86_64-{gcc,cmake,icu,jemalloc}
 ```
 
 Then, exit the shell and launch the "MinGW-w64 Win64" shell. You can obtain

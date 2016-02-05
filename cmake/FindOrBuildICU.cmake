@@ -74,7 +74,7 @@ function(FindOrBuildICU)
         PREFIX ${ICU_EP_PREFIX}
         URL ${FindOrBuildICU_URL}
         URL_HASH ${FindOrBuildICU_URL_HASH}
-        CONFIGURE_COMMAND ${ICU_EP_PREFIX}/src/ExternalICU/source/runConfigureICU ${ICU_PLATFORM}
+        CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} ${ICU_EP_PREFIX}/src/ExternalICU/source/runConfigureICU ${ICU_PLATFORM}
         --disable-shared --enable-static --disable-dyload --disable-extras
         --disable-tests --disable-samples
         --prefix=<INSTALL_DIR>

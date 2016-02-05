@@ -97,5 +97,46 @@ go_bandit([]() {
 
             filesystem::delete_file(filename);
         });
+
+        it("should read string metadata with spaces", [&]() {
+            /// @see https://github.com/meta-toolkit/meta/issues/127
+            options_type options = {
+                {"path", "string"}, {"title", "string"}, {"comment", "string"}};
+            auto config = create_metadata_config(options);
+
+            const std::string metadata
+                = "/my/path1\tWonderful Ducklings\ta great children's book\n"
+                  "/my/path2\tSo Many Goose\tI saw their tiny little feet";
+            create_metadata_file(metadata, filename);
+
+            corpus::metadata_parser parser{filename,
+                                           corpus::metadata_schema(*config)};
+
+            auto fields = parser.next();
+            AssertThat(fields.size(), Equals(3ul));
+            AssertThat(fields[0].type,
+                       Equals(corpus::metadata::field_type::STRING));
+            AssertThat(fields[0].str, Equals("/my/path1"));
+            AssertThat(fields[1].type,
+                       Equals(corpus::metadata::field_type::STRING));
+            AssertThat(fields[1].str, Equals("Wonderful Ducklings"));
+            AssertThat(fields[2].type,
+                       Equals(corpus::metadata::field_type::STRING));
+            AssertThat(fields[2].str, Equals("a great children's book"));
+
+            fields = parser.next();
+            AssertThat(fields.size(), Equals(3ul));
+            AssertThat(fields[0].type,
+                       Equals(corpus::metadata::field_type::STRING));
+            AssertThat(fields[0].str, Equals("/my/path2"));
+            AssertThat(fields[1].type,
+                       Equals(corpus::metadata::field_type::STRING));
+            AssertThat(fields[1].str, Equals("So Many Goose"));
+            AssertThat(fields[2].type,
+                       Equals(corpus::metadata::field_type::STRING));
+            AssertThat(fields[2].str, Equals("I saw their tiny little feet"));
+
+            filesystem::delete_file(filename);
+        });
     });
 });

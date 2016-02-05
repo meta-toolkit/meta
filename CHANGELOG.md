@@ -1,3 +1,21 @@
+# [v2.0.1][2.0.1]
+## Bug fixes
+- Fix issue where `metadata_parser` would not consume spaces in string
+    metadata fields. Thanks to @hopsalot on the forum for the bug report!
+- Fix build issue on OS X with Xcode 6.4 and `clang` related to their
+    shipped version of `string_view` lacking a const `to_string()` method
+
+## Enhancements
+- The `./profile` executable ensures that the file exists before operating on
+  it. Thanks to @domarps for the PR!
+- Add a generic `util::multiway_merge` algorithm for performing the
+    merge-step of an external memory merge sort.
+- Build with the following Xcode versions on Travis CI:
+  * Xcode 6.1 and OS X 10.9 (as before)
+  * Xcode 6.4 and OS X 10.10 (new)
+  * Xcode 7.1.1 and OS X 10.10 (new)
+  * Xcode 7.2 and OS X 10.11 (new)
+
 # [v2.0.0][2.0.0]
 ## New features and major changes
 
@@ -286,7 +304,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.0.0...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.0.1...develop
+[2.0.1]: https://github.com/meta-toolkit/meta/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/meta-toolkit/meta/compare/v1.3.8...v2.0.0
 [1.3.8]: https://github.com/meta-toolkit/meta/compare/v1.3.7...v1.3.8
 [1.3.7]: https://github.com/meta-toolkit/meta/compare/v1.3.6...v1.3.7
