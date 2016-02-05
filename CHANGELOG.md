@@ -303,7 +303,7 @@
 - Initial release.
 
 [unreleased]: https://github.com/meta-toolkit/meta/compare/v2.0.1...develop
-[2.0.0]: https://github.com/meta-toolkit/meta/compare/v2.0.0...v2.0.1
+[2.0.1]: https://github.com/meta-toolkit/meta/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/meta-toolkit/meta/compare/v1.3.8...v2.0.0
 [1.3.8]: https://github.com/meta-toolkit/meta/compare/v1.3.7...v1.3.8
 [1.3.7]: https://github.com/meta-toolkit/meta/compare/v1.3.6...v1.3.7
