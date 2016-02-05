@@ -1,7 +1,13 @@
 set -v
 brew update
 brew install icu4c jemalloc
-brew outdated cmake || brew upgrade cmake
+
+# Travis Xcode 7.1+ images don't have cmake installed for some reason
+if ! [ -x "$(command -v cmake)" ]; then
+    brew install cmake
+else
+    brew outdated cmake || brew upgrade cmake
+fi
 
 if [ "$COMPILER" == "gcc" ]; then
     brew tap homebrew/versions
