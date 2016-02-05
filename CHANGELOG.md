@@ -6,6 +6,8 @@
     shipped version of `string_view` lacking a const `to_string()` method
 
 ## Enhancements
+- The `./profile` executable ensures that the file exists before operating on
+  it. Thanks to @domarps for the PR!
 - Add a generic `util::multiway_merge` algorithm for performing the
     merge-step of an external memory merge sort.
 - Build with the following Xcode versions on Travis CI:
