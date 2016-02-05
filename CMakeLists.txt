@@ -214,7 +214,10 @@ endif()
 check_cxx_source_compiles("
 #include <experimental/string_view>
 int main() {
-    std::experimental::string_view sv = \"hello world\";
+    const std::experimental::string_view sv = \"hello world\";
+    // test that string_view has to_string() const method
+    // Xcode 6.4 appears to have shipped a string_view without it
+    auto str = sv.to_string();
     return 0;
 }" META_HAS_EXPERIMENTAL_STRING_VIEW)
 
