@@ -313,6 +313,11 @@ int main(int argc, char* argv[])
 
     auto config = cpptoml::parse_file(argv[1]);
     std::string file = argv[2];
+    if (!filesystem::file_exists(file))
+    {
+        std::cerr << "File does not exist" << std::endl;
+        return 1;
+    }
     std::unordered_set<std::string> args{argv + 3, argv + argc};
     bool all = args.find("--all") != args.end();
 
