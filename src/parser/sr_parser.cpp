@@ -443,11 +443,11 @@ void sr_parser::save(const std::string& prefix) const
 
 void sr_parser::load(const std::string& prefix)
 {
-    io::gzifstream model{prefix + "/parser.model.gz"};
+    auto model_file = prefix + "/parser.model.gz";
+    if (!filesystem::file_exists(model_file))
+        throw sr_parser_exception{"model file not found: " + model_file};
 
-    if (!model)
-        throw sr_parser_exception{"model file not found"};
-
+    io::gzifstream model{model_file};
     io::packed::read(model, beam_size_);
     model_.load(model);
 }

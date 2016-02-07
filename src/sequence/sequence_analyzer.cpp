@@ -34,10 +34,11 @@ void sequence_analyzer::load(const std::string& prefix)
 
 void sequence_analyzer::load_feature_id_mapping(const std::string& prefix)
 {
-    io::gzifstream input{prefix + "/feature.mapping.gz"};
+    auto feature_file = prefix + "/feature.mapping.gz";
+    if (!filesystem::file_exists(feature_file))
+        throw exception{"missing feature id mapping: " + feature_file};
 
-    if (!input)
-        throw exception{"missing feature id mapping"};
+    io::gzifstream input{feature_file};
 
     uint64_t total_num_keys;
     io::packed::read(input, total_num_keys);
@@ -56,10 +57,11 @@ void sequence_analyzer::load_feature_id_mapping(const std::string& prefix)
 
 void sequence_analyzer::load_label_id_mapping(const std::string& prefix)
 {
-    if (!filesystem::file_exists(prefix + "/label.mapping"))
-        throw exception{"missing label mapping"};
+    auto label_file = prefix + "/label.mapping";
+    if (!filesystem::file_exists(label_file))
+        throw exception{"missing label mapping: " + label_file};
 
-    map::load_mapping(label_id_mapping_, prefix + "/label.mapping");
+    map::load_mapping(label_id_mapping_, label_file);
 }
 
 void sequence_analyzer::save(const std::string& prefix) const
