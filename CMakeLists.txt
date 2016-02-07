@@ -119,9 +119,9 @@ if(STDOPT)
 endif()
 
 if(ZLIB_FOUND)
-  target_include_directories(meta-definitions SYSTEM INTERFACE
-                             ${ZLIB_INCLUDE_DIRS})
-  target_compile_definitions(meta-definitions INTERFACE -DMETA_HAS_ZLIB)
+  target_include_directories(meta-definitions SYSTEM INTERFACE ${ZLIB_INCLUDE_DIRS})
+else()
+  message(FATAL_ERROR "Failed to find required dependency ZLIB")
 endif()
 
 if(LIBDL_LIBRARY)

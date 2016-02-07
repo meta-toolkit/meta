@@ -168,7 +168,6 @@ go_bandit([]() {
         it("should load the index", [&]() { bcancer_forward_test(*svm_cfg); });
     });
 
-#if META_HAS_ZLIB
     describe("[forward-index] with zlib", []() {
 
         filesystem::remove_all("ceeaus-fwd");
@@ -183,7 +182,6 @@ go_bandit([]() {
         it("should load the index", [&]() { ceeaus_forward_test(*gz_cfg); });
 
     });
-#endif
 
     filesystem::remove_all("ceeaus-inv");
     filesystem::remove_all("ceeaus-fwd");
