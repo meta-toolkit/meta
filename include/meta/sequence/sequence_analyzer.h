@@ -319,12 +319,6 @@ class sequence_analyzer
     void load_feature_id_mapping(const std::string& prefix);
 
     /**
-     * Loads the feature_id mapping from disk using an input stream.
-     * @param input The input stream of the feature_id mapping
-     */
-    void load_feature_id_mapping(std::istream& input);
-
-    /**
      * Loads the label_id mapping from disk.
      * @param prefix The folder to load the mapping from
      */

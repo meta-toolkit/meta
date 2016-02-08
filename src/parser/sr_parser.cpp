@@ -7,6 +7,7 @@
 #include <fstream>
 
 #include "meta/io/filesystem.h"
+#include "meta/io/gzstream.h"
 #include "meta/io/packed.h"
 #include "meta/logging/logger.h"
 #include "meta/parallel/parallel_for.h"
@@ -21,10 +22,6 @@
 #include "meta/util/progress.h"
 #include "meta/util/range.h"
 #include "meta/util/time.h"
-
-#ifdef META_HAS_ZLIB
-#include "meta/io/gzstream.h"
-#endif
 
 namespace meta
 {
@@ -264,9 +261,9 @@ std::pair<uint64_t, uint64_t> sr_parser::train_instance(
 }
 
 std::pair<uint64_t, uint64_t>
-    sr_parser::train_early_termination(const parse_tree& tree,
-                                       const std::vector<trans_id>& transitions,
-                                       weight_vectors& update) const
+sr_parser::train_early_termination(const parse_tree& tree,
+                                   const std::vector<trans_id>& transitions,
+                                   weight_vectors& update) const
 {
     std::pair<uint64_t, uint64_t> result{0, 0};
     state state{tree};
@@ -439,37 +436,18 @@ auto sr_parser::best_transitions(const feature_vector& features,
 void sr_parser::save(const std::string& prefix) const
 {
     trans_.save(prefix);
-
-#ifdef META_HAS_ZLIB
     io::gzofstream model{prefix + "/parser.model.gz"};
-#else
-    std::ofstream model{prefix + "/parser.model", std::ios::binary};
-#endif
-
     io::packed::write(model, beam_size_);
-
     model_.save(model);
 }
 
 void sr_parser::load(const std::string& prefix)
 {
-#ifdef META_HAS_ZLIB
-    if (filesystem::file_exists(prefix + "/parser.model.gz"))
-    {
-        io::gzifstream model{prefix + "/parser.model.gz"};
-        load(model);
-        return;
-    }
-#endif
-    std::ifstream model{prefix + "/parser.model", std::ios::binary};
-    load(model);
-}
+    auto model_file = prefix + "/parser.model.gz";
+    if (!filesystem::file_exists(model_file))
+        throw sr_parser_exception{"model file not found: " + model_file};
 
-void sr_parser::load(std::istream& model)
-{
-    if (!model)
-        throw sr_parser_exception{"model file not found"};
-
+    io::gzifstream model{model_file};
     io::packed::read(model, beam_size_);
     model_.load(model);
 }

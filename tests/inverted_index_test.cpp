@@ -123,7 +123,6 @@ go_bandit([]() {
         });
     });
 
-#if META_HAS_ZLIB
     describe("[inverted-index] with zlib", []() {
 
         filesystem::remove_all("ceeaus-inv");
@@ -141,7 +140,6 @@ go_bandit([]() {
         });
 
     });
-#endif
 
     filesystem::remove_all("ceeaus-inv");
 });

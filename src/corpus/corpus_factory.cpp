@@ -22,9 +22,7 @@ corpus_factory::corpus_factory()
     // built-in corpora
     reg<file_corpus>();
     reg<line_corpus>();
-#if META_HAS_ZLIB
     reg<gz_corpus>();
-#endif
     reg<libsvm_corpus>();
 }
 
