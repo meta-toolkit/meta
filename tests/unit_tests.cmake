@@ -85,3 +85,7 @@ set_tests_properties(topics PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
 add_test(hashing ${UNIT_TEST_EXE} --only=[hashing] --reporter=spec)
 set_tests_properties(hashing PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
                          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+add_test(vector-math ${UNIT_TEST_EXE} --only=[vector math] --reporter=spec)
+set_tests_properties(vector-math PROPERTIES TIMEOUT 10 WORKING_DIRECTORY
+                         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
