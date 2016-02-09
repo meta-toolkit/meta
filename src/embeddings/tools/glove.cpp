@@ -214,6 +214,9 @@ class glove_trainer
         xmax_ = embed_cfg.get_as<double>("xmax").value_or(100.0);
         scale_ = embed_cfg.get_as<double>("scale").value_or(0.75);
 
+        auto num_rare = static_cast<uint64_t>(
+            embed_cfg.get_as<int64_t>("unk-num-avg").value_or(100));
+
         if (!filesystem::file_exists(prefix + "/vocab.bin"))
         {
             LOG(fatal) << "Vocabulary has not yet been generated, please "
@@ -263,6 +266,14 @@ class glove_trainer
 
         // train using the specified number of threads
         train(prefix, num_threads, iters, total_records);
+
+        // delete the temporary shuffled coocurrence files
+        for (std::size_t i = 0; i < num_threads; ++i)
+            filesystem::delete_file(prefix + "/coocur-shuf." + std::to_string(i)
+                                    + ".bin");
+
+        // save the target and context word embeddings
+        save(prefix, num_words, num_rare);
     }
 
     array_view<double> target_vector(uint64_t term)
@@ -445,6 +456,81 @@ class glove_trainer
         }
 
         return cost;
+    }
+
+    void save(const std::string& prefix, uint64_t num_words,
+              uint64_t num_rare) const
+    {
+        // target embeddings
+        {
+            std::ofstream output{prefix + "/embeddings.target.bin",
+                                 std::ios::binary};
+            printing::progress progress{" > Saving target embeddings: ",
+                                        num_words};
+            io::packed::write(output, vector_size_);
+            save_embeddings(output, num_words, num_rare, progress,
+                            [&](uint64_t term)
+                            {
+                                return target_vector(term);
+                            });
+        }
+
+        // context embeddings
+        {
+
+            std::ofstream output{prefix + "/embeddings.context.bin",
+                                 std::ios::binary};
+            printing::progress progress{" > Saving context embeddings: ",
+                                        num_words};
+            io::packed::write(output, vector_size_);
+            save_embeddings(output, num_words, num_rare, progress,
+                            [&](uint64_t term)
+                            {
+                                return context_vector(term);
+                            });
+        }
+    }
+
+    template <class VectorFetcher>
+    void save_embeddings(std::ofstream& output, uint64_t num_words,
+                         uint64_t num_rare, printing::progress& progress,
+                         VectorFetcher&& vf) const
+    {
+        for (uint64_t tid = 0; tid < num_words; ++tid)
+        {
+            progress(tid);
+            const auto& vec = vf(tid);
+            write_normalized(vec.begin(), vec.end(), output);
+        }
+
+        util::aligned_vector<double> unk_vec(vector_size_, 0.0);
+        auto num_to_average = std::min(num_rare, num_words);
+        for (uint64_t tid = num_words - num_rare; tid < num_words; ++tid)
+        {
+            const auto& vec = vf(tid);
+            std::transform(unk_vec.begin(), unk_vec.end(), vec.begin(),
+                           unk_vec.begin(),
+                           [=](double unkweight, double vecweight)
+                           {
+                               return unkweight + vecweight / num_to_average;
+                           });
+        }
+        write_normalized(unk_vec.begin(), unk_vec.end(), output);
+    }
+
+    template <class ForwardIterator>
+    void write_normalized(ForwardIterator begin, ForwardIterator end,
+                          std::ofstream& output) const
+    {
+        auto len = std::sqrt(std::accumulate(begin, end, 0.0,
+                                             [](double accum, double weight)
+                                             {
+                                                 return accum + weight * weight;
+                                             }));
+        std::for_each(begin, end, [&](double weight)
+                      {
+                          io::packed::write(output, weight / len);
+                      });
     }
 
     util::aligned_vector<double> weights_;
