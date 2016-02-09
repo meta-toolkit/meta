@@ -11,6 +11,7 @@
 #define META_UTIL_ARRAY_VIEW_H_
 
 #include <cstddef>
+#include <vector>
 
 namespace meta
 {
@@ -45,6 +46,37 @@ class array_view
      * @param end The ending point
      */
     array_view(T* start, T* end) : start_{start}, end_{end}
+    {
+        // nothing
+    }
+
+    /**
+     * Constructs an array_view over a std::vector.
+     */
+    template <class U, class Allocator>
+    array_view(const std::vector<U, Allocator>& container)
+        : array_view(container.data(), container.size())
+    {
+        // nothing
+    }
+
+    /**
+     * Constructs an array_view over a std::vector.
+     */
+    template <class U, class Allocator>
+    array_view(std::vector<U, Allocator>& container)
+        : array_view(container.data(), container.size())
+    {
+        // nothing
+    }
+
+    /**
+     * Constructs an array_view from a compatible other array_view.
+     */
+    template <class U, class = typename std::
+                           enable_if<std::is_convertible<U, T>::value>::type>
+    array_view(const array_view<U>& av)
+        : start_{av.begin()}, end_{av.end()}
     {
         // nothing
     }
