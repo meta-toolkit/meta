@@ -5,7 +5,7 @@
 
 #include <cmath>
 #include "meta/corpus/document.h"
-#include "meta/util/fastapprox.h"
+#include "meta/math/fastapprox.h"
 #include "meta/index/score_data.h"
 #include "meta/index/ranker/lm_ranker.h"
 
