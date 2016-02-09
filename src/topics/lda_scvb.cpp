@@ -76,7 +76,7 @@ void lda_scvb::initialize(std::mt19937& rng)
 void lda_scvb::perform_iteration(uint64_t iter, const std::vector<doc_id>& docs)
 {
     printing::progress progress{"Minibatch " + std::to_string(iter) + ": ",
-                                minibatch_size_, 100, 1};
+                                minibatch_size_};
 
     std::vector<std::unordered_map<term_id, double>> batch_topic_term_count_(
         num_topics_);
@@ -104,9 +104,9 @@ void lda_scvb::perform_iteration(uint64_t iter, const std::vector<doc_id>& docs)
                 gamma[k] /= sum;
                 auto lr = 1.0 / std::pow(10 + t, 0.9);
                 auto weight = std::pow(1 - lr, freq.second);
-                doc_topic_count_[d][k] =
-                    weight * doc_topic_count_[d][k]
-                    + (1 - weight) * idx_->doc_size(d) * gamma[k];
+                doc_topic_count_[d][k]
+                    = weight * doc_topic_count_[d][k]
+                      + (1 - weight) * idx_->doc_size(d) * gamma[k];
             }
             t += freq.second;
         }
@@ -131,12 +131,12 @@ void lda_scvb::perform_iteration(uint64_t iter, const std::vector<doc_id>& docs)
                 auto lr = 1.0 / std::pow(10 + t, 0.9);
                 auto weight = std::pow(1 - lr, freq.second);
 
-                doc_topic_count_[d][k] =
-                    weight * doc_topic_count_[d][k]
-                    + (1 - weight) * idx_->doc_size(d) * gamma[k];
+                doc_topic_count_[d][k]
+                    = weight * doc_topic_count_[d][k]
+                      + (1 - weight) * idx_->doc_size(d) * gamma[k];
 
-                batch_topic_term_count_[k][freq.first] +=
-                    idx_->num_docs() * gamma[k];
+                batch_topic_term_count_[k][freq.first]
+                    += idx_->num_docs() * gamma[k];
 
                 batch_topic_count_[k] += idx_->num_docs() * gamma[k];
             }
@@ -157,9 +157,9 @@ void lda_scvb::perform_iteration(uint64_t iter, const std::vector<doc_id>& docs)
     {
         for (term_id i{0}; i < num_words_; ++i)
         {
-            topic_term_count_[k][i] =
-                (1 - lr) * topic_term_count_[k][i]
-                + lr * (batch_topic_term_count_[k][i] / minibatch_size_);
+            topic_term_count_[k][i]
+                = (1 - lr) * topic_term_count_[k][i]
+                  + lr * (batch_topic_term_count_[k][i] / minibatch_size_);
         }
         topic_count_[k] = (1 - lr) * topic_count_[k]
                           + lr * (batch_topic_count_[k] / minibatch_size_);

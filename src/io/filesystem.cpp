@@ -175,7 +175,6 @@ bool copy_file(const std::string& source, const std::string& dest)
             dest_file.write(buffer.data(), processed);
             prog(total_processed);
         }
-        prog.end();
     }
     // otherwise, copy the file normally
     else
@@ -201,19 +200,20 @@ uint64_t num_lines(const std::string& filename, char delimiter /*= '\n'*/)
     io::mmap_file file{filename};
     uint64_t num = 0;
 
-    printing::progress progress{" > Counting lines in file: ", file.size(), 500,
-                                32 * 1024 * 1024};
-    for (uint64_t idx = 0; idx < file.size(); ++idx)
     {
-        progress(idx);
-        if (file[idx] == delimiter)
+        printing::progress progress{" > Counting lines in file: ", file.size()};
+        for (uint64_t idx = 0; idx < file.size(); ++idx)
+        {
+            progress(idx);
+            if (file[idx] == delimiter)
+                ++num;
+        }
+
+        // this fixes a potential off-by-one if the last line in the file
+        // doesn't end with the delimiter
+        if (file[file.size() - 1] != delimiter)
             ++num;
     }
-
-    // this fixes a potential off-by-one if the last line in the file
-    // doesn't end with the delimiter
-    if (file[file.size() - 1] != delimiter)
-        ++num;
 
     return num;
 }

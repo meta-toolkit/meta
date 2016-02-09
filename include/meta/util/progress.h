@@ -10,7 +10,11 @@
 #ifndef META_UTIL_PROGRESS_H_
 #define META_UTIL_PROGRESS_H_
 
+#include <atomic>
 #include <chrono>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 #include <string>
 
 namespace meta
@@ -36,11 +40,8 @@ class progress
      * @param length The number of iterations
      * @param interval The length of time, in milliseconds, to wait
      * between updates. Default = 500ms.
-     * @param min_iters The minimum number of iterations that must pass
-     * before progress reporting will be considered
      */
-    progress(const std::string& prefix, uint64_t length,
-             int interval = 500, uint64_t min_iters = 10);
+    progress(const std::string& prefix, uint64_t length, int interval = 500);
 
     /**
      * Sets whether or not an endline should be printed at completion.
@@ -56,7 +57,9 @@ class progress
     ~progress();
 
     /**
-     * Updates the progress indicator.
+     * Updates the progress indicator. Since progress is printed
+     * asynchronously, you may not immediately see results after calling
+     * this function, but they will be reflected in the next update tick.
      * @param iter The current iteration number to update to
      */
     void operator()(uint64_t iter);
@@ -72,27 +75,27 @@ class progress
     void clear() const;
 
   private:
-    /// The prefix for the progress report message.
-    std::string prefix_;
+    void print();
+    void progress_thread();
+
+    /// The background thread for printing progress updates
+    std::thread thread_;
+    /// The mutex for the condition variable.
+    std::mutex mutex_;
+    /// The condition variable used by the background thread for sleeping
+    std::condition_variable cond_var_;
+    /// The output line
+    std::string output_;
+    /// The length of the prefix
+    const std::size_t prefix_len_;
     /// The start time of the job.
-    std::chrono::steady_clock::time_point start_;
-    /// The time of the last update.
-    std::chrono::steady_clock::time_point last_update_;
-    /// The last iteration number.
-    uint64_t last_iter_;
+    const std::chrono::steady_clock::time_point start_;
+    /// The current iteration number.
+    std::atomic<uint64_t> iter_;
     ///  The total number of iterations.
-    uint64_t length_;
+    const uint64_t length_;
     /// The length of time, in milliseconds, to wait between updates.
-    int interval_;
-    /**
-     * The minimum number of iterations that must pass before progress
-     * reporting will be considered.
-     */
-    uint64_t min_iters_;
-    /// The length of the last progress output message.
-    int str_len_;
-    /// Whether or not we have finished the job.
-    bool finished_;
+    const int interval_;
     /// Whether or not we should print an endline when done.
     bool endline_;
 };

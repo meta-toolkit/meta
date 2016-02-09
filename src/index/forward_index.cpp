@@ -604,9 +604,7 @@ void forward_index::impl::compress(const std::string& filename,
         std::ifstream in{ucfilename, std::ios::binary};
         uint64_t byte_pos = 0;
 
-        printing::progress progress{
-            " > Compressing postings: ", length, 500, 1024 /* 1KB */
-        };
+        printing::progress progress{" > Compressing postings: ", length};
         // note: we will be accessing pdata in sorted order, but not every
         // doc_id is guaranteed to exist, so we must be mindful of document
         // gaps
