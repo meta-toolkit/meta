@@ -517,6 +517,14 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    glove_trainer trainer{*embed_cfg};
+    try
+    {
+        glove_trainer trainer{*embed_cfg};
+    }
+    catch (const glove_exception& ex)
+    {
+        LOG(fatal) << ex.what() << ENDLG;
+        return 1;
+    }
     return 0;
 }
