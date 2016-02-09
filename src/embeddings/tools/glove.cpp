@@ -17,6 +17,7 @@
 #include "meta/logging/logger.h"
 #include "meta/parallel/thread_pool.h"
 #include "meta/util/aligned_allocator.h"
+#include "meta/util/array_view.h"
 #include "meta/util/progress.h"
 #include "meta/util/printing.h"
 #include "meta/util/random.h"
@@ -139,50 +140,6 @@ std::size_t shuffle_partition(const std::string& prefix, std::size_t max_ram,
     return total_records;
 }
 
-template <class T>
-class array_view
-{
-  public:
-    array_view(T* start, std::size_t len) : start_{start}, end_{start + len}
-    {
-        // nothing
-    }
-
-    array_view(T* start, T* end) : start_{start}, end_{end}
-    {
-        // nothing
-    }
-
-    T* begin() const
-    {
-        return start_;
-    }
-
-    T* end() const
-    {
-        return end_;
-    }
-
-    const T& operator[](std::size_t idx) const
-    {
-        return begin()[idx];
-    }
-
-    T& operator[](std::size_t idx)
-    {
-        return begin()[idx];
-    }
-
-    std::size_t size() const
-    {
-        return end_ - start_;
-    }
-
-  private:
-    T* start_;
-    T* end_;
-};
-
 class glove_exception : public std::runtime_error
 {
   public:
@@ -276,13 +233,13 @@ class glove_trainer
         save(prefix, num_words, num_rare);
     }
 
-    array_view<double> target_vector(uint64_t term)
+    util::array_view<double> target_vector(uint64_t term)
     {
         return {weights_.data() + (term * 2 * (vector_size_ + 1)),
                 vector_size_};
     }
 
-    array_view<const double> target_vector(uint64_t term) const
+    util::array_view<const double> target_vector(uint64_t term) const
     {
         return {weights_.data() + (term * 2 * (vector_size_ + 1)),
                 vector_size_};
@@ -298,13 +255,13 @@ class glove_trainer
         return weights_[term * 2 * (vector_size_ + 1) + vector_size_];
     }
 
-    array_view<double> context_vector(uint64_t term)
+    util::array_view<double> context_vector(uint64_t term)
     {
         return {weights_.data() + (term * 2 + 1) * (vector_size_ + 1),
                 vector_size_};
     }
 
-    array_view<const double> context_vector(uint64_t term) const
+    util::array_view<const double> context_vector(uint64_t term) const
     {
         return {weights_.data() + (term * 2 + 1) * (vector_size_ + 1),
                 vector_size_};
@@ -330,7 +287,7 @@ class glove_trainer
     }
 
   private:
-    array_view<double> target_gradsq(uint64_t term)
+    util::array_view<double> target_gradsq(uint64_t term)
     {
         return {grad_squared_.data() + (term * 2 * (vector_size_ + 1)),
                 vector_size_};
@@ -341,7 +298,7 @@ class glove_trainer
         return grad_squared_[term * 2 * (vector_size_ + 1) + vector_size_];
     }
 
-    array_view<double> context_gradsq(uint64_t term)
+    util::array_view<double> context_gradsq(uint64_t term)
     {
         return {grad_squared_.data() + (term * 2 + 1) * (vector_size_ + 1),
                 vector_size_};
