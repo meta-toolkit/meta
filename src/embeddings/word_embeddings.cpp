@@ -9,6 +9,7 @@
 
 #include "meta/embeddings/word_embeddings.h"
 #include "meta/io/packed.h"
+#include "meta/util/fixed_heap.h"
 #include "meta/util/progress.h"
 
 namespace meta
@@ -124,6 +125,30 @@ util::string_view word_embeddings::term(std::size_t tid) const
     if (tid >= id_to_term_.size())
         return "<unk>";
     return id_to_term_[tid];
+}
+
+std::vector<scored_embedding>
+word_embeddings::top_k(util::array_view<const double> query,
+                       std::size_t k) const
+{
+    auto comp = [](const scored_embedding& a, const scored_embedding& b)
+    {
+        return a.score > b.score;
+    };
+    util::fixed_heap<scored_embedding, decltype(comp)> results{k, comp};
+
+    // +1 for <unk>
+    for (std::size_t tid = 0; tid < id_to_term_.size() + 1; ++tid)
+    {
+        auto vec = vector(tid);
+        auto score
+            = std::inner_product(query.begin(), query.end(), vec.begin(), 0.0);
+
+        embedding e{tid, vec};
+        results.push({e, score});
+    }
+
+    return results.extract_top();
 }
 
 word_embeddings load_embeddings(const cpptoml::table& config)

@@ -30,6 +30,12 @@ struct embedding
     util::array_view<const double> v;
 };
 
+struct scored_embedding
+{
+    embedding e;
+    double score;
+};
+
 /**
  * A read-only model for accessing word embeddings.
  */
@@ -68,6 +74,15 @@ class word_embeddings
      * @return the term (as a string_view) represented by that term id
      */
     util::string_view term(std::size_t tid) const;
+
+    /**
+     * @param query A vector of the same length as a word embedding to
+     *  query for
+     * @param k The number of embeddings to return
+     * @return the top k word scored_embeddings closest to the query
+     */
+    std::vector<scored_embedding> top_k(util::array_view<const double> query,
+                                        std::size_t k = 100) const;
 
   private:
     util::array_view<double> vector(std::size_t tid);
