@@ -3,6 +3,8 @@
  * @author Chase Geigle
  */
 
+#include <cmath>
+#include <numeric>
 #include "meta/io/packed.h"
 #include "meta/learn/sgd.h"
 
@@ -177,11 +179,11 @@ double sgd_model::l2norm() const
 
 double sgd_model::l1norm() const
 {
-    return std::count_if(weights_.begin(), weights_.end(),
-                         [&](const weight_type& w)
-                         {
-                             return scale_ * w.weight > 0;
-                         });
+    return std::accumulate(weights_.begin(), weights_.end(), 0.0,
+                           [](double accum, const weight_type& w)
+                           {
+                               return accum + std::abs(w.weight);
+                           });
 }
 }
 }
