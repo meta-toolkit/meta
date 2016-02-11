@@ -46,7 +46,7 @@ int main(int argc, char** argv)
             break;
 
         auto query = glove.at(line);
-        for (const auto& se : glove.top_k(query.v))
+        for (const auto& se : glove.top_k(query.v, 10))
         {
             auto term = glove.term(se.e.tid);
             std::cout << term << " (" << se.score << ")\n";
