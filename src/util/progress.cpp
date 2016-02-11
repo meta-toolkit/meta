@@ -63,7 +63,8 @@ void progress::print()
     *it++ = ' ';
 
     it += ::sprintf(&(*it), "%d%%", static_cast<int>(percent * 100));
-    it += ::sprintf(&(*it), " ETA %02d:%02d:%02d", hrs, mins % 60, secs % 60);
+    it += ::sprintf(&(*it), " ETA %02d:%02d:%02d", std::min(999, hrs),
+                    mins % 60, secs % 60);
 
     LOG(progress) << '\r' << output_ << ENDLG;
 }
