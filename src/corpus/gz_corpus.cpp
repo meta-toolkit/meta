@@ -42,7 +42,11 @@ document gz_corpus::next()
 
     document doc{cur_id_++, label};
     doc.content(line, encoding());
-    doc.mdata(next_metadata());
+
+    auto mdata = next_metadata();
+    if (store_full_text())
+        mdata.insert(mdata.begin(), metadata::field{doc.content()});
+    doc.mdata(std::move(mdata));
 
     return doc;
 }

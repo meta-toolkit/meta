@@ -54,8 +54,12 @@ document line_corpus::next()
     if (!std::getline(infile_, content))
         throw corpus_exception{"error parsing line_corpus line "
                                + std::to_string(cur_id_)};
+
     doc.content(content, encoding());
-    doc.mdata(next_metadata());
+    auto mdata = next_metadata();
+    if (store_full_text())
+        mdata.insert(mdata.begin(), metadata::field{doc.content()});
+    doc.mdata(std::move(mdata));
 
     return doc;
 }

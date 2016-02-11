@@ -37,7 +37,17 @@ namespace corpus
  * The corpus spec toml file also requires a corpus type and an optional
  * encoding for the corpus text.
  *
- * Optional config parameters: none.
+ * Required config parameters:
+ * ~~~toml
+ * type = "line-corpus" # for example
+ * ~~~
+ *
+ * Optional config parameters:
+ * ~~~toml
+ * encoding = "utf-8" # default value
+ * store-full-text = false # default value; N/A for libsvm-corpus
+ * metadata = # metadata schema; see metadata object
+ * ~~~
  *
  * @see https://meta-toolkit.org/overview-tutorial.html
  */
@@ -80,6 +90,12 @@ class corpus
      */
     const std::string& encoding() const;
 
+    /**
+     * @return whether this corpus will create a metadata field for full text
+     * (called "content")
+     */
+    bool store_full_text() const;
+
   protected:
     /**
      * Helper function to be used by deriving classes in implementing
@@ -92,10 +108,14 @@ class corpus
 
     void set_metadata_parser(metadata_parser&& mdparser);
 
+    void set_store_full_text(bool store_full_text);
+
     /// The type of encoding this document uses
     std::string encoding_;
     /// The metadata parser
     util::optional<metadata_parser> mdata_parser_;
+    /// Whether to store the original document text
+    bool store_full_text_;
 };
 
 /**

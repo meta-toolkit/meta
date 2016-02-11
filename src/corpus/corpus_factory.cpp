@@ -55,6 +55,11 @@ std::unique_ptr<corpus> make_corpus(const cpptoml::table& config)
 
     result->set_metadata_parser({*prefix + "/" + *dataset + "/metadata.dat",
                                  metadata_schema(*corpus_config)});
+
+    auto store_full_text
+        = corpus_config->get_as<bool>("store-full-text").value_or(false);
+    result->set_store_full_text(store_full_text);
+
     return result;
 }
 }
