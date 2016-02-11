@@ -151,26 +151,6 @@ class coocur_buffer
     std::size_t chunk_num_ = 0;
 };
 
-std::unique_ptr<analyzers::token_stream>
-make_stream(const cpptoml::table& config)
-{
-    std::unique_ptr<analyzers::token_stream> stream;
-    auto analyzers = config.get_table_array("analyzers");
-    for (const auto& group : analyzers->get())
-    {
-        auto method = group->get_as<std::string>("method");
-        if (!method)
-            continue;
-
-        if (*method == analyzers::ngram_word_analyzer::id)
-        {
-            stream = analyzers::load_filters(config, *group);
-            break;
-        }
-    }
-    return stream;
-}
-
 hashing::probe_map<std::string, uint64_t>
 load_vocab(const std::string& filename)
 {
@@ -242,7 +222,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto stream = make_stream(*config);
+    auto stream = analyzers::load_filters(*config, *embed_cfg);
     if (!stream)
     {
         LOG(fatal) << "Failed to find an ngram-word analyzer configuration in "

@@ -16,26 +16,6 @@
 
 using namespace meta;
 
-std::unique_ptr<analyzers::token_stream>
-make_stream(const cpptoml::table& config)
-{
-    std::unique_ptr<analyzers::token_stream> stream;
-    auto analyzers = config.get_table_array("analyzers");
-    for (const auto& group : analyzers->get())
-    {
-        auto method = group->get_as<std::string>("method");
-        if (!method)
-            continue;
-
-        if (*method == analyzers::ngram_word_analyzer::id)
-        {
-            stream = analyzers::load_filters(config, *group);
-            break;
-        }
-    }
-    return stream;
-}
-
 int main(int argc, char** argv)
 {
     if (argc < 2)
@@ -58,14 +38,7 @@ int main(int argc, char** argv)
     auto max_size = vocab_cfg->get_as<int64_t>("max-size")
                         .value_or(std::numeric_limits<int64_t>::max());
 
-    auto stream = make_stream(*config);
-    if (!stream)
-    {
-        LOG(fatal) << "Failed to find an ngram-word analyzer configuration in "
-                   << argv[1] << ENDLG;
-        return 1;
-    }
-
+    auto stream = analyzers::load_filters(*config, *embed_cfg);
     hashing::probe_map<std::string, uint64_t> vocab;
 
     {
