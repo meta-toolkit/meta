@@ -19,19 +19,6 @@
 using namespace meta;
 
 /**
- * @param path The path to the file to open
- * @return the text content of that file
- */
-std::string get_content(const std::string& path)
-{
-    std::ifstream in{path};
-    std::string str{(std::istreambuf_iterator<char>(in)),
-                    std::istreambuf_iterator<char>()};
-    std::replace(str.begin(), str.end(), '\n', ' ');
-    return str;
-}
-
-/**
  * Demo app to allow a user to create queries and search an index.
  */
 int main(int argc, char* argv[])
@@ -63,8 +50,7 @@ int main(int argc, char* argv[])
     std::string prefix = *config->get_as<std::string>("prefix") + "/"
                          + *config->get_as<std::string>("dataset") + "/";
 
-    std::cout << "Enter a query, or blank to quit." << std::endl
-              << std::endl;
+    std::cout << "Enter a query, or blank to quit." << std::endl << std::endl;
 
     std::string text;
     while (true)
@@ -92,15 +78,20 @@ int main(int argc, char* argv[])
         for (auto& result : ranking)
         {
             std::string path{idx->doc_path(result.d_id)};
-            std::cout << printing::make_bold(
-                             std::to_string(result_num) + ". " + path + " ("
-                             + std::to_string(result.score) + ")") << std::endl;
-            std::cout << get_content(prefix + path) << std::endl
-                      << std::endl;
+            auto output
+                = printing::make_bold(std::to_string(result_num) + ". " + path)
+                  + " (score = " + std::to_string(result.score) + ", docid = "
+                  + std::to_string(result.d_id) + ")";
+            std::cout << output << std::endl;
+            auto mdata = idx->metadata(result.d_id);
+            if (auto content = mdata.get<std::string>("content"))
+            {
+                auto len = std::min(77ul, content->size());
+                std::cout << content->substr(0, len) << "..." << std::endl
+                          << std::endl;
+            }
             if (result_num++ == 5)
                 break;
         }
-
-        std::cout << std::endl;
     }
 }
