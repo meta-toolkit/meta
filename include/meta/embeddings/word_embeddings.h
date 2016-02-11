@@ -94,14 +94,14 @@ class word_embeddings
     /// The size of the word embeddings
     const std::size_t vector_size_;
 
-    /// The embeddings matrix
-    util::aligned_vector<double> embeddings_;
-
     /// A list of all of the strings in the vocabulary, indexed by id
     util::aligned_vector<std::string> id_to_term_;
 
     /// A hash table from a term to its id
     hashing::probe_map<util::string_view, std::size_t> term_to_id_;
+
+    /// The embeddings matrix
+    util::aligned_vector<double> embeddings_;
 };
 
 /**

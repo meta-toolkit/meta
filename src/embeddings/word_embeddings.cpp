@@ -21,10 +21,10 @@ using vocab_type = hashing::probe_map<util::string_view, std::size_t>;
 
 word_embeddings::word_embeddings(std::istream& vocab, std::istream& vectors)
     : vector_size_{io::packed::read<std::size_t>(vectors)},
-      embeddings_(vector_size_),
       id_to_term_(io::packed::read<std::size_t>(vocab)),
       term_to_id_{static_cast<std::size_t>(std::ceil(
-          id_to_term_.size() / vocab_type::default_max_load_factor()))}
+          id_to_term_.size() / vocab_type::default_max_load_factor()))},
+      embeddings_(vector_size_ * (id_to_term_.size() + 1))
 {
     load_vocab(vocab);
 
@@ -48,10 +48,10 @@ word_embeddings::word_embeddings(std::istream& vocab, std::istream& vectors)
 word_embeddings::word_embeddings(std::istream& vocab, std::istream& first,
                                  std::istream& second)
     : vector_size_{io::packed::read<std::size_t>(first)},
-      embeddings_(vector_size_),
       id_to_term_(io::packed::read<std::size_t>(vocab)),
       term_to_id_{static_cast<std::size_t>(std::ceil(
-          id_to_term_.size() / vocab_type::default_max_load_factor()))}
+          id_to_term_.size() / vocab_type::default_max_load_factor()))},
+      embeddings_(vector_size_ * (id_to_term_.size() + 1))
 {
     if (io::packed::read<std::size_t>(second) != vector_size_)
         throw word_embeddings_exception{"mismatched vector sizes"};
@@ -92,6 +92,9 @@ void word_embeddings::load_vocab(std::istream& vocab)
         progress(tid);
         io::packed::read(vocab, id_to_term_[tid]);
         term_to_id_[id_to_term_[tid]] = tid;
+
+        // discard the count
+        io::packed::read<std::size_t>(vocab);
     }
 }
 
