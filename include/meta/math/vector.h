@@ -11,8 +11,10 @@
 #define META_MATH_VECTOR_H_
 
 #include <cassert>
+#include <cmath>
 #include <algorithm>
 #include <type_traits>
+#include <numeric>
 #include <vector>
 
 #include "meta/util/array_view.h"
@@ -276,6 +278,122 @@ typename detail::common_type<T, U>::vector_type operator-(util::array_view<T> a,
 {
     typename detail::common_type<T, U>::vector_type result{a.begin(), a.end()};
     return std::move(result) - b;
+}
+
+// operator/
+template <class T, class Allocator, class U>
+vector<T, Allocator> operator/(vector<T, Allocator>&& vec, U denom)
+{
+    vector<T> result{std::move(vec)};
+    std::transform(result.begin(), result.end(), result.begin(),
+                   [=](const T& elem)
+                   {
+                       return elem / denom;
+                   });
+    return result;
+}
+
+template <class T, class Allocator, class U>
+vector<T, Allocator> operator/(const vector<T, Allocator>& vec, U denom)
+{
+    vector<T, Allocator> result{vec};
+    return std::move(result) / denom;
+}
+
+template <class T, class U>
+vector<typename std::remove_const<T>::type> operator/(util::array_view<T> vec,
+                                                      U denom)
+{
+    vector<typename std::remove_const<T>::type> result{vec.begin(), vec.end()};
+    return std::move(result) / denom;
+}
+
+// operator*
+template <class T, class Allocator, class U>
+vector<T, Allocator> operator*(vector<T, Allocator>&& vec, U mult)
+{
+    vector<T> result{std::move(vec)};
+    std::transform(result.begin(), result.end(), result.begin(),
+                   [=](const T& elem)
+                   {
+                       return elem * mult;
+                   });
+    return result;
+}
+
+template <class T, class Allocator, class U>
+vector<T, Allocator> operator*(const vector<T, Allocator>& vec, U mult)
+{
+    vector<T, Allocator> result{vec};
+    return std::move(result) * mult;
+}
+
+template <class T, class U>
+vector<typename std::remove_const<T>::type> operator*(util::array_view<T> vec,
+                                                      U mult)
+{
+    vector<typename std::remove_const<T>::type> result{vec.begin(), vec.end()};
+    return std::move(result) * mult;
+}
+
+template <class T, class Allocator, class U>
+vector<T, Allocator> operator*(U mult, vector<T, Allocator>&& vec)
+{
+    vector<T> result{std::move(vec)};
+    std::transform(result.begin(), result.end(), result.begin(),
+                   [=](const T& elem)
+                   {
+                       return elem * mult;
+                   });
+    return result;
+}
+
+template <class T, class Allocator, class U>
+vector<T, Allocator> operator*(U mult, const vector<T, Allocator>& vec)
+{
+    vector<T, Allocator> result{vec};
+    return std::move(result) * mult;
+}
+
+template <class T, class U>
+vector<typename std::remove_const<T>::type> operator*(U mult,
+                                                      util::array_view<T> vec)
+{
+    vector<typename std::remove_const<T>::type> result{vec.begin(), vec.end()};
+    return std::move(result) * mult;
+}
+
+// norms
+template <class T>
+double l2norm(util::array_view<T> vec)
+{
+    return std::sqrt(std::accumulate(vec.begin(), vec.end(), 0.0,
+                                     [](double accum, const T& elem)
+                                     {
+                                         return accum + elem * elem;
+                                     }));
+}
+
+template <class T, class Allocator>
+double l2norm(const vector<T, Allocator>& vec)
+{
+    return l2norm(util::array_view<const T>(vec));
+}
+
+template <class T>
+double l1norm(util::array_view<T> vec)
+{
+    return std::accumulate(vec.begin(), vec.end(), 0.0,
+                           [](double accum, const T& elem)
+                           {
+                               return accum + std::abs(elem);
+                           });
+}
+
+template <class T, class Allocator>
+double l1norm(const vector<T, Allocator>& vec)
+{
+    return l1norm(util::array_view<const T>(vec));
 }
 }
 }

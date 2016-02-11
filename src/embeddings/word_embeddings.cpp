@@ -9,6 +9,7 @@
 
 #include "meta/embeddings/word_embeddings.h"
 #include "meta/io/packed.h"
+#include "meta/math/vector.h"
 #include "meta/util/fixed_heap.h"
 #include "meta/util/progress.h"
 
@@ -75,9 +76,13 @@ word_embeddings::word_embeddings(std::istream& vocab, std::istream& first,
         std::generate(vec.begin(), vec.end(), [&]()
                       {
                           return (io::packed::read<double>(first)
-                                  + io::packed::read<double>(second))
-                                 / 2;
+                                  + io::packed::read<double>(second));
                       });
+        auto len = math::operators::l2norm(vec);
+        std::transform(vec.begin(), vec.end(), vec.begin(), [=](double weight)
+                {
+                    return weight / len;
+                });
     }
 }
 
