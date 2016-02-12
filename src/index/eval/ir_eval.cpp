@@ -46,10 +46,12 @@ void ir_eval::init_index(const std::string& path)
     while (in.good())
     {
         std::getline(in, line);
-        bool trec = (std::count_if(line.begin(), line.end(), [](char ch)
+        bool trec = (std::count_if(line.begin(), line.end(),
+                                   [](char ch)
                                    {
                                        return ch == ' ';
-                                   }) == 3); // 3 spaces == 4 columns
+                                   })
+                     == 3); // 3 spaces == 4 columns
         std::istringstream iss{line};
         iss >> q_id;
         if (trec)
@@ -205,8 +207,11 @@ double ir_eval::gmap() const
 
     double sum = 0.0;
     for (auto& s : scores_)
-        if (s > 0.0)
-            sum += std::log(s);
+    {
+        if (s <= 0.0)
+            return 0.0;
+        sum += std::log(s);
+    }
 
     return std::exp(sum / scores_.size());
 }
