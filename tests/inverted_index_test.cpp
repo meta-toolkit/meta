@@ -54,6 +54,19 @@ void check_term_id(Index& idx) {
         AssertThat(second, EqualsWithDelta(count.second, 0.001));
     }
 }
+
+void check_full_text(corpus::corpus& docs, const cpptoml::table& config) {
+    docs.set_store_full_text(true);
+    auto idx = index::make_index<index::inverted_index>(config, docs);
+
+    auto mdata = idx->metadata(doc_id{0});
+    auto content = mdata.get<std::string>("content");
+    AssertThat(*content, StartsWith("  In my opinion,"));
+
+    mdata = idx->metadata(doc_id{1007});
+    content = mdata.get<std::string>("content");
+    AssertThat(*content, StartsWith("I think we"));
+}
 }
 
 go_bandit([]() {
@@ -72,6 +85,12 @@ go_bandit([]() {
             auto idx = index::make_index<index::inverted_index>(*file_cfg);
             check_ceeaus_expected(*idx);
             check_term_id(*idx);
+        });
+
+        filesystem::remove_all("ceeaus-inv");
+        it("should be able to store full text metadata", [&]() {
+            auto docs = corpus::make_corpus(*file_cfg);
+            check_full_text(*docs, *file_cfg);
         });
     });
 
@@ -92,6 +111,12 @@ go_bandit([]() {
             check_ceeaus_expected(*idx);
             check_term_id(*idx);
             check_term_id(*idx); // twice to check splay_caching
+        });
+
+        filesystem::remove_all("ceeaus-inv");
+        it("should be able to store full text metadata", [&]() {
+            auto docs = corpus::make_corpus(*line_cfg);
+            check_full_text(*docs, *line_cfg);
         });
     });
 
@@ -139,6 +164,11 @@ go_bandit([]() {
             check_term_id(*idx);
         });
 
+        filesystem::remove_all("ceeaus-inv");
+        it("should be able to store full text metadata", [&]() {
+            auto docs = corpus::make_corpus(*gz_cfg);
+            check_full_text(*docs, *gz_cfg);
+        });
     });
 
     filesystem::remove_all("ceeaus-inv");

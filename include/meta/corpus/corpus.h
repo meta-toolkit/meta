@@ -96,6 +96,12 @@ class corpus
      */
     bool store_full_text() const;
 
+    /**
+     * @param store_full_text Tells this corpus to store full document text as
+     * metadata
+     */
+    void set_store_full_text(bool store_full_text);
+
   protected:
     /**
      * Helper function to be used by deriving classes in implementing
@@ -107,8 +113,6 @@ class corpus
     friend std::unique_ptr<corpus> make_corpus(const cpptoml::table&);
 
     void set_metadata_parser(metadata_parser&& mdparser);
-
-    void set_store_full_text(bool store_full_text);
 
     /// The type of encoding this document uses
     std::string encoding_;
