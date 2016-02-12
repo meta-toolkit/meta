@@ -54,7 +54,7 @@ class inverted_index::impl
      * @param ram_budget The total **estimated** RAM budget
      * @return the number of chunks created
      */
-    void tokenize_docs(corpus::corpus* docs,
+    void tokenize_docs(corpus::corpus& docs,
                        postings_inverter<inverted_index>& inverter,
                        metadata_writer& mdata_writer, uint64_t ram_budget);
 
@@ -110,7 +110,8 @@ bool inverted_index::valid() const
     return true;
 }
 
-void inverted_index::create_index(const cpptoml::table& config)
+void inverted_index::create_index(const cpptoml::table& config,
+                                  corpus::corpus& docs)
 {
     // save the config file so we can recreate the analyzer
     {
@@ -120,9 +121,6 @@ void inverted_index::create_index(const cpptoml::table& config)
 
     LOG(info) << "Creating index: " << index_name() << ENDLG;
 
-    // load the documents from the corpus
-    auto docs = corpus::make_corpus(config);
-
     auto ram_budget = static_cast<uint64_t>(
         config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
     auto max_writers = static_cast<unsigned>(
@@ -130,13 +128,12 @@ void inverted_index::create_index(const cpptoml::table& config)
 
     postings_inverter<inverted_index> inverter{index_name(), max_writers};
     {
-        metadata_writer mdata_writer{index_name(), docs->size(),
-                                     docs->schema()};
-        uint64_t num_docs = docs->size();
+        metadata_writer mdata_writer{index_name(), docs.size(), docs.schema()};
+        uint64_t num_docs = docs.size();
         impl_->load_labels(num_docs);
 
         // RAM budget is given in megabytes
-        inv_impl_->tokenize_docs(docs.get(), inverter, mdata_writer,
+        inv_impl_->tokenize_docs(docs, inverter, mdata_writer,
                                  ram_budget * 1024 * 1024);
     }
 
@@ -175,11 +172,11 @@ void inverted_index::load_index()
 }
 
 void inverted_index::impl::tokenize_docs(
-    corpus::corpus* docs, postings_inverter<inverted_index>& inverter,
+    corpus::corpus& docs, postings_inverter<inverted_index>& inverter,
     metadata_writer& mdata_writer, uint64_t ram_budget)
 {
     std::mutex mutex;
-    printing::progress progress{" > Tokenizing Docs: ", docs->size()};
+    printing::progress progress{" > Tokenizing Docs: ", docs.size()};
 
     auto task = [&](uint64_t ram_budget)
     {
@@ -191,10 +188,10 @@ void inverted_index::impl::tokenize_docs(
             {
                 std::lock_guard<std::mutex> lock{mutex};
 
-                if (!docs->has_next())
+                if (!docs.has_next())
                     return; // destructor for producer will write
                             // any intermediate chunks
-                doc = docs->next();
+                doc = docs.next();
                 progress(doc->id());
             }
 

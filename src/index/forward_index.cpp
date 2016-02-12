@@ -3,11 +3,11 @@
  * @author Sean Massung
  */
 
+#include "cpptoml.h"
 #include "meta/analyzers/analyzer.h"
 #include "meta/corpus/corpus.h"
 #include "meta/corpus/corpus_factory.h"
 #include "meta/corpus/libsvm_corpus.h"
-#include "cpptoml.h"
 #include "meta/hashing/probe_map.h"
 #include "meta/index/chunk_reader.h"
 #include "meta/index/disk_index_impl.h"
@@ -52,7 +52,7 @@ class forward_index::impl
      * num_threads number of forward_index chunks that then need to be
      * merged.
      */
-    void tokenize_docs(corpus::corpus* corpus,
+    void tokenize_docs(corpus::corpus& corpus,
                        const analyzers::analyzer& analyzer,
                        metadata_writer& mdata_writer, uint64_t ram_budget);
 
@@ -69,9 +69,9 @@ class forward_index::impl
                       hashing::probe_map<std::string, term_id> vocab);
 
     /**
-     * @param config the configuration settings for this index
+     * @param docs The documents to index (that are in libsvm format)
      */
-    void create_libsvm_postings(const cpptoml::table& config);
+    void create_libsvm_postings(corpus::corpus& docs);
 
     /**
      * @param inv_idx The inverted index to uninvert
@@ -191,7 +191,8 @@ void forward_index::load_index()
     unique_terms_file >> fwd_impl_->total_unique_terms_;
 }
 
-void forward_index::create_index(const cpptoml::table& config)
+void forward_index::create_index(const cpptoml::table& config,
+                                 corpus::corpus& docs)
 {
     {
         std::ofstream config_file{index_name() + "/config.toml"};
@@ -205,7 +206,7 @@ void forward_index::create_index(const cpptoml::table& config)
         LOG(info) << "Creating index from libsvm data: " << index_name()
                   << ENDLG;
 
-        fwd_impl_->create_libsvm_postings(config);
+        fwd_impl_->create_libsvm_postings(docs);
         impl_->save_label_id_mapping();
     }
     else
@@ -217,9 +218,10 @@ void forward_index::create_index(const cpptoml::table& config)
         {
             LOG(info) << "Creating index by uninverting: " << index_name()
                       << ENDLG;
+
             {
                 // Ensure all files are flushed before uninverting
-                make_index<inverted_index>(config);
+                make_index<inverted_index>(config, docs);
             }
             auto inv_idx = make_index<inverted_index>(config);
 
@@ -234,26 +236,22 @@ void forward_index::create_index(const cpptoml::table& config)
         {
             LOG(info) << "Creating forward index: " << index_name() << ENDLG;
 
-            auto docs = corpus::make_corpus(config);
+            auto analyzer = analyzers::load(config);
 
-            {
-                auto analyzer = analyzers::load(config);
+            metadata_writer mdata_writer{index_name(), docs.size(),
+                                         docs.schema()};
 
-                metadata_writer mdata_writer{index_name(), docs->size(),
-                                             docs->schema()};
+            impl_->load_labels(docs.size());
 
-                impl_->load_labels(docs->size());
+            // RAM budget is given in MB
+            fwd_impl_->tokenize_docs(docs, *analyzer, mdata_writer,
+                                     ram_budget * 1024 * 1024);
+            impl_->load_term_id_mapping();
+            impl_->save_label_id_mapping();
+            fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
 
-                // RAM budget is given in MB
-                fwd_impl_->tokenize_docs(docs.get(), *analyzer, mdata_writer,
-                                         ram_budget * 1024 * 1024);
-                impl_->load_term_id_mapping();
-                impl_->save_label_id_mapping();
-                fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
-
-                // reload the label file to ensure it was flushed
-                impl_->load_labels();
-            }
+            // reload the label file to ensure it was flushed
+            impl_->load_labels();
         }
     }
 
@@ -271,7 +269,7 @@ void forward_index::create_index(const cpptoml::table& config)
     LOG(info) << "Done creating index: " << index_name() << ENDLG;
 }
 
-void forward_index::impl::tokenize_docs(corpus::corpus* docs,
+void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                                         const analyzers::analyzer& ana,
                                         metadata_writer& mdata_writer,
                                         uint64_t ram_budget)
@@ -279,7 +277,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
     std::mutex io_mutex;
     std::mutex corpus_mutex;
     std::mutex vocab_mutex;
-    printing::progress progress{" > Tokenizing Docs: ", docs->size()};
+    printing::progress progress{" > Tokenizing Docs: ", docs.size()};
 
     hashing::probe_map<std::string, term_id> vocab;
     bool exceeded_budget = false;
@@ -295,10 +293,10 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
             {
                 std::lock_guard<std::mutex> lock{corpus_mutex};
 
-                if (!docs->has_next())
+                if (!docs.has_next())
                     return;
 
-                doc = docs->next();
+                doc = docs.next();
             }
             {
                 std::lock_guard<std::mutex> lock{io_mutex};
@@ -369,7 +367,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus* docs,
 
     progress.end();
 
-    merge_chunks(num_threads, docs->size(), std::move(vocab));
+    merge_chunks(num_threads, docs.size(), std::move(vocab));
 }
 
 void forward_index::impl::merge_chunks(
@@ -437,12 +435,10 @@ void forward_index::impl::merge_chunks(
                          });
 }
 
-void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
+void forward_index::impl::create_libsvm_postings(corpus::corpus& docs)
 {
     auto filename = idx_->index_name() + idx_->impl_->files[POSTINGS];
-
-    auto docs = corpus::make_corpus(config);
-    auto num_docs = docs->size();
+    auto num_docs = docs.size();
     idx_->impl_->load_labels(num_docs);
 
     total_unique_terms_ = 0;
@@ -451,13 +447,13 @@ void forward_index::impl::create_libsvm_postings(const cpptoml::table& config)
                                                                     num_docs};
 
         // make md_writer with empty schema
-        metadata_writer md_writer{idx_->index_name(), num_docs, docs->schema()};
+        metadata_writer md_writer{idx_->index_name(), num_docs, docs.schema()};
 
         printing::progress progress{" > Creating postings from libsvm data: ",
                                     num_docs};
-        while (docs->has_next())
+        while (docs.has_next())
         {
-            auto doc = docs->next();
+            auto doc = docs.next();
             progress(doc.id());
 
             uint64_t num_unique = 0;

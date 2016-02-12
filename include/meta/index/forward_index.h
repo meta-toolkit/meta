@@ -55,20 +55,26 @@ class forward_index : public disk_index
 {
   public:
     /**
-     * forward_index is a friend of the factory method used to create
-     * it.
+     * forward_index is a friend of the factory method used to create it.
      */
     template <class Index, class... Args>
     friend std::shared_ptr<Index> make_index(const cpptoml::table& config,
                                              Args&&... args);
 
     /**
-     * forward_index is a friend of the factory method used to create
-     * cached versions of it.
+     * forward_index is a friend of the factory method used to create it.
+     */
+    template <class Index, class... Args>
+    friend std::shared_ptr<Index> make_index(const cpptoml::table& config,
+                                             corpus::corpus& docs,
+                                             Args&&... args);
+    /**
+     * forward_index is a friend of the factory method used to create cached
+     * versions of it.
      */
     template <class Index, template <class, class> class Cache, class... Args>
     friend std::shared_ptr<cached_index<Index, Cache>>
-        make_index(const cpptoml::table& config_file, Args&&... args);
+    make_index(const cpptoml::table& config_file, Args&&... args);
 
     using primary_key_type = doc_id;
     using secondary_key_type = term_id;
@@ -116,14 +122,14 @@ class forward_index : public disk_index
      * @return the postings data for a given doc_id
      */
     virtual std::shared_ptr<postings_data_type>
-        search_primary(doc_id d_id) const;
+    search_primary(doc_id d_id) const;
 
     /**
      * @param d_id The doc_id to search for
      * @return the postings stream for a given doc_id
      */
     util::optional<postings_stream<term_id, double>>
-        stream_for(doc_id d_id) const;
+    stream_for(doc_id d_id) const;
 
     /**
      * @param d_id The document id of the doc to convert to liblinear format
@@ -138,16 +144,17 @@ class forward_index : public disk_index
 
   private:
     /**
-     * This function loads a disk index from its filesystem
-     * representation.
+     * Loads a forward index from its filesystem representation.
      */
     void load_index();
 
     /**
-     * This function initializes the forward index.
-     * @param config_file The configuration file used to create the index
+     * Initializes the forward index; it is called by the make_index factory
+     * function.
+     * @param config The configuration to be used
+     * @param docs A corpus object of documents to index
      */
-    void create_index(const cpptoml::table& config);
+    void create_index(const cpptoml::table& config, corpus::corpus& docs);
 
     /**
      * @return whether this index contains all necessary files
