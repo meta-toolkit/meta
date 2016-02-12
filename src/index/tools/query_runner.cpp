@@ -94,7 +94,8 @@ int main(int argc, char* argv[])
                     auto mdata = idx->metadata(result.d_id);
                     if (auto content = mdata.get<std::string>("content"))
                     {
-                        auto len = std::min(77ul, content->size());
+                        auto len = std::min(std::string::size_type{77},
+                                            content->size());
                         std::cout << content->substr(0, len) << "..."
                                   << std::endl
                                   << std::endl;
