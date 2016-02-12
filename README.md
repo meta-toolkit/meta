@@ -93,7 +93,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
@@ -193,7 +193,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-/usr/local/bin/ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
@@ -269,7 +269,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
@@ -310,7 +310,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
@@ -381,7 +381,7 @@ make
 You can now test the system with the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 ## EWS/EngrIT Build Guide
@@ -449,7 +449,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
@@ -497,7 +497,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
