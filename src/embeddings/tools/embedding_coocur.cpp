@@ -53,7 +53,7 @@ class coocur_buffer
 
     void flush()
     {
-        LOG(info) << "Flushing buffer of size: "
+        LOG(info) << "\nFlushing buffer of size: "
                   << printing::bytes_to_units(coocur_.bytes_used()) << " with "
                   << coocur_.size() << " unique pairs" << ENDLG;
 
