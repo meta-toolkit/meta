@@ -115,7 +115,9 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
                                       to_merge.front(), chunk_iter_comp);
 
         auto merged = std::move(*(*range.first).get());
+        auto before = (*range.first).get().bytes_read();
         ++(*range.first).get();
+        total_read += ((*range.first).get().bytes_read() - before);
         ++range.first;
         std::for_each(range.first, range.second, [&](ChunkIterator& iter)
                       {
