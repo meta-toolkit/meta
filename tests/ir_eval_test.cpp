@@ -76,9 +76,12 @@ go_bandit([]() {
                        Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
             AssertThat(eval.gmap(),
                        Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
+
+            // geometric mean of numbers is always <= arithmetic mean
+            AssertThat(eval.map(), Is().GreaterThanOrEqualTo(eval.gmap()));
         });
 
-        it("should compute correct results", []() {
+        it("should compute correct eval measures", []() {
 
             auto file_cfg = tests::create_config("file");
             index::ir_eval eval{*file_cfg};
@@ -144,6 +147,15 @@ go_bandit([]() {
             check_query(eval, results, qid, 1.0, 1.0, 1.0, 1.0, 1.0);
             // recall is still not perfect @5
             check_query(eval, results, qid, 1.0 / 1.5, 1.0, 0.5, 1.0, 1.0, 5);
+
+            // add result with zero AP
+            results.clear();
+            results.emplace_back(doc_id{2}, 0.9); // not relevant
+            avg_p = eval.avg_p(results, qid, 1000);
+            AssertThat(avg_p, EqualsWithDelta(0.0, delta));
+            AssertThat(eval.map(),
+                       Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
+            AssertThat(eval.gmap(), EqualsWithDelta(0.0, delta));
         });
     });
 
