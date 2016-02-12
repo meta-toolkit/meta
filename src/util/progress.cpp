@@ -37,9 +37,7 @@ progress::progress(const std::string& prefix, uint64_t length, int interval)
 void progress::print()
 {
     using namespace std::chrono;
-    uint64_t iter = iter_;
-    if (iter == 0)
-        iter = 1;
+    auto iter = std::max(uint64_t{1}, iter_.load());
     auto tp = steady_clock::now();
     auto percent = static_cast<double>(iter) / length_;
     auto elapsed = duration_cast<milliseconds>(tp - start_).count();
@@ -63,7 +61,8 @@ void progress::print()
     *it++ = ' ';
 
     it += ::sprintf(&(*it), "%d%%", static_cast<int>(percent * 100));
-    it += ::sprintf(&(*it), " ETA %02d:%02d:%02d", hrs, mins % 60, secs % 60);
+    it += ::sprintf(&(*it), " ETA %02d:%02d:%02d", std::min(999, hrs),
+                    mins % 60, secs % 60);
 
     LOG(progress) << '\r' << output_ << ENDLG;
 }

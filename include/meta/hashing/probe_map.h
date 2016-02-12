@@ -46,6 +46,9 @@ class probe_map
     using typename storage_type::iterator;
     using typename storage_type::const_iterator;
 
+    using storage_type::default_max_load_factor;
+    using storage_type::default_resize_ratio;
+
     using storage_type::storage_type;
     using storage_type::begin;
     using storage_type::end;
@@ -60,6 +63,7 @@ class probe_map
     using storage_type::capacity;
     using storage_type::clear;
     using storage_type::bytes_used;
+    using storage_type::extract;
 
     probe_map() : storage_type{8}
     {

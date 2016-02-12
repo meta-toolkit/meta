@@ -115,12 +115,12 @@ class basic_string_view
 
     const_reverse_iterator rbegin() const noexcept
     {
-        return {end()};
+        return const_reverse_iterator{end()};
     }
 
     const_reverse_iterator rend() const noexcept
     {
-        return {begin()};
+        return const_reverse_iterator{begin()};
     }
 
     const_reverse_iterator crbegin() const noexcept
@@ -375,12 +375,13 @@ class basic_string_view
         if (pos >= size())
             return npos;
 
-        auto diff = size() - std::min(size(), pos);
+        auto diff
+            = static_cast<difference_type>(size() - std::min(size(), pos));
         auto it = std::find_first_of(rbegin() + diff, rend(), s.begin(),
                                      s.end(), Traits::eq);
         if (it == rend())
             return npos;
-        return size() - 1 - std::distance(rbegin(), it);
+        return size() - 1 - static_cast<size_type>(std::distance(rbegin(), it));
     }
 
     constexpr size_type find_last_of(Char c, size_type pos = npos) const
