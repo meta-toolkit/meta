@@ -17,4 +17,4 @@ before_build:
 build_script:
     - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && make"
 test_script:
-    - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && cp ../config.toml . && ctest --output-on-failure"
+    - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && cp ../config.toml . && ./unit-test --reporter=spec"
