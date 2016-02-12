@@ -37,9 +37,7 @@ progress::progress(const std::string& prefix, uint64_t length, int interval)
 void progress::print()
 {
     using namespace std::chrono;
-    uint64_t iter = iter_;
-    if (iter == 0)
-        iter = 1;
+    auto iter = std::max(uint64_t{1}, iter_.load());
     auto tp = steady_clock::now();
     auto percent = static_cast<double>(iter) / length_;
     auto elapsed = duration_cast<milliseconds>(tp - start_).count();
