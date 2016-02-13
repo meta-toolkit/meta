@@ -1,3 +1,39 @@
+# [v2.1.0][2.1.0]
+## New features
+- Add the [GloVe algorithm](http://www-nlp.stanford.edu/pubs/glove.pdf) for
+  training word embeddings and a library class `word_embeddings` for loading and
+  querying trained embeddings. To facilitate returning word embeddings, a simple
+  `util::array_view` class was added.
+- Add simple vector math library (and move `fastapprox` into the `math`
+  namespace).
+
+## Bug fixes
+- Fix `probe_map::extract()` for `inline_key_value_storage` type; old
+  implementation forgot to delete all sentinel values before returning the
+  vector.
+- Fix incorrect definition of `l1norm()` in `sgd_model`.
+- Fix `gmap` calculation where 0 average precision was ignored
+
+## Enhancements
+- Improve performance of `printing::progress`. Before, `progress::operator()` in
+  tight loops could dramatically hurt performance, particularly due to frequent
+  calls to `std::chrono::steady_clock::now()`. Now, `progress::operator()`
+  simply sets an atomic iteration counter and a background thread periodically
+  wakes to update the progress output.
+- Allow full text storage in index as metadata field. If `store-full-text =
+  true` (default false) in the corpus config, the string metadata field
+  "content" will be added. This is to simplify the creation of full text
+  metadata: the user doesn't have to duplicate their dataset in `metadata.dat`,
+  and `metadata.dat` will still be somewhat human-readable without large strings
+  of full text added.
+- Allow `make_index` to take a user-supplied corpus object.
+
+## Miscellaneous
+- ZLIB is now a required dependency.
+- Switch to just using the standalone `./unit-test` instead of `ctest`. There
+  aren't really many advantages for us to using CTest at this point with the new
+  unit test framework, so just use our unit test executable.
+
 # [v2.0.1][2.0.1]
 ## Bug fixes
 - Fix issue where `metadata_parser` would not consume spaces in string
@@ -304,7 +340,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.0.1...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.1.0...develop
+[2.1.0]: https://github.com/meta-toolkit/meta/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/meta-toolkit/meta/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/meta-toolkit/meta/compare/v1.3.8...v2.0.0
 [1.3.8]: https://github.com/meta-toolkit/meta/compare/v1.3.7...v1.3.8
