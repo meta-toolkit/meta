@@ -9,7 +9,7 @@ install:
     - bash -lc "pacman --noconfirm --needed -Sy bash pacman pacman-mirrors msys2-runtime msys2-runtime-devel"
     # we don't actually need ada, fortran, libgfortran, or objc, but in
     # order to update gcc we need to also update those packages as well...
-    - bash -lc "pacman --noconfirm -S mingw-w64-x86_64-{gcc,gcc-ada,gcc-fortran,gcc-libgfortran,gcc-objc,cmake,make,icu,jemalloc}"
+    - bash -lc "pacman --noconfirm -S mingw-w64-x86_64-{gcc,gcc-ada,gcc-fortran,gcc-libgfortran,gcc-objc,cmake,make,icu,jemalloc,zlib}"
 before_build:
     - cd C:\projects\meta
     - git submodule update --init --recursive
@@ -17,4 +17,4 @@ before_build:
 build_script:
     - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && make"
 test_script:
-    - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && cp ../config.toml . && ctest --output-on-failure"
+    - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && cp ../config.toml . && ./unit-test --reporter=spec"

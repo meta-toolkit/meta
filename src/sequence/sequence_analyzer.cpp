@@ -8,9 +8,7 @@
 #include <sstream>
 #include "meta/io/packed.h"
 #include "meta/io/filesystem.h"
-#if META_HAS_ZLIB
 #include "meta/io/gzstream.h"
-#endif
 #include "meta/sequence/sequence_analyzer.h"
 #include "meta/utf/utf.h"
 #include "meta/util/mapping.h"
@@ -36,22 +34,11 @@ void sequence_analyzer::load(const std::string& prefix)
 
 void sequence_analyzer::load_feature_id_mapping(const std::string& prefix)
 {
-#if META_HAS_ZLIB
-    if (filesystem::file_exists(prefix + "/feature.mapping.gz"))
-    {
-        io::gzifstream input{prefix + "/feature.mapping.gz"};
-        load_feature_id_mapping(input);
-        return;
-    }
-#endif
-    std::ifstream input{prefix + "/feature.mapping", std::ios::binary};
-    load_feature_id_mapping(input);
-}
+    auto feature_file = prefix + "/feature.mapping.gz";
+    if (!filesystem::file_exists(feature_file))
+        throw exception{"missing feature id mapping: " + feature_file};
 
-void sequence_analyzer::load_feature_id_mapping(std::istream& input)
-{
-    if (!input)
-        throw exception{"missing feature id mapping"};
+    io::gzifstream input{feature_file};
 
     uint64_t total_num_keys;
     io::packed::read(input, total_num_keys);
@@ -70,10 +57,11 @@ void sequence_analyzer::load_feature_id_mapping(std::istream& input)
 
 void sequence_analyzer::load_label_id_mapping(const std::string& prefix)
 {
-    if (!filesystem::file_exists(prefix + "/label.mapping"))
-        throw exception{"missing label mapping"};
+    auto label_file = prefix + "/label.mapping";
+    if (!filesystem::file_exists(label_file))
+        throw exception{"missing label mapping: " + label_file};
 
-    map::load_mapping(label_id_mapping_, prefix + "/label.mapping");
+    map::load_mapping(label_id_mapping_, label_file);
 }
 
 void sequence_analyzer::save(const std::string& prefix) const
@@ -81,11 +69,7 @@ void sequence_analyzer::save(const std::string& prefix) const
     printing::progress progress{" > Saving feature mapping: ",
                                 feature_id_mapping_.size()};
 
-#if META_HAS_ZLIB
     io::gzofstream output{prefix + "/feature.mapping.gz"};
-#else
-    std::ofstream output{prefix + "/feature.mapping", std::ios::binary};
-#endif
     io::packed::write(output, feature_id_mapping_.size());
     uint64_t i = 0;
     for (const auto& pair : feature_id_mapping_)

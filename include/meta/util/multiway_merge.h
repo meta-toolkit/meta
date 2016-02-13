@@ -76,7 +76,6 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
                         RecordHandler&& output)
 {
     using ChunkIterator = typename ForwardIterator::value_type;
-    using Record = typename ChunkIterator::value_type;
 
     uint64_t to_read = std::accumulate(
         begin, end, 0ul, [](uint64_t acc, const ChunkIterator& chunk)
@@ -115,8 +114,10 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
         auto range = std::equal_range(to_merge.begin(), to_merge.end(),
                                       to_merge.front(), chunk_iter_comp);
 
-        Record merged{std::move(*(*range.first).get())};
+        auto merged = std::move(*(*range.first).get());
+        auto before = (*range.first).get().bytes_read();
         ++(*range.first).get();
+        total_read += ((*range.first).get().bytes_read() - before);
         ++range.first;
         std::for_each(range.first, range.second, [&](ChunkIterator& iter)
                       {

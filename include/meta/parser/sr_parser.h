@@ -260,12 +260,6 @@ class sr_parser
                          size_t num, bool check_legality = false) const;
 
     /**
-     * Loads the parser model file from the given stream.
-     * @param model The input stream to read from
-     */
-    void load(std::istream& model);
-
-    /**
      * Storage for the ids for each transition
      */
     transition_map trans_;

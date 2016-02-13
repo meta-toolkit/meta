@@ -6,7 +6,7 @@
 #include "meta/index/inverted_index.h"
 #include "meta/index/ranker/pivoted_length.h"
 #include "meta/index/score_data.h"
-#include "meta/util/fastapprox.h"
+#include "meta/math/fastapprox.h"
 
 namespace meta
 {

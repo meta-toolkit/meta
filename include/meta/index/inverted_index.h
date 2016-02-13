@@ -71,15 +71,21 @@ class inverted_index : public disk_index
     using exception = inverted_index_exception;
 
     /**
-     * inverted_index is a friend of the factory method used to create
-     * it.
+     * inverted_index is a friend of the factory method used to create it.
      */
     template <class Index, class... Args>
     friend std::shared_ptr<Index> make_index(const cpptoml::table&, Args&&...);
 
     /**
-     * inverted_index is a friend of the factory method used to create
-     * cached versions of it.
+     * inverted_index is a friend of the factory method used to create it.
+     */
+    template <class Index, class... Args>
+    friend std::shared_ptr<Index> make_index(const cpptoml::table&,
+                                             corpus::corpus& docs, Args&&...);
+
+    /**
+     * inverted_index is a friend of the factory method used to create cached
+     * versions of it.
      */
     template <class Index, template <class, class> class Cache, class... Args>
     friend std::shared_ptr<cached_index<Index, Cache>>
@@ -168,17 +174,17 @@ class inverted_index : public disk_index
 
   private:
     /**
-     * This function initializes the disk index; it is called by the
-     * make_index factory function.
-     * @param config The configuration to be used
-     */
-    void create_index(const cpptoml::table& config);
-
-    /**
-     * This function loads a disk index from its filesystem
-     * representation.
+     * Loads an inverted index from its filesystem representation.
      */
     void load_index();
+
+    /**
+     * Initializes the inverted index; it is called by the make_index factory
+     * function.
+     * @param config The configuration to be used
+     * @param docs A corpus object of documents to index
+     */
+    void create_index(const cpptoml::table& config, corpus::corpus& docs);
 
     /**
      * @return whether this index contains all necessary files

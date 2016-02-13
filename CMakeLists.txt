@@ -13,16 +13,15 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(CTest)
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 include(CheckCXXSourceRuns)
 include(CMakePushCheckState)
 include(ExternalProject)
-include(FindZLIB)
 include(cmake/FindOrBuildICU.cmake)
 
 find_package(Threads REQUIRED)
+find_package(ZLIB REQUIRED)
 
 cmake_push_check_state()
 
@@ -118,11 +117,7 @@ if(STDOPT)
   target_compile_options(meta-definitions INTERFACE ${STDOPT})
 endif()
 
-if(ZLIB_FOUND)
-  target_include_directories(meta-definitions SYSTEM INTERFACE
-                             ${ZLIB_INCLUDE_DIRS})
-  target_compile_definitions(meta-definitions INTERFACE -DMETA_HAS_ZLIB)
-endif()
+target_include_directories(meta-definitions SYSTEM INTERFACE ${ZLIB_INCLUDE_DIRS})
 
 if(LIBDL_LIBRARY)
   target_link_libraries(meta-definitions INTERFACE ${LIBDL_LIBRARY})

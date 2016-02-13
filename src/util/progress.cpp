@@ -3,6 +3,9 @@
  * @author Chase Geigle
  */
 
+#include <cassert>
+#include <cstdio>
+#include <thread>
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
@@ -15,40 +18,65 @@ namespace meta
 namespace printing
 {
 
-namespace
-{
-std::string eta_str(int milliseconds)
-{
-    int hrs = milliseconds / 1000 / 60 / 60;
-    int ms = milliseconds % (1000 * 60 * 60);
-
-    int min = ms / 1000 / 60;
-    ms = ms % (1000 * 60);
-
-    int sec = ms / 1000;
-
-    std::stringstream ss;
-    ss << "ETA " << std::setfill('0') << std::setw(2) << hrs << ':'
-       << std::setfill('0') << std::setw(2) << min << ':' << std::setfill('0')
-       << std::setw(2) << sec;
-    return ss.str();
-}
-}
-
-progress::progress(const std::string& prefix, uint64_t length, int interval,
-                   uint64_t min_iters)
-    : prefix_{prefix},
+progress::progress(const std::string& prefix, uint64_t length, int interval)
+    : prefix_len_{prefix.length()},
       start_{std::chrono::steady_clock::now()},
-      last_update_{start_},
-      last_iter_{0},
+      iter_{0},
       length_{length},
       interval_{interval},
-      min_iters_{min_iters},
-      str_len_{0},
-      finished_{false},
       endline_{true}
 {
-    // nothing
+    output_.resize(80, ' ');
+    assert(prefix_len_ < 80 - 20);
+    std::copy(prefix.begin(), prefix.end(), output_.begin());
+    output_[prefix_len_] = '[';
+
+    thread_ = std::thread(std::bind(&progress::progress_thread, this));
+}
+
+void progress::print()
+{
+    using namespace std::chrono;
+    auto iter = std::max(uint64_t{1}, iter_.load());
+    auto tp = steady_clock::now();
+    auto percent = static_cast<double>(iter) / length_;
+    auto elapsed = duration_cast<milliseconds>(tp - start_).count();
+    auto remain = (length_ - iter) * static_cast<double>(elapsed) / (iter);
+
+    auto secs = static_cast<int>(remain / 1000);
+    auto mins = secs / 60;
+    auto hrs = mins / 60;
+
+    std::ptrdiff_t max_len = 80 - static_cast<std::ptrdiff_t>(prefix_len_) - 20;
+    if (hrs > 100)
+        max_len -= 1;
+
+    auto it = output_.begin() + static_cast<std::ptrdiff_t>(prefix_len_) + 1;
+    auto barend = it + max_len;
+    auto end = it + static_cast<std::ptrdiff_t>(max_len * percent);
+    std::fill(it, end, '=');
+    *end = '>';
+    it = barend;
+    *it++ = ']';
+    *it++ = ' ';
+
+    it += ::sprintf(&(*it), "%d%%", static_cast<int>(percent * 100));
+    it += ::sprintf(&(*it), " ETA %02d:%02d:%02d", std::min(999, hrs),
+                    mins % 60, secs % 60);
+
+    LOG(progress) << '\r' << output_ << ENDLG;
+}
+
+void progress::progress_thread()
+{
+    while (iter_ != length_)
+    {
+        print();
+
+        std::unique_lock<std::mutex> lock{mutex_};
+        cond_var_.wait_for(lock, std::chrono::milliseconds(interval_));
+    }
+    print();
 }
 
 void progress::print_endline(bool endline)
@@ -58,62 +86,19 @@ void progress::print_endline(bool endline)
 
 void progress::operator()(uint64_t iter)
 {
-    using namespace std::chrono;
-    if (iter - last_iter_ < min_iters_ && iter != length_)
-        return;
-
-    auto tp = steady_clock::now();
-    if (duration_cast<milliseconds>(tp - last_update_).count() < interval_
-        && iter != length_)
-        return;
-
-    last_update_ = tp;
-    last_iter_ = iter;
-
-    auto percent = static_cast<double>(iter) / length_;
-    auto elapsed = duration_cast<milliseconds>(tp - start_).count();
-    auto remain = static_cast<double>(elapsed) / iter * (length_ - iter);
-
-    std::stringstream ss;
-    ss << prefix_;
-
-    auto eta = eta_str(static_cast<int>(remain));
-    // 4 comes from +2 for the [], +5 for the %, +2 for space
-    auto remaining_width
-        = std::max(0, 80 - static_cast<int>(prefix_.length())
-                          - static_cast<int>(eta.length()) - 9);
-    if (remaining_width > 15)
-    {
-        auto filled = static_cast<int>(remaining_width * percent);
-        auto empty = remaining_width - filled - 1;
-
-        ss << '[' << std::string(static_cast<std::size_t>(filled), '=');
-        if (filled != remaining_width)
-        {
-            ss << '>' << std::string(
-                             static_cast<std::size_t>(std::max(0, empty)), ' ');
-        }
-        ss << ']';
-    }
-
-    ss << ' ' << static_cast<int>(percent * 100) << "% " << eta;
-
-    std::string rem(static_cast<std::size_t>(
-                        std::max(0, str_len_ - static_cast<int>(ss.tellp()))),
-                    ' ');
-    str_len_ = static_cast<int>(ss.tellp());
-    ss << rem;
-
-    LOG(progress) << '\r' << ss.str() << ENDLG;
+    iter_ = (iter < length_) ? iter : length_;
 }
 
 void progress::end()
 {
-    finished_ = true;
-    if (last_iter_ != length_)
-        (*this)(length_);
-    if (endline_)
-        LOG(progress) << '\n' << ENDLG;
+    if (thread_.joinable())
+    {
+        iter_ = length_;
+        cond_var_.notify_all();
+        thread_.join();
+        if (endline_)
+            LOG(progress) << '\n' << ENDLG;
+    }
 }
 
 void progress::clear() const
@@ -123,8 +108,7 @@ void progress::clear() const
 
 progress::~progress()
 {
-    if (!finished_)
-        end();
+    end();
 }
 }
 }

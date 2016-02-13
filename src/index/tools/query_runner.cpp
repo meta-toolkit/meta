@@ -74,17 +74,32 @@ int main(int argc, char* argv[])
             {
                 corpus::document query{doc_id{0}};
                 query.content(content);
-                std::cout << "Query " << ++i << ": " << std::endl;
-                std::cout << std::string(20, '=') << std::endl;
+                std::cout << std::string(80, '=') << std::endl;
+                std::cout << "Query " << ++i << ": \"" << content << "\""
+                          << std::endl;
+                std::cout << std::string(80, '-') << std::endl;
 
                 // Use the ranker to score the query over the index.
                 auto ranking = ranker->score(*idx, query);
                 auto result_num = 1;
                 for (auto& result : ranking)
                 {
-                    std::cout << result_num << ". "
-                              << idx->doc_name(result.d_id) << " "
-                              << result.score << std::endl;
+                    std::string path{idx->doc_path(result.d_id)};
+                    auto output = printing::make_bold(std::to_string(result_num)
+                                                      + ". " + path)
+                                  + " (score = " + std::to_string(result.score)
+                                  + ", docid = " + std::to_string(result.d_id)
+                                  + ")";
+                    std::cout << output << std::endl;
+                    auto mdata = idx->metadata(result.d_id);
+                    if (auto content = mdata.get<std::string>("content"))
+                    {
+                        auto len = std::min(std::string::size_type{77},
+                                            content->size());
+                        std::cout << content->substr(0, len) << "..."
+                                  << std::endl
+                                  << std::endl;
+                    }
                     if (result_num++ == 10)
                         break;
                 }

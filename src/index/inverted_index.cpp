@@ -54,7 +54,7 @@ class inverted_index::impl
      * @param ram_budget The total **estimated** RAM budget
      * @return the number of chunks created
      */
-    void tokenize_docs(corpus::corpus* docs,
+    void tokenize_docs(corpus::corpus& docs,
                        postings_inverter<inverted_index>& inverter,
                        metadata_writer& mdata_writer, uint64_t ram_budget);
 
@@ -79,9 +79,7 @@ class inverted_index::impl
 };
 
 inverted_index::impl::impl(inverted_index* idx, const cpptoml::table& config)
-    : idx_{idx},
-      analyzer_{analyzers::load(config)},
-      total_corpus_terms_{0}
+    : idx_{idx}, analyzer_{analyzers::load(config)}, total_corpus_terms_{0}
 {
     // nothing
 }
@@ -112,7 +110,8 @@ bool inverted_index::valid() const
     return true;
 }
 
-void inverted_index::create_index(const cpptoml::table& config)
+void inverted_index::create_index(const cpptoml::table& config,
+                                  corpus::corpus& docs)
 {
     // save the config file so we can recreate the analyzer
     {
@@ -122,9 +121,6 @@ void inverted_index::create_index(const cpptoml::table& config)
 
     LOG(info) << "Creating index: " << index_name() << ENDLG;
 
-    // load the documents from the corpus
-    auto docs = corpus::make_corpus(config);
-
     auto ram_budget = static_cast<uint64_t>(
         config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
     auto max_writers = static_cast<unsigned>(
@@ -132,13 +128,12 @@ void inverted_index::create_index(const cpptoml::table& config)
 
     postings_inverter<inverted_index> inverter{index_name(), max_writers};
     {
-        metadata_writer mdata_writer{index_name(), docs->size(),
-                                     docs->schema()};
-        uint64_t num_docs = docs->size();
+        metadata_writer mdata_writer{index_name(), docs.size(), docs.schema()};
+        uint64_t num_docs = docs.size();
         impl_->load_labels(num_docs);
 
         // RAM budget is given in megabytes
-        inv_impl_->tokenize_docs(docs.get(), inverter, mdata_writer,
+        inv_impl_->tokenize_docs(docs, inverter, mdata_writer,
                                  ram_budget * 1024 * 1024);
     }
 
@@ -177,11 +172,11 @@ void inverted_index::load_index()
 }
 
 void inverted_index::impl::tokenize_docs(
-    corpus::corpus* docs, postings_inverter<inverted_index>& inverter,
+    corpus::corpus& docs, postings_inverter<inverted_index>& inverter,
     metadata_writer& mdata_writer, uint64_t ram_budget)
 {
     std::mutex mutex;
-    printing::progress progress{" > Tokenizing Docs: ", docs->size()};
+    printing::progress progress{" > Tokenizing Docs: ", docs.size()};
 
     auto task = [&](uint64_t ram_budget)
     {
@@ -193,10 +188,10 @@ void inverted_index::impl::tokenize_docs(
             {
                 std::lock_guard<std::mutex> lock{mutex};
 
-                if (!docs->has_next())
+                if (!docs.has_next())
                     return; // destructor for producer will write
                             // any intermediate chunks
-                doc = docs->next();
+                doc = docs.next();
                 progress(doc->id());
             }
 
@@ -260,9 +255,7 @@ void inverted_index::impl::compress(const std::string& filename,
         std::ifstream in{ucfilename, std::ios::binary};
         uint64_t byte_pos = 0;
 
-        printing::progress progress{
-            " > Compressing postings: ", length, 500, 1024 /* 1KB */
-        };
+        printing::progress progress{" > Compressing postings: ", length};
         // note: we will be accessing pdata in sorted order
         while (auto bytes = pdata.read_packed(in))
         {
@@ -319,7 +312,7 @@ float inverted_index::avg_doc_length()
 }
 
 analyzers::feature_map<uint64_t>
-    inverted_index::tokenize(const corpus::document& doc)
+inverted_index::tokenize(const corpus::document& doc)
 {
     return inv_impl_->analyzer_->analyze<uint64_t>(doc);
 }
@@ -336,7 +329,7 @@ auto inverted_index::search_primary(term_id t_id) const
 }
 
 util::optional<postings_stream<doc_id>>
-    inverted_index::stream_for(term_id t_id) const
+inverted_index::stream_for(term_id t_id) const
 {
     return inv_impl_->postings_->find_stream(t_id);
 }

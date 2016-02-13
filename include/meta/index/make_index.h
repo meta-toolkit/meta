@@ -13,6 +13,7 @@
 
 #include "cpptoml.h"
 #include "meta/caching/all.h"
+#include "meta/corpus/corpus_factory.h"
 #include "meta/index/cached_index.h"
 #include "meta/io/filesystem.h"
 
@@ -51,12 +52,14 @@ using splay_forward_index = cached_index<forward_index, caching::splay_cache>;
  * ~~~
  *
  * @param config The configuration to be used to build the index
+ * @param corpus The collection of documents to index
  * @param args any additional arguments to forward to the
  *  constructor for the chosen index type (usually none)
  * @return A properly initialized index
  */
 template <class Index, class... Args>
-std::shared_ptr<Index> make_index(const cpptoml::table& config, Args&&... args)
+std::shared_ptr<Index> make_index(const cpptoml::table& config,
+                                  corpus::corpus& docs, Args&&... args)
 {
     // check if we have paths specified for either kind of index
     if (!(config.contains("forward-index")
@@ -92,9 +95,19 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config, Args&&... args)
     if (!filesystem::make_directory(idx->index_name()) && idx->valid())
         idx->load_index();
     else
-        idx->create_index(config);
+        idx->create_index(config, docs);
 
     return idx;
+}
+
+/**
+ * Helper for make_index that creates a corpus from the global config file.
+ */
+template <class Index, class... Args>
+std::shared_ptr<Index> make_index(const cpptoml::table& config, Args&&... args)
+{
+    auto docs = corpus::make_corpus(config);
+    return make_index<Index>(config, *docs, std::forward<Args>(args)...);
 }
 
 /**
@@ -118,7 +131,7 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config, Args&&... args)
  */
 template <class Index, template <class, class> class Cache, class... Args>
 std::shared_ptr<cached_index<Index, Cache>>
-    make_index(const cpptoml::table& config, Args&&... args)
+make_index(const cpptoml::table& config, Args&&... args)
 {
     return make_index<cached_index<Index, Cache>>(config,
                                                   std::forward<Args>(args)...);

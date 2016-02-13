@@ -40,6 +40,3 @@ target_link_libraries(unit-test meta-index
                                 meta-features
                                 meta-language-model
                                 meta-topics)
-
-set(UNIT_TEST_EXE unit-test)
-include(unit_tests.cmake)

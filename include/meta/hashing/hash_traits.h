@@ -99,7 +99,7 @@ struct hash_traits<kv_pair<K, V>>
 {
     template <class ProbingStrategy, class Hash, class KeyEqual>
     using key_inlineable_storage = typename std::
-        conditional<key_traits<V>::inlineable,
+        conditional<sizeof(V) <= 8,
                     inline_key_value_storage<K, V, ProbingStrategy, Hash,
                                              KeyEqual>,
                     inline_key_external_value_storage<K, V, ProbingStrategy,
@@ -113,7 +113,7 @@ struct hash_traits<kv_pair<K, V>>
                                                KeyEqual>>::type;
 
     using key_inlineable_probe_entry =
-        typename std::conditional<key_traits<V>::inlineable, std::pair<K, V>,
+        typename std::conditional<sizeof(V) <= 8, std::pair<K, V>,
                                   std::pair<K, std::size_t>>::type;
 
     using probe_entry =

@@ -387,6 +387,16 @@ class storage_base
     using hash_type = typename storage_traits<Derived>::hash_type;
     using equal_type = typename storage_traits<Derived>::equal_type;
 
+    constexpr static double default_max_load_factor()
+    {
+        return 0.85;
+    }
+
+    constexpr static double default_resize_ratio()
+    {
+        return 1.5;
+    }
+
     iterator begin()
     {
         return {as_derived(), 0};
@@ -553,8 +563,8 @@ class storage_base
 
     hash_type hash_;
     equal_type equal_;
-    double max_load_factor_ = 0.85;
-    double resize_ratio_ = 1.5;
+    double max_load_factor_ = default_max_load_factor();
+    double resize_ratio_ = default_resize_ratio();
 };
 
 /**
@@ -908,6 +918,20 @@ class inline_key_value_storage
                + sizeof(std::size_t);
     }
 
+    vector_type extract() &&
+    {
+        // get rid of all blank cells
+        table_.erase(std::remove_if(table_.begin(), table_.end(),
+                                    [this](const std::pair<K, V>& pr)
+                                    {
+                                        return this->key_equal(
+                                            pr.first,
+                                            key_traits<K>::sentinel());
+                                    }),
+                     table_.end());
+        return std::move(table_);
+    }
+
     vector_type table_;
     std::size_t size_;
 };
@@ -1019,8 +1043,8 @@ class inline_key_external_value_storage
     {
         assert(new_cap > capacity());
 
-        std::vector<std::pair<K, std::size_t>> temptable(
-            new_cap, std::make_pair(key_traits<K>::sentinel(), 0));
+        key_vector_type temptable(new_cap,
+                                  std::make_pair(key_traits<K>::sentinel(), 0));
         using std::swap;
         swap(table_, temptable);
 
@@ -1039,6 +1063,26 @@ class inline_key_external_value_storage
     {
         return sizeof(std::pair<K, std::size_t>) * table_.capacity()
                + sizeof(V) * values_.capacity();
+    }
+
+    std::vector<std::pair<K, V>> extract() &&
+    {
+        std::vector<std::pair<K, V>> ret;
+        ret.reserve(values_.size());
+
+        for (auto& key_pr : table_)
+        {
+            if (!this->key_equal(key_pr.first, key_traits<K>::sentinel()))
+            {
+                ret.emplace_back(std::move(key_pr.first),
+                                 std::move(values_[key_pr.second]));
+            }
+        }
+
+        key_vector_type{}.swap(table_);
+        value_vector_type{}.swap(values_);
+
+        return ret;
     }
 
     key_vector_type table_;
@@ -1164,6 +1208,14 @@ class external_key_value_storage
     {
         return sizeof(hash_idx) * table_.capacity()
                + sizeof(std::pair<K, V>) * storage_.capacity();
+    }
+
+    kv_vector_type extract() &&
+    {
+        idx_vector_type{}.swap(table_);
+        kv_vector_type ret;
+        storage_.swap(ret);
+        return ret;
     }
 
     idx_vector_type table_;

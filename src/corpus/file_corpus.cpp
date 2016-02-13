@@ -62,6 +62,9 @@ document file_corpus::next()
     doc.content(filesystem::file_text(prefix_ + docs_[cur_].first), encoding());
 
     auto mdata = next_metadata();
+    if (store_full_text())
+        mdata.insert(mdata.begin(), metadata::field{doc.content()});
+
     // add "path" metadata manually
     mdata.insert(mdata.begin(), metadata::field{prefix_ + docs_[cur_].first});
     doc.mdata(std::move(mdata));

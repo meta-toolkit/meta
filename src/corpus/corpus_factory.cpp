@@ -22,9 +22,7 @@ corpus_factory::corpus_factory()
     // built-in corpora
     reg<file_corpus>();
     reg<line_corpus>();
-#if META_HAS_ZLIB
     reg<gz_corpus>();
-#endif
     reg<libsvm_corpus>();
 }
 
@@ -57,6 +55,11 @@ std::unique_ptr<corpus> make_corpus(const cpptoml::table& config)
 
     result->set_metadata_parser({*prefix + "/" + *dataset + "/metadata.dat",
                                  metadata_schema(*corpus_config)});
+
+    auto store_full_text
+        = corpus_config->get_as<bool>("store-full-text").value_or(false);
+    result->set_store_full_text(store_full_text);
+
     return result;
 }
 }

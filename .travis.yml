@@ -96,5 +96,5 @@ before_script:
 
 script:
   - git submodule update --init --recursive
-  - ../travis/cmake.sh Debug && make && make clean
-  - rm -rf CMake* && ../travis/cmake.sh Release && make && ctest --output-on-failure
+  - ../travis/cmake.sh Debug && make -j2 && make clean
+  - rm -rf CMake* && ../travis/cmake.sh Release && make -j2 && ./unit-test --reporter=spec

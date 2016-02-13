@@ -93,7 +93,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
@@ -136,7 +136,7 @@ sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt-get update
 
 # this will probably take a while
-sudo apt-get install g++ g++-4.8 git make wget libjemalloc-dev
+sudo apt-get install g++ g++-4.8 git make wget libjemalloc-dev zlib1g-dev
 
 wget http://www.cmake.org/files/v3.2/cmake-3.2.0-Linux-x86_64.sh
 sudo sh cmake-3.2.0-Linux-x86_64.sh --prefix=/usr/local
@@ -193,7 +193,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-/usr/local/bin/ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
@@ -216,7 +216,7 @@ sudo add-apt-repository ppa:george-edison55/cmake-3.x
 sudo apt-get update
 
 # install dependencies
-sudo apt-get install cmake libicu-dev git libjemalloc-dev
+sudo apt-get install cmake libicu-dev git libjemalloc-dev zlib1g-dev
 ```
 
 Once the dependencies are all installed, you should double check your
@@ -269,7 +269,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
@@ -283,7 +283,7 @@ To install the dependencies, run the following commands.
 
 ```bash
 sudo pacman -Sy
-sudo pacman -S clang cmake git icu libc++ make jemalloc
+sudo pacman -S clang cmake git icu libc++ make jemalloc zlib
 ```
 
 Once the dependencies are all installed, you should be ready to build. Run
@@ -310,7 +310,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
@@ -381,7 +381,7 @@ make
 You can now test the system with the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 ## EWS/EngrIT Build Guide
@@ -449,7 +449,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
@@ -470,7 +470,7 @@ you should run the following commands to download dependencies and related
 software needed for building:
 
 ```bash
-pacman -Syu git make mingw-w64-x86_64-{gcc,cmake,icu,jemalloc}
+pacman -Syu git make mingw-w64-x86_64-{gcc,cmake,icu,jemalloc,zlib}
 ```
 
 Then, exit the shell and launch the "MinGW-w64 Win64" shell. You can obtain
@@ -497,7 +497,7 @@ make
 You can now test the system by running the following command:
 
 ```bash
-ctest --output-on-failure
+./unit-test --reporter=spec
 ```
 
 If everything passes, congratulations! MeTA seems to be working on your
