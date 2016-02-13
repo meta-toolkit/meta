@@ -13,6 +13,7 @@
   vector.
 - Fix incorrect definition of `l1norm()` in `sgd_model`.
 - Fix `gmap` calculation where 0 average precision was ignored
+- Fix progress output in `multiway_merge`.
 
 ## Enhancements
 - Improve performance of `printing::progress`. Before, `progress::operator()` in
