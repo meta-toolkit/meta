@@ -95,7 +95,7 @@ void check_ceeaus_expected_fwd(Index& idx) {
     AssertThat(labels.find(class_label{"english"}),
                Is().Not().EqualTo(labels.end()));
 
-    AssertThrows(std::out_of_range, idx.id("bogus"));
+    AssertThrows(std::out_of_range, idx.id(class_label{"bogus"}));
     AssertThrows(std::out_of_range, idx.class_label_from_id(label_id{0}));
     AssertThrows(std::out_of_range, idx.class_label_from_id(label_id{4}));
 }
