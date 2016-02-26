@@ -15,6 +15,7 @@
 #include "meta/index/disk_index.h"
 #include "meta/index/make_index.h"
 #include "meta/index/postings_stream.h"
+#include "meta/learn/instance.h"
 #include "meta/util/disk_vector.h"
 #include "meta/util/optional.h"
 #include "meta/meta.h"
@@ -141,6 +142,12 @@ class forward_index : public disk_index
      * @return the number of unique terms in the index
      */
     virtual uint64_t unique_terms() const override;
+
+    /**
+     * @param doc The document to tokenize
+     * @return the analyzed version of the document as a feature vector
+     */
+    learn::feature_vector tokenize(const corpus::document& doc);
 
   private:
     /**

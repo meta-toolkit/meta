@@ -45,16 +45,15 @@ class forward_index::impl
     /**
      * Constructs an implementation based on a forward_index.
      */
-    impl(forward_index* idx);
+    impl(forward_index* idx, const cpptoml::table& config);
 
     /**
      * Tokenizes the documents in the corpus in parallel, yielding
      * num_threads number of forward_index chunks that then need to be
      * merged.
      */
-    void tokenize_docs(corpus::corpus& corpus,
-                       const analyzers::analyzer& analyzer,
-                       metadata_writer& mdata_writer, uint64_t ram_budget);
+    void tokenize_docs(corpus::corpus& corpus, metadata_writer& mdata_writer,
+                       uint64_t ram_budget);
 
     /**
      * Merges together num_chunks number of intermediate chunks, using the
@@ -105,6 +104,9 @@ class forward_index::impl
      */
     void load_postings();
 
+    /// The analyzer used to tokenize documents (nullptr if libsvm).
+    std::unique_ptr<analyzers::analyzer> analyzer_;
+
     /// the total number of unique terms if term_id_mapping_ is unused
     uint64_t total_unique_terms_;
 
@@ -120,14 +122,16 @@ class forward_index::impl
 
 forward_index::forward_index(const cpptoml::table& config)
     : disk_index{config, *config.get_as<std::string>("forward-index")},
-      fwd_impl_{this}
+      fwd_impl_{this, config}
 {
     /* nothing */
 }
 
-forward_index::impl::impl(forward_index* idx) : idx_{idx}
+forward_index::impl::impl(forward_index* idx, const cpptoml::table& config)
+    : idx_{idx}
 {
-    /* nothing */
+    if (!is_libsvm_format(config))
+        analyzer_ = analyzers::load(config);
 }
 
 forward_index::forward_index(forward_index&&) = default;
@@ -236,15 +240,13 @@ void forward_index::create_index(const cpptoml::table& config,
         {
             LOG(info) << "Creating forward index: " << index_name() << ENDLG;
 
-            auto analyzer = analyzers::load(config);
-
             metadata_writer mdata_writer{index_name(), docs.size(),
                                          docs.schema()};
 
             impl_->load_labels(docs.size());
 
             // RAM budget is given in MB
-            fwd_impl_->tokenize_docs(docs, *analyzer, mdata_writer,
+            fwd_impl_->tokenize_docs(docs, mdata_writer,
                                      ram_budget * 1024 * 1024);
             impl_->load_term_id_mapping();
             impl_->save_label_id_mapping();
@@ -270,7 +272,6 @@ void forward_index::create_index(const cpptoml::table& config,
 }
 
 void forward_index::impl::tokenize_docs(corpus::corpus& docs,
-                                        const analyzers::analyzer& ana,
                                         metadata_writer& mdata_writer,
                                         uint64_t ram_budget)
 {
@@ -286,7 +287,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
         std::ofstream chunk{idx_->index_name() + "/chunk-"
                                 + std::to_string(chunk_id),
                             std::ios::binary};
-        auto analyzer = ana.clone();
+        auto analyzer = analyzer_->clone();
         while (true)
         {
             util::optional<corpus::document> doc;
@@ -544,6 +545,19 @@ bool forward_index::impl::is_libsvm_format(const cpptoml::table& config) const
                                       "data"};
 
     return false;
+}
+
+learn::feature_vector forward_index::tokenize(const corpus::document& doc)
+{
+    if (!fwd_impl_->analyzer_)
+        throw exception{"this forward index type can't analyze docs"};
+
+    learn::feature_vector f_vec;
+    auto map = fwd_impl_->analyzer_->analyze<double>(doc);
+    for (auto& pr : map)
+        f_vec[get_term_id(pr.key())] = pr.value();
+
+    return f_vec;
 }
 
 uint64_t forward_index::unique_terms() const

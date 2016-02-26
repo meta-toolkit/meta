@@ -183,6 +183,21 @@ go_bandit([]() {
             line_cfg->insert("uninvert", true);
             ceeaus_forward_test(*line_cfg);
         });
+
+        it("should analyze a new document with the current analyzer", [&]() {
+            auto cfg = tests::create_config("line");
+            auto idx = index::make_index<index::forward_index>(*cfg);
+            std::string text{"I think smoking smoking bad."};
+            corpus::document doc;
+            doc.content(text);
+            auto fvector = idx->tokenize(doc);
+            AssertThat(fvector.at(term_id{0}), Equals(1));
+            AssertThat(fvector.at(term_id{1}), Equals(1));
+            AssertThat(fvector.at(term_id{276}), Equals(1));
+            AssertThat(fvector.at(term_id{3343}), Equals(2));
+            AssertThat(fvector.at(term_id{3731}), Equals(1));
+            AssertThat(fvector.at(term_id{2}), Equals(0));
+        });
     });
 
     describe("[forward-index] from svm config", []() {
@@ -194,6 +209,15 @@ go_bandit([]() {
         });
 
         it("should load the index", [&]() { bcancer_forward_test(*svm_cfg); });
+
+        it("should not tokenize new docs", [&](){
+            auto cfg = create_libsvm_config();
+            auto idx = index::make_index<index::forward_index>(*cfg);
+            std::string text{"This should fail"};
+            corpus::document doc;
+            doc.content(text);
+            AssertThrows(index::forward_index_exception, idx->tokenize(doc));
+        });
     });
 
     describe("[forward-index] with zlib", []() {
