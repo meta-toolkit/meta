@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <unordered_set>
 
 #include "bandit/bandit.h"
 #include "create_config.h"
@@ -70,6 +71,33 @@ void check_ceeaus_expected_fwd(Index& idx) {
 
     // make sure there's exactly the correct amount
     AssertThat(id, Equals(idx.num_docs()));
+
+    // make sure we have all the class label info
+    std::unordered_set<label_id> label_ids;
+    label_ids.insert(idx.id(class_label{"japanese"}));
+    label_ids.insert(idx.id(class_label{"chinese"}));
+    label_ids.insert(idx.id(class_label{"english"}));
+    AssertThat(label_ids.find(label_id{1}),
+               Is().Not().EqualTo(label_ids.end()));
+    AssertThat(label_ids.find(label_id{2}),
+               Is().Not().EqualTo(label_ids.end()));
+    AssertThat(label_ids.find(label_id{3}),
+               Is().Not().EqualTo(label_ids.end()));
+
+    std::unordered_set<class_label> labels;
+    labels.insert(idx.class_label_from_id(label_id{1}));
+    labels.insert(idx.class_label_from_id(label_id{2}));
+    labels.insert(idx.class_label_from_id(label_id{3}));
+    AssertThat(labels.find(class_label{"japanese"}),
+               Is().Not().EqualTo(labels.end()));
+    AssertThat(labels.find(class_label{"chinese"}),
+               Is().Not().EqualTo(labels.end()));
+    AssertThat(labels.find(class_label{"english"}),
+               Is().Not().EqualTo(labels.end()));
+
+    AssertThrows(std::out_of_range, idx.id("bogus"));
+    AssertThrows(std::out_of_range, idx.class_label_from_id(label_id{0}));
+    AssertThrows(std::out_of_range, idx.class_label_from_id(label_id{4}));
 }
 
 template <class Index>
