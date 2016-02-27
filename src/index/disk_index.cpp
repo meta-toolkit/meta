@@ -57,7 +57,7 @@ label_id disk_index::lbl_id(doc_id d_id) const
 label_id disk_index::id(class_label label) const
 {
     if (!impl_->label_ids_.contains_key(label))
-        throw std::out_of_range{"Invalid class_label: " + std::string{label}};
+        throw std::out_of_range{"Invalid class_label: " + std::string(label)};
     return impl_->label_ids_.get_value(label);
 }
 
