@@ -203,7 +203,9 @@ go_bandit([]() {
             AssertThat(fvector.at(bad), Equals(1));
             AssertThat(fvector.at(smoke), Equals(2));
             AssertThat(fvector.at(think), Equals(1));
-            AssertThat(fvector.at(term_id{2}), Equals(0));
+
+            auto oov = idx->get_term_id("somelongrandomword");
+            AssertThat(fvector.at(oov), Equals(0));
         });
     });
 
