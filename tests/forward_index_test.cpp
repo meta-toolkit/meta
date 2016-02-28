@@ -191,11 +191,18 @@ go_bandit([]() {
             corpus::document doc;
             doc.content(text);
             auto fvector = idx->tokenize(doc);
-            AssertThat(fvector.at(term_id{0}), Equals(1));
-            AssertThat(fvector.at(term_id{1}), Equals(1));
-            AssertThat(fvector.at(term_id{276}), Equals(1));
-            AssertThat(fvector.at(term_id{3343}), Equals(2));
-            AssertThat(fvector.at(term_id{3731}), Equals(1));
+
+            auto begin_sent = idx->get_term_id("<s>");
+            auto end_sent = idx->get_term_id("</s>");
+            auto bad = idx->get_term_id("bad");
+            auto smoke = idx->get_term_id("smoke");
+            auto think = idx->get_term_id("think");
+
+            AssertThat(fvector.at(begin_sent), Equals(1));
+            AssertThat(fvector.at(end_sent), Equals(1));
+            AssertThat(fvector.at(bad), Equals(1));
+            AssertThat(fvector.at(smoke), Equals(2));
+            AssertThat(fvector.at(think), Equals(1));
             AssertThat(fvector.at(term_id{2}), Equals(0));
         });
     });
