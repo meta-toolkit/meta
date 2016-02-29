@@ -35,15 +35,16 @@ namespace index
 class absolute_discount : public language_model_ranker
 {
   public:
-    /**
-     * The identifier of this ranker.
-     */
+    /// The identifier of this ranker.
     const static util::string_view id;
+
+    /// Default value of delta
+    const static constexpr float default_delta = 0.7f;
 
     /**
      * @param delta
      */
-    absolute_discount(float delta = 0.7f);
+    absolute_discount(float delta = default_delta);
 
     /**
      * Loads an absolute_discount ranker from a stream.

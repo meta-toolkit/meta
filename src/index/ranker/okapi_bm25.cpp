@@ -44,7 +44,7 @@ void okapi_bm25::save(std::ostream& out) const
 
 float okapi_bm25::score_one(const score_data& sd)
 {
-    float doc_len = sd.idx.doc_size(sd.d_id);
+    float doc_len = sd.doc_size;
 
     // add 1.0 to the IDF to ensure that the result is positive
     float IDF = fastapprox::fastlog(
@@ -66,6 +66,15 @@ std::unique_ptr<ranker> make_ranker<okapi_bm25>(const cpptoml::table& config)
     auto k1 = config.get_as<double>("k1").value_or(okapi_bm25::default_k1);
     auto b = config.get_as<double>("b").value_or(okapi_bm25::default_b);
     auto k3 = config.get_as<double>("k3").value_or(okapi_bm25::default_k3);
+
+    if (k1 < 0)
+        throw ranker_exception{"bm25 k1 must be >= 0"};
+
+    if (k3 < 0)
+        throw ranker_exception{"bm25 k3 must be >= 0"};
+
+    if (b < 0 || b > 1)
+        throw ranker_exception{"bm25 b must be on [0,1]"};
 
     return make_unique<okapi_bm25>(k1, b, k3);
 }

@@ -49,11 +49,13 @@ float absolute_discount::doc_constant(const score_data& sd) const
 
 template <>
 std::unique_ptr<ranker>
-    make_ranker<absolute_discount>(const cpptoml::table& config)
+make_ranker<absolute_discount>(const cpptoml::table& config)
 {
-    if (auto delta = config.get_as<double>("delta"))
-        return make_unique<absolute_discount>(*delta);
-    return make_unique<absolute_discount>();
+    auto delta = config.get_as<double>("delta")
+                     .value_or(absolute_discount::default_delta);
+    if (delta < 0 || delta > 1)
+        throw ranker_exception{"absolute-discount delta must be on [0,1]"};
+    return make_unique<absolute_discount>(delta);
 }
 }
 }
