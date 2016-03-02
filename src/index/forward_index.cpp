@@ -555,7 +555,11 @@ learn::feature_vector forward_index::tokenize(const corpus::document& doc)
     learn::feature_vector f_vec;
     auto map = fwd_impl_->analyzer_->analyze<double>(doc);
     for (auto& pr : map)
-        f_vec[get_term_id(pr.key())] = pr.value();
+    {
+        auto t_id = get_term_id(pr.key());
+        if (t_id != unique_terms()) // if known feature, add it
+            f_vec[t_id] = pr.value();
+    }
 
     return f_vec;
 }
