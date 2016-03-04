@@ -14,6 +14,7 @@
 
 #include "meta/corpus/metadata.h"
 #include "meta/util/optional.h"
+#include "meta/io/moveable_stream.h"
 
 namespace meta
 {
@@ -45,8 +46,7 @@ class metadata_parser
 
   private:
     /// the parser used to extract metadata
-    /// unique_ptr because GCC<5.0 can't move streams
-    std::unique_ptr<std::ifstream> infile_;
+    io::mifstream infile_;
 
     /// the schema for the metadata being extracted
     metadata::schema schema_;

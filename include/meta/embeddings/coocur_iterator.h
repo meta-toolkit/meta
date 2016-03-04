@@ -14,7 +14,7 @@
 
 #include "meta/embeddings/coocur_record.h"
 #include "meta/io/filesystem.h"
-#include "meta/util/shim.h"
+#include "meta/io/moveable_stream.h"
 
 namespace meta
 {
@@ -32,7 +32,7 @@ class coocur_iterator
 
     coocur_iterator(const std::string& filename)
         : path_{filename},
-          input_{make_unique<std::ifstream>(filename, std::ios::binary)},
+          input_{filename, std::ios::binary},
           total_bytes_{filesystem::file_size(filename)},
           bytes_read_{0}
     {
@@ -44,10 +44,13 @@ class coocur_iterator
 
     coocur_iterator& operator++()
     {
-        if (input_->peek() == EOF)
+        if (input_.stream().peek() == EOF)
+        {
+            input_.stream().close();
             return *this;
+        }
 
-        bytes_read_ += record_.read(*input_);
+        bytes_read_ += record_.read(input_.stream());
         return *this;
     }
 
@@ -63,9 +66,9 @@ class coocur_iterator
 
     bool operator==(const coocur_iterator& other) const
     {
-        if (!other.input_)
+        if (!other.input_.stream().is_open())
         {
-            return !input_ || !static_cast<bool>(*input_);
+            return !input_.stream().is_open();
         }
         else
         {
@@ -86,7 +89,7 @@ class coocur_iterator
 
   private:
     std::string path_;
-    std::unique_ptr<std::ifstream> input_;
+    io::mifstream input_;
     coocur_record record_;
     uint64_t total_bytes_;
     uint64_t bytes_read_;

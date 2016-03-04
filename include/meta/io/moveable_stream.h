@@ -128,6 +128,11 @@ class mfstream
         return detail::get_stream(stream_);
     }
 
+    explicit operator bool() const
+    {
+        return static_cast<bool>(detail::get_stream(stream_));
+    }
+
   private:
 #if META_HAS_STREAM_MOVE
     Stream stream_;
