@@ -60,6 +60,11 @@ class perfect_hash_builder
         uint64_t num_keys;
         uint64_t num_per_bucket = 4;
         float load_factor = 0.99f;
+
+        options(const options&) = default;
+        options(options&&) = default;
+        options& operator=(const options&) = default;
+        options& operator=(options&&) = default;
     };
 
     /**
