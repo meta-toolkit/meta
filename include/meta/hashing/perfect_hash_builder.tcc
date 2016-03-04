@@ -13,6 +13,7 @@
 #include "meta/hashing/hash.h"
 #include "meta/hashing/probe_set.h"
 #include "meta/io/filesystem.h"
+#include "meta/io/moveable_stream.h"
 #include "meta/io/packed.h"
 #include "meta/logging/logger.h"
 #include "meta/succinct/compressed_vector.h"
@@ -93,9 +94,9 @@ class chunk_iterator
 
     chunk_iterator& operator++()
     {
-        if (input_.peek() == EOF)
+        if (input_.stream().peek() == EOF)
         {
-            input_.close();
+            input_.stream().close();
 
             assert(*this == chunk_iterator{});
             return *this;
@@ -127,11 +128,11 @@ class chunk_iterator
 
     bool operator==(const chunk_iterator& other) const
     {
-        return !input_.is_open() && !other.input_.is_open();
+        return !input_.stream().is_open() && !other.input_.stream().is_open();
     }
 
   private:
-    std::ifstream input_;
+    io::mifstream input_;
     bucket_record<K> record_;
     uint64_t bytes_read_;
     uint64_t total_bytes_;
@@ -155,7 +156,7 @@ std::size_t hash(const K& key, uint64_t seed)
 
 template <class K>
 perfect_hash_builder<K>::perfect_hash_builder(options opts)
-    : opts_{opts},
+    : opts_(opts), // parens to force bad compilers to locate cctor
       num_buckets_{opts.num_keys / opts.num_per_bucket + 1},
       num_chunks_{0}
 {
