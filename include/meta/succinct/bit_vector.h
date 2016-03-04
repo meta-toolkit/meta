@@ -12,6 +12,7 @@
 
 #include <cstdint>
 #include <ostream>
+#include <stdexcept>
 
 #include "meta/util/array_view.h"
 #include "meta/util/likely.h"
