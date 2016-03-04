@@ -129,15 +129,27 @@ uint64_t disk_vector<T>::size() const
 }
 
 template <class T>
-typename disk_vector<T>::iterator disk_vector<T>::begin() const
+auto disk_vector<T>::begin() -> iterator
 {
-    return iterator{0, start_};
+    return start_;
 }
 
 template <class T>
-typename disk_vector<T>::iterator disk_vector<T>::end() const
+auto disk_vector<T>::begin() const -> const_iterator
 {
-    return iterator{size_, start_};
+    return start_;
+}
+
+template <class T>
+auto disk_vector<T>::end() const -> const_iterator
+{
+    return start_ + size_;
+}
+
+template <class T>
+auto disk_vector<T>::end() -> iterator
+{
+    return start_ + size_;
 }
 }
 }
