@@ -53,16 +53,17 @@ inline const std::ofstream& get_stream(const std::ofstream& stream)
 }
 
 #if META_HAS_STREAM_MOVE
-template <class T>
-T make_stream(const char* filename, std::ios_base::openmode mode)
+template <class T, class... Args>
+T make_stream(Args&&... args)
 {
-    return T{filename, mode};
+    return T{std::forward<Args>(args)...};
 }
+
 #else
-template <class T>
-std::unique_ptr<T> make_stream(const char* filename, std::ios_base::openmode mode)
+template <class T, class... Args>
+std::unique_ptr<T> make_stream(Args&&... args)
 {
-    return make_unique<T>(filename, mode);
+    return make_unique<T>(std::forward<Args>(args)...);
 }
 #endif
 
@@ -90,7 +91,10 @@ template <class Stream>
 class mfstream
 {
   public:
-    mfstream() = default;
+    mfstream() : stream_{detail::make_stream<Stream>()}
+    {
+        // nothing
+    }
 
     explicit mfstream(const char* filename,
                       std::ios_base::openmode mode
