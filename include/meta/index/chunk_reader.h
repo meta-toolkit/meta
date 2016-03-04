@@ -17,8 +17,8 @@
 #include <string>
 
 #include "meta/io/filesystem.h"
+#include "meta/io/moveable_stream.h"
 #include "meta/util/progress.h"
-#include "meta/util/shim.h"
 #include "meta/util/multiway_merge.h"
 
 namespace meta
@@ -93,8 +93,8 @@ template <class PostingsData>
 class chunk_reader
 {
   private:
-    /// the file we're reading from currently, or null if there is none
-    std::unique_ptr<std::ifstream> file_;
+    /// the file we're reading from
+    io::mifstream file_;
     /// the path to the file we're reading from
     std::string path_;
     /// the current buffered postings data
@@ -112,7 +112,7 @@ class chunk_reader
      * @param filename The path to the chunk to be read
      */
     chunk_reader(const std::string& filename)
-        : file_{make_unique<std::ifstream>(filename, std::ios::binary)},
+        : file_{filename, std::ios::binary},
           path_{filename},
           total_bytes_{filesystem::file_size(path_)},
           bytes_read_{0}
@@ -136,10 +136,9 @@ class chunk_reader
     ~chunk_reader()
     {
         if (file_)
-        {
-            file_ = nullptr;
-            filesystem::delete_file(path_);
-        }
+            file_.stream().close();
+
+        filesystem::delete_file(path_);
     }
 
     /**
@@ -147,7 +146,14 @@ class chunk_reader
      */
     void operator++()
     {
-        bytes_read_ += postings_.read(*file_);
+        if (file_.stream().peek() == EOF)
+        {
+            file_.stream().close();
+        }
+        else
+        {
+            bytes_read_ += postings_.read(file_);
+        }
     }
 
     /**
@@ -189,9 +195,9 @@ class chunk_reader
      */
     bool operator==(const chunk_reader& other) const
     {
-        if (!other.file_)
+        if (!other.file_.stream().is_open())
         {
-            return !file_ || !static_cast<bool>(*file_);
+            return !file_.stream().is_open();
         }
         else
         {

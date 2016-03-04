@@ -17,7 +17,7 @@ namespace corpus
 
 metadata_parser::metadata_parser(const std::string& filename,
                                  metadata::schema schema)
-    : infile_{make_unique<std::ifstream>(filename)}, schema_{std::move(schema)}
+    : infile_{filename}, schema_{std::move(schema)}
 {
     // nothing
 }
@@ -26,14 +26,14 @@ std::vector<metadata::field> metadata_parser::next()
 {
     std::vector<metadata::field> mdata;
     std::string str;
-    if (*infile_)
+    if (infile_)
     {
-        std::getline(*infile_, str);
+        std::getline(infile_.stream(), str);
         util::string_view line{str};
         mdata.reserve(schema_.size());
         for (const auto& finfo : schema_)
         {
-            if (!*infile_ || line.empty())
+            if (!infile_ || line.empty())
                 throw metadata_exception{
                     "metadata input file ended prematurely"};
 

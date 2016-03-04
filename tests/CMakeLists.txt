@@ -39,4 +39,5 @@ target_link_libraries(unit-test meta-index
                                 meta-parser
                                 meta-features
                                 meta-language-model
+                                meta-succinct
                                 meta-topics)
