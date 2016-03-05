@@ -8,10 +8,10 @@ end-exceptions = "../data/sentence-boundaries/sentence-end-exceptions.txt"
 query-judgements = "../data/ceeaus-qrels.txt"
 query-path = "../queries.txt" # create this file
 
-dataset = "20newsgroups"
+dataset = "ceeaus"
 corpus = "line.toml" # located inside dataset folder
-forward-index = "20news-fwd"
-inverted-index = "20news-inv"
+forward-index = "ceeaus-fwd"
+inverted-index = "ceeaus-inv"
 indexer-ram-budget = 1024 # **estimated** RAM budget for indexing in MB
                           # always set this lower than your physical RAM!
 
