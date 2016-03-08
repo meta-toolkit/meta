@@ -55,6 +55,18 @@ void check_term_id(Index& idx) {
     }
 }
 
+template <class Index>
+void check_trec_expected(Index& idx) {
+    AssertThat(idx.num_docs(), Equals(3ul));
+    AssertThat(idx.avg_doc_length(), EqualsWithDelta(7.0, 0.001));
+    AssertThat(idx.unique_terms(), Equals(9ul));
+    term_id t_id = idx.get_term_id("small");
+    auto pdata = idx.search_primary(t_id);
+    auto counts = pdata->counts();
+    AssertThat(counts.size(), Equals(1ul));
+    AssertThat(counts[0].second, Equals(1ul));
+}
+
 void check_full_text(corpus::corpus& docs, const cpptoml::table& config) {
     docs.set_store_full_text(true);
     auto idx = index::make_index<index::inverted_index>(config, docs);
@@ -172,4 +184,24 @@ go_bandit([]() {
     });
 
     filesystem::remove_all("ceeaus-inv");
+
+    describe("[inverted-index] with TREC corpus", []() {
+        auto trec_cfg = tests::create_config("trec");
+        trec_cfg->erase("dataset");
+        trec_cfg->insert("dataset", "simple-trec");
+        trec_cfg->erase("inverted-index");
+        trec_cfg->insert("inverted-index", "simple-trec-inv");
+
+        it("should create the index", [&]() {
+            auto idx = index::make_index<index::inverted_index>(*trec_cfg);
+            check_trec_expected(*idx);
+        });
+
+        it("should load the index", [&]() {
+            auto idx = index::make_index<index::inverted_index>(*trec_cfg);
+            check_trec_expected(*idx);
+        });
+    });
+
+    filesystem::remove_all("simple-trec-inv"); // TREC index is still called
 });

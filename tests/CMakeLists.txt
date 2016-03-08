@@ -25,12 +25,21 @@ ExternalProject_Add(housing
   BUILD_COMMAND ""
   INSTALL_COMMAND "")
 
+ExternalProject_Add(simple-trec
+  SOURCE_DIR ${meta_BINARY_DIR}/../../data/simple-trec
+  DOWNLOAD_DIR ${meta_BINARY_DIR}/../downloads
+  URL https://meta-toolkit.org/data/2016-03-08/simple-trec.tar.gz
+  URL_HASH "SHA256=82cc1ddfc6aa99692d64ba0b867e576101209303f6fe419c92d3720e83cce599"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND "")
+
 # Ignore sign warnings when expanding bandit's macros.
 file(GLOB BANDIT_SOURCE_FILES *.cpp)
 set_property(SOURCE ${BANDIT_SOURCE_FILES} APPEND PROPERTY COMPILE_FLAGS
     " -Wno-sign-conversion -Wno-conversion")
 add_executable(unit-test ${BANDIT_SOURCE_FILES})
-add_dependencies(unit-test ceeaus breast-cancer)
+add_dependencies(unit-test ceeaus breast-cancer housing simple-trec)
 target_include_directories(unit-test PUBLIC ${meta_SOURCE_DIR}/../deps/bandit/)
 target_link_libraries(unit-test meta-index
                                 meta-classify
