@@ -203,5 +203,5 @@ go_bandit([]() {
         });
     });
 
-    filesystem::remove_all("simple-trec-inv"); // TREC index is still called
+    filesystem::remove_all("simple-trec-inv");
 });
