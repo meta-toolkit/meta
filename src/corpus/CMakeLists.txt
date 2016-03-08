@@ -9,6 +9,7 @@ add_library(meta-corpus corpus.cpp
                         libsvm_corpus.cpp
                         line_corpus.cpp
                         gz_corpus.cpp
+                        trec_corpus.cpp
                         metadata.cpp
                         metadata_parser.cpp)
 

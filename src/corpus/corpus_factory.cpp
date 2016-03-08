@@ -24,6 +24,7 @@ corpus_factory::corpus_factory()
     reg<line_corpus>();
     reg<gz_corpus>();
     reg<libsvm_corpus>();
+    reg<trec_corpus>();
 }
 
 std::unique_ptr<corpus> make_corpus(const cpptoml::table& config)

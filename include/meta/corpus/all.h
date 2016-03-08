@@ -3,3 +3,4 @@
 #include "meta/corpus/gz_corpus.h"
 #include "meta/corpus/libsvm_corpus.h"
 #include "meta/corpus/line_corpus.h"
+#include "meta/corpus/trec_corpus.h"

@@ -7,8 +7,8 @@
  * project.
  */
 
-#ifndef META_UTIL_GZSTREAM_H_
-#define META_UTIL_GZSTREAM_H_
+#ifndef META_IO_GZSTREAM_H_
+#define META_IO_GZSTREAM_H_
 
 #include <zlib.h>
 
