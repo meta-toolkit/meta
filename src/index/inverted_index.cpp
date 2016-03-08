@@ -52,11 +52,13 @@ class inverted_index::impl
      * @param mdata_parser The parser for reading metadata
      * @param mdata_writer The writer for metadata
      * @param ram_budget The total **estimated** RAM budget
+     * @param num_threads The number of threads to tokenize and index docs with
      * @return the number of chunks created
      */
     void tokenize_docs(corpus::corpus& docs,
                        postings_inverter<inverted_index>& inverter,
-                       metadata_writer& mdata_writer, uint64_t ram_budget);
+                       metadata_writer& mdata_writer, uint64_t ram_budget,
+                       uint64_t num_threads);
 
     /**
      * Compresses the large postings file.
@@ -126,6 +128,17 @@ void inverted_index::create_index(const cpptoml::table& config,
     auto max_writers = static_cast<unsigned>(
         config.get_as<int64_t>("indexer-max-writers").value_or(8));
 
+    auto max_threads = std::thread::hardware_concurrency();
+    auto num_threads = static_cast<unsigned>(
+        config.get_as<int64_t>("indexer-num-threads").value_or(max_threads));
+    if (num_threads > max_threads)
+    {
+        num_threads = max_threads;
+        LOG(warning) << "Reducing indexer-num-threads to the hardware "
+                        "concurrency level of "
+                     << max_threads << ENDLG;
+    }
+
     postings_inverter<inverted_index> inverter{index_name(), max_writers};
     {
         metadata_writer mdata_writer{index_name(), docs.size(), docs.schema()};
@@ -134,7 +147,7 @@ void inverted_index::create_index(const cpptoml::table& config,
 
         // RAM budget is given in megabytes
         inv_impl_->tokenize_docs(docs, inverter, mdata_writer,
-                                 ram_budget * 1024 * 1024);
+                                 ram_budget * 1024 * 1024, num_threads);
     }
 
     inverter.merge_chunks();
@@ -173,7 +186,7 @@ void inverted_index::load_index()
 
 void inverted_index::impl::tokenize_docs(
     corpus::corpus& docs, postings_inverter<inverted_index>& inverter,
-    metadata_writer& mdata_writer, uint64_t ram_budget)
+    metadata_writer& mdata_writer, uint64_t ram_budget, uint64_t num_threads)
 {
     std::mutex mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs.size()};
@@ -221,9 +234,8 @@ void inverted_index::impl::tokenize_docs(
         }
     };
 
-    parallel::thread_pool pool;
+    parallel::thread_pool pool{num_threads};
     std::vector<std::future<void>> futures;
-    auto num_threads = pool.thread_ids().size();
     for (size_t i = 0; i < num_threads; ++i)
     {
         futures.emplace_back(
