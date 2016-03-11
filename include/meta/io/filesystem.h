@@ -14,6 +14,10 @@
 #include <stdexcept>
 #include <string>
 
+#if META_HAS_EXPERIMENTAL_FILESYSTEM
+#include <experimental/filesystem>
+#endif
+
 namespace meta
 {
 namespace filesystem
@@ -54,6 +58,12 @@ bool make_directory(const std::string& dir_name);
  * @return true if the file exists
  */
 bool file_exists(const std::string& filename);
+
+/**
+ * @param path The path to check
+ * @return true if the path (file or folder) exists
+ */
+bool exists(const std::string& path);
 
 /**
  * Calculates a file's size in bytes with support for files over 4GB.

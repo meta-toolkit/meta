@@ -92,10 +92,16 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config,
         config, std::forward<Args>(args)...);
 
     // if index has already been made, load it
-    if (!filesystem::make_directory(idx->index_name()) && idx->valid())
+    if (filesystem::exists(idx->index_name()) && idx->valid())
+    {
         idx->load_index();
+    }
     else
+    {
+        if (!filesystem::exists(idx->index_name()))
+            filesystem::make_directory(idx->index_name());
         idx->create_index(config, docs);
+    }
 
     return idx;
 }
