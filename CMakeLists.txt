@@ -13,12 +13,11 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(CheckCXXCompilerFlag)
-include(CheckCXXSourceCompiles)
-include(CheckCXXSourceRuns)
 include(CMakePushCheckState)
 include(ExternalProject)
-include(cmake/FindOrBuildICU.cmake)
+include(deps/meta-cmake/FindOrBuildICU.cmake)
+include(deps/meta-cmake/SetClangOptions.cmake)
+include(deps/meta-cmake/CompilerKludges.cmake)
 
 find_package(Threads REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -37,7 +36,8 @@ if (NOT CMAKE_BUILD_TYPE AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/deps/findicu)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/findicu)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/meta-cmake/)
 
 # We require Unicode 8 for the unit tests, which was added in ICU 56.1
 FindOrBuildICU(
@@ -47,312 +47,65 @@ FindOrBuildICU(
 )
 
 add_library(meta-definitions INTERFACE)
-target_include_directories(meta-definitions INTERFACE ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(meta-definitions INTERFACE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 if(UNIX OR MINGW)
   target_compile_options(meta-definitions INTERFACE -Wall -Wextra -pedantic)
 
   if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    # Enable -Wconversion on clang, since it's not *too* noisy there.
-    #
-    # As of GCC 5.2.0, there are still too many spurious warnings to bother
-    # enabling this there.
-    target_compile_options(meta-definitions INTERFACE "-Wconversion")
-
-    if(CMAKE_GENERATOR STREQUAL "Ninja")
-      target_compile_options(meta-definitions INTERFACE "-fcolor-diagnostics")
-    endif()
-
-    if(ENABLE_LIBCXX)
-      message("-- Locating libc++...")
-      find_library(LIBCXX_LIBRARY NAMES c++ cxx)
-      if(LIBCXX_LIBRARY)
-        message("-- Located libc++: ${LIBCXX_LIBRARY}")
-        set(LIBCXX_OPTIONS "-stdlib=libc++")
-        get_filename_component(LIBCXX_LIB_PATH ${LIBCXX_LIBRARY}
-                               DIRECTORY)
-        find_path(LIBCXX_PREFIX c++/v1/algorithm
-                  PATHS ${LIBCXX_LIB_PATH}/../include
-                  ${CMAKE_SYSTEM_PREFIX_PATH})
-        set(LIBCXX_INCLUDE_DIR ${LIBCXX_PREFIX}/c++/v1/)
-        message("-- Located libc++ include path: ${LIBCXX_INCLUDE_DIR}")
-
-        message("--     Locating libc++'s abi...")
-        find_library(LIBCXXABI_LIBRARY NAMES c++abi)
-        find_library(LIBCXXRT_LIBRARY NAMES cxxrt)
-        if(LIBCXXABI_LIBRARY)
-          message("--     Found libc++abi: ${LIBCXXABI_LIBRARY}")
-          set(CXXABI_LIBRARY ${LIBCXXABI_LIBRARY})
-        elseif(LIBCXXRT_LIBRARY)
-          message("--     Found libcxxrt: ${LIBCXXRT_LIBRARY}")
-          set(CXXABI_LIBRARY ${LIBCXXRT_LIBRARY})
-        else()
-          message("--     No abi library found. "
-                  "Attempting to continue without one...")
-        endif()
-      else()
-        message("-- Could not find libc++, will not use it.")
-      endif()
-    endif()
-
-    find_library(LIBDL_LIBRARY NAMES dl ldl)
-    if(LIBDL_LIBRARY)
-      set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${LIBDL_LIBRARY}")
-    endif()
-
-    if(LIBCXX_OPTIONS)
-      set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${LIBCXX_OPTIONS}")
-    endif()
-
-    if(CXXABI_LIBRARY)
-      set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${LIBCXX_OPTIONS} ${CXXABI_LIBRARY} -L${LIBCXX_LIB_PATH}")
-    endif()
-    if(LIBCXX_INCLUDE_DIR)
-      set(CMAKE_REQUIRED_INCLUDES "${CMAKE_REQUIRED_INCLUDES} ${LIBCXX_INCLUDE_DIR}")
-    endif()
+    SetClangOptions()
   endif()
-endif()
-
-if(STDOPT)
-  target_compile_options(meta-definitions INTERFACE ${STDOPT})
 endif()
 
 target_include_directories(meta-definitions SYSTEM INTERFACE ${ZLIB_INCLUDE_DIRS})
 
-if(LIBDL_LIBRARY)
+if (LIBDL_LIBRARY)
   target_link_libraries(meta-definitions INTERFACE ${LIBDL_LIBRARY})
 endif()
 
-if(CXXABI_LIBRARY)
+if (CXXABI_LIBRARY)
   target_link_libraries(meta-definitions INTERFACE ${CXXABI_LIBRARY})
 endif()
 
-if(LIBCXX_LIBRARY)
+if (LIBCXX_FOUND)
   target_include_directories(meta-definitions SYSTEM INTERFACE ${LIBCXX_INCLUDE_DIR})
   target_compile_options(meta-definitions INTERFACE ${LIBCXX_OPTIONS})
   target_link_libraries(meta-definitions INTERFACE -L${LIBCXX_LIB_PATH})
   target_link_libraries(meta-definitions INTERFACE ${LIBCXX_LIBRARY})
 endif()
 
-if(ENABLE_PROFILING)
+if (ENABLE_PROFILING)
   find_library(GPERFTOOLS_PROFILER NAMES profiler REQUIRED)
   message("-- Found profiler: ${GPERFTOOLS_PROFILER}")
   target_link_libraries(meta-definitions INTERFACE ${GPERFTOOLS_PROFILER})
 endif()
 
 find_library(JEMALLOC_LIB NAMES jemalloc)
-if(JEMALLOC_LIB AND ENABLE_JEMALLOC)
+if (JEMALLOC_LIB AND ENABLE_JEMALLOC)
   message("-- Using jemalloc: ${JEMALLOC_LIB}")
   target_link_libraries(meta-definitions INTERFACE ${JEMALLOC_LIB})
 else()
   message("-- Using regular malloc; consider installing jemalloc")
 endif()
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   target_compile_definitions(meta-definitions INTERFACE
                              -D_DARWIN_USE_64_BIT_INODE=1)
   target_compile_definitions(meta-definitions INTERFACE
                              -DMETA_IS_DARWIN=1)
 endif()
 
-check_cxx_source_compiles("
-#include <atomic>
-#include <memory>
-int main () {
-    auto sp = std::make_shared<int>(1);
-    auto sp2 = std::atomic_load(&sp);
-    return 0;
-}" META_HAS_STD_SHARED_PTR_ATOMICS)
-
-if(META_HAS_STD_SHARED_PTR_ATOMICS)
-  target_compile_definitions(meta-definitions INTERFACE
-                             -DMETA_HAS_STD_SHARED_PTR_ATOMICS=1)
-endif()
-
-check_cxx_source_compiles("
-#include <fstream>
-int main() {
-    std::ofstream ofs{\"path\"};
-    std::ofstream ofs2{std::move(ofs)};
-    return 0;
-}" META_HAS_STREAM_MOVE)
-
-if(META_HAS_STREAM_MOVE)
-  target_compile_definitions(meta-definitions INTERFACE
-                             -DMETA_HAS_STREAM_MOVE=1)
-endif()
-
-check_cxx_source_compiles("
-#include <memory>
-int main() {
-    auto i = std::make_unique<int>(1);
-    return 0;
-}" META_HAS_STD_MAKE_UNIQUE)
-
-if(META_HAS_STD_MAKE_UNIQUE)
-  target_compile_definitions(meta-definitions INTERFACE
-                             -DMETA_HAS_STD_MAKE_UNIQUE)
-endif()
-
-check_cxx_source_compiles("
-#include <experimental/optional>
-int main() {
-    std::experimental::optional<int> x;
-    return 0;
-}" META_HAS_EXPERIMENTAL_OPTIONAL)
-
-if (META_HAS_EXPERIMENTAL_OPTIONAL)
-  target_compile_definitions(meta-definitions INTERFACE
-                             -DMETA_HAS_EXPERIMENTAL_OPTIONAL)
-endif()
-
-check_cxx_source_compiles("
-#include <experimental/string_view>
-int main() {
-    const std::experimental::string_view sv = \"hello world\";
-    // test that string_view has to_string() const method
-    // Xcode 6.4 appears to have shipped a string_view without it
-    auto str = sv.to_string();
-    return 0;
-}" META_HAS_EXPERIMENTAL_STRING_VIEW)
-
-if (META_HAS_EXPERIMENTAL_STRING_VIEW)
-  target_compile_definitions(meta-definitions INTERFACE
-                             -DMETA_HAS_EXPERIMENTAL_STRING_VIEW)
-endif()
-
-# experimental::filesystem is packaged as a separate static library in
-# GCC >= 5.3 as -lstdc++fs
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-  find_library(STDCXX_FILESYSTEM NAMES stdc++fs)
-
-  if (STDCXX_FILESYSTEM)
-    message("-- Found libstdc++ filesystem: ${STDCXX_FILESYSTEM}")
-    set(CMAKE_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES} ${STDCXX_FILESYSTEM}")
-  endif()
-endif()
-
-check_cxx_source_compiles("
-#include <experimental/filesystem>
-
-int main()
-{
-    std::experimental::filesystem::path p1 = \"/usr\";
-    return 0;
-}" META_HAS_EXPERIMENTAL_FILESYSTEM)
-
-if (META_HAS_EXPERIMENTAL_FILESYSTEM)
-  target_compile_definitions(meta-definitions INTERFACE
-    -DMETA_HAS_EXPERIMENTAL_FILESYSTEM)
-
-  if (STDCXX_FILESYSTEM)
-    target_link_libraries(meta-definitions INTERFACE ${STDCXX_FILESYSTEM})
-  endif()
-endif()
-
-# experimental::filesystem::remove_all doesn't recurse properly as of GCC
-# 5.3.
-set(META_REMOVE_ALL_TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/meta-filesystem-test)
-file(MAKE_DIRECTORY ${META_REMOVE_ALL_TEST_DIR})
-file(MAKE_DIRECTORY ${META_REMOVE_ALL_TEST_DIR}/subdir)
-file(WRITE ${META_REMOVE_ALL_TEST_DIR}/subdir/file "Just some testing text")
-
-check_cxx_source_runs("
-#include <experimental/filesystem>
-
-int main()
-{
-    std::experimental::filesystem::remove_all(\"${META_REMOVE_ALL_TEST_DIR}\");
-    return 0;
-}" META_HAS_EXPERIMENTAL_FILESYSTEM_REMOVE_ALL)
-
-if (META_HAS_EXPERIMENTAL_FILESYSTEM_REMOVE_ALL)
-  target_compile_definitions(meta-definitions INTERFACE
-    -DMETA_HAS_EXPERIMENTAL_FILESYSTEM_REMOVE_ALL)
-endif()
-
-file(REMOVE_RECURSE ${META_REMOVE_ALL_TEST_DIR})
-unset(META_REMOVE_ALL_TEST_DIR)
+# set a bunch of preprocessor variables to work around various compiler and
+# standard library bugs
+CompilerKludges()
 
 if(NOT META_HAS_EXPERIMENTAL_FILESYSTEM)
   target_include_directories(meta-definitions SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)
 endif()
 
-set(META_FOUND_ALIGNED_ALLOC_IMPL 0)
-
-check_cxx_source_compiles("
-#include <cstdlib>
-
-int main()
-{
-    ::aligned_alloc(64, 128);
-    return 0;
-}" META_HAS_ALIGNED_ALLOC)
-
-if (META_HAS_ALIGNED_ALLOC)
-  set(META_FOUND_ALIGNED_ALLOC_IMPL 1)
-  target_compile_definitions(meta-definitions INTERFACE
-    -DMETA_HAS_ALIGNED_ALLOC)
-endif()
-
-if (NOT META_FOUND_ALIGNED_ALLOC_IMPL AND UNIX)
-  check_cxx_source_compiles("
-  #include <cstdlib>
-
-  int main()
-  {
-      void* ptr;
-      ::posix_memalign(&ptr, 64, 128);
-      return 0;
-  }" META_HAS_POSIX_MEMALIGN)
-
-  if (META_HAS_POSIX_MEMALIGN)
-    set(META_FOUND_ALIGNED_ALLOC_IMPL 1)
-    target_compile_definitions(meta-definitions INTERFACE
-      -DMETA_HAS_POSIX_MEMALIGN)
-  endif()
-endif()
-
-if (NOT META_FOUND_ALIGNED_ALLOC_IMPL AND WIN32)
-  check_cxx_source_compiles("
-  #include <malloc.h>
-
-  int main()
-  {
-      ::_aligned_malloc(128, 64);
-      return 0;
-  }" META_HAS_ALIGNED_MALLOC)
-
-  if (META_HAS_ALIGNED_MALLOC)
-    set(META_FOUND_ALIGNED_ALLOC_IMPL 1)
-    target_compile_definitions(meta-definitions INTERFACE
-      -DMETA_HAS_ALIGNED_MALLOC)
-  endif()
-endif()
-
-if (NOT META_FOUND_ALIGNED_ALLOC_IMPL)
-  message(FATAL_ERROR "Failed to find a suitable aligned allocation routine")
-endif()
-
-check_cxx_source_compiles("
-int main()
-{
-    long x = 1;
-    if (__builtin_expect(x == 1, 0))
-        return 1;
-    return 0;
-}" META_HAS_BUILTIN_EXPECT)
-
-if (META_HAS_BUILTIN_EXPECT)
-  target_compile_definitions(meta-definitions INTERFACE
-    -DMETA_HAS_BUILTIN_EXPECT)
-endif()
+target_link_libraries(meta-definitions INTERFACE compiler-kludges)
 cmake_pop_check_state()
-
-if(BIICODE)
-  include(contrib/biicode/CMakeLists.txt)
-  return()
-ENDIF()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
