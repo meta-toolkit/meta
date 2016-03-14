@@ -25,8 +25,7 @@ namespace meta
 namespace filesystem
 {
 
-#if !defined META_HAS_EXPERIMENTAL_FILESYSTEM                                  \
-    && !defined META_HAS_TR2_SYS_FILESYSTEM
+#ifndef META_HAS_EXPERIMENTAL_FILESYSTEM
 namespace
 {
 using traits = platformstl::filesystem_traits<char>;
@@ -51,6 +50,11 @@ bool make_directory(const std::string& dir_name)
 bool file_exists(const std::string& filename)
 {
     return traits::file_exists(filename.c_str());
+}
+
+bool exists(const std::string& filename)
+{
+    return file_exists(filename);
 }
 
 uint64_t file_size(const std::string& filename)
@@ -111,16 +115,12 @@ std::uintmax_t remove_all(const std::string& path)
 {
     return remove_all(path_type{path.c_str()});
 }
-#else // filesystem namespace exists, somewhere
-#if META_HAS_EXPERIMENTAL_FILESYSTEM
-using fs = std::experimental::filesystem;
-#elif META_HAS_TR2_SYS_FILESYSTEM
-using fs = std::tr2::sys::filesystem;
-#endif
+#else
+namespace fs = std::experimental::filesystem;
 
 bool delete_file(const std::string& filename)
 {
-    return fs::remove(filename);
+    return fs::exists(filename) && fs::remove(filename);
 }
 
 void rename_file(const std::string& old_name, const std::string& new_name)
@@ -138,6 +138,11 @@ bool file_exists(const std::string& filename)
     return fs::exists(filename);
 }
 
+bool exists(const std::string& filename)
+{
+    return fs::exists(filename);
+}
+
 uint64_t file_size(const std::string& filename)
 {
     if (!file_exists(filename))
@@ -147,7 +152,22 @@ uint64_t file_size(const std::string& filename)
 
 std::uintmax_t remove_all(const std::string& path)
 {
+    if (!fs::exists(path))
+        return 0;
+#if META_HAS_EXPERIMENTAL_FILESYSTEM_REMOVE_ALL
     return fs::remove_all(path);
+#else
+    // fs::remove_all doesn't properly recurse on directories, so we get
+    // to...
+    std::uintmax_t count = 1;
+    if (fs::is_directory(path))
+    {
+        for (fs::directory_iterator d{path}, end; d != end; ++d)
+            count += meta::filesystem::remove_all(d->path());
+    }
+    fs::remove(path);
+    return count;
+#endif
 }
 #endif
 
