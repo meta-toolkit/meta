@@ -47,7 +47,7 @@ template <class InputIt, class Delims, class BinOp>
 void for_each_token(InputIt first, InputIt last, const Delims& delims,
                     BinOp binary_op)
 {
-    for_each_token(first, last, std::cbegin(delims), std::cend(delims),
+    for_each_token(first, last, std::begin(delims), std::end(delims),
                    binary_op);
 }
 }
