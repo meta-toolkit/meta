@@ -60,17 +60,22 @@ void make_compressed_vector(const std::string& prefix, ForwardIterator begin,
         ++num_elems;
     }
 
-    filesystem::make_directory(prefix + "/sarray");
-    sarray_builder s_builder{prefix + "/sarray", num_elems + 1, num_bits};
-    s_builder(bv_builder.total_bits());
-    for (auto it = begin; it != end; ++it)
     {
-        uint64_t word = *it;
-        uint64_t len = (word) ? broadword::msb(word) : 1;
-        bv_builder.write_bits({word, static_cast<uint8_t>(len)});
-
+        filesystem::make_directory(prefix + "/sarray");
+        sarray_builder s_builder{prefix + "/sarray", num_elems + 1, num_bits};
         s_builder(bv_builder.total_bits());
+        for (auto it = begin; it != end; ++it)
+        {
+            uint64_t word = *it;
+            uint64_t len = (word) ? broadword::msb(word) : 1;
+            bv_builder.write_bits({word, static_cast<uint8_t>(len)});
+
+            s_builder(bv_builder.total_bits());
+        }
     }
+
+    sarray select{prefix + "/sarray"};
+    sarray_select{prefix + "/sarray", select};
 }
 }
 }
