@@ -158,7 +158,7 @@ class perfect_hash_map_builder
     using fingerprint_hash = hashing::seeded_hash<hashing::farm_hash_seeded>;
 
     perfect_hash_map_builder(const options_type& options)
-        : options_{options},
+        : options_(options),
           output_{options.prefix + "/values.bin.tmp", std::ios::binary},
           hash_builder_{make_unique<hash_builder_type>(options)},
           fingerprint_{47}
