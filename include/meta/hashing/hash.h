@@ -181,6 +181,14 @@ template <class HashAlgorithm, class T1, class T2, class... Ts>
 void hash_append(HashAlgorithm& h, const T1& first, const T2& second,
                  const Ts&... ts);
 
+template <class HashAlgorithm, class T, class Alloc>
+typename std::enable_if<is_contiguously_hashable<T>::value>::type
+hash_append(HashAlgorithm& h, const std::vector<T, Alloc>& v);
+
+template <class HashAlgorithm, class T, class Alloc>
+typename std::enable_if<!is_contiguously_hashable<T>::value>::type
+hash_append(HashAlgorithm& h, const std::vector<T, Alloc>& v);
+
 // begin implementations for hash_append
 
 template <class HashAlgorithm, class T, std::size_t N>
@@ -256,6 +264,23 @@ hash_append(HashAlgorithm& h, const std::basic_string<Char, Traits, Alloc>& s)
     for (const auto& c : s)
         hash_append(h, c);
     hash_append(h, s.size());
+}
+
+template <class HashAlgorithm, class T, class Alloc>
+typename std::enable_if<is_contiguously_hashable<T>::value>::type
+hash_append(HashAlgorithm& h, const std::vector<T, Alloc>& v)
+{
+    h(v.data(), v.size() * sizeof(T));
+    hash_append(h, v.size());
+}
+
+template <class HashAlgorithm, class T, class Alloc>
+typename std::enable_if<!is_contiguously_hashable<T>::value>::type
+hash_append(HashAlgorithm& h, const std::vector<T, Alloc>& v)
+{
+    for (const auto& val : v)
+        hash_append(h, val);
+    hash_append(h, v.size());
 }
 
 template <class HashAlgorithm, class T1, class T2, class... Ts>
