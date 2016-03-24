@@ -37,7 +37,10 @@ bool bit_vector_view::operator[](uint64_t bit_idx) const
 uint64_t bit_vector_view::extract(uint64_t bit_idx, uint8_t len) const
 {
     if (META_UNLIKELY(len > 64))
-        throw std::invalid_argument{"bit length longer than word"};
+        throw std::out_of_range{"bit length longer than word"};
+
+    if (META_UNLIKELY(bit_idx > size()))
+        throw std::out_of_range{"bit index larger than bit count"};
 
     auto word_pos = bit_idx / 64;
     auto bit_pos = bit_idx % 64;

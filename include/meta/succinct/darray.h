@@ -10,7 +10,6 @@
 #ifndef META_SUCCINCT_DARRAY_H_
 #define META_SUCCINCT_DARRAY_H_
 
-#include <iostream>
 #include <fstream>
 #include "meta/io/binary.h"
 #include "meta/io/filesystem.h"
@@ -213,6 +212,7 @@ class darray_builder
             {
                 auto offset = static_cast<uint16_t>(current_block[i]
                                                     - current_block[0]);
+                assert(i == 0 || offset > 0);
                 io::write_binary(sub_blocks, offset);
             }
         }
@@ -291,7 +291,7 @@ class darray
         {
             using namespace darray_detail;
 
-            if (META_UNLIKELY(i > num_ones))
+            if (META_UNLIKELY(i >= num_ones))
                 throw std::out_of_range{"index out of range in select query"};
 
             auto block_idx = i / ones_per_block;
@@ -323,7 +323,7 @@ class darray
             {
                 auto popcount = broadword::popcount(word);
                 if (one_count < popcount)
-                  break;
+                    break;
                 one_count -= popcount;
                 word = WordReader{}(words[++word_idx]);
             }
