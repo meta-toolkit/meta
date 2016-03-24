@@ -301,6 +301,39 @@ inline uint64_t get_process_seed()
 }
 
 /**
+ * A generic, manually seeded hash function.
+ */
+template <class HashAlgorithm = typename default_hasher<>::type,
+          class SeedType = uint64_t>
+class seeded_hash
+{
+  public:
+    using result_type = typename HashAlgorithm::result_type;
+
+    seeded_hash(SeedType seed) : seed_{seed}
+    {
+        // nothing
+    }
+
+    template <class T>
+    result_type operator()(const T& t) const
+    {
+        HashAlgorithm h(seed_);
+        using hashing::hash_append;
+        hash_append(h, t);
+        return static_cast<result_type>(h);
+    }
+
+    SeedType seed() const
+    {
+        return seed_;
+    }
+
+  private:
+    SeedType seed_;
+};
+
+/**
  * A generic, randomly seeded hash function.
  * @see
  * http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3980.html#seeding
