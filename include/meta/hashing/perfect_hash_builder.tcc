@@ -394,9 +394,9 @@ void hashes_to_indices(ForwardIterator begin, ForwardIterator end,
                    });
 }
 
-bool insert_bucket(std::vector<std::size_t>& indices,
-                   std::vector<bool>& occupied_slots, std::size_t idx,
-                   uint16_t seed, util::disk_vector<uint16_t>& seeds)
+inline bool insert_bucket(std::vector<std::size_t>& indices,
+                          std::vector<bool>& occupied_slots, std::size_t idx,
+                          uint16_t seed, util::disk_vector<uint16_t>& seeds)
 {
     auto iit = indices.begin();
     for (; iit != indices.end(); ++iit)
