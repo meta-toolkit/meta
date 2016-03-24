@@ -386,6 +386,7 @@ uint64_t read(InputStream& is, T& value)
 template <class T, class InputStream>
 T read(InputStream& stream)
 {
+    using meta::io::packed::packed_read;
     T val;
     packed_read(stream, val);
     return val;
