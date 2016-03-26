@@ -31,24 +31,6 @@ struct coocur_record
     {
         weight += other.weight;
     }
-
-    template <class OutputStream>
-    uint64_t write(OutputStream& os) const
-    {
-        auto bytes = io::packed::write(os, target);
-        bytes += io::packed::write(os, context);
-        bytes += io::packed::write(os, weight);
-        return bytes;
-    }
-
-    template <class InputStream>
-    uint64_t read(InputStream& is)
-    {
-        auto bytes = io::packed::read(is, target);
-        bytes += io::packed::read(is, context);
-        bytes += io::packed::read(is, weight);
-        return bytes;
-    }
 };
 
 bool operator==(const coocur_record& a, const coocur_record& b)
@@ -64,6 +46,22 @@ bool operator!=(const coocur_record& a, const coocur_record& b)
 bool operator<(const coocur_record& a, const coocur_record& b)
 {
     return std::tie(a.target, a.context) < std::tie(b.target, b.context);
+}
+
+template <class OutputStream>
+uint64_t packed_write(OutputStream& os, const coocur_record& record)
+{
+    using io::packed::write;
+    return write(os, record.target) + write(os, record.context)
+           + write(os, record.weight);
+}
+
+template <class InputStream>
+uint64_t packed_read(InputStream& is, coocur_record& record)
+{
+    using io::packed::read;
+    return read(is, record.target) + read(is, record.context)
+           + read(is, record.weight);
 }
 }
 }

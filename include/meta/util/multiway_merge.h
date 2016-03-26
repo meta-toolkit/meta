@@ -16,6 +16,9 @@
 #include <utility>
 #include <vector>
 
+#include "meta/io/filesystem.h"
+#include "meta/io/moveable_stream.h"
+#include "meta/io/packed.h"
 #include "meta/util/progress.h"
 
 namespace meta
@@ -179,6 +182,96 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
     };
     return multiway_merge(begin, end, record_comp, record_equal,
                           std::forward<RecordHandler>(output));
+}
+
+/**
+ * A simple implementation of the ChunkIterator concept that reads Records
+ * from a binary file using io::packed::read.
+ */
+template <class Record>
+class chunk_iterator
+{
+  public:
+    /// Default constructor (end iterator)
+    chunk_iterator() = default;
+
+    /**
+     * Constructs a new chunk_iterator reading from the given filename
+     * @param filename The file to read from
+     */
+    chunk_iterator(const std::string& filename)
+        : input_{filename, std::ios::binary},
+          bytes_read_{0},
+          total_bytes_{filesystem::file_size(filename)}
+    {
+        ++(*this);
+    }
+
+    /**
+     * Moves the chunk iterator forward in the file to the next Record. If
+     * the file hits EOF, the internal stream is closed and the resulting
+     * iterator will compare equal with the end iterator.
+     *
+     * @return the current iterator
+     */
+    chunk_iterator& operator++()
+    {
+        if (input_.stream().peek() == EOF)
+        {
+            input_.stream().close();
+
+            assert(*this == chunk_iterator{});
+            return *this;
+        }
+
+        bytes_read_ += io::packed::read(input_.stream(), record_);
+        return *this;
+    }
+
+    Record& operator*()
+    {
+        return record_;
+    }
+
+    const Record& operator*() const
+    {
+        return record_;
+    }
+
+    uint64_t total_bytes() const
+    {
+        return total_bytes_;
+    }
+
+    uint64_t bytes_read() const
+    {
+        return bytes_read_;
+    }
+
+    /**
+     * Equality of chunk_iterators only holds when both iterators are the
+     * "end" iterator.
+     *
+     * @param other The other iterator to compare against
+     * @return whether both iterators are the end iterator
+     */
+    bool operator==(const chunk_iterator& other) const
+    {
+        return !input_.stream().is_open() && !other.input_.stream().is_open();
+    }
+
+  private:
+    io::mifstream input_;
+    Record record_;
+    uint64_t bytes_read_;
+    uint64_t total_bytes_;
+};
+
+template <class Record>
+bool operator!=(const chunk_iterator<Record>& a,
+                const chunk_iterator<Record>& b)
+{
+    return !(a == b);
 }
 }
 }

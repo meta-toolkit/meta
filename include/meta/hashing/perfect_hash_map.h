@@ -17,6 +17,7 @@
 #include "meta/io/moveable_stream.h"
 #include "meta/io/mmap_file.h"
 #include "meta/io/filesystem.h"
+#include "meta/io/packed.h"
 #include "meta/util/optional.h"
 #include "meta/util/progress.h"
 
@@ -74,77 +75,12 @@ uint64_t packed_write(OutputStream& os,
 template <class InputStream, class Value, class FingerPrint>
 uint64_t packed_read(InputStream& is, hashed_value<Value, FingerPrint>& hv)
 {
-    using io::packed::write;
+    using io::packed::read;
     return read(is, hv.idx) + read(is, hv.record);
 }
 
 template <class HashedValue>
-class hv_chunk_iterator
-{
-  public:
-    hv_chunk_iterator() = default;
-
-    hv_chunk_iterator(const std::string& filename)
-        : input_{filename, std::ios::binary},
-          bytes_read_{0},
-          total_bytes_{filesystem::file_size(filename)}
-    {
-        ++(*this);
-    }
-
-    hv_chunk_iterator& operator++()
-    {
-        if (input_.stream().peek() == EOF)
-        {
-            input_.stream().close();
-
-            assert(*this == hv_chunk_iterator{});
-            return *this;
-        }
-
-        bytes_read_ += io::packed::read(input_.stream(), record_.idx);
-        bytes_read_ += io::packed::read(input_.stream(), record_.record);
-        return *this;
-    }
-
-    HashedValue& operator*()
-    {
-        return record_;
-    }
-
-    const HashedValue& operator*() const
-    {
-        return record_;
-    }
-
-    uint64_t total_bytes() const
-    {
-        return total_bytes_;
-    }
-
-    uint64_t bytes_read() const
-    {
-        return bytes_read_;
-    }
-
-    bool operator==(const hv_chunk_iterator& other) const
-    {
-        return !input_.stream().is_open() && !other.input_.stream().is_open();
-    }
-
-  private:
-    io::mifstream input_;
-    HashedValue record_;
-    uint64_t bytes_read_;
-    uint64_t total_bytes_;
-};
-
-template <class HashedValue>
-bool operator!=(const hv_chunk_iterator<HashedValue>& a,
-                const hv_chunk_iterator<HashedValue>& b)
-{
-    return !(a == b);
-}
+using hv_chunk_iterator = util::chunk_iterator<HashedValue>;
 }
 
 template <class KeyType, class ValueType, class FingerPrint = uint32_t>

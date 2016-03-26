@@ -43,27 +43,6 @@ struct bucket_record
                   std::back_inserter(keys));
         std::vector<K>{}.swap(other.keys);
     }
-
-    uint64_t read(std::istream& stream)
-    {
-        std::size_t len;
-        auto bytes = io::packed::read(stream, len);
-        bytes += io::packed::read(stream, idx);
-
-        keys.resize(len);
-        for (std::size_t i = 0; i < len; ++i)
-            bytes += io::packed::read(stream, keys[i]);
-        return bytes;
-    }
-
-    uint64_t write(std::ostream& stream) const
-    {
-        auto bytes = io::packed::write(stream, keys.size());
-        bytes += io::packed::write(stream, idx);
-        for (const auto& key : keys)
-            bytes += io::packed::write(stream, key);
-        return bytes;
-    }
 };
 
 template <class K>
@@ -78,71 +57,31 @@ bool operator<(const bucket_record<K> a, const bucket_record<K>& b)
     return a.idx < b.idx;
 }
 
-template <class K>
-class chunk_iterator
+template <class InputStream, class K>
+uint64_t packed_read(InputStream& is, bucket_record<K>& record)
 {
-  public:
-    chunk_iterator() = default;
+    using io::packed::read;
+    std::size_t len;
+    auto bytes = read(is, len) + read(is, record.idx);
 
-    chunk_iterator(const std::string& filename)
-        : input_{filename, std::ios::binary},
-          bytes_read_{0},
-          total_bytes_{filesystem::file_size(filename)}
-    {
-        ++(*this);
-    }
-
-    chunk_iterator& operator++()
-    {
-        if (input_.stream().peek() == EOF)
-        {
-            input_.stream().close();
-
-            assert(*this == chunk_iterator{});
-            return *this;
-        }
-
-        bytes_read_ += record_.read(input_);
-        return *this;
-    }
-
-    bucket_record<K>& operator*()
-    {
-        return record_;
-    }
-
-    const bucket_record<K>& operator*() const
-    {
-        return record_;
-    }
-
-    uint64_t total_bytes() const
-    {
-        return total_bytes_;
-    }
-
-    uint64_t bytes_read() const
-    {
-        return bytes_read_;
-    }
-
-    bool operator==(const chunk_iterator& other) const
-    {
-        return !input_.stream().is_open() && !other.input_.stream().is_open();
-    }
-
-  private:
-    io::mifstream input_;
-    bucket_record<K> record_;
-    uint64_t bytes_read_;
-    uint64_t total_bytes_;
-};
-
-template <class K>
-bool operator!=(const chunk_iterator<K>& a, const chunk_iterator<K>& b)
-{
-    return !(a == b);
+    record.keys.resize(len);
+    for (std::size_t i = 0; i < len; ++i)
+        bytes += read(is, record.keys[i]);
+    return bytes;
 }
+
+template <class OutputStream, class K>
+uint64_t packed_write(OutputStream& os, const bucket_record<K>& record)
+{
+    using io::packed::write;
+    auto bytes = write(os, record.keys.size()) + write(os, record.idx);
+    for (const auto& key : record.keys)
+        write(os, key);
+    return bytes;
+}
+
+template <class K>
+using chunk_iterator = util::chunk_iterator<bucket_record<K>>;
 
 template <class K>
 std::size_t hash(const K& key, uint64_t seed)
@@ -232,7 +171,7 @@ void perfect_hash_builder<K>::merge_chunks_by_bucket_id()
         util::multiway_merge(iterators.begin(), iterators.end(),
                              [&](mph::bucket_record<K>&& bucket)
                              {
-                                 bucket.write(output);
+                                 io::packed::write(output, bucket);
                              });
     }
 
@@ -354,7 +293,7 @@ void perfect_hash_builder<K>::merge_chunks_by_bucket_size()
         },
         [&](mph::bucket_record<K>&& bucket)
         {
-            bucket.write(output);
+            io::packed::write(output, bucket);
         });
 
     // delete temporary files

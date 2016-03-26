@@ -113,7 +113,7 @@ class coocur_buffer
             = util::multiway_merge(chunks.begin(), chunks.end(),
                                    [&](embeddings::coocur_record&& record)
                                    {
-                                       record.write(output);
+                                       io::packed::write(output, record);
                                    });
         chunks.clear();
 
