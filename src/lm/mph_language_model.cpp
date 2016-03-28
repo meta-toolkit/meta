@@ -251,21 +251,134 @@ uint64_t build_from_arpa(const std::string& arpa_file,
 }
 }
 
+struct mph_language_model::impl
+{
+    using unigram_map_type = ngram_map<std::string>;
+    using middle_map_type = ngram_map<std::vector<uint64_t>>;
+    using last_map_type = ngram_map<std::vector<uint64_t>, float>;
+
+    impl(const std::string& prefix, uint64_t o)
+        : order{o},
+          unigrams{prefix + "/0"},
+          last{prefix + "/" + std::to_string(order)}
+    {
+        for (uint64_t i = 1; i < order - 1; ++i)
+        {
+            auto mid = make_unique<middle_map_type>(prefix + "/"
+                                                    + std::to_string(i));
+            middle_vec.push_back(std::move(mid));
+        }
+
+        unk = *unigrams.index_and_value("<unk>");
+    }
+
+    const middle_map_type& middle(uint64_t idx) const
+    {
+        return *middle_vec[idx];
+    }
+
+    uint64_t order;
+    hashing::index_and_value<prob_backoff<>> unk;
+    unigram_map_type unigrams;
+    std::vector<std::unique_ptr<middle_map_type>> middle_vec;
+    last_map_type last;
+};
+
 mph_language_model::mph_language_model(const cpptoml::table& config)
 {
     auto table = config.get_table("mph-language-model");
     auto arpa_file = table->get_as<std::string>("arpa-file");
     auto prefix = table->get_as<std::string>("binary-file-prefix");
 
-    LOG(info) << "Building language model from .arpa file: " << *arpa_file
+    util::optional<uint64_t> order;
+    if (!filesystem::file_exists(*prefix + "/0/values.bin"))
+    {
+        LOG(info) << "Building language model from .arpa file: " << *arpa_file
+                  << ENDLG;
+
+        auto time = common::time([&]()
+                                 {
+                                     order
+                                         = build_from_arpa(*arpa_file, *prefix);
+                                 });
+        LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
+    }
+    LOG(info) << "Loading language model from binary files in: " << *prefix
               << ENDLG;
 
-    uint64_t order;
-    auto time = common::time([&]()
-                             {
-                                 order = build_from_arpa(*arpa_file, *prefix);
-                             });
-    LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
+    if (!order)
+    {
+        for (uint64_t o = 0; filesystem::file_exists(
+                 *prefix + "/" + std::to_string(o) + "/values.bin");
+             ++o)
+            order = o;
+    }
+
+    impl_ = make_unique<impl>(*prefix, *order);
 }
+
+float mph_language_model::score(const lm_state& in_state,
+                                const std::string& token,
+                                lm_state& out_state) const
+{
+    auto iav = impl_->unigrams.index_and_value(token).value_or(impl_->unk);
+    return score(in_state, iav.idx, iav.value, out_state);
+}
+
+float mph_language_model::score(const lm_state& in_state, uint64_t token,
+                                lm_state& out_state) const
+{
+    return score(in_state, token, impl_->unigrams[token], out_state);
+}
+
+float mph_language_model::score(const lm_state& in_state, uint64_t token,
+                                prob_backoff<> pb, lm_state& out_state) const
+{
+    out_state = in_state;
+    out_state.previous.push_back(token);
+
+    // (1) Find the longest matching ngram
+    if (out_state.previous.size() == impl_->order + 1)
+    {
+        if (auto full = impl_->last.at(out_state.previous))
+        {
+            out_state.shrink();
+            return *full;
+        }
+        out_state.shrink();
+    }
+
+    float res = 0;
+    while (out_state.previous.size() > 1)
+    {
+        const auto& table = impl_->middle(out_state.previous.size() - 1);
+        if (auto mid = table.at(out_state.previous))
+        {
+            res = mid->prob;
+            break;
+        }
+        out_state.shrink();
+    }
+
+    if (out_state.previous.size() == 1)
+        res = pb.prob;
+
+    if (out_state.previous.size() > in_state.previous.size())
+        return res;
+
+    // (2) Apply backoff penalties if needed
+    auto backoff = in_state;
+    for (uint64_t i = 0;
+         i < in_state.previous.size() - out_state.previous.size() + 1; ++i)
+    {
+        const auto& table = impl_->middle(backoff.previous.size() - 1);
+        res += table.at(backoff.previous)->backoff;
+        backoff.shrink();
+    }
+
+    return res;
+}
+
+mph_language_model::~mph_language_model() = default;
 }
 }

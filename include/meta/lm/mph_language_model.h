@@ -11,6 +11,7 @@
 #define META_LM_MPH_LANGUAGE_MODEL_H_
 
 #include "cpptoml.h"
+#include "meta/lm/ngram_map.h"
 #include "meta/lm/sentence.h"
 #include "meta/lm/token_list.h"
 #include "meta/util/array_view.h"
@@ -19,6 +20,17 @@ namespace meta
 {
 namespace lm
 {
+
+struct lm_state
+{
+    std::vector<uint64_t> previous;
+
+    void shrink()
+    {
+        std::copy(previous.begin() + 1, previous.end(), previous.begin());
+        previous.pop_back();
+    }
+};
 
 /**
  * An ngram language model class based on a collection of minimal perfect
@@ -54,38 +66,20 @@ class mph_language_model
     */
     mph_language_model(const cpptoml::table& config);
 
-#if 0
+    ~mph_language_model();
 
-    /**
-     * Default move constructor.
-     */
-    mph_language_model(mph_language_model&&) = default;
+    float score(const lm_state& in_state, const std::string& token,
+                lm_state& out_state) const;
 
-    /**
-     * @param sentence A sequence of tokens
-     * @return the perplexity of this token sequence given the current language
-     * model: \f$ \sqrt[n]{\prod_{i=1}^n\frac{1}{p(w_i|w_{i-n}\cdots w_{i-1})}}
-     * \f$
-     */
-    float perplexity(const sentence& tokens) const;
-
-    /**
-     * @param sentence A sequence of tokens
-     * @return the perplexity of this token sequence given the current language
-     * model normalized by the length of the sequence
-     */
-    float perplexity_per_word(const sentence& tokens) const;
-
-    /**
-     * @param tokens A sequence of n tokens (one sentence)
-     * @return the log probability of the likelihood of this sentence
-     */
-    float log_prob(const sentence& tokens) const;
+    float score(const lm_state& in_state, uint64_t token,
+                lm_state& out_state) const;
 
   private:
+    float score(const lm_state& in_state, uint64_t token, prob_backoff<> pb,
+                lm_state& out_state) const;
+
     struct impl;
     std::unique_ptr<impl> impl_;
-#endif
 };
 }
 }
