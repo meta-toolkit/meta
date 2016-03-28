@@ -234,6 +234,13 @@ class perfect_hash_map_builder
     fingerprint_hash fingerprint_;
 };
 
+template <class Value>
+struct index_and_value
+{
+    uint64_t idx;
+    Value value;
+};
+
 template <class Key, class Value, class FingerPrint = uint32_t>
 class perfect_hash_map
 {
@@ -241,6 +248,7 @@ class perfect_hash_map
     using fingerprint_type = FingerPrint;
     using record_type = detail::hash_record<Value, FingerPrint>;
     using fingerprint_hash = seeded_hash<hashing::farm_hash_seeded>;
+    using index_and_value_type = index_and_value<Value>;
 
     perfect_hash_map(const std::string& prefix)
         : hash_{prefix}, file_{prefix + "/values.bin"}, fingerprint_{47}
@@ -248,9 +256,23 @@ class perfect_hash_map
         // nothing
     }
 
+    perfect_hash_map(perfect_hash_map&&) = default;
+
     const perfect_hash<Key>& hash() const
     {
         return hash_;
+    }
+
+    util::optional<index_and_value_type> index_and_value(const Key& key) const
+    {
+        auto idx = index(key);
+        if (!idx)
+            return util::nullopt;
+
+        auto record = reinterpret_cast<const record_type*>(
+            file_.begin() + *idx * sizeof(record_type));
+
+        return index_and_value_type{*idx, record->value};
     }
 
     util::optional<uint64_t> index(const Key& key) const
@@ -279,6 +301,13 @@ class perfect_hash_map
             return record->value;
 
         return util::nullopt;
+    }
+
+    const Value& operator[](uint64_t idx) const
+    {
+        auto record = reinterpret_cast<const record_type*>(
+            file_.begin() + idx * sizeof(record_type));
+        return record->value;
     }
 
   private:
