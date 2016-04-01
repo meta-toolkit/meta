@@ -57,7 +57,7 @@ void directed_graph<Node, Edge>::add_edge(Edge edge, node_id source,
     ++num_edges_;
 
     list.emplace_back(dest, edge);     // add outgoing edge from source to dest
-    incoming_[source].push_back(dest); // add incoming edge to source
+    incoming_[dest].push_back(source); // add incoming edge to dest
 }
 }
 }
