@@ -120,7 +120,7 @@ centrality_result personalized_page_rank(const DirectedGraph& g, node_id center,
 
     centrality_result res;
     res.reserve(g.size());
-    node_id id = 0;
+    node_id id{0};
     while (id < g.size())
         res.emplace_back(id++, 0.0);
 

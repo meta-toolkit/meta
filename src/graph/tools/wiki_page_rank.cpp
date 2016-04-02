@@ -58,10 +58,10 @@ graph::directed_graph<> create_network(const cpptoml::table& config)
         std::string node_str;
         ss >> node_str;
         node_str.pop_back();
-        node_id src = std::stoul(node_str) - 1;
+        auto src = node_id{std::stoul(node_str) - 1};
         while (ss >> node_str)
         {
-            node_id dest = std::stoul(node_str) - 1;
+            auto dest = node_id{std::stoul(node_str) - 1};
             network.add_edge(src, dest);
         }
         prog(++idx);
@@ -90,12 +90,12 @@ int main(int argc, char* argv[])
     print_results(network, ranks, top_k);
 
     // Some example queries, where the id is the titles line # starting from 0
-    const std::vector<node_id> centers = {
-        1153141, // Computer_science
-        679246,  // Bill_Gates
-        5315048, // University_of_Illinois_at_Urbana-Champaign
-        3975552, // Pizza
-        623970   // Beer
+    const auto centers = {
+        node_id{1153141}, // Computer_science
+        node_id{679246},  // Bill_Gates
+        node_id{5315048}, // University_of_Illinois_at_Urbana-Champaign
+        node_id{3975552}, // Pizza
+        node_id{623970}   // Beer
     };
 
     // Then, run a Personalized PageRank simulation for some pages
