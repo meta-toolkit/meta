@@ -34,6 +34,19 @@ template <class Graph>
 centrality_result degree_centrality(const Graph& g);
 
 /**
+ * Find the PageRank centrality of each node in the graph via power iteration.
+ * @see http://ilpubs.stanford.edu:8090/422/1/1999-66.pdf
+ * @param g
+ * @param damp The dampening (smoothing) factor
+ * @param max_iters The maximum number of iterations to run the power iteration
+ * @return a collection of (id, centrality) pairs
+ */
+template <class DirectedGraph>
+centrality_result page_rank_centrality(const DirectedGraph& g,
+                                       double damp = 0.85,
+                                       uint64_t max_iters = 100);
+
+/**
  * Find the betweenness centrality of each node in the graph using the algorithm
  * from Ulrik Brandes, 2001. This function is parallelized as it takes some time
  * to compute on large networks.

@@ -27,8 +27,8 @@ centrality_result degree_centrality(const Graph& g)
     using pair_t = std::pair<node_id, double>;
     std::sort(res.begin(), res.end(), [&](const pair_t& a, const pair_t& b)
               {
-        return a.second > b.second;
-    });
+                  return a.second > b.second;
+              });
     return res;
 }
 
@@ -47,18 +47,65 @@ centrality_result betweenness_centrality(const Graph& g)
     size_t done = 0;
     parallel::parallel_for(g.begin(), g.end(), [&](decltype(*g.begin()) n)
                            {
-        internal::betweenness_step(g, cb, n.id, calc_mut);
-        std::lock_guard<std::mutex> lock{print_mut};
-        prog(++done);
-    });
+                               internal::betweenness_step(g, cb, n.id,
+                                                          calc_mut);
+                               std::lock_guard<std::mutex> lock{print_mut};
+                               prog(++done);
+                           });
     prog.end();
 
     using pair_t = std::pair<node_id, double>;
     std::sort(cb.begin(), cb.end(), [&](const pair_t& a, const pair_t& b)
               {
-        return a.second > b.second;
-    });
+                  return a.second > b.second;
+              });
     return cb;
+}
+
+template <class DirectedGraph>
+centrality_result page_rank_centrality(const DirectedGraph& g,
+                                       double damp /* = 0.85 */,
+                                       uint64_t max_iters /* = 100 */)
+{
+    if (damp < 0.0 || damp > 1.0)
+        throw graph_exception{"PageRank dampening factor must be on [0, 1]"};
+
+    std::vector<double> v(g.size(), 1.0 / g.size());
+    std::vector<double> w(g.size(), 0.0);
+
+    const double first_term = (1.0 - damp) / g.size();
+    printing::progress prog{" Calculating PageRank centrality ", max_iters};
+    for (uint64_t iter = 0; iter < max_iters; ++iter)
+    {
+        prog(iter);
+        w.assign(w.size(), 0.0);
+        for (uint64_t i = 0; i < g.size(); ++i)
+        {
+            double sum = 0.0;
+            for (const auto& n : g.incoming(node_id{i}))
+            {
+                auto adj_size = g.adjacent(n).size();
+                if (adj_size != 0)
+                    sum += v[n] / adj_size;
+            }
+            w[i] = first_term + damp * sum;
+        }
+        v.swap(w);
+    }
+    prog.end();
+
+    centrality_result evc;
+    evc.reserve(g.size());
+    node_id id{0};
+    for (auto& n : v)
+        evc.emplace_back(id++, n);
+
+    using pair_t = std::pair<node_id, double>;
+    std::sort(evc.begin(), evc.end(), [&](const pair_t& a, const pair_t& b)
+              {
+                  return a.second > b.second;
+              });
+    return evc;
 }
 
 template <class Graph>
@@ -90,8 +137,8 @@ centrality_result eigenvector_centrality(const Graph& g,
     using pair_t = std::pair<node_id, double>;
     std::sort(evc.begin(), evc.end(), [&](const pair_t& a, const pair_t& b)
               {
-        return a.second > b.second;
-    });
+                  return a.second > b.second;
+              });
     return evc;
 }
 
