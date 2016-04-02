@@ -47,6 +47,22 @@ centrality_result page_rank_centrality(const DirectedGraph& g,
                                        uint64_t max_iters = 100);
 
 /**
+ * Find the Personalized PageRank centrality of each node in the graph via
+ * simulation with respect to a particular node.
+ * @param g
+ * @param center The node that the PageRank is personalized for (i.e., where the
+ * random jumping takes the surfer)
+ * @param damp The dampening (smoothing) factor, which should usually be lower
+ * than the PageRank dampening factor (0.85)
+ * @param num_passes The number of times to run through the entire network
+ * @return a collection of (id, centrality) pairs
+ */
+template <class DirectedGraph>
+centrality_result personalized_page_rank(const DirectedGraph& g, node_id center,
+                                         double damp = 0.66,
+                                         uint64_t num_passes = 3.0);
+
+/**
  * Find the betweenness centrality of each node in the graph using the algorithm
  * from Ulrik Brandes, 2001. This function is parallelized as it takes some time
  * to compute on large networks.

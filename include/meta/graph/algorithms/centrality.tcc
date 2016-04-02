@@ -74,7 +74,7 @@ centrality_result page_rank_centrality(const DirectedGraph& g,
     std::vector<double> w(g.size(), 0.0);
 
     const double first_term = (1.0 - damp) / g.size();
-    printing::progress prog{" Calculating PageRank centrality ", max_iters};
+    printing::progress prog{" > Calculating PageRank centrality ", max_iters};
     for (uint64_t iter = 0; iter < max_iters; ++iter)
     {
         prog(iter);
@@ -106,6 +106,58 @@ centrality_result page_rank_centrality(const DirectedGraph& g,
                   return a.second > b.second;
               });
     return evc;
+}
+
+template <class DirectedGraph>
+centrality_result personalized_page_rank(const DirectedGraph& g, node_id center,
+                                         double damp /* = 0.66 */,
+                                         uint64_t num_passes /* = 3.0 */)
+{
+    if (damp < 0.0 || damp > 1.0)
+        throw graph_exception{"PageRank dampening factor must be on [0, 1]"};
+
+    // This can easily be parallelized via reduction
+
+    centrality_result res;
+    res.reserve(g.size());
+    node_id id = 0;
+    while (id < g.size())
+        res.emplace_back(id++, 0.0);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dist(0.0, 1.0);
+
+    auto cur_node = center;
+    auto num_iters = num_passes * g.size();
+    printing::progress prog{" > Running Personalized PageRank ", num_iters};
+    for (uint64_t iter = 0; iter < num_iters; ++iter)
+    {
+
+        ++res[cur_node].second;
+        if (dist(gen) < damp) // pick path randomly if one exists
+        {
+            auto adj = g.adjacent(cur_node);
+            if (adj.empty())
+                cur_node = center;
+            else
+            {
+                std::shuffle(adj.begin(), adj.end(), gen);
+                cur_node = adj.begin()->first;
+            }
+        }
+        else // jump back to center
+            cur_node = center;
+        prog(iter);
+    }
+    prog.end();
+
+    using pair_t = std::pair<node_id, double>;
+    std::sort(res.begin(), res.end(), [&](const pair_t& a, const pair_t& b)
+              {
+                  return a.second > b.second;
+              });
+    return res;
 }
 
 template <class Graph>
