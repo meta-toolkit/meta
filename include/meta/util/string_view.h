@@ -407,11 +407,16 @@ class basic_string_view
         if (pos >= size())
             return npos;
 
-        auto it = std::find_if(
-            begin(), end(), [&](const_reference c)
-            {
-                return std::find(s.begin(), s.end(), c, Traits::eq) == s.end();
-            });
+        auto it
+            = std::find_if(begin(), end(), [&](const_reference c)
+                           {
+                               return std::find_if(s.begin(), s.end(),
+                                                   [](const_reference sc)
+                                                   {
+                                                       return Traits::eq(c, sc);
+                                                   })
+                                      == s.end();
+                           });
         if (it == end())
             return npos;
         return std::distance(begin(), it);
@@ -442,11 +447,16 @@ class basic_string_view
             return npos;
 
         auto diff = size() - std::min(size(), pos);
-        auto it = std::find_if(
-            rbegin() + diff, rend(), [&](const_reference c)
-            {
-                return std::find(s.begin(), s.end(), c, Traits::eq) == s.end();
-            });
+        auto it
+            = std::find_if(rbegin() + diff, rend(), [&](const_reference c)
+                           {
+                               return std::find_if(s.begin(), s.end(),
+                                                   [](const_reference sc)
+                                                   {
+                                                       return Traits::eq(c, sc);
+                                                   })
+                                      == s.end();
+                           });
         if (it == rend())
             return npos;
         return size() - 1 - std::distance(rbegin(), it);
