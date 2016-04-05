@@ -45,6 +45,10 @@ class dataset
         : total_features_{idx->unique_terms()}
     {
         auto size = static_cast<uint64_t>(std::distance(begin, end));
+
+        if (!size)
+            return;
+
         instances_.reserve(size);
 
         printing::progress progress{" > Loading instances into memory: ", size};
