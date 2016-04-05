@@ -48,7 +48,7 @@ counts_t counts(const std::string& text, bool contains_label /* = true */)
         if (pos != sv.npos)
             sv = sv.substr(pos);
         else
-            sv.clear();
+            sv = util::string_view{}; // .clear() doesn't exist for GCC...
     };
 
     consume_whitespace();
