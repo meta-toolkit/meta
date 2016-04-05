@@ -411,7 +411,7 @@ class basic_string_view
             = std::find_if(begin(), end(), [&](const_reference c)
                            {
                                return std::find_if(s.begin(), s.end(),
-                                                   [](const_reference sc)
+                                                   [&](const_reference sc)
                                                    {
                                                        return Traits::eq(c, sc);
                                                    })
@@ -451,7 +451,7 @@ class basic_string_view
             = std::find_if(rbegin() + diff, rend(), [&](const_reference c)
                            {
                                return std::find_if(s.begin(), s.end(),
-                                                   [](const_reference sc)
+                                                   [&](const_reference sc)
                                                    {
                                                        return Traits::eq(c, sc);
                                                    })
