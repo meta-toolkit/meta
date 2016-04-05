@@ -3,9 +3,10 @@
  * @author Sean Massung
  */
 
-#include <sstream>
+#include <cstdlib>
 
 #include "meta/io/libsvm_parser.h"
+#include "meta/util/string_view.h"
 
 namespace meta
 {
@@ -25,45 +26,66 @@ class_label label(const std::string& text)
     return class_label{text.substr(0, space)};
 }
 
+void throw_exception(const std::string& text)
+{
+    throw libsvm_parser_exception{"incorrectly formatted libsvm data: " + text};
+}
+
 counts_t counts(const std::string& text, bool contains_label /* = true */)
 {
-    std::stringstream stream{text};
-    std::string token;
+    util::string_view sv{text};
 
     if (contains_label)
     {
-        if (!(stream >> token)) // ignore class label, but check that it's there
-            throw libsvm_parser_exception{
-                "incorrectly formatted libsvm data: " + text};
+        auto pos = sv.find_first_of(" \t");
+        if (pos == std::string::npos || pos == 0)
+            throw_exception(text);
+        sv = sv.substr(pos);
     }
 
+    auto consume_whitespace = [&]() {
+        auto pos = sv.find_first_not_of(" \t");
+        if (pos != sv.npos)
+            sv = sv.substr(pos);
+        else
+            sv.clear();
+    };
+
+    consume_whitespace();
+
     std::vector<std::pair<term_id, double>> counts;
-    term_id term;
-    double count;
-    while (stream >> token)
+    while (!sv.empty())
     {
-        size_t colon = token.find_first_of(':');
-        if (colon == std::string::npos || colon == 0 || colon == token.size()
-                                                                 - 1)
-            throw libsvm_parser_exception{"incorrectly formatted libsvm data: "
-                                          + text};
+        auto whitespace = sv.find_first_of(" \t");
+        auto token = sv.substr(0, whitespace);
 
-        std::istringstream term_stream{token.substr(0, colon)};
-        term_stream >> term;
-        std::istringstream double_stream{token.substr(colon + 1)};
-        double_stream >> count;
+        if (token.empty())
+            throw_exception("empty token: " + token.to_string());
 
-        // make sure double conversion worked and used the entire string
-        if (double_stream.fail() || !double_stream.eof())
-            throw libsvm_parser_exception{"incorrectly formatted libsvm data: "
-                                          + text};
+        auto colon = token.find_first_of(":");
+        if (colon == std::string::npos || colon == 0 || colon == token.size() - 1)
+            throw_exception("no colon in token: " + token.to_string());
+
+        char* end = nullptr;
+        auto term = std::strtoul(token.data(), nullptr, 0);
+        double count = std::strtod(token.substr(colon + 1).data(), &end);
+
+        if (end != token.data() + token.size())
+            throw_exception("full token not consumed: " + token.to_string());
+            //throw_exception(text);
 
         if (term == 0)
             throw libsvm_parser_exception{"term id was 0 from libsvm format"};
 
         // liblinear has term_ids start at 1 instead of 0 like MeTA and libsvm
-        term_id minus_term{static_cast<uint64_t>(term) - 1};
+        term_id minus_term{term - 1};
         counts.emplace_back(minus_term, count);
+
+        if (whitespace == std::string::npos)
+            break;
+
+        sv = sv.substr(whitespace);
+        consume_whitespace();
     }
 
     return counts;
