@@ -288,7 +288,7 @@ class basic_string_view
             = std::search(begin() + pos, end(), s.begin(), s.end(), Traits::eq);
         if (it == end())
             return npos;
-        return std::distance(begin(), it);
+        return static_cast<size_type>(std::distance(begin(), it));
     }
 
     constexpr size_type find(Char c, size_type pos = 0) const noexcept
@@ -350,7 +350,7 @@ class basic_string_view
                                      Traits::eq);
         if (it == end())
             return npos;
-        return std::distance(begin(), it);
+        return static_cast<size_type>(std::distance(begin(), it));
     }
 
     constexpr size_type find_first_of(Char c, size_type pos = 0) const noexcept
@@ -411,7 +411,7 @@ class basic_string_view
             = std::find_if(begin(), end(), [&](const_reference c)
                            {
                                return std::find_if(s.begin(), s.end(),
-                                                   [](const_reference sc)
+                                                   [&](const_reference sc)
                                                    {
                                                        return Traits::eq(c, sc);
                                                    })
@@ -419,7 +419,7 @@ class basic_string_view
                            });
         if (it == end())
             return npos;
-        return std::distance(begin(), it);
+        return static_cast<size_type>(std::distance(begin(), it));
     }
 
     constexpr size_type find_first_not_of(Char c, size_type pos = 0) const
@@ -451,7 +451,7 @@ class basic_string_view
             = std::find_if(rbegin() + diff, rend(), [&](const_reference c)
                            {
                                return std::find_if(s.begin(), s.end(),
-                                                   [](const_reference sc)
+                                                   [&](const_reference sc)
                                                    {
                                                        return Traits::eq(c, sc);
                                                    })
