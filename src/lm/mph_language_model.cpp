@@ -93,6 +93,8 @@ class ngram_handler
             filesystem::make_directory(options.prefix);
 
             unigram_builder_ = make_unique<unigram_builder_type>(options);
+            progress_ = make_unique<printing::progress>(" > Reading 1-grams: ",
+                                                        counts_.front());
         }
     }
 
@@ -105,7 +107,7 @@ class ngram_handler
             order_ = order;
         }
 
-        ++observed_;
+        (*progress_)(observed_++);
         if (observed_ > counts_[order])
             throw std::runtime_error{"too many " + std::to_string(order + 1)
                                      + "-grams"};
@@ -162,6 +164,7 @@ class ngram_handler
 
     void finish_order()
     {
+        progress_ = nullptr;
         LOG(info) << "Finalizing " << order_ + 1 << "-grams (" << observed_
                   << ")" << ENDLG;
         observed_ = 0;
@@ -184,6 +187,8 @@ class ngram_handler
             filesystem::make_directory(options.prefix);
 
             middle_builder_ = make_unique<middle_builder_type>(options);
+            progress_ = make_unique<printing::progress>(" > Reading 2-grams: ",
+                                                        options.num_keys);
         }
         // middle
         else if (order_ < counts_.size() - 1)
@@ -201,6 +206,9 @@ class ngram_handler
                 filesystem::make_directory(options.prefix);
 
                 middle_builder_ = make_unique<middle_builder_type>(options);
+                progress_ = make_unique<printing::progress>(
+                    " > Reading " + std::to_string(order_ + 2) + "-grams: ",
+                    options.num_keys);
             }
             // here come the final ngrams
             else
@@ -214,6 +222,9 @@ class ngram_handler
                 filesystem::make_directory(options.prefix);
 
                 last_builder_ = make_unique<last_builder_type>(options);
+                progress_ = make_unique<printing::progress>(
+                    " > Reading " + std::to_string(order_ + 2) + "-grams: ",
+                    options.num_keys);
             }
         }
         // last
@@ -230,6 +241,7 @@ class ngram_handler
     uint64_t order_ = 0;
     uint64_t observed_ = 0;
     std::vector<uint64_t> counts_;
+    std::unique_ptr<printing::progress> progress_;
     std::unique_ptr<unigram_builder_type> unigram_builder_;
     std::unique_ptr<ngram_map<std::string>> unigrams_;
     std::unique_ptr<middle_builder_type> middle_builder_;
