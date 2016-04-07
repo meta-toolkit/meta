@@ -19,7 +19,7 @@ indexer-ram-budget = 1024 # **estimated** RAM budget for indexing in MB
 [[analyzers]]
 method = "ngram-word"
 ngram = 1
-filter = "default-chain"
+filter = "default-unigram-chain"
 
 [ranker]
 method = "bm25"
