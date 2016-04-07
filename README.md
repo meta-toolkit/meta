@@ -285,7 +285,7 @@ dependencies, run the following commands.
 
 ```bash
 apt update
-apt install {g++,git,cmake,make,libjemalloc-dev,zlib1g-dev}
+apt install g++ git cmake make libjemalloc-dev zlib1g-dev
 ```
 
 Once the dependencies are all installed, you should be ready to build. Run
