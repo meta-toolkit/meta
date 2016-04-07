@@ -468,7 +468,7 @@ back in to the system**), run the following commands:
 
 ```bash
 module load gcc
-module load cmake/3.4.0
+module load cmake/3.5.0
 ```
 
 Once you have done this, double check your versions by running the
@@ -493,7 +493,7 @@ cmake --version
 
 should output
 
-    cmake version 3.4.0
+    cmake version 3.5.0
 
     CMake suite maintained and supported by Kitware (kitware.com/cmake).
 
@@ -514,7 +514,7 @@ cd build
 cp ../config.toml .
 
 # configure and build the project
-CXX="/software/gcc-4.8.2/bin/g++" cmake ../ -DCMAKE_BUILD_TYPE=Release
+CXX=`which g++` CC=`which gcc` cmake ../ -DICU_ROOT=/class/cs225/builds/icu
 make
 ```
 
