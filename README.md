@@ -109,13 +109,15 @@ check what version you are on, run the following command:
 cat /etc/issue
 ```
 
-If it reads "Ubuntu 12.04 LTS" or something of that nature, see the
-[Ubuntu 12.04 LTS Build Guide](#ubuntu-1204-lts-build-guide). If it reads
-"Ubuntu 14.04 LTS" (or 14.10), see the
-[Ubuntu 14.04 LTS Build Guide](#ubuntu-1404-lts-build-guide). If your
-version is less than 12.04 LTS, your operating system is not supported
-(even by your vendor) and you should upgrade to at least 12.04 LTS (or
-14.04 LTS, if possible).
+Based on what you see, you should proceed with one of the following guides:
+
+- [Ubuntu 12.04 LTS Build Guide](#ubuntu-1204-lts-build-guide)
+- [Ubuntu 14.04 LTS Build Guide](#ubuntu-1404-lts-build-guide)
+- [Ubuntu 15.10 Build Guide](#ubuntu-1510-build-guide)
+
+If your version is less than 12.04 LTS, your operating system is not
+supported (even by your vendor!) and you should upgrade to at least 12.04
+LTS (or 14.04 LTS, if possible).
 
 ### Ubuntu 12.04 LTS Build Guide
 Building on Ubuntu 12.04 LTS requires more work than its more up-to-date
@@ -245,6 +247,46 @@ should output
     cmake version 3.2.2
 
     CMake suite maintained and supported by Kitware (kitware.com/cmake).
+
+Once the dependencies are all installed, you should be ready to build. Run
+the following commands to get started:
+
+```bash
+# clone the project
+git clone https://github.com/meta-toolkit/meta.git
+cd meta/
+
+# set up submodules
+git submodule update --init --recursive
+
+# set up a build directory
+mkdir build
+cd build
+cp ../config.toml .
+
+# configure and build the project
+cmake ../ -DCMAKE_BUILD_TYPE=Release
+make
+```
+
+You can now test the system by running the following command:
+
+```bash
+./unit-test --reporter=spec
+```
+
+If everything passes, congratulations! MeTA seems to be working on your
+system.
+
+## Ubuntu 15.10 Build Guide
+Ubuntu's non-LTS desktop offering in 15.10 has enough modern software in
+its repositories to build MeTA without much trouble. To install the
+dependencies, run the following commands.
+
+```bash
+apt update
+apt install {g++,git,cmake,make,libjemalloc-dev,zlib1g-dev}
+```
 
 Once the dependencies are all installed, you should be ready to build. Run
 the following commands to get started:
