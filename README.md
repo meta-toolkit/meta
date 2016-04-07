@@ -219,7 +219,7 @@ sudo add-apt-repository ppa:george-edison55/cmake-3.x
 sudo apt-get update
 
 # install dependencies
-sudo apt-get install cmake libicu-dev git libjemalloc-dev zlib1g-dev
+sudo apt-get install g++ cmake libicu-dev git libjemalloc-dev zlib1g-dev
 ```
 
 Once the dependencies are all installed, you should double check your
