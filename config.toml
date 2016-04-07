@@ -88,3 +88,11 @@ test-sections = [23, 23]
 [language-model]
 arpa-file = "../data/english-sentences.arpa"
 binary-file-prefix = "english-sentences-"
+
+[embeddings]
+prefix = "word-embeddings"
+filter = [{type = "icu-tokenizer"}, {type = "lowercase"}]
+vector-size = 50
+[embeddings.vocab]
+min-count = 10
+max-size = 500000
