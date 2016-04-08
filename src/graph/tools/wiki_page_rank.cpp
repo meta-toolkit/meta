@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     uint64_t top_k = 25;
 
     // First, run regular PageRank
-    auto ranks = graph::algorithms::page_rank_centrality(network, 0.85, 50);
+    auto ranks = graph::algorithms::page_rank_centrality(network, 0.85, {}, 50);
     print_results(network, ranks, top_k);
 
     // Some example queries, where the id is the titles line # starting from 0
@@ -103,7 +103,10 @@ int main(int argc, char* argv[])
     {
         std::cout << "Personalized PageRank for \""
                   << network.node(center).label << "\"" << std::endl;
-        auto ranks = graph::algorithms::personalized_page_rank(network, center);
+        stats::multinomial<node_id> dist;
+        dist.increment(center, 1);
+        auto ranks
+            = graph::algorithms::page_rank_centrality(network, 0.85, dist, 50);
         print_results(network, ranks, top_k);
     }
 }

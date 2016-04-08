@@ -11,10 +11,11 @@
 #define META_GRAPH_ALGORITHMS_CENTRALITY_H_
 
 #include <mutex>
+#include <vector>
+
 #include "meta/graph/undirected_graph.h"
 #include "meta/graph/directed_graph.h"
-
-#include <vector>
+#include "meta/stats/multinomial.h"
 
 namespace meta
 {
@@ -39,28 +40,16 @@ centrality_result degree_centrality(const Graph& g);
  * @param g
  * @param damp The dampening (smoothing) factor
  * @param max_iters The maximum number of iterations to run the power iteration
+ * @param jump_dist A personalization vector that indicates the
+ * jumping probability for nodes in the graph. By default, this is empty
+ * which signifies a uniform distribution.
  * @return a collection of (id, centrality) pairs
  */
 template <class DirectedGraph>
-centrality_result page_rank_centrality(const DirectedGraph& g,
-                                       double damp = 0.85,
-                                       uint64_t max_iters = 100);
-
-/**
- * Find the Personalized PageRank centrality of each node in the graph via
- * simulation with respect to a particular node.
- * @param g
- * @param center The node that the PageRank is personalized for (i.e., where the
- * random jumping takes the surfer)
- * @param damp The dampening (smoothing) factor, which should usually be lower
- * than the PageRank dampening factor (0.85)
- * @param num_passes The number of times to run through the entire network
- * @return a collection of (id, centrality) pairs
- */
-template <class DirectedGraph>
-centrality_result personalized_page_rank(const DirectedGraph& g, node_id center,
-                                         double damp = 0.66,
-                                         uint64_t num_passes = 3.0);
+centrality_result
+page_rank_centrality(const DirectedGraph& g, double damp = 0.85,
+                     const stats::multinomial<node_id>& jump_dist = {},
+                     uint64_t max_iters = 100);
 
 /**
  * Find the betweenness centrality of each node in the graph using the algorithm
