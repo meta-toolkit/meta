@@ -1,6 +1,6 @@
 # [v2.2.0][2.2.0]
 ## New features
-- Add parallelized versions of PageRank and Personalized PageRank have been
+- Parallelized versions of PageRank and Personalized PageRank have been
     added. A demo is available in `wiki-page-rank`; see the website for
     more information on obtaining the required data.
 - Add a disk-based streaming minimal perfect hash function library. A
