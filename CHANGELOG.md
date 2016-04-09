@@ -33,6 +33,10 @@
     added for places where a moveable `ifstream` or `ofstream` is desired
     as a workaround for older standard libraries lacking these move
     constructors.
+- The number of indexing threads can be controlled via the configuration
+    key `indexer-num-threads` (which defaults to the number of threads on
+    the system), and the number of threads allowed to concurrently write to
+    disk can be controlled via `indexer-max-writers` (which defaults to 8).
 
 # [v2.1.0][2.1.0]
 ## New features
