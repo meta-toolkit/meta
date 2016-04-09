@@ -36,7 +36,7 @@ void pivoted_length::save(std::ostream& out) const
 
 float pivoted_length::score_one(const score_data& sd)
 {
-    float doc_len = sd.idx.doc_size(sd.d_id);
+    float doc_len = sd.doc_size;
     float TF = 1.0f + fastapprox::fastlog(
                           1.0f + fastapprox::fastlog(sd.doc_term_count));
     float norm = (1.0f - s_) + s_ * (doc_len / sd.avg_dl);
@@ -50,6 +50,8 @@ std::unique_ptr<ranker>
     make_ranker<pivoted_length>(const cpptoml::table& config)
 {
     auto s = config.get_as<double>("s").value_or(pivoted_length::default_s);
+    if (s < 0 || s > 1)
+        throw ranker_exception{"pivoted-length s must be on [0,1]"};
     return make_unique<pivoted_length>(s);
 }
 }

@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <unordered_set>
 
 #include "bandit/bandit.h"
 #include "create_config.h"
@@ -70,6 +71,33 @@ void check_ceeaus_expected_fwd(Index& idx) {
 
     // make sure there's exactly the correct amount
     AssertThat(id, Equals(idx.num_docs()));
+
+    // make sure we have all the class label info
+    std::unordered_set<label_id> label_ids;
+    label_ids.insert(idx.id(class_label{"japanese"}));
+    label_ids.insert(idx.id(class_label{"chinese"}));
+    label_ids.insert(idx.id(class_label{"english"}));
+    AssertThat(label_ids.find(label_id{1}),
+               Is().Not().EqualTo(label_ids.end()));
+    AssertThat(label_ids.find(label_id{2}),
+               Is().Not().EqualTo(label_ids.end()));
+    AssertThat(label_ids.find(label_id{3}),
+               Is().Not().EqualTo(label_ids.end()));
+
+    std::unordered_set<class_label> labels;
+    labels.insert(idx.class_label_from_id(label_id{1}));
+    labels.insert(idx.class_label_from_id(label_id{2}));
+    labels.insert(idx.class_label_from_id(label_id{3}));
+    AssertThat(labels.find(class_label{"japanese"}),
+               Is().Not().EqualTo(labels.end()));
+    AssertThat(labels.find(class_label{"chinese"}),
+               Is().Not().EqualTo(labels.end()));
+    AssertThat(labels.find(class_label{"english"}),
+               Is().Not().EqualTo(labels.end()));
+
+    AssertThrows(std::out_of_range, idx.id(class_label{"bogus"}));
+    AssertThrows(std::out_of_range, idx.class_label_from_id(label_id{0}));
+    AssertThrows(std::out_of_range, idx.class_label_from_id(label_id{4}));
 }
 
 template <class Index>
@@ -155,6 +183,30 @@ go_bandit([]() {
             line_cfg->insert("uninvert", true);
             ceeaus_forward_test(*line_cfg);
         });
+
+        it("should analyze a new document with the current analyzer", [&]() {
+            auto cfg = tests::create_config("line");
+            auto idx = index::make_index<index::forward_index>(*cfg);
+            std::string text{"I think smoking smoking bad."};
+            corpus::document doc;
+            doc.content(text);
+            auto fvector = idx->tokenize(doc);
+
+            auto begin_sent = idx->get_term_id("<s>");
+            auto end_sent = idx->get_term_id("</s>");
+            auto bad = idx->get_term_id("bad");
+            auto smoke = idx->get_term_id("smoke");
+            auto think = idx->get_term_id("think");
+
+            AssertThat(fvector.at(begin_sent), Equals(1));
+            AssertThat(fvector.at(end_sent), Equals(1));
+            AssertThat(fvector.at(bad), Equals(1));
+            AssertThat(fvector.at(smoke), Equals(2));
+            AssertThat(fvector.at(think), Equals(1));
+
+            auto oov = idx->get_term_id("somelongrandomword");
+            AssertThat(fvector.at(oov), Equals(0));
+        });
     });
 
     describe("[forward-index] from svm config", []() {
@@ -166,6 +218,15 @@ go_bandit([]() {
         });
 
         it("should load the index", [&]() { bcancer_forward_test(*svm_cfg); });
+
+        it("should not tokenize new docs", [&](){
+            auto cfg = create_libsvm_config();
+            auto idx = index::make_index<index::forward_index>(*cfg);
+            std::string text{"This should fail"};
+            corpus::document doc;
+            doc.content(text);
+            AssertThrows(index::forward_index_exception, idx->tokenize(doc));
+        });
     });
 
     describe("[forward-index] with zlib", []() {

@@ -58,12 +58,18 @@ go_bandit([]() {
                g.add_edge(a, c);
                g.add_edge(a, d);
                check_sizes(g, 4, 3);
+               AssertThat(g.adjacent(a).size(), Equals(3ul));
+               AssertThat(g.adjacent(b).size(), Equals(1ul));
+               AssertThat(g.adjacent(c).size(), Equals(1ul));
+               AssertThat(g.adjacent(d).size(), Equals(1ul));
                AssertThat(algorithms::clustering_coefficient(g, a),
                           EqualsWithDelta(0.0, delta));
                AssertThat(algorithms::neighborhood_overlap(g, a, b),
                           EqualsWithDelta(0.0, delta));
 
                g.add_edge(c, d);
+               AssertThat(g.adjacent(c).size(), Equals(2ul));
+               AssertThat(g.adjacent(d).size(), Equals(2ul));
                check_sizes(g, 4, 4);
                AssertThat(algorithms::clustering_coefficient(g, a),
                           EqualsWithDelta(1.0 / 3, delta));
@@ -103,9 +109,20 @@ go_bandit([]() {
             g.add_edge(a, c);
             g.add_edge(a, d);
             check_sizes(g, 4, 3);
+            AssertThat(g.adjacent(a).size(), Equals(3ul));
+            AssertThat(g.adjacent(b).size(), Equals(0ul));
+            AssertThat(g.adjacent(c).size(), Equals(0ul));
+            AssertThat(g.adjacent(d).size(), Equals(0ul));
+            AssertThat(g.incoming(a).size(), Equals(0ul));
+            AssertThat(g.incoming(b).size(), Equals(1ul));
+            AssertThat(g.incoming(c).size(), Equals(1ul));
+            AssertThat(g.incoming(d).size(), Equals(1ul));
 
             g.add_edge(c, d);
             check_sizes(g, 4, 4);
+            AssertThat(g.adjacent(c).size(), Equals(1ul));
+            AssertThat(g.adjacent(d).size(), Equals(0ul));
+            AssertThat(g.incoming(d).size(), Equals(2ul));
 
             g.add_edge(d, c); // directed, so a different edge than (c, d)
             check_sizes(g, 4, 5);

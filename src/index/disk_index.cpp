@@ -4,6 +4,7 @@
  */
 
 #include <numeric>
+#include <stdexcept>
 
 #include "meta/index/disk_index.h"
 #include "meta/index/disk_index_impl.h"
@@ -55,11 +56,15 @@ label_id disk_index::lbl_id(doc_id d_id) const
 
 label_id disk_index::id(class_label label) const
 {
+    if (!impl_->label_ids_.contains_key(label))
+        throw std::out_of_range{"Invalid class_label: " + std::string(label)};
     return impl_->label_ids_.get_value(label);
 }
 
 class_label disk_index::class_label_from_id(label_id l_id) const
 {
+    if (!impl_->label_ids_.contains_value(l_id))
+        throw std::out_of_range{"Invalid label_id: " + std::to_string(l_id)};
     return impl_->label_ids_.get_key(l_id);
 }
 

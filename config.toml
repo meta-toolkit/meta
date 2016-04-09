@@ -8,17 +8,18 @@ end-exceptions = "../data/sentence-boundaries/sentence-end-exceptions.txt"
 query-judgements = "../data/ceeaus-qrels.txt"
 query-path = "../queries.txt" # create this file
 
-dataset = "20newsgroups"
+dataset = "ceeaus"
 corpus = "line.toml" # located inside dataset folder
-forward-index = "20news-fwd"
-inverted-index = "20news-inv"
+forward-index = "ceeaus-fwd"
+inverted-index = "ceeaus-inv"
 indexer-ram-budget = 1024 # **estimated** RAM budget for indexing in MB
                           # always set this lower than your physical RAM!
+# indexer-num-threads = 8 # default value is system thread concurrency
 
 [[analyzers]]
 method = "ngram-word"
 ngram = 1
-filter = "default-chain"
+filter = "default-unigram-chain"
 
 [ranker]
 method = "bm25"
@@ -87,3 +88,11 @@ test-sections = [23, 23]
 [language-model]
 arpa-file = "../data/english-sentences.arpa"
 binary-file-prefix = "english-sentences-"
+
+[embeddings]
+prefix = "word-embeddings"
+filter = [{type = "icu-tokenizer"}, {type = "lowercase"}]
+vector-size = 50
+[embeddings.vocab]
+min-count = 10
+max-size = 500000

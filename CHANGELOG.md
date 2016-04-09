@@ -1,3 +1,43 @@
+# [v2.2.0][2.2.0]
+## New features
+- Parallelized versions of PageRank and Personalized PageRank have been
+    added. A demo is available in `wiki-page-rank`; see the website for
+    more information on obtaining the required data.
+- Add a disk-based streaming minimal perfect hash function library. A
+    sub-component of this is a small memory-mapped succinct data structure
+    library for answering rank/select queries on bit vectors.
+- Much of our CMake magic has been moved into a separate project included
+    as a submodule: https://github.com/meta-toolkit/meta-cmake, which can
+    now be used in other projects to simplify initial build system
+    configuration.
+
+## Bug fixes
+- Fix parameter settings in language model rankers not being range checked
+    (issue #134).
+- Fix incorrect incoming edge insertion in `directed_graph::add_edge()`.
+- Fix `find_first_of` and `find_last_of` in `util::string_view`.
+
+## Enhancements
+- `forward_index` now knows how to tokenize a document down to a
+    `feature_vector`, provided it was generated with a non-LIBSVM analyzer.
+- Allow loading of an existing index where its corpus is no longer
+    available.
+- Data is no longer shuffled in `batch_train`. Shuffling the data
+    causes horrible access patterns in the postings file, so the data
+    should instead shuffled before indexing.
+- `util::array_view`s can now be constructed as empty.
+- `util::multiway_merge` has been made more generic. You can now specify
+    both the comparison function and merging criteria as parameters, which
+    default to `operator<` and `operator==`, respectively.
+- A simple utility classes `io::mifstream` and `io::mofstream` have been
+    added for places where a moveable `ifstream` or `ofstream` is desired
+    as a workaround for older standard libraries lacking these move
+    constructors.
+- The number of indexing threads can be controlled via the configuration
+    key `indexer-num-threads` (which defaults to the number of threads on
+    the system), and the number of threads allowed to concurrently write to
+    disk can be controlled via `indexer-max-writers` (which defaults to 8).
+
 # [v2.1.0][2.1.0]
 ## New features
 - Add the [GloVe algorithm](http://www-nlp.stanford.edu/pubs/glove.pdf) for
@@ -341,7 +381,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.1.0...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.2.0...develop
+[2.2.0]: https://github.com/meta-toolkit/meta/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/meta-toolkit/meta/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/meta-toolkit/meta/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/meta-toolkit/meta/compare/v1.3.8...v2.0.0

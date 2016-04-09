@@ -22,6 +22,7 @@ about MeTA!
     - [Ubuntu](#ubuntu-build-guide)
     - [Arch Linux](#arch-linux-build-guide)
     - [Fedora](#fedora-build-guide)
+    - [CentOS](#centos-build-guide)
     - [EWS/EngrIT](#ewsengrit-build-guide) (this is UIUC-specific)
     - [Windows](#windows-build-guide)
     - [Generic Setup Notes](#generic-setup-notes)
@@ -108,13 +109,15 @@ check what version you are on, run the following command:
 cat /etc/issue
 ```
 
-If it reads "Ubuntu 12.04 LTS" or something of that nature, see the
-[Ubuntu 12.04 LTS Build Guide](#ubuntu-1204-lts-build-guide). If it reads
-"Ubuntu 14.04 LTS" (or 14.10), see the
-[Ubuntu 14.04 LTS Build Guide](#ubuntu-1404-lts-build-guide). If your
-version is less than 12.04 LTS, your operating system is not supported
-(even by your vendor) and you should upgrade to at least 12.04 LTS (or
-14.04 LTS, if possible).
+Based on what you see, you should proceed with one of the following guides:
+
+- [Ubuntu 12.04 LTS Build Guide](#ubuntu-1204-lts-build-guide)
+- [Ubuntu 14.04 LTS Build Guide](#ubuntu-1404-lts-build-guide)
+- [Ubuntu 15.10 Build Guide](#ubuntu-1510-build-guide)
+
+If your version is less than 12.04 LTS, your operating system is not
+supported (even by your vendor!) and you should upgrade to at least 12.04
+LTS (or 14.04 LTS, if possible).
 
 ### Ubuntu 12.04 LTS Build Guide
 Building on Ubuntu 12.04 LTS requires more work than its more up-to-date
@@ -216,7 +219,7 @@ sudo add-apt-repository ppa:george-edison55/cmake-3.x
 sudo apt-get update
 
 # install dependencies
-sudo apt-get install cmake libicu-dev git libjemalloc-dev zlib1g-dev
+sudo apt-get install g++ cmake libicu-dev git libjemalloc-dev zlib1g-dev
 ```
 
 Once the dependencies are all installed, you should double check your
@@ -244,6 +247,46 @@ should output
     cmake version 3.2.2
 
     CMake suite maintained and supported by Kitware (kitware.com/cmake).
+
+Once the dependencies are all installed, you should be ready to build. Run
+the following commands to get started:
+
+```bash
+# clone the project
+git clone https://github.com/meta-toolkit/meta.git
+cd meta/
+
+# set up submodules
+git submodule update --init --recursive
+
+# set up a build directory
+mkdir build
+cd build
+cp ../config.toml .
+
+# configure and build the project
+cmake ../ -DCMAKE_BUILD_TYPE=Release
+make
+```
+
+You can now test the system by running the following command:
+
+```bash
+./unit-test --reporter=spec
+```
+
+If everything passes, congratulations! MeTA seems to be working on your
+system.
+
+## Ubuntu 15.10 Build Guide
+Ubuntu's non-LTS desktop offering in 15.10 has enough modern software in
+its repositories to build MeTA without much trouble. To install the
+dependencies, run the following commands.
+
+```bash
+apt update
+apt install g++ git cmake make libjemalloc-dev zlib1g-dev
+```
 
 Once the dependencies are all installed, you should be ready to build. Run
 the following commands to get started:
@@ -384,6 +427,77 @@ You can now test the system with the following command:
 ./unit-test --reporter=spec
 ```
 
+## CentOS Build Guide
+MeTA can be built in CentOS 7 and above. CentOS 7 comes with a recent
+enough compiler (GCC 4.8.5), but too old a version of CMake. We'll thus
+install the compiler and related libraries from the package manager and
+install our own more recent `cmake` ourselves.
+
+```bash
+# install build dependencies (this will probably take a while)
+sudo yum install gcc gcc-c++ git make wget zlib-devel epel-release
+sudo yum install jemalloc-devel
+
+wget http://www.cmake.org/files/v3.2/cmake-3.2.0-Linux-x86_64.sh
+sudo sh cmake-3.2.0-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir
+```
+
+You should be able to run the following commands and see the following
+output:
+
+```bash
+g++ --version
+```
+
+should print
+
+    g++ (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
+    Copyright (C) 2015 Free Software Foundation, Inc.
+    This is free software; see the source for copying conditions.  There is NO
+    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+and
+
+```bash
+/usr/local/bin/cmake --version
+```
+
+should print
+
+    cmake version 3.2.0
+
+    CMake suite maintained and supported by Kitware (kitware.com/cmake).
+
+Once the dependencies are all installed, you should be ready to build. Run
+the following commands to get started:
+
+```bash
+# clone the project
+git clone https://github.com/meta-toolkit/meta.git
+cd meta/
+
+# set up submodules
+git submodule update --init --recursive
+
+# set up a build directory
+mkdir build
+cd build
+cp ../config.toml .
+
+# configure and build the project
+/usr/local/bin/cmake ../ -DCMAKE_BUILD_TYPE=Release
+make
+```
+
+You can now test the system by running the following command:
+
+```bash
+./unit-test --reporter=spec
+```
+
+If everything passes, congratulations! MeTA seems to be working on your
+system.
+
 ## EWS/EngrIT Build Guide
 If you are on a machine managed by Engineering IT at UIUC, you should
 follow this guide. These systems have software that is much too old for
@@ -396,7 +510,7 @@ back in to the system**), run the following commands:
 
 ```bash
 module load gcc
-module load cmake/3.4.0
+module load cmake/3.5.0
 ```
 
 Once you have done this, double check your versions by running the
@@ -421,7 +535,7 @@ cmake --version
 
 should output
 
-    cmake version 3.4.0
+    cmake version 3.5.0
 
     CMake suite maintained and supported by Kitware (kitware.com/cmake).
 
@@ -442,7 +556,7 @@ cd build
 cp ../config.toml .
 
 # configure and build the project
-CXX="/software/gcc-4.8.2/bin/g++" cmake ../ -DCMAKE_BUILD_TYPE=Release
+CXX=`which g++` CC=`which gcc` cmake ../ -DICU_ROOT=/class/cs225/builds/icu
 make
 ```
 

@@ -10,66 +10,19 @@
 #define META_LEARN_DATASET_H_
 
 #include <memory>
+
 #include "meta/corpus/metadata.h"
 #include "meta/index/forward_index.h"
 #include "meta/index/inverted_index.h"
 #include "meta/index/postings_data.h"
+#include "meta/learn/instance.h"
 #include "meta/util/progress.h"
 #include "meta/util/range.h"
-#include "meta/util/sparse_vector.h"
-#include "meta/util/identifiers.h"
 
 namespace meta
 {
 namespace learn
 {
-
-using feature_id = term_id;
-using feature_vector = util::sparse_vector<feature_id, double>;
-
-MAKE_NUMERIC_IDENTIFIER_UDL(instance_id, uint64_t, _inst_id)
-
-inline void print_liblinear(std::ostream& os, const feature_vector& weights)
-{
-    for (const auto& count : weights)
-        os << ' ' << (count.first + 1) << ':' << count.second;
-}
-
-/**
- * Represents an instance in the dataset, consisting of its id and
- * feature_vector.
- */
-struct instance
-{
-    template <class ForwardIterator>
-    instance(instance_id inst_id, ForwardIterator begin, ForwardIterator end)
-        : id{inst_id}, weights{begin, end}
-    {
-        // nothing
-    }
-
-    instance(instance_id inst_id, feature_vector wv)
-        : id{inst_id}, weights{std::move(wv)}
-    {
-        // nothing
-    }
-
-    instance(instance_id inst_id) : id{inst_id}, weights{}
-    {
-        // nothing
-    }
-
-    void print_liblinear(std::ostream& os) const
-    {
-        learn::print_liblinear(os, weights);
-    }
-
-    /// the id within the dataset that contains this instance
-    instance_id id;
-    /// the weights of the features in this instance
-    const feature_vector weights;
-};
-
 /**
  * Represents an in-memory view of a set of documents for running learning
  * algorithms over.
@@ -92,6 +45,10 @@ class dataset
         : total_features_{idx->unique_terms()}
     {
         auto size = static_cast<uint64_t>(std::distance(begin, end));
+
+        if (!size)
+            return;
+
         instances_.reserve(size);
 
         printing::progress progress{" > Loading instances into memory: ", size};

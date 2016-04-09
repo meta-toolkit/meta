@@ -16,7 +16,7 @@ const util::string_view dirichlet_prior::id = "dirichlet-prior";
 
 dirichlet_prior::dirichlet_prior(float mu) : mu_{mu}
 {
-    /* nothing */
+    // nothing
 }
 
 dirichlet_prior::dirichlet_prior(std::istream& in)
@@ -49,9 +49,10 @@ template <>
 std::unique_ptr<ranker>
     make_ranker<dirichlet_prior>(const cpptoml::table& config)
 {
-    if (auto mu = config.get_as<double>("mu"))
-        return make_unique<dirichlet_prior>(*mu);
-    return make_unique<dirichlet_prior>();
+    auto mu = config.get_as<double>("mu").value_or(dirichlet_prior::default_mu);
+    if (mu < 0)
+        throw ranker_exception{"dirichlet-prior mu must be >= 0"};
+    return make_unique<dirichlet_prior>(mu);
 }
 }
 }

@@ -103,7 +103,7 @@ class disk_index
     class_label label(doc_id d_id) const;
 
     /**
-     * @param d_id THe doc id to find the label_id for
+     * @param d_id The doc id to find the label_id for
      * @return the label_id of the class that to document belongs to
      */
     label_id lbl_id(doc_id d_id) const;

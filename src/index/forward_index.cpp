@@ -45,16 +45,15 @@ class forward_index::impl
     /**
      * Constructs an implementation based on a forward_index.
      */
-    impl(forward_index* idx);
+    impl(forward_index* idx, const cpptoml::table& config);
 
     /**
      * Tokenizes the documents in the corpus in parallel, yielding
      * num_threads number of forward_index chunks that then need to be
      * merged.
      */
-    void tokenize_docs(corpus::corpus& corpus,
-                       const analyzers::analyzer& analyzer,
-                       metadata_writer& mdata_writer, uint64_t ram_budget);
+    void tokenize_docs(corpus::corpus& corpus, metadata_writer& mdata_writer,
+                       uint64_t ram_budget);
 
     /**
      * Merges together num_chunks number of intermediate chunks, using the
@@ -90,7 +89,7 @@ class forward_index::impl
      * @return whether this index will be based off of a single
      * libsvm-formatted corpus file
      */
-    bool is_libsvm_format(const cpptoml::table& config) const;
+    bool is_libsvm_analyzer(const cpptoml::table& config) const;
 
     /**
      * Compresses the postings file created by uninverting.
@@ -104,6 +103,9 @@ class forward_index::impl
      * @param filename The path to the postings file to load
      */
     void load_postings();
+
+    /// The analyzer used to tokenize documents (nullptr if libsvm).
+    std::unique_ptr<analyzers::analyzer> analyzer_;
 
     /// the total number of unique terms if term_id_mapping_ is unused
     uint64_t total_unique_terms_;
@@ -120,14 +122,16 @@ class forward_index::impl
 
 forward_index::forward_index(const cpptoml::table& config)
     : disk_index{config, *config.get_as<std::string>("forward-index")},
-      fwd_impl_{this}
+      fwd_impl_{this, config}
 {
     /* nothing */
 }
 
-forward_index::impl::impl(forward_index* idx) : idx_{idx}
+forward_index::impl::impl(forward_index* idx, const cpptoml::table& config)
+    : idx_{idx}
 {
-    /* nothing */
+    if (!is_libsvm_analyzer(config))
+        analyzer_ = analyzers::load(config);
 }
 
 forward_index::forward_index(forward_index&&) = default;
@@ -181,7 +185,7 @@ void forward_index::load_index()
     impl_->load_labels();
 
     auto config = cpptoml::parse_file(index_name() + "/config.toml");
-    if (!fwd_impl_->is_libsvm_format(*config))
+    if (!fwd_impl_->is_libsvm_analyzer(*config))
         impl_->load_term_id_mapping();
 
     impl_->load_label_id_mapping();
@@ -201,8 +205,14 @@ void forward_index::create_index(const cpptoml::table& config,
 
     // if the corpus is a single libsvm formatted file, then we are done;
     // otherwise, we will create an inverted index and the uninvert it
-    if (fwd_impl_->is_libsvm_format(config))
+    if (fwd_impl_->is_libsvm_analyzer(config))
     {
+        // double check that the corpus is libsvm-corpus
+        if (!dynamic_cast<corpus::libsvm_corpus*>(&docs))
+            throw forward_index_exception{"both analyzer and corpus type must "
+                                          "be libsvm in order to use libsvm "
+                                          "formatted data"};
+
         LOG(info) << "Creating index from libsvm data: " << index_name()
                   << ENDLG;
 
@@ -236,15 +246,13 @@ void forward_index::create_index(const cpptoml::table& config,
         {
             LOG(info) << "Creating forward index: " << index_name() << ENDLG;
 
-            auto analyzer = analyzers::load(config);
-
             metadata_writer mdata_writer{index_name(), docs.size(),
                                          docs.schema()};
 
             impl_->load_labels(docs.size());
 
             // RAM budget is given in MB
-            fwd_impl_->tokenize_docs(docs, *analyzer, mdata_writer,
+            fwd_impl_->tokenize_docs(docs, mdata_writer,
                                      ram_budget * 1024 * 1024);
             impl_->load_term_id_mapping();
             impl_->save_label_id_mapping();
@@ -270,7 +278,6 @@ void forward_index::create_index(const cpptoml::table& config,
 }
 
 void forward_index::impl::tokenize_docs(corpus::corpus& docs,
-                                        const analyzers::analyzer& ana,
                                         metadata_writer& mdata_writer,
                                         uint64_t ram_budget)
 {
@@ -286,7 +293,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
         std::ofstream chunk{idx_->index_name() + "/chunk-"
                                 + std::to_string(chunk_id),
                             std::ios::binary};
-        auto analyzer = ana.clone();
+        auto analyzer = analyzer_->clone();
         while (true)
         {
             util::optional<corpus::document> doc;
@@ -501,32 +508,8 @@ void forward_index::impl::create_uninverted_metadata(const std::string& name)
                               idx_->index_name() + idx_->impl_->files[file]);
 }
 
-bool forward_index::impl::is_libsvm_format(const cpptoml::table& config) const
+bool forward_index::impl::is_libsvm_analyzer(const cpptoml::table& config) const
 {
-    auto prefix = config.get_as<std::string>("prefix");
-    auto dset = config.get_as<std::string>("dataset");
-    auto corp = config.get_as<std::string>("corpus");
-
-    if (!prefix || !dset || !corp)
-        throw forward_index_exception{"failed to determine corpus type"};
-
-    auto corp_filename = *prefix + "/" + *dset + "/" + *corp;
-    if (!filesystem::file_exists(corp_filename))
-    {
-        throw forward_index_exception{"corpus configuration file ("
-                                      + corp_filename + ") not present"};
-    }
-
-    auto corpus_config = cpptoml::parse_file(corp_filename);
-    auto type = corpus_config->get_as<std::string>("type");
-
-    if (!type)
-    {
-        throw forward_index_exception{
-            "'type' key not present in corpus configuration file "
-            + corp_filename};
-    }
-
     auto analyzers = config.get_table_array("analyzers")->get();
     if (analyzers.size() != 1)
         return false;
@@ -535,15 +518,24 @@ bool forward_index::impl::is_libsvm_format(const cpptoml::table& config) const
     if (!method)
         throw forward_index_exception{"failed to find analyzer method"};
 
-    if (*method == "libsvm" && *type == corpus::libsvm_corpus::id)
-        return true;
+    return *method == "libsvm";
+}
 
-    if (*method == "libsvm" || *type == corpus::libsvm_corpus::id)
-        throw forward_index_exception{"both analyzer and corpus type must be "
-                                      "libsvm in order to use libsvm formatted "
-                                      "data"};
+learn::feature_vector forward_index::tokenize(const corpus::document& doc)
+{
+    if (!fwd_impl_->analyzer_)
+        throw exception{"this forward index type can't analyze docs"};
 
-    return false;
+    learn::feature_vector f_vec;
+    auto map = fwd_impl_->analyzer_->analyze<double>(doc);
+    for (auto& pr : map)
+    {
+        auto t_id = get_term_id(pr.key());
+        if (t_id != unique_terms()) // if known feature, add it
+            f_vec[t_id] = pr.value();
+    }
+
+    return f_vec;
 }
 
 uint64_t forward_index::unique_terms() const

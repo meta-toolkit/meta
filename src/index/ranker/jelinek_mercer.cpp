@@ -49,9 +49,11 @@ template <>
 std::unique_ptr<ranker>
     make_ranker<jelinek_mercer>(const cpptoml::table& config)
 {
-    if (auto lambda = config.get_as<double>("lambda"))
-        return make_unique<jelinek_mercer>(*lambda);
-    return make_unique<jelinek_mercer>();
+    auto lambda = config.get_as<double>("lambda")
+                     .value_or(jelinek_mercer::default_lambda);
+    if (lambda < 0 || lambda > 1)
+        throw ranker_exception{"jelinek-mercer lambda must be on [0,1]"};
+    return make_unique<jelinek_mercer>(lambda);
 }
 }
 }

@@ -14,11 +14,7 @@
 #include <mutex>
 #include <string>
 
-#if !META_HAS_STREAM_MOVE
-#include <memory>
-#include "meta/util/shim.h"
-#endif
-
+#include "meta/io/moveable_stream.h"
 #include "meta/util/disk_vector.h"
 
 namespace meta
@@ -61,41 +57,11 @@ class string_list_writer
     void insert(uint64_t idx, const std::string& elem);
 
   private:
-#if META_HAS_STREAM_MOVE
-    using ofstream = std::ofstream;
-    std::ofstream& file()
-    {
-        return string_file_;
-    }
-    ofstream make_file(const std::string& path)
-    {
-        return std::ofstream{path};
-    }
-#else
-    /// workaround for lack of move operators for gcc 4.8
-    using ofstream = std::unique_ptr<std::ofstream>;
-    /**
-     * @return a reference to the file stream
-     */
-    std::ofstream& file()
-    {
-        return *string_file_;
-    }
-    /**
-     * @param path The path to the file
-     * @return a std::ofstream created from the file
-     */
-    ofstream make_file(const std::string& path)
-    {
-        return make_unique<std::ofstream>(path);
-    }
-#endif
-
     /// Writes are internally synchronized
     std::mutex mutex_;
 
     /// The file containing the strings
-    ofstream string_file_;
+    io::mofstream string_file_;
 
     /// Keeps track of the write position
     uint64_t write_pos_;

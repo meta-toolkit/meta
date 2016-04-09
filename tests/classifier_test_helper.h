@@ -25,24 +25,26 @@ namespace tests {
 template <class Index, class Creator,
           class = typename std::enable_if<!std::is_same<
               typename std::decay<Creator>::type, cpptoml::table>::value>::type>
-inline void check_cv(Index& idx, Creator&& creator, double min_accuracy) {
+inline void check_cv(Index& idx, Creator&& creator, double min_accuracy,
+                     bool even_split = false) {
     using namespace classify;
 
     multiclass_dataset dataset{idx};
     multiclass_dataset_view mcdv{dataset, std::mt19937_64{47}};
 
-    auto mtx = cross_validate(std::forward<Creator>(creator), mcdv, 5);
+    auto mtx
+        = cross_validate(std::forward<Creator>(creator), mcdv, 5, even_split);
     AssertThat(mtx.accuracy(),
                Is().GreaterThan(min_accuracy).And().LessThan(100.0));
 }
 
 template <class Index>
 inline void check_cv(Index& idx, const cpptoml::table& config,
-                     double min_accuracy) {
+                     double min_accuracy, bool even_split = false) {
     using namespace classify;
     check_cv(idx, [&](multiclass_dataset_view docs) {
         return make_classifier(config, std::move(docs));
-    }, min_accuracy);
+    }, min_accuracy, even_split);
 }
 
 using creation_fn = std::function<std::unique_ptr<classify::classifier>(
@@ -124,8 +126,6 @@ inline void run_save_load_single(std::shared_ptr<index::forward_index> idx,
     }
     filesystem::remove_all("save-load-model");
 }
-
-
 }
 }
 #endif

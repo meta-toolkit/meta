@@ -92,10 +92,16 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config,
         config, std::forward<Args>(args)...);
 
     // if index has already been made, load it
-    if (!filesystem::make_directory(idx->index_name()) && idx->valid())
+    if (filesystem::exists(idx->index_name()) && idx->valid())
+    {
         idx->load_index();
+    }
     else
+    {
+        if (!filesystem::exists(idx->index_name()))
+            filesystem::make_directory(idx->index_name());
         idx->create_index(config, docs);
+    }
 
     return idx;
 }
@@ -106,8 +112,52 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config,
 template <class Index, class... Args>
 std::shared_ptr<Index> make_index(const cpptoml::table& config, Args&&... args)
 {
-    auto docs = corpus::make_corpus(config);
-    return make_index<Index>(config, *docs, std::forward<Args>(args)...);
+
+    // check if we have paths specified for either kind of index
+    if (!(config.contains("forward-index")
+          && config.contains("inverted-index")))
+    {
+        throw typename Index::exception{
+            "forward-index or inverted-index missing from configuration file"};
+    }
+
+    // make sure that the index names are different!
+    auto fwd_name = config.get_as<std::string>("forward-index");
+    auto inv_name = config.get_as<std::string>("inverted-index");
+
+    if (*fwd_name == *inv_name)
+    {
+        throw typename Index::exception{
+            "forward and inverted index names must be different!"};
+    }
+
+    // below is needed so that make_shared can find a public ctor to invoke
+    struct make_shared_enabler : public Index
+    {
+        make_shared_enabler(const cpptoml::table& config, Args&&... args)
+            : Index(config, std::forward<Args>(args)...)
+        {
+            // nothing
+        }
+    };
+    auto idx = std::make_shared<make_shared_enabler>(
+        config, std::forward<Args>(args)...);
+
+    // if index has already been made, load it
+    if (filesystem::exists(idx->index_name()) && idx->valid())
+    {
+        idx->load_index();
+    }
+    else
+    {
+        if (!filesystem::exists(idx->index_name()))
+            filesystem::make_directory(idx->index_name());
+
+        auto docs = corpus::make_corpus(config);
+        idx->create_index(config, *docs);
+    }
+
+    return idx;
 }
 
 /**

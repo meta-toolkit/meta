@@ -104,139 +104,29 @@ class disk_vector
      */
     uint64_t size() const;
 
-    /**
-     * Provides iterator functionality for the disk_vector class.
-     */
-    class iterator : public std::iterator<std::random_access_iterator_tag, T>
-    {
-        /// Need to access disk_vector representation
-        friend disk_vector;
-
-      private:
-        /// The current index this iterator is at
-        uint64_t idx_;
-
-        /// The current element this iterator is at
-        T* data_;
-
-        /**
-         * Constructor for disk_vector to use.
-         * @param idx The index to start out at
-         * @param data The data element to initially contain
-         */
-        iterator(uint64_t idx, T* data) : idx_{idx}, data_{data}
-        {
-            /* nothing */
-        }
-
-      public:
-        /// Constructor.
-        iterator() : idx_{0}, data_{nullptr}
-        {
-            /* nothing */
-        }
-
-        /// Copy constructor.
-        iterator(const iterator& other) : idx_{other.idx_}, data_{other.data_}
-        {
-            /* nothing */
-        }
-
-        /// assignment operator.
-        iterator& operator=(iterator other)
-        {
-            std::swap(*this, other);
-            return *this;
-        }
-
-        /// Pre-increment.
-        iterator& operator++()
-        {
-            ++idx_;
-            return *this;
-        }
-
-        /// Post-increment.
-        iterator operator++(int)
-        {
-            iterator save{*this};
-            ++idx_;
-            return save;
-        }
-
-        /// Pre-decrement.
-        iterator& operator--()
-        {
-            --idx_;
-            return *this;
-        }
-
-        /// Post-decrement.
-        iterator operator--(int)
-        {
-            iterator save{*this};
-            --idx_;
-            return *this;
-        }
-
-        /// Equality.
-        bool operator==(const iterator& other)
-        {
-            return other.idx_ == idx_ && other.data_ == data_;
-        }
-
-        /// Inequality.
-        bool operator!=(const iterator& other)
-        {
-            return !(*this == other);
-        }
-
-        /// Dereference operator.
-        T& operator*()
-        {
-            return data_[idx_];
-        }
-
-        /// Arrow operator.
-        const T* operator->()
-        {
-            return &data_[idx_];
-        }
-
-        /// Operator<.
-        bool operator<(const iterator& other) const
-        {
-            return idx_ < other.idx_;
-        }
-
-        /// Operator>.
-        bool operator>(const iterator& other) const
-        {
-            return idx_ > other.idx_;
-        }
-
-        /// Operator<=.
-        bool operator<=(const iterator& other) const
-        {
-            return idx_ <= other.idx_;
-        }
-
-        /// Operator>=.
-        bool operator>=(const iterator& other) const
-        {
-            return idx_ >= other.idx_;
-        }
-    };
+    using iterator = T*;
+    using const_iterator = const T*;
 
     /**
      * @return an iterator to the beginning of this container
      */
-    iterator begin() const;
+    iterator begin();
+
+    /**
+     * @return an iterator to the beginning of this container (const
+     * version)
+     */
+    const_iterator begin() const;
 
     /**
      * @return an iterator to the end of this container
      */
-    iterator end() const;
+    iterator end();
+
+    /**
+     * @return an iterator to the end of this container (const version)
+     */
+    const_iterator end() const;
 
   private:
     /// the path to the file this disk_vector uses for storage

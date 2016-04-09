@@ -27,6 +27,14 @@ class array_view
 {
   public:
     /**
+     * Constructs an empty array view.
+     */
+    array_view() : start_{nullptr}, end_{nullptr}
+    {
+        // nothing
+    }
+
+    /**
      * Constructs an array view starting at the given starting point of
      * the specified length.
      *
@@ -120,7 +128,7 @@ class array_view
      */
     std::size_t size() const
     {
-        return end_ - start_;
+        return static_cast<std::size_t>(end_ - start_);
     }
 
   private:

@@ -169,6 +169,11 @@ void run_tests(const std::string& index_type) {
             cfg->insert("method", winnow::id.to_string());
             check_split(f_idx, *cfg, 0.86);
         });
+
+        it("should run CV using an even class split", [&]() {
+            check_cv(f_idx, *hinge_sgd_cfg, 0.70, true);
+            check_cv(f_idx, *perc_sgd_cfg, 0.70, true);
+        });
     });
 
     describe("[classifier] SVM wrapper", [&]() {

@@ -31,11 +31,11 @@ namespace util
  *
  * - Record:
  *     A Record must represent the atomic items that are to be merged. They
- *     are comparable via operator< and operator==, and must have a member
- *     function merge_with(Record&&). During the merging process, Records
- *     will be read from the individual chunks (via
+ *     must have a member function merge_with(Record&&). During the merging
+ *     process, Records will be read from the individual chunks (via
  *     ChunkIterator::operator++), merge_with will be called across all
- *     Records across all chunks that compare equal, and the final merged
+ *     Records across all chunks that should merge according to the
+ *     predicate specified (defaulting to operator==), and the final merged
  *     Record will be passed to the write callback.
  *
  * - ForwardIterator:
@@ -67,12 +67,26 @@ namespace util
  *     iterator shall compare equal to the default-constructed
  *     ChunkIterator.
  *
+ * - Compare:
+ *     A simple comparison function to be used for sorting the records.
+ *     Defaults to operator<.
+ *
+ * - ShouldMerge:
+ *     A binary function that returns true if the two records given to it
+ *     as arguments should be merged together via Record::merge_with().
+ *     Defaults to operator==.
+ *
+ * - RecordHandler:
+ *     A unary function that is called once per every unique Record after
+ *     merging.
+ *
  * @return the total number of unique Records that were written to the
  * OutputStream
  */
-
-template <class ForwardIterator, class RecordHandler>
+template <class ForwardIterator, class RecordHandler, class Compare,
+          class ShouldMerge>
 uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
+                        Compare&& record_comp, ShouldMerge&& should_merge,
                         RecordHandler&& output)
 {
     using ChunkIterator = typename ForwardIterator::value_type;
@@ -96,9 +110,9 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
     for (; begin != end; ++begin)
         to_merge.emplace_back(*begin);
 
-    auto chunk_iter_comp = [](const ChunkIterator& a, const ChunkIterator& b)
+    auto chunk_iter_comp = [&](const ChunkIterator& a, const ChunkIterator& b)
     {
-        return *a < *b;
+        return record_comp(*a, *b);
     };
 
     uint64_t unique_records = 0;
@@ -121,10 +135,13 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
         ++range.first;
         std::for_each(range.first, range.second, [&](ChunkIterator& iter)
                       {
-                          merged.merge_with(std::move(*iter));
-                          auto before = iter.bytes_read();
-                          ++iter;
-                          total_read += (iter.bytes_read() - before);
+                          if (should_merge(merged, *iter))
+                          {
+                              merged.merge_with(std::move(*iter));
+                              auto before = iter.bytes_read();
+                              ++iter;
+                              total_read += (iter.bytes_read() - before);
+                          }
                       });
 
         // write out merged record
@@ -140,6 +157,28 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
     }
 
     return unique_records;
+}
+
+/**
+ * A simplified wrapper for multiway_merge that uses the default comparison
+ * (operator<) and merge criteria (operator==).
+ */
+template <class ForwardIterator, class RecordHandler>
+uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
+                        RecordHandler&& output)
+{
+    using Record = typename std::remove_reference<decltype(**begin)>::type;
+
+    auto record_comp = [](const Record& a, const Record& b)
+    {
+        return a < b;
+    };
+    auto record_equal = [](const Record& a, const Record& b)
+    {
+        return a == b;
+    };
+    return multiway_merge(begin, end, record_comp, record_equal,
+                          std::forward<RecordHandler>(output));
 }
 }
 }

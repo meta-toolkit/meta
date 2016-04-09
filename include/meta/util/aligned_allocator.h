@@ -21,22 +21,12 @@
 #elif META_HAS_ALIGNED_MALLOC
 #include "meta/util/aligned_alloc_msvc.h"
 #endif
+#include "meta/math/integer.h"
 
 namespace meta
 {
 namespace util
 {
-
-namespace detail
-{
-template <class Integer>
-Integer idiv_ceil(Integer num, Integer denom)
-{
-    // this should be 1 instruction on most architectures since the div
-    // instruction also returns the remainder
-    return (num / denom) + (num % denom != 0);
-}
-}
 
 template <class T, std::size_t Alignment>
 struct aligned_allocator
@@ -64,8 +54,8 @@ struct aligned_allocator
         // determine adjusted size
         // ::aligned_alloc requires the size to be an integer multiple of
         // the requested alignment
-        auto size
-            = alignment_size * detail::idiv_ceil(n * sizeof(T), alignment_size);
+        auto size = alignment_size
+                    * math::integer::div_ceil(n * sizeof(T), alignment_size);
         auto ptr = static_cast<T*>(detail::aligned_alloc(alignment_size, size));
 
         if (!ptr && n > 0)

@@ -123,6 +123,15 @@ struct ranker_context
 }
 
 /**
+ * Exception class for ranker interactions.
+ */
+class ranker_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
+
+/**
  * A ranker scores a query against all the documents in an inverted index,
  * returning a list of documents sorted by relevance.
  */
