@@ -32,7 +32,6 @@ method = "one-vs-all"
 [classifier.base]
 method = "sgd"
 loss = "hinge"
-prefix = "sgd-model"
 
 [lda]
 inference = "gibbs"
