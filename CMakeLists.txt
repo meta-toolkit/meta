@@ -41,9 +41,9 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/meta-cmake/)
 
 # We require Unicode 8 for the unit tests, which was added in ICU 56.1
 FindOrBuildICU(
-  VERSION 56.1
-  URL http://download.icu-project.org/files/icu4c/56.1/icu4c-56_1-src.tgz
-  URL_HASH MD5=c4a2d71ff56aec5ebfab2a3f059be99d
+  VERSION 57.1
+  URL http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz
+  URL_HASH MD5=976734806026a4ef8bdd17937c8898b9
 )
 
 add_library(meta-definitions INTERFACE)
