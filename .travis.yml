@@ -5,6 +5,10 @@ language: cpp
 
 sudo: false
 
+cache:
+  directories:
+    deps/icu
+
 addons:
   apt:
     packages: &default-packages
