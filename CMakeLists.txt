@@ -54,7 +54,7 @@ if(UNIX OR MINGW)
   target_compile_options(meta-definitions INTERFACE -Wall -Wextra -pedantic)
 
   if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    SetClangOptions()
+    SetClangOptions(meta-definitions)
   endif()
 endif()
 
