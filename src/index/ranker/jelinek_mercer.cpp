@@ -13,6 +13,7 @@ namespace index
 {
 
 const util::string_view jelinek_mercer::id = "jelinek-mercer";
+const constexpr float jelinek_mercer::default_lambda;
 
 jelinek_mercer::jelinek_mercer(float lambda) : lambda_{lambda}
 {
