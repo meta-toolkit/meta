@@ -32,7 +32,7 @@ class metadata_parser
      * @param filename The name of the file to parse
      * @param schema The schema to parse the file with
      */
-    metadata_parser(const std::string& filename, metadata::schema schema);
+    metadata_parser(const std::string& filename, metadata::schema_type schema);
 
     /**
      * @return the metadata vector for the next document in the file
@@ -42,14 +42,14 @@ class metadata_parser
     /**
      * @return the schema for the metadata in this file
      */
-    const metadata::schema& schema() const;
+    const metadata::schema_type& schema() const;
 
   private:
     /// the parser used to extract metadata
     io::mifstream infile_;
 
     /// the schema for the metadata being extracted
-    metadata::schema schema_;
+    metadata::schema_type schema_;
 };
 }
 }

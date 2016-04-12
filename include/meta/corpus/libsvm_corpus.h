@@ -55,7 +55,7 @@ class libsvm_corpus : public corpus
 
     uint64_t size() const override;
 
-    metadata::schema schema() const override;
+    metadata::schema_type schema() const override;
 
   private:
     /// The current document we are on

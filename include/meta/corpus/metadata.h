@@ -62,9 +62,9 @@ class metadata
 
     // I want the below to be a const field_info, but g++ gives a cryptic
     // compiler error in that case... clang++ accepts it just fine. -sigh-
-    using schema = std::vector<field_info>;
+    using schema_type = std::vector<field_info>;
 
-    metadata(const char* start, const schema& sch)
+    metadata(const char* start, const schema_type& sch)
         : schema_{&sch}, start_{start}
     {
         // nothing
@@ -122,6 +122,14 @@ class metadata
         }
 
         return util::nullopt;
+    }
+
+    /**
+     * Returns the schema for this metadata object.
+     */
+    const schema_type& schema() const
+    {
+        return *schema_;
     }
 
     /**
@@ -303,7 +311,7 @@ class metadata
     };
 
     /// pointer to the metadata_file's schema
-    const schema* schema_;
+    const schema_type* schema_;
 
     /// the start of the metadata within the metadata_file
     const char* start_;
@@ -314,7 +322,7 @@ class metadata
  * @param config The configuration group that specifies the metadata
  * @return the corresponding metadata::schema object.
  */
-metadata::schema metadata_schema(const cpptoml::table& config);
+metadata::schema_type metadata_schema(const cpptoml::table& config);
 
 /**
  * Exception class for metadata operations.

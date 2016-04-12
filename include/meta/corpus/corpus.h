@@ -78,7 +78,7 @@ class corpus
     /**
      * @return the corpus' metadata schema
      */
-    virtual metadata::schema schema() const;
+    virtual metadata::schema_type schema() const;
 
     /**
      * Destructor.

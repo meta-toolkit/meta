@@ -72,7 +72,7 @@ class metadata_file
 
   private:
     /// the schema for this file
-    corpus::metadata::schema schema_;
+    corpus::metadata::schema_type schema_;
 
     /// the seek positions for every document in this file
     util::disk_vector<uint64_t> index_;

@@ -10,9 +10,9 @@ namespace meta
 namespace corpus
 {
 
-metadata::schema metadata_schema(const cpptoml::table& config)
+metadata::schema_type metadata_schema(const cpptoml::table& config)
 {
-    metadata::schema schema;
+    metadata::schema_type schema;
     if (auto metadata = config.get_table_array("metadata"))
     {
         const auto& arr = metadata->get();
