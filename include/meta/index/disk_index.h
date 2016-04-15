@@ -31,11 +31,6 @@ class string_list;
 class vocabulary_map;
 }
 
-namespace tokenizers
-{
-class tokenizer;
-}
-
 namespace util
 {
 template <class>
