@@ -69,8 +69,7 @@ go_bandit([]() {
     });
 
     f_idx = nullptr;
-    filesystem::remove_all("ceeaus.inv");
-    filesystem::remove_all("ceeaus.fwd");
+    filesystem::remove_all("ceeaus");
     for (const std::string& id :
          {"chi-square", "info-gain", "corr-coef", "odds-ratio"}) {
         for (const std::string& suffix : {"1", "2", "3", "selected"}) {

@@ -76,5 +76,5 @@ go_bandit([]() {
            [&]() { run_model<topics::parallel_lda_gibbs>(idx, prefix); });
     });
 
-    filesystem::remove_all("ceeaus.fwd");
+    filesystem::remove_all("ceeaus");
 });

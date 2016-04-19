@@ -194,12 +194,10 @@ void run_tests(const std::string& index_type) {
 
 go_bandit([]() {
 
-    filesystem::remove_all("ceeaus.inv");
-    filesystem::remove_all("ceeaus.fwd");
+    filesystem::remove_all("ceeaus");
     run_tests("line");
 
-    filesystem::remove_all("ceeaus.inv");
-    filesystem::remove_all("ceeaus.fwd");
+    filesystem::remove_all("ceeaus");
     run_tests("file");
 
     describe("[classifier] saving and loading model files", [&]() {
@@ -276,8 +274,7 @@ go_bandit([]() {
         });
     });
 
-    filesystem::remove_all("ceeaus.inv");
-    filesystem::remove_all("ceeaus.fwd");
+    filesystem::remove_all("ceeaus");
 
     describe("[classifier] confusion matrix", [&]() {
 

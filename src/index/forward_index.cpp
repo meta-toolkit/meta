@@ -121,7 +121,7 @@ class forward_index::impl
 };
 
 forward_index::forward_index(const cpptoml::table& config)
-    : disk_index{config, *config.get_as<std::string>("index") + ".fwd"},
+    : disk_index{config, *config.get_as<std::string>("index") + "/fwd"},
       fwd_impl_{this, config}
 {
     /* nothing */
@@ -198,6 +198,9 @@ void forward_index::load_index()
 void forward_index::create_index(const cpptoml::table& config,
                                  corpus::corpus& docs)
 {
+    if (!filesystem::make_directories(index_name()))
+        throw exception{"Unable to create index directory: " + index_name()};
+
     {
         std::ofstream config_file{index_name() + "/config.toml"};
         config_file << config;

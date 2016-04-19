@@ -87,7 +87,7 @@ inverted_index::impl::impl(inverted_index* idx, const cpptoml::table& config)
 }
 
 inverted_index::inverted_index(const cpptoml::table& config)
-    : disk_index{config, *config.get_as<std::string>("index") + ".inv"},
+    : disk_index{config, *config.get_as<std::string>("index") + "/inv"},
       inv_impl_{this, config}
 {
     // nothing
@@ -115,6 +115,9 @@ bool inverted_index::valid() const
 void inverted_index::create_index(const cpptoml::table& config,
                                   corpus::corpus& docs)
 {
+    if (!filesystem::make_directories(index_name()))
+        throw exception{"Unable to create index directory: " + index_name()};
+
     // save the config file so we can recreate the analyzer
     {
         std::ofstream config_file{index_name() + "/config.toml"};

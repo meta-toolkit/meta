@@ -76,7 +76,7 @@ go_bandit([]() {
         auto file_cfg = tests::create_config("file");
 
         it("should create the index", [&]() {
-            filesystem::remove_all("ceeaus.inv");
+            filesystem::remove_all("ceeaus");
             auto idx = index::make_index<index::inverted_index>(*file_cfg);
             check_ceeaus_expected(*idx);
         });
@@ -87,7 +87,7 @@ go_bandit([]() {
             check_term_id(*idx);
         });
 
-        filesystem::remove_all("ceeaus.inv");
+        filesystem::remove_all("ceeaus");
         it("should be able to store full text metadata", [&]() {
             auto docs = corpus::make_corpus(*file_cfg);
             check_full_text(*docs, *file_cfg);
@@ -96,7 +96,7 @@ go_bandit([]() {
 
     describe("[inverted-index] from line config", []() {
 
-        filesystem::remove_all("ceeaus.inv");
+        filesystem::remove_all("ceeaus");
         auto line_cfg = tests::create_config("line");
 
         it("should create the index", [&]() {
@@ -113,7 +113,7 @@ go_bandit([]() {
             check_term_id(*idx); // twice to check splay_caching
         });
 
-        filesystem::remove_all("ceeaus.inv");
+        filesystem::remove_all("ceeaus");
         it("should be able to store full text metadata", [&]() {
             auto docs = corpus::make_corpus(*line_cfg);
             check_full_text(*docs, *line_cfg);
@@ -150,7 +150,7 @@ go_bandit([]() {
 
     describe("[inverted-index] with zlib", []() {
 
-        filesystem::remove_all("ceeaus.inv");
+        filesystem::remove_all("ceeaus");
         auto gz_cfg = tests::create_config("gz");
 
         it("should create the index", [&]() {
@@ -164,12 +164,12 @@ go_bandit([]() {
             check_term_id(*idx);
         });
 
-        filesystem::remove_all("ceeaus.inv");
+        filesystem::remove_all("ceeaus");
         it("should be able to store full text metadata", [&]() {
             auto docs = corpus::make_corpus(*gz_cfg);
             check_full_text(*docs, *gz_cfg);
         });
     });
 
-    filesystem::remove_all("ceeaus.inv");
+    filesystem::remove_all("ceeaus");
 });
