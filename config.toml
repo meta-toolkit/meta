@@ -10,8 +10,7 @@ query-path = "../queries.txt" # create this file
 
 dataset = "ceeaus"
 corpus = "line.toml" # located inside dataset folder
-forward-index = "ceeaus-fwd"
-inverted-index = "ceeaus-inv"
+index = "ceeaus"
 indexer-ram-budget = 1024 # **estimated** RAM budget for indexing in MB
                           # always set this lower than your physical RAM!
 # indexer-num-threads = 8 # default value is system thread concurrency

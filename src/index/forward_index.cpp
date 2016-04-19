@@ -121,7 +121,7 @@ class forward_index::impl
 };
 
 forward_index::forward_index(const cpptoml::table& config)
-    : disk_index{config, *config.get_as<std::string>("forward-index")},
+    : disk_index{config, *config.get_as<std::string>("index") + ".fwd"},
       fwd_impl_{this, config}
 {
     /* nothing */

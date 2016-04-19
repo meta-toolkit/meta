@@ -41,7 +41,7 @@ go_bandit([]() {
     describe("[rankers]", []() {
 
         auto config = tests::create_config("file");
-        filesystem::remove_all("ceeaus-inv");
+        filesystem::remove_all("ceeaus.inv");
         auto idx = index::make_index<index::inverted_index>(*config);
         std::string encoding = "utf-8";
         if (auto enc = config->get_as<std::string>("encoding"))
@@ -73,6 +73,6 @@ go_bandit([]() {
         });
 
         idx = nullptr;
-        filesystem::remove_all("ceeaus-inv");
+        filesystem::remove_all("ceeaus.inv");
     });
 });

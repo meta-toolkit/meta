@@ -87,7 +87,7 @@ inverted_index::impl::impl(inverted_index* idx, const cpptoml::table& config)
 }
 
 inverted_index::inverted_index(const cpptoml::table& config)
-    : disk_index{config, *config.get_as<std::string>("inverted-index")},
+    : disk_index{config, *config.get_as<std::string>("index") + ".inv"},
       inv_impl_{this, config}
 {
     // nothing

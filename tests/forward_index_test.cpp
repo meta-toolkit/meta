@@ -27,8 +27,7 @@ std::shared_ptr<cpptoml::table> create_libsvm_config() {
     config->insert("prefix", *orig_config->get_as<std::string>("prefix"));
     config->insert("corpus", "libsvm.toml");
     config->insert("dataset", "breast-cancer");
-    config->insert("forward-index", "bcancer-fwd");
-    config->insert("inverted-index", "bcancer-inv");
+    config->insert("index", "bcancer");
 
     auto anas = cpptoml::make_table_array();
     auto ana = cpptoml::make_table();
@@ -151,16 +150,16 @@ go_bandit([]() {
         auto file_cfg = tests::create_config("file");
 
         it("should create the index", [&]() {
-            filesystem::remove_all("ceeaus-inv");
-            filesystem::remove_all("ceeaus-fwd");
+            filesystem::remove_all("ceeaus.inv");
+            filesystem::remove_all("ceeaus.fwd");
             ceeaus_forward_test(*file_cfg);
         });
 
         it("should load the index", [&]() { ceeaus_forward_test(*file_cfg); });
 
         it("should uninvert if specified", [&]() {
-            filesystem::remove_all("ceeaus-inv");
-            filesystem::remove_all("ceeaus-fwd");
+            filesystem::remove_all("ceeaus.inv");
+            filesystem::remove_all("ceeaus.fwd");
             file_cfg->insert("uninvert", true);
             ceeaus_forward_test(*file_cfg);
         });
@@ -170,16 +169,16 @@ go_bandit([]() {
         auto line_cfg = tests::create_config("line");
 
         it("should create the index", [&]() {
-            filesystem::remove_all("ceeaus-inv");
-            filesystem::remove_all("ceeaus-fwd");
+            filesystem::remove_all("ceeaus.inv");
+            filesystem::remove_all("ceeaus.fwd");
             ceeaus_forward_test(*line_cfg);
         });
 
         it("should load the index", [&]() { ceeaus_forward_test(*line_cfg); });
 
         it("should uninvert if specified", [&]() {
-            filesystem::remove_all("ceeaus-inv");
-            filesystem::remove_all("ceeaus-fwd");
+            filesystem::remove_all("ceeaus.inv");
+            filesystem::remove_all("ceeaus.fwd");
             line_cfg->insert("uninvert", true);
             ceeaus_forward_test(*line_cfg);
         });
@@ -213,7 +212,7 @@ go_bandit([]() {
         auto svm_cfg = create_libsvm_config();
 
         it("should create the index", [&]() {
-            filesystem::remove_all("bcancer-fwd");
+            filesystem::remove_all("bcancer.fwd");
             bcancer_forward_test(*svm_cfg);
         });
 
@@ -231,12 +230,12 @@ go_bandit([]() {
 
     describe("[forward-index] with zlib", []() {
 
-        filesystem::remove_all("ceeaus-fwd");
+        filesystem::remove_all("ceeaus.fwd");
         auto gz_cfg = tests::create_config("gz");
 
         it("should create the index", [&]() {
-            filesystem::remove_all("ceeaus-inv");
-            filesystem::remove_all("ceeaus-fwd");
+            filesystem::remove_all("ceeaus.inv");
+            filesystem::remove_all("ceeaus.fwd");
             ceeaus_forward_test(*gz_cfg);
         });
 
@@ -244,7 +243,7 @@ go_bandit([]() {
 
     });
 
-    filesystem::remove_all("ceeaus-inv");
-    filesystem::remove_all("ceeaus-fwd");
-    filesystem::remove_all("bcancer-fwd");
+    filesystem::remove_all("ceeaus.inv");
+    filesystem::remove_all("ceeaus.fwd");
+    filesystem::remove_all("bcancer.fwd");
 });
