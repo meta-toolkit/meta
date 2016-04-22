@@ -7,12 +7,16 @@ ExternalProject_Add(liblinear
   SOURCE_DIR ${meta_SOURCE_DIR}/../deps/libsvm-modules/liblinear
   BINARY_DIR ${meta_SOURCE_DIR}/../deps/libsvm-modules/liblinear/build
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+  CMAKE_CACHE_ARGS "-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}"
+                   "-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}"
   INSTALL_COMMAND "")
 
 ExternalProject_Add(libsvm
   SOURCE_DIR ${meta_SOURCE_DIR}/../deps/libsvm-modules/libsvm
   BINARY_DIR ${meta_SOURCE_DIR}/../deps/libsvm-modules/libsvm/build
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+  CMAKE_CACHE_ARGS "-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}"
+                   "-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}"
   INSTALL_COMMAND "")
 
 add_library(meta-classify binary_classifier_factory.cpp
