@@ -187,19 +187,22 @@ void confusion_matrix::print_stats(std::ostream& out) const
         = std::setw(static_cast<int>(width + printing::make_bold("").size()));
     auto w2 = std::setw(static_cast<int>(12 + printing::make_bold("").size()));
     out.precision(3);
-    out << std::string(width + 12 * 3, '-') << std::endl
+    out << std::string(width + 12 * 4, '-') << std::endl
         << std::left << w1 << printing::make_bold("Class") << std::left << w2
         << printing::make_bold("F1 Score") << std::left << w2
         << printing::make_bold("Precision") << std::left << w2
-        << printing::make_bold("Recall") << std::endl
-        << std::string(width + 12 * 3, '-') << std::endl;
+        << printing::make_bold("Recall") << std::left << w2
+        << printing::make_bold("Class Dist") << std::endl
+        << std::string(width + 12 * 4, '-') << std::endl;
 
     for (auto& cls : classes_)
     {
         auto w3 = std::setw(12); // different width for non-bold
         out << std::left << std::setw(static_cast<int>(width)) << cls
             << std::left << w3 << f1_score(cls) << std::left << w3
-            << precision(cls) << std::left << w3 << recall(cls) << std::endl;
+            << precision(cls) << std::left << w3 << recall(cls)
+            << std::left << w3 << static_cast<double>(counts_.at(cls)) / total_
+            << std::endl;
     }
 
     auto limit = [](double val)
@@ -210,12 +213,12 @@ void confusion_matrix::print_stats(std::ostream& out) const
         return ss.str();
     };
 
-    out << std::string(width + 12 * 3, '-') << std::endl
+    out << std::string(width + 12 * 4, '-') << std::endl
         << w1 << printing::make_bold("Total") << w2
         << printing::make_bold(limit(f1_score())) << w2
         << printing::make_bold(limit(precision())) << w2
         << printing::make_bold(limit(recall())) << std::endl
-        << std::string(width + 12 * 3, '-') << std::endl
+        << std::string(width + 12 * 4, '-') << std::endl
         << total_ << " predictions attempted, overall accuracy: " << accuracy()
         << std::endl;
 
