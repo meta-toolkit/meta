@@ -21,3 +21,6 @@ target_link_libraries(meta-parser meta-parser-trees
                                   meta-sequence
                                   meta-util
                                   ${CMAKE_THREAD_LIBS_INIT})
+if(META_HAS_EXPERIMENTAL_FILESYSTEM)
+  target_link_libraries(meta-parser c++experimental)
+endif()

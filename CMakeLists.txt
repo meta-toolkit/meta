@@ -102,8 +102,6 @@ CompilerKludges()
 
 if(NOT META_HAS_EXPERIMENTAL_FILESYSTEM)
   target_include_directories(meta-definitions SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)
-else()
-  target_compile_options(meta-definitions INTERFACE -lc++experimental)
 endif()
 
 target_link_libraries(meta-definitions INTERFACE compiler-kludges)
