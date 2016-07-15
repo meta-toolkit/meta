@@ -136,7 +136,7 @@ void rename_file(const std::string& old_name, const std::string& new_name)
 
 bool make_directory(const std::string& dir_name)
 {
-    return fs::create_directory(dir_name);
+    return fs::create_directories(dir_name);
 }
 
 bool make_directories(const std::string& path)
