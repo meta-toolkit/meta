@@ -30,7 +30,7 @@ void myclass::member(const type&);
 - Prefer `enum class` (strongly typed `enum`s).
 - Prefer no pointer over `unique_ptr` over `shared_ptr`.
 - Do not use `rand()` [deprecated in
-  C++14](www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3841.pdf).
+  C++14](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3841.pdf).
 - Use `#ifndef META_FILE_NAME_H_` for double inclusion guards.
 - `#define` kept to a minimum, and ALL_CAPS_SNAKE if used.
 - Lines should be no longer than 80 characters

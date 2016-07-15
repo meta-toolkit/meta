@@ -15,3 +15,6 @@ add_library(meta-filters alpha_filter.cpp
 target_link_libraries(meta-filters meta-utf
                                    meta-tokenizers
                                    meta-io)
+if(META_HAS_EXPERIMENTAL_FILESYSTEM)
+  target_link_libraries(meta-filters c++experimental)
+endif()

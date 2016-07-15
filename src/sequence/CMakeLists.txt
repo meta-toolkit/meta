@@ -10,6 +10,12 @@ add_library(meta-sequence observation.cpp
                           trellis.cpp
                           io/ptb_parser.cpp)
 target_link_libraries(meta-sequence meta-io meta-utf)
+if(META_HAS_EXPERIMENTAL_FILESYSTEM)
+  target_link_libraries(meta-sequence c++experimental)
+endif()
 
 add_library(meta-greedy-tagger perceptron.cpp)
 target_link_libraries(meta-greedy-tagger meta-sequence meta-io)
+if(META_HAS_EXPERIMENTAL_FILESYSTEM)
+  target_link_libraries(meta-greedy-tagger c++experimental)
+endif()

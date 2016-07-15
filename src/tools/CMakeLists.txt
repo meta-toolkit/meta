@@ -9,3 +9,6 @@ target_link_libraries(top-k meta-index)
 
 add_executable(mph-vocab mph_vocab.cpp)
 target_link_libraries(mph-vocab meta-io meta-util meta-succinct)
+if(META_HAS_EXPERIMENTAL_FILESYSTEM)
+  target_link_libraries(mph-vocab c++experimental)
+endif()

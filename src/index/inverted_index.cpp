@@ -115,6 +115,9 @@ bool inverted_index::valid() const
 void inverted_index::create_index(const cpptoml::table& config,
                                   corpus::corpus& docs)
 {
+    if (filesystem::exists(index_name()))
+	    filesystem::remove_all(index_name());
+
     if (!filesystem::make_directories(index_name()))
         throw exception{"Unable to create index directory: " + index_name()};
 

@@ -1,2 +1,5 @@
 add_executable(compressor-test compressor_test.cpp)
 target_link_libraries(compressor-test meta-io)
+if(META_HAS_EXPERIMENTAL_FILESYSTEM)
+  target_link_libraries(compressor-test c++experimental)
+endif()

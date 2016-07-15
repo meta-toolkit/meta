@@ -198,6 +198,9 @@ void forward_index::load_index()
 void forward_index::create_index(const cpptoml::table& config,
                                  corpus::corpus& docs)
 {
+    if (filesystem::exists(index_name()))
+        filesystem::remove_all(index_name());
+
     if (!filesystem::make_directories(index_name()))
         throw exception{"Unable to create index directory: " + index_name()};
 
