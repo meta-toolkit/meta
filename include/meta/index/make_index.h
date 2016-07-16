@@ -87,8 +87,7 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config,
     }
     else
     {
-        if (!filesystem::exists(idx->index_name()))
-            filesystem::make_directory(idx->index_name());
+        filesystem::remove_all(idx->index_name());
         idx->create_index(config, docs);
     }
 
@@ -127,9 +126,7 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config, Args&&... args)
     }
     else
     {
-        if (!filesystem::exists(idx->index_name()))
-            filesystem::make_directory(idx->index_name());
-
+        filesystem::remove_all(idx->index_name());
         auto docs = corpus::make_corpus(config);
         idx->create_index(config, *docs);
     }
