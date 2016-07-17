@@ -49,6 +49,18 @@ matrix:
             - gcc-5
             - g++-5
 
+    # Linux/GCC 6
+    - os: linux
+      env: COMPILER=gcc GCC_VERSION=5
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *default-packages
+            - gcc-6
+            - g++-6
+
     # Linux/Clang 3.6
     - os: linux
       env: COMPILER=clang CLANG_VERSION=3.6
