@@ -55,7 +55,7 @@ matrix:
 
     # Linux/GCC 6
     - os: linux
-      env: COMPILER=gcc GCC_VERSION=5
+      env: COMPILER=gcc GCC_VERSION=6
       addons:
         apt:
           sources:
