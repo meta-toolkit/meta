@@ -93,7 +93,7 @@ matrix:
       osx_image: xcode7.2
       env: COMPILER=clang
 
-    # OS X/GCC 5
+    # OS X/GCC 6
     - os: osx
       env: COMPILER=gcc
 

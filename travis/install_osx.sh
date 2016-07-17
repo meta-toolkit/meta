@@ -11,9 +11,9 @@ fi
 
 if [ "$COMPILER" == "gcc" ]; then
     brew tap homebrew/versions
-    brew install homebrew/versions/gcc5
-    export CC=gcc-5
-    export CXX=g++-5
+    brew install homebrew/versions/gcc6
+    export CC=gcc-6
+    export CXX=g++-6
 fi
 
 if [ "$COMPILER" == "clang" ]; then
