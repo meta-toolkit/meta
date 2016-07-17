@@ -40,7 +40,7 @@ go_bandit([]() {
     describe("[ir-eval] retrieval metrics", []() {
 
         it("should give results on [0, 1] for all measures", []() {
-            filesystem::remove_all("ceeaus-inv");
+            filesystem::remove_all("ceeaus");
             auto file_cfg = tests::create_config("file");
             auto idx = index::make_index<index::inverted_index>(*file_cfg);
             index::okapi_bm25 ranker;
@@ -156,6 +156,8 @@ go_bandit([]() {
             AssertThat(eval.map(),
                        Is().GreaterThanOrEqualTo(0).And().LessThanOrEqualTo(1));
             AssertThat(eval.gmap(), EqualsWithDelta(0.0, delta));
+
+            filesystem::remove_all("ceeaus");
         });
     });
 

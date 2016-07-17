@@ -11,6 +11,7 @@
 #include <platformstl/filesystem/filesystem_traits.hpp>
 #include <platformstl/filesystem/path.hpp>
 #include <platformstl/filesystem/readdir_sequence.hpp>
+#include <platformstl/filesystem/directory_functions.hpp>
 #else
 #include <experimental/filesystem>
 #endif
@@ -45,6 +46,11 @@ void rename_file(const std::string& old_name, const std::string& new_name)
 bool make_directory(const std::string& dir_name)
 {
     return traits::create_directory(dir_name.c_str());
+}
+
+bool make_directories(const std::string& path)
+{
+    return stlsoft::platformstl_project::create_directory_recurse(path);
 }
 
 bool file_exists(const std::string& filename)
@@ -131,6 +137,11 @@ void rename_file(const std::string& old_name, const std::string& new_name)
 bool make_directory(const std::string& dir_name)
 {
     return fs::create_directory(dir_name);
+}
+
+bool make_directories(const std::string& path)
+{
+    return fs::create_directories(path);
 }
 
 bool file_exists(const std::string& filename)
