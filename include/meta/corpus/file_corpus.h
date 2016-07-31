@@ -58,7 +58,7 @@ class file_corpus : public corpus
     /**
      * @return the metadata schema for this corpus
      */
-    metadata::schema schema() const override;
+    metadata::schema_type schema() const override;
 
   private:
     /// the current document we are on

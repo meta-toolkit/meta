@@ -54,6 +54,13 @@ void rename_file(const std::string& old_name, const std::string& new_name);
 bool make_directory(const std::string& dir_name);
 
 /**
+ * Attempts to create the directory and any other directories in the path
+ * @param path The path to the new directory
+ * @return whether a new directory was created
+ */
+bool make_directories(const std::string& path);
+
+/**
  * @param filename The file to check
  * @return true if the file exists
  */

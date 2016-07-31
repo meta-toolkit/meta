@@ -22,6 +22,8 @@ class graph
 {
   public:
     using adjacency_list = std::vector<std::pair<node_id, Edge>>;
+    using node_type = Node;
+    using edge_type = Edge;
 
     virtual ~graph() = default;
 

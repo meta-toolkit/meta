@@ -53,10 +53,9 @@ go_bandit([]() {
 
     config->insert("dataset", "housing");
     config->insert("corpus", "libsvm.toml");
-    config->insert("forward-index", "housing-fwd");
-    config->insert("inverted-index", "housing-inv");
+    config->insert("index", "housing");
 
-    filesystem::remove_all("housing-fwd");
+    filesystem::remove_all("housing");
     auto f_idx = index::make_index<index::forward_index>(*config);
 
     regression::regression_dataset dataset{
@@ -101,5 +100,5 @@ go_bandit([]() {
     });
 
     f_idx = nullptr;
-    filesystem::remove_all("housing-fwd");
+    filesystem::remove_all("housing");
 });

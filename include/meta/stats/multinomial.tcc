@@ -55,6 +55,12 @@ double multinomial<T>::counts() const
 }
 
 template <class T>
+uint64_t multinomial<T>::unique_events() const
+{
+    return counts_.size();
+}
+
+template <class T>
 template <class Fun>
 void multinomial<T>::each_seen_event(Fun&& fun) const
 {

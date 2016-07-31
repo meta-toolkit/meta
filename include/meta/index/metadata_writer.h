@@ -33,7 +33,7 @@ class metadata_writer
      * @param schema The schema for the metadata we will store
      */
     metadata_writer(const std::string& prefix, uint64_t num_docs,
-                    corpus::metadata::schema schema);
+                    corpus::metadata::schema_type schema);
 
     /**
      * Writes a document's metadata to the database and index.
@@ -59,7 +59,7 @@ class metadata_writer
     std::ofstream db_file_;
 
     /// the schema of the metadata we are writing
-    corpus::metadata::schema schema_;
+    corpus::metadata::schema_type schema_;
 };
 }
 }

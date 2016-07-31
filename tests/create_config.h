@@ -57,8 +57,7 @@ create_config(const std::string& corpus_type, bool multi = false) {
     table->insert("dataset", "ceeaus");
     table->insert("corpus", corpus_type + ".toml");
     table->insert("encoding", "shift_jis");
-    table->insert("forward-index", "ceeaus-fwd");
-    table->insert("inverted-index", "ceeaus-inv");
+    table->insert("index", "ceeaus");
 
     auto anas = cpptoml::make_table_array();
     auto ana = cpptoml::make_table();

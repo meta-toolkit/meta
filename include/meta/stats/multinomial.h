@@ -76,6 +76,11 @@ class multinomial
     double counts() const;
 
     /**
+     * @return the number of unique event values that have been observed
+     */
+    uint64_t unique_events() const;
+
+    /**
      * Runs a function for each observed event for this distribution. Note
      * that this does **not** include the prior, only events that have been
      * explicitly observed with e.g. the increment() function.

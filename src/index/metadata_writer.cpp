@@ -12,7 +12,7 @@ namespace index
 {
 
 metadata_writer::metadata_writer(const std::string& prefix, uint64_t num_docs,
-                                 corpus::metadata::schema schema)
+                                 corpus::metadata::schema_type schema)
     : seek_pos_{prefix + "/metadata.index", num_docs},
       byte_pos_{0},
       db_file_{prefix + "/metadata.db", std::ios::binary},

@@ -13,6 +13,7 @@ namespace index
 {
 
 const util::string_view dirichlet_prior::id = "dirichlet-prior";
+const constexpr float dirichlet_prior::default_mu;
 
 dirichlet_prior::dirichlet_prior(float mu) : mu_{mu}
 {

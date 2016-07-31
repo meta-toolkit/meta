@@ -43,21 +43,18 @@ void batch_train(Index& idx, Classifier& cls,
 {
     using diff_type = decltype(training_set.begin())::difference_type;
 
-    auto docs = training_set;
-    std::mt19937 gen(std::random_device{}());
-    std::shuffle(docs.begin(), docs.end(), gen);
-
-    // integer-math ceil(docs.size() / batch_size)
-    auto num_batches = (docs.size() + batch_size - 1) / batch_size;
+    // integer-math ceil(training_set.size() / batch_size)
+    auto num_batches = (training_set.size() + batch_size - 1) / batch_size;
     for (uint64_t i = 0; i < num_batches; ++i)
     {
         LOG(progress) << "Training batch " << i + 1 << "/" << num_batches
                       << '\n' << ENDLG;
-        auto end = std::min<uint64_t>((i + 1) * batch_size, docs.size());
+        auto end
+            = std::min<uint64_t>((i + 1) * batch_size, training_set.size());
 
         classify::multiclass_dataset batch{
-            idx, docs.begin() + static_cast<diff_type>(i * batch_size),
-            docs.begin() + static_cast<diff_type>(end)};
+            idx, training_set.begin() + static_cast<diff_type>(i * batch_size),
+            training_set.begin() + static_cast<diff_type>(end)};
         cls.train(batch);
     }
     LOG(progress) << '\n' << ENDLG;

@@ -10,8 +10,7 @@ query-path = "../queries.txt" # create this file
 
 dataset = "ceeaus"
 corpus = "line.toml" # located inside dataset folder
-forward-index = "ceeaus-fwd"
-inverted-index = "ceeaus-inv"
+index = "ceeaus"
 indexer-ram-budget = 1024 # **estimated** RAM budget for indexing in MB
                           # always set this lower than your physical RAM!
 # indexer-num-threads = 8 # default value is system thread concurrency
@@ -19,7 +18,7 @@ indexer-ram-budget = 1024 # **estimated** RAM budget for indexing in MB
 [[analyzers]]
 method = "ngram-word"
 ngram = 1
-filter = "default-chain"
+filter = "default-unigram-chain"
 
 [ranker]
 method = "bm25"
@@ -32,7 +31,6 @@ method = "one-vs-all"
 [classifier.base]
 method = "sgd"
 loss = "hinge"
-prefix = "sgd-model"
 
 [lda]
 inference = "gibbs"
@@ -88,3 +86,11 @@ test-sections = [23, 23]
 [language-model]
 arpa-file = "../data/english-sentences.arpa"
 binary-file-prefix = "english-sentences-"
+
+[embeddings]
+prefix = "word-embeddings"
+filter = [{type = "icu-tokenizer"}, {type = "lowercase"}]
+vector-size = 50
+[embeddings.vocab]
+min-count = 10
+max-size = 500000
