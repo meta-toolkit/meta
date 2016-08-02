@@ -16,7 +16,7 @@ namespace corpus
 {
 
 metadata_parser::metadata_parser(const std::string& filename,
-                                 metadata::schema schema)
+                                 metadata::schema_type schema)
     : infile_{filename}, schema_{std::move(schema)}
 {
     // nothing
@@ -77,7 +77,7 @@ std::vector<metadata::field> metadata_parser::next()
     return mdata;
 }
 
-const metadata::schema& metadata_parser::schema() const
+const metadata::schema_type& metadata_parser::schema() const
 {
     return schema_;
 }

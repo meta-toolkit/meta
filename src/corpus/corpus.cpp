@@ -25,7 +25,7 @@ std::vector<metadata::field> corpus::next_metadata()
     return mdata_parser_->next();
 }
 
-metadata::schema corpus::schema() const
+metadata::schema_type corpus::schema() const
 {
     auto schema = mdata_parser_->schema();
     if (store_full_text())

@@ -5,6 +5,10 @@ language: cpp
 
 sudo: false
 
+cache:
+  directories:
+    deps/icu
+
 addons:
   apt:
     packages: &default-packages
@@ -49,6 +53,18 @@ matrix:
             - gcc-5
             - g++-5
 
+    # Linux/GCC 6
+    - os: linux
+      env: COMPILER=gcc GCC_VERSION=6
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *default-packages
+            - gcc-6
+            - g++-6
+
     # Linux/Clang 3.6
     - os: linux
       env: COMPILER=clang CLANG_VERSION=3.6
@@ -81,7 +97,7 @@ matrix:
       osx_image: xcode7.2
       env: COMPILER=clang
 
-    # OS X/GCC 5
+    # OS X/GCC 6
     - os: osx
       env: COMPILER=gcc
 

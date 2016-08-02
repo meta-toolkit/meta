@@ -78,7 +78,7 @@ uint64_t file_corpus::size() const
     return docs_.size();
 }
 
-metadata::schema file_corpus::schema() const
+metadata::schema_type file_corpus::schema() const
 {
     auto schema = corpus::schema();
     schema.insert(schema.begin(),

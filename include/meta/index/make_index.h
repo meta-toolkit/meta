@@ -61,22 +61,10 @@ template <class Index, class... Args>
 std::shared_ptr<Index> make_index(const cpptoml::table& config,
                                   corpus::corpus& docs, Args&&... args)
 {
-    // check if we have paths specified for either kind of index
-    if (!(config.contains("forward-index")
-          && config.contains("inverted-index")))
+    if (!config.contains("index"))
     {
         throw typename Index::exception{
-            "forward-index or inverted-index missing from configuration file"};
-    }
-
-    // make sure that the index names are different!
-    auto fwd_name = config.get_as<std::string>("forward-index");
-    auto inv_name = config.get_as<std::string>("inverted-index");
-
-    if (*fwd_name == *inv_name)
-    {
-        throw typename Index::exception{
-            "forward and inverted index names must be different!"};
+            "index name missing from configuration file"};
     }
 
     // below is needed so that make_shared can find a public ctor to invoke
@@ -88,6 +76,7 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config,
             // nothing
         }
     };
+
     auto idx = std::make_shared<make_shared_enabler>(
         config, std::forward<Args>(args)...);
 
@@ -98,8 +87,7 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config,
     }
     else
     {
-        if (!filesystem::exists(idx->index_name()))
-            filesystem::make_directory(idx->index_name());
+        filesystem::remove_all(idx->index_name());
         idx->create_index(config, docs);
     }
 
@@ -112,23 +100,10 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config,
 template <class Index, class... Args>
 std::shared_ptr<Index> make_index(const cpptoml::table& config, Args&&... args)
 {
-
-    // check if we have paths specified for either kind of index
-    if (!(config.contains("forward-index")
-          && config.contains("inverted-index")))
+    if (!config.contains("index"))
     {
         throw typename Index::exception{
-            "forward-index or inverted-index missing from configuration file"};
-    }
-
-    // make sure that the index names are different!
-    auto fwd_name = config.get_as<std::string>("forward-index");
-    auto inv_name = config.get_as<std::string>("inverted-index");
-
-    if (*fwd_name == *inv_name)
-    {
-        throw typename Index::exception{
-            "forward and inverted index names must be different!"};
+            "index name missing from configuration file"};
     }
 
     // below is needed so that make_shared can find a public ctor to invoke
@@ -140,6 +115,7 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config, Args&&... args)
             // nothing
         }
     };
+
     auto idx = std::make_shared<make_shared_enabler>(
         config, std::forward<Args>(args)...);
 
@@ -150,9 +126,7 @@ std::shared_ptr<Index> make_index(const cpptoml::table& config, Args&&... args)
     }
     else
     {
-        if (!filesystem::exists(idx->index_name()))
-            filesystem::make_directory(idx->index_name());
-
+        filesystem::remove_all(idx->index_name());
         auto docs = corpus::make_corpus(config);
         idx->create_index(config, *docs);
     }

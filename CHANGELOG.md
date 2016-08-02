@@ -1,3 +1,57 @@
+# [v2.3.0][2.3.0]
+## New features
+- Forward and inverted indexes are now stored in one directory. **To make
+    use of your existing indexes, you will need to move their
+    directories.** For example, a configuration that used to look like the
+    following
+
+    ```toml
+    dataset = "20newsgroups"
+    corpus = "line.toml"
+    forward-index = "20news-fwd"
+    inverted-index = "20news-inv"
+    ```
+
+    will now look like the following
+
+    ```toml
+    dataset = "20newsgroups"
+    corpus = "line.toml"
+    index = "20news-index"
+    ```
+
+    and your folder structure should now look like
+
+    ```
+    20news-index
+    ├── fwd
+    └── inv
+    ```
+
+    You can do this by simply moving the old folders around like so:
+
+    ```bash
+    mkdir 20news-index
+    mv 20news-fwd 20news-index/fwd
+    mv 20news-inv 20news-index/inv
+    ```
+- `stats::multinomial` now can report the number of unique event types
+    counted (`unique_events()`)
+- `std::vector` can now be hashed via `hash_append`.
+
+## Bug fixes
+- Fix rounding bug in language model-based rankers. This bug caused
+    severely degraded performance for these rankers with short queries. The
+    unit tests have been improved to prevent such a regression in the
+    future.
+
+## Enhancements
+- The bundled ICU version has been bumped to ICU 57.1.
+- MeTA will now attempt to build its own version of ICU on Windows if it
+    fails to find a suitable ICU installed.
+- CI support for GCC 6.x was added for all three major platforms.
+- CI support also uses a fixed version of LLVM/libc++ instead of trunk.
+
 # [v2.2.0][2.2.0]
 ## New features
 - Parallelized versions of PageRank and Personalized PageRank have been
@@ -381,7 +435,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.2.0...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.3.0...develop
+[2.3.0]: https://github.com/meta-toolkit/meta/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/meta-toolkit/meta/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/meta-toolkit/meta/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/meta-toolkit/meta/compare/v2.0.0...v2.0.1

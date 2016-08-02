@@ -4,8 +4,8 @@
  */
 
 #include "bandit/bandit.h"
-#include "meta/corpus/document.h"
 #include "create_config.h"
+#include "meta/corpus/document.h"
 #include "meta/index/ranker/all.h"
 
 using namespace bandit;
@@ -15,6 +15,7 @@ namespace {
 
 template <class Ranker, class Index>
 void test_rank(Ranker& r, Index& idx, const std::string& encoding) {
+    // exhaustive search for each document
     for (size_t i = 0; i < idx.num_docs(); ++i) {
         auto d_id = idx.docs()[i];
         auto path = idx.doc_path(d_id);
@@ -33,6 +34,20 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding) {
                        EqualsWithDelta(ranking[1].score, 0.0001));
         }
     }
+
+    // sanity checks for simple query
+    corpus::document query;
+    query.content("character");
+
+    auto ranking = r.score(idx, query);
+    // ensure there is diversity in the top 10 documents
+    AssertThat(ranking[0].score, Is().GreaterThan(ranking.back().score));
+
+    // check for sorted-ness of ranking
+    for (uint64_t i = 1; i < ranking.size(); ++i) {
+        AssertThat(ranking[i - 1].score,
+                   Is().GreaterThanOrEqualTo(ranking[i].score));
+    }
 }
 }
 
@@ -41,7 +56,7 @@ go_bandit([]() {
     describe("[rankers]", []() {
 
         auto config = tests::create_config("file");
-        filesystem::remove_all("ceeaus-inv");
+        filesystem::remove_all("ceeaus");
         auto idx = index::make_index<index::inverted_index>(*config);
         std::string encoding = "utf-8";
         if (auto enc = config->get_as<std::string>("encoding"))
@@ -73,6 +88,6 @@ go_bandit([]() {
         });
 
         idx = nullptr;
-        filesystem::remove_all("ceeaus-inv");
+        filesystem::remove_all("ceeaus");
     });
 });

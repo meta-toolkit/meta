@@ -65,7 +65,7 @@ document libsvm_corpus::next()
     return doc;
 }
 
-metadata::schema libsvm_corpus::schema() const
+metadata::schema_type libsvm_corpus::schema() const
 {
     auto schema = corpus::schema();
     if (lbl_type_ == label_type::REGRESSION)

@@ -14,6 +14,7 @@ namespace index
 {
 
 const util::string_view absolute_discount::id = "absolute-discount";
+const constexpr float absolute_discount::default_delta;
 
 absolute_discount::absolute_discount(float delta) : delta_{delta}
 {

@@ -19,7 +19,7 @@ const util::string_view language_model_ranker::id = "language-model";
 float language_model_ranker::score_one(const score_data& sd)
 {
     float ps = smoothed_prob(sd);
-    float pc = sd.corpus_term_count / sd.total_terms;
+    float pc = static_cast<float>(sd.corpus_term_count) / sd.total_terms;
     return sd.query_term_weight
            * fastapprox::fastlog(ps / (doc_constant(sd) * pc));
 }
