@@ -41,7 +41,7 @@ class selector_factory_exception : public std::runtime_error
 class selector_factory
     : public util::factory<selector_factory, feature_selector,
                            const cpptoml::table&,
-                           std::shared_ptr<index::forward_index>>
+						   const classify::multiclass_dataset_view&>
 {
     friend base_factory;
 
@@ -63,7 +63,7 @@ class selector_factory
  *
  * @param config The configuration table that specifies the configuration
  * for the selector to be created
- * @param idx The forward_index to be passed to the selector being
+ * @param docs The dataset view to be passed to the selector being
  * created
  *
  * @return a unique_ptr to the selector created from the given
@@ -71,7 +71,7 @@ class selector_factory
  */
 std::unique_ptr<feature_selector>
     make_selector(const cpptoml::table& config,
-                  std::shared_ptr<index::forward_index> idx);
+                  const classify::multiclass_dataset_view& docs);
 
 /**
  * Factory method for creating a feature selector. This should be specialized if
@@ -81,7 +81,7 @@ std::unique_ptr<feature_selector>
 template <class Selector>
 std::unique_ptr<feature_selector>
     make_selector(const cpptoml::table& config,
-                  std::shared_ptr<index::forward_index> idx)
+                  const classify::multiclass_dataset_view& docs)
 {
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)
@@ -92,7 +92,7 @@ std::unique_ptr<feature_selector>
         throw selector_factory_exception{
             "feature selection method required in [features] table"};
 
-    return make_unique<Selector>(*prefix + "." + *method, std::move(idx));
+    return make_unique<Selector>(*prefix + "." + *method, docs);
 }
 
 /**

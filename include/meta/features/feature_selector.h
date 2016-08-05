@@ -1,6 +1,7 @@
 /**
  * @file feature_selector.h
  * @author Sean Massung
+ * @author Siddharth Shukramani
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
  * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
@@ -15,8 +16,11 @@
 #include <memory>
 
 #include "cpptoml.h"
-#include "meta/index/forward_index.h"
+#include "meta/classify/multiclass_dataset_view.h"
+#include "meta/index/disk_index.h"
 #include "meta/util/disk_vector.h"
+#include "meta/stats/multinomial.h"
+#include "meta/util/sparse_vector.h"
 
 namespace meta
 {
@@ -41,12 +45,14 @@ namespace features
 class feature_selector
 {
   public:
+	using dataset_view_type = classify::multiclass_dataset_view;
+	
     /**
-     * @param config
-     * @param idx
+     * @param prefix
+     * @param docs
      */
     feature_selector(const std::string& prefix,
-                     std::shared_ptr<index::forward_index> idx);
+                     const dataset_view_type& docs);
 
     /**
      * Default destructor.
@@ -55,9 +61,10 @@ class feature_selector
 
     /**
      * Prints a summary of the top k features for each class.
+     * @param idx
      * @param k
      */
-    virtual void print_summary(uint64_t k = 20) const;
+    virtual void print_summary(std::shared_ptr<index::disk_index> idx, uint64_t k = 20) const;
 
     /**
      * @param term
@@ -83,56 +90,58 @@ class feature_selector
     /**
      * Scores a (label, term) pair in the index according to the derived class's
      * feature selection method
-     * @param lid
+     * @param lbl
      * @param tid
      */
-    virtual double score(label_id lid, term_id tid) const = 0;
+    virtual double score(class_label lbl, term_id tid) const = 0;
 
     /**
-     * @return the probability of a specific term in the index
-     */
-    double prob_term(term_id id) const;
+     * @param tid
+	 * @return the probability of a specific term in the index
+	 */
+    double prob_term(term_id tid) const;
 
     /**
+	 * @param lbl
      * @return the probability of a specific class in the index
      */
-    double prob_class(label_id id) const;
+    double prob_class(class_label lbl) const;
 
     /**
      * Probability of term occuring in class
      * \f$ P(t, c) = \frac{c(t, c)}{T} \f$
-     * @param term
-     * @param label
+     * @param tid
+     * @param lbl
      * @return P(t, c)
      */
-    double term_and_class(term_id term, label_id label) const;
+    double term_and_class(term_id tid, class_label lbl) const;
 
     /**
      * Probability of not seeing a term and a class:
      * \f$ P(t', c) = P(c) - P(t, c) \f$
-     * @param term
-     * @param label
+     * @param tid
+     * @param lbl
      * @return P(t', c)
      */
-    double not_term_and_class(term_id term, label_id label) const;
+    double not_term_and_class(term_id tid, class_label lbl) const;
 
     /**
      * Probability of term not occuring in a class:
      * \f$ P(t, c') = P(t) - P(t, c) \f$
-     * @param term
-     * @param label
+     * @param tid
+     * @param lbl
      * @return P(t, c')
      */
-    double term_and_not_class(term_id term, label_id label) const;
+    double term_and_not_class(term_id tid, class_label lbl) const;
 
     /**
      * Probability not in class c in which term t does not occur:
      * \f$ P(t', c') = 1 - P(t, c) - P(t', c) - P(t, c') \f$
-     * @param term
-     * @param label
+     * @param tid
+     * @param lbl
      * @return P(t', c')
      */
-    double not_term_and_not_class(term_id term, label_id label) const;
+    double not_term_and_not_class(term_id tid, class_label lbl) const;
 
   private:
     /**
@@ -159,7 +168,7 @@ class feature_selector
     /// they need to call the init
     friend std::unique_ptr<feature_selector>
         make_selector(const cpptoml::table& config,
-                      std::shared_ptr<index::forward_index> idx);
+                      const dataset_view_type& docs);
 
     /**
      * Calculates the probabilities of terms and classes given the current
@@ -175,20 +184,20 @@ class feature_selector
     /// Where the feature selection data is stored
     const std::string prefix_;
 
-    /// The forward_index this feature selection is being performed on
-    std::shared_ptr<index::forward_index> idx_;
+    /// The dataset view this feature selection is being performed on
+    dataset_view_type docs_;
 
     /// Whether or not a term_id is currently selected
     util::disk_vector<bool> selected_;
 
     /// P(t) in the entire collection, indexed by term_id
-    std::vector<double> term_prob_;
+	stats::multinomial<term_id> term_prob_;
 
-    /// P(c) in the collection, indexed by label_id
-    std::vector<double> class_prob_;
+    /// P(c) in the collection, indexed by label
+	stats::multinomial<class_label> class_prob_;
 
     /// P(c,t) indexed by [label_id][term_id]
-    std::vector<std::vector<double>> co_occur_;
+	stats::multinomial<std::pair<class_label, term_id>> co_occur_;
 };
 
 /**

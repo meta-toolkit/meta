@@ -29,7 +29,7 @@ selector_factory::selector_factory()
 
 std::unique_ptr<feature_selector>
 make_selector(const cpptoml::table& config,
-              std::shared_ptr<index::forward_index> idx)
+              const classify::multiclass_dataset_view& docs)
 {
     auto table = config.get_table("features");
     if (!table)
@@ -48,10 +48,11 @@ make_selector(const cpptoml::table& config,
     auto features_per_class = static_cast<uint64_t>(
         table->get_as<int64_t>("features-per-class").value_or(20));
 
-    auto selector
-        = selector_factory::get().create(*method, *table, std::move(idx));
-    selector->init(features_per_class); // make_selector is a friend
-    return selector;
+    auto selector = selector_factory::get().create(*method, *table, docs);
+    
+	selector->init(features_per_class); // make_selector is a friend
+    
+	return selector;
 }
 }
 }

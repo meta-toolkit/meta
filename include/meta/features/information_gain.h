@@ -34,10 +34,10 @@ class information_gain : public feature_selector
     /**
      * Scores the (label, term) pair according to this feature selection
      * metric.
-     * @param lid
+     * @param lbl
      * @param tid
      */
-    virtual double score(label_id lid, term_id tid) const override;
+    virtual double score(class_label lbl, term_id tid) const override;
 };
 }
 }

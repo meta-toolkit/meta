@@ -15,27 +15,35 @@ using namespace meta;
 namespace {
 
 template <class Index>
-void test_method(Index& idx, const std::string& id) {
+void test_method(Index& idx, const std::string& method_id) {
     auto config = cpptoml::make_table();
     auto fcfg = cpptoml::make_table();
-    fcfg->insert("method", id);
+    fcfg->insert("method", method_id);
     fcfg->insert("prefix", "test-features");
     config->insert("features", fcfg);
 
-    auto selector = features::make_selector(*config, idx);
+	classify::multiclass_dataset dset{idx};
+	classify::multiclass_dataset_view dset_vw(dset);
+
+    auto selector = features::make_selector(*config, dset_vw);
     selector->select(20);
     selector->select(50);
     selector->select_percent(0.05);
     selector->select_percent(0.10);
 
-    auto t_id = idx->get_term_id("china"); // this term should be selected
-    AssertThat(selector->selected(t_id), IsTrue());
+	auto tid = idx->get_term_id("china"); // this term should be selected	
 
-    // CEEAUS has three classes
-    AssertThat(filesystem::file_exists("test-features." + id + ".1"), IsTrue());
-    AssertThat(filesystem::file_exists("test-features." + id + ".2"), IsTrue());
-    AssertThat(filesystem::file_exists("test-features." + id + ".3"), IsTrue());
-    AssertThat(filesystem::file_exists("test-features." + id + ".selected"),
+	AssertThat(selector->selected(tid), IsTrue());
+
+	std::for_each(dset_vw.labels_begin(), dset_vw.labels_end(),
+					[&](const std::pair<const class_label, label_id>& lbl)
+					{
+						AssertThat(filesystem::file_exists("test-features." + 
+									method_id + "." + static_cast<std::string>(lbl.first)),
+									IsTrue());
+					});
+	
+	AssertThat(filesystem::file_exists("test-features." + method_id + ".selected"),
                IsTrue());
 }
 }
@@ -43,8 +51,8 @@ void test_method(Index& idx, const std::string& id) {
 go_bandit([]() {
     auto line_cfg = tests::create_config("line");
     auto f_idx = index::make_index<index::memory_forward_index>(*line_cfg);
-
-    // run each test twice to ensure files can be read from disk
+	
+	// run each test twice to ensure files can be read from disk
     describe("[feature-selection]", [&]() {
 
         it("should implement chi square", [&]() {
@@ -70,10 +78,10 @@ go_bandit([]() {
 
     f_idx = nullptr;
     filesystem::remove_all("ceeaus");
-    for (const std::string& id :
+    for (const std::string& method_id :
          {"chi-square", "info-gain", "corr-coef", "odds-ratio"}) {
-        for (const std::string& suffix : {"1", "2", "3", "selected"}) {
-            filesystem::remove_all("test-features." + id + "." + suffix);
+        for (const std::string& suffix : {"chinese", "english", "japanese", "selected"}) {
+            filesystem::remove_all("test-features." + method_id + "." + suffix);
         }
     }
 });

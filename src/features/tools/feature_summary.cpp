@@ -13,8 +13,6 @@
 #include "meta/features/selector_factory.h"
 #include "meta/index/forward_index.h"
 #include "meta/logging/logger.h"
-#include "meta/parser/analyzers/tree_analyzer.h"
-#include "meta/sequence/analyzers/ngram_pos_analyzer.h"
 #include "meta/util/shim.h"
 
 using namespace meta;
@@ -29,10 +27,6 @@ int main(int argc, char* argv[])
 
     logging::set_cerr_logging();
 
-    // Register additional analyzers
-    parser::register_analyzers();
-    sequence::register_analyzers();
-
     auto config = cpptoml::parse_file(argv[1]);
     auto feature_config = config->get_table("features");
     if (!feature_config)
@@ -42,7 +36,12 @@ int main(int argc, char* argv[])
     }
 
     auto f_idx = index::make_index<index::memory_forward_index>(*config);
-    auto selector = features::make_selector(*config, f_idx);
-    selector->select(100);
-    selector->print_summary(10);
+    
+	classify::multiclass_dataset dset{f_idx};
+	classify::multiclass_dataset_view dset_vw(dset);
+
+	auto selector = features::make_selector(*config, dset_vw);
+    
+	selector->select(100);
+    selector->print_summary(f_idx, 10);
 }
