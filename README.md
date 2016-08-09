@@ -17,6 +17,7 @@ about MeTA!
 - [Intro](#intro)
     - [Documentation](#documentation)
     - [Tutorials](#tutorials)
+    - [Citing](#citing)
 - [Project Setup](#project-setup)
     - [Mac OS X](#mac-os-x-build-guide)
     - [Ubuntu](#ubuntu-build-guide)
@@ -51,6 +52,25 @@ Doxygen documentation can be found [here][doxygen].
 
 We have walkthroughs for a few different parts of MeTA on the
 [MeTA homepage][meta-website].
+
+## Citing
+
+If you used MeTA in your research, we would greatly appreciate a citation for
+our ACL demo paper:
+
+```latex
+@InProceedings{meta-toolkit,
+  author    = {Massung, Sean and Geigle, Chase and Zhai, Cheng{X}iang},
+  title     = {{MeTA: A Unified Toolkit for Text Retrieval and Analysis}},
+  booktitle = {Proceedings of ACL-2016 System Demonstrations},
+  month     = {August},
+  year      = {2016},
+  address   = {Berlin, Germany},
+  publisher = {Association for Computational Linguistics},
+  pages     = {91--96},
+  url       = {http://anthology.aclweb.org/P16-4016}
+}
+```
 
 # Project setup
 
