@@ -13,6 +13,8 @@
 #include "meta/features/selector_factory.h"
 #include "meta/index/forward_index.h"
 #include "meta/logging/logger.h"
+#include "meta/parser/analyzers/tree_analyzer.h"
+#include "meta/sequence/analyzers/ngram_pos_analyzer.h"
 #include "meta/util/shim.h"
 
 using namespace meta;
@@ -26,6 +28,10 @@ int main(int argc, char* argv[])
     }
 
     logging::set_cerr_logging();
+
+	// Register additional analyzers
+	parser::register_analyzers();
+	sequence::register_analyzers();
 
     auto config = cpptoml::parse_file(argv[1]);
     auto feature_config = config->get_table("features");

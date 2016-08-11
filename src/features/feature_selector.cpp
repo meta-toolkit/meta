@@ -18,7 +18,7 @@ namespace features
 {
 feature_selector::feature_selector(const std::string& prefix,
                                    const dataset_view_type& docs)
-    : prefix_{prefix + ""},
+    : prefix_{prefix},
       docs_{docs},
       selected_{prefix_ + ".selected", docs_.total_features()}
 {
@@ -26,14 +26,14 @@ feature_selector::feature_selector(const std::string& prefix,
 }
 
 void feature_selector::init(uint64_t features_per_class)
-{
-    term_prob_.clear();
+{	
+	term_prob_.clear();
 	class_prob_.clear();
 	co_occur_.clear();
-		
+
 	calc_probs();
-    score_all();
-    select(features_per_class);
+	score_all();
+	select(features_per_class);
 }
 
 void feature_selector::score_all()
@@ -72,7 +72,9 @@ void feature_selector::score_all()
 							return a.second > b.second;
 						});
 
-			std::ofstream out{prefix_ + "." + static_cast<std::string>(c_scores.first), std::ios::binary};
+			std::ofstream out{prefix_ + "." + 
+							  static_cast<std::string>(c_scores.first),
+							  std::ios::binary};
 
 			for (auto& score : c_scores.second)
 			{
@@ -93,7 +95,9 @@ void feature_selector::select(uint64_t features_per_class /* = 20 */)
 	
 	class_prob_.each_seen_event([&](const class_label& lbl)
 	{
-		std::ifstream in{prefix_ + "." + static_cast<std::string>(lbl), std::ios::binary};
+		std::ifstream in{prefix_ + "." +
+						 static_cast<std::string>(lbl),
+						 std::ios::binary};
 		
 		for (uint64_t i = 0; i < features_per_class; ++i)
         {	
@@ -117,7 +121,7 @@ void feature_selector::select_percent(double p /* = 0.05 */)
 
     double num_features = p * term_prob_.unique_events();
     // truncate to int
-    auto per_class = static_cast<uint64_t>(num_features / class_prob_.unique_events());
+    auto per_class = static_cast<uint64_t>(num_features/class_prob_.unique_events());
 	
 	select(per_class);
 }
@@ -148,7 +152,8 @@ void feature_selector::calc_probs()
 	prog.end();
 }
 
-void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx, uint64_t k /* = 20 */) const
+void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx, 
+									 uint64_t k /* = 20 */) const
 {
     term_id tid;
     double score;	
@@ -161,7 +166,8 @@ void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx, uin
                   << "===============================" << std::endl;
 
         // read (term_id, score) pairs
-		std::ifstream in{prefix_ + "." + static_cast<std::string>(lbl), std::ios::binary};
+		std::ifstream in{prefix_ + "." + static_cast<std::string>(lbl),
+						 std::ios::binary};
 		
 		for (uint64_t i = 0; i < k; ++i)
         {
