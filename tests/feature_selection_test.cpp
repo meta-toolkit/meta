@@ -8,6 +8,8 @@
 #include "meta/features/feature_selector.h"
 #include "meta/features/selector_factory.h"
 #include "meta/features/all.h"
+#include "meta/classify/multiclass_dataset.h"
+#include "meta/classify/multiclass_dataset_view.h"
 
 using namespace bandit;
 using namespace meta;

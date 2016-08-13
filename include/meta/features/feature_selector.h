@@ -16,11 +16,11 @@
 #include <memory>
 
 #include "cpptoml.h"
-#include "meta/classify/multiclass_dataset_view.h"
 #include "meta/index/disk_index.h"
 #include "meta/util/disk_vector.h"
 #include "meta/stats/multinomial.h"
 #include "meta/util/sparse_vector.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {
@@ -45,14 +45,11 @@ namespace features
 class feature_selector
 {
   public:
-	using dataset_view_type = classify::multiclass_dataset_view;
-	
     /**
      * @param prefix
-     * @param docs
+     * @param total_features
      */
-    feature_selector(const std::string& prefix,
-                     const dataset_view_type& docs);
+    feature_selector(const std::string& prefix, uint64_t total_features);
 
     /**
      * Default destructor.
@@ -64,7 +61,8 @@ class feature_selector
      * @param idx
      * @param k
      */
-    virtual void print_summary(std::shared_ptr<index::disk_index> idx, uint64_t k = 20) const;
+    virtual void print_summary(std::shared_ptr<index::disk_index> idx,
+							   uint64_t k = 20) const;
 
     /**
      * @param term
@@ -162,19 +160,55 @@ class feature_selector
      * implemented by deriving classes.
      * @param features_per_class
      */
-    void init(uint64_t features_per_class);
+	template <class LabeledDatasetContainer>
+    void init(const LabeledDatasetContainer& docs, uint64_t features_per_class)
+	{
+		term_prob_.clear();
+		class_prob_.clear();
+		co_occur_.clear();
 
-    /// friend the factory function used to create feature_selectors, since
+		calc_probs(docs);
+		score_all();
+		select(features_per_class);
+	}
+
+	/// friend the factory function used to create feature_selectors, since
     /// they need to call the init
+	template <class LabeledDatasetContainer>
     friend std::unique_ptr<feature_selector>
         make_selector(const cpptoml::table& config,
-                      const dataset_view_type& docs);
+                      const LabeledDatasetContainer& docs);
 
     /**
      * Calculates the probabilities of terms and classes given the current
      * index.
      */
-    void calc_probs();
+    template <class LabeledDatasetContainer>
+	void calc_probs(const LabeledDatasetContainer& docs)
+	{
+		uint64_t num_processed = 0;
+
+		printing::progress prog{" > Calculating feature probs: ", docs.size()};
+
+		for (const auto& instance : docs)
+		{
+			prog(++num_processed);
+
+			class_label lbl{docs.label(instance)};
+
+			class_prob_.increment(lbl, 1);
+
+			for (const auto& count : instance.weights)
+			{
+				term_id tid{count.first};
+
+				term_prob_.increment(tid, count.second);
+				co_occur_.increment(std::make_pair(lbl, tid), count.second);
+			}
+		}
+
+		prog.end();
+	}
 
     /**
      * Calculates the feature score for each (label, term) pair.
@@ -182,13 +216,10 @@ class feature_selector
     void score_all();
 
     /// Where the feature selection data is stored
-    const std::string prefix_;
-
-    /// The dataset view this feature selection is being performed on
-    dataset_view_type docs_;
+    const std::string prefix_; 
 
     /// Whether or not a term_id is currently selected
-    util::disk_vector<bool> selected_;
+	util::disk_vector<bool> selected_;
 
     /// P(t) in the entire collection, indexed by term_id
 	stats::multinomial<term_id> term_prob_;

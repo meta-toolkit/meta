@@ -15,7 +15,7 @@ namespace features
 template <class Selector>
 void selector_factory::reg()
 {
-    add(Selector::id, make_selector<Selector>);
+    add(Selector::id, make_factory_selector<Selector>);
 }
 
 selector_factory::selector_factory()
@@ -25,34 +25,6 @@ selector_factory::selector_factory()
     reg<chi_square>();
     reg<correlation_coefficient>();
     reg<odds_ratio>();
-}
-
-std::unique_ptr<feature_selector>
-make_selector(const cpptoml::table& config,
-              const classify::multiclass_dataset_view& docs)
-{
-    auto table = config.get_table("features");
-    if (!table)
-        throw selector_factory_exception{
-            "[features] table missing from config file"};
-
-    auto prefix = table->get_as<std::string>("prefix");
-    if (!prefix)
-        throw selector_factory_exception{"no prefix in [features] table"};
-
-    auto method = table->get_as<std::string>("method");
-    if (!method)
-        throw selector_factory_exception{
-            "feature selection method required in [features] table"};
-
-    auto features_per_class = static_cast<uint64_t>(
-        table->get_as<int64_t>("features-per-class").value_or(20));
-
-    auto selector = selector_factory::get().create(*method, *table, docs);
-    
-	selector->init(features_per_class); // make_selector is a friend
-    
-	return selector;
 }
 }
 }

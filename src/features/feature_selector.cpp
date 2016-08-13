@@ -7,33 +7,19 @@
 #include <fstream>
 #include <iostream>
 #include "meta/features/feature_selector.h"
-#include "meta/io/filesystem.h"
 #include "meta/io/packed.h"
 #include "meta/parallel/parallel_for.h"
-#include "meta/util/progress.h"
 
 namespace meta
 {
 namespace features
 {
 feature_selector::feature_selector(const std::string& prefix,
-                                   const dataset_view_type& docs)
+                                   uint64_t total_features)
     : prefix_{prefix},
-      docs_{docs},
-      selected_{prefix_ + ".selected", docs_.total_features()}
+      selected_{prefix_ + ".selected", total_features}
 {
     // nothing
-}
-
-void feature_selector::init(uint64_t features_per_class)
-{	
-	term_prob_.clear();
-	class_prob_.clear();
-	co_occur_.clear();
-
-	calc_probs();
-	score_all();
-	select(features_per_class);
 }
 
 void feature_selector::score_all()
@@ -124,32 +110,6 @@ void feature_selector::select_percent(double p /* = 0.05 */)
     auto per_class = static_cast<uint64_t>(num_features/class_prob_.unique_events());
 	
 	select(per_class);
-}
-
-void feature_selector::calc_probs()
-{
-    uint64_t num_processed = 0;
-
-	printing::progress prog{" > Calculating feature probs: ", docs_.size()}; 
-
-	for (const auto& instance : docs_)
-	{
-		prog(++num_processed);
-
-		class_label lbl{docs_.label(instance)};
-		
-		class_prob_.increment(lbl, 1);
-		
-		for (const auto& count : instance.weights)
-		{
-			term_id tid{count.first};
-
-			term_prob_.increment(tid, count.second);
-            co_occur_.increment(std::make_pair(lbl, tid), count.second);	
-		}
-	}
-
-	prog.end();
 }
 
 void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx, 

@@ -12,6 +12,8 @@
 #include "meta/features/all.h"
 #include "meta/features/selector_factory.h"
 #include "meta/index/forward_index.h"
+#include "meta/classify/multiclass_dataset.h"
+#include "meta/classify/multiclass_dataset_view.h"
 #include "meta/logging/logger.h"
 #include "meta/parser/analyzers/tree_analyzer.h"
 #include "meta/sequence/analyzers/ngram_pos_analyzer.h"
@@ -50,4 +52,6 @@ int main(int argc, char* argv[])
     
 	selector->select(100);
     selector->print_summary(f_idx, 10);
+
+	return 0;
 }
