@@ -136,6 +136,29 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
     }
 
     /**
+     * Creates an in-memory dataset from a pair of iterators, a function
+	 * to convert to a feature_vector and a functionto obtain a label.
+     */
+    template <class ForwardIterator, class FeatureVectorFunction,
+			  class LabelFunction>
+    multiclass_dataset(ForwardIterator begin, ForwardIterator end,
+					   size_type total_features,
+					   FeatureVectorFunction&& featurizer,
+					   LabelFunction&& labeller)
+        : labeled_dataset{begin, end, total_features,
+						  std::forward<FeatureVectorFunction>(featurizer),
+						  std::forward<LabelFunction>(labeller)}
+    {
+        // build label_id_mapping
+        for (; begin != end; ++begin)
+        {
+            if (!label_id_mapping_.contains_key(labeller(*begin)))
+                label_id_mapping_.insert(labeller(*begin),
+                                         label_id(label_id_mapping_.size()));
+        }
+    }
+
+    /**
      * @return the number of unique labels in the dataset
      */
     size_type total_labels() const
