@@ -24,8 +24,8 @@ void test_method(Index& idx, const std::string& method_id) {
     fcfg->insert("prefix", "test-features");
     config->insert("features", fcfg);
 
-	classify::multiclass_dataset dset{idx};
-	classify::multiclass_dataset_view dset_vw(dset);
+    classify::multiclass_dataset dset{idx};
+    classify::multiclass_dataset_view dset_vw(dset);
 
     auto selector = features::make_selector(*config, dset_vw);
     selector->select(20);
@@ -33,19 +33,20 @@ void test_method(Index& idx, const std::string& method_id) {
     selector->select_percent(0.05);
     selector->select_percent(0.10);
 
-	auto tid = idx->get_term_id("china"); // this term should be selected	
+    auto tid = idx->get_term_id("china"); // this term should be selected	
 
-	AssertThat(selector->selected(tid), IsTrue());
+    AssertThat(selector->selected(tid), IsTrue());
 
-	std::for_each(dset_vw.labels_begin(), dset_vw.labels_end(),
-					[&](const std::pair<const class_label, label_id>& lbl)
-					{
-						AssertThat(filesystem::file_exists("test-features." + 
-									method_id + "." + static_cast<std::string>(lbl.first)),
-									IsTrue());
-					});
-	
-	AssertThat(filesystem::file_exists("test-features." + method_id + ".selected"),
+    std::for_each(dset_vw.labels_begin(), dset_vw.labels_end(),
+                  [&](const std::pair<const class_label, label_id>& lbl)
+                  {
+                      AssertThat(filesystem::file_exists("test-features." + 
+                                 method_id + "." + 
+                                 static_cast<std::string>(lbl.first)),
+                                 IsTrue());
+                  });
+
+    AssertThat(filesystem::file_exists("test-features." + method_id + ".selected"),
                IsTrue());
 }
 }
@@ -54,7 +55,7 @@ go_bandit([]() {
     auto line_cfg = tests::create_config("line");
     auto f_idx = index::make_index<index::memory_forward_index>(*line_cfg);
 	
-	// run each test twice to ensure files can be read from disk
+    // run each test twice to ensure files can be read from disk
     describe("[feature-selection]", [&]() {
 
         it("should implement chi square", [&]() {

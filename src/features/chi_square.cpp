@@ -13,7 +13,7 @@ const std::string chi_square::id = "chi-square";
 
 double chi_square::score(class_label lbl, term_id tid) const
 {
-	double p_tc = term_and_class(tid, lbl);
+    double p_tc = term_and_class(tid, lbl);
     double p_ntnc = not_term_and_not_class(tid, lbl);
     double p_ntc = not_term_and_class(tid, lbl);
     double p_tnc = term_and_not_class(tid, lbl);

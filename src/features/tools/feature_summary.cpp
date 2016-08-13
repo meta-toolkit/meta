@@ -31,9 +31,9 @@ int main(int argc, char* argv[])
 
     logging::set_cerr_logging();
 
-	// Register additional analyzers
-	parser::register_analyzers();
-	sequence::register_analyzers();
+    // Register additional analyzers
+    parser::register_analyzers();
+    sequence::register_analyzers();
 
     auto config = cpptoml::parse_file(argv[1]);
     auto feature_config = config->get_table("features");
@@ -45,13 +45,13 @@ int main(int argc, char* argv[])
 
     auto f_idx = index::make_index<index::memory_forward_index>(*config);
     
-	classify::multiclass_dataset dset{f_idx};
-	classify::multiclass_dataset_view dset_vw(dset);
+    classify::multiclass_dataset dset{f_idx};
+    classify::multiclass_dataset_view dset_vw(dset);
 
-	auto selector = features::make_selector(*config, dset_vw);
+    auto selector = features::make_selector(*config, dset_vw);
     
-	selector->select(100);
+    selector->select(100);
     selector->print_summary(f_idx, 10);
 
-	return 0;
+    return 0;
 }

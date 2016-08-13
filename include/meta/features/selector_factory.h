@@ -38,9 +38,8 @@ class selector_factory_exception : public std::runtime_error
  * files. Clients should use the register_selector method instead of this
  * class directly to add their own selectors.
  */
-class selector_factory : public util::factory<selector_factory, 
-								feature_selector,
-								const cpptoml::table&, uint64_t>
+class selector_factory : public util::factory<selector_factory, feature_selector,
+                                              const cpptoml::table&, uint64_t>
 {
     friend base_factory;
 
@@ -70,31 +69,32 @@ class selector_factory : public util::factory<selector_factory,
  */
 template <class LabeledDatasetContainer>
 std::unique_ptr<feature_selector>
-	make_selector(const cpptoml::table& config,
-				  const LabeledDatasetContainer& docs)
+    make_selector(const cpptoml::table& config, const LabeledDatasetContainer& docs)
 {
-	auto table = config.get_table("features");
-	if (!table)
-		throw selector_factory_exception{
-						"[features] table missing from config file"};
+    auto table = config.get_table("features");
+    if (!table)
+        throw selector_factory_exception{
+                        "[features] table missing from config file"};
 
-	auto prefix = table->get_as<std::string>("prefix");
-	if (!prefix)
-		throw selector_factory_exception{"no prefix in [features] table"};
+    auto prefix = table->get_as<std::string>("prefix");
+    if (!prefix)
+        throw selector_factory_exception{"no prefix in [features] table"};
 
-	auto method = table->get_as<std::string>("method");
-	if (!method)
-		throw selector_factory_exception{
-						"feature selection method required in [features] table"};
+    auto method = table->get_as<std::string>("method");
+    if (!method)
+        throw selector_factory_exception{
+                        "feature selection method required in [features] table"};
 
-	auto features_per_class = static_cast<uint64_t>(
-								table->get_as<int64_t>("features-per-class").value_or(20));
+    auto features_per_class = static_cast<uint64_t>(
+                                table->get_as<int64_t>(
+                                    "features-per-class").value_or(20));
 
-	auto selector = selector_factory::get().create(*method, *table, docs.total_features());
+    auto selector = selector_factory::get().create(*method, *table, 
+                                                    docs.total_features());
 
-	selector->init(docs, features_per_class); // make_selector is a friend
+    selector->init(docs, features_per_class); // make_selector is a friend
 
-	return selector;
+    return selector;
 }
 
 /**
@@ -104,8 +104,7 @@ std::unique_ptr<feature_selector>
  */
 template <class Selector>
 std::unique_ptr<feature_selector>
-    make_factory_selector(const cpptoml::table& config,
-						  uint64_t total_features) 
+    make_factory_selector(const cpptoml::table& config, uint64_t total_features) 
 {
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)

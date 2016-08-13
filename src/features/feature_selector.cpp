@@ -25,49 +25,49 @@ feature_selector::feature_selector(const std::string& prefix,
 void feature_selector::score_all()
 {
     using pair_t = std::pair<term_id, double>;
-	using pair_c = std::pair<class_label, std::vector<pair_t>>;
+    using pair_c = std::pair<class_label, std::vector<pair_t>>;
 
-	printing::progress prog{" > Selecting features: ", term_prob_.unique_events()};
+    printing::progress prog{" > Selecting features: ", term_prob_.unique_events()};
 
-	std::vector<pair_c> scores;
+    std::vector<pair_c> scores;
 
-	uint64_t num_processed = 0;
+    uint64_t num_processed = 0;
 
-	class_prob_.each_seen_event([&](const class_label& lbl)
-	{
-		std::vector<pair_t> class_scores;
+    class_prob_.each_seen_event([&](const class_label& lbl)
+    {
+        std::vector<pair_t> class_scores;
 
-		term_prob_.each_seen_event([&](const term_id& tid)
-		{
-			prog(++num_processed);
+        term_prob_.each_seen_event([&](const term_id& tid)
+        {
+            prog(++num_processed);
 
-			class_scores.push_back(std::make_pair(tid, score(lbl, tid)));
-		});
+            class_scores.push_back(std::make_pair(tid, score(lbl, tid)));
+        });
 
-		scores.push_back(std::make_pair(lbl, class_scores));
-	});
+        scores.push_back(std::make_pair(lbl, class_scores));
+    });
 
-	prog.end();
+    prog.end();
 
-	parallel::parallel_for(
-		scores.begin(), scores.end(), [&](pair_c & c_scores)
-		{
-			std::sort(c_scores.second.begin(), c_scores.second.end(),
-						[](const pair_t& a, const pair_t& b)
-						{
-							return a.second > b.second;
-						});
+    parallel::parallel_for(
+        scores.begin(), scores.end(), [&](pair_c & c_scores)
+        {
+            std::sort(c_scores.second.begin(), c_scores.second.end(),
+                      [](const pair_t& a, const pair_t& b)
+                      {
+                          return a.second > b.second;
+                      });
 
-			std::ofstream out{prefix_ + "." + 
-							  static_cast<std::string>(c_scores.first),
-							  std::ios::binary};
+            std::ofstream out{prefix_ + "." + 
+                              static_cast<std::string>(c_scores.first),
+                              std::ios::binary};
 
-			for (auto& score : c_scores.second)
-			{
-				io::packed::write(out, score.first);
-				io::packed::write(out, score.second);
-			}
-		});
+            for (auto& score : c_scores.second)
+            {
+                io::packed::write(out, score.first);
+                io::packed::write(out, score.second);
+            }
+        });
 }
 
 void feature_selector::select(uint64_t features_per_class /* = 20 */)
@@ -79,19 +79,19 @@ void feature_selector::select(uint64_t features_per_class /* = 20 */)
     term_id tid;
     double score;
 	
-	class_prob_.each_seen_event([&](const class_label& lbl)
-	{
-		std::ifstream in{prefix_ + "." +
-						 static_cast<std::string>(lbl),
-						 std::ios::binary};
-		
-		for (uint64_t i = 0; i < features_per_class; ++i)
+    class_prob_.each_seen_event([&](const class_label& lbl)
+    {
+        std::ifstream in{prefix_ + "." +
+                         static_cast<std::string>(lbl),
+                         std::ios::binary};
+
+        for (uint64_t i = 0; i < features_per_class; ++i)
         {	
             io::packed::read(in, tid);
             io::packed::read(in, score);
             selected_[tid] = true;
         }
-	});
+    });
 }
 
 bool feature_selector::selected(term_id tid) const
@@ -109,7 +109,7 @@ void feature_selector::select_percent(double p /* = 0.05 */)
     // truncate to int
     auto per_class = static_cast<uint64_t>(num_features/class_prob_.unique_events());
 	
-	select(per_class);
+    select(per_class);
 }
 
 void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx, 
@@ -118,25 +118,25 @@ void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx,
     term_id tid;
     double score;	
 
-	class_prob_.each_seen_event([&](const class_label& lbl)
-	{
-		std::cout << std::endl
+    class_prob_.each_seen_event([&](const class_label& lbl)
+    {
+        std::cout << std::endl
                   << "Top " << k << " features for \""
                   << lbl << "\":" << std::endl
                   << "===============================" << std::endl;
 
         // read (term_id, score) pairs
-		std::ifstream in{prefix_ + "." + static_cast<std::string>(lbl),
-						 std::ios::binary};
-		
-		for (uint64_t i = 0; i < k; ++i)
+        std::ifstream in{prefix_ + "." + static_cast<std::string>(lbl),
+                         std::ios::binary};
+
+        for (uint64_t i = 0; i < k; ++i)
         {
             io::packed::read(in, tid);
             io::packed::read(in, score); 
             std::cout << (i + 1) << ". " << idx->term_text(tid) << " ("
                       << score << ")" << std::endl;
         }
-	});
+    });
 }
 
 double feature_selector::prob_term(term_id tid) const

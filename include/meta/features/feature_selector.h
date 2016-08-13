@@ -62,7 +62,7 @@ class feature_selector
      * @param k
      */
     virtual void print_summary(std::shared_ptr<index::disk_index> idx,
-							   uint64_t k = 20) const;
+                               uint64_t k = 20) const;
 
     /**
      * @param term
@@ -95,12 +95,12 @@ class feature_selector
 
     /**
      * @param tid
-	 * @return the probability of a specific term in the index
-	 */
+     * @return the probability of a specific term in the index
+     */
     double prob_term(term_id tid) const;
 
     /**
-	 * @param lbl
+     * @param lbl
      * @return the probability of a specific class in the index
      */
     double prob_class(class_label lbl) const;
@@ -160,21 +160,21 @@ class feature_selector
      * implemented by deriving classes.
      * @param features_per_class
      */
-	template <class LabeledDatasetContainer>
+    template <class LabeledDatasetContainer>
     void init(const LabeledDatasetContainer& docs, uint64_t features_per_class)
-	{
-		term_prob_.clear();
-		class_prob_.clear();
-		co_occur_.clear();
+    {
+        term_prob_.clear();
+        class_prob_.clear();
+        co_occur_.clear();
 
-		calc_probs(docs);
-		score_all();
-		select(features_per_class);
-	}
+        calc_probs(docs);
+        score_all();
+        select(features_per_class);
+    }
 
-	/// friend the factory function used to create feature_selectors, since
+    /// friend the factory function used to create feature_selectors, since
     /// they need to call the init
-	template <class LabeledDatasetContainer>
+    template <class LabeledDatasetContainer>
     friend std::unique_ptr<feature_selector>
         make_selector(const cpptoml::table& config,
                       const LabeledDatasetContainer& docs);
@@ -184,31 +184,31 @@ class feature_selector
      * index.
      */
     template <class LabeledDatasetContainer>
-	void calc_probs(const LabeledDatasetContainer& docs)
-	{
-		uint64_t num_processed = 0;
+    void calc_probs(const LabeledDatasetContainer& docs)
+    {
+        uint64_t num_processed = 0;
 
-		printing::progress prog{" > Calculating feature probs: ", docs.size()};
+        printing::progress prog{" > Calculating feature probs: ", docs.size()};
 
-		for (const auto& instance : docs)
-		{
-			prog(++num_processed);
+        for (const auto& instance : docs)
+        {
+            prog(++num_processed);
 
-			class_label lbl{docs.label(instance)};
+            class_label lbl{docs.label(instance)};
 
-			class_prob_.increment(lbl, 1);
+            class_prob_.increment(lbl, 1);
 
-			for (const auto& count : instance.weights)
-			{
-				term_id tid{count.first};
+            for (const auto& count : instance.weights)
+            {
+                term_id tid{count.first};
 
-				term_prob_.increment(tid, count.second);
-				co_occur_.increment(std::make_pair(lbl, tid), count.second);
-			}
-		}
+                term_prob_.increment(tid, count.second);
+                co_occur_.increment(std::make_pair(lbl, tid), count.second);
+            }
+        }
 
-		prog.end();
-	}
+    	prog.end();
+    }
 
     /**
      * Calculates the feature score for each (label, term) pair.
@@ -219,16 +219,16 @@ class feature_selector
     const std::string prefix_; 
 
     /// Whether or not a term_id is currently selected
-	util::disk_vector<bool> selected_;
+    util::disk_vector<bool> selected_;
 
     /// P(t) in the entire collection, indexed by term_id
-	stats::multinomial<term_id> term_prob_;
+    stats::multinomial<term_id> term_prob_;
 
-    /// P(c) in the collection, indexed by label
-	stats::multinomial<class_label> class_prob_;
+    /// P(c) in the collection, indexed by class_label
+    stats::multinomial<class_label> class_prob_;
 
-    /// P(c,t) indexed by [label_id][term_id]
-	stats::multinomial<std::pair<class_label, term_id>> co_occur_;
+    /// P(c,t) indexed by [class_label][term_id]
+    stats::multinomial<std::pair<class_label, term_id>> co_occur_;
 };
 
 /**
