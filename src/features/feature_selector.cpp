@@ -102,11 +102,12 @@ void feature_selector::select(uint64_t features_per_class /* = 20 */)
         std::ifstream in{prefix_ + "." + std::to_string(lbl_id + 1),
                          std::ios::binary};
 
+        // read the label first
         std::string lbl;
         io::packed::read(in, lbl); 
         
         for (uint64_t i = 0; i < features_per_class; ++i)
-        {	
+        {
             io::packed::read(in, tid);
             io::packed::read(in, score);
 
@@ -138,7 +139,7 @@ void feature_selector::select_percent(double p /* = 0.05 */)
 }
 
 void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx, 
-									 uint64_t k /* = 20 */) const
+                                     uint64_t k /* = 20 */) const
 {
     term_id tid;
     double score;	
@@ -161,11 +162,11 @@ void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx,
         for (uint64_t i = 0; i < k; ++i)
         {
             io::packed::read(in, tid);
-            io::packed::read(in, score); 
+            io::packed::read(in, score);
             std::cout << (i + 1) << ". " << idx->term_text(tid) << " ("
                       << score << ")" << std::endl;
         }
-    };
+    }
 }
 
 double feature_selector::prob_term(term_id tid) const

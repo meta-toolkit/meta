@@ -161,6 +161,8 @@ class feature_selector
      * Creates the state of this feature_selector if necessary; this logic is
      * outside the constructor since it requires pure virtual functions
      * implemented by deriving classes.
+     *
+     * @param docs
      * @param features_per_class
      */
     template <class LabeledDatasetContainer>

@@ -21,7 +21,7 @@ double chi_square::score(class_label lbl, term_id tid) const
     double p_t = prob_term(tid);
 
     double numerator = p_tc * p_ntnc - p_ntc * p_tnc;
-    double denominator = p_c * (1.0 - p_c) * p_t * (1.0 - p_t);	
+    double denominator = p_c * (1.0 - p_c) * p_t * (1.0 - p_t);
 
     return (numerator * numerator) / denominator;
 }

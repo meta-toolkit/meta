@@ -49,7 +49,7 @@ void test_method(Index& idx, const std::string& method_id) {
 go_bandit([]() {
     auto line_cfg = tests::create_config("line");
     auto f_idx = index::make_index<index::memory_forward_index>(*line_cfg);
-	
+
     // run each test twice to ensure files can be read from disk
     describe("[feature-selection]", [&]() {
 
