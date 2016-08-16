@@ -37,15 +37,10 @@ void test_method(Index& idx, const std::string& method_id) {
 
     AssertThat(selector->selected(tid), IsTrue());
 
-    std::for_each(dset_vw.labels_begin(), dset_vw.labels_end(),
-                  [&](const std::pair<const class_label, label_id>& lbl)
-                  {
-                      AssertThat(filesystem::file_exists("test-features." + 
-                                 method_id + "." + 
-                                 static_cast<std::string>(lbl.first)),
-                                 IsTrue());
-                  });
-
+    for(uint64_t lbl_id = 0; lbl_id < dset_vw.total_labels(); ++lbl_id)
+        AssertThat(filesystem::file_exists("test-features." + method_id + "."
+                                           + std::to_string(lbl_id + 1)), IsTrue());
+    
     AssertThat(filesystem::file_exists("test-features." + method_id + ".selected"),
                IsTrue());
 }
@@ -83,7 +78,7 @@ go_bandit([]() {
     filesystem::remove_all("ceeaus");
     for (const std::string& method_id :
          {"chi-square", "info-gain", "corr-coef", "odds-ratio"}) {
-        for (const std::string& suffix : {"chinese", "english", "japanese", "selected"}) {
+        for (const std::string& suffix : {"1", "2", "3", "selected"}) {
             filesystem::remove_all("test-features." + method_id + "." + suffix);
         }
     }

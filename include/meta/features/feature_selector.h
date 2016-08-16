@@ -17,10 +17,11 @@
 
 #include "cpptoml.h"
 #include "meta/index/disk_index.h"
-#include "meta/util/disk_vector.h"
+#include "meta/io/filesystem.h"
 #include "meta/stats/multinomial.h"
-#include "meta/util/sparse_vector.h"
+#include "meta/util/disk_vector.h"
 #include "meta/util/progress.h"
+#include "meta/util/sparse_vector.h"
 
 namespace meta
 {
@@ -47,9 +48,11 @@ class feature_selector
   public:
     /**
      * @param prefix
+     * @param total_labels
      * @param total_features
      */
-    feature_selector(const std::string& prefix, uint64_t total_features);
+    feature_selector(const std::string& prefix, uint64_t total_labels,
+                     uint64_t total_features);
 
     /**
      * Default destructor.
@@ -163,6 +166,11 @@ class feature_selector
     template <class LabeledDatasetContainer>
     void init(const LabeledDatasetContainer& docs, uint64_t features_per_class)
     {
+        // if the first class distribution exists, we have already created the
+        // data for this feature_selector previously
+        if(filesystem::file_exists(prefix_ + ".1"))
+            return;
+
         term_prob_.clear();
         class_prob_.clear();
         co_occur_.clear();
@@ -192,8 +200,6 @@ class feature_selector
 
         for (const auto& instance : docs)
         {
-            prog(++num_processed);
-
             class_label lbl{docs.label(instance)};
 
             class_prob_.increment(lbl, 1);
@@ -205,6 +211,8 @@ class feature_selector
                 term_prob_.increment(tid, count.second);
                 co_occur_.increment(std::make_pair(lbl, tid), count.second);
             }
+
+            prog(++num_processed);
         }
 
     	prog.end();
@@ -216,7 +224,13 @@ class feature_selector
     void score_all();
 
     /// Where the feature selection data is stored
-    const std::string prefix_; 
+    const std::string prefix_;
+
+    /// Total number of labels
+    uint64_t total_labels_;
+    
+    /// Total number of features
+    uint64_t total_features_;
 
     /// Whether or not a term_id is currently selected
     util::disk_vector<bool> selected_;

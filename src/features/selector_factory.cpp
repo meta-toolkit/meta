@@ -15,7 +15,7 @@ namespace features
 template <class Selector>
 void selector_factory::reg()
 {
-    add(Selector::id, make_factory_selector<Selector>);
+    add(Selector::id, factory_make_selector<Selector>);
 }
 
 selector_factory::selector_factory()

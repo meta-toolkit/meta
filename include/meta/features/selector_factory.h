@@ -11,6 +11,9 @@
 #define META_FEATURE_SELECTOR_FACTORY_H_
 
 #include "meta/features/feature_selector.h"
+#include "meta/classify/binary_dataset_view.h"
+#include "meta/classify/multiclass_dataset.h"
+#include "meta/classify/multiclass_dataset_view.h"
 #include "meta/util/factory.h"
 #include "meta/util/shim.h"
 
@@ -39,7 +42,8 @@ class selector_factory_exception : public std::runtime_error
  * class directly to add their own selectors.
  */
 class selector_factory : public util::factory<selector_factory, feature_selector,
-                                              const cpptoml::table&, uint64_t>
+                                              const cpptoml::table&,
+                                              uint64_t, uint64_t>
 {
     friend base_factory;
 
@@ -71,6 +75,18 @@ template <class LabeledDatasetContainer>
 std::unique_ptr<feature_selector>
     make_selector(const cpptoml::table& config, const LabeledDatasetContainer& docs)
 {
+    static_assert(
+        std::is_same<classify::binary_dataset, 
+                        LabeledDatasetContainer>::value
+        || std::is_same<classify::binary_dataset_view, 
+                        LabeledDatasetContainer>::value
+        || std::is_same<classify::multiclass_dataset, 
+                        LabeledDatasetContainer>::value
+        || std::is_same<classify::multiclass_dataset_view,
+                        LabeledDatasetContainer>::value,
+        "docs should be a binary/multiclass dataset or dataset view"
+    );
+
     auto table = config.get_table("features");
     if (!table)
         throw selector_factory_exception{
@@ -90,6 +106,7 @@ std::unique_ptr<feature_selector>
                                     "features-per-class").value_or(20));
 
     auto selector = selector_factory::get().create(*method, *table, 
+                                                    docs.total_labels(),
                                                     docs.total_features());
 
     selector->init(docs, features_per_class); // make_selector is a friend
@@ -104,7 +121,8 @@ std::unique_ptr<feature_selector>
  */
 template <class Selector>
 std::unique_ptr<feature_selector>
-    make_factory_selector(const cpptoml::table& config, uint64_t total_features) 
+    factory_make_selector(const cpptoml::table& config, uint64_t total_labels,
+                          uint64_t total_features) 
 {
     auto prefix = config.get_as<std::string>("prefix");
     if (!prefix)
@@ -115,7 +133,8 @@ std::unique_ptr<feature_selector>
         throw selector_factory_exception{
             "feature selection method required in [features] table"};
 
-    return make_unique<Selector>(*prefix + "." + *method, total_features);
+    return make_unique<Selector>(*prefix + "." + *method, 
+                                 total_labels, total_features);
 }
 
 /**
@@ -125,7 +144,7 @@ std::unique_ptr<feature_selector>
 template <class Selector>
 void register_selector()
 {
-    selector_factory::get().add(Selector::id, make_factory_selector<Selector>);
+    selector_factory::get().add(Selector::id, factory_make_selector<Selector>);
 }
 }
 }
