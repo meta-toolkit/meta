@@ -8,7 +8,6 @@
 #include <iostream>
 #include "meta/features/feature_selector.h"
 #include "meta/io/packed.h"
-#include "meta/logging/logger.h"
 #include "meta/parallel/parallel_for.h"
 
 namespace meta
