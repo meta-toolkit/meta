@@ -17,16 +17,7 @@ namespace meta
 namespace classify
 {
 
-class binary_dataset : public learn::labeled_dataset<bool>
-{
-    public:
-        using learn::labeled_dataset<bool>::labeled_dataset;
-
-        size_type total_labels() const
-        {
-            return 2;
-        }
-};
+using binary_dataset = learn::labeled_dataset<bool>;
 
 /**
  * A non-owning view of a dataset with binary class labels. This is

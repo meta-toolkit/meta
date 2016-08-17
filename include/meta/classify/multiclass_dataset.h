@@ -156,15 +156,7 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
                 label_id_mapping_.insert(labeller(*begin),
                                          label_id(label_id_mapping_.size()));
         }
-    }
-
-    /**
-     * @return the number of unique labels in the dataset
-     */
-    size_type total_labels() const
-    {
-        return label_id_mapping_.size();
-    }
+    } 
 
     /**
      * @return the label_id associated with this label

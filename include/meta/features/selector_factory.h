@@ -14,6 +14,7 @@
 #include "meta/classify/binary_dataset_view.h"
 #include "meta/classify/multiclass_dataset.h"
 #include "meta/classify/multiclass_dataset_view.h"
+#include "meta/regression/regression_dataset_view.h"
 #include "meta/util/factory.h"
 #include "meta/util/shim.h"
 
@@ -65,7 +66,7 @@ class selector_factory : public util::factory<selector_factory, feature_selector
  *
  * @param config The configuration table that specifies the configuration
  * for the selector to be created
- * @param docs The labeled dataset or dataset view (i.e., multiclass or binary) 
+ * @param docs The labeled dataset or dataset view (i.e., binary or multiclass or regression) 
  * to be passed to the selector being created
  *
  * @return a unique_ptr to the selector created from the given
@@ -76,15 +77,19 @@ std::unique_ptr<feature_selector>
     make_selector(const cpptoml::table& config, const LabeledDatasetContainer& docs)
 {
     static_assert(
-        std::is_same<classify::binary_dataset, 
+        std::is_same<classify::binary_dataset,
                         LabeledDatasetContainer>::value
-        || std::is_same<classify::binary_dataset_view, 
+        || std::is_same<classify::binary_dataset_view,
                         LabeledDatasetContainer>::value
-        || std::is_same<classify::multiclass_dataset, 
+        || std::is_same<classify::multiclass_dataset,
                         LabeledDatasetContainer>::value
         || std::is_same<classify::multiclass_dataset_view,
+                        LabeledDatasetContainer>::value
+        || std::is_same<regression::regression_dataset,
+                        LabeledDatasetContainer>::value
+        || std::is_same<regression::regression_dataset_view,
                         LabeledDatasetContainer>::value,
-        "docs should be a binary/multiclass dataset or dataset view"
+        "docs should be a binary/multiclass/regression dataset or dataset view"
     );
 
     auto table = config.get_table("features");

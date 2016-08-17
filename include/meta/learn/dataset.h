@@ -10,6 +10,7 @@
 #define META_LEARN_DATASET_H_
 
 #include <memory>
+#include <unordered_set>
 
 #include "meta/corpus/metadata.h"
 #include "meta/index/forward_index.h"
@@ -219,6 +220,11 @@ class labeled_dataset : public dataset
     {
         labels_.reserve(size());
         std::transform(begin, end, std::back_inserter(labels_), labeller);
+    
+        // insert all labels in a set to get the number of unique labels
+        std::unordered_set<label_type> unique_labels{labels_.begin(),
+                                                     labels_.end()};
+        total_labels_ = unique_labels.size();
     }
 
     /**
@@ -246,7 +252,10 @@ class labeled_dataset : public dataset
                     size_type total_features)
         : dataset{begin, end, total_features}, labels_{begin, end}
     {
-        // nothing
+        // insert all labels in a set to get the number of unique labels
+        std::unordered_set<label_type> unique_labels{labels_.begin(),
+                                                     labels_.end()};
+        total_labels_ = unique_labels.size();
     }
 
     /**
@@ -264,6 +273,11 @@ class labeled_dataset : public dataset
     {
         labels_.reserve(size());
         std::transform(begin, end, std::back_inserter(labels_), labeller);
+        
+        // insert all labels in a set to get the number of unique labels
+        std::unordered_set<label_type> unique_labels{labels_.begin(),
+                                                     labels_.end()};
+        total_labels_ = unique_labels.size();
     }
 
     /**
@@ -279,9 +293,20 @@ class labeled_dataset : public dataset
         return labels_.at(inst.id);
     }
 
+    /**
+     * @return the number of unique labels in the dataset
+     */
+    size_type total_labels() const
+    {
+        return total_labels_;
+    }
+
   private:
     /// the (dense) mapping from instance_id -> class_label
     std::vector<label_type> labels_;
+
+    /// the total number of unique labels
+    uint64_t total_labels_;
 };
 }
 }
