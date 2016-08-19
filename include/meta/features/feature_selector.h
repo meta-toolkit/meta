@@ -202,7 +202,9 @@ class feature_selector
 
         for (const auto& instance : docs)
         {
-            class_label lbl{docs.label(instance)};
+            std::stringstream ss;
+            ss << docs.label(instance);
+            class_label lbl{ss.str()};
 
             class_prob_.increment(lbl, 1);
 
