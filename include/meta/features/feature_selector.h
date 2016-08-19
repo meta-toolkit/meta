@@ -11,9 +11,9 @@
 #ifndef META_FEATURE_SELECTOR_H_
 #define META_FEATURE_SELECTOR_H_
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "cpptoml.h"
 #include "meta/index/disk_index.h"
@@ -170,7 +170,7 @@ class feature_selector
     {
         // if the first class distribution exists, we have already created the
         // data for this feature_selector previously
-        if(filesystem::file_exists(prefix_ + ".1"))
+        if (filesystem::file_exists(prefix_ + ".1"))
             return;
 
         term_prob_.clear();
@@ -186,8 +186,8 @@ class feature_selector
     /// they need to call the init
     template <class LabeledDatasetContainer>
     friend std::unique_ptr<feature_selector>
-        make_selector(const cpptoml::table& config,
-                      const LabeledDatasetContainer& docs);
+    make_selector(const cpptoml::table& config,
+                  const LabeledDatasetContainer& docs);
 
     /**
      * Calculates the probabilities of terms and classes given the current
@@ -219,7 +219,7 @@ class feature_selector
             prog(++num_processed);
         }
 
-    	prog.end();
+        prog.end();
     }
 
     /**
@@ -232,7 +232,7 @@ class feature_selector
 
     /// Total number of labels
     uint64_t total_labels_;
-    
+
     /// Total number of features
     uint64_t total_features_;
 

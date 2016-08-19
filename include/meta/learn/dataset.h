@@ -220,7 +220,7 @@ class labeled_dataset : public dataset
     {
         labels_.reserve(size());
         std::transform(begin, end, std::back_inserter(labels_), labeller);
-    
+
         // insert all labels in a set to get the number of unique labels
         std::unordered_set<label_type> unique_labels{labels_.begin(),
                                                      labels_.end()};
@@ -273,7 +273,7 @@ class labeled_dataset : public dataset
     {
         labels_.reserve(size());
         std::transform(begin, end, std::back_inserter(labels_), labeller);
-        
+
         // insert all labels in a set to get the number of unique labels
         std::unordered_set<label_type> unique_labels{labels_.begin(),
                                                      labels_.end()};

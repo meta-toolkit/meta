@@ -5,19 +5,21 @@
 
 #include "bandit/bandit.h"
 #include "create_config.h"
-#include "meta/features/feature_selector.h"
-#include "meta/features/selector_factory.h"
-#include "meta/features/all.h"
 #include "meta/classify/multiclass_dataset.h"
 #include "meta/classify/multiclass_dataset_view.h"
+#include "meta/features/all.h"
+#include "meta/features/feature_selector.h"
+#include "meta/features/selector_factory.h"
 
 using namespace bandit;
 using namespace meta;
 
-namespace {
+namespace
+{
 
 template <class Index>
-void test_method(Index& idx, const std::string& method_id) {
+void test_method(Index& idx, const std::string& method_id)
+{
     auto config = cpptoml::make_table();
     auto fcfg = cpptoml::make_table();
     fcfg->insert("method", method_id);
@@ -33,16 +35,18 @@ void test_method(Index& idx, const std::string& method_id) {
     selector->select_percent(0.05);
     selector->select_percent(0.10);
 
-    auto tid = idx->get_term_id("china"); // this term should be selected	
+    auto tid = idx->get_term_id("china"); // this term should be selected
 
     AssertThat(selector->selected(tid), IsTrue());
 
-    for(uint64_t lbl_id = 0; lbl_id < dset_vw.total_labels(); ++lbl_id)
+    for (uint64_t lbl_id = 0; lbl_id < dset_vw.total_labels(); ++lbl_id)
         AssertThat(filesystem::file_exists("test-features." + method_id + "."
-                                           + std::to_string(lbl_id + 1)), IsTrue());
-    
-    AssertThat(filesystem::file_exists("test-features." + method_id + ".selected"),
-               IsTrue());
+                                           + std::to_string(lbl_id + 1)),
+                   IsTrue());
+
+    AssertThat(
+        filesystem::file_exists("test-features." + method_id + ".selected"),
+        IsTrue());
 }
 }
 
@@ -77,8 +81,10 @@ go_bandit([]() {
     f_idx = nullptr;
     filesystem::remove_all("ceeaus");
     for (const std::string& method_id :
-         {"chi-square", "info-gain", "corr-coef", "odds-ratio"}) {
-        for (const std::string& suffix : {"1", "2", "3", "selected"}) {
+         {"chi-square", "info-gain", "corr-coef", "odds-ratio"})
+    {
+        for (const std::string& suffix : {"1", "2", "3", "selected"})
+        {
             filesystem::remove_all("test-features." + method_id + "." + suffix);
         }
     }

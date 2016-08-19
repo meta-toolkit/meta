@@ -59,10 +59,8 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
     template <class ForwardIterator>
     multiclass_dataset(std::shared_ptr<index::forward_index> idx,
                        ForwardIterator begin, ForwardIterator end)
-        : labeled_dataset{idx, begin, end, [&](doc_id did)
-                          {
-                              return idx->label(did);
-                          }}
+        : labeled_dataset{idx, begin, end,
+                          [&](doc_id did) { return idx->label(did); }}
     {
         // build label_id_mapping
         for (const auto& lbl : idx->class_labels())
@@ -137,17 +135,17 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
 
     /**
      * Creates an in-memory dataset from a pair of iterators, a function
-	 * to convert to a feature_vector and a functionto obtain a label.
+     * to convert to a feature_vector and a function to obtain a label.
      */
     template <class ForwardIterator, class FeatureVectorFunction,
-			  class LabelFunction>
+              class LabelFunction>
     multiclass_dataset(ForwardIterator begin, ForwardIterator end,
-					   size_type total_features,
-					   FeatureVectorFunction&& featurizer,
-					   LabelFunction&& labeller)
+                       size_type total_features,
+                       FeatureVectorFunction&& featurizer,
+                       LabelFunction&& labeller)
         : labeled_dataset{begin, end, total_features,
-						  std::forward<FeatureVectorFunction>(featurizer),
-						  std::forward<LabelFunction>(labeller)}
+                          std::forward<FeatureVectorFunction>(featurizer),
+                          std::forward<LabelFunction>(labeller)}
     {
         // build label_id_mapping
         for (; begin != end; ++begin)
@@ -156,7 +154,7 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
                 label_id_mapping_.insert(labeller(*begin),
                                          label_id(label_id_mapping_.size()));
         }
-    } 
+    }
 
     /**
      * @return the label_id associated with this label

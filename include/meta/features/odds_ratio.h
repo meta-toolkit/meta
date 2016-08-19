@@ -22,7 +22,7 @@ namespace features
  * \log \frac{P(t|c_i)(1-P(t|\overline{c_i}))}{(1-P(t|c_i))P(t|\overline{c_i})}
  * \f$
  */
-class odds_ratio: public feature_selector
+class odds_ratio : public feature_selector
 {
   public:
     /// Inherit constructor.

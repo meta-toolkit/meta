@@ -3,9 +3,9 @@
  * @author Sean Massung
  */
 
+#include "meta/features/selector_factory.h"
 #include "cpptoml.h"
 #include "meta/features/all.h"
-#include "meta/features/selector_factory.h"
 
 namespace meta
 {

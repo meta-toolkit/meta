@@ -1,14 +1,14 @@
 /**
  * @file feature_selector.cpp
- * @author Sean Massung 
+ * @author Sean Massung
  * @author Siddharth Shukramani
  */
 
-#include <fstream>
-#include <iostream>
 #include "meta/features/feature_selector.h"
 #include "meta/io/packed.h"
 #include "meta/parallel/parallel_for.h"
+#include <fstream>
+#include <iostream>
 
 namespace meta
 {
@@ -37,15 +37,13 @@ void feature_selector::score_all()
     uint64_t num_processed = 0;
 
     printing::progress prog{" > Calculating feature scores: ", total_features_};
-    
-    class_prob_.each_seen_event([&](const class_label& lbl)
-    {
+
+    class_prob_.each_seen_event([&](const class_label& lbl) {
         std::vector<pair_t> class_scores;
 
-        term_prob_.each_seen_event([&](const term_id& tid)
-        {
+        term_prob_.each_seen_event([&](const term_id& tid) {
             class_scores.push_back(std::make_pair(tid, score(lbl, tid)));
-            
+
             prog(++num_processed);
         });
 
@@ -57,33 +55,30 @@ void feature_selector::score_all()
 
     prog.end();
 
-    parallel::parallel_for(
-        scores.begin(), scores.end(), [&](pair_c & c_scores)
+    parallel::parallel_for(scores.begin(), scores.end(), [&](pair_c& c_scores) {
+        std::sort(c_scores.second.begin(), c_scores.second.end(),
+                  [](const pair_t& a, const pair_t& b) {
+                      return a.second > b.second;
+                  });
+
+        std::ofstream out{prefix_ + "." + std::to_string(c_scores.first + 1),
+                          std::ios::binary};
+
+        io::packed::write(out, labels[c_scores.first]);
+
+        for (auto& score : c_scores.second)
         {
-            std::sort(c_scores.second.begin(), c_scores.second.end(),
-                      [](const pair_t& a, const pair_t& b)
-                      {
-                          return a.second > b.second;
-                      });
-
-            std::ofstream out{prefix_ + "." + std::to_string(c_scores.first + 1),
-                              std::ios::binary};
-
-            io::packed::write(out, labels[c_scores.first]);
-
-            for (auto& score : c_scores.second)
-            {
-                io::packed::write(out, score.first);
-                io::packed::write(out, score.second);
-            }
-        });
+            io::packed::write(out, score.first);
+            io::packed::write(out, score.second);
+        }
+    });
 }
 
 void feature_selector::select(uint64_t features_per_class /* = 20 */)
 {
-    if((total_labels_*features_per_class) > total_features_)
-        throw feature_selector_exception{
-            "cannot select more than the total number of features in the dataset"};
+    if ((total_labels_ * features_per_class) > total_features_)
+        throw feature_selector_exception{"cannot select more than the total "
+                                         "number of features in the dataset"};
 
     // zero out old vector
     for (auto& b : selected_)
@@ -91,28 +86,28 @@ void feature_selector::select(uint64_t features_per_class /* = 20 */)
 
     term_id tid;
     double score;
-	
-    printing::progress prog{" > Selecting " + std::to_string(features_per_class)
-                            + " features per class: ",
-                            (total_labels_*features_per_class)};
 
-    for(uint64_t lbl_id = 0; lbl_id < total_labels_; ++lbl_id)
+    printing::progress prog{" > Selecting " + std::to_string(features_per_class)
+                                + " features per class: ",
+                            (total_labels_ * features_per_class)};
+
+    for (uint64_t lbl_id = 0; lbl_id < total_labels_; ++lbl_id)
     {
         std::ifstream in{prefix_ + "." + std::to_string(lbl_id + 1),
                          std::ios::binary};
 
         // read the label first
         std::string lbl;
-        io::packed::read(in, lbl); 
-        
+        io::packed::read(in, lbl);
+
         for (uint64_t i = 0; i < features_per_class; ++i)
         {
             io::packed::read(in, tid);
             io::packed::read(in, score);
 
             selected_[tid] = true;
-            
-            prog((lbl_id + 1)*(i + 1));
+
+            prog((lbl_id + 1) * (i + 1));
         }
 
         prog.end();
@@ -132,38 +127,37 @@ void feature_selector::select_percent(double p /* = 0.05 */)
 
     double num_features = p * total_features_;
     // truncate to int
-    auto per_class = static_cast<uint64_t>(num_features/total_labels_);
-	
+    auto per_class = static_cast<uint64_t>(num_features / total_labels_);
+
     select(per_class);
 }
 
-void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx, 
+void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx,
                                      uint64_t k /* = 20 */) const
 {
     term_id tid;
-    double score;	
+    double score;
 
-    for(uint64_t lbl_id = 0; lbl_id < total_labels_; ++lbl_id) 
+    for (uint64_t lbl_id = 0; lbl_id < total_labels_; ++lbl_id)
     {
         // read (term_id, score) pairs
         std::ifstream in{prefix_ + "." + std::to_string(lbl_id + 1),
                          std::ios::binary};
-        
+
         std::string lbl;
         io::packed::read(in, lbl);
 
         std::cout << std::endl
-                  << "Top " << k << " features for \""
-                  << lbl << "\":" << std::endl
+                  << "Top " << k << " features for \"" << lbl
+                  << "\":" << std::endl
                   << "===============================" << std::endl;
-
 
         for (uint64_t i = 0; i < k; ++i)
         {
             io::packed::read(in, tid);
             io::packed::read(in, score);
-            std::cout << (i + 1) << ". " << idx->term_text(tid) << " ("
-                      << score << ")" << std::endl;
+            std::cout << (i + 1) << ". " << idx->term_text(tid) << " (" << score
+                      << ")" << std::endl;
         }
     }
 }
@@ -190,7 +184,8 @@ double feature_selector::prob_class(const class_label& lbl) const
     return p;
 }
 
-double feature_selector::term_and_class(term_id tid, const class_label& lbl) const
+double feature_selector::term_and_class(term_id tid,
+                                        const class_label& lbl) const
 {
     auto p = co_occur_.probability(std::make_pair(lbl, tid));
 #if DEBUG
@@ -214,7 +209,8 @@ double feature_selector::not_term_and_not_class(term_id tid,
     return p;
 }
 
-double feature_selector::term_and_not_class(term_id tid, const class_label& lbl) const
+double feature_selector::term_and_not_class(term_id tid,
+                                            const class_label& lbl) const
 {
     auto p = term_prob_.probability(tid) - term_and_class(tid, lbl);
 #if DEBUG
@@ -225,7 +221,8 @@ double feature_selector::term_and_not_class(term_id tid, const class_label& lbl)
     return p;
 }
 
-double feature_selector::not_term_and_class(term_id tid, const class_label& lbl) const
+double feature_selector::not_term_and_class(term_id tid,
+                                            const class_label& lbl) const
 {
     auto p = class_prob_.probability(lbl) - term_and_class(tid, lbl);
 #if DEBUG
