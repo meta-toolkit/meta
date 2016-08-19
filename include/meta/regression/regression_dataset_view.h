@@ -46,11 +46,6 @@ class regression_dataset_view : public learn::dataset_view
         return dset<regression_dataset>().label(instance);
     }
 
-    size_type total_labels() const
-    {
-        return dset<regression_dataset>().total_labels();
-    }
-
     friend regression_dataset_view operator-(const regression_dataset_view& lhs,
                                              const regression_dataset_view& rhs)
     {

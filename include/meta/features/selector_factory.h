@@ -84,12 +84,8 @@ make_selector(const cpptoml::table& config, const LabeledDatasetContainer& docs)
             || std::is_same<classify::multiclass_dataset,
                             LabeledDatasetContainer>::value
             || std::is_same<classify::multiclass_dataset_view,
-                            LabeledDatasetContainer>::value
-            || std::is_same<regression::regression_dataset,
-                            LabeledDatasetContainer>::value
-            || std::is_same<regression::regression_dataset_view,
                             LabeledDatasetContainer>::value,
-        "docs should be a binary/multiclass/regression dataset or dataset "
+        "docs should be a binary/multiclass dataset or dataset "
         "view");
 
     auto table = config.get_table("features");
