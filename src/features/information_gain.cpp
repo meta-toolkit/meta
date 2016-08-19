@@ -12,7 +12,7 @@ namespace features
 
 const std::string information_gain::id = "info-gain";
 
-double information_gain::score(class_label lbl, term_id tid) const
+double information_gain::score(const class_label& lbl, term_id tid) const
 {
     double p_tc = term_and_class(tid, lbl);
     double p_ntnc = not_term_and_not_class(tid, lbl);

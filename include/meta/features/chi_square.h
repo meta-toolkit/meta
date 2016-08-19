@@ -38,7 +38,7 @@ class chi_square : public feature_selector
      * @param lbl
      * @param tid
      */
-    virtual double score(class_label lbl, term_id tid) const override;
+    virtual double score(const class_label& lbl, term_id tid) const override;
 };
 }
 }

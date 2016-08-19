@@ -94,7 +94,7 @@ class feature_selector
      * @param lbl
      * @param tid
      */
-    virtual double score(class_label lbl, term_id tid) const = 0;
+    virtual double score(const class_label& lbl, term_id tid) const = 0;
 
     /**
      * @param tid
@@ -106,7 +106,7 @@ class feature_selector
      * @param lbl
      * @return the probability of a specific class in the index
      */
-    double prob_class(class_label lbl) const;
+    double prob_class(const class_label& lbl) const;
 
     /**
      * Probability of term occuring in class
@@ -115,7 +115,7 @@ class feature_selector
      * @param lbl
      * @return P(t, c)
      */
-    double term_and_class(term_id tid, class_label lbl) const;
+    double term_and_class(term_id tid, const class_label& lbl) const;
 
     /**
      * Probability of not seeing a term and a class:
@@ -124,7 +124,7 @@ class feature_selector
      * @param lbl
      * @return P(t', c)
      */
-    double not_term_and_class(term_id tid, class_label lbl) const;
+    double not_term_and_class(term_id tid, const class_label& lbl) const;
 
     /**
      * Probability of term not occuring in a class:
@@ -133,7 +133,7 @@ class feature_selector
      * @param lbl
      * @return P(t, c')
      */
-    double term_and_not_class(term_id tid, class_label lbl) const;
+    double term_and_not_class(term_id tid, const class_label& lbl) const;
 
     /**
      * Probability not in class c in which term t does not occur:
@@ -142,7 +142,7 @@ class feature_selector
      * @param lbl
      * @return P(t', c')
      */
-    double not_term_and_not_class(term_id tid, class_label lbl) const;
+    double not_term_and_not_class(term_id tid, const class_label& lbl) const;
 
   private:
     /**

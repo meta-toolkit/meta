@@ -11,7 +11,7 @@ namespace features
 {
 const std::string odds_ratio::id = "odds-ratio";
 
-double odds_ratio::score(class_label lbl, term_id tid) const
+double odds_ratio::score(const class_label& lbl, term_id tid) const
 {
     double p_tc = term_and_class(tid, lbl);
     double p_tnc = term_and_not_class(tid, lbl);

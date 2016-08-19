@@ -11,7 +11,7 @@ namespace features
 {
 const std::string correlation_coefficient::id = "corr-coef";
 
-double correlation_coefficient::score(class_label lbl, term_id tid) const
+double correlation_coefficient::score(const class_label& lbl, term_id tid) const
 {
     double p_tc = term_and_class(tid, lbl);
     double p_ntnc = not_term_and_not_class(tid, lbl);

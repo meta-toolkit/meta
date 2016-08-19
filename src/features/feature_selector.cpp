@@ -179,7 +179,7 @@ double feature_selector::prob_term(term_id tid) const
     return p;
 }
 
-double feature_selector::prob_class(class_label lbl) const
+double feature_selector::prob_class(const class_label& lbl) const
 {
     auto p = class_prob_.probability(lbl);
 #if DEBUG
@@ -190,7 +190,7 @@ double feature_selector::prob_class(class_label lbl) const
     return p;
 }
 
-double feature_selector::term_and_class(term_id tid, class_label lbl) const
+double feature_selector::term_and_class(term_id tid, const class_label& lbl) const
 {
     auto p = co_occur_.probability(std::make_pair(lbl, tid));
 #if DEBUG
@@ -202,7 +202,7 @@ double feature_selector::term_and_class(term_id tid, class_label lbl) const
 }
 
 double feature_selector::not_term_and_not_class(term_id tid,
-                                                class_label lbl) const
+                                                const class_label& lbl) const
 {
     auto p = 1.0 - term_and_class(tid, lbl) - not_term_and_class(tid, lbl)
              - term_and_not_class(tid, lbl);
@@ -214,7 +214,7 @@ double feature_selector::not_term_and_not_class(term_id tid,
     return p;
 }
 
-double feature_selector::term_and_not_class(term_id tid, class_label lbl) const
+double feature_selector::term_and_not_class(term_id tid, const class_label& lbl) const
 {
     auto p = term_prob_.probability(tid) - term_and_class(tid, lbl);
 #if DEBUG
@@ -225,7 +225,7 @@ double feature_selector::term_and_not_class(term_id tid, class_label lbl) const
     return p;
 }
 
-double feature_selector::not_term_and_class(term_id tid, class_label lbl) const
+double feature_selector::not_term_and_class(term_id tid, const class_label& lbl) const
 {
     auto p = class_prob_.probability(lbl) - term_and_class(tid, lbl);
 #if DEBUG
