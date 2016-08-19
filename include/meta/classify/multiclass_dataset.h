@@ -59,10 +59,8 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
     template <class ForwardIterator>
     multiclass_dataset(std::shared_ptr<index::forward_index> idx,
                        ForwardIterator begin, ForwardIterator end)
-        : labeled_dataset{idx, begin, end, [&](doc_id did)
-                          {
-                              return idx->label(did);
-                          }}
+        : labeled_dataset{idx, begin, end,
+                          [&](doc_id did) { return idx->label(did); }}
     {
         // build label_id_mapping
         for (const auto& lbl : idx->class_labels())
@@ -136,11 +134,26 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
     }
 
     /**
-     * @return the number of unique labels in the dataset
+     * Creates an in-memory dataset from a pair of iterators, a function
+     * to convert to a feature_vector and a function to obtain a label.
      */
-    size_type total_labels() const
+    template <class ForwardIterator, class FeatureVectorFunction,
+              class LabelFunction>
+    multiclass_dataset(ForwardIterator begin, ForwardIterator end,
+                       size_type total_features,
+                       FeatureVectorFunction&& featurizer,
+                       LabelFunction&& labeller)
+        : labeled_dataset{begin, end, total_features,
+                          std::forward<FeatureVectorFunction>(featurizer),
+                          std::forward<LabelFunction>(labeller)}
     {
-        return label_id_mapping_.size();
+        // build label_id_mapping
+        for (; begin != end; ++begin)
+        {
+            if (!label_id_mapping_.contains_key(labeller(*begin)))
+                label_id_mapping_.insert(labeller(*begin),
+                                         label_id(label_id_mapping_.size()));
+        }
     }
 
     /**

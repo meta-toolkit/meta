@@ -22,7 +22,7 @@ namespace features
  * \log \frac{P(t|c_i)(1-P(t|\overline{c_i}))}{(1-P(t|c_i))P(t|\overline{c_i})}
  * \f$
  */
-class odds_ratio: public feature_selector
+class odds_ratio : public feature_selector
 {
   public:
     /// Inherit constructor.
@@ -32,12 +32,12 @@ class odds_ratio: public feature_selector
     const static std::string id;
 
     /**
-     * Scores the (label_id, term) pair according to this feature selection
+     * Scores the (label, term) pair according to this feature selection
      * metric.
-     * @param lid
+     * @param lbl
      * @param tid
      */
-    virtual double score(label_id lid, term_id tid) const override;
+    virtual double score(const class_label& lbl, term_id tid) const override;
 };
 }
 }

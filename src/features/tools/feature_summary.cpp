@@ -7,8 +7,9 @@
  * project.
  */
 
-#include <iostream>
 #include "cpptoml.h"
+#include "meta/classify/multiclass_dataset.h"
+#include "meta/classify/multiclass_dataset_view.h"
 #include "meta/features/all.h"
 #include "meta/features/selector_factory.h"
 #include "meta/index/forward_index.h"
@@ -16,6 +17,7 @@
 #include "meta/parser/analyzers/tree_analyzer.h"
 #include "meta/sequence/analyzers/ngram_pos_analyzer.h"
 #include "meta/util/shim.h"
+#include <iostream>
 
 using namespace meta;
 
@@ -42,7 +44,14 @@ int main(int argc, char* argv[])
     }
 
     auto f_idx = index::make_index<index::memory_forward_index>(*config);
-    auto selector = features::make_selector(*config, f_idx);
+
+    classify::multiclass_dataset dset{f_idx};
+    classify::multiclass_dataset_view dset_vw(dset);
+
+    auto selector = features::make_selector(*config, dset_vw);
+
     selector->select(100);
-    selector->print_summary(10);
+    selector->print_summary(f_idx, 10);
+
+    return 0;
 }

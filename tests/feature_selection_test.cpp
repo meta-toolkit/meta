@@ -5,38 +5,48 @@
 
 #include "bandit/bandit.h"
 #include "create_config.h"
+#include "meta/classify/multiclass_dataset.h"
+#include "meta/classify/multiclass_dataset_view.h"
+#include "meta/features/all.h"
 #include "meta/features/feature_selector.h"
 #include "meta/features/selector_factory.h"
-#include "meta/features/all.h"
 
 using namespace bandit;
 using namespace meta;
 
-namespace {
+namespace
+{
 
 template <class Index>
-void test_method(Index& idx, const std::string& id) {
+void test_method(Index& idx, const std::string& method_id)
+{
     auto config = cpptoml::make_table();
     auto fcfg = cpptoml::make_table();
-    fcfg->insert("method", id);
+    fcfg->insert("method", method_id);
     fcfg->insert("prefix", "test-features");
     config->insert("features", fcfg);
 
-    auto selector = features::make_selector(*config, idx);
+    classify::multiclass_dataset dset{idx};
+    classify::multiclass_dataset_view dset_vw(dset);
+
+    auto selector = features::make_selector(*config, dset_vw);
     selector->select(20);
     selector->select(50);
     selector->select_percent(0.05);
     selector->select_percent(0.10);
 
-    auto t_id = idx->get_term_id("china"); // this term should be selected
-    AssertThat(selector->selected(t_id), IsTrue());
+    auto tid = idx->get_term_id("china"); // this term should be selected
 
-    // CEEAUS has three classes
-    AssertThat(filesystem::file_exists("test-features." + id + ".1"), IsTrue());
-    AssertThat(filesystem::file_exists("test-features." + id + ".2"), IsTrue());
-    AssertThat(filesystem::file_exists("test-features." + id + ".3"), IsTrue());
-    AssertThat(filesystem::file_exists("test-features." + id + ".selected"),
-               IsTrue());
+    AssertThat(selector->selected(tid), IsTrue());
+
+    for (uint64_t lbl_id = 0; lbl_id < dset_vw.total_labels(); ++lbl_id)
+        AssertThat(filesystem::file_exists("test-features." + method_id + "."
+                                           + std::to_string(lbl_id + 1)),
+                   IsTrue());
+
+    AssertThat(
+        filesystem::file_exists("test-features." + method_id + ".selected"),
+        IsTrue());
 }
 }
 
@@ -70,10 +80,12 @@ go_bandit([]() {
 
     f_idx = nullptr;
     filesystem::remove_all("ceeaus");
-    for (const std::string& id :
-         {"chi-square", "info-gain", "corr-coef", "odds-ratio"}) {
-        for (const std::string& suffix : {"1", "2", "3", "selected"}) {
-            filesystem::remove_all("test-features." + id + "." + suffix);
+    for (const std::string& method_id :
+         {"chi-square", "info-gain", "corr-coef", "odds-ratio"})
+    {
+        for (const std::string& suffix : {"1", "2", "3", "selected"})
+        {
+            filesystem::remove_all("test-features." + method_id + "." + suffix);
         }
     }
 });
