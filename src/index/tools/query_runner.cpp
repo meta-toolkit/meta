@@ -3,18 +3,18 @@
  * @author Sean Massung
  */
 
-#include <vector>
-#include <string>
 #include <iostream>
+#include <string>
+#include <vector>
 
-#include "meta/util/time.h"
-#include "meta/util/printing.h"
 #include "meta/corpus/document.h"
-#include "meta/index/inverted_index.h"
 #include "meta/index/eval/ir_eval.h"
+#include "meta/index/inverted_index.h"
 #include "meta/index/ranker/ranker_factory.h"
 #include "meta/parser/analyzers/tree_analyzer.h"
 #include "meta/sequence/analyzers/ngram_pos_analyzer.h"
+#include "meta/util/printing.h"
+#include "meta/util/time.h"
 
 using namespace meta;
 
@@ -66,48 +66,45 @@ int main(int argc, char* argv[])
     }
 
     std::string content;
-    auto elapsed_seconds = common::time(
-        [&]()
+    auto elapsed_seconds = common::time([&]() {
+        size_t i = 0;
+        while (std::getline(queries, content))
         {
-            size_t i = 0;
-            while (std::getline(queries, content))
-            {
-                corpus::document query{doc_id{0}};
-                query.content(content);
-                std::cout << std::string(80, '=') << std::endl;
-                std::cout << "Query " << ++i << ": \"" << content << "\""
-                          << std::endl;
-                std::cout << std::string(80, '-') << std::endl;
+            corpus::document query{doc_id{0}};
+            query.content(content);
+            std::cout << std::string(80, '=') << std::endl;
+            std::cout << "Query " << ++i << ": \"" << content << "\""
+                      << std::endl;
+            std::cout << std::string(80, '-') << std::endl;
 
-                // Use the ranker to score the query over the index.
-                auto ranking = ranker->score(*idx, query);
-                auto result_num = 1;
-                for (auto& result : ranking)
+            // Use the ranker to score the query over the index.
+            auto ranking = ranker->score(*idx, query);
+            auto result_num = 1;
+            for (auto& result : ranking)
+            {
+                std::string path{idx->doc_path(result.d_id)};
+                auto output = printing::make_bold(std::to_string(result_num)
+                                                  + ". " + path)
+                              + " (score = " + std::to_string(result.score)
+                              + ", docid = " + std::to_string(result.d_id)
+                              + ")";
+                std::cout << output << std::endl;
+                auto mdata = idx->metadata(result.d_id);
+                if (auto content = mdata.get<std::string>("content"))
                 {
-                    std::string path{idx->doc_path(result.d_id)};
-                    auto output = printing::make_bold(std::to_string(result_num)
-                                                      + ". " + path)
-                                  + " (score = " + std::to_string(result.score)
-                                  + ", docid = " + std::to_string(result.d_id)
-                                  + ")";
-                    std::cout << output << std::endl;
-                    auto mdata = idx->metadata(result.d_id);
-                    if (auto content = mdata.get<std::string>("content"))
-                    {
-                        auto len = std::min(std::string::size_type{77},
-                                            content->size());
-                        std::cout << content->substr(0, len) << "..."
-                                  << std::endl
-                                  << std::endl;
-                    }
-                    if (result_num++ == 10)
-                        break;
+                    auto len
+                        = std::min(std::string::size_type{77}, content->size());
+                    std::cout << content->substr(0, len) << "..." << std::endl
+                              << std::endl;
                 }
-                if (eval)
-                    eval->print_stats(ranking, query_id{i - 1});
-                std::cout << std::endl;
+                if (result_num++ == 10)
+                    break;
             }
-        });
+            if (eval)
+                eval->print_stats(ranking, query_id{i - 1});
+            std::cout << std::endl;
+        }
+    });
 
     if (eval)
     {
