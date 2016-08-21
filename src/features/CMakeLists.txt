@@ -8,4 +8,6 @@ add_library(meta-features feature_selector.cpp
                           odds_ratio.cpp
                           correlation_coefficient.cpp
                           information_gain.cpp)
-target_link_libraries(meta-features meta-index ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(meta-features meta-index
+                                    meta-succinct
+                                    ${CMAKE_THREAD_LIBS_INIT})

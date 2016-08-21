@@ -33,13 +33,10 @@ void run_test(DatasetView& dset_vw, const std::string& method_id, term_id tid) {
     AssertThat(selector->selected(tid), IsTrue());
 
     for (uint64_t lbl_id = 0; lbl_id < dset_vw.total_labels(); ++lbl_id)
-        AssertThat(filesystem::file_exists("test-features." + method_id + "."
-                                           + std::to_string(lbl_id + 1)),
+        AssertThat(filesystem::file_exists("test-features/" + method_id + "/"
+                                           + std::to_string(lbl_id + 1)
+                                           + ".bin"),
                    IsTrue());
-
-    AssertThat(
-        filesystem::file_exists("test-features." + method_id + ".selected"),
-        IsTrue());
 }
 
 template <class Index>
@@ -92,13 +89,7 @@ go_bandit([]() {
             test_method(f_idx, "odds-ratio");
         });
 
-        for (const std::string& method_id :
-             {"chi-square", "info-gain", "corr-coef", "odds-ratio"}) {
-            for (const std::string& suffix : {"1", "2", "3", "selected"}) {
-                filesystem::remove_all("test-features." + method_id + "."
-                                       + suffix);
-            }
-        }
+        filesystem::remove_all("test-features");
 
         it("should implement chi square (binary)", [&]() {
             test_method_binary(f_idx, "chi-square");
@@ -120,14 +111,7 @@ go_bandit([]() {
             test_method_binary(f_idx, "odds-ratio");
         });
 
-        for (const std::string& method_id :
-             {"chi-square", "info-gain", "corr-coef", "odds-ratio"}) {
-            for (const std::string& suffix : {"1", "2", "selected"}) {
-                filesystem::remove_all("test-features." + method_id + "."
-                                       + suffix);
-            }
-        }
-
+        filesystem::remove_all("test-features");
     });
 
     f_idx = nullptr;

@@ -18,8 +18,9 @@
 #include "cpptoml.h"
 #include "meta/index/disk_index.h"
 #include "meta/io/filesystem.h"
+#include "meta/learn/instance.h"
 #include "meta/stats/multinomial.h"
-#include "meta/util/disk_vector.h"
+#include "meta/succinct/sarray.h"
 #include "meta/util/progress.h"
 #include "meta/util/sparse_vector.h"
 
@@ -35,7 +36,7 @@ namespace features
  * Required config parameters:
  * ~~~toml
  * method = "corr-coef" # choose the feature selection algorithm
- * prefix = "file-prefix"
+ * prefix = "folder-prefix"
  * ~~~
  *
  * Optional config parameters:
@@ -72,6 +73,24 @@ class feature_selector
      * @return whether the given term is currently "selected"
      */
     virtual bool selected(term_id term) const;
+
+    /**
+     * Determines the new, condensed feature_id for a given term_id after
+     * feature selection has been performed. This is only defined for
+     * term_ids where `selected(term) == true`.
+     * @param term
+     * @return the new feature_id for this term after feature selection
+     */
+    learn::feature_id new_id(term_id term) const;
+
+    /**
+     * Determines the original term_id for a given feature_id after
+     * feature selection has been performed. This is only defined for
+     * feature_ids obtained via calling new_id(term).
+     * @param feature
+     * @return the original term_id for this feature
+     */
+    term_id old_id(learn::feature_id feature) const;
 
     /**
      * Sets the top k features for *each class* to be "selected"
@@ -146,15 +165,16 @@ class feature_selector
 
   private:
     /**
-     * The internal implementation of a feature_selector object is a disk_vector
-     * and a collection of binary files. The disk_vector allows constant-time
-     * access to look up a term_id and check whether it has been "selected". The
-     * binary files are sorted by feature score for easy summary operations as
-     * well as changing which top features are set to be selected.
+     * The internal implementation of a feature_selector object is an
+     * sarray (with rank and select data structures) and a collection of
+     * binary files. The sarray allows constant-time access to look up
+     * a term_id and check whether it has been "selected". The binary files
+     * are sorted by feature score for easy summary operations as well as
+     * changing which top features are set to be selected.
      *
      * This base feature_selector class calculates and contains four
-     * distributions which may be used to calculate different feature selection
-     * scores, implemented as derived classes.
+     * distributions which may be used to calculate different feature
+     * selection scores, implemented as derived classes.
      */
 
     /**
@@ -170,7 +190,7 @@ class feature_selector
     {
         // if the first class distribution exists, we have already created the
         // data for this feature_selector previously
-        if (filesystem::file_exists(prefix_ + ".1"))
+        if (filesystem::file_exists(prefix_ + "/1.bin"))
             return;
 
         term_prob_.clear();
@@ -236,8 +256,14 @@ class feature_selector
     /// Total number of features
     uint64_t total_features_;
 
-    /// Whether or not a term_id is currently selected
-    util::disk_vector<bool> selected_;
+    /// Storage for rank/select queries on selected feature_ids
+    util::optional<succinct::sarray> sarray_;
+
+    /// Query structure for rank queries
+    util::optional<succinct::sarray_rank> s_rank_;
+
+    /// Query structure for select queries
+    util::optional<succinct::sarray_select> s_select_;
 
     /// P(t) in the entire collection, indexed by term_id
     stats::multinomial<term_id> term_prob_;
