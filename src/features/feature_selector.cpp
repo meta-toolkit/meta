@@ -133,17 +133,31 @@ void feature_selector::select(uint64_t features_per_class /* = 20 */)
 
 bool feature_selector::selected(term_id tid) const
 {
+    // rank(tid) returns the number of ones in the "bit vector" of selected
+    // features that occur *before* the tid-th position.
+    //
+    // If rank(tid) < rank(tid + 1), then it must be the case that the
+    // tid-th bit was set to one since the rank incremented. If they are
+    // equal, the tid-th bit could not have been set (since there isn't one
+    // more one before the tid+1-th bit.
     return s_rank_->rank(tid) < s_rank_->rank(tid + 1);
 }
 
 learn::feature_id feature_selector::new_id(term_id term) const
 {
+    // rank(tid) returns the number of ones in the "bit vector" of selected
+    // features that occur *before* the tid-th position.
+    //
+    // This provides a condensed re-labeling for the term ids starting at 0
+    // and incremented for each new selected feature.
     assert(selected(term));
     return learn::feature_id{s_rank_->rank(term)};
 }
 
 term_id feature_selector::old_id(learn::feature_id feature) const
 {
+    // select(feature) returns the position of the feature-th one in the
+    // "bit vector" of selected features
     return term_id{s_select_->select(feature)};
 }
 
