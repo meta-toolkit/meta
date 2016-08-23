@@ -108,7 +108,7 @@ class sarray_rank
 
   private:
     const sarray* sarray_;
-    const darray0 high_bit_zeroes_;
+    darray0 high_bit_zeroes_;
 };
 
 /**
@@ -125,7 +125,7 @@ class sarray_select
 
   private:
     const sarray* sarray_;
-    const darray1 high_bit_ones_;
+    darray1 high_bit_ones_;
 };
 
 /**

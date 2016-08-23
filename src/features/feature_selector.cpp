@@ -17,10 +17,12 @@ namespace features
 feature_selector::feature_selector(const std::string& prefix,
                                    uint64_t total_labels,
                                    uint64_t total_features)
-    : prefix_{prefix},
+    : prefix_{[&]() {
+          filesystem::make_directories(prefix);
+          return prefix;
+      }()},
       total_labels_{total_labels},
-      total_features_{total_features},
-      selected_{prefix_ + ".selected", total_features_}
+      total_features_{total_features}
 {
     // nothing
 }
@@ -61,7 +63,8 @@ void feature_selector::score_all()
                       return a.second > b.second;
                   });
 
-        std::ofstream out{prefix_ + "." + std::to_string(c_scores.first + 1),
+        std::ofstream out{prefix_ + "/" + std::to_string(c_scores.first + 1)
+                              + ".bin",
                           std::ios::binary};
 
         io::packed::write(out, labels[c_scores.first]);
@@ -80,10 +83,6 @@ void feature_selector::select(uint64_t features_per_class /* = 20 */)
         throw feature_selector_exception{"cannot select more than the total "
                                          "number of features in the dataset"};
 
-    // zero out old vector
-    for (auto& b : selected_)
-        b = false;
-
     term_id tid;
     double score;
 
@@ -91,9 +90,11 @@ void feature_selector::select(uint64_t features_per_class /* = 20 */)
                                 + " features per class: ",
                             (total_labels_ * features_per_class)};
 
+    std::vector<uint64_t> positions;
+    positions.reserve(total_labels_ * features_per_class);
     for (uint64_t lbl_id = 0; lbl_id < total_labels_; ++lbl_id)
     {
-        std::ifstream in{prefix_ + "." + std::to_string(lbl_id + 1),
+        std::ifstream in{prefix_ + "/" + std::to_string(lbl_id + 1) + ".bin",
                          std::ios::binary};
 
         // read the label first
@@ -105,18 +106,59 @@ void feature_selector::select(uint64_t features_per_class /* = 20 */)
             io::packed::read(in, tid);
             io::packed::read(in, score);
 
-            selected_[tid] = true;
+            positions.push_back(tid);
 
             prog((lbl_id + 1) * (i + 1));
         }
 
         prog.end();
-    };
+    }
+
+    std::sort(positions.begin(), positions.end());
+    positions.erase(std::unique(positions.begin(), positions.end()),
+                    positions.end());
+
+    // ensure destruction of old sarray and rank/select structures
+    s_rank_ = util::nullopt;
+    s_select_ = util::nullopt;
+    sarray_ = util::nullopt;
+    filesystem::remove_all(prefix_ + "/sarray");
+
+    // hallucinate an additional feature to fix boundary cases later
+    sarray_ = succinct::make_sarray(prefix_ + "/sarray", positions.begin(),
+                                    positions.end(), total_features_ + 1);
+    s_rank_ = succinct::sarray_rank{prefix_ + "/sarray", *sarray_};
+    s_select_ = succinct::sarray_select{prefix_ + "/sarray", *sarray_};
 }
 
 bool feature_selector::selected(term_id tid) const
 {
-    return selected_[tid];
+    // rank(tid) returns the number of ones in the "bit vector" of selected
+    // features that occur *before* the tid-th position.
+    //
+    // If rank(tid) < rank(tid + 1), then it must be the case that the
+    // tid-th bit was set to one since the rank incremented. If they are
+    // equal, the tid-th bit could not have been set (since there isn't one
+    // more one before the tid+1-th bit.
+    return s_rank_->rank(tid) < s_rank_->rank(tid + 1);
+}
+
+learn::feature_id feature_selector::new_id(term_id term) const
+{
+    // rank(tid) returns the number of ones in the "bit vector" of selected
+    // features that occur *before* the tid-th position.
+    //
+    // This provides a condensed re-labeling for the term ids starting at 0
+    // and incremented for each new selected feature.
+    assert(selected(term));
+    return learn::feature_id{s_rank_->rank(term)};
+}
+
+term_id feature_selector::old_id(learn::feature_id feature) const
+{
+    // select(feature) returns the position of the feature-th one in the
+    // "bit vector" of selected features
+    return term_id{s_select_->select(feature)};
 }
 
 void feature_selector::select_percent(double p /* = 0.05 */)
@@ -141,7 +183,7 @@ void feature_selector::print_summary(std::shared_ptr<index::disk_index> idx,
     for (uint64_t lbl_id = 0; lbl_id < total_labels_; ++lbl_id)
     {
         // read (term_id, score) pairs
-        std::ifstream in{prefix_ + "." + std::to_string(lbl_id + 1),
+        std::ifstream in{prefix_ + "/" + std::to_string(lbl_id + 1) + ".bin",
                          std::ios::binary};
 
         std::string lbl;

@@ -132,7 +132,7 @@ factory_make_selector(const cpptoml::table& config, uint64_t total_labels,
         throw selector_factory_exception{
             "feature selection method required in [features] table"};
 
-    return make_unique<Selector>(*prefix + "." + *method, total_labels,
+    return make_unique<Selector>(*prefix + "/" + *method, total_labels,
                                  total_features);
 }
 

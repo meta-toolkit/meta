@@ -10,8 +10,9 @@
 #ifndef META_SUCCINCT_DARRAY_H_
 #define META_SUCCINCT_DARRAY_H_
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
+
 #include "meta/io/binary.h"
 #include "meta/io/filesystem.h"
 #include "meta/io/packed.h"
@@ -247,6 +248,17 @@ class darray
         impl_ = make_unique<impl>(prefix, bvv);
     }
 
+    darray(darray&& other) : impl_{std::move(other.impl_)}
+    {
+        // nothing
+    }
+
+    darray& operator=(darray&& rhs)
+    {
+        impl_ = std::move(rhs.impl_);
+        return *this;
+    }
+
     /**
      * Determines the position of the \f$i\f$-th one in the bit vector.
      */
@@ -323,7 +335,7 @@ class darray
             {
                 auto popcount = broadword::popcount(word);
                 if (one_count < popcount)
-                  break;
+                    break;
                 one_count -= popcount;
                 word = WordReader{}(words[++word_idx]);
             }
