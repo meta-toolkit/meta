@@ -37,6 +37,10 @@ method = "one-vs-all"
 method = "sgd"
 loss = "hinge"
 
+[regressor]
+method = "sgd"
+loss = "least-squares"
+
 [lda]
 inference = "gibbs"
 max-iters = 1000
