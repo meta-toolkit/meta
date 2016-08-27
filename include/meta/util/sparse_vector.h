@@ -173,12 +173,12 @@ class sparse_vector
     /**
      * Removes an element.
      */
-    iterator erase(const_iterator pos);
+    iterator erase(iterator pos);
 
     /**
      * Removes elements in an iterator range.
      */
-    iterator erase(const_iterator first, const_iterator last);
+    iterator erase(iterator first, iterator last);
 
     sparse_vector& operator+=(const sparse_vector& rhs);
     sparse_vector& operator-=(const sparse_vector& rhs);
