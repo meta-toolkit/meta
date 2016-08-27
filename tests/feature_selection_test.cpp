@@ -16,8 +16,9 @@ using namespace meta;
 
 namespace {
 
-template <class DatasetView>
-void run_test(DatasetView& dset_vw, const std::string& method_id, term_id tid) {
+template <class Dataset, class DatasetView>
+void run_test(const Dataset& dset, DatasetView& dset_vw,
+              const std::string& method_id, term_id tid) {
     auto config = cpptoml::make_table();
     auto fcfg = cpptoml::make_table();
     fcfg->insert("method", method_id);
@@ -37,6 +38,21 @@ void run_test(DatasetView& dset_vw, const std::string& method_id, term_id tid) {
                                            + std::to_string(lbl_id + 1)
                                            + ".bin"),
                    IsTrue());
+
+    auto filtered_dset = features::filter_dataset(dset, *selector);
+    AssertThat(filtered_dset.total_features(),
+               Equals(selector->total_selected()));
+    AssertThat(filtered_dset.size(), Equals(dset.size()));
+
+    auto dbegin = dset.begin();
+    auto dend = dset.end();
+    auto fbegin = filtered_dset.begin();
+    auto fend = filtered_dset.end();
+    for (; dbegin != dend && fbegin != fend; ++dbegin, ++fbegin) {
+        AssertThat(fbegin->weights.size(),
+                   IsLessThan(dbegin->weights.size()));
+        AssertThat(fbegin->id, Equals(dbegin->id));
+    }
 }
 
 template <class Index>
@@ -47,7 +63,7 @@ void test_method(Index& idx, const std::string& method_id) {
 
     auto tid = idx->get_term_id("china"); // this term should be selected
 
-    run_test(dset_vw, method_id, tid);
+    run_test(dset, dset_vw, method_id, tid);
 }
 
 template <class Index>
@@ -58,7 +74,7 @@ void test_method_binary(Index& idx, const std::string& method_id) {
 
     auto tid = idx->get_term_id("china"); // this term should be selected
 
-    run_test(dset_vw, method_id, tid);
+    run_test(dset, dset_vw, method_id, tid);
 }
 }
 

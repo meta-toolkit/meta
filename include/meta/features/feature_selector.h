@@ -75,6 +75,11 @@ class feature_selector
     virtual bool selected(term_id term) const;
 
     /**
+     * @return the total number of currently selected features
+     */
+    uint64_t total_selected() const;
+
+    /**
      * Determines the new, condensed feature_id for a given term_id after
      * feature selection has been performed. This is only defined for
      * term_ids where `selected(term) == true`.
@@ -283,7 +288,37 @@ class feature_selector_exception : public std::runtime_error
   public:
     using std::runtime_error::runtime_error;
 };
-}
-}
 
+/**
+ * Filters a labeled_dataset to contain only features that are marked as
+ * selected
+ * by a given feature selector.
+ *
+ * @param dataset The dataset to filter
+ * @param selector The feature selector to use
+ */
+template <class Dataset>
+Dataset filter_dataset(const Dataset& dataset, const feature_selector& selector)
+{
+    return Dataset(
+        dataset.begin(), dataset.end(), selector.total_selected(),
+        [&](const learn::instance& instance) {
+            auto weights = instance.weights;
+
+            weights.erase(
+                std::remove_if(
+                    weights.begin(), weights.end(),
+                    [&](const learn::feature_vector::pair_type& weight) {
+                        return !selector.selected(weight.first);
+                    }),
+                weights.end());
+            weights.shrink_to_fit();
+            return weights;
+        },
+        [&](const learn::instance& instance) {
+            return dataset.label(instance);
+        });
+}
+}
+}
 #endif

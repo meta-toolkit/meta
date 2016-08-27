@@ -170,6 +170,16 @@ class sparse_vector
      */
     const_iterator cend() const;
 
+    /**
+     * Removes an element.
+     */
+    iterator erase(const_iterator pos);
+
+    /**
+     * Removes elements in an iterator range.
+     */
+    iterator erase(const_iterator first, const_iterator last);
+
     sparse_vector& operator+=(const sparse_vector& rhs);
     sparse_vector& operator-=(const sparse_vector& rhs);
 

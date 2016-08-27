@@ -4,6 +4,7 @@
  */
 
 #include <algorithm>
+
 #include "meta/util/sparse_vector.h"
 
 namespace meta
@@ -190,6 +191,19 @@ template <class Index, class Value>
 auto sparse_vector<Index, Value>::cend() const -> const_iterator
 {
     return storage_.cend();
+}
+
+template <class Index, class Value>
+auto sparse_vector<Index, Value>::erase(const_iterator pos) -> iterator
+{
+    return storage_.erase(pos);
+}
+
+template <class Index, class Value>
+auto sparse_vector<Index, Value>::erase(const_iterator first,
+                                        const_iterator last) -> iterator
+{
+    return storage_.erase(first, last);
 }
 
 template <class Index, class Value>

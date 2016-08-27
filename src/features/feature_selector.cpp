@@ -161,6 +161,11 @@ term_id feature_selector::old_id(learn::feature_id feature) const
     return term_id{s_select_->select(feature)};
 }
 
+uint64_t feature_selector::total_selected() const
+{
+    return s_rank_->size();
+}
+
 void feature_selector::select_percent(double p /* = 0.05 */)
 {
     if (p <= 0.0 || p >= 1.0)
