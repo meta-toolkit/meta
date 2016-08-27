@@ -10,6 +10,7 @@
 #define META_LEARN_DATASET_H_
 
 #include <memory>
+#include <unordered_set>
 
 #include "meta/corpus/metadata.h"
 #include "meta/index/forward_index.h"

@@ -18,7 +18,7 @@ before_build:
     - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER && mkdir build && cd build && cmake .. -G \"MSYS Makefiles\""
 build_script:
     - set MSYSTEM=MINGW64
-    - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && make"
+    - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && make -j2"
 test_script:
     - set MSYSTEM=MINGW64
     - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && cp ../config.toml . && ./unit-test --reporter=spec"

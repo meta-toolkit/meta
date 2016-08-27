@@ -4,6 +4,7 @@
  */
 
 #include <algorithm>
+
 #include "meta/util/sparse_vector.h"
 
 namespace meta
@@ -12,8 +13,7 @@ namespace util
 {
 
 template <class Index, class Value>
-sparse_vector<Index, Value>::sparse_vector(uint64_t size)
-    : storage_(size)
+sparse_vector<Index, Value>::sparse_vector(uint64_t size) : storage_(size)
 {
     // nothing
 }
@@ -29,11 +29,9 @@ sparse_vector<Index, Value>::sparse_vector(Iter begin, Iter end)
 template <class Index, class Value>
 Value& sparse_vector<Index, Value>::operator[](const Index& index)
 {
-    auto it = std::lower_bound(std::begin(storage_), std::end(storage_), index,
-                               [](const pair_type& p, const Index& idx)
-                               {
-                                   return p.first < idx;
-                               });
+    auto it = std::lower_bound(
+        std::begin(storage_), std::end(storage_), index,
+        [](const pair_type& p, const Index& idx) { return p.first < idx; });
 
     if (it == std::end(storage_))
     {
@@ -54,11 +52,9 @@ Value& sparse_vector<Index, Value>::operator[](const Index& index)
 template <class Index, class Value>
 Value sparse_vector<Index, Value>::at(const Index& index) const
 {
-    auto it = std::lower_bound(std::begin(storage_), std::end(storage_), index,
-                               [](const pair_type& p, const Index& idx)
-                               {
-                                   return p.first < idx;
-                               });
+    auto it = std::lower_bound(
+        std::begin(storage_), std::end(storage_), index,
+        [](const pair_type& p, const Index& idx) { return p.first < idx; });
 
     if (it == std::end(storage_) || it->first != index)
         return Value{};
@@ -69,11 +65,9 @@ template <class Index, class Value>
 auto sparse_vector<Index, Value>::find(const Index& index) const
     -> const_iterator
 {
-    auto it = std::lower_bound(std::begin(storage_), std::end(storage_), index,
-                               [](const pair_type& p, const Index& idx)
-                               {
-                                   return p.first < idx;
-                               });
+    auto it = std::lower_bound(
+        std::begin(storage_), std::end(storage_), index,
+        [](const pair_type& p, const Index& idx) { return p.first < idx; });
 
     if (it == std::end(storage_) || it->first != index)
         return std::end(storage_);
@@ -113,8 +107,7 @@ void sparse_vector<Index, Value>::condense()
 
     // erase-remove idiom looking for value-initalized elements
     storage_.erase(std::remove_if(storage_.begin(), storage_.end(),
-                                  [&](const pair_type& p)
-                                  {
+                                  [&](const pair_type& p) {
                                       return p.second == default_value;
                                   }),
                    storage_.end());
@@ -140,7 +133,7 @@ bool sparse_vector<Index, Value>::empty() const
 }
 
 template <class Index, class Value>
-auto sparse_vector<Index, Value>::contents() const -> const container_type &
+auto sparse_vector<Index, Value>::contents() const -> const container_type&
 {
     return storage_;
 }
@@ -150,8 +143,7 @@ void sparse_vector<Index, Value>::contents(container_type cont)
 {
     storage_ = std::move(cont);
     std::sort(std::begin(storage_), std::end(storage_),
-              [](const pair_type& a, const pair_type& b)
-              {
+              [](const pair_type& a, const pair_type& b) {
                   return a.first < b.first;
               });
 }
@@ -193,8 +185,21 @@ auto sparse_vector<Index, Value>::cend() const -> const_iterator
 }
 
 template <class Index, class Value>
+auto sparse_vector<Index, Value>::erase(const_iterator pos) -> iterator
+{
+    return storage_.erase(pos);
+}
+
+template <class Index, class Value>
+auto sparse_vector<Index, Value>::erase(const_iterator first,
+                                        const_iterator last) -> iterator
+{
+    return storage_.erase(first, last);
+}
+
+template <class Index, class Value>
 auto sparse_vector<Index, Value>::operator+=(const sparse_vector& rhs)
-    -> sparse_vector &
+    -> sparse_vector&
 {
     // use index into the current vector so that we can properly handle
     // invalidation of iterators during the loop
@@ -236,7 +241,7 @@ auto sparse_vector<Index, Value>::operator+=(const sparse_vector& rhs)
 
 template <class Index, class Value>
 auto sparse_vector<Index, Value>::operator-=(const sparse_vector& rhs)
-    -> sparse_vector &
+    -> sparse_vector&
 {
     // use index into the current vector so that we can properly handle
     // invalidation of iterators during the loop

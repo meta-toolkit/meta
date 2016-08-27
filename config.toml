@@ -5,8 +5,6 @@ function-words = "../data/function-words.txt"
 punctuation = "../data/sentence-boundaries/sentence-punctuation.txt"
 start-exceptions = "../data/sentence-boundaries/sentence-start-exceptions.txt"
 end-exceptions = "../data/sentence-boundaries/sentence-end-exceptions.txt"
-query-judgements = "../data/ceeaus-qrels.txt"
-query-path = "../queries.txt" # create this file
 
 dataset = "ceeaus"
 corpus = "line.toml" # located inside dataset folder
@@ -20,6 +18,13 @@ method = "ngram-word"
 ngram = 1
 filter = "default-unigram-chain"
 
+[query-runner]
+#query-judgements = "../data/ceeaus-qrels.txt"  # uncomment to run IR eval
+query-path = "../queries.txt"  # create this file!
+trec-format = false            # default: false
+max-results = 10               # default: 10
+query-id-start = 1             # default: 1
+
 [ranker]
 method = "bm25"
 k1 = 1.2
@@ -31,6 +36,10 @@ method = "one-vs-all"
 [classifier.base]
 method = "sgd"
 loss = "hinge"
+
+[regressor]
+method = "sgd"
+loss = "least-squares"
 
 [lda]
 inference = "gibbs"

@@ -33,12 +33,12 @@ class correlation_coefficient : public feature_selector
     const static std::string id;
 
     /**
-     * Scores the (label_id, term) pair according to this feature selection
+     * Scores the (label, term) pair according to this feature selection
      * metric.
-     * @param lid
+     * @param lbl
      * @param tid
      */
-    virtual double score(label_id lid, term_id tid) const override;
+    virtual double score(const class_label& lbl, term_id tid) const override;
 };
 }
 }

@@ -11,6 +11,8 @@
 #define META_SUCCINCT_DARRAY_H_
 
 #include <fstream>
+#include <iostream>
+
 #include "meta/io/binary.h"
 #include "meta/io/filesystem.h"
 #include "meta/io/packed.h"
@@ -245,6 +247,17 @@ class darray
             darray_builder<WordReader>{prefix, bvv};
         }
         impl_ = make_unique<impl>(prefix, bvv);
+    }
+
+    darray(darray&& other) : impl_{std::move(other.impl_)}
+    {
+        // nothing
+    }
+
+    darray& operator=(darray&& rhs)
+    {
+        impl_ = std::move(rhs.impl_);
+        return *this;
     }
 
     /**
