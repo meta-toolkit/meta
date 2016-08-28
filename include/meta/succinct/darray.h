@@ -304,8 +304,10 @@ class darray
         {
             using namespace darray_detail;
 
+#if DEBUG
             if (META_UNLIKELY(i >= num_ones))
                 throw std::out_of_range{"index out of range in select query"};
+#endif
 
             auto block_idx = i / ones_per_block;
             if (blocks[block_idx] < 0)

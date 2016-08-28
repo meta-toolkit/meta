@@ -131,15 +131,15 @@ class ngram_handler
             util::for_each_token(
                 ngram.begin(), ngram.end(), " ",
                 [&](std::string::const_iterator first,
-                    std::string::const_iterator last)
-                {
+                    std::string::const_iterator last) {
                     if (first != last)
                     {
-                        std::string unigram{first, last};
-                        auto id = unigrams_->index({first, last});
+                        auto unigram = util::make_string_view(first, last);
+                        auto id = unigrams_->index(unigram);
                         if (!id)
                             throw std::runtime_error{
-                                "ngram contains unknown unigram " + unigram};
+                                "ngram contains unknown unigram "
+                                + unigram.to_string()};
                         ids.push_back(*id);
                     }
                 });
@@ -177,7 +177,8 @@ class ngram_handler
 
             // now that the unigrams are written, we're going to load their
             // ngram_map to use as a vocabulary lookup
-            unigrams_ = make_unique<ngram_map<std::string>>(prefix_ + "/0");
+            unigrams_
+                = make_unique<ngram_map<util::string_view>>(prefix_ + "/0");
             LOG(info) << "Loaded unigram map" << ENDLG;
 
             middle_builder_type::options_type options;
@@ -243,7 +244,7 @@ class ngram_handler
     std::vector<uint64_t> counts_;
     std::unique_ptr<printing::progress> progress_;
     std::unique_ptr<unigram_builder_type> unigram_builder_;
-    std::unique_ptr<ngram_map<std::string>> unigrams_;
+    std::unique_ptr<ngram_map<util::string_view>> unigrams_;
     std::unique_ptr<middle_builder_type> middle_builder_;
     std::unique_ptr<last_builder_type> last_builder_;
 };
@@ -265,7 +266,7 @@ uint64_t build_from_arpa(const std::string& arpa_file,
 
 struct mph_language_model::impl
 {
-    using unigram_map_type = ngram_map<std::string>;
+    using unigram_map_type = ngram_map<util::string_view>;
     using middle_map_type = ngram_map<std::vector<uint64_t>>;
     using last_map_type = ngram_map<std::vector<uint64_t>, float>;
 
@@ -274,7 +275,7 @@ struct mph_language_model::impl
           unigrams{prefix + "/0"},
           last{prefix + "/" + std::to_string(order)}
     {
-        for (uint64_t i = 1; i < order - 1; ++i)
+        for (uint64_t i = 1; i < order; ++i)
         {
             auto mid = make_unique<middle_map_type>(prefix + "/"
                                                     + std::to_string(i));
@@ -284,9 +285,9 @@ struct mph_language_model::impl
         unk = *unigrams.index_and_value("<unk>");
     }
 
-    const middle_map_type& middle(uint64_t idx) const
+    const middle_map_type& middle(uint64_t len) const
     {
-        return *middle_vec[idx];
+        return *middle_vec[len - 2];
     }
 
     uint64_t order;
@@ -308,11 +309,8 @@ mph_language_model::mph_language_model(const cpptoml::table& config)
         LOG(info) << "Building language model from .arpa file: " << *arpa_file
                   << ENDLG;
 
-        auto time = common::time([&]()
-                                 {
-                                     order
-                                         = build_from_arpa(*arpa_file, *prefix);
-                                 });
+        auto time = common::time(
+            [&]() { order = build_from_arpa(*arpa_file, *prefix); });
         LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
     }
     LOG(info) << "Loading language model from binary files in: " << *prefix
@@ -329,8 +327,18 @@ mph_language_model::mph_language_model(const cpptoml::table& config)
     impl_ = make_unique<impl>(*prefix, *order);
 }
 
+uint64_t mph_language_model::index(util::string_view token) const
+{
+    return impl_->unigrams.index(token).value_or(impl_->unk.idx);
+}
+
+uint64_t mph_language_model::unk() const
+{
+    return impl_->unk.idx;
+}
+
 float mph_language_model::score(const lm_state& in_state,
-                                const std::string& token,
+                                util::string_view token,
                                 lm_state& out_state) const
 {
     auto iav = impl_->unigrams.index_and_value(token).value_or(impl_->unk);
@@ -363,7 +371,7 @@ float mph_language_model::score(const lm_state& in_state, uint64_t token,
     float res = 0;
     while (out_state.previous.size() > 1)
     {
-        const auto& table = impl_->middle(out_state.previous.size() - 1);
+        const auto& table = impl_->middle(out_state.previous.size());
         if (auto mid = table.at(out_state.previous))
         {
             res = mid->prob;
@@ -383,9 +391,16 @@ float mph_language_model::score(const lm_state& in_state, uint64_t token,
     for (uint64_t i = 0;
          i < in_state.previous.size() - out_state.previous.size() + 1; ++i)
     {
-        const auto& table = impl_->middle(backoff.previous.size() - 1);
-        res += table.at(backoff.previous)->backoff;
-        backoff.shrink();
+        if (backoff.previous.size() == 1)
+        {
+            res += impl_->unigrams[backoff.previous.front()].backoff;
+        }
+        else
+        {
+            const auto& table = impl_->middle(backoff.previous.size());
+            res += table.at(backoff.previous)->backoff;
+            backoff.shrink();
+        }
     }
 
     return res;

@@ -14,7 +14,7 @@
 #include "meta/lm/ngram_map.h"
 #include "meta/lm/sentence.h"
 #include "meta/lm/token_list.h"
-#include "meta/util/array_view.h"
+#include "meta/util/string_view.h"
 
 namespace meta
 {
@@ -68,8 +68,44 @@ class mph_language_model
 
     ~mph_language_model();
 
-    float score(const lm_state& in_state, const std::string& token,
+    /**
+     * Determines to word index in the unigram table for this term.
+     * @param token The unigram to look up
+     */
+    uint64_t index(util::string_view token) const;
+
+    /**
+     * @return the word index of the <unk> token.
+     */
+    uint64_t unk() const;
+
+    /**
+     * Returns the score according to the language model for generating
+     * the next token given the current state in_state. The context needed
+     * for scoring the next word is written to out_state.
+     *
+     * @param in_state The context, which is either just <s> or was
+     * filled for you by a previous call to score()
+     * @param token The next token to score (as a string)
+     * @param out_state Storage to write the state for the next query to
+     *
+     * @return \f$p(w_n \mid w_1, \ldots, w_{n-1})\f$
+     */
+    float score(const lm_state& in_state, util::string_view token,
                 lm_state& out_state) const;
+
+    /**
+     * Returns the score according to the language model for generating
+     * the next token given the current state in_state. The context needed
+     * for scoring the next word is written to out_state.
+     *
+     * @param in_state The context, which is either just <s> or was
+     * filled for you by a previous call to score()
+     * @param token The next token to score (as a word index)
+     * @param out_state Storage to write the state for the next query to
+     *
+     * @return \f$p(w_n \mid w_1, \ldots, w_{n-1})\f$
+     */
 
     float score(const lm_state& in_state, uint64_t token,
                 lm_state& out_state) const;
