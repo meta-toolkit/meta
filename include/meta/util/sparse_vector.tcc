@@ -185,14 +185,14 @@ auto sparse_vector<Index, Value>::cend() const -> const_iterator
 }
 
 template <class Index, class Value>
-auto sparse_vector<Index, Value>::erase(const_iterator pos) -> iterator
+auto sparse_vector<Index, Value>::erase(iterator pos) -> iterator
 {
     return storage_.erase(pos);
 }
 
 template <class Index, class Value>
-auto sparse_vector<Index, Value>::erase(const_iterator first,
-                                        const_iterator last) -> iterator
+auto sparse_vector<Index, Value>::erase(iterator first, iterator last)
+    -> iterator
 {
     return storage_.erase(first, last);
 }
