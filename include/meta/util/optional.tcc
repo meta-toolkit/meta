@@ -66,7 +66,7 @@ optional<T>::optional(optional&& opt)
     : initialized_{opt.initialized_}, storage_{trivial_init}
 {
     if (opt.initialized_)
-        new (dataptr()) T{std::move(opt.storage_.value_)};
+        new (dataptr()) T(std::move(opt.storage_.value_));
 }
 
 template <class T>
