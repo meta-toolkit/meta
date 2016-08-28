@@ -291,7 +291,7 @@ struct mph_language_model::impl
     }
 
     uint64_t order;
-    hashing::index_and_value<prob_backoff<>> unk;
+    hashing::indexed_value<prob_backoff<>> unk;
     unigram_map_type unigrams;
     std::vector<std::unique_ptr<middle_map_type>> middle_vec;
     last_map_type last;

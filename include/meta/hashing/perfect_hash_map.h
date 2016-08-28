@@ -235,7 +235,7 @@ class perfect_hash_map_builder
 };
 
 template <class Value>
-struct index_and_value
+struct indexed_value
 {
     uint64_t idx;
     Value value;
@@ -248,7 +248,7 @@ class perfect_hash_map
     using fingerprint_type = FingerPrint;
     using record_type = detail::hash_record<Value, FingerPrint>;
     using fingerprint_hash = seeded_hash<hashing::farm_hash_seeded>;
-    using index_and_value_type = index_and_value<Value>;
+    using index_and_value_type = indexed_value<Value>;
 
     perfect_hash_map(const std::string& prefix)
         : hash_{prefix}, file_{prefix + "/values.bin"}, fingerprint_{47}
