@@ -209,6 +209,11 @@ uint64_t language_model::index(const std::string& token) const
     return it != vocabulary_.end() ? it->second : unk_id_;
 }
 
+uint64_t language_model::unk() const
+{
+    return unk_id_;
+}
+
 float language_model::score(const lm_state& in_state, uint64_t token,
                             lm_state& out_state) const
 {

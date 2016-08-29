@@ -99,6 +99,8 @@ class language_model
 
     uint64_t index(const std::string& token) const;
 
+    uint64_t unk() const;
+
     float score(const lm_state& in_state, uint64_t token,
                 lm_state& out_state) const;
 
