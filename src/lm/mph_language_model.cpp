@@ -230,8 +230,8 @@ struct mph_language_model::impl
     using middle_map_type = ngram_map<std::vector<uint64_t>>;
     using last_map_type = ngram_map<std::vector<uint64_t>, float>;
 
-    impl(const std::string& prefix, uint64_t o)
-        : order{o},
+    impl(const std::string& prefix, uint64_t ord)
+        : order{ord},
           unigrams{prefix + "/0"},
           last{prefix + "/" + std::to_string(order)}
     {
@@ -278,10 +278,10 @@ mph_language_model::mph_language_model(const cpptoml::table& config)
 
     if (!order)
     {
-        for (uint64_t o = 0; filesystem::file_exists(
-                 *prefix + "/" + std::to_string(o) + "/values.bin");
-             ++o)
-            order = o;
+        for (uint64_t ord = 0; filesystem::file_exists(
+                 *prefix + "/" + std::to_string(ord) + "/values.bin");
+             ++ord)
+            order = ord;
     }
 
     impl_ = make_unique<impl>(*prefix, *order);
