@@ -28,8 +28,8 @@ class ngram_handler
 {
   public:
     using unigram_builder_type = ngram_map_builder<std::string>;
-    using middle_builder_type = ngram_map_builder<std::vector<uint64_t>>;
-    using last_builder_type = ngram_map_builder<std::vector<uint64_t>, float>;
+    using middle_builder_type = ngram_map_builder<std::vector<term_id>>;
+    using last_builder_type = ngram_map_builder<std::vector<term_id>, float>;
 
     ngram_handler(const std::string& prefix) : prefix_{prefix}
     {
@@ -81,7 +81,7 @@ class ngram_handler
             assert(middle_builder_ || last_builder_);
             assert(unigrams_);
 
-            std::vector<uint64_t> ids;
+            std::vector<term_id> ids;
             ids.reserve(order);
 
             util::for_each_token(
@@ -96,7 +96,7 @@ class ngram_handler
                             throw std::runtime_error{
                                 "ngram contains unknown unigram "
                                 + unigram.to_string()};
-                        ids.push_back(*id);
+                        ids.push_back(term_id{*id});
                     }
                 });
 
@@ -227,8 +227,8 @@ uint64_t build_from_arpa(const std::string& arpa_file,
 struct mph_language_model::impl
 {
     using unigram_map_type = ngram_map<util::string_view>;
-    using middle_map_type = ngram_map<std::vector<uint64_t>>;
-    using last_map_type = ngram_map<std::vector<uint64_t>, float>;
+    using middle_map_type = ngram_map<std::vector<term_id>>;
+    using last_map_type = ngram_map<std::vector<term_id>, float>;
 
     impl(const std::string& prefix, uint64_t ord)
         : order{ord},
@@ -287,14 +287,14 @@ mph_language_model::mph_language_model(const cpptoml::table& config)
     impl_ = make_unique<impl>(*prefix, *order);
 }
 
-uint64_t mph_language_model::index(util::string_view token) const
+term_id mph_language_model::index(util::string_view token) const
 {
-    return impl_->unigrams.index(token).value_or(impl_->unk.idx);
+    return term_id{impl_->unigrams.index(token).value_or(impl_->unk.idx)};
 }
 
-uint64_t mph_language_model::unk() const
+term_id mph_language_model::unk() const
 {
-    return impl_->unk.idx;
+    return term_id{impl_->unk.idx};
 }
 
 float mph_language_model::score(const lm_state& in_state,
@@ -302,16 +302,16 @@ float mph_language_model::score(const lm_state& in_state,
                                 lm_state& out_state) const
 {
     auto iav = impl_->unigrams.index_and_value(token).value_or(impl_->unk);
-    return score(in_state, iav.idx, iav.value, out_state);
+    return score(in_state, term_id{iav.idx}, iav.value, out_state);
 }
 
-float mph_language_model::score(const lm_state& in_state, uint64_t token,
+float mph_language_model::score(const lm_state& in_state, term_id token,
                                 lm_state& out_state) const
 {
     return score(in_state, token, impl_->unigrams[token], out_state);
 }
 
-float mph_language_model::score(const lm_state& in_state, uint64_t token,
+float mph_language_model::score(const lm_state& in_state, term_id token,
                                 prob_backoff<> pb, lm_state& out_state) const
 {
     out_state = in_state;

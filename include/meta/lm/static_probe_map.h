@@ -53,7 +53,7 @@ class static_probe_map
      * @return an optional language model node containing the probability and
      * backoff value for the key
      */
-    util::optional<lm_node> find(const std::vector<uint64_t>& key) const;
+    util::optional<lm_node> find(const std::vector<term_id>& key) const;
 
     /**
      * @param key The string key to insert (though only a uint64_t hash is
@@ -67,7 +67,7 @@ class static_probe_map
     /**
      * Helper function to create hasher and hash a list of word ids
      */
-    uint64_t hash(const std::vector<uint64_t>& tokens) const;
+    uint64_t hash(const std::vector<term_id>& tokens) const;
 
     /// Helper function to find a node given the hash value
     util::optional<lm_node> find_hash(uint64_t hashed) const;

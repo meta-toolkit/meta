@@ -14,13 +14,15 @@
 #include <cstdint>
 #include <vector>
 
+#include "meta/meta.h"
+
 namespace meta
 {
 namespace lm
 {
 struct lm_state
 {
-    std::vector<uint64_t> previous;
+    std::vector<term_id> previous;
 
     void shrink()
     {

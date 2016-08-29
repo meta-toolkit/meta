@@ -102,12 +102,12 @@ class language_model
      * @param token The unigram to look up
      * @return the vocabulary id for this token
      */
-    uint64_t index(const std::string& token) const;
+    term_id index(const std::string& token) const;
 
     /**
      * @return the vocabulary id for the <unk> token
      */
-    uint64_t unk() const;
+    term_id unk() const;
 
     /**
      * Returns the score according to the language model for generating
@@ -121,7 +121,7 @@ class language_model
      *
      * @return \f$p(w_n \mid w_1, \ldots, w_{n-1})\f$
      */
-    float score(const lm_state& in_state, uint64_t token,
+    float score(const lm_state& in_state, term_id token,
                 lm_state& out_state) const;
 
   private:
@@ -149,7 +149,7 @@ class language_model
 
     std::string prefix_;
 
-    uint64_t unk_id_;
+    term_id unk_id_;
 
     lm_node unk_node_;
 };

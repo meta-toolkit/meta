@@ -61,12 +61,12 @@ class mph_language_model
      * Determines to word index in the unigram table for this term.
      * @param token The unigram to look up
      */
-    uint64_t index(util::string_view token) const;
+    term_id index(util::string_view token) const;
 
     /**
      * @return the word index of the <unk> token.
      */
-    uint64_t unk() const;
+    term_id unk() const;
 
     /**
      * Returns the score according to the language model for generating
@@ -95,11 +95,11 @@ class mph_language_model
      *
      * @return \f$p(w_n \mid w_1, \ldots, w_{n-1})\f$
      */
-    float score(const lm_state& in_state, uint64_t token,
+    float score(const lm_state& in_state, term_id token,
                 lm_state& out_state) const;
 
   private:
-    float score(const lm_state& in_state, uint64_t token, prob_backoff<> pb,
+    float score(const lm_state& in_state, term_id token, prob_backoff<> pb,
                 lm_state& out_state) const;
 
     struct impl;

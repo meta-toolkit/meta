@@ -159,18 +159,18 @@ float language_model::perplexity_per_word(const sentence& tokens) const
     return perplexity(tokens) / tokens.size();
 }
 
-uint64_t language_model::index(const std::string& token) const
+term_id language_model::index(const std::string& token) const
 {
     auto it = vocabulary_.find(token);
     return it != vocabulary_.end() ? it->second : unk_id_;
 }
 
-uint64_t language_model::unk() const
+term_id language_model::unk() const
 {
     return unk_id_;
 }
 
-float language_model::score(const lm_state& in_state, uint64_t token,
+float language_model::score(const lm_state& in_state, term_id token,
                             lm_state& out_state) const
 {
     out_state = in_state;
