@@ -97,10 +97,30 @@ class language_model
     std::vector<std::pair<std::string, float>> top_k(const sentence& prev,
                                                      size_t k) const;
 
+    /**
+     * Convert a unigram into its vocabulary id.
+     * @param token The unigram to look up
+     * @return the vocabulary id for this token
+     */
     uint64_t index(const std::string& token) const;
 
+    /**
+     * @return the vocabulary id for the <unk> token
+     */
     uint64_t unk() const;
 
+    /**
+     * Returns the score according to the language model for generating
+     * the next token given the current state in_state. The context needed
+     * for scoring the next word is written to out_state.
+     *
+     * @param in_state The context, which is either just <s> or was
+     * filled for you by a previous call to score()
+     * @param token The next token to score (as a word index)
+     * @param out_state Storage to write the state for the next query to
+     *
+     * @return \f$p(w_n \mid w_1, \ldots, w_{n-1})\f$
+     */
     float score(const lm_state& in_state, uint64_t token,
                 lm_state& out_state) const;
 
