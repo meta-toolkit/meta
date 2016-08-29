@@ -124,41 +124,6 @@ void language_model::load_vocab()
     }
 }
 
-float language_model::prob_calc(token_list tokens) const
-{
-    if (tokens.size() == 0)
-        throw language_model_exception{"prob_calc: tokens is empty!"};
-
-    if (tokens.size() == 1)
-    {
-        auto opt = lm_[0].find(token_list{tokens[0]});
-        if (opt)
-            return opt->prob;
-        return unk_node_.prob;
-    }
-    else
-    {
-        auto opt = lm_[tokens.size() - 1].find(tokens);
-        if (opt)
-            return opt->prob;
-
-        auto hist = tokens;
-        hist.pop_back();
-        tokens.pop_front();
-        if (tokens.size() == 1)
-        {
-            auto opt = lm_[0].find(hist[0]);
-            if (!opt)
-                hist[0] = vocabulary_.at("<unk>");
-        }
-
-        opt = lm_[hist.size() - 1].find(hist);
-        if (opt)
-            return opt->backoff + prob_calc(tokens);
-        return prob_calc(tokens);
-    }
-}
-
 float language_model::log_prob(const sentence& tokens) const
 {
     return log_prob(token_list{tokens, vocabulary_});
@@ -166,23 +131,14 @@ float language_model::log_prob(const sentence& tokens) const
 
 float language_model::log_prob(const token_list& tokens) const
 {
-    using diff_type = decltype(tokens.tokens().begin())::difference_type;
     float prob = 0.0f;
 
-    // tokens < N
-    for (uint64_t i = 0; i < N_ - 1 && i < tokens.size(); ++i)
+    lm::lm_state state;
+    lm::lm_state state_next;
+    for (const auto& token : tokens.tokens())
     {
-        prob += prob_calc(tokens.tokens().begin(),
-                          tokens.tokens().begin() + static_cast<diff_type>(i)
-                              + 1);
-    }
-
-    // tokens >= N
-    for (uint64_t i = N_ - 1; i < tokens.size(); ++i)
-    {
-        prob += prob_calc(
-            tokens.tokens().begin() + static_cast<diff_type>(i - N_ + 1),
-            tokens.tokens().begin() + static_cast<diff_type>(i) + 1);
+        prob += score(state, token, state_next);
+        state = state_next;
     }
 
     return prob;

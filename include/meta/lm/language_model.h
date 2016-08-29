@@ -132,55 +132,6 @@ class language_model
     void read_arpa_format(const std::string& arpa_file);
 
     /**
-     * @param tokens
-     * @return the log probability of one ngram
-     */
-    float prob_calc(token_list tokens) const;
-
-    /**
-     * @param begin The beginning of the list of tokens to score
-     * @param end The ending of the list of tokens to score
-     * @return the log probability of one ngram
-     */
-    template <class BidirectionalIterator>
-    float prob_calc(BidirectionalIterator begin,
-                    BidirectionalIterator end) const
-    {
-        auto size = static_cast<std::size_t>(std::distance(begin, end));
-        if (size == 0)
-            throw language_model_exception{"prob_calc: tokens is empty!"};
-
-        if (size == 1)
-        {
-            auto opt = lm_[0].find(begin, end);
-            if (opt)
-                return opt->prob;
-            return unk_node_.prob;
-        }
-        else
-        {
-            auto opt = lm_[size - 1].find(begin, end);
-            if (opt)
-                return opt->prob;
-
-            if (size - 1 == 1)
-            {
-                // look up history [begin, end - 1)
-                auto opt = lm_[0].find(begin, end - 1);
-                if (!opt)
-                    opt = unk_node_;
-            }
-
-            // opt might have been set above
-            if (!opt)
-                opt = lm_[size - 2].find(begin, end - 1);
-            if (opt)
-                return opt->backoff + prob_calc(begin + 1, end);
-            return prob_calc(begin + 1, end);
-        }
-    }
-
-    /**
      * Internal log_prob that takes a token_list
      */
     float log_prob(const token_list& tokens) const;

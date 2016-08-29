@@ -96,7 +96,6 @@ class mph_language_model
      *
      * @return \f$p(w_n \mid w_1, \ldots, w_{n-1})\f$
      */
-
     float score(const lm_state& in_state, uint64_t token,
                 lm_state& out_state) const;
 
