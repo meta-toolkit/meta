@@ -217,6 +217,9 @@ uint64_t language_model::unk() const
 float language_model::score(const lm_state& in_state, uint64_t token,
                             lm_state& out_state) const
 {
+    out_state = in_state;
+    out_state.previous.push_back(token);
+
     // (1) Find the longest matching ngram
     if (out_state.previous.size() == N_)
     {
