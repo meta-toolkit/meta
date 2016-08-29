@@ -10,11 +10,13 @@
 #ifndef META_LANGUAGE_MODEL_H_
 #define META_LANGUAGE_MODEL_H_
 
-#include <vector>
 #include <memory>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
+#include <vector>
+
 #include "cpptoml.h"
+#include "meta/lm/lm_state.h"
 #include "meta/lm/sentence.h"
 #include "meta/lm/static_probe_map.h"
 #include "meta/lm/token_list.h"
@@ -95,6 +97,11 @@ class language_model
     std::vector<std::pair<std::string, float>> top_k(const sentence& prev,
                                                      size_t k) const;
 
+    uint64_t index(const std::string& token) const;
+
+    float score(const lm_state& in_state, uint64_t token,
+                lm_state& out_state) const;
+
   private:
     /**
      * Reads precomputed LM data into this object.
@@ -168,6 +175,8 @@ class language_model
     std::unordered_map<std::string, term_id> vocabulary_;
 
     std::string prefix_;
+
+    uint64_t unk_id_;
 
     lm_node unk_node_;
 };

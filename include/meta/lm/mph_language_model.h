@@ -11,6 +11,7 @@
 #define META_LM_MPH_LANGUAGE_MODEL_H_
 
 #include "cpptoml.h"
+#include "meta/lm/lm_state.h"
 #include "meta/lm/ngram_map.h"
 #include "meta/lm/sentence.h"
 #include "meta/lm/token_list.h"
@@ -20,17 +21,6 @@ namespace meta
 {
 namespace lm
 {
-
-struct lm_state
-{
-    std::vector<uint64_t> previous;
-
-    void shrink()
-    {
-        std::copy(previous.begin() + 1, previous.end(), previous.begin());
-        previous.pop_back();
-    }
-};
 
 /**
  * An ngram language model class based on a collection of minimal perfect

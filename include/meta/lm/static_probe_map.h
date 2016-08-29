@@ -71,6 +71,8 @@ class static_probe_map
         return find_hash(hashed);
     }
 
+    util::optional<lm_node> find(const std::vector<uint64_t>& ngram) const;
+
     /**
      * @param key The string key to insert (though only a uint64_t hash is
      * stored; if the hash already exists, an exception is thrown)

@@ -7,13 +7,13 @@
  * project.
  */
 
-#include <sstream>
-#include <random>
-#include "meta/util/time.h"
-#include "meta/util/shim.h"
-#include "meta/util/fixed_heap.h"
 #include "meta/lm/language_model.h"
 #include "meta/logging/logger.h"
+#include "meta/util/fixed_heap.h"
+#include "meta/util/shim.h"
+#include "meta/util/time.h"
+#include <random>
+#include <sstream>
 
 namespace meta
 {
@@ -31,16 +31,14 @@ language_model::language_model(const cpptoml::table& config)
     {
         LOG(info) << "Loading language model from binary files: "
                   << *binary_file << "*" << ENDLG;
-        auto time = common::time(
-            [&]()
-            {
-                prefix_ = *binary_file;
-                load_vocab();
-                while (filesystem::file_exists(*binary_file + std::to_string(N_)
-                                               + ".binlm"))
-                    lm_.emplace_back(*binary_file + std::to_string(N_++)
-                                     + ".binlm");
-            });
+        auto time = common::time([&]() {
+            prefix_ = *binary_file;
+            load_vocab();
+            while (filesystem::file_exists(*binary_file + std::to_string(N_)
+                                           + ".binlm"))
+                lm_.emplace_back(*binary_file + std::to_string(N_++)
+                                 + ".binlm");
+        });
         LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
     }
     else if (arpa_file && binary_file)
@@ -48,10 +46,7 @@ language_model::language_model(const cpptoml::table& config)
         LOG(info) << "Loading language model from .arpa file: " << *arpa_file
                   << ENDLG;
         prefix_ = *binary_file;
-        auto time = common::time([&]()
-                                 {
-                                     read_arpa_format(*arpa_file);
-                                 });
+        auto time = common::time([&]() { read_arpa_format(*arpa_file); });
         LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
     }
     else
@@ -60,6 +55,7 @@ language_model::language_model(const cpptoml::table& config)
 
     // cache this value
     auto unk = vocabulary_.at("<unk>");
+    unk_id_ = unk;
     unk_node_ = *lm_[0].find(&unk, &unk + 1);
 }
 
@@ -125,10 +121,8 @@ language_model::top_k(const sentence& prev, size_t k) const
 {
     // this is horribly inefficient due to this LM's structure
     using pair_t = std::pair<std::string, float>;
-    auto comp = [](const pair_t& a, const pair_t& b)
-    {
-        return a.second > b.second;
-    };
+    auto comp
+        = [](const pair_t& a, const pair_t& b) { return a.second > b.second; };
     util::fixed_heap<pair_t, decltype(comp)> candidates{k, comp};
 
     token_list candidate{prev, vocabulary_};
@@ -233,6 +227,59 @@ float language_model::perplexity_per_word(const sentence& tokens) const
         throw language_model_exception{
             "perplexity_per_word() called on empty sentence"};
     return perplexity(tokens) / tokens.size();
+}
+
+uint64_t language_model::index(const std::string& token) const
+{
+    auto it = vocabulary_.find(token);
+    return it != vocabulary_.end() ? it->second : unk_id_;
+}
+
+float language_model::score(const lm_state& in_state, uint64_t token,
+                            lm_state& out_state) const
+{
+    // (1) Find the longest matching ngram
+    if (out_state.previous.size() == N_)
+    {
+        if (auto full = lm_[N_ - 1].find(out_state.previous))
+        {
+            out_state.shrink();
+            return full->prob;
+        }
+        out_state.shrink();
+    }
+
+    float res = 0;
+    while (out_state.previous.size() > 1)
+    {
+        const auto& table = lm_[out_state.previous.size() - 1];
+        if (auto mid = table.find(out_state.previous))
+        {
+            res = mid->prob;
+            break;
+        }
+        out_state.shrink();
+    }
+
+    if (out_state.previous.size() == 1)
+    {
+        auto uni_node = lm_[0].find(&token, &token + 1).value_or(unk_node_);
+        res = uni_node.prob;
+    }
+
+    if (out_state.previous.size() > in_state.previous.size())
+        return res;
+
+    // (2) Apply backoff penalties if needed
+    auto backoff = in_state;
+    for (uint64_t i = 0;
+         i < in_state.previous.size() - out_state.previous.size() + 1; ++i)
+    {
+        res += lm_[backoff.previous.size() - 1].find(backoff.previous)->backoff;
+        backoff.shrink();
+    }
+
+    return res;
 }
 }
 }

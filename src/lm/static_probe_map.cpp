@@ -41,8 +41,15 @@ void static_probe_map::insert(const token_list& key, float prob, float backoff)
 
 util::optional<lm_node> static_probe_map::find(const token_list& key) const
 {
-    auto hashed = hash(key);
-    return find_hash(hashed);
+    return find(key.tokens());
+}
+
+util::optional<lm_node>
+static_probe_map::find(const std::vector<uint64_t>& ngram) const
+{
+    hashing::murmur_hash<> hasher{seed_};
+    hash_append(hasher, ngram);
+    return find_hash(static_cast<std::size_t>(hasher));
 }
 
 util::optional<lm_node> static_probe_map::find_hash(uint64_t hashed) const
