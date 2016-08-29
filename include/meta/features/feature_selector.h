@@ -305,14 +305,20 @@ Dataset filter_dataset(const Dataset& dataset, const feature_selector& selector)
         [&](const learn::instance& instance) {
             auto weights = instance.weights;
 
-            weights.erase(
-                std::remove_if(
-                    weights.begin(), weights.end(),
-                    [&](const learn::feature_vector::pair_type& weight) {
-                        return !selector.selected(weight.first);
-                    }),
-                weights.end());
+            using pair_type = learn::feature_vector::pair_type;
+
+            weights.erase(std::remove_if(weights.begin(), weights.end(),
+                                         [&](const pair_type& weight) {
+                                             return !selector.selected(
+                                                 weight.first);
+                                         }),
+                          weights.end());
             weights.shrink_to_fit();
+            std::transform(weights.begin(), weights.end(), weights.begin(),
+                           [&](const pair_type& weight) {
+                               return pair_type{selector.new_id(weight.first),
+                                                weight.second};
+                           });
             return weights;
         },
         [&](const learn::instance& instance) {
