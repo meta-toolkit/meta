@@ -12,6 +12,7 @@
 #include "meta/io/filesystem.h"
 #include "meta/lm/mph_language_model.h"
 #include "meta/lm/ngram_map.h"
+#include "meta/lm/read_arpa.h"
 #include "meta/util/algorithm.h"
 #include "meta/util/shim.h"
 #include "meta/util/time.h"
@@ -23,51 +24,6 @@ namespace lm
 
 namespace
 {
-template <class NGramHandler>
-void read_from_arpa(const std::string& filename, NGramHandler&& ngram_handler)
-{
-    std::ifstream infile{filename};
-    std::string buffer;
-
-    // get to beginning of unigram data, observing the counts of each ngram type
-    while (std::getline(infile, buffer))
-    {
-        if (buffer.find("ngram ") == 0)
-        {
-            auto equal = buffer.find_first_of("=");
-            ngram_handler.count(std::stoul(buffer.substr(equal + 1)));
-        }
-
-        if (buffer.find("\\1-grams:") == 0)
-            break;
-    }
-
-    uint64_t order = 0;
-    while (std::getline(infile, buffer))
-    {
-        // if blank or end
-        if (buffer.empty() || (buffer[0] == '\\' && buffer[1] == 'e'))
-            continue;
-
-        // if start of new ngram data
-        if (buffer[0] == '\\')
-        {
-            ++order;
-            continue;
-        }
-
-        auto first_tab = buffer.find_first_of('\t');
-        float prob = std::stof(buffer.substr(0, first_tab));
-        auto second_tab = buffer.find_first_of('\t', first_tab + 1);
-        auto ngram = buffer.substr(first_tab + 1, second_tab - first_tab - 1);
-        float backoff = 0.0;
-        if (second_tab != std::string::npos)
-            backoff = std::stof(buffer.substr(second_tab + 1));
-
-        ngram_handler(order, ngram, prob, backoff);
-    }
-}
-
 class ngram_handler
 {
   public:
@@ -255,7 +211,11 @@ uint64_t build_from_arpa(const std::string& arpa_file,
     filesystem::remove_all(prefix);
     filesystem::make_directory(prefix);
     ngram_handler handler{prefix};
-    read_from_arpa(arpa_file, handler);
+
+    std::ifstream arpa{arpa_file};
+    read_arpa(arpa, [&](uint64_t /* order */,
+                        uint64_t count) { handler.count(count); },
+              handler);
 
     // finish off the n-grams
     handler.finish_order();

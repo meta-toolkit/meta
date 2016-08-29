@@ -8,10 +8,12 @@
  */
 
 #include "meta/lm/language_model.h"
+#include "meta/lm/read_arpa.h"
 #include "meta/logging/logger.h"
 #include "meta/util/fixed_heap.h"
 #include "meta/util/shim.h"
 #include "meta/util/time.h"
+
 #include <random>
 #include <sstream>
 
@@ -62,58 +64,30 @@ language_model::language_model(const cpptoml::table& config)
 void language_model::read_arpa_format(const std::string& arpa_file)
 {
     std::ifstream infile{arpa_file};
-    std::string buffer;
-
-    // get to beginning of unigram data, saving the counts of each ngram type
     std::vector<uint64_t> count;
-    while (std::getline(infile, buffer))
-    {
-        if (buffer.find("ngram ") == 0)
-        {
-            auto equal = buffer.find_first_of("=");
-            count.emplace_back(std::stoi(buffer.substr(equal + 1)));
-        }
-
-        if (buffer.find("\\1-grams:") == 0)
-            break;
-    }
-
-    lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm", count[N_]);
     std::ofstream unigrams{prefix_ + "0.strings"};
     term_id unigram_id{0};
-    while (std::getline(infile, buffer))
-    {
-        // if blank or end
-        if (buffer.empty() || (buffer[0] == '\\' && buffer[1] == 'e'))
-            continue;
 
-        // if start of new ngram data
-        if (buffer[0] == '\\')
-        {
-            ++N_;
-            lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm",
-                             count[N_]);
-            continue;
-        }
+    read_arpa(
+        infile, [&](uint64_t /* order */,
+                    uint64_t ngramcount) { count.push_back(ngramcount); },
+        [&](uint64_t order, const std::string& ngram, float prob,
+            float backoff) {
+            if (lm_.size() < order + 1)
+            {
+                lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm",
+                                 count[N_]);
+                ++N_;
+            }
 
-        auto first_tab = buffer.find_first_of('\t');
-        float prob = std::stof(buffer.substr(0, first_tab));
-        auto second_tab = buffer.find_first_of('\t', first_tab + 1);
-        auto ngram = buffer.substr(first_tab + 1, second_tab - first_tab - 1);
-        float backoff = 0.0;
-        if (second_tab != std::string::npos)
-            backoff = std::stof(buffer.substr(second_tab + 1));
+            if (order == 0)
+            {
+                unigrams << ngram << "\n";
+                vocabulary_.emplace(ngram, unigram_id++);
+            }
 
-        if (N_ == 0)
-        {
-            unigrams << ngram << std::endl;
-            vocabulary_.emplace(ngram, unigram_id++);
-        }
-
-        lm_[N_].insert(token_list{ngram, vocabulary_}, prob, backoff);
-    }
-
-    ++N_;
+            lm_.back().insert(token_list{ngram, vocabulary_}, prob, backoff);
+        });
 }
 
 std::vector<std::pair<std::string, float>>
