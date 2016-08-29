@@ -31,7 +31,6 @@ void query_lm(const LanguageModel& model, bool verbose = false)
         util::for_each_token(
             line.begin(), line.end(), " ",
             [&](std::string::iterator begin, std::string::iterator end) {
-                //auto tok = util::make_string_view(begin, end);
                 std::string tok{begin, end};
                 auto idx = model.index(tok);
                 auto score = model.score(state, idx, state_next);
