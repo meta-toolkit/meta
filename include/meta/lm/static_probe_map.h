@@ -49,29 +49,11 @@ class static_probe_map
     static_probe_map(static_probe_map&&) = default;
 
     /**
-     * @param key The string key to search for in this probe map
+     * @param key The key to search for in the map (vector of word ids)
      * @return an optional language model node containing the probability and
      * backoff value for the key
      */
-    util::optional<lm_node> find(const token_list& key) const;
-
-    /**
-     * Finds a key represented by a pair of iterators.
-     *
-     * @param begin The beginning of the list of token ids
-     * @param end The ending of the list of token ids
-     * @return an optional language model node containing the probability
-     * and backoff value for the key
-     */
-    template <class ForwardIterator>
-    util::optional<lm_node> find(ForwardIterator begin,
-                                 ForwardIterator end) const
-    {
-        auto hashed = hash(begin, end);
-        return find_hash(hashed);
-    }
-
-    util::optional<lm_node> find(const std::vector<uint64_t>& ngram) const;
+    util::optional<lm_node> find(const std::vector<uint64_t>& key) const;
 
     /**
      * @param key The string key to insert (though only a uint64_t hash is
@@ -83,24 +65,9 @@ class static_probe_map
 
   private:
     /**
-     * Helper function to create hasher and hash token list
+     * Helper function to create hasher and hash a list of word ids
      */
-    uint64_t hash(const token_list& tokens) const;
-
-    /**
-     * Helper function to create hasher and hash token list parameterized
-     * as a pair of iterators
-     */
-    template <class ForwardIterator>
-    uint64_t hash(ForwardIterator begin, ForwardIterator end) const
-    {
-        hashing::murmur_hash<> hasher{seed_};
-        auto dist = std::distance(begin, end);
-        for (; begin != end; ++begin)
-            hash_append(hasher, *begin);
-        hash_append(hasher, dist);
-        return static_cast<std::size_t>(hasher);
-    }
+    uint64_t hash(const std::vector<uint64_t>& tokens) const;
 
     /// Helper function to find a node given the hash value
     util::optional<lm_node> find_hash(uint64_t hashed) const;

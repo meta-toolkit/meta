@@ -58,7 +58,7 @@ language_model::language_model(const cpptoml::table& config)
     // cache this value
     auto unk = vocabulary_.at("<unk>");
     unk_id_ = unk;
-    unk_node_ = *lm_[0].find(&unk, &unk + 1);
+    unk_node_ = *lm_[0].find({unk_id_});
 }
 
 void language_model::read_arpa_format(const std::string& arpa_file)
@@ -201,7 +201,7 @@ float language_model::score(const lm_state& in_state, uint64_t token,
 
     if (out_state.previous.size() == 1)
     {
-        auto uni_node = lm_[0].find(&token, &token + 1).value_or(unk_node_);
+        auto uni_node = lm_[0].find(out_state.previous).value_or(unk_node_);
         res = uni_node.prob;
     }
 

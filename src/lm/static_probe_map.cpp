@@ -19,7 +19,7 @@ static_probe_map::static_probe_map(const std::string& filename,
 
 void static_probe_map::insert(const token_list& key, float prob, float backoff)
 {
-    auto hashed = hash(key);
+    auto hashed = hash(key.tokens());
     auto idx = (hashed % (table_.size() / 2)) * 2;
 
     while (true)
@@ -39,17 +39,10 @@ void static_probe_map::insert(const token_list& key, float prob, float backoff)
     }
 }
 
-util::optional<lm_node> static_probe_map::find(const token_list& key) const
-{
-    return find(key.tokens());
-}
-
 util::optional<lm_node>
 static_probe_map::find(const std::vector<uint64_t>& ngram) const
 {
-    hashing::murmur_hash<> hasher{seed_};
-    hash_append(hasher, ngram);
-    return find_hash(static_cast<std::size_t>(hasher));
+    return find_hash(hash(ngram));
 }
 
 util::optional<lm_node> static_probe_map::find_hash(uint64_t hashed) const
@@ -68,9 +61,11 @@ util::optional<lm_node> static_probe_map::find_hash(uint64_t hashed) const
     }
 }
 
-uint64_t static_probe_map::hash(const token_list& tokens) const
+uint64_t static_probe_map::hash(const std::vector<uint64_t>& tokens) const
 {
-    return hash(tokens.tokens().begin(), tokens.tokens().end());
+    hashing::murmur_hash<> hasher{seed_};
+    hash_append(hasher, tokens);
+    return static_cast<std::size_t>(hasher);
 }
 }
 }
