@@ -14,7 +14,6 @@
 #include "meta/lm/lm_state.h"
 #include "meta/lm/ngram_map.h"
 #include "meta/lm/sentence.h"
-#include "meta/lm/token_list.h"
 #include "meta/util/string_view.h"
 
 namespace meta
