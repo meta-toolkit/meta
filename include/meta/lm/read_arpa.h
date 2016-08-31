@@ -34,20 +34,29 @@ void read_arpa(std::istream& infile, CountHandler&& count_handler,
 {
     std::string buffer;
 
+    bool unigrams_found = false;
+    bool counts_found = false;
     uint64_t order = 0;
     // get to beginning of unigram data, observing the counts of each ngram type
     while (std::getline(infile, buffer))
     {
         if (buffer.find("ngram ") == 0)
         {
+            counts_found = true;
             auto equal = buffer.find_first_of("=");
             count_handler(order, std::stoul(buffer.substr(equal + 1)));
             ++order;
         }
 
         if (buffer.find("\\1-grams:") == 0)
+        {
+            unigrams_found = true;
             break;
+        }
     }
+
+    if (!unigrams_found || !counts_found)
+        throw std::runtime_error{"invalid .arpa format"};
 
     order = 0;
     while (std::getline(infile, buffer))
