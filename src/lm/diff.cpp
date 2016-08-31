@@ -105,7 +105,7 @@ void diff::lm_ops(const sentence& sent, PQ& candidates, uint64_t depth)
         substitute(sent, best_idx - i, candidates, depth);
     }
 
-    if (lm_generate_)
+    if (lm_generate_ && best_idx >= n_val_)
     {
         auto best = sent(best_idx - n_val_, best_idx);
         best.pop_back();
