@@ -83,6 +83,20 @@ template <class HashedValue>
 using hv_chunk_iterator = util::chunk_iterator<HashedValue>;
 }
 
+/**
+ * Builder class for constructing the on-disk representation for a minimal
+ * perfect hashing based hash map.
+ *
+ * `KeyType` represents the key to be hashed, which requires it to have an
+ * overloaded `hash_append`.
+ *
+ * `ValueType` represents the mapped value type, which will be written
+ * directly in binary to the disk for efficiency.
+ *
+ * `FingerPrint` represents the type to contain the fingerprint values for
+ * each of the records in the perfect hash map, for (probabilistic)
+ * false positive detection.
+ */
 template <class KeyType, class ValueType, class FingerPrint = uint32_t>
 class perfect_hash_map_builder
 {
@@ -93,6 +107,10 @@ class perfect_hash_map_builder
     using options_type = typename hash_builder_type::options;
     using fingerprint_hash = hashing::seeded_hash<hashing::farm_hash_seeded>;
 
+    /**
+     * @param options The options for building the hash funciton (see
+     * perfect_hash_builder::options)
+     */
     perfect_hash_map_builder(const options_type& options)
         : options_(options),
           output_{options.prefix + "/values.bin.tmp", std::ios::binary},
@@ -102,6 +120,9 @@ class perfect_hash_map_builder
         // nothing
     }
 
+    /**
+     * Handles a key/value pair.
+     */
     void operator()(const KeyType& key, const ValueType& value)
     {
         (*hash_builder_)(key);
@@ -110,6 +131,10 @@ class perfect_hash_map_builder
         io::packed::write(output_.stream(), value);
     }
 
+    /**
+     * Finalizes writing the perfect hash map to disk. This may take a
+     * long time, depending on how much data is being stored.
+     */
     void write()
     {
         output_.stream().close();
@@ -234,6 +259,10 @@ class perfect_hash_map_builder
     fingerprint_hash fingerprint_;
 };
 
+/**
+ * Represents an entry in a perfect_hash_map, containing its index into
+ * the dense values array and its actual value.
+ */
 template <class Value>
 struct indexed_value
 {
@@ -241,6 +270,9 @@ struct indexed_value
     Value value;
 };
 
+/**
+ * An immutable minimal perfect hashing based hash_map, read from disk.
+ */
 template <class Key, class Value, class FingerPrint = uint32_t>
 class perfect_hash_map
 {
@@ -250,6 +282,9 @@ class perfect_hash_map
     using fingerprint_hash = seeded_hash<hashing::farm_hash_seeded>;
     using index_and_value_type = indexed_value<Value>;
 
+    /**
+     * @param prefix The folder on disk that contains the perfect_hash_map
+     */
     perfect_hash_map(const std::string& prefix)
         : hash_{prefix}, file_{prefix + "/values.bin"}, fingerprint_{47}
     {
@@ -258,11 +293,19 @@ class perfect_hash_map
 
     perfect_hash_map(perfect_hash_map&&) = default;
 
+    /**
+     * @return the perfect hash function used by the map
+     */
     const perfect_hash<Key>& hash() const
     {
         return hash_;
     }
 
+    /**
+     * @param key The key to look up
+     * @return An optional indexed_value that, if non-empty, indicates the
+     * index and the value associated with this key
+     */
     util::optional<index_and_value_type> index_and_value(const Key& key) const
     {
         auto idx = index(key);
@@ -275,6 +318,10 @@ class perfect_hash_map
         return index_and_value_type{*idx, record->value};
     }
 
+    /**
+     * @param key The key to look up
+     * @return The index of this key in the dense value array, if it exists
+     */
     util::optional<uint64_t> index(const Key& key) const
     {
         auto idx = hash_(key);
@@ -289,6 +336,10 @@ class perfect_hash_map
         return util::nullopt;
     }
 
+    /**
+     * @param key The key to look up
+     * @return The value of this key, if it exists
+     */
     util::optional<Value> at(const Key& key) const
     {
         auto idx = hash_(key);
@@ -303,6 +354,12 @@ class perfect_hash_map
         return util::nullopt;
     }
 
+    /**
+     * @param idx The index into the dense values array
+     * @return the value at that index
+     * @note The behavior is undefined for indexes not obtained via
+     * index() or index_and_value()
+     */
     const Value& operator[](uint64_t idx) const
     {
         auto record = reinterpret_cast<const record_type*>(
