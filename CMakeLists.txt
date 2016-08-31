@@ -108,6 +108,8 @@ target_link_libraries(meta-definitions INTERFACE compiler-kludges)
 cmake_pop_check_state()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_custom_target(tidy
                   COMMAND /usr/bin/rm -rf
