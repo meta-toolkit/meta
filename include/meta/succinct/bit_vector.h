@@ -31,8 +31,10 @@ class packed_bits
   public:
     packed_bits(uint64_t word, uint8_t len) : word_{word}, len_{len}
     {
+#if DEBUG
         if (META_UNLIKELY(len > 64))
             throw std::invalid_argument{"bit length longer than word"};
+#endif
 
         auto mask = len_ == 64 ? static_cast<uint64_t>(-1) : (1ull << len_) - 1;
         word_ &= mask;

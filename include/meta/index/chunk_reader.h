@@ -78,6 +78,16 @@ class postings_record
         return counts_;
     }
 
+    template <class InputStream>
+    friend uint64_t packed_read(InputStream& is, postings_record& record)
+    {
+        PostingsData pdata;
+        auto bytes = pdata.read_packed(is);
+        record.key_ = pdata.primary_key();
+        record.counts_ = pdata.counts();
+        return bytes;
+    }
+
   private:
     primary_key_type key_;
     count_t counts_;
@@ -90,132 +100,7 @@ class postings_record
  * one postings_record.
  */
 template <class PostingsData>
-class chunk_reader
-{
-  private:
-    /// the file we're reading from
-    io::mifstream file_;
-    /// the path to the file we're reading from
-    std::string path_;
-    /// the current buffered postings data
-    postings_record<PostingsData> postings_;
-    /// the total number of bytes in the chunk we're reading
-    uint64_t total_bytes_;
-    /// the total number of bytes read
-    uint64_t bytes_read_;
-
-  public:
-    using value_type = postings_record<PostingsData>;
-
-    /**
-     * Constructs a new chunk reader from the given chunk path.
-     * @param filename The path to the chunk to be read
-     */
-    chunk_reader(const std::string& filename)
-        : file_{filename, std::ios::binary},
-          path_{filename},
-          total_bytes_{filesystem::file_size(path_)},
-          bytes_read_{0}
-    {
-        ++(*this);
-    }
-
-    /**
-     * Constructs an empty chunk reader.
-     */
-    chunk_reader() : total_bytes_{0}, bytes_read_{0}
-    {
-        // nothing
-    }
-
-    chunk_reader(chunk_reader&&) = default;
-
-    /**
-     * Destroys the reader **and the chunk file it was reading from**.
-     */
-    ~chunk_reader()
-    {
-        if (file_)
-            file_.stream().close();
-
-        filesystem::delete_file(path_);
-    }
-
-    /**
-     * Reads the next postings data from the stream.
-     */
-    void operator++()
-    {
-        if (file_.stream().peek() == EOF)
-        {
-            file_.stream().close();
-        }
-        else
-        {
-            bytes_read_ += postings_.read(file_);
-        }
-    }
-
-    /**
-     * @return the total number of bytes read so far
-     */
-    uint64_t bytes_read() const
-    {
-        return bytes_read_;
-    }
-
-    /**
-     * @return the total number of bytes in the chunk file
-     */
-    uint64_t total_bytes() const
-    {
-        return total_bytes_;
-    }
-
-    /**
-     * @return the current buffered postings object
-     */
-    postings_record<PostingsData>& operator*()
-    {
-        return postings_;
-    }
-
-    /**
-     * @return the current buffered postings object
-     */
-    const postings_record<PostingsData>& operator*() const
-    {
-        return postings_;
-    }
-
-    /**
-     * Whether this chunk_reader is equal to another. chunk_readers are
-     * equal if they are both exhausted or both are reading from the same
-     * path and have read the same number of bytes.
-     */
-    bool operator==(const chunk_reader& other) const
-    {
-        if (!other.file_.stream().is_open())
-        {
-            return !file_.stream().is_open();
-        }
-        else
-        {
-            return std::tie(path_, bytes_read_)
-                   == std::tie(other.path_, bytes_read_);
-        }
-    }
-};
-
-/**
- * Whether two chunk_readers differ. Defined in terms of operator==.
- */
-template <class PostingsData>
-bool operator!=(const chunk_reader<PostingsData>& a,
-                const chunk_reader<PostingsData>& b)
-{
-    return !(a == b);
-}
+using chunk_reader = util::chunk_iterator<postings_record<PostingsData>>;
 
 /**
  * Performs a multi-way merge sort of all of the provided chunks, writing

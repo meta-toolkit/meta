@@ -17,11 +17,9 @@ go_bandit([]() {
     using namespace hashing;
 
     describe("[perfect hash]", []() {
-
-        using mph_builder = hashing::perfect_hash_builder<std::string>;
-        using options_type = mph_builder::options;
-
         it("should generate minimum perfect hash functions on strings", []() {
+            using mph_builder = hashing::perfect_hash_builder<std::string>;
+            using options_type = mph_builder::options;
             filesystem::remove_all("perfect-hash-unit-test");
 
             options_type options;
@@ -63,5 +61,52 @@ go_bandit([]() {
 
             filesystem::remove_all("perfect-hash-unit-test");
         });
+
+        it("should generate perfect hash functions on vectors of ints", []() {
+            using mph_builder
+                = hashing::perfect_hash_builder<std::vector<uint64_t>>;
+            using options_type = mph_builder::options;
+            filesystem::remove_all("perfect-hash-unit-test");
+
+            std::vector<std::vector<uint64_t>> keys
+                = {{1, 2, 3},
+                   {4, 5, 6},
+                   {1489237, 1930481390, 1394483},
+                   {7, 839, 2019},
+                   {1129, 219, 1}};
+
+            options_type options;
+            options.prefix = "perfect-hash-unit-test";
+            options.num_keys = keys.size();
+            options.max_ram = 1024 * 1024; // 1MB
+            {
+                mph_builder builder{options};
+
+                for (const auto& vec : keys)
+                    builder(vec);
+
+                builder.write();
+            }
+
+            {
+                hashing::perfect_hash<std::vector<uint64_t>> mph{
+                    options.prefix};
+
+                std::vector<uint64_t> indices;
+                for (const auto& key : keys) {
+                    auto h = mph(key);
+                    AssertThat(h, Is().GreaterThanOrEqualTo(uint64_t{0}));
+                    AssertThat(h, Is().LessThan(keys.size()));
+                    indices.push_back(mph(key));
+                }
+
+                std::sort(indices.begin(), indices.end());
+                AssertThat(std::adjacent_find(indices.begin(), indices.end()),
+                           Is().EqualTo(indices.end()));
+            }
+
+            filesystem::remove_all("perfect-hash-unit-test");
+        });
+
     });
 });

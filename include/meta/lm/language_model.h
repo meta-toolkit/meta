@@ -10,11 +10,13 @@
 #ifndef META_LANGUAGE_MODEL_H_
 #define META_LANGUAGE_MODEL_H_
 
-#include <vector>
 #include <memory>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
+#include <vector>
+
 #include "cpptoml.h"
+#include "meta/lm/lm_state.h"
 #include "meta/lm/sentence.h"
 #include "meta/lm/static_probe_map.h"
 #include "meta/lm/token_list.h"
@@ -95,61 +97,39 @@ class language_model
     std::vector<std::pair<std::string, float>> top_k(const sentence& prev,
                                                      size_t k) const;
 
+    /**
+     * Convert a unigram into its vocabulary id.
+     * @param token The unigram to look up
+     * @return the vocabulary id for this token
+     */
+    term_id index(const std::string& token) const;
+
+    /**
+     * @return the vocabulary id for the <unk> token
+     */
+    term_id unk() const;
+
+    /**
+     * Returns the score according to the language model for generating
+     * the next token given the current state in_state. The context needed
+     * for scoring the next word is written to out_state.
+     *
+     * @param in_state The context, which is either just <s> or was
+     * filled for you by a previous call to score()
+     * @param token The next token to score (as a word index)
+     * @param out_state Storage to write the state for the next query to
+     *
+     * @return \f$p(w_n \mid w_1, \ldots, w_{n-1})\f$
+     */
+    float score(const lm_state& in_state, term_id token,
+                lm_state& out_state) const;
+
   private:
     /**
      * Reads precomputed LM data into this object.
      * @param arpa_file The path to the ARPA-formatted file
      */
     void read_arpa_format(const std::string& arpa_file);
-
-    /**
-     * @param tokens
-     * @return the log probability of one ngram
-     */
-    float prob_calc(token_list tokens) const;
-
-    /**
-     * @param begin The beginning of the list of tokens to score
-     * @param end The ending of the list of tokens to score
-     * @return the log probability of one ngram
-     */
-    template <class BidirectionalIterator>
-    float prob_calc(BidirectionalIterator begin,
-                    BidirectionalIterator end) const
-    {
-        auto size = static_cast<std::size_t>(std::distance(begin, end));
-        if (size == 0)
-            throw language_model_exception{"prob_calc: tokens is empty!"};
-
-        if (size == 1)
-        {
-            auto opt = lm_[0].find(begin, end);
-            if (opt)
-                return opt->prob;
-            return unk_node_.prob;
-        }
-        else
-        {
-            auto opt = lm_[size - 1].find(begin, end);
-            if (opt)
-                return opt->prob;
-
-            if (size - 1 == 1)
-            {
-                // look up history [begin, end - 1)
-                auto opt = lm_[0].find(begin, end - 1);
-                if (!opt)
-                    opt = unk_node_;
-            }
-
-            // opt might have been set above
-            if (!opt)
-                opt = lm_[size - 2].find(begin, end - 1);
-            if (opt)
-                return opt->backoff + prob_calc(begin + 1, end);
-            return prob_calc(begin + 1, end);
-        }
-    }
 
     /**
      * Internal log_prob that takes a token_list
@@ -168,6 +148,8 @@ class language_model
     std::unordered_map<std::string, term_id> vocabulary_;
 
     std::string prefix_;
+
+    term_id unk_id_;
 
     lm_node unk_node_;
 };

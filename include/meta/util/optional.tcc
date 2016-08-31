@@ -20,7 +20,7 @@ optional_storage<T>::optional_storage(trivial_init_t)
 template <class T>
 template <class... Args>
 optional_storage<T>::optional_storage(Args&&... args)
-    : value_{std::forward<Args>(args)...}
+    : value_(std::forward<Args>(args)...)
 {
     /* nothing */
 }
@@ -66,7 +66,7 @@ optional<T>::optional(optional&& opt)
     : initialized_{opt.initialized_}, storage_{trivial_init}
 {
     if (opt.initialized_)
-        new (dataptr()) T{std::move(*opt)};
+        new (dataptr()) T(std::move(opt.storage_.value_));
 }
 
 template <class T>

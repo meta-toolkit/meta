@@ -69,7 +69,7 @@ std::size_t shuffle_partition(const std::string& prefix, std::size_t max_ram,
                 total_records += i;
                 chunk_sizes.push_back(i);
                 for (std::size_t j = 0; j < i; ++j)
-                    records[j].write(output);
+                    io::packed::write(output, records[j]);
             }
         });
 
@@ -125,7 +125,7 @@ std::size_t shuffle_partition(const std::string& prefix, std::size_t max_ram,
             for (std::size_t j = 0; j < i; ++j)
             {
                 auto idx = random::bounded_rand(engine, outputs.size());
-                records[j].write(outputs[idx]);
+                io::packed::write(outputs[idx], records[j]);
             }
         }
     }

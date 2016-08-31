@@ -38,7 +38,7 @@ typename std::enable_if<!std::is_floating_point<T>::value
                             && std::is_unsigned<T>::value
                             && !std::is_same<T, bool>::value,
                         uint64_t>::type
-write(OutputStream& stream, T value)
+packed_write(OutputStream& stream, T value)
 {
     uint64_t size = 0;
     while (value > 127)
@@ -58,10 +58,10 @@ write(OutputStream& stream, T value)
  */
 template <class OutputStream, class T>
 typename std::enable_if<std::is_same<T, bool>::value, uint64_t>::type
-write(OutputStream& stream, T value)
+packed_write(OutputStream& stream, T value)
 {
     uint8_t val = value ? 1 : 0;
-    return write(stream, val);
+    return packed_write(stream, val);
 }
 
 /**
@@ -79,12 +79,12 @@ template <class OutputStream, class T>
 typename std::enable_if<!std::is_floating_point<T>::value
                             && std::is_signed<T>::value,
                         uint64_t>::type
-write(OutputStream& stream, T value)
+packed_write(OutputStream& stream, T value)
 {
     using usigned_type = typename std::make_unsigned<T>::type;
     auto elem = static_cast<usigned_type>((value << 1)
                                           ^ (value >> (sizeof(T) * 8 - 1)));
-    return write(stream, elem);
+    return packed_write(stream, elem);
 }
 
 /**
@@ -103,7 +103,7 @@ write(OutputStream& stream, T value)
  */
 template <class OutputStream, class T>
 typename std::enable_if<std::is_floating_point<T>::value, uint64_t>::type
-write(OutputStream& stream, T value)
+packed_write(OutputStream& stream, T value)
 {
     int exp;
     auto digits = std::numeric_limits<T>::digits;
@@ -119,8 +119,8 @@ write(OutputStream& stream, T value)
         exponent += 8;
     }
 
-    auto bytes = write(stream, mantissa);
-    bytes += write(stream, exponent);
+    auto bytes = packed_write(stream, mantissa);
+    bytes += packed_write(stream, exponent);
     return bytes;
 }
 
@@ -134,7 +134,7 @@ write(OutputStream& stream, T value)
  * @return the number of bytes used to write out the value
  */
 template <class OutputStream>
-uint64_t write(OutputStream& stream, util::string_view value)
+uint64_t packed_write(OutputStream& stream, util::string_view value)
 {
     for (const auto& c : value)
     {
@@ -154,10 +154,10 @@ uint64_t write(OutputStream& stream, util::string_view value)
  */
 template <class OutputStream, class T>
 typename std::enable_if<std::is_enum<T>::value, uint64_t>::type
-write(OutputStream& stream, T value)
+packed_write(OutputStream& stream, T value)
 {
     auto val = static_cast<typename std::underlying_type<T>::type>(value);
-    return write(stream, val);
+    return packed_write(stream, val);
 }
 
 /**
@@ -169,9 +169,38 @@ write(OutputStream& stream, T value)
  * @return the number of bytes used to write out the value
  */
 template <class OutputStream, class Tag, class T>
-uint64_t write(OutputStream& stream, const util::identifier<Tag, T>& value)
+uint64_t packed_write(OutputStream& stream, const util::identifier<Tag, T>& value)
 {
-    return write(stream, static_cast<const T&>(value));
+    return packed_write(stream, static_cast<const T&>(value));
+}
+
+/**
+ * Writes a vector type in a packed representation.
+ *
+ * @param os The stream to write to
+ * @param value The value to write
+ * @return the number of bytes used to write out the value
+ */
+template <class OutputStream, class T, class Alloc>
+uint64_t packed_write(OutputStream& os, const std::vector<T, Alloc>& vec)
+{
+    auto bytes = packed_write(os, vec.size());
+    for (const auto& v : vec)
+        bytes += packed_write(os, v);
+    return bytes;
+}
+
+/**
+ * Wrapper function for enabling ADL for io::packed::write.
+ * @param os The stream to write to
+ * @param value The value to write
+ * @return the number of bytes used to write out the value
+ */
+template <class OutputStream, class T>
+uint64_t write(OutputStream& os, const T& value)
+{
+    using meta::io::packed::packed_write;
+    return packed_write(os, value);
 }
 
 /**
@@ -186,7 +215,7 @@ typename std::enable_if<!std::is_floating_point<T>::value
                             && std::is_unsigned<T>::value
                             && !std::is_same<T, bool>::value,
                         uint64_t>::type
-read(InputStream& stream, T& value)
+packed_read(InputStream& stream, T& value)
 {
     value = 0;
     uint64_t size = 0;
@@ -209,10 +238,10 @@ read(InputStream& stream, T& value)
  */
 template <class InputStream, class T>
 typename std::enable_if<std::is_same<T, bool>::value, uint64_t>::type
-read(InputStream& stream, T& value)
+packed_read(InputStream& stream, T& value)
 {
     uint8_t byte;
-    auto bytes = read(stream, byte);
+    auto bytes = packed_read(stream, byte);
     value = byte > 0;
     return bytes;
 }
@@ -232,10 +261,10 @@ template <class InputStream, class T>
 typename std::enable_if<!std::is_floating_point<T>::value
                             && std::is_signed<T>::value,
                         uint64_t>::type
-read(InputStream& stream, T& value)
+packed_read(InputStream& stream, T& value)
 {
     typename std::make_unsigned<T>::type elem;
-    auto bytes = read(stream, elem);
+    auto bytes = packed_read(stream, elem);
 
     value = (elem >> 1) ^ (-(elem & 1));
 
@@ -251,13 +280,13 @@ read(InputStream& stream, T& value)
  */
 template <class InputStream, class T>
 typename std::enable_if<std::is_floating_point<T>::value, uint64_t>::type
-read(InputStream& stream, T& value)
+packed_read(InputStream& stream, T& value)
 {
     int64_t mantissa;
     int64_t exponent;
 
-    auto bytes = read(stream, mantissa);
-    bytes += read(stream, exponent);
+    auto bytes = packed_read(stream, mantissa);
+    bytes += packed_read(stream, exponent);
     value = static_cast<T>(mantissa * std::pow(2.0, exponent));
     return bytes;
 }
@@ -270,7 +299,7 @@ read(InputStream& stream, T& value)
  * @return the number of bytes read
  */
 template <class InputStream>
-uint64_t read(InputStream& stream, std::string& value)
+uint64_t packed_read(InputStream& stream, std::string& value)
 {
     value.clear();
     for (auto c = stream.get(); c != '\0'; c = stream.get())
@@ -288,10 +317,10 @@ uint64_t read(InputStream& stream, std::string& value)
  */
 template <class InputStream, class T>
 typename std::enable_if<std::is_enum<T>::value, uint64_t>::type
-read(InputStream& stream, T& value)
+packed_read(InputStream& stream, T& value)
 {
     typename std::underlying_type<T>::type val;
-    auto size = read(stream, val);
+    auto size = packed_read(stream, val);
     value = static_cast<T>(val);
     return size;
 }
@@ -305,9 +334,48 @@ read(InputStream& stream, T& value)
  * @return the number of bytes used to write out the value
  */
 template <class InputStream, class Tag, class T>
-uint64_t read(InputStream& stream, util::identifier<Tag, T>& value)
+uint64_t packed_read(InputStream& stream, util::identifier<Tag, T>& value)
 {
-    return read(stream, static_cast<T&>(value));
+    return packed_read(stream, static_cast<T&>(value));
+}
+
+/**
+ * Reads a vector type from a packed representation.
+ *
+ * @param is The stream to read from
+ * @param value The value to write
+ * @return the number of bytes read
+ */
+template <class InputStream, class T, class Alloc>
+uint64_t packed_read(InputStream& is, std::vector<T, Alloc>& vec)
+{
+    uint64_t size;
+    auto bytes = packed_read(is, size);
+    vec.clear();
+    vec.reserve(size);
+
+    for (uint64_t i = 0; i < size; ++i)
+    {
+        T val;
+        bytes += packed_read(is, val);
+        vec.emplace_back(val);
+    }
+    assert(vec.size() == size);
+    return bytes;
+}
+
+/**
+ * Wrapper function for enabling ADL for io::packed::read.
+ *
+ * @param is The stream to read from
+ * @param value The value to write
+ * @return the number of bytes read
+ */
+template <class InputStream, class T>
+uint64_t read(InputStream& is, T& value)
+{
+    using meta::io::packed::packed_read;
+    return packed_read(is, value);
 }
 
 /**
@@ -318,8 +386,9 @@ uint64_t read(InputStream& stream, util::identifier<Tag, T>& value)
 template <class T, class InputStream>
 T read(InputStream& stream)
 {
+    using meta::io::packed::packed_read;
     T val;
-    read(stream, val);
+    packed_read(stream, val);
     return val;
 }
 }

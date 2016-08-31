@@ -7,13 +7,15 @@
  * project.
  */
 
-#include <sstream>
-#include <random>
-#include "meta/util/time.h"
-#include "meta/util/shim.h"
-#include "meta/util/fixed_heap.h"
 #include "meta/lm/language_model.h"
+#include "meta/lm/read_arpa.h"
 #include "meta/logging/logger.h"
+#include "meta/util/fixed_heap.h"
+#include "meta/util/shim.h"
+#include "meta/util/time.h"
+
+#include <random>
+#include <sstream>
 
 namespace meta
 {
@@ -31,16 +33,14 @@ language_model::language_model(const cpptoml::table& config)
     {
         LOG(info) << "Loading language model from binary files: "
                   << *binary_file << "*" << ENDLG;
-        auto time = common::time(
-            [&]()
-            {
-                prefix_ = *binary_file;
-                load_vocab();
-                while (filesystem::file_exists(*binary_file + std::to_string(N_)
-                                               + ".binlm"))
-                    lm_.emplace_back(*binary_file + std::to_string(N_++)
-                                     + ".binlm");
-            });
+        auto time = common::time([&]() {
+            prefix_ = *binary_file;
+            load_vocab();
+            while (filesystem::file_exists(*binary_file + std::to_string(N_)
+                                           + ".binlm"))
+                lm_.emplace_back(*binary_file + std::to_string(N_++)
+                                 + ".binlm");
+        });
         LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
     }
     else if (arpa_file && binary_file)
@@ -48,10 +48,7 @@ language_model::language_model(const cpptoml::table& config)
         LOG(info) << "Loading language model from .arpa file: " << *arpa_file
                   << ENDLG;
         prefix_ = *binary_file;
-        auto time = common::time([&]()
-                                 {
-                                     read_arpa_format(*arpa_file);
-                                 });
+        auto time = common::time([&]() { read_arpa_format(*arpa_file); });
         LOG(info) << "Done. (" << time.count() << "ms)" << ENDLG;
     }
     else
@@ -60,64 +57,37 @@ language_model::language_model(const cpptoml::table& config)
 
     // cache this value
     auto unk = vocabulary_.at("<unk>");
-    unk_node_ = *lm_[0].find(&unk, &unk + 1);
+    unk_id_ = unk;
+    unk_node_ = *lm_[0].find({unk_id_});
 }
 
 void language_model::read_arpa_format(const std::string& arpa_file)
 {
     std::ifstream infile{arpa_file};
-    std::string buffer;
-
-    // get to beginning of unigram data, saving the counts of each ngram type
     std::vector<uint64_t> count;
-    while (std::getline(infile, buffer))
-    {
-        if (buffer.find("ngram ") == 0)
-        {
-            auto equal = buffer.find_first_of("=");
-            count.emplace_back(std::stoi(buffer.substr(equal + 1)));
-        }
-
-        if (buffer.find("\\1-grams:") == 0)
-            break;
-    }
-
-    lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm", count[N_]);
     std::ofstream unigrams{prefix_ + "0.strings"};
     term_id unigram_id{0};
-    while (std::getline(infile, buffer))
-    {
-        // if blank or end
-        if (buffer.empty() || (buffer[0] == '\\' && buffer[1] == 'e'))
-            continue;
 
-        // if start of new ngram data
-        if (buffer[0] == '\\')
-        {
-            ++N_;
-            lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm",
-                             count[N_]);
-            continue;
-        }
+    read_arpa(
+        infile, [&](uint64_t /* order */,
+                    uint64_t ngramcount) { count.push_back(ngramcount); },
+        [&](uint64_t order, const std::string& ngram, float prob,
+            float backoff) {
+            if (lm_.size() < order + 1)
+            {
+                lm_.emplace_back(prefix_ + std::to_string(N_) + ".binlm",
+                                 count[N_]);
+                ++N_;
+            }
 
-        auto first_tab = buffer.find_first_of('\t');
-        float prob = std::stof(buffer.substr(0, first_tab));
-        auto second_tab = buffer.find_first_of('\t', first_tab + 1);
-        auto ngram = buffer.substr(first_tab + 1, second_tab - first_tab - 1);
-        float backoff = 0.0;
-        if (second_tab != std::string::npos)
-            backoff = std::stof(buffer.substr(second_tab + 1));
+            if (order == 0)
+            {
+                unigrams << ngram << "\n";
+                vocabulary_.emplace(ngram, unigram_id++);
+            }
 
-        if (N_ == 0)
-        {
-            unigrams << ngram << std::endl;
-            vocabulary_.emplace(ngram, unigram_id++);
-        }
-
-        lm_[N_].insert(token_list{ngram, vocabulary_}, prob, backoff);
-    }
-
-    ++N_;
+            lm_.back().insert(token_list{ngram, vocabulary_}, prob, backoff);
+        });
 }
 
 std::vector<std::pair<std::string, float>>
@@ -125,10 +95,8 @@ language_model::top_k(const sentence& prev, size_t k) const
 {
     // this is horribly inefficient due to this LM's structure
     using pair_t = std::pair<std::string, float>;
-    auto comp = [](const pair_t& a, const pair_t& b)
-    {
-        return a.second > b.second;
-    };
+    auto comp
+        = [](const pair_t& a, const pair_t& b) { return a.second > b.second; };
     util::fixed_heap<pair_t, decltype(comp)> candidates{k, comp};
 
     token_list candidate{prev, vocabulary_};
@@ -156,41 +124,6 @@ void language_model::load_vocab()
     }
 }
 
-float language_model::prob_calc(token_list tokens) const
-{
-    if (tokens.size() == 0)
-        throw language_model_exception{"prob_calc: tokens is empty!"};
-
-    if (tokens.size() == 1)
-    {
-        auto opt = lm_[0].find(token_list{tokens[0]});
-        if (opt)
-            return opt->prob;
-        return unk_node_.prob;
-    }
-    else
-    {
-        auto opt = lm_[tokens.size() - 1].find(tokens);
-        if (opt)
-            return opt->prob;
-
-        auto hist = tokens;
-        hist.pop_back();
-        tokens.pop_front();
-        if (tokens.size() == 1)
-        {
-            auto opt = lm_[0].find(hist[0]);
-            if (!opt)
-                hist[0] = vocabulary_.at("<unk>");
-        }
-
-        opt = lm_[hist.size() - 1].find(hist);
-        if (opt)
-            return opt->backoff + prob_calc(tokens);
-        return prob_calc(tokens);
-    }
-}
-
 float language_model::log_prob(const sentence& tokens) const
 {
     return log_prob(token_list{tokens, vocabulary_});
@@ -198,23 +131,14 @@ float language_model::log_prob(const sentence& tokens) const
 
 float language_model::log_prob(const token_list& tokens) const
 {
-    using diff_type = decltype(tokens.tokens().begin())::difference_type;
     float prob = 0.0f;
 
-    // tokens < N
-    for (uint64_t i = 0; i < N_ - 1 && i < tokens.size(); ++i)
+    lm::lm_state state;
+    lm::lm_state state_next;
+    for (const auto& token : tokens.tokens())
     {
-        prob += prob_calc(tokens.tokens().begin(),
-                          tokens.tokens().begin() + static_cast<diff_type>(i)
-                              + 1);
-    }
-
-    // tokens >= N
-    for (uint64_t i = N_ - 1; i < tokens.size(); ++i)
-    {
-        prob += prob_calc(
-            tokens.tokens().begin() + static_cast<diff_type>(i - N_ + 1),
-            tokens.tokens().begin() + static_cast<diff_type>(i) + 1);
+        prob += score(state, token, state_next);
+        state = state_next;
     }
 
     return prob;
@@ -233,6 +157,67 @@ float language_model::perplexity_per_word(const sentence& tokens) const
         throw language_model_exception{
             "perplexity_per_word() called on empty sentence"};
     return perplexity(tokens) / tokens.size();
+}
+
+term_id language_model::index(const std::string& token) const
+{
+    auto it = vocabulary_.find(token);
+    return it != vocabulary_.end() ? it->second : unk_id_;
+}
+
+term_id language_model::unk() const
+{
+    return unk_id_;
+}
+
+float language_model::score(const lm_state& in_state, term_id token,
+                            lm_state& out_state) const
+{
+    out_state = in_state;
+    out_state.previous.push_back(token);
+
+    // (1) Find the longest matching ngram
+    if (out_state.previous.size() == N_)
+    {
+        if (auto full = lm_[N_ - 1].find(out_state.previous))
+        {
+            out_state.shrink();
+            return full->prob;
+        }
+        out_state.shrink();
+    }
+
+    float res = 0;
+    while (out_state.previous.size() > 1)
+    {
+        const auto& table = lm_[out_state.previous.size() - 1];
+        if (auto mid = table.find(out_state.previous))
+        {
+            res = mid->prob;
+            break;
+        }
+        out_state.shrink();
+    }
+
+    if (out_state.previous.size() == 1)
+    {
+        auto uni_node = lm_[0].find(out_state.previous).value_or(unk_node_);
+        res = uni_node.prob;
+    }
+
+    if (out_state.previous.size() > in_state.previous.size())
+        return res;
+
+    // (2) Apply backoff penalties if needed
+    auto backoff = in_state;
+    for (uint64_t i = 0;
+         i < in_state.previous.size() - out_state.previous.size() + 1; ++i)
+    {
+        res += lm_[backoff.previous.size() - 1].find(backoff.previous)->backoff;
+        backoff.shrink();
+    }
+
+    return res;
 }
 }
 }

@@ -112,10 +112,14 @@ sarray_rank::sarray_rank(const std::string& prefix, const sarray& sarr)
 uint64_t sarray_rank::rank(uint64_t i) const
 {
     auto num_low_bits = sarray_->num_low_bits();
-    uint64_t high_query
-        = std::min(i >> num_low_bits, high_bit_zeroes_.num_positions());
+    auto high_query = i >> num_low_bits;
 
-    uint64_t high_pos = high_bit_zeroes_.select(high_query);
+    // make sure we don't query off the end of the zero index
+    if (high_query >= high_bit_zeroes_.num_positions())
+        return size();
+
+    auto high_pos = high_bit_zeroes_.select(high_query);
+
     uint64_t rank = high_pos - high_query;
 
     auto high_bvv = sarray_->high_bits();

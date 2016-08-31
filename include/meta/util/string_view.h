@@ -407,16 +407,12 @@ class basic_string_view
         if (pos >= size())
             return npos;
 
-        auto it
-            = std::find_if(begin(), end(), [&](const_reference c)
-                           {
-                               return std::find_if(s.begin(), s.end(),
-                                                   [&](const_reference sc)
-                                                   {
-                                                       return Traits::eq(c, sc);
-                                                   })
-                                      == s.end();
-                           });
+        auto it = std::find_if(begin(), end(), [&](const_reference c) {
+            return std::find_if(
+                       s.begin(), s.end(),
+                       [&](const_reference sc) { return Traits::eq(c, sc); })
+                   == s.end();
+        });
         if (it == end())
             return npos;
         return static_cast<size_type>(std::distance(begin(), it));
@@ -447,16 +443,12 @@ class basic_string_view
             return npos;
 
         auto diff = size() - std::min(size(), pos);
-        auto it
-            = std::find_if(rbegin() + diff, rend(), [&](const_reference c)
-                           {
-                               return std::find_if(s.begin(), s.end(),
-                                                   [&](const_reference sc)
-                                                   {
-                                                       return Traits::eq(c, sc);
-                                                   })
-                                      == s.end();
-                           });
+        auto it = std::find_if(rbegin() + diff, rend(), [&](const_reference c) {
+            return std::find_if(
+                       s.begin(), s.end(),
+                       [&](const_reference sc) { return Traits::eq(c, sc); })
+                   == s.end();
+        });
         if (it == rend())
             return npos;
         return size() - 1 - std::distance(rbegin(), it);
@@ -648,6 +640,17 @@ struct hash<meta::util::basic_string_view<Char, Traits>>
 
 namespace meta
 {
+
+namespace util
+{
+inline string_view make_string_view(std::string::const_iterator begin,
+                                    std::string::const_iterator end)
+{
+    return string_view{&*begin,
+                       static_cast<string_view::size_type>(end - begin)};
+}
+}
+
 namespace hashing
 {
 template <class HashAlgorithm, class Char, class Traits>

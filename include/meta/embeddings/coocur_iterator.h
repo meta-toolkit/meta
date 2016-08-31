@@ -10,95 +10,18 @@
 #ifndef META_EMBEDDINGS_COOCUR_ITERATOR_H_
 #define META_EMBEDDINGS_COOCUR_ITERATOR_H_
 
-#include <fstream>
-
 #include "meta/embeddings/coocur_record.h"
-#include "meta/io/filesystem.h"
-#include "meta/io/moveable_stream.h"
+#include "meta/util/multiway_merge.h"
 
 namespace meta
 {
 namespace embeddings
 {
-
 /**
  * An iterator over coocur_record's that live in a packed file on disk.
  * Satisfies the ChunkIterator concept for multiway_merge support.
  */
-class coocur_iterator
-{
-  public:
-    using value_type = coocur_record;
-
-    coocur_iterator(const std::string& filename)
-        : path_{filename},
-          input_{filename, std::ios::binary},
-          total_bytes_{filesystem::file_size(filename)},
-          bytes_read_{0}
-    {
-        ++(*this);
-    }
-
-    coocur_iterator() = default;
-    coocur_iterator(coocur_iterator&&) = default;
-
-    coocur_iterator& operator++()
-    {
-        if (input_.stream().peek() == EOF)
-        {
-            input_.stream().close();
-            return *this;
-        }
-
-        bytes_read_ += record_.read(input_.stream());
-        return *this;
-    }
-
-    coocur_record& operator*()
-    {
-        return record_;
-    }
-
-    const coocur_record& operator*() const
-    {
-        return record_;
-    }
-
-    bool operator==(const coocur_iterator& other) const
-    {
-        if (!other.input_.stream().is_open())
-        {
-            return !input_.stream().is_open();
-        }
-        else
-        {
-            return std::tie(path_, bytes_read_)
-                   == std::tie(other.path_, other.bytes_read_);
-        }
-    }
-
-    uint64_t total_bytes() const
-    {
-        return total_bytes_;
-    }
-
-    uint64_t bytes_read() const
-    {
-        return bytes_read_;
-    }
-
-  private:
-    std::string path_;
-    io::mifstream input_;
-    coocur_record record_;
-    uint64_t total_bytes_;
-    uint64_t bytes_read_;
-};
-
-bool operator!=(const coocur_iterator& a, const coocur_iterator& b)
-{
-    return !(a == b);
-}
+using coocur_iterator = util::chunk_iterator<coocur_record>;
 }
 }
 #endif
