@@ -58,9 +58,11 @@ train-sections = [0, 18]
 dev-sections = [19, 21]
 test-sections = [22, 24]
 
+[language-model]
+arpa-file = "../data/english-sentences.arpa"
+binary-file-prefix = "english-sentences-"
+
 [diff]
-prefix = "../data"
-dataset = "20newsgroups"
 n-value = 3
 max-edits = 3
 # penalty defaults are all zero (no penalty)
@@ -91,10 +93,6 @@ section-size = 99
 train-sections = [2, 21]
 dev-sections = [22, 22]
 test-sections = [23, 23]
-
-[language-model]
-arpa-file = "../data/english-sentences.arpa"
-binary-file-prefix = "english-sentences-"
 
 [embeddings]
 prefix = "word-embeddings"
