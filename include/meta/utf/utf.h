@@ -10,11 +10,10 @@
 #ifndef META_UTF8_H_
 #define META_UTF8_H_
 
+#include <cstdint>
 #include <array>
 #include <functional>
 #include <string>
-
-#include <unicode/utf8.h>
 
 namespace meta
 {
@@ -28,7 +27,16 @@ namespace detail
  * @param dest The string to append the codepoint to
  * @param codepoint The UTF-32 codepoint to append
  */
-void utf8_append_codepoint(std::string& dest, UChar32 codepoint);
+void utf8_append_codepoint(std::string& dest, int32_t codepoint);
+
+/**
+ * Helper method that reads a UTF-32 codepoint from the given utf8 string
+ * at a specific position.
+ * @param str The c-string to read a codepoint from
+ * @param idx The current position in the string
+ * @param length The length of the c string
+ */
+int32_t utf8_next_codepoint(const char* str, int32_t& idx, int32_t length);
 }
 
 /**
@@ -116,8 +124,7 @@ std::string remove_if(const std::string& str, Predicate&& pred)
     auto length = static_cast<int32_t>(str.length());
     for (int32_t i = 0; i < length;)
     {
-        UChar32 codepoint;
-        U8_NEXT(s, i, length, codepoint);
+        auto codepoint = detail::utf8_next_codepoint(s, i, length);
         if (pred(static_cast<uint32_t>(codepoint)))
             continue;
         detail::utf8_append_codepoint(result, codepoint);
@@ -142,8 +149,7 @@ std::string transform(const std::string& str, Function&& fun)
     auto length = static_cast<int32_t>(str.length());
     for (int32_t i = 0; i < length;)
     {
-        UChar32 codepoint;
-        U8_NEXT(s, i, length, codepoint);
+        auto codepoint = detail::utf8_next_codepoint(s, i, length);
         auto transformed = fun(static_cast<uint32_t>(codepoint));
         detail::utf8_append_codepoint(result, transformed);
     }

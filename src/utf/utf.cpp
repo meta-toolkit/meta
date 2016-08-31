@@ -9,6 +9,7 @@
 #include <unicode/uchar.h>
 #include <unicode/uclean.h>
 #include <unicode/unistr.h>
+#include <unicode/utf8.h>
 #include <unicode/translit.h>
 
 #include "detail.h"
@@ -21,7 +22,7 @@ namespace utf
 {
 namespace detail
 {
-void utf8_append_codepoint(std::string& dest, UChar32 codepoint)
+void utf8_append_codepoint(std::string& dest, int32_t codepoint)
 {
     std::array<uint8_t, U8_MAX_LENGTH> buf;
     int32_t len = 0;
@@ -35,6 +36,13 @@ void utf8_append_codepoint(std::string& dest, UChar32 codepoint)
         throw std::runtime_error{"failed to add codepoint to string"};
     dest.append(reinterpret_cast<char*>(&buf[0]),
                 static_cast<std::size_t>(len));
+}
+
+int32_t utf8_next_codepoint(const char* str, int32_t& idx, int32_t length)
+{
+    int32_t codepoint;
+    U8_NEXT(str, idx, length, codepoint);
+    return codepoint;
 }
 }
 
