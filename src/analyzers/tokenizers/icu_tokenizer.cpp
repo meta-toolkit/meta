@@ -6,13 +6,11 @@
 #include <algorithm>
 #include <deque>
 
-#include <unicode/utf.h>
-#include <unicode/uchar.h>
-
-#include "meta/analyzers/tokenizers/icu_tokenizer.h"
 #include "cpptoml.h"
-#include "meta/util/pimpl.tcc"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
 #include "meta/utf/segmenter.h"
+#include "meta/utf/utf.h"
+#include "meta/util/pimpl.tcc"
 
 namespace meta
 {
@@ -47,8 +45,7 @@ class icu_tokenizer::impl
      */
     void set_content(std::string content)
     {
-        auto pred = [](char c)
-        {
+        auto pred = [](char c) {
             return c == '\n' || c == '\v' || c == '\f' || c == '\r';
         };
         // doing this because the sentence segmenter gets confused by
@@ -68,9 +65,12 @@ class icu_tokenizer::impl
                     continue;
 
                 // check first character, if it's whitespace skip it
-                UChar32 codepoint;
-                U8_GET_UNSAFE(wrd.data(), 0, codepoint);
-                if (u_isUWhiteSpace(codepoint))
+                int32_t i = 0;
+                auto length = static_cast<int32_t>(wrd.size());
+                auto codepoint
+                    = utf::detail::utf8_next_codepoint(wrd.data(), i, length);
+                if (codepoint < 0
+                    || utf::isspace(static_cast<uint32_t>(codepoint)))
                     continue;
 
                 tokens_.emplace_back(wrd.to_string());
@@ -148,7 +148,7 @@ icu_tokenizer::operator bool() const
 
 template <>
 std::unique_ptr<token_stream>
-    make_tokenizer<icu_tokenizer>(const cpptoml::table& config)
+make_tokenizer<icu_tokenizer>(const cpptoml::table& config)
 {
     auto language = config.get_as<std::string>("language");
     auto country = config.get_as<std::string>("country");

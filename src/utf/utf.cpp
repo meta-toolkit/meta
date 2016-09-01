@@ -117,6 +117,11 @@ bool isblank(uint32_t codepoint)
     return u_isblank(static_cast<UChar32>(codepoint));
 }
 
+bool isspace(uint32_t codepoint)
+{
+    return u_isUWhiteSpace(static_cast<int32_t>(codepoint));
+}
+
 uint64_t length(const std::string& str)
 {
     const char* s = str.c_str();
