@@ -13,10 +13,15 @@
 #include "meta/util/progress.h"
 
 #if META_HAS_EXPERIMENTAL_FILESYSTEM == 0
-#include <platformstl/filesystem/directory_functions.hpp>
+// reordering these includes screws stuff up, so leave whitespace between
+// them so clang-format won't reorder
 #include <platformstl/filesystem/filesystem_traits.hpp>
+
 #include <platformstl/filesystem/path.hpp>
+
 #include <platformstl/filesystem/readdir_sequence.hpp>
+
+#include <platformstl/filesystem/directory_functions.hpp>
 #else
 #include <experimental/filesystem>
 #endif
