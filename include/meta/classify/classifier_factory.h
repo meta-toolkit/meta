@@ -11,7 +11,9 @@
 #define META_CLASSIFIER_FACTORY_H_
 
 #include <istream>
+
 #include "meta/classify/classifier/classifier.h"
+#include "meta/config.h"
 #include "meta/util/factory.h"
 #include "meta/util/shim.h"
 
@@ -68,9 +70,8 @@ class classifier_factory
  * configuration
  */
 std::unique_ptr<classifier>
-    make_classifier(const cpptoml::table& config,
-                    multiclass_dataset_view training,
-                    std::shared_ptr<index::inverted_index> inv_idx = nullptr);
+make_classifier(const cpptoml::table& config, multiclass_dataset_view training,
+                std::shared_ptr<index::inverted_index> inv_idx = nullptr);
 
 /**
  * Factory method for creating a classifier. This should be specialized if
@@ -107,9 +108,9 @@ std::unique_ptr<classifier> make_classifier(const cpptoml::table&,
  */
 template <class Classifier>
 std::unique_ptr<classifier>
-    make_multi_index_classifier(const cpptoml::table&,
-                                multiclass_dataset_view training,
-                                std::shared_ptr<index::inverted_index> inv_idx)
+make_multi_index_classifier(const cpptoml::table&,
+                            multiclass_dataset_view training,
+                            std::shared_ptr<index::inverted_index> inv_idx)
 {
     return make_unique<Classifier>(training, inv_idx);
 }
@@ -176,8 +177,7 @@ void register_classifier()
     classifier_factory::get().add(
         Classifier::id,
         [](const cpptoml::table& config, multiclass_dataset_view training,
-           std::shared_ptr<index::inverted_index>)
-        {
+           std::shared_ptr<index::inverted_index>) {
             return make_classifier<Classifier>(config, training);
         });
 

@@ -11,6 +11,8 @@
 
 #include <cstdint>
 #include <memory>
+
+#include "meta/config.h"
 #include "meta/util/sparse_vector.h"
 
 namespace meta
@@ -101,18 +103,16 @@ class dirichlet
     void load(std::istream& in);
 
   private:
-
     enum class type
     {
         SYMMETRIC,
         ASYMMETRIC
     } type_;
 
-    union parameters
-    {
+    union parameters {
         parameters()
         {
-           // nothing
+            // nothing
         }
 
         parameters(double alpha)

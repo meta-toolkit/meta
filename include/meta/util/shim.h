@@ -14,10 +14,12 @@
 
 #include <memory>
 
+#include "meta/config.h"
+
 namespace meta
 {
 
-#ifndef META_HAS_STD_MAKE_UNIQUE
+#if META_HAS_STD_MAKE_UNIQUE == 0
 
 namespace detail
 {

@@ -10,6 +10,7 @@
 #ifndef META_GRAPH_H_
 #define META_GRAPH_H_
 
+#include "meta/config.h"
 #include "meta/meta.h"
 #include "meta/util/optional.h"
 

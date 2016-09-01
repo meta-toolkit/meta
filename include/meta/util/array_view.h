@@ -13,6 +13,8 @@
 #include <cstddef>
 #include <vector>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace util
@@ -83,8 +85,7 @@ class array_view
      */
     template <class U, class = typename std::
                            enable_if<std::is_convertible<U, T>::value>::type>
-    array_view(const array_view<U>& av)
-        : start_{av.begin()}, end_{av.end()}
+    array_view(const array_view<U>& av) : start_{av.begin()}, end_{av.end()}
     {
         // nothing
     }

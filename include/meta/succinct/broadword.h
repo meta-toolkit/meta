@@ -12,6 +12,8 @@
 
 #include <cstdint>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace succinct
@@ -167,8 +169,7 @@ inline uint64_t select_in_word(uint64_t word, uint64_t k)
 #endif
     const uint64_t byte_rank
         = k - (((byte_sums << 8) >> place) & uint64_t(0xFF));
-    return place
-           + select_in_byte[((word >> place) & 0xFF) | (byte_rank << 8)];
+    return place + select_in_byte[((word >> place) & 0xFF) | (byte_rank << 8)];
 }
 }
 }

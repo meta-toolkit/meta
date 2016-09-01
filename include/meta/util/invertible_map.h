@@ -12,10 +12,12 @@
 
 #include <fstream>
 #include <iterator>
-#include <utility>
 #include <map>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
+#include <utility>
+
+#include "meta/config.h"
 
 namespace meta
 {

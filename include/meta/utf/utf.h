@@ -10,10 +10,12 @@
 #ifndef META_UTF8_H_
 #define META_UTF8_H_
 
-#include <cstdint>
 #include <array>
+#include <cstdint>
 #include <functional>
 #include <string>
+
+#include "meta/config.h"
 
 namespace meta
 {

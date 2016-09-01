@@ -9,8 +9,9 @@
 #ifndef META_LEARN_INSTANCE_H_
 #define META_LEARN_INSTANCE_H_
 
-#include "meta/util/sparse_vector.h"
+#include "meta/config.h"
 #include "meta/util/identifiers.h"
+#include "meta/util/sparse_vector.h"
 
 namespace meta
 {

@@ -10,6 +10,7 @@
 #ifndef META_SCORE_DATA_H_
 #define META_SCORE_DATA_H_
 
+#include "meta/config.h"
 #include "meta/meta.h"
 
 namespace meta

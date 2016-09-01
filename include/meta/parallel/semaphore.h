@@ -13,6 +13,8 @@
 #include <condition_variable>
 #include <mutex>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace parallel
@@ -42,8 +44,7 @@ class semaphore
     class wait_guard
     {
       public:
-        wait_guard(semaphore& sem)
-            : sem_(sem)
+        wait_guard(semaphore& sem) : sem_(sem)
         {
             std::unique_lock<std::mutex> lock{sem_.mutex_};
             while (!sem_.count_)

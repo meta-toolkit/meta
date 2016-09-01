@@ -6,11 +6,12 @@
 #ifndef META_HASHING_HASH_TRAITS_H_
 #define META_HASHING_HASH_TRAITS_H_
 
-#include <string>
 #include <limits>
+#include <string>
 #include <type_traits>
 #include <utility>
 
+#include "meta/config.h"
 #include "meta/hashing/hash_storage.h"
 
 namespace meta

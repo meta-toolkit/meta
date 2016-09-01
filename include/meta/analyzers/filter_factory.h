@@ -11,6 +11,7 @@
 #define META_FILTER_FACTORY_H_
 
 #include "meta/analyzers/token_stream.h"
+#include "meta/config.h"
 #include "meta/util/factory.h"
 #include "meta/util/shim.h"
 
@@ -93,8 +94,7 @@ void register_tokenizer()
 {
     filter_factory::get().add(
         Tokenizer::id,
-        [](std::unique_ptr<token_stream> source, const cpptoml::table& config)
-        {
+        [](std::unique_ptr<token_stream> source, const cpptoml::table& config) {
             if (source)
                 throw typename Tokenizer::token_stream_exception{
                     "tokenizers must be the first filter"};

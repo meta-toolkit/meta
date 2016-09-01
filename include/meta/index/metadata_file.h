@@ -10,9 +10,10 @@
 #ifndef META_INDEX_METADATA_FILE_H_
 #define META_INDEX_METADATA_FILE_H_
 
-#include "meta/util/disk_vector.h"
+#include "meta/config.h"
 #include "meta/corpus/metadata.h"
 #include "meta/io/mmap_file.h"
+#include "meta/util/disk_vector.h"
 
 namespace meta
 {

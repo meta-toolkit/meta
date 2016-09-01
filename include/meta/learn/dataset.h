@@ -12,6 +12,7 @@
 #include <memory>
 #include <unordered_set>
 
+#include "meta/config.h"
 #include "meta/corpus/metadata.h"
 #include "meta/index/forward_index.h"
 #include "meta/index/inverted_index.h"

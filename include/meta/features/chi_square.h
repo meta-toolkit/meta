@@ -10,6 +10,7 @@
 #ifndef META_CHI_SQUARE_H_
 #define META_CHI_SQUARE_H_
 
+#include "meta/config.h"
 #include "meta/features/feature_selector.h"
 
 namespace meta

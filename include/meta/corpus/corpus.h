@@ -10,13 +10,14 @@
 #ifndef META_CORPUS_H_
 #define META_CORPUS_H_
 
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
 
 #include "cpptoml.h"
-#include "meta/meta.h"
+#include "meta/config.h"
 #include "meta/corpus/document.h"
 #include "meta/corpus/metadata_parser.h"
+#include "meta/meta.h"
 #include "meta/util/optional.h"
 
 namespace meta

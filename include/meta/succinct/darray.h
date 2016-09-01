@@ -13,6 +13,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "meta/config.h"
 #include "meta/io/binary.h"
 #include "meta/io/filesystem.h"
 #include "meta/io/packed.h"

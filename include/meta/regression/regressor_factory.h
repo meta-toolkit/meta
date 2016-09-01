@@ -13,6 +13,7 @@
 #include <istream>
 
 #include "cpptoml.h"
+#include "meta/config.h"
 #include "meta/regression/models/regressor.h"
 #include "meta/util/factory.h"
 #include "meta/util/shim.h"

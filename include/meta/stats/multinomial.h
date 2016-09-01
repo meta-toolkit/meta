@@ -11,6 +11,8 @@
 
 #include <cstdint>
 #include <random>
+
+#include "meta/config.h"
 #include "meta/stats/dirichlet.h"
 #include "meta/util/sparse_vector.h"
 
@@ -163,7 +165,6 @@ multinomial<T> operator+(multinomial<T>&& lhs, multinomial<T>&& rhs)
 {
     return lhs += rhs;
 }
-
 }
 }
 #include "meta/stats/multinomial.tcc"

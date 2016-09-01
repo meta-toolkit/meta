@@ -11,6 +11,8 @@
 #define META_EMBEDDINGS_COOCUR_RECORD_H_
 
 #include <cstdint>
+
+#include "meta/config.h"
 #include "meta/io/packed.h"
 
 namespace meta

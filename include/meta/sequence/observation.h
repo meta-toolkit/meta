@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/meta.h"
 #include "meta/util/identifiers.h"
 #include "meta/util/optional.h"

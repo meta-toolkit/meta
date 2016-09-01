@@ -14,8 +14,9 @@
 #include <unordered_set>
 
 #include "cpptoml.h"
-#include "meta/lm/language_model.h"
+#include "meta/config.h"
 #include "meta/hashing/hash.h"
+#include "meta/lm/language_model.h"
 
 namespace meta
 {

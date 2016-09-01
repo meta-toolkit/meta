@@ -14,8 +14,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "meta/meta.h"
+#include "meta/config.h"
 #include "meta/corpus/metadata.h"
+#include "meta/meta.h"
 #include "meta/util/optional.h"
 
 namespace meta

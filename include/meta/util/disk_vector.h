@@ -10,16 +10,18 @@
 #ifndef META_DISK_VECTOR_H_
 #define META_DISK_VECTOR_H_
 
-#include <type_traits>
-#include <string>
 #include <fcntl.h>
 #include <stdio.h>
+#include <string>
+#include <type_traits>
 #ifndef _WIN32
 #include <sys/mman.h>
 #else
 #include "meta/io/mman-win32/mman.h"
 #endif
 #include <unistd.h>
+
+#include "meta/config.h"
 #include "meta/meta.h"
 
 namespace meta

@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/util/aligned_allocator.h"
 #include "meta/util/optional.h"
 
@@ -152,8 +153,7 @@ class key_storage_iterator
                                    typename Iterator::storage_type,
                                    typename std::remove_const<Storage>::type>::
                                    value>::type>
-    key_storage_iterator(Iterator&& it)
-        : table_{it.table_}, idx_{it.idx_}
+    key_storage_iterator(Iterator&& it) : table_{it.table_}, idx_{it.idx_}
     {
         // nothing
     }
@@ -922,8 +922,7 @@ class inline_key_value_storage
     {
         // get rid of all blank cells
         table_.erase(std::remove_if(table_.begin(), table_.end(),
-                                    [this](const std::pair<K, V>& pr)
-                                    {
+                                    [this](const std::pair<K, V>& pr) {
                                         return this->key_equal(
                                             pr.first,
                                             key_traits<K>::sentinel());

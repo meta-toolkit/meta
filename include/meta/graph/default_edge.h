@@ -10,6 +10,9 @@
 #ifndef META_DEFAULT_EDGE_H_
 #define META_DEFAULT_EDGE_H_
 
+#include "meta/config.h"
+#include "meta/meta.h"
+
 namespace meta
 {
 namespace graph
@@ -32,8 +35,8 @@ struct default_edge
 
     /// the weight for this edge
     double weight;
-    node_id src;    /// This field must exist in all edge objects.
-    node_id dest;   /// This field must exist in all edge objects.
+    node_id src;  /// This field must exist in all edge objects.
+    node_id dest; /// This field must exist in all edge objects.
 };
 }
 }

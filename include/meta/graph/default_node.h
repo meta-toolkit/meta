@@ -12,6 +12,9 @@
 
 #include <string>
 
+#include "meta/config.h"
+#include "meta/meta.h"
+
 namespace meta
 {
 namespace graph

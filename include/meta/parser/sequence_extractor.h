@@ -6,9 +6,10 @@
  * consult the file LICENSE in the root of the project.
  */
 
-#include "meta/parser/trees/visitors/visitor.h"
+#include "meta/config.h"
 #include "meta/parser/trees/internal_node.h"
 #include "meta/parser/trees/leaf_node.h"
+#include "meta/parser/trees/visitors/visitor.h"
 #include "meta/sequence/sequence.h"
 
 namespace meta

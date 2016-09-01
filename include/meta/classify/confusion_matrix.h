@@ -13,6 +13,8 @@
 #include <iostream>
 #include <set>
 #include <unordered_map>
+
+#include "meta/config.h"
 #include "meta/meta.h"
 
 namespace meta
@@ -66,7 +68,7 @@ class confusion_matrix
      * @return the hash
      */
     static size_t
-        string_pair_hash(const std::pair<std::string, std::string>& str_pair);
+    string_pair_hash(const std::pair<std::string, std::string>& str_pair);
 
     // note: the following *cannot* be converted to a using declaration
     // without causing in internal compiler error (segmentation fault) in

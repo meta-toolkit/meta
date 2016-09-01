@@ -10,8 +10,9 @@
 #ifndef META_SUCCINCT_SARRAY_H_
 #define META_SUCCINCT_SARRAY_H_
 
-#include "meta/succinct/broadword.h"
+#include "meta/config.h"
 #include "meta/io/filesystem.h"
+#include "meta/succinct/broadword.h"
 #include "meta/succinct/darray.h"
 
 namespace meta

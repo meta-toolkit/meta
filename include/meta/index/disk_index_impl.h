@@ -12,6 +12,7 @@
 
 #include <mutex>
 
+#include "meta/config.h"
 #include "meta/index/disk_index.h"
 #include "meta/index/metadata_file.h"
 #include "meta/index/string_list.h"

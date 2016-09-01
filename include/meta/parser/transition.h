@@ -9,9 +9,10 @@
 #ifndef META_PARSER_TRANSITION_H_
 #define META_PARSER_TRANSITION_H_
 
+#include "meta/config.h"
 #include "meta/meta.h"
-#include "meta/util/optional.h"
 #include "meta/util/comparable.h"
+#include "meta/util/optional.h"
 
 namespace meta
 {
@@ -110,7 +111,6 @@ std::ostream& operator<<(std::ostream& os, const transition& trans);
  * @return the stream
  */
 std::ostream& operator<<(std::ostream& os, const transition::type_t type);
-
 }
 }
 

@@ -12,14 +12,15 @@
 
 #include <algorithm>
 #include <fstream>
-#include <numeric>
 #include <memory>
+#include <numeric>
 #include <string>
 
+#include "meta/config.h"
 #include "meta/io/filesystem.h"
 #include "meta/io/moveable_stream.h"
-#include "meta/util/progress.h"
 #include "meta/util/multiway_merge.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {
@@ -125,11 +126,9 @@ uint64_t multiway_merge(std::ostream& outstream, ForwardIterator begin,
     for (; begin != end; ++begin)
         to_merge.emplace_back(*begin);
 
-    return util::multiway_merge(to_merge.begin(), to_merge.end(),
-                                [&](PostingsData&& pdata)
-                                {
-                                    pdata.write_packed(outstream);
-                                });
+    return util::multiway_merge(
+        to_merge.begin(), to_merge.end(),
+        [&](PostingsData&& pdata) { pdata.write_packed(outstream); });
 }
 }
 }

@@ -11,10 +11,11 @@
 #ifndef META_ANALYZER_H_
 #define META_ANALYZER_H_
 
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
 
 #include "meta/analyzers/featurizer.h"
+#include "meta/config.h"
 
 namespace cpptoml
 {

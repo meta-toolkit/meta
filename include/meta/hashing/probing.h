@@ -13,6 +13,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "meta/config.h"
 #include "meta/hashing/hash_traits.h"
 #include "meta/util/likely.h"
 

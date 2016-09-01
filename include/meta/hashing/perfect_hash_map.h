@@ -12,11 +12,12 @@
 
 #include <cstdint>
 
+#include "meta/config.h"
 #include "meta/hashing/perfect_hash.h"
 #include "meta/hashing/perfect_hash_builder.h"
-#include "meta/io/moveable_stream.h"
-#include "meta/io/mmap_file.h"
 #include "meta/io/filesystem.h"
+#include "meta/io/mmap_file.h"
+#include "meta/io/moveable_stream.h"
 #include "meta/io/packed.h"
 #include "meta/util/optional.h"
 #include "meta/util/progress.h"
@@ -212,17 +213,12 @@ class perfect_hash_map_builder
         util::multiway_merge(
             iterators.begin(), iterators.end(),
             // sort records at head of chunks by decreasing hash id
-            [](const hashed_value& a, const hashed_value& b)
-            {
+            [](const hashed_value& a, const hashed_value& b) {
                 return a.idx < b.idx;
             },
             // never merge two records together
-            [](const hashed_value&, const hashed_value&)
-            {
-                return false;
-            },
-            [&](hashed_value&& hv)
-            {
+            [](const hashed_value&, const hashed_value&) { return false; },
+            [&](hashed_value&& hv) {
                 output.write(reinterpret_cast<char*>(&hv.record),
                              sizeof(hv.record));
             });
@@ -238,8 +234,7 @@ class perfect_hash_map_builder
     void flush_chunk(std::vector<hashed_value>& buffer, uint64_t chunk_num)
     {
         std::sort(buffer.begin(), buffer.end(),
-                  [](const hashed_value& a, const hashed_value& b)
-                  {
+                  [](const hashed_value& a, const hashed_value& b) {
                       return a.idx < b.idx;
                   });
 

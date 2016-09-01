@@ -12,6 +12,7 @@
 
 #include <fstream>
 
+#include "meta/config.h"
 #include "meta/succinct/bit_vector.h"
 #include "meta/succinct/broadword.h"
 #include "meta/succinct/sarray.h"

@@ -14,8 +14,10 @@
 #include <chrono>
 #include <condition_variable>
 #include <mutex>
-#include <thread>
 #include <string>
+#include <thread>
+
+#include "meta/config.h"
 
 namespace meta
 {

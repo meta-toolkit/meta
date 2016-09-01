@@ -10,14 +10,15 @@
 #ifndef META_DIRECTED_GRAPH_H_
 #define META_DIRECTED_GRAPH_H_
 
-#include <stdexcept>
-#include <vector>
-#include <unordered_set>
 #include <cstddef>
+#include <stdexcept>
+#include <unordered_set>
+#include <vector>
 
-#include "meta/graph/graph.h"
-#include "meta/graph/default_node.h"
+#include "meta/config.h"
 #include "meta/graph/default_edge.h"
+#include "meta/graph/default_node.h"
+#include "meta/graph/graph.h"
 #include "meta/meta.h"
 #include "meta/util/optional.h"
 
@@ -64,32 +65,47 @@ class directed_graph : public graph<Node, Edge>
      */
     virtual void add_edge(Edge edge, node_id source, node_id dest) override;
 
-    #include "meta/graph/node_iterator.h"
+#include "meta/graph/node_iterator.h"
     typedef node_iterator<typename vec_t::iterator> iterator;
     typedef node_iterator<typename vec_t::const_iterator> const_iterator;
 
     /**
      * @return an iterator to the beginning ("first" node) of this graph
      */
-    iterator begin() { return {nodes_.begin()}; }
+    iterator begin()
+    {
+        return {nodes_.begin()};
+    }
 
-    const_iterator begin() const { return {nodes_.cbegin()}; }
+    const_iterator begin() const
+    {
+        return {nodes_.cbegin()};
+    }
 
     /**
      * @return an iterator that represents one past the last node of this graph
      */
-    iterator end() { return {nodes_.end()}; }
+    iterator end()
+    {
+        return {nodes_.end()};
+    }
 
-    const_iterator end() const { return {nodes_.cend()}; }
+    const_iterator end() const
+    {
+        return {nodes_.cend()};
+    }
 
-    #include "meta/graph/edge_iterator.h"
+#include "meta/graph/edge_iterator.h"
     typedef edge_iterator<typename vec_t::iterator> e_iterator;
     typedef edge_iterator<typename vec_t::const_iterator> const_e_iterator;
 
     /**
      * @return an iterator to the beginning ("first" edge) of this graph
      */
-    e_iterator edges_begin() { return {this, nodes_.begin(), nodes_.end()}; }
+    e_iterator edges_begin()
+    {
+        return {this, nodes_.begin(), nodes_.end()};
+    }
 
     const_e_iterator edges_begin() const
     {
@@ -99,7 +115,10 @@ class directed_graph : public graph<Node, Edge>
     /**
      * @return an iterator that represents one past the last node of this graph
      */
-    e_iterator edges_end() { return {this, nodes_.end(), nodes_.end()}; }
+    e_iterator edges_end()
+    {
+        return {this, nodes_.end(), nodes_.end()};
+    }
 
     const_e_iterator edges_end() const
     {

@@ -14,6 +14,7 @@
 #include <utility>
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/meta.h"
 
 namespace meta

@@ -11,6 +11,7 @@
 #define META_BINARY_CLASSIFIER_FACTORY_H_
 
 #include "meta/classify/classifier/binary_classifier.h"
+#include "meta/config.h"
 #include "meta/util/factory.h"
 
 namespace cpptoml
@@ -62,8 +63,8 @@ class binary_classifier_factory
  *  configuration, trained on the given training data
  */
 std::unique_ptr<binary_classifier>
-    make_binary_classifier(const cpptoml::table& config,
-                           binary_dataset_view training);
+make_binary_classifier(const cpptoml::table& config,
+                       binary_dataset_view training);
 
 /**
  * (Template): Factory method for creating a binary classifier; this should
@@ -79,7 +80,7 @@ std::unique_ptr<binary_classifier>
  */
 template <class Classifier>
 std::unique_ptr<binary_classifier>
-    make_binary_classifier(const cpptoml::table&, binary_dataset_view training)
+make_binary_classifier(const cpptoml::table&, binary_dataset_view training)
 {
     return make_unique<Classifier>(training);
 }

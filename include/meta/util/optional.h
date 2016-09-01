@@ -10,6 +10,8 @@
 #ifndef META_UTIL_OPTIONAL_H_
 #define META_UTIL_OPTIONAL_H_
 
+#include "meta/config.h"
+
 #if META_HAS_EXPERIMENTAL_OPTIONAL
 #include <experimental/optional>
 namespace meta
@@ -23,9 +25,9 @@ using std::experimental::nullopt;
 }
 }
 #else
+#include "meta/util/comparable.h"
 #include <stdexcept>
 #include <type_traits>
-#include "meta/util/comparable.h"
 
 namespace meta
 {
@@ -48,7 +50,7 @@ struct nullopt_t
     struct init
     {
     };
-    constexpr nullopt_t(init) {};
+    constexpr nullopt_t(init){};
 };
 /// A global nullopt_t constant.
 constexpr nullopt_t nullopt{nullopt_t::init{}};
@@ -64,8 +66,7 @@ struct optional_dummy_t
  * A storage class for the optional<T> class.
  */
 template <class T>
-union optional_storage
-{
+union optional_storage {
     /**
      * A dummy value.
      */

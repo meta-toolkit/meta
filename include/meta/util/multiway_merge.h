@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/io/filesystem.h"
 #include "meta/io/moveable_stream.h"
 #include "meta/io/packed.h"
@@ -95,16 +96,14 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
     using ChunkIterator = typename ForwardIterator::value_type;
 
     uint64_t to_read = std::accumulate(
-        begin, end, 0ul, [](uint64_t acc, const ChunkIterator& chunk)
-        {
+        begin, end, 0ul, [](uint64_t acc, const ChunkIterator& chunk) {
             return acc + chunk.total_bytes();
         });
 
     printing::progress progress{" > Merging: ", to_read};
 
     uint64_t total_read = std::accumulate(
-        begin, end, 0ul, [](uint64_t acc, const ChunkIterator& chunk)
-        {
+        begin, end, 0ul, [](uint64_t acc, const ChunkIterator& chunk) {
             return acc + chunk.bytes_read();
         });
 
@@ -113,8 +112,7 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
     for (; begin != end; ++begin)
         to_merge.emplace_back(*begin);
 
-    auto chunk_iter_comp = [&](const ChunkIterator& a, const ChunkIterator& b)
-    {
+    auto chunk_iter_comp = [&](const ChunkIterator& a, const ChunkIterator& b) {
         return record_comp(*a, *b);
     };
 
@@ -136,24 +134,22 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
         ++(*range.first).get();
         total_read += ((*range.first).get().bytes_read() - before);
         ++range.first;
-        std::for_each(range.first, range.second, [&](ChunkIterator& iter)
-                      {
-                          if (should_merge(merged, *iter))
-                          {
-                              merged.merge_with(std::move(*iter));
-                              auto before = iter.bytes_read();
-                              ++iter;
-                              total_read += (iter.bytes_read() - before);
-                          }
-                      });
+        std::for_each(range.first, range.second, [&](ChunkIterator& iter) {
+            if (should_merge(merged, *iter))
+            {
+                merged.merge_with(std::move(*iter));
+                auto before = iter.bytes_read();
+                ++iter;
+                total_read += (iter.bytes_read() - before);
+            }
+        });
 
         // write out merged record
         output(std::move(merged));
 
         // remove all empty ChunkIterators from the input
         to_merge.erase(std::remove_if(to_merge.begin(), to_merge.end(),
-                                      [](const ChunkIterator& iter)
-                                      {
+                                      [](const ChunkIterator& iter) {
                                           return iter == ChunkIterator{};
                                       }),
                        to_merge.end());
@@ -172,14 +168,8 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
 {
     using Record = typename std::remove_reference<decltype(**begin)>::type;
 
-    auto record_comp = [](const Record& a, const Record& b)
-    {
-        return a < b;
-    };
-    auto record_equal = [](const Record& a, const Record& b)
-    {
-        return a == b;
-    };
+    auto record_comp = [](const Record& a, const Record& b) { return a < b; };
+    auto record_equal = [](const Record& a, const Record& b) { return a == b; };
     return multiway_merge(begin, end, record_comp, record_equal,
                           std::forward<RecordHandler>(output));
 }

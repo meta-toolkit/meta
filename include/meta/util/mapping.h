@@ -11,9 +11,10 @@
 #define META_UTIL_MAPPING_H_
 
 #include <fstream>
-#include <vector>
 #include <string>
+#include <vector>
 
+#include "meta/config.h"
 #include "meta/util/invertible_map.h"
 
 namespace meta

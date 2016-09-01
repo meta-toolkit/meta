@@ -12,6 +12,8 @@
 #include <cmath>
 #include <type_traits>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace stats
@@ -33,10 +35,8 @@ double expected_value(Dist&& dist, Fun&& fun)
 {
     using T = typename std::remove_reference<Dist>::type::event_type;
     auto total = 0.0;
-    dist.each_seen_event([&](const T& event)
-                         {
-                             total += dist.probability(event) * fun(event);
-                         });
+    dist.each_seen_event(
+        [&](const T& event) { total += dist.probability(event) * fun(event); });
     return total;
 }
 
@@ -50,8 +50,7 @@ template <class Dist>
 double entropy(Dist&& dist)
 {
     using T = typename std::remove_reference<Dist>::type::event_type;
-    return expected_value(dist, [&](const T& event)
-                          {
+    return expected_value(dist, [&](const T& event) {
         return -std::log2(dist.probability(event));
     });
 }

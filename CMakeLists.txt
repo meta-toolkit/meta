@@ -90,6 +90,8 @@ else()
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(_DARWIN_USE_64_BIT_INODE 1)
+  set(META_IS_DARWIN 1)
   target_compile_definitions(meta-definitions INTERFACE
                              -D_DARWIN_USE_64_BIT_INODE=1)
   target_compile_definitions(meta-definitions INTERFACE
@@ -98,13 +100,11 @@ endif()
 
 # set a bunch of preprocessor variables to work around various compiler and
 # standard library bugs
-CompilerKludges()
+CompilerKludges(meta/kludges.h)
 
-if(NOT META_HAS_EXPERIMENTAL_FILESYSTEM)
-  target_include_directories(meta-definitions SYSTEM INTERFACE ${PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)
-endif()
+configure_file(include/meta/config.h.in meta/config.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(meta-definitions INTERFACE compiler-kludges)
 cmake_pop_check_state()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

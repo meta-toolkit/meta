@@ -14,6 +14,7 @@
 #include <ostream>
 #include <stdexcept>
 
+#include "meta/config.h"
 #include "meta/util/array_view.h"
 #include "meta/util/likely.h"
 

@@ -10,6 +10,8 @@
 #ifndef META_MATH_INTEGER_H_
 #define META_MATH_INTEGER_H_
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace math

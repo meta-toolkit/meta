@@ -13,6 +13,8 @@
 #include <fstream>
 #include <string>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace lm

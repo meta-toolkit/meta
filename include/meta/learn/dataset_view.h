@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <iterator>
+
+#include "meta/config.h"
 #include "meta/learn/dataset.h"
 #include "meta/util/comparable.h"
 #include "meta/util/random.h"

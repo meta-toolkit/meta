@@ -10,6 +10,7 @@
 #ifndef META_VOCABULARY_MAP_H_
 #define META_VOCABULARY_MAP_H_
 
+#include "meta/config.h"
 #include "meta/io/mmap_file.h"
 #include "meta/util/disk_vector.h"
 #include "meta/util/optional.h"

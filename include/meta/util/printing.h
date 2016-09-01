@@ -12,6 +12,8 @@
 
 #include <iostream>
 #include <string>
+
+#include "meta/config.h"
 #include "meta/logging/logger.h"
 
 namespace meta

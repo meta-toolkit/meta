@@ -11,6 +11,8 @@
 #define META_ANALYZERS_FEATURIZER_H_
 
 #include <stdexcept>
+
+#include "meta/config.h"
 #include "meta/hashing/probe_map.h"
 #include "meta/util/likely.h"
 #include "meta/util/shim.h"
@@ -44,8 +46,7 @@ class featurizer
      * Constructs a featurizer that writes to a specific feature_map.
      */
     template <class T>
-    featurizer(feature_map<T>& map)
-        : map_{make_unique<concrete_map<T>>(map)}
+    featurizer(feature_map<T>& map) : map_{make_unique<concrete_map<T>>(map)}
     {
         static_assert(std::is_same<T, uint64_t>::value
                           || std::is_same<T, double>::value,

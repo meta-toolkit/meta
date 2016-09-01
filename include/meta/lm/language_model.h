@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "cpptoml.h"
+#include "meta/config.h"
 #include "meta/lm/lm_state.h"
 #include "meta/lm/sentence.h"
 #include "meta/lm/static_probe_map.h"

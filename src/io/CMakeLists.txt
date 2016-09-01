@@ -14,3 +14,10 @@ add_library(meta-io filesystem.cpp
                     libsvm_parser.cpp
                     mmap_file.cpp)
 target_link_libraries(meta-io ${IO_DEPS})
+
+if (META_HAS_EXPERIMENTAL_FILESYSTEM)
+    target_link_libraries(meta-io ${STD_EXPERIMENTAL_FILESYSTEM_LIBRARIES})
+else()
+    target_include_directories(meta-io
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/meta-stlsoft/include)
+endif()

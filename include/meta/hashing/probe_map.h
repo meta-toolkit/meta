@@ -10,6 +10,7 @@
 #ifndef META_HASHING_PROBE_MAP_H_
 #define META_HASHING_PROBE_MAP_H_
 
+#include "meta/config.h"
 #include "meta/hashing/hash.h"
 #include "meta/hashing/hash_traits.h"
 #include "meta/hashing/probing.h"

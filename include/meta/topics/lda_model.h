@@ -10,6 +10,7 @@
 #ifndef META_TOPICS_LDA_MODEL_H_
 #define META_TOPICS_LDA_MODEL_H_
 
+#include "meta/config.h"
 #include "meta/index/forward_index.h"
 
 MAKE_NUMERIC_IDENTIFIER(topic_id, uint64_t)

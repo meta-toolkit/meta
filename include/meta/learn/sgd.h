@@ -10,6 +10,8 @@
 #define META_LEARN_SGD_H_
 
 #include <vector>
+
+#include "meta/config.h"
 #include "meta/learn/dataset.h"
 #include "meta/learn/loss/loss_function.h"
 

@@ -12,9 +12,10 @@
 
 #include <fstream>
 
+#include "meta/config.h"
 #include "meta/corpus/metadata.h"
-#include "meta/util/optional.h"
 #include "meta/io/moveable_stream.h"
+#include "meta/util/optional.h"
 
 namespace meta
 {

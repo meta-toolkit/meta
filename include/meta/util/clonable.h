@@ -11,6 +11,8 @@
 #define META_UTIL_CLONABLE_H_
 
 #include <memory>
+
+#include "meta/config.h"
 #include "meta/util/shim.h"
 
 namespace meta

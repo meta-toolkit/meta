@@ -13,9 +13,11 @@
 
 #include <memory>
 #include <vector>
+
+#include "meta/config.h"
 #include "meta/corpus/metadata.h"
-#include "meta/util/pimpl.h"
 #include "meta/meta.h"
+#include "meta/util/pimpl.h"
 
 namespace cpptoml
 {

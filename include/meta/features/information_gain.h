@@ -10,6 +10,7 @@
 #ifndef META_INFORMATION_GAIN_H_
 #define META_INFORMATION_GAIN_H_
 
+#include "meta/config.h"
 #include "meta/features/feature_selector.h"
 
 namespace meta

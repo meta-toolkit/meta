@@ -9,6 +9,7 @@
 #ifndef META_CLASSIFY_MULTICLASS_DATASET_H_
 #define META_CLASSIFY_MULTICLASS_DATASET_H_
 
+#include "meta/config.h"
 #include "meta/learn/dataset.h"
 #include "meta/util/invertible_map.h"
 

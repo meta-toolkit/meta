@@ -17,6 +17,8 @@
 #include <limits>
 #include <ostream>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace io

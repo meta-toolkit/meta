@@ -12,6 +12,7 @@
 
 #include <thread>
 
+#include "meta/config.h"
 #include "meta/parallel/thread_pool.h"
 #include "meta/topics/lda_gibbs.h"
 
@@ -75,7 +76,8 @@ class parallel_lda_gibbs : public lda_gibbs
      * Indexed as [thread_id][topic]
      */
     std::unordered_map<std::thread::id,
-                       std::vector<stats::multinomial<term_id>>> phi_diffs_;
+                       std::vector<stats::multinomial<term_id>>>
+        phi_diffs_;
 };
 }
 }

@@ -13,6 +13,7 @@
 #include "meta/classify/binary_dataset_view.h"
 #include "meta/classify/multiclass_dataset.h"
 #include "meta/classify/multiclass_dataset_view.h"
+#include "meta/config.h"
 #include "meta/features/feature_selector.h"
 #include "meta/regression/regression_dataset_view.h"
 #include "meta/util/factory.h"

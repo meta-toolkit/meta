@@ -10,6 +10,7 @@
 #define META_CORPUS_CORPUS_FACTORY_
 
 #include "cpptoml.h"
+#include "meta/config.h"
 #include "meta/corpus/corpus.h"
 #include "meta/io/filesystem.h"
 #include "meta/util/factory.h"

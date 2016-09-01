@@ -11,6 +11,8 @@
 
 #include <cstddef>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace stats

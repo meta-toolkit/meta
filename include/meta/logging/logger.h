@@ -13,10 +13,12 @@
 
 #include <chrono>
 #include <functional>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 #include <vector>
+
+#include "meta/config.h"
 
 namespace meta
 {
@@ -239,9 +241,9 @@ class logger
          * @param filter The filtering function used to determine if a
          * given log_line should be written to the stream or not
          */
-        sink(std::ostream& stream, const filter_func& filter =
-            [](const log_line&) { return true; },
-            const formatter_func& formatter = &default_formatter)
+        sink(std::ostream& stream,
+             const filter_func& filter = [](const log_line&) { return true; },
+             const formatter_func& formatter = &default_formatter)
             : stream_(stream), formatter_(formatter), filter_(filter)
         {
             /* nothing */
@@ -262,8 +264,8 @@ class logger
              const formatter_func& formatter = &default_formatter)
             : stream_(stream),
               formatter_(formatter),
-              filter_([sev](const log_line& ll)
-                  { return ll.severity() >= sev; })
+              filter_(
+                  [sev](const log_line& ll) { return ll.severity() >= sev; })
         {
             // nothing
         }
@@ -411,11 +413,11 @@ inline void set_cerr_logging(logging::logger::severity_level sev
                              = logging::logger::severity_level::trace)
 {
     // separate logging for progress output
-    add_sink({std::cerr, [](const logger::log_line& ll) {
-        return ll.severity() == logger::severity_level::progress;
-    }, [](const logger::log_line& ll) {
-        return " " + ll.str();
-    }});
+    add_sink({std::cerr,
+              [](const logger::log_line& ll) {
+                  return ll.severity() == logger::severity_level::progress;
+              },
+              [](const logger::log_line& ll) { return " " + ll.str(); }});
 
     add_sink({std::cerr, sev});
 }

@@ -13,6 +13,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace util
@@ -134,7 +136,6 @@ class dense_matrix
     /// the number of columns in the matrix
     uint64_t columns_;
 };
-
 }
 }
 

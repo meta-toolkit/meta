@@ -11,8 +11,10 @@
 #define META_FILE_CORPUS_H_
 
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
+
+#include "meta/config.h"
 #include "meta/corpus/corpus.h"
 #include "meta/corpus/corpus_factory.h"
 

@@ -10,11 +10,13 @@
 #ifndef META_DBLRU_CACHE_H_
 #define META_DBLRU_CACHE_H_
 
+#include "meta/config.h"
+
 #if META_HAS_STD_SHARED_PTR_ATOMICS
 #include <atomic>
 #else
-#include <mutex>
 #include "meta/util/shim.h"
+#include <mutex>
 #endif
 #include <functional>
 #include <vector>
@@ -45,8 +47,8 @@ namespace caching
  *
  * @see https://issues.apache.org/jira/browse/LUCENE-2075
  */
-template<class Key, class Value,
-         template <class, class> class Map = locking_map>
+template <class Key, class Value,
+          template <class, class> class Map = locking_map>
 class dblru_cache
 {
   public:

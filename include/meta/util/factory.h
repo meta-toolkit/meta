@@ -14,6 +14,8 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+
+#include "meta/config.h"
 #include "meta/util/string_view.h"
 
 namespace meta

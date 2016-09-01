@@ -14,6 +14,7 @@
 #include <stdexcept>
 
 #include "cpptoml.h"
+#include "meta/config.h"
 #include "meta/hashing/probe_map.h"
 #include "meta/util/aligned_allocator.h"
 #include "meta/util/array_view.h"

@@ -12,6 +12,7 @@
 #include <random>
 
 #include "meta/classify/models/linear_model.h"
+#include "meta/config.h"
 #include "meta/sequence/sequence_analyzer.h"
 
 namespace meta

@@ -11,6 +11,7 @@
 #define META_ANALYZER_FACTORY_H_
 
 #include "meta/analyzers/analyzer.h"
+#include "meta/config.h"
 #include "meta/util/factory.h"
 #include "meta/util/shim.h"
 

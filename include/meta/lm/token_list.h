@@ -10,9 +10,10 @@
 #ifndef META_LM_TOKEN_LIST_H_
 #define META_LM_TOKEN_LIST_H_
 
-#include <unordered_map>
 #include <sstream>
+#include <unordered_map>
 
+#include "meta/config.h"
 #include "meta/hashing/hash.h"
 #include "meta/lm/sentence.h"
 #include "meta/meta.h"

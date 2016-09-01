@@ -18,6 +18,7 @@
 #include <utility>
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/hashing/probe_set.h"
 #include "meta/index/chunk.h"
 #include "meta/index/postings_buffer.h"

@@ -12,8 +12,9 @@
 
 #include <cstdint>
 
-#include "meta/io/packed.h"
+#include "meta/config.h"
 #include "meta/hashing/perfect_hash_map.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {
@@ -27,7 +28,8 @@ struct prob_backoff
 };
 
 template <class OutputStream, class Prob, class Backoff>
-uint64_t packed_write(OutputStream& os, const lm::prob_backoff<Prob, Backoff>& pb)
+uint64_t packed_write(OutputStream& os,
+                      const lm::prob_backoff<Prob, Backoff>& pb)
 {
     return io::packed::write(os, pb.prob) + io::packed::write(os, pb.backoff);
 }

@@ -9,6 +9,7 @@
 #ifndef META_PARSER_STATE_ANALYZER_H_
 #define META_PARSER_STATE_ANALYZER_H_
 
+#include "meta/config.h"
 #include "meta/parser/sr_parser.h"
 #include "meta/parser/state.h"
 

@@ -9,6 +9,7 @@
 #ifndef META_PARSER_TRAINING_DATA_H_
 #define META_PARSER_TRAINING_DATA_H_
 
+#include "meta/config.h"
 #include "meta/parser/sr_parser.h"
 
 namespace meta

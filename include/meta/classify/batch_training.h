@@ -14,6 +14,7 @@
 #include <random>
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/logging/logger.h"
 #include "meta/meta.h"
 
@@ -48,7 +49,8 @@ void batch_train(Index& idx, Classifier& cls,
     for (uint64_t i = 0; i < num_batches; ++i)
     {
         LOG(progress) << "Training batch " << i + 1 << "/" << num_batches
-                      << '\n' << ENDLG;
+                      << '\n'
+                      << ENDLG;
         auto end
             = std::min<uint64_t>((i + 1) * batch_size, training_set.size());
 

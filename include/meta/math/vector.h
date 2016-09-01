@@ -10,13 +10,14 @@
 #ifndef META_MATH_VECTOR_H_
 #define META_MATH_VECTOR_H_
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
-#include <algorithm>
-#include <type_traits>
 #include <numeric>
+#include <type_traits>
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/util/array_view.h"
 
 namespace meta
@@ -125,11 +126,9 @@ template <class T, class U, class Allocator>
 vector<T, Allocator> operator+(vector<T, Allocator>&& a, util::array_view<U> b)
 {
     vector<T, Allocator> result{std::move(a)};
-    std::transform(b.begin(), b.end(), result.begin(), result.begin(),
-                   [](const T& bval, const T& resval)
-                   {
-                       return bval + resval;
-                   });
+    std::transform(
+        b.begin(), b.end(), result.begin(), result.begin(),
+        [](const T& bval, const T& resval) { return bval + resval; });
     return result;
 }
 
@@ -243,11 +242,9 @@ template <class T, class U, class Allocator>
 vector<T, Allocator> operator-(vector<T, Allocator>&& a, util::array_view<U> b)
 {
     vector<T, Allocator> result{std::move(a)};
-    std::transform(result.begin(), result.end(), b.begin(), result.begin(),
-                   [](const T& resval, const T& bval)
-                   {
-                       return resval - bval;
-                   });
+    std::transform(
+        result.begin(), result.end(), b.begin(), result.begin(),
+        [](const T& resval, const T& bval) { return resval - bval; });
     return result;
 }
 
@@ -264,11 +261,9 @@ template <class T, class U, class Allocator>
 vector<T, Allocator> operator-(util::array_view<U> a, vector<T, Allocator>&& b)
 {
     vector<T, Allocator> result{std::move(b)};
-    std::transform(a.begin(), a.end(), result.begin(), result.begin(),
-                   [](const T& aval, const T& resval)
-                   {
-                       return aval - resval;
-                   });
+    std::transform(
+        a.begin(), a.end(), result.begin(), result.begin(),
+        [](const T& aval, const T& resval) { return aval - resval; });
     return result;
 }
 
@@ -286,10 +281,7 @@ vector<T, Allocator> operator/(vector<T, Allocator>&& vec, U denom)
 {
     vector<T> result{std::move(vec)};
     std::transform(result.begin(), result.end(), result.begin(),
-                   [=](const T& elem)
-                   {
-                       return elem / denom;
-                   });
+                   [=](const T& elem) { return elem / denom; });
     return result;
 }
 
@@ -314,10 +306,7 @@ vector<T, Allocator> operator*(vector<T, Allocator>&& vec, U mult)
 {
     vector<T> result{std::move(vec)};
     std::transform(result.begin(), result.end(), result.begin(),
-                   [=](const T& elem)
-                   {
-                       return elem * mult;
-                   });
+                   [=](const T& elem) { return elem * mult; });
     return result;
 }
 
@@ -341,10 +330,7 @@ vector<T, Allocator> operator*(U mult, vector<T, Allocator>&& vec)
 {
     vector<T> result{std::move(vec)};
     std::transform(result.begin(), result.end(), result.begin(),
-                   [=](const T& elem)
-                   {
-                       return elem * mult;
-                   });
+                   [=](const T& elem) { return elem * mult; });
     return result;
 }
 
@@ -367,11 +353,9 @@ vector<typename std::remove_const<T>::type> operator*(U mult,
 template <class T>
 double l2norm(util::array_view<T> vec)
 {
-    return std::sqrt(std::accumulate(vec.begin(), vec.end(), 0.0,
-                                     [](double accum, const T& elem)
-                                     {
-                                         return accum + elem * elem;
-                                     }));
+    return std::sqrt(std::accumulate(
+        vec.begin(), vec.end(), 0.0,
+        [](double accum, const T& elem) { return accum + elem * elem; }));
 }
 
 template <class T, class Allocator>
@@ -383,11 +367,9 @@ double l2norm(const vector<T, Allocator>& vec)
 template <class T>
 double l1norm(util::array_view<T> vec)
 {
-    return std::accumulate(vec.begin(), vec.end(), 0.0,
-                           [](double accum, const T& elem)
-                           {
-                               return accum + std::abs(elem);
-                           });
+    return std::accumulate(
+        vec.begin(), vec.end(), 0.0,
+        [](double accum, const T& elem) { return accum + std::abs(elem); });
 }
 
 template <class T, class Allocator>

@@ -10,6 +10,7 @@
 #ifndef META_GZ_CORPUS_H_
 #define META_GZ_CORPUS_H_
 
+#include "meta/config.h"
 #include "meta/corpus/corpus.h"
 #include "meta/corpus/corpus_factory.h"
 #include "meta/io/gzstream.h"

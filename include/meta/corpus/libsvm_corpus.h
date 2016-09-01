@@ -11,6 +11,8 @@
 #define META_CORPUS_LIBSVM_CORPUS_H_
 
 #include <fstream>
+
+#include "meta/config.h"
 #include "meta/corpus/corpus.h"
 #include "meta/corpus/corpus_factory.h"
 

@@ -15,6 +15,7 @@
 #include <thread>
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/parallel/thread_pool.h"
 
 namespace meta
@@ -46,8 +47,8 @@ template <class Iterator, class Function>
 void parallel_for(Iterator begin, Iterator end, thread_pool& pool,
                   Function func)
 {
-    auto block_size = std::distance(begin, end)
-                      / std::thread::hardware_concurrency();
+    auto block_size
+        = std::distance(begin, end) / std::thread::hardware_concurrency();
 
     Iterator last = begin;
     if (block_size > 0)
@@ -65,16 +66,15 @@ void parallel_for(Iterator begin, Iterator end, thread_pool& pool,
     // first p - 1 groups
     for (; begin != last; std::advance(begin, block_size))
     {
-        futures.emplace_back(pool.submit_task([=]()
-        {
+        futures.emplace_back(pool.submit_task([=]() {
             auto mylast = begin;
             std::advance(mylast, block_size);
             std::for_each(begin, mylast, func);
         }));
     }
     // last group
-    futures.emplace_back(pool.submit_task([=]()
-    { std::for_each(begin, end, func); }));
+    futures.emplace_back(
+        pool.submit_task([=]() { std::for_each(begin, end, func); }));
     for (auto& fut : futures)
         fut.get();
 }

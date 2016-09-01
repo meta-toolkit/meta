@@ -11,6 +11,8 @@
 #define META_IO_MOVEABLE_STREAM_H_
 
 #include <fstream>
+
+#include "meta/config.h"
 #include "meta/util/shim.h"
 
 namespace meta

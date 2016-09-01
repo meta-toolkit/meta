@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/sequence/observation.h"
 
 namespace meta

@@ -15,6 +15,7 @@
 #include <stdexcept>
 
 #include "meta/analyzers/analyzer.h"
+#include "meta/config.h"
 #include "meta/index/disk_index.h"
 #include "meta/index/make_index.h"
 #include "meta/index/postings_stream.h"

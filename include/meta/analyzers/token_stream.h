@@ -14,6 +14,8 @@
 #include <string>
 #include <stdexcept>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace analyzers

@@ -10,9 +10,10 @@
 #ifndef META_SEQUENCE_TRELLIS_H_
 #define META_SEQUENCE_TRELLIS_H_
 
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
+#include "meta/config.h"
 #include "meta/meta.h"
 #include "meta/sequence/observation.h"
 #include "meta/util/dense_matrix.h"

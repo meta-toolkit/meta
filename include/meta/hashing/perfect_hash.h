@@ -7,6 +7,7 @@
  * project.
  */
 
+#include "meta/config.h"
 #include "meta/succinct/compressed_vector.h"
 #include "meta/succinct/sarray.h"
 
@@ -52,7 +53,6 @@ class perfect_hash
     }
 
   private:
-
     /// The seed to use for the bucket hash function
     uint64_t bucket_seed_;
     /// The number of bins for the perfect hash function

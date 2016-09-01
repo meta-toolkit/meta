@@ -18,6 +18,7 @@
 #include "hashes/farm_hash.h"
 #include "hashes/metro_hash.h"
 #include "hashes/murmur_hash.h"
+#include "meta/config.h"
 
 namespace meta
 {
@@ -153,7 +154,7 @@ inline void hash_append(HashAlgorithm& h, std::nullptr_t)
 
 template <class HashAlgorithm, class T, std::size_t N>
 typename std::enable_if<!is_contiguously_hashable<T>::value>::type
-hash_append(HashAlgorithm& h, T(&a)[N]);
+hash_append(HashAlgorithm& h, T (&a)[N]);
 
 template <class HashAlgorithm, class T, class U>
 typename std::enable_if<!is_contiguously_hashable<std::pair<T, U>>::value>::type
@@ -193,7 +194,7 @@ hash_append(HashAlgorithm& h, const std::vector<T, Alloc>& v);
 
 template <class HashAlgorithm, class T, std::size_t N>
 typename std::enable_if<!is_contiguously_hashable<T>::value>::type
-hash_append(HashAlgorithm& h, T(&a)[N])
+hash_append(HashAlgorithm& h, T (&a)[N])
 {
     for (const auto& t : a)
         hash_append(h, t);

@@ -12,6 +12,7 @@
 
 #include <utility>
 
+#include "meta/config.h"
 #include "meta/lm/lm_node.h"
 #include "meta/lm/token_list.h"
 #include "meta/util/disk_vector.h"

@@ -12,6 +12,8 @@
 
 #include <fstream>
 #include <numeric>
+
+#include "meta/config.h"
 #include "meta/io/packed.h"
 #include "meta/util/disk_vector.h"
 
@@ -47,7 +49,7 @@ class postings_file_writer
         byte_locations_[id_] = byte_pos_;
         byte_pos_ += pdata.write_packed_counts(output_);
         ++id_;
-   }
+    }
 
   private:
     std::ofstream output_;

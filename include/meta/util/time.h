@@ -12,6 +12,8 @@
 
 #include <chrono>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace common

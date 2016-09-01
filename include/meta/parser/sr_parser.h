@@ -14,10 +14,11 @@
 #include <unordered_map>
 
 #include "meta/classify/models/linear_model.h"
+#include "meta/config.h"
 #include "meta/meta.h"
 #include "meta/parallel/thread_pool.h"
-#include "meta/parser/trees/parse_tree.h"
 #include "meta/parser/transition_map.h"
+#include "meta/parser/trees/parse_tree.h"
 #include "meta/sequence/sequence.h"
 #include "meta/util/optional.h"
 #include "meta/util/sparse_vector.h"
@@ -186,8 +187,8 @@ class sr_parser
      * @return a 3-tuple (update, correct actions, incorrect actions)
      */
     std::tuple<weight_vectors, uint64_t, uint64_t>
-        train_batch(training_batch batch, parallel::thread_pool& pool,
-                    const training_options& options);
+    train_batch(training_batch batch, parallel::thread_pool& pool,
+                const training_options& options);
 
     /**
      * Calculates a weight update on a single tree.
@@ -213,9 +214,9 @@ class sr_parser
      * @return (correct actions, incorrect actions)
      */
     std::pair<uint64_t, uint64_t>
-        train_early_termination(const parse_tree& tree,
-                                const std::vector<trans_id>& transitions,
-                                weight_vectors& update) const;
+    train_early_termination(const parse_tree& tree,
+                            const std::vector<trans_id>& transitions,
+                            weight_vectors& update) const;
 
     /**
      * Calculates a weight update on a single tree, using beam search.
@@ -256,8 +257,8 @@ class sr_parser
      * each transition
      */
     std::vector<scored_trans>
-        best_transitions(const feature_vector& features, const state& state,
-                         size_t num, bool check_legality = false) const;
+    best_transitions(const feature_vector& features, const state& state,
+                     size_t num, bool check_legality = false) const;
 
     /**
      * Storage for the ids for each transition

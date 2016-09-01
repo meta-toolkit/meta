@@ -11,9 +11,10 @@
 #define META_INDEX_POSTINGS_BUFFER_H_
 
 #include <cstdint>
-#include <vector>
 #include <memory>
+#include <vector>
 
+#include "meta/config.h"
 #include "meta/index/postings_stream.h"
 #include "meta/io/packed.h"
 #include "meta/util/shim.h"

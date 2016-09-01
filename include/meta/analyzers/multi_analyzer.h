@@ -10,10 +10,11 @@
 #ifndef META_MULTI_ANALYZER_
 #define META_MULTI_ANALYZER_
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "meta/analyzers/analyzer.h"
+#include "meta/config.h"
 #include "meta/util/clonable.h"
 
 namespace meta

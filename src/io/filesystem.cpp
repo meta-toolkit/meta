@@ -7,26 +7,26 @@
 #include <fstream>
 #include <vector>
 
-#ifndef META_HAS_EXPERIMENTAL_FILESYSTEM
-#include <platformstl/filesystem/filesystem_traits.hpp>
-#include <platformstl/filesystem/path.hpp>
-#include <platformstl/filesystem/readdir_sequence.hpp>
-#include <platformstl/filesystem/directory_functions.hpp>
-#else
-#include <experimental/filesystem>
-#endif
-
 #include "meta/io/filesystem.h"
 #include "meta/io/mmap_file.h"
 #include "meta/util/printing.h"
 #include "meta/util/progress.h"
+
+#if META_HAS_EXPERIMENTAL_FILESYSTEM == 0
+#include <platformstl/filesystem/directory_functions.hpp>
+#include <platformstl/filesystem/filesystem_traits.hpp>
+#include <platformstl/filesystem/path.hpp>
+#include <platformstl/filesystem/readdir_sequence.hpp>
+#else
+#include <experimental/filesystem>
+#endif
 
 namespace meta
 {
 namespace filesystem
 {
 
-#ifndef META_HAS_EXPERIMENTAL_FILESYSTEM
+#if META_HAS_EXPERIMENTAL_FILESYSTEM == 0
 namespace
 {
 using traits = platformstl::filesystem_traits<char>;

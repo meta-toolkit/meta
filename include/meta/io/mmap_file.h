@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace io

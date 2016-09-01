@@ -11,6 +11,8 @@
 #define META_INDEX_METADATA_WRITER_H_
 
 #include <mutex>
+
+#include "meta/config.h"
 #include "meta/corpus/document.h"
 #include "meta/corpus/metadata.h"
 #include "meta/util/disk_vector.h"

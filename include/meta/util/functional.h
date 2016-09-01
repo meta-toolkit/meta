@@ -14,6 +14,8 @@
 #include <functional>
 #include <map>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace functional
@@ -27,8 +29,7 @@ namespace functional
 template <class Result, class... Args>
 std::function<Result(Args...)> memoize(std::function<Result(Args...)> fun)
 {
-    return [fun](Args... args)
-    {
+    return [fun](Args... args) {
         static std::map<std::tuple<Args...>, Result> map_;
         auto it = map_.find(std::make_tuple(args...));
         if (it != map_.end())
@@ -49,10 +50,8 @@ template <class Iter, class Function>
 Iter argmax(Iter begin, Iter end, Function&& fn)
 {
     using T = decltype(*begin);
-    return std::max_element(begin, end, [&](const T& a, const T& b)
-                            {
-                                return fn(a) < fn(b);
-                            });
+    return std::max_element(
+        begin, end, [&](const T& a, const T& b) { return fn(a) < fn(b); });
 }
 }
 }

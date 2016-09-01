@@ -11,11 +11,12 @@
 #define META_INDEX_POSTINGS_STREAM_H_
 
 #include <iterator>
-#include <utility>
 #include <tuple>
+#include <utility>
 
-#include "meta/util/optional.h"
+#include "meta/config.h"
 #include "meta/io/packed.h"
+#include "meta/util/optional.h"
 
 namespace meta
 {

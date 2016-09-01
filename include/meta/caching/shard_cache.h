@@ -15,6 +15,7 @@
 
 #include "meta/caching/dblru_cache.h"
 #include "meta/caching/splay_cache.h"
+#include "meta/config.h"
 #include "meta/util/optional.h"
 
 namespace meta

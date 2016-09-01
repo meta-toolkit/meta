@@ -12,6 +12,8 @@
 #ifndef META_COMPARABLE_H_
 #define META_COMPARABLE_H_
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace util
@@ -34,7 +36,8 @@ class comparable
      * @param rhs
      * @return whether lhs == rhs
      */
-    friend constexpr bool operator==(const comparable& lhs, const comparable& rhs)
+    friend constexpr bool operator==(const comparable& lhs,
+                                     const comparable& rhs)
     {
         return !(lhs.as_derived() < rhs.as_derived())
                && !(rhs.as_derived() < lhs.as_derived());
@@ -48,7 +51,8 @@ class comparable
      * @param rhs
      * @return whether lhs != rhs
      */
-    friend constexpr bool operator!=(const comparable& lhs, const comparable& rhs)
+    friend constexpr bool operator!=(const comparable& lhs,
+                                     const comparable& rhs)
     {
         return !(lhs == rhs);
     }
@@ -58,7 +62,8 @@ class comparable
      * @param rhs
      * @return whether lhs > rhs, as defined by their operator<.
      */
-    friend constexpr bool operator>(const comparable& lhs, const comparable& rhs)
+    friend constexpr bool operator>(const comparable& lhs,
+                                    const comparable& rhs)
     {
         return rhs.as_derived() < lhs.as_derived();
     }
@@ -69,7 +74,8 @@ class comparable
      * @return whether lhs <= rhs, as defined by their operator< and
      * comparable::operator==.
      */
-    friend constexpr bool operator<=(const comparable& lhs, const comparable& rhs)
+    friend constexpr bool operator<=(const comparable& lhs,
+                                     const comparable& rhs)
     {
         return lhs.as_derived() < rhs.as_derived() || lhs == rhs;
     }
@@ -80,7 +86,8 @@ class comparable
      * @return whether lhs >= rhs, as defined by comparable::operator> and
      * comparable::operator==.
      */
-    friend constexpr bool operator>=(const comparable& lhs, const comparable& rhs)
+    friend constexpr bool operator>=(const comparable& lhs,
+                                     const comparable& rhs)
     {
         return lhs > rhs || lhs == rhs;
     }

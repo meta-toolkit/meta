@@ -12,6 +12,7 @@
 
 #include <random>
 
+#include "meta/config.h"
 #include "meta/stats/multinomial.h"
 #include "meta/topics/lda_model.h"
 #include "meta/util/dense_matrix.h"
@@ -72,8 +73,7 @@ class lda_gibbs : public lda_model
      * @param topic The topic we are concerned with.
      */
     virtual double
-        compute_term_topic_probability(term_id term,
-                                       topic_id topic) const override;
+    compute_term_topic_probability(term_id term, topic_id topic) const override;
 
     /**
      * @return the probability that the given topic is picked for the given

@@ -10,6 +10,8 @@
 #ifndef META_UTIL_LIKELY_H_
 #define META_UTIL_LIKELY_H_
 
+#include "meta/config.h"
+
 #if META_HAS_BUILTIN_EXPECT
 #define META_LIKELY(x) __builtin_expect(!!(x), 1)
 #define META_UNLIKELY(x) __builtin_expect(!!(x), 0)

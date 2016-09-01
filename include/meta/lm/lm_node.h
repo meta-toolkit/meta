@@ -13,6 +13,8 @@
 #include <cstdint>
 #include <cstring>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace lm

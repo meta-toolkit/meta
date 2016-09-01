@@ -14,6 +14,8 @@
 #include <new>
 #include <vector>
 
+#include "meta/config.h"
+
 #if META_HAS_ALIGNED_ALLOC
 #include "meta/util/aligned_alloc.h"
 #elif META_HAS_POSIX_MEMALIGN

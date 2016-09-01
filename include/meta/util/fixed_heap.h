@@ -12,6 +12,8 @@
 
 #include <vector>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace util

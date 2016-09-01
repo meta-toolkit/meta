@@ -14,6 +14,7 @@
 #include <memory>
 #include <mutex>
 
+#include "meta/config.h"
 #include "meta/meta.h"
 #include "meta/util/optional.h"
 #include "meta/util/shim.h"

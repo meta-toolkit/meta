@@ -14,6 +14,8 @@
 #include <cstdint>
 #include <limits>
 #include <type_traits>
+
+#include "meta/config.h"
 #include "meta/util/identifiers.h"
 #include "meta/util/string_view.h"
 
@@ -169,7 +171,8 @@ packed_write(OutputStream& stream, T value)
  * @return the number of bytes used to write out the value
  */
 template <class OutputStream, class Tag, class T>
-uint64_t packed_write(OutputStream& stream, const util::identifier<Tag, T>& value)
+uint64_t packed_write(OutputStream& stream,
+                      const util::identifier<Tag, T>& value)
 {
     return packed_write(stream, static_cast<const T&>(value));
 }

@@ -10,6 +10,7 @@
 #ifndef META_INDEX_POSTINGS_FILE_H_
 #define META_INDEX_POSTINGS_FILE_H_
 
+#include "meta/config.h"
 #include "meta/index/postings_data.h"
 #include "meta/index/postings_stream.h"
 #include "meta/io/mmap_file.h"
@@ -50,7 +51,7 @@ class postings_file
      * postings file
      */
     util::optional<postings_stream<SecondaryKey, FeatureValue>>
-        find_stream(PrimaryKey pk) const
+    find_stream(PrimaryKey pk) const
     {
         if (pk < byte_locations_.size())
             return postings_stream<SecondaryKey, FeatureValue>{

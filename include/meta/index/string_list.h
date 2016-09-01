@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "meta/config.h"
 #include "meta/io/mmap_file.h"
 #include "meta/util/disk_vector.h"
 

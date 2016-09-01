@@ -12,6 +12,8 @@
 
 #include <string>
 #include <vector>
+
+#include "meta/config.h"
 #include "meta/util/optional.h"
 #include "meta/util/pimpl.h"
 #include "meta/util/string_view.h"

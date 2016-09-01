@@ -14,6 +14,7 @@
 #include <mutex>
 #include <string>
 
+#include "meta/config.h"
 #include "meta/io/moveable_stream.h"
 #include "meta/util/disk_vector.h"
 

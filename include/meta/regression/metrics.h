@@ -11,6 +11,8 @@
 #define META_REGRESSION_METRICS_H_
 
 #include <vector>
+
+#include "meta/config.h"
 #include "meta/util/identifiers.h"
 
 namespace meta

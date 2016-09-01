@@ -12,6 +12,8 @@
 
 #include <memory>
 
+#include "meta/config.h"
+
 namespace cpptoml
 {
 class table;
@@ -56,7 +58,7 @@ class cached_index : public Index
      * @param p_id the primary key to search the postings file for
      */
     virtual std::shared_ptr<postings_data_type>
-        search_primary(primary_key_type p_id) const override;
+    search_primary(primary_key_type p_id) const override;
 
     /**
      * Clears the cache for the index. Useful if you're using something

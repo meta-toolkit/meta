@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+#include "meta/config.h"
+
 namespace meta
 {
 namespace hashing
@@ -113,8 +115,7 @@ class perfect_hash_builder
         std::size_t idx;
         K key;
 
-        hashed_key(std::size_t index, const K& akey)
-          : idx{index}, key{akey}
+        hashed_key(std::size_t index, const K& akey) : idx{index}, key{akey}
         {
             // nothing
         }

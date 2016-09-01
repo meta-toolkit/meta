@@ -9,8 +9,9 @@
 #ifndef META_CLASSIFY_MULTICLASS_DATASET_VIEW_H_
 #define META_CLASSIFY_MULTICLASS_DATASET_VIEW_H_
 
-#include "meta/learn/dataset_view.h"
 #include "meta/classify/multiclass_dataset.h"
+#include "meta/config.h"
+#include "meta/learn/dataset_view.h"
 #include "meta/logging/logger.h"
 
 namespace meta
@@ -65,11 +66,11 @@ class multiclass_dataset_view : public learn::dataset_view
             partitioned[label(*it)].push_back(it.index());
 
         // find the class with the least representation
-        auto it = std::min_element(partitioned.begin(), partitioned.end(),
-                                   [](const value_type& a, const value_type& b)
-                                   {
-                                       return a.second.size() < b.second.size();
-                                   });
+        auto it
+            = std::min_element(partitioned.begin(), partitioned.end(),
+                               [](const value_type& a, const value_type& b) {
+                                   return a.second.size() < b.second.size();
+                               });
 
         // create the set of dataset indices that contains an equal number of
         // instances for each class label

@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/parser/transition.h"
 #include "meta/parser/trees/node.h"
 #include "meta/parser/trees/parse_tree.h"

@@ -14,12 +14,14 @@
 #define META_THREAD_POOL_H_
 
 #include <condition_variable>
+#include <functional>
+#include <future>
 #include <mutex>
+#include <queue>
 #include <thread>
 #include <vector>
-#include <functional>
-#include <queue>
-#include <future>
+
+#include "meta/config.h"
 
 namespace meta
 {
@@ -132,8 +134,7 @@ class thread_pool
          * @param f The function to run.
          */
         template <class Function>
-        concrete_task(const Function& f)
-            : task_(f)
+        concrete_task(const Function& f) : task_(f)
         {
         }
 

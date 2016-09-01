@@ -11,10 +11,11 @@
 #define META_CORPUS_METADATA_H_
 
 #include <cstdint>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "cpptoml.h"
+#include "meta/config.h"
 #include "meta/io/packed.h"
 #include "meta/util/optional.h"
 
@@ -137,8 +138,7 @@ class metadata
      */
     struct field
     {
-        union
-        {
+        union {
             int64_t sign_int;
             uint64_t usign_int;
             double doub;

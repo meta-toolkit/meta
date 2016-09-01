@@ -10,6 +10,7 @@
 #ifndef META_REGRESSION_DATASET_VIEW_H_
 #define META_REGRESSION_DATASET_VIEW_H_
 
+#include "meta/config.h"
 #include "meta/learn/dataset_view.h"
 
 namespace meta

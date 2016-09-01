@@ -13,6 +13,7 @@
 
 #include "cpptoml.h"
 #include "meta/caching/all.h"
+#include "meta/config.h"
 #include "meta/corpus/corpus_factory.h"
 #include "meta/index/cached_index.h"
 #include "meta/io/filesystem.h"

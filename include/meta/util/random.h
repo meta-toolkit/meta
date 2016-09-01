@@ -15,6 +15,8 @@
 #include <limits>
 #include <random>
 
+#include "meta/config.h"
+
 namespace meta
 {
 

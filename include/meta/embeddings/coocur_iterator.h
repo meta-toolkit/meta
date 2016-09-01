@@ -10,6 +10,7 @@
 #ifndef META_EMBEDDINGS_COOCUR_ITERATOR_H_
 #define META_EMBEDDINGS_COOCUR_ITERATOR_H_
 
+#include "meta/config.h"
 #include "meta/embeddings/coocur_record.h"
 #include "meta/util/multiway_merge.h"
 

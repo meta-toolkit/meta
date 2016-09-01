@@ -10,6 +10,7 @@
 #ifndef META_TOPICS_LDA_SCVB_H_
 #define META_TOPICS_LDA_SCVB_H_
 
+#include "meta/config.h"
 #include "meta/topics/lda_model.h"
 
 namespace meta
@@ -63,9 +64,8 @@ class lda_scvb : public lda_model
      */
     virtual void run(uint64_t num_iters, double convergence = 0) override;
 
-    virtual double compute_term_topic_probability(term_id term,
-                                                  topic_id topic) const
-        override;
+    virtual double
+    compute_term_topic_probability(term_id term, topic_id topic) const override;
 
     virtual double compute_doc_topic_probability(doc_id doc,
                                                  topic_id topic) const override;

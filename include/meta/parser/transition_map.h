@@ -9,6 +9,7 @@
 #ifndef META_PARSER_TRANSITION_MAP_H_
 #define META_PARSER_TRANSITION_MAP_H_
 
+#include "meta/config.h"
 #include "meta/parser/transition.h"
 #include "meta/util/sparse_vector.h"
 

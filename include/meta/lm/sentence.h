@@ -6,11 +6,12 @@
 #ifndef META_SENTENCE_H_
 #define META_SENTENCE_H_
 
-#include <stdexcept>
 #include <deque>
-#include <vector>
+#include <stdexcept>
 #include <string>
+#include <vector>
 
+#include "meta/config.h"
 #include "meta/hashing/hash.h"
 
 namespace meta

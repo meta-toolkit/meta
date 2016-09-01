@@ -15,6 +15,7 @@
 #include <utility>
 #include <vector>
 
+#include "meta/config.h"
 #include "meta/meta.h"
 #include "meta/util/sparse_vector.h"
 

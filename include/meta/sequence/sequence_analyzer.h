@@ -11,10 +11,11 @@
 #define META_SEQUENCE_SEQUENCE_ANALYZER_H_
 
 #include <algorithm>
-#include <vector>
 #include <functional>
 #include <unordered_map>
+#include <vector>
 
+#include "meta/config.h"
 #include "meta/meta.h"
 #include "meta/sequence/sequence.h"
 #include "meta/util/invertible_map.h"
@@ -216,10 +217,9 @@ class sequence_analyzer
         {
             using pair = std::pair<feature_id, double>;
             std::sort(feats_.begin(), feats_.end(),
-                      [](const pair& lhs, const pair& rhs)
-                      {
-                return lhs.first < rhs.first;
-            });
+                      [](const pair& lhs, const pair& rhs) {
+                          return lhs.first < rhs.first;
+                      });
 
             obs_->features(std::move(feats_));
         }

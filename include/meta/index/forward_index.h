@@ -12,13 +12,14 @@
 
 #include <stdexcept>
 
+#include "meta/config.h"
 #include "meta/index/disk_index.h"
 #include "meta/index/make_index.h"
 #include "meta/index/postings_stream.h"
 #include "meta/learn/instance.h"
+#include "meta/meta.h"
 #include "meta/util/disk_vector.h"
 #include "meta/util/optional.h"
-#include "meta/meta.h"
 
 namespace meta
 {

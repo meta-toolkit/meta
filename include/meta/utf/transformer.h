@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "meta/config.h"
 #include "meta/util/pimpl.h"
 
 namespace meta
