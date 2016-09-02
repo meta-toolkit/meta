@@ -9,3 +9,7 @@ add_library(meta-ranker absolute_discount.cpp
                         ranker.cpp
                         ranker_factory.cpp)
 target_link_libraries(meta-ranker meta-index)
+
+install(TARGETS meta-ranker
+        EXPORT meta-exports
+        DESTINATION lib)

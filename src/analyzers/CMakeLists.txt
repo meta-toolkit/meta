@@ -12,3 +12,7 @@ add_library(meta-analyzers analyzer.cpp
 target_link_libraries(meta-analyzers meta-corpus
                                      meta-filters
                                      meta-tokenizers)
+
+install(TARGETS meta-analyzers
+        EXPORT meta-exports
+        DESTINATION lib)

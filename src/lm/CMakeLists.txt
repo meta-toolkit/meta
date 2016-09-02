@@ -12,3 +12,7 @@ add_library(meta-language-model language_model.cpp
 target_link_libraries(meta-language-model meta-corpus
                                           meta-analyzers
                                           meta-succinct)
+
+install(TARGETS meta-language-model
+        EXPORT meta-exports
+        DESTINATION lib)

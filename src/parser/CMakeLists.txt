@@ -21,3 +21,7 @@ target_link_libraries(meta-parser meta-parser-trees
                                   meta-sequence
                                   meta-util
                                   ${CMAKE_THREAD_LIBS_INIT})
+
+install(TARGETS meta-parser
+        EXPORT meta-exports
+        DESTINATION lib)

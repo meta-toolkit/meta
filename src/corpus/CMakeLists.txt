@@ -13,3 +13,7 @@ add_library(meta-corpus corpus.cpp
                         metadata_parser.cpp)
 
 target_link_libraries(meta-corpus meta-io meta-utf cpptoml)
+
+install(TARGETS meta-corpus
+        EXPORT meta-exports
+        DESTINATION lib)

@@ -11,3 +11,7 @@ add_library(meta-features feature_selector.cpp
 target_link_libraries(meta-features meta-index
                                     meta-succinct
                                     ${CMAKE_THREAD_LIBS_INIT})
+
+install(TARGETS meta-features
+        EXPORT meta-exports
+        DESTINATION lib)

@@ -15,3 +15,7 @@ add_library(meta-filters alpha_filter.cpp
 target_link_libraries(meta-filters meta-utf
                                    meta-tokenizers
                                    meta-io)
+
+install(TARGETS meta-filters
+        EXPORT meta-exports
+        DESTINATION lib)

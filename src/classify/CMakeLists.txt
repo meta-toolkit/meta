@@ -36,3 +36,7 @@ add_library(meta-classify binary_classifier_factory.cpp
                           confusion_matrix.cpp)
 target_link_libraries(meta-classify meta-ranker meta-learn meta-kernel)
 add_dependencies(meta-classify liblinear libsvm)
+
+install(TARGETS meta-classify
+        EXPORT meta-exports
+        DESTINATION lib)

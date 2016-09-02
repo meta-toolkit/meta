@@ -16,3 +16,7 @@ add_library(meta-index disk_index.cpp
 target_link_libraries(meta-index meta-analyzers
                                  meta-eval
                                  ${CMAKE_THREAD_LIBS_INIT})
+
+install(TARGETS meta-index
+        EXPORT meta-exports
+        DESTINATION lib)

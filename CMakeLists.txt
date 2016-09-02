@@ -7,6 +7,12 @@ option(ENABLE_JEMALLOC "Link against jemalloc if available" ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
+set(MeTA_VERSION_MAJOR 2)
+set(MeTA_VERSION_MINOR 4)
+set(MeTA_VERSION_PATCH 0)
+set(MeTA_VERSION
+    "${MeTA_VERSION_MAJOR}.${MeTA_VERSION_MINOR}.${MeTA_VERSION_PATCH}")
+
 # MeTA only requires C++11, but on all of our supported compilers at least
 # C++1y support exists, so we therefore set the standard to 14
 set(CMAKE_CXX_STANDARD 14)
@@ -50,7 +56,8 @@ FindOrBuildICU(
 
 add_library(meta-definitions INTERFACE)
 target_include_directories(meta-definitions INTERFACE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
 
 if(UNIX OR MINGW)
   target_compile_options(meta-definitions INTERFACE -Wall -Wextra -pedantic)
@@ -133,3 +140,35 @@ endif()
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(deps/cpptoml EXCLUDE_FROM_ALL)
+
+# install our targets defined in this file
+install(TARGETS meta-definitions
+        EXPORT meta-exports
+        DESTINATION lib)
+
+# install all of our includes
+install(DIRECTORY include/meta/
+        DESTINATION include/meta
+        FILES_MATCHING PATTERN "*.h"
+                       PATTERN "*.tcc")
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/meta/
+        DESTINATION include/meta
+        FILES_MATCHING PATTERN "*.h")
+
+# generate our ConfigVersion.cmake file
+configure_file(cmake/MeTAConfigVersion.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTAConfigVersion.cmake
+               @ONLY)
+configure_file(cmake/MeTAConfig.cmake
+               ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTAConfig.cmake
+               COPYONLY)
+
+# install our exports and cmake files
+install(EXPORT meta-exports
+        FILE MeTATargets.cmake
+        DESTINATION lib/cmake/MeTA)
+install(FILES
+          ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTAConfigVersion.cmake
+          ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTAConfig.cmake
+        DESTINATION
+          lib/cmake/MeTA)

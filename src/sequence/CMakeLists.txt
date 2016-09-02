@@ -13,3 +13,10 @@ target_link_libraries(meta-sequence meta-io meta-utf)
 
 add_library(meta-greedy-tagger perceptron.cpp)
 target_link_libraries(meta-greedy-tagger meta-sequence meta-io)
+
+install(TARGETS
+          meta-sequence meta-greedy-tagger
+        EXPORT
+          meta-exports
+        DESTINATION
+          lib)
