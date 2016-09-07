@@ -1,3 +1,44 @@
+# [v2.4.0][2.4.0]
+## New features
+- Add a minimal perfect hashing implementation for `language_model`, and unify
+  the querying interface with the existing language model.
+- Add a CMake `install()` command to install MeTA as a library (issue #143). For
+  example, once the library is installed, users can do:
+
+    ```
+    find_package(MeTA 2.4 REQUIRED)
+
+    add_executable(my-program src/my_program.cpp)
+    target_link_libraries(my-program meta-index) # or whatever other libs you
+    need from MeTA
+    ```
+- Feature selection functionality added to `multiclass_dataset` and
+  `binary_dataset` and views (issues #111, #149 and PR #150 thanks to @siddshuk).
+
+  ```cpp
+    auto selector = features::make_selector(*config, training_vw);
+    uint64_t total_features_selected = 20;
+    selector->select(total_features_selected);
+    auto filtered_dset = features::filter_dataset(dset, *selector);
+  ```
+- Users can now, similar to `hash_append`, declare standalone functions in the
+  same scope as their type called `packed_read` and `packed_write` which will be
+  called by `io::packed::read` and `io::packed::write`, respectively, via
+  argument-dependent lookup.
+
+## Bug fixes
+- Fix edge-case bug in the succinct data structures
+- Fix off-by-one error in `lm::diff`
+
+## Enhancements
+- Added functionality to the `meta::hashing` library: `hash_append` overload for
+  `std::vector`, manually-seeded hash function
+- Further isolate ICU in MeTA to allow CMake to `install()`
+- Updates to EWS (UIUC) build guide
+- Add `std::vector` operations to `io::packed`
+- Consolidated all variants of chunk iterators into one template
+- Add MeTA's citation to the README!
+
 # [v2.3.0][2.3.0]
 ## New features
 - Forward and inverted indexes are now stored in one directory. **To make
@@ -435,7 +476,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.3.0...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.4.0...develop
+[2.4.0]: https://github.com/meta-toolkit/meta/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/meta-toolkit/meta/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/meta-toolkit/meta/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/meta-toolkit/meta/compare/v2.0.1...v2.1.0
