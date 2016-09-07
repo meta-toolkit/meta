@@ -519,6 +519,18 @@ If everything passes, congratulations! MeTA seems to be working on your
 system.
 
 ## EWS/EngrIT Build Guide
+**Note:** Please don't do this if you are able to get MeTA working in **any
+other possible way**, as the EWS filesystem has a habit of being
+**unbearably slow** and increasing compile times by several orders of
+magnitude. For example, comparing the `cmake`, `make`, and `unit-test`
+steps on my desktop vs. EWS gives the following:
+
+| system         | `cmake` time | `make` time | `unit-test` time |
+| -------------- |  ----------- | ----------- | ---------------- |
+| my desktop     | 0m7.523s     | 2m30.715s   | 0m36.631s        |
+| EWS            | 1m28s        | 11m28.473s  | 1m25.326s        |
+
+
 If you are on a machine managed by Engineering IT at UIUC, you should
 follow this guide. These systems have software that is much too old for
 building MeTA, but EngrIT has been kind enough to package updated versions
@@ -542,8 +554,8 @@ g++ --version
 
 should output
 
-    g++ (GCC) 4.8.2
-    Copyright (C) 2013 Free Software Foundation, Inc.
+    g++ (GCC) 5.3.0
+    Copyright (C) 2015 Free Software Foundation, Inc.
     This is free software; see the source for copying conditions.  There is NO
     warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -576,7 +588,7 @@ cd build
 cp ../config.toml .
 
 # configure and build the project
-CXX=`which g++` CC=`which gcc` cmake ../ -DICU_ROOT=/class/cs225/builds/icu
+CXX=`which g++` CC=`which gcc` cmake ../ -DCMAKE_BUILD_TYPE=Release
 make
 ```
 
