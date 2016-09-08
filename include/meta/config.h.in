@@ -4,7 +4,7 @@
 #include "meta/kludges.h"
 
 // OS X
-#cmakedefine META_IS_DARWIN
-#cmakedefine _DARWIN_USE_64_BIT_INODE
+//#cmakedefine META_IS_DARWIN
+//#cmakedefine _DARWIN_USE_64_BIT_INODE
 
 #endif

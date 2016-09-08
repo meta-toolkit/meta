@@ -112,7 +112,9 @@ endif()
 CompilerKludges(meta/kludges.h)
 
 configure_file(include/meta/config.h.in meta/config.h)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(meta-definitions INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+  $<INSTALL_INTERFACE:include>)
 
 cmake_pop_check_state()
 

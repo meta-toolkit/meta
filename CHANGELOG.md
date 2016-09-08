@@ -1,3 +1,9 @@
+# [v2.4.1][2.4.1]
+## Bug fixes
+- Eliminate excess warnings on Darwin about double preprocessor definitions
+- Fix issue finding `config.h` when used as a sub-project via
+    add_subdirectory()
+
 # [v2.4.0][2.4.0]
 ## New features
 - Add a minimal perfect hashing implementation for `language_model`, and unify
@@ -476,7 +482,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.4.0...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.4.1...develop
+[2.4.1]: https://github.com/meta-toolkit/meta/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/meta-toolkit/meta/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/meta-toolkit/meta/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/meta-toolkit/meta/compare/v2.1.0...v2.2.0
