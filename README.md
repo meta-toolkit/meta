@@ -609,6 +609,12 @@ and related libraries significantly easier than it would be otherwise, and
 it tends to have very up-to-date packages relative to other similar MinGW
 distributions.
 
+**Note:** If you find yourself confused or lost by the instructions below,
+please refer to our [visual setup guide for
+Windows](https://meta-toolkit.org/windows-setup-guide.html) which includes
+screenshots for every step, including updating MSYS2 and the MinGW-w64
+toolchain.
+
 To start, [download the installer][msys2] for MSYS2 from the linked
 website and follow the instructions on that page. Once you've got it
 installed, you should use the MinGW shell to start a new terminal, in which
