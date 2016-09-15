@@ -89,10 +89,12 @@ confusion_matrix cross_validate(Creator&& creator,
                                 bool even_split = false)
 {
     using diff_type = decltype(docs.begin())::difference_type;
-    // docs might be ordered by class, so make sure things are shuffled
-    docs.shuffle();
+
     if (even_split)
         docs = docs.create_even_split();
+
+    // docs might be ordered by class, so make sure things are shuffled
+    docs.shuffle();
 
     confusion_matrix matrix;
     auto step_size = docs.size() / k;
