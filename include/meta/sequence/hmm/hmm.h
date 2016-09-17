@@ -336,7 +336,7 @@ class hidden_markov_model
                 for (label_id j{0}; j < num_states(); ++j)
                 {
                     state_id s_j{j};
-                    sum += fwd.probability(t - 1, i) * trans_prob(s_j, s_i);
+                    sum += fwd.probability(t - 1, j) * trans_prob(s_j, s_i);
                 }
                 fwd.probability(t, i, sum * output_probs(t, s_i));
             }
