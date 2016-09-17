@@ -18,6 +18,7 @@
 #include "meta/stats/multinomial.h"
 #include "meta/util/identifiers.h"
 #include "meta/util/progress.h"
+#include "meta/util/random.h"
 #include "meta/util/time.h"
 
 namespace meta
@@ -28,6 +29,12 @@ namespace hmm
 {
 
 MAKE_NUMERIC_IDENTIFIER(state_id, uint64_t)
+
+class hmm_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
 
 /**
  * A generic Hidden Markov Model implementation for unsupervised sequence
@@ -57,12 +64,81 @@ class hidden_markov_model
         uint64_t max_iters = std::numeric_limits<uint64_t>::max();
     };
 
-    hidden_markov_model(uint64_t num_states,
-                        stats::dirichlet<state_id>&& trans_prior,
-                        ObsDist&& obs_dist)
+    /**
+     * Constructs a new Hidden Markov Model with random initialization
+     * using the provided random number generator. The observation
+     * distribution must be provided and is not initialized by the
+     * constructor (so you should initialize it yourself using an
+     * appropriate constructor for it).
+     *
+     * @param num_states The number of hidden states in the HMM
+     * @param gen The random number generator to use for initialization
+     * @param obs_dist The observation distribution
+     * @param trans_prior The Dirichlet prior over the transitions
+     */
+    template <class Generator>
+    hidden_markov_model(uint64_t num_states, Generator&& rng,
+                        ObsDist&& obs_dist,
+                        stats::dirichlet<state_id>&& trans_prior)
         : obs_dist_{std::move(obs_dist)}, trans_dists_(num_states, trans_prior)
     {
-        // nothing
+        if (obs_dist_.num_states() != num_states)
+            throw hmm_exception{"The observation distribution and HMM have "
+                                "differing numbers of hidden states"};
+
+        for (auto& trans_dist : trans_dists_)
+        {
+            for (state_id s_i{0}; s_i < num_states; ++s_i)
+            {
+                auto rnd = random::bounded_rand(rng, 65536);
+                auto val = (rnd / 65536.0) / num_states;
+                trans_dist.increment(s_i, val);
+            }
+        }
+
+        for (state_id s_i{0}; s_i < num_states; ++s_i)
+        {
+            auto rnd = random::bounded_rand(rng, 65536);
+            auto val = (rnd / 65536.0) / num_states;
+            initial_dist_.increment(s_i, val);
+        }
+    }
+
+    /**
+     * Constructs a new Hidden Markov Model with uniform initialization of
+     * initial state and transition distributions. The observation
+     * distribution must be provided and is not initialized by the
+     * constructor (so you should initialize it yourself using an
+     * appropriate constructor for it). The initialization of the
+     * observation distribution is quite important as this is the only
+     * distribution that distinguishes states from one another when this
+     * constructor is used, so it is recommended to use a random
+     * initialization for it if possible.
+     *
+     * @param num_states The number of hidden states in the HMM
+     * @param obs_dist The observation distribution
+     * @param trans_prior The Dirichlet prior over the transitions
+     */
+    hidden_markov_model(uint64_t num_states, ObsDist&& obs_dist,
+                        stats::dirichlet<state_id>&& trans_prior)
+        : obs_dist_{std::move(obs_dist)}, trans_dists_(num_states, trans_prior)
+    {
+        if (obs_dist_.num_states() != num_states)
+            throw hmm_exception{"The observation distribution and HMM have "
+                                "differing numbers of hidden states"};
+
+        for (auto& trans_dist : trans_dists_)
+        {
+            for (state_id s_i{0}; s_i < num_states; ++s_i)
+            {
+                trans_dist.increment(s_i, 1.0);
+            }
+        }
+
+        for (state_id s_i{0}; s_i < num_states; ++s_i)
+        {
+            initial_dist_.increment(s_i, 1.0);
+        }
     }
 
     /**

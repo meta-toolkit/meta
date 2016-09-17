@@ -30,11 +30,31 @@ class discrete_observations
   public:
     using observation_type = ObservationType;
 
-    discrete_observations(uint64_t num_states,
+    /**
+     * Initializes each multinomial distribution for each hidden state
+     * randomly by using the provided random number generator.
+     */
+    template <class Generator>
+    discrete_observations(uint64_t num_states, uint64_t num_observations,
+                          Generator&& rng,
                           stats::dirichlet<observation_type>&& prior)
         : obs_dist_(num_states, prior)
     {
-        // nothing
+        for (auto& dist : obs_dist_)
+        {
+            for (observation_type o{0}; o < num_observations; ++o)
+            {
+                auto rnd = random::bounded_rand(rng, 65536);
+                auto val = (rnd / 65536.0) / num_observations;
+
+                dist.increment(o, val);
+            }
+        }
+    }
+
+    uint64_t num_states() const
+    {
+        return obs_dist_.size();
     }
 
     discrete_observations blank() const

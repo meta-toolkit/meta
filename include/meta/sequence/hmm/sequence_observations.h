@@ -33,6 +33,27 @@ class sequence_observations
 
     struct markov_model
     {
+        template <class Generator>
+        markov_model(uint64_t num_states, Generator&& rng,
+                     stats::dirichlet<StateType> prior)
+            : trans_dists_(num_states, prior)
+        {
+            for (StateType s_i{0}; s_i < num_states; ++s_i)
+            {
+                auto rnd = random::bounded_rand(rng, 65536);
+                auto val = (rnd / 65536.0) / num_states;
+                initial_dist_.increment(s_i, val);
+
+                for (StateType s_j{0}; s_j < num_states; ++s_j)
+                {
+                    auto rnd = random::bounded_rand(rng, 65536);
+                    auto val = (rnd / 65536.0) / num_states;
+
+                    trans_dists_[s_i].increment(s_j, val);
+                }
+            }
+        }
+
         markov_model(uint64_t num_states, stats::dirichlet<StateType> prior)
             : trans_dists_(num_states, prior)
         {
@@ -48,12 +69,36 @@ class sequence_observations
         std::vector<stats::multinomial<StateType>> trans_dists_;
     };
 
+    /**
+     * Initializes each state's Markov model randomly using the provided
+     * random number generator.
+     */
+    template <class Generator>
+    sequence_observations(uint64_t num_hmm_states, uint64_t num_markov_states,
+                          Generator&& gen,
+                          stats::dirichlet<StateType> trans_prior)
+    {
+        models_.reserve(num_hmm_states);
+        for (uint64_t h = 0; h < num_hmm_states; ++h)
+            models_.emplace_back(num_markov_states,
+                                 std::forward<Generator>(gen), trans_prior);
+    }
+
+    /**
+     * Default initializes each state's Markov model. This is only useful
+     * when setting values manually by using increment().
+     */
     sequence_observations(uint64_t num_hmm_states, uint64_t num_markov_states,
                           stats::dirichlet<StateType> trans_prior)
     {
         models_.reserve(num_hmm_states);
         for (uint64_t h = 0; h < num_hmm_states; ++h)
             models_.emplace_back(num_markov_states, trans_prior);
+    }
+
+    uint64_t num_states() const
+    {
+        return models_.size();
     }
 
     sequence_observations blank() const
