@@ -241,7 +241,7 @@ class hidden_markov_model
                     {
                         auto xi_tij
                             = (gamma[t].probability(s_i) * trans_prob(s_i, s_j)
-                               * obs_prob(seq[t + 1], s_j)
+                               * output_probs(t + 1, s_j)
                                * fwd.normalizer(t + 1)
                                * bwd.probability(t + 1, j))
                               / bwd.probability(t, i);
