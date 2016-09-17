@@ -29,12 +29,8 @@ namespace analyzers
  * [[analyzers]]
  * method = "embedding" # this analyzer
  * filter = # use same filter type that embeddings were learned with
- *
- * [embeddings]
- * prefix = "path/to/learned/embeddings"
+ * prefix = "path/to/embedding/model/"
  * ~~~
- *
- * Optional config parameters: none.
  */
 class embedding_analyzer : public util::clonable<analyzer, embedding_analyzer>
 {
@@ -64,6 +60,12 @@ class embedding_analyzer : public util::clonable<analyzer, embedding_analyzer>
 
     /// Learned word embeddings
     std::shared_ptr<embeddings::word_embeddings> embeddings_;
+
+    /// Path to the embedding model files
+    std::string prefix_;
+
+    /// Storage for the aggregated word embeddings per document
+    std::vector<double> features_;
 };
 
 /**

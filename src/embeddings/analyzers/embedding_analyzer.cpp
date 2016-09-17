@@ -17,19 +17,20 @@ const util::string_view embedding_analyzer::id = "embedding";
 
 embedding_analyzer::embedding_analyzer(const cpptoml::table& config,
                                        std::unique_ptr<token_stream> stream)
-    : stream_{std::move(stream)}
-
+    : stream_{std::move(stream)},
+      embeddings_{std::make_shared<embeddings::word_embeddings>(
+          embeddings::load_embeddings(config))},
+      prefix_{*config.get_as<std::string>("prefix")},
+      features_(embeddings_->vector_size(), 0.0)
 {
-    auto grp = config.get_table("embeddings");
-    if (!grp)
-        throw std::runtime_error{"[embeddings] section needed in config"};
-
-    embeddings_ = std::make_shared<embeddings::word_embeddings>(
-        embeddings::load_embeddings(*grp));
+    // nothing
 }
 
 embedding_analyzer::embedding_analyzer(const embedding_analyzer& other)
-    : stream_{other.stream_->clone()}, embeddings_{other.embeddings_}
+    : stream_{other.stream_->clone()},
+      embeddings_{other.embeddings_},
+      prefix_{other.prefix_},
+      features_{other.features_}
 {
     // nothing
 }
@@ -39,19 +40,19 @@ void embedding_analyzer::tokenize(const corpus::document& doc,
 {
     using namespace math::operators;
     stream_->set_content(get_content(doc));
-    std::vector<double> features(embeddings_->vector_size(), 0.0);
+    features_.assign(embeddings_->vector_size(), 0.0);
     uint64_t num_seen = 0;
     while (*stream_)
     {
         auto token = stream_->next();
-        features = features + embeddings_->at(token).v;
+        features_ = std::move(features_) + embeddings_->at(token).v;
         ++num_seen;
     }
 
     // average each feature and record it
     uint64_t cur_dim = 0;
-    for (const auto& val : features)
-        counts(std::to_string(cur_dim++), val / num_seen);
+    for (const auto& val : features_)
+        counts(prefix_ + std::to_string(cur_dim++), val / num_seen);
 }
 
 template <>
@@ -60,7 +61,7 @@ make_analyzer<embedding_analyzer>(const cpptoml::table& global,
                                   const cpptoml::table& config)
 {
     auto filts = load_filters(global, config);
-    return make_unique<embedding_analyzer>(global, std::move(filts));
+    return make_unique<embedding_analyzer>(config, std::move(filts));
 }
 }
 
