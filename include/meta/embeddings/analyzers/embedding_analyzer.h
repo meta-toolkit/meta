@@ -21,7 +21,9 @@ namespace analyzers
 {
 
 /**
- * Analyzes documents by averaging word embeddings for each token.
+ * Analyzes documents by averaging word embeddings for each token. This analyzer
+ * should only be used with forward_index since it stores double features
+ * values.
  *
  * Required config parameters:
  * ~~~toml

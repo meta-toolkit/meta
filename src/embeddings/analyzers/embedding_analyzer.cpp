@@ -48,18 +48,10 @@ void embedding_analyzer::tokenize(const corpus::document& doc,
         ++num_seen;
     }
 
-    // average each feature, take absolute value (why is this good?)
-    for (auto& f : features)
-        f = std::abs(f / num_seen);
-
-    // normalize to 16 digits and record feature values
-    auto max_elem = *std::max_element(features.begin(), features.end());
+    // average each feature and record it
     uint64_t cur_dim = 0;
-    for (const auto& f : features)
-    {
-        auto val = f / max_elem * 1e16;
-        counts(std::to_string(cur_dim++), static_cast<uint64_t>(val));
-    }
+    for (const auto& val : features)
+        counts(std::to_string(cur_dim++), val / num_seen);
 }
 
 template <>
