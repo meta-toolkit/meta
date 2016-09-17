@@ -52,6 +52,17 @@ class discrete_observations
         }
     }
 
+    /**
+     * Default initializes each state's multinomial. This is only useful
+     * when setting values manually using increment().
+     */
+    discrete_observations(uint64_t num_states,
+                          stats::dirichlet<observation_type> prior)
+        : obs_dist_(num_states, prior)
+    {
+        // nothing
+    }
+
     uint64_t num_states() const
     {
         return obs_dist_.size();
