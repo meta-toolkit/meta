@@ -159,6 +159,11 @@ word_embeddings::top_k(util::array_view<const double> query,
     return results.extract_top();
 }
 
+std::size_t word_embeddings::vector_size() const
+{
+    return vector_size_;
+}
+
 word_embeddings load_embeddings(const cpptoml::table& config)
 {
     auto prefix = config.get_as<std::string>("prefix");

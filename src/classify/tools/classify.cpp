@@ -11,6 +11,7 @@
 
 #include "meta/caching/all.h"
 #include "meta/classify/classifier/all.h"
+#include "meta/embeddings/analyzers/embedding_analyzer.h"
 #include "meta/index/forward_index.h"
 #include "meta/index/ranker/all.h"
 #include "meta/parser/analyzers/tree_analyzer.h"
@@ -73,6 +74,7 @@ int main(int argc, char* argv[])
     // Register additional analyzers
     parser::register_analyzers();
     sequence::register_analyzers();
+    embeddings::register_analyzers();
 
     auto config = cpptoml::parse_file(argv[1]);
     auto class_config = config->get_table("classifier");
@@ -102,7 +104,6 @@ int main(int argc, char* argv[])
     }
     else
     {
-
         creator = [&](classify::multiclass_dataset_view fold) {
             return classify::make_classifier(*class_config, std::move(fold));
         };
