@@ -79,28 +79,45 @@ class hidden_markov_model
     template <class Generator>
     hidden_markov_model(uint64_t num_states, Generator&& rng,
                         ObsDist&& obs_dist,
-                        stats::dirichlet<state_id>&& trans_prior)
-        : obs_dist_{std::move(obs_dist)}, trans_dists_(num_states, trans_prior)
+                        stats::dirichlet<state_id> trans_prior)
+        : obs_dist_{std::move(obs_dist)},
+          trans_prob_(num_states, num_states),
+          trans_prior_{std::move(trans_prior)},
+          initial_prob_(num_states)
     {
         if (obs_dist_.num_states() != num_states)
             throw hmm_exception{"The observation distribution and HMM have "
                                 "differing numbers of hidden states"};
 
-        for (auto& trans_dist : trans_dists_)
+        double inorm = 0;
+        for (state_id s_i{0}; s_i < num_states; ++s_i)
         {
-            for (state_id s_i{0}; s_i < num_states; ++s_i)
+            auto rnd = random::bounded_rand(rng, 65536);
+            auto val = (rnd / 65536.0) / num_states;
+            initial_prob_[s_i] = val;
+            inorm += val;
+
+            double tnorm = 0;
+            for (state_id s_j{0}; s_j < num_states; ++s_j)
             {
                 auto rnd = random::bounded_rand(rng, 65536);
                 auto val = (rnd / 65536.0) / num_states;
-                trans_dist.increment(s_i, val);
+                trans_prob_(s_i, s_j) = val;
+                tnorm += val;
+            }
+            for (state_id s_j{0}; s_j < num_states; ++s_j)
+            {
+                trans_prob_(s_i, s_j)
+                    = (trans_prob_(s_i, s_j) + trans_prior_.pseudo_counts(s_j))
+                      / (tnorm + trans_prior_.pseudo_counts());
             }
         }
 
         for (state_id s_i{0}; s_i < num_states; ++s_i)
         {
-            auto rnd = random::bounded_rand(rng, 65536);
-            auto val = (rnd / 65536.0) / num_states;
-            initial_dist_.increment(s_i, val);
+            initial_prob_[s_i]
+                = (initial_prob_[s_i] + trans_prior_.pseudo_counts(s_i))
+                  / (inorm + trans_prior_.pseudo_counts());
         }
     }
 
@@ -120,24 +137,20 @@ class hidden_markov_model
      * @param trans_prior The Dirichlet prior over the transitions
      */
     hidden_markov_model(uint64_t num_states, ObsDist&& obs_dist,
-                        stats::dirichlet<state_id>&& trans_prior)
-        : obs_dist_{std::move(obs_dist)}, trans_dists_(num_states, trans_prior)
+                        stats::dirichlet<state_id> trans_prior)
+        : obs_dist_{std::move(obs_dist)},
+          trans_prob_{num_states, num_states},
+          trans_prior_{std::move(trans_prior)},
+          initial_prob_(num_states, 1.0 / num_states)
     {
         if (obs_dist_.num_states() != num_states)
             throw hmm_exception{"The observation distribution and HMM have "
                                 "differing numbers of hidden states"};
 
-        for (auto& trans_dist : trans_dists_)
-        {
-            for (state_id s_i{0}; s_i < num_states; ++s_i)
-            {
-                trans_dist.increment(s_i, 1.0);
-            }
-        }
-
         for (state_id s_i{0}; s_i < num_states; ++s_i)
         {
-            initial_dist_.increment(s_i, 1.0);
+            std::fill(trans_prob_.begin(s_i), trans_prob_.end(s_i),
+                      1.0 / num_states);
         }
     }
 
@@ -183,12 +196,12 @@ class hidden_markov_model
 
     uint64_t num_states() const
     {
-        return trans_dists_.size();
+        return initial_prob_.size();
     }
 
     double trans_prob(state_id from, state_id to) const
     {
-        return trans_dists_[from].probability(to);
+        return trans_prob_(from, to);
     }
 
   private:
@@ -197,13 +210,8 @@ class hidden_markov_model
     {
         // allocate space for the new parameters
         auto new_obs_dist = obs_dist_.blank();
-
-        std::vector<stats::multinomial<state_id>> new_trans_dists;
-        new_trans_dists.reserve(num_states());
-        for (const auto& tdist : trans_dists_)
-            new_trans_dists.emplace_back(tdist.prior());
-
-        stats::multinomial<state_id> new_initial_dist{initial_dist_.prior()};
+        util::dense_matrix<double> new_trans_prob{num_states(), num_states()};
+        std::vector<double> new_initial_prob(num_states());
 
         // compute expected counts across all instances
         double log_likelihood = 0;
@@ -230,7 +238,7 @@ class hidden_markov_model
                 state_id s_i{i};
 
                 // add expected counts for initial state probabilities
-                new_initial_dist.increment(s_i, gamma[0].probability(s_i));
+                new_initial_prob[s_i] += gamma(0, s_i);
 
                 // add expected counts for transition probabilities
                 for (label_id j{0}; j < num_states(); ++j)
@@ -239,22 +247,20 @@ class hidden_markov_model
 
                     for (uint64_t t = 0; t < seq.size() - 1; ++t)
                     {
-                        auto xi_tij
-                            = (gamma[t].probability(s_i) * trans_prob(s_i, s_j)
-                               * output_probs(t + 1, s_j)
-                               * fwd.normalizer(t + 1)
-                               * bwd.probability(t + 1, j))
-                              / bwd.probability(t, i);
+                        auto xi_tij = (gamma(t, s_i) * trans_prob(s_i, s_j)
+                                       * output_probs(t + 1, s_j)
+                                       * fwd.normalizer(t + 1)
+                                       * bwd.probability(t + 1, j))
+                                      / bwd.probability(t, i);
 
-                        new_trans_dists[s_i].increment(s_j, xi_tij);
+                        new_trans_prob(s_i, s_j) += xi_tij;
                     }
                 }
 
                 // add expected counts for observation probabilities
                 for (uint64_t t = 0; t < seq.size(); ++t)
                 {
-                    new_obs_dist.increment(seq[t], s_i,
-                                           gamma[t].probability(s_i));
+                    new_obs_dist.increment(seq[t], s_i, gamma(t, s_i));
                 }
             }
 
@@ -269,10 +275,30 @@ class hidden_markov_model
             }
         }
 
+        // normalize parameters
+        auto inorm = std::accumulate(new_initial_prob.begin(),
+                                     new_initial_prob.end(), 0.0);
+        for (state_id s_i{0}; s_i < num_states(); ++s_i)
+        {
+            new_initial_prob[s_i]
+                = (new_initial_prob[s_i] + trans_prior_.pseudo_counts(s_i))
+                  / (inorm + trans_prior_.pseudo_counts());
+
+            auto tnorm = std::accumulate(new_trans_prob.begin(s_i),
+                                         new_trans_prob.end(s_i), 0.0);
+            for (state_id s_j{0}; s_j < num_states(); ++s_j)
+            {
+                new_trans_prob(s_i, s_j)
+                    = (new_trans_prob(s_i, s_j)
+                       + trans_prior_.pseudo_counts(s_i))
+                      / (tnorm + trans_prior_.pseudo_counts());
+            }
+        }
+
         // replace old parameters
         obs_dist_ = std::move(new_obs_dist);
-        trans_dists_ = std::move(new_trans_dists);
-        initial_dist_ = std::move(new_initial_dist);
+        trans_prob_ = std::move(new_trans_prob);
+        initial_prob_ = std::move(new_initial_prob);
 
         return log_likelihood;
     }
@@ -292,20 +318,22 @@ class hidden_markov_model
         return output_probs;
     }
 
-    std::vector<stats::multinomial<state_id>>
+    util::dense_matrix<double>
     posterior_state_membership(const forward_trellis& fwd, const trellis& bwd)
     {
-        std::vector<stats::multinomial<state_id>> gamma(fwd.size());
-
+        util::dense_matrix<double> gamma{fwd.size(), num_states()};
         for (uint64_t t = 0; t < fwd.size(); ++t)
         {
+            double norm = 0;
             for (label_id i{0}; i < num_states(); ++i)
             {
                 state_id s_i{i};
-                gamma[t].increment(s_i, fwd.probability(t, i)
-                                            * bwd.probability(t, i));
+                gamma(t, s_i) = fwd.probability(t, i) * bwd.probability(t, i);
+                norm += gamma(t, s_i);
             }
-            // gamma[t] = prob. dist over possible states at time t
+            std::transform(gamma.begin(t), gamma.end(t), gamma.begin(t),
+                           [&](double val) { return val / norm; });
+            // gamma(t, ) = prob. dist over possible states at time t
         }
         return gamma;
     }
@@ -320,8 +348,7 @@ class hidden_markov_model
         for (label_id l{0}; l < num_states(); ++l)
         {
             state_id s{l};
-            fwd.probability(0, l,
-                            initial_dist_.probability(s) * output_probs(0, s));
+            fwd.probability(0, l, initial_prob_[s] * output_probs(0, s));
         }
         // normalize to avoid underflow
         fwd.normalize(0);
@@ -385,8 +412,9 @@ class hidden_markov_model
     }
 
     ObsDist obs_dist_;
-    std::vector<stats::multinomial<state_id>> trans_dists_;
-    stats::multinomial<state_id> initial_dist_;
+    util::dense_matrix<double> trans_prob_;
+    stats::dirichlet<state_id> trans_prior_;
+    std::vector<double> initial_prob_;
 };
 }
 }
