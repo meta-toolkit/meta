@@ -53,7 +53,7 @@ class forward_index::impl
      * merged.
      */
     void tokenize_docs(corpus::corpus& corpus, metadata_writer& mdata_writer,
-                       uint64_t ram_budget);
+                       uint64_t ram_budget, uint64_t num_threads);
 
     /**
      * Merges together num_chunks number of intermediate chunks, using the
@@ -254,9 +254,21 @@ void forward_index::create_index(const cpptoml::table& config,
 
             impl_->load_labels(docs.size());
 
+            auto max_threads = std::thread::hardware_concurrency();
+            auto num_threads = static_cast<unsigned>(
+                config.get_as<int64_t>("indexer-num-threads")
+                    .value_or(max_threads));
+            if (num_threads > max_threads)
+            {
+                num_threads = max_threads;
+                LOG(warning) << "Reducing indexer-num-threads to the hardware "
+                                "concurrency level of "
+                             << max_threads << ENDLG;
+            }
+
             // RAM budget is given in MB
             fwd_impl_->tokenize_docs(docs, mdata_writer,
-                                     ram_budget * 1024 * 1024);
+                                     ram_budget * 1024 * 1024, num_threads);
             impl_->load_term_id_mapping();
             impl_->save_label_id_mapping();
             fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
@@ -282,7 +294,8 @@ void forward_index::create_index(const cpptoml::table& config,
 
 void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                                         metadata_writer& mdata_writer,
-                                        uint64_t ram_budget)
+                                        uint64_t ram_budget,
+                                        uint64_t num_threads)
 {
     std::mutex io_mutex;
     std::mutex corpus_mutex;
@@ -365,8 +378,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
         }
     };
 
-    parallel::thread_pool pool;
-    auto num_threads = pool.thread_ids().size();
+    parallel::thread_pool pool{num_threads};
     std::vector<std::future<void>> futures;
     futures.reserve(num_threads);
     for (size_t i = 0; i < num_threads; ++i)
