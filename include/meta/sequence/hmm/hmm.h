@@ -289,6 +289,7 @@ class hidden_markov_model
                 output_probs(t, s_i) = obs_dist_.probability(seq[t], s_i);
             }
         }
+        return output_probs;
     }
 
     std::vector<stats::multinomial<state_id>>
