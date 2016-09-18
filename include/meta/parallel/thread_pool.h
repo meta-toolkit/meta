@@ -105,6 +105,14 @@ class thread_pool
         return tasks_.size();
     }
 
+    /**
+     * @return the number of threads in the pool
+     */
+    size_t size() const
+    {
+        return threads_.size();
+    }
+
   private:
     /**
      * A generic task object.
