@@ -31,6 +31,36 @@ class discrete_observations
     using observation_type = ObservationType;
 
     /**
+     * E-step scratch space for computing expected counts.
+     */
+    class expected_counts_type
+    {
+      public:
+        friend discrete_observations;
+
+        expected_counts_type(uint64_t num_states,
+                        stats::dirichlet<observation_type> prior)
+            : obs_dist_(num_states, prior)
+        {
+            // nothing
+        }
+
+        void increment(const observation_type& obs, state_id s_i, double count)
+        {
+            obs_dist_[s_i].increment(obs, count);
+        }
+
+        expected_counts_type& operator+=(const expected_counts_type& other)
+        {
+            for (state_id s_i{0}; s_i < obs_dist_.size(); ++s_i)
+                obs_dist_[s_i] += other.obs_dist_[s_i];
+        }
+
+      private:
+        std::vector<stats::multinomial<observation_type>> obs_dist_;
+    };
+
+    /**
      * Initializes each multinomial distribution for each hidden state
      * randomly by using the provided random number generator.
      */
@@ -53,14 +83,21 @@ class discrete_observations
     }
 
     /**
-     * Default initializes each state's multinomial. This is only useful
-     * when setting values manually using increment().
+     * Re-estimates the multinomials given expected_counts.
      */
-    discrete_observations(uint64_t num_states,
-                          stats::dirichlet<observation_type> prior)
-        : obs_dist_(num_states, prior)
+    discrete_observations(expected_counts_type&& counts)
+      : obs_dist_(std::move(counts.obs_dist_))
     {
-        // nothing
+       // nothing
+    }
+
+    /**
+     * Obtains an expected_counts_type suitable for re-estimating this
+     * distribution.
+     */
+    expected_counts_type expected_counts() const
+    {
+        return {num_states(), obs_dist_.front().prior()};
     }
 
     uint64_t num_states() const
@@ -68,24 +105,9 @@ class discrete_observations
         return obs_dist_.size();
     }
 
-    discrete_observations blank() const
-    {
-        return {obs_dist_.size(), prior()};
-    }
-
-    const stats::dirichlet<observation_type>& prior() const
-    {
-        return obs_dist_.front().prior();
-    }
-
     double probability(observation_type obs, state_id s_i) const
     {
         return obs_dist_[s_i].probability(obs);
-    }
-
-    void increment(observation_type obs, state_id s_i, double amount)
-    {
-        obs_dist_[s_i].increment(obs, amount);
     }
 
   private:
