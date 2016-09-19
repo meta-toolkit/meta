@@ -147,9 +147,10 @@ int main(int argc, char** argv)
     discrete_observations<> obs_dist{
         30, vocab.size(), rng, stats::dirichlet<term_id>{1e-6, vocab.size()}};
 
+    parallel::thread_pool pool;
     hidden_markov_model<discrete_observations<>> hmm{
         30, rng, std::move(obs_dist), stats::dirichlet<state_id>{1e-6, 30}};
-    hmm.fit(training, decltype(hmm)::training_options{});
+    hmm.fit(training, pool, decltype(hmm)::training_options{});
 
     return 0;
 }

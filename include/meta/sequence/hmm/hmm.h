@@ -14,6 +14,7 @@
 
 #include "meta/config.h"
 #include "meta/logging/logger.h"
+#include "meta/parallel/algorithm.h"
 #include "meta/sequence/markov_model.h"
 #include "meta/sequence/trellis.h"
 #include "meta/stats/multinomial.h"
@@ -115,7 +116,8 @@ class hidden_markov_model
      * @param options The training options
      * @return the log likelihood of the data
      */
-    double fit(const training_data_type& instances, training_options options)
+    double fit(const training_data_type& instances, parallel::thread_pool& pool,
+               training_options options)
     {
         double old_ll = std::numeric_limits<double>::lowest();
         for (uint64_t iter = 1; iter <= options.max_iters; ++iter)
@@ -126,7 +128,7 @@ class hidden_markov_model
                 printing::progress progress{"> Iteration "
                                                 + std::to_string(iter) + ": ",
                                             instances.size()};
-                ll = expectation_maximization(instances, progress);
+                ll = expectation_maximization(instances, pool, progress);
             });
 
             LOG(info) << "Took " << time.count() / 1000.0 << "s" << ENDLG;
@@ -167,79 +169,112 @@ class hidden_markov_model
 
   private:
     double expectation_maximization(const training_data_type& instances,
+                                    parallel::thread_pool& pool,
                                     printing::progress& progress)
     {
-        // allocate space for accumulating expected counts
-        auto obs_counts = obs_dist_.expected_counts();
-        auto model_counts = model_.expected_counts();
-
-        // compute expected counts across all instances
-        double log_likelihood = 0;
-        uint64_t seq_id = 0;
-        for (const auto& seq : instances)
+        // Temporary storage for expected counts for the different model
+        // types, plus the data log likelihood computed during the
+        // forward-backward algorithm
+        struct expected_counts
         {
-            progress(seq_id++);
-
-            // cache b_i(o_t) since this could be computed with an
-            // arbitrarily complex model
-            auto output_probs = output_probabilities(seq);
-
-            // run forward-backward to get the trellises
-            auto fwd = forward(seq, output_probs);
-            auto bwd = backward(seq, fwd, output_probs);
-
-            // compute the probability of being in a given state at a given
-            // time from the trellises
-            auto gamma = posterior_state_membership(fwd, bwd);
-
-            // add expected counts to the new parameters
-            for (label_id i{0}; i < num_states(); ++i)
+            expected_counts(const ObsDist& obs_dist, const markov_model& model)
+                : obs_counts{obs_dist.expected_counts()},
+                  model_counts{model.expected_counts()}
             {
-                state_id s_i{i};
+                // nothing
+            }
 
-                // add expected counts for initial state probabilities
-                model_counts.increment_initial(s_i, gamma(0, s_i));
+            expected_counts& operator+=(const expected_counts& other)
+            {
+                obs_counts += other.obs_counts;
+                model_counts += other.model_counts;
+                log_likelihood += other.log_likelihood;
+                return *this;
+            }
 
-                // add expected counts for transition probabilities
-                for (label_id j{0}; j < num_states(); ++j)
+            typename ObsDist::expected_counts_type obs_counts;
+            markov_model::expected_counts_type model_counts;
+            double log_likelihood = 0.0;
+        };
+
+        uint64_t seq_id = 0;
+        // compute expected counts across all instances in parallel
+        std::mutex progress_mutex;
+        auto counts = parallel::reduction(
+            instances.begin(), instances.end(), pool,
+            [&]() {
+                return expected_counts{obs_dist_, model_};
+            },
+            [&](expected_counts& counts, const sequence_type& seq) {
                 {
-                    state_id s_j{j};
+                    std::lock_guard<std::mutex> lock{progress_mutex};
+                    progress(seq_id++);
+                }
+                // cache b_i(o_t) since this could be computed with an
+                // arbitrarily complex model
+                auto output_probs = output_probabilities(seq);
 
-                    for (uint64_t t = 0; t < seq.size() - 1; ++t)
+                // run forward-backward to get the trellises
+                auto fwd = forward(seq, output_probs);
+                auto bwd = backward(seq, fwd, output_probs);
+
+                // compute the probability of being in a given state at a given
+                // time from the trellises
+                auto gamma = posterior_state_membership(fwd, bwd);
+
+                // add expected counts to the new parameters
+                for (label_id i{0}; i < num_states(); ++i)
+                {
+                    state_id s_i{i};
+
+                    // add expected counts for initial state probabilities
+                    counts.model_counts.increment_initial(s_i, gamma(0, s_i));
+
+                    // add expected counts for transition probabilities
+                    for (label_id j{0}; j < num_states(); ++j)
                     {
-                        auto xi_tij = (gamma(t, s_i) * trans_prob(s_i, s_j)
-                                       * output_probs(t + 1, s_j)
-                                       * fwd.normalizer(t + 1)
-                                       * bwd.probability(t + 1, j))
-                                      / bwd.probability(t, i);
+                        state_id s_j{j};
 
-                        model_counts.increment_transition(s_i, s_j, xi_tij);
+                        for (uint64_t t = 0; t < seq.size() - 1; ++t)
+                        {
+                            auto xi_tij = (gamma(t, s_i) * trans_prob(s_i, s_j)
+                                           * output_probs(t + 1, s_j)
+                                           * fwd.normalizer(t + 1)
+                                           * bwd.probability(t + 1, j))
+                                          / bwd.probability(t, i);
+
+                            counts.model_counts.increment_transition(s_i, s_j,
+                                                                     xi_tij);
+                        }
+                    }
+
+                    // add expected counts for observation probabilities
+                    for (uint64_t t = 0; t < seq.size(); ++t)
+                    {
+                        counts.obs_counts.increment(seq[t], s_i, gamma(t, s_i));
                     }
                 }
 
-                // add expected counts for observation probabilities
+                // compute contribution to the log likelihood from the forward
+                // trellis scaling factors for this sequence
                 for (uint64_t t = 0; t < seq.size(); ++t)
                 {
-                    obs_counts.increment(seq[t], s_i, gamma(t, s_i));
+                    // L = \prod_o \prod_t 1 / scale(t)
+                    // log L = \sum_o \sum_t \log (1 / scale(t))
+                    // log L = \sum_o \sum_t - \log scale(t)
+                    counts.log_likelihood += -std::log(fwd.normalizer(t));
                 }
-            }
 
-            // compute contribution to the log likelihood from the forward
-            // trellis scaling factors for this sequence
-            for (uint64_t t = 0; t < seq.size(); ++t)
-            {
-                // L = \prod_o \prod_t 1 / scale(t)
-                // log L = \sum_o \sum_t \log (1 / scale(t))
-                // log L = \sum_o \sum_t - \log scale(t)
-                log_likelihood += -std::log(fwd.normalizer(t));
-            }
-        }
+            },
+            [&](expected_counts& result, const expected_counts& temp) {
+                result += temp;
+            });
 
         // normalize and replace old parameters
-        obs_dist_ = ObsDist{std::move(obs_counts)};
-        model_ = markov_model{std::move(model_counts)};
+        obs_dist_ = ObsDist{std::move(counts.obs_counts)};
+        model_ = markov_model{std::move(counts.model_counts)};
 
-        return log_likelihood;
+        return counts.log_likelihood;
     }
 
     util::dense_matrix<double>
