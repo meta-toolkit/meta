@@ -20,6 +20,7 @@
 #include "meta/index/disk_index.h"
 #include "meta/io/filesystem.h"
 #include "meta/learn/instance.h"
+#include "meta/parallel/algorithm.h"
 #include "meta/stats/multinomial.h"
 #include "meta/succinct/sarray.h"
 #include "meta/util/progress.h"
@@ -222,30 +223,59 @@ class feature_selector
     template <class LabeledDatasetContainer>
     void calc_probs(const LabeledDatasetContainer& docs)
     {
-        uint64_t num_processed = 0;
+        using co_occur_t = decltype(co_occur_);
+        using term_prob_t = decltype(term_prob_);
 
+        // local struct to encapsulate the reduced objects
+        struct prob_counts
+        {
+            prob_counts() = default;
+            prob_counts(const co_occur_t& p_co_occur,
+                        const term_prob_t& p_term_prob)
+                : co_occur{p_co_occur}, term_prob{p_term_prob}
+            {
+                // nothing
+            }
+            prob_counts& operator+=(const prob_counts& other)
+            {
+                co_occur += other.co_occur;
+                term_prob += other.term_prob;
+                return *this;
+            }
+            co_occur_t co_occur;
+            term_prob_t term_prob;
+        };
+
+        uint64_t num_processed = 0;
+        std::mutex prog_cls_mutex;
         printing::progress prog{" > Calculating feature probs: ", docs.size()};
 
-        for (const auto& instance : docs)
-        {
-            std::stringstream ss;
-            ss << docs.label(instance);
-            class_label lbl{ss.str()};
-
-            class_prob_.increment(lbl, 1);
-
-            for (const auto& count : instance.weights)
-            {
-                term_id tid{count.first};
-
-                term_prob_.increment(tid, count.second);
-                co_occur_.increment(std::make_pair(lbl, tid), count.second);
-            }
-
-            prog(++num_processed);
-        }
-
+        auto counts = parallel::reduction(
+            docs.begin(), docs.end(), [&]() { return prob_counts{}; },
+            [&](prob_counts& counts,
+                const typename LabeledDatasetContainer::instance_type&
+                    instance) {
+                std::stringstream ss;
+                ss << docs.label(instance);
+                class_label lbl{ss.str()};
+                for (const auto& w : instance.weights)
+                {
+                    term_id tid{w.first};
+                    counts.term_prob.increment(tid, w.second);
+                    counts.co_occur.increment(std::make_pair(lbl, tid),
+                                              w.second);
+                }
+                std::lock_guard<std::mutex> lock{prog_cls_mutex};
+                prog(++num_processed);
+                class_prob_.increment(lbl, 1);
+            },
+            [&](prob_counts& result, const prob_counts& temp) {
+                result += temp;
+            });
         prog.end();
+
+        term_prob_ = std::move(counts.term_prob);
+        co_occur_ = std::move(counts.co_occur);
     }
 
     /**

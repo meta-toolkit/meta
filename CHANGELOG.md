@@ -4,6 +4,8 @@
   vectors.
 - Add a `parallel::reduction` algorithm designed for parallelizing complex
     accumulation operations (like an E step in an EM algorithm)
+- Parallelize feature counting in feature selector using the new
+  `parallel::reduction`
 
 ## Bug Fixes
 - Properly shuffle documents when doing an even-split classification test
