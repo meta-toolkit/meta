@@ -54,6 +54,7 @@ class discrete_observations
         {
             for (state_id s_i{0}; s_i < obs_dist_.size(); ++s_i)
                 obs_dist_[s_i] += other.obs_dist_[s_i];
+            return *this;
         }
 
       private:
