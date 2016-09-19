@@ -13,6 +13,7 @@
 #include <random>
 
 #include "meta/config.h"
+#include "meta/io/packed.h"
 #include "meta/stats/dirichlet.h"
 #include "meta/util/sparse_vector.h"
 
@@ -133,6 +134,34 @@ class multinomial
      * @param in The stream to read from
      */
     void load(std::istream& in);
+
+    template <class OutputStream>
+    friend uint64_t packed_write(OutputStream& os, const multinomial& dist)
+    {
+        using io::packed::write;
+        return write(os, dist.total_counts_) + write(os, dist.counts_)
+               + write(os, dist.prior_);
+    }
+
+    template <class InputStream>
+    friend uint64_t packed_read(InputStream& is, multinomial& dist)
+    {
+        dist.clear();
+        using io::packed::read;
+        auto bytes = io::packed::read(is, dist.total_counts_);
+        if (bytes == 0)
+            return 0;
+
+        auto count_bytes = io::packed::read(is, dist.counts_);
+        if (count_bytes == 0)
+            return 0;
+
+        auto prior_bytes = io::packed::read(is, dist.prior_);
+        if (prior_bytes == 0)
+            return 0;
+
+        return bytes + count_bytes + prior_bytes;
+    }
 
   private:
     util::sparse_vector<T, double> counts_;

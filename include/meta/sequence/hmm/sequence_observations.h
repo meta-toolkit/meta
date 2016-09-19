@@ -10,6 +10,7 @@
 #ifndef META_SEQUENCE_HMM_SEQUENCE_OBS_H_
 #define META_SEQUENCE_HMM_SEQUENCE_OBS_H_
 
+#include "meta/sequence/hmm/hmm.h"
 #include "meta/sequence/markov_model.h"
 #include "meta/stats/multinomial.h"
 
@@ -56,8 +57,7 @@ class sequence_observations
      */
     template <class Generator>
     sequence_observations(uint64_t num_hmm_states, uint64_t num_markov_states,
-                          Generator&& gen,
-                          stats::dirichlet<state_id> prior)
+                          Generator&& gen, stats::dirichlet<state_id> prior)
     {
         models_.reserve(num_hmm_states);
         for (uint64_t h = 0; h < num_hmm_states; ++h)
@@ -73,6 +73,22 @@ class sequence_observations
                           stats::dirichlet<state_id> prior);
 
     /**
+     * Loads a sequence observation distribution from an input stream.
+     */
+    template <class InputStream>
+    sequence_observations(InputStream& is)
+    {
+        uint64_t size;
+        if (io::packed::read(is, size) == 0)
+            throw hmm_exception{
+                "failed to load sequence_observations from stream"};
+
+        models_.reserve(size);
+        for (uint64_t i = 0; i < size; ++i)
+            models_.emplace_back(is);
+    }
+
+    /**
      * Obtains an expected_counts_type suitable for re-estimating this
      * distribution.
      */
@@ -83,6 +99,17 @@ class sequence_observations
     double probability(const observation_type& obs, state_id s_i) const;
 
     const markov_model& distribution(state_id s_i) const;
+
+    /**
+     * Saves a sequence observation distribution to a stream.
+     */
+    template <class OutputStream>
+    void save(OutputStream& os) const
+    {
+        io::packed::write(os, models_.size());
+        for (const auto& model : models_)
+            model.save(os);
+    }
 
   private:
     std::vector<markov_model> models_;

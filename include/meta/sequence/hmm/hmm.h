@@ -112,6 +112,15 @@ class hidden_markov_model
     }
 
     /**
+     * Loads a hidden Markov model from an input stream.
+     */
+    template <class InputStream>
+    hidden_markov_model(InputStream& is) : obs_dist_{is}, model_{is}
+    {
+        // nothing
+    }
+
+    /**
      * @param instances The training data to fit the model to
      * @param options The training options
      * @return the log likelihood of the data
@@ -176,6 +185,13 @@ class hidden_markov_model
     observation_distribution(state_id s) const
     {
         return obs_dist_.distribution(s);
+    }
+
+    template <class OutputStream>
+    void save(OutputStream& os) const
+    {
+        obs_dist_.save(os);
+        model_.save(os);
     }
 
   private:

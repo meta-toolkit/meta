@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "meta/config.h"
+#include "meta/io/packed.h"
 #include "meta/util/sparse_vector.h"
 
 namespace meta
@@ -101,6 +102,60 @@ class dirichlet
      * @param in The stream to read from
      */
     void load(std::istream& in);
+
+    template <class OutputStream>
+    friend uint64_t packed_write(OutputStream& os, const dirichlet& dist)
+    {
+        auto bytes = io::packed::write(os, static_cast<uint64_t>(dist.type_));
+        switch (dist.type_)
+        {
+            case type::SYMMETRIC:
+            {
+                bytes += io::packed::write(os, dist.params_.fixed_alpha_);
+                bytes += io::packed::write(
+                    os, static_cast<uint64_t>(dist.alpha_sum_
+                                              / dist.params_.fixed_alpha_));
+                break;
+            }
+            case type::ASYMMETRIC:
+            {
+                bytes += io::packed::write(os, dist.params_.sparse_alpha_);
+                break;
+            }
+        }
+        return bytes;
+    }
+
+    template <class InputStream>
+    friend uint64_t packed_read(InputStream& is, dirichlet& dist)
+    {
+        uint64_t typ;
+        auto bytes = io::packed::read(is, typ);
+        if (bytes == 0)
+            return 0;
+
+        type read_type = static_cast<type>(typ);
+        switch (read_type)
+        {
+            case type::SYMMETRIC:
+            {
+                double alpha;
+                bytes += io::packed::read(is, alpha);
+                uint64_t n;
+                bytes += io::packed::read(is, n);
+                dist = dirichlet{alpha, n};
+                break;
+            }
+            case type::ASYMMETRIC:
+            {
+                std::vector<std::pair<T, double>> vec;
+                bytes += io::packed::read(is, vec);
+                dist = dirichlet{vec.begin(), vec.end()};
+                break;
+            }
+        }
+        return bytes;
+    }
 
   private:
     enum class type

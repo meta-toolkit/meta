@@ -95,6 +95,20 @@ class markov_model
     }
 
     /**
+     * Loads a Markov model from a file.
+     */
+    template <class InputStream>
+    markov_model(InputStream& is)
+    {
+        if (io::packed::read(is, initial_prob_) == 0)
+            throw std::runtime_error{"failed to read markov model from stream"};
+        if (io::packed::read(is, trans_prob_) == 0)
+            throw std::runtime_error{"failed to read markov model from stream"};
+        if (io::packed::read(is, prior_) == 0)
+            throw std::runtime_error{"failed to read markov model from stream"};
+    }
+
+    /**
      * Constructs a new Markov model with uniform initialization of
      * initial state and transition distibutions.
      */
@@ -140,6 +154,17 @@ class markov_model
      * @return \f$P(s \mid \theta)\f$
      */
     double initial_probability(state_id s) const;
+
+    /**
+     * Saves a Markov model to a stream.
+     */
+    template <class OutputStream>
+    void save(OutputStream& os) const
+    {
+        io::packed::write(os, initial_prob_);
+        io::packed::write(os, trans_prob_);
+        io::packed::write(os, prior_);
+    }
 
   private:
     std::vector<double> initial_prob_;

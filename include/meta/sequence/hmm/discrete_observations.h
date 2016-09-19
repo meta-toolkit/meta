@@ -10,6 +10,7 @@
 #ifndef META_SEQUENCE_HMM_WORD_OBS_H_
 #define META_SEQUENCE_HMM_WORD_OBS_H_
 
+#include "meta/io/packed.h"
 #include "meta/meta.h"
 #include "meta/sequence/hmm/hmm.h"
 #include "meta/stats/multinomial.h"
@@ -40,7 +41,7 @@ class discrete_observations
         friend discrete_observations;
 
         expected_counts_type(uint64_t num_states,
-                        stats::dirichlet<observation_type> prior)
+                             stats::dirichlet<observation_type> prior)
             : obs_dist_(num_states, prior)
         {
             // nothing
@@ -88,9 +89,19 @@ class discrete_observations
      * Re-estimates the multinomials given expected_counts.
      */
     discrete_observations(expected_counts_type&& counts)
-      : obs_dist_(std::move(counts.obs_dist_))
+        : obs_dist_(std::move(counts.obs_dist_))
     {
-       // nothing
+        // nothing
+    }
+
+    /**
+     * Loads a discrete observation distribution from an input stream.
+     */
+    template <class InputStream>
+    discrete_observations(InputStream& is)
+    {
+        if (io::packed::read(is, obs_dist_) == 0)
+            throw hmm_exception{"failed to load hmm observation distribution"};
     }
 
     /**
@@ -115,6 +126,12 @@ class discrete_observations
     const conditional_distribution_type& distribution(state_id s_i) const
     {
         return obs_dist_[s_i];
+    }
+
+    template <class OutputStream>
+    void save(OutputStream& os) const
+    {
+        io::packed::write(os, obs_dist_);
     }
 
   private:

@@ -178,6 +178,19 @@ uint64_t packed_write(OutputStream& stream,
 }
 
 /**
+ * Writes a pair type in a packed representation.
+ *
+ * @param os The stream to write to
+ * @param value The value to write
+ * @return the number of bytes used to write out the value
+ */
+template <class OutputSteam, class T1, class T2>
+uint64_t packed_write(OutputSteam& os, const std::pair<T1, T2>& pr)
+{
+    return packed_write(os, pr.first) + packed_write(os, pr.second);
+}
+
+/**
  * Writes a vector type in a packed representation.
  *
  * @param os The stream to write to

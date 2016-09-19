@@ -8,6 +8,7 @@
 #include "cpptoml.h"
 #include "meta/hashing/probe_map.h"
 #include "meta/io/filesystem.h"
+#include "meta/io/gzstream.h"
 #include "meta/logging/logger.h"
 #include "meta/sequence/hmm/discrete_observations.h"
 #include "meta/sequence/hmm/hmm.h"
@@ -27,7 +28,7 @@ std::string two_digit(uint8_t num)
  * ~~~toml
  * prefix = "global-data-prefix"
  *
- * [sequence]
+ * [hmm]
  * prefix = "path-to-model"
  * treebank = "penn-treebank" # relative to data prefix
  * corpus = "wsj"
@@ -58,47 +59,46 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto seq_grp = config->get_table("sequence");
+    auto seq_grp = config->get_table("hmm");
     if (!seq_grp)
     {
-        LOG(fatal) << "Configuration must contain a [sequence] group" << ENDLG;
+        LOG(fatal) << "Configuration must contain a [hmm] group" << ENDLG;
         return 1;
     }
 
     auto seq_prefix = seq_grp->get_as<std::string>("prefix");
     if (!seq_prefix)
     {
-        LOG(fatal)
-            << "[sequence] group must contain a prefix to store model files"
-            << ENDLG;
+        LOG(fatal) << "[hmm] group must contain a prefix to store model files"
+                   << ENDLG;
         return 1;
     }
 
     auto treebank = seq_grp->get_as<std::string>("treebank");
     if (!treebank)
     {
-        LOG(fatal) << "[sequence] group must contain a treebank path" << ENDLG;
+        LOG(fatal) << "[hmm] group must contain a treebank path" << ENDLG;
         return 1;
     }
 
     auto corpus = seq_grp->get_as<std::string>("corpus");
     if (!corpus)
     {
-        LOG(fatal) << "[sequence] group must contain a corpus" << ENDLG;
+        LOG(fatal) << "[hmm] group must contain a corpus" << ENDLG;
         return 1;
     }
 
     auto train_sections = seq_grp->get_array("train-sections");
     if (!train_sections)
     {
-        LOG(fatal) << "[sequence] group must contain train-sections" << ENDLG;
+        LOG(fatal) << "[hmm] group must contain train-sections" << ENDLG;
         return 1;
     }
 
     auto section_size = seq_grp->get_as<int64_t>("section-size");
     if (!section_size)
     {
-        LOG(fatal) << "[sequence] group must contain section-size" << ENDLG;
+        LOG(fatal) << "[hmm] group must contain section-size" << ENDLG;
         return 1;
     }
 
@@ -150,7 +150,14 @@ int main(int argc, char** argv)
     parallel::thread_pool pool;
     hidden_markov_model<discrete_observations<>> hmm{
         30, rng, std::move(obs_dist), stats::dirichlet<state_id>{1e-6, 30}};
-    hmm.fit(training, pool, decltype(hmm)::training_options{});
+
+    hmm.fit(training, pool, decltype(hmm)::training_options{1e-5, 50});
+
+    filesystem::make_directories(*seq_prefix);
+    {
+        io::gzofstream file{*seq_prefix + "/model.gz"};
+        hmm.save(file);
+    }
 
     return 0;
 }
