@@ -2,6 +2,8 @@
 ## New features
 - Add an `embedding_analyzer` that represents documents with their averaged word
   vectors.
+- Add a `parallel::reduction` algorithm designed for parallelizing complex
+    accumulation operations (like an E step in an EM algorithm)
 
 ## Bug Fixes
 - Properly shuffle documents when doing an even-split classification test
