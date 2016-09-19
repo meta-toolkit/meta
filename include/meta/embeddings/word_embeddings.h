@@ -85,6 +85,11 @@ class word_embeddings
     std::vector<scored_embedding> top_k(util::array_view<const double> query,
                                         std::size_t k = 100) const;
 
+    /**
+     * @return the number of dimensions for each word
+     */
+    std::size_t vector_size() const;
+
   private:
     util::array_view<double> vector(std::size_t tid);
 
