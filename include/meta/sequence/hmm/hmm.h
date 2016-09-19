@@ -167,6 +167,17 @@ class hidden_markov_model
         return model_.initial_probability(s);
     }
 
+    const ObsDist& observation_distribution() const
+    {
+        return obs_dist_;
+    }
+
+    const typename ObsDist::conditional_distribution_type&
+    observation_distribution(state_id s) const
+    {
+        return obs_dist_.distribution(s);
+    }
+
   private:
     double expectation_maximization(const training_data_type& instances,
                                     parallel::thread_pool& pool,

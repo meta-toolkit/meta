@@ -29,6 +29,7 @@ class sequence_observations
 {
   public:
     using observation_type = std::vector<state_id>;
+    using conditional_distribution_type = markov_model;
 
     /**
      * E-step scratch space for computing expected counts.
@@ -80,6 +81,8 @@ class sequence_observations
     uint64_t num_states() const;
 
     double probability(const observation_type& obs, state_id s_i) const;
+
+    const markov_model& distribution(state_id s_i) const;
 
   private:
     std::vector<markov_model> models_;

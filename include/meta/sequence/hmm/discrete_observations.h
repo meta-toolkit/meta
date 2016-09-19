@@ -29,6 +29,7 @@ class discrete_observations
 {
   public:
     using observation_type = ObservationType;
+    using conditional_distribution_type = stats::multinomial<observation_type>;
 
     /**
      * E-step scratch space for computing expected counts.
@@ -58,7 +59,7 @@ class discrete_observations
         }
 
       private:
-        std::vector<stats::multinomial<observation_type>> obs_dist_;
+        std::vector<conditional_distribution_type> obs_dist_;
     };
 
     /**
@@ -111,8 +112,13 @@ class discrete_observations
         return obs_dist_[s_i].probability(obs);
     }
 
+    const conditional_distribution_type& distribution(state_id s_i) const
+    {
+        return obs_dist_[s_i];
+    }
+
   private:
-    std::vector<stats::multinomial<observation_type>> obs_dist_;
+    std::vector<conditional_distribution_type> obs_dist_;
 };
 }
 }
