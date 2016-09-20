@@ -1,3 +1,21 @@
+# [Unreleased][unreleased]
+## New features
+- Add an `embedding_analyzer` that represents documents with their averaged word
+  vectors.
+- Add a `parallel::reduction` algorithm designed for parallelizing complex
+    accumulation operations (like an E step in an EM algorithm)
+- Parallelize feature counting in feature selector using the new
+  `parallel::reduction`
+
+## Bug Fixes
+- Properly shuffle documents when doing an even-split classification test
+- Make forward indexer listen to `indexer-num-threads` config option.
+- Use correct number of threads when deciding block sizes for
+    `parallel_for`
+- Add workaround to `filesystem::remove_all` for Windows systems to avoid
+    spurious failures caused by virus scanners keeping files open after we
+    deleted them
+
 # [v2.4.1][2.4.1]
 ## Bug fixes
 - Eliminate excess warnings on Darwin about double preprocessor definitions
