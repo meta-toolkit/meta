@@ -101,6 +101,16 @@ reduction(Iterator begin, Iterator end, thread_pool& pool, LocalStorage&& ls_fn,
     }
     return local_storage;
 }
+
+template <class Iterator, class LocalStorage, class MappingFunction,
+          class ReductionFunction>
+typename std::result_of<LocalStorage()>::type
+reduction(Iterator begin, Iterator end, LocalStorage&& ls_fn,
+          MappingFunction&& map_fn, ReductionFunction&& red_fn)
+{
+    parallel::thread_pool pool;
+    return reduction(begin, end, pool, ls_fn, map_fn, red_fn);
+}
 }
 }
 #endif
