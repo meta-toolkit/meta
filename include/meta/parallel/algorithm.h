@@ -10,6 +10,8 @@
 #ifndef META_PARALLEL_ALGORITHM_H_
 #define META_PARALLEL_ALGORITHM_H_
 
+#include <algorithm>
+
 #include "meta/config.h"
 #include "meta/parallel/thread_pool.h"
 
