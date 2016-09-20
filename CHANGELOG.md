@@ -12,6 +12,9 @@
 - Make forward indexer listen to `indexer-num-threads` config option.
 - Use correct number of threads when deciding block sizes for
     `parallel_for`
+- Add workaround to `filesystem::remove_all` for Windows systems to avoid
+    spurious failures caused by virus scanners keeping files open after we
+    deleted them
 
 # [v2.4.1][2.4.1]
 ## Bug fixes

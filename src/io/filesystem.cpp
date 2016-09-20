@@ -23,6 +23,13 @@
 
 #include <platformstl/filesystem/directory_functions.hpp>
 #else
+
+#ifdef _WIN32
+// chrono and thread for a sleep_for hack in remove_all below
+#include <chrono>
+#include <thread>
+#endif
+
 #include <experimental/filesystem>
 #endif
 
@@ -110,6 +117,39 @@ std::uintmax_t remove_all(const path_type& path)
         count += remove_all(nextpath);
     }
 
+#ifdef _WIN32
+    // On Windows, ::DeleteFile() only "marks a file for deletion on close"
+    // and therefore "the file deletion does not occur until the last
+    // handle to the file is closed". This means that, in some cases, the
+    // call to remove_directory below can fail if another process (like the
+    // Windows search indexer or a virus scanner) happens to still have one
+    // of the files in this directory that we deleted above open when we
+    // attempt to remove it.
+    //
+    // As a workaround, we'll attempt to remove a directory a maximum of
+    // three times, sleeping for 100ms more between each successive try. If
+    // removing the directory fails three times in a row, we will throw an
+    // exception and bail out. I really wish there were a better workaround
+    // than this, but I can't come up with anything and we want
+    // remove_all() to have the same (sane) semantics as it would have on
+    // Unix platforms.
+    std::chrono::milliseconds delay(0);
+    for (int i = 0; i < 3; ++i)
+    {
+        if (traits::remove_directory(path.c_str()))
+        {
+            count += 1;
+            return count;
+        }
+        delay += std::chrono::milliseconds(100);
+        std::this_thread::sleep_for(delay);
+    }
+
+    // failed too many times
+    std::string error = "failed to recursively delete path ";
+    error += path.c_str();
+    throw filesystem_exception{error};
+#else
     if (!traits::remove_directory(path.c_str()))
     {
         std::string error = "failed to recursively delete path ";
@@ -119,6 +159,7 @@ std::uintmax_t remove_all(const path_type& path)
 
     count += 1;
     return count;
+#endif
 }
 }
 
