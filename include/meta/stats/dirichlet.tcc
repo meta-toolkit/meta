@@ -3,15 +3,21 @@
  * @author Chase Geigle
  */
 
+#include "meta/io/packed.h"
 #include "meta/stats/dirichlet.h"
 #include "meta/util/identifiers.h"
 #include "meta/util/shim.h"
-#include "meta/io/packed.h"
 
 namespace meta
 {
 namespace stats
 {
+
+template <class T>
+dirichlet<T>::dirichlet() : dirichlet{0.0, 0}
+{
+    // nothing
+}
 
 template <class T>
 dirichlet<T>::dirichlet(double alpha, uint64_t n)
@@ -26,11 +32,9 @@ dirichlet<T>::dirichlet(Iter begin, Iter end)
     : type_{type::ASYMMETRIC}, params_{begin, end}
 {
     using pair_type = typename Iter::value_type;
-    alpha_sum_
-        = std::accumulate(begin, end, 0.0, [](double accum, const pair_type& b)
-                          {
-                              return accum + b.second;
-                          });
+    alpha_sum_ = std::accumulate(
+        begin, end, 0.0,
+        [](double accum, const pair_type& b) { return accum + b.second; });
 }
 
 template <class T>

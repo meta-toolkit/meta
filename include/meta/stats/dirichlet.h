@@ -31,6 +31,11 @@ class dirichlet
 {
   public:
     /**
+     * Constructs an empty (0, 0) Dirichlet.
+     */
+    dirichlet();
+
+    /**
      * Constructs a symmetric Dirichlet with concentration parameter
      * \f$\alpha\f$ and dimension \f$n\f$.
      *
