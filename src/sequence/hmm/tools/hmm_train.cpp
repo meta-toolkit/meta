@@ -151,7 +151,10 @@ int main(int argc, char** argv)
     hidden_markov_model<discrete_observations<>> hmm{
         30, rng, std::move(obs_dist), stats::dirichlet<state_id>{1e-6, 30}};
 
-    hmm.fit(training, pool, decltype(hmm)::training_options{1e-5, 50});
+    decltype(hmm)::training_options options;
+    options.delta = 1e-5;
+    options.max_iters = 50;
+    hmm.fit(training, pool, options);
 
     filesystem::make_directories(*seq_prefix);
     {
