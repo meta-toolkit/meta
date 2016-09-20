@@ -356,6 +356,19 @@ uint64_t packed_read(InputStream& stream, util::identifier<Tag, T>& value)
 }
 
 /**
+ * Reads a pair type from a packed representation.
+ *
+ * @param is The stream to read from
+ * @param value The value to write
+ * @return the number of bytes read
+ */
+template <class InputStream, class T1, class T2>
+uint64_t packed_read(InputStream& is, std::pair<T1, T2>& pr)
+{
+    return packed_read(is, pr.first) + packed_read(is, pr.second);
+}
+
+/**
  * Reads a vector type from a packed representation.
  *
  * @param is The stream to read from
