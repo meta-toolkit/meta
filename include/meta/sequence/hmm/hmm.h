@@ -22,6 +22,7 @@
 #include "meta/util/progress.h"
 #include "meta/util/random.h"
 #include "meta/util/time.h"
+#include "meta/util/traits.h"
 
 namespace meta
 {
@@ -114,7 +115,9 @@ class hidden_markov_model
     /**
      * Loads a hidden Markov model from an input stream.
      */
-    template <class InputStream>
+    template <class InputStream,
+              class = util::disable_if_same_or_derived_t<hidden_markov_model,
+                                                         InputStream>>
     hidden_markov_model(InputStream& is) : obs_dist_{is}, model_{is}
     {
         // nothing

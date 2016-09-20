@@ -14,6 +14,7 @@
 #include "meta/meta.h"
 #include "meta/sequence/hmm/hmm.h"
 #include "meta/stats/multinomial.h"
+#include "meta/util/traits.h"
 
 namespace meta
 {
@@ -97,7 +98,9 @@ class discrete_observations
     /**
      * Loads a discrete observation distribution from an input stream.
      */
-    template <class InputStream>
+    template <class InputStream,
+              class = util::disable_if_same_or_derived_t<discrete_observations,
+                                                         InputStream>>
     discrete_observations(InputStream& is)
     {
         if (io::packed::read(is, obs_dist_) == 0)

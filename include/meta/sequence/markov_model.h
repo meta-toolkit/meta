@@ -14,6 +14,7 @@
 #include "meta/util/dense_matrix.h"
 #include "meta/util/identifiers.h"
 #include "meta/util/random.h"
+#include "meta/util/traits.h"
 
 namespace meta
 {
@@ -97,7 +98,9 @@ class markov_model
     /**
      * Loads a Markov model from a file.
      */
-    template <class InputStream>
+    template <class InputStream,
+              class = util::disable_if_same_or_derived_t<markov_model,
+                                                         InputStream>>
     markov_model(InputStream& is)
     {
         if (io::packed::read(is, initial_prob_) == 0)

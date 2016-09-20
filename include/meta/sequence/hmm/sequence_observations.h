@@ -13,6 +13,7 @@
 #include "meta/sequence/hmm/hmm.h"
 #include "meta/sequence/markov_model.h"
 #include "meta/stats/multinomial.h"
+#include "meta/util/traits.h"
 
 namespace meta
 {
@@ -75,7 +76,9 @@ class sequence_observations
     /**
      * Loads a sequence observation distribution from an input stream.
      */
-    template <class InputStream>
+    template <class InputStream,
+              class = util::disable_if_same_or_derived_t<sequence_observations,
+                                                         InputStream>>
     sequence_observations(InputStream& is)
     {
         uint64_t size;
