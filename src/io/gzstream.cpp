@@ -44,7 +44,7 @@ auto gzstreambuf::underflow() -> int_type
         return traits_type::eof();
     }
 
-    setg(&buffer_[0], &buffer_[0], &buffer_[static_cast<std::size_t>(bytes)]);
+    setg(&buffer_[0], &buffer_[0], &buffer_[0] + bytes);
 
     return traits_type::to_int_type(*gptr());
 }
