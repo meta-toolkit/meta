@@ -81,7 +81,11 @@ matrix:
     # (I want this to be 3.9 across the board, but the apt source is not
     # yet whitelisted for llvm 3.9)
     - os: linux
-      env: COMPILER=clang CLANG_VERSION=3.8 LLVM_TAG=RELEASE_390
+      env:
+        - COMPILER=clang
+        - CLANG_VERSION=3.8
+        - LLVM_TAG=RELEASE_390
+        - CMAKE_VERSION=3.4.3
       addons:
         apt:
           sources:
