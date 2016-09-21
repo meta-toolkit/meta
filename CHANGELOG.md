@@ -15,6 +15,7 @@
 - Add workaround to `filesystem::remove_all` for Windows systems to avoid
     spurious failures caused by virus scanners keeping files open after we
     deleted them
+- Fix invalid memory access in `gzstreambuf::underflow`
 
 # [v2.4.1][2.4.1]
 ## Bug fixes

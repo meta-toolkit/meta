@@ -174,3 +174,8 @@ install(FILES
           ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTAConfig.cmake
         DESTINATION
           lib/cmake/MeTA)
+
+# allow consumption of a build directory as an "installed" version
+export(EXPORT meta-exports
+       FILE ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTATargets.cmake)
+export(PACKAGE MeTA)
