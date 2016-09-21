@@ -12,6 +12,7 @@
 
 #include "meta/config.h"
 #include "meta/parallel/thread_pool.h"
+#include "meta/parallel/parallel_for.h"
 
 namespace meta
 {
@@ -51,47 +52,17 @@ typename std::result_of<LocalStorage()>::type
 reduction(Iterator begin, Iterator end, thread_pool& pool, LocalStorage&& ls_fn,
           MappingFunction&& map_fn, ReductionFunction&& red_fn)
 {
-    using difference_type =
-        typename std::iterator_traits<Iterator>::difference_type;
     using value_type = typename std::iterator_traits<Iterator>::value_type;
-    using local_storage_type = typename std::result_of<LocalStorage()>::type;
 
-    auto pool_size = static_cast<difference_type>(pool.size());
-    auto block_size = std::distance(begin, end) / pool_size;
-
-    Iterator last = begin;
-    if (block_size > 0)
-    {
-        std::advance(last, (pool_size - 1) * block_size);
-    }
-    else
-    {
-        last = end;
-        block_size = 1;
-    }
-
-    std::vector<std::future<local_storage_type>> futures;
-    // first p - 1 groups
-    for (; begin != last; std::advance(begin, block_size))
-    {
-        futures.emplace_back(pool.submit_task([&, begin]() {
-            auto local_storage = ls_fn();
-            auto mylast = begin;
-            std::advance(mylast, block_size);
-            std::for_each(begin, mylast, [&](const value_type& val) {
-                map_fn(local_storage, val);
+    auto futures = for_each_block(begin, end, pool,
+            [&](Iterator tbegin, Iterator tend)
+            {
+                auto local_storage = ls_fn();
+                std::for_each(tbegin, tend, [&](const value_type& val) {
+                    map_fn(local_storage, val);
+                });
+                return local_storage;
             });
-            return local_storage;
-        }));
-    }
-    // last group
-    futures.emplace_back(pool.submit_task([&, begin]() {
-        auto local_storage = ls_fn();
-        std::for_each(begin, end, [&](const value_type& val) {
-            map_fn(local_storage, val);
-        });
-        return local_storage;
-    }));
 
     // reduction phase
     auto local_storage = futures[0].get();
