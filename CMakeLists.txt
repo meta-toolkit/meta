@@ -161,7 +161,7 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/meta/
 configure_file(cmake/MeTAConfigVersion.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTAConfigVersion.cmake
                @ONLY)
-configure_file(cmake/MeTAConfig.cmake
+configure_file(cmake/MeTAConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTAConfig.cmake
                COPYONLY)
 
