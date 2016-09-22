@@ -13,8 +13,8 @@
 #include <algorithm>
 
 #include "meta/config.h"
-#include "meta/parallel/thread_pool.h"
 #include "meta/parallel/parallel_for.h"
+#include "meta/parallel/thread_pool.h"
 
 namespace meta
 {
@@ -56,15 +56,14 @@ reduction(Iterator begin, Iterator end, thread_pool& pool, LocalStorage&& ls_fn,
 {
     using value_type = typename std::iterator_traits<Iterator>::value_type;
 
-    auto futures = for_each_block(begin, end, pool,
-            [&](Iterator tbegin, Iterator tend)
-            {
-                auto local_storage = ls_fn();
-                std::for_each(tbegin, tend, [&](const value_type& val) {
-                    map_fn(local_storage, val);
-                });
-                return local_storage;
-            });
+    auto futures
+        = for_each_block(begin, end, pool, [&](Iterator tbegin, Iterator tend) {
+              auto local_storage = ls_fn();
+              std::for_each(tbegin, tend, [&](const value_type& val) {
+                  map_fn(local_storage, val);
+              });
+              return local_storage;
+          });
 
     // reduction phase
     auto local_storage = futures[0].get();
@@ -83,6 +82,64 @@ reduction(Iterator begin, Iterator end, LocalStorage&& ls_fn,
 {
     parallel::thread_pool pool;
     return reduction(begin, end, pool, ls_fn, map_fn, red_fn);
+}
+
+namespace detail
+{
+template <class RandomIt, class Compare>
+void merge_sort(RandomIt begin, RandomIt end, thread_pool& pool,
+                std::size_t avail_threads, Compare&& comp)
+{
+    auto len = std::distance(begin, end);
+    if (avail_threads < 2 || len <= 1024)
+    {
+        std::sort(begin, end);
+        return;
+    }
+
+    auto mid = std::next(begin, len / 2);
+    auto t1 = pool.submit_task([&]() {
+        merge_sort(begin, mid, pool, avail_threads - 2,
+                   std::forward<Compare>(comp));
+    });
+    merge_sort(mid, end, pool, avail_threads - 2, std::forward<Compare>(comp));
+    t1.get();
+    std::inplace_merge(begin, mid, end);
+}
+}
+
+/**
+ * Runs a parallel merge sort, deferring to std::sort at small problem
+ * sizes.
+ *
+ * @param begin The beginning of the range
+ * @param end The end of the range
+ * @param pool The thread pool to use for running the sort
+ * @param comp The comparison function for the sort
+ */
+template <class RandomIt, class Compare>
+void sort(RandomIt begin, RandomIt end, thread_pool& pool, Compare&& comp)
+{
+    auto fut = pool.submit_task([&]() {
+        detail::merge_sort(begin, end, pool, pool.size() - 1,
+                           std::forward<Compare>(comp));
+    });
+    fut.get();
+}
+
+/**
+ * Runs a parallel merge sort, deferring to std::sort at small problem
+ * sizes.
+ *
+ * @param begin The beginning of the range
+ * @param end The end of the range
+ * @param pool The thread pool to use for running the sort
+ * @param comp The comparison function for the sort
+ */
+template <class RandomIt>
+void sort(RandomIt begin, RandomIt end, thread_pool& pool)
+{
+    return sort(begin, end, pool, std::less<decltype(*begin)>{});
 }
 }
 }
