@@ -97,10 +97,10 @@ void merge_sort(RandomIt begin, RandomIt end, thread_pool& pool,
 
     auto mid = std::next(begin, len / 2);
     auto t1 = pool.submit_task([&]() {
-        merge_sort(begin, mid, pool, avail_threads - 2,
+        merge_sort(begin, mid, pool, avail_threads / 2 + avail_threads % 2,
                    std::forward<Compare>(comp));
     });
-    merge_sort(mid, end, pool, avail_threads - 2, std::forward<Compare>(comp));
+    merge_sort(mid, end, pool, avail_threads / 2, std::forward<Compare>(comp));
     t1.get();
     std::inplace_merge(begin, mid, end);
 }
@@ -119,7 +119,7 @@ template <class RandomIt, class Compare>
 void sort(RandomIt begin, RandomIt end, thread_pool& pool, Compare&& comp)
 {
     auto fut = pool.submit_task([&]() {
-        detail::merge_sort(begin, end, pool, pool.size() - 1,
+        detail::merge_sort(begin, end, pool, pool.size(),
                            std::forward<Compare>(comp));
     });
     fut.get();
