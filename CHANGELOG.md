@@ -9,6 +9,7 @@
 - Add a `parallel::for_each_block` algorithm to run functions on
   (relatively) equal sub-ranges of an iterator range in parallel
 
+# [v2.4.2][2.4.2]
 ## Bug Fixes
 - Properly shuffle documents when doing an even-split classification test
 - Make forward indexer listen to `indexer-num-threads` config option.
@@ -503,7 +504,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.4.1...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.4.2...develop
+[2.4.2]: https://github.com/meta-toolkit/meta/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/meta-toolkit/meta/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/meta-toolkit/meta/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/meta-toolkit/meta/compare/v2.2.0...v2.3.0
