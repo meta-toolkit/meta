@@ -13,7 +13,8 @@ cd ../
 
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME ../
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME \
+    $LIBCXX_EXTRA_CMAKE_FLAGS ../
 make cxx
 make install-libcxx install-libcxxabi
 

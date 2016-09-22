@@ -85,6 +85,7 @@ matrix:
         - COMPILER=clang
         - CLANG_VERSION=3.8
         - LLVM_TAG=RELEASE_390
+        - LIBCXX_EXTRA_CMAKE_FLAGS=-DLIBCXX_INSTALL_EXPERIMENTAL_LIBRARY=On
         - CMAKE_VERSION=3.4.3
       addons:
         apt:
