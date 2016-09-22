@@ -88,23 +88,23 @@ namespace detail
 {
 template <class RandomIt, class Compare>
 void merge_sort(RandomIt begin, RandomIt end, thread_pool& pool,
-                std::size_t avail_threads, Compare&& comp)
+                std::size_t avail_threads, Compare comp)
 {
     auto len = std::distance(begin, end);
     if (avail_threads < 2 || len <= 1024)
     {
-        std::sort(begin, end);
+        std::sort(begin, end, comp);
         return;
     }
 
     auto mid = std::next(begin, len / 2);
     auto t1 = pool.submit_task([&]() {
         merge_sort(begin, mid, pool, avail_threads / 2 + avail_threads % 2,
-                   std::forward<Compare>(comp));
+                   comp);
     });
-    merge_sort(mid, end, pool, avail_threads / 2, std::forward<Compare>(comp));
+    merge_sort(mid, end, pool, avail_threads / 2, comp);
     t1.get();
-    std::inplace_merge(begin, mid, end);
+    std::inplace_merge(begin, mid, end, comp);
 }
 }
 
@@ -118,12 +118,10 @@ void merge_sort(RandomIt begin, RandomIt end, thread_pool& pool,
  * @param comp The comparison function for the sort
  */
 template <class RandomIt, class Compare>
-void sort(RandomIt begin, RandomIt end, thread_pool& pool, Compare&& comp)
+void sort(RandomIt begin, RandomIt end, thread_pool& pool, Compare comp)
 {
-    auto fut = pool.submit_task([&]() {
-        detail::merge_sort(begin, end, pool, pool.size(),
-                           std::forward<Compare>(comp));
-    });
+    auto fut = pool.submit_task(
+        [&]() { detail::merge_sort(begin, end, pool, pool.size(), comp); });
     fut.get();
 }
 
@@ -139,7 +137,8 @@ void sort(RandomIt begin, RandomIt end, thread_pool& pool, Compare&& comp)
 template <class RandomIt>
 void sort(RandomIt begin, RandomIt end, thread_pool& pool)
 {
-    return sort(begin, end, pool, std::less<decltype(*begin)>{});
+    using value_type = typename std::iterator_traits<RandomIt>::value_type;
+    return sort(begin, end, pool, std::less<value_type>{});
 }
 }
 }
