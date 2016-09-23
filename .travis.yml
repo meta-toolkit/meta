@@ -99,6 +99,7 @@ matrix:
 
     # OS X/GCC 6
     - os: osx
+      osx_image: xcode7.3
       env: COMPILER=gcc
 
 install:

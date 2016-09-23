@@ -1,3 +1,14 @@
+# [v2.4.2][2.4.2]
+## Bug Fixes
+- Properly shuffle documents when doing an even-split classification test
+- Make forward indexer listen to `indexer-num-threads` config option.
+- Use correct number of threads when deciding block sizes for
+    `parallel_for`
+- Add workaround to `filesystem::remove_all` for Windows systems to avoid
+    spurious failures caused by virus scanners keeping files open after we
+    deleted them
+- Fix invalid memory access in `gzstreambuf::underflow`
+
 # [v2.4.1][2.4.1]
 ## Bug fixes
 - Eliminate excess warnings on Darwin about double preprocessor definitions
@@ -482,7 +493,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.4.1...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.4.2...develop
+[2.4.2]: https://github.com/meta-toolkit/meta/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/meta-toolkit/meta/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/meta-toolkit/meta/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/meta-toolkit/meta/compare/v2.2.0...v2.3.0

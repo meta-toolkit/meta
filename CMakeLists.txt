@@ -9,7 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 set(MeTA_VERSION_MAJOR 2)
 set(MeTA_VERSION_MINOR 4)
-set(MeTA_VERSION_PATCH 0)
+set(MeTA_VERSION_PATCH 2)
 set(MeTA_VERSION
     "${MeTA_VERSION_MAJOR}.${MeTA_VERSION_MINOR}.${MeTA_VERSION_PATCH}")
 
@@ -161,7 +161,7 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/meta/
 configure_file(cmake/MeTAConfigVersion.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTAConfigVersion.cmake
                @ONLY)
-configure_file(cmake/MeTAConfig.cmake
+configure_file(cmake/MeTAConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTAConfig.cmake
                COPYONLY)
 
@@ -174,3 +174,8 @@ install(FILES
           ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTAConfig.cmake
         DESTINATION
           lib/cmake/MeTA)
+
+# allow consumption of a build directory as an "installed" version
+export(EXPORT meta-exports
+       FILE ${CMAKE_CURRENT_BINARY_DIR}/MeTA/MeTATargets.cmake)
+export(PACKAGE MeTA)
