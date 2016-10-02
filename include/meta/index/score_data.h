@@ -80,15 +80,16 @@ struct score_data
      * @param p_avg_dl The average doc length in the index
      * @param p_num_docs The number of docs in the index
      * @param p_total_terms The total number of terms in the index
-     * @param p_query The current query
+     * @param p_query_length The current query length (e.g. the total number of
+     * words in the query)
      */
     score_data(inverted_index& p_idx, float p_avg_dl, uint64_t p_num_docs,
-               uint64_t p_total_terms, float p_length)
+               uint64_t p_total_terms, float p_query_length)
         : idx(p_idx), // gcc no non-const ref init from brace init list
           avg_dl{p_avg_dl},
           num_docs{p_num_docs},
           total_terms{p_total_terms},
-          query_length{p_length}
+          query_length{p_query_length}
     {
         /* nothing */
     }
