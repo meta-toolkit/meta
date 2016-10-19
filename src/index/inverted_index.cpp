@@ -312,13 +312,7 @@ uint64_t inverted_index::total_corpus_terms()
 
 uint64_t inverted_index::total_num_occurences(term_id t_id) const
 {
-    auto pdata = search_primary(t_id);
-
-    double sum = 0;
-    for (auto& c : pdata->counts())
-        sum += c.second;
-
-    return static_cast<uint64_t>(sum);
+    return stream_for(t_id)->total_counts();
 }
 
 float inverted_index::avg_doc_length()
@@ -334,7 +328,7 @@ inverted_index::tokenize(const corpus::document& doc)
 
 uint64_t inverted_index::doc_freq(term_id t_id) const
 {
-    return search_primary(t_id)->counts().size();
+    return stream_for(t_id)->size();
 }
 
 auto inverted_index::search_primary(term_id t_id) const
