@@ -60,7 +60,7 @@ struct instance
     /// the id within the dataset that contains this instance
     instance_id id;
     /// the weights of the features in this instance
-    const feature_vector weights;
+    feature_vector weights;
 };
 }
 }

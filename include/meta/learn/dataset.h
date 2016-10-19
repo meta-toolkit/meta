@@ -34,7 +34,7 @@ class dataset
   public:
     using instance_type = instance;
     using const_iterator = std::vector<instance_type>::const_iterator;
-    using iterator = const_iterator;
+    using iterator = std::vector<instance_type>::iterator;
     using size_type = std::vector<instance_type>::size_type;
 
     /**
@@ -120,7 +120,15 @@ class dataset
     /**
      * @return an iterator to the first instance
      */
-    iterator begin() const
+    const_iterator begin() const
+    {
+        return instances_.begin();
+    }
+
+    /**
+     * @return an iterator to the first instance
+     */
+    iterator begin()
     {
         return instances_.begin();
     }
@@ -128,7 +136,15 @@ class dataset
     /**
      * @return an iterator to one past the end of the dataset
      */
-    iterator end() const
+    const_iterator end() const
+    {
+        return instances_.end();
+    }
+
+    /**
+     * @return an iterator to one past the end of the dataset
+     */
+    iterator end()
     {
         return instances_.end();
     }
