@@ -15,6 +15,7 @@
 #include "meta/config.h"
 #include "meta/logging/logger.h"
 #include "meta/parallel/algorithm.h"
+#include "meta/sequence/hmm/forward_backward.h"
 #include "meta/sequence/markov_model.h"
 #include "meta/sequence/trellis.h"
 #include "meta/stats/multinomial.h"
@@ -37,6 +38,15 @@ class hmm_exception : public std::runtime_error
     using std::runtime_error::runtime_error;
 };
 
+template <class ObsDist>
+struct hmm_traits
+{
+    using observation_type = typename ObsDist::observation_type;
+    using sequence_type = std::vector<observation_type>;
+    using training_data_type = std::vector<sequence_type>;
+    using forward_backward_type = scaling_forward_backward<sequence_type>;
+};
+
 /**
  * A generic Hidden Markov Model implementation for unsupervised sequence
  * labeling tasks.
@@ -45,9 +55,11 @@ template <class ObsDist>
 class hidden_markov_model
 {
   public:
-    using observation_type = typename ObsDist::observation_type;
-    using sequence_type = std::vector<observation_type>;
-    using training_data_type = std::vector<sequence_type>;
+    using traits_type = hmm_traits<ObsDist>;
+    using observation_type = typename traits_type::observation_type;
+    using sequence_type = typename traits_type::sequence_type;
+    using training_data_type = typename traits_type::training_data_type;
+    using forward_backward_type = typename traits_type::forward_backward_type;
 
     struct training_options
     {
@@ -255,10 +267,17 @@ class hidden_markov_model
                 // cache b_i(o_t) since this could be computed with an
                 // arbitrarily complex model
                 auto output_probs = output_probabilities(seq);
+                auto init_probs = [this](state_id i) { return init_prob(i); };
+                auto trans_probs = [this](state_id i, state_id j) {
+                    return trans_prob(i, j);
+                };
 
                 // run forward-backward to get the trellises
-                auto fwd = forward(seq, output_probs);
-                auto bwd = backward(seq, fwd, output_probs);
+                using fwdbwd = forward_backward_type;
+                auto fwd = fwdbwd::forward(seq, output_probs, num_states(),
+                                           init_probs, trans_probs);
+                auto bwd = fwdbwd::backward(seq, fwd, output_probs,
+                                            num_states(), trans_probs);
 
                 // compute the probability of being in a given state at a given
                 // time from the trellises
@@ -352,79 +371,6 @@ class hidden_markov_model
             // gamma(t, ) = prob. dist over possible states at time t
         }
         return gamma;
-    }
-
-    forward_trellis
-    forward(const sequence_type& seq,
-            const util::dense_matrix<double>& output_probs) const
-    {
-        forward_trellis fwd{seq.size(), num_states()};
-
-        // initialize the first column of the trellis
-        for (label_id l{0}; l < num_states(); ++l)
-        {
-            state_id s{l};
-            fwd.probability(0, l, init_prob(s) * output_probs(0, s));
-        }
-        // normalize to avoid underflow
-        fwd.normalize(0);
-
-        // compute remaining columns using the recursive formulation
-        for (uint64_t t = 1; t < seq.size(); ++t)
-        {
-            for (label_id i{0}; i < num_states(); ++i)
-            {
-                state_id s_i{i};
-                double sum = 0;
-                for (label_id j{0}; j < num_states(); ++j)
-                {
-                    state_id s_j{j};
-                    sum += fwd.probability(t - 1, j) * trans_prob(s_j, s_i);
-                }
-                fwd.probability(t, i, sum * output_probs(t, s_i));
-            }
-            // normalize to avoid underflow
-            fwd.normalize(t);
-        }
-
-        return fwd;
-    }
-
-    trellis backward(const sequence_type& seq, const forward_trellis& fwd,
-                     const util::dense_matrix<double>& output_probs) const
-    {
-        trellis bwd{seq.size(), num_states()};
-
-        // initialize the last column of the trellis
-        for (label_id i{0}; i < num_states(); ++i)
-        {
-            bwd.probability(seq.size() - 1, i, 1);
-        }
-
-        // fill in the remaining columns of the trellis from back to front
-        for (uint64_t k = 1; k < seq.size(); ++k)
-        {
-            assert(seq.size() - 1 >= k);
-            uint64_t t = seq.size() - 1 - k;
-
-            for (label_id i{0}; i < num_states(); ++i)
-            {
-                state_id s_i{i};
-
-                double sum = 0;
-                for (label_id j{0}; j < num_states(); ++j)
-                {
-                    state_id s_j{j};
-
-                    sum += bwd.probability(t + 1, j) * trans_prob(s_i, s_j)
-                           * output_probs(t + 1, s_j);
-                }
-                auto norm = fwd.normalizer(t + 1);
-                bwd.probability(t, i, norm * sum);
-            }
-        }
-
-        return bwd;
     }
 
     ObsDist obs_dist_;
