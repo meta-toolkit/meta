@@ -39,6 +39,8 @@ class sequence_observations
     class expected_counts_type
     {
       public:
+        friend sequence_observations;
+
         expected_counts_type(uint64_t num_hmm_states,
                              uint64_t num_markov_states,
                              stats::dirichlet<state_id> prior);
@@ -72,6 +74,11 @@ class sequence_observations
      */
     sequence_observations(uint64_t num_hmm_states, uint64_t num_markov_states,
                           stats::dirichlet<state_id> prior);
+
+    /**
+     * Re-estimates the Markov models given expected counts.
+     */
+    sequence_observations(expected_counts_type&& counts);
 
     /**
      * Loads a sequence observation distribution from an input stream.

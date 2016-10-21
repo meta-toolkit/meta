@@ -50,6 +50,18 @@ sequence_observations::sequence_observations(uint64_t num_hmm_states,
         models_.emplace_back(num_markov_states, prior);
 }
 
+sequence_observations::sequence_observations(expected_counts_type&& counts)
+    : models_{[&]() {
+          std::vector<markov_model> models;
+          models.reserve(counts.counts_.size());
+          for (auto& ec : counts.counts_)
+              models.emplace_back(std::move(ec));
+          return models;
+      }()}
+{
+    // nothing
+}
+
 auto sequence_observations::expected_counts() const -> expected_counts_type
 {
     return {num_states(), models_.front().num_states(),
