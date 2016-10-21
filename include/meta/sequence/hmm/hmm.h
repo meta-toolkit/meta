@@ -134,33 +134,45 @@ class hidden_markov_model
         double old_ll = std::numeric_limits<double>::lowest();
         for (uint64_t iter = 1; iter <= options.max_iters; ++iter)
         {
-            double ll = 0;
+            double log_likelihood = 0;
 
-            auto time = common::time([&]() {
+            auto em_time = common::time([&]() {
                 printing::progress progress{"> Iteration "
                                                 + std::to_string(iter) + ": ",
                                             instances.size()};
-                ll = expectation_maximization(instances, pool, progress);
+                log_likelihood
+                    = expectation_maximization(instances, pool, progress);
             });
 
-            LOG(info) << "Took " << time.count() / 1000.0 << "s" << ENDLG;
-            LOG(info) << "Log likelihood: " << ll << ENDLG;
+            auto relative_change = (old_ll - log_likelihood) / old_ll;
+            LOG(info) << "Took " << em_time.count() / 1000.0 << "s" << ENDLG;
 
-            if (old_ll > ll)
+            if (iter > 1)
+            {
+                LOG(info) << "Log likelihood: " << log_likelihood << " (+"
+                          << relative_change << " relative change)" << ENDLG;
+            }
+            else
+            {
+                LOG(info) << "Log log_likelihood: " << log_likelihood << ENDLG;
+            }
+
+            if (old_ll > log_likelihood)
             {
                 LOG(fatal) << "Log likelihood did not improve!" << ENDLG;
                 throw std::runtime_error{"Log likelihood did not improve"};
             }
 
-            if (ll - old_ll < options.delta)
+            if (iter > 1 && relative_change < options.delta)
             {
-                LOG(info) << "Converged! (" << ll - old_ll << " < "
+                LOG(info) << "Converged! (" << relative_change << " < "
                           << options.delta << ")" << ENDLG;
-                return ll;
+                return log_likelihood;
             }
 
-            old_ll = ll;
+            old_ll = log_likelihood;
         }
+
         return old_ll;
     }
 
