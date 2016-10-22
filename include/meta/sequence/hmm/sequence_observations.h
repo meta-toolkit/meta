@@ -108,6 +108,8 @@ class sequence_observations
 
     double probability(const observation_type& obs, state_id s_i) const;
 
+    double log_probability(const observation_type& obs, state_id s_i) const;
+
     const markov_model& distribution(state_id s_i) const;
 
     /**

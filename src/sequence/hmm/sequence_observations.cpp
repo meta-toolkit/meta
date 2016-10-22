@@ -79,6 +79,12 @@ double sequence_observations::probability(const observation_type& obs,
     return models_[s_i].probability(obs);
 }
 
+double sequence_observations::log_probability(const observation_type& obs,
+                                              state_id s_i) const
+{
+    return models_[s_i].log_probability(obs);
+}
+
 const markov_model& sequence_observations::distribution(state_id s_i) const
 {
     return models_[s_i];
