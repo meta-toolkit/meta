@@ -254,7 +254,6 @@ struct logarithm_forward_backward
             for (label_id i{0}; i < hmm.num_states(); ++i)
             {
                 state_id s_i{i};
-                std::fill(scratch.begin(), scratch.end(), 0.0);
                 for (label_id j{0}; j < hmm.num_states(); ++j)
                 {
                     state_id s_j{j};
@@ -294,7 +293,6 @@ struct logarithm_forward_backward
             for (label_id i{0}; i < hmm.num_states(); ++i)
             {
                 state_id s_i{i};
-                std::fill(scratch.begin(), scratch.end(), 0.0);
                 for (label_id j{0}; j < hmm.num_states(); ++j)
                 {
                     state_id s_j{j};
