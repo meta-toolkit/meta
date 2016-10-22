@@ -124,6 +124,15 @@ class sequence_observations
   private:
     std::vector<markov_model> models_;
 };
+
+template <>
+struct hmm_traits<sequence_observations>
+{
+    using observation_type = sequence_observations::observation_type;
+    using sequence_type = std::vector<observation_type>;
+    using training_data_type = std::vector<sequence_type>;
+    using forward_backward_type = logarithm_forward_backward;
+};
 }
 }
 }

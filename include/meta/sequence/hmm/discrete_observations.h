@@ -126,6 +126,11 @@ class discrete_observations
         return obs_dist_[s_i].probability(obs);
     }
 
+    double log_probability(ObservationType obs, state_id s_i) const
+    {
+        return std::log(probability(obs, s_i));
+    }
+
     const conditional_distribution_type& distribution(state_id s_i) const
     {
         return obs_dist_[s_i];

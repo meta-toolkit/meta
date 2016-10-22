@@ -44,7 +44,7 @@ struct hmm_traits
     using observation_type = typename ObsDist::observation_type;
     using sequence_type = std::vector<observation_type>;
     using training_data_type = std::vector<sequence_type>;
-    using forward_backward_type = scaling_forward_backward<sequence_type>;
+    using forward_backward_type = scaling_forward_backward;
 };
 
 /**
@@ -264,68 +264,24 @@ class hidden_markov_model
                     std::lock_guard<std::mutex> lock{progress_mutex};
                     progress(seq_id++);
                 }
+
+                using fwdbwd = forward_backward_type;
                 // cache b_i(o_t) since this could be computed with an
                 // arbitrarily complex model
-                auto output_probs = output_probabilities(seq);
-                auto init_probs = [this](state_id i) { return init_prob(i); };
-                auto trans_probs = [this](state_id i, state_id j) {
-                    return trans_prob(i, j);
-                };
+                auto output_probs = fwdbwd::output_probabilities(*this, seq);
 
-                // run forward-backward to get the trellises
-                using fwdbwd = forward_backward_type;
-                auto fwd = fwdbwd::forward(seq, output_probs, num_states(),
-                                           init_probs, trans_probs);
-                auto bwd = fwdbwd::backward(seq, fwd, output_probs,
-                                            num_states(), trans_probs);
+                // run forward-backward
+                auto fwd = fwdbwd::forward(*this, seq, output_probs);
+                auto bwd = fwdbwd::backward(*this, seq, fwd, output_probs);
 
                 // compute the probability of being in a given state at a given
                 // time from the trellises
-                auto gamma = posterior_state_membership(fwd, bwd);
+                auto gamma
+                    = fwdbwd::posterior_state_membership(*this, fwd, bwd);
 
-                // add expected counts to the new parameters
-                for (label_id i{0}; i < num_states(); ++i)
-                {
-                    state_id s_i{i};
-
-                    // add expected counts for initial state probabilities
-                    counts.model_counts.increment_initial(s_i, gamma(0, s_i));
-
-                    // add expected counts for transition probabilities
-                    for (label_id j{0}; j < num_states(); ++j)
-                    {
-                        state_id s_j{j};
-
-                        for (uint64_t t = 0; t < seq.size() - 1; ++t)
-                        {
-                            auto xi_tij = (gamma(t, s_i) * trans_prob(s_i, s_j)
-                                           * output_probs(t + 1, s_j)
-                                           * fwd.normalizer(t + 1)
-                                           * bwd.probability(t + 1, j))
-                                          / bwd.probability(t, i);
-
-                            counts.model_counts.increment_transition(s_i, s_j,
-                                                                     xi_tij);
-                        }
-                    }
-
-                    // add expected counts for observation probabilities
-                    for (uint64_t t = 0; t < seq.size(); ++t)
-                    {
-                        counts.obs_counts.increment(seq[t], s_i, gamma(t, s_i));
-                    }
-                }
-
-                // compute contribution to the log likelihood from the forward
-                // trellis scaling factors for this sequence
-                for (uint64_t t = 0; t < seq.size(); ++t)
-                {
-                    // L = \prod_o \prod_t 1 / scale(t)
-                    // log L = \sum_o \sum_t \log (1 / scale(t))
-                    // log L = \sum_o \sum_t - \log scale(t)
-                    counts.log_likelihood += -std::log(fwd.normalizer(t));
-                }
-
+                // increment expected counts
+                fwdbwd::increment_counts(*this, counts, seq, fwd, bwd, gamma,
+                                         output_probs);
             },
             [&](expected_counts& result, const expected_counts& temp) {
                 result += temp;
@@ -336,41 +292,6 @@ class hidden_markov_model
         model_ = markov_model{std::move(counts.model_counts)};
 
         return counts.log_likelihood;
-    }
-
-    util::dense_matrix<double>
-    output_probabilities(const sequence_type& seq) const
-    {
-        util::dense_matrix<double> output_probs{seq.size(), num_states()};
-
-        for (uint64_t t = 0; t < seq.size(); ++t)
-        {
-            for (state_id s_i{0}; s_i < num_states(); ++s_i)
-            {
-                output_probs(t, s_i) = obs_dist_.probability(seq[t], s_i);
-            }
-        }
-        return output_probs;
-    }
-
-    util::dense_matrix<double>
-    posterior_state_membership(const forward_trellis& fwd, const trellis& bwd)
-    {
-        util::dense_matrix<double> gamma{fwd.size(), num_states()};
-        for (uint64_t t = 0; t < fwd.size(); ++t)
-        {
-            double norm = 0;
-            for (label_id i{0}; i < num_states(); ++i)
-            {
-                state_id s_i{i};
-                gamma(t, s_i) = fwd.probability(t, i) * bwd.probability(t, i);
-                norm += gamma(t, s_i);
-            }
-            std::transform(gamma.begin(t), gamma.end(t), gamma.begin(t),
-                           [&](double val) { return val / norm; });
-            // gamma(t, ) = prob. dist over possible states at time t
-        }
-        return gamma;
     }
 
     ObsDist obs_dist_;
