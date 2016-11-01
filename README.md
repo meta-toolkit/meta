@@ -622,8 +622,11 @@ you should run the following commands to download dependencies and related
 software needed for building:
 
 ```bash
-pacman -Syu git make mingw-w64-x86_64-{gcc,cmake,icu,jemalloc,zlib}
+pacman -Syu git make mingw-w64-x86_64-{gcc,cmake,icu,jemalloc,zlib} --force
 ```
+
+(the `--force` is needed to work around a bug with the latest MSYS2
+installer as of the time of writing.)
 
 Then, exit the shell and launch the "MinGW-w64 Win64" shell. You can obtain
 the toolkit and get started with:

@@ -169,7 +169,7 @@ struct identifier : public comparable<identifier<Tag, T>>
 template <class HashAlgorithm, class Tag, class T>
 void hash_append(HashAlgorithm& h, const identifier<Tag, T>& id)
 {
-    using util::hash_append;
+    using hashing::hash_append;
     hash_append(h, static_cast<const T&>(id));
 }
 
