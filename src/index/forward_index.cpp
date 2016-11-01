@@ -3,6 +3,7 @@
  * @author Sean Massung
  */
 
+#include "meta/index/forward_index.h"
 #include "cpptoml.h"
 #include "meta/analyzers/analyzer.h"
 #include "meta/corpus/corpus.h"
@@ -11,7 +12,6 @@
 #include "meta/hashing/probe_map.h"
 #include "meta/index/chunk_reader.h"
 #include "meta/index/disk_index_impl.h"
-#include "meta/index/forward_index.h"
 #include "meta/index/inverted_index.h"
 #include "meta/index/metadata_writer.h"
 #include "meta/index/postings_file.h"
@@ -224,8 +224,8 @@ void forward_index::create_index(const cpptoml::table& config,
     }
     else
     {
-        auto ram_budget = static_cast<uint64_t>(
-            config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
+        auto ram_budget
+            = config.get_as<uint64_t>("indexer-ram-budget").value_or(1024);
 
         if (config.get_as<bool>("uninvert").value_or(false))
         {
@@ -255,9 +255,8 @@ void forward_index::create_index(const cpptoml::table& config,
             impl_->load_labels(docs.size());
 
             auto max_threads = std::thread::hardware_concurrency();
-            auto num_threads = static_cast<unsigned>(
-                config.get_as<int64_t>("indexer-num-threads")
-                    .value_or(max_threads));
+            auto num_threads = config.get_as<unsigned>("indexer-num-threads")
+                                   .value_or(max_threads);
             if (num_threads > max_threads)
             {
                 num_threads = max_threads;
@@ -304,8 +303,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
 
     hashing::probe_map<std::string, term_id> vocab;
     bool exceeded_budget = false;
-    auto task = [&](size_t chunk_id)
-    {
+    auto task = [&](size_t chunk_id) {
         std::ofstream chunk{idx_->index_name() + "/chunk-"
                                 + std::to_string(chunk_id),
                             std::ios::binary};
@@ -339,8 +337,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
 
             auto length = std::accumulate(
                 counts.begin(), counts.end(), 0ul,
-                [](uint64_t acc, const std::pair<std::string, double>& count)
-                {
+                [](uint64_t acc, const std::pair<std::string, double>& count) {
                     return acc + std::round(count.second);
                 });
 
@@ -437,8 +434,7 @@ void forward_index::impl::merge_chunks(
     }
 
     util::multiway_merge(chunks.begin(), chunks.end(),
-                         [&](forward_index::postings_data_type&& to_write)
-                         {
+                         [&](forward_index::postings_data_type&& to_write) {
                              // renumber the postings
                              forward_index::postings_data_type::count_t counts;
                              counts.reserve(to_write.counts().size());

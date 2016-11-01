@@ -86,15 +86,13 @@ std::unique_ptr<token_stream>
     make_filter<length_filter>(std::unique_ptr<token_stream> src,
                                const cpptoml::table& config)
 {
-    auto min = config.get_as<int64_t>("min");
+    auto min = config.get_as<uint64_t>("min");
     if (!min)
         throw token_stream_exception{"min required for length filter config"};
-    auto max = config.get_as<int64_t>("max");
+    auto max = config.get_as<uint64_t>("max");
     if (!max)
         throw token_stream_exception{"max required for length filter config"};
-    return make_unique<length_filter>(std::move(src),
-                                      static_cast<uint64_t>(*min),
-                                      static_cast<uint64_t>(*max));
+    return make_unique<length_filter>(std::move(src), *min, *max);
 }
 }
 }

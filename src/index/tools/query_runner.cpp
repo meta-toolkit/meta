@@ -103,10 +103,9 @@ int main(int argc, char* argv[])
 
     // Read the rest of the options for this executable.
     auto trec_format = query_group->get_as<bool>("trec-format").value_or(false);
-    auto max_results = static_cast<uint64_t>(
-        query_group->get_as<int64_t>("max-results").value_or(10));
-    auto q_id = static_cast<uint64_t>(
-        query_group->get_as<int64_t>("query-id-start").value_or(1));
+    auto max_results
+        = query_group->get_as<uint64_t>("max-results").value_or(10);
+    auto q_id = query_group->get_as<uint64_t>("query-id-start").value_or(1);
 
     // create the IR evaluation scorer if necessary
     std::unique_ptr<index::ir_eval> eval;

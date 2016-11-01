@@ -84,12 +84,11 @@ std::unique_ptr<corpus> make_corpus<line_corpus>(util::string_view prefix,
     filename.append(dataset.data(), dataset.size());
     filename += ".dat";
 
-    auto lines = config.get_as<int64_t>("num-docs");
+    auto lines = config.get_as<uint64_t>("num-docs");
     if (!lines)
         return make_unique<line_corpus>(filename, encoding);
     else
-        return make_unique<line_corpus>(filename, encoding,
-                                        static_cast<uint64_t>(*lines));
+        return make_unique<line_corpus>(filename, encoding, *lines);
 }
 }
 }

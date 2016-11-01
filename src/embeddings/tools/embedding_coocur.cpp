@@ -17,8 +17,8 @@
 #include "meta/io/packed.h"
 #include "meta/logging/logger.h"
 #include "meta/util/multiway_merge.h"
-#include "meta/util/progress.h"
 #include "meta/util/printing.h"
+#include "meta/util/progress.h"
 
 using namespace meta;
 
@@ -60,8 +60,7 @@ class coocur_buffer
         {
             auto items = std::move(coocur_).extract();
             std::sort(items.begin(), items.end(),
-                      [](const count_t& a, const count_t& b)
-                      {
+                      [](const count_t& a, const count_t& b) {
                           return a.first < b.first;
                       });
 
@@ -111,8 +110,7 @@ class coocur_buffer
         std::ofstream output{prefix_ + "/coocur.bin", std::ios::binary};
         auto num_records
             = util::multiway_merge(chunks.begin(), chunks.end(),
-                                   [&](embeddings::coocur_record&& record)
-                                   {
+                                   [&](embeddings::coocur_record&& record) {
                                        io::packed::write(output, record);
                                    });
         chunks.clear();
@@ -191,10 +189,9 @@ int main(int argc, char** argv)
     auto embed_cfg = config->get_table("embeddings");
     auto prefix = *embed_cfg->get_as<std::string>("prefix");
     auto vocab_filename = prefix + "/vocab.bin";
-    auto window_size = static_cast<std::size_t>(
-        embed_cfg->get_as<int64_t>("window-size").value_or(15));
-    auto max_ram = static_cast<std::size_t>(
-                       embed_cfg->get_as<int64_t>("max-ram").value_or(4096))
+    auto window_size
+        = embed_cfg->get_as<std::size_t>("window-size").value_or(15);
+    auto max_ram = embed_cfg->get_as<std::size_t>("max-ram").value_or(4096)
                    * 1024 * 1024;
 
     if (!filesystem::file_exists(vocab_filename))

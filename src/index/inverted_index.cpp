@@ -4,12 +4,12 @@
  * @author Chase Geigle
  */
 
+#include "meta/index/inverted_index.h"
 #include "meta/analyzers/analyzer.h"
 #include "meta/corpus/corpus.h"
 #include "meta/corpus/corpus_factory.h"
 #include "meta/corpus/metadata_parser.h"
 #include "meta/index/disk_index_impl.h"
-#include "meta/index/inverted_index.h"
 #include "meta/index/metadata_writer.h"
 #include "meta/index/postings_file.h"
 #include "meta/index/postings_file_writer.h"
@@ -74,7 +74,8 @@ class inverted_index::impl
     std::unique_ptr<analyzers::analyzer> analyzer_;
 
     util::optional<postings_file<inverted_index::primary_key_type,
-                                 inverted_index::secondary_key_type>> postings_;
+                                 inverted_index::secondary_key_type>>
+        postings_;
 
     /// the total number of term occurrences in the entire corpus
     uint64_t total_corpus_terms_;
@@ -126,14 +127,14 @@ void inverted_index::create_index(const cpptoml::table& config,
 
     LOG(info) << "Creating index: " << index_name() << ENDLG;
 
-    auto ram_budget = static_cast<uint64_t>(
-        config.get_as<int64_t>("indexer-ram-budget").value_or(1024));
-    auto max_writers = static_cast<unsigned>(
-        config.get_as<int64_t>("indexer-max-writers").value_or(8));
+    auto ram_budget
+        = config.get_as<uint64_t>("indexer-ram-budget").value_or(1024);
+    auto max_writers
+        = config.get_as<unsigned>("indexer-max-writers").value_or(8);
 
     auto max_threads = std::thread::hardware_concurrency();
-    auto num_threads = static_cast<unsigned>(
-        config.get_as<int64_t>("indexer-num-threads").value_or(max_threads));
+    auto num_threads
+        = config.get_as<unsigned>("indexer-num-threads").value_or(max_threads);
     if (num_threads > max_threads)
     {
         num_threads = max_threads;
@@ -194,8 +195,7 @@ void inverted_index::impl::tokenize_docs(
     std::mutex mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs.size()};
 
-    auto task = [&](uint64_t ram_budget)
-    {
+    auto task = [&](uint64_t ram_budget) {
         auto producer = inverter.make_producer(ram_budget);
         auto analyzer = analyzer_->clone();
         while (true)
@@ -224,8 +224,8 @@ void inverted_index::impl::tokenize_docs(
 
             auto length = std::accumulate(
                 counts.begin(), counts.end(), 0ul,
-                [](uint64_t acc, const std::pair<std::string, uint64_t>& count)
-                {
+                [](uint64_t acc,
+                   const std::pair<std::string, uint64_t>& count) {
                     return acc + count.second;
                 });
 
