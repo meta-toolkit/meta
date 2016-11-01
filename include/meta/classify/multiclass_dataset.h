@@ -122,8 +122,9 @@ class multiclass_dataset : public learn::labeled_dataset<class_label>
      * feature_vector and a conversion operator to a class_label.
      */
     template <class ForwardIterator>
-    multiclass_dataset(ForwardIterator begin, ForwardIterator end)
-        : labeled_dataset{begin, end}
+    multiclass_dataset(ForwardIterator begin, ForwardIterator end,
+                       size_type total_features)
+        : labeled_dataset{begin, end, total_features}
     {
         // build label_id_mapping
         for (; begin != end; ++begin)
