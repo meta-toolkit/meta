@@ -24,6 +24,9 @@ namespace hmm
 /**
  * Encapsulates the forward-backward algorithm using the scaling method
  * from the original Rabiner paper.
+ *
+ * @see http://www.ece.ucsb.edu/Faculty/Rabiner/ece259/Reprints/tutorial%20on%20hmm%20and%20applications.pdf
+ * @see http://sifaka.cs.uiuc.edu/course/498cxz06s/hmm.pdf
  */
 struct scaling_forward_backward
 {
