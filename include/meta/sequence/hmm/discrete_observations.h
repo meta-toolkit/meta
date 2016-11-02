@@ -76,12 +76,12 @@ class discrete_observations
     {
         for (auto& dist : obs_dist_)
         {
-            for (observation_type o{0}; o < num_observations; ++o)
+            for (observation_type obs{0}; obs < num_observations; ++obs)
             {
                 auto rnd = random::bounded_rand(rng, 65536);
                 auto val = (rnd / 65536.0) / num_observations;
 
-                dist.increment(o, val);
+                dist.increment(obs, val);
             }
         }
     }
