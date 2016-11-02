@@ -169,11 +169,7 @@ class hidden_markov_model
                 LOG(info) << "Log log_likelihood: " << log_likelihood << ENDLG;
             }
 
-            if (old_ll > log_likelihood)
-            {
-                LOG(fatal) << "Log likelihood did not improve!" << ENDLG;
-                throw std::runtime_error{"Log likelihood did not improve"};
-            }
+            assert(old_ll <= log_likelihood);
 
             if (iter > 1 && relative_change < options.delta)
             {
