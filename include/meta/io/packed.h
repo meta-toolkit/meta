@@ -178,6 +178,19 @@ uint64_t packed_write(OutputStream& stream,
 }
 
 /**
+ * Writes a pair type in a packed representation.
+ *
+ * @param os The stream to write to
+ * @param value The value to write
+ * @return the number of bytes used to write out the value
+ */
+template <class OutputSteam, class T1, class T2>
+uint64_t packed_write(OutputSteam& os, const std::pair<T1, T2>& pr)
+{
+    return packed_write(os, pr.first) + packed_write(os, pr.second);
+}
+
+/**
  * Writes a vector type in a packed representation.
  *
  * @param os The stream to write to
@@ -340,6 +353,19 @@ template <class InputStream, class Tag, class T>
 uint64_t packed_read(InputStream& stream, util::identifier<Tag, T>& value)
 {
     return packed_read(stream, static_cast<T&>(value));
+}
+
+/**
+ * Reads a pair type from a packed representation.
+ *
+ * @param is The stream to read from
+ * @param value The value to write
+ * @return the number of bytes read
+ */
+template <class InputStream, class T1, class T2>
+uint64_t packed_read(InputStream& is, std::pair<T1, T2>& pr)
+{
+    return packed_read(is, pr.first) + packed_read(is, pr.second);
 }
 
 /**

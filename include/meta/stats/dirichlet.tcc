@@ -3,15 +3,21 @@
  * @author Chase Geigle
  */
 
+#include "meta/io/packed.h"
 #include "meta/stats/dirichlet.h"
 #include "meta/util/identifiers.h"
 #include "meta/util/shim.h"
-#include "meta/io/packed.h"
 
 namespace meta
 {
 namespace stats
 {
+
+template <class T>
+dirichlet<T>::dirichlet() : dirichlet{0.0, 0}
+{
+    // nothing
+}
 
 template <class T>
 dirichlet<T>::dirichlet(double alpha, uint64_t n)
@@ -26,11 +32,9 @@ dirichlet<T>::dirichlet(Iter begin, Iter end)
     : type_{type::ASYMMETRIC}, params_{begin, end}
 {
     using pair_type = typename Iter::value_type;
-    alpha_sum_
-        = std::accumulate(begin, end, 0.0, [](double accum, const pair_type& b)
-                          {
-                              return accum + b.second;
-                          });
+    alpha_sum_ = std::accumulate(
+        begin, end, 0.0,
+        [](double accum, const pair_type& b) { return accum + b.second; });
 }
 
 template <class T>
@@ -145,67 +149,13 @@ void dirichlet<T>::swap(dirichlet& other)
 template <class T>
 void dirichlet<T>::save(std::ostream& out) const
 {
-    io::packed::write(out, static_cast<uint64_t>(type_));
-    switch (type_)
-    {
-        case type::SYMMETRIC:
-        {
-            io::packed::write(out, params_.fixed_alpha_);
-            io::packed::write(
-                out, static_cast<uint64_t>(alpha_sum_ / params_.fixed_alpha_));
-            break;
-        }
-        case type::ASYMMETRIC:
-        {
-            io::packed::write(out, params_.sparse_alpha_.size());
-            for (const auto& alpha : params_.sparse_alpha_)
-            {
-                io::packed::write(out, alpha.first);
-                io::packed::write(out, alpha.second);
-            }
-            break;
-        }
-    }
+    io::packed::write(out, *this);
 }
 
 template <class T>
 void dirichlet<T>::load(std::istream& in)
 {
-    uint64_t typ;
-    auto bytes = io::packed::read(in, typ);
-    if (bytes == 0)
-        return;
-
-    type read_type = static_cast<type>(typ);
-    switch (read_type)
-    {
-        case type::SYMMETRIC:
-        {
-            double alpha;
-            io::packed::read(in, alpha);
-            uint64_t n;
-            io::packed::read(in, n);
-            *this = dirichlet{alpha, n};
-            break;
-        }
-        case type::ASYMMETRIC:
-        {
-            uint64_t size;
-            io::packed::read(in, size);
-            std::vector<std::pair<T, double>> vec;
-            vec.reserve(size);
-            for (uint64_t i = 0; i < size; ++i)
-            {
-                T event;
-                io::packed::read(in, event);
-                double count;
-                io::packed::read(in, count);
-                vec.emplace_back(std::move(event), count);
-            }
-            *this = dirichlet{vec.begin(), vec.end()};
-            break;
-        }
-    }
+    io::packed::read(in, *this);
 }
 }
 }

@@ -8,6 +8,21 @@
   `parallel::reduction`
 - Add a `parallel::for_each_block` algorithm to run functions on
   (relatively) equal sub-ranges of an iterator range in parallel
+- Add a parallel merge sort as `parallel::sort`
+- Add a `util/traits.h` header for general useful traits
+- Add a Markov model implementation in `sequence::markov_model`
+- Add a generic unsupervised HMM implementation. This implementation
+  supports HMMs with discrete observations (what is used most often) and
+  sequence observations (useful for log mining applications). The
+  forward-backward algorithm is implemented using both the scaling method
+  and the log-space method. The scaling method is used by default, but the
+  log-space method is useful for HMMs with sequence observations to avoid
+  underflow issues when the output probabilities themselves are very small.
+
+## Enhancements
+- Add additional `packed_write` and `packed_read` overloads: for
+  `std::pair`, `stats::dirichlet`, `stats::multinomial`,
+  `util::dense_matrix`, and `util::sparse_vector`
 
 # [v2.4.2][2.4.2]
 ## Bug Fixes
