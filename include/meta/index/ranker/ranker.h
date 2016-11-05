@@ -12,8 +12,8 @@
 #include <utility>
 #include <vector>
 
-#include "meta/meta.h"
 #include "meta/index/inverted_index.h"
+#include "meta/meta.h"
 
 namespace meta
 {
@@ -77,7 +77,15 @@ struct postings_context
         // nothing
     }
 };
+}
 
+/**
+ * Stores a list of postings_stream and other relevant information for
+ * performing document-at-a-time ranking. You should not generally have to
+ * interact with this class unless implementing a new feedback method, in
+ * which case you should only have to construct it and pass it off to
+ * ranker::rank() directly afterward.
+ */
 struct ranker_context
 {
     template <class ForwardIterator, class FilterFunction>
@@ -116,11 +124,10 @@ struct ranker_context
     }
 
     inverted_index& idx;
-    std::vector<postings_context> postings;
+    std::vector<detail::postings_context> postings;
     float query_length;
     doc_id cur_doc;
 };
-}
 
 /**
  * Exception class for ranker interactions.
@@ -159,7 +166,7 @@ class ranker
     score(inverted_index& idx, ForwardIterator begin, ForwardIterator end,
           uint64_t num_results = 10, Function&& filter = passthrough)
     {
-        detail::ranker_context ctx{idx, begin, end, filter};
+        ranker_context ctx{idx, begin, end, filter};
         return rank(ctx, num_results, filter);
     }
 
@@ -170,15 +177,40 @@ class ranker
      * @param filter A filtering function to apply to each doc_id; returns
      * true if the document should be included in results
      */
-    std::vector<search_result> score(inverted_index& idx,
-                                     const corpus::document& query,
-                                     uint64_t num_results = 10,
-                                     const filter_function_type& filter
-                                     = [](doc_id)
-                                     {
-                                         return true;
-                                     });
+    std::vector<search_result>
+    score(inverted_index& idx, const corpus::document& query,
+          uint64_t num_results = 10,
+          const filter_function_type& filter = [](doc_id) { return true; });
 
+    /**
+     * Default destructor.
+     */
+    virtual ~ranker() = default;
+
+    /**
+     * Saves the ranker to a stream. This should save the ranker's id,
+     * followed by any parameters needed for reconstruction.
+     */
+    virtual void save(std::ostream& out) const = 0;
+
+    /**
+     * Scores a query using a document-at-a-time strategy. You should not
+     * override this unless you desire a completely different ranking
+     * strategy than document-at-a-time, which might be the case if you are
+     * implementing a new pseudo-relevance feedback method.
+     *
+     * @param ctx The ranker_context holding the postings lists
+     * @param num_results The number of search results to return
+     * @param filter The filter function to be used
+     */
+    virtual std::vector<search_result> rank(ranker_context& ctx,
+                                            uint64_t num_results,
+                                            const filter_function_type& filter) = 0;
+};
+
+class ranking_function : public ranker
+{
+  public:
     /**
      * Computes the contribution to the score of a document for a matched
      * query term.
@@ -193,23 +225,10 @@ class ranker
      */
     virtual float initial_score(const score_data& sd) const;
 
-    /**
-     * Default destructor.
-     */
-    virtual ~ranker() = default;
-
-    /**
-     * Saves the ranker to a stream. This should save the ranker's id,
-     * followed by any parameters needed for reconstruction.
-     */
-    virtual void save(std::ostream& out) const = 0;
-
-  private:
-    std::vector<search_result> rank(detail::ranker_context& ctx,
-                                    uint64_t num_results,
-                                    const filter_function_type& filter);
+    virtual std::vector<search_result>
+    rank(ranker_context& ctx, uint64_t num_results,
+         const filter_function_type& filter) override final;
 };
 }
 }
-
 #endif
