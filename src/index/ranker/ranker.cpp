@@ -9,7 +9,6 @@
 #include "meta/index/inverted_index.h"
 #include "meta/index/postings_data.h"
 #include "meta/index/ranker/ranker.h"
-#include "meta/index/score_data.h"
 #include "meta/util/fixed_heap.h"
 
 namespace meta
