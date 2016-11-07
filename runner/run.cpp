@@ -4,6 +4,8 @@
 
 #include <iostream>
 #include "meta/index/inverted_index.h"
+#include "meta/index/ranker/ranker_factory.h"
+#include "meta/index/feedback/rocchio.h"
 
 using namespace meta;
 
@@ -12,13 +14,18 @@ int main(int argc, char* argv[])
     auto config = cpptoml::parse_file(argv[1]);
     auto idx = index::make_index<index::dblru_inverted_index>(*config, 30000);
 
-    std::string test_string = "this is a test string. the vector is populated by the words in this test string";
+    std::string test_query = "free time";
     corpus::document d;
-    d.content(test_string);
+    d.content(test_query);
 
     // note that when tokenized, "default-unigram-chain" filtering is done
     auto counts = idx->tokenize(d);
     d.vector().from_feature_map(counts, *idx);
+
+    auto ranker_group = config->get_table("ranker");
+    auto ranker = index::make_ranker(*ranker_group);
+
+    auto rankings = ranker->score(*idx, d, 50);
 
     return 0;
 }
