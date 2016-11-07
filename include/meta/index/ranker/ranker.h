@@ -14,6 +14,7 @@
 
 #include "meta/meta.h"
 #include "meta/index/inverted_index.h"
+#include "meta/index/feedback/feedback.h"
 
 namespace meta
 {

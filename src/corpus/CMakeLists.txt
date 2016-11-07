@@ -5,6 +5,7 @@ add_subdirectory(tools)
 add_library(meta-corpus corpus.cpp
                         corpus_factory.cpp
                         document.cpp
+                        document_vector.cpp
                         file_corpus.cpp
                         libsvm_corpus.cpp
                         line_corpus.cpp
