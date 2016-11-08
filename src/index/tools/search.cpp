@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     auto group = config->get_table("ranker");
     if (!group)
         throw std::runtime_error{"\"ranker\" group needed in config file!"};
-    auto ranker = index::make_ranker(*group);
+    auto ranker = index::make_ranker(*config, *group);
 
     // Use UTF-8 for the default encoding unless otherwise specified.
     auto encoding = config->get_as<std::string>("encoding").value_or("utf-8");

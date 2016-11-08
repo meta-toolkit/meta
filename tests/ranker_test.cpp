@@ -7,16 +7,20 @@
 #include "create_config.h"
 #include "meta/corpus/document.h"
 #include "meta/index/ranker/all.h"
+#include "meta/index/forward_index.h"
 
 using namespace bandit;
 using namespace meta;
 
-namespace {
+namespace
+{
 
 template <class Ranker, class Index>
-void test_rank(Ranker& r, Index& idx, const std::string& encoding) {
+void test_rank(Ranker& r, Index& idx, const std::string& encoding)
+{
     // exhaustive search for each document
-    for (size_t i = 0; i < idx.num_docs(); ++i) {
+    for (size_t i = 0; i < idx.num_docs(); ++i)
+    {
         auto d_id = idx.docs()[i];
         auto path = idx.doc_path(d_id);
         corpus::document query{doc_id{i}};
@@ -28,7 +32,8 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding) {
         // since we're searching for a document already in the index, the same
         // document should be ranked first, but there are a few duplicate
         // documents......
-        if (ranking[0].d_id != i) {
+        if (ranking[0].d_id != i)
+        {
             AssertThat(ranking[1].d_id, Equals(i));
             AssertThat(ranking[0].score,
                        EqualsWithDelta(ranking[1].score, 0.0001));
@@ -44,7 +49,8 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding) {
     AssertThat(ranking[0].score, Is().GreaterThan(ranking.back().score));
 
     // check for sorted-ness of ranking
-    for (uint64_t i = 1; i < ranking.size(); ++i) {
+    for (uint64_t i = 1; i < ranking.size(); ++i)
+    {
         AssertThat(ranking[i - 1].score,
                    Is().GreaterThanOrEqualTo(ranking[i].score));
     }
@@ -86,6 +92,14 @@ go_bandit([]() {
             index::pivoted_length r;
             test_rank(r, *idx, encoding);
         });
+
+        it("should be able to rank with KL-divergence pseudo-relevance "
+           "feedback",
+           [&]() {
+               index::kl_divergence_prf r{
+                   index::make_index<index::forward_index>(*config)};
+               test_rank(r, *idx, encoding);
+           });
 
         idx = nullptr;
         filesystem::remove_all("ceeaus");

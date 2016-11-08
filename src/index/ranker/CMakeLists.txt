@@ -6,6 +6,7 @@ add_library(meta-ranker absolute_discount.cpp
                         lm_ranker.cpp
                         okapi_bm25.cpp
                         pivoted_length.cpp
+                        kl_divergence_prf.cpp
                         ranker.cpp
                         ranker_factory.cpp)
 target_link_libraries(meta-ranker meta-index)

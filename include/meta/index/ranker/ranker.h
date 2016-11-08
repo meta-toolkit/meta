@@ -77,6 +77,16 @@ struct postings_context
         // nothing
     }
 };
+
+inline term_id get_term_id(disk_index& inv, const std::string& term)
+{
+    return inv.get_term_id(term);
+}
+
+inline term_id get_term_id(disk_index&, term_id tid)
+{
+    return tid;
+}
 }
 
 /**
@@ -85,6 +95,10 @@ struct postings_context
  * interact with this class unless implementing a new feedback method, in
  * which case you should only have to construct it and pass it off to
  * ranker::rank() directly afterward.
+ *
+ * ForwardIterator must dereference to a pair type (either std::pair or
+ * hashing::kv_pair) which has a key type of either std::string or term_id
+ * and a value type convertible to float.
  */
 struct ranker_context
 {
@@ -104,7 +118,7 @@ struct ranker_context
                 typename std::decay<decltype(count)>::type>;
 
             query_length += kv_traits::value(count);
-            auto term = idx.get_term_id(kv_traits::key(count));
+            auto term = detail::get_term_id(inv, kv_traits::key(count));
             auto pstream = idx.stream_for(term);
             if (!pstream)
                 continue;
@@ -205,7 +219,8 @@ class ranker
      */
     virtual std::vector<search_result> rank(ranker_context& ctx,
                                             uint64_t num_results,
-                                            const filter_function_type& filter) = 0;
+                                            const filter_function_type& filter)
+        = 0;
 };
 
 class ranking_function : public ranker
