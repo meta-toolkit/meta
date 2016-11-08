@@ -571,9 +571,12 @@ void forward_index::impl::uninvert(const inverted_index& inv_idx,
 {
     postings_inverter<forward_index> handler{idx_->index_name()};
     {
+        printing::progress progress{" > Uninverting postings: ",
+                                    inv_idx.unique_terms()};
         auto producer = handler.make_producer(ram_budget);
         for (term_id t_id{0}; t_id < inv_idx.unique_terms(); ++t_id)
         {
+            progress(t_id);
             auto pdata = inv_idx.search_primary(t_id);
             producer(pdata->primary_key(), pdata->counts());
         }
