@@ -32,9 +32,10 @@ namespace index
  *
  * Optional config parameters:
  * ~~~toml
- * alpha = 0.5  # query interpolation parameter
- * lambda = 0.5 # mixture model interpolation parameter
- * k = 10       # number of feedback documents to retrieve
+ * alpha = 0.5    # query interpolation parameter
+ * lambda = 0.5   # mixture model interpolation parameter
+ * k = 10         # number of feedback documents to retrieve
+ * max-terms = 50 # maximum number of feedback terms to use
  *
  * [ranker.initial]
  * method = "dirichlet-prior" # the initial model used to retrieve documents
@@ -56,12 +57,19 @@ class kl_divergence_prf : public ranker
     /// Default value for k, the number of feedback documents to retrieve
     const static constexpr uint64_t default_k = 10;
 
+    /**
+     * Default value for max_terms, the number of feedback terms to
+     * interpolate into the query model.
+     */
+    const static constexpr uint64_t default_max_terms = 50;
+
     kl_divergence_prf(std::shared_ptr<forward_index> fwd);
 
     kl_divergence_prf(std::shared_ptr<forward_index> fwd,
                       std::unique_ptr<language_model_ranker>&& initial_ranker,
                       float alpha = default_alpha,
-                      float lambda = default_lambda, uint64_t k = default_k);
+                      float lambda = default_lambda, uint64_t k = default_k,
+                      uint64_t max_terms = default_max_terms);
 
     kl_divergence_prf(std::istream& in);
 
@@ -77,6 +85,7 @@ class kl_divergence_prf : public ranker
     const float alpha_;
     const float lambda_;
     const uint64_t k_;
+    const uint64_t max_terms_;
 };
 
 /**
