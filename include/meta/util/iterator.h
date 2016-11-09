@@ -21,6 +21,10 @@ namespace meta
 namespace util
 {
 
+/**
+ * Wrapper around an Iterator that, when dereferenced, returns f(*it)
+ * where `it` is the wrapped Iterator and `f` is a UnaryFunction.
+ */
 template <class Iterator, class UnaryFunction>
 class transform_iterator
     : public comparable<transform_iterator<Iterator, UnaryFunction>>
@@ -117,6 +121,10 @@ class transform_iterator
     UnaryFunction fun_;
 };
 
+/**
+ * Helper function to construct a transform_iterator from an Iterator and
+ * a UnaryFunction to transform the values of that Iterator.
+ */
 template <class Iterator, class UnaryFunction>
 transform_iterator<Iterator, UnaryFunction>
 make_transform_iterator(Iterator it, UnaryFunction&& fun)
