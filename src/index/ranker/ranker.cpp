@@ -32,11 +32,11 @@ ranking_function::rank(ranker_context& ctx, uint64_t num_results,
     score_data sd{ctx.idx, ctx.idx.avg_doc_length(), ctx.idx.num_docs(),
                   ctx.idx.total_corpus_terms(), ctx.query_length};
 
-    auto comp = [](const search_result& a, const search_result& b) {
-        // comparison is reversed since we want a min-heap
-        return a.score > b.score;
-    };
-    util::fixed_heap<search_result, decltype(comp)> results{num_results, comp};
+    auto results = util::make_fixed_heap<search_result>(
+        num_results, [](const search_result& a, const search_result& b) {
+            // comparison is reversed since we want a min-heap
+            return a.score > b.score;
+        });
 
     doc_id next_doc{ctx.idx.num_docs()};
     while (ctx.cur_doc < ctx.idx.num_docs())

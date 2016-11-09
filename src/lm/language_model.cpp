@@ -95,9 +95,9 @@ language_model::top_k(const sentence& prev, size_t k) const
 {
     // this is horribly inefficient due to this LM's structure
     using pair_t = std::pair<std::string, float>;
-    auto comp
-        = [](const pair_t& a, const pair_t& b) { return a.second > b.second; };
-    util::fixed_heap<pair_t, decltype(comp)> candidates{k, comp};
+    auto candidates = util::make_fixed_heap<pair_t>(
+        k,
+        [](const pair_t& a, const pair_t& b) { return a.second > b.second; });
 
     token_list candidate{prev, vocabulary_};
     candidate.push_back(0_tid);
