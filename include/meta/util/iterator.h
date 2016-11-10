@@ -39,7 +39,7 @@ class transform_iterator
         typename std::add_lvalue_reference<const value_type>::type;
     using iterator_category = typename traits_type::iterator_category;
 
-    transform_iterator(Iterator it, UnaryFunction fun) : it_{it}, fun_{fun}
+    transform_iterator(Iterator it, UnaryFunction fun) : it_{it}, fun_(fun)
     {
         // nothing
     }
