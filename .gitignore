@@ -11,6 +11,7 @@ doc/
 data/ceeaus
 data/breast-cancer
 data/housing
+data/cranfield
 biicode.conf
 bii/
 bin/

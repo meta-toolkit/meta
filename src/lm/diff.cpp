@@ -53,10 +53,10 @@ diff::candidates(const sentence& sent, bool use_lm /* = false */)
 {
     use_lm_ = use_lm;
     using pair_t = std::pair<sentence, double>;
-    auto comp
-        = [](const pair_t& a, const pair_t& b) { return a.second < b.second; };
 
-    util::fixed_heap<pair_t, decltype(comp)> candidates{max_cand_size_, comp};
+    auto candidates = util::make_fixed_heap<pair_t>(
+        max_cand_size_,
+        [](const pair_t& a, const pair_t& b) { return a.second < b.second; });
     seen_.clear();
     add(candidates, sent);
     step(sent, candidates, 0);
