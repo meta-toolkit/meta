@@ -37,7 +37,7 @@ namespace index
  * k = 10         # number of feedback documents to retrieve
  * max-terms = 50 # maximum number of feedback terms to use
  *
- * [ranker.initial]
+ * [ranker.feedback]
  * method = "dirichlet-prior" # the initial model used to retrieve documents
  * # other parameters for that initial retrieval method
  * ~~~
