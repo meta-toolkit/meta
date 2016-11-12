@@ -28,13 +28,15 @@
   The EM algorithm used for the two-component mixture model is provided as
   the `index::feedback::unigram_mixture` free function and returns the
   feedback model.
-- **Breaking Change.** This change also breaks the `ranker` hierarchy into
-  one more level. At the top we have `ranker`, which has a pure virtual
-  function `rank()` that can be overridden to provide entirely custom
-  ranking behavior, This is the class the KL-divergence method derives
-  from, as we need to re-define what it means to rank documents (first
-  retrieving a feedback set, then ranking documents with respect to an
-  updated query).
+- Add the Rocchio algorithm (`rocchio`) for pseudo-relevance feedback in
+  the vector space model.
+- **Breaking Change.** To facilitate the above to changes, we have also
+  broken the `ranker` hierarchy into one more level. At the top we have
+  `ranker`, which has a pure virtual function `rank()` that can be
+  overridden to provide entirely custom ranking behavior, This is the class
+  the KL-divergence and Rocchio methods derive from, as we need to
+  re-define what it means to rank documents (first retrieving a feedback
+  set, then ranking documents with respect to an updated query).
 
   Most of the time, however, you will want to derive from the second level
   `ranking_function`, which is what was called `ranker` before. This class
