@@ -85,6 +85,7 @@ ranker_loader::ranker_loader()
     reg<jelinek_mercer>();
     reg<okapi_bm25>();
     reg<pivoted_length>();
+    reg<kl_divergence_prf>();
 }
 
 std::unique_ptr<ranker> load_ranker(std::istream& in)
