@@ -30,6 +30,7 @@ ranker_factory::ranker_factory()
     reg<okapi_bm25>();
     reg<pivoted_length>();
     reg<kl_divergence_prf>();
+    reg<rocchio>();
 }
 
 std::unique_ptr<ranker> make_ranker(const cpptoml::table& config)
@@ -86,6 +87,7 @@ ranker_loader::ranker_loader()
     reg<okapi_bm25>();
     reg<pivoted_length>();
     reg<kl_divergence_prf>();
+    reg<rocchio>();
 }
 
 std::unique_ptr<ranker> load_ranker(std::istream& in)

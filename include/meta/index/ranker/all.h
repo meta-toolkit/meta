@@ -6,3 +6,4 @@
 #include "meta/index/ranker/okapi_bm25.h"
 #include "meta/index/ranker/pivoted_length.h"
 #include "meta/index/ranker/kl_divergence_prf.h"
+#include "meta/index/ranker/rocchio.h"

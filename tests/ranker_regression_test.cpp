@@ -13,17 +13,14 @@
 using namespace bandit;
 using namespace meta;
 
-namespace
-{
-struct ret_perf
-{
+namespace {
+struct ret_perf {
     double map;
     double avg_ndcg;
 };
 
 ret_perf retrieval_performance(index::ranker& r, index::inverted_index& idx,
-                               const cpptoml::table& cfg)
-{
+                               const cpptoml::table& cfg) {
     index::ir_eval eval{cfg};
 
     std::ifstream queries{*cfg.get_as<std::string>("query-path")};
@@ -31,8 +28,7 @@ ret_perf retrieval_performance(index::ranker& r, index::inverted_index& idx,
 
     double cumulative_ndcg = 0.0;
     uint64_t num_queries = 0;
-    for (query_id qid{1}; std::getline(queries, line); ++qid, ++num_queries)
-    {
+    for (query_id qid{1}; std::getline(queries, line); ++qid, ++num_queries) {
         corpus::document query;
         query.content(line);
         auto results = r.score(idx, query, 1);
@@ -108,6 +104,13 @@ go_bandit([]() {
             AssertThat(perf.avg_ndcg, IsGreaterThan(0.22));
         });
 
+        it("should obtain expected performance with Rocchio", [&]() {
+            index::rocchio r{index::make_index<index::forward_index>(*cfg)};
+            auto perf = retrieval_performance(r, *idx, *cfg);
+            AssertThat(perf.map, IsGreaterThan(0.34));
+            AssertThat(perf.avg_ndcg, IsGreaterThan(0.23));
+        });
+
         it("should get better performance than Dirichlet prior when using "
            "KL-divergence PRF",
            [&]() {
@@ -137,6 +140,41 @@ go_bandit([]() {
                AssertThat(kl_perf.map, IsGreaterThanOrEqualTo(jm_perf.map));
                AssertThat(kl_perf.avg_ndcg,
                           IsGreaterThanOrEqualTo(jm_perf.avg_ndcg));
+           });
+
+        it("should get better performance than Okapi BM25 when using Rocchio",
+           [&]() {
+               index::rocchio rocchio{
+                   index::make_index<index::forward_index>(*cfg),
+                   make_unique<index::okapi_bm25>()};
+
+               auto rocchio_perf = retrieval_performance(rocchio, *idx, *cfg);
+
+               index::okapi_bm25 bm25;
+               auto bm25_perf = retrieval_performance(bm25, *idx, *cfg);
+
+               AssertThat(rocchio_perf.map,
+                          IsGreaterThanOrEqualTo(bm25_perf.map));
+               AssertThat(rocchio_perf.avg_ndcg,
+                          IsGreaterThanOrEqualTo(bm25_perf.avg_ndcg));
+           });
+
+        it("should get better performance than pivoted length when using "
+           "Rocchio",
+           [&]() {
+               index::rocchio rocchio{
+                   index::make_index<index::forward_index>(*cfg),
+                   make_unique<index::okapi_bm25>()};
+
+               auto rocchio_perf = retrieval_performance(rocchio, *idx, *cfg);
+
+               index::pivoted_length pl;
+               auto pl_perf = retrieval_performance(pl, *idx, *cfg);
+
+               AssertThat(rocchio_perf.map,
+                          IsGreaterThanOrEqualTo(pl_perf.map));
+               AssertThat(rocchio_perf.avg_ndcg,
+                          IsGreaterThanOrEqualTo(pl_perf.avg_ndcg));
            });
 
         idx = nullptr;
