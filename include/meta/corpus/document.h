@@ -98,7 +98,7 @@ class document
      */
     void mdata(std::vector<metadata::field>&& metadata);
 
-    document_vector vector();
+    document_vector& vsm_vector();
 
   private:
     /// The document id for this document
@@ -116,7 +116,7 @@ class document
     /// The encoding for the content
     std::string encoding_;
 
-    document_vector vector_;
+    document_vector vsm_vector_;
 
 };
 }

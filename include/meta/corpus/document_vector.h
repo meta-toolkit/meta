@@ -34,7 +34,13 @@ class document_vector
         /*
          * @return the unordered map, i.e. the vector representation
          */
-        std::unordered_map<term_id, float> vector();
+        std::unordered_map<term_id, float>& map();
+
+        /**
+         * Set the "vector" directly
+         * @param m reference to an unordered map to be stored as vector_
+         */
+        void map(std::unordered_map<term_id, float>& m);
 
         /*
          * iterates through the map and prints to std out
