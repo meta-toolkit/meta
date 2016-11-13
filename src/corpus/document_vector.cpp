@@ -32,12 +32,17 @@ namespace corpus
         }
     }
 
+    void document_vector::map(std::unordered_map<term_id, float>& map)
+    {
+        vector_ = map;
+    }
+
     void document_vector::set_term(term_id t_id, float weight)
     {
         vector_[t_id] = weight;
     }
 
-    std::unordered_map<term_id, float> document_vector::vector()
+    std::unordered_map<term_id, float>& document_vector::map()
     {
         return vector_;
     }

@@ -5,7 +5,13 @@
 #ifndef META_FEEDBACK_FACTORY_H
 #define META_FEEDBACK_FACTORY_H
 
+#include "meta/index/feedback/feedback.h"
 #include "meta/util/factory.h"
+
+namespace cpptoml
+{
+class table;
+}
 
 namespace meta
 {

@@ -4,6 +4,8 @@
 
 #include "cpptoml.h"
 #include "meta/index/feedback/all.h"
+#include "meta/index/feedback/feedback_factory.h"
+
 
 namespace meta
 {
@@ -25,7 +27,9 @@ std::unique_ptr<feedback> make_feedback(const cpptoml::table& config)
     auto function = config.get_as<std::string>("method");
     if (!function)
     {
-        // TODO: implement exception
+        throw feedback_factory::exception {
+                "feedback-method required to construct feedback instance"
+        };
     }
     return feedback_factory::get().create(*function, config);
 }
