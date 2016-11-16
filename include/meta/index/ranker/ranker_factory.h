@@ -9,6 +9,7 @@
 #ifndef META_RANKER_FACTORY_H_
 #define META_RANKER_FACTORY_H_
 
+#include "meta/index/ranker/lm_ranker.h"
 #include "meta/index/ranker/ranker.h"
 #include "meta/util/factory.h"
 #include "meta/util/shim.h"
@@ -29,10 +30,26 @@ namespace index
  * class directly to add their own rankers.
  */
 class ranker_factory
-    : public util::factory<ranker_factory, ranker, const cpptoml::table&>
+    : public util::factory<ranker_factory, ranker, const cpptoml::table&,
+                           const cpptoml::table&>
 {
+  public:
     /// Friend the base ranker factory
     friend base_factory;
+
+    std::unique_ptr<language_model_ranker>
+    create_lm(util::string_view identifier, const cpptoml::table& global,
+              const cpptoml::table& local)
+    {
+        auto rnk = base_factory::create(identifier, global, local);
+        if (auto der = dynamic_cast<language_model_ranker*>(rnk.get()))
+        {
+            rnk.release();
+            return std::unique_ptr<language_model_ranker>{der};
+        }
+        throw std::invalid_argument{identifier.to_string()
+                                    + " is not a language_model_ranker"};
+    }
 
   private:
     /**
@@ -53,14 +70,51 @@ class ranker_factory
 std::unique_ptr<ranker> make_ranker(const cpptoml::table&);
 
 /**
+ * Convenience method for creating a ranker using the factory.
+ * @param global The global configuration group (containing the index path)
+ * @param local The ranker configuration group itself
+ */
+std::unique_ptr<ranker> make_ranker(const cpptoml::table& global,
+                                    const cpptoml::table& local);
+
+/**
+ * Convenience method for creating a language_model_ranker using the
+ * factory.
+ */
+std::unique_ptr<language_model_ranker> make_lm_ranker(const cpptoml::table&);
+
+/**
+ * Convenience method for creating a language_model_ranker using the factory.
+ * @param global The global configuration group (containing the index path)
+ * @param local The ranker configuration group itself
+ */
+std::unique_ptr<language_model_ranker>
+make_lm_ranker(const cpptoml::table& global, const cpptoml::table& local);
+
+/**
  * Factory method for creating a ranker. This should be specialized if
  * your given ranker requires special construction behavior (e.g.,
- * reading parameters).
+ * reading parameters) that requires only the ranker-specific configuration
+ * (this will be the case almost all of the time).
  */
 template <class Ranker>
 std::unique_ptr<ranker> make_ranker(const cpptoml::table&)
 {
     return make_unique<Ranker>();
+}
+
+/**
+ * Factory method for creating a ranker. This should be specialized if your
+ * given ranker requires special construction behavior that includes
+ * reading parameter values from the global configuration as well as the
+ * ranker-specific configuration.
+ */
+template <class Ranker>
+std::unique_ptr<ranker> make_ranker(const cpptoml::table& global,
+                                    const cpptoml::table& local)
+{
+    (void)global;
+    return make_ranker<Ranker>(local);
 }
 
 /**
@@ -70,7 +124,21 @@ std::unique_ptr<ranker> make_ranker(const cpptoml::table&)
  */
 class ranker_loader : public util::factory<ranker_loader, ranker, std::istream&>
 {
+  public:
     friend base_factory;
+
+    std::unique_ptr<language_model_ranker>
+    create_lm(util::string_view identifier, std::istream& in)
+    {
+        auto rnk = base_factory::create(identifier, in);
+        if (auto lmr = dynamic_cast<language_model_ranker*>(rnk.get()))
+        {
+            rnk.release();
+            return std::unique_ptr<language_model_ranker>{lmr};
+        }
+        throw std::invalid_argument{
+            "loaded ranker is not a language_model_ranker"};
+    }
 
   private:
     /**
@@ -91,6 +159,11 @@ class ranker_loader : public util::factory<ranker_loader, ranker, std::istream&>
 std::unique_ptr<ranker> load_ranker(std::istream&);
 
 /**
+ * Convenience method for loading a language_model_ranker using the factory.
+ */
+std::unique_ptr<language_model_ranker> load_lm_ranker(std::istream&);
+
+/**
  * Factory method for loading a ranker. This should be specialized if your
  * given ranker requires special construction behavior. Otherwise, it is
  * assumed that the ranker has a constructor from a std::istream&.
@@ -108,7 +181,10 @@ std::unique_ptr<ranker> load_ranker(std::istream& in)
 template <class Ranker>
 void register_ranker()
 {
-    ranker_factory::get().add(Ranker::id, make_ranker<Ranker>);
+    ranker_factory::get().add(Ranker::id, [](const cpptoml::table& global,
+                                             const cpptoml::table& local) {
+        return make_ranker<Ranker>(global, local);
+    });
     ranker_loader::get().add(Ranker::id, load_ranker<Ranker>);
 }
 }

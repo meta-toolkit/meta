@@ -3,19 +3,19 @@
  * @author Sean Massung
  */
 
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <unordered_map>
-#include <string>
 #include "cpptoml.h"
-#include "meta/corpus/corpus.h"
-#include "meta/corpus/corpus_factory.h"
 #include "meta/analyzers/analyzer.h"
 #include "meta/analyzers/filters/all.h"
-#include "meta/util/progress.h"
-#include "meta/util/fixed_heap.h"
+#include "meta/corpus/corpus.h"
+#include "meta/corpus/corpus_factory.h"
 #include "meta/logging/logger.h"
+#include "meta/util/fixed_heap.h"
+#include "meta/util/progress.h"
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 using namespace meta;
 
@@ -26,7 +26,8 @@ int main(int argc, char* argv[])
         std::cerr << "Usage: " << argv[0] << " config.toml k" << std::endl;
         std::cerr << "Prints out the top k most frequent terms in the corpus "
                      "according to the filter chain specified in the config "
-                     "file." << std::endl;
+                     "file."
+                  << std::endl;
         return 1;
     }
 
@@ -57,11 +58,9 @@ int main(int argc, char* argv[])
     prog.end();
 
     using pair_t = std::pair<std::string, uint64_t>;
-    auto comp = [](const pair_t& a, const pair_t& b)
-    {
-        return a.second > b.second;
-    };
-    util::fixed_heap<pair_t, decltype(comp)> terms{k, comp};
+    auto terms = util::make_fixed_heap<pair_t>(
+        k,
+        [](const pair_t& a, const pair_t& b) { return a.second > b.second; });
     for (auto& term : counts)
         terms.emplace(term);
 

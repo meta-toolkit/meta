@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
     auto group = config->get_table("ranker");
     if (!group)
         throw std::runtime_error{"\"ranker\" group needed in config"};
-    auto ranker = index::make_ranker(*group);
+    auto ranker = index::make_ranker(*config, *group);
 
     // Get the config group with options specific to this executable.
     auto query_group = config->get_table("query-runner");

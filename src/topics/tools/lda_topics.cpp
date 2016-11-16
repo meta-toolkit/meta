@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -44,13 +44,11 @@ int print_topics(const std::string& config_file, const std::string& filename,
         std::cout << "Topic " << topic << ":" << std::endl;
         std::cout << "-----------------------" << std::endl;
 
-        auto comp = [](const std::pair<term_id, double>& first,
-                       const std::pair<term_id, double>& second)
-        {
-            return first.second > second.second;
-        };
-        util::fixed_heap<std::pair<term_id, double>, decltype(comp)> pairs{
-            num_words, comp};
+        using scored_term = std::pair<term_id, double>;
+        auto pairs = util::make_fixed_heap<scored_term>(
+            num_words, [](const scored_term& a, const scored_term& b) {
+                return a.second > b.second;
+            });
 
         while (stream)
         {

@@ -22,7 +22,7 @@ namespace learn
  * Transformer for converting term frequency vectors into tf-idf weight
  * vectors. This transformation is performed with respect to a specific
  * index::inverted_index that defines the term statistics, and with respect
- * to an index::ranker that defines the "tf-idf" weight (via its
+ * to an index::ranking_function that defines the "tf-idf" weight (via its
  * score_one() function).
  *
  * For example, one can construct a tfidf_transformer with an
@@ -55,7 +55,7 @@ class tfidf_transformer
      * @param idx The index to use for term statistics
      * @param r The ranker to use for defining the weights
      */
-    tfidf_transformer(index::inverted_index& idx, index::ranker& r)
+    tfidf_transformer(index::inverted_index& idx, index::ranking_function& r)
         : idx_(idx),
           rnk_(r),
           sdata_(idx, idx.avg_doc_length(), idx.num_docs(),
@@ -89,7 +89,7 @@ class tfidf_transformer
 
   private:
     index::inverted_index& idx_;
-    index::ranker& rnk_;
+    index::ranking_function& rnk_;
     index::score_data sdata_;
 };
 
@@ -140,7 +140,7 @@ void transform(dataset& dset, TransformFunction&& trans)
  * score_one())
  */
 void tfidf_transform(dataset& dset, index::inverted_index& idx,
-                     index::ranker& rnk)
+                     index::ranking_function& rnk)
 {
     tfidf_transformer transformer{idx, rnk};
     transform(dset, transformer);
