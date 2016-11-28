@@ -38,6 +38,7 @@ class dataset_view
     using size_type = dataset::size_type;
 
     class iterator;
+    using const_iterator = iterator;
 
     dataset_view(const dataset& dset)
         : dataset_view{dset, std::mt19937_64{std::random_device{}()}}
@@ -45,17 +46,36 @@ class dataset_view
         // nothing
     }
 
+    dataset_view(const dataset& dset, dataset::const_iterator begin,
+                 dataset::const_iterator end)
+        : dataset_view{dset, begin, end,
+                       std::mt19937_64{std::random_device{}()}}
+    {
+        // nothing
+    }
+
     template <class RandomEngine>
     dataset_view(const dataset& dset, RandomEngine&& rng)
+        : dataset_view{dset, dset.begin(), dset.end(),
+                       std::forward<RandomEngine>(rng)}
+    {
+        // nothing
+    }
+
+    template <class RandomEngine>
+    dataset_view(const dataset& dset, dataset::const_iterator begin,
+                 dataset::const_iterator end, RandomEngine&& rng)
         : dset_{&dset},
-          indices_(dset.size()),
+          indices_(static_cast<std::size_t>(std::distance(begin, end))),
           rng_(std::forward<RandomEngine>(rng))
     {
-        std::iota(indices_.begin(), indices_.end(), 0);
+        std::iota(indices_.begin(), indices_.end(),
+                  std::distance(dset.begin(), begin));
     }
 
     // subset constructor
-    dataset_view(const dataset_view& dv, iterator first, iterator last)
+    dataset_view(const dataset_view& dv, const_iterator first,
+                 const_iterator last)
         : dset_{dv.dset_}, rng_{dv.rng_}
     {
         assert(first <= last);
@@ -175,7 +195,6 @@ class dataset_view
         const dataset* dset_;
         std::vector<size_type>::const_iterator it_;
     };
-    using const_iterator = iterator;
 
     iterator begin() const
     {
