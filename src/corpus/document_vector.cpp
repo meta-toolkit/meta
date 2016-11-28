@@ -47,6 +47,11 @@ namespace corpus
         return vector_;
     }
 
+    bool document_vector::isEmpty() const
+    {
+        return vector_.size() == 0;
+    }
+
     void document_vector::print()
     {
         for (auto it = vector_.begin(); it != vector_.end(); ++it)

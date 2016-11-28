@@ -11,10 +11,12 @@
 
 #include <utility>
 #include <vector>
+#include <iostream>
 
 #include "meta/meta.h"
 #include "meta/index/inverted_index.h"
 #include "meta/index/feedback/feedback.h"
+#include "meta/corpus/document_vector.h"
 
 namespace meta
 {
@@ -116,11 +118,43 @@ struct ranker_context
         }
     }
 
+    // if we have iterators to a document vector map
+    template<class FilterFunction>
+    ranker_context(inverted_index& inv, std::unordered_map<term_id, float>::iterator begin,
+                   std::unordered_map<term_id, float>::iterator end, FilterFunction&&  filter)
+            : idx(inv), cur_doc{idx.num_docs()}
+    {
+        query_length = 0.0;
+        postings.reserve(static_cast<std::size_t>(std::distance(begin, end)));
+        for (; begin != end; ++begin)
+        {
+            const auto& count = *begin;
+            auto pstream = idx.stream_for(count.first);
+            if (!pstream)
+                continue;
+            postings.emplace_back(*pstream, count.second, count.first);
+            query_length += count.second;
+
+            while (postings.back().begin != postings.back().end
+                   && !filter(postings.back().begin->first))
+                ++postings.back().begin;
+
+            if (postings.back().begin != postings.back().end)
+            {
+                if (postings.back().begin->first < cur_doc)
+                {
+                    cur_doc = postings.back().begin->first;
+                }
+            }
+        }
+    }
+
     inverted_index& idx;
     std::vector<postings_context> postings;
     float query_length;
     doc_id cur_doc;
 };
+
 }
 
 /**
@@ -180,6 +214,15 @@ class ranker
                                          return true;
                                      });
 
+
+    std::vector<search_result> score_vsm(inverted_index& idx,
+                                         corpus::document& query,
+                                         uint64_t num_results = 10,
+                                         const filter_function_type& filter
+                                         = [](doc_id)
+                                         {
+                                             return true;
+                                         });
     /**
      * Computes the contribution to the score of a document for a matched
      * query term.
