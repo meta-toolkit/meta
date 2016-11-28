@@ -25,6 +25,15 @@ std::vector<search_result>
     return score(idx, counts.begin(), counts.end(), num_results, filter);
 }
 
+std::vector<search_result>
+    ranker::score_vsm(inverted_index& idx, corpus::document& query,
+                      uint64_t num_results,
+                      const filter_function_type& filter)
+{
+    auto vsm_map = query.vsm_vector().map();
+    return score(idx, vsm_map.begin(), vsm_map.end(), num_results, filter);
+}
+
 std::vector<search_result> ranker::rank(detail::ranker_context& ctx,
                                         uint64_t num_results,
                                         const filter_function_type& filter)

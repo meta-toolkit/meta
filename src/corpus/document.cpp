@@ -28,6 +28,8 @@ void document::content(const std::string& content,
 {
     content_ = content;
     encoding_ = encoding;
+
+
 }
 
 void document::encoding(const std::string& encoding)
@@ -74,7 +76,6 @@ void document::mdata(std::vector<metadata::field>&& metadata)
 
 document_vector& document::vsm_vector()
 {
-
     return vsm_vector_;
 }
 }

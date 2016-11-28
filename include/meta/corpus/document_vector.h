@@ -46,6 +46,8 @@ class document_vector
          * iterates through the map and prints to std out
          */
         void print();
+
+        bool isEmpty() const;
     private:
         std::unordered_map<term_id, float> vector_;
     };
