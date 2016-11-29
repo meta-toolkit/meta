@@ -1,6 +1,6 @@
 project(meta-feedback)
 
-add_library(meta-feedback rocchio.cpp feedback_factory.cpp)
+add_library(meta-feedback rocchio.cpp feedback_factory.cpp feedback.cpp)
 target_link_libraries(meta-feedback meta-index)
 
 install(TARGETS meta-feedback

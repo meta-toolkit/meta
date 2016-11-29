@@ -4,11 +4,9 @@
 
 #include <iostream>
 #include "meta/index/inverted_index.h"
-#include "meta/index/eval/ir_eval.h"
-#include "meta/index/ranker/ranker.h"
 #include "meta/index/ranker/ranker_factory.h"
 #include "meta/index/feedback/feedback_factory.h"
-#include "meta/index/feedback/rocchio.h"
+#include "meta/index/eval/ir_eval.h"
 
 using namespace meta;
 
@@ -17,45 +15,32 @@ int main(int argc, char* argv[])
     auto config = cpptoml::parse_file(argv[1]);
     auto path = (*config).get_as<std::string>("query-judgements");
     auto feedback_group = config->get_table("feedback");
-
     auto idx = index::make_index<index::dblru_inverted_index>(*config, 30000);
     auto fwd = index::make_index<index::forward_index>(*config);
-
-    std::string test_query = "free time";
-    corpus::document d;
-    d.content(test_query);
-
-    // note that when tokenized, "default-unigram-chain" filtering is done
-    auto counts = idx->tokenize(d);
-
-    // TODO: make this not need to be called explicitly
-    d.vsm_vector().from_feature_map(counts, *idx);
-
     auto ranker_group = config->get_table("ranker");
     auto ranker = index::make_ranker(*ranker_group);
+    auto feedback_impl = index::make_feedback(*feedback_group);
+    std::ifstream queries{"../data/mas/mas-queries.txt"};
 
     auto eval = index::ir_eval(*config);
 
+    int i = 0;
 
-    /* TODO: attach this to the ranker->score function somehow
-     * so we dont need to explicitly call apply_feedback (or even make feedback).
-     * ideally, this functionality will work right "out of the box" assuming
-     * a feedback implementation is defined in config.toml
-     */
-    std::vector<index::search_result> rankings = ranker->score(*idx, d, 50);
-    std::cout << eval.precision(rankings, d.id(), 10) << std::endl;
-    // TODO: explicit feedback?
-    // TODO: forward index support?
+    queries.seekg(0, std::ios::beg);
+    while(queries.good() && i < 70) {
+        std::string query;
+        std::getline(queries, query);
 
-    eval.reset_stats();
+        corpus::document d{doc_id{i}};
+        d.content(query);
 
-    auto feedback_impl = index::make_feedback(*feedback_group);
-    corpus::document transformed = feedback_impl->apply_feedback(d, rankings, *fwd, *idx);
+        auto rankings = ranker->score(*idx, d, 50);
+        auto transformed = feedback_impl->apply_feedback(d, rankings, *fwd, *idx);
+        rankings = ranker->score_vsm(*idx, transformed, 50);
 
-    // TODO: make rankers able to handle vector representation (i.e. work with the below call)
-    rankings = ranker->score_vsm(*idx, transformed, 50);
-
-    std::cout << eval.precision(rankings, d.id(), 10);
+        i++;
+    }
+    std::cout << eval.map() << std::endl;
 
     return 0;
 }
