@@ -1,0 +1,5 @@
+type = "line-corpus"
+
+[[metadata]]
+name = "name"
+type = "string"

@@ -25,10 +25,15 @@ namespace meta
         class feedback
         {
             public:
-                virtual corpus::document apply_feedback(corpus::document &q0,
+                corpus::document apply_feedback(corpus::document &q0,
                                                         std::vector<search_result> &results,
                                                         index::forward_index &fwd,
-                                                        index::inverted_index &idx) = 0; // pure virtual
+                                                        index::inverted_index &idx);
+                virtual corpus::document transform_vector(corpus::document &q0,
+                                                          std::vector<search_result> &results,
+                                                          index::forward_index &fwd,
+                                                          index::inverted_index &idx) = 0;
+                virtual ~feedback() = default;
         };
     }
 }

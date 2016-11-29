@@ -1,0 +1,116 @@
+image compression
+Text Classification
+source code indexing
+machine learning techniques for financial time series analysis
+machine learning neural networks
+Knowledge Graph
+topic modeling
+design of experiments
+big data fraud
+Ranking Algorithms
+common sense machine
+Finding government corruption
+real time machine response
+Unbalanced Classification
+improving document ranking with machine learning
+compression algorithm
+big data unsupervised learning
+Introduction to neural networks
+data mining algorithms
+distributed storage
+document ranking functions
+python
+cloud computing
+artificial intellegence
+web data mining
+Heuristics Approach
+ML
+book recommendations
+Content Based Image Search
+Deep Neural Networks
+Beta-Gamma threshold
+Content-based filtering
+statistics
+Sentiment Analysis
+Recommender systems
+Inverse Text Frequency Smoothing
+Theoretical implications of big data on privacy and surveilance
+legal document review and attorney client privilege
+MapReduce
+Recommendation systems
+recommender system
+Summarization
+Data Science
+machine learning
+document ranking strategies
+Biological engineering
+Machine Learning
+Supervised Machine Learning
+Content based filtering in recommender system
+Deep Learning
+Disease modeling
+CPU design
+recommender systems
+neural networks
+information retrieval text categorization
+data mining
+protected health information
+data mining
+artificial neural network
+machine learning
+data visualization
+Machine Learning
+web search crawler
+sql
+inverted index compression
+text retrieval feedback
+topic detection
+lda
+the basics of options trading
+machine learning search engine
+deep neural networks
+Map Reduce
+ranking using machine learning
+ir on small documents
+collaborative filtering
+artificial intelligence
+MapReduce key-value
+data visualization
+text retrieval
+web search page ranking
+database
+cluster analysis
+support vector model
+statistics
+incremental crawling
+logistic regression ranking
+Supervised Learning
+content based filtering
+electronic discovery
+sentiment analysis
+Google File System
+sentiment analysis
+database design
+vector space model cosine similarity
+Unsupervised Machine Learning
+data mining
+anonymity
+Support Vector Machines
+genomics
+deep learning 101
+sensor data science
+recommendation system
+IR
+latent Dirichlet allocation
+Artificial Intelligence for Medical Field
+GPU processing
+Google
+deep web search
+Text Clustering
+litigation
+Vector Space Model
+recommender system in information retrieval
+Uniqueness ranking function
+browsing
+machine learning
+Recommender System

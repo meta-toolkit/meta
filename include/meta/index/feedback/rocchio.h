@@ -25,7 +25,7 @@ class rocchio : public feedback
         const static constexpr float default_c = 0.0f;
         rocchio(float a = default_a, float b = default_b, float c = default_c);
         rocchio(std::istream& in);
-        corpus::document apply_feedback(corpus::document &q0,
+        corpus::document transform_vector(corpus::document &q0,
                                         std::vector<search_result> &results,
                                         forward_index &fwd,
                                         inverted_index &idx);

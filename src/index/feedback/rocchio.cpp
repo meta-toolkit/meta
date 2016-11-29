@@ -29,7 +29,7 @@ rocchio::rocchio(std::istream& in)
 
 }
 
-corpus::document rocchio::apply_feedback(corpus::document &q0,
+corpus::document rocchio::transform_vector(corpus::document &q0,
                                          std::vector<search_result> &results,
                                          forward_index &fwd,
                                          inverted_index &idx)
@@ -39,12 +39,6 @@ corpus::document rocchio::apply_feedback(corpus::document &q0,
     std::set<doc_id> relevant;
     size_t rel_size = results.size();
     uint64_t irrel_size = fwd.num_docs() - rel_size;
-
-    if (q0_vsm_map.size() == 0)
-    {
-        // does this make sense? should we just return instead?
-        throw feedback_exception{"q0 VSM empty"};
-    }
 
     // a * q0
     if (a_ > 0)
@@ -62,7 +56,7 @@ corpus::document rocchio::apply_feedback(corpus::document &q0,
      */
     if (b_ > 0)
     {
-        // TODO: IDF weighting. common words will have massive weights
+        std::cout << "b: " << q0.content() << std::endl;
         for (size_t i = 0; i < rel_size; i++)
         {
             doc_id d_id = results[i].d_id;
@@ -81,7 +75,6 @@ corpus::document rocchio::apply_feedback(corpus::document &q0,
         }
     }
 
-    // TODO: consider performance implications of this, especially on a large corpus
     if (c_ > 0)
     {
         std::vector<doc_id> all_docs = fwd.docs();
