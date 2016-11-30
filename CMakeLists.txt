@@ -141,7 +141,6 @@ endif()
 
 add_subdirectory(src)
 add_subdirectory(tests)
-add_subdirectory(runner)
 add_subdirectory(deps/cpptoml EXCLUDE_FROM_ALL)
 
 # install our targets defined in this file

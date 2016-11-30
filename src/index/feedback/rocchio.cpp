@@ -1,11 +1,8 @@
 //
 // Created by Collin Gress on 11/6/16.
 //
-
 #include "meta/index/feedback/rocchio.h"
 #include "meta/index/postings_file.h"
-#include "meta/index/ranker/ranker.h"
-#include <iostream>
 #include <set>
 
 namespace meta
@@ -34,8 +31,8 @@ corpus::document rocchio::transform_vector(corpus::document &q0,
                                          forward_index &fwd,
                                          inverted_index &idx)
 {
-    std::unordered_map<term_id, float> q0_vsm_map = q0.vsm_vector().map();
-    std::unordered_map<term_id, float> qm;
+    query_map q0_vsm_map = q0.vsm_vector().map();
+    query_map qm;
     std::set<doc_id> relevant;
     size_t rel_size = results.size();
     uint64_t irrel_size = fwd.num_docs() - rel_size;
@@ -56,7 +53,6 @@ corpus::document rocchio::transform_vector(corpus::document &q0,
      */
     if (b_ > 0)
     {
-        std::cout << "b: " << q0.content() << std::endl;
         for (size_t i = 0; i < rel_size; i++)
         {
             doc_id d_id = results[i].d_id;
@@ -65,7 +61,7 @@ corpus::document rocchio::transform_vector(corpus::document &q0,
             for (const auto& count : postings->counts())
             {
                 term_id t_id = count.first;
-                uint64_t term_count = idx.doc_freq(t_id);
+                uint64_t term_count = idx.term_freq(t_id, d_id);
                 if (qm.find(t_id) == qm.end())
                 {
                     qm[t_id] = 0;
@@ -87,7 +83,7 @@ corpus::document rocchio::transform_vector(corpus::document &q0,
                 for (const auto& count : postings->counts())
                 {
                     term_id t_id = count.first;
-                    uint64_t term_count = idx.doc_freq(t_id);
+                    uint64_t term_count = idx.term_freq(t_id, d_id);
                     if (qm.find(t_id) == qm.end())
                     {
                         qm[t_id] = 0;

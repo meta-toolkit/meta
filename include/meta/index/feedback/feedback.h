@@ -14,6 +14,8 @@ namespace meta
 {
     namespace index
     {
+        using query_map = std::unordered_map<term_id, float>;
+
         struct search_result;
 
         class feedback_exception : public std::runtime_error
