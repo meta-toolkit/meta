@@ -7,6 +7,8 @@ add_executable(search search.cpp)
 target_link_libraries(search meta-ranker
                              meta-sequence-analyzers
                              meta-parser-analyzers)
+add_executable(search-with-feedback search_with_feedback.cpp)
+target_link_libraries(search-with-feedback meta-index meta-ranker meta-feedback)
 
 add_executable(index index.cpp)
 target_link_libraries(index meta-index

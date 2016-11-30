@@ -11,7 +11,7 @@ namespace index
     corpus::document feedback::apply_feedback(corpus::document &q0, std::vector<search_result> &results,
                                               index::forward_index &fwd, index::inverted_index &idx)
     {
-        auto vsm_vector = q0.vsm_vector();
+        auto &vsm_vector = q0.vsm_vector();
 
         if (vsm_vector.map().size() == 0)
         {

@@ -12,6 +12,7 @@ namespace meta
 {
 namespace index
 {
+
 class rocchio : public feedback
 {
     private:

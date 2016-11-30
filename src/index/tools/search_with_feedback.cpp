@@ -31,12 +31,13 @@ int main(int argc, char* argv[])
         std::string query;
         std::getline(queries, query);
 
-        corpus::document d{doc_id{i}};
+        corpus::document d{static_cast<doc_id>(i)};
         d.content(query);
 
         auto rankings = ranker->score(*idx, d, 50);
         auto transformed = feedback_impl->apply_feedback(d, rankings, *fwd, *idx);
         rankings = ranker->score_vsm(*idx, transformed, 50);
+        eval.avg_p(rankings, d.id(), 50);
 
         i++;
     }
