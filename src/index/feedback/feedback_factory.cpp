@@ -20,7 +20,7 @@ void feedback_factory::reg() {
 feedback_factory::feedback_factory()   //here
 {
     reg<rocchio>();
-    reg<ide>();
+    reg<ide_dec_hi>();
 }
 
 std::unique_ptr<feedback> make_feedback(const cpptoml::table& config)
@@ -44,7 +44,7 @@ void feedback_loader::reg()
 feedback_loader::feedback_loader()  //here
 {
     reg<rocchio>();
-    reg<ide>();
+    reg<ide_dec_hi>();
 }
 
 std::unique_ptr<feedback> load_feedback(std::istream& in)
