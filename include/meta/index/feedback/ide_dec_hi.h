@@ -19,7 +19,6 @@ class ide_dec_hi : public feedback
         const float a_; //constant for original query vector
         const float b_; //constant for  relevant doc. vector
         const float c_; //constant for top non-relevant doc.
-        double dot_product();//non rel query vector, );
 
     public:
         //need default values for constants
