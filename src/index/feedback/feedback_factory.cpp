@@ -17,9 +17,10 @@ void feedback_factory::reg() {
     add(Feedback::id, make_feedback<Feedback>);
 }
 
-feedback_factory::feedback_factory()
+feedback_factory::feedback_factory()   //here
 {
     reg<rocchio>();
+    reg<ide>();
 }
 
 std::unique_ptr<feedback> make_feedback(const cpptoml::table& config)
@@ -40,9 +41,10 @@ void feedback_loader::reg()
     add(Feedback::id, load_feedback<Feedback>);
 }
 
-feedback_loader::feedback_loader()
+feedback_loader::feedback_loader()  //here
 {
     reg<rocchio>();
+    reg<ide>();
 }
 
 std::unique_ptr<feedback> load_feedback(std::istream& in)
