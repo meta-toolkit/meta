@@ -54,7 +54,7 @@ FindOrBuildICU(
   URL_HASH MD5=976734806026a4ef8bdd17937c8898b9
 )
 
-add_library(meta-definitions INTERFACE include/meta/index/feedback/ide.h src/index/feedback/ide.cpp)
+add_library(meta-definitions INTERFACE)
 target_include_directories(meta-definitions INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -141,7 +141,6 @@ endif()
 
 add_subdirectory(src)
 add_subdirectory(tests)
-add_subdirectory(runner)
 add_subdirectory(deps/cpptoml EXCLUDE_FROM_ALL)
 
 # install our targets defined in this file
