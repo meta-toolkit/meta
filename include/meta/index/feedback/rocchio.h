@@ -26,7 +26,7 @@ class rocchio : public feedback
         rocchio(float a = default_a, float b = default_b, float c = default_c);
         rocchio(std::istream& in);
         corpus::document apply_feedback(corpus::document &q0,
-                                        std::vector<search_result> &results,
+                                        std::vector<search_result> &results, //results is a reference to a std:vector which contains objects of type search_result
                                         forward_index &fwd,
                                         inverted_index &idx);
 };

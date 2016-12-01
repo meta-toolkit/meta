@@ -1,0 +1,3 @@
+repository='external project URL'
+module='http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz'
+tag='MD5=976734806026a4ef8bdd17937c8898b9'

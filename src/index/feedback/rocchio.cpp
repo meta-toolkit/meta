@@ -34,7 +34,7 @@ corpus::document rocchio::apply_feedback(corpus::document &q0,
                                          forward_index &fwd,
                                          inverted_index &idx)
 {
-    std::unordered_map<term_id, float> q0_vsm_map = q0.vsm_vector().map();
+    std::unordered_map<term_id, float> q0_vsm_map = q0.vsm_vector().map(); //map of original query vector
     std::unordered_map<term_id, float> qm;
     std::set<doc_id> relevant;
     size_t rel_size = results.size();
@@ -94,7 +94,7 @@ corpus::document rocchio::apply_feedback(corpus::document &q0,
                 for (const auto& count : postings->counts())
                 {
                     term_id t_id = count.first;
-                    uint64_t term_count = idx.doc_freq(t_id);
+                    uint64_t term_count = idx.term_freq(t_id, d_id);
                     if (qm.find(t_id) == qm.end())
                     {
                         qm[t_id] = 0;
