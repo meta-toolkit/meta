@@ -1,1 +1,0 @@
-cmd='CC=C:/MinGW/bin/gcc.exe;CXX=C:/MinGW/bin/g++.exe;CFLAGS=;CXXFLAGS=;C:/Users/Greg/meta/deps/icu/src/ExternalICU/source/runConfigureICU;MinGW;--disable-shared;--enable-static;--disable-dyload;--disable-extras;--disable-tests;--disable-samples;--prefix=<INSTALL_DIR>'
