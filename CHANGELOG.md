@@ -62,6 +62,7 @@
 - Add regression tests for rankers MAP and NDCG scores. This adds a new
   dataset `cranfield` that contains non-binary relevance judgments to
   facilitate these new tests.
+- Bump bundled version of ICU to 58.1.
 
 ## Bug Fixes
 - Fix bug in NDCG calculation (ideal-DCG was computed using the wrong
