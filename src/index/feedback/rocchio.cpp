@@ -29,7 +29,7 @@ rocchio::rocchio(std::istream& in)
 corpus::document rocchio::transform_vector(corpus::document &q0,
                                          std::vector<search_result> &results,
                                          forward_index &fwd,
-                                         inverted_index &idx)
+                                         inverted_index &inv)
 {
     query_map q0_vsm_map = q0.vsm_vector().map();
     query_map qm;
@@ -61,7 +61,7 @@ corpus::document rocchio::transform_vector(corpus::document &q0,
             for (const auto& count : postings->counts())
             {
                 term_id t_id = count.first;
-                uint64_t term_count = idx.term_freq(t_id, d_id);
+                double term_count = count.second;
                 if (qm.find(t_id) == qm.end())
                 {
                     qm[t_id] = 0;
@@ -83,7 +83,7 @@ corpus::document rocchio::transform_vector(corpus::document &q0,
                 for (const auto& count : postings->counts())
                 {
                     term_id t_id = count.first;
-                    uint64_t term_count = idx.term_freq(t_id, d_id);
+                    double term_count = count.second;
                     if (qm.find(t_id) == qm.end())
                     {
                         qm[t_id] = 0;

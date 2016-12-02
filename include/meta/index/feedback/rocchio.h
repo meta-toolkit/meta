@@ -29,7 +29,7 @@ class rocchio : public feedback
         corpus::document transform_vector(corpus::document &q0,
                                         std::vector<search_result> &results,
                                         forward_index &fwd,
-                                        inverted_index &idx);
+                                        inverted_index &inv);
 };
 
 template <>
