@@ -18,8 +18,8 @@
 #include "meta/parallel/thread_pool.h"
 #include "meta/util/aligned_allocator.h"
 #include "meta/util/array_view.h"
-#include "meta/util/progress.h"
 #include "meta/util/printing.h"
+#include "meta/util/progress.h"
 #include "meta/util/random.h"
 #include "meta/util/time.h"
 
@@ -42,36 +42,33 @@ std::size_t shuffle_partition(const std::string& prefix, std::size_t max_ram,
     std::size_t total_records = 0;
     coocur_iterator input{prefix + "/coocur.bin"};
 
-    auto elapsed = common::time(
-        [&]()
+    auto elapsed = common::time([&]() {
+        printing::progress progress{" > Shuffling (pass 1): ",
+                                    input.total_bytes()};
+        while (input != coocur_iterator{})
         {
-            printing::progress progress{" > Shuffling (pass 1): ",
-                                        input.total_bytes()};
-            while (input != coocur_iterator{})
+            std::size_t i = 0;
+            for (; i < records.size() && input != coocur_iterator{};
+                 ++i, ++input)
             {
-                std::size_t i = 0;
-                for (; i < records.size() && input != coocur_iterator{};
-                     ++i, ++input)
-                {
-                    progress(input.bytes_read());
-                    records[i] = *input;
-                }
-
-                std::shuffle(records.begin(),
-                             records.begin() + static_cast<diff_type>(i),
-                             engine);
-
-                std::ofstream output{prefix + "/coocur-shuf."
-                                         + std::to_string(chunk_sizes.size())
-                                         + ".tmp",
-                                     std::ios::binary};
-
-                total_records += i;
-                chunk_sizes.push_back(i);
-                for (std::size_t j = 0; j < i; ++j)
-                    io::packed::write(output, records[j]);
+                progress(input.bytes_read());
+                records[i] = *input;
             }
-        });
+
+            std::shuffle(records.begin(),
+                         records.begin() + static_cast<diff_type>(i), engine);
+
+            std::ofstream output{prefix + "/coocur-shuf."
+                                     + std::to_string(chunk_sizes.size())
+                                     + ".tmp",
+                                 std::ios::binary};
+
+            total_records += i;
+            chunk_sizes.push_back(i);
+            for (std::size_t j = 0; j < i; ++j)
+                io::packed::write(output, records[j]);
+        }
+    });
 
     LOG(info) << "Shuffling pass 1 took " << elapsed.count() / 1000.0
               << " seconds" << ENDLG;
@@ -153,26 +150,23 @@ class glove_trainer
     {
         // extract building parameters
         auto prefix = *embed_cfg.get_as<std::string>("prefix");
-        auto max_ram = static_cast<std::size_t>(
-                           embed_cfg.get_as<int64_t>("max-ram").value_or(4096))
+        auto max_ram = embed_cfg.get_as<std::size_t>("max-ram").value_or(4096)
                        * 1024 * 1024;
-        vector_size_ = static_cast<std::size_t>(
-            embed_cfg.get_as<int64_t>("vector-size").value_or(50));
+        vector_size_
+            = embed_cfg.get_as<std::size_t>("vector-size").value_or(50);
 
-        auto num_threads = static_cast<std::size_t>(
-            embed_cfg.get_as<int64_t>("num-threads")
-                .value_or(std::max(1u, std::thread::hardware_concurrency())));
+        auto num_threads
+            = embed_cfg.get_as<std::size_t>("num-threads")
+                  .value_or(std::max(1u, std::thread::hardware_concurrency()));
 
-        auto iters = static_cast<std::size_t>(
-            embed_cfg.get_as<int64_t>("max-iter").value_or(25));
+        auto iters = embed_cfg.get_as<std::size_t>("max-iter").value_or(25);
 
         learning_rate_
             = embed_cfg.get_as<double>("learning-rate").value_or(0.05);
         xmax_ = embed_cfg.get_as<double>("xmax").value_or(100.0);
         scale_ = embed_cfg.get_as<double>("scale").value_or(0.75);
 
-        auto num_rare = static_cast<uint64_t>(
-            embed_cfg.get_as<int64_t>("unk-num-avg").value_or(100));
+        auto num_rare = embed_cfg.get_as<uint64_t>("unk-num-avg").value_or(100);
 
         if (!filesystem::file_exists(prefix + "/vocab.bin"))
         {
@@ -206,15 +200,14 @@ class glove_trainer
         // randomly initialize the word embeddings and biases
         {
             std::mt19937 engine{std::random_device{}()};
-            std::generate(weights_.begin(), weights_.end(), [&]()
-                          {
-                              // use the word2vec style initialization
-                              // I'm not entirely sure why, but this seems
-                              // to do better than initializing the vectors
-                              // to lie in the unit cube. Maybe scaling?
-                              auto rnd = random::bounded_rand(engine, 65536);
-                              return (rnd / 65536.0 - 0.5) / (vector_size_ + 1);
-                          });
+            std::generate(weights_.begin(), weights_.end(), [&]() {
+                // use the word2vec style initialization
+                // I'm not entirely sure why, but this seems
+                // to do better than initializing the vectors
+                // to lie in the unit cube. Maybe scaling?
+                auto rnd = random::bounded_rand(engine, 65536);
+                return (rnd / 65536.0 - 0.5) / (vector_size_ + 1);
+            });
         }
 
         // shuffle the data and partition it into equal parts for each
@@ -322,19 +315,16 @@ class glove_trainer
             futures.reserve(num_threads);
             for (std::size_t t = 0; t < num_threads; ++t)
             {
-                futures.emplace_back(pool.submit_task(
-                    [&, t]()
-                    {
-                        return train_thread(prefix, t, progress, records);
-                    }));
+                futures.emplace_back(pool.submit_task([&, t]() {
+                    return train_thread(prefix, t, progress, records);
+                }));
             }
 
             double total_cost = 0.0;
-            auto elapsed = common::time([&]()
-                                        {
-                                            for (auto& fut : futures)
-                                                total_cost += fut.get();
-                                        });
+            auto elapsed = common::time([&]() {
+                for (auto& fut : futures)
+                    total_cost += fut.get();
+            });
             progress.end();
 
             LOG(progress) << "> Iteration " << i << "/" << iters
@@ -426,10 +416,7 @@ class glove_trainer
                                         num_words};
             io::packed::write(output, vector_size_);
             save_embeddings(output, num_words, num_rare, progress,
-                            [&](uint64_t term)
-                            {
-                                return target_vector(term);
-                            });
+                            [&](uint64_t term) { return target_vector(term); });
         }
 
         // context embeddings
@@ -440,11 +427,9 @@ class glove_trainer
             printing::progress progress{" > Saving context embeddings: ",
                                         num_words};
             io::packed::write(output, vector_size_);
-            save_embeddings(output, num_words, num_rare, progress,
-                            [&](uint64_t term)
-                            {
-                                return context_vector(term);
-                            });
+            save_embeddings(
+                output, num_words, num_rare, progress,
+                [&](uint64_t term) { return context_vector(term); });
         }
     }
 
@@ -467,8 +452,7 @@ class glove_trainer
             const auto& vec = vf(tid);
             std::transform(unk_vec.begin(), unk_vec.end(), vec.begin(),
                            unk_vec.begin(),
-                           [=](double unkweight, double vecweight)
-                           {
+                           [=](double unkweight, double vecweight) {
                                return unkweight + vecweight / num_to_average;
                            });
         }
@@ -479,15 +463,13 @@ class glove_trainer
     void write_normalized(ForwardIterator begin, ForwardIterator end,
                           std::ofstream& output) const
     {
-        auto len = std::sqrt(std::accumulate(begin, end, 0.0,
-                                             [](double accum, double weight)
-                                             {
-                                                 return accum + weight * weight;
-                                             }));
-        std::for_each(begin, end, [&](double weight)
-                      {
-                          io::packed::write(output, weight / len);
-                      });
+        auto len = std::sqrt(
+            std::accumulate(begin, end, 0.0, [](double accum, double weight) {
+                return accum + weight * weight;
+            }));
+        std::for_each(begin, end, [&](double weight) {
+            io::packed::write(output, weight / len);
+        });
     }
 
     util::aligned_vector<double> weights_;

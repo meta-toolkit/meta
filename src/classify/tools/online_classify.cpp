@@ -6,8 +6,8 @@
 #include <iostream>
 
 #include "meta/classify/batch_training.h"
-#include "meta/classify/classifier_factory.h"
 #include "meta/classify/classifier/online_classifier.h"
+#include "meta/classify/classifier_factory.h"
 #include "meta/logging/logger.h"
 #include "meta/parser/analyzers/tree_analyzer.h"
 #include "meta/sequence/analyzers/ngram_pos_analyzer.h"
@@ -38,14 +38,14 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto batch_size = config->get_as<int64_t>("batch-size");
+    auto batch_size = config->get_as<uint64_t>("batch-size");
     if (!batch_size)
     {
         std::cerr << "Missing batch-size in " << argv[1] << std::endl;
         return 1;
     }
 
-    auto test_start = config->get_as<int64_t>("test-start");
+    auto test_start = config->get_as<uint64_t>("test-start");
     if (!test_start)
     {
         std::cerr << "Missing test-start in " << argv[1] << std::endl;
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 
     auto f_idx = index::make_index<index::forward_index>(*config);
 
-    if (static_cast<uint64_t>(*test_start) > f_idx->num_docs())
+    if (*test_start > f_idx->num_docs())
     {
         std::cerr << "The start of the test set is more than the number of "
                      "docs in the index."
@@ -81,24 +81,22 @@ int main(int argc, char* argv[])
     }
 
     auto docs = f_idx->docs();
-    auto test_begin = docs.begin() + *test_start;
+    auto test_begin = docs.begin() + static_cast<std::ptrdiff_t>(*test_start);
 
     std::vector<doc_id> training_set{docs.begin(), test_begin};
     std::vector<doc_id> test_set{test_begin, docs.end()};
 
-    auto dur = common::time(
-        [&]()
-        {
-            classify::batch_train(f_idx, *online_classifier, training_set,
-                                  static_cast<uint64_t>(*batch_size));
+    auto dur = common::time([&]() {
+        classify::batch_train(f_idx, *online_classifier, training_set,
+                              *batch_size);
 
-            classify::multiclass_dataset test_data{f_idx, test_set.begin(),
-                                                   test_set.end()};
+        classify::multiclass_dataset test_data{f_idx, test_set.begin(),
+                                               test_set.end()};
 
-            auto mtrx = classifier->test(test_data);
-            mtrx.print();
-            mtrx.print_stats();
-        });
+        auto mtrx = classifier->test(test_data);
+        mtrx.print();
+        mtrx.print_stats();
+    });
 
     std::cout << "Took " << dur.count() / 1000.0 << "s" << std::endl;
 

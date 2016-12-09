@@ -38,9 +38,27 @@ class multiclass_dataset_view : public learn::dataset_view
         // nothing
     }
 
-    multiclass_dataset_view(const multiclass_dataset_view& mdv, iterator begin,
-                            iterator end)
+    multiclass_dataset_view(const multiclass_dataset_view& mdv,
+                            const_iterator begin, const_iterator end)
         : dataset_view{mdv, begin, end}
+    {
+        // nothing
+    }
+
+    multiclass_dataset_view(const multiclass_dataset& dset,
+                            multiclass_dataset::const_iterator begin,
+                            multiclass_dataset::const_iterator end)
+        : dataset_view{dset, begin, end}
+    {
+        // nothing
+    }
+
+    template <class RandomEngine>
+    multiclass_dataset_view(const multiclass_dataset& dset,
+                            multiclass_dataset::const_iterator begin,
+                            multiclass_dataset::const_iterator end,
+                            RandomEngine&& rng)
+        : dataset_view{dset, begin, end, std::forward<RandomEngine>(rng)}
     {
         // nothing
     }

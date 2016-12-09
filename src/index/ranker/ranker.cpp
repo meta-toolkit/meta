@@ -4,7 +4,6 @@
  * @author Chase Geigle
  */
 
-#include <unordered_map>
 #include "meta/corpus/document.h"
 #include "meta/index/inverted_index.h"
 #include "meta/index/postings_data.h"
@@ -17,9 +16,9 @@ namespace index
 {
 
 std::vector<search_result>
-    ranker::score(inverted_index& idx, const corpus::document& query,
-                  uint64_t num_results /* = 10 */,
-                  const filter_function_type& filter /* return true */)
+ranker::score(inverted_index& idx, const corpus::document& query,
+              uint64_t num_results /* = 10 */,
+              const filter_function_type& filter /* return true */)
 {
     auto counts = idx.tokenize(query);
     return score(idx, counts.begin(), counts.end(), num_results, filter);
@@ -41,12 +40,11 @@ std::vector<search_result> ranker::rank(detail::ranker_context& ctx,
     score_data sd{ctx.idx, ctx.idx.avg_doc_length(), ctx.idx.num_docs(),
                   ctx.idx.total_corpus_terms(), ctx.query_length};
 
-    auto comp = [](const search_result& a, const search_result& b)
-    {
-        // comparison is reversed since we want a min-heap
-        return a.score > b.score;
-    };
-    util::fixed_heap<search_result, decltype(comp)> results{num_results, comp};
+    auto results = util::make_fixed_heap<search_result>(
+        num_results, [](const search_result& a, const search_result& b) {
+            // comparison is reversed since we want a min-heap
+            return a.score > b.score;
+        });
 
     doc_id next_doc{ctx.idx.num_docs()};
     while (ctx.cur_doc < ctx.idx.num_docs())
@@ -97,7 +95,7 @@ std::vector<search_result> ranker::rank(detail::ranker_context& ctx,
     return results.extract_top();
 }
 
-float ranker::initial_score(const score_data&) const
+float ranking_function::initial_score(const score_data&) const
 {
     return 0.0;
 }

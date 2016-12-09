@@ -34,16 +34,17 @@ class dataset
   public:
     using instance_type = instance;
     using const_iterator = std::vector<instance_type>::const_iterator;
-    using iterator = const_iterator;
+    using iterator = std::vector<instance_type>::iterator;
     using size_type = std::vector<instance_type>::size_type;
 
     /**
      * Creates an in-memory dataset from a forward_index and a range of
      * doc_ids, represented as iterators.
      */
-    template <class ForwardIterator>
+    template <class ForwardIterator,
+              class ProgressTrait = printing::default_progress_trait>
     dataset(std::shared_ptr<index::forward_index> idx, ForwardIterator begin,
-            ForwardIterator end)
+            ForwardIterator end, ProgressTrait = ProgressTrait{})
         : total_features_{idx->unique_terms()}
     {
         auto size = static_cast<uint64_t>(std::distance(begin, end));
@@ -53,7 +54,8 @@ class dataset
 
         instances_.reserve(size);
 
-        printing::progress progress{" > Loading instances into memory: ", size};
+        typename ProgressTrait::type progress{
+            " > Loading instances into memory: ", size};
         for (auto doc = 0_inst_id; begin != end; ++begin, ++doc)
         {
             progress(doc);
@@ -70,15 +72,17 @@ class dataset
      * the knn classifier. The id field of the instance_types stored within
      * the dataset is a document_id.
      */
-    template <class ForwardIterator>
+    template <class ForwardIterator,
+              class ProgressTrait = printing::default_progress_trait>
     dataset(std::shared_ptr<index::inverted_index> idx, ForwardIterator begin,
-            ForwardIterator end)
+            ForwardIterator end, ProgressTrait = ProgressTrait{})
         : total_features_{idx->unique_terms()}
     {
         auto size = static_cast<uint64_t>(std::distance(begin, end));
         instances_.reserve(size);
 
-        printing::progress progress{" > Loading instances into memory: ", size};
+        typename ProgressTrait::type progress{
+            " > Loading instances into memory: ", size};
         for (uint64_t pos = 0; begin != end; ++begin, ++pos)
         {
             progress(pos);
@@ -120,7 +124,15 @@ class dataset
     /**
      * @return an iterator to the first instance
      */
-    iterator begin() const
+    const_iterator begin() const
+    {
+        return instances_.begin();
+    }
+
+    /**
+     * @return an iterator to the first instance
+     */
+    iterator begin()
     {
         return instances_.begin();
     }
@@ -128,7 +140,15 @@ class dataset
     /**
      * @return an iterator to one past the end of the dataset
      */
-    iterator end() const
+    const_iterator end() const
+    {
+        return instances_.end();
+    }
+
+    /**
+     * @return an iterator to one past the end of the dataset
+     */
+    iterator end()
     {
         return instances_.end();
     }

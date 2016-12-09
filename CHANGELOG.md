@@ -1,3 +1,73 @@
+# [Unreleased][unreleased]
+## New features
+- Add an `embedding_analyzer` that represents documents with their averaged word
+  vectors.
+- Add a `parallel::reduction` algorithm designed for parallelizing complex
+  accumulation operations (like an E step in an EM algorithm)
+- Parallelize feature counting in feature selector using the new
+  `parallel::reduction`
+- Add a `parallel::for_each_block` algorithm to run functions on
+  (relatively) equal sub-ranges of an iterator range in parallel
+- Add a parallel merge sort as `parallel::sort`
+- Add a `util/traits.h` header for general useful traits
+- Add a Markov model implementation in `sequence::markov_model`
+- Add a generic unsupervised HMM implementation. This implementation
+  supports HMMs with discrete observations (what is used most often) and
+  sequence observations (useful for log mining applications). The
+  forward-backward algorithm is implemented using both the scaling method
+  and the log-space method. The scaling method is used by default, but the
+  log-space method is useful for HMMs with sequence observations to avoid
+  underflow issues when the output probabilities themselves are very small.
+- Add the KL-divergence retrieval function using pseudo-relevance feedback
+  with the two-component mixture-model approach of Zhai and Lafferty,
+  called `kl_divergence_prf`. This ranker internally can use any
+  `language_model_ranker` subclass like `dirichlet_prior` or
+  `jelinek_mercer` to perform the ranking of the feedback set and the
+  result documents with respect to the modified query.
+
+  The EM algorithm used for the two-component mixture model is provided as
+  the `index::feedback::unigram_mixture` free function and returns the
+  feedback model.
+- Add the Rocchio algorithm (`rocchio`) for pseudo-relevance feedback in
+  the vector space model.
+- **Breaking Change.** To facilitate the above to changes, we have also
+  broken the `ranker` hierarchy into one more level. At the top we have
+  `ranker`, which has a pure virtual function `rank()` that can be
+  overridden to provide entirely custom ranking behavior, This is the class
+  the KL-divergence and Rocchio methods derive from, as we need to
+  re-define what it means to rank documents (first retrieving a feedback
+  set, then ranking documents with respect to an updated query).
+
+  Most of the time, however, you will want to derive from the second level
+  `ranking_function`, which is what was called `ranker` before. This class
+  provides a definition of `rank()` to perform document-at-a-time ranking,
+  and expects deriving classes to instead provide `initial_score()` and
+  `score_one()` implementations to define the scoring function used for
+  each document. **Existing code that derived from `ranker` prior to this
+  version of MeTA likely needs to be changed to instead derive from
+  `ranking_function`.**
+- Add the `util::transform_iterator` class and `util::make_transform_iterator`
+  function for providing iterators that transform their output according to
+  a unary function.
+
+## Enhancements
+- Add additional `packed_write` and `packed_read` overloads: for
+  `std::pair`, `stats::dirichlet`, `stats::multinomial`,
+  `util::dense_matrix`, and `util::sparse_vector`
+- Additional functions have been added to `ranker_factory` to allow
+  construction/loading of language_model_ranker subclasses (useful for the
+  `kl_divergence_prf` implementation)
+- Add a `util::make_fixed_heap` helper function to simplify the declaration
+  of `util::fixed_heap` classes with lambda function comparators.
+- Add regression tests for rankers MAP and NDCG scores. This adds a new
+  dataset `cranfield` that contains non-binary relevance judgments to
+  facilitate these new tests.
+- Bump bundled version of ICU to 58.1.
+
+## Bug Fixes
+- Fix bug in NDCG calculation (ideal-DCG was computed using the wrong
+  sorting order for non-binary judgments)
+
 # [v2.4.2][2.4.2]
 ## Bug Fixes
 - Properly shuffle documents when doing an even-split classification test

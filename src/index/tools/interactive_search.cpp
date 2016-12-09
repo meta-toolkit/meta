@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     auto group = config->get_table("ranker");
     if (!group)
         throw std::runtime_error{"\"ranker\" group needed in config file!"};
-    auto ranker = index::make_ranker(*group);
+    auto ranker = index::make_ranker(*config, *group);
 
     // Find the path prefix to each document so we can print out the contents.
     std::string prefix = *config->get_as<std::string>("prefix") + "/"

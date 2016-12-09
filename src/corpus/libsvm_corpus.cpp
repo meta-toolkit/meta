@@ -109,12 +109,11 @@ std::unique_ptr<corpus> make_corpus<libsvm_corpus>(util::string_view prefix,
         }
     }
 
-    auto lines = config.get_as<int64_t>("num-docs");
+    auto lines = config.get_as<uint64_t>("num-docs");
     if (!lines)
         return make_unique<libsvm_corpus>(filename, lbl_type);
     else
-        return make_unique<libsvm_corpus>(filename, lbl_type,
-                                          static_cast<uint64_t>(*lines));
+        return make_unique<libsvm_corpus>(filename, lbl_type, *lines);
 }
 }
 }

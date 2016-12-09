@@ -1,6 +1,7 @@
 project(meta-embeddings)
 
 add_subdirectory(tools)
+add_subdirectory(analyzers)
 
 add_library(meta-embeddings word_embeddings.cpp)
 target_link_libraries(meta-embeddings cpptoml meta-util)
