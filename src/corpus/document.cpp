@@ -28,8 +28,6 @@ void document::content(const std::string& content,
 {
     content_ = content;
     encoding_ = encoding;
-
-
 }
 
 void document::encoding(const std::string& encoding)

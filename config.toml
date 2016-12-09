@@ -5,7 +5,7 @@ function-words = "../data/function-words.txt"
 punctuation = "../data/sentence-boundaries/sentence-punctuation.txt"
 start-exceptions = "../data/sentence-boundaries/sentence-start-exceptions.txt"
 end-exceptions = "../data/sentence-boundaries/sentence-end-exceptions.txt"
-query-judgements = "../data/ceeaus-qrels.txt"
+
 dataset = "ceeaus"
 corpus = "line.toml" # located inside dataset folder
 index = "ceeaus"
@@ -19,7 +19,7 @@ ngram = 1
 filter = "default-unigram-chain"
 
 [query-runner]
-query-judgements = "../data/ceeaus-qrels.txt"  # uncomment to run IR eval
+#query-judgements = "../data/ceeaus-qrels.txt"  # uncomment to run IR eval
 query-path = "../queries.txt"  # create this file!
 trec-format = false            # default: false
 max-results = 10               # default: 10
