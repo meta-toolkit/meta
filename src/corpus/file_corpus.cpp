@@ -73,6 +73,12 @@ document file_corpus::next()
     return doc;
 }
 
+void file_corpus::skip(uint64_t n)
+{
+    cur_ += n;
+    skip_metadata(n);
+}
+
 uint64_t file_corpus::size() const
 {
     return docs_.size();
