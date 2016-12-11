@@ -10,6 +10,7 @@
 #ifndef META_FILE_CORPUS_H_
 #define META_FILE_CORPUS_H_
 
+#include <limits>
 #include <string>
 #include <utility>
 #include <vector>
@@ -51,6 +52,11 @@ class file_corpus : public corpus
      * @return the next document from this corpus
      */
     document next() override;
+
+    /**
+     * Skip the next n documents in this corpus (default = 1).
+     */
+    void skip(uint64_t n = 1) override;
 
     /**
      * @return the number of documents in this corpus

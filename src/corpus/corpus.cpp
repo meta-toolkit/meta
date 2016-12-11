@@ -25,6 +25,11 @@ std::vector<metadata::field> corpus::next_metadata()
     return mdata_parser_->next();
 }
 
+void corpus::skip_metadata(uint64_t n)
+{
+    mdata_parser_->skip(n);
+}
+
 metadata::schema_type corpus::schema() const
 {
     auto schema = mdata_parser_->schema();

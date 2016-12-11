@@ -41,6 +41,11 @@ class metadata_parser
     std::vector<metadata::field> next();
 
     /**
+     * Skips the metadata vector for the next n documents in the file (default = 1)
+     */
+    void skip(uint64_t n = 1);
+
+    /**
      * @return the schema for the metadata in this file
      */
     const metadata::schema_type& schema() const;

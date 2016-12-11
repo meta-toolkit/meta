@@ -49,6 +49,11 @@ class gz_corpus : public corpus
     document next() override;
 
     /**
+     * Skip the next n documents in this corpus (default = 1).
+     */
+    void skip(uint64_t n = 1) override;
+
+    /**
      * @return the number of documents in this corpus
      */
     uint64_t size() const override;

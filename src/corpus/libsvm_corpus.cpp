@@ -3,6 +3,8 @@
  * @author Chase Geigle
  */
 
+#include <limits>
+
 #include "meta/corpus/libsvm_corpus.h"
 #include "meta/io/filesystem.h"
 #include "meta/io/libsvm_parser.h"
@@ -63,6 +65,25 @@ document libsvm_corpus::next()
     std::getline(input_, next_content_);
 
     return doc;
+}
+
+void libsvm_corpus::skip(uint64_t n)
+{
+    uint64_t skips_left = n;
+
+    while (skips_left > 1)
+    {
+        input_.ignore(std::numeric_limits<std::streamsize>::max(), input_.widen('\n'));
+
+        --skips_left;
+    }
+
+    if (skips_left == 1)
+    {
+        std::getline(input_, next_content_);
+    }
+
+    skip_metadata(n);
 }
 
 metadata::schema_type libsvm_corpus::schema() const

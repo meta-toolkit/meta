@@ -55,6 +55,8 @@ class libsvm_corpus : public corpus
 
     document next() override;
 
+    void skip(uint64_t n = 1) override;
+
     uint64_t size() const override;
 
     metadata::schema_type schema() const override;
