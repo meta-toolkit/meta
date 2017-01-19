@@ -52,6 +52,11 @@ class running_stats
      */
     double variance() const;
 
+    /**
+     * @return the total number of items seen thus far
+     */
+    std::size_t size() const;
+
   private:
     /// the current running mean
     double m_k_;

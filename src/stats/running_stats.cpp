@@ -39,5 +39,10 @@ double running_stats::variance() const
 {
     return s_k_ / (num_items_ - 1);
 }
+
+std::size_t running_stats::size() const
+{
+    return num_items_;
+}
 }
 }
