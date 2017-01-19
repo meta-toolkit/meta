@@ -47,11 +47,10 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/findicu)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/meta-cmake/)
 
-# We require Unicode 8 for the unit tests, which was added in ICU 56.1
 FindOrBuildICU(
-  VERSION 58.1
-  URL http://download.icu-project.org/files/icu4c/58.1/icu4c-58_1-src.tgz
-  URL_HASH MD5=1901302aaff1c1633ef81862663d2917
+  VERSION 58.2
+  URL http://download.icu-project.org/files/icu4c/58.2/icu4c-58_2-src.tgz
+  URL_HASH MD5=fac212b32b7ec7ab007a12dff1f3aea1
 )
 
 add_library(meta-definitions INTERFACE)
