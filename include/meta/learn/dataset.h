@@ -45,7 +45,7 @@ class dataset
               class ProgressTrait = printing::default_progress_trait>
     dataset(std::shared_ptr<index::forward_index> idx, ForwardIterator begin,
             ForwardIterator end, ProgressTrait = ProgressTrait{})
-        : total_features_{idx->unique_terms()}
+        : total_features_(idx->unique_terms())
     {
         auto size = static_cast<uint64_t>(std::distance(begin, end));
 
@@ -76,7 +76,7 @@ class dataset
               class ProgressTrait = printing::default_progress_trait>
     dataset(std::shared_ptr<index::inverted_index> idx, ForwardIterator begin,
             ForwardIterator end, ProgressTrait = ProgressTrait{})
-        : total_features_{idx->unique_terms()}
+        : total_features_(idx->unique_terms())
     {
         auto size = static_cast<uint64_t>(std::distance(begin, end));
         instances_.reserve(size);

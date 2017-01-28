@@ -28,9 +28,9 @@ namespace {
  * Checks that a probing strategy probes each element in a range exactly once.
  */
 template <class Strategy>
-void check_range_at(uint64_t hash, uint64_t size) {
-    std::vector<uint64_t> checker(size, 0);
-    const std::vector<uint64_t> gold(size, 1);
+void check_range_at(std::size_t hash, std::size_t size) {
+    std::vector<std::size_t> checker(size, 0);
+    const std::vector<std::size_t> gold(size, 1);
     Strategy strat{hash, size};
     for (uint64_t i = 0; i < checker.size(); ++i)
         ++checker[strat.probe()];
@@ -40,8 +40,8 @@ void check_range_at(uint64_t hash, uint64_t size) {
 
 template <class Strategy>
 void check_range() {
-    std::vector<uint64_t> sizes = {2, 4, 8, 32, 64};
-    std::vector<uint64_t> weird_sizes = {3, 5, 7, 22, 100, 125};
+    std::vector<std::size_t> sizes = {2, 4, 8, 32, 64};
+    std::vector<std::size_t> weird_sizes = {3, 5, 7, 22, 100, 125};
     if (!std::is_same<Strategy, hashing::probing::quadratic>::value)
         sizes.insert(sizes.end(), weird_sizes.begin(), weird_sizes.end());
 

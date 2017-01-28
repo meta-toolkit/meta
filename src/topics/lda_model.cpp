@@ -11,10 +11,10 @@ namespace topics
 {
 
 lda_model::lda_model(std::shared_ptr<index::forward_index> idx,
-                     uint64_t num_topics)
+                     std::size_t num_topics)
     : idx_{std::move(idx)},
       num_topics_{num_topics},
-      num_words_{idx_->unique_terms()}
+      num_words_(idx_->unique_terms())
 {
     /* nothing */
 }

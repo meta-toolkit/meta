@@ -58,7 +58,7 @@ class inverted_index::impl
     void tokenize_docs(corpus::corpus& docs,
                        postings_inverter<inverted_index>& inverter,
                        metadata_writer& mdata_writer, uint64_t ram_budget,
-                       uint64_t num_threads);
+                       std::size_t num_threads);
 
     /**
      * Compresses the large postings file.
@@ -134,7 +134,7 @@ void inverted_index::create_index(const cpptoml::table& config,
 
     auto max_threads = std::thread::hardware_concurrency();
     auto num_threads
-        = config.get_as<unsigned>("indexer-num-threads").value_or(max_threads);
+        = config.get_as<std::size_t>("indexer-num-threads").value_or(max_threads);
     if (num_threads > max_threads)
     {
         num_threads = max_threads;
@@ -190,7 +190,7 @@ void inverted_index::load_index()
 
 void inverted_index::impl::tokenize_docs(
     corpus::corpus& docs, postings_inverter<inverted_index>& inverter,
-    metadata_writer& mdata_writer, uint64_t ram_budget, uint64_t num_threads)
+    metadata_writer& mdata_writer, uint64_t ram_budget, std::size_t num_threads)
 {
     std::mutex mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs.size()};

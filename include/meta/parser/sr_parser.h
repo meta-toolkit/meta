@@ -82,7 +82,7 @@ class sr_parser
         /**
          * How many threads to use for training.
          */
-        uint64_t num_threads = std::thread::hardware_concurrency();
+        std::size_t num_threads = std::thread::hardware_concurrency();
 
         /**
          * The algorithm to use for training. Defaults to
