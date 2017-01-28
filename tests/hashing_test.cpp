@@ -4,11 +4,11 @@
  */
 
 #include <algorithm>
-#include <iterator>
 #include <fstream>
+#include <iterator>
 #include <sstream>
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "bandit/bandit.h"
@@ -110,20 +110,24 @@ void count(Map& map, const std::vector<K>& tokens) {
 }
 
 template <class HashAlgorithm>
-void check_hash(uint64_t seed, util::string_view key, uint64_t expected) {
+void check_hash(typename HashAlgorithm::result_type seed, util::string_view key,
+                typename HashAlgorithm::result_type expected) {
     HashAlgorithm hash{seed};
     hash(key.data(), key.size());
-    AssertThat(static_cast<std::size_t>(hash), Equals(expected));
+    AssertThat(static_cast<typename HashAlgorithm::result_type>(hash),
+               Equals(expected));
 }
 
 template <class HashAlgorithm>
-void check_incremental_hash(uint64_t seed, util::string_view key,
-                            uint64_t expected) {
+void check_incremental_hash(typename HashAlgorithm::result_type seed,
+                            util::string_view key,
+                            typename HashAlgorithm::result_type expected) {
     HashAlgorithm hash{seed};
     hash(key.data(), key.size() / 2);
     hash(key.data() + key.size() / 2, key.size() - key.size() / 2 - 1);
     hash(key.data() + key.size() - 1, 1);
-    AssertThat(static_cast<std::size_t>(hash), Equals(expected));
+    AssertThat(static_cast<typename HashAlgorithm::result_type>(hash),
+               Equals(expected));
 }
 }
 
@@ -252,9 +256,8 @@ go_bandit([]() {
     });
 
     describe("[hashing] farm_hash x64", []() {
-        it("should match test vectors from FarmHash", []() {
-            farm_hash_self_test();
-        });
+        it("should match test vectors from FarmHash",
+           []() { farm_hash_self_test(); });
     });
 
     describe("[hashing] ints", []() {

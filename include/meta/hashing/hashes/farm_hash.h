@@ -247,7 +247,7 @@ class farm_hash
     }
 
   public:
-    using result_type = std::size_t;
+    using result_type = uint64_t;
 
     farm_hash()
         : buf_pos_{reinterpret_cast<uint8_t*>(buffer_.data())}, mixed_{false}
@@ -356,8 +356,7 @@ class farm_hash_seeded : public farm_hash
 
     inline explicit operator result_type()
     {
-        uint64_t result
-            = static_cast<std::size_t>(static_cast<farm_hash&>(*this));
+        auto result = static_cast<result_type>(static_cast<farm_hash&>(*this));
         return farm::hash_len_16(result - seed_.low, seed_.high);
     }
 };

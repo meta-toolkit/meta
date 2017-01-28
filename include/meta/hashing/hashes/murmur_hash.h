@@ -91,10 +91,10 @@ class murmur_hash<4>
     }
 
   public:
-    using result_type = std::size_t;
+    using result_type = uint32_t;
 
-    murmur_hash(std::size_t seed)
-        : out_{static_cast<uint32_t>(seed)}, buflen_{0}, total_length_{0}
+    murmur_hash(result_type seed)
+        : out_{seed}, buflen_{0}, total_length_{0}
     {
     }
 
@@ -132,7 +132,7 @@ class murmur_hash<4>
         }
     }
 
-    explicit operator std::size_t()
+    explicit operator result_type()
     {
         uint32_t k1 = 0;
         switch (buflen_ & 3)
@@ -197,7 +197,7 @@ class murmur_hash<8>
     }
 
   public:
-    using result_type = std::size_t;
+    using result_type = uint64_t;
 
     murmur_hash(uint64_t seed)
         : h1_{seed}, h2_{seed}, buflen_{0}, total_length_{0}
@@ -239,7 +239,7 @@ class murmur_hash<8>
         }
     }
 
-    explicit operator std::size_t()
+    explicit operator result_type()
     {
         uint64_t k1 = 0;
         uint64_t k2 = 0;
