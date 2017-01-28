@@ -27,7 +27,7 @@ namespace probing
 class linear
 {
   public:
-    linear(uint64_t hash, uint64_t capacity) : hash_{hash}, capacity_{capacity}
+    linear(std::size_t hash, std::size_t capacity) : hash_{hash}, capacity_{capacity}
     {
         hash_ %= capacity_;
     }
@@ -35,20 +35,20 @@ class linear
     /**
      * @return the next index to probe in the table
      */
-    uint64_t probe()
+    std::size_t probe()
     {
         return hash_++ % capacity_;
     }
 
   private:
-    uint64_t hash_;
-    uint64_t capacity_;
+    std::size_t hash_;
+    std::size_t capacity_;
 };
 
 class linear_nomod
 {
   public:
-    linear_nomod(uint64_t hash, uint64_t capacity)
+    linear_nomod(std::size_t hash, std::size_t capacity)
         : hash_{hash}, max_{capacity - 1}
     {
         hash_ %= capacity;
@@ -57,7 +57,7 @@ class linear_nomod
     /**
      * @return the next index to probe in the table
      */
-    uint64_t probe()
+    std::size_t probe()
     {
         hash_++;
         if (hash_ > max_)
@@ -66,14 +66,14 @@ class linear_nomod
     }
 
   private:
-    uint64_t hash_;
-    uint64_t max_;
+    std::size_t hash_;
+    std::size_t max_;
 };
 
 class binary
 {
   public:
-    binary(uint64_t hash, uint64_t capacity)
+    binary(std::size_t hash, std::size_t capacity)
         : hash_{hash}, step_{0}, capacity_{capacity}
     {
         hash_ %= capacity;
@@ -82,7 +82,7 @@ class binary
     /**
      * @return the next index to probe in the table
      */
-    uint64_t probe()
+    std::size_t probe()
     {
         // discard hashes that fall off of the table
         for (; (hash_ ^ step_) >= capacity_; ++step_)
@@ -91,9 +91,9 @@ class binary
     }
 
   private:
-    uint64_t hash_;
-    uint64_t step_;
-    uint64_t capacity_;
+    std::size_t hash_;
+    std::size_t step_;
+    std::size_t capacity_;
 };
 
 template <class T, std::size_t Alignment = 64>
@@ -104,9 +104,9 @@ class binary_hybrid
 
     static_assert(Alignment > sizeof(probe_entry),
                   "Alignment should be larger than sizeof(T)");
-    const static uint64_t block_size = Alignment / sizeof(probe_entry);
+    const static std::size_t block_size = Alignment / sizeof(probe_entry);
 
-    binary_hybrid(uint64_t hash, uint64_t capacity)
+    binary_hybrid(std::size_t hash, std::size_t capacity)
         : hash_{hash}, step_{0}, max_{capacity - 1}
     {
         hash_ %= capacity;
@@ -126,7 +126,7 @@ class binary_hybrid
         }
     }
 
-    uint64_t probe()
+    std::size_t probe()
     {
         if (META_LIKELY(step_ < block_size))
         {
@@ -141,10 +141,10 @@ class binary_hybrid
     }
 
   private:
-    uint64_t hash_;
-    uint64_t step_;
-    uint64_t idx_;
-    uint64_t max_;
+    std::size_t hash_;
+    std::size_t step_;
+    std::size_t idx_;
+    std::size_t max_;
 };
 
 // http://stackoverflow.com/questions/2348187
@@ -152,7 +152,7 @@ class binary_hybrid
 class quadratic
 {
   public:
-    quadratic(uint64_t hash, uint64_t capacity)
+    quadratic(std::size_t hash, std::size_t capacity)
         : hash_{hash}, capacity_{capacity}, step_{0}
     {
         hash_ &= (capacity_ - 1);
@@ -162,7 +162,7 @@ class quadratic
      * @note This strategy only will work for power-of-2 capacities!
      * @return the next index to probe in the table
      */
-    uint64_t probe()
+    std::size_t probe()
     {
         auto next = (hash_ + (step_ * (step_ + 1)) / 2) & (capacity_ - 1);
         ++step_;
@@ -170,9 +170,9 @@ class quadratic
     }
 
   private:
-    uint64_t hash_;
-    uint64_t capacity_;
-    uint64_t step_;
+    std::size_t hash_;
+    std::size_t capacity_;
+    std::size_t step_;
 };
 }
 }

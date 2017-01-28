@@ -458,9 +458,10 @@ class storage_base
      * @param key The key to look for
      * @param hc The hash code for the key
      */
-    uint64_t get_idx(const key_type& key, std::size_t hc) const
+    std::size_t get_idx(const key_type& key,
+                        typename hash_type::result_type hc) const
     {
-        probing_strategy strategy{hc, as_derived().capacity()};
+        probing_strategy strategy(hc, as_derived().capacity());
         auto idx = strategy.probe();
         while (as_derived().occupied(idx) && !as_derived().equal(idx, hc, key))
         {

@@ -14,7 +14,7 @@ namespace topics
 {
 
 lda_scvb::lda_scvb(std::shared_ptr<index::forward_index> idx,
-                   uint64_t num_topics, double alpha, double beta,
+                   std::size_t num_topics, double alpha, double beta,
                    uint64_t minibatch_size)
     : lda_model{std::move(idx), num_topics},
       alpha_{alpha},

@@ -3,19 +3,19 @@
  * @author Chase Geigle
  */
 
-#include <random>
+#include "meta/topics/lda_cvb.h"
 #include "meta/index/postings_data.h"
 #include "meta/logging/logger.h"
-#include "meta/topics/lda_cvb.h"
 #include "meta/util/progress.h"
+#include <random>
 
 namespace meta
 {
 namespace topics
 {
 
-lda_cvb::lda_cvb(std::shared_ptr<index::forward_index> idx, uint64_t num_topics,
-                 double alpha, double beta)
+lda_cvb::lda_cvb(std::shared_ptr<index::forward_index> idx,
+                 std::size_t num_topics, double alpha, double beta)
     : lda_model{std::move(idx), num_topics}
 {
     gamma_.resize(idx_->num_docs());

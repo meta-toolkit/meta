@@ -112,10 +112,10 @@ class perfect_hash_builder
 
     struct hashed_key
     {
-        std::size_t idx;
+        uint64_t idx;
         K key;
 
-        hashed_key(std::size_t index, const K& akey) : idx{index}, key{akey}
+        hashed_key(uint64_t index, const K& akey) : idx{index}, key{akey}
         {
             // nothing
         }

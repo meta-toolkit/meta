@@ -17,7 +17,7 @@ namespace topics
 {
 
 lda_gibbs::lda_gibbs(std::shared_ptr<index::forward_index> idx,
-                     uint64_t num_topics, double alpha, double beta)
+                     std::size_t num_topics, double alpha, double beta)
     : lda_model{std::move(idx), num_topics}
 {
     doc_word_topic_.resize(idx_->num_docs());

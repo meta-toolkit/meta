@@ -43,7 +43,7 @@ class perfect_hash
         using meta::hashing::hash_append;
         farm_hash_seeded hasher{bucket_seed_};
         hash_append(hasher, key);
-        auto hash = static_cast<std::size_t>(hasher);
+        auto hash = static_cast<farm_hash_seeded::result_type>(hasher);
         auto bucket_id = hash % seeds_.size();
         auto seed = seeds_[bucket_id];
         auto pos = farm::hash_len_16(hash, seed) % num_bins_;

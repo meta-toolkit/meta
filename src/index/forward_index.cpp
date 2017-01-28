@@ -53,7 +53,7 @@ class forward_index::impl
      * merged.
      */
     void tokenize_docs(corpus::corpus& corpus, metadata_writer& mdata_writer,
-                       uint64_t ram_budget, uint64_t num_threads);
+                       uint64_t ram_budget, std::size_t num_threads);
 
     /**
      * Merges together num_chunks number of intermediate chunks, using the
@@ -255,7 +255,7 @@ void forward_index::create_index(const cpptoml::table& config,
             impl_->load_labels(docs.size());
 
             auto max_threads = std::thread::hardware_concurrency();
-            auto num_threads = config.get_as<unsigned>("indexer-num-threads")
+            auto num_threads = config.get_as<std::size_t>("indexer-num-threads")
                                    .value_or(max_threads);
             if (num_threads > max_threads)
             {
@@ -294,7 +294,7 @@ void forward_index::create_index(const cpptoml::table& config,
 void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                                         metadata_writer& mdata_writer,
                                         uint64_t ram_budget,
-                                        uint64_t num_threads)
+                                        std::size_t num_threads)
 {
     std::mutex io_mutex;
     std::mutex corpus_mutex;

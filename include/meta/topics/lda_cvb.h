@@ -42,7 +42,7 @@ class lda_cvb : public lda_model
      * @param beta The hyperparameter for the Dirichlet prior over
      *  \f$\theta\f$
      */
-    lda_cvb(std::shared_ptr<index::forward_index> idx, uint64_t num_topics,
+    lda_cvb(std::shared_ptr<index::forward_index> idx, std::size_t num_topics,
             double alpha, double beta);
 
     /**

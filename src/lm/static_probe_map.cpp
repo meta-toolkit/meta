@@ -3,8 +3,8 @@
  * @author Sean Massung
  */
 
-#include "meta/hashing/hash.h"
 #include "meta/lm/static_probe_map.h"
+#include "meta/hashing/hash.h"
 
 namespace meta
 {
@@ -61,11 +61,13 @@ util::optional<lm_node> static_probe_map::find_hash(uint64_t hashed) const
     }
 }
 
-uint64_t static_probe_map::hash(const std::vector<term_id>& tokens) const
+hashing::murmur_hash<>::result_type
+static_probe_map::hash(const std::vector<term_id>& tokens) const
 {
-    hashing::murmur_hash<> hasher(seed_);
+    hashing::murmur_hash<> hasher{
+        static_cast<hashing::murmur_hash<>::result_type>(seed_)};
     hash_append(hasher, tokens);
-    return static_cast<std::size_t>(hasher);
+    return static_cast<hashing::murmur_hash<>::result_type>(hasher);
 }
 }
 }

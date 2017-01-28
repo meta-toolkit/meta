@@ -74,7 +74,7 @@ class_label knn::classify(const feature_vector& instance) const
             "k must be smaller than the "
             "number of documents in the index (training documents)"};
 
-    analyzers::feature_map<uint64_t> query{instance.size()};
+    analyzers::feature_map<uint64_t> query(instance.size());
     for (const auto& count : instance)
         query[inv_idx_->term_text(count.first)] += count.second;
     assert(query.size() > 0);

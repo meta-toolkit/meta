@@ -16,7 +16,7 @@
 using namespace meta;
 
 template <class Model, class Index>
-int run_lda(Index& idx, uint64_t num_iters, uint64_t topics, double alpha,
+int run_lda(Index& idx, uint64_t num_iters, std::size_t topics, double alpha,
             double beta, const std::string& save_prefix)
 {
     Model model{idx, topics, alpha, beta};
@@ -63,7 +63,7 @@ int run_lda(const std::string& config_file)
     auto iters = *lda_group->get_as<uint64_t>("max-iters");
     auto alpha = *lda_group->get_as<double>("alpha");
     auto beta = *lda_group->get_as<double>("beta");
-    auto topics = *lda_group->get_as<uint64_t>("topics");
+    auto topics = *lda_group->get_as<std::size_t>("topics");
     auto save_prefix = *lda_group->get_as<std::string>("model-prefix");
 
     auto f_idx

@@ -19,7 +19,7 @@ double odds_ratio::score(const class_label& lbl, term_id tid) const
     double denominator = (1.0 - p_tc) * p_tnc;
 
     // avoid divide by zero
-    if (denominator == 0.0)
+    if (denominator <= 1e-20)
         return 0.0;
 
     return std::log(numerator / denominator);
