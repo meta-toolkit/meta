@@ -30,14 +30,6 @@ include(deps/meta-cmake/CompilerKludges.cmake)
 find_package(Threads REQUIRED)
 find_package(ZLIB REQUIRED)
 
-# Warn users that are using a 32-bit system
-if (CMAKE_SIZEOF_VOID_P LESS 8)
-  message(WARNING "You appear to be running on a 32-bit system. Support \
-    for 32-bit systems is provided on a best-effort basis; if at all \
-    possible, we strongly recommend that you use  MeTA on a 64-bit \
-    platform.")
-endif()
-
 cmake_push_check_state()
 
 # Work around CMake not propagating the standard flag down to the compiler
@@ -149,6 +141,14 @@ endif()
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(deps/cpptoml EXCLUDE_FROM_ALL)
+
+# Warn users that are using a 32-bit system
+if (CMAKE_SIZEOF_VOID_P LESS 8)
+  message(WARNING "You appear to be running on a 32-bit system. Support \
+    for 32-bit systems is provided on a best-effort basis; if at all \
+    possible, we strongly recommend that you use  MeTA on a 64-bit \
+    platform.")
+endif()
 
 # install our targets defined in this file
 install(TARGETS meta-definitions
