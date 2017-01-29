@@ -96,7 +96,7 @@ test-sections = [23, 23]
 
 [embeddings]
 prefix = "word-embeddings"
-filter = [{type = "icu-tokenizer"}, {type = "lowercase"}]
+filter = [{type = "icu-tokenizer", suppress-tags = true}, {type = "lowercase"}]
 vector-size = 50
 [embeddings.vocab]
 min-count = 10
