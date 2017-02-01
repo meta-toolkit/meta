@@ -3,7 +3,6 @@
  * @author Sean Massung
  */
 
-#include "meta/index/forward_index.h"
 #include "cpptoml.h"
 #include "meta/analyzers/analyzer.h"
 #include "meta/corpus/corpus.h"
@@ -12,6 +11,7 @@
 #include "meta/hashing/probe_map.h"
 #include "meta/index/chunk_reader.h"
 #include "meta/index/disk_index_impl.h"
+#include "meta/index/forward_index.h"
 #include "meta/index/inverted_index.h"
 #include "meta/index/metadata_writer.h"
 #include "meta/index/postings_file.h"
@@ -291,47 +291,58 @@ void forward_index::create_index(const cpptoml::table& config,
     LOG(info) << "Done creating index: " << index_name() << ENDLG;
 }
 
+namespace
+{
+struct local_storage
+{
+    local_storage(const std::string& chunk_path,
+                  const std::unique_ptr<analyzers::analyzer>& analyzer)
+        : chunk_{chunk_path, std::ios::binary}, analyzer_{analyzer->clone()}
+    {
+        // nothing
+    }
+
+    std::ofstream chunk_;
+    std::unique_ptr<analyzers::analyzer> analyzer_;
+};
+}
+
 void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                                         metadata_writer& mdata_writer,
                                         uint64_t ram_budget,
                                         std::size_t num_threads)
 {
     std::mutex io_mutex;
-    std::mutex corpus_mutex;
     std::mutex vocab_mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs.size()};
 
     hashing::probe_map<std::string, term_id> vocab;
     bool exceeded_budget = false;
-    auto task = [&](size_t chunk_id) {
-        std::ofstream chunk{idx_->index_name() + "/chunk-"
-                                + std::to_string(chunk_id),
-                            std::ios::binary};
-        auto analyzer = analyzer_->clone();
-        while (true)
-        {
-            util::optional<corpus::document> doc;
-            {
-                std::lock_guard<std::mutex> lock{corpus_mutex};
+    std::atomic_size_t chunk_id{0};
 
-                if (!docs.has_next())
-                    return;
-
-                doc = docs.next();
-            }
+    parallel::thread_pool pool{num_threads};
+    corpus::parallel_consume(
+        docs, pool,
+        [&]() {
+            auto cid = chunk_id.fetch_add(1);
+            return local_storage{idx_->index_name() + "/chunk-"
+                                     + std::to_string(cid),
+                                 analyzer_};
+        },
+        [&](local_storage& ls, const corpus::document& doc) {
             {
                 std::lock_guard<std::mutex> lock{io_mutex};
-                progress(doc->id());
+                progress(doc.id());
             }
 
-            auto counts = analyzer->analyze<double>(*doc);
+            auto counts = ls.analyzer_->analyze<double>(doc);
 
             // warn if there is an empty document
             if (counts.empty())
             {
                 std::lock_guard<std::mutex> lock{io_mutex};
                 LOG(progress) << '\n' << ENDLG;
-                LOG(warning) << "Empty document (id = " << doc->id()
+                LOG(warning) << "Empty document (id = " << doc.id()
                              << ") generated!" << ENDLG;
             }
 
@@ -341,8 +352,8 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                     return acc + std::round(count.second);
                 });
 
-            mdata_writer.write(doc->id(), length, counts.size(), doc->mdata());
-            idx_->impl_->set_label(doc->id(), doc->label());
+            mdata_writer.write(doc.id(), length, counts.size(), doc.mdata());
+            idx_->impl_->set_label(doc.id(), doc.label());
 
             forward_index::postings_data_type::count_t pd_counts;
             pd_counts.reserve(counts.size());
@@ -369,20 +380,10 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                 }
             }
 
-            forward_index::postings_data_type pdata{doc->id()};
+            forward_index::postings_data_type pdata{doc.id()};
             pdata.set_counts(std::move(pd_counts));
-            pdata.write_packed(chunk);
-        }
-    };
-
-    parallel::thread_pool pool{num_threads};
-    std::vector<std::future<void>> futures;
-    futures.reserve(num_threads);
-    for (size_t i = 0; i < num_threads; ++i)
-        futures.emplace_back(pool.submit_task(std::bind(task, i)));
-
-    for (auto& fut : futures)
-        fut.get();
+            pdata.write_packed(ls.chunk_);
+        });
 
     progress.end();
 
