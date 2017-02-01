@@ -193,6 +193,8 @@ int main(int argc, char** argv)
         = embed_cfg->get_as<std::size_t>("window-size").value_or(15);
     auto max_ram = embed_cfg->get_as<std::size_t>("max-ram").value_or(4096)
                    * 1024 * 1024;
+    auto break_on_tags
+        = embed_cfg->get_as<bool>("break-on-tags").value_or(false);
 
     if (!filesystem::file_exists(vocab_filename))
     {
@@ -243,11 +245,11 @@ int main(int argc, char** argv)
             {
                 auto tok = stream->next();
 
-                if (tok == "<s>")
+                if (tok == "<s>" && break_on_tags)
                 {
                     history.clear();
                 }
-                else if (tok == "</s>")
+                else if (tok == "</s>" && break_on_tags)
                 {
                     continue;
                 }

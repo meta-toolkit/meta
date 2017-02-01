@@ -57,6 +57,12 @@
   `config.toml.` (Note that whitespace tokens are still needed if using a
   `sentence_boundary` filter but, in nearly all circumstances,
   `icu_tokenizer` should be preferred.)
+- **Breaking Change.** Co-occurrence counting for embeddings now uses
+  history that crosses sentence boundaries by default. The old behavior
+  (clearing the history when starting a new sentence) can be obtained by
+  ensuring that a tokenizer is being used that emits sentence boundary tags
+  and by setting `break-on-tags = true` in the `[embeddings]` table of
+  `config.toml`.
 
 ## Enhancements
 - Add additional `packed_write` and `packed_read` overloads: for
