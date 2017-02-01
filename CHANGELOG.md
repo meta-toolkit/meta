@@ -49,6 +49,14 @@
 - Add the `util::transform_iterator` class and `util::make_transform_iterator`
   function for providing iterators that transform their output according to
   a unary function.
+- **Breaking Change.** `whitespace_tokenizer` now emits *only* word tokens
+  by default, suppressing all whitespace tokens. The old default was to
+  emit tokens containing whitespace in addition to actual word tokens. The
+  old behavior can be obtained by passing `false` to its constructor, or
+  setting `suppress-whitespace = false` in its configuration group in
+  `config.toml.` (Note that whitespace tokens are still needed if using a
+  `sentence_boundary` filter but, in nearly all circumstances,
+  `icu_tokenizer` should be preferred.)
 
 ## Enhancements
 - Add additional `packed_write` and `packed_read` overloads: for
