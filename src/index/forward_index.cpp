@@ -3,34 +3,22 @@
  * @author Sean Massung
  */
 
-#include "meta/index/forward_index.h"
-#include "cpptoml.h"
 #include "meta/analyzers/analyzer.h"
-#include "meta/corpus/corpus.h"
-#include "meta/corpus/corpus_factory.h"
 #include "meta/corpus/libsvm_corpus.h"
 #include "meta/hashing/probe_map.h"
 #include "meta/index/chunk_reader.h"
 #include "meta/index/disk_index_impl.h"
+#include "meta/index/forward_index.h"
 #include "meta/index/inverted_index.h"
 #include "meta/index/metadata_writer.h"
 #include "meta/index/postings_file.h"
 #include "meta/index/postings_file_writer.h"
 #include "meta/index/postings_inverter.h"
-#include "meta/index/string_list.h"
-#include "meta/index/string_list_writer.h"
-#include "meta/index/vocabulary_map.h"
 #include "meta/index/vocabulary_map_writer.h"
 #include "meta/io/libsvm_parser.h"
-#include "meta/io/moveable_stream.h"
 #include "meta/logging/logger.h"
-#include "meta/parallel/thread_pool.h"
-#include "meta/util/disk_vector.h"
-#include "meta/util/mapping.h"
 #include "meta/util/pimpl.tcc"
 #include "meta/util/printing.h"
-#include "meta/util/shim.h"
-#include "meta/util/time.h"
 
 namespace meta
 {
