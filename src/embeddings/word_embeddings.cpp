@@ -8,6 +8,7 @@
  */
 
 #include "meta/embeddings/word_embeddings.h"
+#include "meta/io/filesystem.h"
 #include "meta/io/packed.h"
 #include "meta/math/vector.h"
 #include "meta/util/fixed_heap.h"
@@ -164,6 +165,10 @@ word_embeddings load_embeddings(const cpptoml::table& config)
     if (!prefix)
         throw word_embeddings_exception{
             "missing prefix key in configuration file"};
+
+    if (!filesystem::exists(*prefix))
+        throw word_embeddings_exception{"embeddings directory does not exist: "
+                                        + *prefix};
 
     std::ifstream vocab{*prefix + "/vocab.bin", std::ios::binary};
     if (!vocab)
