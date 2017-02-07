@@ -84,14 +84,21 @@ namespace util
  *     A unary function that is called once per every unique Record after
  *     merging.
  *
+ * - ProgresTrait:
+ *     A traits class whose type indicates the progress reporting object to
+ *     use. By default, this is meta::printing::default_progress_trait, but
+ *     progress reporting can be silenced using
+ *     meta::printing::no_progress_trait.
+ *
  * @return the total number of unique Records that were written to the
  * OutputStream
  */
 template <class ForwardIterator, class RecordHandler, class Compare,
-          class ShouldMerge>
+          class ShouldMerge,
+          class ProgressTrait = printing::default_progress_trait>
 uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
                         Compare&& record_comp, ShouldMerge&& should_merge,
-                        RecordHandler&& output)
+                        RecordHandler&& output, ProgressTrait = ProgressTrait{})
 {
     using ChunkIterator = typename ForwardIterator::value_type;
 
@@ -100,7 +107,7 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
             return acc + chunk.total_bytes();
         });
 
-    printing::progress progress{" > Merging: ", to_read};
+    typename ProgressTrait::type progress{" > Merging: ", to_read};
 
     uint64_t total_read = std::accumulate(
         begin, end, 0ul, [](uint64_t acc, const ChunkIterator& chunk) {
@@ -162,16 +169,17 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
  * A simplified wrapper for multiway_merge that uses the default comparison
  * (operator<) and merge criteria (operator==).
  */
-template <class ForwardIterator, class RecordHandler>
+template <class ForwardIterator, class RecordHandler,
+          class ProgressTrait = printing::default_progress_trait>
 uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
-                        RecordHandler&& output)
+                        RecordHandler&& output, ProgressTrait = ProgressTrait{})
 {
     using Record = typename std::remove_reference<decltype(**begin)>::type;
 
     auto record_comp = [](const Record& a, const Record& b) { return a < b; };
     auto record_equal = [](const Record& a, const Record& b) { return a == b; };
     return multiway_merge(begin, end, record_comp, record_equal,
-                          std::forward<RecordHandler>(output));
+                          std::forward<RecordHandler>(output), ProgressTrait{});
 }
 
 /**
