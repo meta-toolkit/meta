@@ -18,6 +18,7 @@
 
 #include "meta/config.h"
 #include "meta/io/filesystem.h"
+#include "meta/io/mmap_file.h"
 #include "meta/io/moveable_stream.h"
 #include "meta/io/packed.h"
 #include "meta/util/progress.h"
@@ -198,7 +199,7 @@ class chunk_iterator
      * @param filename The file to read from
      */
     chunk_iterator(const std::string& filename)
-        : input_{filename, std::ios::binary},
+        : input_{filename},
           bytes_read_{0},
           total_bytes_{filesystem::file_size(filename)}
     {
@@ -214,15 +215,15 @@ class chunk_iterator
      */
     chunk_iterator& operator++()
     {
-        if (input_.stream().peek() == EOF)
+        if (input_.peek() == EOF)
         {
-            input_.stream().close();
+            input_.close();
 
             assert(*this == chunk_iterator{});
             return *this;
         }
 
-        bytes_read_ += io::packed::read(input_.stream(), record_);
+        bytes_read_ += io::packed::read(input_, record_);
         return *this;
     }
 
@@ -255,11 +256,11 @@ class chunk_iterator
      */
     bool operator==(const chunk_iterator& other) const
     {
-        return !input_.stream().is_open() && !other.input_.stream().is_open();
+        return !input_.is_open() && !other.input_.is_open();
     }
 
   private:
-    io::mifstream input_;
+    io::mmap_ifstream input_;
     Record record_;
     uint64_t bytes_read_;
     uint64_t total_bytes_;
