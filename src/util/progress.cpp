@@ -56,6 +56,7 @@ void progress::print()
     auto end = it + static_cast<std::ptrdiff_t>(max_len * percent);
     std::fill(it, end, '=');
     *end = '>';
+    std::fill(end + 1, barend, ' ');
     it = barend;
     *it++ = ']';
     *it++ = ' ';
