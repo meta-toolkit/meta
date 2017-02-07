@@ -271,6 +271,48 @@ bool operator!=(const chunk_iterator<Record>& a,
 {
     return !(a == b);
 }
+
+/**
+ * A simple implementation of the ChunkIterator concept that reads Records
+ * from a binary file using io::packed::read and deletes the underlying
+ * file when it reaches EOF.
+ */
+template <class Record>
+class destructive_chunk_iterator : public chunk_iterator<Record>
+{
+  public:
+    using base_iterator = chunk_iterator<Record>;
+
+    destructive_chunk_iterator() = default;
+
+    destructive_chunk_iterator(const std::string& filename)
+        : base_iterator(filename), filename_{filename}
+    {
+        // nothing
+    }
+
+    destructive_chunk_iterator& operator++()
+    {
+        ++base();
+        if (base() == base_iterator{})
+            filesystem::delete_file(filename_);
+
+        return *this;
+    }
+
+    const std::string& filename() const
+    {
+        return filename_;
+    }
+
+  private:
+    base_iterator& base()
+    {
+        return static_cast<base_iterator&>(*this);
+    }
+
+    const std::string filename_;
+};
 }
 }
 #endif
