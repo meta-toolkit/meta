@@ -22,6 +22,16 @@ confusion_matrix::confusion_matrix()
     /* nothing */
 }
 
+void confusion_matrix::add_fold_accuracy(double acc)
+{
+    fold_acc_.push_back(acc);
+}
+
+std::vector<double> confusion_matrix::fold_accuracy() const
+{
+    return fold_acc_;
+}
+
 void confusion_matrix::add(const predicted_label& predicted,
                            const class_label& actual, size_t times)
 {
