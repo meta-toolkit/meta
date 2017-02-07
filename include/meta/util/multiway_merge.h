@@ -85,7 +85,7 @@ namespace util
  *     A unary function that is called once per every unique Record after
  *     merging.
  *
- * - ProgresTrait:
+ * - ProgressTrait:
  *     A traits class whose type indicates the progress reporting object to
  *     use. By default, this is meta::printing::default_progress_trait, but
  *     progress reporting can be silenced using

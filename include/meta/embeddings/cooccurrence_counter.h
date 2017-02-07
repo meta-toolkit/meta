@@ -1,5 +1,5 @@
 /**
- * @file coocurrence_counter.h
+ * @file cooccurrence_counter.h
  * @author Chase Geigle
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -7,8 +7,8 @@
  * project.
  */
 
-#ifndef META_EMBEDDINGS_COOCCUR_BUFFER_H_
-#define META_EMBEDDINGS_COOCCUR_BUFFER_H_
+#ifndef META_EMBEDDINGS_COOCCURRENCE_COUNTER_H_
+#define META_EMBEDDINGS_COOCCURRENCE_COUNTER_H_
 
 #include <atomic>
 

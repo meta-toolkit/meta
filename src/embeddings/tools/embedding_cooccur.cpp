@@ -1,5 +1,5 @@
 /**
- * @file embedding_coocur.cpp
+ * @file embedding_cooccur.cpp
  * @author Chase Geigle
  *
  * This tool builds the weighted cooccurrence matrix for the GloVe training

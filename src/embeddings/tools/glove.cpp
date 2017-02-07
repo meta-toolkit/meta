@@ -179,7 +179,7 @@ class glove_trainer
         if (!filesystem::file_exists(prefix + "/cooccur.bin"))
         {
             LOG(fatal)
-                << "Coocurrence matrix has not yet been generated, please "
+                << "Cooccurrence matrix has not yet been generated, please "
                    "do this before learning word embeddings"
                 << ENDLG;
             throw glove_exception{"no cooccurrence matrix found in " + prefix};
