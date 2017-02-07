@@ -102,7 +102,7 @@ void progress::end()
     }
 }
 
-void progress::clear() const
+void progress::clear()
 {
     LOG(progress) << '\r' << std::string(80, ' ') << '\r' << ENDLG;
 }
