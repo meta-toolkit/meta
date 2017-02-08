@@ -31,7 +31,7 @@ class semaphore
     /**
      * Constructs the semaphore to allow count number of threads at a time.
      */
-    semaphore(unsigned count) : count_{count}
+    semaphore(std::size_t count) : count_{count}
     {
         // nothing
     }
@@ -67,7 +67,7 @@ class semaphore
     friend wait_guard;
 
   private:
-    unsigned count_;
+    std::size_t count_;
     std::mutex mutex_;
     std::condition_variable cond_;
 };

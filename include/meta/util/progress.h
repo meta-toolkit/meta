@@ -75,7 +75,7 @@ class progress
     /**
      * Clears the last line the progress bar wrote.
      */
-    void clear() const;
+    static void clear();
 
   private:
     void print();

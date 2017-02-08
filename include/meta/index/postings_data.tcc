@@ -194,13 +194,15 @@ uint64_t length(const T& elem,
 }
 
 template <class PrimaryKey, class SecondaryKey, class FeatureValue>
+template <class InputStream>
 uint64_t postings_data<PrimaryKey, SecondaryKey, FeatureValue>::read_packed(
-    std::istream& in)
+    InputStream& in)
 {
-    if (in.get() == EOF)
+    if (in.peek() == EOF)
+    {
+        in.get();
         return 0;
-    else
-        in.unget();
+    }
 
     auto bytes = io::packed::read(in, p_id_);
 

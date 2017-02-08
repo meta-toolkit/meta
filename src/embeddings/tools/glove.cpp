@@ -2,7 +2,7 @@
  * @file glove.cpp
  * @author Chase Geigle
  *
- * This tool builds word embedding vectors from a weighted coocurrence
+ * This tool builds word embedding vectors from a weighted cooccurrence
  * matrix using the GloVe model.
  *
  * @see http://nlp.stanford.edu/projects/glove/
@@ -11,7 +11,7 @@
 #include <thread>
 
 #include "cpptoml.h"
-#include "meta/embeddings/coocur_iterator.h"
+#include "meta/embeddings/cooccur_iterator.h"
 #include "meta/io/filesystem.h"
 #include "meta/io/packed.h"
 #include "meta/logging/logger.h"
@@ -30,25 +30,25 @@ std::size_t shuffle_partition(const std::string& prefix, std::size_t max_ram,
 {
     using namespace embeddings;
 
-    using vec_type = std::vector<coocur_record>;
+    using vec_type = std::vector<cooccur_record>;
     using diff_type = vec_type::iterator::difference_type;
 
     std::mt19937 engine{std::random_device{}()};
-    vec_type records(max_ram / sizeof(coocur_record));
+    vec_type records(max_ram / sizeof(cooccur_record));
 
     // read in RAM sized chunks and shuffle in memory and write out to disk
     std::vector<uint64_t> chunk_sizes;
 
     std::size_t total_records = 0;
-    coocur_iterator input{prefix + "/coocur.bin"};
+    cooccur_iterator input{prefix + "/cooccur.bin"};
 
     auto elapsed = common::time([&]() {
         printing::progress progress{" > Shuffling (pass 1): ",
                                     input.total_bytes()};
-        while (input != coocur_iterator{})
+        while (input != cooccur_iterator{})
         {
             std::size_t i = 0;
-            for (; i < records.size() && input != coocur_iterator{};
+            for (; i < records.size() && input != cooccur_iterator{};
                  ++i, ++input)
             {
                 progress(input.bytes_read());
@@ -58,7 +58,7 @@ std::size_t shuffle_partition(const std::string& prefix, std::size_t max_ram,
             std::shuffle(records.begin(),
                          records.begin() + static_cast<diff_type>(i), engine);
 
-            std::ofstream output{prefix + "/coocur-shuf."
+            std::ofstream output{prefix + "/cooccur-shuf."
                                      + std::to_string(chunk_sizes.size())
                                      + ".tmp",
                                  std::ios::binary};
@@ -73,18 +73,18 @@ std::size_t shuffle_partition(const std::string& prefix, std::size_t max_ram,
     LOG(info) << "Shuffling pass 1 took " << elapsed.count() / 1000.0
               << " seconds" << ENDLG;
 
-    std::vector<coocur_iterator> chunks;
+    std::vector<cooccur_iterator> chunks;
     chunks.reserve(chunk_sizes.size());
     for (std::size_t i = 0; i < chunk_sizes.size(); ++i)
     {
-        chunks.emplace_back(prefix + "/coocur-shuf." + std::to_string(i)
+        chunks.emplace_back(prefix + "/cooccur-shuf." + std::to_string(i)
                             + ".tmp");
     }
 
     std::vector<std::ofstream> outputs(num_partitions);
     for (std::size_t i = 0; i < outputs.size(); ++i)
     {
-        outputs[i].open(prefix + "/coocur-shuf." + std::to_string(i) + ".bin",
+        outputs[i].open(prefix + "/cooccur-shuf." + std::to_string(i) + ".bin",
                         std::ios::binary);
     }
 
@@ -106,7 +106,7 @@ std::size_t shuffle_partition(const std::string& prefix, std::size_t max_ram,
 
                 for (std::size_t n = 0; n < to_write; ++n)
                 {
-                    if (chunks[j] == coocur_iterator{} || i == records.size())
+                    if (chunks[j] == cooccur_iterator{} || i == records.size())
                         break;
                     records[i] = *chunks[j];
                     ++chunks[j];
@@ -130,7 +130,7 @@ std::size_t shuffle_partition(const std::string& prefix, std::size_t max_ram,
     // delete temporary files
     for (std::size_t i = 0; i < chunk_sizes.size(); ++i)
     {
-        filesystem::delete_file(prefix + "/coocur-shuf." + std::to_string(i)
+        filesystem::delete_file(prefix + "/cooccur-shuf." + std::to_string(i)
                                 + ".tmp");
     }
 
@@ -176,14 +176,18 @@ class glove_trainer
             throw glove_exception{"no vocabulary file found in " + prefix};
         }
 
-        if (!filesystem::file_exists(prefix + "/coocur.bin"))
+        if (!filesystem::file_exists(prefix + "/cooccur.bin"))
         {
             LOG(fatal)
-                << "Coocurrence matrix has not yet been generated, please "
+                << "Cooccurrence matrix has not yet been generated, please "
                    "do this before learning word embeddings"
                 << ENDLG;
-            throw glove_exception{"no coocurrence matrix found in " + prefix};
+            throw glove_exception{"no cooccurrence matrix found in " + prefix};
         }
+
+        // shuffle the data and partition it into equal parts for each
+        // thread
+        auto total_records = shuffle_partition(prefix, max_ram, num_threads);
 
         std::size_t num_words = 0;
         {
@@ -210,17 +214,13 @@ class glove_trainer
             });
         }
 
-        // shuffle the data and partition it into equal parts for each
-        // thread
-        auto total_records = shuffle_partition(prefix, max_ram, num_threads);
-
         // train using the specified number of threads
         train(prefix, num_threads, iters, total_records);
 
-        // delete the temporary shuffled coocurrence files
+        // delete the temporary shuffled cooccurrence files
         for (std::size_t i = 0; i < num_threads; ++i)
-            filesystem::delete_file(prefix + "/coocur-shuf." + std::to_string(i)
-                                    + ".bin");
+            filesystem::delete_file(prefix + "/cooccur-shuf."
+                                    + std::to_string(i) + ".bin");
 
         // save the target and context word embeddings
         save(prefix, num_words, num_rare);
@@ -334,9 +334,9 @@ class glove_trainer
         }
     }
 
-    double cost_weight(double coocur) const
+    double cost_weight(double cooccur) const
     {
-        return (coocur < xmax_) ? std::pow(coocur / xmax_, scale_) : 1.0;
+        return (cooccur < xmax_) ? std::pow(cooccur / xmax_, scale_) : 1.0;
     }
 
     void update_weight(double* weight, double* gradsq, double grad)
@@ -352,12 +352,12 @@ class glove_trainer
     {
         using namespace embeddings;
 
-        coocur_iterator iter{prefix + "/coocur-shuf."
-                             + std::to_string(thread_id) + ".bin"};
+        cooccur_iterator iter{prefix + "/cooccur-shuf."
+                              + std::to_string(thread_id) + ".bin"};
 
         double cost = 0.0;
 
-        for (; iter != coocur_iterator{}; ++iter)
+        for (; iter != cooccur_iterator{}; ++iter)
         {
             progress(records++);
             auto record = *iter;
