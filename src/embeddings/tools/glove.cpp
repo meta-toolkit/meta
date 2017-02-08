@@ -185,6 +185,10 @@ class glove_trainer
             throw glove_exception{"no cooccurrence matrix found in " + prefix};
         }
 
+        // shuffle the data and partition it into equal parts for each
+        // thread
+        auto total_records = shuffle_partition(prefix, max_ram, num_threads);
+
         std::size_t num_words = 0;
         {
             std::ifstream vocab{prefix + "/vocab.bin", std::ios::binary};
@@ -209,10 +213,6 @@ class glove_trainer
                 return (rnd / 65536.0 - 0.5) / (vector_size_ + 1);
             });
         }
-
-        // shuffle the data and partition it into equal parts for each
-        // thread
-        auto total_records = shuffle_partition(prefix, max_ram, num_threads);
 
         // train using the specified number of threads
         train(prefix, num_threads, iters, total_records);
