@@ -63,6 +63,14 @@
   ensuring that a tokenizer is being used that emits sentence boundary tags
   and by setting `break-on-tags = true` in the `[embeddings]` table of
   `config.toml`.
+- **Breaking Change.** All references in the embeddings library to "coocur"
+  are have changed to "cooccur". This means that some files and binaries
+  have been renamed. Much of the co-occurrence counting part of the
+  embeddings library has also been moved to the public API.
+- Co-occurrence counting now is performed in parallel. Behavior of its
+  merge strategy can be configured with the new `[embeddings]` config
+  parameter `merge-fanout = n`, which specifies the maximum number of
+  on-disk chunks to allow before kicking off a multi-way merge (default 8).
 
 ## Enhancements
 - Add additional `packed_write` and `packed_read` overloads: for
@@ -76,11 +84,21 @@
 - Add regression tests for rankers MAP and NDCG scores. This adds a new
   dataset `cranfield` that contains non-binary relevance judgments to
   facilitate these new tests.
-- Bump bundled version of ICU to 58.1.
+- Bump bundled version of ICU to 58.2.
 
 ## Bug Fixes
 - Fix bug in NDCG calculation (ideal-DCG was computed using the wrong
   sorting order for non-binary judgments)
+- Fix bug where the final chunks to be merged in index creation were not
+  being deleted when merging completed
+- Fix bug where GloVe training would allocate the embedding matrix before
+  starting the shuffling process, causing it to exceed the "max-ram"
+  config parameter.
+- Fix bug with consuming MeTA from a build directory with `cmake` when
+  building a static ICU library. `meta-utf` is now forced to be a shared
+  library, which (1) should save on binary sizes and (2) ensures that the
+  statically build ICU is linked into the `libmeta-utf.so` library to avoid
+  undefined references to ICU functions.
 
 # [v2.4.2][2.4.2]
 ## Bug Fixes
