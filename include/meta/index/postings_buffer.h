@@ -299,7 +299,7 @@ template <class HashAlgorithm, class PrimaryKey, class SecondaryKey>
 void hash_append(HashAlgorithm& h,
                  const postings_buffer<PrimaryKey, SecondaryKey>& pb)
 {
-    using util::hash_append;
+    using hashing::hash_append;
     hash_append(h, pb.primary_key());
 }
 }

@@ -25,6 +25,15 @@ ExternalProject_Add(housing
   BUILD_COMMAND ""
   INSTALL_COMMAND "")
 
+ExternalProject_Add(cranfield
+  SOURCE_DIR ${meta_BINARY_DIR}/../../data/cranfield
+  DOWNLOAD_DIR ${meta_BINARY_DIR}/../downloads
+  URL https://meta-toolkit.org/data/2016-11-10/cranfield.tar.gz
+  URL_HASH "SHA256=507b6f4f133bc1a65d140780cbd7060a3ca159410b772e5eb1e2c12b215d72b4"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND "")
+
 # Ignore sign warnings when expanding bandit's macros.
 file(GLOB BANDIT_SOURCE_FILES *.cpp)
 set_property(SOURCE ${BANDIT_SOURCE_FILES} APPEND PROPERTY COMPILE_FLAGS

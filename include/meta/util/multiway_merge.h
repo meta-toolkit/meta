@@ -18,6 +18,7 @@
 
 #include "meta/config.h"
 #include "meta/io/filesystem.h"
+#include "meta/io/mmap_file.h"
 #include "meta/io/moveable_stream.h"
 #include "meta/io/packed.h"
 #include "meta/util/progress.h"
@@ -84,14 +85,21 @@ namespace util
  *     A unary function that is called once per every unique Record after
  *     merging.
  *
+ * - ProgressTrait:
+ *     A traits class whose type indicates the progress reporting object to
+ *     use. By default, this is meta::printing::default_progress_trait, but
+ *     progress reporting can be silenced using
+ *     meta::printing::no_progress_trait.
+ *
  * @return the total number of unique Records that were written to the
  * OutputStream
  */
 template <class ForwardIterator, class RecordHandler, class Compare,
-          class ShouldMerge>
+          class ShouldMerge,
+          class ProgressTrait = printing::default_progress_trait>
 uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
                         Compare&& record_comp, ShouldMerge&& should_merge,
-                        RecordHandler&& output)
+                        RecordHandler&& output, ProgressTrait = ProgressTrait{})
 {
     using ChunkIterator = typename ForwardIterator::value_type;
 
@@ -100,7 +108,7 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
             return acc + chunk.total_bytes();
         });
 
-    printing::progress progress{" > Merging: ", to_read};
+    typename ProgressTrait::type progress{" > Merging: ", to_read};
 
     uint64_t total_read = std::accumulate(
         begin, end, 0ul, [](uint64_t acc, const ChunkIterator& chunk) {
@@ -162,16 +170,17 @@ uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
  * A simplified wrapper for multiway_merge that uses the default comparison
  * (operator<) and merge criteria (operator==).
  */
-template <class ForwardIterator, class RecordHandler>
+template <class ForwardIterator, class RecordHandler,
+          class ProgressTrait = printing::default_progress_trait>
 uint64_t multiway_merge(ForwardIterator begin, ForwardIterator end,
-                        RecordHandler&& output)
+                        RecordHandler&& output, ProgressTrait = ProgressTrait{})
 {
     using Record = typename std::remove_reference<decltype(**begin)>::type;
 
     auto record_comp = [](const Record& a, const Record& b) { return a < b; };
     auto record_equal = [](const Record& a, const Record& b) { return a == b; };
     return multiway_merge(begin, end, record_comp, record_equal,
-                          std::forward<RecordHandler>(output));
+                          std::forward<RecordHandler>(output), ProgressTrait{});
 }
 
 /**
@@ -190,7 +199,7 @@ class chunk_iterator
      * @param filename The file to read from
      */
     chunk_iterator(const std::string& filename)
-        : input_{filename, std::ios::binary},
+        : input_{filename},
           bytes_read_{0},
           total_bytes_{filesystem::file_size(filename)}
     {
@@ -206,15 +215,15 @@ class chunk_iterator
      */
     chunk_iterator& operator++()
     {
-        if (input_.stream().peek() == EOF)
+        if (input_.peek() == EOF)
         {
-            input_.stream().close();
+            input_.close();
 
             assert(*this == chunk_iterator{});
             return *this;
         }
 
-        bytes_read_ += io::packed::read(input_.stream(), record_);
+        bytes_read_ += io::packed::read(input_, record_);
         return *this;
     }
 
@@ -247,11 +256,11 @@ class chunk_iterator
      */
     bool operator==(const chunk_iterator& other) const
     {
-        return !input_.stream().is_open() && !other.input_.stream().is_open();
+        return !input_.is_open() && !other.input_.is_open();
     }
 
   private:
-    io::mifstream input_;
+    io::mmap_ifstream input_;
     Record record_;
     uint64_t bytes_read_;
     uint64_t total_bytes_;
@@ -263,6 +272,48 @@ bool operator!=(const chunk_iterator<Record>& a,
 {
     return !(a == b);
 }
+
+/**
+ * A simple implementation of the ChunkIterator concept that reads Records
+ * from a binary file using io::packed::read and deletes the underlying
+ * file when it reaches EOF.
+ */
+template <class Record>
+class destructive_chunk_iterator : public chunk_iterator<Record>
+{
+  public:
+    using base_iterator = chunk_iterator<Record>;
+
+    destructive_chunk_iterator() = default;
+
+    destructive_chunk_iterator(const std::string& filename)
+        : base_iterator(filename), filename_{filename}
+    {
+        // nothing
+    }
+
+    destructive_chunk_iterator& operator++()
+    {
+        ++base();
+        if (base() == base_iterator{})
+            filesystem::delete_file(filename_);
+
+        return *this;
+    }
+
+    const std::string& filename() const
+    {
+        return filename_;
+    }
+
+  private:
+    base_iterator& base()
+    {
+        return static_cast<base_iterator&>(*this);
+    }
+
+    const std::string filename_;
+};
 }
 }
 #endif

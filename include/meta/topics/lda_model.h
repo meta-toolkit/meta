@@ -45,7 +45,8 @@ class lda_model
      * @param idx The index containing the documents to use for the model
      * @param num_topics The number of topics to find
      */
-    lda_model(std::shared_ptr<index::forward_index> idx, uint64_t num_topics);
+    lda_model(std::shared_ptr<index::forward_index> idx,
+              std::size_t num_topics);
 
     /**
      * Destructor. Made virtual to allow for deletion through pointer to
@@ -133,12 +134,12 @@ class lda_model
     /**
      * The number of topics.
      */
-    size_t num_topics_;
+    std::size_t num_topics_;
 
     /**
      * The number of total unique words.
      */
-    size_t num_words_;
+    std::size_t num_words_;
 };
 }
 }

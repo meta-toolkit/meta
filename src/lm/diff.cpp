@@ -21,15 +21,15 @@ diff::diff(const cpptoml::table& config) : lm_{config}
     if (!table)
         throw diff_exception{"missing [diff] table from config"};
 
-    auto nval = table->get_as<int64_t>("n-value");
+    auto nval = table->get_as<uint64_t>("n-value");
     if (!nval)
         throw diff_exception{"n-value not specified in config"};
-    n_val_ = static_cast<uint64_t>(*nval);
+    n_val_ = *nval;
 
-    auto edits = table->get_as<int64_t>("max-edits");
+    auto edits = table->get_as<uint64_t>("max-edits");
     if (!edits)
         throw diff_exception{"max-edits not specified in config"};
-    max_edits_ = static_cast<uint64_t>(*edits);
+    max_edits_ = *edits;
 
     auto lambda = table->get_as<double>("lambda");
     lambda_ = lambda ? *lambda : 0.5;
@@ -41,8 +41,7 @@ diff::diff(const cpptoml::table& config) : lm_{config}
     substitute_penalty_
         = table->get_as<double>("substitute-penalty").value_or(0.0);
     remove_penalty_ = table->get_as<double>("remove-penalty").value_or(0.0);
-    max_cand_size_ = static_cast<uint16_t>(
-        table->get_as<int64_t>("max-candidates").value_or(20));
+    max_cand_size_ = table->get_as<uint16_t>("max-candidates").value_or(20);
     lm_generate_ = table->get_as<bool>("lm-generate").value_or(false);
 
     set_stems(*table);
@@ -54,12 +53,10 @@ diff::candidates(const sentence& sent, bool use_lm /* = false */)
 {
     use_lm_ = use_lm;
     using pair_t = std::pair<sentence, double>;
-    auto comp = [](const pair_t& a, const pair_t& b)
-    {
-        return a.second < b.second;
-    };
 
-    util::fixed_heap<pair_t, decltype(comp)> candidates{max_cand_size_, comp};
+    auto candidates = util::make_fixed_heap<pair_t>(
+        max_cand_size_,
+        [](const pair_t& a, const pair_t& b) { return a.second < b.second; });
     seen_.clear();
     add(candidates, sent);
     step(sent, candidates, 0);

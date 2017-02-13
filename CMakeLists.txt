@@ -47,11 +47,10 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/findicu)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/meta-cmake/)
 
-# We require Unicode 8 for the unit tests, which was added in ICU 56.1
 FindOrBuildICU(
-  VERSION 57.1
-  URL http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz
-  URL_HASH MD5=976734806026a4ef8bdd17937c8898b9
+  VERSION 58.2
+  URL http://download.icu-project.org/files/icu4c/58.2/icu4c-58_2-src.tgz
+  URL_HASH MD5=fac212b32b7ec7ab007a12dff1f3aea1
 )
 
 add_library(meta-definitions INTERFACE)
@@ -142,6 +141,14 @@ endif()
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(deps/cpptoml EXCLUDE_FROM_ALL)
+
+# Warn users that are using a 32-bit system
+if (CMAKE_SIZEOF_VOID_P LESS 8)
+  message(WARNING "You appear to be running on a 32-bit system. Support \
+    for 32-bit systems is provided on a best-effort basis; if at all \
+    possible, we strongly recommend that you use  MeTA on a 64-bit \
+    platform.")
+endif()
 
 # install our targets defined in this file
 install(TARGETS meta-definitions

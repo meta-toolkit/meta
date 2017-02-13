@@ -9,8 +9,8 @@
 #include "meta/io/mman-win32/mman.h"
 #endif
 
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include "meta/io/filesystem.h"
@@ -95,6 +95,36 @@ mmap_file::~mmap_file()
         munmap(start_, size_);
         close(file_descriptor_);
     }
+}
+
+mmap_ifstream::mmap_ifstream(const std::string& filename)
+    : file_(mmap_file(filename)), pos_{0}
+{
+    // nothing
+}
+
+bool mmap_ifstream::is_open() const
+{
+    return static_cast<bool>(file_);
+}
+
+int mmap_ifstream::peek() const
+{
+    if (!is_open() || pos_ >= file_->size())
+        return EOF;
+    return static_cast<unsigned char>((*file_)[pos_]);
+}
+
+int mmap_ifstream::get()
+{
+    if (!is_open() || pos_ >= file_->size())
+        return EOF;
+    return static_cast<unsigned char>((*file_)[pos_++]);
+}
+
+void mmap_ifstream::close()
+{
+    file_ = util::nullopt;
 }
 }
 }

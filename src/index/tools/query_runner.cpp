@@ -27,12 +27,12 @@ template <class Index, class SearchResult>
 void print_results(const Index& idx, const SearchResult& result,
                    uint64_t result_num)
 {
-    std::string path{idx->doc_path(result.d_id)};
+    auto mdata = idx->metadata(result.d_id);
+    auto path = mdata.template get<std::string>("path").value_or("[none]");
     auto output = printing::make_bold(std::to_string(result_num) + ". " + path)
                   + " (score = " + std::to_string(result.score) + ", docid = "
                   + std::to_string(result.d_id) + ")";
     std::cout << output << std::endl;
-    auto mdata = idx->metadata(result.d_id);
     if (auto content = mdata.template get<std::string>("content"))
     {
         auto len = std::min(std::string::size_type{77}, content->size());
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
     auto group = config->get_table("ranker");
     if (!group)
         throw std::runtime_error{"\"ranker\" group needed in config"};
-    auto ranker = index::make_ranker(*group);
+    auto ranker = index::make_ranker(*config, *group);
 
     // Get the config group with options specific to this executable.
     auto query_group = config->get_table("query-runner");
@@ -103,10 +103,9 @@ int main(int argc, char* argv[])
 
     // Read the rest of the options for this executable.
     auto trec_format = query_group->get_as<bool>("trec-format").value_or(false);
-    auto max_results = static_cast<uint64_t>(
-        query_group->get_as<int64_t>("max-results").value_or(10));
-    auto q_id = static_cast<uint64_t>(
-        query_group->get_as<int64_t>("query-id-start").value_or(1));
+    auto max_results
+        = query_group->get_as<uint64_t>("max-results").value_or(10);
+    auto q_id = query_group->get_as<uint64_t>("query-id-start").value_or(1);
 
     // create the IR evaluation scorer if necessary
     std::unique_ptr<index::ir_eval> eval;

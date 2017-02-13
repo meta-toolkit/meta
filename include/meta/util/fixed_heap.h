@@ -91,6 +91,18 @@ class fixed_heap
     Comp comp_;
     std::vector<T> pq_;
 };
+
+/**
+ * Constructs a fixed_heap from a maximum size and binary comparison
+ * function.
+ */
+template <class T, class BinaryFunction>
+fixed_heap<T, BinaryFunction> make_fixed_heap(uint64_t max_elems,
+                                              BinaryFunction&& bf)
+{
+    return fixed_heap<T, BinaryFunction>(max_elems,
+                                         std::forward<BinaryFunction>(bf));
+}
 }
 }
 

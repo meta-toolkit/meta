@@ -56,6 +56,8 @@ void progress::print()
     auto end = it + static_cast<std::ptrdiff_t>(max_len * percent);
     std::fill(it, end, '=');
     *end = '>';
+    if (end < barend)
+        std::fill(end + 1, barend, ' ');
     it = barend;
     *it++ = ']';
     *it++ = ' ';
@@ -101,7 +103,7 @@ void progress::end()
     }
 }
 
-void progress::clear() const
+void progress::clear()
 {
     LOG(progress) << '\r' << std::string(80, ' ') << '\r' << ENDLG;
 }

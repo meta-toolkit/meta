@@ -18,6 +18,7 @@
 #include <thread>
 
 #include "meta/config.h"
+#include "meta/util/string_view.h"
 
 namespace meta
 {
@@ -74,7 +75,7 @@ class progress
     /**
      * Clears the last line the progress bar wrote.
      */
-    void clear() const;
+    static void clear();
 
   private:
     void print();
@@ -100,6 +101,36 @@ class progress
     const int interval_;
     /// Whether or not we should print an endline when done.
     bool endline_;
+};
+
+/**
+ * Class adhering to the progress API that can be substituted for it when
+ * no progress output is desired.
+ */
+class null_progress
+{
+  public:
+    null_progress(util::string_view prefix, uint64_t length, int interval = 500)
+    {
+        (void)prefix;
+        (void)length;
+        (void)interval;
+    }
+
+    void operator()(uint64_t iter)
+    {
+        (void)iter;
+    }
+};
+
+struct default_progress_trait
+{
+    using type = progress;
+};
+
+struct no_progress_trait
+{
+    using type = null_progress;
 };
 }
 }

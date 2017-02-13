@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "meta/config.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {
@@ -129,6 +130,20 @@ class dense_matrix
      * @return the number of columns in the matrix
      */
     uint64_t columns() const;
+
+    template <class OutputStream>
+    friend uint64_t packed_write(OutputStream& os, const dense_matrix& mat)
+    {
+        return io::packed::write(os, mat.storage_)
+               + io::packed::write(os, mat.columns_);
+    }
+
+    template <class InputStream>
+    friend uint64_t packed_read(InputStream& is, dense_matrix& mat)
+    {
+        return io::packed::read(is, mat.storage_)
+               + io::packed::read(is, mat.columns_);
+    }
 
   private:
     /// the underlying storage for the matrix

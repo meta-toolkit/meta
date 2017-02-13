@@ -63,7 +63,7 @@ std::unique_ptr<corpus> make_corpus<gz_corpus>(util::string_view prefix,
 {
     auto encoding = config.get_as<std::string>("encoding").value_or("utf-8");
 
-    auto num_docs = config.get_as<int64_t>("num-docs");
+    auto num_docs = config.get_as<uint64_t>("num-docs");
     if (!num_docs)
         throw corpus_exception{"num-docs config param required for gz_corpus"};
 
@@ -75,8 +75,7 @@ std::unique_ptr<corpus> make_corpus<gz_corpus>(util::string_view prefix,
     filename.append(dataset.data(), dataset.size());
     filename += ".dat";
 
-    return make_unique<gz_corpus>(filename, encoding,
-                                  static_cast<uint64_t>(*num_docs));
+    return make_unique<gz_corpus>(filename, encoding, *num_docs);
 }
 }
 }

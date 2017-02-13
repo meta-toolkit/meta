@@ -145,7 +145,7 @@ double ir_eval::ndcg(const std::vector<search_result>& results, query_id q_id,
     std::vector<uint64_t> rels;
     for (const auto& s : ht->second)
         rels.push_back(s.second);
-    std::sort(rels.begin(), rels.end());
+    std::sort(rels.begin(), rels.end(), std::greater<uint64_t>{});
 
     double idcg = 0.0;
     i = 1;

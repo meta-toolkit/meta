@@ -103,8 +103,8 @@ make_selector(const cpptoml::table& config, const LabeledDatasetContainer& docs)
         throw selector_factory_exception{
             "feature selection method required in [features] table"};
 
-    auto features_per_class = static_cast<uint64_t>(
-        table->get_as<int64_t>("features-per-class").value_or(20));
+    auto features_per_class
+        = table->get_as<uint64_t>("features-per-class").value_or(20);
 
     auto selector = selector_factory::get().create(
         *method, *table, docs.total_labels(), docs.total_features());

@@ -2,12 +2,14 @@ project(meta-sequence)
 
 add_subdirectory(analyzers)
 add_subdirectory(crf)
+add_subdirectory(hmm)
 add_subdirectory(tools)
 
 add_library(meta-sequence observation.cpp
                           sequence.cpp
                           sequence_analyzer.cpp
                           trellis.cpp
+                          markov_model.cpp
                           io/ptb_parser.cpp)
 target_link_libraries(meta-sequence meta-io meta-utf)
 

@@ -1,3 +1,119 @@
+# [v3.0.0][3.0.0]
+## New features
+- Add an `embedding_analyzer` that represents documents with their averaged word
+  vectors.
+- Add a `parallel::reduction` algorithm designed for parallelizing complex
+  accumulation operations (like an E step in an EM algorithm)
+- Parallelize feature counting in feature selector using the new
+  `parallel::reduction`
+- Add a `parallel::for_each_block` algorithm to run functions on
+  (relatively) equal sub-ranges of an iterator range in parallel
+- Add a parallel merge sort as `parallel::sort`
+- Add a `util/traits.h` header for general useful traits
+- Add a Markov model implementation in `sequence::markov_model`
+- Add a generic unsupervised HMM implementation. This implementation
+  supports HMMs with discrete observations (what is used most often) and
+  sequence observations (useful for log mining applications). The
+  forward-backward algorithm is implemented using both the scaling method
+  and the log-space method. The scaling method is used by default, but the
+  log-space method is useful for HMMs with sequence observations to avoid
+  underflow issues when the output probabilities themselves are very small.
+- Add the KL-divergence retrieval function using pseudo-relevance feedback
+  with the two-component mixture-model approach of Zhai and Lafferty,
+  called `kl_divergence_prf`. This ranker internally can use any
+  `language_model_ranker` subclass like `dirichlet_prior` or
+  `jelinek_mercer` to perform the ranking of the feedback set and the
+  result documents with respect to the modified query.
+
+  The EM algorithm used for the two-component mixture model is provided as
+  the `index::feedback::unigram_mixture` free function and returns the
+  feedback model.
+- Add the Rocchio algorithm (`rocchio`) for pseudo-relevance feedback in
+  the vector space model.
+- **Breaking Change.** To facilitate the above to changes, we have also
+  broken the `ranker` hierarchy into one more level. At the top we have
+  `ranker`, which has a pure virtual function `rank()` that can be
+  overridden to provide entirely custom ranking behavior, This is the class
+  the KL-divergence and Rocchio methods derive from, as we need to
+  re-define what it means to rank documents (first retrieving a feedback
+  set, then ranking documents with respect to an updated query).
+
+  Most of the time, however, you will want to derive from the second level
+  `ranking_function`, which is what was called `ranker` before. This class
+  provides a definition of `rank()` to perform document-at-a-time ranking,
+  and expects deriving classes to instead provide `initial_score()` and
+  `score_one()` implementations to define the scoring function used for
+  each document. **Existing code that derived from `ranker` prior to this
+  version of MeTA likely needs to be changed to instead derive from
+  `ranking_function`.**
+- Add the `util::transform_iterator` class and `util::make_transform_iterator`
+  function for providing iterators that transform their output according to
+  a unary function.
+- **Breaking Change.** `whitespace_tokenizer` now emits *only* word tokens
+  by default, suppressing all whitespace tokens. The old default was to
+  emit tokens containing whitespace in addition to actual word tokens. The
+  old behavior can be obtained by passing `false` to its constructor, or
+  setting `suppress-whitespace = false` in its configuration group in
+  `config.toml.` (Note that whitespace tokens are still needed if using a
+  `sentence_boundary` filter but, in nearly all circumstances,
+  `icu_tokenizer` should be preferred.)
+- **Breaking Change.** Co-occurrence counting for embeddings now uses
+  history that crosses sentence boundaries by default. The old behavior
+  (clearing the history when starting a new sentence) can be obtained by
+  ensuring that a tokenizer is being used that emits sentence boundary tags
+  and by setting `break-on-tags = true` in the `[embeddings]` table of
+  `config.toml`.
+- **Breaking Change.** All references in the embeddings library to "coocur"
+  are have changed to "cooccur". This means that some files and binaries
+  have been renamed. Much of the co-occurrence counting part of the
+  embeddings library has also been moved to the public API.
+- Co-occurrence counting now is performed in parallel. Behavior of its
+  merge strategy can be configured with the new `[embeddings]` config
+  parameter `merge-fanout = n`, which specifies the maximum number of
+  on-disk chunks to allow before kicking off a multi-way merge (default 8).
+
+## Enhancements
+- Add additional `packed_write` and `packed_read` overloads: for
+  `std::pair`, `stats::dirichlet`, `stats::multinomial`,
+  `util::dense_matrix`, and `util::sparse_vector`
+- Additional functions have been added to `ranker_factory` to allow
+  construction/loading of language_model_ranker subclasses (useful for the
+  `kl_divergence_prf` implementation)
+- Add a `util::make_fixed_heap` helper function to simplify the declaration
+  of `util::fixed_heap` classes with lambda function comparators.
+- Add regression tests for rankers MAP and NDCG scores. This adds a new
+  dataset `cranfield` that contains non-binary relevance judgments to
+  facilitate these new tests.
+- Bump bundled version of ICU to 58.2.
+
+## Bug Fixes
+- Fix bug in NDCG calculation (ideal-DCG was computed using the wrong
+  sorting order for non-binary judgments)
+- Fix bug where the final chunks to be merged in index creation were not
+  being deleted when merging completed
+- Fix bug where GloVe training would allocate the embedding matrix before
+  starting the shuffling process, causing it to exceed the "max-ram"
+  config parameter.
+- Fix bug with consuming MeTA from a build directory with `cmake` when
+  building a static ICU library. `meta-utf` is now forced to be a shared
+  library, which (1) should save on binary sizes and (2) ensures that the
+  statically build ICU is linked into the `libmeta-utf.so` library to avoid
+  undefined references to ICU functions.
+- Fix bug with consuming Release-mode MeTA libraries from another project
+  being built in Debug mode. Before, `identifiers.h` would change behavior
+  based on the `NDEBUG` macro's setting. This behavior has been removed,
+  and opaque identifiers are always on.
+
+## Deprecation
+- `disk_index::doc_name` and `disk_index::doc_path` have been deprecated in
+  favor of the more general (and less confusing) `metadata()`. They will be
+  removed in a future major release.
+- Support for 32-bit architectures is provided on a best-effort basis. MeTA
+  makes heavy use of memory mapping, which is best paired with a 64-bit
+  address space. Please move to a 64-bit platform for using MeTA if at all
+  possible (most consumer machines should support 64-bit if they were made
+  in the last 5 years or so).
+
 # [v2.4.2][2.4.2]
 ## Bug Fixes
 - Properly shuffle documents when doing an even-split classification test
@@ -493,7 +609,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.4.2...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v3.0.0...develop
+[3.0.0]: https://github.com/meta-toolkit/meta/compare/v2.4.2...v3.0.0
 [2.4.2]: https://github.com/meta-toolkit/meta/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/meta-toolkit/meta/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/meta-toolkit/meta/compare/v2.3.0...v2.4.0

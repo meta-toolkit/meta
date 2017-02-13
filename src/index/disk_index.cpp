@@ -105,7 +105,7 @@ uint64_t disk_index::num_docs() const
 
 std::string disk_index::doc_name(doc_id d_id) const
 {
-    auto path = doc_path(d_id);
+    auto path = metadata<std::string>(d_id, "path").value_or("[none]");
     return path.substr(path.find_last_of("/") + 1);
 }
 

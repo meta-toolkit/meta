@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "meta/config.h"
+#include "meta/io/packed.h"
 
 namespace meta
 {
@@ -184,6 +185,18 @@ class sparse_vector
 
     sparse_vector& operator+=(const sparse_vector& rhs);
     sparse_vector& operator-=(const sparse_vector& rhs);
+
+    template <class OutputSteam>
+    friend uint64_t packed_write(OutputSteam& os, const sparse_vector& sv)
+    {
+        return io::packed::write(os, sv.storage_);
+    }
+
+    template <class InputStream>
+    friend uint64_t packed_read(InputStream& is, sparse_vector& sv)
+    {
+        return io::packed::read(is, sv.storage_);
+    }
 
   private:
     /**

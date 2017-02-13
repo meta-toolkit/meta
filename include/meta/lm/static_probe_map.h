@@ -68,7 +68,8 @@ class static_probe_map
     /**
      * Helper function to create hasher and hash a list of word ids
      */
-    uint64_t hash(const std::vector<term_id>& tokens) const;
+    hashing::murmur_hash<>::result_type
+    hash(const std::vector<term_id>& tokens) const;
 
     /// Helper function to find a node given the hash value
     util::optional<lm_node> find_hash(uint64_t hashed) const;

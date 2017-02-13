@@ -6,22 +6,24 @@
 
 #include <vector>
 
-#include "meta/analyzers/tokenizers/whitespace_tokenizer.h"
-#include "meta/analyzers/tokenizers/icu_tokenizer.h"
-#include "meta/analyzers/tokenizers/character_tokenizer.h"
-#include "meta/analyzers/filters/all.h"
 #include "bandit/bandit.h"
-#include "meta/corpus/document.h"
 #include "create_config.h"
+#include "meta/analyzers/filters/all.h"
+#include "meta/analyzers/tokenizers/character_tokenizer.h"
+#include "meta/analyzers/tokenizers/icu_tokenizer.h"
+#include "meta/analyzers/tokenizers/whitespace_tokenizer.h"
+#include "meta/corpus/document.h"
 #include "meta/util/shim.h"
 
 using namespace bandit;
 using namespace meta;
 
-namespace {
+namespace
+{
 
 void check_expected(analyzers::token_stream& filter,
-                    std::vector<std::string>& expected) {
+                    std::vector<std::string>& expected)
+{
     AssertThat(static_cast<bool>(filter), IsTrue());
     for (const auto& s : expected)
         AssertThat(filter.next(), Equals(s));
@@ -59,8 +61,8 @@ go_bandit([]() {
         it("should work on easy sentences", [&]() {
             norm->set_content("\"This \t\n\f\ris a quote,'' said Dr. Smith.");
             std::vector<std::string> expected
-                = {"``", "This", " ",    "is", " ",  "a", " ", "quote", ",",
-                   "''", " ",    "said", " ",  "Dr", ".", " ", "Smith", "."};
+                = {"``", "This", "is", "a", "quote", ",",
+                   "''", "said", "Dr", ".", "Smith", "."};
             check_expected(*norm, expected);
         });
 
@@ -69,11 +71,9 @@ go_bandit([]() {
                 "What about when we don't want to knee-jerk? We'll "
                 "have to do something.");
             std::vector<std::string> expected
-                = {"What", " ",   "about", " ",         "when", " ",
-                   "we",   " ",   "don",   "'t",        " ",    "want",
-                   " ",    "to",  " ",     "knee-jerk", "?",    " ",
-                   "We",   "'ll", " ",     "have",      " ",    "to",
-                   " ",    "do",  " ",     "something", "."};
+                = {"What", "about", "when",      "we",        "don", "'t",
+                   "want", "to",    "knee-jerk", "?",         "We",  "'ll",
+                   "have", "to",    "do",        "something", "."};
             check_expected(*norm, expected);
         });
     });
@@ -85,7 +85,7 @@ go_bandit([]() {
             auto norm = make_unique<filters::icu_filter>(std::move(tok),
                                                          "Katakana-Latin");
             norm->set_content("キャンパス ハロ");
-            std::vector<std::string> expected = {"kyanpasu", " ", "haro"};
+            std::vector<std::string> expected = {"kyanpasu", "haro"};
             check_expected(*norm, expected);
         });
 
@@ -95,8 +95,7 @@ go_bandit([]() {
                                                          "Greek-Latin");
             norm->set_content("τί φῄς γραφὴν σέ τις ὡς ἔοικε");
             std::vector<std::string> expected
-                = {"tí", " ",   "phḗis", " ",   "graphḕn", " ",    "sé",
-                   " ",  "tis", " ",     "hōs", " ",       "éoike"};
+                = {"tí", "phḗis", "graphḕn", "sé", "tis", "hōs", "éoike"};
             check_expected(*norm, expected);
         });
 
@@ -148,8 +147,7 @@ go_bandit([]() {
                 filters::list_filter::type::REJECT);
             norm->set_content("supposedly i am the octopus of the big house");
             std::vector<std::string> expected
-                = {"supposedly", " ", " ", " ",   " ", "octopus",
-                   " ",          " ", " ", "big", " ", "house"};
+                = {"supposedly", "octopus", "big", "house"};
             check_expected(*norm, expected);
         });
     });
@@ -161,8 +159,7 @@ go_bandit([]() {
             auto norm = make_unique<filters::lowercase_filter>(std::move(tok));
             norm->set_content("A\tweIrd Punctuation casE IS HERE!");
             std::vector<std::string> expected
-                = {"a",    "\t", "weird", " ", "punctuation", " ",
-                   "case", " ",  "is",    " ", "here!"};
+                = {"a", "weird", "punctuation", "case", "is", "here!"};
             check_expected(*norm, expected);
         });
     });
@@ -177,9 +174,9 @@ go_bandit([]() {
             // note that the comma on retrieval prevents the word
             // form being
             // stemmed
-            std::vector<std::string> expected = {
-                "In",     " ", "linguist",   " ", "morpholog", " ", "and", " ",
-                "inform", " ", "retrieval,", " ", "stem"};
+            std::vector<std::string> expected
+                = {"In",     "linguist",   "morpholog", "and",
+                   "inform", "retrieval,", "stem"};
             check_expected(*norm, expected);
         });
     });
@@ -207,7 +204,7 @@ go_bandit([]() {
 
     describe("[tokenizer-filter] sentence_boundary", [&]() {
         std::unique_ptr<token_stream> stream;
-        stream = make_unique<tokenizers::whitespace_tokenizer>();
+        stream = make_unique<tokenizers::whitespace_tokenizer>(false);
         stream = make_unique<filters::english_normalizer>(std::move(stream));
         stream = make_unique<filters::sentence_boundary>(std::move(stream));
 
@@ -227,7 +224,7 @@ go_bandit([]() {
 
         auto stopwords_file = *config->get_as<std::string>("stop-words");
         std::unique_ptr<token_stream> stream;
-        stream = make_unique<tokenizers::whitespace_tokenizer>();
+        stream = make_unique<tokenizers::whitespace_tokenizer>(false);
         stream = make_unique<filters::english_normalizer>(std::move(stream));
         stream = make_unique<filters::sentence_boundary>(std::move(stream));
         stream = make_unique<filters::lowercase_filter>(std::move(stream));

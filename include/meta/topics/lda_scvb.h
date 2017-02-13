@@ -44,7 +44,7 @@ class lda_scvb : public lda_model
      * @param minibatch_size The number of documents to consider in a
      * minibatch
      */
-    lda_scvb(std::shared_ptr<index::forward_index> idx, uint64_t num_topics,
+    lda_scvb(std::shared_ptr<index::forward_index> idx, std::size_t num_topics,
              double alpha, double beta, uint64_t minibatch_size = 100);
 
     /**
