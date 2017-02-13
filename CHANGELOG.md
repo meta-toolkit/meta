@@ -1,4 +1,4 @@
-# [Unreleased][unreleased]
+# [v3.0.0][3.0.0]
 ## New features
 - Add an `embedding_analyzer` that represents documents with their averaged word
   vectors.
@@ -609,7 +609,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v2.4.2...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v3.0.0...develop
+[3.0.0]: https://github.com/meta-toolkit/meta/compare/v2.4.2...v3.0.0
 [2.4.2]: https://github.com/meta-toolkit/meta/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/meta-toolkit/meta/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/meta-toolkit/meta/compare/v2.3.0...v2.4.0
