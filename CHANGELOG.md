@@ -99,6 +99,20 @@
   library, which (1) should save on binary sizes and (2) ensures that the
   statically build ICU is linked into the `libmeta-utf.so` library to avoid
   undefined references to ICU functions.
+- Fix bug with consuming Release-mode MeTA libraries from another project
+  being built in Debug mode. Before, `identifiers.h` would change behavior
+  based on the `NDEBUG` macro's setting. This behavior has been removed,
+  and opaque identifiers are always on.
+
+## Deprecation
+- `disk_index::doc_name` and `disk_index::doc_path` have been deprecated in
+  favor of the more general (and less confusing) `metadata()`. They will be
+  removed in a future major release.
+- Support for 32-bit architectures is provided on a best-effort basis. MeTA
+  makes heavy use of memory mapping, which is best paired with a 64-bit
+  address space. Please move to a 64-bit platform for using MeTA if at all
+  possible (most consumer machines should support 64-bit if they were made
+  in the last 5 years or so).
 
 # [v2.4.2][2.4.2]
 ## Bug Fixes
