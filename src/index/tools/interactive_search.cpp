@@ -66,10 +66,8 @@ int main(int argc, char* argv[])
 
         // Use the ranker to score the query over the index.
         std::vector<index::search_result> ranking;
-        auto time = common::time([&]()
-                                 {
-                                     ranking = ranker->score(*idx, query, 5);
-                                 });
+        auto time
+            = common::time([&]() { ranking = ranker->score(*idx, query, 5); });
 
         std::cout << "Showing top 5 results (" << time.count() << "ms)"
                   << std::endl;
@@ -77,13 +75,13 @@ int main(int argc, char* argv[])
         uint64_t result_num = 1;
         for (auto& result : ranking)
         {
-            std::string path{idx->doc_path(result.d_id)};
+            auto mdata = idx->metadata(result.d_id);
+            auto path = mdata.get<std::string>("path").value_or("[none]");
             auto output
                 = printing::make_bold(std::to_string(result_num) + ". " + path)
                   + " (score = " + std::to_string(result.score) + ", docid = "
                   + std::to_string(result.d_id) + ")";
             std::cout << output << std::endl;
-            auto mdata = idx->metadata(result.d_id);
             if (auto content = mdata.get<std::string>("content"))
             {
                 auto len

@@ -72,12 +72,14 @@ class disk_index
      * @param d_id
      * @return the actual name of this document
      */
+    META_DEPRECATED("use metadata() instead")
     std::string doc_name(doc_id d_id) const;
 
     /**
      * @param d_id
      * @return the path to the file containing this document
      */
+    META_DEPRECATED("use metadata() instead")
     std::string doc_path(doc_id d_id) const;
 
     /**
@@ -133,6 +135,17 @@ class disk_index
      * @return the metadata associated with this document id
      */
     corpus::metadata metadata(doc_id d_id) const;
+
+    /**
+     * @param d_id The document to fetch the metadata field for
+     * @param name The name of the metadata field to be returned
+     * @return the metadata field value, if it exists
+     */
+    template <class T>
+    util::optional<T> metadata(doc_id d_id, const std::string& name)
+    {
+        return metadata(d_id).get<T>(name);
+    }
 
     /**
      * @param d_id

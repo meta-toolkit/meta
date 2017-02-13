@@ -22,7 +22,7 @@ void test_rank(Ranker& r, Index& idx, const std::string& encoding)
     for (size_t i = 0; i < idx.num_docs(); ++i)
     {
         auto d_id = idx.docs()[i];
-        auto path = idx.doc_path(d_id);
+        auto path = *idx.template metadata<std::string>(d_id, "path");
         corpus::document query{doc_id{i}};
         query.content(filesystem::file_text(path), encoding);
 

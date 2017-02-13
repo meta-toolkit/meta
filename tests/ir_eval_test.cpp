@@ -47,7 +47,7 @@ go_bandit([]() {
             index::ir_eval eval{*file_cfg};
             // sanity test bounds
             for (size_t i = 0; i < 5; ++i) {
-                auto path = idx->doc_path(doc_id{i});
+                auto path = *idx->metadata<std::string>(doc_id{i}, "path");
                 corpus::document query{doc_id{0}};
                 query.content(filesystem::file_text(path));
 
