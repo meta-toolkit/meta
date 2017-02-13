@@ -142,7 +142,7 @@ class disk_index
      * @return the metadata field value, if it exists
      */
     template <class T>
-    util::optional<T> metadata(doc_id d_id, const std::string& name)
+    util::optional<T> metadata(doc_id d_id, const std::string& name) const
     {
         return metadata(d_id).get<T>(name);
     }
