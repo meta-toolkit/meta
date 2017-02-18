@@ -29,6 +29,11 @@ include(deps/meta-cmake/CompilerKludges.cmake)
 
 find_package(Threads REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(LibLZMA)
+
+if (LIBLZMA_FOUND AND LIBLZMA_HAS_EASY_ENCODER)
+  set(META_HAS_LIBLZMA ON)
+endif()
 
 cmake_push_check_state()
 
@@ -67,6 +72,10 @@ if(UNIX OR MINGW)
 endif()
 
 target_include_directories(meta-definitions SYSTEM INTERFACE ${ZLIB_INCLUDE_DIRS})
+
+if (META_HAS_LIBLZMA)
+  target_compile_definitions(meta-definitions INTERFACE -DMETA_HAS_LIBLZMA=1)
+endif()
 
 if (LIBDL_LIBRARY)
   target_link_libraries(meta-definitions INTERFACE ${LIBDL_LIBRARY})
