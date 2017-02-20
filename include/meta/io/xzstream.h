@@ -59,11 +59,14 @@ class xzstreambuf : public std::streambuf
 
     bool is_open() const;
 
+    uint64_t bytes_read() const;
+
   private:
     bool reading_;
     std::vector<char> in_buffer_;
     std::vector<char> out_buffer_;
     FILE* file_;
+    uint64_t bytes_read_;
     lzma_stream stream_;
     lzma_action action_;
 };
@@ -76,6 +79,8 @@ class xzifstream : public std::istream
     xzstreambuf* rdbuf() const;
 
     void flush();
+
+    uint64_t bytes_read() const;
 
   private:
     xzstreambuf buffer_;

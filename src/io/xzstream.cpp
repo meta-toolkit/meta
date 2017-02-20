@@ -51,7 +51,8 @@ xzstreambuf::xzstreambuf(const char* filename, const char* openmode,
                          std::size_t buffer_size)
     : in_buffer_(buffer_size),
       out_buffer_(buffer_size),
-      file_{std::fopen(filename, openmode)}
+      file_{std::fopen(filename, openmode)},
+      bytes_read_{0}
 {
 
     stream_ = LZMA_STREAM_INIT;
@@ -113,6 +114,7 @@ auto xzstreambuf::underflow() -> int_type
             stream_.next_in = reinterpret_cast<uint8_t*>(&in_buffer_[0]);
             stream_.avail_in = std::fread(&in_buffer_[0], sizeof(uint8_t),
                                           in_buffer_.size(), file_);
+            bytes_read_ += stream_.avail_in;
 
             if (std::ferror(file_))
             {
@@ -209,6 +211,11 @@ bool xzstreambuf::is_open() const
     return file_ != nullptr && !::ferror(file_);
 }
 
+uint64_t xzstreambuf::bytes_read() const
+{
+    return bytes_read_;
+}
+
 xzifstream::xzifstream(std::string name)
     : std::istream{&buffer_}, buffer_{name.c_str(), "rb"}
 {
@@ -223,6 +230,11 @@ xzstreambuf* xzifstream::rdbuf() const
 void xzifstream::flush()
 {
     buffer_.sync();
+}
+
+uint64_t xzifstream::bytes_read() const
+{
+    return buffer_.bytes_read();
 }
 
 xzofstream::xzofstream(std::string name)
