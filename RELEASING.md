@@ -12,27 +12,29 @@ follow a consistent releasing process.
    changes (like enhancements) increment the Minor release number. Patch
    versions should be released only for bug fixes.
 
-2. Ensure `CHANGELOG.md` is up to date.
+2. Update the version number in `CMakeLists.txt`.
+
+3. Ensure `CHANGELOG.md` is up to date.
 
    If there are *any* breaking changes, mention these explicitly. If there
    are migration strategies to work around these breaking changes, provide
    a brief explanation (or a link to explain them).
 
-3. If there are major *or* minor API changes, ensure that the documentation
+4. If there are major *or* minor API changes, ensure that the documentation
    on the website (meta-toolkit/meta-toolkit.org) is correct.
 
    Update Doxygen as necessary.
 
-4. Ensure that the build is passing on both Travis (Linux + OS X) and
+5. Ensure that the build is passing on both Travis (Linux + OS X) and
    Appveyor (Windows/MinGW-w64).
 
-5. Merge branch `develop` into `master` with a commit message
+6. Merge branch `develop` into `master` with a commit message
 
    > Merge branch 'develop' for MeTA vX.Y.Z
 
    Use `git merge develop --no-ff` to create a merge commit.
 
-6. Tag the merge commit. The tag should be both annotated *and* signed:
+7. Tag the merge commit. The tag should be both annotated *and* signed:
 
    ```
    git tag -as vX.Y.Z
@@ -42,17 +44,17 @@ follow a consistent releasing process.
    version. Remove unnecessary markdown syntax like header markers and code
    blocks. Backticks can stay.
 
-7. Push the merge and the tags to GitHub:
+8. Push the merge and the tags to GitHub:
 
    ```
    git push --follow-tags
    ```
 
-8. Create a release on GitHub using the new tag. Its title should be "MeTA
+9. Create a release on GitHub using the new tag. Its title should be "MeTA
    vX.Y.Z".
 
    The contents of the message should be exactly the same as the CHANGELOG
    entry for that release.
 
-9. Upload the model files and include a section in the GitHub release notes
-   containing their sha256 sums.
+10. Upload the model files and include a section in the GitHub release notes
+    containing their sha256 sums.
