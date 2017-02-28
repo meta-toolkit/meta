@@ -145,7 +145,8 @@ int main(int argc, char* argv[])
                     break;
             }
             if (!trec_format && eval)
-                eval->print_stats(ranking, query_id{q_id});
+                eval->print_stats(ranking, query_id{q_id}, std::cout,
+                                  max_results);
             ++q_id;
         }
     });
