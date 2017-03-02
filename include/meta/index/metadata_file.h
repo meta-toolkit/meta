@@ -76,7 +76,7 @@ class metadata_file
     corpus::metadata::schema_type schema_;
 
     /// the seek positions for every document in this file
-    util::disk_vector<uint64_t> index_;
+    util::disk_vector<const uint64_t> index_;
 
     /// the mapped file for reading metadata from
     io::mmap_file md_db_;

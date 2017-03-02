@@ -70,6 +70,8 @@ class disk_vector
      * @return a reference to the element at position idx in the vector
      * container
      */
+    template <class U = T,
+              class = typename std::enable_if<!std::is_const<U>::value>::type>
     T& operator[](uint64_t idx);
 
     /**
@@ -88,6 +90,8 @@ class disk_vector
      * (i.e., if idx is greater or equal than its size). This is in contrast
      * with member operator[], that does not check against bounds.
      */
+    template <class U = T,
+              class = typename std::enable_if<!std::is_const<U>::value>::type>
     T& at(uint64_t idx);
 
     /**
@@ -112,6 +116,8 @@ class disk_vector
     /**
      * @return an iterator to the beginning of this container
      */
+    template <class U = T,
+              class = typename std::enable_if<!std::is_const<U>::value>::type>
     iterator begin();
 
     /**
@@ -123,6 +129,8 @@ class disk_vector
     /**
      * @return an iterator to the end of this container
      */
+    template <class U = T,
+              class = typename std::enable_if<!std::is_const<U>::value>::type>
     iterator end();
 
     /**

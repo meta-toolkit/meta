@@ -137,8 +137,6 @@ void inverted_index::create_index(const cpptoml::table& config,
     postings_inverter<inverted_index> inverter{index_name(), max_writers};
     {
         metadata_writer mdata_writer{index_name(), docs.size(), docs.schema()};
-        uint64_t num_docs = docs.size();
-        impl_->load_labels(num_docs);
 
         // RAM budget is given in megabytes
         inv_impl_->tokenize_docs(docs, inverter, mdata_writer,
@@ -201,6 +199,8 @@ void inverted_index::impl::tokenize_docs(
     corpus::corpus& docs, postings_inverter<inverted_index>& inverter,
     metadata_writer& mdata_writer, uint64_t ram_budget, std::size_t num_threads)
 {
+    util::disk_vector<label_id> labels{
+        idx_->index_name() + idx_->impl_->files[DOC_LABELS], docs.size()};
     std::mutex io_mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs.size()};
     uint64_t local_budget = ram_budget / num_threads;
@@ -237,7 +237,7 @@ void inverted_index::impl::tokenize_docs(
                 });
 
             mdata_writer.write(doc.id(), length, counts.size(), doc.mdata());
-            idx_->impl_->set_label(doc.id(), doc.label());
+            labels[doc.id()] = idx_->impl_->get_label_id(doc.label());
 
             // update chunk
             ls.producer_(doc.id(), counts);
