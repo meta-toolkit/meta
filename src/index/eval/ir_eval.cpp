@@ -184,7 +184,8 @@ double ir_eval::avg_p(const std::vector<search_result>& results, query_id q_id,
         }
         if (num_rel - 1 == total_relevant)
             break;
-        ++i;
+        if (i++ == num_docs)
+            break;
     }
 
     scores_.push_back(avgp / total_relevant);

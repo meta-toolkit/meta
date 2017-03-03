@@ -108,7 +108,6 @@ go_bandit([]() {
                         1.0 / idcg);
             check_query(eval, results, qid, 0.1 / 0.6, 0.5, 0.1, 0.2,
                         1.0 / idcg_5, 5);
-
             results.emplace_back(doc_id{1}, 0.8); // relevant
             check_query(eval, results, qid,
                         (2.0 * (2.0 / 3.0) * 0.2) / (2.0 / 3.0 + 0.2),
@@ -126,7 +125,7 @@ go_bandit([]() {
             results.emplace_back(doc_id{38}, 0.2);  // relevant
             results.emplace_back(doc_id{754}, 0.1); // relevant
             auto avg_p_5
-                = (1.0 + 2.0 / 3.0 + 3.0 / 4.0 + 4.0 / 5.0 + 5.0 / 6.0) / 5.0;
+                = (1.0 + 2.0 / 3.0 + 3.0 / 4.0 + 4.0 / 5.0) / 5.0;
             auto avg_p = (1.0 + 2.0 / 3.0 + 3.0 / 4.0 + 4.0 / 5.0 + 5.0 / 6.0
                           + 6.0 / 7.0 + 7.0 / 8.0 + 8.0 / 9.0 + 9.0 / 10.0
                           + 10.0 / 11.0)
