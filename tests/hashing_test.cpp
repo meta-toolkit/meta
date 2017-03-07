@@ -14,6 +14,8 @@
 #include "bandit/bandit.h"
 #include "meta/hashing/probe_map.h"
 #include "meta/hashing/probe_set.h"
+#include "meta/hashing/robinhood_map.h"
+#include "meta/hashing/robinhood_set.h"
 #include "meta/io/filesystem.h"
 #include "meta/util/string_view.h"
 
@@ -22,13 +24,15 @@
 using namespace bandit;
 using namespace meta;
 
-namespace {
+namespace
+{
 
 /**
  * Checks that a probing strategy probes each element in a range exactly once.
  */
 template <class Strategy>
-void check_range_at(std::size_t hash, std::size_t size) {
+void check_range_at(std::size_t hash, std::size_t size)
+{
     std::vector<std::size_t> checker(size, 0);
     const std::vector<std::size_t> gold(size, 1);
     Strategy strat{hash, size};
@@ -39,13 +43,15 @@ void check_range_at(std::size_t hash, std::size_t size) {
 }
 
 template <class Strategy>
-void check_range() {
+void check_range()
+{
     std::vector<std::size_t> sizes = {2, 4, 8, 32, 64};
     std::vector<std::size_t> weird_sizes = {3, 5, 7, 22, 100, 125};
     if (!std::is_same<Strategy, hashing::probing::quadratic>::value)
         sizes.insert(sizes.end(), weird_sizes.begin(), weird_sizes.end());
 
-    for (const auto& size : sizes) {
+    for (const auto& size : sizes)
+    {
         check_range_at<Strategy>(0, size);
         check_range_at<Strategy>(1, size);
         check_range_at<Strategy>(2, size);
@@ -58,9 +64,11 @@ void check_range() {
 }
 
 template <class Set, class T>
-void count_unique(Set& set, const std::vector<T>& tokens) {
+void count_unique(Set& set, const std::vector<T>& tokens)
+{
     std::unordered_set<T> gold;
-    for (const auto& token : tokens) {
+    for (const auto& token : tokens)
+    {
         gold.insert(token);
         set.emplace(token);
     }
@@ -76,20 +84,26 @@ void count_unique(Set& set, const std::vector<T>& tokens) {
 
 // exercise the const versions of functions
 template <class Map, class K>
-void compare(const Map& map, const std::unordered_map<K, uint64_t>& gold) {
+void compare(const Map& map, const std::unordered_map<K, uint64_t>& gold)
+{
     using value_type = typename std::unordered_map<K, uint64_t>::value_type;
-    for (const auto& pr : gold) {
+    for (const auto& pr : gold)
+    {
         auto it = map.find(pr.first);
-        AssertThat(it->value(), Equals(pr.second));
+        using kv_traits
+            = hashing::kv_traits<typename std::decay<decltype(*it)>::type>;
+        AssertThat(kv_traits::value(*it), Equals(pr.second));
         AssertThat(static_cast<value_type>(*it), Equals(pr));
     }
     AssertThat(map.size(), Equals(gold.size()));
 }
 
 template <class Map, class K>
-void count(Map& map, const std::vector<K>& tokens) {
+void count(Map& map, const std::vector<K>& tokens)
+{
     std::unordered_map<K, uint64_t> gold;
-    for (const auto& token : tokens) {
+    for (const auto& token : tokens)
+    {
         ++gold[token];
         ++map[token];
     }
@@ -111,7 +125,8 @@ void count(Map& map, const std::vector<K>& tokens) {
 
 template <class HashAlgorithm>
 void check_hash(typename HashAlgorithm::result_type seed, util::string_view key,
-                typename HashAlgorithm::result_type expected) {
+                typename HashAlgorithm::result_type expected)
+{
     HashAlgorithm hash{seed};
     hash(key.data(), key.size());
     AssertThat(static_cast<typename HashAlgorithm::result_type>(hash),
@@ -121,7 +136,8 @@ void check_hash(typename HashAlgorithm::result_type seed, util::string_view key,
 template <class HashAlgorithm>
 void check_incremental_hash(typename HashAlgorithm::result_type seed,
                             util::string_view key,
-                            typename HashAlgorithm::result_type expected) {
+                            typename HashAlgorithm::result_type expected)
+{
     HashAlgorithm hash{seed};
     hash(key.data(), key.size() / 2);
     hash(key.data() + key.size() / 2, key.size() - key.size() / 2 - 1);
@@ -327,6 +343,16 @@ go_bandit([]() {
             map.resize_ratio(2.0);
             count(map, numbers);
         });
+
+        it("should use robinhood hashing (robinhood_set)", [&]() {
+            hashing::robinhood_set<uint64_t> set;
+            count_unique(set, numbers);
+        });
+
+        it("should use robinhood hashing (robinhood_map)", [&]() {
+            hashing::robinhood_map<uint64_t, uint64_t> map;
+            count(map, numbers);
+        });
     });
 
     describe("[hashing] strings", []() {
@@ -393,6 +419,16 @@ go_bandit([]() {
             hashing::probe_map<std::string, uint64_t, quadratic> map;
             // quadratic probing only works for power of two sizes
             map.resize_ratio(2.0);
+            count(map, tokens);
+        });
+
+        it("should use robinhood hashing (robinhood_set)", [&]() {
+            hashing::robinhood_set<std::string> set;
+            count_unique(set, tokens);
+        });
+
+        it("should use robinhood hashing (robinhood_map)", [&]() {
+            hashing::robinhood_map<std::string, uint64_t> map;
             count(map, tokens);
         });
     });
