@@ -11,7 +11,8 @@
 #define META_TOPICS_LDA_MODEL_H_
 
 #include "meta/config.h"
-#include "meta/index/forward_index.h"
+#include "meta/learn/dataset.h"
+#include "meta/learn/instance.h"
 
 MAKE_NUMERIC_IDENTIFIER(topic_id, uint64_t)
 
@@ -42,11 +43,10 @@ class lda_model
      * Constructs an lda_model over the given set of documents and with a
      * fixed number of topics.
      *
-     * @param idx The index containing the documents to use for the model
+     * @param docs Documents to use for the model
      * @param num_topics The number of topics to find
      */
-    lda_model(std::shared_ptr<index::forward_index> idx,
-              std::size_t num_topics);
+    lda_model(learn::dataset docs, std::size_t num_topics);
 
     /**
      * Destructor. Made virtual to allow for deletion through pointer to
@@ -107,7 +107,7 @@ class lda_model
      * @param doc The document we are concerned with
      * @param topic The topic we are concerned with
      */
-    virtual double compute_doc_topic_probability(doc_id doc,
+    virtual double compute_doc_topic_probability(learn::instance_id doc,
                                                  topic_id topic) const = 0;
 
     /**
@@ -127,9 +127,14 @@ class lda_model
     lda_model(const lda_model&) = delete;
 
     /**
-     * The index containing the documents for the model.
+     * @return the total number of words in a specific document
      */
-    std::shared_ptr<index::forward_index> idx_;
+    static std::size_t doc_size(const learn::instance& inst);
+
+    /**
+     * Documents to run the topic modeling on.
+     */
+    learn::dataset docs_;
 
     /**
      * The number of topics.
