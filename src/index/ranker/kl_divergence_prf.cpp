@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include "cpptoml.h"
+#include "meta/hashing/probe_map.h"
 #include "meta/index/ranker/dirichlet_prior.h"
 #include "meta/index/ranker/kl_divergence_prf.h"
 #include "meta/index/ranker/unigram_mixture.h"

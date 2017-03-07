@@ -13,7 +13,7 @@
 #include <stdexcept>
 
 #include "meta/config.h"
-#include "meta/hashing/probe_map.h"
+#include "meta/hashing/robinhood_map.h"
 #include "meta/util/likely.h"
 #include "meta/util/shim.h"
 
@@ -32,7 +32,7 @@ class featurizer_exception : public std::runtime_error
 };
 
 template <class T>
-using feature_map = hashing::probe_map<std::string, T>;
+using feature_map = hashing::robinhood_map<std::string, T>;
 
 /**
  * Used by analyzers to increment feature values in feature_maps

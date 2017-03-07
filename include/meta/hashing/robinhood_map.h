@@ -66,6 +66,9 @@ class robinhood_map
     using base_type::reserve;
     using base_type::hash_function;
     using base_type::key_eq;
+    using base_type::bytes_used;
+    using base_type::next_bytes_used;
+    using base_type::extract;
 
     Value& at(const Key& key)
     {

@@ -351,11 +351,11 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                 std::lock_guard<std::mutex> lock{vocab_mutex};
                 for (const auto& count : counts)
                 {
-                    auto it = vocab.find(count.key());
+                    auto it = vocab.find(count.first);
                     if (it == vocab.end())
-                        it = vocab.emplace(count.key(), term_id{vocab.size()});
+                        it = vocab.emplace(count.first, term_id{vocab.size()});
 
-                    pd_counts.emplace_back(it->value(), count.value());
+                    pd_counts.emplace_back(it->value(), count.second);
                 }
 
                 if (!exceeded_budget && vocab.bytes_used() > ram_budget)
@@ -533,9 +533,9 @@ learn::feature_vector forward_index::tokenize(const corpus::document& doc)
     auto map = fwd_impl_->analyzer_->analyze<double>(doc);
     for (auto& pr : map)
     {
-        auto t_id = get_term_id(pr.key());
+        auto t_id = get_term_id(pr.first);
         if (t_id != unique_terms()) // if known feature, add it
-            f_vec[t_id] = pr.value();
+            f_vec[t_id] = pr.second;
     }
 
     return f_vec;

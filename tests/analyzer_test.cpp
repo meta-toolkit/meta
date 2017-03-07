@@ -31,8 +31,8 @@ void check_analyzer_expected(Analyzer& ana, corpus::document doc,
     auto total = std::accumulate(
         counts.begin(), counts.end(), uint64_t{0},
         [](uint64_t acc,
-           const hashing::kv_pair<std::string, uint64_t>& count) {
-            return acc + count.value();
+           const std::pair<const std::string, uint64_t>& count) {
+            return acc + count.second;
         });
 
     AssertThat(total, Equals(length));

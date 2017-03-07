@@ -3,12 +3,12 @@
  * @author Chase Geigle
  */
 
-#include <cassert>
 #include <algorithm>
+#include <cassert>
 
 #include "meta/index/chunk_reader.h"
-#include "meta/index/postings_inverter.h"
 #include "meta/index/disk_index.h"
+#include "meta/index/postings_inverter.h"
 #include "meta/parallel/thread_pool.h"
 
 namespace meta
@@ -32,31 +32,18 @@ operator()(const secondary_key_type& key, const Container& counts)
 {
     for (const auto& count : counts)
     {
-        using kv_traits
-            = hashing::kv_traits<typename std::decay<decltype(count)>::type>;
-
-        postings_buffer_type pb{kv_traits::key(count)};
+        postings_buffer_type pb{count.first};
         auto it = pdata_.find(pb);
         if (it == pdata_.end())
         {
-            // check if we would resize on an insert
-            if ((pdata_.size() + 1) / static_cast<double>(pdata_.capacity())
-                >= pdata_.max_load_factor())
-            {
-                // now check if roughly doubling our bytes used is going to
-                // cause problems
-                auto next_chunk_size = chunk_size_ + pdata_.bytes_used()
-                                       + pdata_.bytes_used() / 2;
-                if (next_chunk_size >= max_size_)
-                {
-                    // if so, flush the current chunk before carrying on
-                    flush_chunk();
-                }
-            }
+            // check if we are going to exceed our RAM budget
+            auto next_chunk_size
+                = chunk_size_ - pdata_.bytes_used() + pdata_.next_bytes_used();
+            if (next_chunk_size >= max_size_)
+                flush_chunk();
 
             chunk_size_ -= pdata_.bytes_used();
-
-            pb.write_count(key, static_cast<uint64_t>(kv_traits::value(count)));
+            pb.write_count(key, count.second);
             chunk_size_ += pb.bytes_used();
             pdata_.emplace(std::move(pb));
 
@@ -68,8 +55,8 @@ operator()(const secondary_key_type& key, const Container& counts)
 
             // note: we can modify elements in this set because we do not change
             // how comparisons are made (the primary_key value)
-            const_cast<postings_buffer_type&>(*it).write_count(
-                key, static_cast<uint64_t>(kv_traits::value(count)));
+            const_cast<postings_buffer_type&>(*it).write_count(key,
+                                                               count.second);
 
             chunk_size_ += it->bytes_used();
         }
@@ -86,7 +73,7 @@ void postings_inverter<Index>::producer::flush_chunk()
         return;
 
     // extract the keys, emptying the hash set
-    auto pdata = pdata_.extract_keys();
+    auto pdata = pdata_.extract();
     std::sort(pdata.begin(), pdata.end());
     parent_->write_chunk(pdata);
 

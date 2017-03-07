@@ -19,7 +19,7 @@
 #include <vector>
 
 #include "meta/config.h"
-#include "meta/hashing/probe_set.h"
+#include "meta/hashing/robinhood_set.h"
 #include "meta/index/chunk.h"
 #include "meta/index/postings_buffer.h"
 #include "meta/parallel/semaphore.h"
@@ -81,7 +81,7 @@ class postings_inverter
         void flush_chunk();
 
         /// Current in-memory chunk
-        hashing::probe_set<postings_buffer_type> pdata_;
+        hashing::robinhood_set<postings_buffer_type> pdata_;
 
         /// Current size of the in-memory chunk
         uint64_t chunk_size_;

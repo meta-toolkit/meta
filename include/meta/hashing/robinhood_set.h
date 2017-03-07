@@ -62,6 +62,9 @@ class robinhood_set
     using base_type::reserve;
     using base_type::hash_function;
     using base_type::key_eq;
+    using base_type::bytes_used;
+    using base_type::next_bytes_used;
+    using base_type::extract;
 };
 
 template <class Key, class Hash, class KeyEqual, class ValueStorage>

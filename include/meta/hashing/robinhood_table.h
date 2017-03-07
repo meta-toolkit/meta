@@ -49,6 +49,7 @@ class robinhood_table
     using size_type = typename ValueStorage::size_type;
     using iterator = typename ValueStorage::iterator;
     using const_iterator = typename ValueStorage::const_iterator;
+    using difference_type = typename iterator::difference_type;
     using value_type = ValueType;
     using key_getter = detail::key_getter<ValueType>;
     using key_equal = KeyEqual;
@@ -107,7 +108,7 @@ class robinhood_table
 
     void clear()
     {
-        buckets_.clear();
+        std::fill(buckets_.begin(), buckets_.end(), bucket_type{});
         entries_.clear();
     }
 
@@ -150,14 +151,18 @@ class robinhood_table
                 buckets_[idx].hc = hc;
                 buckets_[idx].idx = entries_.size();
 
-                return std::make_pair(entries_.begin() + buckets_[idx].eidx(),
-                                      true);
+                return std::make_pair(
+                    entries_.begin()
+                        + static_cast<difference_type>(buckets_[idx].eidx()),
+                    true);
             }
             else if (key_equal{}(key_getter{}(value),
                                  key_getter{}(entries_[buckets_[idx].eidx()])))
             {
-                return std::make_pair(entries_.begin() + buckets_[idx].eidx(),
-                                      false);
+                return std::make_pair(
+                    entries_.begin()
+                        + static_cast<difference_type>(buckets_[idx].eidx()),
+                    false);
             }
 
             const auto dib = distance_from_initial(idx);
@@ -174,8 +179,10 @@ class robinhood_table
 
                 robinhood_insert(old, (idx + 1) & mask, dib + 1);
 
-                return std::make_pair(entries_.begin() + buckets_[idx].eidx(),
-                                      true);
+                return std::make_pair(
+                    entries_.begin()
+                        + static_cast<difference_type>(buckets_[idx].eidx()),
+                    true);
             }
 
             idx = (idx + 1) & mask;
@@ -219,7 +226,8 @@ class robinhood_table
         const auto idx = get_idx(key);
         if (idx >= buckets_.size() || !buckets_[idx].occupied())
             return entries_.end();
-        return entries_.begin() + buckets_[idx].eidx();
+        return entries_.begin()
+               + static_cast<difference_type>(buckets_[idx].eidx());
     }
 
     const_iterator find(const key_type& key) const
@@ -227,7 +235,8 @@ class robinhood_table
         const auto idx = get_idx(key);
         if (idx >= buckets_.size() || !buckets_[idx].occupied())
             return entries_.end();
-        return entries_.begin() + buckets_[idx].eidx();
+        return entries_.begin()
+               + static_cast<difference_type>(buckets_[idx].eidx());
     }
 
     std::pair<iterator, iterator> equal_range(const key_type& key)
@@ -299,7 +308,7 @@ class robinhood_table
 
     void reserve(size_type count)
     {
-        rehash(std::ceil(count / max_load_factor()));
+        rehash(static_cast<size_type>(std::ceil(count / max_load_factor())));
     }
 
     hasher hash_function() const
@@ -310,6 +319,32 @@ class robinhood_table
     key_equal key_eq() const
     {
         return key_equal{};
+    }
+
+    size_type bytes_used() const
+    {
+        return sizeof(bucket_type) * buckets_.capacity()
+               + sizeof(value_type) * entries_.capacity();
+    }
+
+    size_type next_bytes_used() const
+    {
+        auto bucket_count = buckets_.capacity();
+        if (next_load_factor() >= max_load_factor())
+            bucket_count *= 2;
+        auto entries_count = entries_.capacity();
+        if (entries_.size() == entries_.capacity())
+            entries_count *= 2;
+        return sizeof(bucket_type) * bucket_count
+               + sizeof(value_type) * entries_count;
+    }
+
+    ValueStorage extract()
+    {
+        ValueStorage res;
+        res.swap(entries_);
+        clear();
+        return res;
     }
 
   private:
@@ -385,7 +420,7 @@ class robinhood_table
         {
             if (!buckets_[idx].occupied()
                 || (buckets_[idx].hc == hc
-                    && keq(key, entries_[buckets_[idx].eidx()].first)))
+                    && keq(key, key_getter{}(entries_[buckets_[idx].eidx()]))))
                 return idx;
 
             if (num_probes > distance_from_initial(idx))

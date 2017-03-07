@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+#include "meta/hashing/hash_storage.h"
 #include "meta/index/inverted_index.h"
 #include "meta/meta.h"
 
