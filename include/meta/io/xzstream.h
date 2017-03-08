@@ -15,6 +15,7 @@
 #include <cstdio>
 #include <istream>
 #include <ostream>
+#include <stdexcept>
 #include <streambuf>
 #include <vector>
 
