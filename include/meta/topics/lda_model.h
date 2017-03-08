@@ -46,7 +46,7 @@ class lda_model
      * @param docs Documents to use for the model
      * @param num_topics The number of topics to find
      */
-    lda_model(learn::dataset docs, std::size_t num_topics);
+    lda_model(const learn::dataset& docs, std::size_t num_topics);
 
     /**
      * Destructor. Made virtual to allow for deletion through pointer to
@@ -134,7 +134,7 @@ class lda_model
     /**
      * Documents to run the topic modeling on.
      */
-    learn::dataset docs_;
+    const learn::dataset& docs_;
 
     /**
      * The number of topics.

@@ -10,10 +10,8 @@ namespace meta
 namespace topics
 {
 
-lda_model::lda_model(learn::dataset docs, std::size_t num_topics)
-    : docs_{std::move(docs)},
-      num_topics_{num_topics},
-      num_words_(docs_.total_features())
+lda_model::lda_model(const learn::dataset& docs, std::size_t num_topics)
+    : docs_{docs}, num_topics_{num_topics}, num_words_(docs_.total_features())
 {
     /* nothing */
 }

@@ -40,7 +40,7 @@ void parallel_lda_gibbs::perform_iteration(uint64_t iter,
     std::mutex mutex;
     uint64_t assigned = 0;
     parallel::parallel_for(
-        docs_.begin(), docs_.end(), pool_, [&](learn::instance& doc) {
+        docs_.begin(), docs_.end(), pool_, [&](const learn::instance& doc) {
             {
                 std::lock_guard<std::mutex> lock{mutex};
                 progress(assigned++);

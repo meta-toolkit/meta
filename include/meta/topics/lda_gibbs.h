@@ -43,7 +43,7 @@ class lda_gibbs : public lda_model
      * @param beta The hyperparameter for the Dirichlet prior over
      * \f$\theta\f$
      */
-    lda_gibbs(learn::dataset docs, std::size_t num_topics, double alpha,
+    lda_gibbs(const learn::dataset& docs, std::size_t num_topics, double alpha,
               double beta);
 
     /**

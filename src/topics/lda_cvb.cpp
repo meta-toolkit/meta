@@ -13,9 +13,9 @@ namespace meta
 namespace topics
 {
 
-lda_cvb::lda_cvb(learn::dataset docs, std::size_t num_topics, double alpha,
-                 double beta)
-    : lda_model{std::move(docs), num_topics}
+lda_cvb::lda_cvb(const learn::dataset& docs, std::size_t num_topics,
+                 double alpha, double beta)
+    : lda_model{docs, num_topics}
 {
     gamma_.resize(docs_.size());
 

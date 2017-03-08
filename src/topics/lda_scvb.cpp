@@ -12,8 +12,8 @@ namespace meta
 namespace topics
 {
 
-lda_scvb::lda_scvb(learn::dataset docs, std::size_t num_topics, double alpha,
-                   double beta, uint64_t minibatch_size)
+lda_scvb::lda_scvb(const learn::dataset& docs, std::size_t num_topics,
+                   double alpha, double beta, uint64_t minibatch_size)
     : lda_model{std::move(docs), num_topics},
       docs_view_{docs_},
       alpha_{alpha},

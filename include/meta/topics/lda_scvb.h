@@ -45,7 +45,7 @@ class lda_scvb : public lda_model
      * @param minibatch_size The number of documents to consider in a
      * minibatch
      */
-    lda_scvb(learn::dataset docs, std::size_t num_topics, double alpha,
+    lda_scvb(const learn::dataset& docs, std::size_t num_topics, double alpha,
              double beta, uint64_t minibatch_size = 100);
 
     /**
