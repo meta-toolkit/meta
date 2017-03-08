@@ -11,7 +11,7 @@ namespace topics
 {
 
 lda_model::lda_model(const learn::dataset& docs, std::size_t num_topics)
-    : docs_{docs}, num_topics_{num_topics}
+    : docs_(docs), num_topics_{num_topics}
 {
     /* nothing */
 }
