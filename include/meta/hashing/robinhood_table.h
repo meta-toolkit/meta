@@ -289,9 +289,15 @@ class robinhood_table
 
     void rehash(size_type count)
     {
-        size_type next_size = buckets_.size() * 2;
-        if (next_size < count)
-            next_size = next_power_of_2(count);
+        auto next_size = next_power_of_2(count);
+
+        // don't rehash if (1) the bucket count won't change or (2) the new
+        // load factor would be bigger than the maximum allowed load factor
+        if (next_size == buckets_.size()
+            || static_cast<double>(size()) / next_size > max_load_factor())
+        {
+            return;
+        }
 
         util::aligned_vector<bucket_type> temp_buckets(next_size);
         std::swap(temp_buckets, buckets_);
@@ -308,6 +314,7 @@ class robinhood_table
 
     void reserve(size_type count)
     {
+        entries_.reserve(count);
         rehash(static_cast<size_type>(std::ceil(count / max_load_factor())));
     }
 
@@ -367,7 +374,7 @@ class robinhood_table
     void rehash_if_needed(double lf)
     {
         if (lf > max_load_factor())
-            rehash(0);
+            rehash(buckets_.size() * 2);
     }
 
     static uint32_t next_power_of_2(uint32_t i)
