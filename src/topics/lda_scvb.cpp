@@ -14,7 +14,7 @@ namespace topics
 
 lda_scvb::lda_scvb(const learn::dataset& docs, std::size_t num_topics,
                    double alpha, double beta, uint64_t minibatch_size)
-    : lda_model{std::move(docs), num_topics},
+    : lda_model{docs, num_topics},
       docs_view_{docs_},
       alpha_{alpha},
       beta_{beta},
@@ -100,7 +100,7 @@ void lda_scvb::perform_iteration(uint64_t iter)
             for (topic_id k{0}; k < num_topics_; ++k)
             {
                 gamma[k] = (topic_term_count_[k][freq.first] + beta_)
-                           / (topic_count_[k] + num_words_ * beta_)
+                           / (topic_count_[k] + docs_.total_features() * beta_)
                            * (doc_topic_count_[doc.id][k] + alpha_);
                 sum += gamma[k];
             }
@@ -123,7 +123,7 @@ void lda_scvb::perform_iteration(uint64_t iter)
             for (topic_id k{0}; k < num_topics_; ++k)
             {
                 gamma[k] = (topic_term_count_[k][freq.first] + beta_)
-                           / (topic_count_[k] + num_words_ * beta_)
+                           / (topic_count_[k] + docs_.total_features() * beta_)
                            * (doc_topic_count_[doc.id][k] + alpha_);
                 sum += gamma[k];
             }
@@ -160,7 +160,7 @@ void lda_scvb::perform_iteration(uint64_t iter)
     // it may...
     for (topic_id k{0}; k < num_topics_; ++k)
     {
-        for (term_id i{0}; i < num_words_; ++i)
+        for (term_id i{0}; i < docs_.total_features(); ++i)
         {
             topic_term_count_[k][i]
                 = (1 - lr) * topic_term_count_[k][i]
@@ -175,7 +175,7 @@ double lda_scvb::compute_term_topic_probability(term_id term,
                                                 topic_id topic) const
 {
     return (topic_term_count_.at(topic).at(term) + beta_)
-           / (topic_count_.at(topic) + num_words_ * beta_);
+           / (topic_count_.at(topic) + docs_.total_features() * beta_);
 }
 
 double lda_scvb::compute_doc_topic_probability(learn::instance_id doc,

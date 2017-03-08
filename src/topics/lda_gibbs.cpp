@@ -173,7 +173,7 @@ double lda_gibbs::corpus_log_likelihood() const
 
     for (topic_id j{0}; j < num_topics_; ++j)
     {
-        for (term_id t{0}; t < num_words_; ++t)
+        for (term_id t{0}; t < docs_.total_features(); ++t)
         {
             likelihood += std::lgamma(phi_[j].counts(t))
                           - std::lgamma(phi_[j].prior().pseudo_counts(t));

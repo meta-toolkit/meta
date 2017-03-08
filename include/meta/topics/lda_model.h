@@ -140,11 +140,6 @@ class lda_model
      * The number of topics.
      */
     std::size_t num_topics_;
-
-    /**
-     * The number of total unique words.
-     */
-    std::size_t num_words_;
 };
 }
 }
