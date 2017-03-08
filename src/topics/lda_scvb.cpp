@@ -18,7 +18,8 @@ lda_scvb::lda_scvb(learn::dataset docs, std::size_t num_topics, double alpha,
       docs_view_{docs_},
       alpha_{alpha},
       beta_{beta},
-      minibatch_size_{std::min(minibatch_size, docs_.size())}
+      minibatch_size_{
+          std::min(minibatch_size, static_cast<uint64_t>(docs_.size()))}
 {
     // nothing
 }

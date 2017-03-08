@@ -83,9 +83,10 @@ uint64_t lda_model::num_topics() const
 std::size_t lda_model::doc_size(const learn::instance& inst)
 {
     using pair_t = std::pair<learn::feature_id, double>;
-    return std::accumulate(
+    auto sum = std::accumulate(
         inst.weights.begin(), inst.weights.end(), 0.0,
         [](std::size_t amt, const pair_t& in) { return in.second + amt; });
+    return static_cast<uint64_t>(sum);
 }
 }
 }
