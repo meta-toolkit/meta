@@ -10,87 +10,400 @@
 #ifndef META_INDEX_POSTINGS_BUFFER_H_
 #define META_INDEX_POSTINGS_BUFFER_H_
 
+#include <array>
 #include <cstdint>
+#include <forward_list>
 #include <memory>
 #include <vector>
 
 #include "meta/config.h"
 #include "meta/index/postings_stream.h"
 #include "meta/io/packed.h"
+#include "meta/logging/logger.h"
+#include "meta/util/arena_allocator.h"
 #include "meta/util/shim.h"
 
 namespace meta
 {
 namespace index
 {
-
 namespace detail
 {
-/**
- * Gets the bytes used by a std::string.
- */
 template <class T>
-uint64_t bytes_used(
-    const T& elem,
-    typename std::enable_if<std::is_same<T,
-                                         std::string>::value>::type* = nullptr)
+struct bytes_used
 {
-    return elem.capacity();
-}
+    std::size_t operator()(const T&) const
+    {
+        return 0;
+    }
+};
 
-/**
- * Gets the bytes used by anything not a std::string.
- */
-template <class T>
-uint64_t bytes_used(
-    const T& elem,
-    typename std::enable_if<!std::is_same<T,
-                                          std::string>::value>::type* = nullptr)
+template <class Char, class Traits, class Allocator>
+struct bytes_used<std::basic_string<Char, Traits, Allocator>>
 {
-    return sizeof(elem);
-}
+    using string_type = std::basic_string<Char, Traits, Allocator>;
+
+    std::size_t operator()(const string_type& str) const
+    {
+        // this function attempts to figure out how many heap-allocated
+        // bytes are in use by a particular string in the presence of the
+        // small string optimization.
+        const static string_type empty_string;
+        if (str.capacity() > empty_string.capacity())
+            return sizeof(Char) * str.capacity();
+        return 0;
+    }
+};
 }
 
 /**
  * Represents the postings list for an in-memory chunk assocated with a
  * specific PrimaryKey (usually a std::string). Each postings_buffer stores
- * the PrimaryKey, the total number of key, value pairs in the postings
- * list, the total sum of the counts in the postings list,  and a byte
+ * the PrimaryKey, the total number of (key, value) pairs in the postings
+ * list, the total sum of the counts in the postings list, and a byte
  * buffer that holds the compressed form of the postings list itself. This
  * allows us to store significantly larger in-memory chunks than if we were
  * to store the full materialized postings_data.
+ *
+ * The byte buffer is implemented as a std::forward_list of (compile-time)
+ * fixed-size chunks on top of a thread-local (run-time) fixed-size arena.
+ * This works for us in this case because (1) in-memory postings tend to be
+ * very small and (2) using an arena allocator helps reduce memory
+ * fragmentation problems that arise if using a std::vector-style byte
+ * buffer.
  */
 template <class PrimaryKey, class SecondaryKey, class FeatureValue = uint64_t>
 class postings_buffer
 {
-  private:
+  public:
     using byte_type = uint8_t;
-    using buffer_type = std::vector<byte_type>;
-    using const_buffer_iterator = buffer_type::const_iterator;
 
-    /// A simple input stream that reads from a buffer using an iterator
-    struct buffer_input_stream
+    // we use 31 bytes per buffer to ensure that we have one byte left over
+    // to store the current write index into that buffer; each allocation
+    // will then take 32 + sizeof(void*) bytes after factoring in the next
+    // pointer of the list node
+    using buffer_type = std::array<byte_type, 31>;
+
+    /**
+     * A byte buffer on top of a fixed-size arena.
+     */
+    class char_buffer
     {
-        buffer_input_stream(const_buffer_iterator it) : it_{it}
+      public:
+        /**
+         * This is the storage for a single node in the linked list
+         * associated with this postings buffer.
+         */
+        class node
+        {
+          public:
+            bool full() const
+            {
+                return pos_ == buffer_.size();
+            }
+
+            uint8_t size() const
+            {
+                return pos_;
+            }
+
+            void reset(uint8_t sz)
+            {
+                pos_ = sz;
+            }
+
+            void put(char byte)
+            {
+                assert(pos_ < buffer_.size());
+                buffer_[pos_] = static_cast<uint8_t>(byte);
+                ++pos_;
+            }
+
+            byte_type operator[](uint8_t idx) const
+            {
+                return buffer_[idx];
+            }
+
+            template <class OutputStream>
+            uint64_t write(OutputStream& os) const
+            {
+                os.write(reinterpret_cast<const char*>(buffer_.data()),
+                         static_cast<std::streamsize>(pos_));
+                return pos_;
+            }
+
+          private:
+            buffer_type buffer_;
+            uint8_t pos_ = 0;
+        };
+
+        using allocator_type = util::arena_allocator<node, util::arena<8>>;
+        using list_type = std::forward_list<node, allocator_type>;
+
+        char_buffer(const allocator_type& alloc)
+            : flist_(alloc), tail_{flist_.before_begin()}
         {
             // nothing
         }
 
-        char get()
+        void write_count(SecondaryKey gap, FeatureValue count)
         {
-            return *it_++;
+            if (flist_.empty())
+            {
+                tail_ = flist_.insert_after(tail_, node{});
+                ++size_;
+            }
+
+            const auto pos = tail_->size();
+            const auto old_tail = tail_;
+            try
+            {
+                io::packed::write(*this, gap);
+                io::packed::write(*this, count);
+            }
+            catch (const util::arena_bad_alloc&)
+            {
+                // if we failed to perform the full write, we need to
+                // (1) reset the position of the node that used to be tail
+                // (2) erase any new nodes that might have been allocated
+                // (3) reset the tail to the old node
+                // (4) re-throw the exception
+                old_tail->reset(pos);
+                flist_.erase_after(old_tail, flist_.end());
+                tail_ = old_tail;
+                throw;
+            }
         }
 
-        const_buffer_iterator it_;
+        void put(char byte)
+        {
+            if (tail_->full())
+            {
+                tail_ = flist_.insert_after(tail_, node{});
+                ++size_;
+            }
+
+            tail_->put(byte);
+        }
+
+        template <class OutputStream>
+        uint64_t write(OutputStream& os) const
+        {
+            uint64_t total_bytes = 0;
+            for (const auto& n : flist_)
+                total_bytes += n.write(os);
+            return total_bytes;
+        }
+
+        uint64_t bytes_used() const
+        {
+            return (sizeof(node) + sizeof(void*)) * size_;
+        }
+
+        /**
+         * Emulates an input stream on top of the char buffer's linked
+         * list that is suitable for using as input to io::packed::read
+         * operations.
+         */
+        class stream
+        {
+          public:
+            stream(typename list_type::const_iterator begin,
+                   typename list_type::const_iterator end)
+                : it_{begin}, end_{end}
+            {
+                // nothing
+            }
+
+            int peek() const
+            {
+                if (it_ == end_)
+                    return EOF;
+                return static_cast<unsigned char>((*it_)[pos_]);
+            }
+
+            int get()
+            {
+                if (it_ == end_)
+                    return EOF;
+                auto ret = static_cast<unsigned char>((*it_)[pos_]);
+                ++pos_;
+                if (pos_ == it_->size())
+                {
+                    ++it_;
+                    pos_ = 0;
+                }
+                return ret;
+            }
+
+            bool operator==(const stream& other) const
+            {
+                return std::tie(it_, end_, pos_)
+                       == std::tie(other.it_, other.end_, other.pos_);
+            }
+
+            bool operator!=(const stream& other) const
+            {
+                return !(*this == other);
+            }
+
+          private:
+            typename list_type::const_iterator it_;
+            const typename list_type::const_iterator end_;
+            uint8_t pos_ = 0;
+        };
+
+        /**
+         * Iterates the (key, value) pairs in a char_buffer.
+         */
+        class iterator
+        {
+          public:
+            using value_type = std::pair<SecondaryKey, FeatureValue>;
+            using reference = const value_type&;
+            using pointer = const value_type*;
+            using difference_type = std::ptrdiff_t;
+            using iterator_category = std::input_iterator_tag;
+
+            iterator(typename list_type::const_iterator begin,
+                     typename list_type::const_iterator end)
+                : stream_{begin, end},
+                  value_{std::make_pair(SecondaryKey{0}, FeatureValue{0})}
+            {
+                ++(*this);
+            }
+
+            iterator& operator++()
+            {
+                if (stream_.peek() == EOF)
+                {
+                    at_end_ = true;
+                    return *this;
+                }
+
+                uint64_t gap;
+                io::packed::read(stream_, gap);
+                value_.first += gap;
+                io::packed::read(stream_, value_.second);
+                return *this;
+            }
+
+            std::pair<SecondaryKey, FeatureValue>& operator*()
+            {
+                return value_;
+            }
+
+            const std::pair<SecondaryKey, FeatureValue>& operator*() const
+            {
+                return value_;
+            }
+
+            bool operator==(const iterator& other) const
+            {
+                return std::tie(stream_, at_end_)
+                       == std::tie(other.stream_, other.at_end_);
+            }
+
+            bool operator!=(const iterator& other) const
+            {
+                return !(*this == other);
+            }
+
+          private:
+            stream stream_;
+            std::pair<SecondaryKey, FeatureValue> value_;
+            bool at_end_ = false;
+        };
+
+        iterator begin()
+        {
+            return {flist_.begin(), flist_.end()};
+        }
+
+        iterator begin() const
+        {
+            return {flist_.begin(), flist_.end()};
+        }
+
+        iterator end()
+        {
+            return {flist_.end(), flist_.end()};
+        }
+
+        iterator end() const
+        {
+            return {flist_.end(), flist_.end()};
+        }
+
+      private:
+        list_type flist_;
+        typename list_type::iterator tail_;
+        std::size_t size_ = 0;
     };
 
-  public:
+    using allocator_type = typename char_buffer::allocator_type;
+    using iterator = typename char_buffer::iterator;
+
+    iterator begin()
+    {
+        return buffer_.begin();
+    }
+
+    iterator begin() const
+    {
+        return buffer_.begin();
+    }
+
+    iterator end()
+    {
+        return buffer_.end();
+    }
+
+    iterator end() const
+    {
+        return buffer_.end();
+    }
+
+    std::size_t size() const
+    {
+        return num_ids_;
+    }
+
     /**
      * Creates a postings_buffer for a specific primary key.
      */
-    postings_buffer(PrimaryKey pk) : pk_(std::move(pk))
+    postings_buffer(PrimaryKey pk, const allocator_type& alloc)
+        : buffer_(alloc), pk_(std::move(pk)), alloc_(alloc)
     {
         // nothing
+    }
+
+    /**
+     * Moves a postings_buffer.
+     */
+    postings_buffer(postings_buffer&& other)
+        : buffer_{std::move(other.buffer_)},
+          pk_{std::move(other.pk_)},
+          last_id_{other.last_id_},
+          num_ids_{other.num_ids_},
+          total_counts_{other.total_counts_},
+          alloc_{other.alloc_}
+    {
+        // nothing
+    }
+
+    /**
+     * Move-assigns a postings_buffer.
+     */
+    postings_buffer& operator=(postings_buffer&& other)
+    {
+        assert(other.alloc_ == alloc_);
+        buffer_ = std::move(other.buffer_);
+        pk_ = std::move(other.pk_);
+        last_id_ = other.last_id_;
+        num_ids_ = other.num_ids_;
+        total_counts_ = other.total_counts_;
+        return *this;
     }
 
     /**
@@ -109,13 +422,11 @@ class postings_buffer
      */
     void write_count(SecondaryKey id, FeatureValue count)
     {
+        assert(id >= last_id_);
+        buffer_.write_count(id - last_id_, count);
+
         ++num_ids_;
         total_counts_ += count;
-
-        assert(id >= last_id_);
-        io::packed::write(buffer_, id - last_id_);
-        io::packed::write(buffer_, count);
-
         last_id_ = id;
     }
 
@@ -125,14 +436,8 @@ class postings_buffer
      */
     std::size_t bytes_used() const
     {
-        auto bytes = buffer_.size_;
-
-        // this only matters when PrimaryKey is std::string.
-        // if the capacity of the string is bigger than the size of the
-        // string itself, then we know it must also be using heap memory,
-        // which we haven't accounted for already.
-        if (detail::bytes_used(pk_) > sizeof(PrimaryKey))
-            bytes += detail::bytes_used(pk_);
+        auto bytes = buffer_.bytes_used();
+        bytes += detail::bytes_used<PrimaryKey>{}(pk_);
         return bytes;
     }
 
@@ -148,8 +453,7 @@ class postings_buffer
         bytes += io::packed::write(os, num_ids_);
         bytes += io::packed::write(os, total_counts_);
 
-        buffer_.write(os);
-        return bytes + buffer_.size_;
+        return bytes + buffer_.write(os);
     }
 
     /**
@@ -181,110 +485,8 @@ class postings_buffer
     }
 
   private:
-    /// A simple byte buffer that resizes with a 1.5x policy when full
-    struct char_buffer
-    {
-        /// Constructs an empty buffer
-        char_buffer() : size_{0}, pos_{0}
-        {
-        }
-
-        /**
-         * Copies an existing buffer
-         * @param other The buffer to copy
-         */
-        char_buffer(const char_buffer& other)
-            : size_{other.size_}, pos_{other.pos_}
-        {
-            if (other.bytes_)
-            {
-                bytes_ = make_unique<uint8_t[]>(size_);
-                std::copy(other.bytes_.get(), other.bytes_.get() + pos_,
-                          bytes_.get());
-            }
-        }
-
-        /// char_buffer can be move constructed
-        char_buffer(char_buffer&&) = default;
-
-        /**
-         * @param rhs The buffer to assign into this one
-         * @return the current buffer
-         */
-        char_buffer& operator=(const char_buffer& rhs)
-        {
-            char_buffer copy{rhs};
-            swap(copy);
-            return *this;
-        }
-
-        /// char_buffer can be move assigned
-        char_buffer& operator=(char_buffer&&) = default;
-
-        /**
-         * Swaps the current buffer with the argument
-         * @param other The buffer to swap with
-         */
-        void swap(char_buffer& other)
-        {
-            using std::swap;
-            swap(size_, other.size_);
-            swap(pos_, other.pos_);
-            swap(bytes_, other.bytes_);
-        }
-
-        /**
-         * Writes a single byte to the buffer, resizing if needed.
-         * @param byte the byte to write
-         */
-        void put(char byte)
-        {
-            if (size_ == pos_)
-                resize();
-            bytes_[pos_] = static_cast<uint8_t>(byte);
-            ++pos_;
-        }
-
-        /**
-         * Resizes the buffer to 1.5x its old size.
-         */
-        void resize()
-        {
-            if (size_ == 0)
-            {
-                size_ = 8;
-            }
-            else
-            {
-                // 1.5x resize
-                size_ += (size_ + 1) / 2;
-            }
-
-            auto newbytes = make_unique<uint8_t[]>(size_);
-            std::copy(bytes_.get(), bytes_.get() + pos_, newbytes.get());
-            std::swap(newbytes, bytes_);
-        }
-
-        /**
-         * Writes all the bytes in this buffer to the output stream
-         * @param os The output stream to write to.
-         */
-        template <class OutputStream>
-        void write(OutputStream& os) const
-        {
-            os.write(reinterpret_cast<const char*>(bytes_.get()),
-                     static_cast<std::streamsize>(pos_));
-        }
-
-        /// The bytes in this buffer
-        std::unique_ptr<uint8_t[]> bytes_;
-        /// The current size of the buffer
-        std::size_t size_;
-        /// The current byte position in the buffer
-        std::size_t pos_;
-
-    } buffer_;
-
+    /// The storage for the in-memory postings
+    char_buffer buffer_;
     /// The primary key for the buffer
     PrimaryKey pk_;
     /// The last id we wrote
@@ -293,6 +495,8 @@ class postings_buffer
     uint64_t num_ids_ = 0;
     /// The sum of the counts we've written
     FeatureValue total_counts_ = 0;
+    /// The allocator to use for list nodes in the buffer
+    allocator_type alloc_;
 };
 
 template <class HashAlgorithm, class PrimaryKey, class SecondaryKey>

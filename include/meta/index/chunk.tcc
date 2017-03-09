@@ -64,7 +64,7 @@ void chunk<PrimaryKey, SecondaryKey>::memory_merge_with(Container& pdata)
         ++terms;
         if (my_pd.primary_key() == other_pd->primary_key())
         {
-            my_pd.merge_with(other_pd->stream());
+            my_pd.merge_with(*other_pd);
             my_pd.write_packed(output);
             my_pd.read_packed(my_data);
             ++other_pd;

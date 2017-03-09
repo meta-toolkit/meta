@@ -23,6 +23,7 @@
 #include "meta/index/chunk.h"
 #include "meta/index/postings_buffer.h"
 #include "meta/parallel/semaphore.h"
+#include "meta/util/arena_allocator.h"
 #include "meta/util/optional.h"
 
 namespace meta
@@ -44,6 +45,7 @@ class postings_inverter
     using chunk_t = chunk<primary_key_type, secondary_key_type>;
     using postings_buffer_type
         = postings_buffer<primary_key_type, secondary_key_type>;
+    using allocator_type = typename postings_buffer_type::allocator_type;
 
     /**
      * The object that is fed postings_data by the index.
@@ -58,6 +60,8 @@ class postings_inverter
          * for this producer
          */
         producer(postings_inverter* parent, uint64_t ram_budget);
+
+        producer(producer&& other) = default;
 
         /**
          * Handler for when a given secondary_key has been processed and is
@@ -83,7 +87,7 @@ class postings_inverter
         /// Current in-memory chunk
         hashing::robinhood_set<postings_buffer_type> pdata_;
 
-        /// Current size of the in-memory chunk
+        /// The size of the current in-memory chunk
         uint64_t chunk_size_;
 
         /**
@@ -93,8 +97,14 @@ class postings_inverter
          */
         uint64_t max_size_;
 
+        /// The maximum number of entries in the postings set
+        uint64_t max_table_size_;
+
         /// Back-pointer to the handler this producer is operating on
         postings_inverter* parent_;
+
+        /// An arena to be used to score in-memory postings lists
+        std::unique_ptr<util::arena<8>> arena_;
     };
 
     /**
