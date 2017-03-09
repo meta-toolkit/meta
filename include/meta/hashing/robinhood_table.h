@@ -42,6 +42,40 @@ struct key_getter<std::pair<Key, Value>>
     }
 };
 
+template <std::size_t Size>
+struct next_power_of_2;
+
+template <>
+struct next_power_of_2<sizeof(uint32_t)>
+{
+    uint32_t operator()(uint32_t i) const
+    {
+        --i;
+        i |= i >> 1;
+        i |= i >> 2;
+        i |= i >> 4;
+        i |= i >> 8;
+        i |= i >> 16;
+        return i + 1;
+    }
+};
+
+template <>
+struct next_power_of_2<sizeof(uint64_t)>
+{
+    uint64_t operator()(uint64_t i) const
+    {
+        --i;
+        i |= i >> 1;
+        i |= i >> 2;
+        i |= i >> 4;
+        i |= i >> 8;
+        i |= i >> 16;
+        i |= i >> 32;
+        return i + 1;
+    }
+};
+
 template <class ValueType, class Hash, class KeyEqual, class ValueStorage>
 class robinhood_table
 {
@@ -289,7 +323,7 @@ class robinhood_table
 
     void rehash(size_type count)
     {
-        auto next_size = next_power_of_2(count);
+        auto next_size = next_power_of_2<sizeof(size_type)>{}(count);
 
         // don't rehash if (1) the bucket count won't change or (2) the new
         // load factor would be bigger than the maximum allowed load factor
@@ -375,29 +409,6 @@ class robinhood_table
     {
         if (lf > max_load_factor())
             rehash(buckets_.size() * 2);
-    }
-
-    static uint32_t next_power_of_2(uint32_t i)
-    {
-        --i;
-        i |= i >> 1;
-        i |= i >> 2;
-        i |= i >> 4;
-        i |= i >> 8;
-        i |= i >> 16;
-        return i + 1;
-    }
-
-    static uint64_t next_power_of_2(uint64_t i)
-    {
-        --i;
-        i |= i >> 1;
-        i |= i >> 2;
-        i |= i >> 4;
-        i |= i >> 8;
-        i |= i >> 16;
-        i |= i >> 32;
-        return i + 1;
     }
 
     std::size_t distance_from_initial(std::size_t bucket_idx) const
