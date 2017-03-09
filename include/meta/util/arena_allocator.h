@@ -10,6 +10,7 @@
 #ifndef META_UTIL_ARENA_ALLOCATOR_H_
 #define META_UTIL_ARENA_ALLOCATOR_H_
 
+#include <cstddef>
 #include <memory>
 #include <vector>
 
@@ -32,7 +33,7 @@ class arena_bad_alloc : public std::bad_alloc
  * the MIT license.
  * @see https://howardhinnant.github.io/stack_alloc.html
  */
-template <std::size_t Alignment = alignof(std::max_align_t),
+template <std::size_t Alignment = alignof(META_MAX_ALIGN_T),
           class Allocator = std::allocator<char>>
 class arena
 {
