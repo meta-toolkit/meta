@@ -36,15 +36,15 @@ class lda_gibbs : public lda_model
      * \f$\beta\f$ for the priors on \f$\phi\f$ (topic distributions)
      * and \f$\theta\f$ (topic proportions), respectively.
      *
-     * @param idx The index that contains the documents to model
+     * @param docs Documents to model
      * @param num_topics The number of topics to infer
      * @param alpha The hyperparameter for the Dirichlet prior over
      * \f$\phi\f$
      * @param beta The hyperparameter for the Dirichlet prior over
      * \f$\theta\f$
      */
-    lda_gibbs(std::shared_ptr<index::forward_index> idx, std::size_t num_topics,
-              double alpha, double beta);
+    lda_gibbs(const learn::dataset& docs, std::size_t num_topics, double alpha,
+              double beta);
 
     /**
      * Destructor: virtual for potential subclassing.
@@ -82,7 +82,7 @@ class lda_gibbs : public lda_model
      * @param doc The document we are concerned with.
      * @param topic The topic we are concerned with.
      */
-    virtual double compute_doc_topic_probability(doc_id doc,
+    virtual double compute_doc_topic_probability(learn::instance_id doc,
                                                  topic_id topic) const override;
 
   protected:
@@ -97,7 +97,7 @@ class lda_gibbs : public lda_model
      * @param doc The document the term resides in
      * @return the topic sampled the given (term, doc) pair
      */
-    topic_id sample_topic(term_id term, doc_id doc);
+    topic_id sample_topic(term_id term, learn::instance_id doc);
 
     /**
      * Computes a weight proportional to \f$P(z_i = j | w, \boldsymbol{z})\f$.
@@ -109,7 +109,7 @@ class lda_gibbs : public lda_model
      * @return a weight proportional to the probability that the given term
      * in the given document belongs to the given topic
      */
-    virtual double compute_sampling_weight(term_id term, doc_id doc,
+    virtual double compute_sampling_weight(term_id term, learn::instance_id doc,
                                            topic_id topic) const;
 
     /**
@@ -136,7 +136,8 @@ class lda_gibbs : public lda_model
      * @param term The term in question
      * @param doc The document in question
      */
-    virtual void decrease_counts(topic_id topic, term_id term, doc_id doc);
+    virtual void decrease_counts(topic_id topic, term_id term,
+                                 learn::instance_id doc);
 
     /**
      * Increases all counts associated with the given topic, term, and
@@ -146,7 +147,8 @@ class lda_gibbs : public lda_model
      * @param term The term in question
      * @param doc The document in question
      */
-    virtual void increase_counts(topic_id topic, term_id term, doc_id doc);
+    virtual void increase_counts(topic_id topic, term_id term,
+                                 learn::instance_id doc);
 
     /**
      * @return \f$\log P(\mathbf{w} \mid \mathbf{z})\f$
@@ -169,7 +171,7 @@ class lda_gibbs : public lda_model
      * potentially have many different topics assigned to it, so we are
      * not using term_ids here, but our own contrived intra document term id.
      *
-     * Indexed as [doc_id][position].
+     * Indexed as [instance_id][position].
      */
     std::vector<std::vector<topic_id>> doc_word_topic_;
 

@@ -20,7 +20,7 @@ int print_usage(const std::string& name)
 {
     std::cerr
         << "Usage: " << name
-        << " config_file model.theta\n"
+        << " config.toml model.theta\n"
            "\tCreates a line_corpus dataset based on the topics from an LDA run"
         << std::endl;
     return 1;
