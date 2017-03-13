@@ -22,12 +22,6 @@ namespace parser
  * Represents the parse tree for a sentence. This may either be a sentence
  * parsed from training data, or the output from a trained parser on test
  * data.
- *
- * @todo determine what parts of analyzers::parse_tree are worth
- * keeping---that class deals specifically with trees read from the output
- * of the Stanford parser. When we have our own, we may still want some of
- * that functionality to allow people to use parsers that are not our
- * own?
  */
 class parse_tree
 {

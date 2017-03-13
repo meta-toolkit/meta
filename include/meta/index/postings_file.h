@@ -82,7 +82,7 @@ class postings_file
 
   private:
     io::mmap_file postings_;
-    util::disk_vector<uint64_t> byte_locations_;
+    util::disk_vector<const uint64_t> byte_locations_;
 };
 }
 }

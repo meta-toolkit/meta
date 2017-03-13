@@ -10,6 +10,10 @@ if (WIN32)
     list(APPEND META_IO_SOURCES mman-win32/mman.c)
 endif()
 
+if (META_HAS_LIBLZMA)
+    list(APPEND META_IO_SOURCES xzstream.cpp)
+endif()
+
 add_library(meta-io ${META_IO_SOURCES})
 target_link_libraries(meta-io meta-util ${ZLIB_LIBRARIES})
 
@@ -18,6 +22,11 @@ if (META_HAS_EXPERIMENTAL_FILESYSTEM)
 else()
     target_include_directories(meta-io SYSTEM PRIVATE
         ${META_PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)
+endif()
+
+if (META_HAS_LIBLZMA)
+    target_include_directories(meta-io PUBLIC ${LIBLZMA_INCLUDE_DIRS})
+    target_link_libraries(meta-io ${LIBLZMA_LIBRARIES})
 endif()
 
 install(TARGETS meta-io

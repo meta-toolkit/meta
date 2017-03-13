@@ -111,9 +111,11 @@ class ir_eval
      * @param results The ranked list of results
      * @param q_id The query that was run to produce these results
      * @param out The stream to print to
+     * @param num_docs the @k parameters for each measurement
      */
     void print_stats(const result_type& results, query_id q_id,
-                     std::ostream& out = std::cout);
+                     std::ostream& out = std::cout,
+                     uint64_t num_docs = std::numeric_limits<uint64_t>::max());
 
     /**
      * Clears saved scores for MAP and gMAP.

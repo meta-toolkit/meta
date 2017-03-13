@@ -38,7 +38,7 @@ class vocabulary_map
      * Byte positions for each term in the leaves to allow for reverse
      * lookup of a the string associated with a given id.
      */
-    util::disk_vector<uint64_t> inverse_;
+    util::disk_vector<const uint64_t> inverse_;
 
     /**
      * The size of the nodes in the tree.

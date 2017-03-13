@@ -66,7 +66,7 @@ class disk_index::disk_index_impl
      * Loads the doc labels.
      * @param num_docs The number of documents stored in the index
      */
-    void load_labels(uint64_t num_docs = 0);
+    void load_labels();
 
     /**
      * Loads the term_id mapping.
@@ -84,13 +84,6 @@ class disk_index::disk_index_impl
     void save_label_id_mapping();
 
     /**
-     * Sets the label for a document.
-     * @param id The document id
-     * @param label The new label
-     */
-    void set_label(doc_id id, const class_label& label);
-
-    /**
      * @return the total number of unique terms in the index.
      */
     uint64_t total_unique_terms() const;
@@ -106,7 +99,6 @@ class disk_index::disk_index_impl
      */
     std::vector<class_label> class_labels() const;
 
-  private:
     /**
      * @param lbl the string class label to find the id for
      * @return the label_id of a class_label, creating a new one if
@@ -114,6 +106,7 @@ class disk_index::disk_index_impl
      */
     label_id get_label_id(const class_label& lbl);
 
+  private:
     /// the location of this index
     std::string index_name_;
 
@@ -121,7 +114,7 @@ class disk_index::disk_index_impl
      * Maps which class a document belongs to (if any).
      * Each index corresponds to a doc_id (uint64_t).
      */
-    util::optional<util::disk_vector<label_id>> labels_;
+    util::optional<util::disk_vector<const label_id>> labels_;
 
     /// Stores additional metadata for each document
     util::optional<metadata_file> metadata_;

@@ -241,8 +241,6 @@ void forward_index::create_index(const cpptoml::table& config,
             metadata_writer mdata_writer{index_name(), docs.size(),
                                          docs.schema()};
 
-            impl_->load_labels(docs.size());
-
             auto max_threads = std::thread::hardware_concurrency();
             auto num_threads = config.get_as<std::size_t>("indexer-num-threads")
                                    .value_or(max_threads);
@@ -261,7 +259,7 @@ void forward_index::create_index(const cpptoml::table& config,
             impl_->save_label_id_mapping();
             fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
 
-            // reload the label file to ensure it was flushed
+            // reload the label file
             impl_->load_labels();
         }
     }
@@ -309,6 +307,9 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
     bool exceeded_budget = false;
     std::atomic_size_t chunk_id{0};
 
+    util::disk_vector<label_id> labels{
+        idx_->index_name() + idx_->impl_->files[DOC_LABELS], docs.size()};
+
     parallel::thread_pool pool{num_threads};
     corpus::parallel_consume(
         docs, pool,
@@ -342,7 +343,7 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                 });
 
             mdata_writer.write(doc.id(), length, counts.size(), doc.mdata());
-            idx_->impl_->set_label(doc.id(), doc.label());
+            labels[doc.id()] = idx_->impl_->get_label_id(doc.label());
 
             forward_index::postings_data_type::count_t pd_counts;
             pd_counts.reserve(counts.size());
@@ -447,10 +448,11 @@ void forward_index::impl::create_libsvm_postings(corpus::corpus& docs)
 {
     auto filename = idx_->index_name() + idx_->impl_->files[POSTINGS];
     auto num_docs = docs.size();
-    idx_->impl_->load_labels(num_docs);
 
     total_unique_terms_ = 0;
     {
+        util::disk_vector<label_id> labels{
+            idx_->index_name() + idx_->impl_->files[DOC_LABELS], docs.size()};
         postings_file_writer<forward_index::postings_data_type> out{filename,
                                                                     num_docs};
 
@@ -482,7 +484,7 @@ void forward_index::impl::create_libsvm_postings(corpus::corpus& docs)
 
             md_writer.write(doc.id(), static_cast<uint64_t>(length), num_unique,
                             doc.mdata());
-            idx_->impl_->set_label(doc.id(), doc.label());
+            labels[doc.id()] = idx_->impl_->get_label_id(doc.label());
         }
 
         // +1 since we subtracted one from each of the ids in the
@@ -490,7 +492,7 @@ void forward_index::impl::create_libsvm_postings(corpus::corpus& docs)
         ++total_unique_terms_;
     }
 
-    // reload the label file to ensure it was flushed
+    // load the labels
     idx_->impl_->load_labels();
 
     LOG(info) << "Created compressed postings file ("

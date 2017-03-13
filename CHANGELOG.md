@@ -1,3 +1,22 @@
+# [v3.0.1][3.0.1]
+## New features
+- Add an optional `xz{i,o}fstream` to `meta::io` if compiled with liblzma
+  available.
+- `util::disk_vector<const T>` can now be used to specify a read-only view
+  of a disk-backed vector.
+
+## Bug fixes
+- `ir_eval::print_stats` now takes a `num_docs` parameter to properly
+  display evaluation metrics at a certain cutoff point, which was always 5
+  beforehand. This fixes a bug in `query-runner` where the stats were not
+  being computed according to the cutoff point specified in the
+  configuration.
+- `ir_eval::avg_p` now correctly stops computing after `num_docs`. Before,
+  if you specified `num_docs` as a smaller value than the size of the
+  result list, it would erroneously keep calculating until the end of the
+  result list instead of stopping after `num_docs` elements.
+- `{inverted,forward}_index` can now be loaded from read-only filesystems.
+
 # [v3.0.0][3.0.0]
 ## New features
 - Add an `embedding_analyzer` that represents documents with their averaged word
@@ -609,7 +628,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v3.0.0...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v3.0.1...develop
+[3.0.1]: https://github.com/meta-toolkit/meta/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/meta-toolkit/meta/compare/v2.4.2...v3.0.0
 [2.4.2]: https://github.com/meta-toolkit/meta/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/meta-toolkit/meta/compare/v2.4.0...v2.4.1
