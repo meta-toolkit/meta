@@ -54,11 +54,17 @@ xzstreambuf::xzstreambuf(const char* filename, const char* openmode,
       file_{std::fopen(filename, openmode)},
       bytes_read_{0}
 {
-
     stream_ = LZMA_STREAM_INIT;
     action_ = LZMA_RUN;
     stream_.next_in = nullptr;
     stream_.avail_in = 0;
+
+    if (file_ == nullptr)
+    {
+        stream_.next_out = nullptr;
+        stream_.avail_out = 0;
+        return;
+    }
 
     util::string_view mode{openmode};
     if (mode == "wb")
@@ -95,7 +101,9 @@ xzstreambuf::~xzstreambuf()
         sync();
     }
 
-    fclose(file_);
+    if (file_)
+        fclose(file_);
+
     lzma_end(&stream_);
 }
 
@@ -219,7 +227,10 @@ uint64_t xzstreambuf::bytes_read() const
 xzifstream::xzifstream(std::string name)
     : std::istream{&buffer_}, buffer_{name.c_str(), "rb"}
 {
-    clear();
+    if (buffer_.is_open())
+        clear();
+    else
+        setstate(std::ios::badbit);
 }
 
 xzstreambuf* xzifstream::rdbuf() const
@@ -240,7 +251,10 @@ uint64_t xzifstream::bytes_read() const
 xzofstream::xzofstream(std::string name)
     : std::ostream{&buffer_}, buffer_{name.c_str(), "wb"}
 {
-    clear();
+    if (buffer_.is_open())
+        clear();
+    else
+        setstate(std::ios::badbit);
 }
 
 xzstreambuf* xzofstream::rdbuf() const

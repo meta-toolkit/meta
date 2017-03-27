@@ -84,7 +84,10 @@ bool gzstreambuf::is_open() const
 gzifstream::gzifstream(std::string name)
     : std::istream{&buffer_}, buffer_{name.c_str(), "rb"}
 {
-    clear();
+    if (buffer_.is_open())
+        clear();
+    else
+        setstate(std::ios::badbit);
 }
 
 gzstreambuf* gzifstream::rdbuf() const
@@ -100,7 +103,10 @@ void gzifstream::flush()
 gzofstream::gzofstream(std::string name)
     : std::ostream{&buffer_}, buffer_{name.c_str(), "wb"}
 {
-    clear();
+    if (buffer_.is_open())
+        clear();
+    else
+        setstate(std::ios::badbit);
 }
 
 gzstreambuf* gzofstream::rdbuf() const
