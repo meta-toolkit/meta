@@ -3,7 +3,6 @@
  * @author Chase Geigle
  */
 
-#include <iostream>
 #include "meta/io/gzstream.h"
 
 namespace meta
@@ -79,44 +78,6 @@ int gzstreambuf::sync()
 bool gzstreambuf::is_open() const
 {
     return file_ != nullptr;
-}
-
-gzifstream::gzifstream(std::string name)
-    : std::istream{&buffer_}, buffer_{name.c_str(), "rb"}
-{
-    if (buffer_.is_open())
-        clear();
-    else
-        setstate(std::ios::badbit);
-}
-
-gzstreambuf* gzifstream::rdbuf() const
-{
-    return const_cast<gzstreambuf*>(&buffer_);
-}
-
-void gzifstream::flush()
-{
-    buffer_.sync();
-}
-
-gzofstream::gzofstream(std::string name)
-    : std::ostream{&buffer_}, buffer_{name.c_str(), "wb"}
-{
-    if (buffer_.is_open())
-        clear();
-    else
-        setstate(std::ios::badbit);
-}
-
-gzstreambuf* gzofstream::rdbuf() const
-{
-    return const_cast<gzstreambuf*>(&buffer_);
-}
-
-void gzofstream::flush()
-{
-    buffer_.sync();
 }
 }
 }

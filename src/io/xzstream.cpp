@@ -63,6 +63,7 @@ xzstreambuf::xzstreambuf(const char* filename, const char* openmode,
     {
         stream_.next_out = nullptr;
         stream_.avail_out = 0;
+        reading_ = true;
         return;
     }
 
@@ -222,49 +223,6 @@ bool xzstreambuf::is_open() const
 uint64_t xzstreambuf::bytes_read() const
 {
     return bytes_read_;
-}
-
-xzifstream::xzifstream(std::string name)
-    : std::istream{&buffer_}, buffer_{name.c_str(), "rb"}
-{
-    if (buffer_.is_open())
-        clear();
-    else
-        setstate(std::ios::badbit);
-}
-
-xzstreambuf* xzifstream::rdbuf() const
-{
-    return const_cast<xzstreambuf*>(&buffer_);
-}
-
-void xzifstream::flush()
-{
-    buffer_.sync();
-}
-
-uint64_t xzifstream::bytes_read() const
-{
-    return buffer_.bytes_read();
-}
-
-xzofstream::xzofstream(std::string name)
-    : std::ostream{&buffer_}, buffer_{name.c_str(), "wb"}
-{
-    if (buffer_.is_open())
-        clear();
-    else
-        setstate(std::ios::badbit);
-}
-
-xzstreambuf* xzofstream::rdbuf() const
-{
-    return const_cast<xzstreambuf*>(&buffer_);
-}
-
-void xzofstream::flush()
-{
-    buffer_.sync();
 }
 }
 }
