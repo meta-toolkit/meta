@@ -87,7 +87,7 @@ class zifstream : public zfstream<std::istream, ZStreamBuf>
 {
   public:
     explicit zifstream(const std::string& name)
-        : zfstream<std::istream, ZStreamBuf>{name, "rb"}
+        : zfstream<std::istream, ZStreamBuf>(name, "rb")
     {
         // nothing
     }
@@ -102,7 +102,7 @@ class zofstream : public zfstream<std::ostream, ZStreamBuf>
 {
   public:
     explicit zofstream(const std::string& name)
-        : zfstream<std::ostream, ZStreamBuf>{name, "wb"}
+        : zfstream<std::ostream, ZStreamBuf>(name, "wb")
     {
         // nothing
     }
