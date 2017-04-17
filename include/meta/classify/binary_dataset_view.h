@@ -52,6 +52,36 @@ class binary_dataset_view : public learn::dataset_view
         // nothing
     }
 
+    binary_dataset_view(const binary_dataset& dset,
+                        binary_dataset::const_iterator begin,
+                        binary_dataset::const_iterator end)
+        : dataset_view{dset, begin, end},
+          label_fn_{[this](const instance_type& instance) {
+              return this->dset<binary_dataset>().label(instance);
+          }}
+    {
+        // nothing
+    }
+
+    template <class RandomEngine>
+    binary_dataset_view(const binary_dataset& dset,
+                        binary_dataset::const_iterator begin,
+                        binary_dataset::const_iterator end, RandomEngine&& rng)
+        : dataset_view{dset, begin, end, std::forward<RandomEngine>(rng)},
+          label_fn_{[this](const instance_type& instance) {
+              return this->dset<binary_dataset>().label(instance);
+          }}
+    {
+        // nothing
+    }
+
+    binary_dataset_view(const binary_dataset_view& bdv,
+                        std::vector<size_type>&& indices)
+        : dataset_view{bdv, std::move(indices)}, label_fn_{bdv.label_fn_}
+    {
+        // nothing
+    }
+
     template <class LabelFunction>
     binary_dataset_view(const multiclass_dataset_view& mdv, LabelFunction&& fn)
         : dataset_view{mdv}, label_fn_(std::forward<LabelFunction>(fn))
@@ -95,13 +125,6 @@ class binary_dataset_view : public learn::dataset_view
     }
 
   private:
-    binary_dataset_view(const binary_dataset_view& bdv,
-                        std::vector<size_type>&& indices)
-        : dataset_view{bdv, std::move(indices)}, label_fn_{bdv.label_fn_}
-    {
-        // nothing
-    }
-
     /// function to obtain the labels for instances
     std::function<bool(const instance_type&)> label_fn_;
 };
