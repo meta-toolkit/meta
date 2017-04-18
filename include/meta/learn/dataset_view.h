@@ -84,6 +84,13 @@ class dataset_view
             indices_.emplace_back(first.index());
     }
 
+    // subset constructor with explicit indices
+    dataset_view(const dataset_view& dv, std::vector<size_type>&& indices)
+        : dset_{dv.dset_}, indices_{std::move(indices)}, rng_{dv.rng_}
+    {
+        // nothing
+    }
+
     void add_by_index(size_type idx)
     {
         indices_.push_back(idx);
@@ -217,13 +224,6 @@ class dataset_view
     }
 
   protected:
-    // subset constructor v1
-    dataset_view(const dataset_view& dv, std::vector<size_type>&& indices)
-        : dset_{dv.dset_}, indices_{std::move(indices)}, rng_{dv.rng_}
-    {
-        // nothing
-    }
-
     template <class DerivedDataset>
     const DerivedDataset& dset() const
     {
