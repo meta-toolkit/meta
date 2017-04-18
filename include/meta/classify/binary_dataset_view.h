@@ -28,8 +28,8 @@ class binary_dataset_view : public learn::dataset_view
 {
   public:
     binary_dataset_view(const binary_dataset& dset)
-        : dataset_view{dset}, label_fn_{[this](const instance_type& instance) {
-              return this->dset<binary_dataset>().label(instance);
+        : dataset_view{dset}, label_fn_{[&](const instance_type& instance) {
+              return dset.label(instance);
           }}
     {
         // nothing
@@ -38,8 +38,8 @@ class binary_dataset_view : public learn::dataset_view
     template <class RandomEngine>
     binary_dataset_view(const binary_dataset& dset, RandomEngine&& rng)
         : dataset_view{dset, std::forward<RandomEngine>(rng)},
-          label_fn_{[this](const instance_type& instance) {
-              return this->dset<binary_dataset>().label(instance);
+          label_fn_{[&](const instance_type& instance) {
+              return dset.label(instance);
           }}
     {
         // nothing
@@ -56,8 +56,8 @@ class binary_dataset_view : public learn::dataset_view
                         binary_dataset::const_iterator begin,
                         binary_dataset::const_iterator end)
         : dataset_view{dset, begin, end},
-          label_fn_{[this](const instance_type& instance) {
-              return this->dset<binary_dataset>().label(instance);
+          label_fn_{[&](const instance_type& instance) {
+              return dset.label(instance);
           }}
     {
         // nothing
@@ -68,8 +68,8 @@ class binary_dataset_view : public learn::dataset_view
                         binary_dataset::const_iterator begin,
                         binary_dataset::const_iterator end, RandomEngine&& rng)
         : dataset_view{dset, begin, end, std::forward<RandomEngine>(rng)},
-          label_fn_{[this](const instance_type& instance) {
-              return this->dset<binary_dataset>().label(instance);
+          label_fn_{[&](const instance_type& instance) {
+              return dset.label(instance);
           }}
     {
         // nothing
