@@ -38,6 +38,35 @@ class dataset
     using size_type = std::vector<instance_type>::size_type;
 
     /**
+     * Creates an in-memory dataset from a forward_index consisting of all
+     * of the documents in that index.
+     */
+    template <class ProgressTrait = printing::default_progress_trait,
+              // below acts like an enable_if to avoid this overload being
+              // considered valid when passing an index and a doc_id container
+              class Progress = typename ProgressTrait::type>
+    dataset(std::shared_ptr<index::forward_index> idx,
+            ProgressTrait = ProgressTrait{})
+        : dataset(idx, util::range(doc_id{0}, doc_id{idx->num_docs() - 1}),
+                  ProgressTrait{})
+    {
+        // nothing
+    }
+
+    /**
+     * Creates an in-memory dataset from a forward_index and a list of
+     * document ids.
+     */
+    template <class DocIdContainer,
+              class ProgressTrait = printing::default_progress_trait>
+    dataset(std::shared_ptr<index::forward_index> idx, DocIdContainer&& dcont,
+            ProgressTrait = ProgressTrait{})
+        : dataset(idx, std::begin(dcont), std::end(dcont), ProgressTrait{})
+    {
+        // nothing
+    }
+
+    /**
      * Creates an in-memory dataset from a forward_index and a range of
      * doc_ids, represented as iterators.
      */
