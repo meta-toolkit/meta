@@ -34,7 +34,7 @@ namespace mph
 template <class K>
 struct bucket_record
 {
-    std::size_t idx;
+    uint64_t idx;
     std::vector<K> keys;
 
     void merge_with(bucket_record&& other)
@@ -84,12 +84,12 @@ template <class K>
 using chunk_iterator = util::chunk_iterator<bucket_record<K>>;
 
 template <class K>
-std::size_t hash(const K& key, uint64_t seed)
+farm_hash_seeded::result_type hash(const K& key, uint64_t seed)
 {
     using meta::hashing::hash_append;
     farm_hash_seeded hasher{seed};
     hash_append(hasher, key);
-    return static_cast<std::size_t>(hasher);
+    return static_cast<farm_hash_seeded::result_type>(hasher);
 }
 }
 
@@ -308,10 +308,10 @@ void perfect_hash_builder<K>::merge_chunks_by_bucket_size()
 namespace mph
 {
 template <class K>
-std::vector<std::size_t> hashes_for_bucket(const mph::bucket_record<K>& bucket,
-                                           std::size_t seed)
+std::vector<uint64_t> hashes_for_bucket(const mph::bucket_record<K>& bucket,
+                                           uint64_t seed)
 {
-    std::vector<std::size_t> hashes(bucket.keys.size());
+    std::vector<uint64_t> hashes(bucket.keys.size());
     std::transform(bucket.keys.begin(), bucket.keys.end(), hashes.begin(),
                    [&](const K& key)
                    {
@@ -325,16 +325,16 @@ std::vector<std::size_t> hashes_for_bucket(const mph::bucket_record<K>& bucket,
 
 template <class ForwardIterator, class OutputIterator>
 void hashes_to_indices(ForwardIterator begin, ForwardIterator end,
-                       OutputIterator output, std::size_t seed, std::size_t mod)
+                       OutputIterator output, uint64_t seed, std::size_t mod)
 {
-    std::transform(begin, end, output, [&](const std::size_t& key)
+    std::transform(begin, end, output, [&](uint64_t key)
                    {
                        return farm::hash_len_16(key, seed) % mod;
                    });
 }
 
-inline bool insert_bucket(std::vector<std::size_t>& indices,
-                          std::vector<bool>& occupied_slots, std::size_t idx,
+inline bool insert_bucket(std::vector<uint64_t>& indices,
+                          std::vector<bool>& occupied_slots, uint64_t idx,
                           uint16_t seed, util::disk_vector<uint16_t>& seeds)
 {
     auto iit = indices.begin();
@@ -384,13 +384,13 @@ void perfect_hash_builder<K>::construct_perfect_hash()
 
                 auto hashes = mph::hashes_for_bucket(bucket, bucket_seed_);
 
-                std::vector<std::size_t> indices(bucket.keys.size());
+                std::vector<uint64_t> indices(bucket.keys.size());
                 bool success = false;
                 const uint16_t max_probes
                     = std::numeric_limits<uint16_t>::max();
                 for (uint16_t i = 0; i < max_probes && !success; ++i)
                 {
-                    auto seed = static_cast<std::size_t>(i);
+                    auto seed = static_cast<uint64_t>(i);
 
                     mph::hashes_to_indices(hashes.begin(), hashes.end(),
                                            indices.begin(), seed, num_bins);

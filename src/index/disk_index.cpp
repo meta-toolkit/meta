@@ -6,12 +6,12 @@
 #include <numeric>
 #include <stdexcept>
 
+#include "meta/analyzers/analyzer.h"
 #include "meta/index/disk_index.h"
 #include "meta/index/disk_index_impl.h"
 #include "meta/index/string_list.h"
 #include "meta/index/string_list_writer.h"
 #include "meta/index/vocabulary_map.h"
-#include "meta/analyzers/analyzer.h"
 #include "meta/util/disk_vector.h"
 #include "meta/util/mapping.h"
 #include "meta/util/optional.h"
@@ -105,7 +105,7 @@ uint64_t disk_index::num_docs() const
 
 std::string disk_index::doc_name(doc_id d_id) const
 {
-    auto path = doc_path(d_id);
+    auto path = metadata<std::string>(d_id, "path").value_or("[none]");
     return path.substr(path.find_last_of("/") + 1);
 }
 
@@ -149,15 +149,10 @@ void disk_index::disk_index_impl::initialize_metadata()
     metadata_ = {index_name_};
 }
 
-void disk_index::disk_index_impl::load_labels(uint64_t num_docs)
+void disk_index::disk_index_impl::load_labels()
 {
-    // clear the current label set; this is so that the disk vector can
-    // flush via munmap() if needed
-    labels_ = util::nullopt;
-
-    // load in the new mapping
-    labels_ = util::disk_vector<label_id>{index_name_ + files[DOC_LABELS],
-                                          num_docs};
+    labels_
+        = util::disk_vector<const label_id>{index_name_ + files[DOC_LABELS]};
 }
 
 void disk_index::disk_index_impl::load_term_id_mapping()
@@ -173,11 +168,6 @@ void disk_index::disk_index_impl::load_label_id_mapping()
 void disk_index::disk_index_impl::save_label_id_mapping()
 {
     map::save_mapping(label_ids_, index_name_ + files[LABEL_IDS_MAPPING]);
-}
-
-void disk_index::disk_index_impl::set_label(doc_id id, const class_label& label)
-{
-    (*labels_)[id] = get_label_id(label);
 }
 
 uint64_t disk_index::disk_index_impl::total_unique_terms() const

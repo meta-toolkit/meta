@@ -346,39 +346,18 @@ struct hash<meta::util::numerical_identifier<Tag, T>>
     using ident_name                                                           \
         = meta::util::numerical_identifier<ident_name##_tag, base_type>;
 
-#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
 #define MAKE_IDENTIFIER(ident_name, base_type)                                 \
     MAKE_OPAQUE_IDENTIFIER(ident_name, base_type)
-#else
-#define MAKE_IDENTIFIER(ident_name, base_type) using ident_name = base_type;
-#endif
 
-#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
 #define MAKE_NUMERIC_IDENTIFIER(ident_name, base_type)                         \
     MAKE_OPAQUE_NUMERIC_IDENTIFIER(ident_name, base_type)
-#else
-#define MAKE_NUMERIC_IDENTIFIER(ident_name, base_type)                         \
-    using ident_name = base_type;
-#endif
 
-#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
 #define MAKE_IDENTIFIER_UDL(ident_name, base_type, suffix)                     \
     MAKE_OPAQUE_IDENTIFIER(ident_name, base_type)                              \
     MAKE_USER_DEFINED_LITERAL(ident_name, base_type, suffix)
-#else
-#define MAKE_IDENTIFIER_UDL(ident_name, base_type, suffix)                     \
-    using ident_name = base_type;                                              \
-    MAKE_USER_DEFINED_LITERAL(ident_name, base_type, suffix)
-#endif
 
-#if !defined NDEBUG && !defined NUSE_OPAQUE_IDENTIFIERS
 #define MAKE_NUMERIC_IDENTIFIER_UDL(ident_name, base_type, suffix)             \
     MAKE_OPAQUE_NUMERIC_IDENTIFIER(ident_name, base_type)                      \
     MAKE_USER_DEFINED_NUMERIC_LITERAL(ident_name, base_type, suffix)
-#else
-#define MAKE_NUMERIC_IDENTIFIER_UDL(ident_name, base_type, suffix)             \
-    using ident_name = base_type;                                              \
-    MAKE_USER_DEFINED_NUMERIC_LITERAL(ident_name, base_type, suffix)
-#endif
 
 #endif

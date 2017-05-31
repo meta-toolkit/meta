@@ -4,25 +4,16 @@
  * @author Chase Geigle
  */
 
-#include "meta/index/inverted_index.h"
-#include "meta/analyzers/analyzer.h"
-#include "meta/corpus/corpus.h"
-#include "meta/corpus/corpus_factory.h"
-#include "meta/corpus/metadata_parser.h"
 #include "meta/index/disk_index_impl.h"
+#include "meta/index/inverted_index.h"
 #include "meta/index/metadata_writer.h"
 #include "meta/index/postings_file.h"
 #include "meta/index/postings_file_writer.h"
 #include "meta/index/postings_inverter.h"
-#include "meta/index/vocabulary_map.h"
 #include "meta/index/vocabulary_map_writer.h"
 #include "meta/logging/logger.h"
-#include "meta/parallel/thread_pool.h"
-#include "meta/util/mapping.h"
 #include "meta/util/pimpl.tcc"
 #include "meta/util/printing.h"
-#include "meta/util/progress.h"
-#include "meta/util/shim.h"
 
 namespace meta
 {
@@ -58,7 +49,7 @@ class inverted_index::impl
     void tokenize_docs(corpus::corpus& docs,
                        postings_inverter<inverted_index>& inverter,
                        metadata_writer& mdata_writer, uint64_t ram_budget,
-                       uint64_t num_threads);
+                       std::size_t num_threads);
 
     /**
      * Compresses the large postings file.
@@ -133,8 +124,8 @@ void inverted_index::create_index(const cpptoml::table& config,
         = config.get_as<unsigned>("indexer-max-writers").value_or(8);
 
     auto max_threads = std::thread::hardware_concurrency();
-    auto num_threads
-        = config.get_as<unsigned>("indexer-num-threads").value_or(max_threads);
+    auto num_threads = config.get_as<std::size_t>("indexer-num-threads")
+                           .value_or(max_threads);
     if (num_threads > max_threads)
     {
         num_threads = max_threads;
@@ -146,8 +137,6 @@ void inverted_index::create_index(const cpptoml::table& config,
     postings_inverter<inverted_index> inverter{index_name(), max_writers};
     {
         metadata_writer mdata_writer{index_name(), docs.size(), docs.schema()};
-        uint64_t num_docs = docs.size();
-        impl_->load_labels(num_docs);
 
         // RAM budget is given in megabytes
         inv_impl_->tokenize_docs(docs, inverter, mdata_writer,
@@ -188,37 +177,55 @@ void inverted_index::load_index()
     inv_impl_->load_postings();
 }
 
+namespace
+{
+struct local_storage
+{
+    local_storage(uint64_t ram_budget,
+                  postings_inverter<inverted_index>& inverter,
+                  const std::unique_ptr<analyzers::analyzer>& analyzer)
+        : producer_{inverter.make_producer(ram_budget)},
+          analyzer_{analyzer->clone()}
+    {
+        // nothing
+    }
+
+    postings_inverter<inverted_index>::producer producer_;
+    std::unique_ptr<analyzers::analyzer> analyzer_;
+};
+}
+
 void inverted_index::impl::tokenize_docs(
     corpus::corpus& docs, postings_inverter<inverted_index>& inverter,
-    metadata_writer& mdata_writer, uint64_t ram_budget, uint64_t num_threads)
+    metadata_writer& mdata_writer, uint64_t ram_budget, std::size_t num_threads)
 {
-    std::mutex mutex;
+    util::disk_vector<label_id> labels{
+        idx_->index_name() + idx_->impl_->files[DOC_LABELS], docs.size()};
+    std::mutex io_mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs.size()};
+    uint64_t local_budget = ram_budget / num_threads;
 
-    auto task = [&](uint64_t ram_budget) {
-        auto producer = inverter.make_producer(ram_budget);
-        auto analyzer = analyzer_->clone();
-        while (true)
-        {
-            util::optional<corpus::document> doc;
+    parallel::thread_pool pool{num_threads};
+
+    corpus::parallel_consume(
+        docs, pool,
+        [&]() {
+            return local_storage{local_budget, inverter, analyzer_};
+        },
+        [&](local_storage& ls, const corpus::document& doc) {
             {
-                std::lock_guard<std::mutex> lock{mutex};
-
-                if (!docs.has_next())
-                    return; // destructor for producer will write
-                            // any intermediate chunks
-                doc = docs.next();
-                progress(doc->id());
+                std::lock_guard<std::mutex> lock{io_mutex};
+                progress(doc.id());
             }
 
-            auto counts = analyzer->analyze<uint64_t>(*doc);
+            auto counts = ls.analyzer_->analyze<uint64_t>(doc);
 
             // warn if there is an empty document
             if (counts.empty())
             {
-                std::lock_guard<std::mutex> lock{mutex};
+                std::lock_guard<std::mutex> lock{io_mutex};
                 LOG(progress) << '\n' << ENDLG;
-                LOG(warning) << "Empty document (id = " << doc->id()
+                LOG(warning) << "Empty document (id = " << doc.id()
                              << ") generated!" << ENDLG;
             }
 
@@ -229,24 +236,12 @@ void inverted_index::impl::tokenize_docs(
                     return acc + count.second;
                 });
 
-            mdata_writer.write(doc->id(), length, counts.size(), doc->mdata());
-            idx_->impl_->set_label(doc->id(), doc->label());
+            mdata_writer.write(doc.id(), length, counts.size(), doc.mdata());
+            labels[doc.id()] = idx_->impl_->get_label_id(doc.label());
 
             // update chunk
-            producer(doc->id(), counts);
-        }
-    };
-
-    parallel::thread_pool pool{num_threads};
-    std::vector<std::future<void>> futures;
-    for (size_t i = 0; i < num_threads; ++i)
-    {
-        futures.emplace_back(
-            pool.submit_task(std::bind(task, ram_budget / num_threads)));
-    }
-
-    for (auto& fut : futures)
-        fut.get();
+            ls.producer_(doc.id(), counts);
+        });
 }
 
 void inverted_index::impl::compress(const std::string& filename,

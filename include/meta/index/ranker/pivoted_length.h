@@ -33,7 +33,7 @@ namespace index
  * s = 0.2
  * ~~~
  */
-class pivoted_length : public ranker
+class pivoted_length : public ranking_function
 {
   public:
     /// Identifier for this ranker.

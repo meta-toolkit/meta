@@ -14,6 +14,7 @@
 #include <string>
 
 #include "meta/config.h"
+#include "meta/util/optional.h"
 
 namespace meta
 {
@@ -98,6 +99,27 @@ class mmap_file_exception : public std::runtime_error
 {
   public:
     using std::runtime_error::runtime_error;
+};
+
+/**
+ * A stream for use with io::packed that reads from a memory mapped file.
+ */
+class mmap_ifstream
+{
+  public:
+    mmap_ifstream() = default;
+    mmap_ifstream(mmap_ifstream&&) = default;
+    mmap_ifstream& operator=(mmap_ifstream&&) = default;
+    mmap_ifstream(const std::string& filename);
+
+    bool is_open() const;
+    int peek() const;
+    int get();
+    void close();
+
+  private:
+    util::optional<mmap_file> file_;
+    std::size_t pos_;
 };
 }
 }

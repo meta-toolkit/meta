@@ -22,7 +22,7 @@ namespace index
  * scoring methods described in "A Study of Smoothing Methods for Language
  * Models Applied to Ad Hoc Information Retrieval" by Zhai and Lafferty, 2001.
  */
-class language_model_ranker : public ranker
+class language_model_ranker : public ranking_function
 {
   public:
     /// The identifier for this ranker.

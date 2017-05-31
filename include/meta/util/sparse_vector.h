@@ -254,6 +254,17 @@ sparse_vector<Index, Value> operator-(sparse_vector<Index, Value>&& lhs,
     return lhs -= rhs;
 }
 
+template <class Index, class Value>
+double l2norm(const sparse_vector<Index, Value>& vec)
+{
+    return std::sqrt(std::accumulate(
+        std::begin(vec), std::end(vec), 0.0,
+        [](double accum,
+           const typename sparse_vector<Index, Value>::pair_type& pr) {
+            return accum + pr.second * pr.second;
+        }));
+}
+
 template <class SparseVector1, class SparseVector2>
 double dot_product(SparseVector1&& first, SparseVector2&& second)
 {
@@ -283,6 +294,13 @@ double dot_product(SparseVector1&& first, SparseVector2&& second)
     }
 
     return dot;
+}
+
+template <class SparseVector1, class SparseVector2>
+double cosine_sim(SparseVector1&& first, SparseVector2&& second)
+{
+    return dot_product(first, second)
+           / (l2norm(first) * l2norm(second));
 }
 }
 }

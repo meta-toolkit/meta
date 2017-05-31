@@ -1,15 +1,15 @@
 /**
- * @file embedding_coocur.cpp
+ * @file embedding_cooccur.cpp
  * @author Chase Geigle
  *
- * This tool decompresses the MeTA vocabulary and coocurrence matrix files
+ * This tool decompresses the MeTA vocabulary and cooccurrence matrix files
  * to input that the original GloVe tool can read.
  *
  * (This is mainly for sanity checking.)
  */
 
 #include "cpptoml.h"
-#include "meta/embeddings/coocur_iterator.h"
+#include "meta/embeddings/cooccur_iterator.h"
 #include "meta/io/binary.h"
 #include "meta/logging/logger.h"
 #include "meta/util/progress.h"
@@ -52,11 +52,11 @@ int main(int argc, char** argv)
     }
 
     {
-        coocur_iterator iter{prefix + "/coocur.bin"};
-        printing::progress progress{" > Decompressing coocurrence matrix: ",
+        cooccur_iterator iter{prefix + "/cooccur.bin"};
+        printing::progress progress{" > Decompressing cooccurrence matrix: ",
                                     iter.total_bytes()};
-        std::ofstream output{"coocur-glove.bin", std::ios::binary};
-        for (; iter != coocur_iterator{}; ++iter)
+        std::ofstream output{"cooccur-glove.bin", std::ios::binary};
+        for (; iter != cooccur_iterator{}; ++iter)
         {
             progress(iter.bytes_read());
             auto record = *iter;

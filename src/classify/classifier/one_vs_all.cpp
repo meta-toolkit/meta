@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include "meta/classify/binary_classifier_factory.h"
 #include "meta/classify/classifier/one_vs_all.h"
+#include "meta/classify/binary_classifier_factory.h"
 #include "meta/classify/classifier/online_binary_classifier.h"
 #include "meta/parallel/parallel_for.h"
 
@@ -16,23 +16,11 @@ namespace classify
 const util::string_view one_vs_all::id = "one-vs-all";
 
 one_vs_all::one_vs_all(multiclass_dataset_view docs, const cpptoml::table& base)
+    : one_vs_all(docs, [&](const binary_dataset_view& bdv) {
+          return make_binary_classifier(base, bdv);
+      })
 {
-    classifiers_.reserve(docs.total_labels());
-    for (auto it = docs.labels_begin(), end = docs.labels_end(); it != end;
-         ++it)
-        classifiers_[it->first] = nullptr;
-
-    parallel::parallel_for(
-        classifiers_.begin(), classifiers_.end(),
-        [&](std::pair<const class_label, std::unique_ptr<binary_classifier>>&
-                pr)
-        {
-            binary_dataset_view bdv{docs, [&](const instance_type& instance)
-                                    {
-                                        return docs.label(instance) == pr.first;
-                                    }};
-            pr.second = make_binary_classifier(base, bdv);
-        });
+    // nothing
 }
 
 one_vs_all::one_vs_all(std::istream& in)
@@ -63,16 +51,14 @@ void one_vs_all::train(dataset_view_type docs)
     parallel::parallel_for(
         classifiers_.begin(), classifiers_.end(),
         [&](std::pair<const class_label, std::unique_ptr<binary_classifier>>&
-                pr)
-        {
+                pr) {
             if (auto cls
                 = dynamic_cast<online_binary_classifier*>(pr.second.get()))
             {
-                binary_dataset_view bdv{docs, [&](const instance_type& instance)
-                                        {
-                                            return docs.label(instance)
-                                                   == pr.first;
-                                        }};
+                binary_dataset_view bdv{
+                    docs, [&](const instance_type& instance) {
+                        return docs.label(instance) == pr.first;
+                    }};
 
                 cls->train(bdv);
             }
@@ -118,8 +104,8 @@ class_label one_vs_all::classify(const feature_vector& doc) const
 
 template <>
 std::unique_ptr<classifier>
-    make_classifier<one_vs_all>(const cpptoml::table& config,
-                                multiclass_dataset_view training)
+make_classifier<one_vs_all>(const cpptoml::table& config,
+                            multiclass_dataset_view training)
 {
     auto base = config.get_table("base");
     if (!base)

@@ -145,7 +145,7 @@ double ir_eval::ndcg(const std::vector<search_result>& results, query_id q_id,
     std::vector<uint64_t> rels;
     for (const auto& s : ht->second)
         rels.push_back(s.second);
-    std::sort(rels.begin(), rels.end());
+    std::sort(rels.begin(), rels.end(), std::greater<uint64_t>{});
 
     double idcg = 0.0;
     i = 1;
@@ -184,7 +184,8 @@ double ir_eval::avg_p(const std::vector<search_result>& results, query_id q_id,
         }
         if (num_rel - 1 == total_relevant)
             break;
-        ++i;
+        if (i++ == num_docs)
+            break;
     }
 
     scores_.push_back(avgp / total_relevant);
@@ -217,22 +218,21 @@ double ir_eval::gmap() const
 }
 
 void ir_eval::print_stats(const std::vector<search_result>& results,
-                          query_id q_id, std::ostream& out)
+                          query_id q_id, std::ostream& out, uint64_t num_docs)
 {
     auto w1 = std::setw(8);
     auto w2 = std::setw(6);
     int p = 3;
-    uint64_t max = 5;
     out << w1 << printing::make_bold("  NDCG:") << w2 << std::setprecision(p)
-        << ndcg(results, q_id, max);
+        << ndcg(results, q_id, num_docs);
     out << w1 << printing::make_bold("  Avg. P:") << w2 << std::setprecision(p)
-        << avg_p(results, q_id, max);
+        << avg_p(results, q_id, num_docs);
     out << w1 << printing::make_bold("  F1 Score:") << w2
-        << std::setprecision(p) << f1(results, q_id);
+        << std::setprecision(p) << f1(results, q_id, num_docs);
     out << w1 << printing::make_bold("  Precision:") << w2
-        << std::setprecision(p) << precision(results, q_id, max);
+        << std::setprecision(p) << precision(results, q_id, num_docs);
     out << w1 << printing::make_bold("  Recall:") << w2 << std::setprecision(p)
-        << recall(results, q_id, max);
+        << recall(results, q_id, num_docs);
     out << std::endl;
 }
 

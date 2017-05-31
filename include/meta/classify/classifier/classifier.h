@@ -109,6 +109,7 @@ confusion_matrix cross_validate(Creator&& creator,
             docs, docs.begin(),
             docs.begin() + static_cast<diff_type>(step_size)};
         auto m = cls->test(test_view);
+        matrix.add_fold_accuracy(m.accuracy());
         matrix += m;
         docs.rotate(step_size);
     }

@@ -3,33 +3,22 @@
  * @author Sean Massung
  */
 
-#include "meta/index/forward_index.h"
-#include "cpptoml.h"
 #include "meta/analyzers/analyzer.h"
-#include "meta/corpus/corpus.h"
-#include "meta/corpus/corpus_factory.h"
 #include "meta/corpus/libsvm_corpus.h"
 #include "meta/hashing/probe_map.h"
 #include "meta/index/chunk_reader.h"
 #include "meta/index/disk_index_impl.h"
+#include "meta/index/forward_index.h"
 #include "meta/index/inverted_index.h"
 #include "meta/index/metadata_writer.h"
 #include "meta/index/postings_file.h"
 #include "meta/index/postings_file_writer.h"
 #include "meta/index/postings_inverter.h"
-#include "meta/index/string_list.h"
-#include "meta/index/string_list_writer.h"
-#include "meta/index/vocabulary_map.h"
 #include "meta/index/vocabulary_map_writer.h"
 #include "meta/io/libsvm_parser.h"
 #include "meta/logging/logger.h"
-#include "meta/parallel/thread_pool.h"
-#include "meta/util/disk_vector.h"
-#include "meta/util/mapping.h"
 #include "meta/util/pimpl.tcc"
 #include "meta/util/printing.h"
-#include "meta/util/shim.h"
-#include "meta/util/time.h"
 
 namespace meta
 {
@@ -53,7 +42,7 @@ class forward_index::impl
      * merged.
      */
     void tokenize_docs(corpus::corpus& corpus, metadata_writer& mdata_writer,
-                       uint64_t ram_budget, uint64_t num_threads);
+                       uint64_t ram_budget, std::size_t num_threads);
 
     /**
      * Merges together num_chunks number of intermediate chunks, using the
@@ -252,10 +241,8 @@ void forward_index::create_index(const cpptoml::table& config,
             metadata_writer mdata_writer{index_name(), docs.size(),
                                          docs.schema()};
 
-            impl_->load_labels(docs.size());
-
             auto max_threads = std::thread::hardware_concurrency();
-            auto num_threads = config.get_as<unsigned>("indexer-num-threads")
+            auto num_threads = config.get_as<std::size_t>("indexer-num-threads")
                                    .value_or(max_threads);
             if (num_threads > max_threads)
             {
@@ -272,7 +259,7 @@ void forward_index::create_index(const cpptoml::table& config,
             impl_->save_label_id_mapping();
             fwd_impl_->total_unique_terms_ = impl_->total_unique_terms();
 
-            // reload the label file to ensure it was flushed
+            // reload the label file
             impl_->load_labels();
         }
     }
@@ -291,47 +278,61 @@ void forward_index::create_index(const cpptoml::table& config,
     LOG(info) << "Done creating index: " << index_name() << ENDLG;
 }
 
+namespace
+{
+struct local_storage
+{
+    local_storage(const std::string& chunk_path,
+                  const std::unique_ptr<analyzers::analyzer>& analyzer)
+        : chunk_{chunk_path, std::ios::binary}, analyzer_{analyzer->clone()}
+    {
+        // nothing
+    }
+
+    io::mofstream chunk_;
+    std::unique_ptr<analyzers::analyzer> analyzer_;
+};
+}
+
 void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                                         metadata_writer& mdata_writer,
                                         uint64_t ram_budget,
-                                        uint64_t num_threads)
+                                        std::size_t num_threads)
 {
     std::mutex io_mutex;
-    std::mutex corpus_mutex;
     std::mutex vocab_mutex;
     printing::progress progress{" > Tokenizing Docs: ", docs.size()};
 
     hashing::probe_map<std::string, term_id> vocab;
     bool exceeded_budget = false;
-    auto task = [&](size_t chunk_id) {
-        std::ofstream chunk{idx_->index_name() + "/chunk-"
-                                + std::to_string(chunk_id),
-                            std::ios::binary};
-        auto analyzer = analyzer_->clone();
-        while (true)
-        {
-            util::optional<corpus::document> doc;
-            {
-                std::lock_guard<std::mutex> lock{corpus_mutex};
+    std::atomic_size_t chunk_id{0};
 
-                if (!docs.has_next())
-                    return;
+    util::disk_vector<label_id> labels{
+        idx_->index_name() + idx_->impl_->files[DOC_LABELS], docs.size()};
 
-                doc = docs.next();
-            }
+    parallel::thread_pool pool{num_threads};
+    corpus::parallel_consume(
+        docs, pool,
+        [&]() {
+            auto cid = chunk_id.fetch_add(1);
+            return local_storage{idx_->index_name() + "/chunk-"
+                                     + std::to_string(cid),
+                                 analyzer_};
+        },
+        [&](local_storage& ls, const corpus::document& doc) {
             {
                 std::lock_guard<std::mutex> lock{io_mutex};
-                progress(doc->id());
+                progress(doc.id());
             }
 
-            auto counts = analyzer->analyze<double>(*doc);
+            auto counts = ls.analyzer_->analyze<double>(doc);
 
             // warn if there is an empty document
             if (counts.empty())
             {
                 std::lock_guard<std::mutex> lock{io_mutex};
                 LOG(progress) << '\n' << ENDLG;
-                LOG(warning) << "Empty document (id = " << doc->id()
+                LOG(warning) << "Empty document (id = " << doc.id()
                              << ") generated!" << ENDLG;
             }
 
@@ -341,8 +342,8 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                     return acc + std::round(count.second);
                 });
 
-            mdata_writer.write(doc->id(), length, counts.size(), doc->mdata());
-            idx_->impl_->set_label(doc->id(), doc->label());
+            mdata_writer.write(doc.id(), length, counts.size(), doc.mdata());
+            labels[doc.id()] = idx_->impl_->get_label_id(doc.label());
 
             forward_index::postings_data_type::count_t pd_counts;
             pd_counts.reserve(counts.size());
@@ -369,20 +370,10 @@ void forward_index::impl::tokenize_docs(corpus::corpus& docs,
                 }
             }
 
-            forward_index::postings_data_type pdata{doc->id()};
+            forward_index::postings_data_type pdata{doc.id()};
             pdata.set_counts(std::move(pd_counts));
-            pdata.write_packed(chunk);
-        }
-    };
-
-    parallel::thread_pool pool{num_threads};
-    std::vector<std::future<void>> futures;
-    futures.reserve(num_threads);
-    for (size_t i = 0; i < num_threads; ++i)
-        futures.emplace_back(pool.submit_task(std::bind(task, i)));
-
-    for (auto& fut : futures)
-        fut.get();
+            pdata.write_packed(ls.chunk_);
+        });
 
     progress.end();
 
@@ -457,10 +448,11 @@ void forward_index::impl::create_libsvm_postings(corpus::corpus& docs)
 {
     auto filename = idx_->index_name() + idx_->impl_->files[POSTINGS];
     auto num_docs = docs.size();
-    idx_->impl_->load_labels(num_docs);
 
     total_unique_terms_ = 0;
     {
+        util::disk_vector<label_id> labels{
+            idx_->index_name() + idx_->impl_->files[DOC_LABELS], docs.size()};
         postings_file_writer<forward_index::postings_data_type> out{filename,
                                                                     num_docs};
 
@@ -492,7 +484,7 @@ void forward_index::impl::create_libsvm_postings(corpus::corpus& docs)
 
             md_writer.write(doc.id(), static_cast<uint64_t>(length), num_unique,
                             doc.mdata());
-            idx_->impl_->set_label(doc.id(), doc.label());
+            labels[doc.id()] = idx_->impl_->get_label_id(doc.label());
         }
 
         // +1 since we subtracted one from each of the ids in the
@@ -500,7 +492,7 @@ void forward_index::impl::create_libsvm_postings(corpus::corpus& docs)
         ++total_unique_terms_;
     }
 
-    // reload the label file to ensure it was flushed
+    // load the labels
     idx_->impl_->load_labels();
 
     LOG(info) << "Created compressed postings file ("
@@ -571,9 +563,12 @@ void forward_index::impl::uninvert(const inverted_index& inv_idx,
 {
     postings_inverter<forward_index> handler{idx_->index_name()};
     {
+        printing::progress progress{" > Uninverting postings: ",
+                                    inv_idx.unique_terms()};
         auto producer = handler.make_producer(ram_budget);
         for (term_id t_id{0}; t_id < inv_idx.unique_terms(); ++t_id)
         {
+            progress(t_id);
             auto pdata = inv_idx.search_primary(t_id);
             producer(pdata->primary_key(), pdata->counts());
         }

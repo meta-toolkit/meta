@@ -11,6 +11,7 @@
 #define META_CORPUS_H_
 
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 
 #include "cpptoml.h"
@@ -18,7 +19,9 @@
 #include "meta/corpus/document.h"
 #include "meta/corpus/metadata_parser.h"
 #include "meta/meta.h"
+#include "meta/parallel/thread_pool.h"
 #include "meta/util/optional.h"
+#include "meta/util/progress.h"
 
 namespace meta
 {
@@ -142,7 +145,46 @@ class corpus_exception : public std::runtime_error
   public:
     using std::runtime_error::runtime_error;
 };
-}
-}
 
+/**
+ * Consumes each document in a corpus using a pool of threads.
+ * @param docs The corpus to consume
+ * @param pool The thread pool to use
+ * @param ls_fn A function to create thread-specific storage
+ * @param consume_fn A function to consume a document
+ */
+template <class LocalStorage, class ConsumeFunction>
+void parallel_consume(corpus& docs, parallel::thread_pool& pool,
+                      LocalStorage&& ls_fn, ConsumeFunction&& consume_fn)
+{
+    std::mutex mutex;
+    auto task = [&]() {
+        auto local_storage = ls_fn();
+        while (true)
+        {
+            util::optional<document> doc;
+            {
+                std::lock_guard<std::mutex> lock{mutex};
+
+                if (!docs.has_next())
+                    return;
+
+                doc = docs.next();
+            }
+
+            consume_fn(local_storage, *doc);
+        }
+    };
+
+    std::vector<std::future<void>> futures;
+    futures.reserve(pool.size());
+    for (std::size_t i = 0; i < pool.size(); ++i)
+    {
+        futures.emplace_back(pool.submit_task(task));
+    }
+    for (auto& fut : futures)
+        fut.get();
+}
+}
+}
 #endif

@@ -18,62 +18,11 @@ namespace classify
 const util::string_view one_vs_one::id = "one-vs-one";
 
 one_vs_one::one_vs_one(multiclass_dataset_view docs, const cpptoml::table& base)
+    : one_vs_one{docs, [&](binary_dataset_view training) {
+        return make_binary_classifier(base, training);
+    }}
 {
-    // for deterministic results, we create a list of the possible class
-    // labels and sort them so that we always create the same pairs for the
-    // one-vs-one reduction. This matters when using e.g. SGD where the
-    // termination depends on the loss, which depends on which class we
-    // treat as positive in the reduction.
-    {
-        std::vector<class_label> labels;
-        labels.reserve(docs.total_labels());
-        for (auto it = docs.labels_begin(); it != docs.labels_end(); ++it)
-            labels.push_back(it->first);
-        std::sort(labels.begin(), labels.end());
-
-        for (auto outer = labels.begin(), end = labels.end(); outer != end;
-             ++outer)
-        {
-            for (auto inner = outer; ++inner != end;)
-            {
-                classifiers_.emplace(problem_type{*outer, *inner}, nullptr);
-            }
-        }
-    }
-
-    using size_type = multiclass_dataset_view::size_type;
-    using indices_type = std::vector<size_type>;
-
-    // partition by class label
-    std::unordered_map<class_label, indices_type> partitions;
-    for (auto it = docs.begin(), end = docs.end(); it != end; ++it)
-        partitions[docs.label(*it)].push_back(it.index());
-
-    parallel::parallel_for(
-        classifiers_.begin(), classifiers_.end(),
-        [&](classifier_map_type::value_type& problem)
-        {
-            const auto& pos = partitions[problem.first.positive];
-            const auto& neg = partitions[problem.first.negative];
-
-            indices_type indices;
-            indices.reserve(pos.size() + neg.size());
-            std::copy(pos.begin(), pos.end(), std::back_inserter(indices));
-            std::copy(neg.begin(), neg.end(), std::back_inserter(indices));
-
-            binary_dataset_view bdv{
-                docs, std::move(indices), [&](const instance_type& instance)
-                {
-                    return docs.label(instance) == problem.first.positive;
-                }};
-
-            problem.second = make_binary_classifier(base, bdv);
-        });
-
-#ifndef NDEBUG
-    for (const auto& pr : classifiers_)
-        assert(pr.second != nullptr);
-#endif
+    // nothing
 }
 
 one_vs_one::one_vs_one(std::istream& in)

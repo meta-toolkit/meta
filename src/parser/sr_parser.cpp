@@ -171,7 +171,7 @@ void sr_parser::train(std::vector<parse_tree>& trees, training_options options)
                      start += options.batch_size)
                 {
                     progress(start);
-                    auto end = std::min<uint64_t>(start + options.batch_size,
+                    auto end = std::min<size_t>(start + options.batch_size,
                                                   data.size());
 
                     auto result

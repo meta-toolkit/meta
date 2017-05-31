@@ -69,7 +69,7 @@ go_bandit([]() {
             {
                 const auto& weights = dset(result.d_id).weights;
                 AssertThat(weights.at(tid),
-                           EqualsWithDelta(result.score, 1e-10));
+                           EqualsWithDelta(result.score, 1e-5));
             }
         });
     });

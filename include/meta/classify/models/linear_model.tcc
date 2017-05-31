@@ -122,17 +122,15 @@ template <class FeatureVector>
 auto linear_model<FeatureId, FeatureValue, ClassId>::best_class(
     FeatureVector&& features) const -> class_id
 {
-    return best_class(std::forward<FeatureVector>(features), [](const class_id&)
-                      {
-        return true;
-    });
+    return best_class(std::forward<FeatureVector>(features),
+                      [](const class_id&) { return true; });
 }
 
 template <class FeatureId, class FeatureValue, class ClassId>
 template <class FeatureVector, class Filter>
 auto linear_model<FeatureId, FeatureValue, ClassId>::best_classes(
-    FeatureVector&& features, uint64_t num,
-    Filter&& filter) const -> scored_classes
+    FeatureVector&& features, uint64_t num, Filter&& filter) const
+    -> scored_classes
 {
     weight_vector class_scores;
     for (const auto& feat : features)
@@ -153,12 +151,10 @@ auto linear_model<FeatureId, FeatureValue, ClassId>::best_classes(
         }
     }
 
-    auto comp = [](const scored_class& lhs, const scored_class& rhs)
-    {
-        return lhs.second > rhs.second;
-    };
-
-    util::fixed_heap<scored_class, decltype(comp)> heap{num, comp};
+    auto heap = util::make_fixed_heap<scored_class>(
+        num, [](const scored_class& lhs, const scored_class& rhs) {
+            return lhs.second > rhs.second;
+        });
     for (const auto& score : class_scores)
     {
         auto cid = score.first;
@@ -175,10 +171,7 @@ auto linear_model<FeatureId, FeatureValue, ClassId>::best_classes(
     FeatureVector&& features, uint64_t num) const -> scored_classes
 {
     return best_classes(std::forward<FeatureVector>(features), num,
-                        [](const class_id&)
-                        {
-        return true;
-    });
+                        [](const class_id&) { return true; });
 }
 
 template <class FeatureId, class FeatureValue, class ClassId>
@@ -230,8 +223,8 @@ void linear_model<FeatureId, FeatureValue, ClassId>::condense(bool log)
 }
 
 template <class FeatureId, class FeatureValue, class ClassId>
-auto linear_model<FeatureId, FeatureValue, ClassId>::weights() const -> const
-    weight_vectors &
+auto linear_model<FeatureId, FeatureValue, ClassId>::weights() const
+    -> const weight_vectors&
 {
     return weights_;
 }

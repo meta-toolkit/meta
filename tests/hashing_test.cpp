@@ -4,11 +4,11 @@
  */
 
 #include <algorithm>
-#include <iterator>
 #include <fstream>
+#include <iterator>
 #include <sstream>
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "bandit/bandit.h"
@@ -28,9 +28,9 @@ namespace {
  * Checks that a probing strategy probes each element in a range exactly once.
  */
 template <class Strategy>
-void check_range_at(uint64_t hash, uint64_t size) {
-    std::vector<uint64_t> checker(size, 0);
-    const std::vector<uint64_t> gold(size, 1);
+void check_range_at(std::size_t hash, std::size_t size) {
+    std::vector<std::size_t> checker(size, 0);
+    const std::vector<std::size_t> gold(size, 1);
     Strategy strat{hash, size};
     for (uint64_t i = 0; i < checker.size(); ++i)
         ++checker[strat.probe()];
@@ -40,8 +40,8 @@ void check_range_at(uint64_t hash, uint64_t size) {
 
 template <class Strategy>
 void check_range() {
-    std::vector<uint64_t> sizes = {2, 4, 8, 32, 64};
-    std::vector<uint64_t> weird_sizes = {3, 5, 7, 22, 100, 125};
+    std::vector<std::size_t> sizes = {2, 4, 8, 32, 64};
+    std::vector<std::size_t> weird_sizes = {3, 5, 7, 22, 100, 125};
     if (!std::is_same<Strategy, hashing::probing::quadratic>::value)
         sizes.insert(sizes.end(), weird_sizes.begin(), weird_sizes.end());
 
@@ -110,20 +110,24 @@ void count(Map& map, const std::vector<K>& tokens) {
 }
 
 template <class HashAlgorithm>
-void check_hash(uint64_t seed, util::string_view key, uint64_t expected) {
+void check_hash(typename HashAlgorithm::result_type seed, util::string_view key,
+                typename HashAlgorithm::result_type expected) {
     HashAlgorithm hash{seed};
     hash(key.data(), key.size());
-    AssertThat(static_cast<std::size_t>(hash), Equals(expected));
+    AssertThat(static_cast<typename HashAlgorithm::result_type>(hash),
+               Equals(expected));
 }
 
 template <class HashAlgorithm>
-void check_incremental_hash(uint64_t seed, util::string_view key,
-                            uint64_t expected) {
+void check_incremental_hash(typename HashAlgorithm::result_type seed,
+                            util::string_view key,
+                            typename HashAlgorithm::result_type expected) {
     HashAlgorithm hash{seed};
     hash(key.data(), key.size() / 2);
     hash(key.data() + key.size() / 2, key.size() - key.size() / 2 - 1);
     hash(key.data() + key.size() - 1, 1);
-    AssertThat(static_cast<std::size_t>(hash), Equals(expected));
+    AssertThat(static_cast<typename HashAlgorithm::result_type>(hash),
+               Equals(expected));
 }
 }
 
@@ -252,9 +256,8 @@ go_bandit([]() {
     });
 
     describe("[hashing] farm_hash x64", []() {
-        it("should match test vectors from FarmHash", []() {
-            farm_hash_self_test();
-        });
+        it("should match test vectors from FarmHash",
+           []() { farm_hash_self_test(); });
     });
 
     describe("[hashing] ints", []() {

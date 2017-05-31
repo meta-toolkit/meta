@@ -3,9 +3,9 @@
  * @author Sean Massung
  */
 
-#include <sys/stat.h>
 #include "meta/io/filesystem.h"
 #include "meta/util/disk_vector.h"
+#include <sys/stat.h>
 
 namespace meta
 {
@@ -16,7 +16,14 @@ template <class T>
 disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
     : path_{path}, start_{nullptr}, size_{size}, file_desc_{-1}
 {
-    file_desc_ = open(path_.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    if (std::is_const<T>::value)
+    {
+        file_desc_ = open(path_.c_str(), O_RDONLY);
+    }
+    else
+    {
+        file_desc_ = open(path_.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    }
     if (file_desc_ < 0)
         throw disk_vector_exception{"error obtaining file descriptor for "
                                     + path_};
@@ -30,6 +37,9 @@ disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
         // end and writing a byte
         if (actual_size != size_bytes)
         {
+            if (std::is_const<T>::value)
+                throw disk_vector_exception{
+                    "cannot create disk vector when opened in read-only mode"};
             auto offset = static_cast<long>(size_bytes - 1);
             if (lseek(file_desc_, offset, SEEK_SET) == -1)
                 throw disk_vector_exception{"error lseeking to extend file"};
@@ -45,8 +55,11 @@ disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
             throw disk_vector_exception{"cannot map empty file " + path};
     }
 
-    start_ = (T*)mmap(nullptr, sizeof(T) * size_, PROT_READ | PROT_WRITE,
-                      MAP_SHARED, file_desc_, 0);
+    int prot = PROT_READ;
+    if (!std::is_const<T>::value)
+        prot |= PROT_WRITE;
+    start_
+        = (T*)mmap(nullptr, sizeof(T) * size_, prot, MAP_SHARED, file_desc_, 0);
 
     if (start_ == MAP_FAILED)
         throw disk_vector_exception{"error memory-mapping the file " + path_};
@@ -69,7 +82,8 @@ disk_vector<T>& disk_vector<T>::operator=(disk_vector&& other)
     {
         if (start_)
         {
-            munmap(start_, sizeof(T) * size_);
+            munmap(const_cast<typename std::remove_const<T>::type*>(start_),
+                   sizeof(T) * size_);
             close(file_desc_);
         }
         path_ = std::move(other.path_);
@@ -86,11 +100,13 @@ disk_vector<T>::~disk_vector()
 {
     if (!start_)
         return;
-    munmap(start_, sizeof(T) * size_);
+    munmap(const_cast<typename std::remove_const<T>::type*>(start_),
+           sizeof(T) * size_);
     close(file_desc_);
 }
 
 template <class T>
+template <class, class>
 T& disk_vector<T>::operator[](uint64_t idx)
 {
     return start_[idx];
@@ -103,6 +119,7 @@ const T& disk_vector<T>::operator[](uint64_t idx) const
 }
 
 template <class T>
+template <class, class>
 T& disk_vector<T>::at(uint64_t idx)
 {
     if (idx >= size_)
@@ -129,6 +146,7 @@ uint64_t disk_vector<T>::size() const
 }
 
 template <class T>
+template <class, class>
 auto disk_vector<T>::begin() -> iterator
 {
     return start_;
@@ -147,6 +165,7 @@ auto disk_vector<T>::end() const -> const_iterator
 }
 
 template <class T>
+template <class, class>
 auto disk_vector<T>::end() -> iterator
 {
     return start_ + size_;

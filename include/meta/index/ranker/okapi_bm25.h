@@ -33,7 +33,7 @@ namespace index
  * k3 = 500.0
  * ~~~
  */
-class okapi_bm25 : public ranker
+class okapi_bm25 : public ranking_function
 {
   public:
     /// The identifier for this ranker.

@@ -98,10 +98,12 @@ class postings_record
  * Represents an on-disk chunk to be merged with multi-way merge sort. Each
  * chunk_reader stores the file it's reading from, the total bytes needed
  * to be read, and the current number of bytes read, as well as buffers in
- * one postings_record.
+ * one postings_record. When it reaches the end its file, the file will be
+ * destroyed.
  */
 template <class PostingsData>
-using chunk_reader = util::chunk_iterator<postings_record<PostingsData>>;
+using chunk_reader
+    = util::destructive_chunk_iterator<postings_record<PostingsData>>;
 
 /**
  * Performs a multi-way merge sort of all of the provided chunks, writing

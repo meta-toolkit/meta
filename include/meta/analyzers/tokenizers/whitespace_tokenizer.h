@@ -9,6 +9,7 @@
 #ifndef META_WHITESPACE_TOKENIZER_H_
 #define META_WHITESPACE_TOKENIZER_H_
 
+#include "meta/analyzers/filter_factory.h"
 #include "meta/analyzers/token_stream.h"
 #include "meta/util/clonable.h"
 #include "meta/util/string_view.h"
@@ -39,8 +40,10 @@ class whitespace_tokenizer : public util::clonable<token_stream,
   public:
     /**
      * Creates a whitespace_tokenizer.
+     * @param suppress_whitespace Whether to suppress whitespace tokens
+     * themselves or not.
      */
-    whitespace_tokenizer();
+    whitespace_tokenizer(bool suppress_whitespace = true);
 
     /**
      * Sets the content for the tokenizer to parse.
@@ -64,12 +67,24 @@ class whitespace_tokenizer : public util::clonable<token_stream,
     const static util::string_view id;
 
   private:
+    void consume_adjacent_whitespace();
+
     /// Buffered string content for this tokenizer
     std::string content_;
 
-    /// Character index into the current buffer
-    uint64_t idx_;
+    /// Whether or not to output whitespace tokens
+    const bool suppress_whitespace_;
+
+    /// Character iterator into the current buffer
+    std::string::const_iterator it_;
 };
+
+/**
+ * Specialization of the factory method use to create whitespace_tokenizers.
+ */
+template <>
+std::unique_ptr<token_stream>
+    make_tokenizer<whitespace_tokenizer>(const cpptoml::table& config);
 }
 }
 }

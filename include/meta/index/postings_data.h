@@ -157,7 +157,8 @@ class postings_data
      * @param in The stream to read from
      * @return the number of bytes read in consuming this postings data
      */
-    uint64_t read_packed(std::istream& in);
+    template <class InputStream>
+    uint64_t read_packed(InputStream& in);
 
     /**
      * @return the term_id for this postings_data

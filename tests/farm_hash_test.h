@@ -478,6 +478,7 @@ bool test(uint8_t data[], int offset, int len = 0)
 {
     using meta::hashing::farm_hash;
     using meta::hashing::farm_hash_seeded;
+    using result_type = farm_hash::result_type;
     static int index = 0;
 
     auto check = [&](uint32_t actual)
@@ -493,21 +494,21 @@ bool test(uint8_t data[], int offset, int len = 0)
             farm_hash_seeded hasher{create_seed(offset, 0),
                                     create_seed(offset, 1)};
             hasher(data, static_cast<std::size_t>(len++));
-            uint64_t h = static_cast<std::size_t>(hasher);
+            auto h = static_cast<result_type>(hasher);
             alive += (h >> 32) > 0;
             alive += ((h << 32) >> 32) > 0;
         }
         {
             farm_hash_seeded hasher{create_seed(offset, -1)};
             hasher(data, static_cast<std::size_t>(len++));
-            uint64_t h = static_cast<std::size_t>(hasher);
+            auto h = static_cast<result_type>(hasher);
             alive += (h >> 32) > 0;
             alive += ((h << 32) >> 32) > 0;
         }
         {
             farm_hash hasher;
             hasher(data, static_cast<std::size_t>(len++));
-            uint64_t h = static_cast<std::size_t>(hasher);
+            auto h = static_cast<result_type>(hasher);
             alive += (h >> 32) > 0;
             alive += ((h << 32) >> 32) > 0;
         }
@@ -517,21 +518,21 @@ bool test(uint8_t data[], int offset, int len = 0)
     {
         farm_hash_seeded hasher{create_seed(offset, 0), create_seed(offset, 1)};
         hasher(data + offset, static_cast<std::size_t>(len));
-        uint64_t h = static_cast<std::size_t>(hasher);
+        auto h = static_cast<result_type>(hasher);
         check(h >> 32);
         check((h << 32) >> 32);
     }
     {
         farm_hash_seeded hasher{create_seed(offset, -1)};
         hasher(data + offset, static_cast<std::size_t>(len));
-        uint64_t h = static_cast<std::size_t>(hasher);
+        auto h = static_cast<result_type>(hasher);
         check(h >> 32);
         check((h << 32) >> 32);
     }
     {
         farm_hash hasher;
         hasher(data + offset, static_cast<std::size_t>(len));
-        uint64_t h = static_cast<std::size_t>(hasher);
+        auto h = static_cast<result_type>(hasher);
         check(h >> 32);
         check((h << 32) >> 32);
     }

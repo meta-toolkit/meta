@@ -13,6 +13,10 @@ namespace meta
 namespace learn
 {
 
+const constexpr double sgd_model::default_learning_rate;
+const constexpr double sgd_model::default_l2_regularizer;
+const constexpr double sgd_model::default_l1_regularizer;
+
 sgd_model::sgd_model(std::size_t num_features, options_type options)
     : weights_(num_features),
       scale_{1.0},

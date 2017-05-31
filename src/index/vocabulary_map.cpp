@@ -4,6 +4,7 @@
  */
 
 #include <cstring>
+
 #include "meta/index/vocabulary_map.h"
 #include "meta/util/optional.h"
 

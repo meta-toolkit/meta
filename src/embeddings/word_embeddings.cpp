@@ -8,6 +8,7 @@
  */
 
 #include "meta/embeddings/word_embeddings.h"
+#include "meta/io/filesystem.h"
 #include "meta/io/packed.h"
 #include "meta/math/vector.h"
 #include "meta/util/fixed_heap.h"
@@ -39,10 +40,8 @@ word_embeddings::word_embeddings(std::istream& vocab, std::istream& vectors)
 
         progress(tid);
         auto vec = vector(tid);
-        std::generate(vec.begin(), vec.end(), [&]()
-                      {
-                          return io::packed::read<double>(vectors);
-                      });
+        std::generate(vec.begin(), vec.end(),
+                      [&]() { return io::packed::read<double>(vectors); });
     }
 }
 
@@ -73,16 +72,13 @@ word_embeddings::word_embeddings(std::istream& vocab, std::istream& first,
 
         progress(tid);
         auto vec = vector(tid);
-        std::generate(vec.begin(), vec.end(), [&]()
-                      {
-                          return (io::packed::read<double>(first)
-                                  + io::packed::read<double>(second));
-                      });
+        std::generate(vec.begin(), vec.end(), [&]() {
+            return (io::packed::read<double>(first)
+                    + io::packed::read<double>(second));
+        });
         auto len = math::operators::l2norm(vec);
-        std::transform(vec.begin(), vec.end(), vec.begin(), [=](double weight)
-                {
-                    return weight / len;
-                });
+        std::transform(vec.begin(), vec.end(), vec.begin(),
+                       [=](double weight) { return weight / len; });
     }
 }
 
@@ -139,11 +135,10 @@ std::vector<scored_embedding>
 word_embeddings::top_k(util::array_view<const double> query,
                        std::size_t k) const
 {
-    auto comp = [](const scored_embedding& a, const scored_embedding& b)
-    {
-        return a.score > b.score;
-    };
-    util::fixed_heap<scored_embedding, decltype(comp)> results{k, comp};
+    auto results = util::make_fixed_heap<scored_embedding>(
+        k, [](const scored_embedding& a, const scored_embedding& b) {
+            return a.score > b.score;
+        });
 
     // +1 for <unk>
     for (std::size_t tid = 0; tid < id_to_term_.size() + 1; ++tid)
@@ -170,6 +165,10 @@ word_embeddings load_embeddings(const cpptoml::table& config)
     if (!prefix)
         throw word_embeddings_exception{
             "missing prefix key in configuration file"};
+
+    if (!filesystem::exists(*prefix))
+        throw word_embeddings_exception{"embeddings directory does not exist: "
+                                        + *prefix};
 
     std::ifstream vocab{*prefix + "/vocab.bin", std::ios::binary};
     if (!vocab)

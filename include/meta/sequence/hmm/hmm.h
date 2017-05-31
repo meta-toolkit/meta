@@ -217,67 +217,80 @@ class hidden_markov_model
         model_.save(os);
     }
 
+    /**
+     * Temporary storage for expected counts for the different model types,
+     * plus the data log likelihood computed during the forward-backward
+     * algorithm
+    */
+    struct expected_counts
+    {
+        expected_counts(const hidden_markov_model& hmm)
+            : obs_counts{hmm.obs_dist_.expected_counts()},
+              model_counts{hmm.model_.expected_counts()}
+        {
+            // nothing
+        }
+
+        expected_counts& operator+=(const expected_counts& other)
+        {
+            obs_counts += other.obs_counts;
+            model_counts += other.model_counts;
+            log_likelihood += other.log_likelihood;
+            return *this;
+        }
+
+        typename ObsDist::expected_counts_type obs_counts;
+        markov_model::expected_counts_type model_counts;
+        double log_likelihood = 0.0;
+    };
+
+    /**
+     * Computes expected counts using the forward-backward algorithm.
+     */
+    expected_counts forward_backward(const sequence_type& seq)
+    {
+        expected_counts ec{*this};
+        forward_backward(seq, ec);
+        return ec;
+    }
+
   private:
+    void forward_backward(const sequence_type& seq, expected_counts& counts)
+    {
+        using fwdbwd = forward_backward_type;
+        // cache b_i(o_t) since this could be computed with an
+        // arbitrarily complex model
+        auto output_probs = fwdbwd::output_probabilities(*this, seq);
+
+        // run forward-backward
+        auto fwd = fwdbwd::forward(*this, seq, output_probs);
+        auto bwd = fwdbwd::backward(*this, seq, fwd, output_probs);
+
+        // compute the probability of being in a given state at a given
+        // time from the trellises
+        auto gamma = fwdbwd::posterior_state_membership(*this, fwd, bwd);
+
+        // increment expected counts
+        fwdbwd::increment_counts(*this, counts, seq, fwd, bwd, gamma,
+                                 output_probs);
+    }
+
     double expectation_maximization(const training_data_type& instances,
                                     parallel::thread_pool& pool,
                                     printing::progress& progress)
     {
-        // Temporary storage for expected counts for the different model
-        // types, plus the data log likelihood computed during the
-        // forward-backward algorithm
-        struct expected_counts
-        {
-            expected_counts(const ObsDist& obs_dist, const markov_model& model)
-                : obs_counts{obs_dist.expected_counts()},
-                  model_counts{model.expected_counts()}
-            {
-                // nothing
-            }
-
-            expected_counts& operator+=(const expected_counts& other)
-            {
-                obs_counts += other.obs_counts;
-                model_counts += other.model_counts;
-                log_likelihood += other.log_likelihood;
-                return *this;
-            }
-
-            typename ObsDist::expected_counts_type obs_counts;
-            markov_model::expected_counts_type model_counts;
-            double log_likelihood = 0.0;
-        };
-
         uint64_t seq_id = 0;
         // compute expected counts across all instances in parallel
         std::mutex progress_mutex;
         auto counts = parallel::reduction(
             instances.begin(), instances.end(), pool,
-            [&]() {
-                return expected_counts{obs_dist_, model_};
-            },
+            [&]() { return expected_counts{*this}; },
             [&](expected_counts& counts, const sequence_type& seq) {
                 {
                     std::lock_guard<std::mutex> lock{progress_mutex};
                     progress(seq_id++);
                 }
-
-                using fwdbwd = forward_backward_type;
-                // cache b_i(o_t) since this could be computed with an
-                // arbitrarily complex model
-                auto output_probs = fwdbwd::output_probabilities(*this, seq);
-
-                // run forward-backward
-                auto fwd = fwdbwd::forward(*this, seq, output_probs);
-                auto bwd = fwdbwd::backward(*this, seq, fwd, output_probs);
-
-                // compute the probability of being in a given state at a given
-                // time from the trellises
-                auto gamma
-                    = fwdbwd::posterior_state_membership(*this, fwd, bwd);
-
-                // increment expected counts
-                fwdbwd::increment_counts(*this, counts, seq, fwd, bwd, gamma,
-                                         output_probs);
+                forward_backward(seq, counts);
             },
             [&](expected_counts& result, const expected_counts& temp) {
                 result += temp;

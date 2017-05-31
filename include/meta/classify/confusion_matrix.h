@@ -42,6 +42,16 @@ class confusion_matrix
              size_t times = 1);
 
     /**
+     * @param Accuracy to add
+     */
+    void add_fold_accuracy(double acc);
+
+    /**
+     * @return the list of added accuracies
+     */
+    std::vector<double> fold_accuracy() const;
+
+    /**
      * Prints this matrix's statistics to out.
      *
      * @param out The stream to write to (defaults to `std::cout`)
@@ -160,6 +170,9 @@ class confusion_matrix
 
     /// Total number of classification attempts
     size_t total_;
+
+    /// Keeps track of accuracies between folds
+    std::vector<double> fold_acc_;
 };
 }
 }

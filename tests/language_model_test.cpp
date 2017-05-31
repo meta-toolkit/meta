@@ -28,7 +28,7 @@ void run_test(const cpptoml::table& line_cfg) {
     AssertThat(s4.size(), Equals(5ul));
 
     // log_prob values calculated with KenLM
-    const double delta = 0.0000001;
+    const double delta = 1e-5;
     AssertThat(model.log_prob(s1), EqualsWithDelta(-5.0682507, delta));
     AssertThat(model.log_prob(s2), EqualsWithDelta(-11.7275571, delta));
     AssertThat(model.log_prob(s3), EqualsWithDelta(-11.07649517, delta));

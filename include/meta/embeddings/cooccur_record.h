@@ -1,5 +1,5 @@
 /**
- * @file coocur_record.h
+ * @file cooccur_record.h
  * @author Chase Geigle
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -7,8 +7,8 @@
  * project.
  */
 
-#ifndef META_EMBEDDINGS_COOCUR_RECORD_H_
-#define META_EMBEDDINGS_COOCUR_RECORD_H_
+#ifndef META_EMBEDDINGS_COOCCUR_RECORD_H_
+#define META_EMBEDDINGS_COOCCUR_RECORD_H_
 
 #include <cstdint>
 
@@ -20,38 +20,38 @@ namespace meta
 namespace embeddings
 {
 /**
- * Represents an entry in the coocurrence matrix. Satisfies the Record
+ * Represents an entry in the cooccurrence matrix. Satisfies the Record
  * concept for multiway_merge support.
  */
-struct coocur_record
+struct cooccur_record
 {
     uint64_t target;
     uint64_t context;
     double weight;
 
-    void merge_with(coocur_record&& other)
+    void merge_with(cooccur_record&& other)
     {
         weight += other.weight;
     }
 };
 
-bool operator==(const coocur_record& a, const coocur_record& b)
+inline bool operator==(const cooccur_record& a, const cooccur_record& b)
 {
     return std::tie(a.target, a.context) == std::tie(b.target, b.context);
 }
 
-bool operator!=(const coocur_record& a, const coocur_record& b)
+inline bool operator!=(const cooccur_record& a, const cooccur_record& b)
 {
     return !(a == b);
 }
 
-bool operator<(const coocur_record& a, const coocur_record& b)
+inline bool operator<(const cooccur_record& a, const cooccur_record& b)
 {
     return std::tie(a.target, a.context) < std::tie(b.target, b.context);
 }
 
 template <class OutputStream>
-uint64_t packed_write(OutputStream& os, const coocur_record& record)
+uint64_t packed_write(OutputStream& os, const cooccur_record& record)
 {
     using io::packed::write;
     return write(os, record.target) + write(os, record.context)
@@ -59,7 +59,7 @@ uint64_t packed_write(OutputStream& os, const coocur_record& record)
 }
 
 template <class InputStream>
-uint64_t packed_read(InputStream& is, coocur_record& record)
+uint64_t packed_read(InputStream& is, cooccur_record& record)
 {
     using io::packed::read;
     return read(is, record.target) + read(is, record.context)

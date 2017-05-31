@@ -38,13 +38,43 @@ class dataset
     using size_type = std::vector<instance_type>::size_type;
 
     /**
+     * Creates an in-memory dataset from a forward_index consisting of all
+     * of the documents in that index.
+     */
+    template <class ProgressTrait = printing::default_progress_trait,
+              // below acts like an enable_if to avoid this overload being
+              // considered valid when passing an index and a doc_id container
+              class Progress = typename ProgressTrait::type>
+    dataset(std::shared_ptr<index::forward_index> idx,
+            ProgressTrait = ProgressTrait{})
+        : dataset(idx, util::range(doc_id{0}, doc_id{idx->num_docs() - 1}),
+                  ProgressTrait{})
+    {
+        // nothing
+    }
+
+    /**
+     * Creates an in-memory dataset from a forward_index and a list of
+     * document ids.
+     */
+    template <class DocIdContainer,
+              class ProgressTrait = printing::default_progress_trait>
+    dataset(std::shared_ptr<index::forward_index> idx, DocIdContainer&& dcont,
+            ProgressTrait = ProgressTrait{})
+        : dataset(idx, std::begin(dcont), std::end(dcont), ProgressTrait{})
+    {
+        // nothing
+    }
+
+    /**
      * Creates an in-memory dataset from a forward_index and a range of
      * doc_ids, represented as iterators.
      */
-    template <class ForwardIterator>
+    template <class ForwardIterator,
+              class ProgressTrait = printing::default_progress_trait>
     dataset(std::shared_ptr<index::forward_index> idx, ForwardIterator begin,
-            ForwardIterator end)
-        : total_features_{idx->unique_terms()}
+            ForwardIterator end, ProgressTrait = ProgressTrait{})
+        : total_features_(idx->unique_terms())
     {
         auto size = static_cast<uint64_t>(std::distance(begin, end));
 
@@ -53,7 +83,8 @@ class dataset
 
         instances_.reserve(size);
 
-        printing::progress progress{" > Loading instances into memory: ", size};
+        typename ProgressTrait::type progress{
+            " > Loading instances into memory: ", size};
         for (auto doc = 0_inst_id; begin != end; ++begin, ++doc)
         {
             progress(doc);
@@ -70,15 +101,17 @@ class dataset
      * the knn classifier. The id field of the instance_types stored within
      * the dataset is a document_id.
      */
-    template <class ForwardIterator>
+    template <class ForwardIterator,
+              class ProgressTrait = printing::default_progress_trait>
     dataset(std::shared_ptr<index::inverted_index> idx, ForwardIterator begin,
-            ForwardIterator end)
-        : total_features_{idx->unique_terms()}
+            ForwardIterator end, ProgressTrait = ProgressTrait{})
+        : total_features_(idx->unique_terms())
     {
         auto size = static_cast<uint64_t>(std::distance(begin, end));
         instances_.reserve(size);
 
-        printing::progress progress{" > Loading instances into memory: ", size};
+        typename ProgressTrait::type progress{
+            " > Loading instances into memory: ", size};
         for (uint64_t pos = 0; begin != end; ++begin, ++pos)
         {
             progress(pos);
