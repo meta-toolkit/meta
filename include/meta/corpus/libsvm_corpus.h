@@ -55,6 +55,11 @@ class libsvm_corpus : public corpus
 
     document next() override;
 
+    /**
+     * Reset the corpus to the beginning.
+     */
+    virtual void reset();
+
     void skip(uint64_t n = 1) override;
 
     uint64_t size() const override;

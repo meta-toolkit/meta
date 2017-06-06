@@ -65,6 +65,16 @@ document line_corpus::next()
     return doc;
 }
 
+void line_corpus::reset()
+{
+    infile_.seekg(0, infile_.beg);
+    if (class_infile_)
+        class_infile_->seekg(0, class_infile_->beg);
+
+    cur_id_ = doc_id(0);
+    reset_metadata();
+}
+
 void line_corpus::skip(uint64_t n)
 {
     uint64_t skips_left = n;

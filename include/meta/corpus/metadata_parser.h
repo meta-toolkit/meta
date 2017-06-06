@@ -40,6 +40,8 @@ class metadata_parser
      */
     std::vector<metadata::field> next();
 
+    void reset();
+
     /**
      * Skips the metadata vector for the next n documents in the file (default = 1)
      */

@@ -13,6 +13,7 @@
  */
 
 #include <atomic>
+#include <chrono>
 #include <deque>
 #include <iostream>
 #include <memory>
@@ -32,6 +33,20 @@
 #include "meta/util/progress.h"
 
 using namespace meta;
+
+class sgns_local_buffer
+{
+    public:
+        sgns_local_buffer(const analyzers::token_stream& stream)
+            : stream_{stream.clone()}
+        { }
+
+        sgns_local_buffer(sgns_local_buffer&&) = default;
+
+    private:
+        friend class sgns_trainer;
+        std::unique_ptr<analyzers::token_stream> stream_;
+};
 
 class sgns_exception : public std::runtime_error
 {
@@ -121,13 +136,169 @@ class sgns_trainer
     // words, when this method returns, all threads have finished training.
     void train(std::mutex& io_mutex, printing::progress& progress)
     {
+        auto stream = analyzers::load_filters(cfg_, embed_cfg_);
+        if (!stream)
+        {
+            throw sgns_exception{"Failed to find an ngram-word analyzer configuration"};
+        }
+
         parallel::thread_pool pool{num_threads_};
 
-        for (std::size_t t = 0; t < num_threads_; ++t)
+        auto iterations_left = iterations_;
+
+        auto docs = corpus::make_corpus(cfg_);
+
+        while (iterations_left > 0)
         {
-            pool.submit_task([&, t]() {
-                return train_thread(t, io_mutex, progress);
-            });
+            std::uniform_int_distribution<std::size_t> next_random;
+            int64_t word_counter = 0;
+
+            corpus::parallel_consume(
+                *docs, pool,
+                [&]() {
+                    return sgns_local_buffer{*stream};
+                },
+                [&](sgns_local_buffer& buffer, const corpus::document& doc) {
+                    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+                    sgns_net_vector neu1e(vector_size_, 0);        
+                    std::default_random_engine engine(seed);
+                    std::uniform_int_distribution<std::size_t> next_random;
+                    buffer.stream_->set_content(analyzers::get_content(doc));
+
+                    // Holds the target word and surrounding context words.
+                    sgns_window window;
+
+                    // Load target word.
+                    add_next_index(window, buffer.stream_, word_counter, engine, next_random);
+
+                    // Initialize future context words.
+                    while (window.size() < (max_window_size_ + 1))
+                        if (!add_next_index(window, buffer.stream_, word_counter, engine, next_random))
+                            break;
+
+                    // When the window is first loaded, the target word is the
+                    // first element in the window. The next time a word is added
+                    // to the window, this index will increase by one. This will
+                    // continue until this index reaches the middle of the window,
+                    // where it will stay until the algorithm completes.
+                    sgns_window::size_type target_widx = 0;
+
+                    // While there are target words left in the window...
+                    while (!window.empty() && (target_widx < window.size()))
+                    {
+                        // Sample a random window size.
+                        const auto window_size = next_random(engine) % max_window_size_;
+
+                        // Sweep across the window.
+                        for (sgns_window::size_type w = window_size; w < (max_window_size_ * 2 + 1 - window_size); ++w)
+                        {
+                            // Don't process a target word as its own context word.
+                            if (w != max_window_size_)
+                            {
+                                const int64_t context_widx = (int64_t)target_widx - (int64_t)max_window_size_ + (int64_t)w;
+
+                                if (context_widx < 0 || context_widx >= (int64_t)window.size())
+                                    continue;
+
+                                const sgns_net_vector::size_type l1 = window[(sgns_window::size_type)context_widx] * vector_size_;
+
+                                neu1e.assign(vector_size_, 0);
+
+                                // The first sample here (n == 0) will use the real
+                                // target. The rest (n > 0) will be negative samples.
+                                for (std::size_t n = 0; n < negative_samples_ + 1; n++)
+                                {
+                                    int label = 1;
+                                    sgns_net_vector::size_type target = window[target_widx];
+
+                                    if (n > 0)
+                                    {
+                                        label = 0;
+                                        target = noise_dist_[(next_random(engine) >> 16) % noise_dist_.size()];
+                                        if (target == window[target_widx])
+                                            continue;
+                                    }
+
+                                    const sgns_net_vector::size_type l2 = target * vector_size_;
+
+                                    float dot_product = 0.0f;
+                                    for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
+                                    {
+                                        dot_product += net_.syn0[l1 + i] * net_.syn1neg[l2 + i];
+                                    }
+
+                                    const float sigma = 1.0f / (1.0f + (float)exp(-dot_product));
+                                    const float update = learning_rate_ * (label - sigma);
+
+                                    for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
+                                    {
+                                        neu1e[i] += update * net_.syn1neg[l2 + i];
+                                        net_.syn1neg[l2 + i] += update * net_.syn0[l1 + i];
+                                    }
+                                }
+
+                                for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
+                                {
+                                    net_.syn0[l1 + i] += neu1e[i];
+                                }
+                            }
+                        }
+
+                        // Load the next word in the document into the window.
+                        if (add_next_index(window, buffer.stream_, word_counter, engine, next_random))
+                        {
+                            ++target_widx;
+
+                            // If the window is now too big, drop the first element.
+                            if (window.size() > (max_window_size_ * 2 + 1))
+                            {
+                                window.pop_front();
+                                --target_widx;
+                            }
+                        }
+                        else
+                        {
+                            // If the document is out of words, continue dropping
+                            // elements off the front of the window.
+                            window.pop_front();
+                        }
+
+                        // Update our learning rate every 10,000 words read.
+                        if (word_counter >= 10000)
+                        {
+                            word_count_actual_ += word_counter;
+                            word_counter = 0;
+
+                            learning_rate_ = std::max(
+                                starting_learning_rate_ * (1.0f - (float)word_count_actual_ / (float)(iterations_ * vocab_.total_count + 1.0f)),
+                                starting_learning_rate_ * 0.0001f
+                            );
+
+                            {
+                                const auto new_progress = (uint64_t)((starting_learning_rate_ - learning_rate_) * 100000.0);
+                                std::lock_guard<std::mutex> lock{io_mutex};
+                                progress(new_progress);
+                            }
+                        }
+                    }
+                });
+                
+            --iterations_left;
+
+            word_count_actual_ += word_counter;
+
+            learning_rate_ = std::max(
+                starting_learning_rate_ * (1.0f - word_count_actual_ / (float)(iterations_ * vocab_.total_count + 1.0f)),
+                starting_learning_rate_ * 0.0001f
+            );
+
+            {
+                const auto new_progress = (uint64_t)((starting_learning_rate_ - learning_rate_) * 100000.0);
+                std::lock_guard<std::mutex> lock{io_mutex};
+                progress(new_progress);
+            }
+
+            docs->reset();
         }
     }
 
@@ -166,174 +337,6 @@ class sgns_trainer
         }
 
         return false;
-    }
-
-    // Each thread will run this method on their own subset of training data.
-    void train_thread(std::size_t thread_id, std::mutex& io_mutex, printing::progress& progress)
-    {
-        std::unique_ptr<meta::analyzers::token_stream> stream = analyzers::load_filters(cfg_, embed_cfg_);
-        sgns_net_vector neu1e(vector_size_, 0);
-        std::default_random_engine engine((uint32_t)thread_id);
-        std::uniform_int_distribution<std::size_t> next_random;
-
-        if (!stream)
-        {
-            throw sgns_exception{"Failed to find an ngram-word analyzer configuration"};
-        }
-
-        auto iterations_left = iterations_;
-
-        while (iterations_left > 0)
-        {
-            std::unique_ptr<meta::corpus::corpus> docs = corpus::make_corpus(cfg_);
-            const uint64_t docs_per_thread = (docs->size() + (num_threads_ - 1)) / num_threads_;
-            int64_t word_counter = 0;
-
-            docs->skip(docs_per_thread * thread_id);
-
-            uint64_t docs_left = docs_per_thread;
-
-            while (docs_left > 0 && docs->has_next())
-            {
-                util::optional<corpus::document> doc = docs->next();
-
-                stream->set_content(analyzers::get_content(*doc));
-
-                // Holds the target word and surrounding context words.
-                sgns_window window;
-
-                // Load target word.
-                add_next_index(window, stream, word_counter, engine, next_random);
-
-                // Initialize future context words.
-                while (window.size() < (max_window_size_ + 1))
-                    if (!add_next_index(window, stream, word_counter, engine, next_random))
-                        break;
-
-                // When the window is first loaded, the target word is the
-                // first element in the window. The next time a word is added
-                // to the window, this index will increase by one. This will
-                // continue until this index reaches the middle of the window,
-                // where it will stay until the algorithm completes.
-                sgns_window::size_type target_widx = 0;
-
-                // While there are target words left in the window...
-                while (!window.empty() && (target_widx < window.size()))
-                {
-                    // Sample a random window size.
-                    const auto window_size = next_random(engine) % max_window_size_;
-
-                    // Sweep across the window.
-                    for (sgns_window::size_type w = window_size; w < (max_window_size_ * 2 + 1 - window_size); ++w)
-                    {
-                        // Don't process a target word as its own context word.
-                        if (w != max_window_size_)
-                        {
-                            const int64_t context_widx = (int64_t)target_widx - (int64_t)max_window_size_ + (int64_t)w;
-
-                            if (context_widx < 0 || context_widx >= (int64_t)window.size())
-                                continue;
-
-                            const sgns_net_vector::size_type l1 = window[(sgns_window::size_type)context_widx] * vector_size_;
-
-                            neu1e.assign(vector_size_, 0);
-
-                            // The first sample here (n == 0) will use the real
-                            // target. The rest (n > 0) will be negative samples.
-                            for (std::size_t n = 0; n < negative_samples_ + 1; n++)
-                            {
-                                int label = 1;
-                                sgns_net_vector::size_type target = window[target_widx];
-
-                                if (n > 0)
-                                {
-                                    label = 0;
-                                    target = noise_dist_[(next_random(engine) >> 16) % noise_dist_.size()];
-                                    if (target == window[target_widx])
-                                        continue;
-                                }
-
-                                const sgns_net_vector::size_type l2 = target * vector_size_;
-
-                                float dot_product = 0.0f;
-                                for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
-                                {
-                                    dot_product += net_.syn0[l1 + i] * net_.syn1neg[l2 + i];
-                                }
-
-                                const float sigma = 1.0f / (1.0f + (float)exp(-dot_product));
-                                const float update = learning_rate_ * (label - sigma);
-
-                                for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
-                                {
-                                    neu1e[i] += update * net_.syn1neg[l2 + i];
-                                    net_.syn1neg[l2 + i] += update * net_.syn0[l1 + i];
-                                }
-                            }
-
-                            for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
-                            {
-                                net_.syn0[l1 + i] += neu1e[i];
-                            }
-                        }
-                    }
-
-                    // Load the next word in the document into the window.
-                    if (add_next_index(window, stream, word_counter, engine, next_random))
-                    {
-                        ++target_widx;
-
-                        // If the window is now too big, drop the first element.
-                        if (window.size() > (max_window_size_ * 2 + 1))
-                        {
-                            window.pop_front();
-                            --target_widx;
-                        }
-                    }
-                    else
-                    {
-                        // If the document is out of words, continue dropping
-                        // elements off the front of the window.
-                        window.pop_front();
-                    }
-
-                    // Update our learning rate every 10,000 words read.
-                    if (word_counter >= 10000)
-                    {
-                        word_count_actual_ += word_counter;
-                        word_counter = 0;
-
-                        learning_rate_ = std::max(
-                            starting_learning_rate_ * (1.0f - (float)word_count_actual_ / (float)(iterations_ * vocab_.total_count + 1.0f)),
-                            starting_learning_rate_ * 0.0001f
-                        );
-
-                        {
-                            const auto new_progress = (uint64_t)((starting_learning_rate_ - learning_rate_) * 100000.0);
-                            std::lock_guard<std::mutex> lock{io_mutex};
-                            progress(new_progress);
-                        }
-                    }
-                }
-
-                --docs_left;
-            }
-
-            --iterations_left;
-
-            word_count_actual_ += word_counter;
-
-            learning_rate_ = std::max(
-                starting_learning_rate_ * (1.0f - word_count_actual_ / (float)(iterations_ * vocab_.total_count + 1.0f)),
-                starting_learning_rate_ * 0.0001f
-            );
-
-            {
-                const auto new_progress = (uint64_t)((starting_learning_rate_ - learning_rate_) * 100000.0);
-                std::lock_guard<std::mutex> lock{io_mutex};
-                progress(new_progress);
-            }
-        }
     }
 
     // Load the vocabulary from a file.

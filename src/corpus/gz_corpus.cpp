@@ -53,6 +53,11 @@ document gz_corpus::next()
     return doc;
 }
 
+void gz_corpus::reset()
+{
+    throw std::runtime_error{"Feature not yet supported for this corpus type!"};
+}
+
 void gz_corpus::skip(uint64_t n)
 {
     uint64_t skips_left = n;

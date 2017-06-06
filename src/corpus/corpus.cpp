@@ -25,6 +25,11 @@ std::vector<metadata::field> corpus::next_metadata()
     return mdata_parser_->next();
 }
 
+void corpus::reset_metadata()
+{
+    mdata_parser_->reset();
+}
+
 void corpus::skip_metadata(uint64_t n)
 {
     mdata_parser_->skip(n);

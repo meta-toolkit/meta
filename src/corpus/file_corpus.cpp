@@ -73,6 +73,11 @@ document file_corpus::next()
     return doc;
 }
 
+void file_corpus::reset()
+{
+    throw std::runtime_error{"Feature not yet supported for this corpus type!"};
+}
+
 void file_corpus::skip(uint64_t n)
 {
     cur_ += n;

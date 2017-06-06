@@ -77,6 +77,12 @@ std::vector<metadata::field> metadata_parser::next()
     return mdata;
 }
 
+void metadata_parser::reset()
+{
+    if (infile_)
+        infile_.stream().seekg(0, std::ios::beg);
+}
+
 void metadata_parser::skip(uint64_t n)
 {
     if (infile_)

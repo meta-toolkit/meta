@@ -54,6 +54,11 @@ class file_corpus : public corpus
     document next() override;
 
     /**
+     * Reset the corpus to the beginning.
+     */
+    virtual void reset();
+
+    /**
      * Skip the next n documents in this corpus (default = 1).
      */
     void skip(uint64_t n = 1) override;

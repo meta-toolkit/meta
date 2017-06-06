@@ -75,6 +75,11 @@ class corpus
     virtual document next() = 0;
 
     /**
+     * Reset the corpus to the beginning.
+     */
+    virtual void reset() = 0;
+
+    /**
      * Skip the next n documents in this corpus (default = 1).
      */
     virtual void skip(uint64_t n = 1) = 0;
@@ -117,6 +122,12 @@ class corpus
      * next() to set the metadata for the current document.
      */
     std::vector<metadata::field> next_metadata();
+
+    /**
+     * Helper function to be used by deriving classes in implementing
+     * reset() to reset the metadata for the current document.
+     */
+    void reset_metadata();
 
     /**
      * Helper function to be used by deriving classes in implementing
