@@ -193,6 +193,8 @@ class sgns_trainer
                         for (sgns_window::size_type w = window_size; w < (max_window_size_ * 2 + 1 - window_size); ++w)
                         {
                             // Don't process a target word as its own context word.
+                            // Max window size works here because it is window size + 1th index
+                            // and therefore the target word
                             if (w != max_window_size_)
                             {
                                 const int64_t context_widx = (int64_t)target_widx - (int64_t)max_window_size_ + (int64_t)w;
@@ -206,11 +208,14 @@ class sgns_trainer
 
                                 // The first sample here (n == 0) will use the real
                                 // target. The rest (n > 0) will be negative samples.
+                               
                                 for (std::size_t n = 0; n < negative_samples_ + 1; n++)
                                 {
                                     int label = 1;
                                     sgns_net_vector::size_type target = window[target_widx];
 
+                                    // TODO: Maybe we do the first sample explicity and eliminate the if logic
+                                    // with this loop? Wonder if it is worth trying?
                                     if (n > 0)
                                     {
                                         label = 0;
@@ -266,39 +271,32 @@ class sgns_trainer
                         // Update our learning rate every 10,000 words read.
                         if (word_counter >= 10000)
                         {
-                            word_count_actual_ += word_counter;
+                            update_progress(word_counter, io_mutex, progress);
                             word_counter = 0;
-
-                            learning_rate_ = std::max(
-                                starting_learning_rate_ * (1.0f - (float)word_count_actual_ / (float)(iterations_ * vocab_.total_count + 1.0f)),
-                                starting_learning_rate_ * 0.0001f
-                            );
-
-                            {
-                                const auto new_progress = (uint64_t)((starting_learning_rate_ - learning_rate_) * 100000.0);
-                                std::lock_guard<std::mutex> lock{io_mutex};
-                                progress(new_progress);
-                            }
                         }
                     }
                 });
                 
+            update_progress(word_counter, io_mutex, progress);
             --iterations_left;
-
-            word_count_actual_ += word_counter;
-
-            learning_rate_ = std::max(
-                starting_learning_rate_ * (1.0f - word_count_actual_ / (float)(iterations_ * vocab_.total_count + 1.0f)),
-                starting_learning_rate_ * 0.0001f
-            );
-
-            {
-                const auto new_progress = (uint64_t)((starting_learning_rate_ - learning_rate_) * 100000.0);
-                std::lock_guard<std::mutex> lock{io_mutex};
-                progress(new_progress);
-            }
-
             docs->reset();
+        }
+    }
+
+    // Update the progress indicator
+    void update_progress(int64_t word_counter, std::mutex& io_mutex, printing::progress& progress)
+    {
+        word_count_actual_ += word_counter;
+        
+        learning_rate_ = std::max(
+            starting_learning_rate_ * (1.0f - (float)word_count_actual_ / (float)(iterations_ * vocab_.total_count + 1.0f)),
+            starting_learning_rate_ * 0.0001f
+        );
+
+        {
+            const auto new_progress = (uint64_t)((starting_learning_rate_ - learning_rate_) * 100000.0);
+            std::lock_guard<std::mutex> lock{io_mutex};
+            progress(new_progress);
         }
     }
 
