@@ -75,24 +75,6 @@ void line_corpus::reset()
     reset_metadata();
 }
 
-void line_corpus::skip(uint64_t n)
-{
-    uint64_t skips_left = n;
-    std::string ignoredLabel;
-
-    while (skips_left > 0)
-    {
-        if (class_infile_)
-            *class_infile_ >> ignoredLabel;
-
-        infile_.ignore(std::numeric_limits<std::streamsize>::max(), infile_.widen('\n'));
-
-        --skips_left;
-    }
-
-    skip_metadata(n);
-}
-
 uint64_t line_corpus::size() const
 {
     return num_lines_;

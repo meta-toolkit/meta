@@ -72,25 +72,6 @@ void libsvm_corpus::reset()
     throw std::runtime_error{"Feature not yet supported for this corpus type!"};
 }
 
-void libsvm_corpus::skip(uint64_t n)
-{
-    uint64_t skips_left = n;
-
-    while (skips_left > 1)
-    {
-        input_.ignore(std::numeric_limits<std::streamsize>::max(), input_.widen('\n'));
-
-        --skips_left;
-    }
-
-    if (skips_left == 1)
-    {
-        std::getline(input_, next_content_);
-    }
-
-    skip_metadata(n);
-}
-
 metadata::schema_type libsvm_corpus::schema() const
 {
     auto schema = corpus::schema();

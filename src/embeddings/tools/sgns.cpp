@@ -5,7 +5,15 @@
  *
  * Builds word embedding vectors using the Skip-Gram Negative Sampling method.
  *
+ * This code is heavily based on the original word2vec implementation 
+ * from Tomas Mikolov et. al. but has been adapted to use C++ features
+ * where it increases speed or maintainability.
+ *
  * @see https://code.google.com/archive/p/word2vec/
+ * @see https://github.com/svn2github/word2vec
+ *
+ * The original code was licensed under the Apache 2.0 license which may be found 
+ * here: http://www.apache.org/licenses/LICENSE-2.0
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
  * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
@@ -34,11 +42,15 @@
 
 using namespace meta;
 
+using sgns_net_vector = util::aligned_vector<float, 128>;
+
 class sgns_local_buffer
 {
     public:
-        sgns_local_buffer(const analyzers::token_stream& stream)
-            : stream_{stream.clone()}
+        sgns_local_buffer(const analyzers::token_stream& stream, const std::size_t vector_size)
+            : stream_{stream.clone()},
+              neu1e(vector_size, 0),
+              engine(std::chrono::system_clock::now().time_since_epoch().count())
         { }
 
         sgns_local_buffer(sgns_local_buffer&&) = default;
@@ -46,6 +58,9 @@ class sgns_local_buffer
     private:
         friend class sgns_trainer;
         std::unique_ptr<analyzers::token_stream> stream_;
+        sgns_net_vector neu1e;
+        std::default_random_engine engine;
+        std::uniform_int_distribution<std::size_t> next_random;
 };
 
 class sgns_exception : public std::runtime_error
@@ -61,8 +76,8 @@ struct sgns_word
     uint64_t count;
 };
 
-typedef std::vector<sgns_word> sgns_vocab_vector;
-typedef hashing::probe_map<std::string, sgns_vocab_vector::size_type> sgns_vocab_index_map;
+using sgns_vocab_vector = std::vector<sgns_word>;
+using sgns_vocab_index_map = hashing::probe_map<std::string, sgns_vocab_vector::size_type>;
 
 // The vocabulary is represented by a vector of sgns_word structures and a table
 // that maps from word strings to their vector indexes.
@@ -74,7 +89,6 @@ struct sgns_vocab
 };
 
 typedef std::vector<std::size_t> sgns_noise_distribution;
-typedef util::aligned_vector<float, 128> sgns_net_vector;
 typedef std::deque<sgns_vocab_vector::size_type> sgns_window;
 
 // Represents the neural network that is trained.
@@ -84,7 +98,8 @@ struct sgns_net
         syn0(vocab_size * layer1_size),
         syn1neg(vocab_size * layer1_size, 0)
     {
-        std::default_random_engine random; // TODO: Seed
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        std::default_random_engine random(seed); 
         std::uniform_real_distribution<float> uniform(-0.5f / (float)layer1_size,
                                                        0.5f / (float)layer1_size);
 
@@ -118,7 +133,9 @@ class sgns_trainer
         negative_samples_(sgns_cfg.get_as<std::size_t>("negative-samples").value_or(20)),
         binary_output_(sgns_cfg.get_as<bool>("binary").value_or(true)),
         vocab_(load_vocab(prefix_ + "/vocab.bin")),
-        noise_dist_(create_unigram_noise_distribution(1E8)), // TODO: Configurable size?
+        noise_dist_(create_unigram_noise_distribution(
+                        sgns_cfg.get_as<std::size_t>("unigram-distribution-size").value_or(1E8),
+                        sgns_cfg.get_as<double>("unigram-distribution-power").value_or(0.75))), 
         net_(vocab_.vector.size(), vector_size_),
         learning_rate_(starting_learning_rate_),
         word_count_actual_(0)
@@ -156,24 +173,20 @@ class sgns_trainer
             corpus::parallel_consume(
                 *docs, pool,
                 [&]() {
-                    return sgns_local_buffer{*stream};
+                    return sgns_local_buffer{*stream, vector_size_};
                 },
                 [&](sgns_local_buffer& buffer, const corpus::document& doc) {
-                    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-                    sgns_net_vector neu1e(vector_size_, 0);        
-                    std::default_random_engine engine(seed);
-                    std::uniform_int_distribution<std::size_t> next_random;
                     buffer.stream_->set_content(analyzers::get_content(doc));
 
                     // Holds the target word and surrounding context words.
                     sgns_window window;
 
                     // Load target word.
-                    add_next_index(window, buffer.stream_, word_counter, engine, next_random);
+                    add_next_index(window, buffer.stream_, word_counter, buffer.engine, next_random);
 
                     // Initialize future context words.
                     while (window.size() < (max_window_size_ + 1))
-                        if (!add_next_index(window, buffer.stream_, word_counter, engine, next_random))
+                        if (!add_next_index(window, buffer.stream_, word_counter, buffer.engine, next_random))
                             break;
 
                     // When the window is first loaded, the target word is the
@@ -187,7 +200,7 @@ class sgns_trainer
                     while (!window.empty() && (target_widx < window.size()))
                     {
                         // Sample a random window size.
-                        const auto window_size = next_random(engine) % max_window_size_;
+                        const auto window_size = buffer.next_random(buffer.engine) % max_window_size_;
 
                         // Sweep across the window.
                         for (sgns_window::size_type w = window_size; w < (max_window_size_ * 2 + 1 - window_size); ++w)
@@ -204,7 +217,7 @@ class sgns_trainer
 
                                 const sgns_net_vector::size_type l1 = window[(sgns_window::size_type)context_widx] * vector_size_;
 
-                                neu1e.assign(vector_size_, 0);
+                                buffer.neu1e.assign(vector_size_, 0);
 
                                 // The first sample here (n == 0) will use the real
                                 // target. The rest (n > 0) will be negative samples.
@@ -219,7 +232,7 @@ class sgns_trainer
                                     if (n > 0)
                                     {
                                         label = 0;
-                                        target = noise_dist_[(next_random(engine) >> 16) % noise_dist_.size()];
+                                        target = noise_dist_[(next_random(buffer.engine) >> 16) % noise_dist_.size()];
                                         if (target == window[target_widx])
                                             continue;
                                     }
@@ -237,20 +250,20 @@ class sgns_trainer
 
                                     for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
                                     {
-                                        neu1e[i] += update * net_.syn1neg[l2 + i];
+                                        buffer.neu1e[i] += update * net_.syn1neg[l2 + i];
                                         net_.syn1neg[l2 + i] += update * net_.syn0[l1 + i];
                                     }
                                 }
 
                                 for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
                                 {
-                                    net_.syn0[l1 + i] += neu1e[i];
+                                    net_.syn0[l1 + i] += buffer.neu1e[i];
                                 }
                             }
                         }
 
                         // Load the next word in the document into the window.
-                        if (add_next_index(window, buffer.stream_, word_counter, engine, next_random))
+                        if (add_next_index(window, buffer.stream_, word_counter, buffer.engine, next_random))
                         {
                             ++target_widx;
 
@@ -381,12 +394,11 @@ class sgns_trainer
 
     // Create the noise distribution from which negative word samples are
     // randomly drawn.
-    sgns_noise_distribution create_unigram_noise_distribution(sgns_noise_distribution::size_type size) const
+    sgns_noise_distribution create_unigram_noise_distribution(sgns_noise_distribution::size_type size, double power) const
     {
         printing::progress progress{" > Generating noise distribution: ", vocab_.vector.size()};
 
         sgns_noise_distribution noise_dist(size);
-        const double power = 0.75; // TODO: Configurable?
 
         double normalizer = 0;
         for (sgns_vocab_vector::size_type i = 0; i < vocab_.vector.size(); ++i)

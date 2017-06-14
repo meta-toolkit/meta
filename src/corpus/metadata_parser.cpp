@@ -83,20 +83,6 @@ void metadata_parser::reset()
         infile_.stream().seekg(0, std::ios::beg);
 }
 
-void metadata_parser::skip(uint64_t n)
-{
-    if (infile_)
-    {
-        uint64_t skips_left = n;
-
-        while (skips_left > 0)
-        {
-            infile_.stream().ignore(std::numeric_limits<std::streamsize>::max(), infile_.stream().widen('\n'));
-            --skips_left;
-        }
-    }
-}
-
 const metadata::schema_type& metadata_parser::schema() const
 {
     return schema_;

@@ -40,12 +40,10 @@ class metadata_parser
      */
     std::vector<metadata::field> next();
 
-    void reset();
-
     /**
-     * Skips the metadata vector for the next n documents in the file (default = 1)
+     * Reset the corpus to the beginning.
      */
-    void skip(uint64_t n = 1);
+    void reset();
 
     /**
      * @return the schema for the metadata in this file

@@ -58,23 +58,6 @@ void gz_corpus::reset()
     throw std::runtime_error{"Feature not yet supported for this corpus type!"};
 }
 
-void gz_corpus::skip(uint64_t n)
-{
-    uint64_t skips_left = n;
-
-    while (skips_left > 0)
-    {
-        if (class_stream_)
-            class_stream_.ignore(std::numeric_limits<std::streamsize>::max(), class_stream_.widen('\n'));
-
-        corpus_stream_.ignore(std::numeric_limits<std::streamsize>::max(), corpus_stream_.widen('\n'));
-
-        --skips_left;
-    }
-
-    skip_metadata(n);
-}
-
 uint64_t gz_corpus::size() const
 {
     return num_lines_;
