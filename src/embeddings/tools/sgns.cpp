@@ -5,14 +5,15 @@
  *
  * Builds word embedding vectors using the Skip-Gram Negative Sampling method.
  *
- * This code is heavily based on the original word2vec implementation 
+ * This code is heavily based on the original word2vec implementation
  * from Tomas Mikolov et. al. but has been adapted to use C++ features
  * where it increases speed or maintainability.
  *
  * @see https://code.google.com/archive/p/word2vec/
  * @see https://github.com/svn2github/word2vec
  *
- * The original code was licensed under the Apache 2.0 license which may be found 
+ * The original code was licensed under the Apache 2.0 license which may be
+ * found
  * here: http://www.apache.org/licenses/LICENSE-2.0
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -46,21 +47,23 @@ using sgns_net_vector = util::aligned_vector<float, 128>;
 
 class sgns_local_buffer
 {
-    public:
-        sgns_local_buffer(const analyzers::token_stream& stream, const std::size_t vector_size)
-            : stream_{stream.clone()},
-              neu1e(vector_size, 0),
-              engine(std::chrono::system_clock::now().time_since_epoch().count())
-        { }
+  public:
+    sgns_local_buffer(const analyzers::token_stream& stream,
+                      const std::size_t vector_size)
+        : stream_{stream.clone()},
+          neu1e(vector_size, 0),
+          engine(std::chrono::system_clock::now().time_since_epoch().count())
+    {
+    }
 
-        sgns_local_buffer(sgns_local_buffer&&) = default;
+    sgns_local_buffer(sgns_local_buffer&&) = default;
 
-    private:
-        friend class sgns_trainer;
-        std::unique_ptr<analyzers::token_stream> stream_;
-        sgns_net_vector neu1e;
-        std::default_random_engine engine;
-        std::uniform_int_distribution<std::size_t> next_random;
+  private:
+    friend class sgns_trainer;
+    std::unique_ptr<analyzers::token_stream> stream_;
+    sgns_net_vector neu1e;
+    std::default_random_engine engine;
+    std::uniform_int_distribution<std::size_t> next_random;
 };
 
 class sgns_exception : public std::runtime_error
@@ -77,7 +80,8 @@ struct sgns_word
 };
 
 using sgns_vocab_vector = std::vector<sgns_word>;
-using sgns_vocab_index_map = hashing::probe_map<std::string, sgns_vocab_vector::size_type>;
+using sgns_vocab_index_map
+    = hashing::probe_map<std::string, sgns_vocab_vector::size_type>;
 
 // The vocabulary is represented by a vector of sgns_word structures and a table
 // that maps from word strings to their vector indexes.
@@ -94,14 +98,14 @@ typedef std::deque<sgns_vocab_vector::size_type> sgns_window;
 // Represents the neural network that is trained.
 struct sgns_net
 {
-    sgns_net(std::size_t vocab_size, std::size_t layer1_size) :
-        syn0(vocab_size * layer1_size),
-        syn1neg(vocab_size * layer1_size, 0)
+    sgns_net(std::size_t vocab_size, std::size_t layer1_size)
+        : syn0(vocab_size * layer1_size), syn1neg(vocab_size * layer1_size, 0)
     {
-        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-        std::default_random_engine random(seed); 
-        std::uniform_real_distribution<float> uniform(-0.5f / (float)layer1_size,
-                                                       0.5f / (float)layer1_size);
+        unsigned seed
+            = std::chrono::system_clock::now().time_since_epoch().count();
+        std::default_random_engine random(seed);
+        std::uniform_real_distribution<float> uniform(
+            -0.5f / (float)layer1_size, 0.5f / (float)layer1_size);
 
         for (auto& i : syn0)
             i = uniform(random);
@@ -115,37 +119,46 @@ struct sgns_net
 class sgns_trainer
 {
   public:
-
     // Constructor.
-    sgns_trainer(const cpptoml::table& cfg,
-                 const cpptoml::table& embed_cfg,
-                 const cpptoml::table& sgns_cfg) :
-        cfg_(cfg),
-        embed_cfg_(embed_cfg),
-        prefix_(*embed_cfg.get_as<std::string>("prefix")),
-        vector_size_(embed_cfg.get_as<std::size_t>("vector-size").value_or(100)),
-        num_threads_(embed_cfg.get_as<std::size_t>("num-threads").value_or(std::max(1u, std::thread::hardware_concurrency()))),
-        max_ram_(embed_cfg.get_as<std::size_t>("max-ram").value_or(4096) * 1024 * 1024),
-        subsample_threshold_(sgns_cfg.get_as<double>("subsample-threshold").value_or(1E-4)),
-        max_window_size_(sgns_cfg.get_as<std::size_t>("max-window-size").value_or(6)),
-        iterations_(sgns_cfg.get_as<uint64_t>("iterations").value_or(10)),
-        starting_learning_rate_((float)sgns_cfg.get_as<double>("learning-rate").value_or(0.025)),
-        negative_samples_(sgns_cfg.get_as<std::size_t>("negative-samples").value_or(20)),
-        binary_output_(sgns_cfg.get_as<bool>("binary").value_or(true)),
-        vocab_(load_vocab(prefix_ + "/vocab.bin")),
-        noise_dist_(create_unigram_noise_distribution(
-                        sgns_cfg.get_as<std::size_t>("unigram-distribution-size").value_or(1E8),
-                        sgns_cfg.get_as<double>("unigram-distribution-power").value_or(0.75))), 
-        net_(vocab_.vector.size(), vector_size_),
-        learning_rate_(starting_learning_rate_),
-        word_count_actual_(0)
+    sgns_trainer(const cpptoml::table& cfg, const cpptoml::table& embed_cfg,
+                 const cpptoml::table& sgns_cfg)
+        : cfg_(cfg),
+          embed_cfg_(embed_cfg),
+          prefix_(*embed_cfg.get_as<std::string>("prefix")),
+          vector_size_(
+              embed_cfg.get_as<std::size_t>("vector-size").value_or(100)),
+          num_threads_(
+              embed_cfg.get_as<std::size_t>("num-threads")
+                  .value_or(std::max(1u, std::thread::hardware_concurrency()))),
+          max_ram_(embed_cfg.get_as<std::size_t>("max-ram").value_or(4096)
+                   * 1024 * 1024),
+          subsample_threshold_(
+              sgns_cfg.get_as<double>("subsample-threshold").value_or(1E-4)),
+          max_window_size_(
+              sgns_cfg.get_as<std::size_t>("max-window-size").value_or(6)),
+          iterations_(sgns_cfg.get_as<uint64_t>("iterations").value_or(10)),
+          starting_learning_rate_(
+              (float)sgns_cfg.get_as<double>("learning-rate").value_or(0.025)),
+          negative_samples_(
+              sgns_cfg.get_as<std::size_t>("negative-samples").value_or(20)),
+          binary_output_(sgns_cfg.get_as<bool>("binary").value_or(true)),
+          vocab_(load_vocab(prefix_ + "/vocab.bin")),
+          noise_dist_(create_unigram_noise_distribution(
+              sgns_cfg.get_as<std::size_t>("unigram-distribution-size")
+                  .value_or(1E8),
+              sgns_cfg.get_as<double>("unigram-distribution-power")
+                  .value_or(0.75))),
+          net_(vocab_.vector.size(), vector_size_),
+          learning_rate_(starting_learning_rate_),
+          word_count_actual_(0)
     {
         std::mutex io_mutex;
-        printing::progress progress{" > Training: ", (uint64_t)(starting_learning_rate_ * 100000.0)};
+        printing::progress progress{
+            " > Training: ", (uint64_t)(starting_learning_rate_ * 100000.0)};
 
         train(io_mutex, progress);
 
-        save_w2v_vectors();
+        // save_w2v_vectors();
         save_meta_vectors();
     }
 
@@ -156,7 +169,8 @@ class sgns_trainer
         auto stream = analyzers::load_filters(cfg_, embed_cfg_);
         if (!stream)
         {
-            throw sgns_exception{"Failed to find an ngram-word analyzer configuration"};
+            throw sgns_exception{
+                "Failed to find an ngram-word analyzer configuration"};
         }
 
         parallel::thread_pool pool{num_threads_};
@@ -167,7 +181,6 @@ class sgns_trainer
 
         while (iterations_left > 0)
         {
-            std::uniform_int_distribution<std::size_t> next_random;
             int64_t word_counter = 0;
 
             corpus::parallel_consume(
@@ -176,138 +189,164 @@ class sgns_trainer
                     return sgns_local_buffer{*stream, vector_size_};
                 },
                 [&](sgns_local_buffer& buffer, const corpus::document& doc) {
-                    buffer.stream_->set_content(analyzers::get_content(doc));
-
-                    // Holds the target word and surrounding context words.
-                    sgns_window window;
-
-                    // Load target word.
-                    add_next_index(window, buffer.stream_, word_counter, buffer.engine, next_random);
-
-                    // Initialize future context words.
-                    while (window.size() < (max_window_size_ + 1))
-                        if (!add_next_index(window, buffer.stream_, word_counter, buffer.engine, next_random))
-                            break;
-
-                    // When the window is first loaded, the target word is the
-                    // first element in the window. The next time a word is added
-                    // to the window, this index will increase by one. This will
-                    // continue until this index reaches the middle of the window,
-                    // where it will stay until the algorithm completes.
-                    sgns_window::size_type target_widx = 0;
-
-                    // While there are target words left in the window...
-                    while (!window.empty() && (target_widx < window.size()))
-                    {
-                        // Sample a random window size.
-                        const auto window_size = buffer.next_random(buffer.engine) % max_window_size_;
-
-                        // Sweep across the window.
-                        for (sgns_window::size_type w = window_size; w < (max_window_size_ * 2 + 1 - window_size); ++w)
-                        {
-                            // Don't process a target word as its own context word.
-                            // Max window size works here because it is window size + 1th index
-                            // and therefore the target word
-                            if (w != max_window_size_)
-                            {
-                                const int64_t context_widx = (int64_t)target_widx - (int64_t)max_window_size_ + (int64_t)w;
-
-                                if (context_widx < 0 || context_widx >= (int64_t)window.size())
-                                    continue;
-
-                                const sgns_net_vector::size_type l1 = window[(sgns_window::size_type)context_widx] * vector_size_;
-
-                                buffer.neu1e.assign(vector_size_, 0);
-
-                                // The first sample here (n == 0) will use the real
-                                // target. The rest (n > 0) will be negative samples.
-                               
-                                for (std::size_t n = 0; n < negative_samples_ + 1; n++)
-                                {
-                                    int label = 1;
-                                    sgns_net_vector::size_type target = window[target_widx];
-
-                                    // TODO: Maybe we do the first sample explicity and eliminate the if logic
-                                    // with this loop? Wonder if it is worth trying?
-                                    if (n > 0)
-                                    {
-                                        label = 0;
-                                        target = noise_dist_[(next_random(buffer.engine) >> 16) % noise_dist_.size()];
-                                        if (target == window[target_widx])
-                                            continue;
-                                    }
-
-                                    const sgns_net_vector::size_type l2 = target * vector_size_;
-
-                                    float dot_product = 0.0f;
-                                    for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
-                                    {
-                                        dot_product += net_.syn0[l1 + i] * net_.syn1neg[l2 + i];
-                                    }
-
-                                    const float sigma = 1.0f / (1.0f + (float)exp(-dot_product));
-                                    const float update = learning_rate_ * (label - sigma);
-
-                                    for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
-                                    {
-                                        buffer.neu1e[i] += update * net_.syn1neg[l2 + i];
-                                        net_.syn1neg[l2 + i] += update * net_.syn0[l1 + i];
-                                    }
-                                }
-
-                                for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
-                                {
-                                    net_.syn0[l1 + i] += buffer.neu1e[i];
-                                }
-                            }
-                        }
-
-                        // Load the next word in the document into the window.
-                        if (add_next_index(window, buffer.stream_, word_counter, buffer.engine, next_random))
-                        {
-                            ++target_widx;
-
-                            // If the window is now too big, drop the first element.
-                            if (window.size() > (max_window_size_ * 2 + 1))
-                            {
-                                window.pop_front();
-                                --target_widx;
-                            }
-                        }
-                        else
-                        {
-                            // If the document is out of words, continue dropping
-                            // elements off the front of the window.
-                            window.pop_front();
-                        }
-
-                        // Update our learning rate every 10,000 words read.
-                        if (word_counter >= 10000)
-                        {
-                            update_progress(word_counter, io_mutex, progress);
-                            word_counter = 0;
-                        }
-                    }
+                    process_document(buffer, doc, word_counter, io_mutex,
+                                     progress);
                 });
-                
+
             update_progress(word_counter, io_mutex, progress);
             --iterations_left;
             docs->reset();
         }
     }
 
+    // Process a document
+    void process_document(sgns_local_buffer& buffer,
+                          const corpus::document& doc, int64_t& word_counter,
+                          std::mutex& io_mutex, printing::progress& progress)
+    {
+        buffer.stream_->set_content(analyzers::get_content(doc));
+
+        // Holds the target word and surrounding context words.
+        sgns_window window;
+
+        // Load target word.
+        add_next_index(window, buffer.stream_, word_counter, buffer.engine,
+                       buffer.next_random);
+
+        // Initialize future context words.
+        while (window.size() < (max_window_size_ + 1))
+            if (!add_next_index(window, buffer.stream_, word_counter,
+                                buffer.engine, buffer.next_random))
+                break;
+
+        // When the window is first loaded, the target word is the
+        // first element in the window. The next time a word is added
+        // to the window, this index will increase by one. This will
+        // continue until this index reaches the middle of the window,
+        // where it will stay until the algorithm completes.
+        sgns_window::size_type target_widx = 0;
+
+        // While there are target words left in the window...
+        while (!window.empty() && (target_widx < window.size()))
+        {
+            // Sample a random window size.
+            const auto window_size
+                = buffer.next_random(buffer.engine) % max_window_size_;
+
+            // Sweep across the window.
+            for (sgns_window::size_type w = window_size;
+                 w < (max_window_size_ * 2 + 1 - window_size); ++w)
+            {
+                // Don't process a target word as its own context word.
+                // Max window size works here because it is window size + 1th
+                // index
+                // and therefore the target word
+                if (w != max_window_size_)
+                {
+                    const int64_t context_widx = (int64_t)target_widx
+                                                 - (int64_t)max_window_size_
+                                                 + (int64_t)w;
+
+                    if (context_widx < 0
+                        || context_widx >= (int64_t)window.size())
+                        continue;
+
+                    const sgns_net_vector::size_type l1
+                        = window[(sgns_window::size_type)context_widx]
+                          * vector_size_;
+
+                    buffer.neu1e.assign(vector_size_, 0);
+
+                    // The first sample here will use the real
+                    // target. The rest will be negative samples.
+                    update_vectors(1, window[target_widx], buffer.neu1e, l1);
+                    for (std::size_t n = 0; n < negative_samples_; n++)
+                    {
+                        sgns_net_vector::size_type target
+                            = noise_dist_[(buffer.next_random(buffer.engine)
+                                           >> 16)
+                                          % noise_dist_.size()];
+                        if (target == window[target_widx])
+                            continue;
+                        update_vectors(0, target, buffer.neu1e, l1);
+                    }
+
+                    for (sgns_net_vector::size_type i = 0; i < vector_size_;
+                         i++)
+                    {
+                        net_.syn0[l1 + i] += buffer.neu1e[i];
+                    }
+                }
+            }
+
+            // Load the next word in the document into the window.
+            if (add_next_index(window, buffer.stream_, word_counter,
+                               buffer.engine, buffer.next_random))
+            {
+                ++target_widx;
+
+                // If the window is now too big, drop the first element.
+                if (window.size() > (max_window_size_ * 2 + 1))
+                {
+                    window.pop_front();
+                    --target_widx;
+                }
+            }
+            else
+            {
+                // If the document is out of words, continue dropping
+                // elements off the front of the window.
+                window.pop_front();
+            }
+
+            // Update our learning rate every 10,000 words read.
+            if (word_counter >= 10000)
+            {
+                update_progress(word_counter, io_mutex, progress);
+                word_counter = 0;
+            }
+        }
+    }
+
+    // Update the vectors
+    void update_vectors(int label, sgns_net_vector::size_type& target,
+                        sgns_net_vector& neu1e,
+                        const sgns_net_vector::size_type& l1)
+    {
+        const sgns_net_vector::size_type l2 = target * vector_size_;
+
+        float dot_product = 0.0f;
+        for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
+        {
+            dot_product += net_.syn0[l1 + i] * net_.syn1neg[l2 + i];
+        }
+
+        const float sigma = 1.0f / (1.0f + (float)exp(-dot_product));
+        const float update = learning_rate_ * (label - sigma);
+
+        for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
+        {
+            neu1e[i] += update * net_.syn1neg[l2 + i];
+            net_.syn1neg[l2 + i] += update * net_.syn0[l1 + i];
+        }
+    }
+
     // Update the progress indicator
-    void update_progress(int64_t word_counter, std::mutex& io_mutex, printing::progress& progress)
+    void update_progress(int64_t word_counter, std::mutex& io_mutex,
+                         printing::progress& progress)
     {
         word_count_actual_ += word_counter;
-        
+
         learning_rate_ = std::max(
-            starting_learning_rate_ * (1.0f - (float)word_count_actual_ / (float)(iterations_ * vocab_.total_count + 1.0f)),
-            starting_learning_rate_ * 0.0001f
-        );
+            starting_learning_rate_
+                * (1.0f
+                   - (float)word_count_actual_
+                         / (float)(iterations_ * vocab_.total_count + 1.0f)),
+            starting_learning_rate_ * 0.0001f);
 
         {
-            const auto new_progress = (uint64_t)((starting_learning_rate_ - learning_rate_) * 100000.0);
+            const auto new_progress = (uint64_t)(
+                (starting_learning_rate_ - learning_rate_) * 100000.0);
             std::lock_guard<std::mutex> lock{io_mutex};
             progress(new_progress);
         }
@@ -334,7 +373,12 @@ class sgns_trainer
                 if (subsample_threshold_ > 0)
                 {
                     const auto count = vocab_.vector[i->value()].count;
-                    const float ran = ((float)sqrt(count / (float)(subsample_threshold_ * vocab_.total_count)) + 1) * (float)(subsample_threshold_ * vocab_.total_count) / count;
+                    const float ran
+                        = ((float)sqrt(count / (float)(subsample_threshold_
+                                                       * vocab_.total_count))
+                           + 1)
+                          * (float)(subsample_threshold_ * vocab_.total_count)
+                          / count;
                     if ((ran < (next_random(engine) & 0xFFFF) / 65536.0f))
                     {
                         continue;
@@ -356,7 +400,8 @@ class sgns_trainer
         if (!filesystem::file_exists(filename))
         {
             LOG(fatal) << "Vocabulary has not yet been generated, please "
-                          "do this before learning word embeddings" << ENDLG;
+                          "do this before learning word embeddings"
+                       << ENDLG;
             throw sgns_exception{"no vocabulary file found in " + prefix_};
         }
 
@@ -379,12 +424,16 @@ class sgns_trainer
 
         progress.end();
 
-        const uint64_t bytes_used = (vocab.vector.size() * sizeof(sgns_vocab_vector::value_type)) + vocab.table.bytes_used();
+        const uint64_t bytes_used
+            = (vocab.vector.size() * sizeof(sgns_vocab_vector::value_type))
+              + vocab.table.bytes_used();
 
-        LOG(info) << "Loaded vocabulary of size " << vocab.table.size() << " occupying "
-                  << printing::bytes_to_units(bytes_used) << ENDLG;
+        LOG(info) << "Loaded vocabulary of size " << vocab.table.size()
+                  << " occupying " << printing::bytes_to_units(bytes_used)
+                  << ENDLG;
 
-        if ((max_ram_ <= bytes_used) || ((max_ram_ - bytes_used) < (1024 * 1024)))
+        if ((max_ram_ <= bytes_used)
+            || ((max_ram_ - bytes_used) < (1024 * 1024)))
         {
             throw sgns_exception{"RAM limit too restrictive"};
         }
@@ -394,9 +443,12 @@ class sgns_trainer
 
     // Create the noise distribution from which negative word samples are
     // randomly drawn.
-    sgns_noise_distribution create_unigram_noise_distribution(sgns_noise_distribution::size_type size, double power) const
+    sgns_noise_distribution
+    create_unigram_noise_distribution(sgns_noise_distribution::size_type size,
+                                      double power) const
     {
-        printing::progress progress{" > Generating noise distribution: ", vocab_.vector.size()};
+        printing::progress progress{" > Generating noise distribution: ",
+                                    vocab_.vector.size()};
 
         sgns_noise_distribution noise_dist(size);
 
@@ -410,9 +462,11 @@ class sgns_trainer
         for (sgns_vocab_vector::size_type j = 0; j < vocab_.vector.size(); ++j)
         {
             progress(j);
-            cumulative_probability += pow(vocab_.vector[j].count, power) / normalizer;
+            cumulative_probability
+                += pow(vocab_.vector[j].count, power) / normalizer;
 
-            while ((i < noise_dist.size()) && ((float)i / noise_dist.size() < cumulative_probability))
+            while ((i < noise_dist.size())
+                   && ((float)i / noise_dist.size() < cumulative_probability))
             {
                 noise_dist[i] = j;
                 ++i;
@@ -431,12 +485,13 @@ class sgns_trainer
     void save_w2v_vectors() const
     {
         printing::progress progress{" > Saving word2vec embeddings: ",
-                                    vocab_.vector.size()  * vector_size_};
+                                    vocab_.vector.size() * vector_size_};
 
         const std::string file_path = prefix_ + "/embeddings.w2v.bin";
         FILE* file = fopen(file_path.c_str(), "wb");
 
-        fprintf(file, "%lld %lld\n", (int64_t)vocab_.vector.size(), (int64_t)vector_size_);
+        fprintf(file, "%lld %lld\n", (int64_t)vocab_.vector.size(),
+                (int64_t)vector_size_);
         for (sgns_vocab_vector::size_type i = 0; i < vocab_.vector.size(); ++i)
         {
             fprintf(file, "%s ", vocab_.vector[i].word.c_str());
@@ -444,7 +499,8 @@ class sgns_trainer
             {
                 for (std::size_t j = 0; j < vector_size_; ++j)
                 {
-                    fwrite(&net_.syn0[i * vector_size_ + j], sizeof(float), 1, file);
+                    fwrite(&net_.syn0[i * vector_size_ + j], sizeof(float), 1,
+                           file);
                     progress(i * vector_size_ + j);
                 }
             }
@@ -468,8 +524,11 @@ class sgns_trainer
     {
         // Target embeddings.
         {
-            std::ofstream output { prefix_ + "/embeddings.target.bin", std::ios::binary };
-            printing::progress progress{" > Saving target embeddings: ", net_.syn0.size() + vocab_.vector.size()};
+            std::ofstream output{prefix_ + "/embeddings.target.bin",
+                                 std::ios::binary};
+            printing::progress progress{" > Saving target embeddings: ",
+                                        net_.syn0.size()
+                                            + vocab_.vector.size()};
             uint64_t words_processed = 0;
 
             io::packed::write(output, vector_size_);
@@ -482,7 +541,7 @@ class sgns_trainer
             }
 
             // Write out the unk vector.
-            for (std::size_t i = 0 ; i < vector_size_; ++i)
+            for (std::size_t i = 0; i < vector_size_; ++i)
             {
                 io::packed::write(output, 0.0);
                 progress(++words_processed);
@@ -491,8 +550,11 @@ class sgns_trainer
 
         // Context embeddings.
         {
-            std::ofstream output{ prefix_ + "/embeddings.context.bin", std::ios::binary };
-            printing::progress progress{" > Saving context embeddings: ", net_.syn1neg.size() + vocab_.vector.size()};
+            std::ofstream output{prefix_ + "/embeddings.context.bin",
+                                 std::ios::binary};
+            printing::progress progress{" > Saving context embeddings: ",
+                                        net_.syn1neg.size()
+                                            + vocab_.vector.size()};
             uint64_t words_processed = 0;
 
             io::packed::write(output, vector_size_);
@@ -513,34 +575,33 @@ class sgns_trainer
         }
     }
 
-    private:
+  private:
+    // References to tables in config.toml.
+    const cpptoml::table& cfg_;
+    const cpptoml::table& embed_cfg_;
 
-        // References to tables in config.toml.
-        const cpptoml::table& cfg_;
-        const cpptoml::table& embed_cfg_;
+    // Embedding parameters from config.toml.
+    const std::string prefix_;
+    const std::size_t vector_size_;
+    const std::size_t num_threads_;
+    const std::size_t max_ram_;
 
-        // Embedding parameters from config.toml.
-        const std::string prefix_;
-        const std::size_t vector_size_;
-        const std::size_t num_threads_;
-        const std::size_t max_ram_;
+    // SGNS parameters from config.toml.
+    const double subsample_threshold_; // Sample in word2vec
+    const std::size_t max_window_size_;
+    const uint64_t iterations_;
+    const float starting_learning_rate_; // Alpha in word2vec
+    const std::size_t negative_samples_;
+    const bool binary_output_;
 
-        // SGNS parameters from config.toml.
-        const double      subsample_threshold_; // Sample in word2vec
-        const std::size_t max_window_size_;
-        const uint64_t    iterations_;
-        const float       starting_learning_rate_; // Alpha in word2vec
-        const std::size_t negative_samples_;
-        const bool        binary_output_;
+    // Immutable shared data.
+    const sgns_vocab vocab_;
+    const sgns_noise_distribution noise_dist_;
 
-        // Immutable shared data.
-        const sgns_vocab              vocab_;
-        const sgns_noise_distribution noise_dist_;
-
-        // Mutable shared data.
-        sgns_net             net_;
-        float                learning_rate_;
-        std::atomic<int64_t> word_count_actual_;
+    // Mutable shared data.
+    sgns_net net_;
+    float learning_rate_;
+    std::atomic<int64_t> word_count_actual_;
 };
 
 int main(int argc, char** argv)
@@ -558,16 +619,16 @@ int main(int argc, char** argv)
     auto embed_cfg = cfg->get_table("embeddings");
     if (!embed_cfg)
     {
-        std::cerr << "Missing [embeddings] configuration in "
-                  << argv[1] << std::endl;
+        std::cerr << "Missing [embeddings] configuration in " << argv[1]
+                  << std::endl;
         return 1;
     }
 
     auto sgns_cfg = embed_cfg->get_table("sgns");
     if (!sgns_cfg)
     {
-        std::cerr << "Missing [embeddings.sgns] configuration in "
-                  << argv[1] << std::endl;
+        std::cerr << "Missing [embeddings.sgns] configuration in " << argv[1]
+                  << std::endl;
         return 1;
     }
 
