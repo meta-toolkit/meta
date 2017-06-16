@@ -92,8 +92,8 @@ struct sgns_vocab
     uint64_t total_count;
 };
 
-typedef std::vector<std::size_t> sgns_noise_distribution;
-typedef std::deque<sgns_vocab_vector::size_type> sgns_window;
+using sgns_noise_distribution = std::vector<std::size_t>;
+using sgns_window = std::deque<sgns_vocab_vector::size_type>;
 
 // Represents the neural network that is trained.
 struct sgns_net
@@ -158,7 +158,7 @@ class sgns_trainer
 
         train(io_mutex, progress);
 
-        // save_w2v_vectors();
+        save_w2v_vectors();
         save_meta_vectors();
     }
 

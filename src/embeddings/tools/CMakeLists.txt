@@ -24,3 +24,9 @@ add_executable(meta-to-glove meta_to_glove.cpp)
 target_link_libraries(meta-to-glove meta-util
                                     meta-io
                                     cpptoml)
+
+add_executable(meta-to-word2vec meta_to_word2vec.cpp)
+target_link_libraries(meta-to-word2vec meta-util
+                                       meta-io
+                                       meta-embeddings
+                                       cpptoml)

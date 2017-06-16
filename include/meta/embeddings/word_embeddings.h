@@ -29,6 +29,8 @@ struct embedding
 {
     std::size_t tid;
     util::array_view<const double> v;
+    util::array_view<const double> t;
+    util::array_view<const double> c;
 };
 
 struct scored_embedding
@@ -90,10 +92,23 @@ class word_embeddings
      */
     std::size_t vector_size() const;
 
+    /**
+     * @return the vector containing the vocabulary
+     */
+    const util::aligned_vector<std::string>& vocab() const;
+
   private:
     util::array_view<double> vector(std::size_t tid);
 
     util::array_view<const double> vector(std::size_t tid) const;
+
+    util::array_view<double> target_vector(std::size_t tid);
+
+    util::array_view<const double> target_vector(std::size_t tid) const;
+
+    util::array_view<double> context_vector(std::size_t tid);
+
+    util::array_view<const double> context_vector(std::size_t tid) const;
 
     void load_vocab(std::istream& vocab);
 
@@ -108,6 +123,12 @@ class word_embeddings
 
     /// The embeddings matrix
     util::aligned_vector<double> embeddings_;
+
+     /// The target vectors matrix
+    util::aligned_vector<double> target_vectors_;
+
+    /// The context vectors matrix
+    util::aligned_vector<double> context_vectors_;
 };
 
 /**
