@@ -51,9 +51,7 @@ word_embeddings::word_embeddings(std::istream& vocab, std::istream& first,
       id_to_term_(io::packed::read<std::size_t>(vocab)),
       term_to_id_{static_cast<std::size_t>(std::ceil(
           id_to_term_.size() / vocab_type::default_max_load_factor()))},
-      embeddings_(vector_size_ * (id_to_term_.size() + 1)),
-      target_vectors_(vector_size_ * (id_to_term_.size() + 1)),
-      context_vectors_(vector_size_ * (id_to_term_.size() + 1))
+      embeddings_(vector_size_ * (id_to_term_.size() + 1))
 {
     if (io::packed::read<std::size_t>(second) != vector_size_)
         throw word_embeddings_exception{"mismatched vector sizes"};
@@ -73,23 +71,11 @@ word_embeddings::word_embeddings(std::istream& vocab, std::istream& first,
                 "second embeddings stream ended unexpectedly"};
 
         progress(tid);
-        
-        auto target_vec = target_vector(tid);
-        std::generate(target_vec.begin(), target_vec.end(), [&]() {
-            return (io::packed::read<double>(first));
-        });
-         
-        auto context_vec = context_vector(tid);
-        std::generate(context_vec.begin(), context_vec.end(), [&]() {
-            return (io::packed::read<double>(second));
-        });
-
         auto vec = vector(tid);
-        for (size_t i = 0; i < vec.size(); ++i)
-        {
-            vec[i] = target_vec[i] + context_vec[i];
-        }
-
+        std::generate(vec.begin(), vec.end(), [&]() {
+            return (io::packed::read<double>(first)
+                    + io::packed::read<double>(second));
+        });
         auto len = math::operators::l2norm(vec);
         std::transform(vec.begin(), vec.end(), vec.begin(),
                        [=](double weight) { return weight / len; });
@@ -123,26 +109,6 @@ util::array_view<const double> word_embeddings::vector(std::size_t tid) const
     return {embeddings_.data() + tid * vector_size_, vector_size_};
 }
 
-util::array_view<double> word_embeddings::target_vector(std::size_t tid)
-{
-    return {target_vectors_.data() + tid * vector_size_, vector_size_};
-}
-
-util::array_view<const double> word_embeddings::target_vector(std::size_t tid) const
-{
-    return {target_vectors_.data() + tid * vector_size_, vector_size_};
-}
-
-util::array_view<double> word_embeddings::context_vector(std::size_t tid)
-{
-    return {context_vectors_.data() + tid * vector_size_, vector_size_};
-}
-
-util::array_view<const double> word_embeddings::context_vector(std::size_t tid) const 
-{
-    return {context_vectors_.data() + tid * vector_size_, vector_size_};
-}
-
 embedding word_embeddings::at(util::string_view term) const
 {
     std::size_t tid;
@@ -155,7 +121,7 @@ embedding word_embeddings::at(util::string_view term) const
     {
         tid = v_it->value();
     }
-    return {tid, vector(tid), target_vector(tid), context_vector(tid)};
+    return {tid, vector(tid)};
 }
 
 util::string_view word_embeddings::term(std::size_t tid) const
@@ -178,13 +144,10 @@ word_embeddings::top_k(util::array_view<const double> query,
     for (std::size_t tid = 0; tid < id_to_term_.size() + 1; ++tid)
     {
         auto vec = vector(tid);
-
         auto score
             = std::inner_product(query.begin(), query.end(), vec.begin(), 0.0);
 
-        auto target_vec = target_vector(tid);
-        auto context_vec = context_vector(tid);
-        embedding e{tid, vec, target_vec, context_vec};
+        embedding e{tid, vec};
         results.push({e, score});
     }
 

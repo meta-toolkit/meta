@@ -35,7 +35,7 @@ void save_w2v_vectors(const bool binary_output, const std::string prefix,
     for (size_t i = 0; i < vocab_.size(); ++i)
     {
         fprintf(file, "%s ", vocab_[i].c_str());
-        auto target_vector = learned_embeddings.at(vocab_[i]).t;
+        auto target_vector = learned_embeddings.at(vocab_[i]).v;
         if (binary_output)
         {
             for (std::size_t j = 0; j < vector_size_; ++j)
