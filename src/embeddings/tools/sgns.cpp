@@ -157,8 +157,7 @@ class sgns_trainer
             " > Training: ", (uint64_t)(starting_learning_rate_ * 100000.0)};
 
         train(io_mutex, progress);
-
-        save_w2v_vectors();
+        
         save_meta_vectors();
     }
 
@@ -479,44 +478,6 @@ class sgns_trainer
                   << noise_dist.size() << ENDLG;
 
         return noise_dist;
-    }
-
-    // Save vectors in word2vec format.
-    void save_w2v_vectors() const
-    {
-        printing::progress progress{" > Saving word2vec embeddings: ",
-                                    vocab_.vector.size() * vector_size_};
-
-        const std::string file_path = prefix_ + "/embeddings.w2v.bin";
-        FILE* file = fopen(file_path.c_str(), "wb");
-
-        fprintf(file, "%lld %lld\n", (int64_t)vocab_.vector.size(),
-                (int64_t)vector_size_);
-        for (sgns_vocab_vector::size_type i = 0; i < vocab_.vector.size(); ++i)
-        {
-            fprintf(file, "%s ", vocab_.vector[i].word.c_str());
-            if (binary_output_)
-            {
-                for (std::size_t j = 0; j < vector_size_; ++j)
-                {
-                    fwrite(&net_.syn0[i * vector_size_ + j], sizeof(float), 1,
-                           file);
-                    progress(i * vector_size_ + j);
-                }
-            }
-            else
-            {
-                for (std::size_t j = 0; j < vector_size_; ++j)
-                {
-                    fprintf(file, "%lf ", net_.syn0[i * vector_size_ + j]);
-                    progress(i * vector_size_ + j);
-                }
-            }
-
-            fprintf(file, "\n");
-        }
-
-        fclose(file);
     }
 
     // Save vectors in MeTA format.

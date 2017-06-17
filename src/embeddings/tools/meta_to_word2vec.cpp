@@ -28,7 +28,7 @@ void save_w2v_vectors(const bool binary_output, const std::string prefix,
     printing::progress progress{" > Saving word2vec embeddings: ",
                                 vocab_.size() * vector_size_};
 
-    const std::string file_path = prefix + "/embeddings.w2v.2.bin";
+    const std::string file_path = prefix + "/embeddings.w2v.bin";
     FILE* file = fopen(file_path.c_str(), "wb");
 
     fprintf(file, "%lld %lld\n", (int64_t)vocab_.size(), (int64_t)vector_size_);
