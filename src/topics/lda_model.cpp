@@ -3,6 +3,7 @@
  * @author Chase Geigle
  */
 
+#include <iostream>
 #include "meta/topics/lda_model.h"
 
 namespace meta
@@ -21,24 +22,23 @@ void lda_model::save_doc_topic_distributions(const std::string& filename) const
     std::ofstream file{filename};
     for (const auto& doc : docs_)
     {
-        file << doc.id << "\t";
+ 		io::packed::write(file, doc.id);
         double sum = 0;
         for (topic_id j{0}; j < num_topics_; ++j)
         {
             double prob = compute_doc_topic_probability(doc.id, j);
-            if (prob > 0)
-                file << j << ":" << prob << "\t";
+				if (prob > 0)
+					io::packed::write(file, double(prob));
             sum += prob;
         }
         if (std::abs(sum - 1) > 1e-6)
-            throw std::runtime_error{"invalid probability distribution"};
-        file << "\n";
+            throw lda_model_excpetion{"invalid probability distribution"};
     }
 }
 
 void lda_model::save_topic_term_distributions(const std::string& filename) const
 {
-    std::ofstream file{filename};
+    std::ofstream file{filename, std::ios::binary};
 
     // first, compute the denominators for each term's normalized score
     std::vector<double> denoms;
@@ -52,18 +52,23 @@ void lda_model::save_topic_term_distributions(const std::string& filename) const
         denoms.push_back(denom);
     }
 
+	 io::packed::write(file, num_topics_);
+	 io::packed::write(file, idx_->unique_terms());
+
     // then, calculate and save each term's score
     for (topic_id j{0}; j < num_topics_; ++j)
     {
-        file << j << "\t";
-        for (term_id t_id{0}; t_id < docs_.total_features(); ++t_id)
+		  std::cout << idx_->unique_terms() << std::endl;
+		  //io::packed::write(file, j); 
+        for (term_id t_id{0}; t_id < idx_->unique_terms(); ++t_id)
         {
             double prob = compute_term_topic_probability(t_id, j);
             double norm_prob = prob * std::log(prob / denoms[t_id]);
-            if (norm_prob > 0)
-                file << t_id << ":" << norm_prob << "\t";
+				std::cout << "Topic " << j << ": Id: " << t_id << " Probability:" << norm_prob << std::endl;
+				//file << t_id << ":" << norm_prob << "\t";
+				//io::packed::write(file, t_id);
+				io::packed::write(file, norm_prob);
         }
-        file << "\n";
     }
 }
 

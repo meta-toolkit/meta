@@ -141,6 +141,13 @@ class lda_model
      */
     std::size_t num_topics_;
 };
+
+class lda_model_excpetion : public std::runtime_error
+{
+	public:
+		using std::runtime_error::runtime_error;
+};
+
 }
 }
 
