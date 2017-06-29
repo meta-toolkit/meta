@@ -3,8 +3,8 @@
  * @author Chase Geigle
  */
 
-#include <iostream>
 #include "meta/topics/lda_model.h"
+#include <iostream>
 
 namespace meta
 {
@@ -23,16 +23,17 @@ lda_model::lda_model(std::shared_ptr<index::forward_index> idx,
 void lda_model::save_doc_topic_distributions(const std::string& filename) const
 {
     std::ofstream file{filename, std::ios::binary};
+
+    io::packed::write(file, idx_->docs().size());
+    io::packed::write(file, num_topics_);
+
     for (const auto& d_id : idx_->docs())
     {
-        io::packed::write(file, d_id);
-
         double sum = 0;
         for (topic_id j{0}; j < num_topics_; ++j)
         {
             double prob = compute_doc_topic_probability(d_id, j);
-				if (prob > 0)
-					io::packed::write(file, double(prob));
+            io::packed::write(file, prob);
             sum += prob;
         }
         if (std::abs(sum - 1) > 1e-6)
@@ -56,22 +57,17 @@ void lda_model::save_topic_term_distributions(const std::string& filename) const
         denoms.push_back(denom);
     }
 
-	 io::packed::write(file, num_topics_);
-	 io::packed::write(file, idx_->unique_terms());
+    io::packed::write(file, num_topics_);
+    io::packed::write(file, idx_->unique_terms());
 
     // then, calculate and save each term's score
     for (topic_id j{0}; j < num_topics_; ++j)
     {
-		  std::cout << idx_->unique_terms() << std::endl;
-		  //io::packed::write(file, j); 
         for (term_id t_id{0}; t_id < idx_->unique_terms(); ++t_id)
         {
             double prob = compute_term_topic_probability(t_id, j);
             double norm_prob = prob * std::log(prob / denoms[t_id]);
-				std::cout << "Topic " << j << ": Id: " << t_id << " Probability:" << norm_prob << std::endl;
-				//file << t_id << ":" << norm_prob << "\t";
-				//io::packed::write(file, t_id);
-				io::packed::write(file, norm_prob);
+            io::packed::write(file, norm_prob);
         }
     }
 }
