@@ -67,23 +67,23 @@ class lda_model
 
     /**
      * Saves the topic proportions \f$\theta_d\f$ for each document to
-     * the given file. Saves the distributions using io::packed.
+     * the given stream. Saves the distributions using io::packed.
      *
      * @param filename The file to save \f$\theta\f$ to
      */
-    void save_doc_topic_distributions(const std::string& filename) const;
+    void save_doc_topic_distributions(std::ostream& stream) const;
 
     /**
      * Saves the term distributions \f$\phi_j\f$ for each topic to the
-     * given file. Saves the distributions using io::packed.
+     * given stream. Saves the distributions using io::packed.
      *
      * @param filename The file to save \f$\phi\f$ to
      */
-    void save_topic_term_distributions(const std::string& filename) const;
+    void save_topic_term_distributions(std::ostream& stream) const;
 
     /**
      * Saves the current model to a set of files beginning with prefix:
-     * prefix.phi, prefix.theta, and prefix.terms.
+     * prefix.phi, prefix.theta.
      *
      * @param prefix The prefix for all generated files over this model
      */
