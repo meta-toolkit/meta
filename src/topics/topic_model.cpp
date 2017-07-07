@@ -20,11 +20,9 @@ namespace meta
 namespace topics
 {
 
-topic_model::topic_model(const cpptoml::table& config, std::istream& theta,
+topic_model::topic_model(std::istream& theta,
                          std::istream& phi)
-    : index_{index::make_index<index::forward_index, caching::no_evict_cache>(
-          config)},
-      num_topics_{io::packed::read<std::size_t>(phi)},
+    : num_topics_{io::packed::read<std::size_t>(phi)},
       num_words_{io::packed::read<std::size_t>(phi)},
       num_docs_{io::packed::read<std::size_t>(theta)},
       topic_term_probabilities_(num_topics_, util::aligned_vector<double>()),
@@ -78,7 +76,7 @@ std::vector<term_prob> topic_model::top_k(term_id topic_id, std::size_t k) const
     for (std::size_t i = 0; i < num_words_; ++i)
     {
         pairs.push(
-            term_prob{i, index_->term_text(term_id{i}), current_topic[i]});
+            term_prob{i, current_topic[i]});
     }
 
     return pairs.extract_top();
@@ -90,12 +88,12 @@ stats::multinomial<topic_id> topic_model::topic_distribution(doc_id doc) const
 }
 
 term_prob topic_model::term_probability(topic_id topic_id,
-                                        util::string_view term) const
+                                        term_id term_id) const
 {
-    auto id = index_->get_term_id(term.to_string());
-    auto prob = topic_term_probabilities_[topic_id][id];
 
-    return {id, term.to_string(), prob};
+    auto prob = topic_term_probabilities_[topic_id][term_id];
+
+    return {term_id, prob};
 }
 
 topic_prob topic_model::topic_probability(doc_id doc, topic_id topic_id) const
@@ -138,7 +136,7 @@ topic_model load_topic_model(const cpptoml::table& config)
             "missing topic term probabilities file:" + *prefix + ".phi"};
     }
 
-    return topic_model{config, theta, phi};
+    return topic_model{theta, phi};
 }
 }
 }

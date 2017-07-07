@@ -15,7 +15,7 @@
 
 #include "cpptoml.h"
 #include "meta/config.h"
-#include "meta/index/forward_index.h"
+#include "meta/meta.h"
 #include "meta/stats/multinomial.h"
 #include "meta/util/aligned_allocator.h"
 #include "meta/util/fixed_heap.h"
@@ -29,7 +29,6 @@ namespace topics
 struct term_prob
 {
     std::size_t tid;
-    std::string text;
     double probability;
 };
 
@@ -48,12 +47,10 @@ class topic_model
     /**
      * Load topic models from files.
      *
-     * @param config The config to read from
      * @param theta The stream to read the vocabulary from
      * @param phi The stream to read the vectors from
      */
-    topic_model(const cpptoml::table& config, std::istream& theta,
-                std::istream& phi);
+    topic_model(std::istream& theta, std::istream& phi);
 
     /**
      * @param topic_id The topic to use
@@ -71,10 +68,10 @@ class topic_model
 
     /**
      * @param topic_id The topic we are concerned with
-     * @param term The term we are concerned with
+     * @param term_id The term we are concerned with
      * @return The probability of the term for the given topic
      */
-    term_prob term_probability(topic_id topic_id, util::string_view term) const;
+    term_prob term_probability(topic_id topic_id, term_id term_id) const;
 
     /**
      * @param doc The document we are concerned with
@@ -86,13 +83,6 @@ class topic_model
     const std::size_t& num_topics() const;
 
   private:
-    /**
-     * The forward index of the dataset
-     */
-    std::shared_ptr<
-        index::cached_index<index::forward_index, caching::no_evict_cache>>
-        index_;
-
     /**
      * The number of topics.
      */
