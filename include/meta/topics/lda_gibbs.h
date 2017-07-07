@@ -85,6 +85,9 @@ class lda_gibbs : public lda_model
     virtual double compute_doc_topic_probability(doc_id doc,
                                                  topic_id topic) const override;
 
+    virtual stats::multinomial<topic_id>
+    topic_distrbution(doc_id doc) const override;
+
   protected:
     /**
      * Samples a topic from the full conditional distribution

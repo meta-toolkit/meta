@@ -3,10 +3,10 @@
  * @author Chase Geigle
  */
 
-#include <random>
-#include "meta/index/postings_data.h"
 #include "meta/topics/lda_scvb.h"
+#include "meta/index/postings_data.h"
 #include "meta/util/progress.h"
+#include <random>
 
 namespace meta
 {
@@ -177,6 +177,19 @@ double lda_scvb::compute_doc_topic_probability(doc_id doc, topic_id topic) const
 {
     return (doc_topic_count_.at(doc).at(topic) + alpha_)
            / (idx_->doc_size(doc) + num_topics_ * alpha_);
+}
+
+stats::multinomial<topic_id> lda_scvb::topic_distrbution(doc_id doc) const
+{
+    // TODO: Replace the count vectors with a multinomial rather than creating
+    // it here
+    stats::multinomial<topic_id> result = stats::multinomial<topic_id>();
+    for (topic_id tid{0}; tid < num_topics_; ++tid)
+    {
+        result.increment(tid, doc_topic_count_.at(doc).at(tid));
+    }
+
+    return result;
 }
 }
 }

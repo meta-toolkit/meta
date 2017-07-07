@@ -14,41 +14,41 @@
 #include "meta/logging/logger.h"
 #include "meta/topics/topic_model.h"
 
-
 using namespace meta;
 using namespace meta::topics;
 
 int print_topics(topic_model tm)
 {
-	 auto num_topics = tm.num_topics();
-	 for (std::size_t i = 0; i < num_topics; ++i)
-	 {
-		 std::cout << "Topic " << i << ":" << std::endl;
-		 std::cout << "-----------------" << std::endl;
+    auto num_topics = tm.num_topics();
+    for (term_id i{0}; i < num_topics; ++i)
+    {
+        std::cout << "Topic " << i << ":" << std::endl;
+        std::cout << "-----------------" << std::endl;
 
-		 auto top_k = tm.top_k(i, 10);
-		 for (auto& i : top_k)
-		 {
-			 std::cout << i.text << " (" << i.tid << " ): " << i.probability << std::endl;
-		 }
-	 }
+        auto top_k = tm.top_k(i, 10);
+        for (auto& i : top_k)
+        {
+            std::cout << i.text << " (" << i.tid << " ): " << i.probability
+                      << std::endl;
+        }
+    }
 
-	 return 0;
+    return 0;
 }
 
 int main(int argc, char** argv)
 {
-	if (argc < 2)
-	{
-		std::cerr << "Usage: " << argv[0] << " config.toml" << std::endl;
-		return 1;
-	}
+    if (argc < 2)
+    {
+        std::cerr << "Usage: " << argv[0] << " config.toml" << std::endl;
+        return 1;
+    }
 
-	logging::set_cerr_logging();
+    logging::set_cerr_logging();
 
-	auto config = cpptoml::parse_file(argv[1]);
+    auto config = cpptoml::parse_file(argv[1]);
 
-	auto topic_model = topics::load_topic_model(*config);
+    auto topic_model = topics::load_topic_model(*config);
 
-	print_topics(topic_model);
+    print_topics(topic_model);
 }

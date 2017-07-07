@@ -60,6 +60,11 @@ MAKE_NUMERIC_IDENTIFIER_UDL(query_id, uint64_t, _qid)
  */
 MAKE_NUMERIC_IDENTIFIER_UDL(node_id, uint64_t, _nid)
 
+/*
+ * Numbering system for topic ids.
+ */
+MAKE_NUMERIC_IDENTIFIER_UDL(topic_id, uint64_t, _toid)
+
 /**
  * Containers to be used for caching purposes.
  */
@@ -162,7 +167,6 @@ namespace tokenizers
 namespace filters
 {
 }
-
 }
 
 /**

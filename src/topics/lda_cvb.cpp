@@ -162,5 +162,10 @@ double lda_cvb::compute_doc_topic_probability(doc_id doc, topic_id topic) const
 {
     return theta_[doc].probability(topic);
 }
+
+stats::multinomial<topic_id> lda_cvb::topic_distrbution(doc_id doc) const
+{
+    return theta_[doc];
+}
 }
 }

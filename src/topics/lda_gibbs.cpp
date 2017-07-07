@@ -71,7 +71,8 @@ void lda_gibbs::run(uint64_t num_iters, double convergence /* = 1e-6 */)
         if (ratio <= convergence)
         {
             LOG(progress) << "Found convergence after " << i + 1
-                          << " iterations!\n" << ENDLG;
+                          << " iterations!\n"
+                          << ENDLG;
             break;
         }
     }
@@ -106,6 +107,11 @@ double lda_gibbs::compute_doc_topic_probability(doc_id doc,
                                                 topic_id topic) const
 {
     return theta_[doc].probability(topic);
+}
+
+stats::multinomial<topic_id> lda_gibbs::topic_distrbution(doc_id doc) const
+{
+    return theta_[doc];
 }
 
 void lda_gibbs::initialize()
