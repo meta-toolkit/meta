@@ -15,8 +15,6 @@
 #include "meta/learn/instance.h"
 #include "meta/stats/multinomial.h"
 
-MAKE_NUMERIC_IDENTIFIER(topic_id, uint64_t)
-
 namespace meta
 {
 namespace topics

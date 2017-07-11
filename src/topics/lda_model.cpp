@@ -19,12 +19,12 @@ lda_model::lda_model(const learn::dataset& docs, std::size_t num_topics)
 
 void lda_model::save_doc_topic_distributions(std::ostream& stream) const
 {
-    io::packed::write(stream, idx_->docs().size());
+    io::packed::write(stream, docs_.size());
     io::packed::write(stream, num_topics_);
 
-    for (const auto& d_id : idx_->docs())
+    for (const auto& d : docs_)
     {
-        auto dist = topic_distrbution(d_id);
+        auto dist = topic_distrbution(doc_id{d.id});
         for (topic_id j{0}; j < num_topics_; ++j)
         {
             io::packed::write(stream, dist.counts(j));
@@ -47,12 +47,12 @@ void lda_model::save_topic_term_distributions(std::ostream& stream) const
     }
 
     io::packed::write(stream, num_topics_);
-    io::packed::write(stream, idx_->unique_terms());
+    io::packed::write(stream, docs_.total_features());
 
     // then, calculate and save each term's score
     for (topic_id j{0}; j < num_topics_; ++j)
     {
-        for (term_id t_id{0}; t_id < idx_->unique_terms(); ++t_id)
+        for (term_id t_id{0}; t_id < docs_.total_features(); ++t_id)
         {
             double prob = compute_term_topic_probability(t_id, j);
             double norm_prob = prob * std::log(prob / denoms[t_id]);
