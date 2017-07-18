@@ -50,8 +50,8 @@ void run_model(const learn::dataset& docs, const std::string& prefix) {
         }
         model.save(prefix);
     }
-    AssertThat(filesystem::file_exists(prefix + ".phi"), IsTrue());
-    AssertThat(filesystem::file_exists(prefix + ".theta"), IsTrue());
+    AssertThat(filesystem::file_exists(prefix + ".phi.bin"), IsTrue());
+    AssertThat(filesystem::file_exists(prefix + ".theta.bin"), IsTrue());
     filesystem::delete_file(prefix + ".phi");
     filesystem::delete_file(prefix + ".theta");
 }
