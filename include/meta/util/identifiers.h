@@ -185,6 +185,14 @@ struct numerical_identifier : public identifier<Tag, T>, numeric
     using identifier<Tag, T>::id_;
     using identifier<Tag, T>::operator=;
 
+    // these shouldn't be needed, but GCC 7.1.1 is doing weird things when
+    // using MAKE_NUMERIC_IDENTIFIER instead of MAKE_NUMERIC_IDENTIFIER_UDL
+    // and explicitly defaulting these ctors/operators makes it go away...
+    numerical_identifier(const numerical_identifier&) = default;
+    numerical_identifier(numerical_identifier&&) = default;
+    numerical_identifier& operator=(const numerical_identifier&) = default;
+    numerical_identifier& operator=(numerical_identifier&&) = default;
+
     /**
      * Prefix-increment.
      * @return the current identifier after being incremented
