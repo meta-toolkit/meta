@@ -139,8 +139,10 @@ class murmur_hash<4>
         {
             case 3:
                 k1 ^= static_cast<uint32_t>(buf_[2]) << 16;
+                // fallthrough
             case 2:
                 k1 ^= static_cast<uint32_t>(buf_[1]) << 8;
+                // fallthrough
             case 1:
                 k1 ^= buf_[0];
                 k1 *= c1;
@@ -248,37 +250,51 @@ class murmur_hash<8>
         {
             case 15:
                 k2 ^= static_cast<uint64_t>(buf_[14]) << 48;
+                // fallthrough
             case 14:
                 k2 ^= static_cast<uint64_t>(buf_[13]) << 40;
+                // fallthrough
             case 13:
                 k2 ^= static_cast<uint64_t>(buf_[12]) << 32;
+                // fallthrough
             case 12:
                 k2 ^= static_cast<uint64_t>(buf_[11]) << 24;
+                // fallthrough
             case 11:
                 k2 ^= static_cast<uint64_t>(buf_[10]) << 16;
+                // fallthrough
             case 10:
                 k2 ^= static_cast<uint64_t>(buf_[9]) << 8;
+                // fallthrough
             case 9:
                 k2 ^= static_cast<uint64_t>(buf_[8]);
                 k2 *= c2;
                 k2 = murmur::rotl(k2, 33);
                 k2 *= c1;
                 h2_ ^= k2;
+                // fallthrough
 
             case 8:
                 k1 ^= static_cast<uint64_t>(buf_[7]) << 56;
+                // fallthrough
             case 7:
                 k1 ^= static_cast<uint64_t>(buf_[6]) << 48;
+                // fallthrough
             case 6:
                 k1 ^= static_cast<uint64_t>(buf_[5]) << 40;
+                // fallthrough
             case 5:
                 k1 ^= static_cast<uint64_t>(buf_[4]) << 32;
+                // fallthrough
             case 4:
                 k1 ^= static_cast<uint64_t>(buf_[3]) << 24;
+                // fallthrough
             case 3:
                 k1 ^= static_cast<uint64_t>(buf_[2]) << 16;
+                // fallthrough
             case 2:
                 k1 ^= static_cast<uint64_t>(buf_[1]) << 8;
+                // fallthrough
             case 1:
                 k1 ^= static_cast<uint64_t>(buf_[0]);
                 k1 *= c1;
