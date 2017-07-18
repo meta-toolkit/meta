@@ -107,6 +107,11 @@ class lda_model
     virtual double compute_doc_topic_probability(learn::instance_id doc,
                                                  topic_id topic) const = 0;
 
+    /**
+     * @return The multinomial distrbution of topics over the document
+     *
+     * @param doc The document we are concerned with
+     */
     virtual stats::multinomial<topic_id>
     topic_distrbution(doc_id doc) const = 0;
 

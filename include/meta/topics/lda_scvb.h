@@ -11,8 +11,8 @@
 #define META_TOPICS_LDA_SCVB_H_
 
 #include "meta/config.h"
-#include "meta/topics/lda_model.h"
 #include "meta/learn/dataset_view.h"
+#include "meta/topics/lda_model.h"
 
 namespace meta
 {

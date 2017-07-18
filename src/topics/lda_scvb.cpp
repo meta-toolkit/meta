@@ -190,7 +190,7 @@ stats::multinomial<topic_id> lda_scvb::topic_distrbution(doc_id doc) const
 {
     // TODO: Replace the count vectors with a multinomial rather than creating
     // it here
-    stats::multinomial<topic_id> result = stats::multinomial<topic_id>();
+    stats::multinomial<topic_id> result;
     for (topic_id tid{0}; tid < num_topics_; ++tid)
     {
         result.increment(tid, doc_topic_count_.at(doc).at(tid));

@@ -28,13 +28,13 @@ namespace topics
 
 struct term_prob
 {
-    std::size_t tid;
+    term_id tid;
     double probability;
 };
 
 struct topic_prob
 {
-    std::size_t tid;
+    topic_id tid;
     double probability;
 };
 
@@ -57,7 +57,7 @@ class topic_model
      * @param k The number of words to return
      * @return the top k most probable words in the topic
      */
-    std::vector<term_prob> top_k(term_id topic_id, std::size_t k = 10) const;
+    std::vector<term_prob> top_k(topic_id tid, std::size_t k = 10) const;
 
     /**
      * @param doc_id The document we are concerned with
@@ -71,16 +71,19 @@ class topic_model
      * @param term_id The term we are concerned with
      * @return The probability of the term for the given topic
      */
-    term_prob term_probability(topic_id topic_id, term_id term_id) const;
+    double term_probability(topic_id top_id, term_id tid) const;
 
     /**
      * @param doc The document we are concerned with
      * @param topic_id The topic we are concerned with
      * @return The probability for the given topic
      */
-    topic_prob topic_probability(doc_id doc, topic_id topic_id) const;
+    double topic_probability(doc_id doc, topic_id tid) const;
 
-    const std::size_t& num_topics() const;
+    /**
+     * @return The number of topics
+     */
+    std::size_t num_topics() const;
 
   private:
     /**
