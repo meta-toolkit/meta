@@ -193,7 +193,7 @@ stats::multinomial<topic_id> lda_scvb::topic_distrbution(doc_id doc) const
     stats::multinomial<topic_id> result;
     for (topic_id tid{0}; tid < num_topics_; ++tid)
     {
-        result.increment(tid, doc_topic_count_.at(doc).at(tid));
+        result.increment(tid, doc_topic_count_.at(doc).at(tid) + alpha_);
     }
 
     return result;
