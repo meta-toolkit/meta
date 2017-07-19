@@ -85,6 +85,119 @@ class any_rng
 };
 
 /**
+ * A 64-bit pseudo-random number generator that uses only a single 64-bit
+ * unsigned integer as its state. Passes BigCrush. Not recommended for
+ * standard use, but it is useful for taking a single 64-bit seed and
+ * seeding a generator with a larger state.
+ *
+ * The original was written in 2015 by Sebastiano Vigna (vigna@acm.org) and
+ * released into the public domain.
+ *
+ * @see http://dl.acm.org/citation.cfm?doid=2714064.2660195
+ * @see http://xoroshiro.di.unimi.it/splitmix64.c
+ */
+class splitmix64
+{
+  public:
+    using result_type = uint64_t;
+
+    explicit splitmix64(uint64_t seed)
+      : state_{seed}
+    {
+        // nothing
+    }
+
+    static constexpr uint64_t min()
+    {
+        return 0;
+    }
+
+    static constexpr uint64_t max()
+    {
+        return std::numeric_limits<uint64_t>::max();
+    }
+
+    inline uint64_t operator()()
+    {
+        uint64_t z = (state_ += 0x9E3779B97F4A7C15ULL);
+        z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
+        z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+        return z ^ (z >> 31);
+    }
+
+  private:
+    uint64_t state_;
+};
+
+/**
+ * A high quality 64-bit psuedo-random number generator that is the
+ * successor to the xorshift128+ family. It passes BigCrush without
+ * systematic failures, but has a relatively short period.
+ *
+ * The 128-bit state must be seeded to not be zero everywhere.
+ *
+ * THe original was written in 2016 by David Blackman and Sebastiano Vigna
+ * (vigna@acm.org) and released into the public domain.
+ *
+ * @see http://xoroshiro.di.unimi.it/xoroshiro128plus.c
+ */
+class xoroshiro128
+{
+  public:
+    using result_type = uint64_t;
+
+    explicit xoroshiro128(uint64_t value)
+    {
+        seed(value);
+    }
+
+    explicit xoroshiro128(uint64_t s1, uint64_t s2)
+      : s0_{s1}, s1_{s2}
+    {
+        // nothing
+    }
+
+    static constexpr uint64_t min()
+    {
+        return 0;
+    }
+
+    static constexpr uint64_t max()
+    {
+        return std::numeric_limits<uint64_t>::max();
+    }
+
+    void seed(uint64_t value)
+    {
+        splitmix64 sm{value};
+        s0_ = sm();
+        s1_ = sm();
+    }
+
+    inline uint64_t operator()()
+    {
+        const auto s0 = s0_;
+        auto s1 = s1_;
+        const auto result = s0 + s1;
+
+        s1 ^= s0;
+        s0_ = rotl(s0, 55) ^ s1 ^ (s1 << 14);
+        s1_ = rotl(s1, 36);
+
+        return result;
+    }
+
+  private:
+    static inline uint64_t rotl(const uint64_t x, int k)
+    {
+        return (x << k) | (x >> (64 - k));
+    }
+
+    uint64_t s0_;
+    uint64_t s1_;
+};
+
+/**
  * Generate a random number between 0 and an (exclusive) upper bound. This
  * uses the rejection sampling technique, and it assumes that the
  * RandomEngine has a strictly larger range than the desired one.
