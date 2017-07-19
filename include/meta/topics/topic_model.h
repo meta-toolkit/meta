@@ -57,7 +57,8 @@ class topic_model
      * @param k The number of words to return
      * @return the top k most probable words in the topic
      */
-    std::vector<term_prob> top_k(topic_id tid, std::size_t k = 10) const;
+    template <typename T>
+    std::vector<term_prob> top_k(topic_id tid, std::size_t k, T score) const;
 
     /**
      * @param doc_id The document we are concerned with
@@ -85,6 +86,11 @@ class topic_model
      */
     std::size_t num_topics() const;
 
+    /**
+     * @return The number of unique words
+     */
+    std::size_t num_words() const;
+
   private:
     /**
      * The number of topics.
@@ -111,6 +117,25 @@ class topic_model
      */
     std::vector<stats::multinomial<topic_id>> doc_topic_probabilities_;
 };
+
+template <typename T>
+std::vector<term_prob> topic_model::top_k(topic_id tid, std::size_t k,
+                                          T score) const
+{
+    auto pairs = util::make_fixed_heap<term_prob>(
+        k, [](const term_prob& a, const term_prob& b) {
+            return a.probability > b.probability;
+        });
+
+    auto current_topic = topic_term_probabilities_[tid];
+
+    for (term_id i{0}; i < num_words_; ++i)
+    {
+        pairs.push(term_prob{i, score(tid, i)});
+    }
+
+    return pairs.extract_top();
+}
 
 class topic_model_exception : public std::runtime_error
 {

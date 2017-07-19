@@ -65,23 +65,6 @@ topic_model::topic_model(std::istream& theta, std::istream& phi)
     }
 }
 
-std::vector<term_prob> topic_model::top_k(topic_id tid, std::size_t k) const
-{
-    auto pairs = util::make_fixed_heap<term_prob>(
-        k, [](const term_prob& a, const term_prob& b) {
-            return a.probability > b.probability;
-        });
-
-    auto current_topic = topic_term_probabilities_[tid];
-
-    for (std::size_t i = 0; i < num_words_; ++i)
-    {
-        pairs.push(term_prob{term_id{i}, current_topic[i]});
-    }
-
-    return pairs.extract_top();
-}
-
 stats::multinomial<topic_id> topic_model::topic_distribution(doc_id doc) const
 {
     return doc_topic_probabilities_[doc];
@@ -103,6 +86,11 @@ double topic_model::topic_probability(doc_id doc, topic_id topic_id) const
 std::size_t topic_model::num_topics() const
 {
     return num_topics_;
+}
+
+std::size_t topic_model::num_words() const
+{
+    return num_words_;
 }
 
 topic_model load_topic_model(const cpptoml::table& config)
