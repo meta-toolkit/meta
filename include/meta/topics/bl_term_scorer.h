@@ -7,8 +7,8 @@
  * project.
  */
 
-#ifndef META_TOPICS_BL_TERM_SCORER_H_
-#define META_TOPICS_BL_TERM_SCORER_H_
+#ifndef META_TOPICS_DEFAULT_TERM_SCORER_H_
+#define META_TOPICS_DEFAULT_TERM_SCORER_H_
 
 #include "meta/index/forward_index.h"
 #include "meta/meta.h"
@@ -19,8 +19,10 @@ namespace meta
 namespace topics
 {
 
-/* Scores terms according to a tfidf-like weighting by Blei and Laffterty.
- * @see  http://www.cs.columbia.edu/~blei/papers/BleiLafferty2009.pdf */
+/**
+ * Scores terms according to a tfidf - like weighting by Blei and Laffterty.
+ * @see  http://www.cs.columbia.edu/~blei/papers/BleiLafferty2009.pdf
+ */
 class bl_term_scorer
 {
   public:
@@ -42,9 +44,9 @@ class bl_term_scorer
     topics::topic_model model_;
 
     /**
-     * The denominators
+     * The sums
      */
-    std::vector<double> denoms_;
+    std::vector<double> sums_;
 };
 }
 }

@@ -8,7 +8,6 @@ add_library(meta-topics lda_cvb.cpp
                         lda_scvb.cpp
                         parallel_lda_gibbs.cpp
                         topic_model.cpp
-                        default_term_scorer.cpp
                         bl_term_scorer.cpp)
 target_link_libraries(meta-topics meta-index)
 
