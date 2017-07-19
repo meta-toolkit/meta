@@ -24,7 +24,7 @@ default_term_scorer::default_term_scorer(topic_model model) : model_(model)
         double sum = 0.0;
         for (topic_id j{0}; j < model.num_topics(); ++j)
             sum += fastapprox::fastlog(model_.term_probability(j, t_id));
-        sum *= (1 / model.num_topics());
+        sum *= (1.0 / model.num_topics());
         sums_.push_back(sum);
     }
 }
