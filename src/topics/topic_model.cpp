@@ -65,6 +65,13 @@ topic_model::topic_model(std::istream& theta, std::istream& phi)
     }
 }
 
+std::vector<term_prob> topic_model::top_k(topic_id tid, std::size_t k) const
+{
+    return top_k(tid, k, [this](topic_id t, term_id v) {
+        return term_probability(t, v);
+    });
+}
+
 stats::multinomial<topic_id> topic_model::topic_distribution(doc_id doc) const
 {
     return doc_topic_probabilities_[doc];

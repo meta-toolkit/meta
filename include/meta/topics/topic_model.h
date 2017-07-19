@@ -57,8 +57,16 @@ class topic_model
      * @param k The number of words to return
      * @return the top k most probable words in the topic
      */
+    std::vector<term_prob> top_k(topic_id tid, std::size_t k = 10) const;
+
+    /**
+     * @param topic_id The topic to use
+     * @param k The number of words to return
+     * @param score A scoring function to weight the raw probabilities
+     * @return the top k most probable words in the topic
+     */
     template <typename T>
-    std::vector<term_prob> top_k(topic_id tid, std::size_t k, T score) const;
+    std::vector<term_prob> top_k(topic_id tid, std::size_t k, T&& score) const;
 
     /**
      * @param doc_id The document we are concerned with
@@ -120,7 +128,7 @@ class topic_model
 
 template <typename T>
 std::vector<term_prob> topic_model::top_k(topic_id tid, std::size_t k,
-                                          T score) const
+                                          T&& score) const
 {
     auto pairs = util::make_fixed_heap<term_prob>(
         k, [](const term_prob& a, const term_prob& b) {
