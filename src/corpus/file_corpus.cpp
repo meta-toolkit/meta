@@ -73,11 +73,6 @@ document file_corpus::next()
     return doc;
 }
 
-void file_corpus::reset()
-{
-    throw std::runtime_error{"Feature not yet supported for this corpus type!"};
-}
-
 uint64_t file_corpus::size() const
 {
     return docs_.size();

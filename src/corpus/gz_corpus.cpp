@@ -53,11 +53,6 @@ document gz_corpus::next()
     return doc;
 }
 
-void gz_corpus::reset()
-{
-    throw std::runtime_error{"Feature not yet supported for this corpus type!"};
-}
-
 uint64_t gz_corpus::size() const
 {
     return num_lines_;

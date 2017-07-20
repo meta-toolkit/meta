@@ -55,11 +55,6 @@ class libsvm_corpus : public corpus
 
     document next() override;
 
-    /**
-     * Reset the corpus to the beginning.
-     */
-    virtual void reset();
-
     uint64_t size() const override;
 
     metadata::schema_type schema() const override;

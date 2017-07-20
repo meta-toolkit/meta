@@ -41,11 +41,6 @@ class metadata_parser
     std::vector<metadata::field> next();
 
     /**
-     * Reset the corpus to the beginning.
-     */
-    void reset();
-
-    /**
      * @return the schema for the metadata in this file
      */
     const metadata::schema_type& schema() const;

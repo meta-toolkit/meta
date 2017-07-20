@@ -95,11 +95,9 @@ dev-sections = [22, 22]
 test-sections = [23, 23]
 
 [embeddings]
-algorithm = "sgns"
 prefix = "word-embeddings"
 filter = [{type = "icu-tokenizer", suppress-tags = true}, {type = "lowercase"}]
 vector-size = 50
-num-threads = 4
 
 [embeddings.vocab]
 min-count = 10

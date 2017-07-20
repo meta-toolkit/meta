@@ -75,11 +75,6 @@ class corpus
     virtual document next() = 0;
 
     /**
-     * Reset the corpus to the beginning.
-     */
-    virtual void reset() = 0;
-
-    /**
      * @return the number of documents in this corpus
      */
     virtual uint64_t size() const = 0;

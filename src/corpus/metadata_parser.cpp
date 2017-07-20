@@ -77,12 +77,6 @@ std::vector<metadata::field> metadata_parser::next()
     return mdata;
 }
 
-void metadata_parser::reset()
-{
-    if (infile_)
-        infile_.stream().seekg(0, std::ios::beg);
-}
-
 const metadata::schema_type& metadata_parser::schema() const
 {
     return schema_;

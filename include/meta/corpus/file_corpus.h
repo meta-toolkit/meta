@@ -54,11 +54,6 @@ class file_corpus : public corpus
     document next() override;
 
     /**
-     * Reset the corpus to the beginning.
-     */
-    virtual void reset();
-
-    /**
      * @return the number of documents in this corpus
      */
     uint64_t size() const override;

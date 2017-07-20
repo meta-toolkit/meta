@@ -65,16 +65,6 @@ document line_corpus::next()
     return doc;
 }
 
-void line_corpus::reset()
-{
-    infile_.seekg(0, infile_.beg);
-    if (class_infile_)
-        class_infile_->seekg(0, class_infile_->beg);
-
-    cur_id_ = doc_id(0);
-    reset_metadata();
-}
-
 uint64_t line_corpus::size() const
 {
     return num_lines_;

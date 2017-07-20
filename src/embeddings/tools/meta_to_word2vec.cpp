@@ -23,37 +23,37 @@ using namespace embeddings;
 void save_w2v_vectors(const bool binary_output, const std::string prefix,
                       word_embeddings learned_embeddings)
 {
-    auto vector_size_ = learned_embeddings.vector_size();
-    auto vocab_ = learned_embeddings.vocab();
+    auto vector_size = learned_embeddings.vector_size();
+    auto vocab = learned_embeddings.vocab();
     printing::progress progress{" > Saving word2vec embeddings: ",
-                                vocab_.size() * vector_size_};
+                                vocab.size() * vector_size};
 
     const std::string file_path = prefix + "/embeddings.w2v.bin";
     FILE* file = fopen(file_path.c_str(), "wb");
 
-    fprintf(file, "%lld %lld\n", (int64_t)vocab_.size(), (int64_t)vector_size_);
-    for (size_t i = 0; i < vocab_.size(); ++i)
+    fprintf(file, "%lld %lld\n", (int64_t)vocab.size(), (int64_t)vector_size);
+    for (size_t i = 0; i < vocab.size(); ++i)
     {
-        fprintf(file, "%s ", vocab_[i].c_str());
-        auto target_vector = learned_embeddings.at(vocab_[i]).v;
+        fprintf(file, "%s ", vocab[i].c_str());
+        auto target_vector = learned_embeddings.at(vocab[i]).v;
         if (binary_output)
         {
-            for (std::size_t j = 0; j < vector_size_; ++j)
+            for (std::size_t j = 0; j < vector_size; ++j)
             {
                 // Copying seemed to work here. assuming
                 // there is a better way to do this but
                 // couldn't quite get it.
                 float value = target_vector[j];
                 fwrite(&value, sizeof(float), 1, file);
-                progress(i * vector_size_ + j);
+                progress(i * vector_size + j);
             }
         }
         else
         {
-            for (std::size_t j = 0; j < vector_size_; ++j)
+            for (std::size_t j = 0; j < vector_size; ++j)
             {
                 fprintf(file, "%lf ", target_vector[j]);
-                progress(i * vector_size_ + j);
+                progress(i * vector_size + j);
             }
         }
 

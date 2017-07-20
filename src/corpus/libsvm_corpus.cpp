@@ -67,11 +67,6 @@ document libsvm_corpus::next()
     return doc;
 }
 
-void libsvm_corpus::reset()
-{
-    throw std::runtime_error{"Feature not yet supported for this corpus type!"};
-}
-
 metadata::schema_type libsvm_corpus::schema() const
 {
     auto schema = corpus::schema();
