@@ -3,8 +3,6 @@
  * @author Chase Geigle
  */
 
-#include <limits>
-
 #include "meta/corpus/gz_corpus.h"
 #include "meta/io/filesystem.h"
 #include "meta/util/shim.h"

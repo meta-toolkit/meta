@@ -10,7 +10,6 @@
 #ifndef META_FILE_CORPUS_H_
 #define META_FILE_CORPUS_H_
 
-#include <limits>
 #include <string>
 #include <utility>
 #include <vector>

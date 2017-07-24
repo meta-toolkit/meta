@@ -54,7 +54,6 @@ class sgns_local_buffer
         : stream_{stream.clone()},
           neu1e(vector_size, 0),
           engine(std::chrono::system_clock::now().time_since_epoch().count()),
-          next_int(),
           next_real{0.0f, 1.0f},
           word_counter(0)
     {
@@ -67,9 +66,8 @@ class sgns_local_buffer
     std::unique_ptr<analyzers::token_stream> stream_;
     sgns_net_vector neu1e;
     std::default_random_engine engine;
-    std::uniform_int_distribution<std::size_t> next_int;
     std::uniform_real_distribution<float> next_real;
-    int64_t word_counter;
+    uint64_t word_counter;
 };
 
 class sgns_exception : public std::runtime_error
@@ -197,7 +195,6 @@ class sgns_trainer
                     process_document(buffer, doc, io_mutex, progress);
                 });
 
-            // update_progress(word_counter, io_mutex, progress);
             --iterations_left;
         }
     }
@@ -232,7 +229,7 @@ class sgns_trainer
         {
             // Sample a random window size.
             const auto window_size
-                = buffer.next_int(buffer.engine) % max_window_size_;
+                = random::bounded_rand(buffer.engine, max_window_size_);
 
             // Sweep across the window.
             for (sgns_window::size_type w = window_size;
@@ -320,7 +317,7 @@ class sgns_trainer
             dot_product += net_.syn0[l1 + i] * net_.syn1neg[l2 + i];
         }
 
-        const float sigma = 1.0f / (1.0f + (float)exp(-dot_product));
+        const float sigma = 1.0f / (1.0f + (float)std::exp(-dot_product));
         const float update = learning_rate_ * (label - sigma);
 
         for (sgns_net_vector::size_type i = 0; i < vector_size_; i++)
@@ -334,7 +331,7 @@ class sgns_trainer
     void update_progress(int64_t word_counter, std::mutex& io_mutex,
                          printing::progress& progress)
     {
-        // Note: This progress update is subject to a race condition
+        // Note: This learning rate update is subject to a race condition
         // when running multiple threads however this race condition
         // also exists in the word2vec and doesn't appear to
         // have any impact.
@@ -369,15 +366,15 @@ class sgns_trainer
 
                 if (subsample_threshold_ > 0)
                 {
-                    // Subsampling which random discards frequent words but does
-                    // not change the rankings
+                    // Subsampling which randomly discards frequent words but
+                    // does not change the rankings
                     const auto count = vocab_.vector[i->value()].count;
                     const float subsample_count_
                         = subsample_threshold_ * vocab_.total_count;
                     const float ran
-                        = ((float)sqrt(count / subsample_count_) + 1)
+                        = ((float)std::sqrt(count / subsample_count_) + 1)
                           * subsample_count_ / count;
-                    if ((ran < (buffer.next_real(buffer.engine))))
+                    if (ran < (buffer.next_real(buffer.engine)))
                     {
                         continue;
                     }

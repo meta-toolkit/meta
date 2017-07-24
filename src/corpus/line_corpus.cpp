@@ -4,7 +4,6 @@
  */
 
 #include <algorithm>
-#include <limits>
 
 #include "meta/corpus/line_corpus.h"
 #include "meta/io/filesystem.h"

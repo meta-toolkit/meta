@@ -113,12 +113,6 @@ class corpus
      */
     std::vector<metadata::field> next_metadata();
 
-    /**
-     * Helper function to be used by deriving classes in implementing
-     * reset() to reset the metadata for the current document.
-     */
-    void reset_metadata();
-
   private:
     friend std::unique_ptr<corpus> make_corpus(const cpptoml::table&);
 

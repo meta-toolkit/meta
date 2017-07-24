@@ -103,11 +103,6 @@ vector-size = 50
 min-count = 10
 max-size = 500000
 
-[embeddings.vocab.sgns]
-max-size = 30000000
-min-reduce = 1
-min-reduce-threshold = 0.7
-
 [embeddings.sgns]
 binary = true
 iterations = 5

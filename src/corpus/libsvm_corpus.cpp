@@ -3,8 +3,6 @@
  * @author Chase Geigle
  */
 
-#include <limits>
-
 #include "meta/corpus/libsvm_corpus.h"
 #include "meta/io/filesystem.h"
 #include "meta/io/libsvm_parser.h"
