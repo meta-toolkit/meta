@@ -15,7 +15,7 @@ namespace meta
 {
 namespace topics
 {
-bl_term_scorer::bl_term_scorer(topic_model model) : model_(model)
+bl_term_scorer::bl_term_scorer(topic_model& model) : model_(model)
 {
     // Compute the sums for each term's score
     sums_.reserve(model_.num_words());

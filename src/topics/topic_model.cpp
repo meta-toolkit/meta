@@ -79,10 +79,7 @@ stats::multinomial<topic_id> topic_model::topic_distribution(doc_id doc) const
 
 double topic_model::term_probability(topic_id top_id, term_id tid) const
 {
-
-    auto prob = topic_term_probabilities_[top_id][tid];
-
-    return prob;
+    return topic_term_probabilities_[top_id][tid];
 }
 
 double topic_model::topic_probability(doc_id doc, topic_id topic_id) const
@@ -120,14 +117,14 @@ topic_model load_topic_model(const cpptoml::table& config)
 
     if (!theta)
     {
-        throw topic_model_exception{
-            "missing document topic probabilities file:" + *prefix + ".theta"};
+        throw topic_model_exception{"missing document topic probabilities file:"
+                                    + *prefix + ".theta.bin"};
     }
 
     if (!phi)
     {
         throw topic_model_exception{
-            "missing topic term probabilities file:" + *prefix + ".phi"};
+            "missing topic term probabilities file:" + *prefix + ".phi.bin"};
     }
 
     return topic_model{theta, phi};

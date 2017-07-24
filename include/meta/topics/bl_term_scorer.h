@@ -20,8 +20,8 @@ namespace topics
 {
 
 /**
- * Scores terms according to a tfidf - like weighting by Blei and Laffterty.
- * @see  http://www.cs.columbia.edu/~blei/papers/BleiLafferty2009.pdf
+ * Scores terms according to a tfidf - like weighting by Blei and Lafferty.
+ * @see http://www.cs.columbia.edu/~blei/papers/BleiLafferty2009.pdf
  */
 class bl_term_scorer
 {
@@ -29,7 +29,7 @@ class bl_term_scorer
     /**
      * @param model The topic model to score
      */
-    bl_term_scorer(topics::topic_model model);
+    bl_term_scorer(topics::topic_model& model);
 
     /**
      * @param k The topic id
@@ -41,7 +41,7 @@ class bl_term_scorer
     /**
      * The topic model
      */
-    topics::topic_model model_;
+    const topics::topic_model& model_;
 
     /**
      * The sums
