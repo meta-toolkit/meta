@@ -658,17 +658,6 @@ class external_key_storage
             table_[idx].idx = b.idx;
             table_[idx].hc = b.hc;
         }
-
-        table_.resize(new_cap);
-        std::fill(std::begin(table_), std::end(table_), hash_idx{});
-
-        for (std::size_t i = 0; i < keys_.size(); ++i)
-        {
-            auto hc = this->hash(keys_[i]);
-            auto nidx = this->get_idx(keys_[i], hc);
-            table_[nidx].hc = hc;
-            table_[nidx].idx = i + 1;
-        }
     }
 
     std::size_t bytes_used() const
