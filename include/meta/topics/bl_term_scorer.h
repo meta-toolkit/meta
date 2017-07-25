@@ -29,7 +29,7 @@ class bl_term_scorer
     /**
      * @param model The topic model to score
      */
-    bl_term_scorer(topics::topic_model& model);
+    bl_term_scorer(const topics::topic_model& model);
 
     /**
      * @param k The topic id
