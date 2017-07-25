@@ -71,6 +71,9 @@ class lda_cvb : public lda_model
     virtual double compute_doc_topic_probability(learn::instance_id doc,
                                                  topic_id topic) const override;
 
+    virtual stats::multinomial<topic_id>
+    topic_distrbution(doc_id doc) const override;
+
   protected:
     /**
      * Initializes the parameters randomly.
