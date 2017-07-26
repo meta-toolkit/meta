@@ -104,7 +104,6 @@ min-count = 5
 max-size = 500000
 
 [embeddings.sgns]
-binary = true
 iterations = 5
 negative-samples = 5
 max-window-size = 5

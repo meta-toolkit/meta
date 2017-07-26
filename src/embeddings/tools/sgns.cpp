@@ -145,7 +145,6 @@ class sgns_trainer
               (float)sgns_cfg.get_as<double>("learning-rate").value_or(0.025)),
           negative_samples_(
               sgns_cfg.get_as<std::size_t>("negative-samples").value_or(20)),
-          binary_output_(sgns_cfg.get_as<bool>("binary").value_or(true)),
           vocab_(load_vocab(prefix_ + "/vocab.bin")),
           noise_dist_(create_unigram_noise_distribution(
               sgns_cfg.get_as<std::size_t>("unigram-distribution-size")
@@ -549,7 +548,6 @@ class sgns_trainer
     const uint64_t iterations_;
     const float starting_learning_rate_; // Alpha in word2vec
     const std::size_t negative_samples_;
-    const bool binary_output_;
 
     // Immutable shared data.
     const sgns_vocab vocab_;
