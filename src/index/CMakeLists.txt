@@ -2,6 +2,7 @@ project(meta-index)
 
 add_subdirectory(eval)
 add_subdirectory(ranker)
+add_subdirectory(feedback)
 add_subdirectory(tools)
 
 add_library(meta-index disk_index.cpp

@@ -71,5 +71,10 @@ void document::mdata(std::vector<metadata::field>&& metadata)
 {
     mdata_ = std::move(metadata);
 }
+
+document_vector& document::vsm_vector()
+{
+    return vsm_vector_;
+}
 }
 }

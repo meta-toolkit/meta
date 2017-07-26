@@ -31,6 +31,12 @@ k1 = 1.2
 b = 0.75
 k3 = 500
 
+[feedback]
+method = "rocchio"
+a = 1.2
+b = 0.8
+c = 0.0
+
 [classifier]
 method = "one-vs-all"
 [classifier.base]

@@ -8,7 +8,6 @@
 #include "meta/index/inverted_index.h"
 #include "meta/index/postings_data.h"
 #include "meta/index/ranker/ranker.h"
-#include "meta/index/score_data.h"
 #include "meta/util/fixed_heap.h"
 
 namespace meta
@@ -26,8 +25,17 @@ ranker::score(inverted_index& idx, const corpus::document& query,
 }
 
 std::vector<search_result>
-ranking_function::rank(ranker_context& ctx, uint64_t num_results,
-                       const filter_function_type& filter)
+    ranker::score_vsm(inverted_index& idx, corpus::document& query,
+                      uint64_t num_results,
+                      const filter_function_type& filter)
+{
+    auto vsm_map = query.vsm_vector().map();
+    return score(idx, vsm_map.begin(), vsm_map.end(), num_results, filter);
+}
+
+std::vector<search_result> ranker::rank(detail::ranker_context& ctx,
+                                        uint64_t num_results,
+                                        const filter_function_type& filter)
 {
     score_data sd{ctx.idx, ctx.idx.avg_doc_length(), ctx.idx.num_docs(),
                   ctx.idx.total_corpus_terms(), ctx.query_length};
