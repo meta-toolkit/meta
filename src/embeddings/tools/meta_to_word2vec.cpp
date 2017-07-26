@@ -31,7 +31,7 @@ void save_w2v_vectors(const bool binary_output, const std::string prefix,
     const std::string file_path = prefix + "/embeddings.w2v.bin";
     FILE* file = fopen(file_path.c_str(), "wb");
 
-    fprintf(file, "%lld %lld\n", (int64_t)vocab.size(), (int64_t)vector_size);
+    fprintf(file, "%lld %lld\n", (long long)vocab.size(), (long long)vector_size);
     for (size_t i = 0; i < vocab.size(); ++i)
     {
         fprintf(file, "%s ", vocab[i].c_str());
@@ -43,7 +43,7 @@ void save_w2v_vectors(const bool binary_output, const std::string prefix,
                 // Copying seemed to work here. assuming
                 // there is a better way to do this but
                 // couldn't quite get it.
-                float value = target_vector[j];
+                auto value = static_cast<float>(target_vector[j]);
                 fwrite(&value, sizeof(float), 1, file);
                 progress(i * vector_size + j);
             }
