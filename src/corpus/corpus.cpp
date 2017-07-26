@@ -3,9 +3,9 @@
  * @author Sean Massung
  */
 
+#include "meta/corpus/corpus.h"
 #include "cpptoml.h"
 #include "meta/corpus/all.h"
-#include "meta/corpus/corpus.h"
 #include "meta/io/filesystem.h"
 #include "meta/util/shim.h"
 
@@ -23,11 +23,6 @@ corpus::corpus(std::string encoding)
 std::vector<metadata::field> corpus::next_metadata()
 {
     return mdata_parser_->next();
-}
-
-void corpus::skip_metadata(uint64_t n)
-{
-    mdata_parser_->skip(n);
 }
 
 metadata::schema_type corpus::schema() const

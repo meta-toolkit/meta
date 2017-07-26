@@ -3,8 +3,6 @@
  * @author Chase Geigle
  */
 
-#include <limits>
-
 #include "meta/corpus/gz_corpus.h"
 #include "meta/io/filesystem.h"
 #include "meta/util/shim.h"
@@ -51,23 +49,6 @@ document gz_corpus::next()
     doc.mdata(std::move(mdata));
 
     return doc;
-}
-
-void gz_corpus::skip(uint64_t n)
-{
-    uint64_t skips_left = n;
-
-    while (skips_left > 0)
-    {
-        if (class_stream_)
-            class_stream_.ignore(std::numeric_limits<std::streamsize>::max(), class_stream_.widen('\n'));
-
-        corpus_stream_.ignore(std::numeric_limits<std::streamsize>::max(), corpus_stream_.widen('\n'));
-
-        --skips_left;
-    }
-
-    skip_metadata(n);
 }
 
 uint64_t gz_corpus::size() const

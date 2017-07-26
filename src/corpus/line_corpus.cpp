@@ -4,7 +4,6 @@
  */
 
 #include <algorithm>
-#include <limits>
 
 #include "meta/corpus/line_corpus.h"
 #include "meta/io/filesystem.h"
@@ -63,24 +62,6 @@ document line_corpus::next()
     doc.mdata(std::move(mdata));
 
     return doc;
-}
-
-void line_corpus::skip(uint64_t n)
-{
-    uint64_t skips_left = n;
-    std::string ignoredLabel;
-
-    while (skips_left > 0)
-    {
-        if (class_infile_)
-            *class_infile_ >> ignoredLabel;
-
-        infile_.ignore(std::numeric_limits<std::streamsize>::max(), infile_.widen('\n'));
-
-        --skips_left;
-    }
-
-    skip_metadata(n);
 }
 
 uint64_t line_corpus::size() const

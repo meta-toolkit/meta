@@ -75,11 +75,6 @@ class corpus
     virtual document next() = 0;
 
     /**
-     * Skip the next n documents in this corpus (default = 1).
-     */
-    virtual void skip(uint64_t n = 1) = 0;
-
-    /**
      * @return the number of documents in this corpus
      */
     virtual uint64_t size() const = 0;
@@ -117,12 +112,6 @@ class corpus
      * next() to set the metadata for the current document.
      */
     std::vector<metadata::field> next_metadata();
-
-    /**
-     * Helper function to be used by deriving classes in implementing
-     * skip() to skip the metadata for the current document.
-     */
-    void skip_metadata(uint64_t n = 1);
 
   private:
     friend std::unique_ptr<corpus> make_corpus(const cpptoml::table&);
