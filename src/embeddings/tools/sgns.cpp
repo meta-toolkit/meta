@@ -53,7 +53,8 @@ class sgns_local_buffer
                       const std::size_t vector_size)
         : stream_{stream.clone()},
           neu1e(vector_size, 0),
-          engine(std::chrono::system_clock::now().time_since_epoch().count()),
+          engine(static_cast<uint64_t>(
+              std::chrono::system_clock::now().time_since_epoch().count())),
           next_real{0.0f, 1.0f},
           word_counter(0)
     {
@@ -105,8 +106,8 @@ struct sgns_net
     sgns_net(std::size_t vocab_size, std::size_t layer1_size)
         : syn0(vocab_size * layer1_size), syn1neg(vocab_size * layer1_size, 0)
     {
-        unsigned seed
-            = std::chrono::system_clock::now().time_since_epoch().count();
+        auto seed = static_cast<uint64_t>(
+            std::chrono::system_clock::now().time_since_epoch().count());
         std::default_random_engine random(seed);
         std::uniform_real_distribution<float> uniform(
             -0.5f / (float)layer1_size, 0.5f / (float)layer1_size);
@@ -137,7 +138,8 @@ class sgns_trainer
           max_ram_(embed_cfg.get_as<std::size_t>("max-ram").value_or(4096)
                    * 1024 * 1024),
           subsample_threshold_(
-              sgns_cfg.get_as<double>("subsample-threshold").value_or(1E-4)),
+              (float)sgns_cfg.get_as<double>("subsample-threshold")
+                  .value_or(1e-4)),
           max_window_size_(
               sgns_cfg.get_as<std::size_t>("max-window-size").value_or(6)),
           iterations_(sgns_cfg.get_as<uint64_t>("iterations").value_or(10)),
@@ -327,7 +329,7 @@ class sgns_trainer
     }
 
     // Update the progress indicator
-    void update_progress(int64_t word_counter, std::mutex& io_mutex,
+    void update_progress(uint64_t word_counter, std::mutex& io_mutex,
                          printing::progress& progress)
     {
         // Note: This learning rate update is subject to a race condition
@@ -370,9 +372,8 @@ class sgns_trainer
                     const auto count = vocab_.vector[i->value()].count;
                     const float subsample_count_
                         = subsample_threshold_ * vocab_.total_count;
-                    const float ran
-                        = ((float)std::sqrt(count / subsample_count_) + 1)
-                          * subsample_count_ / count;
+                    const float ran = (std::sqrt(count / subsample_count_) + 1)
+                                      * subsample_count_ / count;
                     if (ran < (buffer.next_real(buffer.engine)))
                     {
                         continue;
@@ -543,7 +544,7 @@ class sgns_trainer
     const std::size_t max_ram_;
 
     // SGNS parameters from config.toml.
-    const double subsample_threshold_; // Sample in word2vec
+    const float subsample_threshold_; // Sample in word2vec
     const std::size_t max_window_size_;
     const uint64_t iterations_;
     const float starting_learning_rate_; // Alpha in word2vec
@@ -556,7 +557,7 @@ class sgns_trainer
     // Mutable shared data.
     sgns_net net_;
     float learning_rate_;
-    std::atomic<int64_t> word_count_actual_;
+    std::atomic<uint64_t> word_count_actual_;
 };
 
 int main(int argc, char** argv)
