@@ -23,7 +23,8 @@ bl_term_scorer::bl_term_scorer(const topic_model& model) : model_(model)
     {
         double sum = 0.0;
         for (topic_id j{0}; j < model.num_topics(); ++j)
-            sum += fastapprox::fastlog(model_.term_probability(j, t_id));
+            sum += fastapprox::fastlog(
+                    static_cast<float>(model_.term_probability(j, t_id)));
         sum *= (1.0 / model.num_topics());
         sums_.push_back(sum);
     }
@@ -31,7 +32,7 @@ bl_term_scorer::bl_term_scorer(const topic_model& model) : model_(model)
 
 double bl_term_scorer::operator()(topic_id k, term_id v) const
 {
-    auto prob = model_.term_probability(k, v);
+    auto prob = static_cast<float>(model_.term_probability(k, v));
     return prob * (fastapprox::fastlog(prob) - sums_[v]);
 }
 }
