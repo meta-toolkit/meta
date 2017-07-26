@@ -186,7 +186,7 @@ double lda_scvb::compute_doc_topic_probability(learn::instance_id doc,
            / (doc_sizes_.at(doc) + num_topics_ * alpha_);
 }
 
-stats::multinomial<topic_id> lda_scvb::topic_distrbution(doc_id doc) const
+stats::multinomial<topic_id> lda_scvb::topic_distribution(doc_id doc) const
 {
     // TODO: Replace the count vectors with a multinomial rather than creating
     // it here

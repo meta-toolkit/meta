@@ -107,7 +107,7 @@ double lda_gibbs::compute_doc_topic_probability(learn::instance_id doc,
     return theta_[doc].probability(topic);
 }
 
-stats::multinomial<topic_id> lda_gibbs::topic_distrbution(doc_id doc) const
+stats::multinomial<topic_id> lda_gibbs::topic_distribution(doc_id doc) const
 {
     return theta_[doc];
 }

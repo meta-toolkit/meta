@@ -86,7 +86,7 @@ class lda_gibbs : public lda_model
                                                  topic_id topic) const override;
 
     virtual stats::multinomial<topic_id>
-    topic_distrbution(doc_id doc) const override;
+    topic_distribution(doc_id doc) const override;
 
   protected:
     /**

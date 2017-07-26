@@ -108,12 +108,12 @@ class lda_model
                                                  topic_id topic) const = 0;
 
     /**
-     * @return The multinomial distrbution of topics over the document
+     * @return The multinomial distribution of topics over the document
      *
      * @param doc The document we are concerned with
      */
     virtual stats::multinomial<topic_id>
-    topic_distrbution(doc_id doc) const = 0;
+    topic_distribution(doc_id doc) const = 0;
 
     /**
      * @return the number of topics in this model

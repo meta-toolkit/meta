@@ -25,7 +25,7 @@ void lda_model::save_doc_topic_distributions(std::ostream& stream) const
 
     for (const auto& d : docs_)
     {
-        io::packed::write(stream, topic_distrbution(doc_id{d.id}));
+        io::packed::write(stream, topic_distribution(doc_id{d.id}));
     }
 }
 
