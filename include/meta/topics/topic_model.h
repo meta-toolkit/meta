@@ -17,7 +17,6 @@
 #include "meta/config.h"
 #include "meta/meta.h"
 #include "meta/stats/multinomial.h"
-#include "meta/util/aligned_allocator.h"
 #include "meta/util/fixed_heap.h"
 #include "meta/util/string_view.h"
 
@@ -73,7 +72,13 @@ class topic_model
      * @return The probability of each of k topics for the
      * given document
      */
-    stats::multinomial<topic_id> topic_distribution(doc_id doc) const;
+    const stats::multinomial<topic_id>& topic_distribution(doc_id doc) const;
+
+    /**
+     * @param k The topic we are concerned with
+     * @return The distribution over terms for the specified topic
+     */
+    const stats::multinomial<term_id>& term_distribution(topic_id k) const;
 
     /**
      * @param topic_id The topic we are concerned with
@@ -118,7 +123,7 @@ class topic_model
     /**
      * The term probabilities by topic
      */
-    std::vector<util::aligned_vector<double>> topic_term_probabilities_;
+    std::vector<stats::multinomial<term_id>> topic_term_probabilities_;
 
     /**
      * The term probabilities by topic

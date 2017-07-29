@@ -24,13 +24,13 @@ topic_model::topic_model(std::istream& theta, std::istream& phi)
     : num_topics_{io::packed::read<std::size_t>(phi)},
       num_words_{io::packed::read<std::size_t>(phi)},
       num_docs_{io::packed::read<std::size_t>(theta)},
-      topic_term_probabilities_(num_topics_, util::aligned_vector<double>()),
-      doc_topic_probabilities_(num_docs_, stats::multinomial<topic_id>())
+      topic_term_probabilities_(num_topics_),
+      doc_topic_probabilities_(num_docs_)
 {
     {
         printing::progress term_progress{
             " > Loading topic term probabilities: ", num_topics_};
-        for (std::size_t tid = 0; tid < num_topics_; ++tid)
+        for (topic_id tid{0}; tid < num_topics_; ++tid)
         {
             if (!phi)
             {
@@ -39,17 +39,14 @@ topic_model::topic_model(std::istream& theta, std::istream& phi)
             }
 
             term_progress(tid);
-            auto& vec = topic_term_probabilities_[tid];
-            vec.resize(num_words_);
-            std::generate(vec.begin(), vec.end(),
-                          [&]() { return io::packed::read<double>(phi); });
+            auto& dist = topic_term_probabilities_[tid];
+            io::packed::read(phi, dist);
         }
     }
 
     {
         printing::progress doc_progress{
             " > Loading document topic probabilities: ", num_docs_};
-        io::packed::read<std::size_t>(theta);
         for (std::size_t d = 0; d < num_docs_; ++d)
         {
             if (!theta)
@@ -60,7 +57,7 @@ topic_model::topic_model(std::istream& theta, std::istream& phi)
 
             doc_progress(d);
             auto& dist = doc_topic_probabilities_[d];
-            dist = io::packed::read<stats::multinomial<topic_id>>(theta);
+            io::packed::read(theta, dist);
         }
     }
 }
@@ -72,14 +69,21 @@ std::vector<term_prob> topic_model::top_k(topic_id tid, std::size_t k) const
     });
 }
 
-stats::multinomial<topic_id> topic_model::topic_distribution(doc_id doc) const
+const stats::multinomial<topic_id>&
+topic_model::topic_distribution(doc_id doc) const
 {
     return doc_topic_probabilities_[doc];
 }
 
+const stats::multinomial<term_id>&
+topic_model::term_distribution(topic_id k) const
+{
+    return topic_term_probabilities_[k];
+}
+
 double topic_model::term_probability(topic_id top_id, term_id tid) const
 {
-    return topic_term_probabilities_[top_id][tid];
+    return topic_term_probabilities_[top_id].probability(tid);
 }
 
 double topic_model::topic_probability(doc_id doc, topic_id topic_id) const

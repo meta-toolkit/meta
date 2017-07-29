@@ -21,7 +21,6 @@ lda_model::lda_model(const learn::dataset& docs, std::size_t num_topics)
 void lda_model::save_doc_topic_distributions(std::ostream& stream) const
 {
     io::packed::write(stream, docs_.size());
-    io::packed::write(stream, num_topics_);
 
     for (const auto& d : docs_)
     {
@@ -33,13 +32,9 @@ void lda_model::save_topic_term_distributions(std::ostream& stream) const
 {
     io::packed::write(stream, num_topics_);
     io::packed::write(stream, docs_.total_features());
-
-    for (topic_id j{0}; j < num_topics_; ++j)
+    for (topic_id k{0}; k < num_topics_; ++k)
     {
-        for (term_id t_id{0}; t_id < docs_.total_features(); ++t_id)
-        {
-            io::packed::write(stream, compute_term_topic_probability(t_id, j));
-        }
+        io::packed::write(stream, term_distribution(k));
     }
 }
 
