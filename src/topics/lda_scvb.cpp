@@ -198,5 +198,18 @@ stats::multinomial<topic_id> lda_scvb::topic_distribution(doc_id doc) const
 
     return result;
 }
+
+stats::multinomial<term_id> lda_scvb::term_distribution(topic_id k) const
+{
+    // TODO: Replace the count vectors with a multinomial rather than creating
+    // it here
+    stats::multinomial<term_id> result;
+    for (term_id w{0}; w < docs_.total_features(); ++w)
+    {
+        result.increment(w, topic_term_count_.at(k).at(w) + beta_);
+    }
+
+    return result;
+}
 }
 }

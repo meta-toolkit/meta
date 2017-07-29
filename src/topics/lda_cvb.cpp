@@ -167,5 +167,10 @@ stats::multinomial<topic_id> lda_cvb::topic_distribution(doc_id doc) const
 {
     return theta_[doc];
 }
+
+stats::multinomial<term_id> lda_cvb::term_distribution(topic_id k) const
+{
+    return phi_[k];
+}
 }
 }

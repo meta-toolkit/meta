@@ -112,6 +112,11 @@ stats::multinomial<topic_id> lda_gibbs::topic_distribution(doc_id doc) const
     return theta_[doc];
 }
 
+stats::multinomial<term_id> lda_gibbs::term_distribution(topic_id k) const
+{
+    return phi_[k];
+}
+
 void lda_gibbs::initialize()
 {
     perform_iteration(0, true);

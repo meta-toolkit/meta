@@ -74,6 +74,9 @@ class lda_cvb : public lda_model
     virtual stats::multinomial<topic_id>
     topic_distribution(doc_id doc) const override;
 
+    virtual stats::multinomial<term_id>
+    term_distribution(topic_id k) const override;
+
   protected:
     /**
      * Initializes the parameters randomly.
