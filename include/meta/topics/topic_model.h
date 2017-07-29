@@ -104,6 +104,11 @@ class topic_model
      */
     std::size_t num_words() const;
 
+    /**
+     * @return The number of documents
+     */
+    std::size_t num_docs() const;
+
   private:
     /**
      * The number of topics.

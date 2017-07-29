@@ -101,6 +101,11 @@ std::size_t topic_model::num_words() const
     return num_words_;
 }
 
+std::size_t topic_model::num_docs() const
+{
+    return num_docs_;
+}
+
 topic_model load_topic_model(const cpptoml::table& config)
 {
     auto topics_cfg = config.get_table("lda");
