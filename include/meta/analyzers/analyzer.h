@@ -16,6 +16,7 @@
 
 #include "meta/analyzers/featurizer.h"
 #include "meta/config.h"
+#include "meta/util/clonable.h"
 
 namespace cpptoml
 {
@@ -48,7 +49,7 @@ class multi_analyzer;
  * When defining your own sublcass of analyzer, you should ensure to
  * subclass from the appropriate type.
  */
-class analyzer
+class analyzer : public util::clonable<analyzer>
 {
   public:
     /**
@@ -70,11 +71,6 @@ class analyzer
         tokenize(doc, feats);
         return counts;
     }
-
-    /**
-     * Clones this analyzer.
-     */
-    virtual std::unique_ptr<analyzer> clone() const = 0;
 
     friend multi_analyzer;
 

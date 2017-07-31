@@ -10,8 +10,10 @@
 #define META_PARSE_TREE_NODE_H_
 
 #include <memory>
+
 #include "meta/meta.h"
 #include "meta/parser/trees/visitors/visitor.h"
+#include "meta/util/clonable.h"
 
 namespace meta
 {
@@ -21,7 +23,7 @@ namespace parser
 /**
  * A single node in a parse tree for a sentence.
  */
-class node
+class node : public util::clonable<node>
 {
   public:
     /**
@@ -51,12 +53,6 @@ class node
      * @return whether this subtree is equal to the other subtree
      */
     virtual bool equal(const node& other) const = 0;
-
-    /**
-     * Clones the given node.
-     * @return a unique_ptr to a copy of this object
-     */
-    virtual std::unique_ptr<node> clone() const = 0;
 
     /**
      * Accepts a visitor.
