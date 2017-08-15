@@ -114,7 +114,7 @@ make_binary_classifier<sgd>(const cpptoml::table& config,
     auto max_iter
         = config.get_as<int64_t>("max-iter").value_or(sgd::default_max_iter);
 
-    auto calibrate = config.get_as<bool>("calibrate").value_or(false);
+    auto calibrate = config.get_as<bool>("calibrate").value_or(true);
 
     return make_unique<sgd>(std::move(training),
                             learn::loss::make_loss_function(*loss), options,

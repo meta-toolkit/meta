@@ -22,23 +22,23 @@ namespace learn
 
 /**
  * A generic stochastic gradient descent learner for binary classification
- * or regression. This model applies the scale-invariant, adaptive gradient
- * method (NAG) described in Ross, Mineiro, and Langford and should be well
- * suited to most datasets with little learning rate fiddling.
+ * or regression. It implements AdaGrad (Duchi, Hazan, and Singer) and
+ * supports calibrating a learning rate from a subset of training data,
+ * which should reduce the need to fiddle with the learning rate as much.
  *
  * It supports both L1 and L2 regularization, which may be used at the same
  * time. L2 regularization uses the "scalar-times-a-vector" trick for
  * efficient shrinking during training, and L1 regularization is performed
  * using the cumulative penalty method of Tsuruoka, Tsujii, and Ananiadou.
  *
- * @see http://arxiv.org/abs/1305.6646
+ * @see http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf
  * @see http://www.aclweb.org/anthology/P09-1054
  */
 class sgd_model
 {
   public:
     /// The default initial learning rate
-    const static constexpr double default_learning_rate = 0.5;
+    const static constexpr double default_learning_rate = 0.001;
 
     /// The default l2 regularization parameter
     const static constexpr double default_l2_regularizer = 1e-7;
@@ -96,10 +96,17 @@ class sgd_model
      */
     template <class SampleView, class LabelFunction>
     void calibrate(SampleView view, const loss::loss_function& loss,
-                   LabelFunction&& labeler, double calibration_rate = 2.0,
+                   LabelFunction&& labeler, double calibration_rate = 2,
                    std::size_t calibration_samples = 1000)
     {
         using diff_type = typename decltype(view.begin())::difference_type;
+
+        // we can't calibrate properly if we get 0 loss from a null
+        // prediction as we'll just end up setting the learning rate to 0
+        // to keep the loss minimized. This happens when we're passed the
+        // Perceptron loss.
+        if (loss.loss(0, 1) == 0 && loss.loss(0, -1) == 0)
+            return;
 
         view.shuffle();
         auto samples = std::min(calibration_samples, view.size());
@@ -108,12 +115,12 @@ class sgd_model
 
         lr_ *= calibration_rate;
         reset();
-        auto hi_loss = avg_loss_on_sample(view, loss,
+        auto hi_loss = avg_loss_on_sample(view, calibration_samples, loss,
                                           std::forward<LabelFunction>(labeler));
 
         lr_ /= calibration_rate;
         reset();
-        auto lo_loss = avg_loss_on_sample(view, loss,
+        auto lo_loss = avg_loss_on_sample(view, calibration_samples, loss,
                                           std::forward<LabelFunction>(labeler));
 
         if (lo_loss < hi_loss)
@@ -123,8 +130,9 @@ class sgd_model
                 lr_ /= calibration_rate;
                 hi_loss = lo_loss;
                 reset();
-                lo_loss = avg_loss_on_sample(
-                    view, loss, std::forward<LabelFunction>(labeler));
+                lo_loss
+                    = avg_loss_on_sample(view, calibration_samples, loss,
+                                         std::forward<LabelFunction>(labeler));
             }
             lr_ *= calibration_rate;
         }
@@ -136,12 +144,17 @@ class sgd_model
                 lr_ *= calibration_rate;
                 lo_loss = hi_loss;
                 reset();
-                hi_loss = avg_loss_on_sample(
-                    view, loss, std::forward<LabelFunction>(labeler));
+                hi_loss
+                    = avg_loss_on_sample(view, calibration_samples, loss,
+                                         std::forward<LabelFunction>(labeler));
             }
             lr_ /= calibration_rate;
         }
 
+        // sometimes calibration gets out of control, so tame it a bit here
+        // just in case. If you need a learning rate out of this range, you
+        // hopefully know it.
+        lr_ = std::max(std::min(lr_, 2.0), 1e-6);
         reset();
     }
 
@@ -177,23 +190,28 @@ class sgd_model
     struct weight_type
     {
         double weight = 0;
-        double scale = 0;
         double grad_squared = 0;
         double cumulative_penalty = 0;
     };
 
     template <class SampleView, class LabelFunction>
     double avg_loss_on_sample(const SampleView& sample,
+                              std::size_t calibration_samples,
                               const loss::loss_function& loss,
                               LabelFunction&& labeler)
     {
         auto avg_loss = 0.0;
-        for (const auto& inst : sample)
-            avg_loss += train_one(inst.weights, labeler(inst), loss);
-        avg_loss /= sample.size();
+        auto it = sample.begin();
+        for (std::size_t i = 0; i < calibration_samples; ++i)
+        {
+            if (it == sample.end())
+                it = sample.begin();
+            avg_loss += train_one(it->weights, labeler(*it), loss);
+        }
+        avg_loss /= calibration_samples;
 
         if (l2_regularization_ > 0)
-            avg_loss += 0.5 * l2_regularization_ * l2norm();
+            avg_loss += 0.5 * l2_regularization_ * std::pow(l2norm(), 2);
 
         if (l1_regularization_ > 0)
             avg_loss += l1_regularization_ * l1norm();
