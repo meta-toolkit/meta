@@ -139,7 +139,7 @@ void transform(dataset& dset, TransformFunction&& trans)
  * @param rnk The ranker to use to define tf-idf weights (via its
  * score_one())
  */
-void tfidf_transform(dataset& dset, index::inverted_index& idx,
+inline void tfidf_transform(dataset& dset, index::inverted_index& idx,
                      index::ranking_function& rnk)
 {
     tfidf_transformer transformer{idx, rnk};
@@ -152,7 +152,7 @@ void tfidf_transform(dataset& dset, index::inverted_index& idx,
  *
  * @param dset The dataset to be transformed
  */
-void l2norm_transform(dataset& dset)
+inline void l2norm_transform(dataset& dset)
 {
     return transform(dset, l2norm_transformer{});
 }
