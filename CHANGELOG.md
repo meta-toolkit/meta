@@ -1,3 +1,12 @@
+# [v3.0.2][3.0.2]
+## Bug fixes
+- Fix issues using `MAKE_NUMERIC_IDENTIFIER` instead of
+  `MAKE_NUMERIC_IDENTIFIER_UDL` on GCC 7.1.1.
+- Work around (what we assume is) a bug on MSYS2 where `cmake` would link
+  in additional exception handling libraries that would cause a crash
+  during indexing by building the `mman-win32` library as shared.
+- Silence fallthrough warnings on Clang from `murmur_hash`.
+
 # [v3.0.1][3.0.1]
 ## New features
 - Add an optional `xz{i,o}fstream` to `meta::io` if compiled with liblzma
@@ -628,7 +637,8 @@
 # [v1.0][1.0]
 - Initial release.
 
-[unreleased]: https://github.com/meta-toolkit/meta/compare/v3.0.1...develop
+[unreleased]: https://github.com/meta-toolkit/meta/compare/v3.0.2...develop
+[3.0.2]: https://github.com/meta-toolkit/meta/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/meta-toolkit/meta/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/meta-toolkit/meta/compare/v2.4.2...v3.0.0
 [2.4.2]: https://github.com/meta-toolkit/meta/compare/v2.4.1...v2.4.2
