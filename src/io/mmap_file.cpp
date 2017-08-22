@@ -5,13 +5,13 @@
 
 #ifndef _WIN32
 #include <sys/mman.h>
+#include <unistd.h>
 #else
 #include "meta/io/mman-win32/mman.h"
 #endif
 
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 #include "meta/io/filesystem.h"
 #include "meta/io/mmap_file.h"
