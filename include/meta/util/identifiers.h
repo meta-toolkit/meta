@@ -142,7 +142,7 @@ struct META_EMPTY_BASES identifier : public comparable<identifier<Tag, T>>
     inline friend std::ostream& operator<<(std::ostream& stream,
                                            const identifier& ident)
     {
-        return stream << static_cast<T>(ident);
+        return stream << static_cast<const T&>(ident);
     }
 
     /**
