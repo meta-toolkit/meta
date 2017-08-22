@@ -11,6 +11,7 @@
 #define META_IO_FILEDES_H_
 
 #include <cstdint>
+#include <fcntl.h>
 #include <stdexcept>
 #include <string>
 #include <sys/stat.h>
@@ -19,7 +20,6 @@
 #include <io.h>
 #include <share.h>
 #else
-#include <fcntl.h>
 #include <unistd.h>
 #endif
 
