@@ -36,8 +36,11 @@ ExternalProject_Add(cranfield
 
 # Ignore sign warnings when expanding bandit's macros.
 file(GLOB BANDIT_SOURCE_FILES *.cpp)
-set_property(SOURCE ${BANDIT_SOURCE_FILES} APPEND PROPERTY COMPILE_FLAGS
-    " -Wno-sign-conversion -Wno-conversion")
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang"
+    OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  set_property(SOURCE ${BANDIT_SOURCE_FILES} APPEND PROPERTY COMPILE_FLAGS
+      " -Wno-sign-conversion -Wno-conversion")
+endif()
 add_executable(unit-test ${BANDIT_SOURCE_FILES})
 add_dependencies(unit-test ceeaus breast-cancer)
 target_include_directories(unit-test PUBLIC ${meta_SOURCE_DIR}/../deps/bandit/)
