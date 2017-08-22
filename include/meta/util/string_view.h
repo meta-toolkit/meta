@@ -76,8 +76,7 @@ class basic_string_view
     template <class Allocator>
     basic_string_view(
         const std::basic_string<Char, Traits, Allocator>& str) noexcept
-        : data_{str.data()},
-          size_{str.size()}
+        : data_{str.data()}, size_{str.size()}
     {
         // nothing
     }
@@ -483,10 +482,11 @@ using u16string_view = basic_string_view<char16_t>;
 using u32string_view = basic_string_view<char32_t>;
 using wstring_view = basic_string_view<wchar_t>;
 
-namespace
+namespace detail
 {
-template <class T>
-using identity = typename std::decay<T>::type;
+template <class Conv, class To, class T>
+using converts_to =
+    typename std::enable_if<std::is_convertible<Conv, To>::value, T>::type;
 }
 
 template <class Char, class Traits>
@@ -496,19 +496,20 @@ constexpr bool operator==(basic_string_view<Char, Traits> lhs,
     return lhs.compare(rhs) == 0;
 }
 
-template <class Char, class Traits>
-constexpr bool
-operator==(basic_string_view<Char, Traits> lhs,
-           identity<basic_string_view<Char, Traits>> rhs) noexcept
+template <class Char, class Traits, class Conv>
+constexpr auto operator==(basic_string_view<Char, Traits> lhs,
+                          Conv&& rhs) noexcept
+    -> detail::converts_to<Conv, decltype(lhs), bool>
 {
-    return lhs.compare(rhs) == 0;
+    return lhs.compare(std::forward<Conv>(rhs)) == 0;
 }
 
-template <class Char, class Traits>
-constexpr bool operator==(identity<basic_string_view<Char, Traits>> lhs,
+template <class Char, class Traits, class Conv>
+constexpr auto operator==(Conv&& lhs,
                           basic_string_view<Char, Traits> rhs) noexcept
+    -> detail::converts_to<Conv, decltype(rhs), bool>
 {
-    return lhs.compare(rhs) == 0;
+    return decltype(rhs)(std::forward<Conv>(lhs)).compare(rhs) == 0;
 }
 
 template <class Char, class Traits>
@@ -518,19 +519,20 @@ constexpr bool operator!=(basic_string_view<Char, Traits> lhs,
     return lhs.compare(rhs) != 0;
 }
 
-template <class Char, class Traits>
-constexpr bool
-operator!=(basic_string_view<Char, Traits> lhs,
-           identity<basic_string_view<Char, Traits>> rhs) noexcept
+template <class Char, class Traits, class Conv>
+constexpr auto operator!=(basic_string_view<Char, Traits> lhs,
+                          Conv&& rhs) noexcept
+    -> detail::converts_to<Conv, decltype(lhs), bool>
 {
-    return lhs.compare(rhs) != 0;
+    return lhs.compare(std::forward<Conv>(rhs)) != 0;
 }
 
-template <class Char, class Traits>
-constexpr bool operator!=(identity<basic_string_view<Char, Traits>> lhs,
+template <class Char, class Traits, class Conv>
+constexpr auto operator!=(Conv&& lhs,
                           basic_string_view<Char, Traits> rhs) noexcept
+    -> detail::converts_to<Conv, decltype(rhs), bool>
 {
-    return lhs.compare(rhs) != 0;
+    return decltype(rhs)(std::forward<Conv>(lhs)).compare(rhs) != 0;
 }
 
 template <class Char, class Traits>
@@ -540,18 +542,20 @@ constexpr bool operator<(basic_string_view<Char, Traits> lhs,
     return lhs.compare(rhs) < 0;
 }
 
-template <class Char, class Traits>
-constexpr bool operator<(basic_string_view<Char, Traits> lhs,
-                         identity<basic_string_view<Char, Traits>> rhs) noexcept
+template <class Char, class Traits, class Conv>
+constexpr auto operator<(basic_string_view<Char, Traits> lhs,
+                         Conv&& rhs) noexcept
+    -> detail::converts_to<Conv, decltype(lhs), bool>
 {
-    return lhs.compare(rhs) < 0;
+    return lhs.compare(std::forward<Conv>(rhs)) < 0;
 }
 
-template <class Char, class Traits>
-constexpr bool operator<(identity<basic_string_view<Char, Traits>> lhs,
+template <class Char, class Traits, class Conv>
+constexpr auto operator<(Conv&& lhs,
                          basic_string_view<Char, Traits> rhs) noexcept
+    -> detail::converts_to<Conv, decltype(rhs), bool>
 {
-    return lhs.compare(rhs) < 0;
+    return decltype(rhs)(std::forward<Conv>(lhs)).compare(rhs) < 0;
 }
 
 template <class Char, class Traits>
@@ -561,18 +565,20 @@ constexpr bool operator>(basic_string_view<Char, Traits> lhs,
     return lhs.compare(rhs) > 0;
 }
 
-template <class Char, class Traits>
-constexpr bool operator>(basic_string_view<Char, Traits> lhs,
-                         identity<basic_string_view<Char, Traits>> rhs) noexcept
+template <class Char, class Traits, class Conv>
+constexpr auto operator>(basic_string_view<Char, Traits> lhs,
+                         Conv&& rhs) noexcept
+    -> detail::converts_to<Conv, decltype(lhs), bool>
 {
-    return lhs.compare(rhs) > 0;
+    return lhs.compare(std::forward<Conv>(rhs)) > 0;
 }
 
-template <class Char, class Traits>
-constexpr bool operator>(identity<basic_string_view<Char, Traits>> lhs,
+template <class Char, class Traits, class Conv>
+constexpr auto operator>(Conv&& lhs,
                          basic_string_view<Char, Traits> rhs) noexcept
+    -> detail::converts_to<Conv, decltype(rhs), bool>
 {
-    return lhs.compare(rhs) > 0;
+    return decltype(rhs)(std::forward<Conv>(lhs)).compare(rhs) > 0;
 }
 
 template <class Char, class Traits>
@@ -582,19 +588,20 @@ constexpr bool operator<=(basic_string_view<Char, Traits> lhs,
     return lhs.compare(rhs) <= 0;
 }
 
-template <class Char, class Traits>
-constexpr bool
-operator<=(basic_string_view<Char, Traits> lhs,
-           identity<basic_string_view<Char, Traits>> rhs) noexcept
+template <class Char, class Traits, class Conv>
+constexpr auto operator<=(basic_string_view<Char, Traits> lhs,
+                          Conv&& rhs) noexcept
+    -> detail::converts_to<Conv, decltype(lhs), bool>
 {
-    return lhs.compare(rhs) <= 0;
+    return lhs.compare(std::forward<Conv>(rhs)) <= 0;
 }
 
-template <class Char, class Traits>
-constexpr bool operator<=(identity<basic_string_view<Char, Traits>> lhs,
+template <class Char, class Traits, class Conv>
+constexpr auto operator<=(Conv&& lhs,
                           basic_string_view<Char, Traits> rhs) noexcept
+    -> detail::converts_to<Conv, decltype(rhs), bool>
 {
-    return lhs.compare(rhs) <= 0;
+    return decltype(rhs)(std::forward<Conv>(lhs)).compare(rhs) <= 0;
 }
 
 template <class Char, class Traits>
@@ -604,19 +611,19 @@ constexpr bool operator>=(basic_string_view<Char, Traits> lhs,
     return lhs.compare(rhs) >= 0;
 }
 
-template <class Char, class Traits>
-constexpr bool
-operator>=(basic_string_view<Char, Traits> lhs,
-           identity<basic_string_view<Char, Traits>> rhs) noexcept
+template <class Char, class Traits, class Conv>
+constexpr auto operator>=(basic_string_view<Char, Traits> lhs,
+                          Conv&& rhs) noexcept
+    -> detail::converts_to<Conv, decltype(lhs), bool>
 {
-    return lhs.compare(rhs) >= 0;
+    return lhs.compare(std::forward<Conv>(rhs)) >= 0;
 }
 
-template <class Char, class Traits>
-constexpr bool operator>=(identity<basic_string_view<Char, Traits>> lhs,
+template <class Char, class Traits, class Conv>
+constexpr bool operator>=(Conv&& lhs,
                           basic_string_view<Char, Traits> rhs) noexcept
 {
-    return lhs.compare(rhs) >= 0;
+    return decltype(rhs)(std::forward<Conv>(lhs)).compare(rhs) >= 0;
 }
 
 template <class Char, class Traits>
