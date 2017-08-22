@@ -134,20 +134,6 @@ struct META_EMPTY_BASES identifier : public comparable<identifier<Tag, T>>
     }
 
     /**
-     * identifiers are comparable by their base types. This allows for
-     * storage in comparison-based containers like std::map or std::set.
-     *
-     * @param lhs
-     * @param rhs
-     * @return whether lhs < rhs based on T::operator<.
-     */
-    inline friend constexpr bool operator<(const identifier& lhs,
-                                           const identifier& rhs)
-    {
-        return static_cast<T>(lhs) < static_cast<T>(rhs);
-    }
-
-    /**
      * identifiers may be printed to output streams.
      * @param stream The stream to write to
      * @param ident The identifier to write to the stream
@@ -171,6 +157,21 @@ struct META_EMPTY_BASES identifier : public comparable<identifier<Tag, T>>
         return stream >> ident.id_;
     }
 };
+
+/**
+ * identifiers are comparable by their base types. This allows for
+ * storage in comparison-based containers like std::map or std::set.
+ *
+ * @param lhs
+ * @param rhs
+ * @return whether lhs < rhs based on T::operator<.
+ */
+template <class Tag, class T>
+inline constexpr bool operator<(const identifier<Tag, T>& lhs,
+                                const identifier<Tag, T>& rhs)
+{
+    return static_cast<const T&>(lhs) < static_cast<const T&>(rhs);
+}
 
 template <class HashAlgorithm, class Tag, class T>
 void hash_append(HashAlgorithm& h, const identifier<Tag, T>& id)
