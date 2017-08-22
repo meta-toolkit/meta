@@ -123,6 +123,7 @@ class file_descriptor
                 "error obtaining file descriptor for " + std::string(path)};
         }
 #else
+        using detail::to_share;
         auto err = ::_sopen_s(&fd_, path, to_flags(mode), to_share(mode),
                               _S_IREAD | _S_IWRITE);
         if (fd_ < 0)
