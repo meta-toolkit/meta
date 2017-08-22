@@ -3,6 +3,8 @@
  * @author Sean Massung
  */
 
+#include <numeric>
+
 #include "meta/analyzers/all.h"
 #include "meta/analyzers/token_stream.h"
 #include "bandit/bandit.h"
