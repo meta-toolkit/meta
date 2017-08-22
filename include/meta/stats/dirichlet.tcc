@@ -3,6 +3,8 @@
  * @author Chase Geigle
  */
 
+#include <numeric>
+
 #include "meta/io/packed.h"
 #include "meta/stats/dirichlet.h"
 #include "meta/util/identifiers.h"
