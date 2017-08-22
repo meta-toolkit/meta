@@ -19,6 +19,12 @@
 #include "meta/util/comparable.h"
 #include "meta/util/string_view.h"
 
+#if _MSC_VER
+#define META_EMPTY_BASES __declspec(empty_bases)
+#else
+#define META_EMPTY_BASES
+#endif
+
 namespace meta
 {
 namespace util
@@ -46,7 +52,7 @@ struct is_numeric
  * through normal relational operators defined on the underlying type T.
  */
 template <class Tag, class T>
-struct identifier : public comparable<identifier<Tag, T>>
+struct META_EMPTY_BASES identifier : public comparable<identifier<Tag, T>>
 {
     using underlying_type = T;
 
@@ -179,7 +185,8 @@ void hash_append(HashAlgorithm& h, const identifier<Tag, T>& id)
  * top of the things supported by identifiers.
  */
 template <class Tag, class T>
-struct numerical_identifier : public identifier<Tag, T>, numeric
+struct META_EMPTY_BASES numerical_identifier : public identifier<Tag, T>,
+                                               numeric
 {
     using identifier<Tag, T>::identifier;
     using identifier<Tag, T>::id_;
@@ -240,8 +247,9 @@ struct numerical_identifier : public identifier<Tag, T>, numeric
      * @param step How much to increase the current identifier by
      * @return the current identifier
      */
-    template <class U, class = typename std::
-                           enable_if<std::is_convertible<U, T>::value>::type>
+    template <class U,
+              class = typename std::
+                  enable_if<std::is_convertible<U, T>::value>::type>
     numerical_identifier& operator+=(const T& step)
     {
         id_ += step;
@@ -252,8 +260,9 @@ struct numerical_identifier : public identifier<Tag, T>, numeric
      * @param step How much to decrease the current identifier by
      * @return the current identifier
      */
-    template <class U, class = typename std::
-                           enable_if<std::is_convertible<U, T>::value>::type>
+    template <class U,
+              class = typename std::
+                  enable_if<std::is_convertible<U, T>::value>::type>
     numerical_identifier& operator-=(const T& step)
     {
         id_ -= step;
