@@ -3,6 +3,8 @@
  * @author Chase Geigle
  */
 
+#include <numeric>
+
 #include "bandit/bandit.h"
 #include "meta/io/filesystem.h"
 #include "meta/math/integer.h"
