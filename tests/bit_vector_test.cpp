@@ -4,6 +4,7 @@
  */
 
 #include <fstream>
+#include <numeric>
 
 #include "bandit/bandit.h"
 #include "meta/io/filesystem.h"
