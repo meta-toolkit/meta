@@ -10,6 +10,8 @@
 #ifndef META_TESTS_CLASSIFIER_TEST_HELPER_H_
 #define META_TESTS_CLASSIFIER_TEST_HELPER_H_
 
+#include "bandit/bandit.h"
+
 #include "create_config.h"
 #include "meta/caching/all.h"
 #include "meta/classify/classifier/all.h"
