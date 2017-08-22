@@ -100,26 +100,8 @@ disk_vector<T>::~disk_vector()
 }
 
 template <class T>
-template <class, class>
-T& disk_vector<T>::operator[](uint64_t idx)
-{
-    return start_[idx];
-}
-
-template <class T>
 const T& disk_vector<T>::operator[](uint64_t idx) const
 {
-    return start_[idx];
-}
-
-template <class T>
-template <class, class>
-T& disk_vector<T>::at(uint64_t idx)
-{
-    if (idx >= size_)
-        throw disk_vector_exception{"index " + std::to_string(idx)
-                                    + " out of range [0, "
-                                    + std::to_string(size_) + ")"};
     return start_[idx];
 }
 
@@ -140,13 +122,6 @@ uint64_t disk_vector<T>::size() const
 }
 
 template <class T>
-template <class, class>
-auto disk_vector<T>::begin() -> iterator
-{
-    return start_;
-}
-
-template <class T>
 auto disk_vector<T>::begin() const -> const_iterator
 {
     return start_;
@@ -154,13 +129,6 @@ auto disk_vector<T>::begin() const -> const_iterator
 
 template <class T>
 auto disk_vector<T>::end() const -> const_iterator
-{
-    return start_ + size_;
-}
-
-template <class T>
-template <class, class>
-auto disk_vector<T>::end() -> iterator
 {
     return start_ + size_;
 }
