@@ -13,11 +13,13 @@ set(MeTA_VERSION_PATCH 2)
 set(MeTA_VERSION
     "${MeTA_VERSION_MAJOR}.${MeTA_VERSION_MINOR}.${MeTA_VERSION_PATCH}")
 
-# MeTA only requires C++11, but on all of our supported compilers at least
-# C++1y support exists, so we therefore set the standard to 14
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+if (NOT (MSVC_VERSION AND CMAKE_COMPILER_ID MATCHES "Clang"))
+  # MeTA only requires C++11, but on all of our supported compilers at least
+  # C++1y support exists, so we therefore set the standard to 14
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
 
 set(META_PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR})
 
@@ -38,7 +40,9 @@ endif()
 cmake_push_check_state()
 
 # Work around CMake not propagating the standard flag down to the compiler
-set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${CMAKE_CXX14_STANDARD_COMPILE_OPTION}")
+if (NOT MSVC_VERSION)
+  set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${CMAKE_CXX14_STANDARD_COMPILE_OPTION}")
+endif()
 
 # Check if there is no build type set. If meta itself is the root project,
 # compile it in release mode instead. If we aren't the root project, just
