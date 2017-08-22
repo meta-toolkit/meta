@@ -23,6 +23,7 @@
 
 #include "meta/config.h"
 #include "meta/meta.h"
+#include "meta/io/filedes.h"
 
 namespace meta
 {
@@ -149,7 +150,7 @@ class disk_vector
     uint64_t size_;
 
     /// the file descriptor used to open and close the mmap file
-    int file_desc_;
+    io::file_descriptor file_desc_;
 };
 
 /**

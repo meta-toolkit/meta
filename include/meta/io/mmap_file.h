@@ -15,6 +15,7 @@
 
 #include "meta/config.h"
 #include "meta/util/optional.h"
+#include "meta/io/filedes.h"
 
 namespace meta
 {
@@ -83,7 +84,7 @@ class mmap_file
     uint64_t size_;
 
     /// File descriptor for the open text file
-    int file_descriptor_;
+    file_descriptor file_descriptor_;
 
     /// No copying */
     mmap_file(const mmap_file& other) = delete;
