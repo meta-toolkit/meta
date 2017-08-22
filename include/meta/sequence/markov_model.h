@@ -37,6 +37,10 @@ class markov_model
       public:
         friend markov_model;
 
+#if !META_HAS_PROMISE_WITH_NO_DEFAULT_CTOR
+        expected_counts_type() = default;
+#endif
+
         expected_counts_type(uint64_t num_states,
                              stats::dirichlet<state_id> prior);
 

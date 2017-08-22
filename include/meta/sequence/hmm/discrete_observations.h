@@ -41,6 +41,10 @@ class discrete_observations
       public:
         friend discrete_observations;
 
+#if !META_HAS_PROMISE_WITH_NO_DEFAULT_CTOR
+        expected_counts_type() = default;
+#endif
+
         expected_counts_type(uint64_t num_states,
                              stats::dirichlet<observation_type> prior)
             : obs_dist_(num_states, prior)
