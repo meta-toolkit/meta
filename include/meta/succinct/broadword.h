@@ -141,7 +141,7 @@ inline uint64_t popcount(uint64_t word)
 #if META_HAS_BUILTIN_POPCOUNTLL
     return static_cast<uint64_t>(__builtin_popcountll(word));
 #elif META_HAS_POPCOUNT64
-    return static_cast<uint64_t>(_popcount64(word));
+    return static_cast<uint64_t>(__popcnt64(word));
 #else
     return bytes_sum(byte_counts(word));
 #endif
