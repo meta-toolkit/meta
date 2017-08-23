@@ -11,6 +11,7 @@
 #include "meta/succinct/compressed_vector.h"
 
 using namespace bandit;
+using namespace snowhouse;
 
 go_bandit([]() {
     using namespace meta;

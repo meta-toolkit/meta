@@ -16,6 +16,7 @@
 #include "meta/util/shim.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace

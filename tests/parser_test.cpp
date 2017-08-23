@@ -20,6 +20,7 @@
 #include "meta/parser/trees/leaf_node.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace {

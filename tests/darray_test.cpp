@@ -11,6 +11,7 @@
 #include "meta/succinct/darray.h"
 
 using namespace bandit;
+using namespace snowhouse;
 
 go_bandit([]() {
     using namespace meta;

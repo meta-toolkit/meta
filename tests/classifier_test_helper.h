@@ -21,6 +21,8 @@
 #include "meta/index/ranker/all.h"
 #include "meta/learn/loss/all.h"
 
+using namespace snowhouse;
+
 namespace meta {
 namespace tests {
 

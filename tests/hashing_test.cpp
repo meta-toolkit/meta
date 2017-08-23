@@ -20,6 +20,7 @@
 #include "farm_hash_test.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace {

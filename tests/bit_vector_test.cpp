@@ -13,6 +13,7 @@
 #include "meta/util/disk_vector.h"
 
 using namespace bandit;
+using namespace snowhouse;
 
 go_bandit([]() {
     using namespace meta;

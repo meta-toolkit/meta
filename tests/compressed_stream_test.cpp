@@ -14,6 +14,7 @@
 #endif
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 template <class CompressedOutputStream = io::gzofstream>

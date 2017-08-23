@@ -13,6 +13,7 @@
 #include "meta/parallel/thread_pool.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace {

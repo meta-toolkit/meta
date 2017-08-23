@@ -14,6 +14,8 @@
 #include "bandit/bandit.h"
 #include "meta/hashing/hashes/farm_hash.h"
 
+using namespace snowhouse;
+
 namespace
 {
 

@@ -7,6 +7,7 @@
 #include "meta/math/vector.h"
 
 using namespace bandit;
+using namespace snowhouse;
 
 go_bandit([]() {
     describe("[vector math]", []() {
