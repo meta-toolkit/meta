@@ -137,20 +137,20 @@ class sgns_trainer
           max_ram_(embed_cfg.get_as<std::size_t>("max-ram").value_or(4096)
                    * 1024 * 1024),
           subsample_threshold_(
-              sgns_cfg.get_as<double>("subsample-threshold").value_or(1E-4)),
-                  .value_or(1e-4)),
+              (float)embed_cfg.get_as<double>("subsample-threshold")
+                  .value_or(1E-4)),
           max_window_size_(
-             embed_cfg.get_as<std::size_t>("max-window-size").value_or(6)),
+              embed_cfg.get_as<std::size_t>("max-window-size").value_or(6)),
           iterations_(embed_cfg.get_as<uint64_t>("iterations").value_or(10)),
           starting_learning_rate_(
               (float)embed_cfg.get_as<double>("learning-rate").value_or(0.025)),
           negative_samples_(
-             embed_cfg.get_as<std::size_t>("negative-samples").value_or(20)),
+              embed_cfg.get_as<std::size_t>("negative-samples").value_or(20)),
           vocab_(load_vocab(prefix_ + "/vocab.bin")),
           noise_dist_(create_unigram_noise_distribution(
-             embed_cfg.get_as<std::size_t>("unigram-distribution-size")
+              embed_cfg.get_as<std::size_t>("unigram-distribution-size")
                   .value_or(1E8),
-             embed_cfg.get_as<double>("unigram-distribution-power")
+              embed_cfg.get_as<double>("unigram-distribution-power")
                   .value_or(0.75))),
           net_(vocab_.vector.size(), vector_size_),
           learning_rate_(starting_learning_rate_),
