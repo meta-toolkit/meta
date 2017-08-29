@@ -27,8 +27,8 @@ namespace topics
  * ~~~toml
  * inference = "inference-method" # gibbs, pargibbs, cvb, scvb
  * max-iters = 1000
- * alpha = 1.0
- * beta = 1.0
+ * alpha = 0.1
+ * beta = 0.1
  * topics = 4
  * model-prefix = "prefix"
  * ~~~
