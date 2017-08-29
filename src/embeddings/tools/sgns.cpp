@@ -125,8 +125,7 @@ class sgns_trainer
 {
   public:
     // Constructor.
-    sgns_trainer(const cpptoml::table& cfg, const cpptoml::table& embed_cfg,
-                 const cpptoml::table& sgns_cfg)
+    sgns_trainer(const cpptoml::table& cfg, const cpptoml::table& embed_cfg)
         : cfg_(cfg),
           embed_cfg_(embed_cfg),
           prefix_(*embed_cfg.get_as<std::string>("prefix")),
@@ -138,20 +137,20 @@ class sgns_trainer
           max_ram_(embed_cfg.get_as<std::size_t>("max-ram").value_or(4096)
                    * 1024 * 1024),
           subsample_threshold_(
-              (float)sgns_cfg.get_as<double>("subsample-threshold")
+              sgns_cfg.get_as<double>("subsample-threshold").value_or(1E-4)),
                   .value_or(1e-4)),
           max_window_size_(
-              sgns_cfg.get_as<std::size_t>("max-window-size").value_or(6)),
-          iterations_(sgns_cfg.get_as<uint64_t>("iterations").value_or(10)),
+             embed_cfg.get_as<std::size_t>("max-window-size").value_or(6)),
+          iterations_(embed_cfg.get_as<uint64_t>("iterations").value_or(10)),
           starting_learning_rate_(
-              (float)sgns_cfg.get_as<double>("learning-rate").value_or(0.025)),
+              (float)embed_cfg.get_as<double>("learning-rate").value_or(0.025)),
           negative_samples_(
-              sgns_cfg.get_as<std::size_t>("negative-samples").value_or(20)),
+             embed_cfg.get_as<std::size_t>("negative-samples").value_or(20)),
           vocab_(load_vocab(prefix_ + "/vocab.bin")),
           noise_dist_(create_unigram_noise_distribution(
-              sgns_cfg.get_as<std::size_t>("unigram-distribution-size")
+             embed_cfg.get_as<std::size_t>("unigram-distribution-size")
                   .value_or(1E8),
-              sgns_cfg.get_as<double>("unigram-distribution-power")
+             embed_cfg.get_as<double>("unigram-distribution-power")
                   .value_or(0.75))),
           net_(vocab_.vector.size(), vector_size_),
           learning_rate_(starting_learning_rate_),
@@ -580,17 +579,9 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto sgns_cfg = embed_cfg->get_table("sgns");
-    if (!sgns_cfg)
-    {
-        std::cerr << "Missing [embeddings.sgns] configuration in " << argv[1]
-                  << std::endl;
-        return 1;
-    }
-
     try
     {
-        sgns_trainer trainer{*cfg, *embed_cfg, *sgns_cfg};
+        sgns_trainer trainer{*cfg, *embed_cfg};
     }
     catch (const sgns_exception& ex)
     {

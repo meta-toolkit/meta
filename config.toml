@@ -44,8 +44,8 @@ loss = "least-squares"
 [lda]
 inference = "gibbs"
 max-iters = 1000
-alpha = 1.0
-beta = 1.0
+alpha = 0.1
+beta = 0.1
 topics = 4
 model-prefix = "lda-model"
 
@@ -98,12 +98,10 @@ test-sections = [23, 23]
 prefix = "word-embeddings"
 filter = [{type = "icu-tokenizer", suppress-tags = true}, {type = "lowercase"}]
 vector-size = 50
-
-[embeddings.vocab]
-min-count = 5
-max-size = 500000
-
-[embeddings.sgns]
 iterations = 5
 negative-samples = 5
 max-window-size = 5
+
+[embeddings.vocab]
+min-count = 10
+max-size = 500000

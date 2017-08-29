@@ -159,7 +159,7 @@ class glove_trainer
             = embed_cfg.get_as<std::size_t>("num-threads")
                   .value_or(std::max(1u, std::thread::hardware_concurrency()));
 
-        auto iters = embed_cfg.get_as<std::size_t>("max-iter").value_or(25);
+        auto iters = embed_cfg.get_as<std::size_t>("iterations").value_or(25);
 
         learning_rate_
             = embed_cfg.get_as<double>("learning-rate").value_or(0.05);

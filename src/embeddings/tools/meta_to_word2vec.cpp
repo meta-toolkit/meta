@@ -20,7 +20,7 @@ using namespace meta;
 using namespace embeddings;
 
 // Save vectors in word2vec format.
-void save_w2v_vectors(const bool binary_output, const std::string prefix,
+void save_w2v_vectors(const std::string prefix,
                       word_embeddings learned_embeddings)
 {
     auto vector_size = learned_embeddings.vector_size();
@@ -36,25 +36,15 @@ void save_w2v_vectors(const bool binary_output, const std::string prefix,
     {
         fprintf(file, "%s ", vocab[i].c_str());
         auto target_vector = learned_embeddings.at(vocab[i]).v;
-        if (binary_output)
+
+        for (std::size_t j = 0; j < vector_size; ++j)
         {
-            for (std::size_t j = 0; j < vector_size; ++j)
-            {
-                // Copying seemed to work here. assuming
-                // there is a better way to do this but
-                // couldn't quite get it.
+            // Copying seemed to work here. assuming
+            // there is a better way to do this but
+            // couldn't quite get it.
                 auto value = static_cast<float>(target_vector[j]);
-                fwrite(&value, sizeof(float), 1, file);
-                progress(i * vector_size + j);
-            }
-        }
-        else
-        {
-            for (std::size_t j = 0; j < vector_size; ++j)
-            {
-                fprintf(file, "%lf ", target_vector[j]);
-                progress(i * vector_size + j);
-            }
+            fwrite(&value, sizeof(float), 1, file);
+            progress(i * vector_size + j);
         }
 
         fprintf(file, "\n");
@@ -82,23 +72,13 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto sgns_cfg = embed_cfg->get_table("sgns");
-    if (!sgns_cfg)
-    {
-        std::cerr << "Missing [embeddings.sgns] configuration in " << argv[1]
-                  << std::endl;
-        return 1;
-    }
-
     auto prefix = embed_cfg->get_as<std::string>("prefix");
     if (!prefix)
         throw word_embeddings_exception{
             "missing prefix key in configuration file"};
-
-    auto binary_output = sgns_cfg->get_as<bool>("binary");
     if (!prefix)
         throw word_embeddings_exception{
             "missing prefix key in configuration file"};
 
-    save_w2v_vectors(*binary_output, *prefix, load_embeddings(*embed_cfg));
+    save_w2v_vectors(*prefix, load_embeddings(*embed_cfg));
 }
