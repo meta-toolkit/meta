@@ -45,6 +45,8 @@ class icu_tokenizer::impl
      */
     void set_content(std::string content)
     {
+        tokens_.clear();
+
         auto pred = [](char c) {
             return c == '\n' || c == '\v' || c == '\f' || c == '\r';
         };
