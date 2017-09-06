@@ -109,6 +109,15 @@ matrix:
       osx_image: xcode8.3
       env: COMPILER=clang
 
+    # OS X 10.12 + Xcode 8.3 w/ Xcode generator
+    - os: osx
+      osx_image: xcode8.3
+      env:
+        - COMPILER=clang
+        - CMAKE_EXTRA_ARGS=-GXcode
+        - BUILD_CMD="cmake --build . --config Release"
+        - TEST_CMD="Release/unit-test --reporter=spec"
+
     # OS X/GCC 7
     - os: osx
       osx_image: xcode7.3
@@ -125,4 +134,4 @@ before_script:
 
 script:
   - git submodule update --init --recursive
-  - ../travis/cmake.sh Release && make -j2 && ./unit-test --reporter=spec
+  - ../travis/build.sh
