@@ -208,7 +208,7 @@ public:
         cout << this->ref_voc_size_ << endl;
     }
 
-    std::map<std::string, double> minka_fpi(double eps=1e-6, int max_iters=100){
+    double minka_fpi(double eps=1e-3, int max_iters=100){
         std::map<std::string, double> alpha_m;
 
         // create initial alpa_m vector
@@ -225,7 +225,7 @@ public:
             std::string word_k;
             double alpha_m_k, alpha_k, alpha_m_k_new;
 
-            cout << endl;
+            cout << vector_iteration << endl;
 
             for (auto alpha_m_iter: alpha_m){
                 word_k = alpha_m_iter.first;
@@ -242,9 +242,19 @@ public:
                     alpha_m[word_k] = alpha_m_k_new;
                 }
             }
+
+            vector_iteration++;
         }
 
-        return alpha_m;
+        cout << endl << "Alpha_m for each word:" << endl;
+
+        double optimal_alpha = 0;
+        for (auto alpha_m_iter: alpha_m){
+            cout << alpha_m_iter.first << " " << alpha_m_iter.second << std::endl;
+            optimal_alpha += alpha_m_iter.second;
+        }
+
+        return optimal_alpha;
     }
 
     double minka_newton(){

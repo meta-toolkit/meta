@@ -29,11 +29,9 @@ int main(){
 
     dirichlet_optimizer optimizer(dms);
 
-    auto optimized = optimizer.minka_fpi();
+    auto optimal_alpha = optimizer.minka_fpi();
 
-    for (auto iter: optimized){
-        std::cout << iter.first << " " << iter.second << std::endl;
-    }
+    cout << endl << "optimal alpha: " << optimal_alpha;
 }
 #else
 #include "meta/stats/optimization.h"
