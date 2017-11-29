@@ -37,13 +37,12 @@ int main(int argc, char* argv[])
         auto config = cpptoml::parse_file(argv[1]);
         auto idx = index::make_index<index::inverted_index>(*config);
 
-        // Print out some data about the corpus.
-        std::cout << "Number of documents: " << idx->num_docs() << std::endl;
-        std::cout << "Avg Doc Length: " << idx->avg_doc_length() << std::endl;
-        std::cout << "Unique Terms: " << idx->unique_terms() << std::endl;
+        // Create and make score of optimizer
+        index::digamma_rec ranker;
+        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
     });
 
-    std::cout << "Index generation took: " << time.count() / 1000.0
+    std::cout << "Method took: " << time.count() / 1000.0
               << " seconds" << std::endl;
 
     return 0;

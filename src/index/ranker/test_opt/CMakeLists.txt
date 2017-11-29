@@ -4,5 +4,7 @@ include_directories(../../../../include)
 
 add_executable(test_opt test.cpp)
 
-target_link_libraries(test_opt meta-ranker)
+target_link_libraries(test_opt meta-ranker
+    meta-sequence-analyzers
+    meta-parser-analyzers)
 
