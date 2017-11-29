@@ -28,21 +28,41 @@ int main(int argc, char* argv[])
     parser::register_analyzers();
     sequence::register_analyzers();
 
+    // Creates an inverted index with no cache. We don't need a cache here
+    //  since we're never searching the index, only building it.
+    auto config = cpptoml::parse_file(argv[1]);
+    auto idx = index::make_index<index::inverted_index>(*config);
+
     // Time how long it takes to create the index. By default, common::time's
     //  unit of measurement is milliseconds.
     auto time = common::time([&]()
     {
-        // Creates an inverted index with no cache. We don't need a cache here
-        //  since we're never searching the index, only building it.
-        auto config = cpptoml::parse_file(argv[1]);
-        auto idx = index::make_index<index::inverted_index>(*config);
-
         // Create and make score of optimizer
         index::digamma_rec ranker;
         std::cout << ranker.get_optimized_mu(*idx) << std::endl;
     });
 
-    std::cout << "Method took: " << time.count() / 1000.0
+    std::cout << "Method DR took: " << time.count() / 1000.0
+              << " seconds" << std::endl;
+
+    time = common::time([&]()
+    {
+        // Create and make score of optimizer
+        index::log_approx ranker;
+        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
+    });
+
+    std::cout << "Method LA took: " << time.count() / 1000.0
+              << " seconds" << std::endl;
+
+    time = common::time([&]()
+    {
+        // Create and make score of optimizer
+        index::mackay_peto ranker;
+        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
+    });
+
+    std::cout << "Method MP took: " << time.count() / 1000.0
               << " seconds" << std::endl;
 
     return 0;
