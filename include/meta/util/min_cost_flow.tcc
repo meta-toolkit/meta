@@ -17,72 +17,34 @@ namespace meta
 {
 namespace util
 {
-template <typename CostType>
+template <typename T>
 struct edge
 {
-    edge(size_t to, CostType cost) : _to(to), _cost(cost)
+    edge(size_t to = 0, T cost = 0) : _to(to), _cost(cost)
     {
     }
 
     size_t _to;
-    CostType _cost;
+    T _cost;
 };
 
-template <typename CostType>
-struct edge0
+template <typename T>
+struct edge_weighted
 {
-    edge0(size_t to, CostType cost, CostType flow)
-        : _to(to), _cost(cost), _flow(flow)
+    edge_weighted(size_t to, T cost, T amount)
+        : _to(to), _cost(cost), _amount(amount)
     {
     }
 
     size_t _to;
-    CostType _cost;
-    CostType _flow;
-};
-
-template <typename CostType>
-struct edge1
-{
-    edge1(size_t to, CostType reduced_cost)
-        : _to(to), _reduced_cost(reduced_cost)
-    {
-    }
-
-    size_t _to;
-    CostType _reduced_cost;
-};
-
-template <typename CostType>
-struct edge2
-{
-    edge2(size_t to, CostType reduced_cost, CostType residual_capacity)
-        : _to(to),
-          _reduced_cost(reduced_cost),
-          _residual_capacity(residual_capacity)
-    {
-    }
-
-    size_t _to;
-    CostType _reduced_cost;
-    CostType _residual_capacity;
-};
-
-template <typename DistType>
-struct edge3
-{
-    edge3(size_t to = 0, DistType dist = 0) : _to(to), _dist(dist)
-    {
-    }
-
-    size_t _to;
-    DistType _dist;
+    T _cost;
+    T _amount;
 };
 
 template <typename NumT>
 NumT min_cost_flow<NumT>::compute_min_cost_flow(
     std::vector<NumT>& e, const std::vector<std::list<edge<NumT>>>& c,
-    std::vector<std::list<edge0<NumT>>>& x)
+    std::vector<std::list<edge_weighted<NumT>>>& x)
 {
 
     assert(e.size() == c.size());
@@ -96,31 +58,31 @@ NumT min_cost_flow<NumT>::compute_min_cost_flow(
     {
         for (auto it = c[from].begin(); it != c[from].end(); ++it)
         {
-            x[from].push_back(edge0<NumT>(it->_to, it->_cost, 0));
-            x[it->_to].push_back(edge0<NumT>(from, -it->_cost, 0));
+            x[from].push_back(edge_weighted<NumT>(it->_to, it->_cost, 0));
+            x[it->_to].push_back(edge_weighted<NumT>(from, -it->_cost, 0));
         }
     }
 
     // reduced costs for forward edges (c[i,j]-pi[i]+pi[j])
     // Note that for forward edges the residual capacity is infinity
-    std::vector<std::list<edge1<NumT>>> r_cost_forward(_num_nodes);
+    std::vector<std::list<edge<NumT>>> r_cost_forward(_num_nodes);
     for (size_t from = 0; from < _num_nodes; ++from)
     {
         for (auto it = c[from].begin(); it != c[from].end(); ++it)
         {
-            r_cost_forward[from].push_back(edge1<NumT>(it->_to, it->_cost));
+            r_cost_forward[from].push_back(edge<NumT>(it->_to, it->_cost));
         }
     }
 
     // reduced costs and capacity for backward edges (c[j,i]-pi[j]+pi[i])
     // Since the flow at the beginning is 0, the residual capacity is also zero
-    std::vector<std::list<edge2<NumT>>> r_cost_cap_backward(_num_nodes);
+    std::vector<std::list<edge_weighted<NumT>>> r_cost_cap_backward(_num_nodes);
     for (size_t from = 0; from < _num_nodes; ++from)
     {
         for (auto it = c[from].begin(); it != c[from].end(); ++it)
         {
             r_cost_cap_backward[it->_to].push_back(
-                edge2<NumT>(from, -it->_cost, 0));
+                edge_weighted<NumT>(from, -it->_cost, 0));
         }
     }
 
@@ -175,8 +137,8 @@ NumT min_cost_flow<NumT>::compute_min_cost_flow(
             }
             if (itccb != r_cost_cap_backward[from].end())
             {
-                if (itccb->_residual_capacity < delta)
-                    delta = itccb->_residual_capacity;
+                if (itccb->_amount < delta)
+                    delta = itccb->_amount;
             }
 
             to = from;
@@ -194,7 +156,7 @@ NumT min_cost_flow<NumT>::compute_min_cost_flow(
             {
                 ++itx;
             }
-            itx->_flow += delta;
+            itx->_amount += delta;
 
             // update residual for backward edges
             auto itccb = r_cost_cap_backward[to].begin();
@@ -205,7 +167,7 @@ NumT min_cost_flow<NumT>::compute_min_cost_flow(
             }
             if (itccb != r_cost_cap_backward[to].end())
             {
-                itccb->_residual_capacity += delta;
+                itccb->_amount += delta;
             }
             itccb = r_cost_cap_backward[from].begin();
             while ((itccb != r_cost_cap_backward[from].end())
@@ -215,7 +177,7 @@ NumT min_cost_flow<NumT>::compute_min_cost_flow(
             }
             if (itccb != r_cost_cap_backward[from].end())
             {
-                itccb->_residual_capacity -= delta;
+                itccb->_amount -= delta;
             }
 
             // update e
@@ -232,7 +194,7 @@ NumT min_cost_flow<NumT>::compute_min_cost_flow(
     {
         for (auto it = x[from].begin(); it != x[from].end(); ++it)
         {
-            dist += (it->_cost * it->_flow);
+            dist += (it->_cost * it->_amount);
         }
     }
     return dist;
@@ -241,23 +203,23 @@ NumT min_cost_flow<NumT>::compute_min_cost_flow(
 template <typename NumT>
 void min_cost_flow<NumT>::compute_shortest_path(
     std::vector<NumT>& d, std::vector<size_t>& prev, size_t from,
-    std::vector<std::list<edge1<NumT>>>& cost_forward,
-    std::vector<std::list<edge2<NumT>>>& cost_backward,
+    std::vector<std::list<edge<NumT>>>& cost_forward,
+    std::vector<std::list<edge_weighted<NumT>>>& cost_backward,
     const std::vector<NumT>& e, size_t& l)
 {
     // Making heap (all inf except 0, so we are saving comparisons...)
-    std::vector<edge3<NumT>> demand(_num_nodes);
+    std::vector<edge<NumT>> demand(_num_nodes);
 
     demand[0]._to = from;
     _nodes_to_demand[from] = 0;
-    demand[0]._dist = 0;
+    demand[0]._cost = 0;
 
     size_t j = 1;
     for (size_t i = 0; i < from; ++i)
     {
         demand[j]._to = i;
         _nodes_to_demand[i] = j;
-        demand[j]._dist = std::numeric_limits<NumT>::max();
+        demand[j]._cost = std::numeric_limits<NumT>::max();
         ++j;
     }
 
@@ -265,7 +227,7 @@ void min_cost_flow<NumT>::compute_shortest_path(
     {
         demand[j]._to = i;
         _nodes_to_demand[i] = j;
-        demand[j]._dist = std::numeric_limits<NumT>::max();
+        demand[j]._cost = std::numeric_limits<NumT>::max();
         ++j;
     }
 
@@ -275,7 +237,7 @@ void min_cost_flow<NumT>::compute_shortest_path(
     {
         size_t u = demand[0]._to;
 
-        d[u] = demand[0]._dist; // final distance
+        d[u] = demand[0]._cost; // final distance
         final_nodes_flg[u] = true;
         if (e[u] < 0)
         {
@@ -289,25 +251,26 @@ void min_cost_flow<NumT>::compute_shortest_path(
         for (auto it = cost_forward[u].begin(); it != cost_forward[u].end();
              ++it)
         {
-            assert(it->_reduced_cost >= 0);
-            NumT alt = d[u] + it->_reduced_cost;
+            assert(it->_cost >= 0);
+            NumT alt = d[u] + it->_cost;
             size_t v = it->_to;
             if ((_nodes_to_demand[v] < demand.size())
-                && (alt < demand[_nodes_to_demand[v]]._dist))
+                && (alt < demand[_nodes_to_demand[v]]._cost))
             {
                 heap_decrease_key(demand, _nodes_to_demand, v, alt);
                 prev[v] = u;
             }
         }
-        for (auto it = cost_backward[u].begin(); it != cost_backward[u].end(); ++it)
+        for (auto it = cost_backward[u].begin(); it != cost_backward[u].end();
+             ++it)
         {
-            if (it->_residual_capacity > 0)
+            if (it->_amount > 0)
             {
-                assert(it->_reduced_cost >= 0);
-                NumT alt = d[u] + it->_reduced_cost;
+                assert(it->_cost >= 0);
+                NumT alt = d[u] + it->_cost;
                 size_t v = it->_to;
                 if ((_nodes_to_demand[v] < demand.size())
-                    && (alt < demand[_nodes_to_demand[v]]._dist))
+                    && (alt < demand[_nodes_to_demand[v]]._cost))
                 {
                     heap_decrease_key(demand, _nodes_to_demand, v, alt);
                     prev[v] = u;
@@ -325,11 +288,11 @@ void min_cost_flow<NumT>::compute_shortest_path(
         {
             if (final_nodes_flg[node_from])
             {
-                it->_reduced_cost += d[node_from] - d[l];
+                it->_cost += d[node_from] - d[l];
             }
             if (final_nodes_flg[it->_to])
             {
-                it->_reduced_cost -= d[it->_to] - d[l];
+                it->_cost -= d[it->_to] - d[l];
             }
         }
     }
@@ -342,11 +305,11 @@ void min_cost_flow<NumT>::compute_shortest_path(
         {
             if (final_nodes_flg[node_from])
             {
-                it->_reduced_cost += d[node_from] - d[l];
+                it->_cost += d[node_from] - d[l];
             }
             if (final_nodes_flg[it->_to])
             {
-                it->_reduced_cost -= d[it->_to] - d[l];
+                it->_cost -= d[it->_to] - d[l];
             }
         }
     }
@@ -354,12 +317,12 @@ void min_cost_flow<NumT>::compute_shortest_path(
 
 template <typename NumT>
 void min_cost_flow<NumT>::heap_decrease_key(
-    std::vector<edge3<NumT>>& demand, std::vector<size_t>& nodes_to_demand,
+    std::vector<edge<NumT>>& demand, std::vector<size_t>& nodes_to_demand,
     size_t v, NumT alt)
 {
     size_t i = nodes_to_demand[v];
-    demand[i]._dist = alt;
-    while (i > 0 && demand[PARENT(i)]._dist > demand[i]._dist)
+    demand[i]._cost = alt;
+    while (i > 0 && demand[PARENT(i)]._cost > demand[i]._cost)
     {
         swap_heap(demand, nodes_to_demand, i, PARENT(i));
         i = PARENT(i);
@@ -368,7 +331,7 @@ void min_cost_flow<NumT>::heap_decrease_key(
 
 template <typename NumT>
 void min_cost_flow<NumT>::heap_remove_first(
-    std::vector<edge3<NumT>>& demand, std::vector<size_t>& nodes_to_demand)
+    std::vector<edge<NumT>>& demand, std::vector<size_t>& nodes_to_demand)
 {
     swap_heap(demand, nodes_to_demand, 0, demand.size() - 1);
     demand.pop_back();
@@ -376,7 +339,7 @@ void min_cost_flow<NumT>::heap_remove_first(
 }
 
 template <typename NumT>
-void min_cost_flow<NumT>::heapify(std::vector<edge3<NumT>>& demand,
+void min_cost_flow<NumT>::heapify(std::vector<edge<NumT>>& demand,
                                   std::vector<size_t>& nodes_to_demand,
                                   size_t i)
 {
@@ -387,7 +350,7 @@ void min_cost_flow<NumT>::heapify(std::vector<edge3<NumT>>& demand,
         size_t l = LEFT(i);
         size_t r = RIGHT(i);
         size_t smallest;
-        if ((l < demand.size()) && (demand[l]._dist < demand[i]._dist))
+        if ((l < demand.size()) && (demand[l]._cost < demand[i]._cost))
         {
             smallest = l;
         }
@@ -395,7 +358,7 @@ void min_cost_flow<NumT>::heapify(std::vector<edge3<NumT>>& demand,
         {
             smallest = i;
         }
-        if ((r < demand.size()) && (demand[r]._dist < demand[smallest]._dist))
+        if ((r < demand.size()) && (demand[r]._cost < demand[smallest]._cost))
         {
             smallest = r;
         }
@@ -410,11 +373,11 @@ void min_cost_flow<NumT>::heapify(std::vector<edge3<NumT>>& demand,
 }
 
 template <typename NumT>
-void min_cost_flow<NumT>::swap_heap(std::vector<edge3<NumT>>& demand,
+void min_cost_flow<NumT>::swap_heap(std::vector<edge<NumT>>& demand,
                                     std::vector<size_t>& nodes_to_demand,
                                     size_t i, size_t j)
 {
-    edge3<NumT> tmp = demand[i];
+    edge<NumT> tmp = demand[i];
     demand[i] = demand[j];
     demand[j] = tmp;
     nodes_to_demand[demand[j]._to] = j;
@@ -644,7 +607,7 @@ T min_cost_flow<NumT>::integral_emd_hat(
     min_cost_flow<T> mcf;
     T my_dist;
 
-    std::vector<std::list<edge0<T>>> flows(bb.size());
+    std::vector<std::list<edge_weighted<T>>> flows(bb.size());
 
     T mcf_dist = mcf.compute_min_cost_flow(bb, cc, flows);
 
@@ -655,7 +618,6 @@ T min_cost_flow<NumT>::integral_emd_hat(
 }
 }
 }
-
 
 // Copyright (c) 2009-2012, Ofir Pele
 // All rights reserved.

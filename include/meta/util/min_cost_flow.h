@@ -21,16 +21,7 @@ template <typename CostType>
 struct edge;
 
 template <typename CostType>
-struct edge0;
-
-template <typename CostType>
-struct edge1;
-
-template <typename CostType>
-struct edge2;
-
-template <typename DistType>
-struct edge3;
+struct edge_weighted;
 
 template <typename NumT>
 class min_cost_flow
@@ -46,7 +37,7 @@ class min_cost_flow
     // x - the flow is returned in it
     NumT compute_min_cost_flow(std::vector<NumT>& e,
                                const std::vector<std::list<edge<NumT>>>& c,
-                               std::vector<std::list<edge0<NumT>>>& x);
+                               std::vector<std::list<edge_weighted<NumT>>>& x);
 
   private:
     size_t _num_nodes;
@@ -57,24 +48,23 @@ class min_cost_flow
                               const std::vector<T>& demand,
                               const std::vector<std::vector<T>>& cost);
 
-    void
-    compute_shortest_path(std::vector<NumT>& d, std::vector<size_t>& prev,
-                          size_t from,
-                          std::vector<std::list<edge1<NumT>>>& cost_forward,
-                          std::vector<std::list<edge2<NumT>>>& cost_backward,
-                          const std::vector<NumT>& e, size_t& l);
+    void compute_shortest_path(
+        std::vector<NumT>& d, std::vector<size_t>& prev, size_t from,
+        std::vector<std::list<edge<NumT>>>& cost_forward,
+        std::vector<std::list<edge_weighted<NumT>>>& cost_backward,
+        const std::vector<NumT>& e, size_t& l);
 
-    void heap_decrease_key(std::vector<edge3<NumT>>& demand,
+    void heap_decrease_key(std::vector<edge<NumT>>& demand,
                            std::vector<size_t>& nodes_to_demand, size_t v,
                            NumT alt);
 
-    void heap_remove_first(std::vector<edge3<NumT>>& demand,
+    void heap_remove_first(std::vector<edge<NumT>>& demand,
                            std::vector<size_t>& nodes_to_demand);
 
-    void heapify(std::vector<edge3<NumT>>& demand,
+    void heapify(std::vector<edge<NumT>>& demand,
                  std::vector<size_t>& nodes_to_demand, size_t i);
 
-    void swap_heap(std::vector<edge3<NumT>>& demand,
+    void swap_heap(std::vector<edge<NumT>>& demand,
                    std::vector<size_t>& nodes_to_demand, size_t i, size_t j);
 
     size_t LEFT(size_t i)
@@ -97,8 +87,7 @@ class min_cost_flow
 
 #include "min_cost_flow.tcc"
 
-#endif //FAST_EMD_MIN_COST_FLOW_H
-
+#endif // FAST_EMD_MIN_COST_FLOW_H
 
 // Copyright (c) 2009-2012, Ofir Pele
 // All rights reserved.

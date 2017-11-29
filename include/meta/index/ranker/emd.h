@@ -226,7 +226,7 @@ public:
         }
 
         util::min_cost_flow<double> mcf;
-        std::vector<std::list<util::edge0<double>>> f(xtra.size());
+        std::vector<std::list<util::edge_weighted<double>>> f(xtra.size());
 
         auto score = mcf.compute_min_cost_flow(xtra, edges, f);
 
