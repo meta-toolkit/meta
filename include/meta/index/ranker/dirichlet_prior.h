@@ -75,6 +75,7 @@ class dirichlet_prior_opt : public dirichlet_prior{
 //    void rank(ranker_context &ctx, uint64_t num_results, const filter_function_type &filter) const override{
 //        ranking_function::rank(ctx, num_results, filter);
 //    }
+public:
     template <class ForwardIterator>
     std::vector<search_result> score(inverted_index& idx, ForwardIterator begin,
                                      ForwardIterator end,
@@ -85,7 +86,7 @@ class dirichlet_prior_opt : public dirichlet_prior{
 
         return ranker::score(idx, begin, end, num_results);
     }
-
+private:
     virtual void optimize_mu(const inverted_index& idx) = 0;
 };
 
