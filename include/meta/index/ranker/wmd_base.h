@@ -60,16 +60,15 @@ class wmd_base : public ranker
 
   private:
     std::shared_ptr<forward_index> fwd_;
-    std::shared_ptr<caching::dblru_shard_cache<std::pair<uint64_t, uint64_t>,
-                                               double>>
-        cache_;
     std::shared_ptr<embeddings::word_embeddings> embeddings_;
     const size_t nthreads_;
     const size_t cache_size_;
+    std::shared_ptr<caching::dblru_shard_cache<std::pair<uint64_t, uint64_t>,
+                                               double>>
+        cache_;
 
     meta::index::Document
-    create_document(std::vector<std::pair<term_id, double>> tf,
-                    ranker_context& ctx);
+    create_document(std::vector<std::pair<term_id, double>> tf);
 };
 
 /**

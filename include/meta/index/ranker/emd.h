@@ -116,7 +116,7 @@ public:
             }
         }
         util::min_cost_flow<double> mcf;
-        auto score = mcf.emd_hat(supply, demand, supply, demand, cost);
+        auto score = mcf.emd_hat(supply, demand, cost);
 
         return score;
     }
@@ -420,10 +420,9 @@ public:
 
 private:
 
+    const size_t nthreads_;
     std::shared_ptr<caching::dblru_shard_cache <std::pair<uint64_t,
             uint64_t>, double>> cache_;
-
-    const size_t nthreads_;
     const size_t dimension_;
     const metric_type dist;
     std::unordered_map<std::string, std::function<double(const Document&,

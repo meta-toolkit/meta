@@ -422,16 +422,13 @@ void min_cost_flow<NumT>::swap_heap(std::vector<edge3<NumT>>& demand,
 }
 
 template <typename NumT>
-NumT min_cost_flow<NumT>::emd_hat(const std::vector<NumT>& supply_orig,
-                                  const std::vector<NumT>& demand_orig,
-                                  const std::vector<NumT>& supply,
+NumT min_cost_flow<NumT>::emd_hat(const std::vector<NumT>& supply,
                                   const std::vector<NumT>& demand,
                                   const std::vector<std::vector<NumT>>& cost)
 {
     if (std::is_integral<NumT>::value)
     {
-        return integral_emd_hat<NumT>(supply_orig, demand_orig, supply, demand,
-                                      cost);
+        return integral_emd_hat<NumT>(supply, demand, cost);
     }
     else
     {
@@ -440,8 +437,6 @@ NumT min_cost_flow<NumT>::emd_hat(const std::vector<NumT>& supply_orig,
 
         // Constructing the input
         const size_t n = supply.size();
-        std::vector<int64_t> i_supply_orig(n);
-        std::vector<int64_t> i_demand_orig(n);
         std::vector<int64_t> i_supply(n);
         std::vector<int64_t> i_demand(n);
         std::vector<std::vector<int64_t>> i_cost(n, std::vector<int64_t>(n));
@@ -452,8 +447,8 @@ NumT min_cost_flow<NumT>::emd_hat(const std::vector<NumT>& supply_orig,
         double max_cost = cost[0][0];
         for (size_t i = 0; i < n; ++i)
         {
-            sum_supply += supply_orig[i];
-            sum_demand += demand_orig[i];
+            sum_supply += supply[i];
+            sum_demand += demand[i];
             for (size_t j = 0; j < n; ++j)
             {
                 if (cost[i][j] > max_cost)
@@ -466,10 +461,6 @@ NumT min_cost_flow<NumT>::emd_hat(const std::vector<NumT>& supply_orig,
         double cost_norm_factor = mult_factor / max_cost;
         for (size_t i = 0; i < n; ++i)
         {
-            i_supply_orig[i] = static_cast<int64_t>(
-                floor(supply_orig[i] * supply_demand_norm_factor + 0.5));
-            i_demand_orig[i] = static_cast<int64_t>(
-                floor(demand_orig[i] * supply_demand_norm_factor + 0.5));
             i_supply[i] = static_cast<int64_t>(
                 floor(supply[i] * supply_demand_norm_factor + 0.5));
             i_demand[i] = static_cast<int64_t>(
@@ -481,9 +472,8 @@ NumT min_cost_flow<NumT>::emd_hat(const std::vector<NumT>& supply_orig,
             }
         }
 
-        // computing distance without extra mass penalty
-        double dist = integral_emd_hat<int64_t>(i_supply_orig, i_demand_orig,
-                                                i_supply, i_demand, i_cost);
+        // computing distance
+        double dist = integral_emd_hat<int64_t>(i_supply, i_demand, i_cost);
 
         // unnormalize
         dist = dist / supply_demand_norm_factor;
@@ -496,7 +486,6 @@ NumT min_cost_flow<NumT>::emd_hat(const std::vector<NumT>& supply_orig,
 template <typename NumT>
 template <typename T>
 T min_cost_flow<NumT>::integral_emd_hat(
-    const std::vector<T>& supply_orig, const std::vector<T>& demand_orig,
     const std::vector<T>& supply_c, const std::vector<T>& demand_c,
     const std::vector<std::vector<T>>& cost_c)
 {
@@ -504,7 +493,6 @@ T min_cost_flow<NumT>::integral_emd_hat(
     assert(demand_c.size() == n);
 
     std::vector<std::vector<T>> cost(cost_c);
-    T abs_diff_sum_supply_sum_denamd;
     T sum_supply = 0;
     T sum_demand = 0;
     for (size_t i = 0; i < n; ++i)

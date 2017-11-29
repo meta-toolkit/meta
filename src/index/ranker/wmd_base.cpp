@@ -79,7 +79,7 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
         std::vector<std::pair<term_id, double>> tf
             = fwd_->search_primary(doc)->counts();
 
-        auto doc1 = create_document(tf, ctx);
+        auto doc1 = create_document(tf);
 
         std::vector<std::pair<term_id, double>> tf_pc;
         std::vector<detail::postings_context> pc = ctx.postings;
@@ -89,7 +89,7 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
                 std::pair<term_id, double>(one.t_id, one.query_term_weight));
         }
 
-        auto doc2 = create_document(tf_pc, ctx);
+        auto doc2 = create_document(tf_pc);
 
         double score1 = emd.emd_relaxed(doc1, doc2);
         double score2 = emd.emd_relaxed(doc2, doc1);
@@ -100,8 +100,7 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
 }
 
 meta::index::Document
-wmd_base::create_document(std::vector<std::pair<term_id, double>> tf,
-                          ranker_context& ctx)
+wmd_base::create_document(std::vector<std::pair<term_id, double>> tf)
 {
     size_t unique_terms_count = tf.size();
     size_t all_terms_count = 0;

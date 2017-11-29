@@ -37,9 +37,7 @@ class min_cost_flow
 {
 
   public:
-    NumT emd_hat(const std::vector<NumT>& supply_orig,
-                 const std::vector<NumT>& demand_orig,
-                 const std::vector<NumT>& supply,
+    NumT emd_hat(const std::vector<NumT>& supply,
                  const std::vector<NumT>& demand,
                  const std::vector<std::vector<NumT>>& cost);
 
@@ -55,9 +53,7 @@ class min_cost_flow
     std::vector<size_t> _nodes_to_demand;
 
     template <typename T>
-    static T integral_emd_hat(const std::vector<T>& supply_orig,
-                              const std::vector<T>& demand_orig,
-                              const std::vector<T>& supply,
+    static T integral_emd_hat(const std::vector<T>& supply,
                               const std::vector<T>& demand,
                               const std::vector<std::vector<T>>& cost);
 
