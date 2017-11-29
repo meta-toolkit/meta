@@ -71,6 +71,29 @@ class dirichlet_prior : public language_model_ranker
     const float mu_;
 };
 
+class dirichlet_prior_opt : public dirichlet_prior{
+    void rank(ranker_context &ctx, uint64_t num_results, const filter_function_type &filter) const override{
+        // optimize mu according to ranker_context before ranking
+        this->optimize_mu(ctx);
+
+        ranking_function::rank(ctx, num_results, filter);
+    }
+
+    virtual void optimize_mu(const ranker_context &ctx) = 0;
+};
+
+class digamma_rec: public dirichlet_prior_opt{
+    void optimize_mu(const ranker_context &ctx) override;
+};
+
+class log_approx: public dirichlet_prior_opt{
+    void optimize_mu(const ranker_context &ctx) override;
+};
+
+class mackay_peto: public dirichlet_prior_opt{
+    void optimize_mu(const ranker_context &ctx) override;
+};
+
 /**
  * Specialization of the factory method used to create dirichlet_prior
  * rankers.
