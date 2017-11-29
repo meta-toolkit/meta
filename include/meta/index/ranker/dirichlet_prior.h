@@ -92,7 +92,6 @@ public:
 
 private:
     void optimize(const inverted_index& idx) {
-        doc_id y = idx.docs()[0];
 
     }
 
