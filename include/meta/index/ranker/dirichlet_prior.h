@@ -86,11 +86,16 @@ public:
     }
 
     float get_optimized_mu(const inverted_index& idx) {
-        optimize_mu(idx);
+        optimize(idx);
         return mu_;
     }
 
 private:
+    void optimize(const inverted_index& idx) {
+        doc_id y = idx.docs()[0];
+
+    }
+
     virtual void optimize_mu(const inverted_index& idx) = 0;
 };
 
