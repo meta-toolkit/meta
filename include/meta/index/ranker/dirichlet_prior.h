@@ -72,26 +72,33 @@ class dirichlet_prior : public language_model_ranker
 };
 
 class dirichlet_prior_opt : public dirichlet_prior{
-    void rank(ranker_context &ctx, uint64_t num_results, const filter_function_type &filter) const override{
+//    void rank(ranker_context &ctx, uint64_t num_results, const filter_function_type &filter) const override{
+//        ranking_function::rank(ctx, num_results, filter);
+//    }
+    template <class ForwardIterator>
+    std::vector<search_result> score(inverted_index& idx, ForwardIterator begin,
+                                     ForwardIterator end,
+                                     uint64_t num_results = 10)
+    {
         // optimize mu according to ranker_context before ranking
-        this->optimize_mu(ctx);
+        this->optimize_mu(idx);
 
-        ranking_function::rank(ctx, num_results, filter);
+        return ranker::score(idx, begin, end, num_results);
     }
 
-    virtual void optimize_mu(const ranker_context &ctx) = 0;
+    virtual void optimize_mu(const inverted_index& idx) = 0;
 };
 
 class digamma_rec: public dirichlet_prior_opt{
-    void optimize_mu(const ranker_context &ctx) override;
+    void optimize_mu(const inverted_index& idx) override;
 };
 
 class log_approx: public dirichlet_prior_opt{
-    void optimize_mu(const ranker_context &ctx) override;
+    void optimize_mu(const inverted_index& idx) override;
 };
 
 class mackay_peto: public dirichlet_prior_opt{
-    void optimize_mu(const ranker_context &ctx) override;
+    void optimize_mu(const inverted_index& idx) override;
 };
 
 /**

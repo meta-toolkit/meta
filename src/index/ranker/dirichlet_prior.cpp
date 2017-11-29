@@ -33,7 +33,7 @@ void dirichlet_prior::save(std::ostream& out) const
     io::packed::write(out, mu_);
 }
 
-float dirichlet_prior::smoothed_prob(score_data& sd)
+float dirichlet_prior::smoothed_prob(const score_data& sd) const
 {
     float pc = static_cast<float>(sd.corpus_term_count) / sd.total_terms;
     float numerator = sd.doc_term_count + mu_ * pc;

@@ -1,5 +1,7 @@
 project(meta-ranker)
 
+add_subdirectory(test_opt)
+
 add_library(meta-ranker absolute_discount.cpp
                         dirichlet_prior.cpp
                         jelinek_mercer.cpp
