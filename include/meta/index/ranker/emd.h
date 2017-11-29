@@ -1,6 +1,7 @@
-//
-// Created by lolik111 on 19.11.17.
-//
+/**
+ * @file emd.h
+ * @author lolik111
+ */
 
 #ifndef META_EMD_H
 #define META_EMD_H
@@ -115,8 +116,7 @@ public:
             }
         }
         util::min_cost_flow<double> mcf;
-        auto score = mcf.emd_hat(supply, demand, supply, demand, cost,
-                                -1.0);
+        auto score = mcf.emd_hat(supply, demand, supply, demand, cost);
 
         return score;
     }
@@ -362,7 +362,7 @@ public:
             double remaining = doc1.weights[i];
             for (auto it = ids.begin();
                  it != ids.end(); it++) {
-                uint64_t w = (uint64_t) *it;
+                auto w = (uint64_t) *it;
                 if (remaining < doc2.weights[w]) {
                     acc += remaining *
                            dist(doc1.vectors[i], doc2.vectors[w]);
