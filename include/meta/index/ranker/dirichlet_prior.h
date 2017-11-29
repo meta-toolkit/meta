@@ -91,7 +91,12 @@ public:
     }
 
 private:
-    virtual void optimize_mu(const inverted_index& idx) = 0;
+     void optimize_mu(const inverted_index& idx){
+         // TODO: parse idx
+         idx.term_freq;
+         idx.doc_size;
+         idx.
+     }
 };
 
 class digamma_rec: public dirichlet_prior_opt{
