@@ -21,6 +21,42 @@ namespace embeddings
 
 using vocab_type = hashing::probe_map<util::string_view, std::size_t>;
 
+
+word_embeddings::word_embeddings(std::istream &vectors, size_t num_lines,
+                                 size_t dimension)
+    : vector_size_{dimension},
+      id_to_term_(num_lines),
+      term_to_id_{static_cast<std::size_t>(std::ceil(
+              id_to_term_.size() / vocab_type::default_max_load_factor()))},
+      embeddings_(vector_size_ * (id_to_term_.size() + 1))
+{
+    printing::progress progress{" > Loading embeddings: ", id_to_term_.size()};
+
+    for (std::size_t tid = 0; tid < id_to_term_.size(); ++tid)
+    {
+        if (!vectors)
+            throw word_embeddings_exception{
+                    "embeddings stream ended unexpectedly"};
+
+        progress(tid);
+
+        vectors >> id_to_term_[tid];
+        term_to_id_[id_to_term_[tid]] = tid;
+
+        auto vec = vector(tid);
+        std::generate(vec.begin(), vec.end(),
+                      [&]() {
+                          double v;
+                          vectors >> v;
+                          return v; });
+        auto len = math::operators::l2norm(vec);
+        std::transform(vec.begin(), vec.end(), vec.begin(),
+                       [=](double weight) { return weight / len; });
+    }
+
+
+}
+
 word_embeddings::word_embeddings(std::istream& vocab, std::istream& vectors)
     : vector_size_{io::packed::read<std::size_t>(vectors)},
       id_to_term_(io::packed::read<std::size_t>(vocab)),
@@ -43,6 +79,7 @@ word_embeddings::word_embeddings(std::istream& vocab, std::istream& vectors)
         std::generate(vec.begin(), vec.end(),
                       [&]() { return io::packed::read<double>(vectors); });
     }
+
 }
 
 word_embeddings::word_embeddings(std::istream& vocab, std::istream& first,
@@ -109,7 +146,7 @@ util::array_view<const double> word_embeddings::vector(std::size_t tid) const
     return {embeddings_.data() + tid * vector_size_, vector_size_};
 }
 
-embedding word_embeddings::at(util::string_view term) const
+embedding word_embeddings::at(std::string term) const
 {
     std::size_t tid;
     auto v_it = term_to_id_.find(term);
@@ -122,6 +159,22 @@ embedding word_embeddings::at(util::string_view term) const
         tid = v_it->value();
     }
     return {tid, vector(tid)};
+}
+
+
+int64_t word_embeddings::tid(std::string term) const
+{
+    int64_t tid;
+    auto v_it = term_to_id_.find(term);
+    if (v_it == term_to_id_.end())
+    {
+        tid = -1;
+    }
+    else
+    {
+        tid = v_it->value();
+    }
+    return tid;
 }
 
 util::string_view word_embeddings::term(std::size_t tid) const
@@ -175,6 +228,32 @@ word_embeddings load_embeddings(const cpptoml::table& config)
         throw word_embeddings_exception{"embeddings directory does not exist: "
                                         + *prefix};
 
+    auto mode = config.get_as<std::string>("mode").value_or("average");
+
+    if (mode == "txt")
+    {
+        std::ifstream target{*prefix + "/embeddings.target.txt"};
+        if (!target)
+            throw word_embeddings_exception{"missing target vectors in: "
+                                            + *prefix};
+        auto lines = filesystem::num_lines(*prefix + "/embeddings.target.txt");
+        auto dim = config.get_as<size_t>("dim");
+        if(!dim)
+        {
+            std::string line;
+            std::getline(target, line);
+            std::istringstream iss(line);
+            std::vector<std::string> results((std::istream_iterator<std::string>(iss)),
+                                             std::istream_iterator<std::string>());
+            dim = results.size() - 1;
+
+        }
+        target.seekg(0, target.beg);
+        return {target, lines, *dim};
+
+    }
+
+
     std::ifstream vocab{*prefix + "/vocab.bin", std::ios::binary};
     if (!vocab)
         throw word_embeddings_exception{"missing vocabulary file in: "
@@ -184,7 +263,6 @@ word_embeddings load_embeddings(const cpptoml::table& config)
     std::ifstream context{*prefix + "/embeddings.context.bin",
                           std::ios::binary};
 
-    auto mode = config.get_as<std::string>("mode").value_or("average");
     if (mode == "average")
     {
         if (!target)

@@ -14,6 +14,7 @@
 #include <mutex>
 
 #include "meta/util/optional.h"
+#include "meta/hashing/hash.h"
 
 namespace meta
 {
@@ -76,10 +77,10 @@ class locking_map
     util::optional<Value> find(const Key& key) const;
 
     /// iterator type for locking_maps
-    using iterator = typename std::unordered_map<Key, Value>::iterator;
+    using iterator = typename std::unordered_map<Key, Value, hashing::hash<>>::iterator;
     /// const_iterator type for locking_maps
     using const_iterator =
-        typename std::unordered_map<Key, Value>::const_iterator;
+        typename std::unordered_map<Key, Value, hashing::hash<>>::const_iterator;
 
     /**
      * @return an iterator to the beginning of the map
@@ -103,7 +104,7 @@ class locking_map
 
   private:
     /// the underlying map used for storage
-    std::unordered_map<Key, Value> map_;
+    std::unordered_map<Key, Value, hashing::hash<>> map_;
     /// the mutex that synchronizes accesses into the map
     mutable std::mutex mutables_;
 };

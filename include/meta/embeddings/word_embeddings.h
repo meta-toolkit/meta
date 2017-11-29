@@ -63,18 +63,34 @@ class word_embeddings
     word_embeddings(std::istream& vocab, std::istream& first,
                     std::istream& second);
 
+
+    /**
+     * Loads word embeddings from txt file
+     *
+     * @param vectors The stream to read the vectors from
+     * @param num_lines Number of lines in the file
+     * @param dimension dimension of the embedding
+     */
+    word_embeddings(std::istream& vectors, size_t num_lines, size_t dimension);
+
     /**
      * @param term The term to look up
      * @return the embedding vector (as an array_view) for the given term,
      *  or the vector for the unknown word as appropriate
      */
-    embedding at(util::string_view term) const;
+    embedding at(std::string term) const;
 
     /**
      * @param tid The term id to look up
      * @return the term (as a string_view) represented by that term id
      */
     util::string_view term(std::size_t tid) const;
+
+    /**
+     * @param tid The term to look up
+     * @return the term id, or -1 if not found
+     */
+    int64_t tid(std::string term) const;
 
     /**
      * @param query A vector of the same length as a word embedding to
@@ -109,7 +125,9 @@ class word_embeddings
     util::aligned_vector<std::string> id_to_term_;
 
     /// A hash table from a term to its id
-    hashing::probe_map<util::string_view, std::size_t> term_to_id_;
+    hashing::probe_map<std::string, std::size_t> term_to_id_;
+//    hashing::probe_map<std::string, std::size_t> term_to_id_;
+
 
     /// The embeddings matrix
     util::aligned_vector<double> embeddings_;
