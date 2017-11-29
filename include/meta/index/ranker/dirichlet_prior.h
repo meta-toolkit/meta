@@ -12,6 +12,8 @@
 #include "meta/index/ranker/lm_ranker.h"
 #include "meta/index/ranker/ranker_factory.h"
 
+#include <iostream>
+
 namespace meta
 {
 namespace index
@@ -86,17 +88,30 @@ public:
     }
 
     float get_optimized_mu(const inverted_index& idx) {
-        optimize_mu(idx);
+        optimize(idx);
         return mu_;
     }
 
 private:
-     void optimize_mu(const inverted_index& idx){
-         // TODO: parse idx
-         idx.term_freq;
-         idx.doc_size;
-         idx.
-     }
+    void optimize(const inverted_index& idx) {
+        // TODO: parse idx
+        auto docs_ids = idx.docs();
+        auto terms_ids = idx.terms();
+
+        std::cout << idx.unique_terms() << std::endl;
+
+        for (auto d_id: docs_ids){
+            for (auto t_id: terms_ids){
+                std::cout << idx.term_freq(t_id, d_id) << std::endl;
+            }
+        }
+
+//        idx.unique_terms()
+//        idx.total_corpus_terms()
+
+    }
+
+    virtual void optimize_mu(const inverted_index& idx) = 0;
 };
 
 class digamma_rec: public dirichlet_prior_opt{
@@ -104,11 +119,11 @@ class digamma_rec: public dirichlet_prior_opt{
 };
 
 class log_approx: public dirichlet_prior_opt{
-    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
+//    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
 };
 
 class mackay_peto: public dirichlet_prior_opt{
-    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
+//    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
 };
 
 /**
