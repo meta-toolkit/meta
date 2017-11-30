@@ -58,24 +58,6 @@ class classifier_factory
     void reg_mi();
 };
 
-
-/**
- * Convenience method for creating a classifier using the factory.
- *
- * @param global global configuration file
- *
- * @param local The configuration group that specifies the configuration
- * for the classifier to be created
- * @param inv_idx The inverted_index to be passed to the classifier being
- * created (if needed)
- *
- * @return a unique_ptr to the classifier created from the given
- * configuration
- */
-    std::unique_ptr<classifier>
-    make_classifier(const cpptoml::table& global, const cpptoml::table& local, multiclass_dataset_view training,
-                    std::shared_ptr<index::inverted_index> inv_idx = nullptr);
-
 /**
  * Convenience method for creating a classifier using the factory.
  *
@@ -132,7 +114,6 @@ make_multi_index_classifier(const cpptoml::table&,
 {
     return make_unique<Classifier>(training, inv_idx);
 }
-
 
 /**
  * Factory that is responsible for loading classifiers from input streams.
