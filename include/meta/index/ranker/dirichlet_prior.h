@@ -197,7 +197,6 @@ private:
 
 class dirichlet_digamma_rec: public dirichlet_prior_opt{
     void optimize_mu(docs_data& dd, float eps, int max_iter) override {
-
         bool all_optimized = false;
         int iter_num = 0;
         double D, S;
@@ -257,7 +256,64 @@ class dirichlet_digamma_rec: public dirichlet_prior_opt{
 };
 
 class dirichlet_log_approx: public dirichlet_prior_opt{
-//    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
+    void optimize_mu(docs_data& dd, float eps, int max_iter) override {
+        bool all_optimized = false;
+        int iter_num = 0;
+        double S, S_k;
+        double n_max = dd.docs_counts.rbegin()->first;
+
+        // start values for alpha and alpha_m
+        double alpha = default_mu, alpha_mk_new;
+        std::map<term_id, double> alpha_m = dd.alpha_m;
+
+        while (!all_optimized && iter_num < max_iter){
+            S = 0.0;
+            all_optimized = true;
+
+            alpha = get_alpha(alpha_m);
+
+            count_d c_d;
+            // TODO: skip the zero docs counts
+            for (count_d n = 1; n <= n_max; n++){
+                c_d = dd.docs_counts[n];
+
+                if (c_d != 0){
+                    S += c_d * (1.0/alpha + log(n + alpha - 0.5) - log(alpha + 0.5));
+                }
+            }
+
+            term_id k;
+            std::map<count_d, count_d> c_k;
+            for (auto kv: dd.terms_docs_counts){
+                k = kv.first;
+                c_k = kv.second;
+
+                S_k = 0.0;
+
+                count_d c_k_n, n_k_max = c_k.rbegin()->first;
+                // TODO: skip the zero docs counts
+                for (count_d n = 1; n <= n_k_max; n++){
+                    c_k_n = c_k[n];
+
+                    if (c_k_n != 0){
+                        S_k += c_k_n * (1.0/alpha_m[k] + log(n + alpha_m[k] - 0.5) - log(alpha_m[k] + 0.5));
+                    }
+                }
+
+                alpha_mk_new = alpha_m[k] * S_k / S;
+
+                if (std::abs(alpha_mk_new - alpha_m[k]) > eps){
+                    all_optimized = false;
+                }
+
+                alpha_m[k] = alpha_mk_new;
+            }
+
+            iter_num++;
+        }
+
+        mu_ = get_alpha(alpha_m);
+    }
 };
 
 class dirichlet_mackay_peto: public dirichlet_prior_opt{
