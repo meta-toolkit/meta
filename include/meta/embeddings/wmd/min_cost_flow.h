@@ -1,6 +1,10 @@
 /**
  * @file min_cost_flow.h
  * @author lolik111
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
 #ifndef FAST_EMD_MIN_COST_FLOW_H
@@ -9,13 +13,12 @@
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
-#include <limits>
 #include <list>
 #include <vector>
 
 namespace meta
 {
-namespace util
+namespace embeddings
 {
 template <typename T>
 struct edge;

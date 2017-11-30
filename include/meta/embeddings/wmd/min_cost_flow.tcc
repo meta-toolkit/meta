@@ -1,22 +1,20 @@
 /**
  * @file min_cost_flow.tcc
  * @author lolik111
+ *
+ * All files in META are dual-licensed under the MIT and NCSA licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * project.
  */
 
-#include "min_cost_flow.h"
-#include <cassert>
-#include <cmath>
-#include <cstdint>
-#include <cstdlib>
-#include <iostream>
 #include <limits>
-#include <list>
 #include <set>
-#include <vector>
+
+#include "min_cost_flow.h"
 
 namespace meta
 {
-namespace util
+namespace embeddings
 {
 template <typename T>
 struct edge
@@ -380,7 +378,7 @@ NumT min_cost_flow<NumT>::emd_hat(const std::vector<NumT>& supply,
                                   const std::vector<NumT>& demand,
                                   const std::vector<std::vector<NumT>>& cost)
 {
-    if (std::is_integral<NumT>::value)
+    if (std::is_integral<NumT>::value && std::is_signed<NumT>::value)
     {
         return integral_emd_hat<NumT>(supply, demand, cost);
     }
@@ -411,6 +409,9 @@ NumT min_cost_flow<NumT>::emd_hat(const std::vector<NumT>& supply,
         }
         double max_sum = std::max(sum_supply, sum_demand);
         double supply_demand_norm_factor = mult_factor / max_sum;
+        if (max_cost < 1e-12){
+            return 0.0;
+        }
         double cost_norm_factor = mult_factor / max_cost;
         for (size_t i = 0; i < n; ++i)
         {

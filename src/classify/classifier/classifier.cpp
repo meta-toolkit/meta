@@ -19,10 +19,8 @@ confusion_matrix classifier::test(dataset_view_type docs) const
 
     confusion_matrix matrix;
     for (const auto& instance : docs)
-        try {
-            matrix.add(predicted_label{classify(instance.weights)},
-                       docs.label(instance));
-        } catch(std::exception e){}
+        matrix.add(predicted_label{classify(instance.weights)},
+                   docs.label(instance));
 
     return matrix;
 }

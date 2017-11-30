@@ -21,13 +21,12 @@ namespace embeddings
 
 using vocab_type = hashing::probe_map<util::string_view, std::size_t>;
 
-
-word_embeddings::word_embeddings(std::istream &vectors, size_t num_lines,
+word_embeddings::word_embeddings(std::istream& vectors, size_t num_lines,
                                  size_t dimension)
     : vector_size_{dimension},
       id_to_term_(num_lines),
       term_to_id_{static_cast<std::size_t>(std::ceil(
-              id_to_term_.size() / vocab_type::default_max_load_factor()))},
+          id_to_term_.size() / vocab_type::default_max_load_factor()))},
       embeddings_(vector_size_ * (id_to_term_.size() + 1))
 {
     printing::progress progress{" > Loading embeddings: ", id_to_term_.size()};
@@ -36,7 +35,7 @@ word_embeddings::word_embeddings(std::istream &vectors, size_t num_lines,
     {
         if (!vectors)
             throw word_embeddings_exception{
-                    "embeddings stream ended unexpectedly"};
+                "embeddings stream ended unexpectedly"};
 
         progress(tid);
 
@@ -44,17 +43,15 @@ word_embeddings::word_embeddings(std::istream &vectors, size_t num_lines,
         term_to_id_[id_to_term_[tid]] = tid;
 
         auto vec = vector(tid);
-        std::generate(vec.begin(), vec.end(),
-                      [&]() {
-                          double v;
-                          vectors >> v;
-                          return v; });
+        std::generate(vec.begin(), vec.end(), [&]() {
+            double v;
+            vectors >> v;
+            return v;
+        });
         auto len = math::operators::l2norm(vec);
         std::transform(vec.begin(), vec.end(), vec.begin(),
                        [=](double weight) { return weight / len; });
     }
-
-
 }
 
 word_embeddings::word_embeddings(std::istream& vocab, std::istream& vectors)
@@ -243,22 +240,20 @@ word_embeddings load_embeddings(const cpptoml::table& config)
             throw word_embeddings_exception{"missing target vectors in: "
                                             + *prefix};
         auto lines = filesystem::num_lines(*prefix + "/embeddings.target.txt");
-        auto dim = config.get_as<size_t>("dim");
-        if(!dim)
+        auto dim = config.get_as<size_t>("vector-size");
+        if (!dim)
         {
             std::string line;
             std::getline(target, line);
             std::istringstream iss(line);
-            std::vector<std::string> results((std::istream_iterator<std::string>(iss)),
-                                             std::istream_iterator<std::string>());
+            std::vector<std::string> results(
+                (std::istream_iterator<std::string>(iss)),
+                std::istream_iterator<std::string>());
             dim = results.size() - 1;
-
+            target.seekg(0, target.beg);
         }
-        target.seekg(0, target.beg);
         return {target, lines, *dim};
-
     }
-
 
     std::ifstream vocab{*prefix + "/vocab.bin", std::ios::binary};
     if (!vocab)

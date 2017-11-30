@@ -6,8 +6,8 @@
 #ifndef META_WMD_BASE_H
 #define META_WMD_BASE_H
 
+#include "meta/embeddings/wmd/wm_distance.h"
 #include "meta/embeddings/word_embeddings.h"
-#include "meta/index/ranker/emd.h"
 #include "meta/index/ranker/ranker.h"
 #include "meta/index/ranker/ranker_factory.h"
 #include "meta/util/array_view.h"
@@ -31,9 +31,11 @@ namespace index
  *
  * Optional config parameters:
  * ~~~toml
- * mode             # current mode: can be 'emd', 'wcd-emd', or 'rwmd'
- * num-threads          # number of threads used in the algorithm
- * cache-per-thread # size of cache per each thread
+ * mode                # current mode: can be "emd", "wcd", "rwmd", or
+ * "prefetch-prune"
+ * distance-func       # type of the distance function: "l2diff" or "cosine"
+ * num-threads         # number of threads used in the algorithm
+ * cache-per-thread    # size of cache per each thread
  * ~~~
  */
 class wmd_base : public ranker
@@ -55,11 +57,6 @@ class wmd_base : public ranker
 
     wmd_base(std::istream& in);
 
-    std::vector<search_result> process(em_distance emd,
-                                       const filter_function_type& filter,
-                                       ranker_context& ctx,
-                                       std::vector<doc_id> docs);
-
     void save(std::ostream& out) const override;
 
     std::vector<search_result>
@@ -76,8 +73,14 @@ class wmd_base : public ranker
         cache_;
     const std::string mode_;
     const std::string distance_func_;
-    meta::index::Document
+    embeddings::emb_document
     create_document(std::vector<std::pair<term_id, double>> tf);
+
+    std::vector<search_result> process(embeddings::wm_distance emd,
+                                       const std::string mode,
+                                       const filter_function_type& filter,
+                                       ranker_context& ctx,
+                                       std::vector<doc_id> docs);
 };
 
 /**
