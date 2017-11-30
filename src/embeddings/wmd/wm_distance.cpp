@@ -205,13 +205,14 @@ double wm_distance::f_c_distance(const emb_document& doc1,
 
     auto val = cache_->find(pair);
 
-    if (!val)
-    {
-        val = dist(embeddings_->at(doc1.ids[first]),
-                   embeddings_->at(doc2.ids[second]));
-        cache_->insert(pair, val.value());
-    }
-    return val.value();
+    double def_distance;
+
+    return val.value_or([&](){
+        auto dst = dist(embeddings_->at(doc1.ids[first]),
+                            embeddings_->at(doc2.ids[second]));
+        cache_ ->insert(pair, val.value());
+        return dst;
+    }());
 }
 }
 }
