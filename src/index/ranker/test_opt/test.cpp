@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     {
         // Create and make score of optimizer
         index::dirichlet_digamma_rec ranker;
-        std::cout << "\n\n" << ranker.get_optimized_mu(*idx, 1e-6, 100) << std::endl;
+        std::cout << "\n\n" << ranker.get_optimized_mu(*idx, 1e-6, 10000) << std::endl;
     });
 
     std::cout << "Method DR took: " << time.count() / 1000.0
