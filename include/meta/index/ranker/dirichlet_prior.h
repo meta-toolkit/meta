@@ -168,7 +168,7 @@ private:
     virtual void optimize_mu(const docs_data& dd, float eps=1e-6, int max_iter=100) = 0;
 };
 
-class digamma_rec_opt: public dirichlet_prior_opt{
+class dirichlet_digamma_rec: public dirichlet_prior_opt{
     void optimize_mu(const docs_data& dd, float eps=1e-6, int max_iter=100) override {
         // fill C_.(n) and C_k(n)
 
@@ -176,18 +176,43 @@ class digamma_rec_opt: public dirichlet_prior_opt{
         std::map<term_id, std::map<count_d, count_d>> terms_docs_counts;
         long doc_size, doc_term_freq;
 
+        cout << "Docs and terms:\n";
         for (auto d_id: dd.doc_ids){
             doc_size = dd.idx.doc_size(d_id);
 
             //// increase number of docs with the given size (C_.(n))
             docs_counts[doc_size] += 1;
 
-            for (auto t_id: dd.idx.terms(d_id)){
+            cout << d_id << " " << doc_size << " " << docs_counts[doc_size] << endl;
+            for (auto t_id: dd.term_ids){
                 doc_term_freq = dd.idx.term_freq(t_id, d_id);
 
                 //// increase number of docs with the given count of word t_id (C_k(n))
                 terms_docs_counts[t_id][doc_term_freq] += 1;
+
+                cout << "    " << t_id << " " << doc_term_freq << " " << terms_docs_counts[t_id][doc_term_freq] << endl;
             }
+        }
+
+        cout << "\nDocuments_ids count: " << dd.doc_ids.size() << "; Terms ids count: " << dd.term_ids.size() << endl;
+
+        cout << "\nDocuments sizes frequency:\n";
+        for (auto kv: docs_counts){
+            cout << kv.first << " " << kv.second << endl;
+        }
+
+        int occur_sum, freq_sum;
+        cout << "\nTerms frequency in each doc:\n";
+        for (auto kv: terms_docs_counts){
+            occur_sum = 0;
+            freq_sum = 0;
+            cout << dd.idx.total_num_occurences(kv.first) << " " << kv.first << endl;
+            for (auto kv_: kv.second){
+                occur_sum += kv_.second;
+                freq_sum += kv_.first * kv_.second;
+                cout << "   " << kv_.first << " " << kv_.second << endl;
+            }
+            cout << "    " << freq_sum << " " << occur_sum << " total occurences" << endl;
         }
 
 //        // sort by ascending of occurences
@@ -199,11 +224,11 @@ class digamma_rec_opt: public dirichlet_prior_opt{
         // p(w|REF) = dd.idx.total_num_occurences(t_id)
 
         // fill start vector alpha_m
-        double alpha = 1, alpha_mk_new;
+        double alpha = 2000.0, alpha_mk_new;
         std::map<term_id, double> alpha_m;
 
-        cout << "Start alpha: ";
-        for (auto t_id: dd.idx.terms()){
+        cout << "\nStart alpha: ";
+        for (auto t_id: dd.term_ids){
             alpha_m[t_id] = dd.idx.total_num_occurences(t_id) * alpha;
             alpha_m[t_id] /= (double)dd.ref_size;
             cout << alpha_m[t_id] << " ";
@@ -213,41 +238,47 @@ class digamma_rec_opt: public dirichlet_prior_opt{
         bool all_optimized = false;
         int iter_num = 0;
 
+        double n_max = docs_counts.rbegin()->first;
+        cout << "\n n_max=" << n_max << endl;
+
         while (!all_optimized && iter_num < max_iter){
-            D = 0;
-            S = 0;
+            D = 0.0;
+            S = 0.0;
             all_optimized = true;
 
             alpha = get_alpha(alpha_m);
 
             cout << "\nIter " << iter_num << " alpha = " << alpha;
-            count_d n, c_d;
-            for (auto kv: docs_counts){
-                n = kv.first;
-                c_d = kv.second;
+            count_d c_d;
+            for (count_d n = 1; n <= n_max; n++){
+                c_d = docs_counts[n];
 
-                D += 1/(n - 1 + alpha);
+                D += 1.0/(n - 1 + alpha);
                 S += c_d * D;
             }
 
-            std::map<count_d, count_d> c_n;
+            cout << "\nD = " << D << "; S = " << S << "; S_k = ";
+
+            std::map<count_d, count_d> c_k;
             term_id k;
             double S_k;
             for (auto kv: terms_docs_counts){
                 k = kv.first;
-                c_n = kv.second;
+                c_k = kv.second;
 
-                D = 0;
-                S_k = 0;
+                D = 0.0;
+                S_k = 0.0;
 
-                count_d n, c_k_n;
-                for (auto kv_: c_n){
-                    n = kv_.first;
-                    c_k_n = kv_.second;
+                count_d c_k_n, n_k_max = c_k.rbegin()->first;
+                cout << "\n n_k_max=" << n_k_max << endl;
+                for (count_d n = 1; n <= n_k_max; n++){
+                    c_k_n = c_k[n];
 
-                    D += 1/(n - 1 + alpha_m[k]);
+                    D += 1.0/(n - 1 + alpha_m[k]);
                     S_k += c_k_n * D;
                 }
+
+                cout << S_k << " ";
 
                 alpha_mk_new = alpha_m[k] * S_k / S;
 
@@ -255,7 +286,7 @@ class digamma_rec_opt: public dirichlet_prior_opt{
                     all_optimized = false;
                 }
 
-                alpha_m[k] *= alpha_mk_new;
+                alpha_m[k] = alpha_mk_new;
             }
 
             cout << "\nVector alpha_m after the iter: ";
@@ -267,15 +298,15 @@ class digamma_rec_opt: public dirichlet_prior_opt{
         }
 
         mu_ = get_alpha(alpha_m);
-
+        cout << endl << mu_ << endl;
     }
 };
 
-class log_approx_opt: public dirichlet_prior_opt{
+class dirichlet_log_approx: public dirichlet_prior_opt{
 //    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
 };
 
-class mackay_peto_opt: public dirichlet_prior_opt{
+class dirichlet_mackay_peto: public dirichlet_prior_opt{
 //    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
 };
 
