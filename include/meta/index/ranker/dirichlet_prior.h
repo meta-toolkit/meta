@@ -74,6 +74,32 @@ class dirichlet_prior : public language_model_ranker
     float mu_;
 };
 
+struct docs_data
+{
+    // general info
+
+    inverted_index& idx;
+    /// ids of all documents
+    std::vector<doc_id> doc_ids;
+    /// ids of all terms
+    std::vector<term_id> term_ids;
+
+    /**
+     * Constructor to initialize most elements.
+     * @param p_idx The index that is being used
+     * @param p_doc_ids ids of all docs
+     * @param p_term_ids ids of all terms
+     */
+    score_data(inverted_index& p_idx, std::vector<doc_id> p_doc_ids, std::vector<doc_id> p_term_ids,
+               uint64_t p_total_terms, float p_query_length)
+        : idx(p_idx), // gcc no non-const ref init from brace init list
+          doc_ids{p_doc_ids},
+          term_ids{p_term_ids}
+    {
+        /* nothing */
+    }
+};
+
 class dirichlet_prior_opt : public dirichlet_prior{
 public:
     template <class ForwardIterator>
@@ -88,34 +114,121 @@ public:
     }
 
     float get_optimized_mu(const inverted_index& idx) {
-        optimize(idx);
+        optimize_mu(idx);
+
         return mu_;
     }
 
 private:
-    void optimize(const inverted_index& idx) {
-        // TODO: parse idx
+    void optimize_mu(const inverted_index& idx) {
         auto docs_ids = idx.docs();
         auto terms_ids = idx.terms();
+        docs_data  dd{idx, docs_ids, terms_ids};
 
-        std::cout << idx.unique_terms() << std::endl;
+        optimize_mu(dd);
+//        std::cout << idx.unique_terms() << std::endl;
 
-        for (auto d_id: docs_ids){
-            for (auto t_id: terms_ids){
-                std::cout << idx.term_freq(t_id, d_id) << std::endl;
-            }
-        }
+//        for (auto d_id: docs_ids){
+//            for (auto t_id: terms_ids){
+//                std::cout << idx.term_freq(t_id, d_id) << std::endl;
+//            }
+//        }
 
+//        optimize_mu(std::vector<doc_id> docs_ids,
 //        idx.unique_terms()
 //        idx.total_corpus_terms()
 
     }
 
-    virtual void optimize_mu(const inverted_index& idx) = 0;
+    virtual void optimize_mu(const docs_data& dd, float eps=1e-6, int max_iter=100) = 0;
 };
 
+// # TODO: choose template type instead of long
+typedef long count_d;
+
 class digamma_rec: public dirichlet_prior_opt{
-    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
+    void optimize_mu(const docs_data& dd, float eps=1e-6, int max_iter=100) override {
+        // fill C_.(n) and C_k(n)
+
+        std::map<count_d, count_d> docs_counts;
+        std::map<term_id, std::map<count_d, count_d>> terms_docs_counts;
+        long doc_size, doc_term_freq;
+
+        for (auto d_id: dd.doc_ids){
+            doc_size = dd.idx.doc_size(d_id);
+
+            //// increase number of docs with the given size (C_.(n))
+            docs_counts[doc_size] += 1;
+
+            for (auto t_id: dd.idx.terms(d_id)){
+                doc_term_freq = dd.idx.term_freq(t_id, d_id);
+
+                //// increase number of docs with the given count of word t_id (C_k(n))
+                terms_docs_counts[t_id][doc_term_freq] += 1;
+            }
+        }
+
+//        // sort by ascending of occurences
+//        std::sort(docs_counts.begin(), items.end());
+//        for (auto key: terms_docs_counts){
+//            std::sort(key.second.begin(), key.second.end());
+//        }
+
+        // p(w|REF) = dd.idx.total_num_occurences(t_id)
+
+        // fill start vector alpha_m
+        double alpha = 1;
+        std::map<term_id, double> alpha_m;
+
+        for (auto t_id: dd.idx.terms()){
+            alpha_m[t_id] = dd.idx.total_num_occurences(t_id) * alpha;
+        }
+
+        double D, S;
+        bool converged = false;
+
+        while (!converged){
+            D = 0;
+            S = 0;
+
+            alpha = 0;
+            for (auto alpha_m_k: alpha_m){
+                alpha += alpha_m_k;
+            }
+
+            count_d n, c_d;
+            for (auto kv: docs_counts){
+                n = kv.first;
+                c_d = kv.second;
+
+                D += 1/(n - 1 + alpha);
+                S += c_d * D;
+            }
+
+            std::map<count_d, count_d> c_n;
+            term_id k;
+            double S_k;
+            for (auto kv: terms_docs_counts){
+                k = kv.first;
+                c_n = kv.second;
+
+                D = 0;
+                S_k = 0;
+
+                count_d n, c_k_n;
+                for (auto kv_: c_n){
+                    n = kv_.first;
+                    c_k_n = kv_.second;
+
+                    D += 1/(n - 1 + alpha * m_k);
+                    S_k += c_k_n * D;
+                }
+
+                alpha_m[k] *= S_k / S;
+            }
+        }
+
+    }
 };
 
 class log_approx: public dirichlet_prior_opt{
