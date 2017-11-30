@@ -17,7 +17,7 @@ void display_result(float alpha, std::map<term_id, double> alpha_m, float time){
     for (auto kv: alpha_m){
         std::cout << kv.second << " ";
     }
-    std::cout << alpha << std::endl << time << std::endl;
+    std::cout << std::endl << alpha << std::endl << time << std::endl;
 }
 
 int main(int argc, char* argv[])
