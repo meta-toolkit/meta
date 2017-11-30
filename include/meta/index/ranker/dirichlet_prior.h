@@ -384,6 +384,27 @@ private:
  */
 template <>
 std::unique_ptr<ranker> make_ranker<dirichlet_prior>(const cpptoml::table&);
+
+/**
+ * Specialization of the factory method used to create dirichlet_digamma_rec
+ * rankers.
+ */
+template <>
+std::unique_ptr<ranker> make_ranker<dirichlet_digamma_rec>(const cpptoml::table&);
+
+/**
+ * Specialization of the factory method used to create dirichlet_log_approx
+ * rankers.
+ */
+template <>
+std::unique_ptr<ranker> make_ranker<dirichlet_log_approx>(const cpptoml::table&);
+
+/**
+ * Specialization of the factory method used to create dirichlet_mackay_peto
+ * rankers.
+ */
+template <>
+std::unique_ptr<ranker> make_ranker<dirichlet_mackay_peto>(const cpptoml::table&);
 }
 }
 #endif
