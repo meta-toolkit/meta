@@ -38,8 +38,8 @@ int main(int argc, char* argv[])
     auto time = common::time([&]()
     {
         // Create and make score of optimizer
-        index::digamma_rec ranker;
-        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
+        index::digamma_rec_opt ranker;
+        std::cout << ranker.get_optimized_mu(*idx, 1e-6, 100) << std::endl;
     });
 
     std::cout << "Method DR took: " << time.count() / 1000.0

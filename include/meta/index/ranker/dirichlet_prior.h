@@ -15,6 +15,8 @@
 #include <cmath>
 #include <iostream>
 
+using namespace std;
+
 namespace meta
 {
 namespace index
@@ -75,6 +77,10 @@ class dirichlet_prior : public language_model_ranker
     float mu_;
 };
 
+
+// # TODO: choose template type instead of long
+typedef long count_d;
+
 struct docs_data
 {
     // general info
@@ -84,6 +90,8 @@ struct docs_data
     std::vector<doc_id> doc_ids;
     /// ids of all terms
     std::vector<term_id> term_ids;
+    /// total size of documents
+    count_d ref_size;
 
     /**
      * Constructor to initialize most elements.
@@ -91,10 +99,11 @@ struct docs_data
      * @param p_doc_ids ids of all docs
      * @param p_term_ids ids of all terms
      */
-    docs_data(const inverted_index& p_idx, std::vector<doc_id> p_doc_ids, std::vector<term_id> p_term_ids)
+    docs_data(const inverted_index& p_idx, std::vector<doc_id> p_doc_ids, std::vector<term_id> p_term_ids, count_d p_ref_size)
         : idx(p_idx), // gcc no non-const ref init from brace init list
           doc_ids{p_doc_ids},
-          term_ids{p_term_ids}
+          term_ids{p_term_ids},
+          ref_size{p_ref_size}
     {
         /* nothing */
     }
@@ -113,8 +122,8 @@ public:
         return ranker::score(idx, begin, end, num_results);
     }
 
-    float get_optimized_mu(const inverted_index& idx) {
-        optimize_mu(idx);
+    float get_optimized_mu(const inverted_index& idx, float eps=1e-6, int max_iter=100) {
+        optimize_mu(idx, eps, max_iter);
 
         return mu_;
     }
@@ -131,12 +140,17 @@ protected:
     }
 
 private:
-    void optimize_mu(const inverted_index& idx) {
+    void optimize_mu(const inverted_index& idx, float eps=1e-6, int max_iter=100) {
         auto docs_ids = idx.docs();
         auto terms_ids = idx.terms();
-        docs_data dd{idx, docs_ids, terms_ids};
 
-        optimize_mu(dd);
+        count_d ref_size = 0;
+        for (auto& id : docs_ids)
+            ref_size += idx.doc_size(id);
+
+        docs_data dd{idx, docs_ids, terms_ids, ref_size};
+
+        optimize_mu(dd, eps, max_iter);
 //        std::cout << idx.unique_terms() << std::endl;
 
 //        for (auto d_id: docs_ids){
@@ -154,10 +168,7 @@ private:
     virtual void optimize_mu(const docs_data& dd, float eps=1e-6, int max_iter=100) = 0;
 };
 
-// # TODO: choose template type instead of long
-typedef long count_d;
-
-class digamma_rec: public dirichlet_prior_opt{
+class digamma_rec_opt: public dirichlet_prior_opt{
     void optimize_mu(const docs_data& dd, float eps=1e-6, int max_iter=100) override {
         // fill C_.(n) and C_k(n)
 
@@ -191,21 +202,25 @@ class digamma_rec: public dirichlet_prior_opt{
         double alpha = 1, alpha_mk_new;
         std::map<term_id, double> alpha_m;
 
+        cout << "Start alpha: ";
         for (auto t_id: dd.idx.terms()){
             alpha_m[t_id] = dd.idx.total_num_occurences(t_id) * alpha;
+            alpha_m[t_id] /= (double)dd.ref_size;
+            cout << alpha_m[t_id] << " ";
         }
 
         double D, S;
         bool all_optimized = false;
-        int iters_num = 0;
+        int iter_num = 0;
 
-        while (!all_optimized && iters_num < max_iter){
+        while (!all_optimized && iter_num < max_iter){
             D = 0;
             S = 0;
             all_optimized = true;
 
             alpha = get_alpha(alpha_m);
 
+            cout << "\nIter " << iter_num << " alpha = " << alpha;
             count_d n, c_d;
             for (auto kv: docs_counts){
                 n = kv.first;
@@ -243,7 +258,12 @@ class digamma_rec: public dirichlet_prior_opt{
                 alpha_m[k] *= alpha_mk_new;
             }
 
-            iters_num++;
+            cout << "\nVector alpha_m after the iter: ";
+            for (auto kv: alpha_m){
+                cout << " " << kv.second;
+            }
+
+            iter_num++;
         }
 
         mu_ = get_alpha(alpha_m);
@@ -251,11 +271,11 @@ class digamma_rec: public dirichlet_prior_opt{
     }
 };
 
-class log_approx: public dirichlet_prior_opt{
+class log_approx_opt: public dirichlet_prior_opt{
 //    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
 };
 
-class mackay_peto: public dirichlet_prior_opt{
+class mackay_peto_opt: public dirichlet_prior_opt{
 //    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
 };
 
