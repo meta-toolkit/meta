@@ -12,6 +12,7 @@
 #include "meta/index/ranker/lm_ranker.h"
 #include "meta/index/ranker/ranker_factory.h"
 
+#include <cmath>
 #include <iostream>
 
 namespace meta
@@ -78,7 +79,7 @@ struct docs_data
 {
     // general info
 
-    inverted_index& idx;
+    const inverted_index& idx;
     /// ids of all documents
     std::vector<doc_id> doc_ids;
     /// ids of all terms
@@ -90,8 +91,7 @@ struct docs_data
      * @param p_doc_ids ids of all docs
      * @param p_term_ids ids of all terms
      */
-    score_data(inverted_index& p_idx, std::vector<doc_id> p_doc_ids, std::vector<doc_id> p_term_ids,
-               uint64_t p_total_terms, float p_query_length)
+    docs_data(const inverted_index& p_idx, std::vector<doc_id> p_doc_ids, std::vector<term_id> p_term_ids)
         : idx(p_idx), // gcc no non-const ref init from brace init list
           doc_ids{p_doc_ids},
           term_ids{p_term_ids}
@@ -119,11 +119,22 @@ public:
         return mu_;
     }
 
+protected:
+    inline double get_alpha(std::map<term_id, double> alpha_m){
+        double alpha = 0;
+
+        for (auto alpha_m_k: alpha_m){
+            alpha += alpha_m_k.second;
+        }
+
+        return alpha;
+    }
+
 private:
     void optimize_mu(const inverted_index& idx) {
         auto docs_ids = idx.docs();
         auto terms_ids = idx.terms();
-        docs_data  dd{idx, docs_ids, terms_ids};
+        docs_data dd{idx, docs_ids, terms_ids};
 
         optimize_mu(dd);
 //        std::cout << idx.unique_terms() << std::endl;
@@ -177,7 +188,7 @@ class digamma_rec: public dirichlet_prior_opt{
         // p(w|REF) = dd.idx.total_num_occurences(t_id)
 
         // fill start vector alpha_m
-        double alpha = 1;
+        double alpha = 1, alpha_mk_new;
         std::map<term_id, double> alpha_m;
 
         for (auto t_id: dd.idx.terms()){
@@ -185,16 +196,15 @@ class digamma_rec: public dirichlet_prior_opt{
         }
 
         double D, S;
-        bool converged = false;
+        bool all_optimized = false;
+        int iters_num = 0;
 
-        while (!converged){
+        while (!all_optimized && iters_num < max_iter){
             D = 0;
             S = 0;
+            all_optimized = true;
 
-            alpha = 0;
-            for (auto alpha_m_k: alpha_m){
-                alpha += alpha_m_k;
-            }
+            alpha = get_alpha(alpha_m);
 
             count_d n, c_d;
             for (auto kv: docs_counts){
@@ -220,13 +230,23 @@ class digamma_rec: public dirichlet_prior_opt{
                     n = kv_.first;
                     c_k_n = kv_.second;
 
-                    D += 1/(n - 1 + alpha * m_k);
+                    D += 1/(n - 1 + alpha_m[k]);
                     S_k += c_k_n * D;
                 }
 
-                alpha_m[k] *= S_k / S;
+                alpha_mk_new = alpha_m[k] * S_k / S;
+
+                if (std::abs(alpha_mk_new - alpha_m[k]) > eps){
+                    all_optimized = false;
+                }
+
+                alpha_m[k] *= alpha_mk_new;
             }
+
+            iters_num++;
         }
+
+        mu_ = get_alpha(alpha_m);
 
     }
 };

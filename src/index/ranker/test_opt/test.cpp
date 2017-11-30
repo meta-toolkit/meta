@@ -45,22 +45,22 @@ int main(int argc, char* argv[])
     std::cout << "Method DR took: " << time.count() / 1000.0
               << " seconds" << std::endl;
 
-    time = common::time([&]()
-    {
-        // Create and make score of optimizer
-        index::log_approx ranker;
-        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
-    });
+//    time = common::time([&]()
+//    {
+//        // Create and make score of optimizer
+//        index::log_approx ranker;
+//        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
+//    });
 
-    std::cout << "Method LA took: " << time.count() / 1000.0
-              << " seconds" << std::endl;
+//    std::cout << "Method LA took: " << time.count() / 1000.0
+//              << " seconds" << std::endl;
 
-    time = common::time([&]()
-    {
-        // Create and make score of optimizer
-        index::mackay_peto ranker;
-        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
-    });
+//    time = common::time([&]()
+//    {
+//        // Create and make score of optimizer
+//        index::mackay_peto ranker;
+//        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
+//    });
 
     std::cout << "Method MP took: " << time.count() / 1000.0
               << " seconds" << std::endl;
