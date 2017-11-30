@@ -45,7 +45,7 @@ parse_word(util::string_view& query, const embeddings::word_embeddings& glove)
     if (word.empty())
         throw parse_exception{"invalid expression"};
     parse_whitespace(query);
-    return glove.at(word).v;
+    return glove.at(word.to_string()).v;
 }
 
 std::vector<double> parse_expression(util::string_view& query,
