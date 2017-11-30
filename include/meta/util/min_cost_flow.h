@@ -1,11 +1,7 @@
-//
-// Created by lolik111 on 29.11.17.
-//
-
-
-//
-// Created by lolik111 on 28.11.17.
-//
+/**
+ * @file min_cost_flow.h
+ * @author lolik111
+ */
 
 #ifndef FAST_EMD_MIN_COST_FLOW_H
 #define FAST_EMD_MIN_COST_FLOW_H
@@ -21,77 +17,57 @@ namespace meta
 {
 namespace util
 {
-template<typename CostType>
+template <typename T>
 struct edge;
 
-template<typename CostType>
-struct edge0;
+template <typename T>
+struct edge_weighted;
 
-template<typename CostType>
-struct edge1;
-
-template<typename CostType>
-struct edge2;
-
-template<typename DistType>
-struct edge3;
-
-template<typename NumT>
+template <typename NumT>
 class min_cost_flow
 {
 
-public:
+  public:
+    NumT emd_hat(const std::vector<NumT>& supply,
+                 const std::vector<NumT>& demand,
+                 const std::vector<std::vector<NumT>>& cost);
 
     // e - supply(positive) and demand(negative).
     // c[i] - edges that goes from node i. first is the second nod
     // x - the flow is returned in it
+    NumT compute_min_cost_flow(std::vector<NumT>& e,
+                               const std::vector<std::list<edge<NumT>>>& c,
+                               std::vector<std::list<edge_weighted<NumT>>>& x);
 
-    NumT emd_hat(const std::vector<NumT> &supply_orig,
-                 const std::vector<NumT> &demand_orig,
-                 const std::vector<NumT> &supply,
-                 const std::vector<NumT> &demand,
-                 const std::vector<std::vector<NumT>> &cost,
-                 NumT extra_mass_penalty);
-
-    NumT compute_min_cost_flow(std::vector<NumT> &e,
-                               const std::vector<std::list<edge<NumT>>> &c,
-                               std::vector<std::list<edge0<NumT>>> &x);
-
-
-private:
-
+  private:
     size_t _num_nodes;
     std::vector<size_t> _nodes_to_demand;
 
-    template<typename T>
-    static T integral_emd_hat(const std::vector<T> &supply_orig,
-                          const std::vector<T> &demand_orig,
-                          const std::vector<T> &supply,
-                          const std::vector<T> &demand,
-                          const std::vector<std::vector<T>> &cost,
-                          T extra_mass_penalty);
+    template <typename T>
+    static T integral_emd_hat(const std::vector<T>& supply,
+                              const std::vector<T>& demand,
+                              const std::vector<std::vector<T>>& cost);
 
-    void
-    compute_shortest_path(std::vector<NumT> &d, std::vector<size_t> &prev,
+    void compute_shortest_path(
+        std::vector<NumT>& d, std::vector<size_t>& prev,
 
-                          size_t from,
-                          std::vector<std::list<edge1<NumT>>> &cost_forward,
-                          std::vector<std::list<edge2<NumT>>> &cost_backward,
+        size_t from, std::vector<std::list<edge<NumT>>>& cost_forward,
+        std::vector<std::list<edge_weighted<NumT>>>& cost_backward,
 
-                          const std::vector<NumT> &e, size_t &l);
+        const std::vector<NumT>& e, size_t& l);
 
-    void heap_decrease_key(std::vector<edge3<NumT>> &demand,
-                           std::vector<size_t> &nodes_to_demand, size_t v,
+    void heap_decrease_key(std::vector<edge<NumT>>& demand,
+                           std::vector<size_t>& nodes_to_demand, size_t v,
                            NumT alt);
 
-    void heap_remove_first(std::vector<edge3<NumT>> &demand,
-                           std::vector<size_t> &nodes_to_demand);
+    void heap_remove_first(std::vector<edge<NumT>>& demand,
+                           std::vector<size_t>& nodes_to_demand);
 
-    void heapify(std::vector<edge3<NumT>> &demand,
-                 std::vector<size_t> &nodes_to_demand, size_t i);
+    void heapify(std::vector<edge<NumT>>& demand,
+                 std::vector<size_t>& nodes_to_demand, size_t i);
 
-    void swap_heap(std::vector<edge3<NumT>> &demand,
-                   std::vector<size_t> &nodes_to_demand, size_t i, size_t j);
+    void swap_heap(std::vector<edge<NumT>>& demand,
+                   std::vector<size_t>& nodes_to_demand, size_t i, size_t j);
 
     size_t LEFT(size_t i)
     {
@@ -107,9 +83,13 @@ private:
     {
         return (i - 1) / 2;
     }
-
 };
-// end min_cost_flow
+}
+}
+
+#include "min_cost_flow.tcc"
+
+#endif // FAST_EMD_MIN_COST_FLOW_H
 
 // Copyright (c) 2009-2012, Ofir Pele
 // All rights reserved.
@@ -137,9 +117,3 @@ private:
 // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-}
-}
-
-#include "min_cost_flow.tcc"
-
-#endif //FAST_EMD_MIN_COST_FLOW_H

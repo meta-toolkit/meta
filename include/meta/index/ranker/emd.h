@@ -106,7 +106,7 @@ class em_distance
             }
         }
         util::min_cost_flow<double> mcf;
-        auto score = mcf.emd_hat(supply, demand, supply, demand, cost, -1.);
+        auto score = mcf.emd_hat(supply, demand, cost);
 
         return score;
     }
@@ -185,7 +185,7 @@ class em_distance
         double res = 0.0;
         auto it1 = a.begin();
         auto it2 = b.begin();
-        if(it1 == it2)
+        if (it1 == it2)
         {
             return 0;
         }

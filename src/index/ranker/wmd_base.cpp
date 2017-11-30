@@ -103,7 +103,8 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
     }
     else
     {
-        index::em_distance wcd(cache_, embeddings_, "wcd", em_distance::l2diff_norm);
+        index::em_distance wcd(cache_, embeddings_, "wcd",
+                               em_distance::l2diff_norm);
         index::em_distance emd(cache_, embeddings_, "emd", distance);
         index::em_distance rwmd(cache_, embeddings_, "rwmd", distance);
 
@@ -128,7 +129,7 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
         scores.erase(scores.begin(), scores.begin() + num_results);
         // emd after wcd
         auto k_emd = process(emd, filter, ctx, k_docs);
-        for(auto sr : k_emd)
+        for (auto sr : k_emd)
         {
             results.emplace(sr);
         }
@@ -136,19 +137,18 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
         // worst result
         auto last = (--results.end())->score;
 
-        const size_t magic_constant = std::max(fwd_->docs().size() / 8,
-                                               num_results * 8);
+        const size_t magic_constant
+            = std::max(fwd_->docs().size() / 8, num_results * 8);
         std::vector<doc_id> rwmd_docs(magic_constant);
         auto start = scores.begin();
-        std::generate(rwmd_docs.begin(), rwmd_docs.end(), [&](){
-            return (*start++).d_id;
-        });
+        std::generate(rwmd_docs.begin(), rwmd_docs.end(),
+                      [&]() { return (*start++).d_id; });
         // rwmd phase
         auto rwmd_results = process(rwmd, filter, ctx, rwmd_docs);
 
         std::vector<doc_id> pretend_docs;
 
-        for(auto sr : rwmd_results)
+        for (auto sr : rwmd_results)
         {
             if (sr.score < last)
             {
@@ -157,14 +157,13 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
         }
 
         if (!pretend_docs.empty())
-        {   // emd phase
+        { // emd phase
             auto pretend_results = process(emd, filter, ctx, pretend_docs);
             for (auto sr : pretend_results)
             {
                 results.emplace(sr);
             }
         }
-
     }
 
     return results.extract_top();
@@ -196,7 +195,8 @@ std::vector<search_result> wmd_base::process(em_distance emd,
                 }
 
                 auto doc2 = create_document(tf_pc);
-                if(doc1.n_terms == 0 || doc2.n_terms == 0){
+                if (doc1.n_terms == 0 || doc2.n_terms == 0)
+                {
                     continue;
                 }
                 auto score = static_cast<float>(emd.score(doc1, doc2));
