@@ -55,5 +55,95 @@ std::unique_ptr<ranker>
         throw ranker_exception{"dirichlet-prior mu must be >= 0"};
     return make_unique<dirichlet_prior>(mu);
 }
+
+const util::string_view dirichlet_digamma_rec::id = "dirichlet-digamma-rec";
+template <>
+std::unique_ptr<ranker>
+    make_ranker<dirichlet_digamma_rec>(const cpptoml::table& config)
+{
+    auto mu = config.get_as<double>("mu").value_or(dirichlet_digamma_rec::default_mu);
+    if (mu < 0)
+        throw ranker_exception{"dirichlet-digamma-rec mu must be >= 0"};
+    return make_unique<dirichlet_digamma_rec>(mu);
+}
+
+dirichlet_digamma_rec::dirichlet_digamma_rec(float mu) : dirichlet_prior_opt(mu)
+{
+    // nothing
+}
+
+dirichlet_digamma_rec::dirichlet_digamma_rec(std::istream& in)
+    : dirichlet_prior_opt(in)
+{
+    // nothing
+}
+
+void dirichlet_digamma_rec::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, mu_);
+}
+
+const util::string_view dirichlet_log_approx::id = "dirichlet-log-approx";
+template <>
+std::unique_ptr<ranker>
+    make_ranker<dirichlet_log_approx>(const cpptoml::table& config)
+{
+    auto mu = config.get_as<double>("mu").value_or(dirichlet_log_approx::default_mu);
+    if (mu < 0)
+        throw ranker_exception{"dirichlet-log-approx mu must be >= 0"};
+    return make_unique<dirichlet_log_approx>(mu);
+}
+
+
+dirichlet_log_approx::dirichlet_log_approx(float mu) : dirichlet_prior_opt(mu)
+{
+    // nothing
+}
+
+dirichlet_log_approx::dirichlet_log_approx(std::istream& in)
+    : dirichlet_prior_opt(in)
+{
+    // nothing
+}
+
+void dirichlet_log_approx::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, mu_);
+}
+
+const util::string_view dirichlet_mackay_peto::id = "dirichlet-mackay-peto";
+template <>
+std::unique_ptr<ranker>
+    make_ranker<dirichlet_mackay_peto>(const cpptoml::table& config)
+{
+    auto mu = config.get_as<double>("mu").value_or(dirichlet_mackay_peto::default_mu);
+    if (mu < 0)
+        throw ranker_exception{"dirichlet-mackay-peto mu must be >= 0"};
+    return make_unique<dirichlet_mackay_peto>(mu);
+}
+
+
+dirichlet_mackay_peto::dirichlet_mackay_peto(float mu) : dirichlet_prior_opt(mu)
+{
+    // nothing
+}
+
+dirichlet_mackay_peto::dirichlet_mackay_peto(std::istream& in)
+    : dirichlet_prior_opt(in)
+{
+    // nothing
+}
+
+void dirichlet_mackay_peto::save(std::ostream& out) const
+{
+    io::packed::write(out, id);
+
+    io::packed::write(out, mu_);
+}
+
 }
 }

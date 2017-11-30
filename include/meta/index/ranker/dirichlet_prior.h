@@ -111,6 +111,11 @@ struct docs_data
 
 class dirichlet_prior_opt : public dirichlet_prior{
 public:
+
+    dirichlet_prior_opt(float mu) : dirichlet_prior(mu) { }
+
+    dirichlet_prior_opt(std::istream& in) : dirichlet_prior(in) { }
+
     template <class ForwardIterator>
     std::vector<search_result> score(inverted_index& idx, ForwardIterator begin,
                                      ForwardIterator end,
@@ -169,6 +174,22 @@ private:
 };
 
 class dirichlet_digamma_rec: public dirichlet_prior_opt{
+public:
+    const static util::string_view id;
+
+    /**
+     * @param mu
+     */
+    dirichlet_digamma_rec(float mu = default_mu);
+
+    /**
+     * Loads a dirichlet_prior ranker from a stream.
+     * @param in The stream to read from
+     */
+    dirichlet_digamma_rec(std::istream& in);
+
+    void save(std::ostream& out) const override;
+private:
     void optimize_mu(const docs_data& dd, float eps=1e-6, int max_iter=100) override {
         // fill C_.(n) and C_k(n)
 
@@ -303,11 +324,43 @@ class dirichlet_digamma_rec: public dirichlet_prior_opt{
 };
 
 class dirichlet_log_approx: public dirichlet_prior_opt{
-//    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
+public:
+    const static util::string_view id;
+
+    /**
+     * @param mu
+     */
+    dirichlet_log_approx(float mu = default_mu);
+
+    /**
+     * Loads a dirichlet_prior ranker from a stream.
+     * @param in The stream to read from
+     */
+    dirichlet_log_approx(std::istream& in);
+
+    void save(std::ostream& out) const override;
+private:
+    void optimize_mu(const docs_data& dd, float eps=1e-6, int max_iter=100) override { mu_ = 0;};
 };
 
 class dirichlet_mackay_peto: public dirichlet_prior_opt{
-//    void optimize_mu(const inverted_index& idx) override { mu_ = 0;};
+public:
+    const static util::string_view id;
+
+    /**
+     * @param mu
+     */
+    dirichlet_mackay_peto(float mu = default_mu);
+
+    /**
+     * Loads a dirichlet_prior ranker from a stream.
+     * @param in The stream to read from
+     */
+    dirichlet_mackay_peto(std::istream& in);
+
+    void save(std::ostream& out) const override;
+private:
+    void optimize_mu(const docs_data& dd, float eps=1e-6, int max_iter=100) override { mu_ = 0;};
 };
 
 /**
