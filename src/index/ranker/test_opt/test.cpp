@@ -33,27 +33,30 @@ int main(int argc, char* argv[])
     auto config = cpptoml::parse_file(argv[1]);
     auto idx = index::make_index<index::inverted_index>(*config);
 
+    double eps = 1e-6;
+    int iters = 10000;
+
     // Time how long it takes to create the index. By default, common::time's
     //  unit of measurement is milliseconds.
     auto time = common::time([&]()
     {
         // Create and make score of optimizer
         index::dirichlet_digamma_rec ranker;
-        std::cout << "\n\n" << ranker.get_optimized_mu(*idx, 1e-6, 100) << std::endl;
+        std::cout << "\n\n" << ranker.get_optimized_mu(*idx, eps, iters) << std::endl;
     });
 
-    std::cout << "Method DR took: " << time.count() / 1000.0
-              << " seconds" << std::endl;
+    std::cout << "Method DR took: " << time.count() / 1.0
+              << " milliseconds" << std::endl;
 
-//    time = common::time([&]()
-//    {
-//        // Create and make score of optimizer
-//        index::log_approx ranker;
-//        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
-//    });
+    time = common::time([&]()
+    {
+        // Create and make score of optimizer
+        index::dirichlet_log_approx ranker;
+        std::cout << ranker.get_optimized_mu(*idx, eps, iters) << std::endl;
+    });
 
-//    std::cout << "Method LA took: " << time.count() / 1000.0
-//              << " seconds" << std::endl;
+    std::cout << "Method LA took: " << time.count() / 1.0
+              << " milliseconds" << std::endl;
 
 //    time = common::time([&]()
 //    {
@@ -62,8 +65,8 @@ int main(int argc, char* argv[])
 //        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
 //    });
 
-    std::cout << "Method MP took: " << time.count() / 1000.0
-              << " seconds" << std::endl;
+    std::cout << "Method MP took: " << time.count() / 1.0
+              << " milliseconds" << std::endl;
 
     return 0;
 }
