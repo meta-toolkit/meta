@@ -3,10 +3,10 @@
  * @author lolik111
  */
 
-#include "meta/parallel/parallel_for.h"
 #include "meta/index/ranker/wmd_base.h"
 #include "meta/index/forward_index.h"
 #include "meta/index/postings_data.h"
+#include "meta/parallel/parallel_for.h"
 #include "meta/util/fixed_heap.h"
 
 namespace meta
@@ -88,14 +88,26 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
     {
         distance = embeddings::wm_distance::cosine;
     }
+    std::vector<std::pair<term_id, double>> tf_pc;
+    tf_pc.reserve(ctx.postings.size());
+    for (auto one : ctx.postings)
+    {
+        tf_pc.push_back({one.t_id, one.query_term_weight});
+    }
+
+    auto doc_to_compare = create_document(tf_pc);
+    if (doc_to_compare.n_terms == 0)
+    {
+        return results.extract_top(); // empty
+    }
 
     parallel::thread_pool pool(nthreads_);
     std::vector<doc_id> docs = fwd_->docs();
 
     if (mode_ != "prefetch-prune")
     {
-        embeddings ::wm_distance emd(cache_, embeddings_, distance);
-        auto scores = process(emd, mode_, filter, ctx, fwd_->docs());
+        embeddings::wm_distance emd(cache_, embeddings_, distance);
+        auto scores = process(emd, mode_, filter, doc_to_compare, fwd_->docs());
         for (auto score : scores)
         {
             results.emplace(score);
@@ -106,7 +118,10 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
         embeddings::wm_distance emd(cache_, embeddings_, distance);
 
         // wcd phase
-        auto scores = process(emd, "wcd", filter, ctx, fwd_->docs());
+        auto scores = process(
+            {cache_, embeddings_, embeddings::wm_distance::l2diff_norm}, "wcd",
+            filter, doc_to_compare, fwd_->docs());
+
         std::sort(scores.begin(), scores.end(),
                   [&](const search_result a, const search_result b) {
                       bool ans;
@@ -121,7 +136,7 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
         }
         scores.erase(scores.begin(), scores.begin() + num_results);
         // emd after wcd
-        auto k_emd = process(emd, "emd", filter, ctx, k_docs);
+        auto k_emd = process(emd, "emd", filter, doc_to_compare, k_docs);
         for (auto sr : k_emd)
         {
             results.emplace(sr);
@@ -130,14 +145,17 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
         // worst result
         auto last = (--results.end())->score;
 
+        // how much documents compare using with rwmd
         const size_t magic_constant
             = std::max(fwd_->docs().size() / 8, num_results * 8);
+
         std::vector<doc_id> rwmd_docs(magic_constant);
         auto start = scores.begin();
         std::generate(rwmd_docs.begin(), rwmd_docs.end(),
                       [&]() { return (*start++).d_id; });
         // rwmd phase
-        auto rwmd_results = process(emd, "rwmd", filter, ctx, rwmd_docs);
+        auto rwmd_results
+            = process(emd, "rwmd", filter, doc_to_compare, rwmd_docs);
 
         std::vector<doc_id> pretend_docs;
 
@@ -151,8 +169,8 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
 
         if (!pretend_docs.empty())
         { // emd phase
-            auto pretend_results = process(emd, "emd", filter, ctx,
-                    pretend_docs);
+            auto pretend_results
+                = process(emd, "emd", filter, doc_to_compare, pretend_docs);
             for (auto sr : pretend_results)
             {
                 results.emplace(sr);
@@ -163,11 +181,11 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
     return results.extract_top();
 }
 
-std::vector<search_result> wmd_base::process(embeddings::wm_distance emd, const
-std::string mode,
-                                             const filter_function_type& filter,
-                                             ranker_context& ctx,
-                                             std::vector<doc_id> docs)
+std::vector<search_result>
+wmd_base::process(embeddings::wm_distance emd, const std::string mode,
+                  const filter_function_type& filter,
+                  embeddings::emb_document doc_to_compare,
+                  std::vector<doc_id> docs)
 {
     parallel::thread_pool pool(nthreads_);
 
@@ -179,26 +197,20 @@ std::string mode,
             {
                 if (!filter(*it))
                     continue;
-                auto tf = fwd_->search_primary(*it)->counts();
-                auto doc1 = create_document(tf);
 
-                std::vector<std::pair<term_id, double>> tf_pc;
-                tf_pc.reserve(ctx.postings.size());
-                for (auto one : ctx.postings)
-                {
-                    tf_pc.push_back({one.t_id, one.query_term_weight});
-                }
+                auto doc = create_document(fwd_->search_primary(*it)->counts());
 
-                auto doc2 = create_document(tf_pc);
-                if (doc1.n_terms == 0 || doc2.n_terms == 0)
+                if (doc.n_terms == 0)
                 {
                     continue;
                 }
-                auto score = static_cast<float>(emd.score(mode, doc1, doc2));
+                auto score
+                    = static_cast<float>(emd.score(mode, doc, doc_to_compare));
                 block_scores.emplace_back(*it, score);
             }
             return block_scores;
         });
+
     std::vector<search_result> results;
     results.reserve(fwd_->docs().size());
     for (auto& vec : scores)

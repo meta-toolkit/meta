@@ -73,13 +73,27 @@ class wmd_base : public ranker
         cache_;
     const std::string mode_;
     const std::string distance_func_;
+    /**
+     * Creates document, omitting terms not presenting in the embeddings
+     * @param tf vector of term frequences
+     * @return Struct representing one document in the wmd processing
+     */
     embeddings::emb_document
     create_document(std::vector<std::pair<term_id, double>> tf);
 
+    /**
+     * Calculates wmd based on the instance of the emd class and mode paralelly
+     * @param emd
+     * @param mode
+     * @param filter
+     * @param doc_to_compare
+     * @param docs documents
+     * @return vector of search results
+     */
     std::vector<search_result> process(embeddings::wm_distance emd,
                                        const std::string mode,
                                        const filter_function_type& filter,
-                                       ranker_context& ctx,
+                                       embeddings::emb_document doc_to_compare,
                                        std::vector<doc_id> docs);
 };
 

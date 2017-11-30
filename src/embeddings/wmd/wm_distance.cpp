@@ -78,7 +78,7 @@ double wm_distance::emd(const emb_document& doc1, const emb_document& doc2)
     {
         for (size_t j = 0; j < doc2.n_terms; ++j)
         {
-            double dist = f_c_distance(doc1, doc2, i, j);
+            double dist = f_c_distance(doc1.ids[i], doc2.ids[j]);
             assert(dist >= 0);
             cost[i][j + doc1.n_terms] = dist;
             cost[j + doc1.n_terms][i] = dist;
@@ -105,7 +105,7 @@ double wm_distance::emd_relaxed(const emb_document& doc1,
         std::vector<double> distance(doc2.n_terms);
         for (size_t j = 0; j < doc2.n_terms; ++j)
         {
-            distance[j] = f_c_distance(doc1, doc2, i, j);
+            distance[j] = f_c_distance(doc1.ids[i], doc2.ids[j]);
         }
 
         if (doc1.weights[i] != 0)
@@ -189,28 +189,25 @@ double wm_distance::cosine(const util::array_view<const double>& a,
     return (1.0 - std::inner_product(a.begin(), a.end(), b.begin(), 0.0)) / 2.0;
 }
 
-double wm_distance::f_c_distance(const emb_document& doc1,
-                                 const emb_document& doc2, size_t first,
-                                 size_t second)
+double wm_distance::f_c_distance(const size_t first_word_id,
+                                 const size_t second_word_id)
 {
     std::pair<size_t, size_t> pair;
-    if (doc1.ids[first] < doc2.ids[second])
+    if (first_word_id < second_word_id)
     {
-        pair = {doc1.ids[first], doc2.ids[second]};
+        pair = {first_word_id, second_word_id};
     }
     else
     {
-        pair = {doc2.ids[second], doc1.ids[first]};
+        pair = {second_word_id, first_word_id};
     }
 
     auto val = cache_->find(pair);
 
-    double def_distance;
-
-    return val.value_or([&](){
-        auto dst = dist(embeddings_->at(doc1.ids[first]),
-                            embeddings_->at(doc2.ids[second]));
-        cache_ ->insert(pair, dst);
+    return val.value_or([&]() {
+        auto dst = dist(embeddings_->at(first_word_id),
+                        embeddings_->at(second_word_id));
+        cache_->insert(pair, dst);
         return dst;
     }());
 }
