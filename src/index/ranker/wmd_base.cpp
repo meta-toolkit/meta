@@ -147,7 +147,8 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
 
         // how much documents compare using with rwmd
         const size_t magic_constant
-            = std::max(fwd_->docs().size() / 8, num_results * 8);
+            = std::max(static_cast<size_t>(fwd_->docs().size() / 8),
+                       static_cast<size_t>(num_results * 8));
 
         std::vector<doc_id> rwmd_docs(magic_constant);
         auto start = scores.begin();
