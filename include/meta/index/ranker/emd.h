@@ -185,6 +185,11 @@ class em_distance
         double res = 0.0;
         auto it1 = a.begin();
         auto it2 = b.begin();
+        if(it1 == it2)
+        {
+            return 0;
+        }
+
         while (it1 != a.end())
         {
             double val = *it1 - *it2;

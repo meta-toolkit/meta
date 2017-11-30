@@ -723,9 +723,8 @@ T min_cost_flow<NumT>::integral_emd_hat(const std::vector<T> &supply_orig,
     T mcf_dist = mcf.compute_min_cost_flow(bb, cc, flows);
 
     my_dist = pre_flow_cost + // pre-flowing on cases where it was possible
-              mcf_dist +      // solution of the transportation problem
-              (abs_diff_sum_supply_sum_denamd
-               * extra_mass_penalty); // emd-hat extra mass penalty
+              mcf_dist; // solution of the transportation problem
+
 
     return my_dist;
 

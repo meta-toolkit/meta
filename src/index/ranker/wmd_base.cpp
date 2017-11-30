@@ -7,7 +7,6 @@
 #include "meta/index/forward_index.h"
 #include "meta/index/postings_data.h"
 #include "meta/index/score_data.h"
-#include "meta/logging/logger.h"
 #include "meta/util/fixed_heap.h"
 
 namespace meta
@@ -104,7 +103,7 @@ std::vector<search_result> wmd_base::rank(ranker_context& ctx,
     }
     else
     {
-        index::em_distance wcd(cache_, embeddings_, "wcd", distance);
+        index::em_distance wcd(cache_, embeddings_, "wcd", em_distance::l2diff_norm);
         index::em_distance emd(cache_, embeddings_, "emd", distance);
         index::em_distance rwmd(cache_, embeddings_, "rwmd", distance);
 
@@ -197,6 +196,9 @@ std::vector<search_result> wmd_base::process(em_distance emd,
                 }
 
                 auto doc2 = create_document(tf_pc);
+                if(doc1.n_terms == 0 || doc2.n_terms == 0){
+                    continue;
+                }
                 auto score = static_cast<float>(emd.score(doc1, doc2));
                 block_scores.emplace_back(*it, score);
             }
