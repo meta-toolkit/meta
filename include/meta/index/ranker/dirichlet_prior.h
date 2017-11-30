@@ -68,6 +68,10 @@ class dirichlet_prior : public language_model_ranker
      */
     float doc_constant(const score_data& sd) const override;
 
+    float parameter() const {
+        return mu_;
+    }
+
   protected:
     /// the Dirichlet prior parameter
 //    const float mu_;
@@ -135,10 +139,8 @@ public:
         return ranker::score(idx, begin, end, num_results);
     }
 
-    float get_optimized_mu(const inverted_index& idx, float eps, int max_iter) {
-        optimize_mu(idx, eps, max_iter);
-
-        return mu_;
+    std::map<term_id, double> get_optimized_mu(const inverted_index& idx, float eps, int max_iter) {
+        return optimize_mu(idx, eps, max_iter);
     }
 
 protected:
@@ -153,7 +155,7 @@ protected:
     }
 
 private:
-    void optimize_mu(const inverted_index& idx, float eps=1e-6, int max_iter=10000) {
+    std::map<term_id, double> optimize_mu(const inverted_index& idx, float eps=1e-6, int max_iter=10000) {
         // parse idx and extract what we need
         auto docs_ids = idx.docs();
         auto terms_ids = idx.terms();
@@ -194,10 +196,10 @@ private:
         docs_data dd{idx, docs_ids, terms_ids, ref_size, docs_counts, terms_docs_counts, alpha_m};
 
         // call optimizer
-        optimize_mu(dd, eps, max_iter);
+        return optimize_mu(dd, eps, max_iter);
     }
 
-    virtual void optimize_mu(docs_data& dd, float eps, int max_iter) = 0;
+    virtual std::map<term_id, double> optimize_mu(docs_data& dd, float eps, int max_iter) = 0;
 };
 
 class dirichlet_digamma_rec: public dirichlet_prior_opt{
@@ -217,7 +219,7 @@ public:
 
     void save(std::ostream& out) const override;
 private:
-    void optimize_mu(docs_data& dd, float eps, int max_iter) override {
+    std::map<term_id, double> optimize_mu(docs_data& dd, float eps, int max_iter) override {
         bool all_optimized = false;
         int iter_num = 0;
         double D, S;
@@ -273,7 +275,10 @@ private:
         }
 
         mu_ = get_alpha(alpha_m);
+
+        return alpha_m;
     }
+
 };
 
 class dirichlet_log_approx: public dirichlet_prior_opt{
@@ -293,7 +298,7 @@ public:
 
     void save(std::ostream& out) const override;
 private:
-    void optimize_mu(docs_data& dd, float eps, int max_iter) override {
+    std::map<term_id, double> optimize_mu(docs_data& dd, float eps, int max_iter) override {
         bool all_optimized = false;
         int iter_num = 0;
         double S, S_k;
@@ -350,6 +355,8 @@ private:
         }
 
         mu_ = get_alpha(alpha_m);
+
+        return alpha_m;
     }
 };
 
@@ -370,11 +377,14 @@ public:
 
     void save(std::ostream& out) const override;
 private:
-    void optimize_mu(docs_data& dd, float eps, int max_iter) override {
+    std::map<term_id, double> optimize_mu(docs_data& dd, float eps, int max_iter) override {
         eps = eps;
         max_iter = max_iter;
         eps = dd.ref_size;
         mu_ = 0;
+        std::map<term_id, double> alpha_m;
+
+        return alpha_m;
     }
 };
 

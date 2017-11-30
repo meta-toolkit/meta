@@ -13,6 +13,13 @@
 using namespace meta;
 
 
+void display_result(float alpha, std::map<term_id, double> alpha_m, float time){
+    for (auto kv: alpha_m){
+        std::cout << kv.second << " ";
+    }
+    std::cout << alpha << std::endl << time << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
     if (argc != 2)
@@ -36,27 +43,28 @@ int main(int argc, char* argv[])
     double eps = 1e-6;
     int iters = 10000;
 
-    // Time how long it takes to create the index. By default, common::time's
-    //  unit of measurement is milliseconds.
-    auto time = common::time([&]()
+    float alpha;
+    std::map<term_id, double> alpha_m;
+
+    index::dirichlet_digamma_rec ranker1;
+    index::dirichlet_log_approx ranker2;
+
+    auto time1 = common::time([&]()
     {
-        // Create and make score of optimizer
-        index::dirichlet_digamma_rec ranker;
-        std::cout << "\n\n" << ranker.get_optimized_mu(*idx, eps, iters) << std::endl;
+        alpha_m = ranker1.get_optimized_mu(*idx, eps, iters);
+        alpha = ranker1.parameter();
     });
 
-    std::cout << "Method DR took: " << time.count() / 1.0
-              << " milliseconds" << std::endl;
+    display_result(alpha, alpha_m, time1.count() / 1.0);
 
-    time = common::time([&]()
+    auto time2 = common::time([&]()
     {
-        // Create and make score of optimizer
-        index::dirichlet_log_approx ranker;
-        std::cout << ranker.get_optimized_mu(*idx, eps, iters) << std::endl;
+        alpha_m = ranker2.get_optimized_mu(*idx, eps, iters);
+        alpha = ranker2.parameter();
     });
 
-    std::cout << "Method LA took: " << time.count() / 1.0
-              << " milliseconds" << std::endl;
+    display_result(alpha, alpha_m, time2.count() / 1.0);
+
 
 //    time = common::time([&]()
 //    {
@@ -64,9 +72,6 @@ int main(int argc, char* argv[])
 //        index::mackay_peto ranker;
 //        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
 //    });
-
-    std::cout << "Method MP took: " << time.count() / 1.0
-              << " milliseconds" << std::endl;
 
     return 0;
 }
