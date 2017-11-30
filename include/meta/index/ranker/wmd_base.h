@@ -44,13 +44,21 @@ class wmd_base : public ranker
 
     const static std::string default_mode;
 
+    const static std::string default_distance_func;
+
     const static constexpr size_t default_cache_size = 1000000;
 
     wmd_base(std::shared_ptr<forward_index> fwd,
              std::shared_ptr<embeddings::word_embeddings> embeddings,
-             size_t nthreads, size_t cache_size);
+             size_t nthreads, size_t cache_size, std::string mode,
+             std::string distance_func);
 
     wmd_base(std::istream& in);
+
+    std::vector<search_result> process(em_distance emd,
+                                       const filter_function_type& filter,
+                                       ranker_context& ctx,
+                                       std::vector<doc_id> docs);
 
     void save(std::ostream& out) const override;
 
@@ -66,7 +74,8 @@ class wmd_base : public ranker
     std::shared_ptr<caching::dblru_shard_cache<std::pair<uint64_t, uint64_t>,
                                                double>>
         cache_;
-
+    const std::string mode_;
+    const std::string distance_func_;
     meta::index::Document
     create_document(std::vector<std::pair<term_id, double>> tf);
 };

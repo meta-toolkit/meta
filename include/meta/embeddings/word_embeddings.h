@@ -111,6 +111,13 @@ class word_embeddings
      */
     const util::aligned_vector<std::string>& vocab() const;
 
+    /**
+     * @param term term_id to look up
+     * @return the embedding vector (as an array_view) for the given term,
+     *  or the vector for the unknown word as appropriate
+     */
+    util::array_view<const double> at(std::size_t tid) const;
+
   private:
     util::array_view<double> vector(std::size_t tid);
 

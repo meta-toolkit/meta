@@ -161,6 +161,11 @@ embedding word_embeddings::at(std::string term) const
     return {tid, vector(tid)};
 }
 
+util::array_view<const double> word_embeddings::at(std::size_t tid) const
+{
+    return vector(tid);
+}
+
 
 int64_t word_embeddings::tid(std::string term) const
 {
@@ -216,6 +221,7 @@ const util::aligned_vector<std::string>& word_embeddings::vocab() const
 {
     return id_to_term_;
 }
+
 
 word_embeddings load_embeddings(const cpptoml::table& config)
 {
