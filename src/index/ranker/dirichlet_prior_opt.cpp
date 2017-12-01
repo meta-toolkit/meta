@@ -229,11 +229,60 @@ std::map<term_id, double> dirichlet_log_approx::optimize_mu(docs_data& dd, float
 }
 
 std::map<term_id, double> dirichlet_mackay_peto::optimize_mu(docs_data& dd, float eps, int max_iter) {
-    eps = eps;
-    max_iter = max_iter;
-    eps = dd.ref_size;
-    mu_ = 0;
-    std::map<term_id, double> alpha_m;
+    bool all_optimized = false;
+    int iter_num = 0;
+
+    // start values for alpha and alpha_m
+    double alpha = default_mu, alpha_mk_new;
+    std::map<term_id, double> alpha_m = dd.alpha_m;
+
+    while (!all_optimized && iter_num < max_iter){
+        all_optimized = true;
+
+        alpha = get_alpha(alpha_m);
+
+        // compute K(alpha)
+        double K_alpha = 0;
+        for (auto d_id: dd.doc_ids){
+            double n_d = dd.idx.doc_size(d_id);
+            K_alpha += log((n_d + alpha) / alpha) + 0.5 * n_d / (alpha * (n_d + alpha));
+        }
+
+        term_id k;
+        std::map<count_d, count_d> c_k;
+        for (auto kv: dd.terms_docs_counts){
+            k = kv.first;
+            c_k = kv.second;
+
+            count_d n_k_max = c_k.rbegin()->first;
+
+            // compute V_k
+            count_d V_k = dd.idx.doc_freq(k);
+
+            // compute H_k and G_k
+            double H_k = 0, G_k = 0;
+            count_d N_f = 0;
+            for (count_d f = n_k_max; f >= 2; f--){
+                N_f += c_k[f];
+
+                G_k += (double) N_f / (f - 1.0);
+                H_k += (double) N_f / pow(f - 1.0, 2);
+            }
+
+            // recompute alpha_mk
+            alpha_mk_new = 2 * V_k / (K_alpha - G_k + sqrt(pow(K_alpha - G_k, 2) + 4 * H_k * V_k));
+
+            if (std::abs(alpha_mk_new - alpha_m[k]) > eps){
+                all_optimized = false;
+            }
+
+            alpha_m[k] = alpha_mk_new;
+        }
+
+        iter_num++;
+    }
+
+    mu_ = get_alpha(alpha_m);
 
     return alpha_m;
 }

@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
 
     index::dirichlet_digamma_rec ranker1;
     index::dirichlet_log_approx ranker2;
+    index::dirichlet_mackay_peto ranker3;
 
     auto time1 = common::time([&]()
     {
@@ -66,12 +67,13 @@ int main(int argc, char* argv[])
     display_result(alpha, alpha_m, time2.count() / 1.0);
 
 
-//    time = common::time([&]()
-//    {
-//        // Create and make score of optimizer
-//        index::mackay_peto ranker;
-//        std::cout << ranker.get_optimized_mu(*idx) << std::endl;
-//    });
+    auto time3 = common::time([&]()
+    {
+        alpha_m = ranker3.get_optimized_mu(*idx, eps, iters);
+        alpha = ranker3.parameter();
+    });
+
+    display_result(alpha, alpha_m, time3.count() / 1.0);
 
     return 0;
 }
