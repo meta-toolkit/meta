@@ -93,7 +93,7 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
     int max_a = (*qid_vec)[ya_index]->size();
     std::uniform_int_distribution<int> a_distribution(0, max_a);
     int a_index = a_distribution(generator);
-    feature_vector a = (*(*qid_vec)[ya_index])[a_index];
+    feature_vector a = *((*(*qid_vec)[ya_index])[a_index]);
 
     tupl d1  = std::make_tuple(a, ya_index, qid);
 
@@ -108,7 +108,7 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
     int max_b = (*qid_vec)[yb_index]->size();
     std::uniform_int_distribution<int> b_distribution(0, max_b);
     int b_index = b_distribution(generator);
-    feature_vector b = (*(*qid_vec)[yb_index])[b_index];
+    feature_vector b = *((*(*qid_vec)[yb_index])[b_index]);
 
     tupl d2  = std::make_tuple(b, yb_index, qid);
 
