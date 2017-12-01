@@ -202,7 +202,7 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
             label_dataset = new vector<feature_vector *>();
             (*query_dataset)[label] = label_dataset;
         }
-        feature_vector *features = new util::sparse_vector();
+        feature_vector *features = new ::meta::util::sparse_vector();
         for (feature_idx = 0; feature_idx < 46; feature_idx++) {
             iss >> tmp_str;
             stringstream ssid(tmp_str.substr(0, tmp_str.find(':')));
