@@ -209,7 +209,7 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
             ssid >> feature_id;
             stringstream ssval(tmp_str.substr(tmp_str.find(':') + 1));
             ssval >> feature_val;
-            features[feature_id] = feature_val;
+            features[term_id{feature_id}] = feature_val;
         }
         label_dataset->push_back(features);
         iss >> tmp_str;
