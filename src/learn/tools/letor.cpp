@@ -109,7 +109,7 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
     for (auto query_iter = dataset->begin(); query_iter != dataset->end(); query_iter++) {
         auto query_dataset = query_iter->second;
         auto query_docids = (*docids)[query_iter->first];
-        if (query_dataset->size <= 1) {
+        if (query_dataset->size() <= 1) {
             continue;
         }
         vector<std::pair<string, double>> *doc_scores = new vector<std::pair<string, double>>();
