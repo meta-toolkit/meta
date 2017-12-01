@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <unordered_map>
 
 #include "meta/learn/loss/all.h"
 #include "meta/learn/loss/hinge.h"
@@ -34,18 +35,21 @@ int main(int argc, char* argv[])
     learn::sgd_model *model = new learn::sgd_model(46);
 
     //training phase
-    vector<vector<vector<feature_vector*>*>*> *training_dataset = new vector<vector<vector<feature_vector*>*>*>();
-    read_data(TRAINING, argv[1], training_dataset);
+    vector<int> *training_qids = new vector<int>();
+    unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *training_dataset = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
+    read_data(TRAINING, argv[1], training_qids, training_dataset);
 
-    //validation phase
-    vector<vector<vector<feature_vector*>*>*> *validation_dataset = new vector<vector<vector<feature_vector*>*>*>();
-    vector<vector<vector<string>*>*>*> *validation_docids = new vector<vector<vector<string>*>*>*>();
-    read_data(VALIDATION, argv[1], validation_dataset, validation_docids);
-
-    //testing phase
-    vector<vector<vector<feature_vector*>*>*> *testing_dataset = new vector<vector<vector<feature_vector*>*>*>();
-    vector<vector<vector<string>*>*>*> *testing_docids = new vector<vector<vector<string>*>*>*>();
-    read_data(TESTING, argv[1], testing_dataset, testing_docids);
+//    //validation phase
+//    vector<int> *validation_qids = new vector<int>();
+//    unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *validation_dataset = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
+//    unordered_map<int, unordered_map<int, vector<string>*>*> *validation_docids = new unordered_map<int, unordered_map<int, vector<string>*>*>();
+//    read_data(VALIDATION, argv[1], validation_qids, validation_dataset, validation_docids);
+//
+//    //testing phase
+//    vector<int> *testing_qids = new vector<int>();
+//    unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *testing_dataset = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
+//    unordered_map<int, unordered_map<int, vector<string>*>*> *testing_docids = new unordered_map<int, unordered_map<int, vector<string>*>*>();
+//    read_data(TESTING, argv[1], testing_qids, testing_dataset, testing_docids);
 
     loss.reset();
     delete model;
@@ -59,9 +63,8 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-void read_data(DATA_TYPE data_type, string data_dir,
-               vector<vector<vector<feature_vector*>*>*> *dataset,
-                vector<vector<vector<string>*>*>*> *docids) {
+void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
+               unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset) {
     string data_file = data_dir;
     switch(data_type) {
         case TRAINING:
@@ -86,12 +89,20 @@ void read_data(DATA_TYPE data_type, string data_dir,
         stringstream ss(tmp_str.substr(tmp_str.find(':') + 1));
         ss >> qid;
 
-        vector<vector<feature_vector*>*> *label_dataset;
+        unordered_map<int, vector<feature_vector*>*> *query_dataset;
         if (dataset->find(qid) != dataset->end()) {
-            label_dataset = dataset[qid];
+            query_dataset = dataset[qid];
         } else {
-            label_dataset = new unordered_map<int, feature_vector*>();
-            dataset[qid] = label_dataset;
+            qids.push_back(qid);
+            query_dataset = new unordered_map<int, feature_vector*>();
+            dataset[qid] = query_dataset;
+        }
+        vector<feature_vector*> *label_dataset;
+        if (query_dataset->find(label) != query_dataset->end()) {
+            label_dataset = query_dataset[label];
+        } else {
+            label_dataset = new vector<feature_vector*>();
+            query_dataset[label] = label_dataset;
         }
         feature_vector *features = new feature_vector();
         for (feature_idx = 0; feature_idx < 46; feature_idx++) {
@@ -102,6 +113,7 @@ void read_data(DATA_TYPE data_type, string data_dir,
             ssval >> feature_val;
             (*features)[ssid] = ssval;
         }
+        label_dataset->push_back(features);
         iss >> tmp_str;
         iss >> tmp_str;
         iss >> docid;
