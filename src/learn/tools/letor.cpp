@@ -12,14 +12,17 @@
 #include "meta/learn/loss/loss_function.h"
 #include "meta/learn/loss/loss_function_factory.h"
 #include "meta/learn/sgd.h"
+#include "meta/learn/instance.h"
+
 
 using namespace meta;
 using namespace learn;
-using tupl = std::tuple<feature_vector, int, int>;
 using namespace std;
+using namespace util;
+
+using tupl = std::tuple<feature_vector, int, int>;
 //using feature_id = term_id;
 //using feature_vector = util::sparse_vector<feature_id, double>;
-#include "meta/learn/instance.h"
 
 enum DATA_TYPE {
     TRAINING,
