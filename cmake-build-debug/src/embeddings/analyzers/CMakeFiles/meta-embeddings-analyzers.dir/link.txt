@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/libmeta-embeddings-analyzers.a  CMakeFiles/meta-embeddings-analyzers.dir/embedding_analyzer.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/libmeta-embeddings-analyzers.a

@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-succinct.a  CMakeFiles/meta-succinct.dir/compressed_vector.cpp.o CMakeFiles/meta-succinct.dir/bit_vector.cpp.o CMakeFiles/meta-succinct.dir/sarray.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-succinct.a

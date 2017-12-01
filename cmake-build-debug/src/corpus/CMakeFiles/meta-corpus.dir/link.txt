@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-corpus.a  CMakeFiles/meta-corpus.dir/corpus.cpp.o CMakeFiles/meta-corpus.dir/corpus_factory.cpp.o CMakeFiles/meta-corpus.dir/document.cpp.o CMakeFiles/meta-corpus.dir/file_corpus.cpp.o CMakeFiles/meta-corpus.dir/libsvm_corpus.cpp.o CMakeFiles/meta-corpus.dir/line_corpus.cpp.o CMakeFiles/meta-corpus.dir/gz_corpus.cpp.o CMakeFiles/meta-corpus.dir/metadata.cpp.o CMakeFiles/meta-corpus.dir/metadata_parser.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-corpus.a

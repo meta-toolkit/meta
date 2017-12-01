@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/libmeta-kernel.a  CMakeFiles/meta-kernel.dir/kernel_factory.cpp.o CMakeFiles/meta-kernel.dir/polynomial.cpp.o CMakeFiles/meta-kernel.dir/radial_basis.cpp.o CMakeFiles/meta-kernel.dir/sigmoid.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/libmeta-kernel.a

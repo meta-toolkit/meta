@@ -1,0 +1,51 @@
+
+{
+	"sources" : 
+	[
+		
+		{
+			"file" : "/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/CMakeFiles/breast-cancer"
+		},
+		
+		{
+			"file" : "/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/CMakeFiles/breast-cancer.rule"
+		},
+		
+		{
+			"file" : "/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/CMakeFiles/breast-cancer-complete.rule"
+		},
+		
+		{
+			"file" : "/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/breast-cancer-prefix/src/breast-cancer-stamp/breast-cancer-install.rule"
+		},
+		
+		{
+			"file" : "/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/breast-cancer-prefix/src/breast-cancer-stamp/breast-cancer-mkdir.rule"
+		},
+		
+		{
+			"file" : "/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/breast-cancer-prefix/src/breast-cancer-stamp/breast-cancer-download.rule"
+		},
+		
+		{
+			"file" : "/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/breast-cancer-prefix/src/breast-cancer-stamp/breast-cancer-update.rule"
+		},
+		
+		{
+			"file" : "/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/breast-cancer-prefix/src/breast-cancer-stamp/breast-cancer-patch.rule"
+		},
+		
+		{
+			"file" : "/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/breast-cancer-prefix/src/breast-cancer-stamp/breast-cancer-configure.rule"
+		},
+		
+		{
+			"file" : "/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/breast-cancer-prefix/src/breast-cancer-stamp/breast-cancer-build.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : [ "breast-cancer" ],
+		"name" : "breast-cancer"
+	}
+}

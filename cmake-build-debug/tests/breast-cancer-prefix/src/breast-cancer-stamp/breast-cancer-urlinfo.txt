@@ -1,0 +1,3 @@
+repository='external project URL'
+module='https://meta-toolkit.org/data/2016-01-26/breast-cancer.tar.gz'
+tag='SHA256=28a87b30d651c9b14ebf4e125c9f532233d7970b7bb19e4b1cb8c4f4ccd0d125'

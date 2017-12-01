@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/libmeta-parser-trees.a  CMakeFiles/meta-parser-trees.dir/leaf_node.cpp.o CMakeFiles/meta-parser-trees.dir/node.cpp.o CMakeFiles/meta-parser-trees.dir/internal_node.cpp.o CMakeFiles/meta-parser-trees.dir/parse_tree.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/libmeta-parser-trees.a

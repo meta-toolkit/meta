@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-language-model.a  CMakeFiles/meta-language-model.dir/language_model.cpp.o CMakeFiles/meta-language-model.dir/token_list.cpp.o CMakeFiles/meta-language-model.dir/diff.cpp.o CMakeFiles/meta-language-model.dir/mph_language_model.cpp.o CMakeFiles/meta-language-model.dir/static_probe_map.cpp.o CMakeFiles/meta-language-model.dir/sentence.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-language-model.a

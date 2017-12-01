@@ -1,0 +1,3 @@
+repository='external project URL'
+module='https://meta-toolkit.org/data/2016-01-26/housing.tar.gz'
+tag='SHA256=555aee6a3cc4fdae089eb91c60c682ef6136d15c33aa8d554cd1b47cb43a64d4'

@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-features.a  CMakeFiles/meta-features.dir/feature_selector.cpp.o CMakeFiles/meta-features.dir/selector_factory.cpp.o CMakeFiles/meta-features.dir/chi_square.cpp.o CMakeFiles/meta-features.dir/odds_ratio.cpp.o CMakeFiles/meta-features.dir/correlation_coefficient.cpp.o CMakeFiles/meta-features.dir/information_gain.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-features.a

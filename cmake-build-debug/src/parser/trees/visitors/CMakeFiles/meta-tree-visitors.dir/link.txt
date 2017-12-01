@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../../lib/libmeta-tree-visitors.a  CMakeFiles/meta-tree-visitors.dir/annotation_remover.cpp.o CMakeFiles/meta-tree-visitors.dir/binarizer.cpp.o CMakeFiles/meta-tree-visitors.dir/debinarizer.cpp.o CMakeFiles/meta-tree-visitors.dir/empty_remover.cpp.o CMakeFiles/meta-tree-visitors.dir/head_finder.cpp.o CMakeFiles/meta-tree-visitors.dir/leaf_node_finder.cpp.o CMakeFiles/meta-tree-visitors.dir/unary_chain_remover.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../../lib/libmeta-tree-visitors.a

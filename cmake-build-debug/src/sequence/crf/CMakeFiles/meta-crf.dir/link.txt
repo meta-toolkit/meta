@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/libmeta-crf.a  CMakeFiles/meta-crf.dir/crf.cpp.o CMakeFiles/meta-crf.dir/scorer.cpp.o CMakeFiles/meta-crf.dir/tagger.cpp.o CMakeFiles/meta-crf.dir/viterbi_scorer.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/libmeta-crf.a

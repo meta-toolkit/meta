@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-parser.a  CMakeFiles/meta-parser.dir/sr_parser.cpp.o CMakeFiles/meta-parser.dir/state.cpp.o CMakeFiles/meta-parser.dir/state_analyzer.cpp.o CMakeFiles/meta-parser.dir/sequence_extractor.cpp.o CMakeFiles/meta-parser.dir/training_data.cpp.o CMakeFiles/meta-parser.dir/transition.cpp.o CMakeFiles/meta-parser.dir/transition_finder.cpp.o CMakeFiles/meta-parser.dir/transition_map.cpp.o CMakeFiles/meta-parser.dir/evalb.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-parser.a

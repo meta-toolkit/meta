@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-index.a  CMakeFiles/meta-index.dir/disk_index.cpp.o CMakeFiles/meta-index.dir/forward_index.cpp.o CMakeFiles/meta-index.dir/inverted_index.cpp.o CMakeFiles/meta-index.dir/metadata_file.cpp.o CMakeFiles/meta-index.dir/metadata_writer.cpp.o CMakeFiles/meta-index.dir/string_list.cpp.o CMakeFiles/meta-index.dir/string_list_writer.cpp.o CMakeFiles/meta-index.dir/vocabulary_map.cpp.o CMakeFiles/meta-index.dir/vocabulary_map_writer.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-index.a

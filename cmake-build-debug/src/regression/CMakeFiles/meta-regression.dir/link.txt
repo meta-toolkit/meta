@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-regression.a  CMakeFiles/meta-regression.dir/metrics.cpp.o CMakeFiles/meta-regression.dir/regressor_factory.cpp.o CMakeFiles/meta-regression.dir/models/regressor.cpp.o CMakeFiles/meta-regression.dir/models/sgd.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-regression.a

@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/libmeta-tokenizers.a  CMakeFiles/meta-tokenizers.dir/character_tokenizer.cpp.o CMakeFiles/meta-tokenizers.dir/icu_tokenizer.cpp.o CMakeFiles/meta-tokenizers.dir/whitespace_tokenizer.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/libmeta-tokenizers.a

@@ -1,0 +1,1 @@
+cmd='/Applications/CLion.app/Contents/bin/cmake/bin/cmake;-DCMAKE_BUILD_TYPE=Release;-C<TMP_DIR>/liblinear-cache-$<CONFIG>.cmake;-GCodeBlocks - Unix Makefiles;<SOURCE_DIR><SOURCE_SUBDIR>'

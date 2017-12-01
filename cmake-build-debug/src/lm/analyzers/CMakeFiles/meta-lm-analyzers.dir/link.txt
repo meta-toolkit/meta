@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/libmeta-lm-analyzers.a  CMakeFiles/meta-lm-analyzers.dir/diff_analyzer.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/libmeta-lm-analyzers.a

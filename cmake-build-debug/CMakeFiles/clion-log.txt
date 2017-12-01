@@ -1,0 +1,19 @@
+/Applications/CLion.app/Contents/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/mihikadave/Documents/CS510_MP/meta
+-- Searching for ICU 58.2
+-- ICU not found; attempting to build it...
+-- ICU include dirs: /Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/deps/icu-58.2/include
+-- ICU libraries: icui18n;icuuc;icudata
+-- Locating libc++...
+-- Located libc++: /usr/lib/libc++.dylib
+-- Located libc++ include path: /Library/Developer/CommandLineTools/usr/include/c++/v1/
+--     Locating libc++'s abi...
+--     Found libc++abi: /usr/lib/libc++abi.dylib
+-- Using jemalloc: /usr/local/lib/libjemalloc.dylib
+-- Locating libc++experimental library
+-- Locating libc++experimental library - not found
+-- No suitable experimental filesystem library found
+-- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
+-- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug

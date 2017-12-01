@@ -1,0 +1,13 @@
+# Target labels
+ housing
+# Source files and their labels
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/CMakeFiles/housing
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/CMakeFiles/housing.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/CMakeFiles/housing-complete.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/housing-prefix/src/housing-stamp/housing-install.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/housing-prefix/src/housing-stamp/housing-mkdir.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/housing-prefix/src/housing-stamp/housing-download.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/housing-prefix/src/housing-stamp/housing-update.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/housing-prefix/src/housing-stamp/housing-patch.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/housing-prefix/src/housing-stamp/housing-configure.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/housing-prefix/src/housing-stamp/housing-build.rule

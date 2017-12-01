@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-topics.a  CMakeFiles/meta-topics.dir/lda_cvb.cpp.o CMakeFiles/meta-topics.dir/lda_gibbs.cpp.o CMakeFiles/meta-topics.dir/lda_model.cpp.o CMakeFiles/meta-topics.dir/lda_scvb.cpp.o CMakeFiles/meta-topics.dir/parallel_lda_gibbs.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-topics.a

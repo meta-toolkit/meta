@@ -1,0 +1,3 @@
+repository='external project URL'
+module='https://meta-toolkit.org/data/2016-01-26/ceeaus.tar.gz'
+tag='SHA256=83616fe13563786a1a6701f40ee0dc044bf32d1273e0ad53ca72582a90bed9ef'

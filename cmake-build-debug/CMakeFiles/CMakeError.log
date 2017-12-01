@@ -1,0 +1,26 @@
+Performing C++ SOURCE FILE Test META_HAS_ALIGNED_ALLOC failed with the following output:
+Change Dir: /Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_6ec24/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_6ec24.dir/build.make CMakeFiles/cmTC_6ec24.dir/build
+Building CXX object CMakeFiles/cmTC_6ec24.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++   -I/Library/Developer/CommandLineTools/usr/include/c++/v1  -DMETA_HAS_ALIGNED_ALLOC  -std=c++14 -stdlib=libc++ -stdlib=libc++ /usr/lib/libc++abi.dylib -L/usr/lib /usr/lib/libdl.dylib   -o CMakeFiles/cmTC_6ec24.dir/src.cxx.o -c /Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/CMakeFiles/CMakeTmp/src.cxx
+clang: warning: /usr/lib/libc++abi.dylib: 'linker' input unused [-Wunused-command-line-argument]
+clang: warning: /usr/lib/libdl.dylib: 'linker' input unused [-Wunused-command-line-argument]
+clang: warning: argument unused during compilation: '-L/usr/lib' [-Wunused-command-line-argument]
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/CMakeFiles/CMakeTmp/src.cxx:6:7: error: no member named 'aligned_alloc' in the global namespace
+    ::aligned_alloc(64, 128);
+    ~~^
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_6ec24.dir/src.cxx.o] Error 1
+make: *** [cmTC_6ec24/fast] Error 2
+
+Source file was:
+
+#include <cstdlib>
+
+int main()
+{
+    ::aligned_alloc(64, 128);
+    return 0;
+}

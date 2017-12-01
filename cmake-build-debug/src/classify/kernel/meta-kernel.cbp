@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="meta-kernel"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\deps\;CMake Files\deps\cpptoml\;CMake Files\deps\cpptoml\cmake\;CMake Files\deps\cpptoml\examples\;CMake Files\deps\meta-cmake\;CMake Files\deps\meta-cmake\kludges\;CMake Files\deps\findicu\;CMake Files\cmake-build-debug\;CMake Files\cmake-build-debug\deps\;CMake Files\cmake-build-debug\deps\icu-58.2\;CMake Files\cmake-build-debug\deps\icu-58.2\tmp\;CMake Files\cmake-build-debug\src\;CMake Files\cmake-build-debug\src\classify\;CMake Files\cmake-build-debug\src\classify\liblinear-prefix\;CMake Files\cmake-build-debug\src\classify\liblinear-prefix\tmp\;CMake Files\cmake-build-debug\src\classify\libsvm-prefix\;CMake Files\cmake-build-debug\src\classify\libsvm-prefix\tmp\;CMake Files\cmake-build-debug\tests\;CMake Files\cmake-build-debug\tests\ceeaus-prefix\;CMake Files\cmake-build-debug\tests\ceeaus-prefix\tmp\;CMake Files\cmake-build-debug\tests\breast-cancer-prefix\;CMake Files\cmake-build-debug\tests\breast-cancer-prefix\tmp\;CMake Files\cmake-build-debug\tests\housing-prefix\;CMake Files\cmake-build-debug\tests\housing-prefix\tmp\;CMake Files\cmake-build-debug\tests\cranfield-prefix\;CMake Files\cmake-build-debug\tests\cranfield-prefix\tmp\;CMake Files\include\;CMake Files\include\meta\;CMake Files\cmake\;CMake Files\src\;CMake Files\src\analyzers\;CMake Files\src\analyzers\filters\;CMake Files\src\analyzers\tokenizers\;CMake Files\src\analyzers\tools\;CMake Files\src\classify\;CMake Files\src\classify\kernel\;CMake Files\src\classify\tools\;CMake Files\src\corpus\;CMake Files\src\corpus\tools\;CMake Files\src\embeddings\;CMake Files\src\embeddings\tools\;CMake Files\src\embeddings\analyzers\;CMake Files\src\features\;CMake Files\src\features\tools\;CMake Files\src\graph\;CMake Files\src\graph\tools\;CMake Files\src\index\;CMake Files\src\index\eval\;CMake Files\src\index\ranker\;CMake Files\src\index\tools\;CMake Files\src\io\;CMake Files\src\io\tools\;CMake Files\src\learn\;CMake Files\src\learn\loss\;CMake Files\src\learn\tools\;CMake Files\src\lm\;CMake Files\src\lm\tools\;CMake Files\src\lm\analyzers\;CMake Files\src\parser\;CMake Files\src\parser\analyzers\;CMake Files\src\parser\analyzers\featurizers\;CMake Files\src\parser\io\;CMake Files\src\parser\tools\;CMake Files\src\parser\trees\;CMake Files\src\parser\trees\visitors\;CMake Files\src\regression\;CMake Files\src\regression\tools\;CMake Files\src\sequence\;CMake Files\src\sequence\analyzers\;CMake Files\src\sequence\crf\;CMake Files\src\sequence\crf\tools\;CMake Files\src\sequence\hmm\;CMake Files\src\sequence\hmm\tools\;CMake Files\src\sequence\tools\;CMake Files\src\stats\;CMake Files\src\succinct\;CMake Files\src\tools\;CMake Files\src\topics\;CMake Files\src\topics\tools\;CMake Files\src\utf\;CMake Files\src\utf\tools\;CMake Files\src\util\;CMake Files\tests\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="meta-kernel">
+				<Option output="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/lib/libmeta-kernel.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DMETA_HAS_LIBLZMA=1"/>
+					<Add option="-D_DARWIN_USE_64_BIT_INODE=1"/>
+					<Add option="-DMETA_IS_DARWIN=1"/>
+					<Add directory="/Users/mihikadave/Documents/CS510_MP/meta/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug"/>
+					<Add directory="/Users/mihikadave/Documents/CS510_MP/meta/deps/cpptoml/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 meta-kernel"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="meta-kernel/fast">
+				<Option output="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/lib/libmeta-kernel.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DMETA_HAS_LIBLZMA=1"/>
+					<Add option="-D_DARWIN_USE_64_BIT_INODE=1"/>
+					<Add option="-DMETA_IS_DARWIN=1"/>
+					<Add directory="/Users/mihikadave/Documents/CS510_MP/meta/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug"/>
+					<Add directory="/Users/mihikadave/Documents/CS510_MP/meta/deps/cpptoml/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 meta-kernel/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/kernel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/kernel/kernel_factory.cpp">
+			<Option target="meta-kernel"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/kernel/polynomial.cpp">
+			<Option target="meta-kernel"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/kernel/radial_basis.cpp">
+			<Option target="meta-kernel"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/kernel/sigmoid.cpp">
+			<Option target="meta-kernel"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/cpptoml/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\deps\cpptoml\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/cpptoml/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\deps\cpptoml\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/cpptoml/cmake/cpptomlConfig.cmake.in">
+			<Option virtualFolder="CMake Files\deps\cpptoml\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/cpptoml/cmake/cpptomlConfig.cmake.in">
+			<Option virtualFolder="CMake Files\deps\cpptoml\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/cpptoml/examples/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\deps\cpptoml\examples\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/cpptoml/examples/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\deps\cpptoml\examples\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/FindOrBuildICU.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/SetClangOptions.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/CompilerKludges.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/FindLIBCXX.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/kludges.h.in">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/kludges/AlignedAlloc.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\kludges\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/kludges/Expect.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\kludges\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/kludges/ExperimentalFilesystem.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\kludges\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/kludges/ExperimentalOptional.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\kludges\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/kludges/ExperimentalStringView.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\kludges\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/kludges/MakeUnique.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\kludges\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/meta-cmake/kludges/SharedPtrAtomics.cmake">
+			<Option virtualFolder="CMake Files\deps\meta-cmake\kludges\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/deps/findicu/FindICU.cmake">
+			<Option virtualFolder="CMake Files\deps\findicu\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/deps/icu-58.2/tmp/ExternalICU-cfgcmd.txt.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\deps\icu-58.2\tmp\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/liblinear-prefix/tmp/liblinear-cfgcmd.txt.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\src\classify\liblinear-prefix\tmp\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/liblinear-prefix/tmp/liblinear-cfgcmd.txt.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\src\classify\liblinear-prefix\tmp\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/libsvm-prefix/tmp/libsvm-cfgcmd.txt.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\src\classify\libsvm-prefix\tmp\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/libsvm-prefix/tmp/libsvm-cfgcmd.txt.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\src\classify\libsvm-prefix\tmp\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/ceeaus-prefix/tmp/ceeaus-cfgcmd.txt.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\tests\ceeaus-prefix\tmp\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/breast-cancer-prefix/tmp/breast-cancer-cfgcmd.txt.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\tests\breast-cancer-prefix\tmp\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/housing-prefix/tmp/housing-cfgcmd.txt.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\tests\housing-prefix\tmp\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/tests/cranfield-prefix/tmp/cranfield-cfgcmd.txt.in">
+			<Option virtualFolder="CMake Files\cmake-build-debug\tests\cranfield-prefix\tmp\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/include/meta/config.h.in">
+			<Option virtualFolder="CMake Files\include\meta\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake/MeTAConfigVersion.cmake.in">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/cmake/MeTAConfig.cmake.in">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/analyzers/filters/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\analyzers\filters\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/analyzers/filters/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\analyzers\filters\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/analyzers/filters/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\analyzers\filters\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/analyzers/tokenizers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\analyzers\tokenizers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/analyzers/tokenizers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\analyzers\tokenizers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/analyzers/tokenizers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\analyzers\tokenizers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/analyzers/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\analyzers\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/analyzers/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\analyzers\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\classify\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\classify\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/kernel/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\classify\kernel\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/kernel/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\classify\kernel\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/kernel/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\classify\kernel\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\classify\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/classify/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\classify\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/corpus/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\corpus\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/corpus/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\corpus\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/corpus/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\corpus\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/corpus/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\corpus\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/embeddings/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\embeddings\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/embeddings/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\embeddings\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/embeddings/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\embeddings\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/embeddings/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\embeddings\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/embeddings/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\embeddings\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/embeddings/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\embeddings\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/embeddings/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\embeddings\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/features/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\features\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/features/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\features\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/features/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\features\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/features/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\features\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/graph/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\graph\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/graph/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\graph\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/graph/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\graph\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/graph/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\graph\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/index/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\index\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/index/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\index\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/index/eval/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\index\eval\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/index/eval/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\index\eval\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/index/eval/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\index\eval\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/index/ranker/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\index\ranker\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/index/ranker/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\index\ranker\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/index/ranker/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\index\ranker\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/index/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\index\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/index/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\index\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/io/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\io\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/io/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\io\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/io/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\io\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/io/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\io\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/learn/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\learn\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/learn/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\learn\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/learn/loss/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\learn\loss\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/learn/loss/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\learn\loss\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/learn/loss/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\learn\loss\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/learn/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\learn\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/learn/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\learn\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/lm/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\lm\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/lm/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\lm\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/lm/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\lm\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/lm/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\lm\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/lm/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\lm\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/lm/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\lm\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/lm/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\lm\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/analyzers/featurizers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\analyzers\featurizers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/analyzers/featurizers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\analyzers\featurizers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/analyzers/featurizers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\analyzers\featurizers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/io/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\io\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/io/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\io\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/io/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\io\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/trees/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\trees\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/trees/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\trees\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/trees/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\trees\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/trees/visitors/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\trees\visitors\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/trees/visitors/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\trees\visitors\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/trees/visitors/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\trees\visitors\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/parser/trees/visitors/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\parser\trees\visitors\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/regression/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\regression\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/regression/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\regression\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/regression/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\regression\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/regression/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\regression\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/analyzers/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\analyzers\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/crf/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\crf\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/crf/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\crf\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/crf/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\crf\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/crf/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\crf\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/crf/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\crf\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/crf/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\crf\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/hmm/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\hmm\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/hmm/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\hmm\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/hmm/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\hmm\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/hmm/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\hmm\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/hmm/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\hmm\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/hmm/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\hmm\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/sequence/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\sequence\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/stats/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\stats\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/stats/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\stats\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/succinct/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\succinct\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/succinct/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\succinct\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/topics/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\topics\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/topics/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\topics\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/topics/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\topics\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/topics/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\topics\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/utf/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\utf\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/utf/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\utf\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/utf/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\utf\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/utf/tools/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\utf\tools\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/util/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\util\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/src/util/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\util\"/>
+		</Unit>
+		<Unit filename="/Users/mihikadave/Documents/CS510_MP/meta/tests/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tests\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

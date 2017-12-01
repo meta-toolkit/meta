@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-analyzers.a  CMakeFiles/meta-analyzers.dir/analyzer.cpp.o CMakeFiles/meta-analyzers.dir/analyzer_factory.cpp.o CMakeFiles/meta-analyzers.dir/multi_analyzer.cpp.o CMakeFiles/meta-analyzers.dir/ngram/ngram_analyzer.cpp.o CMakeFiles/meta-analyzers.dir/ngram/ngram_word_analyzer.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-analyzers.a

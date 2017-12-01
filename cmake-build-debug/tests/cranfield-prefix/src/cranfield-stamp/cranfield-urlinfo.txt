@@ -1,0 +1,3 @@
+repository='external project URL'
+module='https://meta-toolkit.org/data/2016-11-10/cranfield.tar.gz'
+tag='SHA256=507b6f4f133bc1a65d140780cbd7060a3ca159410b772e5eb1e2c12b215d72b4'

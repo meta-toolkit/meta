@@ -1,0 +1,13 @@
+# Target labels
+ liblinear
+# Source files and their labels
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/CMakeFiles/liblinear
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/CMakeFiles/liblinear.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/CMakeFiles/liblinear-complete.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/liblinear-prefix/src/liblinear-stamp/liblinear-install.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/liblinear-prefix/src/liblinear-stamp/liblinear-mkdir.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/liblinear-prefix/src/liblinear-stamp/liblinear-download.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/liblinear-prefix/src/liblinear-stamp/liblinear-update.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/liblinear-prefix/src/liblinear-stamp/liblinear-patch.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/liblinear-prefix/src/liblinear-stamp/liblinear-configure.rule
+/Users/mihikadave/Documents/CS510_MP/meta/cmake-build-debug/src/classify/liblinear-prefix/src/liblinear-stamp/liblinear-build.rule

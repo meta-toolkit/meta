@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-greedy-tagger.a  CMakeFiles/meta-greedy-tagger.dir/perceptron.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-greedy-tagger.a

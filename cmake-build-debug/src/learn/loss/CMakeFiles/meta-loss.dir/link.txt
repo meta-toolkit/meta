@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/libmeta-loss.a  CMakeFiles/meta-loss.dir/hinge.cpp.o CMakeFiles/meta-loss.dir/huber.cpp.o CMakeFiles/meta-loss.dir/least_squares.cpp.o CMakeFiles/meta-loss.dir/logistic.cpp.o CMakeFiles/meta-loss.dir/loss_function_factory.cpp.o CMakeFiles/meta-loss.dir/modified_huber.cpp.o CMakeFiles/meta-loss.dir/perceptron.cpp.o CMakeFiles/meta-loss.dir/smooth_hinge.cpp.o CMakeFiles/meta-loss.dir/squared_hinge.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/libmeta-loss.a
