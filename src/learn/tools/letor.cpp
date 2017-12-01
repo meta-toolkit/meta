@@ -12,7 +12,6 @@
 #include "meta/learn/loss/loss_function.h"
 #include "meta/learn/loss/loss_function_factory.h"
 #include "meta/learn/sgd.h"
-#include "../../../tests/farm_hash_test.h"
 
 using namespace meta;
 using namespace learn;
