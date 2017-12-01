@@ -39,8 +39,8 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
                                     int random_seed);
 void free_dataset(unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset);
 int train(string data_dir, sgd_model *model);
-void free_docids(unordered<int, unordered<int, vector<string>*>*> *docids);
-void free_relevances(unordered<int, unordered<string, int>*> *relevances);
+void free_docids(unordered_map<int, unordered_map<int, vector<string>*>*> *docids);
+void free_relevances(unordered_map<int, unordered_map<string, int>*> *relevances);
 void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
                                 unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
                                 unordered_map<int, unordered_map<string, int>*> *relevance_map,
@@ -133,7 +133,7 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
     free_relevances(relevance_map);
 }
 
-void free_relevances(unordered<int, unordered<string, int>*> *relevances) {
+void free_relevances(unordered_map<int, unordered_map<string, int>*> *relevances) {
     for (auto query_iter = relevances->begin(); query_iter != relevances->end(); query_iter++) {
         auto query_relevances = query_iter->second;
         delete query_relevances;
@@ -141,7 +141,7 @@ void free_relevances(unordered<int, unordered<string, int>*> *relevances) {
     delete relevances;
 }
 
-void free_docids(unordered<int, unordered<int, vector<string>*>*> *docids) {
+void free_docids(unordered_map<int, unordered_map<int, vector<string>*>*> *docids) {
     for (auto query_iter = docids->begin(); query_iter != docids->end(); query_iter++) {
         auto query_docids = query_iter->second;
         for (auto label_iter = query_docids->begin(); label_iter != query_docids->end(); label_iter++) {
