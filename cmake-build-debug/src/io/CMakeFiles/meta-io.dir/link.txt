@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-io.a  CMakeFiles/meta-io.dir/filesystem.cpp.o CMakeFiles/meta-io.dir/gzstream.cpp.o CMakeFiles/meta-io.dir/libsvm_parser.cpp.o CMakeFiles/meta-io.dir/mmap_file.cpp.o CMakeFiles/meta-io.dir/xzstream.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-io.a

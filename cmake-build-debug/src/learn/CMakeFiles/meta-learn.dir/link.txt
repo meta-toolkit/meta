@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-learn.a  CMakeFiles/meta-learn.dir/sgd.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-learn.a

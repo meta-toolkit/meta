@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../../lib/libmeta-eval.a  CMakeFiles/meta-eval.dir/ir_eval.cpp.o CMakeFiles/meta-eval.dir/rank_correlation.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../../lib/libmeta-eval.a

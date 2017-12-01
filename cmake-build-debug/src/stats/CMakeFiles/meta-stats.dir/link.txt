@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-stats.a  CMakeFiles/meta-stats.dir/running_stats.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-stats.a

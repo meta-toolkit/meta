@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-util.a  CMakeFiles/meta-util.dir/progress.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-util.a

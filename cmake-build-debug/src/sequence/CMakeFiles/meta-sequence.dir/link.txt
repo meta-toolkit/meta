@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-sequence.a  CMakeFiles/meta-sequence.dir/observation.cpp.o CMakeFiles/meta-sequence.dir/sequence.cpp.o CMakeFiles/meta-sequence.dir/sequence_analyzer.cpp.o CMakeFiles/meta-sequence.dir/trellis.cpp.o CMakeFiles/meta-sequence.dir/markov_model.cpp.o CMakeFiles/meta-sequence.dir/io/ptb_parser.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-sequence.a

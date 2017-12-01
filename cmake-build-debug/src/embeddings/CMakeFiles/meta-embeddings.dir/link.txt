@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc ../../lib/libmeta-embeddings.a  CMakeFiles/meta-embeddings.dir/cooccurrence_counter.cpp.o CMakeFiles/meta-embeddings.dir/word_embeddings.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib ../../lib/libmeta-embeddings.a

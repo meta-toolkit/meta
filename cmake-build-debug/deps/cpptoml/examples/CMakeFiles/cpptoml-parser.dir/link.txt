@@ -1,1 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/c++   -Wall -pedantic -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/cpptoml-parser.dir/parse_stdin.cpp.o  -o ../cpptoml-parser /usr/lib/libdl.dylib /usr/lib/libc++abi.dylib 
