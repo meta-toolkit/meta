@@ -16,3 +16,5 @@ biicode.conf
 bii/
 bin/
 cmake-build-debug/*
+data/Gov/*
+

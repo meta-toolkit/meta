@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<collectioninfo>
+  <name>OHSUMED</name>
+  <docnum>348566</docnum>
+  <streamnum>3</streamnum>
+  <stream>
+    <streamid>1</streamid>
+    <streamdescription>Title</streamdescription>
+    <uniquetermnum>53613</uniquetermnum>
+    <totaltermnum>2770138</totaltermnum> 
+  </stream> 
+  <stream>
+    <streamid>2</streamid>
+    <streamdescription>Abstract</streamdescription>
+    <uniquetermnum>120208</uniquetermnum>
+    <totaltermnum>23680877</totaltermnum> 
+  </stream> 
+  <stream> 
+    <streamid>3</streamid>
+    <streamdescription>Title and Abstract</streamdescription>
+    <uniquetermnum>126335</uniquetermnum>
+    <totaltermnum>26451015</totaltermnum>
+  </stream>
+</collectioninfo>
