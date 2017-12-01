@@ -26,7 +26,7 @@ enum DATA_TYPE {
     TESTING
 };
 
-bool compare_docscore(pair<string, double> &p1, pair<string, double> &p2) {
+bool compare_docscore(const pair<string, double> &p1, const pair<string, double> &p2) {
     return p1.second > p2.second;
 }
 
@@ -81,7 +81,7 @@ int test(string data_dir, sgd_model *model) {
                                                   = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
     unordered_map<int, unordered_map<int, vector<string>*>*> *testing_docids
                                                   = new unordered_map<int, unordered_map<int, vector<string>*>*>();
-    unordered_map<int, unordered_map<string, int>*> *relevenace_map = new unordered_map<int, unordered_map<string, int>*>();
+    unordered_map<int, unordered_map<string, int>*> *relevance_map = new unordered_map<int, unordered_map<string, int>*>();
     read_data(TESTING, data_dir, testing_qids, testing_dataset, testing_docids, relevance_map);
     evaluate(testing_qids, testing_dataset, testing_docids, relevance_map, model);
 
@@ -112,12 +112,12 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
         vector<std::pair<string, double>> *doc_scores = new vector<std::pair<string, double>>();
         for (auto label_iter = query_dataset->begin(); label_iter != query_dataset->end(); label_iter++) {
             auto label_dataset = label_iter->second;
-            auto label_docids = (*query_docids)[label_iter->firist];
+            auto label_docids = (*query_docids)[label_iter->first];
             for (int doc_idx = 0; doc_idx < label_docids->size(); doc_idx++) {
                 feature_vector *fv = (*label_dataset)[doc_idx];
                 string docid = (*label_docids)[doc_idx];
-                double score = model->predict(fv);
-                doc_scores->push_back(std::makd_pair(docid, score));
+                double score = model->predict(*fv);
+                doc_scores->push_back(std::make_pair(docid, score));
             }
         }
         std::sort(doc_scores->begin(), doc_scores->end(), compare_docscore);
