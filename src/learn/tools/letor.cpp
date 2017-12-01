@@ -31,7 +31,7 @@ enum DATA_TYPE {
 };
 
 void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
-               unordered_map<int, unordered_map<int, vector<feature_vector>*>*> *dataset);
+               unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset);
 int train(string data_dir);
 
 int main(int argc, char* argv[])
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
  * @return
  */
 std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
-                                    unordered_map<int, unordered_map<int, vector<feature_vector>*>*> *training_dataset,
+                                    unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *training_dataset,
                                     int random_seed) {
     std::default_random_engine generator(random_seed);
 
@@ -88,7 +88,7 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
     int q_index = qid_distribution(generator);
     cout<<"Random sample :"<<q_index<<endl;
     int qid = (*training_qids)[q_index];
-    unordered_map<int, vector<feature_vector>*> *qid_vec = (*training_dataset)[qid];cout<<"BR1"<<endl;
+    unordered_map<int, vector<feature_vector*>*> *qid_vec = (*training_dataset)[qid];cout<<"BR1"<<endl;
 
 
     //select ya uniformly at random from Y [q]
@@ -101,7 +101,7 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
     int max_a = (*qid_vec)[ya_index]->size();
     std::uniform_int_distribution<int> a_distribution(0, max_a-1);
     int a_index = a_distribution(generator);
-    feature_vector a = (*(*qid_vec)[ya_index])[a_index];
+    feature_vector a = *((*(*qid_vec)[ya_index])[a_index]);
     cout<<"BR3"<<endl;
     tupl d1  = std::make_tuple(a, ya_index, qid);
 
@@ -143,7 +143,7 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
     int max_b = (*qid_vec)[yb_index]->size();
     std::uniform_int_distribution<int> b_distribution(0, max_b-1);
     int b_index = b_distribution(generator);
-    feature_vector b = (*(*qid_vec)[yb_index])[b_index];
+    feature_vector b = *((*(*qid_vec)[yb_index])[b_index]);
     cout<<"BR6"<<endl;
     tupl d2  = std::make_tuple(b, yb_index, qid);cout<< qid << " " << ya_index << " " << a_index << " " << yb_index << " " << b_index << endl;
     cout<<"BR7"<<endl;
@@ -157,8 +157,8 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
  */
 int train(string data_dir) {
     vector<int> *training_qids = new vector<int>();
-    unordered_map<int, unordered_map<int, vector<feature_vector>*>*> *training_dataset
-            = new unordered_map<int, unordered_map<int, vector<feature_vector>*>*>();
+    unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *training_dataset
+            = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
     read_data(TRAINING, data_dir, training_qids, training_dataset);
     int n_iter = 100000;
 
@@ -213,7 +213,7 @@ int train(string data_dir) {
  * @param dataset
  */
 void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
-               unordered_map<int, unordered_map<int, vector<feature_vector>*>*> *dataset) {
+               unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset) {
     string data_file = data_dir;
     switch (data_type) {
         case TRAINING:
@@ -238,30 +238,30 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
         stringstream ss(tmp_str.substr(tmp_str.find(':') + 1));
         ss >> qid;
 
-        unordered_map<int, vector<feature_vector> *> *query_dataset;
+        unordered_map<int, vector<feature_vector*> *> *query_dataset;
         if (dataset->find(qid) != dataset->end()) {
             query_dataset = (*dataset)[qid];
         } else {
             qids->push_back(qid);
 //            cout<<qid <<endl;
-            query_dataset = new unordered_map<int, vector<feature_vector>*>();
+            query_dataset = new unordered_map<int, vector<feature_vector*>*>();
             (*dataset)[qid] = query_dataset;
         }
-        vector<feature_vector> *label_dataset;
+        vector<feature_vector*> *label_dataset;
         if (query_dataset->find(label) != query_dataset->end()) {
             label_dataset = (*query_dataset)[label];
         } else {
-            label_dataset = new vector<feature_vector>();
+            label_dataset = new vector<feature_vector*>();
             (*query_dataset)[label] = label_dataset;
         }
-        learn::feature_vector features;
+        learn::feature_vector *features = new feature_vector(0);
         for (feature_idx = 0; feature_idx < 46; feature_idx++) {
             iss >> tmp_str;
             stringstream ssid(tmp_str.substr(0, tmp_str.find(':')));
             ssid >> feature_id;
             stringstream ssval(tmp_str.substr(tmp_str.find(':') + 1));
             ssval >> feature_val;
-            features[term_id{feature_id - 1}] = feature_val;
+            (*features)[term_id{feature_id - 1}] = feature_val;
         }
         label_dataset->push_back(features);
         iss >> tmp_str;
