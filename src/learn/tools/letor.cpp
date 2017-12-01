@@ -33,40 +33,44 @@ bool compare_docscore(const pair<string, double> &p1, const pair<string, double>
 void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
                unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
                 unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
-                unordered_map<int, unordered_map<string, int>*> *relevance_map);
+                unordered_map<int, unordered_map<string, int>*> *relevance_map, int feature_nums);
 std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
                                     unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *training_dataset,
                                     int random_seed);
 void free_dataset(unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset);
-int train(string data_dir, sgd_model *model);
+int train(string data_dir, sgd_model *model, int feature_nums);
 void free_docids(unordered_map<int, unordered_map<int, vector<string>*>*> *docids);
 void free_relevances(unordered_map<int, unordered_map<string, int>*> *relevances);
 void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
                                 unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
                                 unordered_map<int, unordered_map<string, int>*> *relevance_map,
-                                sgd_model *model);
-int validate(string data_dir, sgd_model *model);
-int test(string data_dir, sgd_model *model);
+                                sgd_model *model, int feature_nums);
+int validate(string data_dir, sgd_model *model, int feature_nums);
+int test(string data_dir, sgd_model *model, int feature_nums);
 
 int main(int argc, char* argv[])
 {
 
     std::cerr << "Hello LETOR!" << std::endl;
 
-    if (argc != 2) {
-        std::cerr << "Please specify exactly one directory path for training, validation and testing sets" << std::endl;
+    if (argc != 3) {
+        std::cerr << "Please specify exactly one directory path for training, validation and testing sets, and second arguments as the number of features" << std::endl;
     }
 
-    learn::sgd_model *model = new learn::sgd_model(46);
+    int feature_nums;
+    stringstream ss(argv[2]);
+    ss >> feature_nums;
+
+    learn::sgd_model *model = new learn::sgd_model(feature_nums);
 
     //training phase
-    train(argv[1], model);
+    train(argv[1], model, feature_nums);
 
     //validation phase
-    validate(argv[1], model);
+    validate(argv[1], model, feature_nums);
 
     //testing phase
-    test(argv[1], model);
+    test(argv[1], model, feature_nums);
 
     delete model;
 
@@ -75,28 +79,28 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-int test(string data_dir, sgd_model *model) {
+int test(string data_dir, sgd_model *model, int feature_nums) {
     vector<int> *testing_qids = new vector<int>();
     unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *testing_dataset
                                                   = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
     unordered_map<int, unordered_map<int, vector<string>*>*> *testing_docids
                                                   = new unordered_map<int, unordered_map<int, vector<string>*>*>();
     unordered_map<int, unordered_map<string, int>*> *relevance_map = new unordered_map<int, unordered_map<string, int>*>();
-    read_data(TESTING, data_dir, testing_qids, testing_dataset, testing_docids, relevance_map);
-    evaluate(testing_qids, testing_dataset, testing_docids, relevance_map, model);
+    read_data(TESTING, data_dir, testing_qids, testing_dataset, testing_docids, relevance_map, feature_nums);
+    evaluate(testing_qids, testing_dataset, testing_docids, relevance_map, model, feature_nums);
 
     return 0;
 }
 
-int validate(string data_dir, sgd_model *model) {
+int validate(string data_dir, sgd_model *model, int feature_nums) {
     vector<int> *validation_qids = new vector<int>();
     unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *validation_dataset
                                                   = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
     unordered_map<int, unordered_map<int, vector<string>*>*> *validation_docids
                                                   = new unordered_map<int, unordered_map<int, vector<string>*>*>();
     unordered_map<int, unordered_map<string, int>*> *relevance_map = new unordered_map<int, unordered_map<string, int>*>();
-    read_data(VALIDATION, data_dir, validation_qids, validation_dataset, validation_docids, relevance_map);
-    evaluate(validation_qids, validation_dataset, validation_docids, relevance_map, model);
+    read_data(VALIDATION, data_dir, validation_qids, validation_dataset, validation_docids, relevance_map, feature_nums);
+    evaluate(validation_qids, validation_dataset, validation_docids, relevance_map, model, feature_nums);
 
     return 0;
 }
@@ -104,7 +108,7 @@ int validate(string data_dir, sgd_model *model) {
 void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
                             unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
                             unordered_map<int, unordered_map<string, int>*> *relevance_map,
-                            sgd_model *model) {
+                            sgd_model *model, int feature_nums) {
 
     for (auto query_iter = dataset->begin(); query_iter != dataset->end(); query_iter++) {
         auto query_dataset = query_iter->second;
@@ -160,11 +164,11 @@ void free_docids(unordered_map<int, unordered_map<int, vector<string>*>*> *docid
  * Train the pairwise ranker model
  * @return
  */
-int train(string data_dir, sgd_model *model) {
+int train(string data_dir, sgd_model *model, int feature_nums) {
     vector<int> *training_qids = new vector<int>();
     unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *training_dataset
             = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
-    read_data(TRAINING, data_dir, training_qids, training_dataset, nullptr, nullptr);
+    read_data(TRAINING, data_dir, training_qids, training_dataset, nullptr, nullptr, feature_nums);
     int n_iter = 100000;
 
     std::unique_ptr<learn::loss::loss_function> loss
@@ -285,7 +289,7 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
 void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
                unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
                 unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
-                unordered_map<int, unordered_map<string, int>*> *relevance_map) {
+                unordered_map<int, unordered_map<string, int>*> *relevance_map, int feature_nums) {
     string data_file = data_dir;
     switch (data_type) {
         case TRAINING:
@@ -326,7 +330,7 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
             (*query_dataset)[label] = label_dataset;
         }
         feature_vector *features = new feature_vector(0);
-        for (feature_idx = 0; feature_idx < 46; feature_idx++) {
+        for (feature_idx = 0; feature_idx < feature_nums; feature_idx++) {
             iss >> tmp_str;
             stringstream ssid(tmp_str.substr(0, tmp_str.find(':')));
             ssid >> feature_id;
