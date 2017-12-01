@@ -70,6 +70,7 @@ int main(int argc, char* argv[])
 
 /**
  * Return a random pair of tuple for training the svm classifier
+ * Tuple is of type (feature_vec, label, qid)
  * @param indexed_dataset
  * @return
  */
@@ -204,7 +205,13 @@ int train(string data_dir) {
 
 
 
-
+/**
+ * Read data from dataset and store it as nested hash-tables
+ * @param data_type
+ * @param data_dir
+ * @param qids
+ * @param dataset
+ */
 void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
                unordered_map<int, unordered_map<int, vector<feature_vector>*>*> *dataset) {
     string data_file = data_dir;
