@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <sstream>
+#include <cmath>
 
 #include "meta/learn/loss/all.h"
 #include "meta/learn/loss/hinge.h"
@@ -41,6 +42,7 @@ void free_dataset(unordered_map<int, unordered_map<int, vector<feature_vector*>*
 int train(string data_dir, sgd_model *model, int feature_nums);
 void free_docids(unordered_map<int, unordered_map<int, vector<string>*>*> *docids);
 void free_relevances(unordered_map<int, unordered_map<string, int>*> *relevances);
+double compuate_dcg(int limit, vector<int> &rankings);
 void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
                                 unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
                                 unordered_map<int, unordered_map<string, int>*> *relevance_map,
@@ -116,8 +118,8 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
     double top_ndcgs[10];
     vector<double> *temp_precisions = new vector<double>();
     vector<int> *temp_relevances = new vector<int>();
-    double temp_ap, total_relevances;
-    double temp_ndcgs[10], temp_idcgs[10];
+    vector<int> dcg_rankings;
+    double temp_ap, total_relevances, temp_ndcg, temp_idcg;
     for (int index = 0; index < 10; index++) {
         top_precisions[index] = 0;
         top_ndcgs[index] = 0;
@@ -160,9 +162,19 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
                 top_precisions[index] += ((*temp_precisions)[index] / (index + 1));
             }
             mean_ap += (temp_ap / total_relevances);
+            for (int index = 0; index < 10; index++) {
+                dcg_rankings.push_back((*query_relevances)[(*doc_scores)[index].first]);
+            }
+            std::sort(temp_relevances->begin(), temp_relevances->end(), std::greater<int>());
+            for (int index = 0; index < 10; index++) {
+                temp_ndcg = compute_dcg(index + 1, dcg_rankings);
+                temp_idcg = compute_dcg(index + 1, *temp_relevances);
+                top_ndcgs[index] += (temp_ndcg / temp_idcg);
+            }
 
             temp_precisions->clear();
             temp_relevances->clear();
+            dcg_rankings.clear();
             query_num++;
         }
         doc_scores->clear();
@@ -174,6 +186,10 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
     }
     mean_ap /= query_num;
     cout << "Mean average precision: " << mean_ap << endl;
+    for (int index = 0; index < 10; index++) {
+        top_ndcgs[index] /= query_num;
+        cout << "NDCG at position " << (index + 1) << ": " << top_ndcgs[index] << endl;
+    }
 
     delete qids;
     delete doc_scores;
@@ -182,6 +198,17 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
     free_dataset(dataset);
     free_docids(docids);
     free_relevances(relevance_map);
+}
+
+double compuate_dcg(int limit, vector<int> &rankings) {
+    double dcg = 0, dg;
+
+    for (int index = 0; index < limit; index++) {
+        dg = pow(2, rankings[index]) - 1;
+        dg /= log2(1 + (index + 1));
+        dcg += dg;
+    }
+    return dcg;
 }
 
 void free_relevances(unordered_map<int, unordered_map<string, int>*> *relevances) {
@@ -213,7 +240,7 @@ int train(string data_dir, sgd_model *model, int feature_nums) {
     unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *training_dataset
             = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
     read_data(TRAINING, data_dir, training_qids, training_dataset, nullptr, nullptr, feature_nums);
-    int n_iter = 1000000;
+    int n_iter = 100000;
 
     std::unique_ptr<learn::loss::loss_function> loss
             = learn::loss::make_loss_function(learn::loss::hinge::id.to_string());
