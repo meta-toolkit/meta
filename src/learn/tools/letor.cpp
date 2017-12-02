@@ -170,7 +170,7 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
 
     for (int index = 0; index < 10; index++) {
         top_precisions[index] /= query_num;
-        cout << "Precision at position " << (index + 1) << ": " << top_predictions[index] << endl;
+        cout << "Precision at position " << (index + 1) << ": " << top_precisions[index] << endl;
     }
     mean_ap /= query_num;
     cout << "Mean average precision: " << mean_ap << endl;
