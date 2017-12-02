@@ -42,7 +42,7 @@ void free_dataset(unordered_map<int, unordered_map<int, vector<feature_vector*>*
 int train(string data_dir, sgd_model *model, int feature_nums);
 void free_docids(unordered_map<int, unordered_map<int, vector<string>*>*> *docids);
 void free_relevances(unordered_map<int, unordered_map<string, int>*> *relevances);
-double compuate_dcg(int limit, vector<int> &rankings);
+double compute_dcg(int limit, vector<int> &rankings);
 void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
                                 unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
                                 unordered_map<int, unordered_map<string, int>*> *relevance_map,
@@ -200,7 +200,7 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
     free_relevances(relevance_map);
 }
 
-double compuate_dcg(int limit, vector<int> &rankings) {
+double compute_dcg(int limit, vector<int> &rankings) {
     double dcg = 0, dg;
 
     for (int index = 0; index < limit; index++) {
