@@ -110,13 +110,26 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
                             unordered_map<int, unordered_map<string, int>*> *relevance_map,
                             sgd_model *model, int feature_nums) {
 
+    int query_num = 0;
+    double top_precisions[10];
+    double mean_ap = 0;
+    double top_ndcgs[10];
+    vector<double> *temp_precisions = new vector<double>();
+    vector<int> *temp_relevances = new vector<int>();
+    double temp_ap, total_relevances;
+    double temp_ndcgs[10], temp_idcgs[10];
+    for (int index = 0; index < 10; index++) {
+        top_precisions[index] = 0;
+        top_ndcgs[index] = 0;
+    }
+
+    vector<std::pair<string, double>> *doc_scores = new vector<std::pair<string, double>>();
     for (auto query_iter = dataset->begin(); query_iter != dataset->end(); query_iter++) {
         auto query_dataset = query_iter->second;
         auto query_docids = (*docids)[query_iter->first];
         if (query_dataset->size() <= 1) {
             continue;
         }
-        vector<std::pair<string, double>> *doc_scores = new vector<std::pair<string, double>>();
         for (auto label_iter = query_dataset->begin(); label_iter != query_dataset->end(); label_iter++) {
             auto label_dataset = label_iter->second;
             auto label_docids = (*query_docids)[label_iter->first];
@@ -128,13 +141,44 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
             }
         }
         std::sort(doc_scores->begin(), doc_scores->end(), compare_docscore);
-        cout << "qid: " << query_iter->first << endl;
-        for (auto score_iter = doc_scores->begin(); score_iter != doc_scores->end(); score_iter++) {
-            cout << "docid: " << (*score_iter).first << ", score: " << (*score_iter).second << endl;
+        if (doc_scores->size() > 0) {
+            auto query_relevances = (*relevance_map)[query_iter->first];
+            int temp_relevance = (*query_relevances)[(*doc_scores)[0].first];
+            int last_precision = temp_relevance > 0 ? 1 : 0;
+            temp_ap = last_precision * last_precision;
+            temp_precisions->push_back(last_precision);
+            temp_relevances->push_back(temp_relevance);
+            for (int score_idx = 1; score_idx < doc_scores->size(); score_idx++) {
+                temp_relevance = (*query_relevances)[(*doc_scores)[score_idx].first];
+                last_precision += (temp_relevance > 0 ? 1 : 0);
+                temp_ap += ((double)last_precision / (score_idx + 1) * (temp_relevance > 0 ? 1 : 0));
+                temp_precisions->push_back(last_precision);
+                temp_relevances->push_back(temp_relevance);
+            }
+            total_relevances = last_precision;
+            for (int index = 0; index < 10; index++) {
+                top_precisions[index] += ((*temp_precisions)[index] / (index + 1));
+            }
+            mean_ap += (temp_ap / total_relevances);
+
+            temp_precisions->clear();
+            temp_relevances->clear();
+            query_num++;
         }
-        delete doc_scores;
+        doc_scores->clear();
     }
+
+    for (int index = 0; index < 10; index++) {
+        top_precisions[index] /= query_num;
+        cout << "Precision at position " << (index + 1) << ": " << top_predictions[index] << endl;
+    }
+    mean_ap /= query_num;
+    cout << "Mean average precision: " << mean_ap << endl;
+
     delete qids;
+    delete doc_scores;
+    delete temp_precisions;
+    delete temp_relevances;
     free_dataset(dataset);
     free_docids(docids);
     free_relevances(relevance_map);
@@ -186,7 +230,7 @@ int train(string data_dir, sgd_model *model, int feature_nums) {
         double expected_label = y_a - y_b;
         double los = model->train_one(x, expected_label, *loss);
         if (los!=0) {
-            cout<<"Loss :"<<los<<endl;
+            //cout<<"Loss :"<<los<<endl;
         }
 
     }
