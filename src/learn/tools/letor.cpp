@@ -213,7 +213,7 @@ int train(string data_dir, sgd_model *model, int feature_nums) {
     unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *training_dataset
             = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
     read_data(TRAINING, data_dir, training_qids, training_dataset, nullptr, nullptr, feature_nums);
-    int n_iter = 100000;
+    int n_iter = 1000000;
 
     std::unique_ptr<learn::loss::loss_function> loss
             = learn::loss::make_loss_function(learn::loss::hinge::id.to_string());
