@@ -18,19 +18,17 @@ namespace meta
 namespace index
 {
 
-// # TODO: choose template type instead of long
 typedef long count_d;
 
 struct docs_data
 {
-    // general info
-
+    /// inverted index
     const inverted_index& idx;
-    /// ids of all documents
+    /// ids of all documents in the index
     std::vector<doc_id> doc_ids;
-    /// ids of all terms
+    /// ids of all terms in the index
     std::vector<term_id> term_ids;
-    /// total size of documents
+    /// total size of all documents
     count_d ref_size;
     /// C_.(n)
     std::map<count_d, count_d> docs_counts;
@@ -62,18 +60,10 @@ struct docs_data
 
 
 /**
- * Implements Bayesian smoothing with a Dirichlet prior.
+ * Abstract class for Diriclhet prior smoothing with optimized constant mu.
+ * Constant mu is optimized at the stage of scoring documents using information about those documents.
  *
- * Required config parameters:
- * ~~~toml
- * [ranker]
- * method = "dirichlet-prior"
- * ~~~
- *
- * Optional config parameters:
- * ~~~toml
- * mu = 2000.0
- * ~~~
+ * Virtual method optimize_mu(docs_data& dd, float eps, int max_iter) is needed to be overrided in inheritants.
  */
 class dirichlet_prior_opt : public dirichlet_prior{
 public:
@@ -86,6 +76,7 @@ public:
                                      ForwardIterator end,
                                      uint64_t num_results = 10)
     {
+        // optimize mu before scoring
         this->optimize_mu(idx);
 
         return ranker::score(idx, begin, end, num_results);
@@ -107,13 +98,24 @@ protected:
     }
 
 private:
+    /**
+     * Extracts information necessary to find optimal mu and wrap it into docs_data.
+     * Then, calls class-specific realization of optimize_mu function.
+     * Found optimal value of mu is written to the member of the class.
+     *
+     * @param idx inverted index
+     * @param eps convergence precision
+     * @param max_iter maximal number of iterations (upper bound)
+     *
+     * @return optimal value [alpha * m_i] for each term
+     */
     std::map<term_id, double> optimize_mu(const inverted_index& idx, float eps=1e-6, int max_iter=10000) {
         // parse idx and extract what we need
 
         auto docs_ids = idx.docs();
         auto terms_ids = idx.terms();
 
-        // calculate ref_size
+        // calculate total size of all documents
         count_d ref_size = 0;
         for (auto& id : docs_ids)
             ref_size += idx.doc_size(id);
@@ -152,9 +154,31 @@ private:
         return optimize_mu(dd, eps, max_iter);
     }
 
+    /**
+     * Finds optimal mu using information from given docs_data structure.
+     * Writes optimal mu to the corresponding field of the class.
+     *
+     * @param idx inverted index
+     * @param eps convergence precision
+     * @param max_iter maximal number of iterations (upper bound)
+     *
+     * @return optimal value [alpha * m_i] for each term
+     */
     virtual std::map<term_id, double> optimize_mu(docs_data& dd, float eps, int max_iter) = 0;
 };
 
+/**
+ * Implements Diriclhet Prior smoothing with optimized constant mu.
+ *
+ * Optimization method is Fixed-Point Iteration with digamma recurrence relation
+ * described at: https://people.cs.umass.edu/~wallach/theses/wallach_phd_thesis.pdf, pp. 27-28.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [ranker]
+ * method = "dirichlet-digamma-rec"
+ * ~~~
+ */
 class dirichlet_digamma_rec: public dirichlet_prior_opt{
 public:
     const static util::string_view id;
@@ -176,6 +200,18 @@ private:
 
 };
 
+/**
+ * Implements Diriclhet Prior smoothing with optimized constant mu.
+ *
+ * Optimization method is Fixed-Point Iteration with digamma differences log approximation
+ * described at: https://people.cs.umass.edu/~wallach/theses/wallach_phd_thesis.pdf, pp. 28-29.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [ranker]
+ * method = "dirichlet-log-approx"
+ * ~~~
+ */
 class dirichlet_log_approx: public dirichlet_prior_opt{
 public:
     const static util::string_view id;
@@ -196,6 +232,18 @@ private:
     std::map<term_id, double> optimize_mu(docs_data& dd, float eps, int max_iter) override;
 };
 
+/**
+ * Implements Diriclhet Prior smoothing with optimized constant mu.
+ *
+ * Optimization method is MacKay and Peto's Fixed-Point Iteration with efficiently computing N_fk
+ * described at: https://people.cs.umass.edu/~wallach/theses/wallach_phd_thesis.pdf, p. 30.
+ *
+ * Required config parameters:
+ * ~~~toml
+ * [ranker]
+ * method = "dirichlet-mackay-peto"
+ * ~~~
+ */
 class dirichlet_mackay_peto: public dirichlet_prior_opt{
 public:
     const static util::string_view id;
