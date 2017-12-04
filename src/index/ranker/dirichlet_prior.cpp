@@ -55,6 +55,5 @@ std::unique_ptr<ranker>
         throw ranker_exception{"dirichlet-prior mu must be >= 0"};
     return make_unique<dirichlet_prior>(mu);
 }
-
 }
 }
