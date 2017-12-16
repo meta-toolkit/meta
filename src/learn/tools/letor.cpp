@@ -86,6 +86,7 @@ int test(string data_dir, sgd_model *model, int feature_nums) {
                                                   = new unordered_map<string, unordered_map<int, vector<string>>>();
     unordered_map<string, unordered_map<string, int>> *relevance_map = new unordered_map<string, unordered_map<string, int>>();
     read_data(TESTING, data_dir, testing_qids, testing_dataset, testing_docids, relevance_map, feature_nums);
+    cout << "Evaluation on Test set" << endl;
     evaluate(testing_qids, testing_dataset, testing_docids, relevance_map, model, feature_nums);
 
     delete testing_qids;
