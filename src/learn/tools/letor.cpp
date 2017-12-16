@@ -19,7 +19,7 @@ using namespace learn;
 using namespace util;
 using namespace std;
 
-using tupl = std::tuple<feature_vector, int, int>;
+using tupl = std::tuple<feature_vector, int, string>;
 
 enum DATA_TYPE {
     TRAINING,
@@ -31,21 +31,18 @@ bool compare_docscore(const pair<string, double> &p1, const pair<string, double>
     return p1.second > p2.second;
 }
 
-void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
-               unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
-                unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
-                unordered_map<int, unordered_map<string, int>*> *relevance_map, int feature_nums);
-std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
-                                    unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *training_dataset,
+void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
+               unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
+                unordered_map<string, unordered_map<int, vector<string>>> *docids,
+                unordered_map<string, unordered_map<string, int>> *relevance_map, int feature_nums);
+std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
+                                    unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
                                     int random_seed);
-void free_dataset(unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset);
 int train(string data_dir, sgd_model *model, int feature_nums);
-void free_docids(unordered_map<int, unordered_map<int, vector<string>*>*> *docids);
-void free_relevances(unordered_map<int, unordered_map<string, int>*> *relevances);
 double compute_dcg(int limit, vector<int> &rankings);
-void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
-                                unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
-                                unordered_map<int, unordered_map<string, int>*> *relevance_map,
+void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
+                                unordered_map<string, unordered_map<int, vector<string>>> *docids,
+                                unordered_map<string, unordered_map<string, int>> *relevance_map,
                                 sgd_model *model, int feature_nums);
 int validate(string data_dir, sgd_model *model, int feature_nums);
 int test(string data_dir, sgd_model *model, int feature_nums);
@@ -82,34 +79,45 @@ int main(int argc, char* argv[])
 }
 
 int test(string data_dir, sgd_model *model, int feature_nums) {
-    vector<int> *testing_qids = new vector<int>();
-    unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *testing_dataset
-                                                  = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
-    unordered_map<int, unordered_map<int, vector<string>*>*> *testing_docids
-                                                  = new unordered_map<int, unordered_map<int, vector<string>*>*>();
-    unordered_map<int, unordered_map<string, int>*> *relevance_map = new unordered_map<int, unordered_map<string, int>*>();
+    vector<string> *testing_qids = new vector<string>();
+    unordered_map<string, unordered_map<int, vector<feature_vector>>> *testing_dataset
+                                                  = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
+    unordered_map<string, unordered_map<int, vector<string>>> *testing_docids
+                                                  = new unordered_map<string, unordered_map<int, vector<string>>>();
+    unordered_map<string, unordered_map<string, int>> *relevance_map = new unordered_map<string, unordered_map<string, int>>();
     read_data(TESTING, data_dir, testing_qids, testing_dataset, testing_docids, relevance_map, feature_nums);
     evaluate(testing_qids, testing_dataset, testing_docids, relevance_map, model, feature_nums);
+
+    delete testing_qids;
+    delete testing_dataset;
+    delete testing_docids;
+    delete relevance_map;
 
     return 0;
 }
 
 int validate(string data_dir, sgd_model *model, int feature_nums) {
-    vector<int> *validation_qids = new vector<int>();
-    unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *validation_dataset
-                                                  = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
-    unordered_map<int, unordered_map<int, vector<string>*>*> *validation_docids
-                                                  = new unordered_map<int, unordered_map<int, vector<string>*>*>();
-    unordered_map<int, unordered_map<string, int>*> *relevance_map = new unordered_map<int, unordered_map<string, int>*>();
+    vector<string> *validation_qids = new vector<string>();
+    unordered_map<string, unordered_map<int, vector<feature_vector>>> *validation_dataset
+                                                  = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
+    unordered_map<string, unordered_map<int, vector<string>>> *validation_docids
+                                                  = new unordered_map<string, unordered_map<int, vector<string>>>();
+    unordered_map<string, unordered_map<string, int>> *relevance_map = new unordered_map<string, unordered_map<string, int>>();
     read_data(VALIDATION, data_dir, validation_qids, validation_dataset, validation_docids, relevance_map, feature_nums);
+    cout << "Evaluation on Validation set" << endl;
     evaluate(validation_qids, validation_dataset, validation_docids, relevance_map, model, feature_nums);
+
+    delete validation_qids;
+    delete validation_dataset;
+    delete validation_docids;
+    delete relevance_map;
 
     return 0;
 }
 
-void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
-                            unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
-                            unordered_map<int, unordered_map<string, int>*> *relevance_map,
+void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
+                            unordered_map<string, unordered_map<int, vector<string>>> *docids,
+                            unordered_map<string, unordered_map<string, int>> *relevance_map,
                             sgd_model *model, int feature_nums) {
 
     int query_num = 0;
@@ -127,31 +135,29 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
 
     vector<std::pair<string, double>> *doc_scores = new vector<std::pair<string, double>>();
     for (auto query_iter = dataset->begin(); query_iter != dataset->end(); query_iter++) {
-        auto query_dataset = query_iter->second;
-        auto query_docids = (*docids)[query_iter->first];
-        if (query_dataset->size() <= 1) {
-            continue;
-        }
-        for (auto label_iter = query_dataset->begin(); label_iter != query_dataset->end(); label_iter++) {
-            auto label_dataset = label_iter->second;
-            auto label_docids = (*query_docids)[label_iter->first];
-            for (int doc_idx = 0; doc_idx < label_docids->size(); doc_idx++) {
-                feature_vector *fv = (*label_dataset)[doc_idx];
-                string docid = (*label_docids)[doc_idx];
-                double score = model->predict(*fv);
+        auto &query_dataset = query_iter->second;
+        auto &query_docids = (*docids)[query_iter->first];
+
+        for (auto label_iter = query_dataset.begin(); label_iter != query_dataset.end(); label_iter++) {
+            auto &label_dataset = label_iter->second;
+            auto &label_docids = query_docids[label_iter->first];
+            for (int doc_idx = 0; doc_idx < label_docids.size(); doc_idx++) {
+                feature_vector &fv = label_dataset[doc_idx];
+                string docid = label_docids[doc_idx];
+                double score = model->predict(fv);
                 doc_scores->push_back(std::make_pair(docid, score));
             }
         }
         std::sort(doc_scores->begin(), doc_scores->end(), compare_docscore);
-        if (doc_scores->size() > 0) {
-            auto query_relevances = (*relevance_map)[query_iter->first];
-            int temp_relevance = (*query_relevances)[(*doc_scores)[0].first];
+        if (doc_scores->size() >= 10) {
+            auto &query_relevances = (*relevance_map)[query_iter->first];
+            int temp_relevance = query_relevances[(*doc_scores)[0].first];
             int last_precision = temp_relevance > 0 ? 1 : 0;
             temp_ap = last_precision * last_precision;
             temp_precisions->push_back(last_precision);
             temp_relevances->push_back(temp_relevance);
             for (int score_idx = 1; score_idx < doc_scores->size(); score_idx++) {
-                temp_relevance = (*query_relevances)[(*doc_scores)[score_idx].first];
+                temp_relevance = query_relevances[(*doc_scores)[score_idx].first];
                 last_precision += (temp_relevance > 0 ? 1 : 0);
                 temp_ap += ((double)last_precision / (score_idx + 1) * (temp_relevance > 0 ? 1 : 0));
                 temp_precisions->push_back(last_precision);
@@ -163,7 +169,7 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
             }
             mean_ap += (temp_ap / total_relevances);
             for (int index = 0; index < 10; index++) {
-                dcg_rankings.push_back((*query_relevances)[(*doc_scores)[index].first]);
+                dcg_rankings.push_back(query_relevances[(*doc_scores)[index].first]);
             }
             std::sort(temp_relevances->begin(), temp_relevances->end(), std::greater<int>());
             for (int index = 0; index < 10; index++) {
@@ -191,44 +197,22 @@ void evaluate(vector<int> *qids, unordered_map<int, unordered_map<int, vector<fe
         cout << "NDCG at position " << (index + 1) << ": " << top_ndcgs[index] << endl;
     }
 
-    delete qids;
     delete doc_scores;
     delete temp_precisions;
     delete temp_relevances;
-    free_dataset(dataset);
-    free_docids(docids);
-    free_relevances(relevance_map);
 }
 
 double compute_dcg(int limit, vector<int> &rankings) {
     double dcg = 0, dg;
 
-    for (int index = 0; index < limit; index++) {
+    dg = pow(2, rankings[0]) - 1;
+    dcg += dg;
+    for (int index = 1; index < limit; index++) {
         dg = pow(2, rankings[index]) - 1;
-        dg /= log2(1 + (index + 1));
+        dg /= log2(index + 1);
         dcg += dg;
     }
     return dcg;
-}
-
-void free_relevances(unordered_map<int, unordered_map<string, int>*> *relevances) {
-    for (auto query_iter = relevances->begin(); query_iter != relevances->end(); query_iter++) {
-        auto query_relevances = query_iter->second;
-        delete query_relevances;
-    }
-    delete relevances;
-}
-
-void free_docids(unordered_map<int, unordered_map<int, vector<string>*>*> *docids) {
-    for (auto query_iter = docids->begin(); query_iter != docids->end(); query_iter++) {
-        auto query_docids = query_iter->second;
-        for (auto label_iter = query_docids->begin(); label_iter != query_docids->end(); label_iter++) {
-            auto label_docids = label_iter->second;
-            delete label_docids;
-        }
-        delete query_docids;
-    }
-    delete docids;
 }
 
 /**
@@ -236,9 +220,9 @@ void free_docids(unordered_map<int, unordered_map<int, vector<string>*>*> *docid
  * @return
  */
 int train(string data_dir, sgd_model *model, int feature_nums) {
-    vector<int> *training_qids = new vector<int>();
-    unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *training_dataset
-            = new unordered_map<int, unordered_map<int, vector<feature_vector*>*>*>();
+    vector<string> *training_qids = new vector<string>();
+    unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset
+            = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
     read_data(TRAINING, data_dir, training_qids, training_dataset, nullptr, nullptr, feature_nums);
     int n_iter = 100000;
 
@@ -263,23 +247,9 @@ int train(string data_dir, sgd_model *model, int feature_nums) {
     }
     loss.reset();
     delete training_qids;
-    free_dataset(training_dataset);
+    delete training_dataset;
+    //free_dataset(training_dataset);
     return 0;
-}
-
-void free_dataset(unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset) {
-    for (auto qid_iter = dataset->begin(); qid_iter != dataset->end(); qid_iter++) {
-        auto query_dataset = qid_iter->second;
-        for (auto label_iter = query_dataset->begin(); label_iter != query_dataset->end(); label_iter++) {
-            auto label_dataset = label_iter->second;
-            for (auto features_iter = label_dataset->begin(); features_iter != label_dataset->end(); features_iter++) {
-                delete *features_iter;
-            }
-            delete label_dataset;
-        }
-        delete query_dataset;
-    }
-    delete dataset;
 }
 
 /**
@@ -288,14 +258,14 @@ void free_dataset(unordered_map<int, unordered_map<int, vector<feature_vector*>*
  * @param indexed_dataset
  * @return
  */
-std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
-                                    unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *training_dataset,
+std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
+                                    unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
                                     int random_seed) {
 
     std::default_random_engine generator(random_seed);
     int rel_levels = 0;
-    unordered_map<int, vector<feature_vector*>*> *qid_vec;
-    int qid = 0;
+    unordered_map<int, vector<feature_vector>> &qid_vec;
+    string qid;
     do {
         //select q uniformly at random from Q
         int max_q = training_qids->size();
@@ -303,30 +273,30 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
         int q_index = qid_distribution(generator);
         qid = (*training_qids)[q_index];
         qid_vec = (*training_dataset)[qid];
-        rel_levels = qid_vec->size();
+        rel_levels = qid_vec.size();
 
     } while(rel_levels <= 1);
 
     //select ya uniformly at random from Y [q]
-    int max_ya = qid_vec->size();
+    int max_ya = qid_vec.size();
     std::uniform_int_distribution<int> ya_distribution(0, max_ya -1);
     int ya_index = ya_distribution(generator);
 
     int count = 0;
     int ya = ya_index;
-    for (auto iter = qid_vec->begin(); iter != qid_vec->end() && count <= ya; iter++, count++) {
+    for (auto iter = qid_vec.begin(); iter != qid_vec.end() && count <= ya; iter++, count++) {
         ya_index = iter->first;
     }
 
     //select (a, ya, q) uniformly at random from P[q][ya]
-    int max_a = (*qid_vec)[ya_index]->size();
+    int max_a = qid_vec[ya_index].size();
     std::uniform_int_distribution<int> a_distribution(0, max_a-1);
     int a_index = a_distribution(generator);
-    feature_vector a = *((*(*qid_vec)[ya_index])[a_index]);
+    feature_vector &a = qid_vec[ya_index][a_index];
     tupl d1  = std::make_tuple(a, ya_index, qid);
 
-    auto save = (*qid_vec)[ya_index];
-    qid_vec->erase(ya_index);
+    auto &save = qid_vec[ya_index];
+    qid_vec.erase(ya_index);
 
     //select yb uniformly at random from Y [q] − ya.
     int max_yb = max_ya -1;
@@ -334,17 +304,17 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
     int yb_index = yb_distribution(generator);
     count = 0;
     int yb = yb_index;
-    for (auto iter = qid_vec->begin(); iter != qid_vec->end() && count <= yb; iter++, count++) {
+    for (auto iter = qid_vec.begin(); iter != qid_vec.end() && count <= yb; iter++, count++) {
         yb_index = iter->first;
     }
 
-    (*qid_vec)[ya_index] = save;
+    qid_vec.insert(ya_index, save);
 
     //select (b, yb, q) uniformly at random from P[q][yb]
-    int max_b = (*qid_vec)[yb_index]->size();
+    int max_b = qid_vec[yb_index].size();
     std::uniform_int_distribution<int> b_distribution(0, max_b-1);
     int b_index = b_distribution(generator);
-    feature_vector b = *((*(*qid_vec)[yb_index])[b_index]);
+    feature_vector &b = qid_vec[yb_index][b_index];
     tupl d2  = std::make_tuple(b, yb_index, qid);
 
     return std::make_pair(d1,d2);
@@ -357,10 +327,10 @@ std::pair<tupl, tupl> getRandomPair(vector<int> *training_qids,
  * @param qids
  * @param dataset
  */
-void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
-               unordered_map<int, unordered_map<int, vector<feature_vector*>*>*> *dataset,
-                unordered_map<int, unordered_map<int, vector<string>*>*> *docids,
-                unordered_map<int, unordered_map<string, int>*> *relevance_map, int feature_nums) {
+void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
+               unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
+                unordered_map<string, unordered_map<int, vector<string>>> *docids,
+                unordered_map<string, unordered_map<string, int>> *relevance_map, int feature_nums) {
     string data_file = data_dir;
     switch (data_type) {
         case TRAINING:
@@ -378,65 +348,66 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<int> *qids,
     int feature_idx;
     while (std::getline(infile, line)) {
         std::istringstream iss(line);
-        int label, qid, feature_id;
+        int label, feature_id;
+        string qid;
         double feature_val;
         string tmp_str, docid;
         iss >> label >> tmp_str;
-        stringstream ss(tmp_str.substr(tmp_str.find(':') + 1));
+        stringstream ss(tmp_str.substr(tmp_str.find(':') + 1, tmp_str.find(' ')));
         ss >> qid;
 
-        unordered_map<int, vector<feature_vector*> *> *query_dataset;
+        unordered_map<int, vector<feature_vector>> &query_dataset;
         if (dataset->find(qid) != dataset->end()) {
             query_dataset = (*dataset)[qid];
         } else {
             qids->push_back(qid);
-            query_dataset = new unordered_map<int, vector<feature_vector*>*>();
-            (*dataset)[qid] = query_dataset;
+            dataset->insert(qid, unordered_map<int, vector<feature_vector>>());
+            query_dataset = (*dataset)[qid];
         }
-        vector<feature_vector*> *label_dataset;
-        if (query_dataset->find(label) != query_dataset->end()) {
-            label_dataset = (*query_dataset)[label];
+        vector<feature_vector> &label_dataset;
+        if (query_dataset.find(label) != query_dataset.end()) {
+            label_dataset = query_dataset[label];
         } else {
-            label_dataset = new vector<feature_vector*>();
-            (*query_dataset)[label] = label_dataset;
+            query_dataset.insert(label, vector<feature_vector>());
+            label_dataset = query_dataset[label];
         }
-        feature_vector *features = new feature_vector(0);
+        label_dataset.push_back(feature_vector(0));
+        feature_vector &features = label_dataset.back();
         for (feature_idx = 0; feature_idx < feature_nums; feature_idx++) {
             iss >> tmp_str;
             stringstream ssid(tmp_str.substr(0, tmp_str.find(':')));
             ssid >> feature_id;
             stringstream ssval(tmp_str.substr(tmp_str.find(':') + 1));
             ssval >> feature_val;
-            (*features)[term_id{feature_id - 1}] = feature_val;
+            features[term_id{feature_id - 1}] = feature_val;
         }
-        label_dataset->push_back(features);
         iss >> tmp_str;
         iss >> tmp_str;
         iss >> docid;
         if (data_type != TRAINING) {
-            unordered_map<int, vector<string> *> *query_docids;
+            unordered_map<int, vector<string> > &query_docids;
             if (docids->find(qid) != docids->end()) {
                 query_docids = (*docids)[qid];
             } else {
-                query_docids = new unordered_map<int, vector<string>*>();
-                (*docids)[qid] = query_docids;
+                docids->insert(qid, unordered_map<int, vector<string> >());
+                query_docids = (*docids)[qid];
             }
-            vector<string> *label_docids;
-            if (query_docids->find(label) != query_docids->end()) {
+            vector<string> &label_docids;
+            if (query_docids.find(label) != query_docids.end()) {
                 label_docids = (*query_docids)[label];
             } else {
-                label_docids = new vector<string>();
-                (*query_docids)[label] = label_docids;
+                query_docids.insert(label, vector<string>());
+                label_docids = query_docids[label];
             }
-            label_docids->push_back(docid);
-            unordered_map<string, int> *doc_relevance;
+            label_docids.push_back(docid);
+            unordered_map<string, int> &doc_relevance;
             if (relevance_map->find(qid) != relevance_map->end()) {
                 doc_relevance = (*relevance_map)[qid];
             } else {
-                doc_relevance = new unordered_map<string, int>();
-                (*relevance_map)[qid] = doc_relevance;
+                relevance_map->insert(qid, unordered_map<string, int>());
+                doc_relevance = (*relevance_map)[qid];
             }
-            (*doc_relevance)[docid] = label;
+            doc_relevance[docid] = label;
         }
     }
 }
