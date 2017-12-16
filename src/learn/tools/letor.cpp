@@ -265,7 +265,7 @@ std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
 
     std::default_random_engine generator(random_seed);
     int rel_levels = 0;
-    unordered_map<int, vector<feature_vector>> &qid_vec = nullptr;
+    unordered_map<int, vector<feature_vector>> &qid_vec = (*training_dataset)[training_qids->front()];;
     string qid;
     do {
         //select q uniformly at random from Q
@@ -357,21 +357,17 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
         stringstream ss(tmp_str.substr(tmp_str.find(':') + 1, tmp_str.find(' ')));
         ss >> qid;
 
-        unordered_map<int, vector<feature_vector>> &query_dataset = nullptr;
-        if (dataset->find(qid) != dataset->end()) {
-            query_dataset = (*dataset)[qid];
-        } else {
+        if (dataset->find(qid) == dataset->end()) {
             qids->push_back(qid);
             (*dataset)[qid] = unordered_map<int, vector<feature_vector>>();
-            query_dataset = (*dataset)[qid];
         }
-        vector<feature_vector> &label_dataset = nullptr;
-        if (query_dataset.find(label) != query_dataset.end()) {
-            label_dataset = query_dataset[label];
-        } else {
+        unordered_map<int, vector<feature_vector>> &query_dataset = (*dataset)[qid];
+
+        if (query_dataset.find(label) == query_dataset.end()) {
             query_dataset[label] =  vector<feature_vector>();
-            label_dataset = query_dataset[label];
         }
+        vector<feature_vector> &label_dataset = query_dataset[label];
+
         label_dataset.push_back(feature_vector(0));
         feature_vector &features = label_dataset.back();
         for (feature_idx = 0; feature_idx < feature_nums; feature_idx++) {
@@ -386,28 +382,21 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
         iss >> tmp_str;
         iss >> docid;
         if (data_type != TRAINING) {
-            unordered_map<int, vector<string> > &query_docids = nullptr;
-            if (docids->find(qid) != docids->end()) {
-                query_docids = (*docids)[qid];
-            } else {
+            if (docids->find(qid) == docids->end()) {
                 (*docids)[qid] = unordered_map<int, vector<string> >();
-                query_docids = (*docids)[qid];
             }
-            vector<string> &label_docids = nullptr;
-            if (query_docids.find(label) != query_docids.end()) {
-                label_docids = query_docids[label];
-            } else {
+            unordered_map<int, vector<string> > &query_docids = (*docids)[qid];
+
+            if (query_docids.find(label) == query_docids.end()) {
                 query_docids[label] = vector<string>();
-                label_docids = query_docids[label];
             }
+            vector<string> &label_docids = query_docids[label];
+
             label_docids.push_back(docid);
-            unordered_map<string, int> &doc_relevance = nullptr;
-            if (relevance_map->find(qid) != relevance_map->end()) {
-                doc_relevance = (*relevance_map)[qid];
-            } else {
+            if (relevance_map->find(qid) == relevance_map->end()) {
                 (*relevance_map)[qid] = unordered_map<string, int>();
-                doc_relevance = (*relevance_map)[qid];
             }
+            unordered_map<string, int> &doc_relevance = (*relevance_map)[qid];
             doc_relevance[docid] = label;
         }
     }
