@@ -62,7 +62,8 @@ void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vec
 int validate(string data_dir, sgd_model *model, int feature_nums);
 int test(string data_dir, sgd_model *model, int feature_nums);
 int train_svm(string data_dir, int feature_nums);
-void build_dataset_nodes (auto *training_dataset, auto *dataset_nodes);
+void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
+                          vector<forward_node> *dataset_nodes);
 
 int main(int argc, char* argv[])
 {
