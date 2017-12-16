@@ -118,7 +118,7 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
         auto &query_dataset = query_iter->second;
         for (auto label_iter = query_dataset.begin(); label_iter != query_dataset.end(); label_iter++) {
             for (auto label_iter_2 = label_iter + 1; label_iter_2 != query_dataset.end(); label_iter_2++) {
-                bool temp_label = label_iter.first > label_iter_2.first;
+                bool temp_label = label_iter->first > label_iter_2->first;
                 vector<feature_vector> &vec1 = label_iter->second;
                 vector<feature_vector> &vec2 = label_iter_2->second;
                 for (auto vec1_iter = vec1.begin(); vec1_iter != vec1.end(); vec1_iter++) {
