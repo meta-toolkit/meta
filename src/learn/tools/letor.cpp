@@ -249,7 +249,6 @@ int train(string data_dir, sgd_model *model, int feature_nums) {
     loss.reset();
     delete training_qids;
     delete training_dataset;
-    //free_dataset(training_dataset);
     return 0;
 }
 
@@ -265,7 +264,6 @@ std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
 
     std::default_random_engine generator(random_seed);
     int rel_levels = 0;
-    unordered_map<int, vector<feature_vector>> &qid_vec = (*training_dataset)[training_qids->front()];;
     string qid;
     do {
         //select q uniformly at random from Q
@@ -273,10 +271,11 @@ std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
         std::uniform_int_distribution<int> qid_distribution(0, max_q-1);
         int q_index = qid_distribution(generator);
         qid = (*training_qids)[q_index];
-        qid_vec = (*training_dataset)[qid];
+        auto &qid_vec = (*training_dataset)[qid];
         rel_levels = qid_vec.size();
 
     } while(rel_levels <= 1);
+    unordered_map<int, vector<feature_vector>> &qid_vec = (*training_dataset)[qid];;
 
     //select ya uniformly at random from Y [q]
     int max_ya = qid_vec.size();
@@ -296,20 +295,19 @@ std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
     feature_vector &a = qid_vec[ya_index][a_index];
     tupl d1  = std::make_tuple(a, ya_index, qid);
 
-    auto &save = qid_vec[ya_index];
-    qid_vec.erase(ya_index);
-
     //select yb uniformly at random from Y [q] − ya.
     int max_yb = max_ya -1;
     std::uniform_int_distribution<int> yb_distribution(0, max_yb-1);
     int yb_index = yb_distribution(generator);
     count = 0;
     int yb = yb_index;
-    for (auto iter = qid_vec.begin(); iter != qid_vec.end() && count <= yb; iter++, count++) {
+    for (auto iter = qid_vec.begin(); iter != qid_vec.end() && count <= yb; iter++) {
         yb_index = iter->first;
+        if (yb_index == ya_index) {
+            continue;
+        }
+        count++;
     }
-
-    qid_vec[ya_index] = save;
 
     //select (b, yb, q) uniformly at random from P[q][yb]
     int max_b = qid_vec[yb_index].size();
