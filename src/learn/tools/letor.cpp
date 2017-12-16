@@ -13,10 +13,13 @@
 #include "meta/learn/loss/loss_function_factory.h"
 #include "meta/learn/sgd.h"
 #include "meta/learn/instance.h"
+#include "meta/learn/dataset.h"
+#include "meta/learn/binary_dataset_view.h"
 
 using namespace meta;
 using namespace learn;
 using namespace util;
+using namespace classify;
 using namespace std;
 
 using tupl = std::tuple<feature_vector, int, string>;
@@ -26,6 +29,18 @@ enum DATA_TYPE {
     VALIDATION,
     TESTING
 };
+
+typedef struct forwardnode {
+    operator bool() const {
+        return label;
+    }
+    operator feature_vector&() const {
+            return fv;
+    };
+
+    bool label;
+    feature_vector fv;
+}forward_node;
 
 bool compare_docscore(const pair<string, double> &p1, const pair<string, double> &p2) {
     return p1.second > p2.second;
@@ -63,19 +78,59 @@ int main(int argc, char* argv[])
     learn::sgd_model *model = new learn::sgd_model(feature_nums);
 
     //training phase
-    train(argv[1], model, feature_nums);
+    //train(argv[1], model, feature_nums);
+    train_svm(argv[1], feature_nums);
 
-    //validation phase
-    validate(argv[1], model, feature_nums);
-
-    //testing phase
-    test(argv[1], model, feature_nums);
+//    //validation phase
+//    validate(argv[1], model, feature_nums);
+//
+//    //testing phase
+//    test(argv[1], model, feature_nums);
 
     delete model;
 
     std::cerr << "Bye LETOR!" << std::endl;
 
     return 0;
+}
+
+int train_svm(string data_dir, int feature_nums) {
+    vector<string> *training_qids = new vector<string>();
+    unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset
+                                                     = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
+    read_data(TRAINING, data_dir, training_qids, training_dataset, nullptr, nullptr, feature_nums);
+    vector<forward_node> *dataset_nodes = new vector<forward_node>();
+    build_dataset_nodes(training_dataset, dataset_nodes);
+    binary_dataset *bdata = new binary_dataset<vector<forward_node>::iterator>(dataset_nodes->begin(), dataset_nodes->end(), feature_nums);
+    cout<<bdata->size()<<endl;
+    cout<<bdata->total_features<<endl;
+    delete bdata;
+    delete dataset_nodes;
+    delete training_dataset;
+    delete training_qids;
+}
+
+void build_dataset_nodes (auto *training_dataset, auto *dataset_nodes) {
+    for (auto query_iter = training_dataset->begin(); query_iter != training_dataset->end(); query_iter++) {
+        auto &query_dataset = query_iter->second;
+        for (auto label_iter = query_dataset.begin(); label_iter != query_dataset.end(); label_iter++) {
+            for (auto label_iter_2 = label_iter + 1; label_iter_2 != query_dataset.end(); label_iter_2++) {
+                bool temp_label = label_iter.first > label_iter_2.first;
+                vector<feature_vector> &vec1 = label_iter->second;
+                vector<feature_vector> &vec2 = label_iter_2->second;
+                for (auto vec1_iter = vec1.begin(); vec1_iter != vec1.end(); vec1_iter++) {
+                    for (auto vec2_iter = vec2.begin(); vec2_iter != vec2.end(); vec2_iter++) {
+                        dataset_nodes->push_back(forward_node());
+                        forward_node &temp_node = dataset_nodes->back();
+                        temp_node.label = temp_label;
+                        temp_node.fv = *vec1_iter;
+                        temp_node.fv -= *vec2_iter;
+                    }
+                }
+
+            }
+        }
+    }
 }
 
 int test(string data_dir, sgd_model *model, int feature_nums) {
