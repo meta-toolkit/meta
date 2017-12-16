@@ -14,7 +14,7 @@
 #include "meta/learn/sgd.h"
 #include "meta/learn/instance.h"
 #include "meta/learn/dataset.h"
-#include "meta/learn/binary_dataset_view.h"
+#include "meta/classify/binary_dataset_view.h"
 
 using namespace meta;
 using namespace learn;
@@ -34,9 +34,9 @@ typedef struct forwardnode {
     operator bool() const {
         return label;
     }
-    operator feature_vector&() const {
-            return fv;
-    };
+    operator feature_vector() const {
+        return fv;
+    }
 
     bool label;
     feature_vector fv;
@@ -61,6 +61,8 @@ void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vec
                                 sgd_model *model, int feature_nums);
 int validate(string data_dir, sgd_model *model, int feature_nums);
 int test(string data_dir, sgd_model *model, int feature_nums);
+int train_svm(string data_dir, int feature_nums);
+void build_dataset_nodes (auto *training_dataset, auto *dataset_nodes);
 
 int main(int argc, char* argv[])
 {
@@ -101,16 +103,17 @@ int train_svm(string data_dir, int feature_nums) {
     read_data(TRAINING, data_dir, training_qids, training_dataset, nullptr, nullptr, feature_nums);
     vector<forward_node> *dataset_nodes = new vector<forward_node>();
     build_dataset_nodes(training_dataset, dataset_nodes);
-    binary_dataset *bdata = new binary_dataset<vector<forward_node>::iterator>(dataset_nodes->begin(), dataset_nodes->end(), feature_nums);
+    binary_dataset *bdata = new binary_dataset(dataset_nodes->begin(), dataset_nodes->end(), feature_nums);
     cout<<bdata->size()<<endl;
-    cout<<bdata->total_features<<endl;
+    cout<<bdata->total_features()<<endl;
     delete bdata;
     delete dataset_nodes;
     delete training_dataset;
     delete training_qids;
 }
 
-void build_dataset_nodes (auto *training_dataset, auto *dataset_nodes) {
+void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
+                          vector<forward_node> *dataset_nodes) {
     for (auto query_iter = training_dataset->begin(); query_iter != training_dataset->end(); query_iter++) {
         auto &query_dataset = query_iter->second;
         for (auto label_iter = query_dataset.begin(); label_iter != query_dataset.end(); label_iter++) {
