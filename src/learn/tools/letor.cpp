@@ -164,24 +164,26 @@ void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vec
                 temp_relevances->push_back(temp_relevance);
             }
             total_relevances = last_precision;
-            for (int index = 0; index < 10; index++) {
-                top_precisions[index] += ((*temp_precisions)[index] / (index + 1));
-            }
-            mean_ap += (temp_ap / total_relevances);
-            for (int index = 0; index < 10; index++) {
-                dcg_rankings.push_back(query_relevances[(*doc_scores)[index].first]);
-            }
-            std::sort(temp_relevances->begin(), temp_relevances->end(), std::greater<int>());
-            for (int index = 0; index < 10; index++) {
-                temp_ndcg = compute_dcg(index + 1, dcg_rankings);
-                temp_idcg = compute_dcg(index + 1, *temp_relevances);
-                top_ndcgs[index] += (temp_ndcg / temp_idcg);
+            if (total_relevances > 0) { //must check
+                for (int index = 0; index < 10; index++) {
+                    top_precisions[index] += ((*temp_precisions)[index] / (index + 1));
+                }
+                mean_ap += (temp_ap / total_relevances);
+                for (int index = 0; index < 10; index++) {
+                    dcg_rankings.push_back(query_relevances[(*doc_scores)[index].first]);
+                }
+                std::sort(temp_relevances->begin(), temp_relevances->end(), std::greater<int>());
+                for (int index = 0; index < 10; index++) {
+                    temp_ndcg = compute_dcg(index + 1, dcg_rankings);
+                    temp_idcg = compute_dcg(index + 1, *temp_relevances);
+                    top_ndcgs[index] += (temp_ndcg / temp_idcg);
+                }
+                query_num++;
             }
 
             temp_precisions->clear();
             temp_relevances->clear();
             dcg_rankings.clear();
-            query_num++;
         }
         doc_scores->clear();
     }
