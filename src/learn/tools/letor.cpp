@@ -103,6 +103,7 @@ int main(int argc, char* argv[])
         cout << "Please specify full path to libsvm modules" << endl;
         string svm_path;
         cin >> svm_path;
+        svm_path
         svm_wrapper *wrapper = train_svm(argv[1], feature_nums, svm_path);
 
         validate(argv[1], feature_nums, LIBSVM, wrapper, nullptr);
@@ -164,7 +165,7 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
                     for (auto vec2_iter = vec2.begin(); vec2_iter != vec2.end(); vec2_iter++) {
                         dataset_nodes->push_back(forward_node());
                         forward_node &temp_node = dataset_nodes->back();
-                        temp_node.label = class_label{std::to_string(temp_label)};
+                        temp_node.label = class_label{std::to_string(temp_label ? 1 : -1)};
                         temp_node.fv = *vec1_iter;
                         temp_node.fv -= *vec2_iter;
                     }

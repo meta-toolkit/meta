@@ -60,6 +60,7 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
     command += " > NUL 2>&1\"";
 #endif
     system(command.c_str());
+    load_weights();
 }
 
 svm_wrapper::svm_wrapper(std::istream& in)
@@ -81,7 +82,29 @@ svm_wrapper::svm_wrapper(std::istream& in)
         std::getline(in, line);
         out << line << "\n";
     }
+    load_weights();
 }
+
+    void svm_wrapper::load_weights() {
+        auto num_lines = filesystem::num_lines("svm-train.model");
+        std::ifstream in{"svm-train.model"};
+        std::string line;
+        std::size_t i = 0;
+        for (; i < num_lines; ++i)
+        {
+            std::getline(in, line);
+            if (line.find("bias") == 0) {
+                std::getline(in, line);
+                i += 2;
+                break;
+            }
+        }
+        double temp_weight;
+        for (; i < num_lines; ++i) {
+            in >> temp_weight;
+            weights_.push_back(temp_weight);
+        }
+    }
 
 void svm_wrapper::save(std::ostream& out) const
 {
@@ -150,28 +173,9 @@ class_label svm_wrapper::classify(const feature_vector& doc) const
             return 0.0;
         }
 
-        auto num_lines = filesystem::num_lines("svm-train.model");
-        std::ifstream in{"svm-train.model"};
-        std::string line;
-        std::size_t i = 0;
-        for (; i < num_lines; ++i)
-        {
-            std::getline(in, line);
-            if (line.find("bias") == 0) {
-                std::getline(in, line);
-                i += 2;
-                break;
-            }
-        }
-        std::vector<double> weights;
-        double temp_weight;
-        for (; i < num_lines; ++i) {
-            in >> temp_weight;
-            weights.push_back(temp_weight);
-        }
         double score = 0.0;
-        for (i = 0; i < weights.size(); i++) {
-            score += weights[i] * doc[term_id{i}];
+        for (i = 0; i < weights_.size(); i++) {
+            score += weights_[i] * doc[term_id{i}];
         }
 
         return score;
