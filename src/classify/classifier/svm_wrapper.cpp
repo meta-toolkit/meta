@@ -174,7 +174,7 @@ class_label svm_wrapper::classify(const feature_vector& doc) const
         }
 
         double score = 0.0;
-        for (i = 0; i < weights_.size(); i++) {
+        for (int i = 0; i < weights_.size(); i++) {
             score += weights_[i] * doc[term_id{i}];
         }
 
