@@ -163,14 +163,15 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
                           vector<forward_node> *dataset_nodes) {
     for (auto query_iter = training_dataset->begin(); query_iter != training_dataset->end(); query_iter++) {
         auto &query_dataset = query_iter->second;
-        for (auto label_iter = query_dataset.begin(); label_iter != query_dataset.end(); label_iter++) {
-            for (auto label_iter_2 = label_iter; label_iter_2 != query_dataset.end(); label_iter_2++) {
-                if (label_iter_2->first == label_iter->first) {
-                    continue;
-                }
-                bool temp_label = label_iter->first > label_iter_2->first;
-                vector<feature_vector> &vec1 = label_iter->second;
-                vector<feature_vector> &vec2 = label_iter_2->second;
+        vector<int> label_keys;
+        for (auto &iter: query_dataset) {
+            label_keys.push_back(iter.first);
+        }
+        for (int i = 0; i < label_keys.size(); i++) {
+            for (int j = i + 1; j < label_keys.size(); j++) {
+                bool temp_label = label_keys[i] > label_keys[j];
+                vector<feature_vector> &vec1 = query_dataset[label_keys[i]];
+                vector<feature_vector> &vec2 = query_dataset[label_keys[j]];
                 for (auto vec1_iter = vec1.begin(); vec1_iter != vec1.end(); vec1_iter++) {
                     for (auto vec2_iter = vec2.begin(); vec2_iter != vec2.end(); vec2_iter++) {
                         dataset_nodes->push_back(forward_node());
