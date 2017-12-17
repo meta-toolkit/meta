@@ -79,12 +79,12 @@ int main(int argc, char* argv[])
 
     std::cerr << "Hello LETOR!" << std::endl;
 
-    if (argc != 2) {
-        std::cerr << "Please specify the number of features" << std::endl;
+    if (argc != 3) {
+        std::cerr << "Please specify full path for model file/training directory and the number of features" << std::endl;
     }
 
     int feature_nums;
-    stringstream ss(argv[1]);
+    stringstream ss(argv[2]);
     ss >> feature_nums;
 
     int hasModel;
@@ -93,11 +93,11 @@ int main(int argc, char* argv[])
     cout << "Do you want to load model from file? 1(yes)/0(no)" <<endl;
     cin >> hasModel;
     if (hasModel) {
-        cout << "Please specify full path to model file" << endl;
-        cin >> model_file;
+        model_file = argv[1];
+        cout << "full path to model file is " << model_file << endl;
     } else {
-        cout << "Please specify one directory path for training, validation and testing sets" << endl;
-        cin >> data_dir;
+        data_dir = argv[1];
+        cout << "full path to the directory containing training, validating and testing data is " << data_dir << endl;
     }
 
     int selected_method;
