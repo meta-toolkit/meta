@@ -17,6 +17,7 @@
 #include "meta/learn/dataset.h"
 #include "meta/classify/binary_dataset_view.h"
 #include "meta/classify/classifier/svm_wrapper.h"
+#include "meta/classify/classifier/classifier.h"
 
 using namespace meta;
 using namespace learn;
@@ -135,7 +136,7 @@ svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
     vector<forward_node> *dataset_nodes = new vector<forward_node>();
     build_dataset_nodes(training_dataset, dataset_nodes);
     multiclass_dataset *mcdata = new multiclass_dataset(dataset_nodes->begin(), dataset_nodes->end(), feature_nums);
-    multiclass_dataset_view *mcdv = new multiclass_dataset_view(*mcdata);
+    dataset_view_type *mcdv = new dataset_view_type(*mcdata);
     mcdv->shuffle();
     svm_wrapper *wrapper = new svm_wrapper(*mcdv, svm_path);
 
