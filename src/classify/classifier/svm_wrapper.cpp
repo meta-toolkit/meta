@@ -100,15 +100,10 @@ svm_wrapper::svm_wrapper(std::istream& in)
                 break;
             }
         }
-        for (int i = 0; i < labels_.size(); i++) {
-            weights_.push_back(std::vector<double>());
-        }
         double temp_weight;
         for (; i < num_lines; ++i) {
-            for (int j = 0; j < labels_.size(); j++) {
-                in >> temp_weight;
-                weights_[j].push_back(temp_weight);
-            }
+            in >> temp_weight;
+            weights_.push_back(temp_weight);
         }
     }
 
@@ -179,16 +174,12 @@ class_label svm_wrapper::classify(const feature_vector& doc) const
             return 0.0;
         }
 
-        double max_score = -DBL_MAX;
-        for (auto &iter: weights_) {
-            double score = 0.0;
-            for (int i = 0; i < iter.size(); i++) {
-                score += iter[i] * doc[term_id{i}];
-            }
-            max_score = score > max_score ? score : max_score;
+        double score = 0.0;
+        for (int i = 0; i < weights_.size(); i++) {
+            score += weights_[i] * doc[term_id{i}];
         }
 
-        return max_score;
+        return score;
     }
 
     confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
