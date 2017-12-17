@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <string>
 
 #include "meta/learn/loss/all.h"
 #include "meta/learn/loss/hinge.h"
@@ -135,7 +136,7 @@ svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
     build_dataset_nodes(training_dataset, dataset_nodes);
     multiclass_dataset *mcdata = new multiclass_dataset(dataset_nodes->begin(), dataset_nodes->end(), feature_nums);
     multiclass_dataset_view *mcdv = new multiclass_dataset_view(*mcdata);
-    bdv->shuffle();
+    mcdv->shuffle();
     svm_wrapper *wrapper = new svm_wrapper(*mcdv, svm_path);
 
     delete mcdv;
@@ -163,7 +164,7 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
                     for (auto vec2_iter = vec2.begin(); vec2_iter != vec2.end(); vec2_iter++) {
                         dataset_nodes->push_back(forward_node());
                         forward_node &temp_node = dataset_nodes->back();
-                        temp_node.label = class_label{temp_label};
+                        temp_node.label = class_label{std::to_string(temp_label)};
                         temp_node.fv = *vec1_iter;
                         temp_node.fv -= *vec2_iter;
                     }
