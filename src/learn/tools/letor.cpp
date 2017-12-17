@@ -15,7 +15,6 @@
 #include "meta/learn/sgd.h"
 #include "meta/learn/instance.h"
 #include "meta/learn/dataset.h"
-#include "meta/classify/binary_dataset_view.h"
 #include "meta/classify/classifier/svm_wrapper.h"
 #include "meta/classify/classifier/classifier.h"
 
@@ -26,6 +25,7 @@ using namespace classify;
 using namespace std;
 
 using tupl = std::tuple<feature_vector, int, string>;
+using meta::classify::classifier::dataset_view_type;
 
 enum DATA_TYPE {
     TRAINING,
