@@ -51,12 +51,12 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
 
 #ifndef _WIN32
     std::string command = svm_path_ + executable_ + "train "
-                          + options_.at(kernel_) + " svm-train";
+                          + options_.at(kernel_) + " svm-train" + " svm-train.model";
     command += " > /dev/null 2>&1";
 #else
     // see comment in classify()
     auto command = "\"\"" + svm_path_ + executable_ + "train.exe\" "
-                   + options_.at(kernel_) + " svm-train";
+                   + options_.at(kernel_) + " svm-train" + " svm-train.model";
     command += " > NUL 2>&1\"";
 #endif
     system(command.c_str());
