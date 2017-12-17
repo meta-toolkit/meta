@@ -114,10 +114,6 @@ int main(int argc, char* argv[])
     }
 
     if (selected_method == 0) {
-        cout << "Please specify full path to libsvm modules" << endl;
-        string svm_path;
-        cin >> svm_path;
-        svm_path += "/";
 
         auto start = chrono::high_resolution_clock::now();
         svm_wrapper *wrapper = nullptr;
@@ -125,6 +121,10 @@ int main(int argc, char* argv[])
             std::ifstream in{model_file};
             wrapper = new svm_wrapper(in);
         } else {
+            cout << "Please specify full path to libsvm modules" << endl;
+            string svm_path;
+            cin >> svm_path;
+            svm_path += "/";
             wrapper = train_svm(data_dir, feature_nums, svm_path);
         }
         auto end = chrono::high_resolution_clock::now();
