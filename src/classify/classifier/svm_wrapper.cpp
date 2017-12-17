@@ -145,7 +145,7 @@ class_label svm_wrapper::classify(const feature_vector& doc) const
     return labels_.at(lbl - 1);
 }
 
-    double svm_wrapper::computeScore(const feature_vector& doc) {
+    double svm_wrapper::computeScore(feature_vector& doc) {
         if (kernel_ != kernel::None) {
             return 0.0;
         }
