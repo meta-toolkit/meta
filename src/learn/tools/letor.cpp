@@ -483,7 +483,9 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
             ssval >> feature_val;
             features[term_id{feature_id - 1}] = feature_val;
         }
-
+        iss>>tmp_str;
+        iss>>tmp_str;
+        iss>>docid;
         if (data_type != TRAINING) {
             if (docids->find(qid) == docids->end()) {
                 (*docids)[qid] = unordered_map<int, vector<string> >();
@@ -496,7 +498,7 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
             }
             vector<string> &label_docids = query_docids[label];
 
-            docid = std::to_string((*qid_docids)[qid]++);
+            //docid = std::to_string((*qid_docids)[qid]++);
             cout << docid << endl;
             label_docids.push_back(docid);
             if (relevance_map->find(qid) == relevance_map->end()) {
