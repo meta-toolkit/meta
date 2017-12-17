@@ -25,7 +25,6 @@ using namespace classify;
 using namespace std;
 
 using tupl = std::tuple<feature_vector, int, string>;
-using meta::classify::classifier::dataset_view_type;
 
 enum DATA_TYPE {
     TRAINING,
@@ -136,7 +135,7 @@ svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
     vector<forward_node> *dataset_nodes = new vector<forward_node>();
     build_dataset_nodes(training_dataset, dataset_nodes);
     multiclass_dataset *mcdata = new multiclass_dataset(dataset_nodes->begin(), dataset_nodes->end(), feature_nums);
-    dataset_view_type *mcdv = new dataset_view_type(*mcdata);
+    classifier::dataset_view_type *mcdv = new classifier::dataset_view_type(*mcdata);
     mcdv->shuffle();
     svm_wrapper *wrapper = new svm_wrapper(*mcdv, svm_path);
 
