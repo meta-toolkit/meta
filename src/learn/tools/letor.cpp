@@ -7,6 +7,7 @@
 #include <sstream>
 #include <cmath>
 #include <string>
+#include <chrono>
 
 #include "meta/learn/loss/all.h"
 #include "meta/learn/loss/hinge.h"
@@ -104,7 +105,12 @@ int main(int argc, char* argv[])
         string svm_path;
         cin >> svm_path;
         svm_path += "/";
+
+        chrono::high_resolution_clock::time_point start = chrono::high_resolution_clock::now();
         svm_wrapper *wrapper = train_svm(argv[1], feature_nums, svm_path);
+        chrono::high_resolution_clock::time_point end = chrono::high_resolution_clock::now();
+        auto training_time = duration_cast<microseconds>(end - start).count();
+        cout << "training time in ms: " << training_time << endl;
 
         validate(argv[1], feature_nums, LIBSVM, wrapper, nullptr);
 
@@ -114,7 +120,11 @@ int main(int argc, char* argv[])
     } else {
         learn::sgd_model *model = new learn::sgd_model(feature_nums);
 
+        chrono::high_resolution_clock::time_point start = chrono::high_resolution_clock::now();
         train(argv[1], feature_nums, model);
+        chrono::high_resolution_clock::time_point end = chrono::high_resolution_clock::now();
+        auto training_time = duration_cast<microseconds>(end - start).count();
+        cout << "training time in ms: " << training_time << endl;
 
         validate(argv[1], feature_nums, SPD, nullptr, model);
 
