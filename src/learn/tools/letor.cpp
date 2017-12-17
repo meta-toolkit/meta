@@ -169,7 +169,7 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
         }
         for (int i = 0; i < label_keys.size(); i++) {
             for (int j = i + 1; j < label_keys.size(); j++) {
-                int temp_label = label_keys[i] > label_keys[j] ? 1 : -1;
+                int temp_label = label_keys[i] - label_keys[j];
                 vector<feature_vector> &vec1 = query_dataset[label_keys[i]];
                 vector<feature_vector> &vec2 = query_dataset[label_keys[j]];
                 int alternate = 0;

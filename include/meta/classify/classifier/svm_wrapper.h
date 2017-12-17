@@ -123,7 +123,7 @@ class svm_wrapper : public classifier
     /** the list of class_labels (mainly for serializing the model) */
     std::vector<class_label> labels_;
 
-    std::vector<double> weights_;
+    std::vector<std::vector<double>> weights_;
 
     void load_weights();
 };
