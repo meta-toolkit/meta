@@ -496,8 +496,8 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
             }
             vector<string> &label_docids = query_docids[label];
 
-            docid = std::to_string((*qid_docids)[qid]);
-            (*qid_docids)[qid]++;
+            docid = std::to_string((*qid_docids)[qid]++);
+            cout << docid << endl;
             label_docids.push_back(docid);
             if (relevance_map->find(qid) == relevance_map->end()) {
                 (*relevance_map)[qid] = unordered_map<string, int>();
