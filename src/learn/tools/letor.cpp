@@ -106,11 +106,11 @@ int main(int argc, char* argv[])
         cin >> svm_path;
         svm_path += "/";
 
-        chrono::high_resolution_clock::time_point start = chrono::high_resolution_clock::now();
+        auto start = chrono::high_resolution_clock::now();
         svm_wrapper *wrapper = train_svm(argv[1], feature_nums, svm_path);
-        chrono::high_resolution_clock::time_point end = chrono::high_resolution_clock::now();
-        auto training_time = duration_cast<microseconds>(end - start).count();
-        cout << "training time in ms: " << training_time << endl;
+        auto end = chrono::high_resolution_clock::now();
+        chrono::duration<double> training_time = end - start;
+        cout << "training time in seconds: " << training_time.count() << endl;
 
         validate(argv[1], feature_nums, LIBSVM, wrapper, nullptr);
 
@@ -120,11 +120,11 @@ int main(int argc, char* argv[])
     } else {
         learn::sgd_model *model = new learn::sgd_model(feature_nums);
 
-        chrono::high_resolution_clock::time_point start = chrono::high_resolution_clock::now();
+        auto start = chrono::high_resolution_clock::now();
         train(argv[1], feature_nums, model);
-        chrono::high_resolution_clock::time_point end = chrono::high_resolution_clock::now();
-        auto training_time = duration_cast<microseconds>(end - start).count();
-        cout << "training time in ms: " << training_time << endl;
+        auto end = chrono::high_resolution_clock::now();
+        chrono::duration<double> training_time = end - start;
+        cout << "training time in seconds: " << training_time.count() << endl;
 
         validate(argv[1], feature_nums, SPD, nullptr, model);
 
