@@ -144,7 +144,39 @@ class_label svm_wrapper::classify(const feature_vector& doc) const
     return labels_.at(lbl - 1);
 }
 
-confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
+    double svm_wrapper::computeScore(const feature_vector& doc) const {
+        if (kernel_ != kernel::None) {
+            return 0.0;
+        }
+
+        auto num_lines = filesystem::num_lines("svm-train.model");
+        std::ifstream in{"svm-train.model"};
+        std::string line;
+        std::size_t i = 0;
+        for (; i < num_lines; ++i)
+        {
+            std::getline(in, line);
+            if (line.find("bias") == 0) {
+                std::getline(in, line);
+                i += 2;
+                break;
+            }
+        }
+        vector<double> weights;
+        double temp_weight;
+        for (; i < num_lines; ++i) {
+            in >> temp_weight;
+            weights.push_back(temp_weight);
+        }
+        double score = 0.0;
+        for (i = 0; i < weights.size(); i++) {
+            score += weights[i] * doc[i];
+        }
+
+        return score;
+    }
+
+    confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
 {
     // create input for liblinear/libsvm
     {
