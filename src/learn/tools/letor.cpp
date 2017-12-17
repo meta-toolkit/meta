@@ -163,8 +163,8 @@ svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
 
     svm_wrapper *wrapper = new svm_wrapper(svm_path);
 
-    delete mcdv;
-    delete mcdata;
+//    delete mcdv;
+//    delete mcdata;
     delete dataset_nodes;
     delete training_dataset;
     delete training_qids;
