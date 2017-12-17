@@ -189,8 +189,6 @@ void test(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wr
     delete testing_dataset;
     delete testing_docids;
     delete relevance_map;
-
-    return 0;
 }
 
 void validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model) {
@@ -208,8 +206,6 @@ void validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, sv
     delete validation_dataset;
     delete validation_docids;
     delete relevance_map;
-
-    return 0;
 }
 
 void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
@@ -348,7 +344,6 @@ void train(string data_dir, int feature_nums, sgd_model *model) {
     loss.reset();
     delete training_qids;
     delete training_dataset;
-    return 0;
 }
 
 /**
