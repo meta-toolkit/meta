@@ -59,15 +59,15 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
 std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
                                     unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
                                     int random_seed);
-svm_wrapper* train(string data_dir, int feature_nums, sgd_model *model);
+void train(string data_dir, int feature_nums, sgd_model *model);
 double compute_dcg(int limit, vector<int> &rankings);
 void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
                                 unordered_map<string, unordered_map<int, vector<string>>> *docids,
                                 unordered_map<string, unordered_map<string, int>> *relevance_map,
                                 int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model);
-int validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model);
-int test(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model);
-int train_svm(string data_dir, int feature_nums, string svm_path);
+void validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model);
+void test(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model);
+svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path);
 void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
                           vector<forward_node> *dataset_nodes);
 
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
         case 1:
             cout << "spd will be used in training and testing" << endl;
             break;
-        default;
+        default:
             break;
     }
 
@@ -193,7 +193,7 @@ void test(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wr
     return 0;
 }
 
-int validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model) {
+void validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model) {
     vector<string> *validation_qids = new vector<string>();
     unordered_map<string, unordered_map<int, vector<feature_vector>>> *validation_dataset
                                                   = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
@@ -318,7 +318,7 @@ double compute_dcg(int limit, vector<int> &rankings) {
  * Train the pairwise ranker model
  * @return
  */
-int train(string data_dir, int feature_nums, sgd_model *model) {
+void train(string data_dir, int feature_nums, sgd_model *model) {
     vector<string> *training_qids = new vector<string>();
     unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset
             = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
