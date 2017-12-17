@@ -100,7 +100,8 @@ svm_wrapper::svm_wrapper(std::istream& in)
         io::packed::read(in, labels_[i]);
 
     std::ofstream out{"svm-train.model"};
-    auto model_lines = io::packed::read<std::size_t>(in);
+    std::size_t model_lines; //io::packed::read<std::size_t>(in);
+    in >> model_lines;
     std::string line;
     for (std::size_t i = 0; i < model_lines; ++i)
     {
@@ -143,8 +144,10 @@ void svm_wrapper::save(std::ostream& out) const
     for (const auto& lbl : labels_)
         io::packed::write(out, lbl);
 
+    out << std::endl;
     auto num_lines = filesystem::num_lines("svm-train.model");
-    io::packed::write(out, num_lines);
+    //io::packed::write(out, num_lines);
+    out << num_lines << std::endl;
     std::ifstream in{"svm-train.model"};
     std::string line;
     for (std::size_t i = 0; i < num_lines; ++i)
