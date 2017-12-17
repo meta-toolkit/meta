@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
         cout << "Please specify full path to libsvm modules" << endl;
         string svm_path;
         cin >> svm_path;
-        svm_path
+        svm_path += "/";
         svm_wrapper *wrapper = train_svm(argv[1], feature_nums, svm_path);
 
         validate(argv[1], feature_nums, LIBSVM, wrapper, nullptr);
