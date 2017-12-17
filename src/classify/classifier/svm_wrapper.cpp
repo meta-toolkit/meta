@@ -61,8 +61,32 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
     command += " > NUL 2>&1\"";
 #endif
     system(command.c_str());
-    load_weights();
 }
+
+    svm_wrapper::svm_wrapper(const std::string& svm_path,
+                             kernel kernel_opt /* = None */)
+            : svm_path_{svm_path}, kernel_{kernel_opt}
+    {
+
+        if (kernel_opt == kernel::None)
+            executable_ = "liblinear/build/";
+        else
+            executable_ = "libsvm/build/svm-";
+
+
+#ifndef _WIN32
+        std::string command = svm_path_ + executable_ + "train "
+                              + options_.at(kernel_) + " svm-train" + " svm-train.model";
+        command += " > /dev/null 2>&1";
+#else
+        // see comment in classify()
+    auto command = "\"\"" + svm_path_ + executable_ + "train.exe\" "
+                   + options_.at(kernel_) + " svm-train" + " svm-train.model";
+    command += " > NUL 2>&1\"";
+#endif
+        system(command.c_str());
+        load_weights();
+    }
 
 svm_wrapper::svm_wrapper(std::istream& in)
     : svm_path_{io::packed::read<std::string>(in)}
@@ -83,7 +107,6 @@ svm_wrapper::svm_wrapper(std::istream& in)
         std::getline(in, line);
         out << line << "\n";
     }
-    load_weights();
 }
 
     void svm_wrapper::load_weights() {

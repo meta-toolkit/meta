@@ -8,6 +8,7 @@
 #include <cmath>
 #include <string>
 #include <chrono>
+#include <algorithm>
 
 #include "meta/learn/loss/all.h"
 #include "meta/learn/loss/hinge.h"
@@ -39,14 +40,14 @@ enum CLASSIFY_TYPE {
 };
 
 typedef struct forwardnode {
-    operator class_label() const {
+    operator int() const {
         return label;
     }
     operator feature_vector() const {
         return fv;
     }
 
-    class_label label;
+    int label;
     feature_vector fv;
 }forward_node;
 
@@ -145,10 +146,22 @@ svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
     read_data(TRAINING, data_dir, training_qids, training_dataset, nullptr, nullptr, feature_nums);
     vector<forward_node> *dataset_nodes = new vector<forward_node>();
     build_dataset_nodes(training_dataset, dataset_nodes);
-    multiclass_dataset *mcdata = new multiclass_dataset(dataset_nodes->begin(), dataset_nodes->end(), feature_nums);
-    classifier::dataset_view_type *mcdv = new classifier::dataset_view_type(*mcdata);
-    mcdv->shuffle();
-    svm_wrapper *wrapper = new svm_wrapper(*mcdv, svm_path);
+//    multiclass_dataset *mcdata = new multiclass_dataset(dataset_nodes->begin(), dataset_nodes->end(), feature_nums);
+//    classifier::dataset_view_type *mcdv = new classifier::dataset_view_type(*mcdata);
+//    mcdv->shuffle();
+    {
+        std::random_shuffle(dataset_nodes->begin(), dataset_nodes->end());
+        std::ofstream out{"svm-train"};
+        for (const auto& node : *dataset_nodes)
+        {
+            out << node.label << endl;
+            for (const auto& count : node.fv)
+                out << ' ' << (count.first + 1) << ':' << count.second;
+            out << endl;
+        }
+    }
+
+    svm_wrapper *wrapper = new svm_wrapper(svm_path);
 
     delete mcdv;
     delete mcdata;
@@ -168,10 +181,7 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
             label_keys.push_back(iter.first);
         }
         for (int i = 0; i < label_keys.size(); i++) {
-            for (int j = 0; j < label_keys.size(); j++) {
-                if (j == i) {
-                    continue;
-                }
+            for (int j = i + 1; j < label_keys.size(); j++) {
                 int temp_label = label_keys[i] > label_keys[j] ? 1 : -1;
                 vector<feature_vector> &vec1 = query_dataset[label_keys[i]];
                 vector<feature_vector> &vec2 = query_dataset[label_keys[j]];
@@ -179,7 +189,7 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
                     for (auto vec2_iter = vec2.begin(); vec2_iter != vec2.end(); vec2_iter++) {
                         dataset_nodes->push_back(forward_node());
                         forward_node &temp_node = dataset_nodes->back();
-                        temp_node.label = class_label{std::to_string(temp_label)};
+                        temp_node.label = temp_label;
                         temp_node.fv = *vec1_iter;
                         temp_node.fv -= *vec2_iter;
                     }

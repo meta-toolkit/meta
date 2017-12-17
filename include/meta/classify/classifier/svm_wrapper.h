@@ -72,6 +72,9 @@ class svm_wrapper : public classifier
     svm_wrapper(dataset_view_type docs, const std::string& svm_path,
                 kernel kernel_opt = kernel::None);
 
+    svm_wrapper(const std::string& svm_path,
+                kernel kernel_opt = kernel::None);
+
     /**
      * Loads a svm_wrapper from a stream.
      * @param in The stream to read from
