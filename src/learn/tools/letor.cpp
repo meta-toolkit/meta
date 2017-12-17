@@ -169,14 +169,14 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
         }
         for (int i = 0; i < label_keys.size(); i++) {
             for (int j = i + 1; j < label_keys.size(); j++) {
-                bool temp_label = label_keys[i] > label_keys[j];
+                int temp_label = label_keys[i] - label_keys[j];
                 vector<feature_vector> &vec1 = query_dataset[label_keys[i]];
                 vector<feature_vector> &vec2 = query_dataset[label_keys[j]];
                 for (auto vec1_iter = vec1.begin(); vec1_iter != vec1.end(); vec1_iter++) {
                     for (auto vec2_iter = vec2.begin(); vec2_iter != vec2.end(); vec2_iter++) {
                         dataset_nodes->push_back(forward_node());
                         forward_node &temp_node = dataset_nodes->back();
-                        temp_node.label = class_label{std::to_string(temp_label ? 1 : -1)};
+                        temp_node.label = class_label{std::to_string(temp_label)};
                         temp_node.fv = *vec1_iter;
                         temp_node.fv -= *vec2_iter;
                     }
