@@ -79,13 +79,26 @@ int main(int argc, char* argv[])
 
     std::cerr << "Hello LETOR!" << std::endl;
 
-    if (argc != 3) {
-        std::cerr << "Please specify exactly one directory path for training, validation and testing sets, and second arguments as the number of features" << std::endl;
+    if (argc != 2) {
+        std::cerr << "Please specify the number of features" << std::endl;
     }
 
     int feature_nums;
-    stringstream ss(argv[2]);
+    stringstream ss(argv[1]);
     ss >> feature_nums;
+
+    int hasModel;
+    string model_file;
+    string data_dir;
+    cout << "Do you want to load model from file? 1(yes)/0(no)" <<endl;
+    cin >> hasModel;
+    if (hasModel) {
+        cout << "Please specify full path to model file" << endl;
+        cin >> model_file;
+    } else {
+        cout << "Please specify one directory path for training, validation and testing sets" << endl;
+        cin >> data_dir;
+    }
 
     int selected_method;
     cout << "Please select classification method to use: 0(libsvm), 1(spd)" << endl;
@@ -108,28 +121,46 @@ int main(int argc, char* argv[])
         svm_path += "/";
 
         auto start = chrono::high_resolution_clock::now();
-        svm_wrapper *wrapper = train_svm(argv[1], feature_nums, svm_path);
+        svm_wrapper *wrapper = nullptr;
+        if (hasModel) {
+            std::ifstream in{model_file};
+            wrapper = new svm_wrapper(in);
+        } else {
+            wrapper = train_svm(data_dir, feature_nums, svm_path);
+        }
         auto end = chrono::high_resolution_clock::now();
         chrono::duration<double> training_time = end - start;
         cout << "training time in seconds: " << training_time.count() << endl;
 
-        validate(argv[1], feature_nums, LIBSVM, wrapper, nullptr);
+        validate(data_dir, feature_nums, LIBSVM, wrapper, nullptr);
 
-        test(argv[1], feature_nums, LIBSVM, wrapper, nullptr);
+        test(data_dir, feature_nums, LIBSVM, wrapper, nullptr);
+
+        std::ofstream out{"letor_svm_train.model"};
+        wrapper->save(out);
 
         delete wrapper;
     } else {
-        learn::sgd_model *model = new learn::sgd_model(feature_nums);
+        learn::sgd_model *model = nullptr;
 
         auto start = chrono::high_resolution_clock::now();
-        train(argv[1], feature_nums, model);
+        if (hasModel) {
+            std::ifstream in{model_file};
+            model = new learn::sgd_model(in);
+        } else {
+            model = new learn::sgd_model(feature_nums);
+            train(data_dir, feature_nums, model);
+        }
         auto end = chrono::high_resolution_clock::now();
         chrono::duration<double> training_time = end - start;
         cout << "training time in seconds: " << training_time.count() << endl;
 
-        validate(argv[1], feature_nums, SPD, nullptr, model);
+        validate(data_dir, feature_nums, SPD, nullptr, model);
 
-        test(argv[1], feature_nums, SPD, nullptr, model);
+        test(data_dir, feature_nums, SPD, nullptr, model);
+
+        std::ofstream out{"letor_sgd_train.model"};
+        model->save(out);
 
         delete model;
     }

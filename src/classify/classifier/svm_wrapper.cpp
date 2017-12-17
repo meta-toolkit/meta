@@ -107,6 +107,7 @@ svm_wrapper::svm_wrapper(std::istream& in)
         std::getline(in, line);
         out << line << "\n";
     }
+    load_weights();
 }
 
     void svm_wrapper::load_weights() {
