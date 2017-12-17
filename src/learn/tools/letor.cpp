@@ -451,6 +451,7 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
     std::ifstream infile(data_file);
     string line;
     int feature_idx;
+    unordered_map<string, int> *qid_docids = new unordered_map<string, int>();
     while (std::getline(infile, line)) {
         std::istringstream iss(line);
         int label, feature_id;
@@ -486,6 +487,7 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
         if (data_type != TRAINING) {
             if (docids->find(qid) == docids->end()) {
                 (*docids)[qid] = unordered_map<int, vector<string> >();
+                (*qid_docids)[qid] = 0;
             }
             unordered_map<int, vector<string> > &query_docids = (*docids)[qid];
 
@@ -494,7 +496,8 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
             }
             vector<string> &label_docids = query_docids[label];
 
-            docid = std::to_string(label_docids.size());
+            docid = std::to_string((*qid_docids)[qid]);
+            (*qid_docids)[qid]++;
             label_docids.push_back(docid);
             if (relevance_map->find(qid) == relevance_map->end()) {
                 (*relevance_map)[qid] = unordered_map<string, int>();
@@ -503,4 +506,5 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
             doc_relevance[docid] = label;
         }
     }
+    delete qid_docids;
 }
