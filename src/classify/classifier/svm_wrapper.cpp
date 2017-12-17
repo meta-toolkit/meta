@@ -105,7 +105,7 @@ svm_wrapper::svm_wrapper(std::istream& in)
         }
         double temp_weight;
         for (; i < num_lines; ++i) {
-            for (int j = 0; j <labels_size(); j++) {
+            for (int j = 0; j < labels_.size(); j++) {
                 in >> temp_weight;
                 weights_[j].push_back(temp_weight);
             }
