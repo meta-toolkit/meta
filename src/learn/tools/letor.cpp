@@ -154,7 +154,7 @@ svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
         std::ofstream out{"svm-train"};
         for (const auto& node : *dataset_nodes)
         {
-            out << node.label << endl;
+            out << node.label;
             for (const auto& count : node.fv)
                 out << ' ' << (count.first + 1) << ':' << count.second;
             out << endl;
