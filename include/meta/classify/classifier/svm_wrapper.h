@@ -88,7 +88,7 @@ class svm_wrapper : public classifier
      */
     class_label classify(const feature_vector& doc) const override;
 
-    double computeScore(const feature_vector& doc) const override;
+    double computeScore(const feature_vector& doc);
 
     /**
      * Classifies a collection document into specific groups, as determined

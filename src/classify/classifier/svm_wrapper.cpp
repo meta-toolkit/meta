@@ -4,6 +4,7 @@
  */
 
 #include <fstream>
+#include <vector>
 #include "meta/classify/classifier/svm_wrapper.h"
 #include "meta/utf/utf.h"
 
@@ -144,7 +145,7 @@ class_label svm_wrapper::classify(const feature_vector& doc) const
     return labels_.at(lbl - 1);
 }
 
-    double svm_wrapper::computeScore(const feature_vector& doc) const {
+    double svm_wrapper::computeScore(const feature_vector& doc) {
         if (kernel_ != kernel::None) {
             return 0.0;
         }
@@ -162,7 +163,7 @@ class_label svm_wrapper::classify(const feature_vector& doc) const
                 break;
             }
         }
-        vector<double> weights;
+        std::vector<double> weights;
         double temp_weight;
         for (; i < num_lines; ++i) {
             in >> temp_weight;
