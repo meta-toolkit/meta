@@ -175,6 +175,13 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+/**
+ *
+ * @param data_dir
+ * @param feature_nums
+ * @param svm_path
+ * @return
+ */
 svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
     vector<string> *training_qids = new vector<string>();
     unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset
@@ -208,6 +215,11 @@ svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
     return wrapper;
 }
 
+/**
+ *
+ * @param training_dataset
+ * @param dataset_nodes
+ */
 void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
                           vector<forward_node> *dataset_nodes) {
     for (auto query_iter = training_dataset->begin(); query_iter != training_dataset->end(); query_iter++) {
@@ -236,6 +248,14 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
     }
 }
 
+/**
+ *
+ * @param data_dir
+ * @param feature_nums
+ * @param classify_type
+ * @param wrapper
+ * @param model
+ */
 void test(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model) {
     vector<string> *testing_qids = new vector<string>();
     unordered_map<string, unordered_map<int, vector<feature_vector>>> *testing_dataset
@@ -253,6 +273,14 @@ void test(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wr
     delete relevance_map;
 }
 
+/**
+ *
+ * @param data_dir
+ * @param feature_nums
+ * @param classify_type
+ * @param wrapper
+ * @param model
+ */
 void validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model) {
     vector<string> *validation_qids = new vector<string>();
     unordered_map<string, unordered_map<int, vector<feature_vector>>> *validation_dataset
@@ -270,6 +298,17 @@ void validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, sv
     delete relevance_map;
 }
 
+/**
+ *
+ * @param qids
+ * @param dataset
+ * @param docids
+ * @param relevance_map
+ * @param feature_nums
+ * @param classify_type
+ * @param wrapper
+ * @param model
+ */
 void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
                             unordered_map<string, unordered_map<int, vector<string>>> *docids,
                             unordered_map<string, unordered_map<string, int>> *relevance_map,
@@ -374,7 +413,9 @@ double compute_dcg(int limit, vector<int> &rankings) {
 
 /**
  * Train the pairwise ranker model
- * @return
+ * @param data_dir
+ * @param feature_nums
+ * @param model
  */
 void train(string data_dir, int feature_nums, sgd_model *model) {
     vector<string> *training_qids = new vector<string>();
@@ -411,7 +452,9 @@ void train(string data_dir, int feature_nums, sgd_model *model) {
 /**
  * Return a random pair of tuple for training the svm classifier
  * Tuple is of type (feature_vec, label, qid)
- * @param indexed_dataset
+ * @param training_qids
+ * @param training_dataset
+ * @param random_seed
  * @return
  */
 std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
@@ -481,6 +524,9 @@ std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
  * @param data_dir
  * @param qids
  * @param dataset
+ * @param docids
+ * @param relevance_map
+ * @param feature_nums
  */
 void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
                unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
