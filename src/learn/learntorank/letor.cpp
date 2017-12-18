@@ -2,7 +2,7 @@
 // Created by Mihika Dave on 12/18/17.
 //
 
-#include "meta/learn/learntorank/letor.h"
+#include "letor.h"
 
 namespace meta
 {
