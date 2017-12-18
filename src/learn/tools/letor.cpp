@@ -125,6 +125,7 @@ int main(int argc, char* argv[])
             string svm_path;
             cin >> svm_path;
             svm_path += "/";
+            cout << "start training svm!" << endl;
             wrapper = train_svm(data_dir, feature_nums, svm_path);
         }
         auto end = chrono::high_resolution_clock::now();
@@ -152,6 +153,7 @@ int main(int argc, char* argv[])
             cin >> continue_training;
         }
         if (!hasModel || continue_training) {
+            cout << "start training sgd!" << endl;
             train(data_dir, feature_nums, model);
         }
         auto end = chrono::high_resolution_clock::now();
@@ -484,6 +486,8 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
                unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
                 unordered_map<string, unordered_map<int, vector<string>>> *docids,
                 unordered_map<string, unordered_map<string, int>> *relevance_map, int feature_nums) {
+    auto start = chrono::high_resolution_clock::now();
+
     string data_file = data_dir;
     switch (data_type) {
         case TRAINING:
@@ -554,4 +558,8 @@ void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
         }
     }
     delete qid_docids;
+
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_time = end - start;
+    cout << "Time spent in read_data in seconds: " << elapsed_time.count() << endl;
 }
