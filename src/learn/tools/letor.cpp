@@ -144,6 +144,7 @@ int main(int argc, char* argv[])
 
         auto start = chrono::high_resolution_clock::now();
         int continue_training;
+        model = new learn::sgd_model(feature_nums);
         if (hasModel) {
             std::ifstream in{model_file};
             model = new learn::sgd_model(in);
@@ -151,7 +152,6 @@ int main(int argc, char* argv[])
             cin >> continue_training;
         }
         if (!hasModel || continue_training) {
-            model = new learn::sgd_model(feature_nums);
             train(data_dir, feature_nums, model);
         }
         auto end = chrono::high_resolution_clock::now();
