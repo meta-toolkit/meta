@@ -91,7 +91,7 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
 svm_wrapper::svm_wrapper(std::istream& in)
     //: svm_path_{io::packed::read<std::string>(in)}
 {
-    in >> svm_path;
+    in >> svm_path_;
     in >> kernel_;
     in >> executable_;
 
