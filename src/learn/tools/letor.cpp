@@ -1,102 +1,31 @@
-#include <functional>
-#include <iostream>
-#include <vector>
-#include <random>
-#include <unordered_map>
-#include <fstream>
-#include <sstream>
-#include <cmath>
-#include <string>
-#include <chrono>
-#include <algorithm>
+/**
+ * @file letor.cpp
+ * @author Mihika Dave, Anthony Huang, Rachneet Kaur
+ */
 
-#include "meta/learn/loss/all.h"
-#include "meta/learn/loss/hinge.h"
-#include "meta/learn/loss/loss_function.h"
-#include "meta/learn/loss/loss_function_factory.h"
-#include "meta/learn/sgd.h"
-#include "meta/learn/instance.h"
-#include "meta/learn/dataset.h"
-#include "meta/classify/classifier/svm_wrapper.h"
-#include "meta/classify/classifier/classifier.h"
+#include "letor.h"
 
-using namespace meta;
-using namespace learn;
-using namespace util;
-using namespace classify;
-using namespace std;
-
-using tupl = std::tuple<feature_vector, int, string>;
-
-enum DATA_TYPE {
-    TRAINING,
-    VALIDATION,
-    TESTING
-};
-
-enum CLASSIFY_TYPE {
-    LIBSVM,
-    SPD,
-};
-
-typedef struct forwardnode {
-    operator int() const {
-        return label;
-    }
-    operator feature_vector() const {
-        return fv;
-    }
-
-    int label;
-    feature_vector fv;
-}forward_node;
-
-bool compare_docscore(const pair<string, double> &p1, const pair<string, double> &p2) {
-    return p1.second > p2.second;
-}
-
-void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
-               unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
-                unordered_map<string, unordered_map<int, vector<string>>> *docids,
-                unordered_map<string, unordered_map<string, int>> *relevance_map, int feature_nums);
-std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
-                                    unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
-                                    int random_seed);
-void train(string data_dir, int feature_nums, sgd_model *model);
-double compute_dcg(int limit, vector<int> &rankings);
-void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
-                                unordered_map<string, unordered_map<int, vector<string>>> *docids,
-                                unordered_map<string, unordered_map<string, int>> *relevance_map,
-                                int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model);
-void validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model);
-void test(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model);
-svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path);
-void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
-                          vector<forward_node> *dataset_nodes);
-
-int main(int argc, char* argv[])
-{
-
-    std::cerr << "Hello LETOR!" << std::endl;
-
+int main(int argc, char* argv[]) {
+    std::cerr << "Hello! This is Learning To Rank LETOR!" << std::endl;
     if (argc != 3) {
         std::cerr << "Please specify full path for training directory and the number of features" << std::endl;
+        std::cerr << "Usage: ./letor [-data_dir] [-num_features]" << std::endl;
     }
 
     string data_dir;
     data_dir = argv[1];
-    int feature_nums;
+    int num_features;
     stringstream ss(argv[2]);
-    ss >> feature_nums;
+    ss >> num_features;
 
     int hasModel;
     string model_file;
-    cout << "Do you want to load model from file? 1(yes)/0(no)" <<endl;
+    cout << "Do you want to load trained model from file? 1(yes)/0(no)" <<endl;
     cin >> hasModel;
     if (hasModel) {
-        cout << "Please specify full path to model file" << endl;
+        cout << "Please specify full path to your model file" << endl;
         cin >> model_file;
-        cout << "full path to model file is " << model_file << endl;
+        cout << "Full path to your model is: " << model_file << endl;
     }
 
     int selected_method;
@@ -104,75 +33,93 @@ int main(int argc, char* argv[])
     cin >> selected_method;
     switch (selected_method) {
         case 0:
-            cout << "libsvm will be used in training and testing" << endl;
+            cout << "libsvm will be used for training and testing" << endl;
             break;
         case 1:
-            cout << "spd will be used in training and testing" << endl;
+            cout << "spd will be used for training and testing" << endl;
             break;
         default:
             break;
     }
 
     if (selected_method == 0) {
-
-        auto start = chrono::high_resolution_clock::now();
-        svm_wrapper *wrapper = nullptr;
-        if (hasModel) {
-            std::ifstream in{model_file};
-            wrapper = new svm_wrapper(in);
-        } else {
-            cout << "Please specify full path to libsvm modules" << endl;
-            string svm_path;
-            cin >> svm_path;
-            svm_path += "/";
-            cout << "start training svm!" << endl;
-            wrapper = train_svm(data_dir, feature_nums, svm_path);
-        }
-        auto end = chrono::high_resolution_clock::now();
-        chrono::duration<double> training_time = end - start;
-        cout << "training time in seconds: " << training_time.count() << endl;
-
-        validate(data_dir, feature_nums, LIBSVM, wrapper, nullptr);
-
-        test(data_dir, feature_nums, LIBSVM, wrapper, nullptr);
-
-        std::ofstream out{"letor_svm_train.model"};
-        wrapper->save(out);
-
-        delete wrapper;
+        train_libsvm(data_dir, num_features, hasModel, model_file);
     } else {
-        learn::sgd_model *model = nullptr;
+        train_spd(data_dir, num_features, hasModel, model_file);
+    }
+    std::cerr << "Exiting LETOR!" << std::endl;
+    return 0;
+}
 
-        auto start = chrono::high_resolution_clock::now();
-        int continue_training;
-        model = new learn::sgd_model(feature_nums);
-        if (hasModel) {
-            std::ifstream in{model_file};
-            model = new learn::sgd_model(in);
+/**
+ *
+ * @param data_dir
+ * @param num_features
+ * @param hasModel
+ * @param model_file
+ */
+void train_spd(const string &data_dir, int num_features, int hasModel, const string &model_file) {
+    sgd_model *model = nullptr;
+    auto start = chrono::steady_clock::now();
+    int continue_training;
+    model = new sgd_model(num_features);
+    if (hasModel) {
+            ifstream in{model_file};
+            model = new sgd_model(in);
             cout << "Do you want to continue training the loaded sgd model? 1(yes)/0(no)" << endl;
             cin >> continue_training;
-        }
-        if (!hasModel || continue_training) {
-            cout << "start training sgd!" << endl;
-            train(data_dir, feature_nums, model);
-        }
-        auto end = chrono::high_resolution_clock::now();
-        chrono::duration<double> training_time = end - start;
-        cout << "training time in seconds: " << training_time.count() << endl;
-
-        validate(data_dir, feature_nums, SPD, nullptr, model);
-
-        test(data_dir, feature_nums, SPD, nullptr, model);
-
-        std::ofstream out{"letor_sgd_train.model"};
-        model->save(out);
-
-        delete model;
     }
+    if (!hasModel || continue_training) {
+            cout << "start training sgd!" << endl;
+            train(data_dir, num_features, model);
+    }
+    auto end = chrono::steady_clock::now();
+    chrono::duration<double> training_time = end - start;
+    cout << "Training time in seconds: " << training_time.count() << endl;
 
-    std::cerr << "Bye LETOR!" << std::endl;
+    validate(data_dir, num_features, SPD, nullptr, model);
 
-    return 0;
+    test(data_dir, num_features, SPD, nullptr, model);
+
+    ofstream out{"letor_sgd_train.model"};
+    model->save(out);
+
+    delete model;
+}
+
+/**
+ *
+ * @param data_dir
+ * @param num_features
+ * @param hasModel
+ * @param model_file
+ */
+void train_libsvm(const string &data_dir, int num_features, int hasModel, const string &model_file) {
+    auto start = chrono::steady_clock::now();
+    svm_wrapper *wrapper = nullptr;
+    if (hasModel) {
+            ifstream in{model_file};
+            wrapper = new svm_wrapper(in);
+    } else {
+        cout << "Please specify full path to libsvm modules" << endl;
+        string svm_path;
+        cin >> svm_path;
+        svm_path += "/";
+        cout << "Starting to train svm!" << endl;
+        wrapper = train_svm(data_dir, num_features, svm_path);
+    }
+    auto end = chrono::steady_clock::now();
+    chrono::duration<double> training_time = end - start;
+    cout << "Training time in seconds: " << training_time.count() << endl;
+
+    validate(data_dir, num_features, LIBSVM, wrapper, nullptr);
+
+    test(data_dir, num_features, LIBSVM, wrapper, nullptr);
+
+    ofstream out{"letor_svm_train.model"};
+    wrapper->save(out);
+
+    delete wrapper;
 }
 
 /**
@@ -184,14 +131,19 @@ int main(int argc, char* argv[])
  */
 svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
     vector<string> *training_qids = new vector<string>();
+
     unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset
-                                                     = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
+            = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
+
     read_data(TRAINING, data_dir, training_qids, training_dataset, nullptr, nullptr, feature_nums);
+
     vector<forward_node> *dataset_nodes = new vector<forward_node>();
+
     build_dataset_nodes(training_dataset, dataset_nodes);
-//    multiclass_dataset *mcdata = new multiclass_dataset(dataset_nodes->begin(), dataset_nodes->end(), feature_nums);
-//    classifier::dataset_view_type *mcdv = new classifier::dataset_view_type(*mcdata);
-//    mcdv->shuffle();
+
+    //multiclass_dataset *mcdata = new multiclass_dataset(dataset_nodes->begin(), dataset_nodes->end(), feature_nums);
+    //classifier::dataset_view_type *mcdv = new classifier::dataset_view_type(*mcdata);
+    //mcdv->shuffle();
     {
         std::random_shuffle(dataset_nodes->begin(), dataset_nodes->end());
         std::ofstream out{"svm-train"};
@@ -206,8 +158,8 @@ svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
 
     svm_wrapper *wrapper = new svm_wrapper(svm_path);
 
-//    delete mcdv;
-//    delete mcdata;
+    //delete mcdv;
+    //delete mcdata;
     delete dataset_nodes;
     delete training_dataset;
     delete training_qids;
@@ -220,7 +172,7 @@ svm_wrapper* train_svm(string data_dir, int feature_nums, string svm_path) {
  * @param training_dataset
  * @param dataset_nodes
  */
-void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
+void build_dataset_nodes(unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
                           vector<forward_node> *dataset_nodes) {
     for (auto query_iter = training_dataset->begin(); query_iter != training_dataset->end(); query_iter++) {
         auto &query_dataset = query_iter->second;
@@ -242,7 +194,6 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
                         temp_node.fv -= *vec2_iter;
                     }
                 }
-
             }
         }
     }
@@ -259,12 +210,13 @@ void build_dataset_nodes (unordered_map<string, unordered_map<int, vector<featur
 void test(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model) {
     vector<string> *testing_qids = new vector<string>();
     unordered_map<string, unordered_map<int, vector<feature_vector>>> *testing_dataset
-                                                  = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
+            = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
     unordered_map<string, unordered_map<int, vector<string>>> *testing_docids
-                                                  = new unordered_map<string, unordered_map<int, vector<string>>>();
-    unordered_map<string, unordered_map<string, int>> *relevance_map = new unordered_map<string, unordered_map<string, int>>();
+            = new unordered_map<string, unordered_map<int, vector<string>>>();
+    unordered_map<string, unordered_map<string, int>> *relevance_map
+            = new unordered_map<string, unordered_map<string, int>>();
     read_data(TESTING, data_dir, testing_qids, testing_dataset, testing_docids, relevance_map, feature_nums);
-    cout << "Evaluation on Test set" << endl;
+    cout << "Evaluating on test data" << endl;
     evaluate(testing_qids, testing_dataset, testing_docids, relevance_map, feature_nums, classify_type, wrapper, model);
 
     delete testing_qids;
@@ -284,13 +236,21 @@ void test(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wr
 void validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model) {
     vector<string> *validation_qids = new vector<string>();
     unordered_map<string, unordered_map<int, vector<feature_vector>>> *validation_dataset
-                                                  = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
+            = new unordered_map<string, unordered_map<int, vector<feature_vector>>>();
     unordered_map<string, unordered_map<int, vector<string>>> *validation_docids
-                                                  = new unordered_map<string, unordered_map<int, vector<string>>>();
-    unordered_map<string, unordered_map<string, int>> *relevance_map = new unordered_map<string, unordered_map<string, int>>();
+            = new unordered_map<string, unordered_map<int, vector<string>>>();
+    unordered_map<string, unordered_map<string, int>> *relevance_map
+            = new unordered_map<string, unordered_map<string, int>>();
     read_data(VALIDATION, data_dir, validation_qids, validation_dataset, validation_docids, relevance_map, feature_nums);
     cout << "Evaluation on Validation set" << endl;
-    evaluate(validation_qids, validation_dataset, validation_docids, relevance_map, feature_nums, classify_type, wrapper, model);
+    evaluate(validation_qids,
+             validation_dataset,
+             validation_docids,
+             relevance_map,
+             feature_nums,
+             classify_type,
+             wrapper,
+             model);
 
     delete validation_qids;
     delete validation_dataset;
@@ -309,11 +269,14 @@ void validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, sv
  * @param wrapper
  * @param model
  */
-void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
-                            unordered_map<string, unordered_map<int, vector<string>>> *docids,
-                            unordered_map<string, unordered_map<string, int>> *relevance_map,
-                            int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper, sgd_model *model) {
-
+void evaluate(vector<string> *qids,
+              unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
+              unordered_map<string, unordered_map<int, vector<string>>> *docids,
+              unordered_map<string, unordered_map<string, int>> *relevance_map,
+              int feature_nums,
+              CLASSIFY_TYPE classify_type,
+              svm_wrapper *wrapper,
+              sgd_model *model) {
     int query_num = 0;
     double top_precisions[10];
     double mean_ap = 0;
@@ -326,7 +289,6 @@ void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vec
         top_precisions[index] = 0;
         top_ndcgs[index] = 0;
     }
-
     vector<std::pair<string, double>> *doc_scores = new vector<std::pair<string, double>>();
     for (auto query_iter = dataset->begin(); query_iter != dataset->end(); query_iter++) {
         auto &query_dataset = query_iter->second;
@@ -374,7 +336,6 @@ void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vec
                 }
                 query_num++;
             }
-
             temp_precisions->clear();
             temp_relevances->clear();
             dcg_rankings.clear();
@@ -398,6 +359,12 @@ void evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vec
     delete temp_relevances;
 }
 
+/**
+ *
+ * @param limit
+ * @param rankings
+ * @return
+ */
 double compute_dcg(int limit, vector<int> &rankings) {
     double dcg = 0, dg;
 
@@ -439,10 +406,6 @@ void train(string data_dir, int feature_nums, sgd_model *model) {
         x -= b;
         double expected_label = y_a - y_b;
         double los = model->train_one(x, expected_label, *loss);
-        if (los!=0) {
-            //cout<<"Loss :"<<los<<endl;
-        }
-
     }
     loss.reset();
     delete training_qids;
@@ -528,10 +491,13 @@ std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
  * @param relevance_map
  * @param feature_nums
  */
-void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
+void read_data(DATA_TYPE data_type,
+               string data_dir,
+               vector<string> *qids,
                unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
-                unordered_map<string, unordered_map<int, vector<string>>> *docids,
-                unordered_map<string, unordered_map<string, int>> *relevance_map, int feature_nums) {
+               unordered_map<string, unordered_map<int, vector<string>>> *docids,
+               unordered_map<string, unordered_map<string, int>> *relevance_map,
+               int feature_nums) {
     auto start = chrono::high_resolution_clock::now();
 
     string data_file = data_dir;
