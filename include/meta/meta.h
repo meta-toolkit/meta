@@ -101,6 +101,12 @@ namespace loss
 }
 
 /**
+ * Learning to rank algorithms
+ */
+namespace learn2rank
+{
+}
+/**
  * Algorithms for regression.
  */
 namespace regress

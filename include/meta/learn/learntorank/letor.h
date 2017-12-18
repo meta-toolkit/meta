@@ -40,7 +40,7 @@ namespace meta
 {
 namespace learn
 {
-namespace ranker
+namespace learntorank
 {
 
     class let {
@@ -73,7 +73,6 @@ namespace ranker
             feature_vector fv;
         } forward_node;
 
-        //constructor
     public:
 
         void train(string data_dir, int feature_nums, sgd_model *model);

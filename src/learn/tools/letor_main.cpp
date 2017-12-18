@@ -2,11 +2,11 @@
 // Created by Mihika Dave on 12/18/17.
 //
 
-#include "meta/learn/ranker/let.h"
+#include "meta/learn/learntorank/letor.h"
 
 using namespace meta;
 using namespace learn;
-using namespace ranker;
+using namespace learntorank;
 
 /**
      *
