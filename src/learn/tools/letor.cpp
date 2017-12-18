@@ -146,7 +146,11 @@ int main(int argc, char* argv[])
         if (hasModel) {
             std::ifstream in{model_file};
             model = new learn::sgd_model(in);
-        } else {
+        }
+        int continue_training;
+        cout << "Do you want to continue training the loaded sgd model? 1(yes)/0(no)";
+        cin >> continue_training;
+        if (continue_training) {
             model = new learn::sgd_model(feature_nums);
             train(data_dir, feature_nums, model);
         }
