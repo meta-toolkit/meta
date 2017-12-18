@@ -1,9 +1,10 @@
-//
-// Created by Mihika Dave on 12/18/17.
-//
+/**
+ * @file pairwise_letor.h
+ * @author Mihika Dave, Anthony Huang, Rachneet Kaur
+ */
 
-#ifndef META_LET_H
-#define META_LET_H
+#ifndef META_PAIRWISE_LETOR_H
+#define META_PAIRWISE_LETOR_H
 
 #include <functional>
 #include <iostream>
@@ -29,13 +30,9 @@
 
 
 using namespace std;
-//using namespace meta;
-//using namespace learn;
 using namespace meta::util;
 using namespace meta::classify;
 
-using namespace meta::util;
-using namespace meta::classify;
 namespace meta
 {
 namespace learn
@@ -43,10 +40,8 @@ namespace learn
 namespace learntorank
 {
 
-    class let {
-
+class pairwise_letor {
     public:
-
         using tupl = std::tuple<feature_vector, int, string>;
 
         enum DATA_TYPE {
@@ -64,11 +59,9 @@ namespace learntorank
             operator int() const {
                 return label;
             }
-
             operator feature_vector() const {
                 return fv;
             }
-
             int label;
             feature_vector fv;
         } forward_node;
@@ -79,21 +72,29 @@ namespace learntorank
 
         svm_wrapper *train_svm(string data_dir, int feature_nums, string svm_path);
 
-        void validate(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper,
+        void validate(string data_dir,
+                      int feature_nums,
+                      CLASSIFY_TYPE classify_type,
+                      svm_wrapper *wrapper,
                       sgd_model *model);
 
-        void test(string data_dir, int feature_nums, CLASSIFY_TYPE classify_type, svm_wrapper *wrapper,
+        void test(string data_dir,
+                  int feature_nums,
+                  CLASSIFY_TYPE classify_type,
+                  svm_wrapper *wrapper,
                   sgd_model *model);
 
     private:
-        void read_data(DATA_TYPE data_type, string data_dir, vector<string> *qids,
+        void read_data(DATA_TYPE data_type,
+                       string data_dir,
+                       vector<string> *qids,
                        unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
                        unordered_map<string, unordered_map<int, vector<string>>> *docids,
-                       unordered_map<string, unordered_map<string, int>> *relevance_map, int feature_nums);
+                       unordered_map<string, unordered_map<string, int>> *relevance_map,
+                       int feature_nums);
 
-        std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids,
-                                            unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
-                                            int random_seed);
+        std::pair<tupl, tupl> getRandomPair(vector<string> *training_qids, unordered_map<string,
+                unordered_map<int, vector<feature_vector>>> *training_dataset, int random_seed);
 
         void
         build_dataset_nodes(unordered_map<string, unordered_map<int, vector<feature_vector>>> *training_dataset,
@@ -106,7 +107,8 @@ namespace learntorank
         double compute_dcg(int limit, vector<int> &rankings);
 
         void
-        evaluate(vector<string> *qids, unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
+        evaluate(vector<string> *qids,
+                 unordered_map<string, unordered_map<int, vector<feature_vector>>> *dataset,
                  unordered_map<string, unordered_map<int, vector<string>>> *docids,
                  unordered_map<string, unordered_map<string, int>> *relevance_map,
                  int feature_nums,
@@ -114,9 +116,9 @@ namespace learntorank
                  svm_wrapper *wrapper,
                  sgd_model *model);
 
-    };
+};
 
 }
 }
 }
-#endif //META_LET_H
+#endif

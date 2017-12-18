@@ -1,23 +1,24 @@
-//
-// Created by Mihika Dave on 12/18/17.
-//
+/**
+ * @file letor.cpp
+ * @author Mihika Dave, Anthony Huang, Rachneet Kaur
+ */
 
-#include "../learntorank/letor.h"
+#include "meta/learn/learntorank/pairwise_letor.h"
 
 using namespace meta;
 using namespace learn;
 using namespace learntorank;
 
 /**
-     *
-     * @param data_dir
-     * @param num_features
-     * @param hasModel
-     * @param model_file
-     */
+ * Train the pairwise ranker using spd
+ * @param data_dir
+ * @param num_features
+ * @param hasModel
+ * @param model_file
+ */
 void train_spd(const string &data_dir, int num_features, int hasModel, const string &model_file) {
     sgd_model *model = nullptr;
-    let letor_model;
+    pairwise_letor letor_model;
     //start timer
     auto start = chrono::steady_clock::now();
     int continue_training;
@@ -37,9 +38,9 @@ void train_spd(const string &data_dir, int num_features, int hasModel, const str
     chrono::duration<double> training_time = end - start;
     cout << "Training time in seconds: " << training_time.count() << endl;
 
-    letor_model.validate(data_dir, num_features, let::SPD, nullptr, model);
+    letor_model.validate(data_dir, num_features, pairwise_letor::SPD, nullptr, model);
 
-    letor_model.test(data_dir, num_features, let::SPD, nullptr, model);
+    letor_model.test(data_dir, num_features, pairwise_letor::SPD, nullptr, model);
 
     ofstream out{"letor_sgd_train.model"};
     model->save(out);
@@ -48,7 +49,7 @@ void train_spd(const string &data_dir, int num_features, int hasModel, const str
 }
 
 /**
- *
+ * Train the pairwise ranker using libsvm
  * @param data_dir
  * @param num_features
  * @param hasModel
@@ -57,7 +58,7 @@ void train_spd(const string &data_dir, int num_features, int hasModel, const str
 void train_libsvm(const string &data_dir, int num_features, int hasModel, const string &model_file) {
     auto start = chrono::steady_clock::now();
     svm_wrapper *wrapper = nullptr;
-    let letor_model;
+    pairwise_letor letor_model;
     if (hasModel) {
         ifstream in{model_file};
         wrapper = new svm_wrapper(in);
@@ -73,9 +74,9 @@ void train_libsvm(const string &data_dir, int num_features, int hasModel, const 
     chrono::duration<double> training_time = end - start;
     cout << "Training time in seconds: " << training_time.count() << endl;
 
-    letor_model.validate(data_dir, num_features, let::LIBSVM, wrapper, nullptr);
+    letor_model.validate(data_dir, num_features, pairwise_letor::LIBSVM, wrapper, nullptr);
 
-    letor_model.test(data_dir, num_features, let::LIBSVM, wrapper, nullptr);
+    letor_model.test(data_dir, num_features, pairwise_letor::LIBSVM, wrapper, nullptr);
 
     ofstream out{"letor_svm_train.model"};
     wrapper->save(out);
@@ -125,7 +126,7 @@ int main(int argc, char *argv[]) {
     } else {
         train_spd(data_dir, num_features, hasModel, model_file);
     }
-    std::cerr << "Exiting LETOR!" << std::endl;
+    std::cerr << "Exiting Learning To Rank!" << std::endl;
     return 0;
 }
 
