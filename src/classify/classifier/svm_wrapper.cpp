@@ -91,23 +91,16 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
 svm_wrapper::svm_wrapper(std::istream& in)
     : svm_path_{io::packed::read<std::string>(in)}
 {
-    std::cout << "load 1 " << svm_path_ << std::endl;
     io::packed::read(in, kernel_);
-    std::cout << "load 2 " << kernel_ << std::endl;
     io::packed::read(in, executable_);
-    std::cout << "load 3 " << executable_ << std::endl;
 
     auto size = io::packed::read<std::size_t>(in);
-    std::cout << "load 4 " << size << std::endl;
     labels_.resize(size);
     for (std::size_t i = 0; i < size; ++i)
         io::packed::read(in, labels_[i]);
-    std::cout << "load 5" << std::endl;
 
     std::ofstream out{"svm-train.model"};
-    std::size_t model_lines; //io::packed::read<std::size_t>(in);
-    in >> model_lines;
-    std::cout << "load 6 " << model_lines << std::endl;
+    auto model_lines = io::packed::read<std::size_t>(in);
     std::string line;
     for (std::size_t i = 0; i < model_lines; ++i)
     {
@@ -115,7 +108,6 @@ svm_wrapper::svm_wrapper(std::istream& in)
         out << line << "\n";
     }
     out.close();
-    std::cout << "load 7" << std::endl;
     load_weights();
 }
 
@@ -152,10 +144,8 @@ void svm_wrapper::save(std::ostream& out) const
     for (const auto& lbl : labels_)
         io::packed::write(out, lbl);
 
-    out << std::endl;
     auto num_lines = filesystem::num_lines("svm-train.model");
-    //io::packed::write(out, num_lines);
-    out << num_lines << std::endl;
+    io::packed::write(out, num_lines);
     std::ifstream in{"svm-train.model"};
     std::string line;
     for (std::size_t i = 0; i < num_lines; ++i)
