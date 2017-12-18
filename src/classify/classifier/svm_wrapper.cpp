@@ -114,6 +114,7 @@ svm_wrapper::svm_wrapper(std::istream& in)
         std::getline(in, line);
         out << line << "\n";
     }
+    out.close();
     std::cout << "load 7" << std::endl;
     load_weights();
 }
@@ -141,7 +142,7 @@ svm_wrapper::svm_wrapper(std::istream& in)
 
 void svm_wrapper::save(std::ostream& out) const
 {
-    io::packed::write(out, id);
+    //io::packed::write(out, id);
 
     io::packed::write(out, svm_path_);
     io::packed::write(out, kernel_);
