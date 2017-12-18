@@ -89,15 +89,18 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
     }
 
 svm_wrapper::svm_wrapper(std::istream& in)
-    : svm_path_{io::packed::read<std::string>(in)}
+    //: svm_path_{io::packed::read<std::string>(in)}
 {
-    io::packed::read(in, kernel_);
-    io::packed::read(in, executable_);
+    in >> svm_path;
+    in >> kernel_;
+    in >> executable_;
 
-    auto size = io::packed::read<std::size_t>(in);
+    std::size_t size ;//= io::packed::read<std::size_t>(in);
+    in >> size;
     labels_.resize(size);
     for (std::size_t i = 0; i < size; ++i)
-        io::packed::read(in, labels_[i]);
+        //io::packed::read(in, labels_[i]);
+        in >> labels_[i];
 
     std::ofstream out{"svm-train.model"};
     std::size_t model_lines; //io::packed::read<std::size_t>(in);
@@ -134,17 +137,27 @@ svm_wrapper::svm_wrapper(std::istream& in)
 
 void svm_wrapper::save(std::ostream& out) const
 {
-    io::packed::write(out, id);
+//    io::packed::write(out, id);
+//
+//    io::packed::write(out, svm_path_);
+//    io::packed::write(out, kernel_);
+//    io::packed::write(out, executable_);
+//
+//    io::packed::write(out, labels_.size());
+//    for (const auto& lbl : labels_)
+//        io::packed::write(out, lbl);
 
-    io::packed::write(out, svm_path_);
-    io::packed::write(out, kernel_);
-    io::packed::write(out, executable_);
+    out << id << std::endl;
 
-    io::packed::write(out, labels_.size());
+    out << svm_path_ << std::endl;
+    out << kernel_ << std::endl;
+    out << executable_ << std::endl;
+
+    out << labels_.size();
     for (const auto& lbl : labels_)
-        io::packed::write(out, lbl);
-
+        out << " " << lbl;
     out << std::endl;
+
     auto num_lines = filesystem::num_lines("svm-train.model");
     //io::packed::write(out, num_lines);
     out << num_lines << std::endl;
