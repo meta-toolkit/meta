@@ -89,28 +89,32 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
     }
 
 svm_wrapper::svm_wrapper(std::istream& in)
-    //: svm_path_{io::packed::read<std::string>(in)}
+    : svm_path_{io::packed::read<std::string>(in)}
 {
-    in >> svm_path_;
-    in >> kernel_;
-    in >> executable_;
+    std::cout << "load 1 " << svm_path_ << std::endl;
+    io::packed::read(in, kernel_);
+    std::cout << "load 2 " << kernel_ << std::endl;
+    io::packed::read(in, executable_);
+    std::cout << "load 3 " << executable_ << std::endl;
 
-    std::size_t size ;//= io::packed::read<std::size_t>(in);
-    in >> size;
+    auto size = io::packed::read<std::size_t>(in);
+    std::cout << "load 4 " << size << std::endl;
     labels_.resize(size);
     for (std::size_t i = 0; i < size; ++i)
-        //io::packed::read(in, labels_[i]);
-        in >> labels_[i];
+        io::packed::read(in, labels_[i]);
+    std::cout << "load 5" << std::endl;
 
     std::ofstream out{"svm-train.model"};
     std::size_t model_lines; //io::packed::read<std::size_t>(in);
     in >> model_lines;
+    std::cout << "load 6 " << model_lines << std::endl;
     std::string line;
     for (std::size_t i = 0; i < model_lines; ++i)
     {
         std::getline(in, line);
         out << line << "\n";
     }
+    std::cout << "load 7" << std::endl;
     load_weights();
 }
 
@@ -137,27 +141,17 @@ svm_wrapper::svm_wrapper(std::istream& in)
 
 void svm_wrapper::save(std::ostream& out) const
 {
-//    io::packed::write(out, id);
-//
-//    io::packed::write(out, svm_path_);
-//    io::packed::write(out, kernel_);
-//    io::packed::write(out, executable_);
-//
-//    io::packed::write(out, labels_.size());
-//    for (const auto& lbl : labels_)
-//        io::packed::write(out, lbl);
+    io::packed::write(out, id);
 
-    out << id << std::endl;
+    io::packed::write(out, svm_path_);
+    io::packed::write(out, kernel_);
+    io::packed::write(out, executable_);
 
-    out << svm_path_ << std::endl;
-    out << kernel_ << std::endl;
-    out << executable_ << std::endl;
-
-    out << labels_.size();
+    io::packed::write(out, labels_.size());
     for (const auto& lbl : labels_)
-        out << " " << lbl;
-    out << std::endl;
+        io::packed::write(out, lbl);
 
+    out << std::endl;
     auto num_lines = filesystem::num_lines("svm-train.model");
     //io::packed::write(out, num_lines);
     out << num_lines << std::endl;
