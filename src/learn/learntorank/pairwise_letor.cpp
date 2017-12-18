@@ -1,10 +1,10 @@
 /**
- * @file pairwise_letor.h
+ * @file pairwise_letor.cpp
  * @author Mihika Dave, Anthony Huang, Rachneet Kaur
  * @date 12/18/17
  */
 
-#include "../../../include/meta/learn/learntorank/pairwise_letor.h"
+#include "meta/learn/learntorank/pairwise_letor.h"
 
 namespace meta
 {
@@ -327,13 +327,13 @@ void pairwise_letor::validate(string data_dir,
 }
 
 /**
-* Test the model on testing dataset
-* @param data_dir
-* @param feature_nums
-* @param classify_type
-* @param wrapper
-* @param model
-*/
+ * Test the model on testing dataset
+ * @param data_dir
+ * @param feature_nums
+ * @param classify_type
+ * @param wrapper
+ * @param model
+ */
 void pairwise_letor::test(string data_dir,
                           int feature_nums,
                           CLASSIFY_TYPE classify_type,
@@ -442,12 +442,17 @@ void pairwise_letor::evaluate(vector<string> *qids,
         doc_scores->clear();
     }
 
+    cout << endl << "Precision on Test Data: " << endl;
     for (int index = 0; index < 10; index++) {
         top_precisions[index] /= query_num;
         cout << "Precision at position " << (index + 1) << ": " << top_precisions[index] << endl;
     }
     mean_ap /= query_num;
-    cout << "Mean average precision: " << mean_ap << endl;
+
+    cout << endl << "Mean Average Precision on Test Data: " << endl;
+    cout << "MAP: " << mean_ap << endl;
+
+    cout << endl << "NDCG on Test Data: " << endl;
     for (int index = 0; index < 10; index++) {
         top_ndcgs[index] /= query_num;
         cout << "NDCG at position " << (index + 1) << ": " << top_ndcgs[index] << endl;

@@ -1,6 +1,7 @@
 /**
- * @file letor.cpp
+ * @file pairwise_letor_main.cpp
  * @author Mihika Dave, Anthony Huang, Rachneet Kaur
+ * @date 12/18/17
  */
 
 #include "meta/learn/learntorank/pairwise_letor.h"
