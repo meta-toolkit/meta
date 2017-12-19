@@ -42,7 +42,7 @@ pairwise_letor::~pairwise_letor() {
     } else {
         ofstream out{"letor_svm_train.model"};
         wrapper_->save(out);
-        wrapper->save_weights(out_weights);
+        wrapper_->save_weights(out_weights);
     }
 }
 
