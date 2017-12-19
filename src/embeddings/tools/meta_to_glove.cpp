@@ -1,5 +1,5 @@
 /**
- * @file embedding_cooccur.cpp
+ * @file meta_to_glove.cpp
  * @author Chase Geigle
  *
  * This tool decompresses the MeTA vocabulary and cooccurrence matrix files

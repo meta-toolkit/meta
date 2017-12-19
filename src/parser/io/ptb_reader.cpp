@@ -3,8 +3,9 @@
  * @author Chase Geigle
  */
 
-#include <iostream>
+#include <cctype>
 #include <fstream>
+
 #include "meta/parser/io/ptb_reader.h"
 #include "meta/parser/trees/internal_node.h"
 #include "meta/parser/trees/leaf_node.h"
@@ -131,7 +132,6 @@ std::vector<parse_tree> extract_trees(const std::string& filename)
     std::ifstream file{filename};
     return extract_trees(file);
 }
-
 }
 }
 }

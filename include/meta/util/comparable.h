@@ -36,12 +36,9 @@ class comparable
      * @param rhs
      * @return whether lhs == rhs
      */
-    friend constexpr bool operator==(const comparable& lhs,
-                                     const comparable& rhs)
-    {
-        return !(lhs.as_derived() < rhs.as_derived())
-               && !(rhs.as_derived() < lhs.as_derived());
-    }
+    template <class T>
+    friend constexpr bool operator==(const comparable<T>& lhs,
+                                     const comparable<T>& rhs);
 
     /**
      * Determines if two comparables are *not* equivalent, as defined by
@@ -51,22 +48,18 @@ class comparable
      * @param rhs
      * @return whether lhs != rhs
      */
-    friend constexpr bool operator!=(const comparable& lhs,
-                                     const comparable& rhs)
-    {
-        return !(lhs == rhs);
-    }
+    template <class T>
+    friend constexpr bool operator!=(const comparable<T>& lhs,
+                                     const comparable<T>& rhs);
 
     /**
      * @param lhs
      * @param rhs
      * @return whether lhs > rhs, as defined by their operator<.
      */
-    friend constexpr bool operator>(const comparable& lhs,
-                                    const comparable& rhs)
-    {
-        return rhs.as_derived() < lhs.as_derived();
-    }
+    template <class T>
+    friend constexpr bool operator>(const comparable<T>& lhs,
+                                    const comparable<T>& rhs);
 
     /**
      * @param lhs
@@ -74,11 +67,9 @@ class comparable
      * @return whether lhs <= rhs, as defined by their operator< and
      * comparable::operator==.
      */
-    friend constexpr bool operator<=(const comparable& lhs,
-                                     const comparable& rhs)
-    {
-        return lhs.as_derived() < rhs.as_derived() || lhs == rhs;
-    }
+    template <class T>
+    friend constexpr bool operator<=(const comparable<T>& lhs,
+                                     const comparable<T>& rhs);
 
     /**
      * @param lhs
@@ -86,11 +77,9 @@ class comparable
      * @return whether lhs >= rhs, as defined by comparable::operator> and
      * comparable::operator==.
      */
-    friend constexpr bool operator>=(const comparable& lhs,
-                                     const comparable& rhs)
-    {
-        return lhs > rhs || lhs == rhs;
-    }
+    template <class T>
+    friend constexpr bool operator>=(const comparable<T>& lhs,
+                                     const comparable<T>& rhs);
 
   private:
     /**
@@ -104,6 +93,37 @@ class comparable
         return static_cast<const Derived&>(*this);
     }
 };
+
+template <class T>
+constexpr bool operator==(const comparable<T>& lhs, const comparable<T>& rhs)
+{
+    return !(lhs.as_derived() < rhs.as_derived())
+           && !(rhs.as_derived() < lhs.as_derived());
+}
+
+template <class T>
+constexpr bool operator!=(const comparable<T>& lhs, const comparable<T>& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <class T>
+constexpr bool operator>(const comparable<T>& lhs, const comparable<T>& rhs)
+{
+    return rhs.as_derived() < lhs.as_derived();
+}
+
+template <class T>
+constexpr bool operator<=(const comparable<T>& lhs, const comparable<T>& rhs)
+{
+    return lhs.as_derived() < rhs.as_derived() || lhs == rhs;
+}
+
+template <class T>
+constexpr bool operator>=(const comparable<T>& lhs, const comparable<T>& rhs)
+{
+    return lhs > rhs || lhs == rhs;
+}
 }
 }
 #endif

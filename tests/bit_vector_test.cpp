@@ -4,6 +4,7 @@
  */
 
 #include <fstream>
+#include <numeric>
 
 #include "bandit/bandit.h"
 #include "meta/io/filesystem.h"
@@ -12,6 +13,7 @@
 #include "meta/util/disk_vector.h"
 
 using namespace bandit;
+using namespace snowhouse;
 
 go_bandit([]() {
     using namespace meta;

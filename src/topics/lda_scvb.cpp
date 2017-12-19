@@ -3,56 +3,58 @@
  * @author Chase Geigle
  */
 
-#include <random>
-#include "meta/index/postings_data.h"
 #include "meta/topics/lda_scvb.h"
+#include "meta/index/postings_data.h"
 #include "meta/util/progress.h"
+#include <random>
 
 namespace meta
 {
 namespace topics
 {
 
-lda_scvb::lda_scvb(std::shared_ptr<index::forward_index> idx,
-                   std::size_t num_topics, double alpha, double beta,
-                   uint64_t minibatch_size)
-    : lda_model{std::move(idx), num_topics},
+lda_scvb::lda_scvb(const learn::dataset& docs, std::size_t num_topics,
+                   double alpha, double beta, uint64_t minibatch_size)
+    : lda_model{docs, num_topics},
+      docs_view_{docs_},
       alpha_{alpha},
       beta_{beta},
-      minibatch_size_{std::min(minibatch_size, idx_->num_docs())}
+      minibatch_size_{
+          std::min(minibatch_size, static_cast<uint64_t>(docs_.size()))}
 {
     // nothing
 }
 
 void lda_scvb::run(uint64_t num_iters, double)
 {
-    std::mt19937 gen{std::random_device{}()};
-    initialize(gen);
-    auto docs = idx_->docs();
+    initialize();
     for (uint64_t iter = 0; iter < num_iters; ++iter)
     {
-        std::shuffle(docs.begin(), docs.end(), gen);
-        perform_iteration(iter + 1, docs);
+        docs_view_.shuffle();
+        perform_iteration(iter + 1);
     }
 }
 
-void lda_scvb::initialize(std::mt19937& rng)
+void lda_scvb::initialize()
 {
     // TODO: Don't actually iterate through whole dataset here
-    doc_topic_count_.resize(idx_->num_docs());
+    doc_topic_count_.resize(docs_.size());
     topic_term_count_.resize(num_topics_);
     for (auto& v : topic_term_count_)
-        v.resize(idx_->unique_terms());
+        v.resize(docs_.total_features());
     topic_count_.resize(num_topics_);
+    doc_sizes_.resize(docs_.size());
 
-    printing::progress progress{" > Initialization: ", idx_->num_docs()};
-    for (doc_id d{0}; d < idx_->num_docs(); ++d)
+    std::mt19937 rng{std::random_device{}()};
+    printing::progress progress{" > Initialization: ", docs_.size()};
+    for (const auto& doc : docs_)
     {
-        progress(d);
+        progress(doc.id);
 
-        doc_topic_count_[d].resize(num_topics_);
+        doc_sizes_[doc.id] = doc_size(doc);
+        doc_topic_count_[doc.id].resize(num_topics_);
 
-        for (auto& freq : idx_->search_primary(d)->counts())
+        for (const auto& freq : doc.weights)
         {
             double sum = 0;
             std::vector<double> gamma(num_topics_);
@@ -66,14 +68,14 @@ void lda_scvb::initialize(std::mt19937& rng)
             {
                 gamma[k] = gamma[k] * freq.second / sum;
                 topic_term_count_[k][freq.first] += gamma[k];
-                doc_topic_count_[d][k] += gamma[k];
+                doc_topic_count_[doc.id][k] += gamma[k];
                 topic_count_[k] += gamma[k];
             }
         }
     }
 }
 
-void lda_scvb::perform_iteration(uint64_t iter, const std::vector<doc_id>& docs)
+void lda_scvb::perform_iteration(uint64_t iter)
 {
     printing::progress progress{"Minibatch " + std::to_string(iter) + ": ",
                                 minibatch_size_};
@@ -83,20 +85,24 @@ void lda_scvb::perform_iteration(uint64_t iter, const std::vector<doc_id>& docs)
     std::vector<double> batch_topic_count_(num_topics_, 0.0);
     std::vector<double> gamma(num_topics_);
 
-    for (uint64_t j = 0; j < minibatch_size_; ++j)
+    uint64_t j = 0;
+    for (const auto& doc : docs_view_)
     {
+        if (j++ >= minibatch_size_)
+            break;
+
         progress(j);
-        auto d = docs[j];
+
         // burn-in phase
         double t = 0;
-        for (const auto& freq : idx_->search_primary(d)->counts())
+        for (const auto& freq : doc.weights)
         {
             double sum = 0;
             for (topic_id k{0}; k < num_topics_; ++k)
             {
                 gamma[k] = (topic_term_count_[k][freq.first] + beta_)
-                           / (topic_count_[k] + num_words_ * beta_)
-                           * (doc_topic_count_[d][k] + alpha_);
+                           / (topic_count_[k] + docs_.total_features() * beta_)
+                           * (doc_topic_count_[doc.id][k] + alpha_);
                 sum += gamma[k];
             }
             for (topic_id k{0}; k < num_topics_; ++k)
@@ -104,22 +110,22 @@ void lda_scvb::perform_iteration(uint64_t iter, const std::vector<doc_id>& docs)
                 gamma[k] /= sum;
                 auto lr = 1.0 / std::pow(10 + t, 0.9);
                 auto weight = std::pow(1 - lr, freq.second);
-                doc_topic_count_[d][k]
-                    = weight * doc_topic_count_[d][k]
-                      + (1 - weight) * idx_->doc_size(d) * gamma[k];
+                doc_topic_count_[doc.id][k]
+                    = weight * doc_topic_count_[doc.id][k]
+                      + (1 - weight) * doc_sizes_.at(doc.id) * gamma[k];
             }
             t += freq.second;
         }
 
         // normal phase
-        for (const auto& freq : idx_->search_primary(d)->counts())
+        for (const auto& freq : doc.weights)
         {
             double sum = 0;
             for (topic_id k{0}; k < num_topics_; ++k)
             {
                 gamma[k] = (topic_term_count_[k][freq.first] + beta_)
-                           / (topic_count_[k] + num_words_ * beta_)
-                           * (doc_topic_count_[d][k] + alpha_);
+                           / (topic_count_[k] + docs_.total_features() * beta_)
+                           * (doc_topic_count_[doc.id][k] + alpha_);
                 sum += gamma[k];
             }
             for (topic_id k{0}; k < num_topics_; ++k)
@@ -131,14 +137,14 @@ void lda_scvb::perform_iteration(uint64_t iter, const std::vector<doc_id>& docs)
                 auto lr = 1.0 / std::pow(10 + t, 0.9);
                 auto weight = std::pow(1 - lr, freq.second);
 
-                doc_topic_count_[d][k]
-                    = weight * doc_topic_count_[d][k]
-                      + (1 - weight) * idx_->doc_size(d) * gamma[k];
+                doc_topic_count_[doc.id][k]
+                    = weight * doc_topic_count_[doc.id][k]
+                      + (1 - weight) * doc_sizes_.at(doc.id) * gamma[k];
 
                 batch_topic_term_count_[k][freq.first]
-                    += idx_->num_docs() * gamma[k];
+                    += docs_.size() * gamma[k];
 
-                batch_topic_count_[k] += idx_->num_docs() * gamma[k];
+                batch_topic_count_[k] += docs_.size() * gamma[k];
             }
             t += freq.second;
         }
@@ -155,7 +161,7 @@ void lda_scvb::perform_iteration(uint64_t iter, const std::vector<doc_id>& docs)
     // it may...
     for (topic_id k{0}; k < num_topics_; ++k)
     {
-        for (term_id i{0}; i < num_words_; ++i)
+        for (term_id i{0}; i < docs_.total_features(); ++i)
         {
             topic_term_count_[k][i]
                 = (1 - lr) * topic_term_count_[k][i]
@@ -170,13 +176,40 @@ double lda_scvb::compute_term_topic_probability(term_id term,
                                                 topic_id topic) const
 {
     return (topic_term_count_.at(topic).at(term) + beta_)
-           / (topic_count_.at(topic) + num_words_ * beta_);
+           / (topic_count_.at(topic) + docs_.total_features() * beta_);
 }
 
-double lda_scvb::compute_doc_topic_probability(doc_id doc, topic_id topic) const
+double lda_scvb::compute_doc_topic_probability(learn::instance_id doc,
+                                               topic_id topic) const
 {
     return (doc_topic_count_.at(doc).at(topic) + alpha_)
-           / (idx_->doc_size(doc) + num_topics_ * alpha_);
+           / (doc_sizes_.at(doc) + num_topics_ * alpha_);
+}
+
+stats::multinomial<topic_id> lda_scvb::topic_distribution(doc_id doc) const
+{
+    // TODO: Replace the count vectors with a multinomial rather than creating
+    // it here
+    stats::multinomial<topic_id> result;
+    for (topic_id tid{0}; tid < num_topics_; ++tid)
+    {
+        result.increment(tid, doc_topic_count_.at(doc).at(tid) + alpha_);
+    }
+
+    return result;
+}
+
+stats::multinomial<term_id> lda_scvb::term_distribution(topic_id k) const
+{
+    // TODO: Replace the count vectors with a multinomial rather than creating
+    // it here
+    stats::multinomial<term_id> result;
+    for (term_id w{0}; w < docs_.total_features(); ++w)
+    {
+        result.increment(w, topic_term_count_.at(k).at(w) + beta_);
+    }
+
+    return result;
 }
 }
 }

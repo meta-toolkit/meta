@@ -61,33 +61,20 @@ void sgd::save(std::ostream& out) const
 
 void sgd::train(binary_dataset_view docs)
 {
-    size_t t = 0;
-    double avg_loss = 0;
-    double prev_avg_loss = 0;
-    auto check_interval = std::max<std::size_t>(1000, docs.size() / 10);
+    double prev_total_loss = std::numeric_limits<double>::max();
     for (size_t iter = 0; iter < max_iter_; ++iter)
     {
+        double total_loss = 0;
         docs.shuffle();
         for (const auto& instance : docs)
         {
-            t += 1;
-
-            // check for convergence every 10th of the dataset or every
-            // 1000 documents, whichever comes later
-            if (t % check_interval == 0)
-            {
-                avg_loss /= check_interval;
-                if (prev_avg_loss > 0
-                    && std::abs(prev_avg_loss - avg_loss) / prev_avg_loss
-                           < gamma_)
-                    return;
-                prev_avg_loss = avg_loss;
-                avg_loss = 0;
-            }
-
-            avg_loss += model_.train_one(
+            total_loss += model_.train_one(
                 instance.weights, docs.label(instance) ? +1 : -1, *loss_);
         }
+
+        if (prev_total_loss - total_loss < gamma_ * docs.size())
+            break;
+        prev_total_loss = total_loss;
     }
 }
 
@@ -127,7 +114,7 @@ make_binary_classifier<sgd>(const cpptoml::table& config,
     auto max_iter
         = config.get_as<int64_t>("max-iter").value_or(sgd::default_max_iter);
 
-    auto calibrate = config.get_as<bool>("calibrate").value_or(false);
+    auto calibrate = config.get_as<bool>("calibrate").value_or(true);
 
     return make_unique<sgd>(std::move(training),
                             learn::loss::make_loss_function(*loss), options,

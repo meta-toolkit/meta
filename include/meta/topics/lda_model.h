@@ -11,9 +11,9 @@
 #define META_TOPICS_LDA_MODEL_H_
 
 #include "meta/config.h"
-#include "meta/index/forward_index.h"
-
-MAKE_NUMERIC_IDENTIFIER(topic_id, uint64_t)
+#include "meta/learn/dataset.h"
+#include "meta/learn/instance.h"
+#include "meta/stats/multinomial.h"
 
 namespace meta
 {
@@ -42,11 +42,10 @@ class lda_model
      * Constructs an lda_model over the given set of documents and with a
      * fixed number of topics.
      *
-     * @param idx The index containing the documents to use for the model
+     * @param docs Documents to use for the model
      * @param num_topics The number of topics to find
      */
-    lda_model(std::shared_ptr<index::forward_index> idx,
-              std::size_t num_topics);
+    lda_model(const learn::dataset& docs, std::size_t num_topics);
 
     /**
      * Destructor. Made virtual to allow for deletion through pointer to
@@ -66,25 +65,23 @@ class lda_model
 
     /**
      * Saves the topic proportions \f$\theta_d\f$ for each document to
-     * the given file. Saves the distributions in a simple "human
-     * readable" plain-text format.
+     * the given stream. Saves the distributions using io::packed.
      *
      * @param filename The file to save \f$\theta\f$ to
      */
-    void save_doc_topic_distributions(const std::string& filename) const;
+    void save_doc_topic_distributions(std::ostream& stream) const;
 
     /**
      * Saves the term distributions \f$\phi_j\f$ for each topic to the
-     * given file. Saves the distributions in a simple "human readable"
-     * plain-text format.
+     * given stream. Saves the distributions using io::packed.
      *
      * @param filename The file to save \f$\phi\f$ to
      */
-    void save_topic_term_distributions(const std::string& filename) const;
+    void save_topic_term_distributions(std::ostream& stream) const;
 
     /**
      * Saves the current model to a set of files beginning with prefix:
-     * prefix.phi, prefix.theta, and prefix.terms.
+     * prefix.phi, prefix.theta.
      *
      * @param prefix The prefix for all generated files over this model
      */
@@ -107,8 +104,23 @@ class lda_model
      * @param doc The document we are concerned with
      * @param topic The topic we are concerned with
      */
-    virtual double compute_doc_topic_probability(doc_id doc,
+    virtual double compute_doc_topic_probability(learn::instance_id doc,
                                                  topic_id topic) const = 0;
+
+    /**
+     * @return The multinomial distribution of topics over the document
+     *
+     * @param doc The document we are concerned with
+     */
+    virtual stats::multinomial<topic_id>
+    topic_distribution(doc_id doc) const = 0;
+
+    /**
+     * @return The multinomial distribution of terms for a topic
+     *
+     * @param topic The topic we are concerned with
+     */
+    virtual stats::multinomial<term_id> term_distribution(topic_id k) const = 0;
 
     /**
      * @return the number of topics in this model
@@ -127,19 +139,25 @@ class lda_model
     lda_model(const lda_model&) = delete;
 
     /**
-     * The index containing the documents for the model.
+     * @return the total number of words in a specific document
      */
-    std::shared_ptr<index::forward_index> idx_;
+    static std::size_t doc_size(const learn::instance& inst);
+
+    /**
+     * Documents to run the topic modeling on.
+     */
+    const learn::dataset& docs_;
 
     /**
      * The number of topics.
      */
     std::size_t num_topics_;
+};
 
-    /**
-     * The number of total unique words.
-     */
-    std::size_t num_words_;
+class lda_model_excpetion : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 }
 }

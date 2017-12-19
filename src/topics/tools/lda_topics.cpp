@@ -1,6 +1,7 @@
 /**
  * @file lda_topics.cpp
  * @author Chase Geigle
+ * @author Matt Kelly
  */
 
 #include <fstream>
@@ -10,69 +11,53 @@
 
 #include "meta/caching/no_evict_cache.h"
 #include "meta/index/forward_index.h"
-#include "meta/util/fixed_heap.h"
+#include "meta/logging/logger.h"
+#include "meta/topics/bl_term_scorer.h"
+#include "meta/topics/topic_model.h"
 
 using namespace meta;
+using namespace meta::topics;
 
-int print_usage(const std::string& name)
+int print_topics(const index::forward_index& idx, topic_model tm,
+                 std::size_t topics_count)
 {
-    std::cout
-        << "Usage: " << name
-        << " config_file model.phi num_words \n"
-           "\tPrints the top num_words words in each topic in the given model"
-        << std::endl;
-    return 1;
-}
+    auto num_topics = tm.num_topics();
 
-int print_topics(const std::string& config_file, const std::string& filename,
-                 size_t num_words)
-{
-    auto config = cpptoml::parse_file(config_file);
-    auto idx = index::make_index<index::forward_index, caching::no_evict_cache>(
-        *config);
-
-    std::ifstream file{filename};
-    while (file)
+    for (topic_id i{0}; i < num_topics; ++i)
     {
-        std::string line;
-        std::getline(file, line);
-        if (line.length() == 0)
-            continue;
-        std::stringstream stream(line);
-        size_t topic;
-        stream >> topic;
-        std::cout << "Topic " << topic << ":" << std::endl;
-        std::cout << "-----------------------" << std::endl;
+        std::cout << "Topic " << i << ":" << std::endl;
+        std::cout << "-----------------" << std::endl;
 
-        using scored_term = std::pair<term_id, double>;
-        auto pairs = util::make_fixed_heap<scored_term>(
-            num_words, [](const scored_term& a, const scored_term& b) {
-                return a.second > b.second;
-            });
-
-        while (stream)
+        topics::bl_term_scorer scorer{tm};
+        auto top_k = tm.top_k(i, topics_count, scorer);
+        for (const auto& i : top_k)
         {
-            std::string to_split;
-            stream >> to_split;
-            if (to_split.length() == 0)
-                continue;
-            size_t idx = to_split.find_first_of(':');
-            term_id term{std::stoul(to_split.substr(0, idx))};
-            double prob = std::stod(to_split.substr(idx + 1));
-            pairs.emplace(term, prob);
+            std::cout << idx.term_text(i.tid) << " (" << i.tid
+                      << "): " << i.probability << std::endl;
         }
-        for (const auto& p : pairs.extract_top())
-            std::cout << idx->term_text(p.first) << " (" << p.first
-                      << "): " << p.second << std::endl;
+
         std::cout << std::endl;
     }
+
     return 0;
 }
 
 int main(int argc, char** argv)
 {
-    std::vector<std::string> args(argv, argv + argc);
-    if (args.size() < 4)
-        return print_usage(args[0]);
-    return print_topics(args[1], args[2], std::stoul(argv[3]));
+    if (argc < 2)
+    {
+        std::cerr << "Usage: " << argv[0] << " config.toml" << std::endl;
+        return 1;
+    }
+
+    logging::set_cerr_logging();
+
+    auto config = cpptoml::parse_file(argv[1]);
+    auto topics_cfg = config->get_table("lda");
+    auto topics_count
+        = topics_cfg->get_as<std::size_t>("display-topics").value_or(10);
+    auto index = index::make_index<index::forward_index>(*config);
+    auto topic_model = topics::load_topic_model(*config);
+
+    print_topics(*index, topic_model, topics_count);
 }

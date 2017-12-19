@@ -11,10 +11,11 @@
 #define META_TOKEN_STREAM_H_
 
 #include <memory>
-#include <string>
 #include <stdexcept>
+#include <string>
 
 #include "meta/config.h"
+#include "meta/util/clonable.h"
 
 namespace meta
 {
@@ -26,7 +27,7 @@ namespace analyzers
  * from a document. These tokens may be raw tokens (in the case of a
  * tokenizer class) or filtered tokens (from the filter classes).
  */
-class token_stream
+class token_stream : public util::clonable<token_stream>
 {
   public:
     /**
@@ -50,12 +51,6 @@ class token_stream
      * Destructor.
      */
     virtual ~token_stream() = default;
-
-    /**
-     * Clones the given token stream.
-     * @return a unique_ptr to copy this object
-     */
-    virtual std::unique_ptr<token_stream> clone() const = 0;
 };
 
 /**

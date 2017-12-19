@@ -8,6 +8,7 @@
 #include "meta/succinct/sarray.h"
 
 using namespace bandit;
+using namespace snowhouse;
 
 go_bandit([]() {
     describe("[sarray]", []() {

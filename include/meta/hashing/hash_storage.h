@@ -579,6 +579,7 @@ class external_key_storage
   public:
     using reference = T&;
     using const_reference = const T&;
+    using probing_strategy = ProbingStrategy;
 
     using idx_vector_type = util::aligned_vector<hash_idx>;
     using key_vector_type = util::aligned_vector<T>;
@@ -643,15 +644,19 @@ class external_key_storage
     {
         assert(new_cap > capacity());
 
-        table_.resize(new_cap);
-        std::fill(std::begin(table_), std::end(table_), hash_idx{});
-
-        for (std::size_t i = 0; i < keys_.size(); ++i)
+        idx_vector_type temp_table(new_cap);
+        std::swap(table_, temp_table);
+        for (const auto& b : temp_table)
         {
-            auto hc = this->hash(keys_[i]);
-            auto nidx = this->get_idx(keys_[i], hc);
-            table_[nidx].hc = hc;
-            table_[nidx].idx = i + 1;
+            if (b.idx == 0)
+                continue;
+
+            probing_strategy strategy(b.hc, new_cap);
+            auto idx = strategy.probe();
+            while (table_[idx].idx > 0)
+                idx = strategy.probe();
+            table_[idx].idx = b.idx;
+            table_[idx].hc = b.hc;
         }
     }
 
@@ -1125,6 +1130,7 @@ class external_key_value_storage
   public:
     using value_type = kv_pair<K, V>;
     using const_value_type = kv_pair<K, const V>;
+    using probing_strategy = ProbingStrategy;
 
     using idx_vector_type = util::aligned_vector<hash_idx>;
     using kv_vector_type = util::aligned_vector<std::pair<K, V>>;
@@ -1192,15 +1198,19 @@ class external_key_value_storage
     {
         assert(new_cap > capacity());
 
-        table_.resize(new_cap);
-        std::fill(std::begin(table_), std::end(table_), hash_idx{});
-
-        for (std::size_t i = 0; i < storage_.size(); ++i)
+        idx_vector_type temp_table(new_cap);
+        std::swap(table_, temp_table);
+        for (const auto& b : temp_table)
         {
-            auto hc = this->hash(storage_[i].first);
-            auto nidx = this->get_idx(storage_[i].first, hc);
-            table_[nidx].hc = hc;
-            table_[nidx].idx = i + 1;
+            if (b.idx == 0)
+                continue;
+
+            probing_strategy strategy(b.hc, new_cap);
+            auto idx = strategy.probe();
+            while (table_[idx].idx > 0)
+                idx = strategy.probe();
+            table_[idx].idx = b.idx;
+            table_[idx].hc = b.hc;
         }
     }
 

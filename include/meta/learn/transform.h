@@ -112,6 +112,35 @@ class l2norm_transformer
 };
 
 /**
+ * Transformer to scale all features by their maximum absolute value.
+ */
+class max_abs_transformer
+{
+  public:
+    max_abs_transformer(const learn::dataset& dset)
+        : max_abs_(dset.total_features())
+    {
+        for (const auto& inst : dset)
+        {
+            for (const auto& pr : inst.weights)
+            {
+                max_abs_[pr.first]
+                    = std::max(max_abs_[pr.first], std::abs(pr.second));
+            }
+        }
+    }
+
+    void operator()(learn::instance& inst) const
+    {
+        for (auto& pr : inst.weights)
+            pr.second /= max_abs_[pr.first];
+    }
+
+  private:
+    std::vector<double> max_abs_;
+};
+
+/**
  * Transforms the feature vectors of a dataset **in place** using the given
  * transformation function. TransformFunction must have an operator() that
  * takes a learn::instance by mutable reference and changes its
@@ -139,7 +168,7 @@ void transform(dataset& dset, TransformFunction&& trans)
  * @param rnk The ranker to use to define tf-idf weights (via its
  * score_one())
  */
-void tfidf_transform(dataset& dset, index::inverted_index& idx,
+inline void tfidf_transform(dataset& dset, index::inverted_index& idx,
                      index::ranking_function& rnk)
 {
     tfidf_transformer transformer{idx, rnk};
@@ -152,9 +181,20 @@ void tfidf_transform(dataset& dset, index::inverted_index& idx,
  *
  * @param dset The dataset to be transformed
  */
-void l2norm_transform(dataset& dset)
+inline void l2norm_transform(dataset& dset)
 {
     return transform(dset, l2norm_transformer{});
+}
+
+/**
+ * Transforms the feature vectors of a dataset **in place** to have their
+ * feature values scaled by the maximum absolute value for that feature.
+ *
+ * @param dset The dataset to be transformed.
+ */
+inline void max_abs_transform(dataset& dset)
+{
+    return transform(dset, max_abs_transformer{dset});
 }
 }
 }

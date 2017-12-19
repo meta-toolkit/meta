@@ -3,8 +3,9 @@
  * @author Chase Geigle
  */
 
-#include <iostream>
 #include <algorithm>
+#include <cctype>
+
 #include "meta/analyzers/filters/ptb_normalizer.h"
 
 namespace meta
@@ -174,10 +175,8 @@ void ptb_normalizer::parse_token(const std::string& token)
     }
 
     auto lower = token;
-    std::transform(token.begin(), token.end(), lower.begin(), [](char c)
-                   {
-        return std::tolower(c);
-    });
+    std::transform(token.begin(), token.end(), lower.begin(),
+                   [](char c) { return std::tolower(c); });
 
     if (lower.find("d'ye") != lower.npos)
     {
@@ -195,10 +194,8 @@ void ptb_normalizer::parse_token(const std::string& token)
     {
         auto nxt = source_->next();
         auto lnxt = nxt;
-        std::transform(lnxt.begin(), lnxt.end(), lnxt.begin(), [](char c)
-                       {
-            return std::tolower(c);
-        });
+        std::transform(lnxt.begin(), lnxt.end(), lnxt.begin(),
+                       [](char c) { return std::tolower(c); });
 
         if (lnxt == "twas" || lnxt == "tis")
         {

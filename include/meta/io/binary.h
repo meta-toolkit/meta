@@ -16,6 +16,7 @@
 #include <istream>
 #include <limits>
 #include <ostream>
+#include <string>
 
 #include "meta/config.h"
 

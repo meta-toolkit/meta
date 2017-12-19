@@ -9,6 +9,7 @@
 #include "meta/analyzers/filters/porter2_stemmer.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 go_bandit([]() {

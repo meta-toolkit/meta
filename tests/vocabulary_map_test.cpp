@@ -15,6 +15,7 @@
 #include "meta/util/optional.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace {

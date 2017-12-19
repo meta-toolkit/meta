@@ -56,12 +56,12 @@ class parallel_lda_gibbs : public lda_gibbs
     virtual void perform_iteration(uint64_t iter, bool init = false) override;
 
     virtual void decrease_counts(topic_id topic, term_id term,
-                                 doc_id doc) override;
+                                 learn::instance_id doc) override;
 
     virtual void increase_counts(topic_id topic, term_id term,
-                                 doc_id doc) override;
+                                 learn::instance_id doc) override;
 
-    virtual double compute_sampling_weight(term_id term, doc_id doc,
+    virtual double compute_sampling_weight(term_id term, learn::instance_id doc,
                                            topic_id topic) const override;
 
     /**

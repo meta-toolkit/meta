@@ -35,15 +35,15 @@ class lda_cvb : public lda_model
      * \f$\beta\f$ for the priors on \f$\phi\f$ (topic distributions)
      * and \f$\theta\f$ (topic proportions), respectively.
      *
-     * @param idx The index containing the documents to model
+     * @param docs Documents to model
      * @param num_topics The number of topics to infer
      * @param alpha The hyperparameter for the Dirichlet prior over
      *  \f$\phi\f$
      * @param beta The hyperparameter for the Dirichlet prior over
      *  \f$\theta\f$
      */
-    lda_cvb(std::shared_ptr<index::forward_index> idx, std::size_t num_topics,
-            double alpha, double beta);
+    lda_cvb(const learn::dataset& docs, std::size_t num_topics, double alpha,
+            double beta);
 
     /**
      * Destructor: virtual for potential subclassing.
@@ -68,8 +68,14 @@ class lda_cvb : public lda_model
     virtual double
     compute_term_topic_probability(term_id term, topic_id topic) const override;
 
-    virtual double compute_doc_topic_probability(doc_id doc,
+    virtual double compute_doc_topic_probability(learn::instance_id doc,
                                                  topic_id topic) const override;
+
+    virtual stats::multinomial<topic_id>
+    topic_distribution(doc_id doc) const override;
+
+    virtual stats::multinomial<term_id>
+    term_distribution(topic_id k) const override;
 
   protected:
     /**
@@ -90,7 +96,7 @@ class lda_cvb : public lda_model
      * topic assignments for each word occurrence \f$i\f$ in document
      * \f$j\f$.
      *
-     * Indexed as gamma_[d][i]
+     * Indexed as gamma_[doc.id][i]
      */
     std::vector<std::vector<stats::multinomial<topic_id>>> gamma_;
 

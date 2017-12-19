@@ -9,10 +9,11 @@
 #ifndef META_SVM_WRAPPER_H_
 #define META_SVM_WRAPPER_H_
 
+#include <stdexcept>
 #include <unordered_map>
 
-#include "meta/classify/classifier_factory.h"
 #include "meta/classify/classifier/classifier.h"
+#include "meta/classify/classifier_factory.h"
 #include "meta/hashing/hash.h"
 #include "meta/index/forward_index.h"
 #include "meta/meta.h"
@@ -157,6 +158,12 @@ class svm_wrapper : public classifier
      * @return
      */
     void load_weights();
+};
+
+class svm_wrapper_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
 };
 
 /**

@@ -3,6 +3,8 @@
  * @author Chase Geigle
  */
 
+#include <fstream>
+
 #include "meta/topics/lda_model.h"
 
 namespace meta
@@ -10,75 +12,53 @@ namespace meta
 namespace topics
 {
 
-lda_model::lda_model(std::shared_ptr<index::forward_index> idx,
-                     std::size_t num_topics)
-    : idx_{std::move(idx)},
-      num_topics_{num_topics},
-      num_words_(idx_->unique_terms())
+lda_model::lda_model(const learn::dataset& docs, std::size_t num_topics)
+    : docs_(docs), num_topics_{num_topics}
 {
     /* nothing */
 }
 
-void lda_model::save_doc_topic_distributions(const std::string& filename) const
+void lda_model::save_doc_topic_distributions(std::ostream& stream) const
 {
-    std::ofstream file{filename};
-    for (const auto& d_id : idx_->docs())
+    io::packed::write(stream, docs_.size());
+
+    for (const auto& d : docs_)
     {
-        file << d_id << "\t";
-        double sum = 0;
-        for (topic_id j{0}; j < num_topics_; ++j)
-        {
-            double prob = compute_doc_topic_probability(d_id, j);
-            if (prob > 0)
-                file << j << ":" << prob << "\t";
-            sum += prob;
-        }
-        if (std::abs(sum - 1) > 1e-6)
-            throw std::runtime_error{"invalid probability distribution"};
-        file << "\n";
+        io::packed::write(stream, topic_distribution(doc_id{d.id}));
     }
 }
 
-void lda_model::save_topic_term_distributions(const std::string& filename) const
+void lda_model::save_topic_term_distributions(std::ostream& stream) const
 {
-    std::ofstream file{filename};
-
-    // first, compute the denominators for each term's normalized score
-    std::vector<double> denoms;
-    denoms.reserve(idx_->unique_terms());
-    for (term_id t_id{0}; t_id < idx_->unique_terms(); ++t_id)
+    io::packed::write(stream, num_topics_);
+    io::packed::write(stream, docs_.total_features());
+    for (topic_id k{0}; k < num_topics_; ++k)
     {
-        double denom = 1.0;
-        for (topic_id j{0}; j < num_topics_; ++j)
-            denom *= compute_term_topic_probability(t_id, j);
-        denom = std::pow(denom, 1.0 / num_topics_);
-        denoms.push_back(denom);
-    }
-
-    // then, calculate and save each term's score
-    for (topic_id j{0}; j < num_topics_; ++j)
-    {
-        file << j << "\t";
-        for (term_id t_id{0}; t_id < idx_->unique_terms(); ++t_id)
-        {
-            double prob = compute_term_topic_probability(t_id, j);
-            double norm_prob = prob * std::log(prob / denoms[t_id]);
-            if (norm_prob > 0)
-                file << t_id << ":" << norm_prob << "\t";
-        }
-        file << "\n";
+        io::packed::write(stream, term_distribution(k));
     }
 }
 
 void lda_model::save(const std::string& prefix) const
 {
-    save_doc_topic_distributions(prefix + ".theta");
-    save_topic_term_distributions(prefix + ".phi");
+    std::ofstream theta_file{prefix + ".theta.bin", std::ios::binary};
+    std::ofstream phi_file{prefix + ".phi.bin", std::ios::binary};
+
+    save_doc_topic_distributions(theta_file);
+    save_topic_term_distributions(phi_file);
 }
 
 uint64_t lda_model::num_topics() const
 {
     return num_topics_;
+}
+
+std::size_t lda_model::doc_size(const learn::instance& inst)
+{
+    using pair_t = std::pair<learn::feature_id, double>;
+    auto sum = std::accumulate(
+        inst.weights.begin(), inst.weights.end(), 0.0,
+        [](std::size_t amt, const pair_t& in) { return in.second + amt; });
+    return static_cast<uint64_t>(sum);
 }
 }
 }

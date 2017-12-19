@@ -5,10 +5,12 @@
 
 #include "bandit/bandit.h"
 #include "meta/index/make_index.h"
+#include "meta/learn/transform.h"
 #include "meta/regression/regressor_factory.h"
 #include "meta/stats/running_stats.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace {
@@ -63,12 +65,16 @@ go_bandit([]() {
             return *f_idx->metadata(did).get<double>("response");
         }};
 
+    // the housing dataset we use has features with vastly different
+    // scales, so normalize everything before training/testing
+    learn::max_abs_transform(dataset);
+
     describe("[regression] sgd", [&]() {
         it("should create an SGD regressor with least-squares loss", [&]() {
             auto cfg = cpptoml::make_table();
             cfg->insert("method", "sgd");
             cfg->insert("loss", "least-squares");
-            check_cv(*cfg, dataset, {3.91, 2.65, 32.85, 0.61});
+            check_cv(*cfg, dataset, {3.91, 2.81, 32.21, 0.63});
         });
 
         it("should create an SGD regressor with huber loss", [&]() {
@@ -95,7 +101,7 @@ go_bandit([]() {
                cfg->insert("loss", "least-squares");
                cfg->insert("l2-regularization", 1e-5);
                cfg->insert("l1-regularization", 1e-5);
-               check_cv(*cfg, dataset, {3.90, 2.69, 33.08, 0.60});
+               check_cv(*cfg, dataset, {3.96, 2.78, 32.12, 0.62});
            });
     });
 

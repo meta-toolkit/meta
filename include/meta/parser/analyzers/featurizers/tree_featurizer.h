@@ -9,9 +9,10 @@
 #ifndef META_TREE_FEATURIZER_H_
 #define META_TREE_FEATURIZER_H_
 
+#include "meta/analyzers/analyzer.h"
 #include "meta/corpus/document.h"
 #include "meta/parser/trees/parse_tree.h"
-#include "meta/analyzers/analyzer.h"
+#include "meta/util/clonable.h"
 
 namespace meta
 {
@@ -22,7 +23,7 @@ namespace analyzers
  * Base class for featurizers that convert trees into features in a
  * document.
  */
-class tree_featurizer
+class tree_featurizer : public util::clonable<tree_featurizer>
 {
   public:
     using base_type = tree_featurizer;

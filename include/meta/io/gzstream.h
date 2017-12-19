@@ -12,12 +12,11 @@
 
 #include <zlib.h>
 
-#include <istream>
-#include <ostream>
 #include <streambuf>
 #include <vector>
 
 #include "meta/config.h"
+#include "meta/io/zstream.h"
 
 namespace meta
 {
@@ -45,31 +44,15 @@ class gzstreambuf : public std::streambuf
     gzFile file_;
 };
 
-class gzifstream : public std::istream
-{
-  public:
-    explicit gzifstream(std::string name);
+/**
+ * An ifstream that can read gz compressed files.
+ */
+using gzifstream = zifstream<gzstreambuf>;
 
-    gzstreambuf* rdbuf() const;
-
-    void flush();
-
-  private:
-    gzstreambuf buffer_;
-};
-
-class gzofstream : public std::ostream
-{
-  public:
-    explicit gzofstream(std::string name);
-
-    gzstreambuf* rdbuf() const;
-
-    void flush();
-
-  private:
-    gzstreambuf buffer_;
-};
+/**
+ * An ofstream that can write gz compressed files.
+ */
+using gzofstream = zofstream<gzstreambuf>;
 }
 }
 #endif

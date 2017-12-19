@@ -3,7 +3,6 @@
  * @author Chase Geigle
  */
 
-#include <iostream>
 #include <algorithm>
 #include "meta/meta.h"
 #include "meta/index/vocabulary_map_writer.h"

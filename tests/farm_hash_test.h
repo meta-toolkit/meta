@@ -9,8 +9,12 @@
  * @see https://github.com/google/farmhash/blob/master/src/farmhash.cc#L4491-L5728
  */
 
+#include <vector>
+
 #include "bandit/bandit.h"
 #include "meta/hashing/hashes/farm_hash.h"
+
+using namespace snowhouse;
 
 namespace
 {
@@ -474,7 +478,7 @@ uint32_t expected[] = {
     4166253320u, 2747410691u,
 };
 
-bool test(uint8_t data[], int offset, int len = 0)
+bool test(uint8_t* data, int offset, int len = 0)
 {
     using meta::hashing::farm_hash;
     using meta::hashing::farm_hash_seeded;
@@ -545,12 +549,12 @@ void farm_hash_self_test()
     const static constexpr int data_size = 1 << 20;
     const static constexpr int test_size = 300;
 
-    uint8_t data[data_size];
+    std::vector<uint8_t> data(data_size);
 
     // initialize data to pseudorandom values
     uint64_t a = 9;
     uint64_t b = 777;
-    for (int i = 0; i < data_size; ++i)
+    for (std::size_t i = 0; i < data_size; ++i)
     {
         a += b;
         b += a;
@@ -560,14 +564,14 @@ void farm_hash_self_test()
         data[i] = static_cast<uint8_t>(b >> 37);
     }
 
-    AssertThat(test(data, -1), Equals(true));
+    AssertThat(test(data.data(), -1), Equals(true));
     int i = 0;
     for (; i < test_size - 1; ++i)
-        test(data, i * i, i);
+        test(data.data(), i * i, i);
 
     for (; i < data_size; i += i / 7)
-        test(data, 0, i);
+        test(data.data(), 0, i);
 
-    test(data, 0, data_size);
+    test(data.data(), 0, data_size);
 }
 }

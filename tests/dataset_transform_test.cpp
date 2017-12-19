@@ -10,6 +10,7 @@
 #include "meta/learn/transform.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 go_bandit([]() {

@@ -4,11 +4,13 @@
  */
 
 #include <algorithm>
+#include <cctype>
 #include <fstream>
 #include <sstream>
-#include "meta/io/packed.h"
+
 #include "meta/io/filesystem.h"
 #include "meta/io/gzstream.h"
+#include "meta/io/packed.h"
 #include "meta/sequence/sequence_analyzer.h"
 #include "meta/utf/utf.h"
 #include "meta/util/mapping.h"
@@ -186,8 +188,7 @@ sequence_analyzer default_pos_analyzer()
     sequence_analyzer analyzer;
 
     auto word_feats = [](const std::string& word, uint64_t t,
-                         sequence_analyzer::collector& coll)
-    {
+                         sequence_analyzer::collector& coll) {
         auto norm = utf::foldcase(word);
         for (uint64_t i = 1; i <= 4; i++)
         {
@@ -198,10 +199,8 @@ sequence_analyzer default_pos_analyzer()
         coll.add("w[t]=" + norm, 1);
 
         // additional binary word features
-        if (std::any_of(word.begin(), word.end(), [](char c)
-                        {
-                            return std::isdigit(c);
-                        }))
+        if (std::any_of(word.begin(), word.end(),
+                        [](char c) { return std::isdigit(c); }))
         {
             coll.add("w[t]_has_digit=1", 1);
         }
@@ -209,10 +208,8 @@ sequence_analyzer default_pos_analyzer()
         if (std::find(word.begin(), word.end(), '-') != word.end())
             coll.add("w[t]_has_hyphen=1", 1);
 
-        if (std::any_of(word.begin(), word.end(), [](char c)
-                        {
-                            return std::isupper(c);
-                        }))
+        if (std::any_of(word.begin(), word.end(),
+                        [](char c) { return std::isupper(c); }))
         {
             coll.add("w[t]_has_upper=1", 1);
             if (t != 0)
@@ -221,78 +218,72 @@ sequence_analyzer default_pos_analyzer()
             }
         }
 
-        if (std::all_of(word.begin(), word.end(), [](char c)
-                        {
-                            return std::isupper(c);
-                        }))
+        if (std::all_of(word.begin(), word.end(),
+                        [](char c) { return std::isupper(c); }))
         {
             coll.add("w[t]_all_upper=1", 1);
         }
     };
 
     // current word features
-    analyzer.add_observation_function(
-        [=](const sequence& seq, uint64_t t, sequence_analyzer::collector& coll)
-        {
-            std::string word = seq[t].symbol();
-            word_feats(word, t, coll);
-        });
+    analyzer.add_observation_function([=](const sequence& seq, uint64_t t,
+                                          sequence_analyzer::collector& coll) {
+        std::string word = seq[t].symbol();
+        word_feats(word, t, coll);
+    });
 
     // previous word features
-    analyzer.add_observation_function(
-        [](const sequence& seq, uint64_t t, sequence_analyzer::collector& coll)
+    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
+                                         sequence_analyzer::collector& coll) {
+        std::string word = seq[t].symbol();
+        if (t > 0)
         {
-            std::string word = seq[t].symbol();
-            if (t > 0)
+            auto prevword = seq[t - 1].symbol();
+            coll.add("w[t-1]=" + utf::foldcase(prevword), 1);
+            if (t > 1)
             {
-                auto prevword = seq[t - 1].symbol();
-                coll.add("w[t-1]=" + utf::foldcase(prevword), 1);
-                if (t > 1)
-                {
-                    auto prev2word = seq[t - 2].symbol();
-                    coll.add("w[t-2]=" + utf::foldcase(prev2word), 1);
-                }
-                else
-                {
-                    coll.add("w[t-2]=<s>", 1);
-                }
+                auto prev2word = seq[t - 2].symbol();
+                coll.add("w[t-2]=" + utf::foldcase(prev2word), 1);
             }
             else
             {
-                coll.add("w[t-1]=<s>", 1);
-                coll.add("w[t-2]=<s1>", 1);
+                coll.add("w[t-2]=<s>", 1);
             }
-        });
+        }
+        else
+        {
+            coll.add("w[t-1]=<s>", 1);
+            coll.add("w[t-2]=<s1>", 1);
+        }
+    });
 
     // next word features
-    analyzer.add_observation_function(
-        [](const sequence& seq, uint64_t t, sequence_analyzer::collector& coll)
+    analyzer.add_observation_function([](const sequence& seq, uint64_t t,
+                                         sequence_analyzer::collector& coll) {
+        if (t + 1 < seq.size())
         {
-            if (t + 1 < seq.size())
+            auto nextword = seq[t + 1].symbol();
+            coll.add("w[t+1]=" + utf::foldcase(nextword), 1);
+            if (t + 2 < seq.size())
             {
-                auto nextword = seq[t + 1].symbol();
-                coll.add("w[t+1]=" + utf::foldcase(nextword), 1);
-                if (t + 2 < seq.size())
-                {
-                    auto next2word = seq[t + 2].symbol();
-                    coll.add("w[t+2]=" + utf::foldcase(next2word), 1);
-                }
-                else
-                {
-                    coll.add("w[t+2]=</s>", 1);
-                }
+                auto next2word = seq[t + 2].symbol();
+                coll.add("w[t+2]=" + utf::foldcase(next2word), 1);
             }
             else
             {
-                coll.add("w[t+1]=</s>", 1);
-                coll.add("w[t+2]=</s1>", 1);
+                coll.add("w[t+2]=</s>", 1);
             }
-        });
+        }
+        else
+        {
+            coll.add("w[t+1]=</s>", 1);
+            coll.add("w[t+2]=</s1>", 1);
+        }
+    });
 
     // bias term
     analyzer.add_observation_function(
-        [](const sequence&, uint64_t, sequence_analyzer::collector& coll)
-        {
+        [](const sequence&, uint64_t, sequence_analyzer::collector& coll) {
             coll.add("bias", 1);
         });
 

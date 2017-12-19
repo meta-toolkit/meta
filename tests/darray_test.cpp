@@ -3,12 +3,15 @@
  * @author Chase Geigle
  */
 
+#include <numeric>
+
 #include "bandit/bandit.h"
 #include "meta/io/filesystem.h"
 #include "meta/math/integer.h"
 #include "meta/succinct/darray.h"
 
 using namespace bandit;
+using namespace snowhouse;
 
 go_bandit([]() {
     using namespace meta;

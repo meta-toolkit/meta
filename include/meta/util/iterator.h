@@ -14,7 +14,6 @@
 #include <type_traits>
 
 #include "meta/config.h"
-#include "meta/util/comparable.h"
 
 namespace meta
 {
@@ -27,7 +26,6 @@ namespace util
  */
 template <class Iterator, class UnaryFunction>
 class transform_iterator
-    : public comparable<transform_iterator<Iterator, UnaryFunction>>
 {
   public:
     using traits_type = std::iterator_traits<Iterator>;
@@ -96,7 +94,7 @@ class transform_iterator
         return tmp;
     }
 
-    difference_type operator-(transform_iterator other) const
+    difference_type operator-(const transform_iterator& other) const
     {
         return it_ - other.it_;
     }
@@ -106,9 +104,34 @@ class transform_iterator
         return fun_(it_[diff]);
     }
 
-    bool operator<(transform_iterator other) const
+    bool operator<(const transform_iterator& other) const
     {
         return it_ < other.it_;
+    }
+
+    bool operator<=(const transform_iterator& other) const
+    {
+        return it_ <= other.it_;
+    }
+
+    bool operator>(const transform_iterator& other) const
+    {
+        return it_ > other.it_;
+    }
+
+    bool operator>=(const transform_iterator& other) const
+    {
+        return it_ >= other.it_;
+    }
+
+    bool operator==(const transform_iterator& other) const
+    {
+        return it_ == other.it_;
+    }
+
+    bool operator!=(const transform_iterator& other) const
+    {
+        return it_ != other.it_;
     }
 
     value_type operator*() const

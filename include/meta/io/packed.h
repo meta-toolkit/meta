@@ -187,7 +187,9 @@ uint64_t packed_write(OutputStream& stream,
 template <class OutputSteam, class T1, class T2>
 uint64_t packed_write(OutputSteam& os, const std::pair<T1, T2>& pr)
 {
-    return packed_write(os, pr.first) + packed_write(os, pr.second);
+    auto bytes = packed_write(os, pr.first);
+    bytes += packed_write(os, pr.second);
+    return bytes;
 }
 
 /**
@@ -365,7 +367,9 @@ uint64_t packed_read(InputStream& stream, util::identifier<Tag, T>& value)
 template <class InputStream, class T1, class T2>
 uint64_t packed_read(InputStream& is, std::pair<T1, T2>& pr)
 {
-    return packed_read(is, pr.first) + packed_read(is, pr.second);
+    auto bytes = packed_read(is, pr.first);
+    bytes += packed_read(is, pr.second);
+    return bytes;
 }
 
 /**

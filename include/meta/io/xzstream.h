@@ -13,13 +13,12 @@
 #include <lzma.h>
 
 #include <cstdio>
-#include <istream>
-#include <ostream>
 #include <stdexcept>
 #include <streambuf>
 #include <vector>
 
 #include "meta/config.h"
+#include "meta/io/zstream.h"
 
 namespace meta
 {
@@ -72,33 +71,15 @@ class xzstreambuf : public std::streambuf
     lzma_action action_;
 };
 
-class xzifstream : public std::istream
-{
-  public:
-    explicit xzifstream(std::string name);
+/**
+ * An ifstream that can read xz compressed files.
+ */
+using xzifstream = zifstream<xzstreambuf>;
 
-    xzstreambuf* rdbuf() const;
-
-    void flush();
-
-    uint64_t bytes_read() const;
-
-  private:
-    xzstreambuf buffer_;
-};
-
-class xzofstream : public std::ostream
-{
-  public:
-    explicit xzofstream(std::string name);
-
-    xzstreambuf* rdbuf() const;
-
-    void flush();
-
-  private:
-    xzstreambuf buffer_;
-};
+/**
+ * An ofstream that can write xz compressed files.
+ */
+using xzofstream = zofstream<xzstreambuf>;
 }
 }
 #endif

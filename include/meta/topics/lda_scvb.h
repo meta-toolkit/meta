@@ -11,6 +11,7 @@
 #define META_TOPICS_LDA_SCVB_H_
 
 #include "meta/config.h"
+#include "meta/learn/dataset_view.h"
 #include "meta/topics/lda_model.h"
 
 namespace meta
@@ -35,7 +36,7 @@ class lda_scvb : public lda_model
      * and \f$\theta\f$ (topic proportions), respectively. Adheres to a
      * step-size schedule of \f$\frac{s}{(\tau + t)^\kappa}\f$.
      *
-     * @param idx The index containing the documents to model
+     * @param docs Documents to model
      * @param num_topics The number of topics to infer
      * @param alpha The hyperparameter for the Dirichlet prior over
      *  \f$\phi\f$
@@ -44,8 +45,8 @@ class lda_scvb : public lda_model
      * @param minibatch_size The number of documents to consider in a
      * minibatch
      */
-    lda_scvb(std::shared_ptr<index::forward_index> idx, std::size_t num_topics,
-             double alpha, double beta, uint64_t minibatch_size = 100);
+    lda_scvb(const learn::dataset& docs, std::size_t num_topics, double alpha,
+             double beta, uint64_t minibatch_size = 100);
 
     /**
      * Destructor: virtual for potential subclassing.
@@ -67,23 +68,32 @@ class lda_scvb : public lda_model
     virtual double
     compute_term_topic_probability(term_id term, topic_id topic) const override;
 
-    virtual double compute_doc_topic_probability(doc_id doc,
+    virtual double compute_doc_topic_probability(learn::instance_id doc,
                                                  topic_id topic) const override;
+
+    virtual stats::multinomial<topic_id>
+    topic_distribution(doc_id doc) const override;
+
+    virtual stats::multinomial<term_id>
+    term_distribution(topic_id k) const override;
 
   private:
     /**
      * Initialize the model with random parameters.
-     *
-     * @param gen The random number generator to use.
      */
-    void initialize(std::mt19937& gen);
+    void initialize();
 
     /**
      * Performs one iteration (e.g., one minibatch) of the inference algorithm.
      * @param iter The iteration number
-     * @param docs Contains the minibatch in indexes [0, minibatch_size_]
      */
-    void perform_iteration(uint64_t iter, const std::vector<doc_id>& docs);
+    void perform_iteration(uint64_t iter);
+
+    /**
+     * View of underlying documents that can efficiently be shuffled for each
+     * minibatch.
+     */
+    learn::dataset_view docs_view_;
 
     /**
      * Contains the expected counts for each word being assigned a given
@@ -95,7 +105,7 @@ class lda_scvb : public lda_model
     /**
      * Contains the expected counts for each topic being assigned in a
      * given document. Indexed as `doc_topic_count_[d][k]` where `d` is a
-     * `doc_id` and `k` is a `topic_id`.
+     * `instance_id` and `k` is a `topic_id`.
      */
     std::vector<std::vector<double>> doc_topic_count_;
 
@@ -105,6 +115,12 @@ class lda_scvb : public lda_model
      * included here for performance reasons.
      */
     std::vector<double> topic_count_;
+
+    /**
+     * Cache doc_size calculation so it doesn't need to be called multiple times
+     * per document per iteration.
+     */
+    std::vector<double> doc_sizes_;
 
     /// The hyperparameter on \f$\theta\f$, the topic proportions
     const double alpha_;

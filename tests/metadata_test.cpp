@@ -6,12 +6,13 @@
 #include <fstream>
 
 #include "bandit/bandit.h"
+#include "cpptoml.h"
 #include "meta/corpus/metadata.h"
 #include "meta/corpus/metadata_parser.h"
-#include "cpptoml.h"
 #include "meta/io/filesystem.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace {
@@ -50,14 +51,16 @@ go_bandit([]() {
             auto config = create_metadata_config(options);
             const std::string metadata = "/my/path1\n/my/path2"; // no newline
             create_metadata_file(metadata, filename);
-            corpus::metadata_parser parser{filename,
-                                           corpus::metadata_schema(*config)};
-            auto field = parser.next();
-            AssertThat(field.size(), Equals(1ul));
-            AssertThat(field[0].str, Equals("/my/path1"));
-            field = parser.next();
-            AssertThat(field.size(), Equals(1ul));
-            AssertThat(field[0].str, Equals("/my/path2"));
+            {
+                corpus::metadata_parser parser{
+                    filename, corpus::metadata_schema(*config)};
+                auto field = parser.next();
+                AssertThat(field.size(), Equals(1ul));
+                AssertThat(field[0].str, Equals("/my/path1"));
+                field = parser.next();
+                AssertThat(field.size(), Equals(1ul));
+                AssertThat(field[0].str, Equals("/my/path2"));
+            }
             filesystem::delete_file(filename);
         });
 
@@ -71,29 +74,31 @@ go_bandit([]() {
                                          "/my/path2\t346\t1\t-1\n"
                                          "/my/path3\t347\t-0.4\t0\n";
             create_metadata_file(metadata, filename);
-            corpus::metadata_parser parser{filename,
-                                           corpus::metadata_schema(*config)};
-            const double delta = 0.0000001;
-            auto field = parser.next();
-            AssertThat(field.size(), Equals(4ul));
-            AssertThat(field[0].str, Equals("/my/path1"));
-            AssertThat(field[1].usign_int, Equals(345ul));
-            AssertThat(field[2].doub, EqualsWithDelta(9.345, delta));
-            AssertThat(field[3].sign_int, Equals(7));
+            {
+                corpus::metadata_parser parser{
+                    filename, corpus::metadata_schema(*config)};
+                const double delta = 0.0000001;
+                auto field = parser.next();
+                AssertThat(field.size(), Equals(4ul));
+                AssertThat(field[0].str, Equals("/my/path1"));
+                AssertThat(field[1].usign_int, Equals(345ul));
+                AssertThat(field[2].doub, EqualsWithDelta(9.345, delta));
+                AssertThat(field[3].sign_int, Equals(7));
 
-            field = parser.next();
-            AssertThat(field.size(), Equals(4ul));
-            AssertThat(field[0].str, Equals("/my/path2"));
-            AssertThat(field[1].usign_int, Equals(346ul));
-            AssertThat(field[2].doub, EqualsWithDelta(1.0, delta));
-            AssertThat(field[3].sign_int, Equals(-1));
+                field = parser.next();
+                AssertThat(field.size(), Equals(4ul));
+                AssertThat(field[0].str, Equals("/my/path2"));
+                AssertThat(field[1].usign_int, Equals(346ul));
+                AssertThat(field[2].doub, EqualsWithDelta(1.0, delta));
+                AssertThat(field[3].sign_int, Equals(-1));
 
-            field = parser.next();
-            AssertThat(field.size(), Equals(4ul));
-            AssertThat(field[0].str, Equals("/my/path3"));
-            AssertThat(field[1].usign_int, Equals(347ul));
-            AssertThat(field[2].doub, EqualsWithDelta(-0.4, delta));
-            AssertThat(field[3].sign_int, Equals(0));
+                field = parser.next();
+                AssertThat(field.size(), Equals(4ul));
+                AssertThat(field[0].str, Equals("/my/path3"));
+                AssertThat(field[1].usign_int, Equals(347ul));
+                AssertThat(field[2].doub, EqualsWithDelta(-0.4, delta));
+                AssertThat(field[3].sign_int, Equals(0));
+            }
 
             filesystem::delete_file(filename);
         });
@@ -109,32 +114,35 @@ go_bandit([]() {
                   "/my/path2\tSo Many Goose\tI saw their tiny little feet";
             create_metadata_file(metadata, filename);
 
-            corpus::metadata_parser parser{filename,
-                                           corpus::metadata_schema(*config)};
+            {
+                corpus::metadata_parser parser{
+                    filename, corpus::metadata_schema(*config)};
 
-            auto fields = parser.next();
-            AssertThat(fields.size(), Equals(3ul));
-            AssertThat(fields[0].type,
-                       Equals(corpus::metadata::field_type::STRING));
-            AssertThat(fields[0].str, Equals("/my/path1"));
-            AssertThat(fields[1].type,
-                       Equals(corpus::metadata::field_type::STRING));
-            AssertThat(fields[1].str, Equals("Wonderful Ducklings"));
-            AssertThat(fields[2].type,
-                       Equals(corpus::metadata::field_type::STRING));
-            AssertThat(fields[2].str, Equals("a great children's book"));
+                auto fields = parser.next();
+                AssertThat(fields.size(), Equals(3ul));
+                AssertThat(fields[0].type,
+                           Equals(corpus::metadata::field_type::STRING));
+                AssertThat(fields[0].str, Equals("/my/path1"));
+                AssertThat(fields[1].type,
+                           Equals(corpus::metadata::field_type::STRING));
+                AssertThat(fields[1].str, Equals("Wonderful Ducklings"));
+                AssertThat(fields[2].type,
+                           Equals(corpus::metadata::field_type::STRING));
+                AssertThat(fields[2].str, Equals("a great children's book"));
 
-            fields = parser.next();
-            AssertThat(fields.size(), Equals(3ul));
-            AssertThat(fields[0].type,
-                       Equals(corpus::metadata::field_type::STRING));
-            AssertThat(fields[0].str, Equals("/my/path2"));
-            AssertThat(fields[1].type,
-                       Equals(corpus::metadata::field_type::STRING));
-            AssertThat(fields[1].str, Equals("So Many Goose"));
-            AssertThat(fields[2].type,
-                       Equals(corpus::metadata::field_type::STRING));
-            AssertThat(fields[2].str, Equals("I saw their tiny little feet"));
+                fields = parser.next();
+                AssertThat(fields.size(), Equals(3ul));
+                AssertThat(fields[0].type,
+                           Equals(corpus::metadata::field_type::STRING));
+                AssertThat(fields[0].str, Equals("/my/path2"));
+                AssertThat(fields[1].type,
+                           Equals(corpus::metadata::field_type::STRING));
+                AssertThat(fields[1].str, Equals("So Many Goose"));
+                AssertThat(fields[2].type,
+                           Equals(corpus::metadata::field_type::STRING));
+                AssertThat(fields[2].str,
+                           Equals("I saw their tiny little feet"));
+            }
 
             filesystem::delete_file(filename);
         });

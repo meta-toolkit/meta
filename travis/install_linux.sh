@@ -6,12 +6,13 @@ export PATH=$HOME/bin:$PATH
 mkdir $HOME/include
 export CPLUS_INCLUDE_PATH=$HOME/include:$CPLUS_INCLUDE_PATH
 
-CMAKE_VERSION="${CMAKE_VERSION:-3.2.3}"
-CMAKE_VERSION_PARTS=( ${CMAKE_VERSION//./ } )
-CMAKE_MAJOR_MINOR="${CMAKE_VERSION_PARTS[0]}.${CMAKE_VERSION_PARTS[1]}"
+if [ -n "$CMAKE_VERSION" ]; then
+      CMAKE_VERSION_PARTS=( ${CMAKE_VERSION//./ } )
+      CMAKE_MAJOR_MINOR="${CMAKE_VERSION_PARTS[0]}.${CMAKE_VERSION_PARTS[1]}"
 
-wget --no-check-certificate https://www.cmake.org/files/v$CMAKE_MAJOR_MINOR/cmake-$CMAKE_VERSION-Linux-x86_64.sh
-sh cmake-$CMAKE_VERSION-Linux-x86_64.sh --prefix=$HOME --exclude-subdir
+      wget --no-check-certificate https://www.cmake.org/files/v$CMAKE_MAJOR_MINOR/cmake-$CMAKE_VERSION-Linux-x86_64.sh
+      sh cmake-$CMAKE_VERSION-Linux-x86_64.sh --prefix=$HOME --exclude-subdir
+fi
 
 # we have to manually set CC and CXX since travis 'helpfully' clobbers them
 if [ "$COMPILER" = "gcc" ]; then
@@ -22,6 +23,8 @@ fi
 if [ "$COMPILER" == "clang" ]; then
       export CC=clang-$CLANG_VERSION
       export CXX=clang++-$CLANG_VERSION
-      travis/install_libcxx.sh
+      if [ -n "$LLVM_TAG" ]; then
+            travis/install_libcxx.sh
+      fi
 fi
 set +v

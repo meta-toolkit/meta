@@ -6,7 +6,9 @@
 #include <fstream>
 #include <vector>
 #include <cfloat>
+
 #include "meta/classify/classifier/svm_wrapper.h"
+#include "meta/io/filesystem.h"
 #include "meta/utf/utf.h"
 
 namespace meta
@@ -36,10 +38,46 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
         labels_.at(it->second) = it->first;
     }
 
+    std::string base_path;
+    std::string exename;
     if (kernel_opt == kernel::None)
-        executable_ = "liblinear/build/";
+    {
+        base_path = "liblinear/build/";
+        exename = "train";
+    }
     else
-        executable_ = "libsvm/build/svm-";
+    {
+        base_path = "libsvm/build/";
+        exename = "svm-train";
+    }
+
+#ifdef _WIN32
+    exename += ".exe";
+#endif
+
+    if (filesystem::file_exists(svm_path_ + base_path + exename))
+    {
+        executable_ = base_path;
+    }
+    else if (filesystem::file_exists(svm_path_ + base_path + "Release/"
+                                     + exename))
+    {
+        executable_ = base_path + "Release/";
+    }
+    else if (filesystem::file_exists(svm_path_ + base_path + "Debug/"
+                                     + exename))
+    {
+        executable_ = base_path + "Debug/";
+    }
+    else
+    {
+        throw svm_wrapper_exception{
+            "Could not find liblinear/libsvm binaries from root '" + svm_path_
+            + "'"};
+    }
+
+    if (kernel_opt != kernel::None)
+        executable_ += "svm-";
 
     {
         std::ofstream out{"svm-train"};
@@ -68,11 +106,55 @@ svm_wrapper::svm_wrapper(const std::string& svm_path,
         : svm_path_{svm_path}, kernel_{kernel_opt}
 {
 
+    std::string base_path;
+    std::string exename;
     if (kernel_opt == kernel::None)
-        executable_ = "liblinear/build/";
+    {
+        base_path = "liblinear/build/";
+        exename = "train";
+    }
     else
-        executable_ = "libsvm/build/svm-";
+    {
+        base_path = "libsvm/build/";
+        exename = "svm-train";
+    }
 
+#ifdef _WIN32
+    exename += ".exe";
+#endif
+
+    if (filesystem::file_exists(svm_path_ + base_path + exename))
+    {
+        executable_ = base_path;
+    }
+    else if (filesystem::file_exists(svm_path_ + base_path + "Release/"
+                                     + exename))
+    {
+        executable_ = base_path + "Release/";
+    }
+    else if (filesystem::file_exists(svm_path_ + base_path + "Debug/"
+                                     + exename))
+    {
+        executable_ = base_path + "Debug/";
+    }
+    else
+    {
+        throw svm_wrapper_exception{
+                "Could not find liblinear/libsvm binaries from root '" + svm_path_
+                + "'"};
+    }
+
+    if (kernel_opt != kernel::None)
+        executable_ += "svm-";
+
+    {
+        std::ofstream out{"svm-train"};
+        for (const auto& instance : docs)
+        {
+            docs.print_liblinear(out, instance);
+            out << "\n";
+        }
+    }
 
 #ifndef _WIN32
     std::string command = svm_path_ + executable_ + "train "
@@ -80,9 +162,9 @@ svm_wrapper::svm_wrapper(const std::string& svm_path,
     command += " > /dev/null 2>&1";
 #else
     // see comment in classify()
-auto command = "\"\"" + svm_path_ + executable_ + "train.exe\" "
-               + options_.at(kernel_) + " svm-train" + " svm-train.model";
-command += " > NUL 2>&1\"";
+    auto command = "\"\"" + svm_path_ + executable_ + "train.exe\" "
+                   + options_.at(kernel_) + " svm-train" + " svm-train.model";
+    command += " > NUL 2>&1\"";
 #endif
     system(command.c_str());
 
@@ -266,8 +348,8 @@ confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
 
 template <>
 std::unique_ptr<classifier>
-    make_classifier<svm_wrapper>(const cpptoml::table& config,
-                                 multiclass_dataset_view training)
+make_classifier<svm_wrapper>(const cpptoml::table& config,
+                             multiclass_dataset_view training)
 {
     auto path = config.get_as<std::string>("path");
     if (!path)

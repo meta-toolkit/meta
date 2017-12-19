@@ -16,9 +16,11 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 #include "meta/config.h"
+#include "meta/util/shim.h"
 
 namespace meta
 {
@@ -241,10 +243,13 @@ class logger
          * @param filter The filtering function used to determine if a
          * given log_line should be written to the stream or not
          */
-        sink(std::ostream& stream,
-             const filter_func& filter = [](const log_line&) { return true; },
+        sink(std::ostream& stream, const filter_func& filter = &noop_filter,
              const formatter_func& formatter = &default_formatter)
-            : stream_(stream), formatter_(formatter), filter_(filter)
+            : concept_(
+                  make_sink_impl([&](const std::string& str) { stream << str; },
+                                 [&]() { stream.flush(); })),
+              formatter_(formatter),
+              filter_(filter)
         {
             /* nothing */
         }
@@ -262,7 +267,59 @@ class logger
          */
         sink(std::ostream& stream, logger::severity_level sev,
              const formatter_func& formatter = &default_formatter)
-            : stream_(stream),
+            : concept_(
+                  make_sink_impl([&](const std::string& str) { stream << str; },
+                                 [&]() { stream.flush(); })),
+              formatter_(formatter),
+              filter_(
+                  [sev](const log_line& ll) { return ll.severity() >= sev; })
+        {
+            // nothing
+        }
+
+        /**
+         * Creates a new sink from a function to print a line, a function
+         * to flush the output, a function to format the line, and a
+         * function to filter log lines.
+         *
+         * @param print A unary function to print a line
+         * @param flush A nullary function to flush the output
+         * @param formatter The formatting function object to use to
+         * format the log_lines written to the sink
+         * @param filter The filtering function used to determine if a
+         * given log_line should be written to the sink or not
+         */
+        template <class PrintingFunction, class FlushFunction>
+        sink(PrintingFunction&& print, FlushFunction&& flush,
+             const filter_func& filter = &noop_filter,
+             const formatter_func& formatter = &default_formatter)
+            : concept_(make_sink_impl(std::forward<PrintingFunction>(print),
+                                      std::forward<FlushFunction>(flush))),
+              formatter_(formatter),
+              filter_(filter)
+        {
+            // nothing
+        }
+
+        /**
+         * Creates a new sink from a function to print a line, a function
+         * to flush the output, a function to format the line, and a
+         * severity level. All log_lines >= to the provided severity will
+         * be printed, and all others filtered out.
+         *
+         * @param print A unary function to print a line
+         * @param flush A nullary function to flush the output
+         * @param sev The severity level at or above which log lines will
+         * be kept
+         * @param formatter The formatting function object to use to
+         * format the log_lines written to the sink
+         */
+        template <class PrintingFunction, class FlushFunction>
+        sink(PrintingFunction&& print, FlushFunction&& flush,
+             logger::severity_level sev,
+             const formatter_func& formatter = &default_formatter)
+            : concept_(make_sink_impl(std::forward<PrintingFunction>(print),
+                                      std::forward<FlushFunction>(flush))),
               formatter_(formatter),
               filter_(
                   [sev](const log_line& ll) { return ll.severity() >= sev; })
@@ -282,10 +339,10 @@ class logger
                 if (!filter_(line))
                     return;
             if (formatter_)
-                stream_ << formatter_(line);
+                concept_->write(formatter_(line));
             else
-                stream_ << line.str();
-            stream_ << std::flush;
+                concept_->write(line.str());
+            concept_->flush();
         }
 
         /**
@@ -320,11 +377,63 @@ class logger
             return ss.str();
         }
 
+        /**
+         * No-op filter function. (Required because GCC 4.8 has an ICE on a
+         * lambda default argument in a function template.)
+         */
+        static bool noop_filter(const log_line&)
+        {
+            return true;
+        }
+
       private:
+        class sink_concept
+        {
+          public:
+            virtual ~sink_concept() = default;
+            virtual void write(const std::string& str) = 0;
+            virtual void flush() = 0;
+        };
+
+        template <class PrintingFunction, class FlushFunction>
+        class sink_impl final : public sink_concept
+        {
+          public:
+            sink_impl(PrintingFunction&& print, FlushFunction&& flush)
+                : print_(std::forward<PrintingFunction>(print)),
+                  flush_(std::forward<FlushFunction>(flush))
+            {
+                // nothing
+            }
+
+            void write(const std::string& str) override
+            {
+                print_(str);
+            }
+
+            void flush() override
+            {
+                flush_();
+            }
+
+          private:
+            PrintingFunction print_;
+            FlushFunction flush_;
+        };
+
+        template <class PrintingFunction, class FlushFunction>
+        std::unique_ptr<sink_impl<PrintingFunction, FlushFunction>>
+        make_sink_impl(PrintingFunction&& print, FlushFunction&& flush)
+        {
+            return make_unique<sink_impl<PrintingFunction, FlushFunction>>(
+                std::forward<PrintingFunction>(print),
+                std::forward<FlushFunction>(flush));
+        }
+
         /**
          * Internal stream.
          */
-        std::ostream& stream_;
+        std::unique_ptr<sink_concept> concept_;
 
         /**
          * The formatting functor.
@@ -336,16 +445,6 @@ class logger
          */
         filter_func filter_;
     };
-
-    /**
-     * Adds a sink to the given logger.
-     *
-     * @param s The sink to add
-     */
-    void add_sink(const sink& s)
-    {
-        sinks_.push_back(s);
-    }
 
     /**
      * Adds a sink to the given logger.
@@ -382,15 +481,6 @@ inline logger& get_logger()
 {
     static logger log;
     return log;
-}
-
-/**
- * Adds a sink to a static instance of a logger.
- * @param s The sink to add to the static logger instance
- */
-inline void add_sink(const logger::sink& s)
-{
-    get_logger().add_sink(s);
 }
 
 /**

@@ -7,6 +7,7 @@
 #include "meta/io/libsvm_parser.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 go_bandit([]() {
