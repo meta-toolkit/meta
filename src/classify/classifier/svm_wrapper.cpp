@@ -147,14 +147,6 @@ svm_wrapper::svm_wrapper(const std::string& svm_path,
     if (kernel_opt != kernel::None)
         executable_ += "svm-";
 
-    {
-        std::ofstream out{"svm-train"};
-        for (const auto& instance : docs)
-        {
-            docs.print_liblinear(out, instance);
-            out << "\n";
-        }
-    }
 
 #ifndef _WIN32
     std::string command = svm_path_ + executable_ + "train "
