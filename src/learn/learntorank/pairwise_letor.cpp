@@ -4,6 +4,8 @@
  * @date 12/18/17
  */
 
+#include <cassert>
+
 #include "meta/learn/learntorank/pairwise_letor.h"
 
 namespace meta
@@ -22,6 +24,8 @@ pairwise_letor::pairwise_letor(size_t num_features, CLASSIFY_TYPE classify_type,
         if (classify_type == pairwise_letor::SPD) {
             model_ = make_unique<sgd_model>(in);
         } else {
+            string wrapper_id = io::packed::read<std::string>(in);
+            assert(wrapper_id.compare(svm_wrapper::id) == 0);
             wrapper_ = make_unique<svm_wrapper>(in);
         }
     } else {

@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
         std::cerr <<
                   "Please specify path for training directory and the number of features"
                   << std::endl;
-        std::cerr << "Usage: ./letor [-data_dir] [-num_features]" << std::endl;
+        std::cerr << "Usage: ./letor_main [-data_dir] [-num_features]" << std::endl;
         return 1;
     }
 
