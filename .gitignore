@@ -13,6 +13,10 @@ data/ceeaus
 data/breast-cancer
 data/housing
 data/cranfield
+data/Gov
+data/MQ2007
+data/MQ2008
+data/OHSUMED
 biicode.conf
 bii/
 bin/
