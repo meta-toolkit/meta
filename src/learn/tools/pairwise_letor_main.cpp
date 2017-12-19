@@ -123,6 +123,7 @@ int main(int argc, char *argv[]) {
     } else {
         train_spd(data_dir, num_features, hasModel, model_file);
     }
+    cout << "letor weights value are saved to letor.weights" << endl;
 
     cout << "Exiting Learning To Rank!" << std::endl;
     return 0;

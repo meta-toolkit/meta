@@ -158,6 +158,14 @@ void svm_wrapper::save(std::ostream& out) const
     }
 }
 
+void svm_wrapper::save_weights(std::ostream& out) const
+{
+    for (const auto& weight : weights_)
+    {
+        out << weight << std::endl;
+    }
+}
+
 class_label svm_wrapper::classify(const feature_vector& doc) const
 {
     // create input for liblinear

@@ -92,6 +92,12 @@ class svm_wrapper : public classifier
     void save(std::ostream& out) const override;
 
     /**
+     * Save weights as RankSVM to a stream. Should only be used as RankSVM.
+     * @param out
+     */
+    void save_weights(std::ostream& out) const;
+
+    /**
      * Classifies a document into a specific group, as determined by
      * training data.
      * @param doc The document to classify

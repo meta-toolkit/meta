@@ -34,12 +34,15 @@ pairwise_letor::pairwise_letor(size_t num_features, CLASSIFY_TYPE classify_type,
 }
 
 pairwise_letor::~pairwise_letor() {
+    ofstream out_weights{"letor.weights"};
     if (classify_type_ == pairwise_letor::SPD) {
         ofstream out{"letor_sgd_train.model"};
         model_->save(out);
+        model_->save_weights(out_weights);
     } else {
         ofstream out{"letor_svm_train.model"};
         wrapper_->save(out);
+        wrapper->save_weights(out_weights);
     }
 }
 
