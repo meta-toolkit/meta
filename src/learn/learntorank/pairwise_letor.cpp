@@ -25,7 +25,7 @@ pairwise_letor::pairwise_letor(size_t num_features, CLASSIFY_TYPE classify_type,
             model_ = make_unique<sgd_model>(in);
         } else {
             string wrapper_id = io::packed::read<std::string>(in);
-            assert(wrapper_id.compare(svm_wrapper::id) == 0);
+            assert(svm_wrapper::id.compare(wrapper_id) == 0);
             wrapper_ = make_unique<svm_wrapper>(in);
         }
     } else {
