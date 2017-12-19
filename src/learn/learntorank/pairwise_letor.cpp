@@ -102,7 +102,7 @@ void pairwise_letor::read_data(DATA_TYPE data_type,
     auto qid_docids = unordered_map<string, int>();
     while (std::getline(infile, line)) {
         std::istringstream iss(line);
-        int label, feature_id;
+        size_t label, feature_id;
         string qid;
         double feature_val;
         string tmp_str, docid;
@@ -127,9 +127,10 @@ void pairwise_letor::read_data(DATA_TYPE data_type,
             iss >> tmp_str;
             stringstream ssid(tmp_str.substr(0, tmp_str.find(':')));
             ssid >> feature_id;
+            --feature_id;
             stringstream ssval(tmp_str.substr(tmp_str.find(':') + 1));
             ssval >> feature_val;
-            features[term_id{feature_id - 1}] = feature_val;
+            features[term_id{feature_id}] = feature_val;
         }
 
         if (data_type != TRAINING) {
