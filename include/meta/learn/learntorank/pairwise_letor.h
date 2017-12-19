@@ -79,8 +79,14 @@ class pairwise_letor {
         /**
          * Constructor.
          * @param num_features The number of features for the pairwise model
+         * @param classify_type The type of classifier to use
+         * @param hasModel If the sgd/svm model is loaded from file
+         * @param model_file The path to model file
          */
-        pairwise_letor(size_t num_features);
+        pairwise_letor(size_t num_features, CLASSIFY_TYPE classify_type,
+                       bool hasModel, string model_file);
+
+        ~pairwise_letor();
 
         /**
          * Train the pairwise ranker model
@@ -98,24 +104,22 @@ class pairwise_letor {
         /**
          * Validate the learnt model
          * @param data_dir The path to the directory containing vali.txt
-         * @param classify_type The classifier type to use
          */
-        void validate(string data_dir,
-                      int feature_nums,
-                      CLASSIFY_TYPE classify_type);
+        void validate(string data_dir);
 
         /**
          * Test the model on testing dataset
          * @param data_dir The path to the directory containing test.txt
-         * @param classify_type The classifier type to use
          */
-        void test(string data_dir,
-                  CLASSIFY_TYPE classify_type);
+        void test(string data_dir);
 
     private:
 
         /// number of features for this letor model
         size_t num_features_;
+
+        /// type of classifier to use
+        CLASSIFY_TYPE classify_type_;
 
         /// sgd_model for training and testing
         unique_ptr<sgd_model> model_;
@@ -136,8 +140,8 @@ class pairwise_letor {
                        string data_dir,
                        vector<string>& qids,
                        unordered_map<string, unordered_map<int, vector<feature_vector>>>& dataset,
-                       unique_ptr<unordered_map<string, unordered_map<int, vector<string>>>> docids,
-                       unique_ptr<unordered_map<string, unordered_map<string, int>>> relevance_map);
+                       unordered_map<string, unordered_map<int, vector<string>>>& docids,
+                       unordered_map<string, unordered_map<string, int>>& relevance_map);
 
         /**
          * Return a random pair of tuple for training the svm classifier
@@ -186,13 +190,11 @@ class pairwise_letor {
          * @param dataset Map holding nested data mapping: query => label => doc
          * @param docids Map holding doc ids for each query and label
          * @param relevance_map Map holding relevance of each doc for each query
-         * @param classify_type The classifier used for this pairwise model
          */
         void evaluate(vector<string>& qids,
                  unordered_map<string, unordered_map<int, vector<feature_vector>>>& dataset,
                  unordered_map<string, unordered_map<int, vector<string>>>& docids,
-                 unordered_map<string, unordered_map<string, int>>& relevance_map,
-                 CLASSIFY_TYPE classify_type);
+                 unordered_map<string, unordered_map<string, int>>& relevance_map);
 
 };
 

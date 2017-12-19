@@ -13,24 +13,49 @@ namespace learn
 namespace learntorank
 {
 
-pairwise_letor::pairwise_letor(size_t num_features) : num_features_{num_features}
+pairwise_letor::pairwise_letor(size_t num_features, CLASSIFY_TYPE classify_type,
+                               bool hasModel, string model_file)
+        : num_features_{num_features}, classify_type_{classify_type}
 {
-    /* nothing */
+    if (hasModel) {
+        ifstream in{model_file};
+        if (classify_type == pairwise_letor::SPD) {
+            model_ = make_unique<sgd_model>(in);
+        } else {
+            wrapper_ = make_unique<svm_wrapper>(in);
+        }
+    } else {
+        model_ = make_unique<sgd_model>(num_features);
+    }
+}
+
+pairwise_letor::~pairwise_letor() {
+    if (classify_type_ == pairwise_letor::SPD) {
+        ofstream out{"letor_sgd_train.model"};
+        model_->save(out);
+    } else {
+        ofstream out{"letor_svm_train.model"};
+        wrapper_->save(out);
+    }
 }
 
 void pairwise_letor::train(string data_dir) {
     auto training_qids = make_unique<vector<string>>();
     auto training_dataset =
-            make_unique<unordered_map<string,unordered_map<int,vector<feature_vector>>>>();
-    read_data(TRAINING,data_dir,*training_qids,*training_dataset,nullptr,nullptr);
+                make_unique<unordered_map<string,unordered_map<int,vector<feature_vector>>>>();
+    auto docids =
+                make_unique<unordered_map<string, unordered_map<int, vector<string>>>>();
+    auto relevance_map =
+                make_unique<unordered_map<string, unordered_map<string, int>>>();
+    read_data(TRAINING,data_dir,*training_qids,*training_dataset,
+              *docids,*relevance_map);
     auto n_iter = 100000;
 
-    unique_ptr<loss::loss_function> loss
-            = loss::make_loss_function(loss::hinge::id.to_string());
+    auto loss = loss::make_loss_function(loss::hinge::id.to_string());
 
     for (size_t i = 0; i < n_iter; ++i) {
         auto random_seed = i;
-        pair<tupl, tupl> data_pair
+        auto data_pair
                 = getRandomPair(*training_qids, *training_dataset, random_seed);
         feature_vector a, b;
         int y_a, y_b;
@@ -40,7 +65,7 @@ void pairwise_letor::train(string data_dir) {
         auto x = a;
         x -= b;
         auto expected_label = y_a - y_b;
-        double los = model->train_one(x, expected_label, *loss);
+        auto los = model_->train_one(x, expected_label, *loss);
     }
     loss.reset();
 }
@@ -49,8 +74,8 @@ void pairwise_letor::read_data(DATA_TYPE data_type,
                     string data_dir,
                     vector<string>& qids,
                     unordered_map<string, unordered_map<int, vector<feature_vector>>>& dataset,
-                    unique_ptr<unordered_map<string, unordered_map<int, vector<string>>>> docids,
-                    unique_ptr<unordered_map<string, unordered_map<string, int>>> relevance_map) {
+                    unordered_map<string, unordered_map<int, vector<string>>>& docids,
+                    unordered_map<string, unordered_map<string, int>>& relevance_map) {
     auto start = chrono::high_resolution_clock::now();
 
     auto data_file = data_dir;
@@ -101,11 +126,11 @@ void pairwise_letor::read_data(DATA_TYPE data_type,
         }
 
         if (data_type != TRAINING) {
-            if (docids->find(qid) == docids->end()) {
-                (*docids)[qid] = unordered_map<int, vector<string> >();
-                (*qid_docids)[qid] = 0;
+            if (docids.find(qid) == docids.end()) {
+                docids[qid] = unordered_map<int, vector<string> >();
+                qid_docids[qid] = 0;
             }
-            auto& query_docids = (*docids)[qid];
+            auto& query_docids = docids[qid];
 
             if (query_docids.find(label) == query_docids.end()) {
                 query_docids[label] = vector<string>();
@@ -114,10 +139,10 @@ void pairwise_letor::read_data(DATA_TYPE data_type,
 
             docid = qid + to_string(qid_docids[qid]++);
             label_docids.push_back(docid);
-            if (relevance_map->find(qid) == relevance_map->end()) {
-                (*relevance_map)[qid] = unordered_map<string, int>();
+            if (relevance_map.find(qid) == relevance_map.end()) {
+                relevance_map[qid] = unordered_map<string, int>();
             }
-            auto& doc_relevance = (*relevance_map)[qid];
+            auto& doc_relevance = relevance_map[qid];
             doc_relevance[docid] = label;
         }
     }
@@ -140,8 +165,8 @@ void pairwise_letor::build_dataset_nodes(
         for (int i = 0; i < label_keys.size(); i++) {
             for (int j = i + 1; j < label_keys.size(); j++) {
                 auto temp_label = label_keys[i] > label_keys[j] ? 1 : -1;
-                vector<feature_vector>& vec1 = query_dataset[label_keys[i]];
-                vector<feature_vector>& vec2 = query_dataset[label_keys[j]];
+                auto& vec1 = query_dataset[label_keys[i]];
+                auto& vec2 = query_dataset[label_keys[j]];
                 for (auto& vec1_iter : vec1) {
                     for (auto& vec2_iter : vec2) {
                         dataset_nodes.push_back(forward_node());
@@ -156,7 +181,7 @@ void pairwise_letor::build_dataset_nodes(
     }
 }
 
-pair<tupl, tupl> pairwise_letor::getRandomPair(
+pair<pairwise_letor::tupl,pairwise_letor::tupl> pairwise_letor::getRandomPair(
         vector<string>& training_qids,
         unordered_map<string,unordered_map<int,vector<feature_vector>>>& train_dataset,
         int random_seed) {
@@ -226,16 +251,20 @@ pair<tupl, tupl> pairwise_letor::getRandomPair(
 }
 
 void pairwise_letor::train_svm(string data_dir, string svm_path) {
-    unique_ptr<vector<string>> training_qids = make_unique<vector<string>>();
+    auto training_qids = make_unique<vector<string>>();
 
-    unique_ptr<unordered_map<string, unordered_map<int, vector<feature_vector>>>>
-            training_dataset =
+    auto training_dataset =
             make_unique<unordered_map<string,unordered_map<int,vector<feature_vector>>>>();
 
-    read_data(TRAINING,data_dir,*training_qids,*training_dataset,nullptr,nullptr);
+    auto docids =
+            make_unique<unordered_map<string, unordered_map<int, vector<string>>>>();
+    auto relevance_map =
+            make_unique<unordered_map<string, unordered_map<string, int>>>();
 
-    unique_ptr<vector<forward_node>> dataset_nodes
-            = make_unique<vector<forward_node>>();
+    read_data(TRAINING,data_dir,*training_qids,*training_dataset,
+              *docids,*relevance_map);
+
+    auto dataset_nodes = make_unique<vector<forward_node>>();
 
     build_dataset_nodes(*training_dataset, *dataset_nodes);
 
@@ -257,47 +286,42 @@ void pairwise_letor::train_svm(string data_dir, string svm_path) {
 
 }
 
-void pairwise_letor::validate(string data_dir, CLASSIFY_TYPE classify_type) {
-    unique_ptr<vector<string>> validation_qids = make_unique<vector<string>>();
-    unique_ptr<unordered_map<string, unordered_map<int, vector<feature_vector>>>>
-            validation_dataset =
+void pairwise_letor::validate(string data_dir) {
+    auto validation_qids = make_unique<vector<string>>();
+    auto validation_dataset =
             make_unique<unordered_map<string,unordered_map<int,vector<feature_vector>>>>();
-    unique_ptr<unordered_map<string, unordered_map<int, vector<string>>>>
-            validation_docids =
+    auto validation_docids =
             make_unique<unordered_map<string, unordered_map<int, vector<string>>>>();
-    unique_ptr<unordered_map<string, unordered_map<string, int>>> relevance_map
+    auto relevance_map
             = make_unique<unordered_map<string, unordered_map<string, int>>>();
     read_data(VALIDATION,data_dir,*validation_qids,*validation_dataset,
-              validation_docids,relevance_map);
+              *validation_docids,*relevance_map);
     cout << "Evaluation on Validation set" << endl;
     evaluate(*validation_qids, *validation_dataset, *validation_docids,
-             *relevance_map, classify_type);
+             *relevance_map);
 
 }
 
-void pairwise_letor::test(string data_dir, CLASSIFY_TYPE classify_type) {
-    unique_ptr<vector<string>> testing_qids = make_unique<vector<string>>();
-    unique_ptr<unordered_map<string, unordered_map<int, vector<feature_vector>>>>
-            testing_dataset =
+void pairwise_letor::test(string data_dir) {
+    auto testing_qids = make_unique<vector<string>>();
+    auto testing_dataset =
             make_unique<unordered_map<string,unordered_map<int,vector<feature_vector>>>>();
-    unique_ptr<unordered_map<string, unordered_map<int, vector<string>>>>
-            testing_docids =
+    auto testing_docids =
             make_unique<unordered_map<string, unordered_map<int, vector<string>>>>();
-    unique_ptr<unordered_map<string, unordered_map<string, int>>> relevance_map
+    auto relevance_map
             = make_unique<unordered_map<string, unordered_map<string, int>>>();
     read_data(TESTING, data_dir, *testing_qids, *testing_dataset,
-              testing_docids, relevance_map);
+              *testing_docids, *relevance_map);
     cout << "Evaluating on test data" << endl;
     evaluate(*testing_qids, *testing_dataset, *testing_docids,
-             *relevance_map, classify_type);
+             *relevance_map);
 
 }
 
 void pairwise_letor::evaluate(vector<string>& qids,
               unordered_map<string, unordered_map<int, vector<feature_vector>>>& dataset,
               unordered_map<string, unordered_map<int, vector<string>>>& docids,
-              unordered_map<string, unordered_map<string, int>>& relevance_map,
-              CLASSIFY_TYPE classify_type) {
+              unordered_map<string, unordered_map<string, int>>& relevance_map) {
     auto query_num = 0;
     double top_precisions[10];
     double mean_ap = 0;
@@ -306,7 +330,7 @@ void pairwise_letor::evaluate(vector<string>& qids,
     vector<int> temp_relevances;
     vector<int> dcg_rankings;
     double temp_ap, total_relevances, temp_ndcg, temp_idcg;
-    for (size_t index = 0; index < 10; index++) {
+    for (auto index = 0; index < 10; index++) {
         top_precisions[index] = 0;
         top_ndcgs[index] = 0;
     }
@@ -321,7 +345,7 @@ void pairwise_letor::evaluate(vector<string>& qids,
             for (size_t doc_idx = 0; doc_idx < label_docids.size(); doc_idx++) {
                 auto& fv = label_dataset[doc_idx];
                 auto docid = label_docids[doc_idx];
-                auto score = classify_type == LIBSVM ?
+                auto score = classify_type_ == LIBSVM ?
                              wrapper_->computeScore(fv) : model_->predict(fv);
                 doc_scores.push_back(make_pair(docid, score));
             }
@@ -334,7 +358,7 @@ void pairwise_letor::evaluate(vector<string>& qids,
             temp_ap = last_precision * last_precision;
             temp_precisions.push_back(last_precision);
             temp_relevances.push_back(temp_relevance);
-            for (size_t score_idx = 1; score_idx < doc_scores.size(); score_idx++) {
+            for (auto score_idx = 1; score_idx < doc_scores.size(); score_idx++) {
                 temp_relevance = query_relevances[doc_scores[score_idx].first];
                 last_precision += (temp_relevance > 0 ? 1 : 0);
                 temp_ap +=
@@ -344,17 +368,17 @@ void pairwise_letor::evaluate(vector<string>& qids,
             }
             total_relevances = last_precision;
             if (total_relevances > 0) { //must check
-                for (size_t index = 0; index < 10; index++) {
+                for (auto index = 0; index < 10; index++) {
                     top_precisions[index] += (temp_precisions[index] / (index + 1));
                 }
                 mean_ap += (temp_ap / total_relevances);
-                for (size_t index = 0; index < 10; index++) {
+                for (auto index = 0; index < 10; index++) {
                     dcg_rankings.push_back(query_relevances[doc_scores[index].first]);
                 }
                 sort(temp_relevances.begin(), temp_relevances.end(), std::greater<int>());
-                for (size_t index = 0; index < 10; index++) {
+                for (auto index = 0; index < 10; index++) {
                     temp_ndcg = compute_dcg(index + 1, dcg_rankings);
-                    temp_idcg = compute_dcg(index + 1, *temp_relevances);
+                    temp_idcg = compute_dcg(index + 1, temp_relevances);
                     top_ndcgs[index] += (temp_ndcg / temp_idcg);
                 }
                 query_num++;
@@ -367,7 +391,7 @@ void pairwise_letor::evaluate(vector<string>& qids,
     }
 
     cout << endl << "Precision on Test Data: " << endl;
-    for (size_t index = 0; index < 10; index++) {
+    for (auto index = 0; index < 10; index++) {
         top_precisions[index] /= query_num;
         cout << "Precision at position " << (index + 1)
             << ": " << top_precisions[index] << endl;
@@ -378,7 +402,7 @@ void pairwise_letor::evaluate(vector<string>& qids,
     cout << "MAP: " << mean_ap << endl;
 
     cout << endl << "NDCG on Test Data: " << endl;
-    for (size_t index = 0; index < 10; index++) {
+    for (auto index = 0; index < 10; index++) {
         top_ndcgs[index] /= query_num;
         cout << "NDCG at position " << (index + 1) << ": "
             << top_ndcgs[index] << endl;

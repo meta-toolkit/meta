@@ -12,84 +12,80 @@ using namespace learntorank;
 
 /**
  * Train the pairwise ranker using spd
- * @param data_dir
- * @param num_features
- * @param hasModel
- * @param model_file
+ * @param data_dir The path to directory containing train.txt
+ * @param num_features The number of features
+ * @param hasModel If the pairwise model is built from model file
+ * @param model_file The path to model file
  */
-void train_spd(const string &data_dir, int num_features, int hasModel, const string &model_file) {
-    sgd_model *model = nullptr;
-    pairwise_letor letor_model;
+void train_spd(const string &data_dir, int num_features, int hasModel,
+               const string &model_file) {
     //start timer
     auto start = chrono::steady_clock::now();
     int continue_training;
-    model = new sgd_model(num_features);
     if (hasModel) {
-        ifstream in{model_file};
-        model = new sgd_model(in);
-        cout << "Do you want to continue training the loaded sgd model? 1(yes)/0(no)" << endl;
+        cout <<
+             "Do you want to continue training the loaded sgd model? 1(yes)/0(no)" << endl;
         cin >> continue_training;
     }
+    pairwise_letor letor_model(num_features, pairwise_letor::SPD,
+                               hasModel, model_file);
     if (!hasModel || continue_training) {
         cout << "start training sgd!" << endl;
 
-        letor_model.train(data_dir, num_features, model);
+        letor_model.train(data_dir);
     }
     auto end = chrono::steady_clock::now();
     chrono::duration<double> training_time = end - start;
     cout << "Training time in seconds: " << training_time.count() << endl;
 
-    letor_model.validate(data_dir, num_features, pairwise_letor::SPD, nullptr, model);
+    letor_model.validate(data_dir);
 
-    letor_model.test(data_dir, num_features, pairwise_letor::SPD, nullptr, model);
+    letor_model.test(data_dir);
 
-    ofstream out{"letor_sgd_train.model"};
-    model->save(out);
+    cout << "trained sgd model has been saved to letor_sgd_train.model" << endl;
 
-    delete model;
 }
 
 /**
  * Train the pairwise ranker using libsvm
- * @param data_dir
- * @param num_features
- * @param hasModel
- * @param model_file
+ * @param data_dir The path to directory containing train.txt
+ * @param num_features The number of features
+ * @param hasModel If the pairwise model is built from model file
+ * @param model_file The path to model file
  */
-void train_libsvm(const string &data_dir, int num_features, int hasModel, const string &model_file) {
+void train_libsvm(const string &data_dir, int num_features,
+                  int hasModel, const string &model_file) {
     auto start = chrono::steady_clock::now();
-    svm_wrapper *wrapper = nullptr;
-    pairwise_letor letor_model;
-    if (hasModel) {
-        ifstream in{model_file};
-        wrapper = new svm_wrapper(in);
-    } else {
-        cout << "Please specify full path to libsvm modules" << endl;
+    pairwise_letor letor_model(num_features, pairwise_letor::LIBSVM,
+                               hasModel, model_file);
+    if (!hasModel) {
+        cout << "Please specify path to libsvm modules" << endl;
         string svm_path;
         cin >> svm_path;
         svm_path += "/";
         cout << "Starting to train svm!" << endl;
-        wrapper = letor_model.train_svm(data_dir, num_features, svm_path);
+        letor_model.train_svm(data_dir, svm_path);
     }
     auto end = chrono::steady_clock::now();
     chrono::duration<double> training_time = end - start;
     cout << "Training time in seconds: " << training_time.count() << endl;
 
-    letor_model.validate(data_dir, num_features, pairwise_letor::LIBSVM, wrapper, nullptr);
+    letor_model.validate(data_dir);
 
-    letor_model.test(data_dir, num_features, pairwise_letor::LIBSVM, wrapper, nullptr);
+    letor_model.test(data_dir);
 
-    ofstream out{"letor_svm_train.model"};
-    wrapper->save(out);
+    cout << "trained svm model has been saved to letor_svm_train.model" << endl;
 
-    delete wrapper;
 }
 
 int main(int argc, char *argv[]) {
-    std::cerr << "Hello! This is Learning To Rank LETOR!" << std::endl;
+    cout << "Hello! This is Learning To Rank LETOR!" << std::endl;
     if (argc != 3) {
-        std::cerr << "Please specify full path for training directory and the number of features" << std::endl;
+        std::cerr <<
+                  "Please specify path for training directory and the number of features"
+                  << std::endl;
         std::cerr << "Usage: ./letor [-data_dir] [-num_features]" << std::endl;
+        return 1;
     }
 
     string data_dir;
@@ -103,9 +99,9 @@ int main(int argc, char *argv[]) {
     cout << "Do you want to load trained model from file? 1(yes)/0(no)" << endl;
     cin >> hasModel;
     if (hasModel) {
-        cout << "Please specify full path to your model file" << endl;
+        cout << "Please specify path to your model file" << endl;
         cin >> model_file;
-        cout << "Full path to your model is: " << model_file << endl;
+        cout << "Path to your model file is: " << model_file << endl;
     }
 
     int selected_method;
@@ -127,7 +123,8 @@ int main(int argc, char *argv[]) {
     } else {
         train_spd(data_dir, num_features, hasModel, model_file);
     }
-    std::cerr << "Exiting Learning To Rank!" << std::endl;
+
+    cout << "Exiting Learning To Rank!" << std::endl;
     return 0;
 }
 
