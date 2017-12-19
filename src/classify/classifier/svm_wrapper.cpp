@@ -63,30 +63,31 @@ svm_wrapper::svm_wrapper(dataset_view_type docs, const std::string& svm_path,
     system(command.c_str());
 }
 
-    svm_wrapper::svm_wrapper(const std::string& svm_path,
-                             kernel kernel_opt /* = None */)
-            : svm_path_{svm_path}, kernel_{kernel_opt}
-    {
+svm_wrapper::svm_wrapper(const std::string& svm_path,
+                         kernel kernel_opt /* = None */)
+        : svm_path_{svm_path}, kernel_{kernel_opt}
+{
 
-        if (kernel_opt == kernel::None)
-            executable_ = "liblinear/build/";
-        else
-            executable_ = "libsvm/build/svm-";
+    if (kernel_opt == kernel::None)
+        executable_ = "liblinear/build/";
+    else
+        executable_ = "libsvm/build/svm-";
 
 
 #ifndef _WIN32
-        std::string command = svm_path_ + executable_ + "train "
-                              + options_.at(kernel_) + " svm-train" + " svm-train.model";
-        command += " > /dev/null 2>&1";
+    std::string command = svm_path_ + executable_ + "train "
+                          + options_.at(kernel_) + " svm-train" + " svm-train.model";
+    command += " > /dev/null 2>&1";
 #else
-        // see comment in classify()
-    auto command = "\"\"" + svm_path_ + executable_ + "train.exe\" "
-                   + options_.at(kernel_) + " svm-train" + " svm-train.model";
-    command += " > NUL 2>&1\"";
+    // see comment in classify()
+auto command = "\"\"" + svm_path_ + executable_ + "train.exe\" "
+               + options_.at(kernel_) + " svm-train" + " svm-train.model";
+command += " > NUL 2>&1\"";
 #endif
-        system(command.c_str());
-        load_weights();
-    }
+    system(command.c_str());
+
+    load_weights();
+}
 
 svm_wrapper::svm_wrapper(std::istream& in)
     : svm_path_{io::packed::read<std::string>(in)}
@@ -99,42 +100,44 @@ svm_wrapper::svm_wrapper(std::istream& in)
     for (std::size_t i = 0; i < size; ++i)
         io::packed::read(in, labels_[i]);
 
-    std::ofstream out{"svm-train.model"};
-    auto model_lines = io::packed::read<std::size_t>(in);
-    std::string line;
-    for (std::size_t i = 0; i < model_lines; ++i)
     {
-        std::getline(in, line);
-        out << line << "\n";
+        std::ofstream out{"svm-train.model"};
+        auto model_lines = io::packed::read<std::size_t>(in);
+        std::string line;
+        for (std::size_t i = 0; i < model_lines; ++i)
+        {
+            std::getline(in, line);
+            out << line << "\n";
+        }
     }
-    out.close();
+
     load_weights();
 }
 
-    void svm_wrapper::load_weights() {
-        auto num_lines = filesystem::num_lines("svm-train.model");
-        std::ifstream in{"svm-train.model"};
-        std::string line;
-        std::size_t i = 0;
-        for (; i < num_lines; ++i)
-        {
+void svm_wrapper::load_weights() {
+    auto num_lines = filesystem::num_lines("svm-train.model");
+    std::ifstream in{"svm-train.model"};
+    std::string line;
+    std::size_t i = 0;
+    for (; i < num_lines; ++i)
+    {
+        std::getline(in, line);
+        if (line.find("bias") == 0) {
             std::getline(in, line);
-            if (line.find("bias") == 0) {
-                std::getline(in, line);
-                i += 2;
-                break;
-            }
-        }
-        double temp_weight;
-        for (; i < num_lines; ++i) {
-            in >> temp_weight;
-            weights_.push_back(temp_weight);
+            i += 2;
+            break;
         }
     }
+    double temp_weight;
+    for (; i < num_lines; ++i) {
+        in >> temp_weight;
+        weights_.push_back(temp_weight);
+    }
+}
 
 void svm_wrapper::save(std::ostream& out) const
 {
-    //io::packed::write(out, id);
+    io::packed::write(out, id);
 
     io::packed::write(out, svm_path_);
     io::packed::write(out, kernel_);
@@ -194,20 +197,20 @@ class_label svm_wrapper::classify(const feature_vector& doc) const
     return labels_.at(lbl - 1);
 }
 
-    double svm_wrapper::computeScore(feature_vector& doc) {
-        if (kernel_ != kernel::None) {
-            return 0.0;
-        }
-
-        double score = 0.0;
-        for (int i = 0; i < weights_.size(); i++) {
-            score += weights_[i] * doc[term_id{i}];
-        }
-
-        return score;
+double svm_wrapper::computeScore(feature_vector& doc) {
+    if (kernel_ != kernel::None) {
+        return 0.0;
     }
 
-    confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
+    auto score = 0.0;
+    for (std::size_t i = 0; i < weights_.size(); i++) {
+        score += weights_[i] * doc[term_id{i}];
+    }
+
+    return score;
+}
+
+confusion_matrix svm_wrapper::test(multiclass_dataset_view docs) const
 {
     // create input for liblinear/libsvm
     {
