@@ -172,43 +172,52 @@ namespace fs = std::experimental::filesystem;
 
 bool delete_file(const std::string& filename)
 {
-    return fs::exists(filename) && fs::remove(filename);
+    const auto path = fs::u8path(filename);
+    return fs::exists(path) && fs::remove(path);
 }
 
 void rename_file(const std::string& old_name, const std::string& new_name)
 {
-    fs::rename(old_name, new_name);
+    const auto old_path = fs::u8path(old_name);
+    const auto new_path = fs::u8path(new_name);
+    fs::rename(old_path, new_path);
 }
 
 bool make_directory(const std::string& dir_name)
 {
-    return fs::create_directory(dir_name);
+    const auto path = fs::u8path(dir_name);
+    return fs::create_directory(path);
 }
 
-bool make_directories(const std::string& path)
+bool make_directories(const std::string& dirs)
 {
+    const auto path = fs::u8path(dirs);
     return fs::create_directories(path);
 }
 
 bool file_exists(const std::string& filename)
 {
-    return fs::exists(filename);
+    const auto path = fs::u8path(filename);
+    return fs::exists(path);
 }
 
 bool exists(const std::string& filename)
 {
-    return fs::exists(filename);
+    const auto path = fs::u8path(filename);
+    return fs::exists(path);
 }
 
 uint64_t file_size(const std::string& filename)
 {
-    if (!file_exists(filename))
+    const auto path = fs::u8path(filename);
+    if (!fs::exists(path))
         return 0;
-    return fs::file_size(filename);
+    return fs::file_size(path);
 }
 
-std::uintmax_t remove_all(const std::string& path)
+std::uintmax_t remove_all(const std::string& dirs)
 {
+    const auto path = fs::u8path(dirs);
     if (!fs::exists(path))
         return 0;
 #if META_HAS_EXPERIMENTAL_FILESYSTEM_REMOVE_ALL
@@ -220,7 +229,7 @@ std::uintmax_t remove_all(const std::string& path)
     if (fs::is_directory(path))
     {
         for (fs::directory_iterator d{path}, end; d != end; ++d)
-            count += meta::filesystem::remove_all(d->path());
+            count += meta::filesystem::remove_all(d->path().u8string());
     }
     fs::remove(path);
     return count;
