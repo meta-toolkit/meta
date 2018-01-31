@@ -12,8 +12,12 @@
 #include <array>
 #include <stdexcept>
 
+// ICU generates conversion warnings from code we do not control
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <unicode/uclean.h>
 #include <unicode/unistr.h>
+#pragma GCC diagnostic pop
 
 namespace meta
 {
