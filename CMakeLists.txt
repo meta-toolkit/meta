@@ -5,6 +5,11 @@ option(ENABLE_LIBCXX "Use libc++ for the C++ standard library (only for clang)" 
 option(ENABLE_PROFILING "Link against gperftools profiler library" OFF)
 option(ENABLE_JEMALLOC "Link against jemalloc if available" ON)
 
+if (MINGW)
+  # jemalloc is breaking things in MSYS2; just disable it for now
+  set(ENABLE_JEMALLOC OFF)
+endif()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 set(MeTA_VERSION_MAJOR 3)
@@ -106,7 +111,7 @@ find_library(JEMALLOC_LIB NAMES jemalloc)
 if (JEMALLOC_LIB AND ENABLE_JEMALLOC)
   message("-- Using jemalloc: ${JEMALLOC_LIB}")
   target_link_libraries(meta-definitions INTERFACE ${JEMALLOC_LIB})
-else()
+elseif(NOT MINGW)
   message("-- Using regular malloc; consider installing jemalloc")
 endif()
 
