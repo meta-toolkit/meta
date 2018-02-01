@@ -77,24 +77,6 @@ void lda_gibbs::run(uint64_t num_iters, double convergence /* = 1e-6 */)
     LOG(info) << "Finished maximum iterations, or found convergence!" << ENDLG;
 }
 
-topic_id lda_gibbs::sample_topic(term_id term, learn::instance_id doc)
-{
-    stats::multinomial<topic_id> full_conditional;
-    for (topic_id topic{0}; topic < num_topics_; ++topic)
-    {
-        auto weight = compute_sampling_weight(term, doc, topic);
-        full_conditional.increment(topic, weight);
-    }
-    return full_conditional(rng_);
-}
-
-double lda_gibbs::compute_sampling_weight(term_id term, learn::instance_id doc,
-                                          topic_id topic) const
-{
-    return compute_term_topic_probability(term, topic)
-           * compute_doc_topic_probability(doc, topic);
-}
-
 double lda_gibbs::compute_term_topic_probability(term_id term,
                                                  topic_id topic) const
 {
@@ -134,43 +116,28 @@ void lda_gibbs::perform_iteration(uint64_t iter, bool init /* = false */)
     for (const auto& doc : docs_)
     {
         progress(doc.id);
-        uint64_t n = 0; // term number within document---constructed
-                        // so that each occurrence of the same term
-                        // can still be assigned a different topic
-        for (const auto& freq : doc.weights)
-        {
-            for (uint64_t j = 0; j < freq.second; ++j)
-            {
-                auto old_topic = doc_word_topic_[doc.id][n];
-                // don't include current topic assignment in
-                // probability calculation
-                if (!init)
-                    decrease_counts(old_topic, freq.first, doc.id);
-
-                // sample a new topic assignment
-                auto topic = sample_topic(freq.first, doc.id);
-                doc_word_topic_[doc.id][n] = topic;
-
-                // increase counts
-                increase_counts(topic, freq.first, doc.id);
-                n += 1;
-            }
-        }
+        detail::sample_document(doc.weights, num_topics_,
+                                doc_word_topic_[doc.id],
+                                // decrease counts
+                                [&](topic_id old_topic, term_id term) {
+                                    if (!init)
+                                    {
+                                        theta_[doc.id].decrement(old_topic, 1);
+                                        phi_[old_topic].decrement(term, 1);
+                                    }
+                                },
+                                // compute sampling weight
+                                [&](topic_id topic, term_id term) {
+                                    return theta_[doc.id].probability(topic)
+                                           * phi_[topic].probability(term);
+                                },
+                                // increase counts
+                                [&](topic_id new_topic, term_id term) {
+                                    theta_[doc.id].increment(new_topic, 1);
+                                    phi_[new_topic].increment(term, 1);
+                                },
+                                rng_);
     }
-}
-
-void lda_gibbs::decrease_counts(topic_id topic, term_id term,
-                                learn::instance_id doc)
-{
-    phi_[topic].decrement(term, 1);
-    theta_[doc].decrement(topic, 1);
-}
-
-void lda_gibbs::increase_counts(topic_id topic, term_id term,
-                                learn::instance_id doc)
-{
-    phi_[topic].increment(term, 1);
-    theta_[doc].increment(topic, 1);
 }
 
 double lda_gibbs::corpus_log_likelihood() const
