@@ -30,6 +30,8 @@ namespace topics
 class lda_gibbs : public lda_model
 {
   public:
+    class inferencer;
+
     /**
      * Constructs the lda model over the given documents, with the
      * given number of topics, and hyperparameters \f$\alpha\f$ and
