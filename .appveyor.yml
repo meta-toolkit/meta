@@ -43,7 +43,7 @@ install:
     # Use pre-built ICU libs
     - IF DEFINED USE_MSVC cd C:\projects
     - IF DEFINED USE_MSVC appveyor DownloadFile %ICU_URL% -FileName icu.zip
-    - IF DEFINED USE_MSVC 7z x icu.zip -oC:\projects
+    - IF DEFINED USE_MSVC 7z x icu.zip -oC:\projects\icu
 before_build:
     - cd C:\projects\meta
     - git submodule update --init --recursive
