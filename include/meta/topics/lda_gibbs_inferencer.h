@@ -19,11 +19,24 @@ namespace meta
 namespace topics
 {
 
+/**
+ * An inferencer for topic proportions for unseen documents that uses
+ * collapsed Gibbs sampling for inference.
+ */
 class lda_gibbs::inferencer : public meta::topics::inferencer
 {
   public:
     using meta::topics::inferencer::inferencer;
 
+    /**
+     * Performs inference using collapsed Gibbs sampling to determine the
+     * topic proportions for the supplied document. The topics themselves
+     * are held fixed and are not modified by this function.
+     *
+     * @param doc the document to be analyzed
+     * @param iters the number of iterations of sampling to apply
+     * @param rng the random number generator to use during sampling
+     */
     template <class RandomNumberGenerator>
     stats::multinomial<topic_id> operator()(const learn::feature_vector& doc,
                                             std::size_t iters,
