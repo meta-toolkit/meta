@@ -2,7 +2,8 @@ project(meta-topics)
 
 add_subdirectory(tools)
 
-add_library(meta-topics lda_cvb.cpp
+add_library(meta-topics inferencer.cpp
+                        lda_cvb.cpp
                         lda_gibbs.cpp
                         lda_model.cpp
                         lda_scvb.cpp

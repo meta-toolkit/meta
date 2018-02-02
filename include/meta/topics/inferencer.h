@@ -19,98 +19,59 @@ namespace meta
 namespace topics
 {
 
+/**
+ * A base class for topic model inference methods to be run on unseen (new)
+ * documents. This class is useless on its own, but provides a unified
+ * interface for loading in topic model output from disk and provides the
+ * necessary information for specific inferencers to be built.
+ */
 class inferencer
 {
   public:
-    inferencer(const cpptoml::table& config)
-    {
-        auto topics_cfg = config.get_table("lda");
-        if (!topics_cfg)
-        {
-            throw topic_model_exception{
-                "Missing [lda] configuration in configuration file"};
-        }
+    /**
+     * Constructs an inferencer by consulting the [lda] configuration
+     * group of the supplied config.
+     *
+     * @param config a cpptoml::table that contains an [lda] subtable.
+     */
+    inferencer(const cpptoml::table& config);
 
-        auto prefix = topics_cfg->get_as<std::string>("model-prefix");
-        if (!prefix)
-        {
-            throw topic_model_exception{
-                "Missing prefix key in configuration file"};
-        }
+    /**
+     * Constructs an inferencer from an input stream representing the
+     * topics file from a topic model (.phi.bin) and the desired
+     * (symmetric) Dirichlet prior parameter.
+     *
+     * @param topic_stream an istream reading the .phi.bin file from a
+     * topic model
+     * @param alpha the parameter for a symmetric Dirichlet prior for the
+     * proportions to be inferred
+     */
+    inferencer(std::istream& topic_stream, double alpha);
 
-        std::ifstream phi{*prefix + ".phi.bin", std::ios::binary};
+    /**
+     * @param k the topic identifier
+     * @return the term distribution for the given topic
+     */
+    const stats::multinomial<term_id>& term_distribution(topic_id k) const;
 
-        if (!phi)
-        {
-            throw topic_model_exception{"missing topic term probabilities file:"
-                                        + *prefix + ".phi.bin"};
-        }
+    /**
+     * @return the number of topics
+     */
+    std::size_t num_topics() const;
 
-        auto alpha = topics_cfg->get_as<double>("alpha");
-        if (!alpha)
-        {
-            throw topic_model_exception{
-                "missing alpha parameter in configuration file"};
-        }
-
-        auto num_topics = topics_cfg->get_as<uint64_t>("topics");
-        if (!num_topics)
-        {
-            throw topic_model_exception{"missing topics key in [lda] table"};
-        }
-
-        prior_ = stats::dirichlet<topic_id>(*alpha, *num_topics);
-        load_from_stream(phi);
-    }
-
-    inferencer(std::istream& topic_stream, double alpha)
-    {
-        load_from_stream(topic_stream);
-        prior_ = stats::dirichlet<topic_id>(alpha, topics_.size());
-    }
-
-    const stats::multinomial<term_id>& term_distribution(topic_id k) const
-    {
-        return topics_[k];
-    }
-
-    std::size_t num_topics() const
-    {
-        return topics_.size();
-    }
-
-    const stats::dirichlet<topic_id>& proportions_prior() const
-    {
-        return prior_;
-    }
+    /**
+     * @return the Dirichlet prior to use for inferred topic proportions
+     * for new documents
+     */
+    const stats::dirichlet<topic_id>& proportions_prior() const;
 
   private:
-    void load_from_stream(std::istream& topic_stream)
-    {
-        auto check = [&]() {
-            if (!topic_stream)
-                throw topic_model_exception{
-                    "topic term stream ended unexpectedly"};
-        };
+    void load_from_stream(std::istream& topic_stream);
 
-        auto num_topics = io::packed::read<std::size_t>(topic_stream);
-        check();
-        topics_.resize(num_topics);
-
-        io::packed::read<std::size_t>(topic_stream); // discard vocab size
-        check();
-
-        printing::progress term_progress{
-            " > Loading topic term probabilities: ", num_topics};
-        for (topic_id tid{0}; tid < num_topics; ++tid)
-        {
-            check();
-            term_progress(tid);
-            io::packed::read(topic_stream, topics_[tid]);
-        }
-    }
-
+    /// The topics, indexed by topic_id
     std::vector<stats::multinomial<term_id>> topics_;
+
+    /// The prior distribution to use for inferred topic proportions
     stats::dirichlet<topic_id> prior_;
 };
 }
