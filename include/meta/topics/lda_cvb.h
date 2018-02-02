@@ -29,6 +29,8 @@ namespace topics
 class lda_cvb : public lda_model
 {
   public:
+    class inferencer;
+
     /**
      * Constructs the lda model over the given documents, with the
      * given number of topics, and hyperparameters \f$\alpha\f$ and
@@ -110,6 +112,51 @@ class lda_cvb : public lda_model
      */
     std::vector<stats::multinomial<topic_id>> theta_;
 };
+
+namespace detail
+{
+template <class DecreaseCounts, class UpdateWeight, class IncreaseCounts>
+double update_gamma(const learn::feature_vector& doc, std::size_t num_topics,
+                    std::vector<stats::multinomial<topic_id>>& gammas,
+                    DecreaseCounts&& decrease_counts,
+                    UpdateWeight&& update_weight,
+                    IncreaseCounts&& increase_counts)
+{
+    double max_change = 0;
+    uint64_t n = 0;
+    for (const auto& freq : doc)
+    {
+        const auto& term = freq.first;
+        for (uint64_t j = 0; j < freq.second; ++j)
+        {
+            const auto old_gamma = gammas[n];
+
+            // remove current word's expected counts
+            for (topic_id k{0}; k < num_topics; ++k)
+                decrease_counts(k, term, old_gamma.probability(k));
+
+            // recompute gamma distribution
+            gammas[n].clear();
+            for (topic_id k{0}; k < num_topics; ++k)
+                gammas[n].increment(k, update_weight(k, term));
+
+            // redistribute expected counts and compute L1 change in gamma
+            double delta = 0;
+            for (topic_id k{0}; k < num_topics; ++k)
+            {
+                auto prob = gammas[n].probability(k);
+                increase_counts(k, term, prob);
+                delta += std::abs(prob - old_gamma.probability(k));
+            }
+            max_change = std::max(max_change, delta);
+
+            n += 1;
+        }
+    }
+
+    return max_change;
+}
+}
 }
 }
 #endif

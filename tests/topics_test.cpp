@@ -10,6 +10,7 @@
 #include "meta/index/forward_index.h"
 #include "meta/learn/dataset.h"
 #include "meta/topics/lda_cvb.h"
+#include "meta/topics/lda_cvb_inferencer.h"
 #include "meta/topics/lda_gibbs.h"
 #include "meta/topics/lda_gibbs_inferencer.h"
 #include "meta/topics/lda_scvb.h"
@@ -30,13 +31,14 @@ topics::topic_model load_topic_model(const std::string& prefix) {
 
 template <class TopicModel>
 void run_model(const learn::dataset& docs, const std::string& prefix,
+               std::size_t iter = 3,
                bool cleanup = true) {
     {
         const double delta = 0.0000001;
         const uint64_t num_topics = 3;
         TopicModel model{docs, num_topics, 0.1, 0.1}; // alpha = beta = 0.1
         AssertThat(model.num_topics(), Equals(num_topics));
-        model.run(3); // only run for three iterations
+        model.run(iter);
 
         // all term probs for all topics should sum to 1
         for (topic_id topic{0}; topic < model.num_topics(); ++topic) {
@@ -106,10 +108,21 @@ typename ModelType::inferencer load_inferencer(const std::string& prefix,
     return typename ModelType::inferencer{input, alpha};
 }
 
+stats::multinomial<topic_id> infer(const topics::lda_gibbs::inferencer& inf,
+                                   const learn::feature_vector& doc) {
+    random::xoroshiro128 rng{1337};
+    return inf(doc, 15, rng);
+}
+
+stats::multinomial<topic_id> infer(const topics::lda_cvb::inferencer& inf,
+                                   const learn::feature_vector& doc) {
+    return inf(doc, 15, 0.0001);
+}
+
 template <class ModelType>
 void test_inferencer(index::forward_index& idx, const learn::dataset& docs,
                      const std::string& prefix) {
-    run_model<topics::lda_gibbs>(docs, prefix, false);
+    run_model<ModelType>(docs, prefix, 20, false);
 
     // construct a document with a clear "smoking" topic
     corpus::document doc;
@@ -117,9 +130,8 @@ void test_inferencer(index::forward_index& idx, const learn::dataset& docs,
     auto fvec = idx.tokenize(doc);
 
     // perform inference on that document to infer its topic distribution
-    auto inf = load_inferencer<topics::lda_gibbs>(prefix, 0.1);
-    random::xoroshiro128 rng{1337};
-    auto dist = inf(fvec, 15, rng);
+    auto inf = load_inferencer<ModelType>(prefix, 0.1);
+    auto dist = infer(inf, fvec);
 
     const auto delta = 0.0000001;
     const std::size_t num_topics = 3;
@@ -183,6 +195,9 @@ go_bandit([]() {
 
         it("should infer topics for new documents with Gibbs sampling",
            [&]() { test_inferencer<topics::lda_gibbs>(*idx, docs, prefix); });
+
+        it("should infer topics for new documents with CVB0 inference",
+           [&]() { test_inferencer<topics::lda_cvb>(*idx, docs, prefix); });
     });
 
     filesystem::remove_all("ceeaus");

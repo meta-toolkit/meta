@@ -1,5 +1,5 @@
 /**
- * @file topics/lda_gibbs_inferencer.h
+ * @file topics/lda_cvb_inferencer.h
  * @author Chase Geigle
  *
  * All files in META are dual-licensed under the MIT and NCSA licenses. For more
@@ -7,27 +7,26 @@
  * project.
  */
 
-#ifndef META_LDA_GIBBS_INFERENCER_H_
-#define META_LDA_GIBBS_INFERENCER_H_
+#ifndef META_LDA_CVB_INFERENCER_H_
+#define META_LDA_CVB_INFERENCER_H_
 
 #include "meta/config.h"
 #include "meta/topics/inferencer.h"
-#include "meta/topics/lda_gibbs.h"
+#include "meta/topics/lda_cvb.h"
 
 namespace meta
 {
 namespace topics
 {
 
-class lda_gibbs::inferencer : public meta::topics::inferencer
+class lda_cvb::inferencer : public meta::topics::inferencer
 {
   public:
     using meta::topics::inferencer::inferencer;
 
-    template <class RandomNumberGenerator>
     stats::multinomial<topic_id> operator()(const learn::feature_vector& doc,
-                                            std::size_t iters,
-                                            RandomNumberGenerator&& rng) const
+                                            std::size_t max_iters,
+                                            double convergence) const
     {
         auto doc_size = std::accumulate(
             doc.begin(), doc.end(), 0.0,
@@ -36,28 +35,31 @@ class lda_gibbs::inferencer : public meta::topics::inferencer
                 return accum + weight.second;
             });
 
-        std::vector<topic_id> assignments(static_cast<std::size_t>(doc_size));
+        std::vector<stats::multinomial<topic_id>> gammas(
+            static_cast<std::size_t>(doc_size));
         stats::multinomial<topic_id> proportions{proportions_prior()};
 
-        for (std::size_t i = 0; i < iters; ++i)
+        for (std::size_t i = 0; i < max_iters; ++i)
         {
-            detail::sample_document(
-                doc, num_topics(), assignments,
+            auto max_change = detail::update_gamma(
+                doc, num_topics(), gammas,
                 // decrease counts
-                [&](topic_id old_topic, term_id) {
+                [&](topic_id topic, term_id, double prob) {
                     if (i > 0)
-                        proportions.decrement(old_topic, 1);
+                        proportions.decrement(topic, prob);
                 },
-                // sample weight
+                // update weight
                 [&](topic_id topic, term_id term) {
                     return proportions.probability(topic)
                            * term_distribution(topic).probability(term);
                 },
                 // increase counts
-                [&](topic_id new_topic, term_id) {
-                    proportions.increment(new_topic, 1);
-                },
-                std::forward<RandomNumberGenerator>(rng));
+                [&](topic_id topic, term_id, double prob) {
+                    proportions.increment(topic, prob);
+                });
+
+            if (max_change < convergence)
+                break;
         }
 
         return proportions;

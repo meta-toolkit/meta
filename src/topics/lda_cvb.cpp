@@ -70,29 +70,16 @@ void lda_cvb::initialize()
     {
         progress(doc.id);
 
-        uint64_t i = 0; // i here is the inter-document term id, since we need
-                        // to handle each word occurrence separately
-        for (const auto& freq : doc.weights)
-        {
-            for (uint64_t count = 0; count < freq.second; ++count)
-            {
-                // create random gamma distributions
-                for (topic_id k{0}; k < num_topics_; ++k)
-                {
-                    gamma_[doc.id][i].increment(k, rng());
-                }
-
-                // contribute expected counts to phi_ and theta_
-                for (topic_id k{0}; k < num_topics_; ++k)
-                {
-                    auto prob = gamma_[doc.id][i].probability(k);
-                    phi_[k].increment(freq.first, prob);
-                    theta_[doc.id].increment(k, prob);
-                }
-
-                i += 1;
-            }
-        }
+        detail::update_gamma(doc.weights, num_topics_, gamma_[doc.id],
+                             // decrease counts,
+                             [](topic_id, term_id, double) {},
+                             // update weight
+                             [&](topic_id, term_id) { return rng(); },
+                             // increase counts
+                             [&](topic_id topic, term_id term, double prob) {
+                                 theta_[doc.id].increment(topic, prob);
+                                 phi_[topic].increment(term, prob);
+                             });
     }
 }
 
@@ -106,47 +93,25 @@ double lda_cvb::perform_iteration(uint64_t iter)
     {
         progress(doc.id);
 
-        uint64_t i = 0; // term number within document---constructed
-                        // so that each occurrence of the same term
-                        // can still be assigned a different topic
-        for (const auto& freq : doc.weights)
-        {
-            for (uint64_t count = 0; count < freq.second; ++count)
-            {
-                auto old_gamma = gamma_[doc.id][i];
-                for (topic_id k{0}; k < num_topics_; ++k)
-                {
-                    // remove this word occurrence from the distributions
-                    auto prob = gamma_[doc.id][i].probability(k);
-                    phi_[k].decrement(freq.first, prob);
-                    theta_[doc.id].decrement(k, prob);
-                }
+        auto doc_max_change = detail::update_gamma(
+            doc.weights, num_topics_, gamma_[doc.id],
+            // decrease counts
+            [&](topic_id topic, term_id term, double prob) {
+                theta_[doc.id].decrement(topic, prob);
+                phi_[topic].decrement(term, prob);
+            },
+            // update weight
+            [&](topic_id topic, term_id term) {
+                return theta_[doc.id].probability(topic)
+                       * phi_[topic].probability(term);
+            },
+            // increase counts
+            [&](topic_id topic, term_id term, double prob) {
+                theta_[doc.id].increment(topic, prob);
+                phi_[topic].increment(term, prob);
+            });
 
-                gamma_[doc.id][i].clear();
-                for (topic_id k{0}; k < num_topics_; ++k)
-                {
-                    // "sample" the next topic: we are doing
-                    // soft-assignment here so we actually just compute the
-                    // probability of this topic
-                    auto weight = phi_[k].probability(freq.first)
-                                  * theta_[doc.id].probability(k);
-                    gamma_[doc.id][i].increment(k, weight);
-                }
-
-                double delta = 0;
-                for (topic_id k{0}; k < num_topics_; ++k)
-                {
-                    // recontribute expected counts, keep track of gamma
-                    // changes for convergence
-                    auto prob = gamma_[doc.id][i].probability(k);
-                    phi_[k].increment(freq.first, prob);
-                    theta_[doc.id].increment(k, prob);
-                    delta += std::abs(prob - old_gamma.probability(k));
-                }
-                max_change = std::max(max_change, delta);
-                i += 1;
-            }
-        }
+        max_change = std::max(max_change, doc_max_change);
     }
     return max_change;
 }
