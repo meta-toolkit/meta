@@ -74,6 +74,12 @@ class inferencer
     /// The prior distribution to use for inferred topic proportions
     stats::dirichlet<topic_id> prior_;
 };
+
+class inferencer_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
 }
 }
 #endif

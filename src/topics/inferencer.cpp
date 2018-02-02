@@ -19,35 +19,35 @@ inferencer::inferencer(const cpptoml::table& config)
     auto topics_cfg = config.get_table("lda");
     if (!topics_cfg)
     {
-        throw topic_model_exception{
+        throw inferencer_exception{
             "Missing [lda] configuration in configuration file"};
     }
 
     auto prefix = topics_cfg->get_as<std::string>("model-prefix");
     if (!prefix)
     {
-        throw topic_model_exception{"Missing prefix key in configuration file"};
+        throw inferencer_exception{"Missing prefix key in configuration file"};
     }
 
     std::ifstream phi{*prefix + ".phi.bin", std::ios::binary};
 
     if (!phi)
     {
-        throw topic_model_exception{
+        throw inferencer_exception{
             "missing topic term probabilities file:" + *prefix + ".phi.bin"};
     }
 
     auto alpha = topics_cfg->get_as<double>("alpha");
     if (!alpha)
     {
-        throw topic_model_exception{
+        throw inferencer_exception{
             "missing alpha parameter in configuration file"};
     }
 
     auto num_topics = topics_cfg->get_as<uint64_t>("topics");
     if (!num_topics)
     {
-        throw topic_model_exception{"missing topics key in [lda] table"};
+        throw inferencer_exception{"missing topics key in [lda] table"};
     }
 
     prior_ = stats::dirichlet<topic_id>(*alpha, *num_topics);
@@ -64,7 +64,7 @@ void inferencer::load_from_stream(std::istream& topic_stream)
 {
     auto check = [&]() {
         if (!topic_stream)
-            throw topic_model_exception{"topic term stream ended unexpectedly"};
+            throw inferencer_exception{"topic term stream ended unexpectedly"};
     };
 
     auto num_topics = io::packed::read<std::size_t>(topic_stream);
