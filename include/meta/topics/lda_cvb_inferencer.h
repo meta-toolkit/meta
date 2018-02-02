@@ -19,51 +19,27 @@ namespace meta
 namespace topics
 {
 
+/**
+ * An inferencer for topic proportions for unseen documents that uses
+ * collapsed variational Bayes inference.
+ */
 class lda_cvb::inferencer : public meta::topics::inferencer
 {
   public:
     using meta::topics::inferencer::inferencer;
 
+    /**
+     * Performs inference using the CVB0 algorithm to determine the topic
+     * proportions for the supplied document.
+     *
+     * @param doc the document to be analyzed
+     * @param max_iters the maximum number of inference iterations
+     * @param convergence convergence threshold (maximum L1 change in
+     * word-topic distribution vectors)
+     */
     stats::multinomial<topic_id> operator()(const learn::feature_vector& doc,
                                             std::size_t max_iters,
-                                            double convergence) const
-    {
-        auto doc_size = std::accumulate(
-            doc.begin(), doc.end(), 0.0,
-            [](double accum,
-               const std::pair<learn::feature_id, double>& weight) {
-                return accum + weight.second;
-            });
-
-        std::vector<stats::multinomial<topic_id>> gammas(
-            static_cast<std::size_t>(doc_size));
-        stats::multinomial<topic_id> proportions{proportions_prior()};
-
-        for (std::size_t i = 0; i < max_iters; ++i)
-        {
-            auto max_change = detail::update_gamma(
-                doc, num_topics(), gammas,
-                // decrease counts
-                [&](topic_id topic, term_id, double prob) {
-                    if (i > 0)
-                        proportions.decrement(topic, prob);
-                },
-                // update weight
-                [&](topic_id topic, term_id term) {
-                    return proportions.probability(topic)
-                           * term_distribution(topic).probability(term);
-                },
-                // increase counts
-                [&](topic_id topic, term_id, double prob) {
-                    proportions.increment(topic, prob);
-                });
-
-            if (max_change < convergence)
-                break;
-        }
-
-        return proportions;
-    }
+                                            double convergence) const;
 };
 }
 }
