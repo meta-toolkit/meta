@@ -30,7 +30,8 @@ class lda_cvb::inferencer : public meta::topics::inferencer
 
     /**
      * Performs inference using the CVB0 algorithm to determine the topic
-     * proportions for the supplied document.
+     * proportions for the supplied document. The topics themselves are
+     * held fixed and are not modified by this function.
      *
      * @param doc the document to be analyzed
      * @param max_iters the maximum number of inference iterations
