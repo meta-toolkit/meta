@@ -40,6 +40,8 @@ class const_visitor
      * node
      */
     virtual result_type operator()(const internal_node&) = 0;
+
+    virtual ~const_visitor() = default;
 };
 
 /**
@@ -65,6 +67,8 @@ class visitor
      * node
      */
     virtual result_type operator()(internal_node&) = 0;
+
+    virtual ~visitor() = default;
 };
 }
 }
