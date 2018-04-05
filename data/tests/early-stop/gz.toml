@@ -1,0 +1,4 @@
+# file: gz.toml
+type = "gz-corpus"
+encoding = "shift_jis"
+num-docs = 1008

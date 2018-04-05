@@ -1,0 +1,4 @@
+# file: file.toml
+type = "file-corpus"
+list = "early-stop"
+encoding = "shift_jis"

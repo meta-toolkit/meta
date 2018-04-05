@@ -22,6 +22,8 @@ file_corpus::file_corpus(const std::string& prefix, const std::string& doc_list,
     : corpus{std::move(encoding)}, cur_{0}, prefix_{prefix}
 {
     std::ifstream input{doc_list};
+    if (!input)
+        throw corpus_exception{"failed to open corpus list " + doc_list};
     uint64_t idx = 0;
     std::string line;
     while (std::getline(input, line))
