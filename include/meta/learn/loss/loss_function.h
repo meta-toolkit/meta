@@ -58,6 +58,8 @@ struct loss_function
      * @param out The stream to write to
      */
     virtual void save(std::ostream& out) const = 0;
+
+    virtual ~loss_function() = default;
 };
 }
 }
