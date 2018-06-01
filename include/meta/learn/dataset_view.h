@@ -146,6 +146,19 @@ class dataset_view
             return ret;
         }
 
+        iterator& operator--()
+        {
+            --it_;
+            return *this;
+        }
+
+        iterator operator--(int)
+        {
+            auto ret = *this;
+            --(*this);
+            return ret;
+        }
+
         iterator& operator+=(difference_type n)
         {
             it_ += n;
