@@ -13,7 +13,7 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       USE_MSVC: ON
       ZLIB_URL: http://zlib.net/zlib-1.2.11.tar.xz
-      ICU_URL: http://download.icu-project.org/files/icu4c/60.2/icu4c-60_2-Win64-MSVC2015.zip
+      ICU_URL: http://download.icu-project.org/files/icu4c/61.1/icu4c-61_1-Win64-MSVC2017.zip
       NINJA_URL: https://github.com/ninja-build/ninja/releases/download/v1.7.2/ninja-win.zip
 
 install:

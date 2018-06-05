@@ -1,0 +1,5 @@
+chinese chinese/ceecus_ptj_01.txt
+chinese chinese/ceecus_ptj_02.txt
+chinese chinese/ceecus_ptj_03.txt
+chinese chinese/ceecus_ptj_04.txt
+chinese chinese/ceecus_ptj_05.txt

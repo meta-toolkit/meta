@@ -24,6 +24,8 @@ libsvm_corpus::libsvm_corpus(const std::string& file,
       num_lines_{num_docs},
       input_{file}
 {
+    if (!input_)
+        throw corpus_exception{"failed to open input file " + file};
     // if we couldn't determine the number of lines in the constructor, we have
     // to count newlines
     if (num_lines_ == 0)
