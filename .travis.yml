@@ -106,7 +106,7 @@ matrix:
     - os: linux
       env:
         - COMPILER=clang
-        - CLANG_VERSION=6.0.1
+        - CLANG_VERSION=6.0
         - LLVM_TAG=RELEASE_601
         - LIBCXX_EXTRA_CMAKE_FLAGS=-DLIBCXX_INSTALL_EXPERIMENTAL_LIBRARY=On
         - CMAKE_VERSION=3.4.3
