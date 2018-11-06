@@ -55,7 +55,7 @@ endif()
 cmake_push_check_state()
 
 # Work around CMake not propagating the standard flag down to the compiler
-if (NOT MSVC_VERSION)
+if (NOT MSVC_VERSION OR ${CMAKE_VERSION} VERSION_GREATER 3.9)
   if (CMAKE_CXX_STANDARD EQUAL 17)
     set(META_CXX_STANDARD_OPTION "${CMAKE_CXX17_STANDARD_COMPILE_OPTION}")
   else()
