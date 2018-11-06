@@ -12,7 +12,20 @@
 #include "meta/util/printing.h"
 #include "meta/util/progress.h"
 
-#if META_HAS_EXPERIMENTAL_FILESYSTEM == 0
+#if META_HAS_FILESYSTEM
+#if META_HAS_STD_FILESYSTEM
+#include <filesystem>
+#else
+#include <experimental/filesystem>
+#endif
+#else // no filesystem library found
+
+#ifdef _WIN32
+// chrono and thread for a sleep_for hack in remove_all
+#include <chrono>
+#include <thread>
+#endif
+
 // reordering these includes screws stuff up, so leave whitespace between
 // them so clang-format won't reorder
 #include <platformstl/filesystem/filesystem_traits.hpp>
@@ -22,15 +35,6 @@
 #include <platformstl/filesystem/readdir_sequence.hpp>
 
 #include <platformstl/filesystem/directory_functions.hpp>
-#else
-
-#ifdef _WIN32
-// chrono and thread for a sleep_for hack in remove_all below
-#include <chrono>
-#include <thread>
-#endif
-
-#include <experimental/filesystem>
 #endif
 
 namespace meta
@@ -38,7 +42,7 @@ namespace meta
 namespace filesystem
 {
 
-#if META_HAS_EXPERIMENTAL_FILESYSTEM == 0
+#if META_HAS_FILESYSTEM == 0
 namespace
 {
 using traits = platformstl::filesystem_traits<char>;
@@ -167,8 +171,7 @@ std::uintmax_t remove_all(const std::string& path)
 {
     return remove_all(path_type{path.c_str()});
 }
-#else
-namespace fs = std::experimental::filesystem;
+#else // META_HAS_FILESYSTEM == 1
 
 bool delete_file(const std::string& filename)
 {
@@ -220,7 +223,7 @@ std::uintmax_t remove_all(const std::string& dirs)
     const auto path = fs::u8path(dirs);
     if (!fs::exists(path))
         return 0;
-#if META_HAS_EXPERIMENTAL_FILESYSTEM_REMOVE_ALL
+#if META_HAS_WORKING_FILESYSTEM_REMOVE_ALL
     return fs::remove_all(path);
 #else
     // fs::remove_all doesn't properly recurse on directories, so we get

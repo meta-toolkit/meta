@@ -22,7 +22,7 @@ class tag_visitor : public parser::const_visitor<void>
 
     void operator()(const parser::internal_node& in) override
     {
-        counts(tag_featurizer::id.to_string() + "-"
+        counts(util::to_string(tag_featurizer::id) + "-"
                    + static_cast<std::string>(in.category()),
                1ul);
         in.each_child([&](const parser::node* child)
@@ -33,7 +33,7 @@ class tag_visitor : public parser::const_visitor<void>
 
     void operator()(const parser::leaf_node& ln) override
     {
-        counts(tag_featurizer::id.to_string() + "-"
+        counts(util::to_string(tag_featurizer::id) + "-"
                    + static_cast<std::string>(ln.category()),
                1ul);
     }

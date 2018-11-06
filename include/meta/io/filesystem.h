@@ -16,6 +16,10 @@
 
 #include "meta/config.h"
 
+#if META_HAS_STD_FILESYSTEM
+#include <filesystem>
+#endif
+
 #if META_HAS_EXPERIMENTAL_FILESYSTEM
 #include <experimental/filesystem>
 #endif
@@ -25,14 +29,20 @@ namespace meta
 namespace filesystem
 {
 
-#if META_HAS_EXPERIMENTAL_FILESYSTEM == 0
+#if META_HAS_STD_FILESYSTEM
+namespace fs = std::filesystem;
+#elif META_HAS_EXPERIMENTAL_FILESYSTEM
+namespace fs = std::experimental::filesystem;
+#else
 class filesystem_exception : public std::runtime_error
 {
   public:
     using std::runtime_error::runtime_error;
 };
-#else
-using filesystem_exception = std::experimental::filesystem::filesystem_error;
+#endif
+
+#if META_HAS_FILESYSTEM
+using filesystem_exception = fs::filesystem_error;
 #endif
 
 /**

@@ -66,7 +66,7 @@ std::vector<metadata::field> metadata_parser::next()
 
                 case metadata::field_type::STRING:
                 {
-                    mdata.emplace_back(token.to_string());
+                    mdata.emplace_back(util::to_string(token));
                     break;
                 }
             }

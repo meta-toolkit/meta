@@ -24,6 +24,16 @@ if (NOT (MSVC_VERSION AND CMAKE_COMPILER_ID MATCHES "Clang"))
   set(CMAKE_CXX_STANDARD 14)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_CXX_EXTENSIONS OFF)
+
+  if (${CMAKE_VERSION} VERSION_GREATER 3.7)
+    # CMake adds support for the C++17 standard in version 3.8. This is
+    # needed in newer versions of clang and libc++ to enable std::optional,
+    # std::string_view, and friends.
+    list(FIND CMAKE_CXX_COMPILE_FEATURES "cxx_std_17" _index)
+    if (_index GREATER -1)
+      set(CMAKE_CXX_STANDARD 17)
+    endif()
+  endif()
 endif()
 
 set(META_PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR})
@@ -46,7 +56,12 @@ cmake_push_check_state()
 
 # Work around CMake not propagating the standard flag down to the compiler
 if (NOT MSVC_VERSION)
-  set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${CMAKE_CXX14_STANDARD_COMPILE_OPTION}")
+  if (CMAKE_CXX_STANDARD EQUAL 17)
+    set(META_CXX_STANDARD_OPTION "${CMAKE_CXX17_STANDARD_COMPILE_OPTION}")
+  else()
+    set(META_CXX_STANDARD_OPTION "${CMAKE_CXX14_STANDARD_COMPILE_OPTION}")
+  endif()
+  set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${META_CXX_STANDARD_OPTION}")
 endif()
 
 # Check if there is no build type set. If meta itself is the root project,

@@ -90,7 +90,7 @@ std::unique_ptr<corpus> make_corpus<libsvm_corpus>(util::string_view prefix,
                                                    const cpptoml::table& config)
 {
     // string_view doesn't have operator+ overloads...
-    auto filename = prefix.to_string();
+    auto filename = util::to_string(prefix);
     filename += "/";
     filename.append(dataset.data(), dataset.size());
     filename += "/";

@@ -73,7 +73,7 @@ std::unique_ptr<corpus> make_corpus<gz_corpus>(util::string_view prefix,
         throw corpus_exception{"num-docs config param required for gz_corpus"};
 
     // string_view doesn't have operator+ overloads...
-    auto filename = prefix.to_string();
+    auto filename = util::to_string(prefix);
     filename += "/";
     filename.append(dataset.data(), dataset.size());
     filename += "/";

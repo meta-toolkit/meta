@@ -100,7 +100,7 @@ std::unique_ptr<corpus> make_corpus<file_corpus>(util::string_view prefix,
         throw corpus_exception{"list missing from corpus configuration file"};
 
     // string_view doesn't have operator+ overloads...
-    auto folder = prefix.to_string();
+    auto folder = util::to_string(prefix);
     folder += "/";
     folder.append(dataset.data(), dataset.size());
     folder += "/";

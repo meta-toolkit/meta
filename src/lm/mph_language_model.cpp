@@ -95,7 +95,7 @@ class ngram_handler
                         if (!id)
                             throw std::runtime_error{
                                 "ngram contains unknown unigram "
-                                + unigram.to_string()};
+                                + util::to_string(unigram)};
                         ids.push_back(term_id{*id});
                     }
                 });

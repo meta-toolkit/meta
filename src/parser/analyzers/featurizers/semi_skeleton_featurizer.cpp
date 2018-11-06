@@ -30,14 +30,14 @@ class semi_skeleton_visitor : public parser::const_visitor<std::string>
                       });
         rep += ")";
 
-        counts(semi_skeleton_featurizer::id.to_string() + "-" + rep_cat + rep,
+        counts(util::to_string(semi_skeleton_featurizer::id) + "-" + rep_cat + rep,
                1ul);
         return "(" + rep;
     }
 
     std::string operator()(const parser::leaf_node& ln) override
     {
-        counts(semi_skeleton_featurizer::id.to_string() + "-("
+        counts(util::to_string(semi_skeleton_featurizer::id) + "-("
                    + static_cast<std::string>(ln.category()) + ")",
                1ul);
         return "()";

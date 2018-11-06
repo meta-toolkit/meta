@@ -82,7 +82,7 @@ class factory
     {
         if (methods_.find(identifier) == methods_.end())
             throw exception{"unrecognized identifier: \""
-                            + identifier.to_string() + "\""};
+                            + util::to_string(identifier) + "\""};
         return methods_[identifier](std::forward<Args>(args)...);
     }
 
