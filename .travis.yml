@@ -102,22 +102,22 @@ matrix:
             - libc++-dev
             - libc++abi-dev
 
-    # Linux/Clang 6.0 + libc++-6.0
+    # Linux/Clang 7.0 + libc++-7.0
     - os: linux
       env:
         - COMPILER=clang
-        - CLANG_VERSION=6.0
-        - LLVM_TAG=RELEASE_601
+        - CLANG_VERSION=7.0
+        - LLVM_TAG=RELEASE_700
         - LIBCXX_EXTRA_CMAKE_FLAGS=-DLIBCXX_INSTALL_EXPERIMENTAL_LIBRARY=On
-        - CMAKE_VERSION=3.4.3
+        - CMAKE_VERSION=3.7.0
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-6.0
+            - llvm-toolchain-trusty-7.0
             - ubuntu-toolchain-r-test
           packages:
             - *default-packages
-            - clang-6.0
+            - clang-7.0
 
     # OS X 10.11 + Xcode 7.3
     - os: osx
