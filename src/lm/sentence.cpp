@@ -25,7 +25,7 @@ sentence::sentence(const std::string& text, bool tokenize /* = true */)
         {
             auto str = segmenter.content(word);
             if (!str.empty() && !std::all_of(str.begin(), str.end(), ::isspace))
-                tokens_.emplace_back(std::move(str));
+                tokens_.emplace_back(util::to_string(str));
         }
 
         if (tokens_.empty())
