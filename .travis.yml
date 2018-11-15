@@ -106,7 +106,7 @@ matrix:
     - os: linux
       env:
         - COMPILER=clang
-        - CLANG_VERSION=7.0
+        - CLANG_VERSION=7
         - LLVM_TAG=RELEASE_700
         - LIBCXX_EXTRA_CMAKE_FLAGS=-DLIBCXX_INSTALL_EXPERIMENTAL_LIBRARY=On
         - CMAKE_VERSION=3.7.0
@@ -117,7 +117,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - *default-packages
-            - clang-7.0
+            - clang-7
 
     # OS X 10.11 + Xcode 7.3
     - os: osx
