@@ -19,7 +19,9 @@ environment:
 install:
     # Install setup for MSYS2
     - IF DEFINED USE_MSYS2 bash -lc ""
-    - IF DEFINED USE_MSYS2 bash -lc "pacman --noconfirm --needed -Syu"
+    - IF DEFINED USE_MSYS2 bash -lc "pacman --noconfirm -Syu"
+    # update twice because the first update might only update msys2 core
+    - IF DEFINED USE_MSYS2 bash -lc "pacman --noconfirm -Syu"
     # kludge for error: "mingw-w64-x86_64-gcc: /mingw64/etc/gdbinit exists in filesystem"
     - IF DEFINED USE_MSYS2 bash -lc "rm -f /mingw64/etc/gdbinit"
     # we don't actually need ada, fortran, libgfortran, or objc, but in
