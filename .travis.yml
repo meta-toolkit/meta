@@ -113,7 +113,7 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-7.0
+            - llvm-toolchain-trusty-7
             - ubuntu-toolchain-r-test
           packages:
             - *default-packages
