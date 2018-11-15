@@ -128,7 +128,7 @@ struct META_EMPTY_BASES identifier : public comparable<identifier<Tag, T>>
         typename U = T,
         typename
         = typename std::enable_if<std::is_same<U, std::string>::value>::type>
-    constexpr operator util::string_view() const
+    explicit constexpr operator util::string_view() const
     {
         return id_;
     }
