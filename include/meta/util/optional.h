@@ -12,14 +12,14 @@
 
 #include "meta/config.h"
 
-#if META_HAS_OPTIONAL
-#include <optional>
-#elif META_HAS_EXPERIMENTAL_OPTIONAL
-#include <experimental/optional>
-#else
+#if !META_HAS_STD_OPTIONAL && !META_HAS_EXPERIMENTAL_OPTIONAL
 #include "meta/util/comparable.h"
 #include <stdexcept>
 #include <type_traits>
+#elif META_HAS_OPTIONAL_HEADER
+#include <optional>
+#elif META_HAS_EXPERIMENTAL_OPTIONAL_HEADER
+#include <experimental/optional>
 #endif
 
 #if META_HAS_STD_OPTIONAL

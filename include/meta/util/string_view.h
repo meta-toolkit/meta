@@ -13,14 +13,14 @@
 #include "meta/config.h"
 #include "meta/hashing/hash.h"
 
-#if META_HAS_STRING_VIEW
-#include <string_view>
-#elif META_HAS_EXPERIMENTAL_STRING_VIEW
-#include <experimental/string_view>
-#else
+#if !META_HAS_STD_STRING_VIEW && !META_HAS_EXPERIMENTAL_STRING_VIEW
 #include <algorithm>
 #include <stdexcept>
 #include <string>
+#elif META_HAS_STRING_VIEW_HEADER
+#include <string_view>
+#elif META_HAS_EXPERIMENTAL_STRING_VIEW_HEADER
+#include <experimental/string_view>
 #endif
 
 namespace meta
