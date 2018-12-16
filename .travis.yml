@@ -109,7 +109,7 @@ matrix:
         - CLANG_VERSION=7
         - LLVM_TAG=RELEASE_700
         - LIBCXX_EXTRA_CMAKE_FLAGS=-DLIBCXX_INSTALL_EXPERIMENTAL_LIBRARY=On
-        - CMAKE_VERSION=3.7.0
+        - CMAKE_VERSION=3.8.2
       addons:
         apt:
           sources:
