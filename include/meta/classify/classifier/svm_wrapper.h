@@ -74,6 +74,17 @@ class svm_wrapper : public classifier
                 kernel kernel_opt = kernel::None);
 
     /**
+     * Constructor. Should only be used as RankSVM.
+     * @param svm_path The path to the liblinear/libsvm library
+     * @param kernel_opt Which kind of kernel you want to use (default:
+     * None)
+     * This constructor assumes that caller has written training documents
+     * into svm-train file
+     */
+    svm_wrapper(const std::string& svm_path,
+                kernel kernel_opt = kernel::None);
+
+    /**
      * Loads a svm_wrapper from a stream.
      * @param in The stream to read from
      */
@@ -82,12 +93,26 @@ class svm_wrapper : public classifier
     void save(std::ostream& out) const override;
 
     /**
+     * Save weights as RankSVM to a stream. Should only be used as RankSVM.
+     * @param out
+     */
+    void save_weights(std::ostream& out) const;
+
+    /**
      * Classifies a document into a specific group, as determined by
      * training data.
      * @param doc The document to classify
      * @return the class it belongs to
      */
     class_label classify(const feature_vector& doc) const override;
+
+    /**
+     * Compute score of given document by dot product with weights
+     * learned by this SVM (should only be used as RankSVM).
+     * @param doc The document to compute score
+     * @return score of this document
+     */
+    double computeScore(feature_vector& doc);
 
     /**
      * Classifies a collection document into specific groups, as determined
@@ -121,6 +146,18 @@ class svm_wrapper : public classifier
 
     /** the list of class_labels (mainly for serializing the model) */
     std::vector<class_label> labels_;
+
+    /** weights learned by this SVM */
+    std::vector<double> weights_;
+
+    /**
+     * Load weights from train model file written by this SVM. Should
+     * only be used as RankSVM.
+     *
+     * @param
+     * @return
+     */
+    void load_weights();
 };
 
 class svm_wrapper_exception : public std::runtime_error

@@ -71,6 +71,14 @@ void sgd_model::save(std::ostream& out) const
     io::packed::write(out, t_);
 }
 
+void sgd_model::save_weights(std::ostream& out) const
+{
+    for (const auto& weight_val : weights_)
+    {
+        out << weight_val.weight << std::endl;
+    }
+}
+
 double sgd_model::predict(const feature_vector& x) const
 {
     auto val = scale_ * bias_.weight;

@@ -82,6 +82,11 @@ class sgd_model
     void save(std::ostream& out) const;
 
     /**
+     * Saves the weights of current model in non-compact format.
+     */
+    void save_weights(std::ostream& out) const;
+
+    /**
      * Calibrates the learning rate for the model based on sample data.
      * Search strategy inspired by Leon Bottou's SGD package.
      *
