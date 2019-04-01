@@ -159,7 +159,7 @@ std::unique_ptr<classifier> make_multi_index_classifier<knn>(
 
     auto use_weighted = config.get_as<bool>("weighted").value_or(false);
     return make_unique<knn>(std::move(training), std::move(inv_idx), *k,
-                            index::make_ranker(*ranker), use_weighted);
+                            index::make_ranker(config, *ranker), use_weighted);
 }
 }
 }

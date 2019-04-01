@@ -3,6 +3,7 @@
  * @author Chase Geigle
  */
 
+#include <meta/index/ranker/wmd_base.h>
 #include "cpptoml.h"
 #include "meta/index/ranker/all.h"
 #include "meta/index/ranker/ranker_factory.h"
@@ -31,6 +32,7 @@ ranker_factory::ranker_factory()
     reg<pivoted_length>();
     reg<kl_divergence_prf>();
     reg<rocchio>();
+    reg<wmd_base>();
 }
 
 std::unique_ptr<ranker> make_ranker(const cpptoml::table& config)

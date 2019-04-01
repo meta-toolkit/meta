@@ -85,7 +85,8 @@ class generic_shard_cache
      * The hash function used for determining which shard a key
      * belongs to.
      */
-    std::hash<Key> hasher_;
+//    std::hash<Key> hasher_;
+    hashing::hash<> hasher_;
 };
 
 /**

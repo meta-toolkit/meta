@@ -9,8 +9,9 @@ add_library(meta-ranker absolute_discount.cpp
                         kl_divergence_prf.cpp
                         rocchio.cpp
                         ranker.cpp
-                        ranker_factory.cpp)
-target_link_libraries(meta-ranker meta-index)
+                        ranker_factory.cpp
+                        wmd_base.cpp)
+target_link_libraries(meta-ranker meta-index meta-wmd)
 
 install(TARGETS meta-ranker
         EXPORT meta-exports
