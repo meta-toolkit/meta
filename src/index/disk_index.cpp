@@ -123,6 +123,20 @@ std::vector<doc_id> disk_index::docs() const
     return ret;
 }
 
+std::vector<term_id> disk_index::terms() const
+{
+    std::vector<term_id> ret(unique_terms());
+    std::iota(ret.begin(), ret.end(), 0_tid);
+    return ret;
+}
+
+std::vector<term_id> disk_index::terms(doc_id d_id) const
+{
+    std::vector<term_id> ret(unique_terms(d_id));
+    std::iota(ret.begin(), ret.end(), 0_tid);
+    return ret;
+}
+
 // disk_index_impl
 
 const std::vector<const char*> disk_index::disk_index_impl::files

@@ -18,7 +18,6 @@ namespace meta
 {
 namespace stats
 {
-
 /**
  * Computation for \f$E_d[f(x)]\f$ where \f$d\f$ is specified by the
  * `dist` parameter and \f$f(x)\f$ is the `fun` parameter.

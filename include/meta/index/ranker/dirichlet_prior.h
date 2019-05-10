@@ -66,10 +66,16 @@ class dirichlet_prior : public language_model_ranker
      */
     float doc_constant(const score_data& sd) const override;
 
-  private:
+    float parameter() const {
+        return mu_;
+    }
+
+  protected:
     /// the Dirichlet prior parameter
-    const float mu_;
+//    const float mu_;
+    float mu_;
 };
+
 
 /**
  * Specialization of the factory method used to create dirichlet_prior
@@ -77,6 +83,7 @@ class dirichlet_prior : public language_model_ranker
  */
 template <>
 std::unique_ptr<ranker> make_ranker<dirichlet_prior>(const cpptoml::table&);
+
 }
 }
 #endif

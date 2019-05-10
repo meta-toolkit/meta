@@ -31,6 +31,9 @@ ranker_factory::ranker_factory()
     reg<pivoted_length>();
     reg<kl_divergence_prf>();
     reg<rocchio>();
+    reg<dirichlet_digamma_rec>();
+    reg<dirichlet_log_approx>();
+    reg<dirichlet_mackay_peto>();
 }
 
 std::unique_ptr<ranker> make_ranker(const cpptoml::table& config)

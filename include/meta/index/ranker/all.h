@@ -1,6 +1,7 @@
 #include "meta/index/ranker/ranker.h"
 #include "meta/index/ranker/absolute_discount.h"
 #include "meta/index/ranker/dirichlet_prior.h"
+#include "meta/index/ranker/dirichlet_prior_opt.h"
 #include "meta/index/ranker/jelinek_mercer.h"
 #include "meta/index/ranker/lm_ranker.h"
 #include "meta/index/ranker/okapi_bm25.h"
