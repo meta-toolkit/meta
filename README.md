@@ -298,7 +298,7 @@ You can now test the system by running the following command:
 If everything passes, congratulations! MeTA seems to be working on your
 system.
 
-## Ubuntu 15.10 Build Guide
+## Ubuntu 15.10 (and newer) Build Guide
 Ubuntu's non-LTS desktop offering in 15.10 has enough modern software in
 its repositories to build MeTA without much trouble. To install the
 dependencies, run the following commands.
@@ -326,6 +326,24 @@ cp ../config.toml .
 
 # configure and build the project
 cmake ../ -DCMAKE_BUILD_TYPE=Release
+make
+```
+
+### Note: On newer versions of Ubuntu, some of the dependencies have changed. This can cause an issue during the build process with the following error:
+
+```
+meta/build/deps/icu-58.2/src/ExternalICU/source/i18n/digitlst.cpp:67:13: fatal error: xlocale.h: No such file or directory
+ #   include <xlocale.h>
+             ^~~~~~~~~~~
+compilation terminated.
+```
+
+This error can be fixed by executing the following command and running `make` again.
+
+```
+sed -i 's/xlocale/locale/' deps/icu-58.2/src/ExternalICU/source/i18n/digitlst.cpp
+
+# run make again
 make
 ```
 
