@@ -30,21 +30,23 @@ namespace topics
 class lda_gibbs : public lda_model
 {
   public:
+    class inferencer;
+
     /**
      * Constructs the lda model over the given documents, with the
      * given number of topics, and hyperparameters \f$\alpha\f$ and
      * \f$\beta\f$ for the priors on \f$\phi\f$ (topic distributions)
      * and \f$\theta\f$ (topic proportions), respectively.
      *
-     * @param idx The index that contains the documents to model
+     * @param docs Documents to model
      * @param num_topics The number of topics to infer
      * @param alpha The hyperparameter for the Dirichlet prior over
      * \f$\phi\f$
      * @param beta The hyperparameter for the Dirichlet prior over
      * \f$\theta\f$
      */
-    lda_gibbs(std::shared_ptr<index::forward_index> idx, std::size_t num_topics,
-              double alpha, double beta);
+    lda_gibbs(const learn::dataset& docs, std::size_t num_topics, double alpha,
+              double beta);
 
     /**
      * Destructor: virtual for potential subclassing.
@@ -82,36 +84,16 @@ class lda_gibbs : public lda_model
      * @param doc The document we are concerned with.
      * @param topic The topic we are concerned with.
      */
-    virtual double compute_doc_topic_probability(doc_id doc,
+    virtual double compute_doc_topic_probability(learn::instance_id doc,
                                                  topic_id topic) const override;
 
+    virtual stats::multinomial<topic_id>
+    topic_distribution(doc_id doc) const override;
+
+    virtual stats::multinomial<term_id>
+    term_distribution(topic_id k) const override;
+
   protected:
-    /**
-     * Samples a topic from the full conditional distribution
-     * \f$P(z_i = j | w, \boldsymbol{z})\f$. Used in both initialization
-     * and each normal iteration of the sampler, after removing the
-     * current value of \f$z_i\f$ from the vector of assignments
-     * \f$\boldsymbol{z}\f$.
-     *
-     * @param term The term we are sampling a topic assignment for
-     * @param doc The document the term resides in
-     * @return the topic sampled the given (term, doc) pair
-     */
-    topic_id sample_topic(term_id term, doc_id doc);
-
-    /**
-     * Computes a weight proportional to \f$P(z_i = j | w, \boldsymbol{z})\f$.
-     *
-     * @param term The current word we are sampling for
-     * @param doc The document in which the term resides
-     * @param topic The topic \f$j\f$ we want to compute the
-     * probability for
-     * @return a weight proportional to the probability that the given term
-     * in the given document belongs to the given topic
-     */
-    virtual double compute_sampling_weight(term_id term, doc_id doc,
-                                           topic_id topic) const;
-
     /**
      * Initializes the first set of topic assignments for inference.
      * Employs an online application of the sampler where counts are
@@ -127,26 +109,6 @@ class lda_gibbs : public lda_model
      * `false`)
      */
     virtual void perform_iteration(uint64_t iter, bool init = false);
-
-    /**
-     * Decreases all counts associated with the given topic, term, and
-     * document by one.
-     *
-     * @param topic The topic in question
-     * @param term The term in question
-     * @param doc The document in question
-     */
-    virtual void decrease_counts(topic_id topic, term_id term, doc_id doc);
-
-    /**
-     * Increases all counts associated with the given topic, term, and
-     * document by one.
-     *
-     * @param topic The topic in question
-     * @param term The term in question
-     * @param doc The document in question
-     */
-    virtual void increase_counts(topic_id topic, term_id term, doc_id doc);
 
     /**
      * @return \f$\log P(\mathbf{w} \mid \mathbf{z})\f$
@@ -169,7 +131,7 @@ class lda_gibbs : public lda_model
      * potentially have many different topics assigned to it, so we are
      * not using term_ids here, but our own contrived intra document term id.
      *
-     * Indexed as [doc_id][position].
+     * Indexed as [instance_id][position].
      */
     std::vector<std::vector<topic_id>> doc_word_topic_;
 
@@ -188,7 +150,59 @@ class lda_gibbs : public lda_model
      */
     std::mt19937_64 rng_;
 };
-}
+
+namespace detail
+{
+template <class SampleWeight, class RandomNumberGenerator>
+topic_id sample_topic(term_id term, SampleWeight&& sample_weight,
+                      std::size_t num_topics,
+                      stats::multinomial<topic_id>& full_conditional,
+                      RandomNumberGenerator&& rng)
+{
+    full_conditional.clear();
+    for (topic_id topic{0}; topic < num_topics; ++topic)
+        full_conditional.increment(topic, sample_weight(topic, term));
+    return full_conditional(std::forward<RandomNumberGenerator>(rng));
 }
 
+template <class DecreaseCounts, class SampleWeight, class IncreaseCounts,
+          class RandomNumberGenerator>
+void sample_document(const learn::feature_vector& doc, std::size_t num_topics,
+                     std::vector<topic_id>& assignments,
+                     DecreaseCounts&& decrease_counts,
+                     SampleWeight&& sample_weight,
+                     IncreaseCounts&& increase_counts,
+                     RandomNumberGenerator&& rng)
+{
+    // cached scratch space per-document to reduce allocations
+    stats::multinomial<topic_id> full_conditional;
+
+    uint64_t n = 0; // term number within document---constructed
+                    // so that each occurrence of the same term
+                    // can still be assigned a different topic
+    for (const auto& freq : doc)
+    {
+        const auto& term = freq.first;
+        for (uint64_t j = 0; j < freq.second; ++j)
+        {
+            auto old_topic = assignments[n];
+            // don't include current topic assignment in
+            // probability calculation
+            decrease_counts(old_topic, term);
+
+            // sample a new topic assignment
+            auto topic = sample_topic(
+                term, std::forward<SampleWeight>(sample_weight), num_topics,
+                full_conditional, std::forward<RandomNumberGenerator>(rng));
+            assignments[n] = topic;
+
+            // increase counts
+            increase_counts(topic, term);
+            n += 1;
+        }
+    }
+}
+}
+}
+}
 #endif

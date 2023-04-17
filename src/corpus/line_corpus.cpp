@@ -23,6 +23,9 @@ line_corpus::line_corpus(const std::string& file, std::string encoding,
       num_lines_{num_docs},
       infile_{file}
 {
+    if (!infile_)
+        throw corpus_exception{"failed failed to open input file " + file};
+
     // init class label info
     if (filesystem::file_exists(file + ".labels"))
     {
@@ -51,6 +54,10 @@ document line_corpus::next()
 
     document doc{cur_id_++, label};
     std::string content;
+    if (!infile_)
+        throw corpus_exception{"input file ended prematurely; is num-docs "
+                               "incorrect in corpus config file?"};
+
     if (!std::getline(infile_, content))
         throw corpus_exception{"error parsing line_corpus line "
                                + std::to_string(cur_id_)};
@@ -77,7 +84,7 @@ std::unique_ptr<corpus> make_corpus<line_corpus>(util::string_view prefix,
     auto encoding = config.get_as<std::string>("encoding").value_or("utf-8");
 
     // string_view doesn't have operator+ overloads...
-    auto filename = prefix.to_string();
+    auto filename = util::to_string(prefix);
     filename += "/";
     filename.append(dataset.data(), dataset.size());
     filename += "/";
@@ -90,5 +97,5 @@ std::unique_ptr<corpus> make_corpus<line_corpus>(util::string_view prefix,
     else
         return make_unique<line_corpus>(filename, encoding, *lines);
 }
-}
-}
+} // namespace corpus
+} // namespace meta

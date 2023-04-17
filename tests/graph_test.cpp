@@ -9,6 +9,7 @@
 #include "meta/graph/undirected_graph.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace {

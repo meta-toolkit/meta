@@ -10,6 +10,7 @@
 #include "meta/index/forward_index.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace

@@ -11,6 +11,9 @@
 #define META_SUCCINCT_BROADWORD_H_
 
 #include <cstdint>
+#if _MSC_VER
+#include <intrin.h>
+#endif
 
 #include "meta/config.h"
 
@@ -135,8 +138,10 @@ inline uint64_t bytes_sum(uint64_t word)
 
 inline uint64_t popcount(uint64_t word)
 {
-#if META_BROADWORD_USE_POPCOUNT
+#if META_HAS_BUILTIN_POPCOUNTLL
     return static_cast<uint64_t>(__builtin_popcountll(word));
+#elif META_HAS_POPCOUNT64
+    return static_cast<uint64_t>(__popcnt64(word));
 #else
     return bytes_sum(byte_counts(word));
 #endif
@@ -145,13 +150,25 @@ inline uint64_t popcount(uint64_t word)
 inline uint64_t lsb(uint64_t word)
 {
     // TODO: how good is the builtin here when it's not a single instruction?
+#if META_HAS_BUILTIN_CTZLL
     return static_cast<uint64_t>(__builtin_ctzll(word));
+#elif META_HAS_BITSCANFORWARD64
+    unsigned long val;
+    if (_BitScanForward64(&val, word))
+        return static_cast<uint64_t>(val);
+#else
+    unsigned long val;
+    if (_BitScanForward(&val, static_cast<unsigned long>(word)))
+        return static_cast<uint64_t>(val);
+    if (_BitScanForward(&val, static_cast<unsigned long>(word >> 32)))
+        return 32 + static_cast<uint64_t>(val);
+#endif
+    return 64;
 }
 
 inline uint64_t msb(uint64_t word)
 {
-    // TODO: how good is the builtin here when it's not a single instruction?
-    return 64 - static_cast<uint64_t>(__builtin_clzll(word));
+    return 63 - lsb(word);
 }
 
 inline uint64_t select_in_word(uint64_t word, uint64_t k)
@@ -161,8 +178,8 @@ inline uint64_t select_in_word(uint64_t word, uint64_t k)
     const uint64_t k_step_8 = k * ones_step_8;
     const uint64_t geq_k_step_8
         = (((k_step_8 | msbs_step_8) - byte_sums) & msbs_step_8);
-#if META_BROADWORD_USE_POPCOUNT
-    const uint64_t place = intrinsics::popcount(geq_k_step_8) * 8;
+#if META_HAS_BUILTIN_POPCOUNTLL || META_HAS_POPCOUNT64
+    const uint64_t place = popcount(geq_k_step_8) * 8;
 #else
     const uint64_t place
         = ((geq_k_step_8 >> 7) * ones_step_8 >> 53) & ~uint64_t(0x7);

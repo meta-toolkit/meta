@@ -3,6 +3,8 @@
  * @author Sean Massung
  */
 
+#include <numeric>
+
 #include "meta/analyzers/all.h"
 #include "meta/analyzers/token_stream.h"
 #include "bandit/bandit.h"
@@ -12,6 +14,7 @@
 #include "meta/util/shim.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace {

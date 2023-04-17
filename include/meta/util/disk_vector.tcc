@@ -14,19 +14,17 @@ namespace util
 
 template <class T>
 disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
-    : path_{path}, start_{nullptr}, size_{size}, file_desc_{-1}
+    : path_{path}, start_{nullptr}, size_{size}
 {
     if (std::is_const<T>::value)
     {
-        file_desc_ = open(path_.c_str(), O_RDONLY);
+        file_desc_ = io::file_descriptor{path_.c_str(), io::open_mode::READ};
     }
     else
     {
-        file_desc_ = open(path_.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+        file_desc_ = io::file_descriptor{
+            path_.c_str(), io::open_mode::READ_WRITE | io::open_mode::CREATE};
     }
-    if (file_desc_ < 0)
-        throw disk_vector_exception{"error obtaining file descriptor for "
-                                    + path_};
 
     uint64_t actual_size = filesystem::file_size(path_);
     if (size_ != 0)
@@ -41,9 +39,9 @@ disk_vector<T>::disk_vector(const std::string& path, uint64_t size /* = 0 */)
                 throw disk_vector_exception{
                     "cannot create disk vector when opened in read-only mode"};
             auto offset = static_cast<long>(size_bytes - 1);
-            if (lseek(file_desc_, offset, SEEK_SET) == -1)
+            if (file_desc_.lseek(offset) == -1)
                 throw disk_vector_exception{"error lseeking to extend file"};
-            if (write(file_desc_, " ", 1) != 1)
+            if (file_desc_.write(" ", 1) != 1)
                 throw disk_vector_exception{
                     "error writing to extend vector file"};
         }
@@ -81,11 +79,8 @@ disk_vector<T>& disk_vector<T>::operator=(disk_vector&& other)
     if (this != &other)
     {
         if (start_)
-        {
             munmap(const_cast<typename std::remove_const<T>::type*>(start_),
                    sizeof(T) * size_);
-            close(file_desc_);
-        }
         path_ = std::move(other.path_);
         start_ = std::move(other.start_);
         size_ = std::move(other.size_);
@@ -102,30 +97,11 @@ disk_vector<T>::~disk_vector()
         return;
     munmap(const_cast<typename std::remove_const<T>::type*>(start_),
            sizeof(T) * size_);
-    close(file_desc_);
-}
-
-template <class T>
-template <class, class>
-T& disk_vector<T>::operator[](uint64_t idx)
-{
-    return start_[idx];
 }
 
 template <class T>
 const T& disk_vector<T>::operator[](uint64_t idx) const
 {
-    return start_[idx];
-}
-
-template <class T>
-template <class, class>
-T& disk_vector<T>::at(uint64_t idx)
-{
-    if (idx >= size_)
-        throw disk_vector_exception{"index " + std::to_string(idx)
-                                    + " out of range [0, "
-                                    + std::to_string(size_) + ")"};
     return start_[idx];
 }
 
@@ -146,13 +122,6 @@ uint64_t disk_vector<T>::size() const
 }
 
 template <class T>
-template <class, class>
-auto disk_vector<T>::begin() -> iterator
-{
-    return start_;
-}
-
-template <class T>
 auto disk_vector<T>::begin() const -> const_iterator
 {
     return start_;
@@ -160,13 +129,6 @@ auto disk_vector<T>::begin() const -> const_iterator
 
 template <class T>
 auto disk_vector<T>::end() const -> const_iterator
-{
-    return start_ + size_;
-}
-
-template <class T>
-template <class, class>
-auto disk_vector<T>::end() -> iterator
 {
     return start_ + size_;
 }

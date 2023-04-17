@@ -1,26 +1,61 @@
 version: '{build}'
 platform: x64
 configuration: Release
-os: Visual Studio 2015
+
+environment:
+  matrix:
+    # MSYS2 + GCC
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      USE_MSYS2: ON
+      MSYSTEM: MINGW64
+      PATH: C:\msys64\usr\bin;%PATH%
+    # MSVC 2017
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      USE_MSVC: ON
+      ZLIB_URL: http://zlib.net/zlib-1.2.11.tar.xz
+      ICU_URL: http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-Win64-MSVC2017.zip
+      NINJA_URL: https://github.com/ninja-build/ninja/releases/download/v1.7.2/ninja-win.zip
 
 install:
-    - set PATH=C:\msys64\usr\bin;%PATH%
-    - set MSYSTEM=MINGW64
-    - bash -lc ""
-    - bash -lc "pacman --noconfirm --needed -Sy bash pacman pacman-mirrors msys2-runtime msys2-runtime-devel"
+    # Install setup for MSYS2
+    - IF DEFINED USE_MSYS2 bash -lc ""
+    - IF DEFINED USE_MSYS2 bash -lc "pacman --noconfirm -Syu"
+    # update twice because the first update might only update msys2 core
+    - IF DEFINED USE_MSYS2 bash -lc "pacman --noconfirm -Syu"
     # kludge for error: "mingw-w64-x86_64-gcc: /mingw64/etc/gdbinit exists in filesystem"
-    - bash -lc "rm -f /mingw64/etc/gdbinit"
+    - IF DEFINED USE_MSYS2 bash -lc "rm -f /mingw64/etc/gdbinit"
     # we don't actually need ada, fortran, libgfortran, or objc, but in
     # order to update gcc we need to also update those packages as well...
-    - bash -lc "pacman --noconfirm --needed -S mingw-w64-x86_64-{gcc,gcc-ada,gcc-fortran,gcc-libgfortran,gcc-objc,cmake,make,icu,jemalloc,zlib}"
+    - IF DEFINED USE_MSYS2 bash -lc "pacman --noconfirm --needed -S mingw-w64-x86_64-{gcc,gcc-ada,gcc-fortran,gcc-libgfortran,gcc-objc,cmake,make,icu,jemalloc,zlib}"
+    # Install setup for MSVC 2017
+    - IF DEFINED USE_MSVC call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+    - IF DEFINED USE_MSVC cd C:\projects
+    # Grab ninja-build for speeding up building time
+    - IF DEFINED USE_MSVC appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
+    - IF DEFINED USE_MSVC 7z x ninja.zip -oC:\projects\ninja
+    - IF DEFINED USE_MSVC set PATH=C:\projects\ninja;%PATH%
+    # Build ZLIB from scratch
+    - IF DEFINED USE_MSVC appveyor DownloadFile %ZLIB_URL% -FileName zlib.tar.xz
+    - IF DEFINED USE_MSVC 7z x zlib.tar.xz -oC:\projects
+    - IF DEFINED USE_MSVC 7z x zlib.tar -oC:\projects
+    - IF DEFINED USE_MSVC move zlib-* zlib
+    - IF DEFINED USE_MSVC cd zlib && mkdir build && cd build
+    - IF DEFINED USE_MSVC cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=C:\projects\zlib
+    - IF DEFINED USE_MSVC ninja install
+    # Use pre-built ICU libs
+    - IF DEFINED USE_MSVC cd C:\projects
+    - IF DEFINED USE_MSVC appveyor DownloadFile %ICU_URL% -FileName icu.zip
+    - IF DEFINED USE_MSVC 7z x icu.zip -oC:\projects\icu
 before_build:
-    - set MSYSTEM=MINGW64
     - cd C:\projects\meta
     - git submodule update --init --recursive
-    - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER && mkdir build && cd build && cmake .. -G \"MSYS Makefiles\""
+    - IF DEFINED USE_MSYS2 bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER && mkdir build && cd build && cmake .. -G \"MSYS Makefiles\""
+    - IF DEFINED USE_MSVC cd %APPVEYOR_BUILD_FOLDER% && mkdir build && cd build
+    - IF DEFINED USE_MSVC cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DZLIB_ROOT=C:\projects\zlib -DICU_ROOT=C:\projects\icu -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=On
 build_script:
-    - set MSYSTEM=MINGW64
-    - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && make -j2"
+    - IF DEFINED USE_MSYS2 bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && make -j2"
+    - IF DEFINED USE_MSVC ninja
 test_script:
-    - set MSYSTEM=MINGW64
-    - bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && cp ../config.toml . && ./unit-test --reporter=spec"
+    - IF DEFINED USE_MSYS2 bash -lc "export PATH=/mingw64/bin:$PATH && cd $APPVEYOR_BUILD_FOLDER/build && cp ../config.toml . && ./unit-test --reporter=spec"
+    - IF DEFINED USE_MSVC set PATH=C:\projects\zlib\bin;C:\projects\icu\bin64;%PATH%
+    - IF DEFINED USE_MSVC unit-test.exe --reporter=spec

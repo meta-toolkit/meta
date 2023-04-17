@@ -12,7 +12,20 @@
 #include "meta/util/printing.h"
 #include "meta/util/progress.h"
 
-#if META_HAS_EXPERIMENTAL_FILESYSTEM == 0
+#if META_HAS_FILESYSTEM
+#if META_HAS_STD_FILESYSTEM
+#include <filesystem>
+#else
+#include <experimental/filesystem>
+#endif
+#else // no filesystem library found
+
+#ifdef _WIN32
+// chrono and thread for a sleep_for hack in remove_all
+#include <chrono>
+#include <thread>
+#endif
+
 // reordering these includes screws stuff up, so leave whitespace between
 // them so clang-format won't reorder
 #include <platformstl/filesystem/filesystem_traits.hpp>
@@ -22,15 +35,6 @@
 #include <platformstl/filesystem/readdir_sequence.hpp>
 
 #include <platformstl/filesystem/directory_functions.hpp>
-#else
-
-#ifdef _WIN32
-// chrono and thread for a sleep_for hack in remove_all below
-#include <chrono>
-#include <thread>
-#endif
-
-#include <experimental/filesystem>
 #endif
 
 namespace meta
@@ -38,7 +42,7 @@ namespace meta
 namespace filesystem
 {
 
-#if META_HAS_EXPERIMENTAL_FILESYSTEM == 0
+#if META_HAS_FILESYSTEM == 0
 namespace
 {
 using traits = platformstl::filesystem_traits<char>;
@@ -167,51 +171,59 @@ std::uintmax_t remove_all(const std::string& path)
 {
     return remove_all(path_type{path.c_str()});
 }
-#else
-namespace fs = std::experimental::filesystem;
+#else // META_HAS_FILESYSTEM == 1
 
 bool delete_file(const std::string& filename)
 {
-    return fs::exists(filename) && fs::remove(filename);
+    const auto path = fs::u8path(filename);
+    return fs::exists(path) && fs::remove(path);
 }
 
 void rename_file(const std::string& old_name, const std::string& new_name)
 {
-    fs::rename(old_name, new_name);
+    const auto old_path = fs::u8path(old_name);
+    const auto new_path = fs::u8path(new_name);
+    fs::rename(old_path, new_path);
 }
 
 bool make_directory(const std::string& dir_name)
 {
-    return fs::create_directory(dir_name);
+    const auto path = fs::u8path(dir_name);
+    return fs::create_directory(path);
 }
 
-bool make_directories(const std::string& path)
+bool make_directories(const std::string& dirs)
 {
+    const auto path = fs::u8path(dirs);
     return fs::create_directories(path);
 }
 
 bool file_exists(const std::string& filename)
 {
-    return fs::exists(filename);
+    const auto path = fs::u8path(filename);
+    return fs::exists(path);
 }
 
 bool exists(const std::string& filename)
 {
-    return fs::exists(filename);
+    const auto path = fs::u8path(filename);
+    return fs::exists(path);
 }
 
 uint64_t file_size(const std::string& filename)
 {
-    if (!file_exists(filename))
-        return 0;
-    return fs::file_size(filename);
-}
-
-std::uintmax_t remove_all(const std::string& path)
-{
+    const auto path = fs::u8path(filename);
     if (!fs::exists(path))
         return 0;
-#if META_HAS_EXPERIMENTAL_FILESYSTEM_REMOVE_ALL
+    return fs::file_size(path);
+}
+
+std::uintmax_t remove_all(const std::string& dirs)
+{
+    const auto path = fs::u8path(dirs);
+    if (!fs::exists(path))
+        return 0;
+#if META_HAS_WORKING_FILESYSTEM_REMOVE_ALL
     return fs::remove_all(path);
 #else
     // fs::remove_all doesn't properly recurse on directories, so we get
@@ -220,7 +232,7 @@ std::uintmax_t remove_all(const std::string& path)
     if (fs::is_directory(path))
     {
         for (fs::directory_iterator d{path}, end; d != end; ++d)
-            count += meta::filesystem::remove_all(d->path());
+            count += meta::filesystem::remove_all(d->path().u8string());
     }
     fs::remove(path);
     return count;

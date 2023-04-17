@@ -98,6 +98,12 @@ test-sections = [23, 23]
 prefix = "word-embeddings"
 filter = [{type = "icu-tokenizer", suppress-tags = true}, {type = "lowercase"}]
 vector-size = 50
+
 [embeddings.vocab]
-min-count = 10
+min-count = 5
 max-size = 500000
+
+[embeddings.sgns]
+iterations = 5
+negative-samples = 5
+max-window-size = 5

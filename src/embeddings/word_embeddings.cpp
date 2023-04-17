@@ -159,6 +159,11 @@ std::size_t word_embeddings::vector_size() const
     return vector_size_;
 }
 
+const util::aligned_vector<std::string>& word_embeddings::vocab() const
+{
+    return id_to_term_;
+}
+
 word_embeddings load_embeddings(const cpptoml::table& config)
 {
     auto prefix = config.get_as<std::string>("prefix");

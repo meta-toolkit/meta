@@ -22,7 +22,8 @@ gz_corpus::gz_corpus(const std::string& file, std::string encoding,
       corpus_stream_{file + ".gz"},
       class_stream_{file + ".labels.gz"}
 {
-    // nothing
+    if (!corpus_stream_)
+        throw corpus_exception{"failed to open file " + file + ".gz"};
 }
 
 bool gz_corpus::has_next() const
@@ -38,7 +39,11 @@ document gz_corpus::next()
         std::getline(class_stream_, static_cast<std::string&>(label));
 
     std::string line;
-    std::getline(corpus_stream_, line);
+    if (!corpus_stream_)
+        throw corpus_exception{"input file ended prematurely; is num-docs "
+                               "incorrect in corpus config file?"};
+    if (!std::getline(corpus_stream_, line))
+        throw corpus_exception{"failed to read document from input file"};
 
     document doc{cur_id_++, label};
     doc.content(line, encoding());
@@ -68,7 +73,7 @@ std::unique_ptr<corpus> make_corpus<gz_corpus>(util::string_view prefix,
         throw corpus_exception{"num-docs config param required for gz_corpus"};
 
     // string_view doesn't have operator+ overloads...
-    auto filename = prefix.to_string();
+    auto filename = util::to_string(prefix);
     filename += "/";
     filename.append(dataset.data(), dataset.size());
     filename += "/";
@@ -77,5 +82,5 @@ std::unique_ptr<corpus> make_corpus<gz_corpus>(util::string_view prefix,
 
     return make_unique<gz_corpus>(filename, encoding, *num_docs);
 }
-}
-}
+} // namespace corpus
+} // namespace meta

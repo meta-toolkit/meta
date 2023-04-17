@@ -12,28 +12,43 @@
 
 #include "meta/config.h"
 
-#if META_HAS_EXPERIMENTAL_OPTIONAL
+#if !META_HAS_STD_OPTIONAL && !META_HAS_EXPERIMENTAL_OPTIONAL
+#include "meta/util/comparable.h"
+#include <stdexcept>
+#include <type_traits>
+#elif META_HAS_OPTIONAL_HEADER
+#include <optional>
+#elif META_HAS_EXPERIMENTAL_OPTIONAL_HEADER
 #include <experimental/optional>
+#endif
+
+#if META_HAS_STD_OPTIONAL
+namespace meta
+{
+namespace util
+{
+template <class T>
+using optional = std::optional<T>;
+using std::nullopt;
+} // namespace util
+} // namespace meta
+
+#elif META_HAS_EXPERIMENTAL_OPTIONAL
 namespace meta
 {
 namespace util
 {
 template <class T>
 using optional = std::experimental::optional<T>;
-
 using std::experimental::nullopt;
-}
-}
-#else
-#include "meta/util/comparable.h"
-#include <stdexcept>
-#include <type_traits>
+} // namespace util
+} // namespace meta
 
+#else
 namespace meta
 {
 namespace util
 {
-
 /**
  * A tag for trivial initialization of optional storage.
  */
@@ -264,9 +279,8 @@ class bad_optional_access : public std::runtime_error
   public:
     using std::runtime_error::runtime_error;
 };
-}
-}
-
+} // namespace util
+} // namespace meta
 #include "meta/util/optional.tcc"
-#endif // !META_HAS_EXPERIMENTAL_OPTIONAL
+#endif
 #endif // META_UTIL_OPTIONAL_H_

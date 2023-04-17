@@ -50,7 +50,7 @@ logistic_regression::logistic_regression(multiclass_dataset_view docs,
 
             pair.second = make_unique<sgd>(
                 bdv, learn::loss::make_loss_function<learn::loss::logistic>(),
-                options, gamma, max_iter);
+                options, gamma, max_iter, true);
         });
 }
 

@@ -6,9 +6,9 @@
 #ifndef _SYS_MMAN_H_
 #define _SYS_MMAN_H_
 
-#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
+#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.
 #define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
-#endif						
+#endif
 
 /* All the headers include this file. */
 #ifndef _MSC_VER
@@ -41,7 +41,7 @@ extern "C" {
 #define MS_SYNC         2
 #define MS_INVALIDATE   4
 
-void*   mmap(void *addr, size_t len, int prot, int flags, int fildes, off_t off);
+void*   mmap(void *addr, size_t len, int prot, int flags, int fildes, _off_t off);
 int     munmap(void *addr, size_t len);
 int     mprotect(void *addr, size_t len, int prot);
 int     msync(void *addr, size_t len, int flags);

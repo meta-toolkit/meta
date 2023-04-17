@@ -45,6 +45,8 @@ class icu_tokenizer::impl
      */
     void set_content(std::string content)
     {
+        tokens_.clear();
+
         auto pred = [](char c) {
             return c == '\n' || c == '\v' || c == '\f' || c == '\r';
         };
@@ -73,7 +75,7 @@ class icu_tokenizer::impl
                     || utf::isspace(static_cast<uint32_t>(codepoint)))
                     continue;
 
-                tokens_.emplace_back(wrd.to_string());
+                tokens_.emplace_back(util::to_string(wrd));
             }
             if (!suppress_tags_)
                 tokens_.emplace_back("</s>");

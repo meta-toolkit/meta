@@ -139,8 +139,10 @@ class multinomial
     friend uint64_t packed_write(OutputStream& os, const multinomial& dist)
     {
         using io::packed::write;
-        return write(os, dist.total_counts_) + write(os, dist.counts_)
-               + write(os, dist.prior_);
+        auto bytes = write(os, dist.total_counts_);
+        bytes += write(os, dist.counts_);
+        bytes += write(os, dist.prior_);
+        return bytes;
     }
 
     template <class InputStream>

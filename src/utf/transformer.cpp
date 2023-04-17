@@ -3,7 +3,11 @@
  * @author Chase Geigle
  */
 
+// ICU generates conversion warnings from code we do not control
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <unicode/translit.h>
+#pragma GCC diagnostic pop
 
 #include "detail.h"
 #include "meta/utf/transformer.h"

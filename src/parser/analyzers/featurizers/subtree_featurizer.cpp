@@ -32,13 +32,13 @@ class subtree_visitor : public parser::const_visitor<void>
             });
 
         rep += ")";
-        counts(subtree_featurizer::id.to_string() + "-" + rep, 1ul);
+        counts(util::to_string(subtree_featurizer::id) + "-" + rep, 1ul);
     }
 
     void operator()(const parser::leaf_node& ln) override
     {
         auto rep = "(" + static_cast<std::string>(ln.category()) + ")";
-        counts(subtree_featurizer::id.to_string() + "-" + rep, 1ul);
+        counts(util::to_string(subtree_featurizer::id) + "-" + rep, 1ul);
     }
 
   private:

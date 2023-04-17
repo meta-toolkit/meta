@@ -5,6 +5,11 @@ option(ENABLE_LIBCXX "Use libc++ for the C++ standard library (only for clang)" 
 option(ENABLE_PROFILING "Link against gperftools profiler library" OFF)
 option(ENABLE_JEMALLOC "Link against jemalloc if available" ON)
 
+if (MINGW)
+  # jemalloc is breaking things in MSYS2; just disable it for now
+  set(ENABLE_JEMALLOC OFF)
+endif()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 set(MeTA_VERSION_MAJOR 3)
@@ -13,11 +18,23 @@ set(MeTA_VERSION_PATCH 2)
 set(MeTA_VERSION
     "${MeTA_VERSION_MAJOR}.${MeTA_VERSION_MINOR}.${MeTA_VERSION_PATCH}")
 
-# MeTA only requires C++11, but on all of our supported compilers at least
-# C++1y support exists, so we therefore set the standard to 14
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+if (NOT (MSVC_VERSION AND CMAKE_COMPILER_ID MATCHES "Clang"))
+  # MeTA only requires C++11, but on all of our supported compilers at least
+  # C++1y support exists, so we therefore set the standard to 14
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+
+  if (${CMAKE_VERSION} VERSION_GREATER 3.7)
+    # CMake adds support for the C++17 standard in version 3.8. This is
+    # needed in newer versions of clang and libc++ to enable std::optional,
+    # std::string_view, and friends.
+    list(FIND CMAKE_CXX_COMPILE_FEATURES "cxx_std_17" _index)
+    if (_index GREATER -1)
+      set(CMAKE_CXX_STANDARD 17)
+    endif()
+  endif()
+endif()
 
 set(META_PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR})
 
@@ -38,7 +55,14 @@ endif()
 cmake_push_check_state()
 
 # Work around CMake not propagating the standard flag down to the compiler
-set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${CMAKE_CXX14_STANDARD_COMPILE_OPTION}")
+if (NOT MSVC_VERSION OR ${CMAKE_VERSION} VERSION_GREATER 3.9)
+  if (CMAKE_CXX_STANDARD EQUAL 17)
+    set(META_CXX_STANDARD_OPTION "${CMAKE_CXX17_STANDARD_COMPILE_OPTION}")
+  else()
+    set(META_CXX_STANDARD_OPTION "${CMAKE_CXX14_STANDARD_COMPILE_OPTION}")
+  endif()
+  set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${META_CXX_STANDARD_OPTION}")
+endif()
 
 # Check if there is no build type set. If meta itself is the root project,
 # compile it in release mode instead. If we aren't the root project, just
@@ -53,9 +77,9 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/findicu)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/meta-cmake/)
 
 FindOrBuildICU(
-  VERSION 58.2
-  URL http://download.icu-project.org/files/icu4c/58.2/icu4c-58_2-src.tgz
-  URL_HASH MD5=fac212b32b7ec7ab007a12dff1f3aea1
+  VERSION 63.1
+  URL http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz
+  URL_HASH SHA512=9ab407ed840a00cdda7470dcc4c40299a125ad246ae4d019c4b1ede54781157fd63af015a8228cd95dbc47e4d15a0932b2c657489046a19788e5e8266eac079c
 )
 
 add_library(meta-definitions INTERFACE)
@@ -102,7 +126,7 @@ find_library(JEMALLOC_LIB NAMES jemalloc)
 if (JEMALLOC_LIB AND ENABLE_JEMALLOC)
   message("-- Using jemalloc: ${JEMALLOC_LIB}")
   target_link_libraries(meta-definitions INTERFACE ${JEMALLOC_LIB})
-else()
+elseif(NOT MINGW)
   message("-- Using regular malloc; consider installing jemalloc")
 endif()
 

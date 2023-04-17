@@ -60,19 +60,24 @@ counts_t counts(const std::string& text, bool contains_label /* = true */)
         auto token = sv.substr(0, whitespace);
 
         if (token.empty())
-            throw_exception("empty token: " + token.to_string());
+            throw_exception("empty token");
 
         auto colon = token.find_first_of(":");
-        if (colon == std::string::npos || colon == 0 || colon == token.size() - 1)
-            throw_exception("no colon in token: " + token.to_string());
+        if (colon == std::string::npos || colon == 0
+            || colon == token.size() - 1)
+        {
+            throw_exception("no colon in token: " + util::to_string(token));
+        }
 
         char* end = nullptr;
         auto term = std::strtoul(token.data(), nullptr, 0);
         double count = std::strtod(token.substr(colon + 1).data(), &end);
 
         if (end != token.data() + token.size())
-            throw_exception("full token not consumed: " + token.to_string());
-            //throw_exception(text);
+        {
+            throw_exception("full token not consumed: "
+                            + util::to_string(token));
+        }
 
         if (term == 0)
             throw libsvm_parser_exception{"term id was 0 from libsvm format"};
@@ -90,6 +95,6 @@ counts_t counts(const std::string& text, bool contains_label /* = true */)
 
     return counts;
 }
-}
-}
-}
+} // namespace libsvm_parser
+} // namespace io
+} // namespace meta

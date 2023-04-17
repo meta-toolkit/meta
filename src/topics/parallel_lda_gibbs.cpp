@@ -3,25 +3,16 @@
  * @author Chase Geigle
  */
 
-#include "meta/index/postings_data.h"
-#include "meta/logging/logger.h"
-#include "meta/parallel/parallel_for.h"
 #include "meta/topics/parallel_lda_gibbs.h"
+#include "meta/learn/instance.h"
+#include "meta/logging/logger.h"
+#include "meta/parallel/algorithm.h"
 #include "meta/util/progress.h"
-#include "meta/util/range.h"
 
 namespace meta
 {
 namespace topics
 {
-
-void parallel_lda_gibbs::initialize()
-{
-    for (auto& id : pool_.thread_ids())
-        phi_diffs_[id].resize(num_topics_);
-    lda_gibbs::initialize();
-}
-
 void parallel_lda_gibbs::perform_iteration(uint64_t iter,
                                            bool init /* = false */)
 {
@@ -30,81 +21,60 @@ void parallel_lda_gibbs::perform_iteration(uint64_t iter,
         str = "Initialization: ";
     else
         str = "Iteration " + std::to_string(iter) + ": ";
-    printing::progress progress{str, idx_->num_docs()};
+    printing::progress progress{str, docs_.size()};
     progress.print_endline(false);
-
-    auto range = util::range<doc_id>(doc_id{0}, doc_id{idx_->num_docs() - 1});
-
-    // clear out diffs
-    for (auto& phis : phi_diffs_)
-        for (auto& phi : phis.second)
-            phi.clear();
 
     std::mutex mutex;
     uint64_t assigned = 0;
-    parallel::parallel_for(range.begin(), range.end(), pool_, [&](doc_id i)
-                           {
-        {
-            std::lock_guard<std::mutex> lock{mutex};
-            progress(assigned++);
-        }
-        size_t n = 0; // term number within document---constructed
-                      // so that each occurrence of the same term
-                      // can still be assigned a different topic
-        for (const auto& freq : idx_->search_primary(i)->counts())
-        {
-            for (size_t j = 0; j < freq.second; ++j)
+
+    // compute a vector of differences to apply to each topic in parallel
+    // across all of the threads in the pool
+    auto phi_diffs = parallel::reduction(
+        docs_.begin(), docs_.end(), pool_,
+        // local storage
+        [&]() { return std::vector<stats::multinomial<term_id>>(num_topics_); },
+        // map
+        [&](std::vector<stats::multinomial<term_id>>& diffs,
+            const learn::instance& doc) {
             {
-                auto old_topic = doc_word_topic_[i][n];
-                // don't include current topic assignment in
-                // probability calculation
-                if (!init)
-                    decrease_counts(old_topic, freq.first, i);
-
-                // sample a new topic assignment
-                auto topic = sample_topic(freq.first, i);
-                doc_word_topic_[i][n] = topic;
-
-                // increase counts
-                increase_counts(topic, freq.first, i);
-                n += 1;
+                std::lock_guard<std::mutex> lock{mutex};
+                progress(assigned++);
             }
-        }
-    });
 
-    // reduce down the distribution diffs for phi into the global
-    // distributions for phi
-    for (const auto& phis_pair : phi_diffs_)
-    {
-        const auto& phis = phis_pair.second;
-        for (topic_id topic{0}; topic < phis.size(); ++topic)
-            phi_[topic] += phis[topic];
-    }
-}
+            detail::sample_document(
+                doc.weights, num_topics_, doc_word_topic_[doc.id],
+                // decrease counts
+                [&](topic_id old_topic, term_id term) {
+                    if (!init)
+                    {
+                        theta_[doc.id].decrement(old_topic, 1);
+                        diffs[old_topic].decrement(term, 1);
+                    }
+                },
+                // compute sampling weight
+                [&](topic_id topic, term_id term) {
+                    return theta_[doc.id].probability(topic)
+                           * (phi_[topic].counts(term)
+                              + diffs[topic].counts(term))
+                           / (phi_[topic].counts() + diffs[topic].counts());
+                },
+                // increase counts
+                [&](topic_id new_topic, term_id term) {
+                    theta_[doc.id].increment(new_topic, 1);
+                    diffs[new_topic].increment(term, 1);
+                },
+                rng_);
+        },
+        // reduce
+        [&](std::vector<stats::multinomial<term_id>>& diffs_total,
+            const std::vector<stats::multinomial<term_id>>& diffs) {
+            for (topic_id topic{0}; topic < num_topics_; ++topic)
+                diffs_total[topic] += diffs[topic];
+        });
 
-void parallel_lda_gibbs::decrease_counts(topic_id topic, term_id term,
-                                         doc_id doc)
-{
-    auto tid = std::this_thread::get_id();
-    phi_diffs_[tid][topic].decrement(term, 1);
-    theta_[doc].decrement(topic, 1);
-}
-
-void parallel_lda_gibbs::increase_counts(topic_id topic, term_id term,
-                                         doc_id doc)
-{
-    auto tid = std::this_thread::get_id();
-    phi_diffs_[tid][topic].increment(term, 1);
-    theta_[doc].increment(topic, 1);
-}
-
-double parallel_lda_gibbs::compute_sampling_weight(term_id term, doc_id doc,
-                                                   topic_id topic) const
-{
-    auto tid = std::this_thread::get_id();
-    return (phi_[topic].counts(term) + phi_diffs_.at(tid)[topic].counts(term))
-           / (phi_[topic].counts() + phi_diffs_.at(tid)[topic].counts())
-           * compute_doc_topic_probability(doc, topic);
+    // incorporate the reduced diffs from all of the threads
+    for (topic_id topic{0}; topic < num_topics_; ++topic)
+        phi_[topic] += phi_diffs[topic];
 }
 }
 }

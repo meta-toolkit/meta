@@ -16,18 +16,27 @@
 #include <type_traits>
 #ifndef _WIN32
 #include <sys/mman.h>
+#include <unistd.h>
 #else
 #include "meta/io/mman-win32/mman.h"
 #endif
-#include <unistd.h>
 
 #include "meta/config.h"
+#include "meta/io/filedes.h"
 #include "meta/meta.h"
 
 namespace meta
 {
 namespace util
 {
+/**
+ * Basic exception for disk_vector.
+ */
+class disk_vector_exception : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
 
 /**
  * disk_vector represents a large constant-size vector that does not necessarily
@@ -72,7 +81,10 @@ class disk_vector
      */
     template <class U = T,
               class = typename std::enable_if<!std::is_const<U>::value>::type>
-    T& operator[](uint64_t idx);
+    T& operator[](uint64_t idx)
+    {
+        return start_[idx];
+    }
 
     /**
      * @param idx The index of the vector to retrieve
@@ -92,7 +104,14 @@ class disk_vector
      */
     template <class U = T,
               class = typename std::enable_if<!std::is_const<U>::value>::type>
-    T& at(uint64_t idx);
+    T& at(uint64_t idx)
+    {
+        if (idx >= size_)
+            throw disk_vector_exception{"index " + std::to_string(idx)
+                                        + " out of range [0, "
+                                        + std::to_string(size_) + ")"};
+        return start_[idx];
+    }
 
     /**
      * @param idx The index of the vector to retrieve
@@ -118,7 +137,10 @@ class disk_vector
      */
     template <class U = T,
               class = typename std::enable_if<!std::is_const<U>::value>::type>
-    iterator begin();
+    iterator begin()
+    {
+        return start_;
+    }
 
     /**
      * @return an iterator to the beginning of this container (const
@@ -131,7 +153,10 @@ class disk_vector
      */
     template <class U = T,
               class = typename std::enable_if<!std::is_const<U>::value>::type>
-    iterator end();
+    iterator end()
+    {
+        return start_ + size_;
+    }
 
     /**
      * @return an iterator to the end of this container (const version)
@@ -149,16 +174,7 @@ class disk_vector
     uint64_t size_;
 
     /// the file descriptor used to open and close the mmap file
-    int file_desc_;
-};
-
-/**
- * Basic exception for disk_vector.
- */
-class disk_vector_exception : public std::runtime_error
-{
-  public:
-    using std::runtime_error::runtime_error;
+    io::file_descriptor file_desc_;
 };
 }
 }

@@ -39,10 +39,28 @@ class multilevel_clonable : public Base
      *
      * @return a unique_ptr to the Root type object.
      */
-    virtual std::unique_ptr<Root> clone() const
+    std::unique_ptr<Root> clone() const override
     {
         return make_unique<Derived>(static_cast<const Derived&>(*this));
     }
+};
+
+/**
+ * Template class to facilitate polymorphic cloning. Used in the base class
+ * to ensure that the clone() virtual function is provided and is pure
+ * abstract.
+ */
+template <class Root>
+class multilevel_clonable<Root, Root, Root>
+{
+  public:
+    /**
+     * Clones the given object. This requires that the Derived class be
+     * capable of being copy-constructed.
+     *
+     * @return a unique_ptr to the Root type object.
+     */
+    virtual std::unique_ptr<Root> clone() const = 0;
 };
 
 /**
@@ -50,7 +68,7 @@ class multilevel_clonable : public Base
  * ordinary base class, with first parameter being the base class and the
  * second parameter being the current class (CRTP style).
  */
-template <class Base, class Derived>
+template <class Base, class Derived = Base>
 using clonable = multilevel_clonable<Base, Base, Derived>;
 }
 }

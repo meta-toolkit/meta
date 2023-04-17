@@ -1,25 +1,22 @@
-#include <iostream>
-#include <string>
-#include <vector>
-
+#include "cpptoml.h"
+#include "meta/index/forward_index.h"
+#include "meta/learn/dataset.h"
+#include "meta/logging/logger.h"
 #include "meta/topics/lda_cvb.h"
 #include "meta/topics/lda_gibbs.h"
 #include "meta/topics/lda_scvb.h"
 #include "meta/topics/parallel_lda_gibbs.h"
-
-#include "cpptoml.h"
-
-#include "meta/caching/no_evict_cache.h"
-#include "meta/index/forward_index.h"
-#include "meta/logging/logger.h"
+#include <iostream>
+#include <string>
+#include <vector>
 
 using namespace meta;
 
-template <class Model, class Index>
-int run_lda(Index& idx, uint64_t num_iters, std::size_t topics, double alpha,
+template <class Model, class Dataset>
+int run_lda(Dataset& docs, uint64_t num_iters, std::size_t topics, double alpha,
             double beta, const std::string& save_prefix)
 {
-    Model model{idx, topics, alpha, beta};
+    Model model{docs, topics, alpha, beta};
     model.run(num_iters);
     model.save(save_prefix);
     return 0;
@@ -66,39 +63,39 @@ int run_lda(const std::string& config_file)
     auto topics = *lda_group->get_as<std::size_t>("topics");
     auto save_prefix = *lda_group->get_as<std::string>("model-prefix");
 
-    auto f_idx
-        = index::make_index<index::forward_index, caching::no_evict_cache>(
-            *config);
+    auto f_idx = index::make_index<index::forward_index>(*config);
+    auto doc_list = f_idx->docs();
+    learn::dataset docs{f_idx, doc_list.begin(), doc_list.end()};
     if (type == "gibbs")
     {
         std::cout << "Beginning LDA using serial Gibbs sampling..."
                   << std::endl;
-        return run_lda<lda_gibbs>(f_idx, iters, topics, alpha, beta,
+        return run_lda<lda_gibbs>(docs, iters, topics, alpha, beta,
                                   save_prefix);
     }
     else if (type == "pargibbs")
     {
         std::cout << "Beginning LDA using parallel Gibbs sampling..."
                   << std::endl;
-        return run_lda<parallel_lda_gibbs>(f_idx, iters, topics, alpha, beta,
+        return run_lda<parallel_lda_gibbs>(docs, iters, topics, alpha, beta,
                                            save_prefix);
     }
     else if (type == "cvb")
     {
         std::cout << "Beginning LDA using serial collapsed variational bayes..."
                   << std::endl;
-        return run_lda<lda_cvb>(f_idx, iters, topics, alpha, beta, save_prefix);
+        return run_lda<lda_cvb>(docs, iters, topics, alpha, beta, save_prefix);
     }
     else if (type == "scvb")
     {
         std::cout
-            << "Beginning LDA using stochastic collapsed variational bayes..."
+            << "Beginning LDA using stochastic collapsed variational bayes... "
             << std::endl;
-        return run_lda<lda_scvb>(f_idx, iters, topics, alpha, beta,
-                                 save_prefix);
+        return run_lda<lda_scvb>(docs, iters, topics, alpha, beta, save_prefix);
     }
-    std::cout << "Incorrect method selected: must be gibbs, pargibbs, or cvb"
-              << std::endl;
+    std::cout
+        << "Incorrect method selected: must be gibbs, pargibbs, cvb, or scvb"
+        << std::endl;
     return 1;
 }
 
@@ -106,7 +103,7 @@ int main(int argc, char** argv)
 {
     if (argc != 2)
     {
-        std::cerr << "Usage:\t" << argv[0] << " configFile" << std::endl;
+        std::cerr << "Usage:\t" << argv[0] << " config.toml" << std::endl;
         return 1;
     }
 

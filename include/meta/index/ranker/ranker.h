@@ -172,16 +172,32 @@ class ranker
      * weights (pairs of std::string and a weight)
      * @param end A forward iterator to the end of the above range
      * @param num_results The number of results to return in the vector
+     */
+    template <class ForwardIterator>
+    std::vector<search_result> score(inverted_index& idx, ForwardIterator begin,
+                                     ForwardIterator end,
+                                     uint64_t num_results = 10)
+    {
+        ranker_context ctx{idx, begin, end, passthrough};
+        return rank(ctx, num_results, passthrough);
+    }
+
+    /**
+     * @param idx The index this ranker is operating on
+     * @param begin A forward iterator to the beginning of the term
+     * weights (pairs of std::string and a weight)
+     * @param end A forward iterator to the end of the above range
+     * @param num_results The number of results to return in the vector
      * @param filter A filtering function to apply to each doc_id; returns true
      * if the document should be included in results
      */
-    template <class ForwardIterator, class Function = bool (*)(doc_id)>
-    std::vector<search_result>
-    score(inverted_index& idx, ForwardIterator begin, ForwardIterator end,
-          uint64_t num_results = 10, Function&& filter = passthrough)
+    template <class ForwardIterator, class Function>
+    std::vector<search_result> score(inverted_index& idx, ForwardIterator begin,
+                                     ForwardIterator end, uint64_t num_results,
+                                     Function&& filter)
     {
-        ranker_context ctx{idx, begin, end, filter};
-        return rank(ctx, num_results, filter);
+        ranker_context ctx{idx, begin, end, std::forward<Function>(filter)};
+        return rank(ctx, num_results, std::forward<Function>(filter));
     }
 
     /**

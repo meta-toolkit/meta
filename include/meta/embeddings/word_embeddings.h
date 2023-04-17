@@ -90,6 +90,11 @@ class word_embeddings
      */
     std::size_t vector_size() const;
 
+    /**
+     * @return the vocabulary used in the generation of the word embeddings
+     */
+    const util::aligned_vector<std::string>& vocab() const;
+
   private:
     util::array_view<double> vector(std::size_t tid);
 

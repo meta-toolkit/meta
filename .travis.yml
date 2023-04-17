@@ -65,56 +65,83 @@ matrix:
             - gcc-6
             - g++-6
 
-    # Linux/Clang 3.8
+    # Linux/GCC 7
     - os: linux
-      env: COMPILER=clang CLANG_VERSION=3.8
+      env: COMPILER=gcc GCC_VERSION=7
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
           packages:
             - *default-packages
-            - clang-3.8
+            - gcc-7
+            - g++-7
 
-    # Linux/Clang 3.8 + libc++-3.9
-    # (I want this to be 3.9 across the board, but the apt source is not
-    # yet whitelisted for llvm 3.9)
+    # Linux/GCC 8
+    - os: linux
+      env: COMPILER=gcc GCC_VERSION=8
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *default-packages
+            - gcc-8
+            - g++-8
+
+    # Linux/Clang 3.5
+    - os: linux
+      env: COMPILER=clang CLANG_VERSION=3.5
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *default-packages
+            - clang-3.5
+            - libc++-dev
+            - libc++abi-dev
+
+    # Linux/Clang 7.0 + libc++-7.0
     - os: linux
       env:
         - COMPILER=clang
-        - CLANG_VERSION=3.8
-        - LLVM_TAG=RELEASE_390
+        - CLANG_VERSION=7
+        - LLVM_TAG=RELEASE_700
         - LIBCXX_EXTRA_CMAKE_FLAGS=-DLIBCXX_INSTALL_EXPERIMENTAL_LIBRARY=On
-        - CMAKE_VERSION=3.4.3
+        - CMAKE_VERSION=3.8.2
       addons:
         apt:
           sources:
+            - llvm-toolchain-trusty-7
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.8
           packages:
             - *default-packages
-            - clang-3.8
-
-    # OS X 10.10 + Xcode 6.4 (this is the only 10.10 image on Travis)
-    - os: osx
-      osx_image: xcode6.4
-      env: COMPILER=clang
+            - clang-7
 
     # OS X 10.11 + Xcode 7.3
     - os: osx
       osx_image: xcode7.3
       env: COMPILER=clang
 
-    # OS X 10.12 + Xcode 8.2
+    # OS X 10.12 + Xcode 8.3
     - os: osx
-      osx_image: xcode8.2
+      osx_image: xcode8.3
       env: COMPILER=clang
 
-    # OS X/GCC 7
+    # OS X 10.13 + Xcode 9.4
     - os: osx
-      osx_image: xcode7.3
-      env: COMPILER=gcc
+      osx_image: xcode9.4
+      env: COMPILER=clang
+
+    # OS X 10.13 + Xcode 9.4 w/ Xcode generator
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - COMPILER=clang
+        - CMAKE_EXTRA_ARGS=-GXcode
+        - BUILD_CMD="cmake --build . --config Release"
+        - TEST_CMD="Release/unit-test --reporter=spec"
 
 install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then source travis/install_linux.sh; fi
@@ -127,4 +154,4 @@ before_script:
 
 script:
   - git submodule update --init --recursive
-  - ../travis/cmake.sh Debug && make -j2 && make clean && rm -rf CMake* && ../travis/cmake.sh Release && make -j2 && ./unit-test --reporter=spec
+  - ../travis/build.sh

@@ -57,33 +57,20 @@ void sgd::save(std::ostream& out) const
 
 void sgd::train(dataset_view_type docs)
 {
-    size_t t = 0;
-    double avg_loss = 0;
-    double prev_avg_loss = 0;
-    auto check_interval = std::max<std::size_t>(1000, docs.size() / 10);
+    double prev_total_loss = std::numeric_limits<double>::max();
     for (size_t iter = 0; iter < max_iter_; ++iter)
     {
+        double total_loss = 0;
         docs.shuffle();
         for (const auto& instance : docs)
         {
-            t += 1;
-
-            // check for convergence every 10th of the dataset or every
-            // 1000 documents, whichever comes later
-            if (t % check_interval == 0)
-            {
-                avg_loss /= check_interval;
-                if (prev_avg_loss > 0
-                    && std::abs(prev_avg_loss - avg_loss) / prev_avg_loss
-                           < gamma_)
-                    return;
-                prev_avg_loss = avg_loss;
-                avg_loss = 0;
-            }
-
-            avg_loss += model_.train_one(instance.weights, docs.label(instance),
+            total_loss += model_.train_one(instance.weights, docs.label(instance),
                                          *loss_);
         }
+
+        if (prev_total_loss - total_loss < gamma_ * docs.size())
+            break;
+        prev_total_loss = total_loss;
     }
 }
 

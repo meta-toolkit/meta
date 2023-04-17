@@ -224,6 +224,10 @@ class hidden_markov_model
     */
     struct expected_counts
     {
+#if !META_HAS_PROMISE_WITH_NO_DEFAULT_CTOR
+        expected_counts() = default;
+#endif
+
         expected_counts(const hidden_markov_model& hmm)
             : obs_counts{hmm.obs_dist_.expected_counts()},
               model_counts{hmm.model_.expected_counts()}

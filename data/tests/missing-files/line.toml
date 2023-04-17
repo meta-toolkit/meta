@@ -1,0 +1,4 @@
+# file: line.toml
+type = "line-corpus"
+encoding = "shift_jis"
+num_docs = 1008

@@ -11,6 +11,7 @@
 #include "meta/io/filesystem.h"
 
 using namespace bandit;
+using namespace snowhouse;
 
 go_bandit([]() {
     using namespace meta;

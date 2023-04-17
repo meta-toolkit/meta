@@ -19,8 +19,8 @@ if (WIN32)
     target_link_libraries(meta-io meta-mman-win32)
 endif()
 
-if (META_HAS_EXPERIMENTAL_FILESYSTEM)
-    target_link_libraries(meta-io ${STD_EXPERIMENTAL_FILESYSTEM_LIBRARIES})
+if (STD_FILESYSTEM_FOUND)
+    target_link_libraries(meta-io ${STD_FILESYSTEM_LIBRARIES})
 else()
     target_include_directories(meta-io SYSTEM PRIVATE
         ${META_PROJECT_SOURCE_DIR}/deps/meta-stlsoft/include)

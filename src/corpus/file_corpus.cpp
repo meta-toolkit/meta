@@ -22,6 +22,8 @@ file_corpus::file_corpus(const std::string& prefix, const std::string& doc_list,
     : corpus{std::move(encoding)}, cur_{0}, prefix_{prefix}
 {
     std::ifstream input{doc_list};
+    if (!input)
+        throw corpus_exception{"failed to open corpus list " + doc_list};
     uint64_t idx = 0;
     std::string line;
     while (std::getline(input, line))
@@ -98,7 +100,7 @@ std::unique_ptr<corpus> make_corpus<file_corpus>(util::string_view prefix,
         throw corpus_exception{"list missing from corpus configuration file"};
 
     // string_view doesn't have operator+ overloads...
-    auto folder = prefix.to_string();
+    auto folder = util::to_string(prefix);
     folder += "/";
     folder.append(dataset.data(), dataset.size());
     folder += "/";

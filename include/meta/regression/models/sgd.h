@@ -47,7 +47,7 @@ class sgd : public regressor
     const static constexpr double default_gamma = 1e-3;
 
     /// The default number of allowed iterations
-    const static constexpr size_t default_max_iter = 5;
+    const static constexpr size_t default_max_iter = 1000;
 
     /**
      * @param docs The training documents

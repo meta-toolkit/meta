@@ -29,21 +29,23 @@ namespace topics
 class lda_cvb : public lda_model
 {
   public:
+    class inferencer;
+
     /**
      * Constructs the lda model over the given documents, with the
      * given number of topics, and hyperparameters \f$\alpha\f$ and
      * \f$\beta\f$ for the priors on \f$\phi\f$ (topic distributions)
      * and \f$\theta\f$ (topic proportions), respectively.
      *
-     * @param idx The index containing the documents to model
+     * @param docs Documents to model
      * @param num_topics The number of topics to infer
      * @param alpha The hyperparameter for the Dirichlet prior over
      *  \f$\phi\f$
      * @param beta The hyperparameter for the Dirichlet prior over
      *  \f$\theta\f$
      */
-    lda_cvb(std::shared_ptr<index::forward_index> idx, std::size_t num_topics,
-            double alpha, double beta);
+    lda_cvb(const learn::dataset& docs, std::size_t num_topics, double alpha,
+            double beta);
 
     /**
      * Destructor: virtual for potential subclassing.
@@ -68,8 +70,14 @@ class lda_cvb : public lda_model
     virtual double
     compute_term_topic_probability(term_id term, topic_id topic) const override;
 
-    virtual double compute_doc_topic_probability(doc_id doc,
+    virtual double compute_doc_topic_probability(learn::instance_id doc,
                                                  topic_id topic) const override;
+
+    virtual stats::multinomial<topic_id>
+    topic_distribution(doc_id doc) const override;
+
+    virtual stats::multinomial<term_id>
+    term_distribution(topic_id k) const override;
 
   protected:
     /**
@@ -90,7 +98,7 @@ class lda_cvb : public lda_model
      * topic assignments for each word occurrence \f$i\f$ in document
      * \f$j\f$.
      *
-     * Indexed as gamma_[d][i]
+     * Indexed as gamma_[doc.id][i]
      */
     std::vector<std::vector<stats::multinomial<topic_id>>> gamma_;
 
@@ -104,6 +112,51 @@ class lda_cvb : public lda_model
      */
     std::vector<stats::multinomial<topic_id>> theta_;
 };
+
+namespace detail
+{
+template <class DecreaseCounts, class UpdateWeight, class IncreaseCounts>
+double update_gamma(const learn::feature_vector& doc, std::size_t num_topics,
+                    std::vector<stats::multinomial<topic_id>>& gammas,
+                    DecreaseCounts&& decrease_counts,
+                    UpdateWeight&& update_weight,
+                    IncreaseCounts&& increase_counts)
+{
+    double max_change = 0;
+    uint64_t n = 0;
+    for (const auto& freq : doc)
+    {
+        const auto& term = freq.first;
+        for (uint64_t j = 0; j < freq.second; ++j)
+        {
+            const auto old_gamma = gammas[n];
+
+            // remove current word's expected counts
+            for (topic_id k{0}; k < num_topics; ++k)
+                decrease_counts(k, term, old_gamma.probability(k));
+
+            // recompute gamma distribution
+            gammas[n].clear();
+            for (topic_id k{0}; k < num_topics; ++k)
+                gammas[n].increment(k, update_weight(k, term));
+
+            // redistribute expected counts and compute L1 change in gamma
+            double delta = 0;
+            for (topic_id k{0}; k < num_topics; ++k)
+            {
+                auto prob = gammas[n].probability(k);
+                increase_counts(k, term, prob);
+                delta += std::abs(prob - old_gamma.probability(k));
+            }
+            max_change = std::max(max_change, delta);
+
+            n += 1;
+        }
+    }
+
+    return max_change;
+}
+}
 }
 }
 #endif

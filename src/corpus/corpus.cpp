@@ -3,9 +3,9 @@
  * @author Sean Massung
  */
 
+#include "meta/corpus/corpus.h"
 #include "cpptoml.h"
 #include "meta/corpus/all.h"
-#include "meta/corpus/corpus.h"
 #include "meta/io/filesystem.h"
 #include "meta/util/shim.h"
 

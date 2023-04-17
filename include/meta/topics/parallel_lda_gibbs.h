@@ -39,8 +39,6 @@ class parallel_lda_gibbs : public lda_gibbs
     virtual ~parallel_lda_gibbs() = default;
 
   protected:
-    virtual void initialize() override;
-
     /**
      * Performs a sampling iteration of the AD-LDA algorithm. This
      * consists of splitting up the sampling of (document, word) topic
@@ -55,31 +53,11 @@ class parallel_lda_gibbs : public lda_gibbs
      */
     virtual void perform_iteration(uint64_t iter, bool init = false) override;
 
-    virtual void decrease_counts(topic_id topic, term_id term,
-                                 doc_id doc) override;
-
-    virtual void increase_counts(topic_id topic, term_id term,
-                                 doc_id doc) override;
-
-    virtual double compute_sampling_weight(term_id term, doc_id doc,
-                                           topic_id topic) const override;
-
     /**
      * The thread pool used for parallelization.
      */
     parallel::thread_pool pool_;
-
-    /**
-     * Stores the difference in topic_term counts on a per-thread basis
-     * for use in the reduction step.
-     *
-     * Indexed as [thread_id][topic]
-     */
-    std::unordered_map<std::thread::id,
-                       std::vector<stats::multinomial<term_id>>>
-        phi_diffs_;
 };
 }
 }
-
 #endif

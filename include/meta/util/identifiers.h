@@ -19,6 +19,12 @@
 #include "meta/util/comparable.h"
 #include "meta/util/string_view.h"
 
+#if _MSC_VER
+#define META_EMPTY_BASES __declspec(empty_bases)
+#else
+#define META_EMPTY_BASES
+#endif
+
 namespace meta
 {
 namespace util
@@ -46,7 +52,7 @@ struct is_numeric
  * through normal relational operators defined on the underlying type T.
  */
 template <class Tag, class T>
-struct identifier : public comparable<identifier<Tag, T>>
+struct META_EMPTY_BASES identifier : public comparable<identifier<Tag, T>>
 {
     using underlying_type = T;
 
@@ -122,23 +128,9 @@ struct identifier : public comparable<identifier<Tag, T>>
         typename U = T,
         typename
         = typename std::enable_if<std::is_same<U, std::string>::value>::type>
-    constexpr operator util::string_view() const
+    explicit constexpr operator util::string_view() const
     {
         return id_;
-    }
-
-    /**
-     * identifiers are comparable by their base types. This allows for
-     * storage in comparison-based containers like std::map or std::set.
-     *
-     * @param lhs
-     * @param rhs
-     * @return whether lhs < rhs based on T::operator<.
-     */
-    inline friend constexpr bool operator<(const identifier& lhs,
-                                           const identifier& rhs)
-    {
-        return static_cast<T>(lhs) < static_cast<T>(rhs);
     }
 
     /**
@@ -150,7 +142,7 @@ struct identifier : public comparable<identifier<Tag, T>>
     inline friend std::ostream& operator<<(std::ostream& stream,
                                            const identifier& ident)
     {
-        return stream << static_cast<T>(ident);
+        return stream << static_cast<const T&>(ident);
     }
 
     /**
@@ -166,6 +158,21 @@ struct identifier : public comparable<identifier<Tag, T>>
     }
 };
 
+/**
+ * identifiers are comparable by their base types. This allows for
+ * storage in comparison-based containers like std::map or std::set.
+ *
+ * @param lhs
+ * @param rhs
+ * @return whether lhs < rhs based on T::operator<.
+ */
+template <class Tag, class T>
+inline constexpr bool operator<(const identifier<Tag, T>& lhs,
+                                const identifier<Tag, T>& rhs)
+{
+    return static_cast<const T&>(lhs) < static_cast<const T&>(rhs);
+}
+
 template <class HashAlgorithm, class Tag, class T>
 void hash_append(HashAlgorithm& h, const identifier<Tag, T>& id)
 {
@@ -179,7 +186,8 @@ void hash_append(HashAlgorithm& h, const identifier<Tag, T>& id)
  * top of the things supported by identifiers.
  */
 template <class Tag, class T>
-struct numerical_identifier : public identifier<Tag, T>, numeric
+struct META_EMPTY_BASES numerical_identifier : public identifier<Tag, T>,
+                                               numeric
 {
     using identifier<Tag, T>::identifier;
     using identifier<Tag, T>::id_;
@@ -240,8 +248,9 @@ struct numerical_identifier : public identifier<Tag, T>, numeric
      * @param step How much to increase the current identifier by
      * @return the current identifier
      */
-    template <class U, class = typename std::
-                           enable_if<std::is_convertible<U, T>::value>::type>
+    template <class U,
+              class = typename std::
+                  enable_if<std::is_convertible<U, T>::value>::type>
     numerical_identifier& operator+=(const T& step)
     {
         id_ += step;
@@ -252,8 +261,9 @@ struct numerical_identifier : public identifier<Tag, T>, numeric
      * @param step How much to decrease the current identifier by
      * @return the current identifier
      */
-    template <class U, class = typename std::
-                           enable_if<std::is_convertible<U, T>::value>::type>
+    template <class U,
+              class = typename std::
+                  enable_if<std::is_convertible<U, T>::value>::type>
     numerical_identifier& operator-=(const T& step)
     {
         id_ -= step;

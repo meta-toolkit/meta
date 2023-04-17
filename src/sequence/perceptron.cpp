@@ -4,6 +4,7 @@
  */
 
 #include <fstream>
+#include <numeric>
 
 #include "meta/io/filesystem.h"
 #include "meta/io/gzstream.h"

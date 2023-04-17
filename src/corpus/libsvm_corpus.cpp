@@ -24,6 +24,8 @@ libsvm_corpus::libsvm_corpus(const std::string& file,
       num_lines_{num_docs},
       input_{file}
 {
+    if (!input_)
+        throw corpus_exception{"failed to open input file " + file};
     // if we couldn't determine the number of lines in the constructor, we have
     // to count newlines
     if (num_lines_ == 0)
@@ -88,7 +90,7 @@ std::unique_ptr<corpus> make_corpus<libsvm_corpus>(util::string_view prefix,
                                                    const cpptoml::table& config)
 {
     // string_view doesn't have operator+ overloads...
-    auto filename = prefix.to_string();
+    auto filename = util::to_string(prefix);
     filename += "/";
     filename.append(dataset.data(), dataset.size());
     filename += "/";

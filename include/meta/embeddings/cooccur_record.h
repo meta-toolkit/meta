@@ -54,16 +54,20 @@ template <class OutputStream>
 uint64_t packed_write(OutputStream& os, const cooccur_record& record)
 {
     using io::packed::write;
-    return write(os, record.target) + write(os, record.context)
-           + write(os, record.weight);
+    auto bytes = write(os, record.target);
+    bytes += write(os, record.context);
+    bytes += write(os, record.weight);
+    return bytes;
 }
 
 template <class InputStream>
 uint64_t packed_read(InputStream& is, cooccur_record& record)
 {
     using io::packed::read;
-    return read(is, record.target) + read(is, record.context)
-           + read(is, record.weight);
+    auto bytes = read(is, record.target);
+    bytes += read(is, record.context);
+    bytes += read(is, record.weight);
+    return bytes;
 }
 }
 }

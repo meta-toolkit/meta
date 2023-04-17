@@ -4,7 +4,6 @@
  */
 
 #include "meta/topics/lda_cvb.h"
-#include "meta/index/postings_data.h"
 #include "meta/logging/logger.h"
 #include "meta/util/progress.h"
 #include <random>
@@ -14,19 +13,19 @@ namespace meta
 namespace topics
 {
 
-lda_cvb::lda_cvb(std::shared_ptr<index::forward_index> idx,
-                 std::size_t num_topics, double alpha, double beta)
-    : lda_model{std::move(idx), num_topics}
+lda_cvb::lda_cvb(const learn::dataset& docs, std::size_t num_topics,
+                 double alpha, double beta)
+    : lda_model{docs, num_topics}
 {
-    gamma_.resize(idx_->num_docs());
+    gamma_.resize(docs_.size());
 
     // each theta_ is a multinomial over topics with a symmetric
     // Dirichlet(\alpha) prior
-    theta_.reserve(idx_->num_docs());
-    for (doc_id doc{0}; doc < idx_->num_docs(); ++doc)
+    theta_.reserve(docs_.size());
+    for (const auto& doc : docs_)
     {
         theta_.emplace_back(stats::dirichlet<topic_id>{alpha, num_topics_});
-        gamma_[doc].resize(idx_->doc_size(doc));
+        gamma_[doc.id].resize(doc_size(doc));
     }
 
     // each phi_ is a multinomial over terms with a symmetric
@@ -34,7 +33,7 @@ lda_cvb::lda_cvb(std::shared_ptr<index::forward_index> idx,
     phi_.reserve(num_topics_);
     for (topic_id topic{0}; topic < num_topics_; ++topic)
         phi_.emplace_back(
-            stats::dirichlet<term_id>{beta, idx_->unique_terms()});
+            stats::dirichlet<term_id>{beta, docs_.total_features()});
 }
 
 void lda_cvb::run(uint64_t num_iters, double convergence)
@@ -65,89 +64,54 @@ void lda_cvb::initialize()
 {
     std::random_device rdev;
     std::mt19937 rng(rdev());
-    printing::progress progress{"Initialization: ", idx_->num_docs()};
+    printing::progress progress{"Initialization: ", docs_.size()};
 
-    for (doc_id d{0}; d < idx_->num_docs(); ++d)
+    for (const auto& doc : docs_)
     {
-        progress(d);
+        progress(doc.id);
 
-        uint64_t i = 0; // i here is the inter-document term id, since we need
-                        // to handle each word occurrence separately
-        for (auto& freq : idx_->search_primary(d)->counts())
-        {
-            for (uint64_t count = 0; count < freq.second; ++count)
-            {
-                // create random gamma distributions
-                for (topic_id k{0}; k < num_topics_; ++k)
-                {
-                    gamma_[d][i].increment(k, rng());
-                }
-
-                // contribute expected counts to phi_ and theta_
-                for (topic_id k{0}; k < num_topics_; ++k)
-                {
-                    auto prob = gamma_[d][i].probability(k);
-                    phi_[k].increment(freq.first, prob);
-                    theta_[d].increment(k, prob);
-                }
-
-                i += 1;
-            }
-        }
+        detail::update_gamma(doc.weights, num_topics_, gamma_[doc.id],
+                             // decrease counts,
+                             [](topic_id, term_id, double) {},
+                             // update weight
+                             [&](topic_id, term_id) { return rng(); },
+                             // increase counts
+                             [&](topic_id topic, term_id term, double prob) {
+                                 theta_[doc.id].increment(topic, prob);
+                                 phi_[topic].increment(term, prob);
+                             });
     }
 }
 
 double lda_cvb::perform_iteration(uint64_t iter)
 {
     printing::progress progress{"Iteration " + std::to_string(iter) + ": ",
-                                idx_->num_docs()};
+                                docs_.size()};
     progress.print_endline(false);
     double max_change = 0;
-    for (doc_id d{0}; d < idx_->num_docs(); ++d)
+    for (const auto& doc : docs_)
     {
-        progress(d);
+        progress(doc.id);
 
-        uint64_t i = 0; // term number within document---constructed
-                        // so that each occurrence of the same term
-                        // can still be assigned a different topic
-        for (auto& freq : idx_->search_primary(d)->counts())
-        {
-            for (uint64_t count = 0; count < freq.second; ++count)
-            {
-                auto old_gamma = gamma_[d][i];
-                for (topic_id k{0}; k < num_topics_; ++k)
-                {
-                    // remove this word occurrence from the distributions
-                    auto prob = gamma_[d][i].probability(k);
-                    phi_[k].decrement(freq.first, prob);
-                    theta_[d].decrement(k, prob);
-                }
+        auto doc_max_change = detail::update_gamma(
+            doc.weights, num_topics_, gamma_[doc.id],
+            // decrease counts
+            [&](topic_id topic, term_id term, double prob) {
+                theta_[doc.id].decrement(topic, prob);
+                phi_[topic].decrement(term, prob);
+            },
+            // update weight
+            [&](topic_id topic, term_id term) {
+                return theta_[doc.id].probability(topic)
+                       * phi_[topic].probability(term);
+            },
+            // increase counts
+            [&](topic_id topic, term_id term, double prob) {
+                theta_[doc.id].increment(topic, prob);
+                phi_[topic].increment(term, prob);
+            });
 
-                gamma_[d][i].clear();
-                for (topic_id k{0}; k < num_topics_; ++k)
-                {
-                    // "sample" the next topic: we are doing
-                    // soft-assignment here so we actually just compute the
-                    // probability of this topic
-                    auto weight = phi_[k].probability(freq.first)
-                                  * theta_[d].probability(k);
-                    gamma_[d][i].increment(k, weight);
-                }
-
-                double delta = 0;
-                for (topic_id k{0}; k < num_topics_; ++k)
-                {
-                    // recontribute expected counts, keep track of gamma
-                    // changes for convergence
-                    auto prob = gamma_[d][i].probability(k);
-                    phi_[k].increment(freq.first, prob);
-                    theta_[d].increment(k, prob);
-                    delta += std::abs(prob - old_gamma.probability(k));
-                }
-                max_change = std::max(max_change, delta);
-                i += 1;
-            }
-        }
+        max_change = std::max(max_change, doc_max_change);
     }
     return max_change;
 }
@@ -158,9 +122,20 @@ double lda_cvb::compute_term_topic_probability(term_id term,
     return phi_[topic].probability(term);
 }
 
-double lda_cvb::compute_doc_topic_probability(doc_id doc, topic_id topic) const
+double lda_cvb::compute_doc_topic_probability(learn::instance_id doc,
+                                              topic_id topic) const
 {
     return theta_[doc].probability(topic);
+}
+
+stats::multinomial<topic_id> lda_cvb::topic_distribution(doc_id doc) const
+{
+    return theta_[doc];
+}
+
+stats::multinomial<term_id> lda_cvb::term_distribution(topic_id k) const
+{
+    return phi_[k];
 }
 }
 }

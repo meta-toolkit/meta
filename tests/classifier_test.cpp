@@ -13,6 +13,7 @@
 #include "cpptoml.h"
 
 using namespace bandit;
+using namespace snowhouse;
 using namespace meta;
 
 namespace {
@@ -33,13 +34,13 @@ void run_tests(const std::string& index_type) {
 
         it("should create naive bayes classifier with CV", [&]() {
             auto cfg = cpptoml::make_table();
-            cfg->insert("method", naive_bayes::id.to_string());
+            cfg->insert("method", util::to_string(naive_bayes::id));
             check_cv(f_idx, *cfg, 0.95);
         });
 
         it("should create naive-bayes classifier with train/test split", [&]() {
             auto cfg = cpptoml::make_table();
-            cfg->insert("method", naive_bayes::id.to_string());
+            cfg->insert("method", util::to_string(naive_bayes::id));
             check_split(f_idx, *cfg, 0.92);
         });
 
@@ -80,31 +81,31 @@ void run_tests(const std::string& index_type) {
 
         // configure a one-vs-all ensemble of hinge-loss sgd
         auto hinge_sgd_cfg = cpptoml::make_table();
-        hinge_sgd_cfg->insert("method", one_vs_all::id.to_string());
+        hinge_sgd_cfg->insert("method", util::to_string(one_vs_all::id));
 
         auto hinge_base_cfg = cpptoml::make_table();
-        hinge_base_cfg->insert("method", sgd::id.to_string());
-        hinge_base_cfg->insert("loss", learn::loss::hinge::id.to_string());
+        hinge_base_cfg->insert("method", util::to_string(sgd::id));
+        hinge_base_cfg->insert("loss", util::to_string(learn::loss::hinge::id));
         hinge_sgd_cfg->insert("base", hinge_base_cfg);
 
         // configure a one-vs-one ensemble of hinge-loss sgd
         auto hinge_sgd_ovo = cpptoml::make_table();
-        hinge_sgd_ovo->insert("method", one_vs_one::id.to_string());
+        hinge_sgd_ovo->insert("method", util::to_string(one_vs_one::id));
         hinge_sgd_ovo->insert("base", hinge_base_cfg);
 
         // configure a one-vs-all ensemble of perceptron-loss sgd
         auto perc_sgd_cfg = cpptoml::make_table();
-        perc_sgd_cfg->insert("method", one_vs_all::id.to_string());
+        perc_sgd_cfg->insert("method", util::to_string(one_vs_all::id));
 
         auto perc_base_cfg = cpptoml::make_table();
-        perc_base_cfg->insert("method", sgd::id.to_string());
-        perc_base_cfg->insert("loss", learn::loss::perceptron::id.to_string());
+        perc_base_cfg->insert("method", util::to_string(sgd::id));
+        perc_base_cfg->insert("loss", util::to_string(learn::loss::perceptron::id));
 
         perc_sgd_cfg->insert("base", perc_base_cfg);
 
         // configure a one-vs-one ensemble of perceptron-loss sgd
         auto perc_sgd_ovo = cpptoml::make_table();
-        perc_sgd_ovo->insert("method", one_vs_one::id.to_string());
+        perc_sgd_ovo->insert("method", util::to_string(one_vs_one::id));
         perc_sgd_ovo->insert("base", perc_base_cfg);
 
         it("should run one-vs-all using SGD with CV", [&]() {
@@ -148,25 +149,25 @@ void run_tests(const std::string& index_type) {
 
         it("should run logistic regression with CV", [&]() {
             auto cfg = cpptoml::make_table();
-            cfg->insert("method", logistic_regression::id.to_string());
+            cfg->insert("method", util::to_string(logistic_regression::id));
             check_cv(f_idx, *cfg, 0.89);
         });
 
         it("should run logistic regression with train/test split", [&]() {
             auto cfg = cpptoml::make_table();
-            cfg->insert("method", logistic_regression::id.to_string());
+            cfg->insert("method", util::to_string(logistic_regression::id));
             check_split(f_idx, *cfg, 0.87);
         });
 
         it("should run winnow with CV", [&]() {
             auto cfg = cpptoml::make_table();
-            cfg->insert("method", winnow::id.to_string());
+            cfg->insert("method", util::to_string(winnow::id));
             check_cv(f_idx, *cfg, 0.85);
         });
 
         it("should run winnow with train/test split", [&]() {
             auto cfg = cpptoml::make_table();
-            cfg->insert("method", winnow::id.to_string());
+            cfg->insert("method", util::to_string(winnow::id));
             check_split(f_idx, *cfg, 0.86);
         });
 
@@ -178,7 +179,7 @@ void run_tests(const std::string& index_type) {
 
     describe("[classifier] SVM wrapper", [&]() {
         auto svm_cfg = cpptoml::make_table();
-        svm_cfg->insert("method", svm_wrapper::id.to_string());
+        svm_cfg->insert("method", util::to_string(svm_wrapper::id));
         auto mod_path = config->get_as<std::string>("libsvm-modules");
         if (!mod_path)
             throw std::runtime_error{"no path for libsvm-modules"};
@@ -209,7 +210,7 @@ go_bandit([]() {
 
         it("should save and load naive bayes models", [&]() {
             auto cfg = cpptoml::make_table();
-            cfg->insert("method", naive_bayes::id.to_string());
+            cfg->insert("method", util::to_string(naive_bayes::id));
             tests::run_save_load_single(f_idx, *cfg, 0.92);
         });
 
@@ -231,17 +232,17 @@ go_bandit([]() {
 
         // configure a one-vs-all ensemble of hinge-loss sgd
         auto hinge_sgd_cfg = cpptoml::make_table();
-        hinge_sgd_cfg->insert("method", one_vs_all::id.to_string());
+        hinge_sgd_cfg->insert("method", util::to_string(one_vs_all::id));
 
         auto hinge_base_cfg = cpptoml::make_table();
-        hinge_base_cfg->insert("method", sgd::id.to_string());
-        hinge_base_cfg->insert("loss", learn::loss::hinge::id.to_string());
+        hinge_base_cfg->insert("method", util::to_string(sgd::id));
+        hinge_base_cfg->insert("loss", util::to_string(learn::loss::hinge::id));
 
         hinge_sgd_cfg->insert("base", hinge_base_cfg);
 
         // configure a one-vs-one ensemble of hinge-loss sgd
         auto hinge_sgd_ovo = cpptoml::make_table();
-        hinge_sgd_ovo->insert("method", one_vs_one::id.to_string());
+        hinge_sgd_ovo->insert("method", util::to_string(one_vs_one::id));
         hinge_sgd_ovo->insert("base", hinge_base_cfg);
 
         it("should save and load one-vs-all SGD models",
@@ -253,19 +254,19 @@ go_bandit([]() {
 
         it("should save and load logistic regression models", [&]() {
             auto cfg = cpptoml::make_table();
-            cfg->insert("method", logistic_regression::id.to_string());
+            cfg->insert("method", util::to_string(logistic_regression::id));
             tests::run_save_load_single(f_idx, *cfg, 0.87);
         });
 
         it("should save and load winnow models", [&]() {
             auto cfg = cpptoml::make_table();
-            cfg->insert("method", winnow::id.to_string());
+            cfg->insert("method", util::to_string(winnow::id));
             tests::run_save_load_single(f_idx, *cfg, 0.86);
         });
 
         it("should save and SVM wrapper models", [&]() {
             auto cfg = cpptoml::make_table();
-            cfg->insert("method", svm_wrapper::id.to_string());
+            cfg->insert("method", util::to_string(svm_wrapper::id));
             auto mod_path = line_cfg->get_as<std::string>("libsvm-modules");
             if (!mod_path)
                 throw std::runtime_error{"no path for libsvm-modules"};
