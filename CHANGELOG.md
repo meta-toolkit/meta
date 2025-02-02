@@ -35,9 +35,9 @@
 - Parallelize feature counting in feature selector using the new
   `parallel::reduction`
 - Add a `parallel::for_each_block` algorithm to run functions on
-  (relatively) equal sub-ranges of an iterator range in parallel
+  (relatively) equal sub-ranges of an iterator range in parallel.
 - Add a parallel merge sort as `parallel::sort`
-- Add a `util/traits.h` header for general useful traits
+- Add a `util/traits.h` header for general useful traits.
 - Add a Markov model implementation in `sequence::markov_model`
 - Add a generic unsupervised HMM implementation. This implementation
   supports HMMs with discrete observations (what is used most often) and
