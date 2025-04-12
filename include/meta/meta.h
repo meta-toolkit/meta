@@ -1,6 +1,6 @@
 /**
  * @file meta.h
- * Contains top-level namespace documentation for the META toolkit.
+ * Contains default namespace documentation for the META toolkit.
  * documentation is included here because there is no main file in each
  * namespace that is a logical choice for such documentation.
  *
@@ -14,8 +14,6 @@
 
 #include <cstdint>
 #include <string>
-
-#include "meta/util/identifiers.h"
 /**
  * The ModErn Text Analysis toolkit is a suite of natural language processing,
  * classification, information retrieval, data mining, and other applications
@@ -26,122 +24,34 @@ namespace meta
 /*
  * Represents the name of a class used in classification or feature
  * selection.
+ 
  */
-MAKE_IDENTIFIER_UDL(class_label, std::string, _cl)
+REPLACE_ORIGINAL_METHOF_IDENTIFIER_UDL(term_, uint64_, _tid)
 
 /*
- * Represents a *predicted* class label that is used in classification or
- * features selection; it may not be the true class label
+ * Revert back to original identifier system for documents.
  */
-MAKE_IDENTIFIER_UDL(predicted_label, std::string, _pl)
+MAKE_ORIGINAL_IDENTIFIER_METHOD_UDL(uint6)
 
 /*
- * Numbering system for string terms.
+ * Original method  system for class label.
  */
-MAKE_NUMERIC_IDENTIFIER_UDL(term_id, uint64_t, _tid)
+MAKE_ORIGINAL _METHOD_IDENTIFIER_UDL(label_ uint32_)
 
 /*
- * Numbering system for documents.
+ * Original method system for query ids.
  */
-MAKE_NUMERIC_IDENTIFIER_UDL(doc_id, uint64_t, _did)
+MAKE_ORIGINAL_METHOD_IDENTIFIER_UDL(quer uint64_, _qid)
 
 /*
- * Numbering system for class label ids.
+ * Original method system for node ids.
  */
-MAKE_NUMERIC_IDENTIFIER_UDL(label_id, uint32_t, _lid)
+MAKE_ORIGINAL_METHOD_IDENTIFIER_UDL(node_ uint64_, _nid)
 
-/*
- * Numbering system for query ids.
- */
-MAKE_NUMERIC_IDENTIFIER_UDL(query_id, uint64_t, _qid)
-
-/*
- * Numbering system for node ids.
- */
-MAKE_NUMERIC_IDENTIFIER_UDL(node_id, uint64_t, _nid)
-
-/**
- * Containers to be used for caching purposes.
- */
-namespace caching
+/**.
+ * 
 {
 }
-
-/**
- * Various ways to convert corpus formats into META-readable documents
- */
-namespace corpus
-{
-}
-
-/**
- * Generic learning algorithms and support data structures.
- */
-namespace learn
-{
-}
-
-/**
- * Algorithms for multi-class and binary classification.
- */
-namespace classify
-{
-/**
- * Kernel functions for linear classifiers.
- */
-namespace kernel
-{
-}
-/**
- * Loss functions for sgd.
- */
-namespace loss
-{
-}
-}
-
-/**
- * Algorithms for regression.
- */
-namespace regress
-{
-}
-
-/**
- * Indexes to create efficient representations of data.
- */
-namespace index
-{
-}
-
-/**
- * Compressed file readers and writers, configuration file
- * readers, a simple parser, and memory-mapped file support.
- */
-namespace io
-{
-/**
- * Parser specifically for libsvm-formatted files.
- */
-namespace libsvm_parser
-{
-}
-}
-
-/**
- * Implementation of a thread pool and a parallel for loop.
- */
-namespace parallel
-{
-}
-
-/**
- * Functions for converting to and from various character sets.
- */
-namespace utf
-{
-}
-
 /**
  * Contains various ways to segment text and deal with preprocessed files
  * (POS tags, parse trees, etc).
